@@ -1,0 +1,114 @@
+# -------------------------
+# PERL SCRIPT VERSION v4.5.3
+# Last updated: 2010-07-22
+# -------------------------
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software; you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+#
+# make_hwe_table.pl
+# This generates a formatted table output for
+# all loci analyzed with the HWE program
+#
+
+open(OUTFILE, ">>$ARGV[1]");
+print OUTFILE "\n";
+print OUTFILE 
+"Marker       Alleles   Expected      Observed       P-value    Std Error   #Genotypes\n";
+print OUTFILE 
+"                       Homozygosity  Homozygosity \n";
+
+print OUTFILE "\n";
+close(OUTFILE);
+
+format TABLEROW = 
+@<<<<<<<<<<@>>>>>>>>@>>>>>>>>>>>>@>>>>>>>>>>>>@>>>>>>>>>>>>>@>>>>>>>>>>>@>>>>>>>> 
+$marker, $alleles, $homo_exp, $homo_obs, $p_value, $err, $num_genos
+.
+
+open(INFILE, $ARGV[0]);
+open(TABLEROW, ">>$ARGV[1]") || die "can't create";
+
+$end = 0;
+while (<INFILE>) {
+    if (/[=]+/) {
+	if ($end>0) {
+	    write(TABLEROW);
+	}	
+	$end = 0; 
+	$homo_exp=0.0;	$homo_obs=0.0;
+	$num_genos=0; $p_value=0.0;
+	$alleles=0;
+	$marker = <INFILE>;
+	chomp $marker;
+	$line = <INFILE>;
+    }
+    if (/alleles/) {
+	$line = $_;
+	@line_parts = split(/[:]/, $line);
+	$alleles =  $line_parts[1];
+	chomp $alleles;
+    }
+    if (/Expected homozygosity/) {
+	$line = $_;
+	@line_parts = split(/[:]/, $line);
+	$homo_exp = $line_parts[1];
+	chomp $homo_exp;
+	$homo_exp=&float_format($homo_exp);
+    }
+    if (/Observed homozygosity/) {
+	$line = $_;
+	@line_parts = split(/[:]/, $line);
+	$homo_obs =  $line_parts[1];
+	chomp $homo_obs;
+	$homo_obs=&float_format($homo_obs);
+    }
+    if (/Genotypes counted/) {
+	$line = $_;
+	@line_parts = split(/[:]/, $line);
+	$num_genos =  $line_parts[1];
+	chomp $num_genos;
+    }	
+    if (/P-value/) {
+	$line = $_;
+	@line_parts = split(/[:\(\)]/, $line);
+	$p_value = &float_format($line_parts[1]);
+	$err = &float_format($line_parts[2]);
+	$end = 1;
+    }
+}
+if ($end > 0) {
+    write(TABLEROW);
+}
+close(INFILE);
+close(TABLEROW);
+
+sub float_format
+
+{
+    $a=$_[0];
+    return sprintf("%7.4f", $a);
+}
+

@@ -1,0 +1,42 @@
+                                                1/23/2013
+
+1. Choose the name for the new analysis.  (Lets's use pangaea.)
+
+2. Create one file for the header (write_pangaea_ext.h) which will define a new analysis class and override
+   options from the base class.  (see write_xxxxx_ext.h and/or write_fbat_ext.h)
+
+   The class will inherit from CLASS_ANALYSIS (which is defined in analysis.h): viz.
+   class CLASS_PANGAEA: public CLASS_ANALYSIS;
+
+   analysis.h defines a large number of methods that specify special processing available/needed for
+   the new class.  It cursorily explains what the methods mean. Override as necessary.
+
+   Override the following functions if necessary:
+        ped_ind_defaults()
+        sub_prog_name()
+
+   In addition, the following functions:
+        sub_prog_name_to_sub_option()
+        interactive_sub_prog_name_to_sub_option()
+        create_output_file()
+        file_names()
+        replace_chr_number()
+    should be declared in the write_pangaea_ext.h file and then defined in the write_pangaea.cpp file.
+
+3. Create one file to do the analysis (write_pangaea.cpp).  This will contain the operational code.
+   (see write_xxxxx.cpp and/or write_fbat.cpp) 
+   Note: you will need to add "include write_pangaea_ext.h" to this file.
+
+4. Glue:
+   a. Towards the head of analysis_ext.h, you should add:
+        include "write_pangaea_ext.h"
+   b. Towards the end of analysis_ext.h, you should export the new class (I named it CLASS_PANGAEA):
+        extern CLASS_PANGAEA *PANGAEA;
+   c. Towards the head of analysis.cpp, before analysis_list[] is defined, you should instantiate PANGAEA
+        CLASS_PANGAEA *PANGAEA = new CLASS_PANGAEA();
+   d. Towards the head of analysis.cpp, in the analysis_list[]  definition, you should add PANGAEA
+        { "PANGAEA MORGAN format",      PANGAEA },
+   e. In prog_name_to_number(), add a case to recognize the name "pangaea" and return the object PANGAEA
+   f. Add write_pangaea.cpp to the Makefile SRCS variable
+   g. Add write_pangaea.o   to the Makefile OBJS variable
+   h. Execute: make depend

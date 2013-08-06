@@ -1,0 +1,9 @@
+1. ./install.sh
+     udpate VERSION=
+
+2. ./srcdir/meg2.cpp
+     update Mega2Ver, Mega2Rev, and Mega2Patch as necessary
+
+3. ./*src  (? optional)
+     update version in "PERL SCRIPT VERSION vx.y.z" and "Last updated:"
+    

@@ -1,0 +1,380 @@
+# -------------------------
+# PERL SCRIPT VERSION v4.5.3
+# Last updated: 2010-07-22
+# -------------------------
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software; you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+#
+#
+#  
+# Perl script Rsimwalk2.pl
+# 
+# Usage: 
+# perl Rsimwalk2.01.pl -c<stat_list> -o<outfile> -t<titles> infile1, infile2 ..
+# e.g perl Rsimwalk2.01.pl -c1,2,3 -o RSW.01 TR1/STATS-01.ALL TR2/STATS-01.ALL
+# 
+
+# Same assumptions as Merlin scores file except that map positions are provided
+# along with the scores (including intermediate positions).
+
+#set default output file name
+$outfile_stem = "RSW2DATA"; 
+
+# parse arguments
+@titles = ();
+@files = ();
+
+for($i=0; $i <= $#ARGV; $i++) {
+    if(substr($ARGV[$i],0,2) eq "-c") {
+       $stat_n = substr($ARGV[$i], 2);
+       @stat_nums = split(/\,/, $stat_n);
+       @stat_nums = sort {$a <=> $b} @stat_nums;
+    } elsif(substr($ARGV[$i], 0, 2) eq "-o") {
+       $outfile_stem = substr($ARGV[$i], 2);
+    } elsif(substr($ARGV[$i], 0, 2) eq "-t") {
+       $title_str = substr($ARGV[$i], 2);
+       @titles = split(/\,/, $title_str);
+    } else {
+       @files = (@files, $ARGV[$i]);
+    }
+}
+
+$outfile_name = "$outfile_stem";
+$header_name = "$outfile_stem.hdr";
+
+# If titles were not provided or do not match the number of files,
+# use the file-number as a title (file name not a safe string, could be
+# arbitrarily long or duplicate names from separate trait dirs.
+# 
+
+if (@titles < @files)  {
+    printf "WARNING: Fewer titles than score files, using file numbers as titles!\n";
+    @titles = (1 .. @files);
+}
+elsif (@titles > @files) {
+    @titles = @titles[1 .. @files];
+}
+
+$format = "%9s";
+# From here on this code is particular to simwalk2
+
+#first get the marker list and distance
+%map=();
+
+@file_exists = ();
+
+$found=0;
+
+if(!defined(open(INPUT, $files[0]))) {
+    &filenotfound($files[0]);	
+    exit(-1);
+}
+# $append=1;
+while(<INPUT>) {
+    if(/Number of pedigrees/) {
+      $found=0;
+    }
+    elsif(/-LOG10\(p-values\)/) {
+       $found=1;
+       # find the delimiter
+       if(/,/) {
+	   # new simwalk2
+	   $delim= ',';
+	   $_ = <INPUT>;
+       }
+       else {
+	   $delim= 0;
+       }
+       $_ = <INPUT>;
+    } else {
+	if($found == 1) {
+	    chomp;
+	    if($delim) {
+		@fields = split($delim);
+	    }
+	    else {
+		@fields = split();
+	    }
+  	    if ($#fields >= 6) {
+		if($fields[-1] eq "##") {
+		    pop(@fields);
+		}
+		$num_fields = @fields;
+		$key = trim($fields[0]);
+ 		$map{$key}= trim($fields[1]);
+		push(@markers, $key);
+ 	    }
+ 	}
+    }
+}	
+
+close(INPUT);
+
+
+@stat_names = ('BLOCKS', 'MAX-TREE', 'ENTROPY' ,'NPL_PAIR', 'NPL_ALL');
+
+@stat_nums1 = ();
+
+foreach $stat (@stat_nums) {
+    push(@stat_nums1, $stat + ($num_fields-6));
+}
+
+%scores = ();
+$file_num=0;
+
+# keys of stats are concatenated <marker_num><stat><file_num>
+floop: foreach $file (@files) { 
+    if(defined(open(INPUT, $file))) {
+	$file_num++;
+	push(@file_exists,1);
+	$marker_num=0;
+	$found=0;
+      readloop:	while(<INPUT>) {
+	  
+	    if(/Number of pedigrees/) {
+		$found=0;
+	    }
+	    elsif(/-LOG10\(p-values\)/) {
+		$found=1;
+		# find the delimiter
+		if(/,/) {
+		    # new simwalk2
+		    $delim= ',';
+		    $_ = <INPUT>;
+		}
+		else {
+		    $delim=0;
+		}
+		$_ = <INPUT>;
+		
+	    } 
+	    else {
+		if($found == 1) {
+	    	    if (/______________/) {
+			$found=0;
+			close(INPUT);
+			last readloop;
+		    }
+		    else {
+			chomp;
+			if($delim) {
+			    @fields = split($delim);
+			}
+			else {
+			    @fields = split();
+			}
+			$num_fields = @fields;
+			if($num_fields >= 7) {
+			    if($fields[-1] eq "##") {
+				pop(@fields);
+			    }
+			    @output_scores = [];
+			    # check if output scores are numeric;
+			    for ($i=0; $i < @stat_nums; $i++) {
+				$fields[1+$stat_nums[$i]] = trim($fields[1+$stat_nums[$i]]);
+			    	if ($fields[1+$stat_nums[$i]] !~ /^[\+-]?[0-9]*\.*[0-9]*$/) {
+				    $output_scores[$i] = sprintf($format, "NA");
+				}				
+				else {
+				    $output_scores[$i] = 
+					sprintf($format, $fields[1+$stat_nums[$i]]);
+				}
+			    }
+			    $pos = trim($fields[0]);
+			    if($file_num == 1) {
+				$scores{$pos} = join('  ', @output_scores);
+			    }
+			    else {
+				$scores{$pos} = 
+				    join('    ', $scores{$pos},
+					 join('    ', @output_scores));
+			    }
+			}
+			$marker_num++;
+		    }
+		}
+	    }
+	}
+  
+	close(INPUT);    
+    }
+    else {
+	&filenotfound($file);
+	next floop;
+    }
+    printf "Read in analysis results.\n";
+}	
+
+
+# From here on, it is again identical for all
+# nplplot options
+
+if ($file_num == 0) {
+    print STDERR " ERROR - Unable to read in SimWalk2 output files.\n";    
+    print " ERROR - Unable to read in SimWalk2 output files.\n";    
+    exit(-1);
+}
+
+
+# now print the data into a R-readable file
+$header = "";
+foreach $title (@titles) {
+    foreach $stat (@stat_nums) {
+	$header = join(" ", $header,
+		       join("_", $title, $stat_names[$stat-1]));
+    }
+}
+
+open(OUTPUT, ">$outfile_name");
+printf OUTPUT "Marker         Location %s\n", $header;
+    
+foreach $key (@markers) {
+    printf OUTPUT "%-12s    %7.3f   %s\n", 
+    $key, $map{$key}, $scores{$key};
+}
+close(OUTPUT);
+
+
+# ---------------
+# These are already written by Mega2
+
+# full contents of header file
+# yline<-2.0
+# ymin <- 0.0
+# ymax <- 4.0
+# header<-T
+# yfix<-F
+# title <- "Chromosome 11"
+# draw.lgnd<-T
+# xlabl<-""
+# ylabl<-""
+# lgndx<-NULL
+# lgndy<-NULL
+# cex.legend<-0.7
+# cex.axis <- 0.9
+# tcl <- -0.3
+# bw<-F
+# na.rm<-T
+#
+#----------------
+#
+# These are added by this script, because they 
+# depend on the number of scores
+
+# lgndtxt <- c("Trait-ALL", "Trait-Pairs")
+# my.colors <- NULL
+# ltypes <- c("solid", "dotted")
+# ptypes <- c(".", "+")
+
+# ---------------
+
+
+# Extract the lines written by Mega2
+open(HEADER, $header_name);
+@lines = <HEADER>;
+
+readheader: for ($i = 0; $i <= $#lines; $i++) {
+    if ($lines[$i] =~ /inserted by Mega2/) {
+	$lastline = $i;
+	last readheader;
+    }
+}
+
+@headers = split(/\s+/, trim($header));
+
+open(HEADER, ">$header_name");
+
+print HEADER @lines[0 .. $lastline];
+
+printf HEADER "lgndtxt <- c(\"$headers[0]\"";
+
+for ($i=1; $i < @headers; $i++) {
+    printf HEADER ", \"$headers[$i]\"";
+}
+printf HEADER ")\n";
+
+@R_ltypes=(0 .. 3);
+@R_colors = ("black", "red", "green", "blue"); 
+@R_ptypes = (19 .. 22);
+
+@plot_attribs = ();
+
+# This will create 64 tuples.
+# Want ptype to change most often, then color, then ltype
+
+foreach $ltype (@R_ltypes) {
+    foreach $color (@R_colors) {
+	foreach $ptype (@R_ptypes) {
+	    push(@plot_attribs, ($ltype, $color, $ptype));
+	}
+    }
+}
+
+$ltypes_str = "ltypes <- c(";
+$colors_str = "my.colors <- c(";
+$ptypes_str = "ptypes <- c(";
+
+# start off with the first tuple;
+$ltypes_str = $ltypes_str . $plot_attribs[0];
+$colors_str = $colors_str . "\"" . $plot_attribs[1] . "\"";
+$ptypes_str = $ptypes_str . $plot_attribs[2];
+
+$lnum = 1;
+
+for ($i=1; $i < @headers; $i++) {    
+    $lnum = $i % 64;
+    $ltypes_str = $ltypes_str . ", " . $plot_attribs[3*$lnum];
+    $colors_str = $colors_str . ", \"" . $plot_attribs[3*$lnum + 1] . "\"";
+    $ptypes_str = $ptypes_str . ", " . $plot_attribs[3*$lnum + 2];
+}
+
+$ltypes_str = $ltypes_str . ")";
+$colors_str = $colors_str . ")";
+$ptypes_str = $ptypes_str . ")";
+
+print HEADER $ltypes_str, "\n";
+print HEADER $colors_str, "\n";
+print HEADER $ptypes_str, "\n";
+
+close(HEADER);
+
+exit(0);
+    
+sub filenotfound {
+
+    printf " ERROR - File $_[0] does not exist!\n";
+    printf STDERR " ERROR - File $_[0] does not exist!\n";
+    return;
+}
+
+sub trim {
+    $str = shift;
+    $str =~ s/^\s+//;
+    $str =~ s/\#+$//;
+    $str =~ s/\s+$//;
+
+    return $str;
+}

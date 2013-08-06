@@ -1,0 +1,637 @@
+# -------------------------
+# PERL SCRIPT VERSION v4.5.3
+# Last updated: 2010-07-22
+# -------------------------
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software; you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+#
+#
+# script mega2log2html.pl
+# function  to parse Mega2 log and create an html page
+# with the appropriate links
+#
+# usage : mega2log2html.pl log-file
+# first create the links
+#
+
+use Cwd;
+use Fcntl qw(:flock);
+$ENV{'PWD'} ||= cwd();
+$opath = $ARGV[1]; # output files
+$lpath = $ARGV[2]; # log files; sumdir OR RunDate
+$html  = $lpath;
+$main = "$html/MEGA2run.html";
+$links = "MEGA2links.html";
+$links_path="$html/MEGA2links.html";
+$fileview = "MEGA2file.html";
+$fileview_path = "$html/MEGA2file.html";
+$outlinks="MEGA2outputfiles.html";
+$outlinks_path = "$html/MEGA2outputfiles.html";
+
+open(LINKS, ">$links_path") || die("Could not open $links_path for writing.");
+
+print LINKS <<HEADER
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html> 
+<head> 
+<title> List of files </title></head>
+HEADER
+    ;
+# print LINKS "<html> <head> <title> List of files </title></head>\n";
+print LINKS 
+    "<body text=navy bgcolor=\"#eeeeff\" link=\"#6666ff\"  VLINK=\"#6666ff\">\n";
+
+open(OUTPUTLINKS, ">$outlinks_path") || die("Could not open $outlinks_path for writing.");
+
+print OUTPUTLINKS <<HEADER
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html> 
+<head> 
+<title> List of output files </title></head>
+
+HEADER
+    ;
+print OUTPUTLINKS 
+    "<body text=navy bgcolor=\"#eeeeff\" link=\"#6666ff\"  VLINK=\"#6666ff\">\n";
+
+$stream = LINKS;
+$stream1 = OUTPUTLINKS;
+
+$run_labl = &log_files($ARGV[0], $stream, "file_window");
+&input_files($ARGV[0], $stream, "file_window");
+&output_files($ARGV[0], $stream1, "file_window");
+&right_frame($fileview_path);
+
+
+print LINKS "</body>\n";
+print LINKS "</html>\n";
+
+print OUTPUTLINKS "</body>\n";
+print OUTPUTLINKS "</html>\n";
+close(LINKS);
+close(OUTPUTLINKS);
+
+open(MAIN, ">$main") || die("Could not open $main for writing.");
+
+# print the frames
+
+print MAIN <<HEADER 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html> 
+<head> 
+<title> Mega2 Log for Run $run_labl </title></head>
+HEADER
+    ;
+
+print MAIN <<BODY;
+<frameset cols="300, 500%" border=1>
+    <frame src=$links name="links" scrolling=yes>
+    <frameset rows="30%,70%" border=1>
+    <frame src=$outlinks name="output_file_names" scrolling=yes>
+    <frame src=$fileview name="file_window" scrolling=yes>
+    </frameset>
+<noframes>
+<BODY TEXT="#133b66" BGCOLOR="#ece4ee" LINK="#85050f" ALINK="#991e26" VLINK="#133b66">
+This document requires a browser that can display frames.
+</body>
+</noframes>
+</frameset>
+</html>
+BODY
+    ;
+
+##########end of main body
+
+sub input_files {
+
+    ($logfile, $leftframe_stream, $fileframe_name) = @_;
+    
+    %headers= (
+	       "ped" => "Pedigree file",
+	       "loc" => "Locus file",
+	       "map" => "Map file",
+	       "omit"=> "Omit file",
+	       "freq"=> "Frequency file",
+	       "pen"=> "Penetrance file",
+	       "batch" => "Batch file");
+
+    %filenames = ();
+    foreach $key (keys %headers) {
+	$filenames{$key} = "";
+    }
+
+    open(LOGFILE, $logfile) || die("Could not open $logfile for reading.");
+    flock(LOGFILE, LOCK_EX);
+	       
+    while(<LOGFILE>) {
+	chomp;
+	@items = split();
+	if (/^#\s+Locus file:/ ) {
+	    $filenames{"loc"} = $items[$#items];
+	}
+	if (/^#\s+Pedigree file:/ ) {
+	    $filenames{"ped"} = $items[$#items];
+	}
+	if (/^#\s+Map file:/ ) {
+	    $filenames{"map"} = $items[$#items];
+	}
+	if (/^#\s+Omit file:/ ) {
+	    $filenames{"omit"} = $items[$#items];
+	}
+	if (/^#\s+Frequency file:/ ) {
+	    $filenames{"freq"} = $items[$#items];
+	}
+	if (/^#\s+Penetrance file:/ ) {
+	    $filenames{"pen"} = $items[$#items];
+	}
+	if (/^Running Mega2 in batch mode from /) {	    
+	    $filenames{"batch"} = $items[$#items];
+	}
+    }
+    flock(LOGFILE, LOCK_UN);
+    close(LOGFILE);
+
+    print $leftframe_stream <<INPUT;
+    <div align="left">
+    <h2> Input files </h2>
+    <table width="98%">
+INPUT
+    ;
+    foreach $key ("loc", "ped", "map", "omit", "freq", "pen", "batch") {
+	if ($filenames{$key} ne "") {
+	    @subdirs = split("/", $filenames{$key});
+	    $disp_name = $subdirs[$#subdirs];
+	    $href="\"".$ENV{'PWD'}."/".$filenames{$key}."\"";
+	    print $leftframe_stream <<TABLEROW;
+    <tr><td width=150> $headers{$key} </td>
+	<td> <a href=$href type="text/plain" target=$fileframe_name>$disp_name</href>
+	</td>
+    </tr>
+TABLEROW
+    ;
+	}
+    }
+    print $leftframe_stream <<ENDTABLE;	
+    </table>
+    </div>
+ENDTABLE
+    ;
+    return;
+
+}
+
+sub log_files {
+
+    ($logfile, $leftframe_stream, $fileframe_name) = @_;
+    
+    open(LOGFILE, $logfile) || die("Could not open $logfile for reading.");
+    flock(LOGFILE, LOCK_EX);
+    my $outdir ="";
+    my $batchfile = "none";
+
+readloop:    while(<LOGFILE>) {
+        if (/^Run date:/) {
+	    chomp();
+	    @items = split();
+	    $label = $items[2];
+	    $date = &runlabel2date($label);	    
+	}
+    
+	if (/^Run parameters stored in batch file/) {
+	    chomp();
+	    @items = split();
+	    $batchfile = $items[$#items];
+	}
+
+	if (/^See run summaries/) {
+	    chomp();
+	    @items=split();
+	    $outdir_str=$items[$#items];
+	    @outdirs=split(/\//, $outdir_str);
+	    $outdir = $outdirs[$#outdirs];
+	    if (! /current/ ) {
+                if ($outdir eq "directory") {
+                    $extn = $ARGV[2];
+                    $outdir_str = $ARGV[2];
+                } else {
+                    $extn = $outdir;
+                }
+	    }  else {
+		$extn = $ARGV[2];
+	    }
+	    $_ = <LOGFILE>;
+	    chomp;
+	    s/,/ /g;
+	    @logfiles = split();
+	    last readloop;
+	}	
+    }
+    %extensions =();
+
+    foreach $log (@logfiles) {
+	$extensions{$log} = $extn;
+    }
+
+    if ($batchfile ne "none") {
+	@batchfile_parts=split(/\//, $batchfile);
+	$extensions{$batchfile_parts[$#batchfile_parts]} = $extn;
+	push(@logfiles, $batchfile_parts[$#batchfile_parts]);
+    }
+
+    flock(LOGFILE, LOCK_UN);
+    close(LOGFILE);
+
+    print $leftframe_stream <<TABLE;
+    <div align="left">
+    <p> <b> Run date: </b> $date <br>
+	<b> Run label: </b> $label </p>
+    <h2> Log files </h2>
+    <table width="90%">
+TABLE
+    ;
+
+    &htmlize($outdir_str, %extensions);
+
+    foreach $lf (@logfiles) {
+	$href="\"$ENV{'PWD'}/" .$outdir_str."/".$lf."."."html"."\"";
+	print $leftframe_stream <<TR;
+	<tr><td> <a href=$href target=$fileframe_name>$lf</href></td></tr>
+TR
+    ;
+    }
+    print $leftframe_stream <<ENDTABLE;
+    </table>
+    </div>
+ENDTABLE
+    ;
+    return $date;
+}
+
+sub output_files {
+
+    ($logfile, $leftframe_stream, $fileframe_name) = @_;
+
+    open(LOGFILE, $logfile) || die("Could not open $logfile for reading.");
+    flock(LOGFILE, LOCK_EX);
+    @trait_dirs=(".");
+    @output_files=();
+    @additional_output_files=();
+    $parse=0;
+    $additional_parse=0;
+    $sage_option = 0;
+    while(<LOGFILE>) {
+	if (/Mega2 created the following file/) {
+	    $parse=1;
+	}
+	elsif (/trait-specific/ || /Trait-specific/) {
+	    $_= <LOGFILE>;
+	    chomp;
+	    @trait_dirs = split();
+	}
+	elsif (/============/) {
+	    ;
+	}
+	elsif (/Additional files/) {
+	    $parse=0;
+	    $additional_parse = 1;
+	}
+	elsif (/Sage files for each trait/) {
+	    $sage_option = 1;
+	}
+	elsif ($parse && (/(file|script|shell|run R)[\s]*:/)) {
+	    if (/subdirectories/) {
+		;
+	    }
+	    else {
+		chomp;
+		$line= $_;
+		push(@output_files, $line);
+	    }
+	}
+	elsif ($additional_parse && (/(file|script|shell|run R)[\s]*:/)) {	    
+	    chomp;
+	    $line= $_;
+	    push(@additional_output_files, $line);
+	    
+        }
+    }
+ 
+    flock(LOGFILE, LOCK_UN);
+    close(LOGFILE);
+
+    if ($#trait_dirs > 0) {
+	print $leftframe_stream "<h2> Trait-specific output files </h2>\n";
+    }
+    else {
+	print $leftframe_stream "<h2> Output files </h2>\n";
+    }
+    print $leftframe_stream <<TABLE;
+    <div align="left">
+    <table width="90%" cols=4>	
+TABLE
+    ;
+    
+    foreach $trait_dir (@trait_dirs) { 
+	if ($trait_dir ne ".") {
+            $path = "$ENV{'PWD'}/$opath/$trait_dir";
+	    print $leftframe_stream <<TR;
+	    <tr>
+            <td colspan=4><a href=$path type="text/plain" target=$fileframe_name> 
+            <b> $trait_dir/</b></href></td>
+	    </tr>
+TR
+        ;
+	}
+	$i=0;
+	print $leftframe_stream "<tr>\n";
+	foreach $fl (@output_files) {
+	    @items = split(/\s+/, $fl);
+	    $file = pop(@items);
+	
+	    if ((!$sage_option && !&global_file($file)) || 
+		($sage_option && !&global_sage_file($file))) {
+##
+##		$path = $trait_dir."/".$file;
+		$path = "$ENV{'PWD'}/$opath/$trait_dir/$file";
+		print $leftframe_stream <<TD;
+		<td valign=bottom> <a href=$path type="text/plain" target=$fileframe_name> $file </href>
+                </td>
+TD
+    ;
+		 $i++;
+	    }
+	    if($i == 4) {
+		print $leftframe_stream "</tr>\n";
+		$i=0;
+		print $leftframe_stream "<tr>\n";
+	    }
+	}
+    }
+    if ($i < 4 ) {
+	print $leftframe_stream "</tr>\n";
+    }
+    print $leftframe_stream <<ENDTABLE;
+    </table>
+    </div>
+ENDTABLE
+    ;
+    
+    $i=0;
+    if ($#trait_dirs > 0) {
+      l1: foreach $fl (@output_files) {
+	  @items = split(/\s+/, $fl);
+	  $file = pop(@items);
+	  if ((!$sage_option  && (&global_file($file))) ||
+	      ($sage_option && (&global_sage_file($file)))) {
+	      print $leftframe_stream "<h2> Output files for all traits combined </h2>\n";
+	      $i++;
+	      last l1;
+	  }
+      }
+    }
+
+    if ($i > 0) {
+	print $leftframe_stream <<TABLE;
+	<div align="left">
+	<table width="90%" cols=4>	
+TABLE
+      ;
+	print $leftframe_stream <<TR;
+	<tr>
+        <td colspan=4><b> Global files:</b>
+	</td>
+	</tr>
+TR
+        ;
+	$i=0;
+	print $leftframe_stream "<tr>\n";    
+	foreach $fl (@output_files) {
+	    @items = split(/\s+/, $fl);
+	    $file = pop(@items);
+	    if ((!$sage_option  && (&global_file($file))) ||
+		($sage_option && (&global_sage_file($file)))) {
+		print $leftframe_stream <<TD;
+		<td valign=bottom> <a href=$file type="text/plain" target=$fileframe_name> $file </href>
+	        </td>
+TD
+        ;
+		$i++;
+	    }
+	    if($i == 4) {
+		print $leftframe_stream "</tr>\n";
+		$i=0;
+		print $leftframe_stream "<tr>\n";
+	    }
+	}	
+	if ($i < 4) {
+	    print $leftframe_stream "</tr>\n";
+	}
+    print $leftframe_stream <<ENDTABLE;
+    </table>
+    </div>
+ENDTABLE
+    ;
+    }
+
+    if (@additional_output_files > 0) {
+	print $leftframe_stream <<TABLE;
+	<div align="left">
+	<table width="90%" cols=4>	
+TABLE
+      ;
+	print $leftframe_stream <<TR;
+	<tr>
+        <td colspan=4><b> Additional files:</b>
+	</td>
+	</tr>
+TR
+        ;
+        $i=0;
+        print $leftframe_stream "<tr>\n";    
+        foreach $fl (@additional_output_files) {
+	   @items = split(/\s+/, $fl);
+	   $file = pop(@items);
+#          print $file, "\n";
+           $path = "$ENV{'PWD'}/$opath/$file";
+           print $leftframe_stream <<TD;
+     	 <td valign=bottom> <a href=$path type="text/plain" target=$fileframe_name> $file </href>
+	 </td>
+TD
+        ;
+	   $i++;
+	   if($i == 4) {
+	       print $leftframe_stream "</tr>\n";
+	       $i=0;
+	       print $leftframe_stream "<tr>\n";
+	   }
+	}
+    
+	if ($i < 4) {
+	    print $leftframe_stream "</tr>\n";
+	}
+    }
+    print $leftframe_stream <<ENDTABLE;
+    </table>
+    </div>
+ENDTABLE
+    ;
+    return;
+}
+
+sub right_frame
+
+{    
+    $right = $_[0];
+    
+    open(RIGHT, ">$right") || die("Could not open $right for writing.");
+
+    print RIGHT <<HEADER
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html> 
+<head> 
+<title> Right frame </title></head>
+HEADER
+;
+
+# "<html> <head> <title> List of files </title></head>\n";
+    print RIGHT 
+	"<body text=navy font=helvetica bgcolor=\"#ffffff\" link=\"#6666ff\"  VLINK=\"#6666ff\">\n";
+    print RIGHT <<BODY;
+    <center><h2> &nbsp; </h2>
+	<h2> Click on the links at the left </h2>
+	        <h2>to display the corresponding file 
+        </h2></center>
+        </body> </html>
+BODY
+    ;
+    return;
+}
+
+
+sub htmlize {
+
+    $outdir = shift;
+    %log_files = @_;
+
+#rvb print "logfiles @_\n";
+
+    foreach $log_file (keys %log_files) {
+	$html_log_file = $outdir."/".$log_file.".html";
+	open(OUT, ">$html_log_file") || die("Could not open $html_log_file for writing.");
+	if ($log_files{$log_file} ne "none") {
+	    $log = "$log_files{$log_file}/$log_file";
+	} else {
+	    $log = $log_file;
+	}
+        $log = $ENV{'PWD'} . "/" . $log;
+#rvb    print "html_log_file $html_log_file; outdir $outdir; log_file $log_file\n";
+#rvb    print "log $log\n";
+	open(IN, $log) || die("Could not open $log for reading.");
+	printf OUT <<HEADER
+	    <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	    "http://www.w3.org/TR/html4/loose.dtd">
+	    <html> 
+	    <head> 
+	    <title> $log_file </title></head>
+HEADER
+;
+	print OUT
+	"<body text=navy font=helvetica bgcolor=\"#ffffff\" link=\"#6666ff\"  VLINK=\"#6666ff\">\n";
+	print OUT "<pre>\n";
+	while(<IN>) {
+	    print OUT "$_";
+	}
+	close(IN);
+	print OUT "</pre>\n";
+	printf OUT "</body></html>\n";
+	close(OUT);
+    }
+}
+
+
+# return 0 or 1 depending on whether the input file name
+# is included in the list of files that are created in the output 
+# directory even when we have trait-specific directories
+
+sub global_sage_file {
+
+    @tr_specific = ("sage_loc", 
+		    "sage_cnt",
+		    "sage_cntpar");
+
+    foreach $tr (@tr_specific) {
+	if ($_[0] =~ /$tr/) {
+	    return 0;
+	}
+    }
+    
+    return 1;
+
+}
+    
+sub global_file {
+    
+    @globals = ("npl.all.sh",
+		"haplo.all.sh",
+		"ibd.all.sh",
+		"loc.all.sh",
+		"mis.all.sh",
+		"merlin.all.sh",
+		"allegro.all.sh",
+		"Rmerlin.all.sh",
+		"Rallegro.all.sh",
+		"Rsimwalk2.all.sh",
+		"Rmerlin.all.R",
+		"Rallegro.all.R",
+		"Rsimwalk2.all.R",
+		"plink.all.sh");
+
+    foreach $glob (@globals) {
+	if ($_[0] eq $glob) {
+	    return 1;
+	}
+    }
+    return 0;
+}
+
+
+sub runlabel2date {
+
+
+    @mos = ("Jan", "Feb", "Mar", "Apr",
+	    "May", "Jun", "Jul", "Aug",
+	    "Sep", "Oct", "Nov", "Dec");
+
+    ($yearstr, $mn, $day, $hr, $min) = split(/-/);
+    @year = split(/:/, $yearstr);
+    $timestr = join(":", ($hr, $min));
+    return join(" ", ($mos[$mn-1], $day, $year[1], $timestr));
+
+}

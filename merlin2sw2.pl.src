@@ -1,0 +1,148 @@
+# -------------------------
+# PERL SCRIPT VERSION v4.5.3
+# Last updated: 2010-07-22
+# -------------------------
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software; you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+#
+# script merlin2sw2.pl
+#
+# Formats merlin's NPL output for reading into SimWalk2
+# 
+# DATA-STRUCTURES
+# %ped <- associative array, hashed by  pedigree  ids
+# contains all the lines pertaining to that  pedigree
+# including the  ped_num, num_markers line.
+#
+# @peds <- ordered list of pedigrees
+# @markers <- ordered list of markers
+#
+#  INPUT :
+#  npl statistics file, order_file
+#
+#  OUTPUT:
+#  simwalk2-readable file
+#
+#  SYNOPSIS:
+#  merlin2sw2.pl npl_file order_file simwalk2_file
+#
+if (!$ARGV[2]) {
+    print "Usage: merlin2sw2.pl <merlin order> <simwalk2>\n";
+    exit(-1);
+}
+open(ORDER, $ARGV[1]) || die("Could not open $ARGV[1]");
+#assume that order has only two lines,
+# ped_ids and markers separated by white space
+$_ =<ORDER>; chomp();
+@ped_ids = split();
+$num_peds1 = $#ped_ids;
+$_ =<ORDER>; chomp();
+@markers = split();
+$num_markers1=$#markers;
+close(ORDER);
+%peds=(); 
+# initialize the %peds array
+for($i=0; $i <= $#ped_ids; $i++) {
+    $peds{$ped_ids[$i]} = "\t$ped_ids[$i]\t0\n";
+}
+open(IN, $ARGV[0]) || die ("Could not open $ARGV[0]");
+$_ = <IN>; chomp;
+
+if (!(/NPLXF version 1.0/)) {
+    print "Merlin NPL intermediate output is not in correct format.\n";
+    print "Please update your version of Merlin.\n";
+    exit(-1);
+}
+
+while(<IN>) {
+    # read ped num and number of lines to follow
+    # from the second pedigree onwards, store the values
+    # $ped_id and $num_lines should be defined by then
+    # read the <ped, num> pair
+    @marker_lines=();    
+  chomp();
+    $marker_lines[0] = $_;
+    $i=1;
+    @x = split(/[\s]+/, $marker_lines[0]);
+    $ped_id = $x[1]; $num_lines = $x[2];
+    if($num_lines > 0) {
+	     for($m=0; $m <= $num_lines; $m++) {
+	        $_ = <IN>;
+	        if ($_) {
+		   chomp();
+		   $marker_lines[$i]=$_; 
+	           $i++;
+	        } else {
+		  print("Premature termination of input file!");
+		  exit(-1);
+	        }
+	     }
+    }
+    $peds{$ped_id} = join(';', @marker_lines);
+}
+close(IN);
+# just to avoid warning message 
+$ped_id1 = 0; 
+open(OUT, ">$ARGV[2]") || die("Could not open $ARGV[2]");
+# pass through the merlin version number line
+printf OUT "NPLXF version 1.0\n";
+for($p=0; $p <= $num_peds1; $p++) {
+    $ped_id = $ped_ids[$p];
+    @ped_lines = split(/;/,  $peds{$ped_id});
+    ($x, $ped_id1, $ped_num) = split(/\s+/, $ped_lines[0]);
+    printf OUT "%-8s  %5d\n", $ped_id, $ped_num;
+    if ($ped_num > 0) {
+	      %marker_lines=();
+	      for($m=1; $m <= $ped_num + 1; $m++) {	
+	         # num_markers +  1  for  the header
+	         @lines = split(/\s+/, $ped_lines[$m]);
+	         # split to get the marker name, 
+	         # there will be an element called "Marker"
+	         $marker_lines{$lines[0]} = $ped_lines[$m];
+	      }
+	      # first print the header
+	      ($marker, $obsp, $meanp, $stdevp, 
+	       $obsa, $meana, $stdeva) =
+	      split(/\s+/, $marker_lines{"Marker"});	
+	      printf OUT
+	      "%-8s  %9s %9s %9s %9s %9s %9s\n",
+	      $marker, 
+	      $obsa,  $meana, $stdeva,
+	      $obsp, $meanp, $stdevp;
+	      # now the markers
+	      for($m=0; $m <= $num_markers1;  $m++) {
+	         ($marker, $obsp, $meanp, $stdevp, 
+	         $obsa, $meana, $stdeva) =
+		 split(/\s+/, $marker_lines{$markers[$m]});	
+	         printf OUT 
+		 "%-8s  %9s %9s %9s %9s %9s %9s\n",
+		 $marker,
+		 $obsa, $meana, $stdeva, 
+		 $obsp, $meanp, $stdevp;
+	      }
+    } 
+}
+close(OUT);

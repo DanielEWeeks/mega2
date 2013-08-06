@@ -1,0 +1,135 @@
+/*
+  Mega2: Manipulation Environment for Genetic Analysis
+  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+  Daniel E. Weeks, and University of Pittsburgh
+
+  This file is part of the Mega2 program, which is free software; you
+  can redistribute it and/or modify it under the terms of the GNU
+  General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later
+  version.
+
+  Mega2 is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+  For further information contact:
+      Daniel E. Weeks
+      e-mail: weeks@pitt.edu
+
+===========================================================================
+*/
+
+#ifndef ENTRY_H
+#define ENTRY_H
+
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+#include "common.h"
+#include "typedefs.h"
+
+#include "create_summary_ext.h"
+#include "output_routines_ext.h"
+
+class entry : public file_ops {
+public:
+    int _ped;
+    int _per;
+    int _locus;
+    int _allele1, _allele2;
+    linkage_ped_top  *_Top;
+    linkage_locus_top  *_LTop;
+    ext_linkage_locus_top *_EXLTop;
+    linkage_ped_rec  *_tpe;
+    linkage_ped_tree *_tp;
+    linkage_locus_rec *_tle;
+    linkage_locus_rec *_tte;
+    int  _fwid;
+    int  _pwid;
+    int  _mwid;
+    char _fformat[6];
+    char _pformat[6];
+    char _mformat[6];
+
+    int _trait;
+
+    int _numchr;
+    int _chrom_loop;
+public:
+    entry() {
+        // It's really nice to initialize everything to '0' so that when
+        // the code blows up, you know that the variable was never written
+        // too as opposed to someone wrote some funny number there...
+        _ped = _per = _locus = _allele1 = _allele2 = 0;
+        _Top    = (linkage_ped_top  *)NULL;
+        _LTop   = (linkage_locus_top  *)NULL;
+        _EXLTop = (ext_linkage_locus_top *)NULL;
+        _tpe = (linkage_ped_rec  *)NULL;
+        _tp = (linkage_ped_tree *)NULL;
+        _tle = (linkage_locus_rec *)NULL;
+        _tte = (linkage_locus_rec *)NULL;
+        _fformat[0] = _pformat[0] = _mformat[0] = 0;
+        _fwid = _pwid = _mwid = _trait = _numchr = _chrom_loop = 0;
+    }
+    entry(linkage_ped_top *Top) {
+        entry();
+        if (Top != (linkage_ped_top *)NULL) {
+            this->_Top = Top;
+            _LTop   = Top->LocusTop;
+            _EXLTop = Top->EXLTop;
+        }
+    }
+    virtual ~entry() {}
+    void load_formats(const int fwid, const int pwid, const int mwid);
+
+    void pr_id();
+    void pr_fam();
+    void pr_per() { pr_per(_tpe); }
+    void pr_per(linkage_ped_rec  *tpe);
+    void pr_father();
+    void pr_mother();
+    void pr_parent(); // prints father then mother
+
+    void pr_sex() { pr_sex(_tpe); }
+    void pr_sex(linkage_ped_rec  *tpe);
+
+    // returns -1 missing phenotype; 0 Control (unaffected); 1 Case (affected)
+    int is_affected_pheno() { return is_affected_pheno(_tpe); }
+    int is_affected_pheno(linkage_ped_rec  *tpe);
+
+    int has_pheno() { return has_pheno(_tpe); }
+    int has_pheno(linkage_ped_rec  *tpe);
+
+    void pr_pheno() { pr_pheno(_tpe, 0); }
+    void pr_pheno(const int affection_as_string) { pr_pheno(_tpe, affection_as_string); }
+    void pr_pheno(linkage_ped_rec  *tpe) { pr_pheno(tpe, 0); }
+    void pr_pheno(linkage_ped_rec  *tpe, const int affection_as_string);
+
+    void pr_aff();
+    void pr_quant();
+    void pr_marker_name();
+
+    void pr_marker() { pr_marker(_tpe, _locus); }
+    void pr_marker(linkage_ped_rec  *tpe, const int _locus);
+
+    void pr_marker_alleles();
+
+    double get_genetic_distance(int *warnp);
+    void pr_genetic_distance_warning(int warnp);
+    int pr_genetic_distance(const char *format_string, const int display_warn);
+
+    void pr_physical_distance(const char *format_string);
+
+    const char *recode_name(const int allele, const char *zero, const char *other);
+    linkage_locus_rec *get_quant_by_name(const char *name);
+};
+
+#endif

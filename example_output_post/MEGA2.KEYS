@@ -1,0 +1,39 @@
+-----------------------------------------------------
+        Mega2 version 4.5.5
+Run date:                  2012-6-21-10-30
+This file created on       Thu Jun 21 10:30:37 2012
+Input file names
+#       Pedigree file:               pedin.ex
+#          Locus file:               datain.ex
+#            Map file:               map.ex
+#           Omit file:               omit.ex
+  Untyped pedigree option: Include all pedigrees whether typed or not
+Mendelianly-inconsistent genotypes included in output.
+Half-typed individuals' genotypes included in output.
+---------------------------------------------
+
+INPUT                            OUTPUT   
+Numeric     Original   
+NPed  NPer  OPed  OPer  Loop id  Pedigree  Person 
+1     1     1     1              1         1      
+1     2     1     2              1         2      
+1     3     1     3              1         3      
+1     4     1     4              1         4      
+1     5     1     5              1         5      
+1     6     1     6              1         6      
+1     7     1     7              1         7      
+1     8     1     8              1         8      
+1     9     1     9              1         9      
+1     10    1     10             1         10     
+1     11    1     11             1         11     
+2     1     2     1              2         1      
+2     2     2     2              2         2      
+2     3     2     3              2         3      
+2     4     2     4              2         4      
+2     5     2     5              2         5      
+2     6     2     6              2         6      
+2     7     2     7              2         7      
+2     8     2     8           2  2         8      
+2     11    2     8           2  2         8      
+2     9     2     9              2         9      
+2     10    2     10             2         10     

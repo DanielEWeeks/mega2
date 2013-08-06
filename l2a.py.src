@@ -1,0 +1,903 @@
+# -------------------------
+# PYTHON SCRIPT VERSION v4.5.6
+# Last updated: 2012-08-08
+# -------------------------
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software; you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+#
+#
+#
+#
+#Python script linkage_to_annotated.py
+
+# Usage: l2a.py -h
+#        l2a.py -p <pedfile> -d <locusfile> -m <mapfile>
+#               -o <omitfile> -x <output_extension> 
+
+# This converts Linkage-format or old Mega2-format files into
+# our new annotated format.
+
+# Constraints on input:
+# 1) If you provide a pedigree file, you have to provide a locus file
+#    as well.
+# 2) If you provide a pedigree file, you will be prompted to enter
+#    first an unknown quantitative trait value, then the unknown allele
+#    value as follows:
+#         Missing quantitatve phenotype value> "-99.00000"
+#         Unknown allele and affection value> "0"
+#     The strings in "" are what you should type in
+#     The quotes are important.
+# 3) Pedigree file can be in post- or premakeped format, and the locus
+#    file can be a linkage-format locus file or a QTDT-format names file.
+#
+# Output:
+# pedin.<ext>, names.<ext>, map.<ext>, omit.<ext>
+#
+# If a linkage-format locus data file is provided, you will
+# also see a frequency and penetrance file:
+# frequency.<ext> and penetrance.<ext>
+#
+
+import copy, struct, string, sys, getopt, os, re
+
+uniqids = {}
+
+def print_usage() :
+    print("Usage: l2a.py [options]")
+    print("  Options: -p pedfile")
+    print("           -d locusfile")
+    print("           -m mapfile")
+    print("           -o omitfile")
+    print("           -x extension")
+    print("           -u")
+    print("           --intPedID")
+    print("           --intPerID")
+
+def dump_contents(input, output) :
+    sys_str = 'cat ' + input + ' >>' + output
+    os.system(sys_str)
+
+def convert_names_file(input, output) :
+
+    # adds a header to the QTDT-format names file to make
+    # it an annotated names file, and also returns
+    # a set of column headers for the corresponding pedigre
+    # phenotype columns
+
+    sys.stdout.write('Processing names file ... \n')
+    has_aff=0
+    has_quant=0
+    has_markers=0
+    outf = open(output, 'w')
+    outf.write('Type  Name\n')
+    outf.close()
+    dump_contents(input, output)
+    print('---Output names file %s---') % output
+    
+    inf = open(input)
+    names = []
+    # create the marker names for creating the pedigree file
+    # header
+    for marker_rec in inf :
+        cols = marker_rec.split()
+        if len(cols) < 1 :
+            continue        
+
+        [type, name] = [cols[0], cols[1]]
+        if (type == 'A') :
+            names.append((name + '.' + 'A', 'affection'))
+            has_aff=1
+
+        elif (type == 'L') :
+            names.append((name + '.' + 'A', 'liability'))
+            names.append((name + '.' + 'L', 'liability'))
+            has_aff=1
+
+        elif (type == 'T' or type == 'C') :
+            names.append((name + '.' + 'T', 'quant'))
+            has_quant=1
+
+        elif (type == 'M' or type == 'X') :
+            names.append((name + '.' + type + '.1', 'marker'))
+            names.append((name + '.' + type + '.2', 'marker'))
+            has_markers=1
+
+    inf.close()
+            
+    return(names, has_markers, has_quant, has_aff)
+
+
+def convert_omit_file(input, output) :
+    # Adds a header to the Mega2-format omit file
+    # Converts 0 in the individual column to "All"
+    #
+    sys.stdout.write('Processing omit file ... \n')
+    outf = open(output, 'w')
+    outf.write('Pedigree  Individual  Marker\n')
+
+    inf = open(input);
+    for omitline in inf:
+        omitcols = omitline.split()
+
+        if (omitcols[1] == '0') :
+            omitcols[1] = 'All'
+        else:
+            omitcols[1] = uniqids.get(omitcols[0] + '_' + omitcols[1], omitcols[1])
+        outf.write(' '.join(omitcols) + '\n')
+
+    outf.close()
+    print('----Output omit file %s----') % output
+
+def convert_map_file(input, output, convert) :
+
+    # converts a mega2-format map file to the annotated format
+    # Processes the old header to check for map-function (h or k)
+    # Assumes that only one set of maps
+    # (male, female and sex-average) are provided.
+
+    sys.stdout.write('Processing map file ... \n')
+    inf = open(input, 'r')
+    headr1 = inf.readline()
+    header = headr1.lower()
+    cols = header.split()
+
+#old    human = {'23':'X', '24':'XY', '25':'Y', '26':'MT', '999':'U'}
+    human = {'23':'X', '24':'Y', '25':'XY', '26':'MT', '999':'U'}
+    if len(cols) < 3 :
+        print "ERROR:Invalid header"
+        sys.exit(-1)
+
+    if re.search('kos', cols[1].lower()) :
+        mapc = 'k'
+
+    else :
+        mapc = 'h'
+        
+    outcols = ['Chromosome', 'Map.'+mapc+'.a', 'Name']
+
+    if len(cols) > 3 :
+        for col in cols[3:] :
+            if (col.lower() == 'male') :
+                outcols.append('Map.'+mapc+'.m')
+
+            elif (col.lower() == 'female') :
+                outcols.append('Map.'+mapc+'.f')
+
+            elif (col.lower() == 'error') :
+                outcols.append('Error')
+                
+            else :
+                # just copy the header
+                outcols.append('X.'+col)
+                
+    outf = open(output, 'w')
+    omitline = ' '.join(outcols) + '\n'
+    outf.write(omitline)
+    for l in inf :
+        cols = l.split()
+        if len(cols) < 1 :
+            continue
+        try:
+            ichr = int(cols[0])
+            if convert == 'y':
+                if ichr >= 1 and ichr <= 22 :
+                    cols[0] = str(ichr)
+                elif (ichr >= 23 and ichr <= 26) or ichr == 999 :
+                    cols[0] = human[str(ichr)]
+                else :
+                    print 'Warning: invalid human chromosome ' + cols[0] + ' (set to unknown).'
+                    cols[0] = human['999']
+            else :
+                cols[0] = str(ichr)
+        except :
+            if not (cols[0] == 'X' or cols[0] == 'Y' or \
+                        cols[0] == 'XY' or cols[0] == 'MT' or \
+                        cols[0] == 'U') :
+                print 'Warning: invalid human chromosome ' + cols[0] + ' (set to unknown).'
+                print '         Should be a number or a known human label.'
+                if (convert == 'y') :
+                    cols[0] = 'U'
+                else :
+                    cols[0] = '999'
+        
+        lout = '\t'.join(cols[0:len(outcols)]) + '\n'
+        outf.write(lout)
+        
+    inf.close()
+    outf.close()
+    print '----Output map file %s----' % output
+
+
+def test_pedtype(pedin, num_pheno_cols) :
+
+    # function to test pedigree type, pre or post-makeped
+    # also set the column number of the first phenotype
+    pheno_end_col = 0
+    set_len=1
+    col5_zero = 0
+    pedf = open(pedin, 'r')
+
+    for pedrec in pedf :
+        pedr = pedrec.lower()
+        cols = pedr.split()
+        if len(cols) < 1 :
+            continue
+        
+        if (set_len) :
+            # initially set last phenotype according to number of phenotype
+            # columns expected based on locus_types
+            # then, change it to the minimum of ped, per, uniq id columns
+            # if present, assuming that these always come after the
+            # phenotype columns
+            # only do this once
+
+            pheno_end_col = pheno_end_col + num_pheno_cols - 1
+        
+#            pheno_end_col = len(cols)-1
+        
+        try:
+            pedid_field = cols.index('ped:')
+            if (set_len) : 
+                pheno_end_col = min(pheno_end_col, pedid_field - 1)
+            
+        except :
+            pedid_field = -1
+			
+        try:
+            perid_field = cols.index('per:')
+            if (set_len) : 
+                pheno_end_col = min(pheno_end_col, perid_field - 1)
+
+        except:
+            perid_field = -1
+			
+        try:
+            uniqid_field = cols.index('id:')
+            if (set_len) : 
+                pheno_end_col = min(pheno_end_col, uniqid_field - 1)
+            
+        except:
+            uniqid_field = -1
+			
+        if (cols[4] == '0') :
+            col5_zero = 1
+            break
+
+        set_len = 0
+        
+    pedf.close()
+    if col5_zero == 1:
+        # post-makeped
+        pheno_end_col = pheno_end_col + 9
+    else :
+        pheno_end_col = pheno_end_col + 5
+
+    #print (col5_zero, pedid_field, perid_field, uniqid_field, pheno_end_col)
+    
+    return(col5_zero, pedid_field, perid_field, uniqid_field, pheno_end_col)
+
+
+def convert_pedigree_file(pedin, pedout, missing_value, \
+                              unknown, names, \
+                              add_link_pedid, add_link_perid) :
+
+    # function to convert linkage-format pedigree file
+    # to annotated format. Requires a header string for
+    # the phenotype columns.
+    
+    sys.stdout.write('Processing pedigree file ... \n')
+    num_pheno_cols = len(names)
+    (postmake, pedid_field, perid_field, uniqid_field, pheno_end_col) = \
+               test_pedtype(pedin, num_pheno_cols)
+
+
+    if missing_value['type'] == 'float' :
+        missing = missing_value['value']
+    else :
+        missing = missing_value['string']
+
+    # Now create the header line
+    
+    header = ['Pedigree', 'ID',
+              'Father', 'Mother',
+              'FirstOff',
+              'NextPatSib',
+              'NextMatSib',
+              'Sex', 'Proband']
+
+    premake_header = ['Pedigree', 'ID',
+                      'Father', 'Mother',
+                      'Sex']
+    
+    if (postmake) :
+        ped_header = '  '.join(header)
+    else :
+        ped_header = '  '.join(premake_header)
+
+    for (name, loctype) in names :
+        ped_header = ped_header + ' ' + name
+
+    num_required_cols = len(ped_header.split())
+
+    if (pedid_field > -1) :
+        ped_header = ped_header + ' PedID '
+        num_required_cols = num_required_cols + 2
+
+    if (perid_field > -1) :
+        ped_header = ped_header + ' PerID '
+        num_required_cols = num_required_cols + 2
+        
+    if (add_link_pedid == 1) :
+        ped_header = ped_header + ' LinkPedID'
+
+    if (add_link_perid == 1) :
+        ped_header = ped_header + ' LinkPerID'
+
+    if uniqid_field > -1 :
+        num_required_cols = num_required_cols + 2
+        
+    linenum = 1
+    first_mismatch = 1
+    terminate_conversion = 0
+
+    # First check for number of columns before attempting any conversion
+    # Also create unique IDS
+
+    pedinf = open(pedin, 'r')
+
+    fld_len = None
+    for record in pedinf :
+        cols = record.split(None)
+        if len(cols) < 1 :
+            continue
+
+        if fld_len is None:
+            fmt     = map(len, cols)
+            fld_len = fmt
+        else:
+            fmt     = map(len, cols)
+            fld_len = map(max, fld_len, fmt)
+
+        if len(cols) < num_required_cols :
+            if first_mismatch == 1 :
+                print '         Each line requires ' + str(num_required_cols) +  ' fields.'
+                first_mismatch = 0
+
+            print 'ERROR:   Line ' + str(linenum) + ' has ' + str(len(cols)) + ' fields.'
+            terminate_conversion = 1
+            # This probably affects the Unique ID field, so don't try to create
+            # a unique ID
+            continue
+        
+        elif len(cols) > num_required_cols :
+            if first_mismatch == 1 :
+                print '     Each line requires ' + str(num_required_cols) +  ' fields.'
+                first_mismatch = 0
+            
+            print 'WARNING: Line ' + str(linenum) + ' has ' + str(len(cols)) + ' fields.'
+            
+        phen_colnum = 0
+        colnum      = 0
+        for col in cols:
+            if fld_len[colnum] < 2:
+                if ((colnum <= pheno_end_col) and ((postmake and colnum >= 9) or (not postmake and colnum >= 5))):
+                    (locname, loc_type) = names[phen_colnum]
+                    if (loc_type == 'marker') and col == unknown:
+                        fld_len[colnum] = 2
+                    elif (loc_type == 'affection' or loc_type == 'liability' ) and col == unknown:
+                        fld_len[colnum] = 2
+                    else:
+                        if missing_value['type'] == 'float' and float(col) == missing:
+                            fld_len[colnum] = 2
+                        elif missing_value['type'] == 'string' and col == missing:
+                            fld_len[colnum] = 2
+                    phen_colnum += 1
+            colnum += 1
+
+        if (uniqid_field > -1) :
+            uniqids[cols[0] + '_' + cols[1]] = cols[uniqid_field + 1]
+            uniqidvalcol = uniqid_field + 1
+        elif force_uniq:
+            uniqids[cols[0] + '_' + cols[1]] = cols[0] + '_' + cols[1]
+            uniqidvalcol = -1
+        else :
+            uniqids[cols[0] + '_' + cols[1]] = cols[1]
+            uniqidvalcol = -1
+        linenum = linenum + 1
+
+    if terminate_conversion == 1 :
+        print 'Conversion failed, please correct errors and try again.'
+        exit(-1)
+
+    pedinf.seek(0)
+    linenum = 1
+    outf = open(pedout, 'w')
+
+    outf.write(ped_header + '\n')
+    ##    pedinf = open(pedin, 'r')
+
+    if (postmake) :
+        # id, parents, siblings, offspring
+        id_cols = range(1,7)
+
+    else:
+        # id, parents
+        id_cols = range(1,4)
+
+    if force_uniq:
+        for colnum in id_cols :
+            fld_len[colnum] += fld_len[0] + 1
+
+    pedinf.seek(0)
+    fld_len[0] += 2
+    for colnum in id_cols :
+        fld_len[colnum] += 2
+
+    for pedrec in pedinf :
+        cols = pedrec.split()
+        link_pedid = cols[0]
+        link_perid = cols[1]
+        
+        # print the pedigree column
+        outf.write('{0[0]:{1[0]}} '.format(cols, fld_len))
+        # Now write the id columns and remove these from the list
+        for colnum in id_cols :
+            if (cols[colnum] == '0') :
+                    outf.write('{0:<{1}} '.format('0', fld_len[colnum]))
+            else :
+                try: 
+                    outf.write('{0:<{1}} '.format(uniqids[cols[0] + '_' + cols[colnum]], fld_len[colnum]))
+                except:
+                    if postmake :
+                        print 'Error: Line ' + str(linenum) + ', ' + \
+                            header[colnum] + ' is ' + cols[colnum]
+                    else :
+                        print 'Error: Line ' + str(linenum) + ', ' +  \
+                            premake_header[colnum] + ' is ' + cols[colnum]
+
+                    print 'Error: No record with pedigree ' + cols[0] + \
+                        ' and individual ' + cols[colnum]
+                    print 'Terminating conversion'
+                    exit(-1)
+
+        if (postmake) :
+            # Now write the sex and proband
+            outf.write('{0[7]:{1[7]}} {0[8]:{1[8]}} '.format(cols, fld_len))
+        else :
+            # Now write the sex
+            outf.write('{0[4]:{1[4]}} '.format(cols, fld_len))
+            
+        # Now write the rest of the columns
+        # phen_colnum is for indexing into names
+        colnum = 0
+        phen_colnum = 0
+        for col in cols :
+            if ((colnum != 0 and not(colnum in id_cols)) and
+                (col.lower() != 'ped:') and
+                (col.lower() != 'per:') and
+                (col.lower() != 'id:') and
+                (colnum != uniqidvalcol)) :
+                
+                # test if phenotype field, so that we can substitute unknowns
+                # This is col >= 6 if pre-makeped and col >= 10 if post-makeped
+                if ((colnum <= pheno_end_col) and \
+                    ((postmake and colnum >= 9) or (not postmake and colnum >= 5))) :
+#                     print (phen_colnum, ",", colnum, ",", pheno_end_col)
+                    (locname, loc_type) = names[phen_colnum]
+                    if (loc_type == 'marker') :
+                        outf.write('{0:{1}} '.format(('NA' if col == unknown else col), fld_len[colnum]))
+
+                    elif (loc_type == 'affection' or loc_type == 'liability' ) :
+                        outf.write('{0:{1}} '.format(('NA' if col == unknown else col), fld_len[colnum]))
+                                                        
+                    else:
+                        if missing_value['type'] == 'float' and float(col) == missing :
+                            outf.write('{0:>{1}} '.format('NA', fld_len[colnum]))
+
+                        elif missing_value['type'] == 'string' and col == missing :
+                            outf.write('{0:>{1}} '.format('NA', fld_len[colnum]))
+                            
+                        else:
+                            outf.write('{0:>{1}} '.format(col, fld_len[colnum]))
+
+                    phen_colnum = phen_colnum + 1
+                # discard the columns after the pheno_end_col
+#                 else :
+#                     outf.write(col + ' ')
+
+                
+            colnum = colnum+1
+            
+        if (pedid_field > -1) :
+            outf.write(' {0:{1}}'.format(cols[pedid_fields+1], fld_len[pedid_fields+1]))
+
+        if (perid_field > -1) :
+            outf.write(' {0:{1}}'.format(cols[perid_fields+1], fld_len[perid_fields+1]))
+        
+        if (add_link_pedid) :
+            try: 
+                lp = int(link_pedid)
+                outf.write(' {0:{1[0]}}'.format(link_pedid, fld_len))
+
+            except:
+                sys.stdout.write('Error: Linkge format file pedigree IDs have to be an integers,\n')
+                sys.stdout.write('       annotated-format pedigree file not created.\n')
+                outf.close()
+                pedinf.close()
+                os.remove(pedout)
+                return
+
+        if (add_link_perid) :
+            try: 
+                lp = int(link_perid)
+                outf.write(' {0:{1[1]}}'.format(link_perid, fld_len))
+
+            except:
+                sys.stdout.write('Error: Linkge format file person IDs have to be an integers,\n')
+                sys.stdout.write('       annotated-format pedigree file not created.\n')
+                outf.close()
+                pedinf.close()
+                os.remove(pedout)
+                return
+
+        outf.write('\n')
+        linenum = linenum + 1
+
+    outf.close()
+    pedinf.close()
+    if (postmake):
+        print('----Output pedigree file %s (post-makedped format)----') % pedout
+    else :
+        print('----Output pedigree file %s (pre-makedped format)----') % pedout
+    return
+
+def convert_ldata_file(input, out_names, out_freq, out_pen) :
+    # converts a linkage format locus data file to
+    # annotated names file and annotated frequency file
+
+    sys.stdout.write('Processing linkage-format locus data file ... \n')
+    has_aff=0
+    has_quant=0
+    has_markers=0
+    pen_init = 0
+    # dont write penetrance file until a binary trait is encountered
+
+    inf = open(input, 'r')
+    strline = inf.readline()
+    strs = (strline.split('<<')[0]).split();
+    try:
+        num_loc = int(strs[0])
+    except:
+        return([], 0, 0, 0)
+    
+    sex_linked = int(strs[2])
+    headers = [];
+    names_outf = open(out_names, 'w')
+    names_outf.write('Type  Name\n')
+
+    freq_outf = open(out_freq, 'w')
+    freq_outf.write('Name Allele Frequency\n')
+
+    
+    inf.readline()
+    locus_order = inf.readline().split
+    while(1) :
+        locusrec = inf.readline()
+        locelements = locusrec.split()
+        if len(locelements) < 1 :
+            continue
+        
+        loctype = locelements[0]
+        numall = locelements[1]
+
+        if (loctype ==  '0' and numall == '0') :
+            inf.close()
+            names_outf.close()
+            freq_outf.close()
+            if pen_init == 1:
+                pen_outf.close()
+                
+            break;
+
+        namerec = locusrec[locusrec.index('#')+1:]
+        name = namerec.split()[0]
+
+        if (loctype == '0') :
+            headers.append((name + '.T', 'quant'))
+            names_outf.write('T ' + name + '\n')
+            num_alleles = int(numall)
+            frequencies = inf.readline().split()
+            has_quant=1
+            
+            for i in range(4) :
+                inf.readline()
+
+            for all_num in range(num_alleles) :
+                freq_outf.write(' '.join([name, str(all_num+1), frequencies[all_num]]) + '\n')
+
+        elif (loctype == '4') :
+            headers.append((name + '.C.1', 'covariate'))
+            names_outf.write('C ' + name + '\n')
+            num_alleles = int(numall)
+            frequencies = inf.readline().split()
+            has_quant=1
+            for i in range(4) :
+                inf.readline()
+
+            for all_num in range(num_alleles) :
+                freq_outf.write(' '.join([name, str(all_num+1), frequencies[all_num]]) + '\n')
+
+        elif (loctype == '1') :
+            if pen_init == 0 :
+                pen_outf = open(out_pen, 'w')
+    
+                if (sex_linked) :
+                    pen_outf.write("Name   Class   Sex  Pen.11    Pen.12    Pen.22\n")
+                    
+                else :
+                    pen_outf.write("Name   Class  Pen.11    Pen.12    Pen.22\n")
+
+                pen_init=1
+                
+            # genotype frequencies
+            num_alleles = int(numall)
+            frequencies = inf.readline().split()
+            has_aff=1
+            for all_num in range(num_alleles) :
+                freq_outf.write(' '.join([name, str(all_num+1), frequencies[all_num]]) + '\n')
+
+            # number of liability classes
+
+            linedata = inf.readline().split('<<');
+            lineitems = linedata[0].split(None)
+            num_classes = int(lineitems[0])
+            if (num_classes > 1) :
+                headers.append((name + '.' + 'A','affection'))
+                headers.append((name + '.' + 'L', 'affection'))
+                names_outf.write('L ' + name + '\n')
+            else :
+                headers.append((name + '.' + 'A', 'affection'))
+                names_outf.write('A ' + name + '\n')
+                
+            for i in range(num_classes) :
+                penetrances = inf.readline().split()
+                if (sex_linked) :
+                    male_penetrances = inf.readline().split()
+                    
+                #  locus name                
+                penetrances.insert(0, name)
+                # liability class
+                penetrances.insert(1, str(i+1))
+                # output penetrance line
+                if (sex_linked) :
+                    male_penetrances.insert(0, name)
+                    male_penetrances.insert(1, str(i+1))
+                    female_penetrances = copy.copy(penetrances)
+
+                    penetrances.insert(2, "average")
+                    female_penetrances.insert(2, "female")
+                    male_penetrances.insert(2, "male")
+                    male_penetrances.append("0.0")
+
+                
+                pen_outf.write(' '.join(penetrances) + '\n')
+
+                if (sex_linked) :
+                    pen_outf.write(' '.join(female_penetrances) + '\n')
+                    pen_outf.write(' '.join(male_penetrances) + '\n')
+                    
+
+        elif (loctype == '3') :
+
+            has_markers=1
+            num_alleles = int(numall)
+            if (sex_linked) :
+                names_outf.write('X ' + name + '\n')
+                headers.append((name + '.X.1', 'marker'))
+                headers.append((name + '.X.2', 'marker'))
+            else :
+                names_outf.write('M ' + name + '\n')
+                headers.append((name + '.M.1', 'marker'))
+                headers.append((name + '.M.2', 'marker'))
+
+            frequencies = inf.readline().split()            
+            for all_num in range(num_alleles) :
+                freq_outf.write(' '.join([name, str(all_num+1), frequencies[all_num]]) + '\n')
+
+    
+    print('----Output names file %s----') % out_names
+    print('----Output freq file %s----') % out_freq
+    if pen_init == 1:
+        print('----Output penetrance file %s----') % out_pen
+
+    return (headers, has_markers, has_quant, has_aff)
+
+# main function
+# all options need an argument
+# -p pedfile -m mapfile -o omitfile -d locusfile
+
+omitfile = 'None'
+mapfile = 'None'
+pedfile = 'None'
+locusfile = 'None'
+extn = 'conv'
+missing = 'None'
+unknown = 'None'
+phenotypes = []
+add_link_pedid = 0
+add_link_perid = 0
+force_uniq = None
+
+if len(sys.argv) == 1:
+    print_usage()
+    sys.exit(0)
+    
+elif len(sys.argv) < 2 :
+    print("ERROR: Not enough arguments to l2a.py");
+    print_usage()
+    print("To print help, call l2a.py without any arguments.");
+    sys.exit(-1)
+    
+try:
+    optlist, filenames = getopt.gnu_getopt(sys.argv[1:], 
+                                           'hp:d:m:o:ux:', ['intPedID', 'intPerID'])
+    
+except:
+    print("ERROR:Unknown option to l2a.py.")
+    print_usage()
+    print("To print help, simply call l2a.py wihtout any arguments.");
+    sys.exit(-1)
+        
+if (optlist[0][0] == '-h') :
+    print_usage()
+    sys.exit(0)
+
+for o in range(len(optlist)) :
+            
+    if (optlist[o][0] == '-p') :
+        pedfile = optlist[o][1]
+        if not os.path.isfile(pedfile) :
+            print 'Error: file ' + pedfile + ' does not exist!'
+            pedfile = 'None'
+        
+    elif (optlist[o][0] == '-d') :
+        locusfile = optlist[o][1]
+        if not os.path.isfile(locusfile) :
+            print 'Error: file ' + locusfile + ' does not exist!'
+            locusfile = 'None'
+
+    elif (optlist[o][0] == '-m') :
+        mapfile = optlist[o][1]
+        if not os.path.isfile(mapfile) :
+            print 'Error: file ' + mapfile + ' does not exist!'
+            mapfile = 'None'
+
+    elif (optlist[o][0] == '-o') :
+        omitfile = optlist[o][1]
+        if not os.path.isfile(omitfile) :
+            print 'Error: file ' + omitfile + ' does not exist!'
+            omitfile = 'None'
+
+    elif (optlist[o][0] == '-x') :
+        extn = optlist[o][1]
+
+    elif (optlist[o][0] == '-u') :
+        force_uniq = True
+    
+    elif (optlist[o][0] == '--intPedID') :
+        add_link_pedid=1
+
+    elif (optlist[o][0] == '--intPerID') :
+        add_link_perid=1
+
+
+
+if locusfile != 'None' or pedfile != 'None' or \
+        mapfile != 'None' or omitfile != 'None' :
+    print("Input files:")
+
+if locusfile != 'None' :
+    print('    Locus file %s') % locusfile
+
+if pedfile != 'None' :
+    print('    Pedigree file %s') % pedfile
+        
+if mapfile != 'None' :
+    print('    Map file %s') % mapfile
+
+if omitfile != 'None' :
+    print('    Omit file %s') % omitfile
+        
+
+if (locusfile != 'None') :
+    (phenotypes, has_markers, has_quant, has_aff) = \
+       convert_ldata_file(locusfile, 'names.' + extn, \
+                          'frequency.' + extn, 'penetrance.' + extn)
+    if (not phenotypes) :
+        (phenotypes, has_markers, has_quant, has_aff) = \
+                     convert_names_file(locusfile, 'names.' + extn)
+
+if (pedfile != 'None' and phenotypes) :
+    missing={}
+    if (has_quant) :
+        sys.stdout.write('\nMissing quantitative phenotype value\n')
+        sys.stdout.write('   To enter a string value, enclose within \"\",\n')
+        sys.stdout.write('   otherwise entered value will be interpreted numerically.\n')
+        sys.stdout.write('Enter missing value indicator > ')
+        missing['string'] = sys.stdin.readline().strip();
+        if missing['string'][0] == '\"' and missing['string'][len(missing)-1] == '\"' :
+            print('----Missing quantitative phenotype string %s----') % missing
+            missing['type'] = 'string'
+        else :
+            print('----Missing quantitative phenotype value %f----') % float(missing['string'])
+            missing['value'] = float(missing['string'])
+            missing['type'] = 'float'
+    else :
+        missing['value']=0
+        missing['type']='float'
+        
+    if (has_aff and has_markers) :
+        sys.stdout.write('Unknown allele and affection status value string > ');
+        unknown = sys.stdin.readline().strip();
+
+        print('----Unknown allele and affection status value \"%s\"----') % unknown
+
+    elif (not has_aff) :
+
+        sys.stdout.write('Unknown allele value string > ');
+        unknown = sys.stdin.readline().strip();
+
+        print('----Unknown allele %s----') % unknown
+
+    elif (not has_markers) :
+        sys.stdout.write('Unknown affection status value string > ');
+        unknown = sys.stdin.readline().strip();
+
+        print('----Unknown affection status %s----') % unknown
+
+    else :
+        unknown='0'
+        
+    convert_pedigree_file(pedfile, 'pedin.' + extn, missing, unknown, phenotypes, \
+                              add_link_pedid, add_link_perid)
+
+else :
+    if (not phenotypes and pedfile != 'None') :
+        print("ERROR: Locus file required to convert pedigree file.");
+
+
+if (mapfile != 'None') :
+    sys.stdout.write('Character codes for special chromosomes:\n')
+##    sys.stdout.write('  23 => X,  24 => XY (pseudo-x),  25 => Y, 26 => MT (mito), 999 => U (unknown)\n')
+    sys.stdout.write('  23 => X,  24 => Y,  25 => XY (pseudo-x), 26 => MT (mito), 999 => U (unknown)\n')
+    sys.stdout.write('Use character codes? [y/n] > ')
+    convert = sys.stdin.readline().strip()
+
+    convert_map_file(mapfile, 'map.' + extn, convert)
+
+if (omitfile != 'None') :
+    convert_omit_file(omitfile, 'omit.' + extn)
+

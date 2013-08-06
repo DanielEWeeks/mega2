@@ -1,0 +1,382 @@
+# -------------------------
+# PERL SCRIPT VERSION v4.5.3
+# Last updated: 2010-07-22
+# -------------------------
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software; you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+#
+#
+# Perl script Rallegro.pl
+# Usage:
+# perl Rallegro.18.pl -s suffix -c<stat_list> -o<outfile> dir1, dir2 
+# e.g perl Rallegro.18.pl -s01 -c1,2,3 -o RSW.01 TR1 TR2
+#
+# will read in files like allegro_linpairs_spt.01 etc. to
+# create the R- formatted score file
+#
+
+# set default output file name
+$outfile_stem = "RALL";
+
+# parse arguments
+@titles=();
+@dirs = ();
+for($i=0; $i <= $#ARGV; $i++) {
+    if(substr($ARGV[$i],0,2) eq "-c") {
+       $stat_n = substr($ARGV[$i], 2);
+       @stat_nums = split(/\,/, $stat_n);
+    } 
+    elsif(substr($ARGV[$i], 0, 2) eq "-o") {
+	$outfile_stem = substr($ARGV[$i], 2);
+    }
+    elsif(substr($ARGV[$i], 0, 2) eq "-s") {
+	$suffix = substr($ARGV[$i], 2);
+    }
+    elsif(substr($ARGV[$i], 0, 2) eq "-t") {
+	$titlestr = substr($ARGV[$i], 2);
+	@titles = split(/\,/, $titlestr);
+    }
+    else {
+	@dirs = (@dirs, $ARGV[$i]);
+    }
+}
+
+$outfile_name = "$outfile_stem";
+$header_name = "$outfile_stem.hdr";
+
+# If titles were not provided or do not match the number of files,
+# use the file-number as a title (file name not a safe string, could be
+# arbitrarily long or duplicate names from separate trait dirs.
+# 
+
+# if (@titles < @files)  {
+#     printf "WARNING: Fewer titles than score files, using file numbers as titles!\n";
+#     @titles = (1 .. @files);
+# }
+# elsif (@titles > @files) {
+#     @titles = @titles[1 .. @files];
+# }
+
+
+# Reorder the stat numbers so that the first statistic
+# is a multipoint statistic. Multipoint statistics may contain 
+# intermediate locations between markers, so we expect the
+# single-point locations to be a subset of the multi-point
+# locations. In this way, we will have discovered all
+# possible keys, and can pad scores with NAs for missing
+# spt scores.
+# If they are all single-point or the first one is a multipoint
+# we don't do anything.
+#
+
+# This is typical to the Allegro output file : col 1 
+# note that par_*:LOD and par_*HLOD are from the same file
+
+@stat_names = (
+               'exppairs_mpt',
+               'exppairs_spt',
+               'expall_mpt',
+               'expall_spt',
+               'linpairs_mpt',
+               'linpairs_spt',
+               'linall_mpt',
+               'linall_spt',
+               'par_mpt:LOD',
+               'par_spt:LOD',
+               'par_mpt:HLOD',
+               'par_spt:HLOD');
+
+if (index($stat_names[$stat_nums[0]-1],"spt") > -1) {
+    # find the first multipoint statistic,
+    # if we don't find any, we are okay
+    $flip=-1;
+lab1: for ($i=0; $i <= $#stat_nums; $i++) {
+          if (index($stat_names[$stat_nums[$i]-1], "mpt") > -1) {
+	      $flip = $i;
+	      last lab1;
+	  }
+      }
+
+    if ($flip > -1) {
+	# flip the two numbers
+	$tmp = $stat_nums[0];
+	$stat_nums[0] = $stat_nums[$flip];
+	$stat_nums[$flip] = $tmp;
+	
+    }
+}
+
+%scores = ();
+@markers=();
+%dists=();
+
+# NM, 6/29/06, location cannot be used as a key, because
+# in SNP data locations can be identical to each other
+# cannot use marker names, because some marker names are
+# not specified and set to "-". 
+# So generate unique names for each position, using name,
+# and if name is a "-", then append it with its occurence number
+#
+# changed all keys from $dist to $marker for locations and scores
+#
+
+$files_read=0;
+$dir_num=0; 
+
+$header="";
+@output_stats=();
+
+foreach $dir (@dirs) {
+floop:  foreach $stat (@stat_nums) {
+        if($stat > 8) {
+	    @sts = split(/:/, $stat_names[$stat-1]);
+	    $file_name = $dir."/allegro_".$sts[0].".".$suffix;
+	} else {
+	    $file_name = $dir."/allegro_".$stat_names[$stat-1].".".$suffix;
+	}
+	if ($#sts == 1 && $sts[1] =~ "HLOD") {
+	    $stat_colname = "HLOD";
+	}
+	else {
+	    $stat_colname = "LOD";
+	}
+	if (!defined(open(INPUT, $file_name))) {	
+    &filenotfound($file_name);
+	    next floop;
+	}
+    
+	print "Read in Allegro output file $file_name \n";
+	$files_read++;
+
+	$header=join(" ", $header, 
+		     join("_", $titles[$dir_num], $stat_names[$stat-1]));
+	
+	push(@output_stats, $stat);
+	$line = <INPUT>; chomp($line);
+	@headers = split(/\s+/, $line);
+	$dhat_col=-1;
+	for ($i=0; $i <= $#headers; $i++) {
+	    if($headers[$i] eq "location") {
+		$loc_col = $i;
+	    }
+	    elsif ($headers[$i] eq "dhat") {
+		if (index($stat_names[$stat - 1], "par_") < 0) {
+		    $dhat_col = $i;
+		}
+	    }
+	    elsif ($headers[$i] eq $stat_colname) {
+		$lod_col = $i;
+	    }
+	    elsif($headers[$i] eq "marker") {
+		$mrk_col = $i;
+	    }
+	}
+#	print STDERR "score col: $lod_col";
+	
+	# rest of the lines
+	$linenum=0;
+	while(<INPUT>) {
+	    chomp();
+	    @val = split();
+	    if ($val[$mrk_col] eq "-") {
+		$marker = "-".$linenum;
+	    }		
+	    else {
+		$marker = $val[$mrk_col];
+	    }
+	    if ($dhat_col >= 0) {	    
+		if (1.0*$val[$dhat_col]) {
+		    $sign = ($val[$dhat_col])/abs($val[$dhat_col]);
+		}
+		else {
+		    $sign=1;
+		}
+	    }
+	    else {
+		$sign=1;
+	    }
+	    if(!exists($dists{$marker})) {
+		# new marker
+		push(@markers, $marker);
+		$dists{$marker} = $val[$loc_col];
+		$scores{$marker} = $sign*$val[$lod_col];
+	    } else {
+		$scores{$marker} = $scores{$marker}." ".$sign*$val[$lod_col];
+	    } 
+	    $linenum++;
+	}
+	# Now pad the inter-marker locations with '.'s if
+	# this is a spt score
+	if(index($stat_names[$stat-1], "spt") > -1) {
+	    foreach $marker (@markers) {
+		if(substr($marker,0,1) eq "-") {
+		    $scores{$marker} = $scores{$marker}."   NA   ";
+		}
+	    }
+	}
+	close(INPUT);   
+    }
+  $dir_num++;
+}
+
+if (! $files_read) {
+    printf "Unable to read in Allegro output files.\n";
+    exit(-1);
+}
+
+open(OUTPUT, ">$outfile_name");
+printf OUTPUT "marker location %s\n", $header;
+
+for($i=0; $i <= $#markers; $i++){
+    $marker = $markers[$i];
+    if (substr($marker,0,1) eq "-") {
+	$marker = "-";
+    }
+    printf OUTPUT "%10s  %7.3f  %s\n", 
+    $marker, $dists{$markers[$i]}, $scores{$markers[$i]};
+}	
+
+# ---------------
+# full contents of header file
+# ---------------
+# These are already written by Mega2
+#
+# yline<-2.0
+# ymin <- 0.0
+# ymax <- 4.0
+# header<-T
+# yfix<-F
+# title <- "Chromosome 11"
+# draw.lgnd<-T
+# xlabl<-""
+# ylabl<-""
+# lgndx<-NULL
+# lgndy<-NULL
+# cex.legend<-0.7
+# cex.axis <- 0.9
+# tcl <- -0.3
+# bw<-F
+# na.rm<-T
+#
+#----------------
+#
+# These are added by this script, because they 
+# depend on the number of scores
+
+# lgndtxt <- c("Trait-ALL", "Trait-Pairs")
+# my.colors <- NULL
+# ltypes <- c("solid", "dotted")
+# ptypes <- c(".", "+")
+
+# ---------------
+
+# Extract the lines written by Mega2
+open(HEADER, $header_name);
+@lines = <HEADER>;
+
+readheader: for ($i = 0; $i <= $#lines; $i++) {
+    if ($lines[$i] =~ /inserted by Mega2/) {
+	$lastline = $i;
+	last readheader;
+    }
+}
+
+open(HEADER, ">$header_name");
+
+print HEADER @lines[0 .. $lastline];
+
+@headers = split(/\s+/, trim($header));
+
+printf HEADER "lgndtxt <- c(\"$headers[0]\"";
+
+
+for ($i=1; $i < @headers; $i++) {
+    printf HEADER ", \"$headers[$i]\"";
+}
+printf HEADER ")\n";
+
+# Multipoint curves, therefore lines should be plotted
+@R_ltypes=(1 .. 6);
+@R_colors = ("black", "red", "green", "blue"); 
+@R_ptypes = (0, 19 .. 21);
+
+@plot_attribs = ();
+
+# This will create 64 tuples.
+# Want ltype to change most often, then color, then ptype
+
+foreach $ptype (@R_ptypes) {
+    foreach $color (@R_colors) {
+	foreach $ltype (@R_ltypes) {
+	    push(@plot_attribs, ($ltype, $color, $ptype));
+	}
+    }
+}
+
+$ltypes_str = "ltypes <- c(";
+$colors_str = "my.colors <- c(";
+$ptypes_str = "ptypes <- c(";
+
+# start off with the first tuple;
+$ltypes_str = $ltypes_str . $plot_attribs[0];
+$colors_str = $colors_str . "\"" . $plot_attribs[1] . "\"";
+$ptypes_str = $ptypes_str . $plot_attribs[2];
+
+$lnum = 1;
+
+for ($i=1; $i < @headers; $i++) {    
+    $lnum = $i % 64;
+    $ltypes_str = $ltypes_str . ", " . $plot_attribs[3*$lnum];
+    $colors_str = $colors_str . ", \"" . $plot_attribs[3*$lnum + 1] . "\"";
+    $ptypes_str = $ptypes_str . ", " . $plot_attribs[3*$lnum + 2];
+}
+
+$ltypes_str = $ltypes_str . ")";
+$colors_str = $colors_str . ")";
+$ptypes_str = $ptypes_str . ")";
+
+print HEADER $ltypes_str, "\n";
+print HEADER $colors_str, "\n";
+print HEADER $ptypes_str, "\n";
+
+close(HEADER);
+
+exit(0);
+
+sub filenotfound {
+
+    print " ERROR - File $_[0] does not exist!\n";
+    print STDERR " ERROR - File $_[0] does not exist!\n";
+    return;
+}
+sub trim {
+    $str = shift;
+    $str =~ s/^\s+//;
+    $str =~ s/\#+$//;
+    $str =~ s/\s+$//;
+
+    return $str;
+}

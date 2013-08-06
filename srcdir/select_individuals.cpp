@@ -1,0 +1,416 @@
+/*
+  Mega2: Manipulation Environment for Genetic Analysis
+  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+  Daniel E. Weeks, and University of Pittsburgh
+
+  This file is part of the Mega2 program, which is free software; you
+  can redistribute it and/or modify it under the terms of the GNU
+  General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later
+  version.
+
+  Mega2 is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+  For further information contact:
+      Daniel E. Weeks
+      e-mail: weeks@pitt.edu
+
+===========================================================================
+*/
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#include "common.h"
+#include "typedefs.h"
+
+#include "batch_input_ext.h"
+#include "error_messages_ext.h"
+#include "fcmap_ext.h"
+#include "utils_ext.h"
+/*
+        batch_input_ext.h:  batchf
+     error_messages_ext.h:  mssgf my_calloc
+              fcmap_ext.h:  fcmap
+              utils_ext.h:  draw_line log_line randomindex
+*/
+
+
+#define DEFAULT_SelectIndividuals 4
+#define HWE_DEFAULT_SelectIndividuals 3
+
+int get_count_option(int halftyped_item, int *include_halftyped, const char *messg);
+int count_genotypes(linkage_ped_top *LPedTreeTop, int locus_id, int option,
+                    int *geno_count);
+
+
+/* Note : NM 8/18/05 : this function used to work on all
+   pedigrees, changing it to work on a specific pedigree.
+   Also implementing uncoded alleles.
+   Returns the number of people counted
+*/
+
+int founders_or_everyone(linkage_ped_top *Top, int locus_id,
+			 record_type rec, int ped, int *member_ids,
+			 int count_option, int inc_ht, int xlinked)
+
+
+{
+
+    int jj, valid, typed1, typed2, has_typed=0;
+    int entry_cnt;
+    linkage_ped_rec  *pr, *prp;
+    person_node_type *pn, *pnp;
+    int rec_pm = rec == Raw_postmake || rec == Postmakeped;
+
+    /* member ids - vector, set to 1-half typed, 2- fully typed */
+
+    /* find the founder in each pedigree */
+
+    if (rec==Raw_postmake || rec == Postmakeped) {
+        entry_cnt=Top->Ped[ped].EntryCnt;
+        pr = Top->Ped[ped].Entry;
+    } else {
+        entry_cnt=Top->PTop[ped].num_persons;
+        pn = Top->PTop[ped].persons;
+    }
+
+    for (jj=0; jj<entry_cnt; jj++) {
+        typed1 = typed2 =  valid=0;
+
+        if (rec_pm) {
+            prp = &pr[jj];
+            if (xlinked && prp->Sex == 1) {
+                valid = 0;
+            } else {
+                valid=((count_option == 4) || IS_LFOUNDER(*prp));
+            }
+        } else {
+            pnp = &pn[jj];
+            if (xlinked && pnp->gender == 1) {
+                valid = 0;
+            } else {
+                valid=((count_option == 4) || PFOUNDER(*pnp));
+            }
+        }
+
+        if (valid == 0) {
+            ; /* why bother */
+        } else
+        if (rec == Raw_premake) {
+            typed1=allelecmp(pnp->PRALLELE1(locus_id), REC_UNKNOWN);
+            typed2=allelecmp(pnp->PRALLELE2(locus_id), REC_UNKNOWN);
+        } else if (rec == Raw_postmake) {
+            typed1=allelecmp(prp->RALLELE1(locus_id), REC_UNKNOWN);
+            typed2=allelecmp(prp->RALLELE2(locus_id), REC_UNKNOWN);
+        } else if (rec == Postmakeped) {
+            typed1=(prp->EALLELE1(locus_id))? 1 : 0;
+            typed2=(prp->EALLELE2(locus_id))? 1 : 0;
+        } else {
+            typed1=(pnp->PALLELE1(locus_id))? 1 : 0;
+            typed2=(pnp->PALLELE2(locus_id))? 1 : 0;
+        }
+
+        /* find if this person is genotyped at the locus */
+        if (inc_ht) {
+            if (valid && (typed1 || typed2)) {
+                if (typed1 && typed2) {
+                    member_ids[jj]=2;
+                } else {
+                    member_ids[jj]=1;
+                }
+                has_typed++;
+            }
+        } else {
+            if (valid && typed1 && typed2) {
+                member_ids[jj]=2;
+                has_typed++;
+            }
+        }
+    }
+    return has_typed;
+}
+
+/* option 2: select a random member from peds not already selected */
+/* NM: 8-21-08: Since females' genotypes are set to NULL at Y-linked
+   loci, we also have to check for NULL */
+int random_ped_member(linkage_ped_top *LPedTreeTop,
+		      int locus_id, int ped, record_type rec,
+		      int inc_ht, int *num_alleles, int xlinked)
+
+{
+    int jj, sex;
+    int entry_cnt, geno_entry_cnt;
+    int typed1=0, typed2=0;
+    int *genotyped_members, *num_all; /* num_all to store the number of alleles */
+    int homo_test=1;
+    int ylinked;
+
+    ylinked = ((LPedTreeTop->LocusTop->Locus[locus_id].Type == YLINKED)? 1: 0);
+    /* member ids is a vector of 0/1 - selected/not selected */
+
+    entry_cnt=((rec == Raw_postmake || rec == Postmakeped )?
+               LPedTreeTop->Ped[ped].EntryCnt :
+               LPedTreeTop->PTop[ped].num_persons);
+
+    genotyped_members = CALLOC((size_t) entry_cnt, int);
+    num_all=CALLOC((size_t) entry_cnt, int);
+
+    geno_entry_cnt=0;
+    for (jj=0; jj < entry_cnt; jj++) {
+        if (xlinked) {
+            if (rec == Raw_premake || rec == Premakeped) {
+                sex = LPedTreeTop->PTop[ped].persons[jj].gender;
+            } else {
+                sex = LPedTreeTop->Ped[ped].Entry[jj].Sex;
+            }
+            if (sex == 1) continue;
+        }
+        if (rec == Raw_premake) {
+            if (LPedTreeTop->PTop[ped].persons[jj].PRALLELE1(locus_id) == NULL) {
+                typed1 = typed2 = 0;
+            } else {
+                typed1=(allelecmp(LPedTreeTop->PTop[ped].persons[jj].PRALLELE1(locus_id),
+                                  REC_UNKNOWN)? 1: 0);
+                typed2=(allelecmp(LPedTreeTop->PTop[ped].persons[jj].PRALLELE2(locus_id),
+                                  REC_UNKNOWN)? 1: 0);
+                if (ylinked && typed1 && typed2) {
+                    homo_test =
+                        !allelecmp(LPedTreeTop->PTop[ped].persons[jj].PRALLELE1(locus_id),
+                                   LPedTreeTop->PTop[ped].persons[jj].PRALLELE2(locus_id));
+                }
+            }
+        } else if (rec == Raw_postmake) {
+            if (LPedTreeTop->Ped[ped].Entry[jj].RALLELE1(locus_id) == NULL) {
+                typed1=typed2=0;
+            } else {
+                typed1=(allelecmp(LPedTreeTop->Ped[ped].Entry[jj].RALLELE1(locus_id),
+                                  REC_UNKNOWN)? 1: 0);
+                typed2=(allelecmp(LPedTreeTop->Ped[ped].Entry[jj].RALLELE2(locus_id),
+                                  REC_UNKNOWN)? 1: 0);
+                if (ylinked && typed1 && typed2) {
+                    homo_test =
+                        !allelecmp(LPedTreeTop->Ped[ped].Entry[jj].RALLELE1(locus_id),
+                                   LPedTreeTop->Ped[ped].Entry[jj].RALLELE2(locus_id));
+                }
+            }
+        } else if (rec == Postmakeped) {
+            typed1=
+                (LPedTreeTop->Ped[ped].Entry[jj].EALLELE1(locus_id))? 1 : 0;
+            typed2=
+                (LPedTreeTop->Ped[ped].Entry[jj].EALLELE2(locus_id))? 1 : 0;
+            if (ylinked && typed1 && typed2) {
+                homo_test =
+                    (LPedTreeTop->Ped[ped].Entry[jj].EALLELE1(locus_id) ==
+                     LPedTreeTop->Ped[ped].Entry[jj].EALLELE2(locus_id));
+            }
+        } else {
+            typed1=(LPedTreeTop->PTop[ped].persons[jj].PALLELE1(locus_id))? 1 : 0;
+            typed2=(LPedTreeTop->PTop[ped].persons[jj].PALLELE2(locus_id))? 1 : 0;
+            if (ylinked && typed1 && typed2) {
+                homo_test =
+                    (LPedTreeTop->PTop[ped].persons[jj].PALLELE1(locus_id) ==
+                     LPedTreeTop->PTop[ped].persons[jj].PALLELE2(locus_id));
+            }
+        }
+
+        if (typed1 && typed2 && homo_test) {
+            genotyped_members[geno_entry_cnt]=jj;
+            num_all[geno_entry_cnt]=2;
+            geno_entry_cnt++;
+        } else if (inc_ht && (typed1 || typed2) && homo_test) {
+            genotyped_members[geno_entry_cnt]=jj;
+            num_all[geno_entry_cnt]=typed1+typed2;
+            geno_entry_cnt++;
+        }
+
+    }
+
+    jj=-1;
+    if (geno_entry_cnt > 1) {
+        jj=randomindex(geno_entry_cnt);
+        *num_alleles=num_all[jj];
+        jj=genotyped_members[jj];
+    } else if (geno_entry_cnt == 1) {
+        jj=genotyped_members[0];
+        *num_alleles=num_all[0];
+    }
+
+    /*  printf("%d ped %d per\n", ped, jj, num_all[); */
+
+    free(genotyped_members); free(num_all);
+
+    return jj;
+}
+
+/* have a menu option to select which individuals to count */
+/* Added hwe select option */
+
+int get_count_option(int halftyped_item, int *include_halftyped, const char *messg)
+{
+    char choice[10], stars[5];
+    int i, menu_select, count_type=0;
+
+    if (InputMode == BATCH_FILE_INPUTMODE) {
+        // Default Select Individuals...
+        if ((Mega2Status == INSIDE_RECODE && Mega2BatchItems[Count_Genotypes].item_read == 1) ||
+            (Mega2Status == INSIDE_ANALYSIS && Mega2BatchItems[Count_HWE_genotypes].item_read == 1)) {
+            if (Mega2Status == INSIDE_RECODE) {
+                SelectIndividuals = Mega2BatchItems[/* 34 */ Count_Genotypes].value.option;
+            } else {
+                SelectIndividuals = Mega2BatchItems[/* 38 */ Count_HWE_genotypes].value.option;
+            }
+
+            if (halftyped_item && Mega2BatchItems[/* 36 */ Count_Halftyped].item_read) {
+                *include_halftyped =
+                    ((tolower((unsigned char)Mega2BatchItems[/* 36 */ Count_Halftyped].value.copt) == 'y')?
+                     1 : 0);
+            } else {
+                *include_halftyped = 0;
+            }
+            menu_select=0;
+        } else {
+            menu_select = 1;
+        }
+    }
+    if (InputMode == INTERACTIVE_INPUTMODE || menu_select) {
+        if (Mega2Status == INSIDE_RECODE) {
+            SelectIndividuals = DEFAULT_SelectIndividuals;
+        } else {
+            SelectIndividuals = HWE_DEFAULT_SelectIndividuals;
+        }
+        count_type = SelectIndividuals;
+        *include_halftyped=0;
+        while (count_type){
+            strcpy(stars, "    ");
+            stars[SelectIndividuals-1]='*';
+            printf("%s\n", messg);
+            draw_line();
+            printf("0) Done with this menu, please proceed.\n");
+            printf("%c1) Genotyped founders only\n", stars[0]);
+            printf("%c2) Genotyped founders + a randomly chosen genotyped person \n",
+                   stars[1]);
+            printf("    from pedigrees without genotyped founders.\n");
+            i=3;
+            if (Mega2Status == INSIDE_RECODE) {
+                printf("%c%d) Genotyped founders + genotyped individuals with unique alleles\n",
+                       stars[i-1], i);
+                i++;
+            }
+            printf("%c%d) All genotyped individuals\n", stars[i-1], i);
+            if (halftyped_item) {
+                i++;
+                printf(" %d) Count half-typed individuals' alleles. [%s]\n",
+                       i, yorn[*include_halftyped]);
+            }
+            if (halftyped_item) {
+                printf("Select from options 0 - %d or %d to toggle > ", i-1, i);
+            } else {
+                printf("Select from options 0 - %d > ", i);
+            }
+            fcmap(stdin, "%s", choice); newline;
+            sscanf(choice, "%d", &count_type);
+            switch(count_type) {
+            case 0:
+                break;
+            case 1:
+                SelectIndividuals = 1;
+                break;
+            case 2:
+                SelectIndividuals = 2;
+                break;
+            case 3:
+                SelectIndividuals = 3;
+                break;
+            case 4:
+                if (Mega2Status == INSIDE_RECODE) {
+                    SelectIndividuals = 4;
+                    break;
+                }
+            case 5:
+                if (halftyped_item) {
+                    *include_halftyped = TOGGLE(*include_halftyped);
+                    break;
+                }
+            default:
+                warn_unknown(choice);
+            }
+        }
+    }
+    /* log selection */
+    switch(SelectIndividuals) {
+    case 1:
+        sprintf(err_msg, "Count option: founder alleles");
+        break;
+    case 2:
+        sprintf(err_msg, "Count option: founder + random alleles");
+        break;
+    case 3:
+        if (Mega2Status == INSIDE_RECODE) {
+            sprintf(err_msg, "Count option: founder + all new alleles");
+        } else {
+            sprintf(err_msg, "Count option: all alleles");
+        }
+        break;
+    case 4:
+        if (Mega2Status == INSIDE_RECODE) {
+            sprintf(err_msg, "Count option: all alleles");
+        }
+        break;
+    default:
+        break;
+    }
+    mssgf(err_msg);
+    if (halftyped_item) {
+        sprintf(err_msg, "Count half-typed individuals' alleles : %s",
+                yorn[*include_halftyped]);
+        mssgf(err_msg);
+    }
+    log_line(mssgf);
+
+    if (InputMode == INTERACTIVE_INPUTMODE) {
+        if (Mega2Status == INSIDE_RECODE) {
+            Mega2BatchItems[/* 34 */ Count_Genotypes].value.option = SelectIndividuals;
+            batchf(Count_Genotypes);
+        } else {
+            Mega2BatchItems[/* 38 */ Count_HWE_genotypes].value.option = SelectIndividuals;
+            batchf(Count_HWE_genotypes);
+        }
+        if (halftyped_item) {
+            Mega2BatchItems[/* 36 */ Count_Halftyped].value.copt = yorn[*include_halftyped][0];
+            batchf(Count_Halftyped);
+        }
+    }
+
+    return SelectIndividuals;
+}
+
+void select_individuals(linkage_ped_top *LPedTreeTop, int locus_id,
+			int count_option, int ped, int *member_ids,
+			int inc_ht, int xlinked)
+{
+
+    int found,  ind;
+    int num_alleles;
+    found=founders_or_everyone(LPedTreeTop, locus_id,
+                               Postmakeped, ped, member_ids,
+                               count_option, inc_ht, xlinked);
+
+    if (!found && count_option == 2) {
+        ind=random_ped_member(LPedTreeTop, locus_id, ped, Postmakeped,
+                              inc_ht, &num_alleles, xlinked);
+        if (ind > -1) {
+            member_ids[ind]=num_alleles;
+        }
+    }
+
+    return;
+}

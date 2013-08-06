@@ -1,0 +1,13 @@
+PedigreeFile crnft_ped.06
+PedigreeName crnft_chr6
+SubgraphVariable Pedigree
+NameVariable Name
+FatherVariable Father
+MotherVariable Mother
+GenderVariable Gender
+TextVariable Name
+PatternVariable TRAIT
+PatternInfo Unknown 11
+PatternInfo Affected 99
+TextVariable M1
+TextVariable Genotyping-rate

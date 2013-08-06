@@ -1,0 +1,20 @@
+Note that starting from this release, Perl script version numbers
+will match those of the Mega2 version.
+
+For the Mega2 version 3.0 R10, the Perl script version number is 
+3.10.
+
+
+To install the Perl scripts only, run the command
+	./install.sh perl.
+
+To install Mega2 only, run the command
+	./install.sh mega2.
+
+To install both Mega2 and the Perl scripts, run the command
+	./install.sh all
+
+The user is prompted for the path in which to place the Perl scripts
+and/or Mega2 binary.
+
+

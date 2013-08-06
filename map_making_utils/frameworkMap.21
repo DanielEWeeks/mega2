@@ -1,0 +1,53 @@
+
+        Chromosome 21
+
+    Some of your markers are 'cryptic' duplicates.
+    Listed below: these duplicates with the marker on the map
+
+      'cryptic' duplicate                 marker on the map
+
+    GATA129D11     D21S2052           GATA24H09      D21S1442
+
+        Comprehensive genetic map (distances in Kosambi cM)
+
+     Marker         D number        Sex-averaged         Female             Male
+
+  1  GATA11C12      D21S1432                2.99               5.26              2.21
+                                   10.06              18.80              0.00
+  2  GGAA3C07       D21S1437               13.05              24.06              2.21
+                                   11.68              16.78              6.42
+  3  GATA24H09      D21S1442               24.73              40.84              8.63
+                                   12.04              14.00             10.09
+  4  ATA27F01       D21S1440               36.77              54.84             18.72
+                                    3.72               1.36              6.12
+  5  GATA188F04     D21S2055               40.49              56.20             24.84
+                                   17.28               8.43             26.00
+  6  GATA70B08      D21S1446               57.77              64.63             50.84
+
+    Number of recombinations (lower-left)
+    and informative meioses (upper-right)
+
+                       1   2   3   4   5   6
+
+  1  GATA11C12        66  62  64  44  54  49
+  2  GGAA3C07          5 170 137 107 130 131
+  3  GATA24H09         9  17 149  91 123 112
+  4  ATA27F01         14  21   9 110  97  88
+  5  GATA188F04       17  36  19   2 143 106
+  6  GATA70B08        19  50  28  16  19 144
+
+        Framework genetic map (distances in Kosambi cM)
+
+     Marker         D number        Sex-averaged         Female             Male
+
+  1  GATA11C12      D21S1432                2.99               5.26              2.21
+                                   10.06              18.80              0.00
+  2  GGAA3C07       D21S1437               13.05              24.06              2.21
+                                   11.68              16.78              6.42
+  3  GATA24H09      D21S1442               24.73              40.84              8.63
+                                   12.04              14.00             10.09
+  4  ATA27F01       D21S1440               36.77              54.84             18.72
+                                    3.72               1.36              6.12
+  5  GATA188F04     D21S2055               40.49              56.20             24.84
+                                   17.28               8.43             26.00
+  6  GATA70B08      D21S1446               57.77              64.63             50.84

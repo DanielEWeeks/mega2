@@ -1,0 +1,46 @@
+
+        Chromosome 22
+
+        Comprehensive genetic map (distances in Kosambi cM)
+
+     Marker         D number        Sex-averaged         Female             Male
+
+  1  AFM217xf4      D22S420                 4.06               3.32              2.60
+                                   15.26              20.86             10.97
+  2  AFM309wd5      D22S1174               19.32              24.18             13.57
+                                    9.25               8.72              9.67
+  3  GATA21F03      D22S689                28.57              32.90             23.24
+                                    3.82               3.33              4.27
+  4  GATA6F05       D22S685                32.39              36.23             27.51
+                                    3.83               4.44              3.20
+  5  GATA11B12      D22S683                36.22              40.67             30.71
+                                    9.60              19.67              0.00
+  6  GGAT3C10       D22S445                45.82              60.34             30.71
+
+    Number of recombinations (lower-left)
+    and informative meioses (upper-right)
+
+                       1   2   3   4   5   6
+
+  1  AFM217xf4       118  98  85  88 104  78
+  2  AFM309wd5        13 118  84  88 105  78
+  3  GATA21F03        20   9 143  99 131 101
+  4  GATA6F05         17   8   2 131 122  98
+  5  GATA11B12        29  19   8   5 172 123
+  6  GGAT3C10         17  15   9   5   8 135
+
+        Framework genetic map (distances in Kosambi cM)
+
+     Marker         D number        Sex-averaged         Female             Male
+
+  1  AFM217xf4      D22S420                 4.06               3.32              2.60
+                                   15.26              20.86             10.97
+  2  AFM309wd5      D22S1174               19.32              24.18             13.57
+                                    9.25               8.72              9.67
+  3  GATA21F03      D22S689                28.57              32.90             23.24
+                                    3.82               3.33              4.27
+  4  GATA6F05       D22S685                32.39              36.23             27.51
+                                    3.83               4.44              3.20
+  5  GATA11B12      D22S683                36.22              40.67             30.71
+                                    9.60              19.67              0.00
+  6  GGAT3C10       D22S445                45.82              60.34             30.71

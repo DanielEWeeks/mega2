@@ -1,0 +1,340 @@
+# -------------------------
+# PERL SCRIPT VERSION v4.5.3
+# Last updated: 2010-07-22
+# -------------------------
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software; you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+#
+#  
+# Perl script RMerlin.pl
+# Create the nplplot data out of merlin output
+#
+# arguments: Merlin output file names
+#            Rplot outputfile name
+#  
+# Usage:
+# Rmerlin.01.pl  -o<outfile> -c<stat_list> -t<titles> infile1,infile2 ..
+#
+# Combine stats specified by stat_list from files specified by infiles.
+#
+
+# Assumptions:
+# Each file may or may not contain scores for the required statitsic.
+# Some map positions may be missing scores, which will be denoted by "."
+# The map file at the end determines the maximal set of positions that
+# the  statistics are reported on.
+
+#set default output file name
+$outfile_stem = "RMERLIN";
+
+# parse arguments
+@titles = ();
+@files = ();
+
+for ($i = 0; $i <= $#ARGV; $i++) {
+    if(substr($ARGV[$i], 0, 2) eq "-o") {
+	$outfile_stem = substr($ARGV[$i], 2);
+    } elsif(substr($ARGV[$i], 0, 2) eq "-t") {
+	$title_str = substr($ARGV[$i], 2);
+	@titles = split(/\,/, $title_str);
+    } else {
+	@files = (@files, $ARGV[$i]);
+    }
+}
+
+$outfile_name = "$outfile_stem";
+$header_name = "$outfile_stem.hdr";
+
+if (@titles < @files)  {
+    printf "WARNING: Fewer titles than score files, using file numbers as titles!\n";
+    @titles = (1 .. @files);
+}
+elsif (@titles > @files) {
+    @titles = @titles[1 .. @files];
+}
+
+
+#print @files, "\n"; 
+
+# first merge the maps
+# Make a hashed array of marker-names and distances
+# from the Merlin map file corresponding to this chromosome
+#
+# 1/30/2006: array is now positions hashed by name.
+#
+
+%map=();
+$file_num=0;
+
+floop:foreach $file (@files) {
+    if(!defined(open(INPUT, $file))) {
+	&filenotfound($file);
+	next floop;
+    }
+    printf "Reading in map from Merlin output file $file.\n";
+    $_ = <INPUT>;
+    # first read the map at the end of the file
+    MAP:while(1) {
+	if (/CHR  MARKER         POSITION/) {
+	    last MAP;
+	}
+	$_ = <INPUT>;
+    }
+    while(<INPUT>) {
+	chomp;
+	@cols = split;
+	if (!exists($map{$cols[1]})) {
+	    $map{$cols[1]} = $cols[2];
+	}
+    }
+    close(INPUT);
+    $file_num++;
+}
+
+if ($file_num == 0) {
+    printf "Unable to read in Merlin output files.\n";
+    exit(-1);
+}
+
+# create the header
+@header = @titles;
+%scores =();
+
+# Now the other information 
+$fl_num=0;
+@positions=();
+$store_positions = 1;
+
+floop:foreach $file (@files) {
+    if(!defined(open(INPUT, $file))) {
+	&filenotfound($file);
+	next floop;
+    }
+    printf "Reading in scores from Merlin output file $file.\n";
+    $reading=0;
+
+    SCORE: while(<INPUT>) {
+	if (/CHR  MARKER         POSITION/) {
+	    last SCORE; 
+	}
+	elsif(/Trait:/) {
+	    chomp;
+	    @line = split;
+	    $trait = $line[$#line];
+	    chop($trait);
+
+# the arguments are statistic names now, not numbers
+	    $append=1;
+
+	    $stat_num=-1;
+	  statloop:foreach $hdr (@header) {	      
+	      if($trait eq $hdr) {
+		  $reading = 1;		  
+		  $stat_num++;
+		  <INPUT>; <INPUT>; 
+		  $sc_col=4;
+		  $this_stat=$hdr;
+		  last statloop;
+	      }
+	  }
+	}
+	elsif($reading) {	
+	    chomp;
+	    @cols = split;
+	    if($#cols < 1) {
+                # stop reading on seeing a blank line		
+		$reading=0;
+		$store_positions=0;
+	    }
+	    else {
+		if (defined $map{$cols[0]}) {
+		    $key = $cols[0];
+		}
+		else {
+		    $key = "-".$append;
+		    $map{$key} = $cols[0];
+		    if ($stat_num == 0) {
+			$append++;
+		    }
+		}
+
+		$scores{$key}{join("_", ($file, $this_stat))} = 
+		    $cols[$sc_col];
+
+		if ($store_positions) {
+		    push(@positions, $key);
+		}
+	    }
+	}
+    }
+    close(INPUT);
+    $fl_num++;
+}
+
+# write the scores
+open(OUTPUT, ">$outfile_name");
+printf OUTPUT "Marker      Position %s\n", join("  ", @header);
+
+foreach $pos (@positions) {
+    if(substr($pos,0,1) eq "-") {
+	printf OUTPUT "    -      %7.3f  ", $map{$pos};
+    }
+    else {
+	printf OUTPUT "%10s  %7.3f  ", $pos, $map{$pos};
+    }
+    foreach $file (@files) {
+	foreach $hdr (@header) {
+	    $statfile = join("_", ($file, $hdr));
+	    if(exists($scores{$pos}{$statfile})) {
+		printf OUTPUT "%5.3f  ", $scores{$pos}{$statfile};
+	    }
+	    else {
+		printf OUTPUT "   NA   ";
+	    }
+	}
+    }
+    printf OUTPUT "\n";
+} 
+
+close(OUTPUT);
+
+# ---------------
+# These are already written by Mega2
+
+# full contents of header file
+# yline<-2.0
+# ymin <- 0.0
+# ymax <- 4.0
+# header<-T
+# yfix<-F
+# title <- "Chromosome 11"
+# draw.lgnd<-T
+# xlabl<-""
+# ylabl<-""
+# lgndx<-NULL
+# lgndy<-NULL
+# cex.legend<-0.7
+# cex.axis <- 0.9
+# tcl <- -0.3
+# bw<-F
+# na.rm<-T
+#
+#----------------
+#
+# These are added by this script, because they 
+# depend on the number of scores
+
+# lgndtxt <- c("Trait-ALL", "Trait-Pairs")
+# my.colors <- NULL
+# ltypes <- c("solid", "dotted")
+# ptypes <- c(".", "+")
+
+# ---------------
+
+# Extract the lines written by Mega2
+open(HEADER, $header_name);
+@lines = <HEADER>;
+
+readheader: for ($i = 0; $i <= $#lines; $i++) {
+    if ($lines[$i] =~ /inserted by Mega2/) {
+	$lastline = $i;
+	last readheader;
+    }
+}
+
+open(HEADER, ">$header_name");
+
+print HEADER @lines[0 .. $lastline];
+
+print HEADER "lgndtxt <- c(\"$header[0]\"";
+
+for ($i=1; $i < @header; $i++) {
+    printf HEADER ", \"$header[$i]\"";
+}
+printf HEADER ")\n";
+
+@R_ltypes=(1 .. 6);
+@R_colors = ("black", "red", "green", "blue"); 
+@R_ptypes = (19 .. 22);
+
+@plot_attribs = ();
+
+# This will create 64 tuples.
+# Want ltype to change most often, then color, then ltype
+
+foreach $ptype (@R_ptypes) {
+    foreach $color (@R_colors) {
+	foreach $ltype (@R_ltypes) {
+	    push(@plot_attribs, ($ltype, $color, $ptype));
+	}
+    }
+}
+
+$ltypes_str = "ltypes <- c(";
+$colors_str = "my.colors <- c(";
+$ptypes_str = "ptypes <- c(";
+
+# start off with the first tuple;
+$ltypes_str = $ltypes_str . $plot_attribs[0];
+$colors_str = $colors_str . "\"" . $plot_attribs[1] . "\"";
+$ptypes_str = $ptypes_str . $plot_attribs[2];
+
+$lnum = 1;
+
+for ($i=1; $i < @header; $i++) {    
+    $lnum = $i % 64;
+    $ltypes_str = $ltypes_str . ", " . $plot_attribs[3*$lnum];
+    $colors_str = $colors_str . ", \"" . $plot_attribs[3*$lnum + 1] . "\"";
+    $ptypes_str = $ptypes_str . ", " . $plot_attribs[3*$lnum + 2];
+}
+
+$ltypes_str = $ltypes_str . ")";
+$colors_str = $colors_str . ")";
+$ptypes_str = $ptypes_str . ")";
+
+print HEADER $ltypes_str, "\n";
+print HEADER $colors_str, "\n";
+print HEADER $ptypes_str, "\n";
+
+close(HEADER);
+
+exit(0);
+
+sub filenotfound {
+
+    printf "ERROR - File $_[0] does not exist!\n";
+    return;
+}
+
+sub bymap {
+    if ($map{$a} == $map{$b}) {
+	return (1);
+    }
+    else {
+	return ($map{$a} <=> $map{$b});
+    }
+}
+

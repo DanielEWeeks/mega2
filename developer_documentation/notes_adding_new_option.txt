@@ -1,0 +1,135 @@
+QUESTION: Do we need to modify the 'file_format' enumerated variable in common.h?
+
+QUESTION: What are the file_indexes used for which are defined in set_file_indexes in output_files.c?
+
+
+A. analysis.h:
+
+B. analysis.cpp
+
+ The function analysis_menu1() displays the current list of output
+choices within Mega2. 
+	a) Add the full name for your program to the constant array
+
+C. analysis_ext.h:
+  
+
+D. Changes to output_file_names.c:
+
+Routines inside this file set the default output names of options, and
+also decide which "output_file_name" items are initialized/modified
+via option-specific output file names menus.
+
+1) Add new object to the "else if" statement in default_outfile_names(), and
+statements to initialize output file names (starting from 0
+typically).
+
+2) When multiple chromosomes are selected, for each chromosome, the
+suffixes of output files can be changed simultaneously with a single
+call to replace_chr_number(). Add KEYWORD to the case statement in
+replace_chr_number, and add calls to change_output_chr(), one for each
+file whose suffix is to be changed. 
+
+Sometimes, output files are a mixture of chromosome-specific and
+combined files (e.g. the shell script may be a combined file for all
+chromosomes, or there might be a single overall phenotype file). This
+has to be taken into consideration, when you add calls to
+change_output_chr().
+
+3) Routine set_output_paths(): this sets trait-specific sub-directory
+names if trait-specific output option was chosen via the
+trait-selection menu. Usually, there is nothing to be done inside this
+function, unless the option is "special" e.g. trait-specific analysis
+is meaningless for PREST, HWE etc. The first block of the case lists
+these options, where only a single set of output files is created
+inside the output folder. If your option does not need/handle traits,
+add it to this list.
+
+For all other options, trait-specific sub directory names are
+initialized. SAGE 3.0 is special, since some of its files are
+trait-specific, irrespective of the user's selection.
+
+E. Changes to reorder_loci.c:
+
+There are various functions in this file that do analysis-specific
+locus selection checks:
+
+5) get_trait_positions(): For some analysis options, a single trait can be
+placed between markers, using the reordering menu option 2, and this
+trait can have an unknown position. This function checks to see that
+there is only one such unmapped locus. Add your KEYWORD to the case
+block at the top, if this is appropriate.
+
+6) verify_markers(): If your analysis option has some special
+requirements besides 1-5 on locus selection, then add a special
+checking routine to this function. The variable reset is a flag which
+is to be set by this checking routine if the selection is not
+satisfactory.
+
+7) ReOrderLoci(): If your output option requires a particular map type
+(e.g., a physical map), adjust the code so as to initialize the map
+selection menu to point to a map of the appropriate type (as was done
+for the PLINK option).
+
+F. Changes to batch_input.h
+
+Define a new batch input integer variable - this should be the name of
+your new output option, prefixed by the string "BI_".  Assign it the
+next highest integer.  For example:
+
+#define    BI_MEGA2ANN 33
+
+Adjust the function prog_name_to_num() to map the program name to the
+program number.  The analysis option name that will appear in the
+BATCH file is going to be the one you specify in the prog_name()
+function in utils.c (see below).
+
+
+G. Changes to input_check.c : 
+
+The top level function full_check() contains some output
+option-specific handling of checks and errors. For example, PLINK does
+not handle allele frequencies, therefore, the skip for
+allele-frequency values is skipped. Mendel does not handle half-typed
+genotypes, so these are force-set to unknown, rather than asking the
+user.
+
+This can be tricky, as when I added the IQLS option that required
+unique IDs as PAP does, I had to adjust the logic in several places
+(wherever 'TO_PAP' was used.
+
+H. Changes to mega2.c:
+
+The case statement in the main body of the program decides which
+top-level function to call for each option. Add your analysis_type and
+the appropriate call here.
+
+Typically each analysis option takes as input a POINTER to the
+linkage-pedigree data-structure (LPedTreeTop), output files names list
+(file_names), and the global untyped pedigree option (UntypedPedOpt).
+
+Post-processing is generally the same across all options, or handled
+by one of the macros. SAGE needed some special handling upon
+completion of the Mega2 run. If your option needs any special
+post-processing, add code after the statement setting MEGA2 status to
+TERM_MEGA2. 
+
+I. Writing and compiling code for the the new output option:
+
+1) There should a a single top-level function that takes in the three 
+arguments listed in E. See the file new_option_template.c for an
+outline of required and optional code. Let us say that your code
+includes two files: newopt.c and newopt.h.
+
+2) Add an include statement for newopt.h inside typedefs.h (where are
+other Mega2-specific include directives are located).
+
+3) Add an extern declaration for the entry_level function
+create_NEWOPT_files() to the file fdefs.h. If you have other functions
+that need to be exported for calls in other source files, add these to
+fdefs.h as well.
+
+4) In the file Makefile, add newopt.c and newopt.o to the appropriate
+lists for source and object codes.
+
+Now compile Mega2.

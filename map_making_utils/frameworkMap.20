@@ -1,0 +1,72 @@
+
+        Chromosome 20
+
+    1 markers were not found or are repeats:
+
+    D20S477
+
+    Some of your markers are 'cryptic' duplicates.
+    Listed below: these duplicates with the marker on the map
+
+      'cryptic' duplicate                 marker on the map
+
+    GATA51D03      D20S482            GATA149E11     Unknown
+
+        Comprehensive genetic map (distances in Kosambi cM)
+
+     Marker         D number        Sex-averaged         Female             Male
+
+  1  AFM077xd3      D20S103                 2.13               0.00              4.14
+                                    9.99               3.21             17.12
+  2  GATA149E11     Unknown                12.12               3.21             21.26
+                                   12.58              11.78             13.26
+  3  AFMa218yb5     D20S851                24.70              14.99             34.52
+                                    8.24              11.92              4.30
+  4  GATA81E09      D20S604                32.94              26.91             38.82
+                                    6.31               8.55              4.28
+  5  GGAA7E02       D20S470                39.25              35.46             43.10
+                                   14.84              27.34              2.37
+  6  GATA42A03      D20S478                54.09              62.80             45.47
+                                    8.23              13.03              3.55
+  7  GATA47F05      D20S481                62.32              75.83             49.02
+                                   17.59              28.59              6.89
+  8  GATA45B10      D20S480                79.91             104.42             55.91
+                                   15.79              16.49             15.65
+  9  AFM046xf6      D20S171                95.70             120.91             71.56
+
+    Number of recombinations (lower-left)
+    and informative meioses (upper-right)
+
+                       1   2   3   4   5   6   7   8   9
+
+  1  AFM077xd3       124  91  75  93 110  88  95  90  64
+  2  GATA149E11        5 139  84 127 124  99 125  93  83
+  3  AFMa218yb5       19  11 118 105 112  99  90  86  75
+  4  GATA81E09        21  24   7 150 135 121 123 102  91
+  5  GGAA7E02         37  36  14   8 169 130 140 119  99
+  6  GATA42A03        38  39  21  26  19 132 105  86  75
+  7  GATA47F05        39  49  26  38  35   9 153 121 107
+  8  GATA45B10        37  42  28  32  38  17  17 132  77
+  9  AFM046xf6        22  35  34  35  40  25  32   9 113
+
+        Framework genetic map (distances in Kosambi cM)
+
+     Marker         D number        Sex-averaged         Female             Male
+
+  1  AFM077xd3      D20S103                 2.13               0.00              4.14
+                                    9.99               3.21             17.12
+  2  GATA149E11     Unknown                12.12               3.21             21.26
+                                   12.58              11.78             13.26
+  3  AFMa218yb5     D20S851                24.70              14.99             34.52
+                                    8.24              11.92              4.30
+  4  GATA81E09      D20S604                32.94              26.91             38.82
+                                    6.31               8.55              4.28
+  5  GGAA7E02       D20S470                39.25              35.46             43.10
+                                   14.84              27.34              2.37
+  6  GATA42A03      D20S478                54.09              62.80             45.47
+                                    8.23              13.03              3.55
+  7  GATA47F05      D20S481                62.32              75.83             49.02
+                                   17.59              28.59              6.89
+  8  GATA45B10      D20S480                79.91             104.42             55.91
+                                   15.79              16.49             15.65
+  9  AFM046xf6      D20S171                95.70             120.91             71.56
