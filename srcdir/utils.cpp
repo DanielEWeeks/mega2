@@ -2302,14 +2302,14 @@ void fprintf_env_checkset_csh (FILE *fp, const char *var, const char *default_va
 // into an environment variable and a file (with the same name), and then test for
 // a failure exit status (e.g. != 0) and if found will issue an error message and exit.
 //
-// NOTE: The '$?' is only valid immediately after the program has finished execution
-// so this routine must be called then for it to be able to effctively insert it's text
-// into the output stream.
+// NOTE: The '$status' (csh) / '$?' (bash) is only valid immediately after the program has
+// finished execution so this routine must be called then for it to be able to effctively
+// insert it's text into the output stream.
 //
 // fprintf_status_check_csh(filep, "merlin");
 // should produce the following code...
 //
-// set merlin_status=$?
+// set merlin_status=$status
 // echo $merlin_status > merlin_status
 // if ($merlin_status != 0) then
 //   echo "Run of merlin failed with status code: $merlin_status"
@@ -2317,7 +2317,8 @@ void fprintf_env_checkset_csh (FILE *fp, const char *var, const char *default_va
 // endif
 void fprintf_status_check_csh (FILE *fp, const char *prog, const int exit_on_error)
 {
-  fprintf(fp, "set %s_status=$?\n", prog);
+  //fprintf(fp, "set %s_status=$?\n", prog);
+  fprintf(fp, "set %s_status=$status\n", prog);
   fprintf(fp, "echo $%s_status > %s_status\n", prog, prog);
   fprintf(fp, "if ($%s_status != 0) then\n", prog);
   fprintf(fp, "  echo \"ERROR: Run of '%s' failed with status code: $%s_status\"\n", prog, prog);
