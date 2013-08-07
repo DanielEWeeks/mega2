@@ -99,11 +99,18 @@ function verify() {
     fi
 
     echo
-    echo -n "Enter full path for $module to be installed (you will need write access) [default /usr/local/bin]: "
+    echo "Enter full path for $module to be installed."
+    echo "You will need write access."
+    echo -n "[default /usr/local/bin]: "
     read -a mega2_path
 
     if [[ $mega2_path == "" ]]; then
         mega2_path=/usr/local/bin
+    fi
+
+    if [[ "`echo $PATH | grep $mega2_path`" == "" ]] ; then
+        echo "*** The directory $mega2_path is not in your PATH, you will need to add it."
+        echo
     fi
 }
 
@@ -163,6 +170,22 @@ echo
 which=which
 pgm=none
 
+# Try to figure out which flavor of Linux this is...
+function pgm_linux() {
+    v=`sed -n /etc/issue -e "1s/Ubuntu \\([0-9\\.]*\\) .*/\\1/p"`
+    if [ "$v" != "" ] ; then
+        pgm=mega2_${VERSION}_linux_ubuntu.${v}x${x}
+        return
+    fi
+    v=`sed -n /etc/issue -e "1s/^CentOS release \\([0-9\\.]*\\) .*/\\1/p"`
+    if [ "$v" != "" ] ; then
+        pgm=mega2_${VERSION}_linux_centos.${v}x${x}
+        return
+    fi
+}
+
+MAKE=make
+CC=cc
 for scr in $scripts; do
     if [[ $scr == "mega2" || $scr == "mega2compile" ]]; then
         if [[ $OSTYPE == darwin ]]; then 
@@ -172,10 +195,17 @@ for scr in $scripts; do
             pgm=mega2_${VERSION}_darwin.${v}
         elif [[ $OSTYPE == linux ]]; then
             if [ -f /etc/issue ]; then
-                v=`sed -n /etc/issue -e "1s/Ubuntu \\([0-9\\.]*\\) .*/\\1/p"`
                 x=`file /sbin/init| sed -n - -e "1s/.*ELF \\([0-9]*\\)-bit.*/\\1/p"`
-                pgm=mega2_${VERSION}_linux_ubuntu.${v}x${x}
+                pgm_linux
             fi
+        elif [[ $OSTYPE == SunOS ]]; then
+            # uname -v prints 'Generic_147148-26' on Solaris 10.1, and '11.1' on Solaris 11.1
+            # uname -r prints '5.10' on Solaris 10.1, and '5.11' on Solaris 11.1
+            v=`uname -v`
+            x=`uname -i`
+            pgm=mega2_${VERSION}_solaris.${v}_${x} // e.g. mega2_v4.5.9_solaris.11.1_i86pc
+            MAKE=gmake
+            CC=gcc
         elif [[ $OSTYPE == cygwin ]]; then
             v=`uname -r|sed -n -e "s/\\(.*\\)(.*)/\\1/p"`
             pgm=mega2_${VERSION}_cygwin.${v}
@@ -196,12 +226,12 @@ for scr in $scripts; do
             echo "Attempting to compile mega2 because no pre-compiled binary was found for your operating system."
 	    compile_prerequisites=present
 
-	    a=( `$which make 2>/dev/null` )
+	    a=( `$which $MAKE 2>/dev/null` )
             # Check to see if we have any make...
             if [[ $a == no || ! $a ]]; then 
                 compile_prerequisites=missing
             else
-                a=( `make --version 2>/dev/null | head -1` )
+                a=( `$MAKE --version 2>/dev/null | head -1` )
                 # Check to see if we have GNU make...
 		if [[ $a != "GNU" ]]; then
                     compile_prerequisites=missing
@@ -222,7 +252,7 @@ for scr in $scripts; do
                 fi
 	    fi
 
-	    a=( `$which cc 2>/dev/null` )
+	    a=( `$which $CC 2>/dev/null` )
             # Check to see if there is a c compiler...
             if [[ $a == no || ! $a ]]; then 
                 echo
@@ -258,9 +288,9 @@ for scr in $scripts; do
             fi
 
             if [[ ${SAVE:-""} == "" ]]; then
-                make all
+                $MAKE all
             else
-                make clean all
+                $MAKE clean all
             fi
             make_status=$?
             if [[ $make_status > 0 ]]; then
