@@ -75,4 +75,6 @@ extern analysis_type   AnalysisOpt; /* analysis option */
 #include "input_check.h"
 #include "hwe.h"
 
+#include "compress_ext.h"
+
 #endif

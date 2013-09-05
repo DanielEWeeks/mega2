@@ -266,13 +266,13 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
             }
         }
         void loci_start() {
-            if (_tle->chromosome != UNKNOWN_CHROMO) {
+            if (_tle->Marker->chromosome != UNKNOWN_CHROMO) {
                 pr_printf("%-15s %2d %d ",
                           _tle->Name,
-                          _tle->chromosome,
+                          _tle->Marker->chromosome,
                           (int) _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
             }
-            if (_tle->Data.Numbered.Recoded) {
+            if (_tle->Marker->Props.Numbered.Recoded) {
                 pr_printf("   +  %4s %4s ",
                           _tle->Allele[0].name,
                           _tle->Allele[_tle->AlleleCnt == 1 ? 0 : 1].name);
@@ -281,7 +281,7 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
             }
         }
         void inner() {
-            if (_tle->Data.Numbered.Recoded) {
+            if (_tle->Marker->Props.Numbered.Recoded) {
                 pr_printf(" %1s%1s ",
                           (_allele1== 0) ? "N" : _tle->Allele[_allele1 - 1].name,
                           (_allele2== 0) ? "N" : _tle->Allele[_allele2 - 1].name);
@@ -541,10 +541,10 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
             case AFFECTION:
                 // linkage.h    :linkage_pedrec_data is a union (Affection(2xint),
                 // Quant(2xint), Alleles         (2xint), RAlleles (2xchar*)
-                if (_tte->Data.Affection.ClassCnt == 1)
-                    aff = _tpe->Data[_trait].Affection.Status;
+                if (_tte->Pheno->Props.Affection.ClassCnt == 1)
+                    aff = _tpe->Pheno[_trait].Affection.Status;
                 else           
-                    aff = aff_status_entry(_tpe->ESTATUS(_trait), _tpe->ECLASS(_trait), _tte);
+                    aff = aff_status_entry(_tpe->Pheno[_trait].Affection.Status, _tpe->Pheno[_trait].Affection.Class, _tte);
                 if (aff > 0)
                     eligible[_per]=1;
                 break;

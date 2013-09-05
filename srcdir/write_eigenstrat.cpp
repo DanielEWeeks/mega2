@@ -204,7 +204,7 @@ void CLASS_EIGENSTRAT::save_ped_file(linkage_ped_top *Top,
         }
         void inner() {
             if (process_per == 0) return;
-            if (_LTop->Locus[_locus].Data.Numbered.Recoded) {
+            if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                 // How we represent the allele in the output...
                 // display the allele name according to the value associated with this person...
                 pr_printf("%2s %2s ",

@@ -697,13 +697,13 @@ static  void  write_batch2(char *fl_name, int numchr,
 /*       if (analysis == LOCATION) { */
 /* 	/\* use the sex-averaged map *\/ */
 /* 	diffm = difff =  */
-/* 	  LTop->Locus[markers[i+1]].position - LTop->Locus[markers[i]].position; */
+/* 	  LTop->Marker[markers[i+1]].pos_avg - LTop->Marker[markers[i]].pos_avg; */
 /*       } */
 /*       else { */
-/* 	diffm = LTop->Locus[markers[i+1]].pos_male -  */
-/* 	  LTop->Locus[markers[i]].pos_male; */
-/* 	difff = LTop->Locus[markers[i+1]].pos_female - */
-/* 	  LTop->Locus[markers[i]].pos_female; */
+/* 	diffm = LTop->Marker[markers[i+1]].pos_male -  */
+/* 	  LTop->Marker[markers[i]].pos_male; */
+/* 	difff = LTop->Marker[markers[i+1]].pos_female - */
+/* 	  LTop->Marker[markers[i]].pos_female; */
 /*       } */
 /*       if (diffm < 0.0) {	diffm=0.0999; } */
 /*       if (difff < 0.0) {	difff=0.0999; } */
@@ -868,23 +868,23 @@ static  void  write_batch2(char *fl_name, int numchr,
 // Missing quantitative data is not written to the output file...
 static void mwrite_quantitative_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
-    if (fabs(entry->EQUANT(locusnm) - MissingQuant) <= EPSILON)
+    if (fabs(entry->Pheno[locusnm].Quant - MissingQuant) <= EPSILON)
         fprintf(filep, "        ");
     else
-        fprintf(filep, "%7.3f ", entry->EQUANT(locusnm));
+        fprintf(filep, "%7.3f ", entry->Pheno[locusnm].Quant);
 }
 
 static void mwrite_affection_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
-    if (entry->ESTATUS(locusnm) > 0)
-        fprintf(filep, "%1d", entry->ESTATUS(locusnm));
+    if (entry->Pheno[locusnm].Affection.Status > 0)
+        fprintf(filep, "%1d", entry->Pheno[locusnm].Affection.Status);
     else
         fprintf(filep, " ");
-    if (locus->LAFFDATA.ClassCnt > 1)  {
-        if (entry->ESTATUS(locusnm) > 0)
-            fprintf(filep, "%7d", entry->ECLASS(locusnm));
+    if (locus->Pheno->Props.Affection.ClassCnt > 1)  {
+        if (entry->Pheno[locusnm].Affection.Status > 0)
+            fprintf(filep, "%7d", entry->Pheno[locusnm].Affection.Class);
         else
-            fprintf(filep, "       "); /*  entry->ECLASS(locusnm)); */
+            fprintf(filep, "       "); /*  entry->Pheno[locusnm].Affection.Class); */
     }
     else
         fprintf(filep, "       ");
@@ -898,15 +898,15 @@ static void            m5write_affection_data(FILE *filep, int locusnm, linkage_
 {
     char trait_phen[8];
 
-    if (entry->ESTATUS(locusnm) == 0) {
+    if (entry->Pheno[locusnm].Affection.Status == 0) {
         fprintf(filep, "        ");
     } else {
-        if (locus->LAFFDATA.ClassCnt > 1)  {
-            sprintf(trait_phen, "%d_%d ", entry->ESTATUS(locusnm),
-                    entry->ECLASS(locusnm));
+        if (locus->Pheno->Props.Affection.ClassCnt > 1)  {
+            sprintf(trait_phen, "%d_%d ", entry->Pheno[locusnm].Affection.Status,
+                    entry->Pheno[locusnm].Affection.Class);
             fprintf(filep, "%7s ", trait_phen);
         } else {
-            fprintf(filep, "%7d ", entry->ESTATUS(locusnm));
+            fprintf(filep, "%7d ", entry->Pheno[locusnm].Affection.Status);
         }
     }
 }
@@ -920,7 +920,7 @@ static  void            swrite_affection_data(FILE *filep,
     int affected;
 
 
-    affected = aff_status_entry(entry->ESTATUS(locusnm), entry->ECLASS(locusnm),
+    affected = aff_status_entry(entry->Pheno[locusnm].Affection.Status, entry->Pheno[locusnm].Affection.Class,
                                 locus);
     entry->Orig_status=affected;
     if (affected == 0) {
@@ -928,14 +928,14 @@ static  void            swrite_affection_data(FILE *filep,
     } else {
         fprintf(filep, "%4d", affected);
     }
-    fprintf(filep, "    "); /*  entry->ECLASS(locusnm)); */
+    fprintf(filep, "    "); /*  entry->Pheno[locusnm].Affection.Class); */
 }
 
 static void lwrite_affection_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
     int aff_status;
 
-    aff_status=entry->ESTATUS(locusnm);
+    aff_status=entry->Pheno[locusnm].Affection.Status;
     entry->Orig_status=aff_status;
     if (aff_status == 0)
         fprintf(filep, "    ");
@@ -946,21 +946,14 @@ static void lwrite_affection_data(FILE *filep, int locusnm, linkage_locus_rec *l
 
 static void mwrite_binary_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
-
-#define ALLELE1 entry->EALLELE1(locusnm)
-#define ALLELE2 entry->EALLELE2(locusnm)
-    int             allele;
+    int a1, a2;
+    int allele;
     /* Need to check for completely untyped person */
     for (allele = 0; allele < locus->AlleleCnt; allele++)
         {
-            if ((allele == ALLELE1 - 1)
-                || (allele == ALLELE2 - 1))
+            get_2alleles(entry->Marker, locusnm, &a1, &a2);
+            if ((allele == a1 - 1)
+                || (allele == a2 - 1))
                 fprintf(filep, "1");
             else
                 fprintf(filep, "0");
@@ -972,19 +965,13 @@ static void mwrite_binary_data(FILE *filep, int locusnm, linkage_locus_rec *locu
 
 static void mwrite_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
+    int a1, a2;
 
-#define ALLELE1 entry->EALLELE1(locusnm)
-#define ALLELE2 entry->EALLELE2(locusnm)
-    if (ALLELE1 == 0)
+    get_2alleles(entry->Marker, locusnm, &a1, &a2);
+    if (a1 == 0)
         fprintf(filep, "        ");
     else
-        fprintf(filep, "%3d/%3d ", ALLELE1, ALLELE2);
+        fprintf(filep, "%3d/%3d ", a1, a2);
 }
 
 /* This is a hack, copied from create_formats,
@@ -1354,7 +1341,7 @@ void            write_mendel_locus_file(char *file_name,
                 if (sex_linked == 1) {
                     fprintf(fp, "X-LINKED");
                 } else if (sex_linked == 2 &&
-                         Locus->chromosome == SEX_CHROMOSOME) {
+                         Locus->Marker->chromosome == SEX_CHROMOSOME) {
                     fprintf(fp, "X-LINKED");
                 } else {
                     fprintf(fp, "AUTOSOME");
@@ -1363,16 +1350,16 @@ void            write_mendel_locus_file(char *file_name,
             }
             switch (Locus->Type)  {
             case BINARY:
-                fprintf(fp, "%d\n", Locus->LBINDATA.FactorCnt);
-                for (tmpi = 0; tmpi < Locus->LBINDATA.FactorCnt; tmpi++)  {
+                fprintf(fp, "%d\n", Locus->Marker->Props.Binary.FactorCnt);
+                for (tmpi = 0; tmpi < Locus->Marker->Props.Binary.FactorCnt; tmpi++)  {
                     for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                        fprintf(fp, " %d", (int) Locus->LBINDATA.Factor[tmpi][tmpi2]);
+                        fprintf(fp, " %d", (int) Locus->Marker->Props.Binary.Factor[tmpi][tmpi2]);
                     fputc('\n', fp);
                 }
                 break;
             case NUMBERED:
                 fprintf(fp, " 0%3d %8f <= # Alleles,# Phenotypes. %5.2f cM\n",
-                        Locus->chromosome,(Locus->position/100.0),Locus->position);
+                        Locus->Marker->chromosome, (Locus->Marker->pos_avg/100.0), Locus->Marker->pos_avg);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                     fprintf(fp, "%7d %8f\n", allele + 1,
                             Locus->Allele[allele].Frequency);
@@ -1465,20 +1452,20 @@ static int  write_mendel_pen_file(char *fl_name, linkage_locus_top * LTop,
          fprintf(filep, "%-8s", strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN)) :
          fprintf(filep, "%8d", global_trait_entries[tr] + 1));
         fprintf(filep, "%8d                    <= Trait name, Number of liability classes\n",
-                Locus->LAFFDATA.ClassCnt);
-        for (tmpi2 = 1; tmpi2 <= Locus->LAFFDATA.ClassCnt; tmpi2++) {
+                Locus->Pheno->Props.Affection.ClassCnt);
+        for (tmpi2 = 1; tmpi2 <= Locus->Pheno->Props.Affection.ClassCnt; tmpi2++) {
             for (i = 1; i <= 2; i++) {
-                fprintf(filep, "%8d", ((Locus->LAFFDATA.ClassCnt > 1) ?
+                fprintf(filep, "%8d", ((Locus->Pheno->Props.Affection.ClassCnt > 1) ?
                                        (liability_multiplier*i + tmpi2) : i));
                 if (i == 1)    {
                     /* Use 1-Pen */
-                    for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++)
+                    for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++)
                         fprintf(filep, "%8.5f",
-                                (1.0 - Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[ipen]));
+                                (1.0 - Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[ipen]));
                 } else {
                     /* Use Pen */
-                    for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++)
-                        fprintf(filep, "%8.5f", (Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[ipen]));
+                    for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++)
+                        fprintf(filep, "%8.5f", (Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[ipen]));
                 }
                 fprintf(filep, " <= Penetrances : Affection = %d & Liability = %d\n",
                         i, tmpi2);
@@ -1551,15 +1538,15 @@ static int write_mendel5_pen_file(char *fl_name,
             fprintf(filep, "%8sPROB    %8s        %2d\n",
                     strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN),
                     strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN),
-                    2*Locus->LAFFDATA.ClassCnt);
-            for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.ClassCnt; tmpi2++) {
+                    2*Locus->Pheno->Props.Affection.ClassCnt);
+            for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.ClassCnt; tmpi2++) {
                 /* For unaffected status */
                 TRAIT_PHEN1;
                 fprintf(filep, "%7s ", trait_phen);
 
-                for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++) {
+                for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++) {
                     fprintf(filep, "%8.5f",
-                            1 - Locus->LAFFDATA.Class[tmpi2].AutoPen[ipen]);
+                            1 - Locus->Pheno->Props.Affection.Class[tmpi2].AutoPen[ipen]);
                 }
                 fprintf(filep, "\n");
 
@@ -1567,9 +1554,9 @@ static int write_mendel5_pen_file(char *fl_name,
                 TRAIT_PHEN2;
                 fprintf(filep, "%7s ", trait_phen);
 
-                for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++) {
+                for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++) {
                     fprintf(filep, "%8.5f",
-                            Locus->LAFFDATA.Class[tmpi2].AutoPen[ipen]);
+                            Locus->Pheno->Props.Affection.Class[tmpi2].AutoPen[ipen]);
                 }
                 fprintf(filep, "\n");
             }
@@ -1589,15 +1576,15 @@ static int write_mendel5_pen_file(char *fl_name,
             fprintf(filep, "%8sPROB    %8s        %2d\n",
                     strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN),
                     strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN),
-                    2*Locus->LAFFDATA.ClassCnt);
-            for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.ClassCnt; tmpi2++) {
+                    2*Locus->Pheno->Props.Affection.ClassCnt);
+            for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.ClassCnt; tmpi2++) {
                 /* For unaffected status */
                 TRAIT_PHEN1;
                 fprintf(filep, "%7s ", trait_phen);
 
-                for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++) {
+                for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++) {
                     fprintf(filep, "%8.5f",
-                            1 - Locus->LAFFDATA.Class[tmpi2].AutoPen[ipen]);
+                            1 - Locus->Pheno->Props.Affection.Class[tmpi2].AutoPen[ipen]);
                 }
                 fprintf(filep, "\n");
 
@@ -1606,9 +1593,9 @@ static int write_mendel5_pen_file(char *fl_name,
                 TRAIT_PHEN2;
                 fprintf(filep, "%7s ", trait_phen);
 
-                for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++) {
+                for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++) {
                     fprintf(filep, "%8.5f",
-                            Locus->LAFFDATA.Class[tmpi2].AutoPen[ipen]);
+                            Locus->Pheno->Props.Affection.Class[tmpi2].AutoPen[ipen]);
                 }
                 fprintf(filep, "\n");
             }
@@ -1839,9 +1826,9 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
                 case BINARY:
 		case XLINKED:
 		case YLINKED:
-                    if (LTop->Locus[markers[i]].chromosome == LTop->Locus[markers[i-1]].chromosome) {
-                        diffm = LTop->Locus[markers[i]].pos_male - LTop->Locus[markers[i-1]].pos_male;
-                        difff = LTop->Locus[markers[i]].pos_female - LTop->Locus[markers[i-1]].pos_female;
+                    if (LTop->Marker[markers[i]].chromosome == LTop->Marker[markers[i-1]].chromosome) {
+                        diffm = LTop->Marker[markers[i]].pos_male - LTop->Marker[markers[i-1]].pos_male;
+                        difff = LTop->Marker[markers[i]].pos_female - LTop->Marker[markers[i-1]].pos_female;
                     } else {
                         diffm = difff = INVALID_POS_DIFF;
                     }
@@ -1870,8 +1857,8 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
                 if (diffm < 0.0) {
                     sprintf(err_msg,
                             "%s (%7.4g) and %s (%7.4g) are not ordered by increasing male map distance!",
-                            LTop->Locus[markers[i]].Name, LTop->Locus[markers[i]].pos_male,
-                            LTop->Locus[markers[i+1]].Name, LTop->Locus[markers[i+1]].pos_male);
+                            LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_male,
+                            LTop->Marker[markers[i+1]].Name, LTop->Marker[markers[i+1]].pos_male);
                     warnf(err_msg);
                     warnf("Setting the distance between these to 0.001 cM.");
                     diffm=0.001;
@@ -1879,8 +1866,8 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
                 if (difff < 0.0) {
                     sprintf(err_msg,
                             "%s (%7.4g) and %s (%7.4g) are not ordered by increasing female map distance!",
-                            LTop->Locus[markers[i]].Name, LTop->Locus[markers[i]].pos_female,
-                            LTop->Locus[markers[i+1]].Name, LTop->Locus[markers[i+1]].pos_female);
+                            LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_female,
+                            LTop->Marker[markers[i+1]].Name, LTop->Marker[markers[i+1]].pos_female);
                     warnf(err_msg);
                     warnf("Setting the distance between these to 0.001 cM.");
                     difff=0.001;
@@ -1981,8 +1968,8 @@ static void write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top
                 switch(LTop->Locus[markers[i-1]].Type) {
                 case NUMBERED:
                 case BINARY:
-                    if (LTop->Locus[markers[i]].chromosome == LTop->Locus[markers[i-1]].chromosome) {
-                        diff = LTop->Locus[markers[i]].position - LTop->Locus[markers[i-1]].position;
+                    if (LTop->Marker[markers[i]].chromosome == LTop->Marker[markers[i-1]].chromosome) {
+                        diff = LTop->Marker[markers[i]].pos_avg - LTop->Marker[markers[i-1]].pos_avg;
                     } else {
                         diff = INVALID_POS_DIFF;
                     }
@@ -2011,8 +1998,8 @@ static void write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top
                 if (diff < 0.0) {
                     sprintf(err_msg,
                             "%s (%7.4g) and %s (%7.4g) are not ordered by increasing map distance!",
-                            LTop->Locus[markers[i]].Name, LTop->Locus[markers[i]].position,
-                            LTop->Locus[markers[i+1]].Name, LTop->Locus[markers[i+1]].position);
+                            LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_avg,
+                            LTop->Marker[markers[i+1]].Name, LTop->Marker[markers[i+1]].pos_avg);
                     warnf(err_msg);
                     diff=0.001;
                     warnf("Setting the distance between these to 0.001 cM.");
@@ -2128,13 +2115,13 @@ static void write_mendel4_control(char *file_names[], int numchr,
                          strtail(LTop->Locus[global_trait_entries[i]].Name, MENDEL7_MAX_LOCUS_NAME_LEN) :
                          strtail(LTop->Locus[global_trait_entries[i]].Name, MENDEL_MAX_LOCUS_NAME_LEN)));
 
-                if (LTop->Locus[global_trait_entries[i]].LAFFDATA.ClassCnt == 1) {
+                if (LTop->Pheno[global_trait_entries[i]].Props.Affection.ClassCnt == 1) {
                     fprintf(fp, "PENETRANCE = %5.4f :: 1/1\n",
-                            LTop->Locus[global_trait_entries[i]].LAFFDATA.Class[0].AutoPen[0]);
+                            LTop->Pheno[global_trait_entries[i]].Props.Affection.Class[0].AutoPen[0]);
                     fprintf(fp, "PENETRANCE = %5.4f :: 1/2\n",
-                            LTop->Locus[global_trait_entries[i]].LAFFDATA.Class[0].AutoPen[1]);
+                            LTop->Pheno[global_trait_entries[i]].Props.Affection.Class[0].AutoPen[1]);
                     fprintf(fp, "PENETRANCE = %5.4f :: 2/2\n",
-                            LTop->Locus[global_trait_entries[i]].LAFFDATA.Class[0].AutoPen[2]);
+                            LTop->Pheno[global_trait_entries[i]].Props.Affection.Class[0].AutoPen[2]);
                 }
                 break;
             }
@@ -2146,15 +2133,15 @@ static void write_mendel4_control(char *file_names[], int numchr,
                          strtail(LTop->Locus[global_trait_entries[trp]].Name, MENDEL7_MAX_LOCUS_NAME_LEN) :
                          strtail(LTop->Locus[global_trait_entries[trp]].Name, MENDEL_MAX_LOCUS_NAME_LEN)));
 
-                if (LTop->Locus[global_trait_entries[trp]].LAFFDATA.ClassCnt > 1) {
+                if (LTop->Pheno[global_trait_entries[trp]].Props.Affection.ClassCnt > 1) {
                     fprintf(fp, "PENETRANCE_FILE = %s\n", file_names[6]);
                 } else {
                     fprintf(fp, "PENETRANCE = %5.4f :: 1/1\n",
-                            LTop->Locus[global_trait_entries[trp]].LAFFDATA.Class[0].AutoPen[0]);
+                            LTop->Pheno[global_trait_entries[trp]].Props.Affection.Class[0].AutoPen[0]);
                     fprintf(fp, "PENETRANCE = %5.4f :: 1/2\n",
-                            LTop->Locus[global_trait_entries[trp]].LAFFDATA.Class[0].AutoPen[1]);
+                            LTop->Pheno[global_trait_entries[trp]].Props.Affection.Class[0].AutoPen[1]);
                     fprintf(fp, "PENETRANCE = %5.4f :: 2/2\n",
-                            LTop->Locus[global_trait_entries[trp]].LAFFDATA.Class[0].AutoPen[2]);
+                            LTop->Pheno[global_trait_entries[trp]].Props.Affection.Class[0].AutoPen[2]);
                 }
             }
         }
@@ -2711,7 +2698,7 @@ static void init_mendel_files(char *file_names[], int glob_files,
                     if (LoopOverTrait == 0) {
                          init_file(fl_name);
                     } else if (LTop->Locus[*trp].Type == AFFECTION) {
-                        if (analysis != TO_MENDEL7_CSV ||  LTop->Locus[*trp].LAFFDATA.ClassCnt > 1) {
+                        if (analysis != TO_MENDEL7_CSV ||  LTop->Pheno[*trp].Props.Affection.ClassCnt > 1) {
                             init_file(fl_name);
                         } 
                     }
@@ -2751,7 +2738,7 @@ static void init_mendel_files(char *file_names[], int glob_files,
                         init_file(fl_name);
                     } 
                 } else if (LTop->Locus[*trp].Type == AFFECTION) {
-                    if (analysis != TO_MENDEL7_CSV ||  LTop->Locus[*trp].LAFFDATA.ClassCnt > 1) {
+                    if (analysis != TO_MENDEL7_CSV ||  LTop->Pheno[*trp].Props.Affection.ClassCnt > 1) {
                         init_file(fl_name);
                     } 
                 }
@@ -2781,7 +2768,7 @@ static  int count_aff_classes(linkage_locus_top *LTop)
     for (i=0; i < num_traits; i++) {
         if (global_trait_entries[i] < 0) continue;
         if (LTop->Locus[global_trait_entries[i]].Type == AFFECTION &&
-            LTop->Locus[global_trait_entries[i]].LAFFDATA.ClassCnt > 1) {
+            LTop->Pheno[global_trait_entries[i]].Props.Affection.ClassCnt > 1) {
             write_pen_file = 1;
             break;
         }
@@ -3143,22 +3130,22 @@ int get_aff_status(linkage_locus_rec *Locus, analysis_type analysis,
         analysis == NONPARAMETRIC || analysis == IBD_EST ||
         analysis == MISTYPING || analysis == TO_MERLIN) {
 
-        if (Entry->ESTATUS(locus1) == 0)  return 0;
-        else if (Locus->LAFFDATA.ClassCnt == 1)  return Entry->ESTATUS(locus1);
+        if (Entry->Pheno[locus1].Affection.Status == 0)  return 0;
+        else if (Locus->Pheno->Props.Affection.ClassCnt == 1)  return Entry->Pheno[locus1].Affection.Status;
         else {
-            return(liability_multiplier*Entry->ESTATUS(locus1) +
-                   Entry->ECLASS(locus1));
+            return(liability_multiplier*Entry->Pheno[locus1].Affection.Status +
+                   Entry->Pheno[locus1].Affection.Class);
         }
     } else if (analysis == TO_MENDEL || analysis == TO_MENDEL4 ||
                analysis == TO_MERLINONLY) {
 
-        if (Entry->ESTATUS(locus1) == 0) return 0;
+        if (Entry->Pheno[locus1].Affection.Status == 0) return 0;
         else {
-            if (Locus->LAFFDATA.ClassCnt > 1)
-                return(liability_multiplier*Entry->ESTATUS(locus1) +
-                       Entry->ECLASS(locus1));
+            if (Locus->Pheno->Props.Affection.ClassCnt > 1)
+                return(liability_multiplier*Entry->Pheno[locus1].Affection.Status +
+                       Entry->Pheno[locus1].Affection.Class);
             else
-                return(Entry->ESTATUS(locus1));
+                return(Entry->Pheno[locus1].Affection.Status);
         }
     }
     return 0;

@@ -43,11 +43,8 @@
 */
 
 typedef struct _ext_linkage_locus_rec {
-    char **RAlleles;
-    double **AlleleFreq;     /* will be AlleleFreq[][] */
     double *positions; /* one position per map */
     double *pos_male, *pos_female;
-    int *AlleleCnt; /* AlleleCnts per group */
 } ext_linkage_locus_rec;
 
 typedef struct _ext_linkage_locus_top {

@@ -57,10 +57,10 @@
 static void  SOLARwrite_quantitative_data(FILE *filep, int locusnm,
 					  linkage_ped_rec *entry)
 {
-    if (fabs(entry->EQUANT(locusnm) - MissingQuant) <= EPSILON) {
+    if (fabs(entry->Pheno[locusnm].Quant - MissingQuant) <= EPSILON) {
         fprintf(filep, "          ");
     } else {
-        fprintf(filep, "%10.5f", entry->EQUANT(locusnm));
+        fprintf(filep, "%10.5f", entry->Pheno[locusnm].Quant);
     }
 }
 
@@ -70,12 +70,12 @@ static void            SOLARwrite_affection_data(FILE *filep, int locusnm,
 						 linkage_ped_rec *entry)
 
 {
-    if (entry->ESTATUS(locusnm) > 0)
-        fprintf(filep, "%d", entry->ESTATUS(locusnm));
-    if (locus->LAFFDATA.ClassCnt > 1)
+    if (entry->Pheno[locusnm].Affection.Status > 0)
+        fprintf(filep, "%d", entry->Pheno[locusnm].Affection.Status);
+    if (locus->Pheno->Props.Affection.ClassCnt > 1)
         {
-            if (entry->ESTATUS(locusnm) > 0)
-                fprintf(filep, "%d", entry->ECLASS(locusnm));
+            if (entry->Pheno[locusnm].Affection.Status > 0)
+                fprintf(filep, "%d", entry->Pheno[locusnm].Affection.Class);
         }
 }
 
@@ -84,43 +84,29 @@ static void            SOLARwrite_numbered_data(FILE *filep, int locusnm,
 						linkage_ped_rec *entry)
 
 {
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
+    int a1, a2;
+    get_2alleles(entry->Marker, locusnm, &a1, &a2);
 
-#define ALLELE1 entry->EALLELE1(locusnm)
-#define ALLELE2 entry->EALLELE2(locusnm)
-    if (ALLELE1 == 0)
+    if (a1 == 0)
         fprintf(filep, " 0/ 0");
     else
-        fprintf(filep, "%2d/%2d", ALLELE1, ALLELE2);
+        fprintf(filep, "%2d/%2d", a1, a2);
 }
 
 static void            SOLARwrite_numbered_xdata(FILE *filep, int locusnm,
                                                  linkage_ped_rec *entry)
 
 {
+    int a1, a2;
+    get_2alleles(entry->Marker, locusnm, &a1, &a2);
 
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
-
-#define ALLELE1 entry->EALLELE1(locusnm)
-#define ALLELE2 entry->EALLELE2(locusnm)
-
-    if (ALLELE1 == 0)
+    if (a1 == 0)
         fprintf(filep, "  / 0");
     else {
-        if (ALLELE1 == ALLELE2) {
-            fprintf(filep, "  /%2d", ALLELE2);
+        if (a1 == a2) {
+            fprintf(filep, "  /%2d", a2);
         } else {
-            fprintf(filep, "%2d/%2d",  ALLELE1, ALLELE2);
+            fprintf(filep, "%2d/%2d",  a1, a2);
         }
     }
 }
@@ -588,7 +574,7 @@ static int write_SOLAR_map(char *fl_name, linkage_ped_top *Top, int chr)
             if (Locus->Type == NUMBERED || Locus->Type == BINARY)  {
                 fprintf(filep, "%10s  %10f\n", Locus->Name,
                         (Top->LocusTop->map_distance_type == 'h') ?
-                        position[locus1] : Locus->position);
+                        position[locus1] : Locus->Marker->pos_avg);
             }
         }
         fclose(filep);

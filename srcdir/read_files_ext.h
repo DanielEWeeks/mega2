@@ -37,18 +37,18 @@ extern void check_size_dos(void);
 
 extern void free_lpedtop_pedinfo(linkage_ped_top *PTop);
 
-extern int plink_annot_string_aff_phen(int line, linkage_locus_rec *locus,
-                                       linkage_pedrec_data *pedrec, const char *cstatus);
+extern int plink_annot_string_aff_phen(int line, pheno_rec *locus,
+                                       pheno_pedrec_data *pedrec, const char *cstatus);
 
-extern int plink_annot_string_quant_phen(int line, linkage_locus_rec *locus,
-                                         linkage_pedrec_data *pedrec, const char *quantstr);
+extern int plink_annot_string_quant_phen(int line, pheno_rec *locus,
+                                         pheno_pedrec_data *pedrec, const char *quantstr);
 
 extern void premakeped_omit_file(linkage_ped_top *Top, const char *omitfl_name,
 				 const int raw_allele);
 
 
 extern int read_aff_phen(FILE *filep, int locusnm,
-                         linkage_locus_rec *locus, void *ventry,
+                         pheno_rec *locus, void *ventry,
 			 record_type rec);
 
 extern linkage_ped_top *read_linkage2(char *pedfl_name,
@@ -58,10 +58,11 @@ extern linkage_ped_top *read_linkage2(char *pedfl_name,
 				      int untyped_ped_opt, analysis_type analysis);
 
 extern linkage_ped_top *read_linkage_ped_file(FILE *filep,
-					      linkage_locus_top *LTop);
+					      linkage_locus_top *LTop,
+                                              int *col2locus);
 
-extern void annot_ignore_numbered_data(int line, linkage_locus_rec *locus,
-                                       linkage_pedrec_data *pedrec);
+extern void annot_ignore_numbered_data(int line, marker_rec *locus,
+                                       void *pedrec, int loc);
 
 extern char *canonical_allele(const char *ra);
 
@@ -70,7 +71,7 @@ extern int read_numbered_data(FILE *filep, int locusnm,
 			      record_type rec, int last);
 
 
-extern int read_premakeped_affec(FILE *filep, int locusnm, linkage_locus_rec *locus,
+extern int read_premakeped_affec(FILE *filep, int locusnm, pheno_rec *locus,
 				 pre_makeped_record *entry);
 
 extern int read_premakeped_bin(FILE *filep, int locusnm, linkage_locus_rec *locus,

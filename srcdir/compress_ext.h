@@ -26,24 +26,41 @@
 ===========================================================================
 */
 
-#ifndef SELECT_INDIVIDUALS_EXT_H
-#define SELECT_INDIVIDUALS_EXT_H
+#ifndef COMPRESS_H
+#define COMPRESS_H
 
-extern int founders_or_everyone(linkage_ped_top *Top, int locus_id,
-				record_type rec, int ped,
-				allelecnt *member_ids,
-				int count_option, int inc_ht, int xlinked);
+extern void *NOTYPED_ALLELES;
 
-extern int get_count_option(int halftyped_item, int *include_halftyped, const char *messg);
+extern int  marker_size(int size);
 
-extern int random_ped_member(linkage_ped_top *LPedTreeTop,
-			     int locus_id, int ped, record_type rec,
-			     int inc_ht, int *num_alleles, int xlinked);
+extern void *marker_alloc(size_t size, int offset);
+
+extern void marker_free(void *marker, int offset);
 
 
-extern void select_individuals(linkage_ped_top *LPedTreeTop, int locus_id,
-			       int option, int ped, allelecnt *member_ids,
-			       int inc_ht, int xlinked);
+
+extern void get_2Ralleles(void *mp, int marker, const char **all1, const char **all2);
+
+extern void set_2Ralleles(void *mp, int marker, const char *all1, const char *all2);
+
+extern int crunch_Rnotype(void **p, linkage_locus_top *LTop);
+
+extern void copy_2Ralleles(void *to, void *from, int marker);
+
+extern void order_heterozygous_allele_raw(linkage_ped_top *Top);
 
 
-#endif
+
+extern void get_2alleles(void *mp, int marker, int *all1, int *all2);
+
+extern void set_2alleles(void *mp, int marker, int all1, int all2);
+
+extern int  crunch_notype(void **p, linkage_locus_top *LTop);
+
+extern void copy_2alleles(void *to, void *from, int marker);
+
+extern void copy_2alleles(void *to, void *from, int tomarker, int frommarker);
+
+extern void order_heterozygous_allele(linkage_ped_top *Top);
+
+#endif /* COMPRESS_H */

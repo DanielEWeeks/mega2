@@ -26,6 +26,8 @@
 ===========================================================================
 */
 
+//NrvB: ped_top->Locus ONLY contains markers and is a copy of the Top->LocusTop->Locus data !!
+
 #include <stdio.h>
 #include <string.h>
 
@@ -90,7 +92,7 @@ int             UnMappedLociCheck(linkage_ped_top * Top)
 
 
     for (i = 0; i < num_reordered; i++) {
-        if (Top->LocusTop->Locus[reordered_marker_loci[i]].position < 0.000 &&
+        if (Top->LocusTop->Marker[reordered_marker_loci[i]].pos_avg < 0.000 &&
             (Top->LocusTop->Locus[reordered_marker_loci[i]].Type == NUMBERED ||
              Top->LocusTop->Locus[reordered_marker_loci[i]].Type == BINARY)) {
             printf("%s ",
@@ -327,6 +329,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     plink_locus_num = LTop->LocusCnt;
     if (num_reordered > 0) {
         for (locus = 0; locus < LTop->LocusCnt; locus++) {
+// LTop is only markers
             stat=check_locus(&(LTop->Locus[locus]),
                              &displayed_errors, analysis,
                              &plink_locus_num);
@@ -703,8 +706,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             ped = invalidp->ped;
             lloc = Top->LocusTop->Locus[invalidp->locus].linkage_loc_num;
             for (entry=0; entry < Top->PedTree[ped].EntryCnt; entry ++) {
-                Top->PedTree[ped].Entry[entry].LEntry->EALLELE1(lloc)=0;
-                Top->PedTree[ped].Entry[entry].LEntry->EALLELE2(lloc)=0;
+                set_2alleles(Top->PedTree[ped].Entry[entry].LEntry->Marker, lloc, 0, 0);
             }
             grow(err_msg, " %s: %s  ",
                  Top->PedTree[ped].Name,
@@ -747,8 +749,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             lloc = Top->LocusTop->Locus[halftypedp->locus].linkage_loc_num;
             entry = halftypedp->person;
             ped = halftypedp->ped;
-            LPedTop->Ped[ped].Entry[entry].EALLELE1(lloc)=0;
-            LPedTop->Ped[ped].Entry[entry].EALLELE2(lloc)=0;
+            set_2alleles(LPedTop->Ped[ped].Entry[entry].Marker, lloc, 0, 0);
             grow(err_msg,
                  " %s, %s: %s  ",
                  Top->PedTree[ped].Name,
@@ -793,8 +794,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             lloc = Top->LocusTop->Locus[outofboundsp->locus].linkage_loc_num;
             entry = outofboundsp->person;
             ped = outofboundsp->ped;
-            LPedTop->Ped[ped].Entry[entry].EALLELE1(lloc)=0;
-            LPedTop->Ped[ped].Entry[entry].EALLELE2(lloc)=0;
+            set_2alleles(LPedTop->Ped[ped].Entry[entry].Marker, lloc, 0, 0);
             grow(err_msg, "Ped %s, Entry %s:Locus %s  ",
                  Top->PedTree[ped].Name,
                  Top->PedTree[ped].Entry[entry].LEntry->OrigID,

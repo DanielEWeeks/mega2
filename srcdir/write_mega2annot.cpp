@@ -300,9 +300,9 @@ void write_annotated_names_file(linkage_locus_top *LTop,
             m = ChrLoci[m1];
             switch (LTop->Locus[m].Type) {
             case NUMBERED:
-                if (LTop->Locus[m].chromosome == SEX_CHROMOSOME) {
+                if (LTop->Marker[m].chromosome == SEX_CHROMOSOME) {
                     fprintf(fp, " X  %s\n", LTop->Locus[m].Name);
-                } else if (LTop->Locus[m].chromosome == MALE_CHROMOSOME) {
+                } else if (LTop->Marker[m].chromosome == MALE_CHROMOSOME) {
                     fprintf(fp, " Y  %s\n", LTop->Locus[m].Name);
                 } else {
                     fprintf(fp, " M  %s\n", LTop->Locus[m].Name);
@@ -310,7 +310,7 @@ void write_annotated_names_file(linkage_locus_top *LTop,
                 break;
             case AFFECTION:
                 if (LoopOverTrait == 0) {
-                    if (LTop->Locus[m].Data.Affection.ClassCnt > 1) {
+                    if (LTop->Pheno[m].Props.Affection.ClassCnt > 1) {
                         fprintf(fp, " L  %s\n", LTop->Locus[m].Name);
                     } else {
                         fprintf(fp, " A  %s\n", LTop->Locus[m].Name);
@@ -386,7 +386,7 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
         if (LoopOverTrait == 1) {
             switch(LTop->Locus[*trp].Type) {
             case AFFECTION:
-                ((LTop->Locus[*trp].LAFFDATA.ClassCnt > 1)?
+                ((LTop->Pheno[*trp].Props.Affection.ClassCnt > 1)?
                  fprintf(filep, "%s.L.1 %s.L.2 ", LTop->Locus[*trp].Name,  LTop->Locus[*trp].Name) :
                  fprintf(filep, "%s.A ", LTop->Locus[*trp].Name));
                 break;
@@ -405,7 +405,7 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
             switch(Loc->Type) {
             case AFFECTION :
                 if (LoopOverTrait == 0) {
-                    (Loc->LAFFDATA.ClassCnt > 1)?
+                    (Loc->Pheno->Props.Affection.ClassCnt > 1)?
                         fprintf(filep, "%s.L.1 %s.L.2 ",
                                 Loc->Name,  Loc->Name) :  fprintf(filep, "%s.A ", Loc->Name);
                 }
@@ -416,9 +416,9 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
                 }
                 break;
             case NUMBERED:
-                if (Loc->chromosome == SEX_CHROMOSOME) {
+                if (Loc->Marker->chromosome == SEX_CHROMOSOME) {
                     ext = 'X';
-                } else if (Loc->chromosome == MALE_CHROMOSOME) {
+                } else if (Loc->Marker->chromosome == MALE_CHROMOSOME) {
                     ext = 'Y';
                 } else {
                     ext = 'M';
@@ -638,14 +638,14 @@ static void annotated_map_file(linkage_locus_top *LTop, char *mfl_name)
             if (LTop->Locus[locus].Type == NUMBERED ||
                 LTop->Locus[locus].Type == BINARY) {
 
-                if (LTop->Locus[locus].chromosome < SEX_CHROMOSOME) {
+                if (LTop->Marker[locus].chromosome < SEX_CHROMOSOME) {
                     fprintf(fp, "%-15s %2d",
                             LTop->Locus[locus].Name,
-                            LTop->Locus[locus].chromosome);
+                            LTop->Marker[locus].chromosome);
                 } else {
                     fprintf(fp, "%-15s %s",
                             LTop->Locus[locus].Name,
-                            chrom_num_to_name(LTop->Locus[locus].chromosome, &(chrom_name[0])));
+                            chrom_num_to_name(LTop->Marker[locus].chromosome, &(chrom_name[0])));
                 }
 
 		// NOTE: the old version of mega2 would output three columns if there were
@@ -653,13 +653,13 @@ static void annotated_map_file(linkage_locus_top *LTop, char *mfl_name)
 		// all three (a, m, f) even if they exist.
 		if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
 		    fprintf(fp, " %10f\n",
-			    LTop->Locus[locus].position);
+			    LTop->Marker[locus].pos_avg);
 		} else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
 		    fprintf(fp, "    %10f     %10f\n", 
-			    LTop->Locus[locus].pos_female,
-			    LTop->Locus[locus].pos_male);
+			    LTop->Marker[locus].pos_female,
+			    LTop->Marker[locus].pos_male);
 		} else if (genetic_distance_sex_type_map == FEMALE_GDMT &&
-			   LTop->Locus[locus].chromosome != SEX_CHROMOSOME) {
+			   LTop->Marker[locus].chromosome != SEX_CHROMOSOME) {
 		    errorvf("When a female only map is specified only operations on the X chromosome are permitted.\n");
 		    EXIT(INPUT_DATA_ERROR);
 		}
@@ -693,10 +693,17 @@ static void annotated_frequency_file(linkage_locus_top *LTop, char *freqfl)
         fprintf(fp, "Name Allele Frequency\n");
         for (locus1 = 0; locus1 < NumChrLoci; locus1++) {
             locus = ChrLoci[locus1];
-            for (all = 0; all < LTop->Locus[locus].AlleleCnt; all++) {
-                fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].Name, all + 1,
-                        LTop->Locus[locus].Allele[all].Frequency);
-            }
+            if (LTop->Locus[locus].Class == MARKER)
+                for (all = 0; all < LTop->Locus[locus].AlleleCnt; all++) {
+                    fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].Name, all + 1,
+                            LTop->Locus[locus].Allele[all].Frequency);
+                }
+            else
+                for (all = 0; all < LTop->Locus[locus].AlleleCnt; all++) {
+                    fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].Name, all + 1,
+                            LTop->Locus[locus].Allele[all].Frequency);
+                }
+
         }
         fclose(fp);
         if (nloop == 1)
@@ -711,12 +718,12 @@ static void write_loc_pen(FILE *filep, linkage_locus_rec *Locus, linkage_affecti
 {
     int tmpi2, i;
 
-    for (tmpi2 = 1; tmpi2 <= Locus->LAFFDATA.ClassCnt; tmpi2++) {
+    for (tmpi2 = 1; tmpi2 <= Locus->Pheno->Props.Affection.ClassCnt; tmpi2++) {
         if (xlinked) {
             if (xlinked == 2) {
                 if (clp[tmpi2 - 1].AutoDef == 0) {
                     fprintf(filep, "%s %d autosomal", Locus->Name, tmpi2);
-                    for (i = 0; i < Locus->LAFFDATA.PenCnt; i++)
+                    for (i = 0; i < Locus->Pheno->Props.Affection.PenCnt; i++)
                         fprintf(filep, " %f",  clp[tmpi2 - 1].AutoPen[i]);
                     fprintf(filep, "\n");
                 }
@@ -724,7 +731,7 @@ static void write_loc_pen(FILE *filep, linkage_locus_rec *Locus, linkage_affecti
 
             if (clp[tmpi2 - 1].FemaleDef == 0) {
                 fprintf(filep, "%s %d female", Locus->Name, tmpi2);
-                for (i = 0; i < Locus->LAFFDATA.PenCnt; i++)
+                for (i = 0; i < Locus->Pheno->Props.Affection.PenCnt; i++)
                     fprintf(filep, " %f",  clp[tmpi2 - 1].FemalePen[i]);
                 fprintf(filep, "\n");
             }
@@ -737,7 +744,7 @@ static void write_loc_pen(FILE *filep, linkage_locus_rec *Locus, linkage_affecti
             }
         } else {
             fprintf(filep, "%s %d", Locus->Name, tmpi2);
-            for (i = 0; i < Locus->LAFFDATA.PenCnt; i++)
+            for (i = 0; i < Locus->Pheno->Props.Affection.PenCnt; i++)
                 fprintf(filep, " %f",  clp[tmpi2 - 1].AutoPen[i]);
             fprintf(filep, "\n");
         }
@@ -765,10 +772,10 @@ static void annotated_penetrance_file(char *fl_name, linkage_locus_top * LTop, i
                     EXIT(FILE_WRITE_ERROR);
                 }
 
-                clp = Locus->LAFFDATA.Class;
+                clp = Locus->Pheno->Props.Affection.Class;
 /*
                 xlinked = 0;
-                for (tmpi2 = 1; tmpi2 <= Locus->LAFFDATA.ClassCnt; tmpi2++)
+                for (tmpi2 = 1; tmpi2 <= Locus->Pheno->Props.Affection.ClassCnt; tmpi2++)
                     xlinked = xlinked || clp[tmpi2-1].MaleDef != 1 || clp[tmpi2-1].FemaleDef != 1;
 */
                 fprintf(filep, "Name   Class  %sPen.11    Pen.12    Pen.22\n", xlinked ? "Sex   " : "");
@@ -792,8 +799,8 @@ static void annotated_penetrance_file(char *fl_name, linkage_locus_top * LTop, i
 
             Locus = &(LTop->Locus[global_trait_entries[tr]]);
             if (Locus->Type == AFFECTION) {
-                clp = Locus->LAFFDATA.Class;
-                for (tmpi2 = 1; tmpi2 <= Locus->LAFFDATA.ClassCnt; tmpi2++)
+                clp = Locus->Pheno->Props.Affection.Class;
+                for (tmpi2 = 1; tmpi2 <= Locus->Pheno->Props.Affection.ClassCnt; tmpi2++)
                     xlinked = xlinked || clp[tmpi2-1].MaleDef != 1 || clp[tmpi2-1].FemaleDef != 1;
             }
         }
@@ -804,7 +811,7 @@ static void annotated_penetrance_file(char *fl_name, linkage_locus_top * LTop, i
 
             Locus = &(LTop->Locus[global_trait_entries[tr]]);
             if (Locus->Type == AFFECTION) {
-                clp = Locus->LAFFDATA.Class;
+                clp = Locus->Pheno->Props.Affection.Class;
                 write_loc_pen(filep, Locus, clp, xlinked);
             }
         }

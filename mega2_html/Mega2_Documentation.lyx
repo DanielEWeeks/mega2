@@ -541,7 +541,7 @@ Enhancements in Mega2 version 4.5.9
 \end_layout
 
 \begin_layout Itemize
-Bug fiix: Mega2 will now compile properly on Red Hat (RHEL), CentOS, and
+Bug fix: Mega2 will now compile properly on Red Hat (RHEL), CentOS, and
  Solaris systems.
 \end_layout
 

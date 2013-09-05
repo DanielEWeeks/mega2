@@ -31,6 +31,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "mrecode.h"
 
 #include "batch_input_ext.h"
 #include "error_messages_ext.h"
@@ -353,18 +354,15 @@ static int count_genotypes(linkage_ped_top *LPedTreeTop, int locus_id,
 {
     int ii, jj, allele1, allele2;
     int num_genotypes=0;
-    int *member_ids;
+    allelecnt *member_ids;
 
     for (ii=0; ii < LPedTreeTop->PedCnt; ii++) {
-        member_ids = CALLOC((size_t) LPedTreeTop->Ped[ii].EntryCnt, int);
+        member_ids = CALLOC((size_t) LPedTreeTop->Ped[ii].EntryCnt, allelecnt);
         select_individuals(LPedTreeTop, locus_id, count_option, ii,
                            member_ids, 0, xlinked);
         for(jj=0; jj < LPedTreeTop->Ped[ii].EntryCnt; jj++) {
-            if (member_ids[jj] == 2) {
-                allele1=
-                    LPedTreeTop->Ped[ii].Entry[jj].EALLELE1(locus_id);
-                allele2=
-                    LPedTreeTop->Ped[ii].Entry[jj].EALLELE2(locus_id);
+            if (member_ids[jj].num == 2) {
+                get_2alleles(LPedTreeTop->Ped[ii].Entry[jj].Marker, locus_id, &allele1, &allele2);
                 num_genotypes++;
                 geno_count[genoindx(allele1, allele2)] ++;
             }
@@ -521,7 +519,7 @@ static void save_mendel_hwe_individuals(linkage_ped_top *Top,
     char fformat[6], pformat[6];
     int mendel_ind_number=0;
     int fwid, pwid, ped, ind;
-    int **select, *ind_selected;
+    allelecnt **select, *ind_selected;
     FILE *hwe_in = fopen(geno_file, "w");
 
     /* Now print the selected individuals */
@@ -539,29 +537,29 @@ static void save_mendel_hwe_individuals(linkage_ped_top *Top,
         create_mendel_formats(fwid, pwid, fformat, pformat);
     }
 
-    select = CALLOC((size_t) num_loci, int *);
+    select = CALLOC((size_t) num_loci, allelecnt *);
     /* This is a matrix of selection for each locus */
     for (ped = 0; ped < Top->PedCnt; ped++) {
-        ind_selected=CALLOC((size_t) Top->Ped[ped].EntryCnt, int);
+        ind_selected=CALLOC((size_t) Top->Ped[ped].EntryCnt, allelecnt);
         /* array of flags to denote if individual has been selected
            at any marker */
         for (ind = 0; ind < Top->Ped[ped].EntryCnt; ind++)  {
-            ind_selected[ind]=0;
+            ind_selected[ind].num=0;
         }
         /* Now select individuals for each locus */
         for (m=0; m < num_loci; m++) {
-            select[m]=CALLOC((size_t) Top->Ped[ped].EntryCnt, int);
+            select[m]=CALLOC((size_t) Top->Ped[ped].EntryCnt, allelecnt);
             select_individuals(Top, loci_indexes[m],
                                count_option, ped, select[m], 0, xlinked);
         }
         /* set the ind_selected flags */
         for (ind = 0; ind < Top->Ped[ped].EntryCnt; ind++)  {
             for (m = 0; m < num_loci; m++) {
-                if (select[m][ind]) {
-                    ind_selected[ind]++;
+                if (select[m][ind].num) {
+                    ind_selected[ind].num++;
                 }
             }
-            if (!ind_selected[ind]) {
+            if (!ind_selected[ind].num) {
                 continue;
             }
             /* output only if the individual has been selected */
@@ -605,15 +603,13 @@ static void save_mendel_hwe_individuals(linkage_ped_top *Top,
                     }
                 }
 
-                if (select[m][ind]) {
+                if (select[m][ind].num) {
+                    int a1, a2;
+                    get_2alleles(Top->Ped[ped].Entry[ind].Marker, loci_indexes[m], &a1, &a2);
                     if (csv_format) {
-                        fprintf(hwe_in, ",%d/%d",
-                                Top->Ped[ped].Entry[ind].EALLELE1(loci_indexes[m]),
-                                Top->Ped[ped].Entry[ind].EALLELE2(loci_indexes[m]));
+                        fprintf(hwe_in, ",%d/%d", a1, a2);
                     } else {
-                        fprintf(hwe_in, "%3d/%3d ",
-                                Top->Ped[ped].Entry[ind].EALLELE1(loci_indexes[m]),
-                                Top->Ped[ped].Entry[ind].EALLELE2(loci_indexes[m]));
+                        fprintf(hwe_in, "%3d/%3d ", a1, a2);
                     }
                 } else {
                     fprintf(hwe_in, ",");
@@ -628,6 +624,7 @@ static void save_mendel_hwe_individuals(linkage_ped_top *Top,
             select[m]=NULL;
         }
     }
+    free(select);
     fclose(hwe_in);
     return;
 }
@@ -639,7 +636,8 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
 			char *outfile, int inc_ht, int xlinked)
 
 {
-    int m, ind, ped, **member_ids;
+    int m, ind, ped;
+    allelecnt **member_ids;
     FILE *hwe_in, *Rfl;
     char mrkfl[2*FILENAME_LENGTH];
     int num_halftyped, num_fulltyped=0;
@@ -651,9 +649,9 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
     /* Step 2: Create a file containing list of alleles */
     /* for only valid markers   */
 
-    member_ids = CALLOC((size_t) Top->PedCnt, int *);
+    member_ids = CALLOC((size_t) Top->PedCnt, allelecnt *);
     for (ped=0; ped < Top->PedCnt; ped++) {
-        member_ids[ped]= CALLOC((size_t) Top->Ped[ped].EntryCnt, int);
+        member_ids[ped]= CALLOC((size_t) Top->Ped[ped].EntryCnt, allelecnt);
     }
 
     for (m = 0; m < num_loci; m++) {
@@ -666,7 +664,7 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
         /* initalize selected matrix for all pedigrees and individuals */
         for (ped=0; ped < Top->PedCnt; ped++) {
             for (ind =0; ind < Top->Ped[ped].EntryCnt; ind++) {
-                member_ids[ped][ind]=0;
+                member_ids[ped][ind].num=0;
             }
         }
         /* select individuals for each pedigree, then write out only selected
@@ -677,18 +675,19 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
             select_individuals(Top, loci_indexes[m], count_option, ped, member_ids[ped],
                                inc_ht, xlinked);
             for (ind =0; ind < Top->Ped[ped].EntryCnt; ind++) {
-                if (member_ids[ped][ind] >= 1) {
+                int a1, a2;
+                if (member_ids[ped][ind].num >= 1) {
+                    get_2alleles(Top->Ped[ped].Entry[ind].Marker, loci_indexes[m], &a1, &a2);
                     if (set_first_allele) {
-                        first_allele = Top->Ped[ped].Entry[ind].EALLELE1(loci_indexes[m]);
+                        first_allele = a1;
                         set_first_allele = 0;
                     }
                     fprintf(hwe_in, "%6d     %5d      %3d     %3d \n",
                             Top->Ped[ped].Num,
                             Top->Ped[ped].Entry[ind].ID,
-                            Top->Ped[ped].Entry[ind].EALLELE1(loci_indexes[m]),
-                            Top->Ped[ped].Entry[ind].EALLELE2(loci_indexes[m]));
+                            a1, a2);
 
-                    if (member_ids[ped][ind] == 1) {
+                    if (member_ids[ped][ind].num == 1) {
                         num_halftyped++;
                     } else {
                         num_fulltyped++;
@@ -927,12 +926,12 @@ void hwe_user_input(linkage_ped_top *LPedTreeTop, int *numchr,
 
     for (ii1 = 0; ii1 < NumChrLoci; ii1++) {
         ii=ChrLoci[ii1];
-        if (ltop->Locus[ii].chromosome == MALE_CHROMOSOME) {
+        if (ltop->Marker[ii].chromosome == MALE_CHROMOSOME) {
             warnvf("No HWE test for Y-linked loci, skipping %s.\n", _mrk_name(ii));
             continue;
         }
         xlinked =
-            (((ltop->Locus[ii].chromosome == SEX_CHROMOSOME &&
+            (((ltop->Marker[ii].chromosome == SEX_CHROMOSOME &&
                LPedTreeTop->LocusTop->SexLinked == 2) ||
               (LPedTreeTop->LocusTop->SexLinked == 1))? 1 : 0);
 

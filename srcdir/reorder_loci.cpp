@@ -104,12 +104,10 @@
 
 linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
 			     analysis_type *analysis);
-int             linkage_set_locus_order(linkage_ped_top *Top, int *order);
 int             linkage_set_locus_order_new(int num_order, int *order);
 int             get_chromosome_list(linkage_locus_top *LTop, int *list1,
 				    int *counts, int exit_upon_no_chr,
 				    analysis_type analysis);
-int             ReOrderMappedLoci(linkage_ped_top *Top, int *numchr);
 int             display_selections(linkage_ped_top *Top, int *entries,
 				   int num_entries, char *asterisks,
 				   char *scanned_str, int traits_only,
@@ -131,8 +129,12 @@ static int     chromo_and_loci_selection(linkage_ped_top *Top,
 					 int *num_chromo, int **selected_chromo,
 					 int get_ot_set);
 static int      select_trait_loci(linkage_ped_top *Top, analysis_type analysis);
+#ifdef DEFUNCT
+int             ReOrderMappedLoci(linkage_ped_top *Top, int *numchr);
+int             linkage_set_locus_order(linkage_ped_top *Top, int *order);
 static void     linkage_swap_loci(linkage_locus_rec *locus1,
 				  linkage_locus_rec *locus2);
+#endif
 static int    no_trait_allowed(analysis_type analysis, int mssg);
 /* static int    no_aff_trait_allowed(analysis_type analysis, int mssg); */
 static int    quant_allowed(linkage_locus_rec Locus, analysis_type analysis);
@@ -208,6 +210,7 @@ static int compare_index(const void *ptr1, const void *ptr2)
     }
 }
 
+#ifdef DEFUNCT
 /* linkage_swap_loci()
  *
  * Slave routine for set_locus_order(). Swaps data in locus records.
@@ -227,6 +230,7 @@ static void     linkage_swap_loci(linkage_locus_rec *locus1,
     *locus1 = *locus2;
     *locus2 = tmplocus;
 }
+#endif
 
 /* changed this routine, so that limit on the list size is set by the
    maximum number of chromosome present, sets a global MaxChromo,
@@ -249,21 +253,22 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
     ui = 0;
 
     for (j = 0; j < LTop->LocusCnt; j++) {
-        if (LTop->Locus[j].chromosome == UNKNOWN_CHROMO) {
+        if (LTop->Locus[j].Class == TRAIT)
+            continue;
+
+        if (LTop->Marker[j].chromosome == UNKNOWN_CHROMO) {
+
             SUPPRESS_MSSG_NESTED(unmapped_errors);
-            warnvf("Locus %s is unmapped\n", LTop->Locus[j].Name);
+            warnvf("Locus %s is unmapped\n", LTop->Marker[j].Name);
             unmapped_markers[ui++] = j;
-        } else if (LTop->Locus[j].chromosome == MISSING_CHROMO) {
+        } else if (LTop->Marker[j].chromosome == MISSING_CHROMO) {
 	    // The entry for this locus (marker assumed) was not found in the map file.
             // unmapped_markers[ui++] = j;
             continue;
-        } else if (LTop->Locus[j].chromosome < 1) {
-            if (LTop->Locus[j].Class == TRAIT) {
-                continue;
-            }
+        } else if (LTop->Marker[j].chromosome < 1) {
             SUPPRESS_MSSG_NESTED(invalid_chromosome);
             warnvf("Invalid chromosome number %d on locus %s.\n",
-                    LTop->Locus[j].chromosome, LTop->Locus[j].Name);
+                    LTop->Marker[j].chromosome, LTop->Marker[j].Name);
             if (exit_upon_no_chr) {
                 errorvf("Please correct and restart mega2!\n");
                 EXIT(DATA_TYPE_ERROR);
@@ -275,14 +280,14 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
                 /* 	else { */
                 warnf("Locus will be omitted from analysis.");
                 /* 	} */
-                /* 	LTop->Locus[j].chromosome = UNKNOWN_CHROMO; */
+                /* 	LTop->Marker[j].chromosome = UNKNOWN_CHROMO; */
             }
         } else {
             /* fill chromosome list and locus counts in input order */
             new_chr = 1;
             if (total_list > 0) {
                 for (i = 0; i < total_list; i++) {
-                    if (LTop->Locus[j].chromosome == local_list[i]) {
+                    if (LTop->Marker[j].chromosome == local_list[i]) {
                         chr_index = i;
                         new_chr = 0;
                         break;
@@ -290,7 +295,7 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
                 }
             }
             if (new_chr) {
-                local_list[total_list] = LTop->Locus[j].chromosome;
+                local_list[total_list] = LTop->Marker[j].chromosome;
                 counts[total_list] = 1;
                 total_list++;
             } else {
@@ -478,11 +483,11 @@ void get_trait_list(linkage_locus_top *LocusTop, const int check_traits_combine)
                 ((num_affec > 1)? "loci: " : "locus: "));
         mssgf(err_msg);
         display_trait_names(num_affec, affec, LocusTop,
-                            16, NULL, stdout, 0, LocusTop->LocusCnt+1);
+                            16, NULL, stdout, 0, LocusTop->PhenoCnt+1);
         newline;
         fp = Mega2LogF();
         display_trait_names(num_affec, affec, LocusTop,
-                            16, NULL, fp, 0, LocusTop->LocusCnt+1);
+                            16, NULL, fp, 0, LocusTop->PhenoCnt+1);
         fprintf(fp, "\n");
         fflush(fp);
     }
@@ -492,10 +497,10 @@ void get_trait_list(linkage_locus_top *LocusTop, const int check_traits_combine)
                 ((num_quant > 1)? "loci: " : "locus: "));
         mssgf(err_msg);
         display_trait_names(num_quant, quant, LocusTop,
-                            16, NULL, stdout, 0, LocusTop->LocusCnt+1);
+                            16, NULL, stdout, 0, LocusTop->PhenoCnt+1);
         fp = Mega2LogF();
         display_trait_names(num_quant, quant, LocusTop,
-                            16, NULL, fp, 0, LocusTop->LocusCnt+1);
+                            16, NULL, fp, 0, LocusTop->PhenoCnt+1);
         fflush(fp);
         mssgf(" ");
     }
@@ -1151,8 +1156,8 @@ static int      ReOrderLociByChromosome(linkage_ped_top * Top,
                 num_markers = -1;
             }
         } else if (selectionmade >= 1 && selectionmade <= MaxChromo) {
-            for (mm = 0; mm < LTop->LocusCnt; mm++) {
-                if (LTop->Locus[mm].chromosome == selectionmade) {
+            for (mm = LTop->PhenoCnt; mm < LTop->LocusCnt; mm++) {
+                if (LTop->Marker[mm].chromosome == selectionmade) {
                     num_markers++;
                 }
             }
@@ -1255,10 +1260,10 @@ static int verify_markers(int entrycount, int *number,
              Top->LocusTop->Locus[number[i]].Type == YLINKED ||
              Top->LocusTop->Locus[number[i]].Type == NUMBERED) &&
             ((genetic_distance_sex_type_map == SEX_AVERAGED_GDMT &&
-	      Top->LocusTop->Locus[number[i]].position < 0.0) ||
+	      Top->LocusTop->Marker[number[i]].pos_avg < 0.0) ||
              ((genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
 	       genetic_distance_sex_type_map == FEMALE_GDMT) &&
-	      Top->LocusTop->Locus[number[i]].pos_female < 0.0))
+	      Top->LocusTop->Marker[number[i]].pos_female < 0.0))
 	    ) {
 	    // it's a marker with a sex-averaged map and no position, or a sex-specific map and no female position...
             if (!ALLOW_NO_MAP(analysis)) {
@@ -1387,7 +1392,7 @@ int display_selections(linkage_ped_top *Top, int *entries,
         has_err = 0;
     } else {
         for (k = 0; k < entry_count; k++)   {
-            if (LocusTop->Locus[number1[k]].error_prob > 0.0) {
+            if (LocusTop->Marker[number1[k]].error_prob > 0.0) {
                 has_err=1;
                 break;
             }
@@ -1462,13 +1467,13 @@ int display_selections(linkage_ped_top *Top, int *entries,
                     pos = UNKNOWN_POSITION;
                 } else if (Top->EXLTop == NULL) {
 		  // What about SEX_SPECIFIC???
-                    pos = LocusTop->Locus[number1[k]].position;
+                    pos = LocusTop->Marker[number1[k]].pos_avg;
                 } else {
-                    if (LocusTop->Locus[number1[k]].chromosome == SEX_CHROMOSOME) {
+                    if (LocusTop->Marker[number1[k]].chromosome == SEX_CHROMOSOME) {
                         pos = ((Top->EXLTop->EXLocus[number1[k]].pos_female[map_num] >= 0.0)?
                                Top->EXLTop->EXLocus[number1[k]].pos_female[map_num] :
                                Top->EXLTop->EXLocus[number1[k]].positions[map_num]);
-                    } else if (LocusTop->Locus[number1[k]].chromosome == MALE_CHROMOSOME) {
+                    } else if (LocusTop->Marker[number1[k]].chromosome == MALE_CHROMOSOME) {
                         pos = UNKNOWN_POSITION;
                     } else {
                         pos = Top->EXLTop->EXLocus[number1[k]].positions[map_num];
@@ -1499,13 +1504,13 @@ int display_selections(linkage_ped_top *Top, int *entries,
                     if (LocusTop->Locus[number1[k+1]].Class == TRAIT) {
                         pos = UNKNOWN_POSITION;
                     } else if	 (Top->EXLTop == NULL) {
-                        pos = LocusTop->Locus[number1[k+1]].position;
+                        pos = LocusTop->Marker[number1[k+1]].pos_avg;
                     } else {
-                        if (LocusTop->Locus[number1[k+1]].chromosome == SEX_CHROMOSOME) {
+                        if (LocusTop->Marker[number1[k+1]].chromosome == SEX_CHROMOSOME) {
                             pos = ((Top->EXLTop->EXLocus[number1[k+1]].pos_female[map_num] >= 0.0)?
                                    Top->EXLTop->EXLocus[number1[k+1]].pos_female[map_num] :
                                    Top->EXLTop->EXLocus[number1[k+1]].positions[map_num]);
-                        } else if (LocusTop->Locus[number1[k+1]].chromosome == MALE_CHROMOSOME) {
+                        } else if (LocusTop->Marker[number1[k+1]].chromosome == MALE_CHROMOSOME) {
                             pos = UNKNOWN_POSITION;
                         } else {
                             pos = Top->EXLTop->EXLocus[number1[k+1]].positions[map_num];
@@ -1552,14 +1557,14 @@ int display_selections(linkage_ped_top *Top, int *entries,
                 if (LocusTop->Locus[number1[k]].Class == TRAIT) {
                     pos = UNKNOWN_POSITION;
                 } else if (Top->EXLTop == NULL) {
-                    pos = LocusTop->Locus[number1[k]].position;
+                    pos = LocusTop->Marker[number1[k]].pos_avg;
                 } else {
                     /* not trait and has a extended locus top */
-                    if (LocusTop->Locus[number1[k]].chromosome == SEX_CHROMOSOME) {
+                    if (LocusTop->Marker[number1[k]].chromosome == SEX_CHROMOSOME) {
                         pos = ((Top->EXLTop->EXLocus[number1[k]].pos_female[map_num] >= 0.0)?
                                Top->EXLTop->EXLocus[number1[k]].pos_female[map_num] :
                                Top->EXLTop->EXLocus[number1[k]].positions[map_num]);
-                    } else if (LocusTop->Locus[number1[k]].chromosome == MALE_CHROMOSOME) {
+                    } else if (LocusTop->Marker[number1[k]].chromosome == MALE_CHROMOSOME) {
                         pos = UNKNOWN_POSITION;
                     } else {
                         pos = Top->EXLTop->EXLocus[number1[k]].positions[map_num];
@@ -1575,8 +1580,8 @@ int display_selections(linkage_ped_top *Top, int *entries,
                        loc_type_name(LocusTop->Locus[number1[k]].Type));
                 if (LocusTop->Locus[number1[k]].Type == NUMBERED &&
                    ErrorSimOpt == 1 &&
-                   LocusTop->Locus[number1[k]].error_prob >= 0.0) {
-                    printf("%4.3f", LocusTop->Locus[number1[k]].error_prob);
+                   LocusTop->Marker[number1[k]].error_prob >= 0.0) {
+                    printf("%4.3f", LocusTop->Marker[number1[k]].error_prob);
                 }
             }
             printf("\n");
@@ -1802,13 +1807,13 @@ static int       ReOrderLociByPositionNumber(linkage_ped_top *Top,
             tmpNumber = CALLOC((size_t) num_chr_loci, tmpnum);
             // Reorder the loci by position if on a valid chromosome.
 	    // Remember to use the appropriate position based on the input map selection...
-            for (i = 0, j = 0; i < LTop->LocusCnt; i++) {
-                if (LTop->Locus[i].chromosome == numchr) {
+            for (i = LTop->PhenoCnt, j = 0; i < LTop->LocusCnt; i++) {
+                if (LTop->Marker[i].chromosome == numchr) {
 		    if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-                        tmpNumber[j].index = LTop->Locus[i].position;
+                        tmpNumber[j].index = LTop->Marker[i].pos_avg;
 		    } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
 			       genetic_distance_sex_type_map == FEMALE_GDMT) {
-                        tmpNumber[j].index = LTop->Locus[i].pos_female;
+                        tmpNumber[j].index = LTop->Marker[i].pos_female;
 		    } else {
 		      errorvf("You must have specified a genetic distance sex map type.\n");
 		      EXIT(DATA_TYPE_ERROR);
@@ -3313,19 +3318,19 @@ static void get_trait_positions(linkage_locus_top *LTop,
 		 (i < LTop->LocusCnt-1)) {
 
 	      if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-                non_monotonic=((LTop->Locus[i].position < 0)? 1: 0);
+                non_monotonic=((LTop->Marker[i].pos_avg < 0)? 1: 0);
                 if (!non_monotonic) {
-                    if ((LTop->Locus[i].position >= LTop->Locus[i-1].position) &&
-                        (LTop->Locus[i+1].position >= LTop->Locus[i].position)) {
+                    if ((LTop->Marker[i].pos_avg >= LTop->Marker[i-1].pos_avg) &&
+                        (LTop->Marker[i+1].pos_avg >= LTop->Marker[i].pos_avg)) {
                         non_monotonic=1;
                     }
                 }
 	      } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
 			 genetic_distance_sex_type_map == FEMALE_GDMT) {
-                non_monotonic=((LTop->Locus[i].pos_female < 0)? 1: 0);
+                non_monotonic=((LTop->Marker[i].pos_female < 0)? 1: 0);
                 if (!non_monotonic) {
-                    if ((LTop->Locus[i].pos_female >= LTop->Locus[i-1].pos_female) &&
-                        (LTop->Locus[i+1].pos_female >= LTop->Locus[i].pos_female)) {
+                    if ((LTop->Marker[i].pos_female >= LTop->Marker[i-1].pos_female) &&
+                        (LTop->Marker[i+1].pos_female >= LTop->Marker[i].pos_female)) {
                         non_monotonic=1;
                     }
                 }
@@ -3357,7 +3362,7 @@ static void get_trait_positions(linkage_locus_top *LTop,
                 if (strcmp(str, "")) {
                     c = strtok(str, " "); lastval=atof(c);
                     for(i=0; i < j; i++) {
-                        LTop->Locus[traits[i]].position = lastval;
+                        LTop->Marker[traits[i]].pos_avg = lastval;
                         c = strtok(NULL, " ");
                         if (c != NULL) {
                             lastval=atof(c);
@@ -3368,7 +3373,7 @@ static void get_trait_positions(linkage_locus_top *LTop,
             }
             /* set chromocome numbers */
             for(i=0; i < j; i++) {
-                LTop->Locus[traits[i]].chromosome = LTop->Locus[traits[i]-1].chromosome;
+                LTop->Marker[traits[i]].chromosome = LTop->Marker[traits[i]-1].chromosome;
             }
         }
         break;
@@ -3668,6 +3673,7 @@ static int check_simwalk2_affs(analysis_type analysis,
     return 1;
 }
 
+#ifdef DEFUNCT
 int ReOrderMappedLoci(linkage_ped_top *Top, int *numchr)
 {
 
@@ -3740,7 +3746,7 @@ int ReOrderMappedLoci(linkage_ped_top *Top, int *numchr)
     }
     count=0;
     for (i = 0; i < LTop->LocusCnt; i++) {
-        if (LTop->Locus[i].chromosome == *numchr ||
+        if ( (LTop->Locus[i].Class == MARKER && LTop->Marker[i].chromosome == *numchr) ||
             LTop->Locus[i].Type == AFFECTION ||
             LTop->Locus[i].Type == QUANT) {
             /* only indexes that are mapped */
@@ -3788,6 +3794,7 @@ int ReOrderMappedLoci(linkage_ped_top *Top, int *numchr)
     }
     return 1;
 }
+#endif
 
 /* ReOrderMappedLoci_new looks at a list of selected chromosomes,
    main_chromocnt and chromo_loci_count,
@@ -3879,14 +3886,15 @@ static int ReOrderMappedLoci_new(linkage_ped_top *Top, int locus_type,
             count = 0;
 
             /* find loci on chromosome */
-            for (i = 0; i < LTop->LocusCnt; i++) {
-                if (LTop->Locus[i].chromosome != UNKNOWN_CHROMO
-                    && LTop->Locus[i].chromosome == chromosomes[j]) {
+            for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
+                if (LTop->Marker[i].chromosome != UNKNOWN_CHROMO
+                    && LTop->Marker[i].chromosome == chromosomes[j]) {
+
 		    if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-		      tmpNumber[count].index = LTop->Locus[i].position;
+		      tmpNumber[count].index = LTop->Marker[i].pos_avg;
 		    } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
 			       genetic_distance_sex_type_map == FEMALE_GDMT) {
-                        tmpNumber[count].index = LTop->Locus[i].pos_female;
+                        tmpNumber[count].index = LTop->Marker[i].pos_female;
 		    } else {
 		      errorvf("You must have specified a genetic distance sex map type.\n");
 		      EXIT(DATA_TYPE_ERROR);
@@ -3932,6 +3940,7 @@ int linkage_set_locus_order_new(int num_loci, int *order)
     return 1;
 }
 
+#ifdef DEFUNCT
 /* linkage_set_locus_order()  (Original by M. Schroeder; modified by DEW)
  * (also note that after this function is executed,
  *  the original data structure linkage_ped_top is
@@ -3972,11 +3981,16 @@ int             linkage_set_locus_order(linkage_ped_top *Top, int *order)
     int             i, j;
     register int    tmpi;
     register linkage_locus_top *LTop = Top->LocusTop;
-    register linkage_pedrec_data tmpdatap;
+    pheno_pedrec_data tmpdatapp;
     register linkage_ped_rec *Entry;
     register person_node_type *PEntry;
     int             ped, entry_;
     int            *place = CALLOC((size_t) LTop->LocusCnt, int);
+
+//xx rt
+    /*
+     * THIS IS VERY WRONG AND VERY BAD -- rvb
+     */
 
     /* set up place to initial order which is always... */
     for (i = 0; i < LTop->LocusCnt; i++)
@@ -3985,6 +3999,8 @@ int             linkage_set_locus_order(linkage_ped_top *Top, int *order)
     /* There's no really good way to do this. */
     for (i = 0; (i < LTop->LocusCnt) && (order[i] != -99); i++) {
         if (place[i] != order[i])  {
+//xx rt
+            abort();
             if (i == LTop->LocusCnt - 1)   {
                 /* Last locus, and they don't agree? */
                 free(place);
@@ -3998,17 +4014,18 @@ int             linkage_set_locus_order(linkage_ped_top *Top, int *order)
                     if (Top->pedfile_type == POSTMAKEPED_PFT) {
                         for (entry_ = 0; entry_ < Top->Ped[ped].EntryCnt; entry_++) {
                             Entry = &(Top->Ped[ped].Entry[entry_]);
-                            tmpdatap = Entry->Data[i];
-                            Entry->Data[i] = Entry->Data[j];
-                            Entry->Data[j] = tmpdatap;
+
+                            tmpdatapp = Entry->Pheno[i];
+                            Entry->Pheno[i] = Entry->Pheno[j];
+                            Entry->Pheno[j] = tmpdatapp;
                         }
                     } else {
                         /* pre makeped format */
                         for (entry_ = 0; entry_ < Top->PTop[ped].num_persons; entry_++) {
                             PEntry=&(Top->PTop[ped].persons[entry_]);
-                            tmpdatap= PEntry->data[i];
-                            PEntry->data[i] = PEntry->data[j];
-                            PEntry->data[j] = tmpdatap;
+                            tmpdatapp= PEntry->pheno[i];
+                            PEntry->pheno[i] = PEntry->pheno[j];
+                            PEntry->pheno[j] = tmpdatapp;
                         }
                     }
 
@@ -4039,22 +4056,22 @@ int             linkage_set_locus_order(linkage_ped_top *Top, int *order)
     for(ped=0; ped < Top->PedCnt; ped++) {
         if (Top->pedfile_type == POSTMAKEPED_PFT) {
             for(entry_=0; entry_ < Top->Ped[ped].EntryCnt; entry_++) {
-                Top->Ped[ped].Entry[entry_].Data =
-                    REALLOC(Top->Ped[ped].Entry[entry_].Data,
-                            (size_t) Top->LocusTop->LocusCnt, linkage_pedrec_data);
+                Top->Ped[ped].Entry[entry_].Pheno =
+                    REALLOC(Top->Ped[ped].Entry[entry_].Pheno,
+                            (size_t) Top->LocusTop->PhenoCnt, pheno_pedrec_data);
             }
         } else {
             for(entry_=0; entry_ < Top->PTop[ped].num_persons; entry_++) {
-                Top->PTop[ped].persons[entry_].data =
-                    REALLOC(Top->PTop[ped].persons[entry_].data,
-                            (size_t) Top->LocusTop->LocusCnt, linkage_pedrec_data);
+                Top->PTop[ped].persons[entry_].pheno =
+                    REALLOC(Top->PTop[ped].persons[entry_].pheno,
+                            (size_t) Top->LocusTop->PhenoCnt, pheno_pedrec_data);
             }
         }
     }
 
     return 0;
 }
-
+#endif
 
 static int index_selections(int num_select, int *selections,
 			    int num_values, int *values,
@@ -4392,8 +4409,8 @@ static void reset_ychrom_positions(linkage_ped_top *Top)
     upper = chromo_loci_count[has_y];
 
     for (loc = lower; loc < upper; loc++) {
-        Top->LocusTop->Locus[reordered_marker_loci[loc]].position =
-            Top->LocusTop->Locus[reordered_marker_loci[loc]].pos_male =
-            Top->LocusTop->Locus[reordered_marker_loci[loc]].pos_female = 0.0;
+        Top->LocusTop->Marker[reordered_marker_loci[loc]].pos_avg =
+            Top->LocusTop->Marker[reordered_marker_loci[loc]].pos_male =
+            Top->LocusTop->Marker[reordered_marker_loci[loc]].pos_female = 0.0;
     }
 }

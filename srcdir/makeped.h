@@ -30,15 +30,6 @@
 #ifndef MAKEPED_H
 #define MAKEPED_H
 
-#define PQUANT(l) data[l].Quant
-#define PAFFDATA(l) data[l].Affection
-#define PCLASS(l)   PAFFDATA(l).Class
-#define PSTATUS(l)  PAFFDATA(l).Status
-#define PALLELE1(l) data[l].Alleles.Allele_1
-#define PALLELE2(l) data[l].Alleles.Allele_2
-#define PRALLELE1(l) data[l].RAlleles.Allele_1
-#define PRALLELE2(l) data[l].RAlleles.Allele_2
-
 #define PFOUNDER(p) ((p).father == 0 && (p).mother == 0)
 /* reads in a pedigree file, checks if it is in pre-makeped format,
    then converts it to post-makeped format, breaking loops if necessary.

@@ -308,6 +308,7 @@ typedef enum
 
 /* int             quiet; */
 /* global variables that control output behaviour*/
+extern int             MARKER_SCHEME;
 extern const char     *genetic_distance_map_type_string[3];
 extern int             LoopOverTrait; /* flag for looping over traits */
 extern int             LoopOverChrm; /* flag for looping over chromosomes */
@@ -537,6 +538,13 @@ extern char awk_str[5];
     {                                                                   \
         Display_Errors = Display_##errors = 1;                          \
         errors = 0;                                                     \
+    }
+#endif
+
+#ifndef SUPPRESS_MSSG_NESTED_FORCE
+#define SUPPRESS_MSSG_NESTED_FORCE(errors)	                        \
+    {                                                                   \
+        Display_Errors = 1;                                             \
     }
 #endif
 

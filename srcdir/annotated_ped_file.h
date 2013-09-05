@@ -95,8 +95,10 @@ typedef struct _annotated_ped_rec {
     char FirstOff[MAX_NAMELEN], NextMatSib[MAX_NAMELEN], NextPatSib[MAX_NAMELEN];
     char Sex;
     int MZTwin, DZTwin, Proband, Group;
+    int genocnt;
     int LinkPedID, LinkPerID;
-    linkage_pedrec_data *data;
+    pheno_pedrec_data   *pheno;
+    void                *marker;
 } annotated_ped_rec;
 
 extern col_hdr_type    ReservedColnames[NUM_PEDCOL_NAMES];

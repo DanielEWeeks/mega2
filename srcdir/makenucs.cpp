@@ -213,14 +213,14 @@ static void  write_nuclear_peds(char *outfl, linkage_ped_top *Top2,
                         break;
                     case NUMBERED:
                         if (numchr == 0 ||
-                            Top2->LocusTop->Locus[ChrLoci[locus]].chromosome != numchr)
+                            Top2->LocusTop->Marker[ChrLoci[locus]].chromosome != numchr)
                             write_numbered_data(filep, ChrLoci[locus],
                                                 &(Top2->LocusTop->Locus[ChrLoci[locus]]),
                                                 Entry);
                         break;
                     case BINARY:
                         if (numchr == 0 ||
-                            Top2->LocusTop->Locus[ChrLoci[locus]].chromosome != numchr)
+                            Top2->LocusTop->Marker[ChrLoci[locus]].chromosome != numchr)
                             write_binary_data(filep, ChrLoci[locus],
                                               &(Top2->LocusTop->Locus[ChrLoci[locus]]),
                                               Entry);
@@ -541,7 +541,8 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
             To->origped = ped;
             To->IsTyped = 0;
             copy_le_static_data(&(Top->Ped[ped].Entry[0]), &(To->Entry[0]));
-            To->Entry[0].Data = Top->Ped[ped].Entry[0].Data;
+            To->Entry[0].Pheno  = Top->Ped[ped].Entry[0].Pheno;
+            To->Entry[0].Marker = Top->Ped[ped].Entry[0].Marker;
             /* adjust some fields for mum */
             To->Entry[0].ID=1;
             To->Entry[0].Father=0;
@@ -572,7 +573,8 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
 
                 copy_le_static_data(PedTop->PedTree[ped].Entry[mother-1].LEntry,
                                     &(To->Entry[0]));
-                To->Entry[0].Data = (PedTop->PedTree[ped].Entry[mother-1].LEntry)->Data;
+                To->Entry[0].Pheno  = (PedTop->PedTree[ped].Entry[mother-1].LEntry)->Pheno;
+                To->Entry[0].Marker = (PedTop->PedTree[ped].Entry[mother-1].LEntry)->Marker;
 
                 /* adjust some fields for mum */
                 To->Entry[0].ID=1;
@@ -587,7 +589,9 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
 
                 copy_le_static_data(PedTop->PedTree[ped].Entry[father-1].LEntry,
                                     &(To->Entry[1]));
-                To->Entry[1].Data = (PedTop->PedTree[ped].Entry[father-1].LEntry)->Data;
+                To->Entry[1].Pheno  = (PedTop->PedTree[ped].Entry[father-1].LEntry)->Pheno;
+                To->Entry[1].Marker = (PedTop->PedTree[ped].Entry[father-1].LEntry)->Marker;
+
 
                 /* adjust some fields for papa */
                 To->Entry[1].ID=2;
@@ -609,7 +613,8 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
                             /* 			   &(To->Entry[newentry]),  Top); */
                             copy_le_static_data(PedTop->PedTree[ped].Entry[entry].LEntry,
                                                 &(To->Entry[newentry]));
-                            To->Entry[newentry].Data = (PedTop->PedTree[ped].Entry[entry].LEntry)->Data;
+                            To->Entry[newentry].Pheno = (PedTop->PedTree[ped].Entry[entry].LEntry)->Pheno;
+                            To->Entry[newentry].Marker = (PedTop->PedTree[ped].Entry[entry].LEntry)->Marker;
 
                             /* adjust some fields for offspring */
                             To->Entry[newentry].ID=newentry+1;

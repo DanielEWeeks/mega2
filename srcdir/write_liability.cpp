@@ -395,7 +395,7 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
     for (kk=0; kk<num_AFFECTION; kk++){
         locus_AFFECTION=allele_dist[kk].locus_AFFECTION;
         ltop=LPedTreeTop->LocusTop;
-        lclasses=ltop->Locus[locus_AFFECTION].Data.Affection.ClassCnt;
+        lclasses=ltop->Pheno[locus_AFFECTION].Props.Affection.ClassCnt;
         header_p=NULL;
         header_p=CALLOC((size_t) lclasses*3, int);
 

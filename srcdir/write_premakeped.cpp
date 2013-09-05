@@ -84,11 +84,11 @@ static void merlin_affection_data(FILE *filep,
 {
     int affected=0;
 
-    if (locus->LAFFDATA.ClassCnt == 1) {
-        affected = entry->ESTATUS(locusnm);
+    if (locus->Pheno->Props.Affection.ClassCnt == 1) {
+        affected = entry->Pheno[locusnm].Affection.Status;
     } else {
-        affected = aff_status_entry(entry->ESTATUS(locusnm),
-                                    entry->ECLASS(locusnm),
+        affected = aff_status_entry(entry->Pheno[locusnm].Affection.Status,
+                                    entry->Pheno[locusnm].Affection.Class,
                                     locus);
     }
     fprintf(filep, "  %d", affected);
@@ -225,10 +225,10 @@ void save_premakeped_peds(char *outfl_name, linkage_ped_top *Top,
                             // argument ‘-x missing_value_code’ to specify a missing quantitative value.
                             // This being the case the batch file parameter 'Value_Missing_Quant_On_Output' is
 			    // not used here.
-                            if (fabs(Entry->EQUANT(*trp) - MissingQuant) <= EPSILON)
+                            if (fabs(Entry->Pheno[*trp].Quant - MissingQuant) <= EPSILON)
                                 fprintf(filep, "    x     ");
                             else
-                                fprintf(filep, "%10.5f", Entry->EQUANT(*trp));
+                                fprintf(filep, "%10.5f", Entry->Pheno[*trp].Quant);
                         } else {
                             // For the other analysis that use this routine, the missing quant on output
                             // parameter will be used.
@@ -276,10 +276,10 @@ void save_premakeped_peds(char *outfl_name, linkage_ped_top *Top,
                                 fprintf(filep, "  ");
                                 // The documentation for Merlin says to use ‘x’ rather than using the command line
                                 // argument ‘-x missing_value_code’ to specify a missing quantitative value.
-                                if (fabs(Entry->EQUANT(locus) - MissingQuant) <= EPSILON)
+                                if (fabs(Entry->Pheno[locus].Quant - MissingQuant) <= EPSILON)
                                     fprintf(filep, "    x     ");
                                 else
-                                    fprintf(filep, "%10.5f", Entry->EQUANT(locus));
+                                    fprintf(filep, "%10.5f", Entry->Pheno[locus].Quant);
                             } else {
                                 // This would include analysis: TO_LOKI, TO_PREMAKEPED.
                                 write_quantitative_data(filep, locus, Loc, Entry);
@@ -302,11 +302,11 @@ void save_premakeped_peds(char *outfl_name, linkage_ped_top *Top,
                     fprintf(filep, " ID: %s", Entry->UniqueID);
                 } else if (analysis == TO_MERLINONLY && model_file) {
                     if (LoopOverTrait == 1 &&
-                        Top->LocusTop->Locus[*trp].LAFFDATA.ClassCnt > 1) {
+                        Top->LocusTop->Pheno[*trp].Props.Affection.ClassCnt > 1) {
                         fprintf(filep,"%8d", aff_status[0]);
                     } else {
                         for (j=0; j < num_affection; j++) {
-                            if (Top->LocusTop->Locus[aff_loci[j]].LAFFDATA.ClassCnt > 1) {
+                            if (Top->LocusTop->Pheno[aff_loci[j]].Props.Affection.ClassCnt > 1) {
                                 fprintf(filep,"%8d ", aff_status[j]);
                             }
                         }
@@ -361,29 +361,29 @@ static void merlin_model_file(char *model_file, linkage_locus_top *LTop)
                 Loc = &(LTop->Locus[global_trait_entries[l]]);
                 fprintf(filep, "%15s ", Loc->Name);
                 fprintf(filep, "%f ", Loc->Allele[1].Frequency);
-                if (Loc->LAFFDATA.ClassCnt == 1) {
+                if (Loc->Pheno->Props.Affection.ClassCnt == 1) {
                     fprintf(filep, "%f,%f,%f  ",
-                            Loc->LAFFDATA.Class[0].AutoPen[0],
-                            Loc->LAFFDATA.Class[0].AutoPen[1],
-                            Loc->LAFFDATA.Class[0].AutoPen[2]);
+                            Loc->Pheno->Props.Affection.Class[0].AutoPen[0],
+                            Loc->Pheno->Props.Affection.Class[0].AutoPen[1],
+                            Loc->Pheno->Props.Affection.Class[0].AutoPen[2]);
                     fprintf(filep, "%s\n", Loc->Name);
                 } else {
                     fprintf(filep, "*       %s\n", Loc->Name);
-                    for (a=0; a < Loc->LAFFDATA.ClassCnt; a++) {
+                    for (a=0; a < Loc->Pheno->Props.Affection.ClassCnt; a++) {
                         fprintf(filep, "%15s_covar = %d    ",
                                 Loc->Name, (liability_multiplier + a + 1));
                         /* Use 1-Pen */
                         fprintf(filep, "%f,%f,%f\n",
-                                (1.0 - Loc->LAFFDATA.Class[a].AutoPen[0]),
-                                (1.0 - Loc->LAFFDATA.Class[a].AutoPen[1]),
-                                (1.0 - Loc->LAFFDATA.Class[a].AutoPen[2]));
+                                (1.0 - Loc->Pheno->Props.Affection.Class[a].AutoPen[0]),
+                                (1.0 - Loc->Pheno->Props.Affection.Class[a].AutoPen[1]),
+                                (1.0 - Loc->Pheno->Props.Affection.Class[a].AutoPen[2]));
                         fprintf(filep, "%15s_covar = %d    ",
                                 Loc->Name, (liability_multiplier*2 + a + 1));
                         /* Use Pen */
                         fprintf(filep, "%f,%f,%f\n",
-                                Loc->LAFFDATA.Class[a].AutoPen[0],
-                                Loc->LAFFDATA.Class[a].AutoPen[1],
-                                Loc->LAFFDATA.Class[a].AutoPen[2]);
+                                Loc->Pheno->Props.Affection.Class[a].AutoPen[0],
+                                Loc->Pheno->Props.Affection.Class[a].AutoPen[1],
+                                Loc->Pheno->Props.Affection.Class[a].AutoPen[2]);
                         /* print the otherwise clause */
                     }
                     fprintf(filep, "     OTHERWISE     0.0,0.0,0.0\n");
@@ -897,7 +897,7 @@ static void write_merlin_map(linkage_locus_top *LTop,
                 LTop->Locus[locus].Type == BINARY) {
                 
                 fprintf(fp, "%2d  %-15s",
-                        LTop->Locus[locus].chromosome,
+                        LTop->Marker[locus].chromosome,
                         ((analysis == TO_MERLIN) ?
                          strtail(LTop->Locus[locus].Name, MERLIN_MAX_LOCUS_NAME_LEN) :
                          LTop->Locus[locus].Name));
@@ -905,9 +905,9 @@ static void write_merlin_map(linkage_locus_top *LTop,
                 if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
                     // Even for the X chromosome we use the sex-averaged position to give the user an opportunity
                     // to "fudge it" by copying the female map position into the sex-average map...
-                    double apos = (LTop->map_distance_type == 'k') ? position[locus1] : LTop->Locus[locus].position;
+                    double apos = (LTop->map_distance_type == 'k') ? position[locus1] : LTop->Marker[locus].pos_avg;
                     fprintf(fp, " %10f\n", apos); // three column map
-                    if (LTop->Locus[locus].chromosome == SEX_CHROMOSOME && display_warning_XwAverage == 0) {
+                    if (LTop->Marker[locus].chromosome == SEX_CHROMOSOME && display_warning_XwAverage == 0) {
                         warnf("Value_Genetic_Distance_SexTypeMap specified a sex-averaged map");
                         warnf("which is being used on the X-Chromosome.");
                         display_warning_XwAverage++;
@@ -915,8 +915,8 @@ static void write_merlin_map(linkage_locus_top *LTop,
                     
                 } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
                     // On the X chromosome only use female map positions...
-                    if (LTop->Locus[locus].chromosome == SEX_CHROMOSOME) {
-                        double fpos = (LTop->map_distance_type == 'k') ? female_pos[locus1] : LTop->Locus[locus].pos_female;
+                    if (LTop->Marker[locus].chromosome == SEX_CHROMOSOME) {
+                        double fpos = (LTop->map_distance_type == 'k') ? female_pos[locus1] : LTop->Marker[locus].pos_female;
                         fprintf(fp, " %10f    %10f     %10f\n", fpos, fpos, fpos); // five column map
                         if (display_warning_FemaleEverywhere == 0) {
                             warnf("You specified sex-specific analysis on the X chromosome.");
@@ -930,9 +930,9 @@ static void write_merlin_map(linkage_locus_top *LTop,
                             fpos = female_pos[locus1];
                             mpos = male_pos[locus1];
                         } else {
-                            apos = LTop->Locus[locus].position;
-                            fpos = LTop->Locus[locus].pos_female;
-                            mpos = LTop->Locus[locus].pos_male;
+                            apos = LTop->Marker[locus].pos_avg;
+                            fpos = LTop->Marker[locus].pos_female;
+                            mpos = LTop->Marker[locus].pos_male;
                         }
                         fprintf(fp, " %10f    %10f     %10f\n", apos, fpos, mpos); // five column map
                         if (display_warning_SexwAverage == 0) {
@@ -945,8 +945,8 @@ static void write_merlin_map(linkage_locus_top *LTop,
                     }
                     
                 } else if (genetic_distance_sex_type_map == FEMALE_GDMT) {
-                    if (LTop->Locus[locus].chromosome == SEX_CHROMOSOME) {
-                        double fpos = (LTop->map_distance_type == 'k') ? female_pos[locus1] : LTop->Locus[locus].pos_female;
+                    if (LTop->Marker[locus].chromosome == SEX_CHROMOSOME) {
+                        double fpos = (LTop->map_distance_type == 'k') ? female_pos[locus1] : LTop->Marker[locus].pos_female;
                         fprintf(fp, " %10f    %10f     %10f\n", fpos, fpos, fpos);
                     } else {
                         errorvf("A female-only genetic map can only be used on the X chromosome.\n");
@@ -1078,13 +1078,13 @@ static void write_qtdt_locus_file(char *loc_file, linkage_locus_top *LTop,
         /* Write the covariates if necessary */
         if (model_file) {
             if (LoopOverTrait == 1 && LTop->Locus[*trp].Type == AFFECTION
-                && LTop->Locus[*trp].LAFFDATA.ClassCnt > 1) {
+                && LTop->Pheno[*trp].Props.Affection.ClassCnt > 1) {
                 fprintf(fp, "C  %s_covar\n", LTop->Locus[*trp].Name);
             } else {
                 for (locus=0; locus < num_traits; locus++) {
                     SKIP_TRI(locus)
                         if (LTop->Locus[global_trait_entries[locus]].Type == AFFECTION
-                            && LTop->Locus[global_trait_entries[locus]].LAFFDATA.ClassCnt > 1) {
+                            && LTop->Pheno[global_trait_entries[locus]].Props.Affection.ClassCnt > 1) {
                             fprintf(fp, "C  %s_covar\n", LTop->Locus[global_trait_entries[locus]].Name);
                         }
                 }

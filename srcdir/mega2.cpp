@@ -199,6 +199,7 @@ write_simulate_files_ext.h:  create_SIMULATE_format_files
 /* int             quiet; */
 /* global variables that control output behaviour*/
 // strings associated with common.h: genetic_distance_map_type
+int             MARKER_SCHEME;
 const char *genetic_distance_map_type_string[3] = {
   "sex-averaged", "sex-specific", "female"
 };
@@ -359,6 +360,7 @@ static void    init_globals(char *argv0)
 
     /* set the mega2 path */
     check_web_ver = 1;
+    MARKER_SCHEME = 3;
     (void)getcwd(InputPath, (size_t) FILENAME_LENGTH);
     strcpy(mega2_path1, argv0);
     path_end=strrchr(mega2_path1, '/');
@@ -587,7 +589,7 @@ int             main(int argc, char **argv)
     init_globals(argv[0]);
     TimeStampWritten[0]=0; TimeStampWritten[1]=0;
     mega2_opts(argc, argv);
-
+    printf("MARKER_SCHEME = %d\n", MARKER_SCHEME);
     // Initialize these just in case we are not getting the data from a batch file...
     genetic_distance_index = -1;
     base_pair_position_index = -1;
@@ -970,8 +972,11 @@ int             main(int argc, char **argv)
     FirstTime=1;
     PedTreeTop=convert_to_pedtree(LPedTreeTop, 0);
     /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+
+//NrvB: PedTreeTop->Locus ONLY contains markers!!
     full_check(PedTreeTop, LPedTreeTop, analysis);
     /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+
     free_all_including_ped_top(PedTreeTop, NULL, NULL);
     /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
     PedTreeTop = NULL;

@@ -85,7 +85,6 @@ typedef struct _mdata_ {
 
 typedef struct marker_ {
     allele_list_type *first_allele;
-    class_list_type *class_list;
     recode_marker_data data;
     int estimate_frequencies, recode_alleles;
     int num_total_alleles;
@@ -96,5 +95,19 @@ typedef struct marker_ {
     int num_half_typed;
     int ht_founders, ht_random, ht_unique, ht_everyone;
 } marker_type;
+
+//r fields ? && above
+typedef struct pheno_ {
+    allele_list_type *first_allele;
+    class_list_type *class_list;
+    recode_marker_data data;
+    int estimate_frequencies;
+} pheno_type;
+
+typedef struct {
+    const char *all1;
+    const char *all2;
+    int num;
+} allelecnt;
 
 #endif

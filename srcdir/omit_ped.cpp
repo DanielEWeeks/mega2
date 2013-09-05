@@ -248,12 +248,14 @@ int is_typed_at_markers(entry_type Entry, int pedfile_type,
 {
     int num_marker_loci=0, num_markers, j;
     int i, is_typed=0;
-    linkage_pedrec_data *data;
+    void *marker;
+    const char *ar1, *ar2;
+    int a1, a2;
 
     if (pedfile_type == POSTMAKEPED_PFT) {
-        data = Entry.LEntry->Data;
+        marker = Entry.LEntry->Marker;
     } else {
-        data = Entry.PEntry->data;
+        marker = Entry.PEntry->marker;
     }
 
     if (ChrLoci == NULL) {
@@ -272,13 +274,13 @@ int is_typed_at_markers(entry_type Entry, int pedfile_type,
             if (LTop->PedRecDataType == Premakeped ||
                LTop->PedRecDataType == Postmakeped) {
                 num_marker_loci++;
-                is_typed +=
-                    ((data[i].Alleles.Allele_1 > 0 &&  data[i].Alleles.Allele_2 > 0)?
-                     1 : 0);
+                get_2alleles(marker, i, &a1, &a2);
+                is_typed += (a1 > 0 && a2 > 0) ?  1 : 0;
             } else {
+                get_2Ralleles(marker, i, &ar1, &ar2);
                 is_typed +=
-                    ((strcmp(data[i].RAlleles.Allele_1, REC_UNKNOWN) &&
-                      strcmp(data[i].RAlleles.Allele_2, REC_UNKNOWN))?
+                    ((strcmp(ar1, REC_UNKNOWN) &&
+                      strcmp(ar2, REC_UNKNOWN))?
                      1 : 0);
             }
         }
@@ -310,18 +312,18 @@ int is_phenotyped(entry_type Entry, int pedfile_type, linkage_locus_top *LTop)
         if (LTop->Locus[i].Type == QUANT) {
             if (pedfile_type == POSTMAKEPED_PFT) {
                 /* linkage format  */
-                is_typed += ((fabs(Entry.LEntry->EQUANT(i) - MissingQuant) > EPSILON)?
+                is_typed += ((fabs(Entry.LEntry->Pheno[i].Quant - MissingQuant) > EPSILON)?
                              1 : 0);
             } else {
                 /* pre-makeped format */
-                is_typed += ((fabs(Entry.PEntry->PQUANT(i) - MissingQuant) > EPSILON)?
+                is_typed += ((fabs(Entry.PEntry->pheno[i].Quant - MissingQuant) > EPSILON)?
                              1 : 0);
             }
         } else  if (LTop->Locus[i].Type == AFFECTION) {
             if (pedfile_type == POSTMAKEPED_PFT) {
-                is_typed += ((Entry.LEntry->ESTATUS(i))? 1 : 0);
+                is_typed += ((Entry.LEntry->Pheno[i].Affection.Status)? 1 : 0);
             } else {
-                is_typed += ((Entry.PEntry->PSTATUS(i))? 1 : 0);
+                is_typed += ((Entry.PEntry->pheno[i].Affection.Status)? 1 : 0);
             }
         }
     }

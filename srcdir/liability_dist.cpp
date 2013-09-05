@@ -71,7 +71,7 @@ static liable_allele_dist *alloc_allele_dist(int num_affected, int *loci_affecte
     for (mm=0; mm <num_affected; mm++){
         aff_locus_num=loci_affected[mm];
         LiableAlleleDist[mm].locus_AFFECTION = aff_locus_num;
-        num_classes=Llocus_top->Locus[aff_locus_num].Data.Affection.ClassCnt;
+        num_classes=Llocus_top->Pheno[aff_locus_num].Props.Affection.ClassCnt;
         LiableAlleleDist[mm].num_liabls=num_classes;
         LiableAlleleDist[mm].MarkerLiability= MALLOC_STR(num_numbered, marker_liabl_type);
         LiableAlleleDist[mm].loci_NUMBERED = MALLOC_STR(num_numbered, int);
@@ -200,7 +200,7 @@ static liable_allele_dist *create_allele_dist(linkage_ped_top *LPedTreeTop,
     for (kk=0; kk<num_AFFECTION; kk++){
         /* for each trait locus of affection type */
         t_locus=loci_AFFECTION[kk];
-        num_classes=ltop->Locus[t_locus].Data.Affection.ClassCnt;
+        num_classes=ltop->Pheno[t_locus].Props.Affection.ClassCnt;
         for (mm=0; mm<num_NUMBERED; mm++){
             /* for each marker */
             m_locus=loci_NUMBERED[mm];
@@ -214,19 +214,18 @@ static liable_allele_dist *create_allele_dist(linkage_ped_top *LPedTreeTop,
                     ped_tree=LPedTreeTop->Ped[ii];
                     for (jj=0; jj<ped_tree.EntryCnt; jj++){
                         /* for each entry in each pedigree */
-                        affected_status=ped_tree.Entry[jj].ESTATUS(t_locus);
-                        affected_class=ped_tree.Entry[jj].ECLASS(t_locus);
+                        affected_status=ped_tree.Entry[jj].Pheno[t_locus].Affection.Status;
+                        affected_class=ped_tree.Entry[jj].Pheno[t_locus].Affection.Class;
                         if (affected_class==(nn+1)) {
                             /* current_class is nn */
                             /* assign to the allele dist */
-                            allele1= ped_tree.Entry[jj].EALLELE1(m_locus);
+                            get_2alleles(ped_tree.Entry[jj].Marker, m_locus, &allele1, &allele2);
                             if (allele1>0){
                                 ll = allele1 - 1;
                                 allele_dist[kk].LIABLESTATUS(mm,ll,nn,affected_status) += 1;
                                 allele_dist[kk].MARKERTOTAL(mm, nn, affected_status) += 1;
                                 allele_dist[kk].ALLELETOTAL(mm, ll) += 1;
                             }
-                            allele2=ped_tree.Entry[jj].EALLELE2(m_locus);
                             if (allele2>0) {
                                 ll = allele2 - 1;
                                 allele_dist[kk].LIABLESTATUS(mm,ll,nn,affected_status) += 1;

@@ -90,7 +90,7 @@ static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
             if (!_allele1 || !_allele2) return;
             pr_id();
             pr_marker_name();
-            if (_LTop->Locus[_locus].Data.Numbered.Recoded) {
+            if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                 // How we represent the allele in the output...
                 // display the allele name according to the value associated with this person...
                 pr_printf("%2s %2s",
@@ -185,7 +185,7 @@ static void write_PLINK_map_data(linkage_ped_top *LPTop,
         // This should get us things of Locus[?].Type == {NUMBERED, BINARY, XLINKED, YLINKED}.
         if (LTop->Locus[m].Class == MARKER) {
 //          int LType = LTop->Locus[m].Type;
-            int chr = LTop->Locus[m].chromosome;
+            int chr = LTop->Marker[m].chromosome;
             char *snp = LTop->Locus[m].Name;
             // These are the defaults (e.g. nothing was specified)...
             double genetic_distance = MAP_MISSING, base_pair_position = MAP_MISSING;

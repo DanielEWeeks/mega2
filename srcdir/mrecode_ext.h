@@ -37,7 +37,7 @@ extern file_format check_locus_file_format(FILE *filep);
 extern void convert_to_freq(marker_type *marker_list, linkage_locus_top *LTop,
 			    int count_option, analysis_type analysis);
 
-extern void count_classes(marker_type *markers, linkage_locus_top *LTop);
+extern void count_classes(pheno_type *pheno_list, linkage_locus_top *LTop);
 
 extern void count_raw_alleles(marker_type *markers, linkage_locus_top *LTop);
 
@@ -45,23 +45,24 @@ extern linkage_ped_top *create_allele_list(linkage_ped_top *Top,
 					   int locus,
 					   int count_option,
 					   marker_type *marker_listi,
-                                           int **member_ids,
+                                           allelecnt **member_ids,
 					   int count_ht);
 
 extern linkage_ped_top *create_full_marker_data(FILE *lfp,
 						char *omit_flname,
 						int *untyped_ped_opt,
 						linkage_locus_top *LTop,
+                                                int *col2locus,
 						analysis_type analysis);
 
 extern void default_trait_penetrances(linkage_ped_top *Top, int locus,
-                                      marker_type *marker_listi);
+                                      pheno_type *pheno_listi);
 
 extern void free_marker_item(allele_list_type *marker_item);
 
 extern void free_marker_item_class(class_list_type *liability_class);
 
-extern void load_classes(marker_type *markers, linkage_locus_top *LTop);
+extern void load_classes(pheno_type *pheno, linkage_locus_top *LTop);
 
 extern void need_recoding(marker_type *marker);
 
@@ -73,6 +74,7 @@ extern linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_n
 extern void recode_liability_class(marker_type *marker_list, linkage_locus_top *LTop, int mlocus);
 
 extern void recode_locus_top(marker_type *marker_list,
+                             pheno_type *pheno_list,
                              linkage_locus_top *LTop);
 
 extern void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_type *plink_info);

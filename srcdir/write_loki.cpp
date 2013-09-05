@@ -350,16 +350,16 @@ static void write_LOKI_map(char *map_file, int numchr,
 		if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
 		  fprintf(fp, "Position  %-15s %6.3f, %10.7f\n",
 			  LTop->Locus[ChrLoci[locus]].Name,
-			  LTop->Locus[ChrLoci[locus]].pos_male,
-			  LTop->Locus[ChrLoci[locus]].pos_female);
+			  LTop->Marker[ChrLoci[locus]].pos_male,
+			  LTop->Marker[ChrLoci[locus]].pos_female);
 		} else if (genetic_distance_sex_type_map == FEMALE_GDMT) {
 		  fprintf(fp, "Position  %-15s %10.7f\n",
 			  LTop->Locus[ChrLoci[locus]].Name,
-			  LTop->Locus[ChrLoci[locus]].pos_female);
+			  LTop->Marker[ChrLoci[locus]].pos_female);
 		} else if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
 		  fprintf(fp, "Position  %-15s %10.7f\n",
 			  LTop->Locus[ChrLoci[locus]].Name,
-			  LTop->Locus[ChrLoci[locus]].position);
+			  LTop->Marker[ChrLoci[locus]].pos_avg);
 		} else {
 		  // This should never happen...
 		  errorvf("Internal error writing map file.\n");
@@ -778,14 +778,14 @@ static void write_LOKI_param(char *file_names[],
     for(locus=0; locus < NumChrLoci; locus++) {
         if (LTop->Locus[ChrLoci[locus]].Type == NUMBERED ||
            LTop->Locus[ChrLoci[locus]].Type == BINARY) {
-            if (LTop->Locus[ChrLoci[locus]].position > averaged_max) {
-                averaged_max = LTop->Locus[ChrLoci[locus]].position;
+            if (LTop->Marker[ChrLoci[locus]].pos_avg > averaged_max) {
+                averaged_max = LTop->Marker[ChrLoci[locus]].pos_avg;
             }
-            if (LTop->Locus[ChrLoci[locus]].pos_male > male_max) {
-                male_max = LTop->Locus[ChrLoci[locus]].pos_male;
+            if (LTop->Marker[ChrLoci[locus]].pos_male > male_max) {
+                male_max = LTop->Marker[ChrLoci[locus]].pos_male;
             }
-            if (LTop->Locus[ChrLoci[locus]].pos_female > female_max) {
-                female_max = LTop->Locus[ChrLoci[locus]].pos_female;
+            if (LTop->Marker[ChrLoci[locus]].pos_female > female_max) {
+                female_max = LTop->Marker[ChrLoci[locus]].pos_female;
             }
         }
     }

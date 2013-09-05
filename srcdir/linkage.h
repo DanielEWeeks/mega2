@@ -32,24 +32,12 @@
 #include <stdio.h>
 #include "typedefs.h"
 
+#define ALLELE_ARRAY 256
+
 #define MALE_ID   1
 #define FEMALE_ID 2
 #define UNKNOWN_SEX 0
-#define EAFFDATA(l) Data[l].Affection
-#define EQUADATA(l) Data[l].Quant
-#define EALLELES(l) Data[l].Alleles
-#define ECLASS(l)   EAFFDATA(l).Class
-#define ESTATUS(l)  EAFFDATA(l).Status
-#define EQUANT(l)   EQUADATA(l)
-#define EALLELE1(l) EALLELES(l).Allele_1
-#define EALLELE2(l) EALLELES(l).Allele_2
-#define LQUADATA Data.Quant
-#define LNUMDATA Data.Numbered
-#define LBINDATA Data.Binary
-#define LAFFDATA Data.Affection
 #define IS_LFOUNDER(e) ((e).Mother == 0 && (e).Father == 0)
-#define RALLELE1(l) Data[l].RAlleles.Allele_1
-#define RALLELE2(l) Data[l].RAlleles.Allele_2
 
 typedef struct _loci_markers{
     int NumberInSubOrder;
@@ -109,6 +97,7 @@ typedef struct _linkage_allele_rec {
 
 typedef struct _allele_prop {
     void *prop;
+    int idx;
     char name[ALL_LEN+1];
 } allele_prop;
 
@@ -118,6 +107,7 @@ typedef struct _allele_prop {
 #define allele2allele_prop_prop(p) ( ((allele_prop *)(((char *)(p)) - ((long)allele_prop_allele(0))))->prop )
 */
 #define allele2allele_prop_prop(p) ( ((allele_prop *)(((char *)(p)) - ((char *)allele_prop_allele(0))))->prop )
+#define allele2allele_prop_idx(p)  ( ((allele_prop *)(((char *)(p)) - ((char *)allele_prop_allele(0))))->idx )
 
 /* added separate lists for average, male and female penetrances
    for linkage-format input, only the SexPen and Penetrances
@@ -161,6 +151,35 @@ typedef struct _linkage_affection_data {  /* Affection Status   */
     int *Labels;
 } linkage_affection_data;
 
+/* new */
+
+typedef union _pheno_data {
+    struct _linkage_quant_data Quant;
+    struct _linkage_affection_data Affection;
+} pheno_data;
+
+typedef struct _pheno_rec {
+    char *Name;
+    pheno_data Props;
+    int col_num; /* for annotated files only for now */ //X
+} pheno_rec;
+
+typedef union _marker_data {
+    struct _linkage_numbered_data Numbered;
+    struct _linkage_binary_data Binary;
+} marker_data;
+
+typedef struct _marker_rec {
+    char *Name;
+    marker_data Props;
+    // UNKNOWN_POSITION is used in the following fields pos[ition|_male|_female], & error_prob
+    // when a non-numeric or negative value is read, a value is missing, or un-initialized.
+    double pos_avg, pos_male, pos_female, error_prob;
+    int chromosome;
+    int col_num;
+} marker_rec;
+
+/* end new */
 
 typedef union _linkage_locus_data {
     struct _linkage_quant_data Quant;
@@ -175,17 +194,11 @@ typedef struct _linkage_locus_rec {
     linkage_allele_rec *Allele;     /* will be Allele[] */
     linkage_locus_type Type;
     linkage_locus_class Class;
-    linkage_locus_data Data;
-    char *dname;
+    pheno_rec *Pheno;
+    marker_rec *Marker;
     int number;
-    // UNKNOWN_POSITION is used in the following fields pos[ition|_male|_female], & error_prob
-    // when a non-numeric or negative value is read, a value is missing, or un-initialized.
-    double position, pos_male, pos_female, error_prob;
-    int chromosome;
-    int col_num; /* for annotated files only for now */
+    int col_num; /* for annotated files only for now */ //X
 } linkage_locus_rec;
-
-
 
 /* Recombination mode constants */
 /*  sex difference */
@@ -242,8 +255,12 @@ typedef struct _plink_info_type {
 
 typedef struct _linkage_locus_top {
     int LocusCnt;
+    int PhenoCnt;
+    int MarkerCnt;
     int NumPedigreeCols;
     linkage_locus_rec *Locus;       /* will be Locus[] */
+    pheno_rec *Pheno;
+    marker_rec *Marker;
     int RiskLocus, RiskAllele;
     int SexLinked, Program;    /* program is here because that's where it is */
     int MutLocus, Haplotype;
@@ -274,6 +291,32 @@ typedef union _linkage_pedrec_data {
 
 } linkage_pedrec_data;
 
+/* new */
+
+typedef union _pheno_pedrec_data {
+    struct {
+        int Status, Class;
+    } Affection;
+    double Quant;
+} pheno_pedrec_data;
+
+typedef struct _Alleles {
+    int Allele_1, Allele_2;
+} Alleles_int;
+
+typedef struct _RAlleles {
+    const char *Allele_1, *Allele_2;
+} Alleles_str;
+
+typedef union _marker_pedrec_data {
+    Alleles_int Alleles;
+    Alleles_str RAlleles;
+} marker_pedrec_data;
+
+typedef struct _marker_pedrec_char {
+    unsigned char Allele_1, Allele_2;
+} marker_pedrec_char;
+
 /*
  * We're keeping Allele's independent of locus type
  * because they will probably be useful in all cases.
@@ -286,8 +329,10 @@ typedef struct _linkage_ped_rec {
     int Next_PA_Sib, Next_MA_Sib;   /* linkage ID */
     int Sex;         /* 1 == male, 2 == female  */
     int OrigProband; /* Original proband field */
-    linkage_pedrec_data *Data;  /* will be Data[] */
+    pheno_pedrec_data   *Pheno;
+    void                *Marker;
     void *TmpData;
+    int genocnt;
     int Orig_status;  /* Original status */
     int Ngeno; /* Number of genotypes */
     int IsTyped; /* original linkage record status */
@@ -330,7 +375,9 @@ typedef struct pre_makeped_record_ {
     char uniqueid[MAX_NAMELEN];
     int ped, indiv, father, mother, gender;
     int rec_num;
-    linkage_pedrec_data *data;
+    pheno_pedrec_data   *pheno;
+    void                *marker;
+    int genocnt;
 
 } pre_makeped_record;
 
@@ -340,7 +387,9 @@ typedef struct _person_node_ {
     int node_id;
     int indiv, father, mother, gender;
     int proband;
-    linkage_pedrec_data *data;
+    pheno_pedrec_data   *pheno;
+    void                *marker;
+    int genocnt;
     int from_marriage_node_id; /* offspring of marriage ? */
     int num_to_marriages, to_marriage_node_id[MAXMARRIAGES]; /* participates in marriages ? */
     int degree_genotyped;

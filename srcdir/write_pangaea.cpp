@@ -85,7 +85,7 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
             pr_printf("input pedigree record father mother\n");
             pr_printf("input pedigree record gender present\n");
             if (_tte == 0) {
-            } else if (_tte->Type == AFFECTION && _tte->Data.Affection.ClassCnt > 1) {
+            } else if (_tte->Type == AFFECTION && _tte->Pheno->Props.Affection.ClassCnt > 1) {
                 pr_printf("# file columns %d,%d (integer pair) correspond to trait name %s\n",
                           col, col+1,  _tte->Name);
                 col += 2;
@@ -133,14 +133,14 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
                                        &(_Top->LocusTop->Locus[_trait]));
                 pr_printf("%1d   ", ase);
 */
-                pr_printf("%1d   ", _tpe->Data[_trait].Affection.Status);
-                if (_tte->Data.Affection.ClassCnt > 1)
-                    pr_printf("%1d   ", _tpe->Data[_trait].Affection.Class);
+                pr_printf("%1d   ", _tpe->Pheno[_trait].Affection.Status);
+                if (_tte->Pheno->Props.Affection.ClassCnt > 1)
+                    pr_printf("%1d   ", _tpe->Pheno[_trait].Affection.Class);
             } else if (_tte->Type == QUANT) {
-                if (fabs(_tpe->EQUANT(_trait) - MissingQuant) <= EPSILON) {
+                if (fabs(_tpe->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
                     pr_printf("%10.5f ",  999.0);
                 } else {
-                    pr_printf("%10.5f ", _tpe->EQUANT(_trait));
+                    pr_printf("%10.5f ", _tpe->Pheno[_trait].Quant);
                 }
             } else {
                 pr_printf("%d ", 0);
@@ -178,7 +178,7 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
                 j = global_trait_entries[i];
                 if (j == -1)  continue;
                 linkage_locus_rec *loc = &_LTop->Locus[j];
-                if (loc->Type == AFFECTION && loc->Data.Affection.ClassCnt > 1) {
+                if (loc->Type == AFFECTION && loc->Pheno->Props.Affection.ClassCnt > 1) {
                     pr_printf("# file columns %d,%d (integer pair) correspond to trait name %s\n",
                               col, col+1,  _LTop->Locus[j].Name);
                     col += 2;
@@ -219,14 +219,14 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
                                        &(_Top->LocusTop->Locus[_trait]));
                 pr_printf("%1d   ", ase);
 */
-                pr_printf("%1d   ", _tpe->Data[_trait].Affection.Status);
-                if (_tte->Data.Affection.ClassCnt > 1)
-                    pr_printf("%1d   ", _tpe->Data[_trait].Affection.Class);
+                pr_printf("%1d   ", _tpe->Pheno[_trait].Affection.Status);
+                if (_tte->Pheno->Props.Affection.ClassCnt > 1)
+                    pr_printf("%1d   ", _tpe->Pheno[_trait].Affection.Class);
             } else if (_tte->Type == QUANT) {
-                if (fabs(_tpe->EQUANT(_trait) - MissingQuant) <= EPSILON) {
+                if (fabs(_tpe->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
                     pr_printf("%10.5f ",  999.0);
                 } else {
-                    pr_printf("%10.5f ", _tpe->EQUANT(_trait));
+                    pr_printf("%10.5f ", _tpe->Pheno[_trait].Quant);
                 }
             } else {
                 pr_printf("%d ", 0);
@@ -418,7 +418,7 @@ struct par_var: public loop::outer, loop::null {
         pr_printf("input marker data file '%s%s'\n", pfx, file_names[1]);
         pr_nl();
         if (_tte != 0) {
-            if (_tte->Type == AFFECTION && _tte->Data.Affection.ClassCnt > 1) {
+            if (_tte->Type == AFFECTION && _tte->Pheno->Props.Affection.ClassCnt > 1) {
                 pr_printf("input extra file '%s.liability.extra'\n", _tte->Name);
                 pr_printf("input pedigree record trait 1 integer pairs 2 3\n");
                 pr_printf("set trait 1 data discrete with liability\n");
@@ -439,7 +439,7 @@ struct liability_traits: public loop::trait, loop::null {
 
     liability_traits(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::null(Top) { }
     void make_file() {
-        if (_tte == 0 || _tte->Type != AFFECTION || _tte->Data.Affection.ClassCnt <= 1)
+        if (_tte == 0 || _tte->Type != AFFECTION || _tte->Pheno->Props.Affection.ClassCnt <= 1)
             return;
         char outfl[FILENAME_LENGTH];
         sprintf(outfl, "%s.liability.extra", _tte->Name);
@@ -448,8 +448,8 @@ struct liability_traits: public loop::trait, loop::null {
     }
     void inner() {
         int i = 0;
-        int cnt  = _tte->Data.Affection.ClassCnt;
-        linkage_affection_class *pen = _tte->Data.Affection.Class; //.{Male/Female/Auto}Pen[0]@3 MaleDef
+        int cnt  = _tte->Pheno->Props.Affection.ClassCnt;
+        linkage_affection_class *pen = _tte->Pheno->Props.Affection.Class; //.{Male/Female/Auto}Pen[0]@3 MaleDef
 
         for (i = 1; i <= cnt; i++) {
             pr_printf("%d %.6f %.6f %.6f\n",
@@ -681,7 +681,7 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
         }
         void make_file() {
             if (_tte == 0) {
-            } else if (_tte->Type == AFFECTION && _tte->Data.Affection.ClassCnt > 1) {
+            } else if (_tte->Type == AFFECTION && _tte->Pheno->Props.Affection.ClassCnt > 1) {
                 warnvf("%s: Trait with Liability Class is not supported.  Trait will be ignored.\n", _tte->Name);
             } else if (_tte->Type == QUANT) {
                 warnvf("%s: QUANT type is not supported.  Trait will be ignored.\n", _tte->Name);
@@ -692,7 +692,7 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
         void inner () {
             if (_tte == 0) {
                 return;
-            } else if (_tte->Type == AFFECTION && _tte->Data.Affection.ClassCnt > 1) {
+            } else if (_tte->Type == AFFECTION && _tte->Pheno->Props.Affection.ClassCnt > 1) {
                 return; // leave empty file
             } else if (_tte->Type == QUANT) {
                 return;
@@ -702,7 +702,7 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
             pr_printf("# chromosome data does not depend on traits so is in the above directory\n");
             pr_printf("input marker data file '%s%s'\n", pfx, file_names[1]);
             if (_tte != 0) {
-                if (_tte->Type == AFFECTION && _tte->Data.Affection.ClassCnt > 1) {
+                if (_tte->Type == AFFECTION && _tte->Pheno->Props.Affection.ClassCnt > 1) {
                     pr_printf("# liability classes are not supported for translink.\n");
                     pr_printf("# input extra file '%s.liability.extra'\n", _tte->Name);
                     pr_printf("input pedigree record trait 1 integer pairs 2 3\n");
@@ -978,10 +978,10 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
             token = 0;
         }
         void inner () {
-            int chr = _tle->chromosome;
+            int chr = _tle->Marker->chromosome;
             if (chr == UNKNOWN_CHROMO || chr >= MITO_CHROMOSOME) chr = 0;
 
-            double gp = get_gp(_EXLTop, _tle->Type, _tle->chromosome, _tle->Name, _locus, choice);
+            double gp = get_gp(_EXLTop, _tle->Type, _tle->Marker->chromosome, _tle->Name, _locus, choice);
 //          gp = kosambi_to_haldane(gp);
 //          pr_printf(" <%.6f, %.6f> ", gp, ogp);
             if (ogp > gp - delta) gp = ogp + delta;

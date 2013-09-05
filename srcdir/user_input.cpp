@@ -1235,7 +1235,7 @@ static void define_labels(linkage_ped_top *Top, int tr, char *affdata_str)
        classes across all affection loci
     */
 
-    num_classes = Top->LocusTop->Locus[tr].LAFFDATA.ClassCnt;
+    num_classes = Top->LocusTop->Pheno[tr].Props.Affection.ClassCnt;
 
     found=CALLOC((size_t)(3*num_classes), int);
 
@@ -1243,7 +1243,7 @@ static void define_labels(linkage_ped_top *Top, int tr, char *affdata_str)
         for (ped= 0; ped < Top->PedCnt; ped++) {
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry=&(Top->Ped[ped].Entry[entry]);
-                index=3*(Entry->ECLASS(tr) - 1) +  Entry->ESTATUS(tr);
+                index=3*(Entry->Pheno[tr].Affection.Class - 1) +  Entry->Pheno[tr].Affection.Status;
                 found[index]++;
             }
         }
@@ -1251,8 +1251,8 @@ static void define_labels(linkage_ped_top *Top, int tr, char *affdata_str)
         for (ped= 0; ped < Top->PedCnt; ped++) {
             for (entry = 0; entry < Top->PTop[ped].num_persons; entry++)  {
                 index=
-                    3*(Top->PTop[ped].persons[entry].PCLASS(tr) - 1) +
-                    Top->PTop[ped].persons[entry].PSTATUS(tr);
+                    3*(Top->PTop[ped].persons[entry].pheno[tr].Affection.Class - 1) +
+                    Top->PTop[ped].persons[entry].pheno[tr].Affection.Status;
                 found[index]++;
             }
         }
@@ -1338,11 +1338,11 @@ void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
         SKIP_TRI(i)
             if (Top->LocusTop->Locus[global_trait_entries[i]].Type == AFFECTION) {
                 max_classes =
-                    ((Top->LocusTop->Locus[global_trait_entries[i]].LAFFDATA.ClassCnt >
+                    ((Top->LocusTop->Pheno[global_trait_entries[i]].Props.Affection.ClassCnt >
                       max_classes)?
-                     Top->LocusTop->Locus[global_trait_entries[i]].LAFFDATA.ClassCnt :
+                     Top->LocusTop->Pheno[global_trait_entries[i]].Props.Affection.ClassCnt :
                      max_classes);
-                if (Top->LocusTop->Locus[global_trait_entries[i]].LAFFDATA.ClassCnt > 1) {
+                if (Top->LocusTop->Pheno[global_trait_entries[i]].Props.Affection.ClassCnt > 1) {
                     ml_traits[num_mult_tr] = global_trait_entries[i];
                     num_mult_tr++;
                 }
@@ -1361,12 +1361,12 @@ void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
     for(i=0; i < num_traits; i++) {
         SKIP_TRI(i)
             if (Top->LocusTop->Locus[global_trait_entries[i]].Type == AFFECTION) {
-                if (Top->LocusTop->Locus[global_trait_entries[i]].LAFFDATA.ClassCnt == 1) {
+                if (Top->LocusTop->Pheno[global_trait_entries[i]].Props.Affection.ClassCnt == 1) {
                     /* This simply defines a single label 201 or 200001 for single class */
                     Labels = affected_labels(1, "2-1", &NumLabels);
-                    Top->LocusTop->Locus[global_trait_entries[i]].LAFFDATA.Labels =
+                    Top->LocusTop->Pheno[global_trait_entries[i]].Props.Affection.Labels =
                         Labels;
-                    Top->LocusTop->Locus[global_trait_entries[i]].LAFFDATA.NumLabels =
+                    Top->LocusTop->Pheno[global_trait_entries[i]].Props.Affection.NumLabels =
                         NumLabels;
                 }
             }
@@ -1400,12 +1400,12 @@ void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
                 EXIT(BATCH_FILE_ITEM_ERROR);
             } else {
                 if (check_affdata_str(affdata_str,
-                                      Top->LocusTop->Locus[ml_traits[found]].LAFFDATA.ClassCnt)) {
+                                      Top->LocusTop->Pheno[ml_traits[found]].Props.Affection.ClassCnt)) {
                     Labels =
-                        affected_labels(Top->LocusTop->Locus[ml_traits[found]].LAFFDATA.ClassCnt,
+                        affected_labels(Top->LocusTop->Pheno[ml_traits[found]].Props.Affection.ClassCnt,
                                         affdata_str, &NumLabels);
-                    Top->LocusTop->Locus[ml_traits[found]].LAFFDATA.Labels = Labels;
-                    Top->LocusTop->Locus[ml_traits[found]].LAFFDATA.NumLabels = NumLabels;
+                    Top->LocusTop->Pheno[ml_traits[found]].Props.Affection.Labels = Labels;
+                    Top->LocusTop->Pheno[ml_traits[found]].Props.Affection.NumLabels = NumLabels;
                 } else {
                     /* This string is wrong */
 		    errorvf("Found problems with affection labels.\n");
@@ -1459,12 +1459,12 @@ void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
 
         /* Now set the liability and status labels */
         for(i=0; i < num_mult_tr; i++) {
-            Labels = affected_labels(Top->LocusTop->Locus[ml_traits[i]].LAFFDATA.ClassCnt,
+            Labels = affected_labels(Top->LocusTop->Pheno[ml_traits[i]].Props.Affection.ClassCnt,
                                      Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[i],
                                      &NumLabels);
 
-            Top->LocusTop->Locus[ml_traits[i]].LAFFDATA.Labels = Labels;
-            Top->LocusTop->Locus[ml_traits[i]].LAFFDATA.NumLabels = NumLabels;
+            Top->LocusTop->Pheno[ml_traits[i]].Props.Affection.Labels = Labels;
+            Top->LocusTop->Pheno[ml_traits[i]].Props.Affection.NumLabels = NumLabels;
             /* Now prepend each affdata-string with the trait name */
             affdata_str = strdup(Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[i]);
             sprintf(Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[i], "%s:%s",
@@ -1505,11 +1505,11 @@ static int check_quant_phenotype_data_has_value(linkage_ped_top *Top, double val
             for(ped = 0; ped < Top->PedCnt; ped++) {
                 if (Top->pedfile_type == POSTMAKEPED_PFT) {
                     for(entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
-                        if (fabs(Top->Ped[ped].Entry[entry].Data[i].Quant - value) <= EPSILON) return 1;
+                        if (fabs(Top->Ped[ped].Entry[entry].Pheno[i].Quant - value) <= EPSILON) return 1;
                     }
                 } else {
                     for(entry = 0; entry < Top->PTop[ped].num_persons; entry++) {
-                        if (fabs(Top->PTop[ped].persons[entry].data[i].Quant - value) <= EPSILON) return 1;
+                        if (fabs(Top->PTop[ped].persons[entry].pheno[i].Quant - value) <= EPSILON) return 1;
                     }
                 }
             }
@@ -1780,16 +1780,16 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
                     for(ped = 0; ped < Top->PedCnt; ped++) {
                         if (Top->pedfile_type == POSTMAKEPED_PFT) {
                             for(entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
-                                if (fabs(Top->Ped[ped].Entry[entry].Data[i].Quant - QMISSING) <= EPSILON) {
+                                if (fabs(Top->Ped[ped].Entry[entry].Pheno[i].Quant - QMISSING) <= EPSILON) {
                                     /* Set this to the proper missing quant value */
-                                    Top->Ped[ped].Entry[entry].Data[i].Quant = MissingQuant;
+                                    Top->Ped[ped].Entry[entry].Pheno[i].Quant = MissingQuant;
                                 }
                             }
                         } else {
                             for(entry = 0; entry < Top->PTop[ped].num_persons; entry++) {
-                                if (fabs(Top->PTop[ped].persons[entry].data[i].Quant - QMISSING) <= EPSILON) {
+                                if (fabs(Top->PTop[ped].persons[entry].pheno[i].Quant - QMISSING) <= EPSILON) {
                                     /* Set this to the proper missing quant value */
-                                    Top->PTop[ped].persons[entry].data[i].Quant = MissingQuant;
+                                    Top->PTop[ped].persons[entry].pheno[i].Quant = MissingQuant;
                                 }
                             }
                         }
@@ -1804,16 +1804,16 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
                 for(ped = 0; ped < Top->PedCnt; ped++) {
                     if (Top->pedfile_type == POSTMAKEPED_PFT) {
                         for(entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
-                            if (fabs(Top->Ped[ped].Entry[entry].Data[i].Quant - QMISSING) <= EPSILON) {
+                            if (fabs(Top->Ped[ped].Entry[entry].Pheno[i].Quant - QMISSING) <= EPSILON) {
                                 /* Set this to the proper missing quant value */
-                                Top->Ped[ped].Entry[entry].Data[i].Quant = MissingQuant;
+                                Top->Ped[ped].Entry[entry].Pheno[i].Quant = MissingQuant;
                             }
                         }
                     } else {
                         for(entry = 0; entry < Top->PTop[ped].num_persons; entry++) {
-                            if (fabs(Top->PTop[ped].persons[entry].data[i].Quant - QMISSING) <= EPSILON) {
+                            if (fabs(Top->PTop[ped].persons[entry].pheno[i].Quant - QMISSING) <= EPSILON) {
                                 /* Set this to the proper missing quant value */
-                                Top->PTop[ped].persons[entry].data[i].Quant = MissingQuant;
+                                Top->PTop[ped].persons[entry].pheno[i].Quant = MissingQuant;
                             }
                         }
                     }
@@ -2810,7 +2810,7 @@ RULES:
 3) always select the first map by default.
  
 NOTE:
- IQLS acquires physical position from (int)LTop->Locus[markers[locus]].position where
+ IQLS acquires physical position from (int)LTop->Marker[markers[locus]].pos_avg where
  LTop->map_distance_type == 'p'
 */
 

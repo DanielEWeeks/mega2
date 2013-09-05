@@ -44,10 +44,9 @@
 
 /*        Exported functions           */
 
-int set_locus_order(ped_top *Top, int *order);
+int set_locus_orderDEFUNCT(ped_top *Top, int *order);
 void clear_ped_tree( ped_tree *Tree);
 ped_top *new_ped_top(void);
-int set_locus_order(ped_top *Top, int *order);
 int is_typed(ped_rec *Entry, locus_top *LTop1, int mode);
 ped_top        *convert_to_pedtree(linkage_ped_top *Top, int assign_affs);
 void free_all_including_ped_top(ped_top *Top,  void (*PTmpFreeFun)(void *TmpData),
@@ -65,7 +64,7 @@ void reassign_affecteds(ped_top *PTop);
 /********************************************/
 
 /*        internal functions          */
-static void swap_loci(locus_rec *locus1, locus_rec *locus2);
+static void swap_lociDEFUNCT(locus_rec *locus1, locus_rec *locus2);
 static void clear_locus_top(locus_top *LTop);
 static void clear_ped_top(ped_top *Top);
 static void free_all_from_ped_rec(ped_rec *Entry,
@@ -73,7 +72,6 @@ static void free_all_from_ped_rec(ped_rec *Entry,
 static void free_all_from_locus_rec(locus_rec *Locus);
 static void free_all_from_ped_top(ped_top *Top, void (*PTmpFreeFun)(void *TmpData),
                                   void (*ETmpFreeFun)(void *TmpData));
-static void swap_loci(locus_rec *locus1, locus_rec *locus2);
 static locus_top *new_locus_top(void);
 static void clear_ped_rec(ped_rec *Entry);
 static int sort_affecteds(ped_tree *Ped);
@@ -247,7 +245,7 @@ void add_to_offspring(ped_rec *Parent, ped_rec *Child)
  *
  * Slave routine for set_locus_order(). Swaps data in locus records.
  */
-static void swap_loci(locus_rec *locus1, locus_rec *locus2)
+static void swap_lociDEFUNCT(locus_rec *locus1, locus_rec *locus2)
 
 {
     register locus_rec tmplocus;
@@ -288,7 +286,7 @@ static void swap_loci(locus_rec *locus1, locus_rec *locus2)
  * Return non-zero on error.
  */
 
-int set_locus_order(ped_top *Top, int *order)
+int set_locus_orderDEFUNCT(ped_top *Top, int *order)
 {
     int i, j;
     register int tmpi;
@@ -312,11 +310,13 @@ int set_locus_order(ped_top *Top, int *order)
                 return -1;
             } else {
                 for (j = i+1; (j < LTop->LocusCnt) && (place[j] != order[i]); j++);
-                swap_loci(&(LTop->Locus[i]), &(LTop->Locus[j]));
+                swap_lociDEFUNCT(&(LTop->Locus[i]), &(LTop->Locus[j]));
                 /* Now for all pedigree members... */
                 for (ped = 0; ped < Top->PedCnt; ped++)
                     for (entry = 0; entry < Top->PedTree[ped].EntryCnt; entry++) {
                         Entry = &(Top->PedTree[ped].Entry[entry]);
+                        // I've never seen Allele_1/Allele_2 initialized to a value
+                        // but then, of course, we're never called.
                         tmpallelep = Entry->Allele_1[i];
                         Entry->Allele_1[i] = Entry->Allele_1[j];
                         Entry->Allele_1[j] = tmpallelep;
@@ -724,13 +724,13 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
             llocus1 = reordered_marker_loci[l1];
             /* Set the name. */
             PLTop->Locus[locus1].Name = strdup(LLTop->Locus[llocus1].Name);
-            PLTop->Locus[locus1].chromosome = LLTop->Locus[llocus1].chromosome;
+            PLTop->Locus[locus1].chromosome = LLTop->Marker[llocus1].chromosome;
             /* Allele records are identical. */
             PLTop->Locus[locus1].AlleleCnt = LLTop->Locus[llocus1].AlleleCnt;
             PLTop->Locus[locus1].Allele = (allele_rec *) LLTop->Locus[locus1].Allele;
             PLTop->Locus[locus1].linkage_loc_num = llocus1;
             PLTop->Locus[locus1].linkage_loc_rec = &(LLTop->Locus[llocus1]);
-            if (LLTop->Locus[llocus1].chromosome == MITO_CHROMOSOME) {
+            if (LLTop->Marker[llocus1].chromosome == MITO_CHROMOSOME) {
                 PedTreeMito[mito_locus] = locus1;
                 mito_locus++;
             }
@@ -775,11 +775,12 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
                 LRec->IsTyped=0; PRec->IsTyped = 0;
                 locus1=0;
                 for (l1=0; l1 < num_reordered; l1++) {
+                    int a1, a2;
                     if (LLTop->Locus[reordered_marker_loci[l1]].Class == TRAIT) {
                         continue;
                     }
-                    if (LRec->EALLELE1(reordered_marker_loci[l1]) > 0 &&
-                        LRec->EALLELE2(reordered_marker_loci[l1]) > 0) {
+                    get_2alleles(LRec->Marker, reordered_marker_loci[l1], &a1, &a2);
+                    if (a1 > 0 && a2 > 0 ) {
                         PRec->IsTyped++;
                     }
                     locus1++;

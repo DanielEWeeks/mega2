@@ -119,7 +119,7 @@ static void write_gh_quant(FILE *filep, int locusnm,
 			   analysis_type analysis)
 {
     fprintf(filep, "  ");
-    if (fabs(entry->EQUANT(locusnm) - missing_quant) <= EPSILON) {
+    if (fabs(entry->Pheno[locusnm].Quant - missing_quant) <= EPSILON) {
       if (analysis == TO_GeneHunter) {
 	// http://linkage.rockefeller.edu/soft/gh/
 	// Manual Section2. SCAN PEDIGREES
@@ -134,7 +134,7 @@ static void write_gh_quant(FILE *filep, int locusnm,
             fprintf(filep, "%10.5f", missing_quant);
       }
     } else {
-        fprintf(filep, "%10.5f", entry->EQUANT(locusnm));
+        fprintf(filep, "%10.5f", entry->Pheno[locusnm].Quant);
     }
 }
 
@@ -145,6 +145,8 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
     int m, tr, *trp, locus, allele, tmpi, tmpi2, need_dummy=1;
     int num_markers, *markers=NULL, nloop, num_affec=num_traits;
     linkage_locus_rec *Locus;
+    pheno_rec *Pheno;
+    marker_rec *Marker;
     FILE *filep;
     char lfl_name[2*FILENAME_LENGTH];
 
@@ -217,6 +219,7 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
 
         if (LoopOverTrait == 1) {
             Locus = &(Top->LocusTop->Locus[*trp]);
+            Pheno = &(Top->LocusTop->Pheno[*trp]);
             switch(Locus->Type) {
             case AFFECTION:
                 fprintf(filep, "%d %d", (int) Locus->Type - 1,
@@ -228,18 +231,18 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
                     fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
                 }
                 fputc('\n', filep);
-                fprintf(filep, "%d\n", Locus->LAFFDATA.ClassCnt);
-                for (tmpi = 0; tmpi < Locus->LAFFDATA.ClassCnt; tmpi++) {
+                fprintf(filep, "%d\n", Pheno->Props.Affection.ClassCnt);
+                for (tmpi = 0; tmpi < Pheno->Props.Affection.ClassCnt; tmpi++) {
                     if (sex_linked) {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].FemalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                         fputc('\n', filep);
                         for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].MalePen[tmpi2]);
+                            fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                         fputc('\n', filep);
                     } else {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].AutoPen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                         fputc('\n', filep);
                     }
                 }
@@ -266,6 +269,8 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
 
         for(locus=0; locus < NumChrLoci; locus++) {
             Locus = &(Top->LocusTop->Locus[ChrLoci[locus]]);
+            Pheno = &(Top->LocusTop->Pheno[ChrLoci[locus]]);
+            Marker = &(Top->LocusTop->Marker[ChrLoci[locus]]);
             switch(Locus->Type) {
             case AFFECTION:
                 if (LoopOverTrait == 0) {
@@ -278,18 +283,18 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
                         fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
                     }
                     fputc('\n', filep);
-                    fprintf(filep, "%d\n", Locus->LAFFDATA.ClassCnt);
-                    for (tmpi = 0; tmpi < Locus->LAFFDATA.ClassCnt; tmpi++) {
+                    fprintf(filep, "%d\n", Pheno->Props.Affection.ClassCnt);
+                    for (tmpi = 0; tmpi < Pheno->Props.Affection.ClassCnt; tmpi++) {
                         if (sex_linked) {
-                            for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                                fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].FemalePen[tmpi2]);
+                            for (tmpi2 = 0; tmpi2 < Pheno->Props.Affection.PenCnt; tmpi2++)
+                                fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                             fputc('\n', filep);
                             for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                                fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].MalePen[tmpi2]);
+                                fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                             fputc('\n', filep);
                         } else {
-                            for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                                fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].AutoPen[tmpi2]);
+                            for (tmpi2 = 0; tmpi2 < Pheno->Props.Affection.PenCnt; tmpi2++)
+                                fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                             fputc('\n', filep);
                         }
                     }
@@ -649,13 +654,13 @@ static void write_allegro_affection(FILE *filep, int locusnm,
 
 {
     fprintf(filep, "  ");
-    if (entry->ESTATUS(locusnm) != UNDEF)
-        fprintf(filep, "%d", entry->ESTATUS(locusnm));
+    if (entry->Pheno[locusnm].Affection.Status != UNDEF)
+        fprintf(filep, "%d", entry->Pheno[locusnm].Affection.Status);
     else fprintf(filep, "0");
-    if (locus->LAFFDATA.ClassCnt > 1) {
+    if (locus->Pheno->Props.Affection.ClassCnt > 1) {
         fprintf(filep, " ");
-        if (entry->ECLASS(locusnm) != UNDEF)
-            fprintf(filep, "%d", entry->ECLASS(locusnm));
+        if (entry->Pheno[locusnm].Affection.Class != UNDEF)
+            fprintf(filep, "%d", entry->Pheno[locusnm].Affection.Class);
         else
             fprintf(filep, "1");
     }
@@ -878,7 +883,9 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
 {
     int tr, *trp, *locus, allele, tmpi, tmpi2, tmpi3, i, warn_message = 0;
     int num_markers, num_markers_to_use, *markers=NULL, nloop, num_affec=num_traits;
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
+    pheno_rec *Pheno;
+    marker_rec *Marker;
     FILE *filep;
     char lfl_name[2*FILENAME_LENGTH];
 
@@ -944,42 +951,60 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
 	// For the enums associated with Locus->Type see linkage.h:linkage_locus_type
         if (LoopOverTrait == 1) {
             /* affection locus first */
-            Locus = &(LTop->Locus[*trp]); trp++;
-            fprintf(filep, "%d %d", (int) Locus->Type - 1, Locus->AlleleCnt);
-            if (Locus->Name != NULL)
-                fprintf(filep, " # %s\n", Locus->Name);
-            for (allele = 0; allele < Locus->AlleleCnt; allele++) {
-                fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
+            Locus = &(LTop->Locus[*trp]);
+            Pheno = &(LTop->Pheno[*trp]);
+            trp++;
+            switch (Locus->Type) {
+            case AFFECTION:
+            case QUANT:
+                fprintf(filep, "%d %d", (int) Locus->Type - 1, Locus->AlleleCnt);
+                if (Locus->Name != NULL)
+                    fprintf(filep, " # %s\n", Locus->Name);
+                for (allele = 0; allele < Locus->AlleleCnt; allele++) {
+                    fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
+                }
+                fprintf(filep, "\n");
+                break;
+            case BINARY:
+            case NUMBERED:
+                fprintf(filep, "%d %d", (int) Locus->Type - 1, Locus->AlleleCnt);
+                if (Locus->Name != NULL)
+                    fprintf(filep, " # %s\n", Locus->Name);
+                for (allele = 0; allele < Locus->AlleleCnt; allele++) {
+                    fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
+                }
+                fprintf(filep, "\n");
+                break;
+            default:
+                break;
             }
-            fprintf(filep, "\n");
-
             switch(Locus->Type) {
             case AFFECTION:
-                fprintf(filep, "%d\n", Locus->LAFFDATA.ClassCnt);
-                for (tmpi = 0; tmpi < Locus->LAFFDATA.ClassCnt; tmpi++) {
+                fprintf(filep, "%d\n", Pheno->Props.Affection.ClassCnt);
+                for (tmpi = 0; tmpi < Pheno->Props.Affection.ClassCnt; tmpi++) {
                     if (sex_linked) {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].FemalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                         fputc('\n', filep);
                         for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].MalePen[tmpi2]);
+                            fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                         fputc('\n', filep);
                     } else {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].AutoPen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                         fputc('\n', filep);
                     }
                 }
                 break;
             case QUANT:
-                fprintf(filep, "%d\n", Locus->LQUADATA.ClassCnt);
-                for (tmpi = Locus->LQUADATA.ClassCnt; tmpi > 0; tmpi--)
+                fprintf(filep, "%d\n", Pheno->Props.Quant.ClassCnt);
+                for (tmpi = Pheno->Props.Quant.ClassCnt; tmpi > 0; tmpi--)
                     for (tmpi2 = 0; tmpi2 < 3; tmpi2++)
-                        fprintf(filep," %7.6f", Locus->LQUADATA.Mean[tmpi-1][tmpi2]);
+                        fprintf(filep," %7.6f", Pheno->Props.Quant.Mean[tmpi-1][tmpi2]);
                 fprintf(filep, " << GENOTYPE MEANS\n");
                 /* ASSUMES only one trait per qtl */
-                fprintf(filep," %7.6f\n", Locus->LQUADATA.Variance[0][0]);
-                fprintf(filep," %7.6f\n", Locus->LQUADATA.Multiplier);
+                fprintf(filep," %7.6f\n", Pheno->Props.Quant.Variance[0][0]);
+                fprintf(filep," %7.6f\n", Pheno->Props.Quant.Multiplier);
                 break;
             default:
                 warnvf("Invalid locus type\n");
@@ -989,6 +1014,8 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
         /* now the numbered, binary and covariates*/
         for (locus = &(markers[0]), tmpi3 = 0; tmpi3 < num_markers_to_use; locus++, tmpi3++) {
             Locus = &(LTop->Locus[*locus]);
+            Pheno = &(LTop->Pheno[*locus]);
+            Marker = &(LTop->Marker[*locus]);
             switch(Locus->Type) {
             case AFFECTION:
                 if (LoopOverTrait == 0 || Locus->Class == COVARIATE) {
@@ -1000,18 +1027,18 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
                         fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
                     }
                     fputc('\n', filep);
-                    fprintf(filep, "%d\n", Locus->LAFFDATA.ClassCnt);
-                    for (tmpi = 0; tmpi < Locus->LAFFDATA.ClassCnt; tmpi++) {
+                    fprintf(filep, "%d\n", Pheno->Props.Affection.ClassCnt);
+                    for (tmpi = 0; tmpi < Pheno->Props.Affection.ClassCnt; tmpi++) {
                         if (sex_linked) {
-                            for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                                fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].FemalePen[tmpi2]);
+                            for (tmpi2 = 0; tmpi2 < Pheno->Props.Affection.PenCnt; tmpi2++)
+                                fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                             fputc('\n', filep);
                             for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                                fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].MalePen[tmpi2]);
+                                fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                             fputc('\n', filep);
                         } else {
-                            for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                                fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].AutoPen[tmpi2]);
+                            for (tmpi2 = 0; tmpi2 < Pheno->Props.Affection.PenCnt; tmpi2++)
+                                fprintf(filep, " %.4f", Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                             fputc('\n', filep);
                         }
                     }
@@ -1028,17 +1055,17 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
                         fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
                     }
                     fputc('\n', filep);
-                    fprintf(filep, "%d\n", Locus->Data.Quant.ClassCnt);
-                    for (tmpi = Locus->Data.Quant.ClassCnt; tmpi > 0; tmpi--)
+                    fprintf(filep, "%d\n", Pheno->Props.Quant.ClassCnt);
+                    for (tmpi = Pheno->Props.Quant.ClassCnt; tmpi > 0; tmpi--)
                         for (tmpi2 = 0; tmpi2 < 3; tmpi2++) {
                             // local for debugging....
-                            double f = Locus->Data.Quant.Mean[tmpi-1][tmpi2];
+                            double f = Pheno->Props.Quant.Mean[tmpi-1][tmpi2];
                             fprintf(filep," %.6f", f);
                         }
                     fprintf(filep, " << GENOTYPE MEANS\n");
                     /* ASSUMES only one trait per qtl */
-                    fprintf(filep," %.6f\n", Locus->Data.Quant.Variance[0][0]);
-                    fprintf(filep," %.6f\n", Locus->Data.Quant.Multiplier);
+                    fprintf(filep," %.6f\n", Pheno->Props.Quant.Variance[0][0]);
+                    fprintf(filep," %.6f\n", Pheno->Props.Quant.Multiplier);
                 }
                 break;
 
@@ -1052,10 +1079,10 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
                     fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
                 }
                 fputc('\n', filep);
-                fprintf(filep, "%d\n", Locus->LBINDATA.FactorCnt);
-                for (tmpi = 0; tmpi < Locus->LBINDATA.FactorCnt; tmpi++) {
+                fprintf(filep, "%d\n", Marker->Props.Binary.FactorCnt);
+                for (tmpi = 0; tmpi < Marker->Props.Binary.FactorCnt; tmpi++) {
                     for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                        fprintf(filep, " %d", (int) Locus->LBINDATA.Factor[tmpi][tmpi2]);
+                        fprintf(filep, " %d", (int) Marker->Props.Binary.Factor[tmpi][tmpi2]);
                     fputc('\n', filep);
                 }
                 break;
@@ -1067,10 +1094,10 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                     fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
                 }
-                if (analysis == TO_LINKAGE && Locus->Data.Numbered.EstimateFrequencies &&
-                    Locus->Data.Numbered.SelectOpt > 0) {
-                    fprintf(filep, " %d ", Locus->Data.Numbered.NumAlleles);
-                    switch(Locus->Data.Numbered.SelectOpt) {
+                if (analysis == TO_LINKAGE && Locus->Marker->Props.Numbered.EstimateFrequencies &&
+                    Locus->Marker->Props.Numbered.SelectOpt > 0) {
+                    fprintf(filep, " %d ", Locus->Marker->Props.Numbered.NumAlleles);
+                    switch(Locus->Marker->Props.Numbered.SelectOpt) {
                     case 1:
                         fprintf(filep, "founder alleles");
                         break;
@@ -1546,7 +1573,7 @@ static void   write_gh_cshell_file(char *gh_script, int *numchr, char *gh_in,
             /* tot is the total map distance from the first marker to the last,
                in Morgans */
             /* This won't work:
-               tot = LTop->Locus[markers[tmpi-1]].position - LTop->Locus[markers[0]].position;
+               tot = LTop->Marker[markers[tmpi-1]].pos_avg - LTop->Marker[markers[0]].pos_avg;
                because GeneHunter-Plus is using the Haldane position, even if
                the input map is in Kosambi */
 	    if (genetic_distance_index < 0 || genetic_distance_sex_type_map != SEX_AVERAGED_GDMT) {
@@ -1559,18 +1586,18 @@ static void   write_gh_cshell_file(char *gh_script, int *numchr, char *gh_in,
 	      for (locus = &(markers[0]), locus1 = &(markers[1]), tmpi = 0;
                    tmpi < num_markers;
                    locus++, locus1++, tmpi++) {
-                    if (LTop->Locus[*locus].chromosome != LTop->Locus[*locus1].chromosome)
+                    if (LTop->Marker[*locus].chromosome != LTop->Marker[*locus1].chromosome)
                         diff = 0.50000;
                     else {
-                        diff = LTop->Locus[*locus1].position - LTop->Locus[*locus].position;
+                        diff = LTop->Marker[*locus1].pos_avg - LTop->Marker[*locus].pos_avg;
                         if (diff < 0.0)   {
                             warnvf("loci are not in correct order\n");
                             warnvf("    Locus %d (%s) is at position %5.1f\n",
                                     *locus,LTop->Locus[*locus].Name,
-                                    LTop->Locus[*locus].position);
+                                    LTop->Marker[*locus].pos_avg);
                             warnvf("    Locus %d (%s) is at position %5.1f\n",
                                     *locus1,LTop->Locus[*locus1].Name,
-                                    LTop->Locus[*locus1].position);
+                                    LTop->Marker[*locus1].pos_avg);
                         } else {
                             diff = ((LTop->map_distance_type == 'h') ? diff : haldane_x(kosambi_theta(diff)));
                             tot += diff;
@@ -2194,7 +2221,7 @@ void            create_gh_file(linkage_ped_top **Top,
 /*     } */
 /*     num_numbered=0; */
 /*     for (i=0; i < num_markers; i++) { */
-/*       if (LTop->Locus[markers[i]].position >= 0.0) { */
+/*       if (LTop->Marker[markers[i]].pos_avg >= 0.0) { */
 /* 	numbered[num_numbered]=i; num_numbered++; */
 /*       } */
 /*     } */
@@ -2207,20 +2234,20 @@ void            create_gh_file(linkage_ped_top **Top,
 /* 	  continue; */
 /* 	}   */
 
-/* 	if (LTop->Locus[markers[numbered[i]]].chromosome == */
-/* 	   LTop->Locus[markers[numbered[i+1]]].chromosome) { */
+/* 	if (LTop->Marker[markers[numbered[i]]].chromosome == */
+/* 	   LTop->Marker[markers[numbered[i+1]]].chromosome) { */
 /* 	  thetas[numbered[i]]= */
 /* 	    (double) */
-/* 	    (LTop->Locus[markers[numbered[i+1]]].position - */
-/* 	     LTop->Locus[markers[numbered[i]]].position); */
+/* 	    (LTop->Marker[markers[numbered[i+1]]].pos_avg - */
+/* 	     LTop->Marker[markers[numbered[i]]].pos_avg); */
 /* 	  if (thetas[numbered[i]] >= 0.0) */
 /* 	    thetas[numbered[i]] =  */
 /* 	      ((LTop->map_distance_type=='h')? */
 /* 	       haldane_theta(thetas[numbered[i]]) :   */
 /* 	       kosambi_theta(thetas[numbered[i]])); */
 /* 	  else { */
-/* 	    if (LTop->Locus[markers[numbered[i]]].position >= 0.0 && */
-/* 		LTop->Locus[markers[numbered[i+1]]].position >= 0.0) { */
+/* 	    if (LTop->Marker[markers[numbered[i]]].pos_avg >= 0.0 && */
+/* 		LTop->Marker[markers[numbered[i+1]]].pos_avg >= 0.0) { */
 /* 	      sprintf(err_msg,  */
 /* 		      "%s and %s are not in order of increasing map distance!", */
 /* 		      LTop->Locus[markers[numbered[i]]].Name, */
@@ -2228,8 +2255,8 @@ void            create_gh_file(linkage_ped_top **Top,
 /* 	      warnf(err_msg); */
 /* 	      sprintf(err_msg, */
 /* 		      "Their respective map positions are %7.4g and %7.4g respectively.",  */
-/* 		      LTop->Locus[markers[numbered[i]]].position,  */
-/* 		      LTop->Locus[markers[numbered[i+1]]].position); */
+/* 		      LTop->Marker[markers[numbered[i]]].pos_avg,  */
+/* 		      LTop->Marker[markers[numbered[i+1]]].pos_avg); */
 /* 	      warnf(err_msg); */
 /* 	    } */
 /* 	  } */
@@ -2300,23 +2327,23 @@ void print_recomb_fracs(FILE *filep,
 	      continue;
             }
 
-            if (LTop->Locus[markers[i]].chromosome ==
-               LTop->Locus[markers[i+1]].chromosome) {
+            if (LTop->Marker[markers[i]].chromosome ==
+               LTop->Marker[markers[i+1]].chromosome) {
 	      // It's the same chromosome..
 	      double delta, delta_abs, marker, marker_next;
 	      // CPK: compute the delta between the appropriate markers...
 	      switch (tt) {
 	      case SEX_AVERAGED_THETA:
-		marker_next = LTop->Locus[markers[i+1]].position;
-		marker = LTop->Locus[markers[i]].position;
+		marker_next = LTop->Marker[markers[i+1]].pos_avg;
+		marker = LTop->Marker[markers[i]].pos_avg;
                 break;
 	      case MALE_THETA:
-                marker_next = LTop->Locus[markers[i+1]].pos_male;
-		marker = LTop->Locus[markers[i]].pos_male;
+                marker_next = LTop->Marker[markers[i+1]].pos_male;
+		marker = LTop->Marker[markers[i]].pos_male;
                 break;
 	      case FEMALE_THETA:
-                marker_next = LTop->Locus[markers[i+1]].pos_female;
-		marker = LTop->Locus[markers[i]].pos_female;
+                marker_next = LTop->Marker[markers[i+1]].pos_female;
+		marker = LTop->Marker[markers[i]].pos_female;
                 break;
 	      }
 	      delta = marker_next - marker;

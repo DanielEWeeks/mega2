@@ -270,8 +270,8 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
                 int _locus = ChrLoci[m];
                 linkage_locus_rec *_tle = &(_LTop->Locus[_locus]);
                 if (_tle->Class == MARKER) {
-                    int _allele1 = _tpe->Data[_locus].Alleles.Allele_1;
-                    int _allele2 = _tpe->Data[_locus].Alleles.Allele_2;
+                    int _allele1, _allele2;
+                    get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
                     if (_allele1 || _allele2) { personHasMarkers = 1; break; }
                 }
             }
@@ -287,7 +287,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             // Only the integer portion is valid here. We already know that it's a QUANT from 'make_file()'
             // above so there is no need to check here, just use it...
             if (PopDataPheno_i != -1) {
-                double popData = _tpe->Data[PopDataPheno_i].Quant;
+                double popData = _tpe->Pheno[PopDataPheno_i].Quant;
                 if (popData < 0) {
                     errorvf("Processing a user-defined population-of-origin data (POPDATA) value\n");
                     errorvf("using quantitative phenotype information '%s' specified by the\n",

@@ -446,8 +446,8 @@ static int slink_thetas(linkage_locus_top *LTopp,
         theta[0]=0.5; theta_ct++;
         for (i = 1; i < num_markers; i++)  {
             double delta = dmax(0.0,
-                                LTopp->Locus[markers[i]].position -
-                                LTopp->Locus[markers[i - 1]].position);
+                                LTopp->Marker[markers[i]].pos_avg -
+                                LTopp->Marker[markers[i - 1]].pos_avg);
             theta[i] = (LTopp->map_distance_type == 'h') ? haldane_theta(delta) : kosambi_theta(delta);
             theta_ct++;
         }
@@ -455,8 +455,8 @@ static int slink_thetas(linkage_locus_top *LTopp,
         /* How do you get a disease_locus_index < 0 ? */
         for (i = 1; i < num_markers; i++)  {
             double delta = dmax(0.0,
-                                LTopp->Locus[markers[i]].position -
-                                LTopp->Locus[markers[i - 1]].position);
+                                LTopp->Marker[markers[i]].pos_avg -
+                                LTopp->Marker[markers[i - 1]].pos_avg);
             theta[i-1] = (LTopp->map_distance_type == 'h') ? haldane_theta(delta) : kosambi_theta(delta);
             theta_ct++;
         }
@@ -464,16 +464,16 @@ static int slink_thetas(linkage_locus_top *LTopp,
         theta[0]=0.5; theta_ct++;
         for (i = 2; i < num_markers; i++)  {
             double delta = dmax(0.0,
-                                LTopp->Locus[markers[i]].position -
-                                LTopp->Locus[markers[i - 1]].position);
+                                LTopp->Marker[markers[i]].pos_avg -
+                                LTopp->Marker[markers[i - 1]].pos_avg);
             theta[i-1] = (LTopp->map_distance_type == 'h') ? haldane_theta(delta) : kosambi_theta(delta);
             theta_ct++;
         }
     } else if (LoopOverTrait == 0 && disease_locus_index == num_markers-1) {
         for (i = 0; i < num_markers-2; i++)  {
             double delta = dmax(0.0,
-                                LTopp->Locus[markers[i + 1]].position -
-                                LTopp->Locus[markers[i]].position);
+                                LTopp->Marker[markers[i + 1]].pos_avg -
+                                LTopp->Marker[markers[i]].pos_avg);
             theta[i] = (LTopp->map_distance_type == 'h') ? haldane_theta(delta) : kosambi_theta(delta);
             theta_ct++;
         }
@@ -482,16 +482,16 @@ static int slink_thetas(linkage_locus_top *LTopp,
     } else  {
         for (i=1; i < disease_locus_index; i++) {
             double delta = dmax(0.0,
-                                LTopp->Locus[markers[i]].position -
-                                LTopp->Locus[markers[i - 1]].position);
+                                LTopp->Marker[markers[i]].pos_avg -
+                                LTopp->Marker[markers[i - 1]].pos_avg);
             theta[i-1] = (LTopp->map_distance_type == 'h') ? haldane_theta(delta) : kosambi_theta(delta);
             theta_ct++;
         }
         theta[disease_locus_index-1]=0.5;
         theta[disease_locus_index] =
         dmax(0.0,
-             (LTopp->Locus[markers[disease_locus_index+1]].position -
-              LTopp->Locus[markers[disease_locus_index-1]].position));
+             (LTopp->Marker[markers[disease_locus_index+1]].pos_avg -
+              LTopp->Marker[markers[disease_locus_index-1]].pos_avg));
         theta[disease_locus_index] = ((LTopp->map_distance_type == 'h')?
                                       haldane_theta(theta[disease_locus_index]):
                                       kosambi_theta(theta[disease_locus_index]));
@@ -499,8 +499,8 @@ static int slink_thetas(linkage_locus_top *LTopp,
         theta_ct += 2;
         for (i=disease_locus_index+1; i < num_markers-1; i++) {
             double delta = dmax(0.0,
-                                LTopp->Locus[markers[i + 1]].position -
-                                LTopp->Locus[markers[i]].position);
+                                LTopp->Marker[markers[i + 1]].pos_avg -
+                                LTopp->Marker[markers[i]].pos_avg);
             theta[i] = (LTopp->map_distance_type == 'h') ? haldane_theta(delta) : kosambi_theta(delta);
             theta_ct++;
         }
@@ -691,19 +691,19 @@ static void   write_slink_pedigree(ped_top *PTop, linkage_ped_top *Top,
                         if (sim_pheno && loc_order[k] == disease_loc) {
                             fprintf(fp, "  0");
                         } else {
-                            fprintf(fp, " %2d", tpe->Data[loc_order[k]].Affection.Status);
+                            fprintf(fp, " %2d", tpe->Pheno[loc_order[k]].Affection.Status);
                         }
-                        if (Top->LocusTop->Locus[loc_order[k]].Data.Affection.ClassCnt > 1) {
+                        if (Top->LocusTop->Pheno[loc_order[k]].Props.Affection.ClassCnt > 1) {
                             fprintf(fp, " %-2d",
-                                    tpe->Data[loc_order[k]].Affection.Class);
+                                    tpe->Pheno[loc_order[k]].Affection.Class);
                         }
                         break;
                     case QUANT:
-                        if (fabs(tpe->EQUANT(loc_order[k]) - MissingQuant) <= EPSILON ||
+                        if (fabs(tpe->Pheno[loc_order[k]].Quant - MissingQuant) <= EPSILON ||
                             (sim_pheno && loc_order[k] == disease_loc)) {
                             fprintf(fp, "    0.0   ");
                         } else {
-                            fprintf(fp, "%10.5f", tpe->EQUANT(loc_order[k]));
+                            fprintf(fp, "%10.5f", tpe->Pheno[loc_order[k]].Quant);
                         }
                         break;
                     case NUMBERED:

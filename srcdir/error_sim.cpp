@@ -150,8 +150,7 @@ static void error_at_locus(int locnum, int loc_index, linkage_ped_top *Top,
     for(ped=0; ped < Top->PedCnt; ped++) {
         for(entry=0; entry < Top->Ped[ped].EntryCnt; entry++) {
             /* Then generate error at this locus */
-            all1 = Top->Ped[ped].Entry[entry].EALLELE1(locnum);
-            all2 = Top->Ped[ped].Entry[entry].EALLELE2(locnum);
+            get_2alleles(Top->Ped[ped].Entry[entry].Marker, locnum, &all1, &all2);
             if (!all1 || !all2) {
                 continue;
             }
@@ -191,8 +190,7 @@ static void error_at_locus(int locnum, int loc_index, linkage_ped_top *Top,
                         gen.all1, gen.all2, new_gen.all1, new_gen.all2);
                 errsimf(err_msg);
                 /* easier to test with a diff command */
-                Top->Ped[ped].Entry[entry].EALLELE1(locnum) = new_gen.all1;
-                Top->Ped[ped].Entry[entry].EALLELE2(locnum) = new_gen.all2;
+                set_2alleles(Top->Ped[ped].Entry[entry].Marker, locnum, new_gen.all1, new_gen.all2);
             }
         }
     }
@@ -265,7 +263,7 @@ genotype marker_error_model(genotype gen, int number,
     int new_ind, slct_index = gen_index(gen, Loc.AlleleCnt);
 
     slct = randomnum(); select1 = randomnum();
-    if (slct < Loc.error_prob) {
+    if (slct < Loc.Marker->error_prob) {
         *err_type = Marker;
         /* Need to change genotype */
         new_ind = (int) ((double)((NUMGENOS(Loc.AlleleCnt))-1) *
@@ -1502,7 +1500,7 @@ void simulate_errors(linkage_ped_top *Top, int numchr, char *file_names[])
                         Top->LocusTop->Locus[reordered_marker_loci[loc]].Name);
             }
         } else if (error_model[loc] == 'M') {
-            if (Top->LocusTop->Locus[reordered_marker_loci[loc]].error_prob >
+            if (Top->LocusTop->Marker[reordered_marker_loci[loc]].error_prob >
                0.0) {
                 num_error_loci++;
             } else {

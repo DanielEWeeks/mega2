@@ -77,6 +77,7 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
     int      /*num_labels, *labels, */ num_affec = num_traits;
     register linkage_ped_rec *Entry;
     int      affected;
+    int      a1, a2;
 
     char     ofl[2*FILENAME_LENGTH];
     FILE     *filep;
@@ -172,16 +173,16 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
                     switch(Top->LocusTop->Locus[*trp].Type) {
                     case AFFECTION:
                         fprintf(filep,",");
-                        affected=aff_status_entry(Entry->ESTATUS(*trp), Entry->ECLASS(*trp),
+                        affected=aff_status_entry(Entry->Pheno[*trp].Affection.Status, Entry->Pheno[*trp].Affection.Class,
                                                   &(Top->LocusTop->Locus[*trp]));
-/* 	    aff_status= Entry->ECLASS(*trp)+ liability_multiplier*Entry->ESTATUS(*trp); */
+/* 	    aff_status= Entry->Pheno[*trp].Affection.Class+ liability_multiplier*Entry->Pheno[*trp].Affection.Status; */
 /* 	    for (i=0; i<num_labels; i++) { */
 /* 	      if (aff_status==labels[i]) { */
 /* 		affected=2; break; */
 /* 	      } */
 /* 	    } */
 /* 	    if (affected != 2) { */
-/* 	      if (Entry->ESTATUS(*trp) == 0) { */
+/* 	      if (Entry->Pheno[*trp].Affection.Status == 0) { */
 /* 		affected = 0; */
 /* 	      } */
 /* 	      else { */
@@ -204,25 +205,25 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
                     case QUANT:
                         if (LoopOverTrait == 0) {
                             fprintf(filep,",");
-                            if (fabs(Entry->Data[l1].Quant - MissingQuant) > EPSILON) {
-                                fprintf(filep, "%8f ", Entry->Data[l1].Quant);
+                            if (fabs(Entry->Pheno[l1].Quant - MissingQuant) > EPSILON) {
+                                fprintf(filep, "%8f ", Entry->Pheno[l1].Quant);
                             }
                         }
                         break;
                     case AFFECTION:
                         if (LoopOverTrait == 0) {
                             fprintf(filep,",");
-                            affected=aff_status_entry(Entry->ESTATUS(l1), Entry->ECLASS(l1),
+                            affected=aff_status_entry(Entry->Pheno[l1].Affection.Status, Entry->Pheno[l1].Affection.Class,
                                                       &(Top->LocusTop->Locus[l1]));
-/* 	      aff_status= Entry->ECLASS(l1)+  */
-/* 		liability_multiplier*Entry->ESTATUS(l1); */
+/* 	      aff_status= Entry->Pheno[l1].Affection.Class+  */
+/* 		liability_multiplier*Entry->Pheno[l1].Affection.Status; */
 /* 	      for (i=0; i<num_labels; i++) { */
 /* 		if (aff_status==labels[i]) { */
 /* 		  affected=2; break; */
 /* 		} */
 /* 	      } */
 /* 	      if (affected != 2) { */
-/* 		if (Entry->ESTATUS(l1) == 0) { */
+/* 		if (Entry->Pheno[l1].Affection.Status == 0) { */
 /* 		  affected = 0; */
 /* 		} */
 /* 		else { */
@@ -237,13 +238,13 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
                     case BINARY:
                     case NUMBERED:
                         fprintf(filep,",");
-                        if (Entry->EALLELE1(l1) > 0 && Entry->EALLELE2(l1) > 0) {
-                            fprintf(filep, "%d/%d",
-                                    Entry->EALLELE1(l1), Entry->EALLELE2(l1));
-                        } else if (Entry->EALLELE1(l1) > 0 && Entry->EALLELE2(l1) == 0) {
-                            fprintf(filep, "%d/", Entry->EALLELE1(l1));
-                        } else if (Entry->EALLELE1(l1) == 0 && Entry->EALLELE2(l1) > 0) {
-                            fprintf(filep, "%d/", Entry->EALLELE2(l1));
+                        get_2alleles(Entry->Marker, l1, &a1, &a2);
+                        if (a1 > 0 && a2 > 0) {
+                            fprintf(filep, "%d/%d", a1, a2);
+                        } else if (a1 > 0 && a2 == 0) {
+                            fprintf(filep, "%d/", a1);
+                        } else if (a1 == 0 && a2 > 0) {
+                            fprintf(filep, "%d/", a2);
                         }
 
                         break;
@@ -255,8 +256,8 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
                     switch(Top->LocusTop->Locus[*trp].Type) {
                     case QUANT:
                         fprintf(filep,",");
-                        if (fabs(Entry->EQUANT(*trp) - MissingQuant) > EPSILON) {
-                            fprintf(filep, "%8f ", Entry->EQUANT(*trp));
+                        if (fabs(Entry->Pheno[*trp].Quant - MissingQuant) > EPSILON) {
+                            fprintf(filep, "%8f ", Entry->Pheno[*trp].Quant);
                         }
                         break;
                     default:
@@ -309,7 +310,7 @@ void  csv_write_mendel_locus_file(char *file_name,
                traits being looped over. */
             Locus = &(LTop->Locus[*trp]);
             if (Locus->Type == AFFECTION) {
-                if (Locus->LAFFDATA.ClassCnt > 1) {
+                if (Locus->Pheno->Props.Affection.ClassCnt > 1) {
                     MENDEL7_ML_AFFECTION
                         } else {
                     MENDEL7_AFFECTION
@@ -326,15 +327,15 @@ void  csv_write_mendel_locus_file(char *file_name,
                 }
                 else
                     fprintf(fp, "%d,", locus1 + 1);
-                fprintf(fp, "%s, %d\n",	chrom_num_to_name(Locus->chromosome, &(chromo[0])),
+                fprintf(fp, "%s, %d\n",	chrom_num_to_name(Locus->Marker->chromosome, &(chromo[0])),
                         ((Locus->Type == NUMBERED)?
-                         Locus->AlleleCnt : Locus->LBINDATA.FactorCnt));
+                         Locus->AlleleCnt : Locus->Marker->Props.Binary.FactorCnt));
             }
             switch (Locus->Type)  {
             case BINARY:
-                for (tmpi = 0; tmpi < Locus->LBINDATA.FactorCnt; tmpi++)  {
+                for (tmpi = 0; tmpi < Locus->Marker->Props.Binary.FactorCnt; tmpi++)  {
                     for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                        fprintf(fp, " %d", (int) Locus->LBINDATA.Factor[tmpi][tmpi2]);
+                        fprintf(fp, " %d", (int) Locus->Marker->Props.Binary.Factor[tmpi][tmpi2]);
                     fputc('\n', fp);
                 }
                 break;
@@ -346,7 +347,7 @@ void  csv_write_mendel_locus_file(char *file_name,
                 break;
             case AFFECTION:
                 if (LoopOverTrait == 0) {
-                    if (Locus->LAFFDATA.ClassCnt > 1) {
+                    if (Locus->Pheno->Props.Affection.ClassCnt > 1) {
                         MENDEL7_ML_AFFECTION
                             } else {
                         MENDEL7_AFFECTION
@@ -423,7 +424,7 @@ void csv_mendel7_pen_file(char *fl_name, linkage_ped_top *Top, int sex_linked)
             if (tr == num_traits) break;
             if (Top->LocusTop->Locus[trp].Type == QUANT) continue;
 /*       if (Top->LocusTop->Locus[trp].Type == AFFECTION && */
-/* 	  Top->LocusTop->Locus[trp].LAFFDATA.ClassCnt == 1) continue; */
+/* 	  Top->LocusTop->Pheno[trp].Props.Affection.ClassCnt == 1) continue; */
             /* file is already open for writing */
 
         } else {
@@ -432,7 +433,7 @@ void csv_mendel7_pen_file(char *fl_name, linkage_ped_top *Top, int sex_linked)
             if (trp == -1) continue;
             if (Top->LocusTop->Locus[trp].Type == QUANT) continue;
             if (Top->LocusTop->Locus[trp].Type == AFFECTION &&
-                Top->LocusTop->Locus[trp].LAFFDATA.ClassCnt == 1) continue;
+                Top->LocusTop->Pheno[trp].Props.Affection.ClassCnt == 1) continue;
 
             sprintf(poutfl_name, "%s/%s", output_paths[tr], fl_name);
             if ((filep = fopen(poutfl_name, "w")) == NULL) {
@@ -450,14 +451,14 @@ void csv_mendel7_pen_file(char *fl_name, linkage_ped_top *Top, int sex_linked)
 
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry = &(Top->Ped[ped].Entry[entry]);
-                lacp  = &(Locus->LAFFDATA.Class[Entry->ECLASS(trp)-1]);
+                lacp  = &(Locus->Pheno->Props.Affection.Class[Entry->Pheno[trp].Affection.Class-1]);
                 sex   = Entry->Sex;
                 /* don't write the unknown penetrances */
-                if (Entry->ESTATUS(trp) == 0) {
+                if (Entry->Pheno[trp].Affection.Status == 0) {
                     continue;
                 }
 
-                affected= aff_status_entry(Entry->ESTATUS(trp), Entry->ECLASS(trp),  Locus);
+                affected= aff_status_entry(Entry->Pheno[trp].Affection.Status, Entry->Pheno[trp].Affection.Class,  Locus);
                 /* This works because we have already skipped 0 status individuals */
 
                 if (affected != 2) {
@@ -594,9 +595,9 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
                 switch(LTop->Locus[markers[i-1]].Type) {
                 case NUMBERED:
                 case BINARY:
-                    if (LTop->Locus[markers[i]].chromosome == LTop->Locus[markers[i-1]].chromosome) {
-		               diffm = LTop->Locus[markers[i]].pos_male - LTop->Locus[markers[i-1]].pos_male;
-		               difff = LTop->Locus[markers[i]].pos_female - LTop->Locus[markers[i-1]].pos_female;
+                    if (LTop->Marker[markers[i]].chromosome == LTop->Marker[markers[i-1]].chromosome) {
+		               diffm = LTop->Marker[markers[i]].pos_male - LTop->Marker[markers[i-1]].pos_male;
+		               difff = LTop->Marker[markers[i]].pos_female - LTop->Marker[markers[i-1]].pos_female;
                     } else {
                         diffm = difff = INVALID_POS_DIFF;
                     }
@@ -631,8 +632,8 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
                 if (diffm < 0.0) {
                     sprintf(err_msg,
                             "%s (%.4g) and %s (%.4g) are not ordered by increasing male map distance!",
-                            LTop->Locus[markers[i-1]].Name, LTop->Locus[markers[i-1]].pos_male,
-                            LTop->Locus[markers[i]].Name, LTop->Locus[markers[i]].pos_male);
+                            LTop->Marker[markers[i-1]].Name, LTop->Locus[markers[i-1]].pos_male,
+                            LTop->Marker[markers[i]].Name, LTop->Locus[markers[i]].pos_male);
                     warnf(err_msg);
                     warnf("Setting the distance between these to 0.001 cM.");
                     diffm=0.001;
@@ -640,8 +641,8 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
                 if (difff < 0.0 && xlinked) {
 		    sprintf(err_msg,
 			    "%s (%.4g) and %s (%.4g) are not ordered by increasing female map distance!",
-			    LTop->Locus[markers[i-1]].Name, LTop->Locus[markers[i-1]].pos_female,
-			    LTop->Locus[markers[i]].Name, LTop->Locus[markers[i]].pos_female);
+			    LTop->Marker[markers[i-1]].Name, LTop->Locus[markers[i-1]].pos_female,
+			    LTop->Marker[markers[i]].Name, LTop->Locus[markers[i]].pos_female);
 		    warnf(err_msg);
 		    warnf("Setting the distance between these to 0.001 cM.");
                     difff=0.001;
@@ -756,9 +757,9 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
                 case BINARY:
                 case XLINKED:
                 case YLINKED:
-                    if (LTop->Locus[markers[i]].chromosome == LTop->Locus[markers[i-1]].chromosome) {
-		               diffm = LTop->Locus[markers[i]].pos_male - LTop->Locus[markers[i-1]].pos_male;
-		               difff = LTop->Locus[markers[i]].pos_female - LTop->Locus[markers[i-1]].pos_female;
+                    if (LTop->Marker[markers[i]].chromosome == LTop->Marker[markers[i-1]].chromosome) {
+		               diffm = LTop->Marker[markers[i]].pos_male - LTop->Marker[markers[i-1]].pos_male;
+		               difff = LTop->Marker[markers[i]].pos_female - LTop->Marker[markers[i-1]].pos_female;
                     } else {
                         diffm = difff = INVALID_POS_DIFF;
                     }
@@ -788,15 +789,15 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
             } else {
                 if (diffm < 0.0) {
                     warnvf("%s (%.4g) and %s (%.4g) are not ordered by increasing male map distance!\n",
-                            LTop->Locus[markers[i-1]].Name, LTop->Locus[markers[i-1]].pos_male,
-                            LTop->Locus[markers[i]].Name, LTop->Locus[markers[i]].pos_male);
+                            LTop->Marker[markers[i-1]].Name, LTop->Marker[markers[i-1]].pos_male,
+                            LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_male);
                     warnf("Setting the distance between these to 0.001 cM.");
                     diffm=0.001;
                 }
                 if (difff < 0.0) {
 		    warnvf("%s (%.4g) and %s (%.4g) are not ordered by increasing female map distance!\n",
-			    LTop->Locus[markers[i-1]].Name, LTop->Locus[markers[i-1]].pos_female,
-			    LTop->Locus[markers[i]].Name, LTop->Locus[markers[i]].pos_female);
+			    LTop->Marker[markers[i-1]].Name, LTop->Marker[markers[i-1]].pos_female,
+			    LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_female);
 		    warnf("Setting the distance between these to 0.001 cM.");
                     difff=0.001;
                 }
@@ -907,8 +908,8 @@ static void csv_write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus
                             // DONT break...
                         case NUMBERED:
                         case BINARY:
-                            if (LTop->Locus[markers[i]].chromosome == LTop->Locus[markers[i-1]].chromosome) {
-                                diff = LTop->Locus[markers[i]].position - LTop->Locus[markers[i-1]].position;
+                            if (LTop->Marker[markers[i]].chromosome == LTop->Marker[markers[i-1]].chromosome) {
+                                diff = LTop->Marker[markers[i]].pos_avg - LTop->Marker[markers[i-1]].pos_avg;
                             } else {
                                 diff = INVALID_POS_DIFF;
                             }
@@ -937,8 +938,8 @@ static void csv_write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus
             } else {
                 if (diff < 0.0) {
                   warnvf("%s (%.4g) and %s (%.4g) are not ordered by increasing map distance!\n",
-                          LTop->Locus[markers[i-1]].Name, LTop->Locus[markers[i-1]].position,
-                          LTop->Locus[markers[i]].Name, LTop->Locus[markers[i]].position);
+                          LTop->Marker[markers[i-1]].Name, LTop->Marker[markers[i-1]].pos_avg,
+                          LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_avg);
                   warnf("Setting the distance between these to 0.001 cM.");
                   diff = 0.001;
                 }

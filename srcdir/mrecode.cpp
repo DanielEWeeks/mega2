@@ -63,9 +63,9 @@
 */
 
 
-linkage_locus_top *read_common_marker_data(int num_markers, char **names, char *types, int annotated, double penetrances_read, double freq, double pen[5]);
+linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char **names, char *types, int annotated, double penetrances_read, double freq, double pen[5]);
 
-void recode_liability_class(marker_type *marker_list, linkage_locus_top *LTop, int locus);
+void recode_liability_class(pheno_type *pheno_list, linkage_locus_top *LTop, int locus);
 
 /* function for inserting a raw allele into a marker allele list,
    three cases: new allele_list (first non-zero allele)
@@ -275,7 +275,7 @@ static void insert_into_class_list(class_list_type **class_list,
 #define num_classes data.num_classes
 #endif
 
-void count_classes(marker_type *markers, linkage_locus_top *LTop)
+void count_classes(pheno_type *pheno_list, linkage_locus_top *LTop)
 
 {
     int m, count;
@@ -283,7 +283,7 @@ void count_classes(marker_type *markers, linkage_locus_top *LTop)
 
     for (m=0; m < LTop->LocusCnt; m++) {
         if (LTop->Locus[m].Type == AFFECTION) {
-            classp  = markers[m].class_list;
+            classp  = pheno_list[m].class_list;
             if (classp == NULL) continue;
             classlp = NULL;
             count=0;
@@ -293,39 +293,29 @@ void count_classes(marker_type *markers, linkage_locus_top *LTop)
                 classp  = classp->next;
             }
             count = classlp == NULL ? 0 : classlp->l_class.num;
-            markers[m].num_classes = count;
-            LTop->Locus[m].LAFFDATA.ClassCnt = count;
-
-/*       if (markers[m].num_alleles == 1) { */
-/* 	markers[m].num_alleles = 2; */
-/* 	insert_into_class_list(&(markers[m].class_list), 2); */
-/* 	markers[m].class_list[1].l_class.autosomal_pen[0] = 1-DOM_G11; */
-/* 	markers[m].class_list[1].l_class.autosomal_pen[1] = 1-DOM_G12; */
-/* 	markers[m].class_list[1].l_class.autosomal_pen[2] = 1-DOM_G22; */
-/*       } */
+            pheno_list[m].num_classes = count;
+            LTop->Pheno[m].Props.Affection.ClassCnt = count;
         }
     }
-    return;
 }
 
-void load_classes(marker_type *markers, linkage_locus_top *LTop)
-
+void load_classes(pheno_type *pheno, linkage_locus_top *LTop)
 {
     int m, count, error = 0;
     class_list_type *classp, *classlp;
 
-    for (m=0; m < LTop->LocusCnt; m++) {
+    for (m=0; m < LTop->PhenoCnt; m++) {
         if (LTop->Locus[m].Type == AFFECTION) {
-            classp  = markers[m].class_list;
+            classp  = pheno[m].class_list;
             if (classp == NULL) {
-                if (LTop->Locus[m].Data.Affection.ClassCnt > 1) {
+                if (LTop->Pheno[m].Props.Affection.ClassCnt > 1) {
                     errorvf("%s has multiple liability classes, but no defined penetrance.\n Please use a penetrance file to specify them.\n",
                             LTop->Locus[m].Name);
                     error++;
                     continue;
-                } else if (LTop->Locus[m].Data.Affection.ClassCnt == 1) {
+                } else if (LTop->Pheno[m].Props.Affection.ClassCnt == 1) {
                     msgvf("Trait '%s' will be assigned the default penetrance: (%.4f %.4f %.4f)\n",
-                          LTop->Locus[m].Name, DOM_G11, DOM_G12, DOM_G22);
+                          LTop->Pheno[m].Name, DOM_G11, DOM_G12, DOM_G22);
                     count = 1;
                 }
             } else {
@@ -338,9 +328,9 @@ void load_classes(marker_type *markers, linkage_locus_top *LTop)
                 }
                 count = classlp == NULL ? 0 : classlp->l_class.num;
             }
-            markers[m].num_classes = count;
-            LTop->Locus[m].LAFFDATA.ClassCnt = count;
-            recode_liability_class(markers, LTop, m);
+            pheno[m].num_classes = count;
+            LTop->Pheno[m].Props.Affection.ClassCnt = count;
+            recode_liability_class(pheno, LTop, m);
         }
     }
 
@@ -351,7 +341,6 @@ void load_classes(marker_type *markers, linkage_locus_top *LTop)
     return;
 }
 
-
 /* Function to traverse an allele_list and just count the
    length of the list */
 
@@ -361,7 +350,7 @@ void count_raw_alleles(marker_type *markers, linkage_locus_top *LTop)
     int m, count;
     allele_list_type *allelep;
 
-    for (m=0; m < LTop->LocusCnt; m++) {
+    for (m = LTop->PhenoCnt; m < LTop->LocusCnt; m++) {
 /*     if (markers[m].estimate_frequencies == 0) { */
 /*       continue; */
 /*     } */
@@ -370,11 +359,6 @@ void count_raw_alleles(marker_type *markers, linkage_locus_top *LTop)
         while(allelep != NULL) {
             count++;
             allelep = allelep->next;
-        }
-        if ((LTop->Locus[m].Type == AFFECTION || LTop->Locus[m].Type == QUANT) &&
-            count > 2) {
-            errorvf("Trait locus %s has more than two alleles.\n", LTop->Locus[m].Name);
-            EXIT(INPUT_DATA_ERROR);
         }
         markers[m].num_alleles = count;
     }
@@ -479,13 +463,7 @@ void convert_to_freq(marker_type *marker_list,
     allele_list_type *allelep;
 
     for (m=0; m < LTop->LocusCnt; m++) {
-        if (LTop->Locus[m].Type == AFFECTION ||
-            LTop->Locus[m].Type == QUANT) {
-            if (count_option1 > 0 && marker_list[m].estimate_frequencies) {
-                marker_list[m].first_allele->allele_freq.freq =
-                    marker_list[m].first_allele->next->allele_freq.freq = 0.5;
-            }
-        } else if (LTop->Locus[m].Type == NUMBERED ||
+        if (LTop->Locus[m].Type == NUMBERED ||
                 LTop->Locus[m].Type == XLINKED ||
                 LTop->Locus[m].Type == YLINKED) {
 
@@ -574,7 +552,6 @@ void convert_to_freq(marker_type *marker_list,
             }
         }
     }
-    return;
 }
 
 /*----------------------end of convert_to_freq----------------------*/
@@ -591,11 +568,13 @@ void assign_dummy_alleles(marker_type *marker_list,
     allele_list_type *all;
 
 
-    for(m = 0; m < LTop->LocusCnt; m++) {
+    for(m = LTop->PhenoCnt; m < LTop->LocusCnt; m++) {
         if (marker_list[m].estimate_frequencies == 0 ) continue;
+
         if (LTop->Locus[m].Type == NUMBERED ||
            LTop->Locus[m].Type == XLINKED ||
            LTop->Locus[m].Type == YLINKED) {
+
             if (marker_list[m].num_alleles == 1) {
                 marker_list[m].first_allele->allele_freq.freq=1.0;
                 all=CALLOC((size_t) 1, allele_list_type);
@@ -642,7 +621,7 @@ void write_recode_summary(marker_type *markers,
     FILE *fp;
     allele_list_type *allelep;
 
-    for (m=0; m < LTop->LocusCnt; m++) {
+    for (m=LTop->PhenoCnt; m < LTop->LocusCnt; m++) {
         if (markers[m].estimate_frequencies == 1) {
             found_freq_est++;
         }
@@ -704,6 +683,7 @@ void write_recode_summary(marker_type *markers,
 
         if (LTop->Locus[m].Type == NUMBERED || LTop->Locus[m].Type == XLINKED ||
             LTop->Locus[m].Type == YLINKED) {
+
             if (markers[m].estimate_frequencies) {
                 /* Full summary  is to be written */
 
@@ -812,77 +792,77 @@ void write_recode_summary(marker_type *markers,
 
 }
 
-void recode_liability_class(marker_type *marker_list, linkage_locus_top *LTop,  int locus)
+void recode_liability_class(pheno_type *pheno_list, linkage_locus_top *LTop,  int locus)
 {
     int all, nc;
     class_list_type *recoded_class;
 
-    LTop->Locus[locus].LAFFDATA.PenCnt = 3;
+    LTop->Pheno[locus].Props.Affection.PenCnt = 3;
 
 #ifdef CFREE
-    if (LTop->Locus[locus].LAFFDATA.Class) {
-        free(LTop->Locus[locus].LAFFDATA.Class[0].AutoPen);
-        free(LTop->Locus[locus].LAFFDATA.Class[0].FemalePen);
-        free(LTop->Locus[locus].LAFFDATA.Class[0].MalePen);
-        free(LTop->Locus[locus].LAFFDATA.Class);
+    if (LTop->Pheno[locus].Props.Affection.Class) {
+        free(LTop->Pheno[locus].Props.Affection.Class[0].AutoPen);
+        free(LTop->Pheno[locus].Props.Affection.Class[0].FemalePen);
+        free(LTop->Pheno[locus].Props.Affection.Class[0].MalePen);
+        free(LTop->Pheno[locus].Props.Affection.Class);
     }
 #endif
 
-    LTop->Locus[locus].LAFFDATA.Class =
-        CALLOC((size_t) marker_list[locus].num_classes, linkage_affection_class);
+    LTop->Pheno[locus].Props.Affection.Class =
+        CALLOC((size_t) pheno_list[locus].num_classes, linkage_affection_class);
 
-    nc = marker_list[locus].num_classes;
+    nc = pheno_list[locus].num_classes;
+
     for (all = 0; all < nc; all++) {
-        clear_laffclass(&(LTop->Locus[locus].LAFFDATA.Class[all]));
-        LTop->Locus[locus].LAFFDATA.Class[all].AutoDef     = 1;
-        LTop->Locus[locus].LAFFDATA.Class[all].AutoPen    = CALLOC((size_t) 3, double);
-        LTop->Locus[locus].LAFFDATA.Class[all].AutoPen[0] = DOM_G11;
-        LTop->Locus[locus].LAFFDATA.Class[all].AutoPen[1] = DOM_G12;
-        LTop->Locus[locus].LAFFDATA.Class[all].AutoPen[2] = DOM_G22;
+        clear_laffclass(&(LTop->Pheno[locus].Props.Affection.Class[all]));
+        LTop->Pheno[locus].Props.Affection.Class[all].AutoDef     = 1;
+        LTop->Pheno[locus].Props.Affection.Class[all].AutoPen    = CALLOC((size_t) 3, double);
+        LTop->Pheno[locus].Props.Affection.Class[all].AutoPen[0] = DOM_G11;
+        LTop->Pheno[locus].Props.Affection.Class[all].AutoPen[1] = DOM_G12;
+        LTop->Pheno[locus].Props.Affection.Class[all].AutoPen[2] = DOM_G22;
 
-        LTop->Locus[locus].LAFFDATA.Class[all].FemaleDef    = 1;
-        LTop->Locus[locus].LAFFDATA.Class[all].FemalePen    = CALLOC((size_t) 3, double);
-        LTop->Locus[locus].LAFFDATA.Class[all].FemalePen[0] = DOM_G11;
-        LTop->Locus[locus].LAFFDATA.Class[all].FemalePen[1] = DOM_G12;
-        LTop->Locus[locus].LAFFDATA.Class[all].FemalePen[2] = DOM_G22;
+        LTop->Pheno[locus].Props.Affection.Class[all].FemaleDef    = 1;
+        LTop->Pheno[locus].Props.Affection.Class[all].FemalePen    = CALLOC((size_t) 3, double);
+        LTop->Pheno[locus].Props.Affection.Class[all].FemalePen[0] = DOM_G11;
+        LTop->Pheno[locus].Props.Affection.Class[all].FemalePen[1] = DOM_G12;
+        LTop->Pheno[locus].Props.Affection.Class[all].FemalePen[2] = DOM_G22;
 
-        LTop->Locus[locus].LAFFDATA.Class[all].MaleDef    = 1;
-        LTop->Locus[locus].LAFFDATA.Class[all].MalePen    = CALLOC((size_t) 3, double);
-        LTop->Locus[locus].LAFFDATA.Class[all].MalePen[0] = DOM_G11;
-        LTop->Locus[locus].LAFFDATA.Class[all].MalePen[1] = DOM_G12;
-        LTop->Locus[locus].LAFFDATA.Class[all].MalePen[2] = DOM_G22;
+        LTop->Pheno[locus].Props.Affection.Class[all].MaleDef    = 1;
+        LTop->Pheno[locus].Props.Affection.Class[all].MalePen    = CALLOC((size_t) 2, double);
+        LTop->Pheno[locus].Props.Affection.Class[all].MalePen[0] = DOM_G11;
+        LTop->Pheno[locus].Props.Affection.Class[all].MalePen[1] = DOM_G22;
     }
 
-    recoded_class = &(marker_list[locus].class_list[0]);
+    recoded_class = &(pheno_list[locus].class_list[0]);
 
     while (recoded_class != NULL) {
 
         all = recoded_class->l_class.num - 1;
         if (recoded_class->l_class.autosomal_pen != NULL) {
-            LTop->Locus[locus].LAFFDATA.Class[all].AutoDef    = 0;
-            LTop->Locus[locus].LAFFDATA.Class[all].AutoPen[0] =
+            LTop->Pheno[locus].Props.Affection.Class[all].AutoDef    = 0;
+            LTop->Pheno[locus].Props.Affection.Class[all].AutoPen[0] =
                 recoded_class->l_class.autosomal_pen[0];
-            LTop->Locus[locus].LAFFDATA.Class[all].AutoPen[1] =
+            LTop->Pheno[locus].Props.Affection.Class[all].AutoPen[1] =
                 recoded_class->l_class.autosomal_pen[1];
-            LTop->Locus[locus].LAFFDATA.Class[all].AutoPen[2] =
+            LTop->Pheno[locus].Props.Affection.Class[all].AutoPen[2] =
                 recoded_class->l_class.autosomal_pen[2];
         }
 
         if (recoded_class->l_class.female_pen != NULL) {
-            LTop->Locus[locus].LAFFDATA.Class[all].FemaleDef    = 0;
-            LTop->Locus[locus].LAFFDATA.Class[all].FemalePen[0] =
+            LTop->Pheno[locus].Props.Affection.Class[all].FemaleDef    = 0;
+            LTop->Pheno[locus].Props.Affection.Class[all].FemalePen[0] =
                 recoded_class->l_class.female_pen[0];
-            LTop->Locus[locus].LAFFDATA.Class[all].FemalePen[1] =
+            LTop->Pheno[locus].Props.Affection.Class[all].FemalePen[1] =
                 recoded_class->l_class.female_pen[1];
-            LTop->Locus[locus].LAFFDATA.Class[all].FemalePen[2] =
+            LTop->Pheno[locus].Props.Affection.Class[all].FemalePen[2] =
                 recoded_class->l_class.female_pen[2];
         }
 
         if (recoded_class->l_class.male_pen != NULL) {
-            LTop->Locus[locus].LAFFDATA.Class[all].MaleDef    = 0;
-            LTop->Locus[locus].LAFFDATA.Class[all].MalePen[0] =
+            LTop->Pheno[locus].Props.Affection.Class[all].MaleDef    = 0;
+            LTop->Pheno[locus].Props.Affection.Class[all].MalePen[0] =
                 recoded_class->l_class.male_pen[0];
-            LTop->Locus[locus].LAFFDATA.Class[all].MalePen[1] =
+            LTop->Pheno[locus].Props.Affection.Class[all].MalePen[1] =
                 recoded_class->l_class.male_pen[1];
         }
 
@@ -895,7 +875,7 @@ void recode_liability_class(marker_type *marker_list, linkage_locus_top *LTop,  
    values, except for the NUMBERED alleles, where we have frequencies
    and allele_counts */
 
-void recode_locus_top(marker_type *marker_list, linkage_locus_top *LTop)
+void recode_locus_top(marker_type *marker_list, pheno_type *pheno_list, linkage_locus_top *LTop)
 {
     int m, all;
     allele_list_type *recoded_allele;
@@ -913,7 +893,9 @@ void recode_locus_top(marker_type *marker_list, linkage_locus_top *LTop)
             LTop->Locus[m].AlleleCnt = marker_list[m].num_alleles;
             LTop->Locus[m].Allele
                 = CALLOC((size_t) marker_list[m].num_alleles, linkage_allele_rec);
+
             recoded_allele = marker_list[m].first_allele;
+
             for (all = 0; all < marker_list[m].num_alleles; all++) {
                 LTop->Locus[m].Allele[all].Frequency
                     = recoded_allele->allele_freq.freq;
@@ -921,11 +903,10 @@ void recode_locus_top(marker_type *marker_list, linkage_locus_top *LTop)
                 LTop->Locus[m].Allele[all].name = recoded_allele->allele_freq.name;
                 recoded_allele = recoded_allele->next;
             }
-            LTop->Locus[m].Data.Numbered.Recoded = marker_list[m].recode_alleles;
-            LTop->Locus[m].Data.Numbered.EstimateFrequencies = marker_list[m].estimate_frequencies;
-            LTop->Locus[m].Data.Numbered.NumAlleles
-                = marker_list[m].num_total_alleles;
-            LTop->Locus[m].Data.Numbered.SelectOpt = SelectIndividuals;
+            LTop->Marker[m].Props.Numbered.Recoded = marker_list[m].recode_alleles;
+            LTop->Marker[m].Props.Numbered.EstimateFrequencies = marker_list[m].estimate_frequencies;
+            LTop->Marker[m].Props.Numbered.NumAlleles = marker_list[m].num_total_alleles;
+            LTop->Marker[m].Props.Numbered.SelectOpt = SelectIndividuals;
             break;
 
         case AFFECTION:
@@ -937,14 +918,12 @@ void recode_locus_top(marker_type *marker_list, linkage_locus_top *LTop)
 #endif
             LTop->Locus[m].Allele = 	CALLOC((size_t) 2, linkage_allele_rec);
 
-            LTop->Locus[m].Allele[0].Frequency =
-                marker_list[m].first_allele->allele_freq.freq;
-            LTop->Locus[m].Allele[1].Frequency =
-                marker_list[m].first_allele->next->allele_freq.freq;
+            LTop->Locus[m].Allele[0].Frequency = pheno_list[m].first_allele->allele_freq.freq;
+            LTop->Locus[m].Allele[1].Frequency = pheno_list[m].first_allele->next->allele_freq.freq;
 
-//          LTop->Locus[m].LAFFDATA.ClassCnt = marker_list[m].num_classes;
+//          LTop->Pheno[m].Props.Affection.ClassCnt = marker_list[m].num_classes;
 
-            recode_liability_class(marker_list, LTop, m);
+            recode_liability_class(pheno_list, LTop, m);
 
             break;
 
@@ -953,20 +932,19 @@ void recode_locus_top(marker_type *marker_list, linkage_locus_top *LTop)
             LTop->Locus[m].AlleleCnt = 2;
             LTop->Locus[m].Allele = CALLOC((size_t) 2, linkage_allele_rec);
             LTop->Locus[m].Allele[0].Frequency =
-                marker_list[m].first_allele->allele_freq.freq;
+                pheno_list[m].first_allele->allele_freq.freq;
             LTop->Locus[m].Allele[1].Frequency =
-                marker_list[m].first_allele->next->allele_freq.freq;
+                pheno_list[m].first_allele->next->allele_freq.freq;
 
-            LTop->Locus[m].Data.Quant.ClassCnt=1;
-            LTop->Locus[m].Data.Quant.Mean = CALLOC((size_t) 1, double *);
-            LTop->Locus[m].Data.Quant.Mean[0] = CALLOC((size_t) 3, double);
-            LTop->Locus[m].Data.Quant.Mean[0][0] =
-/*	LTop->Locus[m].Data.Quant.Mean[0][1] = */
-                LTop->Locus[m].Data.Quant.Mean[0][1] = 0.0;
-            LTop->Locus[m].Data.Quant.Variance = CALLOC((size_t) 1, double *);
-            LTop->Locus[m].Data.Quant.Variance[0] = CALLOC((size_t) 1, double);
-            LTop->Locus[m].Data.Quant.Variance[0][0] = 1.0;
-            LTop->Locus[m].Data.Quant.Multiplier = 1.0;
+            LTop->Pheno[m].Props.Quant.ClassCnt=1;
+            LTop->Pheno[m].Props.Quant.Mean = CALLOC((size_t) 1, double *);
+            LTop->Pheno[m].Props.Quant.Mean[0] = CALLOC((size_t) 3, double);
+            LTop->Pheno[m].Props.Quant.Mean[0][0] = 0.0;
+            LTop->Pheno[m].Props.Quant.Mean[0][1] = 0.0;
+            LTop->Pheno[m].Props.Quant.Variance = CALLOC((size_t) 1, double *);
+            LTop->Pheno[m].Props.Quant.Variance[0] = CALLOC((size_t) 1, double);
+            LTop->Pheno[m].Props.Quant.Variance[0][0] = 1.0;
+            LTop->Pheno[m].Props.Quant.Multiplier = 1.0;
             break;
 
         default:
@@ -975,7 +953,7 @@ void recode_locus_top(marker_type *marker_list, linkage_locus_top *LTop)
     }
 
     LTop->SexDiff = LTop->Interference = 0;
-    if (LTop->LocusCnt > 1) {
+    if (LTop->MarkerCnt > 1) {
         LTop->MaleRecomb = CALLOC((size_t) LTop->LocusCnt - 1, double);
         for (all = 0; all < LTop->LocusCnt - 1; all++)
             LTop->MaleRecomb[all] = 0.0;
@@ -1009,11 +987,14 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
 {
     int m, ped, per, entrycnt;
     allele_list_type *allele;
-    linkage_pedrec_data *data, *data_copy;
+    void *marker;
+    void *marker_copy;
     int rall;
     const char *all;
     int geno_recoded[2], allele_unrecoded=0;
     int displayed_errors=0;
+    const char *all1, *all2;
+    int a1, a2;
 
 #ifdef DEBUG
     int num_skip;
@@ -1037,64 +1018,51 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                     Top->Ped[ped].EntryCnt :
                     Top->PTop[ped].num_persons);
         for(per=0; per < entrycnt; per++) {
-            data = ((pedfile_type == POSTMAKEPED_PFT)?
-                    &(Top->Ped[ped].Entry[per].Data[0]) :
-                    &(Top->PTop[ped].persons[per].data[0]));
 
-            data_copy=CALLOC((size_t) Top->LocusTop->LocusCnt, linkage_pedrec_data);
-
-            for(m=0; m < Top->LocusTop->LocusCnt; m++) {
-                switch(Top->LocusTop->Locus[m].Type) {
-                case AFFECTION:
-                    data_copy[m].Affection.Status = data[m].Affection.Status;
-                    data_copy[m].Affection.Class = data[m].Affection.Class;
-                    break;
-
-                case QUANT:
-                    data_copy[m].Quant = data[m].Quant;
-                    break;
-
-                case NUMBERED :
-                case XLINKED :
-                case YLINKED:
-
+            marker = (pedfile_type == POSTMAKEPED_PFT)?
+                      Top->Ped[ped].Entry[per].Marker :
+                      Top->PTop[ped].persons[per].marker;
+            if (marker != NOTYPED_ALLELES) {
+                marker_copy = marker_alloc((size_t) Top->LocusTop->MarkerCnt, Top->LocusTop->PhenoCnt);
+                for(m = Top->LocusTop->PhenoCnt; m < Top->LocusTop->LocusCnt; m++) {
+                    a1 = a2 = 0;
                     if (UntypedPeds[ped] == 1) {
-                        data_copy[m].Alleles.Allele_1 = 0;
-                        data_copy[m].Alleles.Allele_2 = 0;
                         geno_recoded[0]=geno_recoded[1]=1;
                     } else {
+                        get_2Ralleles(marker, m, &all1, &all2);
                         geno_recoded[0]=geno_recoded[1]=0;
-                        if (allelecmp(data[m].RAlleles.Allele_1, REC_UNKNOWN) == 0) {
-                            data_copy[m].Alleles.Allele_1 = 0;
+
+                        if (allelecmp(all1, REC_UNKNOWN) == 0) {
+                            a1 = 0;
                             geno_recoded[0]=1;
                         }
 
-                        if (allelecmp(data[m].RAlleles.Allele_2, REC_UNKNOWN) == 0) {
-                            data_copy[m].Alleles.Allele_2 = 0;
+                        if (allelecmp(all2, REC_UNKNOWN) == 0) {
+                            a2 = 0;
                             geno_recoded[1]=1;
                         }
 
-                        if (allelecmp(data[m].RAlleles.Allele_1, REC_UNKNOWN) ||
-                            allelecmp(data[m].RAlleles.Allele_2, REC_UNKNOWN)) {
+                        if (allelecmp(all1, REC_UNKNOWN) ||
+                            allelecmp(all2, REC_UNKNOWN)) {
                             allele = marker_list[m].first_allele;
                             while(allele != NULL) {
                                 rall = allele->allele_freq.index;
                                  all = allele->allele_freq.name;
 
-                                if (allelecmp(data[m].RAlleles.Allele_1, all) == 0) {
-                                    data_copy[m].Alleles.Allele_1 = rall;
+                                if (allelecmp(all1, all) == 0) {
+                                    a1 = rall;
                                     geno_recoded[0]=1;
                                 }
 
-
-                                if (allelecmp(data[m].RAlleles.Allele_2, all) == 0) {
-                                    data_copy[m].Alleles.Allele_2 = rall;
+                                if (allelecmp(all2, all) == 0) {
+                                    a2 = rall;
                                     geno_recoded[1]=1;
                                 }
                                 allele = allele->next;
                             }
                         }
                     }
+                    set_2alleles(marker_copy, m, a1, a2);
                     /* free the raw alleles */
                     if (geno_recoded[0] == 0 || geno_recoded[1] == 0) {
                         if (pedfile_type == POSTMAKEPED_PFT) {
@@ -1117,8 +1085,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                             strcat(err_msg, " allele 2 unrecognized");
                         }
 
-                        grow(err_msg, " in genotype %s/%s",
-                             data[m].RAlleles.Allele_1, data[m].RAlleles.Allele_2);
+                        grow(err_msg, " in genotype %s/%s", all1, all2);
 
                         SUPPRESS_MSSG(displayed_errors)
                             if (displayed_errors > MAX_PED_ERRORS) {
@@ -1128,22 +1095,17 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                         errorf(err_msg);
                         allele_unrecoded=1;
                     }
-/*
-                    free(data[m].RAlleles.Allele_1);
-                    free(data[m].RAlleles.Allele_2);
-*/
-                    break;
-                default:
-                    break;
                 }
+// put it back
+                if (Top->pedfile_type == POSTMAKEPED_PFT) {
+                    Top->Ped[ped].Entry[per].Marker = marker_copy;
+                } else {
+                    Top->PTop[ped].persons[per].marker = marker_copy;
+                }
+
+                /* finally someone did it right ! */
+                marker_free(marker, Top->LocusTop->PhenoCnt);
             }
-            if (Top->pedfile_type == POSTMAKEPED_PFT) {
-                Top->Ped[ped].Entry[per].Data = data_copy;
-            } else {
-                Top->PTop[ped].persons[per].data = data_copy;
-            }
-            /* finally someone did it right ! */
-            free(data);
         }
     }
     
@@ -1164,7 +1126,8 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
         mssgf("Please correct errors and restart Mega2.");
         EXIT(DATA_INCONSISTENCY);
     }
-    return;
+
+    order_heterozygous_allele(Top);
 }
 
 /*-----------------------end of recode_ped_top------------------*/
@@ -1217,11 +1180,13 @@ linkage_locus_top *read_marker_data(FILE *fp,
     /* error flags */
     int invalid_marker_type =0, missing_columns = 0;
     int displayed_messages = 0;
+    int loci_name_space = 0;
 
     num_markers=linecount(fp);
 
     types = CALLOC((size_t) num_markers, char);
     names = CALLOC((size_t) num_markers, char *);
+    num_markers = 0;
 
     Display_Errors = 1;
 
@@ -1271,7 +1236,10 @@ linkage_locus_top *read_marker_data(FILE *fp,
                 i++;
                 types[i]=ltype[0];
                 names[i] = CALLOC(strlen(marker)+1, char);
+                loci_name_space += strlen(marker)+1;
                 strcpy(names[i], marker);
+                if ((!strcmp(ltype, "M")) || (!strcmp(ltype, "X")) || (!strcmp(ltype, "Y")) )
+                    num_markers++;
                 if (!annotated && (!strcmp(ltype, "A"))) {
                     penetrances_read=0;
                     penetrances_read =
@@ -1295,7 +1263,6 @@ linkage_locus_top *read_marker_data(FILE *fp,
         }
     }
     Display_Errors = 1;
-    num_markers = i+1;
 
     if (missing_columns) {
         printf("Found lines with less than 2 columns, see %s for details.\n",
@@ -1313,17 +1280,23 @@ linkage_locus_top *read_marker_data(FILE *fp,
         EXIT(INPUT_DATA_ERROR);
     }
 
-    return read_common_marker_data(num_markers, names, types, annotated, penetrances_read, freq, pen);
+#ifdef SHOWSTATUS
+    msgvf("ALLOC SPACE: locus strings: %d MB (%d x %d)\n",
+          loci_name_space / 1024 / 1024,
+          i+1,  loci_name_space / (i+1) );
+#endif
+
+    return read_common_marker_data(i+1, num_markers, names, types, annotated, penetrances_read, freq, pen);
 }
 
-linkage_locus_top *read_common_marker_data(int num_markers, char **names, char *types, int annotated, double penetrances_read, double freq, double pen[5])
+linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char **names, char *types, int annotated, double penetrances_read, double freq, double pen[5])
 {
-    int i;
+    int i, m, p;
     int cnt_x = 0, cnt_y = 0, cnt_a = 0;
     linkage_locus_rec *Locus;
     linkage_locus_top *LTop = new_llocustop();
 
-    LTop->LocusCnt = num_markers;
+    LTop->LocusCnt = all_loci;
     LTop->NumPedigreeCols = 0;
     LTop->RiskLocus=0;
     LTop->SexLinked=0;
@@ -1332,127 +1305,167 @@ linkage_locus_top *read_common_marker_data(int num_markers, char **names, char *
     LTop->MutMale=LTop->MutFemale=0;
     LTop->Haplotype=0;
 
-    LTop->Locus = CALLOC((size_t) num_markers, linkage_locus_rec);
+    LTop->Locus   = CALLOC((size_t) all_loci,    linkage_locus_rec);
 
-    for (i=0; i < num_markers; i++) {
-        Locus = &(LTop->Locus[i]);
-        Locus->Name = CALLOC(strlen(names[i])+1, char);
-        Locus->number = -1;
-        strcpy(Locus->Name, names[i]);
-        /*    clear_llocusrec(Locus, TYPE_UNSET); */
+    LTop->Pheno  = CALLOC((size_t) all_loci - num_markers, pheno_rec);
+    LTop->PhenoCnt = all_loci - num_markers;
+
+    LTop->Marker = (CALLOC((size_t) num_markers, marker_rec)) - LTop->PhenoCnt;
+    LTop->MarkerCnt = num_markers;
+#ifdef SHOWSTATUS
+    msgvf("ALLOC SPACE: LTop->Locus: %d MB (%d x %d)\n",
+          all_loci * sizeof(linkage_locus_rec) / 1024 / 1024,
+          all_loci,  sizeof(linkage_locus_rec));
+
+    msgvf("ALLOC SPACE: LTop->Pheno: %d MB (%d x %d)\n",
+          (all_loci-num_markers) * sizeof(pheno_rec) / 1024 / 1024,
+          (all_loci-num_markers),  sizeof(pheno_rec));
+
+    msgvf("ALLOC SPACE: LTop->Marker: %d MB (%d x %d)\n",
+          num_markers * sizeof(marker_rec) / 1024 / 1024,
+          num_markers,  sizeof(marker_rec));
+#endif
+    for (i=0, m=0, p=0; i < all_loci; i++) {
+        int idx;
+        marker_rec *Marker;
+        pheno_rec *Pheno;
         switch(types[i]) {
         case 'M':
-            Locus->Type = NUMBERED;
-            Locus->Class = MARKER;
-            HasMarkers=1;
-            LTop->NumPedigreeCols += 2;
-            Locus->AlleleCnt=0;
-            cnt_a++;
-            break;
-
         case 'X':
-            Locus->Type = XLINKED;
-            Locus->Class = MARKER;
-            HasMarkers=1;
-            LTop->NumPedigreeCols += 2;
-            Locus->AlleleCnt=0;
-            cnt_x++;
-
-            break;
-
         case 'Y':
-            Locus->Type = YLINKED;
+            idx = LTop->PhenoCnt + m++;
+            Locus = &(LTop->Locus[idx]);
+            Locus->number = -1;
+            Locus->Name = CALLOC(strlen(names[i])+1, char);
+            strcpy(Locus->Name, names[i]);
             Locus->Class = MARKER;
             HasMarkers=1;
             LTop->NumPedigreeCols += 2;
             Locus->AlleleCnt=0;
-            cnt_y++;
 
+            Marker = &(LTop->Marker[idx]);
+            Locus->Marker = Marker;
+            Locus->Pheno  = 0;
+            Marker->Name = Locus->Name;
+            /*    clear_llocusrec(Locus, TYPE_UNSET); */
+            switch(types[i]) {
+            case 'M':
+                Locus->Type = NUMBERED;
+                cnt_a++;
+                break;
+
+            case 'X':
+                Locus->Type = XLINKED;
+                cnt_x++;
+                break;
+
+            case 'Y':
+                Locus->Type = YLINKED;
+                cnt_y++;
+                break;
+            }
             break;
-
         case 'A':
         case 'L':
-        Locus->Type = AFFECTION;
-        Locus->Class = TRAIT;
-        if (types[i] == 'L') {
-            LTop->NumPedigreeCols += 2;
-            Locus->LAFFDATA.ClassCnt = 2;
-            Locus->LAFFDATA.Class = NULL;
-            Locus->AlleleCnt=0;
-        } else {
-            LTop->NumPedigreeCols ++;
-            Locus->LAFFDATA.ClassCnt = 1;
-            Locus->AlleleCnt = 2;
-            Locus->Allele = CALLOC((size_t) 2, linkage_allele_rec);
-            Locus->LAFFDATA.Class = CALLOC((size_t) 1, linkage_affection_class);
-            Locus->LAFFDATA.PenCnt = 3;
-            clear_laffclass(&(Locus->LAFFDATA.Class[0]));
-            Locus->LAFFDATA.Class[0].AutoPen   = CALLOC((size_t) 3, double);
-            Locus->LAFFDATA.Class[0].FemalePen = CALLOC((size_t) 3, double);
-            Locus->LAFFDATA.Class[0].MalePen   = CALLOC((size_t) 2, double);
+        case 'T':
+        case 'C':
+            idx = p++;
+            Locus = &(LTop->Locus[idx]);
+            Locus->number = -1;
+            Locus->Name = CALLOC(strlen(names[i])+1, char);
+            strcpy(Locus->Name, names[i]);
+            Locus->Class = TRAIT;
 
-            if (!annotated) {
-                if (penetrances_read < 6) {
-                    sprintf(err_msg, "For affection status locus %s :", Locus->Name);
-                    mssgf(err_msg);
-                    mssgf("Names file did not contain allele frequency and penetrances.");
-                    mssgf("Setting penetrances to default values (A/A=0.05 A/a=0.90 a/a=0.90).");
-                    mssgf("and setting the allele frequencies to (0.50, 0.50)");
-                    Locus->Allele[0].Frequency = Locus->Allele[1].Frequency = 0.5;
-                    Locus->LAFFDATA.Class[0].AutoPen[0] = DOM_G11;
-                    Locus->LAFFDATA.Class[0].AutoPen[1] = DOM_G12;
-                    Locus->LAFFDATA.Class[0].AutoPen[2] = DOM_G22;
+            Pheno = &(LTop->Pheno[idx]);
+            Locus->Marker = 0;
+            Locus->Pheno  = Pheno;
+            Pheno->Name = Locus->Name;
+            switch(types[i]) {
+            case 'A':
+            case 'L':
+            Locus->Type = AFFECTION;
+            if (types[i] == 'L') {
+                LTop->NumPedigreeCols += 2;
+                Pheno->Props.Affection.ClassCnt = 2;
+                Pheno->Props.Affection.Class = NULL;
+                Locus->AlleleCnt = 0;
+            } else {
+                LTop->NumPedigreeCols ++;
+                Pheno->Props.Affection.ClassCnt = 1;
+                Locus->AlleleCnt = 2;
+                Locus->Allele = CALLOC((size_t) 2, linkage_allele_rec);
+                Pheno->Props.Affection.Class = CALLOC((size_t) 1, linkage_affection_class);
+                Pheno->Props.Affection.PenCnt = 3;
+                clear_laffclass(&(Pheno->Props.Affection.Class[0]));
+                Pheno->Props.Affection.Class[0].AutoPen   = CALLOC((size_t) 3, double);
+                Pheno->Props.Affection.Class[0].FemalePen = CALLOC((size_t) 3, double);
+                Pheno->Props.Affection.Class[0].MalePen   = CALLOC((size_t) 2, double);
 
-                    Locus->LAFFDATA.Class[0].FemalePen[0] = DOM_G11;
-                    Locus->LAFFDATA.Class[0].FemalePen[1] = DOM_G12;
-                    Locus->LAFFDATA.Class[0].FemalePen[2] = DOM_G22;
-
-                    Locus->LAFFDATA.Class[0].MalePen[0] = DOM_G11;
-                    Locus->LAFFDATA.Class[0].MalePen[1] = DOM_G12;
-                    draw_line();
-                } else {
-                    Locus->Allele[0].Frequency = 1 - freq;
-                    Locus->Allele[1].Frequency = freq;
-                    if (penetrances_read == 8) {
-                        Locus->LAFFDATA.Class[0].FemalePen[0] = pen[0];
-                        Locus->LAFFDATA.Class[0].FemalePen[1] = pen[1];
-                        Locus->LAFFDATA.Class[0].FemalePen[2] = pen[2];
-                        Locus->LAFFDATA.Class[0].MalePen[0] = pen[3];
-                        Locus->LAFFDATA.Class[0].MalePen[1] = pen[4];
-                    } else {
-                        Locus->LAFFDATA.Class[0].AutoPen[0] = pen[0];
-                        Locus->LAFFDATA.Class[0].AutoPen[1] = pen[1];
-                        Locus->LAFFDATA.Class[0].AutoPen[2] = pen[2];
-
+                if (!annotated) {
+                    if (penetrances_read < 6) {
                         sprintf(err_msg, "For affection status locus %s :", Locus->Name);
                         mssgf(err_msg);
-                        mssgf("Names file did not contain 2 male penetrances.");
-                        mssgf("Assuming data is for Autosomes Only.");
+                        mssgf("Names file did not contain allele frequency and penetrances.");
+                        mssgf("Setting penetrances to default values (A/A=0.05 A/a=0.90 a/a=0.90).");
+                        mssgf("and setting the allele frequencies to (0.50, 0.50)");
+                        Locus->Allele[0].Frequency = Locus->Allele[1].Frequency = 0.5;
+                        Pheno->Props.Affection.Class[0].AutoPen[0] = DOM_G11;
+                        Pheno->Props.Affection.Class[0].AutoPen[1] = DOM_G12;
+                        Pheno->Props.Affection.Class[0].AutoPen[2] = DOM_G22;
+
+                        Pheno->Props.Affection.Class[0].FemalePen[0] = DOM_G11;
+                        Pheno->Props.Affection.Class[0].FemalePen[1] = DOM_G12;
+                        Pheno->Props.Affection.Class[0].FemalePen[2] = DOM_G22;
+
+                        Pheno->Props.Affection.Class[0].MalePen[0] = DOM_G11;
+                        Pheno->Props.Affection.Class[0].MalePen[1] = DOM_G22;
                         draw_line();
+                    } else {
+                        Locus->Allele[0].Frequency = 1 - freq;
+                        Locus->Allele[1].Frequency = freq;
+                        if (penetrances_read == 8) {
+                            Pheno->Props.Affection.Class[0].FemalePen[0] = pen[0];
+                            Pheno->Props.Affection.Class[0].FemalePen[1] = pen[1];
+                            Pheno->Props.Affection.Class[0].FemalePen[2] = pen[2];
+                            Pheno->Props.Affection.Class[0].MalePen[0] = pen[3];
+                            Pheno->Props.Affection.Class[0].MalePen[1] = pen[4];
+                        } else {
+                            Pheno->Props.Affection.Class[0].AutoPen[0] = pen[0];
+                            Pheno->Props.Affection.Class[0].AutoPen[1] = pen[1];
+                            Pheno->Props.Affection.Class[0].AutoPen[2] = pen[2];
+
+                            sprintf(err_msg, "For affection status locus %s :", Locus->Name);
+                            mssgf(err_msg);
+                            mssgf("Names file did not contain 2 male penetrances.");
+                            mssgf("Assuming data is for Autosomes Only.");
+                            draw_line();
+                        }
                     }
                 }
             }
-        }
-        break;
-
-        case 'T':
-        case 'C':
-            Locus->Type = QUANT;
-            Locus->Class = TRAIT;
-            LTop->NumPedigreeCols ++;
-            Locus->AlleleCnt=0;
             break;
 
+            case 'T':
+            case 'C':
+                Locus->Type = QUANT;
+                LTop->NumPedigreeCols ++;
+                Locus->AlleleCnt=0;
+                break;
+
+            default:
+                break;
+            }
+            break;
         default:
             break;
         }
-        LTop->SexLinked = (cnt_x + cnt_y) ? (cnt_a ? 2 : 1) : 0;
 
         /* free(names[i]); */
 #ifdef CFREE
         free(names[i]);
 #endif
     }
+    LTop->SexLinked = (cnt_x + cnt_y) ? (cnt_a ? 2 : 1) : 0;
 
     free(types);
     free(names);
@@ -1461,8 +1474,9 @@ linkage_locus_top *read_common_marker_data(int num_markers, char **names, char *
 }
 
 /*----------------------end of read_marker_data------------------------*/
+//r default_trait_penetrance() below is called by some one that does not know about Locus split
 void default_trait_penetrances(linkage_ped_top *Top, int locus,
-			       marker_type *marker_listi)
+                               pheno_type *pheno_listi)
 
 {
     int ped, per, entrycount;
@@ -1479,25 +1493,25 @@ void default_trait_penetrances(linkage_ped_top *Top, int locus,
             }
 
             for(per=0; per < entrycount; per++) {
-                if (Top->LocusTop->Locus[locus].Data.Affection.ClassCnt == 0) {
+                if (Top->LocusTop->Pheno[locus].Props.Affection.ClassCnt == 0) {
                     if (pedfile_type == POSTMAKEPED_PFT) {
-                        lclass = Top->Ped[ped].Entry[per].ECLASS(locus);
+                        lclass = Top->Ped[ped].Entry[per].Pheno[locus].Affection.Class;
                     } else {
-                        lclass = Top->PTop[ped].persons[per].PCLASS(locus);
+                        lclass = Top->PTop[ped].persons[per].pheno[locus].Affection.Class;
                     }
                     /* store the liability class */
-                    marker_listi->num_classes =
-                        ((marker_listi->num_classes < lclass ) ?
-                         lclass : marker_listi->num_classes) ;
+                    pheno_listi->num_classes =
+                        ((pheno_listi->num_classes < lclass ) ?
+                         lclass : pheno_listi->num_classes) ;
 
                 } else {
-                    marker_listi->num_classes = 1;
+                    pheno_listi->num_classes = 1;
                 }
             }
         }
 
-        for (i=0; i < marker_listi->num_classes; i++) {
-            insert_into_class_list(&(marker_listi->class_list), i+1);
+        for (i=0; i < pheno_listi->num_classes; i++) {
+            insert_into_class_list(&(pheno_listi->class_list), i+1);
         }
     }
     return;
@@ -1509,12 +1523,11 @@ void default_trait_penetrances(linkage_ped_top *Top, int locus,
 
 */
 
-//new
 linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
 				    int locus,
 				    int count_option,
 				    marker_type *marker_listi,
-                                    int **member_ids,
+                                    allelecnt **member_ids,
 				    int count_ht)
 {
     int ped, per, ped2, rare, rareped, pedcnt = Top->PedCnt;
@@ -1529,7 +1542,6 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
     int founder = 0;
     int typed1, typed2;
     int ht_ok  = count_ht ? 1 : 0;
-    //??
     int xlinked = 0;
 
     allele_prop_reset();
@@ -1553,7 +1565,6 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
         marker_listi->ht_unique   = marker_listi->ht_everyone = 0;
 
         for (ped2=0; ped2 < 2 * pedcnt; ped2++) {
-//??rvb
             if (ped2 < pedcnt) {
                 rare = 0;
                 ped = ped2;
@@ -1587,29 +1598,26 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
                         continue;
                     } else if (found == 0 && UntypedPeds[ped] != 1) { //Untyped redundant
                         int idx = randomindex(homozper);
-                        per = member_ids[ped][idx];
+                        per = member_ids[ped][idx].num;
                     } else {
                         continue;
                     }
                 }
-                member_ids[ped][per]=0;
+                member_ids[ped][per].num=0;
 
             /* get alleles */
                 if (pedfile_type == POSTMAKEPED_PFT) {
                     prp = &pr[per];
-                    all1 = prp->RALLELE1(locus);
-                    all2 = prp->RALLELE2(locus);
+                    get_2Ralleles(prp->Marker, locus, &all1, &all2);
                     sex  = prp->Sex;
                     founder = IS_LFOUNDER(*prp);
                 } else {
                     pnp = &pn[per];
-                    all1 = pnp->PRALLELE1(locus);
-                    all2 = pnp->PRALLELE2(locus);
+                    get_2Ralleles(pnp->marker, locus, &all1, &all2);
                     sex  = pnp->gender;
                     founder = PFOUNDER(*pnp);
                 }
 
-//??rvb
                 if (LocType == YLINKED && sex == 2) {
                     /* skip the female entirely */
                     continue;
@@ -1637,17 +1645,25 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
              /* typing */
                 homoz = all1 == all2;
                 if (rec == Raw_postmake) {
-                    typed1=allelecmp(prp->RALLELE1(locus), REC_UNKNOWN);
-                    typed2=allelecmp(prp->RALLELE2(locus), REC_UNKNOWN);
+                    const char *a1, *a2;
+                    get_2Ralleles(prp->Marker, locus, &a1, &a2);
+                    typed1=allelecmp(a1, REC_UNKNOWN);
+                    typed2=allelecmp(a2, REC_UNKNOWN);
                 } else if (rec == Postmakeped) {
-                    typed1=(prp->EALLELE1(locus))? 1 : 0;
-                    typed2=(prp->EALLELE2(locus))? 1 : 0;
+                    int a1, a2;
+                    get_2alleles(prp->Marker, locus, &a1, &a2);
+                    typed1=(a1)? 1 : 0;
+                    typed2=(a2)? 1 : 0;
                 } else if (rec == Raw_premake) {
-                    typed1=allelecmp(pnp->PRALLELE1(locus), REC_UNKNOWN);
-                    typed2=allelecmp(pnp->PRALLELE2(locus), REC_UNKNOWN);
+                    const char *a1, *a2;
+                    get_2Ralleles(pnp->marker, locus, &a1, &a2);
+                    typed1=allelecmp(a1, REC_UNKNOWN);
+                    typed2=allelecmp(a2, REC_UNKNOWN);
                 } else {
-                    typed1=(pnp->PALLELE1(locus))? 1 : 0;
-                    typed2=(pnp->PALLELE2(locus))? 1 : 0;
+                    int a1, a2;
+                    get_2alleles(pnp->marker, locus, &a1, &a2);
+                    typed1=(a1)? 1 : 0;
+                    typed2=(a2)? 1 : 0;
                 }
 
             /* find if this person is genotyped at the locus */
@@ -1664,7 +1680,7 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
                 if (!(xlinked && sex == 1)) {
                     int homoz_test = ((LocType == YLINKED) && typed1 && typed2) ? homoz : 1;
                     if (homoz_test)
-                        member_ids[ped][homozper] = per;
+                        member_ids[ped][homozper].num = per;
                     homozper++;
                 }
 
@@ -1759,7 +1775,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
 				    int locus,
 				    int count_option,
 				    marker_type *marker_listi,
-                                    int **member_ids,
+                                    allelecnt **member_ids,
 				    int count_ht)
 {
     int ped, per;
@@ -1775,9 +1791,10 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
     allele_prop_reset();
 
     if (LocType == AFFECTION || LocType == QUANT) {
-        marker_listi->first_allele = CALLOC((size_t) 1, allele_list_type);
-        marker_listi->first_allele->next = CALLOC((size_t) 1, allele_list_type);
-        marker_listi->first_allele->next->next = NULL;
+//      marker_listi->first_allele = CALLOC((size_t) 1, allele_list_type);
+//      marker_listi->first_allele->next = CALLOC((size_t) 1, allele_list_type);
+//      marker_listi->first_allele->next->next = NULL;
+//      For Traits, just put the answers in during recode phase
     } else if ((LocType == NUMBERED) || (LocType == XLINKED) || (LocType == YLINKED)) {
 
         /* first, for this marker, create the list of all new alleles,
@@ -1787,12 +1804,25 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
             if (pedfile_type == POSTMAKEPED_PFT) {
                 entrycount = Top->Ped[ped].EntryCnt;
                 rec = Raw_postmake;
+
+                for(per=0; per < entrycount; per++) {
+                    linkage_ped_rec *te = &Top->Ped[ped].Entry[per];
+                    get_2Ralleles(te->Marker, locus, &all1, &all2);
+                    member_ids[ped][per].num  = 0;
+                    member_ids[ped][per].all1 = all1;
+                    member_ids[ped][per].all2 = all2;
+                }
             } else {
                 entrycount = Top->PTop[ped].num_persons;
                 rec = Raw_premake;
-            }
-            for(per=0; per < entrycount; per++) {
-                member_ids[ped][per]=0;
+
+                for(per=0; per < entrycount; per++) {
+                    person_node_type *tp = &Top->PTop[ped].persons[per];
+                    get_2Ralleles(tp->marker, locus, &all1, &all2);
+                    member_ids[ped][per].num  = 0;
+                    member_ids[ped][per].all1 = all1;
+                    member_ids[ped][per].all2 = all2;
+                }
             }
         }
 
@@ -1803,16 +1833,27 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
 
             entrycount = ((pedfile_type == POSTMAKEPED_PFT)?
                           Top->Ped[ped].EntryCnt : Top->PTop[ped].num_persons);
+
             for(per=0; per < entrycount; per++) {
+/*
+ * example of the old code before member_ids[] add .all1, .all2
+ */
+/*
                 if (pedfile_type == POSTMAKEPED_PFT) {
-                    all1 = Top->Ped[ped].Entry[per].RALLELE1(locus);
-                    all2 = Top->Ped[ped].Entry[per].RALLELE2(locus);
-                    sex = Top->Ped[ped].Entry[per].Sex;
+                    linkage_ped_rec *te = &Top->Ped[ped].Entry[per];
+                    get_2Ralleles(te->Marker, locus, &all1, &all2);
+                    sex = te->Sex;
                 } else {
-                    all1 = Top->PTop[ped].persons[per].PRALLELE1(locus);
-                    all2 = Top->PTop[ped].persons[per].PRALLELE2(locus);
-                    sex = Top->PTop[ped].persons[per].gender;
+                    person_node_type *tp = &Top->PTop[ped].persons[per];
+                    get_2Ralleles(tp->marker, locus, &all1, &all2);
+                    sex = tp->gender;
                 }
+*/
+                sex = (pedfile_type == POSTMAKEPED_PFT) ?
+                           Top->Ped[ped].Entry[per].Sex :
+                           Top->PTop[ped].persons[per].gender;
+                all1 = member_ids[ped][per].all1;
+                all2 = member_ids[ped][per].all2;
 
                 /* insert function takes care of unknown alleles,
                    skipping females for Y-chromosome, since we avoided
@@ -1871,16 +1912,13 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                                  1, count_ht, 0);
 
             for(per=0; per < entrycount; per++) {
-                if (member_ids[ped][per] >= 1) {
-                    if (pedfile_type == POSTMAKEPED_PFT) {
-                        all1 = Top->Ped[ped].Entry[per].RALLELE1(locus);
-                        all2 = Top->Ped[ped].Entry[per].RALLELE2(locus);
-                        sex = Top->Ped[ped].Entry[per].Sex;
-                    } else {
-                        all1 = Top->PTop[ped].persons[per].PRALLELE1(locus);
-                        all2 = Top->PTop[ped].persons[per].PRALLELE2(locus);
-                        sex = Top->PTop[ped].persons[per].gender;
-                    }
+                if (member_ids[ped][per].num >= 1) {
+                    sex = (pedfile_type == POSTMAKEPED_PFT) ?
+                               Top->Ped[ped].Entry[per].Sex :
+                               Top->PTop[ped].persons[per].gender;
+                    all1 = member_ids[ped][per].all1;
+                    all2 = member_ids[ped][per].all2;
+
                     /* printf("1: %d %d %s(%p) %s(%p) %d\n",
                               ped, per, all1, all1, all2, all2, sex); */
 
@@ -1891,7 +1929,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         continue;
                     }
 
-                    if (member_ids[ped][per] == 1) {
+                    if (member_ids[ped][per].num == 1) {
                         /* switch the two alleles if the 1st one is unknown,
                            so that we always count the known allele */
                         /* RETURN VALUES The strcmp() and strncmp() return an integer greater than, equal to, or
@@ -1924,7 +1962,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         marker_listi->num_random ++;
                         marker_listi->num_unique ++;
 
-                        if (member_ids[ped][per] == 1) {
+                        if (member_ids[ped][per].num == 1) {
                             (marker_listi->ht_founders)++;
                             (marker_listi->ht_random)++;
                             (marker_listi->ht_unique)++;
@@ -1953,25 +1991,22 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 }
 
                 if (per > -1 && genotyped >= 1) {
-                    member_ids[ped][per]=genotyped;
+                    member_ids[ped][per].num=genotyped;
                     /* This can be incremented here because we always count the
                        person index returned */
                     (marker_listi->num_random)++;
                     (marker_listi->num_unique)++;
 
-                    if (pedfile_type == POSTMAKEPED_PFT) {
-                        all1 = Top->Ped[ped].Entry[per].RALLELE1(locus);
-                        all2 = Top->Ped[ped].Entry[per].RALLELE2(locus);
-                        sex = Top->Ped[ped].Entry[per].Sex;
-                    } else {
-                        all1 = Top->PTop[ped].persons[per].PRALLELE1(locus);
-                        all2 = Top->PTop[ped].persons[per].PRALLELE2(locus);
-                        sex = Top->PTop[ped].persons[per].gender;
-                    }
+                    sex = (pedfile_type == POSTMAKEPED_PFT) ?
+                               Top->Ped[ped].Entry[per].Sex :
+                               Top->PTop[ped].persons[per].gender;
+                    all1 = member_ids[ped][per].all1;
+                    all2 = member_ids[ped][per].all2;
+
                     /* printf("2: %d %d %s(%p) %s(%p) %d\n",
                               ped, per, all1, all1, all2, all2, sex); */
 
-                    if (member_ids[ped][per] == 1) {
+                    if (member_ids[ped][per].num == 1) {
                         /* switch the two alleles if the 1st one is unknown,
                            so that we always count the known allele */
                         if (!allelecmp(all1, REC_UNKNOWN)) {
@@ -2035,16 +2070,12 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                      Top->Ped[ped].EntryCnt : Top->PTop[ped].num_persons);
 
                 for(per=0; per < entrycount; per++) {
-                    if (pedfile_type == POSTMAKEPED_PFT) {
-                        all1 = Top->Ped[ped].Entry[per].RALLELE1(locus);
-                        all2 = Top->Ped[ped].Entry[per].RALLELE2(locus);
-                        sex = Top->Ped[ped].Entry[per].Sex;
-                    } else {
-                        all1 = Top->PTop[ped].persons[per].PRALLELE1(locus);
-                        all2 = Top->PTop[ped].persons[per].PRALLELE2(locus);
-                        sex = Top->PTop[ped].persons[per].gender;
-                        /*   new_alleles(all1, all2, marker_listi->first_allele)); */
-                    }
+                    sex = (pedfile_type == POSTMAKEPED_PFT) ?
+                               Top->Ped[ped].Entry[per].Sex :
+                               Top->PTop[ped].persons[per].gender;
+                    all1 = member_ids[ped][per].all1;
+                    all2 = member_ids[ped][per].all2;
+
                     /* printf("3: %d %d %s(%p) %s(%p) %d\n",
                               ped, per, all1, all1, all2, all2, sex); */
                     ht=counted1=counted2=0;
@@ -2097,10 +2128,10 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                                 count_this_allele(marker_listi->first_allele,
                                                   all2, 3);
 
-                                member_ids[ped][per]=2;
+                                member_ids[ped][per].num=2;
                                 counted2=1;
                             } else {
-                                member_ids[ped][per]=1;
+                                member_ids[ped][per].num=1;
                             }
                         } else if (!allelecmp(all2, allelep->allele_freq.name)) {
                             /* count allele2 as unique and also insert allele1 */
@@ -2110,17 +2141,17 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                                 count_this_allele(marker_listi->first_allele,
                                                   all1, 3);
 
-                                member_ids[ped][per]=2;
+                                member_ids[ped][per].num=2;
                                 counted1 = 1;
                             } else {
-                                member_ids[ped][per]=1;
+                                member_ids[ped][per].num=1;
                             }
                         }
                     }
 
                     if (counted2 || counted1) {
                         marker_listi->num_unique ++;
-                        if (member_ids[ped][per] == 1) {
+                        if (member_ids[ped][per].num == 1) {
                             (marker_listi->ht_unique) ++;
                         }
                         /* This breaks out of the persons loop and goes to next pedigree */
@@ -2138,7 +2169,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 entrycount =
                     ((pedfile_type == POSTMAKEPED_PFT) ? Top->Ped[ped].EntryCnt : Top->PTop[ped].num_persons);
                 for(per=0; per < entrycount; per++) {
-                    marker_listi->num_half_typed += ((member_ids[ped][per] == 1)? 1: 0);
+                    marker_listi->num_half_typed += ((member_ids[ped][per].num == 1)? 1: 0);
                 }
             }
         }
@@ -2152,27 +2183,24 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
             entrycount =
                 ((pedfile_type == POSTMAKEPED_PFT) ? Top->Ped[ped].EntryCnt : Top->PTop[ped].num_persons);
             for(per=0; per < entrycount; per++) {
-                member_ids[ped][per]=0;
+                member_ids[ped][per].num=0;
             }
             founders_or_everyone(Top, locus, rec, ped,
                                  member_ids[ped],
                                  4, count_ht, 0);
 
             for(per=0; per < entrycount; per++) {
-                if (member_ids[ped][per] >= 1) {
-                    if (pedfile_type == POSTMAKEPED_PFT) {
-                        all1 = Top->Ped[ped].Entry[per].RALLELE1(locus);
-                        all2 = Top->Ped[ped].Entry[per].RALLELE2(locus);
-                        sex = Top->Ped[ped].Entry[per].Sex;
-                    } else {
-                        all1 = Top->PTop[ped].persons[per].PRALLELE1(locus);
-                        all2 = Top->PTop[ped].persons[per].PRALLELE2(locus);
-                        sex = Top->PTop[ped].persons[per].gender;
-                    }
+                if (member_ids[ped][per].num >= 1) {
+                    sex = (pedfile_type == POSTMAKEPED_PFT) ?
+                               Top->Ped[ped].Entry[per].Sex :
+                               Top->PTop[ped].persons[per].gender;
+                    all1 = member_ids[ped][per].all1;
+                    all2 = member_ids[ped][per].all2;
+
                     /* printf("4: %d %d %s(%p) %s(%p) %d\n",
                               ped, per, all1, all1, all2, all2, sex); */
 
-                    if (member_ids[ped][per] == 1) {
+                    if (member_ids[ped][per].num == 1) {
                         /* This is a half-typed person */
                         if (count_ht == 0) {
                             continue;
@@ -2191,7 +2219,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         }
                     }
 
-                    if (sex == 1 && member_ids[ped][per] == 2 && allelecmp(all1, all2) &&
+                    if (sex == 1 && member_ids[ped][per].num == 2 && allelecmp(all1, all2) &&
                         (LocType == XLINKED || LocType == YLINKED)) {
                         continue;
                     }
@@ -2207,7 +2235,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         count_this_allele(marker_listi->first_allele,
                                           all2, 4);
                     }
-                    if (member_ids[ped][per] == 1) {
+                    if (member_ids[ped][per].num == 1) {
                         (marker_listi->ht_everyone) ++;
                     }
                 }
@@ -2221,7 +2249,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 entrycount =
                     ((pedfile_type == POSTMAKEPED_PFT) ? Top->Ped[ped].EntryCnt : Top->PTop[ped].num_persons);
                 for(per=0; per < entrycount; per++) {
-                    marker_listi->num_half_typed += ((member_ids[ped][per] == 1)? 1: 0);
+                    marker_listi->num_half_typed += ((member_ids[ped][per].num == 1)? 1: 0);
                 }
             }
         }
@@ -2239,48 +2267,43 @@ linkage_ped_top  *create_full_marker_data(
     char *omitfl_name,
     int *untyped_ped_opt,
     linkage_locus_top *LTop,
+    int *col2locus,
     analysis_type analysis)
-
 {
-
-
     FILE *fp=pedfilep;
     int i, ped_count, numlines;
     int count_option, count_halftyped;
     marker_type *marker_list;
+    pheno_type *pheno_list;
     linkage_ped_top *Top;
 
     Mega2Status = INSIDE_RECODE;
     /*  read_marker_data(lfilep, &LTop); */
 
-    marker_list=CALLOC((size_t) LTop->LocusCnt, marker_type);
+    pheno_list=CALLOC((size_t) LTop->PhenoCnt, pheno_type);
+    for (i=0; i < LTop->PhenoCnt; i++) {
+        pheno_list[i].first_allele = NULL;
+        pheno_list[i].estimate_frequencies = 1;
+        if (LTop->Locus[i].Type == QUANT) {
+            pheno_list[i].num_classes = 1;
+            pheno_list[i].num_alleles = 2;
+        } else if (LTop->Locus[i].Type == AFFECTION) {
+            pheno_list[i].num_classes = 0;
+            pheno_list[i].num_alleles = 2;
+        }
+    }
 
-    for(i=0; i < LTop->LocusCnt; i++) {
+    marker_list = (CALLOC((size_t) LTop->MarkerCnt, marker_type)) - LTop->PhenoCnt;
+    for(i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
         marker_list[i].first_allele = NULL;
         if (LTop->Locus[i].Type == NUMBERED || LTop->Locus[i].Type == XLINKED ||
            LTop->Locus[i].Type == YLINKED) {
+
             marker_list[i].num_alleles = 0;
             marker_list[i].num_classes = 0;
-        } else if (LTop->Locus[i].Type == QUANT) {
-            marker_list[i].num_classes = 1;
-            marker_list[i].num_alleles = 2;
-        } else if (LTop->Locus[i].Type == AFFECTION) {
-            marker_list[i].num_classes = 0;
-            marker_list[i].num_alleles = 2;
-        }
-        /* defaults: estimate frequencies if not PLINK,
-           always recode */
 
-//rvbxx
-/*
-        if (analysis == TO_PLINK) {
-            marker_list[i].estimate_frequencies = 0;
-        } else {
-            marker_list[i].estimate_frequencies = 1;
         }
-*/
         marker_list[i].estimate_frequencies = 1;
-
         marker_list[i].recode_alleles = 0;
     }
 
@@ -2291,15 +2314,17 @@ linkage_ped_top  *create_full_marker_data(
         pedfile_type = PREMAKEPED_PFT;
         LTop->PedRecDataType = Raw_premake;
         rewind(fp);
-        Top = read_pre_makeped(fp, ped_count, numlines, NULL, LTop);
+        Top = read_pre_makeped(fp, ped_count, numlines, NULL, LTop, col2locus);
     } else {
         pedfile_type = POSTMAKEPED_PFT;
         LTop->PedRecDataType = Raw_postmake;
         rewind(fp);
-        Top = read_linkage_ped_file(fp, LTop);
+        Top = read_linkage_ped_file(fp, LTop, col2locus);
     }
     log_line(mssgf);
     mssgf("Input pedigree data contains:");
+
+    order_heterozygous_allele(Top);
     write_ped_stats(Top, pedfile_type);
     if (omitfl_name != NULL) {
         premakeped_omit_file(Top, omitfl_name,1);
@@ -2328,12 +2353,13 @@ linkage_ped_top  *create_full_marker_data(
         mssgf("Counting alleles for each marker ...");
     }
     {
-        int ped, entrycount, **member_ids;
-        member_ids=CALLOC((size_t) Top->PedCnt, int *);
+        int ped, entrycount;
+        allelecnt **member_ids;
+        member_ids=CALLOC((size_t) Top->PedCnt, allelecnt *);
         for (ped=0; ped < Top->PedCnt; ped++) {
             entrycount = (pedfile_type == POSTMAKEPED_PFT) ? Top->Ped[ped].EntryCnt:
                                                Top->PTop[ped].num_persons;
-            member_ids[ped]=CALLOC((size_t) entrycount, int);
+            member_ids[ped]=CALLOC((size_t) entrycount, allelecnt);
         }
 
         for (i=0; i < LTop->LocusCnt; i++) {
@@ -2343,10 +2369,12 @@ linkage_ped_top  *create_full_marker_data(
             }
 #endif
         /* in this function, we also decide whether to recode or not */
-            create_allele_list(Top, i, count_option, &(marker_list[i]),
-                               member_ids,
-                               count_halftyped);
-            default_trait_penetrances(Top, i, &(marker_list[i]));
+            if (LTop->Locus[i].Class == MARKER)
+                create_allele_list(Top, i, count_option, &(marker_list[i]),
+                                   member_ids,
+                                   count_halftyped);
+            else
+                default_trait_penetrances(Top, i, &(pheno_list[i]));
         }
         for(ped=0; ped < Top->PedCnt; ped++) {
             free(member_ids[ped]);
@@ -2358,19 +2386,22 @@ linkage_ped_top  *create_full_marker_data(
     count_raw_alleles(marker_list, Top->LocusTop);
 
     if (analysis != TO_PLINK) {
-        count_classes(marker_list, Top->LocusTop);
+        count_classes(pheno_list, Top->LocusTop);
     }
 
     /* see if alleles are numeric and consecutive, else
        needs recoding, also sort alleles */
+
     for (i=0; i < LTop->LocusCnt; i++) {
         if (LTop->Locus[i].Type == NUMBERED ||
             LTop->Locus[i].Type == XLINKED ||
             LTop->Locus[i].Type == YLINKED) {
+
             need_recoding(&(marker_list[i]));
+
 /*       if (LTop->Locus[i].Type == XLINKED || */
-/* 	  LTop->Locus[i].Type == YLINKED) { */
-/* 	LTop->Locus[i].Type = NUMBERED; */
+/*    	     LTop->Locus[i].Type == YLINKED) { */
+/* 	        LTop->Locus[i].Type = NUMBERED; */
 /*       } */
         }
     }
@@ -2379,17 +2410,17 @@ linkage_ped_top  *create_full_marker_data(
 
     write_recode_summary(marker_list, Top->LocusTop, count_halftyped);
     recode_ped_top(marker_list, Top, (plink_info_type *)NULL);
-    recode_locus_top(marker_list, Top->LocusTop);
+    recode_locus_top(marker_list, pheno_list, Top->LocusTop);
     Mega2Status = DONE_RECODE;
     log_line(mssgf);
     mssgf("Pedigree data summary after recoding:");
     write_ped_stats(Top, pedfile_type);
 
-    for (i=0; i < LTop->LocusCnt; i++) {
+    for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
         free_marker_item(marker_list[i].first_allele);
     }
 
-    free(marker_list); marker_list=NULL;
+    free(marker_list + LTop->PhenoCnt); marker_list=NULL;
 
     return Top;
 }
@@ -2559,12 +2590,14 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
     /* error flags */
     int invalid_marker_type =0, missing_columns = 0;
     int displayed_messages = 0;
+    int loci_name_space = 0;
 
     num_markers = linecount(fp);
     num_markers += cols;
 
     types = CALLOC((size_t) num_markers, char);
     names = CALLOC((size_t) num_markers, char *);
+    num_markers = 0;
 
     /* annotated format */
     annotated=1;
@@ -2619,6 +2652,9 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
                 i++;
                 types[i]=ltype[0];
                 names[i] = CALLOC(strlen(marker)+1, char);
+                loci_name_space += strlen(marker)+1;
+                if ((!strcmp(ltype, "M")) || (!strcmp(ltype, "X")) || (!strcmp(ltype, "Y")) )
+                    num_markers++;
                 strcpy(names[i], marker);
             } else {
                 sprintf(err_msg,
@@ -2636,8 +2672,6 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
     }
     Display_Errors = 1;
 
-    num_markers = i+1;
-
     if (missing_columns) {
         printf("Found lines with less than 2 columns, see %s for details.\n",
                Mega2Err);
@@ -2654,5 +2688,11 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
         EXIT(INPUT_DATA_ERROR);
     }
 
-    return read_common_marker_data(num_markers, names, types, annotated, penetrances_read, 0, NULL);
+#ifdef SHOWSTATUS
+    msgvf("ALLOC SPACE: locus strings: %d MB (%d x %d)\n",
+          loci_name_space / 1024 / 1024,
+          i+1,  loci_name_space / (i+1) );
+#endif
+
+    return read_common_marker_data(i+1, num_markers, names, types, annotated, penetrances_read, 0, NULL);
 }

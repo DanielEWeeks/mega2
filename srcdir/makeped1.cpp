@@ -68,7 +68,8 @@
 /*--------------- static functions --------------*/
 static int read_peds(int line_count, FILE *pfilep,
                      pre_makeped_record *persons,
-                     linkage_locus_top *LTop);
+                     linkage_locus_top *LTop,
+                     int *col2locus);
 static void free_min_graph(minimizing_graph_type *m_graph);
 
 static void degree_genotyped(person_node_type *entry, linkage_locus_top *LTop);
@@ -106,7 +107,8 @@ void free_marriage_graph(marriage_graph_type *m_graph);
 linkage_ped_top *read_pre_makeped(FILE *fp, int pedcount,
 				  int linecount,
 				  pre_makeped_record *persons,
-				  linkage_locus_top *LTop);
+				  linkage_locus_top *LTop,
+                                  int *col2locus);
 int compare_edges(const void *e11, const void *e22);
 void break_loops(int ped_count, marriage_graph_type *mped,
 		 linkage_locus_top *LTop, int break_loop);
@@ -124,14 +126,15 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
 		      size_t *half_typed);
 marriage_graph_type *make_ped_structure(pre_makeped_record *persons,
 					int pedcount, int linecount);
-int copy_pedrec_data(linkage_pedrec_data *d1, linkage_pedrec_data *d2,
+int copy_pedrec_data(person_node_type *p1, person_node_type *p2,
                      linkage_locus_top *LTop);
 
 /**************/
 
 static int read_peds(int line_count, FILE *pfilep,
                      pre_makeped_record *persons,
-                     linkage_locus_top *LTop)
+                     linkage_locus_top *LTop,
+                     int *col2locus)
 
 {
     /* persons have already been allocated */
@@ -139,9 +142,12 @@ static int read_peds(int line_count, FILE *pfilep,
        ped, indiv, father, mother, gender, data.
        We already know the line_count */
     char rest[FILENAME_LENGTH], dummy1[199], dummy2[199];
-    int i, j, lch = ' ', num_read, unique=0;
+    int i, lch = ' ', num_read, unique=0;
     int col;
     int expected_col=5+LTop->NumPedigreeCols, last_marker;
+    int Display_untyped = 0, untyped = 0, totaltyped = 0;
+    int a1, a2;
+    const char *ar1, *ar2;
 
     for (i=0; i<line_count; i++) {
         num_read=fscanf(pfilep, "%d %d %d %d %d",
@@ -156,7 +162,7 @@ static int read_peds(int line_count, FILE *pfilep,
             errorvf("File %s, Line %d: Malformed line.\n", mega2_input_files[0], i+1);
             EXIT(INPUT_DATA_ERROR);
         }
-        col = 6;
+        col = 5;
         if ((persons[i].gender) && (persons[i].gender != MALE_ID) &&
             (persons[i].gender != FEMALE_ID)) {
             errorvf("File %s, Line %d, Col 5: Sex has invalid value %d.\n",
@@ -164,9 +170,15 @@ static int read_peds(int line_count, FILE *pfilep,
             EXIT(DATA_INCONSISTENCY);
         }
         persons[i].rec_num = i+1;
-        persons[i].data=CALLOC((size_t) LTop->LocusCnt, linkage_pedrec_data);
-        for (j=0; j<LTop->LocusCnt; j++) {
-            last_marker = ((j == LTop->LocusCnt-1)? 1: 0);
+
+        persons[i].pheno  = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
+        // NOTE: No space is allocated in marker for entries 0..LTop->PhenoCnt-1
+        persons[i].marker = marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt);
+        int locus;
+        for (;col < expected_col; ) {
+            if (col2locus[col] == 0) continue;
+            locus = col2locus[col] - 1;
+            last_marker = 0;
             lch=fgetc(pfilep);
             while(isspace(lch)) {
                 if ((lch == LF ||  lch == CR) && !last_marker) {
@@ -180,46 +192,46 @@ static int read_peds(int line_count, FILE *pfilep,
             }
             ungetc(lch, pfilep);
             if (i == 0) {
-                LTop->Locus[j].col_num = col;
+                LTop->Locus[locus].col_num = col;
             }
-            switch (LTop->Locus[j].Type) {
+            switch (LTop->Locus[locus].Type) {
             case QUANT:
-                lch=read_premakeped_quant(pfilep, j, &(persons[i]));
+                lch=read_premakeped_quant(pfilep, locus, &(persons[i]));
 		// Here we are not checking for it being undefined, just "invalid".
 		// There should be a better way...
-                if (persons[i].PQUANT(j) <= QUNDEF) {
+                if (persons[i].pheno[locus].Quant <= QUNDEF) {
                     errorvf("File %s, Line %d, Col %d: Invalid quant data at locus %s.\n",
                             mega2_input_files[0], i+1, num_read+lch,
-                            LTop->Locus[j].Name);
+                            LTop->Locus[locus].Name);
                     EXIT(INPUT_DATA_ERROR);
                 }
                 col++;
                 num_read += 1;
                 break;
             case AFFECTION:
-                lch=read_premakeped_affec(pfilep, j, &(LTop->Locus[j]), &(persons[i]));
-                if (persons[i].PSTATUS(j) == UNDEF ||
-                    persons[i].PCLASS(j) == UNDEF) {
+                lch=read_premakeped_affec(pfilep, locus, &(LTop->Pheno[locus]), &(persons[i]));
+                if (persons[i].pheno[locus].Affection.Status == UNDEF ||
+                    persons[i].pheno[locus].Affection.Class == UNDEF) {
                     errorvf("File %s, Line %d, Col %d: Invalid affection data at locus %s.\n",
                             mega2_input_files[0], i+1, num_read+lch,
-                            LTop->Locus[j].Name);
+                            LTop->Locus[locus].Name);
                     EXIT(INPUT_DATA_ERROR);
                 }
-                if (LTop->Locus[j].Data.Affection.ClassCnt > 1) {
+                if (LTop->Pheno[locus].Props.Affection.ClassCnt > 1) {
                     num_read += 2;
-                    col ++;
-                } else {
                     col += 2;
-                    num_read ++;
+                } else {
+                    col++;
+                    num_read++;
                 }
                 break;
             case BINARY:
-                lch=read_premakeped_bin(pfilep, j, &(LTop->Locus[j]), &(persons[i]));
-                if (persons[i].PALLELE1(j) == UNDEF ||
-                    persons[i].PALLELE2(j) == UNDEF) {
+                lch=read_premakeped_bin(pfilep, locus, &(LTop->Locus[locus]), &(persons[i]));
+                get_2alleles(persons[i].marker, locus, &a1, &a2);
+                if (a1 == UNDEF || a2 == UNDEF) {
                     errorvf("File %s, Line %d, Col %d: Invalid binary data at locus %s.\n",
                             mega2_input_files[0], i+1, num_read+lch,
-                            LTop->Locus[j].Name);
+                            LTop->Locus[locus].Name);
                     EXIT(INPUT_DATA_ERROR);
                 }
                 col += 2;
@@ -228,24 +240,25 @@ static int read_peds(int line_count, FILE *pfilep,
             case NUMBERED:
             case XLINKED:
             case YLINKED:
-                lch=read_numbered_data(pfilep, j, (void *) (&(persons[i])),
+                lch=read_numbered_data(pfilep, locus, (void *) (&(persons[i])),
                                        LTop->PedRecDataType, last_marker);
                 switch(LTop->PedRecDataType) {
                     case Premakeped:
-                        if (persons[i].PALLELE1(j) == UNDEF ||
-                            persons[i].PALLELE2(j) == UNDEF) {
+                        get_2alleles(persons[i].marker, locus, &a1, &a2);
+                        if (a1 == UNDEF || a2 == UNDEF) {
                             errorvf("File %s, Line %d, Col %d: Invalid numbered data at locus %s.\n",
                                     mega2_input_files[0], i+1, num_read+lch,
-                                    LTop->Locus[j].Name);
+                                    LTop->Locus[locus].Name);
                             EXIT(INPUT_DATA_ERROR);
                         }
                         break;
                     case Raw_premake:
-                        if (!strcmp(persons[i].PRALLELE1(j), REC_UNDEF) ||
-                            !strcmp(persons[i].PRALLELE2(j), REC_UNDEF)) {
+                        get_2Ralleles(persons[i].marker, locus, &ar1, &ar2);
+                        if (!strcmp(ar1, REC_UNDEF) ||
+                            !strcmp(ar2, REC_UNDEF)) {
                             errorvf("File %s, Line %d, Col %d: Invalid numbered data at locus %s.\n",
                                     mega2_input_files[0], i+1, num_read+lch,
-                                    LTop->Locus[j].Name);
+                                    LTop->Locus[locus].Name);
                             EXIT(INPUT_DATA_ERROR);
                         }
                         break;
@@ -272,7 +285,21 @@ static int read_peds(int line_count, FILE *pfilep,
                 sprintf(persons[i].uniqueid, "%d", persons[i].indiv);
             }
         }
+        totaltyped++;
+        persons[i].genocnt  = crunch_notype(&persons[i].marker, LTop);
+        if (persons[i].genocnt == 0) {
+/*
+            SUPPRESS_MSSG_NESTED(untyped);
+            warnvf("Untyped person %4d linenum %d: person %d/%d, fa %d, ma %d\n",
+                   untyped, i+1, persons[i].ped, persons[i].indiv, persons[i].father, persons[i].mother);
+*/
+            untyped++;
+        }
     }
+    SUPPRESS_MSSG_NESTED_FORCE(untyped);
+    warnvf("Individuals Untyped: %d out of %d\n", untyped, totaltyped);
+    SUPPRESS_MSSG_NESTED_FINI(untyped);
+
     return unique;
 }
 
@@ -314,8 +341,10 @@ marriage_graph_type *make_ped_structure(pre_makeped_record *persons,
             pped[i].persons[j].father=person->father;
             pped[i].persons[j].mother=person->mother;
             pped[i].persons[j].gender=person->gender;
-            pped[i].persons[j].data=person->data;
+            pped[i].persons[j].pheno=person->pheno;
+            pped[i].persons[j].marker=person->marker;
             pped[i].persons[j].node_id=j;
+            pped[i].persons[j].genocnt=person->genocnt;
             pped[i].persons[j].proband=((j==0)? 1 : 0);
             pped[i].persons[j].from_marriage_node_id=-1;
             pped[i].persons[j].num_to_marriages=0;
@@ -344,8 +373,10 @@ void free_marriage_graph(marriage_graph_type *m_graph)
 
     if (m_graph->persons != NULL) {
         for (i=0; i < m_graph->num_persons; i++) {
-            if (m_graph->persons[i].data != NULL)
-                free(m_graph->persons[i].data);
+            if (m_graph->persons[i].pheno != NULL)
+                free(m_graph->persons[i].pheno);
+            if (m_graph->persons[i].marker != NULL)
+                free(m_graph->persons[i].marker);
         }
         free(m_graph->persons);
     }
@@ -367,71 +398,36 @@ static void free_min_graph(minimizing_graph_type *m_graph)
     free(m_graph->edges);
 }
 
-/* This is a copy of the following function to take a specific
-   set of loci into account */
-
-int copy_pedrec_data1(linkage_pedrec_data *d1, linkage_pedrec_data *d2,
-		      linkage_locus_top *LTop, int locuscnt,
-		      int *locus_inds)
-
-{
-    int i, ii, status=0;
-
-    for (ii=0; ii < locuscnt; ii++) {
-        i=locus_inds[ii];
-        switch (LTop->Locus[i].Type) {
-        case QUANT:
-            d2[ii].Quant = d1[i].Quant;
-            break;
-        case AFFECTION:
-            status=d1[i].Affection.Status;
-            d2[ii].Affection.Status = d1[i].Affection.Status;
-            d2[ii].Affection.Class = d1[i].Affection.Class;
-            break;
-        case BINARY:
-        case NUMBERED:
-        case XLINKED:
-        case YLINKED:
-            switch(LTop->PedRecDataType) {
-            case Raw_premake:
-            case Raw_postmake:
-                d2[ii].RAlleles.Allele_1 = d1[i].RAlleles.Allele_1;
-                d2[ii].RAlleles.Allele_2 = d1[i].RAlleles.Allele_2;
-                break;
-            case Premakeped:
-            case Postmakeped:
-                d2[ii].Alleles.Allele_1 = d1[i].Alleles.Allele_1;
-                d2[ii].Alleles.Allele_2 = d1[i].Alleles.Allele_2;
-                break;
-            default:
-                break;
-            }
-            break;
-        default:
-            errorvf("unknown data type!\n");
-            EXIT(DATA_TYPE_ERROR);
-            break;
-        }
-    }
-    return status;
-}
-
-int copy_pedrec_data(linkage_pedrec_data *d1, linkage_pedrec_data *d2,
+int copy_pedrec_data(person_node_type *p1, person_node_type *p2,
 		     linkage_locus_top *LTop)
 
 {
     int i, status=0;
+    pheno_pedrec_data   *t1 = p1->pheno,  *t2 = p2->pheno;
+    void                *s1 = p1->marker, *s2 = p2->marker;
 
-    for (i=0; i < LTop->LocusCnt; i++) {
+    for (i=0; i < LTop->PhenoCnt; i++) {
         switch (LTop->Locus[i].Type) {
         case QUANT:
-            d2[i].Quant = d1[i].Quant;
+            t2[i].Quant = t1[i].Quant;
             break;
         case AFFECTION:
-            status=d1[i].Affection.Status;
-            d2[i].Affection.Status = d1[i].Affection.Status;
-            d2[i].Affection.Class = d1[i].Affection.Class;
+            status=t1[i].Affection.Status;
+            t2[i].Affection.Status = t1[i].Affection.Status;
+            t2[i].Affection.Class  = t1[i].Affection.Class;
             break;
+        default:
+            break;
+        }
+    }
+
+    if (s1 == NOTYPED_ALLELES) {
+        p2->marker = s1;
+        return status;
+    }
+
+    for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
+        switch (LTop->Locus[i].Type) {
         case BINARY:
         case NUMBERED:
         case XLINKED:
@@ -439,49 +435,22 @@ int copy_pedrec_data(linkage_pedrec_data *d1, linkage_pedrec_data *d2,
             switch(LTop->PedRecDataType) {
             case Raw_premake:
             case Raw_postmake:
-                d2[i].RAlleles.Allele_1 = d1[i].RAlleles.Allele_1;
-                d2[i].RAlleles.Allele_2 = d1[i].RAlleles.Allele_2;
+                copy_2Ralleles(s2, s1, i);
                 break;
             case Premakeped:
             case Postmakeped:
-                d2[i].Alleles.Allele_1 = d1[i].Alleles.Allele_1;
-                d2[i].Alleles.Allele_2 = d1[i].Alleles.Allele_2;
+                copy_2alleles(s2, s1, i);
                 break;
             default:
                 break;
             }
             break;
         default:
-            errorvf("unknown data type!\n");
-            EXIT(DATA_TYPE_ERROR);
             break;
         }
     }
     return status;
 }
-
-/*
-static void copy_pedrec_data_raw_alleles(linkage_pedrec_data *d1,
-					 linkage_pedrec_data *d2,
-					 linkage_locus_top *LTop)
-
-{
-
-    int i;
-
-    for (i=0; i < LTop->LocusCnt; i++) {
-
-        if (LTop->Locus[i].Type == NUMBERED ||
-           LTop->Locus[i].Type == XLINKED ||
-           LTop->Locus[i].Type == YLINKED) {
-            d2[i].RAlleles.Allele_1 = d1[i].RAlleles.Allele_1;
-            d2[i].RAlleles.Allele_2 = d1[i].RAlleles.Allele_2;
-        }
-    }
-    return;
-
-}
-*/
 
 //
 // This routine is used to determine if the pedigree file is in premakeped format
@@ -624,7 +593,8 @@ int check_pre_makeped(FILE *fp, int *num_lines)
 linkage_ped_top *read_pre_makeped(FILE *fp, int pedcount,
 				  int linecount,
 				  pre_makeped_record *persons,
-				  linkage_locus_top *LTop)
+				  linkage_locus_top *LTop,
+                                  int *col2locus)
 
 {
     /*
@@ -649,7 +619,7 @@ linkage_ped_top *read_pre_makeped(FILE *fp, int pedcount,
             EXIT(MEMORY_ALLOC_ERROR);
         }
         // NOTE: This never sets LTop->Locus[i].Allele[j].name for entry.cpp::pr_marker_alleles()
-        unique=read_peds(linecount, fp, persons, LTop);
+        unique=read_peds(linecount, fp, persons, LTop, col2locus);
         if (!unique) {
             for (i=0; i<linecount; i++) {
                 sprintf(persons[i].uniqueid, "%d_%d",
@@ -694,8 +664,7 @@ static void degree_genotyped(person_node_type *entry, linkage_locus_top *LTop)
             LTop->Locus[m].Type == BINARY ||
             LTop->Locus[m].Type == XLINKED ||
             LTop->Locus[m].Type == YLINKED) {
-            allele1= entry->data[m].Alleles.Allele_1;
-            allele2= entry->data[m].Alleles.Allele_2;
+            get_2alleles(entry->marker, m, &allele1, &allele2);
             if (allele1 > 0 && allele2 > 0) deg++;
         }
         entry->degree_genotyped=deg;
@@ -1105,8 +1074,10 @@ static void copy_node_remove_parents(int proband, person_node_type *p1,
     p2->father=0; p2->mother=0;
     p2->from_marriage_node_id=-1;
     p2->degree_genotyped=p1->degree_genotyped;
-    p2->data = CALLOC((size_t) LTop->LocusCnt, linkage_pedrec_data);
-    copy_pedrec_data(p1->data, p2->data, LTop);
+    p2->pheno  = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
+    // NOTE: No space is allocated in marker for entries 0..LTop->PhenoCnt-1
+    p2->marker = marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt);
+    copy_pedrec_data(p1, p2, LTop);
     /*
     if (Mega2Status == INSIDE_RECODE) {
         copy_pedrec_data_raw_alleles(p1->data, p2->data, LTop);
@@ -1114,6 +1085,7 @@ static void copy_node_remove_parents(int proband, person_node_type *p1,
     */
     p2->gender=p1->gender;
     p2->loop_breaker_id=p1->indiv;
+    p2->genocnt = p1->genocnt;
 }
 
 static void reassign_to_marriage(marriage_graph_type *m_graph,
@@ -1388,10 +1360,14 @@ static void make_linkage_record(int pid, marriage_graph_type mped,
     lrec->Data= CALLOC((size_t) LTop->LocusCnt, linkage_pedrec_data);
     lrec->Orig_status = copy_pedrec_data(prec.data, lrec->Data, LTop);
 */
-    lrec->Data = prec.data;
-    prec.data = NULL;
+    lrec->Pheno  = prec.pheno;
+    lrec->Marker = prec.marker;
+    lrec->genocnt   = prec.genocnt;
+    prec.pheno  = NULL;
+    prec.marker = NULL;
 /*  but prec.data is a copy of ... so zero it too */
-    mped.persons[pid].data = NULL;
+    mped.persons[pid].pheno = NULL;
+    mped.persons[pid].marker = NULL;
 
     return;
 }
@@ -1485,6 +1461,23 @@ int main(int argc, char *argv[])
 }
 #endif
 
+
+static void check_any(linkage_ped_top *Top)
+{
+/*
+    int i, j;
+
+    for (i=0; i < Top->PedCnt; i++) {
+        for (j=0; j <Top->Ped[i].EntryCnt; j++) {
+
+            warnvf("genocnt: %s #%d\n",
+                   Top->Ped[i].Entry[j].UniqueID,
+                   Top->Ped[i].Entry[j].genocnt);
+        }
+    }
+*/
+}
+
 int makeped(linkage_ped_top *Top, analysis_type analysis)
 
 {
@@ -1535,6 +1528,7 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
                 Top->IndivCnt += LPed->EntryCnt;
             }
         }
+        check_any(Top);
         return 1;
     }
 
@@ -1598,10 +1592,9 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
         Top=read_linkage_ped_file(fp, LTop);
         fclose(fp); */
     /*  system("/bin/rm -f tmp_ped"); */
+    check_any(Top);
     return 1;
 }
-
-
 
 void clear_prepedtree(marriage_graph_type *m_graph)
 {
@@ -1629,8 +1622,12 @@ void copy_marriage_graph_person(person_node_type *From,
     To->from_marriage_node_id =  From->from_marriage_node_id;
     To->num_to_marriages =  From->num_to_marriages;
 
-    To->data = From->data;
-    From->data = NULL;
+    To->pheno = From->pheno;
+    From->pheno = NULL;
+    To->marker = From->marker;
+    From->marker = NULL;
+
+    To->genocnt   = From->genocnt;
 /*
     int k;
 
@@ -1729,7 +1726,6 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
         for (j=0; j < Top->PTop[i].num_persons; j++) {
 	  // Count the number of males/females....
             person_node_type *pp = &(Top->PTop[i].persons[j]);
-            linkage_pedrec_data *ppd = &(pp->data[-1]);
             int gender = pp->gender;
             if (gender == MALE_ID) {
                 male_count++;
@@ -1747,10 +1743,8 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
 	      // Account for reordered loci...
                 if (Mega2Status < LOCI_REORDERED) {
                     k=l;
-                    ppd++;
                 } else {
                     k = reordered_marker_loci[l];
-                    ppd = &(pp->data[k]);
                 }
 		// !(AFFECTION || QUANT) so it must be: TYPE_UNSET, BINARY, NUMBERED, XINKED, YLINKED
 		// Determine if the alleles are known
@@ -1758,11 +1752,15 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
                     Top->LocusTop->Locus[k].Type != QUANT)    {
                     this_person_typed=0;
                     if (Mega2Status <= INSIDE_RECODE && Top->LocusTop->PedRecDataType == Raw_premake) {
-                        this_person_typed += ((allelecmp(ppd->RAlleles.Allele_1, REC_UNKNOWN))? 1: 0);
-                        this_person_typed += ((allelecmp(ppd->RAlleles.Allele_2, REC_UNKNOWN))? 1: 0);
+                        const char *all1, *all2;
+                        get_2Ralleles(pp->marker, k, &all1, &all2);
+                        this_person_typed += (allelecmp(all1, REC_UNKNOWN)? 1: 0);
+                        this_person_typed += (allelecmp(all2, REC_UNKNOWN)? 1: 0);
                     } else {
-                        this_person_typed += ((ppd->Alleles.Allele_1)? 1: 0);
-                        this_person_typed += ((ppd->Alleles.Allele_2)? 1: 0);
+                        int all1, all2;
+                        get_2alleles(pp->marker, k, &all1, &all2);
+                        this_person_typed += (all1 ? 1: 0);
+                        this_person_typed += (all2 ? 1: 0);
                     }
 
                     if (this_person_typed) {

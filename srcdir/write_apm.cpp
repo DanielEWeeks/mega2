@@ -123,8 +123,9 @@ static int save_apm_peds_ML(FILE *filep, ped_top *Top, int *save)
             for (loc = 0; loc < Top->LocusTop->LocusCnt; loc++) {
                 lloc = Top->LocusTop->Locus[loc].linkage_loc_num;
                 for (entry = 0; entry < Ped->AffectedCnt; entry++) {
-                    if ((Ped->Affected[entry]->LEntry->EALLELE1(lloc) != 0)
-                        && (Ped->Affected[entry]->LEntry->EALLELE2(lloc) != 0))
+                    int a1, a2;
+                    get_2alleles(Ped->Affected[entry]->LEntry->Marker, lloc, &a1, &a2);
+                    if (a1 != 0 && a2 != 0)
                         { typed++; break; }
                 }
             }
@@ -507,8 +508,8 @@ static void  create_apmult_script_file(linkage_ped_top *Copy,
         fprintf(fp, "0\n");
         for (i = 1; i < num_markers; i++) {
 	  // what about SEX_SPECIFIC??
-            dx = Copy->LocusTop->Locus[numbered[markers[i]]].position -
-                Copy->LocusTop->Locus[numbered[markers[i - 1]]].position;
+            dx = Copy->LocusTop->Marker[numbered[markers[i]]].pos_avg -
+                Copy->LocusTop->Marker[numbered[markers[i - 1]]].pos_avg;
             theta = ((Copy->LocusTop->map_distance_type == 'h')?
                      haldane_theta(dx): kosambi_theta(dx));
             fprintf(fp, "%f\n", theta);
@@ -518,8 +519,8 @@ static void  create_apmult_script_file(linkage_ped_top *Copy,
         fprintf(fp, "grep \"Data file\" table.out >> %s\n", apmult_sum);
 
         for (i = 1; i < num_markers; i++) {
-            dx = Copy->LocusTop->Locus[numbered[markers[i]]].position -
-                Copy->LocusTop->Locus[numbered[markers[i - 1]]].position;
+            dx = Copy->LocusTop->Marker[numbered[markers[i]]].pos_avg -
+                Copy->LocusTop->Marker[numbered[markers[i - 1]]].pos_avg;
             /*      theta = ((Copy->LocusTop->map_distance_type == 'h')?
                     haldane_theta(dx): kosambi_theta(dx)); */
             fprintf(fp, "echo \"%10s - %7.5f - %-10s\" >> %-s\n",
@@ -674,7 +675,13 @@ void create_APMULT(char *pedfl_name, char *locusfl_name, int disease_locus,
     for (ch=0; ch < main_chromocnt; ch++) {
         if (main_chromocnt > 1) {
             *numchr=global_chromo_entries[ch];
+            abort();
+#ifdef DEFUNCT
+          NOTE: luckily apm is not currently supported.  and ReOrderMappedLoci has ceased to exist.
+                If you need to bring apm back then, Youll have to figure out hot to use
+                ReOrderMappedLoci_new() ... like everyone else
             ReOrderMappedLoci(LPedTreeTop, numchr);
+#endif
             change_output_chr(file_names[3], *numchr);
             change_output_chr(file_names[14], *numchr);
         }

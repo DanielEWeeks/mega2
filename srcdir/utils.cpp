@@ -1928,6 +1928,7 @@ void mega2_opts(int argc, char **argv)
                     EXIT(INPUT_DATA_ERROR);
                 }
             } else {
+                extern int MARKER_SCHEME;
                 while ((c = *++as)) {
                     switch (c) {
                     case 'w': case 'W':
@@ -1950,6 +1951,15 @@ void mega2_opts(int argc, char **argv)
                         test_socket_s();
                         break;
 #endif
+                    case '1':
+                        MARKER_SCHEME = 1;
+                        break;
+                    case '2':
+                        MARKER_SCHEME = 2;
+                        break;
+                    case '3':
+                        MARKER_SCHEME = 3;
+                        break;
                     case 'v': case 'V':
                         print_mega2_version();
                         break;

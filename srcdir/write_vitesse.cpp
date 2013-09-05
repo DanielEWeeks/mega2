@@ -734,37 +734,37 @@ static void write_vitesse_locus_file(char *loutfl_name,
             fputc('\n', filep);
             switch(Locus->Type) {
             case QUANT:
-                fprintf(filep, "%d\n", Locus->LQUADATA.ClassCnt);
-                for (tmpi = Locus->LQUADATA.ClassCnt; tmpi > 0; tmpi--)
+                fprintf(filep, "%d\n", Locus->Pheno->Props.Quant.ClassCnt);
+                for (tmpi = Locus->Pheno->Props.Quant.ClassCnt; tmpi > 0; tmpi--)
                     for (tmpi2 = 0; tmpi2 < 3; tmpi2++)
-                        fprintf(filep," %.6f", Locus->LQUADATA.Mean[tmpi-1][tmpi2]);
+                        fprintf(filep," %.6f", Locus->Pheno->Props.Quant.Mean[tmpi-1][tmpi2]);
                 fprintf(filep, " << GENOTYPE MEANS\n");
                 /* ASSUMES only one trait per qtl */
-                fprintf(filep," %.6f\n", Locus->LQUADATA.Variance[0][0]);
-                fprintf(filep," %.6f\n", Locus->LQUADATA.Multiplier);
+                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Variance[0][0]);
+                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Multiplier);
                 break;
             case AFFECTION:
-                fprintf(filep, "%d\n", Locus->LAFFDATA.ClassCnt);
-                for (tmpi = 0; tmpi < Locus->LAFFDATA.ClassCnt; tmpi++) {
+                fprintf(filep, "%d\n", Locus->Pheno->Props.Affection.ClassCnt);
+                for (tmpi = 0; tmpi < Locus->Pheno->Props.Affection.ClassCnt; tmpi++) {
                     if (sex_linked) {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].FemalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                         fputc('\n', filep);
                         for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].MalePen[tmpi2]);
+                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                         fputc('\n', filep);
                     } else {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].AutoPen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                         fputc('\n', filep);
                     }
                 }
                 break;
             case BINARY:
-                fprintf(filep, "%d\n", Locus->LBINDATA.FactorCnt);
-                for (tmpi = 0; tmpi < Locus->LBINDATA.FactorCnt; tmpi++) {
+                fprintf(filep, "%d\n", Locus->Marker->Props.Binary.FactorCnt);
+                for (tmpi = 0; tmpi < Locus->Marker->Props.Binary.FactorCnt; tmpi++) {
                     for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                        fprintf(filep, " %d", (int) Locus->LBINDATA.Factor[tmpi][tmpi2]);
+                        fprintf(filep, " %d", (int) Locus->Marker->Props.Binary.Factor[tmpi][tmpi2]);
                     fputc('\n', filep);
                 }
                 break;
@@ -1071,8 +1071,8 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
                     if (j==0) {
                         LTop->LocusTop->Run.linkmap.recomb_frac[0]=0.5;
                         for (k=1; k<intv_size; k++) {
-                            th=LTop->LocusTop->Locus[markers[k]].position -
-                                LTop->LocusTop->Locus[markers[k-1]].position;
+                            th=LTop->LocusTop->Marker[markers[k]].pos_avg -
+                                LTop->LocusTop->Marker[markers[k-1]].pos_avg;
                             LTop->LocusTop->Run.linkmap.recomb_frac[k]=
                                 ((LTop->LocusTop->map_distance_type == 'h')?
                                  haldane_theta(th) : kosambi_theta(th));
@@ -1083,8 +1083,8 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
                     if (j==intv_size) {
                         LTop->LocusTop->Run.linkmap.recomb_frac[intv_size-1]=0.0;
                         for (k=0; k<intv_size-1; k++) {
-                            th=LTop->LocusTop->Locus[markers[k+1]].position -
-                                LTop->LocusTop->Locus[markers[k]].position;
+                            th=LTop->LocusTop->Marker[markers[k+1]].pos_avg -
+                                LTop->LocusTop->Marker[markers[k]].pos_avg;
                             LTop->LocusTop->Run.linkmap.recomb_frac[k]=
                                 ((LTop->LocusTop->map_distance_type == 'h')?
                                  haldane_theta(th) : kosambi_theta(th));
@@ -1094,23 +1094,23 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
                     /* c. trait is betwwen two  marker loci at position j */
                     if (j>0 && j<intv_size) {
                         for (k=1; k<j-1; k++) {
-                            th=LTop->LocusTop->Locus[markers[k+1]].position -
-                                LTop->LocusTop->Locus[markers[k]].position;
+                            th=LTop->LocusTop->Marker[markers[k+1]].pos_avg -
+                                LTop->LocusTop->Marker[markers[k]].pos_avg;
                             LTop->LocusTop->Run.linkmap.recomb_frac[k]=
                                 ((LTop->LocusTop->map_distance_type == 'h')?
                                  haldane_theta(th) : kosambi_theta(th));
                         }
                         LTop->LocusTop->Run.linkmap.recomb_frac[j]=0.0;
                         for (k=j; k<intv_size; k++) {
-                            th=LTop->LocusTop->Locus[markers[k]].position -
-                                LTop->LocusTop->Locus[markers[k-1]].position;
+                            th=LTop->LocusTop->Marker[markers[k]].pos_avg -
+                                LTop->LocusTop->Marker[markers[k-1]].pos_avg;
                             LTop->LocusTop->Run.linkmap.recomb_frac[k]=
                                 ((LTop->LocusTop->map_distance_type == 'h')?
                                  haldane_theta(th) : kosambi_theta(th));
                         }
 
-                        th=LTop->LocusTop->Locus[markers[j]].position -
-                            LTop->LocusTop->Locus[markers[j-1]].position;
+                        th=LTop->LocusTop->Marker[markers[j]].pos_avg -
+                            LTop->LocusTop->Marker[markers[j-1]].pos_avg;
                         LTop->LocusTop->Run.linkmap.stop_theta=
                             ((LTop->LocusTop->map_distance_type == 'h')?
                              haldane_theta(th) : kosambi_theta(th));
@@ -1189,8 +1189,8 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
                     if (k==0) {
                         LTop->LocusTop->Run.linkmap.recomb_frac[0]=0.5;
                         for (jj=1; jj<intv_size; jj++) {
-                            th=LTop->LocusTop->Locus[markers[jj]].position -
-                                LTop->LocusTop->Locus[markers[jj-1]].position;
+                            th=LTop->LocusTop->Marker[markers[jj]].pos_avg -
+                                LTop->LocusTop->Marker[markers[jj-1]].pos_avg;
                             LTop->LocusTop->Run.linkmap.recomb_frac[jj]=
                                 ((LTop->LocusTop->map_distance_type == 'h')?
                                  haldane_theta(th) : kosambi_theta(th));
@@ -1201,8 +1201,8 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
                     if (k==intv_size) {
                         LTop->LocusTop->Run.linkmap.recomb_frac[intv_size-1]=0.0;
                         for (jj=0; jj<intv_size-1; jj++) {
-                            th=LTop->LocusTop->Locus[markers[jj+1]].position -
-                                LTop->LocusTop->Locus[markers[jj]].position;
+                            th=LTop->LocusTop->Marker[markers[jj+1]].pos_avg -
+                                LTop->LocusTop->Marker[markers[jj]].pos_avg;
                             LTop->LocusTop->Run.linkmap.recomb_frac[jj]=
                                 ((LTop->LocusTop->map_distance_type == 'h')?
                                  haldane_theta(th) : kosambi_theta(th));
@@ -1213,23 +1213,23 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
                     /* c. trait is betwwen two  marker loci at position j */
                     if (k>0 && k<intv_size) {
                         for (jj=0; jj<k-1; jj++) {
-                            th=LTop->LocusTop->Locus[markers[jj+1]].position -
-                                LTop->LocusTop->Locus[markers[jj]].position;
+                            th=LTop->LocusTop->Marker[markers[jj+1]].pos_avg -
+                                LTop->LocusTop->Marker[markers[jj]].pos_avg;
                             LTop->LocusTop->Run.linkmap.recomb_frac[jj]=
                                 ((LTop->LocusTop->map_distance_type == 'h')?
                                  haldane_theta(th) : kosambi_theta(th));
                         }
                         LTop->LocusTop->Run.linkmap.recomb_frac[k-1]=0.0;
                         for (jj=k; jj<intv_size; jj++) {
-                            th=LTop->LocusTop->Locus[markers[jj]].position -
-                                LTop->LocusTop->Locus[markers[jj-1]].position;
+                            th=LTop->LocusTop->Marker[markers[jj]].pos_avg -
+                                LTop->LocusTop->Marker[markers[jj-1]].pos_avg;
                             LTop->LocusTop->Run.linkmap.recomb_frac[jj]=
                                 ((LTop->LocusTop->map_distance_type == 'h')?
                                  haldane_theta(th) : kosambi_theta(th));
                         }
 
-                        th=LTop->LocusTop->Locus[markers[k]].position -
-                            LTop->LocusTop->Locus[markers[k-1]].position;
+                        th=LTop->LocusTop->Marker[markers[k]].pos_avg -
+                            LTop->LocusTop->Marker[markers[k-1]].pos_avg;
                         LTop->LocusTop->Run.linkmap.stop_theta=
                             ((LTop->LocusTop->map_distance_type == 'h')?
                              haldane_theta(th) : kosambi_theta(th));

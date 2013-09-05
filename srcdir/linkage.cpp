@@ -85,9 +85,9 @@ linkage_ped_top *new_lpedtop(void);
 linkage_loop_rec *new_llooprec(void);
 void free_all_from_llocusrec(linkage_locus_rec *Locus);
 void free_all_from_llocustop(linkage_locus_top *LTop);
-void free_all_from_lpedrec(linkage_ped_rec *Entry);
+void free_all_from_lpedrec(linkage_ped_rec *Entry, int offset);
 void free_pedrec_raw_alleles(void *Entry, linkage_locus_top *LTop);
-void free_all_from_lpedtree(linkage_ped_tree *Ped);
+void free_all_from_lpedtree(linkage_ped_tree *Ped, int offset);
 void free_all_from_lpedtop(linkage_ped_top *PTop);
 void free_all_including_lpedtop(linkage_ped_top **PTop);
 void free_all_including_llocustop(linkage_locus_top *LTop);
@@ -113,7 +113,7 @@ static void    connect_loopbreakers(linkage_ped_rec *S_Entry,
 				    linkage_ped_rec *D_Entry,
 				    linkage_ped_tree *Ped,
 				    linkage_ped_top *Top1);
-static    void  copy_llocusdata(linkage_locus_data *from, linkage_locus_data *to,
+static    void  copy_llocusdata(linkage_locus_rec *from, linkage_locus_rec *to,
 				linkage_locus_type Type, int num_alleles);
 
 /* This function has been modified (NM- Dec 6,2001)
@@ -131,7 +131,8 @@ void copy_lpedrec(linkage_ped_rec *From, linkage_ped_rec *To,
     copy_pedrec_data(From->Data, To->Data, top->LocusTop);
 */
 /*  Note From->Data must be set to NULL IFF you don't want both structures to SHARE data */
-    To->Data = From->Data;
+    To->Pheno  = From->Pheno;
+    To->Marker = From->Marker;
 }
 
 /* This is a special function to be called when we are
@@ -141,31 +142,6 @@ void copy_lpedrec(linkage_ped_rec *From, linkage_ped_rec *To,
    data.RAlleles are not freed before recoding is completed.
 
 */
-
-void copy_lpedrec_raw_alleles(linkage_ped_rec *From, linkage_ped_rec *To,
-			      linkage_ped_top *top)
-
-{
-
-    int k;
-    for (k = 0; k < top->LocusTop->LocusCnt; k++)    {
-        if (top->LocusTop->Locus[k].Type == NUMBERED ||
-            top->LocusTop->Locus[k].Type == XLINKED) {
-            To->Data[k].RAlleles.Allele_1 =  From->Data[k].RAlleles.Allele_1;
-            To->Data[k].RAlleles.Allele_2 =  From->Data[k].RAlleles.Allele_2;
-
-            /*	CALLOC(strlen(From->Data[k].RAlleles.Allele_1)+1, char);
-		strcpy(To->Data[k].RAlleles.Allele_1,
-		From->Data[k].RAlleles.Allele_1);
-		To->Data[k].RAlleles.Allele_2 =
-		CALLOC(strlen(From->Data[k].RAlleles.Allele_2)+1, char);
-		strcpy(To->Data[k].RAlleles.Allele_2,
-		From->Data[k].RAlleles.Allele_2);
-            */
-        }
-    }
-    return;
-}
 
 void   copy_lpedtree(linkage_ped_tree *From, linkage_ped_tree *To)
 
@@ -200,31 +176,33 @@ void            clear_laffclass(linkage_affection_class *Class)
 }
 
 
-void            clear_llocusdata(linkage_locus_data *Data, linkage_locus_type Type)
+void            clear_llocusdata(linkage_locus_rec *Locus, linkage_locus_type Type)
 
 {
-    if (Data == NULL)
+    if (Locus == NULL)
         return;
     switch (Type)
         {
         case QUANT:
-            Data->Quant.ClassCnt = 0;
-            Data->Quant.Mean = NULL;
-            Data->Quant.Variance = NULL;
+            Locus->Pheno->Props.Quant.ClassCnt = 0;
+            Locus->Pheno->Props.Quant.Mean = NULL;
+            Locus->Pheno->Props.Quant.Variance = NULL;
             break;
         case AFFECTION:
-            Data->Affection.ClassCnt = 0;
-            Data->Affection.PenCnt = 0;
-            Data->Affection.Class = NULL;
+            Locus->Pheno->Props.Affection.ClassCnt = 0;
+            Locus->Pheno->Props.Affection.PenCnt = 0;
+            Locus->Pheno->Props.Affection.Class = NULL;
             break;
         case BINARY:
-            Data->Binary.FactorCnt = 0;
-            Data->Binary.Factor = NULL;
+            Locus->Marker->chromosome=0;
+            Locus->Marker->Props.Binary.FactorCnt = 0;
+            Locus->Marker->Props.Binary.Factor = NULL;
             break;
         case NUMBERED:
-            Data->Numbered.Recoded=0;
-            Data->Numbered.NumAlleles=0;
-            Data->Numbered.SelectOpt=0;
+            Locus->Marker->chromosome=0;
+            Locus->Marker->Props.Numbered.Recoded=0;
+            Locus->Marker->Props.Numbered.NumAlleles=0;
+            Locus->Marker->Props.Numbered.SelectOpt=0;
             break;
         default:
             break;
@@ -233,58 +211,61 @@ void            clear_llocusdata(linkage_locus_data *Data, linkage_locus_type Ty
 
 /* new function  to copy over locus data - NM 11/29/2001*/
 
-static    void  copy_llocusdata(linkage_locus_data *from, linkage_locus_data *to,
+static    void  copy_llocusdata(linkage_locus_rec *fromrec, linkage_locus_rec *torec,
 				linkage_locus_type Type, int num_alleles)
 
 {
-
     int  i, j;
     int js;
-    switch (Type) {
+    pheno_data *p_from = &(fromrec->Pheno->Props), *p_to = &(torec->Pheno->Props);
+    marker_data *m_from = &(fromrec->Marker->Props), *m_to = &(torec->Marker->Props);
+
+   switch (Type) {
     case QUANT:
-        to->Quant.ClassCnt = from->Quant.ClassCnt;
-        to->Quant.Mean = from->Quant.Mean;
-        to->Quant.Variance = from->Quant.Variance;
+        p_to->Quant.ClassCnt = p_from->Quant.ClassCnt;
+        p_to->Quant.Mean     = p_from->Quant.Mean;
+        p_to->Quant.Variance = p_from->Quant.Variance;
         break;
     case AFFECTION:
         /* refer to code for reading in affection status locus
            in read_linkage_locus_file(), read_files.c */
-        to->Affection.ClassCnt = from->Affection.ClassCnt;
-        to->Affection.PenCnt = from->Affection.PenCnt;
-        to->Affection.Class = CALLOC((size_t) from->Affection.ClassCnt,
+        p_to->Affection.ClassCnt = p_from->Affection.ClassCnt;
+        p_to->Affection.PenCnt   = p_from->Affection.PenCnt;
+        p_to->Affection.Class    = CALLOC((size_t) p_from->Affection.ClassCnt,
                                      linkage_affection_class);
-        for(i=0; i < from->Affection.ClassCnt; i++) {
-            to->Affection.Class[i].AutoPen = CALLOC((size_t) from->Affection.PenCnt, double);
-            for(j=0; j < from->Affection.PenCnt; j++) {
-                to->Affection.Class[i].AutoPen[j] =
-                    from->Affection.Class[i].AutoPen[j];
+        for(i=0; i < p_from->Affection.ClassCnt; i++) {
+            p_to->Affection.Class[i].AutoPen = CALLOC((size_t) p_from->Affection.PenCnt, double);
+            for(j=0; j < p_from->Affection.PenCnt; j++) {
+                p_to->Affection.Class[i].AutoPen[j] =
+                    p_from->Affection.Class[i].AutoPen[j];
             }
-            to->Affection.Class[i].FemalePen = CALLOC((size_t) num_alleles, double);
-            for (js= 0; js < num_alleles; js++) {
-                to->Affection.Class[i].FemalePen[js] = from->Affection.Class[i].FemalePen[js];
+            p_to->Affection.Class[i].FemalePen = CALLOC((size_t) p_from->Affection.PenCnt, double);
+//xx        for (js= 0; js < num_alleles; js++)
+            for (js= 0; js < p_from->Affection.PenCnt; js++) {
+                p_to->Affection.Class[i].FemalePen[js] = p_from->Affection.Class[i].FemalePen[js];
             }
-            to->Affection.Class[i].MalePen = CALLOC((size_t) num_alleles, double);
+            p_to->Affection.Class[i].MalePen = CALLOC((size_t) num_alleles, double);
             for (js= 0; js < num_alleles; js++) {
-                to->Affection.Class[i].MalePen[js] = from->Affection.Class[i].MalePen[js];
+                p_to->Affection.Class[i].MalePen[js] = p_from->Affection.Class[i].MalePen[js];
             }
         }
         break;
     case BINARY:
         /* refer to code for reading in binary locus
            in read_linkage_locus_file(), read_files.c */
-        to->Binary.FactorCnt = from->Binary.FactorCnt;
-        to->Binary.Factor = CALLOC((size_t) from->Binary.FactorCnt, char *);
-        for(i=0; i < from->Binary.FactorCnt; i++) {
-            to->Binary.Factor[i] = CALLOC((size_t) num_alleles, char);
+        m_to->Binary.FactorCnt = m_from->Binary.FactorCnt;
+        m_to->Binary.Factor = CALLOC((size_t) m_from->Binary.FactorCnt, char *);
+        for(i=0; i < m_from->Binary.FactorCnt; i++) {
+            m_to->Binary.Factor[i] = CALLOC((size_t) num_alleles, char);
             for(js=0; js < num_alleles; js++) {
-                to->Binary.Factor[i][js] = from->Binary.Factor[i][js];
+                m_to->Binary.Factor[i][js] = m_from->Binary.Factor[i][js];
             }
         }
         break;
     case NUMBERED:
-        to->Numbered.Recoded=    from->Numbered.Recoded;
-        to->Numbered.NumAlleles= from->Numbered.NumAlleles;
-        to->Numbered.SelectOpt=  from->Numbered.SelectOpt;
+        m_to->Numbered.Recoded=    m_from->Numbered.Recoded;
+        m_to->Numbered.NumAlleles= m_from->Numbered.NumAlleles;
+        m_to->Numbered.SelectOpt=  m_from->Numbered.SelectOpt;
         break;
     default:
         break;
@@ -300,8 +281,7 @@ void clear_llocusrec(linkage_locus_rec *Locus, linkage_locus_type Type)
     Locus->Allele = NULL;
     Locus->Type = TYPE_UNSET;
     Locus->Class = CLASS_UNSET;
-    Locus->chromosome = 0;
-    clear_llocusdata(&(Locus->Data), Type);
+    clear_llocusdata(Locus, Type);
 }
 
 
@@ -309,8 +289,12 @@ void            clear_llocustop(linkage_locus_top *LTop)
 {
     if (LTop == NULL) return;
     LTop->LocusCnt = 0;
+    LTop->PhenoCnt = 0;
+    LTop->MarkerCnt = 0;
     LTop->NumPedigreeCols=0;
     LTop->Locus = NULL;
+    LTop->Pheno = NULL;
+    LTop->Marker = NULL;
     LTop->RiskLocus = UNDEF;
     LTop->RiskAllele = UNDEF;
     LTop->SexLinked = UNDEF;
@@ -338,7 +322,8 @@ void            clear_lpedrec(linkage_ped_rec *Entry)
     Entry->Next_PA_Sib = UNDEF;
     Entry->Next_MA_Sib = UNDEF;
     Entry->Sex = UNDEF;
-    Entry->Data = NULL;
+    Entry->Pheno = NULL;
+    Entry->Marker = NULL;
     Entry->TmpData = NULL;
     Entry->Ngeno = 0;
     strcpy(Entry->OrigID, "");
@@ -468,28 +453,28 @@ void   free_all_from_llocusrec(linkage_locus_rec *Locus)
     }
     switch (Locus->Type)     {
     case AFFECTION:
-        if (Locus->LAFFDATA.Class != NULL)   {
-            for (classIdx = 0; classIdx < Locus->LAFFDATA.ClassCnt; classIdx++) {
-                if (Locus->LAFFDATA.Class[classIdx].AutoPen != NULL)
-                    free(Locus->LAFFDATA.Class[classIdx].AutoPen);
-                if (Locus->LAFFDATA.Class[classIdx].FemalePen != NULL)
-                    free(Locus->LAFFDATA.Class[classIdx].FemalePen);
-                if (Locus->LAFFDATA.Class[classIdx].MalePen != NULL)
-                    free(Locus->LAFFDATA.Class[classIdx].MalePen);
+        if (Locus->Pheno->Props.Affection.Class != NULL)   {
+            for (classIdx = 0; classIdx < Locus->Pheno->Props.Affection.ClassCnt; classIdx++) {
+                if (Locus->Pheno->Props.Affection.Class[classIdx].AutoPen != NULL)
+                    free(Locus->Pheno->Props.Affection.Class[classIdx].AutoPen);
+                if (Locus->Pheno->Props.Affection.Class[classIdx].FemalePen != NULL)
+                    free(Locus->Pheno->Props.Affection.Class[classIdx].FemalePen);
+                if (Locus->Pheno->Props.Affection.Class[classIdx].MalePen != NULL)
+                    free(Locus->Pheno->Props.Affection.Class[classIdx].MalePen);
             }
-            free(Locus->LAFFDATA.Class);
-            Locus->LAFFDATA.Class = NULL;
+            free(Locus->Pheno->Props.Affection.Class);
+            Locus->Pheno->Props.Affection.Class = NULL;
         }
 
         break;
 
     case BINARY:
-        if (Locus->LBINDATA.Factor != NULL)   {
-            for (factor = 0; factor < Locus->LBINDATA.FactorCnt; factor++)    {
-                if (Locus->LBINDATA.Factor[factor] != NULL)
-                    free(Locus->LBINDATA.Factor[factor]);
+        if (Locus->Marker->Props.Binary.Factor != NULL)   {
+            for (factor = 0; factor < Locus->Marker->Props.Binary.FactorCnt; factor++)    {
+                if (Locus->Marker->Props.Binary.Factor[factor] != NULL)
+                    free(Locus->Marker->Props.Binary.Factor[factor]);
             }
-            free(Locus->LBINDATA.Factor);
+            free(Locus->Marker->Props.Binary.Factor);
         }
         break;
     case QUANT:
@@ -525,14 +510,24 @@ void   free_all_from_llocustop(linkage_locus_top *LTop)
 
 }
 
-void            free_all_from_lpedrec(linkage_ped_rec *Entry)
+void free_all_from_lpedrec(linkage_ped_rec *Entry, int offset)
 
 {
     if (Entry == NULL)
         return;
+/*
     if (Entry->Data != NULL) {
             free(Entry->Data);
             Entry->Data = NULL;
+    }
+*/
+    if (Entry->Pheno != NULL) {
+            free(Entry->Pheno);
+            Entry->Pheno = NULL;
+    }
+    if (Entry->Marker != NULL) {
+        marker_free(Entry->Marker, offset);
+        Entry->Marker = NULL;
     }
 #ifdef CFREE
     if (Entry->loopbreakers != NULL)
@@ -540,52 +535,10 @@ void            free_all_from_lpedrec(linkage_ped_rec *Entry)
 #endif /* CFREE */
 }
 
-/* special function to free the Raw alleles, should be called
-   BEFORE free_all_from_lpedrec
-*/
-
-#if 0
-void            free_pedrec_raw_alleles(void *Entry,
-					linkage_locus_top *LTop)
+void free_all_from_lpedtree(linkage_ped_tree *Ped, int offset)
 
 {
-    int k;
-    linkage_ped_rec *LEntry;
-    person_node_type *PEntry;
-
-    if (pedfile_type == 0) {
-        LEntry = (linkage_ped_rec *) Entry;
-    } else {
-        PEntry = (person_node_type *) Entry;
-    }
-
-    for (k=0; k < LTop->LocusCnt; k++) {
-        if (LTop->Locus[k].Type == NUMBERED ||
-            LTop->Locus[k].Type == XLINKED) {
-            if (pedfile_type == 0) {
-                if (LEntry->RALLELE1(k) != NULL) {
-                    free(LEntry->RALLELE1(k));   LEntry->RALLELE1(k) = NULL;
-                }
-                if (LEntry->RALLELE2(k) != NULL) {
-                    free(LEntry->RALLELE2(k));   LEntry->RALLELE2(k) = NULL;
-                }
-            } else {
-                if (PEntry->PRALLELE1(k) != NULL) {
-                    free(PEntry->PRALLELE1(k));    PEntry->PRALLELE1(k) = NULL;
-                }
-                if (PEntry->PRALLELE1(k) != NULL) {
-                    free(PEntry->PRALLELE2(k));    PEntry->PRALLELE2(k) = NULL;
-                }
-            }
-        }
-    }
-}
-#endif /* 0 */
-
-void            free_all_from_lpedtree(linkage_ped_tree *Ped)
-
-{
-    int             entry;
+    int entry;
     if (Ped == NULL)
         return;
 
@@ -595,7 +548,7 @@ void            free_all_from_lpedtree(linkage_ped_tree *Ped)
 
     if (Ped->Entry != NULL) {
             for (entry = 0; entry < Ped->EntryCnt; entry++)
-                free_all_from_lpedrec(&(Ped->Entry[entry]));
+                free_all_from_lpedrec(&(Ped->Entry[entry]), offset);
             free(Ped->Entry);
             Ped->Entry = NULL;
     }
@@ -629,16 +582,18 @@ void            free_lpedtop_pedinfo(linkage_ped_top *PTop)
     return;
 }
 
-void            free_all_from_lpedtop(linkage_ped_top *PTop)
+void free_all_from_lpedtop(linkage_ped_top *PTop)
 
 {
-    int             ped;
+    int ped;
+    int offset = PTop->LocusTop->PhenoCnt;
+
     if (PTop == NULL)
         return;
     if (PTop->pedfile_type == 0) {
         if (PTop->Ped != NULL) {
             for (ped = 0; ped < PTop->PedCnt; ped++)
-                free_all_from_lpedtree(&(PTop->Ped[ped]));
+                free_all_from_lpedtree(&(PTop->Ped[ped]), offset);
             free(PTop->Ped);
             PTop->Ped = NULL;
         }
@@ -680,20 +635,31 @@ void  copy_linkage_locus_rec(linkage_locus_rec *from,
         strcpy(to->Name, from->Name);
     to->AlleleCnt = from->AlleleCnt;
     to->Type = from->Type;
-    to->Class = to->Class;
+//  to->Class = to->Class; broken since v4.5.4
+    to->Class = from->Class;
     /* We need new code here to copy over the .Data structure */
-    copy_llocusdata(&(from->Data),  &(to->Data),
-                    from->Type, from->AlleleCnt);
+    copy_llocusdata(from, to, from->Type, from->AlleleCnt);
     to->number = from->number;
-
-    to->position = from->position;
-    to->pos_male = from->pos_male;
-    to->pos_female = from->pos_female;
-    to->chromosome = from->chromosome;
-    to->error_prob = from->error_prob;
-    to->number = from->number;
-    for (j = 0; j < from->AlleleCnt; j++)  {
-        to->Allele[j].Frequency = from->Allele[j].Frequency;
+    switch(to->Type) {
+    case BINARY:
+    case NUMBERED:
+        for (j = 0; j < from->AlleleCnt; j++)  {
+            to->Allele[j].Frequency = from->Allele[j].Frequency;
+        }
+        to->Marker->pos_avg = from->Marker->pos_avg;
+        to->Marker->pos_male = from->Marker->pos_male;
+        to->Marker->pos_female = from->Marker->pos_female;
+        to->Marker->chromosome = from->Marker->chromosome;
+        to->Marker->error_prob = from->Marker->error_prob;
+        break;
+    case AFFECTION:
+    case QUANT:
+        for (j = 0; j < from->AlleleCnt; j++)  {
+            to->Allele[j].Frequency = from->Allele[j].Frequency;
+        }
+        break;
+    default:
+        break;
     }
 }
 
@@ -738,7 +704,10 @@ void copy_linkage_locus_top(linkage_locus_top * from, linkage_locus_top * to)
 {
     int             i;
 
-    to->LocusCnt = from->LocusCnt;
+    to->LocusCnt  = from->LocusCnt;
+    to->PhenoCnt  = from->PhenoCnt;
+    to->MarkerCnt = from->MarkerCnt;
+
     copy_ltop_static_info(from, to);
 
     for (i = 0; i < from->LocusCnt - 1; i++)
@@ -773,6 +742,9 @@ void copy_linkage_locus_top(linkage_locus_top * from, linkage_locus_top * to)
 /* same as above, except, a list of loci is also specified */
 void copy_linkage_locus_top1(linkage_locus_top *from, linkage_locus_top *to,
 			     int locuscnt, int *locus_inds)
+
+
+
 {
 
     int ii, i;
@@ -847,6 +819,12 @@ void  copy_lpedtree1(linkage_ped_tree *From, linkage_ped_tree *To)
 }
 
 /* All allocation parts have been removed from this */
+/*
+ * It appears that malloc_linkage_ped_top is ONLY called by
+ * copy_linkage_ped_top.  The latter seems to hardly be used
+ * anymore, but when used it is after premakeped has been converted
+ * to POSTMAKEPED_PFT (i.e. 0) so the pedfile_type check is always TRUE
+ */
 void  copy_linkage_ped_top(linkage_ped_top *Original, linkage_ped_top *Copy,
 			   int malloc_it)
 {
@@ -878,7 +856,12 @@ void  copy_linkage_ped_top(linkage_ped_top *Original, linkage_ped_top *Copy,
             for (j = 0; j < Original->Ped[i].EntryCnt; j++) {
                 copy_lpedrec(&(Original->Ped[i].Entry[j]),
                              &(Copy->Ped[i].Entry[j]), Original);
-                /* .Data is SHARED.  You must "delink_linkage_ped_top(Copy)" before you free the Copy!!
+                /* Pheno/Marker ptrs is SHARED.  since we don't dp:
+                   Original...->Pheno  = NULL;
+                   Original...->Marker = NULL;
+                   SO
+                   You MUST "delink_linkage_ped_top(Copy)" before you free the Copy!
+                   This function does Copy...->Pheno = NULL; Copy...->Marker = NULL;
                  */
             }
         }
@@ -916,13 +899,15 @@ void  delink_linkage_ped_top(linkage_ped_top *Copy)
     if (Copy->pedfile_type == 0) {
         for (i = 0; i < Copy->PedCnt; i++) {
             for (j = 0; j < Copy->Ped[i].EntryCnt; j++) {
-                Copy->Ped[i].Entry[j].Data = NULL;
+                Copy->Ped[i].Entry[j].Pheno = NULL;
+                Copy->Ped[i].Entry[j].Marker = NULL;
             }
         }
     } else {
         for (i = 0; i < Copy->PedCnt; i++) {
             for (j = 0; j < Copy->PTop[i].num_persons; j++) {
-                Copy->PTop[i].persons[j].data = NULL;
+                Copy->PTop[i].persons[j].pheno = NULL;
+                Copy->PTop[i].persons[j].marker = NULL;
             }
         }
     }
@@ -952,12 +937,36 @@ void malloc_linkage_locus_top(linkage_ped_top *Original,
     }
 
     Copy->LocusTop->Locus = CALLOC(locuscnt, linkage_locus_rec);
+    Copy->LocusTop->Pheno  = CALLOC((size_t) Original->LocusTop->PhenoCnt, pheno_rec);
+    // NOTE: No space is allocated in marker for entries 0..LTop->PhenoCnt-1
+    Copy->LocusTop->Marker = (CALLOC((size_t) Original->LocusTop->MarkerCnt, marker_rec)) - Original->LocusTop->PhenoCnt;
 
     for (i = 0; i < locuscnt; i++) {
         Copy->LocusTop->Locus[i].Name = CALLOC((size_t) FILENAME_LENGTH, char);
-        if (alloc_alleles) {
-            Copy->LocusTop->Locus[i].Allele =
-                CALLOC((size_t) Original->LocusTop->Locus[i].AlleleCnt, linkage_allele_rec);
+        linkage_locus_rec *Locus = &Copy->LocusTop->Locus[i];
+        switch(Original->LocusTop->Locus[i].Type) {
+        case BINARY:
+        case NUMBERED:
+            Locus->Marker = &Copy->LocusTop->Marker[i];
+            Locus->Pheno  = 0;
+            if (alloc_alleles) {
+                Locus->AlleleCnt = Original->LocusTop->Locus[i].AlleleCnt;
+                Locus->Allele =
+                    CALLOC((size_t) Original->LocusTop->Locus[i].AlleleCnt, linkage_allele_rec);
+            }
+            break;
+        case AFFECTION:
+        case QUANT:
+            Locus->Marker = 0;
+            Locus->Pheno  = &Copy->LocusTop->Pheno[i];
+            if (alloc_alleles) {
+                Locus->AlleleCnt = Original->LocusTop->Locus[i].AlleleCnt;
+                Locus->Allele =
+                    CALLOC((size_t) Original->LocusTop->Locus[i].AlleleCnt, linkage_allele_rec);
+            }
+            break;
+        default:
+            break;
         }
     }
 
@@ -1013,15 +1022,12 @@ void malloc_linkage_locus_top1(linkage_ped_top *Original,
    The malloc_alleles flag is necessary because inside
    append_locus_array, we don't know the ordering of markers
    a priori (not the same as the original) */
-
 void  malloc_linkage_ped_top(linkage_ped_top *Original,
 			     linkage_ped_top *Copy,
 			     int alloc_alleles)
 {
 
-    int             i, j;
-    size_t             locuscnt=(size_t)Original->LocusTop->LocusCnt;
-
+    int i;
 
     if (Copy == NULL)  {
         errorvf("In malloc_linkage_ped_top: Null pointer?\n");
@@ -1039,16 +1045,25 @@ void  malloc_linkage_ped_top(linkage_ped_top *Original,
     for (i = 0; i < Original->PedCnt; i++) {
         if (Original->pedfile_type == 0) {
             Copy->Ped[i].Entry = CALLOC((size_t) Original->Ped[i].EntryCnt, linkage_ped_rec);
+/*
+    No reason to allocate space since copy_lpedrec() just slams the "from ptr" into the "to".
+    If a "move" was desired, the caller then sets the "from ptr" to NULL.  No field by field
+    copy is ever done.
             for (j = 0; j < Original->Ped[i].EntryCnt; j++) {
-                Copy->Ped[i].Entry[j].Data = CALLOC((size_t) locuscnt, linkage_pedrec_data);
+                Copy->Ped[i].Entry[j].Pheno  = CALLOC((size_t) Original->LocusTop->PhenoCnt, pheno_pedrec_data);
+                Copy->Ped[i].Entry[j].Marker = marker_alloc((size_t) Original->LocusTop->MarkerCnt, Original->LocusTop->PhenoCnt);
             }
+*/
         } else {
             Copy->PTop[i].persons =
                 CALLOC((size_t) Original->PTop[i].num_persons, person_node_type);
+/*
             for (j = 0; j < Original->PTop[i].num_persons; j++) {
-                Copy->PTop[i].persons[j].data =
-                    CALLOC(locuscnt, linkage_pedrec_data);
+                Copy->PTop[i].persons[j].pheno  = CALLOC((size_t) Original->LocusTop->PhenoCnt, pheno_pedrec_data);
+ I don't think this is necessary
+                Copy->PTop[i].persons[j].marker = marker_alloc((size_t) Original->LocusTop->MarkerCnt, Original->LocusTop->PhenoCnt);
             }
+*/
         }
     }
 
@@ -1063,12 +1078,6 @@ void  malloc_lpedtree_entries(linkage_ped_tree *Copy, size_t entrycount,
        given the number of entries and information
        about locus data */
     Copy->Entry = CALLOC(entrycount, linkage_ped_rec);
-   /*
-    size_t j;
-    for (j = 0; j < entrycount; j++)
-        Copy->Entry[j].Data = CALLOC(locuscnt, linkage_pedrec_data);
-   */
-    return;
 }
 
 
@@ -1141,14 +1150,16 @@ static void    *lcollapse_iterate(list_data EntryData, void *It)
 static void    collapse_lpedtree(linkage_ped_tree *Ped,
 				 linkage_ped_top *Top)
 {
-    int         entry, entry1;
+    int entry, entry1;
     int newentry;
-    int          NewEntryCnt;
+    int NewEntryCnt;
     register linkage_ped_rec *Entry, *NEntry;
     linkage_ped_rec *NewEntry;
 
     id_pair_type *id_pair;
     list         *Modified = new_list();
+
+    int offset = Top->LocusTop->PhenoCnt;
 
     /* count the number of entries to be saved */
     /* and construct the list of ID's of deleted entries */
@@ -1166,12 +1177,11 @@ static void    collapse_lpedtree(linkage_ped_tree *Ped,
         if (Entry->ID == UNDEF)
             continue;
         NEntry = &(NewEntry[newentry]);
-        /*
-        NEntry->Data = CALLOC((size_t) Top->LocusTop->LocusCnt, linkage_pedrec_data);
-        */
+
         copy_lpedrec(Entry, NEntry, Top);
-        Entry->Data = NULL;
-        free_all_from_lpedrec(Entry);
+        Entry->Pheno  = NULL;
+        Entry->Marker = NULL;
+        free_all_from_lpedrec(Entry, offset);
         /* Change the field numbers of entry to match the modified list */
         /* father, mother, first-off, pa_sib, ma_sib */
         list_iterate(Modified, (void *) &(NEntry->Father), lcollapse_iterate);
@@ -1254,8 +1264,10 @@ int  connect_loops(linkage_ped_tree *Ped, linkage_ped_top *Top1)
 {
     register linkage_loop_rec *loop1, *Loop1=NULL, *Loop2=NULL;
     linkage_ped_rec *D_Entry, *S_Entry;
-    int         lb, i, save, *delete_ppl, found_loop=0;
-    int     j;
+    int lb, i, save, *delete_ppl, found_loop=0;
+    int j;
+
+    int offset = Top1->LocusTop->PhenoCnt;
 
     if (Ped->Loops == NULL) {
         /* now collapse the Entry array */
@@ -1349,7 +1361,7 @@ int  connect_loops(linkage_ped_tree *Ped, linkage_ped_top *Top1)
     /* free the memory associated with all deleted entries */
     for (j=0; j<Ped->EntryCnt; j++) {
         if (delete_ppl[j] == 1) {
-            free_all_from_lpedrec(D_Entry);
+            free_all_from_lpedrec(D_Entry, offset);
             /* mark it as deleted */
             Ped->Entry[j].ID = UNDEF;
         }
@@ -1388,7 +1400,6 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
         individual_count = individual_count + Top->Ped[i].EntryCnt;
         for (j = 0; j < Top->Ped[i].EntryCnt; j++)  {
             linkage_ped_rec *pp = &(Top->Ped[i].Entry[j]);
-            linkage_pedrec_data *ppd = &(pp->Data[-1]);
             int gender = pp->Sex;
             if (gender == MALE_ID) {
                 male_count++;
@@ -1405,10 +1416,8 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
             for (l = 0; l < numloc; l++)   {
                 if (Mega2Status < LOCI_REORDERED) {
                     k = l;
-                    ppd++;
                 } else {
                     k = reordered_marker_loci[l];
-                    ppd = &(pp->Data[k]);
                 }
                 if (Top->LocusTop->Locus[k].Type != AFFECTION &&
                     Top->LocusTop->Locus[k].Type != QUANT)    {
@@ -1419,11 +1428,15 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                     }
                     */
                     if (Mega2Status <= INSIDE_RECODE && Top->LocusTop->PedRecDataType == Raw_postmake) {
-                        this_person_typed += ((allelecmp(ppd->RAlleles.Allele_1, REC_UNKNOWN))? 1: 0);
-                        this_person_typed += ((allelecmp(ppd->RAlleles.Allele_2, REC_UNKNOWN))? 1: 0);
+                        const char *all1, *all2;
+                        get_2Ralleles(pp->Marker, k, &all1, &all2);
+                        this_person_typed += (allelecmp(all1, REC_UNKNOWN)? 1: 0);
+                        this_person_typed += (allelecmp(all2, REC_UNKNOWN)? 1: 0);
                     } else {
-                        this_person_typed += ((ppd->Alleles.Allele_1)? 1: 0);
-                        this_person_typed += ((ppd->Alleles.Allele_2)? 1: 0);
+                        int all1, all2;
+                        get_2alleles(pp->Marker, k, &all1, &all2);
+                        this_person_typed += (all1 ? 1: 0);
+                        this_person_typed += (all2 ? 1: 0);
                     }
                     /* If we are in recode, we are counting half-types,
                        otherwise this rouitne is called after half-typed
@@ -1499,47 +1512,48 @@ static void connect_loopbreakers(linkage_ped_rec *S_Entry,
 				 linkage_ped_top *Top1)
 {
     int j, locus1;
+    int sa1, sa2, da1, da2;
 
     /* Check that genotypes match between loop person and duplicate */
     for (locus1 = 0; locus1 < Top1->LocusTop->LocusCnt; locus1++)
         switch (Top1->LocusTop->Locus[locus1].Type)   {
         case QUANT:
-            if (fabs(S_Entry->EQUANT(locus1) - D_Entry->EQUANT(locus1)) >= EPSILON) {
+            if (fabs(S_Entry->Pheno[locus1].Quant - D_Entry->Pheno[locus1].Quant) >= EPSILON) {
                 sprintf(err_msg, "Ped %d, Trait locus %s:",
                         Ped->Num, Top1->LocusTop->Locus[locus1].Name);
                 errorf(err_msg);
                 sprintf(err_msg, "Loop person %d has phenotype %10.7f",
-                        S_Entry->ID, S_Entry->EQUANT(locus1));
+                        S_Entry->ID, S_Entry->Pheno[locus1].Quant);
                 errorf(err_msg);
                 sprintf(err_msg, "Duplicate person %d has phenotype %10.7f",
-                        D_Entry->ID, D_Entry->EQUANT(locus1));
+                        D_Entry->ID, D_Entry->Pheno[locus1].Quant);
                 errorf(err_msg);
                 EXIT(DATA_INCONSISTENCY);
             }
             break;
         case AFFECTION:
-            if (S_Entry->ESTATUS(locus1) != D_Entry->ESTATUS(locus1)) {
+            if (S_Entry->Pheno[locus1].Affection.Status != D_Entry->Pheno[locus1].Affection.Status) {
                 sprintf(err_msg, "Ped %d, Trait locus %s:",
                         Ped->Num, Top1->LocusTop->Locus[locus1].Name);
                 errorf(err_msg);
                 sprintf(err_msg, "Loop person %d has status %d",
-                        S_Entry->ID, S_Entry->ESTATUS(locus1));
+                        S_Entry->ID, S_Entry->Pheno[locus1].Affection.Status);
                 errorf(err_msg);
                 sprintf(err_msg, "Duplicate person %d has status %d",
-                        D_Entry->ID, D_Entry->ESTATUS(locus1));
+                        D_Entry->ID, D_Entry->Pheno[locus1].Affection.Status);
                 errorf(err_msg);
                 EXIT(DATA_INCONSISTENCY);
             }
-            if (Top1->LocusTop->Locus[locus1].LAFFDATA.ClassCnt > 1) {
-                if (S_Entry->ECLASS(locus1) != D_Entry->ECLASS(locus1)) {
+            if (Top1->LocusTop->Pheno[locus1].Props.Affection.ClassCnt > 1) {
+                if (S_Entry->Pheno[locus1].Affection.Class != D_Entry->Pheno[locus1].Affection.Class) {
                     sprintf(err_msg, "Ped %d, Trait locus %s:",
                             Ped->Num, Top1->LocusTop->Locus[locus1].Name);
                     errorf(err_msg);
                     sprintf(err_msg, "Loop person %d has class %d",
-                            S_Entry->ID, S_Entry->ECLASS(locus1));
+                            S_Entry->ID, S_Entry->Pheno[locus1].Affection.Class);
                     errorf(err_msg);
                     sprintf(err_msg, "Duplicate person %d has class %d",
-                            D_Entry->ID, D_Entry->ECLASS(locus1));
+                            D_Entry->ID, D_Entry->Pheno[locus1].Affection.Class);
                     errorf(err_msg);
                     EXIT(DATA_INCONSISTENCY);
                 }
@@ -1550,23 +1564,20 @@ static void connect_loopbreakers(linkage_ped_rec *S_Entry,
         case NUMBERED:
         case XLINKED:
         case YLINKED:
-            if ((S_Entry->Data[locus1].Alleles.Allele_1 !=
-                 D_Entry->Data[locus1].Alleles.Allele_1) ||
-                (S_Entry->Data[locus1].Alleles.Allele_2 !=
-                 D_Entry->Data[locus1].Alleles.Allele_2)) {
-                if (Top1->LocusTop->Locus[locus1].chromosome > 0) {
+            get_2alleles(S_Entry->Marker, locus1, &sa1, &sa2);
+            get_2alleles(D_Entry->Marker, locus1, &da1, &da2);
+            if (sa1 != da1 || sa2 != da2) {
+                if (Top1->LocusTop->Marker[locus1].chromosome > 0) {
 		    Display_Errors=1;
                     sprintf(err_msg, "Ped %d, Chr %d, Locus %d:",
                             Ped->Num,
-                            Top1->LocusTop->Locus[locus1].chromosome, locus1);
+                            Top1->LocusTop->Marker[locus1].chromosome, locus1);
                     errorf(err_msg);
                     sprintf(err_msg, "Loop person %d has genotype %d/%d",
-                            S_Entry->ID,
-                            S_Entry->EALLELE1(locus1), S_Entry->EALLELE2(locus1));
+                            S_Entry->ID, sa1, sa2);
                     errorf(err_msg);
                     sprintf(err_msg, "Duplicate person %d has genotype %d/%d",
-                            D_Entry->ID,
-                            D_Entry->EALLELE1(locus1), D_Entry->EALLELE2(locus1));
+                            D_Entry->ID, da1, da2);
                     errorf(err_msg);
                     EXIT(DATA_INCONSISTENCY);
                 }
@@ -1793,7 +1804,6 @@ void get_unmapped_loci(int append)
         if (append == 2) {
             /* first store the traits in Combine mode */
             NumChrLoci = (LoopOverTrait == 1 || num_traits == 0)? num_traits : num_traits - 1;
-//r         NumChrLoci = num_traits - (global_trait_entries[num_traits - 1] == -1 ? 1 : 0);
             NumChrLoci += NumUnmapped;
         } else {
             NumChrLoci = NumUnmapped;
@@ -1886,8 +1896,9 @@ int is_typed_lentry(linkage_ped_rec Entry, linkage_locus_top *LTop,
     }
 
     for(m=0; m < num_markers; m++) {
-        if ((Entry.EALLELE1(markers[m]) != 0) ||
-            (Entry.EALLELE2(markers[m]) != 0))
+        int a1, a2;
+        get_2alleles(Entry.Marker, markers[m], &a1, &a2);
+        if (a1 != 0 || a2 != 0)
             typed++;
     }
 
@@ -1935,26 +1946,26 @@ void clean_reordered_markers(linkage_locus_top *LTop, analysis_type analysis)
             }
             /*     Check positions */
             if (LTop->Locus[reordered_marker_loci[j]].Type == NUMBERED) {
-                int chr = LTop->Locus[reordered_marker_loci[j]].chromosome;
+                int chr = LTop->Marker[reordered_marker_loci[j]].chromosome;
 #ifdef USEOLDMAPCODE
-                if (LTop->Locus[reordered_marker_loci[j]].position >= 0.0 ||
+                if (LTop->Marker[reordered_marker_loci[j]].position >= 0.0 ||
                     ALLOW_NO_MAP(analysis)) {
                     tmp[num_valid] = reordered_marker_loci[j];
                     num_valid++;
-                } else if (LTop->Locus[reordered_marker_loci[j]].pos_male >= 0.0 &&
-                           LTop->Locus[reordered_marker_loci[j]].pos_female >= 0.0) {
+                } else if (LTop->Marker[reordered_marker_loci[j]].pos_male >= 0.0 &&
+                           LTop->Marker[reordered_marker_loci[j]].pos_female >= 0.0) {
                     tmp[num_valid] = reordered_marker_loci[j];
                     num_valid++;
                     // compute the missing sex-averaged position by taking the averaged of
                     // the sex-specific information?!
                     // Likely this means that the code is making an assumption about having
                     // sex-averated information later in the code. That is troubling...
-                    LTop->Locus[reordered_marker_loci[j]].position  =
-                    (LTop->Locus[reordered_marker_loci[j]].pos_male +
-                     LTop->Locus[reordered_marker_loci[j]].pos_female)/2.0;
+                    LTop->Marker[reordered_marker_loci[j]].pos_avg  =
+                    (LTop->Marker[reordered_marker_loci[j]].pos_male +
+                     LTop->Marker[reordered_marker_loci[j]].pos_female)/2.0;
                 } else {
                     warnvf("Missing map position for marker %s, it will be excluded from analysis.\n",
-                            LTop->Locus[reordered_marker_loci[j]].Name);
+                            LTop->Marker[reordered_marker_loci[j]].Name);
                     chromo_loci_final_count[i]--;
                 }
 #else /* USEOLDMAPCODE */
@@ -1964,22 +1975,22 @@ void clean_reordered_markers(linkage_locus_top *LTop, analysis_type analysis)
                 if (ALLOW_NO_MAP(analysis) ||
                     // with a sex-averaged map, we only know about the average position...
                     (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT &&
-                     LTop->Locus[reordered_marker_loci[j]].position >= 0.0) ||
+                     LTop->Marker[reordered_marker_loci[j]].pos_avg >= 0.0) ||
                     // with a sex-specific map, we must have both male an female for this genetic marker...
                     (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT &&
                      // only test or a male position if this is not the X-chromosome...
-                     (chr != SEX_CHROMOSOME ? LTop->Locus[reordered_marker_loci[j]].pos_male >= 0.0 : 1) &&
-                     LTop->Locus[reordered_marker_loci[j]].pos_female >= 0.0) ||
+                     (chr != SEX_CHROMOSOME ? LTop->Marker[reordered_marker_loci[j]].pos_male >= 0.0 : 1) &&
+                     LTop->Marker[reordered_marker_loci[j]].pos_female >= 0.0) ||
                     // with a female only map, we must have the femele for this marker, and it 's only valid on the X chromosome...
                     (genetic_distance_sex_type_map == FEMALE_GDMT &&
-                     LTop->Locus[reordered_marker_loci[j]].pos_female >= 0.0 &&
-                     LTop->Locus[reordered_marker_loci[j]].chromosome == SEX_CHROMOSOME)
+                     LTop->Marker[reordered_marker_loci[j]].pos_female >= 0.0 &&
+                     LTop->Marker[reordered_marker_loci[j]].chromosome == SEX_CHROMOSOME)
                     ) {
                     tmp[num_valid] = reordered_marker_loci[j];
                     num_valid++;
                 } else {
                     warnvf("Missing or unusable map position for marker %s, it will be excluded from analysis.\n",
-                            LTop->Locus[reordered_marker_loci[j]].Name);
+                            LTop->Marker[reordered_marker_loci[j]].Name);
                     chromo_loci_final_count[i]--;
                 }
 #endif /* USEOLDMAPCODE */

@@ -443,30 +443,30 @@ static void write_SLINK_locus_file(linkage_locus_top *LTop,
 
             /* don't print frequency */
             if (LTop->Locus[*trp].Type == AFFECTION) {
-                fprintf(filep, "%d\n", LTop->Locus[*trp].LAFFDATA.ClassCnt);
-                for (tmpi = 0; tmpi < LTop->Locus[*trp].LAFFDATA.ClassCnt; tmpi++) {
+                fprintf(filep, "%d\n", LTop->Pheno[*trp].Props.Affection.ClassCnt);
+                for (tmpi = 0; tmpi < LTop->Pheno[*trp].Props.Affection.ClassCnt; tmpi++) {
                     if (sex_linked) {
-                        for (tmpi2 = 0; tmpi2 < LTop->Locus[*trp].LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", LTop->Locus[*trp].LAFFDATA.Class[tmpi].FemalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < LTop->Pheno[*trp].Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", LTop->Pheno[*trp].Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                         fputc('\n', filep);
                         for (tmpi2 = 0; tmpi2 < LTop->Locus[*trp].AlleleCnt; tmpi2++)
-                            fprintf(filep, " %.4f", LTop->Locus[*trp].LAFFDATA.Class[tmpi].MalePen[tmpi2]);
+                            fprintf(filep, " %.4f", LTop->Pheno[*trp].Props.Affection.Class[tmpi].MalePen[tmpi2]);
                         fputc('\n', filep);
                     } else {
-                        for (tmpi2 = 0; tmpi2 < LTop->Locus[*trp].LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", LTop->Locus[*trp].LAFFDATA.Class[tmpi].AutoPen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < LTop->Pheno[*trp].Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", LTop->Pheno[*trp].Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                         fputc('\n', filep);
                     }
                 }
             } else {
-                fprintf(filep, "%d\n", LTop->Locus[*trp].LQUADATA.ClassCnt);
-                for (tmpi = LTop->Locus[*trp].LQUADATA.ClassCnt; tmpi > 0; tmpi--)
+                fprintf(filep, "%d\n", LTop->Pheno[*trp].Props.Quant.ClassCnt);
+                for (tmpi = LTop->Pheno[*trp].Props.Quant.ClassCnt; tmpi > 0; tmpi--)
                     for (tmpi2 = 0; tmpi2 < 3; tmpi2++)
-                        fprintf(filep," %7.6f", LTop->Locus[*trp].LQUADATA.Mean[tmpi-1][tmpi2]);
+                        fprintf(filep," %7.6f", LTop->Pheno[*trp].Props.Quant.Mean[tmpi-1][tmpi2]);
                 fprintf(filep, " << GENOTYPE MEANS\n");
                 /* ASSUMES only one trait per qtl */
-                fprintf(filep," %7.6f\n", LTop->Locus[*trp].LQUADATA.Variance[0][0]);
-                fprintf(filep," %7.6f\n", LTop->Locus[*trp].LQUADATA.Multiplier);
+                fprintf(filep," %7.6f\n", LTop->Pheno[*trp].Props.Quant.Variance[0][0]);
+                fprintf(filep," %7.6f\n", LTop->Pheno[*trp].Props.Quant.Multiplier);
             }
 
             fprintf(filep, "3 2 # Proxy\n");
@@ -581,18 +581,18 @@ static void save_SUP_slink_peds(char *pedfl_name, linkage_ped_top *Top,
                         if (sim_pheno) {
                             fprintf(filep, " 0");
                         } else {
-                            fprintf(filep, " %1d", tpe->Data[*trp].Affection.Status);
+                            fprintf(filep, " %1d", tpe->Pheno[*trp].Affection.Status);
                         }
-                        if (Top->LocusTop->Locus[*trp].Data.Affection.ClassCnt > 1) {
-                            fprintf(filep, " %2d", tpe->Data[*trp].Affection.Class);
+                        if (Top->LocusTop->Pheno[*trp].Props.Affection.ClassCnt > 1) {
+                            fprintf(filep, " %2d", tpe->Pheno[*trp].Affection.Class);
                         }
                         break;
 
                     case QUANT:
-                        if (fabs(tpe->EQUANT(*trp) - MissingQuant) < EPSILON || sim_pheno) {
+                        if (fabs(tpe->Pheno[*trp].Quant - MissingQuant) < EPSILON || sim_pheno) {
                             fprintf(filep, "    0.0   ");
                         } else {
-                            fprintf(filep, " %10.5f", tpe->EQUANT(*trp));
+                            fprintf(filep, " %10.5f", tpe->Pheno[*trp].Quant);
                         }
                         break;
                     default:
@@ -701,31 +701,31 @@ static void   write_mega2_locus(char *loutfl_name, linkage_locus_top *LTop,
         fprintf(filep, "\n");
 
         if (LTop->Locus[*trp].Type == AFFECTION) {
-            fprintf(filep, "%d\n", LTop->Locus[*trp].LAFFDATA.ClassCnt);
-            for (tmpi = 0; tmpi < LTop->Locus[*trp].LAFFDATA.ClassCnt; tmpi++) {
+            fprintf(filep, "%d\n", LTop->Pheno[*trp].Props.Affection.ClassCnt);
+            for (tmpi = 0; tmpi < LTop->Pheno[*trp].Props.Affection.ClassCnt; tmpi++) {
                 linkage_locus_rec *Locus = &LTop->Locus[*trp];
                 if (sex_linked) {
-                    for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                        fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].FemalePen[tmpi2]);
+                    for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                        fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                     fputc('\n', filep);
                     for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                        fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].MalePen[tmpi2]);
+                        fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                     fputc('\n', filep);
                 } else {
-                    for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                        fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].AutoPen[tmpi2]);
+                    for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                        fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                     fputc('\n', filep);
                 }
             }
         } else {
-            fprintf(filep, "%d\n", LTop->Locus[*trp].LQUADATA.ClassCnt);
-            for (tmpi = LTop->Locus[*trp].LQUADATA.ClassCnt; tmpi > 0; tmpi--)
+            fprintf(filep, "%d\n", LTop->Pheno[*trp].Props.Quant.ClassCnt);
+            for (tmpi = LTop->Pheno[*trp].Props.Quant.ClassCnt; tmpi > 0; tmpi--)
                 for (tmpi2 = 0; tmpi2 < 3; tmpi2++)
-                    fprintf(filep," %7.6f", LTop->Locus[*trp].LQUADATA.Mean[tmpi-1][tmpi2]);
+                    fprintf(filep," %7.6f", LTop->Pheno[*trp].Props.Quant.Mean[tmpi-1][tmpi2]);
             fprintf(filep, " << GENOTYPE MEANS\n");
             /* ASSUMES only one trait per qtl */
-            fprintf(filep," %7.6f\n", LTop->Locus[*trp].LQUADATA.Variance[0][0]);
-            fprintf(filep," %7.6f\n", LTop->Locus[*trp].LQUADATA.Multiplier);
+            fprintf(filep," %7.6f\n", LTop->Pheno[*trp].Props.Quant.Variance[0][0]);
+            fprintf(filep," %7.6f\n", LTop->Pheno[*trp].Props.Quant.Multiplier);
         }
         fprintf(filep, "3 2 # Proxy\n");
         fprintf(filep, "0.5  0.5\n");

@@ -113,7 +113,7 @@ void log_marker_selections(linkage_ped_top *Top, int *entries,
     (*log_func)(err_msg);
 
     for (k = 0; k < entry_count; k++)   {
-/*     if (LocusTop->Locus[number1[k]].position >= 0.0 ||  */
+/*     if (LocusTop->Marker[number1[k]].pos_avg >= 0.0 ||  */
 /* 	LocusTop->Locus[number1[k]].Type == QUANT || */
 /* 	LocusTop->Locus[number1[k]].Type == AFFECTION) { */
         strcpy(err_msg, "");
@@ -131,9 +131,9 @@ void log_marker_selections(linkage_ped_top *Top, int *entries,
 
         if (disp_err) {
             if (LocusTop->Locus[number1[k]].Type == NUMBERED &&
-                LocusTop->Locus[number1[k]].error_prob > 0.0) {
+                LocusTop->Marker[number1[k]].error_prob > 0.0) {
                 grow(err_msg, " %7.5f",
-                     LocusTop->Locus[number1[k]].error_prob);
+                     LocusTop->Marker[number1[k]].error_prob);
             } else {
                 strcat(err_msg, "    -    ");
             }
@@ -145,10 +145,10 @@ void log_marker_selections(linkage_ped_top *Top, int *entries,
             for (m=0; m < Top->EXLTop->MapCnt; m++) {
 #ifdef USEOLDMAPCODE
                 if (LocusTop->Locus[number1[k]].Class != MARKER ||
-                    LocusTop->Locus[number1[k]].chromosome == MALE_CHROMOSOME) {
+                    LocusTop->Marker[number1[k]].chromosome == MALE_CHROMOSOME) {
                     // If this is not a marker, or it's the Y-chromosome then it's missing...
                     pos = UNKNOWN_POSITION;
-                } else if (LocusTop->Locus[number1[k]].chromosome == SEX_CHROMOSOME) {
+                } else if (LocusTop->Marker[number1[k]].chromosome == SEX_CHROMOSOME) {
                     // If no female position, choose the average on the X-chromosome...
                     pos = ((Top->EXLTop->EXLocus[number1[k]].pos_female[m] >= 0.0)?
                            Top->EXLTop->EXLocus[number1[k]].pos_female[m] :
@@ -161,13 +161,13 @@ void log_marker_selections(linkage_ped_top *Top, int *entries,
                 pos = UNKNOWN_POSITION;
                 if (LocusTop->Locus[number1[k]].Class == MARKER) {
                     // If it's a marker...
-                    if (LocusTop->Locus[number1[k]].chromosome == SEX_CHROMOSOME &&
+                    if (LocusTop->Marker[number1[k]].chromosome == SEX_CHROMOSOME &&
                         Top->EXLTop->EXLocus[number1[k]].pos_female[m] >= 0.0 &&
                         (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
                          genetic_distance_sex_type_map == FEMALE_GDMT)) {
                         // If it's a female chromosome, a female map position exists, and the user has specified a usable map...
                         pos = Top->EXLTop->EXLocus[number1[k]].pos_female[m];
-                    } else if (LocusTop->Locus[number1[k]].chromosome != MALE_CHROMOSOME &&
+                    } else if (LocusTop->Marker[number1[k]].chromosome != MALE_CHROMOSOME &&
                                Top->EXLTop->EXLocus[number1[k]].positions[m] >= 0.0 &&
                                genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
                         // If it's not male (e.g., autosome, mitocondrial), a position exists, and the user has specified a sex-averaged map...
@@ -184,12 +184,12 @@ void log_marker_selections(linkage_ped_top *Top, int *entries,
 #ifdef USEOLDMAPCODE
 	// In the new map code we will never get here, because there will always be an EXLTop after reading a map file...
         } else {
-            if (LocusTop->Locus[number1[k]].position < 0.0 ||
-                LocusTop->Locus[number1[k]].chromosome == UNKNOWN_CHROMO) {
+            if (LocusTop->Marker[number1[k]].pos_avg < 0.0 ||
+                LocusTop->Marker[number1[k]].chromosome == UNKNOWN_CHROMO) {
                 strcat(err_msg, "     -     ");
             } else {
                 grow(err_msg, " %10.7f",
-                     LocusTop->Locus[number1[k]].position);
+                     LocusTop->Marker[number1[k]].pos_avg);
             }
 #endif /* USEOLDMAPCODE */
         }
@@ -382,48 +382,48 @@ void            switch_map(linkage_locus_top *LTop, double *position, sex_map_ty
             case SEX_AVERAGED_MAP :
 	        // Don't make this check on the first time through...
 	        // Warn the user if the order is not increasing...
-                if (((LTop->Locus[ChrLoci[l]].position - lastpos) < 0.0) &&
+                if (((LTop->Marker[ChrLoci[l]].pos_avg - lastpos) < 0.0) &&
                     (pl >= 0)) {
                     warnvf("%s (%.5g) and %s (%.5g) are not ordered by increasing average map distance!\n",
-                            LTop->Locus[ChrLoci[pl]].Name, LTop->Locus[ChrLoci[pl]].position,
-                            LTop->Locus[ChrLoci[l]].Name, LTop->Locus[ChrLoci[l]].position);
+                            LTop->Marker[ChrLoci[pl]].Name, LTop->Marker[ChrLoci[pl]].pos_avg,
+                            LTop->Marker[ChrLoci[l]].Name, LTop->Marker[ChrLoci[l]].pos_avg);
                     warnf("Assigning a 0 inter-marker distance, map conversion may be inaccurate.");
                 }
                 position[l] = ppos +
                     ((LTop->map_distance_type == 'h')?
-                     haldane_to_kosambi(LTop->Locus[ChrLoci[l]].position - lastpos) :
-                     kosambi_to_haldane(LTop->Locus[ChrLoci[l]].position - lastpos));
-                lastpos = LTop->Locus[ChrLoci[l]].position;
+                     haldane_to_kosambi(LTop->Marker[ChrLoci[l]].pos_avg - lastpos) :
+                     kosambi_to_haldane(LTop->Marker[ChrLoci[l]].pos_avg - lastpos));
+                lastpos = LTop->Marker[ChrLoci[l]].pos_avg;
                 break;
 
             case MALE_SEX_MAP :
-                if (((LTop->Locus[ChrLoci[l]].pos_male - lastpos) < 0.0) &&
+                if (((LTop->Marker[ChrLoci[l]].pos_male - lastpos) < 0.0) &&
                     (pl >= 0)) {
                     warnvf("%s (%.5g) and %s (%.5g) are not ordered by increasing male map distance!\n",
-                            LTop->Locus[ChrLoci[pl]].Name, LTop->Locus[ChrLoci[pl]].pos_male,
-                            LTop->Locus[ChrLoci[l]].Name, LTop->Locus[ChrLoci[l]].pos_male);
+                            LTop->Marker[ChrLoci[pl]].Name, LTop->Marker[ChrLoci[pl]].pos_male,
+                            LTop->Marker[ChrLoci[l]].Name, LTop->Marker[ChrLoci[l]].pos_male);
                     warnf("Assigning a 0 inter-marker distance, male map conversion may be inaccurate.");
                 }
                 position[l] = ppos +
                     ((LTop->map_distance_type == 'h')?
-                     haldane_to_kosambi(LTop->Locus[ChrLoci[l]].pos_male - lastpos) :
-                     kosambi_to_haldane(LTop->Locus[ChrLoci[l]].pos_male - lastpos));
-                lastpos = LTop->Locus[ChrLoci[l]].pos_male;
+                     haldane_to_kosambi(LTop->Marker[ChrLoci[l]].pos_male - lastpos) :
+                     kosambi_to_haldane(LTop->Marker[ChrLoci[l]].pos_male - lastpos));
+                lastpos = LTop->Marker[ChrLoci[l]].pos_male;
                 break;
 
             case FEMALE_SEX_MAP :
-                if (((LTop->Locus[ChrLoci[l]].pos_female - lastpos) < 0.0) &&
+                if (((LTop->Marker[ChrLoci[l]].pos_female - lastpos) < 0.0) &&
                     (pl >= 0)) {
                     warnvf("%s (%.5g) and %s (%.5g) are not ordered by increasing female map distance!\n",
-                            LTop->Locus[ChrLoci[pl]].Name, LTop->Locus[ChrLoci[pl]].pos_female,
-                            LTop->Locus[ChrLoci[l]].Name, LTop->Locus[ChrLoci[l]].pos_female);
+                            LTop->Marker[ChrLoci[pl]].Name, LTop->Marker[ChrLoci[pl]].pos_female,
+                            LTop->Marker[ChrLoci[l]].Name, LTop->Marker[ChrLoci[l]].pos_female);
                     warnf("Assigning a 0 inter-marker distance, female map conversion may be inaccurate.");
                 }
                 position[l] = ppos +
                     ((LTop->map_distance_type == 'h')?
-                     haldane_to_kosambi(LTop->Locus[ChrLoci[l]].pos_female - lastpos) :
-                     kosambi_to_haldane(LTop->Locus[ChrLoci[l]].pos_female - lastpos));
-                lastpos = LTop->Locus[ChrLoci[l]].pos_female;
+                     haldane_to_kosambi(LTop->Marker[ChrLoci[l]].pos_female - lastpos) :
+                     kosambi_to_haldane(LTop->Marker[ChrLoci[l]].pos_female - lastpos));
+                lastpos = LTop->Marker[ChrLoci[l]].pos_female;
                 break;
 
             } // switch(sex) {
@@ -640,10 +640,10 @@ void   check_map_positions(linkage_ped_top *Top, int numchr,
     }
 
     for(i=0; i <  loc_cnt-1; i++) {
-        if (LTop->Locus[markers[i + 1]].chromosome != LTop->Locus[markers[i]].chromosome)
+        if (LTop->Marker[markers[i + 1]].chromosome != LTop->Marker[markers[i]].chromosome)
             continue;
         if ((diff =
-             LTop->Locus[markers[i + 1]].position - LTop->Locus[markers[i]].position) < 0.0) {
+             LTop->Marker[markers[i + 1]].pos_avg - LTop->Marker[markers[i]].pos_avg) < 0.0) {
             if (check_or_set == 1) {
                 sprintf(err_msg,
                         "Selected marker loci on chromosome %d are not in map order.",
@@ -651,12 +651,12 @@ void   check_map_positions(linkage_ped_top *Top, int numchr,
                 warnf(err_msg);
                 sprintf(err_msg, "   Locus %d (%s) is at position %10.7f",
                         markers[i]+1, LTop->Locus[markers[i]].Name,
-                        LTop->Locus[markers[i]].position);
+                        LTop->Marker[markers[i]].pos_avg);
                 warnf(err_msg);
                 sprintf(err_msg, "   Locus %d (%s) is at position %10.7f",
                         markers[i+1]+1,
                         LTop->Locus[markers[i + 1]].Name,
-                        LTop->Locus[markers[i + 1]].position);
+                        LTop->Marker[markers[i + 1]].pos_avg);
                 warnf(err_msg);
                 found_neg=1;
             } else {

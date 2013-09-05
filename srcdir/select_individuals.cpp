@@ -32,6 +32,8 @@
 #include "common.h"
 #include "typedefs.h"
 
+#include "mrecode.h"
+
 #include "batch_input_ext.h"
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
@@ -40,6 +42,7 @@
         batch_input_ext.h:  batchf
      error_messages_ext.h:  mssgf my_calloc
               fcmap_ext.h:  fcmap
+            mrecode_ext.h:  allelecnt (type)
               utils_ext.h:  draw_line log_line randomindex
 */
 
@@ -59,7 +62,7 @@ int count_genotypes(linkage_ped_top *LPedTreeTop, int locus_id, int option,
 */
 
 int founders_or_everyone(linkage_ped_top *Top, int locus_id,
-			 record_type rec, int ped, int *member_ids,
+			 record_type rec, int ped, allelecnt *member_ids,
 			 int count_option, int inc_ht, int xlinked)
 
 
@@ -105,33 +108,46 @@ int founders_or_everyone(linkage_ped_top *Top, int locus_id,
         if (valid == 0) {
             ; /* why bother */
         } else
+/*
         if (rec == Raw_premake) {
-            typed1=allelecmp(pnp->PRALLELE1(locus_id), REC_UNKNOWN);
-            typed2=allelecmp(pnp->PRALLELE2(locus_id), REC_UNKNOWN);
+            const char *a1, *a2;
+            get_2Ralleles(pnp->marker, locus_id, &a1, &a2);
+            typed1=allelecmp(a1, REC_UNKNOWN);
+            typed2=allelecmp(a2, REC_UNKNOWN);
         } else if (rec == Raw_postmake) {
-            typed1=allelecmp(prp->RALLELE1(locus_id), REC_UNKNOWN);
-            typed2=allelecmp(prp->RALLELE2(locus_id), REC_UNKNOWN);
+            const char *a1, *a2;
+            get_2Ralleles(prp->Marker, locus_id, &a1, &a2);
+            typed1=allelecmp(a1, REC_UNKNOWN);
+            typed2=allelecmp(a2, REC_UNKNOWN);
+*/
+        if ((rec == Raw_premake) || (rec == Raw_postmake)) {
+            typed1=allelecmp(member_ids[jj].all1, REC_UNKNOWN);
+            typed2=allelecmp(member_ids[jj].all2, REC_UNKNOWN);
         } else if (rec == Postmakeped) {
-            typed1=(prp->EALLELE1(locus_id))? 1 : 0;
-            typed2=(prp->EALLELE2(locus_id))? 1 : 0;
+            int a1, a2;
+            get_2alleles(prp->Marker, locus_id, &a1, &a2);
+            typed1=(a1)? 1 : 0;
+            typed2=(a2)? 1 : 0;
         } else {
-            typed1=(pnp->PALLELE1(locus_id))? 1 : 0;
-            typed2=(pnp->PALLELE2(locus_id))? 1 : 0;
+            int a1, a2;
+            get_2alleles(pnp->marker, locus_id, &a1, &a2);
+            typed1=(a1)? 1 : 0;
+            typed2=(a2)? 1 : 0;
         }
 
         /* find if this person is genotyped at the locus */
         if (inc_ht) {
             if (valid && (typed1 || typed2)) {
                 if (typed1 && typed2) {
-                    member_ids[jj]=2;
+                    member_ids[jj].num=2;
                 } else {
-                    member_ids[jj]=1;
+                    member_ids[jj].num=1;
                 }
                 has_typed++;
             }
         } else {
             if (valid && typed1 && typed2) {
-                member_ids[jj]=2;
+                member_ids[jj].num=2;
                 has_typed++;
             }
         }
@@ -175,50 +191,46 @@ int random_ped_member(linkage_ped_top *LPedTreeTop,
             if (sex == 1) continue;
         }
         if (rec == Raw_premake) {
-            if (LPedTreeTop->PTop[ped].persons[jj].PRALLELE1(locus_id) == NULL) {
+            const char *a1, *a2;
+            get_2Ralleles(LPedTreeTop->PTop[ped].persons[jj].marker, locus_id, &a1, &a2);
+            if (a1 == NULL) {
                 typed1 = typed2 = 0;
             } else {
-                typed1=(allelecmp(LPedTreeTop->PTop[ped].persons[jj].PRALLELE1(locus_id),
-                                  REC_UNKNOWN)? 1: 0);
-                typed2=(allelecmp(LPedTreeTop->PTop[ped].persons[jj].PRALLELE2(locus_id),
-                                  REC_UNKNOWN)? 1: 0);
+                typed1=(allelecmp(a1, REC_UNKNOWN)? 1: 0);
+                typed2=(allelecmp(a2, REC_UNKNOWN)? 1: 0);
                 if (ylinked && typed1 && typed2) {
                     homo_test =
-                        !allelecmp(LPedTreeTop->PTop[ped].persons[jj].PRALLELE1(locus_id),
-                                   LPedTreeTop->PTop[ped].persons[jj].PRALLELE2(locus_id));
+                        !allelecmp(a1, a2);
                 }
             }
         } else if (rec == Raw_postmake) {
-            if (LPedTreeTop->Ped[ped].Entry[jj].RALLELE1(locus_id) == NULL) {
+            const char *a1, *a2;
+            get_2Ralleles(LPedTreeTop->Ped[ped].Entry[jj].Marker, locus_id, &a1, &a2);
+            if (a1 == NULL) {
                 typed1=typed2=0;
             } else {
-                typed1=(allelecmp(LPedTreeTop->Ped[ped].Entry[jj].RALLELE1(locus_id),
-                                  REC_UNKNOWN)? 1: 0);
-                typed2=(allelecmp(LPedTreeTop->Ped[ped].Entry[jj].RALLELE2(locus_id),
-                                  REC_UNKNOWN)? 1: 0);
+                typed1=(allelecmp(a1, REC_UNKNOWN)? 1: 0);
+                typed2=(allelecmp(a2, REC_UNKNOWN)? 1: 0);
                 if (ylinked && typed1 && typed2) {
                     homo_test =
-                        !allelecmp(LPedTreeTop->Ped[ped].Entry[jj].RALLELE1(locus_id),
-                                   LPedTreeTop->Ped[ped].Entry[jj].RALLELE2(locus_id));
+                        !allelecmp(a1, a2);
                 }
             }
         } else if (rec == Postmakeped) {
-            typed1=
-                (LPedTreeTop->Ped[ped].Entry[jj].EALLELE1(locus_id))? 1 : 0;
-            typed2=
-                (LPedTreeTop->Ped[ped].Entry[jj].EALLELE2(locus_id))? 1 : 0;
+            int a1, a2;
+            get_2alleles(LPedTreeTop->Ped[ped].Entry[jj].Marker, locus_id, &a1, &a2);
+            typed1= (a1)? 1 : 0;
+            typed2= (a2)? 1 : 0;
             if (ylinked && typed1 && typed2) {
-                homo_test =
-                    (LPedTreeTop->Ped[ped].Entry[jj].EALLELE1(locus_id) ==
-                     LPedTreeTop->Ped[ped].Entry[jj].EALLELE2(locus_id));
+                homo_test = a1 == a2;
             }
         } else {
-            typed1=(LPedTreeTop->PTop[ped].persons[jj].PALLELE1(locus_id))? 1 : 0;
-            typed2=(LPedTreeTop->PTop[ped].persons[jj].PALLELE2(locus_id))? 1 : 0;
+            int a1, a2;
+            get_2alleles(LPedTreeTop->PTop[ped].persons[jj].marker, locus_id, &a1, &a2);
+            typed1=(a1)? 1 : 0;
+            typed2=(a2)? 1 : 0;
             if (ylinked && typed1 && typed2) {
-                homo_test =
-                    (LPedTreeTop->PTop[ped].persons[jj].PALLELE1(locus_id) ==
-                     LPedTreeTop->PTop[ped].persons[jj].PALLELE2(locus_id));
+                homo_test = a1 == a2;
             }
         }
 
@@ -394,7 +406,7 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
 }
 
 void select_individuals(linkage_ped_top *LPedTreeTop, int locus_id,
-			int count_option, int ped, int *member_ids,
+			int count_option, int ped, allelecnt *member_ids,
 			int inc_ht, int xlinked)
 {
 
@@ -408,7 +420,7 @@ void select_individuals(linkage_ped_top *LPedTreeTop, int locus_id,
         ind=random_ped_member(LPedTreeTop, locus_id, ped, Postmakeped,
                               inc_ht, &num_alleles, xlinked);
         if (ind > -1) {
-            member_ids[ind]=num_alleles;
+            member_ids[ind].num=num_alleles;
         }
     }
 

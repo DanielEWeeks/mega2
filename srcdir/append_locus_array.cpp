@@ -77,6 +77,7 @@ void copy_le_static_data(const linkage_ped_rec *From, linkage_ped_rec *To)
     To->Sex = From->Sex;
     To->OrigProband = From->OrigProband;
     To->Orig_status = From->Orig_status;
+    To->genocnt     = From->genocnt;
     To->Ngeno = From->Ngeno;
     /* Possible error: Why was this cast to int and then to void?
        To->TmpData = (void *)((int) From->TmpData); */
@@ -104,19 +105,20 @@ static void copy_pe_static_data(const person_node_type *From, person_node_type *
     To->father = From->father;
     To->mother = From->mother;
     To->gender = From->gender;
-    To->indiv = From->indiv;
+    To->indiv  = From->indiv;
     strcpy(To->uniqueid, From->uniqueid);
     To->node_id = From->node_id;
     To->proband = From->proband;
     To->num_to_marriages=0;
     for (k=0; k<MAXMARRIAGES; k++) To->to_marriage_node_id[k] = -1;
     To->from_marriage_node_id=-1;
+    To->genocnt     = From->genocnt;
 }
 
 /* affection locus data */
 
-static int copy_trait_loc_data(const linkage_pedrec_data *From,
-                               linkage_pedrec_data *To,
+static int copy_trait_loc_data(const pheno_pedrec_data *From,
+                               pheno_pedrec_data *To,
                                const linkage_locus_type Type)
 {
     int copied;
@@ -144,8 +146,8 @@ static int copy_trait_loc_data(const linkage_pedrec_data *From,
 
 /* marker locus data */
 
-static int copy_marker_loc_data(const linkage_pedrec_data *From,
-                                linkage_pedrec_data *To,
+static int copy_marker_loc_data(void *From, int from,
+                                void *To,   int to,
                                 const linkage_locus_type Type)
 {
     int copied;
@@ -153,8 +155,9 @@ static int copy_marker_loc_data(const linkage_pedrec_data *From,
     switch (Type) {
     case NUMBERED:
     case BINARY:
-        To->Alleles.Allele_1 = From->Alleles.Allele_1;
-        To->Alleles.Allele_2 = From->Alleles.Allele_2;
+        copy_2alleles(To, From, to, from);
+//xx    To->Alleles.Allele_1 = From->Alleles.Allele_1;
+//xx    To->Alleles.Allele_2 = From->Alleles.Allele_2;
         copied=1;
         break;
     case AFFECTION:
@@ -219,7 +222,8 @@ void append_locus_array(const linkage_ped_top *From,
     int   i, j, k;
     int current, saved;
     int num_entries;
-    linkage_pedrec_data *data1, *data2;
+    pheno_pedrec_data *pheno1, *pheno2;
+    void *marker1, *marker2;
 
     /* Using the variable start to keep track of where to start appending */
     current=0;
@@ -243,10 +247,10 @@ void append_locus_array(const linkage_ped_top *From,
                     /* affection and quant loci */
                     current=0;
                     for (k = 0; k < From->LocusTop->LocusCnt; k++)  {
-                        data1=&(From->Ped[i].Entry[j].Data[k]);
-                        data2=&(To->Ped[i].Entry[j].Data[current]);
+                        pheno1=&(From->Ped[i].Entry[j].Pheno[k]);
+                        pheno2=&(To->Ped[i].Entry[j].Pheno[current]);
                         current +=
-                            copy_trait_loc_data(data1, data2,
+                            copy_trait_loc_data(pheno1, pheno2,
                                                 From->LocusTop->Locus[k].Type);
                     }
                 }
@@ -262,10 +266,10 @@ void append_locus_array(const linkage_ped_top *From,
                     /* affection and quant loci */
                     current=0;
                     for (k = 0; k < From->LocusTop->LocusCnt; k++)  {
-                        data1=&(From->PTop[i].persons[j].data[k]);
-                        data2=&(To->PTop[i].persons[j].data[current]);
+                        pheno1=&(From->PTop[i].persons[j].pheno[k]);
+                        pheno2=&(To->PTop[i].persons[j].pheno[current]);
                         current +=
-                            copy_trait_loc_data(data1, data2,
+                            copy_trait_loc_data(pheno1, pheno2,
                                                 From->LocusTop->Locus[k].Type);
                     }
                 }
@@ -302,14 +306,14 @@ void append_locus_array(const linkage_ped_top *From,
             else current = saved;
             for (k = 0; k < From->LocusTop->LocusCnt; k++)  {
                 if (To->pedfile_type == POSTMAKEPED_PFT) {
-                    data1=&(From->Ped[i].Entry[j].Data[k]);
-                    data2=&(To->Ped[i].Entry[j].Data[current]);
+                    marker1=From->Ped[i].Entry[j].Marker;
+                    marker2=To->Ped[i].Entry[j].Marker;
                 } else {
-                    data1=&(From->PTop[i].persons[j].data[k]);
-                    data2=&(To->PTop[i].persons[j].data[current]);
+                    marker1=From->PTop[i].persons[j].marker;
+                    marker2=To->PTop[i].persons[j].marker;
                 }
                 current +=
-                    copy_marker_loc_data(data1, data2,
+                    copy_marker_loc_data(marker1, k, marker2, current,
                                          From->LocusTop->Locus[k].Type);
             }
         }

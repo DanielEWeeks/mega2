@@ -543,7 +543,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         }
         void inner() {
             if (has_pheno()) {
-                if (_LTop->Locus[_locus].Data.Numbered.Recoded)
+                if (_LTop->Marker[_locus].Props.Numbered.Recoded)
                     pr_printf("%s %s ",
                               recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
@@ -764,11 +764,14 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                 is_affected_pheno(&(_tp->Entry[father-1])) == 0 && is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
                 linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[father-1]);
                 linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[mother-1]);
-                int _allele1_f = _tpe_f->Data[_locus].Alleles.Allele_1;
-                int _allele2_f = _tpe_f->Data[_locus].Alleles.Allele_2;
-                int _allele1_m = _tpe_m->Data[_locus].Alleles.Allele_1;
-                int _allele2_m = _tpe_m->Data[_locus].Alleles.Allele_2;
-                if (_LTop->Locus[_locus].Data.Numbered.Recoded)
+//xx            int _allele1_f = _tpe_f->Data[_locus].Alleles.Allele_1;
+//xx            int _allele2_f = _tpe_f->Data[_locus].Alleles.Allele_2;
+//xx            int _allele1_m = _tpe_m->Data[_locus].Alleles.Allele_1;
+//xx            int _allele2_m = _tpe_m->Data[_locus].Alleles.Allele_2;
+                int _allele1_f, _allele2_f, _allele1_m, _allele2_m;
+                get_2alleles(_tpe_f->Marker, _locus, &_allele1_f, &_allele2_f);
+                get_2alleles(_tpe_m->Marker, _locus, &_allele1_m, &_allele2_m);
+                if (_LTop->Marker[_locus].Props.Numbered.Recoded)
                     pr_printf("%s %s %s %s %s %s ",
                               recode_name(_allele1_f, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2_f, MISSING_ALLELE_CODE, "?"),
@@ -1014,9 +1017,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
                 is_affected_pheno() == 1 &&
                 is_affected_pheno(&(_tp->Entry[father-1])) == 0) {
                 linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[father-1]);
-                int _allele1_f = _tpe_f->Data[_locus].Alleles.Allele_1;
-                int _allele2_f = _tpe_f->Data[_locus].Alleles.Allele_2;
-                if (_LTop->Locus[_locus].Data.Numbered.Recoded)
+//xx            int _allele1_f = _tpe_f->Data[_locus].Alleles.Allele_1;
+//xx            int _allele2_f = _tpe_f->Data[_locus].Alleles.Allele_2;
+                int _allele1_f, _allele2_f;
+                get_2alleles(_tpe_f->Marker, _locus, &_allele1_f, &_allele2_f);
+                if (_LTop->Marker[_locus].Props.Numbered.Recoded)
                     pr_printf("%s %s %s %s ",
                               recode_name(_allele1_f, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2_f, MISSING_ALLELE_CODE, "?"),
@@ -1030,9 +1035,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
                 is_affected_pheno() == 1 &&
                 is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
                 linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[mother-1]);
-                int _allele1_m = _tpe_m->Data[_locus].Alleles.Allele_1;
-                int _allele2_m = _tpe_m->Data[_locus].Alleles.Allele_2;
-                if (_LTop->Locus[_locus].Data.Numbered.Recoded)
+//xx            int _allele1_m = _tpe_m->Data[_locus].Alleles.Allele_1;
+//xx            int _allele2_m = _tpe_m->Data[_locus].Alleles.Allele_2;
+                int _allele1_m, _allele2_m;
+                get_2alleles(_tpe_m->Marker, _locus, &_allele1_m, &_allele2_m);
+                if (_LTop->Marker[_locus].Props.Numbered.Recoded)
                     pr_printf("%s %s %s %s ",
                               recode_name(_allele1_m, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2_m, MISSING_ALLELE_CODE, "?"),

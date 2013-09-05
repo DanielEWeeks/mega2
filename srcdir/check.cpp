@@ -118,16 +118,6 @@ void clear_ped_status(ped_status *Stat)
  modfied 4/8/97, lwa, to include checks on Xlinked loci */
 
 
-#ifdef PTALLELE1
-#undef PTALLELE1
-#endif
-#define PTALLELE1(lloc)  LEntry->EALLELE1(lloc)
-
-#ifdef PTALLELE2
-#undef PTALLELE2
-#endif
-#define PTALLELE2(lloc)  LEntry->EALLELE2(lloc)
-
 /* here locus1 is the linkage-locus-top index and ploc is the
    pedtree->locustop index
 */
@@ -151,8 +141,7 @@ static int check_inheritance(ped_rec *PedEntry,
     int y_linked = ((LTop1->Locus[ploc].chromosome == MALE_CHROMOSOME
 		     && LTop1->SexLinked >= 1)? 1 : 0);
 
-    A1 = PedEntry->PTALLELE1(locus1);
-    A2 = PedEntry->PTALLELE2(locus1);
+    get_2alleles(PedEntry->LEntry->Marker, locus1, &A1, &A2);
 
     /* Note: This check does not require that Father != NULL */
     // Display_Errors is set by the caller...
@@ -177,10 +166,8 @@ static int check_inheritance(ped_rec *PedEntry,
     if (Father == NULL) { return 1; }
     /* PTALLELE1(locus1) = father->lentry->Data[locus1].Allele_1 etc. */
 
-    PA[0] = Father->PTALLELE1(locus1);
-    PA[1] = Father->PTALLELE2(locus1);
-    MA[0] = Mother->PTALLELE1(locus1);
-    MA[1] = Mother->PTALLELE2(locus1);
+    get_2alleles(Father->LEntry->Marker, locus1, &PA[0], &PA[1]);
+    get_2alleles(Mother->LEntry->Marker, locus1, &MA[0], &MA[1]);
 
     /* Sex linked allele inheritance check */
     if (!(sex_linked || y_linked) || (sex_linked && IS_FEMALE(*PedEntry))) {
@@ -204,7 +191,7 @@ static int check_inheritance(ped_rec *PedEntry,
 	       name,
 	       ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
 	       (LTop1->Locus[ploc].linkage_loc_rec)->Name,
-	       (LTop1->Locus[ploc].linkage_loc_rec)->chromosome);
+	       (LTop1->Locus[ploc].linkage_loc_rec)->Marker->chromosome);
         warnvf("\t%s <- %s X %s\n",
 	       ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
 	       ((uniqueids == 1)? Father->LEntry->UniqueID : Father->LEntry->OrigID),
@@ -316,15 +303,15 @@ static int check_sibship_alleles(ped_tree *PedTree, const int locus1,
     for(entry=0; entry < PedTree->EntryCnt; entry++) {
         Entry = &(PedTree->Entry[entry]);
 
+        int P1, P2, M1, M2;
         if (Entry->Father == NULL) {
             Entry->sibship_checked=1;
             continue;
         }
+        get_2alleles(Entry->Father->LEntry->Marker, lloc, &P1, &P2);
+        get_2alleles(Entry->Mother->LEntry->Marker, lloc, &M1, &M2);
         if ((!Entry->sibship_checked) &&
-            (Entry->Father->PTALLELE1(lloc) == 0 ||
-             Entry->Father->PTALLELE2(lloc) == 0 ||
-             Entry->Mother->PTALLELE1(lloc) == 0 ||
-             Entry->Mother->PTALLELE2(lloc) == 0)) {
+            (P1 == 0 || P2 == 0 || M1 == 0 || M2 == 0)) {
 
             sib_cnt=0;   inc=0;
 
@@ -349,8 +336,7 @@ static int check_sibship_alleles(ped_tree *PedTree, const int locus1,
 
                 for(off=0; off < sib_cnt; off++) {
                     Sib=Sibs[off];
-                    all1=Sib->PTALLELE1(lloc);
-                    all2=Sib->PTALLELE2(lloc);
+                    get_2alleles(Sib->LEntry->Marker, lloc, &all1, &all2);
                     if (all1 != 0 && all2 != 0) {
                         inc = ((!sex_linked || Sib->Sex == 2)?
                                autosomal_or_female_xlinked(all1, all2, alleles,
@@ -375,18 +361,20 @@ static int check_sibship_alleles(ped_tree *PedTree, const int locus1,
                     /* only one sibling needs to be marked as inconsistent for
                        all other siblings to be inconsistent as well */
                     for(off=0; off<sib_cnt; off++) {
+                        int a1, a2;
                         Sib=Sibs[off];
+                        get_2alleles(Sib->LEntry->Marker, lloc, &a1, &a2);
                         if (!sex_linked) {
                             sprintf(err_msg,
                                     "     Ped %s, entry %s has genotype [%d/%d].", PedTree->Name,
                                     ((uniqueids == 1)? Sib->LEntry->UniqueID : Sib->LEntry->OrigID),
-                                    Sib->PTALLELE1(lloc), Sib->PTALLELE2(lloc));
+                                    a1, a2);
                         } else {
                             sprintf(err_msg,
                                     "     Ped %s, entry %s (%s) has genotype [%d/%d].", PedTree->Name,
                                     ((uniqueids == 1)? Sib->LEntry->UniqueID : Sib->LEntry->OrigID),
                                     ((Sib->Sex == 1)? "male" : "female"),
-                                    Sib->PTALLELE1(lloc), Sib->PTALLELE2(lloc));
+                                    a1, a2);
                         }
                         errorf(err_msg);
                     }
@@ -399,20 +387,22 @@ static int check_sibship_alleles(ped_tree *PedTree, const int locus1,
                     inc=0;
                     alleles[0]=0;
                     for (off=0; off < sib_cnt; off++) {
+                        int a1, a2;
                         Sib=Sibs[off];
+                        get_2alleles(Sib->LEntry->Marker, lloc, &a1, &a2);
                         if (Sib->Sex == 2) {
                             Sib->sibship_checked =1;
                             continue;
                         }
                         if (alleles[0] > 0) {
-                            if (Sib->PTALLELE1(lloc) == alleles[0]) continue;
+                            if (a1 == alleles[0]) continue;
                             else {
                                 inc = 1;
                                 Sib->sibship_checked =1;
                                 break;
                             }
                         } else {
-                            alleles[0] = Sib->PTALLELE1(lloc);
+                            alleles[0] = a1;
                             Sib->sibship_checked = 1;
                         }
                     }
@@ -429,12 +419,14 @@ static int check_sibship_alleles(ped_tree *PedTree, const int locus1,
                         errorf(err_msg);
 
                         for(off=0; off<sib_cnt; off++) {
+                            int a1, a2;
                             if (Sibs[off]->Sex == 2) continue;
 
                             Sib=Sibs[off];
+                            get_2alleles(Sib->LEntry->Marker, lloc, &a1, &a2);
                             sprintf(err_msg,
                                     "     Ped %s, entry %s has Y-allele %d.", PedTree->Name,
-                                    Sib->LEntry->OrigID, Sib->PTALLELE1(lloc));
+                                    Sib->LEntry->OrigID, a1);
                             errorf(err_msg);
                         }
                         (*display_error)++;
@@ -757,7 +749,10 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
             PedEntry = &(PedTree->Entry[entry]);
             iserr = 0;
             /* out of bounds */
-            if (PedEntry->PTALLELE1(lloc) > LTop1->Locus[locus1].AlleleCnt) {
+            int all1, all2;
+            get_2alleles(PedEntry->LEntry->Marker, lloc, &all1, &all2);
+
+            if (all1 > LTop1->Locus[locus1].AlleleCnt) {
                 SUPPRESS_MSSG(*display_error)
                     if (*display_error > MAX_PED_ERRORS) {
                         Display_Errors=0;
@@ -765,13 +760,13 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
                 warnvf("Ped %s: Entry %s allele1 %d out of bounds at locus %s.\n",
 		       PedTree->Name,
 		       ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
-		       PedEntry->PTALLELE1(lloc),
+		       all1,
 		       LTop1->Locus[locus1].Name);
                 (*display_error)++;
                 iserr = 1;
             }
 
-            if (PedEntry->PTALLELE2(lloc) > LTop1->Locus[locus1].AlleleCnt) {
+            if (all2 > LTop1->Locus[locus1].AlleleCnt) {
                 SUPPRESS_MSSG(*display_error)
                     if (*display_error > MAX_PED_ERRORS) {
                         Display_Errors=0;
@@ -780,7 +775,7 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
                 warnvf("Ped %s: Entry %s allele2 %d out of bounds at locus %s.\n",
 		       PedTree->Name,
 		       ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
-		       PedEntry->PTALLELE2(lloc),
+		       all2,
 		       LTop1->Locus[locus1].Name);
                 (*display_error)++;
 
@@ -803,8 +798,8 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
             }
 
             /* semi-typed */
-            if ((PedEntry->PTALLELE1(lloc)== 0 && PedEntry->PTALLELE2(lloc)!= 0) ||
-               (PedEntry->PTALLELE1(lloc)!= 0 && PedEntry->PTALLELE2(lloc)== 0)) {
+            if ((all1== 0 && all2!= 0) ||
+               (all1!= 0 && all2== 0)) {
 
                 SUPPRESS_MSSG(*display_error)
                     if (*display_error > MAX_PED_ERRORS) {
@@ -1110,8 +1105,7 @@ void mito_transmission_report(ped_top *PTop,
             int entry;
             for (entry = 0; entry < PTop->PedTree[ped].EntryCnt; entry++) {
                 int A1, A2;
-                A1 = PTop->PedTree[ped].Entry[entry].PTALLELE1(lloc);
-                A2 = PTop->PedTree[ped].Entry[entry].PTALLELE2(lloc);
+                get_2alleles(PTop->PedTree[ped].Entry[entry].LEntry->Marker, lloc, &A1, &A2);
                 if (! R(A1,A2)) {
                     (*num_hetero)++;
                     sprintf(err_msg,
@@ -1132,8 +1126,7 @@ void mito_transmission_report(ped_top *PTop,
                 }
                 if (PTop->PedTree[ped].Entry[entry].Mother != NULL) {
                     int MA1, MA2;
-                    MA1 = PTop->PedTree[ped].Entry[entry].Mother->PTALLELE1(lloc);
-                    MA2 = PTop->PedTree[ped].Entry[entry].Mother->PTALLELE2(lloc);
+                    get_2alleles(PTop->PedTree[ped].Entry[entry].Mother->LEntry->Marker, lloc, &MA1, &MA2);
                     /* See if child matches mother's genotype */
                     if ((R(A1, MA1) && R(A2, MA2))  || (R(A2, MA1) && R(A1, MA2))) {
                         ;

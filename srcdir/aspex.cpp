@@ -710,7 +710,7 @@ static int assign_distances(tcl_opts_type *opt, int numchr,
     for (i = 0; i < NumChrLoci; i++)  {
         if (LTop1->Locus[ChrLoci[i]].Type == NUMBERED ||
             LTop1->Locus[ChrLoci[i]].Type == BINARY) {
-            if (LTop1->Locus[ChrLoci[i]].position < 0.0) {
+            if (LTop1->Marker[ChrLoci[i]].pos_avg < 0.0) {
                 missing_index[miss] = ChrLoci[i];
                 miss++;
             } else {
@@ -774,7 +774,7 @@ static int assign_distances(tcl_opts_type *opt, int numchr,
         opt->allele_cnt[nloc] = (int) LTop1->Locus[i].AlleleCnt;
         opt->allele_freq[nloc]=
             CALLOC((size_t) LTop1->Locus[i].AlleleCnt, double);
-        distances[nloc] = LTop1->Locus[i].position;
+        distances[nloc] = LTop1->Marker[i].pos_avg;
         for (j = 0; j < opt->allele_cnt[nloc]; j++)
             opt->allele_freq[nloc][j] = LTop1->Locus[i].Allele[j].Frequency;
     }
@@ -1017,20 +1017,20 @@ static void AspexPedFile(char *aspdat_name, tcl_opts_type opt,
 
                 if (num_affec > 0) {
                     fprintf(fp, " %-4d",
-                            aff_status_entry(tpe->ESTATUS(*trp), tpe->ECLASS(*trp),
+                            aff_status_entry(tpe->Pheno[*trp].Affection.Status, tpe->Pheno[*trp].Affection.Class,
                                              &(TTop->LocusTop->Locus[*trp])));
                 }
                 /* 	printf("%d nloc\n", chromo_loci_count[numchr]); */
                 for (lcount = 0; lcount < opt.nloc; lcount++)  {
-                    fprintf(fp, "  %2d",
-                            tpe->Data[opt.locus_ids[lcount]].Alleles.Allele_1);
-                    if (TTop->LocusTop->Locus[opt.locus_ids[lcount]].chromosome == SEX_CHROMOSOME &&
+                    int allele1, allele2;
+                    get_2alleles(tpe->Marker, opt.locus_ids[lcount], &allele1, &allele2);
+                    fprintf(fp, "  %2d", allele1);
+                    if (TTop->LocusTop->Marker[opt.locus_ids[lcount]].chromosome == SEX_CHROMOSOME &&
 			tpe->Sex == 1)
                         /* = 1 = male , 2= female */
                         fprintf(fp, " Y");
                     else
-                        fprintf(fp, " %2d",
-                                tpe->Data[opt.locus_ids[lcount]].Alleles.Allele_2);
+                        fprintf(fp, " %2d", allele2);
                     /*      max of 10 digits/characters per allele identifier... */
                 }
                 fprintf(fp, "\n");

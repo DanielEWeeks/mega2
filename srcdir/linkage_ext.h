@@ -35,7 +35,7 @@ extern void clear_laffclass(linkage_affection_class *Class);
 
 extern void clear_lallelerec(linkage_allele_rec *Allele);
 
-extern void clear_llocusdata(linkage_locus_data *Data,
+extern void clear_llocusdata(linkage_locus_rec *Locus,
 			     linkage_locus_type Type);
 
 extern void clear_llocusrec(linkage_locus_rec *Locus,
@@ -75,7 +75,7 @@ extern void free_all_from_llocusrec(linkage_locus_rec *Locus);
 
 extern void free_all_from_lpedtop(linkage_ped_top *PTop);
 
-extern void free_all_from_lpedtree(linkage_ped_tree *Ped);
+extern void free_all_from_lpedtree(linkage_ped_tree *Ped, int offset);
 
 extern void free_all_including_lpedtop(linkage_ped_top **PTop);
 

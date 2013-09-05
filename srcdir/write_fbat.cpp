@@ -117,15 +117,15 @@ static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
             switch(_LTop->Locus[_trait].Type) {
             case AFFECTION:
                 pr_printf("%1d ",
-                          aff_status_entry(_tpe->Data[_trait].Affection.Status,
-                                           _tpe->Data[_trait].Affection.Class,
+                          aff_status_entry(_tpe->Pheno[_trait].Affection.Status,
+                                           _tpe->Pheno[_trait].Affection.Class,
                                            &(_LTop->Locus[_trait])));
                 break;
             case QUANT:
-                if (fabs(_tpe->EQUANT(_trait) - MissingQuant) < EPSILON) {
+                if (fabs(_tpe->Pheno[_trait].Quant - MissingQuant) < EPSILON) {
                     pr_printf("     -    ");
                 } else {
-                    pr_printf("%10.5f ", _tpe->EQUANT(_trait));
+                    pr_printf("%10.5f ", _tpe->Pheno[_trait].Quant);
                 }
                 break;
             default:
@@ -454,15 +454,15 @@ static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
             run_loop(file_names[1]);
         }
         void inner () {
-            int chr = _tle->chromosome;
+            int chr = _tle->Marker->chromosome;
             if (chr == UNKNOWN_CHROMO || chr >= MITO_CHROMOSOME) chr = 0;
             else if (chr == PSEUDO_X) chr = SEX_CHROMOSOME;
 
             double pp = base_pair_position_index >= 0 ?_EXLTop->EXLocus[_locus].positions[base_pair_position_index] : 0;
             if (pp < 0) pp = 0;
 
-            double gp = get_gp(_EXLTop, _tle->Type, _tle->chromosome, _tle->Name, _locus);
-            pr_printf("%s %d %.6f %.0f %d\n", _tle->Name, chr, gp, pp, _tle->chromosome == SEX_CHROMOSOME);
+            double gp = get_gp(_EXLTop, _tle->Type, _tle->Marker->chromosome, _tle->Name, _locus);
+            pr_printf("%s %d %.6f %.0f %d\n", _tle->Name, chr, gp, pp, _tle->Marker->chromosome == SEX_CHROMOSOME);
         }
     } *xp = new FBAT_map(Top);
 

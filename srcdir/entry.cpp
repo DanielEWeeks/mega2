@@ -183,18 +183,18 @@ int entry::has_pheno(linkage_ped_rec  *tpe)
     switch(_tte->Type) {
         case AFFECTION:
             int ase;
-            if (_tte->Data.Affection.ClassCnt == 1)
-                ase = tpe->Data[_trait].Affection.Status;
+            if (_tte->Pheno->Props.Affection.ClassCnt == 1)
+                ase = tpe->Pheno[_trait].Affection.Status;
             else
-                ase = aff_status_entry(tpe->Data[_trait].Affection.Status,
-                                       tpe->Data[_trait].Affection.Class,
+                ase = aff_status_entry(tpe->Pheno[_trait].Affection.Status,
+                                       tpe->Pheno[_trait].Affection.Class,
                                        _tte); //&(_Top->LocusTop->Locus[_trait]))
             
             if (ase == 0) return 0; // missing phenotype
             break;
             
         case QUANT:
-            if (fabs(tpe->Data[_trait].Quant - MissingQuant) <= EPSILON) return 0; // missing phenotype
+            if (fabs(tpe->Pheno[_trait].Quant - MissingQuant) <= EPSILON) return 0; // missing phenotype
             break;
 
         default:
@@ -215,11 +215,11 @@ int entry::is_affected_pheno(linkage_ped_rec  *tpe)
             int ase;
             // linkage.h:linkage_pedrec_data is a union (Affection(2xint),
             // Quant(2xint), Alleles (2xint), RAlleles (2xchar*)
-            if (_tte->Data.Affection.ClassCnt == 1)
-                ase = tpe->Data[_trait].Affection.Status;
+            if (_tte->Pheno->Props.Affection.ClassCnt == 1)
+                ase = tpe->Pheno[_trait].Affection.Status;
             else
-                ase = aff_status_entry(tpe->Data[_trait].Affection.Status,
-                                       tpe->Data[_trait].Affection.Class,
+                ase = aff_status_entry(tpe->Pheno[_trait].Affection.Status,
+                                       tpe->Pheno[_trait].Affection.Class,
                                        _tte); //&(_Top->LocusTop->Locus[_trait]))
             
 	    return ase-1;
@@ -236,11 +236,11 @@ void entry::pr_pheno(linkage_ped_rec  *tpe, const int affection_as_string)
         case AFFECTION:
             // linkage.h:linkage_pedrec_data is a union (Affection(2xint),
             // Quant(2xint), Alleles (2xint), RAlleles (2xchar*)
-            if (_tte->Data.Affection.ClassCnt == 1)
-                ase = tpe->Data[_trait].Affection.Status;
+            if (_tte->Pheno->Props.Affection.ClassCnt == 1)
+                ase = tpe->Pheno[_trait].Affection.Status;
             else
-                ase = aff_status_entry(tpe->Data[_trait].Affection.Status,
-                                       tpe->Data[_trait].Affection.Class,
+                ase = aff_status_entry(tpe->Pheno[_trait].Affection.Status,
+                                       tpe->Pheno[_trait].Affection.Class,
                                        _tte); //&(_Top->LocusTop->Locus[_trait]))
             
             if (affection_as_string == 1) {
@@ -258,10 +258,10 @@ void entry::pr_pheno(linkage_ped_rec  *tpe, const int affection_as_string)
             break;
             
         case QUANT:
-            if (fabs(tpe->Data[_trait].Quant - MissingQuant) <= EPSILON) {
+            if (fabs(tpe->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
                 pr_printf(" %s ", Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
             } else {
-                pr_printf("%10.5f ", tpe->Data[_trait].Quant);
+                pr_printf("%10.5f ", tpe->Pheno[_trait].Quant);
             }
             break;
         default:
@@ -277,11 +277,11 @@ void entry::pr_aff()
     case AFFECTION:
         // linkage.h:linkage_pedrec_data is a union (Affection(2xint),
         // Quant(2xint), Alleles (2xint), RAlleles (2xchar*)
-        if (_tte->Data.Affection.ClassCnt == 1)
-            ase = _tpe->Data[_trait].Affection.Status;
+        if (_tte->Pheno->Props.Affection.ClassCnt == 1)
+            ase = _tpe->Pheno[_trait].Affection.Status;
         else
-            ase = aff_status_entry(_tpe->Data[_trait].Affection.Status,
-                                   _tpe->Data[_trait].Affection.Class,
+            ase = aff_status_entry(_tpe->Pheno[_trait].Affection.Status,
+                                   _tpe->Pheno[_trait].Affection.Class,
                                    _tte); //&(_Top->LocusTop->Locus[_trait]))
         pr_printf("%1d ", ase);
         break;
@@ -296,10 +296,10 @@ void entry::pr_quant()
     // in itself be sufficient) and also limits the locus to traits.
     switch(_tte->Type) {
     case QUANT:
-        if (fabs(_tpe->EQUANT(_trait) - MissingQuant) <= EPSILON) {
+        if (fabs(_tpe->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
             pr_printf(" %s ", Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
         } else {
-            pr_printf("%10.5f ", _tpe->Data[_trait].Quant);
+            pr_printf("%10.5f ", _tpe->Pheno[_trait].Quant);
         }
         break;
     default:
@@ -321,7 +321,9 @@ void entry::pr_marker_name()
 
 void entry::pr_marker(linkage_ped_rec  *tpe, const int locus)
 {
-    pr_printf("%d %d ", tpe->Data[locus].Alleles.Allele_1, tpe->Data[locus].Alleles.Allele_2);
+    int a1, a2;
+    get_2alleles(tpe->Marker, locus, &a1, &a2);
+    pr_printf("%d %d ", a1, a2);
 }
 
 /**
@@ -370,23 +372,23 @@ double entry::get_genetic_distance(int *warnp)
             genetic_distance = _EXLTop->EXLocus[_locus].positions[genetic_distance_index];
             // But tell the user about it if used for a sex linked chromosome...
 //          if (_tle->Type == XLINKED || _tle->Type == YLINKED) 
-            if (_tle->chromosome == SEX_CHROMOSOME || _tle->chromosome == MALE_CHROMOSOME) {
+            if (_tle->Marker->chromosome == SEX_CHROMOSOME || _tle->Marker->chromosome == MALE_CHROMOSOME) {
                 if (warnp != (int *)NULL) *warnp = 1; // Using average position for a sex map
             }
         } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
             // Male, Female are available, so pick the right one given the current locus type...
 //          if (_tle->Type == XLINKED) // X or SEX_CHROMOSOME
-            if (_tle->chromosome == SEX_CHROMOSOME) // X or SEX_CHROMOSOME
+            if (_tle->Marker->chromosome == SEX_CHROMOSOME) // X or SEX_CHROMOSOME
                 genetic_distance = _EXLTop->EXLocus[_locus].pos_female[genetic_distance_index];
 //          else if (_tle->Type == YLINKED) // Y or MALE_CHROMOSOME
-            else if (_tle->chromosome == MALE_CHROMOSOME)  // Y or MALE_CHROMOSOME
+            else if (_tle->Marker->chromosome == MALE_CHROMOSOME)  // Y or MALE_CHROMOSOME
                 genetic_distance = _EXLTop->EXLocus[_locus].pos_male[genetic_distance_index];
             else {
                 if (warnp != (int *)NULL) *warnp = 2; // Autosome when a sex map specified
             }
         } else if (genetic_distance_sex_type_map == FEMALE_GDMT) {
 //          if (_tle->Type == XLINKED) // X or SEX_CHROMOSOME
-            if (_tle->chromosome == SEX_CHROMOSOME) // X or SEX_CHROMOSOME
+            if (_tle->Marker->chromosome == SEX_CHROMOSOME) // X or SEX_CHROMOSOME
                 genetic_distance = _EXLTop->EXLocus[_locus].pos_female[genetic_distance_index];
             else {
                 if (warnp != (int *)NULL) *warnp = 3; // Female map so only X chromosome analysis is possible?
@@ -410,7 +412,7 @@ void entry::pr_genetic_distance_warning(int warnp)
         break;
     case 1:
         warnf("Since only a sex-averaged genetic map was used, these positions have been used");
-        warnvf("for markers (%d, %s) on the X and Y chromosomes.\n", _tle->chromosome, _tle->Name);
+        warnvf("for markers (%d, %s) on the X and Y chromosomes.\n", _tle->Marker->chromosome, _tle->Name);
         break;
     case 2:
         // autozomes will be set to missing is a result of the decision made to allow the user

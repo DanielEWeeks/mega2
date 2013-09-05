@@ -115,6 +115,7 @@ static void save_CRANEFOOT_pedigrees(char *pedfl_name, linkage_ped_top *Top,
     int tr, nloop, num_affec = num_traits;
     int aff, *trp;
     linkage_ped_rec *tpe;
+    int a1, a2;
 
     NLOOP;
 
@@ -211,8 +212,8 @@ static void save_CRANEFOOT_pedigrees(char *pedfl_name, linkage_ped_top *Top,
                     switch(Top->LocusTop->Locus[*trp].Type) {
                     case AFFECTION:
                         /* print the shape value */
-                        aff = aff_status_entry(tpe->ESTATUS(*trp),
-                                               tpe->ECLASS(*trp),
+                        aff = aff_status_entry(tpe->Pheno[*trp].Affection.Status,
+                                               tpe->Pheno[*trp].Affection.Class,
                                                &(Top->LocusTop->Locus[*trp]));
                         if (aff == 0) {
                             /* unknown = forward hatched */
@@ -228,10 +229,10 @@ static void save_CRANEFOOT_pedigrees(char *pedfl_name, linkage_ped_top *Top,
 
                     case QUANT:
                         /* print the quantitative phenotype for display */
-                        if (fabs(tpe->EQUANT(*trp) - MissingQuant) <= EPSILON) {
+                        if (fabs(tpe->Pheno[*trp].Quant - MissingQuant) <= EPSILON) {
                             fprintf(filep, "\tunknown");
                         } else {
-                            fprintf(filep, "\t%10f", tpe->EQUANT(*trp));
+                            fprintf(filep, "\t%10f", tpe->Pheno[*trp].Quant);
                         }
                         break;
                     default:
@@ -246,8 +247,8 @@ static void save_CRANEFOOT_pedigrees(char *pedfl_name, linkage_ped_top *Top,
                         if (LoopOverTrait == 0) {
                             if (primary_aff == loc) {
                                 /* print shape */
-                                aff = aff_status_entry(tpe->ESTATUS(loc),
-                                                       tpe->ECLASS(loc),
+                                aff = aff_status_entry(tpe->Pheno[loc].Affection.Status,
+                                                       tpe->Pheno[loc].Affection.Class,
                                                        &(Top->LocusTop->Locus[loc]));
                                 if (aff == 0) {
                                     fprintf(filep, "\t11");
@@ -258,24 +259,25 @@ static void save_CRANEFOOT_pedigrees(char *pedfl_name, linkage_ped_top *Top,
                                 }
                             } else {
                                 fprintf(filep, "\t%1d",
-                                        aff_status_entry(tpe->ESTATUS(loc),
-                                                         tpe->ECLASS(loc),
+                                        aff_status_entry(tpe->Pheno[loc].Affection.Status,
+                                                         tpe->Pheno[loc].Affection.Class,
                                                          &(Top->LocusTop->Locus[loc])));
                             }
                         }
                         break;
                     case QUANT:
                         if (LoopOverTrait == 0) {
-                            if (fabs(tpe->EQUANT(loc) - MissingQuant) < EPSILON) {
+                            if (fabs(tpe->Pheno[loc].Quant - MissingQuant) < EPSILON) {
                                 fprintf(filep, "\tunknown");
                             } else {
-                                fprintf(filep, "\t%10f", tpe->EQUANT(loc));
+                                fprintf(filep, "\t%10f", tpe->Pheno[loc].Quant);
                             }
                         }
                         break;
                     case NUMBERED:
                     case BINARY:
-                        fprintf(filep, "\t%d/%d", tpe->EALLELE1(loc), tpe->EALLELE2(loc));
+                        get_2alleles(tpe->Marker, loc, &a1, &a2);
+                        fprintf(filep, "\t%d/%d", a1, a2);
 
                         break;
                     default:

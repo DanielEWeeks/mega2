@@ -121,7 +121,7 @@ void write_quantitative_data(FILE *filep, int locusnm,
 			     linkage_ped_rec *entry)
 {
     fprintf(filep, "  ");
-    if (fabs(entry->EQUANT(locusnm) - MissingQuant) <= EPSILON) {
+    if (fabs(entry->Pheno[locusnm].Quant - MissingQuant) <= EPSILON) {
         if (ITEM_READ(Value_Missing_Quant_On_Output)) {
 	  fprintf(filep, "%s ",
 		  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
@@ -133,20 +133,20 @@ void write_quantitative_data(FILE *filep, int locusnm,
         }
     /* fprintf(filep, "     0.0   "); */
     } else {
-        fprintf(filep, "%10.5f", entry->EQUANT(locusnm));
+        fprintf(filep, "%10.5f", entry->Pheno[locusnm].Quant);
     }
 }
 
 void write_affection_tdtmax(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
-    if (entry->ESTATUS(locusnm) != UNDEF)
+    if (entry->Pheno[locusnm].Affection.Status != UNDEF)
         {
-            if (entry->ESTATUS(locusnm) == 2)
+            if (entry->Pheno[locusnm].Affection.Status == 2)
                 fprintf(filep,"y ");
             else fprintf(filep,"x ");
         }
     else fprintf(filep, "x ");
-    if (locus->LAFFDATA.ClassCnt > 1) {
+    if (locus->Pheno->Props.Affection.ClassCnt > 1) {
         errorvf("tdtmax doesn't handle loci with more than one liability class\n");
         EXIT(OUTPUT_FORMAT_ERROR);
     }
@@ -155,13 +155,13 @@ void write_affection_tdtmax(FILE *filep, int locusnm, linkage_locus_rec *locus, 
 void write_affection_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
     fprintf(filep, "  ");
-    if (entry->ESTATUS(locusnm) != UNDEF)
-        fprintf(filep, "%d", entry->ESTATUS(locusnm));
+    if (entry->Pheno[locusnm].Affection.Status != UNDEF)
+        fprintf(filep, "%d", entry->Pheno[locusnm].Affection.Status);
     else fprintf(filep, "0");
-    if (locus->LAFFDATA.ClassCnt > 1) {
+    if (locus->Pheno->Props.Affection.ClassCnt > 1) {
         fprintf(filep, " ");
-        if (entry->ECLASS(locusnm) != UNDEF)
-            fprintf(filep, "%d", entry->ECLASS(locusnm));
+        if (entry->Pheno[locusnm].Affection.Class != UNDEF)
+            fprintf(filep, "%d", entry->Pheno[locusnm].Affection.Class);
         else
             fprintf(filep, "0");
     }
@@ -171,22 +171,13 @@ void write_affection_data(FILE *filep, int locusnm, linkage_locus_rec *locus, li
 void write_binary_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 
 {
-
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
-
-#define ALLELE1 entry->EALLELE1(locusnm)
-#define ALLELE2 entry->EALLELE2(locusnm)
-
     int allele;
     fprintf(filep, "  ");
     for (allele = 0; allele < locus->AlleleCnt; allele++) {
-        if ((allele == ALLELE1 - 1)
-            || (allele == ALLELE2 - 1))
+        int a1, a2;
+        get_2alleles(entry->Marker, locusnm, &a1, &a2);
+        if ((allele == a1 - 1)
+            || (allele == a2 - 1))
             fprintf(filep, "1 ");
         else fprintf(filep, "0 ");
     }
@@ -196,17 +187,10 @@ void write_binary_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linka
 void write_simulate_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 
 {
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
+    int a1, a2;
+    get_2alleles(entry->Marker, locusnm, &a1, &a2);
 
-#define ALLELE1 entry->EALLELE1(locusnm)
-#define ALLELE2 entry->EALLELE2(locusnm)
-
-    if (ALLELE1 > 0)
+    if (a1 > 0)
         fprintf(filep, " 1 ");
     else
         fprintf(filep, " 0 ");
@@ -215,17 +199,10 @@ void write_simulate_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *l
 void write_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 
 {
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
-
-#define ALLELE1 entry->EALLELE1(locusnm)
-#define ALLELE2 entry->EALLELE2(locusnm)
+    int a1, a2;
+    get_2alleles(entry->Marker, locusnm, &a1, &a2);
 /*  fprintf(filep, "  "); */
-    fprintf(filep, "  %2d %2d", ALLELE1, ALLELE2);
+    fprintf(filep, "  %2d %2d", a1, a2);
 }
 
 /* assign consecutive entry ids to entries,
@@ -733,33 +710,33 @@ int write_quant_stats(linkage_ped_top *Top,
                         for (k=0; k < Top->Ped[j].EntryCnt; k++) {
                             Entry = &(Top->Ped[j].Entry[k]);
 
-                            if (fabs(Entry->Data[i].Quant - MissingQuant) >  EPSILON) {
+                            if (fabs(Entry->Pheno[i].Quant - MissingQuant) >  EPSILON) {
                                 this_ped_phenotyped++;
-                                if (MissingQuant != 0.0 && analysis == TO_LINKAGE && Entry->Data[i].Quant == 0.0) {
+                                if (MissingQuant != 0.0 && analysis == TO_LINKAGE && Entry->Pheno[i].Quant == 0.0) {
                                     ZeroQuant=1;
                                 }
-                                sumq += Entry->Data[i].Quant;
-                                ped_mean[j] += Entry->Data[i].Quant;
+                                sumq += Entry->Pheno[i].Quant;
+                                ped_mean[j] += Entry->Pheno[i].Quant;
 
                                 /* Have the ped min and max been set yet?
                                    If not set to the first available phenotype in pedigree ? */
                                 if (fabs(ped_max[j] - MissingQuant) <= EPSILON) {
-                                    ped_max[j] = Entry->Data[i].Quant;
-                                    ped_min[j] = Entry->Data[i].Quant;
+                                    ped_max[j] = Entry->Pheno[i].Quant;
+                                    ped_min[j] = Entry->Pheno[i].Quant;
                                 } else {
                                     /* Now do the usual comparison */
-                                    if (Entry->Data[i].Quant < ped_min[j]) ped_min[j] = Entry->Data[i].Quant;
-                                    if (Entry->Data[i].Quant > ped_max[j]) ped_max[j] = Entry->Data[i].Quant;
+                                    if (Entry->Pheno[i].Quant < ped_min[j]) ped_min[j] = Entry->Pheno[i].Quant;
+                                    if (Entry->Pheno[i].Quant > ped_max[j]) ped_max[j] = Entry->Pheno[i].Quant;
                                 }
 
                                 /* Have the loc min and max been set yet?
                                    If not set to the first available phenotype. */
                                 if (fabs(minq - MissingQuant) <= EPSILON) {
-                                    minq = Entry->Data[i].Quant;
-                                    maxq = Entry->Data[i].Quant;
+                                    minq = Entry->Pheno[i].Quant;
+                                    maxq = Entry->Pheno[i].Quant;
                                 } else {
-                                    if (Entry->Data[i].Quant < minq) minq = Entry->Data[i].Quant;
-                                    if (Entry->Data[i].Quant > maxq) maxq = Entry->Data[i].Quant;
+                                    if (Entry->Pheno[i].Quant < minq) minq = Entry->Pheno[i].Quant;
+                                    if (Entry->Pheno[i].Quant > maxq) maxq = Entry->Pheno[i].Quant;
                                 }
                                 /* ditto here */
                             } else {
@@ -772,32 +749,32 @@ int write_quant_stats(linkage_ped_top *Top,
                         for (k=0; k < Top->PTop[j].num_persons; k++) {
                             person = &(Top->PTop[j].persons[k]);
 
-                            if (fabs(person->data[i].Quant - MissingQuant) > EPSILON) {
+                            if (fabs(person->pheno[i].Quant - MissingQuant) > EPSILON) {
                                 this_ped_phenotyped++;
-                                sumq += person->data[i].Quant;
-                                ped_mean[j] += person->data[i].Quant;
-                                ped_stdev[j] += (person->data[i].Quant)*(person->data[i].Quant);
+                                sumq += person->pheno[i].Quant;
+                                ped_mean[j] += person->pheno[i].Quant;
+                                ped_stdev[j] += (person->pheno[i].Quant)*(person->pheno[i].Quant);
 
                                 /* Have the ped min and max been set yet?
                                    If not set to the first available phenotype in pedigree ? */
                                 if (fabs(ped_max[j] - MissingQuant) <= EPSILON) {
                                     /* set both the values */
-                                    ped_max[j] = person->data[i].Quant;
-                                    ped_min[j] = person->data[i].Quant;
+                                    ped_max[j] = person->pheno[i].Quant;
+                                    ped_min[j] = person->pheno[i].Quant;
                                 } else {
-                                    if (person->data[i].Quant < ped_min[j]) ped_min[j] = person->data[i].Quant;
-                                    if (person->data[i].Quant > ped_max[j]) ped_max[j] = person->data[i].Quant;
+                                    if (person->pheno[i].Quant < ped_min[j]) ped_min[j] = person->pheno[i].Quant;
+                                    if (person->pheno[i].Quant > ped_max[j]) ped_max[j] = person->pheno[i].Quant;
                                 }
 
                                 /* Have the loc min and max been set yet?
                                    If not set to the first available phenotype. */
                                 if (fabs(minq - MissingQuant) <= EPSILON) {
-                                    minq = person->data[i].Quant;
-                                    maxq = person->data[i].Quant;
+                                    minq = person->pheno[i].Quant;
+                                    maxq = person->pheno[i].Quant;
                                 } else {
                                     /* Now do the usual comparison */
-                                    if (person->data[i].Quant < minq) minq = person->data[i].Quant;
-                                    if (person->data[i].Quant > maxq) maxq = person->data[i].Quant;
+                                    if (person->pheno[i].Quant < minq) minq = person->pheno[i].Quant;
+                                    if (person->pheno[i].Quant > maxq) maxq = person->pheno[i].Quant;
                                 }
                             } else {
                                 // indicate that a MissingQuant was found in the input QTL data...
@@ -831,29 +808,29 @@ int write_quant_stats(linkage_ped_top *Top,
                         /* post-makeped */
                         for (k=0; k < Top->Ped[j].EntryCnt; k++) {
                             Entry = &(Top->Ped[j].Entry[k]);
-                            if (fabs(Entry->Data[i].Quant - MissingQuant) >  EPSILON) {
+                            if (fabs(Entry->Pheno[i].Quant - MissingQuant) >  EPSILON) {
                                 this_ped_phenotyped++;
-                                dev = Entry->Data[i].Quant - meanq;
+                                dev = Entry->Pheno[i].Quant - meanq;
                                 var += dev*dev;
                                 skew += pow(dev, 3.0);
                                 curt += pow(dev, 4.0);
                                 ped_stdev[j] +=
-                                    fabs(Entry->Data[i].Quant - ped_mean[j])*
-                                    fabs(Entry->Data[i].Quant - ped_mean[j]);
+                                    fabs(Entry->Pheno[i].Quant - ped_mean[j])*
+                                    fabs(Entry->Pheno[i].Quant - ped_mean[j]);
                             }
                         }
                     } else {
                         for (k=0; k < Top->PTop[j].num_persons; k++) {
                             person = &(Top->PTop[j].persons[k]);
-                            if (fabs(person->data[i].Quant - MissingQuant) > EPSILON) {
+                            if (fabs(person->pheno[i].Quant - MissingQuant) > EPSILON) {
                                 this_ped_phenotyped++;
-                                dev = person->data[i].Quant - meanq;
+                                dev = person->pheno[i].Quant - meanq;
                                 var += dev*dev;
                                 skew += pow(dev, 3.0);
                                 curt += pow(dev, 4.0);
                                 ped_stdev[j] +=
-                                    fabs(person->data[i].Quant - ped_mean[j])*
-                                    fabs(person->data[i].Quant - ped_mean[j]);
+                                    fabs(person->pheno[i].Quant - ped_mean[j])*
+                                    fabs(person->pheno[i].Quant - ped_mean[j]);
                             }
                         }
                     }
@@ -1214,10 +1191,10 @@ static void write_linkage_locfile_inorder_sex_averaged(linkage_locus_top *LTop,
             num_loci = locus_num+1;
 	    // What about SEX_SPECIFIC???
             while((tmpi < locus_num) &&
-                  (LTop->Locus[loci[tmpi]].position <
+                  (LTop->Marker[loci[tmpi]].pos_avg <
                    LTop->Run.slink.trait_positions[trnum])) {
                 locus_order[tmpi2] = loci[tmpi];
-                positions[tmpi2] = LTop->Locus[loci[tmpi]].position;
+                positions[tmpi2] = LTop->Marker[loci[tmpi]].pos_avg;
                 tmpi++; tmpi2++;
             }
             if ((num_traits >= 2) || (LoopOverTrait == 1 && num_traits > 0)) {
@@ -1229,7 +1206,7 @@ static void write_linkage_locfile_inorder_sex_averaged(linkage_locus_top *LTop,
             /* copy over the rest of the marker loci  and their positions */
             while(tmpi < locus_num) {
                 locus_order[tmpi2] = loci[tmpi];
-                positions[tmpi2] = LTop->Locus[loci[tmpi]].position;
+                positions[tmpi2] = LTop->Marker[loci[tmpi]].pos_avg;
                 tmpi++; tmpi2++;
             }
         }
@@ -1261,37 +1238,37 @@ static void write_linkage_locfile_inorder_sex_averaged(linkage_locus_top *LTop,
             fputc('\n', filep);
             switch(Locus->Type) {
             case QUANT:
-                fprintf(filep, "%d\n", Locus->LQUADATA.ClassCnt);
-                for (tmpi = Locus->LQUADATA.ClassCnt; tmpi > 0; tmpi--)
+                fprintf(filep, "%d\n", Locus->Pheno->Props.Quant.ClassCnt);
+                for (tmpi = Locus->Pheno->Props.Quant.ClassCnt; tmpi > 0; tmpi--)
                     for (tmpi2 = 0; tmpi2 < 3; tmpi2++)
-                        fprintf(filep," %.6f", Locus->LQUADATA.Mean[tmpi-1][tmpi2]);
+                        fprintf(filep," %.6f", Locus->Pheno->Props.Quant.Mean[tmpi-1][tmpi2]);
                 fprintf(filep, " << GENOTYPE MEANS\n");
                 /* ASSUMES only one trait per qtl */
-                fprintf(filep," %.6f\n", Locus->LQUADATA.Variance[0][0]);
-                fprintf(filep," %.6f\n", Locus->LQUADATA.Multiplier);
+                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Variance[0][0]);
+                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Multiplier);
                 break;
             case AFFECTION:
-                fprintf(filep, "%d\n", Locus->LAFFDATA.ClassCnt);
-                for (tmpi = 0; tmpi < Locus->LAFFDATA.ClassCnt; tmpi++) {
+                fprintf(filep, "%d\n", Locus->Pheno->Props.Affection.ClassCnt);
+                for (tmpi = 0; tmpi < Locus->Pheno->Props.Affection.ClassCnt; tmpi++) {
                     if (sex_linked) {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].FemalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                         fputc('\n', filep);
                         for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].MalePen[tmpi2]);
+                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                         fputc('\n', filep);
                     } else {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].AutoPen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                         fputc('\n', filep);
                     }
                 }
                 break;
             case BINARY:
-                fprintf(filep, "%d\n", Locus->LBINDATA.FactorCnt);
-                for (tmpi = 0; tmpi < Locus->LBINDATA.FactorCnt; tmpi++) {
+                fprintf(filep, "%d\n", Locus->Marker->Props.Binary.FactorCnt);
+                for (tmpi = 0; tmpi < Locus->Marker->Props.Binary.FactorCnt; tmpi++) {
                     for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                        fprintf(filep, " %d", (int) Locus->LBINDATA.Factor[tmpi][tmpi2]);
+                        fprintf(filep, " %d", (int) Locus->Marker->Props.Binary.Factor[tmpi][tmpi2]);
                     fputc('\n', filep);
                 }
                 break;
@@ -1402,11 +1379,11 @@ static void write_linkage_locfile_inorder_sex_specific(linkage_locus_top *LTop,
             num_loci = locus_num+1;
 
             while((tmpi < locus_num) &&
-                  (LTop->Locus[loci[tmpi]].position <
+                  (LTop->Marker[loci[tmpi]].pos_avg <
                    LTop->Run.slink.trait_positions[trnum])) {
                 locus_order[tmpi2] = loci[tmpi];
-                positions_male[tmpi2] = LTop->Locus[loci[tmpi]].pos_male;
-                positions_female[tmpi2] = LTop->Locus[loci[tmpi]].pos_female;
+                positions_male[tmpi2] = LTop->Marker[loci[tmpi]].pos_male;
+                positions_female[tmpi2] = LTop->Marker[loci[tmpi]].pos_female;
                 tmpi++; tmpi2++;
             }
             if ((num_traits >= 2) || (LoopOverTrait == 1 && num_traits > 0)) {
@@ -1419,8 +1396,8 @@ static void write_linkage_locfile_inorder_sex_specific(linkage_locus_top *LTop,
             /* copy over the rest of the marker loci  and their positions */
             while(tmpi < locus_num) {
                 locus_order[tmpi2] = loci[tmpi];
-                positions_male[tmpi2] = LTop->Locus[loci[tmpi]].pos_male;
-                positions_female[tmpi2] = LTop->Locus[loci[tmpi]].pos_female;
+                positions_male[tmpi2] = LTop->Marker[loci[tmpi]].pos_male;
+                positions_female[tmpi2] = LTop->Marker[loci[tmpi]].pos_female;
                 tmpi++; tmpi2++;
             }
         }
@@ -1452,37 +1429,37 @@ static void write_linkage_locfile_inorder_sex_specific(linkage_locus_top *LTop,
             fputc('\n', filep);
             switch(Locus->Type) {
             case QUANT:
-                fprintf(filep, "%d\n", Locus->LQUADATA.ClassCnt);
-                for (tmpi = Locus->LQUADATA.ClassCnt; tmpi > 0; tmpi--)
+                fprintf(filep, "%d\n", Locus->Pheno->Props.Quant.ClassCnt);
+                for (tmpi = Locus->Pheno->Props.Quant.ClassCnt; tmpi > 0; tmpi--)
                     for (tmpi2 = 0; tmpi2 < 3; tmpi2++)
-                        fprintf(filep," %.6f", Locus->LQUADATA.Mean[tmpi-1][tmpi2]);
+                        fprintf(filep," %.6f", Locus->Pheno->Props.Quant.Mean[tmpi-1][tmpi2]);
                 fprintf(filep, " << GENOTYPE MEANS\n");
                 /* ASSUMES only one trait per qtl */
-                fprintf(filep," %.6f\n", Locus->LQUADATA.Variance[0][0]);
-                fprintf(filep," %.6f\n", Locus->LQUADATA.Multiplier);
+                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Variance[0][0]);
+                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Multiplier);
                 break;
             case AFFECTION:
-                fprintf(filep, "%d\n", Locus->LAFFDATA.ClassCnt);
-                for (tmpi = 0; tmpi < Locus->LAFFDATA.ClassCnt; tmpi++) {
+                fprintf(filep, "%d\n", Locus->Pheno->Props.Affection.ClassCnt);
+                for (tmpi = 0; tmpi < Locus->Pheno->Props.Affection.ClassCnt; tmpi++) {
                     if (sex_linked) {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].FemalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                         fputc('\n', filep);
                         for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].MalePen[tmpi2]);
+                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                         fputc('\n', filep);
                     } else {
-                        for (tmpi2 = 0; tmpi2 < Locus->LAFFDATA.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->LAFFDATA.Class[tmpi].AutoPen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                         fputc('\n', filep);
                     }
                 }
                 break;
             case BINARY:
-                fprintf(filep, "%d\n", Locus->LBINDATA.FactorCnt);
-                for (tmpi = 0; tmpi < Locus->LBINDATA.FactorCnt; tmpi++) {
+                fprintf(filep, "%d\n", Locus->Marker->Props.Binary.FactorCnt);
+                for (tmpi = 0; tmpi < Locus->Marker->Props.Binary.FactorCnt; tmpi++) {
                     for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                        fprintf(filep, " %d", (int) Locus->LBINDATA.Factor[tmpi][tmpi2]);
+                        fprintf(filep, " %d", (int) Locus->Marker->Props.Binary.Factor[tmpi][tmpi2]);
                     fputc('\n', filep);
                 }
                 break;

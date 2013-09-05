@@ -587,12 +587,12 @@ static void   sagewrite_quantitative_data(FILE *filep, int locusnm,
 					  linkage_locus_rec *locus,
 					  linkage_ped_rec *entry)
 {
-    if (fabs(entry->EQUANT(locusnm) - MissingQuant) <= EPSILON) {
+    if (fabs(entry->Pheno[locusnm].Quant - MissingQuant) <= EPSILON) {
         // This is the old sage for which I could not find source or documentation...
         // Should this be truncated to an int?
         fprintf(filep, "%7.3f ", MissingQuant);
     } else {
-        fprintf(filep, "%7.3f ", entry->EQUANT(locusnm));
+        fprintf(filep, "%7.3f ", entry->Pheno[locusnm].Quant);
     }
 }
 
@@ -609,7 +609,7 @@ static void   sage4write_quantitative_data(FILE *filep, int locusnm,
                                            linkage_locus_rec *locus,
                                            linkage_ped_rec *entry)
 {
-    if (fabs(entry->EQUANT(locusnm) - MissingQuant) <= EPSILON) {
+    if (fabs(entry->Pheno[locusnm].Quant - MissingQuant) <= EPSILON) {
         //fprintf(filep, "   NA   ");
         if (ITEM_READ(Value_Missing_Quant_On_Output)) {
             fprintf(filep, " %s ",
@@ -621,7 +621,7 @@ static void   sage4write_quantitative_data(FILE *filep, int locusnm,
 	  EXIT(BATCH_FILE_ITEM_ERROR);
 	}
     } else {
-        fprintf(filep, "%7.3f ", entry->EQUANT(locusnm));
+        fprintf(filep, "%7.3f ", entry->Pheno[locusnm].Quant);
     }
 }
 
@@ -629,7 +629,7 @@ static void  sagewrite_affection_data(FILE *filep, int locusnm,
 				      linkage_locus_rec *locus,
 				      linkage_ped_rec *entry)
 {
-    int aff = aff_status_entry(entry->ESTATUS(locusnm), entry->ECLASS(locusnm),
+    int aff = aff_status_entry(entry->Pheno[locusnm].Affection.Status, entry->Pheno[locusnm].Affection.Class,
                                locus);
 
     if (aff > 0)
@@ -645,21 +645,14 @@ static void  sagewrite_binary_data(FILE *filep,  int locusnm,
 				   linkage_locus_rec *locus,
 				   linkage_ped_rec *entry)
 {
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
-
-#define ALLELE1 entry->EALLELE1(locusnm)
-#define ALLELE2 entry->EALLELE2(locusnm)
-    int             allele;
+    int a1, a2;
+    int allele;
 /* Need to check for completely untyped person */
     for (allele = 0; allele < locus->AlleleCnt; allele++)
         {
-            if ((allele == ALLELE1 - 1)
-                || (allele == ALLELE2 - 1))
+            get_2alleles(entry->Marker, locusnm, &a1, &a2);
+            if ((allele == a1 - 1)
+                || (allele == a2 - 1))
                 fprintf(filep, "1");
             else
                 fprintf(filep, "0");
@@ -671,22 +664,12 @@ static void  sagewrite_binary_data(FILE *filep,  int locusnm,
 
 static void sagewrite_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
-
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
-
-#define ALLELE1 entry->EALLELE1(locusnm)
-#define ALLELE2 entry->EALLELE2(locusnm)
-
-  // ALLELE1 == entry->Data[locusnm].Alleles.Allele_1
-    if (ALLELE1 == 0)
+    int a1, a2;
+    get_2alleles(entry->Marker, locusnm, &a1, &a2);
+    if (a1 == 0)
         fprintf(filep, " 0/ 0 ");
     else
-        fprintf(filep, "%2d/%2d ", ALLELE1, ALLELE2);
+        fprintf(filep, "%2d/%2d ", a1, a2);
 }
 
 
@@ -755,7 +738,7 @@ static void  write_SAGE_cnt_file(char *poutfl_name,
                     locus1 = *trp;
                     SKIP_TRII(*trp);
                     if (Top->LocusTop->Locus[locus1].Type == AFFECTION) {
-                        if (Entry->ESTATUS(locus1) == 2) {
+                        if (Entry->Pheno[locus1].Affection.Status == 2) {
                             fprintf(filep,"%8d ",Entry->Ngeno);
                         }
                         else
@@ -1647,15 +1630,15 @@ static void   write_SAGE4_map(char *mapfl_name,
         fprintf(fp, "    marker = %s\n",
                 LTop->Locus[markers[0]].Name);
         for(m=1; m<i; m++) {
-            if ((LTop->Locus[markers[m]].position -
-                LTop->Locus[markers[m-1]].position) < 0.0) {
+            if ((LTop->Marker[markers[m]].pos_avg -
+                LTop->Marker[markers[m-1]].pos_avg) < 0.0) {
                 fprintf(fp, "    theta = 0.09999\n");
             } else {
                 theta=((LTop->map_distance_type == 'h')?
-                       haldane_theta(LTop->Locus[markers[m]].position -
-                                     LTop->Locus[markers[m-1]].position):
-                       kosambi_theta(LTop->Locus[markers[m]].position -
-                                     LTop->Locus[markers[m-1]].position));
+                       haldane_theta(LTop->Marker[markers[m]].pos_avg -
+                                     LTop->Marker[markers[m-1]].pos_avg):
+                       kosambi_theta(LTop->Marker[markers[m]].pos_avg -
+                                     LTop->Marker[markers[m-1]].pos_avg));
                 fprintf(fp, "    theta = %0.7g\n", theta);
             }
             fprintf(fp, "    marker = %s\n",

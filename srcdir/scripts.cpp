@@ -175,6 +175,7 @@ void create_TDTMAX(linkage_ped_top **LPTop,
     char            fl_stat[12], infl[FILENAME_LENGTH];
     linkage_ped_top *Top2;
     int             nloop, num_affec=num_traits, *trp;
+    int             al1, al2;
 
     LTop = Top->LocusTop;
     if (main_chromocnt > 1) change_output_chr(file_names[3], 0);
@@ -316,10 +317,10 @@ void create_TDTMAX(linkage_ped_top **LPTop,
                                 tpe->Sex);
                     write_affection_tdtmax(fp, *trp, &(Top2->LocusTop->Locus[*trp]),
                                            tpe);
-                    if (Top2->Ped[m].Entry[i].Data[j].Alleles.Allele_1 != 0)
-                        fprintf(fp, " %2d %2d\n",
-                                Top2->Ped[m].Entry[i].Data[j].Alleles.Allele_1,
-                                Top2->Ped[m].Entry[i].Data[j].Alleles.Allele_2);
+
+                    get_2alleles(Top2->Ped[m].Entry[i].Marker, j, &al1, &al2);
+                    if (al1 != 0)
+                        fprintf(fp, " %2d %2d\n", al1, al2);
                     else
                         fprintf(fp,"  x  x\n");
                 }
@@ -347,7 +348,7 @@ void create_TDTMAX(linkage_ped_top **LPTop,
             fprintf(cfp, "$s[1]\n");
             fprintf(cfp, "%d\n",nperm);   /* Number of permutations */
             fprintf(cfp, "DATA2\n");
-            fprintf(cfp, "echo \"Locus: %s  %10.7f  %d\" >> tdtmax.lst\n",Top2->LocusTop->Locus[j].Name, Top2->LocusTop->Locus[j].position, Top2->LocusTop->Locus[j].chromosome);
+            fprintf(cfp, "echo \"Locus: %s  %10.7f  %d\" >> tdtmax.lst\n",Top2->LocusTop->Marker[j].Name, Top2->LocusTop->Marker[j].pos_avg, Top2->LocusTop->Marker[j].chromosome);
             fprintf(cfp, "cat permout >> tdtmax.lst\n");
             fprintf(cfp, "echo \"----------------------------------\" >> tdtmax.lst\n");
         }  /* for j */
@@ -526,7 +527,7 @@ static void lod2_cshell_file(char *shellfl, char *outfl_name,
             i = ChrLoci[i1];
             if (LTopp->Locus[i].Type == NUMBERED ||
                 LTopp->Locus[i].Type == BINARY) {
-                chromosome=LTopp->Locus[i].chromosome;
+                chromosome=LTopp->Marker[i].chromosome;
                 fprintf(lod2_shell_p, " echo Analyzing marker %s\n",
                         LTopp->Locus[i].Name);
                 fprintf(lod2_shell_p, " rm -f outfile.dat \n");

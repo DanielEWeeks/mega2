@@ -35,7 +35,7 @@
 
 #define MENDEL_AFFECTION fprintf(fp, "%-8s",  strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN));	\
     if ((sex_linked  == 1) ||                                           \
-        (sex_linked == 2 && Locus->chromosome == SEX_CHROMOSOME)) {     \
+        (sex_linked == 2 && Locus->Marker->chromosome == SEX_CHROMOSOME)) {     \
 	fprintf(fp, "X-LINKED");                                        \
     }                                                                   \
     else {                                                              \
@@ -44,7 +44,7 @@
     fprintf(fp, "%2d", Locus->AlleleCnt);                               \
     if (simwalk2==0)                                                    \
 	fprintf(fp, "%2d  <= Locus,Type,# Alleles,# Phenotypes \n",     \
-		2*Locus->LAFFDATA.ClassCnt);                            \
+		2*Locus->Pheno->Props.Affection.ClassCnt);                            \
     else                                                                \
 	fprintf(fp, " 2  <= Locus,Type,# Alleles,# Phenotypes \n");     \
     for (allele = 0; allele < Locus->AlleleCnt; allele++)  {            \
@@ -53,8 +53,8 @@
     }                                                                   \
     if (simwalk2==0) {                                                  \
 	for (tmpi = 1; tmpi <= 2; tmpi++)                               \
-            for (tmpi2 = 1; tmpi2 <= Locus->LAFFDATA.ClassCnt; tmpi2++)  { \
-                if (Locus->LAFFDATA.ClassCnt > 1) {                     \
+            for (tmpi2 = 1; tmpi2 <= Locus->Pheno->Props.Affection.ClassCnt; tmpi2++)  { \
+                if (Locus->Pheno->Props.Affection.ClassCnt > 1) {                     \
                     if (analysis == TO_MENDEL4) {                       \
                         sprintf(trait_phen, "%1d_%d", tmpi, tmpi2);     \
                         fprintf(fp, "%7s ", trait_phen);                \
@@ -67,38 +67,38 @@
                     fprintf(fp, "%2d      ", tmpi);                     \
                 numgen = 0;                                             \
                 if (tmpi == 1)	{                                       \
-                    for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++) \
-                        if (1.0 - Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[ipen] > 0.0) \
+                    for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++) \
+                        if (1.0 - Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[ipen] > 0.0) \
                             numgen++;                                   \
                 }                                                       \
                 else {                                                  \
-                    for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++) \
-                        if (Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[ipen] > 0.0) \
+                    for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++) \
+                        if (Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[ipen] > 0.0) \
                             numgen++;                                   \
                 }                                                       \
                 fprintf(fp, "%2d # Genotypes", numgen);                 \
-                for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++)   \
+                for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++)   \
                     if (tmpi == 1)                                      \
                         fprintf(fp,  "%5.2f",                           \
-                                1.0 - Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[ipen]); \
+                                1.0 - Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[ipen]); \
                     else                                                \
                         fprintf(fp, "%5.2f",                            \
-                                Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[ipen]); \
+                                Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[ipen]); \
                 fprintf(fp, " <= Penetrances\n");                       \
                 if (tmpi == 2)  {                                       \
-                    if (Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[0] > 0.0) \
+                    if (Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[0] > 0.0) \
                         fprintf(fp, "  1/ 1\n");                        \
-                    if (Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[1] > 0.0) \
+                    if (Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[1] > 0.0) \
                         fprintf(fp, "  1/ 2\n");                        \
-                    if (Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[2] > 0.0) \
+                    if (Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[2] > 0.0) \
                         fprintf(fp, "  2/ 2\n");                        \
                 }                                                       \
                 else  {                                                 \
-                    if (1.0 - Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[0] > 0.0) \
+                    if (1.0 - Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[0] > 0.0) \
                         fprintf(fp, "  1/ 1\n");                        \
-                    if (1.0 - Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[1] > 0.0) \
+                    if (1.0 - Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[1] > 0.0) \
                         fprintf(fp, "  1/ 2\n");                        \
-                    if (1.0 - Locus->LAFFDATA.Class[tmpi2 - 1].AutoPen[2] > 0.0) \
+                    if (1.0 - Locus->Pheno->Props.Affection.Class[tmpi2 - 1].AutoPen[2] > 0.0) \
                         fprintf(fp, "  2/ 2\n");                        \
                 }                                                       \
             }                                                           \
@@ -148,7 +148,7 @@
 #undef TRAIT_PHEN1
 #endif
 
-#define TRAIT_PHEN1 if (Locus->LAFFDATA.ClassCnt > 1) { \
+#define TRAIT_PHEN1 if (Locus->Pheno->Props.Affection.ClassCnt > 1) { \
         sprintf(trait_phen, "1_%d", tmpi2+1);           \
     }                                                   \
     else {                                              \
@@ -159,7 +159,7 @@
 #undef TRAIT_PHEN2
 #endif
 
-#define TRAIT_PHEN2 if (Locus->LAFFDATA.ClassCnt > 1) { \
+#define TRAIT_PHEN2 if (Locus->Pheno->Props.Affection.ClassCnt > 1) { \
         sprintf(trait_phen, "2_%d", tmpi2+1);           \
     }                                                   \
     else {                                              \
@@ -192,30 +192,30 @@
     for (tmpi = 1; tmpi <= 2; tmpi++) {                                 \
 	fprintf(fp, "%d,", tmpi);                                       \
 	numgen = 0;                                                     \
-	for (ipen = 0; ipen < Locus->LAFFDATA.PenCnt; ipen++) {         \
+	for (ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++) {         \
             if (tmpi == 1) {						\
-                pen=1.0 - Locus->LAFFDATA.Class[0].AutoPen[ipen];    \
+                pen=1.0 - Locus->Pheno->Props.Affection.Class[0].AutoPen[ipen];    \
             }								\
             else {							\
-                pen=Locus->LAFFDATA.Class[0].AutoPen[ipen];          \
+                pen=Locus->Pheno->Props.Affection.Class[0].AutoPen[ipen];          \
             }                                                           \
             if (pen > 0.0)  numgen++;                                   \
 	}                                                               \
 	fprintf(fp, "%d\n", numgen);                                    \
 	if (tmpi == 2)  {                                               \
-            if (Locus->LAFFDATA.Class[0].AutoPen[0] > 0.0)           \
+            if (Locus->Pheno->Props.Affection.Class[0].AutoPen[0] > 0.0)           \
                 fprintf(fp, "1/1\n");                                   \
-            if (Locus->LAFFDATA.Class[0].AutoPen[1] > 0.0)           \
+            if (Locus->Pheno->Props.Affection.Class[0].AutoPen[1] > 0.0)           \
                 fprintf(fp, "1/2\n");                                   \
-            if (Locus->LAFFDATA.Class[0].AutoPen[2] > 0.0)           \
+            if (Locus->Pheno->Props.Affection.Class[0].AutoPen[2] > 0.0)           \
                 fprintf(fp, "2/2\n");                                   \
 	}                                                               \
 	else  {								\
-            if (1.0 - Locus->LAFFDATA.Class[0].AutoPen[0] > 0.0)     \
+            if (1.0 - Locus->Pheno->Props.Affection.Class[0].AutoPen[0] > 0.0)     \
                 fprintf(fp, "1/1\n");					\
-            if (1.0 - Locus->LAFFDATA.Class[0].AutoPen[1] > 0.0)     \
+            if (1.0 - Locus->Pheno->Props.Affection.Class[0].AutoPen[1] > 0.0)     \
                 fprintf(fp, "1/2\n");					\
-            if (1.0 - Locus->LAFFDATA.Class[0].AutoPen[2] > 0.0)     \
+            if (1.0 - Locus->Pheno->Props.Affection.Class[0].AutoPen[2] > 0.0)     \
                 fprintf(fp, "2/2\n");                                   \
 	}                                                               \
     }

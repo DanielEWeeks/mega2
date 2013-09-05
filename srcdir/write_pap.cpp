@@ -250,6 +250,7 @@ static void save_pap_phen(char *phen_file_name,
     int tr, *trp, nloop, num_affec=num_traits;
     char phen_fl[2*FILENAME_LENGTH];
     entry_type comb_entry;
+    int a1, a2;
 
     FILE *filep;
 
@@ -296,11 +297,11 @@ static void save_pap_phen(char *phen_file_name,
                         switch(Top->LocusTop->Locus[*trp].Type) {
                         case AFFECTION:
                             fprintf(filep, "%8d",
-                                    Top->Ped[ped].Entry[per].ESTATUS(*trp));
+                                    Top->Ped[ped].Entry[per].Pheno[*trp].Affection.Status);
                             break;
 
                         case QUANT:
-                            {   double q = Top->Ped[ped].Entry[per].EQUANT(*trp);
+                            {   double q = Top->Ped[ped].Entry[per].Pheno[*trp].Quant;
                                 if (fabs(q - MissingQuant) <= EPSILON)
                                     fprintf(filep, "   -9999"); // default missing value code
                                 else 
@@ -320,15 +321,14 @@ static void save_pap_phen(char *phen_file_name,
                         switch(Top->LocusTop->Locus[loc].Type) {
                         case NUMBERED:
                         case BINARY:
-                            fprintf(filep, "%8d%8d",
-                                    Top->Ped[ped].Entry[per].EALLELE1(loc),
-                                    Top->Ped[ped].Entry[per].EALLELE2(loc));
+                            get_2alleles(Top->Ped[ped].Entry[per].Marker, loc, &a1, &a2);
+                            fprintf(filep, "%8d%8d", a1, a2);
                             ncol += 2;
                             break;
 
                         case QUANT:
                             if (LoopOverTrait == 0) {
-                                double q = Top->Ped[ped].Entry[per].EQUANT(loc);
+                                double q = Top->Ped[ped].Entry[per].Pheno[loc].Quant;
                                 if (fabs(q - MissingQuant) <= EPSILON)
                                     fprintf(filep, "   -9999"); // default missing value code
                                 else 
@@ -339,7 +339,7 @@ static void save_pap_phen(char *phen_file_name,
                         case AFFECTION:
                             if (LoopOverTrait == 0) {
                                 fprintf(filep, "%8d",
-                                        Top->Ped[ped].Entry[per].ESTATUS(loc));
+                                        Top->Ped[ped].Entry[per].Pheno[loc].Affection.Status);
                                 ncol++;
                             }
                             break;
@@ -532,7 +532,7 @@ static int save_pap_hdr(char *hdr_file_name, linkage_locus_top *LocusTop,
             case NUMBERED:
             case BINARY:
                 if ((LocusTop->SexLinked == 2 &&
-                    LocusTop->Locus[ChrLoci[loc]].chromosome == SEX_CHROMOSOME) ||
+                    LocusTop->Marker[ChrLoci[loc]].chromosome == SEX_CHROMOSOME) ||
                    (LocusTop->SexLinked == 1)) {
                     fprintf(filep, "   6"); // X-linked
                 } else {
@@ -672,7 +672,7 @@ static void pap_popln_file(char *pop_file_name, linkage_locus_top *LTop)
                LTop->Locus[loc].Type == BINARY) {
                 fprintf(filep, "   1 F %c\n",
                         (((LTop->SexLinked == 2 &&
-                           LTop->Locus[loc].chromosome == SEX_CHROMOSOME) ||
+                           LTop->Marker[loc].chromosome == SEX_CHROMOSOME) ||
                           (LTop->SexLinked == 1))? 'T' : 'F'));
                 fprintf(filep, "%3d", LTop->Locus[loc].AlleleCnt);
                 for(all=0; all < LTop->Locus[loc].AlleleCnt; all++) {

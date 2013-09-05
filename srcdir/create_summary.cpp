@@ -490,7 +490,7 @@ static void create_sex_allele_freq_tables(FILE *filep, linkage_ped_top *Top1,
                     }
                 }
                 for (ks = 0; ks < Top1->Ped[j].EntryCnt; ks++)
-                    if (Top1->Ped[j].Entry[ks].Data[i].Affection.Status != 0)
+                    if (Top1->Ped[j].Entry[ks].Pheno[i].Affection.Status != 0)
                         ar->PhenoCount++;
             }
     }
@@ -547,8 +547,7 @@ static void create_sex_allele_freq_tables(FILE *filep, linkage_ped_top *Top1,
                 if (tpe->Sex == 2) ar->FemaleCnt++;
                 else ar->MaleCnt++;
 
-                allele1 = tpe->Data[k].Alleles.Allele_1;
-                allele2 = tpe->Data[k].Alleles.Allele_2;
+                get_2alleles(tpe->Marker, k, &allele1, &allele2);
                 /* Count the alleles */
                 if (inc_ht) {
                     genotyped = ((allele1 != 0 || allele2 != 0)? 1: 0);
@@ -679,7 +678,7 @@ static void create_Y_allele_freq_tables(FILE *filep, linkage_ped_top *Top1,
                     }
                 }
                 for (ks = 0; ks < Top1->Ped[j].EntryCnt; ks++)
-                    if (Top1->Ped[j].Entry[ks].Data[i].Affection.Status != 0 &&
+                    if (Top1->Ped[j].Entry[ks].Pheno[i].Affection.Status != 0 &&
                         Top1->Ped[j].Entry[ks].Sex == 1)
                         ar->PhenoCount++;
             }
@@ -728,8 +727,7 @@ static void create_Y_allele_freq_tables(FILE *filep, linkage_ped_top *Top1,
                 tpe = &(Top1->Ped[is].Entry[j]);
                 ar->MaleCnt++;
 
-                allele1 = tpe->Data[k].Alleles.Allele_1;
-                allele2 = tpe->Data[k].Alleles.Allele_2;
+                get_2alleles(tpe->Marker, k, &allele1, &allele2);
                 /* Count the alleles */
                 if (inc_ht) {
                     genotyped = ((allele1 != 0 || allele2 != 0)? 1: 0);
@@ -799,7 +797,7 @@ void count_alleles(linkage_ped_top *Top1, allele_freq_struct *ar,
     int i;
     int j, genotyped, all;
     int allele1, allele2, entry_count;
-    linkage_pedrec_data *Data;
+    void *Marker;
 
     /* fill in the allele and genotype counts assuming that numbered
        alleles range from 1 to allelecnt */
@@ -817,13 +815,11 @@ void count_alleles(linkage_ped_top *Top1, allele_freq_struct *ar,
         ar->TotalPeople += entry_count;
 
         for (j = 0; j < entry_count; j++)   {
-            Data =
-                (Top1->pedfile_type == POSTMAKEPED_PFT)?
-                &(Top1->Ped[i].Entry[j].Data[loc]) :
-                &(Top1->PTop[i].persons[j].data[loc]);
+            Marker = (Top1->pedfile_type == POSTMAKEPED_PFT) ?
+                Top1->Ped[i].Entry[j].Marker :
+                Top1->PTop[i].persons[j].marker;
 
-            allele1 = Data->Alleles.Allele_1;
-            allele2 = Data->Alleles.Allele_2;
+            get_2alleles(Marker, loc, &allele1, &allele2);
 
             if (inc_ht) {
                 genotyped = (allele1 != 0 || allele2 != 0)? 1: 0;
@@ -889,7 +885,7 @@ static void  create_allele_freq_tables(FILE *filep, linkage_ped_top *Top1,
                 }
 
                 for (ks = 0; ks < Top1->Ped[j].EntryCnt; ks++)
-                    if (Top1->Ped[j].Entry[ks].Data[global_trait_entries[i]].Affection.Status != 0)
+                    if (Top1->Ped[j].Entry[ks].Pheno[global_trait_entries[i]].Affection.Status != 0)
                         ar.PhenoCount++;
             }
         }
@@ -992,7 +988,7 @@ static void  write_sex_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
     }
 
     fprintf(filep, "\nChromosome %d : locus %s with %d alleles\n",
-            Top1->LocusTop->Locus[index].chromosome,
+            Top1->LocusTop->Marker[index].chromosome,
             Top1->LocusTop->Locus[index].Name,
             Top1->LocusTop->Locus[index].AlleleCnt);
 
@@ -1139,7 +1135,7 @@ static void  write_Y_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
     }
 
     fprintf(filep, "\nChromosome %d : locus %s with %d alleles\n",
-            Top1->LocusTop->Locus[index].chromosome,
+            Top1->LocusTop->Marker[index].chromosome,
             Top1->LocusTop->Locus[index].Name,
             Top1->LocusTop->Locus[index].AlleleCnt);
 
@@ -1223,7 +1219,7 @@ static void            write_allele_freq_table(FILE *filep,
     else  max_width = allele_width;
 
     fprintf(filep, "\nChromosome %d : locus %s with %d alleles\n",
-            Top1->LocusTop->Locus[index].chromosome,
+            Top1->LocusTop->Marker[index].chromosome,
             Top1->LocusTop->Locus[index].Name,
             Top1->LocusTop->Locus[index].AlleleCnt);
 
@@ -1322,8 +1318,8 @@ int aff_status_entry(int status, int eclass, linkage_locus_rec *Locus)
     // analysis class causes 'Labels' to have a value of NULL, 'NumLabel' of 0, and
     // 'liability_multiplier' of 0 (see user_input.cpp:define_affection_labels()).
     // This implies that 'aff' will not be set to '2' since eclass is never '2'.
-    NumLabels = Locus->LAFFDATA.NumLabels;
-    Labels = Locus->LAFFDATA.Labels;
+    NumLabels = Locus->Pheno->Props.Affection.NumLabels;
+    Labels = Locus->Pheno->Props.Affection.Labels;
 
     if (status == 0)
         aff=0;
@@ -1367,8 +1363,8 @@ void            affected_by_status(linkage_ped_top *Top, int locus)
 
     for (ped = 0; ped < Top->PedCnt; ped++) {
         for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
-            aff = aff_status_entry(Top->Ped[ped].Entry[entry].ESTATUS(locus),
-                                   Top->Ped[ped].Entry[entry].ECLASS(locus),
+            aff = aff_status_entry(Top->Ped[ped].Entry[entry].Pheno[locus].Affection.Status,
+                                   Top->Ped[ped].Entry[entry].Pheno[locus].Affection.Class,
                                    &(Top->LocusTop->Locus[locus]));
             Top->Ped[ped].Entry[entry].Orig_status = aff;
             /* Allocate space to store an integer in TmpData */
@@ -1387,7 +1383,7 @@ void            affected_by_status(linkage_ped_top *Top, int locus)
                 *(int*)Top->Ped[ped].Entry[entry].TmpData = 1;
                 AffEntryCnt++;
             }
-            /*      Top->Ped[ped].Entry[entry].ESTATUS(locus)=aff; */
+            /*      Top->Ped[ped].Entry[entry].Pheno[locus].Affection.Status=aff; */
         }
     }
 #ifdef DEBUG
@@ -1477,17 +1473,17 @@ void            seg_affected_by_status(linkage_ped_top *Top,
 /*     for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  { */
 /*       /\* Decide who is affected *\/ */
 
-/*       if (Top->Ped[ped].Entry[entry].ESTATUS(locus) == 0) */
+/*       if (Top->Ped[ped].Entry[entry].Pheno[locus].Affection.Status == 0) */
 /* 	aff=0; */
 /*       else { */
-/* 	aff=Top->Ped[ped].Entry[entry].ECLASS(locus) + */
-/* 	  LIABILITYMULTIPLIER * Top->Ped[ped].Entry[entry].ESTATUS(locus); */
+/* 	aff=Top->Ped[ped].Entry[entry].Pheno[locus].Affection.Class + */
+/* 	  LIABILITYMULTIPLIER * Top->Ped[ped].Entry[entry].Pheno[locus].Affection.Status; */
 /* 	for (i1=0; i1<num_labels; i1++) { */
 /* 	  if (aff == labels[i1]) {aff=2; break;} */
 /* 	} */
 /* 	if (aff != 2) aff=1; */
 /*       } */
-/*       Top->Ped[ped].Entry[entry].ESTATUS(locus)=aff; */
+/*       Top->Ped[ped].Entry[entry].Pheno[locus].Affection.Status=aff; */
 /*     } */
 /*   } */
 
@@ -1502,8 +1498,8 @@ void            seg_affected_by_status(linkage_ped_top *Top,
         for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
             /* Segregation analysis table */
             /* always compute the entry's status, and copy to Orig_status */
-            i3 = aff_status_entry(ENTRY.ESTATUS(locus),
-                                  ENTRY.ECLASS(locus),
+            i3 = aff_status_entry(ENTRY.Pheno[locus].Affection.Status,
+                                  ENTRY.Pheno[locus].Affection.Class,
                                   &(Top->LocusTop->Locus[locus]));
 
             /*      if (i3  != 2) { i3 = 1;} */
@@ -1519,13 +1515,13 @@ void            seg_affected_by_status(linkage_ped_top *Top,
                 }
 
 
-                i1 = aff_status_entry(Top->Ped[ped].Entry[mo].ESTATUS(locus),
-                                      Top->Ped[ped].Entry[mo].ECLASS(locus),
+                i1 = aff_status_entry(Top->Ped[ped].Entry[mo].Pheno[locus].Affection.Status,
+                                      Top->Ped[ped].Entry[mo].Pheno[locus].Affection.Class,
                                       &(Top->LocusTop->Locus[locus]));
                 /*	if (i1 != 2) { i1 = 1;} */
 
-                i2 = aff_status_entry(Top->Ped[ped].Entry[fa].ESTATUS(locus),
-                                      Top->Ped[ped].Entry[fa].ECLASS(locus),
+                i2 = aff_status_entry(Top->Ped[ped].Entry[fa].Pheno[locus].Affection.Status,
+                                      Top->Ped[ped].Entry[fa].Pheno[locus].Affection.Class,
                                       &(Top->LocusTop->Locus[locus]));
 
                 /*	if (i2 != 2) { i2 = 1;} */
@@ -1897,10 +1893,7 @@ static void            aff_rel_count(ped_top *Top, int *numchr,
         for (js = 0; js < LPedTreeTop->Ped[is].EntryCnt; js++)  {
             for (l = 0; l < NumChrLoci; l++)	   {
                 if (LPedTreeTop->LocusTop->Locus[ChrLoci[l]].Type == NUMBERED) {
-                    allele1 =
-                        LPedTreeTop->Ped[is].Entry[js].Data[ChrLoci[l]].Alleles.Allele_1;
-                    allele2 =
-                        LPedTreeTop->Ped[is].Entry[js].Data[ChrLoci[l]].Alleles.Allele_2;
+                    get_2alleles(LPedTreeTop->Ped[is].Entry[js].Marker, ChrLoci[l], &allele1, &allele2);
                     if (allele1 != 0 && allele2 != 0) {
                         LPedTreeTop->Ped[is].IsTyped = 1;
                         break;
@@ -2225,8 +2218,8 @@ static void aff_sib_count(linkage_ped_top *NewTop, char *sib_sum_name,
 
             all_typed += all_flag; any_typed += any_flag;
 
-            affected = aff_status_entry(NewTop->Ped[ped].Entry[per].ESTATUS(tr),
-                                        NewTop->Ped[ped].Entry[per].ECLASS(tr),
+            affected = aff_status_entry(NewTop->Ped[ped].Entry[per].Pheno[tr].Affection.Status,
+                                        NewTop->Ped[ped].Entry[per].Pheno[tr].Affection.Class,
                                         &(NewTop->LocusTop->Locus[tr]));
 
             switch(affected) {
@@ -2321,8 +2314,8 @@ static void aff_sib_count(linkage_ped_top *NewTop, char *sib_sum_name,
                                  TYPED_AT_ALL_LOCI, NULL) +
                  is_typed_lentry(NewTop->Ped[ped].Entry[1], NewTop->LocusTop,
                                  TYPED_AT_ALL_LOCI, NULL)),
-                stat_str[NewTop->Ped[ped].Entry[0].ESTATUS(tr)],
-                stat_str[NewTop->Ped[ped].Entry[1].ESTATUS(tr)]);
+                stat_str[NewTop->Ped[ped].Entry[0].Pheno[tr].Affection.Status],
+                stat_str[NewTop->Ped[ped].Entry[1].Pheno[tr].Affection.Status]);
     }
     fprintf(sibfp,
             "---------------------------------------------------\n");
@@ -2358,22 +2351,21 @@ static void aff_sib_count(linkage_ped_top *NewTop, char *sib_sum_name,
         }
         for(per=2; per < (NewTop->Ped[ped].EntryCnt-1); per++) {
             for(per2=per+1; per2<NewTop->Ped[ped].EntryCnt; per2++) {
-                if ((NewTop->Ped[ped].Entry[per].ESTATUS(tr)
+                if ((NewTop->Ped[ped].Entry[per].Pheno[tr].Affection.Status
                     == 0) ||
-                   (NewTop->Ped[ped].Entry[per2].ESTATUS(tr)
+                   (NewTop->Ped[ped].Entry[per2].Pheno[tr].Affection.Status
                     == 0)) {
                     continue;
                 }
-                if (NewTop->Ped[ped].Entry[per].ESTATUS(tr)
-                    != NewTop->Ped[ped].Entry[per2].ESTATUS(tr)) {
+                if (NewTop->Ped[ped].Entry[per].Pheno[tr].Affection.Status
+                    != NewTop->Ped[ped].Entry[per2].Pheno[tr].Affection.Status) {
                     for(loc=0; loc < NumChrLoci; loc++) {
                         if (NewTop->LocusTop->Locus[ChrLoci[loc]].Type != NUMBERED) {
                             continue;
                         }
-                        a1 = NewTop->Ped[ped].Entry[per].EALLELE1(ChrLoci[loc]);
-                        a2 = NewTop->Ped[ped].Entry[per].EALLELE2(ChrLoci[loc]);
-                        b1 = NewTop->Ped[ped].Entry[per2].EALLELE1(ChrLoci[loc]);
-                        b2 = NewTop->Ped[ped].Entry[per2].EALLELE2(ChrLoci[loc]);
+                        get_2alleles(NewTop->Ped[ped].Entry[per].Marker, ChrLoci[loc], &a1, &a2);
+                        get_2alleles(NewTop->Ped[ped].Entry[per2].Marker, ChrLoci[loc], &b1, &b2);
+
                         if (CMP_PAIR(a1, a2, b1, b2)) {
                             counts.stdt_pairs[loc]++;
                         }
@@ -2423,6 +2415,7 @@ void marker_typing_summary(FILE *sum_fp, linkage_ped_top *LPedTreeTop,
     int *typed_per_marker, *typed_per_person;
     int wrote_ped;
     int untyped_mssg_disp;
+    int a1, a2;
 
     nmrk=0;
     for(loc1=0; loc1 < NumChrLoci; loc1++) {
@@ -2444,10 +2437,12 @@ void marker_typing_summary(FILE *sum_fp, linkage_ped_top *LPedTreeTop,
             LPedTreeTop->Ped[ped].Entry[per].Ngeno = 0;
             for(loc1=0; loc1 < NumChrLoci; loc1++) {
                 loc = ChrLoci[loc1];
+                get_2alleles(LPedTreeTop->Ped[ped].Entry[per].Marker, loc, &a1, &a2);
+
                 if ((LPedTreeTop->LocusTop->Locus[loc].Type != AFFECTION) &&
                     (LPedTreeTop->LocusTop->Locus[loc].Type != QUANT) &&
-                    (LPedTreeTop->Ped[ped].Entry[per].EALLELE1(loc) != 0) &&
-                    (LPedTreeTop->Ped[ped].Entry[per].EALLELE2(loc) != 0)) {
+                    (a1 != 0) &&
+                    (a2 != 0)) {
                     (LPedTreeTop->Ped[ped].Entry[per].Ngeno)++;
                 }
             }
@@ -2487,8 +2482,8 @@ void marker_typing_summary(FILE *sum_fp, linkage_ped_top *LPedTreeTop,
                 if ((LPedTreeTop->LocusTop->Locus[loc].Type == NUMBERED ||
                     LPedTreeTop->LocusTop->Locus[loc].Type == BINARY)) {
                     /* allow half-types */
-                    if ((LPedTreeTop->Ped[ped].Entry[per].EALLELE1(loc) != 0) ||
-                       (LPedTreeTop->Ped[ped].Entry[per].EALLELE2(loc) != 0)) {
+                    get_2alleles(LPedTreeTop->Ped[ped].Entry[per].Marker, loc, &a1, &a2);
+                    if (a1 != 0 || a2 != 0) {
                         (typed_per_marker[loc1])++;
                     }
                 }
@@ -2739,7 +2734,7 @@ static void quant_phenotype_summary(linkage_ped_top *Top, char *file_names[])
                 if (IS_LFOUNDER(Entry)) {
                     num_founders[ped]++;
                 }
-                if (fabs(Entry.EQUANT(i) - MissingQuant) > EPSILON) {
+                if (fabs(Entry.Pheno[i].Quant - MissingQuant) > EPSILON) {
                     num_phenos[ped]++;
                     if (IS_LFOUNDER(Entry)) {
                         founders_pheno[ped]++;

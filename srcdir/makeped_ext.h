@@ -32,7 +32,7 @@
 
 extern int check_pre_makeped(FILE *fp, int *num_lines);
 
-extern int copy_pedrec_data(linkage_pedrec_data *d1, linkage_pedrec_data *d2,
+extern int copy_pedrec_data(person_node_type *p1, person_node_type *p2,
 			    linkage_locus_top *LTop);
 
 extern void copy_preped_peds(linkage_ped_top *From, linkage_ped_top *To);
@@ -50,7 +50,8 @@ extern int makeped(linkage_ped_top *Top, analysis_type analysis);
 extern linkage_ped_top *read_pre_makeped(FILE *fp, int pedcount,
 					 int linecnt,
 					 pre_makeped_record *persons,
-					 linkage_locus_top *LTop);
+					 linkage_locus_top *LTop,
+                                         int *col2locus);
 
 
 /*

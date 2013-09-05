@@ -88,13 +88,13 @@ void allele_number_width(linkage_locus_top *TTop, int *AlleleWidth)
     int i, new_width;
     int all_cnt;
 
-    all_cnt = TTop->Locus[0].AlleleCnt;
+    all_cnt = TTop->Locus[TTop->PhenoCnt].AlleleCnt;
     if (all_cnt) {
         *AlleleWidth= (int) floor(log10((double)all_cnt)) + 1;
     } else {
         *AlleleWidth=2;
     }
-    for (i = 1; i < TTop->LocusCnt; i++) {
+    for (i = TTop->PhenoCnt + 1; i < TTop->LocusCnt; i++) {
         if (TTop->Locus[i].AlleleCnt > 0) {
             new_width =
                 (int) floor(log10((double)TTop->Locus[i].AlleleCnt)) + 1;
@@ -354,7 +354,7 @@ void write_key_file(char *ID_file, linkage_ped_top *Top)
     oper = imax(oper, (int) strlen("Person"));
     oped = imax(oped, (int) strlen("Pedigree"));
 
-    if ((fp = fopen(ID_file, "a")) == NULL) {
+    if ((fp = fopen(ID_file, "w")) == NULL) {
         errorvf("Unable to open Mega2 ID file '%s' for writing.\n", ID_file);
         EXIT(FILE_WRITE_ERROR);
     }

@@ -381,8 +381,7 @@ void loop::ped_per_loci::run_loop(const char *dir, const char *fl_name, const ch
                     if (_loci_allele_limit && _tle->AlleleCnt > _loci_allele_limit) continue;
                     
                     // The markers for this individual...
-                    _allele1 = _tpe->Data[_locus].Alleles.Allele_1;
-                    _allele2 = _tpe->Data[_locus].Alleles.Allele_2;
+                    get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
 
                     inner();
                 }
@@ -431,8 +430,7 @@ void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const ch
                     _tpe = &(_tp->Entry[_per]);
                     //_tpe = &(_Top->Ped[_ped].Entry[_per]);
 
-                    _allele1 = _tpe->Data[_locus].Alleles.Allele_1;
-                    _allele2 = _tpe->Data[_locus].Alleles.Allele_2;
+                    get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
 
                     inner();
                 }

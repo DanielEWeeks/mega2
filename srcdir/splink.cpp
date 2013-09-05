@@ -402,16 +402,7 @@ void            create_SPLINK(linkage_ped_top **LPTop,
 {
 
 #define DEFAULT_SPLINK_ped_opt 2
-#ifdef ALLELE1
-#undef ALLELE1
-#endif
-#ifdef ALLELE2
-#undef ALLELE2
-#endif
-
-#define ALLELE1 tpe->EALLELE1(kk)
-#define ALLELE2 tpe->EALLELE2(kk)
-
+    int             a1, a2;
     char            *options;
     int             tr, nloop, *trp, num_affec= num_traits, i, m, kk,k;
     linkage_locus_top *LTop;
@@ -541,8 +532,8 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                     fprintf(fp, "%1d ", tpe->Sex);
                     /* write the affection status locus */
                     /* write_affection_data(fp, *trp, &(Top2->LocusTop->Locus[*trp]), tpe); */
-                    fprintf(fp, " %1d", aff_status_entry(tpe->ESTATUS(*trp),
-                                                         tpe->ECLASS(*trp),
+                    fprintf(fp, " %1d", aff_status_entry(tpe->Pheno[*trp].Affection.Status,
+                                                         tpe->Pheno[*trp].Affection.Class,
                                                          &(Top2->LocusTop->Locus[*trp])));
                     /* write the genotypes */
                     for (k = 0; k < NumChrLoci; k++) {
@@ -551,8 +542,9 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                         case AFFECTION:
                             break;
                         case NUMBERED:
+                            get_2alleles(tpe->Marker, kk, &a1, &a2);
                             fprintf(fp, " ");
-                            fprintf(fp, "%2d/%-2d", ALLELE1, ALLELE2);
+                            fprintf(fp, "%2d/%-2d", a1, a2);
                             break;
                         case QUANT:
                         case BINARY:
@@ -614,6 +606,7 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                         EXIT(FILE_WRITE_ERROR);
                     }
                     for (m = 0; m < Top2->PedCnt; m++) {
+                        int a1, a2;
                         for (i = 0; i < Top2->Ped[m].EntryCnt; i++)  {
                             tpe = &(Top2->Ped[m].Entry[i]);
                             fprintf(fp, fformat, Top2->Ped[m].Name);
@@ -623,8 +616,9 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                             fprintf(fp, "%1d ", tpe->Sex);
                             /*   write_affection_data(fp, 0,
                                  &(Top2->LocusTop->Locus[*trp]), tpe); */
-                            fprintf(fp, " %1d", tpe->ESTATUS(*trp));
-                            fprintf(fp, " %2d/%-2d\n", ALLELE1, ALLELE2);
+                            fprintf(fp, " %1d", tpe->Pheno[*trp].Affection.Status);
+                            get_2alleles(tpe->Marker, kk, &a1, &a2);
+                            fprintf(fp, " %2d/%-2d\n", a1, a2);
                         }
                     }
                     fclose(fp);
