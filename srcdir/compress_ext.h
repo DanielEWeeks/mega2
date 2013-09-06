@@ -29,6 +29,10 @@
 #ifndef COMPRESS_H
 #define COMPRESS_H
 
+#define MARKER_SCHEME_BITS   1
+#define MARKER_SCHEME_BYTE   2
+#define MARKER_SCHEME_PTR    3
+
 extern void *NOTYPED_ALLELES;
 
 extern int  marker_size(int size);

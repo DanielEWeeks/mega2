@@ -360,7 +360,7 @@ static void    init_globals(char *argv0)
 
     /* set the mega2 path */
     check_web_ver = 1;
-    MARKER_SCHEME = 3;
+    MARKER_SCHEME = MARKER_SCHEME_BITS;
     (void)getcwd(InputPath, (size_t) FILENAME_LENGTH);
     strcpy(mega2_path1, argv0);
     path_end=strrchr(mega2_path1, '/');
@@ -589,7 +589,6 @@ int             main(int argc, char **argv)
     init_globals(argv[0]);
     TimeStampWritten[0]=0; TimeStampWritten[1]=0;
     mega2_opts(argc, argv);
-    printf("MARKER_SCHEME = %d\n", MARKER_SCHEME);
     // Initialize these just in case we are not getting the data from a batch file...
     genetic_distance_index = -1;
     base_pair_position_index = -1;
@@ -632,6 +631,7 @@ int             main(int argc, char **argv)
        these files are created again (utils.c). */
 
     batchfile_init_Mega2BatchItems();
+    Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option = MARKER_SCHEME; // set on cmd line
 
     // Try to open the batch file if it's name is anything other than 'none'.
     // This signifies BATCH_FILE_INPUTMODE...
@@ -670,6 +670,12 @@ int             main(int argc, char **argv)
         genetic_distance_index = Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option;
         base_pair_position_index = Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option;
         genetic_distance_sex_type_map = Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option;
+        MARKER_SCHEME = Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option;
+        if (MARKER_SCHEME > MARKER_SCHEME_PTR || MARKER_SCHEME < MARKER_SCHEME_BITS) {
+            printf("MARKER_SCHEME is %d.  Allowed values are 1, 2 or 3\n", MARKER_SCHEME);
+            EXIT(OUTOF_BOUNDS_ERROR);
+        }
+//  printf("MARKER_SCHEME = %d\n", MARKER_SCHEME);
 
         InputMode=BATCH_FILE_INPUTMODE;
     } else {

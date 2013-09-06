@@ -34,6 +34,7 @@
 #include "typedefs.h"
 
 #include "linkage.h"
+#include "compress_ext.h"
 #include "error_messages_ext.h"
 #include "utils_ext.h"
 
@@ -54,19 +55,19 @@ extern allele_prop *Allele_Array[256];
 
 int marker_size(int size)
 {
-    if (MARKER_SCHEME == 1) {
+    if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         return size * sizeof(marker_pedrec_data);
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         return (size + 3) >>2;
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         return size * sizeof(marker_pedrec_char);
     }
 }
 
 void *marker_alloc(size_t size, int offset) {
-    if (MARKER_SCHEME == 1) {
+    if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         return ((void *) ((CALLOC(size, marker_pedrec_data)) - offset));
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         if (MARKER_SCHEME3_offset == -1) {
             MARKER_SCHEME3_offset = offset;
 //xx lazy
@@ -74,18 +75,18 @@ void *marker_alloc(size_t size, int offset) {
             MARKER_SCHEME3_Ralleles = CALLOC(size + offset, Alleles_str);
         }
         return ((void *) CALLOC((size+3)>>2, unsigned char));
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         return ((void *) ((CALLOC(size, marker_pedrec_char)) - offset));
     }
     return ((void *) 0);
 }
 
 void marker_free(void *marker, int offset) {
-    if (MARKER_SCHEME == 1) {
+    if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         free(((marker_pedrec_data *)marker) + offset);
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         free((marker_pedrec_char *)marker);
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         free(((marker_pedrec_char *)marker) + offset);
     }
 }
@@ -93,11 +94,11 @@ void marker_free(void *marker, int offset) {
 void get_2Ralleles(void *mp, int marker, const char **all1, const char **all2) {
     if (mp == NOTYPED_ALLELES) 
         *all2 = *all1 = REC_UNKNOWN;
-    else if (MARKER_SCHEME == 1) {
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
         *all1 = mpd[marker].RAlleles.Allele_1;
         *all2 = mpd[marker].RAlleles.Allele_2;
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         Alleles_str *allelep = &MARKER_SCHEME3_Ralleles[marker];
         int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
         int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
@@ -117,7 +118,7 @@ void get_2Ralleles(void *mp, int marker, const char **all1, const char **all2) {
         } else { //  3:
             *all2 = *all1 = allelep->Allele_2;
         }
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
         *all1 = Allele_Array[mpd[marker].Allele_1]->name;
         *all2 = Allele_Array[mpd[marker].Allele_2]->name;
@@ -134,11 +135,11 @@ void set_2Ralleles(void *mp, int marker, const char *all1, const char *all2) {
 #endif /* ORDER_HETEROZYGOTE */
     if (mp == NOTYPED_ALLELES) 
         ; // do nothing
-    else if (MARKER_SCHEME == 1) {
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
         mpd[marker].RAlleles.Allele_1 = all1;
         mpd[marker].RAlleles.Allele_2 = all2;
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         Alleles_str *allelep = &MARKER_SCHEME3_Ralleles[marker];
         int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
         int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
@@ -181,7 +182,7 @@ void set_2Ralleles(void *mp, int marker, const char *all1, const char *all2) {
                 the_field = 3;
         }
         mpd[get_byte] = the_bits | (the_field << MARKER_SCHEME3_shift[get_bits]);
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
         mpd[marker].Allele_1 = allele2allele_prop_idx(all1);
         mpd[marker].Allele_2 = allele2allele_prop_idx(all2);
@@ -194,18 +195,18 @@ int crunch_Rnotype(void **p, linkage_locus_top *LTop) {
     int cnt = 0;
 
     for (marker = LTop->PhenoCnt; marker < LTop->LocusCnt; marker++) {
-        if (MARKER_SCHEME == 1) {
+        if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
             marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
             if (mpd[marker].RAlleles.Allele_1 != REC_UNKNOWN || 
                 mpd[marker].RAlleles.Allele_2 != REC_UNKNOWN) cnt++;
-        } else if (MARKER_SCHEME == 3) {
+        } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
             int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
             int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
             unsigned char *mpd = (unsigned char *) mp;
             int the_byte = mpd[get_byte];
             int the_bits = (the_byte & MARKER_SCHEME3_mask[get_bits]) >> MARKER_SCHEME3_shift[get_bits];
             if (the_bits != 1) cnt++;
-        } else { // if (MARKER_SCHEME == 2)
+        } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
             marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
             // We know that "0" is loaded as the 0th allele.
             if (mpd[marker].Allele_1 || mpd[marker].Allele_2) cnt++;
@@ -221,12 +222,12 @@ int crunch_Rnotype(void **p, linkage_locus_top *LTop) {
 void copy_2Ralleles(void *to, void *from, int marker) {
     if (from == NOTYPED_ALLELES) 
         ; // do nothing
-    else if (MARKER_SCHEME == 1) {
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         marker_pedrec_data *frompd = (marker_pedrec_data *) from;
         marker_pedrec_data *tompd  = (marker_pedrec_data *) to;
         tompd[marker].RAlleles.Allele_1 = frompd[marker].RAlleles.Allele_1;
         tompd[marker].RAlleles.Allele_2 = frompd[marker].RAlleles.Allele_2;
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
         int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
         unsigned char *frompd = (unsigned char *) from;
@@ -236,7 +237,7 @@ void copy_2Ralleles(void *to, void *from, int marker) {
         int to_byte   = tompd[get_byte];
         int to_bits   = to_byte & ~MARKER_SCHEME3_mask[get_bits];
         tompd[get_byte] = to_bits | from_bits;
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *frompd = (marker_pedrec_char *) from;
         marker_pedrec_char *tompd  = (marker_pedrec_char *) to;
         tompd[marker].Allele_1 = frompd[marker].Allele_1;
@@ -250,7 +251,7 @@ void order_heterozygous_allele_raw(linkage_ped_top *Top)
 #ifdef ORDER_HETEROZYGOTE
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
-    if (MARKER_SCHEME != 3) return;
+    if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
 
     for (ped=0; ped < Top->PedCnt; ped++) {
         entrycount = (pedfile_type == POSTMAKEPED_PFT) ? Top->Ped[ped].EntryCnt :
@@ -299,6 +300,7 @@ void order_heterozygous_allele_raw(linkage_ped_top *Top)
 
     if (cnt > 0)
         msgvf("Fix raw alleles: %d/%d heterozygotes flipped to 1/2.\n", cnt, all);
+
 #endif /* ORDER_HETEROZYGOTE */
 }
 #else
@@ -307,7 +309,7 @@ void order_heterozygous_allele_raw(linkage_ped_top *Top)
 #ifdef ORDER_HETEROZYGOTE
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
-    if (MARKER_SCHEME != 3) return;
+    if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
 
     for (i = Top->LocusTop->PhenoCnt; i < Top->LocusTop->LocusCnt; i++) {
         Alleles_str *allelep = &MARKER_SCHEME3_Ralleles[i];
@@ -355,11 +357,11 @@ void order_heterozygous_allele_raw(linkage_ped_top *Top)
 void get_2alleles(void *mp, int marker, int *all1, int *all2) {
     if (mp == NOTYPED_ALLELES) 
         *all2 = *all1 = 0;
-    else if (MARKER_SCHEME == 1) {
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
         *all1 = mpd[marker].Alleles.Allele_1;
         *all2 = mpd[marker].Alleles.Allele_2;
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         Alleles_int *allelep = &MARKER_SCHEME3_alleles[marker];
         int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
         int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
@@ -380,7 +382,7 @@ void get_2alleles(void *mp, int marker, int *all1, int *all2) {
             *all2 = *all1 = allelep->Allele_2;
 
         }
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
         *all1 = mpd[marker].Allele_1;
         *all2 = mpd[marker].Allele_2;
@@ -397,11 +399,11 @@ void set_2alleles(void *mp, int marker, int all1, int all2) {
 #endif /* ORDER_HETEROZYGOTE */
     if (mp == NOTYPED_ALLELES) 
         ; // do nothing
-    else if (MARKER_SCHEME == 1) {
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
          mpd[marker].Alleles.Allele_1 = all1;
          mpd[marker].Alleles.Allele_2 = all2;
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         Alleles_int *allelep = &MARKER_SCHEME3_alleles[marker];
         int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
         int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
@@ -445,7 +447,7 @@ void set_2alleles(void *mp, int marker, int all1, int all2) {
 
         }
         mpd[get_byte] = the_bits | (the_field << MARKER_SCHEME3_shift[get_bits]);
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         /*
          * Checks to make sure that all1/2 fit int uchar have been made earlier:
          *  in canonical_allele() and in read_numbered_data();
@@ -462,18 +464,18 @@ int crunch_notype(void **p, linkage_locus_top *LTop) {
     int cnt = 0;
 
     for (marker = LTop->PhenoCnt; marker < LTop->LocusCnt; marker++) {
-        if (MARKER_SCHEME == 1) {
+        if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
             marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
             if (mpd[marker].Alleles.Allele_1 != 0 ||
                 mpd[marker].Alleles.Allele_2 != 0) cnt++; 
-        } else if (MARKER_SCHEME == 3) {
+        } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
             int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
             int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
             unsigned char *mpd = (unsigned char *) mp;
             int the_byte = mpd[get_byte];
             int the_bits = (the_byte & MARKER_SCHEME3_mask[get_bits]) >> MARKER_SCHEME3_shift[get_bits];
             if (the_bits != 1) cnt++;
-        } else { // if (MARKER_SCHEME == 2)
+        } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
             marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
             if (mpd[marker].Allele_1 || mpd[marker].Allele_2) cnt++;
         }
@@ -488,12 +490,12 @@ int crunch_notype(void **p, linkage_locus_top *LTop) {
 void copy_2alleles(void *to, void *from, int marker) {
     if (from == NOTYPED_ALLELES) 
         ; // do nothing
-    else if (MARKER_SCHEME == 1) {
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         marker_pedrec_data *frompd = (marker_pedrec_data *) from;
         marker_pedrec_data *tompd  = (marker_pedrec_data *) to;
         tompd[marker].Alleles.Allele_1 = frompd[marker].Alleles.Allele_1;
         tompd[marker].Alleles.Allele_2 = frompd[marker].Alleles.Allele_2;
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
         int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
         unsigned char *frompd = (unsigned char *) from;
@@ -503,7 +505,7 @@ void copy_2alleles(void *to, void *from, int marker) {
         int to_byte   = tompd[get_byte];
         int to_bits   = to_byte & ~MARKER_SCHEME3_mask[get_bits];
         tompd[get_byte] = to_bits | from_bits;
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *frompd = (marker_pedrec_char *) from;
         marker_pedrec_char *tompd  = (marker_pedrec_char *) to;
         tompd[marker].Allele_1 = frompd[marker].Allele_1;
@@ -514,12 +516,12 @@ void copy_2alleles(void *to, void *from, int marker) {
 void copy_2alleles(void *to, void *from, int tomarker, int frommarker) {
     if (from == NOTYPED_ALLELES) 
         ; // do nothing
-    else if (MARKER_SCHEME == 1) {
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         marker_pedrec_data *frompd = (marker_pedrec_data *) from;
         marker_pedrec_data *tompd  = (marker_pedrec_data *) to;
         tompd[tomarker].Alleles.Allele_1 = frompd[frommarker].Alleles.Allele_1;
         tompd[tomarker].Alleles.Allele_2 = frompd[frommarker].Alleles.Allele_2;
-    } else if (MARKER_SCHEME == 3) {
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         unsigned char *frompd = (unsigned char *) from;
         int get_from_byte = (frommarker - MARKER_SCHEME3_offset) >> 2;
         int get_from_bits = (frommarker - MARKER_SCHEME3_offset) & 3;
@@ -532,7 +534,7 @@ void copy_2alleles(void *to, void *from, int tomarker, int frommarker) {
         int to_byte   = tompd[get_to_byte];
         int to_bits   = to_byte & ~MARKER_SCHEME3_mask[get_to_bits];
         tompd[get_to_byte] = to_bits | from_bits;
-    } else { // if (MARKER_SCHEME == 2)
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *frompd = (marker_pedrec_char *) from;
         marker_pedrec_char *tompd  = (marker_pedrec_char *) to;
         tompd[tomarker].Allele_1 = frompd[frommarker].Allele_1;
@@ -546,7 +548,7 @@ void order_heterozygous_allele(linkage_ped_top *Top)
 #ifdef ORDER_HETEROZYGOTE
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
-    if (MARKER_SCHEME != 3) return;
+    if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
 
     for (ped=0; ped < Top->PedCnt; ped++) {
         entrycount = (pedfile_type == POSTMAKEPED_PFT) ? Top->Ped[ped].EntryCnt :
@@ -601,7 +603,7 @@ void order_heterozygous_allele(linkage_ped_top *Top)
 #ifdef ORDER_HETEROZYGOTE
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
-    if (MARKER_SCHEME != 3) return;
+    if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
 
     for (i = Top->LocusTop->PhenoCnt; i < Top->LocusTop->LocusCnt; i++) {
         Alleles_int *allelep = &MARKER_SCHEME3_alleles[i];

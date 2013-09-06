@@ -1596,7 +1596,7 @@ linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     num_ped_records = p;
 #ifdef SHOWSTATUS
     int fudge;
-    if (MARKER_SCHEME == 3)
+    if (MARKER_SCHEME == MARKER_SCHEME_BITS)
         fudge = LTop->LocusCnt * (sizeof (Alleles_int) + sizeof (Alleles_str));
     else
         fudge = 0;

@@ -39,6 +39,7 @@
 #include "batch_input.h"
 
 #include "batch_input_ext.h"
+#include "compress_ext.h"
 #include "error_messages_ext.h"
 #include "genetic_utils_ext.h"
 #include "reorder_loci_ext.h"
@@ -113,6 +114,8 @@ int batchTRAIT, batchAFFVALUE, batchERROR;
       48    Value_Genetic_Distance_SexTypeMap
       49    Value_Missing_Quant_On_Output
       50    Loop_Over_Chromosomes
+      51    Structure$PopDataPheno
+      52    Value_Marker_Compression
 */
 
 static char keywords[NUM_KEYS][KEYWORD_LEN] = {
@@ -167,7 +170,8 @@ static char keywords[NUM_KEYS][KEYWORD_LEN] = {
     "Value_Genetic_Distance_SexTypeMap",
     "Value_Missing_Quant_On_Output",
     "Loop_Over_Chromosomes",
-    "Structure.PopDataPheno"
+    "Structure.PopDataPheno",
+    "Value_Marker_Compression"
 };
 
 void batch_file_doc(FILE *batchfp)
@@ -357,6 +361,10 @@ void batchfile_init_Mega2BatchItems(void)
         case /* 34 */ Count_Genotypes:
         case /* 38 */ Count_HWE_genotypes:
             Mega2BatchItems[i].value.option=2;
+            Mega2BatchItems[i].value_type = INT;
+            break;
+        case /* 52 */ Value_Marker_Compression:
+            Mega2BatchItems[i].value.option=MARKER_SCHEME_BITS;
             Mega2BatchItems[i].value_type = INT;
             break;
         default:
@@ -1009,6 +1017,15 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                 }
                 else if (!strcmp(keyword, "Value_Genetic_Distance_SexTypeMap")) {
                     it = /* 48 */ Value_Genetic_Distance_SexTypeMap;
+                    if (READ_ITER1(it)) {
+                        mult_decl(it);
+                        continue;
+                    }
+                    Mega2BatchItems[it].item_read=1;
+                    sscanf(value, "%d", &Mega2BatchItems[it].value.option);
+                }
+                else if (!strcmp(keyword, "Value_Marker_Compression")) {
+                    it = /* 52 */ Value_Marker_Compression;
                     if (READ_ITER1(it)) {
                         mult_decl(it);
                         continue;

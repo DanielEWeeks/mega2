@@ -44,6 +44,7 @@
 #include "typedefs.h"
 
 #include "batch_input_ext.h"
+#include "compress_ext.h"
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
 #include "net_ext.h"
@@ -1952,13 +1953,13 @@ void mega2_opts(int argc, char **argv)
                         break;
 #endif
                     case '1':
-                        MARKER_SCHEME = 1;
+                        MARKER_SCHEME = MARKER_SCHEME_BITS;
                         break;
                     case '2':
-                        MARKER_SCHEME = 2;
+                        MARKER_SCHEME = MARKER_SCHEME_BYTE;
                         break;
                     case '3':
-                        MARKER_SCHEME = 3;
+                        MARKER_SCHEME = MARKER_SCHEME_PTR;
                         break;
                     case 'v': case 'V':
                         print_mega2_version();

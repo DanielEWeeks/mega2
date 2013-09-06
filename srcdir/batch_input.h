@@ -136,10 +136,11 @@ typedef struct _batch_item_ {
 #define Value_Missing_Quant_On_Output 49
 #define Loop_Over_Chromosomes 50
 #define Structure$PopDataPheno 51
+#define Value_Marker_Compression 52
 // Number of keywords which will appear in the batch file.
 // The above list is zero based, so this would be the last number + 1
 // You must update this number when you add an additional keyword.
-#define NUM_KEYS 52
+#define NUM_KEYS 53
 
 // THIS VARIABLE IS USED EVERYWHERE...
 // It is defined in batch_input.cpp or by the new object system for

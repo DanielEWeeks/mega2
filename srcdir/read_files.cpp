@@ -37,6 +37,7 @@
 #include "error_sim.h"
 
 #include "error_messages_ext.h"
+#include "compress_ext.h"
 #include "fcmap_ext.h"
 #include "grow_string_ext.h"
 #include "linkage_ext.h"
@@ -530,7 +531,7 @@ char *canonical_allele(const char *ra)
         int i1 = strtod(cra, &endptr);
         if (endptr == cra || (*endptr)) {
             // non integer;
-        } else if (i1 >= ALLELE_ARRAY && MARKER_SCHEME > 1) {
+        } else if (i1 >= ALLELE_ARRAY && MARKER_SCHEME != MARKER_SCHEME_PTR) {
             errorvf("This version of Mega2 only supports alleles with value less than %d.\n", ALLELE_ARRAY);
             EXIT(OUTOF_BOUNDS_ERROR);
         }
@@ -588,7 +589,7 @@ int read_numbered_data(FILE *filep, int locusnm,
         a1 = strtod(ra1, &endptr);
         if (endptr == ra1 || (*endptr)) {
             undef = 1; // non integer; can not happen here
-        } else if (a1 >= ALLELE_ARRAY && MARKER_SCHEME > 1) {
+        } else if (a1 >= ALLELE_ARRAY && MARKER_SCHEME != MARKER_SCHEME_PTR) {
             errorvf("This version of Mega2 only supports alleles with value less than %d.\n", ALLELE_ARRAY);
             EXIT(OUTOF_BOUNDS_ERROR);
         }
@@ -630,7 +631,7 @@ int read_numbered_data(FILE *filep, int locusnm,
         a2 = strtod(ra2, &endptr);
         if (endptr == ra2 || (*endptr)) {
             undef = 1; // non integer; can not happen here
-        } else if (a2 >= ALLELE_ARRAY && MARKER_SCHEME > 1) {
+        } else if (a2 >= ALLELE_ARRAY && MARKER_SCHEME != MARKER_SCHEME_PTR) {
             errorvf("This version of Mega2 only supports alleles with value less than %d.\n", ALLELE_ARRAY);
             EXIT(OUTOF_BOUNDS_ERROR);
         }

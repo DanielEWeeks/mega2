@@ -378,7 +378,8 @@ int             menu1(file_format *infl_type,
     int            out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12;
     int            plink_i = 14, plink_j = 15, plink_k = 16;
     int            plink_args_i = 17, plink_phe_i = 18, plink_bed_i = 19;
-    int            plinkf = 0, idx, choiceA[20]; /* idx should be 1+ largest <>_i value (above)*/
+    int            compress_i = 20;
+    int            plinkf = 0, idx, choiceA[21]; /* idx should be 1+ largest <>_i value (above)*/
     char           PLINKArgs[FILENAME_LENGTH] = "";
 
     /* specifying chromosome or extension overrides previous specifications
@@ -676,6 +677,10 @@ int             menu1(file_format *infl_type,
             printf("%2d) Switch to PLINK input menu (ped format)\n", idx);
             choiceA[idx++] = plink_k;
         }
+
+        printf("%2d) Set allele pair compression: 1, 2, or 3 (for 2 bits, 2 bytes, or 16 bytes): %d\n", idx,
+               MARKER_SCHEME);
+        choiceA[idx++] = compress_i;
 
 #ifdef USER_UNKNOWN
         printf("%2d) Unknown allele & affection value(annotated only): %s\n",
@@ -1018,6 +1023,20 @@ int             menu1(file_format *infl_type,
                 if (PLINK_args(PLINKArgs)) break;
                 printf("Enter     UPDATED PLINK parameters:  %s\n", PLINKArgs);
             }
+        } else if (choice_ == compress_i) {
+            int ans;
+            while (1) {
+                fflush(stdout);
+                draw_line();
+                printf("Please enter compression value 1, 2, or 3 (2 bits, 2 bytes, or 16 bytes) > ");
+                fcmap(stdin, "%d", &ans); newline;
+                if (ans > 3 || ans < 1) {
+                    printf("MARKER_SCHEME allowed values are 1, 2 or 3\n");
+                } else {
+                    MARKER_SCHEME = ans;
+                    break;
+                }
+            }
         } else {
             printf("Invalid option %s, select from options 0-%d.\n", cchoice, idx-1);
         }
@@ -1068,6 +1087,10 @@ int             menu1(file_format *infl_type,
 #endif
         strcpy(Mega2BatchItems[/* 43 */ PLINK_Args].value.name, PLINKArgs);
         if (plinkf) batchf(PLINK_Args);
+
+        Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option= MARKER_SCHEME;
+        batchf(Value_Marker_Compression);
+
     }
 
     if (plinkf) {
