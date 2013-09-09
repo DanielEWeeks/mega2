@@ -203,7 +203,7 @@ for scr in $scripts; do
             # uname -r prints '5.10' on Solaris 10.1, and '5.11' on Solaris 11.1
             v=`uname -v`
             x=`uname -i`
-            pgm=mega2_${VERSION}_solaris.${v}_${x} // e.g. mega2_v4.5.9_solaris.11.1_i86pc
+            pgm=mega2_${VERSION}_solaris.${v}_${x} # e.g. mega2_v4.5.9_solaris.11.1_i86pc
             MAKE=gmake
             CC=gcc
         elif [[ $OSTYPE == cygwin ]]; then
