@@ -541,17 +541,30 @@ Enhancements in Mega2 version 4.6.0
 \end_layout
 
 \begin_layout Itemize
-Mega2 now uses a compressed representation for GWAS alleles.
- For example, a GWAS study of 895103 markers on 3122 cohorts requires only
- 1 Gigabyte of memory.
+Mega2 is now much more memory-efficient.
+ Mega2 now uses a compressed representation for storing two-allele markers,
+ such as those typically encountered in a genome-wide association study
+ (GWAS).
+ For example, a GWAS study of 895,103 two-allele markers on 3,122 individuals
+ requires only 1 Gigabyte of memory.
+ For details, see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Input-menu-item:"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
-Mega2 also provides a compressed representation for micro-satellite alleles.
+Mega2 also provides a compressed representation for microsatellite markers,
+ allowing up to 256 alleles.
 \end_layout
 
 \begin_layout Itemize
-Untyped family members do not require space for their allele values.
+Completely untyped family members do not require space for their allele
+ values.
 \end_layout
 
 \begin_layout Subsection
@@ -1097,7 +1110,11 @@ Assuming that the
 
 \begin_layout LyX-Code
 14) Set allele pair compression: 1, 2, or 3 (for 2 bits, 2 bytes, or 16
- bytes): 1 Select from options 0-14 > 
+ bytes): 1 
+\end_layout
+
+\begin_layout LyX-Code
+Select from options 0-14 > 
 \end_layout
 
 \begin_layout Standard
@@ -10486,7 +10503,14 @@ This is read in as a string value and compared against affection phenotypes
 \end_layout
 
 \begin_layout Subsection
-Input menu item: Compression
+Input menu item: Compression 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Input-menu-item:"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -10502,13 +10526,29 @@ Please enter compression value 1, 2, or 3 (2 bits, 2 bytes, or 16 bytes)
 This is an integer value: 1, 2, or 3.
  The default value is 1.
  In this case, each pair of alleles is represented internally with two bits,
- the same as the PLINK bed representation.
- This technique does not provide enough space to represent micro-satellite
- alleles or half typed alleles.
+ the same as the PLINK compressed binary 
+\begin_inset Quotes eld
+\end_inset
+
+bed
+\begin_inset Quotes erd
+\end_inset
+
+ representation.
+ This technique does not provide enough space to represent microsatellite
+ markers or half-typed genotypes (where one allele is unknown).
  For these data sets, the compression value of 2 should be adequate.
- It provides for up to 256 micro-satellite values.
- The compression value of 3 is left for historical comparisons it should
+ It provides for up to 256 alleles.
+ The compression value of 3 is left for historical comparisons - it should
  never be necessary.
+\end_layout
+
+\begin_layout Standard
+Note that in the 2 byte mode, if the input data are in Linkage format and
+ all allele labels are integers, those integers will be used as is, which
+ means that an allele with the label '257' would not work.
+ However, if the input data are in Annotated format, then allele labels
+ are treated as strings, and will be recoded to sequential integers.
 \end_layout
 
 \begin_layout Subsection
@@ -18813,12 +18853,12 @@ Value_Marker_Compression
 This is an integer value: 1, 2, or 3.
  The default value is 1.
  In this case, each pair of alleles is represented internally with two bits,
- the same as the PLINK bed representation.
- This technique does not provide enough space to represent micro-satellite
- alleles or half typed alleles.
+ the same as the PLINK compressed binary 'bed' representation.
+ This technique does not provide enough space to represent microsatellite
+ markers or half-typed genotypes.
  For these data sets, the compression value of 2 should be adequate.
- It provides for up to 256 micro-satellite values.
- The compression value of 3 is left for historical comparisons it should
+ It provides for up to 256 alleles.
+ The compression value of 3 is left for historical comparisons - it should
  never be necessary.
 \end_layout
 

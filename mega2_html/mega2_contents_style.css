@@ -1,0 +1,208 @@
+body {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	font-size : small;
+	background-color: White;	
+
+} 
+
+a {
+	color: #666699;
+	text-decoration: none
+}
+
+a:hover {
+	color: #CC00CC;
+	text-decoration: underline
+}
+
+hr{
+	height: 1px;
+	margin-left : 40px;
+
+}
+
+img {
+	border : 0px none;
+}
+
+ul2 {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	margin-left : 10px;
+}
+
+UL, ul {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	margin-left : 3px;
+}
+
+OL, ol {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	margin-left : 3px;
+}
+
+li {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+}
+
+P, p {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	color : Black;
+	margin-left : 3px;
+	margin-right : 3px;
+}
+
+P.purple {
+	color:#336699
+
+}
+
+P.purpbold {
+	color: #336699;
+	font-weight:bold
+
+}
+
+h1
+{
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	font-size : large;
+	font-weight : bold;
+	color : Black;
+	text-align : center;
+	width :  90%;
+	border-top-width : 1px;
+	border-bottom-width : 1px;
+	border : 1px solid Black;
+	border-left-width : 0px;
+	border-right-width : 0px;
+	padding : 5px;
+	margin-left : 4px;
+
+}
+
+h2
+{
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	font-size : larger;
+	font-weight : bold;
+	color : White;
+	padding : 8px;
+	width : 90%;
+	background : #336699;
+	border : 1px solid White;
+	margin-left : 4px;
+	margin-top : 30px;
+}
+
+h3,h4,h5,h6
+{
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	color : Black;
+	margin-left : 6px;
+}
+
+
+th {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	background-color : #CCCCFF;
+}
+
+td {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+}
+
+tt  {
+        color: #CC0000;
+}
+
+pre {
+	font-family : monospace, "Courier New", Courier ;
+	font-size : small;
+	color: #CC0000;
+	margin-left : 10px;
+
+}
+.command {
+	font-family : monospace, "Courier New", Courier ;
+	font-weight: bold;
+	font-size : medium;
+	color: #CC0000;
+	margin-left : 100px;
+
+}
+
+.stdout{
+	font-family : monospace, "Courier New", Courier ;
+	font-weight: bold;
+	font-size : medium;
+	color: Navy;
+	margin-left : 100px;
+}
+
+code {
+	font-family : monospace, "Courier New", Courier ;
+	font-weight: bold;
+	color: #CC0000;
+	font-size : medium;
+}
+
+samp {
+	font-family : monospace, "Courier New", Courier ;
+	font-weight: bold;
+	color: Black;
+	font-size : medium;
+}
+
+.hint {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	border : 1px solid Black;
+	padding : 8px;
+	width : 70%;
+	background : #CCFFFF;
+	color : Black;
+	margin-left : 100px;	
+}
+
+.sourcecode {
+	font-family : monospace, "Courier New", Courier ;
+	border : 1px solid Black;
+	padding : 10px;
+	width : 70%;
+	background : #FFFFCC;
+	color : Black;
+	margin-left : 100px;
+}
+
+.warning {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	font-weight : bold;
+	color : White;
+	background : #CC0000;
+	border : 1px solid Black;
+	padding : 8px;
+	width : 70%;
+	margin-left : 100px;
+}
+
+.date {
+	font-family : sans-serif, Palatino, Verdana, Geneva, Arial, Helvetica;
+	font-size: smaller;
+	color: White;
+	background-color: Black;
+	text-align: right;
+	padding: 3px;
+	border : 1px solid White;
+	width : 100%;
+	margin-left : 0px;
+	margin-right : 0px;
+}
+
+.navbar {
+	text-align : center;
+	text-decoration : none;
+	border : 0px none;
+	color : White;
+}
+
+FONT.update {color:red}
+FONT.new {color:red}

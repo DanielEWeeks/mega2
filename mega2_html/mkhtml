@@ -1,0 +1,17 @@
+
+# when in doubt "run elyxer.py" --help for options
+
+elyxer.py --css Mega2_Documentation.css Mega2_Documentation.lyx mega2_documentation.html
+
+elyxer.py --toc --toctarget mega2_documentation.html --css toc.css --target contents Mega2_Documentation.lyx mega2_toc.html 
+
+## what dbVor does is:
+##
+## elyxer.py --numberfoot --marginfoot --embedcss dbVOR.css Mega2_Documentation.lyx mega2_documentation.html
+
+## elyxer.py --tocfor dbVORtutorial.html --css docs/toc.css --target contents Mega2_Documentation.lyx mega2_toc.html
+
+sed -e "s/>Subsubsection /> /" -e "s/>Subsection /> /" -e "s/>Section /> /" <mega2_toc.html >mega2_tock.html
+mv mega2_tock.html mega2_toc.html
+
+## and span.unknown and div.tocindent css have display:none
