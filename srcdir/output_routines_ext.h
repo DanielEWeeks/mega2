@@ -29,9 +29,9 @@
 #ifndef OUTPUT_ROUTINES_EXT_H
 #define OUTPUT_ROUTINES_EXT_H
 
+extern void create_formats_no_space(char *fformat, char *pformat);
 extern void create_formats(const int famwid, const int perwid,
 			   char *fformat, char *pformat);
-
 
 extern void field_widths(linkage_ped_top *TTop, linkage_locus_top *LTop,
                          int *FidWidth, int *PidWidth, int *AlleleWidth,

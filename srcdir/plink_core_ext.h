@@ -82,12 +82,15 @@ public:
     //void sub_prog_name(int sub_opt, char *subprog);
     //void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
     //void sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis);
-    void create_output_file(linkage_ped_top *LPedTreeTop,
+    virtual void create_output_file(linkage_ped_top *LPedTreeTop,
                             analysis_type *analysis,
                             char *file_names[],
                             int untyped_ped_opt,
                             int *numchr,
                             linkage_ped_top **Top2) = 0;
+    virtual void save_pheno_file(linkage_ped_top *Top,
+                                  const int pwid,
+                                  const int fwid);
     virtual void save_pedsix_file(linkage_ped_top *Top,
                                   const int pwid,
                                   const int fwid) = 0;

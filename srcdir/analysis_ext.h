@@ -36,6 +36,7 @@
 #include "write_pangaea_ext.h"
 #include "write_beagle_ext.h"
 #include "write_structure_ext.h"
+#include "write_pseq_ext.h"
 
 extern void  prog_name_to_num(char *prog_name, analysis_type *analysis);
 
@@ -91,6 +92,7 @@ extern CLASS_PANGAEA            *PANGAEA;
 extern CLASS_BEAGLE             *BEAGLE;
 extern CLASS_EIGENSTRAT         *EIGENSTRAT;
 extern CLASS_STRUCTURE          *STRUCTURE;
+extern CLASS_PSEQ               *TO_PSEQ;
 
 /*
 extern CLASS_XXXXX              *XXXXX;

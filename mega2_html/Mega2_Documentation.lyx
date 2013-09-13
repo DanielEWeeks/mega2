@@ -10967,7 +10967,7 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-20 Allegro format                  
+20 Allegro format                  40 PSEQ format
 \end_layout
 
 \begin_layout LyX-Code
@@ -10975,7 +10975,7 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-Select an option between 1-39 > 
+Select an option between 1-40 > 
 \end_layout
 
 \begin_layout LyX-Code
@@ -13151,6 +13151,72 @@ status collapsed
 \begin_layout Plain Layout
 
 http://pritch.bsd.uchicago.edu/structure.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Convert to PSEQ (PLINK/SEQ) format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Analysis-PSEQ-option"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This Analysis Menu option creates files for analysis with PLINK/SEQ.
+ For further information please see the section concerning detailed information
+ on PLINK-SEQ Analysis 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Detailed-info-Structure"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Name: Structure
+\end_layout
+
+\begin_layout Standard
+Web: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://atgu.mgh.harvard.edu/plinkseq/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Primary references:
+\end_layout
+
+\begin_layout Standard
+TBD
+\end_layout
+
+\begin_layout Standard
+Documentation: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://atgu.mgh.harvard.edu/plinkseq/pseq.shtml
 \end_layout
 
 \end_inset
@@ -17781,6 +17847,10 @@ Eigenstrat
 
 \begin_layout Enumerate
 Structure
+\end_layout
+
+\begin_layout Enumerate
+PSEQ
 \end_layout
 
 \begin_layout Paragraph
@@ -25273,14 +25343,6 @@ The following chromosome specific files are created for Structure:
 \end_layout
 
 \begin_layout LyX-Code
-STRUCTURE shell file:       structure.all.sh
-\end_layout
-
-\begin_layout LyX-Code
-
-\end_layout
-
-\begin_layout LyX-Code
 STRUCTURE mainparams:       structure.01.mainparams
 \end_layout
 
@@ -25367,6 +25429,57 @@ reference "par:Structure.PopDataPheno"
 \end_inset
 
 ).
+\end_layout
+
+\begin_layout Subsection
+Convert to PSEQ (PLINK/SEQ) format
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Detailed-info-PSEQ"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The following files are created for PSEQ:
+\end_layout
+
+\begin_layout LyX-Code
+PSEQ phenotype file:        pseq.phe
+\end_layout
+
+\begin_layout LyX-Code
+PLINK map file:             pseq.all.bim
+\end_layout
+
+\begin_layout LyX-Code
+PLINK pedigree file:        pseq.all.fam
+\end_layout
+
+\begin_layout LyX-Code
+PLINK binary file snp:      pseq.all.bed
+\end_layout
+
+\begin_layout LyX-Code
+PSEQ shell file:            pseq.all.sh
+\end_layout
+
+\begin_layout Standard
+PLINK/SEQ is a program and library for working with human genetic variation
+ data.
+ It is independent of, but complementary to the PLINK package.
+\end_layout
+
+\begin_layout Standard
+A shell script is produced that allows the data files to be loaded into
+ a PLINK/SEQ database.
+ The data is converted to PLINK SNP Major Binary format (e.g., .bed, .bim, .fam
+ files) and loaded with the appropriate PLINK/SEQ commands.
+ If additional phenotypes are present in the input data (since the .fam file
+ can only hold one phenotype), a phenotype file is created, and also processed
+ by the shell script that loads the data.
 \end_layout
 
 \begin_layout Section

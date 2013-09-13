@@ -4224,7 +4224,7 @@ int x_linked_check(int chromocnt, int *chromosomes, analysis_type analysis)
 /*   int i, choice; */
     int i;
     int autosomal_chr=0, sex_chr=0;
-    int sex_linked;
+    int sex_linked = 0;
 
     // Look for one sex chromosome...
     for (i=0; i < chromocnt; i++) {

@@ -25,29 +25,21 @@
 
 */
 
-#ifndef WRITE_PLINK_FILES_EXT_H
-#define WRITE_PLINK_FILES_EXT_H
+#ifndef WRITE_PSEQ_FILES_EXT_H
+#define WRITE_PSEQ_FILES_EXT_H
 
-#include "plink_core_ext.h"
-
-// See plink_core_ext.h for the corresponding numbers associated with these strings...
-#define PLINK_SUB_OPTION_LGEN                      "lgen"
-#define PLINK_SUB_OPTION_SNP_MAJOR                 "SNP major binary"
-#define PLINK_SUB_OPTION_INDIVIDUAL_MAJOR          "Individual major binary"
-#define PLINK_SUB_OPTION_PED                       "ped"
+#include "write_plink_ext.h"
 
 
-class CLASS_PLINK: public CLASS_PLINK_CORE {
+class CLASS_PSEQ: public CLASS_PLINK {
 public:
-    CLASS_PLINK() : CLASS_PLINK_CORE() {
-        _name = "PLINK";
-	strcpy(file_name_stem, "plink");
+    CLASS_PSEQ() : CLASS_PLINK() {
+        _name = "PSEQ";
+	strcpy(file_name_stem, "pseq");
     }
-   ~CLASS_PLINK() {}
+   ~CLASS_PSEQ() {}
 
-    void sub_prog_name(int sub_opt, char *subprog);
-    void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
-    void sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis);
+    bool has_sub_options()    { return false; }
 
     virtual void create_output_file(linkage_ped_top *LPedTreeTop,
 			    analysis_type *analysis,
@@ -55,20 +47,13 @@ public:
 			    int untyped_ped_opt,
 			    int *numchr,
                             linkage_ped_top **Top2);
-    void save_pedsix_file(linkage_ped_top *Top,
-			   const int pwid,
-			   const int fwid);
-    void save_ped_file(linkage_ped_top *Top,
-		       const int pwid,
-		       const int fwid,
-		       const int mwid);
-    void save_bed_file(const char *bedfl_name,
-		       linkage_ped_top *Top,
-		       const int binary_mode_flag);
-    virtual void create_sh_file(linkage_ped_top *Top,
+
+    void save_pheno_file(linkage_ped_top *Top,
+			 const int pwid,
+			 const int fwid);
+    void create_sh_file(linkage_ped_top *Top,
 			char *file_names[],
 			const int numchr);
-    void file_names_w_stem(char **file_names, char *num, const char *stem);
 };
 
-#endif /* WRITE_PLINK_FILES_EXT_H */
+#endif /* WRITE_PSEQ_FILES_EXT_H */

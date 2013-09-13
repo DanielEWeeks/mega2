@@ -611,10 +611,22 @@ void write_nuc_ped_key_file(char *ID_file,
 }
 
 
-/*------------- This part taken from  mendel files
-  made into a separate function,
-  should be called after field_widths are set
-  ----------------------------------------------------*/
+//
+// This part taken from  mendel files made into a separate function,
+// should be called after field_widths are set
+//
+// The routine create_formats() was split up into two parts so that things like
+// "FID_IID" can be generated. 
+void create_formats_no_space(char *fformat, char *pformat)
+{
+    if (fformat != NULL)
+        strcpy(fformat, (OrigIds[1] == 2 || OrigIds[1] == 4 ? "%s" : "%d"));
+
+    if (pformat != NULL)
+        strcpy(pformat, (OrigIds[0] >= 1 && OrigIds[0] <= 4 ? "%s" : "%d"));
+}
+
+// with a trailing space. This was the original...
 void create_formats(const int famwid, const int perwid, char *fformat, char *pformat)
 {
     if (fformat != NULL) {
@@ -635,5 +647,3 @@ void create_formats(const int famwid, const int perwid, char *fformat, char *pfo
         }
     }
 }
-
-/*------------------------------------------------*/

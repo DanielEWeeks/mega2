@@ -55,9 +55,9 @@ public:
     int  _fwid;
     int  _pwid;
     int  _mwid;
-    char _fformat[6];
-    char _pformat[6];
-    char _mformat[6];
+    char _fformat[100];
+    char _pformat[100];
+    char _mformat[100];
 
     int _trait;
 
@@ -88,6 +88,7 @@ public:
         }
     }
     virtual ~entry() {}
+    void load_formats_no_space(const int mwid);
     void load_formats(const int fwid, const int pwid, const int mwid);
 
     void pr_id();

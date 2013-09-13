@@ -30,6 +30,18 @@
 #include "user_input_ext.h"
 #include "entry.h"
 
+void entry::load_formats_no_space(const int mwid)
+{
+    create_formats_no_space(_fformat, _pformat);
+    _fwid = -1;
+    _pwid = -1;
+
+    if (mwid != -1) {
+        sprintf(_mformat, "%%%ds", mwid);
+        _mwid = mwid;
+    }
+}
+
 void entry::load_formats(const int fwid, const int pwid, const int mwid)
 {
     create_formats(fwid, pwid, _fformat, _pformat);
@@ -40,7 +52,6 @@ void entry::load_formats(const int fwid, const int pwid, const int mwid)
         sprintf(_mformat, "%%%ds", mwid);
         _mwid = mwid;
     }
-
 }
 
 void entry::pr_id()
