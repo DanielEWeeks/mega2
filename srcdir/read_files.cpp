@@ -1792,7 +1792,7 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
 {
     FILE           *pfilep, *lfilep;
     linkage_ped_top *Top;
-    int  line_count, ped_count;
+    int  line_count, ped_count, linkagecols;
     char *pedfile = mega2_input_files[0];
     file_format locus_file_format;
     linkage_locus_top *LTop;
@@ -1818,6 +1818,7 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
     // Returns the count of distinct pedigrees if this is a validly formatted premakeped
     // file, otherwise 0. Only looks at the first 5 colums of the file...
     ped_count=check_pre_makeped(pfilep, &line_count);
+    linkagecols = ped_count > 0 ? 5 : 9;
     // Since check_pre_makeped read the file, we need to rewind to the beginning.
     rewind(pfilep);
 
@@ -1830,6 +1831,13 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
         // Process the annotated file...
         
         LTop = read_marker_data(lfilep, -1,-1);
+        int locus1;
+        col2locus = CALLOC((size_t) linkagecols + LTop->NumPedigreeCols, int);
+        for (locus1 = 0; locus1 < LTop->LocusCnt; locus1++) {
+            linkage_locus_rec *Locus = &LTop->Locus[locus1];
+            col2locus[Locus->col_num + linkagecols] = locus1 + 1;
+        }
+
         if (mapfl_name != NULL) {
             EXLTop = read_map_file(mapfl_name, LTop);
         }
@@ -1845,7 +1853,7 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
     } else {
         // Process what we hope to be linkage file format...
         
-        LTop = read_linkage_locus_file(lfilep, ped_count > 0 ? 5 : 9, &col2locus);
+        LTop = read_linkage_locus_file(lfilep, linkagecols, &col2locus);
         if (mapfl_name != NULL) {
             EXLTop = read_map_file(mapfl_name, LTop);
         }

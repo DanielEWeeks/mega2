@@ -1325,6 +1325,8 @@ linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char *
           num_markers * sizeof(marker_rec) / 1024 / 1024,
           num_markers,  sizeof(marker_rec));
 #endif
+
+    LTop->NumPedigreeCols = 0;
     for (i=0, m=0, p=0; i < all_loci; i++) {
         int idx;
         marker_rec *Marker;
@@ -1340,13 +1342,15 @@ linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char *
             strcpy(Locus->Name, names[i]);
             Locus->Class = MARKER;
             HasMarkers=1;
-            LTop->NumPedigreeCols += 2;
+            Locus->col_num = LTop->NumPedigreeCols;
             Locus->AlleleCnt=0;
 
             Marker = &(LTop->Marker[idx]);
             Locus->Marker = Marker;
             Locus->Pheno  = 0;
             Marker->Name = Locus->Name;
+            Marker->col_num = LTop->NumPedigreeCols;
+            LTop->NumPedigreeCols += 2;
             /*    clear_llocusrec(Locus, TYPE_UNSET); */
             switch(types[i]) {
             case 'M':
@@ -1380,6 +1384,9 @@ linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char *
             Locus->Marker = 0;
             Locus->Pheno  = Pheno;
             Pheno->Name = Locus->Name;
+            Locus->col_num = LTop->NumPedigreeCols;
+            Pheno->col_num = LTop->NumPedigreeCols;
+
             switch(types[i]) {
             case 'A':
             case 'L':
@@ -2282,14 +2289,20 @@ linkage_ped_top  *create_full_marker_data(
 
     pheno_list=CALLOC((size_t) LTop->PhenoCnt, pheno_type);
     for (i=0; i < LTop->PhenoCnt; i++) {
-        pheno_list[i].first_allele = NULL;
-        pheno_list[i].estimate_frequencies = 1;
+        pheno_type *pheno_listi = &(pheno_list[i]);
+        pheno_listi->first_allele = NULL;
+        pheno_listi->estimate_frequencies = 1;
+        pheno_listi->first_allele = CALLOC((size_t) 1, allele_list_type);
+        pheno_listi->first_allele->allele_freq.freq = 0.5;
+        pheno_listi->first_allele->next = CALLOC((size_t) 1, allele_list_type);
+        pheno_listi->first_allele->next->allele_freq.freq = 0.5;
+        pheno_listi->first_allele->next->next = NULL;
         if (LTop->Locus[i].Type == QUANT) {
-            pheno_list[i].num_classes = 1;
-            pheno_list[i].num_alleles = 2;
+            pheno_listi->num_classes = 1;
+            pheno_listi->num_alleles = 2;
         } else if (LTop->Locus[i].Type == AFFECTION) {
-            pheno_list[i].num_classes = 0;
-            pheno_list[i].num_alleles = 2;
+            pheno_listi->num_classes = 0;
+            pheno_listi->num_alleles = 2;
         }
     }
 
