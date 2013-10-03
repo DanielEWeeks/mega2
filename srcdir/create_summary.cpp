@@ -1147,7 +1147,7 @@ static void  write_Y_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
     fprintf(filep, " %d are fully typed.\n",
             ar->MalesGenotyped);
 
-    if (ar->Hetz) {
+    if (ar->Hetz != 0.0) {
         fprintf(filep, "Heterozygous Males   Frequency  Count\n");
         fprintf(filep, "             Observed     %5.4f %7d\n",
                 (double) (ar->Hetz) / (ar->MalesGenotyped),

@@ -75,7 +75,6 @@ void CLASS_PLINK_CORE::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[8], numchr);
 }
 
-
 static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
                                 const int pwid, const int fwid, const int mwid)
 {
@@ -142,6 +141,13 @@ static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
     sp->iterate();
 
     delete sp;
+}
+
+void CLASS_PLINK_CORE::save_pheno_file(linkage_ped_top *Top,
+				       const int pwid,
+				       const int fwid)
+{
+  save_PLINK_pheno(::file_names[2], Top, pwid, fwid);
 }
 
 // MAP_MISSING is used for an unknown or missing map value...
@@ -421,7 +427,7 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
             change_output_chr(file_names[0], global_chromo_entries[0]);
 
     if (num_traits > 1)
-        save_PLINK_pheno(file_names[2], Top, pwid, fwid);
+        ((plink_analysis_type)*analysis)->save_pheno_file(Top, pwid, fwid);
 
     // not annotated, genetic distance in Morgans, include comments...
     // generate a .bim file if output_format != 0 otherwise a .map file if output_format == 0

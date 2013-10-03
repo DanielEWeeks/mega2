@@ -86,6 +86,7 @@ CLASS_PANGAEA            *PANGAEA = new CLASS_PANGAEA();
 CLASS_BEAGLE             *BEAGLE = new CLASS_BEAGLE();
 CLASS_EIGENSTRAT         *EIGENSTRAT = new CLASS_EIGENSTRAT();
 CLASS_STRUCTURE          *STRUCTURE = new CLASS_STRUCTURE();
+CLASS_PSEQ               *TO_PSEQ = new CLASS_PSEQ();
 
 /*
 extern CLASS_XXXXX              *XXXXX = new CLASS_XXXXX();
@@ -130,7 +131,8 @@ analysis_types analysis_list[] = {
     { "PANGAEA MORGAN format",      PANGAEA },
     { "Beagle format",              BEAGLE },
     { "Eigenstrat format",          EIGENSTRAT },
-    { "Structure format",           STRUCTURE }
+    { "Structure format",           STRUCTURE },
+    { "PSEQ format",                TO_PSEQ }
 };
 
 int count_analysis_list = sizeof(analysis_list) / sizeof (analysis_types);
@@ -308,6 +310,10 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
 
         case 'k':
             *analysis = TO_PLINK; // 31. PLINK 
+            break;
+
+        case 'q':
+            *analysis = TO_PSEQ; // 40. PSEQ
             break;
 
         case 'a':

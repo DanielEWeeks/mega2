@@ -91,7 +91,7 @@ void CLASS_EIGENSTRAT::sub_prog_name(int sub_opt, char *subprog) {
 
 void CLASS_EIGENSTRAT::interactive_sub_prog_name_to_sub_option(analysis_type *analysis)
 {
-    int selection;
+    int selection = 0;
     char select[10];
     
     if (batchANALYSIS) {

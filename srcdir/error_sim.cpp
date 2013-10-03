@@ -332,7 +332,7 @@ genotype sw2_error_model(genotype gen, int number,
     double select1;
     double select2;
     double total_prob, homo_limits[2], hetero_limits[3];
-    int index, num_error_genos, total_genos = NUMGENOS(Loc.AlleleCnt);
+    int index, num_error_genos = 0, total_genos = NUMGENOS(Loc.AlleleCnt);
 
     genotype new_gen;
 
