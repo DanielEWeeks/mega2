@@ -678,8 +678,8 @@ int             menu1(file_format *infl_type,
             choiceA[idx++] = plink_k;
         }
 
-        printf("%2d) Set allele pair compression: 1, 2, or 3 (for 2 bits, 2 bytes, or 16 bytes): %d\n", idx,
-               MARKER_SCHEME);
+        printf("%2d) Genotype compression:                   %s\n", idx,
+               MARKER_SCHEME == 1 ? "2 bits" : (MARKER_SCHEME == 2 ? "2 bytes" : (MARKER_SCHEME == 3 ? "16 bytes" : "???")) );
         choiceA[idx++] = compress_i;
 
 #ifdef USER_UNKNOWN

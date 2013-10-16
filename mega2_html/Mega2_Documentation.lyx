@@ -537,6 +537,34 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
+Enhancements in Mega2 version 4.6.1
+\end_layout
+
+\begin_layout Itemize
+Mega2 can now produce PLINK/SEQ format files and a script for loading these
+ files into PLINK/SEQ.
+\end_layout
+
+\begin_layout Itemize
+Bug fix: Mega2 4.6.0 had broken support for Linkage format input using a 
+\begin_inset Quotes eld
+\end_inset
+
+Names file
+\begin_inset Quotes erd
+\end_inset
+
+ (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Names-file"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsection
 Enhancements in Mega2 version 4.6.0
 \end_layout
 
@@ -1045,7 +1073,7 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.0 Traditional input menu:
+              Mega2 4.6.1 Traditional input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1109,8 +1137,7 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-14) Set allele pair compression: 1, 2, or 3 (for 2 bits, 2 bytes, or 16
- bytes): 1 
+14) Genotype compression:                   2 bits
 \end_layout
 
 \begin_layout LyX-Code
@@ -1316,12 +1343,12 @@ Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.6.0 should be: 
+ For example, the web site citation for version 4.6.1 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2013) Mega2 (Version 4.6.0).
+ Weeks DE (2013) Mega2 (Version 4.6.1).
  
 \begin_inset Flex URL
 status collapsed
@@ -1483,7 +1510,7 @@ name "sec:Installation"
 \begin_layout Standard
 \noindent
 \align center
-INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.6.0 AND HIGHER 
+INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.6.1 AND HIGHER 
 \end_layout
 
 \begin_layout Standard
@@ -1522,7 +1549,7 @@ http://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.6.0 
+The latest version is 4.6.1 
 \end_layout
 
 \begin_layout Enumerate
@@ -1531,7 +1558,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.6.0_src.tar.gz
+mega2_v4.6.1_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -1542,7 +1569,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.6.0_src.tar.gz 
+gunzip mega2_v4.6.1_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -1552,7 +1579,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.6.0_src.tar 
+tar xvf mega2_v4.6.1_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -1560,7 +1587,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.6.0_src.tar.gz 
+tar xzvf mega2_v4.6.1_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -1573,7 +1600,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.6.0_src
+mega2_v4.6.1_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -1752,7 +1779,7 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.6.0_src.tar.gz bundle following
+If you downloaded and unpacked the mega2_v4.6.1_src.tar.gz bundle following
  the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1760,7 +1787,7 @@ reference "sub:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.6.0_src containing the following
+), you should see a directory named mega2_v4.6.1_src containing the following
  directories (in bold) or files listed in alphabetical order:
 \end_layout
 
@@ -2279,7 +2306,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.6.0_src in above step), type the command:
+ mega2_v4.6.1_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2330,7 +2357,7 @@ name "sub:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.6.0_src.tar.gz package also includes a source code folder "srcdir"
+The mega2_v4.6.1_src.tar.gz package also includes a source code folder "srcdir"
  containing C source files, a Makefile, and several OS-specific Makedefs
  files that define compilation flags that govern locations of standard C
  libraries, and other OS-specific behavior.
@@ -2345,7 +2372,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.6.0_src folder, type 
+From within the mega2_v4.6.1_src folder, type 
 \end_layout
 
 \begin_deeper
@@ -2626,7 +2653,7 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.6.0_src folder contains
+The sub-folder called mega2_html/ within the mega2_v4.6.1_src folder contains
  documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
@@ -3222,7 +3249,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.6.0_src.tar.gz.
+The Mega2 distribution package is named mega2_v4.6.1_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -3233,7 +3260,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.6.0_src.tar
+mega2_v4.6.1_src.tar
 \end_layout
 
 \end_deeper
@@ -3255,7 +3282,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.6.0_src.tar.tar
+mega2_v4.6.1_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -3263,7 +3290,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.6.0_src.tar.gz
+mega2_v4.6.1_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -3271,7 +3298,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.6.0_src.tar.tar mega2_v4.6.0_src.tar.gz
+mv mega2_v4.6.1_src.tar.tar mega2_v4.6.1_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -8526,6 +8553,13 @@ reference "sub:omit-file"
 
 \begin_layout Subsubsection
 Names file
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Names-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -9017,7 +9051,7 @@ When first started up, Mega2 will present an input menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.0 Traditional input menu:
+              Mega2 4.6.1 Traditional input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -9081,8 +9115,7 @@ When first started up, Mega2 will present an input menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
-14) Set allele pair compression: 1, 2, or 3 (for 2 bits, 2 bytes, or 16
- bytes): 2 
+14) Genotype compression:                   2 bits
 \end_layout
 
 \begin_layout LyX-Code
@@ -9104,7 +9137,7 @@ This menu is almost identical in content as the traditional Mega2 start
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.0 PLINK input menu:
+              Mega2 4.6.1 PLINK input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -9193,7 +9226,7 @@ For simple PLINK non-binary PED format input, we select item 13 from the
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.0 PLINK input menu:
+              Mega2 4.6.1 PLINK input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -26530,7 +26563,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="17" columns="4">
+<lyxtabular version="3" rows="18" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="right" valignment="top" width="0">
@@ -26577,6 +26610,44 @@ Release date
 
 \series bold
 Valid until
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.6.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Oct 18, 2013
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 2014
 \end_layout
 
 \end_inset
@@ -27195,6 +27266,34 @@ March 31, 2008
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Changes from Version 4.6.0 to Version 4.6.1 (Releasted Oct 18th, 2013)
+\end_layout
+
+\begin_layout Itemize
+Enhancement: Mega2 can now produce PLINK/SEQ format files and a script for
+ loading these these files into PLINK/SEQ.
+\end_layout
+
+\begin_layout Itemize
+Bug fix: Mega2 4.6.0 had broken support for Linkage format input using a 
+\begin_inset Quotes eld
+\end_inset
+
+Names file
+\begin_inset Quotes erd
+\end_inset
+
+ (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Names-file"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Subsection

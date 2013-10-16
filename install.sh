@@ -114,7 +114,7 @@ function verify() {
     fi
 }
 
-VERSION=v4.6.0
+VERSION=v4.6.1
 
 if [[ $1 ]]; then
     scripts=$1;

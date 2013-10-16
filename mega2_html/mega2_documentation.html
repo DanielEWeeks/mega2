@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="generator" content="http://www.nongnu.org/elyxer/"/>
-<meta name="create-date" content="2013-09-09"/>
+<meta name="create-date" content="2013-10-16"/>
 <link rel="stylesheet" href="Mega2_Documentation.css" type="text/css" media="all"/>
 <title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses </title>
 </head>
@@ -84,19 +84,22 @@ Table of Contents
 </div>
 <div class="tocindent">
 <div class="toc">
-<a class="Link" href="#toc-Subsection-2.1">Subsection 2.1: Enhancements in Mega2 version 4.6.0</a>
+<a class="Link" href="#toc-Subsection-2.1">Subsection 2.1: Enhancements in Mega2 version 4.6.1</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-2.2">Subsection 2.2: Enhancements in Mega2 version 4.5.9</a>
+<a class="Link" href="#toc-Subsection-2.2">Subsection 2.2: Enhancements in Mega2 version 4.6.0</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-2.3">Subsection 2.3: Enhancements in Mega2 version 4.5.8</a>
+<a class="Link" href="#toc-Subsection-2.3">Subsection 2.3: Enhancements in Mega2 version 4.5.9</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-2.4">Subsection 2.4: Enhancements in Mega2 version 4.5.7</a>
+<a class="Link" href="#toc-Subsection-2.4">Subsection 2.4: Enhancements in Mega2 version 4.5.8</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-2.5">Subsection 2.5: Enhancements in Mega2 version 4.5.5/4.5.6</a>
+<a class="Link" href="#toc-Subsection-2.5">Subsection 2.5: Enhancements in Mega2 version 4.5.7</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-2.6">Subsection 2.6: Enhancements in Mega2 version 4.5.5/4.5.6</a>
 </div>
 </div>
 <div class="toc">
@@ -494,6 +497,9 @@ Table of Contents
 <div class="toc">
 <a class="Link" href="#toc-Subsection-12.39">Subsection 12.39: Convert to Structure format </a>
 </div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-12.40">Subsection 12.40: Convert to PSEQ (PLINK/SEQ) format </a>
+</div>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Section-13">Section 13: The allele frequency menu</a>
@@ -789,6 +795,9 @@ Table of Contents
 <div class="toc">
 <a class="Link" href="#toc-Subsection-23.39">Subsection 23.39: Convert to Structure format</a>
 </div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-23.40">Subsection 23.40: Convert to PSEQ (PLINK/SEQ) format</a>
+</div>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Section-24">Section 24: Utilities included with Mega2 </a>
@@ -855,28 +864,31 @@ Table of Contents
 <a class="Link" href="#toc-Subsection-26.1">Subsection 26.1: Recent releases</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-26.2">Subsection 26.2: Changes from Version 4.5.9 to Version 4.6.0 (Releasted Sept 6th, 2013)</a>
+<a class="Link" href="#toc-Subsection-26.2">Subsection 26.2: Changes from Version 4.6.0 to Version 4.6.1 (Releasted Oct 18th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-26.3">Subsection 26.3: Changes from Version 4.5.8 to Version 4.5.9 (Releasted July 5th, 2013)</a>
+<a class="Link" href="#toc-Subsection-26.3">Subsection 26.3: Changes from Version 4.5.9 to Version 4.6.0 (Releasted Sept 6th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-26.4">Subsection 26.4: Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)</a>
+<a class="Link" href="#toc-Subsection-26.4">Subsection 26.4: Changes from Version 4.5.8 to Version 4.5.9 (Releasted July 5th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-26.5">Subsection 26.5: Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) </a>
+<a class="Link" href="#toc-Subsection-26.5">Subsection 26.5: Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-26.6">Subsection 26.6: Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) </a>
+<a class="Link" href="#toc-Subsection-26.6">Subsection 26.6: Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-26.7">Subsection 26.7: Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) </a>
+<a class="Link" href="#toc-Subsection-26.7">Subsection 26.7: Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-26.8">Subsection 26.8: Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) </a>
+<a class="Link" href="#toc-Subsection-26.8">Subsection 26.8: Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-26.9">Subsection 26.9: Changes from Version 4.0 R5.2 Beta -<span class="formula"></span> Version 4.5.3 (Released June 15th, 2011) </a>
+<a class="Link" href="#toc-Subsection-26.9">Subsection 26.9: Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) </a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-26.10">Subsection 26.10: Changes from Version 4.0 R5.2 Beta -<span class="formula"></span> Version 4.5.3 (Released June 15th, 2011) </a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection--4">Subsection: Changes from Ver 4.0 R5.1 -<span class="formula"></span> Ver 4.0 R5.2 Beta </a>
@@ -1200,7 +1212,19 @@ Creation of a MEGA2run.html HTML summary of the most recent run of Mega2, with l
 <a class="toc" name="toc-Section-2">2</a> Recent improvements and changes
 </h1>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-2.1">2.1</a> Enhancements in Mega2 version 4.6.0
+<a class="toc" name="toc-Subsection-2.1">2.1</a> Enhancements in Mega2 version 4.6.1
+</h2>
+<ul>
+<li>
+Mega2 can now produce PLINK/SEQ format files and a script for loading these files into PLINK/SEQ.
+</li>
+<li>
+Bug fix: Mega2 4.6.0 had broken support for Linkage format input using a &ldquo;Names file&rdquo; (section <a class="Reference" href="#sub:Names-file">8.4.7↓</a>).
+</li>
+
+</ul>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-2.2">2.2</a> Enhancements in Mega2 version 4.6.0
 </h2>
 <ul>
 <li>
@@ -1215,7 +1239,7 @@ Completely untyped family members do not require space for their allele values.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-2.2">2.2</a> Enhancements in Mega2 version 4.5.9
+<a class="toc" name="toc-Subsection-2.3">2.3</a> Enhancements in Mega2 version 4.5.9
 </h2>
 <ul>
 <li>
@@ -1224,7 +1248,7 @@ Bug fix: Mega2 will now compile properly on Red Hat (RHEL), CentOS, and Solaris 
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-2.3">2.3</a> Enhancements in Mega2 version 4.5.8
+<a class="toc" name="toc-Subsection-2.4">2.4</a> Enhancements in Mega2 version 4.5.8
 </h2>
 <ul>
 <li>
@@ -1248,7 +1272,7 @@ Structure format (See section <a class="Reference" href="#sub:Analysis-Structure
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-2.4">2.4</a> Enhancements in Mega2 version 4.5.7
+<a class="toc" name="toc-Subsection-2.5">2.5</a> Enhancements in Mega2 version 4.5.7
 </h2>
 <ul>
 <li>
@@ -1269,7 +1293,7 @@ Mega2 code files are now C++ files and require a C++ compiler. Internally, we ha
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-2.5">2.5</a> Enhancements in Mega2 version 4.5.5/4.5.6
+<a class="toc" name="toc-Subsection-2.6">2.6</a> Enhancements in Mega2 version 4.5.5/4.5.6
 </h2>
 <ul>
 <li>
@@ -1389,7 +1413,7 @@ Assuming that the <i> Mega2 </i> program has been installed according to the ins
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 4.6.0 Traditional input menu:
+              Mega2 4.6.1 Traditional input menu:
 ==========================================================
  0) Done with this menu - please proceed
  1) Input file extension:                   01
@@ -1405,7 +1429,7 @@ Assuming that the <i> Mega2 </i> program has been installed according to the ins
 11) Warn if allele frequency error measure exceeds: No limit
 12) Switch to PLINK input menu (binary format)
 13) Switch to PLINK input menu (ped format)
-14) Set allele pair compression: 1, 2, or 3 (for 2 bits, 2 bytes, or 16 bytes): 1 
+14) Genotype compression:                   2 bits
 Select from options 0-14 &gt; 
 </pre>
 <div class="Standard">
@@ -1461,10 +1485,10 @@ Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)<br/>
  PMID: 15746282
 </blockquote>
 <div class="Standard">
-as well as citing the web site and the version that you used. For example, the web site citation for version 4.6.0 should be: 
+as well as citing the web site and the version that you used. For example, the web site citation for version 4.6.1 should be: 
 </div>
 <blockquote class="Quote">
-Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2013) Mega2 (Version 4.6.0). <a class="FlexURL" href="http://watson.hgen.pitt.edu">http://watson.hgen.pitt.edu</a> 
+Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2013) Mega2 (Version 4.6.1). <a class="FlexURL" href="http://watson.hgen.pitt.edu">http://watson.hgen.pitt.edu</a> 
 </blockquote>
 <h1 class="Section">
 <a class="toc" name="toc-Section-5">5</a> Support, bug reports, and feedback
@@ -1526,7 +1550,7 @@ Web page: <a class="FlexURL" href="http://watson.hgen.pitt.edu">http://watson.hg
 </h1>
 <div class="Standard">
 <div class="center">
-INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.6.0 AND HIGHER 
+INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.6.1 AND HIGHER 
 </div>
 
 </div>
@@ -1546,30 +1570,30 @@ Mega2 can be downloaded from:
 <a class="FlexURL" href="http://watson.hgen.pitt.edu/register">http://watson.hgen.pitt.edu/register</a> 
 </pre>
 <div class="Standard">
-The latest version is 4.6.0 
+The latest version is 4.6.1 
 </div>
 <ol>
 <li>
 Download the Mega2 distribution package: <pre class="LyX-Code">
-mega2_v4.6.0_src.tar.gz
+mega2_v4.6.1_src.tar.gz
 </pre>
 
 </li>
 <li>
 Uncompress the package using the "gunzip" Unix command. For example: <pre class="LyX-Code">
-gunzip mega2_v4.6.0_src.tar.gz 
+gunzip mega2_v4.6.1_src.tar.gz 
 </pre>
 
 </li>
 <li>
 Untar the result using the "tar" Unix command: <pre class="LyX-Code">
-tar xvf mega2_v4.6.0_src.tar 
+tar xvf mega2_v4.6.1_src.tar 
 </pre>
 <div class="Standard">
 NOTE: You may combine the above two steps via a single command: 
 </div>
 <div class="Standard">
-tar xzvf mega2_v4.6.0_src.tar.gz 
+tar xzvf mega2_v4.6.1_src.tar.gz 
 </div>
 <div class="Standard">
 The "z" instructs tar that it is a compressed archive. This is works for GNU-tar. 
@@ -1577,7 +1601,7 @@ The "z" instructs tar that it is a compressed archive. This is works for GNU-tar
 
 </li>
 <li>
-At this point, you should see a new folder named <b>mega2_v4.6.0_src</b>. This is the "distribution folder" which contains all the necessary components of Mega2.
+At this point, you should see a new folder named <b>mega2_v4.6.1_src</b>. This is the "distribution folder" which contains all the necessary components of Mega2.
 </li>
 
 </ol>
@@ -1657,7 +1681,7 @@ You should be able to see the above libraries in the list of installed libraries
 <a class="toc" name="toc-Subsubsection-7.3.1">7.3.1</a> Contents of a binary package
 </h3>
 <div class="Standard">
-If you downloaded and unpacked the mega2_v4.6.0_src.tar.gz bundle following the download section (<a class="Reference" href="#sub:Download-Instructions">7.1↑</a>), you should see a directory named mega2_v4.6.0_src containing the following directories (in bold) or files listed in alphabetical order:
+If you downloaded and unpacked the mega2_v4.6.1_src.tar.gz bundle following the download section (<a class="Reference" href="#sub:Download-Instructions">7.1↑</a>), you should see a directory named mega2_v4.6.1_src containing the following directories (in bold) or files listed in alphabetical order:
 </div>
 <blockquote class="Quotation">
 <table>
@@ -1864,7 +1888,7 @@ In the <b>mega2_bin</b> directory, there will be binary versions of Mega2 for se
 <a class="toc" name="toc-Subsubsection-7.3.3">7.3.3</a> Installing Mega2
 </h3>
 <div class="Standard">
-To install the mega2 executable, Perl scripts and nplplot, from within the Mega2 package folder (i.e. mega2_v4.6.0_src in above step), type the command:
+To install the mega2 executable, Perl scripts and nplplot, from within the Mega2 package folder (i.e. mega2_v4.6.1_src in above step), type the command:
 </div>
 <pre class="LyX-Code">
 ./install.sh 
@@ -1891,7 +1915,7 @@ Mega2 can now be run on a set of data by simply typing the command "mega2". It s
 <a class="toc" name="toc-Subsection-7.4">7.4</a> Compiling and Installing Mega2 from Source <a class="Label" name="sub:Compiling-and-Installing"> </a>
 </h2>
 <div class="Standard">
-The mega2_v4.6.0_src.tar.gz package also includes a source code folder "srcdir" containing C source files, a Makefile, and several OS-specific Makedefs files that define compilation flags that govern locations of standard C libraries, and other OS-specific behavior.
+The mega2_v4.6.1_src.tar.gz package also includes a source code folder "srcdir" containing C source files, a Makefile, and several OS-specific Makedefs files that define compilation flags that govern locations of standard C libraries, and other OS-specific behavior.
 </div>
 <div class="Standard">
 Please note that GNU-make is required to compile Mega2.
@@ -1901,7 +1925,7 @@ To compile Mega2 follow these steps:
 </div>
 <ol>
 <li>
-From within the mega2_v4.6.0_src folder, type <pre class="LyX-Code">
+From within the mega2_v4.6.1_src folder, type <pre class="LyX-Code">
 ./install.sh
 </pre>
 <div class="Standard">
@@ -2077,7 +2101,7 @@ The example_output_pre, example_output_post, example_output_annotated, example_o
 <a class="toc" name="toc-Subsection-7.6">7.6</a> Mega2 Documentation
 </h2>
 <div class="Standard">
-The sub-folder called mega2_html/ within the mega2_v4.6.0_src folder contains documentation for mega2. The Mega2 documentation is also available on-line at 
+The sub-folder called mega2_html/ within the mega2_v4.6.1_src folder contains documentation for mega2. The Mega2 documentation is also available on-line at 
 </div>
 <pre class="LyX-Code">
 <a class="FlexURL" href="http://watson.hgen.pitt.edu/docs/mega2_html/">http://watson.hgen.pitt.edu/docs/mega2_html/</a> 
@@ -2327,11 +2351,11 @@ You need to have registered your e-mail before you can download software at this
 </div>
 <ol>
 <li>
-The Mega2 distribution package is named mega2_v4.6.0_src.tar.gz. Download this package into your Downloads folder.
+The Mega2 distribution package is named mega2_v4.6.1_src.tar.gz. Download this package into your Downloads folder.
 </li>
 <li>
 Depending on your browser settings, Windows may automatically untar the file, in which case you will see this folder on your desktop instead: <pre class="LyX-Code">
-mega2_v4.6.0_src.tar
+mega2_v4.6.1_src.tar
 </pre>
 
 </li>
@@ -2340,19 +2364,19 @@ Now please follow the common installation instructions in section <a class="Refe
 </li>
 <li>
 Note: In some cases, your file may be downloaded as: <pre class="LyX-Code">
-mega2_v4.6.0_src.tar.tar
+mega2_v4.6.1_src.tar.tar
 </pre>
 <div class="Standard">
 instead of as:
 </div>
 <pre class="LyX-Code">
-mega2_v4.6.0_src.tar.gz
+mega2_v4.6.1_src.tar.gz
 </pre>
 <div class="Standard">
 If that happens, then rename the “tar.tar” file as follows:
 </div>
 <pre class="LyX-Code">
-mv mega2_v4.6.0_src.tar.tar mega2_v4.6.0_src.tar.gz
+mv mega2_v4.6.1_src.tar.tar mega2_v4.6.1_src.tar.gz
 </pre>
 <div class="Standard">
 and then follow the common installation instructions in section <a class="Reference" href="#sub:Download-Instructions">7.1↑</a>. 
@@ -3948,7 +3972,7 @@ Please note that when the loci column contains the keyword &ldquo;All&rdquo;, it
 Hint: See the section <a class="Reference" href="#sub:omit-file">24.3↓</a> on creating omit files based on errors found by running the pedigree-checking program Pedcheck.
 </div>
 <h3 class="Subsubsection">
-<a class="toc" name="toc-Subsubsection-8.4.7">8.4.7</a> Names file
+<a class="toc" name="toc-Subsubsection-8.4.7">8.4.7</a> Names file<a class="Label" name="sub:Names-file"> </a>
 </h3>
 <div class="Standard">
 The names file is an alternate way of specifying locus data. It consists of only locus names and types. If a names file is used, the pedigree file can contain <b>uncoded genotypes</b> which could be base-pair sizes or non-numeric allele names. Mega2 will then read in the pedigree file, and, if needed, recode the pedigree data marker genotypes as numbered alleles. 
@@ -4112,7 +4136,7 @@ When first started up, Mega2 will present an input menu for entering input file 
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 4.6.0 Traditional input menu:
+              Mega2 4.6.1 Traditional input menu:
 ==========================================================
  0) Done with this menu - please proceed
  1) Input file extension:                   01
@@ -4128,7 +4152,7 @@ When first started up, Mega2 will present an input menu for entering input file 
 11) Warn if allele frequency error measure exceeds: No limit
 12) Switch to PLINK input menu (binary format)
 13) Switch to PLINK input menu (ped format)
-14) Set allele pair compression: 1, 2, or 3 (for 2 bits, 2 bytes, or 16 bytes): 2 
+14) Genotype compression:                   2 bits
 Select from options 0-14 &gt; 
 </pre>
 <div class="Standard">
@@ -4136,7 +4160,7 @@ Select from options 0-14 &gt;
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 4.6.0 PLINK input menu:
+              Mega2 4.6.1 PLINK input menu:
 ==========================================================
  0) Done with this menu - please proceed
  1) Enter PLINK parameters:                 --bfile --missing-pheno -9 --trait default
@@ -4161,7 +4185,7 @@ Select from options 0-15 &gt;
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 4.6.0 PLINK input menu:
+              Mega2 4.6.1 PLINK input menu:
 ==========================================================
  0) Done with this menu - please proceed
  1) Enter PLINK parameters:                 --file --missing-pheno -9 --trait default
@@ -4769,9 +4793,9 @@ After all the input files and the chromosome number have been specified, then on
 17 Vitesse format                  37 Beagle format
 18 Linkage format                  38 Eigenstrat format
 19 Test loci for HWE               39 Structure format
-20 Allegro format                  
+20 Allegro format                  40 PSEQ format
                                  
-Select an option between 1-39 &gt; 
+Select an option between 1-40 &gt; 
 
 </pre>
 <div class="Standard">
@@ -5330,6 +5354,27 @@ Hubisz MJ, Falush D, Stephens M, Pritchard JK. Inferring weak population structu
 </div>
 <div class="Standard">
 Documentation: <a class="FlexURL" href="http://pritch.bsd.uchicago.edu/structure.html">http://pritch.bsd.uchicago.edu/structure.html</a>
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-12.40">12.40</a> Convert to PSEQ (PLINK/SEQ) format <a class="Label" name="sub:Analysis-PSEQ-option"> </a>
+</h2>
+<div class="Standard">
+This Analysis Menu option creates files for analysis with PLINK/SEQ. For further information please see the section concerning detailed information on PLINK-SEQ Analysis <a class="Reference" href="#sub:Detailed-info-Structure">23.39↓</a>.
+</div>
+<div class="Standard">
+Name: Structure
+</div>
+<div class="Standard">
+Web: <a class="FlexURL" href="http://atgu.mgh.harvard.edu/plinkseq/">http://atgu.mgh.harvard.edu/plinkseq/</a>
+</div>
+<div class="Standard">
+Primary references:
+</div>
+<div class="Standard">
+TBD
+</div>
+<div class="Standard">
+Documentation: <a class="FlexURL" href="http://atgu.mgh.harvard.edu/plinkseq/pseq.shtml">http://atgu.mgh.harvard.edu/plinkseq/pseq.shtml</a>
 </div>
 <h1 class="Section">
 <a class="toc" name="toc-Section-13">13</a> The allele frequency menu
@@ -6996,6 +7041,9 @@ Eigenstrat
 </li>
 <li>
 Structure
+</li>
+<li>
+PSEQ
 </li>
 
 </ol>
@@ -9170,8 +9218,6 @@ Please note that if you wish to run the ’ploteig’ program, you will need to 
 The following chromosome specific files are created for Structure:
 </div>
 <pre class="LyX-Code">
-STRUCTURE shell file:       structure.all.sh
-
 STRUCTURE mainparams:       structure.01.mainparams
 STRUCTURE data:             structure.01.data
 STRUCTURE shell file:       structure.01.sh
@@ -9181,6 +9227,25 @@ Structure is used for inferring population structure using genotype data. Mega2 
 </div>
 <div class="Standard">
 The structure kernel reads two control files and one data file. Examples of both of these control files and a data file are included as a part of the structure download. One of the control files "extraparams" contains parameters that describes algorithm variable settings (e.g., how the program runs) and so is not of concern for our purposes in data file conversion. Mega2 will create an empty &ldquo;extraparams&rdquo; file if one does not already exist, but you may need to customize this file for your specific needs. The "mainparams" control file contains parameters that describe the data file used as input to structure, and so is of concern here. Mega2 will produce a data file which stores data for each individual on one line (rather than the default two lines per individual). Mega2 allows you to choose to associate a quantitative phenotype to a population identifier through the use of the batch file parameter Structure.PopDataPheno (See <a class="Reference" href="#par:Structure.PopDataPheno">113↑</a>).
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-23.40">23.40</a> Convert to PSEQ (PLINK/SEQ) format<a class="Label" name="sub:Detailed-info-PSEQ"> </a>
+</h2>
+<div class="Standard">
+The following files are created for PSEQ:
+</div>
+<pre class="LyX-Code">
+PSEQ phenotype file:        pseq.phe
+PLINK map file:             pseq.all.bim
+PLINK pedigree file:        pseq.all.fam
+PLINK binary file snp:      pseq.all.bed
+PSEQ shell file:            pseq.all.sh
+</pre>
+<div class="Standard">
+PLINK/SEQ is a program and library for working with human genetic variation data. It is independent of, but complementary to the PLINK package.
+</div>
+<div class="Standard">
+A shell script is produced that allows the data files to be loaded into a PLINK/SEQ database. The data is converted to PLINK SNP Major Binary format (e.g., .bed, .bim, .fam files) and loaded with the appropriate PLINK/SEQ commands. If additional phenotypes are present in the input data (since the .fam file can only hold one phenotype), a phenotype file is created, and also processed by the shell script that loads the data.
 </div>
 <h1 class="Section">
 <a class="toc" name="toc-Section-24">24</a> Utilities included with Mega2 
@@ -9607,6 +9672,21 @@ C-shell scripts are produced for the many of the analysis options. These C-shell
 Patched version
 </td>
 <td align="right" valign="top">
+4.6.1
+</td>
+<td align="none" valign="middle">
+Oct 18, 2013
+</td>
+<td align="none" valign="middle">
+June 15, 2014
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="top">
+Patched version
+</td>
+<td align="right" valign="top">
 4.6.0
 </td>
 <td align="none" valign="middle">
@@ -9849,7 +9929,19 @@ March 31, 2008
 
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-26.2">26.2</a> Changes from Version 4.5.9 to Version 4.6.0 (Releasted Sept 6th, 2013)
+<a class="toc" name="toc-Subsection-26.2">26.2</a> Changes from Version 4.6.0 to Version 4.6.1 (Releasted Oct 18th, 2013)
+</h2>
+<ul>
+<li>
+Enhancement: Mega2 can now produce PLINK/SEQ format files and a script for loading these these files into PLINK/SEQ.
+</li>
+<li>
+Bug fix: Mega2 4.6.0 had broken support for Linkage format input using a &ldquo;Names file&rdquo; (section <a class="Reference" href="#sub:Names-file">8.4.7↑</a>).
+</li>
+
+</ul>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-26.3">26.3</a> Changes from Version 4.5.9 to Version 4.6.0 (Releasted Sept 6th, 2013)
 </h2>
 <ul>
 <li>
@@ -9858,7 +9950,7 @@ Enhancement: Mega2 compresses allele data to handle much larger datasets.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-26.3">26.3</a> Changes from Version 4.5.8 to Version 4.5.9 (Releasted July 5th, 2013)
+<a class="toc" name="toc-Subsection-26.4">26.4</a> Changes from Version 4.5.8 to Version 4.5.9 (Releasted July 5th, 2013)
 </h2>
 <ul>
 <li>
@@ -9867,7 +9959,7 @@ Bug fix: Mega2 will now compile properly on Red Hat (RHEL), CentOS, and Solaris 
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-26.4">26.4</a> Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)
+<a class="toc" name="toc-Subsection-26.5">26.5</a> Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)
 </h2>
 <ul>
 <li>
@@ -9891,7 +9983,7 @@ Bug fix: You can now specific a value to represent the missing value code for a 
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-26.5">26.5</a> Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) 
+<a class="toc" name="toc-Subsection-26.6">26.6</a> Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) 
 </h2>
 <ul>
 <li>
@@ -9927,7 +10019,7 @@ Bug-fix: Allow menus to input and output X, Y, XY, MT and U as chromosomes witho
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-26.6">26.6</a> Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) 
+<a class="toc" name="toc-Subsection-26.7">26.7</a> Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) 
 </h2>
 <ul>
 <li>
@@ -9942,7 +10034,7 @@ Bug-fix: Generate better error diagnostics.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-26.7">26.7</a> Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) 
+<a class="toc" name="toc-Subsection-26.8">26.8</a> Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) 
 </h2>
 <ul>
 <li>
@@ -9978,7 +10070,7 @@ Bug-fix: In general, code in critical loops or using large memory allocations ha
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-26.8">26.8</a> Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) 
+<a class="toc" name="toc-Subsection-26.9">26.9</a> Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) 
 </h2>
 <ul>
 <li>
@@ -9996,7 +10088,7 @@ Bug-fix: The mega2log2html.pl Perl program in some cases tried to read from a cl
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-26.9">26.9</a> Changes from Version 4.0 R5.2 Beta -<span class="formula"> &gt; </span> Version 4.5.3 (Released June 15th, 2011) 
+<a class="toc" name="toc-Subsection-26.10">26.10</a> Changes from Version 4.0 R5.2 Beta -<span class="formula"> &gt; </span> Version 4.5.3 (Released June 15th, 2011) 
 </h2>
 <ul>
 <li>
@@ -12546,7 +12638,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.3 (2011-08-31)</a> on <span class="create-date">2013-09-09T11:54:26.521964</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2013-10-16T14:48:25.246417</span>
 </div>
 </div>
 </body>
