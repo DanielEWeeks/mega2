@@ -179,6 +179,9 @@
 #define F_OK    0       /* Test for existence of File */
 #endif
 
+#ifdef _WIN
+#define _ALLOW_KEYWORD_MACROS	// TRANSITION
+#endif
 #define false 0
 #define true 1
 #define EPSILON 0.000001    /* for floating point comparisons */

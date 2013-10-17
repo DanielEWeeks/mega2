@@ -78,7 +78,7 @@ void *marker_alloc(size_t size, int offset) {
     } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         return ((void *) ((CALLOC(size, marker_pedrec_char)) - offset));
     }
-    return ((void *) 0);
+//  return ((void *) 0);
 }
 
 void marker_free(void *marker, int offset) {
@@ -181,11 +181,11 @@ void set_2Ralleles(void *mp, int marker, const char *all1, const char *all2) {
             else
                 the_field = 3;
         }
-        mpd[get_byte] = the_bits | (the_field << MARKER_SCHEME3_shift[get_bits]);
+        mpd[get_byte] = ((unsigned char) (the_bits | (the_field << MARKER_SCHEME3_shift[get_bits])));
     } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
-        mpd[marker].Allele_1 = allele2allele_prop_idx(all1);
-        mpd[marker].Allele_2 = allele2allele_prop_idx(all2);
+        mpd[marker].Allele_1 = ((unsigned char) allele2allele_prop_idx(all1));
+        mpd[marker].Allele_2 = ((unsigned char) allele2allele_prop_idx(all2));
     }
 }
 
@@ -236,7 +236,7 @@ void copy_2Ralleles(void *to, void *from, int marker) {
         int from_bits = from_byte & MARKER_SCHEME3_mask[get_bits];
         int to_byte   = tompd[get_byte];
         int to_bits   = to_byte & ~MARKER_SCHEME3_mask[get_bits];
-        tompd[get_byte] = to_bits | from_bits;
+        tompd[get_byte] = ((unsigned char) (to_bits | from_bits));
     } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *frompd = (marker_pedrec_char *) from;
         marker_pedrec_char *tompd  = (marker_pedrec_char *) to;
@@ -446,15 +446,15 @@ void set_2alleles(void *mp, int marker, int all1, int all2) {
                 the_field = 3;
 
         }
-        mpd[get_byte] = the_bits | (the_field << MARKER_SCHEME3_shift[get_bits]);
+        mpd[get_byte] = ((unsigned char) (the_bits | (the_field << MARKER_SCHEME3_shift[get_bits])));
     } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         /*
          * Checks to make sure that all1/2 fit int uchar have been made earlier:
          *  in canonical_allele() and in read_numbered_data();
          */
         marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
-        mpd[marker].Allele_1 = all1;
-        mpd[marker].Allele_2 = all2;
+        mpd[marker].Allele_1 = ((unsigned char) all1);
+        mpd[marker].Allele_2 = ((unsigned char) all2);
     }
 }
 
@@ -504,7 +504,7 @@ void copy_2alleles(void *to, void *from, int marker) {
         int from_bits = from_byte & MARKER_SCHEME3_mask[get_bits];
         int to_byte   = tompd[get_byte];
         int to_bits   = to_byte & ~MARKER_SCHEME3_mask[get_bits];
-        tompd[get_byte] = to_bits | from_bits;
+        tompd[get_byte] = ((unsigned char) (to_bits | from_bits));
     } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *frompd = (marker_pedrec_char *) from;
         marker_pedrec_char *tompd  = (marker_pedrec_char *) to;
@@ -533,7 +533,7 @@ void copy_2alleles(void *to, void *from, int tomarker, int frommarker) {
         int from_bits = from_byte & MARKER_SCHEME3_mask[get_from_bits];
         int to_byte   = tompd[get_to_byte];
         int to_bits   = to_byte & ~MARKER_SCHEME3_mask[get_to_bits];
-        tompd[get_to_byte] = to_bits | from_bits;
+        tompd[get_to_byte] = ((unsigned char) (to_bits | from_bits));
     } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *frompd = (marker_pedrec_char *) from;
         marker_pedrec_char *tompd  = (marker_pedrec_char *) to;
