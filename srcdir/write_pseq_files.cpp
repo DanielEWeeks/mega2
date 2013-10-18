@@ -383,7 +383,7 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             
             pr_printf("\n");
             pr_printf("mkdir -p ${PSEQ_PROJ}_out\n");
-            pr_printf("if (-f ${PSEQ_PROJ}_out/pseq.01.bed) then\n");
+            pr_printf("if (-f ${PSEQ_PROJ}_out/%s.bed) then\n",file_names[7]);
             pr_printf("  echo\n");
             pr_printf("  echo ERROR: Attemping to move your trio of PLINK files into the \\\"${PSEQ_PROJ}_out\\\" PSEQ project folder.\n");
             pr_printf("  echo ERROR: The PSEQ project folder \\\"${PSEQ_PROJ}_out\\\" already contains PLINK files of the same name.\n");
