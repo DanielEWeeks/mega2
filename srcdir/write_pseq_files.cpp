@@ -302,15 +302,28 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             // This handles the environment variable setup to allow the checking
             // functions in 'batch_run' to work correctly...
             fprintf_env_checkset_csh(_filep, "_PSEQ", "pseq");
+            pr_printf("\n");
+            pr_printf("alias usage 'echo \"Usage: %s [ PSEQ_PROJ [ PSEQ_RESDIR ] ]\"\\\n", file_names[8]);
+            pr_printf("  echo \" PSEQ_PROJ    the project name\"\\\n");
+            pr_printf("  echo \" PSEQ_RESDIR  the resource directory\"\\\n");
+            pr_printf("  exit'\n");
+            pr_printf("\n");
+            pr_printf("if ($1 == '?' || $1 == 'help' || $#argv > 2) then\n");
+            pr_printf("  usage\n");
+            pr_printf("endif\n");
         }
         void inner () {
 
             char cmd[2*FILENAME_LENGTH];
             char out_fl[2*FILENAME_LENGTH];
             
-            if (_numchr > 0)
+            pr_printf("\n");
+
+            if (_numchr > 0) {
                 pr_printf("echo Running PSEQ on chromosome %d markers\n", _numchr);
-            
+                pr_printf("echo\n");
+            }
+
             if (num_traits > 1) {
                 if (LoopOverTrait) {
                     sprintf(out_fl, "../%s", file_names[3]); //bed
@@ -325,49 +338,65 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
                 sh_ln(file_names[0], file_names[6]);
             
             pr_printf("\n");
-            pr_printf("if ($1 == '?' || $1 == 'help' || $#argv > 2) then\n");
-            pr_printf("  echo \"Usage $0 [ PSEQ_PROJ ] [ PSEQ_RESDIR ]\"\n");
-            pr_printf("  echo ' PSEQ_PROJ    the project name'\n");
-            pr_printf("  echo ' PSEQ_RESDIR  the resource directory'\n");
-            pr_printf("  exit\n");
-            pr_printf("endif\n");
-            pr_printf("\n");
-            pr_printf("# If not specified on the command line, use a default...\n");
+            pr_printf("# Assign a project name...\n");
             pr_printf("if ($#argv > 0) then\n");
             pr_printf("  set PSEQ_PROJ=$argv[1]\n");
+            pr_printf("  echo Using the user specified project name of \\\"$PSEQ_PROJ\\\".\n");
             pr_printf("else\n");
             pr_printf("  set PSEQ_PROJ=%s\n", file_names[7]);
+            pr_printf("  echo Using the default project name of \\\"$PSEQ_PROJ\\\".\n");
             pr_printf("endif\n");
+
             pr_printf("\n");
-            pr_printf("# If not specified on the command line, use a default...\n");
+            pr_printf("# Assign a resource directory...\n");
             pr_printf("if ($#argv > 1) then\n");
             pr_printf("  set PSEQ_RESDIR=$argv[2]\n");
+            pr_printf("  echo Using the user specified resource directory of \\\"$PSEQ_RESDIR\\\".\n");
             pr_printf("else\n");
             pr_printf("  set PSEQ_RESDIR=${PSEQ_PROJ}_res\n");
+            pr_printf("  echo Using the default resource directory of \\\"$PSEQ_RESDIR\\\".\n");
             pr_printf("endif\n");
+
+            pr_printf("\n");
             pr_printf("# It is an error if the resource directory does not exist...\n");
             pr_printf("if (! -d $PSEQ_RESDIR) then\n");
+            pr_printf("  echo\n");
             pr_printf("  echo The resource directory \\\"$PSEQ_RESDIR\\\" does not exist.\n");
-            pr_printf("  exit 1\n");
+            pr_printf("  echo\n");
+            pr_printf("  usage\n");
             pr_printf("endif\n");
-#if 0
+
             pr_printf("\n");
-            pr_printf("echo RESDIR $PSEQ_RESDIR\n");
-            pr_printf("echo PROJ $PSEQ_PROJ\n");
-            pr_printf("exit\n");
-#endif /* 0 */
-            pr_printf("\n");
+            pr_printf("# Do not create a new project if it already exists...\n");
+            pr_printf("if (! -f $PSEQ_PROJ) then\n");
+            pr_printf("echo\n");
             pr_printf("echo ... Creating a new project ...\n");
             sprintf(cmd, "$_PSEQ $PSEQ_PROJ new-project --resources $PSEQ_RESDIR\n");
             sh_run("PSEQ", cmd);
             fprintf_status_check_csh(_filep, "PSEQ", 1);
+            pr_printf("else\n");
+            pr_printf("  echo Using existing project \\\"${PSEQ_PROJ}\\\".\n");
+            pr_printf("endif\n");
             
             pr_printf("\n");
+            pr_printf("# If there is a ${SEQ_PROJ}_out directory at this point then 'load-plink' has been run before.\n"); 
+	    // To keep this script from being interactive then we will need to
+	    // add a command line argument to it that tells what behavior is wanted (e.g.
+	    // continue to run the script if the .bed .bim .fam files are found in the _out
+	    // directory, or abort).
+            pr_printf("echo\n");
             pr_printf("echo ... Loading plink binary files ...\n");
             sprintf(cmd, "$_PSEQ $PSEQ_PROJ load-plink --file %s --phenotype %s --id $PSEQ_PROJ --check-reference\n",
                     file_names[7], fam_file_phenotype_name);
             sh_run("PSEQ", cmd);
             fprintf_status_check_csh(_filep, "PSEQ", 1);
+
+            pr_printf("\n");
+            pr_printf("# The directory ${SEQ_PROJ}_out does not exist until load-plink has been run at some point.\n");
+            pr_printf("cp %s.bed %s.bim %s.fam ${PSEQ_PROJ}_out\n", file_names[7], file_names[7], file_names[7]);
+            pr_printf("echo\n");
+            pr_printf("echo Your trio of PLINK files has been moved into the \\\"${PSEQ_PROJ}_out\\\" PSEQ project folder.\n");
+            pr_printf("echo Do not move or alter these files for the duration of your project.\n");
             
             if (num_traits > 2) {
                 pr_printf("\n");
@@ -378,6 +407,7 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             }
             
             pr_printf("\n");
+            pr_printf("echo\n");
             pr_printf("echo ... Listing some individuals in the project/file ...\n");
             sprintf(cmd, "$_PSEQ $PSEQ_PROJ i-view | head\n");
             sh_run("PSEQ", cmd);
