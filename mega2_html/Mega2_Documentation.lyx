@@ -13208,7 +13208,7 @@ This Analysis Menu option creates files for analysis with PLINK/SEQ.
  on PLINK-SEQ Analysis 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Detailed-info-Structure"
+reference "sub:Detailed-info-PSEQ"
 
 \end_inset
 
@@ -13216,13 +13216,13 @@ reference "sub:Detailed-info-Structure"
 \end_layout
 
 \begin_layout Standard
-Name: Structure
+Name: PSEQ
 \end_layout
 
 \begin_layout Standard
 Web: 
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -13245,7 +13245,7 @@ TBD
 \begin_layout Standard
 Documentation: 
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -25509,10 +25509,34 @@ PLINK/SEQ is a program and library for working with human genetic variation
 A shell script is produced that allows the data files to be loaded into
  a PLINK/SEQ database.
  The data is converted to PLINK SNP Major Binary format (e.g., .bed, .bim, .fam
- files) and loaded with the appropriate PLINK/SEQ commands.
+ files) by Mega2 and loaded with the appropriate PLINK/SEQ commands.
  If additional phenotypes are present in the input data (since the .fam file
  can only hold one phenotype), a phenotype file is created, and also processed
  by the shell script that loads the data.
+\end_layout
+
+\begin_layout Standard
+The PLINK/SEQ shell script takes two optional arguments.
+ The first optional argument is the name of the PLINK/SEQ project that you
+ are creating (the default value is 'pseq.01').
+ The project will be created in the direactor in which the shell script
+ is run.
+ The second optional argument should be the path to the PLINK/SEQ resource
+ directory (the default value is the project named appended with the string
+ '_res').
+ For a more complete description of these concepts, please see the PLINK/SEQ
+ documentation at 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://atgu.mgh.harvard.edu/plinkseq/
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
