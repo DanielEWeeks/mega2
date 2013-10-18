@@ -357,6 +357,9 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             pr_printf("  echo Using the default resource directory of \\\"$PSEQ_RESDIR\\\".\n");
             pr_printf("endif\n");
 
+	    // TODO: I still need to figure out how to tell what the former resource directory
+	    // for a project it so that the user doesn't use something different, or warn them if
+	    // they do.
             pr_printf("\n");
             pr_printf("# It is an error if the resource directory does not exist...\n");
             pr_printf("if (! -d $PSEQ_RESDIR) then\n");
@@ -379,24 +382,28 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             pr_printf("endif\n");
             
             pr_printf("\n");
-            pr_printf("# If there is a ${SEQ_PROJ}_out directory at this point then 'load-plink' has been run before.\n"); 
-	    // To keep this script from being interactive then we will need to
-	    // add a command line argument to it that tells what behavior is wanted (e.g.
-	    // continue to run the script if the .bed .bim .fam files are found in the _out
-	    // directory, or abort).
-            pr_printf("echo\n");
-            pr_printf("echo ... Loading plink binary files ...\n");
-            sprintf(cmd, "$_PSEQ $PSEQ_PROJ load-plink --file %s --phenotype %s --id $PSEQ_PROJ --check-reference\n",
-                    file_names[7], fam_file_phenotype_name);
-            sh_run("PSEQ", cmd);
-            fprintf_status_check_csh(_filep, "PSEQ", 1);
+            pr_printf("mkdir -p ${PSEQ_PROJ}_out\n");
+            pr_printf("if (-f ${PSEQ_PROJ}_out/pseq.01.bed) then\n");
+            pr_printf("  echo\n");
+            pr_printf("  echo ERROR: Attemping to move your trio of PLINK files into the \\\"${PSEQ_PROJ}_out\\\" PSEQ project folder.\n");
+            pr_printf("  echo ERROR: The PSEQ project folder \\\"${PSEQ_PROJ}_out\\\" already contains PLINK files of the same name.\n");
+            pr_printf("  exit\n");
+            pr_printf("endif\n");
 
             pr_printf("\n");
-            pr_printf("# The directory ${SEQ_PROJ}_out does not exist until load-plink has been run at some point.\n");
             pr_printf("cp %s.bed %s.bim %s.fam ${PSEQ_PROJ}_out\n", file_names[7], file_names[7], file_names[7]);
             pr_printf("echo\n");
             pr_printf("echo Your trio of PLINK files has been moved into the \\\"${PSEQ_PROJ}_out\\\" PSEQ project folder.\n");
             pr_printf("echo Do not move or alter these files for the duration of your project.\n");
+
+            pr_printf("\n");
+            pr_printf("echo\n");
+            pr_printf("echo ... Loading plink binary files ...\n");
+            sprintf(cmd, "$_PSEQ $PSEQ_PROJ load-plink --file ${PSEQ_PROJ}_out/%s --phenotype %s --id $PSEQ_PROJ --check-reference\n",
+                    file_names[7], fam_file_phenotype_name);
+            sh_run("PSEQ", cmd);
+            fprintf_status_check_csh(_filep, "PSEQ", 1);
+
             
             if (num_traits > 2) {
                 pr_printf("\n");
@@ -411,9 +418,9 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             pr_printf("echo ... Listing some individuals in the project/file ...\n");
             sprintf(cmd, "$_PSEQ $PSEQ_PROJ i-view | head\n");
             sh_run("PSEQ", cmd);
+
             // can't do this because we get the status from the 'head' that we pipe the data to...
             //fprintf_status_check_csh(_filep, "PSEQ", 1);
-
         }
         void file_post() {
             chmod_X_file(path_);
