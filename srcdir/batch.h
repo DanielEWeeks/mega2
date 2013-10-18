@@ -36,6 +36,7 @@
 #include <string>
 #include <cctype>
 #include <algorithm>
+#include <functional>
 #include <vector>
 #include <map>
 #include <errno.h>

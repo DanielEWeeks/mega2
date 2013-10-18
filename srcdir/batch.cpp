@@ -376,7 +376,7 @@ void BatchFile::parse(const string fileName) {
             arg.push_back(keyword);
             
             vector<BatchItem *>::const_iterator itter =
-            find_if(batchItems.begin(), batchItems.end(), bind2nd<BatchItemSectionKeywordEqual>(BatchItemSectionKeywordEqual(), arg));
+            find_if(batchItems.begin(), batchItems.end(), bind2nd(BatchItemSectionKeywordEqual(), arg));
             // We should have been careful to instantiate a BatchItem for every section/keyword that we are
             // aware of. So not finding it in our list is a problem....
             if (itter == batchItems.end()) {
@@ -719,7 +719,7 @@ BatchItem& BatchFile::getBatchItem(const string keyword) {
 #endif /* 0 */
 BatchItem& BatchFile::getBatchItem(const string keyword) {
     vector<BatchItem *>::iterator itter =
-    find_if(batchItems.begin(), batchItems.end(), bind2nd<BatchItemKeywordEqual>(BatchItemKeywordEqual(), keyword));
+    find_if(batchItems.begin(), batchItems.end(), bind2nd(BatchItemKeywordEqual(), keyword));
     if (itter != batchItems.end()) {
         return **itter;
     } else {
@@ -733,7 +733,7 @@ BatchItem& BatchFile::getBatchItem(const string keyword, const string section) {
     arg.push_back(keyword);
     
     vector<BatchItem *>::const_iterator itter =
-    find_if(batchItems.begin(), batchItems.end(), bind2nd<BatchItemSectionKeywordEqual>(BatchItemSectionKeywordEqual(), arg));
+    find_if(batchItems.begin(), batchItems.end(), bind2nd(BatchItemSectionKeywordEqual(), arg));
     if (itter != batchItems.end()) {
         return **itter;
     } else {
@@ -748,7 +748,7 @@ BatchItem& BatchFile::getBatchItem(const string keyword, const string section) {
  */
 bool BatchFile::itemRead(const string keyword) {
     vector<BatchItem *>::const_iterator itter =
-        find_if(batchItems.begin(), batchItems.end(), bind2nd<BatchItemKeywordEqual>(BatchItemKeywordEqual(), keyword));
+        find_if(batchItems.begin(), batchItems.end(), bind2nd(BatchItemKeywordEqual(), keyword));
     return itter != batchItems.end() && (*itter)->itemRead();
 }
 
@@ -758,7 +758,7 @@ bool BatchFile::itemRead(const string keyword, const string section) {
     arg.push_back(keyword);
     
     vector<BatchItem *>::const_iterator itter =
-    find_if(batchItems.begin(), batchItems.end(), bind2nd<BatchItemSectionKeywordEqual>(BatchItemSectionKeywordEqual(), arg));
+    find_if(batchItems.begin(), batchItems.end(), bind2nd(BatchItemSectionKeywordEqual(), arg));
     return itter != batchItems.end();
 }
 
