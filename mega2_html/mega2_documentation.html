@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="generator" content="http://www.nongnu.org/elyxer/"/>
-<meta name="create-date" content="2013-10-16"/>
+<meta name="create-date" content="2013-10-18"/>
 <link rel="stylesheet" href="Mega2_Documentation.css" type="text/css" media="all"/>
 <title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses </title>
 </head>
@@ -984,7 +984,7 @@ Table of Contents
 <a class="Link" href="#toc-Subsection--34">Subsection:  Changes from Ver 2.3 -<span class="formula"></span> Ver 2.3 R2 (Released July 20 2002) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection--35">Subsection:  Changes from Ver 2.2 R3 -<span class="formula"></span> Ver 2.3 (Released June 14 2002) </a>
+<a class="Link" href="#toc-Subsection--35">Subsection: Changes from Ver 2.2 R3 -<span class="formula"></span> Ver 2.3 (Released June 14 2002) </a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection--36">Subsection: Changes from Ver 2.2 R2 -<span class="formula"></span> Ver 2.2 R3 (Released January 23rd, 2002) </a>
@@ -1022,7 +1022,7 @@ Table of Contents
 <a class="Link" href="#toc-Subsection--45">Subsection: Bugs in Mega2 4 R4.0 </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection--46">Subsection:  Bugs in Mega2 4 R3.1 </a>
+<a class="Link" href="#toc-Subsection--46">Subsection: Bugs in Mega2 4 R3.1 </a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection--47">Subsection: Bugs in Mega2 4 R3 </a>
@@ -1031,7 +1031,7 @@ Table of Contents
 <a class="Link" href="#toc-Subsection--48">Subsection:  Bugs in Mega2 4.0 R1 </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection--49">Subsection:  Bugs in Mega2 4.0 </a>
+<a class="Link" href="#toc-Subsection--49">Subsection: Bugs in Mega2 4.0 </a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection--50">Subsection:  Bugs in Mega2 4.0 beta R1</a>
@@ -1220,6 +1220,9 @@ Mega2 can now produce PLINK/SEQ format files and a script for loading these file
 </li>
 <li>
 Bug fix: Mega2 4.6.0 had broken support for Linkage format input using a &ldquo;Names file&rdquo; (section <a class="Reference" href="#sub:Names-file">8.4.7↓</a>).
+</li>
+<li>
+Added binaries for native Microsoft Windows8 and MinGW built on Microsoft Windows8.
 </li>
 
 </ul>
@@ -1882,7 +1885,10 @@ Perl source files for reformatting Allegro, Merlin and SimWalk2 linkage-analysis
 <a class="toc" name="toc-Subsubsection-7.3.2">7.3.2</a> Mega2 Binaries
 </h3>
 <div class="Standard">
-In the <b>mega2_bin</b> directory, there will be binary versions of Mega2 for several platforms. These binaries will have a Mega2 version number and a platform version number. Typically, the Mega2 binary name refers to dynamic load libraries (.dll’s or .so’s) for a particular platform and version and will not necessarily work on other versions on the platform. The <b>install.sh</b> program (below) determines whether any compiled binaries will work on your platform. (Alternatively, <b>install.sh</b> will compile an appropriate binary from the source.
+In the <b>mega2_bin</b> directory, there will be binary versions of Mega2 for several platforms. These binaries will have a Mega2 version number and a platform version number. Typically, the Mega2 binary references dynamic load libraries (.dll’s or .so’s) for a particular platform/version and will not necessarily work on other versions of the platform. There are separate native binaries for Microsoft Windows 7 vs Microsoft Windows 8. Also, the binaries for MinGW are labeled according to whether they were built on Windows 7 vs Windows8. (MinGW needs two .dll’s if you wish to install just Mega2 without the whole MinGW. They are included and depend on Windows Version.)
+</div>
+<div class="Standard">
+The <b>install.sh</b> program (below) determines whether any compiled binaries will work on your platform. (Alternatively, <b>install.sh</b> will compile an appropriate binary from the source.
 </div>
 <h3 class="Subsubsection">
 <a class="toc" name="toc-Subsubsection-7.3.3">7.3.3</a> Installing Mega2
@@ -5359,10 +5365,10 @@ Documentation: <a class="FlexURL" href="http://pritch.bsd.uchicago.edu/structure
 <a class="toc" name="toc-Subsection-12.40">12.40</a> Convert to PSEQ (PLINK/SEQ) format <a class="Label" name="sub:Analysis-PSEQ-option"> </a>
 </h2>
 <div class="Standard">
-This Analysis Menu option creates files for analysis with PLINK/SEQ. For further information please see the section concerning detailed information on PLINK-SEQ Analysis <a class="Reference" href="#sub:Detailed-info-Structure">23.39↓</a>.
+This Analysis Menu option creates files for analysis with PLINK/SEQ. For further information please see the section concerning detailed information on PLINK-SEQ Analysis <a class="Reference" href="#sub:Detailed-info-PSEQ">23.40↓</a>.
 </div>
 <div class="Standard">
-Name: Structure
+Name: PSEQ
 </div>
 <div class="Standard">
 Web: <a class="FlexURL" href="http://atgu.mgh.harvard.edu/plinkseq/">http://atgu.mgh.harvard.edu/plinkseq/</a>
@@ -9245,7 +9251,10 @@ PSEQ shell file:            pseq.all.sh
 PLINK/SEQ is a program and library for working with human genetic variation data. It is independent of, but complementary to the PLINK package.
 </div>
 <div class="Standard">
-A shell script is produced that allows the data files to be loaded into a PLINK/SEQ database. The data is converted to PLINK SNP Major Binary format (e.g., .bed, .bim, .fam files) and loaded with the appropriate PLINK/SEQ commands. If additional phenotypes are present in the input data (since the .fam file can only hold one phenotype), a phenotype file is created, and also processed by the shell script that loads the data.
+A shell script is produced that allows the data files to be loaded into a PLINK/SEQ database. The data is converted to PLINK SNP Major Binary format (e.g., .bed, .bim, .fam files) by Mega2 and loaded with the appropriate PLINK/SEQ commands. If additional phenotypes are present in the input data (since the .fam file can only hold one phenotype), a phenotype file is created, and also processed by the shell script that loads the data.
+</div>
+<div class="Standard">
+The PLINK/SEQ shell script takes two optional arguments. The first optional argument is the name of the PLINK/SEQ project that you are creating (the default value is ’pseq.01’). The project will be created in the direactor in which the shell script is run. The second optional argument should be the path to the PLINK/SEQ resource directory (the default value is the project named appended with the string ’_res’). For a more complete description of these concepts, please see the PLINK/SEQ documentation at <a class="FlexURL" href="http://atgu.mgh.harvard.edu/plinkseq/">http://atgu.mgh.harvard.edu/plinkseq/</a>
 </div>
 <h1 class="Section">
 <a class="toc" name="toc-Section-24">24</a> Utilities included with Mega2 
@@ -9938,6 +9947,9 @@ Enhancement: Mega2 can now produce PLINK/SEQ format files and a script for loadi
 <li>
 Bug fix: Mega2 4.6.0 had broken support for Linkage format input using a &ldquo;Names file&rdquo; (section <a class="Reference" href="#sub:Names-file">8.4.7↑</a>).
 </li>
+<li>
+Enhancement: Added binaries for native Microsoft Windows8 and MinGW built on Microsoft Windows8.
+</li>
 
 </ul>
 <h2 class="Subsection">
@@ -10357,14 +10369,11 @@ Enhancement: Mendel’s newest version now supports longer locus names, up-to 16
 <div class="Standard">
 <b>Annotated file bugs and improvements </b>
 </div>
-<ul>
-<li>
 <div class="Standard">
 Enhancement: Mega2 does not require all loci from the names file to be inside allele-frequency and penetrance files. However, if you do enter a locus in one of these files, it has to be defined inside the names file, and it needs to be completely specified, i.e., with the required number of frequencies and penetrances. <br/>
  If some loci are missing from the frequency file, Mega2 will estimate their allele frequencies from the data.
 </div>
-
-</li>
+<ul>
 <li>
 Modification:Missing value indicators to the conversion script l2a.py no longer need to be enclosed within &ldquo;&rdquo;s. 
 </li>
@@ -11153,7 +11162,7 @@ Bug-fix: In some cases, nuclear families included half-sibs This bug affects Asp
 
 </ul>
 <h2 class="Subsection-">
-<a class="toc" name="toc-Subsection--35"></a> Changes from Ver 2.2 R3 -<span class="formula"> &gt; </span> Ver 2.3 (Released June 14 2002) 
+<a class="toc" name="toc-Subsection--35"></a>Changes from Ver 2.2 R3 -<span class="formula"> &gt; </span> Ver 2.3 (Released June 14 2002) 
 </h2>
 <ul>
 <li>
@@ -11480,7 +11489,7 @@ Mendel8 format control file contained multiple affection definitions if the user
 Mega2 aborted right after starting up on Mac OS X Snow Leopard machines. This has been fixed. 
 </div>
 <h2 class="Subsection-">
-<a class="toc" name="toc-Subsection--46"></a> Bugs in Mega2 4 R3.1 
+<a class="toc" name="toc-Subsection--46"></a>Bugs in Mega2 4 R3.1 
 </h2>
 <div class="Standard">
 Mendel7+ and X-linked markers: if the input map file contains only sex-averaged map positions, the Mendel map file positions would be set to 0 for annotated format input file. This has been fixed; average positions are taken to be the female positions, and male positions are set to 0. 
@@ -11522,7 +11531,7 @@ Conversion from pre-makeped format to post-makeped format output options (such a
 Allegro, Gene Hunter, Gene Hunter-Plus and MLB-QTL output locus files had default trait penetrances set to 0.0 rather than the usual 0.5. 
 </div>
 <h2 class="Subsection-">
-<a class="toc" name="toc-Subsection--49"></a> Bugs in Mega2 4.0 
+<a class="toc" name="toc-Subsection--49"></a>Bugs in Mega2 4.0 
 </h2>
 <div class="Standard">
 Output file names were garbled when output folder name had a &ldquo;.&rdquo; inside it. This has been fixed.
@@ -11939,8 +11948,6 @@ The &ldquo;reset genotypes&rdquo; menu does not EXIT, but continues to loop. Aft
 <div class="Standard">
 This is a list of bugs reported by users of Mega2 2.1 beta: 
 </div>
-<ul>
-<li>
 <div class="Standard">
 No spacing between the liability status and liability class if the selected affection locus had multiple liability classes. Affected options are: <span class="environment"></span>
 </div>
@@ -11953,8 +11960,7 @@ No spacing between the liability status and liability class if the selected affe
 <div class="Standard">
 The sib-phase XMGR scripts do not work for a grid of risk-ratios, the curve-data is missing the second column.
 </div>
-
-</li>
+<ul>
 <li>
 <div class="Standard">
 The Vitesse LOG and STM files may contain bogus locus names and numbers, and, therefore, may not produce correct results.
@@ -12638,7 +12644,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2013-10-16T14:48:25.246417</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2013-10-18T17:03:17.574144</span>
 </div>
 </div>
 </body>

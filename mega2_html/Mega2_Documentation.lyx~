@@ -565,8 +565,7 @@ reference "sub:Names-file"
 \end_layout
 
 \begin_layout Itemize
-Added binaries for native Microsoft Windows8 and MinGW built on Microsoft
- Windows8.
+Added binaries for native windows8 and MinGW.
 \end_layout
 
 \begin_layout Subsection
@@ -27332,8 +27331,7 @@ reference "sub:Names-file"
 \end_layout
 
 \begin_layout Itemize
-Enhancement: Added binaries for native Microsoft Windows8 and MinGW built
- on Microsoft Windows8.
+Enhancement: Added binaries for native windows8 and MinGW.
 \end_layout
 
 \begin_layout Subsection

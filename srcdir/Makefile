@@ -227,7 +227,7 @@ ifeq ($(OSTYPE),mingw)
 	cp $(MODULE)_$(OSTYPE).exe $(MODULE).exe
 else ifeq ($(OSTYPE),windows)
 	copy $(MODULE)_$(OSTYPE).exe $(MODULE).exe
-else
+else ifneq ($(LN),)
 	ln -s $(MODULE)_$(OSTYPE) $(MODULE)
 endif
 

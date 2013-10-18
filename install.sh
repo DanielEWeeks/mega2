@@ -290,7 +290,7 @@ for scr in $scripts; do
             if [[ ${SAVE:-""} == "" ]]; then
                 $MAKE all
             else
-                $MAKE clean all
+                $MAKE LN="" clean all
             fi
             make_status=$?
             if [[ $make_status > 0 ]]; then
