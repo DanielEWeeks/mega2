@@ -4,7 +4,7 @@
 \begin_header
 \textclass article
 \begin_preamble
-
+\usepackage{tocstyle}
 \usepackage{fullpage}
 
 \title{mega2-title}
@@ -542,11 +542,19 @@ Enhancements in Mega2 version 4.6.1
 
 \begin_layout Itemize
 Mega2 can now produce PLINK/SEQ format files and a script for loading these
- files into PLINK/SEQ.
+ files into a PLINK/SEQ project (See section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Detailed-info-PSEQ"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Itemize
-Bug fix: Mega2 4.6.0 had broken support for Linkage format input using a 
+Bug fix: Mega2 4.6.0 had broken support for Linkage format input when using
+ a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -554,7 +562,7 @@ Names file
 \begin_inset Quotes erd
 \end_inset
 
- (section 
+ (See section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Names-file"
@@ -565,8 +573,8 @@ reference "sub:Names-file"
 \end_layout
 
 \begin_layout Itemize
-Added binaries for native Microsoft Windows8 and MinGW built on Microsoft
- Windows8.
+Added binaries for native Microsoft Windows 8 and MinGW built on Microsoft
+ Windows 8.
 \end_layout
 
 \begin_layout Subsection
@@ -899,7 +907,7 @@ The columns in this file are Pedigree, Person, Father, Mother, Gender, Trait
 \begin_layout Standard
 Note: the 
 \shape italic
-pre-makeped 
+pre-makeped
 \shape default
  pedigree file above is exactly the same layout as a PLINK PED file; but
  while the 
@@ -928,7 +936,15 @@ Map file:
 
 \begin_deeper
 \begin_layout Standard
-Call this file map.txt .
+Call this file 
+\begin_inset Quotes eld
+\end_inset
+
+map.txt
+\begin_inset Quotes erd
+\end_inset
+
+.
  Note that the positions will be read in as Haldane centiMorgans.
  Our map file looks like this:
 \end_layout
@@ -1065,9 +1081,9 @@ end{verbatim}
 \end_layout
 
 \begin_layout Standard
-Assuming that the 
+Assuming that the
 \shape italic
- Mega2 
+ Mega2
 \shape default
  program has been installed according to the installation instructions,
  you should now see the first menu, like so: 
@@ -1276,7 +1292,7 @@ For Macintosh OS X users:
 \begin_inset Newline newline
 \end_inset
 
- Be careful when you select the common extension 
+ Be careful when you select the common extension
 \series bold
  .dat
 \series default
@@ -2294,7 +2310,7 @@ mega2_bin
  There are separate native binaries for Microsoft Windows 7 vs Microsoft
  Windows 8.
  Also, the binaries for MinGW are labeled according to whether they were
- built on Windows 7 vs Windows8.
+ built on Windows 7 vs Windows 8.
  (MinGW needs two .dll's if you wish to install just Mega2 without the whole
  MinGW.
  They are included and depend on Windows Version.)
@@ -8883,8 +8899,6 @@ Affection and unknown allele values are always interpreted as strings:
 
 \end_deeper
 \begin_layout Subsection
-
-\series bold
 Pedigree file conversion
 \end_layout
 
@@ -8983,14 +8997,12 @@ LinkPerID
  below.
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Standard
 
 \series bold
 Missing value indicators in pedigree file:
-\end_layout
-
-\begin_layout Standard
-Usually pedigree data contains unknown genotypes and phenotypes.
+\series default
+ Usually pedigree data contains unknown genotypes and phenotypes.
  The l2a.py script prompts the user to enter two missing value indicators,
  one for marker alleles and affection status, and another one for missing
  quantitative.
@@ -9001,14 +9013,12 @@ Usually pedigree data contains unknown genotypes and phenotypes.
  annotated file.
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Standard
 
 \series bold
 Missing fields inside pedigree records:
-\end_layout
-
-\begin_layout Standard
-The converter decides the number of fields required inside each line by
+\series default
+ The converter decides the number of fields required inside each line by
  looking at the pedigree-file format (post- or pre- makeped), the number
  of loci defined inside the names file, and whether extra fields such as
  Ped:, Per: and ID: are present.
@@ -9021,11 +9031,7 @@ The converter decides the number of fields required inside each line by
 \end_layout
 
 \begin_layout Subsection
-
-\series bold
-Locus file conversion
-\series default
- 
+Locus file conversion 
 \end_layout
 
 \begin_layout Standard
@@ -9037,8 +9043,6 @@ If you are using a names-format file, then only an annotated format locus
 \end_layout
 
 \begin_layout Subsection
-
-\series bold
 Map file conversion
 \end_layout
 
@@ -13545,7 +13549,7 @@ s as many times as necessary before she decides to proceed.
 \end_layout
 
 \begin_layout Subsection
-Locus reordering option 1) Select all loci in map order on chromosome: ##
+Locus reordering option 1) Select all loci in map order on chromosome.
 \end_layout
 
 \begin_layout Standard
@@ -25517,10 +25521,10 @@ PLINK/SEQ is a program and library for working with human genetic variation
 \end_layout
 
 \begin_layout Standard
-A shell script is produced that allows the data files to be loaded into
- a PLINK/SEQ database.
- The data is converted to PLINK SNP Major Binary format (e.g., .bed, .bim, .fam
- files) by Mega2 and loaded with the appropriate PLINK/SEQ commands.
+A shell script is produced that, when run, creates a new PLINK/SEQ project
+ and loads the data files into the project-specific PLINK/SEQ database.
+ The data are converted to PLINK SNP Major Binary format (e.g., .bed, .bim,
+ .fam files) by Mega2 and loaded with the appropriate PLINK/SEQ commands.
  If additional phenotypes are present in the input data (since the .fam file
  can only hold one phenotype), a phenotype file is created, and also processed
  by the shell script that loads the data.
@@ -25530,10 +25534,10 @@ A shell script is produced that allows the data files to be loaded into
 The PLINK/SEQ shell script takes two optional arguments.
  The first optional argument is the name of the PLINK/SEQ project that you
  are creating (the default value is 'pseq.01').
- The project will be created in the direactor in which the shell script
+ The project will be created in the directory in which the shell script
  is run.
  The second optional argument should be the path to the PLINK/SEQ resource
- directory (the default value is the project named appended with the string
+ directory (the default value is the project name appended with the string
  '_res').
  For a more complete description of these concepts, please see the PLINK/SEQ
  documentation at 
@@ -25547,7 +25551,22 @@ http://atgu.mgh.harvard.edu/plinkseq/
 
 \end_inset
 
+.
+\end_layout
 
+\begin_layout Standard
+When the PLINK/SEQ shell script is run, after creating a new project, it
+ copies the trio of PLINK files into the project 
+\begin_inset Quotes eld
+\end_inset
+
+_out
+\begin_inset Quotes erd
+\end_inset
+
+ folder before importing them into the PLINK/SEQ project.
+ As PLINK/SEQ does not make a copy of the PLINK data, the trio of PLINK
+ files must remain in the project folder - do not move them or delete them.
 \end_layout
 
 \begin_layout Section
@@ -26673,7 +26692,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-Oct 18, 2013
+Oct 21, 2013
 \end_layout
 
 \end_inset
@@ -27304,16 +27323,17 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.6.0 to Version 4.6.1 (Releasted Oct 18th, 2013)
+Changes from Version 4.6.0 to Version 4.6.1 (Releasted Oct 21st, 2013)
 \end_layout
 
 \begin_layout Itemize
 Enhancement: Mega2 can now produce PLINK/SEQ format files and a script for
- loading these these files into PLINK/SEQ.
+ loading these these files into a PLINK/SEQ project.
 \end_layout
 
 \begin_layout Itemize
-Bug fix: Mega2 4.6.0 had broken support for Linkage format input using a 
+Bug fix: Mega2 4.6.0 had broken support for Linkage format input when using
+ a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -27332,8 +27352,8 @@ reference "sub:Names-file"
 \end_layout
 
 \begin_layout Itemize
-Enhancement: Added binaries for native Microsoft Windows8 and MinGW built
- on Microsoft Windows8.
+Enhancement: Added binaries for native Microsoft Windows 8 and MinGW built
+ on Microsoft Windows 8.
 \end_layout
 
 \begin_layout Subsection
