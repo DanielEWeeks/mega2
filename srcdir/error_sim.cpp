@@ -259,10 +259,10 @@ genotype marker_error_model(genotype gen, int number,
 {
 
     genotype new_gen;
-    double slct, select1;
+    double slct;
     int new_ind, slct_index = gen_index(gen, Loc.AlleleCnt);
 
-    slct = randomnum(); select1 = randomnum();
+    slct = randomnum(); (void) randomnum();
     if (slct < Loc.Marker->error_prob) {
         *err_type = Marker;
         /* Need to change genotype */

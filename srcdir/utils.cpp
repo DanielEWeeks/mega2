@@ -444,7 +444,9 @@ void goodbye(void)
 #endif
     char syscmd[200];
     char *fl_name;
+#ifndef HIDESTATUS
     int exit_status;
+#endif
 /*
     char Mega2BatchRun[FILENAME_LENGTH+30];
 
@@ -554,8 +556,8 @@ void goodbye(void)
     // -1 if an error occurred when invoking fork(2) or waitpid(2)
     move_logs(sumdir);
     // BIG NOTE: this script assumes that MEGA2.BATCH is found in 'sumdir'.
-    exit_status = System((const char *)syscmd);
 #ifndef HIDESTATUS
+    exit_status = System((const char *)syscmd);
 #if defined(_WIN) || defined(MINGW) || (! defined(WIFEXITED))
 #define WIFEXITED(exit_status) (exit_status & 0x7f)
 #define WEXITSTATUS(exit_status) ((exit_status>>8) & 0xff)
@@ -575,6 +577,8 @@ void goodbye(void)
     } else {
         warnvf("An error occurred while attempting to run '%s'.\n", LOG2HTML);
     }
+#else
+    (void) System((const char *)syscmd);
 #endif
     err_or_warn(&XX, &err);
     sprintf(syscmd, "Can not find '%s' run log.", LOG2HTML);

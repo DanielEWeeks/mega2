@@ -4393,11 +4393,9 @@ static void Free_ped(linkage_ped_top *PTop) {
     }
 
     LTop = PTop->LocusTop;
-    marker_rec *Marker;
     pheno_rec *Pheno;
     for (l = 0; l < LTop->LocusCnt; l++) {
         Locus = &(LTop->Locus[l]);
-        Marker = &(LTop->Marker[l]);
         Pheno = &(LTop->Pheno[l]);
         switch (Locus->Type) {
         case NUMBERED:
@@ -4486,7 +4484,10 @@ int check_annotated_file_format(char *input_files[])
 {
     FILE *fp;
     char buffer[READ_CHUNK+1];
-    int ifl, format_flags[4], flags[2];
+    int ifl, flags[2];
+#ifndef HIDEFILE
+    int format_flags[4];
+#endif
     int read_line, checksum=0;
     char *token;
     char *overflow;
@@ -4496,7 +4497,9 @@ int check_annotated_file_format(char *input_files[])
     mssgf("Checking format of input files ....");
 #endif
     for (ifl=0; ifl < 4; ifl++) {
+#ifndef HIDEFILE
         format_flags[ifl]=0;
+#endif
         if (input_files[ifl] == NULL) continue;
 	if ((fp = fopen(input_files[ifl], "r")) == NULL) {
 	  errorvf("could not open %s for reading!\n", input_files[ifl]);
@@ -4576,7 +4579,9 @@ int check_annotated_file_format(char *input_files[])
 
             if (flags[0] && flags[1]) {
                 /* no need to read further */
+#ifndef HIDEFILE
                 format_flags[ifl] = 1;
+#endif
                 checksum++; break;
             }
         }

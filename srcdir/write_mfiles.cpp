@@ -577,7 +577,9 @@ static  void  write_batch2(char *fl_name, int numchr,
     linkage_locus_top *LTop;
     int             nloop, num_affec=num_traits, tr, i,j;
 /*   double           difff, diffm; */
+#ifndef HIDEDATE
     time_t          now;
+#endif
     char            chr_str[3], comment_char[5], batfl_name[2*FILENAME_LENGTH];
     int num_markers, *markers;
 
@@ -641,7 +643,9 @@ static  void  write_batch2(char *fl_name, int numchr,
                  numchr, comment_char));
         fprintf(filep, "\n");
         fprintf(filep, "000003                 %s batch item number\n", comment_char);
+#ifndef HIDEDATE
         now = time(NULL);
+#endif
         fprintf(filep, "Chr %2d; Infiles: %s", numchr,
 #ifdef HIDEDATE
                 NOcTIME

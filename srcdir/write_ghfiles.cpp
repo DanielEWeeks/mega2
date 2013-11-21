@@ -146,7 +146,6 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
     int num_markers, *markers=NULL, nloop, num_affec=num_traits;
     linkage_locus_rec *Locus;
     pheno_rec *Pheno;
-    marker_rec *Marker;
     FILE *filep;
     char lfl_name[2*FILENAME_LENGTH];
 
@@ -270,7 +269,6 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
         for(locus=0; locus < NumChrLoci; locus++) {
             Locus = &(Top->LocusTop->Locus[ChrLoci[locus]]);
             Pheno = &(Top->LocusTop->Pheno[ChrLoci[locus]]);
-            Marker = &(Top->LocusTop->Marker[ChrLoci[locus]]);
             switch(Locus->Type) {
             case AFFECTION:
                 if (LoopOverTrait == 0) {

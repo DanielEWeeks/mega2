@@ -543,10 +543,11 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
     char value[FILENAME_LENGTH];
     char *intstr;
 
-    int j, it = -1, version4;
+    int j, it = -1;
+//  int version4;
     FILE *fp;
 
-    version4 = 0;
+//  version4 = 0;
     /* First the the verseion number */
     fp = fopen(batch_file_name, "r");
     if (fp == (FILE *)NULL) {
@@ -556,7 +557,7 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
 
     (void)fgets(nextline, FILENAME_LENGTH - 1, fp);
     if (!strncasecmp(nextline, "#Version4.4", (size_t) 11)) {
-        version4 = 1;
+//      version4 = 1;
     }
     fclose(fp);
 

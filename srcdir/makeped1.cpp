@@ -466,9 +466,12 @@ int check_pre_makeped(FILE *fp, int *num_lines)
     char ped[FILENAME_LENGTH], ind[FILENAME_LENGTH];
     char line[FILENAME_LENGTH];
     int num_valid_sex=0;
-    int num_unknown_sex=0, first_unknown;
-    int num_invalid_sex=0, first_invalid;
-
+    int num_unknown_sex=0;
+    int num_invalid_sex=0;
+#ifndef HIDEFILE
+    int first_unknown;
+    int first_invalid;
+#endif
     *num_lines=0;
 
     // Here we gather only statistics about the pedigree file from the first five columns:
@@ -522,14 +525,18 @@ int check_pre_makeped(FILE *fp, int *num_lines)
             if (gender == 0) {
                 num_unknown_sex++;
                 if (num_unknown_sex == 1) {
+#ifndef HIDEFILE
                     first_unknown = *num_lines+1;
+#endif
                 }
             } else if (gender == 1 || gender == 2) {
                 num_valid_sex++;
             } else {
                 num_invalid_sex++;
                 if (num_invalid_sex == 1) {
+#ifndef HIDEFILE
                     first_invalid = *num_lines+1;
+#endif
                 }
             }
 
