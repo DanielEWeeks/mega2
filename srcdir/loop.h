@@ -228,7 +228,7 @@ public:
         int _loci_allele_limit;
 
         ped_per_loci(linkage_ped_top *Top) : entry(Top) {
-            _loci_allele_limit = 2;
+            _loci_allele_limit = 0;
         }
        ~ped_per_loci() {}
 
@@ -247,7 +247,7 @@ public:
         int _loci_allele_limit;
 
         loci_ped_per(linkage_ped_top *Top) : entry(Top) {
-            _loci_allele_limit = 2;
+            _loci_allele_limit = 0;
         }
        ~loci_ped_per() {}
 
@@ -266,7 +266,7 @@ public:
         int _loci_allele_limit;
 
         loci(linkage_ped_top *Top) : entry(Top) {
-            _loci_allele_limit = 2;
+            _loci_allele_limit = 0;
         }
        ~loci() {}
         void delete_file(const char *file) { filep_delete(*_opath, file); }
