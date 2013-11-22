@@ -678,8 +678,8 @@ int             menu1(file_format *infl_type,
             choiceA[idx++] = plink_k;
         }
 
-        printf("%2d) Genotype compression:                   %s\n", idx,
-               MARKER_SCHEME == 1 ? "2 bits" : (MARKER_SCHEME == 2 ? "2 bytes" : (MARKER_SCHEME == 3 ? "16 bytes" : "???")) );
+        printf("%2d) Genotype compression size:              %s\n", idx,
+               MARKER_SCHEME == 1 ? "2 bits (biallelic markers only)" : (MARKER_SCHEME == 2 ? "2 bytes" : (MARKER_SCHEME == 3 ? "16 bytes" : "???")) );
         choiceA[idx++] = compress_i;
 
 #ifdef USER_UNKNOWN
@@ -1028,14 +1028,24 @@ int             menu1(file_format *infl_type,
             while (1) {
                 fflush(stdout);
                 draw_line();
-                printf("Please enter compression value 1, 2, or 3 (2 bits, 2 bytes, or 16 bytes) > ");
+//                printf("Please enter compression value 1, 2, or 3 for\n       (2 bits [biallelic marker only], 2 bytes, or 16 bytes) > ");
+                printf("              Mega2 %s compressiopn menu:\n", Mega2Version);
+                draw_line();
+                printf(" 0) Done with this menu - please proceed\n");
+                printf("%s%1d) 2 bits (biallelic markers only)\n",
+                       1 == MARKER_SCHEME ? "*" : " ", 1);
+                printf("%s%1d) 2 bytes (biallelic or microsatellite markers)\n",
+                       2 == MARKER_SCHEME ? "*" : " ", 2);
+                printf("%s%1d) 16 bytes\n",
+                       3 == MARKER_SCHEME ? "*" : " ", 3);
+                printf("Select from options 0-3 > ");
+
                 fcmap(stdin, "%d", &ans); newline;
-                if (ans > 3 || ans < 1) {
-                    printf("MARKER_SCHEME allowed values are 1, 2 or 3\n");
-                } else {
+                if (ans == 0) break;
+                else if (ans <= 3 && ans >= 1)
                     MARKER_SCHEME = ans;
-                    break;
-                }
+                else
+                    printf("MARKER_SCHEME allowed values are 1, 2 or 3\n");
             }
         } else {
             printf("Invalid option %s, select from options 0-%d.\n", cchoice, idx-1);
