@@ -215,12 +215,15 @@ endif
 
 all: $(MODULE)_$(OSTYPE)
 
+CLIBS += -L. -lvcftools -lz
+
 gcc_info.o: $(OBJS)
 
 LINK ?= $(CXX)
 LTARGET ?= -o $(EXEC)
 $(MODULE)_$(OSTYPE): $(OBJS) $(HDRS) gcc_info.o
 	$(RM) $(MODULE)
+	$(MAKE) -C vcftools
 	$(LINK) $(LFLAGS) $(LTARGET) $(OBJS) $(FLAGS) gcc_info.o $(CLIBS)
 
 ifeq ($(OSTYPE),mingw)
@@ -233,6 +236,7 @@ endif
 
 clean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
+	$(MAKE) -C vcftools clean
 
 clean1:
 	$(RM) *~
@@ -244,6 +248,7 @@ srcdist:
 
 depend:
 	makedepend -Y. -- $(CFLAGS) -- $(SRCS)
+	$(MAKE) -C vcftools depend
 
 # DO NOT DELETE
 

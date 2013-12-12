@@ -1,0 +1,45 @@
+/*
+  Mega2: Manipulation Environment for Genetic Analysis
+  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+  Daniel E. Weeks, and University of Pittsburgh
+
+  This file is part of the Mega2 program, which is free software; you
+  can redistribute it and/or modify it under the terms of the GNU
+  General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later
+  version.
+
+  Mega2 is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+  For further information contact:
+      Daniel E. Weeks
+      e-mail: weeks@pitt.edu
+
+===========================================================================
+*/
+
+#ifndef MEGA2_VCFTOOLS_INTERFACE_H
+#define MEGA2_VCFTOOLS_INTERFACE_H
+
+#include "../annotated_ped_file.h"
+
+extern int VCF; 
+
+extern void VCFTools_printf_supported_cmd_line_options();
+extern int VCFTools_process_cmd_line(const char *VCFArgs);
+extern int VCFTools_process_cmd_line_if_necessary(const char *VCFArgs, const char *filename);
+extern void VCFTools_process_file_meta_information_and_header();
+extern int VCFTools_process_next_entry(annotated_ped_rec persons[],
+				       const int persons_n,
+				       linkage_locus_rec Locus[],
+				       const int Locus_i);
+
+#endif /* MEGA2_VCFTOOLS_INTERFACE_H */
