@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -81,6 +81,7 @@
 #include "utils_ext.h"
 #include "write_files_ext.h"
 #include "plink_ext.h"
+
 /*
      error_messages_ext.h:  errorf mssgf my_calloc my_malloc warnf
               fcmap_ext.h:  fcmap
@@ -90,7 +91,7 @@
                list_ext.h:  append_to_list_tail new_list pop_first_list_entry
             makeped_ext.h:  copy_pedrec_data
       marker_lookup_ext.h:  make_marker search_marker
-            mrecode_ext.h:  assign_dummy_alleles convert_to_freq count_classes count_raw_alleles create_allele_list default_trait_penetrances free_marker_item need_recoding read_marker_data read_marker_only_data recode_locus_top recode_ped_top write_recode_summary
+            mrecode_ext.h:  assign_dummy_alleles convert_to_freq count_classes count_raw_alleles create_allele_list default_trait_penetrances free_marker_item need_recoding read_marker_data read_marker_only_data recode_locus_top recode_ped_top write_recode_summary read_m2_map_as_names_file
            omit_ped_ext.h:  omit_peds
          read_files_ext.h:  read_aff_phen read_numbered_data read_quant_phen untype_locus
        reorder_loci_ext.h:  get_chromosome_list
@@ -103,74 +104,23 @@
 
 col_hdr_type    ReservedColnames[NUM_PEDCOL_NAMES];
 
-int sort_byped(const void *p1, const void *p2);
-linkage_ped_top *read_annotated_ped_file(char *pedfile,
-					 linkage_locus_top *LTop,
-					 annotated_file_desc *file_desc,
-					 int num_groups,
-					 int *groups);
-int read_annotated_names_file(char *names_file, linkage_locus_top **LTop,
-			      annotated_file_desc *file_desc);
-ext_linkage_locus_top *read_annotated_map_file(char *map_file, linkage_locus_top *LTop,
-					       ext_linkage_locus_top *inp_EXLTop,
-					       annotated_file_desc *file_desc);
-ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file,
-                                            linkage_locus_top *LTop,
-                                            ext_linkage_locus_top *inp_EXLTop,
-                                            col_hdr_type reserved_colnames[NUM_MAPCOL_NAMES],
-                                            int num_map_recs,
-                                            annotated_file_desc *file_desc,
-                                            char **alleles);
-int parse_map_file_header(FILE *mapfp, col_hdr_type *reserved_mapcols,
-			  list *userdef_mapcols);
-int get_map_names(int num_cols, col_hdr_type *map_colnames,
-		  col_hdr_type *reserved_colnames,
-		  ext_linkage_locus_top *EXLTop);
-void allele_name_width(linkage_locus_top *LTop,
-		       ext_linkage_locus_top *EXLTop,
-		       size_t *AllWidth);
-linkage_ped_tree *copy_annotated_to_lpedtop(linkage_locus_top *LTop,
-					    int num_persons,
-					    annotated_ped_rec *persons,
-					    int num_peds,
-                                            int unique);
-linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
-                                      plink_info_type *plink_info,
-                                      linkage_locus_top *LTop,
-                                      annotated_file_desc *file_desc,
-                                      int phecols,
-                                      int num_groups,
-                                      int *groups,
-                                      int num_ped_records,
-                                      int has_extra_ids);
-marriage_graph_type *copy_annotated_to_premake(linkage_locus_top *LTop,
-                                               int num_persons,
-                                               annotated_ped_rec *persons,
-                                               int num_peds,
-                                               int unique);
+
+static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
+                                             plink_info_type *plink_info,
+                                             linkage_locus_top *LTop,
+                                             annotated_file_desc *file_desc,
+                                             int phecols,
+                                             int num_groups,
+                                             int *groups,
+                                             int num_ped_records,
+                                             int has_extra_ids);
 
 annotated_file_desc AnnotatedFileInfo;
 
-static void copy_colname(col_hdr_type *from,
-			 col_hdr_type *to);
-
-static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
-						int num_userdef_cols,
-						list *userdef_colnames,
-						linkage_locus_top *LTop,
-						int *num_res,
-						int *has_extra_ids);
-static int parse_pedigree_header(FILE *pedfile,
-				 col_hdr_type *reserved_colnames,
-				 list *userdef_ped_cols);
 #ifdef DEFUNCT
 static void ann_field_widths(linkage_ped_top *TTop,
 			     annotated_file_desc *file_desc);
 #endif
-static int parse_names_file_header(FILE *filep,
-                                   annotated_file_desc *file_desc);
-static int parse_frequency_file_header(FILE *filep,
-				       annotated_file_desc *file_desc);
 static void init_reserved_pedcol_names(void);
 
 static int parse_variable_width_hdr(FILE *file,
@@ -180,25 +130,25 @@ static int parse_variable_width_hdr(FILE *file,
 				    const int required_cols,
 				    const char **valid_header_item_extensions);
 
-// //////////////////////////////////////////////////////////////// //
+static int read_plink_map_as_names_file(char *map_file, linkage_locus_top **LTop,
+                                        int cols, char **phe_names, int *phe_types,
+                                        annotated_file_desc *file_desc);
 
-int read_plink_map_as_names_file(char *map_file, linkage_locus_top **LTop,
-                                 int cols, char **phe_names, int *phe_types,
-                                 annotated_file_desc *file_desc);
+static ext_linkage_locus_top *read_plink_map_file(const char *map_file,
+                                                  linkage_locus_top *LTop,
+                                                  annotated_file_desc *file_desc,
+                                                  plink_info_type *plink_info);
 
-ext_linkage_locus_top *read_plink_map_file(char *map_file, linkage_locus_top *LTop,
-                                           ext_linkage_locus_top *inp_EXLTop,
-                                           annotated_file_desc *file_desc,
-                                           plink_info_type *plink_info);
-
-linkage_ped_top *read_plink_ped_file(char *pedfile, char *bedfile, plink_info_type *plink_info,
-                                     int phecols,
-                                     linkage_locus_top *LTop,
-                                     ext_linkage_locus_top *EXLTop,
-                                     int bp_map,
-                                     annotated_file_desc *file_desc,
-                                     int num_groups,
-                                     int *groups);
+static linkage_ped_top *read_plink_ped_file(char *pedfile,
+                                            char *bedfile,
+                                            plink_info_type *plink_info,
+                                            int phecols,
+                                            linkage_locus_top *LTop,
+                                            ext_linkage_locus_top *EXLTop,
+                                            int bp_map,
+                                            annotated_file_desc *file_desc,
+                                            int num_groups,
+                                            int *groups);
 
 static int parse_phe_types(char *phe_file, char ***phe_names, int **phe_types);
 
@@ -208,7 +158,7 @@ static int parse_phe_types(char *phe_file, char ***phe_names, int **phe_types);
     plink, no_fid, no_parents, no_pheno, map3, 
     cM, missing_pheno, geneticMapType, pheno_value, trait
 */
-struct PLINK PLINK = { not_plink_format, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"};
+PLINK_t PLINK = { not_plink_format, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"};
 
 /* end PLINK parameters */
 
@@ -218,10 +168,10 @@ struct PLINK PLINK = { not_plink_format, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0
 
 // full header check routines...
 static int is_missing_required_hdr(col_hdr_type *col_names,
-				   int num_elements);
+                                   int num_elements);
 static void error_hdr(char *hdr,
-		      int num_known,
-		      col_hdr_type *known_hdrs);
+                      int num_known,
+                      col_hdr_type *known_hdrs);
 
 
 // 7.2.2. Annotated pedigree file (column headers)
@@ -256,15 +206,15 @@ static const char *map_valid_header_item_extensions[] = {
 
 // header extension check routines...
 static int is_valid_hdr_ext(const char *colname,
-			    const char **valid_header_item_extensions);
+                            const char **valid_header_item_extensions);
 static void error_hdr_ext(char *colname,
-			  const int column_index,
-			  const char **valid_header_item_extensions);
+                          const int column_index,
+                          const char **valid_header_item_extensions);
 
 // divide the header into it's component parts...
 static void parse_hdr(const char *colname,
-		      char *name, char *ext1, char *ext2,
-		      const char **valid_header_item_extensions);
+                      char *name, char *ext1, char *ext2,
+                      const char **valid_header_item_extensions);
 
 
 
@@ -339,12 +289,11 @@ static void loctype_to_descriptor(linkage_locus_top *LTop, int i, char loctype[]
 }
 
 static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
-						int num_userdef_cols,
-						list *userdef_colnames,
-						linkage_locus_top *LTop,
-						int *num_reserved_cols,
-						int *has_extra_ids)
-
+                                                int num_userdef_cols,
+                                                list *userdef_colnames,
+                                                linkage_locus_top *LTop,
+                                                int *num_reserved_cols,
+                                                int *has_extra_ids)
 {
     /* Store the column headers in order of their appearance in the pedigree file
        to make the reading in easier */
@@ -406,7 +355,7 @@ static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
           != NULL) {
         if (colname_item->value_type != IGNORE) {
 
-            locus_found=0;
+            //locus_found=0;
             parse_hdr(colname_item->ColName, main_part, ext1, ext2, pedigree_valid_header_item_extensions);
             locus_found = search_marker(main_part, &i);
             colname_item->locus_number = i;
@@ -467,8 +416,8 @@ static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
 */
 
 static int parse_pedigree_header(FILE *pedfile,
-				 col_hdr_type *reserved_pedcols,
-				 list *userdef_pedcols)
+                                 col_hdr_type *reserved_pedcols,
+                                 list *userdef_pedcols)
 {
     int colnum;
     /* ped, person, father, mother, sex */
@@ -482,16 +431,16 @@ static int parse_pedigree_header(FILE *pedfile,
 /*     printf("%s %d\n", reserved_pedcols[i].ColName, */
 /* 	   reserved_pedcols[i].input_col); */
 /*   } */
-    return(colnum);
+    return colnum;
 }
 
 /* returns the number of non-reserved columns */
 static int parse_variable_width_hdr(FILE *file,
-				    col_hdr_type *reserved_colnames,
-				    list *userdef_ped_cols,
-				    const int num_reserved_cols,
-				    const int required_cols,
-				    const char **valid_header_item_extensions)
+                                    col_hdr_type *reserved_colnames,
+                                    list *userdef_ped_cols,
+                                    const int num_reserved_cols,
+                                    const int required_cols,
+                                    const char **valid_header_item_extensions)
 {
     int i, col_num=0;
     char buffer[READ_CHUNK+1];
@@ -617,13 +566,13 @@ static char **canonical_allele_cache = (char **)NULL;
 // returned from 'search_allele' so that we only call it once (when the cache is empty).
 // Thank you Robert for suggesting this!
 static char *search_allele_cache(const char *allele) {
-  char *canonical_allele = canonical_allele_cache[((unsigned char)allele[0])];
-  if (canonical_allele == (char *)NULL) {
-    // canonical allele not in the cache, so get it, and add it...
-    canonical_allele = search_allele((char *)allele);
-    canonical_allele_cache[((unsigned char)allele[0])] = canonical_allele;
-  }
-  return canonical_allele;
+    char *canonical_allele = canonical_allele_cache[((unsigned char)allele[0])];
+    if (canonical_allele == (char *)NULL) {
+        // canonical allele not in the cache, so get it, and add it...
+        canonical_allele = search_allele((char *)allele);
+        canonical_allele_cache[((unsigned char)allele[0])] = canonical_allele;
+    }
+    return canonical_allele;
 }
 
 //
@@ -631,8 +580,9 @@ static char *search_allele_cache(const char *allele) {
 // and the .bed file information. This routine should be called for
 // SNP_major mode, or for SNP_minor mode.
 static void process_binary_genotype(FILE *bed_filep, annotated_ped_rec *entry,
-				    int mrkindex, int *SNP_count, int *SNP_data,
-				    const char *allele1, const char *allele2) {
+                                    int mrkindex, int *SNP_count, int *SNP_data,
+                                    linkage_locus_rec *locus,
+                                    const char *allele1, const char *allele2) {
     char *allele1_from_table, *allele2_from_table;
     int ra_val = 0;
     
@@ -647,23 +597,23 @@ static void process_binary_genotype(FILE *bed_filep, annotated_ped_rec *entry,
         case 0x00:
             // 00  Homozygote "1"/"1"
 	    allele1_from_table = search_allele_cache(allele1);
-            set_2Ralleles(entry->marker, mrkindex, allele1_from_table, allele1_from_table);
+            set_2Ralleles(entry->marker, mrkindex, locus, allele1_from_table, allele1_from_table);
             break;
         case 0x01:
             // 01  Heterozygote
 	    allele1_from_table = search_allele_cache(allele1);
 	    allele2_from_table = search_allele_cache(allele2);
-            set_2Ralleles(entry->marker, mrkindex, allele1_from_table, allele2_from_table);
+            set_2Ralleles(entry->marker, mrkindex, locus, allele1_from_table, allele2_from_table);
             break;
         case 0x03:
             // 11  Homozygote "2"/"2"
 	    allele2_from_table = search_allele_cache(allele2);
-            set_2Ralleles(entry->marker, mrkindex, allele2_from_table, allele2_from_table);
+            set_2Ralleles(entry->marker, mrkindex, locus, allele2_from_table, allele2_from_table);
             break;
         case 0x02:
             // 10  Missing genotype
 	    allele1_from_table = search_allele_cache("0");
-            set_2Ralleles(entry->marker, mrkindex, allele1_from_table, allele1_from_table);
+            set_2Ralleles(entry->marker, mrkindex, locus, allele1_from_table, allele1_from_table);
             break;
     }
     
@@ -728,7 +678,7 @@ static int read_annotated_pedrec(FILE *filep,
                 case XLINKED:
                 case YLINKED:
                     lch=fcmap(filep, "%s", dummy);
-                    annot_ignore_numbered_data(entry->rec_num, &(LTop->Marker[mrkindex]),
+                    annot_ignore_numbered_data(entry->rec_num, &(LTop->Locus[mrkindex]),
                                                entry->marker, mrkindex);  /* this will set the pair */
                     
                     i++;
@@ -842,6 +792,8 @@ static int read_annotated_pedrec(FILE *filep,
         } else for (; i < file_desc->num_ped_cols; i++) {
             // Here we process the Phenotypes and Genotypes (.ped file)...
             int mrkindex=ped_col_names[i].locus_number;
+	    // POSSIBLE BUG: Should the 'IGNORE' case here be a continue rather than a break,
+	    // because you still need to get the other items on the line?
             if (mrkindex < 0 || i == file_desc->num_ped_cols ||
                 ped_col_names[i].value_type == IGNORE) {
                 i--;
@@ -860,7 +812,8 @@ static int read_annotated_pedrec(FILE *filep,
                     LTop->Marker[mrkindex].col_num = ped_col_names[i].input_col;
                 // If this is a .fam file we will never get here because the alleles
                 // are not contained in this file. We will add the alleles below...
-                lch=read_numbered_data(filep, mrkindex, (void *) entry, Annotated, 0);
+                lch=read_numbered_data(filep, mrkindex, &LTop->Locus[mrkindex],
+                                       (void *) entry, Annotated, 0);
                 i++;
                 break;
             case AFFECTION:
@@ -962,7 +915,8 @@ static int read_annotated_pedrec(FILE *filep,
                     int SNP_data;       // byte from the binary file
                     allele1[0] = plink_info->alleles[allele_i++];
                     allele2[0] = plink_info->alleles[allele_i++];
-                    process_binary_genotype(plink_info->bed_filep, entry, mrkindex, &SNP_count, &SNP_data, allele1, allele2);
+                    process_binary_genotype(plink_info->bed_filep, entry, mrkindex, &SNP_count, &SNP_data, 
+                                            &LTop->Locus[mrkindex], allele1, allele2);
                     i++;
                 }
             }
@@ -1008,8 +962,7 @@ static int read_annotated_pedrec(FILE *filep,
     return *curr_ped_index;
 }
 
-int sort_byped(const void *p1, const void *p2)
-
+static int sort_byped(const void *p1, const void *p2)
 {
     const annotated_ped_rec *person1, *person2;
 
@@ -1036,9 +989,8 @@ int sort_byped(const void *p1, const void *p2)
 */
 
 static int sort_and_check(int num_recs, annotated_ped_rec *persons,
-			  int num_groups, int *groups,
-			  int has_link_perid, int has_link_pedid)
-
+                          int num_groups, int *groups,
+                          int has_link_perid, int has_link_pedid)
 {
     int gfound, g, p;
     int (*sort_persons)(const void *, const void *) = sort_byped;
@@ -1122,25 +1074,26 @@ static int sort_and_check(int num_recs, annotated_ped_rec *persons,
 */
 static int UNIQUEid = 0; /* unless LinkPerID/LinkPedID is set */
 
-void
-unique_id(char *reslt, char *ped, char *per) {
+void unique_id(char *reslt, char *ped, char *per) {
     if (UNIQUEid || PLINK.no_fid)
         strcpy(reslt, per);
     else
         sprintf(reslt, "%s_%s", ped, per);
 }
 
-char *
-unique_id_per(char *reslt, char *ped) {
+char *unique_id_per(char *reslt, char *ped) {
     if (UNIQUEid || PLINK.no_fid)
         return reslt;
     else
         return reslt + strlen(ped) + 1;
 }
 
-marriage_graph_type *copy_annotated_to_premake(linkage_locus_top *LTop,
-                                               int num_persons, annotated_ped_rec *persons, 
-                                               int num_peds, int unique) {
+static marriage_graph_type *copy_annotated_to_premake(linkage_locus_top *LTop,
+                                                      int num_persons,
+                                                      annotated_ped_rec *persons,
+                                                      int num_peds,
+                                                      int unique)
+{
     int curr_ped;
     int ped, per, k;
     size_t p, lower_p, upper_p;
@@ -1269,10 +1222,10 @@ marriage_graph_type *copy_annotated_to_premake(linkage_locus_top *LTop,
 }
 
 
-linkage_ped_tree *copy_annotated_to_lpedtop(linkage_locus_top *LTop,
-					    int num_persons,
-					    annotated_ped_rec *persons,
-					    int num_peds, int unique)
+static linkage_ped_tree *copy_annotated_to_lpedtop(linkage_locus_top *LTop,
+                                                   int num_persons,
+                                                   annotated_ped_rec *persons,
+                                                   int num_peds, int unique)
 {
     int i, curr_ped;
     int ped, per;
@@ -1292,7 +1245,7 @@ linkage_ped_tree *copy_annotated_to_lpedtop(linkage_locus_top *LTop,
         clear_lpedtree(&(lped[ped]));
     }
 
-    ped=0;
+    //ped=0;
     for (per = 0; per < num_persons; per++) {
         links[per] = CALLOC((size_t)5, int);
         ped = persons[per].ped_index-1;
@@ -1442,11 +1395,11 @@ linkage_ped_tree *copy_annotated_to_lpedtop(linkage_locus_top *LTop,
     return lped;
 }
 
-linkage_ped_top *read_annotated_ped_file(char *pedfile,
-					 linkage_locus_top *LTop,
-					 annotated_file_desc *file_desc,
-					 int num_groups,
-					 int *groups)
+static linkage_ped_top *read_annotated_ped_file(char *pedfile,
+                                                linkage_locus_top *LTop,
+                                                annotated_file_desc *file_desc,
+                                                int num_groups,
+                                                int *groups)
 {
     int num_userdef_cols, num_reserved_cols, c;
     int has_extra_ids = 0;
@@ -1494,15 +1447,15 @@ linkage_ped_top *read_annotated_ped_file(char *pedfile,
 #define UCHAR_MAX            256
 #endif
 
-linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
-                                      plink_info_type *plink_info,
-                                      linkage_locus_top *LTop,
-                                      annotated_file_desc *file_desc,
-                                      int phecols,
-                                      int num_groups,
-                                      int *groups,
-                                      int num_ped_records,
-                                      int has_extra_ids)
+static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
+                                             plink_info_type *plink_info,
+                                             linkage_locus_top *LTop,
+                                             annotated_file_desc *file_desc,
+                                             int phecols,
+                                             int num_groups,
+                                             int *groups,
+                                             int num_ped_records,
+                                             int has_extra_ids)
 {
     int num_peds=0, num_ped_per=0, p, c;
     int num_pheno_errs, retval, num_err=0;
@@ -1512,6 +1465,7 @@ linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     marriage_graph_type *ppeds;
     linkage_ped_tree *lpeds;
     int Display_untyped = 0, untyped = 0, totaltyped = 0;
+    int check_ungenotyped = 0;
 
     // allele_count should be == 0 when using a .ped file...
 
@@ -1527,6 +1481,7 @@ linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         errorf("Could not allocate enough memory, exiting.");
         EXIT(MEMORY_ALLOC_ERROR);
     }
+
 
     // If we are processing a PLINK file allocate the allele chache now...
     if (PLINK.plink) {
@@ -1553,9 +1508,11 @@ linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         } else {
             ungetc(c, filep);
         }
-        persons[p].pheno  = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
+        if (LTop->PhenoCnt)
+            persons[p].pheno  = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
         // NOTE: No space is allocated in marker for entries 0..LTop->PhenoCnt-1
-        persons[p].marker = marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt);
+        if (LTop->MarkerCnt)
+            persons[p].marker = marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt);
 
         persons[p].rec_num = p+1;
 
@@ -1568,6 +1525,7 @@ linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         totaltyped++;
         if ( (PLINK.plink != binary_PED_format) ||
              (PLINK.plink == binary_PED_format && plink_info->SNP_major != 0x01) ) {
+//              NB. VCF files look like SNP_major == 1
             persons[p].genocnt = crunch_Rnotype(&persons[p].marker, LTop);
             if (persons[p].genocnt == 0) {
 /*
@@ -1631,14 +1589,35 @@ linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
                     allele2[0] = plink_info->alleles[allele_i++];
                     for (pp=0; pp < num_ped_records; pp++) {
                         // looping through the individuals...
-                        process_binary_genotype(plink_info->bed_filep, &(persons[pp]), mrkindex, &SNP_count, &SNP_data, allele1, allele2);
+                        process_binary_genotype(plink_info->bed_filep, &(persons[pp]), mrkindex, &SNP_count, &SNP_data, 
+                                                &LTop->Locus[mrkindex], allele1, allele2);
                     }
                     i++;
                 }
             }
         }
+        check_ungenotyped = 1;
+    }
 
-        for (pp=0; pp < num_ped_records; pp++) {
+    if (Input_Format == in_format_binary_VCF ||
+	Input_Format == in_format_compressed_VCF ||
+        Input_Format == in_format_VCF) {
+//      if (! getenv("_")) { asm("int $3"); }
+        VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop);
+        VCFtools_close();
+        check_ungenotyped = 1;
+    }
+
+    // CPK: At this point we have finished processing the .bed file...
+    if   (PLINK.plink == binary_PED_format &&
+          plink_info != NULL &&
+          plink_info->bed_filep != (FILE *)NULL) {
+        fclose(plink_info->bed_filep);
+        plink_info->bed_filep = (FILE *)NULL;
+    }
+
+    if (check_ungenotyped) {
+        for (int pp=0; pp < num_ped_records; pp++) {
             // looping through the individuals...
             persons[pp].genocnt = crunch_Rnotype(&persons[pp].marker, LTop);
             if (persons[pp].genocnt == 0) {
@@ -1653,18 +1632,10 @@ linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     }
 
     SUPPRESS_MSSG_NESTED_FORCE(untyped);
-    warnvf("Individuals Untyped: %d out of %d\n", untyped, totaltyped);
+    if (untyped > 0)
+        warnvf("Individuals untyped: %d out of %d\n", untyped, totaltyped);
     SUPPRESS_MSSG_NESTED_FINI(untyped);
 
-    // CPK: At this point we have finished processing the .bed file...
-    if   (PLINK.plink == binary_PED_format &&
-          plink_info != NULL &&
-          plink_info->bed_filep != (FILE *)NULL) {
-        fclose(plink_info->bed_filep);
-        plink_info->bed_filep = (FILE *)NULL;
-    }
-
-    
     if (num_err == 0) {
         sort_and_check(num_ped_records, persons, num_groups, groups,
                        has_extra_ids & 1, has_extra_ids & 2);
@@ -1817,13 +1788,11 @@ void clear_YLINKED_females(linkage_ped_top *Top, int raw_allele, int hdr)
   Returns 1 more than the width in order to leave one column gap.
   ---------------------------------------------------------------------------- */
 
-void allele_name_width(linkage_locus_top *LTop,
-		       ext_linkage_locus_top *EXLTop,
-		       size_t *AllWidth)
-
+static void allele_name_width(linkage_locus_top *LTop,
+                              ext_linkage_locus_top *EXLTop,
+                              size_t *AllWidth)
 {
-    int m;
-    int a;
+    int m, a;
 
     *AllWidth=0;
     for (m=0; m < LTop->LocusCnt; m++) {
@@ -1837,12 +1806,10 @@ void allele_name_width(linkage_locus_top *LTop,
             }
         }
     }
-    return;
 }
 
 static void ann_field_widths(linkage_ped_top *TTop,
-			     annotated_file_desc *file_desc)
-
+                             annotated_file_desc *file_desc)
 {
 
     int  FidWidth, FnameWidth, PnameWidth;
@@ -1916,7 +1883,7 @@ static void ann_field_widths(linkage_ped_top *TTop,
 #endif
 
 static int parse_names_file_header(FILE *filep,
-				   annotated_file_desc *file_desc)
+                                   annotated_file_desc *file_desc)
 {
     /* Names file has two columns always: Name, Type in any order */
     /* extra information is allowed on each line after the two columns */
@@ -1969,9 +1936,9 @@ static int parse_names_file_header(FILE *filep,
    Changes the read_marker_data() function to take in type and
    name columns */
 
-int read_annotated_names_file(char *names_file, linkage_locus_top **LTop,
-			      annotated_file_desc *file_desc)
-
+static int read_annotated_names_file(char *names_file,
+                                     linkage_locus_top **LTop,
+                                     annotated_file_desc *file_desc)
 {
     int annotated_format;
 
@@ -1993,11 +1960,12 @@ int read_annotated_names_file(char *names_file, linkage_locus_top **LTop,
     return annotated_format;
 }
 
+
 /* This is again a variable length header, we can have several maps */
 
-int parse_map_file_header(FILE *mapfp, col_hdr_type *reserved_mapcols,
-			  list *userdef_mapcols)
-
+static int parse_map_file_header(FILE *mapfp,
+                                 col_hdr_type *reserved_mapcols,
+                                 list *userdef_mapcols)
 {
     int colnum =
         parse_variable_width_hdr(mapfp,
@@ -2009,10 +1977,11 @@ int parse_map_file_header(FILE *mapfp, col_hdr_type *reserved_mapcols,
 }
 
 
-int get_map_names(int num_cols, col_hdr_type *map_colnames,
-		  col_hdr_type *reserved_colnames,
-		  ext_linkage_locus_top *EXLTop)
-
+static int get_map_names(int num_cols,
+                         col_hdr_type *map_colnames,
+                         col_hdr_type *reserved_colnames,
+                         const int allocate_additional_maps,
+                         ext_linkage_locus_top *EXLTop)
 {
     int i, j, map_ind,  mapnum=0, has_err=0;
     char MapName[FILENAME_LENGTH], ext1[FILENAME_LENGTH], ext2[FILENAME_LENGTH];
@@ -2031,11 +2000,11 @@ int get_map_names(int num_cols, col_hdr_type *map_colnames,
             !strcasecmp(map_colnames[i].ColName, reserved_colnames[2].ColName)) {
             continue;
         }
-	// parse_hdr will split the column name in the map file in to three parts...
+        // parse_hdr will split the column name in the map file in to three parts...
         // <MapName, ext1, ext2> == <'Map', [k | h | p], [m | f| a | <none>]>
         parse_hdr(map_colnames[i].ColName, MapName, ext1, ext2, map_valid_header_item_extensions);
         // Look to see if we have recorded this MapName in the map_names vector...
-	// The user does not have to place the maps for any give name next to each other in the map file...
+        // The user does not have to place the maps for any give name next to each other in the map file...
         map_ind=-1;
         if (mapnum > 0) {
             // look for the map index...
@@ -2084,14 +2053,14 @@ int get_map_names(int num_cols, col_hdr_type *map_colnames,
             mapnum++;
             
         } else if (Func[map_ind] == 'p' && ext1[0] == 'p') {
-	  // We saw this map before, but you can only have one physical map for a given Mapname.
-	  // so that means that this map name was used at least twice for a physical map.
+            // We saw this map before, but you can only have one physical map for a given Mapname.
+            // so that means that this map name was used at least twice for a physical map.
             errorvf("Duplic ate Physical Map entry for %s\n", map_names[map_ind]);
-	    EXIT(DATA_TYPE_ERROR);
+            EXIT(DATA_TYPE_ERROR);
         }
         
         // Fill in the 'Sex' vector based on the content of 'ext2[0]'...
-	// for the map designations see... common.h: sex_map_types
+        // for the map designations see... common.h: sex_map_types
         switch((unsigned char)ext2[0]) {
             case 'm': // Male
             case 'M':
@@ -2175,10 +2144,10 @@ int get_map_names(int num_cols, col_hdr_type *map_colnames,
     
     // Copy the map Name (functions and sex if they exist) to the EXLTop structure...
     EXLTop->MapCnt = mapnum;
-    EXLTop->map_functions = CALLOC((size_t)mapnum, char);
-    EXLTop->MapNames = CALLOC((size_t)mapnum, char*);
+    EXLTop->map_functions = CALLOC((size_t)(mapnum + allocate_additional_maps), char);
+    EXLTop->MapNames = CALLOC((size_t)(mapnum + allocate_additional_maps), char*);
 //cpk    EXLTop->SexMaps = CALLOC((size_t)mapnum, sex_map_types*);
-    EXLTop->SexMaps = CALLOC((size_t)mapnum, int*);
+    EXLTop->SexMaps = CALLOC((size_t)(mapnum+ allocate_additional_maps), int*);
     
     for (i=0; i < mapnum; i++) {
         // cpk: These checks can only be made after all of the header information is read in
@@ -2196,10 +2165,10 @@ int get_map_names(int num_cols, col_hdr_type *map_colnames,
         EXLTop->map_functions[i]=Func[i];
 	// For a physical map, the data is stored in the SEX_AVERAGED_MAP of SexMaps...
 //cpk        EXLTop->SexMaps[i]=CALLOC((size_t) 3, sex_map_types);
-        EXLTop->SexMaps[i]=CALLOC((size_t) 3, int);
-        EXLTop->SexMaps[i][SEX_AVERAGED_MAP]=Sex[i][SEX_AVERAGED_MAP];
-        EXLTop->SexMaps[i][MALE_SEX_MAP]=Sex[i][MALE_SEX_MAP];
-        EXLTop->SexMaps[i][FEMALE_SEX_MAP]=Sex[i][FEMALE_SEX_MAP];
+        EXLTop->SexMaps[i] = (int *)CALLOC((size_t) 3, int);
+        EXLTop->SexMaps[i][SEX_AVERAGED_MAP] = Sex[i][SEX_AVERAGED_MAP];
+        EXLTop->SexMaps[i][MALE_SEX_MAP] = Sex[i][MALE_SEX_MAP];
+        EXLTop->SexMaps[i][FEMALE_SEX_MAP] = Sex[i][FEMALE_SEX_MAP];
         free(map_names[i]);
         free(Sex[i]);
     }
@@ -2263,8 +2232,8 @@ int get_map_names(int num_cols, col_hdr_type *map_colnames,
 }
 
 void copy_exmap_locmap(linkage_locus_top *LTop,
-		       ext_linkage_locus_top *EXLTop,
-		       int map_num)
+                       ext_linkage_locus_top *EXLTop,
+                       int map_num)
 {
     int m;
 
@@ -2399,111 +2368,20 @@ void copy_exmap_locmap(linkage_locus_top *LTop,
 #endif /* USEOLDMAPCODE */
 }
 
-ext_linkage_locus_top *read_annotated_map_file(char *map_file, linkage_locus_top *LTop,
-					       ext_linkage_locus_top *inp_EXLTop,
-					       annotated_file_desc *file_desc)
-
-{
-    list *userdef_colnames = new_list();
-    col_hdr_type reserved_colnames[NUM_MAPCOL_NAMES];
-    col_hdr_type *colname_item, *map_all_colnames;
-    int num_map_recs;
-    int num_userdef_cols;
-    int chr;
-
-    FILE *mapfp = fopen(map_file, "r");
-    if (mapfp == NULL) {
-        errorvf("could not open %s for reading!\n", map_file);
-        EXIT(FILE_READ_ERROR);
-    }
-
-#ifndef HIDEFILE
-    printf("Reading map file %s ...", map_file);
-#endif /*  HIDEFILE */
-
-    INIT_COLNAME(reserved_colnames, 0, STRING_AN, "Chromosome");
-    INIT_COLNAME(reserved_colnames, 1, STRING_AN, "Name");
-    INIT_COLNAME(reserved_colnames, 2, FLOAT_AN, "Error");
-    num_userdef_cols = parse_map_file_header(mapfp, reserved_colnames,
-                                             userdef_colnames);
-/*  skip_line(mapfp, chr); parse map already did this read */
-    num_map_recs = linecount(mapfp);
-    skip_line(mapfp, chr);          /* skip header */
-
-    /* Check if there is an Error column */
-    file_desc->num_map_cols = num_userdef_cols;
-    file_desc->map_file_columns =
-        CALLOC((size_t)file_desc->num_map_cols, col_hdr_type);
-    map_all_colnames = &(file_desc->map_file_columns[0]);
-    /* reverse index as for pedigree file, so that the order of column names
-       is in order of input file
-    */
-    /* chromosome */
-    colname_item =  &(map_all_colnames[reserved_colnames[0].input_col]);
-    copy_colname(&(reserved_colnames[0]), colname_item);
-    colname_item->output_col=0;
-
-    /* marker name */
-    colname_item =  &(map_all_colnames[reserved_colnames[1].input_col]);
-    copy_colname(&(reserved_colnames[1]), colname_item);
-    colname_item->output_col=1;
-
-    if (reserved_colnames[2].input_col > -1) {
-        colname_item =  &(map_all_colnames[reserved_colnames[2].input_col]);
-        copy_colname(&(reserved_colnames[2]), colname_item);
-        colname_item->output_col=2;
-    }
-
-    /* userdefined columns i.e. positions */
-    while((colname_item =
-           (col_hdr_type *) pop_first_list_entry(userdef_colnames))
-          != NULL) {
-        copy_colname(colname_item, &(map_all_colnames[colname_item->input_col]));
-#ifdef CFREE
-        free(colname_item);
-#endif
-    }
-#ifdef CFREE
-    free(userdef_colnames);
-#endif
-
-    return read_common_map_file(mapfp, map_file, LTop, inp_EXLTop, reserved_colnames, num_map_recs, file_desc, (char **)NULL);
-}
-
 extern int exceeded_max_morgan_value(const double position);
-
-/**
-   @brief Clear the External Linkage Locus Rec
-
-   Important: This does not create the positions vector, or initialize it.
-   For that @see new_ext_linkage_locus_top_positions
-
-   @param EXLocus    A pointer to an External Linkage Locus Record
-   @return void
- */
-static void clear_ext_linkage_locus_rec(ext_linkage_locus_rec *EXLocus)
-{
-    EXLocus->positions= NULL; // @see new_ext_linkage_locus_top_positions
-    EXLocus->pos_male = EXLocus->pos_female = NULL;
-}
 
 static void init_ext_linkage_locus_top (ext_linkage_locus_top *EXLTop,
                                         linkage_locus_top *LTop)
 {
-    int i;
-
+    // This is actually a bit bigger than it needs to be because it also contains phenotype locus...
     EXLTop->LocusCnt = LTop->LocusCnt;
+    // Note that CALLOC initializes the storage to '0' (e.g., clears them)...
     EXLTop->EXLocus = (CALLOC((size_t) LTop->MarkerCnt, ext_linkage_locus_rec)) - LTop->PhenoCnt;
 #ifdef SHOWSTATUS
     msgvf("ALLOC SPACE: EXLocus: %d MB (%d x %d)\n",
           LTop->MarkerCnt * sizeof(ext_linkage_locus_rec) / 1024 / 1024,
           LTop->MarkerCnt,  sizeof(ext_linkage_locus_rec));
 #endif
-
-    /* initialize locus records */
-    for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
-        clear_ext_linkage_locus_rec(&(EXLTop->EXLocus[i]));
-    }
 }
 
 /**
@@ -2512,7 +2390,7 @@ static void init_ext_linkage_locus_top (ext_linkage_locus_top *EXLTop,
    @param LTop       If 'LTop' is not NULL then initialize as well.
    @return ext_linkage_locus_top *
  */
-static ext_linkage_locus_top *new_ext_linkage_locus_top(linkage_locus_top *LTop)
+static ext_linkage_locus_top *new_EXLTop(linkage_locus_top *LTop)
 {
     ext_linkage_locus_top *EXLTop = MALLOC(ext_linkage_locus_top);
     
@@ -2533,16 +2411,16 @@ static ext_linkage_locus_top *new_ext_linkage_locus_top(linkage_locus_top *LTop)
 }
 
 /**
-   @brief Create and initialize the External Linkage Locus Top Positions
+   @brief Create and initialize the External Linkage Locus Top Positions for one marker
 
    @param EXLTop     A pointer to the External Linkage Locus Top structure.
-   @param loc_num    An index into the EXLocus vector.
+   @param mrk_num    An index into the EXLocus vector.
    @param num_maps   The number of maps to create entries for (int > 0).
    @return void
  */
-static void new_ext_linkage_locus_top_positions(ext_linkage_locus_top *EXLTop,
-                                                const int loc_num,
-                                                const int num_maps)
+static void new_EXLTop_positions(ext_linkage_locus_top *EXLTop,
+                                 const int mrk_num,
+                                 const int num_maps)
 {
     int l;
 
@@ -2552,15 +2430,15 @@ static void new_ext_linkage_locus_top_positions(ext_linkage_locus_top *EXLTop,
     }
     
     // Build the vectors....
-    EXLTop->EXLocus[loc_num].positions = CALLOC((size_t)num_maps, double);
-    EXLTop->EXLocus[loc_num].pos_male = CALLOC((size_t)num_maps, double);
-    EXLTop->EXLocus[loc_num].pos_female = CALLOC((size_t)num_maps, double);
+    EXLTop->EXLocus[mrk_num].positions = CALLOC((size_t)num_maps, double);
+    EXLTop->EXLocus[mrk_num].pos_male = CALLOC((size_t)num_maps, double);
+    EXLTop->EXLocus[mrk_num].pos_female = CALLOC((size_t)num_maps, double);
 
     // Initialize the vectors...
     for (l = 0; l < num_maps; l++) {
-        EXLTop->EXLocus[loc_num].positions[l] =
-        EXLTop->EXLocus[loc_num].pos_female[l] =
-        EXLTop->EXLocus[loc_num].pos_male[l] = UNKNOWN_POSITION;
+        EXLTop->EXLocus[mrk_num].positions[l] =
+        EXLTop->EXLocus[mrk_num].pos_female[l] =
+        EXLTop->EXLocus[mrk_num].pos_male[l] = UNKNOWN_POSITION;
     }
 }
 
@@ -2585,7 +2463,7 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
                                                         const int num_maps)
 {
     int i, mrk_missing_from_map = 0;
-    int Display_unmapped,         unmapped = 0;
+    int Display_unmapped, unmapped = 0;
     
     for (i = 0; i < LTop->LocusCnt; i++) {
         /* Check if maps are provided for all numbered loci */
@@ -2596,7 +2474,7 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
                 warnf(err_msg);
                 LTop->Marker[i].chromosome = MISSING_CHROMO;
                 mrk_missing_from_map++;
-                new_ext_linkage_locus_top_positions(EXLTop, i, num_maps);
+                new_EXLTop_positions(EXLTop, i, num_maps);
             }
         }
     }
@@ -2612,15 +2490,15 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
 }
 
 
-ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage_locus_top *LTop,
-                                            ext_linkage_locus_top *inp_EXLTop,
-                                            col_hdr_type reserved_colnames[NUM_MAPCOL_NAMES],
-                                            int num_map_recs,
-                                            annotated_file_desc *file_desc,
-                                            char **alleles)
+static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
+                                                   const char *map_file,
+                                                   linkage_locus_top *LTop,
+                                                   const int allocate_additional_maps,
+                                                   col_hdr_type reserved_colnames[NUM_MAPCOL_NAMES],
+                                                   annotated_file_desc *file_desc,
+                                                   char **alleles)
 {
     int ii = 1, line = 0, j, l, m;
-    ext_linkage_locus_top *EXLTop;
     col_hdr_type *map_all_colnames = &(file_desc->map_file_columns[0]);
     int *colnums; /* to store the column number for each position */
     char dummy[FILENAME_LENGTH], dname[FILENAME_LENGTH];
@@ -2644,10 +2522,9 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
     int display_Y_message=1;
     char yesorno[4];
     int alleles_i = 0;
-    
-    /*  (rvb) 11/10/11
-     inp_EXLTop is always NULL when called at present */
-    EXLTop = (inp_EXLTop == NULL) ? new_ext_linkage_locus_top(LTop) : inp_EXLTop;
+    int total_maps_to_allocate;
+
+    ext_linkage_locus_top *EXLTop = new_EXLTop(LTop);
     
     // Get the names of maps from the headers.
     // These will be Genetic and Physical maps, and will not include trait markers!
@@ -2655,6 +2532,7 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
         get_map_names(PLINK.plink == binary_PED_format ? file_desc->num_map_cols - 2 : file_desc->num_map_cols,
                       map_all_colnames,
                       reserved_colnames,
+                      allocate_additional_maps,
                       EXLTop);
     
     // Will this cause problems later in the code since 'create_entries_for_markers_without_positions()' is never called???
@@ -2664,6 +2542,9 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
 #endif
         return EXLTop;
     }
+
+    // Maps from the Mega2 annotated map file and maps to be filled in at a later time...
+    total_maps_to_allocate = num_maps + allocate_additional_maps;
     
 #ifndef HIDESTATUS
     mssgvf("Found %d possible maps.\n", num_maps);
@@ -2674,14 +2555,14 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
     
     colnums = CALLOC((size_t)file_desc->num_map_cols, int);
     positions = CALLOC((size_t)file_desc->num_map_cols, double);
-
+  
 #ifdef ALL_ZERO_GENETIC_MAP_INVALID
     // Here we keep track of whether the map contains any valid map data (e.g., not all '0')...
     // As of Bug 338 - 'Valid map': a genetic map with positions of all zeros is valid
     // This constraint is relaxed
-    valid_map_p = CALLOC((size_t)num_maps, int *);
-    for (i = 0; i < num_maps; i++) 
-      valid_map_p[i] = CALLOC((size_t)sizeof(sex_map_types), int);
+    valid_map_p = CALLOC((size_t)total_maps_to_allocate, int *);
+    for (i = 0; i < total_maps_to_allocate; i++) 
+        valid_map_p[i] = CALLOC((size_t)sizeof(sex_map_types), int);
 #endif /* ALL_ZERO_GENETIC_MAP_INVALID */
 
     
@@ -2799,16 +2680,27 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
         
         /* Now check the chromo and marker name, store the positions */
         mrk_num=-1;
+        // This is a hash lookup of the names (markers and phenotypes) in LTop
+        // Here we look up the marker that we have just found from the .map file.
+        // This tells us if we have an intersection with LTop and the map file.
         search_marker(dname, &mrk_num);
         if (mrk_num == -1) {
+            // No intersection...
+            // Here it's "extra". It's in the map file but not in the data used to make LTop.
+            // NOTE: that if the 'dname' is not in LTop then we never get here...
             /* Locus is not in locus file, warn and skip */
             sprintf(err_msg,
-                    "Locus %s (line %d in %s) is not in the locus file; skipping this locus.",
-                    dname, line, map_file);
+                    "Locus %s (line %d in %s) %s file; skipping this locus.",
+                    dname, line, map_file,
+		    (Input_Format == in_format_binary_VCF ||
+                     Input_Format == in_format_compressed_VCF ||
+                     Input_Format == in_format_VCF ?
+		     "has been filtered from the VCF" : "is not in the locus"));
             SUPPRESS_MSSG_NESTED(locus_not_found);
             warnf(err_msg);
             mrk_missing_from_names++;
         } else {
+            // Intersection...
             if (LTop->Locus[mrk_num].number > 0) {
                 /* already encountered */
                 sprintf(err_msg,
@@ -2819,8 +2711,7 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
                 duplicate_mrk++;
             } else {
                 /* first encounter */
-                LTop->Locus[mrk_num].number = ii;
-                ii++;
+                LTop->Locus[mrk_num].number = ii++;
                 if (chr == SEX_CHROMOSOME) {
                     human_x++;
                     if (LTop->Locus[mrk_num].Type != XLINKED) {
@@ -2846,8 +2737,10 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
                 LTop->Marker[mrk_num].chromosome = chr;
                 LTop->Marker[mrk_num].error_prob = error_prob;
 
-                // Create the data structure so that it can be populated below...
-                new_ext_linkage_locus_top_positions(EXLTop, mrk_num, num_maps);
+                // Create the data structure so that it can be populated with map data (below from this file)...
+                // Create an extra slot at the end for the VCF map (to be filled in later from data found in
+                // the VCF file) if we are processing a VCF file.
+                new_EXLTop_positions(EXLTop, mrk_num, total_maps_to_allocate);
                 
                 // num_posiions is the number of maps in the input record...
                 for (l=0; l < num_positions; l++) {
@@ -2862,13 +2755,13 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
                         // p (map_number) is relative to the map 'names' as they are encountered in the input
                         // record (e.g., MapA.h.m,MapA.h.f,MapA.h.a == 0, MapB.?.? == 1) where MapA and MapB have unique map numbers.
                         int p = map_all_colnames[colnums[l]].map_number;
-                        double pvalue = positions[l];
+                        double position = positions[l];
                         
                         j = map_all_colnames[colnums[l]].sex_map_number;
                         
 #ifdef ALL_ZERO_GENETIC_MAP_INVALID
                         // mark this map as containing valid data...
-                        if (pvalue != 0.0) valid_map_p[p][j] = 1;
+                        if (position != 0.0) valid_map_p[p][j] = 1;
 #endif /* ALL_ZERO_GENETIC_MAP_INVALID */
 
                         // a map (one column from the map file) can only be of one type.
@@ -2880,13 +2773,13 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
                                 // IMPORTANT NOTE:
                                 // The data for a physical map (e.g., Map.p) will go into the SEX_AVERAGED_MAP
                                 // column (e.g, sex_map_number == 0)
-                                EXLTop->EXLocus[mrk_num].positions[p] = pvalue;
+                                EXLTop->EXLocus[mrk_num].positions[p] = position;
                                 break;
                             case MALE_SEX_MAP:
-                                EXLTop->EXLocus[mrk_num].pos_male[p] = pvalue;
+                                EXLTop->EXLocus[mrk_num].pos_male[p] = position;
                                 break;
                             case FEMALE_SEX_MAP:
-                                EXLTop->EXLocus[mrk_num].pos_female[p] = pvalue;
+                                EXLTop->EXLocus[mrk_num].pos_female[p] = position;
                                 break;
                             default:
                                 /* should not happen */
@@ -2924,9 +2817,9 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
                                 if (EXLTop->EXLocus[mrk_num].pos_male[l] >= 0.0 ||
                                     EXLTop->EXLocus[mrk_num].positions[l] >= 0.0) {
                                     //has_error=1;
-                                  //sprintf(err_msg,
-                                  //      "XLINKED %s (map %s line %d): using female map, ignoring rest.",
-                                  //      dname, EXLTop->MapNames[l], line);
+                                    //sprintf(err_msg,
+                                    //      "XLINKED %s (map %s line %d): using female map, ignoring rest.",
+                                    //      dname, EXLTop->MapNames[l], line);
                                 }
                             } else {
                                 /* case 2: female map is negative or NA */
@@ -3031,7 +2924,12 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
                 }
             } /* new locus, i.e. not duplicated */
         } /* valid locus present in names file */
-    } // for (ii=0; ii < num_map_recs; ii++) {
+    } // while (!feof(mapfp)) {
+
+    //
+    // THIS IS THE PLACE to compact EXLTop and LTop because you have ???????? in question
+    // just processed the map file and so you know the final set of markers that
+    // you will be using for this run of Mega2.
 
     SUPPRESS_MSSG_NESTED_FINI(chrm_errors);
     SUPPRESS_MSSG_NESTED_FINI(max_morgans);
@@ -3056,7 +2954,7 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
     free(colnums);
 
     // Assign position data to those markers not listed in the map file....
-    mrk_missing_from_map = create_entries_for_markers_without_positions(LTop, EXLTop, num_maps);
+    mrk_missing_from_map = create_entries_for_markers_without_positions(LTop, EXLTop, total_maps_to_allocate);
 
     if (bad_chromo) {
         printf("Invalid chromosome numbers in map file, see %s for details.\n",
@@ -3069,12 +2967,20 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
     }
     
     if (mrk_missing_from_map) {
-        printf("Some marker loci in names file are missing from map file, see %s for details.\n",
+        printf("Some marker loci in the %s file are missing from map file, see %s for details.\n",
+	       (Input_Format == in_format_binary_VCF ||
+               Input_Format == in_format_compressed_VCF ||
+               Input_Format == in_format_VCF ?
+		"VCF" : "names"),
                Mega2Err);
     }
     
     if (mrk_missing_from_names) {
-        printf("Some marker loci in map file are missing from names file, see %s for details.\n",
+        printf("Some marker loci in map file %s file, see %s for details.\n",
+	       (Input_Format == in_format_binary_VCF ||
+               Input_Format == in_format_compressed_VCF ||
+               Input_Format == in_format_VCF ?
+		"have been filtered from the VCF" : "are missing from the names"),
                Mega2Err);
     }
     
@@ -3110,7 +3016,86 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
     }
     
     return EXLTop;
-}   /* end of read_common_map_file */
+}   /* end of read_common_map_file() */
+
+
+static ext_linkage_locus_top *read_annotated_map_file(const char *map_file,
+                                                      linkage_locus_top *LTop,
+                                                      vector<m2_map> additional_maps,
+                                                      annotated_file_desc *file_desc)
+{
+    list *userdef_colnames = new_list();
+    col_hdr_type reserved_colnames[NUM_MAPCOL_NAMES];
+    col_hdr_type *colname_item, *map_all_colnames;
+    int num_userdef_cols;
+    //int chr;
+    FILE *mapfp = fopen(map_file, "r");
+
+    if (mapfp == NULL) return (ext_linkage_locus_top *)NULL;
+
+#ifndef HIDEFILE
+    printf("Reading map file %s ...", map_file);
+#endif /*  HIDEFILE */
+
+    INIT_COLNAME(reserved_colnames, 0, STRING_AN, "Chromosome");
+    INIT_COLNAME(reserved_colnames, 1, STRING_AN, "Name");
+    INIT_COLNAME(reserved_colnames, 2, FLOAT_AN, "Error");
+    num_userdef_cols = parse_map_file_header(mapfp, reserved_colnames, userdef_colnames);
+
+    /* Check if there is an Error column */
+    file_desc->num_map_cols = num_userdef_cols;
+    file_desc->map_file_columns =
+        CALLOC((size_t)file_desc->num_map_cols, col_hdr_type);
+    map_all_colnames = &(file_desc->map_file_columns[0]);
+
+    /* reverse index as for pedigree file, so that the order of column names
+       is in order of input file
+    */
+    /* chromosome */
+    colname_item =  &(map_all_colnames[reserved_colnames[0].input_col]);
+    copy_colname(&(reserved_colnames[0]), colname_item);
+    colname_item->output_col=0;
+
+    /* marker name */
+    colname_item =  &(map_all_colnames[reserved_colnames[1].input_col]);
+    copy_colname(&(reserved_colnames[1]), colname_item);
+    colname_item->output_col=1;
+
+    if (reserved_colnames[2].input_col > -1) {
+        colname_item =  &(map_all_colnames[reserved_colnames[2].input_col]);
+        copy_colname(&(reserved_colnames[2]), colname_item);
+        colname_item->output_col=2;
+    }
+
+    /* userdefined columns i.e. Maps */
+    while((colname_item =
+           (col_hdr_type *) pop_first_list_entry(userdef_colnames))
+          != NULL) {
+        if (Input_Format == in_format_binary_VCF ||
+            Input_Format == in_format_compressed_VCF ||
+            Input_Format == in_format_VCF) {
+            for (size_t i = 0; i < additional_maps.size(); i++) {
+                m2_map map = additional_maps[i];
+                const char *illegal_annotated_map_name = map.get_name().c_str();
+                // Don't use any of the map names that are fixed given the type of input...
+                if (strcasecmp(colname_item->ColName, illegal_annotated_map_name) == 0) {
+                    errorvf("The map file %s may not contain a map named %s\n", map_file, illegal_annotated_map_name);
+                    errorf("when a VCF file is specified as input.");
+                    EXIT(DATA_INCONSISTENCY);
+                }
+            }
+        }
+        copy_colname(colname_item, &(map_all_colnames[colname_item->input_col]));
+#ifdef CFREE
+        free(colname_item);
+#endif
+    }
+#ifdef CFREE
+    free(userdef_colnames);
+#endif
+
+    return read_common_map_file(mapfp, map_file, LTop, (int)additional_maps.size(), reserved_colnames, file_desc, (char **)NULL);
+}
 
 
 /* file format =
@@ -3120,7 +3105,7 @@ ext_linkage_locus_top *read_common_map_file(FILE *mapfp, char *map_file, linkage
 */
 
 static int parse_frequency_file_header(FILE *filep,
-				       annotated_file_desc *file_desc)
+                                       annotated_file_desc *file_desc)
 {
     char buffer[READ_CHUNK + 1];
     char *col_name;
@@ -3165,7 +3150,6 @@ static int parse_frequency_file_header(FILE *filep,
     file_desc->num_freq_cols = num_read;
     return num_read;
 }
-
 
 static void freq_insert_into_allele_list(allele_list_type **marker_item,
                                          char *allele_name,
@@ -3330,8 +3314,8 @@ static int read_annotated_freq_file(char *freq_file_name,
         int ret;
         ret = search_marker(name, &mrk_index);
         if (ret != 1) {
-            warnvf("Line %d of frequency file %s: locus %s is not in names file.\n",
-                   line_num, name, freq_file_name);
+            warnvf("Line %d of frequency file %s references locus %s.\n",
+                   line_num, freq_file_name, name);
             continue;
         }
         
@@ -3380,7 +3364,7 @@ static int read_annotated_freq_file(char *freq_file_name,
 }
 
 static int parse_penetrance_file_header(FILE *filep, char *pen_file_name,
-					annotated_file_desc *file_desc)
+                                        annotated_file_desc *file_desc)
 {
 
     char buffer[READ_CHUNK + 1];
@@ -3443,7 +3427,6 @@ static int parse_penetrance_file_header(FILE *filep, char *pen_file_name,
 }
 
 static class_list_type *new_class_itemp(int class_num)
-
 {
     class_list_type *new_entry = CALLOC((size_t)1, class_list_type);
 
@@ -3456,8 +3439,7 @@ static class_list_type *new_class_itemp(int class_num)
 }
 
 static void fill_penetrances(char *trait, liability_class *lclass,
-			     char *sex, double *pen)
-
+                             char *sex, double *pen)
 {
     switch(sex[0]) {
     case 'a':
@@ -3500,11 +3482,7 @@ static void fill_penetrances(char *trait, liability_class *lclass,
         }
     break;
     }
-    return;
-
 }
-
-
 
 
 /* This is similar to reading in the frequency file,
@@ -3516,12 +3494,10 @@ static void fill_penetrances(char *trait, liability_class *lclass,
    not NA
    2 class_names match but dupliacte penetrances for the same phenotype
 */
-
 static int pen_insert_into_class_list(char *trait, class_list_type **class_list,
-				      char *class_name, int class_num, char *sex,
-				      double *pen)
+                                      char *class_name, int class_num, char *sex,
+                                      double *pen)
 {
-
     class_list_type *class_itemp = *class_list;
     class_list_type *class_itemp1 = *class_list;
     class_list_type *new_entry;
@@ -3579,9 +3555,9 @@ static int pen_insert_into_class_list(char *trait, class_list_type **class_list,
 
 
 static int read_annotated_pen_file(char *pen_file_name,
-				   linkage_locus_top *LTop,
-				   annotated_file_desc *file_desc,
-				   pheno_type *pheno_list)
+                                   linkage_locus_top *LTop,
+                                   annotated_file_desc *file_desc,
+                                   pheno_type *pheno_list)
 {
 
     char penetrance_line[READ_CHUNK+1];
@@ -3716,7 +3692,6 @@ static int read_annotated_pen_file(char *pen_file_name,
 
 
 static void init_reserved_pedcol_names(void)
-
 {
     /* Initialize keyword names and types,
        then also fill in the column values with -1 to indicate absent
@@ -3760,8 +3735,8 @@ static int is_missing_required_hdr(col_hdr_type *col_names, int num_elements)
 }
 
 static void error_hdr(char *hdr,
-		      int num_known,
-		      col_hdr_type *known_hdrs)
+                      int num_known,
+                      col_hdr_type *known_hdrs)
 {
     int i;
     errorvf("Unknown header %s\n", hdr);
@@ -3954,12 +3929,10 @@ static void annotated_omit_file(linkage_ped_top *Top,
 #ifdef _WIN
 #define snprintf _snprintf
 #endif
-void output_PLINK_stats() {
+#ifndef HIDESTATUS
+static void output_stats() {
   char msg[1000];
   // Markers read from the map file...
-  mssgf("");
-  snprintf(msg, 1000, "%d (of %d) markers to be included from %s", PLINK.markers_total ,PLINK.markers_included, mega2_input_files[2]);
-  mssgf(msg);
   snprintf(msg, 1000, "Reading pedigree information from %s", mega2_input_files[0]);
   mssgf(msg);
   snprintf(msg, 1000, "%d individuals read from %s", PLINK.individuals, mega2_input_files[0]);
@@ -3972,6 +3945,134 @@ void output_PLINK_stats() {
   mssgf(msg);
   snprintf(msg, 1000, "%d founders, %d non-founders found", PLINK.founders, PLINK.non_founders);
   mssgf(msg);
+}
+#endif /* HIDESTATUS */
+
+//
+// If a Mega2 map file was specified, the routine 'read_common_map_file()' will create an extra
+// '.posiitons' entry (at the end) that it ignores when processing a VCF (/PLINK) file.
+// If no Meta2 map file was specified, then a '.positions' in EXLTop needs to be created with
+// just one position entry when map_i == 0. 'map_i' points to the zero based map entry.
+// This routine will insert a SEX_AVERAGED_MAP or physical map into the map slot 'map_i'.
+static void insert_m2_map_into_EXLTop(ext_linkage_locus_top *EXLTop,
+                                      linkage_locus_top *LTop,
+                                      const int map_i,
+                                      m2_map map)
+{
+    int i, j;
+    
+    EXLTop->map_functions[map_i] = map.get_function();
+    EXLTop->MapNames[map_i] = strdup(map.get_name().c_str());
+    EXLTop->SexMaps[map_i] = CALLOC((size_t) 3, int);
+    // For a physical map, the data is stored as a SEX_AVERAGED_MAP...
+    EXLTop->SexMaps[map_i][SEX_AVERAGED_MAP] = 1;
+    // read_common_map_file() only accounts for it's maps, so we need to increase the count here...
+    EXLTop->MapCnt++; // see annotated_ped_file.cpp::get_map_names()
+    
+    if (map_i == 0) MaxChromo = NumUnmapped = 0;
+    
+    // For each locus that is a MARKER fill it with 'map' data...
+    // There is other book keeping as well that can only be done if the user actually selects this map.
+    // See: 'create_entries_for_markers_without_positions()'
+    for (i=0, j=0; i < LTop->LocusCnt; i++) {
+        // We can process entries in order because 'read_common_marker_data()' loads the markers
+        // from 'names[]' which would be in the order that they are read from the VCF file...
+        // .Class is set when the Names file 'type' is processed in 'read_common_marker_data()'
+        if (LTop->Locus[i].Class == MARKER) {
+            // Make the map entry for one map (this one) in EXLTop if there are no others...
+            if (map_i == 0) new_EXLTop_positions(EXLTop, i, 1);
+            
+            // Since the order of entries in the 'names[]' vector should match that of the id[] vector,
+            // we can just insert the map positions in order (of 'j')...
+            //
+            // The chromosome is not known when the names file if read, so it is filled in when processing
+            // the map file. It could still be 'UNKNOWN_CHROMO', and we don't give an error if it is...
+            // We also don't keep track of the count of male, female, XY, and MT as read_common_map_file() does...
+            m2_map_entry map_entry = map.get_entry(j++);
+            
+            double position = map_entry.get_POS();
+            // Must set .number > 0 phenotype array
+            EXLTop->EXLocus[i].positions[map_i] = position;
+            // Validate the map entry for this one map in EXLTop because there are no others...
+            if (map_i == 0) {
+                // We can set .chromosome and .number now because there is only one map to select.
+                int chr = map_entry.get_chr();
+                LTop->Marker[i].chromosome = chr;
+                MaxChromo = ((chr != UNKNOWN_CHROMO && chr > MaxChromo)? chr : MaxChromo);
+                if (chr == UNKNOWN_CHROMO) NumUnmapped++;
+                
+                //LTop->Marker[mrk_num].error_prob // Since Marker[] is CALLOCed, this is '0'...
+                // .number is initialized to -1 in 'read_common_marker_data()'; should run from i - n...
+                LTop->Locus[i].number = j;
+                //LTop->SexLinked = 0;
+            }
+        }
+    }
+    
+    // Verify an assumption...
+    if (j != (int)map.size()) {
+        errorvf("INTERNAL Names and Map entries dissagree in count.\n");
+        EXIT(SYSTEM_ERROR);
+    }
+    
+    // This is the special case where there was no EXLTop created by 'read_annotated_map_file()'
+    // and 'read_common_map_file()'.
+    if (map_i == 0) {
+        EXLTop->LocusCnt = (int)map.size();
+        /* Add a one in case there are any unmapped markers with an Unknown chromosome */
+        global_chromo_entries=CALLOC((size_t)MaxChromo + 1, int);
+        chromo_loci_count = CALLOC((size_t)MaxChromo + 1, int);
+        // 'NumUnmapped' is the count of markers in the map file where the chromosome
+        // is specified as unknown. 'mrk_missing_from_map' is the count of markers specified
+        // elsewhere, but with no entry in the map file.
+        if (NumUnmapped > 0) {
+            unmapped_markers = CALLOC((size_t)NumUnmapped, int);
+        }
+    }
+}
+
+//
+// Look for a valid genetic map in EXLTop, and return a boolian result
+static int valid_genetic_map_exists_in_EXLTop(ext_linkage_locus_top *EXLTop)
+{
+    for (int i=0; i<EXLTop->MapCnt; i++)
+        if ((EXLTop->map_functions[i] == 'h' || EXLTop->map_functions[i] == 'k') &&
+            (EXLTop->SexMaps[i][SEX_AVERAGED_MAP] != 0 || EXLTop->SexMaps[i][FEMALE_SEX_MAP] != 0))
+            return 1;
+    return 0;
+}
+
+//
+// This is a temporary fix to get around the fact that all of the analysis currently
+// need a genetic map. Here we create a sex averaged genetic map.
+static void insert_zero_sex_average_genetic_map_in_EXLTop(ext_linkage_locus_top *EXLTop,
+                                                          linkage_locus_top *LTop)
+{
+    // Create an additional map 'at the end'...
+    const int map_i = EXLTop->MapCnt++;
+    // Allocate an additional slot in EXLTop for the map...
+    // NOTE: When extending a region allocated with calloc(3), realloc(3)
+    // does not guarantee that the additional memory is also zero-filled.
+    EXLTop->map_functions = (char *)realloc(EXLTop->map_functions, EXLTop->MapCnt);
+    EXLTop->MapNames = (char **)realloc(EXLTop->MapNames, EXLTop->MapCnt);
+    EXLTop->SexMaps = (int **)realloc(EXLTop->SexMaps, EXLTop->MapCnt);
+    
+    EXLTop->map_functions[map_i] = 'h';
+    EXLTop->MapNames[map_i] = strdup("DummyMap.h.a");
+    EXLTop->SexMaps[map_i] = (int *)CALLOC((size_t) 3, int);
+    EXLTop->SexMaps[map_i][SEX_AVERAGED_MAP] = 1;
+    
+    for (int i=0; i < LTop->LocusCnt; i++)
+        if (LTop->Locus[i].Class == MARKER) {
+            // [re]Allocate space for an additional .pos* slot for the map structure...
+            EXLTop->EXLocus[i].positions = (double *)realloc(EXLTop->EXLocus[i].positions, EXLTop->MapCnt);
+            EXLTop->EXLocus[i].pos_male = (double *)realloc(EXLTop->EXLocus[i].pos_male, EXLTop->MapCnt);
+            EXLTop->EXLocus[i].pos_female = (double *)realloc(EXLTop->EXLocus[i].pos_female, EXLTop->MapCnt);
+            // Fill the slot that we just made room for...
+            EXLTop->EXLocus[i].positions[map_i] = 0; // sex averaged data goes here
+            EXLTop->EXLocus[i].pos_female[map_i] = UNKNOWN_POSITION;
+            EXLTop->EXLocus[i].pos_male[map_i] = UNKNOWN_POSITION;
+        }
 }
 
 linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
@@ -3997,26 +4098,43 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     int   bp_map   = 0;
     int displayed_messages = 0, duplicate_mrk=0;
     char *err_fn = (PLINK.plink == binary_PED_format) ? mega2_input_files[6] : mega2_input_files[0];
-
-    if (PLINK.plink) {
+    m2_map vcf_map;
+    int  xcf = Input_Format == in_format_binary_VCF ||
+               Input_Format == in_format_compressed_VCF ||
+               Input_Format == in_format_VCF;
+    
+    if (PLINK.plink || xcf) {
         char **phe_names = NULL;
         int *phe_types   = NULL;
-        phe_cols = phe_file == NULL ? 0 : parse_phe_types(phe_file, &phe_names, &phe_types);
-        if (PLINK.no_pheno == 0 && phe_cols) {  /* there is an extra row ... if no_pheno == 0 */
-            phe_names[phe_cols] = CALLOC(strlen(PLINK.trait)+1, char);
-            strcpy(phe_names[phe_cols], PLINK.trait);
-            phe_types[phe_cols] = PLINK.traitType;
+        int tot_cols = phe_cols = parse_phe_types(phe_file, &phe_names, &phe_types);
+
+        if (PLINK.no_pheno == 0) {  /* there is an extra row ... if no_pheno == 0 */
+            phe_names[tot_cols] = CALLOC(strlen(PLINK.trait)+1, char);
+            strcpy(phe_names[tot_cols], PLINK.trait);
+            phe_types[tot_cols] = PLINK.traitType;
+            tot_cols++;
         }
-        ann_files = read_plink_map_as_names_file(map_file, &LTop,
-                                                 phe_cols, phe_names, phe_types,
-                                                 &AnnotatedFileInfo);
-        if (phe_cols) {
-            for (i = 0; i < phe_cols + (PLINK.no_pheno == 0 ? 1 : 0); i++) {
-                free(phe_names[i]);
-            }
-            free(phe_names);
-            free(phe_types);
+        if (xcf) {
+            string alternative_key = string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
+
+            // This is a physical map that is 'attached to the side' of the VCF file...
+            // It will later be coppied to EXLTop, and the map object will be deleted by C++
+            // when it goes out of scope.
+            vcf_map = VCFtools_get_map(alternative_key, "chr");
+            
+            // Process the genotype (from VCF file 'vcf_map') and phenotype 'phe_*' marker data,
+            // loading it into LTop...
+            read_m2_map_as_names_file(vcf_map, &LTop, tot_cols, phe_names, phe_types);
+            ann_files = 1;
+        } else
+            ann_files = read_plink_map_as_names_file(names_file ? names_file : map_file,
+                                                     &LTop, tot_cols, phe_names, phe_types,
+                                                     &AnnotatedFileInfo);
+        for (i = 0; i < tot_cols; i++) {
+            free(phe_names[i]);
         }
+        free(phe_names);
+        free(phe_types);
     } else
         ann_files = read_annotated_names_file(names_file, &LTop, &AnnotatedFileInfo);
     free(AnnotatedFileInfo.names_file_columns);
@@ -4025,20 +4143,20 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     clear_marker();
     Display_Errors = 1;
     for (i=0; i < LTop->LocusCnt; i++) {
-      char *name = LTop->Locus[i].Name;
-      int i_old = test_and_add_marker(name, i);
-      if (i_old >= 0) {
-	sprintf(err_msg,
-		"ERROR: Duplicate marker name '%s' found on line: %d of '%s'; first on line: %d",
-		name, i+1, err_fn, i_old+1);
-	SUPPRESS_MSSG(displayed_messages);
-	if (displayed_messages > MAX_PED_ERRORS) {
-	  Display_Errors = 0;
-	}
-	errorf(err_msg);
-	displayed_messages++;
-	duplicate_mrk++;
-      }
+        char *name = LTop->Locus[i].Name;
+        int i_old = test_and_add_marker(name, i);
+        if (i_old >= 0) {
+            sprintf(err_msg,
+                    "ERROR: Duplicate marker name '%s' found on line: %d of '%s'; first on line: %d",
+                    name, i+1, err_fn, i_old+1);
+            SUPPRESS_MSSG(displayed_messages);
+            if (displayed_messages > MAX_PED_ERRORS) {
+                Display_Errors = 0;
+            }
+            errorf(err_msg);
+            displayed_messages++;
+            duplicate_mrk++;
+        }
     }
     Display_Errors = 1; displayed_messages = 0;
 
@@ -4086,14 +4204,85 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     EXLTop = new_ex_llocustop();
 */
-    if (PLINK.plink != not_plink_format) // if this is PLINK format (double negative)
+
+    if (PLINK.plink) {
+        // if this is PLINK format (double negative)
         // CPK: If the .map file is a .bim file we gather the alleles into the
         // vector that is described earlier in this routine...
-      EXLTop = read_plink_map_file(map_file, LTop, (ext_linkage_locus_top *)NULL,
-                                     &AnnotatedFileInfo, plink_info);
-    else
-      EXLTop = read_annotated_map_file(map_file, LTop, (ext_linkage_locus_top *)NULL,
-                                         &AnnotatedFileInfo);
+        EXLTop = read_plink_map_file(names_file ? names_file : map_file,
+                                     LTop,
+                                     &AnnotatedFileInfo,
+                                     plink_info);
+    } else if (xcf) {
+        vector<m2_map> additional_maps;
+        // Create an extra map slot in EXLTop for the map from the VCF file...
+        additional_maps.push_back(vcf_map);
+        EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);
+        
+        if (EXLTop == (ext_linkage_locus_top *)NULL) {
+            // This will be the case if the map file was empty, or it contained no maps.
+            // So we need to create the EXLTop data structure...
+            EXLTop = new_EXLTop(LTop);
+            // SEE: annotated_ped_file.cpp::get_map_names()
+            // Continue to set up EXLTop for the '1' map in 'vcf_map'...
+            EXLTop->map_functions = CALLOC((size_t)1, char); // e.g., 'h', 'k', or 'p'
+            EXLTop->MapNames = CALLOC((size_t)1, char*);
+            EXLTop->SexMaps = CALLOC((size_t)1, int *);
+        }
+        if (EXLTop->MapCnt == 0) {
+            insert_m2_map_into_EXLTop(EXLTop, LTop, 0, vcf_map);
+            insert_zero_sex_average_genetic_map_in_EXLTop(EXLTop, LTop);
+            // In this case, the batch file items must be set since the user does not specify these maps...
+
+            //Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option = 0;
+            base_pair_position_index = 0;
+            Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].item_read=1;
+
+            //Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option = 1;
+            genetic_distance_index = 1;
+            Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].item_read=1;
+
+            //Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option = SEX_AVERAGED_GDMT;
+            genetic_distance_sex_type_map = SEX_AVERAGED_GDMT;
+            Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].item_read=1;
+        } else {
+            // 'read_common_map_file()' will only initialize map positions (EXLTop .pos*)
+            // if it finds an entry in the Mega2 map file. Because the VCF map file may contain a super set
+            // of the marker from a mega2 map, position data for these markers will not have been created.
+            // This is OK if any of the maps from the mega2 map file are used because the mega2 map
+            // is used to 'subset' the markers found in the VCF file.
+            for (int i= LTop->PhenoCnt; i < LTop->LocusCnt; i++)
+                if (EXLTop->EXLocus[i].positions == NULL)
+                    new_EXLTop_positions(EXLTop, i, EXLTop->MapCnt+1);
+            // When processing a vcf file, we have asked 'read_common_map_file()' above to create
+            // an additional map slot, It will fill the first N-1 map slots with maps from the Mega2
+            // annotated map file. We will fill the slot at the end (e.g., indexed by EXLTop->MapCnt)
+            // which 'read_common_map_file()' creates but ignores.
+            insert_m2_map_into_EXLTop(EXLTop, LTop, EXLTop->MapCnt, vcf_map);
+            // Since a genetic map is currently required for all analysis types (will fix this in the future)...
+            if (!valid_genetic_map_exists_in_EXLTop(EXLTop)) {
+                insert_zero_sex_average_genetic_map_in_EXLTop(EXLTop, LTop);
+
+                // Since there was no genetic map in the Mega2 Map File, we added one at the end...
+                genetic_distance_index = EXLTop->MapCnt - 1;
+                Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].item_read=1;
+
+                genetic_distance_sex_type_map = SEX_AVERAGED_GDMT;
+                Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].item_read=1;
+            }
+        }
+    } else {
+        vector<m2_map> additional_maps;
+        // only mega2 is left (and linkage ;-) No additional maps...
+        EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);
+        if (EXLTop == (ext_linkage_locus_top *)NULL) {
+            // The map file was empty and there were no additional maps.
+            // We error here now because this is not VCF or PLINK, so it's not OK to have no Mega2 map file...
+            errorvf("could not open %s for reading!\n", map_file);
+            EXIT(FILE_READ_ERROR);
+        }
+    }
+
     free(AnnotatedFileInfo.map_file_columns);
 
     if (EXLTop->MapCnt > 0) {
@@ -4142,17 +4331,25 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     // In this manner we malloc only one copy of the allele name.
     // Later we need to make sure that we only free these allele names only once!
     if (PLINK.plink == binary_PED_format && plink_info != NULL && plink_info->alleles != (char *)NULL) {
-      create_allele_strings_hashtable(plink_info);
+        create_allele_strings_hashtable(plink_info);
     }
     
-    if (PLINK.plink != not_plink_format) {
+    if (PLINK.plink ||
+	Input_Format == in_format_binary_VCF ||
+        Input_Format == in_format_compressed_VCF ||
+	Input_Format == in_format_VCF) {
         pedfile_type = PREMAKEPED_PFT;
         // CPK: If the .ped file is a .fam file, then we process the alleles as per the .bed file..
         Top = read_plink_ped_file(ped_file, bed_file, plink_info,
                                   phe_cols, LTop, EXLTop, bp_map, &AnnotatedFileInfo,
                                   num_groups, groups);
 #ifndef HIDESTATUS
-	output_PLINK_stats();
+	//mssgf("");
+	if (PLINK.plink) {
+        mssgvf("%d (of %d) markers to be included from %s",
+               PLINK.markers_total ,PLINK.markers_included, mega2_input_files[2]);
+	}
+	output_stats();
 #endif /* HIDESTATUS */
     } else
         Top = read_annotated_ped_file(ped_file, LTop, &AnnotatedFileInfo,
@@ -4333,7 +4530,8 @@ static void Free_AnnotatedFileInfo(void) {
 }
 */
 
-static void Free_map_names(ext_linkage_locus_top *EXLTop) {
+static void Free_map_names(ext_linkage_locus_top *EXLTop)
+{
     int i;
     for (i = 0; i < EXLTop->MapCnt; i++)
         free(EXLTop->SexMaps[i]);
@@ -4344,7 +4542,8 @@ static void Free_map_names(ext_linkage_locus_top *EXLTop) {
     free(EXLTop->SexMaps);
 }
 
-static void Free_ped(linkage_ped_top *PTop) {
+static void Free_ped(linkage_ped_top *PTop)
+{
     linkage_locus_top *LTop;
     linkage_locus_rec *Locus;
 
@@ -4465,7 +4664,8 @@ static void Free_ped(linkage_ped_top *PTop) {
     }
 }
 
-void Free_annotated_files(linkage_ped_top *Top) {
+void Free_annotated_files(linkage_ped_top *Top)
+{
 //  Free_AnnotatedFileInfo(); //Now doing this immediately after op
     if (Top->EXLTop != NULL)
         Free_map_names(Top->EXLTop);
@@ -4480,7 +4680,6 @@ void Free_annotated_files(linkage_ped_top *Top) {
 */
 
 int check_annotated_file_format(char *input_files[])
-
 {
     FILE *fp;
     char buffer[READ_CHUNK+1];
@@ -4502,8 +4701,8 @@ int check_annotated_file_format(char *input_files[])
 #endif
         if (input_files[ifl] == NULL) continue;
 	if ((fp = fopen(input_files[ifl], "r")) == NULL) {
-	  errorvf("could not open %s for reading!\n", input_files[ifl]);
-	  EXIT(FILE_READ_ERROR);
+        errorvf("could not open %s for reading!\n", input_files[ifl]);
+        EXIT(FILE_READ_ERROR);
 	}
         flags[0]=flags[1]=0;
         read_line=1;
@@ -4603,8 +4802,7 @@ int check_annotated_file_format(char *input_files[])
 }
 
 void write_annotated_aff(FILE *filep, int locusnm, linkage_locus_rec *locus,
-			 linkage_ped_rec *entry)
-
+                         linkage_ped_rec *entry)
 {
     fprintf(filep, "  ");
     if (entry->Pheno[locusnm].Affection.Status == UNDEF ||
@@ -4623,14 +4821,11 @@ void write_annotated_aff(FILE *filep, int locusnm, linkage_locus_rec *locus,
             fprintf(filep, "%d", entry->Pheno[locusnm].Affection.Class);
         }
     }
-    return;
 }
 
 void write_annotated_quant(FILE *filep, int locusnm,
                            linkage_ped_rec *entry)
-
 {
-
     fprintf(filep, "  ");
     if (fabs(entry->Pheno[locusnm].Quant - MissingQuant) <= EPSILON) {
         fprintf(filep, "    NA    ");
@@ -4643,7 +4838,6 @@ void write_annotated_quant(FILE *filep, int locusnm,
 
 void write_annotated_numbered(FILE *filep, int locusnm,
 			      linkage_ped_rec *entry)
-
 {
     int all1, all2;
     get_2alleles(entry->Marker, locusnm, &all1, &all2);
@@ -4660,7 +4854,6 @@ void write_annotated_numbered(FILE *filep, int locusnm,
     } else {
         fprintf(filep, "%2d", all2);
     }
-    return;
 }
 
 
@@ -4677,16 +4870,18 @@ void write_annotated_numbered(FILE *filep, int locusnm,
 // //////////////////////////////////////////////////////////////// //
 
 void
-PLINK_clr(enum PLINK_FORMAT plink) {
-    memset(&PLINK, 0, sizeof (struct PLINK));
+PLINK_clr(enum PLINK_FORMAT plink)
+{
+    memset(&PLINK, 0, sizeof (PLINK_t));
     PLINK.plink = plink;
-    if (!plink) return;
+//  if (!plink) return;
     strcpy(PLINK.trait, "default");
     PLINK.missing_pheno = 1;
     PLINK.pheno_value = -9;
 }
 
-int PLINK_args(char *str) {
+int PLINK_args(char *str, int xcf)
+{
     size_t lstr = strlen(str)+1;
     char *par = CALLOC(lstr, char);
     char *tok;
@@ -4698,54 +4893,86 @@ int PLINK_args(char *str) {
     while(1) {
         if (tok == NULL) break;
         if (!strcasecmp(tok, "clear")) {
-            memset(&PLINK, 0, sizeof(struct PLINK));
-        } else if (!strcasecmp(tok, "--bfile")) {
-            PLINK.plink = binary_PED_format;
-        } else if (!strcasecmp(tok, "--file")) {
-            PLINK.plink = PED_format;
-        } else if (!strcasecmp(tok, "--no-fid")) {
-            PLINK.no_fid = 1;
-        } else if (!strcasecmp(tok, "--no-parents")) {
-            PLINK.no_parents = 1;
-        } else if (!strcasecmp(tok, "--no-pheno")) {
-            PLINK.no_pheno = 1;
-        } else if (!strcasecmp(tok, "--map3")) {
-            PLINK.map3 = 1;
-        } else if (!strcasecmp(tok, "--cM")) {
-            PLINK.cM = 1;
-        } else if (!strcasecmp(tok, "--missing-phenotype")) {
-            tok = strtok(NULL, "\t ");
-            PLINK.missing_pheno = 1;
-            PLINK.pheno_value = atof(tok);
-        } else if (!strcasecmp(tok, "--trait")) {
-            tok = strtok(NULL, "\t ");
-            strcpy(PLINK.trait, tok);
-        } else if (!strcasecmp(tok, "--affectionstatus")) {
-            PLINK.traitType = 0;
-        } else if (!strcasecmp(tok, "--quantitative")) {
-            PLINK.traitType = 1;
-        } else if (!strcasecmp(tok, "--kosambi")) {
-            PLINK.geneticMapType = 0;
-        } else if (!strcasecmp(tok, "--haldane")) {
-            PLINK.geneticMapType = 1;
-        } else if (!strcasecmp(tok, "--1")) {
-            PLINK.phenotypeCoding = 1;
+            memset(&PLINK, 0, sizeof(PLINK_t));
         } else {
-            printf("Usage: Bad parameter %s\n", tok);
-            err++;
+            if (! xcf) {
+                if (!strcasecmp(tok, "--bfile")) {
+                    PLINK.plink = binary_PED_format;
+                } else if (!strcasecmp(tok, "--file")) {
+                    PLINK.plink = PED_format;
+                } else if (!strcasecmp(tok, "--no-fid")) {
+                    PLINK.no_fid = 1;
+                } else if (!strcasecmp(tok, "--no-parents")) {
+                    PLINK.no_parents = 1;
+                } else if (!strcasecmp(tok, "--no-pheno")) {
+                    PLINK.no_pheno = 1;
+                } else if (!strcasecmp(tok, "--map3")) {
+                    PLINK.map3 = 1;
+                } else if (!strcasecmp(tok, "--cM")) {
+                    PLINK.cM = 1;
+                } else if (!strcasecmp(tok, "--missing-phenotype")) {
+                    tok = strtok(NULL, "\t ");
+                    PLINK.missing_pheno = 1;
+                    PLINK.pheno_value = atof(tok);
+                } else if (!strcasecmp(tok, "--trait")) {
+                    tok = strtok(NULL, "\t ");
+                    strcpy(PLINK.trait, tok);
+                } else if (!strcasecmp(tok, "--affectionstatus")) {
+                    PLINK.traitType = 0;
+                } else if (!strcasecmp(tok, "--quantitative")) {
+                    PLINK.traitType = 1;
+                } else if (!strcasecmp(tok, "--kosambi")) {
+                    PLINK.geneticMapType = 0;
+                } else if (!strcasecmp(tok, "--haldane")) {
+                    PLINK.geneticMapType = 1;
+                } else if (!strcasecmp(tok, "--1")) {
+                    PLINK.phenotypeCoding = 1;
+                } else {
+                    printf("Usage: Bad parameter %s\n", tok);
+                    err++;
+                }
+            } else {
+                if (!strcasecmp(tok, "--missing-phenotype")) {
+                    tok = strtok(NULL, "\t ");
+                    PLINK.missing_pheno = 1;
+                    PLINK.pheno_value = atof(tok);
+                } else if (!strcasecmp(tok, "--trait")) {
+                    tok = strtok(NULL, "\t ");
+                    strcpy(PLINK.trait, tok);
+                } else if (!strcasecmp(tok, "--affectionstatus")) {
+                    PLINK.traitType = 0;
+                } else if (!strcasecmp(tok, "--quantitative")) {
+                    PLINK.traitType = 1;
+                } else {
+                    printf("Usage: Bad parameter %s\n", tok);
+                    err++;
+                }
+            }
         }
         tok = strtok(NULL, "\t ");
     }
-    if (PLINK.plink != binary_PED_format && PLINK.plink != PED_format) {
-        printf("Usage: You must specify PLINK file type: --file or --bfile\n");
-        err++;
+
+    if (Input_Format == in_format_binary_VCF ||
+        Input_Format == in_format_compressed_VCF ||
+	Input_Format == in_format_VCF) {
+        // nada
+    } else if (PLINK.plink != binary_PED_format && PLINK.plink != PED_format) {
+//xx for NEW batch files w/o --bfile/file
+        if (Input_Format == in_format_binary_PED)
+            PLINK.plink = binary_PED_format;
+        else if (Input_Format == in_format_PED)
+            PLINK.plink = PED_format;
+        else {
+            printf("Usage: You must specify PLINK file type: --file or --bfile\n");
+            err++;
+        }
     }
     if (PLINK.no_pheno == 0 && PLINK.trait[0] == 0) {
         printf("Usage: You must specify a trait name for the pedigree file phenotype\n");
         err++;
     }
     if (err > 0) {
-        PLINK_usage();
+        PLINK_usage(xcf);
     }
 
     PLINK_str(str, FILENAME_LENGTH);
@@ -4755,21 +4982,25 @@ int PLINK_args(char *str) {
 }
 
 void
-PLINK_usage()
+PLINK_usage(int xcf)
 {
-    printf("\nPLINK options: --file/--bfile --no-fid --no-parents --no-pheno --1 --map3 ...\n");
-    printf("    --missing-phenotype <value> --cM --kosambi/--haldane ...\n");
-    printf("    --trait <value> --affectionstatus/--quantitative\n\n");
+    if (! xcf) {
+        printf("\nPLINK options: --file/--bfile --no-fid --no-parents --no-pheno --1 --map3 ...\n");
+        printf("    --missing-phenotype <value> --cM --kosambi/--haldane ...\n");
+        printf("    --trait <value> --affectionstatus/--quantitative\n\n");
+    } else {
+        printf("\nPLINK options: --missing-phenotype <value> --trait <value> --affectionstatus/--quantitative\n\n");
+    }
 }
 
 void
 PLINK_str(char *ans, int len)
 {
     ans[0] = 0;
-    if (PLINK.plink == binary_PED_format)
-        strcat(ans, "--bfile");
-    else if (PLINK.plink == PED_format)
-        strcat(ans, "--file");
+//  if (PLINK.plink == binary_PED_format)
+//      strcat(ans, "--bfile");
+//  else if (PLINK.plink == PED_format)
+//      strcat(ans, "--file");
     if (PLINK.no_fid)
         strcat(ans, " --no-fid");
     if (PLINK.no_parents)
@@ -4803,9 +5034,13 @@ PLINK_str(char *ans, int len)
 static int parse_phe_types(char *phe_file, char ***phe_names, int **phe_types)
 {
     FILE  *fp = fopen(phe_file, "r");
-    int    cols, Xcols;
+    int    cols, Xcols = 1;
 
-    if (fp == NULL) return 0;
+    if (fp == NULL) {
+        *phe_names = (char **)CALLOC((size_t) Xcols, char **);
+        *phe_types = (int *)CALLOC((size_t) Xcols, int);
+        return 0;
+    }
     fclose(fp);
 
     cols = phemake(phe_file);
@@ -4875,9 +5110,9 @@ static int parse_plink_map_as_names_file_header(FILE *filep,
     return 2;
 }
 
-int read_plink_map_as_names_file(char *map_file, linkage_locus_top **LTop,
-                                 int cols, char **phe_names, int *phe_types,
-                                 annotated_file_desc *file_desc)
+static int read_plink_map_as_names_file(char *map_file, linkage_locus_top **LTop,
+					int cols, char **phe_names, int *phe_types,
+					annotated_file_desc *file_desc)
 {
     int annotated_format;
 
@@ -4893,30 +5128,16 @@ int read_plink_map_as_names_file(char *map_file, linkage_locus_top **LTop,
 #endif
     annotated_format = parse_plink_map_as_names_file_header(fp, file_desc);
     if (annotated_format > 0) {
-
-        if (cols == 0) {
-            // The trait that is found (if specified) in the PLINK .ped file...
-            char *mnames[] = {PLINK.trait};
-            int   mtypes[] = {PLINK.traitType}; // NOTE: --quantitative (== 1); --affectionstatus (== 0)
-            if (PLINK.no_pheno == 0) {
-                // Yes, there is a phenotype...
-                *LTop = read_marker_only_data(fp, 1, mnames, mtypes);
-            } else {
-                // NOTE: If --no-pheno specified (PLINK.no_pheno == 1)
-                *LTop = read_marker_only_data(fp, 0, mnames, mtypes);
-            }
-        } else {
-            if (PLINK.no_pheno == 0) cols++;
-            *LTop = read_marker_only_data(fp, cols, phe_names, phe_types);
-        }
+//xx    if (PLINK.no_pheno == 0) cols++;
+        *LTop = read_marker_only_data(fp, cols, phe_names, phe_types);
     }
     return annotated_format;
 }
 
-ext_linkage_locus_top *read_plink_map_file(char *map_file, linkage_locus_top *LTop,
-                                           ext_linkage_locus_top *inp_EXLTop,
-                                           annotated_file_desc *file_desc,
-                                           plink_info_type *plink_info)
+static ext_linkage_locus_top *read_plink_map_file(const char *map_file,
+						  linkage_locus_top *LTop,
+						  annotated_file_desc *file_desc,
+						  plink_info_type *plink_info)
 {
     int col;
     int num_map_recs;
@@ -4991,18 +5212,19 @@ ext_linkage_locus_top *read_plink_map_file(char *map_file, linkage_locus_top *LT
     copy_colname(tmp, map_all_colnames + col);
     map_all_colnames[col].output_col = col;
 
-
-    return read_common_map_file(mapfp, map_file, LTop, inp_EXLTop, reserved_colnames, num_map_recs, file_desc, PLINK.plink == binary_PED_format ? &plink_info->alleles : NULL);
+    return read_common_map_file(mapfp, map_file, LTop, 0, reserved_colnames, file_desc, PLINK.plink == binary_PED_format ? &plink_info->alleles : NULL);
 }
 
-linkage_ped_top *read_plink_ped_file(char *pedfile, char *bedfile, plink_info_type *plink_info,
-                                     int phecols,
-                                     linkage_locus_top *LTop,
-                                     ext_linkage_locus_top *EXLTop,
-                                     int bp_map,
-                                     annotated_file_desc *file_desc,
-                                     int num_groups,
-                                     int *groups)
+static linkage_ped_top *read_plink_ped_file(char *pedfile,
+                                            char *bedfile,
+                                            plink_info_type *plink_info,
+                                            int phecols,
+                                            linkage_locus_top *LTop,
+                                            ext_linkage_locus_top *EXLTop,
+                                            int bp_map,
+                                            annotated_file_desc *file_desc,
+                                            int num_groups,
+                                            int *groups)
 {
     int  num_userdef_cols, i, j;
     int  has_extra_ids = 0;
@@ -5046,7 +5268,7 @@ linkage_ped_top *read_plink_ped_file(char *pedfile, char *bedfile, plink_info_ty
             magic[1] = (char)fgetc(bed_filep);
             // look for the magic numbers for a PLINK V1.00 .bed file
             if (magic[0] == 0x6c && magic[1] == 0x1b) {
-	      SNP_major = (char)fgetc(bed_filep);
+                SNP_major = (char)fgetc(bed_filep);
                 /*
                  a value of 00000001 indicates SNP-major (i.e. list all individuals for first SNP, all individuals
                  for second SNP, etc) whereas a value of 00000000 indicates individual-major (i.e. list all SNPs
@@ -5104,7 +5326,7 @@ linkage_ped_top *read_plink_ped_file(char *pedfile, char *bedfile, plink_info_ty
         colname_item->output_col = output_col;
         output_col++;
     }
-    for (i=0; i < LTop->LocusCnt; i++) {
+    for (i=0; i < (PLINK.plink != binary_PED_format && PLINK.plink != PED_format ? 0 : LTop->LocusCnt); i++) {
         llr = LTop->Locus[i];
         llx = EXLTop->EXLocus[i];
         loctype_to_descriptor(LTop, i, loctype);

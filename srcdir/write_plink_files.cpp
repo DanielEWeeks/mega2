@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -161,7 +161,7 @@ void CLASS_PLINK::save_pedsix_file(linkage_ped_top *Top,
 				   const int fwid)
 {
     struct plink_pedsix: public loop::trait, loop::ped_per {
-        plink_pedsix(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::ped_per(Top) { }
+        plink_pedsix(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::ped_per(Top) { }
         void make_file() {
             mssgvf("        PLINK pedigree file:       %s/%s\n", *_opath, ::file_names[0]);  //fam
             run_loop(::file_names[0]);
@@ -197,7 +197,7 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
 {
     struct plink_ped: public loop::chr, loop::ped_per_loci {
 
-        plink_ped(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::ped_per_loci(Top) {}
+        plink_ped(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::ped_per_loci(Top) {}
         void make_file() {
             mssgvf("        PLINK ped file:            %s/%s\n", *_opath, ::file_names[0]);
             run_loop(::file_names[0]);
@@ -232,6 +232,8 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
         }
     } *sp = new plink_ped(Top);
 
+    sp->_loci_allele_limit = 2;
+
     sp->load_formats(fwid, pwid, mwid);
     sp->iterate();
 
@@ -258,7 +260,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
     if (binary_mode_flag == 1) {
         struct plink_snp_major: public loop::chr, loop::loci_ped_per, public plink_binary {
 
-            plink_snp_major(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loci_ped_per(Top) { }
+            plink_snp_major(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loci_ped_per(Top) { }
            ~plink_snp_major() {}
             void make_file() {
                 mssgvf("        PLINK binary file snp:     %s/%s\n", *_opath, ::file_names[3]);
@@ -280,7 +282,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
 
     } else if (binary_mode_flag == 2) {
         struct plink_indiv_major: public loop::chr, loop::ped_per_loci, public plink_binary {
-            plink_indiv_major(linkage_ped_top *Top) : entry(Top), loop::chr(Top), ped_per_loci(Top) { }
+            plink_indiv_major(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), ped_per_loci(Top) { }
            ~plink_indiv_major() {}
             void make_file() {
                 mssgvf("        PLINK binary file indiv:   %s/%s\n", *_opath, ::file_names[3]);
@@ -318,7 +320,8 @@ void CLASS_PLINK::create_output_file(
     // Here we use the value of 'MissingQuant' which should be derived from the batch
     // file item "Value_Missing_Quant_On_Input".
     //if (have_trait_b(LPedTreeTop->LocusTop) != 0 && PLINK_OUT.no_pheno == 1) {
-    if (have_trait_b(LPedTreeTop->LocusTop) != 0) {
+//  why not let me have no traits ...
+    if (have_trait_b(LPedTreeTop->LocusTop) != 0 || 1) {
         // See #defines for PLINK_SUB_OPTION_*_INT for the value of _suboption
         create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, _suboption-1, "plink", analysis);
     } else {
@@ -391,7 +394,7 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         all_sh *sh;
         int outputFormat;
         
-        PLINK_sh_script(linkage_ped_top *Top) : entry(Top), loop::outer(Top), all_sh(Top) { }
+        PLINK_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
         void make_file() {
             mssgvf("        PLINK shell file:          %s/%s\n", *_opath, file_names[8]);
             run_loop(file_names[8]);

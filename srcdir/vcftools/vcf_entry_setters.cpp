@@ -520,14 +520,14 @@ void vcf_entry::add_CONTIG_descriptor(const string &in, unsigned int index)
 	string details = in.substr(found_start+1, found_end-found_start-1);
 
 	vector<string> tokens;
-	variant_file_entry::tokenize(details, ',', tokens);
+	entry::tokenize(details, ',', tokens);
 	Field_description I;
 	bool id_found = false;
 	vector<string> entry;
 
 	for (unsigned int ui=0; ui<tokens.size(); ui++)
 	{
-		variant_file_entry::tokenize(tokens[ui], '=', entry);
+		entry::tokenize(tokens[ui], '=', entry);
 		if (entry[0] == "ID")
 		{
 			I.ID = entry[1];

@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -26,8 +26,8 @@
 ===========================================================================
 */
 
-#ifndef ENTRY_H
-#define ENTRY_H
+#ifndef PERSON_LOCUS_ENTRY_H
+#define PERSON_LOCUS_ENTRY_H
 
 #include <stdio.h>
 #include <string.h>
@@ -39,7 +39,7 @@
 #include "create_summary_ext.h"
 #include "output_routines_ext.h"
 
-class entry : public file_ops {
+class person_locus_entry : public file_ops {
 public:
     int _ped;
     int _per;
@@ -64,7 +64,7 @@ public:
     int _numchr;
     int _chrom_loop;
 public:
-    entry() {
+    person_locus_entry() {
         // It's really nice to initialize everything to '0' so that when
         // the code blows up, you know that the variable was never written
         // too as opposed to someone wrote some funny number there...
@@ -79,15 +79,15 @@ public:
         _fformat[0] = _pformat[0] = _mformat[0] = 0;
         _fwid = _pwid = _mwid = _trait = _numchr = _chrom_loop = 0;
     }
-    entry(linkage_ped_top *Top) {
-        entry();
+    person_locus_entry(linkage_ped_top *Top) {
+        person_locus_entry();
         if (Top != (linkage_ped_top *)NULL) {
             this->_Top = Top;
             _LTop   = Top->LocusTop;
             _EXLTop = Top->EXLTop;
         }
     }
-    virtual ~entry() {}
+    virtual ~person_locus_entry() {}
     void load_formats_no_space(const int mwid);
     void load_formats(const int fwid, const int pwid, const int mwid);
 

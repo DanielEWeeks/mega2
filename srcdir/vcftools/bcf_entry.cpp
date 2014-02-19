@@ -640,7 +640,7 @@ void bcf_entry::print(ostream &out, const set<string> &INFO_to_keep, bool keep_a
 
 	out << get_CHROM() << '\t' << POS << '\t' << get_ID() << '\t' << REF << '\t' << get_ALT();
 
-	out << '\t' << variant_file_entry::double2str(QUAL);
+	out << '\t' << entry::double2str(QUAL);
 	out << '\t' << get_FILTER();
 	out << '\t' << get_INFO(INFO_to_keep, keep_all_INFO);
 

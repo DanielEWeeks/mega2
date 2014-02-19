@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -238,14 +238,10 @@ static void     linkage_swap_loci(linkage_locus_rec *locus1,
    The above comment doesn't make sense as MaxChromo is already set prior
    to this routine, and list and counts are allocated outside as well.
 */
-
 int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
-			int *counts, int exit_upon_no_chr,
-			analysis_type analysis)
-
-
+                        int *counts, int exit_upon_no_chr,
+                        analysis_type analysis)
 {
-
     int i, j, ui, total_list = 0;
     int new_chr, chr_index;
     int Display_unmapped_errors, unmapped_errors = 0;

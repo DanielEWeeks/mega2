@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -120,7 +120,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
         // This trait will not go into this file (the PSEQ pheno file).
         int skip_trait;
         
-        pseq_pheno(linkage_ped_top *Top) : entry(Top), loop::once(Top), loop::ped_per_trait(Top) { }
+        pseq_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) { }
         
         void make_file() {
             // Here we loop over the pedigrees and individuals to determine what to use
@@ -288,7 +288,7 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
         str *file_names;
         all_sh *sh;
         
-        PSEQ_sh_script(linkage_ped_top *Top) : entry(Top), loop::outer(Top), all_sh(Top) { }
+        PSEQ_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
         void make_file() {
             mssgvf("         PSEQ shell file:          %s/%s\n", *_opath, file_names[8]);
             run_loop(file_names[8]);

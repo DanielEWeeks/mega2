@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -665,7 +665,7 @@ void  create_nuclear_families(linkage_ped_top **LPedTop,
 {
 
     char           chr_str[3];
-    int             single_output, sex_linked;
+    int             single_output=0, sex_linked;
     int             numchr, i, linkage_format;
     linkage_ped_top *Top2;
 

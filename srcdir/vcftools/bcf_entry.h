@@ -18,7 +18,7 @@
 
 extern output_log LOG;
 
-class bcf_entry : public variant_file_entry {
+class bcf_entry : public entry {
 public:
 	bcf_entry(const unsigned int N_indv, const header &header_obj, const vector<char> &line);
 	bcf_entry(const unsigned int N_indv, const header &header_obj);

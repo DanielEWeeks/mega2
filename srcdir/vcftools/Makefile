@@ -1,5 +1,5 @@
 #   Mega2: Manipulation Environment for Genetic Analysis
-#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
 #   Daniel E. Weeks, and University of Pittsburgh
 #  
@@ -27,6 +27,8 @@
 # Requires gnu make (sometimes called 'gmake')
 #
 
+# Put the library in the Mega2 srcdir above this...
+# NOTE: -lz is needed when the library is linked...
 OUT = ../libvcftools.a
 
 # source files.
@@ -40,25 +42,18 @@ OBJ = $(SRC:.cpp=.o)
 # include directories '.' for other vcftools headers, '..' for Mega2 headers...
 INCLUDES = -I. -I..
 
-# compiler flags
-CCFLAGS = -g -D_FILE_OFFSET_BITS=64
-
-# compiler variables are set by calling makefile
-
-# library paths
-LIBS = -lz
+# CC, CFLAGS are defined in Mega2 Makedefs
 
 .SUFFIXES: .cpp
 
 default: $(OUT)
 
 .cpp.o:
-	$(CXX) $(INCLUDES) $(CCFLAGS) -c $< -o $@
-
+	$(CXX) $(INCLUDES) $(CFLAGS) -c $< -o $@
 bgzf: bgzf.c bgzf.h
 
 $(OUT): $(OBJ)
-	$(CC) -c $(CCFLAGS) -m64 bgzf.c $(LIB) -o bgzf.o
+	$(CC) -c $(CFLAGS) bgzf.c -o bgzf.o
 	ar rcs $(OUT) $(OBJ) bgzf.o
 
 depend:
@@ -78,10 +73,14 @@ mega2_vcftools_interface.o: ../write_eigenstrat_ext.h ../write_pangaea_ext.h
 mega2_vcftools_interface.o: ../write_beagle_ext.h ../write_structure_ext.h
 mega2_vcftools_interface.o: ../write_pseq_ext.h ../batch_input.h
 mega2_vcftools_interface.o: ../input_check.h ../hwe.h ../compress_ext.h
-mega2_vcftools_interface.o: ../utils_ext.h ../error_messages_ext.h
-mega2_vcftools_interface.o: output_log.h parameters.h variant_file.h entry.h
-mega2_vcftools_interface.o: bgzf.h vcf_entry.h bcf_entry.h header.h
-mega2_vcftools_interface.o: bcf_file.h vcf_file.h
+mega2_vcftools_interface.o: ../utils_ext.h ../genetic_utils_ext.h
+mega2_vcftools_interface.o: ../error_messages_ext.h ../annotated_ped_file.h
+mega2_vcftools_interface.o: ../read_files_ext.h ../marker_lookup_ext.h
+mega2_vcftools_interface.o: ../phe_lookup_ext.h output_log.h parameters.h
+mega2_vcftools_interface.o: variant_file.h entry.h bgzf.h vcf_entry.h
+mega2_vcftools_interface.o: bcf_entry.h header.h bcf_file.h vcf_file.h
+mega2_vcftools_interface.o: mega2_vcftools_interface.h
+mega2_vcftools_interface.o: ../annotated_ped_file.h
 parameters.o: parameters.h output_log.h
 header.o: header.h entry.h bgzf.h output_log.h
 entry.o: entry.h bgzf.h output_log.h

@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -162,7 +162,7 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
 */
     struct IQLS_pedigree: public loop::outer, loop::ped_per {
 
-        IQLS_pedigree(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        IQLS_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             msgvf("        IQLS pedigree file:        %s/%s\n", *_opath, file_names[0]);
             run_loop(file_names[0]);
@@ -231,7 +231,7 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 
     struct IQLS_marker: public loop::outer, loop::loci_ped_per {
 
-        IQLS_marker(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
+        IQLS_marker(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
         void make_file() {
             msgvf("        IQLS marker file:          %s/%s\n", *_opath, file_names[1]);
             run_loop(file_names[1]);
@@ -335,7 +335,7 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]) {
     struct IQLS_parameter: public loop::chr, loop::null {
 
-        IQLS_parameter(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::null(Top) {}
+        IQLS_parameter(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::null(Top) {}
         void make_file() {
             msgvf("        IQLS parameter file:       %s/%s\n", *_opath, file_names[2]);
             run_loop(file_names[2]);
@@ -358,7 +358,7 @@ static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file
         typedef char *str;
         str *file_names;
 
-        IQLS_shell_script(linkage_ped_top *Top) : entry(Top), loop::outer(Top), sh_util(Top) { }
+        IQLS_shell_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), sh_util(Top) { }
         void make_file() {
             msgvf("        IQLS shell script file:    %s/%s\n", *_opath, file_names[3]);
             run_loop(file_names[3]);
@@ -420,7 +420,7 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
         ped_top *PedTreeTop;
         int     *index;
 
-        Idcoefs_pedigree(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        Idcoefs_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             msgvf("        Idcoefs pedigree file:     %s/%s\n", *_opath, file_names[4]);
             run_loop(file_names[4]);
@@ -522,7 +522,7 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
     struct IDcoefs_study : public loop::outer, loop::ped_per {
         int *eligible;
 
-        IDcoefs_study(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        IDcoefs_study(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             msgvf("        Idcoefs study file:        %s/%s\n", *_opath, file_names[5]);
             run_loop(file_names[5]);

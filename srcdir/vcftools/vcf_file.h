@@ -25,7 +25,7 @@ public:
 	vcf_file();
 
 	void get_entry(unsigned int entry_num, vector<char> &out);
-	variant_file_entry* get_entry_object(unsigned int N_indv);
+	entry* get_entry_object(unsigned int N_indv);
 
 	void print(ostream &out, const set<string> &INFO_to_keep, bool keep_all_INFO);
 	void print(const string &output_file_prefix, const set<string> &INFO_to_keep, bool keep_all_INFO=false);

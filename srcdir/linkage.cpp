@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -1972,6 +1972,7 @@ void clean_reordered_markers(linkage_locus_top *LTop, analysis_type analysis)
                 // Since the user has the option now of explicitly choosing a sex-averaged,
                 // sex-specific, or female map even though all three maps (a, m, f) are present,
                 // we must take this into consideration. We must also worry about the sequelae of this...
+//              asm("int $3");
                 if (ALLOW_NO_MAP(analysis) ||
                     // with a sex-averaged map, we only know about the average position...
                     (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT &&
@@ -1997,6 +1998,9 @@ void clean_reordered_markers(linkage_locus_top *LTop, analysis_type analysis)
             }
         }
     }
+
+    // ??????? Put a breakpoint here. Make a marker go away from the .MAP file and that marker should
+    // not show up in the 'tmp' vector and therefore never copied into the 'reordered_marker-loci' vector.
     
     if (num_valid > 0) {
         reordered_marker_loci = REALLOC(reordered_marker_loci, (size_t)num_valid, int);

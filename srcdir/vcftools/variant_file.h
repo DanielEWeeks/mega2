@@ -88,7 +88,7 @@ public:
 
 	void apply_filters(const parameters &params);
 	virtual void get_entry(unsigned int entry_num, vector<char> &out) = 0;
-	virtual variant_file_entry* get_entry_object(unsigned int N_indv) = 0;
+	virtual entry* get_entry_object(unsigned int N_indv) = 0;
 
 	bool read_index_file(const string &index_filename);
 	void write_index_file(const string &index_filename);
@@ -187,12 +187,11 @@ public:
 	virtual void print(const string &output_file_prefix, const set<string> &INFO_to_keep, bool keep_all_INFO=false) = 0;
 	virtual void print_bcf(BGZF* out, const set<string> &INFO_to_keep, bool keep_all_INFO) = 0;
 	virtual void print_bcf(const string &output_file_prefix, const set<string> &INFO_to_keep, bool keep_all_INFO=false, bool stream=false) = 0;
-#if 0
+
 	void calc_hap_r2(entry *e, entry *e2, const vector<bool> &include_geno1, const vector<bool> &include_geno2, double &r2, double &D, double &Dprime, int &chr_count);
 	void calc_geno_r2(entry *e, entry *e2, const vector<bool> &include_geno1, const vector<bool> &include_geno2, double &r2, int &chr_count);
 	void calc_r2_em(entry *e, entry *e2, const vector<bool> &include_geno1, const vector<bool> &include_geno2, double &r2, int &indv_count);
 	void calc_geno_chisq(entry *e, entry *e2, const vector<bool> &include_geno1, const vector<bool> &include_geno2, double &chisq, double &dof, double &pval, int &indv_count);
-#endif /* 0 */
 	void return_indv_union(variant_file &file2, map<string, pair< int, int> > &combined_individuals, const string &indv_ID_map_file="");
 	void return_site_union(variant_file &file2, map<pair<string, int>, pair<int, int> > &out);
 

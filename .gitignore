@@ -1,0 +1,9 @@
+# Ignore objects
+*.o
+*.BAK
+*.CKP
+# Ignore executables
+srcdir/mega2
+srcdir/mega2_darwin
+srcdir/.cproject
+srcdir/.project

@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -40,13 +40,13 @@ class loop {
 //                       Outer loops
 ////////////////////////////////////////////////////////////////
 public:
-    class once: public virtual entry {
+    class once: public virtual person_locus_entry {
     public:
         int   *_trp;
         bool _trait_affect;
         bool _trait_quant;
 
-        once(linkage_ped_top *Top) : entry(Top) {
+        once(linkage_ped_top *Top) : person_locus_entry(Top) {
             _numchr     = 0;
             _chrom_loop = LoopOverChrm && main_chromocnt > 1;
 
@@ -64,14 +64,14 @@ public:
     };
 
 public:
-    class outer: public virtual entry {
+    class outer: public virtual person_locus_entry {
     public:
         int _trait_loop;
         int   *_trp;
         bool _trait_affect;
         bool _trait_quant;
 
-        outer(linkage_ped_top *Top) : entry(Top) {
+        outer(linkage_ped_top *Top) : person_locus_entry(Top) {
             _numchr       = 0;
             _chrom_loop   = LoopOverChrm && main_chromocnt > 1;
 
@@ -94,13 +94,13 @@ public:
     };
 
 public:
-    class chr: public virtual entry {
+    class chr: public virtual person_locus_entry {
     public:
         int   *_trp;
         bool _trait_affect;
         bool _trait_quant;
 
-        chr(linkage_ped_top *Top) : entry(Top) {
+        chr(linkage_ped_top *Top) : person_locus_entry(Top) {
             _numchr     = 0;
             _chrom_loop = LoopOverChrm && main_chromocnt > 1;
 
@@ -120,14 +120,14 @@ public:
     };
 
 public:
-    class trait: public virtual entry {
+    class trait: public virtual person_locus_entry {
     public:
         int _trait_loop;
         int   *_trp;
         bool _trait_affect;
         bool _trait_quant;
 
-        trait(linkage_ped_top *Top) : entry(Top) {
+        trait(linkage_ped_top *Top) : person_locus_entry(Top) {
             _numchr       = 0;
             _chrom_loop   = LoopOverChrm && main_chromocnt > 1;
 
@@ -152,10 +152,10 @@ public:
 ////////////////////////////////////////////////////////////////
 
 public:
-    class null: public virtual entry {
+    class null: public virtual person_locus_entry {
     public:
 
-        null(linkage_ped_top *Top) : entry(Top) { }
+        null(linkage_ped_top *Top) : person_locus_entry(Top) { }
        ~null() {}
 
         void run_loop(const char *dir, const char *fl_name, const char *mode="w");
@@ -164,9 +164,9 @@ public:
     };
 
 public:
-    class ped_per: public virtual entry {
+    class ped_per: public virtual person_locus_entry {
     public:
-        ped_per(linkage_ped_top *Top) : entry(Top) { }
+        ped_per(linkage_ped_top *Top) : person_locus_entry(Top) { }
        ~ped_per() {}
 
         void run_loop(const char *dir, const char *fl_name, const char *mode="w");
@@ -177,12 +177,12 @@ public:
     };
 
 public:
-    class ped_per_trait: public virtual entry {
+    class ped_per_trait: public virtual person_locus_entry {
         int *trp;
         bool trait_affect;
         bool trait_quant;
     public:
-        ped_per_trait(linkage_ped_top *Top) : entry(Top) {
+        ped_per_trait(linkage_ped_top *Top) : person_locus_entry(Top) {
             trp          = global_trait_entries;
             trait_affect = false;
             trait_quant  = false;
@@ -200,12 +200,12 @@ public:
     };
 
 public:
-    class trait_ped_per: public virtual entry {
+    class trait_ped_per: public virtual person_locus_entry {
         int *trp;
         bool trait_affect;
         bool trait_quant;
     public:
-        trait_ped_per(linkage_ped_top *Top) : entry(Top) {
+        trait_ped_per(linkage_ped_top *Top) : person_locus_entry(Top) {
             trp          = global_trait_entries;
             trait_affect = false;
             trait_quant  = false;
@@ -223,11 +223,11 @@ public:
     };
 
 public:
-    class ped_per_loci: public virtual entry {
+    class ped_per_loci: public virtual person_locus_entry {
     public:
         int _loci_allele_limit;
 
-        ped_per_loci(linkage_ped_top *Top) : entry(Top) {
+        ped_per_loci(linkage_ped_top *Top) : person_locus_entry(Top) {
             _loci_allele_limit = 0;
         }
        ~ped_per_loci() {}
@@ -242,11 +242,11 @@ public:
     };
 
 public:
-    class loci_ped_per: public virtual entry {
+    class loci_ped_per: public virtual person_locus_entry {
     public:
         int _loci_allele_limit;
 
-        loci_ped_per(linkage_ped_top *Top) : entry(Top) {
+        loci_ped_per(linkage_ped_top *Top) : person_locus_entry(Top) {
             _loci_allele_limit = 0;
         }
        ~loci_ped_per() {}
@@ -261,11 +261,11 @@ public:
     };
 
 public:
-    class loci: public virtual entry {
+    class loci: public virtual person_locus_entry {
     public:
         int _loci_allele_limit;
 
-        loci(linkage_ped_top *Top) : entry(Top) {
+        loci(linkage_ped_top *Top) : person_locus_entry(Top) {
             _loci_allele_limit = 0;
         }
        ~loci() {}

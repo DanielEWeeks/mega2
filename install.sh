@@ -1,6 +1,6 @@
 #!/bin/bash
 #   Mega2: Manipulation Environment for Genetic Analysis
-#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
 #   Daniel E. Weeks, and University of Pittsburgh
 #  
@@ -114,7 +114,7 @@ function verify() {
     fi
 }
 
-VERSION=v4.6.1
+VERSION=v4.6.2
 
 if [[ $1 ]]; then
     scripts=$1;

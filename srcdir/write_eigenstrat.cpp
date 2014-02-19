@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -139,7 +139,7 @@ void CLASS_EIGENSTRAT::save_pedsix_file(linkage_ped_top *Top,
     struct eigenstrat_pedsix: public loop::trait, loop::ped_per {
         int missing_affection_status;
 
-        eigenstrat_pedsix(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::ped_per(Top) { }
+        eigenstrat_pedsix(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::ped_per(Top) { }
         void make_file() {
             //if (_tte == (linkage_locus_rec *)NULL) return;
             mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, ::file_names[0]);  //fam
@@ -182,7 +182,7 @@ void CLASS_EIGENSTRAT::save_ped_file(linkage_ped_top *Top,
     struct eigenstrat_ped: public loop::outer, loop::ped_per_loci {
         int missing_affection_status;
         int process_per;
-        eigenstrat_ped(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per_loci(Top) { }
+        eigenstrat_ped(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_loci(Top) { }
         void make_file() {
             //if (_tte == (linkage_locus_rec *)NULL) return;
             mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, ::file_names[0]);
@@ -255,7 +255,7 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
 {
     if (binary_mode_flag == 1) {
         struct eigenstrat_snp_major: public loop::outer, loop::loci_ped_per, public plink_binary {
-            eigenstrat_snp_major(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loci_ped_per(Top) { }
+            eigenstrat_snp_major(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loci_ped_per(Top) { }
             ~eigenstrat_snp_major() {}
             void make_file() {
                 //if (_tte == (linkage_locus_rec *)NULL) return;
@@ -385,7 +385,7 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
         all_sh *sh;
         int subOption;
         
-        EIGENSTRAT_sh_script(linkage_ped_top *Top) : entry(Top), loop::outer(Top), all_sh(Top) { }
+        EIGENSTRAT_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
         void make_file() {
             //if (_tte == (linkage_locus_rec *)NULL) return;
             mssgvf("        EIGENSTRAT shell file:     %s/%s\n", *_opath, file_names[8]);

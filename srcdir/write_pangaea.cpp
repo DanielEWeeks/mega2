@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -71,7 +71,7 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
         int subopt;
         int skip;
 
-        save_peds(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::ped_per(Top) { }
+        save_peds(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::ped_per(Top) { }
         void make_file() {
             mssgvf("        PANGAEA pedigree file:      %s/%s\n", *_opath, file_names[0]);
             run_loop(file_names[0]);
@@ -159,7 +159,7 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
         typedef char *str;
         str *file_names;
 
-        save_peds_all(linkage_ped_top *Top) : entry(Top), loop::once(Top), loop::ped_per_trait(Top) { }
+        save_peds_all(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) { }
         void make_file() {
             mssgvf("        PANGAEA pedigree file:      %s/%s\n", *_opath, file_names[9]);
             run_loop(file_names[9]);
@@ -299,7 +299,7 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
         int subopt;
         char pfx[4];
 
-        PANGAEA_sh_script(linkage_ped_top *Top) : entry(Top), loop::outer(Top), all_sh(Top) {
+        PANGAEA_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
         }
         void make_file() {
@@ -404,7 +404,7 @@ struct par_var: public loop::outer, loop::null {
     str *file_names;
     char pfx[4];
 
-    par_var(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::null(Top) {
+    par_var(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::null(Top) {
         strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
     }
     void make_file() {
@@ -437,7 +437,7 @@ struct liability_traits: public loop::trait, loop::null {
     typedef char *str;
     str *file_names;
 
-    liability_traits(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::null(Top) { }
+    liability_traits(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::null(Top) { }
     void make_file() {
         if (_tte == 0 || _tte->Type != AFFECTION || _tte->Pheno->Props.Affection.ClassCnt <= 1)
             return;
@@ -476,7 +476,7 @@ static void write_PANGAEA_par_template(linkage_ped_top *Top, char *file_names[],
         typedef char *str;
         str *file_names;
 
-        template_par_user(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::null(Top) { }
+        template_par_user(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::null(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             run_loop(file_names[10]);
@@ -513,7 +513,7 @@ static void write_PANGAEA_par_pedcheck(linkage_ped_top *Top, char *file_names[],
         typedef char *str;
         str *file_names;
 
-        pedcheck_xx_par_var(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::null(Top) { }
+        pedcheck_xx_par_var(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::null(Top) { }
         void make_file() {
             mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
             run_loop(file_names[7]);
@@ -531,7 +531,7 @@ static void write_PANGAEA_par_pedcheck(linkage_ped_top *Top, char *file_names[],
         typedef char *str;
         str *file_names;
 
-        pedcheck_par_user(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::null(Top) { }
+        pedcheck_par_user(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::null(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             run_loop(file_names[10]);
@@ -555,7 +555,7 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
         str *file_names;
         int i;
 
-        kin_xx_par_varA(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        kin_xx_par_varA(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             i = 0;
             mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
@@ -595,7 +595,7 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
         str *file_names;
         int i;
 
-        kin_xx_par_varB(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        kin_xx_par_varB(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             i = 0;
             mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
@@ -624,7 +624,7 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
         str *file_names;
         int i;
 
-        kin_xx_par_varC(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        kin_xx_par_varC(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             i = 0;
             mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
@@ -652,7 +652,7 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
         typedef char *str;
         str *file_names;
 
-        kin_par_user(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::null(Top) { }
+        kin_par_user(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::null(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             run_loop(file_names[10]);
@@ -676,7 +676,7 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
         str *file_names;
         char pfx[4];
 
-        translink_xx_par_var(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::null(Top) {
+        translink_xx_par_var(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::null(Top) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
         }
         void make_file() {
@@ -726,7 +726,7 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
         str *file_names;
         char pfx[4];
 
-        translink_par_user(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::null(Top) {
+        translink_par_user(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::null(Top) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
         }
         void make_file() {
@@ -789,7 +789,7 @@ static void write_PANGAEA_par_lod(linkage_ped_top *Top, char *file_names[], char
         str *file_names;
         int subopt;
 
-        lod_par_user(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::null(Top) { }
+        lod_par_user(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::null(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             run_loop(file_names[10]);
@@ -854,7 +854,7 @@ static void write_PANGAEA_par_ibd_tests(linkage_ped_top *Top, char *file_names[]
         str *file_names;
         int subopt;
 
-        lod_par_user(linkage_ped_top *Top) : entry(Top), loop::trait(Top), loop::null(Top) { }
+        lod_par_user(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::null(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             run_loop(file_names[10]);
@@ -934,7 +934,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         str *file_names;
         int token;
 
-        PANGAEA_map_names(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::loci(Top) {  }
+        PANGAEA_map_names(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::loci(Top) {  }
         void make_file() {
             mssgvf("        PANGAEA names map file:     %s/%s\n", *_opath, file_names[1]);
             run_loop(file_names[1]);
@@ -965,7 +965,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         int token;
         double delta;
 
-        PANGAEA_map_dist(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::loci(Top) {
+        PANGAEA_map_dist(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::loci(Top) {
             delta = .000001;
         }
         void make_file() {
@@ -1023,7 +1023,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         int i;
         int token;
 
-        PANGAEA_map_freq(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::loci(Top) { i = 0; }
+        PANGAEA_map_freq(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::loci(Top) { i = 0; }
         void make_file() {
             mssgvf("        PANGAEA freq map file:      %s/%s\n", *_opath, file_names[1]);
             run_loop(*_opath, file_names[1], "a");
@@ -1050,7 +1050,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         int subopt;
         int skip;
 
-        PANGAEA_map_data(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::ped_per_loci(Top) { }
+        PANGAEA_map_data(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::ped_per_loci(Top) { }
         void make_file() {
             mssgvf("        PANGAEA data map file:      %s/%s\n", *_opath, file_names[1]);
             run_loop(*_opath, file_names[1], "a");

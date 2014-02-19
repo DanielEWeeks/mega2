@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -240,7 +240,9 @@ static int read_peds(int line_count, FILE *pfilep,
             case NUMBERED:
             case XLINKED:
             case YLINKED:
-                lch=read_numbered_data(pfilep, locus, (void *) (&(persons[i])),
+                lch=read_numbered_data(pfilep, locus,
+                                       &LTop->Locus[locus],
+                                       (void *) (&(persons[i])),
                                        LTop->PedRecDataType, last_marker);
                 switch(LTop->PedRecDataType) {
                     case Premakeped:
@@ -297,7 +299,8 @@ static int read_peds(int line_count, FILE *pfilep,
         }
     }
     SUPPRESS_MSSG_NESTED_FORCE(untyped);
-    warnvf("Individuals Untyped: %d out of %d\n", untyped, totaltyped);
+    if (untyped > 0)
+        warnvf("Individuals untyped: %d out of %d\n", untyped, totaltyped);
     SUPPRESS_MSSG_NESTED_FINI(untyped);
 
     return unique;

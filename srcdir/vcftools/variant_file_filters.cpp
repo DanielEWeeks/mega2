@@ -20,7 +20,7 @@ void variant_file::filter_genotypes_by_quality(double min_genotype_quality)
 	LOG.printLOG("Filtering out Genotypes with Quality less than " + output_log::dbl2str(min_genotype_quality,0) + "\n");
 
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -45,7 +45,7 @@ void variant_file::filter_genotypes_by_depth(int min_depth, int max_depth)
 
 	LOG.printLOG("Filtering out Genotypes with Depth less than " + output_log::dbl2str(min_depth,0) + " and greater than " + output_log::dbl2str(max_depth, 0) + "\n");
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -74,7 +74,7 @@ void variant_file::filter_genotypes_by_filter_flag(const set<string> &filter_fla
 		LOG.error("Require Genotypes in variant file in order to filter genotypes by Filter Flag.");
 
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 	for (unsigned int s=0; s<N_entries; s++)
 	{
 		if (include_entry[s] == false)
@@ -190,7 +190,7 @@ void variant_file::filter_individuals_by_call_rate(double min_call_rate)
 	vector<int> N_sites_included(N_indv, 0);
 	vector<int> N_missing(N_indv, 0);
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -245,7 +245,7 @@ void variant_file::filter_individuals_by_mean_depth(double min_mean_depth, doubl
 	vector<double> depth_sum(N_indv,0.0);
 	int depth;
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -296,7 +296,7 @@ void variant_file::filter_individuals_by_phase()
 	vector<unsigned int> indv_count(N_indv, 0);
 	vector<unsigned int> indv_count_unphased(N_indv, 0);
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (s=0; s<N_entries; s++)
 	{
@@ -420,7 +420,7 @@ void variant_file::filter_sites_to_keep(const set<string> &snps_to_keep, const s
 	}
 
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -464,7 +464,7 @@ void variant_file::filter_sites_to_exclude(const string &snps_to_exclude_file)
 	}
 
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -491,7 +491,7 @@ void variant_file::filter_sites_by_quality(double min_quality)
 
 	unsigned int s;
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (s=0; s<N_entries; s++)
 	{
@@ -535,7 +535,7 @@ void variant_file::filter_sites_by_mean_depth(double min_mean_depth, double max_
 	int depth;
 
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -783,7 +783,7 @@ void variant_file::filter_sites_by_BED_file(const string &bed_file, bool BED_exc
 			continue;
 
 		get_entry(s, variant_line);
-		variant_file_entry *e = get_entry_object(N_indv);
+		entry *e = get_entry_object(N_indv);
 		e->reset(variant_line);
 		e->parse_basic_entry(true);
 		e->get_CHROM(chr);
@@ -866,7 +866,7 @@ void variant_file::filter_sites_by_mask(const string &mask_file, bool invert_mas
 	unsigned int current_pos = 1;
 	string current_header = "";
 	bool keep;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	while (!mask.eof())
 	{
@@ -956,7 +956,7 @@ void variant_file::filter_sites_by_number_of_alleles(int min_alleles, int max_al
 
 	int N_alleles;
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -990,7 +990,7 @@ void variant_file::filter_sites_by_frequency_and_call_rate(double min_maf, doubl
 	unsigned int N_non_missing_chr;
 
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -1038,7 +1038,7 @@ void variant_file::filter_sites_by_allele_type(bool keep_only_indels, bool remov
 	LOG.printLOG("Filtering sites by allele type\n");
 
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	string allele;
 	unsigned int ref_len, N_alleles;
@@ -1077,6 +1077,7 @@ void variant_file::filter_sites_by_allele_type(bool keep_only_indels, bool remov
 				include_entry[s] = false;
 		}
 	}
+	delete e; // cpk: memory leak
 }
 
 void variant_file::filter_sites_by_allele_count(double min_mac, double max_mac, double min_non_ref_ac, double max_non_ref_ac, double max_missing_call_count)
@@ -1095,7 +1096,7 @@ void variant_file::filter_sites_by_allele_count(double min_mac, double max_mac, 
 	unsigned int N_alleles, N_chr, N_non_missing_chr;
 
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -1144,7 +1145,7 @@ void variant_file::filter_sites_by_HWE_pvalue(double min_HWE_pvalue)
 	unsigned int b11, b12, b22;
 	double p;
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -1158,7 +1159,7 @@ void variant_file::filter_sites_by_HWE_pvalue(double min_HWE_pvalue)
 		e->parse_genotype_entries(true);
 
 		e->get_genotype_counts(include_indv, include_genotype[s], b11, b12, b22);
-		p = variant_file_entry::SNPHWE(b12, b11, b22);
+		p = entry::SNPHWE(b12, b11, b22);
 
 		if (p < min_HWE_pvalue)
 			include_entry[s] = false;
@@ -1178,7 +1179,7 @@ void variant_file::filter_sites_by_filter_status(const set<string> &filter_flags
 	vector<char> variant_line;
 	unsigned int N_to_remove = filter_flags_to_remove.size();
 	unsigned int N_to_keep = filter_flags_to_keep.size();
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -1225,7 +1226,7 @@ void variant_file::filter_sites_by_phase()
 	// TODO: Alter this to allow for a max/min level of unphased-ness.
 	LOG.printLOG("Filtering Sites with Unphased Genotypes\n");
 	vector<char> variant_line;
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{
@@ -1297,7 +1298,7 @@ void variant_file::filter_sites_by_INFO_flags(const set<string> &flags_to_remove
 	string value;
 	unsigned int N_to_remove = flags_to_remove.size();
 	unsigned int N_to_keep = flags_to_keep.size();
-	variant_file_entry *e = get_entry_object(N_indv);
+	entry *e = get_entry_object(N_indv);
 
 	for (unsigned int s=0; s<N_entries; s++)
 	{

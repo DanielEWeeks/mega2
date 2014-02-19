@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2012 Robert Baron, Nandita Mukhopadhyay,
+  Copyright (C) 1999-2014 Robert Baron, Nandita Mukhopadhyay,
   Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -616,7 +616,7 @@ void BatchFile::consistencyChecks() {
     if (bi_PLINK.itemRead()) {
         // Determine if there are any bad arguments in the "PLINK" BatchItem...
         string commandLineArgs = bi_PLINK.getValue();
-        if (!PLINK_args((char *)commandLineArgs.c_str())) {
+        if (!PLINK_args((char *)commandLineArgs.c_str(), 1)) {
             throw BatchFileException("A bad parameter was detected in the PLINK batch file keyword string.",
                                      BATCHFILE_BATCHITEM_PLINK_BAD_PARAMETER);
         }

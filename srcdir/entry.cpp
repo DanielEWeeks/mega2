@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -30,7 +30,7 @@
 #include "user_input_ext.h"
 #include "entry.h"
 
-void entry::load_formats_no_space(const int mwid)
+void person_locus_entry::load_formats_no_space(const int mwid)
 {
     create_formats_no_space(_fformat, _pformat);
     _fwid = -1;
@@ -42,7 +42,7 @@ void entry::load_formats_no_space(const int mwid)
     }
 }
 
-void entry::load_formats(const int fwid, const int pwid, const int mwid)
+void person_locus_entry::load_formats(const int fwid, const int pwid, const int mwid)
 {
     create_formats(fwid, pwid, _fformat, _pformat);
     _fwid = fwid;
@@ -54,13 +54,13 @@ void entry::load_formats(const int fwid, const int pwid, const int mwid)
     }
 }
 
-void entry::pr_id()
+void person_locus_entry::pr_id()
 {
     pr_fam();
     pr_per();
 }
 
-void entry::pr_fam()
+void person_locus_entry::pr_fam()
 {
     // Family or pedigree (see comments for OrigIds in common.h)...
     if (_fwid == 0) {
@@ -75,7 +75,7 @@ void entry::pr_fam()
     }
 }
 
-void entry::pr_per(linkage_ped_rec  *tpe)
+void person_locus_entry::pr_per(linkage_ped_rec  *tpe)
 {
     // Always print the individual info. If there is a father, and a mother
     // then print that information in the same manner as the individual
@@ -93,7 +93,7 @@ void entry::pr_per(linkage_ped_rec  *tpe)
     }
 }
 
-void entry::pr_father()
+void person_locus_entry::pr_father()
 {
     if (_fwid == 0) {
         errorvf("Internal Error: load_formats() method not called.\n");
@@ -118,7 +118,7 @@ void entry::pr_father()
     }
 }
 
-void entry::pr_mother()
+void person_locus_entry::pr_mother()
 {
     if (_fwid == 0) {
         errorvf("Internal Error: load_formats() method not called.\n");
@@ -143,7 +143,7 @@ void entry::pr_mother()
     }
 }
 
-void entry::pr_parent()
+void person_locus_entry::pr_parent()
 {
     if (_fwid == 0) {
         errorvf("Internal Error: load_formats() method not called.\n");
@@ -176,7 +176,7 @@ void entry::pr_parent()
     }
 }
 
-void entry::pr_sex(linkage_ped_rec  *tpe)
+void person_locus_entry::pr_sex(linkage_ped_rec  *tpe)
 {
     // The sex of the individual...
     pr_printf("%1d ", tpe->Sex);
@@ -187,7 +187,7 @@ void entry::pr_sex(linkage_ped_rec  *tpe)
    
    @return 1 if the user does; 0 if they do not
 */
-int entry::has_pheno(linkage_ped_rec  *tpe)
+int person_locus_entry::has_pheno(linkage_ped_rec  *tpe)
 {
     if (_tte == (linkage_locus_rec *)NULL) return 0;
 
@@ -218,7 +218,7 @@ int entry::has_pheno(linkage_ped_rec  *tpe)
 /**
    @returns -1 missing phenotype; 0 Control (unaffected); 1 Case (affected)
  */
-int entry::is_affected_pheno(linkage_ped_rec  *tpe)
+int person_locus_entry::is_affected_pheno(linkage_ped_rec  *tpe)
 {
     if (_tte == (linkage_locus_rec *)NULL) return -1;
     
@@ -239,9 +239,14 @@ int entry::is_affected_pheno(linkage_ped_rec  *tpe)
     return -1;
 }
 
-void entry::pr_pheno(linkage_ped_rec  *tpe, const int affection_as_string)
+void person_locus_entry::pr_pheno(linkage_ped_rec  *tpe, const int affection_as_string)
 {
     int ase;
+
+    if (_tte == NULL) {  // no traits
+        pr_printf("%1d ", 0);
+        return;
+    }
 
     switch(_tte->Type) {
         case AFFECTION:
@@ -280,7 +285,7 @@ void entry::pr_pheno(linkage_ped_rec  *tpe, const int affection_as_string)
     }
 }
 
-void entry::pr_aff()
+void person_locus_entry::pr_aff()
 {
     int ase;
 
@@ -301,7 +306,7 @@ void entry::pr_aff()
     }
 }
 
-void entry::pr_quant()
+void person_locus_entry::pr_quant()
 {
     // This if statement protects the switch statement from invalid loop indexes (which should
     // in itself be sufficient) and also limits the locus to traits.
@@ -319,7 +324,7 @@ void entry::pr_quant()
 }
 
 
-void entry::pr_marker_name()
+void person_locus_entry::pr_marker_name()
 {
     // The Loci name (in this case a SNP ID)...
     if (_fwid == 0) {
@@ -330,7 +335,7 @@ void entry::pr_marker_name()
       pr_printf(_mformat, _LTop->Locus[_locus].Name);
 }
 
-void entry::pr_marker(linkage_ped_rec  *tpe, const int locus)
+void person_locus_entry::pr_marker(linkage_ped_rec  *tpe, const int locus)
 {
     int a1, a2;
     get_2alleles(tpe->Marker, locus, &a1, &a2);
@@ -340,7 +345,7 @@ void entry::pr_marker(linkage_ped_rec  *tpe, const int locus)
 /**
  @brief Print all of the alleles associated with the marker locus
  */
-void entry::pr_marker_alleles()
+void person_locus_entry::pr_marker_alleles()
 {
     int i;
     for (i=0; i <_tle->AlleleCnt; i++) {
@@ -367,7 +372,7 @@ void entry::pr_marker_alleles()
        3 X only female map.
    @return the genetic distnace
 */
-double entry::get_genetic_distance(int *warnp)
+double person_locus_entry::get_genetic_distance(int *warnp)
 {
     double genetic_distance = 0.0;
     
@@ -412,7 +417,7 @@ double entry::get_genetic_distance(int *warnp)
 
 //
 // print something usefull from the warning returned by 'get_genetic_distance(int *warnp)'
-void entry::pr_genetic_distance_warning(int warnp)
+void person_locus_entry::pr_genetic_distance_warning(int warnp)
 {
     switch (warnp) {
     case -1:
@@ -450,7 +455,7 @@ void entry::pr_genetic_distance_warning(int warnp)
    @param[in] format_string If not null, string used to format the genetic distance output
    @return 0 if no warning was displayed; >0 indicating that a certain warning was displayed
  */
-int entry::pr_genetic_distance(const char *format_string, const int display_warn)
+int person_locus_entry::pr_genetic_distance(const char *format_string, const int display_warn)
 {
     int warnp;
     double genetic_distance = get_genetic_distance(&warnp);
@@ -474,7 +479,7 @@ int entry::pr_genetic_distance(const char *format_string, const int display_warn
    @param[in] format_string If not null, string used to format the genetic distance output
    @return void
 */
-void entry::pr_physical_distance(const char *format_string)
+void person_locus_entry::pr_physical_distance(const char *format_string)
 {
     double base_pair_position = 0.0;
 
@@ -488,15 +493,13 @@ void entry::pr_physical_distance(const char *format_string)
 #endif
 }
 
-const char *entry::recode_name(const int allele, const char *zero, const char *other)
+const char *person_locus_entry::recode_name(const int allele, const char *zero, const char *other)
 {
     linkage_allele_rec *lar = _LTop->Locus[_locus].Allele;
     if (allele == 0) 
         return zero;
-    else if (allele == 1)
-        return lar[0].name;
-    else if (allele == 2)
-        return lar[1].name;
+    else if (allele <= _LTop->Locus[_locus].AlleleCnt)
+        return lar[allele-1].name;
     else 
         return other;
 }

@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -125,7 +125,7 @@ void get_2Ralleles(void *mp, int marker, const char **all1, const char **all2) {
     }
 }
 
-void set_2Ralleles(void *mp, int marker, const char *all1, const char *all2) {
+void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *all1, const char *all2) {
 #ifdef ORDER_HETEROZYGOTE
     if (all1 != all2 && strcmp(all1, all2) > 0) {
         const char *tmp = all1;
@@ -162,15 +162,15 @@ void set_2Ralleles(void *mp, int marker, const char *all1, const char *all2) {
             }
             if (MARKER_SCHEME3_check) {
                 if (all1 == REC_UNKNOWN || all2 == REC_UNKNOWN) {
-                    errorvf("Half type genotypes not allowed for 2 bit compression: %s/%s.\n",
+                    errorvf("Half type genotypes not allowed in 2 allele mode: %s/%s.\n",
                             all1, all2);
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }
                 if ( ((all1 != allelep->Allele_1) && (all1 != allelep->Allele_2)) ||
                      ((all2 != allelep->Allele_1) && (all2 != allelep->Allele_2)) ) {
-                         errorvf("More than two alleles seen for 2 bit compression.  %s/%s stored. %s/%s now seen.\n",
-                                allelep->Allele_1, allelep->Allele_2, all1, all2);
-                         EXIT(OUTOF_BOUNDS_ERROR);
+                       errorvf("While you set the maximum number of alleles to 2, there are more than two alleles in the data:\nMarker %s has the alleles %s, %s, %s, %s\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n",
+                               locus->Name, allelep->Allele_1, allelep->Allele_2, all1, all2);
+                    EXIT(OUTOF_BOUNDS_ERROR);
                 }
             }
 
@@ -389,7 +389,7 @@ void get_2alleles(void *mp, int marker, int *all1, int *all2) {
     }
 }
 
-void set_2alleles(void *mp, int marker, int all1, int all2) {
+void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int all2) {
 #ifdef ORDER_HETEROZYGOTE
     if (all1 > all2) {
         int tmp = all1;
@@ -426,14 +426,15 @@ void set_2alleles(void *mp, int marker, int all1, int all2) {
             } 
             if (MARKER_SCHEME3_check) {
                 if (all1 == 0 || all2 == 0) {
-                    errorvf("Half type genotypes not allowed for 2 bit compression: %d/%d.\n",
+                    errorvf("Half type genotypes not allowed in 2 allele mode: %d/%d.\n",
                             all1, all2);
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }
                 if ( ((all1 != allelep->Allele_1) && (all1 != allelep->Allele_2)) ||
                      ((all2 != allelep->Allele_1) && (all2 != allelep->Allele_2)) ) {
-                         errorvf("More than two alleles seen for 2 bit compression.  %d/%d stored. %d/%d now seen.\n",
-                                 allelep->Allele_1, allelep->Allele_2, all1, all2);
+                        errorvf("While you set the maximum number of alleles to 2, there are more than two alleles in the data:\nMarker %s has the alleles %d, %d, %d, %d\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n",
+                                locus->Name, allelep->Allele_1, allelep->Allele_2, all1, all2);
+
                          EXIT(OUTOF_BOUNDS_ERROR);
                 }
             }

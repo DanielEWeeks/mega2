@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -42,7 +42,8 @@ typedef struct _plink_stats {
 #endif /* _WIN */
 
 // This structure is initialized in annotated_ped_file.c: PLINK_clr
-struct PLINK {
+typedef 
+struct PLINK_s {
   enum PLINK_FORMAT plink;
   int no_fid;
   int no_parents;
@@ -70,15 +71,15 @@ struct PLINK {
     int non_founders;
 
   char trait[32]; // default is "default"
-};
+} PLINK_t;
 
-extern struct PLINK PLINK;
+extern PLINK_t PLINK;
 
 extern void PLINK_clr(enum PLINK_FORMAT plink);
 
-extern int PLINK_args(char *str);
+extern int PLINK_args(char *str, int xcf);
 
-extern void PLINK_usage();
+extern void PLINK_usage(int xcf);
 
 extern void PLINK_str(char *str, int len);
 

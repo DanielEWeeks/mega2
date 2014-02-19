@@ -137,16 +137,9 @@ void parameters::read_parameters()
 	while (i<argv.size())
 	{
 		in_str = argv[i];
-#ifdef VCFTOOLS_FILENAME_REQUIRED
 		if (in_str == "--vcf") { vcf_filename = get_arg(i+1); vcf_compressed = false; i++; } 				// VCF file to process
 		else if (in_str == "--bcf") { vcf_filename = get_arg(i+1); bcf_format = true; vcf_compressed = false; i++; } 				// BCF file to process
 		else if (in_str == "--gzvcf") { vcf_filename = get_arg(i+1); vcf_compressed = true; i++; } 				// VCF file to process
-#else /* VCFTOOLS_FILENAME_REQUIRED */
-		// Here the filename is directly inserted into parameters.filename.
-		if (in_str == "--vcf") { i++; } 				// VCF file to process
-		else if (in_str == "--bcf") { bcf_format = true; vcf_compressed = false; i++; } 				// BCF file to process
-		else if (in_str == "--gzvcf") { vcf_compressed = true; i++; } 				// VCF file to process
-#endif /* VCFTOOLS_FILENAME_REQUIRED */
 		else if (in_str == "--012") output_012_matrix = true;							// Output as 0/1/2 matrix
 		else if (in_str == "--BEAGLE-GL") { output_BEAGLE_genotype_likelihoods_GL = true; min_alleles=2; max_alleles=2; }	// Output as BEAGLE Genotype Likelihood format
 		else if (in_str == "--BEAGLE-PL") { output_BEAGLE_genotype_likelihoods_PL = true; min_alleles=2; max_alleles=2; }	// Output as BEAGLE Genotype Likelihood format
@@ -572,9 +565,9 @@ void parameters::print_help()
 void parameters::check_parameters()
 {
 	parameters defaults(0, 0);
-#ifdef VCFTOOLS_FILENAME_REQUIRED
-	if (vcf_filename == "") error("VCF required.", 0);
-#endif /* VCFTOOLS_FILENAME_REQUIRED */
+        // cpk: This is checked for in 'mega2_vcftools_interface.cpp' because the user can't actually specify it.
+        // However, the Mega2 code will put it in.
+	//if (vcf_filename == "") error("VCF required.", 0);
 	if (end_pos < start_pos) error("End position must be greater than Start position.", 1);
 	if (((end_pos != numeric_limits<int>::max()) || (start_pos != -1)) && (chrs_to_keep.size() != 1)) error("Require a single chromosome when specifying a range.", 2);
 	if (max_maf < min_maf) error("Maximum MAF must be not be less than Minimum MAF.", 4);
@@ -612,6 +605,7 @@ void parameters::check_parameters()
 void parameters::error(string err_msg, int code)
 {
 	LOG.printLOG("\n\nError: " + err_msg + "\n\n");
+        // cpk: Make this a throw to hand the error back to Mega2...
 	//exit(code);
 	throw code;
 }

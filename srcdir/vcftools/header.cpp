@@ -12,17 +12,17 @@ int header::add_INFO_descriptor(const string &in, int index)
 {
 	Field_description I;
 	vector<string> tokens;
-	variant_file_entry::tokenize(in, ',', tokens);
+	entry::tokenize(in, ',', tokens);
 
 	if (tokens.size() < 4)
 		LOG.error("Expected 4 parts in INFO definition: " + in);
 
 	vector<string> entry;
-	variant_file_entry::tokenize(tokens[0], '=', entry);
+	entry::tokenize(tokens[0], '=', entry);
 	if (entry[0] == "ID") I.ID = entry[1];
 	else LOG.error("Expected ID entry as first field in INFO description: " + in);
 
-	variant_file_entry::tokenize(tokens[1], '=', entry);
+	entry::tokenize(tokens[1], '=', entry);
 	if (entry[0] == "Number")
 	{
 		if ((entry[1] == "A") || (entry[1] == "G"))
@@ -31,13 +31,13 @@ int header::add_INFO_descriptor(const string &in, int index)
 			I.N_entries_str = entry[1];
 		}
 		else{
-			I.N_entries =  variant_file_entry::str2int(entry[1]);
+			I.N_entries =  entry::str2int(entry[1]);
 			I.N_entries_str = entry[1];
 		}
 	}
 	else LOG.error("Expected Number entry as second field in INFO description: " + in);
 
-	variant_file_entry::tokenize(tokens[2], '=', entry);
+	entry::tokenize(tokens[2], '=', entry);
 	if (entry[0] == "Type")
 	{
 		if (entry[1] == "Integer") { I.Type_str = "Integer"; I.Type = Integer; }
@@ -54,7 +54,7 @@ int header::add_INFO_descriptor(const string &in, int index)
 	}
 		else LOG.error("Expected Type entry as third field in INFO description: " + in);
 
-	variant_file_entry::tokenize(tokens[3], '=', entry);
+	entry::tokenize(tokens[3], '=', entry);
 	if (entry[0] == "Description")
 	{
 		I.Description = entry[1];
@@ -93,27 +93,27 @@ int header::add_FORMAT_descriptor(const string &in, int index)
 	string details = in.substr(0, found_end-1);
 
 	vector<string> tokens;
-	variant_file_entry::tokenize(details, ',', tokens);
+	entry::tokenize(details, ',', tokens);
 	Field_description I;
 	if (tokens.size() < 4)
 		LOG.error("Expected 4 parts in FORMAT definition: " + in);
 
 	vector<string> entry;
-	variant_file_entry::tokenize(tokens[0], '=', entry);
+	entry::tokenize(tokens[0], '=', entry);
 	if (entry[0] == "ID") I.ID = entry[1];
 	else LOG.error("Expected ID entry as first field in FORMAT description: " + in);
 
-	variant_file_entry::tokenize(tokens[1], '=', entry);
+	entry::tokenize(tokens[1], '=', entry);
 	if (entry[0] == "Number")
 	{
 		if ((entry[1] == "A") || (entry[1] == "G"))
 			I.N_entries = -1;
 		else
-			I.N_entries = variant_file_entry::str2int(entry[1]);
+			I.N_entries = entry::str2int(entry[1]);
 		I.N_entries_str = entry[1];
 	}
 	else LOG.error("Expected Number entry as second field in FORMAT description: " + in);
-	variant_file_entry::tokenize(tokens[2], '=', entry);
+	entry::tokenize(tokens[2], '=', entry);
 	if (entry[0] == "Type")
 	{
 		if (entry[1] == "Integer") {I.Type = Integer;}
@@ -130,7 +130,7 @@ int header::add_FORMAT_descriptor(const string &in, int index)
 	}
 	else LOG.error("Expected Type entry as third field in FORMAT description: " + in);
 
-	variant_file_entry::tokenize(tokens[3], '=', entry);
+	entry::tokenize(tokens[3], '=', entry);
 	if (entry[0] == "Description")
 	{
 		I.Description = entry[1];
@@ -169,14 +169,14 @@ void header::add_CONTIG_descriptor(const string &in, int index)
 	string details = in.substr(0, found_end-1);
 
 	vector<string> tokens;
-	variant_file_entry::tokenize(details, ',', tokens);
+	entry::tokenize(details, ',', tokens);
 	Field_description I;
 	bool id_found = false;
 	vector<string> entry;
 
 	for (unsigned int ui=0; ui<tokens.size(); ui++)
 	{
-		variant_file_entry::tokenize(tokens[ui], '=', entry);
+		entry::tokenize(tokens[ui], '=', entry);
 		if (entry[0] == "ID")
 		{
 			I.ID = entry[1];
@@ -197,18 +197,18 @@ int header::add_FILTER_descriptor(const string &in, int index)
 	size_t found_end=in.find_last_of(">");
 	string details = in.substr(0, found_end-1);
 	vector<string> tokens;
-	variant_file_entry::tokenize(details, ',', tokens);
+	entry::tokenize(details, ',', tokens);
 	if (tokens.size() < 2)
 		LOG.error("Expected 2 parts in FILTER definition: " + in);
 
 	string Description;
 	Field_description I;
 	vector<string> entry;
-	variant_file_entry::tokenize(tokens[0], '=', entry);
+	entry::tokenize(tokens[0], '=', entry);
 	if (entry[0] == "ID") I.ID = entry[1];
 	else LOG.error("Expected ID as first field in FILTER description: " + in);
 
-	variant_file_entry::tokenize(tokens[1], '=', entry);
+	entry::tokenize(tokens[1], '=', entry);
 	if (entry[0] == "Description")
 	{
 		Description = entry[1];

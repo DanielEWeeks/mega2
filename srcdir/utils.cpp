@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -399,7 +399,7 @@ void            hello(FILE *fp)
 
     fprintf(fp, "==========================================================\n");
     fprintf(fp, "                          MEGA2 %s\n", Mega2Version);
-    fprintf(fp, "     Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,\n");
+    fprintf(fp, "     Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,\n");
     fprintf(fp, "     Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,\n");
     fprintf(fp, "     Daniel E. Weeks, and University of Pittsburgh\n\n");
 #ifndef HIDEFILE
@@ -1924,6 +1924,30 @@ void mega2_opts(int argc, char **argv)
                         check_web_ver = 0;
                 else if (strcasecmp(as, "nosave") == 0)
                     CreateRunFolder=0;
+                else if (strcasecmp(as, "bed") == 0)
+                    Input_Format = in_format_binary_PED;
+                else if (strcasecmp(as, "ped") == 0)
+                    Input_Format = in_format_PED;
+                else if (strcasecmp(as, "bcf") == 0)
+                    Input_Format = in_format_binary_VCF;
+                else if (strcasecmp(as, "vcf.gz") == 0)
+                    Input_Format = in_format_compressed_VCF;
+                else if (strcasecmp(as, "vcf") == 0)
+                    Input_Format = in_format_VCF;
+                else if (strcasecmp(as, "mega2") == 0)
+                    Input_Format = in_format_mega2;
+                else if (strcasecmp(as, "linkage") == 0)
+                    Input_Format = in_format_linkage;
+                else if (strcasecmp(as, "extended_linkage") == 0)
+                    Input_Format = in_format_extended_linkage;
+                else if (strcasecmp(as, "input") == 0)
+                    Input_Format = in_format_traditional;
+                else if (strcasecmp(as, "mega2") == 0)
+                    Input_Format = in_format_mega2;
+                else if (strcasecmp(as, "linkage") == 0)
+                    Input_Format = in_format_linkage;
+                else if (strcasecmp(as, "hybrid") == 0)
+                    Input_Format = in_format_extended_linkage;
                 else if (strcasecmp(as, "help") == 0)
                     print_mega2_help();
                 else if (strcasecmp(as, "version") == 0)
@@ -2008,23 +2032,39 @@ void print_mega2_help(void)
     printf("Usage: mega2 [options] [batch-file-name]\n");
     printf("  acceptable options:\n");
     printf("             --cow\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers  for cow.\n");
+    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for cow.\n");
     printf("             --dog\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers  for dog.\n");
+    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for dog.\n");
     printf("             --horse\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers  for horse.\n");
+    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for horse.\n");
     printf("             --human\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers  for human.\n");
+    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for human.\n");
     printf("             --mouse\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers  for mouse.\n");
+    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for mouse.\n");
     printf("             --sheep\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers  for sheep.\n");
+    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for sheep.\n");
     printf("             --autosome <value>\n");
     printf("                set last autosome chromosome number to <value>.\n");
     printf("             --pseudo <value>\n");
     printf("                set pseudo autosome xy chromosome to <value>.\n");
     printf("             --mito <value>\n");
     printf("                set mitocondria chromosome to <value>.\n");
+    printf("             --bed\n");
+    printf("                input files are in PLINK binary Ped format (bed).\n");
+    printf("             --ped\n");
+    printf("                input files are in PLINK Ped format (ped).\n");
+    printf("             --bcf\n");
+    printf("                input files are in binary Variant Call File (VCF) format (bcf).\n");
+    printf("             --vcf.gz\n");
+    printf("                input files are in compressed Variant Call File (VCF) format (vcf.gz).\n");
+    printf("             --vcf\n");
+    printf("                input files are in Variant Call File (VCF) format (vcf).\n");
+    printf("             --mega2\n");
+    printf("                input files are in Mega2 format (tabular files with header line).\n");
+    printf("             --linkage\n");
+    printf("                input files are in Linkage format.\n");
+    printf("             --extended_linkage\n");
+    printf("                input files are in Linkage format with a Mega2 names file vs a linkage locus file.\n");
     printf("             -x, --nosave\n");
     printf("                    Do not create a new run-folder.\n");
     printf("             -w, --noweb\n");

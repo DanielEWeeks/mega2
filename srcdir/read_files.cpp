@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -53,6 +53,7 @@
 #include "user_input_ext.h"
 #include "batch_input_ext.h"
 #include "write_files_ext.h"
+
 /*
      error_messages_ext.h:  empty_file errorf mssgf my_calloc my_malloc warnf
               fcmap_ext.h:  fcmap
@@ -88,7 +89,8 @@ static int read_linkage_list_insert_fun(list_data EntryData,
 static linkage_locus_top *read_linkage_locus_file(FILE *filep, int linkagecols, int **col2locus);
 
 /* to be used externally */
-int read_numbered_data(FILE *filep, int locusnm, void *entry,
+int read_numbered_data(FILE *filep, int locusnm,
+                       linkage_locus_rec *locus, void *entry,
 		       record_type rec, int last);
 
 int read_premakeped_affec(FILE *filep, int locusnm, linkage_locus_rec *locus,
@@ -308,7 +310,7 @@ int read_aff_phen(FILE *filep, int locusnm,
 		  record_type rec)
 {
     int lch, status, lclass;
-    int *estatus, *eclass;
+    int *estatus=NULL, *eclass=NULL;
     char cstatus[5], cclass[5];
 
 
@@ -460,7 +462,7 @@ static int read_binary_data(FILE *filep, int locusnm, linkage_locus_rec *locus, 
 
     if (((lch == EOF) || (lch == LF)) && (allele < locus->AlleleCnt - 1)) {
         warnf("Unexpected END-OF-FILE character reading binary factors.");
-        set_2alleles(entry->Marker, locusnm, UNDEF, UNDEF);
+        set_2alleles(entry->Marker, locusnm, locus, UNDEF, UNDEF);
         return lch;
     }
 
@@ -470,13 +472,13 @@ static int read_binary_data(FILE *filep, int locusnm, linkage_locus_rec *locus, 
         a1 = UNDEF;
     }
     if (a2 == 0) {
-        set_2alleles(entry->Marker, locusnm, a1, a1);
+        set_2alleles(entry->Marker, locusnm, locus, a1, a1);
     } else {
         if ((a2 < 0) || (a2 > locus->AlleleCnt)) {
             warnvf("allele %d is out of range\n", a2);
             a2 = UNDEF;
         }
-        set_2alleles(entry->Marker, locusnm, a1, a2);
+        set_2alleles(entry->Marker, locusnm, locus, a1, a2);
     }
     return lch;
 }
@@ -493,10 +495,10 @@ static int read_binary_data(FILE *filep, int locusnm, linkage_locus_rec *locus, 
    6) 3/12/04 - Also reading in the alleles as strings in all cases
    to check for illegal (non-digit characters for recoded alleles).
 */
-void annot_ignore_numbered_data(int line, marker_rec *locus,
+void annot_ignore_numbered_data(int line, linkage_locus_rec *locus,
                                 void *pedrec, int loc)
 {
-    set_2Ralleles(pedrec, loc, REC_UNKNOWN, REC_UNKNOWN);
+    set_2Ralleles(pedrec, loc, locus, REC_UNKNOWN, REC_UNKNOWN);
     
 }
 
@@ -544,6 +546,7 @@ char *canonical_allele(const char *ra)
 }
 
 int read_numbered_data(FILE *filep, int locusnm,
+                       linkage_locus_rec *locus,
 		       void *ventry,
 		       record_type rec, int last_marker)
 {
@@ -657,16 +660,16 @@ int read_numbered_data(FILE *filep, int locusnm,
     if (undef) {
         switch(rec) {
         case Postmakeped:
-            set_2alleles(entry->Marker, locusnm, UNDEF, UNDEF);
+            set_2alleles(entry->Marker, locusnm, locus, UNDEF, UNDEF);
             break;
         case Premakeped:
-            set_2alleles(pentry->marker, locusnm, UNDEF, UNDEF);
+            set_2alleles(pentry->marker, locusnm, locus, UNDEF, UNDEF);
             break;
         case Raw_premake:
-            set_2Ralleles(pentry->marker, locusnm, REC_UNDEF, REC_UNDEF);
+            set_2Ralleles(pentry->marker, locusnm, locus, REC_UNDEF, REC_UNDEF);
             break;
         case Raw_postmake:
-            set_2Ralleles(entry->Marker, locusnm, REC_UNDEF, REC_UNDEF);
+            set_2Ralleles(entry->Marker, locusnm, locus, REC_UNDEF, REC_UNDEF);
             break;
         default:
             break;
@@ -674,19 +677,19 @@ int read_numbered_data(FILE *filep, int locusnm,
     } else {
         switch(rec) {
         case Postmakeped:
-            set_2alleles(entry->Marker, locusnm, a1, a2);
+            set_2alleles(entry->Marker, locusnm, locus, a1, a2);
             break;
         case Premakeped:
-            set_2alleles(pentry->marker, locusnm, a1, a2);
+            set_2alleles(pentry->marker, locusnm, locus, a1, a2);
             break;
         case Raw_premake:
-            set_2Ralleles(pentry->marker, locusnm, cra1, cra2);
+            set_2Ralleles(pentry->marker, locusnm, locus, cra1, cra2);
             break;
         case Raw_postmake:
-            set_2Ralleles(entry->Marker, locusnm, cra1, cra2);
+            set_2Ralleles(entry->Marker, locusnm, locus, cra1, cra2);
             break;
         case Annotated:
-            set_2Ralleles(anentry->marker, locusnm, cra1, cra2);
+            set_2Ralleles(anentry->marker, locusnm, locus, cra1, cra2);
             break;
 
         }
@@ -723,10 +726,10 @@ int read_premakeped_bin(FILE *filep, int locusnm, linkage_locus_rec *locus,
         if (lch == EOF) {
             errorf("Unexpected END-OF-FILE character reading binary alleles");
             if (a1 > 0 && a2 > 0) {
-                set_2alleles(entry->marker, locusnm, a1, a2);
+                set_2alleles(entry->marker, locusnm, locus, a1, a2);
                 return lch;
             } else {
-                set_2alleles(entry->marker, locusnm, UNDEF, UNDEF);
+                set_2alleles(entry->marker, locusnm, locus, UNDEF, UNDEF);
                 return lch;
             }
         }
@@ -743,7 +746,7 @@ int read_premakeped_bin(FILE *filep, int locusnm, linkage_locus_rec *locus,
             }
         }
     }
-    set_2alleles(entry->marker, locusnm, a1, a2);
+    set_2alleles(entry->marker, locusnm, locus, a1, a2);
     return lch;
 }
 
@@ -757,21 +760,21 @@ int read_premakeped_num(FILE *filep, int locusnm,
     lch = fcmap(filep, "%d", &a1);
     if ((lch == EOF) || (lch == LF) || (FCMAP_NARGS < 1)) {
         errorf("Unexpected END-OF-LINE reading numbered allele 1");
-        set_2alleles(entry->marker, locusnm, UNDEF, UNDEF);
+        set_2alleles(entry->marker, locusnm, locus1, UNDEF, UNDEF);
         return lch;
     }
 
     lch = fcmap(filep, "%d", &a2);
     if (((lch == EOF) || (lch == LF)) && (FCMAP_NARGS < 1)) {
         errorf("Unexpected END-OF-LINE reading numbered allele 2");
-        set_2alleles(entry->marker, locusnm, UNDEF, UNDEF);
+        set_2alleles(entry->marker, locusnm, locus1, UNDEF, UNDEF);
         return lch;
     }
 
     if (a1 < 0) {
         errorvf("Numbered allele 1 (%d) out of range at locus %s (# %d).\n",
                 a1, locus1->Name, locusnm+1);
-        set_2alleles(entry->marker, locusnm, UNDEF, UNDEF);
+        set_2alleles(entry->marker, locusnm, locus1, UNDEF, UNDEF);
         return lch;
     }
 
@@ -780,13 +783,13 @@ int read_premakeped_num(FILE *filep, int locusnm,
                 locus1->Name, locus1->AlleleCnt);
         errorvf("but person %d in pedigree %d has genotype %d/%d.\n",
                 entry->indiv, entry->ped, a1, a2);
-        set_2alleles(entry->marker, locusnm, UNDEF, UNDEF);
+        set_2alleles(entry->marker, locusnm, locus1, UNDEF, UNDEF);
         return lch;
     }
 
     if (a2 < 0) {
         errorvf("Numbered allele 2 (%d) out of range at locus %s (# %d).\n",
-                a2,locus1->Name, locusnm+1);
+                a2, locus1->Name, locusnm+1);
         return lch;
     }
     if ((locus1->AlleleCnt > 0) && (a1 > locus1->AlleleCnt)) {
@@ -794,11 +797,11 @@ int read_premakeped_num(FILE *filep, int locusnm,
                 locus1->Name, locus1->AlleleCnt);
         errorvf("but person %d in pedigree %d has genotype %d/%d.\n",
                 entry->indiv, entry->ped, a1, a2);
-        set_2alleles(entry->marker, locusnm, a1, UNDEF);
+        set_2alleles(entry->marker, locusnm, locus1, a1, UNDEF);
         return lch;
     }
 
-    set_2alleles(entry->marker, locusnm, a1, a2);
+    set_2alleles(entry->marker, locusnm, locus1, a1, a2);
     return lch;
 }
 
@@ -937,7 +940,8 @@ static int read_linkage_record(FILE *filep, linkage_ped_rec *entry,
         case NUMBERED:
         case XLINKED:
         case YLINKED:
-            lch = read_numbered_data(filep, locus, (void *) entry,
+            lch = read_numbered_data(filep, locus,
+                                     &(LTop->Locus[locus]), (void *) entry,
                                      LTop->PedRecDataType,
                                      last_marker);
             switch(LTop->PedRecDataType) {
@@ -1203,7 +1207,8 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
     }
 
     SUPPRESS_MSSG_NESTED_FORCE(untyped);
-    warnvf("Individuals Untyped: %d out of %d\n", untyped, totaltyped);
+    if (untyped > 0)
+        warnvf("Individuals untyped: %d out of %d\n", untyped, totaltyped);
     SUPPRESS_MSSG_NESTED_FINI(untyped);
 
     if ((err == -1) || (err == -2)) {
@@ -1967,12 +1972,13 @@ static void other_perids(const int pedid, const int perid,
  
  Added by Nandita - 5/20/02 Untyping for trait loci
  */
-static void  untype_locus(linkage_locus_type ltype,
+static void  untype_locus(linkage_locus_rec *locus,
                           pheno_pedrec_data *pdata,
                           void *mdata,
-                          int locus,
+                          int locusnm,
                           const int raw_allele)
 {
+    linkage_locus_type ltype = locus->Type;
     switch(ltype) {
         case NUMBERED:
         case XLINKED:
@@ -1980,9 +1986,9 @@ static void  untype_locus(linkage_locus_type ltype,
         case BINARY:
             // e.g., .Class == MARKER
             if (raw_allele) {
-                set_2Ralleles(mdata, locus, REC_UNKNOWN, REC_UNKNOWN);
+                set_2Ralleles(mdata, locusnm, locus, REC_UNKNOWN, REC_UNKNOWN);
             } else {
-                set_2alleles(mdata, locus, 0, 0);
+                set_2alleles(mdata, locusnm, locus, 0, 0);
             }
             break;
         case AFFECTION:
@@ -2021,13 +2027,13 @@ static void untype_locus_for_pedfile_type(linkage_ped_top *Top,
                                           const int raw_allele)
 {
     if (Top->pedfile_type == PREMAKEPED_PFT) {
-        untype_locus(Top->LocusTop->Locus[locus_i].Type,
+        untype_locus(&Top->LocusTop->Locus[locus_i],
                      &(Top->PTop[ped_i].persons[person_i].pheno[locus_i]),
                      Top->PTop[ped_i].persons[person_i].marker,
                      locus_i,
                      raw_allele);
     } else {
-        untype_locus(Top->LocusTop->Locus[locus_i].Type,
+        untype_locus(&Top->LocusTop->Locus[locus_i],
                      &(Top->Ped[ped_i].Entry[person_i].Pheno[locus_i]),
                      Top->Ped[ped_i].Entry[person_i].Marker,
                      locus_i,

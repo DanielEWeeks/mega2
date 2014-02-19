@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -197,7 +197,7 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
         struct save_base_pair_position_markers: public loop::chr, loop::loci {
             typedef char *str;
             str *file_names;
-            save_base_pair_position_markers(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::loci(Top) { }
+            save_base_pair_position_markers(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::loci(Top) { }
             void make_file() {
                 if (_numchr > lastautosome) return; // because we have already issued a warning.
                 mssgvf("        BEAGLE base position marker file:    %s/%s\n", *_opath, file_names[1]);
@@ -230,7 +230,7 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
             typedef char *str;
             str *file_names;
             
-            save_genetic_distance_markers(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::loci(Top) { }
+            save_genetic_distance_markers(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::loci(Top) { }
             void make_file() {
                 if (_numchr > lastautosome) return; // because we have already issued a warning.
                 mssgvf("        BEAGLE genetic distance marker file: %s/%s\n", *_opath, file_names[2]);
@@ -321,7 +321,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         str *file_names;
         int missing_pheno;
 
-        save_fams(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_fams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) {
                 warnf("Beagle analysis can only be run on autosomes.");
@@ -366,7 +366,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         typedef char *str;
         str *file_names;
         
-        save_pers(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -398,7 +398,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         typedef char *str;
         str *file_names;
         
-        save_fathers(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_fathers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -431,7 +431,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         typedef char *str;
         str *file_names;
         
-        save_mothers(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_mothers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -461,7 +461,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         typedef char *str;
         str *file_names;
         
-        save_sexs(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_sexs(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -487,7 +487,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         typedef char *str;
         str *file_names;
         
-        save_phenotypes(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_phenotypes(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -525,7 +525,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         typedef char *str;
         str *file_names;
         
-        save_markers(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
+        save_markers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -586,7 +586,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_fams(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_fams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) {
                 warnf("Beagle analysis can only be run on autosomes.");
@@ -626,7 +626,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_pers(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -664,7 +664,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_sexs(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_sexs(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -698,7 +698,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_phenotypes(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per(Top) { }
+        save_phenotypes(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -740,7 +740,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_markers(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
+        save_markers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -820,7 +820,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_fams(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per_trait(Top) { }
+        save_fams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_trait(Top) { }
         void make_file() {
             if (_numchr > lastautosome) {
                 warnf("Beagle analysis can only be run on autosomes.");
@@ -869,7 +869,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_pers(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per_trait(Top) { }
+        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_trait(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -908,7 +908,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_sexs(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per_trait(Top) { }
+        save_sexs(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_trait(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -947,7 +947,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_phenotypes(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::trait_ped_per(Top) { }
+        save_phenotypes(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::trait_ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -994,7 +994,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
         typedef char *str;
         str *file_names;
         
-        save_markers(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
+        save_markers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -1099,7 +1099,7 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
         all_sh *sh;
         analysis_type *analysis;
         
-        BEAGLE_sh_script(linkage_ped_top *Top, analysis_type *analysis) : entry(Top), loop::outer(Top), all_sh(Top) {
+        BEAGLE_sh_script(linkage_ped_top *Top, analysis_type *analysis) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) {
           this->analysis = analysis;
         }
         void make_file() {

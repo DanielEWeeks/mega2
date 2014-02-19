@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -906,7 +906,7 @@ void hwe_user_input(linkage_ped_top *LPedTreeTop, int *numchr,
     /* omit untyped pedigrees */
 /*   omit_peds(untyped_ped_opt, LPedTreeTop); */
     /* get the analysis option */
-    hwe_option = CALLOC((size_t) 6, char);
+    hwe_option = CALLOC((size_t) 16, char);
     strcpy(hwe_option, get_hwe_option(prog_names));
 
     /* select_loci for analysis */

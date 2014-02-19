@@ -44,10 +44,14 @@ public:
 	~Field_description() {};
 };
 
-class variant_file_entry
+class entry
 {
 public:
 	unsigned int N_indv;
+
+	// cpk: To get rid of warning:
+	// delete called on 'entry' that is abstract but has non-virtual destructor
+	virtual ~entry() {};
 
 	virtual void parse_basic_entry(bool parse_ALT=false, bool parse_FILTER=false, bool parse_INFO=false) = 0;
 	virtual void parse_full_entry(bool parse_FORMAT=true) = 0;

@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -278,9 +278,8 @@ void            create_marker_sublist(linkage_ped_top *Top, loci_markers *marker
         if (Top->LocusTop->Locus[i].Type == NUMBERED ||
             Top->LocusTop->Locus[i].Type == BINARY)
             locus_cnt++;
-    j=0;
 
-/*    for (i=0; i < Top->LocusTop->LocusCnt; i++) { */
+/*    for (i=0,j=0; i < Top->LocusTop->LocusCnt; i++) { */
 /*      if (Top->LocusTop->Locus[i].Type == NUMBERED) { */
 /*        marker_loci[j]=i; j++; */
 /*      } */
@@ -295,8 +294,6 @@ void            create_marker_sublist(linkage_ped_top *Top, loci_markers *marker
     for (i = 0; i < markerset->total_files; i++)
         for (j = 0; j < NumberOfMarkers; j++)
             markerset->MarkerSubsetMatrix[i][j] = i+j;
-
-    return;
 }
 
 /* convert map distance(cM) to recombination fraction by haldane map function */
@@ -698,10 +695,10 @@ void   check_map_positions(linkage_ped_top *Top, int numchr,
     } else {
         SetMarkerPosToSpecial=0;
     }
-    return;
 }
 
-char *chrom_num_to_name(int chrom_num, char *chrom_name)
+
+char *chrom_num_to_name(const int chrom_num, char *chrom_name)
 
 {
     if (chrom_num ==  UNKNOWN_CHROMO) {

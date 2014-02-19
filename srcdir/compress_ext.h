@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -45,7 +45,7 @@ extern void marker_free(void *marker, int offset);
 
 extern void get_2Ralleles(void *mp, int marker, const char **all1, const char **all2);
 
-extern void set_2Ralleles(void *mp, int marker, const char *all1, const char *all2);
+extern void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
 
 extern int crunch_Rnotype(void **p, linkage_locus_top *LTop);
 
@@ -57,7 +57,7 @@ extern void order_heterozygous_allele_raw(linkage_ped_top *Top);
 
 extern void get_2alleles(void *mp, int marker, int *all1, int *all2);
 
-extern void set_2alleles(void *mp, int marker, int all1, int all2);
+extern void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int all2);
 
 extern int  crunch_notype(void **p, linkage_locus_top *LTop);
 

@@ -28,7 +28,7 @@ extern output_log LOG;
 
 using namespace std;
 
-class vcf_entry : public variant_file_entry
+class vcf_entry : public entry
 {
 public:
 	vcf_entry(const unsigned int N_indv);

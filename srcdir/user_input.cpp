@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -44,6 +44,8 @@
 #include "output_file_names_ext.h"
 #include "plink_ext.h"
 #include "utils_ext.h"
+#include "user_input_ext.h"
+#include "vcftools/mega2_vcftools_interface.h"
 /*
         batch_input_ext.h:  batchf
         cw_routines_ext.h:  strsep
@@ -61,13 +63,14 @@
 int             ReOrderMenu(int num_chromo, int *chromsomes, int *selection);
 int             analysis_menu1(analysis_type  *analysis);
 
-int             menu1(file_format *infl_type,
-		      char **pedfl_name, char **locusfl_name,
-		      char **mapfl_name, char **omitfl_name,
-		      char **freqfl_name, char **penfl_name,
-                      char **bedfl_name, char **phefl_name,
-		      int *Untyped_ped_opt, int *Error_sim_opt,
-		      char **output_path, double *freq_mismatch_thresh);
+void  menu1(file_format *infl_type,
+            char **pedfl_name, char **locusfl_name,
+            char **mapfl_name, char **pmapfl_name,
+            char **input_path, char **omitfl_name,
+            char **freqfl_name, char **penfl_name,
+            char **auxfl_name, char **phefl_name,
+            int *Untyped_ped_opt, int *Error_sim_opt,
+            char **output_path, double *freq_mismatch_thresh);
 
 void            define_affection_labels(linkage_ped_top *Top,
 					analysis_type analysis);
@@ -87,8 +90,19 @@ static void     untyped_ped_menu(int *opt);
 
 /*===========prototypes============= */
 
-extern struct PLINK PLINK;
+INPUT_FORMAT_t Input_Format = in_format_mega2;
 
+const char *INPUT_FORMAT_STR[] = {
+     "Mega2 format with header",
+     "Linkage format",
+     "Linkage with Mega2 names file",
+     "PLINK binary PED format (bed)",
+     "PLINK PED format (ped)",
+     "BCF format (bcf)",
+     "VCF compressed format (vcf.gz)",
+     "VCF format (vcf)",
+     "Traditional (4.6.1) format",
+};
 
 // see R_output.h & R_output.c write_plink_map_file...
 int genetic_distance_index;
@@ -99,7 +113,7 @@ int base_pair_position_index;
 /*===========================================================================*/
 /* menu for user loci selection for the user's selection/reordering option
    an attempt to make the entry crash proof is made here */
-int             ReOrderMenu(int num_chromo, int *chromosomes, int *selection)
+int ReOrderMenu(int num_chromo, int *chromosomes, int *selection)
 {
 
     char select[10];
@@ -185,7 +199,7 @@ int invalid_analysis(int opt)
 extern analysis_types analysis_list[];
 extern int count_analysis_list;
 
-int             analysis_menu1(analysis_type  *analysis)
+int analysis_menu1(analysis_type  *analysis)
 {
     char            choice[10], sub_prog[20];
     int             i, choice_=0;
@@ -280,8 +294,7 @@ int             analysis_menu1(analysis_type  *analysis)
     return 1;
 }   /* end of analysis_menu */
 
-static void     thresh_string(double val, char *str)
-
+static void thresh_string(double val, char *str)
 {
     if (val >= LARGE) {
         sprintf(str, "No limit");
@@ -292,43 +305,6 @@ static void     thresh_string(double val, char *str)
 
 }
 
-static void gen_files(int plinkf, char *extension, char **locusfl, char **pedfl, char **mapfl, char **omitfl, char **freqfl, char **penfl, char **bedfl, char **phefl)
-{
-    if (plinkf) {
-        sprintf(*locusfl, "%s.datain", extension);
-
-        if (access(*locusfl, F_OK)) {
-            sprintf(*locusfl, "%s.names", extension);
-        }
-
-        if (PLINK.plink == binary_PED_format) {
-            sprintf(*pedfl,  "%s.fam", extension);
-            sprintf(*mapfl,  "%s.bim", extension);
-            sprintf(*bedfl,  "%s.bed", extension);
-        } else if (PLINK.plink == PED_format) {
-            sprintf(*pedfl,  "%s.ped", extension);
-            sprintf(*mapfl,  "%s.map", extension);
-        }
-        sprintf(*phefl, "%s.phe", extension);
-        sprintf(*omitfl, "%s.omit", extension);
-        sprintf(*freqfl, "%s.frequency", extension);
-        sprintf(*penfl,  "%s.penetrance", extension);
-    } else {
-        sprintf(*locusfl, "datain.%s", extension);
-
-        if (access(*locusfl, F_OK)) {
-            sprintf(*locusfl, "names.%s", extension);
-        }
-
-        sprintf(*pedfl,  "pedin.%s", extension);
-        sprintf(*mapfl,  "map.%s", extension);
-        sprintf(*omitfl, "omit.%s", extension);
-        sprintf(*freqfl, "frequency.%s", extension);
-        sprintf(*penfl,  "penetrance.%s", extension);
-    }
-}
-
-
 static void missing_optional_keyword(int batch_item, const char *message)
 {
 #ifndef HIDESTATUS
@@ -337,7 +313,6 @@ static void missing_optional_keyword(int batch_item, const char *message)
 #endif
 }
 
-
 static void missing_mandatory_keyword(int batch_item)
 {
     errorvf("Required keyword %s missing from batch file.\n",
@@ -345,350 +320,700 @@ static void missing_mandatory_keyword(int batch_item)
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
-int             menu1(file_format *infl_type,
-		      char **pedfl_name, char **locusfl_name,
-		      char **mapfl_name, char **omitfl_name,
-		      char **freqfl_name, char **penfl_name,
-                      char **bedfl_name, char **phefl_name,
-		      int *Untyped_ped_opt, int *Error_sim_opt,
-		      char **output_path, double *freq_mismatch_thresh)
+typedef struct fln {
+    const char *title;
+    int batch;
+    const char *type;
+    const char *typefx;
+    const char *stat;
+    const char *flnfx;
+          char *name;
+          char **nameref;
+    int on;
+    int specified;
+} fln_t;
+
+fln_t pedO  = {"Pedigree file:",   Input_Pedigree_File} ,  *pedo  = &pedO;
+fln_t locO  = {"Locus file:",      Input_Locus_File},      *loco  = &locO;
+fln_t mapO  = {"Map file:",        Input_Map_File},        *mapo  = &mapO;
+fln_t pmapO = {"PLINK map file:",  Input_PLINK_Map_File},  *pmapo = &pmapO;
+fln_t omitO = {"Omit file:",       Input_Omit_File},       *omito = &omitO;
+fln_t freqO = {"Frequency file:",  Input_Frequency_File},  *freqo = &freqO;
+fln_t penO  = {"Penetrance file:", Input_Penetrance_File}, *peno  = &penO;
+fln_t auxO  = {"Aux file:",        Input_Aux_File},        *auxo  = &auxO;
+fln_t pheO  = {"Phenotype file:",  Input_Phenotype_File},  *pheo  = &pheO;
+
+fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, 0};
+
+static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *flnfx)
 {
-    int             i, j, choice_ = -1;
-    char            cchoice[10], extension_name[FILENAME_LENGTH], float_str[11];
-    char            messg[100];
-    char            oldmapname[FILENAME_LENGTH], oldomitname[FILENAME_LENGTH];
-    char            oldpedname[FILENAME_LENGTH], oldlocusname[FILENAME_LENGTH];
-    char            oldfreqname[FILENAME_LENGTH], oldpenname[FILENAME_LENGTH];
-    char            oldbedname[FILENAME_LENGTH], oldphenname[FILENAME_LENGTH];
-    int             exit_loop=0;
-    boolean         LocusDataFileSpecified = false, PedigreeDataFileSpecified = false;
-    boolean         MapFileNameSpecified = false, FreqFileSpecified = false;
-    boolean         PenFileSpecified = false,  OmitFileSpecified = false;
-    boolean         BinaryFileSpecified = false, PhenotypeFileSpecified = false;
-    const int      file_batch_items[] = {Input_Pedigree_File,
-					 Input_Locus_File,
-					 Input_Map_File,
-					 Input_Omit_File,
-					 Input_Frequency_File,
-					 Input_Penetrance_File,
-					 Input_Phenotype_File,
-					 Input_Binary_File};
-    int            file_batch_items_size = sizeof(file_batch_items) / sizeof(int);
+    if (fln->on) return;
+
+    fln->on     = 1;
+
+    fln->type   = type;
+    fln->typefx = typefx;
+    fln->stat   = stat;
+    fln->flnfx  = flnfx;
+}
+
+#define MAP_REQ 1
+static void fln_init_mega2(int map_req) {
+    if (map_req < 0) 
+        ;
+    else if (map_req)
+        fln_init(mapo,  "Mega2", "map", "[required]", "map");
+    else
+        fln_init(mapo,  "Mega2", "map", "[optional]", "map");
+    fln_init(omito, "Mega2", "omit", "[optional]", "omit");
+    fln_init(freqo, "Mega2", "freq", "[optional]", "freq");
+    fln_init(peno,  "Mega2", "pen", "[optional]", "pen");
+}
+
+#define PMAP_REQ 1
+static void fln_init_plink(int map) {
+    fln_init(pedo,  "PLINK", "ped", "[required]", "ped");
+    if (map)
+        fln_init(pmapo, "PLINK", "map", "[required]", "map");
+    fln_init(pheo,  "PLINK", "phe", "[optional]", "phe");
+}
+
+static void fln_off() {
+    fln_t **fln = fln_array;
+    while (*fln) {
+        (*fln)->on = 0;
+        (*fln)->specified = 0;
+        fln++;
+    }
+}
+
+static void fln_extension_off()  {
+    fln_t **fln = fln_array;
+    while (*fln)
+        (*fln++)->specified = 0;
+}
+
+static void fln_alloc(char **name) {
+    if (*name == NULL)
+        *name = CALLOC((size_t) FILENAME_LENGTH, char);
+}
+
+static void fln_alloc(char **name, fln_t *fln) {
+    if (*name == NULL) {
+        *name = CALLOC((size_t) FILENAME_LENGTH, char);
+        fln->name = *name;
+        fln->nameref = name;
+    }
+}
+
+static void fln_free(fln_t *fln) {
+    free(fln->name);
+    fln->on = 0;
+    *(fln->nameref) = NULL;
+}
+
+static void fln_free_not_present(fln_t *fln) {
+    if (access(fln->name, F_OK) != 0) {
+        free(fln->name);
+        fln->on = 0;
+        *(fln->nameref) = NULL;
+    }
+}
+
+int  fln_stem = 1;
+char fln_tmp[FILENAME_LENGTH];
+char extension_name[FILENAME_LENGTH];
+int  fln_col1, fln_col2, fln_col4, fln_col1234;
+
+static void fln_col_sizes() {
+    fln_col1 = fln_col2 = fln_col4 = fln_col1234 = 0;
+    int l;
+    fln_t **fln = fln_array, *f;
+    while (*fln) {
+        f = *fln++;
+        if (f->on == 0) continue;
+
+        l = (int)strlen(f->title);
+        if (l > fln_col1) fln_col1 = l;
+        l = (int)strlen(f->type) + (int)strlen(f->typefx);
+        if (l > fln_col2) fln_col2 = l;
+        l = (int)strlen(f->stat);
+        if (l > fln_col4) fln_col4 = l;
+    }
+
+    fln_col1234 = fln_col1 + 2 + fln_col2 + 4 + fln_col4 + 1;
+}
+
+static int fln_print(fln_t *fln, int idx, int _i) {
+    if (! fln->on) return 0;
+
+    if (fln_stem) {
+        sprintf(fln_tmp, "(%s .%s)", fln->type, fln->typefx);
+        if (fln->specified == 0) {
+            sprintf(fln->name, "%s.%s", extension_name, fln->flnfx);
+            fln->specified = 1;
+        }
+    } else {
+        sprintf(fln_tmp, "(%s %s.)", fln->type, fln->typefx);
+        if (fln->specified == 0) {
+            sprintf(fln->name, "%s.%s", fln->flnfx, extension_name);
+            fln->specified = 1;
+        }
+    }
+//  printf("%2d) %-18s  %-27s %s\n",
+    printf("%2d) %-*s%-*s%-*s%s\n",
+           idx, fln_col1+2, fln->title, fln_col2+4, fln_tmp, fln_col4+1, fln->stat,
+           (access(fln->name, F_OK) ? "_" : fln->name));
+    return _i;
+}
+
+static void fln_get(fln_t *fln, const char *title) {
+    draw_line();
+    printf("Please enter %s file name ('clear' to clear) > ", title);
+    strcpy(fln_tmp, fln->name);
+    fcmap(stdin, "%s", fln->name); newline;
+    if (strcasecmp(fln->name, "clear") == 0) {
+        strcpy(fln->name, "-");
+    } else {
+        if (access(fln->name, F_OK)) {
+            printf("WARNING: Could not find file %s\n", fln->name);
+            strcpy(fln->name, fln_tmp);
+            fln->specified = false;
+        } else
+            fln->specified = true;
+    }
+}
+
+static void fln_batchf(fln_t *fln) {
+    if (*fln->name != 0) {
+        strcpy(Mega2BatchItems[/* ? */ fln->batch].value.name, fln->name);
+        batchf(fln->batch);
+    }
+}
+
+static void menu1_batch_set_files(file_format *infl_type,
+                                  char **pedfl_name, char **locusfl_name,
+                                  char **mapfl_name, char **pmapfl_name,
+                                  char **input_path, char **omitfl_name,
+                                  char **freqfl_name, char **penfl_name,
+                                  char **auxfl_name, char **phefl_name,
+                                  char **output_path, int plinkf, int xcf)
+{
+    int i;
+
+    fln_t **fln = fln_array;
+    while (*fln) {
+        i = (*fln)->batch;
+        if (Mega2BatchItems[i].item_read == 1) {
+            if (access(Mega2BatchItems[i].value.name, F_OK) == 0) {
+                strcpy((*fln)->name, Mega2BatchItems[i].value.name);
+            } else {
+                errorvf("Could not find file or path %s named by keyword %s.\n",
+                        Mega2BatchItems[i].value.name,
+                        Mega2BatchItems[i].keyword);
+                EXIT(FILE_NOT_FOUND);
+            }
+        } else {
+            if (i == Input_Pedigree_File || 
+                ((i == Input_Locus_File) && (! plinkf && ! xcf)) ||
+                ((i == Input_Aux_File) && (xcf || Input_Format == in_format_binary_PED))
+                ) {
+                missing_mandatory_keyword(i);
+            } else {
+                strcpy(fln_tmp, (*fln)->title);
+                size_t len = strlen(fln_tmp);
+                fln_tmp[len-1] = ' ';
+                strcat(&fln_tmp[len], "assumed to be unspecified");
+                missing_optional_keyword(i, fln_tmp);
+            }
+            fln_free(*fln);
+        }
+        fln++;
+    }
+
+    if (Mega2BatchItems[/* 33 */ Output_Path].item_read == 1) {
+        if (access(Mega2BatchItems[/* 33 */ Output_Path].value.name, W_OK) == 0 &&
+            is_dir(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
+           strcpy(*output_path, Mega2BatchItems[/* 33 */ Output_Path].value.name);
+        } else {
+            errorvf("file path %s named by keyword %s is not a writable directory.\n",
+                    Mega2BatchItems[/* 33 */ Output_Path].value.name,
+                    Mega2BatchItems[/* 33 */ Output_Path].keyword);
+            EXIT(FILE_NOT_FOUND);
+        }
+
+    } else {
+        missing_optional_keyword(Output_Path,  "using default '.' (current directory)");
+        strcpy(*output_path, ".");
+    }
+
+    if (Mega2BatchItems[/* 54 */ Input_Path].item_read == 1) {
+        if (access(Mega2BatchItems[/* 54 */ Input_Path].value.name, R_OK) == 0 &&
+            is_dir(Mega2BatchItems[/* 54 */ Input_Path].value.name)) {
+            strcpy(*input_path, Mega2BatchItems[/* 54 */ Input_Path].value.name);
+        } else {
+            errorvf("file path %s named by keyword %s is not a readable directory.\n",
+                    Mega2BatchItems[/* 54 */ Input_Path].value.name,
+                    Mega2BatchItems[/* 33 */ Input_Path].keyword);
+            EXIT(FILE_NOT_FOUND);
+        }
+    } else {
+        missing_optional_keyword(Input_Path,  "using default '.' (current directory)");
+        strcpy(*input_path, ".");
+    }
+}
+
+static void menu1_batch_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
+                                 double *freq_mismatch_thresh)
+{
+
+    /* untyped ped option */
+    if (Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].item_read  == 1) {
+        if (Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].value.option >= 0) {
+            *Untyped_ped_opt=Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].value.option;
+        } else {
+            invalid_value_field(Input_Untyped_Ped_Option);
+        }
+    } else {
+        missing_mandatory_keyword(Input_Untyped_Ped_Option);
+    }
+
+    /* Error sim option */
+    if (Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].item_read  == 1) {
+        if (tolower((unsigned char)Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt) == 'y' ||
+            tolower((unsigned char)Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt) == 'n') {
+            *Error_sim_opt= Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt;
+        } else {
+            invalid_value_field(Input_Do_Error_Sim);
+        }
+    }
+    *Error_sim_opt = ((tolower(*Error_sim_opt) == 'y') ? 1:0);
+
+    /* Threshold for comparing input and observed allele frequencies */
+    if (Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].item_read == 1) {
+        if (Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue < 0) {
+            invalid_value_field(AlleleFreq_SquaredDev);
+        }
+        *freq_mismatch_thresh = Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue;
+    } else {
+        missing_optional_keyword(AlleleFreq_SquaredDev, "using default = 'no limit'");
+    }
+#ifdef USER_UNKNOWN
+    if (Mega2BatchItems[/* 42 */ Value_Missing_Allele].item_read == 1) {
+        strcpy(REC_UNKNOWN, Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name);
+    }
+#endif
+}
+
+static int menu1_show_misc(int *Untyped_ped_opt, int *Error_sim_opt,
+                           double *freq_mismatch_thresh,
+                           int err_i, int untyp_i, int _thresh_i, int compress_i,
+                           int *choiceA, int idx, int line_len)
+{
+    char messg[100], float_str[11];
+
+    printf("%2d) %-*s[ %s]\n", idx, line_len,
+           "Simulate genotyping errors:", yorn[*Error_sim_opt]);
+    choiceA[idx++] = err_i;
+
+    printf("%2d) %-*s\n", idx, line_len,
+           untyped_ped_messg(*Untyped_ped_opt, messg));
+    choiceA[idx++] = untyp_i;
+
+    if (_thresh_i) {
+        thresh_string(*freq_mismatch_thresh, float_str);
+        printf("%2d) %-*s%s\n", idx, line_len,
+               "Allele frequency error measure threshold:", float_str);
+        choiceA[idx++] = _thresh_i;
+    }
+
+    printf("%2d) %-*s%s\n", idx, line_len,
+           "Maximum number of alleles per marker:",
+           MARKER_SCHEME == 1 ? "2 alleles" : (MARKER_SCHEME == 2 ? "255 alleles" : (MARKER_SCHEME == 3 ? "256 or more alleles" : "???")) );
+    choiceA[idx++] = compress_i;
+
+    return idx;
+}
+
+static int menu1_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
+                          double *freq_mismatch_thresh,
+                          int err_i, int untyp_i, int thresh_i, int compress_i,
+                          int choice_)
+{
+    int ret = 1;
+
+    if (choice_ == err_i) {
+        *Error_sim_opt = TOGGLE(*Error_sim_opt);
+    } else if (choice_ == untyp_i) {
+        draw_line();
+        untyped_ped_menu(Untyped_ped_opt);
+    } else if (choice_ == thresh_i) {
+        draw_line();
+        printf("Please enter threshold value > ");
+        fcmap(stdin, "%g", freq_mismatch_thresh); newline;
+    } else if (choice_ == compress_i) {
+        int ans;
+        while (1) {
+            fflush(stdout);
+            draw_line();
+            printf("              Mega2 %s Maximum alleles per marker menu:\n", Mega2Version);
+            draw_line();
+            printf("0) Done with this menu - please proceed\n");
+            printf("%s%1d) 2 alleles (2 bits/marker)\n",
+                   1 == MARKER_SCHEME ? "*" : " ", 1);
+            printf("%s%1d) 255 alleles (2 bytes/marker)\n",
+                   2 == MARKER_SCHEME ? "*" : " ", 2);
+            printf("%s%1d) 256 or more alleles (16 bytes/marker)\n",
+                   3 == MARKER_SCHEME ? "*" : " ", 3);
+            printf("Select from options 0-3 > ");
+
+            fcmap(stdin, "%d", &ans); newline;
+            if (ans == 0) break;
+            else if (ans <= 3 && ans >= 1)
+                MARKER_SCHEME = ans;
+            else
+                printf("MARKER_SCHEME allowed values are 1, 2 or 3\n");
+        }
+    } else
+        ret = 0;
+    return ret;
+}
+
+static void menu1_batch_save_misc(int *Untyped_ped_opt, int *Error_sim_opt,
+                                 double *freq_mismatch_thresh)
+{
+    Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].value.option = *Untyped_ped_opt;
+    batchf(Input_Untyped_Ped_Option);
+
+    Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt = yorn[*Error_sim_opt][0];
+    batchf(Input_Do_Error_Sim);
+
+    Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue = *freq_mismatch_thresh;
+    batchf(AlleleFreq_SquaredDev);
+
+    Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option = MARKER_SCHEME;
+    batchf(Value_Marker_Compression);
+
+}
+
+void menu1(file_format *infl_type,
+           char **pedfl_name, char **locusfl_name,
+           char **mapfl_name, char **pmapfl_name,
+           char **input_path, char **omitfl_name,
+           char **freqfl_name, char **penfl_name,
+           char **auxfl_name, char **phefl_name,
+           int *Untyped_ped_opt, int *Error_sim_opt,
+           char **output_path, double *freq_mismatch_thresh)
+{
+    int            i, choice_ = -1;
+    char           cchoice[10];
+    int            exit_loop=0;
+
     int            ext_i=1, loc_i=2, ped_i=3, map_i=4, omit_i = 5, freq_i=6, pen_i=7;
-    int            out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12;
-    int            plink_i = 14, plink_j = 15, plink_k = 16;
-    int            plink_args_i = 17, plink_phe_i = 18, plink_bed_i = 19;
-    int            compress_i = 20;
-    int            plinkf = 0, idx, choiceA[21]; /* idx should be 1+ largest <>_i value (above)*/
+    int            out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
+    int            plink_args_i = 14, plink_phe_i = 15, plink_bed_i = 16;
+    int            compress_i = 17, file_format_i = 18, vcf_args_i = 19;
+    int            vcf_mak_i = 20, site_vcf_i = 21, site_bcf_i = 22, site_vcf_gz_i = 23, _aux_i;
+#ifdef DEFPHE
+    int            in_dir_i = 24, pmap_i = 25, trait_name_i = 26, trait_value_i = 27;
+    int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
+#else
+    int            in_dir_i = 24, pmap_i = 25;
+    int            idx, choiceA[26]; /* idx should be 1+ largest <>_i value (above)*/
+
+#endif
+    int            plinkf = 0, xcf = 0, mega2 = 0;
+
     char           PLINKArgs[FILENAME_LENGTH] = "";
+    char           VCFArgs[FILENAME_LENGTH] = "";
+    char           VCFMarkerAlternativeKey[FILENAME_LENGTH] = "";
+#ifdef DEFPHE
+    char           trait_name[FILENAME_LENGTH] = "";
+    double         trait_value = -9;
+#endif
+    int            reset = 1, reset_extension = 1;
 
     /* specifying chromosome or extension overrides previous specifications
        unless user specified each file separately */
+    *infl_type = LINKAGE;
+
     *Untyped_ped_opt=2; /* Exclude any pedigree with 1 or less untyped people */
     *Error_sim_opt = 0;
-    *infl_type = LINKAGE;
     *freq_mismatch_thresh = LARGE;
 
-    if (*output_path == NULL)
-        *output_path = CALLOC((size_t) FILENAME_LENGTH, char);
-    if (*locusfl_name == NULL)
-        *locusfl_name =  CALLOC((size_t) FILENAME_LENGTH, char);
-    if (*pedfl_name == NULL)
-        *pedfl_name =  CALLOC((size_t) FILENAME_LENGTH, char);
-    if (*mapfl_name == NULL)
-        *mapfl_name =  CALLOC((size_t) FILENAME_LENGTH, char);
-    if (*omitfl_name == NULL)
-        *omitfl_name =  CALLOC((size_t) FILENAME_LENGTH, char);
-    if (*freqfl_name == NULL)
-        *freqfl_name =  CALLOC((size_t) FILENAME_LENGTH, char);
-    if (*penfl_name == NULL)
-        *penfl_name =  CALLOC((size_t) FILENAME_LENGTH, char);
-    if (*bedfl_name == NULL)
-        *bedfl_name =  CALLOC((size_t) FILENAME_LENGTH, char);
-    if (*phefl_name == NULL)
-        *phefl_name =  CALLOC((size_t) FILENAME_LENGTH, char);
+    fln_alloc(output_path);
+    fln_alloc(input_path);
+
+    fln_alloc(pedfl_name,   pedo);
+    fln_alloc(locusfl_name, loco);
+    fln_alloc(mapfl_name,   mapo);
+    fln_alloc(pmapfl_name,  pmapo);
+    fln_alloc(omitfl_name,  omito);
+    fln_alloc(freqfl_name,  freqo);
+    fln_alloc(penfl_name,   peno);
+    fln_alloc(auxfl_name,   auxo);
+    fln_alloc(phefl_name,   pheo);
 
     if (batchINPUTFILES) {
         /* necessary files ped, locus and map
            or ped, name and map
         */
-        if (Mega2BatchItems[/* 43 */ PLINK_Args].item_read == 1) {
+        if (Mega2BatchItems[/* 53 */ Input_Format_Type].item_read == 1) {
+            Input_Format = (INPUT_FORMAT_t) Mega2BatchItems[/* 53 */ Input_Format_Type].value.option;
+
+        } else if (Mega2BatchItems[/* 43 */ PLINK_Args].item_read == 1) {
+//          not vcf because Input_Format would have been set so we need to parse PLINK_Args
+            PLINK_args(Mega2BatchItems[PLINK_Args].value.name, 0);
+            if (PLINK.plink == binary_PED_format) {
+                Input_Format = in_format_binary_PED;
+            } else {
+                Input_Format = in_format_PED;
+            }
+        } else {
+            Input_Format = in_format_traditional;
+        }
+
+        if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
+            Input_Format == in_format_VCF)
+            xcf = 1;
+
+        if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED)
             plinkf = 1;
-        }
-        for(j=0; j < file_batch_items_size; j++) {
-            i = file_batch_items[j];
-            if (Mega2BatchItems[i].item_read==1) {
-                if (access(Mega2BatchItems[i].value.name, F_OK) == 0) {
-                    switch(i) {
-                    case Input_Pedigree_File:
-                        strcpy(*pedfl_name,Mega2BatchItems[i].value.name);
-                        break;
-                    case Input_Locus_File:
-                        strcpy(*locusfl_name,Mega2BatchItems[i].value.name);
-                        break;
-                    case Input_Map_File:
-                        strcpy(*mapfl_name, Mega2BatchItems[i].value.name);
-                        break;
-                    case Input_Omit_File:
-                        strcpy(*omitfl_name, Mega2BatchItems[i].value.name);
-                        break;
-                    case Input_Frequency_File:
-                        strcpy(*freqfl_name, Mega2BatchItems[i].value.name);
-                        break;
-                    case Input_Penetrance_File:
-                        strcpy(*penfl_name, Mega2BatchItems[i].value.name);
-                        break;
-                    case Input_Phenotype_File:
-                        strcpy(*phefl_name, Mega2BatchItems[i].value.name);
-                        break;
-                    case Input_Binary_File:
-                        if (PLINK.plink == binary_PED_format)
-                            strcpy(*bedfl_name, Mega2BatchItems[i].value.name);
-                        break;
-                    }
-                } else {
-                    errorvf("Could not find file or path %s named by keyword %s.\n",
-                            Mega2BatchItems[i].value.name,
-                            Mega2BatchItems[i].keyword);
-                    EXIT(FILE_NOT_FOUND);
-                }
-            } else {
-                // These were not read from the batchfile...
-                if (i < 3) {
-                    if (i == Input_Locus_File && plinkf) continue;
-                    missing_mandatory_keyword(i);
-                } else if (i == Input_Binary_File && PLINK.plink == binary_PED_format) {
-                    missing_mandatory_keyword(i);
-                } else {
-                    switch(i) {
-                    case /* 3 */ Input_Omit_File:
-                        missing_optional_keyword(Input_Omit_File, "omit file assumed to be unspecified");
-                        if (*omitfl_name != NULL) {
-                            free(*omitfl_name);
-                            *omitfl_name = NULL;
-                        }
-                        break;
 
-                    case /* 39 */ Input_Frequency_File:
-                        missing_optional_keyword(Input_Frequency_File, "frequency file assumed to be unspecified");
-                        if (*freqfl_name != NULL) {
-                            free(*freqfl_name);
-                            *freqfl_name = NULL;
-                        }
-                        break;
-
-                    case /* 40 */ Input_Penetrance_File:
-                        missing_optional_keyword(Input_Penetrance_File, "penetrance file assumed to be unspecified");
-                        if (*penfl_name != NULL) {
-                            free(*penfl_name);
-                            *penfl_name = NULL;
-                        }
-                        break;
-
-                    case /* 44 */ Input_Phenotype_File:
-                        if (plinkf)
-                            missing_optional_keyword(Input_Phenotype_File, "phenotype file assumed to be unspecified");
-                        if (*phefl_name != NULL) {
-                            free(*phefl_name);
-                            *phefl_name = NULL;
-                        }
-                        break;
-
-                    case /* 45 */ Input_Binary_File:
-                        if (*bedfl_name != NULL) {
-                            free(*bedfl_name);
-                            *bedfl_name = NULL;
-                        }
-                        break;
-                    }
-                }
-            }
+        if (xcf || plinkf) {
+            if (Mega2BatchItems[/* 43 */ PLINK_Args].item_read == 1 && PLINK.plink == not_plink_format)
+                PLINK_args(Mega2BatchItems[PLINK_Args].value.name, xcf);
         }
 
-        /* untyped ped option */
+        menu1_batch_set_files(infl_type, pedfl_name, locusfl_name,
+                              mapfl_name, pmapfl_name, input_path, omitfl_name,
+                              freqfl_name, penfl_name, auxfl_name, phefl_name,
+                              output_path, plinkf, xcf);
 
-        if (Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].item_read  == 1) {
-            if (Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].value.option >= 0) {
-                *Untyped_ped_opt=Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].value.option;
-            } else {
-                invalid_value_field(Input_Untyped_Ped_Option);
-            }
-        } else {
-            missing_mandatory_keyword(Input_Untyped_Ped_Option);
-        }
+        menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
 
-        /* Error sim option */
-
-        if (Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].item_read  == 1) {
-            if (tolower((unsigned char)Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt) == 'y' ||
-                tolower((unsigned char)Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt) == 'n') {
-                *Error_sim_opt= Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt;
-            } else {
-                invalid_value_field(Input_Do_Error_Sim);
-            }
-        }
-        *Error_sim_opt =
-            ((tolower(*Error_sim_opt) == 'y')? 1:0);
-
-        /*     if (Mega2BatchItems[/ * 7 * / Chromosome_Single].item_read == 1) { */
-        /*       *numchr = Mega2BatchItems[/ * 7 * / Chromosome_Single].value.option; */
-        /*     } */
-
-        if (Mega2BatchItems[/* 33 */ Output_Path].item_read == 1) {
-            if (access(Mega2BatchItems[/* 33 */ Output_Path].value.name, W_OK) == 0 &&
-                is_dir(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
-               strcpy(*output_path, Mega2BatchItems[/* 33 */ Output_Path].value.name);
-            } else {
-                errorvf("file path %s named by keyword %s is not a writable directory.\n",
-                        Mega2BatchItems[/* 33 */ Output_Path].value.name,
-                        Mega2BatchItems[/* 33 */ Output_Path].keyword);
-                EXIT(FILE_NOT_FOUND);
-            }
-
-        } else {
-            missing_optional_keyword(Output_Path,  "using default '.' (current directory)");
-            strcpy(*output_path, ".");
-        }
-
-        /* Threshold for comparing input and observed allele frequencies */
-
-        if (Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].item_read == 1) {
-            if (Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue < 0) {
-                invalid_value_field(AlleleFreq_SquaredDev);
-            }
-
-            *freq_mismatch_thresh = Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue;
-        } else {
-            missing_optional_keyword(AlleleFreq_SquaredDev, "using default = 'no limit'");
-        }
-#ifdef USER_UNKNOWN
-        if (Mega2BatchItems[/* 42 */ Value_Missing_Allele].item_read == 1) {
-            strcpy(REC_UNKNOWN, Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name);
-        }
-#endif
-        if (plinkf) {
-            free(*locusfl_name);
-            *locusfl_name = NULL;
-        }
-
-        return plinkf;
+        return;
     }
 
-    if (plinkf)
-        strcpy(extension_name, "plink");
-    else
-        strcpy(extension_name, "01");
-
-    gen_files(plinkf, extension_name, locusfl_name, pedfl_name, mapfl_name, omitfl_name, freqfl_name, penfl_name, bedfl_name, phefl_name);
 
     sprintf(*output_path, ".");
+    sprintf(*input_path, ".");
 
+    int line_len;
     while (!exit_loop) {
-        printf("              Mega2 %s %s input menu:\n", Mega2Version, plinkf ? "PLINK" : "Traditional");
-        draw_line();
-        printf(" 0) Done with this menu - please proceed\n");
-        idx=1;
-        if (plinkf) {
-            printf("%2d) Enter PLINK parameters:                 %s\n", idx, PLINKArgs);
-            choiceA[idx++] = plink_args_i;
+        if (reset) {
+            fln_off();
+            reset = 0;
+            plinkf = 0;
+            mega2 = 0;
+            xcf = 0;
+#ifdef DEFPHE
+            trait_name[0] = 0;
+            trait_value = -9;
+#endif
+            if (Input_Format == in_format_traditional || Input_Format == in_format_mega2) {
+                mega2 = 1;
+                strcpy(extension_name, "01");
+
+                fln_init(loco, "Mega2", "datain", "[required]", "datain");
+                fln_init(pedo, "Mega2", "pedin", "[required]", "pedin");
+                fln_init_mega2(MAP_REQ);
+
+            } else if (Input_Format == in_format_linkage) {
+                strcpy(extension_name, "01");
+
+                fln_init(loco, "Linkage", "datain", "[required]", "datain");
+                fln_init(pedo, "Linkage", "pedin", "[required]", "pedin");
+                fln_init(mapo, "Mega2 simple", "map", "[required]", "map");
+
+            } else if (Input_Format == in_format_extended_linkage) {
+                strcpy(extension_name, "01");
+
+                fln_init(loco, "Mega2", "hdrless names", "[required]", "names");
+                fln_init(pedo, "Linkage", "pedin", "[required]", "pedin");
+                fln_init(mapo, "Mega2 simple", "map", "[required]", "map");
+
+            } else if (Input_Format == in_format_binary_PED) {
+                plinkf = 1;
+                PLINK_clr(binary_PED_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(extension_name, "plink");
+
+                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init(pmapo, "PLINK", "bim", "[required]", "bim");
+                fln_init(auxo, "PLINK", "bed", "[required]", "bed");
+                auxo->title = "Binary data file:";
+                _aux_i = plink_bed_i;
+                fln_init_plink(  PMAP_REQ);
+//              fln_init_mega2(! MAP_REQ);
+                fln_init_mega2(-1);
+
+            } else if (Input_Format == in_format_PED) {
+                plinkf = 1;
+                PLINK_clr(PED_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(extension_name, "plink");
+
+                fln_init_plink(  PMAP_REQ);
+//              fln_init_mega2(! MAP_REQ);
+                fln_init_mega2(-1);
+
+            } else if (Input_Format == in_format_binary_VCF) {
+                xcf = 1;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(VCFArgs, "--remove-indels");
+                strcpy(extension_name, "study");
+
+                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init_plink(0);
+                fln_init(auxo, "binary", "bcf", "[required]", "bcf");
+                auxo->title = "Variant file:";
+                _aux_i = site_bcf_i;
+
+                fln_init_mega2(! MAP_REQ);
+
+            } else if (Input_Format == in_format_compressed_VCF) {
+                xcf = 1;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(VCFArgs, "--remove-indels");
+                strcpy(extension_name, "study");
+
+                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init(auxo, "compressed", "vcf.gz", "[required]", "vcf.gz");
+                auxo->title = "Variant file:";
+                _aux_i = site_vcf_gz_i;
+                fln_init_plink(! PMAP_REQ);
+                fln_init_mega2(! MAP_REQ);
+
+            } else if (Input_Format == in_format_VCF) {
+                xcf = 1;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(VCFArgs, "--remove-indels");
+                strcpy(extension_name, "study");
+
+                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init(auxo, "text", "vcf", "[required]", "vcf");
+                auxo->title = "Variant file:";
+                _aux_i = site_vcf_i;
+                fln_init_plink(! PMAP_REQ);
+                fln_init_mega2(! MAP_REQ);
+            }
+            reset_extension = 1;
         }
-        if (plinkf)
-            printf("%2d) Input file stem:                        %s\n", idx,
-                   extension_name);
-        else
-            printf("%2d) Input file extension:                   %s\n", idx,
-                   extension_name);
+        if (reset_extension) {
+            reset_extension = 0;
+            fln_extension_off();
+
+            if (strcasecmp(extension_name, "clear")==0) {
+                strcpy(extension_name, "-");
+            }
+        }
+
+        fln_col_sizes();
+        line_len = fln_col1234;
+
+        printf("              Mega2 %s input menu:\n", Mega2Version);
+        draw_line();
+        printf("0) Done with this menu - please proceed\n");
+        idx=1;
+        printf("%2d) %-*s%s\n", idx, line_len,
+               "Select input file format:", INPUT_FORMAT_STR[Input_Format]);
+        choiceA[idx++] = file_format_i;
+
+        if (plinkf || xcf) {
+            if (plinkf) {
+                printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
+                choiceA[idx++] = plink_args_i;
+            } else if (xcf) {
+	        char tmp[1000];
+                printf("%2d) %-*s%s\n", idx, line_len, "Enter VCF parameters:", VCFArgs);
+                choiceA[idx++] = vcf_args_i;
+
+		if (strcmp(VCFMarkerAlternativeKey,"") == 0) sprintf(tmp, "%s", "ID field");
+		else sprintf(tmp, "%s sub-field of the INFO field", VCFMarkerAlternativeKey);
+                printf("%2d) %-*s%s\n", idx, line_len, "Read marker names from the:", tmp);
+                choiceA[idx++] = vcf_mak_i;
+
+                printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
+                choiceA[idx++] = plink_args_i;
+            }
+        }
+
+        if (plinkf || xcf) {
+            printf("%2d) %-*s%s\n", idx, line_len, "Input file stem:", extension_name);
+            fln_stem = 1;
+
+        } else {
+            printf("%2d) %-*s%s\n", idx, line_len, "Input file suffix:", extension_name);
+            fln_stem = 0;
+        }
         choiceA[idx++] = ext_i;
 
-        if (! plinkf) {
-            printf("%2d) Locus datafile:      (%s)        %s\n", idx,
-                   "Mega2 loc",
-                   (access(*locusfl_name, F_OK)? "_": *locusfl_name));
-            choiceA[idx++] = loc_i;
+	// BUG? _aux_i is only initialized in certain cases...
+        choiceA[idx] = fln_print(auxo, idx, _aux_i);
+        if (choiceA[idx]) idx++;
+
+        choiceA[idx] = fln_print(loco, idx, loc_i);
+        if (choiceA[idx]) idx++;
+
+        choiceA[idx] = fln_print(pedo, idx, ped_i);
+        if (choiceA[idx]) idx++;
+
+        choiceA[idx] = fln_print(pmapo, idx, pmap_i);
+        if (choiceA[idx]) idx++;
+
+        choiceA[idx] = fln_print(pheo, idx, plink_phe_i);
+        if (choiceA[idx]) idx++;
+
+        choiceA[idx] = fln_print(mapo, idx, map_i);
+        if (choiceA[idx]) idx++;
+
+        choiceA[idx] = fln_print(omito, idx, omit_i);
+        if (choiceA[idx]) idx++;
+
+        choiceA[idx] = fln_print(freqo, idx, freq_i);
+        if (choiceA[idx]) idx++;
+
+        choiceA[idx] = fln_print(peno, idx, pen_i);
+        if (choiceA[idx]) idx++;
+
+        printf("%2d) %-*s%s\n", idx, line_len,
+               "Output Directory:",
+               ((!strcmp(*output_path, "."))?"[ Current directory ]" : *output_path));
+        choiceA[idx] = out_i;
+        idx++;
+
+/*
+ * to be turned on some day
+        if (xcf) {
+            printf("%2d) %-*s%s\n", idx, line_len,
+                   "Variant File(s) Directory:",
+                   (!strcmp(*input_path, ".")?"[ Current directory ]" : *input_path));
+            choiceA[idx++] = in_dir_i;
         }
+*/
 
-        printf("%2d) Pedigree datafile:   (%s)        %s\n", idx,
-               (PLINK.plink == not_plink_format ? "Mega2 ped" : (PLINK.plink == binary_PED_format ? "PLINK fam" : "PLINK ped")),
-               (access(*pedfl_name, F_OK)? "_": *pedfl_name));
-        choiceA[idx++] = ped_i;
+#ifdef DEFPHE
+//      if ((plink || xcf) && (access(*pedfl_name, R_OK) == 0))
+        if ((xcf) && (access(*pedfl_name, R_OK) == 0))
+        {
+            printf("%2d) %-*s%s\n", idx, line_len, "Name for trait in pedigree file", *trait_name != 0 ? trait_name : "default");
+            choiceA[idx++] = trait_name_i;
 
-        printf("%2d) Map datafile:        (%s)        %s\n", idx,
-               (PLINK.plink == not_plink_format ? "Mega2 map" : (PLINK.plink == binary_PED_format ? "PLINK bim" : "PLINK map")),
-               (access(*mapfl_name, F_OK)? "_": *mapfl_name));
-        choiceA[idx++] = map_i;
-
-        if (plinkf) {
-            if (PLINK.plink == binary_PED_format) {
-                printf("%2d) Binary datafile:     (%s)        %s\n", idx,
-                       "PLINK bed",
-                       (access(*bedfl_name, F_OK)? "_": *bedfl_name));
-                choiceA[idx++] = plink_bed_i;
-            }
-
-            printf("%2d) Phenotype datafile:  {%s}        %s\n", idx,
-                   "PLINK phe",
-                   (access(*phefl_name, F_OK)? "_": *phefl_name));
-            choiceA[idx++] = plink_phe_i;
+            printf("%2d) %-*s%f\n", idx, line_len, "Missing trait value", trait_value == -9 ? -9 : trait_value);
+            choiceA[idx++] = trait_value_i;
         }
-
-        printf("%2d) Omit datafile:       {Mega2 omit}       %s\n", idx,
-               (access(*omitfl_name, F_OK)? "_": *omitfl_name));
-        choiceA[idx++] = omit_i;
-
-        printf("%2d) Frequency datafile:  {annotated fmt}    %s\n", idx,
-               (access(*freqfl_name, F_OK)? "_": *freqfl_name));
-        choiceA[idx++] = freq_i;
-
-        printf("%2d) Penetrance datafile: {annotated fmt}    %s\n", idx,
-               (access(*penfl_name, F_OK)? "_": *penfl_name));
-        choiceA[idx++] = pen_i;
-
-        printf("%2d) Directory for writing output:           %s\n", idx,
-               ((!strcmp(*output_path, "."))?
-                "[ Current directory ]" : *output_path));
-        choiceA[idx++] = out_i;
-
-        printf("%2d) Simulate genotyping errors:             [%s]\n", idx,
-               yorn[*Error_sim_opt]);
-        choiceA[idx++] = err_i;
-
-        printf("%2d) %s (based on fully_typed genotypes)\n", idx,
-               untyped_ped_messg(*Untyped_ped_opt, messg));
-        thresh_string(*freq_mismatch_thresh, float_str);
-        choiceA[idx++] = untyp_i;
-
-        printf("%2d) Warn if allele frequency error measure exceeds: %s\n", idx,
-               float_str);
-        choiceA[idx++] = thresh_i;
-
-        if (plinkf) {
-            printf("%2d) Switch to standard input menu\n", idx);
-            choiceA[idx++] = plink_i;
-            if (PLINK.plink == PED_format) {
-                printf("%2d) Switch to PLINK input menu (binary format)\n", idx);
-                choiceA[idx++] = plink_j;
-            } else if (PLINK.plink == binary_PED_format) {
-                printf("%2d) Switch to PLINK input menu (ped format)\n", idx);
-                choiceA[idx++] = plink_k;
-            }
-        } else {
-            printf("%2d) Switch to PLINK input menu (binary format)\n", idx);
-            choiceA[idx++] = plink_j;
-            printf("%2d) Switch to PLINK input menu (ped format)\n", idx);
-            choiceA[idx++] = plink_k;
-        }
-
-        printf("%2d) Genotype compression size:              %s\n", idx,
-               MARKER_SCHEME == 1 ? "2 bits (biallelic markers only)" : (MARKER_SCHEME == 2 ? "2 bytes" : (MARKER_SCHEME == 3 ? "16 bytes" : "???")) );
-        choiceA[idx++] = compress_i;
-
-#ifdef USER_UNKNOWN
-        printf("%2d) Unknown allele & affection value(annotated only): %s\n",
-               miss_i, REC_UNKNOWN);
-        printf("Select from options 0-%d (%d to toggle) > ", idx-1, err_i);
-#else
-        printf("Select from options 0-%d > ", idx-1);
 #endif
+        _thresh_i = (access(*freqfl_name, R_OK) == 0) ?  thresh_i : 0;
+        idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
+                              err_i, untyp_i, _thresh_i, compress_i,
+                              choiceA, idx, line_len);
+
+        printf("Select from options 0-%d > ", idx-1);
+
         while (1) {
             fcmap(stdin, "%s", cchoice); newline;
             if (!strcmp(cchoice, "q")) {
@@ -706,250 +1031,197 @@ int             menu1(file_format *infl_type,
 
         if (choice_ ==  0) {
             exit_loop=1;
-            if (! plinkf) {
+            if (! plinkf && ! xcf) {
                 if (access(*locusfl_name, F_OK) != 0)   {
-                    printf("ERROR: You must specify a locus datafile.\n");
+                    printf("ERROR: You must specify a locus file.\n");
                     exit_loop=0;
-                }
-                // Since we are not using PLINK format we don't need the .bed file...
-                if (*bedfl_name != (char *)NULL ) {
-                    free(*bedfl_name);
-                    *bedfl_name = NULL;
                 }
             }
             if (access(*pedfl_name, F_OK) != 0) {
-                printf("ERROR: You must specify a pedigree datafile.\n");
+                printf("ERROR: You must specify a pedigree file.\n");
                 exit_loop=0;
             }
-            if (access(*mapfl_name, F_OK) != 0) {
-                printf("ERROR: You did not specify a map datafile.\n");
+            if (! xcf) {
+                // There is a map file that is extracted from the VCF file
+                // and presented to the user as 'VCF.p'. So, the map file is optional.
+                if (access(*mapfl_name, F_OK) != 0 && access(*pmapfl_name, F_OK) != 0) {
+                    printf("ERROR: You did not specify a map or PLINK map file.\n");
+                    exit_loop=0;
+                }
+            }
+            if (plinkf) {
+#ifdef DEFPHE
+                int recalc = 0;
+                if (*(PLINK.trait) == 0 && *trait_name != 0) {
+                    strcpy(PLINK.trait, trait_name);
+                    recalc = 1;
+                }
+                if (PLINK.missing_pheno == 0 && trait_value != -9) {
+                    PLINK.missing_pheno = 1;
+                    PLINK.pheno_value  = trait_value;
+                    recalc = 1;
+                }
+                if (recalc)
+                    PLINK_str(PLINKArgs, sizeof (PLINKArgs));
+#endif
+                if (*PLINKArgs == 0) {
+                    printf("ERROR: You did not specify any PLINK parameters.\n");
+                    exit_loop=0;
+                }
+            }
+            if (Input_Format == in_format_binary_PED && access(*auxfl_name, F_OK) != 0) {
+                printf("ERROR: You did not specify a PLINK binary data file.\n");
                 exit_loop=0;
             }
-            if (plinkf && PLINK.plink == not_plink_format) {
-                printf("ERROR: You did not specify any PLINK parameters.\n");
-                exit_loop=0;
-            }
-            if (PLINK.plink == binary_PED_format && access(*bedfl_name, F_OK) != 0) {
-                printf("ERROR: You did not specify a PLINK binary datafile.\n");
-                exit_loop=0;
+            if (xcf) {
+                if (access(*auxfl_name, F_OK) != 0) {
+                    printf("ERROR: You did not specify a Variant file.\n");
+                    exit_loop=0;
+                }
+                //
+                // So that we can use the already available VCFtools command line
+                // checking. The decision was made to 'splice' the file option into
+                // the args just like the user would invoke VCFtools.
+                char *VCFArgs_w_file = CALLOC(FILENAME_LENGTH, char);
+                strcpy(VCFArgs_w_file, VCFArgs);
+                if (Input_Format == in_format_binary_VCF) {
+                    strcat(VCFArgs_w_file, " --bcf ");
+                } else if (Input_Format == in_format_compressed_VCF) {
+                    strcat(VCFArgs_w_file, " --gzvcf ");
+                } else if (Input_Format == in_format_VCF) {
+                    strcat(VCFArgs_w_file, " --vcf ");
+                }
+                strcat(VCFArgs_w_file, *auxfl_name);
+                
+                if (VCFtools_process_cmd_line_w_file(VCFArgs_w_file) != -1) {
+                    printf("ERROR: VCF argument list is invalid.  Please fix it.\n");
+                    exit_loop=0;
+                } else {
+                    Mega2BatchItems[VCF_Args].item_read = 1;
+                }
+                free(VCFArgs_w_file);
+#ifdef DEFPHE
+                // Allow the user to describe the phenotype and a missing value when
+                // processing a VCF file...
+                if (*trait_name != 0)
+                    sprintf(PLINKArgs, "--trait %s ", trait_name);
+                if (trait_value != -9)
+                    sprintf(PLINKArgs, "--missing-phenotype %f", trait_value);
+#endif
             }
             if (PLINK.plink && PLINK.no_pheno == 0 && PLINK.trait[0] == 0) {
                 printf("ERROR: You did not specify the pedigree file trait name.\n");
-                printf("ERROR: Please choose option 1 and do so now.\n");
+                printf("ERROR: Please choose option 2 and do so now.\n");
                 exit_loop=0;
             }
+
             if (exit_loop == 0)
                 draw_line();
             else {
-                if (access(*omitfl_name, F_OK) != 0) {
-                    free(*omitfl_name);
-                    *omitfl_name = NULL;
-                } else {
+                if (access(*omitfl_name, F_OK) != 0)
+                    fln_free_not_present(omito);
+                else {
                     printf("NOTE: Marker untyping will take place according to the omit file.\n");
-                    printf(
-                        "      Please check the '%s' log file after MEGA2 is finished.\n",
-                        Mega2Log);
+                    printf("      Please check the '%s' log file after MEGA2 is finished.\n",
+                           Mega2Log);
                 }
 
-                if (access(*freqfl_name, F_OK) != 0) {
-                    free(*freqfl_name);
-                    *freqfl_name = NULL;
-                }
-                if (access(*penfl_name, F_OK) != 0) {
-                    free(*penfl_name);
-                    *penfl_name = NULL;
-                }
-                if (access(*phefl_name, F_OK) != 0) {
-                    free(*phefl_name);
-                    *phefl_name = NULL;
-                }
-                if (access(*bedfl_name, F_OK) != 0) {
-                    free(*bedfl_name);
-                    *bedfl_name = NULL;
-                }
+                fln_free_not_present(freqo);
+                fln_free_not_present(peno);
+                fln_free_not_present(auxo);
+                fln_free_not_present(pheo);
+                fln_free_not_present(mapo);
+                fln_free_not_present(pmapo);
             }
+
+        } else if (choice_ == file_format_i) {
+            int ans;
+            while (1) {
+                fflush(stdout);
+                draw_line();
+                printf("              Mega2 %s input file type menu:\n", Mega2Version);
+                draw_line();
+                printf("0) Done with this menu - please proceed\n");
+//      ignore 9th entry (only for old batch files)
+                for (ans = 0; ans < 8; ans++)
+                    printf("%s%1d) %s\n",
+                           ans == Input_Format ? "*" : " ", ans+1,
+                           INPUT_FORMAT_STR[ans]);
+                printf("Select from options 0-8 > ");
+
+                fcmap(stdin, "%d", &ans); newline;
+                if (ans == 0) break;
+                else if (ans <= 8 && ans >= 1)
+                    Input_Format = (INPUT_FORMAT_t) (ans - 1);
+                else
+                    printf("allowed values are 1, 2, 3, 4, 5, 6, 7, 8.\n");
+            }
+            reset = 1;
+
         } else  if (choice_ == ext_i) {
-            if (plinkf)
+            if (plinkf || xcf)
                 printf("Please enter file stem > ");
             else
                 printf("Please enter file extension > ");
             fcmap(stdin, "%s", extension_name); newline;
-            if (strcasecmp(extension_name, "clear")==0) {
-                strcpy(extension_name, "-");
-            } else if (plinkf) {
-                if (!LocusDataFileSpecified) {
-                    sprintf(*locusfl_name, "%s.datain", extension_name);
-                }
-                if (!PedigreeDataFileSpecified) {
-                    if (PLINK.plink == binary_PED_format)
-                        sprintf(*pedfl_name,  "%s.fam", extension_name);
-                    else if (PLINK.plink == PED_format)
-                        sprintf(*pedfl_name,  "%s.ped", extension_name);
-                }
-                if (!MapFileNameSpecified) {
-                    if (PLINK.plink == binary_PED_format)
-                        sprintf(*mapfl_name,  "%s.bim", extension_name);
-                    else if (PLINK.plink == PED_format)
-                        sprintf(*mapfl_name,  "%s.map", extension_name);
-                }
-                if (PLINK.plink == binary_PED_format && !BinaryFileSpecified)
-                    sprintf(*bedfl_name, "%s.bed", extension_name);
-                if (!PhenotypeFileSpecified)
-                    sprintf(*phefl_name, "%s.phe", extension_name);
-                if (!OmitFileSpecified)
-                    sprintf(*omitfl_name, "%s.omit", extension_name);
-                if (!FreqFileSpecified)
-                    sprintf(*freqfl_name, "%s.frequency", extension_name);
-                if (!PenFileSpecified)
-                    sprintf(*penfl_name,  "%s.penetrance", extension_name);
-            } else {
-                if (!LocusDataFileSpecified) {
-                    sprintf(*locusfl_name, "datain.%s", extension_name);
-                }
-                if (access(*locusfl_name, F_OK)) {
-                    sprintf(*locusfl_name, "names.%s", extension_name);
-                }
-                if (!PedigreeDataFileSpecified)
-                    sprintf(*pedfl_name, "pedin.%s", extension_name);
-                if (!MapFileNameSpecified)
-                    sprintf(*mapfl_name, "map.%s", extension_name);
-                if (!OmitFileSpecified)
-                    sprintf(*omitfl_name, "omit.%s", extension_name);
-                if (!FreqFileSpecified)
-                    sprintf(*freqfl_name, "frequency.%s", extension_name);
-                if (!PenFileSpecified)
-                    sprintf(*penfl_name, "penetrance.%s", extension_name);
-            }
+            reset_extension = 1;
+
         } else if (choice_ == loc_i) {
-            draw_line();
-            printf("Please enter locus file name ('clear' to clear) > ");
-            strcpy(oldlocusname, *locusfl_name);
-            fcmap(stdin, "%s", *locusfl_name); newline;
+            fln_get(loco, "locus");
 
-            if (strcasecmp(*locusfl_name, "clear") == 0) {
-                strcpy(*locusfl_name, "-");
-            } else {
-                if (access(*locusfl_name, F_OK)) {
-                    printf("WARNING: Could not find file %s\n", *locusfl_name);
-                    strcpy(*locusfl_name, oldlocusname);
-                    LocusDataFileSpecified = false;
-                } else {
-                    LocusDataFileSpecified = true;
-                }
-            }
         } else if (choice_ == ped_i) {
-            draw_line();
-            printf("Please enter pedigree file name ('clear' to clear) > ");
-            strcpy(oldpedname, *pedfl_name);
-            fcmap(stdin, "%s", *pedfl_name); newline;
+            fln_get(pedo, "pedigree");
 
-            if (strcasecmp(*pedfl_name, "clear") == 0) {
-                strcpy(*pedfl_name, "-");
-            } else {
-                if (access(*pedfl_name, F_OK)) {
-                    printf("WARNING: Could not find file %s\n", *pedfl_name);
-                    strcpy(*pedfl_name, oldpedname);
-                    PedigreeDataFileSpecified = false;
-                } else {
-                    PedigreeDataFileSpecified = true;
-                }
+#ifdef DEFPHE
+        } else if (choice_ == trait_name_i) {
+            asm("int $3");
+            draw_line();
+            printf("Please enter the name for trait of the pedigree file > ");
+            fcmap(stdin, "%s", trait_name); newline;
+
+        } else if (choice_ == trait_value_i) {
+            asm("int $3");
+            draw_line();
+            int ok = 0;
+            double val;
+            while (ok != 1) {
+                printf("Please enter value representing missing trait > ");
+                ok = fscanf(stdin, "%lf", &val);
+                newline;
+                if (ok == 1) trait_value = val;
+                if (feof(stdin)) break;
             }
+#endif
         } else if (choice_ == map_i) {
-            draw_line();
-            printf("Please enter map file name ('clear' to clear) > ");
-            strcpy(oldmapname, *mapfl_name);
-            fcmap(stdin, "%s", *mapfl_name); newline;
-            if (strcasecmp(*mapfl_name, "clear") == 0) {
-                strcpy(*mapfl_name, "-");
-            } else {
-                if (access(*mapfl_name, F_OK)) {
-                    printf("WARNING: Could not find file %s\n", *mapfl_name);
-                    MapFileNameSpecified = false;
-                    strcpy(*mapfl_name, oldmapname);
-                }
-                else
-                    MapFileNameSpecified = true;
-            }
-        } else if (PLINK.plink == binary_PED_format && choice_ == plink_bed_i) {
-            draw_line();
-            printf("Please enter binary file name ('clear' to clear) > ");
-            strcpy(oldbedname, *bedfl_name);
-            fcmap(stdin, "%s", *bedfl_name); newline;
-            if (strcasecmp(*bedfl_name, "clear") == 0) {
-                strcpy(*bedfl_name, "-");
-            } else {
-                if (access(*bedfl_name, F_OK)) {
-                    printf("WARNING: Could not find file %s\n", *bedfl_name);
-                    BinaryFileSpecified = false;
-                    strcpy(*bedfl_name, oldbedname);
-                } else {
-                    BinaryFileSpecified = true;
-                }
-            }
-        } else if (choice_ == plink_phe_i) {
-            draw_line();
-            printf("Please enter phenotype file name ('clear' to clear) > ");
-            strcpy(oldphenname, *phefl_name);
-            fcmap(stdin, "%s", *phefl_name); newline;
-            if (strcasecmp(*phefl_name, "clear") == 0) {
-                strcpy(*phefl_name, "-");
-            } else {
-                if (access(*phefl_name, F_OK)) {
-                    printf("WARNING: Could not find file %s\n", *phefl_name);
-                    PhenotypeFileSpecified = false;
-                    strcpy(*phefl_name, oldphenname);
-                } else {
-                    PhenotypeFileSpecified = true;
-                }
-            }
+            fln_get(mapo, "map");
+
+        } else if (choice_ == pmap_i) {
+            fln_get(pmapo, "PLINK map");
+
         } else if (choice_ == omit_i) {
-            draw_line();
-            printf("Please enter omit file name ('clear' to clear) > ");
-            strcpy(oldomitname, *omitfl_name);
-            fcmap(stdin, "%s", *omitfl_name); newline;
-            if (strcasecmp(*omitfl_name, "clear") == 0) {
-                strcpy(*omitfl_name, "-");
-            } else {
-                if (access(*omitfl_name, F_OK)) {
-                    printf("WARNING: Could not find file %s\n", *omitfl_name);
-                    OmitFileSpecified = false;
-                    strcpy(*omitfl_name, oldomitname);
-                } else {
-                    OmitFileSpecified = true;
-                }
-            }
-        } else if (choice_ == freq_i) {   /* The 'Freq' datafile */
-            draw_line();
-            printf("Please enter frequency file name ('clear' to clear) > ");
-            strcpy(oldfreqname, *freqfl_name);
-            fcmap(stdin, "%s", *freqfl_name); newline;
-            if (strcasecmp(*freqfl_name, "clear") == 0) {
-                strcpy(*freqfl_name, "-");
-            } else {
-                if (access(*freqfl_name, F_OK)) {
-                    printf("WARNING: Could not find file %s\n", *freqfl_name);
-                    strcpy(*freqfl_name, oldfreqname);
-                    FreqFileSpecified = false;
-                }
-                else
-                    FreqFileSpecified = true;
-            }
-        } else if (choice_ == pen_i) {   /* The penetrance datafile */
-            draw_line();
-            printf("Please enter penetrance file name ('clear' to clear) > ");
-            strcpy(oldpenname, *penfl_name);
-            fcmap(stdin, "%s", *penfl_name); newline;
-            if (strcasecmp(*penfl_name, "clear") == 0) {
-                strcpy(*penfl_name, "-");
-            } else {
-                if (access(*penfl_name, F_OK)) {
-                    printf("WARNING: Could not find file %s\n", *penfl_name);
-                    strcpy(*penfl_name, oldpenname);
-                    PenFileSpecified = false;
-                }
-                else
-                    PenFileSpecified = true;
-            }
+            fln_get(omito, "omit");
+
+        } else if (choice_ == freq_i) {   /* The 'Freq' file */
+            fln_get(freqo, "frequency");
+
+        } else if (choice_ == pen_i) {   /* The penetrance file */
+            fln_get(peno, "penetrance");
+
+        } else if (choice_ == plink_bed_i) {
+            fln_get(auxo, "binary");
+
+        } else if (choice_ == site_bcf_i) {
+            fln_get(auxo, "binary");
+
+        } else if (choice_ == site_vcf_gz_i) {
+            fln_get(auxo, "compressed");
+
+        } else if (choice_ == site_vcf_i) {
+            fln_get(auxo, "text");
+
+        } else if (choice_ == plink_phe_i) {
+            fln_get(pheo, "phenotype");
+
         } else if (choice_ == out_i) {   /* The output directory */
             draw_line();
             printf("Please enter output directory name > ");
@@ -977,76 +1249,96 @@ int             menu1(file_format *infl_type,
                     printf("Please specify a new or valid directory.\n");
             }
 
-        } else if (choice_ == err_i) {
-            *Error_sim_opt = TOGGLE(*Error_sim_opt);
-        } else if (choice_ == untyp_i) {
+        } else if (choice_ == in_dir_i) {   /* The input directory */
             draw_line();
-            untyped_ped_menu(Untyped_ped_opt);
-        } else if (choice_ == thresh_i) {
-            draw_line();
-            printf("Please enter threshold value > ");
-            fcmap(stdin, "%g", freq_mismatch_thresh); newline;
+            printf("Please enter input variants directory name > ");
+            fcmap(stdin, "%s", *input_path); newline;
+
+            if (access(*input_path, F_OK)) {
+                printf("WARNING: Could not find directory %s\n", *input_path);
+                strcpy(*input_path, ".");
+            } else if (! is_dir(*input_path)) {
+                printf("WARNING: %s is not a directory.\n", *input_path);
+                printf("Please specify a new or valid directory.\n");
+                strcpy(*input_path, ".");
+            } else if (access(*input_path, R_OK)) {
+                printf("WARNING: %s is not a readable directory.\n", *input_path);
+                printf("Please specify a new or valid directory.\n");
+                strcpy(*input_path, ".");
+            }
+
+//xx
         } else if (choice_ == miss_i) {
             draw_line();
             printf("Please enter missing value indicator > ");
             fcmap(stdin, "%s", REC_UNKNOWN); newline;
-        } else if (choice_ == plink_i || choice_ == plink_j || choice_ == plink_k) {
-            if (choice_ == plink_i) {
-                plinkf = 0;
-                PLINK_clr(not_plink_format);
-                strcpy(extension_name, "01");
-            } else if (choice_ == plink_j) {
-                plinkf = 1;
-                PLINK_clr(binary_PED_format);
-                PLINK_str(PLINKArgs, FILENAME_LENGTH);
-                strcpy(extension_name, "plink");
-            } else if (choice_ == plink_k) {
-                plinkf = 1;
-                PLINK_clr(PED_format);
-/*             free(*bedfl_name); *bedfl_name = NULL; */
-                PLINK_str(PLINKArgs, FILENAME_LENGTH);
-                strcpy(extension_name, "plink");
-            }
-            gen_files(plinkf, extension_name, locusfl_name, pedfl_name, mapfl_name, omitfl_name, freqfl_name, penfl_name, bedfl_name, phefl_name);
-           LocusDataFileSpecified = PedigreeDataFileSpecified = 0;
-           MapFileNameSpecified = OmitFileSpecified = 0;
-           FreqFileSpecified = PenFileSpecified = 0;
-           BinaryFileSpecified = PhenotypeFileSpecified = 0;
+
         } else if (choice_ == plink_args_i) {
-            PLINK_usage();
+            PLINK_usage(xcf);
             while (1) {
                 fflush(stdout);
                 (void)fgets(PLINKArgs, sizeof(PLINKArgs)-1, stdin); newline;
                 i = (int)strlen(PLINKArgs);
                 if (PLINKArgs[i-1] == '\n') PLINKArgs[i-1] = 0;
                 if (PLINKArgs[i-1] == '\r') PLINKArgs[i-1] = 0;
-                if (PLINK_args(PLINKArgs)) break;
+                if (PLINK_args(PLINKArgs, xcf)) break;
                 printf("Enter     UPDATED PLINK parameters:  %s\n", PLINKArgs);
             }
-        } else if (choice_ == compress_i) {
-            int ans;
+
+        } else if (choice_ == vcf_args_i) {
+
+	    char new_VCFArgs[FILENAME_LENGTH];
+	    VCFtools_printf_supported_cmd_line_options();
             while (1) {
+                printf("\nCurrent VCF parameters:  %s\n", VCFArgs);
+		// 3) When doing the vcftools filtering, it wasn't clear to me at first which set
+		// of IDs/positions one should use.  Presumably you must use the IDs/positions as
+		// given in the VCF file itself.  So we have to filter individuals by VCF sample IDs,
+		//and positions by VCF positions.
+                printf("Note that filtering must be done using position information and sample IDs from\n");
+                printf("the input VCF file. \n");
+                printf("Enter new VCF parameters: ");
+                strcpy(new_VCFArgs, VCFArgs);
+                fflush(stdout);
+                (void)fgets(new_VCFArgs, sizeof(new_VCFArgs)-1, stdin); newline;
+                i = (int)strlen(new_VCFArgs);
+                if (new_VCFArgs[i-1] == '\n') new_VCFArgs[i-1] = 0;
+                if (new_VCFArgs[i-1] == '\r') new_VCFArgs[i-1] = 0;
+		if (strlen(new_VCFArgs) == 0) break;
+                if (VCFtools_process_cmd_line_wo_file(new_VCFArgs) == -1) {
+                    strcpy(VCFArgs, new_VCFArgs);
+                    break;
+		}
+            }
+
+        } else if (choice_ == vcf_mak_i) {
+            char select[100];
+            int new_ans, ans = 1;
+            strcpy(VCFMarkerAlternativeKey, "");
+            while (ans != 0) {
                 fflush(stdout);
                 draw_line();
-//                printf("Please enter compression value 1, 2, or 3 for\n       (2 bits [biallelic marker only], 2 bytes, or 16 bytes) > ");
-                printf("              Mega2 %s compressiopn menu:\n", Mega2Version);
-                draw_line();
-                printf(" 0) Done with this menu - please proceed\n");
-                printf("%s%1d) 2 bits (biallelic markers only)\n",
-                       1 == MARKER_SCHEME ? "*" : " ", 1);
-                printf("%s%1d) 2 bytes (biallelic or microsatellite markers)\n",
-                       2 == MARKER_SCHEME ? "*" : " ", 2);
-                printf("%s%1d) 16 bytes\n",
-                       3 == MARKER_SCHEME ? "*" : " ", 3);
-                printf("Select from options 0-3 > ");
-
-                fcmap(stdin, "%d", &ans); newline;
-                if (ans == 0) break;
-                else if (ans <= 3 && ans >= 1)
-                    MARKER_SCHEME = ans;
-                else
-                    printf("MARKER_SCHEME allowed values are 1, 2 or 3\n");
+                printf("Read the marker names from:\n");
+                printf("0) Done with this menu - please proceed\n");
+                printf("%c1) from the ID field\n", (ans == 1 ? '*' : ' '));
+                printf("%c2) from the INFO sub-field\n", (ans == 2 ? '*' : ' '));
+                printf("Select from options 0-2 > ");
+                fcmap(stdin, "%s", select);
+                sscanf(select, "%d", &new_ans);
+                if (new_ans < 0 || new_ans > 2) {
+                    printf("Please enter a 0, 1, or 2.\n");
+                    continue;
+                } else if (new_ans == 1) {
+                    strcpy(VCFMarkerAlternativeKey, "");
+                } else if (new_ans == 2) {
+                    printf("Please input the name of the INFO sub-field that contains the marker name: ");
+                    fcmap(stdin, "%s", VCFMarkerAlternativeKey); newline;
+                }
+                ans = new_ans;
             }
+        } else if (menu1_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
+                                  err_i, untyp_i, thresh_i, compress_i, choice_)) {
+                       // above function looks for match and does action
         } else {
             printf("Invalid option %s, select from options 0-%d.\n", cchoice, idx-1);
         }
@@ -1055,60 +1347,42 @@ int             menu1(file_format *infl_type,
     }
 
     if (InputMode == INTERACTIVE_INPUTMODE) {
-        strcpy(Mega2BatchItems[/* 0 */ Input_Pedigree_File].value.name, *pedfl_name);
-        batchf(Input_Pedigree_File);
-        if (! plinkf) {
-            strcpy(Mega2BatchItems[/* 1 */ Input_Locus_File].value.name, *locusfl_name);
-            batchf(Input_Locus_File);
+
+        Mega2BatchItems[/* 53 */ Input_Format_Type].value.option = Input_Format;
+        batchf(Input_Format_Type);
+
+        fln_t **fln = fln_array;
+        while (*fln) {
+            if ((*fln)->on)
+                fln_batchf(*fln);
+            fln++;
         }
-        strcpy(Mega2BatchItems[/* 2 */ Input_Map_File].value.name, *mapfl_name);
-        batchf(Input_Map_File);
-        if (PLINK.plink == binary_PED_format) {
-            strcpy(Mega2BatchItems[/* 45 */ Input_Binary_File].value.name, *bedfl_name);
-            batchf(Input_Binary_File);
-        }
-        if (*omitfl_name  != NULL) {
-            strcpy(Mega2BatchItems[/* 3 */ Input_Omit_File].value.name, *omitfl_name);
-            batchf(Input_Omit_File);
-        }
-        if (*freqfl_name  != NULL) {
-            strcpy(Mega2BatchItems[/* 39 */ Input_Frequency_File].value.name, *freqfl_name);
-            batchf(Input_Frequency_File);
-        }
-        if (*penfl_name  != NULL) {
-            strcpy(Mega2BatchItems[/* 40 */ Input_Penetrance_File].value.name, *penfl_name);
-            batchf(Input_Penetrance_File);
-        }
-        if (*phefl_name  != NULL) {
-            strcpy(Mega2BatchItems[/* 44 */ Input_Phenotype_File].value.name, *phefl_name);
-            batchf(Input_Phenotype_File);
-        }
-        Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].value.option= *Untyped_ped_opt;
-        batchf(Input_Untyped_Ped_Option);
-        Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt = yorn[*Error_sim_opt][0];
-        batchf(Input_Do_Error_Sim);
+
         strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
         batchf(Output_Path);
-        Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue=*freq_mismatch_thresh;
-        batchf(AlleleFreq_SquaredDev);
+        strcpy(Mega2BatchItems[/* 54 */ Input_Path].value.name, *input_path);
+        batchf(Input_Path);
+
 #ifdef USER_UNKNOWN
         strcpy(Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name, REC_UNKNOWN);
         batchf(Value_Missing_Allele);
 #endif
         strcpy(Mega2BatchItems[/* 43 */ PLINK_Args].value.name, PLINKArgs);
-        if (plinkf) batchf(PLINK_Args);
+        if (*PLINKArgs != 0) batchf(PLINK_Args);
 
-        Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option= MARKER_SCHEME;
-        batchf(Value_Marker_Compression);
+        if (VCFArgs != NULL && strlen(VCFArgs) > 0) {
+            strcpy(Mega2BatchItems[/* 56 */ VCF_Args].value.name, VCFArgs);
+            if (xcf) batchf(VCF_Args);
+        }
+        if (VCFMarkerAlternativeKey != NULL && strlen(VCFMarkerAlternativeKey) > 0) {
+            strcpy(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name, VCFMarkerAlternativeKey);
+            if (xcf) batchf(VCF_Marker_Alternative_INFO_Key);
+        }
 
+        menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
     }
 
-    if (plinkf) {
-        free(*locusfl_name);
-        *locusfl_name = NULL;
-    }
-
-    return plinkf;
+    if (plinkf || xcf) fln_free(loco);
 }
 
 
@@ -1188,7 +1462,6 @@ static int check_affdata_str(char *affdata_str, int num_classes)
 
 static int *affected_labels(int num_classes, const char *affdata_str,
 			    int *num_labels)
-
 {
     char *aff_ptr, *status_str, *class_str;
     int l, liability, status;
@@ -1254,7 +1527,6 @@ static int *affected_labels(int num_classes, const char *affdata_str,
    multiple liability */
 
 static void define_labels(linkage_ped_top *Top, int tr, char *affdata_str)
-
 {
 
     int index, i, ped, entry;
@@ -1326,7 +1598,6 @@ static void define_labels(linkage_ped_top *Top, int tr, char *affdata_str)
 
 }
 
-
 /* get affected labels from the user for all trait_loci */
 /* routines to set affected phenotype identifiers */
 
@@ -1346,7 +1617,6 @@ static void define_labels(linkage_ped_top *Top, int tr, char *affdata_str)
 
 */
 void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
-
 {
     int tr, *ml_traits, i, max_classes = 0;
     int num_mult_tr=0;
@@ -1863,8 +2133,7 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
     }
 }
 
-char      *untyped_ped_messg(int opt, char *untyped_mssg)
-
+char *untyped_ped_messg(int opt, char *untyped_mssg)
 {
     int opt1;
 
@@ -1888,9 +2157,9 @@ char      *untyped_ped_messg(int opt, char *untyped_mssg)
     case 4:
         ((opt == 4)?
          sprintf(untyped_mssg,
-                 "Exclude any pedigree with 0 marker-typed people") :
+                 "Exclude any pedigree with 0 genotyped people") :
          sprintf(untyped_mssg,
-                 "Exclude any pedigree with %d or less marker-typed people",
+                 "Exclude any pedigree with %d or less genotyped people",
                  opt - 4));
         break;
     default:
@@ -1901,8 +2170,7 @@ char      *untyped_ped_messg(int opt, char *untyped_mssg)
     return &(untyped_mssg[0]);
 }
 
-static void     untyped_ped_menu(int *opt)
-
+static void untyped_ped_menu(int *opt)
 {
     int new_opt=-1;
     char opt_[10], select[5] = {"    "};
@@ -1963,10 +2231,8 @@ static void     untyped_ped_menu(int *opt)
     return;
 }
 
-
-int  gh_cov_selection(int num_traits, int *traits,
-		      int *covariates, linkage_locus_top *LTop)
-
+int gh_cov_selection(int num_traits, int *traits,
+                     int *covariates, linkage_locus_top *LTop)
 {
 
     int t, n, numq, num_cov=0, done=0, *quants, *selected;
@@ -2078,7 +2344,6 @@ int  gh_cov_selection(int num_traits, int *traits,
 }
 
 static char *ind_id_choice_messg(int opt, char *ind_id_messg)
-
 {
     switch(opt) {
     case 1:
@@ -2107,7 +2372,6 @@ static char *ind_id_choice_messg(int opt, char *ind_id_messg)
 
     return &(ind_id_messg[0]);
 }
-
 
 int individual_id_item(int item_number, analysis_type analysis,
                        int current_opt_val, int align_right_pos,
@@ -2225,9 +2489,7 @@ int individual_id_item(int item_number, analysis_type analysis,
 }
 
 static char *ped_id_choice_messg(int opt, char *id_messg)
-
 {
-
     switch(opt) {
     case 1:
         if (pedfile_type == POSTMAKEPED_PFT) {
@@ -2269,7 +2531,6 @@ static char *ped_id_choice_messg(int opt, char *id_messg)
 int pedigree_id_item(int item_number, analysis_type analysis,
                      int current_opt_val, int align_right_pos,
                      int get_disp_log, int has_orig)
-
 {
 
     /* This displays a string as a menu item
@@ -2413,15 +2674,12 @@ void ped_ind_defaults(int unique, analysis_type analysis)
 
 }
 
-
 void test_modified(int choice)
 {
     if (FirstIterMenu == 1 && choice > 0) {
         FirstIterMenu = 0;
     }
 }
-
-
 
 // Cranefoot, and smmary needs order but not position. In these cases we could use physical also.
 // For a map there is order and relative/absolute position.
@@ -2870,7 +3128,7 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
     
     // If no physical map is available, but one is required...
     if (bpps == 0 && requires_physical_map_p == 1) {
-        errorvf("For the analysis type specified, a physical map is required,\n       but none are available in the Map file.\n");
+        errorvf("For the analysis type specified, a physical map is required,\n       but none are available.\n");
         EXIT(INPUT_DATA_ERROR);
     }
     

@@ -22,7 +22,9 @@ vcf_file::vcf_file(const string &fname, bool comp, const set<string> &chrs_to_ke
 
 vcf_file::vcf_file()
 {
-	gzvcf_in = false;
+	// cpk: To get rid of warning:
+        // initialization of pointer of type 'gzFile' (aka 'void *') to null from a constant boolean expression
+        gzvcf_in = (gzFile)false;
 	gz_readbuffer = NULL;
 	compressed = false;	has_body = false;
 	has_file_format = false; has_header = false;
@@ -301,7 +303,7 @@ void vcf_file::print(ostream &out, const set<string> &INFO_to_keep, bool keep_al
 	out << endl;
 
 	vector<char> variant_line;
-	variant_file_entry * e = new vcf_entry(N_indv);
+	entry * e = new vcf_entry(N_indv);
 	for (unsigned int s=0; s<N_entries; s++)
 		if (include_entry[s] == true)
 		{
@@ -380,7 +382,7 @@ void vcf_file::print_bcf(BGZF* out, const set<string> &INFO_to_keep, bool keep_a
 	bgzf_write(out, (char *)&header[0], len_text );
 
 	vector<char> variant_line;
-	variant_file_entry * e = new vcf_entry(N_indv);
+	entry * e = new vcf_entry(N_indv);
 	for (unsigned int s=0; s<N_entries; s++)
 		if (include_entry[s] == true)
 		{
@@ -507,7 +509,7 @@ void vcf_file::get_entry(unsigned int entry_num, vector<char> &out)
 	read_line(out);
 }
 
-variant_file_entry* vcf_file::get_entry_object(unsigned int N_indv)
+entry* vcf_file::get_entry_object(unsigned int N_indv)
 {
 	return new vcf_entry(N_indv);
 }

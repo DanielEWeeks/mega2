@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -31,6 +31,11 @@
 
 #define USE_PROTOS prototypes
 #define ANSI ansi
+
+#include <string>
+#include <vector>
+#include <map>
+using namespace std;
 
 #ifdef _WIN
 #include <io.h>
@@ -212,7 +217,7 @@ typedef enum {
 } PedigreeFileType;
 
 typedef enum {
-    PEDIGREE = 0, LOCUS = 1, MAP = 2, OMIT = 3, FREQ = 4, PEN = 5, BED = 6, PHE = 7
+    PEDIGREE = 0, LOCUS = 1, MAP = 2, OMIT = 3, FREQ = 4, PEN = 5, BED = 6, PHEfl = 7, PMAP = 8
 } InputFileType;
 
 typedef enum {
@@ -373,7 +378,7 @@ extern int             FirstIterMenu;
 extern InputModeType   InputMode; /* Not batch mode? */
 extern file_format     InputFileFormat; /* Annotated or linkage */
 extern char            mega2_path[256]; /* path to mega2 executable */
-#define NUMBER_OF_MEGA2_INPUT_FILES         8
+#define NUMBER_OF_MEGA2_INPUT_FILES         9
 extern char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES];
 extern char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][21];
 extern int             pedfile_type; /* whether input-file is pre-makeped or not */

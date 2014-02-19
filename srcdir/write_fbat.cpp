@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -90,7 +90,7 @@ static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
         typedef char *str;
         str *file_names;
 
-        save_pheno(linkage_ped_top *Top) : entry(Top), loop::once(Top), loop::ped_per_trait(Top) {}
+        save_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) {}
         void make_file() {
             msgvf("        FBAT phenotype file:   %s/%s\n", *_opath, file_names[2]);
             run_loop(file_names[2]);
@@ -152,7 +152,7 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
         str *file_names;
         bool has_x;
 
-        save_peds(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per_loci(Top) { }
+        save_peds(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_loci(Top) { }
         void make_file() {
             mssgvf("        FBAT pedigree file:    %s/%s\n", *_opath, file_names[0]);
             if (_tte == NULL) {
@@ -229,7 +229,7 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
         all_sh *sh;
         bool has_x;
 
-        FBAT_sh_script(linkage_ped_top *Top) : entry(Top), loop::outer(Top), all_sh(Top) { }
+        FBAT_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
         void make_file() {
             mssgvf("        FBAT shell file:       %s/%s\n", *_opath, file_names[3]);
             run_loop(file_names[3]);
@@ -340,7 +340,7 @@ static void write_FBAT_Rhdr(linkage_ped_top *Top, char *file_names[])
         str *file_names;
         char strchr[4];
 
-        FBAT_Rhdr(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::null(Top) { }
+        FBAT_Rhdr(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::null(Top) { }
         void make_file() {
             mssgvf("        FBAT R hdr file:       %s/%s\n", *_opath, file_names[7]);
             run_loop(file_names[7]);
@@ -447,7 +447,7 @@ static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
         typedef char *str;
         str *file_names;
 
-        FBAT_map(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::loci(Top) { }
+        FBAT_map(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::loci(Top) { }
 //         marker_name   chr#   genetic_pos   physical_pos   sex_link
         void make_file() {
             mssgvf("        FBAT map file:         %s/%s\n", *_opath, file_names[1]);

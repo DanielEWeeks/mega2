@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -28,6 +28,14 @@
 
 #ifndef PHE_LOOKUP_EXT_H
 #define PHE_LOOKUP_EXT_H
+
+#include <string>
+#include <map>
+
+//
+// For mapping the VCF Tools sample into the pedigree,person found in this file.
+typedef std::map<std::string, std::pair<std::string,std::string> > sample_map_type;
+extern sample_map_type *SAMPLEIDS;
 
 extern void phefree();
 

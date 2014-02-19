@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -80,7 +80,7 @@ static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
 {
     struct plink_core_lgen: public loop::chr, loop::loci_ped_per {
 
-        plink_core_lgen(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::loci_ped_per(Top) {}
+        plink_core_lgen(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::loci_ped_per(Top) {}
         void make_file() {
             mssgvf("        PLINK lgen file:           %s/%s\n", *_opath, ::file_names[3]);
             run_loop(::file_names[3]);
@@ -114,7 +114,7 @@ static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
 {
     struct plink_core_pheno: public loop::once, loop::ped_per_trait {
 
-        plink_core_pheno(linkage_ped_top *Top) : entry(Top), loop::once(Top), loop::ped_per_trait(Top) {}
+        plink_core_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) {}
         void make_file() {
             msgvf("        PLINK phenotype file:      %s/%s\n", *_opath, ::file_names[2]);
             run_loop(::file_names[2]);
@@ -196,6 +196,8 @@ static void write_PLINK_map_data(linkage_ped_top *LPTop,
             // These are the defaults (e.g. nothing was specified)...
             double genetic_distance = MAP_MISSING, base_pair_position = MAP_MISSING;
             
+            if (use_selected_markers_p == 0 && chr == MISSING_CHROMO) continue;
+
             // A PLINK map file can only have 2 alleles, so if there are more we cannot use this marker...
             if (LTop->Locus[m].AlleleCnt > 2) {
                 if (display_error_mallele == 0) {
@@ -309,7 +311,7 @@ static void write_PLINK_map(linkage_ped_top *LPTop,
     struct plink_core_map: public loop::chr, loop::null {
         int generate_bim_file;
 
-        plink_core_map(linkage_ped_top *Top) : entry(Top), loop::chr(Top), loop::null(Top) {}
+        plink_core_map(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::null(Top) {}
         void make_file() {
             mssgvf("        PLINK map file:            %s/%s\n", *_opath, ::file_names[1]);
             run_loop(::file_names[1]);

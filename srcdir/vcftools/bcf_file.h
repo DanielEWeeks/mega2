@@ -22,7 +22,7 @@ public:
 	bcf_file(const string &filename, const set<string> &chrs_to_keep, const set<string> &exclude_chrs, bool force_write_index=false, bool gatk=false);
 
 	void get_entry(unsigned int entry_num, vector<char> &out);
-	variant_file_entry* get_entry_object(unsigned int N_indv);
+	entry* get_entry_object(unsigned int N_indv);
 
 	void print(ostream &out, const set<string> &INFO_to_keep, bool keep_all_INFO);
 	void print(const string &output_file_prefix, const set<string> &INFO_to_keep, bool keep_all_INFO=false);

@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -138,7 +138,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
         str *file_names;
         int markers_i;
         
-        save_marker_names(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::loci(Top) { markers_i = -1; }
+        save_marker_names(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::loci(Top) { markers_i = -1; }
         void make_file() {
             run_loop(file_names[0]);
         }
@@ -175,7 +175,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             double last_genetic_distance;
             int new_chromo, warnp, LoopOverChrm_save;
             
-            save_genetic_distance_markers(linkage_ped_top *Top, int LoopOverChrm_save) : entry(Top), loop::outer(Top), loop::loci(Top) { this->LoopOverChrm_save = LoopOverChrm_save; }
+            save_genetic_distance_markers(linkage_ped_top *Top, int LoopOverChrm_save) : person_locus_entry(Top), loop::outer(Top), loop::loci(Top) { this->LoopOverChrm_save = LoopOverChrm_save; }
             void make_file() {
                 char *fn = file_names[(LoopOverChrm_save == 1 ? 0 : 8)];
                 run_loop(*_opath, fn, "a");
@@ -234,7 +234,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
         str *file_names;
         int PopDataPheno_i, personHasMarkers, chr_i;
         
-        save_pers(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::ped_per_loci(Top) { chr_i = -1; }
+        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_loci(Top) { chr_i = -1; }
         void make_file() {
             int i;
             // The user can specify an integer (quantitative phenotype) designating a user-defined
@@ -342,7 +342,7 @@ static void write_mainparams(linkage_ped_top *Top, char *file_names[],
         str *file_names;
         int markers_i, inds_i;
         
-        save_mainparams(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::null(Top) { markers_i = inds_i = -1; }
+        save_mainparams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::null(Top) { markers_i = inds_i = -1; }
         void make_file() {
             mssgvf("        STRUCTURE mainparams:         %s/%s\n", *_opath, file_names[5]);
             run_loop(file_names[5]);
@@ -403,7 +403,7 @@ static void write_extraparams(linkage_ped_top *Top, char *file_names[],
         str *file_names;
         int markers_i;
         
-        save_extraparams(linkage_ped_top *Top) : entry(Top), loop::outer(Top), loop::null(Top) { markers_i = -1; }
+        save_extraparams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::null(Top) { markers_i = -1; }
         void make_file() {
             mssgvf("        STRUCTURE extraparams:         %s/%s\n", *_opath, file_names[7]);
             run_loop(file_names[7]);
@@ -501,7 +501,7 @@ static void write_sh(linkage_ped_top *Top,
         all_sh *sh;
         analysis_type *analysis;
         
-        STRUCTURE_sh_script(linkage_ped_top *Top, analysis_type *analysis) : entry(Top), loop::outer(Top), all_sh(Top) {
+        STRUCTURE_sh_script(linkage_ped_top *Top, analysis_type *analysis) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) {
             this->analysis = analysis;
         }
         void make_file() {

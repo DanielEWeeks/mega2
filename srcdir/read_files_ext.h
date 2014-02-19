@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -61,13 +61,13 @@ extern linkage_ped_top *read_linkage_ped_file(FILE *filep,
 					      linkage_locus_top *LTop,
                                               int *col2locus);
 
-extern void annot_ignore_numbered_data(int line, marker_rec *locus,
+extern void annot_ignore_numbered_data(int line, linkage_locus_rec *locus,
                                        void *pedrec, int loc);
 
 extern char *canonical_allele(const char *ra);
 
 extern int read_numbered_data(FILE *filep, int locusnm,
-			      void *ventry,
+                              linkage_locus_rec *locus, void *entry,
 			      record_type rec, int last);
 
 

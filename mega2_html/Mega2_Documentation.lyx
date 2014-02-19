@@ -178,7 +178,7 @@ status collapsed
 
 \end_inset
 
- 1997-2013 by the University of Pittsburgh 
+ 1997-2014 by the University of Pittsburgh 
 \end_layout
 
 \end_inset
@@ -502,6 +502,18 @@ reference "sub:PLINK-file-formats"
 \end_layout
 
 \begin_layout Enumerate
+Support for Variant Call Format (VCF, BCF, compressed VCF) files (See Section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-file-formats"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Enumerate
 The ability to automatically zero out selected genotypes for specific individual
 s in order to resolve Mendelian inconsistencies (See section 
 \begin_inset CommandInset ref
@@ -534,6 +546,33 @@ reference "sub:MEGA2run.html-and-related"
 
 \begin_layout Section
 Recent improvements and changes
+\end_layout
+
+\begin_layout Subsection
+Enhancements in Mega2 version 4.6.2
+\end_layout
+
+\begin_layout Itemize
+Mega2 can now read VCF, BCF, and compressed VCF files (See section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-file-formats"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Itemize
+Initial interactive menus have been modified to improve the specification
+ of different input file types (See section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-input-menu"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Subsection
@@ -1094,7 +1133,7 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.1 Traditional input menu:
+              Mega2 4.6.2 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1102,72 +1141,64 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
- 0) Done with this menu - please proceed
+0) Done with this menu - please proceed
 \end_layout
 
 \begin_layout LyX-Code
- 1) Input file extension:                   01
+ 1) Select input file format:                   Mega2 format with header
 \end_layout
 
 \begin_layout LyX-Code
- 2) Locus datafile:      (Mega2 loc)        names.01
+ 2) Input file suffix:                          01
 \end_layout
 
 \begin_layout LyX-Code
- 3) Pedigree datafile:   (Mega2 ped)        pedin.01
+ 3) Locus file:       (Mega2 datain.)[required] _
 \end_layout
 
 \begin_layout LyX-Code
- 4) Map datafile:        (Mega2 map)        map.01
+ 4) Pedigree file:    (Mega2 pedin.) [required] _
 \end_layout
 
 \begin_layout LyX-Code
- 5) Omit datafile:       {Mega2 omit}       _
+ 5) Map file:         (Mega2 map.)   [required] _
 \end_layout
 
 \begin_layout LyX-Code
- 6) Frequency datafile:  {annotated fmt}    _
+ 6) Omit file:        (Mega2 omit.)  [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 7) Penetrance datafile: {annotated fmt}    _
+ 7) Frequency file:   (Mega2 freq.)  [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 8) Directory for writing output:           [ Current directory ]
+ 8) Penetrance file:  (Mega2 pen.)   [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 9) Simulate genotyping errors:             [no ]
+ 9) Output Directory:                           [ Current directory ]
 \end_layout
 
 \begin_layout LyX-Code
-10) Include all pedigrees whether typed or not (based on fully_typed genotypes)
+10) Simulate genotyping errors:                 [ no ]
 \end_layout
 
 \begin_layout LyX-Code
-11) Warn if allele frequency error measure exceeds: No limit
+11) Include all pedigrees whether typed or not 
 \end_layout
 
 \begin_layout LyX-Code
-12) Switch to PLINK input menu (binary format)
+12) Maximum number of alleles per marker:       2 alleles
 \end_layout
 
 \begin_layout LyX-Code
-13) Switch to PLINK input menu (ped format)
-\end_layout
-
-\begin_layout LyX-Code
-14) Genotype compression:                   2 bits
-\end_layout
-
-\begin_layout LyX-Code
-Select from options 0-14 > 
+Select from options 0-12 >
 \end_layout
 
 \begin_layout Standard
 This input menu displays the names of these three input files in the appropriate
- items (e.g., items 2, 3, and 4).
+ items (e.g., items 3, 4, and 5).
  When you are done making all your choices within this menu, to proceed
  to the next menu, choose item 0 
 \begin_inset Quotes eld
@@ -1184,8 +1215,10 @@ Done with this menu - please proceed
 \end_layout
 
 \begin_layout Standard
-Note the options 12 and 13 allow one to instruct Mega2 to read PLINK format
- input files, either in binary format, or in PED format.
+Note the options 1 allows one to instruct Mega2 to read PLINK format input
+ files, either in binary format, or in PED format and Variant Call Format
+ (VCF) input files in either binary (.bcf), compressed (.vcf.gz), or text (.vcf)
+ format.
 \end_layout
 
 \begin_layout Standard
@@ -1335,6 +1368,13 @@ height "1pt"
 
 \begin_layout Section
 Citing Mega2
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Citing-Mega2"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1364,12 +1404,12 @@ Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.6.1 should be: 
+ For example, the web site citation for version 4.6.2 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2013) Mega2 (Version 4.6.1).
+ Weeks DE (2013) Mega2 (Version 4.6.2).
  
 \begin_inset Flex URL
 status collapsed
@@ -1386,6 +1426,13 @@ http://watson.hgen.pitt.edu
 
 \begin_layout Section
 Support, bug reports, and feedback
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Support-bugreports-feedback"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -1446,6 +1493,13 @@ Please send your bug reports and feedback to: Daniel E.
 
 \begin_layout Section
 Contact information
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Contact-information"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -1531,7 +1585,7 @@ name "sec:Installation"
 \begin_layout Standard
 \noindent
 \align center
-INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.6.1 AND HIGHER 
+INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.6.2 AND HIGHER 
 \end_layout
 
 \begin_layout Standard
@@ -1570,7 +1624,7 @@ http://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.6.1 
+The latest version is 4.6.2 
 \end_layout
 
 \begin_layout Enumerate
@@ -1579,7 +1633,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.6.1_src.tar.gz
+mega2_v4.6.2_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -1590,7 +1644,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.6.1_src.tar.gz 
+gunzip mega2_v4.6.2_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -1600,7 +1654,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.6.1_src.tar 
+tar xvf mega2_v4.6.2_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -1608,7 +1662,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.6.1_src.tar.gz 
+tar xzvf mega2_v4.6.2_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -1621,7 +1675,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.6.1_src
+mega2_v4.6.2_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -1800,7 +1854,7 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.6.1_src.tar.gz bundle following
+If you downloaded and unpacked the mega2_v4.6.2_src.tar.gz bundle following
  the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1808,7 +1862,7 @@ reference "sub:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.6.1_src containing the following
+), you should see a directory named mega2_v4.6.2_src containing the following
  directories (in bold) or files listed in alphabetical order:
 \end_layout
 
@@ -2337,7 +2391,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.6.1_src in above step), type the command:
+ mega2_v4.6.2_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2388,7 +2442,7 @@ name "sub:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.6.1_src.tar.gz package also includes a source code folder "srcdir"
+The mega2_v4.6.2_src.tar.gz package also includes a source code folder "srcdir"
  containing C source files, a Makefile, and several OS-specific Makedefs
  files that define compilation flags that govern locations of standard C
  libraries, and other OS-specific behavior.
@@ -2403,7 +2457,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.6.1_src folder, type 
+From within the mega2_v4.6.2_src folder, type 
 \end_layout
 
 \begin_deeper
@@ -2684,7 +2738,7 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.6.1_src folder contains
+The sub-folder called mega2_html/ within the mega2_v4.6.2_src folder contains
  documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
@@ -3280,7 +3334,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.6.1_src.tar.gz.
+The Mega2 distribution package is named mega2_v4.6.2_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -3291,7 +3345,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.6.1_src.tar
+mega2_v4.6.2_src.tar
 \end_layout
 
 \end_deeper
@@ -3313,7 +3367,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.6.1_src.tar.tar
+mega2_v4.6.2_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -3321,7 +3375,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.6.1_src.tar.gz
+mega2_v4.6.2_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -3329,7 +3383,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.6.1_src.tar.tar mega2_v4.6.1_src.tar.gz
+mv mega2_v4.6.2_src.tar.tar mega2_v4.6.2_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -3347,6 +3401,13 @@ reference "sub:Download-Instructions"
 \end_deeper
 \begin_layout Subsection
 Windows Mingw installation
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Windows-Mingw-installation"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -3506,6 +3567,13 @@ reference "sec:List-of-third-party"
 
 \begin_layout Subsection
 Native Windows installation
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Native-Windows-installation"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -3656,7 +3724,14 @@ reference "sec:List-of-third-party"
 \end_layout
 
 \begin_layout Section
-Input files and their formats 
+Input files and their formats
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Input-file-formats"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3828,6 +3903,13 @@ reference "sec:Converting-to-annotated-format"
 
 \begin_layout Subsubsection
 Annotated names file
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Annotated-names-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4049,6 +4131,13 @@ M M3
 
 \begin_layout Subsubsection
 Annotated pedigree file
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Annotated-pedigree-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5499,6 +5588,13 @@ reference "sub:omit-file"
 
 \begin_layout Subsubsection
 Annotated frequency file
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Annotated-frequency-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5591,6 +5687,13 @@ For marker loci whose allele frequencies are not listed, Mega2 estimates
 
 \begin_layout Subsubsection
 Annotated penetrance file
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Annotated-penetrance-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5754,6 +5857,13 @@ To instruct Mega2 to read PLINK format files, choose options 12 or 13 in
 
 \begin_layout Subsubsection
 PLINK PED input format
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:PLINK-PED-input"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5774,6 +5884,13 @@ To instruct Mega2 to read PLINK format PED files, choose option 13 in the
 
 \begin_layout Paragraph
 Pedigree file (*.ped)
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Pedigree-file-(*.ped)"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6074,6 +6191,13 @@ The trait column is not present.
 
 \begin_layout Paragraph
 Map file (*.map)
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Map-file-(*.map)"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6232,6 +6356,13 @@ Pedigree file
 
 \begin_layout Paragraph
 Alternated Phenotype file (header line required)
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Alternated-Phenotype-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6532,6 +6663,13 @@ To instruct Mega2 to read binary PLINK format files, choose option 12 in
 
 \begin_layout Paragraph
 Binary PED file (*.bed)
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Binary-PED-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6542,6 +6680,13 @@ This file is described in detail in the PLINK manual.
 
 \begin_layout Paragraph
 Family file (*.fam)
+\begin_inset CommandInset label
+LatexCommand label
+name "par:PLINK-family-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6855,6 +7000,13 @@ The trait column is not present.
 
 \begin_layout Paragraph
 Binary Map file (*.bim)
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Binary-Map-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7215,10 +7367,24 @@ Linkage
 \end_inset
 
  input file formats
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Linkage-file-formats"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
 Locus file
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Locus-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7362,6 +7528,13 @@ Each co-dominant marker name must have an exact match in the corresponding
 
 \begin_layout Subsubsection
 Pedigree file
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Pedigree-file"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7744,7 +7917,7 @@ Id:
 \series bold
 NOTE
 \series default
-: Mega2 checks if your unique ids are unique over the entire set of individuals
+: Mega2 checks if your unique IDs are unique over the entire set of individuals
  inside the pedigree file.
  
 \end_layout
@@ -8041,7 +8214,7 @@ Select from options 0 - 3 >
 
 \begin_layout Standard
 The current choice is indicated with an asterisk.
- Option 2 can be either selecting unique ids, if these are present as the
+ Option 2 can be either selecting unique IDs, if these are present as the
  
 \begin_inset Quotes eld
 \end_inset
@@ -8050,7 +8223,7 @@ The current choice is indicated with an asterisk.
 \begin_inset Quotes erd
 \end_inset
 
- field in the input pedigree file, or creation of unique ids by Mega2 if
+ field in the input pedigree file, or creation of unique IDs by Mega2 if
  they are absent.
  
 \begin_inset Newline newline
@@ -8207,7 +8380,7 @@ Mega2 will automatically reconnect the loops of a linkage pedigree file
  For example, this is done when generating output files in MENDEL, SAGE,
  and SOLAR formats.
  The reconnection will, unfortunately, result in a renumbering of person
- ids.
+ IDs.
 \end_layout
 
 \begin_layout Standard
@@ -8221,7 +8394,7 @@ Mega2 displays each pair of pedigree records that were re-connected, as
 \end_layout
 
 \begin_layout Subsubsection
-Map file
+Simple Mega2 Map file
 \end_layout
 
 \begin_layout Standard
@@ -8306,6 +8479,10 @@ NOTE: Any marker that is in the locus file must be given a map position
  files created by MEGA2.
  You may have more loci in the map file than appear in the locus file.
  While you will be warned about this, it does not pose any difficulties.
+\end_layout
+
+\begin_layout Standard
+NOTE: The Simple Mega2 Map file is only available for linkage input.
 \end_layout
 
 \begin_layout Standard
@@ -8673,6 +8850,746 @@ In the annotated file format, providing a frequency file will cause the
  
 \end_layout
 
+\begin_layout Subsection
+Variant Call Format input file formats
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:VCF-file-formats"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Variant Call Format (VCF) was designed to store information about genetic
+ variants (See: 
+\begin_inset CommandInset href
+LatexCommand href
+name "Wikipedia"
+target "http://en.wikipedia.org/wiki/Variant_Call_Format"
+
+\end_inset
+
+).
+ Mega2 currently uses source code from the popular VCFtools program (See:
+ 
+\begin_inset CommandInset href
+LatexCommand href
+name "VCFtools"
+target "http://vcftools.sourceforge.net"
+
+\end_inset
+
+) as its underlying engine for parsing VCF files.
+ VCFtools (and so MEGA2) currently supports VCF format v4.0 and VCF format
+ v4.1 (See: 
+\begin_inset CommandInset href
+LatexCommand href
+name "VCF Specification"
+target "http://vcftools.sourceforge.net/specs.html"
+
+\end_inset
+
+), and BCF format v2.1 (See: 
+\begin_inset CommandInset href
+LatexCommand href
+name "BCF (Binary VCF) version 2"
+target "http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2"
+
+\end_inset
+
+).
+ Mega2 supports only the 'filtering' options associated with the binary
+ executable 'vcftools' file (See: 
+\begin_inset CommandInset href
+LatexCommand href
+name "VCFtools Options"
+target "http://vcftools.sourceforge.net/options.html"
+
+\end_inset
+
+).
+ In particular, the options supported are: the Site Filtering Options, the
+ Individual Filters, and the Genotype Filters.
+ These options are specified to Mega2 as they would be to the 'vcftools'
+ program in the form of a command line option string.
+ In Mega2 interactive mode (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Common-Variant-Call-Format-menu-items"
+
+\end_inset
+
+) Mega2 allows the user to specify the filtering options via the input menu,
+ and in batch file mode the VCF_Args batch file item is used (See: 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:VCF_Args"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+VCF input format uses a subset of the PLINK parameters (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:VCF-Menu-item-PLINK-parameters"
+
+\end_inset
+
+) to allow the user to specify phenotype information.
+ With these the user can: specify a name for the pedigree file trait column
+ (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-Pedigree-File"
+
+\end_inset
+
+), indicate the trait to be affection status or quantitative, specify the
+ missing value for quantitative traits, and specify how the affection status
+ is coded.
+\end_layout
+
+\begin_layout Standard
+Mega2 and the 'vcftools' program will accept variant call input files in
+ one of three formats: text only, gzipped compressed text only, or binary
+ file.
+ The variant call file format is specified using the appropriate menu in
+ Mega2 (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Common-Variant-Call-Format-menu-items"
+
+\end_inset
+
+) or using the batch file item Input_Format_Type (See: 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:Input_Format_Type"
+
+\end_inset
+
+) set to the values of: 5 for a .bcf (binary) file, 6 for a .vcf.gz (compressed
+ text) file, and 7 for a .vcf (text) file.
+\end_layout
+
+\begin_layout Standard
+\noindent
+In addition to variant information, Mega2 needs additional information (i.e.,
+ about family structure, genetic map positions, etc.) depending on the output
+ analysis chosen (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-analysis-menu"
+
+\end_inset
+
+).
+ The VCF file format allows for the possibility of user-defined fields,
+ which could in theory specify this additional information within the VCF
+ file.
+ However, in many instances there is no consistent method for representing
+ this information, and so Mega2 instead takes the approach of specifying
+ additional information in separate files, which is consistent with other
+ input file formats.
+ As the VCF file standard evolves, we will revisit this decision.
+ For example, the map position information in the variant file does not
+ include genetic position information.
+ Genetic position information can be easily input by providing a Mega2-format
+ map file.
+\end_layout
+
+\begin_layout Standard
+When using VCF-format input files, one needs to provide several files, which
+ are described below.
+ At a minimum, two files are required: 1) the VCF file containing the marker
+ genotypes, and 2) the PLINK-format famly file containing the family structure
+ information.
+ Optional files include a phenotype file, a map file, an omit file, an allele
+ frequency file, and a penetrance file.
+ The phenotype file may include a SAMPLEID column specifying the key mapping
+ individuals in the family file to the samples in the VCF file.
+\end_layout
+
+\begin_layout Subsubsection
+Variant Call File
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:VCF-File"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Variant Call File (See: 
+\begin_inset CommandInset href
+LatexCommand href
+name "VCF Specification"
+target "http://vcftools.sourceforge.net/specs.html"
+
+\end_inset
+
+) is divided into three sections.
+ The first section contains the meta information (lines from the beginning
+ of the file that begin with the double hash mark '##').
+ The second section contains only one line which is the header line (this
+ line follows the last meta information line and begins with a single hash
+ mark '#').
+ The third section follows the header line, and contains all of the variant
+ call information.
+ The header line contains a number of required fields, followed by sample
+ identifiers (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-Phenotype-File"
+
+\end_inset
+
+ for rules on mapping individual identifiers to sample identifiers).
+ In interactive mode the VCF file is specified through the 
+\begin_inset Quotes eld
+\end_inset
+
+Variant file
+\begin_inset Quotes erd
+\end_inset
+
+ menu item.
+ In batch file input the VCF file is specified using the Input_Aux_File
+ batch file item (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:Input_Aux_File"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+A simple example VCF file is as follows:
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+##fileformat=VCFv4.0
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+##fileDate=20131205
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+##FILTER=<ID=PASS,Description="Passed variant FILTERs">
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT 
+ 1_3     1_4     1_5     1_6     1_7
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+5       2       M1      A       T       .
+       PASS    .
+       GT      1/1     0/1     1/1     1/1     1/1
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+5       4       M3      G       C       .
+       PASS    .
+       GT      0/1     0/1     0/1     0/1     0/1
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+5       6       M2      T       A       .
+       PASS    .
+       GT      0/1     0/1     0/1     0/0     0/1
+\end_layout
+
+\begin_layout Standard
+The file continues off of right of the page with the following header and
+ marker data.
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+1_8     1_9     1_10    1_11    2_3     2_4     2_5     2_6     2_7    
+ 2_8     2_9     2_10
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+1/1     1/1     1/1     1/1     0/0     0/0     0/0     1/1     0/0    
+ 0/1     0/0     0/0
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+0/0     0/0     0/0     0/1     0/1     0/1     0/1     0/1     0/1    
+ 0/1     0/1     0/1
+\end_layout
+
+\begin_layout LyX-Code
+
+\size footnotesize
+0/0     0/0     0/0     0/1     0/1     0/1     0/1     0/1     0/1    
+ 0/1     0/1     0/1
+\end_layout
+
+\begin_layout Standard
+This simple example VCF file specifies three biallelic markers (M1, M3,
+ and M2).
+ It should be noted that Mega2 is not restricted to biallelic markers.
+ The markers and their information is as follows:
+\end_layout
+
+\begin_layout Description
+M1 chromosome: 5; physical position: 2; reference allele: 1; alternate allele:
+ 2
+\end_layout
+
+\begin_layout Description
+M3 chromosome: 5; physical position: 4; reference allele: 2; alternate allele:
+ 1
+\end_layout
+
+\begin_layout Description
+M2 chromosome: 5; physical position: 6; reference allele: 1; alternate allele:
+ 2
+\end_layout
+
+\begin_layout Standard
+This VCF file contains seventeen (17) sample IDs (1_3, 1_4, ..., 2_10).
+ If the sample IDs do not correspond to the person IDs in the family  file,
+ they can be mapped to individual IDs using a SAMPLEID column in the phenotype
+ file (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-Phenotype-File"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+The map information from the VCF File is parsed and made available by Mega2.
+ In interactive mode the map is selectable as 'VCF.p'.
+ In batch file mode this map is specified by setting the value of Value_Base_Pai
+r_Position_Index (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:Value_Base_Pair_Position_Index"
+
+\end_inset
+
+) equal to 0 if no Mega2 Annotated Map File is specified (See: 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Annotated-map-file"
+
+\end_inset
+
+), or to one greater than the number of maps available in the Mega2 Annotated
+ Map File.
+ The map file (VCF.p) that is derived from the VCF file will contain all
+ of the markers that have passed the vcftools filtering criteria.
+ The Mega2 Annotated Map File may contain the same number of markers or
+ less in which case it will provide additional filtering.
+ That is, markers will be dropped if they do not appear in a map that is
+ selected from a Mega2 Annotated Map File.
+\end_layout
+
+\begin_layout Standard
+In many instances a Mega2 analysis option may require a genetic map.
+ When using a VCF file, a genetic map can be specified using a optional
+ Mega2 Annotated Map File (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Annotated-map-file"
+
+\end_inset
+
+).
+ However, if an analysis option requires a genetic map and a Mega2 Annotated
+ Map File is not specified or if a map is selected that contains no genetic
+ maps, then a dummy Sex Average genetic map (whose values are all 0) will
+ be used for the required genetic map.
+ For example, this would allow one to convert from VCF input format to PLINK
+ output format (with a dummy genetic map) when only physical map positions
+ are known.
+ 
+\end_layout
+
+\begin_layout Standard
+The marker associated with a line in the VCF file can be specified as the
+ string associated with the 'ID' field of the VCF file (as in the above
+ example), or as the value associated with a key in the 'INFO' field.
+ This key can be specified in interactive mode, or in batch mode through
+ the batch file identifier VCF_Marker_Alternative_INFO_Key.
+ For a full description of how this is done please see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:VCF_Marker_Alternative_INFO_Key"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Converting from a VCF to a BCF file
+\end_layout
+
+\begin_layout Standard
+It is possible to use the standalone VCFtools program to convert from a
+ VCF file to a BCF file using the following command:
+\end_layout
+
+\begin_layout LyX-Code
+$ vcftools --vcf my_study.vcf --recode-bcf-to-stream > my_study.bcf
+\end_layout
+
+\begin_layout Standard
+For other uses of VCFtools and its options please see 
+\begin_inset CommandInset href
+LatexCommand href
+name "vcftools: Usage and Options2"
+target "http://vcftools.sourceforge.net/options.html"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+PLINK family File
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:VCF-Pedigree-File"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A PLINK family file is used to specify pedigree information.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:PLINK-family-file"
+
+\end_inset
+
+ for a PLINK family file associated with the simple example given here.
+ In a family base study, it is possible (if not likely) that some of the
+ individuals found in the family file will not have been genotyped, and
+ therefore will have no corresponding samples mapped to them in the VCF
+ file.
+ In this case, Mega2 will assign these individuals with the missing genotype,
+ and included them in the list of individuals available for processing.
+ If on the other hand, an individual in the VCF file is excluded from the
+ family file, then they are not considered for processing by Mega2.
+ In this manner the family file drives individual selection.
+\end_layout
+
+\begin_layout Subsubsection
+Augmented PLINK Phenotype File
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:VCF-Phenotype-File"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The PLINK Phenotype file (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:Alternated-Phenotype-file"
+
+\end_inset
+
+) lists the family identifier (FID), the individual identifier (IID), and
+ any traits that can be considered.
+ In addition, the Phenotype file is used to map the sample identifiers from
+ the header line in a VCF file (See: 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-File"
+
+\end_inset
+
+) to the family and individual identifiers.
+ It is possible for these sample identifiers to correspond to individuals,
+ but this is generally not the case.
+ The sample identifiers correspond to individuals if they have the same
+ string values associated with individuals.
+ For family based data analysis a sample identifier must be associated with
+ an individual and family information.
+ To effect this, the approach that was chosen was to allow an additional
+ column (SAMPLEID) to be specified in the PLINK format Input_Phenotype_File
+ (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:Alternated-Phenotype-file"
+
+\end_inset
+
+) that would allow mapping of sample identifier to the individual (IID)
+ and family (FID).
+\end_layout
+
+\begin_layout Standard
+An example of a phenotype file corresponding to the simple example VCF file
+ (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-File"
+
+\end_inset
+
+) could look like this:
+\end_layout
+
+\begin_layout LyX-Code
+FID  IID  TRAIT SAMPLEID
+\end_layout
+
+\begin_layout LyX-Code
+1    1    2     NA
+\end_layout
+
+\begin_layout LyX-Code
+1    2   NA     NA
+\end_layout
+
+\begin_layout LyX-Code
+1    3   NA     1_3
+\end_layout
+
+\begin_layout LyX-Code
+1    4    2     1_4
+\end_layout
+
+\begin_layout LyX-Code
+1    5    2     1_5
+\end_layout
+
+\begin_layout LyX-Code
+1    6   NA     1_6
+\end_layout
+
+\begin_layout LyX-Code
+1    7    2     1_7
+\end_layout
+
+\begin_layout LyX-Code
+1    8    2     1_8
+\end_layout
+
+\begin_layout LyX-Code
+1    9    0     1_9
+\end_layout
+
+\begin_layout LyX-Code
+1   10    2     1_10
+\end_layout
+
+\begin_layout LyX-Code
+1   11    2     1_11
+\end_layout
+
+\begin_layout LyX-Code
+2    1   NA     NA
+\end_layout
+
+\begin_layout LyX-Code
+2    2    2     NA
+\end_layout
+
+\begin_layout LyX-Code
+2    3   NA     2_3
+\end_layout
+
+\begin_layout LyX-Code
+2    4    2     2_4
+\end_layout
+
+\begin_layout LyX-Code
+2    5    2     2_5
+\end_layout
+
+\begin_layout LyX-Code
+2    6   NA     2_6
+\end_layout
+
+\begin_layout LyX-Code
+2    7    2     2_7
+\end_layout
+
+\begin_layout LyX-Code
+2    8    2     2_8
+\end_layout
+
+\begin_layout LyX-Code
+2    9    2     2_9
+\end_layout
+
+\begin_layout LyX-Code
+2   10    2     2_10
+\end_layout
+
+\begin_layout Standard
+Note that four individuals (FID IID 1 1; 1 2; 2 1; 2 2) do not have sample
+ information in the VCF file in the example above.
+\end_layout
+
+\begin_layout Subsubsection
+Map File (Optional)
+\end_layout
+
+\begin_layout Standard
+A Mega2 Annotated Map File (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Annotated-map-file"
+
+\end_inset
+
+) is not required, but may be specified.
+ The maps in the map file may be used in addition to the map found in the
+ VCF file (VCF.p).
+ When used with a VCF file, the Mega2 Annotated Map file may not contain
+ a map with the name VCF.p.
+\end_layout
+
+\begin_layout Subsubsection
+Omit File (Optional)
+\end_layout
+
+\begin_layout Standard
+An omit file may be specified.
+ Please see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:Input_Omit_File"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Frequency File (Optional)
+\end_layout
+
+\begin_layout Standard
+An annotated frequency file may be specified.
+ Please see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Annotated-frequency-file"
+
+\end_inset
+
+.
+ The following file could be used with the example VCF file shown in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-File"
+
+\end_inset
+
+.
+ Note that corresponding REF and ALT alleles are used.
+\end_layout
+
+\begin_layout LyX-Code
+Name Allele Frequency
+\end_layout
+
+\begin_layout LyX-Code
+A1 1 0.990000
+\end_layout
+
+\begin_layout LyX-Code
+A1 2 0.010000
+\end_layout
+
+\begin_layout LyX-Code
+M1 A 0.500000
+\end_layout
+
+\begin_layout LyX-Code
+M1 T 0.500000
+\end_layout
+
+\begin_layout LyX-Code
+M2 A 0.500000
+\end_layout
+
+\begin_layout LyX-Code
+M2 T 0.500000
+\end_layout
+
+\begin_layout LyX-Code
+M3 G 0.500000
+\end_layout
+
+\begin_layout LyX-Code
+M3 C 0.500000
+\end_layout
+
+\begin_layout Subsubsection
+Penetrance File (Optional)
+\end_layout
+
+\begin_layout Standard
+An annotated penetrance file may be specified.
+ Please see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Annotated-penetrance-file"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
 Genetic Map Interpolator (GMI)
 \begin_inset CommandInset label
@@ -8924,7 +9841,7 @@ ID:
 \series bold
 NOTE
 \series default
-: Mega2 checks if your unique ids are unique over the entire set of individuals
+: Mega2 checks if your unique IDs are unique over the entire set of individuals
  inside the pedigree file.
  If not, Mega2 gives you the option to generate unique IDs by prepending
  the pedigree name to the ID.
@@ -8975,7 +9892,7 @@ PerID
 \end_layout
 
 \begin_layout Standard
-The linkage pedigree and person ids (1st and second columns respectively)
+The linkage pedigree and person IDs (1st and second columns respectively)
  are stored as 
 \begin_inset Quotes eld
 \end_inset
@@ -8992,7 +9909,7 @@ LinkPerID
 \begin_inset Quotes erd
 \end_inset
 
- respectively, and these can be used as output individual and pedigree ids
+ respectively, and these can be used as output individual and pedigree IDs
  if you select menu items 1 from the output identifier selection menus described
  below.
 \end_layout
@@ -9054,11 +9971,18 @@ The converter checks the map function type and male or female-specific maps
 
 \begin_layout Section
 The input menu
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:The-input-menu"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-When first started up, Mega2 will present an input menu for entering input
- file names:
+When you first started up Mega2, it will present a menu for entering input
+ file names in Mega2 native format:
 \end_layout
 
 \begin_layout LyX-Code
@@ -9066,7 +9990,7 @@ When first started up, Mega2 will present an input menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.1 Traditional input menu:
+              Mega2 4.6.2 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -9074,77 +9998,82 @@ When first started up, Mega2 will present an input menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
- 0) Done with this menu - please proceed
+0) Done with this menu - please proceed
 \end_layout
 
 \begin_layout LyX-Code
- 1) Input file extension:                   01
+ 1) Select input file format:                   Mega2 format with header
 \end_layout
 
 \begin_layout LyX-Code
- 2) Locus datafile:      (Mega2 loc)        _
+ 2) Input file suffix:                          01
 \end_layout
 
 \begin_layout LyX-Code
- 3) Pedigree datafile:   (Mega2 ped)        _
+ 3) Locus file:       (Mega2 datain.)[required] _
 \end_layout
 
 \begin_layout LyX-Code
- 4) Map datafile:        (Mega2 map)        _
+ 4) Pedigree file:    (Mega2 pedin.) [required] _
 \end_layout
 
 \begin_layout LyX-Code
- 5) Omit datafile:       {Mega2 omit}       _
+ 5) Map file:         (Mega2 map.)   [required] _
 \end_layout
 
 \begin_layout LyX-Code
- 6) Frequency datafile:  {annotated fmt}    _
+ 6) Omit file:        (Mega2 omit.)  [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 7) Penetrance datafile: {annotated fmt}    _
+ 7) Frequency file:   (Mega2 freq.)  [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 8) Directory for writing output:           [ Current directory ]
+ 8) Penetrance file:  (Mega2 pen.)   [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 9) Simulate genotyping errors:             [no ]
+ 9) Output Directory:                           [ Current directory ]
 \end_layout
 
 \begin_layout LyX-Code
-10) Include all pedigrees whether typed or not (based on fully_typed genotypes)
+10) Simulate genotyping errors:                 [ no ]
 \end_layout
 
 \begin_layout LyX-Code
-11) Warn if allele frequency error measure exceeds: No limit
+11) Include all pedigrees whether typed or not 
 \end_layout
 
 \begin_layout LyX-Code
-12) Switch to PLINK input menu (binary format)
+12) Maximum number of alleles per marker:       2 alleles
 \end_layout
 
 \begin_layout LyX-Code
-13) Switch to PLINK input menu (ped format)
-\end_layout
-
-\begin_layout LyX-Code
-14) Genotype compression:                   2 bits
-\end_layout
-
-\begin_layout LyX-Code
-Select from options 0-14 > 
+Select from options 0-12 >
 \end_layout
 
 \begin_layout Standard
+Each line that selects an input file indicates the type of file, the format
+ of the file (here Mega2), the prefix (when prepended to the suffix) [ or
+ the suffix (when appended to a stem)] and whether the file is required
+ or optional.
+ Whether the file type is embedded in the suffix or prefix depends on the
+ convention used for the particular input class.
+ Additional menu lines are used to set operational parameters.
+\end_layout
 
-\emph on
-This menu is almost identical in content as the traditional Mega2 start
- menu.
- But before we discuss the options, we will show the two related menus that
- are brought up by selecting menu item 12 and item 13.
- For PLINK binary PED format input, we select item 12 (below):
+\begin_layout Standard
+\begin_inset Quotes eld
+\end_inset
+
+Line 1
+\begin_inset Quotes erd
+\end_inset
+
+ (Select input file format) introduces a special menu that lets you select
+ a specific input type from Linkage, Mega2, PLINK (choosing among various
+ subtypes) and Variant Call Format (VCF) (choosing among various subtypes).
 \end_layout
 
 \begin_layout LyX-Code
@@ -9152,7 +10081,7 @@ This menu is almost identical in content as the traditional Mega2 start
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.1 PLINK input menu:
+Mega2 4.6.2 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -9160,68 +10089,132 @@ This menu is almost identical in content as the traditional Mega2 start
 \end_layout
 
 \begin_layout LyX-Code
- 0) Done with this menu - please proceed
+0) Done with this menu - please proceed
 \end_layout
 
 \begin_layout LyX-Code
- 1) Enter PLINK parameters:                 --bfile --missing-pheno -9 --trait
+*1) Mega2 format with header
+\end_layout
+
+\begin_layout LyX-Code
+ 2) Linkage format
+\end_layout
+
+\begin_layout LyX-Code
+ 3) Linkage with Mega2 names file
+\end_layout
+
+\begin_layout LyX-Code
+ 4) PLINK binary PED format (bed)
+\end_layout
+
+\begin_layout LyX-Code
+ 5) PLINK PED format (ped)
+\end_layout
+
+\begin_layout LyX-Code
+ 6) BCF format (bcf)
+\end_layout
+
+\begin_layout LyX-Code
+ 7) VCF compressed format (vcf.gz)
+\end_layout
+
+\begin_layout LyX-Code
+ 8) VCF format (vcf) 
+\end_layout
+
+\begin_layout LyX-Code
+Select from options 0-8 >
+\end_layout
+
+\begin_layout Standard
+For example, selecting 
+\begin_inset Quotes eld
+\end_inset
+
+Line 6
+\begin_inset Quotes erd
+\end_inset
+
+ (BCF format (bcf)) replaces the old input menu with a new menu:
+\end_layout
+
+\begin_layout LyX-Code
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+              Mega2 4.6.2 input menu:
+\end_layout
+
+\begin_layout LyX-Code
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+0) Done with this menu - please proceed
+\end_layout
+
+\begin_layout LyX-Code
+ 1) Select input file format:                 BCF format (bcf)
+\end_layout
+
+\begin_layout LyX-Code
+ 2) Enter VCF parameters:                     --remove-indels
+\end_layout
+
+\begin_layout LyX-Code
+ 3) Enter PLINK parameters:                    --missing-phenotype -9 --trait
  default
 \end_layout
 
 \begin_layout LyX-Code
- 2) Input file stem:                        plink
+ 4) Input file stem:                          study
 \end_layout
 
 \begin_layout LyX-Code
- 3) Pedigree datafile:   (PLINK fam)        _
+ 5) Variant file:     (binary .bcf)[required] _
 \end_layout
 
 \begin_layout LyX-Code
- 4) Map datafile:        (PLINK bim)        _
+ 6) Pedigree file:    (PLINK .fam) [required] _
 \end_layout
 
 \begin_layout LyX-Code
- 5) Binary datafile:     (PLINK bed)        _
+ 7) Phenotype file:   (PLINK .phe) [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 6) Phenotype datafile:  {PLINK phe}        _
+ 8) Map file:         (Mega2 .map) [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 7) Omit datafile:       {Mega2 omit}       _
+ 9) Omit file:        (Mega2 .omit)[optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 8) Frequency datafile:  {annotated fmt}    _
+10) Frequency file:   (Mega2 .freq)[optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 9) Penetrance datafile: {annotated fmt}    _
+11) Penetrance file:  (Mega2 .pen) [optional] _
 \end_layout
 
 \begin_layout LyX-Code
-10) Directory for writing output:           [ Current directory ]
+12) Output Directory:                         [ Current directory ]
 \end_layout
 
 \begin_layout LyX-Code
-11) Simulate genotyping errors:             [no ]
+13) Simulate genotyping errors:               [ no ]
 \end_layout
 
 \begin_layout LyX-Code
-12) Include all pedigrees whether typed or not (based on fully_typed genotypes)
+14) Include all pedigrees whether typed or not
 \end_layout
 
 \begin_layout LyX-Code
-13) Warn if allele frequency error measure exceeds: No limit
-\end_layout
-
-\begin_layout LyX-Code
-14) Switch to standard input menu
-\end_layout
-
-\begin_layout LyX-Code
-15) Switch to PLINK input menu (ped format)
+15) Maximum number of alleles per marker:     2 alleles
 \end_layout
 
 \begin_layout LyX-Code
@@ -9229,98 +10222,231 @@ Select from options 0-15 >
 \end_layout
 
 \begin_layout Standard
-
-\emph on
-For simple PLINK non-binary PED format input, we select item 13 from the
- start menu (or 15 from the above menu).
- 
-\end_layout
-
-\begin_layout LyX-Code
-==========================================================
-\end_layout
-
-\begin_layout LyX-Code
-              Mega2 4.6.1 PLINK input menu:
-\end_layout
-
-\begin_layout LyX-Code
-==========================================================
-\end_layout
-
-\begin_layout LyX-Code
- 0) Done with this menu - please proceed
-\end_layout
-
-\begin_layout LyX-Code
- 1) Enter PLINK parameters:                 --file --missing-pheno -9 --trait
- default
-\end_layout
-
-\begin_layout LyX-Code
- 2) Input file stem:                        plink
-\end_layout
-
-\begin_layout LyX-Code
- 3) Pedigree datafile:   (PLINK ped)        _
-\end_layout
-
-\begin_layout LyX-Code
- 4) Map datafile:        (PLINK map)        _
-\end_layout
-
-\begin_layout LyX-Code
- 5) Phenotype datafile:  {PLINK phe}        _
-\end_layout
-
-\begin_layout LyX-Code
- 6) Omit datafile:       {Mega2 omit}       _
-\end_layout
-
-\begin_layout LyX-Code
- 7) Frequency datafile:  {annotated fmt}    _
-\end_layout
-
-\begin_layout LyX-Code
- 8) Penetrance datafile: {annotated fmt}    _
-\end_layout
-
-\begin_layout LyX-Code
- 9) Directory for writing output:           [ Current directory ]
-\end_layout
-
-\begin_layout LyX-Code
-10) Simulate genotyping errors:             [no ]
-\end_layout
-
-\begin_layout LyX-Code
-11) Include all pedigrees whether typed or not (based on fully_typed genotypes)
-\end_layout
-
-\begin_layout LyX-Code
-12) Warn if allele frequency error measure exceeds: No limit
-\end_layout
-
-\begin_layout LyX-Code
-13) Switch to standard input menu
-\end_layout
-
-\begin_layout LyX-Code
-14) Switch to PLINK input menu (binary format)
-\end_layout
-
-\begin_layout LyX-Code
-Select from options 0-14 >
+Here you see that some (actually one) of the files are intrinsic Variant
+ Call Format files (.bcf), but other files are in PLINK format, and other
+ files are in Mega2 native format.
+ The reason for this varied assortment of file formats will be explained
+ later.
+ Below, we will discuss the input-specific files first, then the other menu
+ items.
 \end_layout
 
 \begin_layout Standard
-There are many items that are same on all three menus but the items that
- specify the input files depend on the type of input.
- We will discuss the input-specific files first, then the common menu items.
+Note: Mega2, by default, starts with the 
+\begin_inset Quotes eld
+\end_inset
+
+Mega2 format with header
+\begin_inset Quotes erd
+\end_inset
+
+ input type.
+ It is possible using the flags in the table below to have Mega2 start with
+ a different input type.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mega2 Argument
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Initial Input File Type
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--mega2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mega2 format with header
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--linkage
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linkage format
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--extend_linkage
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linkage with Mega2 names file
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--bed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PLINK binary PED format (bed)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--ped
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PLINK PED format (ped)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--bcf
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BCF format (vcf)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--vcf.gz
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+VCF compresed format (vcf.gz)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--vcf
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+VCF format (vcf)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note: Batch files created with Mega2 version 4.6.1 or earlier will not have
+ an input type.
+ In this case, Mega2 will look at the inputs and try to decide what the
+ input type was choosing from the Mega2, Linkage, and PLINK types.
 \end_layout
 
 \begin_layout Subsection
-Input formats: Mega2 annotated and linkage
+Input formats: Mega2 annotated and Linkage
 \end_layout
 
 \begin_layout Paragraph
@@ -9333,7 +10459,7 @@ The first item is a file extension.
  the current directory and retrieve files named datain.ext (or names.ext),
  pedin.ext, map.ext, omit.ext, frequency.ext and penetrance.ext, if they exist.
  So it is a good idea to use the default file naming schemes, as then many
- items of this input menu are automatically populated once the correct extension
+ items of the input menu are automatically populated once the correct extension
  has been chosen.
 \end_layout
 
@@ -9352,7 +10478,7 @@ The locus, pedigree, and map file are required files.
 \end_layout
 
 \begin_layout Paragraph
-Input menu item 2: Locus datafile:
+Input menu item: Locus datafile:
 \end_layout
 
 \begin_layout Standard
@@ -9361,7 +10487,7 @@ This specifies the locus file name.
 \end_layout
 
 \begin_layout Paragraph
-Input menu item 3: Pedigree datafile:
+Input menu item: Pedigree datafile:
 \end_layout
 
 \begin_layout Standard
@@ -9370,7 +10496,7 @@ This specifies the pedigree file name.
 \end_layout
 
 \begin_layout Paragraph
-Input menu item 4: Map datafile:
+Input menu item: Map datafile:
 \end_layout
 
 \begin_layout Standard
@@ -9389,7 +10515,7 @@ Common PLINK menu items
 \end_layout
 
 \begin_layout Paragraph
-PLINK menu item 1: PLINK parameters
+Menu item: PLINK parameters
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:PLINK-parameters"
@@ -9400,7 +10526,7 @@ name "sub:PLINK-parameters"
 \end_layout
 
 \begin_layout Standard
-This menu item is only displayed for PLINK PED and PLINK binary PED input.
+This menu item is displayed mainly for PLINK PED and PLINK binary PED input.
  As discussed previously in section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -9408,7 +10534,13 @@ reference "sub:PLINK-file-formats"
 
 \end_inset
 
-, PLINK will accept input files with omitted columns if the appropriate
+, the 
+\series bold
+\emph on
+plink
+\series default
+\emph default
+ program will accept input files with omitted columns if an appropriate
  flag is specified.
  Mega2 also respects these flags and allows them to be set.
  Selecting this option displays the available feature flags:
@@ -10071,18 +11203,18 @@ Affection status is coded 0 (unaffected) / 1 (affected) / -9 (missing,)
 \end_layout
 
 \begin_layout Standard
-You type the desired flags on the menu item 1 input line and hit enter to
- have the items recorded (and validated).
+You type the desired flags for the PLINK parameters menu item line and hit
+ enter to have the flags (validated and) recorded.
 \end_layout
 
 \begin_layout Paragraph
-Input menu item 2: Input file stem:
+Menu item: Input file stem
 \end_layout
 
 \begin_layout Standard
 This field becomes the file stem.
  If the stem is set to 'plink', then Mega2 attempts to fill in the menu
- items that expect file names by searching for plink.ped, plink.bed, plink.bam,
+ items that require file names by searching for plink.ped, plink.bed, plink.bam,
  plink.fam, plink.map, and plink.phe and additionally plink.omit, plink.frequency,
  and plink.penetrance.
 \end_layout
@@ -10103,7 +11235,7 @@ The pedigree (.fam), map (.bim) and binary (.bed) files are required for PLINK
 \end_layout
 
 \begin_layout Paragraph
-Input menu item 3: Pedigree datafile:
+Input menu item: Pedigree datafile:
 \end_layout
 
 \begin_layout Standard
@@ -10120,7 +11252,7 @@ fam
 \end_layout
 
 \begin_layout Paragraph
-Input menu item 4: Map datafile:
+Input menu item: Map datafile:
 \end_layout
 
 \begin_layout Standard
@@ -10136,7 +11268,7 @@ bim
 \end_layout
 
 \begin_layout Paragraph
-Input menu item 5: Binary PED datafile:
+Input menu item: Binary PED datafile:
 \end_layout
 
 \begin_layout Standard
@@ -10148,7 +11280,7 @@ Input format: PLINK ped
 \end_layout
 
 \begin_layout Paragraph
-Pedigree, Map and Binary datafile
+Pedigree and Map datafile:
 \end_layout
 
 \begin_layout Standard
@@ -10158,7 +11290,7 @@ The pedigree (.ped), and map (.map) files are required for PLINK PED input.
 \end_layout
 
 \begin_layout Paragraph
-Input menu item 3: Pedigree datafile:
+Input menu item: Pedigree datafile:
 \end_layout
 
 \begin_layout Standard
@@ -10166,11 +11298,405 @@ This specifies the pedigree file name (.ped file).
 \end_layout
 
 \begin_layout Paragraph
-Input menu item 4: Map datafile
+Input menu item: Map datafile:
 \end_layout
 
 \begin_layout Standard
-This specifies the four column map file (.map file).
+This specifies the four column map file (.map file).Common PLINK menu items
+\end_layout
+
+\begin_layout Subsection
+Common Variant Call Format menu items
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Common-Variant-Call-Format-menu-items"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Variant Call Format file (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-file-formats"
+
+\end_inset
+
+) can be presented as text (.vcf), compressed text (.vcf.gz) or binary format
+ (.bcf).
+ Conceptually, this file is a combination of the PLINK .bed/.ped file (for
+ genotype information) and the PLINK .map file (for chromosome and physical
+ position).
+ The variant file is missing the pedigree information (.fam) and phenotype
+ information (.phe) that we customarily need for linkage analysis.
+ Hence, we allow the user to supply these two additional files in PLINK
+ format.
+ Then we need to allow a few of the PLINK parameters introduced above for
+ these PLINK files.
+\end_layout
+
+\begin_layout Paragraph
+Menu item: PLINK parameters
+\begin_inset CommandInset label
+LatexCommand label
+name "par:VCF-Menu-item-PLINK-parameters"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Restricted list of available PLINK parameters.
+ Selecting this option displays the available feature flags:
+\end_layout
+
+\begin_layout LyX-Code
+PLINK options: --missing-phenotype <value> --trait <value> ...
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+--affectionstatus/--quantitative
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The flags are a subset of the flags allowed for PLINK input: 
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+flag
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+meaning
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-
+\emph default
+trait
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+specify a name for the pedigree file trait column
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-affectionstatus
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+indicate that trait is a binary affection status
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-quantitative
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+indicate that trait is an arbitrary number
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Again, we will repeat the supplementary PLINK related flags from section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:PLINK-file-formats"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Quotation
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="left" valignment="top" width="4in">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+flag
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+meaning
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-
+\emph default
+missing-phenotype
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Specifies the missing value for quantitative traits (default -9)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-
+\emph default
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Affection status is coded 0 (unaffected) / 1 (affected) / -9 (missing,)
+ vs.
+ 0 (missing) / 1 (unaffected) / 2 (affected) / -9 (missing)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Menu item: Variant Call Format parameters
+\end_layout
+
+\begin_layout Standard
+Mega2 supports only the 'filtering' options associated with the binary executabl
+e 'vcftools' file (See: 
+\begin_inset CommandInset href
+LatexCommand href
+name "VCFtools Options"
+target "http://vcftools.sourceforge.net/options.html"
+
+\end_inset
+
+).
+ In particular, the options supported are the: Site Filtering Options, the
+ Individual Filters, and the Genotype Filters.
+\end_layout
+
+\begin_layout Standard
+Note that filtering must be done using position information and sample IDs
+ from the input VCF file.
+\end_layout
+
+\begin_layout Subsection
+Input format: Variant Call Format files
+\end_layout
+
+\begin_layout Paragraph
+Pedigree and Map datafile
+\end_layout
+
+\begin_layout Standard
+The variant file in the selected format and the pedigree (.fam) are required
+ for Variant input files.
+ The phenotype file as well as the Mega2 map, omit, frequency and penetrance
+ files are optional.
+\end_layout
+
+\begin_layout Paragraph
+Input menu item: Variant Call Format datafile:
+\end_layout
+
+\begin_layout Standard
+This specifies the vcf file name as .bcf, .vcf, or .vcf.gz as appropriate to
+ the input type chosen.
+\end_layout
+
+\begin_layout Paragraph
+Input menu item: Pedigree datafile:
+\end_layout
+
+\begin_layout Standard
+This specifies the pedigree file name (.fam file).
+\end_layout
+
+\begin_layout Paragraph
+Input menu item: Map datafile:
+\end_layout
+
+\begin_layout Standard
+This specifies a Mega2 map file to provide genetic position information
+ for analysis modes.
 \end_layout
 
 \begin_layout Subsection
@@ -10183,26 +11709,27 @@ This specifies the names of the omit file, allele-frequency file and trait
  The omit, frequency and penetrance input data files are all optional files.
  The frequency and penetrance files are read in only in the annotated file
  format.
- 
+ These files were created to support the Mega2 native file format, but we
+ allow these files to be specified for PLINK and VCF file formats.
 \end_layout
 
 \begin_layout Subsection
-Input menu item: Directory for writing output: 
+Input menu item: Output Directory: 
 \end_layout
 
 \begin_layout Standard
 This specifies the name of the directory where Mega2 creates the output
  files.
  By default, this is set to the directory from which Mega2 is invoked.
- The output directory can be specified either as an absolute path (e.g., /home/nan
-dita/mega2_results/example) or a relative path.
+ The output directory can be specified either as an absolute path (e.g., /home/use
+r/mega2_results/example) or a relative path.
  Mega2 checks to see if the specified directory exists, if not, the user
  is asked if this directory should be created before proceeding.
  
 \end_layout
 
 \begin_layout Subsection
-Input menu item: Set up for simulating genotyping errors: 
+Input menu item: Simulating genotyping errors: 
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Simulate-errors"
@@ -10532,6 +12059,12 @@ This is a floating-point value that defines when to flag discrepancies between
  is expected to be less than 1.0, any value 1 and above would automatically
  disable flagging.
  By default flagging is turned off.
+ 
+\series bold
+Note:
+\series default
+ This menu item is not displayed unless a frequency file is specified in
+ the input menu.
 \end_layout
 
 \begin_layout Standard
@@ -10551,7 +12084,7 @@ This is read in as a string value and compared against affection phenotypes
 \end_layout
 
 \begin_layout Subsection
-Input menu item: Compression 
+Input menu item: Maximum number of alleles per marker 
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Input-menu-item:"
@@ -10566,15 +12099,36 @@ name "sub:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-Please enter compression value 1, 2, or 3 (2 bits, 2 bytes, or 16 bytes)
- >
+              Mega2 4.6.2 Maximum alleles per marker menu:
+\end_layout
+
+\begin_layout LyX-Code
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+0) Done with this menu - please proceed 
+\end_layout
+
+\begin_layout LyX-Code
+*1) 2 alleles (2 bits/marker) 
+\end_layout
+
+\begin_layout LyX-Code
+ 2) 255 alleles (2 bytes/marker)  
+\end_layout
+
+\begin_layout LyX-Code
+ 3) 256 or more alleles (16 bytes/marker) 
+\end_layout
+
+\begin_layout LyX-Code
+Select from options 0-3 > 
 \end_layout
 
 \begin_layout Standard
-This is an integer value: 1, 2, or 3.
- The default value is 1.
- In this case, each pair of alleles is represented internally with two bits,
- the same as the PLINK compressed binary 
+In the first case, each genotype is represented internally with two bits;
+ this is the same as the PLINK compressed binary 
 \begin_inset Quotes eld
 \end_inset
 
@@ -10585,18 +12139,19 @@ bed
  representation.
  This technique does not provide enough space to represent microsatellite
  markers or half-typed genotypes (where one allele is unknown).
- For these data sets, the compression value of 2 should be adequate.
- It provides for up to 256 alleles.
- The compression value of 3 is left for historical comparisons - it should
+ For these data sets, the second compression option should be adequate.
+ It provides for up to 255 alleles.
+ The final compression option is left for historical comparisons - it should
  never be necessary.
 \end_layout
 
 \begin_layout Standard
-Note that in the 2 byte mode, if the input data are in Linkage format and
- all allele labels are integers, those integers will be used as is, which
- means that an allele with the label '257' would not work.
+Note that in the 2 byte mode, if the input data are in Linkage format, all
+ allele labels are integers used as is.
+ This means that an allele with the label '256' would not be allowed.
  However, if the input data are in Annotated format, then allele labels
- are treated as strings, and will be recoded to sequential integers.
+ are treated as strings, and will be recoded to sequential integers; so
+ '256' might be allowed if the labeling is sparse.
 \end_layout
 
 \begin_layout Subsection
@@ -10914,6 +12469,13 @@ There are no repair mechanisms for unconnected pedigrees or discrepancies
 
 \begin_layout Section
 The analysis menu
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:The-analysis-menu"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15539,7 +17101,7 @@ This file contains a list of input and output pedigree and person identifiers.
  It relates each input pedigree record to its corresponding output pedigree
  record.
  Since, several of the output formats within Mega2 require reordering individual
-s, or re-assigning pedigree and person ids, it is difficult for the user
+s, or re-assigning pedigree and person IDs, it is difficult for the user
  to match up the output against the input.
  Therefore, it was felt necessary to create a mapping between input and
  output pedigree data.
@@ -15953,6 +17515,13 @@ Usage:
 
 \begin_layout Subsection
 Species options
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Species-options"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17160,6 +18729,10 @@ Input menu items
 
 \begin_deeper
 \begin_layout Enumerate
+Input_Format_Type
+\end_layout
+
+\begin_layout Enumerate
 Input_Pedigree_File 
 \end_layout
 
@@ -17204,7 +18777,19 @@ Input_Phenotype_File
 \end_layout
 
 \begin_layout Enumerate
+Input_Aux_File
+\end_layout
+
+\begin_layout Enumerate
 PLINK
+\end_layout
+
+\begin_layout Enumerate
+VCF_Args
+\end_layout
+
+\begin_layout Enumerate
+VCF_Marker_Alternative_INFO_Key
 \end_layout
 
 \end_deeper
@@ -17473,7 +19058,65 @@ Details on batch file items
 \end_layout
 
 \begin_layout Paragraph
-Input_Pedigree_File 
+Input_Format_Type
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Format_Type"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This item specifies the input file format type as follows:
+\end_layout
+
+\begin_layout Enumerate
+Mega2 format with header
+\end_layout
+
+\begin_layout Enumerate
+Linkage format
+\end_layout
+
+\begin_layout Enumerate
+Linkage with Mega2 names file
+\end_layout
+
+\begin_layout Enumerate
+PLINK binary PED format (bed)
+\end_layout
+
+\begin_layout Enumerate
+PLINK PED format (ped)
+\end_layout
+
+\begin_layout Enumerate
+BCF format (bcf)
+\end_layout
+
+\begin_layout Enumerate
+VCF compressed format (vcf.gz)
+\end_layout
+
+\begin_layout Enumerate
+VCF format (vcf)
+\end_layout
+
+\begin_layout Enumerate
+Traditional (4.6.1) input file format
+\end_layout
+
+\begin_layout Paragraph
+Input_Pedigree_File
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Pedigree_File"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17500,7 +19143,14 @@ PLINK Binary PED input
 \end_layout
 
 \begin_layout Paragraph
-Input_Map_File 
+Input_Map_File
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Map_File"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17528,7 +19178,14 @@ PLINK Binary PED input
 \end_layout
 
 \begin_layout Paragraph
-Input_Locus_File 
+Input_Locus_File
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Locus_File"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17544,6 +19201,13 @@ input format, but it is not used for either PLINK input format.
 
 \begin_layout Paragraph
 Input_Binary_File
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Binary_File"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17573,7 +19237,14 @@ Input_Binary_File
 \end_layout
 
 \begin_layout Paragraph
-Input_Omit_File 
+Input_Omit_File
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Omit_File"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17584,7 +19255,14 @@ This item specifies the input omit data file.
 \end_layout
 
 \begin_layout Paragraph
-Input_Frequency_File 
+Input_Frequency_File
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Frequency_File"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17596,7 +19274,14 @@ This item specifies the input allele frequency file name.
 \end_layout
 
 \begin_layout Paragraph
-Input_Penetrance_File 
+Input_Penetrance_File
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Penetrance_File"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17609,6 +19294,13 @@ This item specifies the input penetrance parameter file name.
 
 \begin_layout Paragraph
 Input_Phenotype_File
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Phenotype_File"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17619,7 +19311,32 @@ This item specifies the input phenotype file name.
 \end_layout
 
 \begin_layout Paragraph
+Input_Aux_File
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Aux_File"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This item specifies the input auxiliary file name.
+ This is an optional item available for either VCF format input files.
+ The value should be a string without white-space characters.
+ 
+\end_layout
+
+\begin_layout Paragraph
 PLINK
+\begin_inset CommandInset label
+LatexCommand label
+name "par:PLINK_Args"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17636,7 +19353,78 @@ reference "sub:PLINK-parameters"
 \end_layout
 
 \begin_layout Paragraph
-Input_Untyped_Ped_Option 
+VCF_Args
+\begin_inset CommandInset label
+LatexCommand label
+name "par:VCF_Args"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This parameter is for any VCF file format.
+ It is used to specify a subset of the command line options supported by
+ the 'vcftools' program.
+ These are command line options are (See 
+\begin_inset CommandInset href
+LatexCommand href
+name "VCFtools Options"
+target "http://vcftools.sourceforge.net/options.html"
+
+\end_inset
+
+) the: Site Filtering Options, the Individual Filters, and the Genotype
+ Filters.
+\end_layout
+
+\begin_layout Paragraph
+VCF_Marker_Alternative_INFO_Key
+\begin_inset CommandInset label
+LatexCommand label
+name "par:VCF_Marker_Alternative_INFO_Key"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The marker can be specified as the string associated with the 'ID' field
+ of the VCF file, or as the value associated with a key in the 'INFO' field.
+ If the user specifies a key (not null) then only the INFO field will be
+ used, otherwise only the 'ID' field will be used.
+ One or the other is used, never switching between them.
+\end_layout
+
+\begin_layout Standard
+If from this the string value is a '.' (unknown) then the marker will be
+ constructed from a prefix ('chr') appending it to the CHROM and POS VCF
+ file field values in the following way (chrCHROM_POS).
+ This is not guaranteed to be unique since the VCF file specification allows
+ multiple records to have the same POS.
+ In the construction of this marker name 'X', 'Y', 'XY', and 'MT' will be
+ used rather than the associated numbers for the chromosomes.
+ This is done in accordance to the species option (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Species-options"
+
+\end_inset
+
+) that Mega2 is told to use.
+\end_layout
+
+\begin_layout Paragraph
+Input_Untyped_Ped_Option
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Untyped_Ped_Option"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17677,7 +19465,14 @@ value
 \end_layout
 
 \begin_layout Paragraph
-Input_Do_Error_Sim 
+Input_Do_Error_Sim
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Input_Do_Error_Sim"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17700,7 +19495,14 @@ yes/no
 \end_layout
 
 \begin_layout Paragraph
-Output_Path 
+Output_Path
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Output_Path"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17718,18 +19520,17 @@ This option decides which directory to create the output files in.
  This is the default value.
  White space is not allowed within the path-name.
  
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
 \end_layout
 
 \begin_layout Paragraph
-Analysis_Option 
+Analysis_Option
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Analysis_Option"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18679,7 +20480,7 @@ name "par:Loop_Over_Chromosomes"
 \begin_layout Standard
 This option specifies whether data from multiple chromosomes are written
  to the same file or not.
- If true (y), each chromosome gets it's own file.
+ If true (y), each chromosome gets its own file.
  If false (n) only one file is produced which contains data for all chromosomes.
 \end_layout
 
@@ -18840,7 +20641,14 @@ X          4.0     rs232   1.0     862     6.0    954    4.0       0.0
 \end_layout
 
 \begin_layout Paragraph
-Trait_Single 
+Trait_Single
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Trait_Single"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18889,7 +20697,14 @@ trait1
 \end_layout
 
 \begin_layout Paragraph
-Traits_Loop_Over 
+Traits_Loop_Over
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Traits_Loop_Over"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18901,7 +20716,14 @@ This option corresponds to the menu item 2 of the trait reordering menu
 \end_layout
 
 \begin_layout Paragraph
-Traits_Combine 
+Traits_Combine
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Traits_Combine"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18944,7 +20766,14 @@ Traits_Loop_Over
 \end_layout
 
 \begin_layout Paragraph
-Trait_Subdirs 
+Trait_Subdirs
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Trait_Subdirs"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18965,6 +20794,13 @@ These are trait-specific directories in which output files are created if
 
 \begin_layout Paragraph
 Value_Marker_Compression
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Value_Marker_Compression"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -19013,7 +20849,14 @@ If the list of trait loci that will be output include one or more quantitative
 \end_layout
 
 \begin_layout Paragraph
-Value_Affecteds 
+Value_Affecteds
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Value_Affecteds"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -19294,7 +21137,14 @@ This option defines how invalid genotypes should be handled without pausing
 \end_layout
 
 \begin_layout Paragraph
-Default_Other_Values 
+Default_Other_Values
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Default_Other_Values"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -19311,7 +21161,14 @@ yes
 \end_layout
 
 \begin_layout Paragraph
-Default_Ignore_Nonfatal 
+Default_Ignore_Nonfatal
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Default_Ignore_Nonfatal"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -19327,7 +21184,14 @@ yes
 \end_layout
 
 \begin_layout Paragraph
-Default_Rplot_Options 
+Default_Rplot_Options
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Default_Rplot_Options"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -19341,7 +21205,14 @@ If set to
 \end_layout
 
 \begin_layout Paragraph
-Xlinked_Analysis_Mode 
+Xlinked_Analysis_Mode
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Xlinked_Analysis_Mode"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -20208,7 +22079,7 @@ Note that, when generating the Mendel format pedigree file, Mega2 automatically
  with broken loops), which is very important for running the haplotyping
  programs.
  Unfortunately, reconnection of loops will result in a renumbering of the
- person ids, which can be confusing (One can run Makeped and tell it that
+ person IDs, which can be confusing (One can run Makeped and tell it that
  there are no loops, this results in a post-Makeped LINKAGE format file
  with loops intact and thus Mega2 will not need to reconnect any loops).
 \end_layout
@@ -20552,11 +22423,11 @@ Restrictions:
  If your input pedigree file has been created by Makeped, then, usually,
  Makeped will have re-numbered your pedigrees, making it very difficult
  to interpret the resulting data without going through the hassle of figuring
- out the correspondence between the new person ids and the original person
- ids.
- Thus, since Mendel supports text ids, Mega2 will now use original ids if
+ out the correspondence between the new person IDs and the original person
+ IDs.
+ Thus, since Mendel supports text IDs, Mega2 will now use original IDs if
  they exist by default.
- These original ids are assumed to appear at the end of each record in the
+ These original IDs are assumed to appear at the end of each record in the
  pedigree file in the format: 
 \begin_inset Newline newline
 \end_inset
@@ -20774,9 +22645,9 @@ The user can also elect to convert the families to Nuclear families, and
  If your input pedigree file has been created by Makeped, then, usually,
  Makeped will have re-numbered your pedigrees, making it very difficult
  to interpret the resulting data without going through the hassle of figuring
- out the correspondence between the new person ids and the original person
- ids.
- Thus, since ASPEX supports text ids, Mega2 will now use original ids if
+ out the correspondence between the new person IDs and the original person
+ IDs.
+ Thus, since ASPEX supports text IDs, Mega2 will now use original IDs if
  they exist and if the user chooses not to use the 
 \begin_inset Quotes eld
 \end_inset
@@ -20786,7 +22657,7 @@ conversion to nuclear families
 \end_inset
 
  option.
- These original ids are assumed to appear at the end of each record in the
+ These original IDs are assumed to appear at the end of each record in the
  pedigree file in the format: 
 \begin_inset Newline newline
 \end_inset
@@ -26617,7 +28488,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="18" columns="4">
+<lyxtabular version="3" rows="19" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="right" valignment="top" width="0">
@@ -26664,6 +28535,44 @@ Release date
 
 \series bold
 Valid until
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.6.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Jan 31, 2014
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 2014
 \end_layout
 
 \end_inset
@@ -27320,6 +29229,33 @@ March 31, 2008
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Changes from Version 4.6.1 to Version 4.6.2 (Releasted January 31, 2014)
+\end_layout
+
+\begin_layout Itemize
+Mega2 can now read VCF files (See section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-file-formats"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Itemize
+Initial interactive interface screens have been modified to improve the
+ specification of different input file types (See section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-input-menu"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Subsection
@@ -28592,7 +30528,7 @@ Changes from Ver 3.0 R9-
 
 \begin_layout Itemize
 Bug-fix: Several options produced wrong pedigree file with missing pedigree
- ids when using a pre-makeped pedigree file as input.
+ IDs when using a pre-makeped pedigree file as input.
  These involve options which skip pre-makeped to post-makeped conversion
  including Mendel format options, Merlin, Prest, and Solar.
  
@@ -28815,7 +30751,7 @@ Bug-fix: Premakeped format pedigrees with affection status loci caused Mega2
 
 \begin_layout Itemize
 Bug-fix: For pre-makeped format files, output files did not contain pedigree
- numbers, if user selected premakeped pedigree ids as the output pedigree
+ numbers, if user selected premakeped pedigree IDs as the output pedigree
  id.
  
 \end_layout
@@ -29172,7 +31108,7 @@ Bug-fix: HWE R options: Spurious error message even when table was created
 \begin_layout Itemize
 Bug-fix: Linkage option - Only pedigrees with non-numeric names assigned
  numbers causing possible conflicts with pedigrees whose original numeric
- ids were maintained in the output.
+ IDs were maintained in the output.
  
 \end_layout
 
@@ -29428,7 +31364,7 @@ loop-over traits
 \begin_inset Quotes erd
 \end_inset
 
- mode person ids in the phenotype file did not match person ids in the pedigree
+ mode person IDs in the phenotype file did not match person IDs in the pedigree
  file.
 \end_layout
 
@@ -29609,8 +31545,8 @@ Bug-Fix: Pedigree and individual id menu behavior has been fixed.
 \end_layout
 
 \begin_layout Itemize
-Bug-Fix: Fixed SPLINK format bug - was writing individual ids in place of
- mother's ids.
+Bug-Fix: Fixed SPLINK format bug - was writing individual IDs in place of
+ mother's IDs.
  
 \end_layout
 
@@ -29692,7 +31628,7 @@ Enhancement: R-plot labels for each curve can now be input separately from
 
 \begin_layout Itemize
 Bug-Fix: in SOLAR where the phenotype file and marker genotype file didn't
- match the person ids in the pedigree file (id choice was not implemented
+ match the person IDs in the pedigree file (id choice was not implemented
  for the former).
  
 \end_layout
@@ -29741,7 +31677,7 @@ Enhancement: Creating a marker frequency file for Merlin format.
 Enhancement: Improved user-interface for selecting pedigree and individual
  id for output files, these can be either selected from the input, or generated
  in some cases, e.g.
- unique ids can be generated by mega2.
+ unique IDs can be generated by mega2.
  
 \end_layout
 
@@ -29787,7 +31723,7 @@ Bug-Fix: SimWalk2 penetrance file had invalid liability class values.
 \end_layout
 
 \begin_layout Itemize
-Bug-Fix: SPLINK option produced garbled individual ids in the pedigree file
+Bug-Fix: SPLINK option produced garbled individual IDs in the pedigree file
  if the user opted to combine all loci into one pedigree file.
  This has been rectified.
 \end_layout
@@ -29816,7 +31752,7 @@ Enhancement: Number of allowable liability classes has been increased up
 
 \begin_layout Itemize
 Enhancement: New MEGA2.KEYS file now gives a mapping to pedigree and person
- ids between the input and output.
+ IDs between the input and output.
  
 \end_layout
 
@@ -29892,7 +31828,7 @@ Enhancement: Several options can now select which pedigree id to output
  they are generated, and the user is informed of the fact.
  These options are Simwalk2, Mendel, Aspex, SAGE, SOLAR, Genotyping Summary,
  Pre-makeped, Merlin-SimWalk2, and Merlin.
- Refer to Using unique person ids for details.
+ Refer to Using unique person IDs for details.
  
 \end_layout
 
@@ -29919,7 +31855,7 @@ Minor bug - Menu wording in SimWalk2 file names menu was a bit strange,
 \begin_layout Itemize
 Bug-fix: Versions 2.3 and 2.3 R1 may have had a segmentation fault when creating
  nuclear pedigrees from post-makeped pedigrees which did not have person
- ids numbered consecutively from 1 through the number of pedigree members.
+ IDs numbered consecutively from 1 through the number of pedigree members.
  Nuclear pedigrees are also created in the S.A.G.E.
  3.0, ASPEX, and GHMLB options.
  Pre-makeped pedigrees do not cause segmentation faults in either version
@@ -29928,7 +31864,7 @@ Bug-fix: Versions 2.3 and 2.3 R1 may have had a segmentation fault when creating
 \end_layout
 
 \begin_layout Itemize
-Bug-fix: Post-makeped pedigrees with non-ordinal entry ids may have also
+Bug-fix: Post-makeped pedigrees with non-ordinal entry IDs may have also
  created segmentation faults in the 
 \begin_inset Quotes eld
 \end_inset
@@ -30418,7 +32354,7 @@ Map files with kosambi distances are allowed.
 \end_layout
 
 \begin_layout Itemize
-Original person ids can be output in Mendel and Aspex output files, if provided
+Original person IDs can be output in Mendel and Aspex output files, if provided
  in the post-Makeped format pedigree file.
  
 \end_layout
@@ -30891,7 +32827,7 @@ Bugs in Mega2 3.0 R9
 \end_layout
 
 \begin_layout Standard
-Several options produced wrong pedigree file with missing pedigree ids when
+Several options produced wrong pedigree file with missing pedigree IDs when
  using a pre-makeped pedigree file as input.
  These involve options which skip pre-makeped to post-makeped conversion
  including Mendel-format options, Merlin, Prest, and Solar.
@@ -30952,7 +32888,7 @@ Premakeped-format pedigrees with affection status loci caused Mega2 to crash.
 
 \begin_layout Standard
 For pre-makeped format files, output files did not contain pedigree numbers,
- if user selected the premakeped pedigree ids as the output pedigree id.
+ if user selected the premakeped pedigree IDs as the output pedigree id.
 \end_layout
 
 \begin_layout Standard
@@ -31111,7 +33047,7 @@ HWE R options: Spurious error message even when table was created correctly.
 
 \begin_layout Standard
 Linkage option - Only pedigrees with non-numeric names assigned numbers
- causing possible conflicts with pedigrees whose original numeric ids were
+ causing possible conflicts with pedigrees whose original numeric IDs were
  maintained in the output.
 \end_layout
 
@@ -31215,7 +33151,7 @@ loop-over traits
 \begin_inset Quotes erd
 \end_inset
 
- mode person ids in the phenotype file did not match person ids in the pedigree
+ mode person IDs in the phenotype file did not match person IDs in the pedigree
  file.
  
 \end_layout
@@ -31309,8 +33245,8 @@ Pedigree and individual id menu behavior has been fixed.
 \end_layout
 
 \begin_layout Standard
-Fixed SPLINK format bug - was writing individual ids in place of mother's
- ids.
+Fixed SPLINK format bug - was writing individual IDs in place of mother's
+ IDs.
 \end_layout
 
 \begin_layout Standard
@@ -31337,7 +33273,7 @@ Bugs in Mega2 2.3 R4
 
 \begin_layout Standard
 In SOLAR, the phenotype file and marker genotype file don't match the person
- ids in the pedigree file (id choice was not implemented for the former).
+ IDs in the pedigree file (id choice was not implemented for the former).
 \end_layout
 
 \begin_layout Standard
@@ -31417,7 +33353,7 @@ Bugs in Mega2 2.3 and Mega2 2.3 R1
 
 \begin_layout Standard
 Versions 2.3 and 2.3 R1 may have had a segmentation fault when creating nuclear
- pedigrees from post-makeped pedigrees which did not have person ids numbered
+ pedigrees from post-makeped pedigrees which did not have person IDs numbered
  consecutively from 1 through the number of pedigree members.
  Nuclear pedigrees are also created in the S.A.G.E.
  3.0, ASPEX, and GHMLB options.
@@ -31426,7 +33362,7 @@ Versions 2.3 and 2.3 R1 may have had a segmentation fault when creating nuclear
 \end_layout
 
 \begin_layout Standard
-Post-makeped pedigrees with non-ordinal entry ids may have also created
+Post-makeped pedigrees with non-ordinal entry IDs may have also created
  segmentation faults in the 
 \begin_inset Quotes eld
 \end_inset

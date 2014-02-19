@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -129,7 +129,7 @@ typedef struct _batch_item_ {
 #define Value_Missing_Allele 42
 #define PLINK_Args 43
 #define Input_Phenotype_File 44
-#define Input_Binary_File 45
+#define Input_Aux_File 45
 #define Value_Genetic_Distance_Index 46
 #define Value_Base_Pair_Position_Index 47
 #define Value_Genetic_Distance_SexTypeMap 48
@@ -137,10 +137,15 @@ typedef struct _batch_item_ {
 #define Loop_Over_Chromosomes 50
 #define Structure$PopDataPheno 51
 #define Value_Marker_Compression 52
+#define Input_Format_Type 53
+#define Input_Path 54
+#define Input_PLINK_Map_File 55
+#define VCF_Args 56
+#define VCF_Marker_Alternative_INFO_Key 57
 // Number of keywords which will appear in the batch file.
 // The above list is zero based, so this would be the last number + 1
 // You must update this number when you add an additional keyword.
-#define NUM_KEYS 53
+#define NUM_KEYS 58
 
 // THIS VARIABLE IS USED EVERYWHERE...
 // It is defined in batch_input.cpp or by the new object system for

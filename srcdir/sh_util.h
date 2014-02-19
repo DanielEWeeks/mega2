@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -29,10 +29,10 @@
 #ifndef SH_UTIL_H
 #define SH_UTIL_H
 
-class sh_util: public virtual entry {
+class sh_util: public virtual person_locus_entry {
 public:
 
-    sh_util(linkage_ped_top  *Top) : entry(Top) { }
+    sh_util(linkage_ped_top  *Top) : person_locus_entry(Top) { }
     virtual ~sh_util() {}
     void sh_shell_type() {
         pr_printf("#!/bin/csh -f\n");

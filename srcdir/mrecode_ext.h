@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -70,6 +70,11 @@ extern linkage_locus_top *read_marker_data(FILE *lfp, int type_col,
 					   int name_col);
 
 extern linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, int *phe_types);
+
+#include "vcftools/mega2_vcftools_interface.h"
+
+extern void read_m2_map_as_names_file(m2_map map, linkage_locus_top **LTop, const int cols, char **phe_names, int *phe_types);
+extern vector<string> read_vcf_names(const string names_file);
 
 extern void recode_liability_class(marker_type *marker_list, linkage_locus_top *LTop, int mlocus);
 

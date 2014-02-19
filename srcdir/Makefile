@@ -1,5 +1,5 @@
 #   Mega2: Manipulation Environment for Genetic Analysis
-#   Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+#   Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
 #   Daniel E. Weeks, and University of Pittsburgh
 #  
@@ -147,6 +147,8 @@ endif
 # CC, CFLAGS are defined in Makedefs
 
 DFLAGS += -DCFREE -DRUNSHELL_SETUP
+# NOTE: the '-DNDEBUG' is needed to turn off the assert macros in the VCFtools code...
+DFLAGS += -DNDEBUG
 
 # Used for getting a direct match with the genetic map files with running Beagle Analysis...
 #DFLAGS += -DDONT_CONVERT_TO_HALDANE_FOR_BEAGLE
@@ -219,11 +221,15 @@ CLIBS += -L. -lvcftools -lz
 
 gcc_info.o: $(OBJS)
 
+vcftools.a:
+	$(MAKE) -C vcftools
+
+# export CFLAGS so that the called Makefile can find it...
+export CFLAGS
 LINK ?= $(CXX)
 LTARGET ?= -o $(EXEC)
-$(MODULE)_$(OSTYPE): $(OBJS) $(HDRS) gcc_info.o
+$(MODULE)_$(OSTYPE): $(OBJS) $(HDRS) gcc_info.o vcftools.a
 	$(RM) $(MODULE)
-	$(MAKE) -C vcftools
 	$(LINK) $(LFLAGS) $(LTARGET) $(OBJS) $(FLAGS) gcc_info.o $(CLIBS)
 
 ifeq ($(OSTYPE),mingw)
@@ -350,6 +356,8 @@ user_input.o: batch_input.h input_check.h hwe.h compress_ext.h
 user_input.o: batch_input_ext.h cw_routines_ext.h error_messages_ext.h
 user_input.o: fcmap_ext.h genetic_utils_ext.h grow_string_ext.h
 user_input.o: output_file_names_ext.h plink_ext.h utils_ext.h
+user_input.o: user_input_ext.h vcftools/mega2_vcftools_interface.h
+user_input.o: annotated_ped_file.h
 cal_prob.o: common.h typedefs.h errorno.h allutil.h linkage.h
 cal_prob.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 cal_prob.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -380,8 +388,9 @@ mega2.o: cranefoot_ext.h create_summary_ext.h error_messages_ext.h
 mega2.o: error_sim_ext.h fcmap_ext.h genetic_utils_ext.h hwe_user_input_ext.h
 mega2.o: input_check_ext.h makenucs_ext.h makeped_ext.h marker_lookup_ext.h
 mega2.o: mega2annot_ext.h output_file_names_ext.h output_routines_ext.h
-mega2.o: pedtree_ext.h read_files_ext.h reorder_loci_ext.h scripts_ext.h
-mega2.o: slink_ext.h splink_ext.h user_input_ext.h utils_ext.h
+mega2.o: pedtree_ext.h plink_ext.h read_files_ext.h reorder_loci_ext.h
+mega2.o: scripts_ext.h slink_ext.h splink_ext.h user_input_ext.h
+mega2.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h utils_ext.h
 mega2.o: write_IQLS_ext.h write_SUP_files_ext.h write_apm_ext.h
 mega2.o: write_files_ext.h write_ghfiles_ext.h write_loki_ext.h
 mega2.o: write_mfiles_ext.h write_pap_ext.h write_premakeped_ext.h
@@ -483,7 +492,8 @@ mrecode.o: write_structure_ext.h write_pseq_ext.h batch_input.h input_check.h
 mrecode.o: hwe.h compress_ext.h mrecode.h error_messages_ext.h fcmap_ext.h
 mrecode.o: grow_string_ext.h linkage_ext.h makeped_ext.h marker_lookup_ext.h
 mrecode.o: omit_ped_ext.h read_files_ext.h select_individuals_ext.h
-mrecode.o: utils_ext.h write_files_ext.h
+mrecode.o: utils_ext.h write_files_ext.h vcftools/mega2_vcftools_interface.h
+mrecode.o: annotated_ped_file.h
 gen_user_input.o: common.h typedefs.h errorno.h allutil.h linkage.h
 gen_user_input.o: linkage_external.h makeped.h pedtree.h analysis.h
 gen_user_input.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -552,9 +562,11 @@ read_files.o: write_beagle_ext.h write_structure_ext.h write_pseq_ext.h
 read_files.o: batch_input.h input_check.h hwe.h compress_ext.h mrecode.h
 read_files.o: annotated_ped_file.h error_sim.h error_messages_ext.h
 read_files.o: fcmap_ext.h grow_string_ext.h linkage_ext.h list_ext.h
-read_files.o: makeped_ext.h marker_lookup_ext.h mrecode_ext.h omit_ped_ext.h
-read_files.o: plink_ext.h read_files_ext.h reorder_loci_ext.h utils_ext.h
-read_files.o: user_input_ext.h batch_input_ext.h write_files_ext.h
+read_files.o: makeped_ext.h marker_lookup_ext.h mrecode_ext.h
+read_files.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
+read_files.o: omit_ped_ext.h plink_ext.h read_files_ext.h reorder_loci_ext.h
+read_files.o: utils_ext.h user_input_ext.h batch_input_ext.h
+read_files.o: write_files_ext.h
 write_solar_files.o: common.h typedefs.h errorno.h allutil.h linkage.h
 write_solar_files.o: linkage_external.h makeped.h pedtree.h analysis.h
 write_solar_files.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -740,10 +752,11 @@ annotated_ped_file.o: input_check.h hwe.h compress_ext.h mrecode.h
 annotated_ped_file.o: annotated_ped_file.h error_messages_ext.h fcmap_ext.h
 annotated_ped_file.o: grow_string_ext.h linkage_ext.h list_ext.h
 annotated_ped_file.o: makeped_ext.h marker_lookup_ext.h mrecode_ext.h
-annotated_ped_file.o: omit_ped_ext.h phe_lookup_ext.h read_files_ext.h
-annotated_ped_file.o: reorder_loci_ext.h select_individuals_ext.h
-annotated_ped_file.o: user_input_ext.h utils_ext.h write_files_ext.h
-annotated_ped_file.o: plink_ext.h
+annotated_ped_file.o: vcftools/mega2_vcftools_interface.h
+annotated_ped_file.o: annotated_ped_file.h omit_ped_ext.h phe_lookup_ext.h
+annotated_ped_file.o: read_files_ext.h reorder_loci_ext.h
+annotated_ped_file.o: select_individuals_ext.h user_input_ext.h utils_ext.h
+annotated_ped_file.o: write_files_ext.h plink_ext.h
 write_SUP_files.o: common.h typedefs.h errorno.h allutil.h linkage.h
 write_SUP_files.o: linkage_external.h makeped.h pedtree.h analysis.h
 write_SUP_files.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -811,7 +824,14 @@ write_IQLS.o: linkage_ext.h omit_ped_ext.h output_file_names_ext.h
 write_IQLS.o: output_routines_ext.h pedtree_ext.h user_input_ext.h
 write_IQLS.o: utils_ext.h loop.h file_ops.h entry.h sh_util.h
 net.o: common.h error_messages_ext.h
-phe_lookup.o: plink_ext.h phe_lookup_ext.h
+phe_lookup.o: common.h typedefs.h errorno.h allutil.h linkage.h
+phe_lookup.o: linkage_external.h makeped.h pedtree.h analysis.h
+phe_lookup.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
+phe_lookup.o: plink_core_ext.h write_eigenstrat_ext.h write_pangaea_ext.h
+phe_lookup.o: write_beagle_ext.h write_structure_ext.h write_pseq_ext.h
+phe_lookup.o: batch_input.h input_check.h hwe.h compress_ext.h utils_ext.h
+phe_lookup.o: genetic_utils_ext.h error_messages_ext.h plink_ext.h
+phe_lookup.o: phe_lookup_ext.h
 analysis.o: common.h typedefs.h errorno.h allutil.h linkage.h
 analysis.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 analysis.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h

@@ -15,7 +15,7 @@
 //
 // Written by Jan Wigginton
 */
-double variant_file_entry::SNPHWE(int obs_hets, int obs_hom1, int obs_hom2)
+double entry::SNPHWE(int obs_hets, int obs_hom1, int obs_hom2)
 {
 	if (obs_hom1 + obs_hom2 + obs_hets == 0 ) return 1;
 
@@ -102,7 +102,7 @@ double variant_file_entry::SNPHWE(int obs_hets, int obs_hom1, int obs_hom2)
 	return p_hwe;
 }
 
-int variant_file_entry::str2int(const string &in, const int missing_value)
+int entry::str2int(const string &in, const int missing_value)
 {
 	if ((in.size() == 0) || (in == "."))
 		return missing_value;
@@ -110,7 +110,7 @@ int variant_file_entry::str2int(const string &in, const int missing_value)
 		return atoi(in.c_str());
 }
 
-double variant_file_entry::str2double(const string &in, const double missing_value)
+double entry::str2double(const string &in, const double missing_value)
 {
 	if ((in.size() == 0) || (in == "."))
 		return missing_value;
@@ -118,7 +118,7 @@ double variant_file_entry::str2double(const string &in, const double missing_val
 		return atof(in.c_str());
 }
 
-string variant_file_entry::int2str(const int in, const int missing_value)
+string entry::int2str(const int in, const int missing_value)
 {
 	if (in == missing_value)
 		return ".";
@@ -131,7 +131,7 @@ string variant_file_entry::int2str(const int in, const int missing_value)
 	}
 }
 
-string variant_file_entry::double2str(const double in, const double missing_value)
+string entry::double2str(const double in, const double missing_value)
 {
 	if (in == missing_value)
 		return ".";
@@ -144,7 +144,7 @@ string variant_file_entry::double2str(const double in, const double missing_valu
 	}
 }
 
-void variant_file_entry::tokenize(const string &in, char token, vector<string> &out)
+void entry::tokenize(const string &in, char token, vector<string> &out)
 {
 	out.resize(0);
 	istringstream ss(in);
@@ -155,13 +155,13 @@ void variant_file_entry::tokenize(const string &in, char token, vector<string> &
 	}
 }
 
-void variant_file_entry::copy_object(vector<char> &out, int &position, const vector<char> &in)
+void entry::copy_object(vector<char> &out, int &position, const vector<char> &in)
 {
 	memcpy(&out[position], &in, in.size() );
 	position += in.size();
 }
 
-void variant_file_entry::make_typed_string(vector<char> &out, const string &in, bool typed)
+void entry::make_typed_string(vector<char> &out, const string &in, bool typed)
 {
 	vector<char> tmp_vector;
 	out.resize(0);
@@ -203,7 +203,7 @@ void variant_file_entry::make_typed_string(vector<char> &out, const string &in, 
 	copy(in.begin(), in.end(), back_inserter(out));
 }
 
-void variant_file_entry::make_typed_int(vector<char> &out, const int &in, bool typed)
+void entry::make_typed_int(vector<char> &out, const int &in, bool typed)
 {
 	vector<char> tmp_char;
 	out.resize(0);
@@ -228,7 +228,7 @@ void variant_file_entry::make_typed_int(vector<char> &out, const int &in, bool t
 	out.insert(out.end(), tmp_char.begin(), tmp_char.end());
 }
 
-void variant_file_entry::make_typed_string_vector( vector<char> &out, const vector<string> &in, int number )
+void entry::make_typed_string_vector( vector<char> &out, const vector<string> &in, int number )
 {
 	vector<char> tmp_char;
 	int max_val = 0;
@@ -280,7 +280,7 @@ void variant_file_entry::make_typed_string_vector( vector<char> &out, const vect
 	}
 }
 
-void variant_file_entry::make_typed_GT_vector(vector<char> &out, vector<string> &in )
+void entry::make_typed_GT_vector(vector<char> &out, vector<string> &in )
 {
 	vector<char> tmp_vector;
 	int8_t size_type;
@@ -319,7 +319,7 @@ void variant_file_entry::make_typed_GT_vector(vector<char> &out, vector<string> 
 	out.insert( out.end(), tmp_vector.begin(), tmp_vector.end() );
 }
 
-void variant_file_entry::encode_genotype(vector<char> &out, string &in, int exp_size)
+void entry::encode_genotype(vector<char> &out, string &in, int exp_size)
 {
 	int8_t tmp_int;
 	int8_t phased = 0;
@@ -355,7 +355,7 @@ void variant_file_entry::encode_genotype(vector<char> &out, string &in, int exp_
 	}
 }
 
-void variant_file_entry::make_typed_int_vector(vector<char> &out, const string &in, int number )
+void entry::make_typed_int_vector(vector<char> &out, const string &in, int number )
 {
 	vector<char> tmp_char;
 	vector<int> tmp_ints;
@@ -434,7 +434,7 @@ void variant_file_entry::make_typed_int_vector(vector<char> &out, const string &
 	}
 }
 
-void variant_file_entry::make_typed_int_vector(vector<char> &out, const vector<string> &in, int number )
+void entry::make_typed_int_vector(vector<char> &out, const vector<string> &in, int number )
 {
 	vector<char> tmp_char;
 	vector<int> tmp_ints;
@@ -512,7 +512,7 @@ void variant_file_entry::make_typed_int_vector(vector<char> &out, const vector<s
 	}
 }
 
-void variant_file_entry::make_typed_int_vector(vector<char> &out, const vector<int> &in )
+void entry::make_typed_int_vector(vector<char> &out, const vector<int> &in )
 {
 	vector<char> tmp_char;
 	int type;
@@ -560,7 +560,7 @@ void variant_file_entry::make_typed_int_vector(vector<char> &out, const vector<i
 	}
 }
 
-void variant_file_entry::make_int(vector<char> &out, const int &in, int type)
+void entry::make_int(vector<char> &out, const int &in, int type)
 {
 	out.resize(0);
 	if (type == 1)
@@ -604,7 +604,7 @@ void variant_file_entry::make_int(vector<char> &out, const int &in, int type)
 	}
 }
 
-void variant_file_entry::make_typed_float_vector(vector<char> &out, const string &in, int number )
+void entry::make_typed_float_vector(vector<char> &out, const string &in, int number )
 {
 	vector<string> split_string;
 	int8_t size_type;
@@ -646,7 +646,7 @@ void variant_file_entry::make_typed_float_vector(vector<char> &out, const string
 		out.insert(out.end(), size_vector.begin(), size_vector.end());
 	}
 
-	float value;
+	float value = 0.0;
 	unsigned char missing[4] = {0x01, 0x00, 0x80, 0x7F};
 	for(unsigned int ui=0; (int)ui<max_val; ui++)
 	{
@@ -663,7 +663,7 @@ void variant_file_entry::make_typed_float_vector(vector<char> &out, const string
 	}
 }
 
-void variant_file_entry::make_typed_float_vector(vector<char> &out, const vector<string> &in, int number )
+void entry::make_typed_float_vector(vector<char> &out, const vector<string> &in, int number )
 {
 	vector<string> split_string;
 	int8_t size_type;
@@ -728,7 +728,7 @@ void variant_file_entry::make_typed_float_vector(vector<char> &out, const vector
 	}
 }
 
-void variant_file_entry::make_type_size(vector<char> &out, const unsigned int &type, const unsigned int &size)
+void entry::make_type_size(vector<char> &out, const unsigned int &type, const unsigned int &size)
 {
 	uint8_t byte;
 	vector<char> tmp_vector;
@@ -751,7 +751,7 @@ void variant_file_entry::make_type_size(vector<char> &out, const unsigned int &t
 	out.insert(out.end(), tmp_vector.begin(), tmp_vector.end());
 }
 
-float variant_file_entry::get_typed_float(unsigned int * line_position, const vector<char>& line)
+float entry::get_typed_float(unsigned int * line_position, const vector<char>& line)
 {
 	unsigned int size, type;
 	float out;
@@ -777,7 +777,7 @@ float variant_file_entry::get_typed_float(unsigned int * line_position, const ve
 	return out;
 }
 
-vector<float> variant_file_entry::get_typed_float_vector(unsigned int * line_position, const vector<char>& line)
+vector<float> entry::get_typed_float_vector(unsigned int * line_position, const vector<char>& line)
 {
 	unsigned int size, type;
 
@@ -802,7 +802,7 @@ vector<float> variant_file_entry::get_typed_float_vector(unsigned int * line_pos
 	return out;
 }
 
-string variant_file_entry::get_typed_string(unsigned int * line_position, const vector<char>& line)
+string entry::get_typed_string(unsigned int * line_position, const vector<char>& line)
 {
 	unsigned int size, type;
 	string out;
@@ -817,14 +817,14 @@ string variant_file_entry::get_typed_string(unsigned int * line_position, const 
 	memcpy(tmp, &line[*line_position], size*sizeof(char));
 	*line_position += size;
 	out = string( tmp, size );
+	delete tmp; // cpk: Memory leak
 
-	if (out == "" or out == " ")
-		out = ".";
+	if (out == "" or out == " ") out = ".";
 
 	return out;
 }
 
-int variant_file_entry::get_typed_int(unsigned int * line_position, const vector<char>& line, unsigned int &type, unsigned int &size)
+int entry::get_typed_int(unsigned int * line_position, const vector<char>& line, unsigned int &type, unsigned int &size)
 {
 	int out;
 
@@ -865,7 +865,7 @@ int variant_file_entry::get_typed_int(unsigned int * line_position, const vector
 	return out;
 }
 
-vector<int> variant_file_entry::get_int_vector(unsigned int * line_position, const vector<char>& line)
+vector<int> entry::get_int_vector(unsigned int * line_position, const vector<char>& line)
 {
 	unsigned int size, type;
 	get_type( line_position, line, type, size );
@@ -908,7 +908,7 @@ vector<int> variant_file_entry::get_int_vector(unsigned int * line_position, con
 	return out;
 }
 
-void variant_file_entry::get_type(unsigned int * line_position, const vector<char>& line, unsigned int &type, unsigned int &size)
+void entry::get_type(unsigned int * line_position, const vector<char>& line, unsigned int &type, unsigned int &size)
 {
 	uint8_t byte = *reinterpret_cast<const uint8_t*>(&line[*line_position]);
 	*line_position += sizeof(byte);
@@ -952,7 +952,7 @@ void variant_file_entry::get_type(unsigned int * line_position, const vector<cha
 	}
 }
 
-void variant_file_entry::skip_section(unsigned int *line_position, const vector<char> &line)
+void entry::skip_section(unsigned int *line_position, const vector<char> &line)
 {
 	unsigned int type, size;
 	get_type(line_position, line, type, size);
@@ -965,7 +965,7 @@ void variant_file_entry::skip_section(unsigned int *line_position, const vector<
 		*line_position += sizeof(int32_t)*size;
 }
 
-bool variant_file_entry::check_missing(unsigned int line_position, const unsigned int type, const vector<char> &line)
+bool entry::check_missing(unsigned int line_position, const unsigned int type, const vector<char> &line)
 {
 	static unsigned char missing_float[4] = {0x01, 0x00, 0x80, 0x7F};
 	static unsigned char missing_int1 = 0x80;
@@ -1024,13 +1024,13 @@ bool variant_file_entry::check_missing(unsigned int line_position, const unsigne
 	return missing;
 }
 
-void variant_file_entry::decode_genotype(int8_t in, int &GT, bool &phased)
+void entry::decode_genotype(int8_t in, int &GT, bool &phased)
 {
 	GT = (int)(in >> 1)-1;
 	phased = (in & (int8_t)1);
 }
 
-void variant_file_entry::get_number(uint32_t &out, unsigned int *line_position, const vector<char>& line)
+void entry::get_number(uint32_t &out, unsigned int *line_position, const vector<char>& line)
 {
 	memcpy(&out, &line[*line_position], sizeof(out));
 	*line_position += sizeof(out);

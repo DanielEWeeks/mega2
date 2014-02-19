@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -65,7 +65,9 @@ public:
     virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
          set individual default to person field */
-        OrigIds[0] = 1;
+//      OrigIds[0] = 1; // OrigID
+//      OrigIds[0] = 3; // UniqueID
+        OrigIds[0] = 1; // OrigID 
         OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
     

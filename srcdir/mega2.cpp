@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -129,12 +129,14 @@
 #include "output_file_names_ext.h"
 #include "output_routines_ext.h"
 #include "pedtree_ext.h"
+#include "plink_ext.h"
 #include "read_files_ext.h"
 #include "reorder_loci_ext.h"
 #include "scripts_ext.h"
 #include "slink_ext.h"
 #include "splink_ext.h"
 #include "user_input_ext.h"
+#include "vcftools/mega2_vcftools_interface.h"
 #include "utils_ext.h"
 #include "write_IQLS_ext.h"
 #include "write_SUP_files_ext.h"
@@ -347,6 +349,8 @@ char months[12][10];
 char awk_str[5];
 
 int zero_female_ylinked = 0;
+
+extern file_format check_locus_file_format(FILE *input_files);
 
 /* set all global variables to NULL so that they can
    be freed safely */
@@ -569,13 +573,14 @@ int             main(int argc, char **argv)
     char           *omitfl_name = NULL;
     char           *freqfl_name = NULL;
     char           *mapfl_name  = NULL;
+    char           *pmapfl_name = NULL;
     char           *penfl_name  = NULL;
     char           *bedfl_name  = NULL;
     char           *phefl_name  = NULL;
+    char           *input_path  = NULL;
     char const     *logdir;
     int            num_cols=0;
 /*  int            check_web_ver = 1; */
-    int            format_checksum;
 
     FILE          *fp;
     int            ferr = 0; /* error opening one or more files*/
@@ -728,13 +733,13 @@ int             main(int argc, char **argv)
  13) Switch to PLINK input menu (ped format)
  Select from options 0-13 >
  */
-    plink_info->plinkf = 
-        menu1(&infl_type, &pedfl_name, &locusfl_name,
-              &mapfl_name,  &omitfl_name, &freqfl_name, &penfl_name,
-              &bedfl_name, &phefl_name,
-              &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
-              &FreqMismatchThreshold);
-
+    menu1(&infl_type, &pedfl_name, &locusfl_name,
+          &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
+          &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
+          &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
+          &FreqMismatchThreshold);
+    plink_info->plinkf = (Input_Format == in_format_binary_PED) ? binary_PED_format : 
+                               (Input_Format == in_format_PED) ? PED_format : not_plink_format;
     mega2_input_files[PEDIGREE] = CALLOC(strlen(pedfl_name)+1, char);
     strcpy(mega2_input_files[PEDIGREE], pedfl_name);
     strcpy(&mega2_input_file_type[PEDIGREE][0],  "Pedigree file");
@@ -745,9 +750,17 @@ int             main(int argc, char **argv)
     }
     strcpy(&mega2_input_file_type[LOCUS][0],  "Locus file");
 
-    mega2_input_files[MAP] = CALLOC(strlen(mapfl_name)+1, char);
-    strcpy(mega2_input_files[MAP], mapfl_name);
-    strcpy(&mega2_input_file_type[MAP][0],  "Map file");
+    if (mapfl_name != NULL) {
+        mega2_input_files[MAP] = CALLOC(strlen(mapfl_name)+1, char);
+        strcpy(mega2_input_files[MAP], mapfl_name);
+        strcpy(&mega2_input_file_type[MAP][0],  "Map file");
+    }
+
+    if (pmapfl_name != NULL) {
+        mega2_input_files[PMAP] = CALLOC(strlen(pmapfl_name)+1, char);
+        strcpy(mega2_input_files[PMAP], pmapfl_name);
+        strcpy(&mega2_input_file_type[PMAP][0],  "PLINK Map file");
+    }
 
     if (omitfl_name != NULL) {
         mega2_input_files[OMIT] = CALLOC(strlen(omitfl_name)+1, char);
@@ -774,10 +787,10 @@ int             main(int argc, char **argv)
     strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
 
     if (phefl_name != NULL) {
-        mega2_input_files[PHE] = CALLOC(strlen(phefl_name)+1, char);
-        strcpy(mega2_input_files[PHE], phefl_name);
+        mega2_input_files[PHEfl] = CALLOC(strlen(phefl_name)+1, char);
+        strcpy(mega2_input_files[PHEfl], phefl_name);
     }
-    strcpy(&mega2_input_file_type[PHE][0],  "PLINK Phenotype file");
+    strcpy(&mega2_input_file_type[PHEfl][0],  "PLINK Phenotype file");
 
     Mega2Status = FILE_NAMES_READ;
     time_stamp_logs();
@@ -829,7 +842,7 @@ int             main(int argc, char **argv)
     AnalysisOpt = analysis;
 #ifdef DARWIN_OS
     if ((SIMWALK2(analysis)) &&
-        !(strcasecmp(mega2_input_files[2], "map.dat")) &&
+        !(strcasecmp(mega2_input_files[2] != 0 ? mega2_input_files[MAP] : mega2_input_files[PMAP], "map.dat")) &&
         !(strcasecmp(Mega2OutputPath, InputPath))) {
         char reply;
         warnf("Darwin file names are case-insensitive.");
@@ -845,15 +858,35 @@ int             main(int argc, char **argv)
     }
 #endif
 
-    if (plink_info->plinkf == 0) {
-        format_checksum = check_annotated_file_format(mega2_input_files);
-    } else
-        format_checksum = 5;
-    if (plink_info->plinkf) {
+    int af;
+    if (Input_Format == in_format_traditional) {
+        af = check_annotated_file_format(mega2_input_files);
+        if (af == 0) {
+            if (locusfl_name && *locusfl_name != 0) {
+                FILE *fp = fopen(locusfl_name, "r");
+                if (check_locus_file_format(fp) == NAMES)
+                    Input_Format = in_format_extended_linkage;
+                else
+                    Input_Format = in_format_linkage;
+                fclose(fp);
+            } else {
+                errorvf("The input format is linkage and the locus file is missing.\n");
+                EXIT(EARLY_TERMINATION);
+            }
+        } else if ((af == 3) || (af == 4))
+            Input_Format = in_format_mega2;
+    }
+    msgvf("Input Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
+
+    if (Input_Format == in_format_mega2) {
 #ifndef HIDESTATUS
-        mssgf("Pedigree and map files appear to be in PLINK format.");
-        mssgf("omit, penetrance, and frequency files are always in Annotated format.");
-        mssgf("Input files will be read in as PLINK or Annotated format files as appropriate.");
+        if (mega2_input_files[3] == NULL) {
+            mssgf("Pedigree, names and map file appear to be in ANNOTATED format.");
+            mssgf("Input files will be read in as ANNOTATED format files.");
+        } else {
+            mssgf("Pedigree, names, map and omit file appear to be in ANNOTATED format.");
+            mssgf("Input files will be read in as ANNOTATED format files.");
+        }
 #endif
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -863,13 +896,97 @@ int             main(int argc, char **argv)
                                            bedfl_name,  phefl_name,
                                            UntypedPedOpt, analysis, plink_info);
         if (LPedTreeTop == NULL) {
-            errorvf("Unsuccessful in reading linkage files - aborting mega2!\n");
+            errorvf("Unsuccessful in reading annotated files - aborting mega2!\n");
             EXIT(INPUT_DATA_ERROR);
         }
-    } else if (format_checksum == 0) {
+    } else if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED) {
+        int it = PLINK_Args;
+        if (Mega2BatchItems[it].item_read != 1) {
+            errorvf("PLINK arguments not specified.\n");
+            EXIT(BATCH_FILE_ITEM_ERROR);
+        }
+/*
+        set in menu1(): one place iff batch and another 
+        PLINK_args(Mega2BatchItems[it].value.name, 0);
+*/
+
 #ifndef HIDESTATUS
-        mssgf("Pedigree, names and map file appear to be in LINKAGE format.");
-        mssgf("Input files will be read in as LINKAGE format files.");
+        mssgf("Pedigree and map files appear to be in PLINK format.");
+        mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
+        mssgf("Input files will be read in as PLINK or Annotated format files as appropriate.");
+#endif
+        add_allele("NA", zero);
+        REC_UNKNOWN = zero;
+
+//xx
+        LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name,
+                                           ((mapfl_name && *mapfl_name != 0) ? mapfl_name : pmapfl_name),
+                                           freqfl_name, penfl_name,    omitfl_name,
+                                           bedfl_name,  phefl_name,
+                                           UntypedPedOpt, analysis, plink_info);
+        if (LPedTreeTop == NULL) {
+            errorvf("Unsuccessful in reading input files - aborting mega2!\n");
+            EXIT(INPUT_DATA_ERROR);
+        }
+    } else if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
+               Input_Format == in_format_VCF) {
+
+        int it = PLINK_Args;
+        if (Mega2BatchItems[it].item_read == 1)
+            PLINK_args(Mega2BatchItems[it].value.name, 1);
+
+        it = VCF_Args;
+        if (Mega2BatchItems[it].item_read != 1) {
+            errorvf("VCF arguments not specified.\n");
+            EXIT(BATCH_FILE_ITEM_ERROR);
+        }
+	char *cp = CALLOC(FILENAME_LENGTH, char);
+	strcpy(cp, Mega2BatchItems[it].value.name);
+	if (Input_Format == in_format_binary_VCF) {
+	  strcat(cp, " --bcf ");
+	} else if (Input_Format == in_format_compressed_VCF) {
+	  strcat(cp, " --gzvcf ");
+	} else if (Input_Format == in_format_VCF) {
+	  strcat(cp, " --vcf ");
+	}
+	strcat(cp, bedfl_name);
+
+	if (VCFtools_process_cmd_line_if_necessary_inclusive(cp) != -1) {
+	  errorvf("VCF arguments can not be processed.\n");
+	  EXIT(BATCH_FILE_ITEM_ERROR);
+	}
+        free(cp);
+        
+        mssgf("Processing VCF file meta information and header.");
+        VCFtools_process_file_meta_information_and_header();
+        
+        
+#ifndef HIDESTATUS
+        mssgf("Pedigree and bim files appear to be in PLINK format.");
+        mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
+#endif
+        add_allele("NA", zero);
+        REC_UNKNOWN = zero;
+        
+        LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name, mapfl_name,
+                                           freqfl_name, penfl_name, omitfl_name,
+                                           bedfl_name,  phefl_name,
+                                           UntypedPedOpt, analysis, plink_info);
+        if (LPedTreeTop == NULL) {
+            errorvf("Unsuccessful in reading input files - aborting mega2!\n");
+            EXIT(INPUT_DATA_ERROR);
+        }
+    } else if (Input_Format == in_format_linkage || Input_Format == in_format_extended_linkage) {
+
+#ifndef HIDESTATUS
+        if (Input_Format == in_format_linkage) {
+            mssgf("Pedigree, names and map file appear to be in LINKAGE format.");
+            mssgf("Input files will be read in as LINKAGE format files.");
+        } else if (Input_Format == in_format_extended_linkage) {
+            mssgf("Pedigree and map file appear to be in LINKAGE format.");
+            mssgf("Names (aka locus) file appears to be in Mega2 format w/o header.");
+            mssgf("Input files will be read appropriately.");
+        }
 
         if (penfl_name != NULL) {
             warnvf("Penetrance file %s will not be read in (only available in annotated format.\n", penfl_name);
@@ -886,43 +1003,11 @@ int             main(int argc, char **argv)
             errorvf("Unsuccessful in reading linkage files - aborting mega2!\n");
             EXIT(INPUT_DATA_ERROR);
         }
-    } else if (format_checksum == 4) {
-#ifndef HIDESTATUS
-        mssgf("Pedigree, names, map and omit file appear to be in ANNOTATED format.");
-        mssgf("Input files will be read in as ANNOTATED format files.");
-#endif
-        add_allele("NA", zero);
-        REC_UNKNOWN = zero;
-
-        LPedTreeTop = read_annotated_files(pedfl_name,  locusfl_name,  mapfl_name,
-                                           freqfl_name, penfl_name,    omitfl_name,
-                                           bedfl_name,  phefl_name,
-                                           UntypedPedOpt, analysis, plink_info);
-        if (LPedTreeTop == NULL) {
-            errorvf("Unsuccessful in reading linkage files - aborting mega2!\n");
-            EXIT(INPUT_DATA_ERROR);
-        }
-    } else if (format_checksum == 3 && mega2_input_files[3] == NULL) {
-#ifndef HIDESTATUS
-        mssgf("Pedigree, names and map file appear to be in ANNOTATED format.");
-        mssgf("Input files will be read in as ANNOTATED format files.");
-#endif
-        add_allele("NA", zero);
-        REC_UNKNOWN = zero;
-        LPedTreeTop = read_annotated_files(pedfl_name,  locusfl_name,  mapfl_name,
-                                           freqfl_name, penfl_name,    omitfl_name,
-                                           bedfl_name,  phefl_name,
-                                           UntypedPedOpt, analysis, plink_info);
-        if (LPedTreeTop == NULL) {
-            errorvf("Unsuccessful in reading linkage files - aborting mega2!\n");
-            EXIT(INPUT_DATA_ERROR);
-        }
     } else {
         errorf("Input files appear to be in mixed ANNOTATED and LINKAGE format.");
         errorf("Please use only ANNOTATED or only LINKAGE files.");
         errorf("Unsuccessful in reading input files - aborting mega2!\n");
         EXIT(INPUT_DATA_ERROR);
-
     }
 
     if (LPedTreeTop->pedfile_type == POSTMAKEPED_PFT) {

@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -706,7 +706,8 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             ped = invalidp->ped;
             lloc = Top->LocusTop->Locus[invalidp->locus].linkage_loc_num;
             for (entry=0; entry < Top->PedTree[ped].EntryCnt; entry ++) {
-                set_2alleles(Top->PedTree[ped].Entry[entry].LEntry->Marker, lloc, 0, 0);
+                set_2alleles(Top->PedTree[ped].Entry[entry].LEntry->Marker, lloc, 
+                             Top->LocusTop->Locus[invalidp->locus].linkage_loc_rec, 0, 0);
             }
             grow(err_msg, " %s: %s  ",
                  Top->PedTree[ped].Name,
@@ -749,7 +750,8 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             lloc = Top->LocusTop->Locus[halftypedp->locus].linkage_loc_num;
             entry = halftypedp->person;
             ped = halftypedp->ped;
-            set_2alleles(LPedTop->Ped[ped].Entry[entry].Marker, lloc, 0, 0);
+            set_2alleles(LPedTop->Ped[ped].Entry[entry].Marker, lloc, 
+                         Top->LocusTop->Locus[halftypedp->locus].linkage_loc_rec, 0, 0);
             grow(err_msg,
                  " %s, %s: %s  ",
                  Top->PedTree[ped].Name,
@@ -794,7 +796,8 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             lloc = Top->LocusTop->Locus[outofboundsp->locus].linkage_loc_num;
             entry = outofboundsp->person;
             ped = outofboundsp->ped;
-            set_2alleles(LPedTop->Ped[ped].Entry[entry].Marker, lloc, 0, 0);
+            set_2alleles(LPedTop->Ped[ped].Entry[entry].Marker, lloc, 
+                         Top->LocusTop->Locus[outofboundsp->locus].linkage_loc_rec, 0, 0);
             grow(err_msg, "Ped %s, Entry %s:Locus %s  ",
                  Top->PedTree[ped].Name,
                  Top->PedTree[ped].Entry[entry].LEntry->OrigID,

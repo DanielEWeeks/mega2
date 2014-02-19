@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -29,6 +29,22 @@
 #ifndef USER_INPUT_EXT_H
 #define USER_INPUT_EXT_H
 
+typedef
+enum INPUT_FORMAT {
+    in_format_mega2 = 0,
+    in_format_linkage = 1,
+    in_format_extended_linkage = 2,
+    in_format_binary_PED = 3,
+    in_format_PED = 4,
+    in_format_binary_VCF = 5,
+    in_format_compressed_VCF = 6,
+    in_format_VCF = 7,
+    in_format_traditional = 8
+}
+INPUT_FORMAT_t;
+
+extern INPUT_FORMAT_t Input_Format;
+extern const char *INPUT_FORMAT_STR[];
 
 extern int ReOrderMenu(int num_chromo, int *chromsomes, int *selection);
 
@@ -49,13 +65,14 @@ extern int individual_id_item(int item_number, analysis_type analysis,
 extern int invalid_analysis(int opt);
 
 
-extern int menu1(file_format *infl_type,
-		 char **pedfl_name, char **locusfl_name,
-		 char **mapfl_name, char **omitfl_name,
-		 char **freqfl_name, char **penfl_name,
-                 char **bedfl_name, char **phefl_name,
-		 int *Untyped_ped_opt, int *err_sim_opt,
-		 char **mega2_output_path, double *freq_miscmatch_thresh);
+extern void menu1(file_format *infl_type,
+                            char **pedfl_name, char **locusfl_name,
+                            char **mapfl_name, char **pmapfl_name,
+                            char **input_path, char **omitfl_name,
+                            char **freqfl_name, char **penfl_name,
+                            char **bedfl_name, char **phefl_name,
+                            int *Untyped_ped_opt, int *err_sim_opt,
+                            char **mega2_output_path, double *freq_miscmatch_thresh);
 
 
 extern void ped_ind_defaults(int unique, analysis_type analysis);

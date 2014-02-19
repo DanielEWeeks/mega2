@@ -292,7 +292,7 @@ void bcf_file::get_entry(unsigned int entry_num, vector<char> &out)
 	read(&out[2*sizeof(uint32_t)], 1, read_size);
 }
 
-variant_file_entry* bcf_file::get_entry_object(unsigned int N_indv)
+entry* bcf_file::get_entry_object(unsigned int N_indv)
 {
 	return new bcf_entry(N_indv, header_obj);
 }
@@ -385,7 +385,7 @@ void bcf_file::read_header(bool skip_meta)
 		{
 			vector<string> tmp;
 			has_header = true;
-			variant_file_entry::tokenize(headers[ui],'\t',tmp);
+			entry::tokenize(headers[ui],'\t',tmp);
 			for (unsigned int ui = 0; ui < tmp.size(); ui++)
 			{
 				switch (ui)
@@ -460,7 +460,7 @@ void bcf_file::print(ostream &out, const set<string> &INFO_to_keep, bool keep_al
 	out << endl;
 
 	vector<char> variant_line;
-	variant_file_entry *e = new bcf_entry(N_indv, header_obj);
+	entry *e = new bcf_entry(N_indv, header_obj);
 	for (unsigned int s=0; s<N_entries; s++)
 		if (include_entry[s] == true)
 		{
@@ -525,7 +525,7 @@ void bcf_file::print_bcf(BGZF* out, const set<string> &INFO_to_keep, bool keep_a
 	bgzf_write(out, (char *)&len_text, sizeof(len_text) );
 	bgzf_write(out, (char *)&header[0], len_text );
 	vector<char> variant_line;
-	variant_file_entry * e = new bcf_entry(N_indv, header_obj);
+	entry * e = new bcf_entry(N_indv, header_obj);
 	for (unsigned int s=0; s<N_entries; s++)
 	{
 		if (include_entry[s] == true)

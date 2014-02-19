@@ -38,7 +38,9 @@ public:
 	static string dbl2str(double n, int prc);
 	static string dbl2str_fixed(double n, int prc);
 private:
-	bool output_to_screen;
+	// cpk: To get rid of the warning:
+	// private field 'output_to_screen' is not used
+	//bool output_to_screen;
 	ofstream LOG;
 };
 

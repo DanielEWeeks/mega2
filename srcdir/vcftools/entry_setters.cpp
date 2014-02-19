@@ -8,27 +8,27 @@
 
 #include "entry.h"
 
-void variant_file_entry::set_CHROM(const string &in)
+void entry::set_CHROM(const string &in)
 {
 	CHROM = in;
 }
 
-void variant_file_entry::set_POS(const int in)
+void entry::set_POS(const int in)
 {
 	POS = in;
 }
 
-void variant_file_entry::set_ID(const string &in)
+void entry::set_ID(const string &in)
 {
 	ID = in;
 }
 
-void variant_file_entry::set_REF(const string &in)
+void entry::set_REF(const string &in)
 {
 	REF = in;
 }
 
-void variant_file_entry::add_ALT_allele(const string &in)
+void entry::add_ALT_allele(const string &in)
 {
 	if (in != ".")
 	{
@@ -45,7 +45,7 @@ void variant_file_entry::add_ALT_allele(const string &in)
 	parsed_ALT = true;
 }
 
-void variant_file_entry::add_FILTER_entry(const string &in)
+void entry::add_FILTER_entry(const string &in)
 {
 	if ((in != "PASS") && (in != "."))
 		if (find(FILTER.begin(), FILTER.end(), in) == FILTER.end())

@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -108,7 +108,7 @@ int batchTRAIT, batchAFFVALUE, batchERROR;
       42    Value_Missing_Allele
       43    PLINK
       44    Input_Phenotype_File
-      45    Input_Binary_File
+      45    Input_Aux_File
       46    Value_Genetic_Distance_Index
       47    Value_Base_Pair_Position_Index
       48    Value_Genetic_Distance_SexTypeMap
@@ -116,6 +116,11 @@ int batchTRAIT, batchAFFVALUE, batchERROR;
       50    Loop_Over_Chromosomes
       51    Structure$PopDataPheno
       52    Value_Marker_Compression
+      53    Input_Format_Type
+      54    Input_Path
+      55    Input_PLINK_Map_File
+      56    VCF_Args
+      57    VCF_INFO_Marker_Alternative_Key
 */
 
 static char keywords[NUM_KEYS][KEYWORD_LEN] = {
@@ -164,14 +169,19 @@ static char keywords[NUM_KEYS][KEYWORD_LEN] = {
     "Value_Missing_Allele_Aff",
     "PLINK",
     "Input_Phenotype_File",
-    "Input_Binary_File",
+    "Input_Aux_File",
     "Value_Genetic_Distance_Index",
     "Value_Base_Pair_Position_Index",
     "Value_Genetic_Distance_SexTypeMap",
     "Value_Missing_Quant_On_Output",
     "Loop_Over_Chromosomes",
     "Structure.PopDataPheno",
-    "Value_Marker_Compression"
+    "Value_Marker_Compression",
+    "Input_Format_Type",
+    "Input_Path",
+    "Input_PLINK_Map_File",
+    "VCF_Args",
+    "VCF_Marker_Alternative_INFO_Key"
 };
 
 void batch_file_doc(FILE *batchfp)
@@ -281,8 +291,12 @@ void batchfile_init_Mega2BatchItems(void)
         case /* 42 */ Value_Missing_Allele:
         case /* 43 */ PLINK_Args:
         case /* 44 */ Input_Phenotype_File:
-        case /* 45 */ Input_Binary_File:
+        case /* 45 */ Input_Aux_File:
         case /* 51 */ Structure$PopDataPheno:
+        case /* 54 */ VCF_Args:
+        case /* 57 */ VCF_Marker_Alternative_INFO_Key:
+        case /* 55 */ Input_Path:
+        case /* 56 */ Input_PLINK_Map_File:
             Mega2BatchItems[i].value.name = CALLOC((size_t)FILENAME_LENGTH, char);
             strcpy(Mega2BatchItems[i].value.name, "");
             Mega2BatchItems[i].value_type = STRING;
@@ -319,6 +333,7 @@ void batchfile_init_Mega2BatchItems(void)
         case /* 13 */ Traits_Num:
         case /* 21 */ Error_Loci_Num:
         case /* 31 */ Covariates_Num:
+        case /* 53 */ Input_Format_Type:
             Mega2BatchItems[i].value.option=0;
             Mega2BatchItems[i].value_type = INT;
             break;
@@ -407,15 +422,28 @@ void check_batch_items(void)
     int read_a_section;
     /* Input files */
 
-    if (ITEM_READ(/* 0 */ Input_Pedigree_File) && 
-        (ITEM_READ(/* 1 */ Input_Locus_File) || Mega2BatchItems[PLINK_Args].item_read) &&
-        ITEM_READ(/* 2 */ Input_Map_File) && ITEM_READ(/* 4 */ Input_Untyped_Ped_Option)) {
+    if (!ITEM_READ(/* 53 */ Input_Format_Type)) {
+        // In this case Input_Format == in_format_mega2 == 0
+        if (Mega2BatchItems[PLINK_Args].item_read) {
+            if (PLINK.plink == binary_PED_format) {
+                Input_Format = in_format_binary_PED;
+            } else if (PLINK.plink == PED_format) {
+                Input_Format = in_format_PED;
+            }
+        }
+    }
+    if (ITEM_READ(/* 0 */ Input_Pedigree_File) &&
+        (ITEM_READ(/* 1 */ Input_Locus_File) || Mega2BatchItems[PLINK_Args].item_read || Mega2BatchItems[VCF_Args].item_read) &&
+        (ITEM_READ(/* 2 */ Input_Map_File) || (Input_Format == in_format_VCF || Input_Format == in_format_compressed_VCF || Input_Format == in_format_binary_VCF || Input_Format == in_format_PED || Input_Format == in_format_binary_PED) ) &&
+        ITEM_READ(/* 4 */ Input_Untyped_Ped_Option)) {
+        // NOTE: You don't need a Map_File if you are working with a VCF file because it contains one map (VCF.p)...
         batchINPUTFILES=1;
         mssgf("Input filenames and missing value indicator read in from batch file.");
     } else {
         if (!ITEM_READ(/* 0 */ Input_Pedigree_File)) {
             missing_item_goto_menu(0, "Input menu");
-        } else if (!ITEM_READ(/* 1 */ Input_Locus_File) && !Mega2BatchItems[PLINK_Args].item_read){
+        } else if (!ITEM_READ(/* 1 */ Input_Locus_File) && 
+                   (Mega2BatchItems[Input_Format_Type].item_read && Mega2BatchItems[Input_Format_Type].value.option < in_format_binary_PED)) {
             missing_item_goto_menu(1, "Input menu");
         } else if (!ITEM_READ(/* 2 */ Input_Map_File)) {
             missing_item_goto_menu(2, "Input menu");
@@ -577,7 +605,12 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                 malformed_batch_line(keyword);
             }
             strcpy(value, intstr);
-            if (!strncmp(keyword, "Input", (size_t) 5)) {
+            if (!strcmp(keyword, "Input_Format_Type")) {
+                it = Input_Format_Type;
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+                Input_Format = (INPUT_FORMAT_t)Mega2BatchItems[it].value.option;
+            } else if (!strncmp(keyword, "Input", (size_t) 5)) {
                 /* file names section */
                 it = -1;
                 for (j = /* 0 */ Input_Pedigree_File ; j <= /* 5 - 1 */ Input_Untyped_Ped_Option ; j++) {
@@ -595,8 +628,12 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                         it = /* 40 */ Input_Penetrance_File ;
                     } else if (!strcmp(keyword, keywords[44])) {
                         it = /* 44 */ Input_Phenotype_File ;
-                    } else if (!strcmp(keyword, keywords[45])) {
-                        it = /* 45 */ Input_Binary_File ;
+                    } else if (!strcmp(keyword, keywords[45]) || !strcmp(keyword, "Input_Binary_File")) {
+                        it = /* 45 */ Input_Aux_File ;
+                    } else if (!strcmp(keyword, keywords[54])) {
+                        it = /* 55 */ Input_Path ;
+                    } else if (!strcmp(keyword, keywords[55])) {
+                        it = /* 55 */ Input_PLINK_Map_File ;
                     }
                 } else {
                     if (READ_ITER1(it)) {
@@ -608,7 +645,9 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                     || (it == /* 39 */ Input_Frequency_File )
                     || (it == /* 40 */ Input_Penetrance_File )
                     || (it == /* 44 */ Input_Phenotype_File )
-                    || (it == /* 45 */ Input_Binary_File )) {
+                    || (it == /* 45 */ Input_Aux_File )
+                    || (it == /* 54 */ Input_Path )
+                    || (it == /* 55 */ Input_PLINK_Map_File )) {
                     Mega2BatchItems[it].item_read = 1;
                     sscanf(value, "%s", Mega2BatchItems[it].value.name);
                 } else if (it == /* 4 */ Input_Untyped_Ped_Option ) {
@@ -1211,7 +1250,14 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                 Mega2BatchItems[it].item_read = 1;
 /*              sscanf(value, "%s", Mega2BatchItems[it].value.name);*/
                 strcpy(Mega2BatchItems[it].value.name, value);
-                PLINK_args(value);
+            } else if (!strncasecmp(keyword, "VCF_Args", (size_t) 8)) {
+                it = /* 56 */ VCF_Args;
+                Mega2BatchItems[it].item_read = 1;
+                strcpy(Mega2BatchItems[it].value.name, value);
+            } else if (!strncasecmp(keyword, "VCF_Marker_Alternative_INFO_Key", (size_t) 31)) {
+                it = /* 57 */ VCF_Marker_Alternative_INFO_Key;
+                Mega2BatchItems[it].item_read = 1;
+                strcpy(Mega2BatchItems[it].value.name, value);
             } else if (!strcasecmp(keyword, "Loop_Over_Chromosomes")) {
                 it = /* 50 */ Loop_Over_Chromosomes;
                 Mega2BatchItems[it].item_read = 1;

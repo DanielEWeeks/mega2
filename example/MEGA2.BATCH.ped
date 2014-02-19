@@ -95,3 +95,4 @@ Default_Rplot_Options=y
 Value_Genetic_Distance_Index=0
 Value_Genetic_Distance_SexTypeMap=0
 Value_Missing_Quant=-99.99
+Value_Base_Pair_Position_Index=1

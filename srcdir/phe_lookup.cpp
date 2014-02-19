@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2013 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -26,17 +26,20 @@
 ===========================================================================
 */
 
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+#include "common.h"
+#include "typedefs.h"
+#include "utils_ext.h"
+#include "genetic_utils_ext.h"
+#include "error_messages_ext.h"
+
 #include "plink_ext.h"
 #include "phe_lookup_ext.h"
 
-#include <string>
 #include <vector>
-#include <map>
 
 #include <iostream>
 #include <fstream>
@@ -47,21 +50,21 @@ class simpleobj
 {
 public:
     simpleobj();
-private:
+
 //    simpleobj(simpleobj& cpy);
-    simpleobj& operator=(simpleobj& cpy);
+    simpleobj& operator=(const simpleobj& cpy);
 };
 
 simpleobj::simpleobj() {}
 //simpleobj::simpleobj(simpleobj& cpy) {}
-simpleobj& simpleobj::operator=(simpleobj& cpy) {
+simpleobj& simpleobj::operator=(const simpleobj& cpy) {
     if (this != &cpy) *this = cpy;
     return *this;
 }
 
 
 
-class pedper : simpleobj
+class pedper
 {
 public:
     pedper(char *ped, char *per);
@@ -137,6 +140,7 @@ public:
     void debug_dump_pydict();
     void test(const string path);
     int  search(const char *ped, const char *per, vector<string> &v);
+    
     void free();
 private:
     string path;
@@ -160,7 +164,9 @@ phe::~phe() {
 }
 
 
-
+//
+// For mapping the VCF Tools sample into the pedigree,person found in this file.
+sample_map_type *SAMPLEIDS = (sample_map_type *)NULL;
 
 int phe::make()
 {
@@ -169,6 +175,10 @@ int phe::make()
     const char *c_ptr;
     char  *endptr;
     double quant;
+    int i = 0, sampleid_column_number = 0;
+    map<string,int> samples;
+
+    SAMPLEIDS = (sample_map_type *)NULL;
 
 //    printf("phe::make\n"); fflush(stdout);
     ifstream ifs(path.c_str(), ifstream::in);
@@ -187,9 +197,17 @@ int phe::make()
             printf("ped %s, per %s, rest %s\n", ped.c_str(), per.c_str(), rest.c_str());
 
         istringstream fields(rest, istringstream::in);
+
         while (fields.good()) {
             fields >> val;
-            traits.push_back(trait(val));
+	    // The comlumn name "SAMPLEID" is used to map the sample id into the <FID, IID>
+	    if (val == "SAMPLEID") {
+	      SAMPLEIDS = new sample_map_type();
+	      sampleid_column_number = i;
+	    } else {
+	      traits.push_back(trait(val));
+	    }
+	    i++;
         }
     }
 
@@ -205,39 +223,63 @@ int phe::make()
         vector<trait>::iterator tp = traits.begin();
 
         istringstream fields(rest, istringstream::in);
+        i = 0;
         while (fields.good()) {
             fields >> val;
             if (fields.fail()) continue;
-            v.push_back(val);
 
-            if (val == "NA" || val == "0")
-                tp->values[0]++;
-            else if (val == "1")
-                tp->values[1]++;
-            else if (val == "2")
-                tp->values[2]++;
-            else if (PLINK.missing_pheno) {
-                c_ptr = val.c_str();
-                quant = strtod(c_ptr, &endptr);
-                if (endptr == c_ptr || (*endptr)) { /* conversion failed */ 
-                    tp->values[3]++;
-                    tp->quant++;
-                } else if (quant == PLINK.pheno_value)
-                    tp->values[0]++;
-                else {
-                    tp->values[3]++;
-                    tp->quant++;
-                }
-            } else {
+	    // If we found the "SAMPLEID" column in the header file, and we are processing the
+	    // SAMPLEID data column, then make a mapping between the sample name (val) and the <ped,per>
+	    // Note that the user can choose not to fill in this column or fill it with the string "NA".
+            // In this case there is no mapping between the sample ID and the person.
+	    if (SAMPLEIDS != NULL && sampleid_column_number == i) {
+              if (val != "NA") {
+	        SAMPLEIDS->insert(pair<string,pair<string,string> >(val, pair<string,string>(ped, per)));
+                samples[val]++; // count the number of uses of this string
+	        i++;
+              }
+	      continue;
+	    } else {
+	      v.push_back(val);
+	    }
+
+	    if (val == "NA" || val == "0")
+	      tp->values[0]++;
+	    else if (val == "1")
+	      tp->values[1]++;
+	    else if (val == "2")
+	      tp->values[2]++;
+	    else if (PLINK.missing_pheno) {
+	      c_ptr = val.c_str();
+	      quant = strtod(c_ptr, &endptr);
+	      if (endptr == c_ptr || (*endptr)) { /* conversion failed */
                 tp->values[3]++;
                 tp->quant++;
-            }
-            tp++;
-        }
+	      } else if (quant == PLINK.pheno_value)
+                tp->values[0]++;
+	      else {
+                tp->values[3]++;
+                tp->quant++;
+	      }
+	    } else {
+	      tp->values[3]++;
+	      tp->quant++;
+	    }
+	    tp++;
+	    i++;
+        } // while (fields.good()) {
+
 //      printf("%ld# 1: %s; 2: %s; 3: %s; 4: %s; 5: %s\n", v->size(), (*v)[0].c_str(), (*v)[1].c_str(), (*v)[2].c_str(), (*v)[3].c_str(), (*v)[4].c_str());
 
-    }
+    } // while (true) {
     ifs.close();
+
+    // Check for multiple occurranaces of a SAMPLEID string and give an error if found.
+    for (map<string,int>::iterator it=samples.begin(); it!=samples.end(); ++it)
+        if (it->second > 1) {
+            errorvf("The phenotype file SAMPLEID column entry '%s' occurs more than once.\n", it->first.c_str());
+            EXIT(DATA_TYPE_ERROR);
+        }
 
     return (int)traits.size();
 }

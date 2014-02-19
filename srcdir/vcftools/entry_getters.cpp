@@ -9,35 +9,35 @@
 #include "entry.h"
 
 // Return the CHROMosome name
-string variant_file_entry::get_CHROM() const
+string entry::get_CHROM() const
 {
 	return CHROM;
 }
 
 // Return the CHROMosome name
-void variant_file_entry::get_CHROM(string &out) const
+void entry::get_CHROM(string &out) const
 {
 	out = CHROM;
 }
 
-int variant_file_entry::get_POS() const
+int entry::get_POS() const
 {
 	return POS;
 }
 
-string variant_file_entry::get_ID() const
+string entry::get_ID() const
 {
 	if (ID.size() == 0)
 		return ".";
 	return ID;
 }
 
-string variant_file_entry::get_REF() const
+string entry::get_REF() const
 {
 	return REF;
 }
 
-string variant_file_entry::get_ALT() const
+string entry::get_ALT() const
 {
 	assert(parsed_ALT == true);
 
@@ -53,7 +53,7 @@ string variant_file_entry::get_ALT() const
 	return out;
 }
 
-bool variant_file_entry::is_SNP() const
+bool entry::is_SNP() const
 {
 	assert(parsed_ALT == true);
 
@@ -70,7 +70,7 @@ bool variant_file_entry::is_SNP() const
 	return true;
 }
 
-bool variant_file_entry::is_biallelic_SNP() const
+bool entry::is_biallelic_SNP() const
 {
 	assert(parsed_ALT == true);
 
@@ -86,7 +86,7 @@ bool variant_file_entry::is_biallelic_SNP() const
 	return true;
 }
 
-bool variant_file_entry::is_diploid(const vector<bool> &include_indv, const vector<bool> &include_genotype) const
+bool entry::is_diploid(const vector<bool> &include_indv, const vector<bool> &include_genotype) const
 {
 	for (unsigned int ui=0; ui<N_indv; ui++)
 	{
@@ -100,7 +100,7 @@ bool variant_file_entry::is_diploid(const vector<bool> &include_indv, const vect
 	return true;
 }
 
-void variant_file_entry::get_allele(int allele_num, string &out) const
+void entry::get_allele(int allele_num, string &out) const
 {
 	assert(parsed_ALT == true);
 
@@ -112,7 +112,7 @@ void variant_file_entry::get_allele(int allele_num, string &out) const
 		out = ALT[allele_num-1];
 }
 
-string variant_file_entry::get_allele(int allele_num) const
+string entry::get_allele(int allele_num) const
 {
 	assert(parsed_ALT == true);
 
@@ -124,7 +124,7 @@ string variant_file_entry::get_allele(int allele_num) const
 		return ALT[allele_num-1];
 }
 
-string variant_file_entry::get_ALT_allele(int allele_num) const
+string entry::get_ALT_allele(int allele_num) const
 {
 	assert(parsed_ALT == true);
 
@@ -133,7 +133,7 @@ string variant_file_entry::get_ALT_allele(int allele_num) const
 	return ALT[allele_num];
 }
 
-void variant_file_entry::get_alleles_vector(vector<string> &out) const
+void entry::get_alleles_vector(vector<string> &out) const
 {
 	assert(parsed_ALT == true);
 	out.resize(ALT.size()+1);
@@ -141,13 +141,13 @@ void variant_file_entry::get_alleles_vector(vector<string> &out) const
 	copy(ALT.begin(), ALT.end(), out.begin()+1);
 }
 
-double variant_file_entry::get_QUAL() const
+double entry::get_QUAL() const
 {
 	return QUAL;
 }
 
 
-string variant_file_entry::get_FILTER() const
+string entry::get_FILTER() const
 {
 	assert(parsed_FILTER == true);
 
@@ -167,13 +167,13 @@ string variant_file_entry::get_FILTER() const
 	return out.str();
 }
 
-void variant_file_entry::get_FILTER_vector(vector<string> &out) const
+void entry::get_FILTER_vector(vector<string> &out) const
 {
 	assert(parsed_FILTER == true);
 	out = FILTER;
 }
 
-string variant_file_entry::get_INFO(const set<string> &INFO_to_keep, bool keep_all_INFO) const
+string entry::get_INFO(const set<string> &INFO_to_keep, bool keep_all_INFO) const
 {
 	assert(parsed_INFO == true);
 
@@ -208,7 +208,7 @@ string variant_file_entry::get_INFO(const set<string> &INFO_to_keep, bool keep_a
 	return sout.str();
 }
 
-vector<pair<string, string> > variant_file_entry::get_INFO_vector(const set<string> &INFO_to_keep, bool keep_all_INFO) const
+vector<pair<string, string> > entry::get_INFO_vector(const set<string> &INFO_to_keep, bool keep_all_INFO) const
 {
 	assert(parsed_INFO == true);
 
@@ -231,7 +231,7 @@ vector<pair<string, string> > variant_file_entry::get_INFO_vector(const set<stri
 }
 
 
-string variant_file_entry::get_INFO_value(const string &key) const
+string entry::get_INFO_value(const string &key) const
 {
 	assert(parsed_INFO == true);
 
@@ -243,7 +243,7 @@ string variant_file_entry::get_INFO_value(const string &key) const
 	return "?";
 }
 
-string variant_file_entry::get_FORMAT() const
+string entry::get_FORMAT() const
 {
 	assert(parsed_FORMAT == true);
 
@@ -259,7 +259,7 @@ string variant_file_entry::get_FORMAT() const
 	return out;
 }
 
-void variant_file_entry::get_FORMAT_binary(vector<char> &out) const
+void entry::get_FORMAT_binary(vector<char> &out) const
 {
 	assert(parsed_FORMAT_binary == true);
 	out = FORMAT_binary;
@@ -267,7 +267,7 @@ void variant_file_entry::get_FORMAT_binary(vector<char> &out) const
 
 
 // Return the alleles of a genotype as a pair of strings.
-void variant_file_entry::get_indv_GENOTYPE_strings(unsigned int indv, pair<string, string> &out) const
+void entry::get_indv_GENOTYPE_strings(unsigned int indv, pair<string, string> &out) const
 {
 	assert(parsed_GT[indv] == true);
 
@@ -279,19 +279,19 @@ void variant_file_entry::get_indv_GENOTYPE_strings(unsigned int indv, pair<strin
 }
 
 
-void variant_file_entry::get_indv_GENOTYPE_ids(unsigned int indv, pair<int, int> &out) const
+void entry::get_indv_GENOTYPE_ids(unsigned int indv, pair<int, int> &out) const
 {
 	assert(parsed_GT[indv] == true);
 	out = GENOTYPE[indv];
 }
 
-char variant_file_entry::get_indv_PHASE(unsigned int indv) const
+char entry::get_indv_PHASE(unsigned int indv) const
 {
 	assert(parsed_GT[indv] == true);
 	return PHASE[indv];
 }
 
-int variant_file_entry::get_indv_DEPTH(unsigned int indv) const
+int entry::get_indv_DEPTH(unsigned int indv) const
 {
 	assert(parsed_DP[indv] == true);
 	if (DEPTH.empty())
@@ -299,7 +299,7 @@ int variant_file_entry::get_indv_DEPTH(unsigned int indv) const
 	return DEPTH[indv];
 }
 
-double variant_file_entry::get_indv_GQUALITY(unsigned int indv) const
+double entry::get_indv_GQUALITY(unsigned int indv) const
 {
 	assert(parsed_GQ[indv] == true);
 	if (GQUALITY.empty())
@@ -307,7 +307,7 @@ double variant_file_entry::get_indv_GQUALITY(unsigned int indv) const
 	return GQUALITY[indv];
 }
 
-void variant_file_entry::get_indv_GFILTER_vector(unsigned int indv, vector<string> &out) const
+void entry::get_indv_GFILTER_vector(unsigned int indv, vector<string> &out) const
 {
 	assert(parsed_FT[indv] == true);
 	if (!GFILTER.empty())
@@ -316,7 +316,7 @@ void variant_file_entry::get_indv_GFILTER_vector(unsigned int indv, vector<strin
 		out.resize(0);
 }
 
-void variant_file_entry::get_indv_GFILTER(unsigned int indv, string &out) const
+void entry::get_indv_GFILTER(unsigned int indv, string &out) const
 {
 	assert(parsed_FT[indv] == true);
 
@@ -334,13 +334,13 @@ void variant_file_entry::get_indv_GFILTER(unsigned int indv, string &out) const
 		out = ".";
 }
 
-int variant_file_entry::get_indv_ploidy(unsigned int indv) const
+int entry::get_indv_ploidy(unsigned int indv) const
 {
 	assert (parsed_GT[indv]==true);
 	return ploidy[indv];
 }
 
-bool variant_file_entry::FORMAT_id_exists(const string &FORMAT_id)
+bool entry::FORMAT_id_exists(const string &FORMAT_id)
 {
 	assert(parsed_FORMAT == true);
 	if (FORMAT_to_idx.find(FORMAT_id) != FORMAT_to_idx.end())
@@ -348,13 +348,13 @@ bool variant_file_entry::FORMAT_id_exists(const string &FORMAT_id)
 	return false;
 }
 
-unsigned int variant_file_entry::get_N_alleles() const
+unsigned int entry::get_N_alleles() const
 {
 	assert(parsed_ALT == true);
 	return (ALT.size()+1);
 }
 
-unsigned int variant_file_entry::get_N_chr(const vector<bool> &include_indv, const vector<bool> &include_genotype) const
+unsigned int entry::get_N_chr(const vector<bool> &include_indv, const vector<bool> &include_genotype) const
 {
 	unsigned int out=0;
 
@@ -370,7 +370,7 @@ unsigned int variant_file_entry::get_N_chr(const vector<bool> &include_indv, con
 }
 
 // Return the frequency (counts) of each allele.
-void variant_file_entry::get_allele_counts(vector<int> &out, unsigned int &N_non_missing_chr_out, const vector<bool> &include_indv, const vector<bool> &include_genotype) const
+void entry::get_allele_counts(vector<int> &out, unsigned int &N_non_missing_chr_out, const vector<bool> &include_indv, const vector<bool> &include_genotype) const
 {
 	pair<int,int> genotype;
 	vector<int> allele_counts(get_N_alleles(), 0);
@@ -397,7 +397,7 @@ void variant_file_entry::get_allele_counts(vector<int> &out, unsigned int &N_non
 }
 
 // Return the counts of homozygote1, heterozygotes, and homozygote2
-void variant_file_entry::get_genotype_counts(const vector<bool> &include_indv, const vector<bool> &include_genotype, unsigned int &out_N_hom1, unsigned int &out_N_het, unsigned int &out_N_hom2) const
+void entry::get_genotype_counts(const vector<bool> &include_indv, const vector<bool> &include_genotype, unsigned int &out_N_hom1, unsigned int &out_N_het, unsigned int &out_N_hom2) const
 {
 	out_N_hom1 = 0; out_N_hom2 = 0; out_N_het = 0;
 	pair<int, int> genotype;
@@ -433,14 +433,14 @@ void variant_file_entry::get_genotype_counts(const vector<bool> &include_indv, c
 	}
 }
 
-void variant_file_entry::get_POS_binary(vector<char> &out) const
+void entry::get_POS_binary(vector<char> &out) const
 {
 	out.resize(sizeof(uint32_t));
 	uint32_t pos = POS - 1;
 	memcpy(&out[0], &pos, sizeof(pos));
 }
 
-void variant_file_entry::get_rlen(vector<char> &out) const
+void entry::get_rlen(vector<char> &out) const
 {
 	out.resize(sizeof(int32_t));
 	int32_t rlen;
@@ -451,14 +451,14 @@ void variant_file_entry::get_rlen(vector<char> &out) const
 	memcpy(&out[0], &rlen, sizeof(rlen));
 }
 
-void variant_file_entry::get_QUAL_binary(vector<char> &out) const
+void entry::get_QUAL_binary(vector<char> &out) const
 {
 	out.resize(sizeof(float));
 	float qual = (float)QUAL;
 	memcpy(&out[0], &qual, sizeof(qual));
 }
 
-void variant_file_entry::get_n_allele_info(vector<char> &out) const
+void entry::get_n_allele_info(vector<char> &out) const
 {
 	out.resize(sizeof(uint32_t));
 	uint32_t n_allele_info = (uint32_t)ALT.size() + 1;
@@ -470,7 +470,7 @@ void variant_file_entry::get_n_allele_info(vector<char> &out) const
 	memcpy(&out[0], &n_allele_info, sizeof(n_allele_info));
 }
 
-void variant_file_entry::get_n_fmt_sample(vector<char> &out) const
+void entry::get_n_fmt_sample(vector<char> &out) const
 {
 	out.resize(sizeof(uint32_t));
 	uint32_t n_fmt_sample = (uint32_t)(FORMAT.size()-N_FORMAT_removed);
@@ -482,12 +482,12 @@ void variant_file_entry::get_n_fmt_sample(vector<char> &out) const
 	memcpy(&out[0], &n_fmt_sample, sizeof(n_fmt_sample));
 }
 
-void variant_file_entry::get_ID_binary(vector<char> &out)
+void entry::get_ID_binary(vector<char> &out)
 {
 	make_typed_string(out, ID, true );
 }
 
-void variant_file_entry::get_ALLELES_binary(vector<char> &out)
+void entry::get_ALLELES_binary(vector<char> &out)
 {
 	vector<char> tmp;
 	out.resize(0);
