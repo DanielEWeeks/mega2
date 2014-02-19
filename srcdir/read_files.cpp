@@ -1941,6 +1941,7 @@ static void other_pedid(const int pedid, linkage_ped_top *Top)
     }
 }
 
+#ifdef defunct
 /**
    Append the "appropriate person identification string" to 'err_msg'.
  */
@@ -1966,6 +1967,7 @@ static void other_perids(const int pedid, const int perid,
         }
     }
 }
+#endif
 
 /**
  @brief Untype the locus whether it be a Genotype or Phenotype.
@@ -2103,7 +2105,7 @@ static void untype_locus_for_pedfile_type_ped_per(linkage_ped_top *Top,
                 // out here since there is no method to enumerate the exclusions...
                 SUPPRESS_MSSG(*displayed_messages);
                 if (*displayed_messages > MAX_PED_ERRORS) Display_Errors = 0;
-                sprintf(err_msg, "Could not locate individual %d for untyping in", omitper);
+                sprintf(err_msg, "Could not locate following individual for untyping in");
                 other_pedid(ped_i, Top);
                 warnf(err_msg);
                 (*displayed_messages)++;
@@ -2175,7 +2177,8 @@ void omit_file_data_processing(linkage_ped_top *Top,
 {
     int displayed_messages1 = 0, displayed_messages = 0, omitfl_lineno=0;
     int checked_for_locus_named_All = 0;
-    
+    extern char *unique_id_per(char *reslt, char *ped);
+
     if (ped_i < 0 || ped_i > 2 || per_i < 0 || per_i > 2 || loci_i < 0 || loci_i > 2) {
         errorvf("INTERNAL: Omit file (%s) line (%d) ped/per/loci index out of bounds.\n",
                 omitfl_name, omitfl_lineno);
@@ -2185,7 +2188,7 @@ void omit_file_data_processing(linkage_ped_top *Top,
     do {
         char line[3][MAX_NAMELEN], *omitped_str, *omitper_str, *omitloci, *comment_p;
         int omitped, omitped_i, omitper, omitper_i, omitloci_i;
-        int num_read, lch = 0, n;
+        int num_read, lch = 0;
         
         omitfl_lineno++; // keeping track of for error reporting...
         
@@ -2212,25 +2215,17 @@ void omit_file_data_processing(linkage_ped_top *Top,
         omitper_str = line[per_i];
         omitloci = line[loci_i];
         
-        if (strcasecmp(omitped_str, "All") == 0) {
+        if (strcasecmp(omitped_str, "All") == 0)
             omitped = 0; // All
-        } else if (sscanf(omitped_str, "%d%n", &omitped, &n) == EOF || (int)strlen(omitped_str) != n || omitped <= 0) {
-            // NOTE: This use of sscanf will make sure that then entire lines is parsed as a number.
-            errorvf("Omit file (%s) line (%d) the first argument 'ped' must be an integer greater than or equal to zero.\n",
-                    omitfl_name, omitfl_lineno);
-            EXIT(INPUT_DATA_ERROR);
-        }
-        
-        if (strcasecmp(omitper_str, "all") == 0) {
+        else
+            omitped = 1;
+        if (strcasecmp(omitper_str, "all") == 0)
             // Note we already support the "all" concept on the person column with "0"
             // This just makes "all" more explicit.
             omitper = 0; // All
-        } else if (sscanf(omitper_str, "%d%n", &omitper, &n) == EOF || (int)strlen(omitper_str) != n || omitper < 0) {
-            errorvf("Omit file (%s) line (%d) the second argument 'person' must be an integer greater than or equal to zero.\n",
-                    omitfl_name, omitfl_lineno);
-            EXIT(INPUT_DATA_ERROR);
-        }
-        
+        else
+            omitper = 1;
+
         // Step 1a: Check for the cases that don't or might not make sense....
         
         if (omitped == 0 && omitper == 0 && strcasecmp(omitloci, "all") == 0) {
@@ -2273,8 +2268,8 @@ void omit_file_data_processing(linkage_ped_top *Top,
             int i;
             // Search for the specific pedigree...
             for (i=0; i < Top->PedCnt; i++) {
-                int this_ped = (Top->pedfile_type == PREMAKEPED_PFT ? Top->PTop[i].ped : Top->Ped[i].Num);
-                if (this_ped == omitped) { omitped_i=i; break; }
+                char *this_ped = (Top->pedfile_type == PREMAKEPED_PFT ? Top->PTop[i].Name : Top->Ped[i].Name);
+                if (strcmp(this_ped, omitped_str) == 0) { omitped_i=i; break; }
             }
             if (omitped_i == -1) {
                 errorvf("Omit file (%s) line (%d) Pedigree id (%d) not found.\n",
@@ -2297,13 +2292,16 @@ void omit_file_data_processing(linkage_ped_top *Top,
                             Top->PTop[omitped_i].num_persons : Top->Ped[omitped_i].EntryCnt);
             int i;
             for (i=0; i < num_pers; i++) {
-                int this_per = (Top->pedfile_type == PREMAKEPED_PFT ?
-                                Top->PTop[omitped_i].persons[i].indiv : Top->Ped[omitped_i].Entry[i].ID);
-                if (this_per == omitper) { omitper_i=i; break; }
+                char *this_per = (Top->pedfile_type == PREMAKEPED_PFT ?
+                                  Top->PTop[omitped_i].persons[i].uniqueid : Top->Ped[omitped_i].Entry[i].UniqueID);
+                if (strcmp(this_per, omitper_str) == 0) { omitper_i=i; break; }
+                if (strcmp(unique_id_per(this_per, omitped_str), omitper_str) == 0) { 
+                    omitper_i=i; break;
+                }
             }
             if (omitper_i == -1) {
-                errorvf("Omit file (%s) line (%d) Person id (%d) not found in Pedigree (%d).\n",
-                        omitfl_name, omitfl_lineno, omitper, omitped);
+                errorvf("Omit file (%s) line (%d) Person id (%s) not found in Pedigree (%s).\n",
+                        omitfl_name, omitfl_lineno, omitper_str, omitped_str);
                 EXIT(DATA_INCONSISTENCY);
             }
         }
@@ -2313,14 +2311,14 @@ void omit_file_data_processing(linkage_ped_top *Top,
         if (omitper == 0 && omitped == 0) {
             sprintf(err_msg, "Untyped all individuals in all pedigrees");
         } else if (omitper == 0 && omitped != 0) {
-            sprintf(err_msg, "Untyped all individuals in pedigree %d", omitped);
-            other_pedid(omitped_i, Top);
+            sprintf(err_msg, "Untyped all individuals in pedigree %s", omitped_str);
+//          other_pedid(omitped_i, Top);
         } else if (omitper != 0 && omitped == 0) {
-            sprintf(err_msg, "Untyped individual %d in all pedigrees", omitper);
+            sprintf(err_msg, "Untyped individual %s in all pedigrees", omitper_str);
         } else {
-            sprintf(err_msg, "Untyped individual %d in pedigree %d", omitper, omitped);
-            other_perids(omitped_i, omitper_i, Top);
-            other_pedid(omitped_i, Top);
+            sprintf(err_msg, "Untyped individual %s in pedigree %s", omitper_str, omitped_str);
+//          other_perids(omitped_i, omitper_i, Top);
+//          other_pedid(omitped_i, Top);
         }
         
         // Step 4: Iterate over the locus to be untyped...
