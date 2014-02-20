@@ -132,8 +132,8 @@ void CLASS_PLINK::interactive_sub_prog_name_to_sub_option(analysis_type *analysi
                 selection == PLINK_SUB_OPTION_PED_INT)) {
             draw_line();
             printf("Selection Menu: PLINK output file options\n");
-            printf("%d) %s\n", PLINK_SUB_OPTION_LGEN_INT, PLINK_SUB_OPTION_LGEN);
-            printf("%d) %s (PLINK default for .BED files)\n", PLINK_SUB_OPTION_SNP_MAJOR_INT, PLINK_SUB_OPTION_SNP_MAJOR);
+            printf("%d) %s long-format\n", PLINK_SUB_OPTION_LGEN_INT, PLINK_SUB_OPTION_LGEN);
+            printf("%d) %s (PLINK's default for .bed files)\n", PLINK_SUB_OPTION_SNP_MAJOR_INT, PLINK_SUB_OPTION_SNP_MAJOR);
             printf("%d) %s\n", PLINK_SUB_OPTION_INDIVIDUAL_MAJOR_INT, PLINK_SUB_OPTION_INDIVIDUAL_MAJOR);
             printf("%d) %s\n", PLINK_SUB_OPTION_PED_INT, PLINK_SUB_OPTION_PED);
             printf("Enter selection: 1 - 4 > ");

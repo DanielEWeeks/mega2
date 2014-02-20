@@ -722,7 +722,7 @@ void menu1(file_format *infl_type,
     int            idx, choiceA[26]; /* idx should be 1+ largest <>_i value (above)*/
 
 #endif
-    int            plinkf = 0, xcf = 0, mega2 = 0;
+    int            plinkf = 0, xcf = 0;
 
     char           PLINKArgs[FILENAME_LENGTH] = "";
     char           VCFArgs[FILENAME_LENGTH] = "";
@@ -805,14 +805,12 @@ void menu1(file_format *infl_type,
             fln_off();
             reset = 0;
             plinkf = 0;
-            mega2 = 0;
             xcf = 0;
 #ifdef DEFPHE
             trait_name[0] = 0;
             trait_value = -9;
 #endif
             if (Input_Format == in_format_traditional || Input_Format == in_format_mega2) {
-                mega2 = 1;
                 strcpy(extension_name, "01");
 
                 fln_init(loco, "Mega2", "datain", "[required]", "datain");
@@ -1319,8 +1317,8 @@ void menu1(file_format *infl_type,
                 fflush(stdout);
                 draw_line();
                 printf("Read the marker names from:\n");
-                printf("1) from the ID field\n");
-                printf("2) from the INFO sub-field\n");
+                printf("1) the ID field\n");
+                printf("2) an INFO sub-field\n");
                 printf("Select from options 1-2 > ");
                 fcmap(stdin, "%s", select);
                 sscanf(select, "%d", &ans);
@@ -1328,7 +1326,7 @@ void menu1(file_format *infl_type,
                     printf("Please enter a 1, or 2.\n");
                     continue;
                 } else if (ans == 2) {
-                    printf("Please input the name of the INFO sub-field that contains the marker name: ");
+                    printf("\n Please input the name of the INFO sub-field 'key'\n that contains the marker names: ");
                     fcmap(stdin, "%s", VCFMarkerAlternativeKey); newline;
                 }
 		break;
