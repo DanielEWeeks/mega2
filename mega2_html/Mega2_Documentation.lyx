@@ -356,11 +356,7 @@ reference "sub:Output-formats"
 
 \end_inset
 
-), thus greatly facilitating a variety of different 
-\lang american
-analyses
-\lang english
-.
+), thus greatly facilitating a variety of different analyses.
  In addition, for many of these options, it also sets up a C-shell script
  that then can automatically run these analyses (if you are using Mega2
  in a Unix environment that supports C-shell scripts).
@@ -1124,7 +1120,7 @@ Minimal input to Mega2 consists of three matched files: (1) a names file;
 \begin_layout Standard
 \align center
 \begin_inset Graphics
-	filename ../../mega2rvb/mega2_html/simple_ped.jpg
+	filename simple_ped.jpg
 
 \end_inset
 
@@ -4005,7 +4001,7 @@ reference "sec:List-of-third-party"
 \end_inset
 
 , there are several third party programs that are needed by Mega2.
- If you need these programs, you will have to load them onto windows.
+ If you need these programs, you will have to load them onto Windows.
 \end_layout
 
 \begin_layout Labeling
@@ -29716,7 +29712,14 @@ Changes from Version 4.6.0 to Version 4.6.1 (Releasted Oct 21st, 2013)
 
 \begin_layout Itemize
 Enhancement: Mega2 can now produce PLINK/SEQ format files and a script for
- loading these these files into a PLINK/SEQ project.
+ loading these these files into a PLINK/SEQ project (See section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Detailed-info-PSEQ"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Itemize
