@@ -1064,7 +1064,7 @@ static string get_marker_name(const string info_id_alternative_key,
     // get_INFO_value() will return "?" if it cannot find the key
     // You must remember to '-DNDEBUG' while compiling to turn off the assert macros in the VCFtools code
     if (id == "?") {
-        errorvf("The VCF Marker Alternative INFO Key '%s' does not exist.\n", info_id_alternative_key.c_str());
+        errorvf("The requested '%s' sub-field of the VCF INFO field does not exist.\n", info_id_alternative_key.c_str());
         EXIT(DATA_TYPE_ERROR);
     } else if (id == ".") {
         // Create a marker name from the prefix, processed CHROM, and POS...

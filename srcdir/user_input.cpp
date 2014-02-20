@@ -1319,8 +1319,8 @@ void menu1(file_format *infl_type,
                 fflush(stdout);
                 draw_line();
                 printf("Read the marker names from:\n");
-                printf("1) from the ID field\n");
-                printf("2) from the INFO sub-field\n");
+                printf("1) the ID field\n");
+                printf("2) an INFO sub-field\n");
                 printf("Select from options 1-2 > ");
                 fcmap(stdin, "%s", select);
                 sscanf(select, "%d", &ans);
@@ -1328,7 +1328,7 @@ void menu1(file_format *infl_type,
                     printf("Please enter a 1, or 2.\n");
                     continue;
                 } else if (ans == 2) {
-                    printf("Please input the name of the INFO sub-field that contains the marker name: ");
+                    printf("\n Please input the name of the INFO sub-field 'key'\n that contains the marker names: ");
                     fcmap(stdin, "%s", VCFMarkerAlternativeKey); newline;
                 }
 		break;
