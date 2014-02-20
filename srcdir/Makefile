@@ -148,7 +148,7 @@ endif
 
 DFLAGS += -DCFREE -DRUNSHELL_SETUP
 # NOTE: the '-DNDEBUG' is needed to turn off the assert macros in the VCFtools code...
-DFLAGS += -DNDEBUG
+CFLAGS += -DNDEBUG
 
 # Used for getting a direct match with the genetic map files with running Beagle Analysis...
 #DFLAGS += -DDONT_CONVERT_TO_HALDANE_FOR_BEAGLE
