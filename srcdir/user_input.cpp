@@ -722,7 +722,7 @@ void menu1(file_format *infl_type,
     int            idx, choiceA[26]; /* idx should be 1+ largest <>_i value (above)*/
 
 #endif
-    int            plinkf = 0, xcf = 0, mega2 = 0;
+    int            plinkf = 0, xcf = 0;
 
     char           PLINKArgs[FILENAME_LENGTH] = "";
     char           VCFArgs[FILENAME_LENGTH] = "";
@@ -805,14 +805,12 @@ void menu1(file_format *infl_type,
             fln_off();
             reset = 0;
             plinkf = 0;
-            mega2 = 0;
             xcf = 0;
 #ifdef DEFPHE
             trait_name[0] = 0;
             trait_value = -9;
 #endif
             if (Input_Format == in_format_traditional || Input_Format == in_format_mega2) {
-                mega2 = 1;
                 strcpy(extension_name, "01");
 
                 fln_init(loco, "Mega2", "datain", "[required]", "datain");
