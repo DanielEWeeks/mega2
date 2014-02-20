@@ -184,8 +184,9 @@ function pgm_linux() {
     fi
 }
 
-MAKE=make
-CC=cc
+# export so that makefiles in subdirectories have access to these...
+export MAKE=make
+export CC=cc
 for scr in $scripts; do
     if [[ $scr == "mega2" || $scr == "mega2compile" ]]; then
         if [[ $OSTYPE == darwin ]]; then 
@@ -204,8 +205,8 @@ for scr in $scripts; do
             v=`uname -v`
             x=`uname -i`
             pgm=mega2_${VERSION}_solaris.${v}_${x} # e.g. mega2_v4.5.9_solaris.11.1_i86pc
-            MAKE=gmake
-            CC=gcc
+            export MAKE=gmake
+            export CC=gcc
         elif [[ $OSTYPE == cygwin ]]; then
             v=`uname -r|sed -n -e "s/\\(.*\\)(.*)/\\1/p"`
             pgm=mega2_${VERSION}_cygwin.${v}
