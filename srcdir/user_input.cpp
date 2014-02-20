@@ -1313,28 +1313,25 @@ void menu1(file_format *infl_type,
 
         } else if (choice_ == vcf_mak_i) {
             char select[100];
-            int new_ans, ans = 1;
+            int ans;
             strcpy(VCFMarkerAlternativeKey, "");
-            while (ans != 0) {
+            while (1) {
                 fflush(stdout);
                 draw_line();
                 printf("Read the marker names from:\n");
-                printf("0) Done with this menu - please proceed\n");
-                printf("%c1) from the ID field\n", (ans == 1 ? '*' : ' '));
-                printf("%c2) from the INFO sub-field\n", (ans == 2 ? '*' : ' '));
-                printf("Select from options 0-2 > ");
+                printf("1) from the ID field\n");
+                printf("2) from the INFO sub-field\n");
+                printf("Select from options 1-2 > ");
                 fcmap(stdin, "%s", select);
-                sscanf(select, "%d", &new_ans);
-                if (new_ans < 0 || new_ans > 2) {
-                    printf("Please enter a 0, 1, or 2.\n");
+                sscanf(select, "%d", &ans);
+                if (ans < 1 || ans > 2) {
+                    printf("Please enter a 1, or 2.\n");
                     continue;
-                } else if (new_ans == 1) {
-                    strcpy(VCFMarkerAlternativeKey, "");
-                } else if (new_ans == 2) {
+                } else if (ans == 2) {
                     printf("Please input the name of the INFO sub-field that contains the marker name: ");
                     fcmap(stdin, "%s", VCFMarkerAlternativeKey); newline;
                 }
-                ans = new_ans;
+		break;
             }
         } else if (menu1_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
                                   err_i, untyp_i, thresh_i, compress_i, choice_)) {
