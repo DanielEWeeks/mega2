@@ -34,7 +34,7 @@ CFLAGS = -Wall -g -I msys
 CLIBS = -lm -lws2_32 -L vcftools/msys
 
 cw_routines.o mega2.o net.o phe_lookup.o read_files.o user_input.o utils.o: DFLAGS += -DMINGW
-write_files.o write_plink_files.o: DFLAGS += -DMINGW
+plink_core_files.o write_files.o write_plink_files.o: DFLAGS += -DMINGW
 
 utils.o write_files.o: CFLAGS += -D_GNU_SOURCE=1
 

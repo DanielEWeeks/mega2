@@ -27,7 +27,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <assert.h>
+#ifdef BGZF_MT
 #include <pthread.h>
+#endif
 #include <sys/types.h>
 #include "bgzf.h"
 
