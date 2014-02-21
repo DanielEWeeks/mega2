@@ -7,6 +7,7 @@
  */
 
 #include "variant_file.h"
+#include <time.h>
 
 void variant_file::filter_genotypes_by_quality(double min_genotype_quality)
 {
