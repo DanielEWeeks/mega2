@@ -32,6 +32,11 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifdef _WIN
+#define R_OK 4
+#define access(str,type) _access(str,type)
+#endif
+
 #include "common.h"
 #include "typedefs.h"
 

@@ -222,7 +222,7 @@ CLIBS += -L. -lvcftools -lz
 gcc_info.o: $(OBJS)
 
 vcftools.a:
-	$(MAKE) -C vcftools
+	$(MAKE) CXX=$(CXX) CC=$(CC) -C vcftools
 
 # export CFLAGS so that the called Makefile can find it...
 export CFLAGS

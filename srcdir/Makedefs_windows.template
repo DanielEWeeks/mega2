@@ -34,10 +34,10 @@ LTARGET = -out:$(EXEC).exe -debug
 
 # compiler options
 
-CFLAGS = -nologo -Zi -W4 -D_CRT_SECURE_NO_WARNINGS -D_WIN -Fo$*.o 
+CFLAGS = -I win -nologo -Zi -W4 -D_CRT_SECURE_NO_WARNINGS -D_WIN -EHsc -Fo$*.o 
 
 RM=del /Q
 
-marker_lookup.o phe_lookup.o batch.o write_pseq_files.o: CFLAGS += -EHsc
+#now on for all code: marker_lookup.o phe_lookup.o batch.o write_pseq_files.o: CFLAGS += -EHsc
 
 #mega2.o cw_routines.o: DFLAGS += -DDARWIN_OS
