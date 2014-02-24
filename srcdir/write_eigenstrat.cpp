@@ -260,7 +260,7 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
             void make_file() {
                 //if (_tte == (linkage_locus_rec *)NULL) return;
                 mssgvf("        EIGENSTRAT binary file snp: %s/%s\n", *_opath, ::file_names[3]);
-                run_loop(::file_names[3]);
+                run_loop(*_opath, ::file_names[3], write_binary);
             }
             void file_header() {
                 plink_binary::file_header(_filep);

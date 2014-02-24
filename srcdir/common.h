@@ -466,6 +466,9 @@ extern char MITO_CHROMOSOME_STR[4];
 
 extern SubjectOrganismType subject_organism;
 
+extern const char write_binary[];
+extern const char read_binary[];
+
 
 #define UNKNOWN_CHROMO 999
 #define MISSING_CHROMO 888

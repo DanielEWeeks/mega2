@@ -264,7 +264,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
            ~plink_snp_major() {}
             void make_file() {
                 mssgvf("        PLINK binary file snp:     %s/%s\n", *_opath, ::file_names[3]);
-                run_loop(::file_names[3]);
+                run_loop(*_opath, ::file_names[3], write_binary);
             }
             void file_header() {
                 plink_binary::file_header(_filep);
@@ -286,7 +286,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
            ~plink_indiv_major() {}
             void make_file() {
                 mssgvf("        PLINK binary file indiv:   %s/%s\n", *_opath, ::file_names[3]);
-                run_loop(::file_names[3]);
+                run_loop(*_opath, ::file_names[3], write_binary);
             }
             void file_header() {
                 plink_binary::file_header(_filep);

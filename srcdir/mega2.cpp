@@ -337,6 +337,13 @@ char SEX_CHROMOSOME_STR[4]  = ".x.";
 char MALE_CHROMOSOME_STR[4] = ".y.";
 char PSEUDO_X_STR[4]        = "x.y";
 char MITO_CHROMOSOME_STR[4] = "...";
+#if defined(_WIN) || defined(MINGW)
+const char write_binary[] = "wb";
+const char read_binary[]  = "rb";
+#else
+const char write_binary[] = "w";
+const char read_binary[]  = "r";
+#endif
 
 SubjectOrganismType subject_organism;
 

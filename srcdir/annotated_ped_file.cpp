@@ -5261,7 +5261,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
         if (plink_info->allele_count == 0) {
             msgvf("WARNING... No alleles were discovered when the PLINK .bim file was read.\n");
         }
-        bed_filep = (bedfile != NULL) ? fopen(bedfile, "r") : NULL;
+        bed_filep = (bedfile != NULL) ? fopen(bedfile, read_binary) : NULL;
         if (bed_filep != (FILE *)NULL) {
             char magic[2];
             magic[0] = (char)fgetc(bed_filep);
