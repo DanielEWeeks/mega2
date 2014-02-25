@@ -139,16 +139,22 @@ void parameters::read_parameters()
 		in_str = argv[i];
 		if (in_str == "--vcf") { vcf_filename = get_arg(i+1); vcf_compressed = false; i++; } 				// VCF file to process
 		else if (in_str == "--bcf") { vcf_filename = get_arg(i+1); bcf_format = true; vcf_compressed = false; i++; } 				// BCF file to process
+
 		else if (in_str == "--gzvcf") { vcf_filename = get_arg(i+1); vcf_compressed = true; i++; } 				// VCF file to process
+#ifndef _WIN
 		else if (in_str == "--012") output_012_matrix = true;							// Output as 0/1/2 matrix
 		else if (in_str == "--BEAGLE-GL") { output_BEAGLE_genotype_likelihoods_GL = true; min_alleles=2; max_alleles=2; }	// Output as BEAGLE Genotype Likelihood format
 		else if (in_str == "--BEAGLE-PL") { output_BEAGLE_genotype_likelihoods_PL = true; min_alleles=2; max_alleles=2; }	// Output as BEAGLE Genotype Likelihood format
+#endif
 		else if (in_str == "--bed") { BED_file = get_arg(i+1); i++; BED_exclude=false; }
 		else if (in_str == "--chr") { chrs_to_keep.insert(get_arg(i+1)); i++; }					// Chromosome to process
+#ifndef _WIN
 		else if (in_str == "--counts") output_counts = true;								// Output per-site allele count statistics
 		else if (in_str == "--counts2") {output_counts = true; suppress_allele_output = true; }								// Output per-site allele count statistics
 		else if (in_str == "--depth") output_indv_depth = true;							// Output per-individual coverage statistics
+#endif
 		else if (in_str == "--derived") derived = true;								// Output frequencies so that AA is first.
+#ifndef _WIN
 		else if (in_str == "--diff-discordance-matrix") { diff_discordance_matrix = true; }	// Calculate some concensus statistics
 		else if (in_str == "--diff-indv-discordance") { diff_indv_discordance = true; }	// Calculate some concensus statistics
 		else if (in_str == "--diff-indv-map") { diff_indv_map_file = get_arg(i+1); i++; }	// Map individual ids in the second file
@@ -156,6 +162,7 @@ void parameters::read_parameters()
 		else if (in_str == "--diff-switch-error") { diff_switch_error = true; }	// Calculate some concensus statistics
 		else if (in_str == "--diff") { diff_file = get_arg(i+1); diff_file_compressed = false; i++; }	// Calculate some concensus statistics
 		else if (in_str == "--diff-bcf") { diff_file = get_arg(i+1); diff_file_bcf = true; i++; }	// Calculate some concensus statistics
+#endif
 		else if (in_str == "--exclude-bed") { BED_file = get_arg(i+1); i++; BED_exclude=true; }
 		else if (in_str == "--exclude") { snps_to_exclude_file = get_arg(i+1); i++; }				// List of SNPs to exclude
 		else if (in_str == "--exclude-positions") { exclude_positions_file = get_arg(i+1); i++; }

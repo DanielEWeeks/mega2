@@ -90,42 +90,14 @@ SRCS =  input_check.cpp     select_index.cpp \
 	write_loki.cpp      error_messages.cpp   annotated_ped_file.cpp \
 	                    write_SUP_files.cpp  write_mendel7_files.cpp \
 	write_plink_files.cpp cranefoot.cpp      write_mega2annot.cpp \
-	grow_string.cpp     marker_lookup.cpppp  write_IQLS.cpp \
+	grow_string.cpp     marker_lookup.cpp    write_IQLS.cpp \
 	net.cpp             phe_lookup.cpp       analysis.cpp \
 	write_fbat.cpp      entry.cpp            loop.cpp \
 	write_pangaea.cpp   write_beagle.cpp     plink_core_files.cpp \
 	write_eigenstrat.cpp write_structure.cpp batch.cpp \
 	compress.cpp        write_pseq_files.cpp
 
-OBJS =  input_check.o     select_index.o \
-	aspex.o		  liability_dist.o   select_individuals.o \
-	linkage.o	  stamp_time.o       output_file_names.o \
-	cal_const.o	  list.o	     test_switch.o \
-	cal_n.o		  ln_p_value.o	     user_input.o \
-	cal_prob.o	  log_factorial.o    utils.o \
-	check.o		  mega2.o	     write_apm.o \
-	check_file.o	  output_routines.o  write_files.o \
-	do_switch.o	  pedtree.o	     write_ghfiles.o \
-	fcmap.o		  print_data.o	     write_liability.o \
-	random_choose.o   write_mfiles.o     mrecode.o\
-	gen_user_input.o  write_sage_files.o splink.o \
-	genetic_utils.o   read_data.o	     write_simulate_files.o \
-	homozygosity.o	  read_files.o	     write_solar_files.o \
-	hwe.o		  reorder_loci.o     write_vitesse.o \
-	hwe_user_input.o  scripts.o          cw_routines.o \
-	makeped1.o        omit_ped.o         slink.o \
-	R_output.o  	  write_premakeped.o create_summary.o \
-	write_prest.o     write_pap.o        batch_input.o \
-	makenucs.o        append_locus_array.o error_sim.o \
-	write_loki.o      error_messages.o   annotated_ped_file.o \
-	                  write_SUP_files.o  write_mendel7_files.o \
-	write_plink_files.o cranefoot.o      write_mega2annot.o \
-	grow_string.o     marker_lookup.o    write_IQLS.o \
-	net.o             phe_lookup.o       analysis.o \
-	write_fbat.o      entry.o            loop.o \
-	write_pangaea.o   write_beagle.o     plink_core_files.o \
-	write_eigenstrat.o write_structure.o batch.o \
-	compress.o        write_pseq_files.o
+OBJS =  $(SRCS:.cpp=.o)
 
 # The flags for including the libraries:
 
@@ -146,9 +118,8 @@ endif
 
 # CC, CFLAGS are defined in Makedefs
 
-DFLAGS += -DCFREE -DRUNSHELL_SETUP
-# NOTE: the '-DNDEBUG' is needed to turn off the assert macros in the VCFtools code...
-CFLAGS += -DNDEBUG
+DFLAGS += -DCFREE -DRUNSHELL_SETUP -DHAS_ZLIB
+
 
 # Used for getting a direct match with the genetic map files with running Beagle Analysis...
 #DFLAGS += -DDONT_CONVERT_TO_HALDANE_FOR_BEAGLE
@@ -217,18 +188,33 @@ endif
 
 all: $(MODULE)_$(OSTYPE)
 
-CLIBS += -L. -lvcftools -lz
-
 gcc_info.o: $(OBJS)
-
-vcftools.a:
-	$(MAKE) CXX=$(CXX) CC=$(CC) -C vcftools
 
 # export CFLAGS so that the called Makefile can find it...
 export CFLAGS
+export CXX
+export CC
+export AR
+export ARFLAGS
+export AROUT
+
+CLIBS += libvcftools.a libz.a
+
+SUBDIRS = vcftools zlib-1.2.8
+.PHONY: $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) $(MAKEFLAGS) -C $@
+vcftools: zlib-1.2.8
+libvcftools.a: vcftools
+libz.a: zlib-1.2.8
+
 LINK ?= $(CXX)
 LTARGET ?= -o $(EXEC)
-$(MODULE)_$(OSTYPE): $(OBJS) $(HDRS) gcc_info.o vcftools.a
+AR ?= ar
+ARFLAGS ?= rcs
+AROUT ?=
+
+$(MODULE)_$(OSTYPE): $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libvcftools.a libz.a
 	$(RM) $(MODULE)
 	$(LINK) $(LFLAGS) $(LTARGET) $(OBJS) $(FLAGS) gcc_info.o $(CLIBS)
 
@@ -242,7 +228,7 @@ endif
 
 clean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
-	$(MAKE) -C vcftools clean
+	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) clean;)
 
 clean1:
 	$(RM) *~

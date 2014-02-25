@@ -7,6 +7,10 @@
 
 #include "vcf_file.h"
 
+#ifndef S_ISREG
+#define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
+#endif
+
 vcf_file::vcf_file(const string &fname, bool comp, const set<string> &chrs_to_keep, const set<string> &exclude_chrs, bool force_write_index)
 {
 	filename = fname; compressed = comp;

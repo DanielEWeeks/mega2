@@ -23,6 +23,11 @@
 #include "bgzf.h"
 #include "output_log.h"
 
+#ifdef _WIN
+#define and &&
+#define or  ||
+#endif
+
 using namespace std;
 extern output_log LOG;
 

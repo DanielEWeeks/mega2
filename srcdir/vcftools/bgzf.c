@@ -25,7 +25,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _WIN
 #include <unistd.h>
+#endif
 #include <assert.h>
 #ifdef BGZF_MT
 #include <pthread.h>
@@ -83,6 +85,9 @@ typedef struct {
 KHASH_MAP_INIT_INT64(cache, cache_t)
 #endif
 
+#ifdef _WIN
+#define inline __inline
+#endif
 static inline int ed_is_big()
 {
 	long one= 1;

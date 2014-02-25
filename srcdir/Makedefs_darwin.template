@@ -36,7 +36,6 @@ CFLAGS = -Wall -g
 #CFLAGS += -O0
 #CFLAGS += -m64
 
-CLIBS = -lm -lz
+CLIBS = -lm
 
-DFLAGS += -DHAS_ZLIB
 mega2.o cw_routines.o: DFLAGS += -DDARWIN_OS

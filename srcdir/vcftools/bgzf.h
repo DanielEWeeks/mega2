@@ -32,6 +32,9 @@
 #include <stdio.h>
 #include <zlib.h>
 #include <sys/types.h>
+#ifdef _WIN
+typedef signed __int64 ssize_t;
+#endif
 
 #define BGZF_BLOCK_SIZE     0xff00 // make sure compressBound(BGZF_BLOCK_SIZE) < BGZF_MAX_BLOCK_SIZE
 #define BGZF_MAX_BLOCK_SIZE 0x10000

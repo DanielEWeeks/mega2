@@ -272,9 +272,15 @@ int bcf_file::read_CHROM_and_POS_and_skip_remainder_of_line(string &CHROM, int &
 	POS = chrom_int[3] + (int32_t)1;
 
 	size_t forward = chrom_int[0] + chrom_int[1] - 2*sizeof(int32_t);
+#ifdef _WIN
+        char *whole_line = new char[forward];
+	ret = read(whole_line, 1, forward);
+        delete [] whole_line;
+#else
 	char whole_line[forward];
 
 	ret = read(&whole_line, 1, forward);
+#endif
 	return ret;
 }
 

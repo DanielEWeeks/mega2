@@ -217,8 +217,13 @@ enum argType {
 };
 
 typedef struct _command_line_option {
+#ifdef _WIN
+    char *str;       // The option string e.g., '--foo'
+    enum argType at; // e.g., 0: '--foo'; 1: '--foo value'; 2: -foo filename
+#else
     const char *str;       // The option string e.g., '--foo'
     const enum argType at; // e.g., 0: '--foo'; 1: '--foo value'; 2: -foo filename
+#endif
 } command_line_option;
 
 //

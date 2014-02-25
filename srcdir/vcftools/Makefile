@@ -27,6 +27,9 @@
 # Requires gnu make (sometimes called 'gmake')
 #
 
+# NOTE: the '-DNDEBUG' is needed to turn off the assert macros in the VCFtools code...
+CFLAGS += -DNDEBUG
+
 # Put the library in the Mega2 srcdir above this...
 # NOTE: -lz is needed when the library is linked...
 OUT = ../libvcftools.a
@@ -34,13 +37,14 @@ OUT = ../libvcftools.a
 # source files.
 SRC =  	mega2_vcftools_interface.cpp \
 	parameters.cpp header.cpp \
-	entry.cpp entry_getters.cpp entry_setters.cpp bcf_entry.cpp bcf_entry_setters.cpp vcf_entry.cpp vcf_entry_setters.cpp \
+	entry.cpp entry_getters.cpp entry_setters.cpp bcf_entry.cpp bcf_entry_setters.cpp \
+	vcf_entry.cpp vcf_entry_setters.cpp \
 	variant_file.cpp variant_file_filters.cpp variant_file_index.cpp bcf_file.cpp vcf_file.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
-# include directories '.' for other vcftools headers, '..' for Mega2 headers...
-INCLUDES = -I. -I..
+# include directories '.' for other vcftools headers, '..' for Mega2 headers... and zlib headers
+CFLAGS += -I..
 
 # CC, CFLAGS are defined in Mega2 Makedefs
 
@@ -50,11 +54,12 @@ default: $(OUT)
 
 .cpp.o:
 	$(CXX) $(INCLUDES) $(CFLAGS) -c $< -o $@
+
 bgzf: bgzf.c bgzf.h
 
 $(OUT): $(OBJ)
 	$(CC) -c $(CFLAGS) bgzf.c -o bgzf.o
-	ar rcs $(OUT) $(OBJ) bgzf.o
+	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(OBJ) bgzf.o
 
 depend:
 	makedepend -Y. -- $(CFLAGS) -- $(INCLUDES) $(SRC) bgzf.c
