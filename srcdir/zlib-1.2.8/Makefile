@@ -17,25 +17,62 @@
 # To install in $HOME instead of /usr/local, use:
 #    make install prefix=$HOME
 
-INST = ../libz.a ../zlib.h ../zconf.h
+go: all
 
-all: ../libz.a
+ifeq      ($(OSTYPE),windows) #### WINDOWS ####
 
-Makefile.Z: Makefile.Z.in
+
+$(TARGET)::
+	$(MAKE) $(MFLAGS) -f win32/Makefile.msc $(TARGET)
+
+TARGET = zlib.lib
+CP = copy
+
+clean::
+	$(MAKE) $(MFLAGS) -f win32/Makefile.msc clean
+
+else ifeq ($(OSTYPE),mingw) #### MINGW ####
+
+
+TARGET = libz.a
+CP = cp
+
+$(TARGET)::
+	$(MAKE) $(MFLAGS) -f win32/Makefile.gcc $(TARGET)
+
+clean::
+	$(MAKE) $(MFLAGS) -f win32/Makefile.gcc clean
+
+else                       #### DEFAULT ####
+
+TARGET = libz.a
+CP = cp
+
+Makefile.zlib: Makefile.zlib.in
 	./configure
 
-../libz.a: libz.a
-	cp  $(INST:../%=%) ..
+$(TARGET):: Makefile.zlib
+	$(MAKE) $(MFLAGS) -f Makefile.zlib $(TARGET)
+
+clean::
+ifneq ($(wildcard Makefile.zlib),)
+	$(MAKE) $(MFLAGS) -f Makefile.zlib clean
+endif
+endif
+
+INST = ../$(TARGET) ../zlib.h ../zconf.h
+
+all: ../$(TARGET)
+
+../$(TARGET): $(TARGET)
+	$(foreach fl,$(INST:../%=%),$(CP) $(fl) ..;)
 	chmod 644 $(INST)
 
-libz.a: Makefile.Z
-	$(MAKE) $(MAKEFLAGS) -f Makefile.Z libz.a
-
-clean: Makefile.Z
-	$(MAKE) $(MAKEFLAGS) -f Makefile.Z clean
+clean::
 	$(RM) *.obj
 	$(RM) *.lib *.exe *.exe *.pdb
 	$(RM) $(INST)
 
 distclean: clean
-	$(RM) Makefile.Z
+	$(RM) Makefile.zlib
+	$(CP) zconf.h.in zconf.h

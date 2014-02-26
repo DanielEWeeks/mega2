@@ -53,7 +53,7 @@ CFLAGS += -I..
 default: $(OUT)
 
 .cpp.o:
-	$(CXX) $(INCLUDES) $(CFLAGS) -c $< -o $@
+	$(CXX) $(INCLUDES) $(CFLAGS) -c $<
 
 bgzf: bgzf.c bgzf.h
 
@@ -66,6 +66,9 @@ depend:
 
 clean:
 	$(RM) $(OBJ) bgzf.o $(OUT) Makefile.bak
+
+distclean: clean
+
 
 # DO NOT DELETE
 

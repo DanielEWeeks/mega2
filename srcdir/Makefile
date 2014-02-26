@@ -191,6 +191,7 @@ all: $(MODULE)_$(OSTYPE)
 gcc_info.o: $(OBJS)
 
 # export CFLAGS so that the called Makefile can find it...
+export OSTYPE
 export CFLAGS
 export CXX
 export CC
@@ -198,12 +199,13 @@ export AR
 export ARFLAGS
 export AROUT
 
-CLIBS += libvcftools.a libz.a
+ZLIBS ?= libz.a
+CLIBS += libvcftools.a $(ZLIBS)
 
 SUBDIRS = vcftools zlib-1.2.8
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
-	$(MAKE) $(MAKEFLAGS) -C $@
+	$(MAKE) $(MFLAGS) -C $@
 vcftools: zlib-1.2.8
 libvcftools.a: vcftools
 libz.a: zlib-1.2.8
@@ -229,6 +231,11 @@ endif
 clean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
 	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) clean;)
+
+distclean:
+	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
+	echo next
+	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) distclean;)
 
 clean1:
 	$(RM) *~
