@@ -49,7 +49,7 @@ TARGET = libz.a
 CP = cp
 
 Makefile.zlib: Makefile.zlib.in
-	./configure
+	./configure --static
 
 $(TARGET):: Makefile.zlib
 	$(MAKE) $(MFLAGS) -f Makefile.zlib $(TARGET)
