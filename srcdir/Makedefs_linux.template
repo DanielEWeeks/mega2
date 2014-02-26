@@ -31,15 +31,8 @@ CC = gcc
 # compiler options
 
 CFLAGS = -Wall -ggdb
-CLIBS = -lm -lz
 
-DFLAGS += -DHAS_ZLIB
+CLIBS = -lm
 
 #no one uses LINUX_OS flag, ... yet
 #mega2.o cw_routines.o: DFLAGS += -DLINUX_OS
-
-# DFLAGS = -DBETA -DLINUX_OS -DDEBUG_MAKEPED1
-# DFLAGS = -DEXPIRE -DLINUX_OS 
-# -DDMALLOC
-# -DSETSEED
-# -ldmalloc
