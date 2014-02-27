@@ -74,5 +74,5 @@ clean::
 	$(RM) $(INST)
 
 distclean: clean
-	$(RM) Makefile.zlib
+	$(RM) Makefile.zlib configure.log
 	$(CP) zconf.h.in zconf.h

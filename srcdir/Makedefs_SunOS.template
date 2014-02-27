@@ -33,9 +33,7 @@ CC = gcc
 CFLAGS = -Wall
 # for gethostbyname() on Solaris11, libnsl needs to be linked in.
 # for send() and recv() on Solaris11, libsocket needs to be linked in.
-CLIBS  = -lm -lz -lnsl -lsocket
-
-DFLAGS += -DHAS_ZLIB
+CLIBS  = -lm -lnsl -lsocket
 
 mega2.o cw_routines.o: DFLAGS += -DSOLARIS
 
