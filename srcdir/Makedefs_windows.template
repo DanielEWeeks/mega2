@@ -28,16 +28,24 @@ MAKEDEFS = DEFINED
 # c compiler
 CC = cl
 CXX = cl
+
 LINK = link -nologo
 LTARGET = -out:$(EXEC).exe -debug
+
+AR = lib
+ARFLAGS = -nologo
+AROUT = -out:
+
+WINO = -Fo$*.o
+
+ZLIBS = zlib.lib
+
 #pragma warning(disable:# #)
 
 # compiler options
 
-CFLAGS = -nologo -Zi -W4 -D_CRT_SECURE_NO_WARNINGS -D_WIN -EHsc -Fo$*.o 
+CFLAGS = -nologo -MD -Zi -W4 -D_CRT_SECURE_NO_WARNINGS -D_WIN -EHsc
 
 RM=del /Q
 
 #now on for all code: marker_lookup.o phe_lookup.o batch.o write_pseq_files.o: CFLAGS += -EHsc
-
-ZLIBS = zlib.lib

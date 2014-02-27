@@ -21,21 +21,26 @@ go: all
 
 ifeq      ($(OSTYPE),windows) #### WINDOWS ####
 
-
-$(TARGET)::
-	$(MAKE) $(MFLAGS) -f win32/Makefile.msc $(TARGET)
-
 TARGET = zlib.lib
 CP = copy
+CHMOD = echo
+UP = ..\\
+
+unexport MAKEFLAGS
+unexport MFLAGS
+
+$(TARGET)::
+	nmake -f win32/Makefile.msc $(TARGET)
 
 clean::
-	$(MAKE) $(MFLAGS) -f win32/Makefile.msc clean
+	nmake -f win32/Makefile.msc clean
 
 else ifeq ($(OSTYPE),mingw) #### MINGW ####
 
-
 TARGET = libz.a
 CP = cp
+CHMOD = chmod
+UP = ../
 
 $(TARGET)::
 	$(MAKE) $(MFLAGS) -f win32/Makefile.gcc $(TARGET)
@@ -47,6 +52,8 @@ else                       #### DEFAULT ####
 
 TARGET = libz.a
 CP = cp
+CHMOD = chmod
+UP = ../
 
 Makefile.zlib: Makefile.zlib.in
 	./configure
@@ -60,18 +67,21 @@ ifneq ($(wildcard Makefile.zlib),)
 endif
 endif
 
-INST = ../$(TARGET) ../zlib.h ../zconf.h
+INST = $(TARGET) zlib.h zconf.h
 
 all: ../$(TARGET)
 
 ../$(TARGET): $(TARGET)
-	$(foreach fl,$(INST:../%=%),$(CP) $(fl) ..;)
-	chmod 644 $(INST)
+#	$(foreach fl,$(INST),$(CP) $(fl) .. &&) echo on
+	$(CP) $(TARGET) ..
+	$(CP) zlib.h ..
+	$(CP) zconf.h ..
+	$(CHMOD) 644 $(INST:%=$(UP)%)
 
 clean::
 	$(RM) *.obj
 	$(RM) *.lib *.exe *.exe *.pdb
-	$(RM) $(INST)
+	$(RM) $(INST:%=$(UP)%)
 
 distclean: clean
 	$(RM) Makefile.zlib
