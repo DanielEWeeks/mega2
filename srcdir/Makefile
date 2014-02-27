@@ -181,7 +181,6 @@ export CC
 export AR
 export ARFLAGS
 export AROUT
-export WINO
 
 LINK ?= $(CXX)
 LTARGET ?= -o $(EXEC)

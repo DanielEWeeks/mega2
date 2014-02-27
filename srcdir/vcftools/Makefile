@@ -34,8 +34,10 @@ CFLAGS += -DNDEBUG
 # NOTE: -lz is needed when the library is linked...
 ifeq ($(OSTYPE),windows)
 UP = ..\\
+WINO = -Fo$*.o
 else
 UP = ../
+WINO = 
 endif
 
 OUT = $(UP)libvcftools.a
