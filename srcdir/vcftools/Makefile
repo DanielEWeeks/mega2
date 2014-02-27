@@ -32,7 +32,15 @@ CFLAGS += -DNDEBUG
 
 # Put the library in the Mega2 srcdir above this...
 # NOTE: -lz is needed when the library is linked...
-OUT = ../libvcftools.a
+ifeq ($(OSTYPE),windows)
+UP = ..\\
+WINO = -Fo$*.o
+else
+UP = ../
+WINO = 
+endif
+
+OUT = $(UP)libvcftools.a
 
 # source files.
 SRC =  	mega2_vcftools_interface.cpp \
@@ -53,12 +61,14 @@ CFLAGS += -I..
 default: $(OUT)
 
 .cpp.o:
-	$(CXX) $(INCLUDES) $(CFLAGS) -c $<
+	$(CXX) $(INCLUDES) $(CFLAGS) -c $< $(WINO)
+
+.c.o:
+	$(CC) $(INCLUDES) $(CFLAGS) -c $< $(WINO)
 
 bgzf: bgzf.c bgzf.h
 
-$(OUT): $(OBJ)
-	$(CC) -c $(CFLAGS) bgzf.c -o bgzf.o
+$(OUT): $(OBJ) bgzf.o
 	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(OBJ) bgzf.o
 
 depend:

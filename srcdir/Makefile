@@ -173,23 +173,6 @@ endif
 output_file_names.o: DFLAGS += $(DlFLAGS)
 read_files.o compress.o: DFLAGS += $(DlFLAGS)
 
-.c.o:
-ifeq ($(MINGW),)
-	$(RM) $*.o
-endif
-	$(CC) $(CFLAGS) $(DFLAGS) $(FLAGS) -c $(IFLAGS) $*.c
-
-.cpp.o:	
-ifeq ($(MINGW),)
-	$(RM) $*.o
-endif
-	$(CXX) $(CFLAGS) $(DFLAGS) $(FLAGS) -c $(IFLAGS) $*.cpp
-
-
-all: $(MODULE)_$(OSTYPE)
-
-gcc_info.o: $(OBJS)
-
 # export CFLAGS so that the called Makefile can find it...
 export OSTYPE
 export CFLAGS
@@ -199,8 +182,32 @@ export AR
 export ARFLAGS
 export AROUT
 
+LINK ?= $(CXX)
+LTARGET ?= -o $(EXEC)
+AR ?= ar
+ARFLAGS ?= rcs
+AROUT ?=
+
 ZLIBS ?= libz.a
 CLIBS += libvcftools.a $(ZLIBS)
+
+WINO ?=
+
+.c.o:
+ifeq ($(MINGW),)
+	$(RM) $*.o
+endif
+	$(CC) $(CFLAGS) $(DFLAGS) $(FLAGS) -c $(IFLAGS) $*.c $(WINO)
+
+.cpp.o:	
+ifeq ($(MINGW),)
+	$(RM) $*.o
+endif
+	$(CXX) $(CFLAGS) $(DFLAGS) $(FLAGS) -c $(IFLAGS) $*.cpp $(WINO)
+
+all: $(MODULE)_$(OSTYPE)
+
+gcc_info.o: $(OBJS)
 
 SUBDIRS = vcftools zlib-1.2.8
 .PHONY: $(SUBDIRS)
@@ -209,12 +216,6 @@ $(SUBDIRS):
 vcftools: zlib-1.2.8
 libvcftools.a: vcftools
 libz.a: zlib-1.2.8
-
-LINK ?= $(CXX)
-LTARGET ?= -o $(EXEC)
-AR ?= ar
-ARFLAGS ?= rcs
-AROUT ?=
 
 $(MODULE)_$(OSTYPE): $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libvcftools.a libz.a
 	$(RM) $(MODULE)
@@ -230,17 +231,20 @@ endif
 
 clean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
-	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) clean;)
+#	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) RM="$(RM)" clean &&) echo on
+	$(MAKE) $(MFLAGS) -C vcftools   RM="$(RM)" clean
+	$(MAKE) $(MFLAGS) -C zlib-1.2.8 RM="$(RM)" clean
 
 distclean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
-	echo next
-	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) distclean;)
+#	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) RM="$(RM)" distclean &&) echo on
+	$(MAKE) $(MFLAGS) -C vcftools   RM="$(RM)" distclean
+	$(MAKE) $(MFLAGS) -C zlib-1.2.8 RM="$(RM)" distclean
 
 clean1:
 	$(RM) *~
 
-srcdist:	
+srcdist:
 	for i in $(SRCS) $(HDRS); do $(REMOVECVS1) $$i > ../srcdir/$$i; done
 	for i in `ls Makedefs*`; do $(REMOVECVS) $$i > ../srcdir/$$i.template; done
 	$(REMOVECVS) Makefile > ../srcdir/Makefile
