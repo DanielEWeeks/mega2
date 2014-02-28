@@ -531,7 +531,7 @@ begin{adjustwidth*}{-1.5cm}{-1.5cm}
 
 \begin_layout Standard
 \begin_inset Graphics
-	filename /Volumes/MacHDdata/Users/dweeks/data/src/mega2/mega2_dev_src/mega2_html/Mega2_overview.pdf
+	filename Mega2_overview.pdf
 	scale 83
 
 \end_inset
@@ -2598,7 +2598,7 @@ Rallegro.pl.src Rmerlin.pl.src Rsimwalk2.pl.src
 
 \begin_layout Plain Layout
 Perl source files for reformatting Allegro, Merlin and SimWalk2 linkage-analysis
- output for plottingby nplplot.
+ output for plotting by nplplot.
 \end_layout
 
 \end_inset
@@ -3054,6 +3054,31 @@ License Agreement
 The distribution of this package is governed by the terms of GNU public
  license version 3 (GPLv3).
  Please follow the terms of this agreement.
+\end_layout
+
+\begin_layout Standard
+Mega2 uses two libraries developed by other external groups; the sources
+ are included with the Mega2 sources.
+ One library handles reading of the various Variant Call Format (VCF) input
+ files.
+ The other library, ZLIB, is a compression library; it is not directly used
+ by Mega2.
+ ZLIB is needed by the VCF library and also used to format Beagle output.
+ The license for the VCF library is the MIT license 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:MIT-License---"
+
+\end_inset
+
+and ZLIB is free and the license for ZLIB is shown in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:License-for-ZLIB"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -29011,7 +29036,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-Jan 31, 2014
+Feb 28, 2014
 \end_layout
 
 \end_inset
@@ -29680,7 +29705,7 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.6.1 to Version 4.6.2 (Releasted January 31, 2014)
+Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)
 \end_layout
 
 \begin_layout Itemize
@@ -29706,8 +29731,13 @@ reference "sec:The-input-menu"
 ).
 \end_layout
 
+\begin_layout Itemize
+Bug Fix: Binary file support (mainly .bed files) was broken on Windows and
+ Mingw platforms.
+\end_layout
+
 \begin_layout Subsection
-Changes from Version 4.6.0 to Version 4.6.1 (Releasted Oct 21st, 2013)
+Changes from Version 4.6.0 to Version 4.6.1 (Released Oct 21st, 2013)
 \end_layout
 
 \begin_layout Itemize
@@ -29748,7 +29778,7 @@ Enhancement: Added binaries for native Microsoft Windows 8 and MinGW built
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.5.9 to Version 4.6.0 (Releasted Sept 6th, 2013)
+Changes from Version 4.5.9 to Version 4.6.0 (Released Sept 6th, 2013)
 \end_layout
 
 \begin_layout Itemize
@@ -29756,7 +29786,7 @@ Enhancement: Mega2 compresses allele data to handle much larger datasets.
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.5.8 to Version 4.5.9 (Releasted July 5th, 2013)
+Changes from Version 4.5.8 to Version 4.5.9 (Released July 5th, 2013)
 \end_layout
 
 \begin_layout Itemize
@@ -31824,7 +31854,7 @@ loop-over traits
 \end_layout
 
 \begin_layout Subsection*
- Changes from Ver 2.5 R2 -
+Changes from Ver 2.5 R2 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -33671,7 +33701,7 @@ R-graphics bug fixed - The output file was not renumbered according to the
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 2.5
+Bugs in Mega2 2.5
 \end_layout
 
 \begin_layout Standard
@@ -34041,12 +34071,6 @@ Allele count option did not skip untyped markers, so it gave meaningless
  output due to divide-by-zero errors.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\end_layout
-
-\begin_deeper
 \begin_layout Standard
 Aspex and Splink options did not have the correct headers in the c-shell
  scripts when more than one analysis was put into the same file.
@@ -34054,6 +34078,10 @@ Aspex and Splink options did not have the correct headers in the c-shell
 
 \end_deeper
 \begin_layout Section
+License agreements
+\end_layout
+
+\begin_layout Subsection
 Mega2 license agreement
 \end_layout
 
@@ -36366,6 +36394,236 @@ Public License instead of this License.
 
 \begin_layout LyX-Code
 <http://www.gnu.org/philosophy/why-not-lgpl.html>.
+\end_layout
+
+\begin_layout Subsection
+MIT License -- for VCF tools
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:MIT-License---"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* The MIT License
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+   Copyright (c) 2008 Broad Institute / Massachusetts Institute of Technology
+\end_layout
+
+\begin_layout LyX-Code
+                 2011, 2012 Attractive Chaos <attractor@live.co.uk>
+\end_layout
+
+\begin_layout LyX-Code
+   Permission is hereby granted, free of charge, to any person obtaining
+ a copy
+\end_layout
+
+\begin_layout LyX-Code
+   of this software and associated documentation files (the "Software"),
+ to deal
+\end_layout
+
+\begin_layout LyX-Code
+   in the Software without restriction, including without limitation the
+ rights
+\end_layout
+
+\begin_layout LyX-Code
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ sell
+\end_layout
+
+\begin_layout LyX-Code
+   copies of the Software, and to permit persons to whom the Software is
+\end_layout
+
+\begin_layout LyX-Code
+   furnished to do so, subject to the following conditions:
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+   The above copyright notice and this permission notice shall be included
+ in
+\end_layout
+
+\begin_layout LyX-Code
+   all copies or substantial portions of the Software.
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR
+\end_layout
+
+\begin_layout LyX-Code
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+\end_layout
+
+\begin_layout LyX-Code
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE
+\end_layout
+
+\begin_layout LyX-Code
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+\end_layout
+
+\begin_layout LyX-Code
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM,
+\end_layout
+
+\begin_layout LyX-Code
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ IN
+\end_layout
+
+\begin_layout LyX-Code
+   THE SOFTWARE.
+\end_layout
+
+\begin_layout LyX-Code
+*/ 
+\end_layout
+
+\begin_layout Subsection
+License for ZLIB
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:License-for-ZLIB"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The zlib home page is http://zlib.net/.
+ It contains much useful information including the license reproduced below.
+\end_layout
+
+\begin_layout LyX-Code
+/* zlib.h -- interface of the 'zlib' general purpose compression library
+\end_layout
+
+\begin_layout LyX-Code
+  version 1.2.8, April 28th, 2013
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+  Copyright (C) 1995-2013 Jean-loup Gailly and Mark Adler
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+  This software is provided 'as-is', without any express or implied
+\end_layout
+
+\begin_layout LyX-Code
+  warranty.
+  In no event will the authors be held liable for any damages
+\end_layout
+
+\begin_layout LyX-Code
+  arising from the use of this software.
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+  Permission is granted to anyone to use this software for any purpose,
+\end_layout
+
+\begin_layout LyX-Code
+  including commercial applications, and to alter it and redistribute it
+\end_layout
+
+\begin_layout LyX-Code
+  freely, subject to the following restrictions:
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+  1.
+ The origin of this software must not be misrepresented; you must not
+\end_layout
+
+\begin_layout LyX-Code
+     claim that you wrote the original software.
+ If you use this software
+\end_layout
+
+\begin_layout LyX-Code
+     in a product, an acknowledgment in the product documentation would
+ be
+\end_layout
+
+\begin_layout LyX-Code
+     appreciated but is not required.
+\end_layout
+
+\begin_layout LyX-Code
+  2.
+ Altered source versions must be plainly marked as such, and must not be
+\end_layout
+
+\begin_layout LyX-Code
+     misrepresented as being the original software.
+\end_layout
+
+\begin_layout LyX-Code
+  3.
+ This notice may not be removed or altered from any source distribution.
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+  Jean-loup Gailly        Mark Adler
+\end_layout
+
+\begin_layout LyX-Code
+  jloup@gzip.org          madler@alumni.caltech.edu
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+*/ 
 \end_layout
 
 \begin_layout Section
