@@ -206,7 +206,7 @@ extern int count_analysis_list;
 
 int analysis_menu1(analysis_type  *analysis)
 {
-    char            choice[10], sub_prog[20];
+    char            choice[50], sub_prog[50];
     int             i, choice_=0;
     int             num_per_screen;
     char            option_col1[35], option_col2[35];
