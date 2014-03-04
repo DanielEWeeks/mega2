@@ -1765,6 +1765,27 @@ http://watson.hgen.pitt.edu
  
 \end_layout
 
+\begin_layout Standard
+If you use Mega2 to convert VCF or BCF input files, then, as this makes
+ use of a built-in copy of VCFtools, you should also cite the following
+ paper:
+\end_layout
+
+\begin_layout Quote
+\begin_inset CommandInset href
+LatexCommand href
+name "The Variant Call Format and VCFtools"
+target "http://dx.doi.org/10.1093/bioinformatics/btr330"
+
+\end_inset
+
+, Petr Danecek, Adam Auton, Goncalo Abecasis, Cornelis A.
+ Albers, Eric Banks, Mark A.
+ DePristo, Robert Handsaker, Gerton Lunter, Gabor Marth, Stephen T.
+ Sherry, Gilean McVean, Richard Durbin and 1000 Genomes Project Analysis
+ Group, Bioinformatics (2011) 27 (15): 2156-2158.
+\end_layout
+
 \begin_layout Section
 Support, bug reports, and feedback
 \begin_inset CommandInset label
@@ -3107,10 +3128,18 @@ target "http://www.gnu.org/licenses/gpl-3.0.html"
 \end_inset
 
 .
+ A copy of this license is included in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:GPLv3-license-agreement"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
-Mega2 uses two libraries developed by other external groups; the sources
+Mega2 uses two libraries developed by other external groups, the sources
  of which are included with the Mega2 sources.
  The VCFtools library handles reading of the various Variant Call Format
  (VCF) input files.
@@ -34137,6 +34166,13 @@ License agreements
 
 \begin_layout Subsection
 GPLv3 license agreement for Mega2 and VCFtools
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:GPLv3-license-agreement"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -36451,7 +36487,7 @@ Public License instead of this License.
 \end_layout
 
 \begin_layout Subsection
-MIT License -- for VCF tools
+MIT License -- for VCFtools
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:MIT-License---"
@@ -36459,6 +36495,11 @@ name "sub:MIT-License---"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+While the VCFtools source code as a whole is licensed under the GPL license
+ above, these files contain the MIT license: bgzf.c and bgzf.h.
 \end_layout
 
 \begin_layout LyX-Code
@@ -36570,8 +36611,19 @@ name "sub:License-for-ZLIB"
 \end_layout
 
 \begin_layout Standard
-The zlib home page is http://zlib.net/.
- It contains much useful information including the license reproduced below.
+The zlib home page is 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://zlib.net/
+\end_layout
+
+\end_inset
+
+.
+ It contains useful information including the license reproduced below.
 \end_layout
 
 \begin_layout LyX-Code
