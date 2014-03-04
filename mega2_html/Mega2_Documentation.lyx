@@ -3097,27 +3097,35 @@ License Agreement
 \end_layout
 
 \begin_layout Standard
-The distribution of this package is governed by the terms of GNU public
- license version 3 (GPLv3).
- Please follow the terms of this agreement.
+Distribution of Mega2 is governed by the terms of GNU public license version
+ 3 (GPLv3) 
+\begin_inset CommandInset href
+LatexCommand href
+name "GPLv3"
+target "http://www.gnu.org/licenses/gpl-3.0.html"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
 Mega2 uses two libraries developed by other external groups; the sources
- are included with the Mega2 sources.
- One library handles reading of the various Variant Call Format (VCF) input
- files.
- The other library, ZLIB, is a compression library; it is not directly used
- by Mega2.
- ZLIB is needed by the VCF library and also used to format Beagle output.
- The license for the VCF library is the MIT license 
+ of which are included with the Mega2 sources.
+ The VCFtools library handles reading of the various Variant Call Format
+ (VCF) input files.
+ ZLIB is needed by the VCFtools library and is also used to format Beagle
+ output.
+ The VCFtools library is released under the GNU public license version 3
+ (GPLv3), and the MIT license 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:MIT-License---"
 
 \end_inset
 
-and ZLIB is free and the license for ZLIB is shown in 
+.
+ The license for ZLIB is shown in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:License-for-ZLIB"
@@ -34128,7 +34136,7 @@ License agreements
 \end_layout
 
 \begin_layout Subsection
-Mega2 license agreement
+GPLv3 license agreement for Mega2 and VCFtools
 \end_layout
 
 \begin_layout LyX-Code
