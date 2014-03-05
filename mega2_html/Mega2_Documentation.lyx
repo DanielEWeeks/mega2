@@ -7,6 +7,7 @@
 \usepackage{tocstyle}
 \usepackage{fullpage}
 \usepackage{changepage}
+\usepackage{multicol}
 
 \title{mega2-title}
 
@@ -265,19 +266,6 @@ hrule
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset toc
-LatexCommand tableofcontents
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Introduction
-\end_layout
-
-\begin_layout Standard
 
 \series bold
 \shape italic
@@ -298,9 +286,42 @@ http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf
 \end_layout
 
 \begin_layout Standard
-\begin_inset VSpace defskip
+\begin_inset VSpace smallskip
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hrule
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
 During an association or linkage analysis project, one may need to analyze
  the data with several different programs.
  Unfortunately, it can often be quite difficult to get one's data in the
@@ -309,7 +330,7 @@ During an association or linkage analysis project, one may need to analyze
  loci must be reordered into their proper order.
  Writing custom reformatting scripts can be error-prone and very time-consuming.
  To address these problems, we created Mega2, which can be obtained following
- the installation instructions in Section 
+ the instructions in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Installation"
@@ -320,15 +341,14 @@ reference "sec:Installation"
 \end_layout
 
 \begin_layout Standard
-To get started using Mega2, we recommend first reading the Quick Start Mega2
- mini-tutorial (see 
+The Quick Start Mega2 tutorial in 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sec:Quickstart---get"
 
 \end_inset
 
-).
+ will help you get started using Mega2.
 \end_layout
 
 \begin_layout Standard
@@ -357,9 +377,9 @@ reference "sub:Output-formats"
 \end_inset
 
 ), thus greatly facilitating a variety of different analyses.
- In addition, for many of these options, it also sets up a C-shell script
+ In addition, for many of these options, it also sets up a shell script
  that then can automatically run these analyses (if you are using Mega2
- in a Unix environment that supports C-shell scripts).
+ in a Unix or Macintosh environment).
  
 \end_layout
 
@@ -386,7 +406,7 @@ In addition to the ability to reformat data for a variety of analysis programs,
 
 \begin_layout Enumerate
 The ability to create publication-quality PDF plots of the results using
- our nplplot R library (See section 
+ our nplplot R library (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Creating-plots"
@@ -398,7 +418,7 @@ reference "sec:Creating-plots"
 
 \begin_layout Enumerate
 The ability to create custom tracks of results for visualization in the
- UCSC genome browser (See section 
+ UCSC genome browser (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Custom-tracks-for"
@@ -409,7 +429,7 @@ reference "sec:Custom-tracks-for"
 \end_layout
 
 \begin_layout Enumerate
-The ability to run in an automated way using batch files (See section 
+The ability to run in an automated way using batch files (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Batch-mode"
@@ -421,7 +441,7 @@ reference "sec:Batch-mode"
 
 \begin_layout Enumerate
 The availability of our Genetic Map Interpolator for aiding in constructing
- genetic maps of markers (See section 
+ genetic maps of markers (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Genetic-Map-Interpolator"
@@ -443,8 +463,8 @@ reference "sub:Simulate-errors"
 \end_layout
 
 \begin_layout Enumerate
-Support for Mega2-annotated format files that contain informative header
- lines and are readable into R (See section 
+Input and output support for Mega2-annotated format files that contain informati
+ve header lines and are readable into R (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-file-formats"
@@ -455,8 +475,8 @@ reference "sub:Annotated-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-Support for the widely-used PLINK binary PED format (*.bed) and PLINK PED
- format (*.ped) files (See Section
+Input and output support for the widely-used PLINK format files (See Section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:PLINK-file-formats"
@@ -467,8 +487,8 @@ reference "sub:PLINK-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-Support for Variant Call Format (VCF, BCF, compressed VCF) files (See Section
- 
+Input support for Variant Call Format (VCF, BCF, compressed VCF) files,
+ including flexible filtering on input (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:VCF-file-formats"
@@ -480,7 +500,7 @@ reference "sub:VCF-file-formats"
 
 \begin_layout Enumerate
 The ability to automatically zero out selected genotypes for specific individual
-s in order to resolve Mendelian inconsistencies (See section 
+s in order to resolve Mendelian inconsistencies (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-omit-file"
@@ -492,21 +512,21 @@ reference "sub:Annotated-omit-file"
 
 \begin_layout Enumerate
 In most cases, in addition to generating appropriately re-formatted files,
- Mega2 also generates a C-shell script that will automatically run the desired
+ Mega2 also generates a shell script that will automatically run the desired
  program.
  
 \end_layout
 
 \begin_layout Enumerate
-Creation of a MEGA2run.html HTML summary of the most recent run of Mega2,
- with links to input and output and log files (See 
+Creation of an HTML summary of the most recent run of Mega2, with links
+ to input and output and log files (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:MEGA2run.html-and-related"
 
 \end_inset
 
-
+).
 \end_layout
 
 \begin_layout Subsection
@@ -651,6 +671,22 @@ reference "sec:Detailed-info-Analysis-Options"
 \end_inset
 
 ):
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{multicols}{2}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
@@ -799,6 +835,22 @@ Structure format
 
 \begin_layout Enumerate
 PSEQ format 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{multicols}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -1504,8 +1556,8 @@ Done with this menu - please proceed
 \end_layout
 
 \begin_layout Standard
-Note the options 1 allows one to instruct Mega2 to read PLINK format input
- files, either in binary format, or in PED format and Variant Call Format
+Note that option 1 allows one to instruct Mega2 to read PLINK format input
+ files, either in binary format or in PED format, or Variant Call Format
  (VCF) input files in either binary (.bcf), compressed (.vcf.gz), or text (.vcf)
  format.
 \end_layout
@@ -1713,6 +1765,27 @@ http://watson.hgen.pitt.edu
  
 \end_layout
 
+\begin_layout Standard
+If you use Mega2 to convert VCF or BCF input files, then, as this makes
+ use of a built-in copy of VCFtools, you should also cite the following
+ paper:
+\end_layout
+
+\begin_layout Quote
+\begin_inset CommandInset href
+LatexCommand href
+name "The Variant Call Format and VCFtools"
+target "http://dx.doi.org/10.1093/bioinformatics/btr330"
+
+\end_inset
+
+, Petr Danecek, Adam Auton, Goncalo Abecasis, Cornelis A.
+ Albers, Eric Banks, Mark A.
+ DePristo, Robert Handsaker, Gerton Lunter, Gabor Marth, Stephen T.
+ Sherry, Gilean McVean, Richard Durbin and 1000 Genomes Project Analysis
+ Group, Bioinformatics (2011) 27 (15): 2156-2158.
+\end_layout
+
 \begin_layout Section
 Support, bug reports, and feedback
 \begin_inset CommandInset label
@@ -1875,12 +1948,6 @@ name "sec:Installation"
 \noindent
 \align center
 INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.6.2 AND HIGHER 
-\end_layout
-
-\begin_layout Standard
-\noindent
-\align center
-Last updated: July 5, 2013 
 \end_layout
 
 \begin_layout Subsection
@@ -3071,7 +3138,7 @@ reference "sub:GNU-General-Public"
 \end_layout
 
 \begin_layout Standard
-Mega2 uses two libraries developed by other external groups; the sources
+Mega2 uses two libraries developed by other external groups, the sources
  of which are included with the Mega2 sources.
  The VCFtools library handles reading of the various Variant Call Format
  (VCF) input files.
@@ -36434,7 +36501,7 @@ Public License instead of this License.
 \end_layout
 
 \begin_layout Subsection
-MIT License -- for VCF tools
+MIT License -- for VCFtools
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:MIT-License---"
@@ -36442,6 +36509,11 @@ name "sub:MIT-License---"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+While the VCFtools source code as a whole is licensed under the GPL license
+ above, these files contain the MIT license: bgzf.c and bgzf.h.
 \end_layout
 
 \begin_layout LyX-Code
@@ -36553,8 +36625,19 @@ name "sub:License-for-ZLIB"
 \end_layout
 
 \begin_layout Standard
-The zlib home page is http://zlib.net/.
- It contains much useful information including the license reproduced below.
+The zlib home page is 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://zlib.net/
+\end_layout
+
+\end_inset
+
+.
+ It contains useful information including the license reproduced below.
 \end_layout
 
 \begin_layout LyX-Code
