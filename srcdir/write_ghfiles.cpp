@@ -1582,7 +1582,7 @@ static void   write_gh_cshell_file(char *gh_script, int *numchr, char *gh_in,
             ntick = 0;
             if ((LTop->LocusCnt - num_affec) > 1) {
 	      for (locus = &(markers[0]), locus1 = &(markers[1]), tmpi = 0;
-                   tmpi < num_markers;
+                   tmpi < num_markers-1;
                    locus++, locus1++, tmpi++) {
                     if (LTop->Marker[*locus].chromosome != LTop->Marker[*locus1].chromosome)
                         diff = 0.50000;

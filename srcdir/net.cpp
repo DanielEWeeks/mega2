@@ -59,6 +59,7 @@ const char *errstr;
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <fcntl.h>
 #define SOCK int
 #define INVALID_SOCKET -1
 #define SOCK_ERRh(sfd) (sfd < 0)
@@ -313,6 +314,18 @@ SOCK http_request(const char *request, const char *host, unsigned short port)
     SOCK fd = socket_fd(host, port);
     if (SOCK_ERRh(fd)) return INVALID_SOCKET;
 
+#if defined(_WIN) || defined(MINGW)
+    int soptbuff = 5 * 1000;
+#else
+    struct timeval soptbuff = { 5, 0};
+#endif
+    int sret;
+    sret =           setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (const char *)&soptbuff, sizeof soptbuff);
+    if (sret != 0 || setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (const char *)&soptbuff, sizeof soptbuff) != 0 ) {
+        ERR_STR();
+        warnvf("setsocketopt: SND/RCV timeout failed: errno %d (%s)\n", errno, errstr);
+    }
+
     sprintf(socket_buffer, req, request, host);
     len  = strlen(socket_buffer);
 
@@ -376,11 +389,42 @@ SOCK socket_fd(const char *host, unsigned short port)
 
     memcpy(&saddr.sin_addr, mega2_server->h_addr_list[0], sizeof (struct in_addr));
 
-    err = connect(sfd, (struct sockaddr *)&saddr, sizeof (struct sockaddr_in));
-    if (SOCK_ERR(err)) {
+#if defined(_WIN) || defined(MINGW)
+    int soptbuff = 1;
+    if (ioctlsocket(sfd, FIONBIO, (u_long *)&soptbuff) != NO_ERROR) {
         ERR_STR();
+        warnvf("ioctlsocket: set non blocking failed\n");
+    }
+#else
+    int fl = fcntl(sfd, F_GETFL);
+    fcntl(sfd, F_SETFL, O_NONBLOCK);
+#endif
+
+    err = connect(sfd, (struct sockaddr *)&saddr, sizeof (struct sockaddr_in));
+
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(sfd, &fds);
+
+    struct timeval sopttm = { 5, 0 };
+    err = select(sfd + 1, NULL, &fds, NULL, &sopttm);
+
+    if (SOCK_ERR(err) || err == 0) {
+#if defined(_WIN) || defined(MINGW)
+        if (err == 0) {
+            errno = 0;
+            errstr = "Operation timed out";
+        } else
+#else
+        if (err == 0) {
+            errno = 60;
+            err   = -1;
+        } // fall thru
+#endif
+            ERR_STR();
         switch(errno) {
         default:
+            fflush(stdout); fflush(stderr);
             warnvf("socket_fd: connect(%s:%d) failed with errno %d (\"%s\")\n",
 		   host, port, errno, errstr);
             STR_ERR();
@@ -389,6 +433,15 @@ SOCK socket_fd(const char *host, unsigned short port)
         }
     }
 
+#if defined(_WIN) || defined(MINGW)
+    soptbuff = 0;
+    if (ioctlsocket(sfd, FIONBIO, (u_long *)&soptbuff) != NO_ERROR) {
+        ERR_STR();
+        warnvf("ioctlsocket: set non blocking failed\n");
+    }
+#else
+    fcntl(sfd, F_SETFL, fl);
+#endif
     return sfd;
 }
 
