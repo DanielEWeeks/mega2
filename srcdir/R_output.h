@@ -37,14 +37,14 @@
 #define MERLINTABLE(chrstr, of) sprintf(of, "merlin_table.%s", chrstr);
 #define MERLINPDF(chrstr, of) sprintf(of, "merlin_out.%s.pdf", chrstr);
 
-extern char input_stem[4]; /* name for the generated  R_data file */
+extern char input_stem[FILENAME_LENGTH]; /* name for the generated  R_data file */
 extern char output_stem[FILENAME_LENGTH];
-extern char Rperl_file[20];
-extern char Rdatafile[20];
-extern char Rplot_function[14];
-extern char Rshell_file[20];
-extern char Rscript_file[20];
-extern char Rmap_file[20];
+extern char Rperl_file[FILENAME_LENGTH];
+extern char Rdatafile[FILENAME_LENGTH];
+extern char Rplot_function[FILENAME_LENGTH];
+extern char Rshell_file[FILENAME_LENGTH];
+extern char Rscript_file[FILENAME_LENGTH];
+extern char Rmap_file[FILENAME_LENGTH];
 
 typedef struct _out_pars {
     int pcomb_traits;
