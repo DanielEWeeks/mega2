@@ -3140,6 +3140,8 @@ reference "sub:GNU-General-Public"
 \begin_layout Standard
 Mega2 uses two libraries developed by other external groups, the sources
  of which are included with the Mega2 sources.
+ Minimal modifications have been made to these two libraries to facilitate
+ their integration with Mega2.
  The VCFtools library handles reading of the various Variant Call Format
  (VCF) input files.
  ZLIB is needed by the VCFtools library and is also used to format Beagle
@@ -34179,7 +34181,7 @@ License agreements
 \end_layout
 
 \begin_layout Subsection
-GNU General Public License Version 3, 29 June 207 for Mega2
+GNU General Public License Version 3 for Mega2
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:GNU-General-Public"
@@ -36501,7 +36503,7 @@ Public License instead of this License.
 \end_layout
 
 \begin_layout Subsection
-MIT License -- for VCFtools
+MIT License for VCFtools
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:MIT-License---"
@@ -36512,8 +36514,11 @@ name "sub:MIT-License---"
 \end_layout
 
 \begin_layout Standard
-While the VCFtools source code as a whole is licensed under the GPL license
- above, these files contain the MIT license: bgzf.c and bgzf.h.
+We have included VCFTools source code in the srcdir/vcftools directory of
+ the Mega2 distribution.
+ This code has been minimally modified so as to integrate it with Mega2.
+ While the VCFtools source code as a whole is licensed under the Lesser
+ GPL license below, these files contain the MIT license: bgzf.c and bgzf.h.
 \end_layout
 
 \begin_layout LyX-Code
@@ -36625,7 +36630,10 @@ name "sub:License-for-ZLIB"
 \end_layout
 
 \begin_layout Standard
-The zlib home page is 
+For ease of compilation, we have included zlib source code in the srcdir/zlib-1.2.
+8 directory of the Mega2 distribution.
+ This code has been minimally modified so as to integrate it with Mega2.
+ The zlib home page is 
 \begin_inset Flex URL
 status collapsed
 
@@ -36747,7 +36755,7 @@ http://zlib.net/
 \end_layout
 
 \begin_layout Subsection
-GNU Lesser General Public License Version 3, 29 June 2007 for VCFtools
+GNU Lesser General Public License Version 3 for VCFtools
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:GNU-Lesser-General"
@@ -36755,6 +36763,14 @@ name "sub:GNU-Lesser-General"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+We have included VCFTools source code in the srcdir/vcftools directory of
+ the Mega2 distribution.
+ This code has been minimally modified so as to integrate it with Mega2.
+ While the VCFtools source code as a whole is licensed under the Lesser
+ GPL license, two of files contain the MIT license, listed above.
 \end_layout
 
 \begin_layout Standard

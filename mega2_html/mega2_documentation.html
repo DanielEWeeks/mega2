@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="generator" content="http://www.nongnu.org/elyxer/"/>
-<meta name="create-date" content="2014-02-28"/>
+<meta name="create-date" content="2014-03-06"/>
 <link rel="stylesheet" href="Mega2_Documentation.css" type="text/css" media="all"/>
 <title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses </title>
 </head>
@@ -70,6 +70,15 @@ Previous Programmers:<i> Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, Willi
 </div>
 <div class="Standard">
 <span class="unknown">\hrule</span> 
+</div>
+<div class="Standard">
+<b><i>Note:</i></b> This documentation is available in PDF form from <a class="FlexURL" href="http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf">http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf</a> and it is also included in the mega2_html folder of the Mega2 distribution.
+</div>
+<div class="Standard">
+<div class="smallskip"> </div>
+</div>
+<div class="Standard">
+<span class="unknown">\hrule</span>
 </div>
 <div class="fulltoc">
 <div class="tocheader">
@@ -1171,13 +1180,16 @@ Table of Contents
 </div>
 <div class="tocindent">
 <div class="toc">
-<a class="Link" href="#toc-Subsection-29.1">Subsection 29.1: Mega2 license agreement</a>
+<a class="Link" href="#toc-Subsection-29.1">Subsection 29.1: GNU General Public License Version 3 for Mega2</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-29.2">Subsection 29.2: MIT License — for VCF tools</a>
+<a class="Link" href="#toc-Subsection-29.2">Subsection 29.2: MIT License for VCFtools</a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection-29.3">Subsection 29.3: License for ZLIB</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-29.4">Subsection 29.4: GNU Lesser General Public License Version 3 for VCFtools</a>
 </div>
 </div>
 <div class="toc">
@@ -1196,19 +1208,16 @@ Table of Contents
 <a class="toc" name="toc-Section-1">1</a> Introduction
 </h1>
 <div class="Standard">
-<b><i>Note:</i></b> This documentation is available in PDF form from <a class="FlexURL" href="http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf">http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf</a> and it is also included in the mega2_html folder of the Mega2 distribution.
+During an association or linkage analysis project, one may need to analyze the data with several different programs. Unfortunately, it can often be quite difficult to get one’s data in the proper format desired by each different computer program. Not only must the data be converted to the proper format, but also the loci must be reordered into their proper order. Writing custom reformatting scripts can be error-prone and very time-consuming. To address these problems, we created Mega2, which can be obtained following the instructions in Section <a class="Reference" href="#sec:Installation">8↓</a>.
 </div>
 <div class="Standard">
-<div class="defskip"> </div>During an association or linkage analysis project, one may need to analyze the data with several different programs. Unfortunately, it can often be quite difficult to get one’s data in the proper format desired by each different computer program. Not only must the data be converted to the proper format, but also the loci must be reordered into their proper order. Writing custom reformatting scripts can be error-prone and very time-consuming. To address these problems, we created Mega2, which can be obtained following the installation instructions in Section <a class="Reference" href="#sec:Installation">8↓</a>.
-</div>
-<div class="Standard">
-To get started using Mega2, we recommend first reading the Quick Start Mega2 mini-tutorial (see <a class="Reference" href="#sec:Quickstart---get">Section 4↓</a>).
+The Quick Start Mega2 tutorial in <a class="Reference" href="#sec:Quickstart---get">Section 4↓</a> will help you get started using Mega2.
 </div>
 <div class="Standard">
 Mega2 can read input data in several formats: LINKAGE format, PLINK format, and VCF format (as listed here: <a class="Reference" href="#sub:Input-formats">1.2.1↓</a>). Mega2 allows one to augment these input formats with additional information, if desired. For example, trait locus pentrance information can be specified. 
 </div>
 <div class="Standard">
-Mega2 then takes the input files and, via a menu-driven interface, transforms them into various other file formats (listed here <a class="Reference" href="#sub:Output-formats">1.2.2↓</a>), thus greatly facilitating a variety of different analyses. In addition, for many of these options, it also sets up a C-shell script that then can automatically run these analyses (if you are using Mega2 in a Unix environment that supports C-shell scripts). 
+Mega2 then takes the input files and, via a menu-driven interface, transforms them into various other file formats (listed here <a class="Reference" href="#sub:Output-formats">1.2.2↓</a>), thus greatly facilitating a variety of different analyses. In addition, for many of these options, it also sets up a shell script that then can automatically run these analyses (if you are using Mega2 in a Unix or Macintosh environment). 
 </div>
 <div class="Standard">
 Mega2 is currently structured so that the user proceeds through a series of menus, making choices in each one (or accepting the default values), until the desired output files are created. After the desired output files are created, Mega2 exits. It can also be run in a &ldquo;hands-free&rdquo; mode, using a control file to specify these choices.
@@ -1218,37 +1227,37 @@ In addition to the ability to reformat data for a variety of analysis programs, 
 </div>
 <ol>
 <li>
-The ability to create publication-quality PDF plots of the results using our nplplot R library (See section <a class="Reference" href="#sec:Creating-plots">18↓</a>).
+The ability to create publication-quality PDF plots of the results using our nplplot R library (See Section <a class="Reference" href="#sec:Creating-plots">18↓</a>).
 </li>
 <li>
-The ability to create custom tracks of results for visualization in the UCSC genome browser (See section <a class="Reference" href="#sec:Custom-tracks-for">19↓</a>).
+The ability to create custom tracks of results for visualization in the UCSC genome browser (See Section <a class="Reference" href="#sec:Custom-tracks-for">19↓</a>).
 </li>
 <li>
-The ability to run in an automated way using batch files (See section <a class="Reference" href="#sec:Batch-mode">22↓</a>).
+The ability to run in an automated way using batch files (See Section <a class="Reference" href="#sec:Batch-mode">22↓</a>).
 </li>
 <li>
-The availability of our Genetic Map Interpolator for aiding in constructing genetic maps of markers (See section <a class="Reference" href="#sec:Genetic-Map-Interpolator">10↓</a>).
+The availability of our Genetic Map Interpolator for aiding in constructing genetic maps of markers (See Section <a class="Reference" href="#sec:Genetic-Map-Interpolator">10↓</a>).
 </li>
 <li>
 The ability to simulate genotype errors (See section <a class="Reference" href="#sub:Simulate-errors">12.9↓</a>).
 </li>
 <li>
-Support for Mega2-annotated format files that contain informative header lines and are readable into R (See section <a class="Reference" href="#sub:Annotated-file-formats">9.1↓</a>).
+Input and output support for Mega2-annotated format files that contain informative header lines and are readable into R (See Section <a class="Reference" href="#sub:Annotated-file-formats">9.1↓</a>).
 </li>
 <li>
-Support for the widely-used PLINK binary PED format (*.bed) and PLINK PED format (*.ped) files (See Section<a class="Reference" href="#sub:PLINK-file-formats">9.2↓</a>).
+Input and output support for the widely-used PLINK format files (See Section <a class="Reference" href="#sub:PLINK-file-formats">9.2↓</a>).
 </li>
 <li>
-Support for Variant Call Format (VCF, BCF, compressed VCF) files (See Section <a class="Reference" href="#sub:VCF-file-formats">9.4↓</a>).
+Input support for Variant Call Format (VCF, BCF, compressed VCF) files, including flexible filtering on input (See Section <a class="Reference" href="#sub:VCF-file-formats">9.4↓</a>).
 </li>
 <li>
-The ability to automatically zero out selected genotypes for specific individuals in order to resolve Mendelian inconsistencies (See section <a class="Reference" href="#sub:Annotated-omit-file">9.1.4↓</a>).
+The ability to automatically zero out selected genotypes for specific individuals in order to resolve Mendelian inconsistencies (See Section <a class="Reference" href="#sub:Annotated-omit-file">9.1.4↓</a>).
 </li>
 <li>
-In most cases, in addition to generating appropriately re-formatted files, Mega2 also generates a C-shell script that will automatically run the desired program. 
+In most cases, in addition to generating appropriately re-formatted files, Mega2 also generates a shell script that will automatically run the desired program. 
 </li>
 <li>
-Creation of a MEGA2run.html HTML summary of the most recent run of Mega2, with links to input and output and log files (See <a class="Reference" href="#sub:MEGA2run.html-and-related">20.8↓</a>
+Creation of an HTML summary of the most recent run of Mega2, with links to input and output and log files (See Section <a class="Reference" href="#sub:MEGA2run.html-and-related">20.8↓</a>).
 </li>
 
 </ol>
@@ -1258,7 +1267,7 @@ Creation of a MEGA2run.html HTML summary of the most recent run of Mega2, with l
 <div class="Standard">
 <span class="environment"><span class="arrayrow">
 <span class="arraycell align-l">
- − 1.5cm − 1.5cm
+
 </span>
 
 </span>
@@ -1269,7 +1278,7 @@ Creation of a MEGA2run.html HTML summary of the most recent run of Mega2, with l
 
 </div>
 <div class="Standard">
-<span class="unknown">\end</span>adjustwidth*
+<span class="unknown">\end</span>
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-1.2">1.2</a> Supported formats
@@ -1303,6 +1312,15 @@ Variant Call Format (VCF, BCF, compressed VCF) (See <a class="Reference" href="#
 </h3>
 <div class="Standard">
 Mega2 supports the following output file formats (For more detail, see Sections <a class="Reference" href="#sec:The-analysis-menu">13↓</a> and <a class="Reference" href="#sec:Detailed-info-Analysis-Options">24↓</a>):
+</div>
+<div class="Standard">
+<span class="environment"><span class="arrayrow">
+<span class="arraycell align-l">
+
+</span>
+
+</span>
+</span>
 </div>
 <ol>
 <li>
@@ -1418,6 +1436,9 @@ PSEQ format
 </li>
 
 </ol>
+<div class="Standard">
+<span class="unknown">\end</span>
+</div>
 <h1 class="Section">
 <a class="toc" name="toc-Section-2">2</a> Download Mega2
 </h1>
@@ -1668,7 +1689,7 @@ Select from options 0-12 &gt;
 This input menu displays the names of these three input files in the appropriate items (e.g., items 3, 4, and 5). When you are done making all your choices within this menu, to proceed to the next menu, choose item 0 &ldquo;Done with this menu - please proceed&rdquo;. Simply follow the instructions provided by this and subsequent menus to continue with the Mega2 analysis. 
 </div>
 <div class="Standard">
-Note the options 1 allows one to instruct Mega2 to read PLINK format input files, either in binary format, or in PED format and Variant Call Format (VCF) input files in either binary (.bcf), compressed (.vcf.gz), or text (.vcf) format.
+Note that option 1 allows one to instruct Mega2 to read PLINK format input files, either in binary format or in PED format, or Variant Call Format (VCF) input files in either binary (.bcf), compressed (.vcf.gz), or text (.vcf) format.
 </div>
 <div class="Standard">
 <span class="unknown">\hypertarget</span>tips
@@ -1721,6 +1742,12 @@ as well as citing the web site and the version that you used. For example, the w
 </div>
 <blockquote class="Quote">
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2013) Mega2 (Version 4.6.2). <a class="FlexURL" href="http://watson.hgen.pitt.edu">http://watson.hgen.pitt.edu</a> 
+</blockquote>
+<div class="Standard">
+If you use Mega2 to convert VCF or BCF input files, then, as this makes use of a built-in copy of VCFtools, you should also cite the following paper:
+</div>
+<blockquote class="Quote">
+<a class="URL" href="http://dx.doi.org/10.1093/bioinformatics/btr330">The Variant Call Format and VCFtools</a>, Petr Danecek, Adam Auton, Goncalo Abecasis, Cornelis A. Albers, Eric Banks, Mark A. DePristo, Robert Handsaker, Gerton Lunter, Gabor Marth, Stephen T. Sherry, Gilean McVean, Richard Durbin and 1000 Genomes Project Analysis Group, Bioinformatics (2011) 27 (15): 2156-2158.
 </blockquote>
 <h1 class="Section">
 <a class="toc" name="toc-Section-6">6</a> Support, bug reports, and feedback<a class="Label" name="sec:Support-bugreports-feedback"> </a>
@@ -1783,12 +1810,6 @@ Web page: <a class="FlexURL" href="http://watson.hgen.pitt.edu">http://watson.hg
 <div class="Standard">
 <div class="center">
 INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.6.2 AND HIGHER 
-</div>
-
-</div>
-<div class="Standard">
-<div class="center">
-Last updated: July 5, 2013 
 </div>
 
 </div>
@@ -2345,10 +2366,10 @@ The sub-folder called mega2_html/ within the mega2_v4.6.2_src folder contains do
 <a class="toc" name="toc-Subsection-8.7">8.7</a> License Agreement
 </h2>
 <div class="Standard">
-The distribution of this package is governed by the terms of GNU public license version 3 (GPLv3). Please follow the terms of this agreement.
+Distribution of Mega2 is governed by the terms of GNU General Public License Version 3 (<a class="URL" href="http://www.gnu.org/licenses/gpl-3.0.html">GPLv3</a>) <a class="Reference" href="#sub:GNU-General-Public">29.1↓</a>.
 </div>
 <div class="Standard">
-Mega2 uses two libraries developed by other external groups; the sources are included with the Mega2 sources. One library handles reading of the various Variant Call Format (VCF) input files. The other library, ZLIB, is a compression library; it is not directly used by Mega2. ZLIB is needed by the VCF library and also used to format Beagle output. The license for the VCF library is the MIT license <a class="Reference" href="#sub:MIT-License---">29.2↓</a>and ZLIB is free and the license for ZLIB is shown in <a class="Reference" href="#sub:License-for-ZLIB">29.3↓</a>.
+Mega2 uses two libraries developed by other external groups, the sources of which are included with the Mega2 sources. Minimal modifications have been made to these two libraries to facilitate their integration with Mega2. The VCFtools library handles reading of the various Variant Call Format (VCF) input files. ZLIB is needed by the VCFtools library and is also used to format Beagle output. The VCFtools library is released under the GNU Lesser General Public License Version 3 (<a class="URL" href="http://www.gnu.org/copyleft/lesser.html">LGPLv3</a>) <a class="Reference" href="#sub:GNU-Lesser-General">29.4↓</a>, and the MIT license <a class="Reference" href="#sub:MIT-License---">29.2↓</a>. The license for ZLIB is shown in <a class="Reference" href="#sub:License-for-ZLIB">29.3↓</a>.
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-8.8">8.8</a> Feedback and Bug Reports
@@ -12804,7 +12825,7 @@ Aspex and Splink options did not have the correct headers in the c-shell scripts
 <a class="toc" name="toc-Section-29">29</a> License agreements
 </h1>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-29.1">29.1</a> Mega2 license agreement
+<a class="toc" name="toc-Subsection-29.1">29.1</a> GNU General Public License Version 3 for Mega2<a class="Label" name="sub:GNU-General-Public"> </a>
 </h2>
 <pre class="LyX-Code">
                     GNU GENERAL PUBLIC LICENSE
@@ -13362,8 +13383,11 @@ Public License instead of this License.  But first, please read
 &lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;.
 </pre>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-29.2">29.2</a> MIT License — for VCF tools<a class="Label" name="sub:MIT-License---"> </a>
+<a class="toc" name="toc-Subsection-29.2">29.2</a> MIT License for VCFtools<a class="Label" name="sub:MIT-License---"> </a>
 </h2>
+<div class="Standard">
+We have included VCFTools source code in the srcdir/vcftools directory of the Mega2 distribution. This code has been minimally modified so as to integrate it with Mega2. While the VCFtools source code as a whole is licensed under the Lesser GPL license below, these files contain the MIT license: bgzf.c and bgzf.h.
+</div>
 <pre class="LyX-Code">
 /* The MIT License
 
@@ -13392,7 +13416,7 @@ Public License instead of this License.  But first, please read
 <a class="toc" name="toc-Subsection-29.3">29.3</a> License for ZLIB<a class="Label" name="sub:License-for-ZLIB"> </a>
 </h2>
 <div class="Standard">
-The zlib home page is http://zlib.net/. It contains much useful information including the license reproduced below.
+For ease of compilation, we have included zlib source code in the srcdir/zlib-1.2.8 directory of the Mega2 distribution. This code has been minimally modified so as to integrate it with Mega2. The zlib home page is <a class="FlexURL" href="http://zlib.net/">http://zlib.net/</a>. It contains useful information including the license reproduced below.
 </div>
 <pre class="LyX-Code">
 /* zlib.h — interface of the ’zlib’ general purpose compression library
@@ -13421,6 +13445,123 @@ The zlib home page is http://zlib.net/. It contains much useful information incl
 
 */ 
 </pre>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-29.4">29.4</a> GNU Lesser General Public License Version 3 for VCFtools<a class="Label" name="sub:GNU-Lesser-General"> </a>
+</h2>
+<div class="Standard">
+We have included VCFTools source code in the srcdir/vcftools directory of the Mega2 distribution. This code has been minimally modified so as to integrate it with Mega2. While the VCFtools source code as a whole is licensed under the Lesser GPL license, two of files contain the MIT license, listed above.
+</div>
+<div class="Standard">
+GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+</div>
+<div class="Standard">
+Copyright (C) 2007 Free Software Foundation, Inc. &lt;http://fsf.org/&gt; Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
+</div>
+<div class="Standard">
+This version of the GNU Lesser General Public License incorporates the terms and conditions of version 3 of the GNU General Public License, supplemented by the additional permissions listed below.
+</div>
+<div class="Standard">
+0. Additional Definitions.
+</div>
+<div class="Standard">
+As used herein, "this License" refers to version 3 of the GNU Lesser General Public License, and the "GNU GPL" refers to version 3 of the GNU General Public License.
+</div>
+<div class="Standard">
+"The Library" refers to a covered work governed by this License, other than an Application or a Combined Work as defined below.
+</div>
+<div class="Standard">
+An "Application" is any work that makes use of an interface provided by the Library, but which is not otherwise based on the Library. Defining a subclass of a class defined by the Library is deemed a mode of using an interface provided by the Library.
+</div>
+<div class="Standard">
+A "Combined Work" is a work produced by combining or linking an Application with the Library. The particular version of the Library with which the Combined Work was made is also called the "Linked Version".
+</div>
+<div class="Standard">
+The "Minimal Corresponding Source" for a Combined Work means the Corresponding Source for the Combined Work, excluding any source code for portions of the Combined Work that, considered in isolation, are based on the Application, and not on the Linked Version.
+</div>
+<div class="Standard">
+The "Corresponding Application Code" for a Combined Work means the object code and/or source code for the Application, including any data and utility programs needed for reproducing the Combined Work from the Application, but excluding the System Libraries of the Combined Work.
+</div>
+<div class="Standard">
+1. Exception to Section 3 of the GNU GPL.
+</div>
+<div class="Standard">
+You may convey a covered work under sections 3 and 4 of this License without being bound by section 3 of the GNU GPL.
+</div>
+<div class="Standard">
+2. Conveying Modified Versions.
+</div>
+<div class="Standard">
+If you modify a copy of the Library, and, in your modifications, a facility refers to a function or data to be supplied by an Application that uses the facility (other than as an argument passed when the facility is invoked), then you may convey a copy of the modified version:
+</div>
+<div class="Standard">
+a) under this License, provided that you make a good faith effort to ensure that, in the event an Application does not supply the function or data, the facility still operates, and performs whatever part of its purpose remains meaningful, or
+</div>
+<div class="Standard">
+b) under the GNU GPL, with none of the additional permissions of this License applicable to that copy.
+</div>
+<div class="Standard">
+3. Object Code Incorporating Material from Library Header Files.
+</div>
+<div class="Standard">
+The object code form of an Application may incorporate material from a header file that is part of the Library. You may convey such object code under terms of your choice, provided that, if the incorporated material is not limited to numerical parameters, data structure layouts and accessors, or small macros, inline functions and templates (ten or fewer lines in length), you do both of the following:
+</div>
+<div class="Standard">
+a) Give prominent notice with each copy of the object code that the Library is used in it and that the Library and its use are covered by this License.
+</div>
+<div class="Standard">
+b) Accompany the object code with a copy of the GNU GPL and this license document.
+</div>
+<div class="Standard">
+4. Combined Works.
+</div>
+<div class="Standard">
+You may convey a Combined Work under terms of your choice that, taken together, effectively do not restrict modification of the portions of the Library contained in the Combined Work and reverse engineering for debugging such modifications, if you also do each of the following:
+</div>
+<div class="Standard">
+a) Give prominent notice with each copy of the Combined Work that the Library is used in it and that the Library and its use are covered by this License.
+</div>
+<div class="Standard">
+b) Accompany the Combined Work with a copy of the GNU GPL and this license document.
+</div>
+<div class="Standard">
+c) For a Combined Work that displays copyright notices during execution, include the copyright notice for the Library among these notices, as well as a reference directing the user to the copies of the GNU GPL and this license document.
+</div>
+<div class="Standard">
+d) Do one of the following:
+</div>
+<div class="Standard">
+0) Convey the Minimal Corresponding Source under the terms of this License, and the Corresponding Application Code in a form suitable for, and under terms that permit, the user to recombine or relink the Application with a modified version of the Linked Version to produce a modified Combined Work, in the manner specified by section 6 of the GNU GPL for conveying Corresponding Source.
+</div>
+<div class="Standard">
+1) Use a suitable shared library mechanism for linking with the Library. A suitable mechanism is one that (a) uses at run time a copy of the Library already present on the user’s computer system, and (b) will operate properly with a modified version of the Library that is interface-compatible with the Linked Version.
+</div>
+<div class="Standard">
+e) Provide Installation Information, but only if you would otherwise be required to provide such information under section 6 of the GNU GPL, and only to the extent that such information is necessary to install and execute a modified version of the Combined Work produced by recombining or relinking the Application with a modified version of the Linked Version. (If you use option 4d0, the Installation Information must accompany the Minimal Corresponding Source and Corresponding Application Code. If you use option 4d1, you must provide the Installation Information in the manner specified by section 6 of the GNU GPL for conveying Corresponding Source.)
+</div>
+<div class="Standard">
+5. Combined Libraries.
+</div>
+<div class="Standard">
+You may place library facilities that are a work based on the Library side by side in a single library together with other library facilities that are not Applications and are not covered by this License, and convey such a combined library under terms of your choice, if you do both of the following:
+</div>
+<div class="Standard">
+a) Accompany the combined library with a copy of the same work based on the Library, uncombined with any other library facilities, conveyed under the terms of this License.
+</div>
+<div class="Standard">
+b) Give prominent notice with the combined library that part of it is a work based on the Library, and explaining where to find the accompanying uncombined form of the same work.
+</div>
+<div class="Standard">
+6. Revised Versions of the GNU Lesser General Public License.
+</div>
+<div class="Standard">
+The Free Software Foundation may publish revised and/or new versions of the GNU Lesser General Public License from time to time. Such new versions will be similar in spirit to the present version, but may differ in detail to address new problems or concerns.
+</div>
+<div class="Standard">
+Each version is given a distinguishing version number. If the Library as you received it specifies that a certain numbered version of the GNU Lesser General Public License "or any later version" applies to it, you have the option of following the terms and conditions either of that published version or of any later version published by the Free Software Foundation. If the Library as you received it does not specify a version number of the GNU Lesser General Public License, you may choose any version of the GNU Lesser General Public License ever published by the Free Software Foundation.
+</div>
+<div class="Standard">
+If the Library as you received it specifies that a proxy can decide whether future versions of the GNU Lesser General Public License shall apply, that proxy’s public statement of acceptance of any version is permanent authorization for you to choose that version for the Library.
+</div>
 <h1 class="Section">
 <a class="toc" name="toc-Section-30">30</a> PDF documentation
 </h1>
@@ -13505,7 +13646,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2014-02-28T14:10:43.618866</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.3 (2011-08-31)</a> on <span class="create-date">2014-03-06T12:38:26.393608</span>
 </div>
 </div>
 </body>
