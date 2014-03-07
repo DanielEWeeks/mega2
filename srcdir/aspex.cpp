@@ -413,7 +413,7 @@ static void AspexCshellFile(char *cshellname, char *aspin_name,
 {
     int i, tr, nloop, num_affec=num_traits;
     FILE *shell_fp;
-    char fl_name[2*FILENAME_LENGTH], mode[2], syscmd[100], chr_str[3];
+    char fl_name[2*FILENAME_LENGTH], mode[2], syscmd[2*FILENAME_LENGTH], chr_str[3];
     int xlinked =  ((numchr == SEX_CHROMOSOME)? 1 : 0);
 
     CHR_STR(numchr, chr_str);

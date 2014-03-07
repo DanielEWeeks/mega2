@@ -267,7 +267,7 @@ static void write_SAGE_cntcsh(char *cshfl_name, char *cntfl_name,
 {
     int *trp, tr, nloop, num_affec=num_traits;
     FILE *csh_unit;
-    char     syscmd[100], cfl[2*FILENAME_LENGTH];
+    char     syscmd[2*FILENAME_LENGTH], cfl[2*FILENAME_LENGTH];
     int i, num_inds=0;
 
     for (i=0; i<Top->PedCnt; i++) {
@@ -375,7 +375,7 @@ static void     write_SAGE_csh(char *cshfl_name, char *outfl_name,
 
 {
     FILE *csh_unit;
-    char cfl[2*FILENAME_LENGTH], syscmd[100];
+    char cfl[2*FILENAME_LENGTH], syscmd[2*FILENAME_LENGTH];
     int num_inds=0;
     int i, tr, nloop, num_affec=num_traits;
 
@@ -1010,7 +1010,7 @@ static void sage_file_names(char *file_names[], linkage_ped_top *Top)
     int i, select=-1;
     analysis_type analysis = TO_SAGE;
     char stem[5], fl_stat[12], shellfl_type[7], cselect[5];
-    char filename[17], *name;
+    char filename[FILENAME_LENGTH], *name;
 
     ((num_traits > 1 || (LoopOverTrait == 1 && num_traits > 0))?
      strcpy(shellfl_type, "SIBPAL") :
@@ -1348,7 +1348,7 @@ static void sage4_file_names(char *file_names[], int has_orig, int has_uniq)
     int select=-1;
     analysis_type analysis = TO_SAGE4;
     char stem[5], fl_stat[12];
-    char filename[17], *name;
+    char filename[FILENAME_LENGTH], *name;
 
     if (main_chromocnt > 1) {
         // returns only the <file_name> removing <extension> and <rest> if they exist...

@@ -55,14 +55,14 @@
 */
 
 
-char input_stem[4]; /* name for the generated  R_data file */
+char input_stem[FILENAME_LENGTH]; /* name for the generated  R_data file */
 char output_stem[FILENAME_LENGTH];
-char Rperl_file[20];
-char Rdatafile[20];
-char Rplot_function[14];
-char Rshell_file[20];
-char Rscript_file[20];
-char Rmap_file[20];
+char Rperl_file[FILENAME_LENGTH];
+char Rdatafile[FILENAME_LENGTH];
+char Rplot_function[FILENAME_LENGTH];
+char Rshell_file[FILENAME_LENGTH];
+char Rscript_file[FILENAME_LENGTH];
+char Rmap_file[FILENAME_LENGTH];
 
 #ifdef TEST
 #define BPPI_p(x) 1
@@ -160,7 +160,7 @@ static void convert_SW2R(R_plot_params_type Rplot_params,
 
     int tr, trr, nloop, num_affec=num_traits;
     int st, ch;
-    char swoutfile[13], chr_str[3], *syscmd;
+    char swoutfile[FILENAME_LENGTH], chr_str[3], *syscmd;
     FILE *shfp;
     char rshfl[20+FILENAME_LENGTH];
 
@@ -1811,7 +1811,7 @@ static void convert_merlin2R(R_plot_params_type Rplot_params,
 
     int tr, trr, nloop, num_affec=num_traits;
     int st, ch;
-    char merlinoutfile[25], *syscmd, chr_str[3];
+    char merlinoutfile[FILENAME_LENGTH], *syscmd, chr_str[3];
     FILE *shfp;
     char rshfl[20+FILENAME_LENGTH];
     char rdataf[FILENAME_LENGTH];
