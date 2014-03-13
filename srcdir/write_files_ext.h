@@ -61,7 +61,8 @@ extern void write_linkage_locfile_inorder(linkage_locus_top *LTop,
 extern void write_locus_stats(linkage_locus_top *LTop,
 			      file_format locus_file_type);
 
-extern void write_numbered_data(FILE *filep, int locusnm,
+extern void write_numbered_data(FILE *filep,
+                                const int locusnm,
                                 linkage_locus_rec *locus,
                                 linkage_ped_rec *entry);
 

@@ -227,6 +227,11 @@ public:
     // by the method 'output_quant_default_value()' should be numeric as well...
     virtual bool output_quant_must_be_numeric() { return false; }
 
+    // If true the named representation of an allele will be used if it is available.
+    // If false alleles will always be written in their 'number'ed representation even if
+    // there is a 'name'ed representation available.
+    // Use by write_files.cpp::write_numbered_data() and entry.cpp::person_locus_entry::pr_marker.
+    virtual bool allele_data_use_name_if_available() { return false; }
 
 /*
   whether QTLS are allowed.
@@ -1073,6 +1078,8 @@ public:
     virtual bool allow_no_aff_trait()     { return true; }
     virtual bool allow_no_trait()  { return true; }
     virtual bool allow_sex_map() { return true; }
+
+    virtual bool allele_data_use_name_if_available() { return true; }
 
     // missing values are always replaced with an 'x'
     virtual bool output_quant_can_define_missing_value() { return false; }

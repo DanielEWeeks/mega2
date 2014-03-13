@@ -118,8 +118,9 @@ public:
     void pr_quant();
     void pr_marker_name();
 
-    void pr_marker() { pr_marker(_tpe, _locus); }
-    void pr_marker(linkage_ped_rec  *tpe, const int _locus);
+    // From loop.cpp it appears that _locus and _tle are always defined together...
+    void pr_marker() { pr_marker(_locus, _tle, _tpe); }
+    void pr_marker(const int locus, linkage_locus_rec *tle, linkage_ped_rec *tpe);
 
     void pr_marker_alleles();
 
