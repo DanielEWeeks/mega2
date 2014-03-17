@@ -204,8 +204,9 @@ void write_simulate_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *l
  write_solar_files.cpp:SOLARwrite_numbered_data(),
  write_mfiles.cpp:mwrite_numbered_data(), and
  entry.cpp:person_locus_entry::pr_marker().
- The differences are reflected by the file output format. These always write
- numbered data with the exceltion of pr_marker() which can write lettered data as well.
+ The differences are reflected by the file output format.
+
+ Only the SOLAR version has not been modified to process lettered data if available.
 */
 void write_numbered_data(FILE *filep, const int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
@@ -218,10 +219,10 @@ void write_numbered_data(FILE *filep, const int locusnm, linkage_locus_rec *locu
         a2 <= locus->AlleleCnt &&
         a1_name != (const char *)NULL &&
         a2_name != (const char *)NULL) {
-            fprintf(filep, "  %s %s", (a1 > 0 ? a1_name : "0"), (a2 > 0 ? a2_name : "0"));
-        } else {
-            fprintf(filep, "  %2d %2d", a1, a2);
-        }
+        fprintf(filep, "  %s %s", (a1 > 0 ? a1_name : "0"), (a2 > 0 ? a2_name : "0"));
+    } else {
+        fprintf(filep, "  %2d %2d", a1, a2);
+    }
 }
 
 /* assign consecutive entry ids to entries,
