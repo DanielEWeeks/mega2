@@ -80,7 +80,7 @@ static void            SOLARwrite_affection_data(FILE *filep, int locusnm,
 }
 
 
-static void            SOLARwrite_numbered_data(FILE *filep, int locusnm,
+static void            SOLARwrite_numbered_data(FILE *filep, const int locusnm,
 						linkage_ped_rec *entry)
 
 {

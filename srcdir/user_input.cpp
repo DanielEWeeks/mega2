@@ -931,15 +931,15 @@ void menu1(file_format *infl_type,
                 printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             } else if (xcf) {
-	        char tmp[1000];
+                char tmp[2000];
                 printf("%2d) %-*s%s\n", idx, line_len, "Enter VCF parameters:", VCFArgs);
                 choiceA[idx++] = vcf_args_i;
-
-		if (strcmp(VCFMarkerAlternativeKey,"") == 0) sprintf(tmp, "%s", "ID field");
-		else sprintf(tmp, "%s sub-field of the INFO field", VCFMarkerAlternativeKey);
+                
+                if (strcmp(VCFMarkerAlternativeKey,"") == 0) sprintf(tmp, "%s", "ID field");
+                else sprintf(tmp, "%s sub-field of the INFO field", VCFMarkerAlternativeKey);
                 printf("%2d) %-*s%s\n", idx, line_len, "Read marker names from the:", tmp);
                 choiceA[idx++] = vcf_mak_i;
-
+                
                 printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             }
@@ -1294,10 +1294,10 @@ void menu1(file_format *infl_type,
 	    VCFtools_printf_supported_cmd_line_options();
             while (1) {
                 printf("\nCurrent VCF parameters:  %s\n", VCFArgs);
-		// 3) When doing the vcftools filtering, it wasn't clear to me at first which set
-		// of IDs/positions one should use.  Presumably you must use the IDs/positions as
-		// given in the VCF file itself.  So we have to filter individuals by VCF sample IDs,
-		//and positions by VCF positions.
+                // 3) When doing the vcftools filtering, it wasn't clear to me at first which set
+                // of IDs/positions one should use.  Presumably you must use the IDs/positions as
+                // given in the VCF file itself.  So we have to filter individuals by VCF sample IDs,
+                //and positions by VCF positions.
                 printf("Note that filtering must be done using position information and sample IDs from\n");
                 printf("the input VCF file. \n");
                 printf("Enter new VCF parameters: ");
@@ -1307,11 +1307,11 @@ void menu1(file_format *infl_type,
                 i = (int)strlen(new_VCFArgs);
                 if (new_VCFArgs[i-1] == '\n') new_VCFArgs[i-1] = 0;
                 if (new_VCFArgs[i-1] == '\r') new_VCFArgs[i-1] = 0;
-		if (strlen(new_VCFArgs) == 0) break;
+                if (strlen(new_VCFArgs) == 0) break;
                 if (VCFtools_process_cmd_line_wo_file(new_VCFArgs) == -1) {
                     strcpy(VCFArgs, new_VCFArgs);
                     break;
-		}
+                }
             }
 
         } else if (choice_ == vcf_mak_i) {
@@ -1334,7 +1334,7 @@ void menu1(file_format *infl_type,
                     printf("\n Please input the name of the INFO sub-field 'key'\n that contains the marker names: ");
                     fcmap(stdin, "%s", VCFMarkerAlternativeKey); newline;
                 }
-		break;
+                break;
             }
         } else if (menu1_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
                                   err_i, untyp_i, thresh_i, compress_i, choice_)) {
@@ -1367,14 +1367,18 @@ void menu1(file_format *infl_type,
         strcpy(Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name, REC_UNKNOWN);
         batchf(Value_Missing_Allele);
 #endif
-        strcpy(Mega2BatchItems[/* 43 */ PLINK_Args].value.name, PLINKArgs);
-        if (*PLINKArgs != 0) batchf(PLINK_Args);
-
-        if (VCFArgs != NULL && strlen(VCFArgs) > 0) {
+        // Handle the batch file item only if the user input something...
+        // Note: these PLINKArgs and friends are stack variables so we don't have to check for != NULL...
+        if (strlen(PLINKArgs) > 0) {
+            strcpy(Mega2BatchItems[/* 43 */ PLINK_Args].value.name, PLINKArgs);
+            Mega2BatchItems[/* 43 */ PLINK_Args].item_read = 1;
+            batchf(PLINK_Args);
+        }
+        if (strlen(VCFArgs) > 0) {
             strcpy(Mega2BatchItems[/* 56 */ VCF_Args].value.name, VCFArgs);
             if (xcf) batchf(VCF_Args);
         }
-        if (VCFMarkerAlternativeKey != NULL && strlen(VCFMarkerAlternativeKey) > 0) {
+        if (strlen(VCFMarkerAlternativeKey) > 0) {
             strcpy(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name, VCFMarkerAlternativeKey);
             if (xcf) batchf(VCF_Marker_Alternative_INFO_Key);
         }
