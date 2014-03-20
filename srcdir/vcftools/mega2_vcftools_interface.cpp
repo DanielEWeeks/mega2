@@ -636,14 +636,18 @@ void VCFtools_process_file_meta_information_and_header()
 
  The phenotype file allows for an additional SAMPLEID column when processing VCF files.
  phe_lookup.cpp::phe::make() will detect the SAMPLEID column and create a map in
- phe_lookup_ext.h::SAMPLEID. This column maps the 'sample' found in the VCF file to the Mega2 <ped, per>.
+ phe_lookup_ext.h::SAMPLEID. This column maps the 'sample' found in the VCF file to
+ the Mega2 <ped, per>.
 
  */
 
 /**
- Give the user a message if the SAMPLEID in the Phenotype File is not found as a
- VCF file sample label (VCF file header line), or if it has been excluded through
- the vcftools filtering mechanism.
+ This routine processes the SAMPLEID information in the phenotype file, and the sample information
+ in the VCF file and will give the user a message if any of the following occurs:
+ 1) a SAMPLEID in the Phenotype File is not found (or found multiple times) as a VCF file
+    sample label (found in the VCF file header line)
+ 2) a SAMPLEID entry has been excluded through the vcftools filtering mechanism
+ 3) a sample label in the VCF file is not found in the SAMPLEID column of the phenotype file.
  */
 static void phenotype_file_SAMPLEID_entry_checks()
 {
@@ -653,11 +657,12 @@ static void phenotype_file_SAMPLEID_entry_checks()
     }
     mssgf("The SAMPLEID column was included in the phenotype file.");
     
+    // Iterate over the SAMPLEID information from the phenotype file...
     for (sample_map_type::iterator it = SAMPLEIDS->begin(); it != SAMPLEIDS->end(); it++) {
         string map_sample = it->first;
         int found = 0;
-
-        // look for the SAMPLEID (found in the phenotype file) in the VCF file...
+        
+        // Look for the SAMPLEID (map_sample) in the VCF file...
         for (int ui=0; ui < vf->N_total_indv(); ui++) {
             string vcf_file_sample = vf->indv[(size_t)ui];
             if (vcf_file_sample == map_sample) {
@@ -672,8 +677,27 @@ static void phenotype_file_SAMPLEID_entry_checks()
             mssgvf("SAMPLEID '%s' was not found in the VCF file.\n", map_sample.c_str());
         } else if (found > 1) {
             mssgvf("SAMPLEID '%s' was found multiple times in the VCF file.\n", map_sample.c_str());
-        }
+        } // else if (fount == 1) all is well!
     } // for (sample_map_type::iterator it ...
+    
+    // Look through all of the samples in the VCF file....
+    for (int ui=0; ui < vf->N_total_indv(); ui++) {
+        if (vf->include_indv[(size_t)ui] == false) continue;
+        string vcf_file_sample = vf->indv[(size_t)ui];
+        int found = 0;
+        // Determine if it matches any sample in the SAMPLEID column of the phenotype file...
+        for (sample_map_type::iterator it = SAMPLEIDS->begin(); it != SAMPLEIDS->end(); it++) {
+            string map_sample = it->first;
+            if (vcf_file_sample == map_sample) {
+                found++;
+                break;
+            }
+        }
+        if (found == 0) {
+            mssgvf("The VCF file sample '%s' was not found in the SAMPLEID column\n", vcf_file_sample.c_str());
+            mssgf("included in the phenotype file.");
+        }
+    }
 }
 
 //
