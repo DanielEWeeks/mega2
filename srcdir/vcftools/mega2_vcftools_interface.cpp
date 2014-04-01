@@ -1141,6 +1141,7 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
         map_entry.set_chr(e->get_CHROM());
         map_entry.set_POS(e->get_POS());
         map_entry.set_marker_name(get_marker_name(info_id_alternative_key, unknown_marker_prefix));
+	map_entry.set_REF(e->get_REF());
         map.push_back_entry(map_entry);
     }
     

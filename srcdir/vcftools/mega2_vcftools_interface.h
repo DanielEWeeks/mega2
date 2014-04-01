@@ -53,11 +53,16 @@ private:
     int chr;
     double POS;
     string marker_name;
+    string REF; // Reference Allele
     
 public:
-    m2_map_entry() : chr(UNKNOWN_CHROMO), POS(0), marker_name("") {};
-    m2_map_entry(string CHROM, double POS, string marker_name) { set_chr(CHROM); set_POS(POS); set_marker_name(marker_name); };
-    m2_map_entry(int chr, double POS, string marker_name) { this->chr = chr; this->POS = POS; this->marker_name = marker_name; };
+    m2_map_entry() : chr(UNKNOWN_CHROMO), POS(0), marker_name(""), REF("") {};
+    m2_map_entry(string CHROM, double POS, string marker_name, string REF) {
+      set_chr(CHROM); set_POS(POS); set_marker_name(marker_name); set_REF(REF);
+    };
+    m2_map_entry(int chr, double POS, string marker_name, string REF) {
+      this->chr = chr; this->POS = POS; this->marker_name = marker_name; this->REF = REF;
+    };
     ~m2_map_entry() {};
     
     const int get_chr() { return chr; };
@@ -74,6 +79,9 @@ public:
     
     const string get_marker_name() { return marker_name; };
     void set_marker_name(const string marker_name) { this->marker_name = marker_name; };
+    
+    const string get_REF() { return REF; };
+    void set_REF(const string REF) { this->REF = REF; };
 };
 
 class m2_map {

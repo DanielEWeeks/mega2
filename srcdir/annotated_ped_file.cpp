@@ -4075,6 +4075,8 @@ static void insert_zero_sex_average_genetic_map_in_EXLTop(ext_linkage_locus_top 
         }
 }
 
+m2_map save_vcf_map;
+
 linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                                       char *map_file, char *freq_file,
                                       char *pen_file, char *omit_file,
@@ -4121,6 +4123,13 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             // It will later be coppied to EXLTop, and the map object will be deleted by C++
             // when it goes out of scope.
             vcf_map = VCFtools_get_map(alternative_key, "chr");
+            
+            if (analysis == TO_PLINK) {
+                // Store the map so that we can pull out the VCF reference alleles and drop then into a
+                // file to be read by PLINK using '--reference-allele fn'. It is unclear at this point
+                // whether the user will choose this map file or not.
+                save_vcf_map = vcf_map;
+            }
             
             // Process the genotype (from VCF file 'vcf_map') and phenotype 'phe_*' marker data,
             // loading it into LTop...

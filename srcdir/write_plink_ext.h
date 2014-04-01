@@ -45,6 +45,8 @@ public:
     }
    ~CLASS_PLINK() {}
 
+    void replace_chr_number(char *file_names[], int numchr);
+
     void sub_prog_name(int sub_opt, char *subprog);
     void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
     void sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis);
