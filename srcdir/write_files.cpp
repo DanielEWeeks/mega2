@@ -201,12 +201,12 @@ void write_simulate_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *l
 
  Note: this functionality exists in several different places:
  write_sage_files.cpp:sagewrite_numbered_data(),
- write_solar_files.cpp:SOLARwrite_numbered_data(),
+ write_solar_files.cpp:SOLARwrite_numbered_[x]data(),
  write_mfiles.cpp:mwrite_numbered_data(), and
  entry.cpp:person_locus_entry::pr_marker().
  The differences are reflected by the file output format.
 
- Only the SOLAR version has not been modified to process lettered data if available.
+ All of these routines have been modified to process lettered data if available.
 */
 void write_numbered_data(FILE *filep, const int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {

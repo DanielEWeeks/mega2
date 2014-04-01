@@ -227,9 +227,10 @@ public:
     // by the method 'output_quant_default_value()' should be numeric as well...
     virtual bool output_quant_must_be_numeric() { return false; }
 
-    // If true the named representation of an allele will be used if it is available.
+    // True if the target analysis supports character alleles...
+    // This implies that the named representation of an allele will be used if it is available.
     // If false alleles will always be written in their 'number'ed representation even if
-    // there is a 'name'ed representation available.
+    // there is a 'name'ed (character) representation available.
     // Use by write_files.cpp::write_numbered_data() and entry.cpp::person_locus_entry::pr_marker.
     virtual bool allele_data_use_name_if_available() { return false; }
 
@@ -464,6 +465,9 @@ public:
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
     virtual bool qtl_allow()     { return true; }
 
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
+
     virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
            set individual default to person field */
@@ -603,6 +607,9 @@ public:
    ~CLASS_SIMWALK2() {}
 
     virtual bool has_sub_options()    { return true; }
+
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
 
     void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
     void sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis);
@@ -840,6 +847,9 @@ public:
     virtual bool qtl_disallow() { return true; }
     virtual bool require_physical_map()  { return true; }
 
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
+
     virtual void ped_ind_defaults(int unique)  {
         /* Always unique ids for persons */
         /* Set the output pedigree and per field choices */
@@ -925,6 +935,9 @@ public:
     virtual bool allow_trait_combination()  { return true; }
     virtual bool forbid_sex_linked_loci()  { return true; }
 
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
+
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "x"; }
 
@@ -964,6 +977,9 @@ public:
     virtual bool maintain_broken_loops()  { return true; }
     virtual bool qtl_allow()     { return true; }
 
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
+
     virtual void ped_ind_defaults(int unique)  {
         /* Always unique ids for persons */
         /* Set the output pedigree and per field choices */
@@ -991,6 +1007,9 @@ public:
 
     virtual bool allow_sex_map() { return true; }
     virtual bool allow_trait_combination()  { return true; }
+
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
 
     virtual bool output_quant_can_define_missing_value() { return false; }
 
@@ -1025,6 +1044,9 @@ public:
     virtual bool output_quant_can_define_missing_value() { return false; }
     virtual bool qtl_allow()     { return true; }
 
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
+
     void create_output_file(linkage_ped_top *LPedTreeTop,
 			    analysis_type *analysis,
 			    char *file_names[],
@@ -1048,6 +1070,9 @@ public:
     virtual bool allow_trait_combination()  { return true; }
     virtual bool output_quant_can_define_missing_value() { return false; }
     virtual bool qtl_allow()     { return true; }
+
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
 
     virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
@@ -1079,6 +1104,7 @@ public:
     virtual bool allow_no_trait()  { return true; }
     virtual bool allow_sex_map() { return true; }
 
+    // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
 
     // missing values are always replaced with an 'x'
@@ -1117,6 +1143,9 @@ public:
     virtual bool allow_covariates()  { return true; }
     virtual bool allow_sex_map() { return true; }
     virtual bool allow_trait_combination()  { return true; }
+
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
 
     virtual bool output_quant_can_define_missing_value() { return false; }
 
@@ -1289,6 +1318,9 @@ public:
     virtual bool allow_affection_liability_class()  { return true; }
     virtual bool allow_trait_combination()  { return true; }
 
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
+
     // I have not been able to find the manuals for SAGE v3 online.
     // So, I have decided not to break things by trying to incorporate the
     // missing output quant batch file item in this version of SAGE.
@@ -1316,6 +1348,9 @@ public:
 
     virtual bool allow_affection_liability_class()  { return true; }
     virtual bool allow_trait_combination()  { return true; }
+
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
 
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "NA"; }
@@ -1399,6 +1434,9 @@ public:
     virtual bool allow_trait_combination()  { return true; }
     virtual bool qtl_allow() { return true; }
 
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
+
     // Must modify 'write_solar_files.cpp:SOLARwrite_numbered_[x]data()' to make this work...
     //virtual bool allele_data_use_name_if_available() { return false; }
 
@@ -1430,6 +1468,10 @@ public:
     virtual bool allow_affection_liability_class()  { return true; }
     virtual bool allow_no_aff_trait() { return true; }
     virtual bool allow_no_trait()  { return true; }
+
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
+
     virtual bool break_loops()  { return true; }
     virtual bool maintain_broken_loops()  { return true; }
     virtual bool nuke_opts()    { return true; }
