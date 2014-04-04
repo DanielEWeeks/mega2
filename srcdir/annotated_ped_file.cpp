@@ -4845,24 +4845,14 @@ void write_annotated_quant(FILE *filep, int locusnm,
 }
 
 
-void write_annotated_numbered(FILE *filep, int locusnm,
-			      linkage_ped_rec *entry)
+void write_annotated_numbered(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
     int all1, all2;
     get_2alleles(entry->Marker, locusnm, &all1, &all2);
 
     fprintf(filep, " ");
-    if (all1 == 0) {
-        fprintf(filep, "NA ");
-    } else {
-        fprintf(filep, "%2d ", all1);
-    }
-
-    if (all2 == 0) {
-        fprintf(filep, "NA");
-    } else {
-        fprintf(filep, "%2d", all2);
-    }
+    fprintf_allele(filep, locus, all1, "NA ", " %s ", "%2d ");
+    fprintf_allele(filep, locus, all2, "NA", " %s", "%2d");
 }
 
 

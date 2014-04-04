@@ -29,6 +29,7 @@
 #include "file_ops.h"
 #include "user_input_ext.h"
 #include "entry.h"
+#include "write_files_ext.h"
 
 void person_locus_entry::load_formats_no_space(const int mwid)
 {
@@ -347,17 +348,7 @@ void person_locus_entry::pr_marker(const int locus, linkage_locus_rec *tle, link
 {
     int a1, a2;
     get_2alleles(tpe->Marker, locus, &a1, &a2);
-    const char *a1_name = tle->Allele[a1-1].name;
-    const char *a2_name = tle->Allele[a2-1].name;
-    if (AnalysisOpt->allele_data_use_name_if_available() &&
-        a1 <= tle->AlleleCnt &&
-        a2 <= tle->AlleleCnt &&
-        a1_name != (const char *)NULL &&
-        a2_name != (const char *)NULL) {
-            pr_printf("%s %s", (a1 > 0 ? a1_name : "0"), (a2 > 0 ? a2_name : "0"));
-        } else {
-            pr_printf("%d %d ", a1, a2);
-        }
+    fprintf_2alleles(_filep, tle, a1, a2, (const char *)NULL, "%s %s ", "%d %d ");
 }
 
 /**

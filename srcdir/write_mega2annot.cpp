@@ -577,7 +577,7 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
                         break;
 
                     case NUMBERED:
-                        write_annotated_numbered(filep, ChrLoci[locus], Entry);
+                        write_annotated_numbered(filep, ChrLoci[locus], Loc, Entry);
                         break;
 
                     default:

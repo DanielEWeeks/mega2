@@ -45,6 +45,7 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 #include "genetic_utils_ext.h"
+#include "write_files_ext.h"
 
 #include "write_beagle_ext.h"
 
@@ -771,7 +772,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                 int _allele1_f, _allele2_f, _allele1_m, _allele2_m;
                 get_2alleles(_tpe_f->Marker, _locus, &_allele1_f, &_allele2_f);
                 get_2alleles(_tpe_m->Marker, _locus, &_allele1_m, &_allele2_m);
-                if (_LTop->Marker[_locus].Props.Numbered.Recoded)
+                if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                     pr_printf("%s %s %s %s %s %s ",
                               recode_name(_allele1_f, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2_f, MISSING_ALLELE_CODE, "?"),
@@ -779,9 +780,14 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                               recode_name(_allele2_m, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
-                else
-                    pr_printf("%d %d %d %d %d %d ",
-                              _allele1_f, _allele2_f, _allele1_m, _allele2_m, _allele1, _allele2);
+                } else {
+                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1_f, _allele2_f,
+                                     (const char *)NULL, "%s %s ", "%d %d ");
+                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1_m, _allele2_m,
+                                     (const char *)NULL, "%s %s ", "%d %d ");
+                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1, _allele2,
+                                     (const char *)NULL, "%s %s ", "%d %d ");
+                }
             }
         }
         void loci_end() {
@@ -1021,15 +1027,18 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
 //xx            int _allele2_f = _tpe_f->Data[_locus].Alleles.Allele_2;
                 int _allele1_f, _allele2_f;
                 get_2alleles(_tpe_f->Marker, _locus, &_allele1_f, &_allele2_f);
-                if (_LTop->Marker[_locus].Props.Numbered.Recoded)
+                if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                     pr_printf("%s %s %s %s ",
                               recode_name(_allele1_f, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2_f, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
-                else
-                    pr_printf("%d %d %d %d ",
-                              _allele1_f, _allele2_f, _allele1, _allele2);
+                } else {
+                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1_f, _allele2_f,
+                                     (const char *)NULL, "%s %s ", "%d %d ");
+                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1, _allele2,
+                                    (const char *)NULL, "%s %s ", "%d %d ");
+                }
             }
             if (mother != 0 &&
                 is_affected_pheno() == 1 &&
@@ -1039,15 +1048,18 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
 //xx            int _allele2_m = _tpe_m->Data[_locus].Alleles.Allele_2;
                 int _allele1_m, _allele2_m;
                 get_2alleles(_tpe_m->Marker, _locus, &_allele1_m, &_allele2_m);
-                if (_LTop->Marker[_locus].Props.Numbered.Recoded)
+                if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                     pr_printf("%s %s %s %s ",
                               recode_name(_allele1_m, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2_m, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
-                else
-                    pr_printf("%d %d %d %d ",
-                              _allele1_m, _allele2_m, _allele1, _allele2);
+                } else {
+                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1_m, _allele2_m,
+                                     (const char *)NULL, "%s %s ", "%d %d ");
+                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1, _allele2,
+                                     (const char *)NULL, "%s %s ", "%d %d ");
+		}
             }
         }
         void loci_end() {

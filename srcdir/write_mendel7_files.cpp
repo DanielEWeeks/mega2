@@ -39,6 +39,7 @@
 #include "genetic_utils_ext.h"
 #include "utils_ext.h"
 #include "user_input_ext.h"
+#include "write_files_ext.h"
 #define WRITE_MENDEL7_FILES_EXT_H
 #include "write_mendel7_files_ext.h"
 
@@ -240,11 +241,17 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
                         fprintf(filep,",");
                         get_2alleles(Entry->Marker, l1, &a1, &a2);
                         if (a1 > 0 && a2 > 0) {
-                            fprintf(filep, "%d/%d", a1, a2);
+                            fprintf_2alleles(filep, &Top->LocusTop->Locus[l1], a1, a2,
+		                             (const char *)NULL, "%s/%s", "%d/%d");
+                            //fprintf(filep, "%d/%d", a1, a2);
                         } else if (a1 > 0 && a2 == 0) {
-                            fprintf(filep, "%d/", a1);
+                            fprintf_allele(filep, &Top->LocusTop->Locus[l1], a1,
+		                             (const char *)NULL, "%s/", "%d/");
+                            //fprintf(filep, "%d/", a1);
                         } else if (a1 == 0 && a2 > 0) {
-                            fprintf(filep, "%d/", a2);
+                            fprintf_allele(filep, &Top->LocusTop->Locus[l1], a2,
+		                             (const char *)NULL, "%s/", "%d/");
+                            //fprintf(filep, "%d/", a2);
                         }
 
                         break;

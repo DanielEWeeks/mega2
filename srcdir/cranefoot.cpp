@@ -42,6 +42,7 @@
 #include "output_file_names_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
+#include "write_files_ext.h"
 /*
      create_summary_ext.h:  aff_status_entry
      error_messages_ext.h:  mssgf my_calloc
@@ -277,9 +278,10 @@ static void save_CRANEFOOT_pedigrees(char *pedfl_name, linkage_ped_top *Top,
                     case NUMBERED:
                     case BINARY:
                         get_2alleles(tpe->Marker, loc, &a1, &a2);
-                        fprintf(filep, "\t%d/%d", a1, a2);
-
+                        fprintf_2alleles(filep, &Top->LocusTop->Locus[loc], a1, a2,
+                                         (const char *)NULL, "\t%s/%s", "\t%d/%d");
                         break;
+
                     default:
                         break;
                     }

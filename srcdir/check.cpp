@@ -196,6 +196,7 @@ static int check_inheritance(ped_rec *PedEntry,
 	       ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
 	       ((uniqueids == 1)? Father->LEntry->UniqueID : Father->LEntry->OrigID),
 	       ((uniqueids == 1)? Mother->LEntry->UniqueID : Mother->LEntry->OrigID));
+        // This will write the numeric allele always...
         warnvf("\t%d/%d <- %d/%d X %d/%d\n",
 	       A1, A2, PA[0], PA[1], MA[0], MA[1]);
 
@@ -230,6 +231,7 @@ static int check_inheritance(ped_rec *PedEntry,
 	       ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
 	       ((uniqueids == 1)? Father->LEntry->UniqueID : Father->LEntry->OrigID),
 	       ((uniqueids == 1)? Mother->LEntry->UniqueID : Mother->LEntry->OrigID));
+        // This will write the numeric allele always...
         warnvf("\t%d/ <- %d/ X %d/%d\n",
 	       A1, PA[0], MA[0], MA[1]);
 
@@ -256,6 +258,7 @@ static int check_inheritance(ped_rec *PedEntry,
         warnvf("\t%s <- %s\n",
 	       PedEntry->LEntry->OrigID,
 	       Father->LEntry->OrigID);
+        // This will write the numeric allele always...
         warnvf("%d/ <- %d/\n", A1, PA[0]);
 
         (*display_error)++;
@@ -1142,6 +1145,7 @@ void mito_transmission_report(ped_top *PTop,
                                 PTop->PedTree[ped].Entry[entry].LEntry->UniqueID :
                                 PTop->PedTree[ped].Entry[entry].LEntry->OrigID),
                                (PTop->LocusTop->Locus[*locus1].linkage_loc_rec)->Name);
+                        // This will write the numeric allele always...
                         warnvf("\t%d/%d -> %d/%d\n",
                                MA1, MA2, A1, A2);
                         warnvf("\t%s  -> %s\n",

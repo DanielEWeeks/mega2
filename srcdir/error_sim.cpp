@@ -183,6 +183,7 @@ static void error_at_locus(int locnum, int loc_index, linkage_ped_top *Top,
                 err_out_item->new_genotype.all2 = new_gen.all2;
                 err_out_item->err_type = err_class;
                 append_to_list_tail(*err_list, (list_data)err_out_item);
+		// The alleles will print out as numeric...
                 sprintf(err_msg,
                         "(Ped %s, Person %s): %d, %d -> %d, %d",
                         Top->Ped[ped].Name,

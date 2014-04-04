@@ -1437,9 +1437,6 @@ public:
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
 
-    // Must modify 'write_solar_files.cpp:SOLARwrite_numbered_[x]data()' to make this work...
-    //virtual bool allele_data_use_name_if_available() { return false; }
-
     virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
            set individual default to person field */

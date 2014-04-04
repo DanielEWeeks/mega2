@@ -59,7 +59,22 @@ extern void write_linkage_locfile_inorder(linkage_locus_top *LTop,
 
 
 extern void write_locus_stats(linkage_locus_top *LTop,
-			      file_format locus_file_type);
+                              file_format locus_file_type);
+
+extern void fprintf_allele(FILE *filep,
+                           linkage_locus_rec *locus,
+                           const int allele,
+                           const char *is_zero_format_string,
+                           const char *character_format_string,
+                           const char *numbered_format_string);
+
+extern void fprintf_2alleles(FILE *filep,
+                             linkage_locus_rec *locus,
+                             const int allele1,
+                             const int allele2,
+                             const char *allele1_is_zero_format_string,
+                             const char *character_format_string,
+                             const char *numbered_format_string);
 
 extern void write_numbered_data(FILE *filep,
                                 const int locusnm,
