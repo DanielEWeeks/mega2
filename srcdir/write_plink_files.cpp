@@ -46,6 +46,7 @@
 #include "output_routines_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
+#include "vcftools/mega2_vcftools_interface.h"
 
 /*
      create_summary_ext.h:  aff_status_entry marker_typing_summary
@@ -356,16 +357,114 @@ void CLASS_PLINK::file_names_w_stem(char **file_names, char *num, const char *st
     sprintf(file_names[4], "%s.all.sh", stem);
     sprintf(file_names[5], "%s_geno_summary.%s", stem, num);
     sprintf(file_names[6], "%s.%s.fam", stem, num);
-    //
+
     sprintf(file_names[7], "%s.%s", stem, num);
     sprintf(file_names[8], "%s.%s.sh", stem, num);
+
+    // When input is some form of a VCF, and the user selects the associated (VCF.p) map...
+    // This file contains markers for the output map only.
+    sprintf(file_names[9], "%s.%s.ref", stem, num);
+}
+
+
+void CLASS_PLINK::replace_chr_number(char *file_names[], int numchr) {
+    // This does the right thing for file_names[0-8]...    
+    CLASS_PLINK_CORE::replace_chr_number(file_names, numchr);
+    
+    // Files specific to PLINK....
+    change_output_chr(file_names[9], numchr);
 }
 
 /**
- @param output_format determines how the files are written:
- .LGEN mode (== 0),
- .BED mode: (SNP major == 1; Individual major == 2).
+   Pull out the VCF reference alleles and drop then into a file to be read by PLINK using
+   '--reference-allele fn'. The file 'fn' contains one line for each marker which is the
+   marker followed by the reference allale (e.g., "marker REF").
+
+   This code assumes that there is a physical map (e.g., base_pair_position_index >= 0), and
+   that it is the physical map is from the VCF file (e.g., named 'VCF.p').
+*/
+static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
+                                              FILE *ref_fp) {
+    linkage_locus_top *LTop = LPTop->LocusTop;
+    int m, i;
+    
+    for (i=0; i < NumChrLoci; i++) {
+        m = ChrLoci[i];
+        
+        // Ignore anything but a marker...
+        if (LTop->Locus[m].Class == MARKER) {
+            extern m2_map save_vcf_map;
+            //int chr = LTop->Marker[m].chromosome;
+            //if (chr == UNKNOWN_CHROMO) chr = 0;
+            string target_marker_name(LTop->Locus[m].Name);
+            
+            for(unsigned int j = 0; j < save_vcf_map.size(); j++) {
+                m2_map_entry map_entry = save_vcf_map.get_entry(j);
+                string marker_name = map_entry.get_marker_name();
+                if (target_marker_name == marker_name) {
+                    string reference_allele = map_entry.get_REF();
+                    fprintf(ref_fp, "%s\t%s\n", LTop->Locus[m].Name, reference_allele.c_str());
+                    break;
+                }
+            }
+        }
+    }
+}
+
+/**
+   Write the reference allele file for the PLINK --reference-allele option for the markers
+   that have been specified in the output map file.
+
+   Because it seems that the --reference-allele file can contain markers that are not in
+   the map file. It sbould be possible to just write out all of the markers that are found
+   in the m2_map file. Before doing this more testing shold be done, and the PLINK source
+   reviewed to make sure that there are no unforseen concequences.
  */
+static void write_PLINK_reference_allele_file(linkage_ped_top *Top) {
+    
+    struct plink_reference_allele_file: public loop::chr, loop::null {
+        
+        plink_reference_allele_file(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::null(Top) {}
+        void make_file() {
+            mssgvf("        PLINK VCF REF file:        %s/%s\n", *_opath, ::file_names[9]);
+            run_loop(::file_names[9]);
+        }
+        void inner() {
+            markers_on_chromosome(_numchr);
+            
+            write_PLINK_reference_allele_data(_Top, _filep);
+        }
+    } *sp = new plink_reference_allele_file(Top);
+    
+    sp->iterate();
+    
+    delete sp;
+}
+
+/**
+   A predicate that determines if a vcf file map is being used.
+ */
+static int using_xcf_map_p(linkage_ped_top *Top)
+{
+    int  xcf = Input_Format == in_format_binary_VCF ||
+               Input_Format == in_format_compressed_VCF ||
+	       Input_Format == in_format_VCF;
+    char *map_name;
+    string save_vcf_map_name;
+    extern m2_map save_vcf_map;
+
+    // Is the input VCF?
+    if (xcf == 0) return 0; // No
+
+    // Is there a valid physical map?
+    if (base_pair_position_index < 0) return 0; // No
+
+    map_name = Top->EXLTop->MapNames[base_pair_position_index];
+    save_vcf_map_name = save_vcf_map.get_name();
+
+    // Compare the name of the physical map with the one associated with the vcf map...
+    return strcasecmp(map_name, save_vcf_map_name.c_str()) == 0;
+}
 
 void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
                                  char *file_names[],
@@ -373,7 +472,11 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
 {
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
         strcmp(output_paths[0], ".");
-    int output_format = _suboption - 1;
+    int using_xcf_map = using_xcf_map_p(Top);
+
+    if (using_xcf_map) {
+        write_PLINK_reference_allele_file(Top);
+    }
 
     struct all_sh: public sh_util {
         all_sh(linkage_ped_top *Top) : sh_util(Top) {}
@@ -392,7 +495,8 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         typedef char *str;
         str *file_names;
         all_sh *sh;
-        int outputFormat;
+        int suboption;
+        int xcf;
         
         PLINK_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
         void make_file() {
@@ -414,6 +518,8 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         void inner () {
             char cmd[2*FILENAME_LENGTH];
             char out_fl[2*FILENAME_LENGTH];
+            const char *file_option = "";
+	    char reference_allele_option[2*FILENAME_LENGTH];
             
             if (_numchr > 0)
                 pr_printf("echo Running PLINK on chromosome %d markers\n", _numchr);
@@ -428,12 +534,17 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
                     
                     sprintf(out_fl, "../%s", file_names[1]); //map&bim
                     sh_ln(out_fl, file_names[1]);
+
+                    if (xcf) {
+                       sprintf(out_fl, "../%s", file_names[9]); // VCF REF file...
+                       sh_ln(out_fl, file_names[9]);
+                    }
                 }
             }
             
             if (strcmp(file_names[0], file_names[6]))        //fam
                 sh_ln(file_names[0], file_names[6]);
-            
+
             // From the PLINK code (input.cpp) it appears that the '--missing-phenotype' flag can
             // be associated with an affection status (what the PLINK code refers to as a "binary trait")
             // as well as a quantitative trait. For a binary trait the value "is also" (in addition to '0'
@@ -444,17 +555,25 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
             // by Mega2, because we only use (0, 1, 2). The missing phenotype flag value will simply not appear
             // in the input that PLINK reads.
             
+            if (suboption == PLINK_SUB_OPTION_LGEN_INT) file_option = "--lfile ";
+            else if (suboption == PLINK_SUB_OPTION_PED_INT) file_option = "--file ";
+            else if (suboption == PLINK_SUB_OPTION_SNP_MAJOR_INT ||
+                     suboption == PLINK_SUB_OPTION_INDIVIDUAL_MAJOR_INT) file_option = "--bfile ";
+
+            if (xcf) sprintf(reference_allele_option, " --reference-allele %s", file_names[9]);
+            else reference_allele_option[0] = '\0';
+            
 #ifdef RUNSHELL_SETUP
-            sprintf(cmd, "$_PLINK --noweb --%cfile %s --missing-phenotype %s --assoc --out %s\n",
-                    (outputFormat == 0 ? 'l' : 'b'), file_names[7],
-                    Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read ?
-                    Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9",
+            sprintf(cmd, "$_PLINK --noweb %s%s%s --missing-phenotype %s --assoc --out %s\n",
+                    file_option, file_names[7], reference_allele_option,
+                    (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read ?
+                     Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9"),
                     file_names[7]);
 #else /* RUNSHELL_SETUP */
-            sprintf(cmd, "plink --%cfile %s --missing-phenotype %s --assoc --out %s\n",
-                    (outputFormat == 0 ? 'l' : 'b'), file_names[7],
-                    Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read ?
-                    Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9" ,
+            sprintf(cmd, "plink %s%s%s --missing-phenotype %s --assoc --out %s\n",
+                    file_option, file_names[7], reference_allele_option,
+                    (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read ?
+                     Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9"),
                     file_names[7]);
 #endif /* RUNSHELL_SETUP */
             sh_run("PLINK", cmd);
@@ -467,7 +586,8 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
     
     xp->file_names = file_names;
     xp->sh         = sh;
-    xp->outputFormat = output_format;
+    xp->suboption  = _suboption;
+    xp->xcf        = using_xcf_map;
     
     xp->iterate();
     

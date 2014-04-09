@@ -320,7 +320,8 @@ void create_TDTMAX(linkage_ped_top **LPTop,
 
                     get_2alleles(Top2->Ped[m].Entry[i].Marker, j, &al1, &al2);
                     if (al1 != 0)
-                        fprintf(fp, " %2d %2d\n", al1, al2);
+                        fprintf_2alleles(fp, &Top2->LocusTop->Locus[*trp], al1, al2,
+					 (const char *)NULL, " %2s %2s\n", " %2d %2d\n");
                     else
                         fprintf(fp,"  x  x\n");
                 }

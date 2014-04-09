@@ -1573,6 +1573,7 @@ static void connect_loopbreakers(linkage_ped_rec *S_Entry,
                             Ped->Num,
                             Top1->LocusTop->Marker[locus1].chromosome, locus1);
                     errorf(err_msg);
+                    // Since this is linkage we can only have numeric alleles...
                     sprintf(err_msg, "Loop person %d has genotype %d/%d",
                             S_Entry->ID, sa1, sa2);
                     errorf(err_msg);

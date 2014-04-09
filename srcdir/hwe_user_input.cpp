@@ -49,6 +49,7 @@
 #include "utils_ext.h"
 #include "write_mendel7_files_ext.h"
 #include "write_mfiles_ext.h"
+#include "write_files_ext.h"
 /*
         batch_input_ext.h:  batchf
      error_messages_ext.h:  errorf mssgf my_calloc warnf
@@ -605,11 +606,12 @@ static void save_mendel_hwe_individuals(linkage_ped_top *Top,
 
                 if (select[m][ind].num) {
                     int a1, a2;
+                    linkage_locus_rec *locus = &Top->LocusTop->Locus[m];
                     get_2alleles(Top->Ped[ped].Entry[ind].Marker, loci_indexes[m], &a1, &a2);
                     if (csv_format) {
-                        fprintf(hwe_in, ",%d/%d", a1, a2);
+                        fprintf_2alleles(hwe_in, locus, a1, a2, (const char *)NULL, ",%s/%s", ",%d/%d");
                     } else {
-                        fprintf(hwe_in, "%3d/%3d ", a1, a2);
+                        fprintf_2alleles(hwe_in, locus, a1, a2, (const char *)NULL, "%3s/%3s", "%3d/%3d");
                     }
                 } else {
                     fprintf(hwe_in, ",");
@@ -682,11 +684,11 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
                         first_allele = a1;
                         set_first_allele = 0;
                     }
-                    fprintf(hwe_in, "%6d     %5d      %3d     %3d \n",
+                    fprintf(hwe_in, "%6d     %5d      ",
                             Top->Ped[ped].Num,
-                            Top->Ped[ped].Entry[ind].ID,
-                            a1, a2);
-
+                            Top->Ped[ped].Entry[ind].ID);
+		    fprintf_2alleles(hwe_in, &Top->LocusTop->Locus[loci_indexes[m]], a1, a2,
+				     (const char *)NULL, "%3s     %3s \n", "%3d     %3d \n");
                     if (member_ids[ped][ind].num == 1) {
                         num_halftyped++;
                     } else {

@@ -40,6 +40,7 @@
 #include "output_file_names_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
+#include "write_files_ext.h"
 /*
      error_messages_ext.h:  errorf mssgf my_calloc
               fcmap_ext.h:  fcmap
@@ -80,29 +81,35 @@ static void            SOLARwrite_affection_data(FILE *filep, int locusnm,
 }
 
 
-static void            SOLARwrite_numbered_data(FILE *filep, const int locusnm,
-						linkage_ped_rec *entry)
-
+static void SOLARwrite_numbered_data(FILE *filep, const int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
-
-    if (a1 == 0)
-        fprintf(filep, " 0/ 0");
-    else
-        fprintf(filep, "%2d/%2d", a1, a2);
+    fprintf_2alleles(filep, locus, a1, a2, " 0/ 0", "%2s/%2s", "%2d/%2d");
 }
 
-static void            SOLARwrite_numbered_xdata(FILE *filep, int locusnm,
+static void            SOLARwrite_numbered_xdata(FILE *filep,
+                                                 const int locusnm,
+                                                 linkage_locus_rec *locus,
                                                  linkage_ped_rec *entry)
-
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
-
-    if (a1 == 0)
+    const char *a1_name = locus->Allele[a1-1].name;
+    const char *a2_name = locus->Allele[a2-1].name;
+    if (a1 == 0) {
         fprintf(filep, "  / 0");
-    else {
+    } else if (AnalysisOpt->allele_data_use_name_if_available() &&
+               a1 <= locus->AlleleCnt &&
+               a2 <= locus->AlleleCnt &&
+               a1_name != (const char *)NULL &&
+               a2_name != (const char *)NULL) {
+        if (a1 == a2) {
+            fprintf(filep, "  /%s", (a2 > 0 ? a2_name : "0"));
+        } else {
+            fprintf(filep, "%s/%s", (a1 > 0 ? a1_name : "0"), (a2 > 0 ? a2_name : "0"));
+        }
+    } else {
         if (a1 == a2) {
             fprintf(filep, "  /%2d", a2);
         } else {
@@ -525,9 +532,9 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
                     case NUMBERED:
                         fprintf(filep,",");
                         if (Top->LocusTop->SexLinked && IS_MALE(*Entry))
-                            SOLARwrite_numbered_xdata(filep, l1, Entry);
+                            SOLARwrite_numbered_xdata(filep, l1, &Top->LocusTop->Locus[l1], Entry);
                         else
-                            SOLARwrite_numbered_data(filep, l1,  Entry);
+                            SOLARwrite_numbered_data(filep, l1, &Top->LocusTop->Locus[l1], Entry);
                         break;
                     default:
                         fprintf(stderr, "unknown locus type (locus %d).\n", l1 + 1);

@@ -45,6 +45,7 @@
 #include "read_files_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
+#include "write_files_ext.h"
 /*
      create_summary_ext.h:  aff_status_entry
      error_messages_ext.h:  errorf mssgf my_calloc warnf
@@ -92,9 +93,6 @@ static void sagewrite_affection_data(FILE *filep, int locusnm,
 static void sagewrite_binary_data(FILE *filep, int locusnm,
 				  linkage_locus_rec  *locus,
 				  linkage_ped_rec *entry);
-static void sagewrite_numbered_data(FILE *filep, int locusnm,
-                                    linkage_locus_rec *locus, linkage_ped_rec
-                                    *entry);
 static int save_SAGE_peds(char *outfl_name, linkage_ped_top *Top,
 			  analysis_type analysis, int pwid, int fwid);
 static void  write_SAGE_locus_file(char *loutfl_name,
@@ -661,26 +659,13 @@ static void  sagewrite_binary_data(FILE *filep,  int locusnm,
         }
 }
 
-
 static void sagewrite_numbered_data(FILE *filep, const int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
-    const char *a1_name = locus->Allele[a1-1].name;
-    const char *a2_name = locus->Allele[a2-1].name;
-    if (a1 == 0) {
-        fprintf(filep, " 0/ 0 ");
-    } else if (AnalysisOpt->allele_data_use_name_if_available() &&
-        a1 <= locus->AlleleCnt &&
-        a2 <= locus->AlleleCnt &&
-        a1_name != (const char *)NULL &&
-        a2_name != (const char *)NULL) {
-        fprintf(filep, "  %s/%s", (a1 > 0 ? a1_name : "0"), (a2 > 0 ? a2_name : "0"));
-    } else {
-        fprintf(filep, "%2d/%2d ", a1, a2);
-    }
+    // For a single character allele, all of these format strings will use 6 columns...
+    fprintf_2alleles(filep, locus, a1, a2, " 0/ 0 ", "%2s/%2s ", "%2d/%2d ");
 }
-
 
 
 /*

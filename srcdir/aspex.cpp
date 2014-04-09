@@ -46,6 +46,7 @@
 #include "scripts_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
+#include "write_files_ext.h"
 /*
         batch_input_ext.h:  batchf
      create_summary_ext.h:  aff_status_entry
@@ -1023,14 +1024,16 @@ static void AspexPedFile(char *aspdat_name, tcl_opts_type opt,
                 /* 	printf("%d nloc\n", chromo_loci_count[numchr]); */
                 for (lcount = 0; lcount < opt.nloc; lcount++)  {
                     int allele1, allele2;
+                    linkage_locus_rec *locus = &TTop->LocusTop->Locus[*trp];
                     get_2alleles(tpe->Marker, opt.locus_ids[lcount], &allele1, &allele2);
-                    fprintf(fp, "  %2d", allele1);
+                    fprintf_allele(fp, locus, allele1, (const char *)NULL, "   %s", "  %2d");
                     if (TTop->LocusTop->Marker[opt.locus_ids[lcount]].chromosome == SEX_CHROMOSOME &&
-			tpe->Sex == 1)
+                        tpe->Sex == 1)
                         /* = 1 = male , 2= female */
                         fprintf(fp, " Y");
-                    else
-                        fprintf(fp, " %2d", allele2);
+                    else {
+                        fprintf_allele(fp, locus, allele2, (const char *)NULL, "  %s", " %2d");
+                    }
                     /*      max of 10 digits/characters per allele identifier... */
                 }
                 fprintf(fp, "\n");

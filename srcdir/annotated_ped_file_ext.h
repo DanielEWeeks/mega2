@@ -53,7 +53,9 @@ extern void write_annotated_aff(FILE *filep, int locusnm, linkage_locus_rec *loc
 				linkage_ped_rec *entry);
 
 
-extern void write_annotated_numbered(FILE *filep, int locusnm,
+extern void write_annotated_numbered(FILE *filep,
+				     int locusnm,
+				     linkage_locus_rec *locus,
 				     linkage_ped_rec *entry);
 
 

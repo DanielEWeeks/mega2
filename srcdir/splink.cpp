@@ -73,6 +73,7 @@
 #include "output_routines_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
+#include "write_files_ext.h"
 /*
      create_summary_ext.h:  aff_status_entry
      error_messages_ext.h:  errorf mssgf my_calloc my_malloc
@@ -543,8 +544,9 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                             break;
                         case NUMBERED:
                             get_2alleles(tpe->Marker, kk, &a1, &a2);
-                            fprintf(fp, " ");
-                            fprintf(fp, "%2d/%-2d", a1, a2);
+                            // NOTE: The second allele is left alligned...
+                            fprintf_2alleles(fp, &Top->LocusTop->Locus[kk], a1, a2,
+                                            (const char *)NULL, " %2s/%-2s", " %2d/%-2d");
                             break;
                         case QUANT:
                         case BINARY:
@@ -618,7 +620,9 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                                  &(Top2->LocusTop->Locus[*trp]), tpe); */
                             fprintf(fp, " %1d", tpe->Pheno[*trp].Affection.Status);
                             get_2alleles(tpe->Marker, kk, &a1, &a2);
-                            fprintf(fp, " %2d/%-2d\n", a1, a2);
+                            // NOTE: The second allele is left alligned...
+                            fprintf_2alleles(fp, &LTop->Locus[kk], a1, a2,
+                                             (const char *)NULL, " %2s/%-2s\n", " %2d/%-2d\n");
                         }
                     }
                     fclose(fp);

@@ -47,6 +47,9 @@ public:
     virtual const char* output_quant_default_value() { return "?"; }
     virtual bool qtl_allow()        { return true; }
 
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
+
     virtual void ped_ind_defaults(int unique)  {
         OrigIds[0] = 2; /* uniqueIds */
         OrigIds[1] = 2; /* Ped num */

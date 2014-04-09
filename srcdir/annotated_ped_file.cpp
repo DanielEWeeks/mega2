@@ -4075,6 +4075,8 @@ static void insert_zero_sex_average_genetic_map_in_EXLTop(ext_linkage_locus_top 
         }
 }
 
+m2_map save_vcf_map;
+
 linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                                       char *map_file, char *freq_file,
                                       char *pen_file, char *omit_file,
@@ -4121,6 +4123,13 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             // It will later be coppied to EXLTop, and the map object will be deleted by C++
             // when it goes out of scope.
             vcf_map = VCFtools_get_map(alternative_key, "chr");
+            
+            if (analysis == TO_PLINK) {
+                // Store the map so that we can pull out the VCF reference alleles and drop then into a
+                // file to be read by PLINK using '--reference-allele fn'. It is unclear at this point
+                // whether the user will choose this map file or not.
+                save_vcf_map = vcf_map;
+            }
             
             // Process the genotype (from VCF file 'vcf_map') and phenotype 'phe_*' marker data,
             // loading it into LTop...
@@ -4836,24 +4845,14 @@ void write_annotated_quant(FILE *filep, int locusnm,
 }
 
 
-void write_annotated_numbered(FILE *filep, int locusnm,
-			      linkage_ped_rec *entry)
+void write_annotated_numbered(FILE *filep, int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
     int all1, all2;
     get_2alleles(entry->Marker, locusnm, &all1, &all2);
 
     fprintf(filep, " ");
-    if (all1 == 0) {
-        fprintf(filep, "NA ");
-    } else {
-        fprintf(filep, "%2d ", all1);
-    }
-
-    if (all2 == 0) {
-        fprintf(filep, "NA");
-    } else {
-        fprintf(filep, "%2d", all2);
-    }
+    fprintf_allele(filep, locus, all1, "NA ", " %s ", "%2d ");
+    fprintf_allele(filep, locus, all2, "NA", " %s", "%2d");
 }
 
 
