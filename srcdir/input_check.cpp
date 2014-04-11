@@ -559,7 +559,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 	// This option defines how invalid genotypes should be handled without pausing for user-input
 	// via the invalid-genotypes menu (which is skipped). If set to yes the genotypes will be reset
 	// to unknowns, and if set to no invalid genotypes will not be reset.
-        if (!InputMode == INTERACTIVE_INPUTMODE &&
+        if (InputMode != INTERACTIVE_INPUTMODE &&
             Mega2BatchItems[/* 26 */ Default_Reset_Invalid].item_read == 1
             ) {
             if (Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'n' ||
@@ -838,7 +838,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
     if (PedStat.genotype_invalid || PedStat.halftyped || PedStat.exceed_allcnt) {
         log_line(mssgf);
-        if (!InputMode == INTERACTIVE_INPUTMODE && Mega2BatchItems[/* 26 */ Default_Reset_Invalid].item_read) {
+        if (InputMode != INTERACTIVE_INPUTMODE && Mega2BatchItems[/* 26 */ Default_Reset_Invalid].item_read) {
             mssgf(
                 "DEFAULT HANDLING MODE FOR INVALID GENOTYPES SPECIFIED IN BATCH FILE.\n");
         }

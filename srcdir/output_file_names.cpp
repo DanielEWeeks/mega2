@@ -319,7 +319,7 @@ void           set_output_paths(analysis_type analysis,
         trait_paths[0] = CALLOC((size_t) FILENAME_LENGTH, char);
         sprintf(output_paths[0], "%s", Mega2OutputPath);
         strcpy(trait_paths[0], "");
-        if (!InputMode == INTERACTIVE_INPUTMODE && Mega2BatchItems[/* 16 */ Trait_Subdirs].item_read) {
+        if (InputMode != INTERACTIVE_INPUTMODE && Mega2BatchItems[/* 16 */ Trait_Subdirs].item_read) {
             j=1;
             for (i=1; i <= num_traits; i++) {
                 SKIP_TRII(trait_loc_num[i-1]);

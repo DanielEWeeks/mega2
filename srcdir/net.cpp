@@ -105,6 +105,7 @@ SOCK           http_request(const char *request, const char *host, unsigned shor
 SOCK           socket_fd(const char *host, unsigned short port);
 
 static         char socket_buffer[4096];
+//xx static         char socket_buffer[96];
 
 struct shar {int line;} data;
 
@@ -128,7 +129,7 @@ void http_response(const char *request, const char *host, unsigned short port, e
 {
     SOCK fd;
     int status = 0;
-    int len = 1;
+    int len = 0;
     int type = 0;
     int cnt = 1;
     size_t line;
@@ -140,15 +141,16 @@ void http_response(const char *request, const char *host, unsigned short port, e
     refill_prev_end = NULL;
     linec = socket_buffer;
     linec[0] = 0;
-    while (len > 0) {
-        linep = strsep(&linec, "\n");
-        if (linec == NULL) {
+    while (len >= 0) {
+        if (len == 0) {
             len = refill(fd, socket_buffer, sizeof(socket_buffer));
             if (len < 0) break;
             linec = socket_buffer;
-            linep = strsep(&linec, "\n");
         }
+        linep = strsep(&linec, "\n");
+        len--;
         line = linec - linep - 1; /* -1 is for \n */
+        len -= line;
         if (linec[-2] == '\r') {
             linec[-2] = 0;
             line--;
@@ -163,7 +165,7 @@ void http_response(const char *request, const char *host, unsigned short port, e
             }
         }
         if (debug) {
-            msgvf("#%d: %s (L%d) %d\n", cnt, linep, line, type);
+            msgvf("#%d: %s (L%d) (R%d) %d\n", cnt, linep, line, len, type);
         }
 
         fn(cnt, linep, (int)line, type, ap);
@@ -184,9 +186,9 @@ static int refill(SOCK fd, char *buffer, size_t blen)
         refill_overflow = &buffer[blen];
         refill_prev_end = &buffer[blen];
     }
-    if (refill_overflow < &buffer[blen]) {
-        strncpy(buffer, refill_overflow, refill_prev_end - refill_overflow);
-        overflow_size = &buffer[blen] - refill_overflow;
+    if (refill_overflow < refill_prev_end) {
+        overflow_size = refill_prev_end - refill_overflow;
+        strncpy(buffer, refill_overflow, overflow_size);
     } else {
         overflow_size = 0;
     }
@@ -219,7 +221,8 @@ static int refill(SOCK fd, char *buffer, size_t blen)
         refill_overflow = &buffer[total_length];
         buffer[total_length] = 0;
     }
-    return (int)total_length;
+    overflow_size = refill_prev_end - refill_overflow;
+    return (int)total_length - overflow_size;
 }
 
 void test_socket_fd(void)

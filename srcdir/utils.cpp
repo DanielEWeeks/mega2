@@ -1686,7 +1686,7 @@ static void get_mega2_version(int cnt, char *line, int len, int type, void *ap)
 void mega2_version_check(void)
 {
     FILE *verf;
-    int ver=0, rev=0, patch=0, verint, distverint, has_bugs;
+    int newver=0, newrev=0, newpatch=0, verrev, newverrev, has_bugs;
     char ans;
     char version_name[20];
 
@@ -1698,16 +1698,16 @@ void mega2_version_check(void)
         verf = NULL;
     } else {
         verf     = stdout; /* some random pointer */
-        ver      = hv.ver;
-        rev      = hv.rev;
-        patch    = hv.patch;
+        newver   = hv.ver;
+        newrev   = hv.rev;
+        newpatch = hv.patch;
         has_bugs = hv.has_bugs;
     }
 #else
     verf = http_response_body("GET /pub/mega2/.version", "watson.hgen.pitt.edu", 80);
 #endif
 
-    switch(wget_failures(verf, &ver, &rev, &patch, &has_bugs)) {
+    switch(wget_failures(verf, &newver, &newrev, &newpatch, &has_bugs)) {
     case COMMAND_NOT_FOUND:
         printf("wget not installed on your system.\n");
         break;
@@ -1718,32 +1718,39 @@ void mega2_version_check(void)
         break;
 
     case SUCCESS:
-        distverint = 100*ver + 10*rev;
-        verint = 100*Mega2Ver + 10*Mega2Rev;
+        newverrev = 100*newver + 10*newrev;
+        verrev = 100*Mega2Ver + 10*Mega2Rev;
 
 #ifdef HIDESTATUS
-        printf("OLD %d, NEW %d\n", verint, distverint);
+        printf("OLD %d, NEW %d\n", verrev, newverrev);
 #endif
 
-        if (distverint == 0) {
+        if (newverrev == 0) {
             printf("Unable to check web version.\n");
-        } else if (distverint == verint) {
+        } else if (newverrev == verrev) {
+
             /* (ver == Mega2Ver && rev == Mega2Rev && patch == Mega2Patch) { */
-            if (patch == Mega2Patch) {
+            if (newpatch == Mega2Patch) {
                 printf("Mega2 version is up to date.\n");
-            } else if (patch < Mega2Patch) {
+            } else if (newpatch < Mega2Patch) {
                 printf("Your Mega2 version is newer than the official distribution.\n");
-                printf("    Latest version: %d.%d.%d\n", ver, rev, patch);
+                printf("    Latest version: %d.%d.%d\n", newver, newrev, newpatch);
                 printf("    Your   version: %d.%d.%d\n", Mega2Ver, Mega2Rev, Mega2Patch);
             } else {
                 printf("There is a new minor revision of Mega2; You might want to get it.\n");
-                printf("    Latest version: %d.%d.%d\n", ver, rev, patch);
+                printf("    Latest version: %d.%d.%d\n", newver, newrev, newpatch);
                 printf("    Your   version: %d.%d.%d\n", Mega2Ver, Mega2Rev, Mega2Patch);
+
+                sprintf(version_name, ".bug.%d.%d.%d", Mega2Ver, Mega2Rev, Mega2Patch);
+                mega2_version_report_check(version_name); // ... new name
+                sprintf(version_name, ".release.%d.%d.%d", Mega2Ver, Mega2Rev, Mega2Patch);
+                mega2_version_report_check(version_name);
+                draw_line();
             }
-        } else if (distverint > verint) {
+        } else if (newverrev > verrev) {
 /*       (ver > Mega2Ver || rev > Mega2Rev || patch > Mega2Patch) { */
             printf("Upgrade needed: \n");
-            printf("        Release version: %d.%d.%d\n", ver, rev, patch);
+            printf("        Release version: %d.%d.%d\n", newver, newrev, newpatch);
             printf("        Your    version: %d.%d.%d\n", Mega2Ver, Mega2Rev, Mega2Patch);
             printf("Exit Mega2 now, while you update [y/n] ? ");
 
@@ -1753,19 +1760,17 @@ void mega2_version_check(void)
             } else {
                 printf("Please update Mega2 as soon as possible.\n");
             }
-        } else if (distverint < verint) {
+        } else if (newverrev < verrev) {
             /* (ver < Mega2Ver || rev < Mega2Rev || patch < Mega2Patch) { */
             printf("You appear to be running a more recent version of Mega2.\n");
-            printf("        Release version: %d.%d.%d\n", ver, rev, patch);
+            printf("        Release version: %d.%d.%d\n", newver, newrev, newpatch);
             printf("        Your    version: %d.%d.%d\n", Mega2Ver, Mega2Rev, Mega2Patch);
         }
 
         if (has_bugs) {
             mega2_bug_report_check(".bugs", has_bugs);
         }
-        sprintf(version_name, ".bug.%d.%d.%d", Mega2Ver, Mega2Rev, Mega2Patch);
-        mega2_version_report_check(version_name);
-        draw_line();
+
         break;
 
     default:
