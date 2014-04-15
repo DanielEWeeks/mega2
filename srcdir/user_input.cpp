@@ -1070,7 +1070,8 @@ void menu1(file_format *infl_type,
                 if (*PLINKArgs == 0) {
                     printf("ERROR: You did not specify any PLINK parameters.\n");
                     exit_loop=0;
-                }
+                } else
+                    Mega2BatchItems[PLINK_Args].item_read = 1;
             }
             if (Input_Format == in_format_binary_PED && access(*auxfl_name, F_OK) != 0) {
                 printf("ERROR: You did not specify a PLINK binary data file.\n");
