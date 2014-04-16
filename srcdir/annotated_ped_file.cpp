@@ -4896,9 +4896,17 @@ int PLINK_args(char *str, int xcf)
         } else {
             if (! xcf) {
                 if (!strcasecmp(tok, "--bfile")) {
-                    PLINK.plink = binary_PED_format;
+                    if (InputMode == INTERACTIVE_INPUTMODE) {
+                        printf("Usage: Bad parameter for interactive input  %s\n", tok);
+                        err++;
+                    } else
+                        PLINK.plink = binary_PED_format;
                 } else if (!strcasecmp(tok, "--file")) {
-                    PLINK.plink = PED_format;
+                    if (InputMode == INTERACTIVE_INPUTMODE) {
+                        printf("Usage: Bad parameter for interactive input  %s\n", tok);
+                        err++;
+                    } else
+                        PLINK.plink = PED_format;
                 } else if (!strcasecmp(tok, "--no-fid")) {
                     PLINK.no_fid = 1;
                 } else if (!strcasecmp(tok, "--no-parents")) {
@@ -4984,7 +4992,7 @@ void
 PLINK_usage(int xcf)
 {
     if (! xcf) {
-        printf("\nPLINK options: --file/--bfile --no-fid --no-parents --no-pheno --1 --map3 ...\n");
+        printf("\nPLINK options: --no-fid --no-parents --no-pheno --1 --map3 ...\n");
         printf("    --missing-phenotype <value> --cM --kosambi/--haldane ...\n");
         printf("    --trait <value> --affectionstatus/--quantitative\n\n");
     } else {
