@@ -249,8 +249,13 @@ static void  write_SOLAR_locus_file(char *fl_name, linkage_locus_top *LTop)
                 else
                     fprintf(filep, "%8d ", locus1 + 1);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++)   {
-                    fprintf(filep, "%d %9f  ", allele + 1,
-                            Locus->Allele[allele].Frequency);
+                    if (AnalysisOpt->allele_data_use_name_if_available()) {
+                        const char *name = Locus->Allele[allele].name;
+                        fprintf(filep, "%s", name);
+                    } else {
+                        fprintf(filep, "%d", allele + 1);
+                    }
+                    fprintf(filep, " %9f  ", Locus->Allele[allele].Frequency);
                 }
                 fprintf(filep,"\n");
             }

@@ -216,7 +216,7 @@ void fprintf_allele(FILE *filep,
 {
     if (allele == 0 && is_zero_format_string != (const char *)NULL) {
         // is_zero_format_string should be something like "    ", "NA ", or NULL.
-        fprintf(filep, is_zero_format_string);
+        fprintf(filep, is_zero_format_string, NULL);
     } else if (AnalysisOpt->allele_data_use_name_if_available() &&
                allele <= locus->AlleleCnt &&
 	       locus->Allele[allele-1].name != NULL) {
@@ -255,7 +255,7 @@ void fprintf_2alleles(FILE *filep,
                       const char *numbered_format_string)
 {
     if (allele1 == 0 && allele1_is_zero_format_string != (const char *)NULL) {
-        fprintf(filep, allele1_is_zero_format_string);
+        fprintf(filep, allele1_is_zero_format_string, NULL);
     } else if (AnalysisOpt->allele_data_use_name_if_available() &&
                allele1 <= locus->AlleleCnt &&
                allele2 <= locus->AlleleCnt &&

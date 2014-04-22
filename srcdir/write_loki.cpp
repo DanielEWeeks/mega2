@@ -395,11 +395,17 @@ static void write_LOKI_freq(char *freq_file, int numchr,
         for (locus = 0; locus < NumChrLoci; locus++) {
             if (LTop->Locus[ChrLoci[locus]].Type == NUMBERED ||
                 LTop->Locus[ChrLoci[locus]].Type == BINARY) {
-                fprintf(fp, "Frequency  %s ",
+                fprintf(fp, "Frequency  %s",
                         LTop->Locus[ChrLoci[locus]].Name);
-                for(all=0; all < LTop->Locus[ChrLoci[locus]].AlleleCnt; all++) {
-                    fprintf(fp, "%d,%7.6f ", all+1,
-                            LTop->Locus[ChrLoci[locus]].Allele[all].Frequency);
+                // NOTE: Similar code is found in write_mendel7_files.cpp:csv_write_mendel_locus_file()
+                for (all=0; all < LTop->Locus[ChrLoci[locus]].AlleleCnt; all++) {
+                    if (AnalysisOpt->allele_data_use_name_if_available()) {
+                        const char *name = LTop->Locus[ChrLoci[locus]].Allele[all].name;
+                        fprintf(fp, " %s", name);
+                    } else {
+                        fprintf(fp, " %d", all+1);
+                    }
+                    fprintf(fp, ",%7.6f", LTop->Locus[ChrLoci[locus]].Allele[all].Frequency);
                 }
                 fprintf(fp, "\n");
             }

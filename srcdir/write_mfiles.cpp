@@ -1361,9 +1361,15 @@ void            write_mendel_locus_file(char *file_name,
             case NUMBERED:
                 fprintf(fp, " 0%3d %8f <= # Alleles,# Phenotypes. %5.2f cM\n",
                         Locus->Marker->chromosome, (Locus->Marker->pos_avg/100.0), Locus->Marker->pos_avg);
+                // NOTE: Similar code is found in write_mendel7_files.cpp:csv_write_mendel_locus_file()
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
-                    fprintf(fp, "%7d %8f\n", allele + 1,
-                            Locus->Allele[allele].Frequency);
+                    if (AnalysisOpt->allele_data_use_name_if_available()) {
+                        const char *name = Locus->Allele[allele].name;
+                        fprintf(fp, "%7s", name);
+                    } else {
+                        fprintf(fp, "%7d", allele + 1);
+                    }
+                    fprintf(fp, " %8f\n", Locus->Allele[allele].Frequency);
                 }
                 break;
             case AFFECTION:
