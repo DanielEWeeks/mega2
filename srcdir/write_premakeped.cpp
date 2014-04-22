@@ -968,17 +968,16 @@ static void write_merlin_map(linkage_locus_top *LTop,
 }
 
 static void write_merlin_freq(linkage_locus_top *LTop,
-			      char *freqfl, int numchr,
-			      analysis_type analysis)
+                              char *freqfl, int numchr,
+                              analysis_type analysis)
 
 {
     int nloop, tr, locus, locus1, num_affec=num_traits ;
-    int all;
     char mfl[2*FILENAME_LENGTH];
     FILE *fp;
-
+    
     NLOOP;
-
+    
     for (tr=0; tr <= nloop; tr++) {
         if (nloop > 1 && tr == 0) continue;
         sprintf(mfl, "%s/%s", output_paths[tr], freqfl);
@@ -986,21 +985,34 @@ static void write_merlin_freq(linkage_locus_top *LTop,
             errorvf("could not open frequency file %s.\n", mfl);
             EXIT(FILE_WRITE_ERROR);
         }
-
+        
         for (locus1 = 0; locus1 < NumChrLoci; locus1++) {
             locus = ChrLoci[locus1];
             if (LTop->Locus[locus].Type == NUMBERED ||
                 LTop->Locus[locus].Type == BINARY) {
+                int allele;
+                // The marker name preceeds the frequency informaiton...
                 fprintf(fp, "M  %s\n",
                         ((analysis == TO_MERLIN)?
                          strtail(LTop->Locus[locus].Name, MERLIN_MAX_LOCUS_NAME_LEN) :
                          LTop->Locus[locus].Name));
-                fprintf(fp, "F ");
-                for(all=0; all < LTop->Locus[locus].AlleleCnt; all++) {
-                    fprintf(fp, "%6f ",
-                            LTop->Locus[locus].Allele[all].Frequency);
+                if (AnalysisOpt->allele_data_use_name_if_available()) {
+                    // Merlin will accept character alleles but you need to use the
+                    // "Extended allele frequency format" documented here:
+                    // http://www.sph.umich.edu/csg/abecasis/merlin/tour/input_files.html
+                    // With this format each allele gets it's own line...
+                    for (allele=0; allele < LTop->Locus[locus].AlleleCnt; allele++) {
+                        double frequency = LTop->Locus[locus].Allele[allele].Frequency;
+                        const char *name = LTop->Locus[locus].Allele[allele].name;
+                        fprintf(fp, "A %s %6f\n", name, frequency);
+                    }
+                } else {
+                    // With this format all allele frequencies are written on one line...
+                    fprintf(fp, "F");
+                    for (allele=0; allele < LTop->Locus[locus].AlleleCnt; allele++)
+                        fprintf(fp, " %6f", LTop->Locus[locus].Allele[allele].Frequency);
+                    fprintf(fp, "\n");
                 }
-                fprintf(fp, "\n");
             }
         }
         fclose(fp);

@@ -287,17 +287,82 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
 
 /* Write the qtl variables at the end */
 
+
+//
+// Print the first bit of information for the other 'fprint_mendel7_*()' routines
+// This is for the affection status and not a marker so there is no issue of whether
+// the Locus should be output in a numbered or character (named) format.
+static void fprint_mendel7_affection_header(FILE *fp,
+                                            const linkage_locus_rec *Locus,
+                                            const int sex_linked)
+{
+    fprintf(fp, "%s,%s,%d,2\n",
+            Locus->Name,
+            ((sex_linked == 1) ? "X-LINKED" : "AUTOSOME"),
+            Locus->AlleleCnt);
+    for (int allele = 0; allele < Locus->AlleleCnt; allele++)  {
+        fprintf(fp, "%d,%8f\n", allele + 1, Locus->Allele[allele].Frequency);
+    }
+}
+
+//
+// This replaces an old macro MENDEL7_AFFECTION
+static void fprint_mendel7_affection(FILE *fp,
+                                     const linkage_locus_rec *Locus,
+                                     const int sex_linked)
+{
+    fprint_mendel7_affection_header(fp, Locus, sex_linked);
+    for (int tmpi = 1; tmpi <= 2; tmpi++) {
+        int numgen = 0;
+        fprintf(fp, "%d,", tmpi);
+        for (int ipen = 0; ipen < Locus->Pheno->Props.Affection.PenCnt; ipen++) {
+            double pen;
+            if (tmpi == 1) {
+                pen = 1.0 - Locus->Pheno->Props.Affection.Class[0].AutoPen[ipen];
+            } else {
+                pen = Locus->Pheno->Props.Affection.Class[0].AutoPen[ipen];
+            }
+            if (pen > 0.0)  numgen++;
+        }
+        fprintf(fp, "%d\n", numgen);
+        if (tmpi == 2)  {
+            if (Locus->Pheno->Props.Affection.Class[0].AutoPen[0] > 0.0)
+                fprintf(fp, "1/1\n");
+            if (Locus->Pheno->Props.Affection.Class[0].AutoPen[1] > 0.0)
+                fprintf(fp, "1/2\n");
+            if (Locus->Pheno->Props.Affection.Class[0].AutoPen[2] > 0.0)
+                fprintf(fp, "2/2\n");
+        } else {
+            if (1.0 - Locus->Pheno->Props.Affection.Class[0].AutoPen[0] > 0.0)
+                fprintf(fp, "1/1\n");
+            if (1.0 - Locus->Pheno->Props.Affection.Class[0].AutoPen[1] > 0.0)
+                fprintf(fp, "1/2\n");
+            if (1.0 - Locus->Pheno->Props.Affection.Class[0].AutoPen[2] > 0.0)
+                fprintf(fp, "2/2\n");
+        }
+    }
+}
+
+//
+// This replaces an old macro MENDEL7_ML_AFFECTION
+static void fprint_mendel7_ml_affection(FILE *fp,
+                                        const linkage_locus_rec *Locus,
+                                        const int sex_linked)
+{
+    fprint_mendel7_affection_header(fp, Locus, sex_linked);
+    fprintf(fp, "1\n2\n");
+}
+
 void  csv_write_mendel_locus_file(char *file_name,
 				  linkage_locus_top *LTop,
 				  int sex_linked)
 {
 
     int      nloop, tr, locus1, allele, tmpi, tmpi2, *trp;
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     char     chromo[4], loutfl_name[2*FILENAME_LENGTH];
-    int      numgen, ipen, num_affec = num_traits;
+    int      num_affec = num_traits;
     FILE     *fp;
-    double pen;
 
     NLOOP;
 
@@ -318,10 +383,10 @@ void  csv_write_mendel_locus_file(char *file_name,
             Locus = &(LTop->Locus[*trp]);
             if (Locus->Type == AFFECTION) {
                 if (Locus->Pheno->Props.Affection.ClassCnt > 1) {
-                    MENDEL7_ML_AFFECTION
-                        } else {
-                    MENDEL7_AFFECTION
-                        }
+                    fprint_mendel7_ml_affection(fp, Locus, sex_linked);
+		} else {
+                    fprint_mendel7_affection(fp, Locus, sex_linked);
+		}
             }
         }
 
@@ -330,7 +395,7 @@ void  csv_write_mendel_locus_file(char *file_name,
             Locus = &(LTop->Locus[ChrLoci[locus1]]);
             if (Locus->Type == NUMBERED || Locus->Type == BINARY) {
                 if (Locus->Name != NULL) {
-		  fprintf(fp, "%s,", strtail(Locus->Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+                    fprintf(fp, "%s,", strtail(Locus->Name, MENDEL7_MAX_LOCUS_NAME_LEN));
                 }
                 else
                     fprintf(fp, "%d,", locus1 + 1);
@@ -348,17 +413,22 @@ void  csv_write_mendel_locus_file(char *file_name,
                 break;
             case NUMBERED:
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
-                    fprintf(fp, "%d,%8f\n", allele + 1,
-                            Locus->Allele[allele].Frequency);
+                    if (AnalysisOpt->allele_data_use_name_if_available()) {
+                        const char *name = Locus->Allele[allele].name;
+                        fprintf(fp, "%s", name);
+                    } else {
+                        fprintf(fp, "%d", allele + 1);
+                    }
+                    fprintf(fp, ",%8f\n", Locus->Allele[allele].Frequency);
                 }
                 break;
             case AFFECTION:
                 if (LoopOverTrait == 0) {
                     if (Locus->Pheno->Props.Affection.ClassCnt > 1) {
-                        MENDEL7_ML_AFFECTION
-                            } else {
-                        MENDEL7_AFFECTION
-                            }
+                        fprint_mendel7_ml_affection(fp, Locus, sex_linked);
+                    } else {
+                        fprint_mendel7_affection(fp, Locus, sex_linked);
+                    }
                 }
                 break;
             case QUANT:
