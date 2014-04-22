@@ -1713,7 +1713,7 @@ void get_loci_on_chromosome(const int numchr)
                     for (k=0; k < num_reordered; k++) {
                         ChrLoci[j++] = reordered_marker_loci[k];
                     }
-                    if (ChrLociLastMarkerIndex == -1) ChrLociLastMarkerIndex = j-1;
+                    ChrLociLastMarkerIndex = j-1;
                 } else if (numchr == -1) {
                     /* skip the loci on X-chromosome */
                     if (chromindex == 0) {
@@ -1726,8 +1726,8 @@ void get_loci_on_chromosome(const int numchr)
                         if (k < lower || k >= upper) {
                             ChrLoci[j++] = reordered_marker_loci[k];
                         }
-                        if (ChrLociLastMarkerIndex == -1) ChrLociLastMarkerIndex = k-1;
                     }
+                    ChrLociLastMarkerIndex = j-1;
                 } else {
                     if (chromindex == 0) {
                         lower=0; upper = chromo_loci_count[chromindex];
@@ -1738,7 +1738,7 @@ void get_loci_on_chromosome(const int numchr)
                     for (k = lower; k < upper; k++) {
                         ChrLoci[j++] = reordered_marker_loci[k];
                     }
-                    if (ChrLociLastMarkerIndex == -1) ChrLociLastMarkerIndex = j-1;
+                    ChrLociLastMarkerIndex = j-1;
                 }
             }
         }
@@ -1754,7 +1754,7 @@ void get_loci_on_chromosome(const int numchr)
                 for (k=0; k < num_reordered; k++) {
                     ChrLoci[j++] = reordered_marker_loci[k];
                 }
-                if (ChrLociLastMarkerIndex == -1) ChrLociLastMarkerIndex = j-1;
+                ChrLociLastMarkerIndex = j-1;
             } else {
                 if (chromindex == 0) {
                     lower=0; upper = chromo_loci_count[chromindex];
@@ -1765,7 +1765,7 @@ void get_loci_on_chromosome(const int numchr)
                 for (k = lower; k < upper; k++) {
                     ChrLoci[j++] = reordered_marker_loci[k];
                 }
-                if (ChrLociLastMarkerIndex == -1) ChrLociLastMarkerIndex = k-1;
+                ChrLociLastMarkerIndex = j-1;
             }
         }
     } else {

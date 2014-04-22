@@ -1773,6 +1773,15 @@ static linkage_locus_top *read_linkage_locus_file(FILE *filep, int linkagecols, 
     LTop->MarkerCnt = marker1;
     LTop->Marker = (REALLOC(LTop->Marker, (size_t) LTop->MarkerCnt, marker_rec))  - LTop->PhenoCnt;
 
+    pheno1 = 0;
+    marker1 = LTop->PhenoCnt;
+    for (locus1 = 0; locus1 < LTop->LocusCnt; locus1++) {
+        if (LTop->Locus[locus1].Type == AFFECTION || LTop->Locus[locus1].Type == QUANT) {
+            LTop->Locus[locus1].Pheno = &LTop->Pheno[pheno1++];
+        } else if (LTop->Locus[locus1].Type == NUMBERED || LTop->Locus[locus1].Type == BINARY) {
+            LTop->Locus[locus1].Marker = &LTop->Marker[marker1++];
+        }
+    }
     free(order);
 
     printf("Data read in from Locus file:\n");
@@ -1780,6 +1789,7 @@ static linkage_locus_top *read_linkage_locus_file(FILE *filep, int linkagecols, 
 /* 	 LTop->LocusCnt, marker_count); */
 /*   log_line(mssgf); */
 /*   get_trait_list(LTop); */
+
     return LTop;
 }
 
