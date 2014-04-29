@@ -47,6 +47,9 @@
 #include "write_ghfiles_ext.h"
 #include "plink_ext.h"
 
+#include <string>
+#include <map>
+
 /*
      error_messages_ext.h:  Mega2LogF mssgf my_calloc warnf
               fcmap_ext.h:  fcmap
@@ -195,6 +198,9 @@ void write_simulate_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *l
 }
 
 
+//
+// Holds a cache of the string value of numerical alleles...
+static map<int, string> numbered_format_string_map;
 /**
    @brief Format the allele appropriately.
 
@@ -206,8 +212,9 @@ void write_simulate_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *l
  */
 const char *format_allele(linkage_locus_rec *locus, const int allele)
 {
-  static char allele_buf[1024];
+  // First see if we can/should return the character allele representation...
   if (AnalysisOpt->allele_data_use_name_if_available() &&
+      allele > 0 &&
       allele <= locus->AlleleCnt &&
       // When the input is linkage there will be no name array
       // entry for this allele.
@@ -217,15 +224,31 @@ const char *format_allele(linkage_locus_rec *locus, const int allele)
       // numeric representation instead.
       locus->Allele[allele-1].Frequency != 0 &&
       // seem mrecode.cpp
-      strncmp("dummy", locus->Allele[allele-1].name, 5) != 0) {
-    return (allele > 0 ? locus->Allele[allele-1].name : "0");
+      strncmp("dummy", locus->Allele[allele-1].name, 5) != 0
+      // For microsatiites they give you alleles as number that are not contiguous.
+      // When we dicide to recode (normally letters into numbers), but in this sparse
+      // numberic case we also recode. Add a command line argument to Mega2 which says
+      // to always pick the recode (e.g., sequential numberic values).
+      // NEED TO INSERT THE CONDITIONAL HERE!!!
+      ) {
+    return locus->Allele[allele-1].name;
   }
-  // numbered_format_string should be something linke "%2d "...
-  snprintf(allele_buf, 1024, "%d", allele);
-  // NOTE: In the future we will look up the allele value in a hash table so
-  // that we only make it one time. In that manner the number of numeric
-  // strings that we have is no more than the number of unique numeric alleles.
-  return strdup(allele_buf);
+
+  // Here, the character allele is not used, or not available.
+  //
+  // At this point we look for the string representation of the numeric allele
+  // in the map. If it is found, then we return it. If it is not found then
+  // we add it, and then return it.
+  map<int,string>::iterator it = numbered_format_string_map.find(allele);
+  if (it == numbered_format_string_map.end()) {
+      char allele_buf[1024];
+      string allele_string;
+      snprintf(allele_buf, 1024, "%d", allele);
+      allele_string = string(allele_buf);
+      numbered_format_string_map[allele] = allele_string;
+      return allele_string.c_str();
+  }
+  return it->second.c_str();
 }
 
 /**
