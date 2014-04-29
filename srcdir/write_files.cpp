@@ -200,7 +200,7 @@ void write_simulate_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *l
 
 //
 // Holds a cache of the string value of numerical alleles...
-static map<int, string> numbered_format_string_map;
+static map<int, char *> numbered_format_string_map;
 /**
    @brief Format the allele appropriately.
 
@@ -239,16 +239,14 @@ const char *format_allele(linkage_locus_rec *locus, const int allele)
   // At this point we look for the string representation of the numeric allele
   // in the map. If it is found, then we return it. If it is not found then
   // we add it, and then return it.
-  map<int,string>::iterator it = numbered_format_string_map.find(allele);
+  map<int, char *>::iterator it = numbered_format_string_map.find(allele);
   if (it == numbered_format_string_map.end()) {
-      char allele_buf[1024];
-      string allele_string;
+      char allele_buf[1024], *str;
       snprintf(allele_buf, 1024, "%d", allele);
-      allele_string = string(allele_buf);
-      numbered_format_string_map[allele] = allele_string;
-      return allele_string.c_str();
+      numbered_format_string_map[allele] = str = strdup(allele_buf);
+      return str;
   }
-  return it->second.c_str();
+  return it->second;
 }
 
 /**
