@@ -4851,8 +4851,16 @@ void write_annotated_numbered(FILE *filep, int locusnm, linkage_locus_rec *locus
     get_2alleles(entry->Marker, locusnm, &all1, &all2);
 
     fprintf(filep, " ");
-    fprintf_allele(filep, locus, all1, "NA ", " %s ", "%2d ");
-    fprintf_allele(filep, locus, all2, "NA", " %s", "%2d");
+
+    if (all1 == 0)
+        fputs("NA ", filep);
+    else
+        fprintf(filep, "%2s ", format_allele(locus, all1));
+
+    if (all2 == 0)
+        fputs("NA", filep);
+    else
+        fprintf(filep, "%2s", format_allele(locus, all2));
 }
 
 

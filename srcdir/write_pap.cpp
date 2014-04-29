@@ -323,9 +323,9 @@ static void save_pap_phen(char *phen_file_name,
                         case NUMBERED:
                         case BINARY:
                             get_2alleles(Top->Ped[ped].Entry[per].Marker, loc, &a1, &a2);
-                            fprintf_2alleles(filep, &Top->LocusTop->Locus[loc], a1, a2,
-		                             (const char *)NULL, "%8s%8s", "%8d%8d");
-                            //fprintf(filep, "%8d%8d", a1, a2);
+                            fprintf(filep, "%8s%8s",
+                                    format_allele(&(Top->LocusTop->Locus[loc]), a1),
+                                    format_allele(&(Top->LocusTop->Locus[loc]), a2));
                             ncol += 2;
                             break;
 

@@ -544,12 +544,14 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         }
         void inner() {
             if (has_pheno()) {
-                if (_LTop->Marker[_locus].Props.Numbered.Recoded)
+                if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                     pr_printf("%s %s ",
                               recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
-                else
-                    pr_printf("%d %d ", _allele1, _allele2);
+                } else {
+                    linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
+                    pr_printf("%s %s ", format_allele(Locus, _allele1), format_allele(Locus, _allele2));
+                }
             }
         }
         void loci_end() {
@@ -781,12 +783,11 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                               recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
                 } else {
-                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1_f, _allele2_f,
-                                     (const char *)NULL, "%s %s ", "%d %d ");
-                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1_m, _allele2_m,
-                                     (const char *)NULL, "%s %s ", "%d %d ");
-                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1, _allele2,
-                                     (const char *)NULL, "%s %s ", "%d %d ");
+                    linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
+                    pr_printf("%s %s %s %s %s %s ",
+			      format_allele(Locus, _allele1_f), format_allele(Locus, _allele2_f),
+			      format_allele(Locus, _allele1_m), format_allele(Locus, _allele2_m),
+			      format_allele(Locus, _allele1), format_allele(Locus, _allele2));
                 }
             }
         }
@@ -1022,6 +1023,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             if (father != 0 &&
                 is_affected_pheno() == 1 &&
                 is_affected_pheno(&(_tp->Entry[father-1])) == 0) {
+
                 linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[father-1]);
 //xx            int _allele1_f = _tpe_f->Data[_locus].Alleles.Allele_1;
 //xx            int _allele2_f = _tpe_f->Data[_locus].Alleles.Allele_2;
@@ -1034,15 +1036,16 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
                               recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
                 } else {
-                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1_f, _allele2_f,
-                                     (const char *)NULL, "%s %s ", "%d %d ");
-                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1, _allele2,
-                                    (const char *)NULL, "%s %s ", "%d %d ");
+                    linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
+                    pr_printf("%s %s %s %s ",
+			      format_allele(Locus, _allele1_f), format_allele(Locus, _allele2_f),
+			      format_allele(Locus, _allele1), format_allele(Locus, _allele2));
                 }
             }
             if (mother != 0 &&
                 is_affected_pheno() == 1 &&
                 is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
+
                 linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[mother-1]);
 //xx            int _allele1_m = _tpe_m->Data[_locus].Alleles.Allele_1;
 //xx            int _allele2_m = _tpe_m->Data[_locus].Alleles.Allele_2;
@@ -1055,10 +1058,10 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
                               recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
                               recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
                 } else {
-                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1_m, _allele2_m,
-                                     (const char *)NULL, "%s %s ", "%d %d ");
-                    fprintf_2alleles(_filep, &_LTop->Locus[_locus], _allele1, _allele2,
-                                     (const char *)NULL, "%s %s ", "%d %d ");
+                    linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
+                    pr_printf("%s %s %s %s ",
+                              format_allele(Locus, _allele1_m), format_allele(Locus, _allele2_m),
+                              format_allele(Locus, _allele1), format_allele(Locus, _allele2));
 		}
             }
         }
@@ -1124,12 +1127,9 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
             sh_shell_type();
             sh_id();
             script_time_stamp(_filep);
-        }
-        void inner () {
-            pr_printf("# Process %s format %s data...\n", (*analysis)->_name, (*analysis)->_subname);
-            pr_printf("# For further information on Beagle command line options please see:\n");
-            pr_printf("# http://faculty.washington.edu/browning/beagle/beagle.html\n");
-            pr_printf("# \n");
+#ifdef RUNSHELL_SETUP
+            pr_printf("# Allows the user to define their own version of Java.\n");
+            fprintf_env_checkset_csh(_filep, "_JAVA", "java");
             pr_printf("# Please set the environment variable BEAGLE_JAR to point to the location of\n");
             pr_printf("# the beagle.jar file. The default is the current directory. You may wish to set\n");
             pr_printf("# this environment variable in you shell's rc file (e.g., .bash_profile) so that it\n");
@@ -1146,6 +1146,13 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
             pr_printf("  exit 0\n");
             pr_printf("endif\n");
             pr_printf("\n");
+#endif /* RUNSHELL_SETUP */
+        }
+        void inner () {
+            pr_printf("# Process %s format %s data...\n", (*analysis)->_name, (*analysis)->_subname);
+            pr_printf("# For further information on Beagle command line options please see:\n");
+            pr_printf("# http://faculty.washington.edu/browning/beagle/beagle.html\n");
+            pr_printf("# \n");
             pr_printf("echo 'NOTE: If you encounter a 'Java heap space' exception while running Beagle,'\n");
             pr_printf("echo 'please consult the 'Memory Management' section of the Beagle documentation'\n");
             pr_printf("echo 'for further assistance.'\n");
@@ -1153,7 +1160,7 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
             // For a complete list of Beagle command line arguments,
             // please see section 3.2 of the Beagle manual.
             // Also, see section 5.1 Memory Management to give Java more memory for it's computations.
-            pr_printf("java -jar $BEAGLE_JAR");
+            pr_printf("$_JAVA -jar $BEAGLE_JAR");
             
             if ((*analysis)->_suboption == BEAGLE_UNPHASED_UNRELATED_SUBOPTION)
                 pr_printf(" unphased=%s", file_names[0]);
@@ -1192,8 +1199,10 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
                 pr_printf("if ( -e %s.log) then\n", OUT_NAME);
                 pr_printf("  mv -f %s.log %s.log.old\n", OUT_NAME, OUT_NAME);
                 pr_printf("endif\n");
-                
-                pr_printf("java -jar $BEAGLE_JAR data=%s.%s.phased.gz trait=%s out=%s",
+
+                // Since the source for Beagle is not available, it's not clear what
+		// System.exit(N); code that it returns on a failure.
+                pr_printf("$_JAVA -jar $BEAGLE_JAR data=%s.%s.phased.gz trait=%s out=%s",
                           file_names[5], file_names[0],
                           _tte->Name, OUT_NAME);
                 if ((*analysis)->_suboption == BEAGLE_UNPHASED_PAIR_SUBOPTION)

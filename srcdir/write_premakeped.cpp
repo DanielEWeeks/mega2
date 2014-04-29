@@ -996,22 +996,20 @@ static void write_merlin_freq(linkage_locus_top *LTop,
                         ((analysis == TO_MERLIN)?
                          strtail(LTop->Locus[locus].Name, MERLIN_MAX_LOCUS_NAME_LEN) :
                          LTop->Locus[locus].Name));
-                if (AnalysisOpt->allele_data_use_name_if_available()) {
-                    // Merlin will accept character alleles but you need to use the
-                    // "Extended allele frequency format" documented here:
-                    // http://www.sph.umich.edu/csg/abecasis/merlin/tour/input_files.html
-                    // With this format each allele gets it's own line...
-                    for (allele=0; allele < LTop->Locus[locus].AlleleCnt; allele++) {
-                        double frequency = LTop->Locus[locus].Allele[allele].Frequency;
-                        const char *name = LTop->Locus[locus].Allele[allele].name;
-                        fprintf(fp, "A %s %6f\n", name, frequency);
-                    }
-                } else {
-                    // With this format all allele frequencies are written on one line...
-                    fprintf(fp, "F");
-                    for (allele=0; allele < LTop->Locus[locus].AlleleCnt; allele++)
-                        fprintf(fp, " %6f", LTop->Locus[locus].Allele[allele].Frequency);
-                    fprintf(fp, "\n");
+                // Merlin will accept character alleles but you need to use the
+                // "Extended allele frequency format" documented here:
+                // http://www.sph.umich.edu/csg/abecasis/merlin/tour/input_files.html
+                // With this format each allele gets it's own line.
+                // Previous versions of Mega2 used the "Classic Allele Frequency Format"
+                // where all allele frequencies are written on one line.
+                // However, this apparently only works for numeric alleles.
+                // So, rather than special case the code we will use the more general
+                // form for both cases.
+                for (allele=0; allele < LTop->Locus[locus].AlleleCnt; allele++) {
+                    linkage_locus_rec *Locus = &(LTop->Locus[locus]);
+                    fprintf(fp, "A %s %6f\n",
+			    format_allele(Locus, allele+1),
+			    Locus->Allele[allele].Frequency);
                 }
             }
         }

@@ -664,7 +664,10 @@ static void sagewrite_numbered_data(FILE *filep, const int locusnm, linkage_locu
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
     // For a single character allele, all of these format strings will use 6 columns...
-    fprintf_2alleles(filep, locus, a1, a2, " 0/ 0 ", "%2s/%2s ", "%2d/%2d ");
+    if (a1 == 0)
+        fputs(" 0/ 0 ", filep);
+    else
+        fprintf(filep, "%2s/%2s ", format_allele(locus, a1), format_allele(locus, a2));
 }
 
 

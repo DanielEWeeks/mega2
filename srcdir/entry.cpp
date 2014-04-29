@@ -338,17 +338,12 @@ void person_locus_entry::pr_marker_name()
 
 /**
  @brief Print the alleles associated with a person at a locus
-
- If the analysis method 'allele_data_use_name_if_available()' is true then the allele
- name will be used in place of the number if it is available.
-
- Also see 'write_files.cpp:write_numbered_data()' which has similar functionality.
 */
 void person_locus_entry::pr_marker(const int locus, linkage_locus_rec *tle, linkage_ped_rec *tpe)
 {
     int a1, a2;
     get_2alleles(tpe->Marker, locus, &a1, &a2);
-    fprintf_2alleles(_filep, tle, a1, a2, (const char *)NULL, "%s %s ", "%d %d ");
+    pr_printf("%s %s ", format_allele(tle, a1), format_allele(tle, a2));
 }
 
 /**

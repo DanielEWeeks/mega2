@@ -609,9 +609,9 @@ static void save_mendel_hwe_individuals(linkage_ped_top *Top,
                     linkage_locus_rec *locus = &Top->LocusTop->Locus[m];
                     get_2alleles(Top->Ped[ped].Entry[ind].Marker, loci_indexes[m], &a1, &a2);
                     if (csv_format) {
-                        fprintf_2alleles(hwe_in, locus, a1, a2, (const char *)NULL, ",%s/%s", ",%d/%d");
+                        fprintf(hwe_in, ",%s/%s", format_allele(locus, a1), format_allele(locus, a2));
                     } else {
-                        fprintf_2alleles(hwe_in, locus, a1, a2, (const char *)NULL, "%3s/%3s", "%3d/%3d");
+                        fprintf(hwe_in, "%3s/%3s", format_allele(locus, a1), format_allele(locus, a2));
                     }
                 } else {
                     fprintf(hwe_in, ",");
@@ -657,9 +657,9 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
     }
 
     for (m = 0; m < num_loci; m++) {
+        linkage_locus_rec *locus = &Top->LocusTop->Locus[loci_indexes[m]];
         /* initialize R file for every marker */
-        sprintf(mrkfl, "%s.%s", geno_file,
-                Top->LocusTop->Locus[loci_indexes[m]].Name);
+        sprintf(mrkfl, "%s.%s", geno_file, locus->Name);
         hwe_in = fopen(mrkfl, "w");
         fprintf(hwe_in, "Pedigree Individual allele1\tallele2\n");
 
@@ -687,8 +687,7 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
                     fprintf(hwe_in, "%6d     %5d      ",
                             Top->Ped[ped].Num,
                             Top->Ped[ped].Entry[ind].ID);
-		    fprintf_2alleles(hwe_in, &Top->LocusTop->Locus[loci_indexes[m]], a1, a2,
-				     (const char *)NULL, "%3s     %3s \n", "%3d     %3d \n");
+                    fprintf(hwe_in, "%3s     %3s \n", format_allele(locus, a1), format_allele(locus, a2));
                     if (member_ids[ped][ind].num == 1) {
                         num_halftyped++;
                     } else {
@@ -699,10 +698,7 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
         }
         fclose(hwe_in);
         /* Log the number of half-types */
-        sprintf(err_msg,
-                "Marker %s: Found %d fully-typed",
-                Top->LocusTop->Locus[loci_indexes[m]].Name,
-                num_fulltyped);
+        sprintf(err_msg, "Marker %s: Found %d fully-typed", locus->Name, num_fulltyped);
         if (num_halftyped > 0) {
             grow(err_msg, " and %d half-typed individuals.",
                  num_halftyped);
@@ -713,11 +709,9 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
 
         /* add the marker name to the list in the R-script */
         if (m < (num_loci-1)) {
-            fprintf(Rfl, "\"%s\", ",
-                    Top->LocusTop->Locus[loci_indexes[m]].Name);
+            fprintf(Rfl, "\"%s\", ", locus->Name);
         } else {
-            fprintf(Rfl, "\"%s\");\n",
-                    Top->LocusTop->Locus[loci_indexes[m]].Name);
+            fprintf(Rfl, "\"%s\");\n", locus->Name);
         }
     }
 

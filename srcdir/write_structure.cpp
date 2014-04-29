@@ -513,18 +513,27 @@ static void write_sh(linkage_ped_top *Top,
             sh_shell_type();
             sh_id();
             script_time_stamp(_filep);
+#ifdef RUNSHELL_SETUP
+	    // This handles the environment variable setup to allow the checking
+	    // functions in 'batch_run' to work correctly...
+            fprintf_env_checkset_csh(_filep, "_STRUCTURE", "structure");
+#endif /* RUNSHELL_SETUP */
         }
         void inner () {
+            char cmd[2*FILENAME_LENGTH];
             pr_printf("# Process %s format data...\n", (*analysis)->_name);
             pr_printf("# For further information on Structure please see:\n");
             pr_printf("# http://pritch.bsd.uchicago.edu/structure.html\n");
-#ifdef RUNSHELL_SETUP
-            fprintf_env_checkset_csh(_filep, "_STRUCTURE", "structure");
-#endif /* RUNSHELL_SETUP */
             // If there isn't one then create an empty one.
             pr_printf("echo 'You may need to customize the extraparams file for your specific needs.'\n");
             pr_printf("touch extraparams\n");
-            pr_printf("$_STRUCTURE -m %s\n", file_names[5]);
+#ifdef RUNSHELL_SETUP
+            sprintf(cmd, "$_STRUCTURE -m %s\n", file_names[5]);
+#else /* RUNSHELL_SETUP */
+            pr_printf("structure -m %s\n", file_names[5]);
+#endif /* RUNSHELL_SETUP */
+            sh_run("STRUCTURE", cmd);
+            fprintf_status_check_csh(_filep, "STRUCTURE", 1);
         }
         void file_post() {
             chmod_X_file(path_);

@@ -170,6 +170,20 @@ public:
     }
 
     /**
+       @brief Write a null terminated string to the file.
+
+       The file must have been opened (@see filep_open) must be called before calling this method.
+     */
+    void pr_puts(const char *s) {
+#ifdef HAS_ZLIB
+        if ((void *)_gzfile != (void *)NULL)
+            gzputs(_gzfile, s);
+        else
+#endif /* HAS_ZLIB */
+            fputs(s, _filep);
+    }
+
+    /**
        @brief Write a new line character to the file.
 
        NOTE: We should consider doing the right thing when writing a file in windows (e.g., "\r\n").

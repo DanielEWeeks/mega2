@@ -40,6 +40,7 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 #include "write_premakeped_ext.h"
+#include "write_files_ext.h"
 /*
      error_messages_ext.h:  errorf mssgf my_calloc warnf
               fcmap_ext.h:  fcmap
@@ -397,15 +398,10 @@ static void write_LOKI_freq(char *freq_file, int numchr,
                 LTop->Locus[ChrLoci[locus]].Type == BINARY) {
                 fprintf(fp, "Frequency  %s",
                         LTop->Locus[ChrLoci[locus]].Name);
-                // NOTE: Similar code is found in write_mendel7_files.cpp:csv_write_mendel_locus_file()
                 for (all=0; all < LTop->Locus[ChrLoci[locus]].AlleleCnt; all++) {
-                    if (AnalysisOpt->allele_data_use_name_if_available()) {
-                        const char *name = LTop->Locus[ChrLoci[locus]].Allele[all].name;
-                        fprintf(fp, " %s", name);
-                    } else {
-                        fprintf(fp, " %d", all+1);
-                    }
-                    fprintf(fp, ",%7.6f", LTop->Locus[ChrLoci[locus]].Allele[all].Frequency);
+                    fprintf(fp, " %s,%7.6f",
+			    format_allele(&LTop->Locus[ChrLoci[locus]], all+1),
+			    LTop->Locus[ChrLoci[locus]].Allele[all].Frequency);
                 }
                 fprintf(fp, "\n");
             }

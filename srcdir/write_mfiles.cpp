@@ -972,7 +972,10 @@ static void mwrite_numbered_data(FILE *filep, const int locusnm, linkage_locus_r
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
-    fprintf_2alleles(filep, locus, a1, a2, "        ", "%3s/%3s ", "%3d/%3d ");
+    if (a1 == 0)
+        fputs("        ", filep);
+    else
+        fprintf(filep, "%3s/%3s ", format_allele(locus, a1), format_allele(locus, a2));
 }
 
 /* This is a hack, copied from create_formats,
@@ -1361,15 +1364,10 @@ void            write_mendel_locus_file(char *file_name,
             case NUMBERED:
                 fprintf(fp, " 0%3d %8f <= # Alleles,# Phenotypes. %5.2f cM\n",
                         Locus->Marker->chromosome, (Locus->Marker->pos_avg/100.0), Locus->Marker->pos_avg);
-                // NOTE: Similar code is found in write_mendel7_files.cpp:csv_write_mendel_locus_file()
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
-                    if (AnalysisOpt->allele_data_use_name_if_available()) {
-                        const char *name = Locus->Allele[allele].name;
-                        fprintf(fp, "%7s", name);
-                    } else {
-                        fprintf(fp, "%7d", allele + 1);
-                    }
-                    fprintf(fp, " %8f\n", Locus->Allele[allele].Frequency);
+                    fprintf(fp, "%7s %8f\n",
+			    format_allele(Locus, allele+1),
+			    Locus->Allele[allele].Frequency);
                 }
                 break;
             case AFFECTION:

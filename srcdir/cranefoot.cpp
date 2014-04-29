@@ -278,8 +278,9 @@ static void save_CRANEFOOT_pedigrees(char *pedfl_name, linkage_ped_top *Top,
                     case NUMBERED:
                     case BINARY:
                         get_2alleles(tpe->Marker, loc, &a1, &a2);
-                        fprintf_2alleles(filep, &Top->LocusTop->Locus[loc], a1, a2,
-                                         (const char *)NULL, "\t%s/%s", "\t%d/%d");
+			fprintf(filep, "\t%s/%s",
+				format_allele(&(Top->LocusTop->Locus[loc]), a1),
+				format_allele(&(Top->LocusTop->Locus[loc]), a2));
                         break;
 
                     default:

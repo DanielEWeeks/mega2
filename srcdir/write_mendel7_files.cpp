@@ -202,7 +202,9 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
                 /* now write genotype data  */
                 for (locus1 = 0; locus1 < NumChrLoci; locus1++)  {
                     int l1=ChrLoci[locus1];
-                    switch (Top->LocusTop->Locus[l1].Type)   {
+                    linkage_locus_rec *locus = &(Top->LocusTop->Locus[l1]);
+
+                    switch (locus->Type)   {
                     case QUANT:
                         if (LoopOverTrait == 0) {
                             fprintf(filep,",");
@@ -214,8 +216,9 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
                     case AFFECTION:
                         if (LoopOverTrait == 0) {
                             fprintf(filep,",");
-                            affected=aff_status_entry(Entry->Pheno[l1].Affection.Status, Entry->Pheno[l1].Affection.Class,
-                                                      &(Top->LocusTop->Locus[l1]));
+                            affected=aff_status_entry(Entry->Pheno[l1].Affection.Status,
+                                                      Entry->Pheno[l1].Affection.Class,
+                                                      locus);
 /* 	      aff_status= Entry->Pheno[l1].Affection.Class+  */
 /* 		liability_multiplier*Entry->Pheno[l1].Affection.Status; */
 /* 	      for (i=0; i<num_labels; i++) { */
@@ -241,17 +244,11 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
                         fprintf(filep,",");
                         get_2alleles(Entry->Marker, l1, &a1, &a2);
                         if (a1 > 0 && a2 > 0) {
-                            fprintf_2alleles(filep, &Top->LocusTop->Locus[l1], a1, a2,
-		                             (const char *)NULL, "%s/%s", "%d/%d");
-                            //fprintf(filep, "%d/%d", a1, a2);
+                            fprintf(filep, "%s/%s", format_allele(locus, a1), format_allele(locus, a2));
                         } else if (a1 > 0 && a2 == 0) {
-                            fprintf_allele(filep, &Top->LocusTop->Locus[l1], a1,
-		                             (const char *)NULL, "%s/", "%d/");
-                            //fprintf(filep, "%d/", a1);
+                            fprintf(filep, "%s/", format_allele(locus, a1));
                         } else if (a1 == 0 && a2 > 0) {
-                            fprintf_allele(filep, &Top->LocusTop->Locus[l1], a2,
-		                             (const char *)NULL, "%s/", "%d/");
-                            //fprintf(filep, "%d/", a2);
+                            fprintf(filep, "%s/", format_allele(locus, a2));
                         }
 
                         break;
@@ -413,13 +410,9 @@ void  csv_write_mendel_locus_file(char *file_name,
                 break;
             case NUMBERED:
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
-                    if (AnalysisOpt->allele_data_use_name_if_available()) {
-                        const char *name = Locus->Allele[allele].name;
-                        fprintf(fp, "%s", name);
-                    } else {
-                        fprintf(fp, "%d", allele + 1);
-                    }
-                    fprintf(fp, ",%8f\n", Locus->Allele[allele].Frequency);
+                    fprintf(fp, "%s,%8f\n",
+			    format_allele(Locus, allele+1),
+			    Locus->Allele[allele].Frequency);
                 }
                 break;
             case AFFECTION:

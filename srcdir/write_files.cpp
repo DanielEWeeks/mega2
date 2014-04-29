@@ -194,82 +194,40 @@ void write_simulate_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *l
         fprintf(filep, " 0 ");
 }
 
-/**
-   @brief Print the allele in the appropriate format.
-
-   This routine provides a way of writing the allele, as:
-   1) a special case if it is zero (optional as is_zero_format_string must be != NULL),
-   2) a character string if the analysis data uses this and it exists, or finally
-   3) a numberic quantity.
-
-   Here the format string applies to the printing of a single allele only.
-
-   Note that the analysis method 'allele_data_use_name_if_available()' must return
-   true for the character string to be used, otherwise the numeric value is used.
- */
-void fprintf_allele(FILE *filep,
-                    linkage_locus_rec *locus,
-                    const int allele,
-                    const char *is_zero_format_string,
-                    const char *character_format_string,
-                    const char *numbered_format_string)
-{
-    if (allele == 0 && is_zero_format_string != (const char *)NULL) {
-        // is_zero_format_string should be something like "    ", "NA ", or NULL.
-        fprintf(filep, is_zero_format_string, NULL);
-    } else if (AnalysisOpt->allele_data_use_name_if_available() &&
-               allele <= locus->AlleleCnt &&
-	       locus->Allele[allele-1].name != NULL) {
-        // character_format_string should be something like " %s "...
-        fprintf(filep, character_format_string,
-                (allele > 0 ? locus->Allele[allele-1].name : "0"));
-    } else {
-        // numbered_format_string should be something linke "%2d "...
-        fprintf(filep, numbered_format_string, allele);
-    }
-}
 
 /**
-   @brief Print allele1 and allele2 in the appropriate format.
+   @brief Format the allele appropriately.
 
-   This routine provides a way of writing two alleles as:
-   1) a special case if it is zero (optional as is_zero_format_string must be != NULL),
-   2) character strings if the analysis data uses this and it exists, or finally
-   3) numberic quantities.
+   This routine provides a way of returning the string representation
+   of the allele. If certain criteria hold then the character/string name
+   is returned, otherwise a string representation of the number is returned.
 
-   Here the format string applies to the printing of both alleles.
-
-   Note that the analysis method 'allele_data_use_name_if_available()' must return
-   true for the character string to be used, otherwise the numeric value is used.
-
-   NOTE: The locus->Allele[alleleN-1].name != NULL test is important. Without it
-   it is possible that though the output analysis takes named alleles, the input
-   was given numbered alleles.
+   @return a string constant representation of the allele.
  */
-void fprintf_2alleles(FILE *filep,
-                      linkage_locus_rec *locus,
-                      const int allele1,
-                      const int allele2,
-                      const char *allele1_is_zero_format_string,
-                      const char *character_format_string,
-                      const char *numbered_format_string)
+const char *format_allele(linkage_locus_rec *locus, const int allele)
 {
-    if (allele1 == 0 && allele1_is_zero_format_string != (const char *)NULL) {
-        fprintf(filep, allele1_is_zero_format_string, NULL);
-    } else if (AnalysisOpt->allele_data_use_name_if_available() &&
-               allele1 <= locus->AlleleCnt &&
-               allele2 <= locus->AlleleCnt &&
-	       locus->Allele[allele1-1].name != NULL &&
-	       locus->Allele[allele2-1].name != NULL) {
-        // character_format_string should be something like " %s %s", or " %s/%s"...
-        fprintf(filep, character_format_string,
-                (allele1 > 0 ? locus->Allele[allele1-1].name : "0"),
-                (allele2 > 0 ? locus->Allele[allele2-1].name : "0"));
-    } else {
-        // numbered_format_string should be something linke "%2d/%2d ", or "%d%d"...
-        fprintf(filep, numbered_format_string, allele1, allele2);
-    }
+  static char allele_buf[1024];
+  if (AnalysisOpt->allele_data_use_name_if_available() &&
+      allele <= locus->AlleleCnt &&
+      // When the input is linkage there will be no name array
+      // entry for this allele.
+      locus->Allele[allele-1].name != NULL &&
+      // When the allele is not present for any of the markers
+      // it is the case that Frequency == 0 and so we will use
+      // numeric representation instead.
+      locus->Allele[allele-1].Frequency != 0 &&
+      // seem mrecode.cpp
+      strncmp("dummy", locus->Allele[allele-1].name, 5) != 0) {
+    return (allele > 0 ? locus->Allele[allele-1].name : "0");
+  }
+  // numbered_format_string should be something linke "%2d "...
+  snprintf(allele_buf, 1024, "%d", allele);
+  // NOTE: In the future we will look up the allele value in a hash table so
+  // that we only make it one time. In that manner the number of numeric
+  // strings that we have is no more than the number of unique numeric alleles.
+  return strdup(allele_buf);
 }
+
 /**
  @brief Print the alleles associated with a person (entry) at a locus
 */
@@ -277,7 +235,7 @@ void write_numbered_data(FILE *filep, const int locusnm, linkage_locus_rec *locu
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
-    fprintf_2alleles(filep, locus, a1, a2, (const char *)NULL, "  %2s %2s", "  %2d %2d");
+    fprintf(filep, "  %2s %2s", format_allele(locus, a1), format_allele(locus, a2));
 }
 
 /* assign consecutive entry ids to entries,

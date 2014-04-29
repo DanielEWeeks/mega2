@@ -1026,13 +1026,13 @@ static void AspexPedFile(char *aspdat_name, tcl_opts_type opt,
                     int allele1, allele2;
                     linkage_locus_rec *locus = &TTop->LocusTop->Locus[*trp];
                     get_2alleles(tpe->Marker, opt.locus_ids[lcount], &allele1, &allele2);
-                    fprintf_allele(fp, locus, allele1, (const char *)NULL, "   %s", "  %2d");
+                    fprintf(fp, "  %2s", format_allele(locus, allele1));
                     if (TTop->LocusTop->Marker[opt.locus_ids[lcount]].chromosome == SEX_CHROMOSOME &&
                         tpe->Sex == 1)
                         /* = 1 = male , 2= female */
                         fprintf(fp, " Y");
                     else {
-                        fprintf_allele(fp, locus, allele2, (const char *)NULL, "  %s", " %2d");
+                        fprintf(fp, "  %2s", format_allele(locus, allele2));
                     }
                     /*      max of 10 digits/characters per allele identifier... */
                 }

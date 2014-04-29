@@ -85,7 +85,10 @@ static void SOLARwrite_numbered_data(FILE *filep, const int locusnm, linkage_loc
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
-    fprintf_2alleles(filep, locus, a1, a2, " 0/ 0", "%2s/%2s", "%2d/%2d");
+    if (a1 == 0)
+        fputs(" 0/ 0", filep);
+    else
+        fprintf(filep, "%2s/%2s", format_allele(locus, a1), format_allele(locus, a2));
 }
 
 static void            SOLARwrite_numbered_xdata(FILE *filep,
@@ -95,26 +98,12 @@ static void            SOLARwrite_numbered_xdata(FILE *filep,
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
-    const char *a1_name = locus->Allele[a1-1].name;
-    const char *a2_name = locus->Allele[a2-1].name;
     if (a1 == 0) {
-        fprintf(filep, "  / 0");
-    } else if (AnalysisOpt->allele_data_use_name_if_available() &&
-               a1 <= locus->AlleleCnt &&
-               a2 <= locus->AlleleCnt &&
-               a1_name != (const char *)NULL &&
-               a2_name != (const char *)NULL) {
-        if (a1 == a2) {
-            fprintf(filep, "  /%s", (a2 > 0 ? a2_name : "0"));
-        } else {
-            fprintf(filep, "%s/%s", (a1 > 0 ? a1_name : "0"), (a2 > 0 ? a2_name : "0"));
-        }
+        fputs("  / 0", filep);
+    } else if (a1 == a2) {
+        fprintf(filep, "  /%2s", format_allele(locus, a2));
     } else {
-        if (a1 == a2) {
-            fprintf(filep, "  /%2d", a2);
-        } else {
-            fprintf(filep, "%2d/%2d",  a1, a2);
-        }
+        fprintf(filep, "%2s/%2s", format_allele(locus, a1), format_allele(locus, a2));
     }
 }
 
@@ -230,7 +219,7 @@ static void  write_SOLAR_locus_file(char *fl_name, linkage_locus_top *LTop)
     int        tr, nloop, locus1, allele, num_affec=num_traits;
     FILE *filep;
     char lfl[2*FILENAME_LENGTH];
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
 
     NLOOP;
 
@@ -249,13 +238,9 @@ static void  write_SOLAR_locus_file(char *fl_name, linkage_locus_top *LTop)
                 else
                     fprintf(filep, "%8d ", locus1 + 1);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++)   {
-                    if (AnalysisOpt->allele_data_use_name_if_available()) {
-                        const char *name = Locus->Allele[allele].name;
-                        fprintf(filep, "%s", name);
-                    } else {
-                        fprintf(filep, "%d", allele + 1);
-                    }
-                    fprintf(filep, " %9f  ", Locus->Allele[allele].Frequency);
+                    fprintf(filep, "%s %9f  ",
+			    format_allele(Locus, allele+1),
+			    Locus->Allele[allele].Frequency);
                 }
                 fprintf(filep,"\n");
             }

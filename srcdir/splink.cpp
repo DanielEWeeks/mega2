@@ -538,15 +538,16 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                                                          &(Top2->LocusTop->Locus[*trp])));
                     /* write the genotypes */
                     for (k = 0; k < NumChrLoci; k++) {
+                        linkage_locus_rec *locus = &Top2->LocusTop->Locus[ChrLoci[k]];
                         kk=ChrLoci[k];
-                        switch (Top2->LocusTop->Locus[kk].Type)	  {
+                        switch (locus->Type) {
                         case AFFECTION:
                             break;
                         case NUMBERED:
                             get_2alleles(tpe->Marker, kk, &a1, &a2);
                             // NOTE: The second allele is left alligned...
-                            fprintf_2alleles(fp, &Top->LocusTop->Locus[kk], a1, a2,
-                                            (const char *)NULL, " %2s/%-2s", " %2d/%-2d");
+                            fprintf(fp, " %2s/%-2s",
+                                    format_allele(locus, a1), format_allele(locus, a2));
                             break;
                         case QUANT:
                         case BINARY:
@@ -594,11 +595,11 @@ void            create_SPLINK(linkage_ped_top **LPTop,
         niter=1;
         create_mssg(*analysis);
         for (k = 0; k < NumChrLoci; k++)   {
+            linkage_locus_rec *locus = &LTop->Locus[ChrLoci[k]];
             kk=ChrLoci[k];
             if ((LTop->Locus[kk].Type == NUMBERED) ||
                 (LTop->Locus[kk].Type == BINARY)) {
-                sprintf(pfl, "%s.%s", file_names[0],
-                        LTop->Locus[kk].Name);
+                sprintf(pfl, "%s.%s", file_names[0], locus->Name);
                 trp = &(global_trait_entries[0]);
                 for (tr = 0; tr <= nloop; tr++) {
                     if (nloop > 1 && tr==0) continue;
@@ -621,8 +622,8 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                             fprintf(fp, " %1d", tpe->Pheno[*trp].Affection.Status);
                             get_2alleles(tpe->Marker, kk, &a1, &a2);
                             // NOTE: The second allele is left alligned...
-                            fprintf_2alleles(fp, &LTop->Locus[kk], a1, a2,
-                                             (const char *)NULL, " %2s/%-2s\n", " %2d/%-2d\n");
+                            fprintf(fp, " %2s/%-2s\n",
+                                    format_allele(locus, a1), format_allele(locus, a2));
                         }
                     }
                     fclose(fp);
@@ -643,10 +644,9 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                             EXIT(FILE_WRITE_ERROR);
                         }
                     }
-                    fprintf(cfp, "echo Running SPLINK on the marker %s\n",
-                            LTop->Locus[kk].Name);
+                    fprintf(cfp, "echo Running SPLINK on the marker %s\n", locus->Name);
                     fprintf(cfp, "splink -l1 -i%s -S+ %s < %s > /dev/null \n",
-                            Top2->LocusTop->Locus[kk].Name, options, pfl);
+                            locus->Name, options, pfl);
                     if (niter == locus_cnt) {
                         fprintf(cfp, "echo SPLINK analyses are completed.\n");
                         fprintf(cfp,
@@ -668,9 +668,6 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                 file_names[3]);
         mssgf(err_msg);
     }
-
-    /*  draw_line();*/
-    return;
 }
 
 #undef Top

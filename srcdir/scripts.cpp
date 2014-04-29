@@ -319,10 +319,10 @@ void create_TDTMAX(linkage_ped_top **LPTop,
                                            tpe);
 
                     get_2alleles(Top2->Ped[m].Entry[i].Marker, j, &al1, &al2);
-                    if (al1 != 0)
-                        fprintf_2alleles(fp, &Top2->LocusTop->Locus[*trp], al1, al2,
-					 (const char *)NULL, " %2s %2s\n", " %2d %2d\n");
-                    else
+                    if (al1 != 0) {
+                        linkage_locus_rec *locus = &Top2->LocusTop->Locus[*trp];
+                        fprintf(fp, " %2s %2s\n", format_allele(locus, al1), format_allele(locus, al2));
+                    } else
                         fprintf(fp,"  x  x\n");
                 }
             }
