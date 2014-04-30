@@ -615,7 +615,7 @@ void VCFtools_process_file_meta_information_and_header()
     
     mssgf("After application of VCFtools filtering:");
     mssg = "Kept " + output_log::int2str(vf->N_kept_individuals()) +
-      " out of " + output_log::int2str(vf->N_total_indv()) + " Individuals";
+        " out of " + output_log::int2str(vf->N_total_indv()) + " Individuals";
     mssgf(mssg.c_str());
     if (vf->N_kept_sites() == 0) {
         errorf("Filtering constraints have excluded all locus/sites.");
@@ -623,7 +623,7 @@ void VCFtools_process_file_meta_information_and_header()
         EXIT(DATA_TYPE_ERROR);
     }
     mssg = "Kept " + output_log::int2str(vf->N_kept_sites()) +
-      " out of a possible " + output_log::int2str(vf->N_total_sites()) + " Loci/Sites";
+        " out of a possible " + output_log::int2str(vf->N_total_sites()) + " Loci/Sites";
     mssgf(mssg.c_str());
     mssgf("");
     
@@ -1047,6 +1047,7 @@ static const vector<int> gen_mega2_ui(const annotated_ped_rec persons[])
     // to the caller. This gets us out of the business of dealing with 'new' and pointers in the code.
     return mega2_ui_v;
 }
+
 #endif /* 0 */
 
 /**

@@ -212,41 +212,41 @@ static map<int, char *> numbered_format_string_map;
  */
 const char *format_allele(linkage_locus_rec *locus, const int allele)
 {
-  // First see if we can/should return the character allele representation...
-  if (AnalysisOpt->allele_data_use_name_if_available() &&
-      allele > 0 &&
-      allele <= locus->AlleleCnt &&
-      // When the input is linkage there will be no name array
-      // entry for this allele.
-      locus->Allele[allele-1].name != NULL &&
-      // When the allele is not present for any of the markers
-      // it is the case that Frequency == 0 and so we will use
-      // numeric representation instead.
-      locus->Allele[allele-1].Frequency != 0 &&
-      // seem mrecode.cpp
-      strncmp("dummy", locus->Allele[allele-1].name, 5) != 0
-      // For microsatiites they give you alleles as number that are not contiguous.
-      // When we dicide to recode (normally letters into numbers), but in this sparse
-      // numberic case we also recode. Add a command line argument to Mega2 which says
-      // to always pick the recode (e.g., sequential numberic values).
-      // NEED TO INSERT THE CONDITIONAL HERE!!!
-      ) {
-    return locus->Allele[allele-1].name;
-  }
+    // First see if we can/should return the character allele representation...
+    if (AnalysisOpt->allele_data_use_name_if_available() &&
+        allele > 0 &&
+        allele <= locus->AlleleCnt &&
+        // When the input is linkage there will be no name array
+        // entry for this allele.
+        locus->Allele[allele-1].name != NULL &&
+        // When the allele is not present for any of the markers
+        // it is the case that Frequency == 0 and so we will use
+        // numeric representation instead.
+        locus->Allele[allele-1].Frequency != 0 &&
+        // seem mrecode.cpp
+        strncmp("dummy", locus->Allele[allele-1].name, 5) != 0
+        // For microsatiites they give you alleles as number that are not contiguous.
+        // When we dicide to recode (normally letters into numbers), but in this sparse
+        // numberic case we also recode. Add a command line argument to Mega2 which says
+        // to always pick the recode (e.g., sequential numberic values).
+        // NEED TO INSERT THE CONDITIONAL HERE!!!
+        ) {
+        return locus->Allele[allele-1].name;
+    }
 
-  // Here, the character allele is not used, or not available.
-  //
-  // At this point we look for the string representation of the numeric allele
-  // in the map. If it is found, then we return it. If it is not found then
-  // we add it, and then return it.
-  map<int, char *>::iterator it = numbered_format_string_map.find(allele);
-  if (it == numbered_format_string_map.end()) {
-      char allele_buf[1024], *str;
-      snprintf(allele_buf, 1024, "%d", allele);
-      numbered_format_string_map[allele] = str = strdup(allele_buf);
-      return str;
-  }
-  return it->second;
+    // Here, the character allele is not used, or not available.
+    //
+    // At this point we look for the string representation of the numeric allele
+    // in the map. If it is found, then we return it. If it is not found then
+    // we add it, and then return it.
+    map<int, char *>::iterator it = numbered_format_string_map.find(allele);
+    if (it == numbered_format_string_map.end()) {
+        char allele_buf[1024], *str;
+        snprintf(allele_buf, 1024, "%d", allele);
+        numbered_format_string_map[allele] = str = strdup(allele_buf);
+        return str;
+    }
+    return it->second;
 }
 
 /**
@@ -1590,9 +1590,9 @@ void write_linkage_locfile_inorder(linkage_locus_top *LTop,
 				   int *loci, int sex_linked,
 				   analysis_type analysis)
 {
-  if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-    write_linkage_locfile_inorder_sex_averaged(LTop, loutfl_name, locus_num, loci, sex_linked, analysis);
-  } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
-    write_linkage_locfile_inorder_sex_specific(LTop, loutfl_name, locus_num, loci, sex_linked, analysis);
-  }
+    if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
+        write_linkage_locfile_inorder_sex_averaged(LTop, loutfl_name, locus_num, loci, sex_linked, analysis);
+    } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
+        write_linkage_locfile_inorder_sex_specific(LTop, loutfl_name, locus_num, loci, sex_linked, analysis);
+    }
 }

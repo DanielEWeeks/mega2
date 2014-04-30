@@ -127,19 +127,19 @@ static int cmp_marker_genetic_positions (const void *a, const void *b) {
 extern int ChrLociFirstMarkerIndex, ChrLociLastMarkerIndex;
 
 static void sort_basepair_positions() {
-  // Naturally this sort will fail (EXC_BAD_ACCESS) if there is just one marker on the chromosome.
-  // It's not a very interesting case, but it happens in the test code.
-  if (ChrLociLastMarkerIndex-ChrLociFirstMarkerIndex > 0)
-    qsort((void *)&ChrLoci[ChrLociFirstMarkerIndex],
-	  (size_t)(ChrLociLastMarkerIndex-ChrLociFirstMarkerIndex+1),
-	  sizeof(int), cmp_marker_basepair_positions);
+    // Naturally this sort will fail (EXC_BAD_ACCESS) if there is just one marker on the chromosome.
+    // It's not a very interesting case, but it happens in the test code.
+    if (ChrLociLastMarkerIndex-ChrLociFirstMarkerIndex > 0)
+        qsort((void *)&ChrLoci[ChrLociFirstMarkerIndex],
+              (size_t)(ChrLociLastMarkerIndex-ChrLociFirstMarkerIndex+1),
+              sizeof(int), cmp_marker_basepair_positions);
 }
 
 static void sort_genetic_positions() {
-  if (ChrLociLastMarkerIndex-ChrLociFirstMarkerIndex > 0)
-    qsort((void *)&ChrLoci[ChrLociFirstMarkerIndex],
-	  (size_t)(ChrLociLastMarkerIndex-ChrLociFirstMarkerIndex+1),
-	  sizeof(int), cmp_marker_genetic_positions);
+    if (ChrLociLastMarkerIndex-ChrLociFirstMarkerIndex > 0)
+        qsort((void *)&ChrLoci[ChrLociFirstMarkerIndex],
+              (size_t)(ChrLociLastMarkerIndex-ChrLociFirstMarkerIndex+1),
+              sizeof(int), cmp_marker_genetic_positions);
 }
 
 /**
@@ -1270,11 +1270,11 @@ void CLASS_BEAGLE::create_output_file(linkage_ped_top *LPedTreeTop,
 
     // chosen based on suboption...
     if ((*analysis)->_suboption == BEAGLE_UNPHASED_UNRELATED_SUBOPTION)
-      write_BEAGLE_genotype_unphased_unrelated_file(Top, file_names, pwid, fwid);
+        write_BEAGLE_genotype_unphased_unrelated_file(Top, file_names, pwid, fwid);
     else if ((*analysis)->_suboption == BEAGLE_UNPHASED_TRIO_SUBOPTION)
-      write_BEAGLE_genotype_unphased_trio_file(Top, file_names, pwid, fwid);
+        write_BEAGLE_genotype_unphased_trio_file(Top, file_names, pwid, fwid);
     else if ((*analysis)->_suboption == BEAGLE_UNPHASED_PAIR_SUBOPTION)
-      write_BEAGLE_genotype_unphased_pair_file(Top, file_names, pwid, fwid);
+        write_BEAGLE_genotype_unphased_pair_file(Top, file_names, pwid, fwid);
 
     write_BEAGLE_sh(Top, analysis, file_names);
 }
@@ -1322,7 +1322,7 @@ void CLASS_BEAGLE::get_file_names(char *file_names[], char *prefix,
         i=1;
         printf(" %d) Genotypes file name                       %-15s\t%s\n",
                i, file_names[0],
-              file_status(file_names[0], fl_stat));
+               file_status(file_names[0], fl_stat));
         ibgl=i++;
         
         if (genetic_distance_index >= 0) {
@@ -1411,15 +1411,15 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 #ifdef HAS_ZLIB
     sprintf(file_names[0], "%s.%s.bgl.gz", stem, num);
     if (base_pair_position_index >= 0)
-      sprintf(file_names[1], "%s.%s.pmkr.gz", stem, num);
+        sprintf(file_names[1], "%s.%s.pmkr.gz", stem, num);
     if (genetic_distance_index >= 0) 
-      sprintf(file_names[2], "%s.%s.gmkr.gz", stem, num);
+        sprintf(file_names[2], "%s.%s.gmkr.gz", stem, num);
 #else /* HAS_ZLIB */
     sprintf(file_names[0], "%s.%s.bgl", stem, num);
     if (base_pair_position_index >= 0)
-      sprintf(file_names[1], "%s.%s.pmkr", stem, num);
+        sprintf(file_names[1], "%s.%s.pmkr", stem, num);
     if (genetic_distance_index >= 0) 
-      sprintf(file_names[2], "%s.%s.gmkr", stem, num);
+        sprintf(file_names[2], "%s.%s.gmkr", stem, num);
 #endif /* HAS_ZLIB */
     sprintf(file_names[3], "%s.%s.sh", stem, num);
     sprintf(file_names[4], "%s.all.sh", stem);
@@ -1435,9 +1435,9 @@ void CLASS_BEAGLE::file_names(char **file_names, char *num)
 void CLASS_BEAGLE::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
     if (base_pair_position_index >= 0)
-      change_output_chr(file_names[1], numchr);
+        change_output_chr(file_names[1], numchr);
     if (genetic_distance_index >= 0) 
-      change_output_chr(file_names[2], numchr);
+        change_output_chr(file_names[2], numchr);
     change_output_chr(file_names[3], numchr);
     change_output_chr(file_names[5], numchr);
 }

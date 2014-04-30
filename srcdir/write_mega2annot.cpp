@@ -620,8 +620,8 @@ static void annotated_map_file(linkage_locus_top *LTop, char *mfl_name)
         if (LTop->map_distance_type == 'k' ||
             LTop->map_distance_type == 'h') {
 	  if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-            fprintf(fp,  "Name  Chromosome  Map.%c.a\n",
-		    LTop->map_distance_type);
+              fprintf(fp,  "Name  Chromosome  Map.%c.a\n",
+                      LTop->map_distance_type);
 	  } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
 		     genetic_distance_sex_type_map == FEMALE_GDMT) {
 	    // We need a heading for the male map even though there may not be one...

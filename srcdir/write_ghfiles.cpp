@@ -120,19 +120,19 @@ static void write_gh_quant(FILE *filep, int locusnm,
 {
     fprintf(filep, "  ");
     if (fabs(entry->Pheno[locusnm].Quant - missing_quant) <= EPSILON) {
-      if (analysis == TO_GeneHunter) {
-	// http://linkage.rockefeller.edu/soft/gh/
-	// Manual Section2. SCAN PEDIGREES
-	//
-	// A '-' in the phenotype/covariate data indicates missing data - NB:
-	// 0 is a real value that a phenotype may take on and DOES NOT represent
-	// missing phenotype data.
+        if (analysis == TO_GeneHunter) {
+            // http://linkage.rockefeller.edu/soft/gh/
+            // Manual Section2. SCAN PEDIGREES
+            //
+            // A '-' in the phenotype/covariate data indicates missing data - NB:
+            // 0 is a real value that a phenotype may take on and DOES NOT represent
+            // missing phenotype data.
             fprintf(filep, "    -     ");
-      } else  if (ITEM_READ(Value_Missing_Quant_On_Output)) {
+        } else  if (ITEM_READ(Value_Missing_Quant_On_Output)) {
             fprintf(filep, "%s", Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
-      } else {
+        } else {
             fprintf(filep, "%10.5f", missing_quant);
-      }
+        }
     } else {
         fprintf(filep, "%10.5f", entry->Pheno[locusnm].Quant);
     }
@@ -453,29 +453,29 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
 
 #ifdef USEOLDMAPCODE
 	if (sex_linked) {
-	  print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, MALE_THETA);
-	  print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, FEMALE_THETA);
+            print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, MALE_THETA);
+            print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, FEMALE_THETA);
 	} else {
-	  print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, SEX_AVERAGED_THETA);
+            print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, SEX_AVERAGED_THETA);
 	}
 #else /* USEOLDMAPCODE */
 	// see user_input.c: get_genetic_distance_index()
 	if (genetic_distance_index >= 0) {
-	  if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-	    print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, SEX_AVERAGED_THETA);
-	  } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
-	    // With a SEX_SPECIFIC_GDMT when LTop->SexDiff == NO_SEX_DIFF, we should NOT print out
-	    // the male recombination fractions to a LINKAGE-format output file, since on the
-	    // X-chromosome, LTop->SexDiff must be set to NO_SEX_DIFF...
-	    if (Top->LocusTop->SexDiff != NO_SEX_DIFF) {
-	      print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, MALE_THETA);
-	    }
-	    print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, FEMALE_THETA);
-	  } else if (genetic_distance_sex_type_map == FEMALE_GDMT) {
-	    print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, FEMALE_THETA);
-	  }
+            if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
+                print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, SEX_AVERAGED_THETA);
+            } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
+                // With a SEX_SPECIFIC_GDMT when LTop->SexDiff == NO_SEX_DIFF, we should NOT print out
+                // the male recombination fractions to a LINKAGE-format output file, since on the
+                // X-chromosome, LTop->SexDiff must be set to NO_SEX_DIFF...
+                if (Top->LocusTop->SexDiff != NO_SEX_DIFF) {
+                    print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, MALE_THETA);
+                }
+                print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, FEMALE_THETA);
+            } else if (genetic_distance_sex_type_map == FEMALE_GDMT) {
+                print_recomb_fracs(filep, num_markers, markers, Top->LocusTop, analysis, FEMALE_THETA);
+            }
 	} else {
-	  // give an error if no genteic difference map was provided (at this moment one must be provided)
+            // give an error if no genteic difference map was provided (at this moment one must be provided)
 	}
 #endif /* USEOLDMAPCODE */
 
@@ -905,7 +905,7 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
     // worst case size, using -1 as a centinal...
     markers = CALLOC((size_t) NumChrLoci + 1, int);
     for (i=0, tmpi=0; i<NumChrLoci; i++) {
-      if (LoopOverTrait == 0 || // flag for looping over traits
+        if (LoopOverTrait == 0 || // flag for looping over traits
             LTop->Locus[ChrLoci[i]].Type == NUMBERED ||
             LTop->Locus[ChrLoci[i]].Type == BINARY) {
             markers[tmpi++] = ChrLoci[i];
@@ -2033,7 +2033,7 @@ void            create_gh_file(linkage_ped_top **Top,
     }
 
     if (R_setup) {
-      R_setup = allegro_R_setup(*numchr, *Top);
+        R_setup = allegro_R_setup(*numchr, *Top);
     }
 
     if (*analysis == TO_GHMLB) {
@@ -2319,40 +2319,40 @@ void print_recomb_fracs(FILE *filep,
         for (i=0; i < num_markers-1; i++) {
             if (LTop->Locus[markers[i]].Class == TRAIT ||
                 LTop->Locus[markers[i+1]].Class == TRAIT) {
-	       // When two traits are located together.
-	       // This works even if they are on different chromosomes.
-	      thetas[i] = 0.5; // The null hypothesis between the trait and the first marker....
-	      continue;
+                // When two traits are located together.
+                // This works even if they are on different chromosomes.
+                thetas[i] = 0.5; // The null hypothesis between the trait and the first marker....
+                continue;
             }
 
             if (LTop->Marker[markers[i]].chromosome ==
-               LTop->Marker[markers[i+1]].chromosome) {
-	      // It's the same chromosome..
-	      double delta, delta_abs, marker, marker_next;
-	      // CPK: compute the delta between the appropriate markers...
-	      switch (tt) {
-	      case SEX_AVERAGED_THETA:
-		marker_next = LTop->Marker[markers[i+1]].pos_avg;
-		marker = LTop->Marker[markers[i]].pos_avg;
-                break;
-	      case MALE_THETA:
-                marker_next = LTop->Marker[markers[i+1]].pos_male;
-		marker = LTop->Marker[markers[i]].pos_male;
-                break;
-	      case FEMALE_THETA:
-                marker_next = LTop->Marker[markers[i+1]].pos_female;
-		marker = LTop->Marker[markers[i]].pos_female;
-                break;
-	      }
-	      delta = marker_next - marker;
-	      // CPK: use the absolute value of the delta...
-	      delta_abs = (delta >= 0.0) ? delta : -delta;
-	      // If the markers are real, are they in the right order?
-	      if (delta < 0.0 && marker >= 0.0 && marker_next >= 0.0) {
-		 warnvf("%s (%.5g) and %s (%.5g) are not ordered by increasing map distance; using abs(distance)!\n",
-			LTop->Locus[markers[i]].Name, marker,
-			LTop->Locus[markers[i+1]].Name, marker_next);
-		//CPK: warnf("Setting the distance between these to zero cM.");
+                LTop->Marker[markers[i+1]].chromosome) {
+                // It's the same chromosome..
+                double delta, delta_abs, marker, marker_next;
+                // CPK: compute the delta between the appropriate markers...
+                switch (tt) {
+                case SEX_AVERAGED_THETA:
+                    marker_next = LTop->Marker[markers[i+1]].pos_avg;
+                    marker = LTop->Marker[markers[i]].pos_avg;
+                    break;
+                case MALE_THETA:
+                    marker_next = LTop->Marker[markers[i+1]].pos_male;
+                    marker = LTop->Marker[markers[i]].pos_male;
+                    break;
+                case FEMALE_THETA:
+                    marker_next = LTop->Marker[markers[i+1]].pos_female;
+                    marker = LTop->Marker[markers[i]].pos_female;
+                    break;
+                }
+                delta = marker_next - marker;
+                // CPK: use the absolute value of the delta...
+                delta_abs = (delta >= 0.0) ? delta : -delta;
+                // If the markers are real, are they in the right order?
+                if (delta < 0.0 && marker >= 0.0 && marker_next >= 0.0) {
+                    warnvf("%s (%.5g) and %s (%.5g) are not ordered by increasing map distance; using abs(distance)!\n",
+                           LTop->Locus[markers[i]].Name, marker,
+                           LTop->Locus[markers[i+1]].Name, marker_next);
+                    //CPK: warnf("Setting the distance between these to zero cM.");
                 }
 	        // Both these conversion functions return 0 thetas if difference is negative.
                 // CPK: However, now that they are getting the absolute value they will not...
@@ -2380,14 +2380,14 @@ void print_recomb_fracs(FILE *filep,
         }
     }
     switch (tt) {
-              case SEX_AVERAGED_THETA:
-                break;
-              case MALE_THETA:
-                fprintf(filep," male"); 
-                break;
-              case FEMALE_THETA:
-                fprintf(filep," female"); 
-                break;
+    case SEX_AVERAGED_THETA:
+        break;
+    case MALE_THETA:
+        fprintf(filep," male"); 
+        break;
+    case FEMALE_THETA:
+        fprintf(filep," female"); 
+        break;
     }
     fprintf(filep, "\n");
 }
