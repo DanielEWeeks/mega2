@@ -213,7 +213,8 @@ static map<int, char *> numbered_format_string_map;
 const char *format_allele(linkage_locus_rec *locus, const int allele)
 {
     // First see if we can/should return the character allele representation...
-    if (AnalysisOpt->allele_data_use_name_if_available() &&
+    if ((force_numeric_alleles == 0) &&
+        AnalysisOpt->allele_data_use_name_if_available() &&
         allele > 0 &&
         allele <= locus->AlleleCnt &&
         // When the input is linkage there will be no name array

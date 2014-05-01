@@ -323,6 +323,7 @@ int             default_output_filenames;
 /* Global flags. */
 int             abortflag;
 int             SetMarkerPosToSpecial;
+int             force_numeric_alleles = 0;
 
 int lastautosome    = 0;
 int pseudoautosome  = 0;

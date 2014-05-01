@@ -1953,6 +1953,8 @@ void mega2_opts(int argc, char **argv)
                     Input_Format = in_format_linkage;
                 else if (strcasecmp(as, "hybrid") == 0)
                     Input_Format = in_format_extended_linkage;
+                else if (strcasecmp(as, "force_numeric_alleles") == 0)
+                    force_numeric_alleles = 1;
                 else if (strcasecmp(as, "help") == 0)
                     print_mega2_help();
                 else if (strcasecmp(as, "version") == 0)
