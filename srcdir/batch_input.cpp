@@ -721,9 +721,16 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                 if (iter == 3 && it == /* 5 */ Analysis_Option ) {
                     if ((*analysis)->has_sub_options()) {
                         if (! ITEM_READ(/* 6 */ Analysis_Sub_Option )) 
-                            warnvf("%s: using empty (i.e. default) sub-program name.\n",
+                            warnvf("Trying empty sub-program name (no name specified).\n",
                                     analysis_name);
                         (*analysis)->sub_prog_name_to_sub_option(sub_analysis_name, analysis);
+                        if (*analysis == NULL) {
+                            errorvf("%s sub-program needs to be specified.\n",
+                                    analysis_name);
+			    errorvf("Required keyword %s missing from batch file.\n",
+				    Mega2BatchItems[Analysis_Sub_Option].keyword);
+			    EXIT(BATCH_FILE_ITEM_ERROR);
+                        }
                     }
 #ifdef DEBUGOPT
                     printf("option number %d, name %s.\n",
