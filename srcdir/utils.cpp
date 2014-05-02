@@ -2072,6 +2072,10 @@ void print_mega2_help(void)
     printf("                input files are in Linkage format.\n");
     printf("             --extended_linkage\n");
     printf("                input files are in Linkage format with a Mega2 names file vs a linkage locus file.\n");
+
+    printf("             --force_numeric_alleles\n");
+    printf("                recode alleles as numbers even though analysis can accept letter alleles.\n");
+
     printf("             -x, --nosave\n");
     printf("                    Do not create a new run-folder.\n");
     printf("             -w, --noweb\n");
