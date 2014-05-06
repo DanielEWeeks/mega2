@@ -348,7 +348,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         }
         void file_post() {
             if (missing_pheno > 0) {
-                warnvf("%d People were filtered out because they had an unknown trait status.\n",
+                warnvf("%d IDs were filtered out because they had an unknown trait status.\n",
 		       missing_pheno);
                 //warnvf("%d individuals were filtered out because they were not genotyped at the selected markers.\n",
 		//       missing_markers);
@@ -588,6 +588,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     struct save_fams: public loop::outer, loop::ped_per {
         typedef char *str;
         str *file_names;
+        int skipped_id;
         
         save_fams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
@@ -596,13 +597,11 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                 return;
             }
             mssgvf("        BEAGLE genotype file:                %s/%s\n", *_opath, file_names[0]);
+            skipped_id = 0;
             run_loop(file_names[0]);
         }
         void file_header() {
             pr_printf("P Pedigree ");
-        }
-        void file_trailer() {
-            pr_nl();
         }
         void inner() {
             // NOTE: from entry.h: linkage_ped_rec  *_tpe;
@@ -615,6 +614,20 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                 pr_fam(); pr_fam();
                 pr_fam(); pr_fam();
                 pr_fam(); pr_fam();
+            } else {
+                skipped_id++; // Didn't meat the above criteria...
+            }
+        }
+        void file_trailer() {
+            pr_nl();
+        }
+        void file_post() {
+            if (skipped_id > 0) {
+                warnvf("%d IDs were filtered because they did not meet the inclusion criteria\n", skipped_id);
+                warnf("which is: the ID has both parents; the ID (child) is affected; and");
+                warnf("both parents are unaffected.");
+                //warnvf("%d individuals were filtered out because they were not genotyped at the selected markers.\n",
+		//       missing_markers);
             }
         }
     } *sP = new save_fams(Top);
@@ -840,9 +853,6 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
         void file_header() {
             pr_printf("P Pedigree ");
         }
-        void file_trailer() {
-            pr_nl();
-        }
         void inner() {
             // The indexes for IDs in linkage_ped_rec (_tpe) are 1-based with 0 used for NA.
             int father = _tpe->Father, mother = _tpe->Mother;
@@ -859,6 +869,9 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
                 pr_fam(); pr_fam();
                 pr_fam(); pr_fam();
             } else filtered_pairs++;
+        }
+        void file_trailer() {
+            pr_nl();
         }
     } *sP = new save_fams(Top);
     
@@ -1153,9 +1166,9 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
             pr_printf("# For further information on Beagle command line options please see:\n");
             pr_printf("# http://faculty.washington.edu/browning/beagle/beagle.html\n");
             pr_printf("# \n");
-            pr_printf("echo 'NOTE: If you encounter a 'Java heap space' exception while running Beagle,'\n");
-            pr_printf("echo 'please consult the 'Memory Management' section of the Beagle documentation'\n");
-            pr_printf("echo 'for further assistance.'\n");
+            pr_printf("echo ' NOTE: If you encounter a 'Java heap space' exception while running Beagle,'\n");
+            pr_printf("echo ' please consult the 'Memory Management' section of the Beagle documentation'\n");
+            pr_printf("echo ' for further assistance.'\n");
             pr_printf("echo\n");
             // For a complete list of Beagle command line arguments,
             // please see section 3.2 of the Beagle manual.
@@ -1188,7 +1201,17 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
                 pr_printf(" redundant=true");
 
             pr_printf("\n");
+            pr_printf("if ( ! -f %s.log ) then\n", file_names[5]);
+            pr_printf("  echo 'First Beagle run produced no output log.'\n");
+            pr_printf("  exit 1\n");
+            pr_printf("endif\n");
+            pr_printf("\n");
+            pr_printf("if ( -z `tail -1 %s.log | grep finished` ) then\n", file_names[5]);
+            pr_printf("  echo 'Beagle log file error.'\n");
+            pr_printf("  exit 2\n");
+            pr_printf("endif\n");
 
+            pr_printf("\n");
             pr_printf("\necho\n");
             
             // There needs to be a trait for association testing

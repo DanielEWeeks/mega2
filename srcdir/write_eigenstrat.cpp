@@ -59,6 +59,22 @@
               utils_ext.h:  EXIT draw_line script_time_stamp summary_time_stamp
 */
 
+/*
+  EIGENSTRAT output file created by Mega2.
+
+  The EIGENSTRAT is a family of programs available through the EIGENSOFT software site
+  which is located at this link:
+  http://www.hsph.harvard.edu/alkes-price/software/
+
+  There appear to be two verions that are currently in use EIGENSOFT 4.2 (which supports
+  multi-threading), and EIGENSOFT 5.0.1 (which supports additional features and bug fixes).
+  Our testing has been done with the 4.2 version.
+
+  The EIGENSTRAT control progrema are: smartpca.perl, and smarteigenstrat.perl. 
+  There is a description of the programs and their options in the file 'EIGENSTRAT/README'.
+  These programs run other programs that area located in the bin directory of the release
+  (e.g., EIG4.2/bin). FOR THIS REASON THE BIN DIRECTORY MUST BE IN YOUR CURRENT PATH!
+ */
 
 void CLASS_EIGENSTRAT::sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis) {
     if (strcasecmp(sub_prog_name, EIGENSTRAT_SUB_OPTION_SNP_MAJOR) == 0)
@@ -396,20 +412,20 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
             sh_shell_type();
             sh_id();
             script_time_stamp(_filep);
-#define PATH_ERROR_MESSAGE "Please put the EIGn.m/bin directory in PATH for smartpca.perl and\\\n\
-smarteigenstrat.perl to be found, as suggested by the EIG4.2/EIGENSTRAT/README\\\n\
-Documentation."
-            executable_in_path_does_not_exist_csh(_filep, "smartpca.perl", PATH_ERROR_MESSAGE);
-            executable_in_path_does_not_exist_csh(_filep, "smarteigenstrat.perl", PATH_ERROR_MESSAGE);
-            // For example the following may be usefull:
-            // setenv PATH ../../eigensoft/EIG4.2/bin:$PATH
-            //
-            // This handles the environment variable setup to allow the checking
-            // functions in 'batch_run' to work correctly...
-#ifdef RUNSHELL_SETUP
-            fprintf_env_checkset_csh(_filep, "_SMARTPCA", "smartpca.perl");
-            fprintf_env_checkset_csh(_filep, "_SMARTEIGENSTRAT", "smarteigenstrat.perl");
-#endif /* RUNSHELL_SETUP */
+            pr_printf("\n");
+            pr_printf("echo 'IMPORTANT NOTICE'\n");
+            pr_printf("echo 'You MUST put the EIGENSTRAT bin directory in your PATH BEFORE RUNNING THIS SCRIPT.'\n");
+            pr_printf("echo\n");
+            pr_printf("echo 'This will allow the files run by the perl scripts (smartpcl.perl, and'\n");
+            pr_printf("echo 'smarteigenstrat.perl) to be found (as suggested by the documentation found in'\n");
+            pr_printf("echo 'EIGx.y/EIGENSTRAT/README).'\n");
+            pr_printf("echo \"To do this let us assume that the EIGENSTRAT bin directory is located at '/usr/local/src/EIG4.2/bin'.\"\n");
+            pr_printf("echo 'If using the csh use the command line:'\n");
+            pr_printf("echo 'set path = ($path /usr/local/src/EIG4.2/bin)'\n");
+            pr_printf("echo 'If using bash/ksh/sh use the command line:'\n");
+            pr_printf("echo 'export PATH=$PATH:/usr/local/src/EIG4.2/bin'\n");
+            pr_printf("echo\n");
+            pr_printf("\n");
 #ifdef TEST
             fprintf_env_checkset_csh(_filep, "_PLINK", "plink");
 #endif /* TEST */
@@ -435,7 +451,7 @@ Documentation."
 
             // For Eigenstrat only two of the PLINK suboptions are valid...
             if (subOption == PLINK_SUB_OPTION_PED_INT) {
-                pr_printf("$_SMARTPCA -i %s -a %s -b %s -k 2 -o %s -p %s -e %s -l %s -m 5 -t 2 -s 6.0\n",
+                pr_printf("smartpca.perl -i %s -a %s -b %s -k 2 -o %s -p %s -e %s -l %s -m 5 -t 2 -s 6.0\n",
                           file_names[0], // .ped (.geno)
                           file_names[1], // .map (.snp)
                           file_names[0], // .ped (.ind)
@@ -444,13 +460,14 @@ Documentation."
                           file_names[10], // .plot
                           file_names[11], // .eval
                           file_names[12] // .p_log
-                          );
+                    );
+                pr_printf("\n");
                 // NOTE: Phenotype information is contained in '-b file.ind' and is dependent
                 // on the '-q' flag.
                 // Affection data if '-q NO' (default) encoded as "Case"/"Control" labels
                 // Quantitative phenotypes if '-q YES' implies real numbers with -100.0
                 // signifying missing data.
-                pr_printf("$_SMARTEIGENSTRAT -i %s -a %s -b %s -p %s -k 1 -o %s -l %s%s\n",
+                pr_printf("smarteigenstrat.perl -i %s -a %s -b %s -p %s -k 1 -o %s -l %s%s\n",
                           file_names[0], // .ped
                           file_names[1], // .map
                           file_names[0], // .ped
@@ -459,7 +476,8 @@ Documentation."
                           file_names[13], // .chisq
                           file_names[14], // .e_log
                           (_tte->Type == QUANT ? " -q YES" : "")
-                          );
+                    );
+                pr_printf("\n");
 #ifdef TEST
                 // It seems that Eigenstrat is happy to take broken PLINK files and not complain under
                 // some circumstances. Here, we run the output produced by Mega2 through plink and check
@@ -474,7 +492,7 @@ Documentation."
                 fprintf_status_check_csh(_filep, "PLINK", 1);
 #endif /* TEST */
             } else { // for PLINK_SUB_OPTION_SNP_MAJOR
-                pr_printf("$_SMARTPCA -i %s -a %s -b %s -k 2 -o %s -p %s -e %s -l %s -m 5 -t 2 -s 6.0\n",
+                pr_printf("smartpca.perl -i %s -a %s -b %s -k 2 -o %s -p %s -e %s -l %s -m 5 -t 2 -s 6.0\n",
                           file_names[3], // .bed
                           file_names[1], // .bim (.pedsnp)
                           file_names[0], // .fam (.pedind)
@@ -483,8 +501,9 @@ Documentation."
                           file_names[10], // .plot
                           file_names[11], // .eval
                           file_names[12] // .p_log
-                          );
-                pr_printf("$_SMARTEIGENSTRAT -i %s -a %s -b %s -p %s -k 1 -o %s -l %s%s\n",
+                    );
+                pr_printf("\n");
+                pr_printf("smarteigenstrat.perl -i %s -a %s -b %s -p %s -k 1 -o %s -l %s%s\n",
                           file_names[3], // .bed
                           file_names[1], // .bim
                           file_names[0], // .fam
@@ -493,7 +512,8 @@ Documentation."
                           file_names[13], // .chisq
                           file_names[14], // .e_log
                           (_tte->Type == QUANT ? " -q YES" : "")
-                          );
+                    );
+                pr_printf("\n");
 #ifdef TEST
                 pr_printf("echo\n");
                 pr_printf("echo 'As a test run the Mega2 output through PLINK to see if it complains.'\n");
