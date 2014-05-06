@@ -1953,6 +1953,8 @@ void mega2_opts(int argc, char **argv)
                     Input_Format = in_format_linkage;
                 else if (strcasecmp(as, "hybrid") == 0)
                     Input_Format = in_format_extended_linkage;
+                else if (strcasecmp(as, "force_numeric_alleles") == 0)
+                    force_numeric_alleles = 1;
                 else if (strcasecmp(as, "help") == 0)
                     print_mega2_help();
                 else if (strcasecmp(as, "version") == 0)
@@ -2070,6 +2072,10 @@ void print_mega2_help(void)
     printf("                input files are in Linkage format.\n");
     printf("             --extended_linkage\n");
     printf("                input files are in Linkage format with a Mega2 names file vs a linkage locus file.\n");
+
+    printf("             --force_numeric_alleles\n");
+    printf("                recode alleles as numbers even though analysis can accept letter alleles.\n");
+
     printf("             -x, --nosave\n");
     printf("                    Do not create a new run-folder.\n");
     printf("             -w, --noweb\n");

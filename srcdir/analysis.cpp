@@ -507,6 +507,10 @@ void CLASS_ASPEX::sub_prog_name(int sub_opt, char *subprog) {
 }
 
 void CLASS_ASPEX::sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis) {
+    if (*sub_prog_name == 0) {
+        (*analysis)->_suboption = 0;
+        return;
+    }
     switch(tolower((unsigned char)sub_prog_name[strlen(sub_prog_name) - 1])) {
     case 'd':
         (*analysis)->_suboption = 1; break;

@@ -447,7 +447,7 @@ extern int             default_output_filenames;
 /* Global flags. */
 extern int             abortflag;
 extern int             SetMarkerPosToSpecial;
-
+extern int             force_numeric_alleles;
 /* have to break up ASPEX into 4 options */
 
 extern int lastautosome;
