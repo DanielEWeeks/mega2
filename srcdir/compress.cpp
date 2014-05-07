@@ -162,14 +162,17 @@ void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *a
             }
             if (MARKER_SCHEME3_check) {
                 if (all1 == REC_UNKNOWN || all2 == REC_UNKNOWN) {
-                    errorvf("Half type genotypes not allowed in 2 allele mode: %s/%s.\n",
+                    errorvf("You set the maximum number of alleles to 2.\nHalf type genotypes are not allowed in 2 allele mode: %s/%s.\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n",
                             all1, all2);
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }
-                if ( ((all1 != allelep->Allele_1) && (all1 != allelep->Allele_2)) ||
-                     ((all2 != allelep->Allele_1) && (all2 != allelep->Allele_2)) ) {
-                       errorvf("While you set the maximum number of alleles to 2, there are more than two alleles in the data:\nMarker %s has the alleles %s, %s, %s, %s\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n",
-                               locus->Name, allelep->Allele_1, allelep->Allele_2, all1, all2);
+                const char * estr = "While you set the maximum number of alleles to 2, there are more than two alleles in the data:\nMarker %s has the alleles %s, %s; trying to add %s.\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n";
+                if ( (all1 != allelep->Allele_1) && (all1 != allelep->Allele_2) ) {
+                    errorvf(estr, locus->Name, allelep->Allele_1, allelep->Allele_2, all1);
+                    EXIT(OUTOF_BOUNDS_ERROR);
+                }
+                if ( (all2 != allelep->Allele_1) && (all2 != allelep->Allele_2) ) {
+                    errorvf(estr, locus->Name, allelep->Allele_1, allelep->Allele_2, all2);
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }
             }
@@ -426,17 +429,20 @@ void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int 
             } 
             if (MARKER_SCHEME3_check) {
                 if (all1 == 0 || all2 == 0) {
-                    errorvf("Half type genotypes not allowed in 2 allele mode: %d/%d.\n",
+                    errorvf("You set the maximum number of alleles to 2.\nHalf type genotypes are not allowed in 2 allele mode: %d/%d.\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n",
                             all1, all2);
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }
-                if ( ((all1 != allelep->Allele_1) && (all1 != allelep->Allele_2)) ||
-                     ((all2 != allelep->Allele_1) && (all2 != allelep->Allele_2)) ) {
-                        errorvf("While you set the maximum number of alleles to 2, there are more than two alleles in the data:\nMarker %s has the alleles %d, %d, %d, %d\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n",
-                                locus->Name, allelep->Allele_1, allelep->Allele_2, all1, all2);
-
-                         EXIT(OUTOF_BOUNDS_ERROR);
+                const char * estr = "While you set the maximum number of alleles to 2, there are more than two alleles in the data:\nMarker %s has the alleles %d, %d; trying to add%d.\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n";
+                if ( (all1 != allelep->Allele_1) && (all1 != allelep->Allele_2) ) {
+                    errorvf(estr, locus->Name, allelep->Allele_1, allelep->Allele_2, all1);
+                    EXIT(OUTOF_BOUNDS_ERROR);
                 }
+                if ( (all2 != allelep->Allele_1) && (all2 != allelep->Allele_2) ) {
+                    errorvf(estr, locus->Name, allelep->Allele_1, allelep->Allele_2, all2);
+                    EXIT(OUTOF_BOUNDS_ERROR);
+                }
+
             }
 
             if (all1 != all2)

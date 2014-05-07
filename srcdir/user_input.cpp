@@ -388,6 +388,7 @@ static void fln_off() {
     while (*fln) {
         (*fln)->on = 0;
         (*fln)->specified = 0;
+        (*fln)->name[0] = 0;
         fln++;
     }
 }
@@ -418,14 +419,14 @@ static void fln_free(fln_t *fln) {
 }
 
 static void fln_free_not_present(fln_t *fln) {
-    if (access(fln->name, F_OK) != 0) {
+    if (fln->specified == 0 || access(fln->name, F_OK) != 0) {
         free(fln->name);
         fln->on = 0;
         *(fln->nameref) = NULL;
     }
 }
 
-int  fln_stem = 1;
+int  fln_stem = 0;
 char fln_tmp[FILENAME_LENGTH];
 char extension_name[FILENAME_LENGTH];
 int  fln_col1, fln_col2, fln_col4, fln_col1234;
@@ -828,13 +829,16 @@ void menu1(file_format *infl_type,
                 fln_init(loco, "Linkage", "datain", "[required]", "datain");
                 fln_init(pedo, "Linkage", "pedin", "[required]", "pedin");
                 fln_init(mapo, "Mega2 simple", "map", "[required]", "map");
+                fln_init(omito, "Mega2", "omit", "[optional]", "omit");
 
             } else if (Input_Format == in_format_extended_linkage) {
                 strcpy(extension_name, "01");
 
                 fln_init(loco, "Mega2", "hdrless names", "[required]", "names");
                 fln_init(pedo, "Linkage", "pedin", "[required]", "pedin");
+//              fln_init_mega2( MAP_REQ);
                 fln_init(mapo, "Mega2 simple", "map", "[required]", "map");
+                fln_init(omito, "Mega2", "omit", "[optional]", "omit");
 
             } else if (Input_Format == in_format_binary_PED) {
                 plinkf = 1;
@@ -1122,8 +1126,10 @@ void menu1(file_format *infl_type,
             if (exit_loop == 0)
                 draw_line();
             else {
-                if (access(*omitfl_name, F_OK) != 0)
-                    fln_free_not_present(omito);
+                if (omito->specified == 0)
+                    fln_free(omito);
+                else if (access(*omitfl_name, F_OK) != 0)
+                    fln_free(omito);
                 else {
                     printf("NOTE: Marker untyping will take place according to the omit file.\n");
                     printf("      Please check the '%s' log file after MEGA2 is finished.\n",

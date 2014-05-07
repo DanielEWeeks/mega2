@@ -866,7 +866,7 @@ int             main(int argc, char **argv)
     }
 #endif
 
-    int af;
+    int af, guess;
     if (Input_Format == in_format_traditional) {
         af = check_annotated_file_format(mega2_input_files);
         if (af == 0) {
@@ -883,18 +883,23 @@ int             main(int argc, char **argv)
             }
         } else if ((af == 3) || (af == 4))
             Input_Format = in_format_mega2;
+        msgvf("Input Format Deduced as: %s\n", INPUT_FORMAT_STR[Input_Format]);
+        guess = 1;
+    } else {
+        msgvf("Input Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
+        guess = 0;
     }
-    msgvf("Input Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
 
     if (Input_Format == in_format_mega2) {
 #ifndef HIDESTATUS
         if (mega2_input_files[3] == NULL) {
-            mssgf("Pedigree, names and map file appear to be in ANNOTATED format.");
-            mssgf("Input files will be read in as ANNOTATED format files.");
+            msgvf("Pedigree, names and map file %s ANNOTATED format.\n",
+                  guess ? "appear to be in" : "specified as");
         } else {
-            mssgf("Pedigree, names, map and omit file appear to be in ANNOTATED format.");
-            mssgf("Input files will be read in as ANNOTATED format files.");
+            msgvf("Pedigree, names, map and omit file %s ANNOTATED format.\n",
+                  guess ? "appear to be in" : "specified as");
         }
+        mssgf("Input files will be read in as ANNOTATED format files.");
 #endif
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -919,7 +924,8 @@ int             main(int argc, char **argv)
 */
 
 #ifndef HIDESTATUS
-        mssgf("Pedigree and map files appear to be in PLINK format.");
+        msgvf("Pedigree and map files %s PLINK format.\n",
+              guess ? "appear to be in" : "specified as");
         mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
         mssgf("Input files will be read in as PLINK or Annotated format files as appropriate.");
 #endif
@@ -988,10 +994,12 @@ int             main(int argc, char **argv)
 
 #ifndef HIDESTATUS
         if (Input_Format == in_format_linkage) {
-            mssgf("Pedigree, names and map file appear to be in LINKAGE format.");
+            msgvf("Pedigree, names and map file %s LINKAGE format.\n",
+                  guess ? "appear to be in" : "specified as");
             mssgf("Input files will be read in as LINKAGE format files.");
         } else if (Input_Format == in_format_extended_linkage) {
-            mssgf("Pedigree and map file appear to be in LINKAGE format.");
+            msgvf("Pedigree and map file %s LINKAGE format.\n",
+                  guess ? "appear to be in" : "specified as");
             mssgf("Names (aka locus) file appears to be in Mega2 format w/o header.");
             mssgf("Input files will be read appropriately.");
         }

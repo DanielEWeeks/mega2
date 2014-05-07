@@ -529,7 +529,8 @@ static int parse_variable_width_hdr(FILE *file,
 /* 	  col_num); */
 /*   mssgf(err_msg); */
     if (is_missing_required_hdr(reserved_colnames, required_cols) || invalid_extension) {
-        errorf("Found errors in the headers, please correct and restart Mega2.\n");
+        errorf("Found errors in the Mega2 annotated headers, please correct and restart Mega2.\n");
+        errorf("Missing required headers.\n");
         EXIT(FILE_HEADER_ERROR);
     }
 
@@ -1956,6 +1957,8 @@ static int read_annotated_names_file(char *names_file,
         *LTop = read_marker_data(fp,
                                  file_desc->names_file_columns[0].input_col - 1,
                                  file_desc->names_file_columns[1].input_col - 1);
+    } else {
+        errorvf("Invalid names file header: %s\n", names_file);
     }
     return annotated_format;
 }

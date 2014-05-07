@@ -2224,12 +2224,12 @@ void omit_file_data_processing(linkage_ped_top *Top,
         omitped_str = line[ped_i];
         omitper_str = line[per_i];
         omitloci = line[loci_i];
-        
+       
         if (strcasecmp(omitped_str, "All") == 0)
             omitped = 0; // All
         else
             omitped = 1;
-        if (strcasecmp(omitper_str, "all") == 0)
+        if ( (strcasecmp(omitper_str, "all") == 0) || (strcmp(omitper_str, "0") == 0) )
             // Note we already support the "all" concept on the person column with "0"
             // This just makes "all" more explicit.
             omitper = 0; // All
