@@ -819,7 +819,7 @@ void menu1(file_format *infl_type,
             if (Input_Format == in_format_traditional || Input_Format == in_format_mega2) {
                 strcpy(extension_name, "01");
 
-                fln_init(loco, "Mega2", "datain", "[required]", "datain");
+                fln_init(loco, "Mega2", "names", "[required]", "names");
                 fln_init(pedo, "Mega2", "pedin", "[required]", "pedin");
                 fln_init_mega2(MAP_REQ);
 
@@ -2083,7 +2083,7 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
     // where we convert any "NA"s (QMISSINGs) that we have read to the value of MissingQuant.
     //
     // NOTE: It is pointless to do this if 'MissingQuant == QMISSING' as would be the case if we
-    // were reading Mega2 annotated files with NA used as the missing value.
+    // were reading Mega2 files with NA used as the missing value.
     if (fabs(MissingQuant - QMISSING) > EPSILON) {
         
         if (HasQuant) {
@@ -2818,12 +2818,12 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     // map in the map file, and to present the user a list of maps for them to choose
     // from in interactive input mode.
     
-    // NOTE: For annotated map files, indexes are assigned to maps in a map file by reading
+    // NOTE: For Mega2 map files, indexes are assigned to maps in a map file by reading
     // it from left to right in order of the first occurrance of a map-name. It is an error
     // for the map-name to be associated with more than one map-type. It is an error for the
     // map-name to have a duplicate sex-designator.
     //
-    // Annotated maps are defined as follows:
+    // Mega2 maps are defined as follows:
     // map-designator == map-name . map-type. sex-designator
     // where: map-type is one of <h, k p>; sex-designator is one of <a, m, f>
     
@@ -2832,7 +2832,7 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     // gdsm tells whether the map is: sex-averaged (a), sex-specific (m,f), or female (f)
     gdsm = CALLOC((size_t)(3*EXLTop->MapCnt), genetic_distance_map_type);
     // gds is the index into the gdsm (map) array which specifies a valid genetic map (Index & SexType).
-    // For example, if the (annotated) map file looks like this...
+    // For example, if the Mega2 map file looks like this...
     // Chromosome      Map.k.a Name    Map.k.m Map.k.f BP.p
     // 3 genetic maps will be possible: Map.k (sex-averaged), Map.k (sex-specific), Map.k (female)
     // and so after exiting this for loop gds will be 3.

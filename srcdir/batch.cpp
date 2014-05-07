@@ -88,7 +88,7 @@ void BatchFile::initBatchItems() {
     addBatchItem(new BatchItemFileInput("Input_Pedigree_File", ""));
     addBatchItem(new BatchItemFileInput("Input_Map_File", ""));
     
-    // Rrequired item for linkage and Mega2 annotated input format, but it is not used for either PLINK formats.
+    // Rrequired item for linkage and Mega2 input format, but it is not used for either PLINK formats.
     addBatchItem(new BatchItemFileInput("Input_Locus_File", ""));
     
     // Required item for PLINK binary formats (e.g., the .BED file)
@@ -98,10 +98,10 @@ void BatchFile::initBatchItems() {
     // opitonal...
     addBatchItem(new BatchItemFileInput("Input_Omit_File", ""));
     
-    // Optionally used to specify allele frequencies for annotated and PLINK formats.
+    // Optionally used to specify allele frequencies for Mega2 and PLINK formats.
     addBatchItem(new BatchItemFileInput("Input_Frequency_File", ""));
     
-    // Optionally used to specify allele penetrances for annotated and PLINK formats.
+    // Optionally used to specify allele penetrances for Mega2 and PLINK formats.
     addBatchItem(new BatchItemFileInput("Input_Penetrance_File", ""));
     
     // Optionally used to specify additional phenotypes in PLINK format.
@@ -550,7 +550,7 @@ void BatchFile::consistencyChecks() {
     if (dynamic_cast<BatchItemIntVector&>(BF()->getBatchItem("Error_Except_Loci")).itemRead())
       dynamic_cast<BatchItemIntGe0&>(BF()->getBatchItem("Error_Loci_Num")).setIsRequired();
     
-    // These are Required for Linkage and Annotated input format...
+    // These are Required for Linkage and Mega2 input format...
     //f = (dynamic_cast<BatchItemFile&>(BF()->getBatchItem("Input_Locus_File")));
 
     // Throw an exception of a required item was not read from the batch file...

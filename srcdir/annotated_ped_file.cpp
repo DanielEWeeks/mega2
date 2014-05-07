@@ -529,7 +529,7 @@ static int parse_variable_width_hdr(FILE *file,
 /* 	  col_num); */
 /*   mssgf(err_msg); */
     if (is_missing_required_hdr(reserved_colnames, required_cols) || invalid_extension) {
-        errorf("Found errors in the Mega2 annotated headers, please correct and restart Mega2.\n");
+        errorf("Found errors in the Mega2 headers, please correct and restart Mega2.\n");
         errorf("Missing required headers.\n");
         EXIT(FILE_HEADER_ERROR);
     }
@@ -1416,7 +1416,7 @@ static linkage_ped_top *read_annotated_ped_file(char *pedfile,
 
     init_reserved_pedcol_names();
 #ifndef HIDEFILE
-    mssgvf("Reading annotated format pedigree file: %s\n", pedfile);
+    mssgvf("Reading Mega2 format pedigree file: %s\n", pedfile);
 #endif
     num_userdef_cols = parse_pedigree_header(filep,
                                              ReservedColnames,
@@ -1950,7 +1950,7 @@ static int read_annotated_names_file(char *names_file,
     }
 
 #ifndef HIDEFILE
-    mssgvf("Reading annotated format names file: %s\n", names_file);
+    mssgvf("Reading Mega2 format names file: %s\n", names_file);
 #endif
     annotated_format = parse_names_file_header(fp, file_desc);
     if (annotated_format > 0) {
@@ -2546,7 +2546,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
         return EXLTop;
     }
 
-    // Maps from the Mega2 annotated map file and maps to be filled in at a later time...
+    // Maps from the Mega2 map file and maps to be filled in at a later time...
     total_maps_to_allocate = num_maps + allocate_additional_maps;
     
 #ifndef HIDESTATUS
@@ -3278,7 +3278,7 @@ static int read_annotated_freq_file(char *freq_file_name,
     }
     
 #ifndef HIDEFILE
-    sprintf(err_msg, "Reading annotated format frequency file: %s", freq_file_name);
+    sprintf(err_msg, "Reading Mega2 format frequency file: %s", freq_file_name);
     mssgf(err_msg);
 #endif
     
@@ -3574,7 +3574,7 @@ static int read_annotated_pen_file(char *pen_file_name,
     int num_err=0;
 
 #ifndef HIDEFILE
-    sprintf(err_msg, "Reading annotated format penetrance file: %s", pen_file_name);
+    sprintf(err_msg, "Reading Mega2 format penetrance file: %s", pen_file_name);
     mssgf(err_msg);
 #endif
 
@@ -3860,7 +3860,7 @@ static void annotated_omit_file(linkage_ped_top *Top,
     FILE *omitfp;
     
 #ifndef HIDEFILE
-    msgvf("Reading annotated format omit file: %s\n", omitfl_name);
+    msgvf("Reading Mega2 format omit file: %s\n", omitfl_name);
 #endif
     if ((omitfp=fopen(omitfl_name, "r")) == NULL) {
         errorvf("could not open %s for reading!\n", omitfl_name);
@@ -4798,7 +4798,7 @@ int check_annotated_file_format(char *input_files[])
         }
 #ifndef HIDEFILE
         if (format_flags[ifl] == 1) {
-            mssgvf("\t%s is in ANNOTATED format.\n", input_files[ifl]);
+            mssgvf("\t%s is in MEGA2 format.\n", input_files[ifl]);
         } else {
             mssgvf("\t%s is in LINKAGE format.\n", input_files[ifl]);
         }
