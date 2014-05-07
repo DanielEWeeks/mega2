@@ -332,6 +332,7 @@ typedef struct fln {
     const char *typefx;
     const char *stat;
     const char *flnfx;
+    const char *flnfy;
           char *name;
           char **nameref;
     int on;
@@ -360,6 +361,20 @@ static void fln_init(fln_t *fln, const char *type, const char *typefx, const cha
     fln->typefx = typefx;
     fln->stat   = stat;
     fln->flnfx  = flnfx;
+    fln->flnfy  = 0;
+}
+
+static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *flnfx, const char *flnfy)
+{
+    if (fln->on) return;
+
+    fln->on     = 1;
+
+    fln->type   = type;
+    fln->typefx = typefx;
+    fln->stat   = stat;
+    fln->flnfx  = flnfx;
+    fln->flnfy  = flnfy;
 }
 
 #define MAP_REQ 1
@@ -371,8 +386,8 @@ static void fln_init_mega2(int map_req) {
     else
         fln_init(mapo,  "Mega2", "map", "[optional]", "map");
     fln_init(omito, "Mega2", "omit", "[optional]", "omit");
-    fln_init(freqo, "Mega2", "freq", "[optional]", "freq");
-    fln_init(peno,  "Mega2", "pen", "[optional]", "pen");
+    fln_init(freqo, "Mega2", "freq", "[optional]", "freq", "frequency");
+    fln_init(peno,  "Mega2", "pen", "[optional]", "pen", "penetrance");
 }
 
 #define PMAP_REQ 1
@@ -453,20 +468,34 @@ static void fln_col_sizes() {
 static int fln_print(fln_t *fln, int idx, int _i) {
     if (! fln->on) return 0;
 
-    if (fln_stem) {
+    if (fln_stem)
         sprintf(fln_tmp, "(%s .%s)", fln->type, fln->typefx);
-        if (fln->specified == 0) {
-            sprintf(fln->name, "%s.%s", extension_name, fln->flnfx);
-            fln->specified = 1;
-        }
-    } else {
+    else
         sprintf(fln_tmp, "(%s %s.)", fln->type, fln->typefx);
-        if (fln->specified == 0) {
+
+    if (fln->specified == 0) {
+        if (fln_stem)
+            sprintf(fln->name, "%s.%s", extension_name, fln->flnfx);
+        else
             sprintf(fln->name, "%s.%s", fln->flnfx, extension_name);
-            fln->specified = 1;
-        }
-    }
-//  printf("%2d) %-18s  %-27s %s\n",
+
+        if (access(fln->name, F_OK) && fln->flnfy) { // try again
+            if (fln_stem)
+                sprintf(fln->name, "%s.%s", extension_name, fln->flnfy);
+            else
+                sprintf(fln->name, "%s.%s", fln->flnfy, extension_name);
+            if (access(fln->name, F_OK)) { // done trying
+                if (fln_stem)
+                    sprintf(fln->name, "%s.%s", extension_name, fln->flnfx);
+                else
+                    sprintf(fln->name, "%s.%s", fln->flnfx, extension_name);
+            } else 
+          fln->specified = 1;
+        } else
+          fln->specified = 1;
+    } // else
+//        fln->specified = 1;
+
     printf("%2d) %-*s%-*s%-*s%s\n",
            idx, fln_col1+2, fln->title, fln_col2+4, fln_tmp, fln_col4+1, fln->stat,
            (access(fln->name, F_OK) ? "_" : fln->name));
