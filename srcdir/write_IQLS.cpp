@@ -128,7 +128,7 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
 {
 /* IQLS pedigree/phenotype file:
    This file contains the pedigree and phenotype information. Individuals who are not
-   listed in this file will not be included in the analysis. The columns in the ﬁle should
+   listed in this file will not be included in the analysis. The columns in the file should
    be organized as follows:
    1 1 7 6 1 1
    1 2 7 6 2 2
@@ -152,7 +152,7 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
 
    Sampled individuals who are unrelated to anyone else in the sample should be included
    by giving each such person their own unique family ID (as well as unique individual
-   ID) and setting both parents’ IDs to 0. There is no limit on the number of individuals
+   ID) and setting both parent IDs to 0. There is no limit on the number of individuals
    nor on the number of families. Each individual should be entered only once. The
    individual ID is required to be unique (e.g. it cannot be reused in a different family).
    Individuals from the same family should appear in a single cluster, though there is
@@ -197,15 +197,15 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
   Column (1) marker rs number
   Column (2) chromosome
   Column (3) physical position (in nucleotides)
-  Column (4) strand orientation (‘+’=same strand as HapMap, ‘-’=opposite strand
+  Column (4) strand orientation (+) same strand as HapMap, (-) opposite strand
   from HapMap)
   Column (5) nucleotide for allele 0
   Column (6) nucleotide for allele 1
   Columns (7)... marker genotypes (NN for missing genotype)
-  The first row of the file must contain the column headings. The headings for the ﬁrst
+  The first row of the file must contain the column headings. The headings for the first
   6 columns can be arbitrary, but should not contain any space characters. Columns
   7 and beyond contain marker genotype data for the sampled individuals, and each of
-  these columns must have the corresponding individual’s ID number as the heading.
+  these columns must have the corresponding individual ID number as the heading.
   The order of the individuals is not required to be the same as the order in the pedigree
   file. The column headings must specify the order. There is no limit on the number
   of markers. However, all markers should be on the same chromosome and should be
@@ -367,6 +367,12 @@ static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file
             sh_shell_type();
             sh_id();
             script_time_stamp(_filep);
+#ifdef RUNSHELL_SETUP
+	    // This handles the environment variable setup to allow the checking
+	    // functions in 'batch_run' to work correctly...
+	    fprintf_env_checkset_csh(_filep, "_IDCOEFS", "idcoefs");
+	    fprintf_env_checkset_csh(_filep, "_IQLS", "IQLS");
+#endif /* RUNSHELL_SETUP */
         }
         void inner () {
             char cmd[2*FILENAME_LENGTH];
@@ -375,15 +381,20 @@ static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file
             if (_numchr > 0)
                 pr_printf("echo Running Idcoefs and IQLS on chromosome %d\n", _numchr);
 
-            sprintf(cmd, "idcoefs -p %s -s %s -o IBDfile\n", file_names[4], file_names[5]);
+            sprintf(cmd, "$_IDCOEFS -p %s -s %s -o IBDfile\n", file_names[4], file_names[5]);
             sh_rm("IBDfile");
-            sh_run("idcoefs", cmd);
+            sh_run("IDCOEFS", cmd);
+            fprintf_status_check_csh(_filep, "IDCOEFS", 1);
             sh_status("idcoefs", "IBDfile");
 
             sprintf(out_fl, "IQLStest_out.%02d", _numchr);
-            sprintf(cmd, "IQLS -pheno %s -geno %s -r %s -ibd IBDfile\n",file_names[0],file_names[1],file_names[2]);
+            sprintf(cmd, "$_IQLS -pheno %s -geno %s -r %s -ibd IBDfile\n", file_names[0], file_names[1], file_names[2]);
             sh_rm("IQLStest.out");
             sh_run("IQLS", cmd);
+            //fprintf_status_check_csh(_filep, "IQLS", 1); // exits with status == 1
+            pr_printf("# IQLS will output the results of all haplotype tests to a file called ‚ÄúIQLStest.out‚Äù.\n");
+            pr_printf("# See: http://www.stat.uchicago.edu/~mcpeek/software/IQLS/IQLS_Documentation.pdf\n");
+            pr_printf("# Section 2.6 Running IQLS\n");
             sh_save_output("IQLS", "IQLStest.out", out_fl);
         }
         void file_post() {
@@ -515,7 +526,7 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
    IBD coefficients should be included for every pair of eligible individuals who have the
    same family ID (including each individual with himself/herself ). A sampled individual
    who does not share a family ID with anyone else in the sample, would be represented
-   in the markid ﬁle by a single line that gives the IBD coefficients for the person with
+   in the markid file by a single line that gives the IBD coefficients for the person with
    himself/herself.
 
 */
