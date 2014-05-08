@@ -2450,7 +2450,7 @@ linkage_ped_top  *create_full_marker_data(
 //
 // Read the first non-whitespace character in the file
 // If it is a digit assume that it is in linkage (LINKAGE) format.
-// Otherwise, assume that the file is in annotated (NAMES) format.
+// Otherwise, assume that the file is in Mega2 (NAMES) format.
 file_format check_locus_file_format(FILE *fp)
 {
     char first_char;

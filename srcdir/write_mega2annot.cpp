@@ -26,7 +26,7 @@
 ===========================================================================
 */
 
-/* Functions for writing out Mega2 annotated formatted files,
+/* Functions for writing out Mega2 formatted files,
    for now only handles integer pedigree and person IDs. Works
    like l2a.py otherwise.
 */
@@ -161,7 +161,7 @@ static void mega2annot_file_names(char *file_names[], int *combine_chromo,
     while (choice != 0) {
         draw_line();
         print_outfile_mssg();
-        printf("  Mega2 annotated file name menu\n");
+        printf("  Mega2 file name menu\n");
         draw_line();
         printf("0) Done with this menu - please proceed\n");
         if (main_chromocnt == 1 || *combine_chromo) {

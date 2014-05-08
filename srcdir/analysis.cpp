@@ -125,7 +125,7 @@ analysis_types analysis_list[] = {
     { "SUP format",                 TO_SUP },
     { "PLINK format",               TO_PLINK },
     { "CRANEFOOT format",           CRANEFOOT },
-    { "Mega2 annotated format",     MEGA2ANNOT },
+    { "Mega2 format",               MEGA2ANNOT },
     { "IQLS/Idcoefs format",        IQLS },
     { "FBAT format",                FBAT },
     { "PANGAEA MORGAN format",      PANGAEA },
@@ -822,7 +822,7 @@ void CLASS_IQLS::create_output_file(
     int format_checksum = 1; //XX
     if (format_checksum == 0) {
         errorvf("Pedigree, names and map file appear to be in LINKAGE format.\n");
-        mssgvf("IQLS requires the input data be in annotated format.\n");
+        mssgvf("IQLS requires the input data be in Mega2 format.\n");
         EXIT(INPUT_DATA_ERROR);
     }
     create_IQLS_files(&LPedTreeTop, file_names, UntypedPedOpt);

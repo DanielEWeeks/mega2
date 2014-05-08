@@ -332,6 +332,7 @@ typedef struct fln {
     const char *typefx;
     const char *stat;
     const char *flnfx;
+    const char *flnfy;
           char *name;
           char **nameref;
     int on;
@@ -360,6 +361,20 @@ static void fln_init(fln_t *fln, const char *type, const char *typefx, const cha
     fln->typefx = typefx;
     fln->stat   = stat;
     fln->flnfx  = flnfx;
+    fln->flnfy  = 0;
+}
+
+static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *flnfx, const char *flnfy)
+{
+    if (fln->on) return;
+
+    fln->on     = 1;
+
+    fln->type   = type;
+    fln->typefx = typefx;
+    fln->stat   = stat;
+    fln->flnfx  = flnfx;
+    fln->flnfy  = flnfy;
 }
 
 #define MAP_REQ 1
@@ -371,8 +386,8 @@ static void fln_init_mega2(int map_req) {
     else
         fln_init(mapo,  "Mega2", "map", "[optional]", "map");
     fln_init(omito, "Mega2", "omit", "[optional]", "omit");
-    fln_init(freqo, "Mega2", "freq", "[optional]", "freq");
-    fln_init(peno,  "Mega2", "pen", "[optional]", "pen");
+    fln_init(freqo, "Mega2", "freq", "[optional]", "freq", "frequency");
+    fln_init(peno,  "Mega2", "pen", "[optional]", "pen", "penetrance");
 }
 
 #define PMAP_REQ 1
@@ -388,6 +403,7 @@ static void fln_off() {
     while (*fln) {
         (*fln)->on = 0;
         (*fln)->specified = 0;
+        (*fln)->name[0] = 0;
         fln++;
     }
 }
@@ -418,14 +434,14 @@ static void fln_free(fln_t *fln) {
 }
 
 static void fln_free_not_present(fln_t *fln) {
-    if (access(fln->name, F_OK) != 0) {
+    if (fln->specified == 0 || access(fln->name, F_OK) != 0) {
         free(fln->name);
         fln->on = 0;
         *(fln->nameref) = NULL;
     }
 }
 
-int  fln_stem = 1;
+int  fln_stem = 0;
 char fln_tmp[FILENAME_LENGTH];
 char extension_name[FILENAME_LENGTH];
 int  fln_col1, fln_col2, fln_col4, fln_col1234;
@@ -452,20 +468,34 @@ static void fln_col_sizes() {
 static int fln_print(fln_t *fln, int idx, int _i) {
     if (! fln->on) return 0;
 
-    if (fln_stem) {
+    if (fln_stem)
         sprintf(fln_tmp, "(%s .%s)", fln->type, fln->typefx);
-        if (fln->specified == 0) {
-            sprintf(fln->name, "%s.%s", extension_name, fln->flnfx);
-            fln->specified = 1;
-        }
-    } else {
+    else
         sprintf(fln_tmp, "(%s %s.)", fln->type, fln->typefx);
-        if (fln->specified == 0) {
+
+    if (fln->specified == 0) {
+        if (fln_stem)
+            sprintf(fln->name, "%s.%s", extension_name, fln->flnfx);
+        else
             sprintf(fln->name, "%s.%s", fln->flnfx, extension_name);
-            fln->specified = 1;
-        }
-    }
-//  printf("%2d) %-18s  %-27s %s\n",
+
+        if (access(fln->name, F_OK) && fln->flnfy) { // try again
+            if (fln_stem)
+                sprintf(fln->name, "%s.%s", extension_name, fln->flnfy);
+            else
+                sprintf(fln->name, "%s.%s", fln->flnfy, extension_name);
+            if (access(fln->name, F_OK)) { // done trying
+                if (fln_stem)
+                    sprintf(fln->name, "%s.%s", extension_name, fln->flnfx);
+                else
+                    sprintf(fln->name, "%s.%s", fln->flnfx, extension_name);
+            } else 
+          fln->specified = 1;
+        } else
+          fln->specified = 1;
+    } // else
+//        fln->specified = 1;
+
     printf("%2d) %-*s%-*s%-*s%s\n",
            idx, fln_col1+2, fln->title, fln_col2+4, fln_tmp, fln_col4+1, fln->stat,
            (access(fln->name, F_OK) ? "_" : fln->name));
@@ -818,7 +848,7 @@ void menu1(file_format *infl_type,
             if (Input_Format == in_format_traditional || Input_Format == in_format_mega2) {
                 strcpy(extension_name, "01");
 
-                fln_init(loco, "Mega2", "datain", "[required]", "datain");
+                fln_init(loco, "Mega2", "names", "[required]", "names");
                 fln_init(pedo, "Mega2", "pedin", "[required]", "pedin");
                 fln_init_mega2(MAP_REQ);
 
@@ -828,13 +858,16 @@ void menu1(file_format *infl_type,
                 fln_init(loco, "Linkage", "datain", "[required]", "datain");
                 fln_init(pedo, "Linkage", "pedin", "[required]", "pedin");
                 fln_init(mapo, "Mega2 simple", "map", "[required]", "map");
+                fln_init(omito, "Mega2", "omit", "[optional]", "omit");
 
             } else if (Input_Format == in_format_extended_linkage) {
                 strcpy(extension_name, "01");
 
                 fln_init(loco, "Mega2", "hdrless names", "[required]", "names");
                 fln_init(pedo, "Linkage", "pedin", "[required]", "pedin");
+//              fln_init_mega2( MAP_REQ);
                 fln_init(mapo, "Mega2 simple", "map", "[required]", "map");
+                fln_init(omito, "Mega2", "omit", "[optional]", "omit");
 
             } else if (Input_Format == in_format_binary_PED) {
                 plinkf = 1;
@@ -1122,8 +1155,10 @@ void menu1(file_format *infl_type,
             if (exit_loop == 0)
                 draw_line();
             else {
-                if (access(*omitfl_name, F_OK) != 0)
-                    fln_free_not_present(omito);
+                if (omito->specified == 0)
+                    fln_free(omito);
+                else if (access(*omitfl_name, F_OK) != 0)
+                    fln_free(omito);
                 else {
                     printf("NOTE: Marker untyping will take place according to the omit file.\n");
                     printf("      Please check the '%s' log file after MEGA2 is finished.\n",
@@ -2077,7 +2112,7 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
     // where we convert any "NA"s (QMISSINGs) that we have read to the value of MissingQuant.
     //
     // NOTE: It is pointless to do this if 'MissingQuant == QMISSING' as would be the case if we
-    // were reading Mega2 annotated files with NA used as the missing value.
+    // were reading Mega2 files with NA used as the missing value.
     if (fabs(MissingQuant - QMISSING) > EPSILON) {
         
         if (HasQuant) {
@@ -2812,12 +2847,12 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     // map in the map file, and to present the user a list of maps for them to choose
     // from in interactive input mode.
     
-    // NOTE: For annotated map files, indexes are assigned to maps in a map file by reading
+    // NOTE: For Mega2 map files, indexes are assigned to maps in a map file by reading
     // it from left to right in order of the first occurrance of a map-name. It is an error
     // for the map-name to be associated with more than one map-type. It is an error for the
     // map-name to have a duplicate sex-designator.
     //
-    // Annotated maps are defined as follows:
+    // Mega2 maps are defined as follows:
     // map-designator == map-name . map-type. sex-designator
     // where: map-type is one of <h, k p>; sex-designator is one of <a, m, f>
     
@@ -2826,7 +2861,7 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     // gdsm tells whether the map is: sex-averaged (a), sex-specific (m,f), or female (f)
     gdsm = CALLOC((size_t)(3*EXLTop->MapCnt), genetic_distance_map_type);
     // gds is the index into the gdsm (map) array which specifies a valid genetic map (Index & SexType).
-    // For example, if the (annotated) map file looks like this...
+    // For example, if the Mega2 map file looks like this...
     // Chromosome      Map.k.a Name    Map.k.m Map.k.f BP.p
     // 3 genetic maps will be possible: Map.k (sex-averaged), Map.k (sex-specific), Map.k (female)
     // and so after exiting this for loop gds will be 3.

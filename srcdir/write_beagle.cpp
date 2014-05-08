@@ -521,7 +521,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
     // So, they must be written in the same order as written in the marker file @see write_BEAGLE_marker_file
     //
-    // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
+    // NOTE: Mega2 input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
     struct save_markers: public loop::outer, loop::loci_ped_per {
         typedef char *str;
         str *file_names;
@@ -751,7 +751,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
-    // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
+    // NOTE: Mega2 input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
     struct save_markers: public loop::outer, loop::loci_ped_per {
         typedef char *str;
         str *file_names;
@@ -1009,7 +1009,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
-    // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
+    // NOTE: Mega2 input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
     struct save_markers: public loop::outer, loop::loci_ped_per {
         typedef char *str;
         str *file_names;

@@ -840,7 +840,7 @@ int             main(int argc, char **argv)
      13 Create summary files            30 SUP format                     
      14 Old SAGE format                 31 PLINK format                   
      15 TDTMax analyses [DISABLED]      32 CRANEFOOT format               
-     16 SOLAR format                    33 Mega2 annotated format         
+     16 SOLAR format                    33 Mega2 format         
      17 Vitesse format                  34 IQLS/Idcoefs format            
      
      Select an option between 1-34 > 
@@ -866,7 +866,7 @@ int             main(int argc, char **argv)
     }
 #endif
 
-    int af;
+    int af, guess;
     if (Input_Format == in_format_traditional) {
         af = check_annotated_file_format(mega2_input_files);
         if (af == 0) {
@@ -883,18 +883,23 @@ int             main(int argc, char **argv)
             }
         } else if ((af == 3) || (af == 4))
             Input_Format = in_format_mega2;
+        msgvf("Input Format Deduced as: %s\n", INPUT_FORMAT_STR[Input_Format]);
+        guess = 1;
+    } else {
+        msgvf("Input Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
+        guess = 0;
     }
-    msgvf("Input Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
 
     if (Input_Format == in_format_mega2) {
 #ifndef HIDESTATUS
         if (mega2_input_files[3] == NULL) {
-            mssgf("Pedigree, names and map file appear to be in ANNOTATED format.");
-            mssgf("Input files will be read in as ANNOTATED format files.");
+            msgvf("Pedigree, names and map file %s Mega2 format.\n",
+                  guess ? "appear to be in" : "specified as");
         } else {
-            mssgf("Pedigree, names, map and omit file appear to be in ANNOTATED format.");
-            mssgf("Input files will be read in as ANNOTATED format files.");
+            msgvf("Pedigree, names, map and omit file %s Mega2 format.\n",
+                  guess ? "appear to be in" : "specified as");
         }
+        mssgf("Input files will be read in as Mega2 format files.");
 #endif
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -904,7 +909,7 @@ int             main(int argc, char **argv)
                                            bedfl_name,  phefl_name,
                                            UntypedPedOpt, analysis, plink_info);
         if (LPedTreeTop == NULL) {
-            errorvf("Unsuccessful in reading annotated files - aborting mega2!\n");
+            errorvf("Unsuccessful in reading Mega2 format files - aborting mega2!\n");
             EXIT(INPUT_DATA_ERROR);
         }
     } else if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED) {
@@ -919,9 +924,10 @@ int             main(int argc, char **argv)
 */
 
 #ifndef HIDESTATUS
-        mssgf("Pedigree and map files appear to be in PLINK format.");
+        msgvf("Pedigree and map files %s PLINK format.\n",
+              guess ? "appear to be in" : "specified as");
         mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
-        mssgf("Input files will be read in as PLINK or Annotated format files as appropriate.");
+        mssgf("Input files will be read in as PLINK or Mega2 format files as appropriate.");
 #endif
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -988,19 +994,21 @@ int             main(int argc, char **argv)
 
 #ifndef HIDESTATUS
         if (Input_Format == in_format_linkage) {
-            mssgf("Pedigree, names and map file appear to be in LINKAGE format.");
+            msgvf("Pedigree, names and map file %s LINKAGE format.\n",
+                  guess ? "appear to be in" : "specified as");
             mssgf("Input files will be read in as LINKAGE format files.");
         } else if (Input_Format == in_format_extended_linkage) {
-            mssgf("Pedigree and map file appear to be in LINKAGE format.");
+            msgvf("Pedigree and map file %s LINKAGE format.\n",
+                  guess ? "appear to be in" : "specified as");
             mssgf("Names (aka locus) file appears to be in Mega2 format w/o header.");
             mssgf("Input files will be read appropriately.");
         }
 
         if (penfl_name != NULL) {
-            warnvf("Penetrance file %s will not be read in (only available in annotated format.\n", penfl_name);
+            warnvf("Penetrance file %s will not be read in (only available in Mega2 format.\n", penfl_name);
         }
         if (freqfl_name != NULL) {
-            warnvf("Frequency file %s will not be read in (only available in annotated format.\n", freqfl_name);
+            warnvf("Frequency file %s will not be read in (only available in Mega2 format.\n", freqfl_name);
         }
 #endif
         REC_UNKNOWN = zero;
@@ -1012,8 +1020,8 @@ int             main(int argc, char **argv)
             EXIT(INPUT_DATA_ERROR);
         }
     } else {
-        errorf("Input files appear to be in mixed ANNOTATED and LINKAGE format.");
-        errorf("Please use only ANNOTATED or only LINKAGE files.");
+        errorf("Input files appear to be in mixed Mega2 format and LINKAGE format.");
+        errorf("Please use only Mega2 files or only LINKAGE files.");
         errorf("Unsuccessful in reading input files - aborting mega2!\n");
         EXIT(INPUT_DATA_ERROR);
     }
