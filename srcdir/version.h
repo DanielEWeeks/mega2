@@ -33,7 +33,7 @@
  * The parameters here are likely to need to be changed for each release.
  *
  * NOTE:
- * ../install.sh around line 117 defines VERSION which has to be changed
+ * ../install.sh around line 30 defines VERSION which has to be changed
  * whenever MEGA{VER,REV,PATCH} are changed.
  */
 
