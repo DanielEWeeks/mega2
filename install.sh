@@ -24,6 +24,18 @@
 #       e-mail: weeks@pitt.edu
 # 
 # ===========================================================================
+
+# NOTE: Please refer to 'srcdir/version.h' which also encodes the Mega2 version
+# information.
+#VERSION=v4.6.2
+
+VERSION_H='./srcdir/version.h'
+MEGA2VER=`grep MEGA2VER ${VERSION_H} | sed -n 's/^#define MEGA2VER \(.*\)/\1/p'`
+MEGA2REV=`grep MEGA2REV ${VERSION_H} | sed -n 's/^#define MEGA2REV \(.*\)/\1/p'`
+MEGA2PATCH=`grep MEGA2PATCH ${VERSION_H} | sed -n 's/^#define MEGA2PATCH \(.*\)/\1/p'`
+# Get the current Mega2 version numbers from the source...
+VERSION="v${MEGA2VER}.${MEGA2REV}.${MEGA2PATCH}"
+
 #
 # shell script to install mega2
 # and find out the perl path
@@ -31,6 +43,19 @@
 # usage: install.sh [default, /usr/local/bin/]
 # gunzip mega2.gz
 # First ask for which path to install into
+
+#
+# The user can bypass certain questions asked by the script by setting the
+# appropriate environment variables. So, if the user always wants the behavior
+# associated with these variables they can be set one time in thee user's shell
+# RC file. The variables are:
+#
+# MEGA2_BINARY_DIRECTORY (if defined) should be set to the path that the Mega2
+# binaries will be installed. If this is not a path (directory) an error will
+# be given, and the script will exit.
+#
+# MEGA2_OVERWRITE_BINARIES (if defined) should be set to any character string,
+# it will cause the install script to always overwrite the binaries.
 
 function verify() {
     echo
@@ -88,6 +113,20 @@ function verify() {
     else
         rnotfound=0
         echo OK: Found $a
+        echo Checking for nplplot library installed in R
+        rm -f nplplot_installed_version.txt
+        R --no-save 1>/dev/null 2>&1 <<RSCRIPT
+sink("nplplot_installed_version.txt")
+packageVersion("nplplot")
+RSCRIPT
+        if [[ -s "nplplot_installed_version.txt" ]] ; then
+            NPLPLOT_INSTALLED_VERSION=`sed -n 's/^\[1\] \(.*\)/\1/p' nplplot_installed_version.txt`
+            echo "OK: Found nplplot version $NPLPLOT_INSTALLED_VERSION"
+        else
+            echo "WARNING: nplplot not installed"
+            echo "WARNING: You will need to start R and run the command:"
+            echo "WARNING: > install.packages(\"nplplot\")"
+        fi
     fi
 
     echo Checking for csh
@@ -98,11 +137,26 @@ function verify() {
        echo OK: Found $a
     fi
 
-    echo
-    echo "Enter full path for $module to be installed."
-    echo "You will need write access."
-    echo -n "[default /usr/local/bin]: "
-    read -a mega2_path
+    # if this environment variable is set to a directory, then just install there
+    # and don't query the user
+    if [[ $MEGA2_BINARY_DIRECTORY ]] ; then
+        mega2_path=$MEGA2_BINARY_DIRECTORY
+        if [ ! -d $mega2_path ]; then
+            echo "The directory '$mega2_path'"
+            echo "associated with the environment variable MEGA2_BINARY_DIRECTORY does not exist."
+            echo "Please create the directory or unset the environment variable and run install.sh"
+            echo "(this script) again."
+            exit
+        fi
+        echo "Using path $mega2_path from the environment variable MEGA2_BINARY_DIRECTORY"
+        echo "for $module to be installed."
+    else 
+        echo
+        echo "Enter full path for $module to be installed."
+        echo "You will need write access."
+        echo -n "[default /usr/local/bin]: "
+        read -a mega2_path
+    fi
 
     if [[ $mega2_path == "" ]]; then
         mega2_path=/usr/local/bin
@@ -113,8 +167,6 @@ function verify() {
         echo
     fi
 }
-
-VERSION=v4.6.2
 
 if [[ $1 ]]; then
     scripts=$1;
@@ -337,7 +389,10 @@ for scr in $scripts; do
 	if [ -x $mega2prog ]; then
 	    echo "Installing  $mega2prog for $OSTYPE version $v"
 	fi
-	if [[ -e $mega2_path"/mega2_${VERSION}_${OSTYPE}" ||  -h $mega2_path"/mega2_${VERSION}_${OSTYPE}" ]]; then
+
+        if [[ $MEGA2_OVERWRITE_BINARIES ]] ; then
+            /bin/cp -p $mega2prog $mega2_path"/mega2_${VERSION}_${OSTYPE}"
+	elif [[ -e $mega2_path"/mega2_${VERSION}_${OSTYPE}" ||  -h $mega2_path"/mega2_${VERSION}_${OSTYPE}" ]]; then
 	    echo "A file named mega2_${VERSION}_${OSTYPE} already exists in $mega2_path"
 	    echo -n "Remove this file [y/n]? " 
             read answer
@@ -350,7 +405,10 @@ for scr in $scripts; do
         else
 		/bin/cp -p $mega2prog $mega2_path"/mega2_${VERSION}_${OSTYPE}"
 	fi
-	if [[ -e $mega2_path"/mega2" || -h $mega2_path"/mega2" ]]; then
+
+        if [[ $MEGA2_OVERWRITE_BINARIES ]] ; then
+            /bin/cp -p $mega2prog $mega2_path"/mega2"
+	elif [[ -e $mega2_path"/mega2" || -h $mega2_path"/mega2" ]]; then
 	    echo "A file named mega2 already exists in $mega2_path"
 	    echo -n "Remove this file [y/n]? "
             read answer
@@ -433,5 +491,5 @@ for scr in $scripts; do
 done
 
 echo
-echo "Please remember to also install the 'nplplot' and 'genetics' R packages into R"
+echo "Please remember to also install the 'nplplot' and 'genetics' R packages into R if necessary"
 echo "Please consult the Mega2 documentation for details"
