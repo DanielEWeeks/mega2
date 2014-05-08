@@ -57,8 +57,25 @@ CLASS_BEAGLE_UNPHASED_UNRELATED *BEAGLE_UNPHASED_UNRELATED = new CLASS_BEAGLE_UN
 CLASS_BEAGLE_UNPHASED_TRIO *BEAGLE_UNPHASED_TRIO = new CLASS_BEAGLE_UNPHASED_TRIO();
 CLASS_BEAGLE_UNPHASED_PAIR *BEAGLE_UNPHASED_PAIR = new CLASS_BEAGLE_UNPHASED_PAIR();
 
-#define MISSING_ALLELE_CODE                "0"
+//
+// The emtry.cpp code uses 0 for missing in pr_pheno(), pr_father(), pr_mother()...
 #define MISSING_ID_CODE                    "0"
+#define MISSING_ALLELE_CODE                MISSING_ID_CODE
+
+
+/**
+
+   BEAGLE_INCLUDE_PHENOTYPE
+
+   Beagle only needs a phenotype for association testing. Furthermore, for association testing
+   it will give an error if the phenotype is 0 (e.g., missing). So, it would seem that there are
+   two ways of proceeding:
+   1) never include phenotypes, and do not do association testing, or
+   2) only include person data that has a phenotype (e.g., it's not missing) informaiton and do association testing.
+
+   Implemented here is #1.
+ */
+
 
 /*
      error_messages_ext.h:  mssgf my_calloc warnf
@@ -180,6 +197,7 @@ static void sort_genetic_positions() {
  the phased parental haplotypes are coded as 2/1 depending on whether or not the haplotype is transmitted.
  Children must be omitted from the analysis (either by filtering the input data or by using the
  excludesample= argument). Beagle is limited in this way because it only performs Fisher exact tests on 2x2 tables.
+ In association testing a 0 (unknown) phenotype will generate an error.
  
  @param[in] Top Root   Data structure references to pedigrees, persons, and loci.
  @param[in] file_names List of file neames used by this analysis mode.
@@ -301,6 +319,9 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
 /**
  @brief Output the Beagle Genotype file; Unphased unrelated data format
 
+ From Section "2.1 Genotypes file format" of the Beagle manual...
+ http://faculty.washington.edu/browning/beagle/beagle_3.3.2_31Oct11.pdf
+
  In Unphased unrelated data each pair of columns (following the first two) will give the
  genotype for each individual.
 
@@ -320,7 +341,6 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     struct save_fams: public loop::outer, loop::ped_per {
         typedef char *str;
         str *file_names;
-        int missing_pheno;
 
         save_fams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
@@ -329,7 +349,6 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
                 return;
             }
             mssgvf("        BEAGLE genotype file:                %s/%s\n", *_opath, file_names[0]);
-            missing_pheno = 0;
             run_loop(file_names[0]);
         }
         void file_header() {
@@ -337,22 +356,10 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
         }
         void inner() {
             // FUTURE: Also, only write data for individuals where some marker information is known.
-            if (has_pheno()) {
-                pr_fam(); pr_fam(); // Must be printed out twice because there are two allele columns...
-            } else {
-                missing_pheno++; // Do not write out data associated with individuals that have unknown status...
-            }
+            pr_fam(); pr_fam(); // Must be printed out twice because there are two allele columns...
         }
         void file_trailer() {
             pr_nl();
-        }
-        void file_post() {
-            if (missing_pheno > 0) {
-                warnvf("%d IDs were filtered out because they had an unknown trait status.\n",
-		       missing_pheno);
-                //warnvf("%d individuals were filtered out because they were not genotyped at the selected markers.\n",
-		//       missing_markers);
-            }
         }
     } *sP = new save_fams(Top);
     
@@ -379,9 +386,9 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             // For diploid data, the identifier and affection status will typically be the same for both alleles.
             // Must be printed out twice because there are two allele columns...
             // The sampling ID must be unique throughout....
-            if (has_pheno()) pr_printf("%s %s ", _tpe->UniqueID, _tpe->UniqueID);
 
-            //pr_printf("%s_%d %s_%d ", _tp->Name, _tpe->ID, _tp->Name, _tpe->ID);
+            // Here we use UniqueID explicitly...
+            pr_printf("%s %s ", _tpe->UniqueID, _tpe->UniqueID);
             //pr_per(); pr_per();
         }
         void file_trailer() {
@@ -408,13 +415,11 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             pr_printf("PID Father ");
         }
         void inner() {
-            if (has_pheno()) {
-                // The indexes for IDs in linkage_ped_rec (_tpe) are 1-based with 0 used for NA.
-                // Since something is output for the child/individual then we need to need to
-                // output something here so that the data in the subsequent columns is consistent.
-                const char *fid = (_tpe->Father != 0) ? _tp->Entry[_tpe->Father-1].UniqueID : MISSING_ID_CODE;
-                pr_printf("%s %s ", fid, fid);
-	    }
+            // The indexes for IDs in linkage_ped_rec (_tpe) are 1-based with 0 used for NA.
+            // Since something is output for the child/individual then we need to
+            // output something here so that the data in the subsequent columns is consistent.
+            const char *fid = (_tpe->Father != 0) ? _tp->Entry[_tpe->Father-1].UniqueID : MISSING_ID_CODE;
+            pr_printf("%s %s ", fid, fid);
             //pr_father(); pr_father();
         }
         void file_trailer() {
@@ -441,10 +446,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             pr_printf("MID Mother ");
         }
         void inner() {
-            if (has_pheno()) {
-                const char *mid = (_tpe->Mother != 0) ? _tp->Entry[_tpe->Mother-1].UniqueID : MISSING_ID_CODE;
-                pr_printf("%s %s ", mid, mid);
-            }    
+            const char *mid = (_tpe->Mother != 0) ? _tp->Entry[_tpe->Mother-1].UniqueID : MISSING_ID_CODE;
+            pr_printf("%s %s ", mid, mid);
             //pr_mother(); pr_mother();
         }
         void file_trailer() {
@@ -471,7 +474,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             pr_printf("C Sex ");
         }
         void inner() {
-            if (has_pheno()) { pr_sex(); pr_sex(); }
+            pr_sex(); pr_sex();
         }
         void file_trailer() {
             pr_nl();
@@ -482,7 +485,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     sC->load_formats(fwid, pwid, -1);
     sC->iterate();
     delete sC;
-    
+
+#ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
     struct save_phenotypes: public loop::outer, loop::ped_per {
         typedef char *str;
@@ -503,8 +507,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             else warnf("The genotype file contains no phenotypes.");
         }
         void inner() {
-            // Must be printed out twice because there are two allele columns
-            if (has_pheno()) { pr_pheno(); pr_pheno(); }
+            pr_pheno(); pr_pheno();
         }
         void file_trailer() {
             if (_tte != (linkage_locus_rec *)NULL) pr_nl();
@@ -516,12 +519,13 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     sAT->load_formats(fwid, pwid, -1);
     sAT->iterate();
     delete sAT;
+#endif /* BEAGLE_INCLUDE_PHENOTYPE */
     
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
     // So, they must be written in the same order as written in the marker file @see write_BEAGLE_marker_file
     //
-    // NOTE: Mega2 input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
+    // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
     struct save_markers: public loop::outer, loop::loci_ped_per {
         typedef char *str;
         str *file_names;
@@ -543,15 +547,13 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             pr_printf("M %s ", _tle->Name);
         }
         void inner() {
-            if (has_pheno()) {
-                if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
-                    pr_printf("%s %s ",
-                              recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
-                } else {
-                    linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
-                    pr_printf("%s %s ", format_allele(Locus, _allele1), format_allele(Locus, _allele2));
-                }
+            if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
+                pr_printf("%s %s ",
+                          recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
+                          recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
+            } else {
+                linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
+                pr_printf("%s %s ", format_allele(Locus, _allele1), format_allele(Locus, _allele2));
             }
         }
         void loci_end() {
@@ -569,9 +571,12 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
 /**
  @brief Output the Beagle Genotype file; Unphased [related] trio data format
 
+ From Section "2.1 Genotypes file format" of the Beagle manual...
+ http://faculty.washington.edu/browning/beagle/beagle_3.3.2_31Oct11.pdf
+
  In Unphased [related] trio data each 6-tuple of columns (following the first two) will give the
- genotype of one parent-offspring trio <father, mother, child>. If both Father and Mother are
- not present, then nothing is written for the child.
+ genotype of one parent-offspring trio <1st_parent, 2nd_parent, child>. If both Father and Mother
+ are not present, then nothing is written for the child.
 
  Processing of these files requires the 'trios' command line argument to Beagle.
 
@@ -588,7 +593,6 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     struct save_fams: public loop::outer, loop::ped_per {
         typedef char *str;
         str *file_names;
-        int skipped_id;
         
         save_fams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
@@ -597,38 +601,18 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                 return;
             }
             mssgvf("        BEAGLE genotype file:                %s/%s\n", *_opath, file_names[0]);
-            skipped_id = 0;
             run_loop(file_names[0]);
         }
         void file_header() {
             pr_printf("P Pedigree ");
         }
         void inner() {
-            // NOTE: from entry.h: linkage_ped_rec  *_tpe;
-            // The indexes for IDs in linkage_ped_rec (_tpe) are 1-based with 0 used for NA.
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has both parents, the child is affected, and both parents are unaffected...
-            if (father != 0 && mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0 && is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
-                pr_fam(); pr_fam();
-                pr_fam(); pr_fam();
-                pr_fam(); pr_fam();
-            } else {
-                skipped_id++; // Didn't meat the above criteria...
-            }
+            pr_fam(); pr_fam();
+            pr_fam(); pr_fam();
+            pr_fam(); pr_fam();
         }
         void file_trailer() {
             pr_nl();
-        }
-        void file_post() {
-            if (skipped_id > 0) {
-                warnvf("%d IDs were filtered because they did not meet the inclusion criteria\n", skipped_id);
-                warnf("which is: the ID has both parents; the ID (child) is affected; and");
-                warnf("both parents are unaffected.");
-                //warnvf("%d individuals were filtered out because they were not genotyped at the selected markers.\n",
-		//       missing_markers);
-            }
         }
     } *sP = new save_fams(Top);
     
@@ -654,19 +638,12 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             pr_nl();
         }
         void inner() {
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has both parents, the child is affected, and both parents are unaffected...
-            if (father != 0 && mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0 && is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
-                char *fid = _tp->Entry[father-1].UniqueID;
-                char *mid = _tp->Entry[mother-1].UniqueID;
-                pr_printf("%s %s %s %s %s %s ", fid, fid, mid, mid, _tpe->UniqueID, _tpe->UniqueID);
-                
-                //pr_father(); pr_father();
-                //pr_mother(); pr_mother();
-                //pr_per(); pr_per();
-            }
+            const char *fid = (_tpe->Father != 0) ? _tp->Entry[_tpe->Father-1].UniqueID : MISSING_ID_CODE;
+            const char *mid = (_tpe->Mother != 0) ? _tp->Entry[_tpe->Mother-1].UniqueID : MISSING_ID_CODE;
+            pr_printf("%s %s %s %s %s %s ", fid, fid, mid, mid, _tpe->UniqueID, _tpe->UniqueID);
+            //pr_father(); pr_father();
+            //pr_mother(); pr_mother();
+            //pr_per(); pr_per();
         }
     } *sI = new save_pers(Top);
     
@@ -692,15 +669,17 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             pr_nl();
         }
         void inner() {
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has both parents, the child is affected, and both parents are unaffected...
-            if (father != 0 && mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0 && is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
-                pr_sex(&_tp->Entry[father-1]); pr_sex(&_tp->Entry[father-1]);
-                pr_sex(&_tp->Entry[mother-1]); pr_sex(&_tp->Entry[mother-1]);
-                pr_sex(); pr_sex();
+            if (_tpe->Father != 0) {
+                pr_sex(&_tp->Entry[_tpe->Father-1]); pr_sex(&_tp->Entry[_tpe->Father-1]);
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
+            if (_tpe->Mother != 0) {
+                pr_sex(&_tp->Entry[_tpe->Mother-1]); pr_sex(&_tp->Entry[_tpe->Mother-1]);
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
+            }
+            pr_sex(); pr_sex();
         }
     } *sC = new save_sexs(Top);
     
@@ -709,6 +688,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     sC->iterate();
     delete sC;
     
+#ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
     struct save_phenotypes: public loop::outer, loop::ped_per {
         typedef char *str;
@@ -728,15 +708,17 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             else warnf("The genotype file contains no phenotypes.");
         }
         void inner() {
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has both parents, the child is affected, and both parents are unaffected...
-            if (father != 0 && mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0 && is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
-                pr_pheno(&_tp->Entry[father-1]); pr_pheno(&_tp->Entry[father-1]);
-                pr_pheno(&_tp->Entry[mother-1]); pr_pheno(&_tp->Entry[mother-1]);
-                pr_pheno(); pr_pheno();
+            if (_tpe->Father != 0) {
+                pr_pheno(&_tp->Entry[_tpe->Father-1]); pr_pheno(&_tp->Entry[_tpe->Father-1]);
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
+            if (_tpe->Mother != 0) {
+                pr_pheno(&_tp->Entry[_tpe->Mother-1]); pr_pheno(&_tp->Entry[_tpe->Mother-1]);
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
+            }
+            pr_pheno(); pr_pheno();
         }
         void file_trailer() {
             if (_tte != (linkage_locus_rec *)NULL) pr_nl();
@@ -748,10 +730,11 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     sAT->load_formats(fwid, pwid, -1);
     sAT->iterate();
     delete sAT;
+#endif /* BEAGLE_INCLUDE_PHENOTYPE */
     
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
-    // NOTE: Mega2 input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
+    // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
     struct save_markers: public loop::outer, loop::loci_ped_per {
         typedef char *str;
         str *file_names;
@@ -773,35 +756,48 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             pr_printf("M %s ", _tle->Name);
         }
         void inner() {
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has both parents, the child is affected, and both parents are unaffected...
-            if (father != 0 && mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0 && is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
-                linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[father-1]);
-                linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[mother-1]);
-//xx            int _allele1_f = _tpe_f->Data[_locus].Alleles.Allele_1;
-//xx            int _allele2_f = _tpe_f->Data[_locus].Alleles.Allele_2;
-//xx            int _allele1_m = _tpe_m->Data[_locus].Alleles.Allele_1;
-//xx            int _allele2_m = _tpe_m->Data[_locus].Alleles.Allele_2;
-                int _allele1_f, _allele2_f, _allele1_m, _allele2_m;
+            if (_tpe->Father != 0) {
+                int _allele1_f, _allele2_f;
+                linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[_tpe->Father-1]);
                 get_2alleles(_tpe_f->Marker, _locus, &_allele1_f, &_allele2_f);
-                get_2alleles(_tpe_m->Marker, _locus, &_allele1_m, &_allele2_m);
                 if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
-                    pr_printf("%s %s %s %s %s %s ",
+                    pr_printf("%s %s ",
                               recode_name(_allele1_f, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele2_f, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele1_m, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele2_m, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
+                              recode_name(_allele2_f, MISSING_ALLELE_CODE, "?"));
                 } else {
                     linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
-                    pr_printf("%s %s %s %s %s %s ",
-			      format_allele(Locus, _allele1_f), format_allele(Locus, _allele2_f),
-			      format_allele(Locus, _allele1_m), format_allele(Locus, _allele2_m),
-			      format_allele(Locus, _allele1), format_allele(Locus, _allele2));
+                    pr_printf("%s %s ",
+                              format_allele(Locus, _allele1_f), format_allele(Locus, _allele2_f));
                 }
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
+            }
+
+            if (_tpe->Mother != 0) {
+                int _allele1_m, _allele2_m;
+                linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[_tpe->Mother-1]);
+                get_2alleles(_tpe_m->Marker, _locus, &_allele1_m, &_allele2_m);
+                if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
+                    pr_printf("%s %s ",
+                              recode_name(_allele1_m, MISSING_ALLELE_CODE, "?"),
+                              recode_name(_allele2_m, MISSING_ALLELE_CODE, "?"));
+                } else {
+                    linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
+                    pr_printf("%s %s ",
+                              format_allele(Locus, _allele1_m), format_allele(Locus, _allele2_m));
+                }
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
+            }
+
+            if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
+                pr_printf("%s %s ",
+                          recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
+                          recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
+            } else {
+                linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
+                pr_printf("%s %s ",
+                          format_allele(Locus, _allele1), format_allele(Locus, _allele2));
             }
         }
         void loci_end() {
@@ -830,45 +826,30 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
  @param[in] fwid       Width of (max characers taken by) pedigree/family id in the output file.
  @return void
 */
-static int filtered_pairs;
 static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char *file_names[],
                                                      const int pwid, const int fwid)
 {
-    filtered_pairs = 0;
     // Pedigree...
-    struct save_fams: public loop::outer, loop::ped_per_trait {
+    struct save_fams: public loop::outer, loop::ped_per {
         typedef char *str;
         str *file_names;
         
-        save_fams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_trait(Top) { }
+        save_fams(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) {
                 warnf("Beagle analysis can only be run on autosomes.");
                 return;
             }
             mssgvf("        BEAGLE genotype file:                %s/%s\n", *_opath, file_names[0]);
-            filtered_pairs = 0;
             run_loop(file_names[0]);
         }
         void file_header() {
             pr_printf("P Pedigree ");
         }
         void inner() {
-            // The indexes for IDs in linkage_ped_rec (_tpe) are 1-based with 0 used for NA.
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has a parent, the child is affected, and the parent is unaffected...
-            if (father != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0) {
-                pr_fam(); pr_fam();
-                pr_fam(); pr_fam();
-            } else filtered_pairs++;
-            if (mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
-                pr_fam(); pr_fam();
-                pr_fam(); pr_fam();
-            } else filtered_pairs++;
+            pr_fam(); pr_fam(); pr_fam(); pr_fam();
+
+            pr_fam(); pr_fam(); pr_fam(); pr_fam();
         }
         void file_trailer() {
             pr_nl();
@@ -879,17 +860,15 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     sP->load_formats(fwid, pwid, -1);
     sP->iterate();
     delete sP;
-    if (filtered_pairs != 0) {
-        warnvf("There were %d pairs excluded where the parent was not genotyped,\n", filtered_pairs);
-        warnf("or the individual was not affected, or the parent was affected.");
-    }
     
-    // Father, Mother, Child (6-tuple)...
-    struct save_pers: public loop::outer, loop::ped_per_trait {
+    // Each set of four consecutive columns (beginning with columns 3-6) gives the genotype data
+    // for one parent-offspring pair. In each set of four columns, the first two columns give the
+    // genotypes for the genotyped parent, and the last two columns give the genotypes for the offspring.
+    struct save_pers: public loop::outer, loop::ped_per {
         typedef char *str;
         str *file_names;
         
-        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_trait(Top) { }
+        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -901,20 +880,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             pr_nl();
         }
         void inner() {
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has a parent, the child is affected, and the parent is unaffected...
-            if (father != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0) {
-                char *fid = _tp->Entry[father-1].UniqueID;
-                pr_printf("%s %s %s %s ",fid, fid, _tpe->UniqueID, _tpe->UniqueID);
-            }
-            if (mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
-                char *mid = _tp->Entry[mother-1].UniqueID;
-                pr_printf("%s %s %s %s ", mid, mid, _tpe->UniqueID, _tpe->UniqueID);
-            }
+            const char *fid = (_tpe->Father != 0) ? _tp->Entry[_tpe->Father-1].UniqueID : MISSING_ID_CODE;
+            const char *mid = (_tpe->Mother != 0) ? _tp->Entry[_tpe->Mother-1].UniqueID : MISSING_ID_CODE;
+            pr_printf("%s %s %s %s ",fid, fid, _tpe->UniqueID, _tpe->UniqueID);
+
+            pr_printf("%s %s %s %s ", mid, mid, _tpe->UniqueID, _tpe->UniqueID);
         }
     } *sI = new save_pers(Top);
     
@@ -924,11 +894,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     delete sI;
     
     // Sex...
-    struct save_sexs: public loop::outer, loop::ped_per_trait {
+    struct save_sexs: public loop::outer, loop::ped_per {
         typedef char *str;
         str *file_names;
         
-        save_sexs(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_trait(Top) { }
+        save_sexs(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             run_loop(*_opath, file_names[0], "a");
@@ -940,20 +910,19 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             pr_nl();
         }
         void inner() {
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has a parent, the child is affected, and the parent is unaffected...
-            if (father != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0) {
-                pr_sex(&_tp->Entry[father-1]); pr_sex(&_tp->Entry[father-1]);
-                pr_sex(); pr_sex();
+            if (_tpe->Father != 0) {
+                pr_sex(&_tp->Entry[_tpe->Father-1]); pr_sex(&_tp->Entry[_tpe->Father-1]);
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
-            if (mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
-                pr_sex(&_tp->Entry[mother-1]); pr_sex(&_tp->Entry[mother-1]);
-                pr_sex(); pr_sex();
+            pr_sex(); pr_sex();
+
+            if (_tpe->Mother != 0) {
+                pr_sex(&_tp->Entry[_tpe->Mother-1]); pr_sex(&_tp->Entry[_tpe->Mother-1]);
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
+            pr_sex(); pr_sex();
         }
     } *sC = new save_sexs(Top);
     
@@ -962,6 +931,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     sC->iterate();
     delete sC;
     
+#ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
     struct save_phenotypes: public loop::outer, loop::trait_ped_per {
         typedef char *str;
@@ -981,20 +951,19 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             else warnf("The genotype file contains no phenotypes.");
         }
         void inner() {
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has a parent, the child is affected, and the parent is unaffected...
-            if (father != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0) {
-                pr_pheno(&_tp->Entry[father-1]); pr_pheno(&_tp->Entry[father-1]);
-                pr_pheno(); pr_pheno();
+            if (_tpe->Father != 0) {
+                pr_pheno(&_tp->Entry[_tpe->Father-1]); pr_pheno(&_tp->Entry[_tpe->Father-1]);
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
-            if (mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
-                pr_pheno(&_tp->Entry[mother-1]); pr_pheno(&_tp->Entry[mother-1]);
-                pr_pheno(); pr_pheno();
+            pr_pheno(); pr_pheno();
+
+            if (_tpe->Mother != 0) {
+                pr_pheno(&_tp->Entry[_tpe->Mother-1]); pr_pheno(&_tp->Entry[_tpe->Mother-1]);
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
+            pr_pheno(); pr_pheno();
         }
         void file_trailer() {
             if (_tte != (linkage_locus_rec *)NULL) pr_nl();
@@ -1006,10 +975,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     sAT->load_formats(fwid, pwid, -1);
     sAT->iterate();
     delete sAT;
+#endif /* BEAGLE_INCLUDE_PHENOTYPE */
     
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
-    // NOTE: Mega2 input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
+    // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
     struct save_markers: public loop::outer, loop::loci_ped_per {
         typedef char *str;
         str *file_names;
@@ -1031,51 +1001,57 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             pr_printf("M %s ", _tle->Name);
         }
         void inner() {
-            int father = _tpe->Father, mother = _tpe->Mother;
-            // Only if this ID has a parent, the child is affected, and the parent is unaffected...
-            if (father != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[father-1])) == 0) {
-
-                linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[father-1]);
-//xx            int _allele1_f = _tpe_f->Data[_locus].Alleles.Allele_1;
-//xx            int _allele2_f = _tpe_f->Data[_locus].Alleles.Allele_2;
+            if (_tpe->Father != 0) {
                 int _allele1_f, _allele2_f;
+                linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[_tpe->Father-1]);
                 get_2alleles(_tpe_f->Marker, _locus, &_allele1_f, &_allele2_f);
                 if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
-                    pr_printf("%s %s %s %s ",
+                    pr_printf("%s %s ",
                               recode_name(_allele1_f, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele2_f, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
+                              recode_name(_allele2_f, MISSING_ALLELE_CODE, "?"));
                 } else {
                     linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
-                    pr_printf("%s %s %s %s ",
-			      format_allele(Locus, _allele1_f), format_allele(Locus, _allele2_f),
-			      format_allele(Locus, _allele1), format_allele(Locus, _allele2));
+                    pr_printf("%s %s ",
+                              format_allele(Locus, _allele1_f), format_allele(Locus, _allele2_f));
                 }
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
-            if (mother != 0 &&
-                is_affected_pheno() == 1 &&
-                is_affected_pheno(&(_tp->Entry[mother-1])) == 0) {
 
-                linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[mother-1]);
-//xx            int _allele1_m = _tpe_m->Data[_locus].Alleles.Allele_1;
-//xx            int _allele2_m = _tpe_m->Data[_locus].Alleles.Allele_2;
+            if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
+                pr_printf("%s %s ",
+                          recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
+                          recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
+            } else {
+                linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
+                pr_printf("%s %s ",
+                          format_allele(Locus, _allele1), format_allele(Locus, _allele2));
+            }
+
+            if (_tpe->Mother != 0) {
                 int _allele1_m, _allele2_m;
+                linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[_tpe->Mother-1]);
                 get_2alleles(_tpe_m->Marker, _locus, &_allele1_m, &_allele2_m);
                 if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
-                    pr_printf("%s %s %s %s ",
+                    pr_printf("%s %s ",
                               recode_name(_allele1_m, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele2_m, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
-                              recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
+                              recode_name(_allele2_m, MISSING_ALLELE_CODE, "?"));
                 } else {
                     linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
-                    pr_printf("%s %s %s %s ",
-                              format_allele(Locus, _allele1_m), format_allele(Locus, _allele2_m),
-                              format_allele(Locus, _allele1), format_allele(Locus, _allele2));
-		}
+                    pr_printf("%s %s ",
+                              format_allele(Locus, _allele1_m), format_allele(Locus, _allele2_m));
+                }
+            } else {
+                pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
+            }
+            if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
+                pr_printf("%s %s ",
+                          recode_name(_allele1, MISSING_ALLELE_CODE, "?"),
+                          recode_name(_allele2, MISSING_ALLELE_CODE, "?"));
+            } else {
+                linkage_locus_rec *Locus = &(_LTop->Locus[_locus]);
+                pr_printf("%s %s ",
+                          format_allele(Locus, _allele1), format_allele(Locus, _allele2));
             }
         }
         void loci_end() {
@@ -1211,6 +1187,7 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
             pr_printf("  exit 2\n");
             pr_printf("endif\n");
 
+#ifdef BEAGLE_INCLUDE_PHENOTYPE
             pr_printf("\n");
             pr_printf("\necho\n");
             
@@ -1234,6 +1211,7 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
             } else {
                 pr_printf("echo 'No Trait available for Association Testing.'\n");
             }
+#endif /* BEAGLE_INCLUDE_PHENOTYPE */
         }
         void file_post() {
             chmod_X_file(path_);
