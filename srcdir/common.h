@@ -61,6 +61,8 @@ using namespace std;
 #define access(str,type) _access(str,type)
 #define unlink(str) _unlink(str)
 
+extern int snprintf(char *buf, int cnt, const char *fmt, ...);
+
 /* warning C4701: potentially uninitialized local variable ... used */
 #pragma warning(disable: 4100 4701)
 #endif
