@@ -434,6 +434,20 @@ const char *mklogdir(void)
     return (const char *)sumdir;
 }
 
+#ifdef _WIN
+int snprintf(char *buf, int cnt, const char *fmt, ...)
+{
+    va_list ap;
+    int ret;
+
+    va_start(ap, fmt);
+    ret = vsnprintf(buf, cnt, fmt, ap);
+    va_end(ap);
+
+    return ret;
+}
+#endif
+
 void goodbye(void)
 {
     FILE *XX, *err;
