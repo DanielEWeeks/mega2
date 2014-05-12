@@ -75,6 +75,7 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1820302391 "Robert V. Baron" 
 \end_header
 
 \begin_body
@@ -147,7 +148,7 @@ Department of Human Genetics, University of Pittsburgh
 \begin_layout Plain Layout
 Copyright 
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -294,7 +295,7 @@ http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf
 
 \begin_layout Standard
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -322,7 +323,7 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-During an association or linkage analysis project, one may need to analyze
+During an association or linkage  analysis project, one may need to analyze
  the data with several different programs.
  Unfortunately, it can often be quite difficult to get one's data in the
  proper format desired by each different computer program.
@@ -463,8 +464,8 @@ reference "sub:Simulate-errors"
 \end_layout
 
 \begin_layout Enumerate
-Input and output support for Mega2-annotated format files that contain informati
-ve header lines and are readable into R (See Section 
+Input and output support for Mega2 format files that contain informative
+ header lines and are readable into R (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-file-formats"
@@ -535,7 +536,7 @@ Graphical overview of Mega2
 
 \begin_layout Standard
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -561,7 +562,7 @@ begin{adjustwidth*}{-1.5cm}{-1.5cm}
 
 \begin_layout Standard
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -675,7 +676,7 @@ reference "sec:Detailed-info-Analysis-Options"
 
 \begin_layout Standard
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -806,7 +807,7 @@ CRANEFOOT format
 \end_layout
 
 \begin_layout Enumerate
-Mega2 annotated format 
+Mega2 format 
 \end_layout
 
 \begin_layout Enumerate
@@ -839,7 +840,7 @@ PSEQ format
 
 \begin_layout Standard
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -888,7 +889,26 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
-Enhancements in Mega2 version 4.6.2
+Enhancements in Mega2 version 4.7.0
+\end_layout
+
+\begin_layout Itemize
+Mega2 now passes non-numeric alleles to analysis programs that will accept
+ this format.
+ Conversion to numeric alleles can still be requested if desired.
+\end_layout
+
+\begin_layout Itemize
+Bug Fix: A number of problems with Beagle Analysis have been addressed.
+\end_layout
+
+\begin_layout Itemize
+Bug Fix: Resolved an issue specifying PLINK mode interactively.
+\end_layout
+
+\begin_layout Itemize
+Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.Enha
+ncements in Mega2 version 4.6.2
 \end_layout
 
 \begin_layout Itemize
@@ -1232,7 +1252,11 @@ Pedigree file:
 
  The 
 \shape italic
-pre-makeped 
+pre-makeped
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \shape default
  pedigree file format is a relatively simple format with the first 5 columns
  containing pedigree information followed by genotypes and phenotypes.
@@ -1344,8 +1368,8 @@ The second column heading decides whether the map function is Haldane or
 \end_layout
 
 \begin_layout Standard
-Convert to Mega2 annotated format files: Use the l2a.py utility to convert
- the three files you created as illustrated below: 
+Convert to Mega2 format files: Use the l2a.py utility to convert the three
+ files you created as illustrated below: 
 \end_layout
 
 \begin_layout Standard
@@ -1370,7 +1394,7 @@ l2a.py -p pedin.txt -d names.txt -m map.txt -x 01
 
 \begin_layout Standard
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -1385,8 +1409,7 @@ end{verbatim}
 \end_layout
 
 \begin_layout Standard
-Three new files are created in the Mega2 annotated format, pedin.01, names.01
- and map.01.
+Three new files are created in the Mega2 format, pedin.01, names.01 and map.01.
  These look like the three files above, except that they all have header
  lines with columns names, e.g.
  the pedigree file has these column names 
@@ -1433,7 +1456,7 @@ Run mega2
 From within a Unix (or Cygwin) shell, at the Unix prompt, type the command:
  
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -1474,7 +1497,7 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.2 input menu:
+              Mega2 4.7.0 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1494,7 +1517,7 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
- 3) Locus file:       (Mega2 datain.)[required] _
+ 3) Locus file:       (Mega2 names.) [required] _
 \end_layout
 
 \begin_layout LyX-Code
@@ -1564,7 +1587,7 @@ Note that option 1 allows one to instruct Mega2 to read PLINK format input
 
 \begin_layout Standard
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -1601,7 +1624,7 @@ Specifying allele-frequencies:
  If you have allele frequencies available and wish to use these instead
  of letting Mega2 estimate them from the pedigree data, then you can set
  up a frequency file.
- The annotated format frequency file has three columns and looks like: 
+ The Mega2 format frequency file has three columns and looks like: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1652,7 +1675,10 @@ status collapsed
 \begin_layout Standard
 This frequency file, as well as the other optional Mega2 files: the omit
  file and the penetrance file, may also be provided for PLINK format input.
- The files follow the exact same format as is used for the Mega2 annotated
+ The files follow the exact same format as is used for the Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
  input format.
  
 \end_layout
@@ -1671,7 +1697,11 @@ For Macintosh OS X users:
  .dat
 \series default
  for your input files.
- If your map file is named 
+ If your map file is named
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series bold
  map.dat 
 \series default
@@ -1745,12 +1775,12 @@ Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.6.2 should be: 
+ For example, the web site citation for version 4.7.0 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2013) Mega2 (Version 4.6.2).
+ Weeks DE (2013) Mega2 (Version 4.7.0).
  
 \begin_inset Flex URL
 status collapsed
@@ -1804,7 +1834,7 @@ Mega2 Google Group
 \begin_layout Standard
 Mega2 users are invited to participate in our Mega2 Google Group at 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -1947,7 +1977,7 @@ name "sec:Installation"
 \begin_layout Standard
 \noindent
 \align center
-INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.6.2 AND HIGHER 
+INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.7.0 AND HIGHER 
 \end_layout
 
 \begin_layout Subsection
@@ -1980,7 +2010,7 @@ http://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.6.2 
+The latest version is 4.7.0 
 \end_layout
 
 \begin_layout Enumerate
@@ -1989,7 +2019,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.6.2_src.tar.gz
+mega2_v4.7.0_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -2000,7 +2030,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.6.2_src.tar.gz 
+gunzip mega2_v4.7.0_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -2010,7 +2040,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.6.2_src.tar 
+tar xvf mega2_v4.7.0_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -2018,7 +2048,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.6.2_src.tar.gz 
+tar xzvf mega2_v4.7.0_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -2031,7 +2061,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.6.2_src
+mega2_v4.7.0_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2210,7 +2240,7 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.6.2_src.tar.gz bundle following
+If you downloaded and unpacked the mega2_v4.7.0_src.tar.gz bundle following
  the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2218,7 +2248,7 @@ reference "sub:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.6.2_src containing the following
+), you should see a directory named mega2_v4.7.0_src containing the following
  directories (in bold) or files listed in alphabetical order:
 \end_layout
 
@@ -2337,8 +2367,11 @@ example_output_annotated
 \begin_inset Text
 
 \begin_layout Plain Layout
-Folder containing output files created by running mega2 with annotated input
- files, using the batch file MEGA2.BATCH.annotated.
+Folder containing output files created by running
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ with mega2 input files, using the batch file MEGA2.BATCH.annotated.
  
 \end_layout
 
@@ -2430,7 +2463,7 @@ example_output_preannotated
 \begin_inset Text
 
 \begin_layout Plain Layout
-Folder containing output files created by running mega2 with annotated input
+Folder containing output files created by running mega2 with mega2 input
  files, using the batch file MEGA2.BATCH.preannotated.
 \end_layout
 
@@ -2492,8 +2525,11 @@ l2a.py.src
 \begin_inset Text
 
 \begin_layout Plain Layout
-Python script linkage_to_annotated.py to convert linkage-style Mega2 format
- files to the new annotated format.
+Python script linkage_to_annotated.py to convert linkage-style
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ format files to the new Mega2 format.
 \end_layout
 
 \end_inset
@@ -2747,7 +2783,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.6.2_src in above step), type the command:
+ mega2_v4.7.0_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2798,7 +2834,7 @@ name "sub:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.6.2_src.tar.gz package also includes a source code folder "srcdir"
+The mega2_v4.7.0_src.tar.gz package also includes a source code folder "srcdir"
  containing C source files, a Makefile, and several OS-specific Makedefs
  files that define compilation flags that govern locations of standard C
  libraries, and other OS-specific behavior.
@@ -2813,7 +2849,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.6.2_src folder, type 
+From within the mega2_v4.7.0_src folder, type 
 \end_layout
 
 \begin_deeper
@@ -3044,15 +3080,15 @@ MEGA2.BATCH.bed
 \begin_layout Standard
 These constitute several sets of the preexisting Mega2 format data files,
  namely the ".05" data set and the ".ex" data set, as well as a data set in
- the new annotated format.
+ the Mega2 format.
  The "pedin.pre" file is analogous to the "pedin.05", except that it is in
  pre-makeped format.
  The *.ex set also includes an omit file to illustrate the usage of the "omit"
  file.
  The pedin.pre.05 file is a pre-Makeped format file.
  It uses the datain.05 locus data file.
- The annotated data set was created by running the python script linkage_to_anno
-tated.py on the ".05" data set.
+ The Mega2 data set was created by running the python script linkage_to_annotate
+d.py on the ".05" data set.
 \end_layout
 
 \begin_layout Enumerate
@@ -3094,7 +3130,7 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.6.2_src folder contains
+The sub-folder called mega2_html/ within the mega2_v4.7.0_src folder contains
  documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
@@ -3393,7 +3429,7 @@ Cygwin POSIX windows environment
 \begin_layout Standard
 Cygwin(
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -3747,7 +3783,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.6.2_src.tar.gz.
+The Mega2 distribution package is named mega2_v4.7.0_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -3758,7 +3794,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.6.2_src.tar
+mega2_v4.7.0_src.tar
 \end_layout
 
 \end_deeper
@@ -3780,7 +3816,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.6.2_src.tar.tar
+mega2_v4.7.0_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -3788,7 +3824,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.6.2_src.tar.gz
+mega2_v4.7.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -3796,7 +3832,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.6.2_src.tar.tar mega2_v4.6.2_src.tar.gz
+mv mega2_v4.7.0_src.tar.tar mega2_v4.7.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -3830,7 +3866,7 @@ Mingw POSIX windows environment
 \begin_layout Standard
 Mingw (
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -4237,6 +4273,12 @@ VCF format
 
 \end_deeper
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "inp:mega2"
+
+\end_inset
+
 Mega2 input file formats
 \begin_inset CommandInset label
 LatexCommand label
@@ -4248,9 +4290,9 @@ name "sub:Annotated-file-formats"
 \end_layout
 
 \begin_layout Standard
-Mega2 can read input file sets in the Mega2 format (previously referred
- to as the Annotated format), which consist of files are in table format
- with a header line defining the names of each data column.
+Mega2 can read input file sets in the Mega2 format ( referred to in previous
+ documentation as the Annotated format), which consist of files are in table
+ format with a header line defining the names of each data column.
  Columns are separated by one or more white-space characters (tabs or blanks),
  and rows are separated by newlines (or returns).
  
@@ -4301,8 +4343,11 @@ Data lines below the header column are read in accordance with the column
 
 \begin_layout Standard
 The Mega2 distribution package contains a conversion program for converting
- from the old LINKAGE-based format files into the Mega2 annotated format
- files (See section 
+ from the old LINKAGE-based format files into the Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ format files (See section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Converting-to-annotated-format"
@@ -4355,11 +4400,11 @@ Mega2 also supports two more optional files: an allele-frequency file, and
 \end_layout
 
 \begin_layout LyX-Code
-  frequency.04 
+  freq.04 
 \end_layout
 
 \begin_layout LyX-Code
-  penetrance.04
+  pen.04
 \end_layout
 
 \begin_layout LyX-Code
@@ -4367,7 +4412,24 @@ Mega2 also supports two more optional files: an allele-frequency file, and
 \end_layout
 
 \begin_layout Standard
-In the current version, there is no provision for providing quantitative
+Note: 
+\emph on
+frequency
+\emph default
+ can be used in place of 
+\emph on
+freq
+\emph default
+ and 
+\emph on
+penetrance
+\emph default
+ in place of 
+\emph on
+pen
+\emph default
+.
+ In the current version, there is no provision for providing quantitative
  trait distribution parameters.
  
 \end_layout
@@ -4406,7 +4468,7 @@ reference "sub:DOS-format-file-related"
 \end_layout
 
 \begin_layout Subsubsection
-Annotated names file
+Mega2 Names file
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Annotated-names-file"
@@ -4606,7 +4668,11 @@ Affection status trait (multiple liability classes)
 \end_layout
 
 \begin_layout Standard
-Here is an example annotated names file: 
+Here is an example
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ names file: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -4634,7 +4700,7 @@ M M3
 \end_layout
 
 \begin_layout Subsubsection
-Annotated pedigree file
+Mega2 Pedigree file
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Annotated-pedigree-file"
@@ -4896,14 +4962,36 @@ Marker genotypes are coded as a pair of alleles, with at least one space
  or tab between them.
  Non-numeric allele names are allowed inside the pedigree file only with
  the use of a names file, and only for numbered marker loci.
- The recoded output pedigrees will have their genotypes altered to numeric
- alleles if the target output format requires this.
+ In releases of Mega2 starting with 4.7.0, non numeric allele names will be
+ copied forward into the output files for analysis types that allow non
+ numeric alleles.
+ Otherwise, the recoded output pedigrees will have their genotypes altered
+ to numeric alleles .
+ A Mega2 command line flag (
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-force_numeric_alleles
+\emph default
+) may be set to force allele recoding if it is not necessary, but preferred
+ by the researcher.
  Allele names have to be strings, and may not contain white-space characters,
  since the pedigree file is read in as a white-space separated column format.
 \end_layout
 
 \begin_layout Paragraph
-Missing values in annotated files 
+Missing values 
 \end_layout
 
 \begin_layout Standard
@@ -4915,7 +5003,11 @@ NA
 \begin_inset Quotes erd
 \end_inset
 
- by default in the annotated format.
+ by default in
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ Mega2 format.
  In order to be compatible with linkage format data, we have provided a
  means to specify missing allele and affection codes.
  Missing quantitative values can be 
@@ -4993,7 +5085,7 @@ name "lyx:PLINK-ex1"
 \end_layout
 
 \begin_layout Subsubsection
-Annotated map file
+Mega2 Map file
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Annotated-map-file"
@@ -5048,8 +5140,8 @@ Physical maps columns should be named as map-name.p, where the 'map-name'
 \end_layout
 
 \begin_layout Standard
-Below is an example annotated map file, with two maps, one genetic and one
- physical: 
+Below is an example Mega2 map file, with two maps, one genetic and one physical:
+ 
 \end_layout
 
 \begin_layout LyX-Code
@@ -5069,8 +5161,8 @@ Chromosome    Map.k.a  Name   Map.k.m    Map.k.f  Buildxx.p
 \end_layout
 
 \begin_layout Standard
-Shown below is a more complicated annotated map file containing four maps,
- two genetic (M and M4) and two physical (M2 and M3):
+Shown below is a more complicated Mega2 map file containing four maps, two
+ genetic (M and M4) and two physical (M2 and M3):
 \end_layout
 
 \begin_layout LyX-Code
@@ -5091,15 +5183,6 @@ X          0.0     rs231   0.0     743     0.0    912    0.0       0.0
 
 \begin_layout LyX-Code
 X          4.0     rs232   1.0     862     6.0    954    4.0       0.0 
-\end_layout
-
-\begin_layout Standard
-Although these map files look very similar to non-annotated map files, recall
- that in the non-annotated format the order of columns 
-\series bold
-does
-\series default
- matter and the second column header indicates the map function.
 \end_layout
 
 \begin_layout Standard
@@ -5565,6 +5648,29 @@ Special chromosome names and numbers
 \end_layout
 
 \begin_layout Standard
+Note: We have not defined the 
+\series bold
+simple map file format
+\series default
+ yet.
+ It is used with LINKAGE style input files and it is not as flexible as
+ the 
+\series bold
+map file
+\series default
+ we have described here.
+ It provides a single set of map information.
+ See section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Simple-Mega2-Map"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 
 \series bold
 X chromosome
@@ -5573,9 +5679,17 @@ X chromosome
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- Annotated format 
+ map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  - 
 \begin_inset Quotes eld
@@ -5585,14 +5699,22 @@ X
 \begin_inset Quotes erd
 \end_inset
 
- denotes x-linked loci in the annotated format map file.
+ denotes x-linked loci in the
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ map file.
  
 \begin_inset Newline newline
 \end_inset
 
  
 \series bold
-Non-annotated format 
+simple map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  - 
 \begin_inset Quotes eld
@@ -5602,8 +5724,8 @@ Non-annotated format
 \begin_inset Quotes erd
 \end_inset
 
- should be used as the chromosome label to denote X-linked loci in the non-annot
-ated map file.
+ should be used as the chromosome label to denote X-linked loci in the simple
+ map file.
  
 \begin_inset Newline newline
 \end_inset
@@ -5620,8 +5742,8 @@ ated map file.
 \end_layout
 
 \begin_layout Standard
-Mega2 asks the user if loci on chromosome 23 (in non-annotated format input
- files) should be considered as X-linked or autosomal.
+Mega2 asks the user if loci on chromosome 23 (in simple map input files)
+ should be considered as X-linked or autosomal.
 \end_layout
 
 \begin_layout Standard
@@ -5633,9 +5755,17 @@ Pseudo-X region of X and Y chromosomes
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- Annotated format 
+ map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  - Some genes are common to both X and Y chromosomes in humans.
  These genes are said to reside in the pseudo-autosomal region.
@@ -5656,12 +5786,20 @@ XY
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- Non-annotated format 
+ simple map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
- - In non-annotated format files, such markers should be labeled with chromosome
- number 
+ - In simple map files, such markers should be labeled with chromosome number
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -5695,9 +5833,17 @@ Y chromosome
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- Annotated format 
+ map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  - 
 \begin_inset Quotes eld
@@ -5713,9 +5859,17 @@ Y
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- Non-annotated format 
+ simple map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  - 
 \begin_inset Quotes eld
@@ -5725,7 +5879,7 @@ Y
 \begin_inset Quotes erd
 \end_inset
 
- should be the chromosome number inside the non-annotated format map file.
+ should be the chromosome number inside the simple map file.
  (Before Mega2 4.5.5 this used to be 
 \begin_inset Quotes eld
 \end_inset
@@ -5772,9 +5926,17 @@ Mitochondrial chromosome
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- Annotated format 
+ map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  - 
 \begin_inset Quotes eld
@@ -5790,9 +5952,17 @@ MT
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- Non-annotated format 
+ simple map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  - 
 \begin_inset Quotes eld
@@ -5845,9 +6015,17 @@ Unknown chromosome
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- Annotated format 
+ map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  - Use the label 
 \begin_inset Quotes eld
@@ -5857,14 +6035,18 @@ U
 \begin_inset Quotes erd
 \end_inset
 
- inside the annotated format map file to label unmapped markers.
+ inside the map file to label unmapped markers.
  
 \begin_inset Newline newline
 \end_inset
 
 
 \series bold
- Non-annotated format 
+ simple map file
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  - Use 
 \begin_inset Quotes eld
@@ -5874,7 +6056,7 @@ U
 \begin_inset Quotes erd
 \end_inset
 
- to label unmapped markers inside the non-annotated format map file.
+ to label unmapped markers inside the simple map file.
 \end_layout
 
 \begin_layout Standard
@@ -5886,12 +6068,11 @@ Output file labels
 \begin_inset Newline newline
 \end_inset
 
-If input files were in annotated format with chromosomes labeled with X,Y
- etc.
+If input files were in Mega2 format with chromosomes labeled with X,Y etc.
  the output files also have character extensions instead of chromosome numbers
  (e.g.
  Lpedin.X, Ldatain.X etc.).
- If input files were in non-annotated format, numeric extensions are used,
+ If input files were in simple map format, numeric extensions are used,
  23-25 and 999 for the unknown chromosome.
 \end_layout
 
@@ -5931,7 +6112,7 @@ New reordering menu items
 \end_layout
 
 \begin_layout Subsubsection
-Annotated omit file
+Omit file
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Annotated-omit-file"
@@ -5942,8 +6123,11 @@ name "sub:Annotated-omit-file"
 \end_layout
 
 \begin_layout Standard
-The annotated omit file contains the three required columns as in the case
- of non-annotated files.
+The
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ omit file contains the three required columns.
  Again, names must be maintained, ordering of columns doesn't matter, and
  neither does the case in the header line.
 \end_layout
@@ -5989,8 +6173,8 @@ Each line should have two integers and a string, separated by white space.
  Trait phenotypes will not be set to unknown.
  Specific omit file entries containing the name of the trait locus should
  be included to do the latter.
- If the person number is zero, then all marker genotypes will be set to
- unknown for the entire pedigree.
+ If the person number is zero or all, then all marker genotypes will be
+ set to unknown for the entire pedigree.
  Otherwise only the indicated person will be untyped.
 \end_layout
 
@@ -6091,7 +6275,7 @@ reference "sub:omit-file"
 \end_layout
 
 \begin_layout Subsubsection
-Annotated frequency file
+Frequency file
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Annotated-frequency-file"
@@ -6102,7 +6286,11 @@ name "sub:Annotated-frequency-file"
 \end_layout
 
 \begin_layout Standard
-The annotated frequency file contains one line for each marker and allele.
+The
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ frequency file contains one line for each marker and allele.
  All alleles present in the data have to be listed.
  The allele labels should match those in the pedigree file (raw or coded).
  The column headings should be as listed below (letter case and order of
@@ -6190,7 +6378,7 @@ For marker loci whose allele frequencies are not listed, Mega2 estimates
 \end_layout
 
 \begin_layout Subsubsection
-Annotated penetrance file
+Penetrance file
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Annotated-penetrance-file"
@@ -6268,6 +6456,12 @@ NOTE: Every row must have 6 column, even though there is no meaningful value
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "inp:plink"
+
+\end_inset
+
 PLINK input file formats
 \begin_inset CommandInset label
 LatexCommand label
@@ -6281,7 +6475,7 @@ name "sub:PLINK-file-formats"
 \begin_layout Standard
 The PLINK program (
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -6296,7 +6490,10 @@ de facto
 \shape default
  standard for whole genome association analysis.
  It uses input files that contain the same kind of information as the Mega2
- annotated format.
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ format.
  It also allows for several different formats of the input data and supports
  conversion between these formats.
  Perhaps the most popular (but unreadable) format is its compressed binary
@@ -6304,7 +6501,7 @@ de facto
  Mega2 supports the binary format and one of the text formats, PED.
  We suggest you visit the PLINK documentation web site (
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -6342,23 +6539,6 @@ reference "sub:PLINK-parameters"
 .
 \end_layout
 
-\begin_layout Standard
-To instruct Mega2 to read PLINK format files, choose options 12 or 13 in
- the initial Mega2 input menu:
-\end_layout
-
-\begin_layout LyX-Code
-12) Switch to PLINK input menu (binary format)
-\end_layout
-
-\begin_layout LyX-Code
-13) Switch to PLINK input menu (ped format)
-\end_layout
-
-\begin_layout LyX-Code
-
-\end_layout
-
 \begin_layout Subsubsection
 PLINK PED input format
 \begin_inset CommandInset label
@@ -6375,15 +6555,6 @@ This format is typically coded using two primary files: the pedigree file
  and the map file.
  The default naming scheme is to use the same stem for both, and a '.ped'
  extension for the pedigree file, and a '.map' extension for the map file.
-\end_layout
-
-\begin_layout Standard
-To instruct Mega2 to read PLINK format PED files, choose option 13 in the
- initial Mega2 input menu:
-\end_layout
-
-\begin_layout LyX-Code
-13) Switch to PLINK input menu (ped format)
 \end_layout
 
 \begin_layout Paragraph
@@ -6494,7 +6665,11 @@ This file is very similar to a
 \emph on
 pre-makeped
 \emph default
- style Mega2 annotated pedigree file.
+ style Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ pedigree file.
  It has the standard five initial columns: pedigree, person, father, mother
  and sex.
  This is followed by a single trait and then the markers, coded as pairs
@@ -6545,7 +6720,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -6583,7 +6758,7 @@ The two columns pedigree & person are replaced by one column, specifying
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -6621,7 +6796,7 @@ The father and mother column are not present; Mega2 will assign the missing
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -6658,7 +6833,7 @@ The sex column is not present; 0 is used as the value.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -6776,7 +6951,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -6813,7 +6988,7 @@ The genetic position column is not present.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7040,7 +7215,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7077,7 +7252,7 @@ Specifies the missing value for quantitative traits (default -9)
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7154,15 +7329,6 @@ This format is typically coded using three primary files: the pedigree file,
  The default naming scheme is to use the same stem for all three, and a
  '.ped' extension for the pedigree file, a '.fam' extension for the family
  file, and a '.map' extension for the map file.
-\end_layout
-
-\begin_layout Standard
-To instruct Mega2 to read binary PLINK format files, choose option 12 in
- the initial Mega2 input menu:
-\end_layout
-
-\begin_layout LyX-Code
-12) Switch to PLINK input menu (binary format)
 \end_layout
 
 \begin_layout Paragraph
@@ -7355,7 +7521,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7393,7 +7559,7 @@ The two columns pedigree & person are replaced by one column, specifying
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7430,7 +7596,7 @@ The father and mother column are not present; 0 is used as the value.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7467,7 +7633,7 @@ The sex column is not present; 0 is used as the value.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7610,7 +7776,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7647,7 +7813,7 @@ The genetic position column is not present.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7766,7 +7932,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7803,7 +7969,7 @@ Specifies the missing value for quantitative traits (default -9)
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7863,6 +8029,12 @@ penetrance file
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "inp:linkage"
+
+\end_inset
+
 LINKAGE input file formats
 \begin_inset CommandInset label
 LatexCommand label
@@ -7918,7 +8090,7 @@ the LINKAGE pedigree file; and
 \end_layout
 
 \begin_layout Enumerate
-the Mega2 map file.
+the Simple Mega2 map file.
  
 \end_layout
 
@@ -8949,6 +9121,13 @@ Mega2 displays each pair of pedigree records that were re-connected, as
 
 \begin_layout Subsubsection
 Simple Mega2 Map file
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Simple-Mega2-Map"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -9070,8 +9249,8 @@ Specifying sex-specific maps
 \end_layout
 
 \begin_layout Standard
-The map file now allows two extra columns for specifying male and female
- map distances.
+The simple map file now allows two extra columns for specifying male and
+ female map distances.
  These columns should appear after the 
 \begin_inset Quotes eld
 \end_inset
@@ -9141,8 +9320,8 @@ Each line should contain three items separated by white space.
  These items represent pedigree, person, and loci.
  For a LINKAGE format file these must be ordered pedigree, person, and loci
  respectively.
- For an annotated format file the columns can be in any order but must be
- named Pedigree, Individual, and Marker.
+ For a Mega2 format file the columns can be in any order but must be named
+ Pedigree, Individual, and Marker.
  The pedigree should be either All, or an integer that must match a pedigree
  number used in your input file.
  If All, then the locus(loci) with associated person(s) will be untyped
@@ -9313,7 +9492,7 @@ reference "sub:omit-file"
 \end_layout
 
 \begin_layout Subsubsection
-Names file
+Header-less Names file
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Names-file"
@@ -9402,12 +9581,18 @@ al markers, instead estimating these from the pedigree data itself.
 \end_layout
 
 \begin_layout Standard
-In the annotated file format, providing a frequency file will cause the
- allele-frequency estimation to be skipped, only allele labels will be recoded.
+In the Mega2 file format, providing a frequency file will cause the allele-frequ
+ency estimation to be skipped, only allele labels will be recoded.
  
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "inp:vcf_or_bcf"
+
+\end_inset
+
 Variant Call Format (VCF, BCF, compressed VCF) input file formats
 \begin_inset CommandInset label
 LatexCommand label
@@ -9745,9 +9930,12 @@ M2 chromosome: 5; physical position: 6; reference allele: 1; alternate allele:
 
 \begin_layout Standard
 This VCF file contains seventeen (17) sample IDs (1_3, 1_4, ..., 2_10).
- If the sample IDs do not correspond to the person IDs in the family  file,
- they can be mapped to individual IDs using a SAMPLEID column in the phenotype
- file (See 
+ If the sample IDs do not correspond to the person IDs in the family
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ file, they can be mapped to individual IDs using a SAMPLEID column in the
+ phenotype file (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:VCF-Phenotype-File"
@@ -9768,27 +9956,46 @@ reference "par:Value_Base_Pair_Position_Index"
 
 \end_inset
 
-) equal to 0 if no Mega2 Annotated Map File is specified (See: 
+) equal to 0 if no Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ Map File is specified (See: 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
 
 \end_inset
 
-), or to one greater than the number of maps available in the Mega2 Annotated
+), or to one greater than the number of maps available in the Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
  Map File.
  The map file (VCF.p) that is derived from the VCF file will contain all
  of the markers that have passed the vcftools filtering criteria.
- The Mega2 Annotated Map File may contain the same number of markers or
- less in which case it will provide additional filtering.
+ The Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ Map File may contain the same number of markers or less in which case it
+ will provide additional filtering.
  That is, markers will be dropped if they do not appear in a map that is
- selected from a Mega2 Annotated Map File.
+ selected from a Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ Map File.
 \end_layout
 
 \begin_layout Standard
 In many instances a Mega2 analysis option may require a genetic map.
  When using a VCF file, a genetic map can be specified using a optional
- Mega2 Annotated Map File (See 
+ Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ Map File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
@@ -9796,7 +10003,10 @@ reference "sub:Annotated-map-file"
 \end_inset
 
 ).
- However, if an analysis option requires a genetic map and a Mega2 Annotated
+ However, if an analysis option requires a genetic map and a Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
  Map File is not specified or if a map is selected that contains no genetic
  maps, then a dummy Sex Average genetic map (whose values are all 0) will
  be used for the required genetic map.
@@ -10040,7 +10250,11 @@ Map File (Optional)
 \end_layout
 
 \begin_layout Standard
-A Mega2 Annotated Map File (See 
+A Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ Map File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
@@ -10050,8 +10264,11 @@ reference "sub:Annotated-map-file"
 ) is not required, but may be specified.
  The maps in the map file may be used in addition to the map found in the
  VCF file (VCF.p).
- When used with a VCF file, the Mega2 Annotated Map file may not contain
- a map with the name VCF.p.
+ When used with a VCF file, the Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ Map file may not contain a map with the name VCF.p.
 \end_layout
 
 \begin_layout Subsubsection
@@ -10075,7 +10292,11 @@ Frequency File (Optional)
 \end_layout
 
 \begin_layout Standard
-An annotated frequency file may be specified.
+AMega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ frequency file may be specified.
  Please see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10136,7 +10357,7 @@ Penetrance File (Optional)
 \end_layout
 
 \begin_layout Standard
-An annotated penetrance file may be specified.
+AMega2 penetrance file may be specified.
  Please see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10180,7 +10401,11 @@ The Genetic Map Interpolator (GMI) program is designed to create interpolated
  genetic maps of single nucleotide polymorphism (SNP) markers.
  Starting from a list of single nucleotide polymorphism (SNP) 
 \series bold
-rs 
+rs
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  numbers, GMI fetches the most up-to-date SNP and microsatellite physical
  positions from Ensembl, and then combines these with the Rutgers combined
@@ -10252,7 +10477,11 @@ http://watson.hgen.pitt.edu/register/docs/gmi.html
 \end_layout
 
 \begin_layout Section
-Converting to Mega2's annotated format 
+Converting to Mega2's
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ format 
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Converting-to-annotated-format"
@@ -10264,7 +10493,11 @@ name "sec:Converting-to-annotated-format"
 
 \begin_layout Standard
 We have provided a Python script, l2a.py, to convert linkage format files
- to Mega2's annotated format.
+ to Mega2's
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ format.
  This is included within the Mega2 distribution package.
  
 \end_layout
@@ -10280,9 +10513,17 @@ Usage:
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- l2a.py 
+ l2a.py
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  without any arguments for help with input options and arguments 
 \end_layout
@@ -10484,7 +10725,7 @@ Missing value indicators in pedigree file:
  status is usually coded as 0 whereas missing quantitative traits are coded
  as some unlikely number such as -99.
  All missing genotype and phenotype values are coded as NA in the converted
- annotated file.
+ Mega2 file.
 \end_layout
 
 \begin_layout Standard
@@ -10509,10 +10750,9 @@ Locus file conversion
 \end_layout
 
 \begin_layout Standard
-If you are using a names-format file, then only an annotated format locus
- names file will be created.
+If you are using a names-format file, then only a names file will be created.
  If you convert a linkage format locus data file with frequencies and trait
- penetrances, then annotated format frequency and penetrance files are also
+ penetrances, then Mega2 format frequency and penetrance files are also
  written.
 \end_layout
 
@@ -10522,7 +10762,10 @@ Map file conversion
 
 \begin_layout Standard
 The converter checks the map function type and male or female-specific maps
- from the map file headers, and creates the appropriate annotated format
+ from the map file headers, and creates the appropriate Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
  map file.
 \end_layout
 
@@ -10547,7 +10790,7 @@ When you first started up Mega2, it will present a menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.2 input menu:
+              Mega2 4.7.0 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -10638,7 +10881,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.6.2 input file type menu:
+Mega2 4.7.0 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -10702,7 +10945,7 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.2 input menu:
+              Mega2 4.7.0 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -10962,7 +11205,7 @@ BCF format (vcf)
 \begin_inset Text
 
 \begin_layout Plain Layout
-VCF compresed format (vcf.gz)
+VCF compressed format (vcf.gz)
 \end_layout
 
 \end_inset
@@ -11003,7 +11246,11 @@ Note: Batch files created with Mega2 version 4.6.1 or earlier will not have
 \end_layout
 
 \begin_layout Subsection
-Input formats: Mega2 annotated and Linkage
+Input formats: Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ and Linkage
 \end_layout
 
 \begin_layout Paragraph
@@ -11028,9 +11275,13 @@ Locus, Pedigree and Map datafile:
 
 \begin_layout Standard
 The locus, pedigree, and map file are required files.
- In future versions, for the annotated format, the names file will be made
- optional, since locus names and types are already specified in the first
- line of the annotated pedigree file.
+ In future versions, for the Mega2 format, the names file will be made optional,
+ since locus names and types are already specified in the first line of
+ the
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ pedigree file.
  
 \end_layout
 
@@ -11162,7 +11413,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11199,7 +11450,7 @@ switch to PLINK PED input format
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11236,7 +11487,7 @@ switch to PLINK binary PED format
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11273,7 +11524,7 @@ genetic distance in map file is in Kosambi units
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11310,7 +11561,7 @@ genetic distance in map file is in Haldane units
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11345,7 +11596,7 @@ specify a name for the pedigree file trait column
 \begin_layout Plain Layout
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11378,7 +11629,7 @@ indicate that trait is a binary affection status
 \begin_layout Plain Layout
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11461,7 +11712,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11499,7 +11750,7 @@ The two columns pedigree & person are replaced by one column, specifying
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11537,7 +11788,7 @@ The father and mother column are not present; Mega2 will assign the missing
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11574,7 +11825,7 @@ The sex column is not present; 0 is used as the value.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11611,7 +11862,7 @@ The trait column is not present.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11648,7 +11899,7 @@ The genetic position column is not present.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11685,7 +11936,7 @@ The genetic position is specified in centiMorgans.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11722,7 +11973,7 @@ Specifies the missing value for quantitative traits (default -9)
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -11965,7 +12216,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -12000,7 +12251,7 @@ specify a name for the pedigree file trait column
 \begin_layout Plain Layout
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -12033,7 +12284,7 @@ indicate that trait is a binary affection status
 \begin_layout Plain Layout
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -12117,7 +12368,7 @@ meaning
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -12154,7 +12405,7 @@ Specifies the missing value for quantitative traits (default -9)
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -12264,7 +12515,7 @@ Input menu items: Omit, frequency and penetrance data files (optional):
 This specifies the names of the omit file, allele-frequency file and trait
  penetrance file respectively.
  The omit, frequency and penetrance input data files are all optional files.
- The frequency and penetrance files are read in only in the annotated file
+ The frequency and penetrance files are read in only for the Mega2 file
  format.
  These files were created to support the Mega2 native file format, but we
  allow these files to be specified for PLINK and VCF file formats.
@@ -12636,7 +12887,7 @@ Input menu item: Unknown allele and affection definition
 \begin_layout Standard
 This is read in as a string value and compared against affection phenotypes
  and marker genotypes for an exact match.
- The unknown allele and affection status indicator is used only for annotated
+ The unknown allele and affection status indicator is used only for Mega2
  files.
 \end_layout
 
@@ -12656,7 +12907,7 @@ name "sub:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.6.2 Maximum alleles per marker menu:
+              Mega2 4.7.0 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -12706,9 +12957,9 @@ bed
 Note that in the 2 byte mode, if the input data are in Linkage format, all
  allele labels are integers used as is.
  This means that an allele with the label '256' would not be allowed.
- However, if the input data are in Annotated format, then allele labels
- are treated as strings, and will be recoded to sequential integers; so
- '256' might be allowed if the labeling is sparse.
+ However, if the input data are in Mega2 format, then allele labels are
+ treated as strings, and will be recoded to sequential integers; so '256'
+ might be allowed if the labeling is sparse.
 \end_layout
 
 \begin_layout Subsection
@@ -13106,7 +13357,7 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-13 Create summary files            33 Mega2 annotated format
+13 Create summary files            33 Mega2  format
 \end_layout
 
 \begin_layout LyX-Code
@@ -13244,7 +13495,7 @@ This Analysis Menu option creates output files in the old Vintage Mendel
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13320,7 +13571,7 @@ This Analysis Menu option creates the files needed for analysis via the
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13356,7 +13607,7 @@ This Analysis Menu option creates the files needed for analysis via the
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13457,7 +13708,7 @@ This Analysis Menu option creates the files needed for input into the simulation
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13531,7 +13782,7 @@ This Analysis Menu option creates the files needed to compute lod scores
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13567,7 +13818,7 @@ This Analysis Menu option creates the files needed for input into the simulation
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13738,7 +13989,7 @@ This Analysis Menu option creates the files needed for analysis via the
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13780,7 +14031,7 @@ This Analysis Menu option creates files in LINKAGE format for analysis with
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13825,7 +14076,7 @@ This Analysis Menu option creates files in LINKAGE format.
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13914,7 +14165,7 @@ Gen
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13942,7 +14193,7 @@ http://cran.r-project.org/web/packages/genetics/index.html
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -13969,7 +14220,7 @@ http://cran.r-project.org/web/packages/genetics/index.html
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14049,7 +14300,7 @@ ive traits as well as affection status loci via the Maximum-Likelihood-Binomial
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14090,7 +14341,7 @@ This Analysis Menu option creates the files needed for using SAGE 4.0 and
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14144,7 +14395,7 @@ This Analysis Menu option sets up one set of output data files which can
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14223,7 +14474,7 @@ This Analysis Menu option sets up the files necessary for running PAP (Pedigree
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14256,7 +14507,7 @@ This Analysis Menu option sets up the files necessary for running Merlin
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14298,7 +14549,7 @@ This Analysis Menu option sets up the files necessary for running LOKI including
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14332,7 +14583,7 @@ This Analysis Menu option sets up the files necessary for running Mendel
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14437,7 +14688,7 @@ Name: SUP
 
  Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14491,8 +14742,8 @@ long format
  (lgen) with a single genotype in every line.
  There are two binary output file options, which produce files that are
  much more compact than the lgen format.
- PLINK requires a physical map, and only our annotated format allows physical
- maps, therefore this option can only be used with annotated format files.
+ PLINK requires a physical map, and only our Mega2 format allows physical
+ maps, therefore this option can only be used with Mega2 format files.
  
 \begin_inset Newline newline
 \end_inset
@@ -14573,12 +14824,16 @@ http://www.finndiane.fi/software/cranefoot/
 \end_layout
 
 \begin_layout Subsection
-Convert to Mega2 annotated format
+Convert to Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ format
 \end_layout
 
 \begin_layout Standard
 This Analysis Menu option creates pedigree, names, map, frequency, and penetranc
-e files in Mega2's annotated format.
+e files in Mega2 format.
  If the input pedigree file is pre-makeped, then so is the output file,
  and vice-versa.
  This can be used instead of l2a.py, provided that your pedigree and person
@@ -14614,16 +14869,19 @@ This Analysis Menu option creates pedigree, marker, and parameter files
  Idcoefs program, and then run the IQLS program.
  Note that IQLS only supports two-allele markers and needs to know the physical
  positions of the markers.
- Thus, this option should only be run on input data in Mega2 annotated format
- that contains two-allele markers, at least one affection status trait,
- and where a physical map has been specified.
+ Thus, this option should only be run on input data in Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ format that contains two-allele markers, at least one affection status
+ trait, and where a physical map has been specified.
  The output IQLS marker file has to contain only character allele names,
  so if your input marker has numbered alleles 1 and 2, these will be remapped
  to character alleles A and G respectively.
 \end_layout
 
 \begin_layout Standard
-If a marker was originally input with text allele labels in the input annotated
+If a marker was originally input with text allele labels in the input Mega2
  pedigree file, then those original allele labels are used on output into
  the IQLS marker file, and the strand orientation is set to '+'.
 \end_layout
@@ -14652,7 +14910,7 @@ e.
 \begin_layout Standard
 Name: IQLS Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14687,7 +14945,7 @@ http://galton.uchicago.edu/~mcpeek/software/IQLS/index.html
 
  Name: Idcoefs Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14758,7 +15016,7 @@ Name: FBAT
 
 Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -14874,7 +15132,7 @@ Name: Morgan: pedcheck, kin, translink, lm_linkage, lm_bayes, lm_ibdtests,
 \begin_layout Standard
 Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -15020,7 +15278,7 @@ Name: Beagle
 \begin_layout Standard
 Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -15041,7 +15299,7 @@ If you use BEAGLE in a published analysis, please report the BEAGLE version
  used and cite the appropriate publication or publications listed below.
  Please check 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -15183,7 +15441,7 @@ Name: Eigenstrat, part of the Eigensoft package
 \begin_layout Standard
 Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -15218,7 +15476,7 @@ Patterson N, Price AL, Reich D (2006) Population Structure and Eigenanalysis.
 \begin_layout Standard
 Documentation: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -15360,7 +15618,7 @@ Name: PSEQ
 \begin_layout Standard
 Web: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -15383,7 +15641,7 @@ TBD
 \begin_layout Standard
 Documentation: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -15783,7 +16041,7 @@ As before, the second option lists the available chromosome numbers and
 The asterisk indicates the current selection.
  Once you enter a number indicating which map should be used in the output,
  you will be taken back to the locus reordering menu.
- The map names are read in from the header of the annotated map file.
+ The map names are read in from the header of the Mega2 map file.
 \end_layout
 
 \begin_layout Section
@@ -15791,7 +16049,7 @@ Map Selection Menus
 \end_layout
 
 \begin_layout Standard
-When an annotated map file (see section 
+When a map file (see section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
@@ -15821,16 +16079,19 @@ The Genetic Map Selection Menu
 \end_layout
 
 \begin_layout Standard
-When using an annotated map file, there are three possible types of genetic
- maps: sex-averaged, sex-specific (male and female), or female (see section
- 
+When using a map file, there are three possible types of genetic maps: sex-avera
+ged, sex-specific (male and female), or female (see section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
 
 \end_inset
 
-; Annotated map file).
+;
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ Map file).
 \end_layout
 
 \begin_layout Standard
@@ -16262,7 +16523,7 @@ Simwalk2: Parametric (Location scores) and Non-parametric linkage
 \begin_inset Newline newline
 \end_inset
 
-
+ FBAT
 \end_layout
 
 \begin_layout Standard
@@ -16927,7 +17188,7 @@ In this example, data containing marker loci on chromosomes 1, 2, and 3
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -16944,7 +17205,7 @@ npl and
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -17302,7 +17563,7 @@ The nplplot package now has functions to create custom track files that
  then can be uploaded into the UCSC Genome Browser for further visualization.
  From within Mega2, the creation of custom track files is done automatically
  under the following conditions: 1) an option has been chosen where the
- creation of R plots is supported; 2) the input files are in annotated format;
+ creation of R plots is supported; 2) the input files are in Mega2 format;
  and 3) the map file contains a physical map giving the physical positions
  of the markers.
  When these conditions hold, the running of the C shell script to do the
@@ -17388,7 +17649,7 @@ Supported analysis options
 \end_layout
 
 \begin_layout Standard
-The following options can currently create R-plots, and, if run on annotated
+The following options can currently create R-plots, and, if run on Mega2
  input files with a map file containing a physical map, will also create
  UCSC Custom Track files: 
 \end_layout
@@ -17481,7 +17742,7 @@ To turn off saving summary files in a separate directory run mega2 with
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -17497,7 +17758,7 @@ status open
 nosave option, i.e.
  
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -17516,7 +17777,7 @@ mega2
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -17559,7 +17820,7 @@ E files are left within the folder from which Mega2 was run.
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18065,11 +18326,19 @@ name "sec:Mega2-command-line-arguments"
 \begin_layout Standard
 
 \series bold
-Usage: 
+Usage:
+\change_deleted -1820302391 1399922222
+ 
 \series default
  
+\change_unchanged
+
 \emph on
- mega2 
+ mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph default
  [options] [batch-file-name] 
 \end_layout
@@ -18218,7 +18487,7 @@ mitochondrial
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18280,7 +18549,7 @@ horse
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18342,7 +18611,7 @@ sheep
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18404,7 +18673,7 @@ dog
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18466,7 +18735,7 @@ mouse
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18528,7 +18797,7 @@ cow
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18643,7 +18912,7 @@ interpretation
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18704,7 +18973,7 @@ Y
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18748,7 +19017,7 @@ chromosome number for pseudo XY region
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18797,15 +19066,15 @@ chromosome number for mitochondrial DNA.
 \begin_layout Subsection
 
 \series bold
-General options 
+Input format options 
 \end_layout
 
 \begin_layout Itemize
 
 \emph on
--x, -
+-
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18816,7 +19085,583 @@ status open
 
 \end_inset
 
--nosave 
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+-mega2
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+	Mega2 format with header
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+-linkage
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+	Linkage format
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+-extend_linkage
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+	Linkage with Mega2 names file
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+-bed
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+	PLINK binary PED format (bed)
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+-ped
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+	PLINK PED format (ped)
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+-bcf
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+	BCF format (vcf)
+-
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+-vcf.gz
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+	VCF compressed format (vcf.gz)
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+-vcf
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+	VCF format (vcf)
+
+\end_layout
+
+\begin_layout Subsection
+
+\series bold
+General options 
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-force_numeric_alleles
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
+\emph default
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ As of Mega2 version 4.7.0, if letter alleles are found in the input, they
+ will be passed through to the output and not recoded as numeric alleles.
+ This is done for all input formats that allow letter alleles (i.e.
+ all input formats except LINKAGE) and for the analysis that support letter
+ alleles.
+ If you would prefer the recoding of letter alleles to numbers to take place
+ even though it is not necessary, set this flag 
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-force_numeric_alleles.
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+-x, -
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-nosave
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph default
  
 \begin_inset Newline newline
@@ -18834,7 +19679,7 @@ status open
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18857,7 +19702,7 @@ nosave option turns off this feature, and saves all run-related files with
 \emph on
 -w, -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18868,7 +19713,11 @@ status open
 
 \end_inset
 
--noweb 
+-noweb
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph default
  
 \begin_inset Newline newline
@@ -18887,7 +19736,7 @@ status open
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18909,7 +19758,7 @@ noweb option.
 \emph on
 -h, -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18920,7 +19769,11 @@ status open
 
 \end_inset
 
--help 
+-help
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph default
  
 \begin_inset Newline newline
@@ -18939,7 +19792,7 @@ status open
 \emph on
 -v, -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -18950,7 +19803,11 @@ status open
 
 \end_inset
 
--version 
+-version
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph default
  
 \begin_inset Newline newline
@@ -18974,7 +19831,11 @@ Obsolete options
 \begin_layout Itemize
 
 \emph on
--nosave: 
+-nosave:
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph default
  
 \begin_inset Newline newline
@@ -19011,7 +19872,7 @@ Other arguments
 \end_layout
 
 \begin_layout Standard
- The only other option accepted by Mega2 besides the switches listed above,
+The only other option accepted by Mega2 besides the switches listed above,
  is the batch file name.
  It checks to see that there is at most one such file name.
  If you mistakenly supplied one of the other valid options, Mega2 proceeds
@@ -19134,7 +19995,7 @@ Using the
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -19159,7 +20020,7 @@ The purpose of having a batch-execution mode is to enable Mega2 to be embedded
 \emph on
 -
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -19577,11 +20438,19 @@ Special considerations
 The order in which these options appear in the batch file does not affect
  Mega2's behavior.
  Some options are dependent on the definition of others.
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
  Each class is regarded as complete only if an adequate number of definitions
  in that class are provided.
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series default
  For example, in the Input menu items class, one has to have at least the
  three file names (pedigree, locus and map), the untyped-ped option and
@@ -19686,7 +20555,7 @@ This item specifies the input pedigree file name.
  The value should be a string without any white-space characters.
  It will store the name of the pedigree file in 
 \emph on
-linkage, annotated and PLINK PED
+linkage, Mega2 and PLINK PED
 \emph default
  input formats and the name of the 
 \begin_inset Quotes eld
@@ -19720,7 +20589,7 @@ This item specifies the name of the input map file.
  The value should be a string without white-space characters.
  It will store the map file in 
 \emph on
-linkage, annotated and PLINK PED
+linkage, Mega2 and PLINK PED
 \emph default
  input formats and the 
 \begin_inset Quotes eld
@@ -19753,7 +20622,11 @@ name "par:Input_Locus_File"
 This item specifies the name of the input locus data file.
  This is a required item for 
 \emph on
-linkage and Mega2 annotated 
+linkage and Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ 
 \emph default
 input format, but it is not used for either PLINK input format.
  The value should be a string without white-space characters.
@@ -19782,7 +20655,7 @@ This item specifies the name of the PLINK binary PED format file.
 \emph on
 The first two file types above are always necessary and for PLINK PED format
  these two are sufficient.
- For annotated or linkage formats, the 
+ For Mega2 or linkage formats, the 
 \series bold
 Input_Locus_File
 \series default
@@ -19828,7 +20701,7 @@ name "par:Input_Frequency_File"
 
 \begin_layout Standard
 This item specifies the input allele frequency file name.
- This is an optional item for annotated and either PLINK format input files
+ This is an optional item for Mega2 and either PLINK format input files
  are used.
  The value should be a string without white-space characters.
  
@@ -19847,7 +20720,7 @@ name "par:Input_Penetrance_File"
 
 \begin_layout Standard
 This item specifies the input penetrance parameter file name.
- This is also an optional item, for annotated and either PLINK format input
+ This is also an optional item, for Mega2 and either PLINK format input
  files are used.
  The value should be a string without white-space characters.
  
@@ -20009,7 +20882,11 @@ This item specifies the handling of marker-untyped pedigrees.
 \end_inset
 
  and so on, i.e.
- included pedigrees must have at least 
+ included pedigrees must have at least
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph on
  
 \begin_inset Formula $<$
@@ -20019,7 +20896,11 @@ value
 \begin_inset Formula $>$
 \end_inset
 
- - 3 
+ - 3
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph default
  typed persons.
  
@@ -20286,7 +21167,7 @@ ns.
 
 \begin_layout Quotation
 \begin_inset Tabular
-<lyxtabular version="3" rows="31" columns="2">
+<lyxtabular version="3" rows="38" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
@@ -20913,6 +21794,146 @@ PACKEDPED
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PED
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PANGAEA MORGAN
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pedcheck(1)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+kinship(2)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+translink(3)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lm_linkage(4)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lm_bayes(5)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lm_ibdtests(6)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -20926,7 +21947,7 @@ PACKEDPED
 \begin_inset Text
 
 \begin_layout Plain Layout
-PED
+lm_ibdtests_lr(7)
 \end_layout
 
 \end_inset
@@ -21660,9 +22681,17 @@ Default_Outfile_Names
 \end_layout
 
 \begin_layout Standard
-If set to 
+If set to
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph on
- yes 
+ yes
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph default
  , the output file-names menu will be skipped for all options.
  In addition to file names, some of these menus also contain options for
@@ -21685,11 +22714,19 @@ name "par:Default_Reset_Invalid"
 \begin_layout Standard
 This option defines how invalid genotypes should be handled without pausing
  for user-input via the invalid-genotypes menu (which is skipped).
- If set to 
+ If set to
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph on
  yes
 \emph default
- the genotypes will be reset to unknowns, and if set to 
+ the genotypes will be reset to unknowns, and if set to
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph on
  no
 \emph default
@@ -21756,7 +22793,11 @@ name "par:Default_Rplot_Options"
 \end_layout
 
 \begin_layout Standard
-If set to 
+If set to
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph on
  yes
 \emph default
@@ -21958,10 +22999,10 @@ Value_Missing_Allele_Aff
 \end_layout
 
 \begin_layout Standard
-The annotated map file allows the user to also specify the indicator for
- unknown allele and affection status values.
- This is again an optional item, and used only if annotated format input
- files are used.
+The Mega2 map file allows the user to also specify the indicator for unknown
+ allele and affection status values.
+ This is again an optional item, and used only if Mega2 format input files
+ are used.
  
 \end_layout
 
@@ -21991,12 +23032,12 @@ ve trait containing the population assignments for each individual.
 
 \begin_layout Standard
 
-\end_layout
-
-\begin_layout Standard
-
 \series bold
-OBSOLETE OPTIONS 
+OBSOLETE OPTIONS
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  [Updated]
 \begin_inset Newline newline
@@ -22450,6 +23491,12 @@ name "sec:Detailed-info-Analysis-Options"
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:simwalk2"
+
+\end_inset
+
 Create SimWalk2 format files
 \end_layout
 
@@ -22532,9 +23579,17 @@ Suppose the chromosome number is 5.
 It multiple traits and/or multiple chromosomes are selected for analysis,
  the a combined shell script is created which executes the chromosome-specific
  shell scripts in the individual trait directories.
- This shell script is called 
+ This shell script is called
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series bold
- [*].all.sh 
+ [*].all.sh
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  
 \end_layout
@@ -22684,15 +23739,27 @@ map.dat
 \begin_inset Newline newline
 \end_inset
 
- The haplotyping shell script is called 
+ The haplotyping shell script is called
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series bold
- haplo.05.sh 
+ haplo.05.sh
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  
 \begin_inset Newline newline
 \end_inset
 
- The name of the Location scores C-Shell script file is 
+ The name of the Location scores C-Shell script file is
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series bold
  loc.05.sh
 \series default
@@ -22732,6 +23799,12 @@ mis.05.sh.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:vintagemendel"
+
+\end_inset
+
 Convert to MENDEL format
 \end_layout
 
@@ -23070,6 +24143,12 @@ Select options 0-5 to enter new file names, 6 to toggle >
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:aspex"
+
+\end_inset
+
 Convert to ASPEX format
 \end_layout
 
@@ -23292,6 +24371,12 @@ Select options 0-3 to enter new file names, 4 to toggle >
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:genehunter-plus"
+
+\end_inset
+
 Convert to GeneHunter-Plus format
 \end_layout
 
@@ -23386,6 +24471,12 @@ In order to run GeneHunter-Plus on these data files, one needs only to execute
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:genehunter"
+
+\end_inset
+
 Convert to GeneHunter format
 \end_layout
 
@@ -23640,6 +24731,12 @@ dummy
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:apm"
+
+\end_inset
+
 Convert to APM format
 \end_layout
 
@@ -23730,6 +24827,12 @@ for combined data from multiple chromosomes.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:apmmult"
+
+\end_inset
+
 Convert to APM MULT multiple locus format
 \end_layout
 
@@ -23762,6 +24865,12 @@ The user can select the length of the marker interval via a menu.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:nuclear"
+
+\end_inset
+
 Create nuclear families
 \end_layout
 
@@ -23811,6 +24920,12 @@ The user has a choice of combined or separate output files per chromosome.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:slink"
+
+\end_inset
+
 Convert to SLINK format
 \end_layout
 
@@ -23845,6 +24960,12 @@ This option creates the files needed for input into the simulation programs
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:splink"
+
+\end_inset
+
 Convert to SPLINK format
 \end_layout
 
@@ -23912,6 +25033,12 @@ If you are seeking to use SPLINK to compute maximum LOD scores for each
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:homogenetity"
+
+\end_inset
+
 Set up for homogeneity analyses
 \end_layout
 
@@ -23944,6 +25071,12 @@ This option can handle only a single trait (affection status or quantitative)
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:simulate"
+
+\end_inset
+
 Convert to SIMULATE format 
 \end_layout
 
@@ -23971,6 +25104,12 @@ SIMULATE will also allow only a single trait which has to be a binary trait.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:summary"
+
+\end_inset
+
 Create summary files
 \end_layout
 
@@ -24843,7 +25982,7 @@ Pedigree        Members Phenotyped       %Phenotyped    Total   Phenotyped
 
 \begin_layout Standard
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -24858,6 +25997,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:oldsage"
+
+\end_inset
+
 Convert to SAGE format
 \end_layout
 
@@ -25035,6 +26180,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:tdtmax"
+
+\end_inset
+
 Set up for TDTMax analyses
 \end_layout
 
@@ -25166,6 +26317,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:solar"
+
+\end_inset
+
 Convert to SOLAR format
 \end_layout
 
@@ -25256,6 +26413,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:vitesse"
+
+\end_inset
+
 Convert to Vitesse format
 \end_layout
 
@@ -25355,6 +26518,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:linkage"
+
+\end_inset
+
 Convert to Linkage format
 \end_layout
 
@@ -25396,6 +26565,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:hwe"
+
+\end_inset
+
 Test loci for Hardy-Weinberg Equilibrium
 \end_layout
 
@@ -25787,6 +26962,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:allegro"
+
+\end_inset
+
 Convert to Allegro format
 \end_layout
 
@@ -25885,6 +27066,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:mlbqtl"
+
+\end_inset
+
 Convert to MLBQTL format
 \end_layout
 
@@ -25928,6 +27115,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:sage"
+
+\end_inset
+
 Convert to S.A.G.E.
  4.0 format
 \end_layout
@@ -26073,6 +27266,12 @@ mal data.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:pre-makeped"
+
+\end_inset
+
 Convert to pre-makeped format
 \end_layout
 
@@ -26097,6 +27296,12 @@ This is analogous to the Linkage format option which generates post-makeped
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:merlinsimwalk2-npl"
+
+\end_inset
+
 Convert to Merlin-SimWalk2 format
 \end_layout
 
@@ -26180,14 +27385,30 @@ The C-shell script npl.06.sh runs Merlin on the Merlin format files to create
  i.e.
  do not require a great deal of computation.
  Merlin can be instructed to limit the amount of time spent on each pedigree
- by means of the 
+ by means of the
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph on
- --minutes 
+ --minutes
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \emph default
  switch.
- Currently, this value is set to 
+ Currently, this value is set to
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series bold
- 1 minute 
+ 1 minute
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  inside the Pedigrees that cannot be handled by Merlin are then analyzed
  by SimWalk2's NPL option, and Merlin's exact scores incorporated into the
@@ -26206,6 +27427,12 @@ The C-shell script npl.06.sh runs Merlin on the Merlin format files to create
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:prest"
+
+\end_inset
+
 Convert to PREST format
 \end_layout
 
@@ -26316,6 +27543,12 @@ The shell script prest_script.all.sh runs PREST over the marker data on the
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:pap"
+
+\end_inset
+
 Convert to PAP format
 \end_layout
 
@@ -26352,6 +27585,12 @@ The C-shell script simply copies the rest of the files into files with the
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:merlin"
+
+\end_inset
+
 Convert to Merlin format
 \end_layout
 
@@ -26458,6 +27697,12 @@ reference "par:Value_Genetic_Distance_SexTypeMa"
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:loki"
+
+\end_inset
+
 Convert to Loki format
 \end_layout
 
@@ -26532,6 +27777,12 @@ using Ped, Per and ID identifiers in the pedigree file
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:mendel"
+
+\end_inset
+
 Convert to Mendel format
 \end_layout
 
@@ -26577,9 +27828,17 @@ Note that the locus and variable files are now combined into a single definition
 \begin_inset Newline newline
 \end_inset
 
+
+\change_deleted -1820302391 1399922222
  
+\change_unchanged
+
 \series bold
- Handling trait penetrances 
+ Handling trait penetrances
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  If all affection traits selected for output have a single liability class,
  the penetrance file is not written.
@@ -26614,6 +27873,12 @@ using Ped, Per and ID identifiers in the pedigree file
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:sup"
+
+\end_inset
+
 Convert to SUP format
 \end_layout
 
@@ -26667,6 +27932,12 @@ If the pedigree data contains either loops (pre-makeped format) or loop-breakers
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:plink"
+
+\end_inset
+
 Convert to PLINK format
 \end_layout
 
@@ -26837,6 +28108,12 @@ hrule
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:cranefoot"
+
+\end_inset
+
 Convert to Cranefoot format
 \end_layout
 
@@ -26960,11 +28237,24 @@ hrule
 \end_layout
 
 \begin_layout Subsection
-Convert to Mega2 annotated format
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:mega2"
+
+\end_inset
+
+Convert to Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ format
 \end_layout
 
 \begin_layout Standard
-The following chromosome specific files are created for Mega2 annotated
+The following chromosome specific files are created for Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
  format: 
 \end_layout
 
@@ -27016,6 +28306,12 @@ all
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:iqlsidcoefs"
+
+\end_inset
+
 Convert to IQLS/Idcoefs format
 \end_layout
 
@@ -27052,6 +28348,12 @@ The following chromosome specific files are created for IQLS/Idcoefs:
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:fbat"
+
+\end_inset
+
 Convert to FBAT format
 \end_layout
 
@@ -27161,6 +28463,12 @@ to provide arguments to the plot.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:pangaea"
+
+\end_inset
+
 Convert to PANGAEA MORGAN format 
 \begin_inset CommandInset label
 LatexCommand label
@@ -27194,7 +28502,7 @@ Morgan tutorial
 
  is available at 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -27210,7 +28518,7 @@ http://www.stat.washington.edu/thompson/Stuff_bk/morgan-tut.pdf
 \begin_layout Standard
 The software download is available via 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -27427,6 +28735,12 @@ MORGAN
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:beagle"
+
+\end_inset
+
 Convert to Beagle format
 \begin_inset CommandInset label
 LatexCommand label
@@ -27662,6 +28976,12 @@ The genetic map output for Beagle will be in Haldane cM.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:eigenstrat"
+
+\end_inset
+
 Convert to Eigenstrat format
 \begin_inset CommandInset label
 LatexCommand label
@@ -27819,6 +29139,12 @@ Please note that if you wish to run the 'ploteig' program, you will need
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:structure"
+
+\end_inset
+
 Convert to Structure format
 \begin_inset CommandInset label
 LatexCommand label
@@ -27923,6 +29249,12 @@ reference "par:Structure.PopDataPheno"
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:pseq"
+
+\end_inset
+
 Convert to PSEQ (PLINK/SEQ) format
 \begin_inset CommandInset label
 LatexCommand label
@@ -28017,18 +29349,22 @@ Utilities included with Mega2
 \end_layout
 
 \begin_layout Subsection
-Converting linkage format files to Mega2 annotated format - l2a.py 
+Converting linkage format files to Mega2
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+ format - l2a.py 
 \end_layout
 
 \begin_layout Standard
-The annotated format consists of input files which contain white-space delimited
+The Mega2 format consists of input files which contain white-space delimited
  tabular data with mandatory column headers for each column of the data.
  We encourage you to use this format, as it is much more robust to data
  errors than the linkage format-based input files, and also allows more
  types of data to be specified.
  Therefore, we have also provided a Python script to convert your existing
- linkage format data files to the annotated format.
- The l2a.py utility script is described in detail inside the annotated input
+ linkage format data files to the Mega2 format.
+ The l2a.py utility script is described in detail inside the Mega2 input
  files section.
  
 \end_layout
@@ -28893,7 +30229,7 @@ The web page that explains the R installation procedure and contains the
 
 \begin_layout LyX-Code
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -28926,7 +30262,7 @@ The web page that explains the Python installation procedure and contains
 
 \begin_layout LyX-Code
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -28990,7 +30326,7 @@ The web page that explains the Perl installation procedure and contains
 
 \begin_layout LyX-Code
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -29026,7 +30362,7 @@ The web page that explains the Gawk installation procedure and contains
 
 \begin_layout LyX-Code
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -29060,7 +30396,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="19" columns="4">
+<lyxtabular version="3" rows="20" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="right" valignment="top" width="0">
@@ -29107,6 +30443,44 @@ Release date
 
 \series bold
 Valid until
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.7.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+May 15, 2014
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 2015
 \end_layout
 
 \end_inset
@@ -29804,6 +31178,28 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
+Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)
+\end_layout
+
+\begin_layout Itemize
+Mega2 now passes non-numeric alleles to analysis programs that will accept
+ this format.
+ Conversion to numeric alleles can still be requested if desired.
+\end_layout
+
+\begin_layout Itemize
+Bug Fix: A number of problems with Beagle Analysis have been addressed.
+\end_layout
+
+\begin_layout Itemize
+Bug Fix: Resolved an issue in specifying PLINK mode interactively.
+\end_layout
+
+\begin_layout Itemize
+Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.
+\end_layout
+
+\begin_layout Subsection
 Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)
 \end_layout
 
@@ -29993,7 +31389,7 @@ Bug-fix: The program to generate html from the text files (mega2log2html.pl)
 
 \begin_layout Itemize
 Bug-fix: Allow blank lines and comment lines in any of the files of the
- annotated format.
+ Mega2 format.
 \end_layout
 
 \begin_layout Itemize
@@ -30061,7 +31457,7 @@ Bug-fix: Negative genetic distances between out of order markers are now
 
 \begin_layout Itemize
 Bug-fix: The *.keys mapping file has been reformatted.
- And IDs have been made consistent between linkage input and annotated input.
+ And IDs have been made consistent between linkage input and Mega2 input.
 \end_layout
 
 \begin_layout Itemize
@@ -30134,8 +31530,8 @@ Bug-fix: When doing quantitative summaries output to a sub-directory, the
 \end_layout
 
 \begin_layout Itemize
-Bug-fix: When converting annotated files to Merlin format, the MEGA2.ERR
- file had two strange extraneous lines at the end.
+Bug-fix: When converting Mega2 files to Merlin format, the MEGA2.ERR file
+ had two strange extraneous lines at the end.
 \end_layout
 
 \begin_layout Itemize
@@ -30538,11 +31934,6 @@ The bug fixes listed on this page are also separately listed in the section
  
 \end_layout
 
-\begin_layout Itemize
-
-\end_layout
-
-\begin_deeper
 \begin_layout Standard
 
 \series bold
@@ -30557,6 +31948,7 @@ Bug-fix: PLINK long format output files were not named correctly, as per
  
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 Bug-fix: PLINK shell script had problems and failed to run.
  This has been fixed.
@@ -30673,12 +32065,6 @@ Enhancement: NAs are now acceptable as unknown value indicator for affection
  status loci as well.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\end_layout
-
-\begin_deeper
 \begin_layout Standard
 
 \series bold
@@ -30761,7 +32147,11 @@ Enhancement: Mega2 automatically limits the display of warnings and error
 \begin_layout Standard
 
 \series bold
-Version 4.0 beta, 4.0 beta R1, 4.0 
+Version 4.0 beta, 4.0 beta R1, 4.0
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  introduces a new input file format called the annotated format.
  observed under somewhat rare circumstances.
@@ -31045,7 +32435,11 @@ Modification: Merlin command line options were out-of-date.
 \begin_layout Standard
 
 \series bold
-Version 3.0 Revision 10,11,12 
+Version 3.0 Revision 10,11,12
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  fixes a few more bugs that were observed under somewhat rare circumstances.
  Version 12 also implements a new output option for the simulation program
@@ -31180,7 +32574,11 @@ Very old versions
 \begin_layout Standard
 
 \series bold
-Version 3.0 Revision 8, 9 
+Version 3.0 Revision 8, 9
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  are patched versions of Mega2 3.0.
  They contains some important bug-fixes that was introduced in the 3.0 R7
@@ -31195,7 +32593,11 @@ Version 3.0 Revision 8, 9
 
  
 \series bold
-Version 3.0 Revision 7 
+Version 3.0 Revision 7
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  is a patched version of Mega2 3.0.
  It contains a couple of bug-fixes, and the expiry date has been changed
@@ -31210,7 +32612,11 @@ Version 3.0 Revision 7
 
  
 \series bold
-Version 3.0 Revisions 1, 2,3, 4 and 5 
+Version 3.0 Revisions 1, 2,3, 4 and 5
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+
 \series default
  are patched versions of Mega2 3.0.
  They contain some important bug-fixes which are listed below.
@@ -31319,7 +32725,11 @@ e (very dense markers would have the same problem, if the output did not
 \end_layout
 
 \begin_layout Subsection*
- Changes from Ver 3.0 R7-
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Changes from Ver 3.0 R7-
 \begin_inset Formula $>$
 \end_inset
 
@@ -31618,7 +33028,7 @@ Enhancement: Mega2 checks entire map file for errors before terminating
 \end_layout
 
 \begin_layout Subsection*
- Changes from Ver 3.0 R2 -
+Changes from Ver 3.0 R2 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -31645,7 +33055,7 @@ Bug-fix:Unique IDs were not carried over during conversion from Pre-makeped
 \end_layout
 
 \begin_layout Subsection*
- Changes from Ver 3.0 R1 -
+Changes from Ver 3.0 R1 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -31788,7 +33198,11 @@ ic files.
 \end_layout
 
 \begin_layout Subsection*
- Changes from Ver 2.5 R4 -
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Changes from Ver 2.5 R4 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -31932,7 +33346,11 @@ Bug-Fix: Duplicate names in the names files caused Mega2 to run incorrectly.
 \end_layout
 
 \begin_layout Subsection*
- Changes from Ver 2.5 R3 -
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Changes from Ver 2.5 R3 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -32007,7 +33425,11 @@ Enhancement: Improved messages with respect to pedigree format (pre- or
 \end_layout
 
 \begin_layout Subsection*
- Changes from Ver 2.5 R1 -
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Changes from Ver 2.5 R1 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -32289,7 +33711,11 @@ Enhancement: For Merlin, cannot handle generating plots for multiple traits
 \end_layout
 
 \begin_layout Subsection*
- Changes from Ver 2.3 R3 -
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Changes from Ver 2.3 R3 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -32429,7 +33855,7 @@ Minor bug - Menu wording in SimWalk2 file names menu was a bit strange,
 \end_layout
 
 \begin_layout Subsection*
- Changes from Ver 2.3 -
+Changes from Ver 2.3 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -32707,7 +34133,7 @@ Mega2 crashed if no marker loci were selected, this has been corrected.
 \end_layout
 
 \begin_layout Subsection*
- Changes from version 2.2 -
+Changes from version 2.2 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -32732,7 +34158,7 @@ Menu for resetting genotypes has been fixed, the EXIT option did not work
 \end_layout
 
 \begin_layout Subsection*
- Changes from version 2.1 beta R3 -
+Changes from version 2.1 beta R3 -
 \begin_inset Formula $>$
 \end_inset
 
@@ -32993,10 +34419,6 @@ This section is no longer being updated because it is redundant with the
 \end_layout
 
 \begin_layout Standard
-
-\end_layout
-
-\begin_layout Standard
 \align center
 
 \series bold
@@ -33237,7 +34659,11 @@ ly set the first paternal and maternal sibling fields to 0, even when such
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 4.0 R1 
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 4.0 R1 
 \end_layout
 
 \begin_layout Standard
@@ -33322,7 +34748,11 @@ Random simulation of genotyping errors did not work correctly from 4.0 beta
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 4.0 beta R1
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 4.0 beta R1
 \end_layout
 
 \begin_layout Standard
@@ -33355,7 +34785,7 @@ R plot menu behavior was incorrect.
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 4.0 beta 
+Bugs in Mega2 4.0 beta 
 \end_layout
 
 \begin_layout Standard
@@ -33397,7 +34827,11 @@ Nuclear pedigree files had redundant chromosome number extensions when multiple
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 3.0 R10 
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 3.0 R10 
 \end_layout
 
 \begin_layout Standard
@@ -33444,7 +34878,7 @@ Loop-breaking in premakeped format pedigrees produced false error messages
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 3.0 R8 
+Bugs in Mega2 3.0 R8 
 \end_layout
 
 \begin_layout Standard
@@ -33462,7 +34896,11 @@ The Rallegro.pl, Rmerlin.pl and Rsimwalk2.pl Perl scripts failed to distinguish
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 3.0 R7 
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 3.0 R7 
 \end_layout
 
 \begin_layout Standard
@@ -33490,7 +34928,11 @@ Incorrect genotypes reset menu
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 3.0 R5, R6 
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 3.0 R5, R6 
 \end_layout
 
 \begin_layout Standard
@@ -33506,7 +34948,7 @@ Mendel option did not label X-linked loci as such when the combined output
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 3.0 R4 
+Bugs in Mega2 3.0 R4 
 \end_layout
 
 \begin_layout Standard
@@ -33554,7 +34996,11 @@ The R shell script contained mal-formed file-names when a single trait was
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 3.0 R3 
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 3.0 R3 
 \end_layout
 
 \begin_layout Standard
@@ -33577,7 +35023,7 @@ When recoding alleles, total allele count was wrong in MEGA2.RECODE file.
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 3.0 R2 
+Bugs in Mega2 3.0 R2 
 \end_layout
 
 \begin_layout Standard
@@ -33596,7 +35042,11 @@ Unique IDs were not carried over during conversion from Pre-makeped format
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 3.0 R1 
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 3.0 R1 
 \end_layout
 
 \begin_layout Standard
@@ -33646,7 +35096,11 @@ Vitesse shell script was missing its header and hence could not be run.
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 3.0 
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 3.0 
 \end_layout
 
 \begin_layout Standard
@@ -33723,7 +35177,11 @@ Duplicate names in the names files caused Mega2 to run incorrectly.
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 2.5 R3
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 2.5 R3
 \end_layout
 
 \begin_layout Standard
@@ -33741,7 +35199,7 @@ loop-over traits
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 2.5 R2
+Bugs in Mega2 2.5 R2
 \end_layout
 
 \begin_layout Standard
@@ -33891,7 +35349,11 @@ Existing vstrm files were not removed before each Vitesse run.
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 2.3 R3
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 2.3 R3
 \end_layout
 
 \begin_layout Standard
@@ -33906,7 +35368,7 @@ SPLINK option produced garbled pedigree files if the user selected the option
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 2.3 R2
+Bugs in Mega2 2.3 R2
 \end_layout
 
 \begin_layout Standard
@@ -33976,7 +35438,11 @@ In some cases, nuclear families included half-sibs This bug affects Aspex,
 \end_layout
 
 \begin_layout Subsection*
- Bugs in Mega2 2.2 R3
+
+\change_deleted -1820302391 1399922222
+ 
+\change_unchanged
+Bugs in Mega2 2.2 R3
 \end_layout
 
 \begin_layout Standard
@@ -34100,22 +35566,11 @@ The sib-phase XMGR scripts do not work for a grid of risk-ratios, the curve-data
  is missing the second column.
 \end_layout
 
-\begin_layout Itemize
-
-\end_layout
-
-\begin_deeper
 \begin_layout Standard
 The Vitesse LOG and STM files may contain bogus locus names and numbers,
  and, therefore, may not produce correct results.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\end_layout
-
-\begin_deeper
 \begin_layout Standard
 The fix to the previous bug made locus numbers ordinal (i.e.
  1..N, where N is the window size, including trait) with trait locus always
@@ -34148,23 +35603,11 @@ Mega2 ran into infinite loops trying to sort pedigree members if the structure
 SLINK option crashed if the only trait locus chosen was a QTL.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\end_layout
-
-\begin_deeper
 \begin_layout Standard
 Mendel output the first marker locus twice in the locus file if no affection
  locus was selected.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\end_layout
-
-\begin_deeper
 \begin_layout Standard
 Allele count option did not skip untyped markers, so it gave meaningless
  output due to divide-by-zero errors.
@@ -34175,7 +35618,6 @@ Aspex and Splink options did not have the correct headers in the c-shell
  scripts when more than one analysis was put into the same file.
 \end_layout
 
-\end_deeper
 \begin_layout Section
 License agreements
 \end_layout
@@ -37021,7 +38463,7 @@ Note:
 \series default
  This documentation is available in PDF form from 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
