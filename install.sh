@@ -36,6 +36,9 @@ MEGA2PATCH=`grep MEGA2PATCH ${VERSION_H} | sed -n 's/^#define MEGA2PATCH \(.*\)/
 # Get the current Mega2 version numbers from the source...
 VERSION="v${MEGA2VER}.${MEGA2REV}.${MEGA2PATCH}"
 
+# Minimum acceptable version of nplplot...
+MINIMUM_REQUIRED_NPLPLOT_VERSION='4.5'
+
 #
 # shell script to install mega2
 # and find out the perl path
@@ -121,6 +124,13 @@ packageVersion("nplplot")
 RSCRIPT
         if [[ -s "nplplot_installed_version.txt" ]] ; then
             NPLPLOT_INSTALLED_VERSION=`sed -n 's/^\[1\] \(.*\)/\1/p' nplplot_installed_version.txt`
+            if [[ $NPLPLOT_INSTALLED_VERSION < $MINIMUM_REQUIRED_NPLPLOT_VERSION ]] ; then
+                echo "ERROR: Found nplplot version $NPLPLOT_INSTALLED_VERSION"
+                echo "ERROR: At least version $MINIMUM_REQUIRED_NPLPLOT_VERSION is required."
+                echo "ERROR: Please start R and install nplplit using the following command."
+                echo "ERROR: > install.packages('nplplot', repos='http://cran.us.r-project.org', type='source')"
+                exit
+            fi
             echo "OK: Found nplplot version $NPLPLOT_INSTALLED_VERSION"
         else
             echo "WARNING: nplplot not installed"
