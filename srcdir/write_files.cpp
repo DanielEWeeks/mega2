@@ -212,7 +212,13 @@ static map<int, char *> numbered_format_string_map;
  */
 const char *format_allele(linkage_locus_rec *locus, const int allele)
 {
+    // Big 'if' predicate....
     // First see if we can/should return the character allele representation...
+
+    // Explaining the 'force_numeric_alleles' flag...
+    // For microsatalites that give you alleles as number that are not contiguous,
+    // in this potentially spaces numeric case we also recode. A command line argument
+    // has been added to Mega2 which says to always pick the recode (e.g., sequential numberic values).
     if ((force_numeric_alleles == 0) &&
         AnalysisOpt->allele_data_use_name_if_available() &&
         allele > 0 &&
@@ -225,13 +231,8 @@ const char *format_allele(linkage_locus_rec *locus, const int allele)
         // numeric representation instead.
         locus->Allele[allele-1].Frequency != 0 &&
         // seem mrecode.cpp
-        strncmp("dummy", locus->Allele[allele-1].name, 5) != 0
-        // For microsatiites they give you alleles as number that are not contiguous.
-        // When we dicide to recode (normally letters into numbers), but in this sparse
-        // numberic case we also recode. Add a command line argument to Mega2 which says
-        // to always pick the recode (e.g., sequential numberic values).
-        // NEED TO INSERT THE CONDITIONAL HERE!!!
-        ) {
+        strncmp("dummy", locus->Allele[allele-1].name, 5) != 0) {
+
         return locus->Allele[allele-1].name;
     }
 
@@ -247,6 +248,7 @@ const char *format_allele(linkage_locus_rec *locus, const int allele)
         numbered_format_string_map[allele] = str = strdup(allele_buf);
         return str;
     }
+
     return it->second;
 }
 

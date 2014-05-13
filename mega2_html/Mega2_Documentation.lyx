@@ -2205,9 +2205,10 @@ The nplplot R package
 \end_layout
 
 \begin_layout Standard
-To use the plotting option, you need the "nplplot" R library, also distributed
- from CRAN.
- 
+To use the plotting option, you need the "nplplot" R library (version 4.5
+ or greater), also distributed from CRAN.
+ The Mega2 install.sh script now checks to see if you have the proper version
+ installed.
 \end_layout
 
 \begin_layout Standard
@@ -4962,12 +4963,16 @@ Marker genotypes are coded as a pair of alleles, with at least one space
  or tab between them.
  Non-numeric allele names are allowed inside the pedigree file only with
  the use of a names file, and only for numbered marker loci.
- In releases of Mega2 starting with 4.7.0, non numeric allele names will be
- copied forward into the output files for analysis types that allow non
- numeric alleles.
- Otherwise, the recoded output pedigrees will have their genotypes altered
- to numeric alleles .
- A Mega2 command line flag (
+ In releases of Mega2 starting with 4.7.0, non numeric allele names when specified
+ will be copied forward from input files to output files for analysis types
+ that allow non numeric alleles.
+ When the allele is not present for any of the markers (which is the case
+ when the allele frequency is 0), or if a marker has no alleles, the numeric
+ allele value will always be used.
+ Also, in the case where the input contains numeric alleles that are not
+ contiguous (e.g.
+ microsatalites) they will be treated as if they are allele names unless
+ the Mega2 comand line flag (
 \emph on
 -
 \begin_inset ERT
@@ -4984,8 +4989,10 @@ status collapsed
 
 -force_numeric_alleles
 \emph default
-) may be set to force allele recoding if it is not necessary, but preferred
- by the researcher.
+) has been specified to force allele recoding, if it is not necessary, but
+ preferred by the researcher.
+ Otherwise, the recoded output pedigrees will have their genotypes altered
+ to numeric alleles .
  Allele names have to be strings, and may not contain white-space characters,
  since the pedigree file is read in as a white-space separated column format.
 \end_layout
@@ -19130,7 +19137,6 @@ status collapsed
 \noun off
 \color none
 	Mega2 format with header
-
 \end_layout
 
 \begin_layout Itemize
@@ -19194,7 +19200,6 @@ status collapsed
 \noun off
 \color none
 	Linkage format
-
 \end_layout
 
 \begin_layout Itemize
@@ -19258,7 +19263,6 @@ status collapsed
 \noun off
 \color none
 	Linkage with Mega2 names file
-
 \end_layout
 
 \begin_layout Itemize
@@ -19322,7 +19326,6 @@ status collapsed
 \noun off
 \color none
 	PLINK binary PED format (bed)
-
 \end_layout
 
 \begin_layout Itemize
@@ -19386,7 +19389,6 @@ status collapsed
 \noun off
 \color none
 	PLINK PED format (ped)
-
 \end_layout
 
 \begin_layout Itemize
@@ -19449,8 +19451,7 @@ status collapsed
 \uwave off
 \noun off
 \color none
-	BCF format (vcf)
--
+	BCF format (vcf)-
 \end_layout
 
 \begin_layout Itemize
@@ -19514,7 +19515,6 @@ status collapsed
 \noun off
 \color none
 	VCF compressed format (vcf.gz)
-
 \end_layout
 
 \begin_layout Itemize
@@ -19578,7 +19578,6 @@ status collapsed
 \noun off
 \color none
 	VCF format (vcf)
-
 \end_layout
 
 \begin_layout Subsection
