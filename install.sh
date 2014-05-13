@@ -119,7 +119,7 @@ RSCRIPT
         if [[ -s "nplplot_installed_version.txt" ]] ; then
             NPLPLOT_INSTALLED_VERSION=`sed -n 's/^\[1\] \(.*\)/\1/p' nplplot_installed_version.txt`
             # The quotes that R produces are the all too cute ASCII \xE2, rather than something like '`
-            NPLPLOT_INSTALLED_VERSION=`echo $NPLPLOT_INSTALLED_VERSION | sed -n 's/^.\(.*\).$/\1/p'`
+            NPLPLOT_INSTALLED_VERSION=`echo $NPLPLOT_INSTALLED_VERSION |  sed -n 's/.$//p' | sed -n 's/^.//p'`
             if [[ $NPLPLOT_INSTALLED_VERSION < $MINIMUM_REQUIRED_NPLPLOT_VERSION ]] ; then
                 echo "ERROR: Found nplplot version $NPLPLOT_INSTALLED_VERSION"
                 echo "ERROR: At least version $MINIMUM_REQUIRED_NPLPLOT_VERSION is required."
