@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #   Mega2: Manipulation Environment for Genetic Analysis
 #   Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
@@ -41,16 +42,11 @@ MINIMUM_REQUIRED_NPLPLOT_VERSION='4.5'
 
 #
 # shell script to install mega2
-# and find out the perl path
-#
-# usage: install.sh [default, /usr/local/bin/]
-# gunzip mega2.gz
-# First ask for which path to install into
 
 #
 # The user can bypass certain questions asked by the script by setting the
 # appropriate environment variables. So, if the user always wants the behavior
-# associated with these variables they can be set one time in thee user's shell
+# associated with these variables they can be set one time in the user's shell
 # RC file. The variables are:
 #
 # MEGA2_BINARY_DIRECTORY (if defined) should be set to the path that the Mega2
@@ -112,9 +108,7 @@ function verify() {
     a=( `$which R 2>/dev/null` )
     if [[ $a == no || ! $a ]]; then
        echo WARNING: Could not find R
-       rnotfound=1
-    else
-        rnotfound=0
+    elif [[ ${SAVE:-""} == "" ]]; then
         echo OK: Found $a
         echo Checking for nplplot library installed in R
         rm -f nplplot_installed_version.txt
@@ -124,18 +118,21 @@ packageVersion("nplplot")
 RSCRIPT
         if [[ -s "nplplot_installed_version.txt" ]] ; then
             NPLPLOT_INSTALLED_VERSION=`sed -n 's/^\[1\] \(.*\)/\1/p' nplplot_installed_version.txt`
+            # The quotes that R produces are the all too cute ASCII \xE2, rather than something like '`
+            NPLPLOT_INSTALLED_VERSION=`echo $NPLPLOT_INSTALLED_VERSION | sed -n 's/^.\(.*\).$/\1/p'`
             if [[ $NPLPLOT_INSTALLED_VERSION < $MINIMUM_REQUIRED_NPLPLOT_VERSION ]] ; then
                 echo "ERROR: Found nplplot version $NPLPLOT_INSTALLED_VERSION"
                 echo "ERROR: At least version $MINIMUM_REQUIRED_NPLPLOT_VERSION is required."
-                echo "ERROR: Please start R and install nplplit using the following command."
-                echo "ERROR: > install.packages('nplplot', repos='http://cran.us.r-project.org', type='source')"
+                echo "ERROR: Please start R and install nplplot using the following command."
+                echo "ERROR: install.packages('nplplot')"
                 exit
             fi
             echo "OK: Found nplplot version $NPLPLOT_INSTALLED_VERSION"
         else
-            echo "WARNING: nplplot not installed"
-            echo "WARNING: You will need to start R and run the command:"
-            echo "WARNING: > install.packages(\"nplplot\")"
+            echo "WARNING: nplplot not installed. To install it you"
+            echo "WARNING: will need to start R and run the command:"
+            echo "WARNING: install.packages('nplplot')"
+            exit
         fi
     fi
 

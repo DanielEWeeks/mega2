@@ -38,8 +38,8 @@
  */
 
 #define MEGA2VER 4
-#define MEGA2REV 6
-#define MEGA2PATCH 2
+#define MEGA2REV 7
+#define MEGA2PATCH 0
 
 #define EXPIRE_YEAR 2014
 /* June */

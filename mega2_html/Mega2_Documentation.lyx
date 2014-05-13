@@ -907,8 +907,11 @@ Bug Fix: Resolved an issue specifying PLINK mode interactively.
 \end_layout
 
 \begin_layout Itemize
-Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.Enha
-ncements in Mega2 version 4.6.2
+Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.
+\end_layout
+
+\begin_layout Subsection
+Enhancements in Mega2 version 4.6.2
 \end_layout
 
 \begin_layout Itemize
