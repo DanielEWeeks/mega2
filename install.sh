@@ -350,7 +350,7 @@ for scr in $scripts; do
             if [[ ${SAVE:-""} == "" ]]; then
                 $MAKE all
             else
-                $MAKE LN="" clean all
+                $MAKE LN="" distclean all
             fi
             make_status=$?
             if [[ $make_status > 0 ]]; then
@@ -362,6 +362,7 @@ for scr in $scripts; do
             mega2prog=srcdir/mega2_${OSTYPE}
             cd ..
             if [[ ${SAVE:-""} != "" ]]; then
+                echo
                 echo saving $mega2prog to mega2_bin/$pgm
                 rm -f mega2_bin/$pgm
                 cp -p $mega2prog mega2_bin/$pgm
