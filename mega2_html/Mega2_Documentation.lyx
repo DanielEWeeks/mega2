@@ -894,8 +894,23 @@ Enhancements in Mega2 version 4.7.0
 
 \begin_layout Itemize
 Mega2 now passes non-numeric alleles to analysis programs that will accept
- this format.
- Conversion to numeric alleles can still be requested if desired.
+ this format (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:Using-non-numeric-allele"
+
+\end_inset
+
+).
+ Conversion to numeric alleles can still be requested if desired (section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "force_numeric_alleles_cmd_line"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Itemize
@@ -4959,6 +4974,13 @@ markers
 
 \begin_layout Paragraph
 Using non-numeric allele names 
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Using-non-numeric-allele"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4969,13 +4991,18 @@ Marker genotypes are coded as a pair of alleles, with at least one space
  In releases of Mega2 starting with 4.7.0, non numeric allele names when specified
  will be copied forward from input files to output files for analysis types
  that allow non numeric alleles.
+ These analyses are: Beagle, Cranefoot, IQLS/Idcoefs, Loki, Mega2, Mendel,
+ Merlin, Merlin-SimWalk2, PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, SimWalk2,
+ vintage mendel.
+ For the other analyses, the recoded output pedigrees will have their genotypes
+ altered to have numeric alleles.
  When the allele is not present for any of the markers (which is the case
  when the allele frequency is 0), or if a marker has no alleles, the numeric
  allele value will always be used.
  Also, in the case where the input contains numeric alleles that are not
  contiguous (e.g.
- microsatalites) they will be treated as if they are allele names unless
- the Mega2 comand line flag (
+ microsatellites) they will be treated as if they are allele names and copied.
+ The Mega2 comand line flag (
 \emph on
 -
 \begin_inset ERT
@@ -4992,10 +5019,8 @@ status collapsed
 
 -force_numeric_alleles
 \emph default
-) has been specified to force allele recoding, if it is not necessary, but
- preferred by the researcher.
- Otherwise, the recoded output pedigrees will have their genotypes altered
- to numeric alleles .
+) can be been specified to force allele recoding, if it is not necessary,
+ but preferred by the researcher.
  Allele names have to be strings, and may not contain white-space characters,
  since the pedigree file is read in as a white-space separated column format.
 \end_layout
@@ -19612,6 +19637,13 @@ status collapsed
 
 \emph default
  
+\begin_inset CommandInset label
+LatexCommand label
+name "force_numeric_alleles_cmd_line"
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -23803,7 +23835,7 @@ mis.05.sh.
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
-name "ext:vintagemendel"
+name "ext:vintage"
 
 \end_inset
 
@@ -27300,7 +27332,7 @@ This is analogous to the Linkage format option which generates post-makeped
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
-name "ext:merlinsimwalk2-npl"
+name "ext:merlin/simwalk2-npl"
 
 \end_inset
 
@@ -28310,7 +28342,7 @@ all
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
-name "ext:iqlsidcoefs"
+name "ext:iqls/idcoefs"
 
 \end_inset
 
@@ -31185,8 +31217,23 @@ Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)
 
 \begin_layout Itemize
 Mega2 now passes non-numeric alleles to analysis programs that will accept
- this format.
- Conversion to numeric alleles can still be requested if desired.
+ this format (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:Using-non-numeric-allele"
+
+\end_inset
+
+).
+ Conversion to numeric alleles can still be requested if desired (section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "force_numeric_alleles_cmd_line"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Itemize

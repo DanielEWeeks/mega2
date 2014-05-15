@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="generator" content="http://www.nongnu.org/elyxer/"/>
-<meta name="create-date" content="2014-05-12"/>
+<meta name="create-date" content="2014-05-15"/>
 <link rel="stylesheet" href="Mega2_Documentation.css" type="text/css" media="all"/>
 <title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses </title>
 </head>
@@ -115,22 +115,25 @@ Table of Contents
 <a class="Link" href="#toc-Subsection-3.1">Subsection 3.1: Enhancements in Mega2 version 4.7.0</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.2">Subsection 3.2: Enhancements in Mega2 version 4.6.1</a>
+<a class="Link" href="#toc-Subsection-3.2">Subsection 3.2: Enhancements in Mega2 version 4.6.2</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.3">Subsection 3.3: Enhancements in Mega2 version 4.6.0</a>
+<a class="Link" href="#toc-Subsection-3.3">Subsection 3.3: Enhancements in Mega2 version 4.6.1</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.4">Subsection 3.4: Enhancements in Mega2 version 4.5.9</a>
+<a class="Link" href="#toc-Subsection-3.4">Subsection 3.4: Enhancements in Mega2 version 4.6.0</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.5">Subsection 3.5: Enhancements in Mega2 version 4.5.8</a>
+<a class="Link" href="#toc-Subsection-3.5">Subsection 3.5: Enhancements in Mega2 version 4.5.9</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.6">Subsection 3.6: Enhancements in Mega2 version 4.5.7</a>
+<a class="Link" href="#toc-Subsection-3.6">Subsection 3.6: Enhancements in Mega2 version 4.5.8</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.7">Subsection 3.7: Enhancements in Mega2 version 4.5.5/4.5.6</a>
+<a class="Link" href="#toc-Subsection-3.7">Subsection 3.7: Enhancements in Mega2 version 4.5.7</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-3.8">Subsection 3.8: Enhancements in Mega2 version 4.5.5/4.5.6</a>
 </div>
 </div>
 <div class="toc">
@@ -1462,7 +1465,7 @@ Detailed installation instructions can be found in Section <a class="Reference" 
 </h2>
 <ul>
 <li>
-Mega2 now passes non-numeric alleles to analysis programs that will accept this format. Conversion to numeric alleles can still be requested if desired.
+Mega2 now passes non-numeric alleles to analysis programs that will accept this format (section <a class="Reference" href="#par:Using-non-numeric-allele">15↓</a>). Conversion to numeric alleles can still be requested if desired (section <a class="Reference" href="#force_numeric_alleles_cmd_line">21.3↓</a>).
 </li>
 <li>
 Bug Fix: A number of problems with Beagle Analysis have been addressed.
@@ -1471,8 +1474,14 @@ Bug Fix: A number of problems with Beagle Analysis have been addressed.
 Bug Fix: Resolved an issue specifying PLINK mode interactively.
 </li>
 <li>
-Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.Enhancements in Mega2 version 4.6.2
+Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.
 </li>
+
+</ul>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-3.2">3.2</a> Enhancements in Mega2 version 4.6.2
+</h2>
+<ul>
 <li>
 Mega2 can now read VCF, BCF, and compressed VCF input files, while applying optional ’VCFtools’ filters (See section <a class="Reference" href="#sub:VCF-file-formats">9.4↓</a>). 
 </li>
@@ -1482,7 +1491,7 @@ Initial interactive menus have been modified to improve the specification of dif
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.2">3.2</a> Enhancements in Mega2 version 4.6.1
+<a class="toc" name="toc-Subsection-3.3">3.3</a> Enhancements in Mega2 version 4.6.1
 </h2>
 <ul>
 <li>
@@ -1497,7 +1506,7 @@ Added binaries for native Microsoft Windows 8 and MinGW built on Microsoft Windo
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.3">3.3</a> Enhancements in Mega2 version 4.6.0
+<a class="toc" name="toc-Subsection-3.4">3.4</a> Enhancements in Mega2 version 4.6.0
 </h2>
 <ul>
 <li>
@@ -1512,7 +1521,7 @@ Completely untyped family members do not require space for their allele values.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.4">3.4</a> Enhancements in Mega2 version 4.5.9
+<a class="toc" name="toc-Subsection-3.5">3.5</a> Enhancements in Mega2 version 4.5.9
 </h2>
 <ul>
 <li>
@@ -1521,7 +1530,7 @@ Bug fix: Mega2 will now compile properly on Red Hat (RHEL), CentOS, and Solaris 
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.5">3.5</a> Enhancements in Mega2 version 4.5.8
+<a class="toc" name="toc-Subsection-3.6">3.6</a> Enhancements in Mega2 version 4.5.8
 </h2>
 <ul>
 <li>
@@ -1545,7 +1554,7 @@ Structure format (See section <a class="Reference" href="#sub:Analysis-Structure
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.6">3.6</a> Enhancements in Mega2 version 4.5.7
+<a class="toc" name="toc-Subsection-3.7">3.7</a> Enhancements in Mega2 version 4.5.7
 </h2>
 <ul>
 <li>
@@ -1566,7 +1575,7 @@ Mega2 code files are now C++ files and require a C++ compiler. Internally, we ha
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.7">3.7</a> Enhancements in Mega2 version 4.5.5/4.5.6
+<a class="toc" name="toc-Subsection-3.8">3.8</a> Enhancements in Mega2 version 4.5.5/4.5.6
 </h2>
 <ul>
 <li>
@@ -1931,7 +1940,7 @@ combinat, gdata, gtools, MASS, mvtnorm
 <a class="toc" name="toc-Paragraph-2"></a>The nplplot R package
 </div>
 <div class="Standard">
-To use the plotting option, you need the "nplplot" R library, also distributed from CRAN. 
+To use the plotting option, you need the "nplplot" R library (version 4.5 or greater), also distributed from CRAN. The Mega2 install.sh script now checks to see if you have the proper version installed.
 </div>
 <div class="Standard">
 To install these packages, open up R, go to the "Package manager" menu item, and use the "install from the web" option. To load in these libraries, you can again use the package manager menu. 
@@ -3060,10 +3069,10 @@ Affection status trait (multiple liability classes)
 In version 4.5.7 and later, you can just use M for all the <b>markers</b> in the pedigree file header line and in the names file. Mega2 will read the map file to determine whether the marker is on a X-linked or Y-linked chromosome. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-15"></a>Using non-numeric allele names 
+<a class="toc" name="toc-Paragraph-15"></a>Using non-numeric allele names <a class="Label" name="par:Using-non-numeric-allele"> </a>
 </div>
 <div class="Standard">
-Marker genotypes are coded as a pair of alleles, with at least one space or tab between them. Non-numeric allele names are allowed inside the pedigree file only with the use of a names file, and only for numbered marker loci. In releases of Mega2 starting with 4.7.0, non numeric allele names will be copied forward into the output files for analysis types that allow non numeric alleles. Otherwise, the recoded output pedigrees will have their genotypes altered to numeric alleles . A Mega2 command line flag (<i>-<span class="unknown">\/</span>-force_numeric_alleles</i>) may be set to force allele recoding if it is not necessary, but preferred by the researcher. Allele names have to be strings, and may not contain white-space characters, since the pedigree file is read in as a white-space separated column format.
+Marker genotypes are coded as a pair of alleles, with at least one space or tab between them. Non-numeric allele names are allowed inside the pedigree file only with the use of a names file, and only for numbered marker loci. In releases of Mega2 starting with 4.7.0, non numeric allele names when specified will be copied forward from input files to output files for analysis types that allow non numeric alleles. These analyses are: Beagle, Cranefoot, IQLS/Idcoefs, Loki, Mega2, Mendel, Merlin, Merlin-SimWalk2, PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, SimWalk2, vintage mendel. For the other analyses, the recoded output pedigrees will have their genotypes altered to have numeric alleles. When the allele is not present for any of the markers (which is the case when the allele frequency is 0), or if a marker has no alleles, the numeric allele value will always be used. Also, in the case where the input contains numeric alleles that are not contiguous (e.g. microsatellites) they will be treated as if they are allele names and copied. The Mega2 comand line flag (<i>-<span class="unknown">\/</span>-force_numeric_alleles</i>) can be been specified to force allele recoding, if it is not necessary, but preferred by the researcher. Allele names have to be strings, and may not contain white-space characters, since the pedigree file is read in as a white-space separated column format.
 </div>
 <div class="Paragraph">
 <a class="toc" name="toc-Paragraph-16"></a>Missing values 
@@ -7246,7 +7255,7 @@ chromosome number for mitochondrial DNA.
 </h2>
 <ul>
 <li>
-<i>-<span class="unknown">\/</span>-force_numeric_alleles</i> <br/>
+<i>-<span class="unknown">\/</span>-force_numeric_alleles</i> <a class="Label" name="force_numeric_alleles_cmd_line"> </a><br/>
  <br/>
  As of Mega2 version 4.7.0, if letter alleles are found in the input, they will be passed through to the output and not recoded as numeric alleles. This is done for all input formats that allow letter alleles (i.e. all input formats except LINKAGE) and for the analysis that support letter alleles. If you would prefer the recoding of letter alleles to numbers to take place even though it is not necessary, set this flag <i>-<span class="unknown">\/</span>-force_numeric_alleles.</i>
 </li>
@@ -8725,7 +8734,7 @@ Simwalk2 does not currently handle QTLs. Moreover, at most one trait locus is al
 
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-24.2">24.2</a> <a class="Label" name="ext:vintagemendel"> </a>Convert to MENDEL format
+<a class="toc" name="toc-Subsection-24.2">24.2</a> <a class="Label" name="ext:vintage"> </a>Convert to MENDEL format
 </h2>
 <div class="Standard">
 Suppose the chromosome number is 5. Then Mega2 will, by default, generate the following files:<br/>
@@ -9671,7 +9680,7 @@ Pre-makeped files created by Mega2:
 This is analogous to the Linkage format option which generates post-makeped format files. If the input pedigree file was in post-makeped file with broken loops, this option will reconnect the loops. 
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-24.24">24.24</a> <a class="Label" name="ext:merlinsimwalk2-npl"> </a>Convert to Merlin-SimWalk2 format
+<a class="toc" name="toc-Subsection-24.24">24.24</a> <a class="Label" name="ext:merlin/simwalk2-npl"> </a>Convert to Merlin-SimWalk2 format
 </h2>
 <div class="Standard">
 Output files created by Mega2 for Merlin:<br/>
@@ -9954,7 +9963,7 @@ The following chromosome specific files are created for Mega2 format:
 Note that the default output file names have been chosen to match the Mega2 input file naming convention. Thus, within a subsequent run, Mega2 will easily detect these as valid input files if you specify the extension &ldquo;01.mega2&rdquo; in the input menu. If multiple chromosomes are combined within a single set of output files, then the extension &ldquo;all&rdquo; will be used instead of chromosome numbers. This option allows covariates, and also supports the selection of different individual and pedigree ID fields.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-24.34">24.34</a> <a class="Label" name="ext:iqlsidcoefs"> </a>Convert to IQLS/Idcoefs format
+<a class="toc" name="toc-Subsection-24.34">24.34</a> <a class="Label" name="ext:iqls/idcoefs"> </a>Convert to IQLS/Idcoefs format
 </h2>
 <div class="Standard">
 The following chromosome specific files are created for IQLS/Idcoefs:
@@ -10876,7 +10885,7 @@ March 31, 2008
 </h2>
 <ul>
 <li>
-Mega2 now passes non-numeric alleles to analysis programs that will accept this format. Conversion to numeric alleles can still be requested if desired.
+Mega2 now passes non-numeric alleles to analysis programs that will accept this format (section <a class="Reference" href="#par:Using-non-numeric-allele">15↑</a>). Conversion to numeric alleles can still be requested if desired (section <a class="Reference" href="#force_numeric_alleles_cmd_line">21.3↑</a>).
 </li>
 <li>
 Bug Fix: A number of problems with Beagle Analysis have been addressed.
@@ -13770,7 +13779,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2014-05-12T15:38:55.456410</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2014-05-15T14:28:07.409108</span>
 </div>
 </div>
 </body>
