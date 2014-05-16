@@ -41,7 +41,7 @@
 #define MEGA2REV 7
 #define MEGA2PATCH 0
 
-#define EXPIRE_YEAR 2014
+#define EXPIRE_YEAR 2015
 /* June */
 #define EXPIRE_MO 5
 #define EXPIRE_DATE 15

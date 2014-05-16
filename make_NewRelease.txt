@@ -1,8 +1,10 @@
 1. ./install.sh
-     udpate VERSION=
+     update VERSION=
+     update the NPLPLOT version if needed
 
-2. ./srcdir/meg2.cpp
+2. ./srcdir/version.h
      update Mega2Ver, Mega2Rev, and Mega2Patch as necessary
+     update the expiration date as necessary.
 
 3. ./*src  (? optional)
      update version in "PERL SCRIPT VERSION vx.y.z" and "Last updated:"
