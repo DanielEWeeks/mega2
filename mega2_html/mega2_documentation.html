@@ -120,21 +120,6 @@ Table of Contents
 <div class="toc">
 <a class="Link" href="#toc-Subsection-3.3">Subsection 3.3: Enhancements in Mega2 version 4.6.1</a>
 </div>
-<div class="toc">
-<a class="Link" href="#toc-Subsection-3.4">Subsection 3.4: Enhancements in Mega2 version 4.6.0</a>
-</div>
-<div class="toc">
-<a class="Link" href="#toc-Subsection-3.5">Subsection 3.5: Enhancements in Mega2 version 4.5.9</a>
-</div>
-<div class="toc">
-<a class="Link" href="#toc-Subsection-3.6">Subsection 3.6: Enhancements in Mega2 version 4.5.8</a>
-</div>
-<div class="toc">
-<a class="Link" href="#toc-Subsection-3.7">Subsection 3.7: Enhancements in Mega2 version 4.5.7</a>
-</div>
-<div class="toc">
-<a class="Link" href="#toc-Subsection-3.8">Subsection 3.8: Enhancements in Mega2 version 4.5.5/4.5.6</a>
-</div>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Section-4">Section 4: Quick start - get Mega2 running in minutes </a>
@@ -1465,7 +1450,7 @@ Detailed installation instructions can be found in Section <a class="Reference" 
 </h2>
 <ul>
 <li>
-Mega2 now passes non-numeric alleles to analysis programs that will accept this format (section <a class="Reference" href="#par:Using-non-numeric-allele">15↓</a>). Conversion to numeric alleles can still be requested if desired (section <a class="Reference" href="#force_numeric_alleles_cmd_line">21.3↓</a>).
+Mega2 now passes non-numeric alleles through (without recoding them to numeric alleles) to analysis programs that will accept non-numeric alleles (section <a class="Reference" href="#par:Using-non-numeric-allele">15↓</a>). This simplifies analyses, as it avoids relabelling alleles, making it easier to interpret the resulting output. Conversion to numeric alleles can still be requested if desired (section <a class="Reference" href="#force_numeric_alleles_cmd_line">21.3↓</a>).
 </li>
 <li>
 Bug Fix: A number of problems with Beagle Analysis have been addressed.
@@ -1502,93 +1487,6 @@ Bug fix: Mega2 4.6.0 had broken support for Linkage format input when using a &l
 </li>
 <li>
 Added binaries for native Microsoft Windows 8 and MinGW built on Microsoft Windows 8.
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.4">3.4</a> Enhancements in Mega2 version 4.6.0
-</h2>
-<ul>
-<li>
-Mega2 is now much more memory-efficient. Mega2 now uses a compressed representation for storing two-allele markers, such as those typically encountered in a genome-wide association study (GWAS). For example, a GWAS study of 895,103 two-allele markers on 3,122 individuals requires only 1 Gigabyte of memory. For details, see section <a class="Reference" href="#sub:Input-menu-item:">12.13↓</a>.
-</li>
-<li>
-Mega2 also provides a compressed representation for microsatellite markers, allowing up to 256 alleles.
-</li>
-<li>
-Completely untyped family members do not require space for their allele values.
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.5">3.5</a> Enhancements in Mega2 version 4.5.9
-</h2>
-<ul>
-<li>
-Bug fix: Mega2 will now compile properly on Red Hat (RHEL), CentOS, and Solaris systems.
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.6">3.6</a> Enhancements in Mega2 version 4.5.8
-</h2>
-<ul>
-<li>
-Mega2 now supports several additional output formats. While these new options set up files that run for us, these have not been extensively tested yet, so if you try them out, please send us feedback if you notice anything that should be improved.<ol>
-<li>
-PANGAEA MORGAN format (See section <a class="Reference" href="#sub:Analysis-Morgan-option">13.36↓</a>)
-</li>
-<li>
-Beagle format (See section <a class="Reference" href="#sub:Analysis-BEAGLE-option">13.37↓</a>)
-</li>
-<li>
-Eigenstrat format (See section <a class="Reference" href="#sub:Analysis-Eigenstrat-option">13.38↓</a>)
-</li>
-<li>
-Structure format (See section <a class="Reference" href="#sub:Analysis-Structure-option">13.39↓</a>)
-</li>
-
-</ol>
-
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.7">3.7</a> Enhancements in Mega2 version 4.5.7
-</h2>
-<ul>
-<li>
-Mega2 can now generate binary format PLINK files (See section <a class="Reference" href="#sub:Analysis-PLINK-option">13.31↓</a>).
-</li>
-<li>
-Mega2 can now generate files for FBAT analysis (See section <a class="Reference" href="#sub:Analysis-FBAT-option">13.35↓</a>).
-</li>
-<li>
-Mega2 can supports 5 non-human species, including dog, mouse, and horse (See section <a class="Reference" href="#sec:Mega2-command-line-arguments">21↓</a>).
-</li>
-<li>
-We have improved the handling of missing value codes for quantitative phenotypes and covariates, allowing the user to more easily map the missing value code in the input data files to the desired missing value code in the reformatted output files. If the user uses a numerical output missing value code that is within the range of the real values, Mega2 warns the user.
-</li>
-<li>
-Mega2 code files are now C++ files and require a C++ compiler. Internally, we have begun to use object-oriented paradigms to make it much easier to add new analysis options.
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.8">3.8</a> Enhancements in Mega2 version 4.5.5/4.5.6
-</h2>
-<ul>
-<li>
-Mega2 can now read files in PLINK format. Both binary PED files (*.bed) and PED files (*.ped) are accepted.
-</li>
-<li>
-Mega2 can now generate PLINK output MAP files that contain both genetic and physical maps.
-</li>
-<li>
-Mega2 is now more robust in handling input map files containing multiple genetic and/or physical maps.
-</li>
-<li>
-Mega2 is now more memory efficient and runs faster than previous versions. 
 </li>
 
 </ul>
@@ -1744,7 +1642,7 @@ This frequency file, as well as the other optional Mega2 files: the omit file an
 </h2>
 <div class="Standard">
 For Macintosh OS X users: <br/>
- Be careful when you select the common extension<b> .dat</b> for your input files. If your map file is named<b> map.dat </b>, and you create SimWalk2 files and then run SimWalk2, the <b>map.dat</b> file will be overwritten by the SimWalk2 formatted file <b>MAP.DAT</b>. Although the letter case differs, these files are in reality the same file.
+ Be careful when you select the common extension<b> .dat</b> for your input files. If your map file is named<b> map.dat </b>, and you create SimWalk2 files and then run SimWalk2, the <b>map.dat</b> file will be overwritten by the SimWalk2 formatted file <b>MAP.DAT</b>. The default Macintosh file system is case-insensitive, so it would treat <b>map.dat</b> and <b>MAP.DAT</b> as the same file.
 </div>
 <div class="Standard">
 <hr class="line" />
@@ -3072,7 +2970,7 @@ In version 4.5.7 and later, you can just use M for all the <b>markers</b> in the
 <a class="toc" name="toc-Paragraph-15"></a>Using non-numeric allele names <a class="Label" name="par:Using-non-numeric-allele"> </a>
 </div>
 <div class="Standard">
-Marker genotypes are coded as a pair of alleles, with at least one space or tab between them. Non-numeric allele names are allowed inside the pedigree file only with the use of a names file, and only for numbered marker loci. In releases of Mega2 starting with 4.7.0, non numeric allele names when specified will be copied forward from input files to output files for analysis types that allow non numeric alleles. These analyses are: Beagle, Cranefoot, IQLS/Idcoefs, Loki, Mega2, Mendel, Merlin, Merlin-SimWalk2, PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, and SimWalk2. For the other analyses, the recoded output pedigrees will have their genotypes altered to have numeric alleles. When the allele is not present for any of the markers (which is the case when the allele frequency is 0), or if a marker has no alleles, the numeric allele value will always be used. Also, in the case where the input contains numeric alleles that are not contiguous (e.g. microsatellites) they will be treated as if they are allele names and copied. The Mega2 comand line flag (<i>-<span class="unknown">\/</span>-force_numeric_alleles</i>) can be been specified to force allele recoding, if it is not necessary, but preferred by the researcher. Allele names have to be strings, and may not contain white-space characters, since the pedigree file is read in as a white-space separated column format. 
+Marker genotypes are coded as a pair of alleles, with at least one space or tab between them. Non-numeric allele names are allowed inside the pedigree file only with the use of a names file, and only for numbered marker loci. In releases of Mega2 starting with 4.7.0, non-numeric allele names when specified will be copied forward from input files to output files for analysis types that allow non-numeric alleles. Carrying the original allele labels through to the output files without recoding makes it easier to keep track of which allele is which. The analysis options which support non-numeric allele names are: Beagle, Cranefoot, IQLS/Idcoefs, Loki, Mega2, Mendel, Merlin, Merlin-SimWalk2, PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, and SimWalk2. For the other analyses, the recoded output pedigrees will have their genotypes altered to have numeric alleles. Also, in the case where the input contains numeric alleles that are not contiguous (e.g., microsatellites) they will be treated as if they are allele names and copied. The Mega2 command line flag (<i>-<span class="unknown">\/</span>-force_numeric_alleles</i>) can be been specified to force allele recoding, if it is not necessary, but preferred by the researcher. Allele names have to be strings, and may not contain white-space characters, since the pedigree file is read in assuming a white-space delimited column format. 
 </div>
 <div class="Standard">
 Note: Some analyses, like Merlin, require the letter alleles to be A, C, G or T. The coding convention of using A and B as the allele designator is not accepted. Mega2 has not been programmed to make this check. So for the present, in this and similar analyses, you will have to manually set <i>-<span class="unknown">\/</span>-force_numeric_alleles.</i>
@@ -7260,7 +7158,7 @@ chromosome number for mitochondrial DNA.
 <li>
 <i>-<span class="unknown">\/</span>-force_numeric_alleles</i> <a class="Label" name="force_numeric_alleles_cmd_line"> </a><br/>
  <br/>
- As of Mega2 version 4.7.0, if letter alleles are found in the input, they will be passed through to the output and not recoded as numeric alleles. This is done for all input formats that allow letter alleles (i.e. all input formats except LINKAGE) and for the analysis that support letter alleles. If you would prefer the recoding of letter alleles to numbers to take place even though it is not necessary, set this flag <i>-<span class="unknown">\/</span>-force_numeric_alleles.</i>
+ As of Mega2 version 4.7.0, if non-numeric alleles are found in the input, they will be passed through to the output and not recoded as numeric alleles. This is done for all input formats that allow letter alleles (i.e., all input formats except LINKAGE) and for the analysis options that support non-numeric alleles. To force the recoding of alleles to numeric alleles to take place, set this flag <i>-<span class="unknown">\/</span>-force_numeric_alleles.</i>
 </li>
 <li>
 <i>-x, -<span class="unknown">\/</span>-nosave</i> <br/>
@@ -13785,7 +13683,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2014-05-16T10:49:10.565298</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.3 (2011-08-31)</a> on <span class="create-date">2014-05-16T16:40:12.576419</span>
 </div>
 </div>
 </body>

@@ -893,8 +893,9 @@ Enhancements in Mega2 version 4.7.0
 \end_layout
 
 \begin_layout Itemize
-Mega2 now passes non-numeric alleles to analysis programs that will accept
- this format (section 
+Mega2 now passes non-numeric alleles through (without recoding them to numeric
+ alleles) to analysis programs that will accept non-numeric alleles (section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "par:Using-non-numeric-allele"
@@ -902,6 +903,8 @@ reference "par:Using-non-numeric-allele"
 \end_inset
 
 ).
+ This simplifies analyses, as it avoids relabelling alleles, making it easier
+ to interpret the resulting output.
  Conversion to numeric alleles can still be requested if desired (section
  
 \begin_inset CommandInset ref
@@ -993,180 +996,6 @@ reference "sub:Names-file"
 \begin_layout Itemize
 Added binaries for native Microsoft Windows 8 and MinGW built on Microsoft
  Windows 8.
-\end_layout
-
-\begin_layout Subsection
-Enhancements in Mega2 version 4.6.0
-\end_layout
-
-\begin_layout Itemize
-Mega2 is now much more memory-efficient.
- Mega2 now uses a compressed representation for storing two-allele markers,
- such as those typically encountered in a genome-wide association study
- (GWAS).
- For example, a GWAS study of 895,103 two-allele markers on 3,122 individuals
- requires only 1 Gigabyte of memory.
- For details, see section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Input-menu-item:"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Mega2 also provides a compressed representation for microsatellite markers,
- allowing up to 256 alleles.
-\end_layout
-
-\begin_layout Itemize
-Completely untyped family members do not require space for their allele
- values.
-\end_layout
-
-\begin_layout Subsection
-Enhancements in Mega2 version 4.5.9
-\end_layout
-
-\begin_layout Itemize
-Bug fix: Mega2 will now compile properly on Red Hat (RHEL), CentOS, and
- Solaris systems.
-\end_layout
-
-\begin_layout Subsection
-Enhancements in Mega2 version 4.5.8
-\end_layout
-
-\begin_layout Itemize
-Mega2 now supports several additional output formats.
- While these new options set up files that run for us, these have not been
- extensively tested yet, so if you try them out, please send us feedback
- if you notice anything that should be improved.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-PANGAEA MORGAN format (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Analysis-Morgan-option"
-
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Enumerate
-Beagle format (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Analysis-BEAGLE-option"
-
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Enumerate
-Eigenstrat format (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Analysis-Eigenstrat-option"
-
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Enumerate
-Structure format (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Analysis-Structure-option"
-
-\end_inset
-
-)
-\end_layout
-
-\end_deeper
-\begin_layout Subsection
-Enhancements in Mega2 version 4.5.7
-\end_layout
-
-\begin_layout Itemize
-Mega2 can now generate binary format PLINK files (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Analysis-PLINK-option"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Itemize
-Mega2 can now generate files for FBAT analysis (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Analysis-FBAT-option"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Itemize
-Mega2 can supports 5 non-human species, including dog, mouse, and horse
- (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Mega2-command-line-arguments"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Itemize
-We have improved the handling of missing value codes for quantitative phenotypes
- and covariates, allowing the user to more easily map the missing value
- code in the input data files to the desired missing value code in the reformatt
-ed output files.
- If the user uses a numerical output missing value code that is within the
- range of the real values, Mega2 warns the user.
-\end_layout
-
-\begin_layout Itemize
-Mega2 code files are now C++ files and require a C++ compiler.
- Internally, we have begun to use object-oriented paradigms to make it much
- easier to add new analysis options.
-\end_layout
-
-\begin_layout Subsection
-Enhancements in Mega2 version 4.5.5/4.5.6
-\end_layout
-
-\begin_layout Itemize
-Mega2 can now read files in PLINK format.
- Both binary PED files (*.bed) and PED files (*.ped) are accepted.
-\end_layout
-
-\begin_layout Itemize
-Mega2 can now generate PLINK output MAP files that contain both genetic
- and physical maps.
-\end_layout
-
-\begin_layout Itemize
-Mega2 is now more robust in handling input map files containing multiple
- genetic and/or physical maps.
-\end_layout
-
-\begin_layout Itemize
-Mega2 is now more memory efficient and runs faster than previous versions.
- 
 \end_layout
 
 \begin_layout Standard
@@ -1732,7 +1561,16 @@ map.dat
 MAP.DAT
 \series default
 .
- Although the letter case differs, these files are in reality the same file.
+ The default Macintosh file system is case-insensitive, so it would treat
+ 
+\series bold
+map.dat
+\series default
+ and 
+\series bold
+MAP.DAT
+\series default
+ as the same file.
 \end_layout
 
 \begin_layout Standard
@@ -4988,20 +4826,20 @@ Marker genotypes are coded as a pair of alleles, with at least one space
  or tab between them.
  Non-numeric allele names are allowed inside the pedigree file only with
  the use of a names file, and only for numbered marker loci.
- In releases of Mega2 starting with 4.7.0, non numeric allele names when specified
+ In releases of Mega2 starting with 4.7.0, non-numeric allele names when specified
  will be copied forward from input files to output files for analysis types
- that allow non numeric alleles.
- These analyses are: Beagle, Cranefoot, IQLS/Idcoefs, Loki, Mega2, Mendel,
- Merlin, Merlin-SimWalk2, PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, and SimWalk2.
+ that allow non-numeric alleles.
+ Carrying the original allele labels through to the output files without
+ recoding makes it easier to keep track of which allele is which.
+ The analysis options which support non-numeric allele names are: Beagle,
+ Cranefoot, IQLS/Idcoefs, Loki, Mega2, Mendel, Merlin, Merlin-SimWalk2,
+ PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, and SimWalk2.
  For the other analyses, the recoded output pedigrees will have their genotypes
  altered to have numeric alleles.
- When the allele is not present for any of the markers (which is the case
- when the allele frequency is 0), or if a marker has no alleles, the numeric
- allele value will always be used.
  Also, in the case where the input contains numeric alleles that are not
- contiguous (e.g.
- microsatellites) they will be treated as if they are allele names and copied.
- The Mega2 comand line flag (
+ contiguous (e.g., microsatellites) they will be treated as if they are allele
+ names and copied.
+ The Mega2 command line flag (
 \emph on
 -
 \begin_inset ERT
@@ -5021,7 +4859,8 @@ status collapsed
 ) can be been specified to force allele recoding, if it is not necessary,
  but preferred by the researcher.
  Allele names have to be strings, and may not contain white-space characters,
- since the pedigree file is read in as a white-space separated column format.
+ since the pedigree file is read in assuming a white-space delimited column
+ format.
  
 \end_layout
 
@@ -19676,13 +19515,13 @@ name "force_numeric_alleles_cmd_line"
 \begin_inset Newline newline
 \end_inset
 
- As of Mega2 version 4.7.0, if letter alleles are found in the input, they
- will be passed through to the output and not recoded as numeric alleles.
- This is done for all input formats that allow letter alleles (i.e.
- all input formats except LINKAGE) and for the analysis that support letter
+ As of Mega2 version 4.7.0, if non-numeric alleles are found in the input,
+ they will be passed through to the output and not recoded as numeric alleles.
+ This is done for all input formats that allow letter alleles (i.e., all input
+ formats except LINKAGE) and for the analysis options that support non-numeric
  alleles.
- If you would prefer the recoding of letter alleles to numbers to take place
- even though it is not necessary, set this flag 
+ To force the recoding of alleles to numeric alleles to take place, set
+ this flag 
 \emph on
 -
 \begin_inset ERT
