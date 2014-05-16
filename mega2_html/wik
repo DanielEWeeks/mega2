@@ -1,0 +1,104 @@
+| xx<ref name=Mega2_Abstract>{{cite journal|last=Mukhopadhyay|first=N|coauthors=Almasy L, Schroeder M, Mulvihill WP, Weeks DE|title=Mega2, a data-handling program for facilitating genetic linkage and association analyses|journal=Am J Hum Genet|date=1999|volume=65|page=A436}}</ref><ref name=Mega2_paper>{{cite journal|last=Mukhopadhyay|first=N|coauthors=Almasy L, Schroeder M, Mulvihill WP, Weeks DE|title=Mega2: data-handling for facilitating genetic linkage and association analyses|journal=Bioinformatics|date=2005|volume=21|issue=10|pages=2556-2557|pmid=15746282}}</ref><ref name=Mega2_2013_Abstract>{{cite journal|last=Kollar|first=CP|coauthors=Baron RV, Mukhopadhyay N, Weeks DE|title=Mega2: enhanced data-handling for facilitating genetic linkage and association analyses|journal=Presented at the 63rd Annual Meeting of The American Society of Human Genetics, Boston|date=October 2013|page=Abstract 1831|url=http://abstracts.ashg.org/cgi-bin/2013/ashg13s.pl?author=kollar&sort=ptimes&sbutton=Detail&absno=130121140&sid=32111}}</ref>
+
+| LINKAGE<ref name=LINKAGE1984 >{{cite journal | author=Lathrop GM, Lalouel J-M | title=Easy calculations of lod scores and genetic risks on small computers | journal=Am J Hum Genet | date=1984 | volume=36 |pages=460-465 }}</ref><ref name=LINKAGE1985 >{{cite journal | author=Lathrop GM, Lalouel JM, Julier C, Ott J | title=Multilocus linkage analysis in humans: detection of linkage and estimation of recombination | journal=Am J Hum Genet | date=1985 | volume=37 | issue=3|pages=482-498 }}</ref><ref name=LINKAGE1986 >{{cite journal | author=Lathrop GM, Lalouel JM, White RL | title=Construction of human linkage maps:  likelihood calculations for multilocus analysis | journal=Genet Epidemiol | date=1986 | volume=3 |pages=39-52 }}</ref><ref name=LINKAGE1988>{{cite journal | author=Lathrop GM, Lalouel JM | title=Efficient computations in multilocus linkage analysis | journal=Am J Hum Genet | date=1988 | volume=42 |pages=498-505 }}</ref>
+
+ || [http://www.jurgott.org/linkage/LinkageUser.pdf Linkage User Guide (PDF)], [http://watson.hgen.pitt.edu/docs/mega2_html/mega2_documentation.html#sub:Linkage-file-formats LINKAGE format]
+
+| Mega2<ref name=Mega2_Abstract /><ref name=Mega2_paper /><ref name=Mega2_2013_Abstract />  || [http://watson.hgen.pitt.edu/docs/mega2_html/mega2_documentation.html#sub:Annotated-file-formats Mega2 format]
+
+| PLINK<ref name=PLINK >{{cite journal | author=Purcell S, Neale B, Todd-Brown K, Thomas L, Ferreira MAR, Bender D, Maller J, Sklar P, de Bakker PIW, Daly MJ, Sham PC | title=PLINK: a tool set for whole-genome association and population-based linkage analyses | journal=Am J Hum Genet | date=2007 | volume=81 | issue=3|pages=559-575 | pmid=17701901 }}</ref>  ||  [http://pngu.mgh.harvard.edu/~purcell/plink/ PLINK documentation]
+
+| VCF or BCF || [[Variant Call Format|Variant Call Format (Wikipedia entry)]], [http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2 BCF documentation]
+
+
+|  ASPEX format ||  [http://aspex.sourceforge.net ASPEX]
+
+|  Allegro format<ref >{{cite journal | author=Gudbjartsson DF, Jonasson K, Frigge ML, Kong A | title=Allegro, a new computer program for multipoint linkage analysis | journal=Nat Genet | date=2000 | volume=25 | issue=1|pages=12-13 }}</ref>
+ ||
+
+|  Beagle format<ref >{{cite journal | author=Browning SR, Browning BL | title=Rapid and accurate haplotype phasing and missing-data inference for whole-genome association studies by use of localized haplotype clustering | journal=Am J Hum Genet | date=2007 | volume=81 | issue=5|pages=1084-1097 }}</ref><ref >{{cite journal | author=Browning BL, Browning SR | title=A unified approach to genotype imputation and haplotype-phase inference for large data sets of trios and unrelated individuals | journal=Am J Hum Genet | date=2009 | volume=84 | issue=2|pages=210-223 | pmid=19200528 }}</ref>
+
+ ||  [http://faculty.washington.edu/browning/beagle/beagle.html BEAGLE]
+
+|  CRANEFOOT format<ref >{{cite journal | author=Makinen VP, Parkkonen M, Wessman M, Groop PH, Kanninen T, Kaski K | title=High-throughput pedigree drawing | journal=Eur J Hum Genet | date=2005 | volume=13 | issue=8|pages=987-989 }}</ref>
+ ||  [http://www.finndiane.fi/software/cranefoot/ CRANEFOOT]
+
+|  Eigenstrat format<ref >{{cite journal | author=Price AL, Patterson NJ, Plenge RM, Weinblatt ME, Shadick NA, Reich D | title=Principal components analysis corrects for stratification in genome-wide association studies | journal=Nat Genet | date=2006 | volume=38 | issue=8|pages=904-909 }}</ref><ref >{{cite journal | author=Patterson N, Price AL, Reich D | title=Population structure and eigenanalysis | journal=PLoS Genet | date=2006 | volume=2 | issue=12|pages=e190 }}</ref>
+  ||  [http://www.hsph.harvard.edu/alkes-price/software/ EIGENSOFT]
+
+|  FBAT format<ref >{{cite journal | author=Laird NM, Horvath S, Xu X | title=Implementing a unified approach to family-based tests of association | journal=Genet Epidemiol | date=2000 | volume=19 | issue=Suppl 1|pages=S36-42. }}</ref>
+ ||  [http://www.hsph.harvard.edu/fbat/fbat.htm FBAT]
+
+|  GeneHunter format<ref >{{cite journal | author=Kruglyak L, Daly MJ, Reeve-Daly MP, Lander ES | title=Parametric and nonparametric linkage analysis: a unified multipoint approach | journal=Am J Hum Genet | date=1996 | volume=58 |pages=1347-1363 }}</ref>
+ ||  [http://www.broadinstitute.org/ftp/distribution/software/genehunter/ GeneHunter]
+
+|  GeneHunter-Plus format<ref >{{cite journal | author=Kong A, Cox NJ | title=Allele-sharing models: LOD scores and accurate linkage tests | journal=Am J Hum Genet | date=1997 | volume=61 | issue=5|pages=1179-1188 }}</ref>
+ ||  [http://galton.uchicago.edu/genehunterplus/ GeneHunter-Plus]
+
+|  IQLS/Idcoefs format<ref >{{cite journal | author=Wang Z, McPeek MS | title=An Incomplete-Data Quasi-likelihood Approach to Haplotype-Based Genetic Association Studies on Related Individuals | journal=J Am Stat Assoc | date=2009 | volume=104 | issue=487|pages=1251-1260 }}</ref><ref >{{cite journal | author=Abney M | title=A graphical algorithm for fast computation of identity coefficients and generalized kinship coefficients | journal=Bioinformatics | date=2009 | volume=25 | issue=12|pages=1561-1563 }}</ref>
+  ||  [http://www.stat.uchicago.edu/~mcpeek/software/IQLS/index.html IQLS],[http://home.uchicago.edu/~abney/abney_web/Software.html Idcoefs]
+
+|  Linkage format<ref name=LINKAGE1984 /><ref name=LINKAGE1985 /><ref name=LINKAGE1986 /><ref name=LINKAGE1988 />  ||  [http://www.jurgott.org/linkage/LinkageUser.pdf Linkage User Guide (PDF)], [http://watson.hgen.pitt.edu/docs/mega2_html/mega2_documentation.html#sub:Linkage-file-formats LINKAGE format]
+
+|  Loki format<ref >{{cite journal | author=Heath SC | title=Markov chain Monte Carlo segregation and linkage analysis for oligogenic models | journal=Am J Hum Genet | date=1997 | volume=61 | issue=3|pages=748-760 }}</ref>
+ ||  [https://www.stat.washington.edu/thompson/Genepi/Loki.shtml Loki]
+
+|  MLBQTL format<ref >{{cite journal | author=Alcais A, Philippi A, Abel L | title=Genetic model-free linkage analysis using the maximum-likelihood- binomial method for categorical traits | journal=Genet Epidemiol | date=1999 | volume=17 | issue=Suppl 1|pages=S467-472 }}</ref>
+ ||  [http://www.hgid.net/site/site.php?rubr=9# MLB-QTL]
+
+|  Mega2 annotated format<ref name=Mega2_Abstract /><ref name=Mega2_paper /><ref name=Mega2_2013_Abstract />   ||   [http://watson.hgen.pitt.edu/docs/mega2_html/mega2_documentation.html#sub:Annotated-file-formats Mega2 format]
+
+|  Mendel format<ref name=MENDEL2013 >{{cite journal | author=Lange K, Papp JC, Sinsheimer JS, Sripracha R, Zhou H, Sobel EM | title=Mendel: the Swiss army knife of genetic analysis programs | journal=Bioinformatics | date=2013 | volume=29 | issue=12|pages=1568-1570 }}</ref>
+ ||  [http://www.genetics.ucla.edu/software/ Mendel]
+
+|  Merlin format<ref name=MERLIN2002 >{{cite journal | author=Abecasis GR, Cherny SS, Cookson WO, Cardon LR | title=Merlin--rapid analysis of dense genetic maps using sparse gene flow trees | journal=Nat Genet | date=2002 | volume=30 | issue=1|pages=97-101. }}</ref>
+ ||  [http://www.sph.umich.edu/csg/abecasis/Merlin Merlin]
+
+|  Merlin/SimWalk2-NPL format<ref name=MERLIN2002 /><ref name=SIMWALK2 />  ||  [http://www.sph.umich.edu/csg/abecasis/Merlin  Merlin] [http://watson.hgen.pitt.edu/register SimWalk2]
+
+|  PANGAEA MORGAN format<ref >{{cite journal | author=Thompson EA | title=Monte Carlo likelihood in the genetic mapping of complex traits | journal=Philos Trans R Soc Lond B Biol Sci | date=1994 | volume=344 | issue=1310|pages=345-350; discussion 350-341 }}</ref><ref >{{cite journal | author=Thompson EA | title=Monte Carlo likelihood in genetic mapping | journal=Statistical Science | date=1994 | volume=9 | issue=3|pages=355-366 }}</ref>
+
+ ||  [http://www.stat.washington.edu/thompson/Genepi/MORGAN/Morgan.shtml MORGAN]
+
+|  PAP format<ref >{{cite journal | author=Hasstedt SJ | title=jPAP: Document-driven software for genetic analysis | journal=Genet Epidemiol | date=2005 | volume=29 |pages=255 }}</ref>
+ ||  [http://hasstedt.genetics.utah.edu/  PAP]
+
+|  PLINK format<ref name=PLINK /> (bed, lgen, or ped formats)
+ ||  [http://pngu.mgh.harvard.edu/~purcell/plink/ PLINK]
+
+|  PREST format<ref >{{cite journal | author=McPeek MS, Sun L | title=Statistical tests for detection of misspecified relationships by use of genome-screen data | journal=Am J Hum Genet | date=2000 | volume=66 | issue=3|pages=1076-1094 }}</ref><ref >{{cite journal | author=Sun L, Wilder K, McPeek MS | title=Enhanced pedigree error detection | journal=Hum Hered | date=2002 | volume=54 | issue=2|pages=99-110 }}</ref>
+
+ ||  [http://fisher.utstat.toronto.edu/sun/Software/Prest/prest3.02/index.html PREST]
+
+|  PSEQ format ||  [http://atgu.mgh.harvard.edu/plinkseq/ PSEQ]
+
+|  Pre-makeped LINKAGE format<ref name=LINKAGE1984 /><ref name=LINKAGE1985 /><ref name=LINKAGE1986 /><ref name=LINKAGE1988 />  ||   [http://www.jurgott.org/linkage/LinkageUser.pdf Linkage User Guide (PDF)], [http://watson.hgen.pitt.edu/docs/mega2_html/mega2_documentation.html#sub:Linkage-file-formats LINKAGE format] 
+
+|  SAGE format ||  [http://darwin.cwru.edu/  SAGE], [http://code.google.com/p/opensage/ openSAGE]
+
+|  SIMULATE format<ref >{{cite journal | author=Speer M, Terwilliger JD, Ott J | title=A chromosome-based method for rapid computer simulation | journal=Am J Hum Genet | date=1992 | volume=51 |pages=A202 }}</ref>
+ ||  [http://www.jurgott.org/linkage/simulate.html SIMULATE]
+
+|  SLINK format<ref >{{cite journal | author=Weeks DE, Ott J, Lathrop GM | title=SLINK: a general simulation program for linkage analysis | journal=Am J Hum Genet | date=1990 | volume=47 | issue=3|pages=A204 }}</ref><ref name=SLINK>{{cite journal | author=Schäffer AA, Lemire M, Ott J, Lathrop GM, Weeks DE | title=Coordinated conditional simulation with SLINK and SUP of many markers linked or associated to a trait in large pedigrees | journal=Hum Hered | date=2011 | volume=71 | issue=2|pages=126-134 | pmid=21734403 }}</ref>
+ ||  [http://watson.hgen.pitt.edu/register FASTSLINK]
+
+|  SOLAR format<ref >{{cite journal | author=Blangero J, Almasy L | title=Multipoint oligogenic linkage analysis of quantitative traits | journal=Genet Epidemiol | date=1997 | volume=14 | issue=6|pages=959-964 }}</ref><ref >{{cite journal | author=Almasy L, Blangero J | title=Multipoint quantitative-trait linkage analysis in general pedigrees | journal=Am J Hum Genet | date=1998 | volume=62 | issue=5|pages=1198-1211 }}</ref>
+ ||  [http://solar.txbiomedgenetics.org/download.html SOLAR]
+
+|  SPLINK format<ref >{{cite journal | author=Holmans P | title=Asymptotic properties of affected-sib-pair linkage analysis | journal=Am J Hum Genet | date=1993 | volume=52 | issue=2|pages=362-374 }}</ref>
+ ||  [http://www-gene.cimr.cam.ac.uk/clayton/software/ SPLINK]
+
+|  SUP format<ref >{{cite journal | author=Lemire M | title=SUP: an extension to SLINK to allow a larger number of marker loci to be simulated in pedigrees conditional on trait values | journal=BMC Genet | date=2006 | volume=7 |pages=40 }}</ref><ref name=SLINK /> 
+ ||  [http://mlemire.freeshell.org/software.html  SUP]
+
+|  SimWalk2 format<ref name=SIMWALK2 >{{cite journal | author=Sobel E, Lange K | title=Descent graphs in pedigree analysis: Applications to haplotyping, location scores, and marker-sharing statistics | journal=Am J Hum Genet | date=1996 | volume=58 | issue=6|pages=1323-1337 }}</ref>
+ ||  [http://watson.hgen.pitt.edu/register SimWalk2]
+
+|  Structure format<ref >{{cite journal | author=Pritchard JK, Stephens M, Donnelly P | title=Inference of population structure using multilocus genotype data | journal=Genetics | date=2000 | volume=155 | issue=2|pages=945-959. | pmid=10835412 }}</ref><ref >{{cite journal | author=Falush D, Stephens M, Pritchard JK | title=Inference of population structure using multilocus genotype data: linked loci and correlated allele frequencies | journal=Genetics | date=2003 | volume=164 | issue=4|pages=1567-1587 }}</ref><ref >{{cite journal | author=Falush D, Stephens M, Pritchard JK | title=Inference of population structure using multilocus genotype data: dominant markers and null alleles | journal=Mol Ecol Notes | date=2007 | volume=7 | issue=4|pages=574-578 }}</ref>
+  ||  [http://pritchardlab.stanford.edu/structure.html Structure]
+
+|  Vintage Mendel format<ref >{{cite journal | author=Lange K, Weeks D, Boehnke M | title=Programs for pedigree analysis: MENDEL, FISHER, and dGENE | journal=Genet Epidemiol | date=1988 | volume=5 |pages=471-472 }}</ref><ref name=MENDEL2013 /> 
+ ||  [http://www.genetics.ucla.edu/software/ Vintage Mendel]
+
+|  Vitesse format<ref >{{cite journal | author=O'Connell JR, Weeks DE | title=The VITESSE algorithm for rapid exact multilocus linkage analysis via genotype set-recoding and fuzzy inheritance | journal=Nat Genet | date=1995 | volume=11 |pages=402-408 }}</ref>
+ ||   [http://watson.hgen.pitt.edu/register Vitesse] 

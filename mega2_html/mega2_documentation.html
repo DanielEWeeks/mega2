@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="generator" content="http://www.nongnu.org/elyxer/"/>
-<meta name="create-date" content="2014-05-15"/>
+<meta name="create-date" content="2014-05-16"/>
 <link rel="stylesheet" href="Mega2_Documentation.css" type="text/css" media="all"/>
 <title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses </title>
 </head>
@@ -3072,7 +3072,10 @@ In version 4.5.7 and later, you can just use M for all the <b>markers</b> in the
 <a class="toc" name="toc-Paragraph-15"></a>Using non-numeric allele names <a class="Label" name="par:Using-non-numeric-allele"> </a>
 </div>
 <div class="Standard">
-Marker genotypes are coded as a pair of alleles, with at least one space or tab between them. Non-numeric allele names are allowed inside the pedigree file only with the use of a names file, and only for numbered marker loci. In releases of Mega2 starting with 4.7.0, non numeric allele names when specified will be copied forward from input files to output files for analysis types that allow non numeric alleles. These analyses are: Beagle, Cranefoot, IQLS/Idcoefs, Loki, Mega2, Mendel, Merlin, Merlin-SimWalk2, PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, SimWalk2, vintage mendel. For the other analyses, the recoded output pedigrees will have their genotypes altered to have numeric alleles. When the allele is not present for any of the markers (which is the case when the allele frequency is 0), or if a marker has no alleles, the numeric allele value will always be used. Also, in the case where the input contains numeric alleles that are not contiguous (e.g. microsatellites) they will be treated as if they are allele names and copied. The Mega2 comand line flag (<i>-<span class="unknown">\/</span>-force_numeric_alleles</i>) can be been specified to force allele recoding, if it is not necessary, but preferred by the researcher. Allele names have to be strings, and may not contain white-space characters, since the pedigree file is read in as a white-space separated column format.
+Marker genotypes are coded as a pair of alleles, with at least one space or tab between them. Non-numeric allele names are allowed inside the pedigree file only with the use of a names file, and only for numbered marker loci. In releases of Mega2 starting with 4.7.0, non numeric allele names when specified will be copied forward from input files to output files for analysis types that allow non numeric alleles. These analyses are: Beagle, Cranefoot, IQLS/Idcoefs, Loki, Mega2, Mendel, Merlin, Merlin-SimWalk2, PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, and SimWalk2. For the other analyses, the recoded output pedigrees will have their genotypes altered to have numeric alleles. When the allele is not present for any of the markers (which is the case when the allele frequency is 0), or if a marker has no alleles, the numeric allele value will always be used. Also, in the case where the input contains numeric alleles that are not contiguous (e.g. microsatellites) they will be treated as if they are allele names and copied. The Mega2 comand line flag (<i>-<span class="unknown">\/</span>-force_numeric_alleles</i>) can be been specified to force allele recoding, if it is not necessary, but preferred by the researcher. Allele names have to be strings, and may not contain white-space characters, since the pedigree file is read in as a white-space separated column format. 
+</div>
+<div class="Standard">
+Note: Some analyses, like Merlin, require the letter alleles to be A, C, G or T. The coding convention of using A and B as the allele designator is not accepted. Mega2 has not been programmed to make this check. So for the present, in this and similar analyses, you will have to manually set <i>-<span class="unknown">\/</span>-force_numeric_alleles.</i>
 </div>
 <div class="Paragraph">
 <a class="toc" name="toc-Paragraph-16"></a>Missing values 
@@ -9680,7 +9683,7 @@ Pre-makeped files created by Mega2:
 This is analogous to the Linkage format option which generates post-makeped format files. If the input pedigree file was in post-makeped file with broken loops, this option will reconnect the loops. 
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-24.24">24.24</a> <a class="Label" name="ext:merlin/simwalk2-npl"> </a>Convert to Merlin-SimWalk2 format
+<a class="toc" name="toc-Subsection-24.24">24.24</a> <a class="Label" name="ext:merlinsimwalk2-npl"> </a>Convert to Merlin-SimWalk2 format
 </h2>
 <div class="Standard">
 Output files created by Mega2 for Merlin:<br/>
@@ -9963,7 +9966,7 @@ The following chromosome specific files are created for Mega2 format:
 Note that the default output file names have been chosen to match the Mega2 input file naming convention. Thus, within a subsequent run, Mega2 will easily detect these as valid input files if you specify the extension &ldquo;01.mega2&rdquo; in the input menu. If multiple chromosomes are combined within a single set of output files, then the extension &ldquo;all&rdquo; will be used instead of chromosome numbers. This option allows covariates, and also supports the selection of different individual and pedigree ID fields.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-24.34">24.34</a> <a class="Label" name="ext:iqls/idcoefs"> </a>Convert to IQLS/Idcoefs format
+<a class="toc" name="toc-Subsection-24.34">24.34</a> <a class="Label" name="ext:iqlsidcoefs"> </a>Convert to IQLS/Idcoefs format
 </h2>
 <div class="Standard">
 The following chromosome specific files are created for IQLS/Idcoefs:
@@ -9999,6 +10002,9 @@ The first file will be created only if there is more than one trait. The next fi
 </div>
 <div class="Standard">
 The next set of 4 files get repeated for each chromosome (if requested) and for each trait (if requested). The <i>ped</i> and <i>map</i> files satisfy requirements of FBAT. The <i>sh</i> file runs FBAT with the <i>ped</i> and <i>map</i> input performing the <i>fbat.cmd.txt</i> tasks and then runs the <b>fbat.R</b> program to collect and plot the results. Finally, the <i>hdr</i> file is used by <b>nplplot</b><i> </i>to provide arguments to the plot.
+</div>
+<div class="Standard">
+Note: The FBAT program requires that an affection trait be specified. Mega2 will choose the first affection phenotype from the phenotype list for FBAT’s affection. If all the phenotypes are quantitative, an error will be given. Further, the trait selection menu can be used to select any affection trait and make it the first trait.
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-24.36">24.36</a> <a class="Label" name="ext:pangaea"> </a>Convert to PANGAEA MORGAN format <a class="Label" name="sub:Detailed-info-Pangaea-Morgan"> </a>
@@ -13779,7 +13785,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2014-05-15T14:28:07.409108</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2014-05-16T10:49:10.565298</span>
 </div>
 </div>
 </body>

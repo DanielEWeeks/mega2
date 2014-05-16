@@ -4992,8 +4992,7 @@ Marker genotypes are coded as a pair of alleles, with at least one space
  will be copied forward from input files to output files for analysis types
  that allow non numeric alleles.
  These analyses are: Beagle, Cranefoot, IQLS/Idcoefs, Loki, Mega2, Mendel,
- Merlin, Merlin-SimWalk2, PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, SimWalk2,
- vintage mendel.
+ Merlin, Merlin-SimWalk2, PLINK, SAGE, SAGE4.0, SOLAR, SPLINK, and SimWalk2.
  For the other analyses, the recoded output pedigrees will have their genotypes
  altered to have numeric alleles.
  When the allele is not present for any of the markers (which is the case
@@ -5023,6 +5022,32 @@ status collapsed
  but preferred by the researcher.
  Allele names have to be strings, and may not contain white-space characters,
  since the pedigree file is read in as a white-space separated column format.
+ 
+\end_layout
+
+\begin_layout Standard
+Note: Some analyses, like Merlin, require the letter alleles to be A, C,
+ G or T.
+ The coding convention of using A and B as the allele designator is not
+ accepted.
+ Mega2 has not been programmed to make this check.
+ So for the present, in this and similar analyses, you will have to manually
+ set 
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-force_numeric_alleles.
 \end_layout
 
 \begin_layout Paragraph
@@ -27332,7 +27357,7 @@ This is analogous to the Linkage format option which generates post-makeped
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
-name "ext:merlin/simwalk2-npl"
+name "ext:merlinsimwalk2-npl"
 
 \end_inset
 
@@ -28342,7 +28367,7 @@ all
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
-name "ext:iqls/idcoefs"
+name "ext:iqlsidcoefs"
 
 \end_inset
 
@@ -28494,6 +28519,15 @@ nplplot
  
 \emph default
 to provide arguments to the plot.
+\end_layout
+
+\begin_layout Standard
+Note: The FBAT program requires that an affection trait be specified.
+ Mega2 will choose the first affection phenotype from the phenotype list
+ for FBAT's affection.
+ If all the phenotypes are quantitative, an error will be given.
+ Further, the trait selection menu can be used to select any affection trait
+ and make it the first trait.
 \end_layout
 
 \begin_layout Subsection
