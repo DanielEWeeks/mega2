@@ -1,3 +1,14 @@
+## Mega2 Bitbucket repository ##
+
+The latest development snapshot of the Mega2 code can
+be obtained from this Bitbucket repository.  Please note
+that this development snapshot is not as thoroughly tested
+as our stable release version, but does contain the newest
+features and changes.
+
+To obtain the stable release version, please go to
+<http://watson.hgen.pitt.edu/register>.
+
 ## Documentation ##
 
 Please see the Mega2 documentation, which is available in this
