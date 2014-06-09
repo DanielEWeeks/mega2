@@ -6,7 +6,7 @@ that this development snapshot is not as thoroughly tested
 as our stable release version, but does contain the newest
 features and changes.
 
-To obtain the stable release version, please go to
+To obtain the stable release version (including pre-compiled binaries), please go to
 <http://watson.hgen.pitt.edu/register>.
 
 ## Documentation ##
@@ -34,6 +34,4 @@ It is also available online as html <http://watson.hgen.pitt.edu/docs/mega2_html
   
   + The master branch reflects our latest working code; **it may contain bugs.**
 
-  + The current stable release is named v4.7.0\_Release; you should "git checkout v4.7.0\_Release" after cloning Mega2.
-
-  
+  + The current stable release is named v4.7.0\_Release; you should "git checkout v4.7.0\_Release" after cloning Mega2.  Alternatively, you can download source code for the stable release by clicking on 'Downloads' and then on 'Tags'.
