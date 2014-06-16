@@ -4,9 +4,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="generator" content="http://www.nongnu.org/elyxer/"/>
-<meta name="create-date" content="2014-05-16"/>
+<meta name="create-date" content="2014-06-16"/>
 <link rel="stylesheet" href="Mega2_Documentation.css" type="text/css" media="all"/>
-<title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses </title>
+<title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses</title>
 </head>
 <body>
 <div id="globalWrapper">
@@ -14,9 +14,11 @@
 Mega2<br/>
 &ldquo;Manipulation Environment for Genetic Analyses&rdquo;<br/>
 A data-handling program for facilitating<br/>
-genetic linkage and association analyses <br/>
-
+genetic linkage and association analyses
 </h1>
+<h2 class="Date">
+Jun 16, 2014
+</h2>
 <div class="Standard">
 <div class="center">
 <table>
@@ -143,10 +145,13 @@ Table of Contents
 </div>
 <div class="tocindent">
 <div class="toc">
-<a class="Link" href="#toc-Subsection-6.1">Subsection 6.1: Mega2 Google Group</a>
+<a class="Link" href="#toc-Subsection-6.1">Subsection 6.1: Mega2 feedback</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-6.2">Subsection 6.2: Bug reports</a>
+<a class="Link" href="#toc-Subsection-6.2">Subsection 6.2: Mega2 Google Group</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-6.3">Subsection 6.3: Bug reports</a>
 </div>
 </div>
 <div class="toc">
@@ -1678,13 +1683,25 @@ If you use Mega2 to convert VCF or BCF input files, then, as this makes use of a
 <a class="toc" name="toc-Section-6">6</a> Support, bug reports, and feedback<a class="Label" name="sec:Support-bugreports-feedback"> </a>
 </h1>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-6.1">6.1</a> Mega2 Google Group
+<a class="toc" name="toc-Subsection-6.1">6.1</a> Mega2 feedback
+</h2>
+<div class="Standard">
+As we strive to improve Mega2, we would greatly appreciate your feedback. This page provides a link to our Mega2 feedback form:
+</div>
+<div class="Standard">
+<a class="FlexURL" href="http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_feedback.html">http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_feedback.html</a>
+</div>
+<div class="Standard">
+Or feel free to send us an e-mail (contact information below).
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-6.2">6.2</a> Mega2 Google Group
 </h2>
 <div class="Standard">
 Mega2 users are invited to participate in our Mega2 Google Group at <a class="FlexURL" href="https://groups.google.com/forum/#!forum/mega2-users">https://groups.google.com/forum/#!forum/mega2-users</a>. Support questions should be posted there.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-6.2">6.2</a> Bug reports
+<a class="toc" name="toc-Subsection-6.3">6.3</a> Bug reports
 </h2>
 <div class="Standard">
 If you encounter a bug in Mega2, please send us a detailed bug report, including the following information:
@@ -3312,7 +3329,7 @@ The omit file should be in the following format:
 Each line should have two integers and a string, separated by white space. The first number is the pedigree number and must match that used in your input LINKAGE format file. The second number is the person number and must match that used in your input LINKAGE format file. The string should be either All or the name of the locus. If All is used, the person or pedigree indicated will be untyped at all marker loci. Trait phenotypes will not be set to unknown. Specific omit file entries containing the name of the trait locus should be included to do the latter. If the person number is zero or all, then all marker genotypes will be set to unknown for the entire pedigree. Otherwise only the indicated person will be untyped.
 </div>
 <div class="Standard">
-A summary of the omit results will be found in the file omit.log. This file is rewritten the next time MEGA2 is run with an omit file specified. If MEGA2 can not find a person or pedigree as specified in the input omit file, it will halt with an error message.
+A summary of the omit results will be found in the file omit.log. This file is rewritten the next time Mega2 is run with an omit file specified. If Mega2 can not find a person or pedigree as specified in the input omit file, it will halt with an error message.
 </div>
 <div class="Standard">
 Example omit file, ’omit.05’:
@@ -3446,7 +3463,13 @@ Below is a small example PED file (corresponding to the map file just below):
 
 </pre>
 <div class="Standard">
-This file is very similar to a <i>pre-makeped</i> style Mega2 pedigree file. It has the standard five initial columns: pedigree, person, father, mother and sex. This is followed by a single trait and then the markers, coded as pairs of alleles. There is no header for this file. In Mega2, it is sometimes necessary to have a name for the trait. This name is supplied as part of the Mega2 file selection menu. (The name is necessary to correlate this trait with the information in the Mega2 penetrance and frequency files.) The PLINK flags are:
+To read the example PED file correctly while naming the quantitative trait &ldquo;Q1&rdquo;, we use the Mega2 PLINK flags:
+</div>
+<pre class="LyX-Code">
+--trait Q1 --quantitative
+</pre>
+<div class="Standard">
+This file is very similar to a <i>pre-makeped</i> style Mega2 pedigree file. It has the standard five initial columns: pedigree, person, father, mother and sex. This is followed by a single trait and then the markers, coded as pairs of alleles. There is no header for this file, so it includes no information regarding the type of trait in the trait column; this information is supplied via the use of the Mega2-PLINK options -<span class="unknown">\/</span>-affectionstatus or -<span class="unknown">\/</span>-quantitative. In Mega2, it is sometimes necessary to have a name for the trait. This name is supplied as part of the Mega2 file selection menu, using the -<span class="unknown">\/</span>-trait Mega2 PLINK option. (The name is necessary to correlate this trait with the information in the Mega2 penetrance and frequency files.) The Mega2 PLINK flags are:
 </div>
 <blockquote class="Quotation">
 <table>
@@ -3479,19 +3502,37 @@ The father and mother column are not present; Mega2 will assign the missing valu
 </tr>
 <tr>
 <td align="center" valign="top">
-<i>-<span class="unknown">\/</span>-</i>no-sex
+<i>-<span class="unknown">\/</span>-</i>no-pheno
 </td>
 <td align="left" valign="top" style="width: 4in;">
-The sex column is not present; 0 is used as the value.
+The trait column is not present.
 </td>
 
 </tr>
 <tr>
 <td align="center" valign="top">
-<i>-<span class="unknown">\/</span>-</i>no-pheno
+<i>-<span class="unknown">\/</span>-</i>trait
 </td>
 <td align="left" valign="top" style="width: 4in;">
-The trait column is not present.
+specify a name for the pedigree file trait column.
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="top">
+-<span class="unknown">\/</span>-affectionstatus
+</td>
+<td align="left" valign="top" style="width: 4in;">
+indicate that trait is a dichotomous affection status trait locus (default).
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="top">
+-<span class="unknown">\/</span>-quantitative
+</td>
+<td align="left" valign="top" style="width: 4in;">
+indicate that trait is a quantitative trait locus.
 </td>
 
 </tr>
@@ -3511,7 +3552,13 @@ Below is a small example map file:
 5    M3        5.0	2
 </pre>
 <div class="Standard">
-This file allows the alleles in the <b>Pedigree file</b> to be assigned to a particular marker. Successive lines of the <b>Map file</b> identify the marker for each allele pair. Each row typically includes four fields: the chromosome (1-22, X, Y or 0), the marker name, the genetic position in Morgans, and finally the base-pair position. The override flags are:
+To read the example map file, under the assumption the genetic map positions are specified in Kosambi centiMorgans, we use the Mega2-PLINK flags:
+</div>
+<pre class="LyX-Code">
+--kosambi --cM 
+</pre>
+<div class="Standard">
+This file allows the alleles in the <b>Pedigree file</b> to be assigned to a particular marker. Successive lines of the <b>Map file</b> identify the marker for each allele pair. Each row typically includes four fields: the chromosome (1-22, X, Y or 0), the marker name, the genetic position in Kosambi Morgans, and finally the base-pair position. The override flags are:
 </div>
 <blockquote class="Quotation">
 <table>
@@ -3539,6 +3586,24 @@ The genetic position column is not present.
 </td>
 <td align="left" valign="top">
 The genetic position is specified in centiMorgans.
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="top">
+<i>-<span class="unknown">\/</span>-</i>kosambi
+</td>
+<td align="left" valign="top">
+genetic distance in map file is in Kosambi units (default)
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="top">
+<i>-<span class="unknown">\/</span>-</i>haldane
+</td>
+<td align="left" valign="top">
+genetic distance in map file is in Haldane units
 </td>
 
 </tr>
@@ -3599,7 +3664,7 @@ The PLINK standard allows for only one phenotype in the <b>Pedigree file</b>, bu
 <i>-<span class="unknown">\/</span>-</i>missing-phenotype
 </td>
 <td align="left" valign="top" style="width: 4in;">
-Specifies the missing value for quantitative traits (default -9)
+Specifies the missing value for quantitative traits (default -9).
 </td>
 
 </tr>
@@ -3608,7 +3673,7 @@ Specifies the missing value for quantitative traits (default -9)
 <i>-<span class="unknown">\/</span>-</i>1
 </td>
 <td align="left" valign="top" style="width: 4in;">
-Affection status is coded 0 (unaffected) / 1 (affected) / -9 (missing,) vs. 0 (missing) / 1 (unaffected) / 2 (affected) / -9 (missing)
+Affection status is coded 0 (unaffected) / 1 (affected) / -9 (missing,) vs. 0 (missing) / 1 (unaffected) / 2 (affected) / -9 (missing).
 </td>
 
 </tr>
@@ -4143,7 +4208,7 @@ CHROMOSOME    KOSAMBI   NAME
 
 </pre>
 <div class="Standard">
-NOTE: Any marker that is in the locus file must be given a map position in the map file. Thus, the marker names used in the map file must match exactly the names used in the locus file. If a codominant marker locus in the locus file is not found in the map file, then MEGA2 will warn you about this. If you ignore the warning, then this locus will not appear in the output files created by MEGA2. You may have more loci in the map file than appear in the locus file. While you will be warned about this, it does not pose any difficulties.
+NOTE: Any marker that is in the locus file must be given a map position in the map file. Thus, the marker names used in the map file must match exactly the names used in the locus file. If a codominant marker locus in the locus file is not found in the map file, then Mega2 will warn you about this. If you ignore the warning, then this locus will not appear in the output files created by Mega2. You may have more loci in the map file than appear in the locus file. While you will be warned about this, it does not pose any difficulties.
 </div>
 <div class="Standard">
 NOTE: The Simple Mega2 Map file is only available for linkage input.
@@ -4176,10 +4241,10 @@ The omit file should be in the following format:
 Each line should contain three items separated by white space. These items represent pedigree, person, and loci. For a LINKAGE format file these must be ordered pedigree, person, and loci respectively. For a Mega2 format file the columns can be in any order but must be named Pedigree, Individual, and Marker. The pedigree should be either All, or an integer that must match a pedigree number used in your input file. If All, then the locus(loci) with associated person(s) will be untyped for all pedigrees. Otherwise only loci with the specific pedigree number will be affected. The person should be either All, a zero (synonym for All), or an integer that must match a person number used in your input file. If a zero, or All, then the locus(loci) with associated pedigree(s) will be untyped for all persons. Otherwise only loci with the specific person number will be affected. The loci (third item) should be either All, or the name of a locus used in your input file. If All, then the person(s), and pedigree(s) indicated will be untyped for <i>all marker</i> <i>loci only; trait loci will not be affected</i>. Otherwise only the specific loci (marker or trait) will be affected.
 </div>
 <div class="Standard">
-A summary of the omit results will be found in the file omit.log. This file is rewritten the next time MEGA2 is run with an omit file specified.
+A summary of the omit results will be found in the file omit.log. This file is rewritten the next time Mega2 is run with an omit file specified.
 </div>
 <div class="Standard">
-The following describes possible errors and warnings associated with the reading of an omit file. If MEGA2 can not find a specific pedigree, person, or loci (from the omit file) in the input data, it will halt with an error message. If All is used for a loci in the omit file, and the input data contains a loci named All, it will halt with an error message. If the pedigree is specified as All, and a person number given, a warning will be issued if that person cannot be found within one of the available pedigrees. If pedigree, person, and loci are all specified as All, a warning will be issued stating that all marker loci will be untyped.
+The following describes possible errors and warnings associated with the reading of an omit file. If Mega2 can not find a specific pedigree, person, or loci (from the omit file) in the input data, it will halt with an error message. If All is used for a loci in the omit file, and the input data contains a loci named All, it will halt with an error message. If the pedigree is specified as All, and a person number given, a warning will be issued if that person cannot be found within one of the available pedigrees. If pedigree, person, and loci are all specified as All, a warning will be issued stating that all marker loci will be untyped.
 </div>
 <div class="Standard">
 Example LINKAGE format omit file, ’omit.05’:
@@ -4251,7 +4316,7 @@ In the Mega2 file format, providing a frequency file will cause the allele-frequ
 <a class="toc" name="toc-Subsection-9.4">9.4</a> <a class="Label" name="inp:vcf_or_bcf"> </a>Variant Call Format (VCF, BCF, compressed VCF) input file formats<a class="Label" name="sub:VCF-file-formats"> </a>
 </h2>
 <div class="Standard">
-Variant Call Format (VCF) was designed to store information about genetic variants (See: <a class="URL" href="http://en.wikipedia.org/wiki/Variant_Call_Format">Wikipedia</a>). Mega2 currently uses source code from the popular VCFtools program (See: <a class="URL" href="http://vcftools.sourceforge.net">VCFtools</a>) as its underlying engine for parsing VCF files. VCFtools (and so MEGA2) currently supports VCF format v4.0 and VCF format v4.1 (See: <a class="URL" href="http://vcftools.sourceforge.net/specs.html">VCF Specification</a>), and BCF format v2.1 (See: <a class="URL" href="http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2">BCF (Binary VCF) version 2</a>). Mega2 supports only the ’filtering’ options associated with the binary executable ’vcftools’ file (See: <a class="URL" href="http://vcftools.sourceforge.net/options.html">VCFtools Options</a>). In particular, the options supported are: the Site Filtering Options, the Individual Filters, and the Genotype Filters. These options are specified to Mega2 as they would be to the ’vcftools’ program in the form of a command line option string. In Mega2 interactive mode (See <a class="Reference" href="#sub:Common-Variant-Call-Format-menu-items">12.5↓</a>) Mega2 allows the user to specify the filtering options via the input menu, and in batch file mode the VCF_Args batch file item is used (See: <a class="Reference" href="#par:VCF_Args">80↓</a>).
+Variant Call Format (VCF) was designed to store information about genetic variants (See: <a class="URL" href="http://en.wikipedia.org/wiki/Variant_Call_Format">Wikipedia</a>). Mega2 currently uses source code from the popular VCFtools program (See: <a class="URL" href="http://vcftools.sourceforge.net">VCFtools</a>) as its underlying engine for parsing VCF files. VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format v4.1 (See: <a class="URL" href="http://vcftools.sourceforge.net/specs.html">VCF Specification</a>), and BCF format v2.1 (See: <a class="URL" href="http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2">BCF (Binary VCF) version 2</a>). Mega2 supports only the ’filtering’ options associated with the binary executable ’vcftools’ file (See: <a class="URL" href="http://vcftools.sourceforge.net/options.html">VCFtools Options</a>). In particular, the options supported are: the Site Filtering Options, the Individual Filters, and the Genotype Filters. These options are specified to Mega2 as they would be to the ’vcftools’ program in the form of a command line option string. In Mega2 interactive mode (See <a class="Reference" href="#sub:Common-Variant-Call-Format-menu-items">12.5↓</a>) Mega2 allows the user to specify the filtering options via the input menu, and in batch file mode the VCF_Args batch file item is used (See: <a class="Reference" href="#par:VCF_Args">80↓</a>).
 </div>
 <div class="Standard">
 VCF input format uses a subset of the PLINK parameters (See <a class="Reference" href="#par:VCF-Menu-item-PLINK-parameters">48↓</a>) to allow the user to specify phenotype information. With these the user can: specify a name for the pedigree file trait column (See <a class="Reference" href="#sub:VCF-Pedigree-File">9.4.2↓</a>), indicate the trait to be affection status or quantitative, specify the missing value for quantitative traits, and specify how the affection status is coded.
@@ -4387,7 +4452,7 @@ An omit file may be specified. Please see <a class="Reference" href="#par:Input_
 <a class="toc" name="toc-Subsubsection-9.4.6">9.4.6</a> Frequency File (Optional)
 </h3>
 <div class="Standard">
-AMega2 frequency file may be specified. Please see <a class="Reference" href="#sub:Annotated-frequency-file">9.1.5↑</a>. The following file could be used with the example VCF file shown in <a class="Reference" href="#sub:VCF-File">9.4.1↑</a>. Note that corresponding REF and ALT alleles are used.
+A Mega2 frequency file may be specified. Please see <a class="Reference" href="#sub:Annotated-frequency-file">9.1.5↑</a>. The following file could be used with the example VCF file shown in <a class="Reference" href="#sub:VCF-File">9.4.1↑</a>. Note that corresponding REF and ALT alleles are used.
 </div>
 <pre class="LyX-Code">
 Name Allele Frequency
@@ -4404,7 +4469,7 @@ M3 C 0.500000
 <a class="toc" name="toc-Subsubsection-9.4.7">9.4.7</a> Penetrance File (Optional)
 </h3>
 <div class="Standard">
-AMega2 penetrance file may be specified. Please see <a class="Reference" href="#sub:Annotated-penetrance-file">9.1.6↑</a>.
+A Mega2 penetrance file may be specified. Please see <a class="Reference" href="#sub:Annotated-penetrance-file">9.1.6↑</a>.
 </div>
 <h1 class="Section">
 <a class="toc" name="toc-Section-10">10</a> Genetic Map Interpolator (GMI)<a class="Label" name="sec:Genetic-Map-Interpolator"> </a>
@@ -4487,7 +4552,7 @@ Affection and unknown allele values are always interpreted as strings:
 <ul>
 <li class="nested">
 <pre class="LyX-Code">
-—-Unknown allele 0—-
+----Unknown allele 0----
 </pre>
 
 </li>
@@ -4736,12 +4801,12 @@ This specifies the name of map file. The locus datafile, pedigree datafile and t
 This menu item is displayed mainly for PLINK PED and PLINK binary PED input. As discussed previously in section <a class="Reference" href="#sub:PLINK-file-formats">9.2↑</a>, the <b><i>plink</i></b> program will accept input files with omitted columns if an appropriate flag is specified. Mega2 also respects these flags and allows them to be set. Selecting this option displays the available feature flags:
 </div>
 <pre class="LyX-Code">
-PLINK options: --file/--bfile --no-fid --no-parents --no-pheno --1 --map3 ...
+PLINK options: --no-fid --no-parents --no-pheno --1 --map3 ...
     --missing-phenotype &lt;value&gt; --cM --kosambi/--haldane ...
     --trait &lt;value&gt; --affectionstatus/--quantitative
 </pre>
 <div class="Standard">
-Most of these flags are familiar from the previous PLINK file format discussion. The new flags will be explained below: 
+Most of these flags are familiar from the previous PLINK file format discussion in Section <a class="Reference" href="#sub:PLINK-file-formats">9.2↑</a>. The new flags will be explained below: 
 </div>
 <div class="Standard">
 <div class="center">
@@ -4757,28 +4822,10 @@ Most of these flags are familiar from the previous PLINK file format discussion.
 </tr>
 <tr>
 <td align="center" valign="top">
-<i>-<span class="unknown">\/</span>-</i>file
-</td>
-<td align="center" valign="top">
-switch to PLINK PED input format
-</td>
-
-</tr>
-<tr>
-<td align="center" valign="top">
-<i>-<span class="unknown">\/</span>-</i>bfile
-</td>
-<td align="center" valign="top">
-switch to PLINK binary PED format
-</td>
-
-</tr>
-<tr>
-<td align="center" valign="top">
 <i>-<span class="unknown">\/</span>-</i>kosambi
 </td>
 <td align="center" valign="top">
-genetic distance in map file is in Kosambi units
+genetic distance in map file is in Kosambi units (default)
 </td>
 
 </tr>
@@ -4796,7 +4843,7 @@ genetic distance in map file is in Haldane units
 <i>-<span class="unknown">\/</span>-</i>trait
 </td>
 <td align="center" valign="top">
-specify a name for the pedigree file trait column
+specify a trait name for the pedigree file trait column (the default trait name is ’default’)
 </td>
 
 </tr>
@@ -4805,7 +4852,7 @@ specify a name for the pedigree file trait column
 -<span class="unknown">\/</span>-affectionstatus
 </td>
 <td align="center" valign="top">
-indicate that trait is a binary affection status
+indicate that the trait is a dichotomous affection status trait locus (default)
 </td>
 
 </tr>
@@ -4814,7 +4861,7 @@ indicate that trait is a binary affection status
 -<span class="unknown">\/</span>-quantitative
 </td>
 <td align="center" valign="top">
-indicate that trait is an arbitrary number
+indicate that the trait is a quantitative trait locus
 </td>
 
 </tr>
@@ -6794,7 +6841,7 @@ This file contains a list of input and output pedigree and person identifiers. I
  Here is an example MEGA2.KEYS file. 
 </div>
 <pre class="LyX-Code">
-———————
+---------------------
 Fri Oct 11 13:15:05 2002
 Input file names
 locus file:    datain.ex
@@ -6802,7 +6849,7 @@ pedigree file: pedin.ex1
 map file:      map.ex
 omit file:     omit.ex
 Untyped pedigree option: Include all pedigrees whether typed or not
-———————
+---------------------
  INPUT                                                OUTPUT
  Pedigree    Person      Ped:       Per:    Loop id   Pedigree    Person
          1          1        1          1                  1          1
@@ -6842,7 +6889,7 @@ This file is created if the user selects random-genotyping error generation in t
 This file contains a list of recoded marker loci with the original allele names, recoded identifiers, allele frequencies, the type of individuals counted for the purpose of estimating allele frequencies, and total number of alleles counted for each allele and each marker. Given below is an excerpt for a recode summary file. 
 </div>
 <pre class="LyX-Code">
-———————————————-
+----------------------------------------------
         Mega2 version 3.0 R5
 Run date:                  2006-1-20-13-53
 This file created on       Fri Jan 20 13:53:20 2006
@@ -6856,9 +6903,9 @@ Half-typed individuals’ genotypes included in output.
 Allele frequency computed from:
      Genotyped founders or a randomly chosen individual
      excluding half-typed individuals.
-———————
+---------------------
 Recoded loci:
-———————————————
+---------------------------------------------
 Frequencies and counts:
    1=Founders       2=1+Random       3=2+Unique     4=Everyone
 Marker 2: marker2 has 6 alleles; frequencies computed using 11 individuals:
@@ -6907,7 +6954,7 @@ If you open the MEGA2run.html in a web-browser, it will provide you with a nicel
 <a class="toc" name="toc-Section-21">21</a> Mega2 command-line arguments <a class="Label" name="sec:Mega2-command-line-arguments"> </a>
 </h1>
 <div class="Standard">
-<b>Usage:</b> <i> mega2</i> [options] [batch-file-name] 
+<b>Usage:</b><i> mega2</i> [options] [batch-file-name] 
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-21.1">21.1</a> Species options<a class="Label" name="sub:Species-options"> </a>
@@ -8595,7 +8642,7 @@ If user selected to set up R-graphics for the non-parametric analysis option, th
 Given below is an example of this combined shell script for two traits on a single chromosome: 
 </div>
 <pre class="LyX-Code">
-#———————————————-
+#----------------------------------------------
 #   Mega2 version 4.2
 #   Run date:                2009-4-15-09-49
 #   This script created on   Wed Apr 15 09:49:08 2009
@@ -8604,7 +8651,7 @@ Given below is an example of this combined shell script for two traits on a sing
 #          Locus file:              names.01
 #            Map file:              map.01
 #    Untyped pedigree option  Include all pedigrees whether typed or not
-#———————————————-
+#----------------------------------------------
 echo SimWalk2 analysis for chromosome 1 ,trait 1 ...
 echo This may take a while.
 cd Trait-1
@@ -9038,7 +9085,7 @@ Selection Menu: Summary file options
 0 unaffected members with status 1.
  Segregation Mating Table Counts:
 Mo Fa              0           1           2 Seg Ratio Aff/(Unaff + Aff)
-——           —         —         —  ——-- ——--
+------           —         —         —  -------- --------
 0 x 0 -&gt;           0           0           0                 
 0 x 1 -&gt;           0           0           0                 
 0 x 2 -&gt;           0           0           4   100.000  100.000
@@ -9152,23 +9199,23 @@ HINT: If one has case-control data, one can use Mega2 to generate the appropriat
  
 </div>
 <pre class="LyX-Code">
-———————
+---------------------
 Thu Jun  6 14:18:47 2002
 Input file names
 locus file:    datain.01
 pedigree file: pedin.01
 map file:      map.01
 Untyped pedigree option: Include all pedigrees whether typed or not
-———————
+---------------------
  Genotyping success rate summary for chromosome 1
-—————————————————
+---------------------------------------------------
 Per person genotyping rate :
 Number of markers: 4
 Maximum number of markers typed 4
 Minimum number of markers typed 0
-—————————————————
+---------------------------------------------------
 Ped      Person   #Markers typed  Success Rate
-—————————————————
+---------------------------------------------------
 3         1                   4         1.00
 3         2                   4         1.00
 3         3                   4         1.00
@@ -9183,22 +9230,22 @@ Per marker genotyping rate:
 Total number of individuals: 384
 Maximum number of individuals typed at a marker 364
 Minimum number of individuals typed at a marker 356
-—————————————————
+---------------------------------------------------
 Marker      Alleles   #Individuals   #Percentage
                        Typed          Typed
-—————————————————
+---------------------------------------------------
 d1s196            4            356          0.93
 d1s238            4            364          0.95
 d1s229            4            364          0.95
 d1s103            4            364          0.95
-—————————————————
+---------------------------------------------------
 </pre>
 <div class="Standard">
 <i>Option 5) Quantitative phenotype summary .</i> <br/>
  This creates a summary of phenotype values for selected quantitative loci present in the pedigree file. The user can create separate file for each quantitative trait locus or a combined file for all loci. The output file is called <i>phenotyping_rate.##</i> . Here is an excerpt form a typical output file: 
 </div>
 <pre class="LyX-Code">
-———————
+---------------------
 Mon Mar  8 15:04:59 2004
 Input file names
 locus file:    datain.06
@@ -9206,9 +9253,9 @@ pedigree file: pedin.06
 map file:      map.06
 omit file:     omit.06
 Untyped pedigree option: Include all pedigrees whether typed or not
-———————
+---------------------
 Phenotype Summary for Q1
-—————————————
+---------------------------------------
                         All                             Founders
 Pedigree        Members Phenotyped       %Phenotyped    Total   Phenotyped      %
 1               52              37              0.71    17      8               0.47
@@ -9434,7 +9481,7 @@ any of these results,please cite:
 Guo, S.-W., Thompson, E. T. (1992)
 Performing the Exact Test of Hardy-Weinberg Proportion
 for Multiple Alleles. Biometrics 48:361-372
-———————
+---------------------
 Mon Feb 12 14:27:44 2001
 Input file names
 locus file:    datain.01
@@ -9442,7 +9489,7 @@ pedigree file: pedin.01
 map file:      map.01
 Counted individuals consist of:
     Genotyped founders or a randomly chosen genotyped person from each pedigree
-———————
+---------------------
  
  
 Marker       Alleles   Expected      Observed       P-value    Std Error   #Genotypes
@@ -9908,7 +9955,7 @@ Note: The FBAT program requires that an affection trait be specified. Mega2 will
 <a class="toc" name="toc-Subsection-24.36">24.36</a> <a class="Label" name="ext:pangaea"> </a>Convert to PANGAEA MORGAN format <a class="Label" name="sub:Detailed-info-Pangaea-Morgan"> </a>
 </h2>
 <div class="Standard">
-&ldquo;MORGAN (Monte Carlo Genetic Analysis) is a collection of programs and libraries developed at the University of Washington under the PANGAEA (Pedigree Analysis for Genetics and Epidemiological Attributes) umbrella. This software implements a number of methods for the analysis of data observed on members of a pedigree, with the main programs implementing Markov Chain Monte Carlo (MCMC) methods.&rdquo; (Taken from the tutorial introduction.) The &ldquo;Morgan tutorial&rdquo; is available at <a class="FlexURL" href="http://www.stat.washington.edu/thompson/Stuff_bk/morgan-tut.pdf">http://www.stat.washington.edu/thompson/Stuff_bk/morgan-tut.pdf</a>; there are also example data files that are provided to match the tutorial. 
+&ldquo;MORGAN (Monte Carlo Genetic Analysis) is a collection of programs and libraries developed at the University of Washington under the PANGAEA (Pedigree Analysis for Genetics and Epidemiological Attributes) umbrella. This software implements a number of methods for the analysis of data observed on members of a pedigree, with the main programs implementing Markov Chain Monte Carlo (MCMC) methods.&rdquo; (Taken from the tutorial introduction.) The &ldquo;Morgan tutorial&rdquo; is available at <a class="FlexURL" href="http://www.stat.washington.edu/thompson/Genepi/MORGAN/morgan311-tut-html/morgan-tut.html">http://www.stat.washington.edu/thompson/Genepi/MORGAN/morgan311-tut-html/morgan-tut.html</a>; there are also example data files that are provided to match the tutorial. 
 </div>
 <div class="Standard">
 The software download is available via <a class="FlexURL" href="http://www.stat.washington.edu/thompson/Genepi/MORGAN/Morgan.shtml">http://www.stat.washington.edu/thompson/Genepi/MORGAN/Morgan.shtml</a> We have used version 3.1.1 in our Mega2 development work. You should &ldquo;<i>untar</i>&rdquo; the release file, <b>morgan311_release.tgz,</b> (in our case) into a convenient directory and &ldquo;<i>make</i>&rdquo; the software. The are several <i>README</i> files that explain more of the details of <b>MORGAN</b>. 
@@ -13683,7 +13730,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.3 (2011-08-31)</a> on <span class="create-date">2014-05-16T16:40:12.576419</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.5 (2013-03-10)</a> on <span class="create-date">2014-06-16T12:56:12.743323</span>
 </div>
 </div>
 </body>

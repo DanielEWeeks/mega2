@@ -1,5 +1,5 @@
-#LyX 2.0 created this file. For more info see http://www.lyx.org/
-\lyxformat 413
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
 \begin_document
 \begin_header
 \textclass article
@@ -22,13 +22,13 @@
 \font_roman default
 \font_sans default
 \font_typewriter default
+\font_math auto
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
-
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -48,15 +48,24 @@
 \pdf_pdfusetitle true
 \papersize default
 \use_geometry false
-\use_amsmath 1
-\use_esint 1
-\use_mhchem 1
-\use_mathdots 1
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 0
+\use_package mhchem 1
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
 \cite_engine basic
+\cite_engine_type default
+\biblio_style plain
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
 \suppress_date false
+\justification true
 \use_refstyle 0
 \index Index
 \shortcut idx
@@ -75,7 +84,6 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1820302391 "Robert V. Baron" 
 \end_header
 
 \begin_body
@@ -101,8 +109,20 @@ A data-handling program for facilitating
 \begin_inset Newline newline
 \end_inset
 
-genetic linkage and association analyses 
-\begin_inset Newline newline
+genetic linkage and association analyses
+\end_layout
+
+\begin_layout Date
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+today
+\end_layout
+
 \end_inset
 
 
@@ -112,8 +132,8 @@ genetic linkage and association analyses
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="1">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
@@ -1100,10 +1120,6 @@ Pedigree file:
  The 
 \shape italic
 pre-makeped
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \shape default
  pedigree file format is a relatively simple format with the first 5 columns
  containing pedigree information followed by genotypes and phenotypes.
@@ -1522,11 +1538,7 @@ status collapsed
 \begin_layout Standard
 This frequency file, as well as the other optional Mega2 files: the omit
  file and the penetrance file, may also be provided for PLINK format input.
- The files follow the exact same format as is used for the Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- input format.
+ The files follow the exact same format as is used for the Mega2 input format.
  
 \end_layout
 
@@ -1545,10 +1557,6 @@ For Macintosh OS X users:
 \series default
  for your input files.
  If your map file is named
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  map.dat 
 \series default
@@ -1681,6 +1689,33 @@ name "sec:Support-bugreports-feedback"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Mega2 feedback
+\end_layout
+
+\begin_layout Standard
+As we strive to improve Mega2, we would greatly appreciate your feedback.
+ This page provides a link to our Mega2 feedback form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_feedback.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Or feel free to send us an e-mail (contact information below).
 \end_layout
 
 \begin_layout Subsection
@@ -2112,7 +2147,7 @@ reference "sub:Download-Instructions"
 \begin_layout Quotation
 \begin_inset Tabular
 <lyxtabular version="3" rows="21" columns="2">
-<features tabularvalignment="middle">
+<features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="2in">
 <column alignment="left" valignment="top" width="4in">
 <row>
@@ -2224,11 +2259,8 @@ example_output_annotated
 \begin_inset Text
 
 \begin_layout Plain Layout
-Folder containing output files created by running
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- with mega2 input files, using the batch file MEGA2.BATCH.annotated.
+Folder containing output files created by running with mega2 input files,
+ using the batch file MEGA2.BATCH.annotated.
  
 \end_layout
 
@@ -2382,11 +2414,8 @@ l2a.py.src
 \begin_inset Text
 
 \begin_layout Plain Layout
-Python script linkage_to_annotated.py to convert linkage-style
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- format files to the new Mega2 format.
+Python script linkage_to_annotated.py to convert linkage-style format files
+ to the new Mega2 format.
 \end_layout
 
 \end_inset
@@ -4200,11 +4229,8 @@ Data lines below the header column are read in accordance with the column
 
 \begin_layout Standard
 The Mega2 distribution package contains a conversion program for converting
- from the old LINKAGE-based format files into the Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- format files (See section 
+ from the old LINKAGE-based format files into the Mega2 format files (See
+ section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Converting-to-annotated-format"
@@ -4350,9 +4376,9 @@ The two required columns inside a names file are the locus name and the
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="8" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -4525,11 +4551,7 @@ Affection status trait (multiple liability classes)
 \end_layout
 
 \begin_layout Standard
-Here is an example
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- names file: 
+Here is an example names file: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -4625,9 +4647,9 @@ If there are multiple liability classes, then the status column header should
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="8" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -4902,11 +4924,7 @@ NA
 \begin_inset Quotes erd
 \end_inset
 
- by default in
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Mega2 format.
+ by default in Mega2 format.
  In order to be compatible with linkage format data, we have provided a
  means to specify missing allele and affection codes.
  Missing quantitative values can be 
@@ -5091,9 +5109,9 @@ For annotated map files, acceptable chromosome labels include:
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -5253,9 +5271,9 @@ e chromosome codes:
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -5406,9 +5424,9 @@ Table of the previous coding system (version 4.5.4 and earlier):
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -5579,16 +5597,8 @@ X chromosome
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - 
 \begin_inset Quotes eld
@@ -5598,11 +5608,7 @@ X
 \begin_inset Quotes erd
 \end_inset
 
- denotes x-linked loci in the
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- map file.
+ denotes x-linked loci in the map file.
  
 \begin_inset Newline newline
 \end_inset
@@ -5610,10 +5616,6 @@ X
  
 \series bold
 simple map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - 
 \begin_inset Quotes eld
@@ -5655,16 +5657,8 @@ Pseudo-X region of X and Y chromosomes
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - Some genes are common to both X and Y chromosomes in humans.
  These genes are said to reside in the pseudo-autosomal region.
@@ -5686,16 +5680,8 @@ XY
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  simple map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - In simple map files, such markers should be labeled with chromosome number
  
@@ -5733,16 +5719,8 @@ Y chromosome
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - 
 \begin_inset Quotes eld
@@ -5759,16 +5737,8 @@ Y
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  simple map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - 
 \begin_inset Quotes eld
@@ -5826,16 +5796,8 @@ Mitochondrial chromosome
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - 
 \begin_inset Quotes eld
@@ -5852,16 +5814,8 @@ MT
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  simple map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - 
 \begin_inset Quotes eld
@@ -5915,16 +5869,8 @@ Unknown chromosome
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - Use the label 
 \begin_inset Quotes eld
@@ -5942,10 +5888,6 @@ U
 
 \series bold
  simple map file
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  - Use 
 \begin_inset Quotes eld
@@ -6022,11 +5964,7 @@ name "sub:Annotated-omit-file"
 \end_layout
 
 \begin_layout Standard
-The
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- omit file contains the three required columns.
+The omit file contains the three required columns.
  Again, names must be maintained, ordering of columns doesn't matter, and
  neither does the case in the header line.
 \end_layout
@@ -6079,8 +6017,8 @@ Each line should have two integers and a string, separated by white space.
 
 \begin_layout Standard
 A summary of the omit results will be found in the file omit.log.
- This file is rewritten the next time MEGA2 is run with an omit file specified.
- If MEGA2 can not find a person or pedigree as specified in the input omit
+ This file is rewritten the next time Mega2 is run with an omit file specified.
+ If Mega2 can not find a person or pedigree as specified in the input omit
  file, it will halt with an error message.
 \end_layout
 
@@ -6185,11 +6123,7 @@ name "sub:Annotated-frequency-file"
 \end_layout
 
 \begin_layout Standard
-The
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- frequency file contains one line for each marker and allele.
+The frequency file contains one line for each marker and allele.
  All alleles present in the data have to be listed.
  The allele labels should match those in the pedigree file (raw or coded).
  The column headings should be as listed below (letter case and order of
@@ -6389,9 +6323,6 @@ de facto
 \shape default
  standard for whole genome association analysis.
  It uses input files that contain the same kind of information as the Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
  format.
  It also allows for several different formats of the input data and supports
  conversion between these formats.
@@ -6560,31 +6491,86 @@ Below is a small example PED file (corresponding to the map file just below):
 \end_layout
 
 \begin_layout Standard
+To read the example PED file correctly while naming the quantitative trait
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Q1
+\begin_inset Quotes erd
+\end_inset
+
+, we use the Mega2 PLINK flags:
+\end_layout
+
+\begin_layout LyX-Code
+--trait Q1 --quantitative
+\end_layout
+
+\begin_layout Standard
 This file is very similar to a 
 \emph on
 pre-makeped
 \emph default
- style Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- pedigree file.
+ style Mega2 pedigree file.
  It has the standard five initial columns: pedigree, person, father, mother
  and sex.
  This is followed by a single trait and then the markers, coded as pairs
  of alleles.
- There is no header for this file.
+ There is no header for this file, so it includes no information regarding
+ the type of trait in the trait column; this information is supplied via
+ the use of the Mega2-PLINK options -
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-affectionstatus or -
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-quantitative.
  In Mega2, it is sometimes necessary to have a name for the trait.
- This name is supplied as part of the Mega2 file selection menu.
+ This name is supplied as part of the Mega2 file selection menu, using the
+ -
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-trait Mega2 PLINK option.
  (The name is necessary to correlate this trait with the information in
- the Mega2 penetrance and frequency files.) The PLINK flags are:
+ the Mega2 penetrance and frequency files.) The Mega2 PLINK flags are:
 \end_layout
 
 \begin_layout Quotation
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
+<lyxtabular version="3" rows="7" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="left" valignment="top" width="4in">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -6708,7 +6694,7 @@ status collapsed
 
 -
 \emph default
-no-sex
+no-pheno
 \end_layout
 
 \end_inset
@@ -6717,14 +6703,14 @@ no-sex
 \begin_inset Text
 
 \begin_layout Plain Layout
-The sex column is not present; 0 is used as the value.
+The trait column is not present.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6745,7 +6731,73 @@ status collapsed
 
 -
 \emph default
-no-pheno
+trait
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+specify a name for the pedigree file trait column.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-affectionstatus
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+indicate that trait is a dichotomous affection status trait locus (default).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-quantitative
 \end_layout
 
 \end_inset
@@ -6754,7 +6806,7 @@ no-pheno
 \begin_inset Text
 
 \begin_layout Plain Layout
-The trait column is not present.
+indicate that trait is a quantitative trait locus.
 \end_layout
 
 \end_inset
@@ -6795,6 +6847,15 @@ Below is a small example map file:
 \end_layout
 
 \begin_layout Standard
+To read the example map file, under the assumption the genetic map positions
+ are specified in Kosambi centiMorgans, we use the Mega2-PLINK flags:
+\end_layout
+
+\begin_layout LyX-Code
+--kosambi --cM 
+\end_layout
+
+\begin_layout Standard
 This file allows the alleles in the 
 \series bold
 Pedigree file
@@ -6806,17 +6867,17 @@ Map file
 \series default
  identify the marker for each allele pair.
  Each row typically includes four fields: the chromosome (1-22, X, Y or
- 0), the marker name, the genetic position in Morgans, and finally the base-pair
- position.
+ 0), the marker name, the genetic position in Kosambi Morgans, and finally
+ the base-pair position.
  The override flags are:
 \end_layout
 
 \begin_layout Quotation
 \begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="left" valignment="top" width="0">
+<lyxtabular version="3" rows="5" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="left" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -6879,7 +6940,7 @@ The genetic position column is not present.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6905,11 +6966,85 @@ cM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 The genetic position is specified in centiMorgans.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-
+\emph default
+kosambi
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+genetic distance in map file is in Kosambi units (default)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-
+\emph default
+haldane
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+genetic distance in map file is in Haldane units
 \end_layout
 
 \end_inset
@@ -7078,8 +7213,8 @@ Mega2 requires that this header line be present.
 \begin_layout Quotation
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="left" valignment="top" width="4in">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -7136,7 +7271,7 @@ missing-phenotype
 \begin_inset Text
 
 \begin_layout Plain Layout
-Specifies the missing value for quantitative traits (default -9)
+Specifies the missing value for quantitative traits (default -9).
 \end_layout
 
 \end_inset
@@ -7175,7 +7310,7 @@ status collapsed
 \begin_layout Plain Layout
 Affection status is coded 0 (unaffected) / 1 (affected) / -9 (missing,)
  vs.
- 0 (missing) / 1 (unaffected) / 2 (affected) / -9 (missing)
+ 0 (missing) / 1 (unaffected) / 2 (affected) / -9 (missing).
 \end_layout
 
 \end_inset
@@ -7384,8 +7519,8 @@ Family file
 \begin_layout Quotation
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="left" valignment="top" width="4in">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -7639,9 +7774,9 @@ Map file
 \begin_layout Quotation
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="left" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="left" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -7799,8 +7934,8 @@ Mega2 requires that this header be present.
 \begin_layout Quotation
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="left" valignment="top" width="4in">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -9120,9 +9255,9 @@ NOTE: Any marker that is in the locus file must be given a map position
  Thus, the marker names used in the map file must match exactly the names
  used in the locus file.
  If a codominant marker locus in the locus file is not found in the map
- file, then MEGA2 will warn you about this.
+ file, then Mega2 will warn you about this.
  If you ignore the warning, then this locus will not appear in the output
- files created by MEGA2.
+ files created by Mega2.
  You may have more loci in the map file than appear in the locus file.
  While you will be warned about this, it does not pose any difficulties.
 \end_layout
@@ -9248,13 +9383,13 @@ loci only; trait loci will not be affected
 
 \begin_layout Standard
 A summary of the omit results will be found in the file omit.log.
- This file is rewritten the next time MEGA2 is run with an omit file specified.
+ This file is rewritten the next time Mega2 is run with an omit file specified.
 \end_layout
 
 \begin_layout Standard
 The following describes possible errors and warnings associated with the
  reading of an omit file.
- If MEGA2 can not find a specific pedigree, person, or loci (from the omit
+ If Mega2 can not find a specific pedigree, person, or loci (from the omit
  file) in the input data, it will halt with an error message.
  If All is used for a loci in the omit file, and the input data contains
  a loci named All, it will halt with an error message.
@@ -9523,7 +9658,7 @@ target "http://vcftools.sourceforge.net"
 \end_inset
 
 ) as its underlying engine for parsing VCF files.
- VCFtools (and so MEGA2) currently supports VCF format v4.0 and VCF format
+ VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format
  v4.1 (See: 
 \begin_inset CommandInset href
 LatexCommand href
@@ -9829,12 +9964,9 @@ M2 chromosome: 5; physical position: 6; reference allele: 1; alternate allele:
 
 \begin_layout Standard
 This VCF file contains seventeen (17) sample IDs (1_3, 1_4, ..., 2_10).
- If the sample IDs do not correspond to the person IDs in the family
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- file, they can be mapped to individual IDs using a SAMPLEID column in the
- phenotype file (See 
+ If the sample IDs do not correspond to the person IDs in the family file,
+ they can be mapped to individual IDs using a SAMPLEID column in the phenotype
+ file (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:VCF-Phenotype-File"
@@ -9855,46 +9987,27 @@ reference "par:Value_Base_Pair_Position_Index"
 
 \end_inset
 
-) equal to 0 if no Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Map File is specified (See: 
+) equal to 0 if no Mega2 Map File is specified (See: 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
 
 \end_inset
 
-), or to one greater than the number of maps available in the Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Map File.
+), or to one greater than the number of maps available in the Mega2 Map
+ File.
  The map file (VCF.p) that is derived from the VCF file will contain all
  of the markers that have passed the vcftools filtering criteria.
- The Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Map File may contain the same number of markers or less in which case it
- will provide additional filtering.
+ The Mega2 Map File may contain the same number of markers or less in which
+ case it will provide additional filtering.
  That is, markers will be dropped if they do not appear in a map that is
- selected from a Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Map File.
+ selected from a Mega2 Map File.
 \end_layout
 
 \begin_layout Standard
 In many instances a Mega2 analysis option may require a genetic map.
  When using a VCF file, a genetic map can be specified using a optional
- Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Map File (See 
+ Mega2 Map File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
@@ -9902,13 +10015,10 @@ reference "sub:Annotated-map-file"
 \end_inset
 
 ).
- However, if an analysis option requires a genetic map and a Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Map File is not specified or if a map is selected that contains no genetic
- maps, then a dummy Sex Average genetic map (whose values are all 0) will
- be used for the required genetic map.
+ However, if an analysis option requires a genetic map and a Mega2 Map File
+ is not specified or if a map is selected that contains no genetic maps,
+ then a dummy Sex Average genetic map (whose values are all 0) will be used
+ for the required genetic map.
  For example, this would allow one to convert from VCF input format to PLINK
  output format (with a dummy genetic map) when only physical map positions
  are known.
@@ -10149,11 +10259,7 @@ Map File (Optional)
 \end_layout
 
 \begin_layout Standard
-A Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Map File (See 
+A Mega2 Map File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
@@ -10163,11 +10269,8 @@ reference "sub:Annotated-map-file"
 ) is not required, but may be specified.
  The maps in the map file may be used in addition to the map found in the
  VCF file (VCF.p).
- When used with a VCF file, the Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Map file may not contain a map with the name VCF.p.
+ When used with a VCF file, the Mega2 Map file may not contain a map with
+ the name VCF.p.
 \end_layout
 
 \begin_layout Subsubsection
@@ -10191,11 +10294,7 @@ Frequency File (Optional)
 \end_layout
 
 \begin_layout Standard
-AMega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- frequency file may be specified.
+A Mega2 frequency file may be specified.
  Please see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10256,7 +10355,7 @@ Penetrance File (Optional)
 \end_layout
 
 \begin_layout Standard
-AMega2 penetrance file may be specified.
+A Mega2 penetrance file may be specified.
  Please see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10301,10 +10400,6 @@ The Genetic Map Interpolator (GMI) program is designed to create interpolated
  Starting from a list of single nucleotide polymorphism (SNP) 
 \series bold
 rs
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  numbers, GMI fetches the most up-to-date SNP and microsatellite physical
  positions from Ensembl, and then combines these with the Rutgers combined
@@ -10376,11 +10471,7 @@ http://watson.hgen.pitt.edu/register/docs/gmi.html
 \end_layout
 
 \begin_layout Section
-Converting to Mega2's
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- format 
+Converting to Mega2's format 
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Converting-to-annotated-format"
@@ -10392,11 +10483,7 @@ name "sec:Converting-to-annotated-format"
 
 \begin_layout Standard
 We have provided a Python script, l2a.py, to convert linkage format files
- to Mega2's
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- format.
+ to Mega2's format.
  This is included within the Mega2 distribution package.
  
 \end_layout
@@ -10413,16 +10500,8 @@ Usage:
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  l2a.py
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  without any arguments for help with input options and arguments 
 \end_layout
@@ -10661,11 +10740,7 @@ Map file conversion
 
 \begin_layout Standard
 The converter checks the map function type and male or female-specific maps
- from the map file headers, and creates the appropriate Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- map file.
+ from the map file headers, and creates the appropriate Mega2 map file.
 \end_layout
 
 \begin_layout Section
@@ -10947,9 +11022,9 @@ Mega2 format with header
 \begin_layout LyX-Code
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="left" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="left" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -11145,11 +11220,7 @@ Note: Batch files created with Mega2 version 4.6.1 or earlier will not have
 \end_layout
 
 \begin_layout Subsection
-Input formats: Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- and Linkage
+Input formats: Mega2 and Linkage
 \end_layout
 
 \begin_layout Paragraph
@@ -11176,11 +11247,7 @@ Locus, Pedigree and Map datafile:
 The locus, pedigree, and map file are required files.
  In future versions, for the Mega2 format, the names file will be made optional,
  since locus names and types are already specified in the first line of
- the
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- pedigree file.
+ the pedigree file.
  
 \end_layout
 
@@ -11254,8 +11321,7 @@ plink
 \end_layout
 
 \begin_layout LyX-Code
-PLINK options: --file/--bfile --no-fid --no-parents --no-pheno --1 --map3
- ...
+PLINK options: --no-fid --no-parents --no-pheno --1 --map3 ...
 \end_layout
 
 \begin_layout LyX-Code
@@ -11267,7 +11333,15 @@ PLINK options: --file/--bfile --no-fid --no-parents --no-pheno --1 --map3
 \end_layout
 
 \begin_layout Standard
-Most of these flags are familiar from the previous PLINK file format discussion.
+Most of these flags are familiar from the previous PLINK file format discussion
+ in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:PLINK-file-formats"
+
+\end_inset
+
+.
  The new flags will be explained below: 
 \end_layout
 
@@ -11275,10 +11349,10 @@ Most of these flags are familiar from the previous PLINK file format discussion.
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<lyxtabular version="3" rows="6" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -11325,80 +11399,6 @@ status collapsed
 
 -
 \emph default
-file
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-switch to PLINK PED input format
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--
-\emph default
-bfile
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-switch to PLINK binary PED format
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--
-\emph default
 kosambi
 \end_layout
 
@@ -11408,7 +11408,7 @@ kosambi
 \begin_inset Text
 
 \begin_layout Plain Layout
-genetic distance in map file is in Kosambi units
+genetic distance in map file is in Kosambi units (default)
 \end_layout
 
 \end_inset
@@ -11482,7 +11482,8 @@ trait
 \begin_inset Text
 
 \begin_layout Plain Layout
-specify a name for the pedigree file trait column
+specify a trait name for the pedigree file trait column (the default trait
+ name is 'default')
 \end_layout
 
 \end_inset
@@ -11515,7 +11516,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-indicate that trait is a binary affection status
+indicate that the trait is a dichotomous affection status trait locus (default)
 \end_layout
 
 \end_inset
@@ -11548,7 +11549,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-indicate that trait is an arbitrary number
+indicate that the trait is a quantitative trait locus
 \end_layout
 
 \end_inset
@@ -11575,8 +11576,8 @@ reference "sub:PLINK-file-formats"
 \begin_layout Quotation
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="left" valignment="top" width="4in">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -12079,9 +12080,9 @@ The flags are a subset of the flags allowed for PLINK input:
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -12231,8 +12232,8 @@ reference "sub:PLINK-file-formats"
 \begin_layout Quotation
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="left" valignment="top" width="4in">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -14723,11 +14724,7 @@ http://www.finndiane.fi/software/cranefoot/
 \end_layout
 
 \begin_layout Subsection
-Convert to Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- format
+Convert to Mega2 format
 \end_layout
 
 \begin_layout Standard
@@ -14768,12 +14765,9 @@ This Analysis Menu option creates pedigree, marker, and parameter files
  Idcoefs program, and then run the IQLS program.
  Note that IQLS only supports two-allele markers and needs to know the physical
  positions of the markers.
- Thus, this option should only be run on input data in Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- format that contains two-allele markers, at least one affection status
- trait, and where a physical map has been specified.
+ Thus, this option should only be run on input data in Mega2 format that
+ contains two-allele markers, at least one affection status trait, and where
+ a physical map has been specified.
  The output IQLS marker file has to contain only character allele names,
  so if your input marker has numbered alleles 1 and 2, these will be remapped
  to character alleles A and G respectively.
@@ -15031,7 +15025,7 @@ Name: Morgan: pedcheck, kin, translink, lm_linkage, lm_bayes, lm_ibdtests,
 \begin_layout Standard
 Web: 
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -15087,7 +15081,7 @@ Documentation:
 \begin_layout Standard
 HTML: 
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -15103,7 +15097,7 @@ html
 \begin_layout Standard
 PDF: 
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -15986,11 +15980,7 @@ reference "sub:Annotated-map-file"
 
 \end_inset
 
-;
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- Map file).
+; Map file).
 \end_layout
 
 \begin_layout Standard
@@ -18226,18 +18216,9 @@ name "sec:Mega2-command-line-arguments"
 
 \series bold
 Usage:
-\change_deleted -1820302391 1399922222
- 
 \series default
- 
-\change_unchanged
-
 \emph on
  mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  [options] [batch-file-name] 
 \end_layout
@@ -18314,12 +18295,12 @@ U
 \begin_layout LyX-Code
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="5">
-<features tabularvalignment="middle">
+<features rotate="0" tabularvalignment="middle">
 <column alignment="left" valignment="top" width="0pt">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -18763,9 +18744,9 @@ In addition, several flags allow the non-autosomal chromosomes to be specified:
 \begin_layout LyX-Code
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="3">
-<features tabularvalignment="middle">
+<features rotate="0" tabularvalignment="middle">
 <column alignment="left" valignment="top" width="0pt">
-<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top">
 <column alignment="left" valignment="top" width="4in">
 <row>
 <cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -19495,10 +19476,6 @@ status collapsed
 \end_inset
 
 -force_numeric_alleles
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  
 \begin_inset CommandInset label
@@ -19556,10 +19533,6 @@ status collapsed
 \end_inset
 
 -nosave
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  
 \begin_inset Newline newline
@@ -19612,10 +19585,6 @@ status collapsed
 \end_inset
 
 -noweb
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  
 \begin_inset Newline newline
@@ -19668,10 +19637,6 @@ status collapsed
 \end_inset
 
 -help
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  
 \begin_inset Newline newline
@@ -19702,10 +19667,6 @@ status collapsed
 \end_inset
 
 -version
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  
 \begin_inset Newline newline
@@ -19730,10 +19691,6 @@ Obsolete options
 
 \emph on
 -nosave:
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  
 \begin_inset Newline newline
@@ -20337,17 +20294,9 @@ The order in which these options appear in the batch file does not affect
  Mega2's behavior.
  Some options are dependent on the definition of others.
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  Each class is regarded as complete only if an adequate number of definitions
  in that class are provided.
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 
 \series default
  For example, in the Input menu items class, one has to have at least the
@@ -20520,11 +20469,7 @@ name "par:Input_Locus_File"
 This item specifies the name of the input locus data file.
  This is a required item for 
 \emph on
-linkage and Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- 
+linkage and Mega2 
 \emph default
 input format, but it is not used for either PLINK input format.
  The value should be a string without white-space characters.
@@ -20781,10 +20726,6 @@ This item specifies the handling of marker-untyped pedigrees.
 
  and so on, i.e.
  included pedigrees must have at least
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph on
  
 \begin_inset Formula $<$
@@ -20795,10 +20736,6 @@ value
 \end_inset
 
  - 3
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  typed persons.
  
@@ -21066,9 +21003,9 @@ ns.
 \begin_layout Quotation
 \begin_inset Tabular
 <lyxtabular version="3" rows="38" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
@@ -22580,16 +22517,8 @@ Default_Outfile_Names
 
 \begin_layout Standard
 If set to
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph on
  yes
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  , the output file-names menu will be skipped for all options.
  In addition to file names, some of these menus also contain options for
@@ -22613,18 +22542,10 @@ name "par:Default_Reset_Invalid"
 This option defines how invalid genotypes should be handled without pausing
  for user-input via the invalid-genotypes menu (which is skipped).
  If set to
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph on
  yes
 \emph default
  the genotypes will be reset to unknowns, and if set to
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph on
  no
 \emph default
@@ -22692,10 +22613,6 @@ name "par:Default_Rplot_Options"
 
 \begin_layout Standard
 If set to
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph on
  yes
 \emph default
@@ -22932,10 +22849,6 @@ ve trait containing the population assignments for each individual.
 
 \series bold
 OBSOLETE OPTIONS
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  [Updated]
 \begin_inset Newline newline
@@ -23478,16 +23391,8 @@ It multiple traits and/or multiple chromosomes are selected for analysis,
  the a combined shell script is created which executes the chromosome-specific
  shell scripts in the individual trait directories.
  This shell script is called
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  [*].all.sh
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  
 \end_layout
@@ -23638,26 +23543,14 @@ map.dat
 \end_inset
 
  The haplotyping shell script is called
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  haplo.05.sh
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  
 \begin_inset Newline newline
 \end_inset
 
  The name of the Location scores C-Shell script file is
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  loc.05.sh
 \series default
@@ -27284,29 +27177,13 @@ The C-shell script npl.06.sh runs Merlin on the Merlin format files to create
  do not require a great deal of computation.
  Merlin can be instructed to limit the amount of time spent on each pedigree
  by means of the
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph on
  --minutes
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \emph default
  switch.
  Currently, this value is set to
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  1 minute
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  inside the Pedigrees that cannot be handled by Merlin are then analyzed
  by SimWalk2's NPL option, and Merlin's exact scores incorporated into the
@@ -27727,16 +27604,8 @@ Note that the locus and variable files are now combined into a single definition
 \end_inset
 
 
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series bold
  Handling trait penetrances
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  If all affection traits selected for output have a single liability class,
  the penetrance file is not written.
@@ -28141,19 +28010,11 @@ name "ext:mega2"
 
 \end_inset
 
-Convert to Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- format
+Convert to Mega2 format
 \end_layout
 
 \begin_layout Standard
-The following chromosome specific files are created for Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- format: 
+The following chromosome specific files are created for Mega2 format: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -28409,11 +28270,12 @@ Morgan tutorial
 
  is available at 
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
-http://www.stat.washington.edu/thompson/Stuff_bk/morgan-tut.pdf
+http://www.stat.washington.edu/thompson/Genepi/MORGAN/morgan311-tut-html/morgan-tut.
+html
 \end_layout
 
 \end_inset
@@ -28425,7 +28287,7 @@ http://www.stat.washington.edu/thompson/Stuff_bk/morgan-tut.pdf
 \begin_layout Standard
 The software download is available via 
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -29256,11 +29118,7 @@ Utilities included with Mega2
 \end_layout
 
 \begin_layout Subsection
-Converting linkage format files to Mega2
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
- format - l2a.py 
+Converting linkage format files to Mega2 format - l2a.py 
 \end_layout
 
 \begin_layout Standard
@@ -29301,8 +29159,8 @@ http://watson.hgen.pitt.edu/register/
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="left" valignment="top">
 <column alignment="none" valignment="top" width="12cm">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -29687,8 +29545,8 @@ Other scripts:
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="2">
-<features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="left" valignment="top">
 <column alignment="none" valignment="top" width="15cm">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -29995,9 +29853,9 @@ Genetics
 \begin_layout Quote
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
@@ -30304,11 +30162,11 @@ Recent releases
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="20" columns="4">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="right" valignment="top" width="0">
-<column alignment="none" valignment="middle" width="0">
-<column alignment="none" valignment="middle" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="right" valignment="top">
+<column alignment="none" valignment="middle">
+<column alignment="none" valignment="middle">
 <row>
 <cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
@@ -32070,10 +31928,6 @@ Enhancement: Mega2 automatically limits the display of warnings and error
 
 \series bold
 Version 4.0 beta, 4.0 beta R1, 4.0
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  introduces a new input file format called the annotated format.
  observed under somewhat rare circumstances.
@@ -32358,10 +32212,6 @@ Modification: Merlin command line options were out-of-date.
 
 \series bold
 Version 3.0 Revision 10,11,12
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  fixes a few more bugs that were observed under somewhat rare circumstances.
  Version 12 also implements a new output option for the simulation program
@@ -32497,10 +32347,6 @@ Very old versions
 
 \series bold
 Version 3.0 Revision 8, 9
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  are patched versions of Mega2 3.0.
  They contains some important bug-fixes that was introduced in the 3.0 R7
@@ -32516,10 +32362,6 @@ Version 3.0 Revision 8, 9
  
 \series bold
 Version 3.0 Revision 7
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  is a patched version of Mega2 3.0.
  It contains a couple of bug-fixes, and the expiry date has been changed
@@ -32535,10 +32377,6 @@ Version 3.0 Revision 7
  
 \series bold
 Version 3.0 Revisions 1, 2,3, 4 and 5
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
-
 \series default
  are patched versions of Mega2 3.0.
  They contain some important bug-fixes which are listed below.
@@ -32647,10 +32485,6 @@ e (very dense markers would have the same problem, if the output did not
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Changes from Ver 3.0 R7-
 \begin_inset Formula $>$
 \end_inset
@@ -33120,10 +32954,6 @@ ic files.
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Changes from Ver 2.5 R4 -
 \begin_inset Formula $>$
 \end_inset
@@ -33268,10 +33098,6 @@ Bug-Fix: Duplicate names in the names files caused Mega2 to run incorrectly.
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Changes from Ver 2.5 R3 -
 \begin_inset Formula $>$
 \end_inset
@@ -33347,10 +33173,6 @@ Enhancement: Improved messages with respect to pedigree format (pre- or
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Changes from Ver 2.5 R1 -
 \begin_inset Formula $>$
 \end_inset
@@ -33633,10 +33455,6 @@ Enhancement: For Merlin, cannot handle generating plots for multiple traits
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Changes from Ver 2.3 R3 -
 \begin_inset Formula $>$
 \end_inset
@@ -34581,10 +34399,6 @@ ly set the first paternal and maternal sibling fields to 0, even when such
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 4.0 R1 
 \end_layout
 
@@ -34670,10 +34484,6 @@ Random simulation of genotyping errors did not work correctly from 4.0 beta
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 4.0 beta R1
 \end_layout
 
@@ -34749,10 +34559,6 @@ Nuclear pedigree files had redundant chromosome number extensions when multiple
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 3.0 R10 
 \end_layout
 
@@ -34818,10 +34624,6 @@ The Rallegro.pl, Rmerlin.pl and Rsimwalk2.pl Perl scripts failed to distinguish
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 3.0 R7 
 \end_layout
 
@@ -34850,10 +34652,6 @@ Incorrect genotypes reset menu
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 3.0 R5, R6 
 \end_layout
 
@@ -34918,10 +34716,6 @@ The R shell script contained mal-formed file-names when a single trait was
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 3.0 R3 
 \end_layout
 
@@ -34964,10 +34758,6 @@ Unique IDs were not carried over during conversion from Pre-makeped format
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 3.0 R1 
 \end_layout
 
@@ -35018,10 +34808,6 @@ Vitesse shell script was missing its header and hence could not be run.
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 3.0 
 \end_layout
 
@@ -35099,10 +34885,6 @@ Duplicate names in the names files caused Mega2 to run incorrectly.
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 2.5 R3
 \end_layout
 
@@ -35271,10 +35053,6 @@ Existing vstrm files were not removed before each Vitesse run.
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 2.3 R3
 \end_layout
 
@@ -35360,10 +35138,6 @@ In some cases, nuclear families included half-sibs This bug affects Aspex,
 \end_layout
 
 \begin_layout Subsection*
-
-\change_deleted -1820302391 1399922222
- 
-\change_unchanged
 Bugs in Mega2 2.2 R3
 \end_layout
 
