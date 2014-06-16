@@ -7486,6 +7486,23 @@ Below is a small example fam file:
 \end_layout
 
 \begin_layout Standard
+To read the example fam file correctly while naming the quantitative trait
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Q1
+\begin_inset Quotes erd
+\end_inset
+
+, we use the Mega2 PLINK flags:
+\end_layout
+
+\begin_layout LyX-Code
+--trait Q1 --quantitative
+\end_layout
+
+\begin_layout Standard
 The 
 \begin_inset Quotes eld
 \end_inset
@@ -7518,7 +7535,7 @@ Family file
 
 \begin_layout Quotation
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="2">
+<lyxtabular version="3" rows="4" columns="2">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="left" valignment="top" width="4in">
@@ -7616,43 +7633,6 @@ no-parents
 
 \begin_layout Plain Layout
 The father and mother column are not present; 0 is used as the value.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--
-\emph default
-no-sex
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-The sex column is not present; 0 is used as the value.
 \end_layout
 
 \end_inset
