@@ -31,7 +31,8 @@ CC = cc
 
 # compiler options
 
-CFLAGS = -Wall -g
+OPT ?= -O3
+CFLAGS = -Wall $(OPT)
 # The '-O0' is for use when running under valgrind...
 #CFLAGS += -O0
 #CFLAGS += -m64
