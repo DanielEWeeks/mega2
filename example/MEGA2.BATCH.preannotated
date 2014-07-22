@@ -73,6 +73,10 @@
 #   These correspond to the Select Individuals menu
 #   within the allele-recoding step.
 # 
+
+#Input_Format_Type=0
+# The format is annotated premakeped which is _type == 0 but we are going to let Mega2 figure it out.
+
 Input_Pedigree_File=pedin.preannotated
 Input_Locus_File=names.preannotated
 Input_Map_File=map.preannotated

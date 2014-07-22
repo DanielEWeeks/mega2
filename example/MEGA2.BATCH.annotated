@@ -73,6 +73,7 @@
 #   These correspond to the Select Individuals menu
 #   within the allele-recoding step.
 # 
+Input_Format_Type=0
 Input_Pedigree_File=pedin.annotated
 Input_Locus_File=names.annotated
 Input_Map_File=map.annotated

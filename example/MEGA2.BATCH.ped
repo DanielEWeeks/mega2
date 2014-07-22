@@ -73,10 +73,11 @@
 #   These correspond to the Select Individuals menu
 #   within the allele-recoding step.
 # 
+Input_Format_Type=4
 Input_Pedigree_File=ped.ped
 Input_Map_File=ped.map
 Input_Phenotype_File=ped.phe
-PLINK=--file --trait Q1 --quantitative --missing-phenotype -99.99 --kosambi --cM
+PLINK=--trait Q1 --quantitative --missing-phenotype -99.99 --kosambi --cM
 Input_Frequency_File=ped.frequency
 Input_Penetrance_File=ped.penetrance
 Input_Untyped_Ped_Option=2

@@ -71,6 +71,7 @@
 #   These correspond to the Select Individuals menu
 #   within the allele-recoding step.
 # 
+Input_Format_Type=1
 Input_Pedigree_File=pedin.ex
 Input_Locus_File=datain.ex
 Input_Map_File=map.ex
