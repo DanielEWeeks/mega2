@@ -155,7 +155,8 @@ aspex.o cranefoot.o mega2.o R_output.o write_SUP_files.o write_ghfiles.o write_p
 
 # -DHIDEFILE
 annotated_ped_file.o makeped1.o mega2.o read_files.o utils.o: DFLAGS += $(DfFLAGS)
-write_IQLS.o write_plink_files.o: DFLAGS += $(DfFLAGS)
+write_IQLS.o write_beagle.o write_eigenstrat.o write_fbat.o: DFLAGS += $(DfFLAGS)
+write_pangaea.o write_plink_files.o write_pseq_files.o write_structure.o: DFLAGS += $(DfFLAGS)
 
 # -DDATE -DHIDEPATH
 write_mfiles.o write_vitesse.o utils.o: DFLAGS += $(DdFLAGS) $(DpFLAGS)
