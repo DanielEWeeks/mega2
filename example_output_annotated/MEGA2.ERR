@@ -1,11 +1,11 @@
 ==========================================================
-                          MEGA2 4.5.5
-     Copyright (C) 1999-2012 Robert Baron, Charles P. Kollar,
+                          MEGA2 4.7.0
+     Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
      Daniel E. Weeks, and University of Pittsburgh
 
-     Last updated: Jun 21 2012, 10:29:17 , valid until June 15, 2013.
-     Compiled with gcc version 4.2.1 (Apple Inc. build 5666) (dot 3)
+     Last updated: Jul 22 2014, 12:55:24 , valid until June 15, 2015.
+     Compiled with gcc version 4.2.1 Compatible Apple LLVM 5.1 (clang-503.0.40)
 
      Mega2 comes with ABSOLUTELY NO WARRANTY.
      See LICENSE.txt for terms of copying, modifying & redistributing Mega2.
@@ -15,9 +15,9 @@ We have changed the numbers to be compatible with PLINK. 23 still codes for X,
 but 24 codes for Y and 25 Codes for XY.
 
 -----------------------------------------------------
-        Mega2 version 4.5.5
-Run date:                  2012-6-21-10-30
-This file created on       Thu Jun 21 10:30:37 2012
+        Mega2 version 4.7.0
+Run date:                  2014-7-22-13-08
+This file created on       Tue Jul 22 13:08:32 2014
 Input file names
 #       Pedigree file:               pedin.annotated
 #          Locus file:               names.annotated

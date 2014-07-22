@@ -1,9 +1,9 @@
 #!/bin/csh -f
 # C-shell file name: ../example_output_post/crnft_shell.all.sh
 #----------------------------------------------
-#   Mega2 version 4.5.5
-#   Run date:                2012-6-21-10-30
-#   This script created on   Thu Jun 21 10:30:37 2012
+#   Mega2 version 4.7.0
+#   Run date:                2014-7-22-13-08
+#   This script created on   Tue Jul 22 13:08:32 2014
 #   Input file names:
 #       Pedigree file:              pedin.ex
 #          Locus file:              datain.ex

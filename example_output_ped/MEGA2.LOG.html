@@ -6,13 +6,13 @@
 <body text=navy font=helvetica bgcolor="#ffffff" link="#6666ff"  VLINK="#6666ff">
 <pre>
 ==========================================================
-                          MEGA2 4.5.5
-     Copyright (C) 1999-2012 Robert Baron, Charles P. Kollar,
+                          MEGA2 4.7.0
+     Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
      Daniel E. Weeks, and University of Pittsburgh
 
-     Last updated: Jun 21 2012, 10:29:17 , valid until June 15, 2013.
-     Compiled with gcc version 4.2.1 (Apple Inc. build 5666) (dot 3)
+     Last updated: Jul 22 2014, 12:55:24 , valid until June 15, 2015.
+     Compiled with gcc version 4.2.1 Compatible Apple LLVM 5.1 (clang-503.0.40)
 
      Mega2 comes with ABSOLUTELY NO WARRANTY.
      See LICENSE.txt for terms of copying, modifying & redistributing Mega2.
@@ -21,32 +21,37 @@ NOTE: If you have previously used explicit numbers for sex chromosomes, BEWARE!
 We have changed the numbers to be compatible with PLINK. 23 still codes for X,
 but 24 codes for Y and 25 Codes for XY.
 
-Running Mega2 in batch mode from MEGA2.BATCH.ped.
+Running Mega2 in batch mode from MEGA2.BATCH.ped
 Input filenames and missing value indicator read in from batch file.
 Analysis option read in from batch file.
 Markers, chromosome(s) and read in from batch file.
 Trait selection(s) read in from batch file.
-Keyword Input_Omit_File not in batch file, omit file assumed to be unspecified.
+Keyword Input_Locus_File not in batch file, Locus file assumed to be unspecified.
+Keyword Input_PLINK_Map_File not in batch file, PLINK map file assumed to be unspecified.
+Keyword Input_Omit_File not in batch file, Omit file assumed to be unspecified.
+Keyword Input_Aux_File not in batch file, Aux file assumed to be unspecified.
+Keyword Input_Path not in batch file, using default '.' (current directory).
 -----------------------------------------------------
-        Mega2 version 4.5.5
-Run date:                  2012-6-21-10-30
-This file created on       Thu Jun 21 10:30:36 2012
+        Mega2 version 4.7.0
+Run date:                  2014-7-22-13-08
+This file created on       Tue Jul 22 13:08:32 2014
 Input file names
 #       Pedigree file:               ped.ped
 #            Map file:               ped.map
 #      Frequency file:               ped.frequency
 #     Penetrance file:               ped.penetrance
-#    PLINK Phenotype file:               ped.phe
+# PLINK Phenotype file:               ped.phe
   Untyped pedigree option: Include all pedigrees whether typed or not
 Mendelianly-inconsistent genotypes included in output.
 Half-typed individuals' genotypes included in output.
 ---------------------------------------------
 
 ===========================================================
-Analysis option: Mendel7+ format.
-Pedigree and map files appear to be in PLINK format.
-omit, penetrance, and frequency files are always in Annotated format.
-Input files will be read in as PLINK or Annotated format files as appropriate.
+Analysis option: Mendel7+.
+Input Format: PLINK PED format (ped)
+Pedigree and map files specified as PLINK format.
+omit, penetrance, and frequency files are always in Mega2 format.
+Input files will be read in as PLINK or Mega2 format files as appropriate.
 reading phenotype file ped.phe ... (1 columns)
 Reading PLINK map file for names: ped.map
 Reading map file ped.map ... (4 columns)
@@ -64,13 +69,13 @@ Total number of loci =  5
 Number of loci found per chromosome (chromosome:number)
    5:3
 ===========================================================
-Reading annotated format frequency file: ped.frequency
-Reading annotated format penetrance file: ped.penetrance
+Reading Mega2 format frequency file: ped.frequency
+Reading Mega2 format penetrance file: ped.penetrance
+WARNING: Missing QTL phenotype value specified by Value_Missing_Quant_On_Input will be ignored.
+Missing QTL phenotype value read from --missing_phenotype (-99.990000).
 Reading PLINK .ped file: ped.ped (12 columns).
 Reading PLINK format ped file: ped.ped (13 columns)
-
-3 (of 3) markers to be included from ped.map
-Reading pedigree information from ped.ped
+3 (of 3) markers to be included from ped.mapReading pedigree information from ped.ped
 21 individuals read from ped.ped
 21 individuals with nonmissing phenotypes
 0 cases, 0 controls, 0 missing
@@ -79,24 +84,24 @@ Reading pedigree information from ped.ped
 ===========================================================
 Input pedigree data contains:
 Input pedigree file is in PLINK-fam format. 
-                                             Marker Genotypes
-                                             Fully    Half
-      Pedigrees    People   Males   Females  Typed    Typed  Total
-TOTAL        2       21       9      12         63       0       63
-Typed        2       21       9      12
-Untyped      0        0       0       0
+                                                Marker Genotypes
+                                                Fully    Half
+     Pedigrees   People   Males   Females       Typed    Typed     Total
+TOTAL        2       21       9        12          63        0        63
+Typed        2       21       9        12
+Untyped      0        0       0         0
 ===========================================================
 Pedigree exclusion option : Include all pedigrees whether typed or not.
 Recoding pedigree genotypes ... 
 ===========================================================
 Pedigree data summary after recoding:
 Input pedigree file is in PLINK-fam format. 
-                                             Marker Genotypes
-                                             Fully    Half
-      Pedigrees    People   Males   Females  Typed    Typed  Total
-TOTAL        2       21       9      12         63       0       63
-Typed        2       21       9      12
-Untyped      0        0       0       0
+                                                Marker Genotypes
+                                                Fully    Half
+     Pedigrees   People   Males   Females       Typed    Typed     Total
+TOTAL        2       21       9        12          63        0        63
+Typed        2       21       9        12
+Untyped      0        0       0         0
 ===========================================================
 Selected map Map.
 Selected chromosome 5
@@ -106,19 +111,20 @@ After selecting traits and covariates
 1 trait locus 
       1 Affection status locus: 
                 TRAIT
+===========================================================
 Pedigree statistics after selecting chromosomes and marker loci:
-                                             Marker Genotypes
-                                             Fully    Half
-      Pedigrees    People   Males   Females  Typed    Typed  Total
-TOTAL        2       21       9      12         63       0       63
-Typed        2       21       9      12
-Untyped      0        0       0       0
+                                                Marker Genotypes
+                                                Fully    Half
+     Pedigrees   People   Males   Females       Typed    Typed     Total
+TOTAL        2       21       9        12          63        0        63
+Typed        2       21       9        12
+Untyped      0        0       0         0
 ===========================================================
 Person id in output pedigree file = Individual id
 ===========================================================
-Pedigree identifier in output pedigree file = Premakeped pedigree number.
+Pedigree id in output pedigree file = Premakeped pedigree number.
 ===========================================================
-Mega2 created the following file(s) for Mendel7+ format:
+Mega2 created the following file(s) for Mendel7+:
         Definition file:      mendel_locus.05
         Pedigree file:        mendel_ped.05
         Map file:             mendel_map.05
@@ -130,7 +136,7 @@ If you use Mega2 as part of a published work, please reference
  Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)
  Mega2: data-handling for facilitating genetic linkage and association analyses.
  Bioinformatics. 2005 May 15;21(10):2556-7, PMID: 15746282
-as well as the version used, which is currently Version 4.5.5
+as well as the version used, which is currently Version 4.7.0
 ===========================================================
 See run summaries in current directory .
    MEGA2.LOG, MEGA2.ERR, MEGA2.KEYS

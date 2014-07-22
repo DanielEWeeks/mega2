@@ -673,7 +673,7 @@ int             main(int argc, char **argv)
         sprintf(err_msg, "Running Mega2 in batch mode.");
 #else
 	// DO NOT CHANGE: This line is parsed by 'utils.c:#define LOG2HTML'...
-        sprintf(err_msg, "Running Mega2 in batch mode from %s", Mega2Batch);
+        sprintf(err_msg, "Running Mega2 in batch mode from %s.", Mega2Batch);
 #endif
         mssgf(err_msg);
 
