@@ -171,9 +171,9 @@ static int read_peds(int line_count, FILE *pfilep,
         }
         persons[i].rec_num = i+1;
 
-        persons[i].pheno  = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
+        persons[i].pheno  = (LTop->PhenoCnt > 0) ? CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data) : 0;
         // NOTE: No space is allocated in marker for entries 0..LTop->PhenoCnt-1
-        persons[i].marker = marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt);
+        persons[i].marker = (LTop->MarkerCnt > 0) ? marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt) : 0;
         int locus;
         for (;col < expected_col; ) {
             if (col2locus[col] == 0) continue;
@@ -1084,9 +1084,9 @@ static void copy_node_remove_parents(int proband, person_node_type *p1,
     p2->father=0; p2->mother=0;
     p2->from_marriage_node_id=-1;
     p2->degree_genotyped=p1->degree_genotyped;
-    p2->pheno  = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
+    p2->pheno  = (LTop->PhenoCnt > 0) ? CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data) : 0;
     // NOTE: No space is allocated in marker for entries 0..LTop->PhenoCnt-1
-    p2->marker = marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt);
+    p2->marker = (LTop->MarkerCnt > 0) ? marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt) : 0;
     copy_pedrec_data(p1, p2, LTop);
     /*
     if (Mega2Status == INSIDE_RECODE) {

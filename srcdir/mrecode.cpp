@@ -1308,11 +1308,11 @@ linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char *
 
     LTop->Locus   = CALLOC((size_t) all_loci,    linkage_locus_rec);
 
-    LTop->Pheno  = CALLOC((size_t) all_loci - num_markers, pheno_rec);
     LTop->PhenoCnt = all_loci - num_markers;
+    LTop->Pheno  = (LTop->PhenoCnt > 0) ? CALLOC((size_t) LTop->PhenoCnt, pheno_rec) : 0;
 
-    LTop->Marker = CALLOC((size_t) num_markers, marker_rec) - LTop->PhenoCnt;
     LTop->MarkerCnt = num_markers;
+    LTop->Marker = (LTop->MarkerCnt > 0) ? (CALLOC((size_t) LTop->MarkerCnt, marker_rec) - LTop->PhenoCnt) : 0;
 #ifdef SHOWSTATUS
     msgvf("ALLOC SPACE: LTop->Locus: %d MB (%d x %d)\n",
           all_loci * sizeof(linkage_locus_rec) / 1024 / 1024,
@@ -2292,38 +2292,44 @@ linkage_ped_top  *create_full_marker_data(
     Mega2Status = INSIDE_RECODE;
     /*  read_marker_data(lfilep, &LTop); */
 
-    pheno_list=CALLOC((size_t) LTop->PhenoCnt, pheno_type);
-    for (i=0; i < LTop->PhenoCnt; i++) {
-        pheno_type *pheno_listi = &(pheno_list[i]);
-        pheno_listi->first_allele = NULL;
-        pheno_listi->estimate_frequencies = 1;
-        pheno_listi->first_allele = CALLOC((size_t) 1, allele_list_type);
-        pheno_listi->first_allele->allele_freq.freq = 0.5;
-        pheno_listi->first_allele->next = CALLOC((size_t) 1, allele_list_type);
-        pheno_listi->first_allele->next->allele_freq.freq = 0.5;
-        pheno_listi->first_allele->next->next = NULL;
-        if (LTop->Locus[i].Type == QUANT) {
-            pheno_listi->num_classes = 1;
-            pheno_listi->num_alleles = 2;
-        } else if (LTop->Locus[i].Type == AFFECTION) {
-            pheno_listi->num_classes = 0;
-            pheno_listi->num_alleles = 2;
+    if (LTop->PhenoCnt > 0) {
+        pheno_list=CALLOC((size_t) LTop->PhenoCnt, pheno_type);
+        for (i=0; i < LTop->PhenoCnt; i++) {
+            pheno_type *pheno_listi = &(pheno_list[i]);
+            pheno_listi->first_allele = NULL;
+            pheno_listi->estimate_frequencies = 1;
+            pheno_listi->first_allele = CALLOC((size_t) 1, allele_list_type);
+            pheno_listi->first_allele->allele_freq.freq = 0.5;
+            pheno_listi->first_allele->next = CALLOC((size_t) 1, allele_list_type);
+            pheno_listi->first_allele->next->allele_freq.freq = 0.5;
+            pheno_listi->first_allele->next->next = NULL;
+            if (LTop->Locus[i].Type == QUANT) {
+                pheno_listi->num_classes = 1;
+                pheno_listi->num_alleles = 2;
+            } else if (LTop->Locus[i].Type == AFFECTION) {
+                pheno_listi->num_classes = 0;
+                pheno_listi->num_alleles = 2;
+            }
         }
-    }
+    } else 
+        pheno_list = 0;
 
-    marker_list = (CALLOC((size_t) LTop->MarkerCnt, marker_type)) - LTop->PhenoCnt;
-    for(i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
-        marker_list[i].first_allele = NULL;
-        if (LTop->Locus[i].Type == NUMBERED || LTop->Locus[i].Type == XLINKED ||
-           LTop->Locus[i].Type == YLINKED) {
+    if (LTop->MarkerCnt > 0) {
+        marker_list = (CALLOC((size_t) LTop->MarkerCnt, marker_type)) - LTop->PhenoCnt;
+        for(i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
+            marker_list[i].first_allele = NULL;
+            if (LTop->Locus[i].Type == NUMBERED || LTop->Locus[i].Type == XLINKED ||
+               LTop->Locus[i].Type == YLINKED) {
 
-            marker_list[i].num_alleles = 0;
-            marker_list[i].num_classes = 0;
+                marker_list[i].num_alleles = 0;
+                marker_list[i].num_classes = 0;
 
+            }
+            marker_list[i].estimate_frequencies = 1;
+            marker_list[i].recode_alleles = 0;
         }
-        marker_list[i].estimate_frequencies = 1;
-        marker_list[i].recode_alleles = 0;
-    }
+    } else
+        marker_list = 0;
 
     set_missing_quant_input((linkage_ped_top *) NULL, analysis);
 
@@ -2438,7 +2444,10 @@ linkage_ped_top  *create_full_marker_data(
         free_marker_item(marker_list[i].first_allele);
     }
 
-    free(marker_list + LTop->PhenoCnt); marker_list=NULL;
+    if (marker_list) {
+        free(marker_list + LTop->PhenoCnt);
+        marker_list=NULL;
+    }
 
     return Top;
 }

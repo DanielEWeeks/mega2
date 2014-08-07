@@ -863,9 +863,9 @@ static int read_linkage_record(FILE *filep, linkage_ped_rec *entry,
     }
 
     /* allocate the space for genotypes */
-    entry->Pheno  = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
+    entry->Pheno  = (LTop->PhenoCnt > 0) ? CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data) : 0;
     // NOTE: No space is allocated in marker for entries 0..LTop->PhenoCnt-1
-    entry->Marker = marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt);
+    entry->Marker = (LTop->MarkerCnt > 0) ? marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt) : 0;
     /* Now get genotypes, classes, etc. */
     for (;col < expected_col; ) {
         if (col2locus[col] == 0) continue;
@@ -2432,17 +2432,19 @@ static  ext_linkage_locus_top *make_EXLTop_from_LTop(linkage_locus_top *LTop, in
     EXLTop->valid_map_p[0][FEMALE_SEX_MAP] = (female_col > 0 ? 1 : 0);
 #endif /* ALL_ZERO_GENETIC_MAP_INVALID */
     
-    EXLTop->EXLocus = (CALLOC((size_t) LTop->MarkerCnt, ext_linkage_locus_rec)) - LTop->PhenoCnt;
-    for (m = LTop->PhenoCnt; m < LTop->LocusCnt; m++) {
-        // Since LTop is linkage, it only supports one map....
-        EXLTop->EXLocus[m].positions = CALLOC((size_t)1, double);
-        EXLTop->EXLocus[m].pos_male = CALLOC((size_t)1, double);
-        EXLTop->EXLocus[m].pos_female = CALLOC((size_t)1, double);
-        EXLTop->EXLocus[m].positions[0] = LTop->Marker[m].pos_avg;
-        EXLTop->EXLocus[m].pos_female[0] = LTop->Marker[m].pos_female;
-        EXLTop->EXLocus[m].pos_male[0] = LTop->Marker[m].pos_male;
-    }
-    
+    if (LTop->MarkerCnt > 0) {
+        EXLTop->EXLocus = (CALLOC((size_t) LTop->MarkerCnt, ext_linkage_locus_rec)) - LTop->PhenoCnt;
+        for (m = LTop->PhenoCnt; m < LTop->LocusCnt; m++) {
+            // Since LTop is linkage, it only supports one map....
+            EXLTop->EXLocus[m].positions = CALLOC((size_t)1, double);
+            EXLTop->EXLocus[m].pos_male = CALLOC((size_t)1, double);
+            EXLTop->EXLocus[m].pos_female = CALLOC((size_t)1, double);
+            EXLTop->EXLocus[m].positions[0] = LTop->Marker[m].pos_avg;
+            EXLTop->EXLocus[m].pos_female[0] = LTop->Marker[m].pos_female;
+            EXLTop->EXLocus[m].pos_male[0] = LTop->Marker[m].pos_male;
+        }
+    } else 
+        EXLTop->EXLocus = 0;
     Display_Errors = 1;
 
     //

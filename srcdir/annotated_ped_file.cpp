@@ -1509,11 +1509,9 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         } else {
             ungetc(c, filep);
         }
-        if (LTop->PhenoCnt)
-            persons[p].pheno  = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
+        persons[p].pheno  = (LTop->PhenoCnt > 0) ? CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data) : 0;
         // NOTE: No space is allocated in marker for entries 0..LTop->PhenoCnt-1
-        if (LTop->MarkerCnt)
-            persons[p].marker = marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt);
+        persons[p].marker = (LTop->MarkerCnt > 0) ? marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt) : 0;
 
         persons[p].rec_num = p+1;
 
@@ -2379,7 +2377,7 @@ static void init_ext_linkage_locus_top (ext_linkage_locus_top *EXLTop,
     // This is actually a bit bigger than it needs to be because it also contains phenotype locus...
     EXLTop->LocusCnt = LTop->LocusCnt;
     // Note that CALLOC initializes the storage to '0' (e.g., clears them)...
-    EXLTop->EXLocus = (CALLOC((size_t) LTop->MarkerCnt, ext_linkage_locus_rec)) - LTop->PhenoCnt;
+    EXLTop->EXLocus = (LTop->MarkerCnt > 0) ? (CALLOC((size_t) LTop->MarkerCnt, ext_linkage_locus_rec) - LTop->PhenoCnt) : 0;
 #ifdef SHOWSTATUS
     msgvf("ALLOC SPACE: EXLocus: %d MB (%d x %d)\n",
           LTop->MarkerCnt * sizeof(ext_linkage_locus_rec) / 1024 / 1024,
@@ -4183,33 +4181,38 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         return NULL;
     }
 
-    marker_list = (CALLOC((size_t) LTop->MarkerCnt, marker_type)) - LTop->PhenoCnt;
+    if (LTop->MarkerCnt > 0) {
+        marker_list = (CALLOC((size_t) LTop->MarkerCnt, marker_type)) - LTop->PhenoCnt;
 #ifdef SHOWSTATUS
-    msgvf("ALLOC SPACE: marker_list: %d MB (%d x %d)\n",
-          LTop->MarkerCnt * sizeof(marker_type) / 1024 / 1024,
-          LTop->MarkerCnt,  sizeof(marker_type));
+        msgvf("ALLOC SPACE: marker_list: %d MB (%d x %d)\n",
+              LTop->MarkerCnt * sizeof(marker_type) / 1024 / 1024,
+              LTop->MarkerCnt,  sizeof(marker_type));
 #endif
-    for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
-        marker_list[i].first_allele = NULL;
-        /* set estimate frequencies by default */
-        marker_list[i].estimate_frequencies = 1;
-        marker_list[i].recode_alleles = 0;
-        marker_list[i].num_alleles = 0;
-    }
-
-    pheno_list=CALLOC((size_t) LTop->PhenoCnt, pheno_type);
-    for (i=0; i < LTop->PhenoCnt; i++) {
-        pheno_list[i].first_allele = NULL;
-        /* set estimate frequencies by default */
-        pheno_list[i].estimate_frequencies = 1;
-        pheno_list[i].num_alleles = 0;
-        if (LTop->Locus[i].Type == AFFECTION) {
-            pheno_list[i].num_classes = (int) LTop->Pheno[i].Props.Affection.ClassCnt;
-        } else if (LTop->Locus[i].Type == QUANT) {
-            pheno_list[i].num_classes = (int) LTop->Pheno[i].Props.Quant.ClassCnt;
+        for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
+            marker_list[i].first_allele = NULL;
+            /* set estimate frequencies by default */
+            marker_list[i].estimate_frequencies = 1;
+            marker_list[i].recode_alleles = 0;
+            marker_list[i].num_alleles = 0;
         }
-    }
+    } else
+        marker_list = 0;
 
+    if (LTop->PhenoCnt > 0) {
+        pheno_list=CALLOC((size_t) LTop->PhenoCnt, pheno_type);
+        for (i=0; i < LTop->PhenoCnt; i++) {
+            pheno_list[i].first_allele = NULL;
+            /* set estimate frequencies by default */
+            pheno_list[i].estimate_frequencies = 1;
+            pheno_list[i].num_alleles = 0;
+            if (LTop->Locus[i].Type == AFFECTION) {
+                pheno_list[i].num_classes = (int) LTop->Pheno[i].Props.Affection.ClassCnt;
+            } else if (LTop->Locus[i].Type == QUANT) {
+                pheno_list[i].num_classes = (int) LTop->Pheno[i].Props.Quant.ClassCnt;
+            }
+        }
+    } else
+        pheno_list = 0;
 /* (rvb) 11/10/11 
     Since read_X_map_file() gets NULL (below), it returns a fresh EXLTop
     line below is unnecessary and leaks memory
@@ -4523,7 +4526,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 */
     free(groups);
 #endif
-    free(marker_list + Top->LocusTop->PhenoCnt); marker_list=NULL;
+    if (marker_list) {
+        free(marker_list + Top->LocusTop->PhenoCnt);
+        marker_list=NULL;
+    }
     free(pheno_list);  pheno_list=NULL;
     InputFileFormat = ANNOTATED;
     return Top;
@@ -4643,7 +4649,8 @@ static void Free_ped(linkage_ped_top *PTop)
     }
     free(LTop->Locus);
     free(LTop->Pheno);
-    free( ((marker_rec *)LTop->Marker) + LTop->PhenoCnt );
+    if (LTop->Marker != 0)
+        free( ((marker_rec *)LTop->Marker) + LTop->PhenoCnt );
     free(LTop->MaleRecomb);
 
     EXLTop = PTop->EXLTop;                                /* read_annotated_map_files */
@@ -4654,7 +4661,8 @@ static void Free_ped(linkage_ped_top *PTop)
             free(EXLocus->pos_male);
             free(EXLocus->pos_female);                       /* read_annotated_map_files */
         }
-        free( EXLTop->EXLocus + LTop->PhenoCnt );
+        if (EXLTop->EXLocus)
+            free( EXLTop->EXLocus + LTop->PhenoCnt );
     }
     free(LTop);
 
