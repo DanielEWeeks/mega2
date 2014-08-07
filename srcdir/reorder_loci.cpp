@@ -330,7 +330,7 @@ static int is_int_in_string(const char *str, const int i)
 {
     char *entry = (char *)str;
     
-    while (*entry != '\0') {
+    while (*entry != '\0' && *entry != 'e') {
         int num = 0;
         while (isspace((int)*entry)) entry++;
         while (isdigit((int)*entry)) {
@@ -847,6 +847,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
             for (i = 0; i < num_loci; i++) {
                 grow(Mega2BatchItems[/* 15 */ Traits_Combine].value.name, " %d", selected_loci[i] + 1);
             }
+            grow(Mega2BatchItems[/* 15 */ Traits_Combine].value.name, " %d", num_traits + 1);
             strcat(Mega2BatchItems[/* 15 */ Traits_Combine].value.name, " e");
 
             ReOrderLociByPositionNumber(Top, loc_type, &num_loci,
