@@ -997,11 +997,9 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
             global_trait_entries = CALLOC((size_t) 1, int);
             global_trait_entries[0] = -1;
             num_traits = 1;
-	    //#if 0
             if ((option == 1 || option == 3) && HasMarkers) {
                 clean_reordered_markers(Top->LocusTop, *analysis);
             }
-	    //#endif /* 0 */
         } else if (*analysis == TO_ALLELE_FREQ || *analysis == TO_LIABLE_FREQ) {
             /* special case because this option counts alleles for
                affection status loci */

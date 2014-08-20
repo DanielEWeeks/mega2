@@ -31,6 +31,8 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "tod.hh"
+
 #include "utils_ext.h"
 #include "errorno.h"
 
@@ -744,6 +746,7 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
     */
 
     // Display_Errors is set by the caller...
+    Tod tod_ci("ped_check_data: check allele bounds and halftype also inheritance()");
     for (locus1 = 0; locus1 < LTop1->LocusCnt; locus1++) {
 
         lloc = LTop1->Locus[locus1].linkage_loc_num;
@@ -854,10 +857,11 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
             }
         } // for (entry = 0; entry < PedTree->EntryCnt; entry++) ...
     } // for (locus1 = 0; locus1 < LTop1->LocusCnt; locus1++) ...
-
+    tod_ci();
     /* Check sibships to see that they have only 4 distinct alleles,
        only need to check sibships of size greater than 2 */
 
+    Tod tod_sship("check_ped_data: check sib_ship_alleles");
     for(locus1=0; locus1 < LTop1->LocusCnt; locus1++) {
         /* send in the index of locus in locus_top */
         if (check_sibship_alleles(PedTree, locus1,
@@ -877,6 +881,7 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
             invalidp->ped = ped_num;
         }
     }
+    tod_sship();
 
     if (PedStatus->genotype_invalid > 0 || PedStatus->halftyped > 0 ||
         PedStatus->entry_unconnected > 0 || PedStatus->exceed_allcnt > 0) {

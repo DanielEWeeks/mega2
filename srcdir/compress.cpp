@@ -37,6 +37,7 @@
 #include "compress_ext.h"
 #include "error_messages_ext.h"
 #include "utils_ext.h"
+#include "annotated_ped_file.h"
 
 extern int      MARKER_SCHEME;
 int             MARKER_SCHEME3_offset = -1;
@@ -125,6 +126,30 @@ void get_2Ralleles(void *mp, int marker, const char **all1, const char **all2) {
     }
 }
 
+//for ped stat {p/l}genotype()
+int num_typed_2Ralleles(void *mp, int marker) {
+    if (mp == NOTYPED_ALLELES) 
+        return 0;
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
+        marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
+        return (!! allelecmp(mpd[marker].RAlleles.Allele_1, REC_UNKNOWN) ) + (!! allelecmp(mpd[marker].RAlleles.Allele_2, REC_UNKNOWN) );
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
+        int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
+        unsigned char *mpd = (unsigned char *) mp;
+        int the_byte = mpd[get_byte];
+        int the_bits = (the_byte & MARKER_SCHEME3_mask[get_bits]) >> MARKER_SCHEME3_shift[get_bits];
+        if (the_bits == 1) { // 0
+            return 0;
+        } else {
+            return 2;
+        }
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
+        marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
+        return (!! mpd[marker].Allele_1) + (!! mpd[marker].Allele_2);
+    }
+}
+
 void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *all1, const char *all2) {
 #ifdef ORDER_HETEROZYGOTE
     if (all1 != all2 && strcmp(all1, all2) > 0) {
@@ -197,22 +222,28 @@ int crunch_Rnotype(void **p, linkage_locus_top *LTop) {
     int marker;
     int cnt = 0;
 
-    for (marker = LTop->PhenoCnt; marker < LTop->LocusCnt; marker++) {
-        if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
-            marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
-            if (mpd[marker].RAlleles.Allele_1 != REC_UNKNOWN || 
-                mpd[marker].RAlleles.Allele_2 != REC_UNKNOWN) cnt++;
-        } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+    if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
+        marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
+        for (marker = LTop->PhenoCnt, mpd = &mpd[marker];
+             marker < LTop->LocusCnt; marker++, mpd++) {
+            if (mpd->RAlleles.Allele_1 != REC_UNKNOWN || 
+                mpd->RAlleles.Allele_2 != REC_UNKNOWN) cnt++;
+        }
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        unsigned char *mpd = (unsigned char *) mp;
+        for (marker = LTop->PhenoCnt; marker < LTop->LocusCnt; marker++) {
             int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
             int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
-            unsigned char *mpd = (unsigned char *) mp;
             int the_byte = mpd[get_byte];
             int the_bits = (the_byte & MARKER_SCHEME3_mask[get_bits]) >> MARKER_SCHEME3_shift[get_bits];
             if (the_bits != 1) cnt++;
-        } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
-            marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
+        }
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
+        marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
+        for (marker = LTop->PhenoCnt, mpd = &mpd[marker];
+             marker < LTop->LocusCnt; marker++, mpd++) {
             // We know that "0" is loaded as the 0th allele.
-            if (mpd[marker].Allele_1 || mpd[marker].Allele_2) cnt++;
+            if (mpd->Allele_1 || mpd->Allele_2) cnt++;
         }
     }
     if (cnt == 0) {
@@ -389,6 +420,30 @@ void get_2alleles(void *mp, int marker, int *all1, int *all2) {
         marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
         *all1 = mpd[marker].Allele_1;
         *all2 = mpd[marker].Allele_2;
+    }
+}
+
+//for ped stat {p/l}genotype()
+int num_typed_2alleles(void *mp, int marker) {
+    if (mp == NOTYPED_ALLELES) 
+        return 0;
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
+        marker_pedrec_data *mpd = (marker_pedrec_data *) mp;
+        return (!! mpd[marker].Alleles.Allele_1) + (!! mpd[marker].Alleles.Allele_2);
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
+        int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
+        unsigned char *mpd = (unsigned char *) mp;
+        int the_byte = mpd[get_byte];
+        int the_bits = (the_byte & MARKER_SCHEME3_mask[get_bits]) >> MARKER_SCHEME3_shift[get_bits];
+        if (the_bits == 1) { // 0
+            return 0;
+        } else {
+            return 2;
+        }
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
+        marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
+        return (!! mpd[marker].Allele_1) + (!! mpd[marker].Allele_2);
     }
 }
 

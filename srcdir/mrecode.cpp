@@ -33,6 +33,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "tod.hh"
 
 #include "mrecode.h"
 
@@ -159,12 +160,25 @@ static void count_this_allele(allele_list_type *marker_item,
             (marker_itemp->allele_freq.unique_count)++;
         }
     } else {
-        (marker_itemp->allele_freq.everyone_count)++;
+/*
+ * handled elsewhere
+ *        (marker_itemp->allele_freq.everyone_count)++;
+ */
     }
     return;
 
 }
-
+/*
+  case 1:
+            (marker_itemp->allele_freq.founder_count)++;
+  case 2:
+            (marker_itemp->allele_freq.random_count)++;
+  case 3:
+            (marker_itemp->allele_freq.unique_count)++;
+            break
+  case 4:
+           (marker_itemp->allele_freq.everyone_count)++;
+ */
 static allele_list_type *insert_into_allele_list(allele_list_type **marker_item,
 				   const char *all_val)
 
@@ -1562,18 +1576,6 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
         marker_listi->first_allele->next->next = NULL;
     } else if ((LocType == NUMBERED) || (LocType == XLINKED) || (LocType == YLINKED)) {
 
-        /* first, for this marker, create the list of all new alleles,
-           and set the count to 0 */
-
-        marker_listi->num_people=0;
-        marker_listi->num_half_typed=0;
-
-        marker_listi->num_founders = marker_listi->num_random = 0;
-        marker_listi->num_unique   = marker_listi->num_everyone = 0;
-
-        marker_listi->ht_founders = marker_listi->ht_random = 0;
-        marker_listi->ht_unique   = marker_listi->ht_everyone = 0;
-
         for (ped2=0; ped2 < 2 * pedcnt; ped2++) {
             if (ped2 < pedcnt) {
                 rare = 0;
@@ -1632,7 +1634,6 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
                     /* skip the female entirely */
                     continue;
                 }
-                marker_listi->num_people++;
 
                 if (!allelecmp(all1, REC_UNKNOWN)) {
                     const char *tmp = all1;
@@ -1684,8 +1685,6 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
                     ht = (typed2) ? ht_ok : 0;
 //                    if (typed2) has_typed++;
                 }
-//??rvb
-//??cpk yes I concur...
 		// if it's not a male
                 if (!(xlinked && sex == 1)) {
                     int homoz_test = ((LocType == YLINKED) && typed1 && typed2) ? homoz : 1;
@@ -1759,15 +1758,8 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
                             }
                         }
 
-                        marker_listi->num_everyone ++;
                         if (ht == 1)
                             marker_listi->ht_everyone++;
-                        if (LocType == NUMBERED || LocType == XLINKED ||
-                            (sex == 1 && LocType == YLINKED))
-                            all1fp->allele_freq.everyone_count++;
-                        if ((LocType == NUMBERED) || (sex == 2 && LocType == XLINKED)) {
-                            all2fp->allele_freq.everyone_count++;
-                        }
                     }
                 }
             }
@@ -1783,23 +1775,19 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
 int Display_y_female, y_female = 0;
 linkage_ped_top *create_allele_list(linkage_ped_top *Top,
 				    int locus,
-				    int count_option,
 				    marker_type *marker_listi,
                                     allelecnt **member_ids,
 				    int count_ht)
 {
     int ped, per;
     const char  *all1, *all2;
-    int sex, entrycount, found, counted1, counted2, ht;
-    int genotyped;
+    int sex, entrycount;
     record_type rec;
-    allele_list_type *allelep;
     linkage_locus_type LocType = Top->LocusTop->Locus[locus].Type;
-    allele_list_type *alp;
+    allele_list_type *al1p, *al2p;
 
     Display_Errors = 1;
     allele_prop_reset();
-
     if (LocType == AFFECTION || LocType == QUANT) {
 //      marker_listi->first_allele = CALLOC((size_t) 1, allele_list_type);
 //      marker_listi->first_allele->next = CALLOC((size_t) 1, allele_list_type);
@@ -1810,96 +1798,168 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
         /* first, for this marker, create the list of all new alleles,
            and set the count to 0 */
 
-        for (ped=0; ped < Top->PedCnt; ped++) {
-            if (pedfile_type == POSTMAKEPED_PFT) {
+        marker_listi->num_people=0;
+        marker_listi->num_half_typed=0;
+
+        marker_listi->num_founders = marker_listi->num_random = 0;
+        marker_listi->num_unique   = marker_listi->num_everyone = 0;
+
+        marker_listi->ht_founders = marker_listi->ht_random = 0;
+        marker_listi->ht_unique   = marker_listi->ht_everyone = 0;
+
+        if (pedfile_type == POSTMAKEPED_PFT) {
+            rec = Raw_postmake;
+            allelecnt **mp = member_ids;
+            for (ped=0; ped < Top->PedCnt; ped++, mp++) {
                 entrycount = Top->Ped[ped].EntryCnt;
-                rec = Raw_postmake;
+                linkage_ped_rec *te = &Top->Ped[ped].Entry[0];
+                allelecnt *mpp = mp[0];
+                for(per=0; per < entrycount; per++, te++, mpp++) {
+                    get_2Ralleles(te->Marker, locus, &mpp->all1, &mpp->all2);
+                    mpp->num  = 0;
 
-                for(per=0; per < entrycount; per++) {
-                    linkage_ped_rec *te = &Top->Ped[ped].Entry[per];
-                    get_2Ralleles(te->Marker, locus, &all1, &all2);
-                    member_ids[ped][per].num  = 0;
-                    member_ids[ped][per].all1 = all1;
-                    member_ids[ped][per].all2 = all2;
-                }
-            } else {
-                entrycount = Top->PTop[ped].num_persons;
-                rec = Raw_premake;
+                    all1 = mpp->all1;
+                    all2 = mpp->all2;
+                    if (!allelecmp(all1, REC_UNKNOWN)) {
+                        if (!allelecmp(all2, REC_UNKNOWN)) {
+                            continue; // 0/0
+                        }
+                        const char *tmp = all1;
+                        all1 = all2;
+                        all2 = tmp;
+                    }
+                    sex = te->Sex;
+                    al1p = (allele_list_type *)allele2allele_prop_prop(all1);
+                    if (al1p == (void *) 0) {
+                        al1p = insert_into_allele_list(&(marker_listi->first_allele),
+                                                      all1);
+                        allele2allele_prop_prop(all1) = al1p;
+                    }
+                    al2p = (allele_list_type *)allele2allele_prop_prop(all2);
+                    if (al2p == (void *) 0) {
+                        al2p = insert_into_allele_list(&(marker_listi->first_allele),
+                                                      all2);
+                        allele2allele_prop_prop(all2) = al2p;
+                    }
+                    if (Top->LocusTop->Locus[locus].number == -1) continue;
+                    if (!allelecmp(all2, REC_UNKNOWN) && !count_ht)
+                        continue; // if no half type allowed
+                    if (LocType == NUMBERED) {
+                        marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
+                        if (al1p) al1p->allele_freq.everyone_count++;
+                        if (al2p) al2p->allele_freq.everyone_count++;
+                    } else if (sex == 1) {
+                        if (al1p && (al1p == al2p)) {
+                            marker_listi->num_everyone++;
+                            al1p->allele_freq.everyone_count++;
+                        }
+                    } else if (sex == 2) {
+                        if (LocType == XLINKED) {
+                            marker_listi->num_everyone++;
+                            if (al1p) al1p->allele_freq.everyone_count++;
+                            if (al2p) al2p->allele_freq.everyone_count++;
+                        } else if (LocType == YLINKED) {
+                            if (allelecmp(all1, REC_UNKNOWN) || allelecmp(all2, REC_UNKNOWN)) {
+                                SUPPRESS_MSSG_NESTED(y_female);
+                                warnvf("marker %s (on Y chromosome) observed for female (%s) with value%s %s/%s\n",
+                                       Top->LocusTop->Locus[locus].Name,
+                                       Top->Ped[ped].Entry[per].UniqueID,
+                                       all1 != all2 ? "(s)" : "",
+                                       all1,
+                                       all1 != all2 ? all2 : "");
+                            }
+                        }
+                    }
 
-                for(per=0; per < entrycount; per++) {
-                    person_node_type *tp = &Top->PTop[ped].persons[per];
-                    get_2Ralleles(tp->marker, locus, &all1, &all2);
-                    member_ids[ped][per].num  = 0;
-                    member_ids[ped][per].all1 = all1;
-                    member_ids[ped][per].all2 = all2;
                 }
             }
-        }
-
-        for (ped=0; ped < Top->PedCnt; ped++) {
-/*       if (UntypedPeds[ped] == 1) { */
-/* 	continue; */
-/*       } */
-
-            entrycount = ((pedfile_type == POSTMAKEPED_PFT)?
-                          Top->Ped[ped].EntryCnt : Top->PTop[ped].num_persons);
-
-            for(per=0; per < entrycount; per++) {
-/*
- * example of the old code before member_ids[] add .all1, .all2
- */
-/*
-                if (pedfile_type == POSTMAKEPED_PFT) {
-                    linkage_ped_rec *te = &Top->Ped[ped].Entry[per];
-                    get_2Ralleles(te->Marker, locus, &all1, &all2);
-                    sex = te->Sex;
-                } else {
-                    person_node_type *tp = &Top->PTop[ped].persons[per];
-                    get_2Ralleles(tp->marker, locus, &all1, &all2);
-                    sex = tp->gender;
-                }
-*/
-                sex = (pedfile_type == POSTMAKEPED_PFT) ?
-                           Top->Ped[ped].Entry[per].Sex :
-                           Top->PTop[ped].persons[per].gender;
-                all1 = member_ids[ped][per].all1;
-                all2 = member_ids[ped][per].all2;
-
-                /* insert function takes care of unknown alleles,
-                   skipping females for Y-chromosome, since we avoided
-                   reading in the data.
-                */
-                if (LocType == YLINKED && sex == 2) {
-                    if (allelecmp(all1, REC_UNKNOWN) || allelecmp(all2, REC_UNKNOWN)) {
-                        SUPPRESS_MSSG_NESTED(y_female);
-                        warnvf("marker %s (on Y chromosome) observed for female (%s) with value%s %s/%s\n",
-                               Top->LocusTop->Locus[locus].Name,
-                               (pedfile_type == POSTMAKEPED_PFT) ?
-                               Top->Ped[ped].Entry[per].UniqueID : 
-                               Top->PTop[ped].persons[per].uniqueid,
-                               all1 != all2 ? "(s)" : "",
-                               all1,
-                               all1 != all2 ? all2 : "");
+        } else {
+            rec = Raw_premake;
+            allelecnt **mp = member_ids;
+            for (ped=0; ped < Top->PedCnt; ped++, mp++) {
+                entrycount = Top->PTop[ped].num_persons;
+                person_node_type *tp = &Top->PTop[ped].persons[0];
+                allelecnt *mpp = mp[0];
+                for(per=0; per < entrycount; per++, tp++, mpp++) {
+                    get_2Ralleles(tp->marker, locus, &mpp->all1, &mpp->all2);
+                    mpp->num  = 0;
+                    all1 = mpp->all1;
+                    all2 = mpp->all2;
+                    if (!allelecmp(all1, REC_UNKNOWN)) {
+                        if (!allelecmp(all2, REC_UNKNOWN)) {
+                            continue; // 0/0
+                        }
+                        const char *tmp = all1;
+                        all1 = all2;
+                        all2 = tmp;
                     }
-                }
-                /* At this time we are not checking to see if males are
-                   homozygotes at X-linked loci */
-
-                if (allele2allele_prop_prop(all1) == (void *) 0) {
-                    alp = insert_into_allele_list(&(marker_listi->first_allele),
-                                                  all1);
-                    allele2allele_prop_prop(all1) = alp;
-                }
-
-                if (allele2allele_prop_prop(all2) == (void *) 0) {
-                    alp = insert_into_allele_list(&(marker_listi->first_allele),
-                                                  all2);
-                    allele2allele_prop_prop(all2) = alp;
+                    sex = tp->gender;
+                    al1p = (allele_list_type *)allele2allele_prop_prop(all1);
+                    if (al1p == (void *) 0) {
+                        al1p = insert_into_allele_list(&(marker_listi->first_allele),
+                                                      all1);
+                        allele2allele_prop_prop(all1) = al1p;
+                    }
+                    al2p = (allele_list_type *)allele2allele_prop_prop(all2);
+                    if (al2p == (void *) 0) {
+                        al2p = insert_into_allele_list(&(marker_listi->first_allele),
+                                                      all2);
+                        allele2allele_prop_prop(all2) = al2p;
+                    }
+                    if (Top->LocusTop->Locus[locus].number == -1) continue;
+                    if (!allelecmp(all2, REC_UNKNOWN) && !count_ht)
+                        continue; // if no half type allowed
+                    if (LocType == NUMBERED) {
+                        marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
+                        if (al1p) al1p->allele_freq.everyone_count++;
+                        if (al2p) al2p->allele_freq.everyone_count++;
+                    } else if (sex == 1) {
+                        if (al1p && (al1p == al2p)) {
+                            marker_listi->num_everyone++;
+                            al1p->allele_freq.everyone_count++;
+                        }
+                    } else if (sex == 2) {
+                        if (LocType == XLINKED) {
+                            marker_listi->num_everyone++;
+                            if (al1p) al1p->allele_freq.everyone_count++;
+                            if (al2p) al2p->allele_freq.everyone_count++;
+                        } else if (LocType == YLINKED) {
+                            if (allelecmp(all1, REC_UNKNOWN) || allelecmp(all2, REC_UNKNOWN)) {
+                                SUPPRESS_MSSG_NESTED(y_female);
+                                warnvf("marker %s (on Y chromosome) observed for female (%s) with value%s %s/%s\n",
+                                       Top->LocusTop->Locus[locus].Name,
+                                       Top->PTop[ped].persons[per].uniqueid,
+                                       all1 != all2 ? "(s)" : "",
+                                       all1,
+                                       all1 != all2 ? all2 : "");
+                            }
+                        }
+                    }
                 }
             }
         }
         Display_Errors = 1;
+    }
+    return Top;
+}
 
+linkage_ped_top *count_allele_list(linkage_ped_top *Top,
+                                   int locus,
+                                   int count_option,
+                                   marker_type *marker_listi,
+                                   allelecnt **member_ids,
+                                   int count_ht)
+{
+    int ped, per;
+    const char  *all1, *all2;
+    int sex, entrycount, found, counted1, counted2, ht;
+    int genotyped;
+    record_type rec;
+    allele_list_type *allelep;
+    linkage_locus_type LocType = Top->LocusTop->Locus[locus].Type;
+//  allele_list_type *alp;
+
+    if ((LocType == NUMBERED) || (LocType == XLINKED) || (LocType == YLINKED)) {
         marker_listi->num_people=0;
         marker_listi->num_half_typed=0;
         marker_listi->num_founders =  marker_listi->num_random =
@@ -1907,11 +1967,12 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
             marker_listi->ht_founders = marker_listi->ht_random =
             marker_listi->ht_unique = marker_listi->ht_everyone = 0;
 
-        if (Top->LocusTop->Locus[locus].number == -1) return Top;
-
         /* Now create the count for each allele */
 
         /* First founders */
+//      Tod tod_counting("founders, everyone, count this");
+        rec = (pedfile_type == POSTMAKEPED_PFT) ? Raw_postmake : Raw_premake;
+
         for (ped=0; ped < Top->PedCnt; ped++) {
             if (UntypedPeds[ped] == 1) {
                 continue;
@@ -2061,8 +2122,10 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 }
             }
         }
+//      tod_counting();
 
         /* unique alleles */
+//      Tod tod_alleles("while thru alleles and ped & halftype");
         allelep = marker_listi->first_allele;
         while (allelep != NULL) {
             /* If there are still alleles with 0 counts
@@ -2173,6 +2236,8 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
             }
             allelep = allelep->next;
         }
+//      tod_alleles();
+//      Tod tod_lt4("count_option < 4");
         if (count_option < 4) {
             /* count up the half_typed people for this marker now */
             for(ped=0; ped < Top->PedCnt; ped++) {
@@ -2185,8 +2250,10 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 }
             }
         }
+//      tod_lt4();
         /* else leave it for later */
 
+//      Tod tod_more("founder or everyone");
         /* count everyone after setting all member ids to 0 */
         for (ped=0; ped < Top->PedCnt; ped++) {
             if (UntypedPeds[ped] == 1) continue;
@@ -2253,7 +2320,8 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 }
             }
         }
-
+//      tod_more();
+//      Tod tod_eq4("eq 4");
         if (count_option == 4) {
             /* count up the half_typed people for this marker */
             for(ped=0; ped < Top->PedCnt; ped++) {
@@ -2265,6 +2333,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 }
             }
         }
+//      tod_eq4();
     }
 
 //m    count_allele_freq(Top, locus, count_option, marker_listi, member_ids, count_ht);
@@ -2386,24 +2455,37 @@ linkage_ped_top  *create_full_marker_data(
             member_ids[ped]=CALLOC((size_t) entrycount, allelecnt);
         }
 
+        Tod tod_cal1("create allele list");
+        Tod tod_fr1(20);
+        Tod tod_fr1_x4(20); // 0.000,688
         for (i=0; i < LTop->LocusCnt; i++) {
+            tod_fr1.reset();
+            tod_fr1_x4.reset();
 #ifdef DEBUG
             if (((i+1) % 100) == 0) {
                 printf("Marker %s ..", LTop->Locus[i].Name);
             }
 #endif
         /* in this function, we also decide whether to recode or not */
-            if (LTop->Locus[i].Class == MARKER)
-                create_allele_list(Top, i, count_option, &(marker_list[i]),
-                                   member_ids,
-                                   count_halftyped);
-            else
+            if (LTop->Locus[i].Class == MARKER) {
+                create_allele_list(Top, i, &(marker_list[i]),
+                                   member_ids, count_halftyped);
+            
+                tod_fr1("create allele list 1 freq");
+                if ( (count_option != 4 || analysis == TO_HWETEST || analysis == TO_SIMULATE) &&
+                      LTop->Locus[i].number != -1 ) {
+                    count_allele_list(Top, i, count_option, &(marker_list[i]),
+                                      member_ids, count_halftyped);
+                    tod_fr1_x4("create allele list 4 freq");
+                }
+            } else
                 default_trait_penetrances(Top, i, &(pheno_list[i]));
         }
         for(ped=0; ped < Top->PedCnt; ped++) {
             free(member_ids[ped]);
         }
         free(member_ids);
+        tod_cal1();
     }
     SUPPRESS_MSSG_NESTED_FINI(y_female);
 

@@ -33,6 +33,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "tod.hh"
 
 #include "loop.h"
 
@@ -161,6 +162,7 @@ void CLASS_PLINK::save_pedsix_file(linkage_ped_top *Top,
 				   const int pwid,
 				   const int fwid)
 {
+    Tod tod_pedsix("save ped/fam file six cols");
     struct plink_pedsix: public loop::trait, loop::ped_per {
         plink_pedsix(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::ped_per(Top) { }
         void make_file() {
@@ -189,6 +191,7 @@ void CLASS_PLINK::save_pedsix_file(linkage_ped_top *Top,
     sp->iterate();
 
     delete sp;
+    tod_pedsix();
 }
 
 void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
@@ -196,6 +199,7 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
 				const int fwid,
 				const int mwid)
 {
+    Tod tod_ped("save ped file");
     struct plink_ped: public loop::chr, loop::ped_per_loci {
 
         plink_ped(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::ped_per_loci(Top) {}
@@ -239,6 +243,7 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
     sp->iterate();
 
     delete sp;
+    tod_ped();
 }
 
 //
@@ -259,13 +264,16 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
                                 const int binary_mode_flag)
 {
     if (binary_mode_flag == 1) {
+        Tod tod_bed1("save bed file plink snp major");
         struct plink_snp_major: public loop::chr, loop::loci_ped_per, public plink_binary {
 
             plink_snp_major(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loci_ped_per(Top) { }
            ~plink_snp_major() {}
             void make_file() {
+                Tod tod_lmf("make bed file for chr");
                 mssgvf("        PLINK binary file snp:     %s/%s\n", *_opath, ::file_names[3]);
                 run_loop(*_opath, ::file_names[3], write_binary);
+                tod_lmf();
             }
             void file_header() {
                 plink_binary::file_header(_filep);
@@ -280,8 +288,10 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
 
         xp->iterate();
         delete xp;
+        tod_bed1();
 
     } else if (binary_mode_flag == 2) {
+        Tod tod_bed2("save bed file plink indiv major");
         struct plink_indiv_major: public loop::chr, loop::ped_per_loci, public plink_binary {
             plink_indiv_major(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), ped_per_loci(Top) { }
            ~plink_indiv_major() {}
@@ -303,6 +313,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
         xp->iterate();
         delete xp;
 
+        tod_bed2();
     } else {
         errorvf("INTERNAL: binary_mode_flag unknown value?\n");
         EXIT(SYSTEM_ERROR);
@@ -470,6 +481,7 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
                                  char *file_names[],
                                  const int numchr)
 {
+    Tod tod_sh("plink create sh file");
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
         strcmp(output_paths[0], ".");
     int using_xcf_map = using_xcf_map_p(Top);
@@ -599,4 +611,5 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         sh->filep_close();
         delete sh;
     }
+    tod_sh();
 }

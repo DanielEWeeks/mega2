@@ -43,10 +43,16 @@ extern void count_raw_alleles(marker_type *markers, linkage_locus_top *LTop);
 
 extern linkage_ped_top *create_allele_list(linkage_ped_top *Top,
 					   int locus,
-					   int count_option,
 					   marker_type *marker_listi,
                                            allelecnt **member_ids,
 					   int count_ht);
+
+extern linkage_ped_top *count_allele_list(linkage_ped_top *Top,
+                                          int locus,
+                                          int count_option,
+                                          marker_type *marker_listi,
+                                          allelecnt **member_ids,
+                                          int count_ht);
 
 extern linkage_ped_top *create_full_marker_data(FILE *lfp,
 						char *omit_flname,

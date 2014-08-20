@@ -28,7 +28,7 @@
 #
 
 # NOTE: the '-DNDEBUG' is needed to turn off the assert macros in the VCFtools code...
-CFLAGS += -DNDEBUG
+LOCFLAGS += -DNDEBUG
 
 # Put the library in the Mega2 srcdir above this...
 # NOTE: -lz is needed when the library is linked...
@@ -52,7 +52,7 @@ SRC =  	mega2_vcftools_interface.cpp \
 OBJ = $(SRC:.cpp=.o)
 
 # include directories '.' for other vcftools headers, '..' for Mega2 headers... and zlib headers
-CFLAGS += -I..
+LOCFLAGS += -I..
 
 # CC, CFLAGS are defined in Mega2 Makedefs
 
@@ -61,10 +61,10 @@ CFLAGS += -I..
 default: $(OUT)
 
 .cpp.o:
-	$(CXX) $(INCLUDES) $(CFLAGS) -c $< $(WINO)
+	$(CXX) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) -c $< $(WINO)
 
 .c.o:
-	$(CC) $(INCLUDES) $(CFLAGS) -c $< $(WINO)
+	$(CC) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) -c $< $(WINO)
 
 bgzf: bgzf.c bgzf.h
 
@@ -72,7 +72,7 @@ $(OUT): $(OBJ) bgzf.o
 	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(OBJ) bgzf.o
 
 depend:
-	makedepend -Y. -- $(CFLAGS) -- $(INCLUDES) $(SRC) bgzf.c
+	makedepend -Y. -- $(CFLAGS) $(LOCFLAGS) -- $(INCLUDES) $(SRC) bgzf.c
 
 clean:
 	$(RM) $(OBJ) bgzf.o $(OUT) Makefile.bak
@@ -95,27 +95,32 @@ mega2_vcftools_interface.o: ../utils_ext.h ../genetic_utils_ext.h
 mega2_vcftools_interface.o: ../error_messages_ext.h ../annotated_ped_file.h
 mega2_vcftools_interface.o: ../read_files_ext.h ../marker_lookup_ext.h
 mega2_vcftools_interface.o: ../phe_lookup_ext.h output_log.h parameters.h
-mega2_vcftools_interface.o: variant_file.h entry.h bgzf.h vcf_entry.h
-mega2_vcftools_interface.o: bcf_entry.h header.h bcf_file.h vcf_file.h
-mega2_vcftools_interface.o: mega2_vcftools_interface.h
+mega2_vcftools_interface.o: variant_file.h ../zlib.h ../zconf.h entry.h
+mega2_vcftools_interface.o: bgzf.h vcf_entry.h bcf_entry.h header.h
+mega2_vcftools_interface.o: bcf_file.h vcf_file.h mega2_vcftools_interface.h
 mega2_vcftools_interface.o: ../annotated_ped_file.h
 parameters.o: parameters.h output_log.h
-header.o: header.h entry.h bgzf.h output_log.h
-entry.o: entry.h bgzf.h output_log.h
-entry_getters.o: entry.h bgzf.h output_log.h
-entry_setters.o: entry.h bgzf.h output_log.h
-bcf_entry.o: bcf_entry.h output_log.h entry.h bgzf.h header.h
-bcf_entry_setters.o: bcf_entry.h output_log.h entry.h bgzf.h header.h
-vcf_entry.o: vcf_entry.h entry.h bgzf.h output_log.h
-vcf_entry_setters.o: vcf_entry.h entry.h bgzf.h output_log.h
-variant_file.o: variant_file.h parameters.h output_log.h entry.h bgzf.h
-variant_file.o: vcf_entry.h bcf_entry.h header.h
-variant_file_filters.o: variant_file.h parameters.h output_log.h entry.h
-variant_file_filters.o: bgzf.h vcf_entry.h bcf_entry.h header.h
-variant_file_index.o: variant_file.h parameters.h output_log.h entry.h bgzf.h
-variant_file_index.o: vcf_entry.h bcf_entry.h header.h
-bcf_file.o: bcf_file.h output_log.h parameters.h variant_file.h entry.h
-bcf_file.o: bgzf.h vcf_entry.h bcf_entry.h header.h
-vcf_file.o: vcf_file.h output_log.h vcf_entry.h entry.h bgzf.h parameters.h
-vcf_file.o: variant_file.h bcf_entry.h header.h
-bgzf.o: bgzf.h
+header.o: header.h entry.h bgzf.h ../zlib.h ../zconf.h output_log.h
+entry.o: entry.h bgzf.h ../zlib.h ../zconf.h output_log.h
+entry_getters.o: entry.h bgzf.h ../zlib.h ../zconf.h output_log.h
+entry_setters.o: entry.h bgzf.h ../zlib.h ../zconf.h output_log.h
+bcf_entry.o: bcf_entry.h output_log.h entry.h bgzf.h ../zlib.h ../zconf.h
+bcf_entry.o: header.h
+bcf_entry_setters.o: bcf_entry.h output_log.h entry.h bgzf.h ../zlib.h
+bcf_entry_setters.o: ../zconf.h header.h
+vcf_entry.o: vcf_entry.h entry.h bgzf.h ../zlib.h ../zconf.h output_log.h
+vcf_entry_setters.o: vcf_entry.h entry.h bgzf.h ../zlib.h ../zconf.h
+vcf_entry_setters.o: output_log.h
+variant_file.o: variant_file.h ../zlib.h ../zconf.h parameters.h output_log.h
+variant_file.o: entry.h bgzf.h vcf_entry.h bcf_entry.h header.h
+variant_file_filters.o: variant_file.h ../zlib.h ../zconf.h parameters.h
+variant_file_filters.o: output_log.h entry.h bgzf.h vcf_entry.h bcf_entry.h
+variant_file_filters.o: header.h
+variant_file_index.o: variant_file.h ../zlib.h ../zconf.h parameters.h
+variant_file_index.o: output_log.h entry.h bgzf.h vcf_entry.h bcf_entry.h
+variant_file_index.o: header.h
+bcf_file.o: bcf_file.h output_log.h parameters.h variant_file.h ../zlib.h
+bcf_file.o: ../zconf.h entry.h bgzf.h vcf_entry.h bcf_entry.h header.h
+vcf_file.o: vcf_file.h output_log.h vcf_entry.h entry.h bgzf.h ../zlib.h
+vcf_file.o: ../zconf.h parameters.h variant_file.h bcf_entry.h header.h
+bgzf.o: bgzf.h ../zlib.h ../zconf.h

@@ -39,11 +39,15 @@ extern int  marker_size(int size);
 
 extern void *marker_alloc(size_t size, int offset);
 
+extern void *people_alloc(size_t size);
+
 extern void marker_free(void *marker, int offset);
 
 
 
 extern void get_2Ralleles(void *mp, int marker, const char **all1, const char **all2);
+
+extern int num_typed_2Ralleles(void *mp, int marker);
 
 extern void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
 
@@ -56,6 +60,8 @@ extern void order_heterozygous_allele_raw(linkage_ped_top *Top);
 
 
 extern void get_2alleles(void *mp, int marker, int *all1, int *all2);
+
+extern int num_typed_2alleles(void *mp, int marker);
 
 extern void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int all2);
 

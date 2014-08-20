@@ -1306,7 +1306,6 @@ void menu1(file_format *infl_type,
                 strcpy(*input_path, ".");
             }
 
-//xx
         } else if (choice_ == miss_i) {
             draw_line();
             printf("Please enter missing value indicator > ");

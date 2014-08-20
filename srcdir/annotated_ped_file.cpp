@@ -60,6 +60,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "tod.hh"
 #include "mrecode.h"
 
 #include "annotated_ped_file.h"
@@ -622,7 +623,6 @@ static void process_binary_genotype(FILE *bed_filep, annotated_ped_rec *entry,
     *SNP_count += 2;
 }
 
-
 /* NM: 8-21-08: Changed this routine to read the */
 
 static int read_annotated_pedrec(FILE *filep,
@@ -883,7 +883,7 @@ static int read_annotated_pedrec(FILE *filep,
             *curr_ped_index = -1;
         }
     } /* for */
-    
+
     if (strcmp(entry->Mother, "0") == 0 && strcmp(entry->Father, "0") == 0) {
         PLINK.founders += 1;
     } else {
@@ -900,6 +900,8 @@ static int read_annotated_pedrec(FILE *filep,
           plink_info != NULL &&
           plink_info->bed_filep != (FILE *)NULL &&
           plink_info->SNP_major != 0x01) {
+
+        Tod tod_pl_nmj("plink read indiv major bed");
         int allele_i = 0;               // an index for the alleles array
         char allele1[2], allele2[2];    // for converting allele characters to string arrays
         int i;
@@ -923,8 +925,13 @@ static int read_annotated_pedrec(FILE *filep,
             }
             
         }
-    }    
-    
+        tod_pl_nmj();
+//        @@ plink process indiv major: 0.157030 original design
+//        @@ plink process indiv major: 0.036451 at 2 bits at a time
+//        @@ plink process indiv major: 0.014141 at byte at a time
+
+    }
+
 /*   printf("%s, %c\n", entry->ID, entry->Sex); */
     if (lch != '\n') {
         /* skip to the end of the file */
@@ -1467,6 +1474,9 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     linkage_ped_tree *lpeds;
     int Display_untyped = 0, untyped = 0, totaltyped = 0;
     int check_ungenotyped = 0;
+    int xcf = Input_Format == in_format_binary_VCF ||
+	      Input_Format == in_format_compressed_VCF ||
+              Input_Format == in_format_VCF ;
 
     // allele_count should be == 0 when using a .ped file...
 
@@ -1497,6 +1507,8 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     }
 
     p=0;
+    Tod tod_cp_all_eof("read ped file");
+    Tod tod_cp_eof(20);
     while (!feof(filep)) {
         c=fgetc(filep);
         if (c == -1) {
@@ -1515,14 +1527,17 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 
         persons[p].rec_num = p+1;
 
+        tod_cp_eof.reset();
         retval = read_annotated_pedrec(filep, pedfile, plink_info, phecols,
                                        &(persons[p]), LTop,
                                        file_desc, phe_vals,
                                        &num_peds, &num_ped_per,
                                        ped_names, &num_pheno_errs);
 
+        tod_cp_eof("ped line");
         totaltyped++;
-        if ( (PLINK.plink != binary_PED_format) ||
+
+        if ( ((PLINK.plink != binary_PED_format) && (! xcf)) ||
              (PLINK.plink == binary_PED_format && plink_info->SNP_major != 0x01) ) {
 //              NB. VCF files look like SNP_major == 1
             persons[p].genocnt = crunch_Rnotype(&persons[p].marker, LTop);
@@ -1550,6 +1565,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         }
         num_err += num_pheno_errs;
     }
+    tod_cp_all_eof();
     num_ped_records = p;
 #ifdef SHOWSTATUS
     int fudge;
@@ -1563,6 +1579,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 #endif
 /*   printf("%d\n", num_ped_records); */
     
+    Tod tod_cp_smj("plink read snp major bed");
     if   (PLINK.plink == binary_PED_format &&
           plink_info != NULL &&
           plink_info->bed_filep != (FILE *)NULL &&
@@ -1575,6 +1592,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         int pp, i;
         allele1[1] = '\0';
         allele2[1] = '\0';
+        // cycle through the locusts searching for allele markers....
         // cycle through the locusts searching for allele markers....
         for (i=0; i < file_desc->num_ped_cols + plink_info->allele_count; i++) {
             int mrkindex=ped_col_names[i].locus_number;
@@ -1597,10 +1615,9 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         }
         check_ungenotyped = 1;
     }
+    tod_cp_smj();
 
-    if (Input_Format == in_format_binary_VCF ||
-	Input_Format == in_format_compressed_VCF ||
-        Input_Format == in_format_VCF) {
+    if (xcf) {
 //      if (! getenv("_")) { asm("int $3"); }
         VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop);
         VCFtools_close();
@@ -1615,6 +1632,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         plink_info->bed_filep = (FILE *)NULL;
     }
 
+    Tod tod_cp_cru("check all markers untyped");
     if (check_ungenotyped) {
         for (int pp=0; pp < num_ped_records; pp++) {
             // looping through the individuals...
@@ -1629,6 +1647,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
             }
         }
     }
+    tod_cp_cru();
 
     SUPPRESS_MSSG_NESTED_FORCE(untyped);
     if (untyped > 0)
@@ -1636,6 +1655,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     SUPPRESS_MSSG_NESTED_FINI(untyped);
 
     if (num_err == 0) {
+        Tod tod_cp_hmm("sort, copy ann to premake/lpedtop");
         sort_and_check(num_ped_records, persons, num_groups, groups,
                        has_extra_ids & 1, has_extra_ids & 2);
 
@@ -1658,6 +1678,8 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 /*      UNIQUEid = (has_extra_ids & (1|2)) > 0; */
         Top->OrigIds =   (has_extra_ids & (4|8)) > 0;  /* 4 ==     PerId; 8 ==     PedId */
         Top->PedCnt = num_peds;
+        tod_cp_hmm();
+
     } else {
         Top=NULL;
     }
@@ -4086,6 +4108,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                                       analysis_type analysis,
                                       plink_info_type *plink_info)
 {
+    Tod tod_anfiles("read annotated files");
     int num_groups, count_option, count_halftyped=0;
     int *groups, j;
     int ann_files, i;
@@ -4136,10 +4159,13 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             // loading it into LTop...
             read_m2_map_as_names_file(vcf_map, &LTop, tot_cols, phe_names, phe_types);
             ann_files = 1;
-        } else
+        } else {
+            Tod tod_pmap("read plink map as names");
             ann_files = read_plink_map_as_names_file(names_file ? names_file : map_file,
                                                      &LTop, tot_cols, phe_names, phe_types,
                                                      &AnnotatedFileInfo);
+            tod_pmap();
+        }
         for (i = 0; i < tot_cols; i++) {
             free(phe_names[i]);
         }
@@ -4152,6 +4178,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     // CPK: Build the MARKER set and in doing so search for duplicate markers....
     clear_marker();
     Display_Errors = 1;
+    Tod tod_init("hash markers names");
     for (i=0; i < LTop->LocusCnt; i++) {
         char *name = LTop->Locus[i].Name;
         int i_old = test_and_add_marker(name, i);
@@ -4168,6 +4195,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             duplicate_mrk++;
         }
     }
+    tod_init();
     Display_Errors = 1; displayed_messages = 0;
 
     if (duplicate_mrk) {
@@ -4182,6 +4210,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     }
 
     if (LTop->MarkerCnt > 0) {
+        Tod tod_mlist("init marker_list");
         marker_list = (CALLOC((size_t) LTop->MarkerCnt, marker_type)) - LTop->PhenoCnt;
 #ifdef SHOWSTATUS
         msgvf("ALLOC SPACE: marker_list: %d MB (%d x %d)\n",
@@ -4195,10 +4224,12 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             marker_list[i].recode_alleles = 0;
             marker_list[i].num_alleles = 0;
         }
+        tod_mlist();
     } else
         marker_list = 0;
 
     if (LTop->PhenoCnt > 0) {
+        Tod tod_plist("init pheno_list");
         pheno_list=CALLOC((size_t) LTop->PhenoCnt, pheno_type);
         for (i=0; i < LTop->PhenoCnt; i++) {
             pheno_list[i].first_allele = NULL;
@@ -4211,8 +4242,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                 pheno_list[i].num_classes = (int) LTop->Pheno[i].Props.Quant.ClassCnt;
             }
         }
+        tod_plist();
     } else
         pheno_list = 0;
+
 /* (rvb) 11/10/11 
     Since read_X_map_file() gets NULL (below), it returns a fresh EXLTop
     line below is unnecessary and leaks memory
@@ -4224,10 +4257,12 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         // if this is PLINK format (double negative)
         // CPK: If the .map file is a .bim file we gather the alleles into the
         // vector that is described earlier in this routine...
+        Tod tod_pmf("read plink map file");
         EXLTop = read_plink_map_file(names_file ? names_file : map_file,
                                      LTop,
                                      &AnnotatedFileInfo,
                                      plink_info);
+        tod_pmf();
     } else if (xcf) {
         vector<m2_map> additional_maps;
         // Create an extra map slot in EXLTop for the map from the VCF file...
@@ -4309,10 +4344,16 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         EXIT(INPUT_DATA_ERROR);
     }
 
+    Tod tod_cl("get_chromosome_list");
     NumChromo=get_chromosome_list(LTop, global_chromo_entries,
                                   chromo_loci_count, 0, analysis);
+    tod_cl();
+
+    Tod tod_lstat("write_locus_stats");
     write_locus_stats(LTop, ANNOTATED);
+    tod_lstat();
     
+    Tod tod_fp("read more files: freq & penetrance");
     HasFreqFileBeenRead = 
         read_annotated_freq_file(freq_file, LTop, &AnnotatedFileInfo,
 			       marker_list, pheno_list, &num_groups, &groups);
@@ -4341,12 +4382,15 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             break;
         }
     }
-    
+    tod_fp();
+
     // CPK: Create the hash set that is used when processing plink binary data.
     // In this manner we malloc only one copy of the allele name.
     // Later we need to make sure that we only free these allele names only once!
     if (PLINK.plink == binary_PED_format && plink_info != NULL && plink_info->alleles != (char *)NULL) {
+        Tod tod_hash("create_allele_strings_hashtable");
         create_allele_strings_hashtable(plink_info);
+        tod_hash();
     }
     
     if (PLINK.plink ||
@@ -4355,9 +4399,11 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 	Input_Format == in_format_VCF) {
         pedfile_type = PREMAKEPED_PFT;
         // CPK: If the .ped file is a .fam file, then we process the alleles as per the .bed file..
+        Tod tod_ppf("read plink ped file");
         Top = read_plink_ped_file(ped_file, bed_file, plink_info,
                                   phe_cols, LTop, EXLTop, bp_map, &AnnotatedFileInfo,
                                   num_groups, groups);
+        tod_ppf();
 #ifndef HIDESTATUS
 	//mssgf("");
 	if (PLINK.plink) {
@@ -4395,10 +4441,15 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     log_line(mssgf);
     mssgf("Input pedigree data contains:");
 
+    Tod tod_hraw("order_heterozygous_allele_raw ");
     order_heterozygous_allele_raw(Top);
+    tod_hraw();
 
+    Tod tod_pstat("write_ped_stats");
     write_ped_stats(Top, pedfile_type);
+    tod_pstat();
 
+    Tod tod_omit("read annotated omit file");
     if (omit_file != NULL)	 {
         annotated_omit_file(Top, omit_file, &AnnotatedFileInfo);
         free(AnnotatedFileInfo.omit_file_columns);
@@ -4410,6 +4461,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     omit_peds(untyped_ped_opt, Top);
 
     clear_YLINKED_females(Top, 1, 1);
+    tod_omit();
 
     /* recode and compute frequencies if necessary */
     Mega2Status = INSIDE_RECODE;
@@ -4428,12 +4480,15 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         extern int Display_y_female, y_female;
         int ped, entrycount;
         allelecnt **member_ids;
+        Tod tod_cal_init("init member_ids (for allele/freq counting)");
         member_ids=CALLOC((size_t) Top->PedCnt, allelecnt *);
         for (ped=0; ped < Top->PedCnt; ped++) {
             entrycount = (pedfile_type == POSTMAKEPED_PFT) ? Top->Ped[ped].EntryCnt:
                                                Top->PTop[ped].num_persons;
             member_ids[ped]=CALLOC((size_t) entrycount, allelecnt);
         }
+        tod_cal_init(); // 606.971166
+        Tod tod_cal_phen("init pheno_list: alleles, num_alleles");
         for (i=0; i < LTop->PhenoCnt; i++) {  // this code should be in mrecode.cpp:*_top()
             if (pheno_list[i].estimate_frequencies) {
                 pheno_type *pheno_listi = &(pheno_list[i]);
@@ -4447,19 +4502,35 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                 pheno_listi->num_alleles = 2;
             }
         }
+        tod_cal_phen();
+        Tod tod_cal("create allele list");
+        Tod tod_fr(20); // 0.000,688
+        Tod tod_fr_x4(20);
         for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
-            if (marker_list[i].estimate_frequencies)
-                create_allele_list(Top, (int) i, count_option, &(marker_list[i]),
-                                   member_ids,
-                                   count_halftyped);
+            tod_fr.reset();
+            tod_fr_x4.reset();
+            if (marker_list[i].estimate_frequencies) {
+                create_allele_list(Top, (int) i, &(marker_list[i]),
+                                   member_ids, count_halftyped);
+                tod_fr("create allele list 1 freq");
+                if ( (count_option != 4 || analysis == TO_HWETEST || analysis == TO_SIMULATE) &&
+                      LTop->Locus[i].number != -1 ) {
+                    count_allele_list(Top, (int) i, count_option, &(marker_list[i]),
+                                      member_ids, count_halftyped);
+                    tod_fr_x4("create allele list 4 freq");
+                }
+            }
         }
         for(ped=0; ped < Top->PedCnt; ped++) {
             free(member_ids[ped]);
         }
         free(member_ids);
         SUPPRESS_MSSG_NESTED_FINI(y_female);
+        tod_cal();
     }
 
+
+    Tod tod_cra("count_raw_alleles/check recoding");
     count_raw_alleles(marker_list, Top->LocusTop);
 
     for (i=0; i < LTop->LocusCnt; i++) {
@@ -4474,33 +4545,48 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 /*       LTop->Locus[i].Type = NUMBERED; */
 /*     } */
     }
+    tod_cra();
 
+    Tod tod_cvt("convert_to_freq");
     if (HasFreqFileBeenRead == 0 || HasFreqFileBeenRead == 2) {
         convert_to_freq(marker_list, Top->LocusTop, count_option, analysis);
         assign_dummy_alleles(marker_list, Top->LocusTop);
     }
+    tod_cvt();
 
-
+    Tod tod_rsum("write_recode_summary");
     write_recode_summary(marker_list, Top->LocusTop, count_halftyped);
+    tod_rsum();
 
+    Tod tod_dtp("default_trait_penetrance");
     if (HasPenFileBeenRead == 0) {
         for (j=0; j < num_traits; j++) {
             default_trait_penetrances(Top, global_trait_entries[j],
                                       &(pheno_list[global_trait_entries[j]]));
         }
     }
+    tod_dtp();
 
+    Tod tod_rped("recode_ped_top"); // 199.470821
     recode_ped_top(marker_list, Top, plink_info);
+    tod_rped();
+
+    Tod tod_rloc("recode locus top");
     recode_locus_top(marker_list, pheno_list, Top->LocusTop);
+    tod_rloc();
+
     Mega2Status = DONE_RECODE;
 
     log_line(mssgf);
 #ifndef HIDESTATUS
     mssgf("Pedigree data summary after recoding:");
 #endif
+    Tod tod_pstat2("write_ped_stats 2");
     write_ped_stats(Top, pedfile_type);
+    tod_pstat2();
 
 
+    Tod tod_free("free markers_item, etc");
     for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
        free_marker_item(marker_list[i].first_allele);
     }
@@ -4532,6 +4618,9 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     }
     free(pheno_list);  pheno_list=NULL;
     InputFileFormat = ANNOTATED;
+    tod_free();
+
+    tod_anfiles();
     return Top;
 }
 
@@ -4983,7 +5072,7 @@ int PLINK_args(char *str, int xcf)
 	Input_Format == in_format_VCF) {
         // nada
     } else if (PLINK.plink != binary_PED_format && PLINK.plink != PED_format) {
-//xx for NEW batch files w/o --bfile/file
+//for NEW batch files w/o --bfile/file
         if (Input_Format == in_format_binary_PED)
             PLINK.plink = binary_PED_format;
         else if (Input_Format == in_format_PED)
@@ -5267,6 +5356,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
     int  SNP_major = 0;
     FILE *bed_filep = (FILE *)NULL;
 
+    Tod pf_hdr("read plink ped file");
     FILE *filep = fopen(pedfile, "r");
     if (filep == NULL) {
         errorvf("could not open %s for reading!\n", pedfile);
@@ -5389,6 +5479,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
         }
     }
 
+    pf_hdr();
     file_desc->ped_file_columns = ped_all_colnames;
     file_desc->num_ped_cols = num_userdef_cols;
 

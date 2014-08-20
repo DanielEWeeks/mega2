@@ -33,6 +33,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "tod.hh"
 
 #include "loop.h"
 
@@ -433,8 +434,11 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
 
     // not annotated, genetic distance in Morgans, include comments...
     // generate a .bim file if output_format != 0 otherwise a .map file if output_format == 0
+    Tod tod_plmap("plink: write map file");
     write_PLINK_map(Top, file_names[1], output_format == 1 || output_format == 2);
+    tod_plmap();
 
+    Tod tod_plfmt("plink: write files: lgen/ped/ped6+bed");
     if (output_format == 0) {
         ((plink_analysis_type)*analysis)->save_pedsix_file(Top, pwid, fwid);
         save_PLINK_lgen(file_names[3], Top, pwid, fwid, mwid);
@@ -446,6 +450,7 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
         // (SNP major == 1; Individual major == 2).
         ((plink_analysis_type)*analysis)->save_bed_file(file_names[3], Top, output_format);
     }
+    tod_plfmt();
 
     // Now a method...
     //write_PLINK_sh(numchr, combine_chromo, file_names, &(prefix[0]), Top, output_format);

@@ -109,6 +109,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "tod.hh"
 #include "R_output.h"
 
 #include "annotated_ped_file_ext.h"
@@ -597,6 +598,10 @@ int             main(int argc, char **argv)
     char          *zero = canonical_allele("0");
 
     
+    Tod tod_all("total elapsed time")
+;
+    Tod tod_init("mega2 init");
+
     Mega2Status = INIT;
     /* Set the default modes/options/initializations */
     init_globals(argv[0]);
@@ -643,6 +648,9 @@ int             main(int argc, char **argv)
        the user will be warned that copies were made when
        these files are created again (utils.c). */
 
+    tod_init();
+
+    Tod tod_batch("batch file init");
     batchfile_init_Mega2BatchItems();
     Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option = MARKER_SCHEME; // set on cmd line
 
@@ -694,7 +702,7 @@ int             main(int argc, char **argv)
     } else {
         InputMode=INTERACTIVE_INPUTMODE;
     }
-
+    tod_batch();
     // determine if we should go out to the web and check to see if the user is running the latest release of MEGA2...
     if ((InputMode == BATCH_FILE_INPUTMODE && access(Mega2Batch, F_OK) == 0) ||
 	!check_web_ver) {
@@ -741,6 +749,7 @@ int             main(int argc, char **argv)
  13) Switch to PLINK input menu (ped format)
  Select from options 0-13 >
  */
+    Tod tod_menu1("menu1");
     menu1(&infl_type, &pedfl_name, &locusfl_name,
           &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
           &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
@@ -815,6 +824,7 @@ int             main(int argc, char **argv)
         }
     }
     if (ferr) EXIT(FILE_READ_ERROR);
+    tod_menu1();
 
     check_size_dos();
 
@@ -890,6 +900,7 @@ int             main(int argc, char **argv)
         guess = 0;
     }
 
+    Tod tod_files("read all files");
     if (Input_Format == in_format_mega2) {
 #ifndef HIDESTATUS
         if (mega2_input_files[3] == NULL) {
@@ -932,7 +943,6 @@ int             main(int argc, char **argv)
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
 
-//xx
         LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name,
                                            ((mapfl_name && *mapfl_name != 0) ? mapfl_name : pmapfl_name),
                                            freqfl_name, penfl_name,    omitfl_name,
@@ -1025,7 +1035,9 @@ int             main(int argc, char **argv)
         errorf("Unsuccessful in reading input files - aborting mega2!\n");
         EXIT(INPUT_DATA_ERROR);
     }
+    tod_files();
 
+    Tod tod_makeped("makeped");
     if (LPedTreeTop->pedfile_type == POSTMAKEPED_PFT) {
         infl_type = LINKAGE;
     } else {
@@ -1052,7 +1064,9 @@ int             main(int argc, char **argv)
     get_genetic_distance_index(LPedTreeTop->EXLTop);
     // see user_input.c:analysis_type RequiresPhysicalMap[]
     get_base_pair_position_index(LPedTreeTop->EXLTop);
+    tod_makeped();
 
+    Tod tod_reorder("ReOrderLoci");
     /* Reorder the loci */
     LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
 //SL
@@ -1065,6 +1079,7 @@ int             main(int argc, char **argv)
     } else {
         numchr = 0;
     }
+    tod_reorder();
 
     /*  Mega2Status=TRAIT_SELECTED_M2S; */
     default_outfile_names(analysis, &(global_chromo_entries[0]), file_names, logdir);
@@ -1077,18 +1092,24 @@ int             main(int argc, char **argv)
     /* Convert to PedTree for checking purposes,
        don't need to assign affecteds */
     FirstTime=1;
+
+    Tod tod_pedtree("convert_to_pedtree");
     PedTreeTop=convert_to_pedtree(LPedTreeTop, 0);
     /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+    tod_pedtree();
 
 //NrvB: PedTreeTop->Locus ONLY contains markers!!
+    Tod tod_fcheck("full_check");
     full_check(PedTreeTop, LPedTreeTop, analysis);
     /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+    tod_fcheck();
 
     free_all_including_ped_top(PedTreeTop, NULL, NULL);
     /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
     PedTreeTop = NULL;
     FirstTime=0;
 
+    Tod tod_stat1("write_ped_stat [again]");
     /* Output ped stats one more time */
     if (analysis != QUANT_SUMMARY) {
         log_line(mssgf);
@@ -1099,6 +1120,7 @@ int             main(int argc, char **argv)
     if (ErrorSimOpt) {
         simulate_errors(LPedTreeTop, numchr, file_names);
     }
+    tod_stat1();
 
     /* Now to analysis-specific options */
     ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
@@ -1107,9 +1129,13 @@ int             main(int argc, char **argv)
     /*  printf("num-traits = %d\n", num_traits); sleep(2); */
 
     // Create the data files, and then the shell scripts...
+    Tod tod_out("create_output_files");
     analysis->create_output_file(LPedTreeTop, &analysis, file_names,
                                  UntypedPedOpt, &numchr, &Top2);
+    tod_out();
+    Tod tod_sh("create_shell_file");
     analysis->create_sh_file(LPedTreeTop, file_names, numchr);
+    tod_sh();
 
     if (FirstIterMenu == 1 && InputMode == INTERACTIVE_INPUTMODE) {
         Mega2BatchItems[/* 25 */ Default_Outfile_Names].value.copt = 'y';
@@ -1117,6 +1143,7 @@ int             main(int argc, char **argv)
     }
     Mega2Status = TERM_MEGA2;
 
+    Tod tod_nuke_key("nuclear key");
     if (NUKE_OPTS) {
         if (Top2 != NULL) {
             write_nuc_ped_key_file(Mega2KeysRun, LPedTreeTop, Top2);
@@ -1125,8 +1152,10 @@ int             main(int argc, char **argv)
     } else {
         write_key_file(Mega2KeysRun, LPedTreeTop);
     }
+    tod_nuke_key();
 
 
+    Tod tod_fin("epilogue");
     if (strcmp(output_paths[0], ".") &&
         ((LoopOverTrait == 1 && num_traits > 1) ||
          (LoopOverTrait == 0 && num_traits > 2 && (analysis == TO_SAGE && HasAff)))) {
@@ -1226,6 +1255,9 @@ int             main(int argc, char **argv)
 
     if (phefl_name != NULL)
         free(phefl_name);
+    tod_fin();
+
+    tod_all();
 
     /*  free_all_including_lpedtop(&LPedTreeTop); */
 

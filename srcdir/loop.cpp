@@ -27,6 +27,7 @@
 */
 
 #include "loop.h"
+#include "tod.hh"
 
 void loop::once::iterate()
 {
@@ -398,10 +399,13 @@ void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const ch
     int m;
 
     // Loop through the SELECTED Loci (by count)...
+    Tod tod_lpp_markers("get markers_on_chromosomes");
     markers_on_chromosome(_numchr);
+    tod_lpp_markers();
 
     filep_open(dir, fl_name, mode);
-
+ 
+    Tod tod_lpp_start(10);
     for (m=0; m < NumChrLoci; m++) {
         // The actual Loci number associated with a SELECTED Loci...
         _locus = ChrLoci[m];
@@ -415,6 +419,7 @@ void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const ch
 
             loci_start();
 
+            tod_lpp_start.reset();
             // for each pedigree (consulting the linkage_ped_top structure)...
             for (_ped=0; _ped < _Top->PedCnt; _ped++) {
 
@@ -425,18 +430,19 @@ void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const ch
                 _tp = &(_Top->Ped[_ped]);
                 ped_start();
 
-                for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
+                _tpe = _tp->Entry;
+                for (_per = 0; _per < _tp->EntryCnt; _per++, _tpe++) {
                     // record for the individual (a linkage_ped_rec)...
-                    _tpe = &(_tp->Entry[_per]);
                     //_tpe = &(_Top->Ped[_ped].Entry[_per]);
 
                     get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
-
                     inner();
                 }
                 ped_end();
             }
             loci_end();
+            tod_lpp_start("loop over ped person");
+
         }
     }
     filep_close();

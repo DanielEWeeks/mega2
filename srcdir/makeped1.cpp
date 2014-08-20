@@ -1762,15 +1762,9 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
                     Top->LocusTop->Locus[k].Type != QUANT)    {
                     this_person_typed=0;
                     if (Mega2Status <= INSIDE_RECODE && Top->LocusTop->PedRecDataType == Raw_premake) {
-                        const char *all1, *all2;
-                        get_2Ralleles(pp->marker, k, &all1, &all2);
-                        this_person_typed += (allelecmp(all1, REC_UNKNOWN)? 1: 0);
-                        this_person_typed += (allelecmp(all2, REC_UNKNOWN)? 1: 0);
+                        this_person_typed = num_typed_2Ralleles(pp->marker, k);
                     } else {
-                        int all1, all2;
-                        get_2alleles(pp->marker, k, &all1, &all2);
-                        this_person_typed += (all1 ? 1: 0);
-                        this_person_typed += (all2 ? 1: 0);
+                        this_person_typed = num_typed_2alleles(pp->marker, k);
                     }
 
                     if (this_person_typed) {
