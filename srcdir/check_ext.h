@@ -29,18 +29,27 @@
 #ifndef CHECK_EXT_H
 #define CHECK_EXT_H
 
+extern int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
+                           locus_top *LTop1, int ped_num, int locus,
+                           int *display_error, int uniqueids,
+                           FILE **reset_fp, bool *first);
+
+extern int check_invalid_fam(ped_tree *PedTree, ped_status *PedStatus,
+                             locus_top *LTop1, int ped_num, int locus1,
+                             int *display_error, int uniqueids,
+                             ped_rec **Sibs);
+
 extern int check_locus(locus_rec *Locus, int *disp_err,
 		       analysis_type analysis,
 		       int *plink_locus_num);
 
-extern int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
-			  locus_top *LTop1, int pednum,
-			  int *display_error, int uniqueids);
-
+extern int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
+                               locus_top *LTop1, int ped_num, int locus,
+                               int *display_error, int uniqueids,
+                               FILE **reset_fp, bool *first);
 
 extern int check_ped_relations(ped_tree *PedTree, ped_status *PedStatus);
 
 extern int check_unique_ids(linkage_ped_top *Top);
-
 
 #endif

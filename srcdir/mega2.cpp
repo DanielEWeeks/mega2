@@ -412,6 +412,8 @@ static void    init_globals(char *argv0)
 #endif
     UntypedPedOpt = -1;
     UntypedPeds = NULL;
+    HalfTypedReset=-1;
+    NonMendelianReset=-1;
     NOcTIME = "Fri Aug 29 02:14:00 1997\n";
     getRunDate();
     NukedMultiplier=1000;

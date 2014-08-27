@@ -1815,11 +1815,10 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 linkage_ped_rec *te = &Top->Ped[ped].Entry[0];
                 allelecnt *mpp = mp[0];
                 for(per=0; per < entrycount; per++, te++, mpp++) {
-                    get_2Ralleles(te->Marker, locus, &mpp->all1, &mpp->all2);
+                    get_2Ralleles(te->Marker, locus, &all1, &all2);
                     mpp->num  = 0;
-
-                    all1 = mpp->all1;
-                    all2 = mpp->all2;
+                    mpp->all1 = all1;
+                    mpp->all2 = all2;
                     if (!allelecmp(all1, REC_UNKNOWN)) {
                         if (!allelecmp(all2, REC_UNKNOWN)) {
                             continue; // 0/0
@@ -1828,7 +1827,6 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         all1 = all2;
                         all2 = tmp;
                     }
-                    sex = te->Sex;
                     al1p = (allele_list_type *)allele2allele_prop_prop(all1);
                     if (al1p == (void *) 0) {
                         al1p = insert_into_allele_list(&(marker_listi->first_allele),
@@ -1842,8 +1840,12 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         allele2allele_prop_prop(all2) = al2p;
                     }
                     if (Top->LocusTop->Locus[locus].number == -1) continue;
-                    if (!allelecmp(all2, REC_UNKNOWN) && !count_ht)
-                        continue; // if no half type allowed
+                    if (!allelecmp(all2, REC_UNKNOWN)) {
+                        if (!count_ht)
+                            continue; // if no half type allowed
+                        marker_listi->ht_everyone++;
+                    }
+                    sex = te->Sex;
                     if (LocType == NUMBERED) {
                         marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
                         if (al1p) al1p->allele_freq.everyone_count++;
@@ -1881,10 +1883,10 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 person_node_type *tp = &Top->PTop[ped].persons[0];
                 allelecnt *mpp = mp[0];
                 for(per=0; per < entrycount; per++, tp++, mpp++) {
-                    get_2Ralleles(tp->marker, locus, &mpp->all1, &mpp->all2);
+                    get_2Ralleles(tp->marker, locus, &all1, &all2);
                     mpp->num  = 0;
-                    all1 = mpp->all1;
-                    all2 = mpp->all2;
+                    mpp->all1 = all1;
+                    mpp->all2 = all2;
                     if (!allelecmp(all1, REC_UNKNOWN)) {
                         if (!allelecmp(all2, REC_UNKNOWN)) {
                             continue; // 0/0
@@ -1893,7 +1895,6 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         all1 = all2;
                         all2 = tmp;
                     }
-                    sex = tp->gender;
                     al1p = (allele_list_type *)allele2allele_prop_prop(all1);
                     if (al1p == (void *) 0) {
                         al1p = insert_into_allele_list(&(marker_listi->first_allele),
@@ -1907,8 +1908,12 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         allele2allele_prop_prop(all2) = al2p;
                     }
                     if (Top->LocusTop->Locus[locus].number == -1) continue;
-                    if (!allelecmp(all2, REC_UNKNOWN) && !count_ht)
-                        continue; // if no half type allowed
+                    if (!allelecmp(all2, REC_UNKNOWN)) {
+                        if (!count_ht)
+                            continue; // if no half type allowed
+                        marker_listi->ht_everyone++;
+                    }
+                    sex = tp->gender;
                     if (LocType == NUMBERED) {
                         marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
                         if (al1p) al1p->allele_freq.everyone_count++;

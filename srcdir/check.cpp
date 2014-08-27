@@ -66,12 +66,13 @@ void mito_transmission_report(ped_top *PTop,
 /*  static int check_ordinal(ped_tree *PedTree, ped_status *PedStatus); */
 
 static int check_inheritance(ped_rec *PedEntry,
-			     locus_top *LTop1, int locus1, int ploc,
-			     const char *name, int *display_error, int uniqueids);
+			     locus_top *LTop1, const int locus1, const int ploc,
+                             int A1, int A2, const char *name,
+                             int *display_error, const int uniqueids);
 
 static int check_ped_connected(ped_tree *Ped);
 static void connected_traverse(ped_rec *Entry, int curr_ped);
-static int check_sibship_alleles(ped_tree *PedTree, int locus1,
+static int check_sibship_alleles(ped_tree *PedTree, ped_rec **Sibs, int locus1,
 				 locus_top *LTop1, int *sibship_checked,
 				 int *display_error, int uniqueids);
 static int autosomal_or_female_xlinked(int all1, int all2,
@@ -82,19 +83,21 @@ static int male_xlinked(int all1, int *allele, int *allelecnt);
 int cmp_ids(const void *aa, const void *bb);
 
 void clear_ped_status(ped_status *Stat)
-
 {
     Stat->father_invalid = 0;
     Stat->mother_invalid = 0;
     Stat->parents_not_defined=0;
     Stat->incomplete_entry = 0;
     Stat->offspring_out_of_range = 0;
+
     Stat->genotype_invalid = 0;
     Stat->halftyped = 0;
     Stat->exceed_allcnt = 0;
+    Stat->entry_unconnected = 0;
+    Stat->checked_sibship = 0;
+
     Stat->bad_ID = 0;
     Stat->bad_sex = 0;
-    Stat->entry_unconnected = 0;
     Stat->unknown = 0;
     Stat->invalid_genotypes=NULL;
     Stat->half_types=NULL;
@@ -127,12 +130,11 @@ void clear_ped_status(ped_status *Stat)
 /* Ignore females' genotypes for y-linked loci */
 
 static int check_inheritance(ped_rec *PedEntry,
-			     locus_top *LTop1, const int locus1,
-			     const int ploc, const char *name,
+			     locus_top *LTop1, const int locus1, const int ploc, 
+                             int A1, int A2, const char *name,
 			     int *display_error, const int uniqueids)
 {
-
-    int A1, A2, PA[2], MA[2];
+    int PA[2], MA[2];
     ped_rec *Father=PedEntry->Father;
     ped_rec *Mother=PedEntry->Mother;
     /* Changed the definition of sex-linked to specifically x-linked,
@@ -143,11 +145,9 @@ static int check_inheritance(ped_rec *PedEntry,
     int y_linked = ((LTop1->Locus[ploc].chromosome == MALE_CHROMOSOME
 		     && LTop1->SexLinked >= 1)? 1 : 0);
 
-    get_2alleles(PedEntry->LEntry->Marker, locus1, &A1, &A2);
-
     /* Note: This check does not require that Father != NULL */
     // Display_Errors is set by the caller...
-    if ((sex_linked  || y_linked) && IS_MALE(*PedEntry)){
+    if ((sex_linked  || y_linked) && IS_MALE(*PedEntry)) {
         /* if child is male,  must be a homozygote */
         if (!R(A1,A2)) {
             warnvf("Ped %s: Male %s is a heterozygote at %c-linked locus %s.\n",
@@ -275,7 +275,8 @@ static int check_inheritance(ped_rec *PedEntry,
 
 /* check the PA_sibs and MA_sibs */
 /* locus1 is the index of locus being checked in locus_top */
-static int check_sibship_alleles(ped_tree *PedTree, const int locus1,
+static int check_sibship_alleles(ped_tree *PedTree, ped_rec **Sibs,
+                                 const int locus1,
 				 locus_top *LTop1, int *checked_sibship,
 				 int *display_error, const int uniqueids)
 
@@ -284,7 +285,8 @@ static int check_sibship_alleles(ped_tree *PedTree, const int locus1,
     int alleles[4], all1, all2;
     int entry, off, haserr, inc, allelecnt, a;
     int max_allelecnt, sib_cnt;
-    ped_rec *Entry, *Sib, **Sibs;
+//  ped_rec *Entry, *Sib, **Sibs;
+    ped_rec *Entry, *Sib;
     int sex_linked = (((LTop1->SexLinked == 2 &&
                         LTop1->Locus[locus1].chromosome == SEX_CHROMOSOME) ||
                        (LTop1->SexLinked == 1)) ? 1 : 0);
@@ -295,7 +297,7 @@ static int check_sibship_alleles(ped_tree *PedTree, const int locus1,
 
     max_allelecnt = ((sex_linked)? 3 : 4);
 
-    Sibs = CALLOC((size_t) PedTree->EntryCnt, ped_rec *);
+//  Sibs = CALLOC((size_t) PedTree->EntryCnt, ped_rec *);
     haserr = 0;
     /* set all the checked flags to 0 */
     for(entry=0; entry < PedTree->EntryCnt; entry++) {
@@ -441,7 +443,7 @@ static int check_sibship_alleles(ped_tree *PedTree, const int locus1,
             }
         }
     }
-    free(Sibs);
+//  free(Sibs);
     return haserr;
 }
 
@@ -725,6 +727,8 @@ int check_ped_relations(ped_tree *PedTree, ped_status *PedStatus)
  * Return non-zero if an error was found, zero otherwise.
  */
 
+#if 0
+/* not currently used */
 int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
 		   locus_top *LTop1, int ped_num, int *display_error,
 		   int uniqueids)
@@ -750,6 +754,7 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
     for (locus1 = 0; locus1 < LTop1->LocusCnt; locus1++) {
 
         lloc = LTop1->Locus[locus1].linkage_loc_num;
+        int AlleleCnt = LTop1->Locus[locus1].AlleleCnt;
 
         for (entry = 0; entry < PedTree->EntryCnt; entry++) {
             PedEntry = &(PedTree->Entry[entry]);
@@ -758,7 +763,7 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
             int all1, all2;
             get_2alleles(PedEntry->LEntry->Marker, lloc, &all1, &all2);
 
-            if (all1 > LTop1->Locus[locus1].AlleleCnt) {
+            if (all1 > AlleleCnt) {
                 SUPPRESS_MSSG(*display_error)
                     if (*display_error > MAX_PED_ERRORS) {
                         Display_Errors=0;
@@ -772,7 +777,7 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
                 iserr = 1;
             }
 
-            if (all2 > LTop1->Locus[locus1].AlleleCnt) {
+            if (all2 > AlleleCnt) {
                 SUPPRESS_MSSG(*display_error)
                     if (*display_error > MAX_PED_ERRORS) {
                         Display_Errors=0;
@@ -800,7 +805,6 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
                 outofboundsp->person = entry;
                 outofboundsp->ped = ped_num;
                 outofboundsp->next = NULL;
-
             }
 
             /* semi-typed */
@@ -830,15 +834,14 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
                 half_typedp->ped = ped_num;
                 half_typedp->person = entry;
                 half_typedp->locus = locus1;
-
                 /* PedStatus->half_types[entry][locus1]=1;*/
             }
             if (LTop1->Locus[locus1].chromosome == MITO_CHROMOSOME) {
                 /* Continue without inheritance checks */
                 continue;
             }
-            if (!check_inheritance(PedEntry, LTop1, lloc, locus1, PedTree->Name,
-                                   display_error, uniqueids)) {
+            if (!check_inheritance(PedEntry, LTop1, lloc, locus1, all1, all2,
+                                   PedTree->Name, display_error, uniqueids)) {
 	      // if an error was generated in check_inheritance()
                 PedStatus->genotype_invalid++;
                 if (invalidp == NULL) {
@@ -862,9 +865,10 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
        only need to check sibships of size greater than 2 */
 
     Tod tod_sship("check_ped_data: check sib_ship_alleles");
+    Sibs = CALLOC((size_t) PedTree->EntryCnt, ped_rec *);
     for(locus1=0; locus1 < LTop1->LocusCnt; locus1++) {
         /* send in the index of locus in locus_top */
-        if (check_sibship_alleles(PedTree, locus1,
+        if (check_sibship_alleles(PedTree, Sibs, locus1,
                                   LTop1, &(PedStatus->checked_sibship),
                                   display_error, uniqueids)) {
             PedStatus->genotype_invalid++;
@@ -881,6 +885,7 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
             invalidp->ped = ped_num;
         }
     }
+    free(Sibs);
     tod_sship();
 
     if (PedStatus->genotype_invalid > 0 || PedStatus->halftyped > 0 ||
@@ -889,6 +894,182 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
     } else {
         return 0;
     }
+}
+#endif
+
+int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
+                        locus_top *LTop, int ped_num, int locus,
+                        int *display_error, int uniqueids,
+                        FILE **reset_fp, bool *first)
+{
+    int entry, lloc, iserr;
+    register ped_rec *PedEntry;
+    int abortf = 0;
+    int all1, all2;
+
+    lloc = LTop->Locus[locus].linkage_loc_num;
+    int AlleleCnt = LTop->Locus[locus].AlleleCnt;
+
+    for (entry = 0; entry < PedTree->EntryCnt; entry++) {
+        PedEntry = &(PedTree->Entry[entry]);
+        iserr = 0;
+
+        get_2alleles(PedEntry->LEntry->Marker, lloc, &all1, &all2);
+
+        if (all1 > AlleleCnt) {
+            SUPPRESS_MSSG(*display_error)
+                if (*display_error > MAX_PED_ERRORS) {
+                    Display_Errors=0;
+                }
+            warnvf("Ped %s: Entry %s allele1 %d out of bounds at locus %s.\n",
+                   PedTree->Name,
+                   ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
+                   all1,
+                   LTop->Locus[locus].Name);
+            (*display_error)++;
+            iserr = 1;
+        }
+
+        if (all2 > AlleleCnt) {
+            SUPPRESS_MSSG(*display_error)
+                if (*display_error > MAX_PED_ERRORS) {
+                    Display_Errors=0;
+                }
+
+            warnvf("Ped %s: Entry %s allele2 %d out of bounds at locus %s.\n",
+                   PedTree->Name,
+                   ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
+                   all2,
+                   LTop->Locus[locus].Name);
+            (*display_error)++;
+            iserr=1;
+        }
+
+        if (iserr) {
+            PedStatus->exceed_allcnt++;
+            abortf=1;
+
+            set_2alleles(PedEntry->LEntry->Marker, lloc, 
+                         LTop->Locus[locus].linkage_loc_rec, 0, 0);
+
+            if (*reset_fp == NULL) {
+                if (*first) {
+                    *reset_fp = fopen(Mega2ResetRun, "w");
+                    summary_time_stamp(mega2_input_files, *reset_fp, "");
+                    *first = 0;
+                } else
+                    *reset_fp = fopen(Mega2ResetRun, "a");
+                fprintf(*reset_fp, "Genotypes with out-of-bounds alleles.\n");
+                fprintf(*reset_fp, "Pedigree   Person    Marker\n");
+            }
+            fprintf(*reset_fp, "%s   %s   %s\n",
+                    PedTree->Name,
+                    ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
+                    LTop->Locus[locus].Name);
+        }
+    }
+    return abortf;
+}
+
+int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
+                    locus_top *LTop, int ped_num, int locus,
+                    int *display_error, int uniqueids,
+                    FILE **reset_fp, bool *first)
+{
+    int entry, lloc, iserr;
+    register ped_rec *PedEntry;
+    int abortf = 0;
+    int all1, all2;
+
+    lloc = LTop->Locus[locus].linkage_loc_num;
+
+    for (entry = 0; entry < PedTree->EntryCnt; entry++) {
+        PedEntry = &(PedTree->Entry[entry]);
+        iserr = 0;
+
+        get_2alleles(PedEntry->LEntry->Marker, lloc, &all1, &all2);
+
+        /* semi-typed */
+        if ((all1 == 0 && all2 != 0) ||
+            (all1 != 0 && all2 == 0)) {
+            abortf=1;
+            PedStatus->halftyped++;
+            HalfTypedReset=1;
+
+            SUPPRESS_MSSG(*display_error)
+                if (*display_error > MAX_PED_ERRORS) {
+                    Display_Errors=0;
+                }
+            warnvf("Ped %s: Entry %s is half-typed at locus %s.\n",
+                   PedTree->Name,
+                   ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
+                   LTop->Locus[locus].Name);
+            (*display_error)++;
+
+            set_2alleles(PedEntry->LEntry->Marker, lloc, 
+                         LTop->Locus[locus].linkage_loc_rec, 0, 0);
+
+            if (*reset_fp == NULL) {
+                if (*first) {
+                    *reset_fp = fopen(Mega2ResetRun, "w");
+                    summary_time_stamp(mega2_input_files, *reset_fp, "");
+                    *first = 0;
+                } else
+                    *reset_fp = fopen(Mega2ResetRun, "a");
+                fprintf(*reset_fp, "Half-typed genotypes:\n");
+                fprintf(*reset_fp, "Pedigree   Person    Marker\n");
+            }
+            fprintf(*reset_fp, "%s   %s   %s\n",
+                    PedTree->Name,
+                    ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
+                    LTop->Locus[locus].Name);
+        }
+    }
+    return abortf;
+}
+
+int check_invalid_fam(ped_tree *PedTree, ped_status *PedStatus,
+                      locus_top *LTop1, int ped_num, int locus1, 
+                      int *display_error, int uniqueids,
+                      ped_rec **Sibs)
+{
+    int entry, lloc;
+    register ped_rec *PedEntry;
+    int err = 0;
+    lloc = LTop1->Locus[locus1].linkage_loc_num;
+
+/*
+    PedTree->EntryCnt == 1
+    means there is no family structure so we should return 0.
+    BUT check_inheritance also checks for anomalies on make with X-linked
+*/
+
+    for (entry = 0; entry < PedTree->EntryCnt; entry++) {
+        PedEntry = &(PedTree->Entry[entry]);
+        /* out of bounds */
+        int all1, all2;
+        get_2alleles(PedEntry->LEntry->Marker, lloc, &all1, &all2);
+
+        if (!check_inheritance(PedEntry, LTop1, lloc, locus1, all1, all2,
+                               PedTree->Name, display_error, uniqueids)) {
+            PedStatus->genotype_invalid++;
+            err = 1;
+        }
+    }
+
+    if (PedTree->EntryCnt == 1) return err;
+
+   /* Check sibships to see that they have only 4 distinct alleles,
+       only need to check sibships of size greater than 2 */
+
+    /* send in the index of locus in locus_top */
+    if (check_sibship_alleles(PedTree, Sibs, locus1,
+                              LTop1, &(PedStatus->checked_sibship),
+                              display_error, uniqueids)) {
+        PedStatus->genotype_invalid++;
+        err = 1;
+    }
+    return err;
 }
 
 /* NM: locus errors :

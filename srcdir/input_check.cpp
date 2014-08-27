@@ -43,6 +43,7 @@
 #include "fcmap_ext.h"
 #include "genetic_utils_ext.h"
 #include "grow_string_ext.h"
+#include "user_input_ext.h"
 #include "input_check_ext.h"
 #include "pedtree_ext.h"
 #include "utils_ext.h"
@@ -71,13 +72,13 @@ void            full_check(ped_top *Top, linkage_ped_top *LPedTop,
 int             UnMappedLociCheck(linkage_ped_top *Top);
 int             input_observed_freq_check(linkage_ped_top *Top, double threshold);
 void            check_renumber_ped(ped_tree *Ped);
-
+/*
 static  void    write_reset_summary(ped_top *PTop, loc_list *invalidp,
 				    person_loc_list *halftypedp,
 				    person_loc_list *outofboundsp,
 				    int imend, int ht, int aexceed,
 				    int uniqueids);
-
+*/
 static void     create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
 
 /* end of prototypes */
@@ -196,9 +197,9 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
     return found_problem;
 }
 
+#if 0
 static void write_and_free1(FILE *fp, loc_list *invalidp, ped_top *PedTop,
 			   locus_top *LTop)
-
 {
     loc_list *next;
     for (; invalidp != NULL; invalidp = next) {
@@ -212,7 +213,6 @@ static void write_and_free1(FILE *fp, loc_list *invalidp, ped_top *PedTop,
 
 static void write_and_free2(FILE *fp, person_loc_list *invalidp, 
 			    ped_top *PedTop,  locus_top *LTop, int uniqueids)
-
 {
     person_loc_list *next;
 
@@ -234,7 +234,6 @@ static  void  write_reset_summary(ped_top *PedTop,
 				  person_loc_list *outofboundsp,
 				  int imend, int ht, int aexceed,
 				  int uniqueids)
-
 {
 
     FILE *reset_fp;
@@ -272,6 +271,7 @@ static  void  write_reset_summary(ped_top *PedTop,
     fclose(reset_fp);
     return;
 }
+#endif
 
 /*---------------------------------------------------------------+
   | Given the pedtree Top, check all the pedigree and locus data. |
@@ -283,7 +283,6 @@ static  void  write_reset_summary(ped_top *PedTop,
 
 void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 		     analysis_type analysis)
-
 {
     int chr;
     int             entry, lloc, ped, locus, select=-1, menu_item=0;
@@ -294,11 +293,8 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     int             set_uniq=0, nonuniq;
 
     register locus_top *LTop = Top->LocusTop;
-    loc_list        *invalid_genos, *invalidp;
-
-    person_loc_list *halftyped, *halftypedp, *exceed_allcnt, *outofboundsp;
     char            select_[10];
-    char            toggle_str[20];
+    char            toggle_str[50];
 
     /* These are set if the corresponding menu item is toggled */
     int             exit_select=-1, halftyped_select=-1;
@@ -311,8 +307,6 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     int             num_mito_hetero = 0, num_mito_non_maternal = 0;
 
     clear_ped_status(&PedStat);
-    HalfTypedReset=-1;
-    NonMendelianReset=-1;
 
     /* changed the locus checking loop to skip numbered loci
        for QUANT summary. This can be modified to accommodate other
@@ -401,7 +395,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
        marker loci.
     */
     if (LPedTop->UniqueIds && analysis != TO_PAP && analysis != IQLS) {
-        nonuniq = check_unique_ids(LPedTop);
+        nonuniq = check_unique_ids(LPedTop); 
 /*     if (nonuniq) { */
 /*       set_uniq=1; */
 /*     } */
@@ -433,71 +427,12 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
     tod_cpr();
 
-    Tod tod_cpd("check_ped_data");
-    if (num_reordered > 0 && HasMarkers) {
-        /* init the check_sibship flag before checking the pedigrees*/
-        PedStat.checked_sibship=0;
-        invalid_genos = NULL;
-        halftyped = NULL;
-        exceed_allcnt = NULL;
-
-        invalidp = invalid_genos;
-        halftypedp = halftyped;
-        outofboundsp = exceed_allcnt;
-
-        Display_Errors=1;
-        displayed_errors = 0;
-        printf("Checking for half-typed, Mendelian inconsistencies and invalid alleles ...\n");
-        for (ped = 0; ped < Top->PedCnt; ped++)   {
-            stat = check_ped_data(&(Top->PedTree[ped]), &PedStat, Top->LocusTop,
-                                  ped, &displayed_errors, LPedTop->UniqueIds);
-            abortf = imax(abortf, stat);
-            if (PedStat.invalid_genotypes != NULL) {
-                if (invalidp == NULL) {
-                    invalid_genos = PedStat.invalid_genotypes;
-                    invalidp = invalid_genos;
-                } else {
-                    while(invalidp->next != NULL) {
-                        invalidp = invalidp->next;
-                    }
-                    invalidp->next = PedStat.invalid_genotypes;
-                }
-                PedStat.invalid_genotypes = NULL;
-            }
-            if (PedStat.half_types != NULL) {
-                if (halftypedp == NULL) {
-                    halftyped = PedStat.half_types;
-                    halftypedp=halftyped;
-                } else {
-                    while(halftypedp->next != NULL) {
-                        halftypedp = halftypedp->next;
-                    }
-                    halftypedp->next = PedStat.half_types;
-                }
-                PedStat.half_types = NULL;
-            }
-            if (PedStat.allele_outof_bounds != NULL) {
-                if (outofboundsp == NULL) {
-                    exceed_allcnt = PedStat.allele_outof_bounds;
-                    outofboundsp=exceed_allcnt;
-                } else {
-                    while(outofboundsp->next != NULL) {
-                        outofboundsp = outofboundsp->next;
-                    }
-                    outofboundsp->next = PedStat.allele_outof_bounds;
-                }
-                PedStat.allele_outof_bounds = NULL;
-            }
-        }
-        Display_Errors=1;
-        displayed_errors = 0;
-    }
-    tod_cpd();
-
     Tod tod_mito("mito_transmission_report");
     for (chr=0; chr < main_chromocnt; chr++) {
         if (global_chromo_entries[chr] == MITO_CHROMOSOME) {
             mito_transmission_report(Top, &num_mito_hetero, &num_mito_non_maternal);
+            if (num_mito_hetero > 0 || num_mito_non_maternal > 0)
+                abortf = imax(abortf, 1);
             break;
         }
     }
@@ -512,6 +447,8 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     Tod tod_iofc("input_observed_freq_check");
     if (num_reordered > 0 && analysis != TO_PLINK) {
         freq_mis = input_observed_freq_check(LPedTop, FreqMismatchThreshold);
+        if (freq_mis > 0)
+            abortf = imax(abortf, 1);
     } else {
         freq_mis=0;
     }
@@ -519,33 +456,19 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     Tod tod_cepi("check epilog code: do reset");
     /* set imend and hmend to 1 if errors are present */
-    imend=((PedStat.genotype_invalid > 0)? 1 : 0);
-    hmend=((PedStat.halftyped > 0)? 1 : 0);
-    aexceed = ((PedStat.exceed_allcnt > 0)? 1 : 0);
-
-    if ((abortl == 1 || abortf) && (abortl != 2) && (abortf != 2)) {
+    imend   = 1;
+    hmend   = (Input_Format == in_format_binary_PED) ? 0 : 1;  // PLINK binary is NEVER halftyped
+    aexceed = (Input_Format == in_format_linkage) ? 1 : 0;     // only necessary for Linkage
+    if (loc_err == 1 || PedStat.entry_unconnected > 0 || freq_mis || nonuniq ||
+        num_mito_hetero > 0 || num_mito_non_maternal > 0) {
         draw_line();  exclaim();
-        warnvf("Found these problems/errors in input data (see MEGA2.ERR for details): \n");
+        warnvf("Thus far found these problems/errors in input data (see MEGA2.ERR for details): \n");
         if (loc_err == 1) {
             warnvf(" -> Invalid marker allele number or frequencies \n");
         }
 
         if (PedStat.entry_unconnected > 0) {
             warnvf(" -> Unconnected entries\n");
-        }
-        if (PedStat.halftyped) {
-            warnvf(" -> Half-typed genotypes\n");
-            if (analysis == TO_MENDEL || SIMWALK2(analysis)) {
-                warnvf("       Half-typed genotypes will be set to unknown \n");
-                warnvf("       as required by %s\n", ProgName);
-            }
-        }
-        if (PedStat.genotype_invalid > 0) {
-            warnvf(" -> Mendelian-inconsistent genotypes\n");
-        }
-
-        if (PedStat.exceed_allcnt > 0) {
-            warnvf(" -> Genotype allele numbers exceed locus allele count\n");
         }
 
         if (freq_mis) {
@@ -580,54 +503,50 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                 Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'N')
                 hmend = imend = aexceed = 0;
         } else {
-            printf("How shall we proceed?\n");
+            printf("How shall we proceed further?\n");
             while (select != 0) {
                 strcpy(toggle_str, "");
                 menu_item=0;
                 draw_line();
                 printf("0) Done with this menu - please proceed\n"); menu_item++;
-                if (PedStat.halftyped) {
+                if (1 /* PedStat.halftyped */) {
                     if (analysis == TO_MENDEL || SIMWALK2(analysis)) {
                         printf(" NOTE: Proceeding will zero out all half-typed individuals.\n");
                     } else {
                         printf(" %d) Set half-typed genotypes to unknown [%s].\n", menu_item,
                                yorn[hmend]);
-                        sprintf(toggle_str, ", %d", menu_item);
+                        sprintf(toggle_str, "; options %d", menu_item);
                         halftyped_select = menu_item++;
                     }
                 }
-                if (PedStat.genotype_invalid) {
+                if (1 /* PedStat.genotype_invalid */) {
                     printf(" %d) Set all genotypes to unknown within entire pedigrees\n",
                            menu_item);
                     printf("    at each Mendelianly-inconsistent locus? [%s]\n",
                            yorn[imend]);
-                    if (toggle_str != NULL) {
-                        grow(toggle_str, ", (%d", menu_item);
-                    } else {
-                        sprintf(toggle_str, ", %d", menu_item);
-                    }
+                    grow(toggle_str, ", %d", menu_item);
                     invalid_select = menu_item++;
                 }
-                if (PedStat.exceed_allcnt) {
+                if (1 /* PedStat.exceed_allcnt */) {
                     printf(" %d) Set out-of-bound genotypes to unknown? [%s]\n",
                            menu_item, yorn[aexceed]);
-                    sprintf(toggle_str, ", %d", menu_item);
+                    grow(toggle_str, ", %d", menu_item);
                     exceedall_select = menu_item++;
                 }
 
 		// NOTE: There seems to be no batch file item to cover this case...
                 if (nonuniq && analysis != TO_PAP && analysis != CRANEFOOT && analysis != IQLS) {
                     printf(" %d) Generate new unique IDs? [%s]\n", menu_item, yorn[set_uniq]);
-                    sprintf(toggle_str, ", %d", menu_item);
+                    grow(toggle_str, ", %d", menu_item);
                     uniq_select = menu_item++;
                 }
 
                 if (freq_mis) {
                     printf("Don't know how to correct for frequency mismatches.\n");
                 }
-                if (PedStat.genotype_invalid || PedStat.halftyped || PedStat.exceed_allcnt) {
-                    strcat(toggle_str, " to toggle)");
-                }
+//              if (PedStat.genotype_invalid || PedStat.halftyped || PedStat.exceed_allcnt) {
+                    strcat(toggle_str, " toggle");
+//              }
                 printf(" %d) EXIT Mega2.\n", menu_item);
                 exit_select=menu_item;
 
@@ -690,156 +609,149 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     /* else abort = 1*/
     displayed_errors=0;
-    Tod tod_imend("reset non mendelian");
+    bool first = true;
+    FILE *reset_fp = NULL;
+
+    Tod tod_imend_all("reset ALL non mendelian");
+    Tod tod_imend(20);
     if (imend) {
-        loc_list *curr, *next;
-        int flush=0;
-
-        /* set invalid genos to 0 0 */
-        NonMendelianReset=1;
-
-        /* First take out repeated elements */
-        curr = invalid_genos;
-        next = curr->next;
-        while(next != NULL && curr != NULL) {
-            if (curr->ped == next->ped && curr->locus == next->locus) {
-                curr->next = next->next;
-                free(next);
-            } else {
-                curr = curr->next;
-            }
-            if (curr->next != NULL) {
-                next = curr->next;
-            } else {
-                break;
-            }
-        }
-        mssgf("Setting Mendelianly-inconsistent genotypes to unknowns for these pedigree/Locus combinations:");
-        strcpy(err_msg, "  ");
-        invalidp = invalid_genos;
-        while(invalidp != NULL) {
-            ped = invalidp->ped;
-            lloc = Top->LocusTop->Locus[invalidp->locus].linkage_loc_num;
-            for (entry=0; entry < Top->PedTree[ped].EntryCnt; entry ++) {
-                set_2alleles(Top->PedTree[ped].Entry[entry].LEntry->Marker, lloc, 
-                             Top->LocusTop->Locus[invalidp->locus].linkage_loc_rec, 0, 0);
-            }
-            grow(err_msg, " %s: %s  ",
-                 Top->PedTree[ped].Name,
-                 LTop->Locus[invalidp->locus].Name);
-
-            flush++;
-            if (flush == 3) {
-                SUPPRESS_MSSG(displayed_errors)
-                    if (displayed_errors > MAX_PED_ERRORS) {
-                        Display_Messages = 0;
+        int rm;
+        NonMendelianReset=0;
+        for (ped = 0; ped < Top->PedCnt; ped++) {
+            ped_rec **Sibs = CALLOC((size_t) Top->PedTree[ped].EntryCnt, ped_rec *);
+            tod_imend.reset();
+            for (locus = 0; locus < LTop->LocusCnt; locus++) {
+                if (LTop->Locus[locus].chromosome == MITO_CHROMOSOME) {
+                    continue;           /* Continue without inheritance checks */
+                }
+                rm = check_invalid_fam(&(Top->PedTree[ped]), &PedStat, LTop,
+                                       ped, locus, &displayed_errors, LPedTop->UniqueIds,
+                                       Sibs);
+                if (rm) {
+                    if (first) {
+                        reset_fp = fopen(Mega2ResetRun, "w");
+                        summary_time_stamp(mega2_input_files, reset_fp, "");
+                        first = false;
+                        fprintf(reset_fp, "Mendelianly inconsistent pedigrees:\n");
+                        fprintf(reset_fp, "Pedigree   Person    Marker\n");
                     }
-                displayed_errors++;
-                mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
-            }
-            invalidp = invalidp->next;
-        }
 
-        if (flush) {
-            mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
+                    NonMendelianReset = 1;
+                    lloc = LTop->Locus[locus].linkage_loc_num;
+                    fprintf(reset_fp, "%s      All   %s\n", 
+                            Top->PedTree[ped].Name, 
+                            LTop->Locus[locus].Name);
+
+                    strcpy(err_msg, "    PED ");
+                    for (entry=0; entry < Top->PedTree[ped].EntryCnt; entry ++) {
+                        /* set invalid genos to 0 0 */
+                        set_2alleles(Top->PedTree[ped].Entry[entry].LEntry->Marker, lloc, 
+                                     Top->LocusTop->Locus[locus].linkage_loc_rec, 0, 0);
+                    }
+                }
+            }
+            tod_imend("reset non mendelian");
+            free(Sibs);
         }
+        if (reset_fp != NULL) {
+            fclose(reset_fp);
+        }
+        tod_imend_all();
     } else {
         NonMendelianReset=0;
     }
-    if (Display_Messages == 0) {
+
+    if (Display_Errors == 0) {
         printf("Check error logs for full list of pedigrees with reset genotypes.\n");
         draw_line();
-        Display_Messages=1;
+        Display_Errors=1;
     }
 
     displayed_errors = 0;
-    tod_imend();
 
-    Tod tod_hmend("reset half typed");
+    Tod tod_hmend_all("reset all half typed");
+    Tod tod_hmend(20);
     if (hmend) {
-        int flush=0;
-        mssgf("Setting half-typed genotypes to unknowns for these pedigree/person/locus combinations:");
-        HalfTypedReset=1;
-        strcpy(err_msg, "  ");
-        /* set invalid genos to 0 0 */
-        halftypedp = halftyped;
-        while (halftypedp != NULL) {
-            lloc = Top->LocusTop->Locus[halftypedp->locus].linkage_loc_num;
-            entry = halftypedp->person;
-            ped = halftypedp->ped;
-            set_2alleles(LPedTop->Ped[ped].Entry[entry].Marker, lloc, 
-                         Top->LocusTop->Locus[halftypedp->locus].linkage_loc_rec, 0, 0);
-            grow(err_msg,
-                 " %s, %s: %s  ",
-                 Top->PedTree[ped].Name,
-                 Top->PedTree[ped].Entry[entry].LEntry->OrigID,
-                 LTop->Locus[halftypedp->locus].Name);
-            flush++;
-            if (flush == 2) {
-                SUPPRESS_MSSG(displayed_errors)
-                    if (displayed_errors > MAX_PED_ERRORS) {
-                        Display_Messages=0;
-                    }
-                mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
-                displayed_errors++;
-            }
-            halftypedp = halftypedp->next;
-        }
-        if (flush) {
-            mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
-        }
+        FILE *reset_fp = NULL;
+        mssgf("Setting any half-typed genotypes to unknowns for the indicated pedigree/person/locus combinations:");
+        HalfTypedReset=0;
 
-        abortf=1;
+        for (ped = 0; ped < Top->PedCnt; ped++) {
+            tod_hmend.reset();
+            for (locus = 0; locus < LTop->LocusCnt; locus++) {
+                stat = check_half_type(&(Top->PedTree[ped]), &PedStat, LTop,
+                                       ped, locus, &displayed_errors, LPedTop->UniqueIds,
+                                       &reset_fp, &first);
+                abortf = imax(abortf, stat);
+                if (stat) {
+                    HalfTypedReset=1;
+                }
+            }
+            tod_hmend("reset half typed");
+        }
+        /* set invalid genos to 0 0 */
+        if (reset_fp != NULL)
+            fclose(reset_fp);
+        msgvf(" Status: Reset %d half-typed markers.\n", PedStat.halftyped);
+        tod_hmend_all();
     } else {
         HalfTypedReset=0;
     }
 
-    if (Display_Messages == 0) {
+    if (Display_Errors == 0) {
+        printf("Check error logs for full list of half typed genotypes.\n");
+        draw_line();
+        Display_Errors=1;
+    }
+
+    Tod tod_xmend_all("reset ALL out-of-bound genotypes");
+    Tod tod_xmend(20);
+    int OOBReset=0;
+    if (aexceed) {
+        FILE *reset_fp = NULL;
+        mssgf("Setting any genotypes with out-of-bounds alleles to unknown ...");
+
+        for (ped = 0; ped < Top->PedCnt; ped++) {
+            tod_xmend.reset();
+            for (locus = 0; locus < LTop->LocusCnt; locus++) {
+                stat = check_out_of_bounds(&(Top->PedTree[ped]), &PedStat, LTop,
+                                           ped, locus, &displayed_errors, LPedTop->UniqueIds,
+                                           &reset_fp, &first);
+                abortf = imax(abortf, stat);
+                if (stat) {
+                    OOBReset=1;
+                }
+            }
+            tod_xmend("reset out-of-bound genotypes");
+        }
+        /* set invalid genos to 0 0 */
+        if (reset_fp != NULL)
+            fclose(reset_fp);
+        msgvf(" Status: Reset %d out-of-bound allele values.\n", PedStat.exceed_allcnt);
+        tod_xmend_all();
+    } else {
+        OOBReset=0;
+    }
+
+    if (Display_Errors == 0) {
+        printf("Check error logs for full list of out-of-bound genotypes.\n");
+        draw_line();
+        Display_Errors=1;
+    }
+
+    /* Store the resets instead of freeing */
+    Tod tod_wrs("write_reset_summary");
+/*
+    write_reset_summary(Top, invalid_genos, halftyped, exceed_allcnt,
+                        PedStat.genotype_invalid, PedStat.halftyped,
+                        PedStat.exceed_allcnt, LPedTop->UniqueIds);
+*/
+    tod_wrs();
+    if (Display_Errors == 0) {
         printf("Check error logs for full list of reset genotypes.\n");
         draw_line();
-        Display_Messages=1;
+        Display_Errors=1;
     }
-    tod_hmend();
-
-    Tod tod_oob("reset out of bounds");
-    if (aexceed) {
-        int flush=0;
-        displayed_errors = 0;
-
-        mssgf("Setting genotypes with out-of-bounds alleles to unknown ...");
-        strcpy(err_msg, "  ");
-
-        /* set invalid genos to 0 0 */
-        outofboundsp = exceed_allcnt;
-        while(outofboundsp != NULL) {
-            lloc = Top->LocusTop->Locus[outofboundsp->locus].linkage_loc_num;
-            entry = outofboundsp->person;
-            ped = outofboundsp->ped;
-            set_2alleles(LPedTop->Ped[ped].Entry[entry].Marker, lloc, 
-                         Top->LocusTop->Locus[outofboundsp->locus].linkage_loc_rec, 0, 0);
-            grow(err_msg, "Ped %s, Entry %s:Locus %s  ",
-                 Top->PedTree[ped].Name,
-                 Top->PedTree[ped].Entry[entry].LEntry->OrigID,
-                 LTop->Locus[outofboundsp->locus].Name);
-            flush++;
-            if (flush == 2) {
-                SUPPRESS_MSSG(displayed_errors)
-                    if (displayed_errors > MAX_PED_ERRORS) {
-                        Display_Messages = 0;
-                    }
-                mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
-                displayed_errors++;
-
-            }
-            outofboundsp = outofboundsp->next;
-        }
-
-        if (flush) {
-            mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
-        }
-        abortf=1;
-    }
-    tod_oob();
 
     Tod tod_uniq("create_unique_id");
     if (set_uniq) {
@@ -848,22 +760,16 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
     tod_uniq();
 
-    /* Store the resets instead of freeing */
-    Tod tod_wrs("write_reset_summary");
-    write_reset_summary(Top, invalid_genos, halftyped, exceed_allcnt,
-                        PedStat.genotype_invalid, PedStat.halftyped,
-                        PedStat.exceed_allcnt, LPedTop->UniqueIds);
-    tod_wrs();
-    if (Display_Messages == 0) {
-        printf("Check error logs for full list of reset genotypes.\n");
-        draw_line();
-        Display_Messages=1;
-    }
     if (PedStat.genotype_invalid || PedStat.halftyped || PedStat.exceed_allcnt) {
         log_line(mssgf);
         if (InputMode != INTERACTIVE_INPUTMODE && Mega2BatchItems[/* 26 */ Default_Reset_Invalid].item_read) {
             mssgf(
-                "DEFAULT HANDLING MODE FOR INVALID GENOTYPES SPECIFIED IN BATCH FILE.\n");
+                "DEFAULT HANDLING MODE FOR INVALID GENOTYPES SPECIFIED IN BATCH FILE:");
+            int copt = Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt;
+            if ((copt == 'y' || copt == 'Y')) 
+                msgvf(" Reset allele to 0/0 mode\n\n");
+            else
+                msgvf(" Leave allele mode\n\n");
         }
     }
 
@@ -899,6 +805,22 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     if (PedStat.genotype_invalid || PedStat.halftyped ||
         PedStat.exceed_allcnt || nonuniq) {
         log_line(mssgf);
+        warnvf("Mega2 also found these problems/errors in input data (see MEGA2.ERR for details): \n");
+        if (PedStat.halftyped > 0) {
+            warnvf(" -> %d Half-typed genotypes\n", PedStat.halftyped);
+            if (analysis == TO_MENDEL || SIMWALK2(analysis)) {
+                warnvf("       Half-typed genotypes will be set to unknown \n");
+                warnvf("       as required by %s\n", ProgName);
+            }
+        }
+        if (PedStat.genotype_invalid > 0) {
+            warnvf(" -> %d Mendelian-inconsistent genotypes\n", PedStat.genotype_invalid);
+        }
+
+        if (PedStat.exceed_allcnt > 0) {
+            warnvf(" -> %d Genotype allele numbers exceed locus allele count\n",
+                   PedStat.exceed_allcnt);
+        }
         printf("Check %s for details.\n", Mega2Err);
     }
 
@@ -913,6 +835,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     }
     Display_Messages=1;
+    Display_Errors=1;
 }
 
 
