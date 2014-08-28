@@ -1594,6 +1594,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         allele2[1] = '\0';
         // cycle through the locusts searching for allele markers....
         // cycle through the locusts searching for allele markers....
+        Tod tod_plink(20);
         for (i=0; i < file_desc->num_ped_cols + plink_info->allele_count; i++) {
             int mrkindex=ped_col_names[i].locus_number;
             if (mrkindex > 0 && LTop->Locus[mrkindex].Class == MARKER) {
@@ -1602,6 +1603,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
                     // we found an allele marker...
                     int SNP_count = 0;  // always start on a new byte
                     int SNP_data;       // byte from the binary file
+                    tod_plink.reset();
                     allele1[0] = plink_info->alleles[allele_i++]; // allele characters from the string
                     allele2[0] = plink_info->alleles[allele_i++];
                     for (pp=0; pp < num_ped_records; pp++) {
@@ -1609,6 +1611,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
                         process_binary_genotype(plink_info->bed_filep, &(persons[pp]), mrkindex, &SNP_count, &SNP_data, 
                                                 &LTop->Locus[mrkindex], allele1, allele2);
                     }
+                    tod_plink("cycle for individs");
                     i++;
                 }
             }

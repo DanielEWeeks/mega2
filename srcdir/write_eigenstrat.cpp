@@ -283,8 +283,11 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
                 
                 // PLINK .bed file v1.00 SNP-major mode (lists all individuals for a SNP).
                 fputc(0x01, _filep);
+                SNP_bufsz = ( _Top->IndivCnt + 3 ) >> 2;
+                SNP_buf = CALLOC((size_t) SNP_bufsz, unsigned char);
             }
-            void loci_start() { SNP_count = 0; SNP_data = 0; }
+            void file_trailer() { free(SNP_buf); }
+            void loci_start() { SNP_count = 0; SNP_data = 0; SNP_cp = SNP_buf; }
             void inner() {
                 // NOTE: For Eigenstrat non-quantitative (affection status) phenotype,
                 // values must be either 'Case' or 'Control'. Eigenstrat seems to have no
@@ -292,7 +295,9 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
                 if (!has_pheno()) return;
                 plink_binary::inner(_filep, _allele1, _allele2);
             }
-            void loci_end() { if ((SNP_count & 0x7) != 0) fputc(SNP_data, _filep); }
+//          void loci_end() { if ((SNP_count & 0x7) != 0) fputc(SNP_data, _filep); }
+            void loci_end() { if ((SNP_count & 0x7) != 0) *SNP_cp++ = SNP_data;
+                              fwrite(SNP_buf, 1, SNP_bufsz, _filep); }
         } *xp = new eigenstrat_snp_major(Top);
         
         xp->iterate();

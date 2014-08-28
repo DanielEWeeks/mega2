@@ -124,8 +124,11 @@ public:
 
 class plink_binary {
 public:
-    int SNP_count;      // always start on a new byte
-    int SNP_data;       // byte to write to the binary file
+    int  SNP_count;      // always start on a new byte
+    int  SNP_data;       // byte to write to the binary file
+    int  SNP_bufsz;
+    unsigned char *SNP_buf;
+    unsigned char *SNP_cp;
 
     void file_header(FILE *filep) {
         // Write the magic numbers for a PLINK V1.00 .bed file
@@ -152,7 +155,8 @@ public:
         SNP_count += 2;
 
         if ((SNP_count & 0x7) == 0) {
-            fputc(SNP_data, filep);
+            *SNP_cp++ = SNP_data;
+            /*   fputc(SNP_data, filep) */;
             SNP_data = SNP_count = 0;
         }
     }
