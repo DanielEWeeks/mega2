@@ -457,9 +457,9 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     Tod tod_cepi("check epilog code: do reset");
     /* set imend and hmend to 1 if errors are present */
-    chk_imend   = 1;
-    chk_hmend   = (Input_Format == in_format_binary_PED) ? 0 : 1; // PLINK binary is NEVER halftyped
-    chk_aexceed = (Input_Format == in_format_linkage) ? 1 : 0;    // only necessary for Linkage
+    imend = chk_imend   = 1;
+    hmend = chk_hmend   = (Input_Format == in_format_binary_PED) ? 0 : 1; // PLINK binary is NEVER halftyped
+    aexceed = chk_aexceed = (Input_Format == in_format_linkage) ? 1 : 0;    // only necessary for Linkage
     if (loc_err == 1 || PedStat.entry_unconnected > 0 || freq_mis || nonuniq ||
         num_mito_hetero > 0 || num_mito_non_maternal > 0) {
         draw_line();  exclaim();
@@ -503,11 +503,6 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             if (Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'n' ||
                 Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'N')
                 hmend = imend = aexceed = 0;
-            else {
-                hmend   = chk_hmend;
-                imend   = chk_imend;
-                aexceed = chk_aexceed;
-            }
         } else {
             int imendf = 0, hmendf = 0, aexceedf = 0;
             printf("How shall we proceed further?\n");
@@ -624,7 +619,14 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     Tod tod_hmend_all("reset all half typed");
     Tod tod_hmend(20);
-    if (chk_hmend) {
+    /* NB
+       chk_hmend is true iff there is reason to believe the checking is necessary
+       hmend is true iff the user said yes please reset the bad data
+       using chk_hmend in the conditional lets the code look for the bad data and report it
+          if hmend is also set it is reset and written to .RESET
+       using hmend in the conditional does everything iff the user requested a reset
+    */
+    if (/*chk_*/hmend) {
         FILE *reset_fp = NULL;
         mssgf("Setting any half-typed genotypes to unknowns for the indicated pedigree/person/locus combinations:");
         HalfTypedReset=0;
@@ -661,7 +663,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     Tod tod_xmend_all("reset ALL out-of-bound genotypes");
     Tod tod_xmend(20);
     int OOBReset=0;
-    if (chk_aexceed) {
+    if (/*chk_*/aexceed) {
         FILE *reset_fp = NULL;
         mssgf("Setting any genotypes with out-of-bounds alleles to unknown ...");
 
@@ -696,7 +698,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     Tod tod_imend_all("reset ALL non mendelian");
     Tod tod_imend(20);
-    if (chk_imend) {
+    if (/*chk_*/imend) {
         FILE *reset_fp = NULL;
         int rm;
         NonMendelianReset=0;
