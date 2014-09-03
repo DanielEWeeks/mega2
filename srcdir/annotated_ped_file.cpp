@@ -4411,7 +4411,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 	//mssgf("");
 	if (PLINK.plink) {
         mssgvf("%d (of %d) markers to be included from %s\n",
-               PLINK.markers_total ,PLINK.markers_included, mega2_input_files[2]);
+               PLINK.markers_total ,PLINK.markers_included, map_files);
 	}
 	output_stats();
 #endif /* HIDESTATUS */

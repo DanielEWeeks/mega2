@@ -900,7 +900,7 @@ int check_ped_data(ped_tree *PedTree, ped_status *PedStatus,
 int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
                         locus_top *LTop, int ped_num, int locus,
                         int *display_error, int uniqueids,
-                        FILE **reset_fp, bool *first)
+                        FILE **reset_fp, bool *first, int reset)
 {
     int entry, lloc, iserr;
     register ped_rec *PedEntry;
@@ -949,8 +949,9 @@ int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
             PedStatus->exceed_allcnt++;
             abortf=1;
 
-            set_2alleles(PedEntry->LEntry->Marker, lloc, 
-                         LTop->Locus[locus].linkage_loc_rec, 0, 0);
+            if (reset)
+                set_2alleles(PedEntry->LEntry->Marker, lloc, 
+                             LTop->Locus[locus].linkage_loc_rec, 0, 0);
 
             if (*reset_fp == NULL) {
                 if (*first) {
@@ -959,7 +960,8 @@ int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
                     *first = 0;
                 } else
                     *reset_fp = fopen(Mega2ResetRun, "a");
-                fprintf(*reset_fp, "Genotypes with out-of-bounds alleles.\n");
+                fprintf(*reset_fp, "Genotypes with out-of-bounds alleles %s:\n",
+                        reset ? "RESET" : "ALLOWED");
                 fprintf(*reset_fp, "Pedigree   Person    Marker\n");
             }
             fprintf(*reset_fp, "%s   %s   %s\n",
@@ -974,7 +976,7 @@ int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
 int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
                     locus_top *LTop, int ped_num, int locus,
                     int *display_error, int uniqueids,
-                    FILE **reset_fp, bool *first)
+                    FILE **reset_fp, bool *first, int reset)
 {
     int entry, lloc, iserr;
     register ped_rec *PedEntry;
@@ -1006,8 +1008,9 @@ int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
                    LTop->Locus[locus].Name);
             (*display_error)++;
 
-            set_2alleles(PedEntry->LEntry->Marker, lloc, 
-                         LTop->Locus[locus].linkage_loc_rec, 0, 0);
+            if (reset)
+                set_2alleles(PedEntry->LEntry->Marker, lloc, 
+                             LTop->Locus[locus].linkage_loc_rec, 0, 0);
 
             if (*reset_fp == NULL) {
                 if (*first) {
@@ -1016,7 +1019,8 @@ int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
                     *first = 0;
                 } else
                     *reset_fp = fopen(Mega2ResetRun, "a");
-                fprintf(*reset_fp, "Half-typed genotypes:\n");
+                fprintf(*reset_fp, "Half-typed genotypes %s:\n",
+                        reset ? "RESET" : "ALLOWED");
                 fprintf(*reset_fp, "Pedigree   Person    Marker\n");
             }
             fprintf(*reset_fp, "%s   %s   %s\n",

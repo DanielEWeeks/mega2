@@ -329,15 +329,21 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
 static int is_int_in_string(const char *str, const int i)
 {
     char *entry = (char *)str;
-    
+    char *endptr;
+    int num, num2;
+
     while (*entry != '\0' && *entry != 'e') {
-        int num = 0;
-        while (isspace((int)*entry)) entry++;
-        while (isdigit((int)*entry)) {
-            num *= 10;
-            num += ((int)*entry++ - '0');
-        }
-        if (num == i) return 1;
+        num  = strtol(entry, &endptr, 10);
+        entry = endptr;
+        while ((*entry != '\0' && *entry != 'e') && (isspace((int)*entry))) entry++;
+        if (*entry == ',') {
+            if (num == i) return 1;
+            entry++;
+        } else if (*entry == '-' && *(entry+1) != 0) {
+            num2  = strtol(entry + 1, &endptr, 10);
+            if (i >= num && i <= num2) return 1;
+            entry = endptr;
+        } else if (num == i) return 1;
     }
     return 0;
 }

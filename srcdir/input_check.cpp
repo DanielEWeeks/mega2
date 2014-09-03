@@ -290,6 +290,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     int             stat, abortl=0, abortf=0, loc_err=0;
     /* below are the error flags */
     int             aexceed, imend, hmend, freq_mis;
+    int             chk_aexceed, chk_imend, chk_hmend;
     int             set_uniq=0, nonuniq;
 
     register locus_top *LTop = Top->LocusTop;
@@ -456,9 +457,9 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     Tod tod_cepi("check epilog code: do reset");
     /* set imend and hmend to 1 if errors are present */
-    imend   = 1;
-    hmend   = (Input_Format == in_format_binary_PED) ? 0 : 1;  // PLINK binary is NEVER halftyped
-    aexceed = (Input_Format == in_format_linkage) ? 1 : 0;     // only necessary for Linkage
+    chk_imend   = 1;
+    chk_hmend   = (Input_Format == in_format_binary_PED) ? 0 : 1; // PLINK binary is NEVER halftyped
+    chk_aexceed = (Input_Format == in_format_linkage) ? 1 : 0;    // only necessary for Linkage
     if (loc_err == 1 || PedStat.entry_unconnected > 0 || freq_mis || nonuniq ||
         num_mito_hetero > 0 || num_mito_non_maternal > 0) {
         draw_line();  exclaim();
@@ -502,34 +503,40 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             if (Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'n' ||
                 Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'N')
                 hmend = imend = aexceed = 0;
+            else {
+                hmend   = chk_hmend;
+                imend   = chk_imend;
+                aexceed = chk_aexceed;
+            }
         } else {
+            int imendf = 0, hmendf = 0, aexceedf = 0;
             printf("How shall we proceed further?\n");
             while (select != 0) {
                 strcpy(toggle_str, "");
                 menu_item=0;
                 draw_line();
                 printf("0) Done with this menu - please proceed\n"); menu_item++;
-                if (1 /* PedStat.halftyped */) {
+                if (chk_hmend /* PedStat.halftyped */) {
                     if (analysis == TO_MENDEL || SIMWALK2(analysis)) {
                         printf(" NOTE: Proceeding will zero out all half-typed individuals.\n");
                     } else {
                         printf(" %d) Set half-typed genotypes to unknown [%s].\n", menu_item,
-                               yorn[hmend]);
+                               yorn[hmendf]);
                         sprintf(toggle_str, "; options %d", menu_item);
                         halftyped_select = menu_item++;
                     }
                 }
-                if (1 /* PedStat.genotype_invalid */) {
+                if (chk_imend /* PedStat.genotype_invalid */) {
                     printf(" %d) Set all genotypes to unknown within entire pedigrees\n",
                            menu_item);
                     printf("    at each Mendelianly-inconsistent locus? [%s]\n",
-                           yorn[imend]);
+                           yorn[imendf]);
                     grow(toggle_str, ", %d", menu_item);
                     invalid_select = menu_item++;
                 }
-                if (1 /* PedStat.exceed_allcnt */) {
+                if (chk_aexceed /* PedStat.exceed_allcnt */) {
                     printf(" %d) Set out-of-bound genotypes to unknown? [%s]\n",
-                           menu_item, yorn[aexceed]);
+                           menu_item, yorn[aexceedf]);
                     grow(toggle_str, ", %d", menu_item);
                     exceedall_select = menu_item++;
                 }
@@ -562,13 +569,13 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                 case 4:
                 case 5:
                     if (select == halftyped_select) {
-                        hmend = (hmend ? 0 : 1);
+                        hmendf = (hmendf ? 0 : 1);
                         break;
                     } else if (select == invalid_select) {
-                        imend = (imend ? 0 : 1);
+                        imendf = (imendf ? 0 : 1);
                         break;
                     } else if (select == exceedall_select) {
-                        aexceed = (aexceed ? 0 : 1);
+                        aexceedf = (aexceedf ? 0 : 1);
                         break;
                     } else if (select == uniq_select) {
                         set_uniq = (set_uniq ? 0 : 1);
@@ -582,6 +589,9 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                     break;
                 }
             }
+            hmend = hmendf;
+            imend = imendf;
+            aexceed = aexceedf;
         }
     }
     tod_cepi();
@@ -608,70 +618,13 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
 
     /* else abort = 1*/
+    Display_Errors=1;
     displayed_errors=0;
     bool first = true;
-    FILE *reset_fp = NULL;
-
-    Tod tod_imend_all("reset ALL non mendelian");
-    Tod tod_imend(20);
-    if (imend) {
-        int rm;
-        NonMendelianReset=0;
-        for (ped = 0; ped < Top->PedCnt; ped++) {
-            ped_rec **Sibs = CALLOC((size_t) Top->PedTree[ped].EntryCnt, ped_rec *);
-            tod_imend.reset();
-            for (locus = 0; locus < LTop->LocusCnt; locus++) {
-                if (LTop->Locus[locus].chromosome == MITO_CHROMOSOME) {
-                    continue;           /* Continue without inheritance checks */
-                }
-                rm = check_invalid_fam(&(Top->PedTree[ped]), &PedStat, LTop,
-                                       ped, locus, &displayed_errors, LPedTop->UniqueIds,
-                                       Sibs);
-                if (rm) {
-                    if (first) {
-                        reset_fp = fopen(Mega2ResetRun, "w");
-                        summary_time_stamp(mega2_input_files, reset_fp, "");
-                        first = false;
-                        fprintf(reset_fp, "Mendelianly inconsistent pedigrees:\n");
-                        fprintf(reset_fp, "Pedigree   Person    Marker\n");
-                    }
-
-                    NonMendelianReset = 1;
-                    lloc = LTop->Locus[locus].linkage_loc_num;
-                    fprintf(reset_fp, "%s      All   %s\n", 
-                            Top->PedTree[ped].Name, 
-                            LTop->Locus[locus].Name);
-
-                    strcpy(err_msg, "    PED ");
-                    for (entry=0; entry < Top->PedTree[ped].EntryCnt; entry ++) {
-                        /* set invalid genos to 0 0 */
-                        set_2alleles(Top->PedTree[ped].Entry[entry].LEntry->Marker, lloc, 
-                                     Top->LocusTop->Locus[locus].linkage_loc_rec, 0, 0);
-                    }
-                }
-            }
-            tod_imend("reset non mendelian");
-            free(Sibs);
-        }
-        if (reset_fp != NULL) {
-            fclose(reset_fp);
-        }
-        tod_imend_all();
-    } else {
-        NonMendelianReset=0;
-    }
-
-    if (Display_Errors == 0) {
-        printf("Check error logs for full list of pedigrees with reset genotypes.\n");
-        draw_line();
-        Display_Errors=1;
-    }
-
-    displayed_errors = 0;
 
     Tod tod_hmend_all("reset all half typed");
     Tod tod_hmend(20);
-    if (hmend) {
+    if (chk_hmend) {
         FILE *reset_fp = NULL;
         mssgf("Setting any half-typed genotypes to unknowns for the indicated pedigree/person/locus combinations:");
         HalfTypedReset=0;
@@ -681,7 +634,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             for (locus = 0; locus < LTop->LocusCnt; locus++) {
                 stat = check_half_type(&(Top->PedTree[ped]), &PedStat, LTop,
                                        ped, locus, &displayed_errors, LPedTop->UniqueIds,
-                                       &reset_fp, &first);
+                                       &reset_fp, &first, hmend);
                 abortf = imax(abortf, stat);
                 if (stat) {
                     HalfTypedReset=1;
@@ -703,11 +656,12 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         draw_line();
         Display_Errors=1;
     }
+    displayed_errors = 0;
 
     Tod tod_xmend_all("reset ALL out-of-bound genotypes");
     Tod tod_xmend(20);
     int OOBReset=0;
-    if (aexceed) {
+    if (chk_aexceed) {
         FILE *reset_fp = NULL;
         mssgf("Setting any genotypes with out-of-bounds alleles to unknown ...");
 
@@ -716,7 +670,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             for (locus = 0; locus < LTop->LocusCnt; locus++) {
                 stat = check_out_of_bounds(&(Top->PedTree[ped]), &PedStat, LTop,
                                            ped, locus, &displayed_errors, LPedTop->UniqueIds,
-                                           &reset_fp, &first);
+                                           &reset_fp, &first, aexceed);
                 abortf = imax(abortf, stat);
                 if (stat) {
                     OOBReset=1;
@@ -738,6 +692,69 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         draw_line();
         Display_Errors=1;
     }
+    displayed_errors = 0;
+
+    Tod tod_imend_all("reset ALL non mendelian");
+    Tod tod_imend(20);
+    if (chk_imend) {
+        FILE *reset_fp = NULL;
+        int rm;
+        NonMendelianReset=0;
+        for (ped = 0; ped < Top->PedCnt; ped++) {
+            ped_rec **Sibs = CALLOC((size_t) Top->PedTree[ped].EntryCnt, ped_rec *);
+            tod_imend.reset();
+            for (locus = 0; locus < LTop->LocusCnt; locus++) {
+                if (LTop->Locus[locus].chromosome == MITO_CHROMOSOME) {
+                    continue;           /* Continue without inheritance checks */
+                }
+                rm = check_invalid_fam(&(Top->PedTree[ped]), &PedStat, LTop,
+                                       ped, locus, &displayed_errors, LPedTop->UniqueIds,
+                                       Sibs);
+                if (rm) {
+                    if (reset_fp == NULL) {
+                        if (first) {
+                            reset_fp = fopen(Mega2ResetRun, "w");
+                            summary_time_stamp(mega2_input_files, reset_fp, "");
+                            first = false;
+                        } else
+                            reset_fp = fopen(Mega2ResetRun, "a");
+                        fprintf(reset_fp, "Mendelianly inconsistent pedigrees %s:\n",
+                                imend ? "RESET" : "ALLOWED");
+                        fprintf(reset_fp, "Pedigree   Person    Marker\n");
+                    }
+                    fprintf(reset_fp, "%s      All   %s\n", 
+                            Top->PedTree[ped].Name, 
+                            LTop->Locus[locus].Name);
+
+                    NonMendelianReset = 1;
+                    if (imend) {
+                        lloc = LTop->Locus[locus].linkage_loc_num;
+
+                        for (entry=0; entry < Top->PedTree[ped].EntryCnt; entry ++) {
+                            /* set invalid genos to 0 0 */
+                            set_2alleles(Top->PedTree[ped].Entry[entry].LEntry->Marker, lloc, 
+                                         Top->LocusTop->Locus[locus].linkage_loc_rec, 0, 0);
+                        }
+                    }
+                }
+            }
+            tod_imend("reset non mendelian");
+            free(Sibs);
+        }
+        if (reset_fp != NULL) {
+            fclose(reset_fp);
+        }
+        tod_imend_all();
+    } else {
+        NonMendelianReset=0;
+    }
+
+    if (Display_Errors == 0) {
+        printf("Check error logs for full list of pedigrees with reset genotypes.\n");
+        draw_line();
+        Display_Errors=1;
+    }
+    displayed_errors = 0;
 
     /* Store the resets instead of freeing */
     Tod tod_wrs("write_reset_summary");
@@ -767,9 +784,9 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                 "DEFAULT HANDLING MODE FOR INVALID GENOTYPES SPECIFIED IN BATCH FILE:");
             int copt = Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt;
             if ((copt == 'y' || copt == 'Y')) 
-                msgvf(" Reset allele to 0/0 mode\n\n");
+                msgvf(" Reset allele to 0/0\n\n");
             else
-                msgvf(" Leave allele mode\n\n");
+                msgvf(" Leave allele alone\n\n");
         }
     }
 

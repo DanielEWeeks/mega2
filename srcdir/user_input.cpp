@@ -693,20 +693,16 @@ static int menu1_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
             draw_line();
             printf("              Mega2 %s Maximum alleles per marker menu:\n", Mega2Version);
             draw_line();
-            printf("0) Done with this menu - please proceed\n");
-            printf("%s%1d) 2 alleles (2 bits/marker)\n",
-                   1 == MARKER_SCHEME ? "*" : " ", 1);
-            printf("%s%1d) 255 alleles (2 bytes/marker)\n",
-                   2 == MARKER_SCHEME ? "*" : " ", 2);
-            printf("%s%1d) 256 or more alleles (16 bytes/marker)\n",
-                   3 == MARKER_SCHEME ? "*" : " ", 3);
-            printf("Select from options 0-3 > ");
+            printf("%1d) 2 alleles (2 bits/marker)\n", 1);
+            printf("%1d) 255 alleles (2 bytes/marker)\n", 2);
+            printf("%1d) 256 or more alleles (16 bytes/marker)\n", 3);
+            printf("Select from options 1-3 > ");
 
             fcmap(stdin, "%d", &ans); newline;
-            if (ans == 0) break;
-            else if (ans <= 3 && ans >= 1)
+            if (ans <= 3 && ans >= 1) {
                 MARKER_SCHEME = ans;
-            else
+                break;
+            } else
                 printf("MARKER_SCHEME allowed values are 1, 2 or 3\n");
         }
     } else
@@ -1180,19 +1176,16 @@ void menu1(file_format *infl_type,
                 draw_line();
                 printf("              Mega2 %s input file type menu:\n", Mega2Version);
                 draw_line();
-                printf("0) Done with this menu - please proceed\n");
 //      ignore 9th entry (only for old batch files)
                 for (ans = 0; ans < 8; ans++)
-                    printf("%s%1d) %s\n",
-                           ans == Input_Format ? "*" : " ", ans+1,
-                           INPUT_FORMAT_STR[ans]);
-                printf("Select from options 0-8 > ");
+                    printf("%1d) %s\n", ans+1, INPUT_FORMAT_STR[ans]);
+                printf("Select from options 1-8 > ");
 
                 fcmap(stdin, "%d", &ans); newline;
-                if (ans == 0) break;
-                else if (ans <= 8 && ans >= 1)
+                if (ans <= 8 && ans >= 1) {
                     Input_Format = (INPUT_FORMAT_t) (ans - 1);
-                else
+                    break;
+                } else
                     printf("allowed values are 1, 2, 3, 4, 5, 6, 7, 8.\n");
             }
             reset = 1;
@@ -1895,8 +1888,30 @@ void set_missing_quant_output(linkage_ped_top *Top, analysis_type analysis)
     // For these options that value will be used later in the program so there
     // is no point in asking the user now or checking the value of the batch
     // file item Value_Missing_Quant_On_Output.
-    if (!analysis->output_quant_can_define_missing_value()) return;
-    
+    if (!analysis->output_quant_can_define_missing_value()) {
+        if (analysis->output_quant_default_value() != NULL) {
+            const char *missingq = analysis->output_quant_default_value();
+            char *end;
+            double value;
+            if (analysis->output_quant_must_be_numeric()) {
+                value = strtod((const char *)missingq, &end);
+                    // Did a successful numeric conversion take place?
+                if (strlen(missingq) == 0 || strlen(end) != 0 || errno == ERANGE) {
+                    errorvf("Analysis type '%s' requires quantitative values to be numeric.\n",
+                            analysis->_name);
+                    errorvf("But converting specified value '%s' to a floating point number failed.\n", missingq);
+                    EXIT(DATA_TYPE_ERROR);
+                } else if (check_quant_phenotype_data_has_value(Top, value)) {
+                    errorvf("The default missing quantitative value is among the values found in the set of quantitative values");
+                    EXIT(DATA_TYPE_ERROR);
+                }
+            }
+            strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name, missingq);
+            Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read = 1;
+        }
+        return;
+    }
+
     if (!Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read) {
         
         if (InputMode == BATCH_FILE_INPUTMODE) {

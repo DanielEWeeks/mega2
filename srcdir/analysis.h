@@ -629,7 +629,7 @@ public:
     virtual bool allow_sex_map() { return true; }
     virtual bool allow_trait_combination()  { return true; }
     virtual bool is_sub_option()  { return true; }
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual bool qtl_disallow()  { return true; }
     virtual bool simwalk2()      { return true; }
 
@@ -665,7 +665,7 @@ public:
     virtual bool allow_no_aff_trait()     { return true; }
     virtual bool allow_no_trait()  { return true; }
     virtual bool is_sub_option()  { return true; }
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual bool qtl_disallow() { return true; }
     virtual bool simwalk2()     { return true; }
 
@@ -702,7 +702,7 @@ public:
     virtual bool allow_no_trait()  { return true; }
     virtual bool allow_sex_map() { return true; }
     virtual bool is_sub_option()  { return true; }
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual bool qtl_disallow()  { return true; }
     virtual bool simwalk2()      { return true; }
 
@@ -738,7 +738,7 @@ public:
     virtual bool allow_sex_map() { return true; }
     virtual bool allow_trait_combination()  { return true; }
     virtual bool is_sub_option()  { return true; }
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual bool qtl_disallow()  { return true; }
     virtual bool simwalk2()      { return true; }
 
@@ -775,7 +775,7 @@ public:
     virtual bool allow_trait_combination()  { return true; }
     virtual bool is_sub_option()  { return true; }
 
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
 
     virtual bool qtl_disallow()  { return true; }
     virtual bool simwalk2()      { return true; }
@@ -1011,7 +1011,7 @@ public:
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
 
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
 
     virtual bool qtl_allow()     { return true; }
 
@@ -1041,7 +1041,7 @@ public:
    ~CLASS_MENDEL4() {}
 
     virtual bool allow_sex_map() { return true; }
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual bool qtl_allow()     { return true; }
 
     // Accepts character alleles...
@@ -1068,7 +1068,7 @@ public:
     virtual bool allow_affection_liability_class()  { return true; }
     virtual bool allow_sex_map() { return true; }
     virtual bool allow_trait_combination()  { return true; }
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual bool qtl_allow()     { return true; }
 
     // Accepts character alleles...
@@ -1108,7 +1108,7 @@ public:
     virtual bool allele_data_use_name_if_available() { return true; }
 
     // missing values are always replaced with an 'x'
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual const char* output_quant_default_value() { return "x"; }
 
     virtual bool qtl_disallow()  { return true; }
@@ -1147,7 +1147,7 @@ public:
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
 
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
 
     virtual bool qtl_allow()     { return true; }
 
@@ -1222,7 +1222,7 @@ public:
     // II.3. Marker/Trait Descriptions: header.dat
     // To indicate an unknown phenotype, the phenotype equals -9999 or the missing value code
     // specified for the variable in header.dat (which we no longer do)
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
 
     virtual bool qtl_allow()    { return true; }
 
@@ -1324,7 +1324,7 @@ public:
     // I have not been able to find the manuals for SAGE v3 online.
     // So, I have decided not to break things by trying to incorporate the
     // missing output quant batch file item in this version of SAGE.
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
 
     virtual bool qtl_allow() { return true; }
 

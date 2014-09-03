@@ -718,27 +718,24 @@ void   summary_time_stamp(char **input_files, FILE *fp, const char *message)
             }
         }
 #endif
-/*     fprintf(fp, "  Locus file:              %s\n", input_files[1]);  */
-/*     fprintf(fp, "  Pedigree file:           %s\n", input_files[0]); */
-/*     fprintf(fp, "  Map file:                %s\n", input_files[2]); */
-/*     if (input_files[3] != NULL)  */
-/*       fprintf(fp, "  Omit file:               %s\n", input_files[3]); */
-        if (UntypedPedOpt != -1)
-            fprintf(fp, "  Untyped pedigree option: %s\n",
-                    untyped_ped_messg(UntypedPedOpt, mssg));
-        if (NonMendelianReset == 1) {
-            fprintf(fp,
-                    "Mendelianly-inconsistent genotypes set to unknowns.\n");
-        } else if (HalfTypedReset == 0) {
-            fprintf(fp, "Mendelianly-inconsistent genotypes included in output.\n");
-        }
-        if (HalfTypedReset == 1) {
-            fprintf(fp, "Half-typed individuals set to unknowns.\n");
-        } else if (HalfTypedReset == 0) {
-            fprintf(fp, "Half-typed individuals' genotypes included in output.\n");
-        }
-    }
 
+    }
+    if (UntypedPedOpt != -1)
+        fprintf(fp, "Untyped pedigree option: %s\n",
+                untyped_ped_messg(UntypedPedOpt, mssg));
+/*
+    if (NonMendelianReset == 1) {
+        fprintf(fp,
+                "Mendelianly-inconsistent genotypes set to unknowns.\n");
+    } else if (HalfTypedReset == 0) {
+        fprintf(fp, "Mendelianly-inconsistent genotypes included in output.\n");
+    }
+    if (HalfTypedReset == 1) {
+        fprintf(fp, "Half-typed individuals set to unknowns.\n");
+    } else if (HalfTypedReset == 0) {
+        fprintf(fp, "Half-typed individuals' genotypes included in output.\n");
+    }
+*/
     if (strcmp(message, ""))
         fprintf(fp, "%s\n", message);
     fprintf(fp, "---------------------------------------------\n\n");
