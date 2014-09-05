@@ -153,6 +153,8 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
 
 static int parse_phe_types(char *phe_file, char ***phe_names, int **phe_types);
 
+extern int FLOAT_AFFECT, Display_FLOAT_AFFECT;
+
 /* PLINK parameters */
 #include "plink_ext.h"
 /* 
@@ -4406,6 +4408,15 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         Top = read_plink_ped_file(ped_file, bed_file, plink_info,
                                   phe_cols, LTop, EXLTop, bp_map, &AnnotatedFileInfo,
                                   num_groups, groups);
+        SUPPRESS_MSSG_NESTED_FORCE(FLOAT_AFFECT);
+        if (FLOAT_AFFECT > 10) {
+            warnvf("There were %d instances of decimal numbers read where affects were expected.\n");
+            if (PLINK.plink) {
+                warnvf("Perhaps you should rerun Mega2 and specify that the fam/ped trait is quantitative.\n",
+                       FLOAT_AFFECT);
+            }
+        }
+        SUPPRESS_MSSG_NESTED_FINI(FLOAT_AFFECT);
         tod_ppf();
 #ifndef HIDESTATUS
 	//mssgf("");

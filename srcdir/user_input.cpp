@@ -1099,8 +1099,15 @@ void menu1(file_format *infl_type,
                 if (*PLINKArgs == 0) {
                     printf("ERROR: You did not specify any PLINK parameters.\n");
                     exit_loop=0;
-                } else
+                } else if (exit_loop) {
                     Mega2BatchItems[PLINK_Args].item_read = 1;
+                    printf("NOTE: You have indicated the trait in the fam/ped file is named \"%s\" and\n",
+                           PLINK.trait);
+                    printf("      is %s trait.  You also have specified the --missing-phenotype is %g.\n",
+                           PLINK.traitType ? "a quantitative" : "an affective",  PLINK.pheno_value);
+                    printf("NOTE: If this is not what you intended, got back and edit menu line 2.\n");
+                }
+
             }
             if (Input_Format == in_format_binary_PED && access(*auxfl_name, F_OK) != 0) {
                 printf("ERROR: You did not specify a PLINK binary data file.\n");

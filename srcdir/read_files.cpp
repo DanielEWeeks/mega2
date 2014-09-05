@@ -116,10 +116,10 @@ void premakeped_omit_file(linkage_ped_top *Top,
 			  const char *omitfl_name,
                           const int raw_allele);
 
+int FLOAT_AFFECT = 0, Display_FLOAT_AFFECT = 0;
+
 /**************************************/
 static int check_ped_file_cols(int cols, FILE *fp, char *file_name)
-
-
 {
 
     /* special function to see if the pedigree file has the correct
@@ -265,10 +265,12 @@ int read_quant_phen(FILE *filep, int locusnm, void *ventry,
     return lch;
 }
 
+
 int plink_annot_string_aff_phen(int line, pheno_rec *locus,
                                 pheno_pedrec_data *pedrec, const char *cstatus)
 {
     int status;
+    char *endptr = 0;
 
     pedrec->Affection.Status = UNDEF;
     pedrec->Affection.Class = UNDEF;
@@ -277,7 +279,17 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
         status = 0;
     } else {
         status = -1;
-        sscanf(cstatus, "%d", &status);
+        status = strtol(cstatus, &endptr, 10);
+        if (*endptr) {
+            SUPPRESS_MSSG_NESTED(FLOAT_AFFECT);
+            if (*endptr == '.')
+                errorvf("Line %d, %s: Floating point number used for an affection status %s, setting to unknown.\n",
+                        line, locus->Name, cstatus);
+            else
+                errorvf("Line %d, %s: bad number used for an affection status %s, setting to unknown.\n",
+                        line, locus->Name, cstatus);
+            status = 0;
+        }
     }
 
     if (status != 0 && status != 1 && status != 2) {
@@ -311,7 +323,8 @@ int read_aff_phen(FILE *filep, int locusnm,
 {
     int lch, status, lclass;
     int *estatus=NULL, *eclass=NULL;
-    char cstatus[5], cclass[5];
+    char *endptr = 0;
+    char cstatus[128], cclass[128];
 
 
     linkage_ped_rec *entry = (linkage_ped_rec *) ventry;
@@ -339,11 +352,21 @@ int read_aff_phen(FILE *filep, int locusnm,
             status = 0;
         } else {
             status = -1;
-            sscanf(cstatus, "%d", &status);
+            status = strtol(cstatus, &endptr, 10);
         }
     } else {
         status = -1;
-        sscanf(cstatus, "%d", &status);
+        status = strtol(cstatus, &endptr, 10);
+    }
+    if (endptr && *endptr) {
+        SUPPRESS_MSSG_NESTED(FLOAT_AFFECT);
+        if (*endptr == '.')
+            errorvf("Line %d, %s: Floating point number used for an affection status %s, setting to unknown.\n",
+                    anentry->rec_num, locus->Name, cstatus);
+        else
+            errorvf("Line %d, %s: bad number used for an affection status %s, setting to unknown.\n",
+                    anentry->rec_num, locus->Name, cstatus);
+        status = 0;
     }
 
     if (FCMAP_NARGS < 1) {
@@ -1896,6 +1919,11 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
             }
             set_missing_quant_input((linkage_ped_top *) NULL, analysis);
             Top = read_linkage_ped_file(pfilep, LTop, col2locus);
+            SUPPRESS_MSSG_NESTED_FORCE(FLOAT_AFFECT);
+            if (FLOAT_AFFECT > 10) {
+                warnvf("There were %d instances of decimal numbers read where affects were expected.\n");
+            }
+            SUPPRESS_MSSG_NESTED_FINI(FLOAT_AFFECT);
             Top->EXLTop = EXLTop;
         }
         log_line(mssgf);
