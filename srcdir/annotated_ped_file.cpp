@@ -161,7 +161,7 @@ extern int FLOAT_AFFECT, Display_FLOAT_AFFECT;
     plink, no_fid, no_parents, no_pheno, map3, 
     cM, missing_pheno, geneticMapType, pheno_value, trait
 */
-PLINK_t PLINK = { not_plink_format, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"};
+PLINK_t PLINK = { 0, not_plink_format, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"};
 
 /* end PLINK parameters */
 
@@ -5080,6 +5080,8 @@ int PLINK_args(char *str, int xcf)
         }
         tok = strtok(NULL, "\t ");
     }
+    PLINK.xcf = xcf;
+
 
     if (Input_Format == in_format_binary_VCF ||
         Input_Format == in_format_compressed_VCF ||

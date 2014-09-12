@@ -142,10 +142,13 @@ typedef struct _batch_item_ {
 #define Input_PLINK_Map_File 55
 #define VCF_Args 56
 #define VCF_Marker_Alternative_INFO_Key 57
+#define Value_Missing_Affect_On_Input 58
+#define Value_Missing_Affect_On_Output 59
+#define Output_File_Stem 60
 // Number of keywords which will appear in the batch file.
 // The above list is zero based, so this would be the last number + 1
 // You must update this number when you add an additional keyword.
-#define NUM_KEYS 58
+#define NUM_KEYS 61
 
 // THIS VARIABLE IS USED EVERYWHERE...
 // It is defined in batch_input.cpp or by the new object system for

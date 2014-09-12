@@ -44,6 +44,7 @@ public:
    ~CLASS_EIGENSTRAT() {}
 
     virtual const char* output_quant_default_value() { return "-100"; }
+    virtual const char* output_affect_default_value() { return "-100"; }
 
     void replace_chr_number(char *file_names[], int numchr);
 

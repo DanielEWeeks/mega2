@@ -181,7 +181,11 @@ static char keywords[NUM_KEYS][KEYWORD_LEN] = {
     "Input_Path",
     "Input_PLINK_Map_File",
     "VCF_Args",
-    "VCF_Marker_Alternative_INFO_Key"
+    "VCF_Marker_Alternative_INFO_Key",
+    "Value_Missing_Affect_On_Input",
+    "Value_Missing_Affect_On_Output",
+    "Output_File_Stem"
+
 };
 
 void batch_file_doc(FILE *batchfp)
@@ -297,11 +301,14 @@ void batchfile_init_Mega2BatchItems(void)
         case /* 57 */ VCF_Marker_Alternative_INFO_Key:
         case /* 55 */ Input_Path:
         case /* 56 */ Input_PLINK_Map_File:
+        case /* 60 */ Output_File_Stem:
             Mega2BatchItems[i].value.name = CALLOC((size_t)FILENAME_LENGTH, char);
             strcpy(Mega2BatchItems[i].value.name, "");
             Mega2BatchItems[i].value_type = STRING;
             break;
         case /* 49 */ Value_Missing_Quant_On_Output:
+        case /* 58 */ Value_Missing_Affect_On_Input:
+        case /* 59 */ Value_Missing_Affect_On_Output:
             Mega2BatchItems[i].value.name = CALLOC((size_t)FILENAME_LENGTH, char);
             strcpy(Mega2BatchItems[i].value.name, "0");
             Mega2BatchItems[i].value_type = STRING;
@@ -334,7 +341,7 @@ void batchfile_init_Mega2BatchItems(void)
         case /* 21 */ Error_Loci_Num:
         case /* 31 */ Covariates_Num:
         case /* 53 */ Input_Format_Type:
-            Mega2BatchItems[i].value.option=0;
+            Mega2BatchItems[i].value.option = 0;
             Mega2BatchItems[i].value_type = INT;
             break;
         case /* 24 */ Input_Do_Error_Sim:
@@ -422,16 +429,6 @@ void check_batch_items(void)
     int read_a_section;
     /* Input files */
 
-    if (!ITEM_READ(/* 53 */ Input_Format_Type)) {
-        // In this case Input_Format == in_format_mega2 == 0
-        if (Mega2BatchItems[PLINK_Args].item_read) {
-            if (PLINK.plink == binary_PED_format) {
-                Input_Format = in_format_binary_PED;
-            } else if (PLINK.plink == PED_format) {
-                Input_Format = in_format_PED;
-            }
-        }
-    }
     if (ITEM_READ(/* 0 */ Input_Pedigree_File) &&
         (ITEM_READ(/* 1 */ Input_Locus_File) || Mega2BatchItems[PLINK_Args].item_read || Mega2BatchItems[VCF_Args].item_read) &&
         (ITEM_READ(/* 2 */ Input_Map_File) || (Input_Format == in_format_VCF || Input_Format == in_format_compressed_VCF || Input_Format == in_format_binary_VCF || Input_Format == in_format_PED || Input_Format == in_format_binary_PED) ) &&
@@ -563,6 +560,10 @@ static void malformed_batch_line(char *keyword)
 
 /* global variables */
 static char analysis_name[50]="", sub_analysis_name[100]="";
+char Str_Missing_Quant_On_Input[50];
+char Str_Missing_Affect_on_Input[50];
+char Str_Missing_Quant_On_Output[50];
+char Str_Missing_Affect_On_Output[50];
 
 static void set_batch_items(char *batch_file_name, int iter, analysis_type *analysis)
 {
@@ -927,60 +928,36 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                         mult_decl(it);
                         continue;
                     }
-                    Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].item_read = 1;
-                    // QMISSING is the internal numeric value of NA.
-                    if (strcasecmp(value, "NA") == 0) {
-                        Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = QMISSING;
-                    } else {
-                        // Interesting, but MissingQuant was not assigned here in the past!
-                        // NOTE: the use of 'strtok' here assumes that there is no comment following the value
-                        MissingQuant = atof(strtok(value, " "));
-                        Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = MissingQuant;
+                    Mega2BatchItems[it].item_read = 1;
+                    strcpy(Str_Missing_Quant_On_Input, value);
+                } else if (!strcmp(keyword, "Value_Missing_Affect_On_Input")) {
+                    it = /* 58 */ Value_Missing_Affect_On_Input ;
+                    if (READ_ITER1(it)) {
+                        mult_decl(it);
+                        continue;
                     }
+                    Mega2BatchItems[it].item_read = 1;
+                    strcpy(Str_Missing_Affect_on_Input, value);
                 } else if (!strcmp(keyword, "Value_Missing_Quant_On_Output")) {
+                    it = /* 49 */ Value_Missing_Quant_On_Output ;
                     // This is the missing value code that is used on output analysises those targets
                     // support that support optional missing value codes.
-                    if (READ_ITER1(/* 49 */ Value_Missing_Quant_On_Output)) {
+                    if (READ_ITER1(it)) {
                         // if it's the first pass and has been declared more than once, complain...
-                        mult_decl(/* 49 */ Value_Missing_Quant_On_Output);
+                        mult_decl(it);
                         continue;
                     }
 
-                    // The 'analysis' variable can only be guaranted to hold data until the third pass.
-                    // This is because the sub-analysis option may not have been read till the end of the second pass.
-                    if (iter == 3) {
-                        // We need to determine if the option will support this batch item.
-                        if ((*analysis)->output_quant_can_define_missing_value()) {
-                            Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read = 1;
-                            strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name, value);
-                        } else {
-                            if (ITEM_READ(/* 6 */ Analysis_Sub_Option))
-                                // NOTE: ProgName does not exist at this point.
-                                warnvf("'Analysis_Option' = '%s' with 'Analysis_Sub_Option' = '%s' does not allow the definition of 'Value_Missing_Quant_On_Output'.\n",
-                                       analysis_name, sub_analysis_name);
-                            else
-                                warnvf("'Analysis_Option' = '%s' does not allow the definition of 'Value_Missing_Quant_On_Output'.\n",
-                                       analysis_name);
-                        }
-                        // We need to determine if this option must be numeric...
-                        if ((*analysis)->output_quant_must_be_numeric()) {
-                            char *end;
-                            // The converted value is thrown away, because we just want to know if it is valid...
-                            (void) strtod((const char *)value, &end);
-                            // See user_input.cpp:set_missing_quant_input() for an explaination of this test...
-                            if (strlen(value) == 0 || strlen(end) != 0 || errno == ERANGE) {
-                                // Conversion of the entire string was not successful or some other error...
-                                errorvf("'Analysis_Option' = '%s' while specifying 'Value_Missing_Quant_On_Output'.\n",
-                                        (*analysis)->_name);
-                                errorvf("Analysis type requires quantitative values to be numeric.\n");
-                                EXIT(BATCH_FILE_ITEM_ERROR);
-                            }
-                            // NOTE: It is not possible at this point to check to see if the
-                            // missing quantitative value defined here is in the input quantitative
-                            // phenotype data. This will be done later in the routine
-                            // user_input.cpp:set_missing_quant_output()
-                        } // if ((*analysis)->output_quant_must_be_numeric()) {
-                    } // if (iter == 3) {
+                    Mega2BatchItems[it].item_read = 1;
+                    strcpy(Str_Missing_Quant_On_Output, value);
+                } else if (!strcmp(keyword, "Value_Missing_Affect_On_Output")) {
+                    it = /* 59 */ Value_Missing_Affect_On_Output ;
+                    if (READ_ITER1(it)) {
+                        mult_decl(it);
+                        continue;
+                    }
+                    Mega2BatchItems[it].item_read = 1;
+                    strcpy(Str_Missing_Affect_On_Output, value);
                 } else if (!strcmp(keyword, "Value_Affecteds")) {
                     int num_trs = 0;
                     char *affdata_str;
@@ -1211,16 +1188,30 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                 it = /* 30 */ Xlinked_Analysis_Mode ;
                 Mega2BatchItems[it].item_read = 1;
                 sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-            } else if (!strncmp(keyword, "Output_Path", (size_t) 11)) {
-                it = /* 33 */ Output_Path ;
-                Mega2BatchItems[it].item_read = 1;
-                sscanf(value, "%s", Mega2BatchItems[it].value.name);
+            } else if (!strncmp(keyword, "Output_", (size_t) 7)) {
+                if (!strncmp(keyword, "Output_Path", (size_t) 11)) {
+                    it = /* 33 */ Output_Path ;
+                    Mega2BatchItems[it].item_read = 1;
+                    sscanf(value, "%s", Mega2BatchItems[it].value.name);
+/*
+                } else if (!strncmp(keyword, "Output_Map_Num", (size_t) 10)) {
+                    it = / * 41 * / Output_Map_Num;
+                    Mega2BatchItems[it].item_read = 1;
+                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+*/
+                } else if (!strncmp(keyword, "Output_File_Stem", (size_t) 16)) {
+                    it = /* 60 */ Output_File_Stem ;
+                    Mega2BatchItems[it].item_read = 1;
+                    sscanf(value, "%s", Mega2BatchItems[it].value.name);
+                } else if (iter == 1) {
+                    warn_unknown(keyword);
+                }
             } else if (!strncmp(keyword, "Count", (size_t) 5)) {
                 if (!strcmp(keyword, "Count_Genotypes")) {
                     it = /* 34 */ Count_Genotypes ;
                     Mega2BatchItems[it].item_read = 1;
                     sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                } else if (!strcmp(keyword, "Count_Halftyped")) {
+                } else if (!strncmp(keyword, "Count_Halftype", 14)) {
                     it = /* 36 */ Count_Halftyped ;
                     Mega2BatchItems[it].item_read = 1;
                     sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
@@ -1231,11 +1222,12 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                         invalid_value_field(it);
                         break;
                     }
-                } else {
+                } else if (!strcmp(keyword, "Count_HWE_genotypes")) {
                     it = /* 38 */ Count_HWE_genotypes ;
                     Mega2BatchItems[it].item_read = 1;
-                    Mega2BatchItems[it].item_read = 1;
                     sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+                } else if (iter == 1) {
+                    warn_unknown(keyword);
                 }
             } else if (!strncmp(keyword, "Rplot", (size_t) 5)) {
                 /* for now only one item */
@@ -1246,10 +1238,6 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                 it = /* 37 */ AlleleFreq_SquaredDev ;
                 Mega2BatchItems[it].item_read = 1;
                 Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue = atof(strtok(value, " "));
-            } else if (!strncmp(keyword, "Output_Map_Num", (size_t) 10)) {
-                it = /* 41 */ Output_Map_Num;
-                Mega2BatchItems[it].item_read = 1;
-                sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
             } else if (!strncasecmp(keyword, "PLINK", (size_t) 5)) {
                 // Shouldn't there be a check here to see if the Analysis_Option == Plink?
                 if (iter >= 2) continue;
@@ -1301,36 +1289,229 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
         } // if (strcmp(nextline, "") != 0) {
     } //  while (!feof(fp)) {
 
-    // If the Value_Missing_Quant_On_Output is either not specified or was not permitted
-    // to have been specified in the batch file (e.g., output_quant_can_define_missing_value()
-    // returns false), then check to see if there is a default value for that analysis mode (e.g.,
-    // output_quant_default_value() != NULL). If so, then make it look as if
-    // Value_Missing_Quant_On_Output was read as that default.
-    if (iter == 3) {
-        if (!ITEM_READ(Value_Missing_Quant_On_Output) &&
-            (*analysis)->output_quant_default_value() != (const char *)NULL) {
-            Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read = 1;
-            strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
-                   (*analysis)->output_quant_default_value());
-            
-            // Since the user did not specify the default value, this is an internal check.
-            if ((*analysis)->output_quant_must_be_numeric()) {
-                char *end;
-                const char *value = (*analysis)->output_quant_default_value();
-                // The converted value is thrown away, because we just want to know if it is valid...
-                (void) strtod(value, &end);
-                if (strlen(value) == 0 || strlen(end) != 0 || errno == ERANGE) {
-                    // Conversion of the entire string was not successful or some other error...
-                    errorvf("INTERNAL ERROR:'Analysis_Option' = '%s' the method\n",
-                            (*analysis)->_name);
-                    errorf(" 'output_quant_default_value()' must return a numeric string.");
-                    EXIT(DATA_INCONSISTENCY);
+    fclose(fp);
+}
+
+// If the Value_Missing_Quant_On_Output is either not specified or was not permitted
+// to have been specified in the batch file (e.g., output_quant_can_define_missing_value()
+// returns false), then check to see if there is a default value for that analysis mode (e.g.,
+// output_quant_default_value() != NULL). If so, then make it look as if
+// Value_Missing_Quant_On_Output was read as that default.
+void fix_Value_Missing_Quant_On_Input(analysis_type *analysis, struct itl *itp, const char *value);
+void fix_Value_Missing_Quant_On_Output(analysis_type *analysis, struct itl *itp, const char *value);
+void fix_Value_Missing_Affect_On_Input(analysis_type *analysis, struct itl *itp, const char *value);
+void fix_Value_Missing_Affect_On_Output(analysis_type *analysis, struct itl *itp, const char *value);
+
+struct itl {
+    int it;
+    int inherit;
+    char *str;
+    const char *name;
+    const char *put;
+    void (*store)(analysis_type *analysis, struct itl *itp, const char *value);
+} Value_Missing[]  =  {
+    {Value_Missing_Quant_On_Input,   0,                             Str_Missing_Quant_On_Input,
+     "Quantitative", "Input",   fix_Value_Missing_Quant_On_Input},
+
+    {Value_Missing_Quant_On_Output,  Value_Missing_Quant_On_Input,  Str_Missing_Quant_On_Output,
+     "Quantitative", "Output",  fix_Value_Missing_Quant_On_Output},
+
+    {Value_Missing_Affect_On_Input,  Value_Missing_Quant_On_Input,  Str_Missing_Affect_on_Input,
+     "Affect", "Input",         fix_Value_Missing_Affect_On_Input},
+
+    {Value_Missing_Affect_On_Output, Value_Missing_Affect_On_Input, Str_Missing_Affect_On_Output,
+     "Affect", "Output",        fix_Value_Missing_Affect_On_Output},
+
+    {0, 0, 0, 
+     0, 0, (void (*)(analysis_type *analysis, struct itl *itp, const char *value)) 0}
+};
+
+void fix_Value_Missing_inherit_Quant_2_Affect() {
+    Value_Missing[2  /*Value_Missing[_Affect_On_Input]*/].inherit = Value_Missing_Quant_On_Input;
+    Value_Missing[3 /*Value_Missing[_Affect_On_Output]*/].inherit = Value_Missing_Quant_On_Output;
+}
+
+int fix_Value_Missing_check_allow(analysis_type *analysis, struct itl *itp) {
+    int allow = 1;
+    if (itp->it == Value_Missing_Quant_On_Input)
+        allow = 1;
+    else if (itp->it == Value_Missing_Affect_On_Input)
+        allow = 1;
+    else if (itp->it == Value_Missing_Quant_On_Output)
+        allow = (*analysis)->output_quant_can_define_missing_value();
+    else if (itp->it == Value_Missing_Affect_On_Output)
+        allow = (*analysis)->output_affect_can_define_missing_value();
+    return allow;
+}
+
+int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *itp, const char *value) {
+    int qnum = 0;
+    int num = 0;
+    if (itp->it == Value_Missing_Quant_On_Input)
+        qnum = 1;
+/*
+    else if (itp->it == Value_Missing_Affect_On_Input)
+        num = 1;
+*/
+    else if (itp->it == Value_Missing_Quant_On_Output)
+        qnum = (*analysis)->output_quant_must_be_numeric();
+    else if (itp->it == Value_Missing_Affect_On_Output)
+        num = (*analysis)->output_affect_must_be_numeric();
+
+    // Since the user did not specify the default value, this is an internal check.
+    if (num || qnum) {
+        char *end;
+        if (qnum)
+            (void) strtod(value, &end);
+        else if (num)
+            (void) strtol(value, &end, 10);
+        if (strlen(value) == 0 || strlen(end) != 0 || errno == ERANGE) {
+            // Conversion of the entire string was not successful or some other error...
+            errorvf("value \"%s\" must be a numeric string representing a %s number.\n",
+                   value, qnum ? "float" : "integer");
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int fix_Value_Missing(analysis_type *analysis, struct itl *itp) {
+
+    int allow = fix_Value_Missing_check_allow(analysis, itp);
+    if (ITEM_READ(itp->it)) {
+        // NOTE: ProgName does not exist at this point.
+        if (! allow) {
+            warnvf("'Analysis_Option' = '%s:%s' does not allow the definition of Missing %s %s Value.\n",
+                   analysis_name, *sub_analysis_name ? sub_analysis_name : "",
+                   itp->name, itp->put);
+            return 0; // error; but not before
+        }
+        itp->store(analysis, itp, itp->str);
+        return fix_Value_Missing_check_numeric(analysis, itp, itp->str);
+    } else {
+        const char *df = 0;
+        char dfp[32];
+        if (itp->it == Value_Missing_Quant_On_Input) {
+            if (PLINK.plink || PLINK.xcf) {
+                if (PLINK.missing_pheno) {
+                    sprintf(dfp, "%g", PLINK.pheno_value);
+                    df = dfp;
+                } else
+                    df = "-9";
+            } else
+                df = "0";
+        } else if (itp->it == Value_Missing_Affect_On_Input)
+            df = "0";
+        else if (itp->it == Value_Missing_Quant_On_Output)
+            df = (*analysis)->output_quant_default_value();
+        else if (itp->it == Value_Missing_Affect_On_Output)
+            df = (*analysis)->output_affect_default_value();
+ 
+        if (df != (const char *)NULL) {
+            Mega2BatchItems[itp->it].item_read = 1;
+            itp->store(analysis, itp, df);
+            strcpy(itp->str, df);
+            return fix_Value_Missing_check_numeric(analysis, itp, df);
+        } else if (allow) {
+// Note here
+//            Mega2BatchItems[itp->it].item_read = 1;
+// is not set.  Because we are guessing value.
+            int inherit = itp->inherit;
+            if (inherit) {
+                switch(itp->it) {
+                case Value_Missing_Affect_On_Input:
+                    switch(inherit) {
+                    case Value_Missing_Quant_On_Input:
+                        strcpy(Mega2BatchItems[itp->it].value.name,
+                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+                        strcpy(Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str,
+                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                case Value_Missing_Quant_On_Output:
+                    switch(inherit) {
+                    case Value_Missing_Quant_On_Input:
+                        strcpy(Mega2BatchItems[itp->it].value.name,
+                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+                        strcpy(Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str,
+                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                case Value_Missing_Affect_On_Output:
+                    switch(inherit) {
+                    case Value_Missing_Quant_On_Input:
+                        strcpy(Mega2BatchItems[itp->it].value.name,
+                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+                        break;
+                    case Value_Missing_Quant_On_Output:
+                        strcpy(Mega2BatchItems[itp->it].value.name,
+                               Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str);
+                        break;
+                    case Value_Missing_Affect_On_Input:
+                        strcpy(Mega2BatchItems[itp->it].value.name,
+                               Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str);
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                default:
+                    break;
                 }
             }
         }
     }
+    return 0;
+}
 
-    fclose(fp);
+void fix_Value_Missing_Quant_On_Input(analysis_type *analysis, struct itl *itp, const char *value) {
+    // QMISSING is the internal numeric value of NA.
+    if (strcasecmp(value, "NA") == 0) {
+        Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = QMISSING;
+    } else {
+        char *endptr;
+        // Interesting, but MissingQuant was not assigned here in the past!
+        // NOTE: the use of 'strtok' here assumes that there is no comment following the value
+        MissingQuant = strtod(value, &endptr);
+        Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = MissingQuant;
+    }
+}
+
+void fix_Value_Missing_Quant_On_Output(analysis_type *analysis, struct itl *itp, const char *value) {
+    strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name, value);
+}
+
+void fix_Value_Missing_Affect_On_Input(analysis_type *analysis, struct itl *itp, const char *value) {
+    if (strcasecmp(value, "NA") == 0)
+        Mega2BatchItems[itp->it].value.option = 0;
+    else
+        strcpy(Mega2BatchItems[itp->it].value.name, value);
+}
+
+void fix_Value_Missing_Affect_On_Output(analysis_type *analysis, struct itl *itp, const char *value) {
+    strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Affect_On_Output].value.name, value);
+}
+
+int fix_Value_Missing_all(analysis_type *analysis) {
+    int ret = 0;
+    ret = fix_Value_Missing(analysis, &Value_Missing[0 /* Value_Missing_Quant_On_Input   */]);
+    if (ret) return 1;
+
+    ret = fix_Value_Missing(analysis, &Value_Missing[1 /* Value_Missing_Affect_On_Input  */]);
+    if (ret) return 1;
+
+    ret = fix_Value_Missing(analysis, &Value_Missing[2 /* Value_Missing_Quant_On_Output  */]);
+    if (ret) return 1;
+
+    ret = fix_Value_Missing(analysis, &Value_Missing[3 /* Value_Missing_Affect_On_Output */]);
+    if (ret) return 1;
+    return ret;
 }
 
 void batchfile_process(char *batch_file_name, analysis_type *analysis)
@@ -1338,9 +1519,33 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
 	// this is where the batch items are read from the batch file, and checked for consistency...
     set_batch_items(batch_file_name, 1, analysis);
     set_batch_items(batch_file_name, 2, analysis);
-	// Ahh... because analysis doesn't get defined until iteration 2 and so any logic that depends
-	// on it's existance won't work till after that!!!!
+	// Ahh... because analysis doesn't get defined until iteration 2 and so any logic that
+	// depends on it's existance won't work till after that!!!!
     set_batch_items(batch_file_name, 3, analysis);
+
+    int xcf = 0;
+    if (Mega2BatchItems[/* 53 */ Input_Format_Type].item_read == 1) {
+        Input_Format = (INPUT_FORMAT_t) Mega2BatchItems[/* 53 */ Input_Format_Type].value.option;
+
+        if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
+            Input_Format == in_format_VCF)
+            xcf = 1;
+    }
+    if (Mega2BatchItems[/* 43 */ PLINK_Args].item_read == 1) {
+        PLINK_args(Mega2BatchItems[PLINK_Args].value.name, xcf);
+        if (!Input_Format) {
+            if (PLINK.plink == binary_PED_format)
+                Input_Format = in_format_binary_PED;
+            else if (PLINK.plink == PED_format)
+                Input_Format = in_format_PED;
+        }
+    }
+    if (!Input_Format)
+        Input_Format = in_format_traditional;
+
+    if (fix_Value_Missing_all(analysis)) {
+            EXIT(DATA_INCONSISTENCY);
+    }
 
     check_batch_items();
 }

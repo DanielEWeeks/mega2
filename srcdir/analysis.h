@@ -202,6 +202,7 @@ public:
     // take a hard coded value, warn the user if they give one beacuse it will
     // be ignored.
     virtual bool output_quant_can_define_missing_value() { return false; }
+    virtual bool output_affect_can_define_missing_value() { return false; }
     //
     // This value is presented to the user as a default value in the "Missing output QTL
     // value definition menu" found in user_input.cpp:set_missing_quant_output(). If you
@@ -219,6 +220,7 @@ public:
     // and 'output_quant_default_value()' returns NULL), ITEM_READ(Value_Missing_Quant_On_Output)
     // will return false.
     virtual const char* output_quant_default_value() { return (const char *)NULL; }
+    virtual const char* output_affect_default_value() { return (const char *)NULL; }
     //
     // This is used in batch_input.cpp:set_batch_items(), and user_input.cpp:set_missing_quant_output()
     // to determine if the string given for the output quantitative value must be numeric.
@@ -226,6 +228,7 @@ public:
     // HINT: If this is set as 'true' in an analysis sub-class then the value returned
     // by the method 'output_quant_default_value()' should be numeric as well...
     virtual bool output_quant_must_be_numeric() { return false; }
+    virtual bool output_affect_must_be_numeric() { return false; }
 
     // True if the target analysis supports character alleles...
     // This implies that the named representation of an allele will be used if it is available.
@@ -504,6 +507,10 @@ public:
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "0"; }
     virtual bool output_quant_must_be_numeric() { return true; }
+
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
 
     virtual bool qtl_allow() { return true; }
 
@@ -885,6 +892,9 @@ public:
     virtual const char* output_quant_default_value() { return "0.0"; }
     virtual bool output_quant_must_be_numeric() { return true; }
 
+    virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
+
     virtual bool qtl_allow()    { return true; }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -911,6 +921,10 @@ public:
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "-99.99"; }
     virtual bool output_quant_must_be_numeric() { return true; }
+
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "-99"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
 
     virtual bool qtl_allow() { return true; }
 
@@ -940,6 +954,9 @@ public:
 
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "x"; }
+
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "x"; }
 
     virtual bool qtl_allow() { return true; }
 
@@ -1111,6 +1128,8 @@ public:
 //  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual const char* output_quant_default_value() { return "x"; }
 
+    virtual const char* output_affect_default_value() { return "x"; }
+
     virtual bool qtl_disallow()  { return true; }
     virtual bool simwalk2()      { return true; }
 
@@ -1187,6 +1206,10 @@ public:
     virtual const char* output_quant_default_value() { return "0"; }
     virtual bool output_quant_must_be_numeric() { return true; }
 
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
+
     virtual bool qtl_allow()    { return true; }
 
     virtual void ped_ind_defaults(int unique)  {
@@ -1259,6 +1282,10 @@ public:
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "0"; }
     virtual bool output_quant_must_be_numeric() { return true; }
+
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
 
     virtual bool qtl_allow() { return true; }
 
@@ -1354,6 +1381,9 @@ public:
 
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "NA"; }
+
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "NA"; }
 
     virtual bool qtl_allow() { return true; }
 
@@ -1722,6 +1752,10 @@ public:
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "0"; }
     virtual bool output_quant_must_be_numeric() { return true; }
+
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
 
     virtual bool qtl_allow() { return true; }
 

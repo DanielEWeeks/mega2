@@ -931,10 +931,6 @@ int             main(int argc, char **argv)
             errorvf("PLINK arguments not specified.\n");
             EXIT(BATCH_FILE_ITEM_ERROR);
         }
-/*
-        set in menu1(): one place iff batch and another 
-        PLINK_args(Mega2BatchItems[it].value.name, 0);
-*/
 
 #ifndef HIDESTATUS
         msgvf("Pedigree and map files %s PLINK format.\n",

@@ -44,6 +44,7 @@ public:
     virtual bool loops()  { return true; }
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
     virtual const char* output_quant_default_value() { return "999.0"; }
+    virtual const char* output_affect_default_value() { return "999"; }
     virtual bool qtl_allow()        { return true; }
 
     virtual void ped_ind_defaults(int unique)  {

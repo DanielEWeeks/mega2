@@ -293,9 +293,13 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
     }
 
     if (status != 0 && status != 1 && status != 2) {
+        if (!strcmp(cstatus, Mega2BatchItems[/* 58 */ Value_Missing_Affect_On_Input].value.name))
+            status = 0;
+/*
         if (PLINK.missing_pheno && status == PLINK.pheno_value) {
-            ; /*status = 0;*/
-        } else {
+            ; / * status = 0; * /
+*/
+        else {
 #if 0
             sprintf(err_msg,
                     "Line %d, %s: column %d: Illegal affection status %s, setting to unknown.",
@@ -397,9 +401,13 @@ int read_aff_phen(FILE *filep, int locusnm,
     
     if (status != 0 && status != 1 && status != 2) {
         if (rec == Annotated) {
+            if (!strcmp(cstatus, Mega2BatchItems[/* 58 */ Value_Missing_Affect_On_Input].value.name))
+                status = 0;
+/*
             if (PLINK.missing_pheno && status == PLINK.pheno_value) {
-                    status = 0;
-            } else {
+                status = 0;
+*/
+            else {
                 sprintf(err_msg,
                         "Line %d, column %d: Illegal affection status %s, setting to unknown.",
                         anentry->rec_num, locus->col_num, cstatus);

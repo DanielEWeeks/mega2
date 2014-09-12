@@ -47,7 +47,7 @@ public:
     virtual bool loops()  { return true; }
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
     // missing values are always replaced with an '-'
-    virtual bool output_quant_can_define_missing_value() { return false; }
+//  virtual bool output_quant_can_define_missing_value() { return false; }
 
     virtual bool require_physical_map()  { return false; }
 /*

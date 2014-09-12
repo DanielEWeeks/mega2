@@ -269,8 +269,8 @@ void person_locus_entry::pr_pheno(linkage_ped_rec  *tpe, const int affection_as_
                 if (ase == 0) pr_printf("NA "); // missing phenotype
                 else if (ase == 1) pr_printf("Control "); // unaffected
                 else if (ase == 2) pr_printf("Case "); // affected
-            } else if (ase == 0 && Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read) {
-                pr_printf("%s ", Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
+            } else if (ase == 0) {
+                pr_printf("%s ", Mega2BatchItems[/* 59 */ Value_Missing_Affect_On_Output].value.name);
             } else {
                 pr_printf("%1d ", ase);
             }
@@ -302,8 +302,8 @@ void person_locus_entry::pr_aff()
             ase = aff_status_entry(_tpe->Pheno[_trait].Affection.Status,
                                    _tpe->Pheno[_trait].Affection.Class,
                                    _tte); //&(_Top->LocusTop->Locus[_trait]))
-        if (ase == 0 && Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read) {
-            pr_printf("%s ", Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
+        if (ase == 0) {
+            pr_printf("%s ", Mega2BatchItems[/* 59 */ Value_Missing_Affect_On_Output].value.name);
         } else {
             pr_printf("%1d ", ase);
         }

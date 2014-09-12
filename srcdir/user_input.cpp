@@ -786,23 +786,6 @@ void menu1(file_format *infl_type,
     fln_alloc(phefl_name,   pheo);
 
     if (batchINPUTFILES) {
-        /* necessary files ped, locus and map
-           or ped, name and map
-        */
-        if (Mega2BatchItems[/* 53 */ Input_Format_Type].item_read == 1) {
-            Input_Format = (INPUT_FORMAT_t) Mega2BatchItems[/* 53 */ Input_Format_Type].value.option;
-
-        } else if (Mega2BatchItems[/* 43 */ PLINK_Args].item_read == 1) {
-//          not vcf because Input_Format would have been set so we need to parse PLINK_Args
-            PLINK_args(Mega2BatchItems[PLINK_Args].value.name, 0);
-            if (PLINK.plink == binary_PED_format) {
-                Input_Format = in_format_binary_PED;
-            } else {
-                Input_Format = in_format_PED;
-            }
-        } else {
-            Input_Format = in_format_traditional;
-        }
 
         if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
             Input_Format == in_format_VCF)
@@ -811,10 +794,6 @@ void menu1(file_format *infl_type,
         if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED)
             plinkf = 1;
 
-        if (xcf || plinkf) {
-            if (Mega2BatchItems[/* 43 */ PLINK_Args].item_read == 1 && PLINK.plink == not_plink_format)
-                PLINK_args(Mega2BatchItems[PLINK_Args].value.name, xcf);
-        }
 
         menu1_batch_set_files(infl_type, pedfl_name, locusfl_name,
                               mapfl_name, pmapfl_name, input_path, omitfl_name,

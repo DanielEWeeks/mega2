@@ -44,6 +44,7 @@ typedef struct _plink_stats {
 // This structure is initialized in annotated_ped_file.c: PLINK_clr
 typedef 
 struct PLINK_s {
+  int xcf;
   enum PLINK_FORMAT plink;
   int no_fid;
   int no_parents;

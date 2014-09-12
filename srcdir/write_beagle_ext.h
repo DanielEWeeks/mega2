@@ -45,6 +45,7 @@ public:
     virtual bool loops()  { return true; }
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
     virtual const char* output_quant_default_value() { return "?"; }
+    virtual const char* output_affect_default_value() { return "?"; }
     virtual bool qtl_allow()        { return true; }
 
     // Accepts character alleles...
