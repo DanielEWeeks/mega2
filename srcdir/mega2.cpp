@@ -127,6 +127,7 @@
 #include "makeped_ext.h"
 #include "marker_lookup_ext.h"
 #include "mega2annot_ext.h"
+#include "menu_value_missing_ext.h"
 #include "output_file_names_ext.h"
 #include "output_routines_ext.h"
 #include "pedtree_ext.h"
@@ -877,6 +878,8 @@ int             main(int argc, char **argv)
         fflush(stdin);
     }
 #endif
+
+    Value_Missing_get(&analysis);
 
     int af, guess;
     if (Input_Format == in_format_traditional) {

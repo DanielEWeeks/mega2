@@ -1403,8 +1403,6 @@ void menu1(file_format *infl_type,
     if (plinkf || xcf) fln_free(loco);
 }
 
-
-
 /* static void default_labels(char *msg, int *liability, int *status, int num_classes) */
 
 /* { */

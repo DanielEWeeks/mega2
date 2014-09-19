@@ -588,14 +588,12 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
 #ifdef RUNSHELL_SETUP
             sprintf(cmd, "$_PLINK --noweb %s%s%s --missing-phenotype %s --assoc --out %s\n",
                     file_option, file_names[7], reference_allele_option,
-                    (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read ?
-                     Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9"),
+                    Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
                     file_names[7]);
 #else /* RUNSHELL_SETUP */
             sprintf(cmd, "plink %s%s%s --missing-phenotype %s --assoc --out %s\n",
                     file_option, file_names[7], reference_allele_option,
-                    (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read ?
-                     Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9"),
+                    Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
                     file_names[7]);
 #endif /* RUNSHELL_SETUP */
             sh_run("PLINK", cmd);

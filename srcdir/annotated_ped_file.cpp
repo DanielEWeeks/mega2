@@ -4410,7 +4410,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                                   num_groups, groups);
         SUPPRESS_MSSG_NESTED_FORCE(FLOAT_AFFECT);
         if (FLOAT_AFFECT > 10) {
-            warnvf("There were %d instances of decimal numbers read where affects were expected.\n");
+            warnvf("There were %d instances of decimal numbers read where affection status were expected.\n");
             if (PLINK.plink) {
                 warnvf("Perhaps you should rerun Mega2 and specify that the fam/ped trait is quantitative.\n",
                        FLOAT_AFFECT);

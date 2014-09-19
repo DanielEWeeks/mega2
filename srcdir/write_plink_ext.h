@@ -52,7 +52,7 @@ public:
     virtual bool output_quant_must_be_numeric() { return true; }
 
     virtual bool output_affect_can_define_missing_value() { return true;  }
-    virtual const char* output_affect_default_value() { return "-9"; }
+//  virtual const char* output_affect_default_value() { return "-9"; }
     virtual bool output_affect_must_be_numeric() { return true; }
 
     void replace_chr_number(char *file_names[], int numchr);

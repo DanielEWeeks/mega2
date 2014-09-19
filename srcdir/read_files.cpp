@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <ctype.h>
 
 #include "common.h"
@@ -207,10 +208,13 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
         }
     }
     if (PLINK.missing_pheno) {
-        if (quant == PLINK.pheno_value) quant = QMISSING;
+//      if (quant == PLINK.pheno_value) quant = QMISSING;
+        if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
     }
     if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].item_read) {
-        if (quant == MissingQuant) quant = QMISSING;
+//      if (quant == MissingQuant) quant = QMISSING;
+        if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
+
     }
 
     pedrec->Quant = quant;
@@ -243,11 +247,12 @@ int read_quant_phen(FILE *filep, int locusnm, void *ventry,
         }
     }
     if (PLINK.missing_pheno) {
-        if (quant == PLINK.pheno_value)
-            quant = QMISSING;
+//      if (quant == PLINK.pheno_value) quant = QMISSING;
+        if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
     }
     if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].item_read) {
-        if (quant == MissingQuant) quant = QMISSING;
+//      if (quant == MissingQuant) quant = QMISSING;
+        if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
     }
     switch(rec) {
     case Annotated:

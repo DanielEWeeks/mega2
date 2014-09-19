@@ -41,6 +41,7 @@
 #include "batch_input_ext.h"
 #include "compress_ext.h"
 #include "error_messages_ext.h"
+#include "menu_value_missing_ext.h"
 #include "genetic_utils_ext.h"
 #include "reorder_loci_ext.h"
 #include "user_input_ext.h"
@@ -307,6 +308,10 @@ void batchfile_init_Mega2BatchItems(void)
             Mega2BatchItems[i].value_type = STRING;
             break;
         case /* 49 */ Value_Missing_Quant_On_Output:
+            Mega2BatchItems[i].value.name = CALLOC((size_t)FILENAME_LENGTH, char);
+            strcpy(Mega2BatchItems[i].value.name, "0.0");
+            Mega2BatchItems[i].value_type = STRING;
+            break;
         case /* 58 */ Value_Missing_Affect_On_Input:
         case /* 59 */ Value_Missing_Affect_On_Output:
             Mega2BatchItems[i].value.name = CALLOC((size_t)FILENAME_LENGTH, char);
@@ -560,10 +565,6 @@ static void malformed_batch_line(char *keyword)
 
 /* global variables */
 static char analysis_name[50]="", sub_analysis_name[100]="";
-char Str_Missing_Quant_On_Input[50];
-char Str_Missing_Affect_on_Input[50];
-char Str_Missing_Quant_On_Output[50];
-char Str_Missing_Affect_On_Output[50];
 
 static void set_batch_items(char *batch_file_name, int iter, analysis_type *analysis)
 {
@@ -1292,228 +1293,6 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
     fclose(fp);
 }
 
-// If the Value_Missing_Quant_On_Output is either not specified or was not permitted
-// to have been specified in the batch file (e.g., output_quant_can_define_missing_value()
-// returns false), then check to see if there is a default value for that analysis mode (e.g.,
-// output_quant_default_value() != NULL). If so, then make it look as if
-// Value_Missing_Quant_On_Output was read as that default.
-void fix_Value_Missing_Quant_On_Input(analysis_type *analysis, struct itl *itp, const char *value);
-void fix_Value_Missing_Quant_On_Output(analysis_type *analysis, struct itl *itp, const char *value);
-void fix_Value_Missing_Affect_On_Input(analysis_type *analysis, struct itl *itp, const char *value);
-void fix_Value_Missing_Affect_On_Output(analysis_type *analysis, struct itl *itp, const char *value);
-
-struct itl {
-    int it;
-    int inherit;
-    char *str;
-    const char *name;
-    const char *put;
-    void (*store)(analysis_type *analysis, struct itl *itp, const char *value);
-} Value_Missing[]  =  {
-    {Value_Missing_Quant_On_Input,   0,                             Str_Missing_Quant_On_Input,
-     "Quantitative", "Input",   fix_Value_Missing_Quant_On_Input},
-
-    {Value_Missing_Quant_On_Output,  Value_Missing_Quant_On_Input,  Str_Missing_Quant_On_Output,
-     "Quantitative", "Output",  fix_Value_Missing_Quant_On_Output},
-
-    {Value_Missing_Affect_On_Input,  Value_Missing_Quant_On_Input,  Str_Missing_Affect_on_Input,
-     "Affect", "Input",         fix_Value_Missing_Affect_On_Input},
-
-    {Value_Missing_Affect_On_Output, Value_Missing_Affect_On_Input, Str_Missing_Affect_On_Output,
-     "Affect", "Output",        fix_Value_Missing_Affect_On_Output},
-
-    {0, 0, 0, 
-     0, 0, (void (*)(analysis_type *analysis, struct itl *itp, const char *value)) 0}
-};
-
-void fix_Value_Missing_inherit_Quant_2_Affect() {
-    Value_Missing[2  /*Value_Missing[_Affect_On_Input]*/].inherit = Value_Missing_Quant_On_Input;
-    Value_Missing[3 /*Value_Missing[_Affect_On_Output]*/].inherit = Value_Missing_Quant_On_Output;
-}
-
-int fix_Value_Missing_check_allow(analysis_type *analysis, struct itl *itp) {
-    int allow = 1;
-    if (itp->it == Value_Missing_Quant_On_Input)
-        allow = 1;
-    else if (itp->it == Value_Missing_Affect_On_Input)
-        allow = 1;
-    else if (itp->it == Value_Missing_Quant_On_Output)
-        allow = (*analysis)->output_quant_can_define_missing_value();
-    else if (itp->it == Value_Missing_Affect_On_Output)
-        allow = (*analysis)->output_affect_can_define_missing_value();
-    return allow;
-}
-
-int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *itp, const char *value) {
-    int qnum = 0;
-    int num = 0;
-    if (itp->it == Value_Missing_Quant_On_Input)
-        qnum = 1;
-/*
-    else if (itp->it == Value_Missing_Affect_On_Input)
-        num = 1;
-*/
-    else if (itp->it == Value_Missing_Quant_On_Output)
-        qnum = (*analysis)->output_quant_must_be_numeric();
-    else if (itp->it == Value_Missing_Affect_On_Output)
-        num = (*analysis)->output_affect_must_be_numeric();
-
-    // Since the user did not specify the default value, this is an internal check.
-    if (num || qnum) {
-        char *end;
-        if (qnum)
-            (void) strtod(value, &end);
-        else if (num)
-            (void) strtol(value, &end, 10);
-        if (strlen(value) == 0 || strlen(end) != 0 || errno == ERANGE) {
-            // Conversion of the entire string was not successful or some other error...
-            errorvf("value \"%s\" must be a numeric string representing a %s number.\n",
-                   value, qnum ? "float" : "integer");
-            return 1;
-        }
-    }
-    return 0;
-}
-
-int fix_Value_Missing(analysis_type *analysis, struct itl *itp) {
-
-    int allow = fix_Value_Missing_check_allow(analysis, itp);
-    if (ITEM_READ(itp->it)) {
-        // NOTE: ProgName does not exist at this point.
-        if (! allow) {
-            warnvf("'Analysis_Option' = '%s:%s' does not allow the definition of Missing %s %s Value.\n",
-                   analysis_name, *sub_analysis_name ? sub_analysis_name : "",
-                   itp->name, itp->put);
-            return 0; // error; but not before
-        }
-        itp->store(analysis, itp, itp->str);
-        return fix_Value_Missing_check_numeric(analysis, itp, itp->str);
-    } else {
-        const char *df = 0;
-        char dfp[32];
-        if (itp->it == Value_Missing_Quant_On_Input) {
-            if (PLINK.plink || PLINK.xcf) {
-                if (PLINK.missing_pheno) {
-                    sprintf(dfp, "%g", PLINK.pheno_value);
-                    df = dfp;
-                } else
-                    df = "-9";
-            } else
-                df = "0";
-        } else if (itp->it == Value_Missing_Affect_On_Input)
-            df = "0";
-        else if (itp->it == Value_Missing_Quant_On_Output)
-            df = (*analysis)->output_quant_default_value();
-        else if (itp->it == Value_Missing_Affect_On_Output)
-            df = (*analysis)->output_affect_default_value();
- 
-        if (df != (const char *)NULL) {
-            Mega2BatchItems[itp->it].item_read = 1;
-            itp->store(analysis, itp, df);
-            strcpy(itp->str, df);
-            return fix_Value_Missing_check_numeric(analysis, itp, df);
-        } else if (allow) {
-// Note here
-//            Mega2BatchItems[itp->it].item_read = 1;
-// is not set.  Because we are guessing value.
-            int inherit = itp->inherit;
-            if (inherit) {
-                switch(itp->it) {
-                case Value_Missing_Affect_On_Input:
-                    switch(inherit) {
-                    case Value_Missing_Quant_On_Input:
-                        strcpy(Mega2BatchItems[itp->it].value.name,
-                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        strcpy(Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str,
-                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                case Value_Missing_Quant_On_Output:
-                    switch(inherit) {
-                    case Value_Missing_Quant_On_Input:
-                        strcpy(Mega2BatchItems[itp->it].value.name,
-                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        strcpy(Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str,
-                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                case Value_Missing_Affect_On_Output:
-                    switch(inherit) {
-                    case Value_Missing_Quant_On_Input:
-                        strcpy(Mega2BatchItems[itp->it].value.name,
-                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        break;
-                    case Value_Missing_Quant_On_Output:
-                        strcpy(Mega2BatchItems[itp->it].value.name,
-                               Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str);
-                        break;
-                    case Value_Missing_Affect_On_Input:
-                        strcpy(Mega2BatchItems[itp->it].value.name,
-                               Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str);
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-    }
-    return 0;
-}
-
-void fix_Value_Missing_Quant_On_Input(analysis_type *analysis, struct itl *itp, const char *value) {
-    // QMISSING is the internal numeric value of NA.
-    if (strcasecmp(value, "NA") == 0) {
-        Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = QMISSING;
-    } else {
-        char *endptr;
-        // Interesting, but MissingQuant was not assigned here in the past!
-        // NOTE: the use of 'strtok' here assumes that there is no comment following the value
-        MissingQuant = strtod(value, &endptr);
-        Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = MissingQuant;
-    }
-}
-
-void fix_Value_Missing_Quant_On_Output(analysis_type *analysis, struct itl *itp, const char *value) {
-    strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name, value);
-}
-
-void fix_Value_Missing_Affect_On_Input(analysis_type *analysis, struct itl *itp, const char *value) {
-    if (strcasecmp(value, "NA") == 0)
-        Mega2BatchItems[itp->it].value.option = 0;
-    else
-        strcpy(Mega2BatchItems[itp->it].value.name, value);
-}
-
-void fix_Value_Missing_Affect_On_Output(analysis_type *analysis, struct itl *itp, const char *value) {
-    strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Affect_On_Output].value.name, value);
-}
-
-int fix_Value_Missing_all(analysis_type *analysis) {
-    int ret = 0;
-    ret = fix_Value_Missing(analysis, &Value_Missing[0 /* Value_Missing_Quant_On_Input   */]);
-    if (ret) return 1;
-
-    ret = fix_Value_Missing(analysis, &Value_Missing[1 /* Value_Missing_Affect_On_Input  */]);
-    if (ret) return 1;
-
-    ret = fix_Value_Missing(analysis, &Value_Missing[2 /* Value_Missing_Quant_On_Output  */]);
-    if (ret) return 1;
-
-    ret = fix_Value_Missing(analysis, &Value_Missing[3 /* Value_Missing_Affect_On_Output */]);
-    if (ret) return 1;
-    return ret;
-}
-
 void batchfile_process(char *batch_file_name, analysis_type *analysis)
 {
 	// this is where the batch items are read from the batch file, and checked for consistency...
@@ -1542,10 +1321,6 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
     }
     if (!Input_Format)
         Input_Format = in_format_traditional;
-
-    if (fix_Value_Missing_all(analysis)) {
-            EXIT(DATA_INCONSISTENCY);
-    }
 
     check_batch_items();
 }

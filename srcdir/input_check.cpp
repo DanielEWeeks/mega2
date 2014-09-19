@@ -517,6 +517,10 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                     } else {
                         printf(" %d) Set half-typed genotypes to unknown [%s].\n", menu_item,
                                yorn[hmendf]);
+                        if (!hmendf) {
+                            printf("    If \"no\" is indicated, half-typed genotypes\n");
+                            printf("    will not be looked for.\n");
+                        }
                         sprintf(toggle_str, "; options %d", menu_item);
                         halftyped_select = menu_item++;
                     }
@@ -526,12 +530,20 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                            menu_item);
                     printf("    at each Mendelianly-inconsistent locus? [%s]\n",
                            yorn[imendf]);
+                    if (!imendf) {
+                        printf("    If \"no\" is indicated, Mendelianly-inconsistent loci\n");
+                        printf("    will not be looked for.\n");
+                    }
                     grow(toggle_str, ", %d", menu_item);
                     invalid_select = menu_item++;
                 }
                 if (chk_aexceed /* PedStat.exceed_allcnt */) {
                     printf(" %d) Set out-of-bound genotypes to unknown? [%s]\n",
                            menu_item, yorn[aexceedf]);
+                    if (!aexceedf) {
+                        printf("    If \"no\" is indicated, out-of-bound genotypes\n");
+                        printf("    will not be looked for.\n");
+                    }
                     grow(toggle_str, ", %d", menu_item);
                     exceedall_select = menu_item++;
                 }
