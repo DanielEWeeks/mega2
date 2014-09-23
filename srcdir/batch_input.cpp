@@ -1302,24 +1302,28 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
 	// depends on it's existance won't work till after that!!!!
     set_batch_items(batch_file_name, 3, analysis);
 
+    int input_set = 0;
     int xcf = 0;
     if (Mega2BatchItems[/* 53 */ Input_Format_Type].item_read == 1) {
         Input_Format = (INPUT_FORMAT_t) Mega2BatchItems[/* 53 */ Input_Format_Type].value.option;
 
+        input_set = 1;
         if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
             Input_Format == in_format_VCF)
             xcf = 1;
+
     }
     if (Mega2BatchItems[/* 43 */ PLINK_Args].item_read == 1) {
         PLINK_args(Mega2BatchItems[PLINK_Args].value.name, xcf);
         if (!Input_Format) {
+            input_set = 1;
             if (PLINK.plink == binary_PED_format)
                 Input_Format = in_format_binary_PED;
             else if (PLINK.plink == PED_format)
                 Input_Format = in_format_PED;
         }
     }
-    if (!Input_Format)
+    if (!input_set)
         Input_Format = in_format_traditional;
 
     check_batch_items();
