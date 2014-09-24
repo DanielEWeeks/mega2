@@ -858,11 +858,11 @@ static int read_annotated_pedrec(FILE *filep,
                                                   &entry->pheno[mrkindex],
                                                   mrkindex < phe_cnt ? phe_vals[mrkindex] : "NA");
                 } else
-                    lch=read_quant_phen(filep, mrkindex, (void *)entry, Annotated);
+                    lch=read_quant_phen(filep, mrkindex, &(LTop->Pheno[mrkindex]), (void *)entry, Annotated);
 
 		// Here we are not checking for it being undefined, just "invalid".
 		// There should be a better way...
-                if (entry->pheno[mrkindex].Quant <= QUNDEF) {
+                if (entry->pheno[mrkindex].Quant == QUNDEF) {
                     errorvf("Ped File \"%s\", Line %d : Invalid quantitative phenotype at locus %s\n",
                             pedfile, entry->rec_num, LTop->Locus[mrkindex].Name);
                     (*num_errors)++;

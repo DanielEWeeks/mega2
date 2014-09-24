@@ -552,9 +552,9 @@ static void missing_mult_dependency_keyword(int dependent_item, int dependent_on
 
 static void mult_decl(int item)
 {
-    warnvf("Found multiple occurrences of keyword %s,\n",
-            Mega2BatchItems[item].keyword);
-    warnf("Using the first definition, and ignoring all later definitions.");
+    errorvf("Found multiple occurrences of keyword %s,\n", Mega2BatchItems[item].keyword);
+//  errorf("Using the first definition, and ignoring all later definitions.");
+    EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
 static void malformed_batch_line(char *keyword)

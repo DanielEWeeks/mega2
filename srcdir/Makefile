@@ -146,7 +146,8 @@ R_output.o hwe_user_input.o mega2.o mrecode.o utils.o read_files.o write_sage_fi
 stamp_time.o: DFLAGS += $(DdFLAGS)
 
 # -DHIDESTATUS
-aspex.o annotated_ped_file.o batch_input.o genetic_utils.o makeped1.o mega2.o mrecode.o: DFLAGS += $(DsFLAGS)
+aspex.o annotated_ped_file.o batch_input.o genetic_utils.o makeped1.o mega2.o: DFLAGS += $(DsFLAGS)
+menu_value_missing.o mrecode.o: DFLAGS += $(DsFLAGS)
 output_routines.o read_files.o reorder_loci.o user_input.o utils.o write_files.o: DFLAGS += $(DsFLAGS)
 write_plink_files.o: DFLAGS += $(DsFLAGS)
 

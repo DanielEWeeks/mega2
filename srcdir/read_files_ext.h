@@ -78,10 +78,11 @@ extern int read_premakeped_bin(FILE *filep, int locusnm, linkage_locus_rec *locu
 			       pre_makeped_record *entry);
 
 extern int read_premakeped_quant(FILE *filep, int locusnm,
-				 pre_makeped_record *entry);
+				 pheno_rec *locus, pre_makeped_record *entry);
 
 
-extern int read_quant_phen(FILE *filep, int locusnm, void *ventry,
+extern int read_quant_phen(FILE *filep, int locusnm,
+                           pheno_rec *locus, void *ventry,
 			   record_type rec);
 
 extern void omit_file_data_processing(linkage_ped_top *Top,

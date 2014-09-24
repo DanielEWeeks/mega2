@@ -84,13 +84,15 @@ extern int snprintf(char *buf, int cnt, const char *fmt, ...);
    mark untyped individuals until we know the correct
    missing value */
 #ifndef QUNDEF
-#define QUNDEF -999999
+//#define QUNDEF -999999
+#define QUNDEF  (-2.1415965358979E30)
 #endif
 
 // QMISSING is used as the numeric equivalent of the string "NA" for missing quantitative phenotype values.
 // It should an enumerated type equal to INT_MIN + 2 (or some other small int).
 #ifndef QMISSING
-#define QMISSING -888888
+//#define QMISSING -888888
+#define QMISSING (-1.1415965358979E30)
 #endif
 
 #ifndef UNDEF

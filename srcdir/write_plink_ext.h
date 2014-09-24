@@ -45,10 +45,7 @@ public:
     }
    ~CLASS_PLINK() {}
 
-    virtual bool output_quant_can_define_missing_value() {
-        extern void fix_Value_Missing_inherit_Quant_2_Affect();
-        fix_Value_Missing_inherit_Quant_2_Affect();
-        return true; }
+    virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "-9"; }
     virtual bool output_quant_must_be_numeric() { return true; }
 

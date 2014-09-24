@@ -65,9 +65,9 @@ static void fix_Value_Missing_Affect_On_Input(analysis_type *analysis, struct it
 static void fix_Value_Missing_Affect_On_Output(analysis_type *analysis, struct itl *itp, const char *value);
 static int fix_Value_Missing_check_allow(analysis_type *analysis, int vmidx);
 static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *itp, const char *value);
-static int fix_Value_Missing(analysis_type *analysis, int vmidx, int init_str);
+static int fix_Value_Missing(analysis_type *analysis, int vmidx);
 static void fix_Value_Missing_default(analysis_type *analysis, int vmidx);
-static int fix_Value_Missing_all(analysis_type *analysis, int init_str);
+static int fix_Value_Missing_all(analysis_type *analysis);
 static void Value_Missing_menu(analysis_type *analysis);
 
 struct itl {
@@ -81,7 +81,9 @@ struct itl {
     int set;
 };
 
+#ifdef HIDESTATUS
 static const char *source_name[] = { "menu input", "in batch", "plink --missing-pheno", "plink default", "analysis rule", "inherited", "cannot change", "output default", "linkage default", "mega2 default"};
+#endif
 
 struct itl Value_Missing[]  =  {
     {Value_Missing_Quant_On_Input,   0,                             Str_Missing_Quant_On_Input,
@@ -93,7 +95,7 @@ struct itl Value_Missing[]  =  {
     {Value_Missing_Affect_On_Input,  Value_Missing_Quant_On_Input,  Str_Missing_Affect_on_Input,
      "Affection", "Input",         fix_Value_Missing_Affect_On_Input, 0, 0},
 
-    {Value_Missing_Affect_On_Output, Value_Missing_Affect_On_Input, Str_Missing_Affect_On_Output,
+    {Value_Missing_Affect_On_Output, Value_Missing_Quant_On_Output, Str_Missing_Affect_On_Output,
      "Affection", "Output",        fix_Value_Missing_Affect_On_Output, 0, 0},
 
     {0, 0, 0, 
@@ -107,7 +109,6 @@ struct itl Value_Missing[]  =  {
 
 static void Value_Missing_menu(analysis_type *analysis)
 {
-//  return;
     int all_i = 1, qin_i = 2, qout_i = 3, ain_i = 4, aout_i = 5;
     int ans, idx, not_done = 1;
     int ttl;
@@ -124,25 +125,35 @@ static void Value_Missing_menu(analysis_type *analysis)
         draw_line();
         printf("              Mega2 %s Missing Value menu:\n", Mega2Version);
         draw_line();
-        printf("If it is necessary specify the value to indicate that a trait is missing,\n");
+        printf("If it is necessary, specify a different value to indicate that a trait is missing\n");
         printf("both for input to Mega2 and/or output from Mega2.\n");
         printf("Note: Output entries that are marked with a \"#\" can not be changed.\n\n");
+
         printf("0) Done with this menu - please proceed\n");
+/*
         if (1) {
             printf("%2d) Specify default for ALL missing traits:                         %s\n",
                    ++ttl, "");
             trans[ttl] = all_i;
         }
-
+*/
         if (1) {
-            printf("%2d) Specify missing value for Quantitative traits read:    %7s [%s]\n",
-                   ++ttl, Value_Missing[qin_i-2].str, source_name[Value_Missing[qin_i-2].source]);
+            printf("%2d) Specify input missing value for Quantitative traits:  %7s",
+                   ++ttl, Value_Missing[qin_i-2].str);
+#ifdef HIDESTATUS
+            printf(" [%s]", source_name[Value_Missing[qin_i-2].source]);
+#endif
+            printf("\n");
             trans[ttl] = qin_i;
         }
 
         if (1) {
-            printf("%2d) Specify missing value for Affection status read:       %7s [%s]\n",
-                   ++ttl, Value_Missing[ain_i-2].str, source_name[Value_Missing[ain_i-2].source]);
+            printf("%2d) Specify input missing value for Affection status:     %7s",
+                   ++ttl, Value_Missing[ain_i-2].str);
+#ifdef HIDESTATUS
+            printf(" [%s]", source_name[Value_Missing[ain_i-2].source]);
+#endif
+            printf("\n");
             trans[ttl] = ain_i;
         }
 
@@ -150,26 +161,42 @@ static void Value_Missing_menu(analysis_type *analysis)
         if (!*show) show = (*analysis)->output_quant_default_value();
         if (!show) show = "";
         if (fix_Value_Missing_check_allow(analysis, 1)) {
-            printf("%2d) Specify missing value for Quantitative traits written: %7s [%s]\n",
-                   ++ttl, show, source_name[Value_Missing[qout_i-2].source]);
+            printf("%2d) Specify output missing value for Quantitative traits: %7s",
+                   ++ttl, show);
+#ifdef HIDESTATUS
+            printf(" [%s]", source_name[Value_Missing[qout_i-2].source]);
+#endif
+            printf("\n");
             trans[ttl] = qout_i;
         } else {
             Value_Missing[qout_i-2].source = 6;
-            printf(" #) Fixed missing value for Quantitative traits written:   %7s [%s]\n",
-                   show, source_name[Value_Missing[qout_i-2].source]);
+            printf(" #) Fixed output missing value for Quantitative traits:   %7s",
+                   show);
+#ifdef HIDESTATUS
+            printf(" [%s]", source_name[Value_Missing[qout_i-2].source]);
+#endif
+            printf("\n");
         }
 
         show = Value_Missing[aout_i-2].str;
         if (!*show) show = (*analysis)->output_affect_default_value();
         if (!show) show = "";
         if (fix_Value_Missing_check_allow(analysis, 3)) {
-            printf("%2d) Specify missing value for Affection status written:    %7s [%s]\n",
-                   ++ttl, show, source_name[Value_Missing[aout_i-2].source]);
+            printf("%2d) Specify output missing value for Affection status:    %7s",
+                   ++ttl, show);
+#ifdef HIDESTATUS
+            printf(" [%s]", source_name[Value_Missing[aout_i-2].source]);
+#endif
+            printf("\n");
             trans[ttl] = aout_i;
         } else {
             Value_Missing[aout_i-2].source = 6;
-            printf(" #) Fixed missing value for Affection status written:      %7s [%s]\n",
-                   show, source_name[Value_Missing[aout_i-2].source]);
+            printf(" #) Fixed output missing value for Affection status:      %7s",
+                   show);
+#ifdef HIDESTATUS
+            printf(" [%s]", source_name[Value_Missing[aout_i-2].source]);
+#endif
+            printf("\n");
         }
 
         printf("Select from options 0-%d > ", ttl);
@@ -177,7 +204,7 @@ static void Value_Missing_menu(analysis_type *analysis)
         fcmap(stdin, "%d", &ans); newline;
         if (ans == 0) {
 //          asm("int $3");
-            not_done = fix_Value_Missing_all(analysis, 0);
+            not_done = fix_Value_Missing_all(analysis);
             continue;
         } else if (ans > ttl || ans < 1) {
             printf("The allowed values are:");
@@ -188,18 +215,27 @@ static void Value_Missing_menu(analysis_type *analysis)
         }
         idx = trans[ans];
         if (idx != all_i) {
-            printf("Please enter Missing %s %s Value (or enter \"clear\") > ",
+//          printf("Please enter Missing %s %s Value (or enter \"clear\") > ",
+//                 Value_Missing[idx - 2].name, Value_Missing[idx - 2].put);
+            printf("Please enter Missing %s %s > ",
                    Value_Missing[idx - 2].name, Value_Missing[idx - 2].put);
             Value_Missing[idx - 2].set = 1;
             fcmap(stdin, "%s", Str_read);
+/*
             if (!strcmp(Str_read, "clear")) {
                 Value_Missing[idx - 2].str[0] = 0;
                 Value_Missing[idx - 2].set = 0;
-            } else if (! fix_Value_Missing_check_numeric(analysis, &Value_Missing[idx-2], Str_read)) {
+            } else 
+*/
+            if (! fix_Value_Missing_check_numeric(analysis, &Value_Missing[idx-2], Str_read)) {
                 strcpy(Value_Missing[idx - 2].str, Str_read);
                 Value_Missing[idx-2].source = 0;
             }
         } else {
+/*
+ * Currently this branch will never be taken because idx is NEVER == all_idx.  I will flush this code ...
+ * soon.
+ */
             printf("Please enter Default Missing Value (or enter \"clear\") > ");
             fcmap(stdin, "%s", Str_read);
             Value_Missing[0].set = 1;
@@ -243,14 +279,17 @@ static void Value_Missing_menu(analysis_type *analysis)
                                    BATCH FILE
 ******************************************************************************* */
 
+/* defunct
 void fix_Value_Missing_inherit_Quant_2_Affect() {
-    Value_Missing[2  /*Value_Missing[_Affect_On_Input]*/].inherit = Value_Missing_Quant_On_Input;
-    Value_Missing[3 /*Value_Missing[_Affect_On_Output]*/].inherit = Value_Missing_Quant_On_Output;
+    Value_Missing[2  / * Value_Missing[_Affect_On_Input] * /].inherit = Value_Missing_Quant_On_Input;
+    Value_Missing[3 / * Value_Missing[_Affect_On_Output] * /].inherit = Value_Missing_Quant_On_Output;
 }
+*/
 
 static int fix_Value_Missing_check_allow(analysis_type *analysis, int vmidx) {
     struct itl *itp = &Value_Missing[vmidx];
     int allow = 1;
+
     if (itp->it == Value_Missing_Quant_On_Input)
         allow = 1;
     else if (itp->it == Value_Missing_Affect_On_Input)
@@ -302,24 +341,6 @@ static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *
     }
     return 0;
 }
-
-/*
-            switch (Input_Format) {
-            case in_format_mega2:
-                break;
-            case in_format_linkage:
-            case in_format_extended_linkage:
-                break;
-            case in_format_binary_PED:
-            case in_format_PED:
-            case in_format_binary_VCF:
-            case in_format_compressed_VCF:
-            case in_format_VCF:
-                break;
-            default:
-                break;
-            }
-*/
 
 static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
 {
@@ -414,147 +435,155 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
     if (df != (const char *)NULL) {
         ret = fix_Value_Missing_check_numeric(analysis, itp, df);
         if (! ret) {
-//              itp->store(analysis, itp, df);
             strcpy(itp->str, df);
         }
     }
 }
 
-static int fix_Value_Missing(analysis_type *analysis, int vmidx, int init_str)
+static int fix_Value_Missing(analysis_type *analysis, int vmidx)
 {
     int ret = 0;
     struct itl *itp = &Value_Missing[vmidx];
     int allow = fix_Value_Missing_check_allow(analysis, vmidx);
-//  if (ITEM_READ(itp->it))
-    if (itp->set)
-    {
+/*
+ * For interactive, all 4 missing values are "set".
+ * For batch, Only Quant Input (and possibly Quant Output) is set, the others are grown!
+ */
+    if (itp->set) {
         if (! allow) {
             warnvf("'Analysis_Option' = '%s' does not allow the definition of Missing %s %s Value.\n",
                    ProgName, itp->name, itp->put);
-            return 0; // error; but not before
-        }
-        ret = fix_Value_Missing_check_numeric(analysis, itp, itp->str);
-        if (! ret &&  !init_str) {
-            itp->store(analysis, itp, itp->str);
-            if (! batchINPUTFILES) {
-                Mega2BatchItems[itp->it].item_read = 1;
-                batchf(itp->it);
-            }
-        }
-        return ret;
-    } else {
-        const char *df = 0;
-        char dfp[32];
-        if (itp->it == Value_Missing_Quant_On_Input) {
-            if (PLINK.plink || PLINK.xcf) {
-                if (PLINK.missing_pheno) {
-                    if (!init_str) itp->source = 2;
-                    sprintf(dfp, "%g", PLINK.pheno_value);
-                    df = dfp;
-                } else {
-                    if (!init_str) itp->source = 3;
-                    df = "-9";
+//          return 0; // error; but not before
+        } else {
+            ret = fix_Value_Missing_check_numeric(analysis, itp, itp->str);
+            if (! ret ) {
+                itp->store(analysis, itp, itp->str);
+                if (! batchINPUTFILES) {
+                    Mega2BatchItems[itp->it].item_read = 1;
+                    batchf(itp->it);
                 }
-            } else
-                df = 0;
-        } else if (itp->it == Value_Missing_Affect_On_Input)
-/*
-            if (PLINK.plink || PLINK.xcf) {
-                if (PLINK.missing_pheno) {
-                    sprintf(dfp, "%g", PLINK.pheno_value);
-                    df = dfp;
-                    if (!init_str) itp->source = 2;
-                } else {
-                    df = "-9";
-                    if (!init_str) itp->source = 3;
-                }
-            } else
-*/
-                df = 0;
-        else if (itp->it == Value_Missing_Quant_On_Output) {
-            df = (*analysis)->output_quant_default_value();
-            if (!init_str && df) itp->source = 4;
-        } else if (itp->it == Value_Missing_Affect_On_Output) {
-            df = (*analysis)->output_affect_default_value();
-            if (!init_str && df) itp->source = 4;
-        }
- 
-        if (df != (const char *)NULL) {
-            ret = fix_Value_Missing_check_numeric(analysis, itp, df);
-            if (! ret) {
-                if (!init_str)
-                    itp->store(analysis, itp, df);
-                strcpy(itp->str, df);
             }
-        } else if (allow) {
+            return ret;
+        }
+    }
+
+    const char *df = 0;
+    char dfp[32];
+    if (itp->it == Value_Missing_Quant_On_Input) {
+      /* this is always set (above) and hence not used*/
+        if (PLINK.plink || PLINK.xcf) {
+            if (PLINK.missing_pheno) {
+                itp->source = 2;
+                sprintf(dfp, "%g", PLINK.pheno_value);
+                df = dfp;
+            } else {
+                itp->source = 3;
+                df = "-9";
+            }
+        } else
+            df = 0;
+    } else if (itp->it == Value_Missing_Affect_On_Input) {
+       /* grow a default (see allow) */
+        if (PLINK.plink || PLINK.xcf) {
+            if (PLINK.missing_pheno) {
+                sprintf(dfp, "%g", PLINK.pheno_value);
+                df = dfp;
+                itp->source = 2;
+            } else {
+                df = "-9";
+                itp->source = 3;
+            }
+        } else
+            df = 0;
+    /* the outputs are used if set by analysis */
+    } else if (itp->it == Value_Missing_Quant_On_Output) {
+        df = (*analysis)->output_quant_default_value();
+        if (df) itp->source = 4;
+    } else if (itp->it == Value_Missing_Affect_On_Output) {
+        df = (*analysis)->output_affect_default_value();
+        if (df) {
+            if (Mega2BatchItems[(itp->inherit)].item_read)
+                df = 0;
+            else
+                itp->source = 4;
+        }
+    }
+
+    if (df != (const char *)NULL) {
+        ret = fix_Value_Missing_check_numeric(analysis, itp, df);
+        if (! ret) {
+            strcpy(itp->str, df);
+            itp->store(analysis, itp, df);
+            Mega2BatchItems[itp->it].item_read = 1;
+        }
+    } else if (allow) {
 // Note:
 //            Mega2BatchItems[itp->it].item_read = 1;
 // is not set.  Because we are guessing value.
-            if (!init_str) itp->source = 5;
-            int inherit = itp->inherit;
-            if (inherit) {
-                switch(itp->it) {
-                case Value_Missing_Affect_On_Input:
-                    switch(inherit) {
-                    case Value_Missing_Quant_On_Input:
-                        if (!init_str)
-                            strcpy(Mega2BatchItems[itp->it].value.name,
-                                   Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        strcpy(Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str,
-                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                case Value_Missing_Quant_On_Output:
-                    switch(inherit) {
-                    case Value_Missing_Quant_On_Input:
-                        if (!init_str)
-                            strcpy(Mega2BatchItems[itp->it].value.name,
-                                   Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        strcpy(Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str,
-                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                case Value_Missing_Affect_On_Output:
-                    switch(inherit) {
-                    case Value_Missing_Quant_On_Input:
-                        if (!init_str)
-                            strcpy(Mega2BatchItems[itp->it].value.name,
-                                   Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                        strcpy(Value_Missing[3 /*Value_Missing[_Quant_On_Output]*/].str,
-                               Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-
-                        break;
-                    case Value_Missing_Quant_On_Output:
-                        if (!init_str)
-                            strcpy(Mega2BatchItems[itp->it].value.name,
-                                   Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str);
-                        strcpy(Value_Missing[3 /*Value_Missing[_Quant_On_Output]*/].str,
-                               Value_Missing[1 /*Value_Missing[_Quant_On_Input]*/].str);
-                        break;
-                    case Value_Missing_Affect_On_Input:
-                        if (!init_str)
-                            strcpy(Mega2BatchItems[itp->it].value.name,
-                                   Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str);
-                        strcpy(Value_Missing[3 /*Value_Missing[_Quant_On_Output]*/].str,
-                               Value_Missing[2 /*Value_Missing[_Quant_On_Input]*/].str);
-                        break;
-                    default:
-                        break;
-                    }
+        itp->source = 5;
+        int inherit = itp->inherit;
+        if (inherit) {
+            switch(itp->it) {
+            case Value_Missing_Affect_On_Input:
+                switch(inherit) {
+                case Value_Missing_Quant_On_Input:
+                    strcpy(Mega2BatchItems[itp->it].value.name,
+                           Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+                    Mega2BatchItems[itp->it].item_read = 1;
+                    strcpy(Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str,
+                           Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
                     break;
                 default:
                     break;
                 }
+                break;
+            case Value_Missing_Quant_On_Output:
+                switch(inherit) {
+                case Value_Missing_Quant_On_Input:
+                    strcpy(Mega2BatchItems[itp->it].value.name,
+                           Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+                    Mega2BatchItems[itp->it].item_read = 1;
+                    strcpy(Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str,
+                           Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+                    break;
+                default:
+                    break;
+                }
+                break;
+            case Value_Missing_Affect_On_Output:
+                switch(inherit) {
+                case Value_Missing_Quant_On_Input:
+                    strcpy(Mega2BatchItems[itp->it].value.name,
+                           Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+                    Mega2BatchItems[itp->it].item_read = 1;
+                    strcpy(Value_Missing[3 /*Value_Missing[_Quant_On_Output]*/].str,
+                           Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
+
+                    break;
+                case Value_Missing_Quant_On_Output:
+                    strcpy(Mega2BatchItems[itp->it].value.name,
+                           Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str);
+                    Mega2BatchItems[itp->it].item_read = 1;
+                    strcpy(Value_Missing[3 /*Value_Missing[_Quant_On_Output]*/].str,
+                           Value_Missing[1 /*Value_Missing[_Quant_On_Input]*/].str);
+                    break;
+                case Value_Missing_Affect_On_Input:
+                    strcpy(Mega2BatchItems[itp->it].value.name,
+                           Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str);
+                    Mega2BatchItems[itp->it].item_read = 1;
+                    strcpy(Value_Missing[3 /*Value_Missing[_Quant_On_Output]*/].str,
+                           Value_Missing[2 /*Value_Missing[_Quant_On_Input]*/].str);
+                    break;
+                default:
+                    break;
+                }
+                break;
+            default:
+                break;
             }
-        } else {
-            if (!init_str)  itp->source = 6;
         }
+    } else {
+        itp->source = 6;
     }
     return 0;
 }
@@ -587,18 +616,19 @@ static void fix_Value_Missing_Affect_On_Output(analysis_type *analysis, struct i
     strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Affect_On_Output].value.name, value);
 }
 
-static int fix_Value_Missing_all(analysis_type *analysis, int init_str) {
+static int fix_Value_Missing_all(analysis_type *analysis) {
     int ret = 0;
-    ret = fix_Value_Missing(analysis, 0, init_str);
+
+    ret = fix_Value_Missing(analysis, 0);
     if (ret) return 1;
 
-    ret = fix_Value_Missing(analysis, 1, init_str);
+    ret = fix_Value_Missing(analysis, 1);
     if (ret) return 1;
 
-    ret = fix_Value_Missing(analysis, 2, init_str);
+    ret = fix_Value_Missing(analysis, 2);
     if (ret) return 1;
 
-    ret = fix_Value_Missing(analysis, 3, init_str);
+    ret = fix_Value_Missing(analysis, 3);
     if (ret) return 1;
     return ret;
 }
@@ -609,16 +639,18 @@ static int fix_Value_Missing_all(analysis_type *analysis, int init_str) {
 
 void Value_Missing_get(analysis_type *analysis)
 {
+    int allow;
     struct itl *itp = &Value_Missing[0], *itpn;
 
     if (batchINPUTFILES) {
         for (int i = 0; i < 4; i++) {
+            allow = fix_Value_Missing_check_allow(analysis, i);
             itpn = itp + i;
-            itpn->source = 1;
+            itpn->source = allow ? 1 : 6;
             itpn->set = Mega2BatchItems[itpn->it].item_read;
         }
 
-        if (fix_Value_Missing_all(analysis, 0))
+        if (fix_Value_Missing_all(analysis))
             EXIT(DATA_INCONSISTENCY);
     } else {
         Value_Missing_menu(analysis);
@@ -626,27 +658,38 @@ void Value_Missing_get(analysis_type *analysis)
 
     itpn = itp + 0;
     if (Mega2BatchItems[itpn->it].value.fvalue == QMISSING)
-        msgvf("%s  %s Missing Value \"%s\" [\"%s\" %s]\n",
-              itpn->name, itpn->put, "AN", itpn->str, 
-              source_name[itpn->source]);
+        msgvf("%s  %s Missing Value \"%s\"",
+              itpn->name, itpn->put, "NA");
     else
-        msgvf("%s  %s Missing Value  %g  [\"%s\" %s]\n",
-              itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.fvalue, itpn->str, 
-              source_name[itpn->source]);
+        msgvf("%s  %s Missing Value  %g ",
+              itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.fvalue);
+#ifdef HIDESTATUS
+    msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
+#endif
+    msgvf("\n");
 
     itpn = itp + 2;
-    msgvf("%s     %s Missing Value \"%s\" [\"%s\" %s]\n",
-          itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name, itpn->str, 
-          source_name[itpn->source]);
+    msgvf("%s     %s Missing Value \"%s\"",
+          itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name);
+#ifdef HIDESTATUS
+    msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
+#endif
+    msgvf("\n");
 
     itpn = itp + 1;
-    msgvf("%s %s Missing Value \"%s\" [\"%s\" %s]\n",
-          itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name, itpn->str, 
-          source_name[itpn->source]);
+    msgvf("%s %s Missing Value \"%s\"",
+          itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name);
+#ifdef HIDESTATUS
+    msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
+#endif
+    msgvf("\n");
 
     itpn = itp + 3;
-    msgvf("%s    %s Missing Value \"%s\" [\"%s\" %s]\n",
-          itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name, itpn->str, 
-          source_name[itpn->source]);
+    msgvf("%s    %s Missing Value \"%s\"",
+          itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name);
+#ifdef HIDESTATUS
+    msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
+#endif
+    msgvf("\n");
 
 }

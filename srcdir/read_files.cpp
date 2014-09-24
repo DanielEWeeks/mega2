@@ -74,7 +74,7 @@
 
 /* static functions */
 static int read_quantitative_data(FILE *filep, int locusnm,
-				  linkage_ped_rec *entry);
+                                  pheno_rec *locus, linkage_ped_rec *entry);
 static int read_affection_data(FILE *filep, int locusnm,
 			       pheno_rec *locus,
 			       linkage_ped_rec *entry);
@@ -166,17 +166,16 @@ static int check_ped_file_cols(int cols, FILE *fp, char *file_name)
     return 1;
 }
 
-int read_premakeped_quant(FILE *filep,
-			  int locusnm, pre_makeped_record *entry)
-
+int read_premakeped_quant(FILE *filep, int locusnm, 
+                          pheno_rec *locus, pre_makeped_record *entry)
 {
-    int lch = read_quant_phen(filep, locusnm, (void *) entry, Premakeped);
+    int lch = read_quant_phen(filep, locusnm, locus, (void *) entry, Premakeped);
     return lch;
 }
 
-static int read_quantitative_data(FILE *filep, int locusnm, linkage_ped_rec *entry)
+static int read_quantitative_data(FILE *filep, int locusnm, pheno_rec *locus, linkage_ped_rec *entry)
 {
-    int lch = read_quant_phen(filep, locusnm, (void *) entry, Postmakeped);
+    int lch = read_quant_phen(filep, locusnm, locus, (void *) entry, Postmakeped);
     return lch;
 }
 
@@ -205,6 +204,10 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
         if (endptr == quantstr || (*endptr)) {
             /* conversion failed */
             quant=QUNDEF;
+        } else if (quant == QMISSING || quant == QUNDEF) {
+            errorvf("Line %d, trait %s, value %s:\n", line, locus->Name, quantstr);
+            errorvf("Internal Quantitative Missing Value Consistency Error.  Get Help.\n");
+            EXIT(OUTOF_BOUNDS_ERROR);
         }
     }
     if (PLINK.missing_pheno) {
@@ -222,7 +225,8 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
     return 0;
 }
 
-int read_quant_phen(FILE *filep, int locusnm, void *ventry,
+int read_quant_phen(FILE *filep, int locusnm, 
+                    pheno_rec *locus, void *ventry,
                     record_type rec)
 
 {
@@ -244,6 +248,10 @@ int read_quant_phen(FILE *filep, int locusnm, void *ventry,
         if (endptr == quantstr || (*endptr)) {
             /* conversion failed */
             quant=QUNDEF;
+        } else if (quant == QMISSING || quant == QUNDEF) {
+            errorvf("Line %d, trait %s, value %s:\n", anentry->rec_num, locus->Name, quantstr);
+            errorvf("Internal Quantitative Missing Value Consistency Error.  Get Help.\n");
+            EXIT(OUTOF_BOUNDS_ERROR);
         }
     }
     if (PLINK.missing_pheno) {
@@ -925,7 +933,7 @@ static int read_linkage_record(FILE *filep, linkage_ped_rec *entry,
 
         switch (LTop->Locus[locus].Type) {
         case QUANT:
-            lch = read_quantitative_data(filep, locus, entry);
+            lch = read_quantitative_data(filep, locus, &LTop->Pheno[locus], entry);
             if (entry->Pheno[locus].Quant == QUNDEF) {
                 sprintf(err_msg,
                         "File %s, Line %d, Ped %d: Invalid quant data for entry %d at locus %s",

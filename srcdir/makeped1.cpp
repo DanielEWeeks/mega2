@@ -196,7 +196,7 @@ static int read_peds(int line_count, FILE *pfilep,
             }
             switch (LTop->Locus[locus].Type) {
             case QUANT:
-                lch=read_premakeped_quant(pfilep, locus, &(persons[i]));
+                lch=read_premakeped_quant(pfilep, locus, &LTop->Pheno[locus], &(persons[i]));
 		// Here we are not checking for it being undefined, just "invalid".
 		// There should be a better way...
                 if (persons[i].pheno[locus].Quant <= QUNDEF) {
