@@ -502,10 +502,19 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
     } else if (itp->it == Value_Missing_Affect_On_Output) {
         df = (*analysis)->output_affect_default_value();
         if (df) {
-            if (Mega2BatchItems[(itp->inherit)].item_read)
-                df = 0;
-            else
+            struct itl *itpv = &Value_Missing[0], *itpn;
+            int i;
+            for (i = 0; i < 4; i++) {
+                itpn = itpv + i;
+                if (itp->inherit == itpn->it)
+                    break;
+            }
+            if (Value_Missing[i].source == 4)
                 itp->source = 4;
+            else {
+                df = 0;
+//??            allow = 1;
+            }
         }
     }
 
