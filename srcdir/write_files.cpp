@@ -123,7 +123,7 @@ void write_quantitative_data(FILE *filep, int locusnm,
     fprintf(filep, "  ");
     if (fabs(entry->Pheno[locusnm].Quant - MissingQuant) <= EPSILON) {
         if (ITEM_READ(Value_Missing_Quant_On_Output)) {
-	  fprintf(filep, "%s ",
+            fprintf(filep, "%s ",
 		  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
         } else {
             // This should have been caught before this point, but just in case...

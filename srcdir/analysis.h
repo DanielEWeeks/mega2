@@ -403,14 +403,18 @@ public:
     }
    ~CLASS_ASPEX() {}
 
-     virtual bool allow_affection_liability_class()  { return true; }
-     virtual bool allow_no_aff_trait()     { return true; }
-     virtual bool allow_no_trait()  { return true; }
-     virtual bool has_sub_options()    { return true; }
-     virtual bool nuke_opts()    { return true; }
-     virtual bool qtl_disallow() { return true; }
+    virtual bool allow_affection_liability_class()  { return true; }
+    virtual bool allow_no_aff_trait()     { return true; }
+    virtual bool allow_no_trait()  { return true; }
+    virtual bool has_sub_options()    { return true; }
+    virtual bool nuke_opts()    { return true; }
 
-     virtual void ped_ind_defaults(int unique)  {
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "0"; }
+
+    virtual bool qtl_disallow() { return true; }
+
+    virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
@@ -466,6 +470,10 @@ public:
     virtual bool allow_sex_map() { return true; }
     virtual bool allow_trait_combination()  { return true; }
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
+
+//  virtual const char* output_quant_default_value() { return "unknown"; }
+//  virtual const char* output_affect_default_value() { return "\t11"; }
+
     virtual bool qtl_allow()     { return true; }
 
     // Accepts character alleles...
