@@ -114,23 +114,7 @@ static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
         void per_end()   { pr_nl(); }
         void inner() {
             /* trait locus */
-            switch(_LTop->Locus[_trait].Type) {
-            case AFFECTION:
-                pr_printf("%1d ",
-                          aff_status_entry(_tpe->Pheno[_trait].Affection.Status,
-                                           _tpe->Pheno[_trait].Affection.Class,
-                                           &(_LTop->Locus[_trait])));
-                break;
-            case QUANT:
-                if (fabs(_tpe->Pheno[_trait].Quant - MissingQuant) < EPSILON) {
-                    pr_printf("     -    ");
-                } else {
-                    pr_printf("%10.5f ", _tpe->Pheno[_trait].Quant);
-                }
-                break;
-            default:
-                break;
-            }
+            pr_pheno();
         }
     } *sp = new save_pheno(Top);
 

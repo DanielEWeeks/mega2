@@ -2057,7 +2057,8 @@ static void  untype_locus(linkage_locus_rec *locus,
             break;
             
         case QUANT:
-            pdata->Quant = QMISSING;
+//          pdata->Quant = QMISSING;
+            pdata->Quant = MissingQuant;
             break;
             
         default:

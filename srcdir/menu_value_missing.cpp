@@ -315,13 +315,18 @@ static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *
                 num = 1;
         }
     } else if (itp->it == Value_Missing_Quant_On_Output) {
-        qnum = (*analysis)->output_quant_must_be_numeric();
+        if ((*analysis != MEGA2ANNOT && *analysis != TO_PSEQ) ||
+            strcasecmp(value, "na"))
+            qnum = (*analysis)->output_quant_must_be_numeric();
     } else if (itp->it == Value_Missing_Affect_On_Output) {
-        if ((*analysis)->output_affect_must_be_numeric()) {
-            if (*analysis == TO_PLINK)
-                qnum = 1;
-            else
-                num = 1;
+        if ((*analysis != MEGA2ANNOT && *analysis != TO_PSEQ) ||
+            strcasecmp(value, "na")) {
+            if ((*analysis)->output_affect_must_be_numeric()) {
+                if (*analysis == TO_PLINK)
+                    qnum = 1;
+                else
+                    num = 1;
+            }
         }
     }
 
@@ -697,7 +702,7 @@ void Value_Missing_get(analysis_type *analysis)
     msgvf("%s    %s Missing Value \"%s\"",
           itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name);
 #ifdef HIDESTATUS
-    msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
+    msgvf(" [\"%s\" %s]", itpn->str,  source_name[itpn->source]);
 #endif
     msgvf("\n");
 

@@ -43,10 +43,9 @@ public:
 
 /*  this is necessary because we are inheriting from CLASS_PLINK not CLASS_ANALYSIS */
     virtual const char* output_quant_default_value() { return "NA"; }
-    virtual bool output_quant_must_be_numeric() { return false; }
 
-    virtual const char* output_affect_default_value() { return "NA"; }
-    virtual bool output_affect_must_be_numeric() { return false; }
+    virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
 
     virtual void create_output_file(linkage_ped_top *LPedTreeTop,
 			    analysis_type *analysis,

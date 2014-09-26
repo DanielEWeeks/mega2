@@ -43,8 +43,11 @@ public:
     }
    ~CLASS_EIGENSTRAT() {}
 
-    virtual const char* output_quant_default_value() { return "-100"; }
+    virtual const char* output_quant_default_value() { return "-100.0"; }
+    virtual bool output_quant_must_be_numeric() { return true; }
+
     virtual const char* output_affect_default_value() { return "-100"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
 
     void replace_chr_number(char *file_names[], int numchr);
 

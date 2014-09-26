@@ -541,6 +541,15 @@ public:
     virtual bool allow_trait_combination()  { return true; }
     virtual bool allow_covariates()  { return true; }
     virtual bool forbid_sex_linked_loci()  { return true; }
+
+    virtual bool output_quant_can_define_missing_value() { return true; }
+    virtual const char* output_quant_default_value() { return "0"; }
+    virtual bool output_quant_must_be_numeric() { return true; }
+
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
+
     virtual bool qtl_allow() { return true; }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -565,6 +574,15 @@ public:
 
     virtual bool allow_no_aff_trait()     { return true; }
     virtual bool allow_no_trait()  { return true; }
+
+    virtual bool output_quant_can_define_missing_value() { return true; }
+    virtual const char* output_quant_default_value() { return "0"; }
+    virtual bool output_quant_must_be_numeric() { return true; }
+
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
+
     virtual bool qtl_disallow() { return true; }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -617,6 +635,9 @@ public:
 
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
+
+    virtual const char* output_quant_default_value() { return ""; }
+    virtual const char* output_affect_default_value() { return ""; }
 
     void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
     void sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis);
@@ -946,11 +967,10 @@ public:
     }
    ~CLASS_LOKI() {}
 
-    virtual bool allow_trait_combination()  { return true; }
-    virtual bool forbid_sex_linked_loci()  { return true; }
-
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
+    virtual bool allow_trait_combination()  { return true; }
+    virtual bool forbid_sex_linked_loci()  { return true; }
 
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "x"; }
@@ -992,6 +1012,13 @@ public:
     virtual bool allow_trait_combination()  { return true; }
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
     virtual bool maintain_broken_loops()  { return true; }
+
+    virtual const char* output_quant_default_value() { return "NA"; }
+    virtual bool output_quant_must_be_numeric() { return true; }
+
+    virtual const char* output_affect_default_value() { return "NA"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
+
     virtual bool qtl_allow()     { return true; }
 
     // Accepts character alleles...
@@ -1028,7 +1055,8 @@ public:
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
 
-//  virtual bool output_quant_can_define_missing_value() { return false; }
+    virtual const char* output_quant_default_value() { return ""; }
+    virtual const char* output_affect_default_value() { return ""; }
 
     virtual bool qtl_allow()     { return true; }
 
@@ -1058,7 +1086,11 @@ public:
    ~CLASS_MENDEL4() {}
 
     virtual bool allow_sex_map() { return true; }
+
 //  virtual bool output_quant_can_define_missing_value() { return false; }
+    virtual const char* output_quant_default_value() { return ""; }
+    virtual const char* output_affect_default_value() { return ""; }
+
     virtual bool qtl_allow()     { return true; }
 
     // Accepts character alleles...
@@ -1085,7 +1117,11 @@ public:
     virtual bool allow_affection_liability_class()  { return true; }
     virtual bool allow_sex_map() { return true; }
     virtual bool allow_trait_combination()  { return true; }
+
 //  virtual bool output_quant_can_define_missing_value() { return false; }
+    virtual const char* output_quant_default_value() { return ""; }
+    virtual const char* output_affect_default_value() { return ""; }
+
     virtual bool qtl_allow()     { return true; }
 
     // Accepts character alleles...
@@ -1127,7 +1163,6 @@ public:
     // missing values are always replaced with an 'x'
 //  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual const char* output_quant_default_value() { return "x"; }
-
     virtual const char* output_affect_default_value() { return "x"; }
 
     virtual bool qtl_disallow()  { return true; }
@@ -1158,15 +1193,16 @@ public:
     }
    ~CLASS_MERLINONLY() {}
 
+    // Accepts character alleles...
+    virtual bool allele_data_use_name_if_available() { return true; }
     virtual bool allow_affection_liability_class()  { return true; }
     virtual bool allow_covariates()  { return true; }
     virtual bool allow_sex_map() { return true; }
     virtual bool allow_trait_combination()  { return true; }
 
-    // Accepts character alleles...
-    virtual bool allele_data_use_name_if_available() { return true; }
-
 //  virtual bool output_quant_can_define_missing_value() { return false; }
+    virtual const char* output_quant_default_value() { return "x"; }
+    virtual const char* output_affect_default_value() { return "x"; }
 
     virtual bool qtl_allow()     { return true; }
 
@@ -1440,6 +1476,15 @@ public:
     virtual bool allow_trait_combination()  { return true; }
     virtual bool break_loops()  { return true; }
     virtual bool maintain_broken_loops()  { return true; }
+
+    virtual bool output_quant_can_define_missing_value() { return true; }
+    virtual const char* output_quant_default_value() { return "0"; }
+    virtual bool output_quant_must_be_numeric() { return true; }
+
+    virtual bool output_affect_can_define_missing_value() { return true; }
+    virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
+
     virtual bool qtl_allow() { return true; }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -1462,6 +1507,10 @@ public:
 
     virtual bool allow_covariates()  { return true; }
     virtual bool allow_trait_combination()  { return true; }
+
+    virtual const char* output_quant_default_value() { return ""; }
+    virtual const char* output_affect_default_value() { return ""; }
+
     virtual bool qtl_allow() { return true; }
 
     // Accepts character alleles...
