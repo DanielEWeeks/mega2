@@ -217,8 +217,8 @@ static void Value_Missing_menu(analysis_type *analysis)
         if (idx != all_i) {
 //          printf("Please enter Missing %s %s Value (or enter \"clear\") > ",
 //                 Value_Missing[idx - 2].name, Value_Missing[idx - 2].put);
-            printf("Please enter Missing %s %s > ",
-                   Value_Missing[idx - 2].name, Value_Missing[idx - 2].put);
+            printf("Please enter %s Missing %s value > ",
+                   Value_Missing[idx - 2].put, Value_Missing[idx - 2].name);
             Value_Missing[idx - 2].set = 1;
             fcmap(stdin, "%s", Str_read);
 /*
