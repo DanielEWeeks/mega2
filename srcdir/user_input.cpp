@@ -1967,9 +1967,9 @@ void set_missing_quant_output(linkage_ped_top *Top, analysis_type analysis)
                 } else {
                     // Here the user was permitted to specify a missing value, and their data
                     // contained it.
-                    errorvf("'Analysis_Option' = '%s' while specifying 'Value_Missing_Quant_On_Output'.\n",
+                    errorvf("Select an output missing quantitative trait value that is not in your data.\n",
                             analysis->_name);
-                    errorvf("Value specified '%lf' was found in the selected input quantitative trait data.\n", value);
+                    errorvf("The output missing value '%lf' exists in the quantitative trait data.\n", value);
                     EXIT(BATCH_FILE_ITEM_ERROR);
                 }
         }
