@@ -1808,15 +1808,9 @@ void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
    Search the quantitative phenotype data for a "match" with the value specified.
    Return true (1) if found, else false (0) if not.
 */
-static int check_quant_phenotype_data_has_value(linkage_ped_top *Top, double value) {
+int check_quant_phenotype_data_has_value(linkage_ped_top *Top, double value) {
     int i, i1, ped, entry;
 
-    // It's OK if the value matches that of the value used internally to mark missing values.
-    // This routine is checking against the "data" and not our missing value marker.
-    // MissingQuant get's set in batch_input.cpp:set_batch_items() from the batch item keyword
-    // Value_Missing_Quant_On_Input
-    if (fabs(MissingQuant - value) <= EPSILON) return 0;
-    
     for (i1 = 0; i1 < num_traits ; i1++) {
         i = global_trait_entries[i1];
         if (i == -1) continue;
@@ -1864,6 +1858,7 @@ static int check_quant_phenotype_data_has_value(linkage_ped_top *Top, double val
  */
 void set_missing_quant_output(linkage_ped_top *Top, analysis_type analysis)
 {
+#if 0 /* defunct code ... see menu_missing_value.cpp */
     int select=-1;
     double value;
     char missingq[200], *end;
@@ -1974,6 +1969,7 @@ void set_missing_quant_output(linkage_ped_top *Top, analysis_type analysis)
                 }
         }
     }
+#endif
     mssgvf("NOTE: The Missing QTL value on output will be assigned as '%s'.\n",
            Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
 }
@@ -1999,6 +1995,8 @@ void set_missing_quant_output(linkage_ped_top *Top, analysis_type analysis)
 void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
 {
     int i, i1, ped, entry;
+
+#if 0 /* defunct code ... see menu_missing_value.cpp */
     
     // If we will never encounter a quant, then there is no point in caring about the value for a missing one.
     if ((!HasQuant && num_covariates == 0) || !QTL_ALLOW) return;
@@ -2006,7 +2004,7 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
     //
     // The missing quant can come from one of three places:
 
-    if (PLINK.plink && PLINK.missing_pheno) {
+    if ((PLINK.plink || PLINK.xcf) && PLINK.missing_pheno) {
         // 1) for PLINK input if --missing_phenotype is specified it comes from there (a warning is
         // given if Value_Missing_Quant_On_Input is also specified),
 #ifndef HIDESTATUS
@@ -2100,8 +2098,9 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
         Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = MissingQuant;
         if (InputMode == INTERACTIVE_INPUTMODE) batchf(Value_Missing_Quant_On_Input);
     }
-    
+#endif    
     // At this point MissingQuant is either QMISSING (e.g., "NA") or some other number...
+    // Now determined by menu_value_missing.cpp:Value_Missing_get()
     
     if (Top == NULL) return;
     

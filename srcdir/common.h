@@ -85,14 +85,14 @@ extern int snprintf(char *buf, int cnt, const char *fmt, ...);
    missing value */
 #ifndef QUNDEF
 //#define QUNDEF -999999
-#define QUNDEF  (-2.1415965358979E30)
+#define QUNDEF  (-9.999999999E30)
 #endif
 
 // QMISSING is used as the numeric equivalent of the string "NA" for missing quantitative phenotype values.
 // It should an enumerated type equal to INT_MIN + 2 (or some other small int).
 #ifndef QMISSING
 //#define QMISSING -888888
-#define QMISSING (-1.1415965358979E30)
+#define QMISSING (-8.888888888E30)
 #endif
 
 #ifndef UNDEF
@@ -424,6 +424,8 @@ extern int             num_covariates, *covariates;
 extern int             seed1, seed2, seed3; /* random seeds */
 extern int             FirstTime; /* First time pedigrees are constructed */
 extern double          MissingQuant;
+extern double          MissingOutQuant, QuantOutLow, QuantOutHi;
+extern int             MissingOutQuantSet;
 extern int             NukedMultiplier;
 
 extern int             SelectIndividuals;

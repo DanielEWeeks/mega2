@@ -53,6 +53,8 @@ extern void  affected_by_status(linkage_ped_top *Top, int locus);
 extern int analysis_menu1(analysis_type  *analysis);
 
 
+extern int check_quant_phenotype_data_has_value(linkage_ped_top *Top, double value);
+
 extern void define_affection_labels(linkage_ped_top *Top,
 				    analysis_type analysis);
 

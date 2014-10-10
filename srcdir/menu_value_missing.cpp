@@ -1,3 +1,4 @@
+#define IGNORE 1
 /*
   Mega2: Manipulation Environment for Genetic Analysis
   Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
@@ -29,6 +30,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <errno.h>
 
 #include "common.h"
@@ -82,21 +84,24 @@ struct itl {
 };
 
 #ifdef HIDESTATUS
-static const char *source_name[] = { "menu input", "in batch", "plink --missing-pheno", "plink default", "analysis rule", "inherited", "cannot change", "output default", "linkage default", "mega2 default"};
+static const char *source_name[] = {
+    /*0*/ "menu input",      /*1*/ "in batch",  /*2*/ "plink --missing-pheno", /*3*/ "plink default",
+    /*4*/ "analysis rule",   /*5*/ "inherited", /*6*/ "cannot change",         /*7*/ "output default",
+    /*8*/ "linkage default", /*9*/ "mega2 default"};
 #endif
 
 struct itl Value_Missing[]  =  {
-    {Value_Missing_Quant_On_Input,   0,                             Str_Missing_Quant_On_Input,
+    {Value_Missing_Quant_On_Input,   0, Str_Missing_Quant_On_Input,
      "Quantitative", "Input",   fix_Value_Missing_Quant_On_Input, 0, 0},
 
-    {Value_Missing_Quant_On_Output,  Value_Missing_Quant_On_Input,  Str_Missing_Quant_On_Output,
+    {Value_Missing_Quant_On_Output,  0,  Str_Missing_Quant_On_Output,
      "Quantitative", "Output",  fix_Value_Missing_Quant_On_Output, 0, 0},
 
-    {Value_Missing_Affect_On_Input,  Value_Missing_Quant_On_Input,  Str_Missing_Affect_on_Input,
-     "Affection", "Input",         fix_Value_Missing_Affect_On_Input, 0, 0},
+    {Value_Missing_Affect_On_Input,  0,  Str_Missing_Affect_on_Input,
+     "Affection", "Input",      fix_Value_Missing_Affect_On_Input, 0, 0},
 
-    {Value_Missing_Affect_On_Output, Value_Missing_Quant_On_Output, Str_Missing_Affect_On_Output,
-     "Affection", "Output",        fix_Value_Missing_Affect_On_Output, 0, 0},
+    {Value_Missing_Affect_On_Output, 1, Str_Missing_Affect_On_Output,
+     "Affection", "Output",     fix_Value_Missing_Affect_On_Output, 0, 0},
 
     {0, 0, 0, 
      0, 0, (void (*)(analysis_type *analysis, struct itl *itp, const char *value)) 0, 0}
@@ -287,6 +292,9 @@ void fix_Value_Missing_inherit_Quant_2_Affect() {
 */
 
 static int fix_Value_Missing_check_allow(analysis_type *analysis, int vmidx) {
+#ifdef IGNORE
+    return 1;
+#else
     struct itl *itp = &Value_Missing[vmidx];
     int allow = 1;
 
@@ -299,9 +307,13 @@ static int fix_Value_Missing_check_allow(analysis_type *analysis, int vmidx) {
     else if (itp->it == Value_Missing_Affect_On_Output)
         allow = (*analysis)->output_affect_can_define_missing_value();
     return allow;
+#endif
 }
 
 static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *itp, const char *value) {
+#ifdef IGNORE
+    return 0;
+#else
     int qnum = 0;
     int num = 0;
     if (itp->it == Value_Missing_Quant_On_Input) {
@@ -345,6 +357,7 @@ static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *
         }
     }
     return 0;
+#endif
 }
 
 static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
@@ -476,7 +489,7 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
     char dfp[32];
     if (itp->it == Value_Missing_Quant_On_Input) {
       /* this is always set (above) and hence not used*/
-        if (PLINK.plink || PLINK.xcf) {
+        if (PLINK.plink || PLINK.xcf) {  // if specified in batch file then above "ipt->set" code has run
             if (PLINK.missing_pheno) {
                 itp->source = 2;
                 sprintf(dfp, "%g", PLINK.pheno_value);
@@ -489,7 +502,10 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
             df = 0;
     } else if (itp->it == Value_Missing_Affect_On_Input) {
        /* grow a default (see allow) */
-        if (PLINK.plink || PLINK.xcf) {
+        int i = itp->inherit;
+        if (Value_Missing[i].source == 1) // batch file
+            /* use inheritance */;
+        else if (PLINK.plink || PLINK.xcf) {
             if (PLINK.missing_pheno) {
                 sprintf(dfp, "%g", PLINK.pheno_value);
                 df = dfp;
@@ -507,13 +523,7 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
     } else if (itp->it == Value_Missing_Affect_On_Output) {
         df = (*analysis)->output_affect_default_value();
         if (df) {
-            struct itl *itpv = &Value_Missing[0], *itpn;
-            int i;
-            for (i = 0; i < 4; i++) {
-                itpn = itpv + i;
-                if (itp->inherit == itpn->it)
-                    break;
-            }
+            int i = itp->inherit;
             if (Value_Missing[i].source == 4)
                 itp->source = 4;
             else {
@@ -536,6 +546,7 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
 // is not set.  Because we are guessing value.
         itp->source = 5;
         int inherit = itp->inherit;
+        inherit = Value_Missing[inherit].it;
         if (inherit) {
             switch(itp->it) {
             case Value_Missing_Affect_On_Input:
@@ -611,11 +622,32 @@ static void fix_Value_Missing_Quant_On_Input(analysis_type *analysis, struct itl
         // Interesting, but MissingQuant was not assigned here in the past!
         // NOTE: the use of 'strtok' here assumes that there is no comment following the value
         MissingQuant = strtod(value, &endptr);
+
+        if (*analysis == TO_SAGE) {
+#ifndef HIDESTATUS
+            warnf("Decimal places in will be ignored since SAGE accepts only integers as missing values.");
+#endif
+            MissingQuant = (MissingQuant > 0 ? floor(MissingQuant) : ceil(MissingQuant));
+        }
         Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = MissingQuant;
     }
 }
 
 static void fix_Value_Missing_Quant_On_Output(analysis_type *analysis, struct itl *itp, const char *value) {
+    double mis;
+    char *end;
+
+    if (strcasecmp(value, "na") && (*analysis)->output_quant_must_be_numeric()) {
+        //&& fix_Value_Missing_check_numeric(analysis, itp, value) == 0) {
+        mis = strtod(value, &end);
+        if (strlen(value) != 0 && strlen(end) == 0 && errno != ERANGE) {
+            MissingOutQuant = mis;
+            MissingOutQuantSet = 1;
+        } else 
+            MissingOutQuantSet = 0;
+    } else 
+        MissingOutQuantSet = 0;
+
     strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name, value);
 }
 

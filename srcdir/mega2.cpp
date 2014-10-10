@@ -105,6 +105,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <ctype.h>
 
 #include "common.h"
@@ -298,6 +299,8 @@ int             num_covariates, *covariates;
 int             seed1, seed2, seed3; /* random seeds */
 int             FirstTime; /* First time pedigrees are constructed */
 double          MissingQuant;
+double          MissingOutQuant, QuantOutLow = NAN, QuantOutHi = NAN;
+int             MissingOutQuantSet;
 int             NukedMultiplier;
 
 int             SelectIndividuals;

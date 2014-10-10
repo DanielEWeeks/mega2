@@ -117,7 +117,8 @@ void premakeped_omit_file(linkage_ped_top *Top,
 			  const char *omitfl_name,
                           const int raw_allele);
 
-int FLOAT_AFFECT = 0, Display_FLOAT_AFFECT = 0;
+int BAD_QMISSING_OUT = 0, Display_BAD_QMISSING_OUT = 0;
+int FLOAT_AFFECT = 0,     Display_FLOAT_AFFECT = 0;
 
 /**************************************/
 static int check_ped_file_cols(int cols, FILE *fp, char *file_name)
@@ -186,6 +187,22 @@ static int read_affection_data(FILE *filep, int locusnm, pheno_rec *locus, linka
     return lch;
 }
 
+static void check_quant_vs_MissingQuants(double quant)
+{
+    if (MissingOutQuantSet) {
+        if (isnan(QuantOutLow) || quant <= QuantOutLow)
+            QuantOutLow = quant;
+        if (isnan(QuantOutHi)  || quant >= QuantOutHi)
+            QuantOutHi  = quant;
+
+        if (!isnan(QuantOutLow) && MissingOutQuant >= QuantOutLow && MissingOutQuant <= QuantOutHi) {
+            SUPPRESS_MSSG_NESTED(BAD_QMISSING_OUT);
+            errorvf("The missing quantitative output value (%g) is among the values found \n", MissingOutQuant);
+            errorvf("in the set of quantitative values [%g..%g].\n", QuantOutLow, QuantOutHi);
+        }
+    }
+}
+
 /**
    This routine will set the value of Quant to that of the numeric representation
    of "NA".
@@ -210,6 +227,9 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
             EXIT(OUTOF_BOUNDS_ERROR);
         }
     }
+
+    check_quant_vs_MissingQuants(quant);
+
     if (PLINK.missing_pheno) {
 //      if (quant == PLINK.pheno_value) quant = QMISSING;
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
@@ -254,6 +274,9 @@ int read_quant_phen(FILE *filep, int locusnm,
             EXIT(OUTOF_BOUNDS_ERROR);
         }
     }
+
+    check_quant_vs_MissingQuants(quant);
+
     if (PLINK.missing_pheno) {
 //      if (quant == PLINK.pheno_value) quant = QMISSING;
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
@@ -1260,6 +1283,8 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
         EXIT(INPUT_DATA_ERROR);
     }
 
+    count_Missing_Quant_consistency();
+
     Top->PedCnt = PedCnt;
     Top->Ped = CALLOC((size_t) PedCnt, linkage_ped_tree);
     for (ped = 0; ped < PedCnt; ped++) {
@@ -1321,6 +1346,17 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
     free_list(EntryList);
 
     return Top;
+}
+
+void count_Missing_Quant_consistency()
+{
+    SUPPRESS_MSSG_NESTED_FORCE(BAD_QMISSING_OUT);
+    if (BAD_QMISSING_OUT) {
+        errorvf("Output Quantitative Missing Value was found among the quantitative data %d times\n",
+                BAD_QMISSING_OUT);
+        EXIT(INPUT_DATA_ERROR);
+    }
+    SUPPRESS_MSSG_NESTED_FINI(BAD_QMISSING_OUT);
 }
 
 

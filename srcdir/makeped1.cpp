@@ -303,6 +303,8 @@ static int read_peds(int line_count, FILE *pfilep,
         warnvf("Individuals untyped: %d out of %d\n", untyped, totaltyped);
     SUPPRESS_MSSG_NESTED_FINI(untyped);
 
+    count_Missing_Quant_consistency();
+
     return unique;
 }
 

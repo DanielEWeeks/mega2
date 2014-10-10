@@ -61,6 +61,8 @@ extern linkage_ped_top *read_linkage_ped_file(FILE *filep,
 					      linkage_locus_top *LTop,
                                               int *col2locus);
 
+extern void count_Missing_Quant_consistency();
+
 extern void annot_ignore_numbered_data(int line, linkage_locus_rec *locus,
                                        void *pedrec, int loc);
 

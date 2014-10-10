@@ -411,6 +411,7 @@ public:
 
     virtual bool output_affect_can_define_missing_value() { return true; }
     virtual const char* output_affect_default_value() { return "0"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
 
     virtual bool qtl_disallow() { return true; }
 
