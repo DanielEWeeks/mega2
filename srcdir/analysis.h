@@ -346,6 +346,33 @@ public:
     CLASS_ANALYSIS   *analysis;
 };
 
+class Missing_Value {
+/* some day
+    enum class numeric {OFF=0, Num,   Any};
+   but scoped enum are a c++11 feature and possibly ... not there
+*/
+
+public:
+    enum numeric {Numeric=0, Num=1,   Any=2};
+    enum change  {Change=0,  Fixed=1, Varies=2, NoQnt=3};
+
+public:
+    string           Description;
+    CLASS_ANALYSIS   *analysis;
+
+    const char      *quant_str;
+    enum numeric     quant_num;
+    enum change      quant_change;
+
+    const char      *affect_str;
+    enum numeric     affect_num;
+    enum change      affect_change;
+
+    const char      *allele_str;
+    enum numeric     allele_num;
+    enum change      allele_change;
+};
+
 // documentation shows this as disabled.
 class CLASS_APM: public CLASS_ANALYSIS {
 public:

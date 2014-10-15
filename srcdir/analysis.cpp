@@ -137,6 +137,8 @@ analysis_types analysis_list[] = {
 
 int count_analysis_list = sizeof(analysis_list) / sizeof (analysis_types);
 
+#include "menu_value_missing.h"
+
 //
 // The two routines 'prog_name()', and 'prog_name_to_num()' are intertwined.
 // 'prog_name()' is used to output a string to the batch file that is understandable to the user.

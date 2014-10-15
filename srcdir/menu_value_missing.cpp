@@ -1,4 +1,4 @@
-#define IGNORE 1
+//define IGNORE 1
 /*
   Mega2: Manipulation Environment for Genetic Analysis
   Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
@@ -45,10 +45,14 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 
+#include "analysis.h"
+
 /*
      error_messages_ext.h:  errorf mssgf my_calloc warnf
               utils_ext.h:  EXIT draw_line get_line
 */
+
+extern Missing_Value missing_value;
 
 char Str_Missing_Quant_On_Input[50]   = "";
 char Str_Missing_Affect_on_Input[50]  = "";
@@ -163,7 +167,8 @@ static void Value_Missing_menu(analysis_type *analysis)
         }
 
         show = Value_Missing[qout_i-2].str;
-        if (!*show) show = (*analysis)->output_quant_default_value();
+//      if (!*show) show = (*analysis)->output_quant_default_value();
+	if (!*show) show = missing_value.quant_str;
         if (!show) show = "";
         if (fix_Value_Missing_check_allow(analysis, 1)) {
             printf("%2d) Specify output missing value for Quantitative traits: %7s",
@@ -184,7 +189,8 @@ static void Value_Missing_menu(analysis_type *analysis)
         }
 
         show = Value_Missing[aout_i-2].str;
-        if (!*show) show = (*analysis)->output_affect_default_value();
+//      if (!*show) show = (*analysis)->output_affect_default_value();
+        if (!*show) show = missing_value.affect_str;
         if (!show) show = "";
         if (fix_Value_Missing_check_allow(analysis, 3)) {
             printf("%2d) Specify output missing value for Affection status:    %7s",
@@ -303,9 +309,11 @@ static int fix_Value_Missing_check_allow(analysis_type *analysis, int vmidx) {
     else if (itp->it == Value_Missing_Affect_On_Input)
         allow = 1;
     else if (itp->it == Value_Missing_Quant_On_Output)
-        allow = (*analysis)->output_quant_can_define_missing_value();
+//      allow = (*analysis)->output_quant_can_define_missing_value();
+	allow = missing_value.quant_change == Missing_Value::Varies;
     else if (itp->it == Value_Missing_Affect_On_Output)
-        allow = (*analysis)->output_affect_can_define_missing_value();
+//      allow = (*analysis)->output_affect_can_define_missing_value();
+	allow = missing_value.affect_change == Missing_Value::Varies;
     return allow;
 #endif
 }
@@ -329,11 +337,14 @@ static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *
     } else if (itp->it == Value_Missing_Quant_On_Output) {
         if ((*analysis != MEGA2ANNOT && *analysis != TO_PSEQ) ||
             strcasecmp(value, "na"))
-            qnum = (*analysis)->output_quant_must_be_numeric();
+//            qnum = (*analysis)->output_quant_must_be_numeric();
+	    qnum = missing_value.quant_num == Missing_Value::Num;
     } else if (itp->it == Value_Missing_Affect_On_Output) {
         if ((*analysis != MEGA2ANNOT && *analysis != TO_PSEQ) ||
             strcasecmp(value, "na")) {
-            if ((*analysis)->output_affect_must_be_numeric()) {
+//          if ((*analysis)->output_affect_must_be_numeric())
+	    if (missing_value.affect_num == Missing_Value::Num)
+	    {
                 if (*analysis == TO_PLINK)
                     qnum = 1;
                 else
@@ -434,7 +445,8 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
         }
     else if (itp->it == Value_Missing_Quant_On_Output) {
         itp->set = allow;
-        df = (*analysis)->output_quant_default_value();
+//      df = (*analysis)->output_quant_default_value();
+	df = missing_value.quant_str;
         if (df == (const char *)NULL) {
             itp->source = 7;
             df = Mega2BatchItems[itp->it].value.name;
@@ -442,7 +454,8 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
             itp->source = 4;
     } else if (itp->it == Value_Missing_Affect_On_Output) {
         itp->set = allow;
-        df = (*analysis)->output_affect_default_value();
+//      df = (*analysis)->output_affect_default_value();
+	df = missing_value.affect_str;
         if (df == (const char *)NULL) {
             itp->source = 7;
             df = Mega2BatchItems[itp->it].value.name;
@@ -518,10 +531,12 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
             df = 0;
     /* the outputs are used if set by analysis */
     } else if (itp->it == Value_Missing_Quant_On_Output) {
-        df = (*analysis)->output_quant_default_value();
+//      df = (*analysis)->output_quant_default_value();
+	df = missing_value.quant_str;
         if (df) itp->source = 4;
     } else if (itp->it == Value_Missing_Affect_On_Output) {
-        df = (*analysis)->output_affect_default_value();
+//      df = (*analysis)->output_affect_default_value();
+	df = missing_value.affect_str;
         if (df) {
             int i = itp->inherit;
             if (Value_Missing[i].source == 4)
@@ -637,7 +652,9 @@ static void fix_Value_Missing_Quant_On_Output(analysis_type *analysis, struct it
     double mis;
     char *end;
 
-    if (strcasecmp(value, "na") && (*analysis)->output_quant_must_be_numeric()) {
+//  if (strcasecmp(value, "na") && (*analysis)->output_quant_must_be_numeric())
+    if (strcasecmp(value, "na") && missing_value.quant_num == Missing_Value::Num)
+	{
         //&& fix_Value_Missing_check_numeric(analysis, itp, value) == 0) {
         mis = strtod(value, &end);
         if (strlen(value) != 0 && strlen(end) == 0 && errno != ERANGE) {
@@ -655,7 +672,21 @@ static void fix_Value_Missing_Affect_On_Input(analysis_type *analysis, struct it
 //    if (strcasecmp(value, "NA") == 0)
 //        Mega2BatchItems[itp->it].value.option = 0;
 //    else
-        strcpy(Mega2BatchItems[itp->it].value.name, value);
+    double Missing;
+    char *end;
+    if (*analysis == TO_SAGE) {
+#ifndef HIDESTATUS
+	warnf("Decimal places in will be ignored since SAGE accepts only integers as missing values.");
+#endif
+	Missing = strtod(value, &end);
+	if (strlen(value) != 0 && strlen(end) == 0 && errno != ERANGE) {
+	    Missing = (Missing > 0 ? floor(Missing) : ceil(Missing));
+	    sprintf(Mega2BatchItems[itp->it].value.name, "%d", (int) Missing);
+	} else {
+	    strcpy(Mega2BatchItems[itp->it].value.name, value);
+	}
+    } else
+	strcpy(Mega2BatchItems[itp->it].value.name, value);
 }
 
 static void fix_Value_Missing_Affect_On_Output(analysis_type *analysis, struct itl *itp, const char *value) {

@@ -204,6 +204,9 @@ int invalid_analysis(int opt)
 extern analysis_types analysis_list[];
 extern int count_analysis_list;
 
+extern Missing_Value missing_value;
+extern Missing_Value missing_values[];
+
 int analysis_menu1(analysis_type  *analysis)
 {
     char            choice[50], sub_prog[50];
@@ -267,6 +270,13 @@ int analysis_menu1(analysis_type  *analysis)
         /* note the analysis may be changed */
         if ((*analysis)->has_sub_options())
             (*analysis)->interactive_sub_prog_name_to_sub_option(analysis);
+    }
+
+    for (i = 0; i < count_analysis_list; i++) {
+	if (*analysis == missing_values[i].analysis) {
+	    missing_value = missing_values[i];
+	    break;
+	}
     }
 
     AllowUnmapped = (ALLOW_NO_CHR(*analysis) ? 1 : 0);

@@ -851,15 +851,16 @@ analysis.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
 analysis.o: write_eigenstrat_ext.h write_pangaea_ext.h write_beagle_ext.h
 analysis.o: write_structure_ext.h write_pseq_ext.h batch_input.h
 analysis.o: input_check.h hwe.h compress_ext.h utils_ext.h
-analysis.o: error_messages_ext.h fcmap_ext.h output_file_names_ext.h
-analysis.o: aspex_ext.h cranefoot_ext.h create_summary_ext.h
-analysis.o: hwe_user_input_ext.h makenucs_ext.h mega2annot_ext.h
-analysis.o: scripts_ext.h slink_ext.h splink_ext.h write_IQLS_ext.h
-analysis.o: write_SUP_files_ext.h write_apm_ext.h write_files_ext.h
-analysis.o: write_ghfiles_ext.h write_loki_ext.h write_mfiles_ext.h
-analysis.o: write_pap_ext.h write_premakeped_ext.h write_prest_ext.h
-analysis.o: write_sage_files_ext.h write_simulate_files_ext.h
-analysis.o: write_solar_files_ext.h write_vitesse_ext.h
+analysis.o: menu_value_missing.h error_messages_ext.h fcmap_ext.h
+analysis.o: output_file_names_ext.h aspex_ext.h cranefoot_ext.h
+analysis.o: create_summary_ext.h hwe_user_input_ext.h makenucs_ext.h
+analysis.o: mega2annot_ext.h scripts_ext.h slink_ext.h splink_ext.h
+analysis.o: write_IQLS_ext.h write_SUP_files_ext.h write_apm_ext.h
+analysis.o: write_files_ext.h write_ghfiles_ext.h write_loki_ext.h
+analysis.o: write_mfiles_ext.h write_pap_ext.h write_premakeped_ext.h
+analysis.o: write_prest_ext.h write_sage_files_ext.h
+analysis.o: write_simulate_files_ext.h write_solar_files_ext.h
+analysis.o: write_vitesse_ext.h
 write_fbat.o: common.h typedefs.h errorno.h allutil.h linkage.h
 write_fbat.o: linkage_external.h makeped.h pedtree.h analysis.h
 write_fbat.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -973,4 +974,5 @@ menu_value_missing.o: plink_core_ext.h write_eigenstrat_ext.h
 menu_value_missing.o: write_pangaea_ext.h write_beagle_ext.h
 menu_value_missing.o: write_structure_ext.h write_pseq_ext.h batch_input.h
 menu_value_missing.o: input_check.h hwe.h compress_ext.h batch_input_ext.h
-menu_value_missing.o: error_messages_ext.h utils_ext.h
+menu_value_missing.o: error_messages_ext.h fcmap_ext.h plink_ext.h
+menu_value_missing.o: user_input_ext.h utils_ext.h
