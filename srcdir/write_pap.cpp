@@ -570,9 +570,6 @@ static int save_pap_hdr(char *hdr_file_name, linkage_locus_top *LocusTop,
         //
         // NOTE: 9 items to a line, additional entries are on lines.
         
-        // Historically this line has been included in output from Mega2.
-        // However, since we are now taking the default -9999 there is no need for it.
-#if 0
         ncol=0;
         fprintf(filep, "      -1"); 	  ncol += 8;
         if (include_sex) {
@@ -622,7 +619,7 @@ static int save_pap_hdr(char *hdr_file_name, linkage_locus_top *LocusTop,
             }
         }
         if (ncol > 0) fprintf(filep, "\n");
-#endif /* 0 */
+
         //
         // Optional line(s). PHSIM(I) = -99999 if not included.
         // -2 Code to indicate line of simulation indicators (columns: 1-8; type: Integer)

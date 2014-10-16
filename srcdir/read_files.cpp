@@ -189,7 +189,7 @@ static int read_affection_data(FILE *filep, int locusnm, pheno_rec *locus, linka
 
 static void check_quant_vs_MissingQuants(double quant)
 {
-    if (MissingOutQuantSet) {
+    if (MissingOutQuantSet && (quant != QUNDEF && quant != QMISSING)) {
         if (isnan(QuantOutLow) || quant <= QuantOutLow)
             QuantOutLow = quant;
         if (isnan(QuantOutHi)  || quant >= QuantOutHi)

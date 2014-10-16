@@ -1887,6 +1887,8 @@ extern void set_chromosomes_mouse(); /* { set_chromosomes(19,  0,  0); } */
 extern void set_chromosomes_cow();   /* { set_chromosomes(29,  0,  0); } */
 extern void set_chromosomes_human(); /* { set_chromosomes(22, 25, 26); } */
 extern int lastautosome, pseudoautosome, mitoautosome;
+extern int missingv_flags;
+extern char *quant_in, *quant_out, *affect_in, *affect_out;
 
 void mega2_opts(int argc, char **argv)
 {
@@ -1966,7 +1968,23 @@ void mega2_opts(int argc, char **argv)
                     Input_Format = in_format_extended_linkage;
                 else if (strcasecmp(as, "force_numeric_alleles") == 0)
                     force_numeric_alleles = 1;
-                else if (strcasecmp(as, "help") == 0)
+                else if (strcasecmp(as, "quant_in") == 0) {
+		    argv++; --argc;
+		    quant_in = *argv;
+		    missingv_flags |= 1;
+		} else if (strcasecmp(as, "quant_out") == 0) {
+		    argv++; --argc;
+		    quant_out = *argv;
+		    missingv_flags |= 2;
+                } else if (strcasecmp(as, "affect_in") == 0) {
+		    argv++; --argc;
+		    affect_in = *argv;
+		    missingv_flags |= 4;
+                } else if (strcasecmp(as, "affect_out") == 0) {
+		    argv++; --argc;
+		    affect_out = *argv;
+		    missingv_flags |= 8;
+		} else if (strcasecmp(as, "help") == 0)
                     print_mega2_help();
                 else if (strcasecmp(as, "version") == 0)
                     print_mega2_version();

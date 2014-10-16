@@ -60,6 +60,9 @@ char Str_Missing_Quant_On_Output[50]  = "";
 char Str_Missing_Affect_On_Output[50] = "";
 char Str_read[50] = "";
 
+int missingv_flags = 0;
+char *quant_in, *quant_out, *affect_in, *affect_out;
+
 // If the Value_Missing_Quant_On_Output is either not specified or was not permitted
 // to have been specified in the batch file (e.g., output_quant_can_define_missing_value()
 // returns false), then check to see if there is a default value for that analysis mode (e.g.,
@@ -91,7 +94,7 @@ struct itl {
 static const char *source_name[] = {
     /*0*/ "menu input",      /*1*/ "in batch",  /*2*/ "plink --missing-pheno", /*3*/ "plink default",
     /*4*/ "analysis rule",   /*5*/ "inherited", /*6*/ "cannot change",         /*7*/ "output default",
-    /*8*/ "linkage default", /*9*/ "mega2 default"};
+    /*8*/ "linkage default", /*9*/ "mega2 default", /*10*/ "cmd line"};
 #endif
 
 struct itl Value_Missing[]  =  {
@@ -320,6 +323,7 @@ static int fix_Value_Missing_check_allow(analysis_type *analysis, int vmidx) {
 
 static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *itp, const char *value) {
 #ifdef IGNORE
+
     return 0;
 #else
     int qnum = 0;
@@ -364,7 +368,7 @@ static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *
             // Conversion of the entire string was not successful or some other error...
             errorvf("%s %s missing value \"%s\" must be a numeric string representing %s number.\n",
                     itp->name, itp->put, value, qnum ? "a float" : "an integer");
-            return 1;
+            return missingv_flags ? 0 : 1; // doesnt count if user is manipulating stuff
         }
     }
     return 0;
@@ -382,7 +386,10 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
     allow = fix_Value_Missing_check_allow(analysis, vmidx);
 
     if (itp->it == Value_Missing_Quant_On_Input) {
-        switch (Input_Format) {
+	if (missingv_flags & 1) {
+            itp->set = 1;
+	    df = quant_in;
+        } else switch (Input_Format) {
         case in_format_mega2:
             itp->set = 1;
             itp->source = 9;
@@ -412,8 +419,11 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
         default:
             break;
         }
-    } else if (itp->it == Value_Missing_Affect_On_Input)
-        switch (Input_Format) {
+    } else if (itp->it == Value_Missing_Affect_On_Input) {
+	if (missingv_flags & 4) {
+            itp->set = 1;
+	    df = affect_in;
+        } else switch (Input_Format) {
         case in_format_mega2:
             itp->set = 1;
             itp->source = 9;
@@ -443,24 +453,34 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
         default:
             break;
         }
-    else if (itp->it == Value_Missing_Quant_On_Output) {
-        itp->set = allow;
+    } else if (itp->it == Value_Missing_Quant_On_Output) {
+	if (missingv_flags & 2) {
+            itp->set = 1;
+	    df = quant_out;
+        } else {
+	    itp->set = allow;
 //      df = (*analysis)->output_quant_default_value();
-	df = missing_value.quant_str;
-        if (df == (const char *)NULL) {
-            itp->source = 7;
-            df = Mega2BatchItems[itp->it].value.name;
-        } else
-            itp->source = 4;
+	    df = missing_value.quant_str;
+	    if (df == (const char *)NULL) {
+		itp->source = 7;
+		df = Mega2BatchItems[itp->it].value.name;
+	    } else
+		itp->source = 4;
+	}
     } else if (itp->it == Value_Missing_Affect_On_Output) {
-        itp->set = allow;
+	if (missingv_flags & 8) {
+            itp->set = 1;
+	    df = affect_out;
+        } else {
+	    itp->set = allow;
 //      df = (*analysis)->output_affect_default_value();
-	df = missing_value.affect_str;
-        if (df == (const char *)NULL) {
-            itp->source = 7;
-            df = Mega2BatchItems[itp->it].value.name;
-        } else
-            itp->source = 4;
+	    df = missing_value.affect_str;
+	    if (df == (const char *)NULL) {
+		itp->source = 7;
+		df = Mega2BatchItems[itp->it].value.name;
+	    } else
+		itp->source = 4;
+	}
     }
 
     if (df != (const char *)NULL) {
@@ -480,6 +500,7 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
  * For interactive, all 4 missing values are "set".
  * For batch, Only Quant Input (and possibly Quant Output) is set, the others are grown!
  */
+
     if (itp->set) {
         if (! allow) {
             warnvf("'Analysis_Option' = '%s' does not allow the definition of Missing %s %s Value.\n",
@@ -549,7 +570,7 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
     }
 
     if (df != (const char *)NULL) {
-        ret = fix_Value_Missing_check_numeric(analysis, itp, df);
+        ret = allow ? fix_Value_Missing_check_numeric(analysis, itp, df) : 0;
         if (! ret) {
             strcpy(itp->str, df);
             itp->store(analysis, itp, df);
@@ -719,12 +740,33 @@ void Value_Missing_get(analysis_type *analysis)
     int allow;
     struct itl *itp = &Value_Missing[0], *itpn;
 
+    for (int i = 0; i < 4; i++) {
+	itpn = itp + i;
+	if ((itpn->it == Value_Missing_Quant_On_Input) && (missingv_flags & 1)) {
+	    strcpy(itpn->str, quant_in);
+	    itpn->set = 1;
+	    itpn->source = 10;
+	} else if ((itpn->it == Value_Missing_Affect_On_Input) && (missingv_flags & 4)) {
+	    strcpy(itpn->str, quant_out);
+	    itpn->set = 1;
+	    itpn->source = 10;
+	} else if ((itpn->it == Value_Missing_Quant_On_Output) && (missingv_flags & 2)) {
+	    strcpy(itpn->str, affect_in);
+	    itpn->set = 1;
+	    itpn->source = 10;
+	} else if ((itpn->it == Value_Missing_Affect_On_Output) && (missingv_flags & 8)) {
+	    strcpy(itpn->str, affect_out);
+	    itpn->set = 1;
+	    itpn->source = 10;
+	}
+    }
     if (batchINPUTFILES) {
         for (int i = 0; i < 4; i++) {
             allow = fix_Value_Missing_check_allow(analysis, i);
             itpn = itp + i;
-            itpn->source = allow ? 1 : 6;
-            itpn->set = Mega2BatchItems[itpn->it].item_read;
+	    if (itpn->source == 0)
+		itpn->source = allow ? 1 : 6;
+	    itpn->set = itpn->set | Mega2BatchItems[itpn->it].item_read;
         }
 
         if (fix_Value_Missing_all(analysis))
