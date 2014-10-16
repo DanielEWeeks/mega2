@@ -505,7 +505,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                 hmend = imend = aexceed = 0;
         } else {
             int imendf = 0, hmendf = 0, aexceedf = 0;
-            printf("How shall we proceed further?\n");
+            printf("Specify whether to reset poorly typed individuals and families:\n");
             while (select != 0) {
                 strcpy(toggle_str, "");
                 menu_item=0;

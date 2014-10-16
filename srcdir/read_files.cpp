@@ -228,8 +228,6 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
         }
     }
 
-    check_quant_vs_MissingQuants(quant);
-
     if (PLINK.missing_pheno) {
 //      if (quant == PLINK.pheno_value) quant = QMISSING;
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
@@ -239,6 +237,8 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
 
     }
+
+    check_quant_vs_MissingQuants(quant);
 
     pedrec->Quant = quant;
 
@@ -275,8 +275,6 @@ int read_quant_phen(FILE *filep, int locusnm,
         }
     }
 
-    check_quant_vs_MissingQuants(quant);
-
     if (PLINK.missing_pheno) {
 //      if (quant == PLINK.pheno_value) quant = QMISSING;
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
@@ -285,6 +283,9 @@ int read_quant_phen(FILE *filep, int locusnm,
 //      if (quant == MissingQuant) quant = QMISSING;
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
     }
+
+    check_quant_vs_MissingQuants(quant);
+
     switch(rec) {
     case Annotated:
         anentry->pheno[locusnm].Quant = quant;
@@ -1354,7 +1355,7 @@ void count_Missing_Quant_consistency()
     if (BAD_QMISSING_OUT) {
         errorvf("Output Quantitative Missing Value was found among the quantitative data %d times\n",
                 BAD_QMISSING_OUT);
-        EXIT(INPUT_DATA_ERROR);
+//tmp   EXIT(INPUT_DATA_ERROR);
     }
     SUPPRESS_MSSG_NESTED_FINI(BAD_QMISSING_OUT);
 }

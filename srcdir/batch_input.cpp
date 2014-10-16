@@ -603,7 +603,9 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
             sscanf(strtok(nextline, "="), "%s", keyword);
             // get everything after the '=' sign...
             intstr = strtok(NULL, "\n");
-            if (intstr == NULL) {
+            if (intstr == NULL && !strncasecmp(keyword, "value_missing_", 14) ) {
+                intstr = (char *)"";
+            } else if (intstr == NULL) {
                 malformed_batch_line(keyword);
             }
             strcpy(value, intstr);
