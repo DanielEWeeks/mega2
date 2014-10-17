@@ -30,7 +30,9 @@ CC = gcc
 
 # compiler options
 
-CFLAGS = -Wall
+OPT ?= -O3
+CFLAGS = -Wall $(OPT)
+
 CLIBS  = -lm
 
 mega2.o cw_routines.o: DFLAGS += -DSOLARIS

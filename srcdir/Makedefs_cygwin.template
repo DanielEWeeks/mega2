@@ -29,8 +29,9 @@ MAKEDEFS = DEFINED
 CC = gcc
 
 # compiler options
+OPT ?= -O3
+CFLAGS = -Wall $(OPT)
 
-CFLAGS = -Wall
 CLIBS = -lm
 
 #mega2.o cw_routines.o: DFLAGS += -DCYGWIN_OS

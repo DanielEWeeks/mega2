@@ -105,6 +105,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#ifdef SOLARIS
+#define _STDC_C99
+#endif
 #include <math.h>
 #include <ctype.h>
 

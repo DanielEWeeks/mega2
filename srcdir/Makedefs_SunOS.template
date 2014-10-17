@@ -30,7 +30,9 @@ CC = gcc
 
 # compiler options
 
-CFLAGS = -Wall
+OPT ?= -O3
+CFLAGS = -Wall $(OPT)
+
 # for gethostbyname() on Solaris11, libnsl needs to be linked in.
 # for send() and recv() on Solaris11, libsocket needs to be linked in.
 CLIBS  = -lm -lnsl -lsocket

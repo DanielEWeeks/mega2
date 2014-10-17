@@ -13105,35 +13105,11 @@ Genotype reset menu
 \end_layout
 
 \begin_layout Standard
-This menu is displayed if Mega2 found non-fatal problems with the pedigree
+This menu is displayed for Mega2 to look for problems with the pedigree
  data.
- It will display all three options or a subset depending on which problems
+ It will display all four options or a subset depending on which problems
  were detected.
  
-\end_layout
-
-\begin_layout LyX-Code
-Found these errors in one or more pedigrees:
-\end_layout
-
-\begin_layout LyX-Code
-   Unconnected entries
-\end_layout
-
-\begin_layout LyX-Code
-   Mendelian-inconsistent genotypes
-\end_layout
-
-\begin_layout LyX-Code
-   Half-typed genotypes
-\end_layout
-
-\begin_layout LyX-Code
-   Input and observed allele frequencies do not match
-\end_layout
-
-\begin_layout LyX-Code
-How shall we proceed?
 \end_layout
 
 \begin_layout LyX-Code
@@ -13141,23 +13117,58 @@ How shall we proceed?
 \end_layout
 
 \begin_layout LyX-Code
+Specify whether to reset poorly typed individuals and families: ================
+==========================================
+\end_layout
+
+\begin_layout LyX-Code
 0) Done with this menu - please proceed
 \end_layout
 
 \begin_layout LyX-Code
- 1) Set mendelian-inconsistent genotypes to (0,0) [yes].
+ 1) Set half-typed genotypes to unknown [no ].
 \end_layout
 
 \begin_layout LyX-Code
- 2) Set half-typed genotypes to (0,0) [yes].
+    If "no" is indicated, half-typed genotypes
 \end_layout
 
 \begin_layout LyX-Code
- 3) EXIT Mega2.
+    will not be looked for.
 \end_layout
 
 \begin_layout LyX-Code
-Select from options 0-3, 1 and 2 to toggle > 
+ 2) Set all genotypes to unknown within entire pedigrees
+\end_layout
+
+\begin_layout LyX-Code
+    at each Mendelianly-inconsistent locus? [no ]
+\end_layout
+
+\begin_layout LyX-Code
+    If "no" is indicated, Mendelianly-inconsistent loci
+\end_layout
+
+\begin_layout LyX-Code
+    will not be looked for.
+\end_layout
+
+\begin_layout LyX-Code
+ 3) Set out-of-bound genotypes to unknown? [no ]
+\end_layout
+
+\begin_layout LyX-Code
+    If "no" is indicated, out-of-bound genotypes
+\end_layout
+
+\begin_layout LyX-Code
+    will not be looked for.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+ 4) EXIT Mega2.
+  
 \end_layout
 
 \begin_layout LyX-Code
@@ -13165,8 +13176,12 @@ Select from options 0-3, 1 and 2 to toggle >
 \end_layout
 
 \begin_layout Standard
-There are no repair mechanisms for unconnected pedigrees or discrepancies
- in input and observed allele frequencies.
+Item 3) only appears for linkage format inputs.
+ In addition item 1) is not possible for PLINK binary inputs that do not
+ allow half-typed genotypes to be represented.
+ If you have already run your data through a program that checks for these
+ consistency issues and not there are none, it will be faster to not request
+ that Mega2 also look for these issues.
 \end_layout
 
 \begin_layout Section
@@ -15538,6 +15553,164 @@ http://atgu.mgh.harvard.edu/plinkseq/pseq.shtml
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+The Value Missing Menu 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:The-Value-Missing-menu"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This menu is used to indicate what value in the input data represents a
+ missing value.
+ Quantitative traits may have a different value for this purpose than Affection
+ Status traits.
+ In addition, when Mega2 produces outputs for analysis programs, it allows
+ you to specify what token should be used.
+ Again a different value can be used for Quantitative traits vs Affection
+ Status traits.
+ Typically, the input dictates what the default values should be for missing
+ values.
+ Below is for Linkage Style input; Mega2 would use 
+\begin_inset Quotes eld
+\end_inset
+
+NA
+\begin_inset Quotes erd
+\end_inset
+
+ for both input missing values and PLINK is likely to use -9.
+ Output missing values can present problems.
+ Some analysis programs dictate the value to be used to represent a missing
+ value.
+ In this case, the 
+\begin_inset Quotes eld
+\end_inset
+
+3)
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+4)
+\begin_inset Quotes erd
+\end_inset
+
+ would be written 
+\begin_inset Quotes eld
+\end_inset
+
+#)
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+#)
+\begin_inset Quotes erd
+\end_inset
+
+ respectively indicating that you can not change the value.
+ All four values are copied to the batch file that is generated.
+\end_layout
+
+\begin_layout LyX-Code
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+              Mega2 4.7.1 Missing Value menu:
+\end_layout
+
+\begin_layout LyX-Code
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+If it is necessary, specify a different value to indicate that a trait is
+ missing 
+\end_layout
+
+\begin_layout LyX-Code
+both for input to Mega2 and/or output from Mega2.
+\end_layout
+
+\begin_layout LyX-Code
+Note: Output entries that are marked with a "#" can not be changed.
+\end_layout
+
+\begin_layout LyX-Code
+0) Done with this menu - please proceed
+\end_layout
+
+\begin_layout LyX-Code
+ 1) Specify input missing value for Quantitative traits:     -999
+\end_layout
+
+\begin_layout LyX-Code
+ 2) Specify input missing value for Affection status:           0
+\end_layout
+
+\begin_layout LyX-Code
+ 3) Specify output missing value for Quantitative traits:       x
+\end_layout
+
+\begin_layout LyX-Code
+ 4) Specify output missing value for Affection status:          x
+\end_layout
+
+\begin_layout LyX-Code
+Select from options 0-4 > 0
+\end_layout
+
+\begin_layout Standard
+You may edit these values as you desire in keeping with what is allowed
+ by the analysis program.
+ Mega2 can verify that the value is constrained to be numeric.
+\end_layout
+
+\begin_layout Standard
+After 
+\begin_inset Quotes eld
+\end_inset
+
+0)
+\begin_inset Quotes erd
+\end_inset
+
+ is typed to exit the menu, a summary is written to the logs as shown below:
+ (This case indicates no changes from the default.)
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+Quantitative  Input Missing Value  -999
+\end_layout
+
+\begin_layout LyX-Code
+Affection     Input Missing Value "0"
+\end_layout
+
+\begin_layout LyX-Code
+Quantitative Output Missing Value "x"
+\end_layout
+
+\begin_layout LyX-Code
+Affection    Output Missing Value "x" 
 \end_layout
 
 \begin_layout Section
@@ -19450,6 +19623,281 @@ status collapsed
 \begin_layout Subsection
 
 \series bold
+Missing Value options 
+\end_layout
+
+\begin_layout Standard
+Several flags allow an override value to be supplied to indicate the token
+ for a missing value read as input or generated into output for the analysis
+ program.
+ Mega2 has rules that constrain the values; using these flags, allows you
+ to break the builtin rules and enter any values you like.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="3">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="center" valignment="top">
+<column alignment="left" valignment="top" width="4in">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+flag
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+value
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+interpretation
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-quant_in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+decimal number
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+override for batch item Value_Missing_Quant_On_Input and default for interactive
+ menu for same item 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:value_missing"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-quant_out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+decimal number
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+override for batch item Value_Missing_Quant_On_Output and default for interactiv
+e menu for same item 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:value_missing"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-affect_in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integer number
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+override for batch item Value_Missing_Affect_On_Input and default for interactiv
+e menu for same item 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:value_missing"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-affect_out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integer number
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+override for batch item Value_Missing_Affect_On_Output and default for interacti
+ve menu for same item 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:value_missing"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\series bold
 General options 
 \end_layout
 
@@ -20151,6 +20599,13 @@ Special phenotype and genotype indicators, i.e.
  missing quantitative phenotype, definition of affecteds (used only for
  multiple liability classes), and unknown allele and affection status indicators
  
+\begin_inset CommandInset label
+LatexCommand label
+name "par:value_missing"
+
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -20164,6 +20619,14 @@ Value_Missing_Quant_On_Input (formerly Value_Missing_Quant)
 
 \begin_layout Enumerate
 Value_Missing_Quant_On_Output
+\end_layout
+
+\begin_layout Enumerate
+Value_Missing_Affect_On_Input
+\end_layout
+
+\begin_layout Enumerate
+Value_Missing_Affect_On_Output
 \end_layout
 
 \begin_layout Enumerate
@@ -22257,6 +22720,31 @@ If the list of trait loci that will be output include one or more quantitative
  traits or covariates, then this value is used as the missing quantitative
  phenotype value in the output data for those analysis modes where missing
  values are not predefined (e.g., Merlin uses 'x').
+\end_layout
+
+\begin_layout Paragraph
+Value_Missing_Affect_On_Input
+\end_layout
+
+\begin_layout Standard
+This value is interpreted as the missing value code for affection status
+ in the input data.
+ The value may be string 'NA'.
+ PLINK uses -9 as the default missing value indicator and also allows you
+ to change it by a flag (missing-phenotype) which Mega2 also honors.
+ If it is not specified, the value for Value_Missing_Quant_On_Input is used.
+\end_layout
+
+\begin_layout Paragraph
+Value_Missing_Affect_On_Output
+\end_layout
+
+\begin_layout Standard
+This value is used as the missing phenotype value for affection status in
+ the output data for those analysis modes where missing values are not predefine
+d (e.g., Merlin uses 'x').
+ If it is not specified, the value for Value_Missing_Quant_On_Output is
+ used.
 \end_layout
 
 \begin_layout Paragraph

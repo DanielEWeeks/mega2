@@ -29,8 +29,10 @@ MAKEDEFS = DEFINED
 CC = gcc
 
 # compiler options
+#CFLAGS = -Wall -g
+OPT ?= -O3
+CFLAGS = -Wall $(OPT)
 
-CFLAGS = -Wall -g
 CLIBS = -lm -lws2_32 libvcftools.a libz.a
 
 cw_routines.o mega2.o net.o phe_lookup.o read_files.o user_input.o utils.o: DFLAGS += -DMINGW
