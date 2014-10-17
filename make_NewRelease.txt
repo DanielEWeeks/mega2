@@ -1,3 +1,5 @@
+Verify that the expiration date is correct.
+
 1. ./install.sh
      update VERSION=
      update the NPLPLOT version if needed
@@ -8,4 +10,34 @@
 
 3. ./*src  (? optional)
      update version in "PERL SCRIPT VERSION vx.y.z" and "Last updated:"
+
+
+Generate the Mega2 HTML documentation using the 'mkhtml' script
+
+Check the generated HTML documentation for any formatting mistakes 
     
+git clone https://bitbucket.org/dweeks/mega2.git
+
+git clone https://bitbucket.org/dweeks/mega2_binaries.git
+
+Move the binaries from the 'mega2_binaries' repository into
+the mega2_bin folder.
+
+Rename the mega2 folder appropriately.
+
+Update the exclusion file
+
+tar zcvf mega2_v4.7.1_src.tar.gz mega2_v4.7.1_src/ -X exclude_v4.7.1
+
+Copy the mega2*.tar.gz file into the 'mega2' distribution folder on the web server.
+Update the 'readme' and copy it to the .message file
+
+Copy three documentation files into the docs/mega2_html file on the web server
+
+Mega2_Documentation.pdf
+mega2_documentation.html
+mega2_toc.html
+
+Update the release info in the 'mega2.html' file in the root directory.
+
+Update the version information on the mega2 wikipedia page.
