@@ -909,6 +909,20 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
+Enhancements in Mega2 version 4.7.1
+\end_layout
+
+\begin_layout Itemize
+Mega2 now gives you complete control to specify missing values for quantitative
+ and affection phenotypes, both in the input data and for the data that
+ Mega2 will output.
+\end_layout
+
+\begin_layout Itemize
+Mega2's performance is almost twice as fast as Version 4.7.0
+\end_layout
+
+\begin_layout Subsection
 Enhancements in Mega2 version 4.7.0
 \end_layout
 
@@ -1360,7 +1374,7 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.7.0 input menu:
+              Mega2 4.7.1 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1639,12 +1653,12 @@ Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.7.0 should be: 
+ For example, the web site citation for version 4.7.1 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2013) Mega2 (Version 4.7.0).
+ Weeks DE (2013) Mega2 (Version 4.7.1).
  
 \begin_inset Flex URL
 status collapsed
@@ -1868,7 +1882,7 @@ name "sec:Installation"
 \begin_layout Standard
 \noindent
 \align center
-INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.7.0 AND HIGHER 
+INSTALLATION INSTRUCTIONS FOR MEGA2 VERSION 4.7.1 AND HIGHER 
 \end_layout
 
 \begin_layout Subsection
@@ -1901,7 +1915,7 @@ http://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.7.0 
+The latest version is 4.7.1 
 \end_layout
 
 \begin_layout Enumerate
@@ -1910,7 +1924,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.7.0_src.tar.gz
+mega2_v4.7.1_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -1921,7 +1935,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.7.0_src.tar.gz 
+gunzip mega2_v4.7.1_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -1931,7 +1945,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.7.0_src.tar 
+tar xvf mega2_v4.7.1_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -1939,7 +1953,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.7.0_src.tar.gz 
+tar xzvf mega2_v4.7.1_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -1952,7 +1966,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.7.0_src
+mega2_v4.7.1_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2132,7 +2146,7 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.7.0_src.tar.gz bundle following
+If you downloaded and unpacked the mega2_v4.7.1_src.tar.gz bundle following
  the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2140,7 +2154,7 @@ reference "sub:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.7.0_src containing the following
+), you should see a directory named mega2_v4.7.1_src containing the following
  directories (in bold) or files listed in alphabetical order:
 \end_layout
 
@@ -2669,7 +2683,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.7.0_src in above step), type the command:
+ mega2_v4.7.1_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2720,7 +2734,7 @@ name "sub:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.7.0_src.tar.gz package also includes a source code folder "srcdir"
+The mega2_v4.7.1_src.tar.gz package also includes a source code folder "srcdir"
  containing C source files, a Makefile, and several OS-specific Makedefs
  files that define compilation flags that govern locations of standard C
  libraries, and other OS-specific behavior.
@@ -2735,7 +2749,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.7.0_src folder, type 
+From within the mega2_v4.7.1_src folder, type 
 \end_layout
 
 \begin_deeper
@@ -3016,7 +3030,7 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.7.0_src folder contains
+The sub-folder called mega2_html/ within the mega2_v4.7.1_src folder contains
  documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
@@ -3669,7 +3683,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.7.0_src.tar.gz.
+The Mega2 distribution package is named mega2_v4.7.1_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -3680,7 +3694,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.7.0_src.tar
+mega2_v4.7.1_src.tar
 \end_layout
 
 \end_deeper
@@ -3702,7 +3716,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.7.0_src.tar.tar
+mega2_v4.7.1_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -3710,7 +3724,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.7.0_src.tar.gz
+mega2_v4.7.1_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -3718,7 +3732,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.7.0_src.tar.tar mega2_v4.7.0_src.tar.gz
+mv mega2_v4.7.1_src.tar.tar mega2_v4.7.1_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4848,7 +4862,7 @@ Marker genotypes are coded as a pair of alleles, with at least one space
  or tab between them.
  Non-numeric allele names are allowed inside the pedigree file only with
  the use of a names file, and only for numbered marker loci.
- In releases of Mega2 starting with 4.7.0, non-numeric allele names when specified
+ In releases of Mega2 starting with 4.7.1, non-numeric allele names when specified
  will be copied forward from input files to output files for analysis types
  that allow non-numeric alleles.
  Carrying the original allele labels through to the output files without
@@ -10744,7 +10758,7 @@ When you first started up Mega2, it will present a menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.7.0 input menu:
+              Mega2 4.7.1 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -10835,7 +10849,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.7.0 input file type menu:
+Mega2 4.7.1 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -10899,7 +10913,7 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.7.0 input menu:
+              Mega2 4.7.1 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -12787,7 +12801,7 @@ name "sub:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.7.0 Maximum alleles per marker menu:
+              Mega2 4.7.1 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -19472,7 +19486,7 @@ name "force_numeric_alleles_cmd_line"
 \begin_inset Newline newline
 \end_inset
 
- As of Mega2 version 4.7.0, if non-numeric alleles are found in the input,
+ As of Mega2 version 4.7.1, if non-numeric alleles are found in the input,
  they will be passed through to the output and not recoded as numeric alleles.
  This is done for all input formats that allow letter alleles (i.e., all input
  formats except LINKAGE) and for the analysis options that support non-numeric
@@ -30141,7 +30155,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="20" columns="4">
+<lyxtabular version="3" rows="21" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="right" valignment="top">
@@ -30188,6 +30202,44 @@ Release date
 
 \series bold
 Valid until
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.7.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Oct 17, 2014
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 2015
 \end_layout
 
 \end_inset
@@ -30920,6 +30972,33 @@ March 31, 2008
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)
+\end_layout
+
+\begin_layout Itemize
+Mega2 now gives you complete control to specify missing values for quantitative
+ and affection phenotypes, both in the input data and for the data that
+ Mega2 will output.
+\end_layout
+
+\begin_layout Itemize
+Mega2's performance is almost twice as fast as Version 4.7.0
+\end_layout
+
+\begin_layout Itemize
+Bug Fix: Allow 0 markers or 0 traits w/o generating voluminous warnings.
+\end_layout
+
+\begin_layout Itemize
+Bug Fix: Omit file now (again) allows 0 for person to represent ALL -- the
+ entire pedigree.
+\end_layout
+
+\begin_layout Itemize
+Bug Fix: Detect missing suboption when it is required.
 \end_layout
 
 \begin_layout Subsection

@@ -71,6 +71,9 @@
         write_files_ext.h:  write_locus_stats write_ped_stats
 */
 
+#ifdef _WIN
+#define isnan(x) _isnan(x)
+#endif
 
 /* static functions */
 static int read_quantitative_data(FILE *filep, int locusnm,

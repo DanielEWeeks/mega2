@@ -299,7 +299,11 @@ int             num_covariates, *covariates;
 int             seed1, seed2, seed3; /* random seeds */
 int             FirstTime; /* First time pedigrees are constructed */
 double          MissingQuant;
+#ifdef _WIN
+double          MissingOutQuant, QuantOutLow, QuantOutHi;
+#else
 double          MissingOutQuant, QuantOutLow = NAN, QuantOutHi = NAN;
+#endif
 int             MissingOutQuantSet;
 int             NukedMultiplier;
 
@@ -376,6 +380,11 @@ static void    init_globals(char *argv0)
     char mega2_path1[FILENAME_LENGTH]=" ";
 
     /* set the mega2 path */
+#ifdef _WIN
+    ((long *)&QuantOutHi)[0] = 0xffffffff;
+    ((long *)&QuantOutHi)[1] = 0x7fffffff;
+    QuantOutLow = QuantOutHi;
+#endif
     check_web_ver = 1;
     MARKER_SCHEME = MARKER_SCHEME_BITS;
     (void)getcwd(InputPath, (size_t) FILENAME_LENGTH);

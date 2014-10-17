@@ -29,8 +29,9 @@ MAKEDEFS = DEFINED
 CC = gcc
 
 # compiler options
-
-CFLAGS = -Wall -ggdb
+#CFLAGS = -Wall -ggdb
+OPT ?= -O3
+CFLAGS = -Wall $(OPT)
 
 CLIBS = -lm
 
