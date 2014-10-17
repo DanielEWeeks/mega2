@@ -212,11 +212,10 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-Current Programmers: 
+Current Programmer: 
 \shape italic
 Robert V.
- Baron and Charles P.
- Kollar
+ Baron
 \end_layout
 
 \end_inset
@@ -229,7 +228,8 @@ Robert V.
 \begin_layout Plain Layout
 Previous Programmers:
 \emph on
- Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P.
+ Charles P.
+ Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P.
  Mulvihill.
 \end_layout
 
@@ -298,7 +298,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf
+https://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf
 \end_layout
 
 \end_inset
@@ -885,7 +885,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register/
+https://watson.hgen.pitt.edu/register/
 \end_layout
 
 \end_inset
@@ -1665,7 +1665,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu
+https://watson.hgen.pitt.edu
 \end_layout
 
 \end_inset
@@ -1720,7 +1720,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_feedback.html
+https://watson.hgen.pitt.edu/docs/mega2_html/Mega2_feedback.html
 \end_layout
 
 \end_inset
@@ -1860,7 +1860,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu
+https://watson.hgen.pitt.edu
 \end_layout
 
 \end_inset
@@ -1906,7 +1906,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register
+https://watson.hgen.pitt.edu/register
 \end_layout
 
 \end_inset
@@ -3041,7 +3041,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/docs/mega2_html/
+https://watson.hgen.pitt.edu/docs/mega2_html/
 \end_layout
 
 \end_inset
@@ -3131,7 +3131,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register/
+https://watson.hgen.pitt.edu/register/
 \end_layout
 
 \end_inset
@@ -3669,7 +3669,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register
+https://watson.hgen.pitt.edu/register
 \end_layout
 
 \end_inset
@@ -8087,7 +8087,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://linkage.rockefeller.edu/soft/linkage/
+https://linkage.rockefeller.edu/soft/linkage/
 \end_layout
 
 \end_inset
@@ -10380,7 +10380,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register/
+https://watson.hgen.pitt.edu/register/
 \end_layout
 
 \end_inset
@@ -10407,7 +10407,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register/
+https://watson.hgen.pitt.edu/register/
 \end_layout
 
 \end_inset
@@ -10445,7 +10445,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register/
+https://watson.hgen.pitt.edu/register/
 \end_layout
 
 \end_inset
@@ -10456,7 +10456,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register/docs/gmi.html
+https://watson.hgen.pitt.edu/register/docs/gmi.html
 \end_layout
 
 \end_inset
@@ -13364,7 +13364,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register
+https://watson.hgen.pitt.edu/register
 \end_layout
 
 \end_inset
@@ -13557,7 +13557,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register
+https://watson.hgen.pitt.edu/register
 \end_layout
 
 \end_inset
@@ -13621,7 +13621,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register
+https://watson.hgen.pitt.edu/register
 \end_layout
 
 \end_inset
@@ -13944,7 +13944,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register
+https://watson.hgen.pitt.edu/register
 \end_layout
 
 \end_inset
@@ -14319,7 +14319,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register
+https://watson.hgen.pitt.edu/register
 \end_layout
 
 \end_inset
@@ -15556,7 +15556,7 @@ http://atgu.mgh.harvard.edu/plinkseq/pseq.shtml
 \end_layout
 
 \begin_layout Section
-The Value Missing Menu 
+The Missing Value Menu 
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:The-Value-Missing-menu"
@@ -15567,17 +15567,17 @@ name "sec:The-Value-Missing-menu"
 \end_layout
 
 \begin_layout Standard
-This menu is used to indicate what value in the input data represents a
+This menu is used to indicate what values in the input data represents a
  missing value.
- Quantitative traits may have a different value for this purpose than Affection
- Status traits.
+ Quantitative traits may have a different missing value for this purpose
+ than Affection Status traits.
  In addition, when Mega2 produces outputs for analysis programs, it allows
- you to specify what token should be used.
- Again a different value can be used for Quantitative traits vs Affection
- Status traits.
- Typically, the input dictates what the default values should be for missing
- values.
- Below is for Linkage Style input; Mega2 would use 
+ you to specify what missing value code should be used.
+ Again a different value can be used for Quantitative traits vs.
+ Affection Status traits.
+ Typically, the input dictates the default missing values.
+ Below is what one would see if the input files are in LINKAGE format.
+ Mega2 input format would use 
 \begin_inset Quotes eld
 \end_inset
 
@@ -15585,11 +15585,11 @@ NA
 \begin_inset Quotes erd
 \end_inset
 
- for both input missing values and PLINK is likely to use -9.
+ for both input missing values, and PLINK input format uses -9 by default.
  Output missing values can present problems.
  Some analysis programs dictate the value to be used to represent a missing
  value.
- In this case, the 
+ In this case, the options 
 \begin_inset Quotes eld
 \end_inset
 
@@ -15605,7 +15605,7 @@ NA
 \begin_inset Quotes erd
 \end_inset
 
- would be written 
+ in the Missing Value menu would be written 
 \begin_inset Quotes eld
 \end_inset
 
@@ -15621,7 +15621,7 @@ NA
 \begin_inset Quotes erd
 \end_inset
 
- respectively indicating that you can not change the value.
+ respectively indicating that you can not change these output missing values.
  All four values are copied to the batch file that is generated.
 \end_layout
 
@@ -15677,7 +15677,7 @@ Select from options 0-4 > 0
 \begin_layout Standard
 You may edit these values as you desire in keeping with what is allowed
  by the analysis program.
- Mega2 can verify that the value is constrained to be numeric.
+ Mega2 will verify if the value is constrained to be numeric.
 \end_layout
 
 \begin_layout Standard
@@ -15689,8 +15689,8 @@ After
 \begin_inset Quotes erd
 \end_inset
 
- is typed to exit the menu, a summary is written to the logs as shown below:
- (This case indicates no changes from the default.)
+ is typed to exit the menu, a summary is written to the logs as shown below
+ (This case indicates no changes from the default):
 \end_layout
 
 \begin_layout LyX-Code
@@ -19627,11 +19627,10 @@ Missing Value options
 \end_layout
 
 \begin_layout Standard
-Several flags allow an override value to be supplied to indicate the token
- for a missing value read as input or generated into output for the analysis
- program.
+Several flags allow an override value to be supplied to specify the missing
+ value code read as input or generated into output for the analysis program.
  Mega2 has rules that constrain the values; using these flags, allows you
- to break the builtin rules and enter any values you like.
+ to break the built-in rules and enter any values you like.
 \end_layout
 
 \begin_layout LyX-Code
@@ -22719,7 +22718,7 @@ name "par:Value_Missing_Quant_On_Output"
 If the list of trait loci that will be output include one or more quantitative
  traits or covariates, then this value is used as the missing quantitative
  phenotype value in the output data for those analysis modes where missing
- values are not predefined (e.g., Merlin uses 'x').
+ values are not predefined (e.g., Merlin uses 'x' for its output missing value).
 \end_layout
 
 \begin_layout Paragraph
@@ -22728,10 +22727,10 @@ Value_Missing_Affect_On_Input
 
 \begin_layout Standard
 This value is interpreted as the missing value code for affection status
- in the input data.
+ traits in the input data.
  The value may be string 'NA'.
  PLINK uses -9 as the default missing value indicator and also allows you
- to change it by a flag (missing-phenotype) which Mega2 also honors.
+ to change it via a flag (missing-phenotype) which Mega2 also honors.
  If it is not specified, the value for Value_Missing_Quant_On_Input is used.
 \end_layout
 
@@ -29629,7 +29628,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/register/
+https://watson.hgen.pitt.edu/register/
 \end_layout
 
 \end_inset
@@ -38710,7 +38709,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-http://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf
+https://watson.hgen.pitt.edu/docs/mega2_html/Mega2_Documentation.pdf
 \end_layout
 
 \end_inset
