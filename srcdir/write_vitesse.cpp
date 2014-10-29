@@ -158,6 +158,7 @@ static void vitesse_file_names(int single_file, char *file_names[])
         printf("Select option 0-5 > ");
         fcmap(stdin, "%d", &select); newline;
         test_modified(select);
+        fname = NULL; // silly compiler does not understand switch stmnts
         switch(select) {
         case 0:
             break;
@@ -198,7 +199,7 @@ static void vitesse_linkmap_marker_interval(int *mint_opt, int *intv_size,
 {
     int i, select=-1;
     char selected[2], cselect[10];
-    int *chr_markers, num_chr_markers=0, found_invalid=0;
+    int *chr_markers = NULL, num_chr_markers=0, found_invalid=0; // too hard for compiler to decide chr_markers is assigned
 
     if (main_chromocnt == 1) {
         chr_markers = CALLOC((size_t) num_reordered, int);
@@ -687,7 +688,7 @@ static void write_vitesse_locus_file(char *loutfl_name,
     /* this is the same as write_gh_locus_file, except it takes a vector of selected loci */
 
     int tr, nloop, num_affec=num_traits, locus, allele, tmpi, tmpi2;
-    int *trp, num_loci, trait_locus;
+    int *trp, num_loci, trait_locus = 0; //compiler: not obvious
     register linkage_locus_rec *Locus;
     char fl[2*FILENAME_LENGTH];
     FILE *filep;
@@ -951,8 +952,8 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
 {
     int i, j, k, jj,  single_file, run_num;
     char chr_str[3];
-    int mint_opt, intv_size, intv_size_width, *markers, tmp_intv_size;
-    int first_time=1, num_evals;
+    int mint_opt = 0, intv_size, intv_size_width, *markers = NULL, tmp_intv_size; //compiler: mint_opt,markers are always
+    int first_time=1, num_evals;                                                  //assigned in vitesse_linkmap_marker_interval()
     int prog_num, *chr_markers;
     double start_theta, stop_theta, increment, th;
     char *outfl_name, *loutfl_name;

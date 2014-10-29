@@ -480,7 +480,7 @@ static void write_batch(char *loutfl_name, char *outfl_name,
 {
     linkage_locus_top *LTop;
     int            *trp, cont=0, tr, i, num_affec=num_traits;
-    FILE           *filep;
+    FILE           *filep = NULL; //compiler: can not tell filep is assigned
     char           batfl_name[2*FILENAME_LENGTH];
     int first_time = 1;
     /* implementing the loop over traits a little differently,
@@ -1169,7 +1169,8 @@ static void  save_mendel_peds(char *outfl_name, linkage_ped_top *Top,
 
                 /* now write the genotypes and QTLs */
 
-                if (naff > 0) paff_status=&(aff_status[0]);
+//xx            if (naff > 0) paff_status=&(aff_status[0]);
+                paff_status=&(aff_status[0]);
 
                 for (loc1 = 0; loc1 < NumChrLoci; loc1++)   {
                     locus1 = ChrLoci[loc1];
@@ -1405,7 +1406,7 @@ static int  write_mendel_pen_file(char *fl_name, linkage_locus_top * LTop,
     int       tr, tmpi2, num_affec=num_traits;
     register  linkage_locus_rec *Locus;
     int       ipen, i, first_time=1;
-    FILE      *filep;
+    FILE      *filep = NULL; //compiler can't figure ...
     char      poutfl_name[2*FILENAME_LENGTH];
     int       naff=0;
 
@@ -1505,7 +1506,7 @@ static int write_mendel5_pen_file(char *fl_name,
 
     int   *trp, tr, tmpi2, ipen, num_affec=num_traits;
     register linkage_locus_rec *Locus;
-    FILE *filep;
+    FILE *filep = NULL; //compiler: too hard to tell its assigned.
     char poutfl_name[2*FILENAME_LENGTH];
     int naff=0, first_time=1;
     char trait_phen[8];
@@ -1628,7 +1629,7 @@ static void write_mendel5_variable_file(char *varfl_name,
     /* MOD TR */
     char vfl_name[2*FILENAME_LENGTH];
     int            i, *tr;
-    FILE           *filep;
+    FILE           *filep = NULL; //compiler: too hard to tell its assigned
     int            numq=0;
     int created=0;
 
@@ -1763,7 +1764,7 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
 
     int i, j, nloop, tr, *trp, num_affec=num_traits;
     char mapfl_name[2*FILENAME_LENGTH];
-    double difff, diffm;
+    double difff = INVALID_POS_DIFF, diffm = INVALID_POS_DIFF; //compiler: this makes diff f/m defined for truly odd cases
 
     FILE *filep;
 
@@ -1913,7 +1914,7 @@ static void write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top
 
     int i, j, nloop, tr, *trp, num_affec=num_traits;
     char mapfl_name[2*FILENAME_LENGTH];
-    double diff;
+    double diff = INVALID_POS_DIFF; //compiler: this makes diff defined for truly odd cases
 
     FILE *filep;
 

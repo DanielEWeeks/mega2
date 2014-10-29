@@ -100,7 +100,7 @@ void save_premakeped_peds(char *outfl_name, linkage_ped_top *Top,
 {
     int tr, nloop, num_affec=num_traits;
     int ped, entry, locus, loc1, j;
-    int *trp, *aff_status=NULL, *paff_status, *aff_loci;
+    int *trp, *aff_status=NULL, *paff_status, *aff_loci = NULL; // silly compiler
     register linkage_ped_rec *Entry;
     linkage_locus_rec *Loc;
     linkage_locus_top *LTop;
@@ -334,7 +334,7 @@ static void merlin_model_file(char *model_file, linkage_locus_top *LTop)
 {
 
     int a, l;
-    FILE *filep;
+    FILE *filep = NULL;
     char mfl_name[2*FILENAME_LENGTH];
     linkage_locus_rec *Loc;
 
@@ -396,7 +396,8 @@ static void merlin_model_file(char *model_file, linkage_locus_top *LTop)
             }
     }
     if (LoopOverTrait == 0 || num_traits == 1) {
-        fclose(filep);
+        if (filep)
+            fclose(filep);
     }
     return;
 

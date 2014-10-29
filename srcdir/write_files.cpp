@@ -1026,6 +1026,7 @@ void write_locus_stats(linkage_locus_top *LTop, file_format locus_file_type)
        such that they are displayed in order */
     if (NumChromo) {
         curr_min_chrom=MAX_CHROMO_NUM;
+        curr_min_chrom_index=0; //compiler: if loop fails to assign
         for (i=0; i < NumChromo; i++) {
             if (global_chromo_entries[i] < curr_min_chrom) {
                 curr_min_chrom = global_chromo_entries[i];
@@ -1202,12 +1203,12 @@ static void write_linkage_locfile_inorder_sex_averaged(linkage_locus_top *LTop,
 						       analysis_type analysis)
 {
     int tr, nloop, num_affec=num_traits, locus, allele, tmpi, tmpi2;
-    int *trp, trnum, num_loci,  *locus_order, trait_locus;
+    int *trp, trnum, num_loci = 0,  *locus_order = NULL, trait_locus = 0; //compiler: too hard
     char fl[2*FILENAME_LENGTH];
     register linkage_locus_rec *Locus;
     FILE *filep;
 
-    double *positions;
+    double *positions = NULL; //compiler: too hard
 
     if (analysis == TO_VITESSE) {
         locus_order = &(loci[0]);
@@ -1279,6 +1280,7 @@ static void write_linkage_locfile_inorder_sex_averaged(linkage_locus_top *LTop,
         }
         fputc('\n', filep);
 
+        if (analysis == TO_VITESSE || analysis == TO_SUP) // hopefully to make compiler happy
         for (locus = 0; locus < num_loci; locus++) {
             if (locus_order[locus] == -9) {
                 Locus=&(LTop->Locus[*trp]);
@@ -1388,12 +1390,12 @@ static void write_linkage_locfile_inorder_sex_specific(linkage_locus_top *LTop,
 						       analysis_type analysis)
 {
     int tr, nloop, num_affec=num_traits, locus, allele, tmpi, tmpi2;
-    int *trp, trnum, num_loci,  *locus_order, trait_locus;
+    int *trp, trnum, num_loci = 0,  *locus_order = NULL, trait_locus = 0; //compiler: too hard
     char fl[2*FILENAME_LENGTH];
     register linkage_locus_rec *Locus;
     FILE *filep;
 
-    double *positions_male, *positions_female;
+    double *positions_male = NULL, *positions_female = NULL; //compiler: too hard
 
     if (analysis == TO_VITESSE) {
         locus_order = &(loci[0]);
@@ -1470,6 +1472,7 @@ static void write_linkage_locfile_inorder_sex_specific(linkage_locus_top *LTop,
         }
         fputc('\n', filep);
 
+        if (analysis == TO_VITESSE || analysis == TO_SUP) // hopefully to make compiler happy
         for (locus = 0; locus < num_loci; locus++) {
             if (locus_order[locus] == -9) {
                 Locus=&(LTop->Locus[*trp]);

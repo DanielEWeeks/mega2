@@ -381,7 +381,7 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
     char *file_ext;
     int *loci_NUMBERED, lclasses, locus_AFFECTION, num_alleles;
     int num_genos, **genotypes, *header_p;
-    FILE *fp;
+    FILE *fp = NULL; //silly compiler; set immediately below or eventually in loop
     linkage_locus_top *ltop;
     int kk, nn, mm, ll, pos;
     char shortname[FILENAME_LENGTH];

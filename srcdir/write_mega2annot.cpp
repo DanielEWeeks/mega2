@@ -885,6 +885,7 @@ void create_mega2annot_files(linkage_ped_top **LPedTop, char *file_names[],
             }
         } else {
             // replaces <extension> with 'all', keeping <extension> and <rest> if they exist...
+            numchr = -1; // it represents multiple chrs
             analysis->replace_chr_number(file_names, 0);
             get_loci_on_chromosome(0);
             if (UnmappedSelected == 1) {

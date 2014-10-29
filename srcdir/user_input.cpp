@@ -754,7 +754,7 @@ void menu1(file_format *infl_type,
     int            out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
     int            plink_args_i = 14, plink_phe_i = 15, plink_bed_i = 16;
     int            compress_i = 17, file_format_i = 18, vcf_args_i = 19;
-    int            vcf_mak_i = 20, site_vcf_i = 21, site_bcf_i = 22, site_vcf_gz_i = 23, _aux_i;
+    int            vcf_mak_i = 20, site_vcf_i = 21, site_bcf_i = 22, site_vcf_gz_i = 23, _aux_i = 0;
 #ifdef DEFPHE
     int            in_dir_i = 24, pmap_i = 25, trait_name_i = 26, trait_value_i = 27;
     int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
@@ -974,6 +974,8 @@ void menu1(file_format *infl_type,
         choiceA[idx++] = ext_i;
 
 	// BUG? _aux_i is only initialized in certain cases...
+        // No. auxo is off iff _aux_i is not initialized and fln_print just returns 0 
+        //  w/o doing anything
         choiceA[idx] = fln_print(auxo, idx, _aux_i);
         if (choiceA[idx]) idx++;
 
@@ -3066,9 +3068,10 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     do {
         draw_line();
         // make the selected option the current option, if it is valid...
-        if (option_selected < 1 || option_selected > gds2)
+        if (option_selected < 1 || option_selected > gds2) {
             printf("? Invalid option selected. It must be between 0 - %d\n", gds2);
-        else {
+            option = 1; // as it says above ... pick the first option as the default
+        } else {
             option = option_selected;
         }
         
@@ -3266,9 +3269,10 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
     do {
         draw_line();
         // make the selected option the current option, if it is valid...
-        if (option_selected < 1 || option_selected > bpps2)
+        if (option_selected < 1 || option_selected > bpps2) {
             printf("? Invalid option selected. It must be between 0 - %d\n", bpps2);
-        else
+            option = 1; // as it says above ... pick the first option as the default
+        } else
             option = option_selected;
         // Ask the user which option to use...
         printf("Physical map selection menu:\n");

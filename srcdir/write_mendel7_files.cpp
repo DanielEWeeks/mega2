@@ -471,7 +471,7 @@ void csv_mendel7_pen_file(char *fl_name, linkage_ped_top *Top, int sex_linked)
     int       tr;
     register  linkage_locus_rec *Locus;
     int       trp, ipen, ped, entry;
-    FILE      *filep;
+    FILE      *filep = NULL;
     char poutfl_name[2*FILENAME_LENGTH];
     char genostr[3][4] = {"1/1", "1/2", "2/2"};
     double pen;
@@ -576,8 +576,9 @@ void csv_mendel7_pen_file(char *fl_name, linkage_ped_top *Top, int sex_linked)
         }
     }
 
-    if (LoopOverTrait == 0) {
-        fclose(filep);
+    if (LoopOverTrait == 0 && num_traits > 0) {
+        if (filep)
+            fclose(filep);
     }
 
     sprintf(err_msg, "      Penetrance file:        %s",

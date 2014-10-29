@@ -316,7 +316,7 @@ void count_classes(pheno_type *pheno_list, linkage_locus_top *LTop)
 
 void load_classes(pheno_type *pheno, linkage_locus_top *LTop)
 {
-    int m, count, error = 0;
+    int m, count = 0, error = 0;
     class_list_type *classp, *classlp;
 
     for (m=0; m < LTop->PhenoCnt; m++) {
@@ -1189,7 +1189,7 @@ linkage_locus_top *read_marker_data(FILE *fp,
     char nextline[FILENAME_LENGTH];
     char ltype[3], marker[100];
     char *types, **names;
-    int penetrances_read;
+    int penetrances_read = 0;
     double freq, pen[5];
     int num_read, lch, line_num;
     /* error flags */
@@ -1560,8 +1560,8 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
     record_type rec;
     linkage_locus_type LocType = Top->LocusTop->Locus[locus].Type;
     allele_list_type *all1fp, *all2fp;
-    linkage_ped_rec  *pr, *prp;
-    person_node_type *pn, *pnp;
+    linkage_ped_rec  *pr = NULL, *prp = NULL;
+    person_node_type *pn = NULL, *pnp = NULL;
     int homoz = 0, homozper = 0, rand = 0;
     int founder = 0;
     int typed1, typed2;
@@ -1782,7 +1782,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
     int ped, per;
     const char  *all1, *all2;
     int sex, entrycount;
-    record_type rec;
+//  record_type rec;
     linkage_locus_type LocType = Top->LocusTop->Locus[locus].Type;
     allele_list_type *al1p, *al2p;
 
@@ -1808,7 +1808,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
         marker_listi->ht_unique   = marker_listi->ht_everyone = 0;
 
         if (pedfile_type == POSTMAKEPED_PFT) {
-            rec = Raw_postmake;
+//          rec = Raw_postmake;
             allelecnt **mp = member_ids;
             for (ped=0; ped < Top->PedCnt; ped++, mp++) {
                 entrycount = Top->Ped[ped].EntryCnt;
@@ -1876,7 +1876,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 }
             }
         } else {
-            rec = Raw_premake;
+//          rec = Raw_premake;
             allelecnt **mp = member_ids;
             for (ped=0; ped < Top->PedCnt; ped++, mp++) {
                 entrycount = Top->PTop[ped].num_persons;

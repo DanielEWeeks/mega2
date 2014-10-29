@@ -606,7 +606,7 @@ int STR_CHR(const char *dummy)
 linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
 			     analysis_type *analysis)
 {
-    int selection, option, map_num;
+    int selection, option, map_num = 0; //silly compiler
     int loc_type = 1;
     int i, chr_valid = 0;
     int num_chromo, *selected_chromosomes = NULL;

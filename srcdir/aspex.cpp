@@ -1080,7 +1080,7 @@ void  create_aspex_files(linkage_ped_top **LPedTop,
 
     linkage_ped_top *NewTop = NULL;
 
-    linkage_ped_top *TTop;
+    linkage_ped_top *TTop = NULL; //silly compiler
     linkage_locus_top *LTop1;
     tcl_opts_type opt;
 
@@ -1173,7 +1173,7 @@ void  create_aspex_files(linkage_ped_top **LPedTop,
 
         if (nuked) {
             TTop = NewTop;
-        } else {
+        } else if (!nuked) {
             TTop=Top;
         }
 

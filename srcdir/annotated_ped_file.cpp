@@ -650,7 +650,7 @@ static int read_annotated_pedrec(FILE *filep,
     int has_link_perid = 0;
     int has_phenotype = 0;
     char c;
-    int phe_cnt;
+    int phe_cnt = 0; //silly compiler
 
     col_hdr_type *ped_col_names = file_desc->ped_file_columns;
     *num_errors=0;
@@ -2491,7 +2491,7 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
                                                         const int num_maps)
 {
     int i, mrk_missing_from_map = 0;
-    int Display_unmapped, unmapped = 0;
+    int Display_unmapped = 0, unmapped = 0;
     
     for (i = 0; i < LTop->LocusCnt; i++) {
         /* Check if maps are provided for all numbered loci */
@@ -2538,11 +2538,11 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     int num_maps;
     int num_positions, num_read;
     int lch, has_error; /* simulated genotyping error column? */
-    int Display_chrm_errors,      chrm_errors = 0;
-    int Display_max_morgans,      max_morgans = 0;
-    int Display_locus_not_found,  locus_not_found = 0;
-    int Display_dup_locus,        dup_locus = 0;
-    int Display_bad_position,     bad_position = 0;
+    int Display_chrm_errors = 1,      chrm_errors = 0; //silly compiler can not tell Display_
+    int Display_max_morgans = 1,      max_morgans = 0; // is initialized before use iff
+    int Display_locus_not_found = 1,  locus_not_found = 0; // associated _var is 0
+    int Display_dup_locus = 1,        dup_locus = 0;
+    int Display_bad_position = 1,     bad_position = 0;
     
     /* These are all error flags */
     int mrk_missing_from_map, mrk_missing_from_names=0, duplicate_mrk=0;
@@ -4488,7 +4488,8 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                 get_count_option(1, &count_halftyped,
                                  "Select individuals to compute allele frequencies\n       for recoded marker loci:");
 
-        }
+        } else 
+            count_option=4;
     } else {
         count_option=4;
     }
@@ -4679,7 +4680,7 @@ static void Free_ped(linkage_ped_top *PTop)
     linkage_ped_rec   *Entry;
 
     marriage_graph_type *PPeds;
-    person_node_type    *Per;
+    person_node_type    *Per = NULL; //silly compiler
 
     int p, l, i;
 

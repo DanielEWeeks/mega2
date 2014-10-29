@@ -2617,7 +2617,7 @@ static void quant_phenotype_summary(linkage_ped_top *Top, char *file_names[])
     int *founders_pheno = CALLOC((size_t) Top->PedCnt, int);
     int i1, i, num_quant=0;
     int ped, ind;
-    int qindex;
+    int qindex = 0; // silly compiler
     char fname[FILENAME_LENGTH];
     FILE *fp;
     int choice = -1, combine_loci = 0;

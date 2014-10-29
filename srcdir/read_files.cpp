@@ -624,7 +624,7 @@ int read_numbered_data(FILE *filep, int locusnm,
 
     int a1=0, a2=0, lch, i, c;
     char ra1[ALL_LEN], ra2[ALL_LEN];
-    char *cra1, *cra2;
+    char *cra1 = NULL, *cra2 = NULL; //silly compiler
     char *rap;
     int undef=0;
 
@@ -667,7 +667,7 @@ int read_numbered_data(FILE *filep, int locusnm,
             errorvf("This version of Mega2 only supports alleles with value less than %d.\n", ALLELE_ARRAY);
             EXIT(OUTOF_BOUNDS_ERROR);
         }
-    } else {
+    } else if (rec == Raw_premake || rec == Raw_postmake || rec == Annotated) {
 /* some day A == a
         for (i=0; i < (int) strlen(ra1); i++)
             ra1[i] = toupper(ra1[i]);
@@ -709,7 +709,7 @@ int read_numbered_data(FILE *filep, int locusnm,
             errorvf("This version of Mega2 only supports alleles with value less than %d.\n", ALLELE_ARRAY);
             EXIT(OUTOF_BOUNDS_ERROR);
         }
-    } else {
+    } else if (rec == Raw_premake || rec == Raw_postmake || rec == Annotated) {
 /* some day A == a
         for (i=0; i < (int) strlen(ra2); i++)
             ra2[i] = toupper(ra2[i]);

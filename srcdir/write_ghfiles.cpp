@@ -142,7 +142,7 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
 			  analysis_type analysis, int sex_linked)
 {
 
-    int m, tr, *trp, locus, allele, tmpi, tmpi2, need_dummy=1;
+    int m, tr, *trp, locus, allele, tmpi, tmpi2 = 0, need_dummy=1;
     int num_markers, *markers=NULL, nloop, num_affec=num_traits;
     linkage_locus_rec *Locus;
     pheno_rec *Pheno;
@@ -2328,7 +2328,7 @@ void print_recomb_fracs(FILE *filep,
             if (LTop->Marker[markers[i]].chromosome ==
                 LTop->Marker[markers[i+1]].chromosome) {
                 // It's the same chromosome..
-                double delta, delta_abs, marker, marker_next;
+                double delta, delta_abs, marker = 0, marker_next = 0; //silly compiler
                 // CPK: compute the delta between the appropriate markers...
                 switch (tt) {
                 case SEX_AVERAGED_THETA:

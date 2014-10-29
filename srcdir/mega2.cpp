@@ -896,7 +896,10 @@ int             main(int argc, char **argv)
 
     Value_Missing_get(&analysis);
 
-    int af, guess;
+#ifndef HIDESTATUS
+    int guess;
+#endif
+    int af;
     if (Input_Format == in_format_traditional) {
         af = check_annotated_file_format(mega2_input_files);
         if (af == 0) {
@@ -914,10 +917,14 @@ int             main(int argc, char **argv)
         } else if ((af == 3) || (af == 4))
             Input_Format = in_format_mega2;
         msgvf("Input Format Deduced as: %s\n", INPUT_FORMAT_STR[Input_Format]);
+#ifndef HIDESTATUS
         guess = 1;
+#endif
     } else {
         msgvf("Input Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
+#ifndef HIDESTATUS
         guess = 0;
+#endif
     }
 
     Tod tod_files("read all files");

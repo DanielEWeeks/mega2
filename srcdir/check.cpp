@@ -978,7 +978,7 @@ int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
                     int *display_error, int uniqueids,
                     FILE **reset_fp, bool *first, int reset)
 {
-    int entry, lloc, iserr;
+    int entry, lloc /*, iserr */;
     register ped_rec *PedEntry;
     int abortf = 0;
     int all1, all2;
@@ -987,7 +987,7 @@ int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
 
     for (entry = 0; entry < PedTree->EntryCnt; entry++) {
         PedEntry = &(PedTree->Entry[entry]);
-        iserr = 0;
+//      iserr = 0;
 
         get_2alleles(PedEntry->LEntry->Marker, lloc, &all1, &all2);
 

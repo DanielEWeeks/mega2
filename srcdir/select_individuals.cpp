@@ -69,19 +69,18 @@ int founders_or_everyone(linkage_ped_top *Top, int locus_id,
 {
 
     int jj, valid, typed1, typed2, has_typed=0;
-    int entry_cnt;
-    linkage_ped_rec  *pr, *prp;
-    person_node_type *pn, *pnp;
-    int rec_pm = rec == Raw_postmake || rec == Postmakeped;
+    int entry_cnt = 0;
+    linkage_ped_rec  *pr = NULL, *prp = NULL;
+    person_node_type *pn = NULL, *pnp = NULL;
 
     /* member ids - vector, set to 1-half typed, 2- fully typed */
 
     /* find the founder in each pedigree */
 
-    if (rec==Raw_postmake || rec == Postmakeped) {
+    if (rec == Raw_postmake || rec == Postmakeped) {
         entry_cnt=Top->Ped[ped].EntryCnt;
         pr = Top->Ped[ped].Entry;
-    } else {
+    } else if (rec == Raw_premake || rec == Premakeped || rec == Annotated) {
         entry_cnt=Top->PTop[ped].num_persons;
         pn = Top->PTop[ped].persons;
     }
@@ -89,14 +88,14 @@ int founders_or_everyone(linkage_ped_top *Top, int locus_id,
     for (jj=0; jj<entry_cnt; jj++) {
         typed1 = typed2 =  valid=0;
 
-        if (rec_pm) {
+        if (rec == Raw_postmake || rec == Postmakeped) {
             prp = &pr[jj];
             if (xlinked && prp->Sex == 1) {
                 valid = 0;
             } else {
                 valid=((count_option == 4) || IS_LFOUNDER(*prp));
             }
-        } else {
+        } else if (rec == Raw_premake || rec == Premakeped || rec == Annotated) {
             pnp = &pn[jj];
             if (xlinked && pnp->gender == 1) {
                 valid = 0;
@@ -128,7 +127,7 @@ int founders_or_everyone(linkage_ped_top *Top, int locus_id,
             get_2alleles(prp->Marker, locus_id, &a1, &a2);
             typed1=(a1)? 1 : 0;
             typed2=(a2)? 1 : 0;
-        } else {
+        } else if (rec == Premakeped || rec == Annotated) {
             int a1, a2;
             get_2alleles(pnp->marker, locus_id, &a1, &a2);
             typed1=(a1)? 1 : 0;
@@ -269,7 +268,7 @@ int random_ped_member(linkage_ped_top *LPedTreeTop,
 int get_count_option(int halftyped_item, int *include_halftyped, const char *messg)
 {
     char choice[10], stars[5];
-    int i, menu_select, count_type=0;
+    int i, menu_select = 0, count_type=0;
 
     if (InputMode == BATCH_FILE_INPUTMODE) {
         // Default Select Individuals...

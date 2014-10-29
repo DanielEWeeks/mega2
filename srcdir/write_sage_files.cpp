@@ -1345,7 +1345,7 @@ static void sage4_file_names(char *file_names[], int has_orig, int has_uniq)
     int select=-1;
     analysis_type analysis = TO_SAGE4;
     char stem[5], fl_stat[12];
-    char filename[FILENAME_LENGTH], *name;
+    char filename[FILENAME_LENGTH], *name = (char *)""; //silly compiler!
 
     if (main_chromocnt > 1) {
         // returns only the <file_name> removing <extension> and <rest> if they exist...

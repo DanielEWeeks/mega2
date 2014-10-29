@@ -524,6 +524,7 @@ static genotype select_this_geno(int index, int num_indices,
             break;
 
         default:
+            matches_error = false;
             break;
         }
         printf("loc %d, num %d\n", loc, num);

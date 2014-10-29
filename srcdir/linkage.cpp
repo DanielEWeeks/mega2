@@ -1263,7 +1263,7 @@ int  connect_loops(linkage_ped_tree *Ped, linkage_ped_top *Top1)
 
 {
     register linkage_loop_rec *loop1, *Loop1=NULL, *Loop2=NULL;
-    linkage_ped_rec *D_Entry, *S_Entry;
+    linkage_ped_rec *D_Entry = NULL, *S_Entry;
     int lb, i, save, *delete_ppl, found_loop=0;
     int j;
 
@@ -1360,7 +1360,7 @@ int  connect_loops(linkage_ped_tree *Ped, linkage_ped_top *Top1)
 
     /* free the memory associated with all deleted entries */
     for (j=0; j<Ped->EntryCnt; j++) {
-        if (delete_ppl[j] == 1) {
+        if (delete_ppl[j] == 1) { // implies D_Entry was defined via above code
             free_all_from_lpedrec(D_Entry, offset);
             /* mark it as deleted */
             Ped->Entry[j].ID = UNDEF;
@@ -1628,7 +1628,7 @@ int ChrLociFirstMarkerIndex, ChrLociLastMarkerIndex;
 */
 void get_loci_on_chromosome(const int numchr)
 {
-    int chromindex, upper, lower;
+    int chromindex = 0, upper, lower; //silly compiler
     int i, j, k;
 
     if (ManualReorder == 1) return;

@@ -126,7 +126,7 @@ void person_name_width(linkage_ped_top *TTop, int *PidWidth)
 {
 
     int i, j;
-    int new_width;
+    int new_width = 0; //silly compiler
 
     *PidWidth=1;
     for (i = 0; i < TTop->PedCnt; i++) {
@@ -144,7 +144,7 @@ void person_id_width(linkage_ped_top *TTop, int *PidWidth)
 
 {
     int i, j;
-    int new_width;
+    int new_width = 0; // silly compiler
 
     *PidWidth=1;
     for (i = 0; i < TTop->PedCnt; i++) {

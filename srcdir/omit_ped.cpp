@@ -176,10 +176,11 @@ void omit_peds(int untyped_ped_opt, linkage_ped_top *LPedTreeTop)
             entry_count = LPedTreeTop->Ped[i].EntryCnt;
         }
 
+        Entry.LEntry = NULL; // silly compiler
         for (j=0; j < entry_count; j++) {
             if (LPedTreeTop->pedfile_type == PREMAKEPED_PFT) {
                 Entry.PEntry = &(LPedTreeTop->PTop[i].persons[j]);
-            } else {
+            } else if (LPedTreeTop->pedfile_type == POSTMAKEPED_PFT) {
                 Entry.LEntry = &(LPedTreeTop->Ped[i].Entry[j]);
             }
 

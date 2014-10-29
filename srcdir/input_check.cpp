@@ -674,7 +674,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     Tod tod_xmend_all("reset ALL out-of-bound genotypes");
     Tod tod_xmend(20);
-    int OOBReset=0;
+//  int OOBReset=0;
     if (/*chk_*/aexceed) {
         FILE *reset_fp = NULL;
         mssgf("Setting any genotypes with out-of-bounds alleles to unknown ...");
@@ -687,7 +687,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                                            &reset_fp, &first, aexceed);
                 abortf = imax(abortf, stat);
                 if (stat) {
-                    OOBReset=1;
+//                  OOBReset=1;
                 }
             }
             tod_xmend("reset out-of-bound genotypes");
@@ -698,7 +698,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         msgvf(" Status: Reset %d out-of-bound allele values.\n", PedStat.exceed_allcnt);
         tod_xmend_all();
     } else {
-        OOBReset=0;
+//      OOBReset=0;
     }
 
     if (Display_Errors == 0) {

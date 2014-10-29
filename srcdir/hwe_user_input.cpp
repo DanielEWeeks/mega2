@@ -885,7 +885,7 @@ void hwe_user_input(linkage_ped_top *LPedTreeTop, int *numchr,
     int *geno_count, num_genotypes;
     char *hwe_option;
     int *loci_indxs;
-    double *homo_e, *homo_o;
+    double *homo_e = NULL, *homo_o = NULL;
     linkage_locus_top *ltop;
     FILE *fp1;
     char **input_files, *exec_cp, *gen_executable_name;
@@ -1152,7 +1152,7 @@ void hwe_user_input(linkage_ped_top *LPedTreeTop, int *numchr,
         System("/bin/rm -f hwe_tmp hwe_tmp1");
         free(outfile_name1); free(outfile_name2);
         outfile_name1=NULL; outfile_name2=NULL;
-    } else {
+    } else if (!strcmp(hwe_option, "GEN")) {
         /* GEN option */
         /* get the output file names and write copyright notice and time stamp */
         outfile_name1 = CALLOC((size_t) FILENAME_LENGTH, char);

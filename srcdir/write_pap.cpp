@@ -369,7 +369,7 @@ static int save_pap_hdr(char *hdr_file_name, linkage_locus_top *LocusTop,
 {
     int loc, num_vars, num_cols, ncol=0;
     int *trp, tr, nloop, num_affec=num_traits;
-    int tmpi, num_loc;
+    int tmpi, num_loc = 0; //silly compiler
     char hdr_fl[2*FILENAME_LENGTH];
     char lname[9];
     FILE *filep;
