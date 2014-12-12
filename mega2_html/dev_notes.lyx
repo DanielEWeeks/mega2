@@ -1,0 +1,3236 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\newcommand{\dwcomment}[1]{{\color{red}[DW: #1]}}
+
+\newcommand{\rvb}[1]{{\color{orange}[rvb: #1]}}
+
+\newcommand{\rcheck}[1]{}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing onehalf
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 0
+\use_package mhchem 1
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1ex
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Mega2 Development Notes
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="1">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+Robert V.
+ Baron
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Department of Human Genetics, University of Pittsburgh 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Copyright 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+copyright
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 2012-2014 by the University of Pittsburgh 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace smallskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+hrule
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Defining an Analysis Method
+\end_layout
+
+\begin_layout Standard
+To make this discussion concrete we will look at the implementation of the
+ FBAT analysis method.
+ First, we need to choose two file names for the analysis method: one for
+ the C++ code and one for the class definition.
+ We will use the files 
+\series bold
+write_fbat.cpp
+\series default
+ and 
+\series bold
+write_fbat_ext.h, 
+\series default
+respectively.
+ (Technically, there can be executable code in the class definition.)
+\end_layout
+
+\begin_layout Subsection
+Class definition
+\end_layout
+
+\begin_layout Standard
+We define a new class and derive it from the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+CLASS_ANALYSIS
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+ base class.
+ (I like to put the string 
+\begin_inset Quotes eld
+\end_inset
+
+CLASS_
+\begin_inset Quotes erd
+\end_inset
+
+ at the start of the class name.) After defining the constructor/destructor
+ there are a lot of standard methods that can be defined and other methods
+ that will be forward referenced and defined in the 
+\begin_inset Quotes eld
+\end_inset
+
+code
+\begin_inset Quotes erd
+\end_inset
+
+ file.
+ And of course you can define any methods you need to define the semantics
+ of the analysis.
+ 
+\end_layout
+
+\begin_layout Standard
+All these standard methods must be a subset of what is defined in 
+\series bold
+CLASS_ANALYSIS
+\series default
+ (see file 
+\series bold
+\emph on
+analysis.h
+\series default
+\emph default
+).
+ In particular, a few dozen virtual methods are defined that contain only
+ a 
+\begin_inset Quotes eld
+\end_inset
+
+return false
+\begin_inset Quotes erd
+\end_inset
+
+ statement.
+ There are extensive comments in the 
+\series bold
+\emph on
+analysis.
+\series default
+\emph default
+h
+\emph on
+ 
+\emph default
+file that document what these switches do.
+ These virtual methods turn off or on features of the Mega2 system necessary
+ for this particular analysis method being defined.
+ The base class defines these switches to be off.
+ Thus if that is the correct state for the new analysis, it is not necessary
+ to repeat the method definition since it will be inherit from the base
+ class.
+ Of course, the method is virtual so you may define it to 
+\begin_inset Quotes eld
+\end_inset
+
+return true
+\begin_inset Quotes erd
+\end_inset
+
+ for this analysis.
+ Obviously, in this case it would be necessary to copy the appropriate definitio
+n into the new class definition.
+\end_layout
+
+\begin_layout Standard
+Toward the end of the 
+\series bold
+CLASS_ANALYSIS
+\series default
+ definition, there are a few more virtual methods that you might want to
+ override for your class: 
+\emph on
+ped_ind_defaults
+\emph default
+, 
+\emph on
+sub_prog_name
+\emph default
+, 
+\emph on
+sub_prog_name_to_sub_option
+\emph default
+, 
+\emph on
+and interactive_sub_prog_name_to_sub_option
+\emph default
+.
+ Often, certainly for FBAT, you only need to define 
+\emph on
+ped_ind_defaults
+\emph default
+, which indicates how to print out the pedigree and person information.
+ For the other functions, the default is fine.
+\end_layout
+
+\begin_layout Standard
+Finally, the four methods: 
+\emph on
+create_output_file
+\emph default
+, 
+\emph on
+get_file_names
+\emph default
+, 
+\emph on
+file_names, 
+\emph default
+and 
+\emph on
+replace_chr_number
+\emph default
+ are declared with the class definition but defined in the code file.
+ 
+\emph on
+create_output_file
+\emph default
+ is responsible for doing data transformations and creating all the output
+ files needed by the analysis program.
+ The other methods support the idiosyncratic way that Mega2 generates file
+ names (with embedded chromosomes and suffix that indicates file type).
+\end_layout
+
+\begin_layout Subsection
+Class code
+\end_layout
+
+\begin_layout Standard
+The header of the file is standard boiler plate and you should just copy
+ it from an existing .cpp, such as 
+\series bold
+write_fbat.cpp
+\series default
+.
+ You will of course not include the 
+\begin_inset Quotes eld
+\end_inset
+
+write_fbat_ext.h
+\begin_inset Quotes erd
+\end_inset
+
+ (and 
+\begin_inset Quotes eld
+\end_inset
+
+fbat.R.h
+\begin_inset Quotes erd
+\end_inset
+
+) header, but use the header file for your class.
+ I like to follow the header by the code to generate each of the types of
+ files needed by the analysis and at the end of the file I define the 
+\emph on
+create_output_file
+\emph default
+ to call all the methods (or functions) defined earlier in the file.
+ Finally, at the end of the file there is the code to interactively query
+ the user for the names to be used for each type of file, 
+\emph on
+get_file_names
+\emph default
+.
+ And there is the code to glue the names together and to allow components
+ (like the chromosome number) to be changed as necessary.
+\end_layout
+
+\begin_layout Standard
+So lets look deeper into how an output file is generated.
+ But first we need to make a few adjustments to the Mega2 files so these
+ new files are compiled and available.
+\end_layout
+
+\begin_layout Subsection
+Glue code
+\end_layout
+
+\begin_layout Enumerate
+Towards the head of analysis_ext.h, you should add: include "write_fbat_ext.h"
+ 
+\end_layout
+
+\begin_layout Enumerate
+Towards the end of analysis_ext.h, you should export the new class (I named
+ it CLASS_FBAT):
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+extern CLASS_FBAT *FBAT;
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Towards the head of analysis.cpp, before analysis_list[] is defined, you
+ should instantiate FBAT 
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+CLASS_FBAT *FBAT = new CLASS_FBAT(); 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Towards the head of analysis.cpp, in the analysis_list[] definition, you
+ should add FBAT 
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+{ "FBAT format", FBAT }, 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+In prog_name_to_number(), add a case to recognize the name "fbat" and return
+ the object FBAT 
+\end_layout
+
+\begin_layout Enumerate
+Add write_fbat.cpp to the Makefile SRCS variable 
+\end_layout
+
+\begin_layout Enumerate
+Execute: make depend 
+\end_layout
+
+\begin_layout Section
+Generating Output Files
+\end_layout
+
+\begin_layout Subsection
+Simple Output Classes
+\end_layout
+
+\begin_layout Subsubsection
+class file_ops [in file_ops.h]
+\end_layout
+
+\begin_layout Standard
+\begin_inset Quotes eld
+\end_inset
+
+file_ops
+\begin_inset Quotes erd
+\end_inset
+
+ opens [
+\emph on
+filep_open
+\emph default
+()] and closes [
+\emph on
+filep_close
+\emph default
+()] files as well as prints [
+\emph on
+pr_printf
+\emph default
+(), 
+\emph on
+pr_puts
+\emph default
+(), and 
+\emph on
+pr_nl
+\emph default
+()] to files.
+ If the file name ends in 
+\begin_inset Quotes eld
+\end_inset
+
+.gz
+\begin_inset Quotes erd
+\end_inset
+
+, the compression library, zlib, will be used to write the file data.
+ The print methods use the file descriptor member of the object and take
+ the same arguments as printf and fputs, respectively.
+ The 
+\emph on
+filep_open
+\emph default
+ method calls the virtual function, 
+\emph on
+file_header
+\emph default
+, after the file is opened; while the method 
+\emph on
+filep_close
+\emph default
+() calls the virtual function, 
+\emph on
+file_trailer
+\emph default
+, before the file is closed and the virtual function, 
+\emph on
+file_post
+\emph default
+, after it is closed.
+ These virtual functions allow derived classes to easily supply headers
+ and trailer data for the file.
+\end_layout
+
+\begin_layout Standard
+In addition, there are additional methods to flush the data to disk, 
+\emph on
+file_flush
+\emph default
+, and delete the named file, 
+\emph on
+filep_delete
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+Note: The object destructor calls the 
+\emph on
+filep_close
+\emph default
+ method; so it is never necessary to explicitly call 
+\emph on
+filep_close
+\emph default
+.
+\end_layout
+
+\begin_layout Subsubsection
+class person_locus_entry : public file_ops [in entry.h and entry.cpp]
+\end_layout
+
+\begin_layout Standard
+This class contains all the necessary members to identify a pedigree/person,
+ locus and alleles.
+ It contains auxiliary members to find the additional properties of the
+ person and locus.
+ And it holds other bookkeeping data.
+ This class is derived from 
+\begin_inset Quotes eld
+\end_inset
+
+file_ops
+\begin_inset Quotes erd
+\end_inset
+
+ to use the latter's printing capabilities.
+ This class has numerous methods, typically beginning 
+\begin_inset Quotes eld
+\end_inset
+
+pr_
+\begin_inset Quotes erd
+\end_inset
+
+, for printing: person, parents, sex, phenotypes, alleles, etc.
+ If it proves necessary to access the members without printing their data,
+ the members are defined as:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="16" columns="3">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+member
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+meaning
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_ped
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pedigree index
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_per
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+person index
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_locus
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+locus index
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_allele1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+first allele value as integer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_allele2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+second allele value as integer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_trait
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+trait index (in locus array)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_numchr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+chromosome number
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_chrom_loop
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1 means produce a separate file per chromosome
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_Top
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+linkage_ped_top *
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+base for everything
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_LTop
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+(linkage_locus_top *
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+base for locus array
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_EXLTop
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ext_linkage_locus_top 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+base for extended locus array
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_tpe
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+linkage_ped_rec *
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+info for person
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_tp
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+linkage_ped_tree *
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+info for pedigree
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_tle
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+linkage_locus_rec *
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+info for marker locus
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_tte
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+linkage_locus_rec *
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+info for trait locus
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note: All these member names begin with an underscore 
+\begin_inset Quotes eld
+\end_inset
+
+_
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Output Loop Classes
+\end_layout
+
+\begin_layout Standard
+The loop classes are defined in the files: 
+\series bold
+loop.h 
+\series default
+and 
+\series bold
+loop.cpp
+\series default
+.
+ These supply an Inner loop and Outer loop.
+ Both loops contain several different classes each of which iterates through
+ people, chromosomes and markers in a designated order.
+ Creating an output file for Mega2 is achieved by creating a new class that
+ is derived from a chosen Output loop class and a chosen Inner loop class.
+ It is easiest to explain the Inner loop and then the Outer loop but programmati
+cally you need to setup the Outer loop and then the Inner loop.
+ So it might be best to read this section twice.
+ 
+\end_layout
+
+\begin_layout Standard
+Note: (This will also make more sense on a second reading.) Both the Inner
+ and Outer loop are derived from 
+\series bold
+person_locus_entry
+\series default
+ class.
+ When we create the output file class, it will be derived from both an outer
+ class and an inner class.
+ This is called multiple inheritance.
+ And each of these classes is derived from the person_locus_entry class.
+ This is called OOPS.
+ Although this could lead us into a long discussion about inheritance, the
+ basic question is do we want the inner loop object to inherit from a different
+ object than the outer loop object.
+ This would be the C++ default.
+ But we want both objects to inherit from the same person_locus_entry object
+ and share data.
+ To have this happen correctly, the definition of each type of loop class
+ must indicate that the class is derived from the 
+\begin_inset Quotes eld
+\end_inset
+
+virtual
+\begin_inset Quotes erd
+\end_inset
+
+ person_locus_entry class.
+ After this accommodation, there is only one more small detail that must
+ be attended to in creating the class for the output file.
+\end_layout
+
+\begin_layout Subsubsection
+Inner loop
+\end_layout
+
+\begin_layout Standard
+A class of the Inner loop type will create an output file.
+ Let us start by explaining, in detail, one example: the loop::ped_per_loci
+ class.
+ There is only one 
+\begin_inset Quotes eld
+\end_inset
+
+real
+\begin_inset Quotes erd
+\end_inset
+
+ method, 
+\emph on
+run_loop
+\emph default
+(), in the class, but quite a few virtual function that are stubbed out
+ as empty to be replaced in a derived class as necessary.
+ The goal of this class is to open and output file and then iterate over
+ all the pedigrees and then in each pedigree iterate over each person and
+ then for each person iterate over all the markers in some chromosome.
+ The file is open on line 8.
+ Line 11 starts the loop on pedigrees, and line 20 starts the loop on loci
+ on the specified chromosome.
+ Line 11 sets and increments _ped, which is used on line 17 to define _tp,
+ a pointer to the pedigree info.
+ A similar arrangements happens on line 20/23 also on 27/29/30.
+ Again these constructs define variables that can be accessed, but by what?
+ The interesting part of the loop is lines 18/46, 25/44, and 41 which invoke
+ the virtual methods 
+\emph on
+ped_start/ped_end
+\emph default
+, 
+\emph on
+per_start/per_end
+\emph default
+ and 
+\emph on
+inner
+\emph default
+, respectively.
+ The ped_per_loci class has these functions do nothing, but a derived class
+ can override the methods as needed.
+ For example, if you needed to relabel the pedigree (and or persons), that
+ code could be placed in the 
+\emph on
+ped_start
+\emph default
+ method.
+ If you needed to print the person id, this could be done in the 
+\emph on
+per_star
+\emph default
+t method.
+ This class could be used to list the genotypes for each person.
+ In this case, the 
+\emph on
+inner
+\emph default
+ method would print the genotypes.
+ It could also print a new line or the new line could be deferred to the
+ 
+\emph on
+per_end
+\emph default
+ method, thus producing a long line starting with the person id followed
+ by all the allele labels.
+ (Note: if all this is clear, you should see that the first option will
+ only produce the person id on the first line per pedigree/person.
+\end_layout
+
+\begin_layout Standard
+For completeness, here are a few more details: line 6 works magic to fill
+ NumChrLoci (line 27) with the number of traits and markers for the specified
+ chromosome and fill the ChrLoci Array (line 29) with the loci index for
+ the traits and markers for the specified chromosome.
+ There are checks to make determine if untyped pedigrees should be processed
+ (line 14), only markers are processed (line 34) and that there be less
+ than a specified numbers of alleles for the marker (line 36).
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+ 1 
+\backslash
+
+\backslash
+ void loop::ped_per_loci::run_loop(const char *dir, const char *fl_name,
+ const char *mode)
+\end_layout
+
+\begin_layout Plain Layout
+
+ 2 
+\backslash
+
+\backslash
+ {
+\end_layout
+
+\begin_layout Plain Layout
+
+ 3 
+\backslash
+
+\backslash
+     int m;
+\end_layout
+
+\begin_layout Plain Layout
+
+ 4 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+ 5 
+\backslash
+
+\backslash
+     // Loop through the Loci...
+\end_layout
+
+\begin_layout Plain Layout
+
+ 6 
+\backslash
+
+\backslash
+     markers_on_chromosome(_numchr);
+\end_layout
+
+\begin_layout Plain Layout
+
+ 7 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+ 8 
+\backslash
+
+\backslash
+     filep_open(dir, fl_name, mode);
+\end_layout
+
+\begin_layout Plain Layout
+
+ 9 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+10 
+\backslash
+
+\backslash
+     // for each pedigree (consulting the linkage_ped_top structure)...
+\end_layout
+
+\begin_layout Plain Layout
+
+11 
+\backslash
+
+\backslash
+     for (_ped=0; _ped < _Top->PedCnt; _ped++) {
+\end_layout
+
+\begin_layout Plain Layout
+
+12 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+13 
+\backslash
+
+\backslash
+         // It there is some indication as to why this pedigree should not
+ be included, don't...
+\end_layout
+
+\begin_layout Plain Layout
+
+14 
+\backslash
+
+\backslash
+         if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
+\end_layout
+
+\begin_layout Plain Layout
+
+15 
+\backslash
+
+\backslash
+         // for each person/inividual in that pedigree (cousulting the linkage_p
+ed_tree)...
+\end_layout
+
+\begin_layout Plain Layout
+
+16 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+17 
+\backslash
+
+\backslash
+         _tp = &(_Top->Ped[_ped]);
+\end_layout
+
+\begin_layout Plain Layout
+
+18 
+\backslash
+
+\backslash
+         ped_start();
+\end_layout
+
+\begin_layout Plain Layout
+
+19 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+20 
+\backslash
+
+\backslash
+         for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
+\end_layout
+
+\begin_layout Plain Layout
+
+21 
+\backslash
+
+\backslash
+             // record for the individual (a linkage_ped_rec)...
+\end_layout
+
+\begin_layout Plain Layout
+
+22 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+23 
+\backslash
+
+\backslash
+             _tpe = &(_Top->Ped[_ped].Entry[_per]);
+\end_layout
+
+\begin_layout Plain Layout
+
+24 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+25 
+\backslash
+
+\backslash
+             per_start();
+\end_layout
+
+\begin_layout Plain Layout
+
+26 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+27 
+\backslash
+
+\backslash
+             for (m=0; m < NumChrLoci; m++) {
+\end_layout
+
+\begin_layout Plain Layout
+
+28 
+\backslash
+
+\backslash
+                 // The actual Loci number associated with a SELECTED Loci...
+\end_layout
+
+\begin_layout Plain Layout
+
+29 
+\backslash
+
+\backslash
+                 _locus = ChrLoci[m];
+\end_layout
+
+\begin_layout Plain Layout
+
+30 
+\backslash
+
+\backslash
+                 _tle = &(_LTop->Locus[_locus]);
+\end_layout
+
+\begin_layout Plain Layout
+
+31 
+\backslash
+
+\backslash
+                 
+\end_layout
+
+\begin_layout Plain Layout
+
+32 
+\backslash
+
+\backslash
+                 // Ignore anything but a marker.
+\end_layout
+
+\begin_layout Plain Layout
+
+33 
+\backslash
+
+\backslash
+                 // This should get us things of Locus[?].Type == {NUMBERED,
+ BINARY, XLINKED, YLINKED}.
+\end_layout
+
+\begin_layout Plain Layout
+
+34 
+\backslash
+
+\backslash
+                 if (_tle->Class == MARKER) {
+\end_layout
+
+\begin_layout Plain Layout
+
+35 
+\backslash
+
+\backslash
+                     
+\end_layout
+
+\begin_layout Plain Layout
+
+36 
+\backslash
+
+\backslash
+                     if (_loci_allele_limit && _tle->AlleleCnt > _loci_allele_li
+mit) continue;
+\end_layout
+
+\begin_layout Plain Layout
+
+37 
+\backslash
+
+\backslash
+                     
+\end_layout
+
+\begin_layout Plain Layout
+
+38 
+\backslash
+
+\backslash
+                     // The markers for this individual...
+\end_layout
+
+\begin_layout Plain Layout
+
+39 
+\backslash
+
+\backslash
+                     get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
+\end_layout
+
+\begin_layout Plain Layout
+
+40 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+41 
+\backslash
+
+\backslash
+                     inner();
+\end_layout
+
+\begin_layout Plain Layout
+
+42 
+\backslash
+
+\backslash
+                 }
+\end_layout
+
+\begin_layout Plain Layout
+
+43 
+\backslash
+
+\backslash
+             }
+\end_layout
+
+\begin_layout Plain Layout
+
+44 
+\backslash
+
+\backslash
+             per_end();
+\end_layout
+
+\begin_layout Plain Layout
+
+45 
+\backslash
+
+\backslash
+         }
+\end_layout
+
+\begin_layout Plain Layout
+
+46 
+\backslash
+
+\backslash
+         ped_end();
+\end_layout
+
+\begin_layout Plain Layout
+
+47 
+\backslash
+
+\backslash
+     }
+\end_layout
+
+\begin_layout Plain Layout
+
+48 
+\backslash
+
+\backslash
+     filep_close();
+\end_layout
+
+\begin_layout Plain Layout
+
+49 
+\backslash
+
+\backslash
+ }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There is another Inner loop class that loops first over the loci then the
+ person, loci_ped_per.
+ The 
+\emph on
+inner
+\emph default
+ method is applied every time the person changes.
+ Also, the outer most iteration uses 
+\emph on
+loci_start/loci_end
+\emph default
+.
+ Similarly, there is a pair of Inner loop classes with trait instead of
+ loci.
+ Filling out the grouping there is a loop class for loci, and one for pedigree/p
+erson and one that is not a loop at all ...
+ that happens just once.
+\end_layout
+
+\begin_layout Subsubsection
+Outer loop
+\end_layout
+
+\begin_layout Standard
+Mega2 sometimes outputs one file of data.
+ But it can also output separate files in new directory for each different
+ trait and having a different name (suffix) for different chromosomes.
+ The example shown above processes one chromosome.
+ (Although if the _numchr value is -1, it will process all chromosomes into
+ one output file.) How do we iterate through all the chromosomes (and/or
+ possibly traits)? This is what the Outer loop classes support.
+ 
+\end_layout
+
+\begin_layout Standard
+Thus building on the example above, supposed we want to iterate on chromosomes.
+ The Outer loop class, 
+\series bold
+\emph on
+chr
+\series default
+\emph default
+, handles this case.
+ There is only one 
+\begin_inset Quotes eld
+\end_inset
+
+real
+\begin_inset Quotes erd
+\end_inset
+
+ method, 
+\emph on
+iterate
+\emph default
+(), in the class, but quite a few virtual function that are stubbed out
+ as empty to be replaced in a derived class as necessary.
+ (All this is analogous to the Inner loop class described above.) The goal
+ of this class is to define the file that will be used by the Inner loop
+ and then iterate over all the chromosomes.
+ Or if chosen by the user, not iterate at all and process all the chromosomes
+ together.
+ Line 22 starts a loop; but if _chrom_loop is zero, the loop will be degenerate,
+ and only go through one cycle and abort at line 43.
+ The code in lines 24-35 assure that the correct chromosomes for will be
+ iterated through.
+ If _chrom_loop is set choose the correct chromosome (line 25) for each
+ cycle; otherwise choose all the chromosomes (line 29) or the only single
+ chromosome (line 32).
+ The interesting part of this loop construct is lines 37/42 which invoke
+ the virtual methods 
+\emph on
+chr_start/chr_end
+\emph default
+.
+ These are intended to be be overwritten as necessary similar to the start/end
+ virtual methods defined earlier.
+ Finally, line 39, 
+\emph on
+make_file
+\emph default
+(), is the glue that will connect the Outer loop to the Inner loop.
+ In particular, the 
+\begin_inset Quotes eld
+\end_inset
+
+new
+\begin_inset Quotes erd
+\end_inset
+
+ class discussed earlier must define a 
+\emph on
+make_file
+\emph default
+ method that calls the 
+\emph on
+run_loop
+\emph default
+ method.
+\end_layout
+
+\begin_layout Standard
+For completeness, there is some 
+\begin_inset Quotes eld
+\end_inset
+
+magic
+\begin_inset Quotes erd
+\end_inset
+
+ code lines 6-20.
+ This code chooses the first trait of a given type (Affection status or
+ Quantitative) to make available to all the subsequent running code.
+ It exists to satisfy usages that need to define a trait even though we
+ are not looping over traits.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+ 1 
+\backslash
+
+\backslash
+ void loop::chr::iterate()
+\end_layout
+
+\begin_layout Plain Layout
+
+ 2 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ 3 
+\backslash
+
+\backslash
+    int i, tr; 
+\end_layout
+
+\begin_layout Plain Layout
+
+ 4 
+\backslash
+
+\backslash
+     linkage_locus_rec *tte;
+\end_layout
+
+\begin_layout Plain Layout
+
+ 5 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ 6 
+\backslash
+
+\backslash
+     _tte = (linkage_locus_rec *)NULL; // None was selected
+\end_layout
+
+\begin_layout Plain Layout
+
+ 7 
+\backslash
+
+\backslash
+     for (tr=0; tr < num_traits; tr++) {
+\end_layout
+
+\begin_layout Plain Layout
+
+ 8 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ 9 
+\backslash
+
+\backslash
+         _trait = *_trp++;
+\end_layout
+
+\begin_layout Plain Layout
+
+10 
+\backslash
+
+\backslash
+         if (_trait == -1) continue;
+\end_layout
+
+\begin_layout Plain Layout
+
+11 
+\backslash
+
+\backslash
+         if (_trait == -99) break;
+\end_layout
+
+\begin_layout Plain Layout
+
+12 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+13 
+\backslash
+
+\backslash
+         tte = &(_LTop->Locus[_trait]);
+\end_layout
+
+\begin_layout Plain Layout
+
+14 
+\backslash
+
+\backslash
+         if (_trait_affect && tte->Type != AFFECTION)
+\end_layout
+
+\begin_layout Plain Layout
+
+15 
+\backslash
+
+\backslash
+             continue;
+\end_layout
+
+\begin_layout Plain Layout
+
+16 
+\backslash
+
+\backslash
+         if (_trait_quant  && tte->Type != QUANT)
+\end_layout
+
+\begin_layout Plain Layout
+
+17 
+\backslash
+
+\backslash
+             continue;
+\end_layout
+
+\begin_layout Plain Layout
+
+18 
+\backslash
+
+\backslash
+         _tte = tte;
+\end_layout
+
+\begin_layout Plain Layout
+
+19 
+\backslash
+
+\backslash
+         break;
+\end_layout
+
+\begin_layout Plain Layout
+
+20 
+\backslash
+
+\backslash
+     }
+\end_layout
+
+\begin_layout Plain Layout
+
+21 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+22 
+\backslash
+
+\backslash
+     for (i = 0; i < main_chromocnt; i++) {
+\end_layout
+
+\begin_layout Plain Layout
+
+23 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+24 
+\backslash
+
+\backslash
+         if (_chrom_loop) {
+\end_layout
+
+\begin_layout Plain Layout
+
+25 
+\backslash
+
+\backslash
+             _numchr=global_chromo_entries[i];
+\end_layout
+
+\begin_layout Plain Layout
+
+26 
+\backslash
+
+\backslash
+             _Top->analysis->replace_chr_number(file_names, _numchr);
+\end_layout
+
+\begin_layout Plain Layout
+
+27 
+\backslash
+
+\backslash
+         } else {
+\end_layout
+
+\begin_layout Plain Layout
+
+28 
+\backslash
+
+\backslash
+             if (main_chromocnt > 1) {
+\end_layout
+
+\begin_layout Plain Layout
+
+29 
+\backslash
+
+\backslash
+                 _numchr=-1;
+\end_layout
+
+\begin_layout Plain Layout
+
+30 
+\backslash
+
+\backslash
+                 _Top->analysis->replace_chr_number(file_names, 0);
+\end_layout
+
+\begin_layout Plain Layout
+
+31 
+\backslash
+
+\backslash
+             } else {
+\end_layout
+
+\begin_layout Plain Layout
+
+32 
+\backslash
+
+\backslash
+                 _numchr=global_chromo_entries[i];
+\end_layout
+
+\begin_layout Plain Layout
+
+33 
+\backslash
+
+\backslash
+                 _Top->analysis->replace_chr_number(file_names, _numchr);
+\end_layout
+
+\begin_layout Plain Layout
+
+34 
+\backslash
+
+\backslash
+             }
+\end_layout
+
+\begin_layout Plain Layout
+
+35 
+\backslash
+
+\backslash
+        }
+\end_layout
+
+\begin_layout Plain Layout
+
+36 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+37 
+\backslash
+
+\backslash
+         chr_start();
+\end_layout
+
+\begin_layout Plain Layout
+
+38 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+39 
+\backslash
+
+\backslash
+         make_file(); // which must call run_loop() to access an 'inner'
+ loop
+\end_layout
+
+\begin_layout Plain Layout
+
+40 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+41 
+\backslash
+
+\backslash
+         chr_end();
+\end_layout
+
+\begin_layout Plain Layout
+
+42 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+43 
+\backslash
+
+\backslash
+         if (!_chrom_loop) break;
+\end_layout
+
+\begin_layout Plain Layout
+
+44 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+45 
+\backslash
+
+\backslash
+     }
+\end_layout
+
+\begin_layout Plain Layout
+
+46 
+\backslash
+
+\backslash
+ } 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There is another Outer loop class, trait, that loops over traits in a similar
+ manner to the chromosome loop; this loop exposes 
+\emph on
+trait_start/trait_end
+\emph default
+ instead of the 
+\begin_inset Quotes eld
+\end_inset
+
+chr
+\begin_inset Quotes erd
+\end_inset
+
+ methods.
+ Another is a loop iterates both over chromosomes and with each chromosome
+ value, iterates over traits, exposing the virtual methods 
+\emph on
+chr_start/chr_end
+\emph default
+ as seen earlier as well as 
+\emph on
+trait_start/trait_end
+\emph default
+.
+ Finally, there is a loop that is not a loop at all ...
+ that happens just once.
+\end_layout
+
+\begin_layout Standard
+An important observation about all the Outer loop classes, is that their
+ constructors examine that global variables set for the analysis and then
+ define 
+\emph on
+_chrom_loop
+\emph default
+ and 
+\emph on
+_trait_loop
+\emph default
+ (and a few others) to carry into the loop semantics whether the user desires
+ 
+\begin_inset Quotes eld
+\end_inset
+
+looping
+\begin_inset Quotes erd
+\end_inset
+
+ for the traits (i.e.
+ creating separate directories) and for the chromosomes (i.e.
+ creating separate files).
+\end_layout
+
+\begin_layout Standard
+One final note: it seems that there might be more Outer loop (and Inner
+ loop) classes than are necessary.
+ The answer is that the flexibility is necessary.
+ For example, you might use the Outer loop over chromosome and trait class
+ to produce a file that contains the person id and all his/her phenotypes.
+ That would create a file in each trait directory (possibly labeled by the
+ chromosome.) But all these files would contain the same data.
+ In this case, using the 
+\begin_inset Quotes eld
+\end_inset
+
+not a loop
+\begin_inset Quotes erd
+\end_inset
+
+ case is what is probably wanted.
+ Of course, if the analysis needs a control file for each trait and chromosome,
+ then the first choice was correct.
+ And if the control file has some lines that depend on the trait/chromosome
+ and others that the user would set depending on the 
+\begin_inset Quotes eld
+\end_inset
+
+subanalysis
+\begin_inset Quotes erd
+\end_inset
+
+, you might use both loops and when the control file with the trait/chromosome
+ information is written add a line to include the 
+\begin_inset Quotes eld
+\end_inset
+
+subanalysis
+\begin_inset Quotes erd
+\end_inset
+
+ control file.
+\end_layout
+
+\begin_layout Subsubsection
+Combining the Outer loop class and the Inner loop class
+\end_layout
+
+\begin_layout Standard
+So pulling this all together, suppose we want to have the Outer loop encompass
+ the trait and chromosome and the Inner loop handle pedigree/person/marker.
+ (Think a ped file.) We would start by defining a class that inherits from
+ both:
+\end_layout
+
+\begin_layout LyX-Code
+struct new_class: public loop::outer, loop::ped_per_loci {
+\end_layout
+
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout Standard
+Its constructor would look a little strange:
+\end_layout
+
+\begin_layout LyX-Code
+new_class (linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top),
+ loop::ped_per_loci(Top) { }
+\end_layout
+
+\begin_layout Standard
+We indicated earlier that the loop constructs are strange because they all
+ inherit 
+\begin_inset Quotes eld
+\end_inset
+
+virtually
+\begin_inset Quotes erd
+\end_inset
+
+ from person_locus_entry, i.e.
+ multiple objects share the same person_locus_entry object.
+ The result is that we have to explicitly add the virtual base class constructor
+ to the list of base class constructors to invoke before calling the new
+ constructor.
+\end_layout
+
+\begin_layout Standard
+Finally, we need to define
+\end_layout
+
+\begin_layout LyX-Code
+make_file()
+\end_layout
+
+\begin_layout Standard
+to print out a file name to show the user what is happening and then to
+ call
+\end_layout
+
+\begin_layout LyX-Code
+run_loop(<file name to use>);
+\end_layout
+
+\begin_layout Paragraph
+Example
+\end_layout
+
+\begin_layout Standard
+The code snipped below comes from the 
+\series bold
+write_fbat.cpp
+\series default
+ file: I am not going to explain everything, just the highlights.
+ The code illustrates the intended use of the virtual methods allowed for
+ in the loop classes.
+ 
+\emph on
+file_header
+\emph default
+ emits the name of each marker at the beginning of the file.
+ 
+\emph on
+per_start
+\emph default
+ prints the person id and parentage, etc.
+ 
+\emph on
+per_end
+\emph default
+ simply prints a newline.
+ And of course, 
+\emph on
+inner
+\emph default
+ prints the marker name.
+\end_layout
+
+\begin_layout Standard
+One more idiosyncrasy of the example code needs to be explained.
+ Lines 5-44 define the 
+\series bold
+save_peds
+\series default
+ class and create a new 
+\series bold
+save_peds
+\series default
+ object pointed to by sp.
+ Line 54 calls the iterate method.
+ So what happens on lines 46-52? Lines 46&47 copy data that is available
+ to the outer function into the object (also see lines 7& 8.) Some version
+ of C++ have lexical scoping so this is not necessary, but not all; so this
+ is the safe way to go.
+ Lines 49 & 50 initialize some parameters of the loop: that traits should
+ only be affection status and that there may be at most 40 alleles per marker.
+ Finally, line 52 carries some formatting information into the loop that
+ will be used to print family ids and person ids.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+ 1 
+\backslash
+
+\backslash
+ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
+\end_layout
+
+\begin_layout Plain Layout
+ 2 
+\backslash
+
+\backslash
+                            const int pwid, const int fwid,
+\end_layout
+
+\begin_layout Plain Layout
+ 3 
+\backslash
+
+\backslash
+                            const bool has_x)
+\end_layout
+
+\begin_layout Plain Layout
+ 4 
+\backslash
+
+\backslash
+ {
+\end_layout
+
+\begin_layout Plain Layout
+ 5 
+\backslash
+
+\backslash
+     struct save_peds: public loop::outer, loop::ped_per_loci {
+\end_layout
+
+\begin_layout Plain Layout
+ 6 
+\backslash
+
+\backslash
+         typedef char *str;
+\end_layout
+
+\begin_layout Plain Layout
+ 7 
+\backslash
+
+\backslash
+         str *file_names;
+\end_layout
+
+\begin_layout Plain Layout
+ 8 
+\backslash
+
+\backslash
+         bool has_x;
+\end_layout
+
+\begin_layout Plain Layout
+ 9 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+10 
+\backslash
+
+\backslash
+         save_peds(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(
+Top), loop::ped_per_loci(Top) { }
+\end_layout
+
+\begin_layout Plain Layout
+11 
+\backslash
+
+\backslash
+         void make_file() {
+\end_layout
+
+\begin_layout Plain Layout
+12 
+\backslash
+
+\backslash
+             mssgvf("        FBAT pedigree file:    %s/%s
+\backslash
+n", *_opath, file_names[0]);
+\end_layout
+
+\begin_layout Plain Layout
+13 
+\backslash
+
+\backslash
+             if (_tte == NULL) {
+\end_layout
+
+\begin_layout Plain Layout
+14 
+\backslash
+
+\backslash
+                 mssgvf("        FBAT pedigree file:    needs a trait value
+ to be defined
+\backslash
+nExiting
+\backslash
+n");
+\end_layout
+
+\begin_layout Plain Layout
+15 
+\backslash
+
+\backslash
+                 EXIT(DATA_INCONSISTENCY);
+\end_layout
+
+\begin_layout Plain Layout
+16 
+\backslash
+
+\backslash
+             }
+\end_layout
+
+\begin_layout Plain Layout
+17 
+\backslash
+
+\backslash
+             run_loop(file_names[0]);
+\end_layout
+
+\begin_layout Plain Layout
+18 
+\backslash
+
+\backslash
+         }
+\end_layout
+
+\begin_layout Plain Layout
+19 
+\backslash
+
+\backslash
+         void file_header() {
+\end_layout
+
+\begin_layout Plain Layout
+20 
+\backslash
+
+\backslash
+             int locus;
+\end_layout
+
+\begin_layout Plain Layout
+21 
+\backslash
+
+\backslash
+             int m;
+\end_layout
+
+\begin_layout Plain Layout
+22 
+\backslash
+
+\backslash
+             linkage_locus_rec *lpe;
+\end_layout
+
+\begin_layout Plain Layout
+23 
+\backslash
+
+\backslash
+             if (has_x) return;
+\end_layout
+
+\begin_layout Plain Layout
+24 
+\backslash
+
+\backslash
+             for (m=0; m < NumChrLoci; m++) {
+\end_layout
+
+\begin_layout Plain Layout
+25 
+\backslash
+
+\backslash
+                 locus = ChrLoci[m];
+\end_layout
+
+\begin_layout Plain Layout
+26 
+\backslash
+
+\backslash
+                 lpe = &(_LTop->Locus[locus]);
+\end_layout
+
+\begin_layout Plain Layout
+27 
+\backslash
+
+\backslash
+                 if (lpe->Class == MARKER)
+\end_layout
+
+\begin_layout Plain Layout
+28 
+\backslash
+
+\backslash
+                     pr_printf("%s ", _Top->LocusTop->Locus[locus].Name);
+\end_layout
+
+\begin_layout Plain Layout
+29 
+\backslash
+
+\backslash
+             }
+\end_layout
+
+\begin_layout Plain Layout
+30 
+\backslash
+
+\backslash
+             pr_nl();
+\end_layout
+
+\begin_layout Plain Layout
+31 
+\backslash
+
+\backslash
+         }
+\end_layout
+
+\begin_layout Plain Layout
+32 
+\backslash
+
+\backslash
+         void per_start() {
+\end_layout
+
+\begin_layout Plain Layout
+33 
+\backslash
+
+\backslash
+             pr_id();
+\end_layout
+
+\begin_layout Plain Layout
+34 
+\backslash
+
+\backslash
+             pr_parent();
+\end_layout
+
+\begin_layout Plain Layout
+35 
+\backslash
+
+\backslash
+             pr_sex();
+\end_layout
+
+\begin_layout Plain Layout
+36 
+\backslash
+
+\backslash
+             pr_aff();
+\end_layout
+
+\begin_layout Plain Layout
+37 
+\backslash
+
+\backslash
+         }
+\end_layout
+
+\begin_layout Plain Layout
+38 
+\backslash
+
+\backslash
+         void per_end() {
+\end_layout
+
+\begin_layout Plain Layout
+39 
+\backslash
+
+\backslash
+             pr_nl();
+\end_layout
+
+\begin_layout Plain Layout
+40 
+\backslash
+
+\backslash
+         }
+\end_layout
+
+\begin_layout Plain Layout
+41 
+\backslash
+
+\backslash
+         void inner() {
+\end_layout
+
+\begin_layout Plain Layout
+42 
+\backslash
+
+\backslash
+             pr_marker();
+\end_layout
+
+\begin_layout Plain Layout
+43 
+\backslash
+
+\backslash
+         }
+\end_layout
+
+\begin_layout Plain Layout
+44 
+\backslash
+
+\backslash
+     } *sp = new save_peds(Top);
+\end_layout
+
+\begin_layout Plain Layout
+45 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+46 
+\backslash
+
+\backslash
+     sp->file_names = file_names;
+\end_layout
+
+\begin_layout Plain Layout
+47 
+\backslash
+
+\backslash
+     sp->has_x = has_x;
+\end_layout
+
+\begin_layout Plain Layout
+48 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+49 
+\backslash
+
+\backslash
+     sp->_trait_affect = true;
+\end_layout
+
+\begin_layout Plain Layout
+50 
+\backslash
+
+\backslash
+     sp->_loci_allele_limit = 40;
+\end_layout
+
+\begin_layout Plain Layout
+51 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+52 
+\backslash
+
+\backslash
+     sp->load_formats(fwid, pwid, -1);
+\end_layout
+
+\begin_layout Plain Layout
+53 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+54 
+\backslash
+
+\backslash
+     sp->iterate();
+\end_layout
+
+\begin_layout Plain Layout
+55 
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+56 
+\backslash
+
+\backslash
+     delete sp;
+\end_layout
+
+\begin_layout Plain Layout
+57 
+\backslash
+
+\backslash
+ }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Legacy Structures
+\end_layout
+
+\begin_layout Section
+Compilation Tricks
+\end_layout
+
+\begin_layout Subsection
+MinGW
+\end_layout
+
+\begin_layout Standard
+MinGW is described in 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+www.mingw.org
+\end_layout
+
+\end_inset
+
+.
+ The download can be found at 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.mingw.org/download/installer
+\end_layout
+
+\end_inset
+
+.
+ Once downloaded, the binaries should be added to your Windows path.
+ At this point, a build of Mega2 should proceed just like a regular Unix/Linux/M
+acOS build.
+ You can either type 
+\end_layout
+
+\begin_layout LyX-Code
+make 
+\end_layout
+
+\begin_layout Standard
+in the Mega2/srcdir directory or type
+\end_layout
+
+\begin_layout LyX-Code
+install
+\end_layout
+
+\begin_layout Standard
+in the Mega2 directory.
+ The binary that is produced depends on a two .dll's that are part of the
+ MinGW libraries; these .dll's must be packaged with the Mega2 binary.
+ The .dlls can be found in:
+\end_layout
+
+\begin_layout Quotation
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+.dll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+path
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+libgcc_s_dw2-1.dll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+XXXXX
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+libstdc++-6.dll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+XXXXX
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Microsoft Windows
+\end_layout
+
+\begin_layout Subsubsection*
+Visual Studio
+\end_layout
+
+\begin_layout Standard
+First, you should obtain a copy of the latest Visual Studio or Visual Studio
+ Express from Microsoft 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+www.visualstudio.com
+\end_layout
+
+\end_inset
+
+.
+ If you are given a choice, only the C and C++ compilers tool chain is necessary.
+\end_layout
+
+\begin_layout Subsubsection
+Gmake
+\end_layout
+
+\begin_layout Standard
+You will also need a copy of Gnu make
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.gnu.org/software/make/
+\end_layout
+
+\end_inset
+
+ for windows to run the make scripts that build Mega2.
+ A windows binary can be found at 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://gnuwin32.sourceforge.net/packages/make.htm
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Path
+\end_layout
+
+\begin_layout Standard
+You must put the compiler and make binaries on your path.
+ The easiest way to put the compiler and tools onto your path is to 
+\begin_inset Quotes eld
+\end_inset
+
+source
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+c:
+\backslash
+Program Files
+\backslash
+Microsoft
+\backslash
+Microsoft Visual Studio
+\backslash
+Common
+\backslash
+bin
+\backslash
+vs32vars.bat XXXXX
+\begin_inset Quotes erd
+\end_inset
+
+.
+ A simple 
+\end_layout
+
+\begin_layout LyX-Code
+PATH %PATH%;<full path to make binary>
+\end_layout
+
+\begin_layout Standard
+will put the make program in your path.
+ 
+\end_layout
+
+\begin_layout Standard
+NOTE: These two procedures have to be repeated every time you need to compile
+ Mega2.
+\end_layout
+
+\begin_layout Subsubsection
+Execution
+\end_layout
+
+\begin_layout Standard
+With these prerequisites fulfilled, you need to enter the 
+\series bold
+\emph on
+Mega2/srcdir
+\series default
+\emph default
+ directory and type
+\end_layout
+
+\begin_layout LyX-Code
+make
+\end_layout
+
+\begin_layout Standard
+to compile Mega2.
+ The binary that is produced is self contained and will run on any windows
+ system.
+\end_layout
+
+\end_body
+\end_document
