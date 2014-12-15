@@ -118,7 +118,7 @@ endif
 
 # CC, CFLAGS are defined in Makedefs
 
-DFLAGS += -DCFREE -DRUNSHELL_SETUP -DHAS_ZLIB
+DFLAGS += -DCFREE -DRUNSHELL_SETUP
 
 
 # Used for getting a direct match with the genetic map files with running Beagle Analysis...

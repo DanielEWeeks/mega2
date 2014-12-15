@@ -1409,19 +1409,20 @@ void CLASS_BEAGLE::get_file_names(char *file_names[], char *prefix,
 
 static void inner_file_names(char **file_names, const char *num, const char *stem /* = "beagle" */)
 {    
-#ifdef HAS_ZLIB
     sprintf(file_names[0], "%s.%s.bgl.gz", stem, num);
     if (base_pair_position_index >= 0)
         sprintf(file_names[1], "%s.%s.pmkr.gz", stem, num);
     if (genetic_distance_index >= 0) 
         sprintf(file_names[2], "%s.%s.gmkr.gz", stem, num);
-#else /* HAS_ZLIB */
+
+/* w/o zlib
     sprintf(file_names[0], "%s.%s.bgl", stem, num);
     if (base_pair_position_index >= 0)
         sprintf(file_names[1], "%s.%s.pmkr", stem, num);
     if (genetic_distance_index >= 0) 
         sprintf(file_names[2], "%s.%s.gmkr", stem, num);
-#endif /* HAS_ZLIB */
+ */
+
     sprintf(file_names[3], "%s.%s.sh", stem, num);
     sprintf(file_names[4], "%s.all.sh", stem);
     sprintf(file_names[5], "%s.%s.out", stem, num);
