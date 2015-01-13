@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2014 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2015 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -367,7 +367,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
     tod_cl();
 
-    if (abortl <= 4) {
+    if (abortl > 0 && abortl <= 4) {
         loc_err=1;
     }
 
@@ -465,7 +465,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         draw_line();  exclaim();
         warnvf("Thus far found these problems/errors in input data (see MEGA2.ERR for details): \n");
         if (loc_err == 1) {
-            warnvf(" -> Invalid marker allele number or frequencies \n");
+            warnvf(" -> Invalid markers seen: unacceptible allele count or frequencies don't sum to 1.0\n");
         }
 
         if (PedStat.entry_unconnected > 0) {
