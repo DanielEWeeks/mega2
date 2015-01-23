@@ -1624,7 +1624,9 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 
     if (xcf) {
 //      if (! getenv("_")) { asm("int $3"); }
-        VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop);
+        string alternative_key = string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
+
+        VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop, alternative_key, "chr");
         VCFtools_close();
         check_ungenotyped = 1;
     }

@@ -62,6 +62,7 @@ Mega2: Manipulation Environment for Genetic Analysis
 #include "compress_ext.h"
 #include "marker_lookup_ext.h"
 #include "phe_lookup_ext.h"
+#include "reorder_loci_ext.h"
 
 // VCFtools includes...
 // NOTE: that vcftools was modified to use the 'vcftools' namespace because
@@ -781,6 +782,9 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
     return person_indv_v;
 }
 
+static string get_marker_name(const string info_id_alternative_key,
+                              const string unknown_marker_prefix);
+
 /**
    Process the next entry in the VCF file after doing some sanity checking.
 
@@ -790,13 +794,16 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
                                        const annotated_ped_rec persons[],
                                        const unsigned int person_n,
                                        const vector<int> &persons_indv_v,
-                                       linkage_locus_top *LTop)
+                                       linkage_locus_top *LTop,
+                                       string info_id_alternative_key, 
+                                       string unknown_marker_prefix)
 {
     vector<string> alleles;
     char phase;
     pair<int, int> genotype;
     vector<char> variant_line;
     string allele1, allele2;
+    string ID;
     int Locus_i;
     
     // read, load, and parse the VCF file data entry (marker and associated samples)...
@@ -810,14 +817,16 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
     if (vf->include_entry[entry_i] == false) return 0; // This entry was not processed
     
     // Get the index in LTop->Locus[] for the marker/locus associated with the entry ID string...
-    if (!search_marker(e->get_ID().c_str(), &Locus_i)) {
-        errorvf("INTERNAL: Unable to find ID '%s' from VCF file in Meag2 Locus.\n", e->get_ID().c_str());
+    ID = get_marker_name(info_id_alternative_key, unknown_marker_prefix);
+
+    if (!search_marker(ID.c_str(), &Locus_i)) {
+        errorvf("INTERNAL: Unable to find ID '%s' from VCF file in Mega2 Locus.\n", ID.c_str());
         EXIT(SYSTEM_ERROR);
     }
     // Consistency check: Make sure that the marker names (Locus and VCF file marker entry) really do match....
-    if (strcmp(LTop->Locus[Locus_i].Name,e->get_ID().c_str()) != 0) {
+    if (strcmp(LTop->Locus[Locus_i].Name,ID.c_str()) != 0) {
         errorvf("INTERNAL: Mega2 Locus name '%s' does not match ID '%s' from VCF file.\n",
-                LTop->Locus[Locus_i].Name, e->get_ID().c_str());
+                LTop->Locus[Locus_i].Name, ID.c_str());
         EXIT(SYSTEM_ERROR);
     }
     // Consistency check: Make sure that the type of the Locus is really a marker...
@@ -903,7 +912,9 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
 // won't be genotyped.
 void VCFtools_process_entries(annotated_ped_rec persons[],
                               const unsigned int person_n,
-                              linkage_locus_top *LTop)
+                              linkage_locus_top *LTop,
+                              string info_id_alternative_key,
+                              string unknown_marker_prefix)
 {
     if (params == (parameters *)NULL) {
         errorf("INTERNAL: The VCFtools command line arguments were not parsed.");
@@ -925,7 +936,8 @@ void VCFtools_process_entries(annotated_ped_rec persons[],
     // These lines follow the header file which should have been read by the routine
     // VCFtools_process_file_meta_information_and_header()
     for (unsigned int entry_i = 0; entry_i < (unsigned int)vf->N_total_sites(); entry_i++)
-        VCFtools_process_next_entry(entry_i, persons, person_n, person_indv_v, LTop);
+        VCFtools_process_next_entry(entry_i, persons, person_n, person_indv_v, LTop,
+                                    info_id_alternative_key, unknown_marker_prefix);
     
     vf->set_filepos(file_pos);
 }
@@ -1130,6 +1142,8 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
     // Allow rewinding to a point just after the header...
     streampos file_pos = vf->get_filepos();
     
+    human_x = human_y = human_xy = human_unknown = human_mt = human_auto = 0;
+
     for (unsigned int entry_i = 0; entry_i < (unsigned int)vf->N_total_sites(); entry_i++) {
         // If it didn't pass the filtering criteria, don't include the marker in the map...
         if (vf->include_entry[entry_i] == false) continue;
@@ -1144,6 +1158,28 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
         map_entry.set_marker_name(get_marker_name(info_id_alternative_key, unknown_marker_prefix));
 	map_entry.set_REF(e->get_REF());
         map.push_back_entry(map_entry);
+
+        int chr = STR_CHR((e->get_CHROM()).c_str());
+        if (chr == SEX_CHROMOSOME) {
+            human_x++;
+//          if (LTop->Locus[mrk_num].Type != XLINKED) {
+//              LTop->Locus[mrk_num].Type = XLINKED;
+//          }
+        } else if (chr == MALE_CHROMOSOME) {
+            human_y++;
+//          if (LTop->Locus[mrk_num].Type != YLINKED) {
+//              LTop->Locus[mrk_num].Type = YLINKED;
+//          }
+        } else if (chr == PSEUDO_X) {
+            human_xy++;
+        } else if (chr == MITO_CHROMOSOME) {
+            human_mt++;
+        } else if (chr == UNKNOWN_CHROMO) {
+            human_unknown++;
+            NumUnmapped++;
+        } else {
+            human_auto++;
+        }
     }
     
     vf->set_filepos(file_pos); // rewind the stream...

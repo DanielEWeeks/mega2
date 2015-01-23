@@ -120,7 +120,9 @@ extern void VCFtools_process_file_meta_information_and_header();
 // 'VCFtools_process_file_meta_information_and_header'.
 extern void VCFtools_process_entries(annotated_ped_rec persons[],
                                      const unsigned int persons_n,
-                                     linkage_locus_top *LTop);
+                                     linkage_locus_top *LTop,
+                                     string info_id_alternative_key,
+                                     string unknown_marker_prefix);
 //
 // Here we strip the .MAP file from the side of the VCF file for those entries
 // that have passed the VCFtools filtering criteria. The 'file' is created as a
