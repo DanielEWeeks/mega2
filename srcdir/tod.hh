@@ -40,7 +40,7 @@ public:
 #ifndef TOD
     Tod() {}
     Tod(int lim) {}
-    Tod(const char *str) {}
+    Tod(const char *str, int lim) {}
     void reset(void) {}
     double operator()(void) {return 0.0;}
     void   operator()(const char *) {}
@@ -56,7 +56,7 @@ public:
         gettimeofday(&tv_base, (void *) 0);
     }
 
-    Tod(const char *str): lim(0), str(str) {
+    Tod(const char *str, int lim=0): lim(lim), cnt(0), str(str) {
         gettimeofday(&tv_base, (void *) 0);
     }
 

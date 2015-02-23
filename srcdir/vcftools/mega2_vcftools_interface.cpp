@@ -52,6 +52,7 @@ Mega2: Manipulation Environment for Genetic Analysis
 // Mega2 includes....
 #include "common.h"
 #include "typedefs.h"
+#include "tod.hh"
 #include "utils_ext.h"
 #include "genetic_utils_ext.h"
 #include "error_messages_ext.h"
@@ -612,8 +613,10 @@ void VCFtools_process_file_meta_information_and_header()
     else
         vf = new bcf_file(params->vcf_filename, params->chrs_to_keep, params->chrs_to_exclude, params->force_write_index, params->gatk);
     
+    Tod vcfap("VCF apply filters");
     vf->apply_filters(*params);
-    
+    vcfap();
+
     mssgf("After application of VCFtools filtering:");
     mssg = "Kept " + output_log::int2str(vf->N_kept_individuals()) +
         " out of " + output_log::int2str(vf->N_total_indv()) + " Individuals";
@@ -708,6 +711,7 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
                                              const unsigned int person_n)
 {
     vector<int> person_indv_v(person_n); // created on the stack
+    int Display_untyped = 0, untyped = 0;
     
     // For each person in Mega2....
     for (unsigned int pi=0; pi<person_n; pi++) {
@@ -751,7 +755,8 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
         if (vcf_sample_matches.size() == 0) {
             // NOTE: The actual assignment of the missing genotype happens in VCFtools_process_next_entry() when
             // persons_indv_v[pi] == -1 where the individual genotype is made 0/0.
-            mssgvf("Pedigree %s person %s will be untyped.\n", ped, per);
+            SUPPRESS_MSSG_NESTED(untyped);
+            warnvf("Pedigree %s person %s not in vcf file so will be untyped.\n", ped, per);
         } else if (vcf_sample_matches.size() == 1) {
             // On a good day, we should find just one match....
             person_indv_v[pi] = vcf_sample_matches[0];
@@ -779,6 +784,8 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
             EXIT(DATA_TYPE_ERROR);
         }
     }
+    SUPPRESS_MSSG_NESTED_FINI(untyped);
+
     return person_indv_v;
 }
 
@@ -798,24 +805,32 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
                                        string info_id_alternative_key, 
                                        string unknown_marker_prefix)
 {
-    vector<string> alleles;
+    vector<string> Alleles;
+    vector<char *> alleles;
     char phase;
     pair<int, int> genotype;
     vector<char> variant_line;
-    string allele1, allele2;
+    char *allele1, *allele2;
+    char *allele0 = canonical_allele("0");
     string ID;
     int Locus_i;
-    
-    // read, load, and parse the VCF file data entry (marker and associated samples)...
-    vf->get_entry(entry_i, variant_line);
-    e->reset(variant_line);
-    e->parse_basic_entry(true,true,true); // one marker's worth of data...
-    e->get_alleles_vector(alleles);
-    
+
     // Only entries (markers) that have passed the VCFtools filtering will be built into the names file
     // and thus will have Mega2 Loci...
     if (vf->include_entry[entry_i] == false) return 0; // This entry was not processed
-    
+
+    // read, load, and parse the VCF file data entry (marker and associated samples)...
+//    asm("int $3");
+    vf->get_entry(entry_i, variant_line);
+    e->reset(variant_line);
+    e->parse_basic_entry(true,true,true); // one marker's worth of data...
+    e->get_alleles_vector(Alleles);
+  
+    for (vector<string>::iterator I = Alleles.begin();
+         I != Alleles.end();) {
+        alleles.push_back(canonical_allele((*I++).c_str()));
+    }
+
     // Get the index in LTop->Locus[] for the marker/locus associated with the entry ID string...
     ID = get_marker_name(info_id_alternative_key, unknown_marker_prefix);
 
@@ -830,8 +845,9 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
         EXIT(SYSTEM_ERROR);
     }
     // Consistency check: Make sure that the type of the Locus is really a marker...
-    linkage_locus_type lltype = LTop->Locus[Locus_i].Type;
-    linkage_locus_class llclass = LTop->Locus[Locus_i].Class;
+    linkage_locus_rec *LLR = &LTop->Locus[Locus_i];
+    linkage_locus_type lltype = LLR->Type;
+    linkage_locus_class llclass = LLR->Class;
     if (llclass != MARKER || !(lltype == NUMBERED || lltype == XLINKED || lltype == YLINKED)) {
         errorvf("INTERNAL: Mega2 Locus name '%s' is not a Marker.\n", LTop->Locus[Locus_i].Name);
         EXIT(SYSTEM_ERROR);
@@ -848,7 +864,6 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
     // 2) If an individual in the VCF file is excluded from the .fam file then they are not considered for processing
     //   (tell the user that the entry in the VCF file will be ignored).
     for (unsigned int pi=0; pi<person_n; pi++) {
-        char *canonical_allele1, *canonical_allele2;
         
         if (persons_indv_v[pi] < 0) {
             // No match was found for the persons[] entry in the VCF file, OR
@@ -857,8 +872,7 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
             // Don't give a warning here because we give one earlier in build_person_indv_v()
 
             // In this case, make the individual 0/0...
-            canonical_allele1 = canonical_allele("0");
-            set_2Ralleles(persons[pi].marker, Locus_i, &LTop->Locus[Locus_i], canonical_allele1, canonical_allele1);
+            set_2Ralleles(persons[pi].marker, Locus_i, &LTop->Locus[Locus_i], allele0, allele0);
         } else {
             // Using code patterned after variant_file_format_convert.cpp::variant_file::output_as_plink()
 
@@ -881,7 +895,7 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
             // and canonicalize the strings.
             
             allele1 = (genotype.first == -1 ?
-                       "0" :
+                       allele0 :
                        alleles[(size_t)genotype.first]);
             // NOTE: Male X-chr, Y-chr etc double allele1 in Mega2 ??? (check this)
             // NOTE: Male X-chr, Y-chr is represented in a VCF file as 'allele1'
@@ -889,12 +903,10 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
             // it as if it were 'allele1|.'.
             allele2 = (genotype.second != -1 ?
                        alleles[(size_t)genotype.second] :
-                       (phase == '/' ? "0" : allele1));
+                       (phase == '/' ? allele0 : allele1));
             
-            canonical_allele1 = canonical_allele(allele1.c_str());
-            canonical_allele2 = canonical_allele(allele2.c_str());
             // annotated_ped_rec *, int, const char *, const char *
-            set_2Ralleles(persons[pi].marker, Locus_i, &LTop->Locus[Locus_i], canonical_allele1, canonical_allele2);
+            set_2Ralleles(persons[pi].marker, Locus_i, LLR, allele1, allele2);
         } // } else {
     } // for (unsigned int pi=0; pi<person_n; pi++) {
     
@@ -935,10 +947,15 @@ void VCFtools_process_entries(annotated_ped_rec persons[],
     // Loop over all of the lines (entries) in the VCF file...
     // These lines follow the header file which should have been read by the routine
     // VCFtools_process_file_meta_information_and_header()
-    for (unsigned int entry_i = 0; entry_i < (unsigned int)vf->N_total_sites(); entry_i++)
+    Tod vcfall("VCF all entries");
+    Tod vcfpne(50);
+    for (unsigned int entry_i = 0; entry_i < (unsigned int)vf->N_total_sites(); entry_i++) {
+        vcfpne.reset();
         VCFtools_process_next_entry(entry_i, persons, person_n, person_indv_v, LTop,
                                     info_id_alternative_key, unknown_marker_prefix);
-    
+        vcfpne("VCF next entry");
+    }
+    vcfall();
     vf->set_filepos(file_pos);
 }
 
@@ -1130,7 +1147,7 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
 {
     vector<char> variant_line;
     m2_map map("VCF", 'p');
-    
+
     if (params == (parameters *)NULL) {
         errorf("INTERNAL: The VCFtools command line arguments were not parsed.");
         EXIT(SYSTEM_ERROR);
@@ -1144,20 +1161,31 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
     
     human_x = human_y = human_xy = human_unknown = human_mt = human_auto = 0;
 
+    Tod vcfme("vcf map entry: one line", 50);
+    Tod vcffetch(50);
+    Tod vcfstore(50);
+    Tod vcfl1(50);
     for (unsigned int entry_i = 0; entry_i < (unsigned int)vf->N_total_sites(); entry_i++) {
         // If it didn't pass the filtering criteria, don't include the marker in the map...
         if (vf->include_entry[entry_i] == false) continue;
-        
-        vf->get_entry(entry_i, variant_line);
-        e->reset(variant_line);
-        e->parse_basic_entry(true);
-        
+	vcfme.reset();
+        vcffetch.reset();
+
+        vcfl1.reset();
+        vf->get_entry(entry_i, variant_line); // 256
+        vcfl1("l1");
+        e->reset(variant_line);               // 31
+        e->parse_basic_entry(true);           //  5
+        vcffetch("vcf fetch");                // 299
+
+        vcfstore.reset();
         m2_map_entry map_entry;
         map_entry.set_chr(e->get_CHROM());
         map_entry.set_POS(e->get_POS());
         map_entry.set_marker_name(get_marker_name(info_id_alternative_key, unknown_marker_prefix));
 	map_entry.set_REF(e->get_REF());
         map.push_back_entry(map_entry);
+        vcfstore("vcf store");                   // 2?
 
         int chr = STR_CHR((e->get_CHROM()).c_str());
         if (chr == SEX_CHROMOSOME) {
@@ -1180,6 +1208,7 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
         } else {
             human_auto++;
         }
+        vcfme();
     }
     
     vf->set_filepos(file_pos); // rewind the stream...

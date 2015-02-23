@@ -1626,9 +1626,11 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 //      if (! getenv("_")) { asm("int $3"); }
         string alternative_key = string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
 
+        Tod vcfpe(" VCFtools_process_entries(persons, num_ped_records, ...)");
         VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop, alternative_key, "chr");
         VCFtools_close();
         check_ungenotyped = 1;
+        vcfpe();
     }
 
     // CPK: At this point we have finished processing the .bed file...
@@ -4153,8 +4155,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             // This is a physical map that is 'attached to the side' of the VCF file...
             // It will later be coppied to EXLTop, and the map object will be deleted by C++
             // when it goes out of scope.
+            Tod vcfgm("VCF get map");
             vcf_map = VCFtools_get_map(alternative_key, "chr");
-            
+            vcfgm();
+
             if (analysis == TO_PLINK) {
                 // Store the map so that we can pull out the VCF reference alleles and drop then into a
                 // file to be read by PLINK using '--reference-allele fn'. It is unclear at this point
@@ -4164,8 +4168,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             
             // Process the genotype (from VCF file 'vcf_map') and phenotype 'phe_*' marker data,
             // loading it into LTop...
+            Tod vcfmn("VCF map as names");
             read_m2_map_as_names_file(vcf_map, &LTop, tot_cols, phe_names, phe_types);
             ann_files = 1;
+            vcfmn();
         } else {
             Tod tod_pmap("read plink map as names");
             ann_files = read_plink_map_as_names_file(names_file ? names_file : map_file,

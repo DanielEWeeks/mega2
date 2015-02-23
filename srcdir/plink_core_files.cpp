@@ -287,7 +287,7 @@ static void write_PLINK_map_data(linkage_ped_top *LPTop,
                 if (generate_bim_file != 0) {
                     // When PLINK makes the .BIM file, the minor allele is listed before major allele.
                     // We do not list alleles based on frequency...
-                    fprintf(map_fp, "%2s %2s",
+                    fprintf(map_fp, "\t%s\t%s",
                             LTop->Locus[m].Allele[0].name, LTop->Locus[m].Allele[1].name);
                 }
                 

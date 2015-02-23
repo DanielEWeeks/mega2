@@ -1004,7 +1004,7 @@ int             main(int argc, char **argv)
 	}
         free(cp);
         
-        mssgf("Processing VCF file meta information and header.");
+        mssgf("\nProcessing VCF file meta information and header.");
         VCFtools_process_file_meta_information_and_header();
         
         

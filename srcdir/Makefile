@@ -176,6 +176,7 @@ output_file_names.o: DFLAGS += $(DlFLAGS)
 read_files.o compress.o: DFLAGS += $(DlFLAGS)
 
 # export CFLAGS so that the called Makefile can find it...
+export FLAGS
 export OSTYPE
 export CFLAGS
 export CXX
@@ -208,6 +209,9 @@ endif
 	$(CXX) $(CFLAGS) $(DFLAGS) $(FLAGS) -c $(IFLAGS) $*.cpp $(WINO)
 
 all: $(MODULE)_$(OSTYPE)
+
+dbg:
+	$(MAKE) $(MAKEFLAGS) TEST=2 HIDE=1 OPT=-g FLAGS=-DTOD all
 
 gcc_info.o: $(OBJS)
 

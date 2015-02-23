@@ -61,10 +61,10 @@ LOCFLAGS += -I..
 default: $(OUT)
 
 .cpp.o:
-	$(CXX) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) -c $< $(WINO)
+	$(CXX) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) $(FLAGS) -c $< $(WINO)
 
 .c.o:
-	$(CC) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) -c $< $(WINO)
+	$(CC) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) $(FLAGS) -c $< $(WINO)
 
 bgzf: bgzf.c bgzf.h
 
