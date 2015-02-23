@@ -40,7 +40,7 @@ public:
 #ifndef TOD
     Tod() {}
     Tod(int lim) {}
-    Tod(const char *str, int lim) {}
+    Tod(const char *str, int lim=0) {}
     void reset(void) {}
     double operator()(void) {return 0.0;}
     void   operator()(const char *) {}
