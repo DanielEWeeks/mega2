@@ -404,6 +404,7 @@ void CLASS_PLINK::replace_chr_number(char *file_names[], int numchr) {
    This code assumes that there is a physical map (e.g., base_pair_position_index >= 0), and
    that it is the physical map is from the VCF file (e.g., named 'VCF.p').
 */
+#if 0
 static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
                                               FILE *ref_fp) {
     linkage_locus_top *LTop = LPTop->LocusTop;
@@ -431,6 +432,55 @@ static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
         }
     }
 }
+#endif
+
+typedef map<const string,string> write_PLINK_reference_map;
+typedef map<const string,string>::iterator write_PLINK_reference_mapi;
+static write_PLINK_reference_map PLINK_reference_map;
+
+static void write_PLINK_reference_map_gen() {
+    extern m2_map save_vcf_map;
+    unsigned int lim = save_vcf_map.size();
+
+    Tod rmp("write_PLINK_reference_map_gen");
+    for(unsigned int j = 0; j < lim; j++) {
+        m2_map_entry map_entry = save_vcf_map.get_entry(j);
+
+        const string marker_name = map_entry.get_marker_name();
+        const string reference_allele = map_entry.get_REF();
+
+        PLINK_reference_map[marker_name] = reference_allele;
+    }
+    rmp();
+}
+
+static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
+                                              FILE *ref_fp) {
+    linkage_locus_top *LTop = LPTop->LocusTop;
+    int m, i;
+    
+    Tod rad("write_PLINK_reference_allele_data");
+    for (i=0; i < NumChrLoci; i++) {
+        m = ChrLoci[i];
+        
+        // Ignore anything but a marker...
+        if (LTop->Locus[m].Class == MARKER) {
+            //int chr = LTop->Marker[m].chromosome;
+            //if (chr == UNKNOWN_CHROMO) chr = 0;
+            string target_marker_name(LTop->Locus[m].Name);
+
+            write_PLINK_reference_mapi mapi = PLINK_reference_map.find(target_marker_name);
+            if (mapi == PLINK_reference_map.end()) {
+                printf("tilt: %s not found\n", target_marker_name.c_str());
+            } else {
+                string ref_allele = mapi->second;
+                fprintf(ref_fp, "%s\t%s\n", LTop->Locus[m].Name, ref_allele.c_str());
+            }
+            
+        }
+    }
+    rad();
+}
 
 /**
    Write the reference allele file for the PLINK --reference-allele option for the markers
@@ -456,7 +506,9 @@ static void write_PLINK_reference_allele_file(linkage_ped_top *Top) {
             write_PLINK_reference_allele_data(_Top, _filep);
         }
     } *sp = new plink_reference_allele_file(Top);
-    
+
+    write_PLINK_reference_map_gen();    
+
     sp->iterate();
     
     delete sp;
