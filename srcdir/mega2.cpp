@@ -1246,7 +1246,7 @@ int             main(int argc, char **argv)
     }
 
     log_line(mssgf);
-    goodbye();
+    goodbye(0);
 #ifdef CFREE
     Free_batch_items();
     Free_output_paths(analysis);

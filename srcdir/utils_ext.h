@@ -62,7 +62,7 @@ extern void           get_line(FILE *fp, char *retline);
 
 extern int            global_ou_files(int default_opt);
 
-extern void           goodbye(void);
+extern void           goodbye(int exit);
 
 extern void           hello(FILE *fp);
 

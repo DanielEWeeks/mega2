@@ -124,7 +124,7 @@ void           copy_file(char *flname1, char *flname2);
 void           move_file(char *flname1, char *flname2);
 void           makedir(char *dirname);
 void           move_logs(char *sumdir) ;
-void           goodbye(void);
+void           goodbye(int exit);
 char *         strtail(const char *name, const int n);
 const char    *perl_pgm(const char *pl);
 static void    append_to_fd(const char *file_name, const char *str, FILE *FDo);
@@ -448,7 +448,7 @@ int snprintf(char *buf, int cnt, const char *fmt, ...)
 }
 #endif
 
-void goodbye(void)
+void goodbye(int exit)
 {
     FILE *XX, *err;
 #ifndef VALGRIND
@@ -480,15 +480,24 @@ void goodbye(void)
             mssgf(err_msg);
         }
 
-        mssgf("If you use Mega2 as part of a published work, please reference ");
-        mssgf(" Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)");
-        mssgf(" Mega2: data-handling for facilitating genetic linkage and association analyses.");
-        mssgf(" Bioinformatics. 2005 May 15;21(10):2556-7, PMID: 15746282");
-        sprintf(err_msg, "as well as the version used, which is currently Version %s",
-                Mega2Version);
-        mssgf(err_msg);
+        if (exit == 0) {
+            mssgf("If you use Mega2 as part of a published work, please reference ");
+            /*
+              mssgf(" Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)");
+              mssgf(" Mega2: data-handling for facilitating genetic linkage and association analyses.");
+              mssgf(" Bioinformatics. 2005 May 15;21(10):2556-7, PMID: 15746282");
+            */
+            mssgf("Baron V Robert, Kollar Charles, Mukhopadhyay Nandita, and Weeks E Daniel");
+            mssgf("Mega2: validated data-reformatting for linkage and association analyses");
+            mssgf("Source Code for Biology and Medicine.2014, 9:26");
+            mssgf("DOI: 10.1186/s13029-014-0026-y");
 
-        log_line(mssgf);
+            sprintf(err_msg, "as well as the version used, which is currently Version %s",
+                    Mega2Version);
+            mssgf(err_msg);
+
+            log_line(mssgf);
+        }
 
         sprintf(err_msg, "See run summaries in directory %s ",
 #ifdef HIDEPATH
@@ -994,7 +1003,7 @@ void Exit(int arg, const char *file, const int line, const char *err)
     exit(arg);
 #else
     log_line(mssgf);
-    goodbye();
+    goodbye(arg);
     printf("%s:%d Mega2 terminated. Error \"%s\" (#%d).\n", file, line, err, arg);
     fflush(stdout);
     exit(arg);
