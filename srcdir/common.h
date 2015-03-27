@@ -448,6 +448,7 @@ extern int             *ChrLoci; /* Contains selected marker loci on selected
                                     chromosomes
                                     For LoopOverTrait=0, list may have trait_loci as well */
 extern int             NumChrLoci; /* Number of ChrLoci */
+extern int             NumChrSite; /* Number of markers */
 extern int             human_x, human_xy, human_y, human_mt, human_unknown, human_auto;
 extern int             default_output_filenames;
 /* Global flags. */

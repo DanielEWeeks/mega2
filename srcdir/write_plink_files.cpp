@@ -309,8 +309,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
 
                 // PLINK .bed file v1.00 Individual-major mode (lists all SNPs for the individual).
                 fputc(0x00, _filep);
-                SNP_bufsz = ( _Top->LocusTop->MarkerCnt + 3 ) >> 2;
-                SNP_buf = CALLOC((size_t) SNP_bufsz, unsigned char);
+                SNP_bufsz = ( NumChrSite + 3 ) >>2;
             }
             void file_trailer() { free(SNP_buf); }
             void per_start() { SNP_count = 0; SNP_data = 0; SNP_cp = SNP_buf; }

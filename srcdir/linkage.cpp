@@ -1637,6 +1637,7 @@ void get_loci_on_chromosome(const int numchr)
     // Traits are included if 'num_traits' has been set.
 
     NumChrLoci=0;
+    NumChrSite=0;
     if (num_traits > 0) {
 //c      NumChrLoci = num_traits - ((LoopOverTrait == 0) ? 1 : 0);// This breaks when there is no '-1' in global_trait_entries[].
 // It looks like the problem occurs in the batch_run tests 'change_chrom' where:
@@ -1657,12 +1658,14 @@ void get_loci_on_chromosome(const int numchr)
     if (num_reordered > 0) {
         if (numchr == 0) {
             NumChrLoci += num_reordered;
+            NumChrSite += num_reordered;
         } else if (numchr == -1) {
             /* everything but the x-chromosome */
             for (i=0; i < main_chromocnt; i++) {
                 if (global_chromo_entries[i] == SEX_CHROMOSOME) {
                     int locuscnt = chromo_loci_count[i] - ((i > 0) ? chromo_loci_count[i-1] : 0);
                     NumChrLoci += (num_reordered - locuscnt);
+                    NumChrSite += (num_reordered - locuscnt);
                     chromindex = i;
                     break;
                 }
@@ -1674,6 +1677,7 @@ void get_loci_on_chromosome(const int numchr)
                     // chromo_loci_count is cumulative, so only the 0th entry contains the correct number...
                     int locuscnt = chromo_loci_count[i] - ((i > 0) ? chromo_loci_count[i-1] : 0);
                     NumChrLoci += locuscnt;
+                    NumChrSite += locuscnt;
                     chromindex = i;
                     break;
                 }
