@@ -65,7 +65,7 @@ public:
          set individual default to person field */
 //      OrigIds[0] = 1; // OrigID
 //      OrigIds[0] = 3; // UniqueID
-        OrigIds[0] = 1; // OrigID 
+        OrigIds[0] = 3; // OrigID 
         OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
     
