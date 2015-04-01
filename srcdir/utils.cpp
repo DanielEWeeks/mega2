@@ -487,7 +487,7 @@ void goodbye(int exit)
               mssgf(" Mega2: data-handling for facilitating genetic linkage and association analyses.");
               mssgf(" Bioinformatics. 2005 May 15;21(10):2556-7, PMID: 15746282");
             */
-            mssgf("Baron V Robert, Kollar Charles, Mukhopadhyay Nandita, and Weeks E Daniel");
+            mssgf("Baron RV, Kollar C, Mukhopadhyay N, Weeks DE");
             mssgf("Mega2: validated data-reformatting for linkage and association analyses");
             mssgf("Source Code for Biology and Medicine.2014, 9:26");
             mssgf("DOI: 10.1186/s13029-014-0026-y");
