@@ -467,6 +467,7 @@ void goodbye(int exit)
     sprintf(Mega2BatchRun, "%s.%s", Mega2Batch, RunDate);
     copy_file(Mega2Batch, Mega2BatchRun);
  */
+
     if (CreateRunFolder == 1) {
         if (BatchFileCreated == 1) {
             sprintf(err_msg,
@@ -478,25 +479,6 @@ void goodbye(int exit)
 #endif
                 );
             mssgf(err_msg);
-        }
-
-        if (exit == 0) {
-            mssgf("If you use Mega2 as part of a published work, please reference ");
-            /*
-              mssgf(" Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)");
-              mssgf(" Mega2: data-handling for facilitating genetic linkage and association analyses.");
-              mssgf(" Bioinformatics. 2005 May 15;21(10):2556-7, PMID: 15746282");
-            */
-            mssgf("Baron RV, Kollar C, Mukhopadhyay N, Weeks DE");
-            mssgf("Mega2: validated data-reformatting for linkage and association analyses");
-            mssgf("Source Code for Biology and Medicine.2014, 9:26");
-            mssgf("DOI: 10.1186/s13029-014-0026-y");
-
-            sprintf(err_msg, "as well as the version used, which is currently Version %s",
-                    Mega2Version);
-            mssgf(err_msg);
-
-            log_line(mssgf);
         }
 
         sprintf(err_msg, "See run summaries in directory %s ",
@@ -513,16 +495,6 @@ void goodbye(int exit)
         if (BatchFileCreated == 1) {
             mssgf("Run parameters stored in batch file MEGA2.BATCH");
         }
-
-        mssgf("If you use Mega2 as part of a published work, please reference ");
-        mssgf(" Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)");
-        mssgf(" Mega2: data-handling for facilitating genetic linkage and association analyses.");
-        mssgf(" Bioinformatics. 2005 May 15;21(10):2556-7, PMID: 15746282");
-        sprintf(err_msg, "as well as the version used, which is currently Version %s",
-                Mega2Version);
-        mssgf(err_msg);
-
-        log_line(mssgf);
 
         sprintf(err_msg, "See run summaries in current directory .");
         mssgf(err_msg);
@@ -635,6 +607,24 @@ void goodbye(int exit)
     free(fl_name);
 
     log_line(mssgf);
+    if (exit == 0) {
+        mssgf("If you use Mega2 as part of a published work, please reference ");
+        /*
+          mssgf(" Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)");
+          mssgf(" Mega2: data-handling for facilitating genetic linkage and association analyses.");
+          mssgf(" Bioinformatics. 2005 May 15;21(10):2556-7, PMID: 15746282");
+        */
+        mssgf(" Baron RV, Kollar C, Mukhopadhyay N, Weeks DE");
+        mssgf(" Mega2: validated data-reformatting for linkage and association analyses");
+        mssgf(" Source Code for Biology and Medicine.2014, 9:26");
+        mssgf(" DOI: 10.1186/s13029-014-0026-y");
+
+        sprintf(err_msg, "as well as the version used, which is currently Version %s",
+                Mega2Version);
+        mssgf(err_msg);
+
+        log_line(mssgf);
+    }
     close_logs();
 /*
     delete_file(Mega2BatchRun);
