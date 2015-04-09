@@ -85,14 +85,11 @@ void free_marker_item(allele_list_type *marker_item)
         return;
     } else if (marker_item->next != NULL) {
         free_marker_item(marker_item->next);
-#ifdef CFREE
         free(marker_item);
-#endif
     }
     return;
 }
 
-#ifdef CFREE
 void free_marker_item_class(class_list_type *liability_class)
 {
     if (liability_class == NULL) {
@@ -108,7 +105,6 @@ void free_marker_item_class(class_list_type *liability_class)
     return;
 }
 
-#endif
 /* traverse the list until we find an allele value
    that is greater than or equal to the value we
    are inserting. If we find a value greater than the
@@ -815,14 +811,12 @@ void recode_liability_class(pheno_type *pheno_list, linkage_locus_top *LTop,  in
 
     LTop->Pheno[locus].Props.Affection.PenCnt = 3;
 
-#ifdef CFREE
     if (LTop->Pheno[locus].Props.Affection.Class) {
         free(LTop->Pheno[locus].Props.Affection.Class[0].AutoPen);
         free(LTop->Pheno[locus].Props.Affection.Class[0].FemalePen);
         free(LTop->Pheno[locus].Props.Affection.Class[0].MalePen);
         free(LTop->Pheno[locus].Props.Affection.Class);
     }
-#endif
 
     LTop->Pheno[locus].Props.Affection.Class =
         CALLOC((size_t) pheno_list[locus].num_classes, linkage_affection_class);
@@ -929,9 +923,7 @@ void recode_locus_top(marker_type *marker_list, pheno_type *pheno_list, linkage_
             LTop->Locus[m].Class = TRAIT;
             /* This has not yet been set up */
             LTop->Locus[m].AlleleCnt = 2;
-#ifdef CFREE
             if (LTop->Locus[m].Allele) free(LTop->Locus[m].Allele);
-#endif
             LTop->Locus[m].Allele = 	CALLOC((size_t) 2, linkage_allele_rec);
 
             LTop->Locus[m].Allele[0].Frequency = pheno_list[m].first_allele->allele_freq.freq;
@@ -1483,9 +1475,7 @@ linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char *
         }
 
         /* free(names[i]); */
-#ifdef CFREE
         free(names[i]); // This only works if everyone copies here, and currently they seem to do so
-#endif
     }
     LTop->SexLinked = (cnt_x + cnt_y) ? (cnt_a ? 2 : 1) : 0;
 

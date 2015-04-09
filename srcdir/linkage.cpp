@@ -529,10 +529,8 @@ void free_all_from_lpedrec(linkage_ped_rec *Entry, int offset)
         marker_free(Entry->Marker, offset);
         Entry->Marker = NULL;
     }
-#ifdef CFREE
     if (Entry->loopbreakers != NULL)
         free(Entry->loopbreakers);
-#endif /* CFREE */
 }
 
 void free_all_from_lpedtree(linkage_ped_tree *Ped, int offset)

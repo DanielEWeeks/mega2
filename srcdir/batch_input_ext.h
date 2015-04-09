@@ -42,8 +42,6 @@ extern void batchf(int batch_item);
 extern void batch_file_doc(FILE *batchfp);
 extern void create_batchfile(void);
 
-#ifdef CFREE
 extern void Free_batch_items(void);
-#endif /* CFREE */
 
 #endif

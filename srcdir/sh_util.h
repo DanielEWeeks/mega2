@@ -125,7 +125,6 @@ public:
         pr_nl();
     }
 
-#ifdef RUNSHELL_SETUP
     // NOTE: This is the same code that is found in utils.cpp:fprintf_env_checkset_csh().
     // But because fprintf is coopted, it is not possible to call this routine here...
     void sh_env_checkset_csh(const char *var, const char *default_value) {
@@ -133,7 +132,6 @@ public:
         pr_printf("  set %s='%s'\n", var, default_value);
         pr_printf("endif\n");
     }
-#endif /* RUNSHELL_SETUP */
 
     void sh_sh(sh_util *sub_shell) {
         pr_nl();

@@ -145,10 +145,11 @@ typedef struct _batch_item_ {
 #define Value_Missing_Affect_On_Input 58
 #define Value_Missing_Affect_On_Output 59
 #define Output_File_Stem 60
+#define Value_Imputed_Threshold 61
 // Number of keywords which will appear in the batch file.
 // The above list is zero based, so this would be the last number + 1
 // You must update this number when you add an additional keyword.
-#define NUM_KEYS 61
+#define NUM_KEYS 62
 
 // THIS VARIABLE IS USED EVERYWHERE...
 // It is defined in batch_input.cpp or by the new object system for

@@ -499,19 +499,10 @@ static void free_globals(void)
     int ii;
 
 /*  superceded by Free_batch_items() */
-#ifndef CFREE
-    /* free globals - output_paths */
-    free(output_paths[0]); free(output_paths);
-#endif
 
     /* global_trait_entries */
     if (global_trait_entries != NULL)
         free(global_trait_entries);
-
-#ifndef CFREE
-    if (global_chromo_entries != NULL)
-        free(global_chromo_entries);
-#endif
 
     /* Free labels */
     if (NumLabels > 0) {
@@ -531,9 +522,6 @@ static void free_globals(void)
         free(file_names[ii]);
     }
 /*  superceded by Free_batch_items() */
-#ifndef CFREE
-    free(Mega2BatchItems);
-#endif
     return;
 }
 
@@ -1235,10 +1223,6 @@ int             main(int argc, char **argv)
             }
             strcat(err_msg, fl); strcat(err_msg, " ");
             ii++;
-#ifndef CFREE
-            /* let Free_output_paths() do it; just report the paths here */
-            free(output_paths[ii]); output_paths[ii]=NULL;
-#endif
         }
         if (num_cols > 0) {
             mssgf(err_msg);
@@ -1247,12 +1231,10 @@ int             main(int argc, char **argv)
 
     log_line(mssgf);
     goodbye(0);
-#ifdef CFREE
     Free_batch_items();
     Free_output_paths(analysis);
     Free_reorder_loci();
     Free_annotated_files(LPedTreeTop);
-#endif
     free_globals();
     /* free local */
 

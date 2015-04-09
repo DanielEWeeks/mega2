@@ -384,13 +384,9 @@ static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
         }
         copy_colname(colname_item,
                      &(ped_all_colnames[colname_item->input_col]));
-#ifdef CFREE
         free(colname_item);
-#endif
     }
-#ifdef CFREE
     free(userdef_colnames);
-#endif
     /* t2=time((time_t *) NULL);
        printf("Time taken = %g\n", difftime(t2, t1)); */
     if (name_not_found > 0) {
@@ -1693,7 +1689,6 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         Top=NULL;
     }
 
-#ifdef CFREE
     if (phecols > 0) free(phe_vals);
     for (c = 0; c < num_peds; c++)
         free(ped_names[c]);
@@ -1704,7 +1699,6 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         if (persons[c].pheno != NULL) free(persons[c].pheno);
         if (persons[c].marker != NULL) free(persons[c].marker);
     }
-#endif
     free(persons);
     return Top;
 }
@@ -3118,13 +3112,9 @@ static ext_linkage_locus_top *read_annotated_map_file(const char *map_file,
             }
         }
         copy_colname(colname_item, &(map_all_colnames[colname_item->input_col]));
-#ifdef CFREE
         free(colname_item);
-#endif
     }
-#ifdef CFREE
     free(userdef_colnames);
-#endif
 
     return read_common_map_file(mapfp, map_file, LTop, (int)additional_maps.size(), reserved_colnames, file_desc, (char **)NULL);
 }
@@ -4126,9 +4116,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     ext_linkage_locus_top *EXLTop;
     marker_type *marker_list;
     pheno_type *pheno_list;
-#ifdef CFREE
     class_list_type *lclass;
-#endif
     int   phe_cols = 0;
     int   bp_map   = 0;
     int displayed_messages = 0, duplicate_mrk=0;
@@ -4618,7 +4606,6 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     }
 
     for (i=0; i < LTop->PhenoCnt; i++) {
-#ifdef CFREE
        lclass = pheno_list[i].class_list;
        while(lclass != NULL) {
            free(lclass->l_class.autosomal_pen);
@@ -4627,17 +4614,14 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
            lclass = lclass->next;
        }
        free_marker_item_class(pheno_list[i].class_list);
-#endif
     }
 
-#ifdef CFREE
 /* (rvb) 11/10/11
     As I read a group array is created in read_annotated_freq_file() and sort_and_check()
     verifies that groups on the people (if used) are in the group array.  I do not believe
     I've seen any code that puts things in the group array.
 */
     free(groups);
-#endif
     if (marker_list) {
         free(marker_list + Top->LocusTop->PhenoCnt);
         marker_list=NULL;
@@ -4650,7 +4634,6 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     return Top;
 }
 
-#ifdef CFREE
 /*
 static void Free_AnnotatedFileInfo(void) {
     free(AnnotatedFileInfo.names_file_columns);
@@ -4806,7 +4789,6 @@ void Free_annotated_files(linkage_ped_top *Top)
         Free_map_names(Top->EXLTop);
     Free_ped(Top);
 }
-#endif
 
 /* function to check if pedigree, names and map file are in annotated
    format. Read the first line from each file, and check for some

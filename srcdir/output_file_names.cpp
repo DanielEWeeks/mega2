@@ -326,9 +326,7 @@ void           set_output_paths(analysis_type analysis,
                 if (analysis->skip_trait(Top->LocusTop, trait_loc_num[i-1])) continue;
                 if (strcmp(Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[0],
                            "use trait names")) {
-#ifdef CFREE
                     /* I do not like this alaising for only this case of Trait_Subdirs. */
-#endif
                     output_paths[j] = Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[j-1];
                 } else {
                     output_paths[j] =
@@ -431,7 +429,6 @@ void           set_output_paths(analysis_type analysis,
     return;
 }
 
-#ifdef CFREE
 void Free_output_paths(analysis_type analysis) {
     int i;
     int ntraits;
@@ -461,7 +458,6 @@ void Free_output_paths(analysis_type analysis) {
     free(trait_paths[0]);
     free(trait_paths);
 }
-#endif
 
 char *file_status(char *fl_name, char *status)
 

@@ -1068,12 +1068,10 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     return Top;
 }
 
-#ifdef CFREE
 void Free_reorder_loci(void) {
 /*  might be alloc'ed in linkage.c */
     free(ChrLoci);
 }
-#endif
 
 /*===========================================================================*/
 

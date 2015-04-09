@@ -118,7 +118,9 @@ endif
 
 # CC, CFLAGS are defined in Makedefs
 
-DFLAGS += -DCFREE -DRUNSHELL_SETUP
+write_IQLS.o write_beagle.o write_fbat.o write_loki.o write_mfiles.o: DFLAGS += -DRUNSHELL_SETUP
+write_pangaea.o write_plink_files.o write_premakeped.o: DFLAGS += -DRUNSHELL_SETUP
+write_structure.o: DFLAGS += -DRUNSHELL_SETUP
 
 
 # Used for getting a direct match with the genetic map files with running Beagle Analysis...

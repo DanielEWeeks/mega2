@@ -788,9 +788,7 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                         }
                     } else {
 		        int ch;
-#ifdef CFREE
                         if (iter == 1) continue;
-#endif /* CFREE */
                         if (Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].value.option <= 0) {
                             invalid_value_field(8);
                         }
@@ -900,9 +898,7 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                         } else if (!Mega2BatchItems[/* 14 */ Traits_Loop_Over].item_read) {
                             continue;
                         } else {
-#ifdef CFREE
                             if (iter == 1) continue;
-#endif
                             parse_string(Mega2BatchItems[/* 14 */ Traits_Loop_Over].value.name, NULL,
                                          &num_dirs, (int) LARGE, 0);
                             Mega2BatchItems[/* 16 */ Trait_Subdirs].item_read = 1;
@@ -1419,8 +1415,6 @@ void batchf(int item)
 
 #endif /* NEW_BATCH */
 
-#ifdef CFREE
-
 void Free_batch_items(void) {
     item_value_type vt;
     int i, j, num_trs;
@@ -1460,5 +1454,3 @@ void Free_batch_items(void) {
     }
     free(Mega2BatchItems);
 }
-
-#endif /* CFREE */
