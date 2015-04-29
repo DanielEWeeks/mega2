@@ -49,6 +49,7 @@
 #include "utils_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
 
+using namespace std;
 /*
      create_summary_ext.h:  aff_status_entry marker_typing_summary
      error_messages_ext.h:  mssgf my_calloc warnf
@@ -111,7 +112,7 @@ void CLASS_PLINK::interactive_sub_prog_name_to_sub_option(analysis_type *analysi
     char select[10];
     
     if (batchANALYSIS) {
-        if (Mega2BatchItems[/* 6 */ Analysis_Sub_Option].item_read) {
+        if (Mega2BatchItems[/* 6 */ Analysis_Sub_Option].items_read) {
             selection = (*analysis)->_suboption;
         } else {
 #ifndef HIDESTATUS

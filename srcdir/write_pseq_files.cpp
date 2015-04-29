@@ -179,7 +179,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
                     case QUANT:
                         pr_printf("##%s,Float,%s,\"Quantitative trait description\"\n",
                                   _Top->LocusTop->Locus[global_trait_entries[tr]].Name,
-                                  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read ?
+                                  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read ?
                                   Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9"
                                   );
                         break;

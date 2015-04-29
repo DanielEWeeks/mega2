@@ -155,7 +155,7 @@ int hashtable_strcmp(const void *prev, const void *next) {
 void invalid_value_field(int batch_item)
 {
     errorvf("Keyword %s has invalid value in batch file.\n",
-            Mega2BatchItems[batch_item].keyword);
+            C(Mega2BatchItems[batch_item].keyword));
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
@@ -850,7 +850,7 @@ int global_ou_files(int default_opt)
     char stars[3];
 
 //SL
-    if (batchANALYSIS && Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read) {
+    if (batchANALYSIS && Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read) {
         return (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
     }
 

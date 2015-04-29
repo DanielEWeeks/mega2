@@ -561,7 +561,7 @@ void CLASS_FBAT::interactive_sub_prog_name_to_sub_option(analysis_type *analysis
     char select[10];
 
     if (batchANALYSIS) {
-        if (Mega2BatchItems[/* 6 */ Analysis_Sub_Option].item_read) {
+        if (Mega2BatchItems[/* 6 */ Analysis_Sub_Option].items_read) {
             selection = (*analysis)->_suboption;
         } else {
             selection = 1;
@@ -615,7 +615,7 @@ void CLASS_FBAT::get_file_names(char *file_names[], char *prefix,
         // This is the batch file item that controls whether you wish to comnine the
         // chromosomes in the same file or not. If true (y), each chromosome gets it's own file.
         // This is a derective from the user which will override the default...
-        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read)
+        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read)
             *combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
         else
             *combine_chromo=0;

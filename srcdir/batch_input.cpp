@@ -56,6 +56,23 @@
               utils_ext.h:  EXIT draw_line get_line
 */
 
+using namespace std;
+
+#include <iostream>
+#include <sstream>
+
+#include "str_utils.hh"
+
+istringstream ss;
+
+typedef map<Cstr, batch_item_type *> Mapsb;
+typedef map<Cstr, batch_item_type *>::const_iterator Mapsbp;
+typedef list<batch_item_type *> Listb;
+typedef list<batch_item_type *>::const_iterator Listbp;
+
+Mapsb BatchItemMap;
+Listb BatchItemList;
+
 batch_item_type *Mega2BatchItems;
 
 int batchINPUTFILES, batchANALYSIS, batchREORDER;
@@ -122,72 +139,81 @@ int batchTRAIT, batchAFFVALUE, batchERROR;
       55    Input_PLINK_Map_File
       56    VCF_Args
       57    VCF_INFO_Marker_Alternative_Key
+      58    Value_Missing_Affect_On_Input
+      59    Value_Missing_Affect_On_Output
+      60    Output_File_Stem
+      61    Value_Imputed_Threshold
 */
 
-static char keywords[NUM_KEYS][KEYWORD_LEN] = {
-    "Input_Pedigree_File",
-    "Input_Locus_File",
-    "Input_Map_File",
-    "Input_Omit_File",
-    "Input_Untyped_Ped_Option",
-    "Analysis_Option",
-    "Analysis_Sub_Option",
-    "Chromosome_Single",
-    "Chromosomes_Multiple_Num",
-    "Chromosomes_Multiple",
-    "Loci_Selected_Num",
-    "Loci_Selected",
-    "Trait_Single",
-    "REMTraits_Num",
-    "Traits_Loop_Over",
-    "Traits_Combine",
-    "Trait_Subdirs",
-    "Value_Missing_Quant_On_Input", // "Value_Missing_Quant" is an alias
-    "Value_Affecteds",
-    "Error_Loci",
-    "Error_Except_Loci",
-    "Error_Loci_Num",
-    "Error_Model",
-    "Error_Probabilities",
-    "Input_Do_Error_Sim",
-    "Default_Outfile_Names",
-    "Default_Reset_Invalid",
-    "Default_Other_Values",
-    "Default_Ignore_Nonfatal",
-    "Default_Rplot_Options",
-    "Xlinked_Analysis_Mode",
-    "REMCovariates_Num",
-    "Covariates_Selected",
-    "Output_Path",
-    "Count_Genotypes",
-    "Rplot_Statistics",
-    "Count_Halftyped",
-    "AlleleFreq_SquaredDev",
-    "Count_HWE_genotypes",
-    "Input_Frequency_File",
-    "Input_Penetrance_File",
-    "REMOutput_Map_Num",
-    "Value_Missing_Allele_Aff",
-    "PLINK",
-    "Input_Phenotype_File",
-    "Input_Aux_File",
-    "Value_Genetic_Distance_Index",
-    "Value_Base_Pair_Position_Index",
-    "Value_Genetic_Distance_SexTypeMap",
-    "Value_Missing_Quant_On_Output",
-    "Loop_Over_Chromosomes",
-    "Structure.PopDataPheno",
-    "Value_Marker_Compression",
-    "Input_Format_Type",
-    "Input_Path",
-    "Input_PLINK_Map_File",
-    "VCF_Args",
-    "VCF_Marker_Alternative_INFO_Key",
-    "Value_Missing_Affect_On_Input",
-    "Value_Missing_Affect_On_Output",
-    "Output_File_Stem"
-
+// NOTE: the default value is always represented as a string and converted if necessary.
+static keyw_t keywords[] = {
+    {"Input_Pedigree_File",                   STRING,     ""},
+    {"Input_Locus_File",                      STRING,     ""},
+    {"Input_Map_File",                        STRING,     ""},
+    {"Input_Omit_File",                       STRING,     ""},
+    {"Input_Untyped_Ped_Option",              INT,      "-1"},
+    {"Analysis_Option",                       STRING,     ""},
+    {"Analysis_Sub_Option",                   STRING,     ""},
+    {"Chromosome_Single",                     INT,       "1"},
+    {"Chromosomes_Multiple_Num",              INT,       "0"},
+    {"Chromosomes_Multiple",                  CHRM_LIST,  ""},
+    {"Loci_Selected_Num",                     INT,       "0"},
+    {"Loci_Selected",                         LINE,       ""},
+    {"Trait_Single",                          INT,       "0"},
+    {"REMTraits_Num",                         INT,       "0"},
+    {"Traits_Loop_Over",                      LINE,       ""},
+    {"Traits_Combine",                        LINE,       ""},
+    {"Trait_Subdirs",                         NAME_LIST,  ""},
+    {"Value_Missing_Quant_On_Input",          FLOAT,   "0.0"}, 
+    {"Value_Affecteds",                       NAME_LIST,  ""},
+    {"Error_Loci",                            INT_LIST,   ""},
+    {"Error_Except_Loci",                     INT_LIST,   ""},
+    {"Error_Loci_Num",                        INT,       "0"},
+    {"Error_Model",                           CHAR,      "X"},
+    {"Error_Probabilities",                   FLOAT_LIST, ""},
+    {"Input_Do_Error_Sim",                    YORN,      "n"},
+    {"Default_Outfile_Names",                 YORN,      "n"},
+    {"Default_Reset_Invalid",                 YORN,      "y"},
+    {"Default_Other_Values",                  YORN,      "n"},
+    {"Default_Ignore_Nonfatal",               YORN,      "n"},
+    {"Default_Rplot_Options",                 YORN,      "n"},
+    {"Xlinked_Analysis_Mode",                 INT,       "2"},
+    {"REMCovariates_Num",                     INT,       "0"},
+    {"Covariates_Selected",                   LINE,       ""},
+    {"Output_Path",                           STRING,     ""},
+    {"Count_Genotypes",                       INT,       "2"},
+    {"Rplot_Statistics",                      LINE,       ""},
+    {"Count_Halftyped",                       YORN,      "n"},
+    {"AlleleFreq_SquaredDev",                 FLOAT,   "0.0"},
+    {"Count_HWE_genotypes",                   INT,       "2"},
+    {"Input_Frequency_File",                  STRING,     ""},
+    {"Input_Penetrance_File",                 STRING,     ""},
+    {"REMOutput_Map_Num",                     INT,       "1"},
+    {"Value_Missing_Allele_Aff",              LINE,       ""},
+    {"PLINK_Args",                            LINE,       ""},
+    {"Input_Phenotype_File",                  STRING,     ""},
+    {"Input_Aux_File",                        STRING,     ""},
+    {"Value_Genetic_Distance_Index",          INT,      "-1"},
+    {"Value_Base_Pair_Position_Index",        INT,      "-1"},
+    {"Value_Genetic_Distance_SexTypeMap",     INT,      "-1"},
+    {"Value_Missing_Quant_On_Output",         LINE,    "0.0"},
+    {"Loop_Over_Chromosomes",                 YORN,      "n"},
+    {"Structure.PopDataPheno",                STRING,     ""},
+    {"Value_Marker_Compression",              INT,       "1"}, // MARKER_SCHEME_BITS
+    {"Input_Format_Type",                     INT,       "0"},
+    {"Input_Path",                            STRING,     ""},
+    {"Input_PLINK_Map_File",                  STRING,     ""},
+    {"VCF_Args",                              LINE,       ""},
+    {"VCF_Marker_Alternative_INFO_Key",       LINE,       ""},
+    {"Value_Missing_Affect_On_Input",         LINE,      "0"},
+    {"Value_Missing_Affect_On_Output",        LINE,      "0"},
+    {"Output_File_Stem",                      STRING,     ""},
+    {"Value_Imputed_Threshold",               FLOAT,   "0.0"},
+    {"Value_Imputed_Chromosome",              STRING,     ""},
+    {"Input_Imputed_Info",                    STRING,     ""},
 };
+
+int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);
 
 void batch_file_doc(FILE *batchfp)
 {
@@ -199,9 +225,9 @@ void batch_file_doc(FILE *batchfp)
     fprintf(batchfp, "%c Currently implemented keywords:\n",
             COMMENT_CHAR);
     for (key =0; key < NUM_KEYS; key++) {
-        if (strncasecmp(keywords[key], "REM", (size_t) 3)) {
+        if (keywords[key].keyword.compare(0, (size_t) 3, "REM")) {
             fprintf(batchfp, "%c   %d) %s \n", COMMENT_CHAR,
-                    key+1, keywords[key]);
+                    key+1, C(keywords[key].keyword));
         }
     }
     fprintf(batchfp, "%c \n", COMMENT_CHAR);
@@ -266,7 +292,6 @@ void create_batchfile(void)
     BatchFileCreated=1;
 }
 
-
 /* The type of keyword is used only for writing out batch items */
 void batchfile_init_Mega2BatchItems(void)
 {
@@ -275,130 +300,98 @@ void batchfile_init_Mega2BatchItems(void)
     Mega2BatchItems = CALLOC((size_t)NUM_KEYS, batch_item_type);
 
     for (i=0;  i < NUM_KEYS; i++) {
-        Mega2BatchItems[i].item_number=i;
-        Mega2BatchItems[i].item_read=0;
-        strcpy(Mega2BatchItems[i].keyword, keywords[i]);
-        switch(i) {
-        case /* 0 */ Input_Pedigree_File:
-        case /* 1 */ Input_Locus_File:
-        case /* 2 */ Input_Map_File:
-        case /* 3 */ Input_Omit_File:
-        case /* 5 */ Analysis_Option:
-        case /* 6 */ Analysis_Sub_Option:
-        case /* 11 */ Loci_Selected:
-        case /* 14 */ Traits_Loop_Over:
-        case /* 15 */ Traits_Combine:
-        case /* 32 */ Covariates_Selected:
-        case /* 33 */ Output_Path:
-        case /* 35 */ Rplot_Statistics:
-        case /* 39 */ Input_Frequency_File:
-        case /* 40 */ Input_Penetrance_File:
-        case /* 42 */ Value_Missing_Allele:
-        case /* 43 */ PLINK_Args:
-        case /* 44 */ Input_Phenotype_File:
-        case /* 45 */ Input_Aux_File:
-        case /* 51 */ Structure$PopDataPheno:
-        case /* 54 */ VCF_Args:
-        case /* 57 */ VCF_Marker_Alternative_INFO_Key:
-        case /* 55 */ Input_Path:
-        case /* 56 */ Input_PLINK_Map_File:
-        case /* 60 */ Output_File_Stem:
-            Mega2BatchItems[i].value.name = CALLOC((size_t)FILENAME_LENGTH, char);
-            strcpy(Mega2BatchItems[i].value.name, "");
-            Mega2BatchItems[i].value_type = STRING;
+        batch_item_type *bi    = &Mega2BatchItems[i];
+        item_value_type& type  = keywords[i].type;
+        Str& deflt             = keywords[i].default_string;
+        bi->keyword     = keywords[i].keyword;
+        bi->value_type  = type;
+        bi->item_number = i;
+        bi->line_number = 0;
+        bi->items_read  = 0;
+        bi->flag        = Add2BatchItemList;
+
+        Cstr& name      = bi->keyword;
+        BatchItemMap[name]  = bi;
+
+        switch(type) {
+        case STRING:
+        case LINE:
+            bi->value.name         = CALLOC((size_t)FILENAME_LENGTH, char);
+            strcpy(bi->value.name, deflt.c_str());
             break;
-        case /* 49 */ Value_Missing_Quant_On_Output:
-            Mega2BatchItems[i].value.name = CALLOC((size_t)FILENAME_LENGTH, char);
-            strcpy(Mega2BatchItems[i].value.name, "0.0");
-            Mega2BatchItems[i].value_type = STRING;
-            break;
-        case /* 58 */ Value_Missing_Affect_On_Input:
-        case /* 59 */ Value_Missing_Affect_On_Output:
-            Mega2BatchItems[i].value.name = CALLOC((size_t)FILENAME_LENGTH, char);
-            strcpy(Mega2BatchItems[i].value.name, "0");
-            Mega2BatchItems[i].value_type = STRING;
-            break;
-        case /* 9 */ Chromosomes_Multiple:
-        case /* 19 */ Error_Loci:
-        case /* 20 */ Error_Except_Loci:
-            Mega2BatchItems[i].value.mult_opts=NULL;
-            Mega2BatchItems[i].value_type = INT_LIST;
-            break;
-        case /* 4 */ Input_Untyped_Ped_Option:
-            Mega2BatchItems[i].value.option=-1;
-            Mega2BatchItems[i].value_type = INT;
-            break;
-        case /* 46 */ Value_Genetic_Distance_Index:
-        case /* 47 */ Value_Base_Pair_Position_Index:
-        case /* 48 */ Value_Genetic_Distance_SexTypeMap:
-            Mega2BatchItems[i].value.option=-1;
-            Mega2BatchItems[i].value_type = INT;
-            break;
-        case /* 7 */ Chromosome_Single:
-        case /* 41 */ Output_Map_Num:
-            Mega2BatchItems[i].value.option=1;
-            Mega2BatchItems[i].value_type = INT;
-            break;
-        case /* 8 */ Chromosomes_Multiple_Num:
-        case /* 10 */ Loci_Selected_Num:
-        case /* 12 */ Trait_Single:
-        case /* 13 */ Traits_Num:
-        case /* 21 */ Error_Loci_Num:
-        case /* 31 */ Covariates_Num:
-        case /* 53 */ Input_Format_Type:
-            Mega2BatchItems[i].value.option = 0;
-            Mega2BatchItems[i].value_type = INT;
-            break;
-        case /* 24 */ Input_Do_Error_Sim:
-        case /* 25 */ Default_Outfile_Names:
-        case /* 27 */ Default_Other_Values:
-        case /* 28 */ Default_Ignore_Nonfatal:
-        case /* 29 */ Default_Rplot_Options:
-        case /* 36 */ Count_Halftyped:
-        case /* 50 */ Loop_Over_Chromosomes:
-            Mega2BatchItems[i].value.copt='n';
-            Mega2BatchItems[i].value_type = YORN;
-            break;
-        case /* 26 */ Default_Reset_Invalid:
-            /* Reset invalid genotypes */
-            Mega2BatchItems[i].value.copt='y';
-            Mega2BatchItems[i].value_type = YORN;
-            break;
-        case /* 16 */ Trait_Subdirs:
-            /* trait numbers and trait directory names */
-        case /* 18 */ Value_Affecteds:
-            /* affection labels */
-            Mega2BatchItems[i].value.mult_names=NULL;
-            Mega2BatchItems[i].value_type = NAME_LIST;
-            break;
-        case /* 17 */ Value_Missing_Quant_On_Input:
-        case /* 37 */ AlleleFreq_SquaredDev:
-            Mega2BatchItems[i].value.fvalue=0.0;
-            Mega2BatchItems[i].value_type = FLOAT;
-            break;
-        case /* 22 */ Error_Model:
-            Mega2BatchItems[i].value.copt='X';
-            Mega2BatchItems[i].value_type = CHAR;
-            break;
-        case /* 23 */ Error_Probabilities:
-            Mega2BatchItems[i].value.mult_fvalues=NULL;
-            Mega2BatchItems[i].value_type = FLOAT_LIST;
-            break;
-        case /* 30 */ Xlinked_Analysis_Mode:
-        case /* 34 */ Count_Genotypes:
-        case /* 38 */ Count_HWE_genotypes:
-            Mega2BatchItems[i].value.option=2;
-            Mega2BatchItems[i].value_type = INT;
-            break;
-        case /* 52 */ Value_Marker_Compression:
-            Mega2BatchItems[i].value.option=MARKER_SCHEME_BITS;
-            Mega2BatchItems[i].value_type = INT;
-            break;
+
         default:
-            strcpy(Mega2BatchItems[i].value.name, "");
-            Mega2BatchItems[i].value_type = STRING;
+            bi->value.name         = CALLOC((size_t)FILENAME_LENGTH, char);
+            strcpy(bi->value.name, deflt.c_str());
+            break;
+
+        case INT:
+            bi->value.option       = atoi(deflt.c_str());
+            break;
+
+        case FLOAT:
+            bi->value.fvalue       = atof(deflt.c_str());
+            break;
+
+        case CHAR:
+            bi->value.copt         = deflt[0];
+            break;
+
+        case YORN:
+            bi->value.copt         = tolower(deflt[0]);
+            break;
+
+        case INT_LIST:
+        case CHRM_LIST:
+            bi->value.mult_opts     = NULL;
+            break;
+
+        case NAME_LIST:
+            bi->value.mult_names   = NULL;
+            break;
+
+        case FLOAT_LIST:
+            bi->value.mult_fvalues = NULL;
             break;
         }
+    }
+
+    // We won't list these options to BatchItemList since they need special treatment
+    int err = 0;
+    Cstr clear[] = {"Analysis_Option", "Analysis_Sub_Option", "Input_Format_Type"};
+    for (i = 0; i < 3; i++) {
+        Mapsbp anal = BatchItemMap.find(clear[i]);
+        if (anal == BatchItemMap.cend()) {
+            errorvf("Internal Error!  %s not found %s\n:", C(clear[i]));
+            err++;
+        }
+        batch_item_type *bi = anal->second;
+        bi->flag = Clear;
+    }
+    if (err) {
+        EXIT(BATCH_FILE_ITEM_ERROR);
+    }
+    
+    // Aliases
+    pair<Cstr,Cstr> aliases[] = {
+        make_pair("Value_Missing_Quant_On_Input", "Value_Missing_Quant"),
+        make_pair("VCF_Args", "VCF_ARGS"),
+        make_pair("PLINK_Args", "PLINK"),
+        make_pair("Input_Aux_File", "Input_Binary_File"),
+        make_pair("AlleleFreq_SquaredDev", "AlleleFreq_SquaredError"),
+        make_pair("Count_Halftyped", "Count_Halftypes"),
+        make_pair("REMOutput_Map_Num", "Output_Map_Num"),
+        make_pair("","")  //sentinel
+    };
+    for (i = 0; aliases[i].first != ""; i++) {
+        Mapsbp anal = BatchItemMap.find(aliases[i].first);
+        if (anal == BatchItemMap.cend()) {
+            errorvf("Internal Error!  %s not found %s\n:", C(aliases[i].first));
+            err++;
+        } else {
+	    batch_item_type *bi = anal->second;
+	    BatchItemMap[aliases[i].second] = bi;
+	}
     }
 }
 
@@ -412,18 +405,11 @@ void batchfile_init_Mega2BatchItems(void)
    on other keywords are not forced  into sequential ordering.
 */
 
-#ifdef READ_ITER1
-#undef READ_ITER1
-#endif
-
-#define READ_ITER1(it) ((it == -1)? 0 : (Mega2BatchItems[it].item_read == 1) && (iter == 1))
-
-
 static void missing_item_goto_menu(int batch_item, const char *menu_name)
 {
     if (batch_item >= 0) {
         warnvf("Missing necessary batch item %s, going to %s.\n",
-                Mega2BatchItems[batch_item].keyword, menu_name);
+               C(Mega2BatchItems[batch_item].keyword), menu_name);
     } else {
         warnvf("Going to %s.\n", menu_name);
     }
@@ -435,8 +421,8 @@ void check_batch_items(void)
     /* Input files */
 
     if (ITEM_READ(/* 0 */ Input_Pedigree_File) &&
-        (ITEM_READ(/* 1 */ Input_Locus_File) || Mega2BatchItems[PLINK_Args].item_read || Mega2BatchItems[VCF_Args].item_read) &&
-        (ITEM_READ(/* 2 */ Input_Map_File) || (Input_Format == in_format_VCF || Input_Format == in_format_compressed_VCF || Input_Format == in_format_binary_VCF || Input_Format == in_format_PED || Input_Format == in_format_binary_PED) ) &&
+        (ITEM_READ(/* 1 */ Input_Locus_File) || Mega2BatchItems[PLINK_Args].items_read || Mega2BatchItems[VCF_Args].items_read || Input_Format == in_format_imputed) &&
+        (ITEM_READ(/* 2 */ Input_Map_File) || (Input_Format == in_format_VCF || Input_Format == in_format_compressed_VCF || Input_Format == in_format_binary_VCF || Input_Format == in_format_PED || Input_Format == in_format_binary_PED || Input_Format == in_format_imputed) ) &&
         ITEM_READ(/* 4 */ Input_Untyped_Ped_Option)) {
         // NOTE: You don't need a Map_File if you are working with a VCF file because it contains one map (VCF.p)...
         batchINPUTFILES=1;
@@ -445,7 +431,7 @@ void check_batch_items(void)
         if (!ITEM_READ(/* 0 */ Input_Pedigree_File)) {
             missing_item_goto_menu(0, "Input menu");
         } else if (!ITEM_READ(/* 1 */ Input_Locus_File) && 
-                   (Mega2BatchItems[Input_Format_Type].item_read && Mega2BatchItems[Input_Format_Type].value.option < in_format_binary_PED)) {
+                   (Mega2BatchItems[Input_Format_Type].items_read && Mega2BatchItems[Input_Format_Type].value.option < in_format_binary_PED)) {
             missing_item_goto_menu(1, "Input menu");
         } else if (!ITEM_READ(/* 2 */ Input_Map_File)) {
             missing_item_goto_menu(2, "Input menu");
@@ -492,7 +478,7 @@ void check_batch_items(void)
 
     read_a_section =
       batchINPUTFILES + batchANALYSIS + batchREORDER + batchTRAIT +
-      (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].item_read ? 1 : 0) +
+      (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].items_read ? 1 : 0) +
       batchAFFVALUE + batchERROR;
 
     if (read_a_section) {
@@ -509,10 +495,10 @@ static void missing_items(int batch_item, int list_item)
 {
     errorf("Not enough items to read:");
     errorvf("Item %s specifies %d items, \n",
-            Mega2BatchItems[batch_item].keyword,
+            C(Mega2BatchItems[batch_item].keyword),
             Mega2BatchItems[batch_item].value.option);
     errorvf("Item %s has less than %d items.\n",
-            Mega2BatchItems[list_item].keyword,
+            C(Mega2BatchItems[list_item].keyword),
             Mega2BatchItems[batch_item].value.option);
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
@@ -520,11 +506,11 @@ static void missing_items(int batch_item, int list_item)
 static void missing_dependency_keyword(int dependent_item, int dependent_on_item)
 {
     errorvf("Keyword %s is defined but keyword %s is missing from batch file.\n",
-            Mega2BatchItems[dependent_item].keyword,
-            Mega2BatchItems[dependent_on_item].keyword);
+            C(Mega2BatchItems[dependent_item].keyword),
+            C(Mega2BatchItems[dependent_on_item].keyword));
     errorvf("Keyword %s depends on keyword %s.\n",
-            Mega2BatchItems[dependent_item].keyword,
-            Mega2BatchItems[dependent_on_item].keyword);
+            C(Mega2BatchItems[dependent_item].keyword),
+            C(Mega2BatchItems[dependent_on_item].keyword));
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
@@ -536,15 +522,15 @@ static void missing_mult_dependency_keyword(int dependent_item, int dependent_on
     if (and_or) {
         sprintf(err_msg,
                 "Keyword %s requires all these keywords to be defined:",
-                Mega2BatchItems[dependent_item].keyword);
+                C(Mega2BatchItems[dependent_item].keyword));
     } else {
         sprintf(err_msg,
                 "Keyword %s depends on one of these keywords to be defined:",
-                Mega2BatchItems[dependent_item].keyword);
+                C(Mega2BatchItems[dependent_item].keyword));
     }
 
     for (i=0; i < num_dependent_items; i++) {
-        strcat(err_msg, Mega2BatchItems[dependent_on_items[i]].keyword);
+        strcat(err_msg, C(Mega2BatchItems[dependent_on_items[i]].keyword));
     }
     errorf(err_msg);
     EXIT(BATCH_FILE_ITEM_ERROR);
@@ -552,255 +538,596 @@ static void missing_mult_dependency_keyword(int dependent_item, int dependent_on
 
 static void mult_decl(int item)
 {
-    errorvf("Found multiple occurrences of keyword %s,\n", Mega2BatchItems[item].keyword);
+    errorvf("Found multiple occurrences of keyword %s,\n",
+            C(Mega2BatchItems[item].keyword));
 //  errorf("Using the first definition, and ignoring all later definitions.");
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
-static void malformed_batch_line(char *keyword)
+static void malformed_batch_line(const char *keyword)
 {
     errorvf("Malformed line for keyword %s.\n", keyword);
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
+static void check_dependencies(analysis_type *analysis)
+{
+    batch_item_type& bi8 = Mega2BatchItems[Chromosomes_Multiple_Num];
+    batch_item_type& bi9 = Mega2BatchItems[Chromosomes_Multiple];
+    if (bi9.items_read) {
+        if (!bi8.items_read)
+            missing_dependency_keyword(9, 8);
+        else if (bi8.value.option <= 0 || bi8.value.option != bi9.items_read-1)
+            invalid_value_field(8);
+    }
+
+    batch_item_type& bi14 = Mega2BatchItems[Traits_Loop_Over];
+    batch_item_type& bi16 = Mega2BatchItems[Trait_Subdirs];
+    if (bi16.items_read) {
+        if (!bi14.items_read)
+            missing_dependency_keyword(16, 14);
+    }
+    batch_item_type& bi12 = Mega2BatchItems[Trait_Single];
+    batch_item_type& bi15 = Mega2BatchItems[Traits_Combine];
+    batch_item_type& bi18 = Mega2BatchItems[Value_Affecteds];
+    if (bi18.items_read) {
+        int num_trs = 1;
+        if (bi12.items_read)
+            num_trs = 1;
+        else if (bi14.items_read)
+            parse_string(bi14.value.name, NULL, &num_trs, (int) LARGE, 0);
+        else if (bi15.items_read)
+            parse_string(bi15.value.name, NULL, &num_trs, (int) LARGE, 0);
+        else {
+            int opt_array[3] = { 12, 14, 15 };
+            /* error */
+            missing_mult_dependency_keyword(18, opt_array, 3, 0);
+        }
+        if (num_trs != bi18.items_read-1) {
+            invalid_value_field(18);
+        }
+    }
+
+    batch_item_type& bi19 = Mega2BatchItems[Error_Loci];
+    batch_item_type& bi20 = Mega2BatchItems[Error_Except_Loci];
+    batch_item_type& bi21 = Mega2BatchItems[Error_Loci_Num];
+    if (bi19.items_read) {
+        if (!bi21.items_read)
+            missing_dependency_keyword(19, 21);
+        else if (bi21.value.option <= 0)
+            invalid_value_field(21);
+
+        if (bi21.value.option != bi19.items_read-1) {
+            missing_items(/* 21 */ Error_Loci_Num, 19);
+        }
+    } else if (bi20.items_read) {
+        if (!bi21.items_read)
+            missing_dependency_keyword(20, 21);
+        else if (bi21.value.option <= 0)
+            invalid_value_field(21);
+
+        if (bi21.value.option != bi20.items_read-1) {
+            missing_items(/* 21 */ Error_Loci_Num, 20);
+        }
+    }
+
+    batch_item_type& bi22 = Mega2BatchItems[Error_Model];
+    batch_item_type& bi23 = Mega2BatchItems[Error_Probabilities];
+    if (bi23.items_read) {
+        if (!bi22.items_read) 
+            missing_dependency_keyword(23, 22);
+
+        switch (bi22.value.copt) {
+        case 'U':
+            if (bi23.items_read != 1 + 1) {
+                errorvf("Item %s has to have 1 value.\n",
+                        C(bi22.keyword));
+            }
+            break;
+        case 'S':
+            if (bi23.items_read != 5 + 1) {
+                errorvf("Item %s has to have 5 values.\n",
+                        C(bi22.keyword));
+            }
+            break;
+        case 'M':
+            /* Ignore everything */
+            break;
+        default:
+            invalid_value_field(/*22 */ Error_Model);
+            break;
+       }
+    }
+
+    batch_item_type& bi50 = Mega2BatchItems[Loop_Over_Chromosomes];
+    if (bi50.items_read) {
+        if (!(*analysis)->Loop_Over_Chromosomes_implemented()) {
+            warnvf("The batch file item 'Loop_Over_Chromosomes' is not implemented for analysis option '%s'.\n", bi50.value.name);
+        }
+    }
+
+}
+
 /* global variables */
 static char analysis_name[50]="", sub_analysis_name[100]="";
 
-static void set_batch_items(char *batch_file_name, int iter, analysis_type *analysis)
+void Mega2BatchItemSet(char *value, batch_item_type *bi)
+{
+    char *intstr;
+    int capacity = 8;
+    int j;
+
+    bi->items_read = 1;
+
+    switch(bi->value_type) {
+    case STRING:
+        sscanf(value, "%s", bi->value.name);
+        break;
+
+    case LINE:
+        strcpy(bi->value.name, value);
+        break;
+
+    default:
+        sscanf(value, "%s", bi->value.name);
+        break;
+
+    case INT:
+        sscanf(value, "%d", &(bi->value.option));
+        break;
+
+    case FLOAT:
+        bi->value.fvalue = atof(strtok(value, " "));
+        break;
+
+    case CHAR:
+        sscanf(value, "%c", &(bi->value.copt));
+        break;
+
+    case YORN:
+        sscanf(value, "%c", &(bi->value.copt));
+        if (bi->value.copt != 'y' && bi->value.copt != 'Y' &&
+            bi->value.copt != 'n' && bi->value.copt != 'N')
+            invalid_value_field(bi->item_number);
+        break;
+
+    case INT_LIST:
+//        asm("int $3");
+        warnvf("INT_LIST: %s\n", value);
+        bi->value.mult_opts = CALLOC((size_t)capacity, int);
+        intstr = NULL;
+        intstr = strtok(value, " \n");
+        for (j = 0; intstr != NULL; j++) {
+            if (j >= capacity) {
+                capacity *= 2;
+                bi->value.mult_opts = REALLOC(bi->value.mult_opts, (size_t)capacity, int);
+            }
+            bi->value.mult_opts[j] = atoi(intstr);
+            intstr = strtok(NULL, " \n");
+        }
+        bi->value.mult_opts = REALLOC(bi->value.mult_opts, (size_t)j, int);
+        bi->items_read += j;
+        break;
+
+    case NAME_LIST:
+//      tested
+        capacity = 8;
+        bi->value.mult_names = CALLOC((size_t)capacity, char *);
+        intstr = NULL;
+        intstr = strtok(value, " \n");
+        for (j = 0; intstr != NULL; j++) {
+            if (j >= capacity) {
+                capacity *= 2;
+                bi->value.mult_names = REALLOC(bi->value.mult_names, (size_t)capacity, char *);
+            }
+            bi->value.mult_names[j] = CALLOC((size_t)FILENAME_LENGTH, char);
+            strcpy(bi->value.mult_names[j], intstr);
+            intstr = strtok(NULL, " \n");
+        }
+        bi->value.mult_names = REALLOC(bi->value.mult_names, (size_t)j, char *);
+        bi->items_read += j;
+        break;
+
+    case FLOAT_LIST:
+//        asm("int $3");
+        warnvf("FLOAT_LIST: %s\n", value);
+        bi->value.mult_fvalues = CALLOC((size_t)capacity, double);
+        intstr = NULL;
+        intstr = strtok(value, " \n");
+        for (j = 0; intstr != NULL; j++) {
+            if (j >= capacity) {
+                capacity *= 2;
+                bi->value.mult_fvalues = REALLOC(bi->value.mult_fvalues, (size_t)capacity, double);
+            }
+            bi->value.mult_fvalues[j] = atof(intstr);
+            intstr = strtok(NULL, " \n");
+        }
+        bi->value.mult_fvalues = REALLOC(bi->value.mult_fvalues, (size_t)j, double);
+        bi->items_read += j;
+        break;
+
+    case CHRM_LIST:
+//      tested
+        bi->value.mult_opts = CALLOC((size_t)capacity, int);
+        int ch;
+        intstr = NULL;
+        intstr = strtok(value, " \n");
+        for (j = 0; intstr != NULL; j++) {
+            if (j >= capacity) {
+                capacity *= 2;
+                bi->value.mult_opts = REALLOC(bi->value.mult_opts, (size_t)capacity, int);
+            }
+            if ((ch=STR_CHR(intstr)) != -1) {
+                bi->value.mult_opts[j] = ch;
+            } else {
+                errorf("For batch file item 'Chromosomes_Multiple'.");
+                errorvf("A chromosome must be a positive integer less then %d or one of the\n", lastautosome+4);
+                errorf("following: X, Y, XY, MT, U.");
+                EXIT(BATCH_FILE_ITEM_ERROR);
+            }
+            intstr = strtok(NULL, " \n");
+        }
+        bi->value.mult_opts = REALLOC(bi->value.mult_opts, (size_t)j, int);
+        bi->items_read += j;
+        break;
+    }
+}
+
+void Mega2BatchItemSet(char *value, int i)
+{
+    if (i >= NUM_KEYS) {
+        warnvf("Mega2BatchItemSet: index %d too large\n:", i);
+        return;
+    }
+    batch_item_type *bi = &Mega2BatchItems[i];
+    Mega2BatchItemSet(value, bi);
+}
+
+void Mega2BatchItemSet(char *value, Cstr& key)
+{
+    Mapsbp lookup = BatchItemMap.find(key);
+    if (lookup == BatchItemMap.cend()) {
+        warnvf("Mega2BatchItemSet: key %s not found %s\n:", C(key));
+        return;
+    }
+    batch_item_type *bi = lookup->second;
+    Mega2BatchItemSet(value, bi);
+}
+
+batch_item_type& Mega2BatchItemGet(batch_item_type *bi)
+{
+    return *bi;
+}
+
+/*
+class Mega2BatchItemGetException : public std::exception {
+public:
+    Cstr exc;
+    Mega2BatchItemGetException(): exc("Mega2BatchItem: no match") {};
+    virtual
+    ~Mega2BatchItemGetException() _NOEXCEPT { throw; };
+};
+
+static Mega2BatchItemGetException MBIGE;
+*/
+batch_item_type& Mega2BatchItemGet(int i)
+{
+    if (i >= NUM_KEYS) {
+        warnvf("Mega2BatchItemGet: index %d too large\n:", i);
+//        throw std::runtime_error("Mega2BatchItem: index too large");
+    }
+    return Mega2BatchItems[i];
+}
+
+batch_item_type& Mega2BatchItemGet(Cstr& key)
+{
+    Mapsbp lookup = BatchItemMap.find(key);
+    if (lookup == BatchItemMap.cend()) {
+        warnvf("Mega2BatchItemGet: key %s not found %s\n:", C(key));
+//        throw std::runtime_error("Mega2BatchItem: bad key");
+    }
+    batch_item_type *bi = lookup->second;
+    return *bi;
+}
+
+static void set_batch_items(char *batch_file_name, analysis_type *analysis)
 {
     char nextline[FILENAME_LENGTH];
-    char keyword[KEYWORD_LEN];
     char value[FILENAME_LENGTH];
-    char *intstr;
+    Str  keyword;
+    int errtok = 0, errline = 0, cnt = 0;
+    extern int debug;
 
-    int j, it = -1;
-//  int version4;
-    FILE *fp;
-
-//  version4 = 0;
     /* First the the verseion number */
-    fp = fopen(batch_file_name, "r");
+    FILE *fp = fopen(batch_file_name, "r");
     if (fp == (FILE *)NULL) {
         errorvf("could not open %s for reading!\n", batch_file_name);
         EXIT(FILE_READ_ERROR);
     }
 
+#ifdef later
+//  int version4 = 0;
     (void)fgets(nextline, FILENAME_LENGTH - 1, fp);
     if (!strncasecmp(nextline, "#Version4.4", (size_t) 11)) {
 //      version4 = 1;
     }
-    fclose(fp);
+    rewind(fp);
+#endif
 
-    fp = fopen(batch_file_name, "r");
+    int line_n = 1;
+    int lz;
+    Token token;
+    Str lhs, rhs;
+    Mapsbp lookup;
+    batch_item_type *bi;
+
     while (!feof(fp)) {
         get_line(fp, nextline);
+        line_n++;
+        if (*nextline == 0) continue;
+        lz = strlen(nextline) - 1;
+        if (nextline[lz] == '\n') nextline[lz] = 0;
+        if (*nextline == 0) continue;
+
         // if the line is not the empty string, though this would match a line with one space on it...
         // better would be to search for the leack of a comment character in the first column and
         // an equal sign somewhere in the line....
-        if (strcmp(nextline, "") != 0) {
-            // get everything before the '=' sign...
-            // NOTE: there must be NO white space before the start of the line or between the keyword of the '='?!
-            sscanf(strtok(nextline, "="), "%s", keyword);
-            // get everything after the '=' sign...
-            intstr = strtok(NULL, "\n");
-            if (intstr == NULL && !strncasecmp(keyword, "value_missing_", 14) ) {
-                intstr = (char *)"";
-            } else if (intstr == NULL) {
-                malformed_batch_line(keyword);
+        token.set(nextline);
+        if (token.assign(lhs, rhs)) {
+//
+            if (debug) warnvf("lhs: |%s| rhs: |%s|\n", C(lhs), C(rhs));
+            lookup = BatchItemMap.find(lhs);
+            if (lookup == BatchItemMap.cend()) {
+                errorvf("Unexpected batch file option: %s\n", C(lhs));
+                errtok++;
+            } else {
+                bi = lookup->second;
+
+                if (bi->items_read > 0) {
+                    errorvf("Duplicate %s option at lines %d and %d in batch file.\n",
+                            C(lhs), bi->line_number, line_n);
+                    mult_decl(bi->item_number);
+                }
+                bi->line_number = line_n;
+                bi->items_read = 1;
+                bi->value_str = rhs;
+                if (bi->flag == Add2BatchItemList)
+                    BatchItemList.push_back(bi);
+                cnt++;
             }
-            strcpy(value, intstr);
-            if (!strcmp(keyword, "Input_Format_Type")) {
-                it = Input_Format_Type;
+        } else {
+            errorvf("Odd format batch file line %s\n:", nextline);
+            errline++;
+        }
+    }
+    fclose(fp);
+
+    int err = 0;
+
+    // First Select Input_Format_Type
+    lookup = BatchItemMap.find("Input_Format_Type");
+    if (lookup == BatchItemMap.cend()) {
+        errorvf("%s option not found.\n", "Input_Format_Type");
+        err++;
+    } else {
+        bi = lookup->second;
+        if (bi->items_read)
+            sscanf(bi->value_str.c_str(), "%d", &(bi->value.option));
+        else
+            bi->value.option = 0;
+        Input_Format = (INPUT_FORMAT_t)bi->value.option;
+        if (debug) warnvf("Option: %s %s\n", "Input_Format_Type", bi->value_str.c_str());
+    }
+
+    // Then Select Analysis Mode
+    lookup = BatchItemMap.find("Analysis_Option");
+    if (lookup == BatchItemMap.cend()) {
+        errorvf("%s option not found.\n", "Analysis_Option");
+        err++;
+    } else {
+        bi = lookup->second;
+        if (bi->items_read == 0) {
+            errorvf("%s option not set %s\n:", "Analysis_Option");
+            err++;
+        } else {
+            sscanf(bi->value_str.c_str(), "%s", analysis_name);
+            strcpy(bi->value.name, analysis_name);
+
+            // This is where the 'analysis' variable get's assiged too...
+            prog_name_to_num(analysis_name, analysis);
+            if (*analysis == NULL || !(*analysis)->is_enabled()) {
+                err++;
+                unknown_prog(analysis_name);
+            }
+        }
+        if (debug) warnvf("Option: %s %s\n", "Analysis_Option", bi->value_str.c_str());
+    }
+    /* Also check if this analysis has a sub-option and if sub-option was
+       provided in the batch file */
+
+    if ((*analysis) != NULL && (*analysis)->has_sub_options()) {
+        lookup = BatchItemMap.find("Analysis_Sub_Option");
+        if (lookup == BatchItemMap.cend()) {
+            errorvf("%s option not found.\n", "Analysis_Sub_Option");
+            err++;
+        } else {
+            bi = lookup->second;
+            if (bi->items_read == 0) {
+                warnvf("Trying empty sub-program name (no name specified).\n",
+                       analysis_name);
+            } else {
+                strcpy(sub_analysis_name, bi->value_str.c_str());
+            }
+            (*analysis)->sub_prog_name_to_sub_option(sub_analysis_name, analysis);
+            if (*analysis == NULL) {
+                errorvf("%s sub-program needs to be specified.\n", analysis_name);
+                errorvf("Required keyword %s missing from batch file.\n",
+                        C(Mega2BatchItems[Analysis_Sub_Option].keyword));
+                err++;
+            }
+            if (debug) warnvf("Option: %s %s\n", "Analysis_Sub_Option", bi->value_str.c_str());
+        }
+    }
+
+    // gross hack
+    pair<Cstr,char *> hacks[] = {
+	make_pair("Value_Missing_Quant_On_Input", Str_Missing_Quant_On_Input),
+	make_pair("Value_Missing_Quant_On_Output", Str_Missing_Quant_On_Output),
+	make_pair("Value_Missing_Affect_On_Input", Str_Missing_Affect_on_Input),
+	make_pair("Value_Missing_Affect_On_Output", Str_Missing_Affect_On_Output),
+    };
+    for (int i = 0; i < 4; i++) {
+	lookup = BatchItemMap.find(hacks[i].first);
+	if (lookup == BatchItemMap.cend()) {
+	    errorvf("%s option not found %s\n:", C(hacks[i].first));
+		err++;
+	} else {
+	    bi = lookup->second;
+	    if (bi->items_read > 0) {
+		strcpy(hacks[i].second, bi->value_str.c_str());
+                if (i < 2)
+                    bi->value_str = "0.0";  // reset to default value
+                else
+                    bi->value_str = "0";    // reset to default value
+	    }
+	}
+    }
+    if (err) EXIT(BATCH_FILE_ITEM_ERROR);
+
+    // Finally process all the other batch arguments
+    for (Listbp BatchItemListp = BatchItemList.cbegin(); BatchItemListp != BatchItemList.cend(); BatchItemListp++) {
+        batch_item_type *bi = (*BatchItemListp);
+        Str& keyword = bi->keyword;
+        Str& bivalue = bi->value_str;
+        strcpy(value, bi->value_str.c_str());
+        if (debug) msgvf("key %s, val %s\n", C(keyword), value);
+
+//??
+        if (bivalue == "" && !keyword.compare(0, 14, "value_missing_") ) {
+            *value = 0;
+        } else if (bivalue == "") {
+            malformed_batch_line(C(keyword));
+        }
+
+        Mega2BatchItemSet(value, bi);
+#if 0
+        if (!strncmp(keyword, "Input", (size_t) 5)) {
+            /* file names section */
+            it = -1;
+            for (j = /* 0 */ Input_Pedigree_File ; j <= /* 5 - 1 */ Input_Untyped_Ped_Option ; j++) {
+                if (!strcmp(keyword, keywords[j].keyword)) {
+                    it = j;
+                    break;
+                }
+            }
+            if (it == -1) {
+                if (!strcmp(keyword, keywords[24].keyword)) {
+                    it = /* 24 */ Input_Do_Error_Sim ;
+                } else if (!strcmp(keyword, keywords[39].keyword)) {
+                    it = /* 39 */ Input_Frequency_File ;
+                } else if (!strcmp(keyword, keywords[40].keyword)) {
+                    it = /* 40 */ Input_Penetrance_File ;
+                } else if (!strcmp(keyword, keywords[44].keyword)) {
+                    it = /* 44 */ Input_Phenotype_File ;
+                } else if (!strcmp(keyword, keywords[45].keyword) || !strcmp(keyword, "Input_Binary_File")) {
+                    it = /* 45 */ Input_Aux_File ;
+                } else if (!strcmp(keyword, keywords[54].keyword)) {
+                    it = /* 55 */ Input_Path ;
+                } else if (!strcmp(keyword, keywords[55].keyword)) {
+                    it = /* 55 */ Input_PLINK_Map_File ;
+                }
+            } else {
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+            }
+            if ((it >= /* 0 */ Input_Pedigree_File  && it < /* 4 */ Input_Untyped_Ped_Option )
+                || (it == /* 39 */ Input_Frequency_File )
+                || (it == /* 40 */ Input_Penetrance_File )
+                || (it == /* 44 */ Input_Phenotype_File )
+                || (it == /* 45 */ Input_Aux_File )
+                || (it == /* 54 */ Input_Path )
+                || (it == /* 55 */ Input_PLINK_Map_File )) {
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%s", Mega2BatchItems[it].value.name);
+            } else if (it == /* 4 */ Input_Untyped_Ped_Option ) {
                 Mega2BatchItems[it].item_read = 1;
                 sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                Input_Format = (INPUT_FORMAT_t)Mega2BatchItems[it].value.option;
-            } else if (!strncmp(keyword, "Input", (size_t) 5)) {
-                /* file names section */
-                it = -1;
-                for (j = /* 0 */ Input_Pedigree_File ; j <= /* 5 - 1 */ Input_Untyped_Ped_Option ; j++) {
-                    if (!strcmp(keyword, keywords[j])) {
-                        it = j;
-                        break;
-                    }
-                }
-                if (it == -1) {
-                    if (!strcmp(keyword, keywords[24])) {
-                        it = /* 24 */ Input_Do_Error_Sim ;
-                    } else if (!strcmp(keyword, keywords[39])) {
-                        it = /* 39 */ Input_Frequency_File ;
-                    } else if (!strcmp(keyword, keywords[40])) {
-                        it = /* 40 */ Input_Penetrance_File ;
-                    } else if (!strcmp(keyword, keywords[44])) {
-                        it = /* 44 */ Input_Phenotype_File ;
-                    } else if (!strcmp(keyword, keywords[45]) || !strcmp(keyword, "Input_Binary_File")) {
-                        it = /* 45 */ Input_Aux_File ;
-                    } else if (!strcmp(keyword, keywords[54])) {
-                        it = /* 55 */ Input_Path ;
-                    } else if (!strcmp(keyword, keywords[55])) {
-                        it = /* 55 */ Input_PLINK_Map_File ;
-                    }
-                } else {
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                }
-                if ((it >= /* 0 */ Input_Pedigree_File  && it < /* 4 */ Input_Untyped_Ped_Option )
-                    || (it == /* 39 */ Input_Frequency_File )
-                    || (it == /* 40 */ Input_Penetrance_File )
-                    || (it == /* 44 */ Input_Phenotype_File )
-                    || (it == /* 45 */ Input_Aux_File )
-                    || (it == /* 54 */ Input_Path )
-                    || (it == /* 55 */ Input_PLINK_Map_File )) {
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%s", Mega2BatchItems[it].value.name);
-                } else if (it == /* 4 */ Input_Untyped_Ped_Option ) {
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                } else if (it == /* 24 */ Input_Do_Error_Sim ) {
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
+            } else if (it == /* 24 */ Input_Do_Error_Sim ) {
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
+            }
+        }
+        /*  Analysis option section */
+        else if (!strncmp(keyword, "Chromosome", (size_t) 10)) {
+            it = -1;
+            for (j = /* 7 */ Chromosome_Single ; j <= /* 9 */ Chromosomes_Multiple ; j++) {
+                if (!strcmp(keyword, keywords[j].keyword)) {
+                    it = j;
+                    break;
                 }
             }
-
-            /*  Analysis option section */
-            else if (!strncmp(keyword, "Analysis", (size_t) 8)) {
-                it = -1;
-                for (j = /* 5 */ Analysis_Option ; j <= /* 6 */ Analysis_Sub_Option ; j++) {
-                    if (!strcmp(keyword, keywords[j])) {
-                        it = j;
-                        break;
-                    }
-                }
-
+            if (READ_ITER1(it)) {
+                mult_decl(it);
+                continue;
+            }
+            if (it == /* 7 */ Chromosome_Single ) { /*  single chromosome */
                 if (READ_ITER1(it)) {
                     mult_decl(it);
                     continue;
                 }
                 Mega2BatchItems[it].item_read = 1;
-                if (iter == 1) {
-                    if (it == /* 5 */ Analysis_Option ) {
-                        sscanf(value, "%s", analysis_name);
-                    } else {
-                        //sscanf(value, "%s", sub_analysis_name);
-                        // Want the remainder of the line not just the first substring...
-                        strcpy(sub_analysis_name, value);
-                    }
-                }
-
-                if (iter == 2) {
-                    if (it == /* 5 */ Analysis_Option ) {
-                        // This is where the 'analysis' variable get's assiged too...
-                        prog_name_to_num(analysis_name, analysis);
-                        if (*analysis == NULL || !(*analysis)->is_enabled()) {
-                            unknown_prog(analysis_name);
-                        }
-                        /* Also check if this analysis has a sub-option and if sub-option was
-                           provided in the batch file */
-                    }
-#if 0
-                    if ((*analysis)->has_sub_options() && !ITEM_READ(/* 6 */ Analysis_Sub_Option )) {
-                            // For backwards compatibility this is not required with PLINK so don't warn about it...
-                        if (*analysis == TO_PLINK || *analysis == FBAT) {
-                                // Since it is not required for backwards compatibility we fudge it here...
-                                (*analysis)->_suboption = 1; // 'lgen
-                        } else {
-                            errorvf("%s sub-program needs to be specified.\n",
-                                    analysis_name);
-			    errorvf("Required keyword %s missing from batch file.\n",
-				    Mega2BatchItems[Analysis_Sub_Option].keyword);
-			    EXIT(BATCH_FILE_ITEM_ERROR);
-                        }
-                        strcpy(Mega2BatchItems[/* 5 */ Analysis_Option].value.name, analysis_name);
-                    } else {
-                        if ((*analysis)->has_sub_options()) {
-                            (*analysis)->sub_prog_name_to_sub_option(sub_analysis_name, analysis);
-                        }
-                    }
-#endif /* 0 */
-                    strcpy(Mega2BatchItems[/* 5 */ Analysis_Option].value.name, analysis_name);
-                }
-                // The Analysis_Sub_Option is not guaranteed to have been processed till the third pass
-                // if it has been specified before the Analysis_Option in the batch file.
-                if (iter == 3 && it == /* 5 */ Analysis_Option ) {
-                    if ((*analysis)->has_sub_options()) {
-                        if (! ITEM_READ(/* 6 */ Analysis_Sub_Option )) 
-                            warnvf("Trying empty sub-program name (no name specified).\n",
-                                    analysis_name);
-                        (*analysis)->sub_prog_name_to_sub_option(sub_analysis_name, analysis);
-                        if (*analysis == NULL) {
-                            errorvf("%s sub-program needs to be specified.\n",
-                                    analysis_name);
-			    errorvf("Required keyword %s missing from batch file.\n",
-				    Mega2BatchItems[Analysis_Sub_Option].keyword);
-			    EXIT(BATCH_FILE_ITEM_ERROR);
-                        }
-                    }
-#ifdef DEBUGOPT
-                    printf("option number %d, name %s.\n",
-                           Mega2BatchItems[/* 5 */ Analysis_Option].value.option, analysis_name);
-                    if (HAS_SUB_OPTION(Mega2BatchItems[/* 5 */ Analysis_Option].value.option)) {
-                        printf("sub-option number %d, name %s.\n",
-                               Mega2BatchItems[/* 6 */ Analysis_Sub_Option].value.option, sub_analysis_name);
-                    }
-                    exit(0);
-#endif /* DEBUGOPT */
-                }
-            }
-            /* Chromosome section  */
-            else if (!strncmp(keyword, "Chromosome", (size_t) 10)) {
-                it = -1;
-                for (j = /* 7 */ Chromosome_Single ; j <= /* 9 */ Chromosomes_Multiple ; j++) {
-                    if (!strcmp(keyword, keywords[j])) {
-                        it = j;
-                        break;
-                    }
-                }
+                sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+            } else if (it == /* 8 */ Chromosomes_Multiple_Num ) { /*  Number of chromosomes */
                 if (READ_ITER1(it)) {
                     mult_decl(it);
                     continue;
                 }
-                if (it == /* 7 */ Chromosome_Single ) { /*  single chromosome */
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                } else if (it == /* 8 */ Chromosomes_Multiple_Num ) { /*  Number of chromosomes */
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
 
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                } else if (it == /* 9 */ Chromosomes_Multiple ) { /*  list  of chromosomes */
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+            } else if (it == /* 9 */ Chromosomes_Multiple ) { /*  list  of chromosomes */
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                if (!Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].item_read) {
+                    /* if iter == 1 do nothing */
+                    if (iter == 2) {
+                        /* declare error */
+                        missing_dependency_keyword(9, 8);
                     }
-                    if (!Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].item_read) {
-                        /* if iter == 1 do nothing */
-                        if (iter == 2) {
-                            /* declare error */
-                            missing_dependency_keyword(9, 8);
-                        }
+                } else {
+                    int ch;
+                    if (iter == 1) continue;
+                    if (Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].value.option <= 0) {
+                        invalid_value_field(8);
+                    }
+                    Mega2BatchItems[it].value.mult_opts
+                        =CALLOC((size_t)Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].value.option, int);
+                    Mega2BatchItems[it].item_read = 1;
+                    intstr = strtok(value, " ");
+                    if (intstr == NULL) {
+                        missing_items( /*8 */ Chromosomes_Multiple_Num , /* 9 */ Chromosomes_Multiple );
+                    }
+//REVISIT
+                    if ((ch=STR_CHR(intstr)) != -1) {
+                        Mega2BatchItems[it].value.mult_opts[0] = ch;
                     } else {
-		        int ch;
-                        if (iter == 1) continue;
-                        if (Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].value.option <= 0) {
-                            invalid_value_field(8);
-                        }
-                        Mega2BatchItems[it].value.mult_opts
-                            =CALLOC((size_t)Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].value.option, int);
-                        Mega2BatchItems[it].item_read = 1;
-                        intstr = strtok(value, " ");
+                        errorf("For batch file item 'Chromosomes_Multiple'.");
+                        errorvf("A chromosome must be a positive integer less then %d or one of the\n", lastautosome+4);
+                        errorf("following: X, Y, XY, MT, U.");
+                        EXIT(BATCH_FILE_ITEM_ERROR);
+                        //errorf("A chromosome must be a positive integer or one of the following: X, Y, XY, MT, U.");
+                    }
+                    for (j = 1; j < Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].value.option; j++) {
+                        intstr = strtok(NULL, " ");
                         if (intstr == NULL) {
                             missing_items( /*8 */ Chromosomes_Multiple_Num , /* 9 */ Chromosomes_Multiple );
                         }
                         if ((ch=STR_CHR(intstr)) != -1) {
-                            Mega2BatchItems[it].value.mult_opts[0] = ch;
+                            Mega2BatchItems[it].value.mult_opts[j] = ch;
                         } else {
                             errorf("For batch file item 'Chromosomes_Multiple'.");
                             errorvf("A chromosome must be a positive integer less then %d or one of the\n", lastautosome+4);
@@ -808,452 +1135,404 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                             EXIT(BATCH_FILE_ITEM_ERROR);
                             //errorf("A chromosome must be a positive integer or one of the following: X, Y, XY, MT, U.");
                         }
-                        for (j = 1; j < Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].value.option; j++) {
-                            intstr = strtok(NULL, " ");
-                            if (intstr == NULL) {
-                                missing_items( /*8 */ Chromosomes_Multiple_Num , /* 9 */ Chromosomes_Multiple );
-                            }
-                            if ((ch=STR_CHR(intstr)) != -1) {
-                                Mega2BatchItems[it].value.mult_opts[j] = ch;
-                            } else {
-                                errorf("For batch file item 'Chromosomes_Multiple'.");
-                                errorvf("A chromosome must be a positive integer less then %d or one of the\n", lastautosome+4);
-                                errorf("following: X, Y, XY, MT, U.");
-                                EXIT(BATCH_FILE_ITEM_ERROR);
-                                //errorf("A chromosome must be a positive integer or one of the following: X, Y, XY, MT, U.");
-                            }
-                        }
                     }
                 }
             }
-            /* Marker selection section */
-            else if (!strncmp(keyword, "Loci", (size_t) 4)) {
-                it = -1;
-                for (j =  /*10 */ Loci_Selected_Num ; j <= /* 11 */ Loci_Selected ; j++) {
-                    if (!strcmp(keyword, keywords[j])) {
-                        it = j;
-                        break;
-                    }
-                }
-                if (READ_ITER1(it)) {
-                    mult_decl(it);
-                    continue;
-                }
-                if (it == /* 10 */ Loci_Selected_Num ) { /* Number of markers */
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                } else if (it == /* 11 */ Loci_Selected ) { /* Marker  numbers */
-                    strcpy(Mega2BatchItems[it].value.name, value);
-                    Mega2BatchItems[it].item_read = 1;
+        }
+        /* Marker selection section */
+        else if (!strncmp(keyword, "Loci", (size_t) 4)) {
+            it = -1;
+            for (j =  /*10 */ Loci_Selected_Num ; j <= /* 11 */ Loci_Selected ; j++) {
+                if (!strcmp(keyword, keywords[j].keyword)) {
+                    it = j;
+                    break;
                 }
             }
-            /* Trait selection section */
-            else if ((!strncmp(keyword, "Trait", (size_t) 5)) ||
-		     (!strncmp(keyword, "Covar", (size_t) 5))) {
-                it = -1;
-                for (j = /* 12 */ Trait_Single ; j <= /* 16 */ Trait_Subdirs ; j++) {
-                    if (!strcmp(keyword, keywords[j])) {
-                        it = j;
-                        break;
-                    }
+            if (READ_ITER1(it)) {
+                mult_decl(it);
+                continue;
+            }
+            if (it == /* 10 */ Loci_Selected_Num ) { /* Number of markers */
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+            } else if (it == /* 11 */ Loci_Selected ) { /* Marker  numbers */
+                strcpy(Mega2BatchItems[it].value.name, value);
+                Mega2BatchItems[it].item_read = 1;
+            }
+        }
+        /* Trait selection section */
+        else if ((!strncmp(keyword, "Trait", (size_t) 5)) ||
+                 (!strncmp(keyword, "Covar", (size_t) 5))) {
+            it = -1;
+            for (j = /* 12 */ Trait_Single ; j <= /* 16 */ Trait_Subdirs ; j++) {
+                if (!strcmp(keyword, keywords[j].keyword)) {
+                    it = j;
+                    break;
                 }
-                if (it == -1) {
-                    if (!strcmp(keyword, keywords[31])) {
-                        it = /* 31 */ Covariates_Num ;
-                    } else if (!strcmp(keyword, keywords[32])) {
-                        it = /* 32 */ Covariates_Selected ;
-                    }
+            }
+            if (it == -1) {
+                if (!strcmp(keyword, keywords[31].keyword)) {
+                    it = /* 31 */ Covariates_Num ;
+                } else if (!strcmp(keyword, keywords[32].keyword)) {
+                    it = /* 32 */ Covariates_Selected ;
                 }
-                if (READ_ITER1(it)) {
-                    mult_decl(it);
-                    continue;
-                }
+            }
+            if (READ_ITER1(it)) {
+                mult_decl(it);
+                continue;
+            }
 
-                if (it == /* 12 */ Trait_Single  || it == /* 13 */ Traits_Num  || it == /* 31 */ Covariates_Num ) {
-                    /* Single trait number, number of traits or number of covars */
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                } else if (it == /* 14 */ Traits_Loop_Over  || it == /* 15 */ Traits_Combine  || it == /* 32 */ Covariates_Selected ) {
-                    /* Remove dependency on the number items, set these directly
-                       from the string using parse_string */
-                    Mega2BatchItems[it].item_read = 1;
-                    strcpy(Mega2BatchItems[it].value.name, value);
-                } else if (it == /* 16 */ Trait_Subdirs ) {
-                    int num_dirs = 0;
-                    /* Check if the value has the keyword Use trait names */
-                    if (!strcasecmp(value, "use trait names")) {
+            if (it == /* 12 */ Trait_Single  || it == /* 13 */ Traits_Num  || it == /* 31 */ Covariates_Num ) {
+                /* Single trait number, number of traits or number of covars */
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+            } else if (it == /* 14 */ Traits_Loop_Over  || it == /* 15 */ Traits_Combine  || it == /* 32 */ Covariates_Selected ) {
+                /* Remove dependency on the number items, set these directly
+                   from the string using parse_string */
+                Mega2BatchItems[it].item_read = 1;
+                strcpy(Mega2BatchItems[it].value.name, value);
+            } else if (it == /* 16 */ Trait_Subdirs ) {
+                int num_dirs = 0;
+                /* Check if the value has the keyword Use trait names */
+                if (!strcasecmp(value, "use trait names")) {
+                    Mega2BatchItems[/* 16 */ Trait_Subdirs].item_read = 1;
+                    Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names
+                        = CALLOC((size_t)1, char *);
+                    Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[0]
+                        = CALLOC((size_t)16, char);
+                    strcpy(Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[0],
+                           "use trait names");
+                } else {
+                    /* User defined Trait sub directories,
+                       num_traits must  be set using the trait-selection item */
+                    if (!Mega2BatchItems[/* 14 */ Traits_Loop_Over].item_read && iter == 2) {
+                        /* error */
+                        missing_dependency_keyword(16, 14);
+                    } else if (!Mega2BatchItems[/* 14 */ Traits_Loop_Over].item_read) {
+                        continue;
+                    } else {
+                        if (iter == 1) continue;
+                        parse_string(Mega2BatchItems[/* 14 */ Traits_Loop_Over].value.name, NULL,
+                                     &num_dirs, (int) LARGE, 0);
                         Mega2BatchItems[/* 16 */ Trait_Subdirs].item_read = 1;
                         Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names
-                            = CALLOC((size_t)1, char *);
+                            = CALLOC((size_t)num_dirs, char *);
                         Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[0]
-                            = CALLOC((size_t)16, char);
+                            = CALLOC((size_t)FILENAME_LENGTH, char);
                         strcpy(Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[0],
-                               "use trait names");
-                    } else {
-                        /* User defined Trait sub directories,
-                           num_traits must  be set using the trait-selection item */
-                        if (!Mega2BatchItems[/* 14 */ Traits_Loop_Over].item_read && iter == 2) {
-                            /* error */
-                            missing_dependency_keyword(16, 14);
-                        } else if (!Mega2BatchItems[/* 14 */ Traits_Loop_Over].item_read) {
-                            continue;
-                        } else {
-                            if (iter == 1) continue;
-                            parse_string(Mega2BatchItems[/* 14 */ Traits_Loop_Over].value.name, NULL,
-                                         &num_dirs, (int) LARGE, 0);
-                            Mega2BatchItems[/* 16 */ Trait_Subdirs].item_read = 1;
-                            Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names
-                                = CALLOC((size_t)num_dirs, char *);
-                            Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[0]
+                               strtok(value, " "));
+                        for (j = 1; j < num_dirs; j++) {
+                            Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[j]
                                 = CALLOC((size_t)FILENAME_LENGTH, char);
-                            strcpy(Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[0],
-                                   strtok(value, " "));
-                            for (j = 1; j < num_dirs; j++) {
-                                Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[j]
-                                    = CALLOC((size_t)FILENAME_LENGTH, char);
-                                strcpy(Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[j],
-                                       strtok(NULL, " "));
-                            }
+                            strcpy(Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[j],
+                                   strtok(NULL, " "));
                         }
                     }
                 }
-            } else if (!strncmp(keyword, "Value", (size_t) 5)) {
-                if (!strcmp(keyword, "Value_Missing_Quant_On_Input") ||
-                    !strcmp(keyword, "Value_Missing_Quant") // deprecated but not yet forgotten...
-		    ) {
-                    // "Value_Missing_Quant_On_Input" is an alias for "Value_Missing_Quant" which has been deprecated
-                    it = /* 17 */ Value_Missing_Quant_On_Input ;
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    Mega2BatchItems[it].item_read = 1;
-                    strcpy(Str_Missing_Quant_On_Input, value);
-                } else if (!strcmp(keyword, "Value_Missing_Affect_On_Input")) {
-                    it = /* 58 */ Value_Missing_Affect_On_Input ;
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    Mega2BatchItems[it].item_read = 1;
-                    strcpy(Str_Missing_Affect_on_Input, value);
-                } else if (!strcmp(keyword, "Value_Missing_Quant_On_Output")) {
-                    it = /* 49 */ Value_Missing_Quant_On_Output ;
-                    // This is the missing value code that is used on output analysises those targets
-                    // support that support optional missing value codes.
-                    if (READ_ITER1(it)) {
-                        // if it's the first pass and has been declared more than once, complain...
-                        mult_decl(it);
-                        continue;
-                    }
-
-                    Mega2BatchItems[it].item_read = 1;
-                    strcpy(Str_Missing_Quant_On_Output, value);
-                } else if (!strcmp(keyword, "Value_Missing_Affect_On_Output")) {
-                    it = /* 59 */ Value_Missing_Affect_On_Output ;
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    Mega2BatchItems[it].item_read = 1;
-                    strcpy(Str_Missing_Affect_On_Output, value);
-                } else if (!strcmp(keyword, "Value_Affecteds")) {
-                    int num_trs = 0;
-                    char *affdata_str;
-                    it = /* 18 */ Value_Affecteds ;
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    if (ITEM_READ(/* 12 */ Trait_Single) || ITEM_READ(/* 14 */ Traits_Loop_Over) || ITEM_READ( /*15 */ Traits_Combine)) {
-                        if (!ITEM_READ(/* 18 */ Value_Affecteds)) {
-                            Mega2BatchItems[/* 18 */ Value_Affecteds].item_read = 1;
-                            if (ITEM_READ(/* 12 */ Trait_Single)) {
-                                /* single trait */
-                                Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names
-                                    = CALLOC((size_t)1, char *);
-                                Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[0]
-                                    = CALLOC((size_t)FILENAME_LENGTH, char);
-                                sscanf(value, "%s",
-                                       Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[0]);
-                            } else if (ITEM_READ(/* 14 */ Traits_Loop_Over) || ITEM_READ(/* 15 */ Traits_Combine)) {
-                                /* Traits Loop Over */
-                                if (ITEM_READ(/* 14 */ Traits_Loop_Over)) {
-                                    parse_string(
-                                        Mega2BatchItems[/* 14 */ Traits_Loop_Over].value.name,
-                                        NULL, &num_trs, (int) LARGE, 0);
-                                } else if (ITEM_READ(/* 15 */ Traits_Combine)) {
-                                    parse_string(
-                                        Mega2BatchItems[/* 15 */ Traits_Combine].value.name,
-                                        NULL, &num_trs, (int) LARGE, 0);
-                                }
-
-                                Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names
-                                    = CALLOC((size_t)num_trs, char *);
-                                affdata_str = NULL;
-                                affdata_str = strtok(value, " \n");
-                                j = 0;
-                                while (affdata_str != NULL) {
-                                    Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[j]
-                                        = strdup(affdata_str);
-                                    affdata_str = strtok(NULL, " \n");
-                                    j++;
-                                }
-                            }
-                        }
-                    } else {
-                        if (iter == /* 2 */ Input_Map_File ) {
-                            int opt_array[3] = { 12, 14, 15 };
-                            /* error */
-                            missing_mult_dependency_keyword(18, opt_array, 3, 0);
-                        }
-                    }
-                }
-#ifdef USER_UNKNOWN
-                else if (!strcmp(keyword, "Value_Missing_Allele_Aff")) {
-                    it = /* 42 */ Value_Missing_Allele;
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    Mega2BatchItems[/* 42 */ Value_Missing_Allele].item_read=1;
-                    strcpy(Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name, value);
-                }
-#endif
-                else if (!strcmp(keyword, "Value_Genetic_Distance_Index")) {
-                    it = /* 46 */ Value_Genetic_Distance_Index;
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    Mega2BatchItems[it].item_read=1;
-                    sscanf(value, "%d", &Mega2BatchItems[it].value.option);
-                }
-                else if (!strcmp(keyword, "Value_Base_Pair_Position_Index")) {
-                    it = /* 47 */ Value_Base_Pair_Position_Index;
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    Mega2BatchItems[it].item_read=1;
-                    sscanf(value, "%d", &Mega2BatchItems[it].value.option);
-                }
-                else if (!strcmp(keyword, "Value_Genetic_Distance_SexTypeMap")) {
-                    it = /* 48 */ Value_Genetic_Distance_SexTypeMap;
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    Mega2BatchItems[it].item_read=1;
-                    sscanf(value, "%d", &Mega2BatchItems[it].value.option);
-                }
-                else if (!strcmp(keyword, "Value_Marker_Compression")) {
-                    it = /* 52 */ Value_Marker_Compression;
-                    if (READ_ITER1(it)) {
-                        mult_decl(it);
-                        continue;
-                    }
-                    Mega2BatchItems[it].item_read=1;
-                    sscanf(value, "%d", &Mega2BatchItems[it].value.option);
-                }
-            } else if (!strncmp(keyword, "Error", (size_t) 5)) {
-                it = -1;
-                for (j = /* 19 */ Error_Loci ; j <= /* 23 */ Error_Probabilities ; j++) {
-                    if (!strcmp(keyword, keywords[j])) {
-                        it = j;
-                        break;
-                    }
-                }
+            }
+        } else if (!strncmp(keyword, "Value", (size_t) 5)) {
+            if (!strcmp(keyword, "Value_Missing_Quant_On_Input") ||
+                !strcmp(keyword, "Value_Missing_Quant") // deprecated but not yet forgotten...
+                ) {
+                // "Value_Missing_Quant_On_Input" is an alias for "Value_Missing_Quant" which has been deprecated
+                it = /* 17 */ Value_Missing_Quant_On_Input ;
                 if (READ_ITER1(it)) {
                     mult_decl(it);
                     continue;
                 }
+                Mega2BatchItems[it].item_read = 1;
+                strcpy(Str_Missing_Quant_On_Input, value);
+            } else if (!strcmp(keyword, "Value_Missing_Affect_On_Input")) {
+                it = /* 58 */ Value_Missing_Affect_On_Input ;
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                Mega2BatchItems[it].item_read = 1;
+                strcpy(Str_Missing_Affect_on_Input, value);
+            } else if (!strcmp(keyword, "Value_Missing_Quant_On_Output")) {
+                it = /* 49 */ Value_Missing_Quant_On_Output ;
+                // This is the missing value code that is used on output analysises those targets
+                // support that support optional missing value codes.
+                if (READ_ITER1(it)) {
+                    // if it's the first pass and has been declared more than once, complain...
+                    mult_decl(it);
+                    continue;
+                }
 
-                if (it == /* 19 */ Error_Loci  || it == /* 20 */ Error_Except_Loci ) {
-                    /* Error loci or error_except_loci,
-                       both need error_loci_num (item 21) to be
-                       specified.
-                    */
-                    if (!Mega2BatchItems[/* 21 */ Error_Loci_Num].item_read) {
-                        if (iter == 2) {
-                            missing_dependency_keyword(it, 21);
+                Mega2BatchItems[it].item_read = 1;
+                strcpy(Str_Missing_Quant_On_Output, value);
+            } else if (!strcmp(keyword, "Value_Missing_Affect_On_Output")) {
+                it = /* 59 */ Value_Missing_Affect_On_Output ;
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                Mega2BatchItems[it].item_read = 1;
+                strcpy(Str_Missing_Affect_On_Output, value);
+            } else if (!strcmp(keyword, "Value_Affecteds")) {
+                int num_trs = 0;
+                char *affdata_str;
+                it = /* 18 */ Value_Affecteds ;
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                if (ITEM_READ(/* 12 */ Trait_Single) || ITEM_READ(/* 14 */ Traits_Loop_Over) || ITEM_READ( /*15 */ Traits_Combine)) {
+                    if (!ITEM_READ(/* 18 */ Value_Affecteds)) {
+                        Mega2BatchItems[/* 18 */ Value_Affecteds].item_read = 1;
+                        if (ITEM_READ(/* 12 */ Trait_Single)) {
+                            /* single trait */
+                            Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names
+                                = CALLOC((size_t)1, char *);
+                            Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[0]
+                                = CALLOC((size_t)FILENAME_LENGTH, char);
+                            sscanf(value, "%s",
+                                   Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[0]);
+                        } else if (ITEM_READ(/* 14 */ Traits_Loop_Over) || ITEM_READ(/* 15 */ Traits_Combine)) {
+                            /* Traits Loop Over */
+                            if (ITEM_READ(/* 14 */ Traits_Loop_Over)) {
+                                parse_string(
+                                    Mega2BatchItems[/* 14 */ Traits_Loop_Over].value.name,
+                                    NULL, &num_trs, (int) LARGE, 0);
+                            } else if (ITEM_READ(/* 15 */ Traits_Combine)) {
+                                parse_string(
+                                    Mega2BatchItems[/* 15 */ Traits_Combine].value.name,
+                                    NULL, &num_trs, (int) LARGE, 0);
+                            }
+
+                            Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names
+                                = CALLOC((size_t)num_trs, char *);
+                            affdata_str = NULL;
+                            affdata_str = strtok(value, " \n");
+                            j = 0;
+                            while (affdata_str != NULL) {
+                                Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[j]
+                                    = strdup(affdata_str);
+                                affdata_str = strtok(NULL, " \n");
+                                j++;
+                            }
                         }
-                    } else {
-                        if (Mega2BatchItems[/* 21 */ Error_Loci_Num].value.option <= 0) {
-                            invalid_value_field(21);
-                        }
-                        Mega2BatchItems[it].item_read = 1;
-                        Mega2BatchItems[it].value.mult_opts
-                            = CALLOC((size_t)Mega2BatchItems[/* 21 */ Error_Loci_Num].value.option, int);
-                        intstr = strtok(value, " ");
+                    }
+                } else {
+                    if (iter == /* 2 */ Input_Map_File ) {
+                        int opt_array[3] = { 12, 14, 15 };
+                        /* error */
+                        missing_mult_dependency_keyword(18, opt_array, 3, 0);
+                    }
+                }
+            }
+#ifdef USER_UNKNOWN
+            else if (!strcmp(keyword, "Value_Missing_Allele_Aff")) {
+                it = /* 42 */ Value_Missing_Allele;
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                Mega2BatchItems[/* 42 */ Value_Missing_Allele].item_read=1;
+                strcpy(Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name, value);
+            }
+#endif
+            else if (!strcmp(keyword, "Value_Genetic_Distance_Index")) {
+                it = /* 46 */ Value_Genetic_Distance_Index;
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                Mega2BatchItems[it].item_read=1;
+                sscanf(value, "%d", &Mega2BatchItems[it].value.option);
+            }
+            else if (!strcmp(keyword, "Value_Base_Pair_Position_Index")) {
+                it = /* 47 */ Value_Base_Pair_Position_Index;
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                Mega2BatchItems[it].item_read=1;
+                sscanf(value, "%d", &Mega2BatchItems[it].value.option);
+            }
+            else if (!strcmp(keyword, "Value_Genetic_Distance_SexTypeMap")) {
+                it = /* 48 */ Value_Genetic_Distance_SexTypeMap;
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                Mega2BatchItems[it].item_read=1;
+                sscanf(value, "%d", &Mega2BatchItems[it].value.option);
+            }
+            else if (!strcmp(keyword, "Value_Marker_Compression")) {
+                it = /* 52 */ Value_Marker_Compression;
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                Mega2BatchItems[it].item_read=1;
+                sscanf(value, "%d", &Mega2BatchItems[it].value.option);
+            }
+            else if (!strcmp(keyword, "Value_Imputed_Threshold")) {
+                it = /* 61 */ Value_Imputed_Threshold;
+                if (READ_ITER1(it)) {
+                    mult_decl(it);
+                    continue;
+                }
+                Mega2BatchItems[it].item_read=1;
+                sscanf(value, "%lf", &Mega2BatchItems[it].value.fvalue);
+            }
+        } else if (!strncmp(keyword, "Error", (size_t) 5)) {
+            it = -1;
+            for (j = /* 19 */ Error_Loci ; j <= /* 23 */ Error_Probabilities ; j++) {
+                if (!strcmp(keyword, keywords[j].keyword)) {
+                    it = j;
+                    break;
+                }
+            }
+            if (READ_ITER1(it)) {
+                mult_decl(it);
+                continue;
+            }
+
+            if (it == /* 19 */ Error_Loci  || it == /* 20 */ Error_Except_Loci ) {
+                /* Error loci or error_except_loci,
+                   both need error_loci_num (item 21) to be
+                   specified.
+                */
+                if (!Mega2BatchItems[/* 21 */ Error_Loci_Num].item_read) {
+                    if (iter == 2) {
+                        missing_dependency_keyword(it, 21);
+                    }
+                } else {
+                    if (Mega2BatchItems[/* 21 */ Error_Loci_Num].value.option <= 0) {
+                        invalid_value_field(21);
+                    }
+                    Mega2BatchItems[it].item_read = 1;
+                    Mega2BatchItems[it].value.mult_opts
+                        = CALLOC((size_t)Mega2BatchItems[/* 21 */ Error_Loci_Num].value.option, int);
+                    intstr = strtok(value, " ");
+                    if (intstr == NULL) {
+                        missing_items(/* 21 */ Error_Loci_Num, it);
+                    }
+                    Mega2BatchItems[it].value.mult_opts[0] = atoi(intstr);
+                    for (j = 1; j < Mega2BatchItems[/* 21 */ Error_Loci_Num].value.option; j++) {
+                        intstr = strtok(NULL, " ");
                         if (intstr == NULL) {
                             missing_items(/* 21 */ Error_Loci_Num, it);
                         }
-                        Mega2BatchItems[it].value.mult_opts[0] = atoi(intstr);
-                        for (j = 1; j < Mega2BatchItems[/* 21 */ Error_Loci_Num].value.option; j++) {
-                            intstr = strtok(NULL, " ");
-                            if (intstr == NULL) {
-                                missing_items(/* 21 */ Error_Loci_Num, it);
-                            }
-                            Mega2BatchItems[it].value.mult_opts[j] = atoi(
-                                intstr);
-                        }
+                        Mega2BatchItems[it].value.mult_opts[j] = atoi(
+                            intstr);
                     }
-                } else if (it == /* 21 */ Error_Loci_Num ) {
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                } else if (it == /* 22 */ Error_Model ) {
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
+                }
+            } else if (it == /* 21 */ Error_Loci_Num ) {
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+            } else if (it == /* 22 */ Error_Model ) {
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
 
-                } else if (it == /* 23 */ Error_Probabilities ) {
-                    Mega2BatchItems[/* 23 */ Error_Probabilities].item_read = 1;
-                    if (!Mega2BatchItems[/* 22 */ Error_Model].item_read) {
-                        if (iter == 2) {
-                            missing_dependency_keyword(it, 22);
-                        }
+            } else if (it == /* 23 */ Error_Probabilities ) {
+                Mega2BatchItems[/* 23 */ Error_Probabilities].item_read = 1;
+                if (!Mega2BatchItems[/* 22 */ Error_Model].item_read) {
+                    if (iter == 2) {
+                        missing_dependency_keyword(it, 22);
                     }
+                }
 
-                    switch (Mega2BatchItems[/* 22 */ Error_Model].value.copt) {
-                    case 'U':
-                        /* read a single value and ignore the rest */
-                        Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues
-                            = CALLOC((size_t)1, double);
-                        intstr = strtok(value, " ");
-                        if (intstr == NULL) {
-                            errorvf("Item %s has to have 5 values.\n",
-                                    Mega2BatchItems[/* 22 */ Error_Model].keyword);
-                            EXIT(BATCH_FILE_ITEM_ERROR);
-                        }
-                        Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues[0]
-                            = atof(intstr);
-                        break;
+                switch (Mega2BatchItems[/* 22 */ Error_Model].value.copt) {
+                case 'U':
+                    /* read a single value and ignore the rest */
+                    Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues
+                        = CALLOC((size_t)1, double);
+                    intstr = strtok(value, " ");
+                    if (intstr == NULL) {
+                        errorvf("Item %s has to have 5 values.\n",
+                                C(Mega2BatchItems[/* 22 */ Error_Model].keyword));
+                        EXIT(BATCH_FILE_ITEM_ERROR);
+                    }
+                    Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues[0]
+                        = atof(intstr);
+                    break;
 
-                    case 'S':
-                        /* read 5 values */
-                        Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues
-                            = CALLOC((size_t)5, double);
-                        intstr = strtok(value, " ");
+                case 'S':
+                    /* read 5 values */
+                    Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues
+                        = CALLOC((size_t)5, double);
+                    intstr = strtok(value, " ");
+                    if (intstr == NULL) {
+                        errorvf("Item %s has to have 5 values.\n",
+                                C(Mega2BatchItems[/* 23 */ Error_Probabilities].keyword));
+                        EXIT(BATCH_FILE_ITEM_ERROR);
+                    }
+                    Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues[0]
+                        = atof(intstr);
+                    for (j = 1; j < 5; j++) {
+                        intstr = strtok(NULL, " ");
                         if (intstr == NULL) {
                             errorvf("Item %s has to have 5 values.\n",
                                     Mega2BatchItems[/* 23 */ Error_Probabilities].keyword);
                             EXIT(BATCH_FILE_ITEM_ERROR);
                         }
-                        Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues[0]
-                            = atof(intstr);
-                        for (j = 1; j < 5; j++) {
-                            intstr = strtok(NULL, " ");
-                            if (intstr == NULL) {
-                                errorvf("Item %s has to have 5 values.\n",
-                                        Mega2BatchItems[/* 23 */ Error_Probabilities].keyword);
-                                EXIT(BATCH_FILE_ITEM_ERROR);
-                            }
-                            Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues[j] = atof(
-                                intstr);
-                        }
-                        break;
-
-                    case 'M':
-                        /* Ignore everything */
-                        break;
-                    default:
-                        invalid_value_field(/*22 */ Error_Model);
-                        break;
+                        Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues[j] = atof(
+                            intstr);
                     }
-                }
-            } else if (!strncmp(keyword, "Defau", (size_t) 5)) {
-                it = -1;
-                for (j = /* 25 */ Default_Outfile_Names ; j <= /* 29 */ Default_Rplot_Options ; j++) {
-                    if (!strcmp(keyword, keywords[j])) {
-                        it = j;
-                        break;
-                    }
-                }
-                if (READ_ITER1(it)) {
-                    mult_decl(it);
-                    continue;
-                }
+                    break;
 
-                Mega2BatchItems[it].item_read = 1;
-                sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
-                if (Mega2BatchItems[it].value.copt != 'y'
-                    && Mega2BatchItems[it].value.copt != 'Y'
-                    && Mega2BatchItems[it].value.copt != 'n'
-                    && Mega2BatchItems[it].value.copt != 'N') {
-                    invalid_value_field(it);
+                case 'M':
+                    /* Ignore everything */
+                    break;
+                default:
+                    invalid_value_field(/*22 */ Error_Model);
                     break;
                 }
-            } else if (!strncmp(keyword, "Xlinked", (size_t) 7)) {
-                it = /* 30 */ Xlinked_Analysis_Mode ;
+            }
+        } else if (!strncmp(keyword, "Defau", (size_t) 5)) {
+            it = -1;
+            for (j = /* 25 */ Default_Outfile_Names ; j <= /* 29 */ Default_Rplot_Options ; j++) {
+                if (!strcmp(keyword, keywords[j].keyword)) {
+                    it = j;
+                    break;
+                }
+            }
+            if (READ_ITER1(it)) {
+                mult_decl(it);
+                continue;
+            }
+            Mega2BatchItems[it].item_read = 1;
+            sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
+            if (Mega2BatchItems[it].value.copt != 'y'
+                && Mega2BatchItems[it].value.copt != 'Y'
+                && Mega2BatchItems[it].value.copt != 'n'
+                && Mega2BatchItems[it].value.copt != 'N') {
+                invalid_value_field(it);
+                break;
+            }
+        } else if (!strncmp(keyword, "Xlinked", (size_t) 7)) {
+            it = /* 30 */ Xlinked_Analysis_Mode ;
+            Mega2BatchItems[it].item_read = 1;
+            sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+        } else if (!strncmp(keyword, "Output_", (size_t) 7)) {
+            if (!strncmp(keyword, "Output_Path", (size_t) 11)) {
+                it = /* 33 */ Output_Path ;
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%s", Mega2BatchItems[it].value.name);
+/*
+            } else if (!strncmp(keyword, "Output_Map_Num", (size_t) 10)) {
+                it = / * 41 * / Output_Map_Num;
                 Mega2BatchItems[it].item_read = 1;
                 sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-            } else if (!strncmp(keyword, "Output_", (size_t) 7)) {
-                if (!strncmp(keyword, "Output_Path", (size_t) 11)) {
-                    it = /* 33 */ Output_Path ;
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%s", Mega2BatchItems[it].value.name);
-/*
-                } else if (!strncmp(keyword, "Output_Map_Num", (size_t) 10)) {
-                    it = / * 41 * / Output_Map_Num;
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
 */
-                } else if (!strncmp(keyword, "Output_File_Stem", (size_t) 16)) {
-                    it = /* 60 */ Output_File_Stem ;
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%s", Mega2BatchItems[it].value.name);
-                } else if (iter == 1) {
-                    warn_unknown(keyword);
-                }
-            } else if (!strncmp(keyword, "Count", (size_t) 5)) {
-                if (!strcmp(keyword, "Count_Genotypes")) {
-                    it = /* 34 */ Count_Genotypes ;
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                } else if (!strncmp(keyword, "Count_Halftype", 14)) {
-                    it = /* 36 */ Count_Halftyped ;
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
-                    if (Mega2BatchItems[it].value.copt != 'y'
-                        && Mega2BatchItems[it].value.copt != 'Y'
-                        && Mega2BatchItems[it].value.copt != 'n'
-                        && Mega2BatchItems[it].value.copt != 'N') {
-                        invalid_value_field(it);
-                        break;
-                    }
-                } else if (!strcmp(keyword, "Count_HWE_genotypes")) {
-                    it = /* 38 */ Count_HWE_genotypes ;
-                    Mega2BatchItems[it].item_read = 1;
-                    sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
-                } else if (iter == 1) {
-                    warn_unknown(keyword);
-                }
-            } else if (!strncmp(keyword, "Rplot", (size_t) 5)) {
-                /* for now only one item */
-                it = /* 35 */ Rplot_Statistics ;
+            } else if (!strncmp(keyword, "Output_File_Stem", (size_t) 16)) {
+                it = /* 60 */ Output_File_Stem ;
                 Mega2BatchItems[it].item_read = 1;
-                strcpy(Mega2BatchItems[it].value.name, value);
-            } else if (!strncmp(keyword, "Allel", (size_t) 5)) {
-                it = /* 37 */ AlleleFreq_SquaredDev ;
+                sscanf(value, "%s", Mega2BatchItems[it].value.name);
+            } else if (iter == 1) {
+                warn_unknown(C(keyword));
+            }
+        } else if (!strncmp(keyword, "Count", (size_t) 5)) {
+            if (!strcmp(keyword, "Count_Genotypes")) {
+                it = /* 34 */ Count_Genotypes ;
                 Mega2BatchItems[it].item_read = 1;
-                Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue = atof(strtok(value, " "));
-            } else if (!strncasecmp(keyword, "PLINK", (size_t) 5)) {
-                // Shouldn't there be a check here to see if the Analysis_Option == Plink?
-                if (iter >= 2) continue;
-                it = /* 43 */ PLINK_Args;
-                Mega2BatchItems[it].item_read = 1;
-/*              sscanf(value, "%s", Mega2BatchItems[it].value.name);*/
-                strcpy(Mega2BatchItems[it].value.name, value);
-            } else if (!strncasecmp(keyword, "VCF_Args", (size_t) 8)) {
-                it = /* 56 */ VCF_Args;
-                Mega2BatchItems[it].item_read = 1;
-                strcpy(Mega2BatchItems[it].value.name, value);
-            } else if (!strncasecmp(keyword, "VCF_Marker_Alternative_INFO_Key", (size_t) 31)) {
-                it = /* 57 */ VCF_Marker_Alternative_INFO_Key;
-                Mega2BatchItems[it].item_read = 1;
-                strcpy(Mega2BatchItems[it].value.name, value);
-            } else if (!strcasecmp(keyword, "Loop_Over_Chromosomes")) {
-                it = /* 50 */ Loop_Over_Chromosomes;
+                sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+            } else if (!strncmp(keyword, "Count_Halftype", 14)) {
+                it = /* 36 */ Count_Halftyped ;
                 Mega2BatchItems[it].item_read = 1;
                 sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
                 if (Mega2BatchItems[it].value.copt != 'y'
@@ -1263,46 +1542,84 @@ static void set_batch_items(char *batch_file_name, int iter, analysis_type *anal
                     invalid_value_field(it);
                     break;
                 }
-                // The 'analysis' variable can only be guaranted to hold data until the third pass.
-                // This is because the sub-analysis option may not have been read till the end of the second pass.
-                if (iter == 3) {
-                    if (!(*analysis)->Loop_Over_Chromosomes_implemented()) {
-                        warnvf("The batch file item 'Loop_Over_Chromosomes' is not implemented for analysis option '%s'.\n", analysis_name);
-                    }
-                }
-            } else if (!strcasecmp(keyword, "Structure.PopDataPheno")) {
-                if (iter == 3) {
-                    if (*analysis == STRUCTURE) {
-                        it = /* 51 */ Structure$PopDataPheno;
-                        Mega2BatchItems[it].item_read = 1;
-                        sscanf(value, "%s", Mega2BatchItems[it].value.name);
-                    } else {
-                        warnvf("The batch file item 'Structure.PopDataPheno' is not implemented for analysis option '%s'.\n", analysis_name);
-                    }
+            } else if (!strcmp(keyword, "Count_HWE_genotypes")) {
+                it = /* 38 */ Count_HWE_genotypes ;
+                Mega2BatchItems[it].item_read = 1;
+                sscanf(value, "%d", &(Mega2BatchItems[it].value.option));
+            } else if (iter == 1) {
+                warn_unknown(C(keyword));
+            }
+        } else if (!strncmp(keyword, "Rplot", (size_t) 5)) {
+            /* for now only one item */
+            it = /* 35 */ Rplot_Statistics ;
+            Mega2BatchItems[it].item_read = 1;
+            strcpy(Mega2BatchItems[it].value.name, value);
+        } else if (!strncmp(keyword, "Allel", (size_t) 5)) {
+            it = /* 37 */ AlleleFreq_SquaredDev ;
+            Mega2BatchItems[it].item_read = 1;
+            Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue = atof(strtok(value, " "));
+        } else if (!strncasecmp(keyword, "PLINK", (size_t) 5)) {
+            // Shouldn't there be a check here to see if the Analysis_Option == Plink?
+            if (iter >= 2) continue;
+            it = /* 43 */ PLINK_Args;
+            Mega2BatchItems[it].item_read = 1;
+/*              sscanf(value, "%s", Mega2BatchItems[it].value.name);*/
+            strcpy(Mega2BatchItems[it].value.name, value);
+        } else if (!strncasecmp(keyword, "VCF_Args", (size_t) 8)) {
+            it = /* 56 */ VCF_Args;
+            Mega2BatchItems[it].item_read = 1;
+            strcpy(Mega2BatchItems[it].value.name, value);
+        } else if (!strncasecmp(keyword, "VCF_Marker_Alternative_INFO_Key", (size_t) 31)) {
+            it = /* 57 */ VCF_Marker_Alternative_INFO_Key;
+            Mega2BatchItems[it].item_read = 1;
+            strcpy(Mega2BatchItems[it].value.name, value);
+        } else if (!strcasecmp(keyword, "Loop_Over_Chromosomes")) {
+            it = /* 50 */ Loop_Over_Chromosomes;
+            Mega2BatchItems[it].item_read = 1;
+            sscanf(value, "%c", &(Mega2BatchItems[it].value.copt));
+            if (Mega2BatchItems[it].value.copt != 'y'
+                && Mega2BatchItems[it].value.copt != 'Y'
+                && Mega2BatchItems[it].value.copt != 'n'
+                && Mega2BatchItems[it].value.copt != 'N') {
+                invalid_value_field(it);
+                break;
+            }
+            // The 'analysis' variable can only be guaranted to hold data until the third pass.
+            // This is because the sub-analysis option may not have been read till the end of the second pass.
+            if (iter == 3) {
+                if (!(*analysis)->Loop_Over_Chromosomes_implemented()) {
+                    warnvf("The batch file item 'Loop_Over_Chromosomes' is not implemented for analysis option '%s'.\n", analysis_name);
                 }
             }
-            
-            if (iter == 1 && it == -1) {
-                warn_unknown(keyword);
+        } else if (!strcasecmp(keyword, "Structure.PopDataPheno")) {
+            if (iter == 3) {
+                if (*analysis == STRUCTURE) {
+                    it = /* 51 */ Structure$PopDataPheno;
+                    Mega2BatchItems[it].item_read = 1;
+                    sscanf(value, "%s", Mega2BatchItems[it].value.name);
+                } else {
+                    warnvf("The batch file item 'Structure.PopDataPheno' is not implemented for analysis option '%s'.\n", analysis_name);
+                }
             }
-        } // if (strcmp(nextline, "") != 0) {
-    } //  while (!feof(fp)) {
+        }
+#endif
+    }
 
-    fclose(fp);
+    msgvf("\nBatch file Status: %d arguments, %d bad lines, %d unknown options\n", cnt, errline, errtok);
+    if (errtok + errline)
+        EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
 void batchfile_process(char *batch_file_name, analysis_type *analysis)
 {
 	// this is where the batch items are read from the batch file, and checked for consistency...
-    set_batch_items(batch_file_name, 1, analysis);
-    set_batch_items(batch_file_name, 2, analysis);
-	// Ahh... because analysis doesn't get defined until iteration 2 and so any logic that
-	// depends on it's existance won't work till after that!!!!
-    set_batch_items(batch_file_name, 3, analysis);
+    set_batch_items(batch_file_name, analysis);
+    check_batch_items();
+    check_dependencies(analysis);
 
     int input_set = 0;
     int xcf = 0;
-    if (Mega2BatchItems[/* 53 */ Input_Format_Type].item_read == 1) {
+    if (Mega2BatchItems[/* 53 */ Input_Format_Type].items_read) {
         Input_Format = (INPUT_FORMAT_t) Mega2BatchItems[/* 53 */ Input_Format_Type].value.option;
 
         input_set = 1;
@@ -1311,7 +1628,7 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
             xcf = 1;
 
     }
-    if (Mega2BatchItems[/* 43 */ PLINK_Args].item_read == 1) {
+    if (Mega2BatchItems[/* 43 */ PLINK_Args].items_read) {
         PLINK_args(Mega2BatchItems[PLINK_Args].value.name, xcf);
         if (!Input_Format) {
             input_set = 1;
@@ -1323,8 +1640,6 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
     }
     if (!input_set)
         Input_Format = in_format_traditional;
-
-    check_batch_items();
 }
 
 
@@ -1360,7 +1675,7 @@ void batchf(int item)
         batch_file_doc(batchfp);
     }
 
-    fprintf(batchfp, "%s=", batch_item.keyword);
+    fprintf(batchfp, "%s=", C(batch_item.keyword));
     switch(batch_item.value_type) {
     case INT:
         fprintf(batchfp, "%d", batch_item.value.option);
@@ -1371,6 +1686,7 @@ void batchf(int item)
         fprintf(batchfp, "%s", yorn[index]);
         break;
     case STRING:
+    case LINE:
         fprintf(batchfp, "%s", batch_item.value.name);
         break;
     case FLOAT:
@@ -1384,6 +1700,7 @@ void batchf(int item)
         fprintf(batchfp, "%c", batch_item.value.copt);
         break;
     case INT_LIST:
+    case CHRM_LIST:
         opt = batch_item.value.mult_opts;
         while (*opt != -99) {
             fprintf(batchfp, "%d ", *opt);
@@ -1413,6 +1730,17 @@ void batchf(int item)
     fclose(batchfp);
 }
 
+void batchf(Cstr& keyword)
+{
+    Mapsbp lookup = BatchItemMap.find(keyword);
+    if (lookup == BatchItemMap.cend()) {
+        warnvf("batchf: key %s not found %s\n:", C(keyword));
+        return;
+    }
+    batch_item_type *bi = lookup->second;
+    batchf(bi->item_number);
+}
+
 #endif /* NEW_BATCH */
 
 void Free_batch_items(void) {
@@ -1440,6 +1768,8 @@ void Free_batch_items(void) {
             continue;
 
         if (vt == INT_LIST) {
+            free(Mega2BatchItems[i].value.mult_opts);
+        } else if (vt == CHRM_LIST) {
             free(Mega2BatchItems[i].value.mult_opts);
         } else if (vt == FLOAT_LIST)
             free(Mega2BatchItems[i].value.mult_fvalues);

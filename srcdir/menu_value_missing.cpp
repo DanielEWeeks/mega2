@@ -511,7 +511,7 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
             if (! ret ) {
                 itp->store(analysis, itp, itp->str);
                 if (! batchINPUTFILES) {
-                    Mega2BatchItems[itp->it].item_read = 1;
+                    Mega2BatchItems[itp->it].items_read = 1;
                     batchf(itp->it);
                 }
             }
@@ -574,11 +574,11 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
         if (! ret) {
             strcpy(itp->str, df);
             itp->store(analysis, itp, df);
-            Mega2BatchItems[itp->it].item_read = 1;
+            Mega2BatchItems[itp->it].items_read = 1;
         }
     } else if (allow) {
 // Note:
-//            Mega2BatchItems[itp->it].item_read = 1;
+//            Mega2BatchItems[itp->it].items_read = 1;
 // is not set.  Because we are guessing value.
         itp->source = 5;
         int inherit = itp->inherit;
@@ -590,7 +590,7 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
                 case Value_Missing_Quant_On_Input:
                     strcpy(Mega2BatchItems[itp->it].value.name,
                            Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                    Mega2BatchItems[itp->it].item_read = 1;
+                    Mega2BatchItems[itp->it].items_read = 1;
                     strcpy(Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str,
                            Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
                     break;
@@ -603,7 +603,7 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
                 case Value_Missing_Quant_On_Input:
                     strcpy(Mega2BatchItems[itp->it].value.name,
                            Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                    Mega2BatchItems[itp->it].item_read = 1;
+                    Mega2BatchItems[itp->it].items_read = 1;
                     strcpy(Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str,
                            Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
                     break;
@@ -616,7 +616,7 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
                 case Value_Missing_Quant_On_Input:
                     strcpy(Mega2BatchItems[itp->it].value.name,
                            Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
-                    Mega2BatchItems[itp->it].item_read = 1;
+                    Mega2BatchItems[itp->it].items_read = 1;
                     strcpy(Value_Missing[3 /*Value_Missing[_Quant_On_Output]*/].str,
                            Value_Missing[0 /*Value_Missing[_Quant_On_Input]*/].str);
 
@@ -624,14 +624,14 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
                 case Value_Missing_Quant_On_Output:
                     strcpy(Mega2BatchItems[itp->it].value.name,
                            Value_Missing[1 /*Value_Missing[_Quant_On_Output]*/].str);
-                    Mega2BatchItems[itp->it].item_read = 1;
+                    Mega2BatchItems[itp->it].items_read = 1;
                     strcpy(Value_Missing[3 /*Value_Missing[_Quant_On_Output]*/].str,
                            Value_Missing[1 /*Value_Missing[_Quant_On_Input]*/].str);
                     break;
                 case Value_Missing_Affect_On_Input:
                     strcpy(Mega2BatchItems[itp->it].value.name,
                            Value_Missing[2 /*Value_Missing[_Affect_On_Input]*/].str);
-                    Mega2BatchItems[itp->it].item_read = 1;
+                    Mega2BatchItems[itp->it].items_read = 1;
                     strcpy(Value_Missing[3 /*Value_Missing[_Quant_On_Output]*/].str,
                            Value_Missing[2 /*Value_Missing[_Quant_On_Input]*/].str);
                     break;
@@ -766,7 +766,7 @@ void Value_Missing_get(analysis_type *analysis)
             itpn = itp + i;
 	    if (itpn->source == 0)
 		itpn->source = allow ? 1 : 6;
-	    itpn->set = itpn->set | Mega2BatchItems[itpn->it].item_read;
+	    itpn->set = itpn->set | (Mega2BatchItems[itpn->it].items_read > 0);
         }
 
         if (fix_Value_Missing_all(analysis))

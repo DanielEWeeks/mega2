@@ -691,7 +691,7 @@ void  create_nuclear_families(linkage_ped_top **LPedTop,
 //SL
     if (Top->LocusTop->SexLinked == 2 && single_output == 1) {
         if (batchANALYSIS)
-            if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read)
+            if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read)
                 errorvf("You may not analyze autosomal chromosomes and sex chromosomes in the same file.\nPlease fix this in the batch file (Loop_Over_Chromosomes) and try again.\n");
             else
                 errorvf("You may not analyze autosomal chromosomes and sex chromosomes in the same file.\nPlease fix this in the batch file (Chromosomes_Multiple) and try again.\n");

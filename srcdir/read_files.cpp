@@ -235,7 +235,7 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
 //      if (quant == PLINK.pheno_value) quant = QMISSING;
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
     }
-    if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].item_read) {
+    if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].items_read) {
 //      if (quant == MissingQuant) quant = QMISSING;
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
 
@@ -282,7 +282,7 @@ int read_quant_phen(FILE *filep, int locusnm,
 //      if (quant == PLINK.pheno_value) quant = QMISSING;
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
     }
-    if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].item_read) {
+    if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].items_read) {
 //      if (quant == MissingQuant) quant = QMISSING;
         if (fabs(quant - MissingQuant) < EPSILON) quant = QMISSING;
     }
@@ -3037,7 +3037,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
     if (fatal) { EXIT(DATA_INCONSISTENCY);   }
 
     if (non_fatal) {
-        if (InputMode || Mega2BatchItems[/* 28 */ Default_Ignore_Nonfatal].item_read != 1) {
+        if (InputMode || Mega2BatchItems[/* 28 */ Default_Ignore_Nonfatal].items_read == 0) {
             printf("Do you wish to continue with Mega2? (y/n) > ");
             fflush(stdin); fcmap(stdin, "%s", yesorno); newline;
         } else {

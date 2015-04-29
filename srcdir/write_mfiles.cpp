@@ -2425,7 +2425,7 @@ static void  glob_mendel_files(int *glob_files)
     }
 
 //SL
-    if (batchANALYSIS && Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read) {
+    if (batchANALYSIS && Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read) {
         *glob_files = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
         return;
     }
@@ -2831,7 +2831,7 @@ int  create_mendel_file(linkage_ped_top **Top, char *mapfl_name,
 //SL
         if (LPedTreeTop->LocusTop->SexLinked == 2 && glob_files == 1) {
             if (batchANALYSIS)
-                if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read)
+                if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read)
                     errorvf("You may not analyze autosomal chromosomes and sex chromosomes in the same file.\nPlease fix this in the batch file (Loop_Over_Chromosomes) and try again.\n");
                 else
                     errorvf("You may not analyze autosomal chromosomes and sex chromosomes in the same file.\nPlease fix this in the batch file (Chromosomes_Multiple) and try again.\n");

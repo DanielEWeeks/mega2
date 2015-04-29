@@ -397,7 +397,7 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
         // NOTE that for interactive input, reorder_loci.cpp:ReOrderLoci() will ask the user
         // if they want to write chromosomes to one file or one file for each cromosome IF the user selects
         // multiple chromosomes in the preceeding menu. The answer will be stored in "Loop_Over_Chromosomes".
-        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read)
+        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read)
             combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
     }
 

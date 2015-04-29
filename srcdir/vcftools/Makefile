@@ -82,19 +82,20 @@ distclean: clean
 
 # DO NOT DELETE
 
-mega2_vcftools_interface.o: ../common.h ../typedefs.h ../errorno.h
-mega2_vcftools_interface.o: ../allutil.h ../linkage.h ../linkage_external.h
-mega2_vcftools_interface.o: ../makeped.h ../pedtree.h ../analysis.h
-mega2_vcftools_interface.o: ../analysis_ext.h ../write_fbat_ext.h
-mega2_vcftools_interface.o: ../write_plink_ext.h ../plink_core_ext.h
-mega2_vcftools_interface.o: ../write_eigenstrat_ext.h ../write_pangaea_ext.h
-mega2_vcftools_interface.o: ../write_beagle_ext.h ../write_structure_ext.h
-mega2_vcftools_interface.o: ../write_pseq_ext.h ../batch_input.h
-mega2_vcftools_interface.o: ../input_check.h ../hwe.h ../compress_ext.h
-mega2_vcftools_interface.o: ../utils_ext.h ../genetic_utils_ext.h
-mega2_vcftools_interface.o: ../error_messages_ext.h ../annotated_ped_file.h
-mega2_vcftools_interface.o: ../read_files_ext.h ../marker_lookup_ext.h
-mega2_vcftools_interface.o: ../phe_lookup_ext.h output_log.h parameters.h
+mega2_vcftools_interface.o: ../common.h ../types.hh ../typedefs.h
+mega2_vcftools_interface.o: ../errorno.h ../allutil.h ../linkage.h
+mega2_vcftools_interface.o: ../linkage_external.h ../makeped.h ../pedtree.h
+mega2_vcftools_interface.o: ../analysis.h ../analysis_ext.h
+mega2_vcftools_interface.o: ../write_fbat_ext.h ../write_plink_ext.h
+mega2_vcftools_interface.o: ../plink_core_ext.h ../write_eigenstrat_ext.h
+mega2_vcftools_interface.o: ../write_pangaea_ext.h ../write_beagle_ext.h
+mega2_vcftools_interface.o: ../write_structure_ext.h ../write_pseq_ext.h
+mega2_vcftools_interface.o: ../batch_input.h ../input_check.h ../hwe.h
+mega2_vcftools_interface.o: ../compress_ext.h ../tod.hh ../utils_ext.h
+mega2_vcftools_interface.o: ../genetic_utils_ext.h ../error_messages_ext.h
+mega2_vcftools_interface.o: ../annotated_ped_file.h ../read_files_ext.h
+mega2_vcftools_interface.o: ../marker_lookup_ext.h ../phe_lookup_ext.h
+mega2_vcftools_interface.o: ../reorder_loci_ext.h output_log.h parameters.h
 mega2_vcftools_interface.o: variant_file.h ../zlib.h ../zconf.h entry.h
 mega2_vcftools_interface.o: bgzf.h vcf_entry.h bcf_entry.h header.h
 mega2_vcftools_interface.o: bcf_file.h vcf_file.h mega2_vcftools_interface.h

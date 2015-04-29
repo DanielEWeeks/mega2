@@ -830,7 +830,7 @@ static void stat_selection_menu(char *input_stat_names[],
     char num[6];
     int batchRPLOT=0;
 
-    if (Mega2BatchItems[/* 35 */ Rplot_Statistics].item_read == 1) {
+    if (Mega2BatchItems[/* 35 */ Rplot_Statistics].items_read) {
         strcpy(str, Mega2BatchItems[/* 35 */ Rplot_Statistics].value.name);
         batchRPLOT=1;
         /* parse the string and set the stat values */

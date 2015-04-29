@@ -111,7 +111,7 @@ void CLASS_EIGENSTRAT::interactive_sub_prog_name_to_sub_option(analysis_type *an
     char select[10];
     
     if (batchANALYSIS) {
-        if (Mega2BatchItems[/* 6 */ Analysis_Sub_Option].item_read) {
+        if (Mega2BatchItems[/* 6 */ Analysis_Sub_Option].items_read) {
             selection = (*analysis)->_suboption;
         } else {
             errorvf("Valid values for Eigenstrat 'Analysis_Sub_Option' are:\n");

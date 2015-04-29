@@ -272,15 +272,15 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
 
     if (InputMode == BATCH_FILE_INPUTMODE) {
         // Default Select Individuals...
-        if ((Mega2Status == INSIDE_RECODE && Mega2BatchItems[Count_Genotypes].item_read == 1) ||
-            (Mega2Status == INSIDE_ANALYSIS && Mega2BatchItems[Count_HWE_genotypes].item_read == 1)) {
+        if ((Mega2Status == INSIDE_RECODE && Mega2BatchItems[Count_Genotypes].items_read) ||
+            (Mega2Status == INSIDE_ANALYSIS && Mega2BatchItems[Count_HWE_genotypes].items_read)) {
             if (Mega2Status == INSIDE_RECODE) {
                 SelectIndividuals = Mega2BatchItems[/* 34 */ Count_Genotypes].value.option;
             } else {
                 SelectIndividuals = Mega2BatchItems[/* 38 */ Count_HWE_genotypes].value.option;
             }
 
-            if (halftyped_item && Mega2BatchItems[/* 36 */ Count_Halftyped].item_read) {
+            if (halftyped_item && Mega2BatchItems[/* 36 */ Count_Halftyped].items_read) {
                 *include_halftyped =
                     ((tolower((unsigned char)Mega2BatchItems[/* 36 */ Count_Halftyped].value.copt) == 'y')?
                      1 : 0);

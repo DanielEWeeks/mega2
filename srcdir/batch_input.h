@@ -32,7 +32,6 @@
 
 /* allocate memory in chunks of 50 for mult_names */
 #define OPT_CHUNK 50
-#define KEYWORD_LEN 50
 // batch file comment character...
 #define COMMENT_CHAR '#'
 
@@ -54,7 +53,7 @@
    FLOAT_LIST = list of floatng point numbers separated by white-space
 */
 typedef enum _item_value_type {
-    YORN, INT, FLOAT, CHAR, STRING, INT_LIST, NAME_LIST, FLOAT_LIST
+    YORN, INT, FLOAT, CHAR, STRING, LINE, INT_LIST, NAME_LIST, FLOAT_LIST, CHRM_LIST
 } item_value_type;
 
 typedef union batch_item_value_ {
@@ -67,13 +66,21 @@ typedef union batch_item_value_ {
     double *mult_fvalues;
 } batch_item_value;
 
+enum Batch_Item_Flag {Clear = 0, Add2BatchItemList = 1 };
 typedef struct _batch_item_ {
-    int item_number, item_read;
-    char keyword[KEYWORD_LEN];
+    int item_number, items_read, line_number;
+    std::string keyword;
+    std::string value_str;
+    Batch_Item_Flag flag;
     item_value_type value_type;
     batch_item_value value;
 } batch_item_type;
 
+typedef struct keyw {
+    std::string keyword;
+    item_value_type type;
+    std::string default_string;
+} keyw_t;
 
 /**
  These are the indices to the array "Mega2BatchItems".
@@ -146,10 +153,6 @@ typedef struct _batch_item_ {
 #define Value_Missing_Affect_On_Output 59
 #define Output_File_Stem 60
 #define Value_Imputed_Threshold 61
-// Number of keywords which will appear in the batch file.
-// The above list is zero based, so this would be the last number + 1
-// You must update this number when you add an additional keyword.
-#define NUM_KEYS 62
 
 // THIS VARIABLE IS USED EVERYWHERE...
 // It is defined in batch_input.cpp or by the new object system for
@@ -157,7 +160,7 @@ typedef struct _batch_item_ {
 extern batch_item_type *Mega2BatchItems;
 
 
-#define ITEM_READ(n)     (Mega2BatchItems[n].item_read == 1)
+#define ITEM_READ(n)     (Mega2BatchItems[n].items_read >= 1)
 
 #ifndef DEFAULT_OUTFILES
 #define DEFAULT_OUTFILES (Mega2BatchItems[Default_Outfile_Names].value.copt == 'y' || \

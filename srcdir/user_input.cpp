@@ -106,8 +106,11 @@ const char *INPUT_FORMAT_STR[] = {
      "BCF format (bcf)",
      "VCF compressed format (vcf.gz)",
      "VCF format (vcf)",
-     "Traditional (4.6.1) format",
+     "IMPUTE2/Oxford format (gen or gen.gz)"
 };
+const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
+
+double Imputed_Threshold = 0.90;
 
 // see R_output.h & R_output.c write_plink_map_file...
 int genetic_distance_index;
@@ -324,14 +327,14 @@ static void missing_optional_keyword(int batch_item, const char *message)
 {
 #ifndef HIDESTATUS
     mssgvf("Keyword %s not in batch file, %s.\n",
-            Mega2BatchItems[batch_item].keyword, message);
+           C(Mega2BatchItems[batch_item].keyword), message);
 #endif
 }
 
 static void missing_mandatory_keyword(int batch_item)
 {
     errorvf("Required keyword %s missing from batch file.\n",
-            Mega2BatchItems[batch_item].keyword);
+            C(Mega2BatchItems[batch_item].keyword));
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
@@ -549,19 +552,19 @@ static void menu1_batch_set_files(file_format *infl_type,
     fln_t **fln = fln_array;
     while (*fln) {
         i = (*fln)->batch;
-        if (Mega2BatchItems[i].item_read == 1) {
+        if (Mega2BatchItems[i].items_read) {
             if (access(Mega2BatchItems[i].value.name, F_OK) == 0) {
                 strcpy((*fln)->name, Mega2BatchItems[i].value.name);
             } else {
                 errorvf("Could not find file or path %s named by keyword %s.\n",
                         Mega2BatchItems[i].value.name,
-                        Mega2BatchItems[i].keyword);
+                        C(Mega2BatchItems[i].keyword));
                 EXIT(FILE_NOT_FOUND);
             }
         } else {
             if (i == Input_Pedigree_File || 
-                ((i == Input_Locus_File) && (! plinkf && ! xcf)) ||
-                ((i == Input_Aux_File) && (xcf || Input_Format == in_format_binary_PED))
+                ((i == Input_Locus_File) && (! plinkf && ! xcf && (Input_Format != in_format_imputed))) ||
+                ((i == Input_Aux_File) && (xcf || Input_Format == in_format_binary_PED || Input_Format == in_format_imputed))
                 ) {
                 missing_mandatory_keyword(i);
             } else {
@@ -576,14 +579,14 @@ static void menu1_batch_set_files(file_format *infl_type,
         fln++;
     }
 
-    if (Mega2BatchItems[/* 33 */ Output_Path].item_read == 1) {
+    if (Mega2BatchItems[/* 33 */ Output_Path].items_read) {
         if (access(Mega2BatchItems[/* 33 */ Output_Path].value.name, W_OK) == 0 &&
             is_dir(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
            strcpy(*output_path, Mega2BatchItems[/* 33 */ Output_Path].value.name);
         } else {
             errorvf("file path %s named by keyword %s is not a writable directory.\n",
                     Mega2BatchItems[/* 33 */ Output_Path].value.name,
-                    Mega2BatchItems[/* 33 */ Output_Path].keyword);
+                    C(Mega2BatchItems[/* 33 */ Output_Path].keyword));
             EXIT(FILE_NOT_FOUND);
         }
 
@@ -592,14 +595,14 @@ static void menu1_batch_set_files(file_format *infl_type,
         strcpy(*output_path, ".");
     }
 
-    if (Mega2BatchItems[/* 54 */ Input_Path].item_read == 1) {
+    if (Mega2BatchItems[/* 54 */ Input_Path].items_read) {
         if (access(Mega2BatchItems[/* 54 */ Input_Path].value.name, R_OK) == 0 &&
             is_dir(Mega2BatchItems[/* 54 */ Input_Path].value.name)) {
             strcpy(*input_path, Mega2BatchItems[/* 54 */ Input_Path].value.name);
         } else {
             errorvf("file path %s named by keyword %s is not a readable directory.\n",
                     Mega2BatchItems[/* 54 */ Input_Path].value.name,
-                    Mega2BatchItems[/* 33 */ Input_Path].keyword);
+                    C(Mega2BatchItems[/* 33 */ Input_Path].keyword));
             EXIT(FILE_NOT_FOUND);
         }
     } else {
@@ -613,7 +616,7 @@ static void menu1_batch_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
 {
 
     /* untyped ped option */
-    if (Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].item_read  == 1) {
+    if (Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].items_read) {
         if (Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].value.option >= 0) {
             *Untyped_ped_opt=Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].value.option;
         } else {
@@ -624,7 +627,7 @@ static void menu1_batch_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
     }
 
     /* Error sim option */
-    if (Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].item_read  == 1) {
+    if (Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].items_read) {
         if (tolower((unsigned char)Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt) == 'y' ||
             tolower((unsigned char)Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt) == 'n') {
             *Error_sim_opt= Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt;
@@ -635,7 +638,7 @@ static void menu1_batch_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
     *Error_sim_opt = ((tolower(*Error_sim_opt) == 'y') ? 1:0);
 
     /* Threshold for comparing input and observed allele frequencies */
-    if (Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].item_read == 1) {
+    if (Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].items_read) {
         if (Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue < 0) {
             invalid_value_field(AlleleFreq_SquaredDev);
         }
@@ -644,7 +647,7 @@ static void menu1_batch_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
         missing_optional_keyword(AlleleFreq_SquaredDev, "using default = 'no limit'");
     }
 #ifdef USER_UNKNOWN
-    if (Mega2BatchItems[/* 42 */ Value_Missing_Allele].item_read == 1) {
+    if (Mega2BatchItems[/* 42 */ Value_Missing_Allele].items_read) {
         strcpy(REC_UNKNOWN, Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name);
     }
 #endif
@@ -909,6 +912,17 @@ void menu1(file_format *infl_type,
                 _aux_i = site_vcf_i;
                 fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
+            } else if (Input_Format == in_format_imputed) {
+                strcpy(extension_name, "impute");
+
+                fln_init(pedo, "IMPUTE2", "sample", "[required]", "sample");
+                pedo->title = "Sample file:";
+                fln_init(auxo, "IMPUTE2", "impute", "[required]", "impute");
+                auxo->title = "IMPUTE2 file:";
+                _aux_i = imputed_i;
+                fln_init_plink(! PMAP_REQ);
+                fln_init_mega2(! MAP_REQ);
+
             }
             reset_extension = 1;
         }
@@ -951,7 +965,8 @@ void menu1(file_format *infl_type,
             }
         }
 
-        if (plinkf || xcf) {
+        if (plinkf || xcf ||
+            Input_Format == in_format_imputed) {
             printf("%2d) %-*s%s\n", idx, line_len, "Input file stem:", extension_name);
             fln_stem = 1;
 
@@ -960,7 +975,10 @@ void menu1(file_format *infl_type,
             fln_stem = 0;
         }
         choiceA[idx++] = ext_i;
-
+        if (Input_Format == in_format_imputed) {
+            printf("%2d) %-*s%.4f\n", idx, line_len, "Enter imputation threshold:", Imputed_Threshold);
+            choiceA[idx++] = imputed_threshold_i;
+        }
 	// BUG? _aux_i is only initialized in certain cases...
         // No. auxo is off iff _aux_i is not initialized and fln_print just returns 0 
         //  w/o doing anything
@@ -1031,7 +1049,7 @@ void menu1(file_format *infl_type,
 
         if (choice_ ==  0) {
             exit_loop=1;
-            if (! plinkf && ! xcf) {
+            if (! plinkf && ! xcf && (Input_Format != in_format_imputed)) {
                 if (access(*locusfl_name, F_OK) != 0)   {
                     printf("ERROR: You must specify a locus file.\n");
                     exit_loop=0;
@@ -1041,7 +1059,7 @@ void menu1(file_format *infl_type,
                 printf("ERROR: You must specify a pedigree file.\n");
                 exit_loop=0;
             }
-            if (! xcf) {
+            if (! xcf && (Input_Format != in_format_imputed)) {
                 // There is a map file that is extracted from the VCF file
                 // and presented to the user as 'VCF.p'. So, the map file is optional.
                 if (access(*mapfl_name, F_OK) != 0 && access(*pmapfl_name, F_OK) != 0) {
@@ -1054,7 +1072,7 @@ void menu1(file_format *infl_type,
                     printf("ERROR: You did not specify any PLINK parameters.\n");
                     exit_loop=0;
                 } else if (exit_loop) {
-                    Mega2BatchItems[PLINK_Args].item_read = 1;
+                    Mega2BatchItems[PLINK_Args].items_read = 1;
                     printf("NOTE: You have indicated the trait in the fam/ped file is named \"%s\" and\n",
                            PLINK.trait);
                     printf("      is %s trait.  You also have specified the --missing-phenotype is %g.\n",
@@ -1091,7 +1109,7 @@ void menu1(file_format *infl_type,
                     printf("ERROR: VCF argument list is invalid.  Please fix it.\n");
                     exit_loop=0;
                 } else {
-                    Mega2BatchItems[VCF_Args].item_read = 1;
+                    Mega2BatchItems[VCF_Args].items_read = 1;
                 }
                 free(VCFArgs_w_file);
             }
@@ -1130,27 +1148,39 @@ void menu1(file_format *infl_type,
                 printf("              Mega2 %s input file type menu:\n", Mega2Version);
                 draw_line();
 //      ignore 9th entry (only for old batch files)
-                for (ans = 0; ans < 8; ans++)
+                for (ans = 0; ans < 9; ans++)
                     printf("%1d) %s\n", ans+1, INPUT_FORMAT_STR[ans]);
-                printf("Select from options 1-8 > ");
+                printf("Select from options 1-9 > ");
 
                 fcmap(stdin, "%d", &ans); newline;
-                if (ans <= 8 && ans >= 1) {
+                if (ans <= 9 && ans >= 1) {
                     Input_Format = (INPUT_FORMAT_t) (ans - 1);
                     break;
                 } else
-                    printf("allowed values are 1, 2, 3, 4, 5, 6, 7, 8.\n");
+                    printf("allowed values are 1, 2, 3, 4, 5, 6, 7, 8, 9.\n");
             }
             reset = 1;
 
         } else  if (choice_ == ext_i) {
-            if (plinkf || xcf)
+            if (fln_stem)
                 printf("Please enter file stem > ");
             else
                 printf("Please enter file extension > ");
             fcmap(stdin, "%s", extension_name); newline;
             reset_extension = 1;
 
+        } else if (choice_ == imputed_threshold_i) {
+            double ansd;
+            while (1) {
+                printf("Please enter threshold for acceptable imputed value ");
+                fcmap(stdin, "%g", &ansd); newline;
+                if (ansd <= 0.5 || ansd > 1.0) {
+                    printf("threshold must be between 0.5 and 1.0\n");
+                } else break;
+            }
+            Mega2BatchItems[/* 61 */ Value_Imputed_Threshold].items_read = 1;
+            Mega2BatchItems[/* 61 */ Value_Imputed_Threshold].value.fvalue = ansd;
+            batchf(/* 61 */ Value_Imputed_Threshold);
         } else if (choice_ == loc_i) {
             fln_get(loco, "locus");
 
@@ -1182,6 +1212,9 @@ void menu1(file_format *infl_type,
             fln_get(auxo, "compressed");
 
         } else if (choice_ == site_vcf_i) {
+            fln_get(auxo, "text");
+
+        } else if (choice_ == imputed_i) {
             fln_get(auxo, "text");
 
         } else if (choice_ == plink_phe_i) {
@@ -1332,7 +1365,7 @@ void menu1(file_format *infl_type,
         // Note: these PLINKArgs and friends are stack variables so we don't have to check for != NULL...
         if (strlen(PLINKArgs) > 0) {
             strcpy(Mega2BatchItems[/* 43 */ PLINK_Args].value.name, PLINKArgs);
-            Mega2BatchItems[/* 43 */ PLINK_Args].item_read = 1;
+            Mega2BatchItems[/* 43 */ PLINK_Args].items_read = 1;
             batchf(PLINK_Args);
         }
         if (strlen(VCFArgs) > 0) {
@@ -1347,7 +1380,7 @@ void menu1(file_format *infl_type,
         menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
     }
 
-    if (plinkf || xcf) fln_free(loco);
+    if (plinkf || xcf || (Input_Format == in_format_imputed)) fln_free(loco);
 }
 
 /* static void default_labels(char *msg, int *liability, int *status, int num_classes) */
@@ -1638,7 +1671,7 @@ void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
             }
     }
 
-    if (batchAFFVALUE && Mega2BatchItems[/* 18 */ Value_Affecteds].item_read) {
+    if (batchAFFVALUE && Mega2BatchItems[/* 18 */ Value_Affecteds].items_read) {
         /* check each individual string */
         for (i=0; i < num_mult_tr; i++) {
             int found = -1;
@@ -1833,12 +1866,12 @@ void set_missing_quant_output(linkage_ped_top *Top, analysis_type analysis)
                 }
             }
             strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name, missingq);
-            Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read = 1;
+            Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read = 1;
         }
         return;
     }
 
-    if (!Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read) {
+    if (!Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read) {
         
         if (InputMode == BATCH_FILE_INPUTMODE) {
             errorvf("The batch file item 'Value_Missing_Quant_On_Output' must be specified because\n");
@@ -1883,7 +1916,7 @@ void set_missing_quant_output(linkage_ped_top *Top, analysis_type analysis)
             }
         }
         
-        Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read = 1;
+        Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read = 1;
         strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name, missingq);
         if (InputMode == INTERACTIVE_INPUTMODE) batchf(Value_Missing_Quant_On_Output);
         
@@ -1955,7 +1988,7 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
         // 1) for PLINK input if --missing_phenotype is specified it comes from there (a warning is
         // given if Value_Missing_Quant_On_Input is also specified),
 #ifndef HIDESTATUS
-        if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].item_read) {
+        if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].items_read) {
             warnvf("Missing QTL phenotype value specified by Value_Missing_Quant_On_Input will be ignored.\n");
         }
         mssgvf("Missing QTL phenotype value read from --missing_phenotype (%f).\n", PLINK.pheno_value);
@@ -1969,7 +2002,7 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
             MissingQuant = (MissingQuant > 0 ? floor(MissingQuant) : ceil(MissingQuant));
         }
         
-    } else if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].item_read) {
+    } else if (Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].items_read) {
         // 2) if the batch file item Value_Missing_Quant_On_Input is specified (not PLINK input) it comes from there,
         //
         // NOTE: batch_input.cpp:set_batch_items() will look for the string 'NA' in this field, and if
@@ -2041,7 +2074,7 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
             } // if (select == 1) {
         } // while (select != 0) {
         
-        Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].item_read = 1;
+        Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].items_read = 1;
         Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = MissingQuant;
         if (InputMode == INTERACTIVE_INPUTMODE) batchf(Value_Missing_Quant_On_Input);
     }

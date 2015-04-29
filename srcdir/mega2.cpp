@@ -941,7 +941,7 @@ int             main(int argc, char **argv)
         }
     } else if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED) {
         int it = PLINK_Args;
-        if (Mega2BatchItems[it].item_read != 1) {
+        if (Mega2BatchItems[it].items_read == 0) {
             errorvf("PLINK arguments not specified.\n");
             EXIT(BATCH_FILE_ITEM_ERROR);
         }
@@ -968,11 +968,11 @@ int             main(int argc, char **argv)
                Input_Format == in_format_VCF) {
 
         int it = PLINK_Args;
-        if (Mega2BatchItems[it].item_read == 1)
+        if (Mega2BatchItems[it].items_read)
             PLINK_args(Mega2BatchItems[it].value.name, 1);
 
         it = VCF_Args;
-        if (Mega2BatchItems[it].item_read != 1) {
+        if (Mega2BatchItems[it].items_read == 0) {
             errorvf("VCF arguments not specified.\n");
             EXIT(BATCH_FILE_ITEM_ERROR);
         }
@@ -1041,6 +1041,25 @@ int             main(int argc, char **argv)
             errorvf("Unsuccessful in reading linkage files - aborting mega2!\n");
             EXIT(INPUT_DATA_ERROR);
         }
+    } else if (Input_Format == in_format_imputed) {
+        int it = Value_Imputed_Threshold;
+        if (Mega2BatchItems[it].items_read)
+            Imputed_Threshold = Mega2BatchItems[it].value.fvalue;
+
+        mssgf("Imputed data file processing");
+
+        add_allele("NA", zero);
+        REC_UNKNOWN = zero;
+        
+        LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name, mapfl_name,
+                                           freqfl_name, penfl_name, omitfl_name,
+                                           bedfl_name,  phefl_name,
+                                           UntypedPedOpt, analysis, plink_info);
+        if (LPedTreeTop == NULL) {
+            errorvf("Unsuccessful in reading input files - aborting mega2!\n");
+            EXIT(INPUT_DATA_ERROR);
+        }
+
     } else {
         errorf("Input files appear to be in mixed Mega2 format and LINKAGE format.");
         errorf("Please use only Mega2 files or only LINKAGE files.");

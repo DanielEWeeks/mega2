@@ -39,12 +39,15 @@ enum INPUT_FORMAT {
     in_format_binary_VCF = 5,
     in_format_compressed_VCF = 6,
     in_format_VCF = 7,
-    in_format_traditional = 8
+    in_format_imputed = 8,
+    in_format_traditional = 100,
 }
 INPUT_FORMAT_t;
 
 extern INPUT_FORMAT_t Input_Format;
 extern const char *INPUT_FORMAT_STR[];
+
+extern double Imputed_Threshold;
 
 extern int ReOrderMenu(int num_chromo, int *chromsomes, int *selection);
 

@@ -132,7 +132,7 @@ static void mega2annot_file_names(char *file_names[], int *combine_chromo,
     // If there is more than one chromosome specified defer to the batch file item
     // or if it is not read, ask the user...
     if (main_chromocnt > 1) {
-        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read) {
+        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read) {
             *combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
         } else {
             // Ask the user if they want chromosome specific files.
@@ -842,7 +842,7 @@ void create_mega2annot_files(linkage_ped_top **LPedTop, char *file_names[],
 /*
     if (Top->LocusTop->SexLinked == 2 && combine_chromo == 1) {
         if (batchANALYSIS)
-            if (Mega2BatchItems[/ * 50 * / Loop_Over_Chromosomes].item_read)
+            if (Mega2BatchItems[/ * 50 * / Loop_Over_Chromosomes].items_read)
                 errorvf("You may not analyze autosomal chromosomes and sex chromosomes in the same file.\nPlease fix this in the batch file (Loop_Over_Chromosomes) and try again.\n");
             else
                 errorvf("You may not analyze autosomal chromosomes and sex chromosomes in the same file.\nPlease fix this in the batch file (Chromosomes_Multiple) and try again.\n");

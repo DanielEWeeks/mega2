@@ -798,15 +798,15 @@ static void write_mega2_batch(char *file_names[], linkage_locus_top *LTop)
             EXIT(FILE_WRITE_ERROR);
         }
         script_time_stamp(filep);
-        fprintf(filep, "%s=pedfile.dat\n", Mega2BatchItems[/* 0 */ Input_Pedigree_File].keyword);
-        fprintf(filep, "%s=%s\n", Mega2BatchItems[/* 1 */ Input_Locus_File].keyword, file_names[6]);
-        fprintf(filep, "%s=%s\n", Mega2BatchItems[/* 2 */ Input_Map_File].keyword, file_names[7]);
-        fprintf(filep, "%s=2\n", Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].keyword);
-        fprintf(filep, "%s=23\n", Mega2BatchItems[/* 5 */ Analysis_Option].keyword);
-        fprintf(filep, "%s=1\n", Mega2BatchItems[/* 7 */ Chromosome_Single].keyword);
-        fprintf(filep, "%s=1\n", Mega2BatchItems[/* 12 */ Trait_Single].keyword);
+        fprintf(filep, "%s=pedfile.dat\n", Mega2BatchItems[/* 0 */ Input_Pedigree_File].keyword.c_str());
+        fprintf(filep, "%s=%s\n", Mega2BatchItems[/* 1 */ Input_Locus_File].keyword.c_str(), file_names[6]);
+        fprintf(filep, "%s=%s\n", Mega2BatchItems[/* 2 */ Input_Map_File].keyword.c_str(), file_names[7]);
+        fprintf(filep, "%s=2\n", Mega2BatchItems[/* 4 */ Input_Untyped_Ped_Option].keyword.c_str());
+        fprintf(filep, "%s=23\n", Mega2BatchItems[/* 5 */ Analysis_Option].keyword.c_str());
+        fprintf(filep, "%s=1\n", Mega2BatchItems[/* 7 */ Chromosome_Single].keyword.c_str());
+        fprintf(filep, "%s=1\n", Mega2BatchItems[/* 12 */ Trait_Single].keyword.c_str());
         if (LTop->Locus[*trp].Type == QUANT) {
-            fprintf(filep, "%s=%7.4f\n", Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].keyword, MissingQuant);
+            fprintf(filep, "%s=%7.4f\n", Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].keyword.c_str(), MissingQuant);
         }
         fclose(filep);
         if (nloop == 1) {

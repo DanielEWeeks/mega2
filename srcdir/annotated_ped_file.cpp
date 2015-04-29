@@ -83,6 +83,9 @@
 #include "write_files_ext.h"
 #include "plink_ext.h"
 
+#include "str_utils.hh"
+#include "read_impute.hh"
+
 /*
      error_messages_ext.h:  errorf mssgf my_calloc my_malloc warnf
               fcmap_ext.h:  fcmap
@@ -101,7 +104,6 @@
               utils_ext.h:  EXIT columncount log_line
         write_files_ext.h:  write_locus_stats write_ped_stats
 */
-
 
 col_hdr_type    ReservedColnames[NUM_PEDCOL_NAMES];
 
@@ -1620,7 +1622,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 
     if (xcf) {
 //      if (! getenv("_")) { asm("int $3"); }
-        string alternative_key = string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
+        std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
 
         Tod vcfpe(" VCFtools_process_entries(persons, num_ped_records, ...)");
         VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop, alternative_key, "chr");
@@ -3014,7 +3016,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     if (missing_columns || duplicate_mrk) {
         EXIT(INPUT_DATA_ERROR);
     } else if (bad_chromo || mrk_missing_from_map || mrk_missing_from_names) {
-        if (InputMode == INTERACTIVE_INPUTMODE || Mega2BatchItems[/* 28 */ Default_Ignore_Nonfatal].item_read != 1) {
+        if (InputMode == INTERACTIVE_INPUTMODE || Mega2BatchItems[/* 28 */ Default_Ignore_Nonfatal].items_read == 0) {
             printf("Do you wish to continue with Mega2? (y/n) > ");
             fflush(stdin); fcmap(stdin, "%s", yesorno); newline;
         } else {
@@ -3047,7 +3049,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
 
 static ext_linkage_locus_top *read_annotated_map_file(const char *map_file,
                                                       linkage_locus_top *LTop,
-                                                      vector<m2_map> additional_maps,
+                                                      std::vector<m2_map> additional_maps,
                                                       annotated_file_desc *file_desc)
 {
     list *userdef_colnames = new_list();
@@ -4125,7 +4127,16 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     int  xcf = Input_Format == in_format_binary_VCF ||
                Input_Format == in_format_compressed_VCF ||
                Input_Format == in_format_VCF;
-    
+
+    if (Input_Format == in_format_imputed) {
+        warnf("processing imputed files");
+        asm("int $3");
+        Str t = "";
+        ReadImputed imputed(bed_file, t, ped_file);
+        imputed.read_imputed_file();
+        if (imputed.read_info) imputed.read_info_file();
+        imputed.read_sample_file();
+    }
     if (PLINK.plink || xcf) {
         char **phe_names = NULL;
         int *phe_types   = NULL;
@@ -4138,7 +4149,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             tot_cols++;
         }
         if (xcf) {
-            string alternative_key = string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
+            std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
 
             // This is a physical map that is 'attached to the side' of the VCF file...
             // It will later be coppied to EXLTop, and the map object will be deleted by C++
@@ -4265,7 +4276,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                                      plink_info);
         tod_pmf();
     } else if (xcf) {
-        vector<m2_map> additional_maps;
+        std::vector<m2_map> additional_maps;
         // Create an extra map slot in EXLTop for the map from the VCF file...
         additional_maps.push_back(vcf_map);
         EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);
@@ -4287,15 +4298,15 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
             //Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option = 0;
             base_pair_position_index = 0;
-            Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].item_read=1;
+            Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].items_read=1;
 
             //Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option = 1;
             genetic_distance_index = 1;
-            Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].item_read=1;
+            Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].items_read=1;
 
             //Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option = SEX_AVERAGED_GDMT;
             genetic_distance_sex_type_map = SEX_AVERAGED_GDMT;
-            Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].item_read=1;
+            Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].items_read=1;
         } else {
             // 'read_common_map_file()' will only initialize map positions (EXLTop .pos*)
             // if it finds an entry in the Mega2 map file. Because the VCF map file may contain a super set
@@ -4316,14 +4327,14 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
                 // Since there was no genetic map in the Mega2 Map File, we added one at the end...
                 genetic_distance_index = EXLTop->MapCnt - 1;
-                Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].item_read=1;
+                Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].items_read=1;
 
                 genetic_distance_sex_type_map = SEX_AVERAGED_GDMT;
-                Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].item_read=1;
+                Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].items_read=1;
             }
         }
     } else {
-        vector<m2_map> additional_maps;
+        std::vector<m2_map> additional_maps;
         // only mega2 is left (and linkage ;-) No additional maps...
         EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);
         if (EXLTop == (ext_linkage_locus_top *)NULL) {

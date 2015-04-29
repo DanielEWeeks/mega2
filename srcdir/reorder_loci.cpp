@@ -463,7 +463,7 @@ void get_trait_list(linkage_locus_top *LocusTop, const int check_traits_combine)
         // NOTE: This is a different issue from the 'trait number N is out of the bounds' error
         // message that is generated elsewhere in this code.
         if (check_traits_combine &&
-            Mega2BatchItems[/* 15 */ Traits_Combine].item_read == 1 &&
+            Mega2BatchItems[/* 15 */ Traits_Combine].items_read &&
             is_int_in_string(Mega2BatchItems[/* 15 */ Traits_Combine].value.name, numt+1) == 0) {
             errorf("The batch file item 'Traits_Combine' must contain an item numbered N+1");
             errorvf("where N is the number of traits (here N+1=%d). For additional information\n", numt+1);
@@ -644,7 +644,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
             EXIT(EARLY_TERMINATION);
         }
         /* Mega2BatchItems[/ * 15 * / Traits_Combine] is 'Traits_Combine'; Mega2BatchItems[/ * 12 * / Trait_Single] is 'Trait_Single' */
-        if (Mega2BatchItems[/* 15 */ Traits_Combine].item_read || Mega2BatchItems[/* 12 */ Trait_Single].item_read) {
+        if (Mega2BatchItems[/* 15 */ Traits_Combine].items_read || Mega2BatchItems[/* 12 */ Trait_Single].items_read) {
             batchREORDER = 1; /* non-zero is true */
             /*  user-specified marker order on current chromosome */
             ReOrderLociByPositionNumber(Top, -1, &num_loci, &(selected_loci), *analysis, 1, 0);
@@ -674,7 +674,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
                 else
                     loc_type = 0;
                 /* Batch Item 11 is 'Loci_Selected'; Batch Item 14 is 'Traits_Loop_over' */
-                if (Mega2BatchItems[/* 11 */ Loci_Selected].item_read || Mega2BatchItems[/* 14 */ Traits_Loop_Over].item_read) {
+                if (Mega2BatchItems[/* 11 */ Loci_Selected].items_read || Mega2BatchItems[/* 14 */ Traits_Loop_Over].items_read) {
                     /* keep selected trait loci */
                     ReOrderLociByPositionNumber(Top, 0, &num_loci, &selected_loci, *analysis, 1, 0);
                 } else {
@@ -723,7 +723,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
                 map_num = 0;
             }
 
-            if (Mega2BatchItems[/* 7 */ Chromosome_Single].item_read) {
+            if (Mega2BatchItems[/* 7 */ Chromosome_Single].items_read) {
                 /* single chromosome option */
                 /* Find out if chromosome is valid only if
                    there is at least one chromosome*/
@@ -748,7 +748,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
 
                 mssgvf("Selected chromosome %d\n", *numchr);
 
-                if (Mega2BatchItems[/* 11 */ Loci_Selected].item_read) {
+                if (Mega2BatchItems[/* 11 */ Loci_Selected].items_read) {
                     /*  user-specified marker order  on current chromosome */
                     ReOrderLociByPositionNumber(Top, *numchr, &num_loci,
                                                 &(selected_loci), *analysis, 1, map_num);
@@ -759,7 +759,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
                     ReOrderLociByChromosome(Top, numchr, 1);
                     ManualReorder = 0;
                 }
-            } else if (Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].item_read) {
+            } else if (Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].items_read) {
                 char prchr[4];
                 /* Multiple chromosomes */
                 option = 3;
@@ -782,8 +782,8 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
                 /* Both Chromosomes_single and Chromosomes_Multiple_Num
                    are missing */
                 errorvf("Both %s and %s are missing from batch file.\n",
-			Mega2BatchItems[/* 7 */ Chromosome_Single].keyword,
-			Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].keyword
+			C(Mega2BatchItems[/* 7 */ Chromosome_Single].keyword),
+			C(Mega2BatchItems[/* 8 */ Chromosomes_Multiple_Num].keyword)
 			);
                 EXIT(BATCH_FILE_ITEM_ERROR);
             }
@@ -1738,7 +1738,7 @@ static void invalid_value_in_list(int batch_item, char *list_item)
 
 {
     errorvf("Invalid value-list item %s for keyword %s.\n",
-            list_item, Mega2BatchItems[batch_item].keyword);
+            list_item, C(Mega2BatchItems[batch_item].keyword));
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
@@ -1844,15 +1844,15 @@ static int       ReOrderLociByPositionNumber(linkage_ped_top *Top,
 
     if (batchREORDER) {
         if (numchr == -1) {
-            if (Mega2BatchItems[/* 15 */ Traits_Combine].item_read) {
+            if (Mega2BatchItems[/* 15 */ Traits_Combine].items_read) {
                 strcpy(entrydummy, Mega2BatchItems[/* 15 */ Traits_Combine].value.name);
-            } else if (Mega2BatchItems[/* 12 */ Trait_Single].item_read) {
+            } else if (Mega2BatchItems[/* 12 */ Trait_Single].items_read) {
                 sprintf(entrydummy, "%d", Mega2BatchItems[/* 12 */ Trait_Single].value.option);
             }
         } else {
-            if (Mega2BatchItems[/* 11 */ Loci_Selected].item_read) {
+            if (Mega2BatchItems[/* 11 */ Loci_Selected].items_read) {
                 strcpy(entrydummy, Mega2BatchItems[/* 11 */ Loci_Selected].value.name);
-            } else if (Mega2BatchItems[/* 14 */ Traits_Loop_Over].item_read) {
+            } else if (Mega2BatchItems[/* 14 */ Traits_Loop_Over].items_read) {
                 strcpy(entrydummy, Mega2BatchItems[/* 14 */ Traits_Loop_Over].value.name);
            }
         }
@@ -4254,7 +4254,7 @@ int x_linked_check(int chromocnt, int *chromosomes, analysis_type analysis)
         sex_linked = 0;
     }
 
-    /*   if (Mega2BatchItems[/ * 30 * / Xlinked_Analysis_Mode].item_read == 1) { */
+    /*   if (Mega2BatchItems[/ * 30 * / Xlinked_Analysis_Mode].items_read == 1) { */
     /*     sex_linked = Mega2BatchItems[/ * 30 * / Xlinked_Analysis_Mode].value.option;  */
 /*   } */
 /*   else { */

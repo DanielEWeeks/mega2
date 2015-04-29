@@ -200,7 +200,7 @@ void write_simulate_numbered_data(FILE *filep, int locusnm, linkage_locus_rec *l
 
 //
 // Holds a cache of the string value of numerical alleles...
-static map<int, char *> numbered_format_string_map;
+static std::map<int, char *> numbered_format_string_map;
 /**
    @brief Format the allele appropriately.
 
@@ -241,7 +241,7 @@ const char *format_allele(linkage_locus_rec *locus, const int allele)
     // At this point we look for the string representation of the numeric allele
     // in the map. If it is found, then we return it. If it is not found then
     // we add it, and then return it.
-    map<int, char *>::iterator it = numbered_format_string_map.find(allele);
+    std::map<int, char *>::iterator it = numbered_format_string_map.find(allele);
     if (it == numbered_format_string_map.end()) {
         char allele_buf[1024], *str;
         snprintf(allele_buf, 1024, "%d", allele);
@@ -586,7 +586,7 @@ void  create_linkage_files(linkage_ped_top **LPedTop, int *numchr, char *file_na
 //SL
     if (Top->LocusTop->SexLinked == 2 && glob_files == 1) {
         if (batchANALYSIS)
-            if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read)
+            if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read)
                 errorvf("You may not analyze autosomal chromosomes and sex chromosomes in the same file.\nPlease fix this in the batch file (Loop_Over_Chromosomes) and try again.\n");
             else
                 errorvf("You may not analyze autosomal chromosomes and sex chromosomes in the same file.\nPlease fix this in the batch file (Chromosomes_Multiple) and try again.\n");

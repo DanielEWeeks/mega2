@@ -240,7 +240,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             // The user can specify an integer (quantitative phenotype) designating a user-defined
             // population from which the individual was obtained.
             PopDataPheno_i = -1;
-            if (Mega2BatchItems[Structure$PopDataPheno].item_read) {
+            if (Mega2BatchItems[Structure$PopDataPheno].items_read) {
                 char *PopDataPheno = Mega2BatchItems[Structure$PopDataPheno].value.name;
                 for (i=0; i<_LTop->LocusCnt; i++) {
                     if (_LTop->Locus[i].Type == QUANT && strcasecmp(PopDataPheno, _LTop->Locus[i].Name) == 0) {
@@ -618,7 +618,7 @@ void CLASS_STRUCTURE::create_output_file(linkage_ped_top *LPedTreeTop,
         // NOTE that for interactive input, reorder_loci.cpp:ReOrderLoci() will ask the user
         // if they want to write chromosomes to one file or one file for each cromosome IF the user selects
         // multiple chromosomes in the preceeding menu. The answer will be stored in "Loop_Over_Chromosomes".
-        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read)
+        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read)
             combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
     }
 

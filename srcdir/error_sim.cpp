@@ -839,7 +839,7 @@ static void error_sim_menu(linkage_ped_top *Top,
     /*  printf("%d batch error\n", batchERROR); */
     if (batchERROR) {
         /* first read the error model option */
-        if (Mega2BatchItems[/* 22 */ Error_Model].item_read == 1) {
+        if (Mega2BatchItems[/* 22 */ Error_Model].items_read) {
             switch ((int)Mega2BatchItems[/* 22 */ Error_Model].value.copt) {
             case 'U':
                 model_opt = 1;
@@ -859,7 +859,7 @@ static void error_sim_menu(linkage_ped_top *Top,
             }
         }
 
-        if (Mega2BatchItems[/* 23 */ Error_Probabilities].item_read == 1) {
+        if (Mega2BatchItems[/* 23 */ Error_Probabilities].items_read) {
             switch(model_opt) {
             case 1:
                 UniformErrProb = Mega2BatchItems[/* 23 */ Error_Probabilities].value.mult_fvalues[0];
@@ -891,7 +891,7 @@ static void error_sim_menu(linkage_ped_top *Top,
         loc_select = CALLOC((size_t) num_select, int);
         loc_select_i = CALLOC((size_t) num_select, int);
 
-        if (Mega2BatchItems[/* 19 */ Error_Loci].item_read == 1) {
+        if (Mega2BatchItems[/* 19 */ Error_Loci].items_read) {
             /* Selections to apply error model to */
             locus_opt = 2;
             for(loc=0; loc < num_select; loc++) {
@@ -899,7 +899,7 @@ static void error_sim_menu(linkage_ped_top *Top,
                     loc_select[loc] = Mega2BatchItems[/* 19 */ Error_Loci].value.mult_opts[loc];
                 loc_select_i[loc]--;
             }
-        } else if (Mega2BatchItems[/* 20 */ Error_Except_Loci].item_read == 1) {
+        } else if (Mega2BatchItems[/* 20 */ Error_Except_Loci].items_read) {
             /* selections to except from errors */
             locus_opt = 3;
             for(loc=0; loc < num_select; loc++) {

@@ -695,7 +695,7 @@ static void write_LOKI_control(char *file_names[], int numchr,
                         // which is called by 'write_premakeped.cpp:save_premakeped_peds()' which is called by
                         // 'create_LOKI_files()'. The batch item 'Value_Missing_Quant_On_Output' is used by
                         //'write_quantitative_data()' when the quant == MissingQuant.
-                        if (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read) {
+                        if (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read) {
                             fprintf(fp, "MISSING \"%s\", %s\n",
                                     Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
                                     LTop->Locus[*trp].Name);
@@ -720,7 +720,7 @@ static void write_LOKI_control(char *file_names[], int numchr,
                         case QUANT:
                             // Only write the MISSING command if one or more QTLs are missing (e.g., .item.read true).
                             // Even so, we can't be sure that it is this one that is missing.
-                            if (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].item_read) {
+                            if (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read) {
                                 fprintf(fp, "MISSING \"%s\", %s\n",
                                         Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
                                         LTop->Locus[global_trait_entries[locus]].Name);

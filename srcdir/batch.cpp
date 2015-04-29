@@ -897,16 +897,17 @@ void BatchItemDirectory::valueCheck() {
 #endif /* DISABLE_FILE_CHECKS */
 }
 
+extern int NUM_KEYS;
 void BatchFile::CopyToMega2BatchItems() {
     int i;
     for (i=0; i<NUM_KEYS; i++) {
-        char *keyword = Mega2BatchItems[i].keyword;
+        const char *keyword = Mega2BatchItems[i].keyword.c_str();
         int value_type = Mega2BatchItems[i].value_type;
         BatchItem& bi = BF()->getBatchItem(keyword);
         if (!bi.itemRead()) continue;
         // Do not process deprecated items...
         if (dynamic_cast<BatchItemDeprecated *>(&BF()->getBatchItem(keyword)) != NULL) continue;
-        Mega2BatchItems[i].item_read=1;
+        Mega2BatchItems[i].items_read=1;
         switch (value_type) {
             case INT:
                 Mega2BatchItems[i].value.option = dynamic_cast<BatchItemInt&>(bi).getValue();

@@ -1300,7 +1300,7 @@ void CLASS_BEAGLE::get_file_names(char *file_names[], char *prefix,
         // This is the batch file item that controls whether you wish to comnine the
         // chromosomes in the same file or not. If true (y), each chromosome gets it's own file.
         // This is a derective from the user which will override the default...
-        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].item_read &&
+        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read &&
             tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) != 'y')
             warnvf("For %s analysis, batch file item 'Loop_Over_Chromosomes=y' is assumed.\n",
 		 analysis->_name);

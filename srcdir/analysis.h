@@ -357,7 +357,7 @@ public:
     enum change  {Change=0,  Fixed=1, Varies=2, NoQnt=3};
 
 public:
-    string           Description;
+    std::string       Description;
     CLASS_ANALYSIS   *analysis;
 
     const char      *quant_str;

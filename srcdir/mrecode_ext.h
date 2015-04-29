@@ -80,7 +80,7 @@ extern linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_n
 #include "vcftools/mega2_vcftools_interface.h"
 
 extern void read_m2_map_as_names_file(m2_map map, linkage_locus_top **LTop, const int cols, char **phe_names, int *phe_types);
-extern vector<string> read_vcf_names(const string names_file);
+extern std::vector<std::string> read_vcf_names(const std::string names_file);
 
 extern void recode_liability_class(marker_type *marker_list, linkage_locus_top *LTop, int mlocus);
 

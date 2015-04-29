@@ -498,8 +498,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 	// via the invalid-genotypes menu (which is skipped). If set to yes the genotypes will be reset
 	// to unknowns, and if set to no invalid genotypes will not be reset.
         if (InputMode != INTERACTIVE_INPUTMODE &&
-            Mega2BatchItems[/* 26 */ Default_Reset_Invalid].item_read == 1
-            ) {
+            Mega2BatchItems[/* 26 */ Default_Reset_Invalid].items_read) {
             if (Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'n' ||
                 Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'N')
                 hmend = imend = aexceed = 0;
@@ -614,7 +613,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
 
     // There are three cases in which genotypes are set to unknown...
-    if (Mega2BatchItems[/* 26 */ Default_Reset_Invalid].item_read != 1 &&
+    if (Mega2BatchItems[/* 26 */ Default_Reset_Invalid].items_read == 0 &&
         (hmend != 0 || imend != 0 || aexceed != 0)) {
         
         // It is possible to have reached the above menu from batch or interactive mode.
@@ -793,7 +792,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     if (PedStat.genotype_invalid || PedStat.halftyped || PedStat.exceed_allcnt) {
         log_line(mssgf);
-        if (InputMode != INTERACTIVE_INPUTMODE && Mega2BatchItems[/* 26 */ Default_Reset_Invalid].item_read) {
+        if (InputMode != INTERACTIVE_INPUTMODE && Mega2BatchItems[/* 26 */ Default_Reset_Invalid].items_read) {
             mssgf(
                 "DEFAULT HANDLING MODE FOR INVALID GENOTYPES SPECIFIED IN BATCH FILE:");
             int copt = Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt;

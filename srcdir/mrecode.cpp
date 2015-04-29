@@ -2842,7 +2842,7 @@ void read_m2_map_as_names_file(m2_map map,
     // fill both in here as well as give a tally of the markers...
     for (map_i = 0; map_i < map.size(); map_i++) {
       m2_map_entry map_entry = map.get_entry(map_i);
-      string marker_name = map_entry.get_marker_name();
+      std::string marker_name = map_entry.get_marker_name();
       size_t marker_name_size = marker_name.size() + 1;
 
       i++;

@@ -32,10 +32,7 @@
 #define USE_PROTOS prototypes
 #define ANSI ansi
 
-#include <string>
-#include <vector>
-#include <map>
-using namespace std;
+#include "types.hh"
 
 #ifdef _WIN
 #include <io.h>
