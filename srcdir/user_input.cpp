@@ -755,23 +755,15 @@ void menu1(file_format *infl_type,
     int            plink_args_i = 14, plink_phe_i = 15, plink_bed_i = 16;
     int            compress_i = 17, file_format_i = 18, vcf_args_i = 19;
     int            vcf_mak_i = 20, site_vcf_i = 21, site_bcf_i = 22, site_vcf_gz_i = 23, _aux_i = 0;
-#ifdef DEFPHE
-    int            in_dir_i = 24, pmap_i = 25, trait_name_i = 26, trait_value_i = 27;
-    int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
-#else
     int            in_dir_i = 24, pmap_i = 25;
-    int            idx, choiceA[26]; /* idx should be 1+ largest <>_i value (above)*/
+    int	           imputed_i = 28, imputed_threshold_i = 29;
+    int            idx, choiceA[30]; /* idx should be 1+ largest <>_i value (above)*/
 
-#endif
     int            plinkf = 0, xcf = 0;
 
     char           PLINKArgs[FILENAME_LENGTH] = "";
     char           VCFArgs[FILENAME_LENGTH] = "";
     char           VCFMarkerAlternativeKey[FILENAME_LENGTH] = "";
-#ifdef DEFPHE
-    char           trait_name[FILENAME_LENGTH] = "";
-    double         trait_value = -9;
-#endif
     int            reset = 1, reset_extension = 1;
 
     /* specifying chromosome or extension overrides previous specifications
@@ -826,10 +818,6 @@ void menu1(file_format *infl_type,
             reset = 0;
             plinkf = 0;
             xcf = 0;
-#ifdef DEFPHE
-            trait_name[0] = 0;
-            trait_value = -9;
-#endif
             if (Input_Format == in_format_traditional || Input_Format == in_format_mega2) {
                 strcpy(extension_name, "01");
 
@@ -1019,17 +1007,6 @@ void menu1(file_format *infl_type,
         }
 */
 
-#ifdef DEFPHE
-//      if ((plink || xcf) && (access(*pedfl_name, R_OK) == 0))
-        if ((xcf) && (access(*pedfl_name, R_OK) == 0))
-        {
-            printf("%2d) %-*s%s\n", idx, line_len, "Name for trait in pedigree file", *trait_name != 0 ? trait_name : "default");
-            choiceA[idx++] = trait_name_i;
-
-            printf("%2d) %-*s%f\n", idx, line_len, "Missing trait value", trait_value == -9 ? -9 : trait_value);
-            choiceA[idx++] = trait_value_i;
-        }
-#endif
         _thresh_i = (access(*freqfl_name, R_OK) == 0) ?  thresh_i : 0;
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
                               err_i, untyp_i, _thresh_i, compress_i,
@@ -1073,20 +1050,6 @@ void menu1(file_format *infl_type,
                 }
             }
             if (plinkf) {
-#ifdef DEFPHE
-                int recalc = 0;
-                if (*(PLINK.trait) == 0 && *trait_name != 0) {
-                    strcpy(PLINK.trait, trait_name);
-                    recalc = 1;
-                }
-                if (PLINK.missing_pheno == 0 && trait_value != -9) {
-                    PLINK.missing_pheno = 1;
-                    PLINK.pheno_value  = trait_value;
-                    recalc = 1;
-                }
-                if (recalc)
-                    PLINK_str(PLINKArgs, sizeof (PLINKArgs));
-#endif
                 if (*PLINKArgs == 0) {
                     printf("ERROR: You did not specify any PLINK parameters.\n");
                     exit_loop=0;
@@ -1131,14 +1094,6 @@ void menu1(file_format *infl_type,
                     Mega2BatchItems[VCF_Args].item_read = 1;
                 }
                 free(VCFArgs_w_file);
-#ifdef DEFPHE
-                // Allow the user to describe the phenotype and a missing value when
-                // processing a VCF file...
-                if (*trait_name != 0)
-                    sprintf(PLINKArgs, "--trait %s ", trait_name);
-                if (trait_value != -9)
-                    sprintf(PLINKArgs, "--missing-phenotype %f", trait_value);
-#endif
             }
             if (PLINK.plink && PLINK.no_pheno == 0 && PLINK.trait[0] == 0) {
                 printf("ERROR: You did not specify the pedigree file trait name.\n");
@@ -1202,26 +1157,6 @@ void menu1(file_format *infl_type,
         } else if (choice_ == ped_i) {
             fln_get(pedo, "pedigree");
 
-#ifdef DEFPHE
-        } else if (choice_ == trait_name_i) {
-            asm("int $3");
-            draw_line();
-            printf("Please enter the name for trait of the pedigree file > ");
-            fcmap(stdin, "%s", trait_name); newline;
-
-        } else if (choice_ == trait_value_i) {
-            asm("int $3");
-            draw_line();
-            int ok = 0;
-            double val;
-            while (ok != 1) {
-                printf("Please enter value representing missing trait > ");
-                ok = fscanf(stdin, "%lf", &val);
-                newline;
-                if (ok == 1) trait_value = val;
-                if (feof(stdin)) break;
-            }
-#endif
         } else if (choice_ == map_i) {
             fln_get(mapo, "map");
 
