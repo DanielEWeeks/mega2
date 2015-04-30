@@ -208,9 +208,9 @@ static keyw_t keywords[] = {
     {"Value_Missing_Affect_On_Input",         LINE,      "0"},
     {"Value_Missing_Affect_On_Output",        LINE,      "0"},
     {"Output_File_Stem",                      STRING,     ""},
-    {"Value_Imputed_Threshold",               FLOAT,   "0.0"},
+    {"Value_Imputed_Threshold",               FLOAT,   "0.3"},
     {"Value_Imputed_Chromosome",              STRING,     ""},
-    {"Input_Imputed_Info",                    STRING,     ""},
+    {"Input_Imputed_Info_File",               STRING,     ""},
 };
 
 int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);
@@ -642,7 +642,10 @@ static void check_dependencies(analysis_type *analysis)
     batch_item_type& bi50 = Mega2BatchItems[Loop_Over_Chromosomes];
     if (bi50.items_read) {
         if (!(*analysis)->Loop_Over_Chromosomes_implemented()) {
-            warnvf("The batch file item 'Loop_Over_Chromosomes' is not implemented for analysis option '%s'.\n", bi50.value.name);
+//            warnvf("The batch file item 'Loop_Over_Chromosomes' is not implemented for analysis option '%s/%s'.\n",
+//                   (*analysis)->_name, (*analysis)->_subname);
+            warnvf("The batch file item 'Loop_Over_Chromosomes' is not implemented for analysis option '%s.\n",
+                   (*analysis)->_name);
         }
     }
 

@@ -110,7 +110,7 @@ const char *INPUT_FORMAT_STR[] = {
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
-double Imputed_Threshold = 0.90;
+double Imputed_Threshold = 0.30;
 
 // see R_output.h & R_output.c write_plink_map_file...
 int genetic_distance_index;
@@ -976,7 +976,8 @@ void menu1(file_format *infl_type,
         }
         choiceA[idx++] = ext_i;
         if (Input_Format == in_format_imputed) {
-            printf("%2d) %-*s%.4f\n", idx, line_len, "Enter imputation threshold:", Imputed_Threshold);
+            printf("%2d) %-*s%.4f\n", idx, line_len, "Enter imputation threshold:", 
+                   Mega2BatchItemGet("Value_Imputed_Threshold").value.fvalue);
             choiceA[idx++] = imputed_threshold_i;
         }
 	// BUG? _aux_i is only initialized in certain cases...
@@ -1174,13 +1175,17 @@ void menu1(file_format *infl_type,
             while (1) {
                 printf("Please enter threshold for acceptable imputed value ");
                 fcmap(stdin, "%g", &ansd); newline;
-                if (ansd <= 0.5 || ansd > 1.0) {
-                    printf("threshold must be between 0.5 and 1.0\n");
+                if (ansd < 0.0 || ansd > 1.0) {
+                    printf("threshold must be between 0.0 and 1.0\n");
                 } else break;
             }
-            Mega2BatchItems[/* 61 */ Value_Imputed_Threshold].items_read = 1;
-            Mega2BatchItems[/* 61 */ Value_Imputed_Threshold].value.fvalue = ansd;
-            batchf(/* 61 */ Value_Imputed_Threshold);
+            Mega2BatchItemGet("Value_Imputed_Threshold").items_read = 1;
+            Mega2BatchItemGet("Value_Imputed_Threshold").value.fvalue = ansd;
+            batchf("Value_Imputed_Threshold");
+/*
+    {"Value_Imputed_Chromosome",              STRING,     ""},
+    {"Input_Imputed_Info_File",               STRING,     ""},
+ */
         } else if (choice_ == loc_i) {
             fln_get(loco, "locus");
 
