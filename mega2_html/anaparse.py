@@ -10,7 +10,7 @@ ANALYSIS = "wik"
 TEMPLATE = "template.html"
 TEMPLAT2 = "template_mega2.html"
 #URME     = "file:///Users/rbaron/mega2/bb/mega2_html"
-URME     = "http://watson.hgen.pitt.edu/docs/mega2_html"
+URME     = "https://watson.hgen.pitt.edu/docs/mega2_html"
 
 HEAD = re.compile("""\|\s*(.*?)<ref""")
 HED  = re.compile("""\|\s*(.*?)\s*\|\|""")
@@ -261,6 +261,7 @@ def main():
     TabFile.head()
 
 #   show_input()
+#   Create frame_inp_<INPUT>.html file
     for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF'):
         inp = inp.replace(' ', '_').lower()
         T2.map('**path**', URME)
@@ -269,6 +270,7 @@ def main():
         T2.write(file_name)
 
     for analy in analysis:
+#   Create frame_ext_<ANALYSIS>.html file
         an  = analy.split()[0]
         anr = an.replace('/', '').lower()
 
@@ -277,6 +279,7 @@ def main():
         file_name = "conversions/frame_ext_{0}.html".format(anr)
         T2.write(file_name)
 
+#   Create <INPUT>_<ANALYSIS>.html file
         ahref = Citation('/', '')
 
 #       ahref.mega2('<a href="{0}#ext:{1}"> Mega2 Analysis documentation: {2}</a>',
