@@ -31,6 +31,8 @@
  *  read lines reseting stringstream/vector each line
  */
 
+#include <stdlib.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -54,29 +56,31 @@ void pr_str(const string& x) {
     cout << x << " ";
 }
 
-void ReadImputed::read_imputed_file () {
+void ReadImputed::read_imputed_file ()
+{
 
     ifstream ifs;
     ifstream infs;
+    int dbg = 0;
 
-    asm("int $3");
+//  asm("int $3");
     ifs.open(impute_file);
     if (! ifs.is_open() ) {
-        errorvf("Can not open \"%s\" file\n", impute_file);
+        errorvf("read_imputed_file: Can not open \"%s\" file\n", impute_file);
         EXIT(1);
     }
 
     if (!info_file.empty()) {
         infs.open(info_file.c_str());
         if (! infs.is_open() ) {
-            warnvf("Info file explicitly specified but can not be opened: \"%s\"\n", C(info_file));
+            warnvf("read_imputed_file: Info file explicitly specified but can not be opened: \"%s\"\n", C(info_file));
             EXIT(1);
         }
     } else {
         info_file = string(impute_file) + "_info";
         infs.open(info_file.c_str());
         if (! infs.is_open() ) {
-            warnvf("Implicitly specified Info file can not be opened: \"%s\"\n", C(info_file));
+            warnvf("read_imputed_file: Implicitly guessed Info file can not be opened: \"%s\"\n", C(info_file));
             read_info = false;
         } else {
             infs.close();
@@ -111,7 +115,7 @@ void ReadImputed::read_imputed_file () {
             name = rsid;  // it seems to be this way
         } else if (hmm == "---") {
             fields.clear();
-            split(fields, rsid, ":");
+            split(fields, rsid, ":", 3);
 
             if (dbg) {
                 cout << rsid << " ";
@@ -122,10 +126,10 @@ void ReadImputed::read_imputed_file () {
                     chrm = fields[0];
                     name = "chr" + fields[0] + "_" + fields[1];
                 } else if (fields[0].compare(0, 2, "rs") == 0) {
-                    chrm  =  "20";
+                    chrm  =  default_chrm;
                     name = fields[0];
                 } else {
-                    warnvf("bad line(%d): %s %s %s\n", 
+                    warnvf("impute file: bad line(%d) rs_id field first item: %s %s %s\n", 
                            C(idx), C(hmm), C(rsid), C(pos));
                     continue;
                 }
@@ -135,15 +139,21 @@ void ReadImputed::read_imputed_file () {
                     cout << fields[2] << " ";
                     cout << fields[3] << " ";
                 }
-                if ((fields[1] != pos) ||
-                    (fields[2] != A)   ||
-                    (fields[3] != B)) {
-                    warnvf("bad line(%d): %s %s %s %s %s\n",
+                if (fields[1] != pos) {
+                    warnvf("impute2 file: bad line(%d) rs_id field pos: %s %s %s %s %s\n",
+                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
+                    }
+                if (fields[2] != A) {
+                    warnvf("impute2 file: bad line(%d) rs_id field A: %s %s %s %s %s\n",
+                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
+                    }
+                if (fields[3] != B) {
+                    warnvf("impute2 file: bad line(%d) rs_id field B: %s %s %s %s %s\n",
                            C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
                     }
             }
         } else {
-            warnvf("bad line(%d): %s %s %s %s %s\n",
+            warnvf("impute file: bad line(%d) first field not --- or chromosome: %s %s %s %s %s\n",
                    C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
         }
         if (dbg) {
@@ -156,25 +166,54 @@ void ReadImputed::read_imputed_file () {
     }
 }
 
+Str ReadImputed::info_file_hdr = "snp_id rs_id position a0 a1 exp_freq_a1 info certainty type";
+
 void ReadImputed::read_info_file () {
     ifstream ifs;
-    asm("int $3");
+    int dbg = 0;
+
     ifs.open(info_file.c_str());
     if (! ifs.is_open() ) {
-        errorvf("Can not open \"%s\" file\n", C(info_file));
+        errorvf("read_info_file: Can not open \"%s\" file\n", C(info_file));
+        EXIT(1);
+    }
+
+    Str line;
+    getline(ifs, line);
+    if (line.compare(0, info_file_hdr.size(), info_file_hdr) != 0) {
+        errorvf("Bad header for \"%s\" file.\n", C(info_file));
+        errorvf(" expecting: %s\n", C(info_file_hdr));
+        errorvf(" found: %s\n", C(line));
         EXIT(1);
     }
 
     Vecs fields;
-    Str  name;
-    Str  chrm;
-    Str line;
-    while (! ifs.eof() ) {
+    int  line_n = 1;
+    Vecmarkerpp mp;
+
+    for (mp = markers.cbegin(); ! ifs.eof(); mp++) {
         getline(ifs, line);
-        cout << line << endl;
+        if (ifs.fail()) break;
+        if (dbg) {
+            cout << line_n << ": " << line << endl;
+        }
+        line_n++;
+        fields.clear();
+        split(fields, line);
+        if (fields[2] != (*mp)->pos) {
+            errorvf("Files \"%s\" and \"%s\" do not list markers in the identical order starting at line %d: %s.\n", 
+                    impute_file, C(info_file), line_n, C(line));
+                EXIT(1);
+        }
+        (*mp)->info = atof(fields[6].c_str());
+        (*mp)->certainty = atof(fields[7].c_str());
+    }
+    if (mp != markers.cend() || line_n != markers.size() + 1 /*hdr*/) {
+        errorvf("Files \"%s\" and \"%s\" are different lengths: %d vs %d\n",
+                impute_file, C(info_file), markers.size(), line_n);
+        EXIT(1);
     }
     ifs.close();
-    asm("int $3");
 }
 
 void ReadImputed::read_imputed_file_genotype (const char *imp) {
@@ -192,7 +231,7 @@ void ReadImputed::read_imputed_file_genotype (const char *imp) {
     ifs.open(imp);
     if (! ifs.is_open() ) {
         cout << "Can not open file: " << "ps.20.impute" << endl;
-        errorvf("Can not open \"%s\" file\n", imp);
+        errorvf("read_imputed_genotype_file: Can not open \"%s\" file\n", imp);
         EXIT(1);
     }
     Token token(3);
@@ -283,6 +322,40 @@ void ReadImputed::read_imputed_file_genotype (const char *imp) {
     }
 }
 
+Str ReadImputed::sample_file_hdr = "ID_1 ID_2 missing";
+
 void ReadImputed::read_sample_file () {
-    asm("int $3");
+    ifstream ifs;
+    int dbg = 0;
+
+    ifs.open(sample_file.c_str());
+    if (! ifs.is_open() ) {
+        errorvf("read_sample_file: Can not open \"%s\" file\n", C(sample_file));
+        EXIT(1);
+    }
+
+    Str line;
+    getline(ifs, line);
+    if (line.compare(0, sample_file_hdr.size(), sample_file_hdr) != 0) {
+        errorvf("Bad header for \"%s\" file.\n", C(sample_file));
+        errorvf(" expecting: %s\n", C(sample_file_hdr));
+        errorvf(" found: %s\n", C(line));
+        EXIT(1);
+    }
+
+    Vecs fields;
+    int  line_n = 1;
+    Vecmarkerpp mp;
+
+    for (mp = markers.cbegin(); ! ifs.eof(); mp++) {
+        getline(ifs, line);
+        if (ifs.fail()) break;
+        if (dbg) {
+            cout << line_n << ": " << line << endl;
+        }
+        line_n++;
+        fields.clear();
+        split(fields, line);
+        
+    }
 }

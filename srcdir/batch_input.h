@@ -158,6 +158,12 @@ typedef struct keyw {
 // It is defined in batch_input.cpp or by the new object system for
 // backward compatability.
 extern batch_item_type *Mega2BatchItems;
+extern batch_item_type *Mega2BatchItemGet(int i);
+extern batch_item_type *Mega2BatchItemGet(const std::string& key);
+
+extern void Mega2BatchItemSet(char *value, batch_item_type *bi);
+extern void Mega2BatchItemSet(char *value, int i);
+extern void Mega2BatchItemSet(char *value, const std::string& key);
 
 
 #define ITEM_READ(n)     (Mega2BatchItems[n].items_read >= 1)

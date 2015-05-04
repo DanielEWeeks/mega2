@@ -45,6 +45,7 @@
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
 #include "genetic_utils_ext.h"
+#include "reorder_loci_ext.h"
 #include "grow_string_ext.h"
 #include "output_file_names_ext.h"
 #include "plink_ext.h"
@@ -110,7 +111,7 @@ const char *INPUT_FORMAT_STR[] = {
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
-double Imputed_Threshold = 0.30;
+double Imputed_Info_Metric_Threshold = 0.30;
 
 // see R_output.h & R_output.c write_plink_map_file...
 int genetic_distance_index;
@@ -323,24 +324,32 @@ static void thresh_string(double val, char *str)
 
 }
 
-static void missing_optional_keyword(int batch_item, const char *message)
+static void missing_optional_keyword(batch_item_type *bi, const char *message)
 {
 #ifndef HIDESTATUS
-    mssgvf("Keyword %s not in batch file, %s.\n",
-           C(Mega2BatchItems[batch_item].keyword), message);
+    mssgvf("Keyword %s not in batch file, %s.\n", C(bi->keyword), message);
 #endif
 }
+static void missing_optional_keyword(int batch_item, const char *message)
+{
+    missing_optional_keyword(&Mega2BatchItems[batch_item], message);
+}
 
-static void missing_mandatory_keyword(int batch_item)
+static void missing_mandatory_keyword(batch_item_type *bi)
 {
     errorvf("Required keyword %s missing from batch file.\n",
-            C(Mega2BatchItems[batch_item].keyword));
+            C(bi->keyword));
     EXIT(BATCH_FILE_ITEM_ERROR);
+}
+static void missing_mandatory_keyword(int batch_item)
+{
+    missing_mandatory_keyword(&Mega2BatchItems[batch_item]);
 }
 
 typedef struct fln {
     const char *title;
     int batch;
+    Str item;
     const char *type;
     const char *typefx;
     const char *stat;
@@ -361,8 +370,10 @@ fln_t freqO = {"Frequency file:",  Input_Frequency_File},  *freqo = &freqO;
 fln_t penO  = {"Penetrance file:", Input_Penetrance_File}, *peno  = &penO;
 fln_t auxO  = {"Aux file:",        Input_Aux_File},        *auxo  = &auxO;
 fln_t pheO  = {"Phenotype file:",  Input_Phenotype_File},  *pheo  = &pheO;
+fln_t infO  = {"Imputed Info file:", -1, "Input_Imputed_Info_File"};
+fln_t *info  = &infO;
 
-fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, 0};
+fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, info, 0};
 
 static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *flnfx)
 {
@@ -534,8 +545,13 @@ static void fln_get(fln_t *fln, const char *title) {
 
 static void fln_batchf(fln_t *fln) {
     if (*fln->name != 0) {
-        strcpy(Mega2BatchItems[/* ? */ fln->batch].value.name, fln->name);
-        batchf(fln->batch);
+	if (fln->batch == -1) {
+            strcpy(Mega2BatchItemGet(fln->item)->value.name, fln->name);
+            batchf(fln->item);
+        } else {
+	    strcpy(Mega2BatchItems[/* ? */ fln->batch].value.name, fln->name);
+	    batchf(fln->batch);
+	}
     }
 }
 
@@ -549,16 +565,22 @@ static void menu1_batch_set_files(file_format *infl_type,
 {
     int i;
 
+    batch_item_type *bi;
     fln_t **fln = fln_array;
     while (*fln) {
         i = (*fln)->batch;
-        if (Mega2BatchItems[i].items_read) {
-            if (access(Mega2BatchItems[i].value.name, F_OK) == 0) {
-                strcpy((*fln)->name, Mega2BatchItems[i].value.name);
+        if (i == -1) {
+            bi = Mega2BatchItemGet((*fln)->item);
+        } else {
+            bi = Mega2BatchItemGet(i);
+        }
+        if (bi->items_read) {
+            if (access(bi->value.name, F_OK) == 0) {
+                strcpy((*fln)->name, bi->value.name);
             } else {
                 errorvf("Could not find file or path %s named by keyword %s.\n",
-                        Mega2BatchItems[i].value.name,
-                        C(Mega2BatchItems[i].keyword));
+                        bi->value.name,
+                        C(bi->keyword));
                 EXIT(FILE_NOT_FOUND);
             }
         } else {
@@ -759,8 +781,9 @@ void menu1(file_format *infl_type,
     int            compress_i = 17, file_format_i = 18, vcf_args_i = 19;
     int            vcf_mak_i = 20, site_vcf_i = 21, site_bcf_i = 22, site_vcf_gz_i = 23, _aux_i = 0;
     int            in_dir_i = 24, pmap_i = 25;
-    int	           imputed_i = 28, imputed_threshold_i = 29;
-    int            idx, choiceA[30]; /* idx should be 1+ largest <>_i value (above)*/
+    int	           imputed_i = 28, imputed_info_metric_threshold_i = 29;
+    int            imputed_chromosome_i = 30, inf_i = 31;
+    int            idx, choiceA[32]; /* idx should be 1+ largest <>_i value (above)*/
 
     int            plinkf = 0, xcf = 0;
 
@@ -768,6 +791,9 @@ void menu1(file_format *infl_type,
     char           VCFArgs[FILENAME_LENGTH] = "";
     char           VCFMarkerAlternativeKey[FILENAME_LENGTH] = "";
     int            reset = 1, reset_extension = 1;
+
+    char           *infofl_array = NULL;
+    char          **infofl_name = &infofl_array;
 
     /* specifying chromosome or extension overrides previous specifications
        unless user specified each file separately */
@@ -789,6 +815,7 @@ void menu1(file_format *infl_type,
     fln_alloc(penfl_name,   peno);
     fln_alloc(auxfl_name,   auxo);
     fln_alloc(phefl_name,   pheo);
+    fln_alloc(infofl_name,  info);
 
     if (batchINPUTFILES) {
 
@@ -920,6 +947,7 @@ void menu1(file_format *infl_type,
                 fln_init(auxo, "IMPUTE2", "impute", "[required]", "impute");
                 auxo->title = "IMPUTE2 file:";
                 _aux_i = imputed_i;
+                fln_init(info, "IMPUTE2", "impute_info", "[optional]", "impute_info");
                 fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
 
@@ -975,16 +1003,29 @@ void menu1(file_format *infl_type,
             fln_stem = 0;
         }
         choiceA[idx++] = ext_i;
+
         if (Input_Format == in_format_imputed) {
-            printf("%2d) %-*s%.4f\n", idx, line_len, "Enter imputation threshold:", 
-                   Mega2BatchItemGet("Value_Imputed_Threshold").value.fvalue);
-            choiceA[idx++] = imputed_threshold_i;
+            printf("%2d) %-*s%.4f\n", idx, line_len, "Enter imputation info metric threshold:", 
+                   Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue);
+            choiceA[idx++] = imputed_info_metric_threshold_i;
+
+            printf("%2d) %-*s%s\n", idx, line_len, "Enter imputation chromosome [required]:",
+                   Mega2BatchItemGet("Value_Imputed_Chromosome")->items_read ? 
+                   Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name : "--");
+            choiceA[idx++] = imputed_chromosome_i;
         }
+
+        choiceA[idx] = fln_print(auxo, idx, _aux_i);
+        if (choiceA[idx]) idx++;
+
+        if (Input_Format == in_format_imputed) {
+            choiceA[idx] = fln_print(info, idx, inf_i);
+            if (choiceA[idx]) idx++;
+	}
+
 	// BUG? _aux_i is only initialized in certain cases...
         // No. auxo is off iff _aux_i is not initialized and fln_print just returns 0 
         //  w/o doing anything
-        choiceA[idx] = fln_print(auxo, idx, _aux_i);
-        if (choiceA[idx]) idx++;
 
         choiceA[idx] = fln_print(loco, idx, loc_i);
         if (choiceA[idx]) idx++;
@@ -1170,7 +1211,7 @@ void menu1(file_format *infl_type,
             fcmap(stdin, "%s", extension_name); newline;
             reset_extension = 1;
 
-        } else if (choice_ == imputed_threshold_i) {
+        } else if (choice_ == imputed_info_metric_threshold_i) {
             double ansd;
             while (1) {
                 printf("Please enter threshold for acceptable imputed value ");
@@ -1179,13 +1220,29 @@ void menu1(file_format *infl_type,
                     printf("threshold must be between 0.0 and 1.0\n");
                 } else break;
             }
-            Mega2BatchItemGet("Value_Imputed_Threshold").items_read = 1;
-            Mega2BatchItemGet("Value_Imputed_Threshold").value.fvalue = ansd;
-            batchf("Value_Imputed_Threshold");
+            batch_item_type *bip = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold");
+            bip->items_read = 1;
+            bip->value.fvalue = ansd;
+
+        } else if (choice_ == imputed_chromosome_i) {
+            char select[100];
+            int chrm;
+            while (1) {
+                printf("Please specify a chromosome for unspecified markers: ");
+                fcmap(stdin, "%s", select); newline;
+                if ((chrm = STR_CHR(select)) == -1) {
+                    printf("%s is not a valid chromosome. Valid chromosomes are numbers 1-26, X, Y, XY, or MT\n", select);
+                } else break;
+            }
+            batch_item_type *bip = Mega2BatchItemGet("Value_Imputed_Chromosome");
+            bip->items_read = 1;
+            strcpy(bip->value.name, select);
 /*
-    {"Value_Imputed_Chromosome",              STRING,     ""},
     {"Input_Imputed_Info_File",               STRING,     ""},
  */
+        } else if (choice_ == inf_i) {
+            fln_get(info, "imputed info");
+
         } else if (choice_ == loc_i) {
             fln_get(loco, "locus");
 
@@ -1380,6 +1437,15 @@ void menu1(file_format *infl_type,
         if (strlen(VCFMarkerAlternativeKey) > 0) {
             strcpy(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name, VCFMarkerAlternativeKey);
             if (xcf) batchf(VCF_Marker_Alternative_INFO_Key);
+        }
+
+        if (Input_Format == in_format_imputed) {
+            Cstr Values[] = {"Value_Imputed_Info_Metric_Threshold", "Value_Imputed_Chromosome" };
+            for(int i = 0; i < 2; i++) {
+                batch_item_type *bip = Mega2BatchItemGet(Values[i]);
+                if (bip->items_read) 
+                    batchf(bip);
+            }
         }
 
         menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);

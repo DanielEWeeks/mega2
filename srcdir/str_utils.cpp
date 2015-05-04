@@ -200,10 +200,15 @@ void TokenSstream::set(Cstr& line) {
  * \brief split line into fields using sep
  */
 
-void split(Vecs &fields, Cstr& line, Cstr& sep, int dbg) {
-    int of, fo = 0;
+void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
+    size_t  fo = 0;
     bool mo = true;
-    of = line.find_first_not_of(sep, fo);
+    size_t  of = line.find_first_not_of(sep, fo);
+    if (of == -1) {
+        fields.push_back(line);
+        return;
+    }
+    int  i  = 1;
     while (mo) {
         fo = line.find_first_of(sep, of);
 //      if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
@@ -217,6 +222,10 @@ void split(Vecs &fields, Cstr& line, Cstr& sep, int dbg) {
 //          if (dbg) cout << line.substr(of, fo-of) << endl;
             fields.push_back(line.substr(of, fo-of));
             of = line.find_first_not_of(sep, fo);
+            if (cnt && i++ >= cnt) {
+                fields.push_back(line.substr(of, line.size()-of+1));
+                return;
+            }
             if (of == -1) return;
         }
     }

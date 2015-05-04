@@ -46,7 +46,8 @@ public:
     double certainty;
 };
 
-typedef vectordb<Marker *> Vecmarkers;
+typedef vectordb<Marker *> Vecmarkerp;
+typedef vectordb<Marker *>::const_iterator Vecmarkerpp;
 
 class ReadImputed {
 public:
@@ -63,13 +64,18 @@ public:
     void read_sample_file();
 
 public:
-    Vecmarkers markers;
+    Vecmarkerp markers;
     bool       read_info;
+    Str        default_chrm;
 
 private:
     const   char *impute_file;
     Str     info_file;
     Str     sample_file;
+static
+    Str     info_file_hdr;
+static
+    Str     sample_file_hdr;
     Globals G;
 };
 

@@ -105,7 +105,7 @@ private:
 /**
  * \brief split line into fields using sep
  */
-void split(Vecs &fields, Cstr& line, Cstr& sep=" \t\n\r", int dbg=0);
+void split(Vecs &fields, Cstr& line, Cstr& sep=" \t\n\r", int cnt=0);
 
 class Globals {
 public:

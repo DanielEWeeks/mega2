@@ -329,10 +329,12 @@ static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *
     int qnum = 0;
     int num = 0;
     if (itp->it == Value_Missing_Quant_On_Input) {
-        if (Input_Format != in_format_mega2 || strcasecmp(value, "na"))
+        if ((Input_Format != in_format_mega2 && Input_Format != in_format_imputed) ||
+            strcasecmp(value, "na"))
             qnum = 1;
     } else if (itp->it == Value_Missing_Affect_On_Input) {
-        if (Input_Format != in_format_mega2 || strcasecmp(value, "na")) {
+        if ((Input_Format != in_format_mega2 && Input_Format != in_format_imputed) ||
+            strcasecmp(value, "na")) {
             if (PLINK.plink || PLINK.xcf)
                 qnum = 1;
             else
@@ -391,6 +393,7 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
 	    df = quant_in;
         } else switch (Input_Format) {
         case in_format_mega2:
+        case in_format_imputed:
             itp->set = 1;
             itp->source = 9;
             df = "NA";
@@ -425,6 +428,7 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
 	    df = affect_in;
         } else switch (Input_Format) {
         case in_format_mega2:
+        case in_format_imputed:
             itp->set = 1;
             itp->source = 9;
             df = "NA";

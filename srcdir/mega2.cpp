@@ -1044,7 +1044,7 @@ int             main(int argc, char **argv)
     } else if (Input_Format == in_format_imputed) {
         int it = Value_Imputed_Threshold;
         if (Mega2BatchItems[it].items_read)
-            Imputed_Threshold = Mega2BatchItems[it].value.fvalue;
+            Imputed_Info_Metric_Threshold = Mega2BatchItems[it].value.fvalue;
 
         mssgf("Imputed data file processing");
 

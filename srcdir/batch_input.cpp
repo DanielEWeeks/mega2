@@ -59,11 +59,8 @@
 using namespace std;
 
 #include <iostream>
-#include <sstream>
 
 #include "str_utils.hh"
-
-istringstream ss;
 
 typedef map<Cstr, batch_item_type *> Mapsb;
 typedef map<Cstr, batch_item_type *>::const_iterator Mapsbp;
@@ -196,7 +193,7 @@ static keyw_t keywords[] = {
     {"Value_Genetic_Distance_Index",          INT,      "-1"},
     {"Value_Base_Pair_Position_Index",        INT,      "-1"},
     {"Value_Genetic_Distance_SexTypeMap",     INT,      "-1"},
-    {"Value_Missing_Quant_On_Output",         LINE,    "0.0"},
+    {"Value_Missing_Quant_On_Output",         LINE,      "0"},
     {"Loop_Over_Chromosomes",                 YORN,      "n"},
     {"Structure.PopDataPheno",                STRING,     ""},
     {"Value_Marker_Compression",              INT,       "1"}, // MARKER_SCHEME_BITS
@@ -208,7 +205,7 @@ static keyw_t keywords[] = {
     {"Value_Missing_Affect_On_Input",         LINE,      "0"},
     {"Value_Missing_Affect_On_Output",        LINE,      "0"},
     {"Output_File_Stem",                      STRING,     ""},
-    {"Value_Imputed_Threshold",               FLOAT,   "0.3"},
+    {"Value_Imputed_Info_Metric_Threshold",   FLOAT,   "0.3"},
     {"Value_Imputed_Chromosome",              STRING,     ""},
     {"Input_Imputed_Info_File",               STRING,     ""},
 };
@@ -373,6 +370,7 @@ void batchfile_init_Mega2BatchItems(void)
     }
     
     // Aliases
+//err: Should this be case sensitive
     pair<Cstr,Cstr> aliases[] = {
         make_pair("Value_Missing_Quant_On_Input", "Value_Missing_Quant"),
         make_pair("VCF_Args", "VCF_ARGS"),
@@ -620,14 +618,14 @@ static void check_dependencies(analysis_type *analysis)
         switch (bi22.value.copt) {
         case 'U':
             if (bi23.items_read != 1 + 1) {
-                errorvf("Item %s has to have 1 value.\n",
-                        C(bi22.keyword));
+                errorvf("Item %s has to have 1 value.\n", C(bi22.keyword));
+		EXIT(BATCH_FILE_ITEM_ERROR);
             }
             break;
         case 'S':
             if (bi23.items_read != 5 + 1) {
-                errorvf("Item %s has to have 5 values.\n",
-                        C(bi22.keyword));
+                errorvf("Item %s has to have 5 values.\n", C(bi22.keyword));
+		EXIT(BATCH_FILE_ITEM_ERROR);
             }
             break;
         case 'M':
@@ -679,6 +677,7 @@ void Mega2BatchItemSet(char *value, batch_item_type *bi)
         sscanf(value, "%d", &(bi->value.option));
         break;
 
+//err: why not sscan %f
     case FLOAT:
         bi->value.fvalue = atof(strtok(value, " "));
         break;
@@ -797,11 +796,6 @@ void Mega2BatchItemSet(char *value, Cstr& key)
     Mega2BatchItemSet(value, bi);
 }
 
-batch_item_type& Mega2BatchItemGet(batch_item_type *bi)
-{
-    return *bi;
-}
-
 /*
 class Mega2BatchItemGetException : public std::exception {
 public:
@@ -813,24 +807,26 @@ public:
 
 static Mega2BatchItemGetException MBIGE;
 */
-batch_item_type& Mega2BatchItemGet(int i)
+batch_item_type *Mega2BatchItemGet(int i)
 {
     if (i >= NUM_KEYS) {
         warnvf("Mega2BatchItemGet: index %d too large\n:", i);
-//        throw std::runtime_error("Mega2BatchItem: index too large");
+//err: enable
+        throw std::runtime_error(Str("Mega2BatchItem: index too large"));
     }
-    return Mega2BatchItems[i];
+    return &Mega2BatchItems[i];
 }
 
-batch_item_type& Mega2BatchItemGet(Cstr& key)
+batch_item_type *Mega2BatchItemGet(Cstr& key)
 {
     Mapsbp lookup = BatchItemMap.find(key);
     if (lookup == BatchItemMap.cend()) {
-        warnvf("Mega2BatchItemGet: key %s not found %s\n:", C(key));
-//        throw std::runtime_error("Mega2BatchItem: bad key");
+        warnvf("Mega2BatchItemGet: key \"%s\" not found %s\n:", C(key));
+//err: enable
+        throw std::runtime_error(Str("Mega2BatchItem: bad key"));
     }
     batch_item_type *bi = lookup->second;
-    return *bi;
+    return bi;
 }
 
 static void set_batch_items(char *batch_file_name, analysis_type *analysis)
@@ -973,6 +969,7 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
     }
 
     // gross hack
+//err: needs better plan
     pair<Cstr,char *> hacks[] = {
 	make_pair("Value_Missing_Quant_On_Input", Str_Missing_Quant_On_Input),
 	make_pair("Value_Missing_Quant_On_Output", Str_Missing_Quant_On_Output),
@@ -1005,7 +1002,7 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
         strcpy(value, bi->value_str.c_str());
         if (debug) msgvf("key %s, val %s\n", C(keyword), value);
 
-//??
+//err: does this do anything
         if (bivalue == "" && !keyword.compare(0, 14, "value_missing_") ) {
             *value = 0;
         } else if (bivalue == "") {
@@ -1111,6 +1108,7 @@ void batchf(int item)
         break;
     case INT_LIST:
     case CHRM_LIST:
+//err: i = batch_item.items_read
         opt = batch_item.value.mult_opts;
         while (*opt != -99) {
             fprintf(batchfp, "%d ", *opt);
@@ -1118,6 +1116,7 @@ void batchf(int item)
         }
         break;
     case FLOAT_LIST:
+//err:
         fopt = batch_item.value.mult_fvalues;
         while ((int)(*fopt) != -9999) {
             fprintf(batchfp, "%g ", *fopt);
@@ -1126,6 +1125,7 @@ void batchf(int item)
         break;
 
     case NAME_LIST:
+//err:
         str = &(batch_item.value.mult_names[0]);
         while(*str  != NULL) {
             fprintf(batchfp, "%s ", *str);
@@ -1151,12 +1151,17 @@ void batchf(Cstr& keyword)
     batchf(bi->item_number);
 }
 
+void batchf(batch_item_type *bi) {
+    batchf(bi->item_number);
+}
+
 #endif /* NEW_BATCH */
 
 void Free_batch_items(void) {
     item_value_type vt;
     int i, j, num_trs;
 
+//err: use num_trs = items_read - 1
     if (ITEM_READ(Traits_Loop_Over)) {
         if (LoopOverTrait)
             num_trs = parse_string(Mega2BatchItems[Traits_Loop_Over].value.name,

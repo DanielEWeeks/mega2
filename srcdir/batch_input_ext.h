@@ -37,17 +37,10 @@ extern void batchfile_process(char *batch_file_name, analysis_type *analysis);
 extern void check_batch_items(void);
 
 
-extern void Mega2BatchItemSet(char *value, batch_item_type *bi);
-extern void Mega2BatchItemSet(char *value, int i);
-extern void Mega2BatchItemSet(char *value, const std::string& key);
-extern batch_item_type& Mega2BatchItemGet(batch_item_type *bi);
-extern batch_item_type& Mega2BatchItemGet(int i);
-extern batch_item_type& Mega2BatchItemGet(const std::string& key);
-
-
 // Called in many places were the batch item is to be updated
 extern void batchf(int batch_item);
 extern void batchf(const std::string& keyword);
+extern void batchf(batch_item_type *bi);
 
 extern void batch_file_doc(FILE *batchfp);
 extern void create_batchfile(void);

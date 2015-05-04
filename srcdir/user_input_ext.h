@@ -47,7 +47,7 @@ INPUT_FORMAT_t;
 extern INPUT_FORMAT_t Input_Format;
 extern const char *INPUT_FORMAT_STR[];
 
-extern double Imputed_Threshold;
+extern double Imputed_Info_Metric_Threshold;
 
 extern int ReOrderMenu(int num_chromo, int *chromsomes, int *selection);
 
