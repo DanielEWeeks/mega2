@@ -110,9 +110,9 @@ void split(Vecs &fields, Cstr& line, Cstr& sep=" \t\n\r", int cnt=0);
 class Globals {
 public:
     Globals() {
-        chrm_set.insert(chrmSet, chrmSet+32);
-        chrm_renum.insert(chrmRenum, chrmRenum+32);
-        chrm_int.insert(chrmInt, chrmInt+32);
+        chrm_set.insert(chrmSet, chrmSet+31);
+        chrm_renum.insert(chrmRenum, chrmRenum+31);
+        chrm_int.insert(chrmInt, chrmInt+31);
     }
 
     Sets chrm_set;

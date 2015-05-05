@@ -76,6 +76,7 @@ void ReadImputed::read_imputed_file ()
             warnvf("read_imputed_file: Info file explicitly specified but can not be opened: \"%s\"\n", C(info_file));
             EXIT(1);
         }
+        read_info = true;
     } else {
         info_file = string(impute_file) + "_info";
         infs.open(info_file.c_str());
@@ -94,6 +95,7 @@ void ReadImputed::read_imputed_file ()
 
     Str  name;
     Str  chrm;
+    int Display_bad_line_msg = 1, bad_line_msg = 0;
     while (! ifs.eof() ) {
 
         ifs >> hmm;
@@ -129,6 +131,7 @@ void ReadImputed::read_imputed_file ()
                     chrm  =  default_chrm;
                     name = fields[0];
                 } else {
+                    SUPPRESS_MSSG_NESTED(bad_line_msg);
                     warnvf("impute file: bad line(%d) rs_id field first item: %s %s %s\n", 
                            C(idx), C(hmm), C(rsid), C(pos));
                     continue;
@@ -140,19 +143,23 @@ void ReadImputed::read_imputed_file ()
                     cout << fields[3] << " ";
                 }
                 if (fields[1] != pos) {
+                    SUPPRESS_MSSG_NESTED(bad_line_msg);
                     warnvf("impute2 file: bad line(%d) rs_id field pos: %s %s %s %s %s\n",
                            C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
                     }
                 if (fields[2] != A) {
+                    SUPPRESS_MSSG_NESTED(bad_line_msg);
                     warnvf("impute2 file: bad line(%d) rs_id field A: %s %s %s %s %s\n",
                            C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
                     }
                 if (fields[3] != B) {
+                    SUPPRESS_MSSG_NESTED(bad_line_msg);
                     warnvf("impute2 file: bad line(%d) rs_id field B: %s %s %s %s %s\n",
                            C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
                     }
             }
         } else {
+            SUPPRESS_MSSG_NESTED(bad_line_msg);
             warnvf("impute file: bad line(%d) first field not --- or chromosome: %s %s %s %s %s\n",
                    C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
         }
@@ -164,6 +171,8 @@ void ReadImputed::read_imputed_file ()
         }
         markers.push_back(new Marker(name, chrm, pos, A, B, read_info));
     }
+    SUPPRESS_MSSG_NESTED_FINI(bad_line_msg);
+
 }
 
 Str ReadImputed::info_file_hdr = "snp_id rs_id position a0 a1 exp_freq_a1 info certainty type";
@@ -187,10 +196,13 @@ void ReadImputed::read_info_file () {
         EXIT(1);
     }
 
-    Vecs fields;
-    int  line_n = 1;
+    Vecs        fields;
     Vecmarkerpp mp;
+    int    line_n = 1;
+    int    skip_count = 0;
+    double info;
 
+    int Display_info_threshold_msg = 1, info_threshold_msg = 0;
     for (mp = markers.cbegin(); ! ifs.eof(); mp++) {
         getline(ifs, line);
         if (ifs.fail()) break;
@@ -205,15 +217,32 @@ void ReadImputed::read_info_file () {
                     impute_file, C(info_file), line_n, C(line));
                 EXIT(1);
         }
-        (*mp)->info = atof(fields[6].c_str());
+        info = atof(fields[6].c_str());
+        (*mp)->info = info;
         (*mp)->certainty = atof(fields[7].c_str());
+
+        if (info < info_threshold) {
+            skip_count++;
+            (*mp)->skip = true;
+
+            SUPPRESS_MSSG_NESTED(info_threshold_msg);
+            warnvf("Marker: %s %s %s %s %s info (%.4f) < threshold (%.4f)\n", 
+                   C(fields[0]), C(fields[1]), C(fields[2]), C(fields[3]), C(fields[4]),
+                   info, info_threshold);
+        }
+            
     }
+    SUPPRESS_MSSG_NESTED_FINI(info_threshold_msg);
+
     if (mp != markers.cend() || line_n != markers.size() + 1 /*hdr*/) {
         errorvf("Files \"%s\" and \"%s\" are different lengths: %d vs %d\n",
                 impute_file, C(info_file), markers.size(), line_n);
         EXIT(1);
     }
     ifs.close();
+
+    warnvf("%d of %d markers that are below the info_metric_threshold will be skipped.\n", 
+           skip_count, markers.size());
 }
 
 void ReadImputed::read_imputed_file_genotype (const char *imp) {
@@ -328,13 +357,19 @@ void ReadImputed::read_sample_file () {
     ifstream ifs;
     int dbg = 0;
 
+    asm("int $3");
     ifs.open(sample_file.c_str());
     if (! ifs.is_open() ) {
         errorvf("read_sample_file: Can not open \"%s\" file\n", C(sample_file));
         EXIT(1);
     }
 
-    Str line;
+    Str  line;
+    int  line_n = 2;
+    VecsDB fields;
+    Vecs mappedfields;
+
+//line 1
     getline(ifs, line);
     if (line.compare(0, sample_file_hdr.size(), sample_file_hdr) != 0) {
         errorvf("Bad header for \"%s\" file.\n", C(sample_file));
@@ -342,12 +377,59 @@ void ReadImputed::read_sample_file () {
         errorvf(" found: %s\n", C(line));
         EXIT(1);
     }
+    split(sample_file_hdr1a, line);
+    split(fields, line);
 
-    Vecs fields;
-    int  line_n = 1;
-    Vecmarkerpp mp;
+    Mapsi  col2idx;
+    Mapsip col2idxp;
+    Mapii  idx2fixed;
+    Mapiip idx2fixedp;
+    int    i;
+    int    ret;
+    i = 0;
+    for (VecspDB fp = fields.cbegin(); fp != fields.cend(); i++, fp++) {
+        col2idx[*fp] = i;
+    }
 
-    for (mp = markers.cbegin(); ! ifs.eof(); mp++) {
+    Cstr special[] = {"ID_1", "ID_2", "father", "mother", "sex"};
+    for (i = 0; i < 5; i++) {
+        if (map_get(col2idx, special[i], ret))
+            idx2fixed[ret] = i;
+    }
+
+//line 2
+    sample_file_hdr1b.clear();
+    Cstr fill1[] = {"", "", "0", "0", "0"};
+    sample_file_hdr1b.insert(sample_file_hdr1b.end(), fill1, fill1+5);
+    i = 0;
+    for (VecspDB fp = sample_file_hdr1a.cbegin(); fp != sample_file_hdr1a.cend(); i++, fp++) {
+        if (map_get(idx2fixed, i, ret))
+            sample_file_hdr1b[ret] = *fp;
+        else
+            sample_file_hdr1b.push_back(*fp);
+    }
+
+    getline(ifs, line);
+    if (ifs.fail()) {
+        errorvf("Bad second header line for \"%s\" file.\n", C(sample_file));
+        EXIT(1);
+    }
+    if (dbg) {
+        cout << line_n << ": " << line << endl;
+    }
+    split(sample_file_hdr2a, line);
+    Cstr fill2[] = {"", "", "", "", ""};
+    sample_file_hdr2b.insert(sample_file_hdr2b.end(), fill2, fill2+5);
+    i = 0;
+    for (VecspDB fp = sample_file_hdr2a.cbegin(); fp != sample_file_hdr2a.cend(); i++, fp++) {
+        if (map_get(idx2fixed, i, ret))
+            sample_file_hdr2b[ret] = *fp;
+        else
+            sample_file_hdr2b.push_back(*fp);
+    }
+
+//line rest
+    for (; ! ifs.eof(); ) {
         getline(ifs, line);
         if (ifs.fail()) break;
         if (dbg) {
@@ -357,5 +439,28 @@ void ReadImputed::read_sample_file () {
         fields.clear();
         split(fields, line);
         
+        mappedfields.clear();
+        Cstr fill[] = {"", "", "0", "0", "0"};
+        mappedfields.insert(mappedfields.end(), fill, fill+5);
+        i = 0;
+        int ret = 0;
+        for (VecspDB fp = fields.cbegin(); fp != fields.cend(); i++, fp++) {
+            if (map_get(idx2fixed, i, ret)) {
+                mappedfields[ret] = *fp;
+            } else {
+                mappedfields.push_back(*fp);
+            }
+/*
+            idx2fixedp = idx2fixed.find(i);
+            if (idx2fixedp == idx2fixed.cend()) { //nf
+                mappedfields.push_back(*fp);
+            } else { //f
+                mappedfields[idx2fixedp->second] = *fp;
+            }
+*/
+        }
+        people.push_back(mappedfields);
     }
+    asm("int $3");
 }
+

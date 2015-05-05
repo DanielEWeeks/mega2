@@ -355,15 +355,15 @@ void batchfile_init_Mega2BatchItems(void)
 
     // We won't list these options to BatchItemList since they need special treatment
     int err = 0;
+    batch_item_type *bi;
     Cstr clear[] = {"Analysis_Option", "Analysis_Sub_Option", "Input_Format_Type"};
     for (i = 0; i < 3; i++) {
-        Mapsbp anal = BatchItemMap.find(clear[i]);
-        if (anal == BatchItemMap.cend()) {
+        if (map_get(BatchItemMap, clear[i], bi))
+            bi->flag = Clear;
+        else {
             errorvf("Internal Error!  %s not found %s\n:", C(clear[i]));
             err++;
         }
-        batch_item_type *bi = anal->second;
-        bi->flag = Clear;
     }
     if (err) {
         EXIT(BATCH_FILE_ITEM_ERROR);
@@ -382,13 +382,11 @@ void batchfile_init_Mega2BatchItems(void)
         make_pair("","")  //sentinel
     };
     for (i = 0; aliases[i].first != ""; i++) {
-        Mapsbp anal = BatchItemMap.find(aliases[i].first);
-        if (anal == BatchItemMap.cend()) {
+        if (map_get(BatchItemMap, aliases[i].first, bi))
+	    BatchItemMap[aliases[i].second] = bi;
+        else {
             errorvf("Internal Error!  %s not found %s\n:", C(aliases[i].first));
             err++;
-        } else {
-	    batch_item_type *bi = anal->second;
-	    BatchItemMap[aliases[i].second] = bi;
 	}
     }
 }
@@ -787,13 +785,14 @@ void Mega2BatchItemSet(char *value, int i)
 
 void Mega2BatchItemSet(char *value, Cstr& key)
 {
-    Mapsbp lookup = BatchItemMap.find(key);
-    if (lookup == BatchItemMap.cend()) {
-        warnvf("Mega2BatchItemSet: key %s not found %s\n:", C(key));
-        return;
+    batch_item_type *bi = NULL;
+    if (map_get(BatchItemMap, key, bi))
+        Mega2BatchItemSet(value, bi);
+    else {
+        warnvf("Mega2BatchItemSet: key %s not found\n:", C(key));
+        throw std::runtime_error(Str("Mega2BatchItemSet: bad key"));
     }
-    batch_item_type *bi = lookup->second;
-    Mega2BatchItemSet(value, bi);
+
 }
 
 /*
@@ -811,22 +810,20 @@ batch_item_type *Mega2BatchItemGet(int i)
 {
     if (i >= NUM_KEYS) {
         warnvf("Mega2BatchItemGet: index %d too large\n:", i);
-//err: enable
-        throw std::runtime_error(Str("Mega2BatchItem: index too large"));
+        throw std::runtime_error(Str("Mega2BatchItemGet: index too large"));
     }
     return &Mega2BatchItems[i];
 }
 
 batch_item_type *Mega2BatchItemGet(Cstr& key)
 {
-    Mapsbp lookup = BatchItemMap.find(key);
-    if (lookup == BatchItemMap.cend()) {
-        warnvf("Mega2BatchItemGet: key \"%s\" not found %s\n:", C(key));
-//err: enable
-        throw std::runtime_error(Str("Mega2BatchItem: bad key"));
+    batch_item_type *bi = NULL;
+    if (map_get(BatchItemMap, key, bi))
+        return bi;
+    else {
+        warnvf("Mega2BatchItemGet: key \"%s\" not found\n:", C(key));
+        throw std::runtime_error(Str("Mega2BatchItemGet: bad key"));
     }
-    batch_item_type *bi = lookup->second;
-    return bi;
 }
 
 static void set_batch_items(char *batch_file_name, analysis_type *analysis)
@@ -875,13 +872,7 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
         if (token.assign(lhs, rhs)) {
 //
             if (debug) warnvf("lhs: |%s| rhs: |%s|\n", C(lhs), C(rhs));
-            lookup = BatchItemMap.find(lhs);
-            if (lookup == BatchItemMap.cend()) {
-                errorvf("Unexpected batch file option: %s\n", C(lhs));
-                errtok++;
-            } else {
-                bi = lookup->second;
-
+            if (map_get(BatchItemMap, lhs, bi)) {
                 if (bi->items_read > 0) {
                     errorvf("Duplicate %s option at lines %d and %d in batch file.\n",
                             C(lhs), bi->line_number, line_n);
@@ -893,6 +884,9 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
                 if (bi->flag == Add2BatchItemList)
                     BatchItemList.push_back(bi);
                 cnt++;
+            } else {
+                errorvf("Unexpected batch file option: %s\n", C(lhs));
+                errtok++;
             }
         } else {
             errorvf("Odd format batch file line %s\n:", nextline);
@@ -904,27 +898,20 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
     int err = 0;
 
     // First Select Input_Format_Type
-    lookup = BatchItemMap.find("Input_Format_Type");
-    if (lookup == BatchItemMap.cend()) {
-        errorvf("%s option not found.\n", "Input_Format_Type");
-        err++;
-    } else {
-        bi = lookup->second;
+    if (map_get(BatchItemMap, "Input_Format_Type", bi)) {
         if (bi->items_read)
             sscanf(bi->value_str.c_str(), "%d", &(bi->value.option));
         else
             bi->value.option = 0;
         Input_Format = (INPUT_FORMAT_t)bi->value.option;
         if (debug) warnvf("Option: %s %s\n", "Input_Format_Type", bi->value_str.c_str());
+    } else {
+        errorvf("%s option not found.\n", "Input_Format_Type");
+        err++;
     }
 
     // Then Select Analysis Mode
-    lookup = BatchItemMap.find("Analysis_Option");
-    if (lookup == BatchItemMap.cend()) {
-        errorvf("%s option not found.\n", "Analysis_Option");
-        err++;
-    } else {
-        bi = lookup->second;
+    if (map_get(BatchItemMap, "Analysis_Option", bi)) {
         if (bi->items_read == 0) {
             errorvf("%s option not set %s\n:", "Analysis_Option");
             err++;
@@ -940,17 +927,15 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
             }
         }
         if (debug) warnvf("Option: %s %s\n", "Analysis_Option", bi->value_str.c_str());
+    } else {
+        errorvf("%s option not found.\n", "Analysis_Option");
+        err++;
     }
     /* Also check if this analysis has a sub-option and if sub-option was
        provided in the batch file */
 
     if ((*analysis) != NULL && (*analysis)->has_sub_options()) {
-        lookup = BatchItemMap.find("Analysis_Sub_Option");
-        if (lookup == BatchItemMap.cend()) {
-            errorvf("%s option not found.\n", "Analysis_Sub_Option");
-            err++;
-        } else {
-            bi = lookup->second;
+        if (map_get(BatchItemMap, "Analysis_Sub_Option", bi)) {
             if (bi->items_read == 0) {
                 warnvf("Trying empty sub-program name (no name specified).\n",
                        analysis_name);
@@ -965,6 +950,9 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
                 err++;
             }
             if (debug) warnvf("Option: %s %s\n", "Analysis_Sub_Option", bi->value_str.c_str());
+        } else {
+            errorvf("%s option not found.\n", "Analysis_Sub_Option");
+            err++;
         }
     }
 
@@ -977,12 +965,7 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
 	make_pair("Value_Missing_Affect_On_Output", Str_Missing_Affect_On_Output),
     };
     for (int i = 0; i < 4; i++) {
-	lookup = BatchItemMap.find(hacks[i].first);
-	if (lookup == BatchItemMap.cend()) {
-	    errorvf("%s option not found %s\n:", C(hacks[i].first));
-		err++;
-	} else {
-	    bi = lookup->second;
+        if (map_get(BatchItemMap, hacks[i].first, bi)) {
 	    if (bi->items_read > 0) {
 		strcpy(hacks[i].second, bi->value_str.c_str());
                 if (i < 2)
@@ -990,7 +973,10 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
                 else
                     bi->value_str = "0";    // reset to default value
 	    }
-	}
+	} else {
+            errorvf("%s option not found %s\n:", C(hacks[i].first));
+		err++;
+        }
     }
     if (err) EXIT(BATCH_FILE_ITEM_ERROR);
 
@@ -1142,13 +1128,13 @@ void batchf(int item)
 
 void batchf(Cstr& keyword)
 {
-    Mapsbp lookup = BatchItemMap.find(keyword);
-    if (lookup == BatchItemMap.cend()) {
+    batch_item_type *bi = NULL;
+    if (map_get(BatchItemMap, keyword, bi))
+        batchf(bi->item_number);
+    else {
         warnvf("batchf: key %s not found %s\n:", C(keyword));
         return;
     }
-    batch_item_type *bi = lookup->second;
-    batchf(bi->item_number);
 }
 
 void batchf(batch_item_type *bi) {

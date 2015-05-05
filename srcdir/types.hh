@@ -85,16 +85,30 @@ bool inline inList(Cstr& str, T& list) {
 
 ////
 
-typedef std::map<std::string, std::string>  Mapss;
-typedef std::map<std::string, int>          Mapsi;
+typedef std::map<const std::string, std::string>  Mapss;
+typedef std::map<const std::string, int>          Mapsi;
 typedef std::map<int, std::string>          Mapis;
-typedef std::map<std::string, std::string>::const_iterator  Mapssp;
-typedef std::map<std::string, int>::const_iterator          Mapsip;
-typedef std::map<int, std::string>::const_iterator          Mapisp;
+typedef std::map<int, int>                  Mapii;
+typedef std::map<const std::string, std::string>::const_iterator  Mapssp;
+typedef std::map<const std::string, int>::const_iterator          Mapsip;
+typedef std::map<int, std::string>::const_iterator                Mapisp;
+typedef std::map<int, int>::const_iterator                        Mapiip;
 
 template <typename T>
-bool inline inMap(Cstr& str, T& map) {
+bool inline inMap(typename T::key_type& str, T& map) {
     return (map.find(str) != map.cend());
+}
+
+template <typename T>
+bool map_get(T& map, typename T::key_type& lookup, typename T::mapped_type& ret) {
+    typename T::const_iterator ip;
+    ip = map.find(lookup);
+    if (ip == map.cend())
+        return false;
+    else {
+        ret = ip->second;
+        return true;
+    }
 }
 
 ////

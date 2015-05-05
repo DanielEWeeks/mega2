@@ -518,7 +518,12 @@ extern char awk_str[5];
 #define SKIP_TRII(i)                            \
     if (i == -1) continue
 #endif
+
 #ifndef SUPPRESS_MSSG
+
+extern int Display_Errors, Display_Messages;
+
+#define MAX_PED_ERRORS 9
 
 #define SUPPRESS_MSSG(displayed_errors)	if (displayed_errors == (MAX_PED_ERRORS+1)) { \
         fflush(stdout);                                                 \
@@ -535,12 +540,12 @@ extern char awk_str[5];
 #ifndef SUPPRESS_MSSG_NESTED
 #define SUPPRESS_MSSG_NESTED(errors)	if (errors++ == 0) {            \
         fflush(stdout);                                                 \
-        printf("Errors/warnings/messages (up to 10 displayed): \n");    \
+        printf("\nErrors/warnings/messages (up to 10 displayed): \n");    \
         fflush(stdout);                                                 \
         Display_Errors = Display_##errors = 1;                          \
     } else if (errors == (MAX_PED_ERRORS+2)) {                          \
         fflush(stdout);                                                 \
-        printf("Too many messages, display is temporarily suspended ..\n"); \
+        printf("Too many messages, display is temporarily suspended ..\n\n"); \
         fflush(stdout);                                                 \
         Display_Errors = Display_##errors = 0;                          \
     } else {                                                            \

@@ -69,6 +69,4 @@ typedef struct _file_info
     int line_count;
 } file_info;
 
-extern int Display_Errors, Display_Messages;
-
 #endif

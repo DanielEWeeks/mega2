@@ -32,8 +32,11 @@
 class Marker {
 public:
     Marker(Cstr name, Cstr chr, Cstr pos, Cstr A, Cstr B, bool read_info): name(name), chr(chr), pos(pos), A(A), B(B) {
-        if (! read_info) info = 1.0;
-        else info = 0.0;
+        if (! read_info)
+            info = 1.0;
+        else
+            info = 0.0;
+        skip = false;
     }
 
 public:
@@ -44,10 +47,14 @@ public:
     Str B;
     double info;
     double certainty;
+    bool skip;
 };
 
 typedef vectordb<Marker *> Vecmarkerp;
 typedef vectordb<Marker *>::const_iterator Vecmarkerpp;
+
+typedef vectordb<Vecs> Vecvecs;
+typedef vectordb<Vecs>::const_iterator Vecvecsp;
 
 class ReadImputed {
 public:
@@ -65,9 +72,10 @@ public:
 
 public:
     Vecmarkerp markers;
+    Vecvecs    people;
     bool       read_info;
     Str        default_chrm;
-
+    double     info_threshold;
 private:
     const   char *impute_file;
     Str     info_file;
@@ -76,6 +84,10 @@ static
     Str     info_file_hdr;
 static
     Str     sample_file_hdr;
+    Vecs    sample_file_hdr1a;
+    Vecs    sample_file_hdr1b;
+    Vecs    sample_file_hdr2a;
+    Vecs    sample_file_hdr2b;
     Globals G;
 };
 
