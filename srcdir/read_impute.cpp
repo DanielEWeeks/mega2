@@ -202,7 +202,7 @@ void ReadImputed::read_info_file () {
 
     Vecs        fields;
     Vecmarkerpp mp;
-    int    line_n = 1;
+    size_t line_n = 1;
     int    skip_count = 0;
     double info;
 

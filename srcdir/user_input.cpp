@@ -32,11 +32,6 @@
 #include <ctype.h>
 #include <errno.h>
 
-#ifdef _WIN
-#define R_OK 4
-#define access(str,type) _access(str,type)
-#endif
-
 #include "common.h"
 #include "typedefs.h"
 
@@ -52,6 +47,13 @@
 #include "utils_ext.h"
 #include "user_input_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
+
+#ifdef _WIN
+#define R_OK 4
+#define access(str,type) _access(str,type)
+#endif
+
+
 /*
         batch_input_ext.h:  batchf
         cw_routines_ext.h:  strsep
@@ -3317,9 +3319,8 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
         printf("Physical map selection menu:\n");
         printf("0) Done with this menu - please proceed\n");
         for (i = 0; i < bpps; i++) {
-            printf("%c%d) %s\n",
-                   ((i+1) == option) ? '*' : ' ', i+1,
-                   EXLTop->MapNames[bppi[i]]
+            printf("%c", ((i+1) == option) ? '*' : ' ');        // msvc needs these two lines
+            printf("%d) %s\n", i+1, EXLTop->MapNames[bppi[i]]   // separated
                    );
         }
         // if the analysis does not require a map, allow the user to select 'None'...

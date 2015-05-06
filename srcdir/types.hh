@@ -125,7 +125,7 @@ typedef std::pair<std::string, int>         Pairsi;
 
 inline const char * C(Cstr& str) {return str.c_str();}
 inline int C(int i) {return i;}
-inline int C(double d) {return d;}
+inline double C(double d) {return d;}
 
 
 #endif

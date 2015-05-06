@@ -294,8 +294,8 @@ void batchfile_init_Mega2BatchItems(void)
 {
     int i;
 
-    Mega2BatchItems = CALLOC((size_t)NUM_KEYS, batch_item_type);
-
+//  Mega2BatchItems = CALLOC((size_t)NUM_KEYS, batch_item_type); // Only on OSX
+    Mega2BatchItems = new batch_item_type[NUM_KEYS];
     for (i=0;  i < NUM_KEYS; i++) {
         batch_item_type *bi    = &Mega2BatchItems[i];
         item_value_type& type  = keywords[i].type;
@@ -985,7 +985,7 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
     if (err) EXIT(BATCH_FILE_ITEM_ERROR);
 
     // Finally process all the other batch arguments
-    for (Listbp BatchItemListp = BatchItemList.cbegin(); BatchItemListp != BatchItemList.cend(); BatchItemListp++) {
+    for (Listbp BatchItemListp = BatchItemList.begin(); BatchItemListp != BatchItemList.end(); BatchItemListp++) {
         batch_item_type *bi = (*BatchItemListp);
         Str& keyword = bi->keyword;
         Str& bivalue = bi->value_str;

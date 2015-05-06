@@ -61,7 +61,7 @@ bool Token::more(Str& token, int dbg) {
 //#include <iostream>
 bool Token::assign(Str& lhs, Str& rhs, int dbg) {
 
-    int mid = line.find_first_of("=", 0);
+    size_t mid = line.find_first_of("=", 0);
     if (mid == std::string::npos) {
         lhs = rhs = "";
         return false;

@@ -153,7 +153,7 @@ public:
         SNP_count += 2;
 
         if ((SNP_count & 0x7) == 0) {
-            *SNP_cp++ = SNP_data;
+            *SNP_cp++ = (unsigned char) SNP_data;
             /*   fputc(SNP_data, filep) */;
             SNP_data = SNP_count = 0;
         }
