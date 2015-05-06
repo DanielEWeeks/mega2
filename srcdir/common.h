@@ -553,6 +553,11 @@ extern int Display_Errors, Display_Messages;
     }
 #endif
 
+#ifndef SUPPRESS_MSSG_NESTED_INIT
+#define SUPPRESS_MSSG_NESTED_INIT(errors)	                        \
+    int Display_##errors = 1, errors = 0;
+#endif
+
 #ifndef SUPPRESS_MSSG_NESTED_FINI
 #define SUPPRESS_MSSG_NESTED_FINI(errors)	                        \
     {                                                                   \

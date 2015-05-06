@@ -4137,6 +4137,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         imputed.read_imputed_file();
         if (imputed.read_info) imputed.read_info_file();
         imputed.read_sample_file();
+        imputed.read_genotypes_file();
     }
     if (PLINK.plink || xcf) {
         char **phe_names = NULL;

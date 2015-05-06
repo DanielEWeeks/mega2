@@ -48,6 +48,10 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #include "str_utils.hh"
 #include "read_impute.hh"
 
+// g++ does not like these const operators on "vectordb" classes
+#define cbegin() begin()
+#define cend()   end()
+
 using namespace std;
 
 int dbg = 1;
@@ -95,7 +99,7 @@ void ReadImputed::read_imputed_file ()
 
     Str  name;
     Str  chrm;
-    int Display_bad_line_msg = 1, bad_line_msg = 0;
+    SUPPRESS_MSSG_NESTED_INIT(bad_line_msg);
     while (! ifs.eof() ) {
 
         ifs >> hmm;
@@ -132,7 +136,7 @@ void ReadImputed::read_imputed_file ()
                     name = fields[0];
                 } else {
                     SUPPRESS_MSSG_NESTED(bad_line_msg);
-                    warnvf("impute file: bad line(%d) rs_id field first item: %s %s %s\n", 
+                    warnvf("impute2 file: bad line(%d): %s %s %s\nrs_id field first item unexpected\n", 
                            C(idx), C(hmm), C(rsid), C(pos));
                     continue;
                 }
@@ -144,23 +148,23 @@ void ReadImputed::read_imputed_file ()
                 }
                 if (fields[1] != pos) {
                     SUPPRESS_MSSG_NESTED(bad_line_msg);
-                    warnvf("impute2 file: bad line(%d) rs_id field pos: %s %s %s %s %s\n",
-                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
+                    warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id pos field (%s) does not match position column (%s)\n",
+                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[1]), C(pos));
                     }
                 if (fields[2] != A) {
                     SUPPRESS_MSSG_NESTED(bad_line_msg);
-                    warnvf("impute2 file: bad line(%d) rs_id field A: %s %s %s %s %s\n",
-                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
+                    warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id A allele field (%s) does not match A column (%s)\n",
+                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[2]), C(A));
                     }
                 if (fields[3] != B) {
                     SUPPRESS_MSSG_NESTED(bad_line_msg);
-                    warnvf("impute2 file: bad line(%d) rs_id field B: %s %s %s %s %s\n",
-                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
+                    warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id B allele field (%s) does not match B column (%s)\n",
+                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[3]), C(B));
                     }
             }
         } else {
             SUPPRESS_MSSG_NESTED(bad_line_msg);
-            warnvf("impute file: bad line(%d) first field not --- or chromosome: %s %s %s %s %s\n",
+            warnvf("impute file: bad line(%d): %s %s %s %s %s\n         first field is not --- or chromosome\n",
                    C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
         }
         if (dbg) {
@@ -202,7 +206,7 @@ void ReadImputed::read_info_file () {
     int    skip_count = 0;
     double info;
 
-    int Display_info_threshold_msg = 1, info_threshold_msg = 0;
+    SUPPRESS_MSSG_NESTED_INIT(info_threshold_msg);
     for (mp = markers.cbegin(); ! ifs.eof(); mp++) {
         getline(ifs, line);
         if (ifs.fail()) break;
@@ -243,112 +247,6 @@ void ReadImputed::read_info_file () {
 
     warnvf("%d of %d markers that are below the info_metric_threshold will be skipped.\n", 
            skip_count, markers.size());
-}
-
-void ReadImputed::read_imputed_file_genotype (const char *imp) {
-
-    ifstream ifs;
-    string line;
-
-    string hmm, rsid, pos, A, B;
-    vector<double> nums;
-
-    string field;
-    int idx = 0;
-
-    asm("int $3");
-    ifs.open(imp);
-    if (! ifs.is_open() ) {
-        cout << "Can not open file: " << "ps.20.impute" << endl;
-        errorvf("read_imputed_genotype_file: Can not open \"%s\" file\n", imp);
-        EXIT(1);
-    }
-    Token token(3);
-    vector<string> triple_genotype;
-    string genotype[3];
-
-    while (! ifs.eof() ) {
-        getline(ifs, line);
-        if (ifs.eof()) break;
-        idx++;
-
-        token.set(line);
-
-        token.more(hmm);
-        token.more(rsid);
-        token.more(pos);
-        token.more(A);
-        token.more(B);
-        genotype[0] = A + A;
-        genotype[1] = A + B;
-        genotype[2] = B + B;
-
-        triple_genotype.clear();
-        token.getD(nums);
-
-        int i;
-        int sam = 1;
-        int triple = 0;
-        double maxx;
-        do {
-            sam++;
-            token.getD(nums);
-            if (nums[0] > 0.0 && nums[1] > 0.0 && nums[2] > 0.0) {
-                triple++;
-                cout << nums[0] << " " << nums[1] << " " << nums[2] << "\n";
-                if (nums[0] > nums[1]) {
-                    maxx = nums[0];
-                    i = 0;
-                } else {
-                    maxx = nums[1];
-                    i = 1;
-                }
-                if (nums[2] > maxx) {
-                    maxx = nums[2];
-                    i = 2;
-                }
-                triple_genotype.push_back(genotype[i]);
-            }
-        } while (nums.size() != 0);
-
-        if (triple) {
-            cout << idx << ": ";
-
-            cout << hmm << " ";
-
-            cout << rsid << " ";
-            vector<string> fields;
-            split(fields, rsid, ":");
-
-            if (G.chrm_set.find(fields[0]) != G.chrm_set.end())
-            {
-                fields[0] = "chr" + fields[0] + "_" + fields[1];
-            } else {
-                // pass
-            }
-            cout << fields[0] << " ";
-            cout << fields[1] << " ";
-            cout << fields[2] << " ";
-            cout << fields[3] << " ";
-
-            cout << pos << " ";
-
-            cout << A << " ";
-            cout << B << " ";
-
-            cout << nums[0] << " ";
-            cout << nums[1] << " ";
-            cout << nums[2] << " ";
-
-            for_each (triple_genotype.begin(), triple_genotype.end(), pr_str);
-
-            cout << "sample: " << sam;
-            cout << " triple: " << triple;
-
-            cout << endl;
-        }
-
-    }
 }
 
 Str ReadImputed::sample_file_hdr = "ID_1 ID_2 missing";
@@ -450,17 +348,125 @@ void ReadImputed::read_sample_file () {
             } else {
                 mappedfields.push_back(*fp);
             }
-/*
-            idx2fixedp = idx2fixed.find(i);
-            if (idx2fixedp == idx2fixed.cend()) { //nf
-                mappedfields.push_back(*fp);
-            } else { //f
-                mappedfields[idx2fixedp->second] = *fp;
-            }
-*/
         }
         people.push_back(mappedfields);
     }
-    asm("int $3");
 }
 
+void ReadImputed::read_genotypes_file () {
+
+    ifstream ifs;
+    string line;
+
+    string hmm, rsid, pos, A, B;
+    vector<double> nums;
+
+    string field;
+    int idx = 0;
+
+    asm("int $3");
+    ifs.open(impute_file);
+    if (! ifs.is_open() ) {
+        errorvf("read_imputed_genotype_file: Can not open \"%s\" file\n",
+                impute_file);
+        EXIT(1);
+    }
+    Token token(3);
+    Vecs  triple_genotype;
+    Str   genotype[3];
+    Vecmarkerpp mpp;
+    Marker     *mp;
+    SUPPRESS_MSSG_NESTED_INIT(skip_msg);
+
+    for (mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
+        getline(ifs, line);
+        if (ifs.eof()) break;
+        idx++;
+
+        token.set(line);
+
+        token.more(hmm);
+        token.more(rsid);
+        token.more(pos);
+        mp = *mpp;
+        if (pos != mp->pos) {
+            errorvf("internal error: impute_file (\"%s\") second pass does not match first pass at line %d\n",
+                    impute_file, idx);
+                EXIT(1);
+        }
+        if (mp->skip) {
+            SUPPRESS_MSSG_NESTED(skip_msg);
+            warnvf("Marker: skipped %s %s %s info (%.4f) < threshold (%.4f)\n", 
+                   C(mp->name), C(mp->chr), C(mp->pos), mp->info, info_threshold);
+        }
+        token.more(A);
+        token.more(B);
+        genotype[0] = A + A;
+        genotype[1] = A + B;
+        genotype[2] = B + B;
+
+        triple_genotype.clear();
+        token.getD(nums);
+
+        int i;
+        int sam = 1;
+        int triple = 0;
+        double maxx;
+        do {
+            sam++;
+            token.getD(nums);
+            if (nums[0] > 0.0 && nums[1] > 0.0 && nums[2] > 0.0) {
+                triple++;
+                cout << "#";
+                cout << idx << ": ";
+                cout << mp->name << " ";
+                cout << nums[0] << " " << nums[1] << " " << nums[2] << "\n";
+                if (nums[0] > nums[1]) {
+                    maxx = nums[0];
+                    i = 0;
+                } else {
+                    maxx = nums[1];
+                    i = 1;
+                }
+                if (nums[2] > maxx) {
+                    maxx = nums[2];
+                    i = 2;
+                }
+                triple_genotype.push_back(genotype[i]);
+            }
+        } while (nums.size() != 0);
+
+        if (triple) {
+            cout << "#";
+            cout << idx << ": ";
+            cout << hmm << " ";
+
+            cout << rsid << " (";
+            vector<string> fields;
+            split(fields, rsid, ":");
+
+            fields[0] = mp->name;
+            cout << fields[0] << " ";
+            cout << fields[1] << " ";
+            cout << fields[2] << " ";
+            cout << fields[3] << ") ";
+
+            cout << pos << " ";
+
+            cout << A << " ";
+            cout << B << " ";
+
+            cout << nums[0] << " ";
+            cout << nums[1] << " ";
+            cout << nums[2] << " ";
+
+            for_each (triple_genotype.begin(), triple_genotype.end(), pr_str);
+
+            cout << "sample: " << sam;
+            cout << " triple: " << triple;
+
+            cout << endl;
+        }
+    }
+    SUPPRESS_MSSG_NESTED_FINI(skip_msg);
+}

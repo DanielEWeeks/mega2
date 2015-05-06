@@ -35,6 +35,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <limits>
 
 typedef std::string                         Str;
 typedef const std::string                   Cstr;
@@ -45,7 +46,8 @@ typedef std::set<std::string>               Sets;
 
 template <typename T>
 bool inline inSet(Cstr& str, T& set) {
-    return (set.find(str) != set.cend());
+//  return (set.find(str) != set.cend()); // gcc has issues
+    return (set.find(str) != set.end());
 }
 
 ////
@@ -80,7 +82,8 @@ typedef std::list<std::string>::const_iterator              Listsp;
 
 template <typename T>
 bool inline inList(Cstr& str, T& list) {
-    return (list.find(str) != list.cend());
+//  return (list.find(str) != list.cend()); // gcc has issues
+    return (list.find(str) != list.end());
 }
 
 ////
@@ -96,14 +99,16 @@ typedef std::map<int, int>::const_iterator                        Mapiip;
 
 template <typename T>
 bool inline inMap(typename T::key_type& str, T& map) {
-    return (map.find(str) != map.cend());
+//  return (map.find(str) != map.cend()); // gcc has issues
+    return (map.find(str) != map.end());
 }
 
 template <typename T>
 bool map_get(T& map, typename T::key_type& lookup, typename T::mapped_type& ret) {
     typename T::const_iterator ip;
     ip = map.find(lookup);
-    if (ip == map.cend())
+//  if (ip == map.cend()) // gcc has issues
+    if (ip == map.end())
         return false;
     else {
         ret = ip->second;

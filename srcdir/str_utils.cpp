@@ -26,6 +26,7 @@
 ===========================================================================
 */
 
+#include <stdlib.h>
 #include "common.h"
 #include "error_messages_ext.h"
 
@@ -43,7 +44,7 @@ using namespace std;
 bool Token::more(Str& token, int dbg) {
     fo = line.find_first_of(sep, of);
 //  if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
-    if (fo == -1) {
+    if (fo == std::string::npos) {
         fo = line.size();
 //      if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
 //      if (dbg)cout << line.substr(of, fo-of) << endl;
@@ -61,7 +62,7 @@ bool Token::more(Str& token, int dbg) {
 bool Token::assign(Str& lhs, Str& rhs, int dbg) {
 
     int mid = line.find_first_of("=", 0);
-    if (mid == -1) {
+    if (mid == std::string::npos) {
         lhs = rhs = "";
         return false;
     }
@@ -69,7 +70,7 @@ bool Token::assign(Str& lhs, Str& rhs, int dbg) {
     fo = line.find_last_not_of(sep, mid);
  
 //  if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
-    if (fo == -1) {
+    if (fo == std::string::npos) {
         fo = mid;
 //      if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
     }
@@ -78,13 +79,13 @@ bool Token::assign(Str& lhs, Str& rhs, int dbg) {
 
     mid += 2;
     of = line.find_first_not_of(sep, mid);
-    if (of == -1)
+    if (of == std::string::npos)
         of = mid;
     fo = line.find_last_not_of(sep);
  
 //  if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
     if (fo < mid) {
-        fo = npos;
+        fo = line.size();
 //      if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
     }
 //  if (dbg) cout << line.substr(of, fo-of+1) << endl;
@@ -120,16 +121,16 @@ void Token::getD(Vecd& vec, int cnt) {
 
 void Token::set(Cstr& line) {
     this->line = line;
-    npos = this->line.size();
 /*
+    npos = this->line.size();
     if (this->line[npos] == '\n') {
         npos--;
         this->line.resize(npos);
     }
 */
     of = line.find_first_not_of(sep);
-    if (of == -1) of = 0;
-    fo = -1;
+    if (of == std::string::npos) of = 0;
+    fo = std::string::npos;
     mo = true;
 }
 
@@ -204,7 +205,7 @@ void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
     size_t  fo = 0;
     bool mo = true;
     size_t  of = line.find_first_not_of(sep, fo);
-    if (of == -1) {
+    if (of == std::string::npos) {
         fields.push_back(line);
         return;
     }
@@ -212,7 +213,7 @@ void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
     while (mo) {
         fo = line.find_first_of(sep, of);
 //      if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
-        if (fo == -1) {
+        if (fo == std::string::npos) {
             fo = line.size();
 //          if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
 //          if (dbg)cout << line.substr(of, fo-of) << endl;
@@ -226,7 +227,7 @@ void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
                 fields.push_back(line.substr(of, line.size()-of+1));
                 return;
             }
-            if (of == -1) return;
+            if (of == std::string::npos) return;
         }
     }
 }

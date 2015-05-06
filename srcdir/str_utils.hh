@@ -57,13 +57,13 @@ public:
     void set(const char *line);
 
 private:
-    Str   sep;
-    Str   line;
-    int   npos;
-    int   _cnt;
-//  int   dbg;
-    bool  mo;
-    int   of, fo;
+    Str    sep;
+    Str    line;
+//  int    npos;
+    int    _cnt;
+//  int    dbg;
+    bool   mo;
+    size_t of, fo;
 };
 
 ////////////////////////////////////////////////////////////////

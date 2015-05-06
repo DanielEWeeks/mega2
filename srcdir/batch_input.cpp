@@ -64,8 +64,8 @@ using namespace std;
 
 typedef map<Cstr, batch_item_type *> Mapsb;
 typedef map<Cstr, batch_item_type *>::const_iterator Mapsbp;
-typedef list<batch_item_type *> Listb;
-typedef list<batch_item_type *>::const_iterator Listbp;
+typedef std::list<batch_item_type *> Listb;
+typedef std::list<batch_item_type *>::const_iterator Listbp;
 
 Mapsb BatchItemMap;
 Listb BatchItemList;
@@ -773,6 +773,16 @@ void Mega2BatchItemSet(char *value, batch_item_type *bi)
     }
 }
 
+class Mega2BatchItemException : public std::exception {
+public:
+    Str exc;
+    Mega2BatchItemException(Cstr& s): exc(s) {};
+    virtual
+//  ~Mega2BatchItemException() _NOEXCEPT throw () {};
+    ~Mega2BatchItemException() throw () {};
+    const char* what() const throw() { return exc.c_str(); };
+};
+
 void Mega2BatchItemSet(char *value, int i)
 {
     if (i >= NUM_KEYS) {
@@ -790,27 +800,19 @@ void Mega2BatchItemSet(char *value, Cstr& key)
         Mega2BatchItemSet(value, bi);
     else {
         warnvf("Mega2BatchItemSet: key %s not found\n:", C(key));
-        throw std::runtime_error(Str("Mega2BatchItemSet: bad key"));
+//      throw std::runtime_error(Str("Mega2BatchItemSet: bad key"));
+        throw Mega2BatchItemException("Mega2BatchItemSet: bad key");
     }
 
 }
 
-/*
-class Mega2BatchItemGetException : public std::exception {
-public:
-    Cstr exc;
-    Mega2BatchItemGetException(): exc("Mega2BatchItem: no match") {};
-    virtual
-    ~Mega2BatchItemGetException() _NOEXCEPT { throw; };
-};
-
-static Mega2BatchItemGetException MBIGE;
-*/
 batch_item_type *Mega2BatchItemGet(int i)
 {
     if (i >= NUM_KEYS) {
         warnvf("Mega2BatchItemGet: index %d too large\n:", i);
-        throw std::runtime_error(Str("Mega2BatchItemGet: index too large"));
+//      throw std::runtime_error(Str("Mega2BatchItemGet: index too large"));
+        throw Mega2BatchItemException("Mega2BatchItemGet: index too large");
+        return (batch_item_type *) NULL;
     }
     return &Mega2BatchItems[i];
 }
@@ -822,7 +824,9 @@ batch_item_type *Mega2BatchItemGet(Cstr& key)
         return bi;
     else {
         warnvf("Mega2BatchItemGet: key \"%s\" not found\n:", C(key));
-        throw std::runtime_error(Str("Mega2BatchItemGet: bad key"));
+//      throw std::runtime_error(Str("Mega2BatchItemGet: bad key"));
+        throw Mega2BatchItemException("Mega2BatchItemGet: bad key");
+        return (batch_item_type *) NULL;
     }
 }
 

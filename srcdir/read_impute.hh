@@ -66,9 +66,10 @@ public:
 
     void read_info_file();
 
-    void read_imputed_file_genotype(const char *imp);
-
     void read_sample_file();
+
+    void read_genotypes_file();
+
 
 public:
     Vecmarkerp markers;
