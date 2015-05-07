@@ -193,7 +193,7 @@ static keyw_t keywords[] = {
     {"Value_Genetic_Distance_Index",          INT,      "-1"},
     {"Value_Base_Pair_Position_Index",        INT,      "-1"},
     {"Value_Genetic_Distance_SexTypeMap",     INT,      "-1"},
-    {"Value_Missing_Quant_On_Output",         LINE,      "0"},
+    {"Value_Missing_Quant_On_Output",         LINE,    "0.0"},
     {"Loop_Over_Chromosomes",                 YORN,      "n"},
     {"Structure.PopDataPheno",                STRING,     ""},
     {"Value_Marker_Compression",              INT,       "1"}, // MARKER_SCHEME_BITS
@@ -335,7 +335,7 @@ void batchfile_init_Mega2BatchItems(void)
             break;
 
         case YORN:
-            bi->value.copt         = tolower(deflt[0]);
+            bi->value.copt         = (unsigned char)tolower(deflt[0]);
             break;
 
         case INT_LIST:
@@ -640,7 +640,7 @@ static void check_dependencies(analysis_type *analysis)
         if (!(*analysis)->Loop_Over_Chromosomes_implemented()) {
 //            warnvf("The batch file item 'Loop_Over_Chromosomes' is not implemented for analysis option '%s/%s'.\n",
 //                   (*analysis)->_name, (*analysis)->_subname);
-            warnvf("The batch file item 'Loop_Over_Chromosomes' is not implemented for analysis option '%s.\n",
+            warnvf("The batch file item 'Loop_Over_Chromosomes' is not implemented for analysis option '%s'.\n",
                    (*analysis)->_name);
         }
     }
@@ -1187,5 +1187,5 @@ void Free_batch_items(void) {
             free(Mega2BatchItems[i].value.mult_names);
         }
     }
-    free(Mega2BatchItems);
+    delete[] Mega2BatchItems;
 }
