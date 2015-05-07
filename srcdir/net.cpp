@@ -47,7 +47,7 @@
 #define STR_ERR() /*LOCALFREE(errstr)*/
 #define SOCK SOCKET
 #define fdopen _fdopen
-int errno;
+//int errno; // defined in stdlib.h on _WIN
 const char *errstr;
 
 #else /*  defined(_WIN) || defined(MINGW) */

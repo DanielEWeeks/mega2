@@ -364,7 +364,7 @@ static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *
         char *end;
         if (qnum)
             (void) strtod(value, &end);
-        else if (num)
+        else // if (num)
             (void) strtol(value, &end, 10);
         if (strlen(value) == 0 || strlen(end) != 0 || errno == ERANGE) {
             // Conversion of the entire string was not successful or some other error...
