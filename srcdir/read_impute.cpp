@@ -46,7 +46,7 @@
 extern void           Exit(int arg, const char *file, const int line, const char *err);
 
 #include "str_utils.hh"
-#include "read_impute.hh"
+#include "input.hh"
 
 // g++ does not like these const operators on "vectordb" classes
 #define cbegin() begin()
@@ -116,7 +116,7 @@ void ReadImputed::read_imputed_file ()
             cout << idx << ": ";
             cout << hmm << " ";
         }
-        if (inMap(hmm, G.chrm_set)) {
+        if (inMap(hmm, input->G.chrm_set)) {
             chrm = hmm;
             name = rsid;  // it seems to be this way
         } else if (hmm == "---") {
@@ -128,7 +128,7 @@ void ReadImputed::read_imputed_file ()
                 cout << "#" << fields.size() << " ";
             }
             if (fields.size() > 1) {
-                if (inMap(fields[0], G.chrm_set)) {
+                if (inMap(fields[0], input->G.chrm_set)) {
                     chrm = fields[0];
                     name = "chr" + fields[0] + "_" + fields[1];
                 } else if (fields[0].compare(0, 2, "rs") == 0) {
@@ -173,7 +173,7 @@ void ReadImputed::read_imputed_file ()
             cout << B << " ";
             cout << endl;
         }
-        markers.push_back(new Marker(name, chrm, pos, A, B, read_info));
+        markers.push_back(new ImpMarker(name, chrm, pos, A, B, read_info));
     }
     SUPPRESS_MSSG_NESTED_FINI(bad_line_msg);
 
@@ -375,7 +375,7 @@ void ReadImputed::read_genotypes_file () {
     Vecs  triple_genotype;
     Str   genotype[3];
     Vecmarkerpp mpp;
-    Marker     *mp;
+    ImpMarker   *mp;
     SUPPRESS_MSSG_NESTED_INIT(skip_msg);
 
     for (mpp = markers.cbegin(); ! ifs.eof(); mpp++) {

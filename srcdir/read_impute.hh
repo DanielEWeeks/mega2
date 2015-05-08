@@ -29,9 +29,9 @@
 #ifndef READ_IMPUTE_HH
 #define READ_IMPUTE_HH
 
-class Marker {
+class ImpMarker {
 public:
-    Marker(Cstr name, Cstr chr, Cstr pos, Cstr A, Cstr B, bool read_info): name(name), chr(chr), pos(pos), A(A), B(B) {
+    ImpMarker(Cstr name, Cstr chr, Cstr pos, Cstr A, Cstr B, bool read_info): name(name), chr(chr), pos(pos), A(A), B(B) {
         if (! read_info)
             info = 1.0;
         else
@@ -50,17 +50,23 @@ public:
     bool skip;
 };
 
-typedef vectordb<Marker *> Vecmarkerp;
-typedef vectordb<Marker *>::const_iterator Vecmarkerpp;
+typedef vectordb<ImpMarker *> Vecmarkerp;
+typedef vectordb<ImpMarker *>::const_iterator Vecmarkerpp;
 
 typedef vectordb<Vecs> Vecvecs;
 typedef vectordb<Vecs>::const_iterator Vecvecsp;
+class Input;
 
 class ReadImputed {
 public:
-    ReadImputed(const char *imp, Cstr& info, Cstr& sam) :
-        impute_file(imp), info_file(info), sample_file(sam){}
-    ~ReadImputed() { (void) markers[0]; }
+    ReadImputed() {};
+    ~ReadImputed() { (void) markers[0]; };
+
+    void files(char *imp, Cstr& info, Cstr& sam) {
+        impute_file = imp;
+        info_file   = info;
+        sample_file = sam;
+    }
 
     void read_imputed_file();
 
@@ -72,11 +78,12 @@ public:
 
 
 public:
-    Vecmarkerp markers;
-    Vecvecs    people;
-    bool       read_info;
-    Str        default_chrm;
-    double     info_threshold;
+    Vecmarkerp    markers;
+    Vecvecs       people;
+    bool          read_info;
+    Str           default_chrm;
+    double        info_threshold;
+    Input_Impute *input;
 private:
     const   char *impute_file;
     Str     info_file;
@@ -89,7 +96,6 @@ static
     Vecs    sample_file_hdr1b;
     Vecs    sample_file_hdr2a;
     Vecs    sample_file_hdr2b;
-    Globals G;
 };
 
 #endif

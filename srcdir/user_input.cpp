@@ -48,6 +48,8 @@
 #include "user_input_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
 
+#include "input.hh"
+
 #ifdef _WIN
 #define R_OK 4
 #define access(str,type) _access(str,type)
@@ -99,6 +101,7 @@ static void     untyped_ped_menu(int *opt);
 /*===========prototypes============= */
 
 INPUT_FORMAT_t Input_Format = in_format_mega2;
+Input *InputO;
 
 const char *INPUT_FORMAT_STR[] = {
      "Mega2 format with header",
@@ -355,8 +358,8 @@ typedef struct fln {
     const char *type;
     const char *typefx;
     const char *stat;
-    const char *flnfx;
-    const char *flnfy;
+    const char *sfx1;
+    const char *sfx2;
           char *name;
           char **nameref;
     int on;
@@ -377,7 +380,7 @@ fln_t *info  = &infO;
 
 fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, info, 0};
 
-static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *flnfx)
+static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *sfx1)
 {
     if (fln->on) return;
 
@@ -386,11 +389,11 @@ static void fln_init(fln_t *fln, const char *type, const char *typefx, const cha
     fln->type   = type;
     fln->typefx = typefx;
     fln->stat   = stat;
-    fln->flnfx  = flnfx;
-    fln->flnfy  = 0;
+    fln->sfx1   = sfx1;
+    fln->sfx2   = 0;
 }
 
-static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *flnfx, const char *flnfy)
+static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *sfx1, const char *sfx2)
 {
     if (fln->on) return;
 
@@ -399,8 +402,8 @@ static void fln_init(fln_t *fln, const char *type, const char *typefx, const cha
     fln->type   = type;
     fln->typefx = typefx;
     fln->stat   = stat;
-    fln->flnfx  = flnfx;
-    fln->flnfy  = flnfy;
+    fln->sfx1   = sfx1;
+    fln->sfx2   = sfx2;
 }
 
 #define MAP_REQ 1
@@ -501,20 +504,20 @@ static int fln_print(fln_t *fln, int idx, int _i) {
 
     if (fln->specified == 0) {
         if (fln_stem)
-            sprintf(fln->name, "%s.%s", extension_name, fln->flnfx);
+            sprintf(fln->name, "%s.%s", extension_name, fln->sfx1);
         else
-            sprintf(fln->name, "%s.%s", fln->flnfx, extension_name);
+            sprintf(fln->name, "%s.%s", fln->sfx1, extension_name);
 
-        if (access(fln->name, F_OK) && fln->flnfy) { // try again
+        if (access(fln->name, F_OK) && fln->sfx2) { // try again
             if (fln_stem)
-                sprintf(fln->name, "%s.%s", extension_name, fln->flnfy);
+                sprintf(fln->name, "%s.%s", extension_name, fln->sfx2);
             else
-                sprintf(fln->name, "%s.%s", fln->flnfy, extension_name);
+                sprintf(fln->name, "%s.%s", fln->sfx2, extension_name);
             if (access(fln->name, F_OK)) { // done trying
                 if (fln_stem)
-                    sprintf(fln->name, "%s.%s", extension_name, fln->flnfx);
+                    sprintf(fln->name, "%s.%s", extension_name, fln->sfx1);
                 else
-                    sprintf(fln->name, "%s.%s", fln->flnfx, extension_name);
+                    sprintf(fln->name, "%s.%s", fln->sfx1, extension_name);
             } else 
           fln->specified = 1;
         } else
@@ -820,6 +823,8 @@ void menu1(file_format *infl_type,
     fln_alloc(infofl_name,  info);
 
     if (batchINPUTFILES) {
+
+        InputO = InputCreate::createinput(Input_Format);
 
         if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
             Input_Format == in_format_VCF)
@@ -1403,6 +1408,8 @@ void menu1(file_format *infl_type,
 
         if (choice_) draw_line();
     }
+
+    InputO = InputCreate::createinput(Input_Format);
 
     if (InputMode == INTERACTIVE_INPUTMODE) {
 

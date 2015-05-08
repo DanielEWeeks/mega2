@@ -2783,7 +2783,6 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
 
     if (invalid_marker_type) {
         printf("Invalid marker types, see %s for details.\n", Mega2Err);
-
     }
 
     if (missing_columns || invalid_marker_type) {

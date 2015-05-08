@@ -4131,9 +4131,12 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     if (Input_Format == in_format_imputed) {
         warnf("processing imputed files");
         Str t = "";
-        ReadImputed imputed(bed_file, t, ped_file);
+        ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
+        imputed.input = (static_cast<Input_Impute *>(InputO));
+        imputed.files(bed_file, t, ped_file);
         imputed.default_chrm   = std::string(Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name);
         imputed.info_threshold = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue;
+        asm("int $3");
         imputed.read_imputed_file();
         if (imputed.read_info) imputed.read_info_file();
         imputed.read_sample_file();

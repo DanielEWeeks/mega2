@@ -29,23 +29,11 @@
 #ifndef USER_INPUT_EXT_H
 #define USER_INPUT_EXT_H
 
-typedef
-enum INPUT_FORMAT {
-    in_format_mega2 = 0,
-    in_format_linkage = 1,
-    in_format_extended_linkage = 2,
-    in_format_binary_PED = 3,
-    in_format_PED = 4,
-    in_format_binary_VCF = 5,
-    in_format_compressed_VCF = 6,
-    in_format_VCF = 7,
-    in_format_imputed = 8,
-    in_format_traditional = 100,
-}
-INPUT_FORMAT_t;
+#include "input.hh"
 
 extern INPUT_FORMAT_t Input_Format;
 extern const char *INPUT_FORMAT_STR[];
+extern Input *InputO;
 
 extern double Imputed_Info_Metric_Threshold;
 
