@@ -29,6 +29,8 @@
 #ifndef READ_IMPUTE_HH
 #define READ_IMPUTE_HH
 
+#include "annotated_ped_file.h"
+
 class ImpMarker {
 public:
     ImpMarker(Cstr name, Cstr chr, Cstr pos, Cstr A, Cstr B, bool read_info): name(name), chr(chr), pos(pos), A(A), B(B) {
@@ -53,13 +55,18 @@ public:
 typedef vectordb<ImpMarker *> Vecmarkerp;
 typedef vectordb<ImpMarker *>::const_iterator Vecmarkerpp;
 
-typedef vectordb<Vecs> Vecvecs;
-typedef vectordb<Vecs>::const_iterator Vecvecsp;
+typedef vectordb<VecsDB> Vecvecs;
+typedef vectordb<VecsDB>::const_iterator Vecvecsp;
+
+enum Column_Type {RESERVED, MISSING, PHENO, GENO};
+typedef vectordb<Column_Type> Vecct;
+typedef vectordb<Column_Type>::const_iterator Vecctp;
+
 class Input;
 
 class ReadImputed {
 public:
-    ReadImputed() {};
+    ReadImputed() : HDR(2) {};  // two line header
     ~ReadImputed() { (void) markers[0]; };
 
     void files(char *imp, Cstr& info, Cstr& sam) {
@@ -74,15 +81,25 @@ public:
 
     void read_sample_file();
 
-    void read_genotypes_file();
+    linkage_locus_top *build_names();
 
+    void build_map(m2_map& impute_map);
+
+    annotated_ped_rec *build_ped(linkage_locus_top *LTop, int *num_peds);
+
+    void build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
 
 public:
     Vecmarkerp    markers;
+    int           markers_all;
+    int           markers_filtered;
     Vecvecs       people;
+    int           people_all;
+    int           people_filtered;
     bool          read_info;
     Str           default_chrm;
     double        info_threshold;
+    double        probability_threshold;
     Input_Impute *input;
 private:
     const   char *impute_file;
@@ -92,10 +109,15 @@ static
     Str     info_file_hdr;
 static
     Str     sample_file_hdr;
+    int     HDR;
     Vecs    sample_file_hdr1a;
     Vecs    sample_file_hdr1b;
     Vecs    sample_file_hdr2a;
     Vecs    sample_file_hdr2b;
+
+// #if 0 in .cpp
+//    Vecct   column_type;
+//    Veci    reserved;
 };
 
 #endif

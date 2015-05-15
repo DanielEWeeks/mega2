@@ -71,6 +71,7 @@
 #include "common.h"
 #include "typedefs.h"
 
+#include "annotated_ped_file.h"
 #include "annotated_ped_file_ext.h"
 #include "batch_input_ext.h"
 #include "create_summary_ext.h"

@@ -64,6 +64,7 @@
 #include "mrecode.h"
 
 #include "annotated_ped_file.h"
+#include "annotated_ped_file_ext.h"
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
 #include "grow_string_ext.h"
@@ -1470,9 +1471,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     char **ped_names, **phe_vals = 0;
     linkage_ped_top *Top;
     annotated_ped_rec *persons;
-    marriage_graph_type *ppeds;
-    linkage_ped_tree *lpeds;
-    int Display_untyped = 0, untyped = 0, totaltyped = 0;
+    int untyped = 0, totaltyped = 0;
     int check_ungenotyped = 0;
     int xcf = Input_Format == in_format_binary_VCF ||
 	      Input_Format == in_format_compressed_VCF ||
@@ -1493,7 +1492,6 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         EXIT(MEMORY_ALLOC_ERROR);
     }
 
-
     // If we are processing a PLINK file allocate the allele chache now...
     if (PLINK.plink) {
         // Allocate an array of character pointers large enough to hold every character that we find.
@@ -1506,6 +1504,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
       }
     }
 
+    SUPPRESS_MSSG_NESTED_INIT(untyped_msg);
     p=0;
     Tod tod_cp_all_eof("read ped file");
     Tod tod_cp_eof(20);
@@ -1543,7 +1542,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
             persons[p].genocnt = crunch_Rnotype(&persons[p].marker, LTop);
             if (persons[p].genocnt == 0) {
 /*
-                SUPPRESS_MSSG_NESTED(untyped);
+                SUPPRESS_MSSG_NESTED(untyped_msg);
                 warnvf("Untyped person %4d linenum %d: person %s, fa %s, ma %s\n",
                        untyped, p+1, persons[p].ID, persons[p].Father, persons[p].Mother);
 */
@@ -1565,6 +1564,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         }
         num_err += num_pheno_errs;
     }
+    SUPPRESS_MSSG_NESTED_FINI(untyped_msg);
     tod_cp_all_eof();
     num_ped_records = p;
 #ifdef SHOWSTATUS
@@ -1639,7 +1639,39 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         plink_info->bed_filep = (FILE *)NULL;
     }
 
+    Top = mk_ped_top(persons, num_ped_records, LTop, num_peds,
+                     totaltyped, groups, num_groups, has_extra_ids,
+                     num_err, check_ungenotyped);
+
+    if (phecols > 0) free(phe_vals);
+    if (ped_names) {
+        for (c = 0; c < num_peds; c++)
+            free(ped_names[c]);
+        free(ped_names);
+    }
+    for (c = 0; c < num_ped_records; c++) {
+        /* annotated_ped_rec has linkage_pedrec_data (for ped locus data) */
+        if (persons[c].pheno != NULL) free(persons[c].pheno);
+        if (persons[c].marker != NULL) free(persons[c].marker);
+    }
+    free(persons);
+
+    return Top;
+}
+
+linkage_ped_top *mk_ped_top(annotated_ped_rec *persons, int num_ped_records, 
+                            linkage_locus_top *LTop, int num_peds, int totaltyped,
+                            int *groups, int num_groups, int has_extra_ids,
+                            int num_err, int check_ungenotyped)
+{
+    marriage_graph_type *ppeds;
+    linkage_ped_tree *lpeds;
+    linkage_ped_top *Top;
+//  int untyped = 0;
+// fix both
+
     Tod tod_cp_cru("check all markers untyped");
+    SUPPRESS_MSSG_NESTED_INIT(untyped);
     if (check_ungenotyped) {
         for (int pp=0; pp < num_ped_records; pp++) {
             // looping through the individuals...
@@ -1691,17 +1723,6 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         Top=NULL;
     }
 
-    if (phecols > 0) free(phe_vals);
-    for (c = 0; c < num_peds; c++)
-        free(ped_names[c]);
-    free(ped_names);
-
-    for (c = 0; c < p; c++) {
-        /* annotated_ped_rec has linkage_pedrec_data (for ped locus data) */
-        if (persons[c].pheno != NULL) free(persons[c].pheno);
-        if (persons[c].marker != NULL) free(persons[c].marker);
-    }
-    free(persons);
     return Top;
 }
 
@@ -3981,7 +4002,7 @@ static void output_stats() {
 static void insert_m2_map_into_EXLTop(ext_linkage_locus_top *EXLTop,
                                       linkage_locus_top *LTop,
                                       const int map_i,
-                                      m2_map map)
+                                      m2_map& map)
 {
     int i, j;
     
@@ -4123,7 +4144,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     int   bp_map   = 0;
     int displayed_messages = 0, duplicate_mrk=0;
     char *err_fn = (PLINK.plink == binary_PED_format) ? mega2_input_files[6] : mega2_input_files[0];
+
     m2_map vcf_map;
+    m2_map impute_map;
+
     int  xcf = Input_Format == in_format_binary_VCF ||
                Input_Format == in_format_compressed_VCF ||
                Input_Format == in_format_VCF;
@@ -4134,15 +4158,20 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
         imputed.input = (static_cast<Input_Impute *>(InputO));
         imputed.files(bed_file, t, ped_file);
+        err_fn = mega2_input_files[6];
         imputed.default_chrm   = std::string(Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name);
         imputed.info_threshold = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue;
-        asm("int $3");
+//      imputed.probability_threshold = Mega2BatchItemGet("Imputed_Probability_Threshold")->value.fvalue;
+        imputed.probability_threshold = .90;
         imputed.read_imputed_file();
         if (imputed.read_info) imputed.read_info_file();
         imputed.read_sample_file();
-        imputed.read_genotypes_file();
+//      imputed.read_genotypes_file();
     }
-    if (PLINK.plink || xcf) {
+    if (Input_Format == in_format_imputed) {
+        ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
+        LTop = imputed.build_names();
+    } else if (PLINK.plink || xcf) {
         char **phe_names = NULL;
         int *phe_types   = NULL;
         int tot_cols = phe_cols = parse_phe_types(phe_file, &phe_names, &phe_types);
@@ -4201,8 +4230,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         int i_old = test_and_add_marker(name, i);
         if (i_old >= 0) {
             sprintf(err_msg,
-                    "ERROR: Duplicate marker name '%s' found on line: %d of '%s'; first on line: %d",
-                    name, i+1, err_fn, i_old+1);
+                    "Duplicate marker name '%s' in '%s'", name, err_fn);
             SUPPRESS_MSSG(displayed_messages);
             if (displayed_messages > MAX_PED_ERRORS) {
                 Display_Errors = 0;
@@ -4269,8 +4297,15 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     EXLTop = new_ex_llocustop();
 */
+    std::vector<m2_map> additional_maps;
 
-    if (PLINK.plink) {
+    if (Input_Format == in_format_imputed) {
+        ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
+        m2_map impute_map("IMPUTE", 'p');
+        imputed.build_map(impute_map);
+        additional_maps.push_back(impute_map);
+
+    } else if (PLINK.plink) {
         // if this is PLINK format (double negative)
         // CPK: If the .map file is a .bim file we gather the alleles into the
         // vector that is described earlier in this routine...
@@ -4281,9 +4316,20 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                                      plink_info);
         tod_pmf();
     } else if (xcf) {
-        std::vector<m2_map> additional_maps;
         // Create an extra map slot in EXLTop for the map from the VCF file...
         additional_maps.push_back(vcf_map);
+    } else {
+        // only mega2 is left (and linkage ;-) No additional maps...
+        EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);
+        if (EXLTop == (ext_linkage_locus_top *)NULL) {
+            // The map file was empty and there were no additional maps.
+            // We error here now because this is not VCF or PLINK, so it's not OK to have no Mega2 map file...
+            errorvf("could not open %s for reading!\n", map_file);
+            EXIT(FILE_READ_ERROR);
+        }
+    }
+
+    if (additional_maps.size() > 0) {
         EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);
         
         if (EXLTop == (ext_linkage_locus_top *)NULL) {
@@ -4297,7 +4343,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             EXLTop->SexMaps = CALLOC((size_t)1, int *);
         }
         if (EXLTop->MapCnt == 0) {
-            insert_m2_map_into_EXLTop(EXLTop, LTop, 0, vcf_map);
+            insert_m2_map_into_EXLTop(EXLTop, LTop, 0, additional_maps[0]);
             insert_zero_sex_average_genetic_map_in_EXLTop(EXLTop, LTop);
             // In this case, the batch file items must be set since the user does not specify these maps...
 
@@ -4325,7 +4371,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             // an additional map slot, It will fill the first N-1 map slots with maps from the Mega2
             // annotated map file. We will fill the slot at the end (e.g., indexed by EXLTop->MapCnt)
             // which 'read_common_map_file()' creates but ignores.
-            insert_m2_map_into_EXLTop(EXLTop, LTop, EXLTop->MapCnt, vcf_map);
+            insert_m2_map_into_EXLTop(EXLTop, LTop, EXLTop->MapCnt, additional_maps[0]);
             // Since a genetic map is currently required for all analysis types (will fix this in the future)...
             if (!valid_genetic_map_exists_in_EXLTop(EXLTop)) {
                 insert_zero_sex_average_genetic_map_in_EXLTop(EXLTop, LTop);
@@ -4337,16 +4383,6 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                 genetic_distance_sex_type_map = SEX_AVERAGED_GDMT;
                 Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].items_read=1;
             }
-        }
-    } else {
-        std::vector<m2_map> additional_maps;
-        // only mega2 is left (and linkage ;-) No additional maps...
-        EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);
-        if (EXLTop == (ext_linkage_locus_top *)NULL) {
-            // The map file was empty and there were no additional maps.
-            // We error here now because this is not VCF or PLINK, so it's not OK to have no Mega2 map file...
-            errorvf("could not open %s for reading!\n", map_file);
-            EXIT(FILE_READ_ERROR);
         }
     }
 
@@ -4410,7 +4446,19 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         tod_hash();
     }
     
-    if (PLINK.plink ||
+    if (Input_Format == in_format_imputed) {
+        ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
+        int num_peds = 0;
+        annotated_ped_rec *persons = imputed.build_ped(LTop, &num_peds);
+        imputed.build_genotypes(LTop, persons);
+        pedfile_type = PREMAKEPED_PFT;
+        Top = mk_ped_top(persons, imputed.people.size(), LTop, num_peds,
+                         /*totaltyped*/ imputed.people_filtered,
+                         /*groups*/ NULL, 0, 0, 
+                         /*num_err*/0, 1);
+//      asm("int $3");
+
+    } else if (PLINK.plink ||
 	Input_Format == in_format_binary_VCF ||
         Input_Format == in_format_compressed_VCF ||
 	Input_Format == in_format_VCF) {
@@ -4432,7 +4480,9 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     } else
         Top = read_annotated_ped_file(ped_file, LTop, &AnnotatedFileInfo,
                                       num_groups, groups);
-    free(AnnotatedFileInfo.ped_file_columns);
+
+    if (AnnotatedFileInfo.ped_file_columns)
+        free(AnnotatedFileInfo.ped_file_columns);
 
     SUPPRESS_MSSG_NESTED_FORCE(FLOAT_AFFECT);
     if (FLOAT_AFFECT > 10) {
@@ -5516,3 +5566,53 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
                                 phecols, num_groups, groups,
                                 num_ped_records, has_extra_ids);
 }
+
+////////////////////////////////////////////////////////////////
+// Eventually all map functions should be in their own file NOT here
+////////////////////////////////////////////////////////////////
+
+using namespace std;
+
+m2_map::m2_map(const string name, const char function) {
+    if (!(function == 'p' || function == 'h' || function == 'k')) {
+        errorf("The map function must be one of: p, h, or k.");
+        EXIT(SYSTEM_ERROR);
+    }
+    if (name.length() < 3) {
+        errorf("The map name lenth must not be zero.");
+        EXIT(SYSTEM_ERROR);
+    }
+    full_name= name + "." + string(1, function);
+};
+
+// see linkage_ext.h
+const linkage_locus_type m2_map_entry::get_locus_type() {
+    if (chr == SEX_CHROMOSOME) return XLINKED;
+    else if (chr == MALE_CHROMOSOME) return YLINKED;
+    return NUMBERED; // BINARY???
+};
+
+const string m2_map_entry::get_chr_type_string() {
+    if (chr == SEX_CHROMOSOME) return "X";
+    else if (chr == MALE_CHROMOSOME) return "Y";
+    return "M"; // NOTE: XY and MT are lumped in here.
+};
+
+void m2_map_entry::set_chr(const string CHROM) {
+    if (CHROM == "chrX" || CHROM == "X") {
+        chr = SEX_CHROMOSOME;
+    } else if (CHROM == "chrY" || CHROM == "Y") {
+        chr = MALE_CHROMOSOME;
+    } else if (CHROM == "chrXY" || CHROM == "XY") {
+        chr = PSEUDO_X;
+    } else if (CHROM == "chrMT" || CHROM == "MT") {
+        chr = MITO_CHROMOSOME;
+    } else {
+        int chr;
+        istringstream ss(CHROM);
+        // If we can convert it into a number then use it, otherwise designate it as unknown.
+        if (!(ss >> chr)) this->chr = UNKNOWN_CHROMO; // "U"
+        else this->chr = chr;
+    }
+};
+

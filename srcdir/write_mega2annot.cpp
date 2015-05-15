@@ -38,6 +38,7 @@
 #include "common.h"
 #include "typedefs.h"
 
+#include "annotated_ped_file.h"
 #include "annotated_ped_file_ext.h"
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"

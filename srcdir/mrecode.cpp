@@ -36,6 +36,7 @@
 #include "tod.hh"
 
 #include "mrecode.h"
+#include "mrecode_ext.h"
 
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
@@ -64,8 +65,6 @@
         write_files_ext.h:  write_ped_stats
 */
 
-
-linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char **names, char *types, int annotated, double penetrances_read, double freq, double pen[5]);
 
 void recode_liability_class(pheno_type *pheno_list, linkage_locus_top *LTop, int locus);
 
@@ -1345,8 +1344,9 @@ linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char *
             idx = LTop->PhenoCnt + m++;
             Locus = &(LTop->Locus[idx]);
             Locus->number = -1;
-            Locus->Name = CALLOC(strlen(names[i])+1, char);
-            strcpy(Locus->Name, names[i]);
+//5/15      Locus->Name = CALLOC(strlen(names[i])+1, char);
+//5/15      strcpy(Locus->Name, names[i]);
+            Locus->Name = names[i];
             Locus->Class = MARKER;
             HasMarkers=1;
             Locus->col_num = LTop->NumPedigreeCols;
@@ -1383,8 +1383,9 @@ linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char *
             idx = p++;
             Locus = &(LTop->Locus[idx]);
             Locus->number = -1;
-            Locus->Name = CALLOC(strlen(names[i])+1, char);
-            strcpy(Locus->Name, names[i]);
+//5/15      Locus->Name = CALLOC(strlen(names[i])+1, char);
+//5/15      strcpy(Locus->Name, names[i]);
+            Locus->Name = names[i];
             Locus->Class = TRAIT;
 
             Pheno = &(LTop->Pheno[idx]);
@@ -1474,8 +1475,8 @@ linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char *
             break;
         }
 
-        /* free(names[i]); */
-        free(names[i]); // This only works if everyone copies here, and currently they seem to do so
+//5/15  free(names[i]); // This only works if everyone copies here, and currently they seem to do so
+//      so lets just use the calloc'ed string
     }
     LTop->SexLinked = (cnt_x + cnt_y) ? (cnt_a ? 2 : 1) : 0;
 

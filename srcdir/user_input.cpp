@@ -1449,7 +1449,8 @@ void menu1(file_format *infl_type,
         }
 
         if (Input_Format == in_format_imputed) {
-            Cstr Values[] = {"Value_Imputed_Info_Metric_Threshold", "Value_Imputed_Chromosome" };
+            Cstr Values[] = { "Value_Imputed_Info_Metric_Threshold", 
+                              "Value_Imputed_Chromosome" };
             for(int i = 0; i < 2; i++) {
                 batch_item_type *bip = Mega2BatchItemGet(Values[i]);
                 if (bip->items_read) 

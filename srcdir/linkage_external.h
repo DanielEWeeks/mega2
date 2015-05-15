@@ -62,4 +62,65 @@ typedef struct _ext_linkage_locus_top {
 #endif /* ALL_ZERO_GENETIC_MAP_INVALID */
 } ext_linkage_locus_top;
 
+//
+// The classes 'm2_map' and 'm2_map_entry' define a simple three column map (for now).
+// In the future this can be customized/extended to add other types of maps (e.g., plink).
+
+class m2_map_entry {
+private:
+    int chr;
+    double POS;
+    std::string marker_name;
+    std::string REF; // Reference Allele
+    
+public:
+    m2_map_entry() : chr(UNKNOWN_CHROMO), POS(0), marker_name(""), REF("") {};
+    m2_map_entry(std::string CHROM, double POS, std::string marker_name, std::string REF) {
+        set_chr(CHROM); set_POS(POS); set_marker_name(marker_name); set_REF(REF);
+    };
+    m2_map_entry(int chr, double POS, std::string marker_name, std::string REF) {
+        this->chr = chr; this->POS = POS; this->marker_name = marker_name; this->REF = REF;
+    };
+    ~m2_map_entry() {};
+    
+    const int get_chr() { return chr; };
+    const linkage_locus_type get_locus_type (); // e.g. XLINKED, YLINKED, or NUMBERED (see linkage.h)
+    const std::string get_chr_type_string (); // e.g. 'X', 'Y', or, 'M'
+    // If the CHROM is specified as a string we must convert it to
+    // an integer, because that is what Mega2 want's to process it as. Normal CHROM strings
+    // are things like '1' 'chr1'. If it's something like 'X', 'Y', or 'chrX' or 'chrY' then
+    // we need to convert it to a number based on the organism.
+    void set_chr(const std::string CHROM);
+    
+    const double get_POS() { return POS; };
+    void set_POS(const double POS) { this->POS = POS; };
+    
+    const std::string get_marker_name() { return marker_name; };
+    void set_marker_name(const std::string marker_name) { this->marker_name = marker_name; };
+    
+    const std::string get_REF() { return REF; };
+    void set_REF(const std::string REF) { this->REF = REF; };
+};
+
+class m2_map {
+private:
+    std::string full_name; // name.function
+    std::vector <m2_map_entry> entries;
+    
+public:
+    // where function is: 'h', 'k', or 'p'
+    m2_map(const std::string name, const char function);
+    m2_map() { full_name = "invalid.x"; }
+   ~m2_map() {};
+    
+    const std::string get_name() { return full_name; };
+    
+    const char get_function() { return full_name.at(full_name.length() -1 ); };
+    
+    const m2_map_entry get_entry(const unsigned int i) { return entries[i]; };
+    void push_back_entry(m2_map_entry e) { entries.push_back(e); };
+
+    const size_t size() { return entries.size(); };
+};
+
 #endif

@@ -116,6 +116,7 @@
 #include "tod.hh"
 #include "R_output.h"
 
+#include "annotated_ped_file.h"
 #include "annotated_ped_file_ext.h"
 #include "aspex_ext.h"
 #include "batch_input_ext.h"
@@ -511,11 +512,12 @@ static void free_globals(void)
 
     if (Mega2OutputPath != NULL)
         free(Mega2OutputPath);
-
+/*
     for (ii=0; ii < NUMBER_OF_MEGA2_INPUT_FILES; ii++) {
-    if (mega2_input_files[ii] != NULL)
-        free(mega2_input_files[ii]);
+	if (mega2_input_files[ii] != NULL)
+	    free(mega2_input_files[ii]);
     }
+*/
     for (ii=0; ii < NUM_OUTFILES; ii++) {
         /*    if (file_names[ii] != NULL)
               check not necessary, as they are always allocated */
@@ -756,64 +758,82 @@ int             main(int argc, char **argv)
  13) Switch to PLINK input menu (ped format)
  Select from options 0-13 >
  */
+
     Tod tod_menu1("menu1");
     menu1(&infl_type, &pedfl_name, &locusfl_name,
           &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
           &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
           &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
           &FreqMismatchThreshold);
+
+    Input_Files& inf = InputO->input_files;  // InputO is set in menu1 as soon as possible.
+
     plink_info->plinkf = (Input_Format == in_format_binary_PED) ? binary_PED_format : 
                                (Input_Format == in_format_PED) ? PED_format : not_plink_format;
+
+/*
     mega2_input_files[PEDIGREE] = CALLOC(strlen(pedfl_name)+1, char);
     strcpy(mega2_input_files[PEDIGREE], pedfl_name);
-    strcpy(&mega2_input_file_type[PEDIGREE][0],  "Pedigree file");
 
     if (locusfl_name != NULL) {
         mega2_input_files[1] = CALLOC(strlen(locusfl_name)+1, char);
         strcpy(mega2_input_files[LOCUS], locusfl_name);
     }
-    strcpy(&mega2_input_file_type[LOCUS][0],  "Locus file");
 
     if (mapfl_name != NULL) {
         mega2_input_files[MAP] = CALLOC(strlen(mapfl_name)+1, char);
         strcpy(mega2_input_files[MAP], mapfl_name);
-        strcpy(&mega2_input_file_type[MAP][0],  "Map file");
     }
 
     if (pmapfl_name != NULL) {
         mega2_input_files[PMAP] = CALLOC(strlen(pmapfl_name)+1, char);
         strcpy(mega2_input_files[PMAP], pmapfl_name);
-        strcpy(&mega2_input_file_type[PMAP][0],  "PLINK Map file");
     }
 
     if (omitfl_name != NULL) {
         mega2_input_files[OMIT] = CALLOC(strlen(omitfl_name)+1, char);
         strcpy(mega2_input_files[OMIT], omitfl_name);
     }
-    strcpy(&mega2_input_file_type[OMIT][0],  "Omit file");
 
     if (freqfl_name != NULL) {
         mega2_input_files[FREQ] = CALLOC(strlen(freqfl_name)+1, char);
         strcpy(mega2_input_files[FREQ], freqfl_name);
     }
-    strcpy(&mega2_input_file_type[FREQ][0],  "Frequency file");
 
     if (penfl_name != NULL) {
         mega2_input_files[PEN] = CALLOC(strlen(penfl_name)+1, char);
         strcpy(mega2_input_files[PEN], penfl_name);
     }
-    strcpy(&mega2_input_file_type[PEN][0],  "Penetrance file");
 
     if (bedfl_name != NULL) {
         mega2_input_files[BED] = CALLOC(strlen(bedfl_name)+1, char);
         strcpy(mega2_input_files[BED], bedfl_name);
     }
-    strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
 
     if (phefl_name != NULL) {
         mega2_input_files[PHEfl] = CALLOC(strlen(phefl_name)+1, char);
         strcpy(mega2_input_files[PHEfl], phefl_name);
     }
+
+*/
+    *inf.pedfl   = pedfl_name;
+    *inf.locusfl = locusfl_name;
+    *inf.mapfl   = mapfl_name;
+    *inf.pmapfl  = pmapfl_name;
+    *inf.omitfl  = omitfl_name;
+    *inf.freqfl  = freqfl_name;
+    *inf.penfl   = penfl_name;
+    *inf.bedfl   = bedfl_name;
+    *inf.phefl   = phefl_name;
+
+    strcpy(&mega2_input_file_type[PEDIGREE][0],  "Pedigree file");
+    strcpy(&mega2_input_file_type[LOCUS][0],  "Locus file");
+    strcpy(&mega2_input_file_type[MAP][0],  "Map file");
+    strcpy(&mega2_input_file_type[PMAP][0],  "PLINK Map file");
+    strcpy(&mega2_input_file_type[OMIT][0],  "Omit file");
+    strcpy(&mega2_input_file_type[FREQ][0],  "Frequency file");
+    strcpy(&mega2_input_file_type[PEN][0],  "Penetrance file");
+    strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
     strcpy(&mega2_input_file_type[PHEfl][0],  "PLINK Phenotype file");
 
     Mega2Status = FILE_NAMES_READ;
@@ -842,15 +862,15 @@ int             main(int argc, char **argv)
      ===========================================================
      ANALYSIS MENU 
      ==========================================================
-     1 SimWalk2 format                 18 Linkage format                 
-     2 Vintage Mendel format           19 Test loci for HWE              
-     3 ASPEX format                    20 Allegro format                 
-     4 GeneHunter-Plus format          21 MLBQTL format                  
-     5 GeneHunter format               22 SAGE format                    
-     6 APM format [DISBALED]           23 Pre-makeped format             
-     7 APM-MULT format [DISABLED]      24 Merlin/SimWalk2-NPL format     
-     8 Create nuclear families         25 PREST format                   
-     9 SLINK format                    26 PAP format                     
+      1 SimWalk2 format                 18 Linkage format                 
+      2 Vintage Mendel format           19 Test loci for HWE              
+      3 ASPEX format                    20 Allegro format                 
+      4 GeneHunter-Plus format          21 MLBQTL format                  
+      5 GeneHunter format               22 SAGE format                    
+      6 APM format [DISBALED]           23 Pre-makeped format             
+      7 APM-MULT format [DISABLED]      24 Merlin/SimWalk2-NPL format     
+      8 Create nuclear families         25 PREST format                   
+      9 SLINK format                    26 PAP format                     
      10 SPLINK format                   27 Merlin format                  
      11 Homogeneity analyses            28 Loki format                    
      12 SIMULATE format                 29 Mendel format                  
@@ -866,20 +886,22 @@ int             main(int argc, char **argv)
     Mega2Status = ANALYSIS_NAME_READ;
     AnalysisOpt = analysis;
 #ifdef DARWIN_OS
-    if ((SIMWALK2(analysis)) &&
-        !(strcasecmp(mega2_input_files[2] != 0 ? mega2_input_files[MAP] : mega2_input_files[PMAP], "map.dat")) &&
-        !(strcasecmp(Mega2OutputPath, InputPath))) {
-        char reply;
-        warnf("Darwin file names are case-insensitive.");
-        sprintf(err_msg, "Simwalk2 shell script will overwrite %s.",
-                mega2_input_files[2]);
-        warnf(err_msg);
-        printf("Terminate mega2 ? [y/n] (default 'y') > ");
-        fcmap(stdin, "%c", &reply);
-        if (tolower(reply) != 'n') {
-            EXIT(EARLY_TERMINATION);
+    if (SIMWALK2(analysis)) {
+        char *xmap = mega2_input_files[2] != 0 ? mega2_input_files[MAP] : mega2_input_files[PMAP];
+        if ( !(xmap && strcasecmp(xmap, "map.dat")) &&
+            !(strcasecmp(Mega2OutputPath, InputPath))) {
+            char reply;
+            warnf("Darwin file names are case-insensitive.");
+            sprintf(err_msg, "Simwalk2 shell script will overwrite %s.",
+                    mega2_input_files[2]);
+            warnf(err_msg);
+            printf("Terminate mega2 ? [y/n] (default 'y') > ");
+            fcmap(stdin, "%c", &reply);
+            if (tolower(reply) != 'n') {
+                EXIT(EARLY_TERMINATION);
+            }
+            fflush(stdin);
         }
-        fflush(stdin);
     }
 #endif
 
@@ -1280,6 +1302,7 @@ int             main(int argc, char **argv)
 
     if (phefl_name != NULL)
         free(phefl_name);
+
     tod_fin();
 
     tod_all();

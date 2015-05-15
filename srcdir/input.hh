@@ -51,26 +51,26 @@ enum INPUT_FORMAT {
 
 class Input_Files {
 public:
-    char * &pedfl_ref;
-    char * &locusfl_ref;
-    char * &mapfl_ref;
-    char * &pmapfl_ref;
-    char * &omitfl_ref;
-    char * &freqfl_ref;
-    char * &penfl_ref;
-    char * &bedfl_ref;
-    char * &phefl_ref;
+    char **pedfl;
+    char **locusfl;
+    char **mapfl;
+    char **pmapfl;
+    char **omitfl;
+    char **freqfl;
+    char **penfl;
+    char **bedfl;
+    char **phefl;
 
     Input_Files() :
-        pedfl_ref(mega2_input_files[PEDIGREE]),
-        locusfl_ref(mega2_input_files[LOCUS]),
-        mapfl_ref(mega2_input_files[MAP]),
-        pmapfl_ref(mega2_input_files[PMAP]),
-        omitfl_ref(mega2_input_files[OMIT]),
-        freqfl_ref(mega2_input_files[FREQ]),
-        penfl_ref(mega2_input_files[PEN]),
-        bedfl_ref(mega2_input_files[BED]),
-        phefl_ref(mega2_input_files[PHEfl]) {};
+        pedfl(&mega2_input_files[PEDIGREE]),
+        locusfl(&mega2_input_files[LOCUS]),
+        mapfl(&mega2_input_files[MAP]),
+        pmapfl(&mega2_input_files[PMAP]),
+        omitfl(&mega2_input_files[OMIT]),
+        freqfl(&mega2_input_files[FREQ]),
+        penfl(&mega2_input_files[PEN]),
+        bedfl(&mega2_input_files[BED]),
+        phefl(&mega2_input_files[PHEfl]) {  };
 
 };
 

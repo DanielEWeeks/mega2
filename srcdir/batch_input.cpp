@@ -1011,8 +1011,8 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
 {
 	// this is where the batch items are read from the batch file, and checked for consistency...
     set_batch_items(batch_file_name, analysis);
-    check_batch_items();
     check_dependencies(analysis);
+    check_batch_items();
 
     int input_set = 0;
     int xcf = 0;

@@ -160,46 +160,6 @@ string output_log::dbl2str_fixed(double n, int prc) {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-m2_map::m2_map(const string name, const char function) {
-    if (!(function == 'p' || function == 'h' || function == 'k')) {
-        errorf("The map function must be one of: p, h, or k.");
-        EXIT(SYSTEM_ERROR);
-    }
-    if (name.length() < 3) {
-        errorf("The map name lenth must not be zero.");
-        EXIT(SYSTEM_ERROR);
-    }
-    full_name= name + "." + string(1, function);
-};
-// see linkage.h
-const linkage_locus_type m2_map_entry::get_locus_type() {
-    if (chr == SEX_CHROMOSOME) return XLINKED;
-    else if (chr == MALE_CHROMOSOME) return YLINKED;
-    return NUMBERED; // BINARY???
-};
-const string m2_map_entry::get_chr_type_string() {
-    if (chr == SEX_CHROMOSOME) return "X";
-    else if (chr == MALE_CHROMOSOME) return "Y";
-    return "M"; // NOTE: XY and MT are lumped in here.
-};
-void m2_map_entry::set_chr(const string CHROM) {
-    if (CHROM == "chrX" || CHROM == "X") {
-        chr = SEX_CHROMOSOME;
-    } else if (CHROM == "chrY" || CHROM == "Y") {
-        chr = MALE_CHROMOSOME;
-    } else if (CHROM == "chrXY" || CHROM == "XY") {
-        chr = PSEUDO_X;
-    } else if (CHROM == "chrMT" || CHROM == "MT") {
-        chr = MITO_CHROMOSOME;
-    } else {
-        int chr;
-        istringstream ss(CHROM);
-        // If we can convert it into a number then use it, otherwise designate it as unknown.
-        if (!(ss >> chr)) this->chr = UNKNOWN_CHROMO; // "U"
-        else this->chr = chr;
-    }
-};
-
 
 //
 // vcftools: Usage and Options

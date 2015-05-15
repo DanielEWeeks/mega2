@@ -77,6 +77,10 @@ extern linkage_locus_top *read_marker_data(FILE *lfp, int type_col,
 
 extern linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, int *phe_types);
 
+linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char **names, char *types, int annotated, double penetrances_read, double freq, double pen[5]);
+
+void recode_liability_class(pheno_type *pheno_list, linkage_locus_top *LTop, int locus);
+
 #include "vcftools/mega2_vcftools_interface.h"
 
 extern void read_m2_map_as_names_file(m2_map map, linkage_locus_top **LTop, const int cols, char **phe_names, int *phe_types);

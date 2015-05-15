@@ -215,6 +215,7 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
 {
     char *endptr;
     double quant;
+    int ret = 1;
 
     if (strcasecmp(quantstr, "NA") == 0)
         quant = QMISSING;
@@ -227,6 +228,7 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
         } else if (quant == QMISSING || quant == QUNDEF) {
             errorvf("Line %d, trait %s, value %s:\n", line, locus->Name, quantstr);
             errorvf("Internal Quantitative Missing Value Consistency Error.  Get Help.\n");
+            ret = 0;
             EXIT(OUTOF_BOUNDS_ERROR);
         }
     }
@@ -245,7 +247,7 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
 
     pedrec->Quant = quant;
 
-    return 0;
+    return ret;
 }
 
 int read_quant_phen(FILE *filep, int locusnm, 
@@ -311,6 +313,7 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
 {
     int status;
     char *endptr = 0;
+    int ret = 1;
 
     pedrec->Affection.Status = UNDEF;
     pedrec->Affection.Class = UNDEF;
@@ -328,6 +331,7 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
             else
                 errorvf("Line %d, %s: bad number used for an affection status %s, setting to unknown.\n",
                         line, locus->Name, cstatus);
+            ret = 0;
             status = 0;
         }
     }
@@ -351,6 +355,7 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
                     line, locus->Name, cstatus);
             errorf(err_msg);
 #endif
+            ret = 0;
         }
         status = 0;
     }
@@ -358,7 +363,7 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
     pedrec->Affection.Status = status;
     pedrec->Affection.Class  = 1;
 
-    return 0;
+    return ret;
 }
 
 int read_aff_phen(FILE *filep, int locusnm,
