@@ -4171,6 +4171,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     if (Input_Format == in_format_imputed) {
         ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
         LTop = imputed.build_names();
+	ann_files = 1;
     } else if (PLINK.plink || xcf) {
         char **phe_names = NULL;
         int *phe_types   = NULL;

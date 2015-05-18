@@ -42,6 +42,7 @@
 #include <algorithm>
 
 #include "common.h"
+#include "tod.hh"
 #include "error_messages_ext.h"
 extern void           Exit(int arg, const char *file, const int line, const char *err);
 #include "typedefs.h"
@@ -568,7 +569,7 @@ ReadImputed::build_ped(linkage_locus_top *LTop, int *num_peds)
     SUPPRESS_MSSG_NESTED_INIT(illegal_affect_msg);
     SUPPRESS_MSSG_NESTED_INIT(illegal_quant_msg);
     for (Vecvecsp peop = people.cbegin(); peop != people.cend(); peop++) {
-        VecsDB pp = (*peop);
+        const VecsDB& pp = (*peop);
 
         annotated_ped_rec *entry = &persons[p++]; // incr p for next cycle
 
@@ -710,7 +711,8 @@ void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *pe
     string line;
 
     string hmm, rsid, pos, A, B;
-    vector<double> nums;
+//    vector<double> nums;
+    double nums[3];
 
     ifs.open(impute_file);
     if (! ifs.is_open() ) {
@@ -735,6 +737,7 @@ void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *pe
     SUPPRESS_MSSG_NESTED_INIT(skip_msg);
     SUPPRESS_MSSG_NESTED_INIT(prob_msg);
 
+    Tod tod_gen("impute genotypes");
     for (mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
         getline(ifs, line);
         if (ifs.eof()) break;
@@ -742,6 +745,9 @@ void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *pe
 
         token.set(line);
 
+//	ifs >> hmm; // +A+B+ nums() all read via >> @ 14.62 sec
+//                               vector<double> nums  12.26
+//                               double nums[3]       11.59
         token.more(hmm);
         token.more(rsid);
         token.more(pos);
@@ -774,12 +780,11 @@ void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *pe
         double maxx;
         int p = 0;
 
-        for (Vecvecsp peop = people.cbegin(); peop != people.cend(); peop++, p++) {
-            VecsDB pp = (*peop);
-
+	for( ; p < people_filtered; p++) {
             annotated_ped_rec *entry = &persons[p];
             sam++;
-            token.getD(nums);
+            token.getDC(nums);
+
             maxx = 0.0;
 
             if (dbg) {
@@ -788,6 +793,7 @@ void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *pe
                 cout << mp->name << " ";
                 cout << nums[0] << " " << nums[1] << " " << nums[2] << "\n";
             }
+
             if (nums[0] > nums[1]) {
                 maxx = nums[0];
                 i = 0;
@@ -825,12 +831,15 @@ void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *pe
             }
 
         }
+/*
         token.getD(nums);  // last one on line
         if (nums.size() != 0) {
             errorvf("internal error: impute_file (\"%s\") second pass does not match first pass at line %d for number of genotypes\n",
                     impute_file, line_n);
         }
+*/
     }
+    tod_gen();
     SUPPRESS_MSSG_NESTED_FINI(skip_msg);
     SUPPRESS_MSSG_NESTED_FINI(prob_msg);
 }

@@ -39,10 +39,11 @@
 class Token {
 
 public: 
-    Token(int cnt=0, Cstr white=" \t\n\r"): sep(white), _cnt(cnt) {
+    Token(int cnt=0, Cstr white=" \t\n\r"): sep(white), Cline(0), _cnt(cnt){
     }
 
     bool more(Str& token, int dbg=0);
+    bool more(char *& token);
     void rest(Str& token) {
         token = line.substr(of);
     }
@@ -52,13 +53,16 @@ public:
     void getS(Vecs& vec, int cnt=0);
 
     void getD(Vecd& vec, int cnt=0);
+    void getD(double vec[3], int cnt=0);
+    void getDC(double vec[3], int cnt=0);
 
-    void set(Cstr& line);
-    void set(const char *line);
+    void set(Cstr& line, char *Clin=0);
+    void set(char *line);
 
 private:
     Str    sep;
     Str    line;
+    char  *Cline;
 //  int    npos;
     int    _cnt;
 //  int    dbg;

@@ -63,10 +63,13 @@ template <typename T>
 class vectordb : public std::vector<T> {
 public:
     T& operator[](std::size_t i);
+    const T& operator[](std::size_t i) const;
 };
 
 template <typename T>
 T& vectordb<T>::operator[](std::size_t i) { return (std::vector<T>::data()[i]); }
+template <typename T>
+const T& vectordb<T>::operator[](std::size_t i) const { return (std::vector<T>::data()[i]); }
 
 typedef vectordb<std::string> VecsDB;
 typedef vectordb<int>         VeciDB;

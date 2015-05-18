@@ -58,6 +58,22 @@ bool Token::more(Str& token, int dbg) {
     }
 }
 
+bool Token::more(char *&token) {
+    fo = line.find_first_of(sep, of);
+    if (fo == std::string::npos) {
+        fo = line.size();
+        token = &Cline[of];
+        Cline[fo] = 0;
+        return false;
+    } else {
+        token = &Cline[of];
+        Cline[fo] = 0;
+
+        of = line.find_first_not_of(sep, fo);
+        return true;
+    }
+}
+
 //#include <iostream>
 bool Token::assign(Str& lhs, Str& rhs, int dbg) {
 
@@ -119,8 +135,45 @@ void Token::getD(Vecd& vec, int cnt) {
     }
 }
 
-void Token::set(Cstr& line) {
+void Token::getD(double vec[3], int cnt) {
+    Str token;
+    double dbl;
+    char *fin;
+    for (int i = 0, l = cnt ? cnt : _cnt; mo && i < l; i++) {
+        mo = more(token);
+        dbl = strtod(token.c_str(), &fin); //4.8
+        if (*fin != 0) {
+            dbl = 0.0;
+            warnvf("Invalid floating point number: %s\n", C(token));
+        }
+        vec[i] = dbl;
+    }
+}
+
+void Token::getDC(double vec[3], int cnt) {
+    char *token;
+    double dbl;
+    char *fin;
+    for (int i = 0, l = cnt ? cnt : _cnt; mo && i < l; i++) {
+        mo = more(token);
+        dbl = strtod(token, &fin);
+        if (*fin != 0) {
+            dbl = 0.0;
+            warnvf("Invalid floating point number: %s\n", token);
+        }
+        vec[i] = dbl;
+    }
+}
+
+void Token::set(Cstr& line, char* Clin) {
     this->line = line;
+    if (Clin) {
+        Cline = Clin;
+    } else {
+        if (Cline) free(Cline);
+        Cline = CALLOC(line.size()+1, char); // to be safe
+        strcpy(Cline, line.c_str());
+    }
 /*
     npos = this->line.size();
     if (this->line[npos] == '\n') {
@@ -134,8 +187,8 @@ void Token::set(Cstr& line) {
     mo = true;
 }
 
-void Token::set(const char * line) {
-    set(string(line));
+void Token::set(char *line) {
+    set(string(line), line);
 }
 
 ////////////////////////////////////////////////////////////////
