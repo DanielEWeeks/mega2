@@ -72,7 +72,7 @@ public:
     virtual void do_menu_pr(int &idx, int line_len, int choiceA[]);
     virtual int  do_menu_parse(int choice);
     virtual void do_menu2batch();
-    virtual void do_batch2menu();
+    virtual void do_batch2local();
 
     virtual void do_init(Input_Impute *inp);
     virtual linkage_locus_top *do_names();
@@ -129,10 +129,9 @@ static const
     int imputed_chromosome_i =            8000001;
 static const
     int imputed_info_metric_threshold_i = 8000002;
+static const
+    int imputed_probability_threshold_i = 8000003;
 
-// #if 0 in .cpp
-//    Vecct   column_type;
-//    Veci    reserved;
 };
 
 #endif

@@ -47,6 +47,7 @@
 extern void           Exit(int arg, const char *file, const int line, const char *err);
 #include "typedefs.h"
 #include "fcmap_ext.h"
+#include "batch_input.h"
 #include "batch_input_ext.h"
 #include "mrecode.h"
 #include "mrecode_ext.h"
@@ -67,22 +68,26 @@ using namespace std;
 
 void ReadImputed::do_menu_pr(int &idx, int line_len, int choiceA[])
 {
+    printf("%2d) %-*s%s\n", idx, line_len, "Enter imputation chromosome [required]:",
+           Mega2BatchItemGet("Imputed_Chromosome")->items_read ? 
+           Mega2BatchItemGet("Imputed_Chromosome")->value.name : "--");
+    choiceA[idx++] = imputed_chromosome_i;
+
     printf("%2d) %-*s%.4f\n", idx, line_len, "Enter imputation info metric threshold:", 
-           Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue);
+           Mega2BatchItemGet("Imputed_Info_Metric_Threshold")->value.fvalue);
     choiceA[idx++] = imputed_info_metric_threshold_i;
 
-    printf("%2d) %-*s%s\n", idx, line_len, "Enter imputation chromosome [required]:",
-           Mega2BatchItemGet("Value_Imputed_Chromosome")->items_read ? 
-           Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name : "--");
-    choiceA[idx++] = imputed_chromosome_i;
-    return;
+    printf("%2d) %-*s%.4f\n", idx, line_len, "Enter probability threshold:", 
+           Mega2BatchItemGet("Imputed_Probability_Threshold")->value.fvalue);
+    choiceA[idx++] = imputed_probability_threshold_i;
+
 }
 
 int ReadImputed::do_menu_parse(int choice_)
 {
     int ret = 0;
     if (choice_ == imputed_chromosome_i) {
-        char select[100];
+        char select[100], *sel = &select[0];
         int chrm;
         while (1) {
             printf("Please specify a chromosome for unspecified markers: ");
@@ -91,9 +96,7 @@ int ReadImputed::do_menu_parse(int choice_)
                 printf("%s is not a valid chromosome. Valid chromosomes are numbers 1-26, X, Y, XY, or MT\n", select);
             } else break;
         }
-        batch_item_type *bip = Mega2BatchItemGet("Value_Imputed_Chromosome");
-        bip->items_read = 1;
-        strcpy(bip->value.name, select);
+        BatchItemSet(sel, "Imputed_Chromosome");
         ret = 1;
     } else if (choice_ == imputed_info_metric_threshold_i) {
 	double ansd;
@@ -104,9 +107,20 @@ int ReadImputed::do_menu_parse(int choice_)
 		printf("threshold must be between 0.0 and 1.0\n");
 	    } else break;
 	}
-	batch_item_type *bip = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold");
-	bip->items_read = 1;
-	bip->value.fvalue = ansd;
+
+	BatchItemSet(ansd, "Imputed_Info_Metric_Threshold");
+	ret = 1;
+    } else if (choice_ == imputed_probability_threshold_i) {
+	double ansd;
+	while (1) {
+	    printf("Please enter threshold for acceptable probabilities ");
+	    fcmap(stdin, "%g", &ansd); newline;
+	    if (ansd < 0.0 || ansd > 1.0) {
+		printf("threshold must be between 0.0 and 1.0\n");
+	    } else break;
+	}
+
+	BatchItemSet(ansd, "Imputed_Probability_Threshold");
 	ret = 1;
     }
     return ret;
@@ -114,8 +128,10 @@ int ReadImputed::do_menu_parse(int choice_)
 
 void ReadImputed::do_menu2batch()
 {
-    Cstr Values[] = { "Value_Imputed_Info_Metric_Threshold", 
-                      "Value_Imputed_Chromosome" };
+    Cstr Values[] = { "Imputed_Chromosome",
+                      "Imputed_Info_Metric_Threshold", 
+                      "Imputed_Probability_Threshold" };
+                      
     for(int i = 0; i < 2; i++) {
         batch_item_type *bip = Mega2BatchItemGet(Values[i]);
         if (bip->items_read) 
@@ -123,10 +139,13 @@ void ReadImputed::do_menu2batch()
     }
 }
 
-void ReadImputed::do_batch2menu()
+void ReadImputed::do_batch2local()
 {
-    return;
+    BatchItemGet(this->default_chrm, "Imputed_Chromosome");
+    BatchItemGet(this->info_threshold, "Imputed_Info_Metric_Threshold");
+    BatchItemGet(this->probability_threshold, "Imputed_Probability_Threshold");
 }
+
 
 void ReadImputed::do_init(Input_Impute *inp)
 {
@@ -135,10 +154,6 @@ void ReadImputed::do_init(Input_Impute *inp)
     this->files(*inp->input_files.bedfl, t, *inp->input_files.pedfl);
 
 ///    err_fn = mega2_input_files[6];
-    this->default_chrm   = std::string(Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name);
-    this->info_threshold = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue;
-//      this->probability_threshold = Mega2BatchItemGet("Imputed_Probability_Threshold")->value.fvalue;
-    this->probability_threshold = .90;
 
     read_imputed_file();
 

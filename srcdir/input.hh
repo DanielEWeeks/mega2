@@ -82,12 +82,12 @@ public:
     virtual boolean has_menu_pr()      { return false; }
     virtual boolean has_menu_parse()   { return false; }
     virtual boolean has_menu2batch()   { return false; }
-    virtual boolean has_batch2menu()   { return false; }
+    virtual boolean has_batch2local()   { return false; }
 
     virtual void do_menu_pr(int &idx, int line_len, int choiceA[])   { }
     virtual int  do_menu_parse(int choice) { return 0; }   // 0 indicates no match ; but false (above) means this is not called.
     virtual void do_menu2batch() { }
-    virtual void do_batch2menu() { }
+    virtual void do_batch2local() { }
 
 
     virtual boolean has_init()  { return false; }
@@ -192,12 +192,12 @@ public:
     virtual boolean has_menu_pr()      { return true; }
     virtual boolean has_menu_parse()   { return true; }
     virtual boolean has_menu2batch()   { return true; }
-    virtual boolean has_batch2menu()   { return true; }
+    virtual boolean has_batch2local()   { return true; }
 
     virtual void do_menu_pr(int &idx, int line_len, int choiceA[])    { Obj.do_menu_pr(idx, line_len, choiceA); }
     virtual int  do_menu_parse(int choice) { return Obj.do_menu_parse(choice); }
     virtual void do_menu2batch() { Obj.do_menu2batch(); }
-    virtual void do_batch2menu() { Obj.do_batch2menu(); }
+    virtual void do_batch2local() { Obj.do_batch2local(); }
 
 
     virtual boolean has_init()  { return true; }

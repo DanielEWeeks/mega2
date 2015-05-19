@@ -205,12 +205,24 @@ static keyw_t keywords[] = {
     {"Value_Missing_Affect_On_Input",         LINE,      "0"},
     {"Value_Missing_Affect_On_Output",        LINE,      "0"},
     {"Output_File_Stem",                      STRING,     ""},
-    {"Value_Imputed_Info_Metric_Threshold",   FLOAT,   "0.3"},
-    {"Value_Imputed_Chromosome",              STRING,     ""},
+    {"Imputed_Chromosome",                    STRING,     ""},
+    {"Imputed_Info_Metric_Threshold",         FLOAT,   "0.3"},
+    {"Imputed_Probability_Threshold",         FLOAT,   "0.9"},
     {"Input_Imputed_Info_File",               STRING,     ""},
 };
 
 int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);
+
+pair<Cstr,Cstr> keyword_aliases[] = {
+    make_pair("Value_Missing_Quant_On_Input", "Value_Missing_Quant"),
+    make_pair("VCF_Args", "VCF_ARGS"),
+    make_pair("PLINK_Args", "PLINK"),
+    make_pair("Input_Aux_File", "Input_Binary_File"),
+    make_pair("AlleleFreq_SquaredDev", "AlleleFreq_SquaredError"),
+    make_pair("Count_Halftyped", "Count_Halftypes"),
+    make_pair("REMOutput_Map_Num", "Output_Map_Num"),
+    make_pair("","")  //sentinel
+};
 
 void batch_file_doc(FILE *batchfp)
 {
@@ -370,22 +382,11 @@ void batchfile_init_Mega2BatchItems(void)
     }
     
     // Aliases
-//err: Should this be case sensitive
-    pair<Cstr,Cstr> aliases[] = {
-        make_pair("Value_Missing_Quant_On_Input", "Value_Missing_Quant"),
-        make_pair("VCF_Args", "VCF_ARGS"),
-        make_pair("PLINK_Args", "PLINK"),
-        make_pair("Input_Aux_File", "Input_Binary_File"),
-        make_pair("AlleleFreq_SquaredDev", "AlleleFreq_SquaredError"),
-        make_pair("Count_Halftyped", "Count_Halftypes"),
-        make_pair("REMOutput_Map_Num", "Output_Map_Num"),
-        make_pair("","")  //sentinel
-    };
-    for (i = 0; aliases[i].first != ""; i++) {
-        if (map_get(BatchItemMap, aliases[i].first, bi))
-	    BatchItemMap[aliases[i].second] = bi;
+    for (i = 0; keyword_aliases[i].first != ""; i++) {
+        if (map_get(BatchItemMap, keyword_aliases[i].first, bi))
+	    BatchItemMap[keyword_aliases[i].second] = bi;
         else {
-            errorvf("Internal Error!  %s not found %s\n:", C(aliases[i].first));
+            errorvf("Internal Error!  %s not found %s\n:", C(keyword_aliases[i].first));
             err++;
 	}
     }
@@ -806,6 +807,36 @@ void Mega2BatchItemSet(char *value, Cstr& key)
 
 }
 
+void BatchItemSet(int &num, Cstr &item) {
+    batch_item_type *bip = Mega2BatchItemGet(item);
+    bip->items_read = 1;
+    bip->value.option = num;
+}
+
+void BatchItemSet(double &dbl, Cstr &item) {
+    batch_item_type *bip = Mega2BatchItemGet(item);
+    bip->items_read = 1;
+    bip->value.fvalue = dbl;
+}
+
+void BatchItemSet(Str &str, Cstr &item) {
+    batch_item_type *bip = Mega2BatchItemGet(item);
+    bip->items_read = 1;
+    strcpy(bip->value.name, C(str));
+}
+
+void BatchItemSet(char *&str, Cstr &item) {
+    batch_item_type *bip = Mega2BatchItemGet(item);
+    bip->items_read = 1;
+    strcpy(bip->value.name, str);
+}
+
+void BatchItemSet(char &str, Cstr &item) {
+    batch_item_type *bip = Mega2BatchItemGet(item);
+    bip->items_read = 1;
+    bip->value.copt = str;
+}
+
 batch_item_type *Mega2BatchItemGet(int i)
 {
     if (i >= NUM_KEYS) {
@@ -828,6 +859,26 @@ batch_item_type *Mega2BatchItemGet(Cstr& key)
         throw Mega2BatchItemException("Mega2BatchItemGet: bad key");
         return (batch_item_type *) NULL;
     }
+}
+
+void BatchItemGet(int &num, Cstr &item) {
+    num = Mega2BatchItemGet(item)->value.option;
+}
+
+void BatchItemGet(double &dbl, Cstr &item) {
+    dbl = Mega2BatchItemGet(item)->value.fvalue;
+}
+
+void BatchItemGet(Str &str, Cstr &item) {
+    str = std::string(Mega2BatchItemGet(item)->value.name);
+}
+
+void BatchItemGet(char *&str, Cstr &item) {
+    strcpy(str, Mega2BatchItemGet(item)->value.name);
+}
+
+void BatchItemGet(char &str, Cstr &item) {
+    str = Mega2BatchItemGet(item)->value.copt;
 }
 
 static void set_batch_items(char *batch_file_name, analysis_type *analysis)
@@ -960,8 +1011,7 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
         }
     }
 
-    // gross hack
-//err: needs better plan
+    // gross hack: needs better plan
     pair<Cstr,char *> hacks[] = {
 	make_pair("Value_Missing_Quant_On_Input", Str_Missing_Quant_On_Input),
 	make_pair("Value_Missing_Quant_On_Output", Str_Missing_Quant_On_Output),

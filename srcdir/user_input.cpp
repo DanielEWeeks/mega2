@@ -1208,6 +1208,7 @@ void menu1(file_format *infl_type,
                 fcmap(stdin, "%d", &ans); newline;
                 if (ans <= 9 && ans >= 1) {
                     Input_Format = (INPUT_FORMAT_t) (ans - 1);
+                    if (Input != 0) delete Input;
 		    Input = InputCreate::createinput(Input_Format);
                     break;
                 } else
@@ -1418,8 +1419,6 @@ void menu1(file_format *infl_type,
 
         if (choice_) draw_line();
     }
-
-    Input = InputCreate::createinput(Input_Format);
 
     if (InputMode == INTERACTIVE_INPUTMODE) {
 

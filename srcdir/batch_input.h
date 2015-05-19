@@ -152,7 +152,6 @@ typedef struct keyw {
 #define Value_Missing_Affect_On_Input 58
 #define Value_Missing_Affect_On_Output 59
 #define Output_File_Stem 60
-#define Value_Imputed_Threshold 61
 
 // THIS VARIABLE IS USED EVERYWHERE...
 // It is defined in batch_input.cpp or by the new object system for
@@ -161,10 +160,21 @@ extern batch_item_type *Mega2BatchItems;
 extern batch_item_type *Mega2BatchItemGet(int i);
 extern batch_item_type *Mega2BatchItemGet(const std::string& key);
 
+extern void BatchItemGet(int &num, Cstr &item);
+extern void BatchItemGet(double &dbl, Cstr &item);
+extern void BatchItemGet(Str &str, Cstr &item);
+extern void BatchItemGet(char *&str, Cstr &item);
+extern void BatchItemGet(char &str, Cstr &item);
+
 extern void Mega2BatchItemSet(char *value, batch_item_type *bi);
 extern void Mega2BatchItemSet(char *value, int i);
 extern void Mega2BatchItemSet(char *value, const std::string& key);
 
+extern void BatchItemSet(int &num, Cstr &item);
+extern void BatchItemSet(double &dbl, Cstr &item);
+extern void BatchItemSet(Str &str, Cstr &item);
+extern void BatchItemSet(char *&str, Cstr &item);
+extern void BatchItemSet(char &str, Cstr &item);
 
 #define ITEM_READ(n)     (Mega2BatchItems[n].items_read >= 1)
 

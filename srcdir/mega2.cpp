@@ -1064,9 +1064,9 @@ int             main(int argc, char **argv)
             EXIT(INPUT_DATA_ERROR);
         }
     } else if (Input_Format == in_format_imputed) {
-        int it = Value_Imputed_Threshold;
-        if (Mega2BatchItems[it].items_read)
-            Imputed_Info_Metric_Threshold = Mega2BatchItems[it].value.fvalue;
+ 
+       if (Input->has_batch2local())
+            Input->do_batch2local();
 
         mssgf("Imputed data file processing");
 
