@@ -76,7 +76,7 @@ public:
 
 class Input_Base {
 public:
-    Input_Base(INPUT_FORMAT_t i): input_format(i) {}
+    Input_Base(INPUT_FORMAT_t i): input_format(i), plink(0), xcf(0), req_aux(0), req_locus(1), req_map(1), req_stem(0)  {}
     virtual ~Input_Base() {};
 
     virtual boolean has_menu_pr()      { return false; }
@@ -106,6 +106,13 @@ public:
     INPUT_FORMAT_t input_format;
     Input_Files input_files;
     Globals G;
+
+    int plink;
+    int xcf;
+    int req_aux;
+    int req_locus;
+    int req_map;
+    int req_stem;
 };
 
 class Input_Old : public Input_Base {
@@ -138,13 +145,19 @@ public:
 
 class Input_PLINK_Common : public Input_Old {
 public:
-    Input_PLINK_Common(INPUT_FORMAT_t i): Input_Old(i) {}
+    Input_PLINK_Common(INPUT_FORMAT_t i): Input_Old(i) {
+        plink    = 1;
+        req_locus = 0;
+        req_stem = 1;
+    }
     virtual ~Input_PLINK_Common() {};
 };
 
 class Input_PED_Binary : public Input_PLINK_Common {
 public:
-    Input_PED_Binary(INPUT_FORMAT_t i): Input_PLINK_Common(i) {}
+    Input_PED_Binary(INPUT_FORMAT_t i): Input_PLINK_Common(i) {
+        req_aux   = 1;
+    }
     virtual ~Input_PED_Binary() {};
 };
 
@@ -158,7 +171,12 @@ public:
 
 class Input_VCF_Common : public Input_Old {
 public:
-    Input_VCF_Common(INPUT_FORMAT_t i): Input_Old(i) {}
+    Input_VCF_Common(INPUT_FORMAT_t i): Input_Old(i) {
+        xcf = 1;
+        req_locus = 0;
+        req_map = 0;
+        req_stem = 1;
+}
     virtual ~Input_VCF_Common() {};
 };
 
@@ -186,7 +204,12 @@ class Input_Impute;
 
 class Input_Impute : public Input_Base {
 public:
-    Input_Impute(INPUT_FORMAT_t i): Input_Base(i) {}
+    Input_Impute(INPUT_FORMAT_t i): Input_Base(i) {
+        req_aux   = 1;
+        req_locus = 0;
+        req_map = 0;
+        req_stem  = 1;
+    }
     ~Input_Impute() {};
 
     virtual boolean has_menu_pr()      { return true; }

@@ -590,9 +590,10 @@ static void menu1_batch_set_files(file_format *infl_type,
             }
         } else {
             if (i == Input_Pedigree_File || 
-                ((i == Input_Locus_File) && (! plinkf && ! xcf && (Input_Format != in_format_imputed))) ||
-                ((i == Input_Aux_File) && (xcf || Input_Format == in_format_binary_PED || Input_Format == in_format_imputed))
-                ) {
+///                ((i == Input_Locus_File) && (! plinkf && ! xcf && (Input_Format != in_format_imputed))) ||
+///                ((i == Input_Aux_File) && (xcf || Input_Format == in_format_binary_PED || Input_Format == in_format_imputed))
+                ((i == Input_Locus_File) && Input->req_locus) ||
+                ((i == Input_Aux_File) && Input->req_aux) ) {
                 missing_mandatory_keyword(i);
             } else {
                 strcpy(fln_tmp, (*fln)->title);
@@ -1001,8 +1002,8 @@ void menu1(file_format *infl_type,
             }
         }
 
-        if (plinkf || xcf ||
-            Input_Format == in_format_imputed) {
+///        if (plinkf || xcf || Input_Format == in_format_imputed)
+        if (Input->req_stem) {
             printf("%2d) %-*s%s\n", idx, line_len, "Input file stem:", extension_name);
             fln_stem = 1;
 
@@ -1102,7 +1103,9 @@ void menu1(file_format *infl_type,
 
         if (choice_ ==  0) {
             exit_loop=1;
-            if (! plinkf && ! xcf && (Input_Format != in_format_imputed)) {
+///            if (! plinkf && ! xcf && (Input_Format != in_format_imputed))
+            if (Input->req_locus)
+                {
                 if (access(*locusfl_name, F_OK) != 0)   {
                     printf("ERROR: You must specify a locus file.\n");
                     exit_loop=0;
@@ -1112,7 +1115,9 @@ void menu1(file_format *infl_type,
                 printf("ERROR: You must specify a pedigree file.\n");
                 exit_loop=0;
             }
-            if (! xcf && (Input_Format != in_format_imputed)) {
+///            if (! xcf && (Input_Format != in_format_imputed))
+            if (Input->req_map)
+            {
                 // There is a map file that is extracted from the VCF file
                 // and presented to the user as 'VCF.p'. So, the map file is optional.
                 if (access(*mapfl_name, F_OK) != 0 && access(*pmapfl_name, F_OK) != 0) {
@@ -1472,7 +1477,8 @@ void menu1(file_format *infl_type,
         menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
     }
 
-    if (plinkf || xcf || (Input_Format == in_format_imputed)) fln_free(loco);
+///    if (plinkf || xcf || (Input_Format == in_format_imputed)) fln_free(loco);
+    if (! Input->req_locus) fln_free(loco);
 }
 
 /* static void default_labels(char *msg, int *liability, int *status, int num_classes) */

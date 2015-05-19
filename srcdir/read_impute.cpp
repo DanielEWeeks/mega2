@@ -132,7 +132,7 @@ void ReadImputed::do_menu2batch()
                       "Imputed_Info_Metric_Threshold", 
                       "Imputed_Probability_Threshold" };
                       
-    for(int i = 0; i < 2; i++) {
+    for(int i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
         batch_item_type *bip = Mega2BatchItemGet(Values[i]);
         if (bip->items_read) 
             batchf(bip);
