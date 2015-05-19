@@ -46,10 +46,13 @@
 #include "error_messages_ext.h"
 extern void           Exit(int arg, const char *file, const int line, const char *err);
 #include "typedefs.h"
+#include "fcmap_ext.h"
+#include "batch_input_ext.h"
 #include "mrecode.h"
 #include "mrecode_ext.h"
 #include "reorder_loci_ext.h"
 #include "plink_ext.h"
+#include "annotated_ped_file_ext.h"
 #include "annotated_ped_file.h"
 #include "read_files_ext.h"
 
@@ -62,10 +65,120 @@ extern void           Exit(int arg, const char *file, const int line, const char
 
 using namespace std;
 
-int dbg = 1;
+void ReadImputed::do_menu_pr(int &idx, int line_len, int choiceA[])
+{
+    printf("%2d) %-*s%.4f\n", idx, line_len, "Enter imputation info metric threshold:", 
+           Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue);
+    choiceA[idx++] = imputed_info_metric_threshold_i;
 
-void pr_str(const string& x) {
-    cout << x << " ";
+    printf("%2d) %-*s%s\n", idx, line_len, "Enter imputation chromosome [required]:",
+           Mega2BatchItemGet("Value_Imputed_Chromosome")->items_read ? 
+           Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name : "--");
+    choiceA[idx++] = imputed_chromosome_i;
+    return;
+}
+
+int ReadImputed::do_menu_parse(int choice_)
+{
+    int ret = 0;
+    if (choice_ == imputed_chromosome_i) {
+        char select[100];
+        int chrm;
+        while (1) {
+            printf("Please specify a chromosome for unspecified markers: ");
+            fcmap(stdin, "%s", select); newline;
+            if ((chrm = STR_CHR(select)) == -1) {
+                printf("%s is not a valid chromosome. Valid chromosomes are numbers 1-26, X, Y, XY, or MT\n", select);
+            } else break;
+        }
+        batch_item_type *bip = Mega2BatchItemGet("Value_Imputed_Chromosome");
+        bip->items_read = 1;
+        strcpy(bip->value.name, select);
+        ret = 1;
+    } else if (choice_ == imputed_info_metric_threshold_i) {
+	double ansd;
+	while (1) {
+	    printf("Please enter threshold for acceptable imputed value ");
+	    fcmap(stdin, "%g", &ansd); newline;
+	    if (ansd < 0.0 || ansd > 1.0) {
+		printf("threshold must be between 0.0 and 1.0\n");
+	    } else break;
+	}
+	batch_item_type *bip = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold");
+	bip->items_read = 1;
+	bip->value.fvalue = ansd;
+	ret = 1;
+    }
+    return ret;
+}
+
+void ReadImputed::do_menu2batch()
+{
+    Cstr Values[] = { "Value_Imputed_Info_Metric_Threshold", 
+                      "Value_Imputed_Chromosome" };
+    for(int i = 0; i < 2; i++) {
+        batch_item_type *bip = Mega2BatchItemGet(Values[i]);
+        if (bip->items_read) 
+            batchf(bip);
+    }
+}
+
+void ReadImputed::do_batch2menu()
+{
+    return;
+}
+
+void ReadImputed::do_init(Input_Impute *inp)
+{
+    Str t = "";
+    this->input = inp;
+    this->files(*inp->input_files.bedfl, t, *inp->input_files.pedfl);
+
+///    err_fn = mega2_input_files[6];
+    this->default_chrm   = std::string(Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name);
+    this->info_threshold = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue;
+//      this->probability_threshold = Mega2BatchItemGet("Imputed_Probability_Threshold")->value.fvalue;
+    this->probability_threshold = .90;
+
+    read_imputed_file();
+
+    if (this->read_info) read_info_file();
+
+    read_sample_file();
+}
+
+linkage_locus_top *ReadImputed::do_names()
+{
+    linkage_locus_top *LTop = build_impute2_names();
+
+    return LTop;
+}
+
+void ReadImputed::do_map(std::vector<m2_map>& additional_maps)
+{
+    m2_map impute_map("IMPUTE", 'p');
+
+    build_impute2_map(impute_map);
+
+    additional_maps.push_back(impute_map);
+}
+
+linkage_ped_top *ReadImputed::do_ped(linkage_locus_top *LTop)
+{
+    int num_peds = 0;
+
+    annotated_ped_rec *persons = build_impute2_ped(LTop, &num_peds);
+
+    build_impute2_genotypes(LTop, persons);
+
+    linkage_ped_top *Top;
+    Top = mk_ped_top(persons, this->people.size(), LTop, num_peds,
+                     /*totaltyped*/ this->people_filtered,
+                     /*groups*/ NULL, 0, 0, 
+                     /*num_err*/0, 1);
+
+    return Top;
+
 }
 
 void ReadImputed::read_imputed_file ()
@@ -451,7 +564,7 @@ void ReadImputed::read_sample_file ()
 }
 
 linkage_locus_top *
-ReadImputed::build_names()
+ReadImputed::build_impute2_names()
 {
 //  asm("int $3");
 //  int dbg = 0;
@@ -476,7 +589,7 @@ ReadImputed::build_names()
         mp = *marp;
         if (! mp->skip ) {
             if (i >= num_all) {
-                errorvf("Internal Error: build_names() count of skipped markers too large\n");
+                errorvf("Internal Error: build_impute2_names() count of skipped markers too large\n");
                 EXIT(1);
             }
             names[i] = CALLOC(mp->name.size()+1, char);
@@ -490,7 +603,7 @@ ReadImputed::build_names()
                                   /*annotated*/ 0, /*penetrances_read*/ 0, 0, NULL);
 }
 
-void ReadImputed::build_map(m2_map& map)
+void ReadImputed::build_impute2_map(m2_map& map)
 {
 //  asm("int $3");
 //  int dbg = 0;
@@ -511,7 +624,7 @@ void ReadImputed::build_map(m2_map& map)
         mp = *marp;
         if (! mp->skip ) {
             if (i >= num_all) {
-                errorvf("Internal Error: build_map() count of skipped markers too large\n");
+                errorvf("Internal Error: build_impute2_map() count of skipped markers too large\n");
                 EXIT(1);
             }
             i++;
@@ -548,7 +661,7 @@ void ReadImputed::build_map(m2_map& map)
 }
 
 annotated_ped_rec *
-ReadImputed::build_ped(linkage_locus_top *LTop, int *num_peds) 
+ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds) 
 {
 //    asm("int $3");
     int dbg = 0;
@@ -558,7 +671,7 @@ ReadImputed::build_ped(linkage_locus_top *LTop, int *num_peds)
     annotated_ped_rec *persons;
     int num_ped_records = people.size();
     if ((persons = CALLOC((size_t)num_ped_records, annotated_ped_rec)) == NULL) {
-        errorf("Build_Ped: Could not allocate enough memory, exiting.");
+        errorf("Build_Impute2_Ped: Could not allocate enough memory, exiting.");
         EXIT(MEMORY_ALLOC_ERROR);
     }
     Mapsi ped_names;
@@ -702,7 +815,7 @@ ReadImputed::build_ped(linkage_locus_top *LTop, int *num_peds)
     return persons;
 }
 
-void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
+void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
 {
 //  asm("int $3");
     int dbg = 0;

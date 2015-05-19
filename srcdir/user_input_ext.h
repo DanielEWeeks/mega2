@@ -33,7 +33,7 @@
 
 extern INPUT_FORMAT_t Input_Format;
 extern const char *INPUT_FORMAT_STR[];
-extern Input *InputO;
+extern Input_Base *Input;
 
 extern double Imputed_Info_Metric_Threshold;
 

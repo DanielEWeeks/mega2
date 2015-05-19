@@ -766,7 +766,7 @@ int             main(int argc, char **argv)
           &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
           &FreqMismatchThreshold);
 
-    Input_Files& inf = InputO->input_files;  // InputO is set in menu1 as soon as possible.
+    Input_Files& inf = Input->input_files;  // Input is set in menu1 as soon as possible.
 
     plink_info->plinkf = (Input_Format == in_format_binary_PED) ? binary_PED_format : 
                                (Input_Format == in_format_PED) ? PED_format : not_plink_format;

@@ -74,10 +74,33 @@ public:
 
 };
 
-class Input {
+class Input_Base {
 public:
-    Input(INPUT_FORMAT_t i): input_format(i) {}
-    virtual ~Input() {};
+    Input_Base(INPUT_FORMAT_t i): input_format(i) {}
+    virtual ~Input_Base() {};
+
+    virtual boolean has_menu_pr()      { return false; }
+    virtual boolean has_menu_parse()   { return false; }
+    virtual boolean has_menu2batch()   { return false; }
+    virtual boolean has_batch2menu()   { return false; }
+
+    virtual void do_menu_pr(int &idx, int line_len, int choiceA[])   { }
+    virtual int  do_menu_parse(int choice) { return 0; }   // 0 indicates no match ; but false (above) means this is not called.
+    virtual void do_menu2batch() { }
+    virtual void do_batch2menu() { }
+
+
+    virtual boolean has_init()  { return false; }
+    virtual boolean has_names() { return false; }
+    virtual boolean has_map()   { return false; }
+    virtual boolean has_ped()   { return false; }
+
+//  these functions are define the corresponding function above returns true;
+    virtual void do_init()  { }
+    virtual linkage_locus_top *do_names() { return (linkage_locus_top *)0; }
+    virtual void do_map(std::vector<m2_map>& additional_maps) { }
+    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop) { return (linkage_ped_top *) 0; }
+
 
 public:
     INPUT_FORMAT_t input_format;
@@ -85,9 +108,9 @@ public:
     Globals G;
 };
 
-class Input_Old : public Input {
+class Input_Old : public Input_Base {
 public:
-    Input_Old(INPUT_FORMAT_t i): Input(i) {}
+    Input_Old(INPUT_FORMAT_t i): Input_Base(i) {}
     virtual ~Input_Old() {};
 };
 
@@ -159,10 +182,33 @@ public:
 
 ////////////////
 
-class Input_Impute : public Input {
+class Input_Impute;
+
+class Input_Impute : public Input_Base {
 public:
-    Input_Impute(INPUT_FORMAT_t i): Input(i) {}
-    virtual ~Input_Impute() {};
+    Input_Impute(INPUT_FORMAT_t i): Input_Base(i) {}
+    ~Input_Impute() {};
+
+    virtual boolean has_menu_pr()      { return true; }
+    virtual boolean has_menu_parse()   { return true; }
+    virtual boolean has_menu2batch()   { return true; }
+    virtual boolean has_batch2menu()   { return true; }
+
+    virtual void do_menu_pr(int &idx, int line_len, int choiceA[])    { Obj.do_menu_pr(idx, line_len, choiceA); }
+    virtual int  do_menu_parse(int choice) { return Obj.do_menu_parse(choice); }
+    virtual void do_menu2batch() { Obj.do_menu2batch(); }
+    virtual void do_batch2menu() { Obj.do_batch2menu(); }
+
+
+    virtual boolean has_init()  { return true; }
+    virtual boolean has_names() { return true; }
+    virtual boolean has_map()   { return true; }
+    virtual boolean has_ped()   { return true; }
+
+    virtual void do_init()  { Obj.do_init(this); }
+    virtual linkage_locus_top *do_names() { return Obj.do_names(); }
+    virtual void do_map(std::vector<m2_map>& additional_maps) { Obj.do_map(additional_maps); }
+    linkage_ped_top *do_ped(linkage_locus_top *LTop) { return Obj.do_ped(LTop); }
 
 public:
     ReadImputed Obj;
@@ -177,7 +223,7 @@ public:
 class InputCreate {
 public:
     static
-    Input *createinput(INPUT_FORMAT in_format) {
+    Input_Base *createinput(INPUT_FORMAT in_format) {
         switch(in_format) {
         case in_format_mega2:
             return new Input_Mega2(in_format);

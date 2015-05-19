@@ -101,7 +101,7 @@ static void     untyped_ped_menu(int *opt);
 /*===========prototypes============= */
 
 INPUT_FORMAT_t Input_Format = in_format_mega2;
-Input *InputO;
+Input_Base *Input;
 
 const char *INPUT_FORMAT_STR[] = {
      "Mega2 format with header",
@@ -824,7 +824,7 @@ void menu1(file_format *infl_type,
 
     if (batchINPUTFILES) {
 
-        InputO = InputCreate::createinput(Input_Format);
+        Input = InputCreate::createinput(Input_Format);
 
         if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
             Input_Format == in_format_VCF)
@@ -844,6 +844,7 @@ void menu1(file_format *infl_type,
         return;
     }
 
+    Input = InputCreate::createinput(Input_Format);  // may be changed later but need something for now
 
     sprintf(*output_path, ".");
     sprintf(*input_path, ".");
@@ -1011,6 +1012,8 @@ void menu1(file_format *infl_type,
         }
         choiceA[idx++] = ext_i;
 
+        if (Input->has_menu_pr()) Input->do_menu_pr(idx, line_len, choiceA);
+#if 0
         if (Input_Format == in_format_imputed) {
             printf("%2d) %-*s%.4f\n", idx, line_len, "Enter imputation info metric threshold:", 
                    Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue);
@@ -1021,6 +1024,7 @@ void menu1(file_format *infl_type,
                    Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name : "--");
             choiceA[idx++] = imputed_chromosome_i;
         }
+#endif
 
         choiceA[idx] = fln_print(auxo, idx, _aux_i);
         if (choiceA[idx]) idx++;
@@ -1204,6 +1208,7 @@ void menu1(file_format *infl_type,
                 fcmap(stdin, "%d", &ans); newline;
                 if (ans <= 9 && ans >= 1) {
                     Input_Format = (INPUT_FORMAT_t) (ans - 1);
+		    Input = InputCreate::createinput(Input_Format);
                     break;
                 } else
                     printf("allowed values are 1, 2, 3, 4, 5, 6, 7, 8, 9.\n");
@@ -1218,6 +1223,7 @@ void menu1(file_format *infl_type,
             fcmap(stdin, "%s", extension_name); newline;
             reset_extension = 1;
 
+#if 0
         } else if (choice_ == imputed_info_metric_threshold_i) {
             double ansd;
             while (1) {
@@ -1230,7 +1236,10 @@ void menu1(file_format *infl_type,
             batch_item_type *bip = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold");
             bip->items_read = 1;
             bip->value.fvalue = ansd;
-
+#endif
+        } else if (Input->has_menu_parse() && Input->do_menu_parse(choice_) ) {
+            ; // work handled in do_menu_parse iff it returns 1
+#if 0
         } else if (choice_ == imputed_chromosome_i) {
             char select[100];
             int chrm;
@@ -1247,6 +1256,7 @@ void menu1(file_format *infl_type,
 /*
     {"Input_Imputed_Info_File",               STRING,     ""},
  */
+#endif
         } else if (choice_ == inf_i) {
             fln_get(info, "imputed info");
 
@@ -1409,7 +1419,7 @@ void menu1(file_format *infl_type,
         if (choice_) draw_line();
     }
 
-    InputO = InputCreate::createinput(Input_Format);
+    Input = InputCreate::createinput(Input_Format);
 
     if (InputMode == INTERACTIVE_INPUTMODE) {
 
@@ -1448,6 +1458,8 @@ void menu1(file_format *infl_type,
             if (xcf) batchf(VCF_Marker_Alternative_INFO_Key);
         }
 
+        if (Input->has_menu2batch()) Input->do_menu2batch();
+#if 0
         if (Input_Format == in_format_imputed) {
             Cstr Values[] = { "Value_Imputed_Info_Metric_Threshold", 
                               "Value_Imputed_Chromosome" };
@@ -1457,7 +1469,7 @@ void menu1(file_format *infl_type,
                     batchf(bip);
             }
         }
-
+#endif
         menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
     }
 

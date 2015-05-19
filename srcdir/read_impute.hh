@@ -69,6 +69,16 @@ public:
     ReadImputed() : HDR(2) {};  // two line header
     ~ReadImputed() { (void) markers[0]; };
 
+    virtual void do_menu_pr(int &idx, int line_len, int choiceA[]);
+    virtual int  do_menu_parse(int choice);
+    virtual void do_menu2batch();
+    virtual void do_batch2menu();
+
+    virtual void do_init(Input_Impute *inp);
+    virtual linkage_locus_top *do_names();
+    virtual void do_map(std::vector<m2_map>& additional_maps);
+    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
+
     void files(char *imp, Cstr& info, Cstr& sam) {
         impute_file = imp;
         info_file   = info;
@@ -81,13 +91,13 @@ public:
 
     void read_sample_file();
 
-    linkage_locus_top *build_names();
+    linkage_locus_top *build_impute2_names();
 
-    void build_map(m2_map& impute_map);
+    void build_impute2_map(m2_map& impute_map);
 
-    annotated_ped_rec *build_ped(linkage_locus_top *LTop, int *num_peds);
+    annotated_ped_rec *build_impute2_ped(linkage_locus_top *LTop, int *num_peds);
 
-    void build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
+    void build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
 
 public:
     Vecmarkerp    markers;
@@ -114,6 +124,11 @@ static
     Vecs    sample_file_hdr1b;
     Vecs    sample_file_hdr2a;
     Vecs    sample_file_hdr2b;
+
+static const
+    int imputed_chromosome_i =            8000001;
+static const
+    int imputed_info_metric_threshold_i = 8000002;
 
 // #if 0 in .cpp
 //    Vecct   column_type;
