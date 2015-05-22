@@ -58,6 +58,7 @@ bool Token::more(Str& token, int dbg) {
     }
 }
 
+
 bool Token::more(char *&token) {
     fo = line.find_first_of(sep, of);
     if (fo == std::string::npos) {
@@ -165,30 +166,28 @@ void Token::getDC(double vec[3], int cnt) {
     }
 }
 
-void Token::set(Cstr& line, char* Clin) {
-    this->line = line;
-    if (Clin) {
-        Cline = Clin;
-    } else {
-        if (Cline) free(Cline);
-        Cline = CALLOC(line.size()+1, char); // to be safe
-        strcpy(Cline, line.c_str());
-    }
-/*
-    npos = this->line.size();
-    if (this->line[npos] == '\n') {
-        npos--;
-        this->line.resize(npos);
-    }
-*/
+void Token::set(Cstr& lin) {
+    this->line = lin;
+
+    if (Cline) free(Cline);
+    Cline = CALLOC(lin.size()+1, char); // to be safe
+    strcpy(Cline, lin.c_str());
+
     of = line.find_first_not_of(sep);
     if (of == std::string::npos) of = 0;
     fo = std::string::npos;
     mo = true;
 }
 
-void Token::set(char *line) {
-    set(string(line), line);
+void Token::set(char *lin) {
+    this->line = string(lin);
+
+    Cline = lin;
+
+    of = line.find_first_not_of(sep);
+    if (of == std::string::npos) of = 0;
+    fo = std::string::npos;
+    mo = true;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -282,6 +281,14 @@ void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
             }
             if (of == std::string::npos) return;
         }
+    }
+}
+
+void join(Vecs &vec, Str& ans, Cstr& sep) {
+    for (int i = 0, l = vec.size(); i < l; i++) {
+        ans.append(vec[i]);
+        if (i < l - 1)
+            ans.append(sep);
     }
 }
 

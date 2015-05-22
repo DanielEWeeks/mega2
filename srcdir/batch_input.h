@@ -157,24 +157,71 @@ typedef struct keyw {
 // It is defined in batch_input.cpp or by the new object system for
 // backward compatability.
 extern batch_item_type *Mega2BatchItems;
-extern batch_item_type *Mega2BatchItemGet(int i);
-extern batch_item_type *Mega2BatchItemGet(const std::string& key);
+extern batch_item_type *BatchItemGet(int i);
+extern batch_item_type *BatchItemGet(const std::string& key);
 
-extern void BatchItemGet(int &num, Cstr &item);
-extern void BatchItemGet(double &dbl, Cstr &item);
-extern void BatchItemGet(Str &str, Cstr &item);
-extern void BatchItemGet(char *&str, Cstr &item);
-extern void BatchItemGet(char &str, Cstr &item);
+inline void BatchValueGet(int &num, Cstr &item) {
+    num = BatchItemGet(item)->value.option;
+}
 
-extern void Mega2BatchItemSet(char *value, batch_item_type *bi);
-extern void Mega2BatchItemSet(char *value, int i);
-extern void Mega2BatchItemSet(char *value, const std::string& key);
+inline void BatchValueGet(double &dbl, Cstr &item) {
+    dbl = BatchItemGet(item)->value.fvalue;
+}
 
-extern void BatchItemSet(int &num, Cstr &item);
-extern void BatchItemSet(double &dbl, Cstr &item);
-extern void BatchItemSet(Str &str, Cstr &item);
-extern void BatchItemSet(char *&str, Cstr &item);
-extern void BatchItemSet(char &str, Cstr &item);
+inline void BatchValueGet(Str &str, Cstr &item) {
+    str = std::string(BatchItemGet(item)->value.name);
+}
+
+inline void BatchValueGet(char *&str, Cstr &item) {
+    strcpy(str, BatchItemGet(item)->value.name);
+}
+
+inline void BatchValueGet(char &str, Cstr &item) {
+    str = BatchItemGet(item)->value.copt;
+}
+
+void BatchValueGet(Vecs& vec, Cstr &item);
+void BatchValueGet(Vecd& vec, Cstr &item);
+void BatchValueGet(Veci& vec, Cstr &item);
+
+
+extern void RawBatchValueSet(char *value, batch_item_type *bi);
+extern void RawBatchValueSet(char *value, int i);
+extern void RawBatchValueSet(char *value, const std::string& key);
+
+inline void BatchValueSet(int &num, Cstr &item) {
+    batch_item_type *bip = BatchItemGet(item);
+    bip->items_read = 1;
+    bip->value.option = num;
+}
+
+inline void BatchValueSet(double &dbl, Cstr &item) {
+    batch_item_type *bip = BatchItemGet(item);
+    bip->items_read = 1;
+    bip->value.fvalue = dbl;
+}
+
+inline void BatchValueSet(Str &str, Cstr &item) {
+    batch_item_type *bip = BatchItemGet(item);
+    bip->items_read = 1;
+    strcpy(bip->value.name, C(str));
+}
+
+inline void BatchValueSet(char *&str, Cstr &item) {
+    batch_item_type *bip = BatchItemGet(item);
+    bip->items_read = 1;
+    strcpy(bip->value.name, str);
+}
+
+inline void BatchValueSet(char &str, Cstr &item) {
+    batch_item_type *bip = BatchItemGet(item);
+    bip->items_read = 1;
+    bip->value.copt = str;
+}
+
+void BatchValueSet(Vecs& vec, Cstr &item);
+void BatchValueSet(Vecd& vec, Cstr &item);
+void BatchValueSet(Veci& vec, Cstr &item);
 
 #define ITEM_READ(n)     (Mega2BatchItems[n].items_read >= 1)
 

@@ -551,7 +551,7 @@ static void fln_get(fln_t *fln, const char *title) {
 static void fln_batchf(fln_t *fln) {
     if (*fln->name != 0) {
 	if (fln->batch == -1) {
-            strcpy(Mega2BatchItemGet(fln->item)->value.name, fln->name);
+            strcpy(BatchItemGet(fln->item)->value.name, fln->name);
             batchf(fln->item);
         } else {
 	    strcpy(Mega2BatchItems[/* ? */ fln->batch].value.name, fln->name);
@@ -575,9 +575,9 @@ static void menu1_batch_set_files(file_format *infl_type,
     while (*fln) {
         i = (*fln)->batch;
         if (i == -1) {
-            bi = Mega2BatchItemGet((*fln)->item);
+            bi = BatchItemGet((*fln)->item);
         } else {
-            bi = Mega2BatchItemGet(i);
+            bi = BatchItemGet(i);
         }
         if (bi->items_read) {
             if (access(bi->value.name, F_OK) == 0) {
@@ -590,10 +590,8 @@ static void menu1_batch_set_files(file_format *infl_type,
             }
         } else {
             if (i == Input_Pedigree_File || 
-///                ((i == Input_Locus_File) && (! plinkf && ! xcf && (Input_Format != in_format_imputed))) ||
-///                ((i == Input_Aux_File) && (xcf || Input_Format == in_format_binary_PED || Input_Format == in_format_imputed))
-                ((i == Input_Locus_File) && Input->req_locus) ||
-                ((i == Input_Aux_File) && Input->req_aux) ) {
+                ((i == Input_Locus_File) && Input->req_locus_file) ||
+                ((i == Input_Aux_File) && Input->req_aux_file) ) {
                 missing_mandatory_keyword(i);
             } else {
                 strcpy(fln_tmp, (*fln)->title);
@@ -787,9 +785,8 @@ void menu1(file_format *infl_type,
     int            compress_i = 17, file_format_i = 18, vcf_args_i = 19;
     int            vcf_mak_i = 20, site_vcf_i = 21, site_bcf_i = 22, site_vcf_gz_i = 23, _aux_i = 0;
     int            in_dir_i = 24, pmap_i = 25;
-    int	           imputed_i = 28, imputed_info_metric_threshold_i = 29;
-    int            imputed_chromosome_i = 30, inf_i = 31;
-    int            idx, choiceA[32]; /* idx should be 1+ largest <>_i value (above)*/
+    int	           imputed_i = 26, inf_i = 27;
+    int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
 
     int            plinkf = 0, xcf = 0;
 
@@ -957,7 +954,7 @@ void menu1(file_format *infl_type,
                 auxo->title = "IMPUTE2 file:";
                 _aux_i = imputed_i;
                 fln_init(info, "IMPUTE2", "impute_info", "[optional]", "impute_info");
-                fln_init_plink(! PMAP_REQ);
+//              fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
 
             }
@@ -1002,8 +999,7 @@ void menu1(file_format *infl_type,
             }
         }
 
-///        if (plinkf || xcf || Input_Format == in_format_imputed)
-        if (Input->req_stem) {
+        if (Input->req_stem_flag) {
             printf("%2d) %-*s%s\n", idx, line_len, "Input file stem:", extension_name);
             fln_stem = 1;
 
@@ -1013,19 +1009,7 @@ void menu1(file_format *infl_type,
         }
         choiceA[idx++] = ext_i;
 
-        if (Input->has_menu_pr()) Input->do_menu_pr(idx, line_len, choiceA);
-#if 0
-        if (Input_Format == in_format_imputed) {
-            printf("%2d) %-*s%.4f\n", idx, line_len, "Enter imputation info metric threshold:", 
-                   Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue);
-            choiceA[idx++] = imputed_info_metric_threshold_i;
-
-            printf("%2d) %-*s%s\n", idx, line_len, "Enter imputation chromosome [required]:",
-                   Mega2BatchItemGet("Value_Imputed_Chromosome")->items_read ? 
-                   Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name : "--");
-            choiceA[idx++] = imputed_chromosome_i;
-        }
-#endif
+        if (Input->has_menu_display()) Input->do_menu_display(idx, line_len, choiceA);
 
         choiceA[idx] = fln_print(auxo, idx, _aux_i);
         if (choiceA[idx]) idx++;
@@ -1103,8 +1087,7 @@ void menu1(file_format *infl_type,
 
         if (choice_ ==  0) {
             exit_loop=1;
-///            if (! plinkf && ! xcf && (Input_Format != in_format_imputed))
-            if (Input->req_locus)
+            if (Input->req_locus_file)
                 {
                 if (access(*locusfl_name, F_OK) != 0)   {
                     printf("ERROR: You must specify a locus file.\n");
@@ -1115,8 +1098,7 @@ void menu1(file_format *infl_type,
                 printf("ERROR: You must specify a pedigree file.\n");
                 exit_loop=0;
             }
-///            if (! xcf && (Input_Format != in_format_imputed))
-            if (Input->req_map)
+            if (Input->req_map_file)
             {
                 // There is a map file that is extracted from the VCF file
                 // and presented to the user as 'VCF.p'. So, the map file is optional.
@@ -1196,6 +1178,7 @@ void menu1(file_format *infl_type,
                 fln_free_not_present(pheo);
                 fln_free_not_present(mapo);
                 fln_free_not_present(pmapo);
+                fln_free_not_present(info);
             }
 
         } else if (choice_ == file_format_i) {
@@ -1229,40 +1212,9 @@ void menu1(file_format *infl_type,
             fcmap(stdin, "%s", extension_name); newline;
             reset_extension = 1;
 
-#if 0
-        } else if (choice_ == imputed_info_metric_threshold_i) {
-            double ansd;
-            while (1) {
-                printf("Please enter threshold for acceptable imputed value ");
-                fcmap(stdin, "%g", &ansd); newline;
-                if (ansd < 0.0 || ansd > 1.0) {
-                    printf("threshold must be between 0.0 and 1.0\n");
-                } else break;
-            }
-            batch_item_type *bip = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold");
-            bip->items_read = 1;
-            bip->value.fvalue = ansd;
-#endif
         } else if (Input->has_menu_parse() && Input->do_menu_parse(choice_) ) {
             ; // work handled in do_menu_parse iff it returns 1
-#if 0
-        } else if (choice_ == imputed_chromosome_i) {
-            char select[100];
-            int chrm;
-            while (1) {
-                printf("Please specify a chromosome for unspecified markers: ");
-                fcmap(stdin, "%s", select); newline;
-                if ((chrm = STR_CHR(select)) == -1) {
-                    printf("%s is not a valid chromosome. Valid chromosomes are numbers 1-26, X, Y, XY, or MT\n", select);
-                } else break;
-            }
-            batch_item_type *bip = Mega2BatchItemGet("Value_Imputed_Chromosome");
-            bip->items_read = 1;
-            strcpy(bip->value.name, select);
-/*
-    {"Input_Imputed_Info_File",               STRING,     ""},
- */
-#endif
+
         } else if (choice_ == inf_i) {
             fln_get(info, "imputed info");
 
@@ -1463,22 +1415,11 @@ void menu1(file_format *infl_type,
         }
 
         if (Input->has_menu2batch()) Input->do_menu2batch();
-#if 0
-        if (Input_Format == in_format_imputed) {
-            Cstr Values[] = { "Value_Imputed_Info_Metric_Threshold", 
-                              "Value_Imputed_Chromosome" };
-            for(int i = 0; i < 2; i++) {
-                batch_item_type *bip = Mega2BatchItemGet(Values[i]);
-                if (bip->items_read) 
-                    batchf(bip);
-            }
-        }
-#endif
+
         menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
     }
 
-///    if (plinkf || xcf || (Input_Format == in_format_imputed)) fln_free(loco);
-    if (! Input->req_locus) fln_free(loco);
+    if (! Input->req_locus_file) fln_free(loco);
 }
 
 /* static void default_labels(char *msg, int *liability, int *status, int num_classes) */

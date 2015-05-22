@@ -4153,37 +4153,11 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                Input_Format == in_format_VCF;
 
     if (Input->has_init()) Input->do_init();
-#if 0
-    if (Input_Format == in_format_imputed) {
-        warnf("processing imputed files");
-        Str t = "";
-        ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
-        imputed.input = (static_cast<Input_Impute *>(InputO));
-        imputed.files(bed_file, t, ped_file);
-        err_fn = mega2_input_files[6];
-        imputed.default_chrm   = std::string(Mega2BatchItemGet("Value_Imputed_Chromosome")->value.name);
-        imputed.info_threshold = Mega2BatchItemGet("Value_Imputed_Info_Metric_Threshold")->value.fvalue;
-//      imputed.probability_threshold = Mega2BatchItemGet("Imputed_Probability_Threshold")->value.fvalue;
-        imputed.probability_threshold = .90;
 
-        imputed.read_imputed_file();
-        if (imputed.read_info) imputed.read_info_file();
-        imputed.read_sample_file();
-//      imputed.read_genotypes_file();
-    }
-#endif
     if (Input->has_names()) {
         LTop = Input->do_names();
 	ann_files = 1;
-    }
-#if 0
-    if (Input_Format == in_format_imputed) {
-        ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
-        LTop = imputed.build_names();
-	ann_files = 1;
-    } 
-#endif
-     else if (PLINK.plink || xcf) {
+    } else if (PLINK.plink || xcf) {
         char **phe_names = NULL;
         int *phe_types   = NULL;
         int tot_cols = phe_cols = parse_phe_types(phe_file, &phe_names, &phe_types);
@@ -4312,15 +4286,6 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     std::vector<m2_map> additional_maps;
 
     if (Input->has_map()) { Input->do_map(additional_maps); }
-#if 0
-    if (Input_Format == in_format_imputed) {
-        ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
-        m2_map impute_map("IMPUTE", 'p');
-        imputed.build_map(impute_map);
-        additional_maps.push_back(impute_map);
-
-    }
-#endif
     else if (PLINK.plink) {
         // if this is PLINK format (double negative)
         // CPK: If the .map file is a .bim file we gather the alleles into the
@@ -4465,23 +4430,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     if (Input->has_ped()) {
         pedfile_type = PREMAKEPED_PFT;
         Top = Input->do_ped(LTop);
-    }
-#if 0
-    if (Input_Format == in_format_imputed) {
-        ReadImputed& imputed = (static_cast<Input_Impute *>(InputO))->Obj;
-        int num_peds = 0;
-        annotated_ped_rec *persons = imputed.build_ped(LTop, &num_peds);
-        imputed.build_genotypes(LTop, persons);
-        pedfile_type = PREMAKEPED_PFT;
-        Top = mk_ped_top(persons, imputed.people.size(), LTop, num_peds,
-                         /*totaltyped*/ imputed.people_filtered,
-                         /*groups*/ NULL, 0, 0, 
-                         /*num_err*/0, 1);
-//      asm("int $3");
-
-    }
-#endif
-     else if (PLINK.plink ||
+    } else if (PLINK.plink ||
 	Input_Format == in_format_binary_VCF ||
         Input_Format == in_format_compressed_VCF ||
 	Input_Format == in_format_VCF) {

@@ -1068,8 +1068,6 @@ int             main(int argc, char **argv)
        if (Input->has_batch2local())
             Input->do_batch2local();
 
-        mssgf("Imputed data file processing");
-
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
         

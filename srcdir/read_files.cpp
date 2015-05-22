@@ -219,7 +219,9 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
 
     if (strcasecmp(quantstr, "NA") == 0)
         quant = QMISSING;
-    else {
+    else if (inSet(quantstr, Input->MissingCodesSet)) {
+        quant = QMISSING;
+    } else {
         /* try to read in the values */
         quant = strtod(quantstr, &endptr);
         if (endptr == quantstr || (*endptr)) {
@@ -338,6 +340,8 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
 
     if (status != 0 && status != 1 && status != 2) {
         if (!strcmp(cstatus, Mega2BatchItems[/* 58 */ Value_Missing_Affect_On_Input].value.name))
+            status = 0;
+        else if (inSet(cstatus, Input->MissingCodesSet)) 
             status = 0;
 /*
         if (PLINK.missing_pheno && status == PLINK.pheno_value) {
@@ -590,7 +594,11 @@ char *canonical_allele(const char *ra)
     allele_prop *Ara;
     cra = search_allele(ra);
     if (cra == NULL) {
-        Ara = CALLOC((size_t) 1, allele_prop);
+        int len = strlen(ra);
+        if (len <= ALL_LEN)
+            Ara = CALLOC((size_t) 1, allele_prop);
+        else
+            Ara = (allele_prop *)CALLOC(((size_t) sizeof(allele_prop)) + len - ALL_LEN , char);
         cra = allele_prop_allele(Ara);
         strcpy(cra, ra);
         add_allele(cra, cra);  /* need key on heap */

@@ -205,9 +205,11 @@ static keyw_t keywords[] = {
     {"Value_Missing_Affect_On_Input",         LINE,      "0"},
     {"Value_Missing_Affect_On_Output",        LINE,      "0"},
     {"Output_File_Stem",                      STRING,     ""},
-    {"Imputed_Chromosome",                    STRING,     ""},
+    {"Imputed_Oxford_Single_Chr",             STRING,     ""},
     {"Imputed_Info_Metric_Threshold",         FLOAT,   "0.3"},
-    {"Imputed_Probability_Threshold",         FLOAT,   "0.9"},
+    {"Imputed_Hard_Call_Threshold",           FLOAT,   "0.9"},
+    {"Imputed_Missing_Codes",                 NAME_LIST,  ""},
+    {"Imputed_Allow_Indels",                  YORN,      "y"},
     {"Input_Imputed_Info_File",               STRING,     ""},
 };
 
@@ -651,7 +653,7 @@ static void check_dependencies(analysis_type *analysis)
 /* global variables */
 static char analysis_name[50]="", sub_analysis_name[100]="";
 
-void Mega2BatchItemSet(char *value, batch_item_type *bi)
+void RawBatchValueSet(char *value, batch_item_type *bi)
 {
     char *intstr;
     int capacity = 8;
@@ -693,7 +695,7 @@ void Mega2BatchItemSet(char *value, batch_item_type *bi)
         break;
 
     case INT_LIST:
-//        asm("int $3");
+//      asm("int $3");
         warnvf("INT_LIST: %s\n", value);
         bi->value.mult_opts = CALLOC((size_t)capacity, int);
         intstr = NULL;
@@ -730,7 +732,7 @@ void Mega2BatchItemSet(char *value, batch_item_type *bi)
         break;
 
     case FLOAT_LIST:
-//        asm("int $3");
+//      asm("int $3");
         warnvf("FLOAT_LIST: %s\n", value);
         bi->value.mult_fvalues = CALLOC((size_t)capacity, double);
         intstr = NULL;
@@ -784,21 +786,21 @@ public:
     const char* what() const throw() { return exc.c_str(); };
 };
 
-void Mega2BatchItemSet(char *value, int i)
+void RawBatchValueSet(char *value, int i)
 {
     if (i >= NUM_KEYS) {
         warnvf("Mega2BatchItemSet: index %d too large\n:", i);
         return;
     }
     batch_item_type *bi = &Mega2BatchItems[i];
-    Mega2BatchItemSet(value, bi);
+    RawBatchValueSet(value, bi);
 }
 
-void Mega2BatchItemSet(char *value, Cstr& key)
+void RawBatchValueSet(char *value, Cstr& key)
 {
     batch_item_type *bi = NULL;
     if (map_get(BatchItemMap, key, bi))
-        Mega2BatchItemSet(value, bi);
+	RawBatchValueSet(value, bi);
     else {
         warnvf("Mega2BatchItemSet: key %s not found\n:", C(key));
 //      throw std::runtime_error(Str("Mega2BatchItemSet: bad key"));
@@ -807,37 +809,109 @@ void Mega2BatchItemSet(char *value, Cstr& key)
 
 }
 
-void BatchItemSet(int &num, Cstr &item) {
-    batch_item_type *bip = Mega2BatchItemGet(item);
-    bip->items_read = 1;
-    bip->value.option = num;
+void BatchValueSet(Veci& vec, Cstr &item)   // for lists
+{
+    batch_item_type *bi = BatchItemGet(item);
+    bi->items_read = 1;
+
+    int capacity = vec.size()+1;
+    int j;
+
+    switch(bi->value_type) {
+
+    case CHRM_LIST:
+    case INT_LIST:
+        bi->value.mult_opts = CALLOC((size_t)capacity, int);
+        for (j = 0; j < capacity - 1; j++) {
+            bi->value.mult_opts[j] = vec[j];
+        }
+        bi->value.mult_opts[j] = 0;
+        bi->items_read += j;
+        break;
+    default:
+        break;
+    }
 }
 
-void BatchItemSet(double &dbl, Cstr &item) {
-    batch_item_type *bip = Mega2BatchItemGet(item);
-    bip->items_read = 1;
-    bip->value.fvalue = dbl;
+void BatchValueSet(Vecs& vec, Cstr &item)   // for lists
+{
+    batch_item_type *bi = BatchItemGet(item);
+    bi->items_read = 1;
+
+    int capacity = vec.size()+1;
+    int j;
+
+    switch(bi->value_type) {
+
+    case NAME_LIST:
+//      tested
+        bi->value.mult_names = CALLOC((size_t)capacity, char *);
+        for (j = 0; j < capacity - 1; j++) {
+            bi->value.mult_names[j] = CALLOC((size_t)vec[j].size()+1, char);
+            strcpy(bi->value.mult_names[j], C(vec[j]));
+        }
+        bi->value.mult_names[j] = CALLOC((size_t)1, char);
+        bi->value.mult_names[j] = 0;
+        bi->items_read += j;
+        break;
+    default:
+        break;
+    }
 }
 
-void BatchItemSet(Str &str, Cstr &item) {
-    batch_item_type *bip = Mega2BatchItemGet(item);
-    bip->items_read = 1;
-    strcpy(bip->value.name, C(str));
+void BatchValueSet(Vecd& vec, Cstr &item)   // for lists
+{
+    batch_item_type *bi = BatchItemGet(item);
+    bi->items_read = 1;
+
+    int capacity = vec.size()+1;
+    int j;
+
+    switch(bi->value_type) {
+
+    case FLOAT_LIST:
+        bi->value.mult_fvalues = CALLOC((size_t)capacity, double);
+        for (j = 0; j < capacity - 1; j++) {
+            bi->value.mult_fvalues[j] = vec[j];
+        }
+        bi->value.mult_fvalues[j] = 0.0;
+        bi->items_read += j;
+        break;
+    default:
+        break;
+    }
 }
 
-void BatchItemSet(char *&str, Cstr &item) {
-    batch_item_type *bip = Mega2BatchItemGet(item);
-    bip->items_read = 1;
-    strcpy(bip->value.name, str);
-}
+/*
+void BatchValueSet(Veci& vec, Cstr &item)   // for lists
+{
+    batch_item_type *bi = BatchItemGet(item);
+    bi->items_read = 1;
 
-void BatchItemSet(char &str, Cstr &item) {
-    batch_item_type *bip = Mega2BatchItemGet(item);
-    bip->items_read = 1;
-    bip->value.copt = str;
-}
+    int capacity = vec.size()+1;
+    int j;
 
-batch_item_type *Mega2BatchItemGet(int i)
+    switch(bi->value_type) {
+
+    case CHRM_LIST:
+//      tested
+        bi->value.mult_opts = CALLOC((size_t)capacity, int);
+        int ch;
+        for (j = 0; j < capacity - 1; j++) {
+            bi->value.mult_names[j] = CALLOC((size_t)vec[j].size()+1, char);
+            sprintf(bi->value.mult_names[j], "%s", vec[j]);
+        }
+        bi->value.mult_names[j] = CALLOC((size_t)1, char);
+        bi->value.mult_names[j] = 0;
+        bi->items_read += j;
+        break;
+    default:
+        break;
+    }
+}
+*/
+
+batch_item_type *BatchItemGet(int i)
 {
     if (i >= NUM_KEYS) {
         warnvf("Mega2BatchItemGet: index %d too large\n:", i);
@@ -848,7 +922,7 @@ batch_item_type *Mega2BatchItemGet(int i)
     return &Mega2BatchItems[i];
 }
 
-batch_item_type *Mega2BatchItemGet(Cstr& key)
+batch_item_type *BatchItemGet(Cstr& key)
 {
     batch_item_type *bi = NULL;
     if (map_get(BatchItemMap, key, bi))
@@ -861,27 +935,60 @@ batch_item_type *Mega2BatchItemGet(Cstr& key)
     }
 }
 
-void BatchItemGet(int &num, Cstr &item) {
-    num = Mega2BatchItemGet(item)->value.option;
+void BatchValueGet(Vecs& vec, Cstr &item)   // for lists
+{
+    batch_item_type *bi = BatchItemGet(item);
+    int capacity = bi->items_read - 1;
+    int j = 0;
+
+    vec.clear();
+    switch(bi->value_type) {
+
+    case NAME_LIST:
+//      tested
+        vec.insert(vec.begin(), &bi->value.mult_names[j], &bi->value.mult_names[capacity]);
+        break;
+    default:
+        break;
+    }
 }
 
-void BatchItemGet(double &dbl, Cstr &item) {
-    dbl = Mega2BatchItemGet(item)->value.fvalue;
+void BatchValueGet(Vecd& vec, Cstr &item)   // for lists
+{
+    batch_item_type *bi = BatchItemGet(item);
+    int capacity = bi->items_read - 1;
+    int j = 0;
+
+    vec.clear();
+    switch(bi->value_type) {
+
+    case FLOAT_LIST:
+        vec.insert(vec.begin(), &bi->value.mult_fvalues[j], &bi->value.mult_fvalues[capacity]);
+        break;
+    default:
+        break;
+    }
 }
 
-void BatchItemGet(Str &str, Cstr &item) {
-    str = std::string(Mega2BatchItemGet(item)->value.name);
+void BatchValueGet(Veci& vec, Cstr &item)   // for lists
+{
+    batch_item_type *bi = BatchItemGet(item);
+    int capacity = bi->items_read - 1;
+    int j = 0;
+
+    vec.clear();
+    switch(bi->value_type) {
+
+    case CHRM_LIST:
+    case INT_LIST:
+        vec.insert(vec.begin(), &bi->value.mult_opts[j], &bi->value.mult_opts[capacity]);
+        break;
+    default:
+        break;
+    }
 }
 
-void BatchItemGet(char *&str, Cstr &item) {
-    strcpy(str, Mega2BatchItemGet(item)->value.name);
-}
-
-void BatchItemGet(char &str, Cstr &item) {
-    str = Mega2BatchItemGet(item)->value.copt;
-}
-
-static void set_batch_items(char *batch_file_name, analysis_type *analysis)
+static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
 {
     char nextline[FILENAME_LENGTH];
     char value[FILENAME_LENGTH];
@@ -1049,18 +1156,19 @@ static void set_batch_items(char *batch_file_name, analysis_type *analysis)
             malformed_batch_line(C(keyword));
         }
 
-        Mega2BatchItemSet(value, bi);
+        RawBatchValueSet(value, bi);
     }
 
-    msgvf("\nBatch file Status: %d arguments, %d bad lines, %d unknown options\n", cnt, errline, errtok);
-    if (errtok + errline)
+    if (errtok + errline) {
+        errorvf("\nBatch file Status: %d arguments, %d bad lines, %d unknown options\n", cnt, errline, errtok);
         EXIT(BATCH_FILE_ITEM_ERROR);
+    }
 }
 
 void batchfile_process(char *batch_file_name, analysis_type *analysis)
 {
 	// this is where the batch items are read from the batch file, and checked for consistency...
-    set_batch_items(batch_file_name, analysis);
+    parse_batch_file(batch_file_name, analysis);
     check_dependencies(analysis);
     check_batch_items();
 
@@ -1088,7 +1196,6 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
     if (!input_set)
         Input_Format = in_format_traditional;
 }
-
 
 //
 // Write the item associated with the Mega2BatchItem to the batch file.
@@ -1165,7 +1272,6 @@ void batchf(int item)
         break;
 
     case NAME_LIST:
-//err:
         str = &(batch_item.value.mult_names[0]);
         while(*str  != NULL) {
             fprintf(batchfp, "%s ", *str);
@@ -1197,7 +1303,8 @@ void batchf(batch_item_type *bi) {
 
 #endif /* NEW_BATCH */
 
-void Free_batch_items(void) {
+void Free_batch_items(void) 
+{
     item_value_type vt;
     int i, j, num_trs;
 

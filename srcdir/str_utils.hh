@@ -56,7 +56,7 @@ public:
     void getD(double vec[3], int cnt=0);
     void getDC(double vec[3], int cnt=0);
 
-    void set(Cstr& line, char *Clin=0);
+    void set(Cstr& line);
     void set(char *line);
 
 private:
@@ -110,6 +110,8 @@ private:
  * \brief split line into fields using sep
  */
 void split(Vecs &fields, Cstr& line, Cstr& sep=" \t\n\r", int cnt=0);
+
+void join(Vecs &vec, Str& ans, Cstr& sep);
 
 class Globals {
 public:

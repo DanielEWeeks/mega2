@@ -29,6 +29,7 @@
 #ifndef READ_IMPUTE_HH
 #define READ_IMPUTE_HH
 
+#include "batch_input.h"
 #include "annotated_ped_file.h"
 
 class ImpMarker {
@@ -62,14 +63,12 @@ enum Column_Type {RESERVED, MISSING, PHENO, GENO};
 typedef vectordb<Column_Type> Vecct;
 typedef vectordb<Column_Type>::const_iterator Vecctp;
 
-class Input;
-
 class ReadImputed {
 public:
     ReadImputed() : HDR(2) {};  // two line header
     ~ReadImputed() { (void) markers[0]; };
 
-    virtual void do_menu_pr(int &idx, int line_len, int choiceA[]);
+    virtual void do_menu_display(int &idx, int line_len, int choiceA[]);
     virtual int  do_menu_parse(int choice);
     virtual void do_menu2batch();
     virtual void do_batch2local();
@@ -107,9 +106,11 @@ public:
     int           people_all;
     int           people_filtered;
     bool          read_info;
-    Str           default_chrm;
+
+    Str           oxford_single_chr;
     double        info_threshold;
-    double        probability_threshold;
+    double        hard_call_threshold;
+    char          allow_indels;
     Input_Impute *input;
 private:
     const   char *impute_file;
@@ -126,11 +127,15 @@ static
     Vecs    sample_file_hdr2b;
 
 static const
-    int imputed_chromosome_i =            8000001;
+    int imputed_oxford_single_chr_i     = 8000001;
 static const
     int imputed_info_metric_threshold_i = 8000002;
 static const
-    int imputed_probability_threshold_i = 8000003;
+    int imputed_hard_call_threshold_i   = 8000003;
+static const
+    int imputed_missing_code_i          = 8000004;
+static const
+    int imputed_allow_indels_i          = 8000005;
 
 };
 

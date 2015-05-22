@@ -35,6 +35,9 @@ class Input_Impute;
 #include "str_utils.hh"
 #include "read_impute.hh"
 
+class Input_Base;
+extern Input_Base *Input;
+
 typedef
 enum INPUT_FORMAT {
     in_format_mega2 = 0,
@@ -76,15 +79,15 @@ public:
 
 class Input_Base {
 public:
-    Input_Base(INPUT_FORMAT_t i): input_format(i), plink(0), xcf(0), req_aux(0), req_locus(1), req_map(1), req_stem(0)  {}
+    Input_Base(INPUT_FORMAT_t i): input_format(i), plink(0), xcf(0), req_aux_file(0), req_locus_file(1), req_map_file(1), req_stem_flag(0)  {}
     virtual ~Input_Base() {};
 
-    virtual boolean has_menu_pr()      { return false; }
+    virtual boolean has_menu_display() { return false; }
     virtual boolean has_menu_parse()   { return false; }
     virtual boolean has_menu2batch()   { return false; }
-    virtual boolean has_batch2local()   { return false; }
+    virtual boolean has_batch2local()  { return false; }
 
-    virtual void do_menu_pr(int &idx, int line_len, int choiceA[])   { }
+    virtual void do_menu_display(int &idx, int line_len, int choiceA[])   { }
     virtual int  do_menu_parse(int choice) { return 0; }   // 0 indicates no match ; but false (above) means this is not called.
     virtual void do_menu2batch() { }
     virtual void do_batch2local() { }
@@ -106,13 +109,15 @@ public:
     INPUT_FORMAT_t input_format;
     Input_Files input_files;
     Globals G;
+    Str     MissingCodes;
+    Sets    MissingCodesSet;
 
     int plink;
     int xcf;
-    int req_aux;
-    int req_locus;
-    int req_map;
-    int req_stem;
+    int req_aux_file;
+    int req_locus_file;
+    int req_map_file;
+    int req_stem_flag;
 };
 
 class Input_Old : public Input_Base {
@@ -146,9 +151,9 @@ public:
 class Input_PLINK_Common : public Input_Old {
 public:
     Input_PLINK_Common(INPUT_FORMAT_t i): Input_Old(i) {
-        plink    = 1;
-        req_locus = 0;
-        req_stem = 1;
+        plink          = 1;
+        req_locus_file = 0;
+        req_stem_flag  = 1;
     }
     virtual ~Input_PLINK_Common() {};
 };
@@ -156,7 +161,7 @@ public:
 class Input_PED_Binary : public Input_PLINK_Common {
 public:
     Input_PED_Binary(INPUT_FORMAT_t i): Input_PLINK_Common(i) {
-        req_aux   = 1;
+        req_aux_file   = 1;
     }
     virtual ~Input_PED_Binary() {};
 };
@@ -173,9 +178,9 @@ class Input_VCF_Common : public Input_Old {
 public:
     Input_VCF_Common(INPUT_FORMAT_t i): Input_Old(i) {
         xcf = 1;
-        req_locus = 0;
-        req_map = 0;
-        req_stem = 1;
+        req_locus_file = 0;
+        req_map_file   = 0;
+        req_stem_flag  = 1;
 }
     virtual ~Input_VCF_Common() {};
 };
@@ -205,19 +210,19 @@ class Input_Impute;
 class Input_Impute : public Input_Base {
 public:
     Input_Impute(INPUT_FORMAT_t i): Input_Base(i) {
-        req_aux   = 1;
-        req_locus = 0;
-        req_map = 0;
-        req_stem  = 1;
+        req_aux_file   = 1;
+        req_locus_file = 0;
+        req_map_file   = 0;
+        req_stem_flag  = 1;
     }
     ~Input_Impute() {};
 
-    virtual boolean has_menu_pr()      { return true; }
+    virtual boolean has_menu_display() { return true; }
     virtual boolean has_menu_parse()   { return true; }
     virtual boolean has_menu2batch()   { return true; }
-    virtual boolean has_batch2local()   { return true; }
+    virtual boolean has_batch2local()  { return true; }
 
-    virtual void do_menu_pr(int &idx, int line_len, int choiceA[])    { Obj.do_menu_pr(idx, line_len, choiceA); }
+    virtual void do_menu_display(int &idx, int line_len, int choiceA[])    { Obj.do_menu_display(idx, line_len, choiceA); }
     virtual int  do_menu_parse(int choice) { return Obj.do_menu_parse(choice); }
     virtual void do_menu2batch() { Obj.do_menu2batch(); }
     virtual void do_batch2local() { Obj.do_batch2local(); }
