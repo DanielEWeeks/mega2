@@ -674,7 +674,7 @@ ReadImputed::build_impute2_names()
     for (Vecsp phep = sample_file_hdr1b.cbegin()+5; i < num_pheno; i++, phep++, typep++) {
         names[i] = CALLOC((*phep).size()+1, char);
         strcpy(names[i], (*phep).c_str());
-        types[i] = (*typep) == "P" ? 'T' : 'A';
+        types[i] = ( ((*typep) == "B") || ((*typep) == "D") ) ? 'A' : 'T';
     }
 
     ImpMarker *mp;
@@ -849,8 +849,10 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
         for (VecspDB vp = pp.cbegin()+5; vp != pp.cend(); vp++, i++) {
             if (dbg)
                 printf("%s %s %s\n", C(namep[i]), C(typep[i]), C(*vp));
-            switch (typep[i] == "B" ? 'A' : 'T') {
-            case 'A':
+//          switch (typep[i] == "B" ? 'A' : 'T')
+	    switch (LTop->Locus[i].Type) {
+//          case 'A':
+	    case AFFECTION:
                 ret = plink_annot_string_aff_phen(entry->rec_num+HDR, &(LTop->Pheno[i]),
                                                   &entry->pheno[i], C(*vp));
                 if (!ret) {
@@ -871,7 +873,9 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
                     }
                 }
                 break;
-            case 'T':
+//          case 'T':
+	    case QUANT:
+	    default:
                 ret = plink_annot_string_quant_phen(entry->rec_num+HDR, &(LTop->Pheno[i]),
                                                     &entry->pheno[i], C(*vp));
                 if (!ret) {
