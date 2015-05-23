@@ -181,7 +181,7 @@ void ReadImputed::do_menu2batch()
                       "Imputed_Allow_Indels" 
     };
                       
-    for(int i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
+    for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
         batch_item_type *bip = BatchItemGet(Values[i]);
         if (bip->items_read) 
             batchf(bip);
@@ -944,7 +944,7 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     char *callele2;
     char *callele0  = canonical_allele(C("0"));
 
-    SUPPRESS_MSSG_NESTED_INIT(skip_msg);
+//  SUPPRESS_MSSG_NESTED_INIT(skip_msg);
     SUPPRESS_MSSG_NESTED_INIT(prob_msg);
 
     Tod tod_gen("impute genotypes");
@@ -1060,6 +1060,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 */
     }
     tod_gen();
-    SUPPRESS_MSSG_NESTED_FINI(skip_msg);
+//  SUPPRESS_MSSG_NESTED_FINI(skip_msg);
     SUPPRESS_MSSG_NESTED_FINI(prob_msg);
 }

@@ -254,6 +254,7 @@ public:
     Input_Base *createinput(INPUT_FORMAT in_format) {
         switch(in_format) {
         case in_format_mega2:
+	default:
             return new Input_Mega2(in_format);
             break;
         case in_format_linkage:

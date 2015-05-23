@@ -1504,7 +1504,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
       }
     }
 
-    SUPPRESS_MSSG_NESTED_INIT(untyped_msg);
+//  SUPPRESS_MSSG_NESTED_INIT(untyped_msg);
     p=0;
     Tod tod_cp_all_eof("read ped file");
     Tod tod_cp_eof(20);
@@ -1564,7 +1564,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         }
         num_err += num_pheno_errs;
     }
-    SUPPRESS_MSSG_NESTED_FINI(untyped_msg);
+//  SUPPRESS_MSSG_NESTED_FINI(untyped_msg);
     tod_cp_all_eof();
     num_ped_records = p;
 #ifdef SHOWSTATUS

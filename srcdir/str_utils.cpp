@@ -27,6 +27,7 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 #include "common.h"
 #include "error_messages_ext.h"
 
