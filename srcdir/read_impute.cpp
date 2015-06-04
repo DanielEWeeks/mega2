@@ -68,9 +68,8 @@ using namespace std;
 
 void ReadImputed::do_menu_display(int &idx, int line_len, int choiceA[])
 {
-    printf("%2d) %-*s%s\n", idx, line_len, "Oxford-single-chr [required]:",
-           BatchItemGet("Imputed_Oxford_Single_Chr")->items_read ? 
-           BatchItemGet("Imputed_Oxford_Single_Chr")->value.name : "--");
+    printf("%2d) %-*s%s\n", idx, line_len, "Oxford-single-chr [if required]:",
+           BatchItemGet("Imputed_Oxford_Single_Chr")->value.name);
     choiceA[idx++] = imputed_oxford_single_chr_i;
 
     printf("%2d) %-*s%.4f\n", idx, line_len, "Imputation info metric threshold:", 
@@ -80,6 +79,10 @@ void ReadImputed::do_menu_display(int &idx, int line_len, int choiceA[])
     printf("%2d) %-*s%.4f\n", idx, line_len, "Hard call threshold:", 
            BatchItemGet("Imputed_Hard_Call_Threshold")->value.fvalue);
     choiceA[idx++] = imputed_hard_call_threshold_i;
+
+    printf("%2d) %-*s%.4f\n", idx, line_len, "Hard call warn precent:", 
+           BatchItemGet("Imputed_Hard_Call_Warn_Percent")->value.fvalue);
+    choiceA[idx++] = imputed_hard_call_warn_percent_i;
 
     printf("%2d) %-*s", idx, line_len, "Codes for Missing value: (space separated)");
     char **lst = BatchItemGet("Imputed_Missing_Codes")->value.mult_names;
@@ -108,6 +111,7 @@ int ReadImputed::do_menu_parse(int choice_)
                 printf("%s is not a valid chromosome. Valid chromosomes are numbers 1-26, X, Y, XY, or MT\n", select);
             } else break;
         }
+
         BatchValueSet(sel, "Imputed_Oxford_Single_Chr");
         ret = 1;
     } else if (choice_ == imputed_info_metric_threshold_i) {
@@ -134,6 +138,18 @@ int ReadImputed::do_menu_parse(int choice_)
 
 	BatchValueSet(ansd, "Imputed_Hard_Call_Threshold");
 	ret = 1;
+    } else if (choice_ == imputed_hard_call_warn_percent_i) {
+	double ansd;
+	while (1) {
+	    printf("Please enter percent ");
+	    fcmap(stdin, "%g", &ansd); newline;
+	    if (ansd < 0.0 || ansd > 100.0) {
+		printf("threshold must be between 0.0 and 100.0\n");
+	    } else break;
+	}
+
+	BatchValueSet(ansd, "Imputed_Hard_Call_Warn_Percent");
+	ret = 1;
     } else if (choice_ == imputed_missing_code_i) {
 	char selection[100];
         if (1) {
@@ -153,20 +169,8 @@ int ReadImputed::do_menu_parse(int choice_)
     } else if (choice_ == imputed_allow_indels_i) {
         batch_item_type *bip = BatchItemGet("Imputed_Allow_Indels");
         bip->value.copt = bip->value.copt == 'y' ? 'n' : 'y';
+
         bip->items_read = 1;
-//xx
-/*
-        int ans, lc;
-	while (1) {
-	    printf("Please enter yes(y) or no(n) ");
-	    fcmap(stdin, "%c", &ans); newline;
-            lc = tolower(ans);
-            if (lc == 'y' || lc == 'n') {
-		printf("value must be yes or no.\n");
-	    } else break;
-	}
-	BatchItemSet(ans, "Imputed_Allow_Indels");
-*/
 	ret = 1;
     }
     return ret;
@@ -177,6 +181,7 @@ void ReadImputed::do_menu2batch()
     Cstr Values[] = { "Imputed_Oxford_Single_Chr",
                       "Imputed_Info_Metric_Threshold", 
                       "Imputed_Hard_Call_Threshold", 
+                      "Imputed_Hard_Call_Warn_Percent", 
                       "Imputed_Missing_Codes",
                       "Imputed_Allow_Indels" 
     };
@@ -193,7 +198,9 @@ void ReadImputed::do_batch2local()
     BatchValueGet(this->oxford_single_chr, "Imputed_Oxford_Single_Chr");
     BatchValueGet(this->info_threshold, "Imputed_Info_Metric_Threshold");
     BatchValueGet(this->hard_call_threshold, "Imputed_Hard_Call_Threshold");
+    BatchValueGet(this->hard_call_warn_percent, "Imputed_Hard_Call_Warn_Percent");
     BatchValueGet(this->allow_indels, "Imputed_Allow_Indels");
+    BatchValueGet(this->info_file, "Input_Imputed_Info_File");
 
     Vecs vec;
     BatchValueGet(vec, "Imputed_Missing_Codes");
@@ -204,9 +211,8 @@ void ReadImputed::do_batch2local()
 
 void ReadImputed::do_init(Input_Impute *inp)
 {
-    Str t = "";
     this->input = inp;
-    this->files(*inp->input_files.bedfl, t, *inp->input_files.pedfl);
+    this->files(*inp->input_files.bedfl, *inp->input_files.pedfl);
 
 ///    err_fn = mega2_input_files[6];
 
@@ -261,36 +267,32 @@ void ReadImputed::read_imputed_file ()
     ifs.open(impute_file);
     if (! ifs.is_open() ) {
         errorvf("read_imputed_file: Can not open \"%s\" file\n", impute_file);
-        EXIT(1);
+        EXIT(FILE_NOT_FOUND);
     }
 
     if (!info_file.empty()) {
         infs.open(info_file.c_str());
         if (! infs.is_open() ) {
-            errorvf("read_imputed_file: Info file explicitly specified but can not be opened: \"%s\"\n", C(info_file));
-            EXIT(1);
+            errorvf("read_imputed_file: Info file can not be opened: \"%s\"\n", C(info_file));
+            EXIT(FILE_NOT_FOUND);
         }
+        infs.close();
         read_info = true;
-    } else {
-        info_file = string(impute_file) + "_info";
-        infs.open(info_file.c_str());
-        if (! infs.is_open() ) {
-            warnvf("read_imputed_file: Implicitly guessed Info file can not be opened: \"%s\"\n", C(info_file));
-            read_info = false;
-        } else {
-            infs.close();
-            read_info = true;
-        }
     }
 
     Str hmm, rsid, pos, A, B;
     VecsDB fields;
-    int idx = 0;
+    ImpMarker *mp = NULL, *mpp = NULL;
+    int line_n = 0;
+    int skip_count = 0;
     int nochr = 0;
 
     Str  name;
     Str  chrm;
-    SUPPRESS_MSSG_NESTED_INIT(bad_line_msg);
+    SUPPRESS_MSSG_NESTED_INIT(bad_line);
+    SUPPRESS_MSSG_NESTED_INIT(halftyped);
+    SUPPRESS_MSSG_NESTED_INIT(indel);
+    SUPPRESS_MSSG_NESTED_INIT(duplicate);
     while (! ifs.eof() ) {
 
         ifs >> hmm;
@@ -301,11 +303,15 @@ void ReadImputed::read_imputed_file ()
         ifs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         if (ifs.eof()) break;
-        idx++;
+        line_n++;
 
         if (dbg) {
-            cout << idx << ": ";
+            cout << line_n << ": ";
             cout << hmm << " ";
+        }
+        if (hmm.compare(0, 3, "chr") == 0) {
+//          hmm = hmm.substr(3, hmm.size()-3);
+            hmm.erase(0, 3);
         }
         if (inMap(hmm, input->G.chrm_set)) {
             chrm = hmm;
@@ -321,19 +327,23 @@ void ReadImputed::read_imputed_file ()
                 cout << "#" << fields.size() << " ";
             }
             if (fields.size() > 0) {
+                if (fields[0].compare(0, 3, "chr") == 0) {
+//                  fields[0] = fields[0].substr(3, fields[0].size()-3);
+                    fields[0].erase(0, 3);
+                }
                 if (inMap(fields[0], input->G.chrm_set)) {
                     chrm = fields[0];
                     name = "chr" + fields[0] + "_" + fields[1];
-                } else if (fields[0].compare(0, 2, "rs") == 0 && oxford_single_chr != "") {
+                } else if (fields[0].compare(0, 2, "rs") == 0 && oxford_single_chr != "--") {
                     chrm  =  oxford_single_chr;
                     name = fields[0];
-                } else if (oxford_single_chr != "") {
+                } else if (oxford_single_chr != "--") {
                     chrm  =  oxford_single_chr;
                     name = fields[0];
                 } else {
-                    SUPPRESS_MSSG_NESTED(bad_line_msg);
-                    warnvf("impute2 file: bad line(%d): %s %s %s\nrs_id field first item unexpected: no chromosome was specified and can not be inferred\n", 
-                           C(idx), C(hmm), C(rsid), C(pos));
+                    SUPPRESS_MSSG_NESTED(bad_line);
+                    errorvf("impute2 file: bad line(%d): %s %s %s\nrs_id field first item unexpected: no chromosome was specified and can not be inferred\n", 
+                           C(line_n), C(hmm), C(rsid), C(pos));
                     nochr++;
                     continue;
                 }
@@ -344,25 +354,31 @@ void ReadImputed::read_imputed_file ()
                     cout << fields[3] << " ";
                 }
                 if (fields.size() > 1 && fields[1] != pos) {
-                    SUPPRESS_MSSG_NESTED(bad_line_msg);
+                    SUPPRESS_MSSG_NESTED(bad_line);
                     warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id pos field (%s) does not match position column (%s)\n",
-                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[1]), C(pos));
-                    }
-                if (fields.size() > 2 && fields[2] != A) {
-                    SUPPRESS_MSSG_NESTED(bad_line_msg);
+                           C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[1]), C(pos));
+                }
+                if (check_format && fields.size() > 2 && fields[2] != A) {
+                    SUPPRESS_MSSG_NESTED(bad_line);
                     warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id A allele field (%s) does not match A column (%s)\n",
-                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[2]), C(A));
-                    }
-                if (fields.size() > 3 && fields[3] != B) {
-                    SUPPRESS_MSSG_NESTED(bad_line_msg);
+                           C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[2]), C(A));
+                }
+                if (check_format && fields.size() > 3 && fields[3] != B) {
+                    SUPPRESS_MSSG_NESTED(bad_line);
                     warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id B allele field (%s) does not match B column (%s)\n",
-                           C(idx), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[3]), C(B));
-                    }
+                           C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[3]), C(B));
+                }
+                if (A != B && (A == "0" || B == "0")) {
+                    SUPPRESS_MSSG_NESTED(halftyped);
+                    warnvf("impute2 file: odd line(%d): %s %s %s %s %s\n         heterozygote samples will appear halftyped because only one allele is 0\n",
+                           C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B));
+
+                }
             }
-            if (hmm != "---") {
-                SUPPRESS_MSSG_NESTED(bad_line_msg);
+            if (check_format && hmm != "---") {
+                SUPPRESS_MSSG_NESTED(bad_line);
                 warnvf("impute file: bad line(%d): %s %s %s %s %s\n         first field is not --- or chromosome\n",
-                       C(idx), C(hmm), C(rsid), C(pos), C(A), C(B));
+                       C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B));
             }
 
         }
@@ -372,18 +388,49 @@ void ReadImputed::read_imputed_file ()
             cout << B << " ";
             cout << endl;
         }
-        markers.push_back(new ImpMarker(name, chrm, pos, A, B, read_info));
+        mpp = mp;
+        mp = new ImpMarker(name, chrm, pos, A, B, read_info);
+        markers.push_back(mp);
+// some checks: indels and dups
+        if ( ( mp->A.size() > 1 && mp->A.compare(0, 5, "dummy" )) || 
+             ( mp->B.size() > 1 && mp->B.compare(0, 5, "dummy" )) ) {
+            if (allow_indels == 'y') {
+                SUPPRESS_MSSG_NESTED(indel);
+                warnvf("Marker: %s (bp %s) indel alleles[%s/%s] allowed [line %d].\n",
+                       C(mp->name), C(mp->pos), C(mp->A), C(mp->B), line_n);
+            } else {
+                SUPPRESS_MSSG_NESTED(indel);
+                warnvf("Marker: %s (bp %s) indel alleles[%s/%s] ignored [line %d].\n",
+                       C(mp->name), C(mp->pos), C(mp->A), C(mp->B), line_n);
+                skip_count++;
+                mp->skip = true;
+            }
+        } 
+
+        if (mpp == NULL)
+            ;
+        else if (mpp->pos == mp->pos) {
+            SUPPRESS_MSSG_NESTED(duplicate);
+            warnvf("Markers: %s (bp %s) repeated with different alleles [%s/%s %s/%s] kept only first [line %d].\n",
+                   C(mp->name), C(mp->pos), C(mpp->A), C(mpp->B), C(mp->A), C(mp->B), line_n);
+            if (! mp->skip) {
+                skip_count++;
+                mp->skip = true;
+            }
+        }
     }
+    SUPPRESS_MSSG_NESTED_FINI(bad_line);
+    SUPPRESS_MSSG_NESTED_FINI(halftyped);
+    SUPPRESS_MSSG_NESTED_FINI(indel);
+    SUPPRESS_MSSG_NESTED_FINI(duplicate);
     if (nochr) {
         errorvf("read_imputed_file: can not determine chromosomes for %d markers\n",
                 nochr);
-        EXIT(1);
+        EXIT(DATA_INCONSISTENCY);
     }
 
     markers_all = markers.size();
-    markers_filtered = markers_all;
-    SUPPRESS_MSSG_NESTED_FINI(bad_line_msg);
-
+    markers_filtered = markers_all - skip_count;
 }
 
 Str ReadImputed::info_file_hdr = "snp_id rs_id position a0 a1 exp_freq_a1 info certainty type";
@@ -398,16 +445,40 @@ void ReadImputed::read_info_file ()
     ifs.open(info_file.c_str());
     if (! ifs.is_open() ) {
         errorvf("read_info_file: Can not open \"%s\" file\n", C(info_file));
-        EXIT(1);
+        EXIT(FILE_NOT_FOUND);
     }
 
     Str line;
     getline(ifs, line);
-    if (line.compare(0, info_file_hdr.size(), info_file_hdr) != 0) {
+    Vecs l, h;
+    split(l, line);
+    split(h, info_file_hdr);
+//  if (l[0] != h[0] || l[1] != h[1] || l[2] != h[2] || l[3] != h[3] || 
+//      l[4] != h[4] || l[5] != h[5] || l[6] != h[6] || l[7] != h[7] || 
+//      l[8] != h[8])
+//  if (line.compare(0, info_file_hdr.size(), info_file_hdr) != 0)
+    if (l[0] != h[0] || l[1] != h[1] || l[2] != h[2])
+    {
         errorvf("Bad header for \"%s\" file.\n", C(info_file));
-        errorvf(" expecting: %s\n", C(info_file_hdr));
-        errorvf(" found: %s\n", C(line));
-        EXIT(1);
+        errorvf(" expecting: %s %s %s\n", C(h[0]), C(h[1]), C(h[2]));
+        errorvf(" found: %s %s %s\n", C(l[0]), C(l[1]), C(l[2]));
+        EXIT(INPUT_DATA_ERROR);
+    }
+
+    Mapsi col2idx;
+    int i, info_col, certainty_col;
+    i = 0;
+    for (VecspDB fp = l.cbegin(); fp != l.cend(); i++, fp++)
+        col2idx[*fp] = i;
+    if (!map_get(col2idx, "info", info_col)) {
+        errorvf("Bad header for \"%s\" file.\n", C(info_file));
+        errorvf("Can not find \"info\" column in %s.\n", C(line));
+        EXIT(INPUT_DATA_ERROR);
+    }
+    if (!map_get(col2idx, "certainty", certainty_col)) {
+        errorvf("Bad header for \"%s\" file.\n", C(info_file));
+        errorvf("Can not find \"certainty\" column in %s.\n", C(line));
+        EXIT(INPUT_DATA_ERROR);
     }
 
     Vecs        fields;
@@ -415,10 +486,8 @@ void ReadImputed::read_info_file ()
     size_t line_n = 0;
     int    skip_count = 0;
     double info;
-
-    SUPPRESS_MSSG_NESTED_INIT(info_threshold_msg);
-    SUPPRESS_MSSG_NESTED_INIT(indel_msg);
-    SUPPRESS_MSSG_NESTED_INIT(dup_msg);
+//xxx
+    SUPPRESS_MSSG_NESTED_INIT(info_threshold);
     ImpMarker *mp;
     for (mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
         mp = *mpp;
@@ -433,62 +502,38 @@ void ReadImputed::read_info_file ()
         if (fields[2] != mp->pos) {
             errorvf("Files \"%s\" and \"%s\" do not list markers in the identical order starting at line %d: %s.\n", 
                     impute_file, C(info_file), line_n, C(line));
-                EXIT(1);
+                EXIT(DATA_INCONSISTENCY);
         }
-        info = atof(fields[6].c_str());
+
+        info = atof(fields[info_col].c_str());
         mp->info = info;
-        mp->certainty = atof(fields[7].c_str());
+        mp->certainty = atof(fields[certainty_col].c_str());
 
-        if (info < info_threshold) {
-            skip_count++;
-            mp->skip = true;
-
-            SUPPRESS_MSSG_NESTED(info_threshold_msg);
-            warnvf("Marker: %s %s %s %s %s info (%.4f) < threshold (%.4f)\n", 
-                   C(fields[0]), C(fields[1]), C(fields[2]), C(fields[3]), C(fields[4]),
-                   info, info_threshold);
-//      } else if ( mp->A.find(mp->B)!=string::npos || mp->B.find(mp->A)!=string::npos ) {
-        } else if ( ( mp->A.size() > 1 && mp->A.compare(0, 5, "dummy" )) || 
-                    ( mp->B.size() > 1 && mp->B.compare(0, 5, "dummy" )) ) {
-            if (allow_indels == 'y') {
-                SUPPRESS_MSSG_NESTED(indel_msg);
-                warnvf("Markers: %s (bp %s) indel alleles[(%s) (%s)] allowed entry line %d.\n",
-                       C(mp->name), C(mp->pos), C(mp->A), C(mp->B), line_n);
-            } else {
-                SUPPRESS_MSSG_NESTED(indel_msg);
-                warnvf("Markers: %s (bp %s) indel alleles[(%s) (%s)] ignored entry line %d.\n",
-                       C(mp->name), C(mp->pos), C(mp->A), C(mp->B), line_n);
+        if (! mp->skip) {
+            if (info < info_threshold) {
                 skip_count++;
                 mp->skip = true;
-            }
-        } 
-        if (mpp == markers.cbegin())
-            ;
-        else if ((*(mpp-1))->pos == mp->pos) {
-            SUPPRESS_MSSG_NESTED(dup_msg);
-            warnvf("Markers: %s (bp %s) repeated with different alleles [(%s/%s) (%s/%s)] ignored entry line %d.\n",
-                   C(mp->name), C(mp->pos), C((*(mpp-1))->A), C((*(mpp-1))->B), C(mp->A), C(mp->B), line_n);
-            if (! mp->skip) {
-                skip_count++;
-                mp->skip = true;
+
+                SUPPRESS_MSSG_NESTED(info_threshold);
+                warnvf("Marker: %s %s %s %s %s info (%.4f) < threshold (%.4f) [line %d]\n", 
+                       C(fields[0]), C(fields[1]), C(fields[2]), C(fields[3]), C(fields[4]),
+                       info, info_threshold, line_n);
             }
         }
     }
 
-    markers_filtered = markers_all - skip_count;
-    SUPPRESS_MSSG_NESTED_FINI(info_threshold_msg);
-    SUPPRESS_MSSG_NESTED_FINI(indel_msg);
-    SUPPRESS_MSSG_NESTED_FINI(dup_msg);
+    markers_filtered = markers_filtered - skip_count;
+    SUPPRESS_MSSG_NESTED_FINI(info_threshold);
 
     if (mpp != markers.cend() || line_n != markers.size()) {
         errorvf("Files \"%s\" and \"%s\" are different lengths: %d vs %d\n",
                 impute_file, C(info_file), markers.size(), line_n);
-        EXIT(1);
+        EXIT(DATA_INCONSISTENCY);
     }
     ifs.close();
 
-    warnvf("%d of %d markers that are filtered by  the info_metric_threshold or indels.\n", 
-           skip_count, markers.size());
+    warnvf("%d of %d markers remain after filters are applied.\n", 
+           markers.size() - skip_count, markers.size());
 }
 
 Str ReadImputed::sample_file_hdr = "ID_1 ID_2 missing";
@@ -503,7 +548,7 @@ void ReadImputed::read_sample_file ()
     ifs.open(sample_file.c_str());
     if (! ifs.is_open() ) {
         errorvf("read_sample_file: Can not open \"%s\" file\n", C(sample_file));
-        EXIT(1);
+        EXIT(FILE_NOT_FOUND);
     }
 
     Str  line;
@@ -520,16 +565,14 @@ void ReadImputed::read_sample_file ()
         errorvf("Bad header for \"%s\" file.\n", C(sample_file));
         errorvf(" expecting: %s\n", C(sample_file_hdr));
         errorvf(" found: %s\n", C(line));
-        EXIT(1);
+        EXIT(INPUT_DATA_ERROR);
     }
     split(sample_file_hdr1a, line);
     split(fields, line);
 //  column_type.reserve(fields.size());
 
     Mapsi  col2idx;
-    Mapsip col2idxp;
-    Mapii  idx2fixed;
-    Mapiip idx2fixedp;
+    Mapii  idx2rsvd;
     int    i;
     int    ret;
     i = 0;
@@ -537,77 +580,34 @@ void ReadImputed::read_sample_file ()
         col2idx[*fp]    = i;
 //      column_type.push_back(PHENO);
     }
-#if 0
-    Cstr special[] = {"ID_1", "ID_2", "father", "mother", "sex"};
-    for (i = 0; i < 5; i++) {
-        if (map_get(col2idx, special[i], ret)) {
-            column_type[ret] = RESERVED;
-            reserved.push_back(ret);
-        } else {
-            reserved.push_back(-1);
-        }
-    }
 
-//line 2
-    getline(ifs, line);
-    if (ifs.fail()) {
-        errorvf("Bad second header line for \"%s\" file.\n", C(sample_file));
-        EXIT(1);
-    }
-    if (dbg) {
-        cout << line_n << ": " << line << endl;
-    }
-    split(sample_file_hdr2a, line);
-
-//line rest
-    for (; ! ifs.eof(); ) {
-        getline(ifs, line);
-        if (ifs.fail()) break;
-        if (dbg) {
-            cout << line_n << ": " << line << endl;
-        }
-        line_n++;
-        fields.clear();
-        split(fields, line);
-        mappedfields.clear();
-        for (i = 0; i < 5; i++) {
-            if (reserved[i] < 0)
-                mappedfields.push_back("0");
-            else
-                mappedfields.push_back(fields[reserved[i]]);
-        }
-
-        i = 0;
-        for (VecspDB fp = fields.cbegin(); fp != fields.cend(); i++, fp++) {
-            if (column_type[i] != RESERVED)
-                mappedfields.push_back(*fp);
-        }
-        people.push_back(mappedfields);
-    }
-#else
-    Cstr special[] = {"ID_1", "ID_2", "father", "mother", "sex", "missing"};
+    Cstr rsvd[] = {"ID_1", "ID_2", "father", "mother", "sex", "missing"};
     for (i = 0; i < 6; i++) {
-        if (map_get(col2idx, special[i], ret))
-            idx2fixed[ret] = i;
+        if (map_get(col2idx, rsvd[i], ret))
+            idx2rsvd[ret] = i;
     }
 
 //line 2
     sample_file_hdr1b.clear();
+    Str missin;
     Cstr fill1[] = {"", "", "0", "0", "0"};
     sample_file_hdr1b.insert(sample_file_hdr1b.end(), fill1, fill1+5);
     i = 0;
     for (VecspDB fp = sample_file_hdr1a.cbegin(); fp != sample_file_hdr1a.cend(); i++, fp++) {
-        if (map_get(idx2fixed, i, ret)) {
+        if (map_get(idx2rsvd, i, ret)) {
             if (ret < 5)
                 sample_file_hdr1b[ret] = *fp;
+            else
+                missin = *fp;
         } else
             sample_file_hdr1b.push_back(*fp);
     }
+    sample_file_hdr1b.push_back(missin);
 
     getline(ifs, line);
     if (ifs.fail()) {
         errorvf("Bad second header line for \"%s\" file.\n", C(sample_file));
-        EXIT(1);
+        EXIT(INPUT_DATA_ERROR);
     }
     if (dbg) {
         cout << line_n << ": " << line << endl;
@@ -617,12 +617,16 @@ void ReadImputed::read_sample_file ()
     sample_file_hdr2b.insert(sample_file_hdr2b.end(), fill2, fill2+5);
     i = 0;
     for (VecspDB fp = sample_file_hdr2a.cbegin(); fp != sample_file_hdr2a.cend(); i++, fp++) {
-        if (map_get(idx2fixed, i, ret)) {
+        if (map_get(idx2rsvd, i, ret)) {
             if (ret < 5)
                 sample_file_hdr2b[ret] = *fp;
+            else
+                missin = *fp;
         } else
             sample_file_hdr2b.push_back(*fp);
     }
+    sample_file_hdr2b.push_back(missin);
+
 
 //line rest
     for (; ! ifs.eof(); ) {
@@ -641,16 +645,18 @@ void ReadImputed::read_sample_file ()
         i = 0;
         int ret = 0;
         for (VecspDB fp = fields.cbegin(); fp != fields.cend(); i++, fp++) {
-            if (map_get(idx2fixed, i, ret)) {
+            if (map_get(idx2rsvd, i, ret)) {
                 if (ret < 5)
                     mappedfields[ret] = *fp;
+                else
+                    missin = *fp;
             } else {
                 mappedfields.push_back(*fp);
             }
         }
+        mappedfields.push_back(missin);
         people.push_back(mappedfields);
     }
-#endif
 
     people_all = people.size();
     people_filtered = people_all - 0;
@@ -683,7 +689,7 @@ ReadImputed::build_impute2_names()
         if (! mp->skip ) {
             if (i >= num_all) {
                 errorvf("Internal Error: build_impute2_names() count of skipped markers too large\n");
-                EXIT(1);
+                EXIT(DATA_INCONSISTENCY);
             }
             names[i] = CALLOC(mp->name.size()+1, char);
             strcpy(names[i], mp->name.c_str());
@@ -693,7 +699,7 @@ ReadImputed::build_impute2_names()
     }
 
     return read_common_marker_data(num_pheno + num_markers, num_markers, names, types,
-                                  /*annotated*/ 0, /*penetrances_read*/ 0, 0, NULL);
+                                  /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
 }
 
 void ReadImputed::build_impute2_map(m2_map& map)
@@ -718,7 +724,7 @@ void ReadImputed::build_impute2_map(m2_map& map)
         if (! mp->skip ) {
             if (i >= num_all) {
                 errorvf("Internal Error: build_impute2_map() count of skipped markers too large\n");
-                EXIT(1);
+                EXIT(DATA_INCONSISTENCY);
             }
             i++;
             map_entry.set_chr(mp->chr);
@@ -731,14 +737,14 @@ void ReadImputed::build_impute2_map(m2_map& map)
             int chr = STR_CHR(C(mp->chr));
             if (chr == SEX_CHROMOSOME) {
                 human_x++;
-    //          if (LTop->Locus[mrk_num].Type != XLINKED) {
-    //              LTop->Locus[mrk_num].Type = XLINKED;
-    //          }
+//              if (LTop->Locus[mrk_num].Type != XLINKED) {
+//                  LTop->Locus[mrk_num].Type = XLINKED;
+//              }
             } else if (chr == MALE_CHROMOSOME) {
                 human_y++;
-    //          if (LTop->Locus[mrk_num].Type != YLINKED) {
-    //              LTop->Locus[mrk_num].Type = YLINKED;
-    //          }
+//              if (LTop->Locus[mrk_num].Type != YLINKED) {
+//                  LTop->Locus[mrk_num].Type = YLINKED;
+//              }
             } else if (chr == PSEUDO_X) {
                 human_xy++;
             } else if (chr == MITO_CHROMOSOME) {
@@ -772,9 +778,10 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
     int curr_ped_index = 0;
     int num_errors     = 0;
 
-    SUPPRESS_MSSG_NESTED_INIT(illegal_affect_msg);
-    SUPPRESS_MSSG_NESTED_INIT(illegal_quant_msg);
+    SUPPRESS_MSSG_NESTED_SET(illegal_affect);
+    SUPPRESS_MSSG_NESTED_SET(illegal_quant);
     for (Vecvecsp peop = people.cbegin(); peop != people.cend(); peop++) {
+
         const VecsDB& pp = (*peop);
 
         annotated_ped_rec *entry = &persons[p++]; // incr p for next cycle
@@ -802,11 +809,11 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
             ped_names[pp[0]] = curr_ped_index;
             curr_per_index = 1;
         }
-        entry->per_index = curr_per_index;
 
 // 1 ID_2 -> ID
         strcpy(entry->ID, C(pp[1]));
         PLINK.individuals += 1;
+        entry->per_index = curr_per_index;
 #ifdef IDS
         printf("Ped/per: %s/%s; pedi/peri %d/%d\n",
                entry->Pedigree, entry->ID, curr_ped_index, curr_per_index);
@@ -819,8 +826,10 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
 // 4 sex
         entry->Sex = pp[4][0];
         if (tolower((unsigned char)entry->Sex) == 'm' || entry->Sex == '1') {
+            entry->Sex = '1';
             PLINK.males += 1;
         } else if (tolower((unsigned char)entry->Sex) == 'f' || entry->Sex == '2') {
+            entry->Sex = '2';
             PLINK.females += 1;
         } else {
             PLINK.unspecified_sex += 1;
@@ -849,53 +858,39 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
         for (VecspDB vp = pp.cbegin()+5; vp != pp.cend(); vp++, i++) {
             if (dbg)
                 printf("%s %s %s\n", C(namep[i]), C(typep[i]), C(*vp));
-//          switch (typep[i] == "B" ? 'A' : 'T')
 	    switch (LTop->Locus[i].Type) {
-//          case 'A':
 	    case AFFECTION:
                 ret = plink_annot_string_aff_phen(entry->rec_num+HDR, &(LTop->Pheno[i]),
                                                   &entry->pheno[i], C(*vp));
-                if (!ret) {
-                    SUPPRESS_MSSG_NESTED(illegal_affect_msg);
-                }
+                num_errors += ret;
+
                 if (entry->pheno[i].Affection.Status == UNDEF) {
-                    SUPPRESS_MSSG_NESTED(illegal_affect_msg);
+                    SUPPRESS_MSSG_NESTED(illegal_affect);
                     errorvf("File %s, Entry %d : Invalid status at locus %s\n",
                             C(sample_file), entry->rec_num+HDR, LTop->Locus[i].Name);
                     num_errors++;
                 }
                 if (LTop->Pheno[i].Props.Affection.ClassCnt != 1) {
                     if (entry->pheno[i].Affection.Class == UNDEF) {
-                        SUPPRESS_MSSG_NESTED(illegal_affect_msg);
+                        SUPPRESS_MSSG_NESTED(illegal_affect);
                         errorvf("File \"%s\", Entry %d : Invalid liability class at locus %s\n\n",
                                 C(sample_file), entry->rec_num+HDR, LTop->Locus[i].Name);
                         num_errors++;
                     }
                 }
                 break;
-//          case 'T':
 	    case QUANT:
 	    default:
                 ret = plink_annot_string_quant_phen(entry->rec_num+HDR, &(LTop->Pheno[i]),
                                                     &entry->pheno[i], C(*vp));
-                if (!ret) {
-                    SUPPRESS_MSSG_NESTED(illegal_quant_msg);
-                }
-                // Here we are not checking for it being undefined, just "invalid".
-                // There should be a better way...
-                if (entry->pheno[i].Quant == QUNDEF) {
-                    SUPPRESS_MSSG_NESTED(illegal_quant_msg);
-                    errorvf("File \"%s\", Entry %d : Invalid quantitative phenotype at locus %s\n",
-                            C(sample_file), entry->rec_num+HDR, LTop->Locus[i].Name);
-                    num_errors++;
-                }
+                num_errors += ret;
                 break;
             }
         }
     }
-    SUPPRESS_MSSG_NESTED_FINI(illegal_affect_msg);
-    SUPPRESS_MSSG_NESTED_FINI(illegal_quant_msg);
-    printf("num errors: %d\n", num_errors);
+    SUPPRESS_MSSG_NESTED_FINI(illegal_affect);
+    SUPPRESS_MSSG_NESTED_FINI(illegal_quant);
+    printf("number phenotype errors: %d\n", num_errors);
 
 #ifdef SHOWSTATUS
     int fudge;
@@ -928,12 +923,11 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     if (! ifs.is_open() ) {
         errorvf("read_imputed_genotype_file: Can not open \"%s\" file\n",
                 impute_file);
-        EXIT(1);
+        EXIT(FILE_NOT_FOUND);
     }
 
     int line_n = 0;
     Token token(3);
-//  Str   genotype[3];
     Vecmarkerpp mpp;
     ImpMarker   *mp;
 
@@ -944,14 +938,14 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     char *callele2;
     char *callele0  = canonical_allele(C("0"));
 
-//  SUPPRESS_MSSG_NESTED_INIT(skip_msg);
-    SUPPRESS_MSSG_NESTED_INIT(prob_msg);
+//  SUPPRESS_MSSG_NESTED_INIT(skip);
 
     Tod tod_gen("impute genotypes");
-    SUPPRESS_MSSG_NESTED(prob_msg);
-    warnvf("%10s %10s %10s  %s\n          %10s %10s %10s  %s\n",
-           "untyped", "less", "greater", "Marker",
-           "marker", "hard call", "hard call", "       + chr/pos");
+    SUPPRESS_MSSG_NESTED_INIT(percent_hard_call);
+    SUPPRESS_MSSG_NESTED(percent_hard_call);
+    warnvf("%10s %10s %10s  %s\n         %10s %10s %10s  %s\n",
+           "untyped", "less", "greater", "Marker + chr:pos",
+           "marker", "hard call", "hard call", "");
     for (mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
         getline(ifs, line);
         if (ifs.eof()) break;
@@ -969,10 +963,10 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
         if (pos != mp->pos) {
             errorvf("internal error: impute_file (\"%s\") second pass does not match first pass at line %d\n",
                     impute_file, line_n);
-                EXIT(1);
+                EXIT(DATA_INCONSISTENCY);
         }
         if (mp->skip) {
-//          SUPPRESS_MSSG_NESTED(skip_msg);
+//          SUPPRESS_MSSG_NESTED(skip);
 //          warnvf("Marker: skipped %s %s %s info (%.4f) < threshold (%.4f)\n", 
 //                 C(mp->name), C(mp->chr), C(mp->pos), mp->info, info_threshold);
             continue;
@@ -985,9 +979,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
         token.more(B);
         callele1    = canonical_allele(C(A));
         callele2    = canonical_allele(C(B));
-//      genotype[0] = A + A;
-//      genotype[1] = A + B;
-//      genotype[2] = B + B;
         
         int i;
         int sam = 0;
@@ -999,7 +990,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
             annotated_ped_rec *entry = &persons[p];
             sam++;
             token.getDC(nums);
-
             maxx = 0.0;
 
             if (dbg) {
@@ -1046,10 +1036,12 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                 break;
             }
         }
-        SUPPRESS_MSSG_NESTED(prob_msg);
-        warnvf("%10d %10d %10d  %s %s/%s\n",
-               zero, less, greater, 
-               C(mp->name), C(mp->chr), C(mp->pos));
+        if (greater < hard_call_warn_percent * people_filtered) {
+            SUPPRESS_MSSG_NESTED(percent_hard_call);
+            warnvf("%10d %10d %10d  %s %s:%s\n",
+                   zero, less, greater, 
+                   C(mp->name), C(mp->chr), C(mp->pos));
+        }
 
 /*
         token.getD(nums);  // last one on line
@@ -1060,6 +1052,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 */
     }
     tod_gen();
-//  SUPPRESS_MSSG_NESTED_FINI(skip_msg);
-    SUPPRESS_MSSG_NESTED_FINI(prob_msg);
+//  SUPPRESS_MSSG_NESTED_FINI(skip);
+    SUPPRESS_MSSG_NESTED_FINI(percent_hard_call);
 }

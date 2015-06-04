@@ -145,7 +145,8 @@ static int read_peds(int line_count, FILE *pfilep,
     int i, lch = ' ', num_read, unique=0;
     int col;
     int expected_col=5+LTop->NumPedigreeCols, last_marker;
-    int Display_untyped = 0, untyped = 0, totaltyped = 0;
+    SUPPRESS_MSSG_NESTED_INIT(untyped);
+    int untyped = 0, totaltyped = 0;
     int a1, a2;
     const char *ar1, *ar2;
 

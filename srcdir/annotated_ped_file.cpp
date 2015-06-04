@@ -156,8 +156,6 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
 
 static int parse_phe_types(char *phe_file, char ***phe_names, int **phe_types);
 
-extern int FLOAT_AFFECT,     Display_FLOAT_AFFECT;
-
 /* PLINK parameters */
 #include "plink_ext.h"
 /* 
@@ -1667,18 +1665,18 @@ linkage_ped_top *mk_ped_top(annotated_ped_rec *persons, int num_ped_records,
     marriage_graph_type *ppeds;
     linkage_ped_tree *lpeds;
     linkage_ped_top *Top;
-//  int untyped = 0;
+    int untyped = 0;
 // fix both
 
     Tod tod_cp_cru("check all markers untyped");
-    SUPPRESS_MSSG_NESTED_INIT(untyped);
+    SUPPRESS_MSSG_NESTED_INIT(untyped_msg);
     if (check_ungenotyped) {
         for (int pp=0; pp < num_ped_records; pp++) {
             // looping through the individuals...
             persons[pp].genocnt = crunch_Rnotype(&persons[pp].marker, LTop);
             if (persons[pp].genocnt == 0) {
 /*
-                SUPPRESS_MSSG_NESTED(untyped);
+                SUPPRESS_MSSG_NESTED(untyped_msg);
                 warnvf("Untyped person %4d snp major record %d: person %s, fa %s, ma %s\n",
                        untyped, pp, persons[pp].ID, persons[pp].Father, persons[pp].Mother);
 */
@@ -1688,10 +1686,10 @@ linkage_ped_top *mk_ped_top(annotated_ped_rec *persons, int num_ped_records,
     }
     tod_cp_cru();
 
-    SUPPRESS_MSSG_NESTED_FORCE(untyped);
+    SUPPRESS_MSSG_NESTED_FORCE(untyped_msg);
     if (untyped > 0)
         warnvf("Individuals untyped: %d out of %d\n", untyped, totaltyped);
-    SUPPRESS_MSSG_NESTED_FINI(untyped);
+    SUPPRESS_MSSG_NESTED_FINI(untyped_msg);
 
     if (num_err == 0) {
         Tod tod_cp_hmm("sort, copy ann to premake/lpedtop");
@@ -2512,7 +2510,7 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
                                                         const int num_maps)
 {
     int i, mrk_missing_from_map = 0;
-    int Display_unmapped = 0, unmapped = 0;
+    SUPPRESS_MSSG_NESTED_INIT(unmapped);
     
     for (i = 0; i < LTop->LocusCnt; i++) {
         /* Check if maps are provided for all numbered loci */
@@ -2559,11 +2557,11 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     int num_maps;
     int num_positions, num_read;
     int lch, has_error; /* simulated genotyping error column? */
-    int Display_chrm_errors = 1,      chrm_errors = 0; //silly compiler can not tell Display_
-    int Display_max_morgans = 1,      max_morgans = 0; // is initialized before use iff
-    int Display_locus_not_found = 1,  locus_not_found = 0; // associated _var is 0
-    int Display_dup_locus = 1,        dup_locus = 0;
-    int Display_bad_position = 1,     bad_position = 0;
+    SUPPRESS_MSSG_NESTED_INIT(chrm_errors);
+    SUPPRESS_MSSG_NESTED_INIT(max_morgans);
+    SUPPRESS_MSSG_NESTED_INIT(locus_not_found);
+    SUPPRESS_MSSG_NESTED_INIT(dup_locus);
+    SUPPRESS_MSSG_NESTED_INIT(bad_position);
     
     /* These are all error flags */
     int mrk_missing_from_map, mrk_missing_from_names=0, duplicate_mrk=0;
@@ -4426,7 +4424,9 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         create_allele_strings_hashtable(plink_info);
         tod_hash();
     }
-    
+
+    SUPPRESS_MSSG_NESTED_SET(FLOAT_AFFECT);
+
     if (Input->has_ped()) {
         pedfile_type = PREMAKEPED_PFT;
         Top = Input->do_ped(LTop);
@@ -4457,11 +4457,11 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         free(AnnotatedFileInfo.ped_file_columns);
 
     SUPPRESS_MSSG_NESTED_FORCE(FLOAT_AFFECT);
-    if (FLOAT_AFFECT > 10) {
-        warnvf("There were %d instances of decimal numbers read where affection status were expected.\n");
+    if (SUPPRESS_MSSG_COUNT(FLOAT_AFFECT) > 0) {
+        warnvf("There were %d instances of decimal numbers read where affection status were expected.\n",
+               SUPPRESS_MSSG_COUNT(FLOAT_AFFECT) );
         if (PLINK.plink) {
-            warnvf("Perhaps you should rerun Mega2 and specify that the fam/ped trait is quantitative.\n",
-                   FLOAT_AFFECT);
+            warnvf("Perhaps you should rerun Mega2 and specify that the fam/ped trait is quantitative.\n");
         }
     }
     SUPPRESS_MSSG_NESTED_FINI(FLOAT_AFFECT);
@@ -4529,7 +4529,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     }
 
     {
-        extern int Display_y_female, y_female;
+        SUPPRESS_MSSG_NESTED_INIT(y_female);
         int ped, entrycount;
         allelecnt **member_ids;
         Tod tod_cal_init("init member_ids (for allele/freq counting)");

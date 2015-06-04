@@ -982,11 +982,17 @@ static void  write_SAGE_locus_file(char *loutfl_name,
                 fprintf(filep, "\n");
                 for (allele = 0; allele < Locus->AlleleCnt; allele++)   {
 #ifdef TEST                    
-                    fprintf(filep, "%-4d = %9.6f\n",
-                            allele + 1, Locus->Allele[allele].Frequency);
+//                  fprintf(filep, "%-4d = %9.6f\n",
+//                          allele + 1, Locus->Allele[allele].Frequency);
+                    fprintf(filep, "%-4s = %9.6f\n",
+                            format_allele(Locus, allele + 1),
+                            Locus->Allele[allele].Frequency);
 #else
-                    fprintf(filep, "%-4d = %8.5f\n",
-                            allele + 1, Locus->Allele[allele].Frequency);
+//                  fprintf(filep, "%-4d = %8.5f\n",
+//                          allele + 1, Locus->Allele[allele].Frequency);
+                    fprintf(filep, "%-4s = %8.5f\n",
+                            format_allele(Locus, allele + 1),
+                            Locus->Allele[allele].Frequency);
 #endif
                 }
                 fprintf(filep,";\n;\n");

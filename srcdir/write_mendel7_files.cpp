@@ -298,7 +298,10 @@ static void fprint_mendel7_affection_header(FILE *fp,
             ((sex_linked == 1) ? "X-LINKED" : "AUTOSOME"),
             Locus->AlleleCnt);
     for (int allele = 0; allele < Locus->AlleleCnt; allele++)  {
-        fprintf(fp, "%d,%8f\n", allele + 1, Locus->Allele[allele].Frequency);
+//      fprintf(fp, "%d,%8f\n", allele + 1, Locus->Allele[allele].Frequency);
+        fprintf(fp, "%s,%8f\n",
+                format_allele(Locus, allele + 1),
+                Locus->Allele[allele].Frequency);
     }
 }
 

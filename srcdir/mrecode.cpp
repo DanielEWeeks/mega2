@@ -1763,7 +1763,7 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
 }
 
 //w
-int Display_y_female, y_female = 0;
+SUPPRESS_MSSG_NESTED_INIT(y_female);
 linkage_ped_top *create_allele_list(linkage_ped_top *Top,
 				    int locus,
 				    marker_type *marker_listi,

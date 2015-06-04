@@ -38,6 +38,7 @@
 
 #include "error_messages_ext.h"
 #include "grow_string_ext.h"
+#include "write_files_ext.h"
 /*
      error_messages_ext.h:  errorf my_calloc warnf
         grow_string_ext.h:  grow
@@ -1163,8 +1164,9 @@ int check_locus(locus_rec *Locus, int *displayed_errors,
                     Display_Errors = 0;
                 }
                 warnvf(//"Allele %d of locus %s has a negative or zero frequency %5.4f\n",
-                       "Allele %d of locus %s has a frequency %5.4f which is not in the range 0.0 - 1.0 (inclusive)\n",
-                       allele+1, Locus->Name, LLocus->Allele[allele].Frequency);
+                       "Allele %s of locus %s has a frequency %5.4f which is not in the range 0.0 - 1.0 (inclusive)\n",
+                       format_allele(LLocus, allele+1),
+                       Locus->Name, LLocus->Allele[allele].Frequency);
                 (*displayed_errors)++;
                 retval = 1;
             }

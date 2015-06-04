@@ -671,7 +671,7 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
                                              const unsigned int person_n)
 {
     vector<int> person_indv_v(person_n); // created on the stack
-    int Display_untyped = 0, untyped = 0;
+    SUPPRESS_MSSG_NESTED_INIT(untyped);
     
     // For each person in Mega2....
     for (unsigned int pi=0; pi<person_n; pi++) {

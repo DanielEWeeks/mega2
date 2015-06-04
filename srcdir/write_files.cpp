@@ -210,7 +210,7 @@ static std::map<int, char *> numbered_format_string_map;
 
    @return a string constant representation of the allele.
  */
-const char *format_allele(linkage_locus_rec *locus, const int allele)
+const char *format_allele(const linkage_locus_rec *locus, const int allele)
 {
     // Big 'if' predicate....
     // First see if we can/should return the character allele representation...
@@ -851,7 +851,10 @@ int write_quant_stats(linkage_ped_top *Top,
                     }
                 }
 
-                meanq = sumq/(double)(num_phenos[q]);
+                if (num_phenos[q])
+                    meanq = sumq/(double)(num_phenos[q]);
+                else
+                    meanq = 0.0;
 
                 /* Second pass to set the skew and curtosis after computing mean.
                    Sums of devs raised to 2,3,4 power while looping over individuals.

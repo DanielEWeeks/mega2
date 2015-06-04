@@ -49,6 +49,7 @@
 #include "output_routines_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
+#include "write_files_ext.h"
 /*
  annotated_ped_file_ext.h:  write_annotated_aff write_annotated_numbered write_annotated_quant
      error_messages_ext.h:  mssgf
@@ -108,7 +109,7 @@ static void rename_mega2annot_locus(linkage_locus_top *LTop)
     for (i=0; i < NumChrLoci; i++) {
         dot = strchr(LTop->Locus[ChrLoci[i]].Name, '.');
         if (dot != NULL) {
-            printf("%s\n", dot);
+//why       printf("%s\n", dot);
             *dot = '_';
         }
     }
@@ -696,12 +697,18 @@ static void annotated_frequency_file(linkage_locus_top *LTop, char *freqfl)
             locus = ChrLoci[locus1];
             if (LTop->Locus[locus].Class == MARKER)
                 for (all = 0; all < LTop->Locus[locus].AlleleCnt; all++) {
-                    fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].Name, all + 1,
+//                  fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].Name, all + 1,
+//                          LTop->Locus[locus].Allele[all].Frequency);
+                    fprintf(fp, "%s %s %8f\n", LTop->Locus[locus].Name,
+                            format_allele(&LTop->Locus[locus], all+1),
                             LTop->Locus[locus].Allele[all].Frequency);
                 }
             else
                 for (all = 0; all < LTop->Locus[locus].AlleleCnt; all++) {
-                    fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].Name, all + 1,
+//                  fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].Name, all + 1,
+//                          LTop->Locus[locus].Allele[all].Frequency);
+                    fprintf(fp, "%s %s %8f\n", LTop->Locus[locus].Name,
+                            format_allele(&LTop->Locus[locus], all+1),
                             LTop->Locus[locus].Allele[all].Frequency);
                 }
 

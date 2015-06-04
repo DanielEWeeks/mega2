@@ -65,7 +65,7 @@ typedef vectordb<Column_Type>::const_iterator Vecctp;
 
 class ReadImputed {
 public:
-    ReadImputed() : HDR(2) {};  // two line header
+    ReadImputed() :  check_format(0), HDR(2) {};  // two line header
     ~ReadImputed() { (void) markers[0]; };
 
     virtual void do_menu_display(int &idx, int line_len, int choiceA[]);
@@ -78,9 +78,8 @@ public:
     virtual void do_map(std::vector<m2_map>& additional_maps);
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
 
-    void files(char *imp, Cstr& info, Cstr& sam) {
+    void files(char *imp, Cstr& sam) {
         impute_file = imp;
-        info_file   = info;
         sample_file = sam;
     }
 
@@ -110,8 +109,10 @@ public:
     Str           oxford_single_chr;
     double        info_threshold;
     double        hard_call_threshold;
+    double        hard_call_warn_percent;
     char          allow_indels;
     Input_Impute *input;
+    int           check_format;
 private:
     const   char *impute_file;
     Str     info_file;
@@ -133,9 +134,11 @@ static const
 static const
     int imputed_hard_call_threshold_i   = 8000003;
 static const
-    int imputed_missing_code_i          = 8000004;
+    int imputed_hard_call_warn_percent_i= 8000004;
 static const
-    int imputed_allow_indels_i          = 8000005;
+    int imputed_missing_code_i          = 8000005;
+static const
+    int imputed_allow_indels_i          = 8000006;
 
 };
 

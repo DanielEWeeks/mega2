@@ -120,8 +120,10 @@ void premakeped_omit_file(linkage_ped_top *Top,
 			  const char *omitfl_name,
                           const int raw_allele);
 
-int BAD_QMISSING_OUT = 0, Display_BAD_QMISSING_OUT = 0;
-int FLOAT_AFFECT = 0,     Display_FLOAT_AFFECT = 0;
+SUPPRESS_MSSG_NESTED_INIT(BAD_QMISSING_OUT);
+SUPPRESS_MSSG_NESTED_INIT(FLOAT_AFFECT);
+SUPPRESS_MSSG_NESTED_INIT(illegal_affect);
+SUPPRESS_MSSG_NESTED_INIT(illegal_quant);
 
 /**************************************/
 static int check_ped_file_cols(int cols, FILE *fp, char *file_name)
@@ -215,7 +217,7 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
 {
     char *endptr;
     double quant;
-    int ret = 1;
+    int err = 0;
 
     if (strcasecmp(quantstr, "NA") == 0)
         quant = QMISSING;
@@ -227,10 +229,13 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
         if (endptr == quantstr || (*endptr)) {
             /* conversion failed */
             quant=QUNDEF;
+            SUPPRESS_MSSG_NESTED(illegal_quant);
+            errorvf("Entry %d: %s Invalid quantitative phenotype for locus %s\n",
+                    line, quantstr, locus->Name);
+            err = 1;
         } else if (quant == QMISSING || quant == QUNDEF) {
             errorvf("Line %d, trait %s, value %s:\n", line, locus->Name, quantstr);
             errorvf("Internal Quantitative Missing Value Consistency Error.  Get Help.\n");
-            ret = 0;
             EXIT(OUTOF_BOUNDS_ERROR);
         }
     }
@@ -249,7 +254,7 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
 
     pedrec->Quant = quant;
 
-    return ret;
+    return err;
 }
 
 int read_quant_phen(FILE *filep, int locusnm, 
@@ -314,8 +319,8 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
                                 pheno_pedrec_data *pedrec, const char *cstatus)
 {
     int status;
+    int err = 0;
     char *endptr = 0;
-    int ret = 1;
 
     pedrec->Affection.Status = UNDEF;
     pedrec->Affection.Class = UNDEF;
@@ -333,8 +338,8 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
             else
                 errorvf("Line %d, %s: bad number used for an affection status %s, setting to unknown.\n",
                         line, locus->Name, cstatus);
-            ret = 0;
             status = 0;
+            err = 1;
         }
     }
 
@@ -354,20 +359,20 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
                     line, locus->Name, locus->col_num, cstatus);
             errorf(err_msg);
 #else
+            SUPPRESS_MSSG_NESTED(illegal_affect);
+            err = 1;
             sprintf(err_msg,
                     "Line %d, %s: Illegal affection status %s, setting to unknown.",
                     line, locus->Name, cstatus);
             errorf(err_msg);
 #endif
-            ret = 0;
         }
         status = 0;
     }
 
     pedrec->Affection.Status = status;
     pedrec->Affection.Class  = 1;
-
-    return ret;
+    return err;
 }
 
 int read_aff_phen(FILE *filep, int locusnm,
@@ -1166,7 +1171,8 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
     linkage_loop_rec *loop;
     int i;
     int origuniq = 0;
-    int Display_untyped = 0, untyped = 0, totaltyped = 0;
+    SUPPRESS_MSSG_NESTED_INIT(untyped);
+    int untyped = 0, totaltyped = 0;
 
     if (filep == NULL) return NULL;
 
@@ -1368,9 +1374,9 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
 void count_Missing_Quant_consistency()
 {
     SUPPRESS_MSSG_NESTED_FORCE(BAD_QMISSING_OUT);
-    if (BAD_QMISSING_OUT) {
+    if (SUPPRESS_MSSG_COUNT(BAD_QMISSING_OUT)) {
         errorvf("Output Quantitative Missing Value was found among the quantitative data %d times\n",
-                BAD_QMISSING_OUT);
+                SUPPRESS_MSSG_COUNT(BAD_QMISSING_OUT));
 //tmp   EXIT(INPUT_DATA_ERROR);
     }
     SUPPRESS_MSSG_NESTED_FINI(BAD_QMISSING_OUT);
@@ -1994,8 +2000,9 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
             set_missing_quant_input((linkage_ped_top *) NULL, analysis);
             Top = read_linkage_ped_file(pfilep, LTop, col2locus);
             SUPPRESS_MSSG_NESTED_FORCE(FLOAT_AFFECT);
-            if (FLOAT_AFFECT > 10) {
-                warnvf("There were %d instances of decimal numbers read where affects were expected.\n");
+            if (SUPPRESS_MSSG_COUNT(FLOAT_AFFECT) > 0) {
+                warnvf("There were %d instances of decimal numbers read where affects were expected.\n",
+                       SUPPRESS_MSSG_COUNT(FLOAT_AFFECT));
             }
             SUPPRESS_MSSG_NESTED_FINI(FLOAT_AFFECT);
             Top->EXLTop = EXLTop;

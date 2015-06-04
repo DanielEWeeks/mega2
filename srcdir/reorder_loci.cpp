@@ -245,8 +245,8 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
 {
     int i, j, ui, total_list = 0;
     int new_chr, chr_index;
-    int Display_unmapped_errors, unmapped_errors = 0;
-    int Display_invalid_chromosome, invalid_chromosome = 0;
+    SUPPRESS_MSSG_NESTED_INIT(unmapped_errors);
+    SUPPRESS_MSSG_NESTED_INIT(invalid_chromosome);
     ui = 0;
 
     for (j = 0; j < LTop->LocusCnt; j++) {

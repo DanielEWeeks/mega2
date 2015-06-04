@@ -112,7 +112,7 @@ const char *INPUT_FORMAT_STR[] = {
      "BCF format (bcf)",
      "VCF compressed format (vcf.gz)",
      "VCF format (vcf)",
-     "IMPUTE2/Oxford format (gen or gen.gz)"
+     "IMPUTE2/Oxford format (gen/impute2)"
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -950,10 +950,10 @@ void menu1(file_format *infl_type,
 
                 fln_init(pedo, "IMPUTE2", "sample", "[required]", "sample");
                 pedo->title = "Sample file:";
-                fln_init(auxo, "IMPUTE2", "impute", "[required]", "impute");
+                fln_init(auxo, "IMPUTE2", "gen", "[required]", "gen", "impute2");
                 auxo->title = "IMPUTE2 file:";
                 _aux_i = imputed_i;
-                fln_init(info, "IMPUTE2", "impute_info", "[optional]", "impute_info");
+                fln_init(info, "IMPUTE2", "gen_info", "[optional]", "gen_info", "impute2_info");
 //              fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
 

@@ -538,32 +538,45 @@ extern int Display_Errors, Display_Messages;
 #endif
 
 #ifndef SUPPRESS_MSSG_NESTED
-#define SUPPRESS_MSSG_NESTED(errors)	if (errors++ == 0) {            \
-        fflush(stdout);                                                 \
-        printf("\nErrors/warnings/messages (up to 10 displayed): \n");    \
-        fflush(stdout);                                                 \
-        Display_Errors = Display_##errors = 1;                          \
-    } else if (errors == (MAX_PED_ERRORS+2)) {                          \
-        fflush(stdout);                                                 \
-        printf("Too many messages, display is temporarily suspended ..\n\n"); \
-        fflush(stdout);                                                 \
-        Display_Errors = Display_##errors = 0;                          \
-    } else {                                                            \
-        Display_Errors = Display_##errors;                              \
+#define SUPPRESS_MSSG_NESTED(errors)	if (_##errors##_++ == 0) {         \
+        fflush(stdout);                                                    \
+        printf("\nErrors/warnings/messages of type \"" #errors "\" (up to 10 displayed): \n"); \
+        fflush(stdout);                                                    \
+        Display_Errors = Display_##errors##_ = 1;                          \
+    } else if (_##errors##_ == (MAX_PED_ERRORS+2)) {                       \
+        fflush(stdout);                                                    \
+        printf("Too many \"" #errors "\" messages, display is temporarily suspended ..\n");\
+        fflush(stdout);                                                    \
+        Display_Errors = Display_##errors##_ = 0;                          \
+    } else {                                                               \
+        Display_Errors = Display_##errors##_;                              \
     }
 #endif
 
 #ifndef SUPPRESS_MSSG_NESTED_INIT
 #define SUPPRESS_MSSG_NESTED_INIT(errors)	                        \
-    int Display_##errors = 1, errors = 0;
+    int Display_##errors##_ = 1, _##errors##_ = 0;
+#endif
+
+#ifndef SUPPRESS_MSSG_NESTED_SET
+#define SUPPRESS_MSSG_NESTED_SET(errors)	                        \
+        extern int Display_##errors##_, _##errors##_;
 #endif
 
 #ifndef SUPPRESS_MSSG_NESTED_FINI
 #define SUPPRESS_MSSG_NESTED_FINI(errors)	                        \
     {                                                                   \
-        Display_Errors = Display_##errors = 1;                          \
-        errors = 0;                                                     \
+        Display_Errors = Display_##errors##_ = 1;                       \
+        fflush(stdout);                                                 \
+        if (_##errors##_ > 9) printf("%d more messages of type \"" #errors "\" are in the log.\n\n", _##errors##_-10); \
+        else if (_##errors##_) printf("\n");                            \
+        fflush(stdout);                                                 \
+        _##errors##_ = 0;                                               \
     }
+#endif
+
+#ifndef SUPPRESS_MSSG_COUNT
+#define SUPPRESS_MSSG_COUNT(errors)  (_##errors##_)
 #endif
 
 #ifndef SUPPRESS_MSSG_NESTED_FORCE
