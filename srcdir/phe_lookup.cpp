@@ -285,7 +285,7 @@ int phe::make()
 }
 
 #ifdef _WIN
-#define strdup _strdup
+#define strdup(str) _strdup(str)
 #endif
 void phe::hdr(char **names, int *types)
 {

@@ -80,9 +80,9 @@ void ReadImputed::do_menu_display(int &idx, int line_len, int choiceA[])
            BatchItemGet("Imputed_Hard_Call_Threshold")->value.fvalue);
     choiceA[idx++] = imputed_hard_call_threshold_i;
 
-    printf("%2d) %-*s%.4f\n", idx, line_len, "Hard call warn precent:", 
-           BatchItemGet("Imputed_Hard_Call_Warn_Percent")->value.fvalue);
-    choiceA[idx++] = imputed_hard_call_warn_percent_i;
+    printf("%2d) %-*s%.4f\n", idx, line_len, "Hard call warn fraction:", 
+           BatchItemGet("Imputed_Hard_Call_Warn_Fraction")->value.fvalue);
+    choiceA[idx++] = imputed_hard_call_warn_fraction_i;
 
     printf("%2d) %-*s", idx, line_len, "Codes for Missing value: (space separated)");
     char **lst = BatchItemGet("Imputed_Missing_Codes")->value.mult_names;
@@ -138,17 +138,17 @@ int ReadImputed::do_menu_parse(int choice_)
 
 	BatchValueSet(ansd, "Imputed_Hard_Call_Threshold");
 	ret = 1;
-    } else if (choice_ == imputed_hard_call_warn_percent_i) {
+    } else if (choice_ == imputed_hard_call_warn_fraction_i) {
 	double ansd;
 	while (1) {
-	    printf("Please enter percent ");
+	    printf("Please enter fraction ");
 	    fcmap(stdin, "%g", &ansd); newline;
-	    if (ansd < 0.0 || ansd > 100.0) {
-		printf("threshold must be between 0.0 and 100.0\n");
+	    if (ansd < 0.0 || ansd > 1.0) {
+		printf("threshold must be between 0.0 and 1.0\n");
 	    } else break;
 	}
 
-	BatchValueSet(ansd, "Imputed_Hard_Call_Warn_Percent");
+	BatchValueSet(ansd, "Imputed_Hard_Call_Warn_Fraction");
 	ret = 1;
     } else if (choice_ == imputed_missing_code_i) {
 	char selection[100];
@@ -181,7 +181,7 @@ void ReadImputed::do_menu2batch()
     Cstr Values[] = { "Imputed_Oxford_Single_Chr",
                       "Imputed_Info_Metric_Threshold", 
                       "Imputed_Hard_Call_Threshold", 
-                      "Imputed_Hard_Call_Warn_Percent", 
+                      "Imputed_Hard_Call_Warn_Fraction", 
                       "Imputed_Missing_Codes",
                       "Imputed_Allow_Indels" 
     };
@@ -198,7 +198,7 @@ void ReadImputed::do_batch2local()
     BatchValueGet(this->oxford_single_chr, "Imputed_Oxford_Single_Chr");
     BatchValueGet(this->info_threshold, "Imputed_Info_Metric_Threshold");
     BatchValueGet(this->hard_call_threshold, "Imputed_Hard_Call_Threshold");
-    BatchValueGet(this->hard_call_warn_percent, "Imputed_Hard_Call_Warn_Percent");
+    BatchValueGet(this->hard_call_warn_fraction, "Imputed_Hard_Call_Warn_Fraction");
     BatchValueGet(this->allow_indels, "Imputed_Allow_Indels");
     BatchValueGet(this->info_file, "Input_Imputed_Info_File");
 
@@ -466,7 +466,7 @@ void ReadImputed::read_info_file ()
     }
 
     Mapsi col2idx;
-    int i, info_col, certainty_col;
+    int i, info_col = 6, certainty_col = 7;
     i = 0;
     for (VecspDB fp = l.cbegin(); fp != l.cend(); i++, fp++)
         col2idx[*fp] = i;
@@ -941,8 +941,8 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 //  SUPPRESS_MSSG_NESTED_INIT(skip);
 
     Tod tod_gen("impute genotypes");
-    SUPPRESS_MSSG_NESTED_INIT(percent_hard_call);
-    SUPPRESS_MSSG_NESTED(percent_hard_call);
+    SUPPRESS_MSSG_NESTED_INIT(fraction_hard_call);
+    SUPPRESS_MSSG_NESTED(fraction_hard_call);
     warnvf("%10s %10s %10s  %s\n         %10s %10s %10s  %s\n",
            "untyped", "less", "greater", "Marker + chr:pos",
            "marker", "hard call", "hard call", "");
@@ -1036,8 +1036,8 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                 break;
             }
         }
-        if (greater < hard_call_warn_percent * people_filtered) {
-            SUPPRESS_MSSG_NESTED(percent_hard_call);
+        if (greater < hard_call_warn_fraction * people_filtered) {
+            SUPPRESS_MSSG_NESTED(fraction_hard_call);
             warnvf("%10d %10d %10d  %s %s:%s\n",
                    zero, less, greater, 
                    C(mp->name), C(mp->chr), C(mp->pos));
@@ -1053,5 +1053,5 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     }
     tod_gen();
 //  SUPPRESS_MSSG_NESTED_FINI(skip);
-    SUPPRESS_MSSG_NESTED_FINI(percent_hard_call);
+    SUPPRESS_MSSG_NESTED_FINI(fraction_hard_call);
 }

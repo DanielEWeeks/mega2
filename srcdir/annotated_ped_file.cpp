@@ -4283,8 +4283,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 */
     std::vector<m2_map> additional_maps;
 
-    if (Input->has_map()) { Input->do_map(additional_maps); }
-    else if (PLINK.plink) {
+    if (Input->has_map()) {
+        Input->do_map(additional_maps);
+        EXLTop = NULL; // but additional_maps.size() > 0 so see below; this makes compiler happy
+    } else if (PLINK.plink) {
         // if this is PLINK format (double negative)
         // CPK: If the .map file is a .bim file we gather the alleles into the
         // vector that is described earlier in this routine...
@@ -4297,6 +4299,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     } else if (xcf) {
         // Create an extra map slot in EXLTop for the map from the VCF file...
         additional_maps.push_back(vcf_map);
+        EXLTop = NULL; // but additional_maps.size() > 0 so see below; this makes compiler happy
     } else {
         // only mega2 is left (and linkage ;-) No additional maps...
         EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);

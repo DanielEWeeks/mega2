@@ -1072,8 +1072,8 @@ void  create_aspex_files(linkage_ped_top **LPedTop,
     int             SelectRiskOpt, SelectionNumber;
     int             num_ratios;
 
-    double           this_risk, left, right, risk, *risk_ratios, InitRisk,
-        RiskIncrement, FinalRisk;
+    double           this_risk, left, right, risk, *risk_ratios = NULL, InitRisk,
+        RiskIncrement, FinalRisk;  //Note: risk_rations is only used if riskopt == 2
 
     int             nuked, global_cshell;
     int             i, count, first_time;

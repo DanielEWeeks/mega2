@@ -317,7 +317,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
             void per_start() { SNP_count = 0; SNP_data = 0; SNP_cp = SNP_buf; }
             void inner() { plink_binary::inner(_filep, _allele1, _allele2); }
 //          void per_end() { if ((SNP_count & 0x7) != 0) fputc(SNP_data, _filep); }
-            void per_end() { if ((SNP_count & 0x7) != 0) *SNP_cp++ = SNP_data;
+            void per_end() { if ((SNP_count & 0x7) != 0) *SNP_cp++ = (unsigned char)SNP_data;
                              fwrite(SNP_buf, 1, SNP_bufsz, _filep); }
         } *xp = new plink_indiv_major(Top);
 
