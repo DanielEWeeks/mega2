@@ -50,7 +50,8 @@ extern linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                          plink_info_type *plink_info);  //temp
 
 extern linkage_ped_top *mk_ped_top(annotated_ped_rec *persons, int num_ped_records, 
-                                   linkage_locus_top *LTop, int num_peds, int totaltyped,
+                                   linkage_locus_top *LTop, int num_peds,
+                                   int untyped, int totaltyped,
                                    int *groups, int num_groups, int has_extra_ids,
                                    int num_err, int check_ungenotyped);
 

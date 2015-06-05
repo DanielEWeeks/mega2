@@ -79,11 +79,12 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes false
+\tracking_changes true
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1820302391 "Robert V. Baron" 
 \end_header
 
 \begin_body
@@ -909,7 +910,21 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
+Enhancements in Mega2 version 4.
+\change_inserted -1820302391 1433535839
+8.0
+\change_deleted -1820302391 1433535836
+7.1
+\change_inserted -1820302391 1433535832
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1820302391 1433535833
 Enhancements in Mega2 version 4.7.1
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
@@ -1374,7 +1389,13 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.7.1 input menu:
+              Mega2 
+\change_deleted -1820302391 1433535853
+4.7.1
+\change_inserted -1820302391 1433535853
+4.8.0
+\change_unchanged
+ input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1653,12 +1674,24 @@ Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.7.1 should be: 
+ For example, the web site citation for version 
+\change_deleted -1820302391 1433535856
+4.7.1
+\change_inserted -1820302391 1433535856
+4.8.0
+\change_unchanged
+ should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2013) Mega2 (Version 4.7.1).
+ Weeks DE (2013) Mega2 (Version 
+\change_deleted -1820302391 1433535857
+4.7.1
+\change_inserted -1820302391 1433535857
+4.8.0
+\change_unchanged
+).
  
 \begin_inset Flex URL
 status collapsed
@@ -1915,7 +1948,13 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.7.1 
+The latest version is 
+\change_deleted -1820302391 1433535872
+4.7.1
+\change_inserted -1820302391 1433535872
+4.8.0
+\change_unchanged
+ 
 \end_layout
 
 \begin_layout Enumerate
@@ -1924,7 +1963,13 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.7.1_src.tar.gz
+mega2_v
+\change_deleted -1820302391 1433535874
+4.7.1
+\change_inserted -1820302391 1433535874
+4.8.0
+\change_unchanged
+_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -1935,7 +1980,13 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.7.1_src.tar.gz 
+gunzip mega2_v
+\change_deleted -1820302391 1433535874
+4.7.1
+\change_inserted -1820302391 1433535874
+4.8.0
+\change_unchanged
+_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -1945,7 +1996,13 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.7.1_src.tar 
+tar xvf mega2_v
+\change_deleted -1820302391 1433535875
+4.7.1
+\change_inserted -1820302391 1433535875
+4.8.0
+\change_unchanged
+_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -1953,7 +2010,13 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.7.1_src.tar.gz 
+tar xzvf mega2_v
+\change_deleted -1820302391 1433535876
+4.7.1
+\change_inserted -1820302391 1433535876
+4.8.0
+\change_unchanged
+_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -1966,7 +2029,13 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.7.1_src
+mega2_v
+\change_deleted -1820302391 1433535877
+4.7.1
+\change_inserted -1820302391 1433535877
+4.8.0
+\change_unchanged
+_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2146,16 +2215,27 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.7.1_src.tar.gz bundle following
- the download section (
+If you downloaded and unpacked the mega2_v
+\change_deleted -1820302391 1433535878
+4.7.1
+\change_inserted -1820302391 1433535878
+4.8.0
+\change_unchanged
+_src.tar.gz bundle following the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.7.1_src containing the following
- directories (in bold) or files listed in alphabetical order:
+), you should see a directory named mega2_v
+\change_deleted -1820302391 1433535880
+4.7.1
+\change_inserted -1820302391 1433535880
+4.8.0
+\change_unchanged
+_src containing the following directories (in bold) or files listed in alphabeti
+cal order:
 \end_layout
 
 \begin_layout Quotation
@@ -2683,7 +2763,13 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.7.1_src in above step), type the command:
+ mega2_v
+\change_deleted -1820302391 1433535883
+4.7.1
+\change_inserted -1820302391 1433535883
+4.8.0
+\change_unchanged
+_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2734,10 +2820,16 @@ name "sub:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.7.1_src.tar.gz package also includes a source code folder "srcdir"
- containing C source files, a Makefile, and several OS-specific Makedefs
- files that define compilation flags that govern locations of standard C
- libraries, and other OS-specific behavior.
+The mega2_v
+\change_deleted -1820302391 1433535885
+4.7.1
+\change_inserted -1820302391 1433535885
+4.8.0
+\change_unchanged
+_src.tar.gz package also includes a source code folder "srcdir" containing
+ C source files, a Makefile, and several OS-specific Makedefs files that
+ define compilation flags that govern locations of standard C libraries,
+ and other OS-specific behavior.
 \end_layout
 
 \begin_layout Standard
@@ -2749,7 +2841,13 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.7.1_src folder, type 
+From within the mega2_v
+\change_deleted -1820302391 1433535886
+4.7.1
+\change_inserted -1820302391 1433535886
+4.8.0
+\change_unchanged
+_src folder, type 
 \end_layout
 
 \begin_deeper
@@ -3030,8 +3128,13 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.7.1_src folder contains
- documentation for mega2.
+The sub-folder called mega2_html/ within the mega2_v
+\change_deleted -1820302391 1433535889
+4.7.1
+\change_inserted -1820302391 1433535889
+4.8.0
+\change_unchanged
+_src folder contains documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
 
@@ -3683,7 +3786,13 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.7.1_src.tar.gz.
+The Mega2 distribution package is named mega2_v
+\change_deleted -1820302391 1433535890
+4.7.1
+\change_inserted -1820302391 1433535890
+4.8.0
+\change_unchanged
+_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -3694,7 +3803,13 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.7.1_src.tar
+mega2_v
+\change_deleted -1820302391 1433535891
+4.7.1
+\change_inserted -1820302391 1433535891
+4.8.0
+\change_unchanged
+_src.tar
 \end_layout
 
 \end_deeper
@@ -3716,7 +3831,13 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.7.1_src.tar.tar
+mega2_v
+\change_deleted -1820302391 1433535891
+4.7.1
+\change_inserted -1820302391 1433535891
+4.8.0
+\change_unchanged
+_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -3724,7 +3845,13 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.7.1_src.tar.gz
+mega2_v
+\change_deleted -1820302391 1433535892
+4.7.1
+\change_inserted -1820302391 1433535892
+4.8.0
+\change_unchanged
+_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -3732,7 +3859,19 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.7.1_src.tar.tar mega2_v4.7.1_src.tar.gz
+mv mega2_v
+\change_deleted -1820302391 1433535892
+4.7.1
+\change_inserted -1820302391 1433535892
+4.8.0
+\change_unchanged
+_src.tar.tar mega2_v
+\change_deleted -1820302391 1433535894
+4.7.1
+\change_inserted -1820302391 1433535894
+4.8.0
+\change_unchanged
+_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -10758,7 +10897,13 @@ When you first started up Mega2, it will present a menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.7.1 input menu:
+              Mega2 
+\change_deleted -1820302391 1433535909
+4.7.1
+\change_inserted -1820302391 1433535909
+4.8.0
+\change_unchanged
+ input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -10849,7 +10994,13 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.7.1 input file type menu:
+Mega2 
+\change_deleted -1820302391 1433535911
+4.7.1
+\change_inserted -1820302391 1433535911
+4.8.0
+\change_unchanged
+ input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -10890,10 +11041,26 @@ Mega2 4.7.1 input file type menu:
 
 \begin_layout LyX-Code
  8) VCF format (vcf) 
+\change_inserted -1820302391 1433536241
+
 \end_layout
 
 \begin_layout LyX-Code
-Select from options 0-8 >
+
+\change_inserted -1820302391 1433536251
+ 9) IMPUTE2/Oxford format (gen/impute2)
+\change_unchanged
+
+\end_layout
+
+\begin_layout LyX-Code
+Select from options 0-
+\change_inserted -1820302391 1433536256
+9
+\change_deleted -1820302391 1433536255
+8
+\change_unchanged
+ >
 \end_layout
 
 \begin_layout Standard
@@ -10913,7 +11080,13 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.7.1 input menu:
+              Mega2 
+\change_deleted -1820302391 1433535912
+4.7.1
+\change_inserted -1820302391 1433535912
+4.8.0
+\change_unchanged
+ input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -11015,7 +11188,7 @@ Mega2 format with header
 
 \begin_layout LyX-Code
 \begin_inset Tabular
-<lyxtabular version="3" rows="9" columns="2">
+<lyxtabular version="3" rows="10" columns="2">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="left" valignment="top">
@@ -11180,7 +11353,7 @@ VCF compressed format (vcf.gz)
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -11189,11 +11362,35 @@ VCF compressed format (vcf.gz)
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 VCF format (vcf)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1433536350
+--gen
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1433536370
+Oxford/Impute2 format (gen)
 \end_layout
 
 \end_inset
@@ -12399,6 +12596,107 @@ Input menu item: Map datafile:
 \begin_layout Standard
 This specifies a Mega2 map file to provide genetic position information
  for analysis modes.
+\change_inserted -1820302391 1433536490
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1820302391 1433536520
+Input format: Oxford/Impute2 Format files
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536604
+ 1) Select input file format:                         IMPUTE2/Oxford format
+ (gen/impute2)
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536611
+ 2) Input file stem:                                  impute
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536614
+ 3) Oxford-single-chr [if required]:                  --
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536616
+ 4) Imputation info metric threshold:                 0.3000
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536617
+ 5) Hard call threshold:                              0.9000
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536619
+ 6) Hard call warn fraction:                          0.9000
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536687
+ 7) Codes for Missing value: (space separated)       
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536690
+ 8) Allow indels (toggle):                            [ yes ]
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536660
+ 9) IMPUTE2 file:       (IMPUTE2 .gen)     [required]_ 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536641
+10) Imputed Info file:  (IMPUTE2 .gen_info)[optional] _
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536646
+11) Sample file:        (IMPUTE2 .sample)  [required] _ 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536648
+12) Map file:           (Mega2 .map)       [optional] _ 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536650
+13) Omit file:          (Mega2 .omit)      [optional] _ 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536653
+14) Frequency file:     (Mega2 .freq)      [optional] _ 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1433536595
+15) Penetrance file:    (Mega2 .pen)       [optional] _
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -12801,7 +13099,13 @@ name "sub:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.7.1 Maximum alleles per marker menu:
+              Mega2 
+\change_deleted -1820302391 1433535914
+4.7.1
+\change_inserted -1820302391 1433535914
+4.8.0
+\change_unchanged
+ Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -15630,7 +15934,13 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.7.1 Missing Value menu:
+              Mega2 
+\change_deleted -1820302391 1433535919
+4.7.1
+\change_inserted -1820302391 1433535919
+4.8.0
+\change_unchanged
+ Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -30642,7 +30952,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="21" columns="4">
+<lyxtabular version="3" rows="22" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="right" valignment="top">
@@ -30708,6 +31018,72 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
+4.
+\change_inserted -1820302391 1433535953
+8.0
+\change_deleted -1820302391 1433535951
+7.1
+\change_unchanged
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1433535976
+June 12
+\change_deleted -1820302391 1433535970
+Oct 17
+\change_unchanged
+, 201
+\change_inserted -1820302391 1433535966
+5
+\change_deleted -1820302391 1433535966
+4
+\change_unchanged
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 201
+\change_inserted -1820302391 1433535960
+6
+\change_deleted -1820302391 1433535960
+5
+\change_unchanged
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1433535946
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1433535946
 4.7.1
 \end_layout
 
@@ -30717,6 +31093,8 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\change_inserted -1820302391 1433535946
 Oct 17, 2014
 \end_layout
 
@@ -30726,6 +31104,8 @@ Oct 17, 2014
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\change_inserted -1820302391 1433535946
 June 15, 2015
 \end_layout
 
@@ -31462,7 +31842,41 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
+Changes from Version 4.
+\change_deleted -1820302391 1433536000
+6.2
+\change_inserted -1820302391 1433536002
+7.1
+\change_unchanged
+ to Version 4.
+\change_deleted -1820302391 1433536007
+7.1
+\change_inserted -1820302391 1433536008
+8.0
+\change_unchanged
+ (Released 
+\change_deleted -1820302391 1433536013
+Oct 16
+\change_inserted -1820302391 1433536019
+June 12
+\change_unchanged
+, 201
+\change_inserted -1820302391 1433536024
+5
+\change_deleted -1820302391 1433536024
+4
+\change_unchanged
+)
+\change_inserted -1820302391 1433535990
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1820302391 1433535990
 Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize

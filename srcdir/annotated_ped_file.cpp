@@ -1637,7 +1637,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         plink_info->bed_filep = (FILE *)NULL;
     }
 
-    Top = mk_ped_top(persons, num_ped_records, LTop, num_peds,
+    Top = mk_ped_top(persons, num_ped_records, LTop, num_peds, untyped,
                      totaltyped, groups, num_groups, has_extra_ids,
                      num_err, check_ungenotyped);
 
@@ -1658,15 +1658,14 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 }
 
 linkage_ped_top *mk_ped_top(annotated_ped_rec *persons, int num_ped_records, 
-                            linkage_locus_top *LTop, int num_peds, int totaltyped,
+                            linkage_locus_top *LTop, int num_peds,
+                            int untyped, int totaltyped,
                             int *groups, int num_groups, int has_extra_ids,
                             int num_err, int check_ungenotyped)
 {
     marriage_graph_type *ppeds;
     linkage_ped_tree *lpeds;
     linkage_ped_top *Top;
-    int untyped = 0;
-// fix both
 
     Tod tod_cp_cru("check all markers untyped");
     SUPPRESS_MSSG_NESTED_INIT(untyped_msg);

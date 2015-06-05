@@ -686,7 +686,7 @@ void   summary_time_stamp(char **input_files, FILE *fp, const char *message)
     if (input_files != NULL) {
         fprintf(fp, "Input file names\n");
 
-        for (i=0; i< 2; i++) {
+        for (i=0; i< 3; i++) {
             if (input_files[i] != NULL) {
                 // DO NOT CHANGE: This line is parsed by '#define LOG2HTML'...
                 fprintf(fp, "# %19s:               %s\n",
@@ -694,7 +694,7 @@ void   summary_time_stamp(char **input_files, FILE *fp, const char *message)
 #ifdef HIDEPATH
                         NOPATH
 #else
-                        input_files[i]
+                        input_files[i] || ""
 #endif
 );
             }
@@ -707,7 +707,7 @@ void   summary_time_stamp(char **input_files, FILE *fp, const char *message)
 #endif
         }
 #ifndef HIDEPATH
-        for (i=2; i< NUMBER_OF_MEGA2_INPUT_FILES; i++) {
+        for (i=3; i< NUMBER_OF_MEGA2_INPUT_FILES; i++) {
             if (input_files[i] != NULL) {
                 // DO NOT CHANGE: This line is parsed by '#define LOG2HTML'...
                 fprintf(fp, "# %19s:               %s\n",
