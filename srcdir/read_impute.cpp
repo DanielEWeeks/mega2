@@ -214,18 +214,19 @@ void ReadImputed::do_init(Input_Impute *inp)
     this->input = inp;
     this->files(*inp->input_files.bedfl, *inp->input_files.pedfl);
 
-///    err_fn = mega2_input_files[6];
-
     read_imputed_file();
 
     if (this->read_info) read_info_file();
 
+    check_indelsNdups();
+
     read_sample_file();
 }
 
-linkage_locus_top *ReadImputed::do_names()
+linkage_locus_top *ReadImputed::do_names(const char *&names_fn)
 {
     linkage_locus_top *LTop = build_impute2_names();
+    names_fn = impute_file;
 
     return LTop;
 }
@@ -282,17 +283,13 @@ void ReadImputed::read_imputed_file ()
 
     Str hmm, rsid, pos, A, B;
     VecsDB fields;
-    ImpMarker *mp = NULL, *mpp = NULL;
     int line_n = 0;
-    int skip_count = 0;
     int nochr = 0;
 
     Str  name;
     Str  chrm;
     SUPPRESS_MSSG_NESTED_INIT(bad_line);
     SUPPRESS_MSSG_NESTED_INIT(halftyped);
-    SUPPRESS_MSSG_NESTED_INIT(indel);
-    SUPPRESS_MSSG_NESTED_INIT(duplicate);
     while (! ifs.eof() ) {
 
         ifs >> hmm;
@@ -310,14 +307,16 @@ void ReadImputed::read_imputed_file ()
             cout << hmm << " ";
         }
         if (hmm.compare(0, 3, "chr") == 0) {
-//          hmm = hmm.substr(3, hmm.size()-3);
             hmm.erase(0, 3);
         }
         if (inMap(hmm, input->G.chrm_set)) {
             chrm = hmm;
             fields.clear();
             split(fields, rsid, ":", 3);
-            name = fields[0];  // it seems to be this way
+            if (rsid == "." || rsid == "NA" || rsid == "na")
+                name = "chr" + chrm + "_" + pos;
+            else
+                name = fields[0];  // it seems to be this way
         } else /* if (hmm == "---") */ {   // first column can be -9 ... anything
             fields.clear();
             split(fields, rsid, ":", 3);
@@ -326,14 +325,16 @@ void ReadImputed::read_imputed_file ()
                 cout << rsid << " ";
                 cout << "#" << fields.size() << " ";
             }
-            if (fields.size() > 0) {
+            if (rsid == "." || rsid == "NA" || rsid == "na") {
+                chrm = oxford_single_chr;
+                name = "chr" + oxford_single_chr + "_" + pos;
+            } else if (fields.size() > 0) {
                 if (fields[0].compare(0, 3, "chr") == 0) {
-//                  fields[0] = fields[0].substr(3, fields[0].size()-3);
                     fields[0].erase(0, 3);
                 }
                 if (inMap(fields[0], input->G.chrm_set)) {
                     chrm = fields[0];
-                    name = "chr" + fields[0] + "_" + fields[1];
+                    name = "chr" + fields[0] + "_" + pos;
                 } else if (fields[0].compare(0, 2, "rs") == 0 && oxford_single_chr != "--") {
                     chrm  =  oxford_single_chr;
                     name = fields[0];
@@ -388,10 +389,36 @@ void ReadImputed::read_imputed_file ()
             cout << B << " ";
             cout << endl;
         }
-        mpp = mp;
-        mp = new ImpMarker(name, chrm, pos, A, B, read_info);
-        markers.push_back(mp);
+        markers.push_back(new ImpMarker(name, chrm, pos, A, B, read_info));
+    }
+
+    SUPPRESS_MSSG_NESTED_FINI(bad_line);
+    SUPPRESS_MSSG_NESTED_FINI(halftyped);
+    if (nochr) {
+        errorvf("read_imputed_file: can not determine chromosomes for %d markers\n",
+                nochr);
+        EXIT(DATA_INCONSISTENCY);
+    }
+
+    markers_all = markers.size();
+    markers_filtered = markers_all;
+}
+
+void ReadImputed::check_indelsNdups()
+{
 // some checks: indels and dups
+    ImpMarker *mp = NULL, *mpprev = NULL;
+    int line_n = 0;
+    int skip_count = 0;
+
+    SUPPRESS_MSSG_NESTED_INIT(indel);
+    for (Vecmarkerpp mpp = markers.cbegin(); mpp != markers.cend(); mpp++) {
+        mp     = *mpp;
+
+        line_n++;
+
+        if (mp->skip) continue;
+
         if ( ( mp->A.size() > 1 && mp->A.compare(0, 5, "dummy" )) || 
              ( mp->B.size() > 1 && mp->B.compare(0, 5, "dummy" )) ) {
             if (allow_indels == 'y') {
@@ -405,32 +432,38 @@ void ReadImputed::read_imputed_file ()
                 skip_count++;
                 mp->skip = true;
             }
-        } 
+        }
+    } 
+    SUPPRESS_MSSG_NESTED_FINI(indel);
+    markers_filtered = markers_filtered - skip_count;
+    mssgvf("Markers remaining %d; Filtered by indels %d\n", markers_filtered, skip_count);
 
-        if (mpp == NULL)
+    mp = NULL;
+    line_n = 0;
+    skip_count = 0;
+    SUPPRESS_MSSG_NESTED_INIT(duplicate);
+    for (Vecmarkerpp mpp = markers.cbegin(); mpp != markers.cend(); mpp++) {
+        mpprev = mp;
+        mp     = *mpp;
+
+        line_n++;
+
+        if (mp->skip) continue;
+
+        if (mpprev == NULL)
             ;
-        else if (mpp->pos == mp->pos) {
+        else if (mpprev->pos == mp->pos) {
             SUPPRESS_MSSG_NESTED(duplicate);
-            warnvf("Markers: %s (bp %s) repeated with different alleles [%s/%s %s/%s] kept only first [line %d].\n",
-                   C(mp->name), C(mp->pos), C(mpp->A), C(mpp->B), C(mp->A), C(mp->B), line_n);
-            if (! mp->skip) {
-                skip_count++;
-                mp->skip = true;
-            }
+            warnvf("Markers: %s (bp %s) repeated with different alleles [%s/%s %s/%s] ignored repeat [line %d].\n",
+                   C(mp->name), C(mp->pos), C(mpprev->A), C(mpprev->B), C(mp->A), C(mp->B), line_n);
+            skip_count++;
+            mp->skip = true;
         }
     }
-    SUPPRESS_MSSG_NESTED_FINI(bad_line);
-    SUPPRESS_MSSG_NESTED_FINI(halftyped);
-    SUPPRESS_MSSG_NESTED_FINI(indel);
     SUPPRESS_MSSG_NESTED_FINI(duplicate);
-    if (nochr) {
-        errorvf("read_imputed_file: can not determine chromosomes for %d markers\n",
-                nochr);
-        EXIT(DATA_INCONSISTENCY);
-    }
+    markers_filtered = markers_filtered - skip_count;
 
-    markers_all = markers.size();
-    markers_filtered = markers_all - skip_count;
+    mssgvf("Markers remaining %d; Filtered by dups %d\n\n", markers_filtered, skip_count);
 }
 
 Str ReadImputed::info_file_hdr = "snp_id rs_id position a0 a1 exp_freq_a1 info certainty type";
@@ -532,8 +565,7 @@ void ReadImputed::read_info_file ()
     }
     ifs.close();
 
-    warnvf("%d of %d markers remain after filters are applied.\n", 
-           markers.size() - skip_count, markers.size());
+    mssgvf("Markers remaining %d; Filtered by info threshold %d\n", markers_filtered, skip_count);
 }
 
 Str ReadImputed::sample_file_hdr = "ID_1 ID_2 missing";
@@ -927,8 +959,8 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     }
 
     int line_n = 0;
+    int skip_count = 0;
     Token token(3);
-    Vecmarkerpp mpp;
     ImpMarker   *mp;
 
     int   mrk_idx = sample_file_hdr2b.size() - 5 -1;
@@ -946,7 +978,7 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     warnvf("%10s %10s %10s  %s\n         %10s %10s %10s  %s\n",
            "untyped", "less", "greater", "Marker + chr:pos",
            "marker", "hard call", "hard call", "");
-    for (mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
+    for (Vecmarkerpp mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
         getline(ifs, line);
         if (ifs.eof()) break;
         line_n++;
@@ -1054,4 +1086,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     tod_gen();
 //  SUPPRESS_MSSG_NESTED_FINI(skip);
     SUPPRESS_MSSG_NESTED_FINI(fraction_hard_call);
+
+    mssgvf("Markers remaining %d; Filtered by hard call threshold %d\n", markers_filtered, skip_count);
 }

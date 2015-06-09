@@ -527,25 +527,27 @@ extern int Display_Errors, Display_Messages;
 
 #define SUPPRESS_MSSG(displayed_errors)	if (displayed_errors == (MAX_PED_ERRORS+1)) { \
         fflush(stdout);                                                 \
-        printf("Too many messages, display is temporarily suspended ..\n"); \
+        logf("===== Too many messages, display is temporarily suspended ..", "", 0); \
         fflush(stdout);                                                 \
     }                                                                   \
     else if (displayed_errors == 0) {                                   \
         fflush(stdout);                                                 \
-        printf("Errors/warnings/messages (up to 10 displayed): \n");    \
+        logf("===== Errors/warnings messages: ");  \
         fflush(stdout);                                                 \
     }
 #endif
 
+// (up to 10 displayed)
+
 #ifndef SUPPRESS_MSSG_NESTED
 #define SUPPRESS_MSSG_NESTED(errors)	if (_##errors##_++ == 0) {         \
         fflush(stdout);                                                    \
-        printf("\nErrors/warnings/messages of type \"" #errors "\" (up to 10 displayed): \n"); \
-        fflush(stdout);                                                    \
         Display_Errors = Display_##errors##_ = 1;                          \
+        logf("\n===== Errors/warnings messages of type \"" #errors "\": "); \
+        fflush(stdout);                                                    \
     } else if (_##errors##_ == (MAX_PED_ERRORS+2)) {                       \
         fflush(stdout);                                                    \
-        printf("Too many \"" #errors "\" messages, display is temporarily suspended ..\n");\
+        logf("===== Too many \"" #errors "\" messages, display is temporarily suspended ..", "", 0); \
         fflush(stdout);                                                    \
         Display_Errors = Display_##errors##_ = 0;                          \
     } else {                                                               \
@@ -568,8 +570,7 @@ extern int Display_Errors, Display_Messages;
     {                                                                   \
         Display_Errors = Display_##errors##_ = 1;                       \
         fflush(stdout);                                                 \
-        if (_##errors##_ > 9) printf("%d more messages of type \"" #errors "\" are in the log.\n\n", _##errors##_-10); \
-        else if (_##errors##_) printf("\n");                            \
+        if (_##errors##_) logvf("===== %d total messages of type \"" #errors "\" are in the ERR log.\n\n", _##errors##_); \
         fflush(stdout);                                                 \
         _##errors##_ = 0;                                               \
     }

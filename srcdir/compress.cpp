@@ -52,7 +52,7 @@ int             MARKER_SCHEME3_shift[] = {   0,    2,    4,    6};
 
 void           *NOTYPED_ALLELES = (void *) 0;
 
-extern allele_prop *Allele_Array[256];
+extern allele_prop **Allele_Array;
 
 int marker_size(int size)
 {

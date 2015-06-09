@@ -234,6 +234,7 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
                     line, quantstr, locus->Name);
             err = 1;
         } else if (quant == QMISSING || quant == QUNDEF) {
+            Display_Errors = 1;
             errorvf("Line %d, trait %s, value %s:\n", line, locus->Name, quantstr);
             errorvf("Internal Quantitative Missing Value Consistency Error.  Get Help.\n");
             EXIT(OUTOF_BOUNDS_ERROR);
@@ -281,6 +282,7 @@ int read_quant_phen(FILE *filep, int locusnm,
             /* conversion failed */
             quant=QUNDEF;
         } else if (quant == QMISSING || quant == QUNDEF) {
+            Display_Errors = 1;
             errorvf("Line %d, trait %s, value %s:\n", anentry->rec_num, locus->Name, quantstr);
             errorvf("Internal Quantitative Missing Value Consistency Error.  Get Help.\n");
             EXIT(OUTOF_BOUNDS_ERROR);
@@ -587,9 +589,11 @@ void annot_ignore_numbered_data(int line, linkage_locus_rec *locus,
     
 }
 
-int allele_count = 0;
+int allele_count = -1;
+int ALLELE_ARRAY = 256;
+//allele_prop *Allele_Array[ALLELE_ARRAY];
+allele_prop **Allele_Array = CALLOC((size_t) ALLELE_ARRAY, allele_prop *);
 
-allele_prop *Allele_Array[ALLELE_ARRAY];
 
 char *canonical_allele(const char *ra)
 {
@@ -607,22 +611,30 @@ char *canonical_allele(const char *ra)
         cra = allele_prop_allele(Ara);
         strcpy(cra, ra);
         add_allele(cra, cra);  /* need key on heap */
-        Allele_Array[allele_count] = Ara;
-        Ara->idx = allele_count++;
+        Ara->idx = ++allele_count;
 
         /*
          * Test on string (i.e. annotated) values
          */
         if (allele_count >= ALLELE_ARRAY) {
-            errorvf("This version of Mega2 only supports %d unique alleles.\n", ALLELE_ARRAY);
-            EXIT(OUTOF_BOUNDS_ERROR);
+            Display_Errors = 1;
+            if (MARKER_SCHEME != MARKER_SCHEME_PTR) {
+                errorvf("This version of Mega2 only supports %d unique alleles.\n", ALLELE_ARRAY);
+                EXIT(OUTOF_BOUNDS_ERROR);
+            } else {
+                ALLELE_ARRAY *= 2;
+                warnvf("Growing Allele_Array to %d entries\n", ALLELE_ARRAY);
+                Allele_Array = REALLOC(Allele_Array, (size_t) ALLELE_ARRAY, allele_prop *);
+            }
         }
+        Allele_Array[allele_count] = Ara;
 
         char *endptr;
         int i1 = strtod(cra, &endptr);
         if (endptr == cra || (*endptr)) {
             // non integer;
         } else if (i1 >= ALLELE_ARRAY && MARKER_SCHEME != MARKER_SCHEME_PTR) {
+            Display_Errors = 1;
             errorvf("This version of Mega2 only supports alleles with value less than %d.\n", ALLELE_ARRAY);
             EXIT(OUTOF_BOUNDS_ERROR);
         }
@@ -682,6 +694,7 @@ int read_numbered_data(FILE *filep, int locusnm,
         if (endptr == ra1 || (*endptr)) {
             undef = 1; // non integer; can not happen here
         } else if (a1 >= ALLELE_ARRAY && MARKER_SCHEME != MARKER_SCHEME_PTR) {
+            Display_Errors = 1;
             errorvf("This version of Mega2 only supports alleles with value less than %d.\n", ALLELE_ARRAY);
             EXIT(OUTOF_BOUNDS_ERROR);
         }
@@ -724,6 +737,7 @@ int read_numbered_data(FILE *filep, int locusnm,
         if (endptr == ra2 || (*endptr)) {
             undef = 1; // non integer; can not happen here
         } else if (a2 >= ALLELE_ARRAY && MARKER_SCHEME != MARKER_SCHEME_PTR) {
+            Display_Errors = 1;
             errorvf("This version of Mega2 only supports alleles with value less than %d.\n", ALLELE_ARRAY);
             EXIT(OUTOF_BOUNDS_ERROR);
         }
@@ -1225,11 +1239,13 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
                 /* check that the first n entries are defined */
                 for (i=0; i<loop->numEntry; i++) {
                     if (loop->Entry[i]==UNDEF) {
+                        Display_Errors = 1;
                         errorf("INTERNAL error setting loop ids.");
                         EXIT(SYSTEM_ERROR);
                     }
                 }
                 if (loop->numEntry >= MAXLOOPMEMBERS) {
+                    Display_Errors = 1;
                     errorf("Exceeded loop limit for an individual\n");
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }

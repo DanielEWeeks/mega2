@@ -74,7 +74,7 @@ public:
     virtual void do_batch2local();
 
     virtual void do_init(Input_Impute *inp);
-    virtual linkage_locus_top *do_names();
+    virtual linkage_locus_top *do_names(const char *&names_fn);
     virtual void do_map(std::vector<m2_map>& additional_maps);
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
 
@@ -84,6 +84,8 @@ public:
     }
 
     void read_imputed_file();
+
+    void check_indelsNdups();
 
     void read_info_file();
 

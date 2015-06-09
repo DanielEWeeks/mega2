@@ -2578,6 +2578,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
         get_map_names(PLINK.plink == binary_PED_format ? file_desc->num_map_cols - 2 : file_desc->num_map_cols,
                       map_all_colnames,
                       reserved_colnames,
+//xx
                       allocate_additional_maps,
                       EXLTop);
     
@@ -2590,6 +2591,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     }
 
     // Maps from the Mega2 map file and maps to be filled in at a later time...
+//xx
     total_maps_to_allocate = num_maps + allocate_additional_maps;
     
 #ifndef HIDESTATUS
@@ -2735,6 +2737,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
             // Here it's "extra". It's in the map file but not in the data used to make LTop.
             // NOTE: that if the 'dname' is not in LTop then we never get here...
             /* Locus is not in locus file, warn and skip */
+//xxx
             sprintf(err_msg,
                     "Locus %s (line %d in %s) %s file; skipping this locus.",
                     dname, line, map_file,
@@ -3070,6 +3073,7 @@ static ext_linkage_locus_top *read_annotated_map_file(const char *map_file,
                                                       std::vector<m2_map> additional_maps,
                                                       annotated_file_desc *file_desc)
 {
+//xxx
     list *userdef_colnames = new_list();
     col_hdr_type reserved_colnames[NUM_MAPCOL_NAMES];
     col_hdr_type *colname_item, *map_all_colnames;
@@ -3117,9 +3121,14 @@ static ext_linkage_locus_top *read_annotated_map_file(const char *map_file,
     while((colname_item =
            (col_hdr_type *) pop_first_list_entry(userdef_colnames))
           != NULL) {
+//xxx
+#if 0
         if (Input_Format == in_format_binary_VCF ||
             Input_Format == in_format_compressed_VCF ||
-            Input_Format == in_format_VCF) {
+            Input_Format == in_format_VCF)
+#else
+        if (additional_maps.size()) {
+#endif
             for (size_t i = 0; i < additional_maps.size(); i++) {
                 m2_map map = additional_maps[i];
                 const char *illegal_annotated_map_name = map.get_name().c_str();
@@ -4001,6 +4010,7 @@ static void insert_m2_map_into_EXLTop(ext_linkage_locus_top *EXLTop,
                                       const int map_i,
                                       m2_map& map)
 {
+//xx
     int i, j;
     
     EXLTop->map_functions[map_i] = map.get_function();
@@ -4140,7 +4150,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     int   phe_cols = 0;
     int   bp_map   = 0;
     int displayed_messages = 0, duplicate_mrk=0;
-    char *err_fn = (PLINK.plink == binary_PED_format) ? mega2_input_files[6] : mega2_input_files[0];
+    const char *names_fn = (PLINK.plink == binary_PED_format) ? mega2_input_files[6] : mega2_input_files[0];
 
     m2_map vcf_map;
     m2_map impute_map;
@@ -4152,7 +4162,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     if (Input->has_init()) Input->do_init();
 
     if (Input->has_names()) {
-        LTop = Input->do_names();
+        LTop = Input->do_names(names_fn);
 	ann_files = 1;
     } else if (PLINK.plink || xcf) {
         char **phe_names = NULL;
@@ -4193,6 +4203,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             ann_files = read_plink_map_as_names_file(names_file ? names_file : map_file,
                                                      &LTop, tot_cols, phe_names, phe_types,
                                                      &AnnotatedFileInfo);
+            names_fn = names_file ? names_file : map_file;
             tod_pmap();
         }
         for (i = 0; i < tot_cols; i++) {
@@ -4200,8 +4211,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         }
         free(phe_names);
         free(phe_types);
-    } else
+    } else {
         ann_files = read_annotated_names_file(names_file, &LTop, &AnnotatedFileInfo);
+        names_fn = names_file;
+    }
     free(AnnotatedFileInfo.names_file_columns);
 
     // CPK: Build the MARKER set and in doing so search for duplicate markers....
@@ -4213,7 +4226,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         int i_old = test_and_add_marker(name, i);
         if (i_old >= 0) {
             sprintf(err_msg,
-                    "Duplicate marker name '%s' in '%s'", name, err_fn);
+                    "Duplicate marker name '%s' in '%s'", name, names_fn);
             SUPPRESS_MSSG(displayed_messages);
             if (displayed_messages > MAX_PED_ERRORS) {
                 Display_Errors = 0;
@@ -4281,7 +4294,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     EXLTop = new_ex_llocustop();
 */
     std::vector<m2_map> additional_maps;
-
+//	asm("int $3");
     if (Input->has_map()) {
         Input->do_map(additional_maps);
         EXLTop = NULL; // but additional_maps.size() > 0 so see below; this makes compiler happy
@@ -4323,6 +4336,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             EXLTop->MapNames = CALLOC((size_t)1, char*);
             EXLTop->SexMaps = CALLOC((size_t)1, int *);
         }
+//xx here
         if (EXLTop->MapCnt == 0) {
             insert_m2_map_into_EXLTop(EXLTop, LTop, 0, additional_maps[0]);
             insert_zero_sex_average_genetic_map_in_EXLTop(EXLTop, LTop);

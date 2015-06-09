@@ -32,8 +32,6 @@
 #include <stdio.h>
 #include "typedefs.h"
 
-#define ALLELE_ARRAY 256
-
 #define MALE_ID   1
 #define FEMALE_ID 2
 #define UNKNOWN_SEX 0

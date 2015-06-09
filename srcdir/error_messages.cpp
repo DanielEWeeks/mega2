@@ -109,41 +109,32 @@ void err_or_warn(FILE **errfp, FILE **logfp)
    message is a char pointer, implemented as a
    global variable */
 
-void warnf(const char *messg)
+void logf(const char *messg, const char *shout, int showerrf)
 {
-    if (Mega2logf != NULL) {
-        fprintf(Mega2logf, "WARNING: %s\n", messg);
-        fflush(Mega2logf);
-    }
-
-    if (Mega2errf != NULL) {
-        fprintf(Mega2errf, "WARNING: %s\n", messg);
+    if (showerrf && Mega2errf != NULL) {
+        fprintf(Mega2errf, "%s%s\n", shout, messg);
         fflush(Mega2errf);
     }
 
     if (Display_Errors==1 || Mega2logf == NULL || Mega2errf == NULL) {
-        fprintf(stderr, "WARNING: %s\n", messg);
+        if (Mega2logf != NULL) {
+            fprintf(Mega2logf, "%s%s\n", shout, messg);
+            fflush(Mega2logf);
+        }
+        fprintf(stderr, "%s%s\n", shout, messg);
         fflush(stderr);
     }
+}
+
+void warnf(const char *messg)
+{
+    logf(messg, "WARNING: ", 1);
 }
 
 /* write in ERROR file as well as LOG file */
 void errorf(const char *messg)
 {
-    if (Mega2logf != NULL) {
-        fprintf(Mega2logf, "ERROR: %s\n", messg);
-        fflush(Mega2logf);
-    }
-
-    if (Mega2errf != NULL) {
-        fprintf(Mega2errf, "ERROR: %s\n", messg);
-        fflush(Mega2errf);
-    }
-
-    if (Display_Errors==1 || Mega2logf == NULL || Mega2errf == NULL) {
-        fprintf(stderr, "ERROR: %s\n", messg);
-        fflush(stderr);
-    }
+    logf(messg, "ERROR: ", 1);
 }
 
 /* logf is called only  */
@@ -160,18 +151,35 @@ void mssgf(const char *messg)
     }
 }
 
+void logvf(const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    if (Mega2errf != NULL) {
+        vfprintf(Mega2errf, fmt, ap);
+        fflush(Mega2errf);
+    }
+    va_end(ap);
+
+    va_start(ap, fmt);
+    if (Display_Errors==1 || Mega2logf == NULL || Mega2errf == NULL) {
+        if (Mega2logf != NULL) {
+            vfprintf(Mega2logf, fmt, ap);
+            fflush(Mega2logf);
+            va_end(ap);
+            va_start(ap, fmt);
+        }
+        vfprintf(stderr, fmt, ap);
+        fflush(stderr);
+    }
+    va_end(ap);
+}
+
 void warnvf(const char *fmt, ...)
 {
     va_list ap;
     const char *shout = "WARNING: ";
-
-    va_start(ap, fmt);
-    if (Mega2logf != NULL) {
-        fputs(shout, Mega2logf);
-        vfprintf(Mega2logf, fmt, ap);
-        fflush(Mega2logf);
-    }
-    va_end(ap);
 
     va_start(ap, fmt);
     if (Mega2errf != NULL) {
@@ -183,6 +191,13 @@ void warnvf(const char *fmt, ...)
 
     va_start(ap, fmt);
     if (Display_Errors==1 || Mega2logf == NULL || Mega2errf == NULL) {
+        if (Mega2logf != NULL) {
+            fputs(shout, Mega2logf);
+            vfprintf(Mega2logf, fmt, ap);
+            fflush(Mega2logf);
+            va_end(ap);
+            va_start(ap, fmt);
+        }
         fputs(shout, stderr);
         vfprintf(stderr, fmt, ap);
         fflush(stderr);
@@ -196,14 +211,6 @@ void errorvf(const char *fmt, ...)
     const char *shout = "ERROR: ";
 
     va_start(ap, fmt);
-    if (Mega2logf != NULL) {
-        fputs(shout, Mega2logf);
-        vfprintf(Mega2logf, fmt, ap);
-        fflush(Mega2logf);
-    }
-    va_end(ap);
-
-    va_start(ap, fmt);
     if (Mega2errf != NULL) {
         fputs(shout, Mega2errf);
         vfprintf(Mega2errf, fmt, ap);
@@ -213,6 +220,13 @@ void errorvf(const char *fmt, ...)
 
     va_start(ap, fmt);
     if (Display_Errors==1 || Mega2logf == NULL || Mega2errf == NULL) {
+        if (Mega2logf != NULL) {
+            fputs(shout, Mega2logf);
+            vfprintf(Mega2logf, fmt, ap);
+            fflush(Mega2logf);
+            va_end(ap);
+            va_start(ap, fmt);
+        }
         fputs(shout, stderr);
         vfprintf(stderr, fmt, ap);
         fflush(stderr);

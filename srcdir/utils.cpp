@@ -694,7 +694,7 @@ void   summary_time_stamp(char **input_files, FILE *fp, const char *message)
 #ifdef HIDEPATH
                         NOPATH
 #else
-                        input_files[i] || ""
+                        input_files[i]
 #endif
 );
             }
