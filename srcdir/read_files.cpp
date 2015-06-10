@@ -2464,7 +2464,7 @@ void omit_file_data_processing(linkage_ped_top *Top,
             strcat(err_msg, " at all marker loci.");
             SUPPRESS_MSSG(displayed_messages1);
             if (displayed_messages1 > MAX_PED_ERRORS) Display_Messages = 0;
-            mssgf(err_msg);
+            warnf(err_msg);
             displayed_messages1++;
             
             // From "Omit file "documentation:

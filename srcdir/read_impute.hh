@@ -73,6 +73,8 @@ public:
     virtual void do_menu2batch();
     virtual void do_batch2local();
 
+    void show_settings();
+
     virtual void do_init(Input_Impute *inp);
     virtual linkage_locus_top *do_names(const char *&names_fn);
     virtual void do_map(std::vector<m2_map>& additional_maps);
@@ -111,7 +113,7 @@ public:
     Str           oxford_single_chr;
     double        info_threshold;
     double        hard_call_threshold;
-    double        hard_call_warn_fraction;
+    double        genotype_missing_fraction;
     char          allow_indels;
     Input_Impute *input;
     int           check_format;
@@ -130,17 +132,17 @@ static
     Vecs    sample_file_hdr2b;
 
 static const
-    int imputed_oxford_single_chr_i       = 8000001;
+    int imputed_oxford_single_chr_i         = 8000001;
 static const
-    int imputed_info_metric_threshold_i   = 8000002;
+    int imputed_info_metric_threshold_i     = 8000002;
 static const
-    int imputed_hard_call_threshold_i     = 8000003;
+    int imputed_hard_call_threshold_i       = 8000003;
 static const
-    int imputed_hard_call_warn_fraction_i = 8000004;
+    int imputed_genotype_missing_fraction_i = 8000004;
 static const
-    int imputed_missing_code_i            = 8000005;
+    int imputed_missing_code_i              = 8000005;
 static const
-    int imputed_allow_indels_i            = 8000006;
+    int imputed_allow_indels_i              = 8000006;
 
 };
 

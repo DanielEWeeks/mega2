@@ -415,10 +415,7 @@ void            hello(FILE *fp)
     fprintf(fp, "     Mega2 comes with ABSOLUTELY NO WARRANTY.\n");
     fprintf(fp, "     See LICENSE.txt for terms of copying, modifying & redistributing Mega2.\n");
     fprintf(fp, "==========================================================\n");
-    fprintf(fp, "NOTE: If you have previously used explicit numbers for sex chromosomes, BEWARE!\n");
-    fprintf(fp, "We have changed the numbers to be compatible with PLINK. 23 still codes for X,\n");
-    fprintf(fp, "but 24 codes for Y and 25 Codes for XY.\n\n");
-
+    fprintf(fp, "NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.\n\n");
 }
 
 const char *mklogdir(void)

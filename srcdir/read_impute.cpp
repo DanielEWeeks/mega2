@@ -76,15 +76,15 @@ void ReadImputed::do_menu_display(int &idx, int line_len, int choiceA[])
            BatchItemGet("Imputed_Info_Metric_Threshold")->value.fvalue);
     choiceA[idx++] = imputed_info_metric_threshold_i;
 
-    printf("%2d) %-*s%.4f\n", idx, line_len, "Hard call threshold:", 
+    printf("%2d) %-*s%.4f\n", idx, line_len, "\"Impute2 style\" hard call threshold:", 
            BatchItemGet("Imputed_Hard_Call_Threshold")->value.fvalue);
     choiceA[idx++] = imputed_hard_call_threshold_i;
 
-    printf("%2d) %-*s%.4f\n", idx, line_len, "Hard call warn fraction:", 
-           BatchItemGet("Imputed_Hard_Call_Warn_Fraction")->value.fvalue);
-    choiceA[idx++] = imputed_hard_call_warn_fraction_i;
+    printf("%2d) %-*s%.4f\n", idx, line_len, "Genotype missing fraction:", 
+           BatchItemGet("Imputed_Genotype_Missing_Fraction")->value.fvalue);
+    choiceA[idx++] = imputed_genotype_missing_fraction_i;
 
-    printf("%2d) %-*s", idx, line_len, "Codes for Missing value: (space separated)");
+    printf("%2d) %-*s", idx, line_len, "Missing trait value codes: (space separated)");
     char **lst = BatchItemGet("Imputed_Missing_Codes")->value.mult_names;
     if (lst) {
         for (; *lst; ) printf("%s ", *lst++);
@@ -129,7 +129,7 @@ int ReadImputed::do_menu_parse(int choice_)
     } else if (choice_ == imputed_hard_call_threshold_i) {
 	double ansd;
 	while (1) {
-	    printf("Please enter threshold for acceptable probabilities ");
+	    printf("Please enter hard call fraction ");
 	    fcmap(stdin, "%g", &ansd); newline;
 	    if (ansd < 0.0 || ansd > 1.0) {
 		printf("threshold must be between 0.0 and 1.0\n");
@@ -138,22 +138,22 @@ int ReadImputed::do_menu_parse(int choice_)
 
 	BatchValueSet(ansd, "Imputed_Hard_Call_Threshold");
 	ret = 1;
-    } else if (choice_ == imputed_hard_call_warn_fraction_i) {
+    } else if (choice_ == imputed_genotype_missing_fraction_i) {
 	double ansd;
 	while (1) {
-	    printf("Please enter fraction ");
+	    printf("Please enter genotype missing fraction ");
 	    fcmap(stdin, "%g", &ansd); newline;
 	    if (ansd < 0.0 || ansd > 1.0) {
 		printf("threshold must be between 0.0 and 1.0\n");
 	    } else break;
 	}
 
-	BatchValueSet(ansd, "Imputed_Hard_Call_Warn_Fraction");
+	BatchValueSet(ansd, "Imputed_Genotype_Missing_Fraction");
 	ret = 1;
     } else if (choice_ == imputed_missing_code_i) {
 	char selection[100];
         if (1) {
-	    printf("Please enter space separated list of codes for the missing phenotype value: ");
+	    printf("Please enter space separated list of missing trait value codes: ");
             (void)fgets(selection, sizeof(selection)-1, stdin); newline;
 	}
         Str MissingCodes = string(selection);
@@ -181,7 +181,7 @@ void ReadImputed::do_menu2batch()
     Cstr Values[] = { "Imputed_Oxford_Single_Chr",
                       "Imputed_Info_Metric_Threshold", 
                       "Imputed_Hard_Call_Threshold", 
-                      "Imputed_Hard_Call_Warn_Fraction", 
+                      "Imputed_Genotype_Missing_Fraction", 
                       "Imputed_Missing_Codes",
                       "Imputed_Allow_Indels" 
     };
@@ -198,7 +198,7 @@ void ReadImputed::do_batch2local()
     BatchValueGet(this->oxford_single_chr, "Imputed_Oxford_Single_Chr");
     BatchValueGet(this->info_threshold, "Imputed_Info_Metric_Threshold");
     BatchValueGet(this->hard_call_threshold, "Imputed_Hard_Call_Threshold");
-    BatchValueGet(this->hard_call_warn_fraction, "Imputed_Hard_Call_Warn_Fraction");
+    BatchValueGet(this->genotype_missing_fraction, "Imputed_Genotype_Missing_Fraction");
     BatchValueGet(this->allow_indels, "Imputed_Allow_Indels");
     BatchValueGet(this->info_file, "Input_Imputed_Info_File");
 
@@ -208,11 +208,32 @@ void ReadImputed::do_batch2local()
     Input->MissingCodesSet.insert(vec.cbegin(), vec.cend());
 }
 
+void ReadImputed::show_settings()
+{
+    msgvf("\n");
+    msgvf("Impute2 Analysis Oxford Single Chr:         %s\n", C(this->oxford_single_chr));
+    msgvf("Impute2 Analysis Info Metric Threshold:     %.3f\n", this->info_threshold);
+    msgvf("Impute2 Analysis Hard Call Threshold:       %.3f\n", this->hard_call_threshold);
+    msgvf("Impute2 Analysis Genotype Missing Fraction: %.3f\n", this->genotype_missing_fraction);
+    msgvf("Impute2 Analysis Allow Indels:              %c\n", this->allow_indels);
+
+    Vecs vec;
+    BatchValueGet(vec, "Imputed_Missing_Codes");
+    join(vec, Input->MissingCodes, " ");
+    msgvf("Impute2 Analysis Missing Trait Value Codes: %s\n", C(Input->MissingCodes));
+
+    msgvf("Impute2 Analysis Imputed Sample File:       %s\n", C(this->sample_file));
+    msgvf("Impute2 Analysis Imputed File:              %s\n",  this->impute_file);
+    msgvf("Impute2 Analysis Imputed Info File:         %s\n", C(this->info_file));
+
+}
+
 
 void ReadImputed::do_init(Input_Impute *inp)
 {
     this->input = inp;
     this->files(*inp->input_files.bedfl, *inp->input_files.pedfl);
+    show_settings();
 
     read_imputed_file();
 
@@ -436,7 +457,10 @@ void ReadImputed::check_indelsNdups()
     } 
     SUPPRESS_MSSG_NESTED_FINI(indel);
     markers_filtered = markers_filtered - skip_count;
-    mssgvf("Markers remaining %d; Filtered by indels %d\n", markers_filtered, skip_count);
+    if (allow_indels == 'y')
+        mssgvf("Markers remaining %d; NO Filtering by indels\n", markers_filtered);
+    else
+        mssgvf("Markers remaining %d; Filtered by indels %d\n", markers_filtered, skip_count);
 
     mp = NULL;
     line_n = 0;
@@ -519,7 +543,7 @@ void ReadImputed::read_info_file ()
     size_t line_n = 0;
     int    skip_count = 0;
     double info;
-//xxx
+
     SUPPRESS_MSSG_NESTED_INIT(info_threshold);
     ImpMarker *mp;
     for (mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
@@ -959,7 +983,7 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     }
 
     int line_n = 0;
-    int skip_count = 0;
+//    int skip_count = 0;
     Token token(3);
     ImpMarker   *mp;
 
@@ -973,11 +997,12 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 //  SUPPRESS_MSSG_NESTED_INIT(skip);
 
     Tod tod_gen("impute genotypes");
-    SUPPRESS_MSSG_NESTED_INIT(fraction_hard_call);
-    SUPPRESS_MSSG_NESTED(fraction_hard_call);
-    warnvf("%10s %10s %10s  %s\n         %10s %10s %10s  %s\n",
-           "untyped", "less", "greater", "Marker + chr:pos",
-           "marker", "hard call", "hard call", "");
+    SUPPRESS_MSSG_NESTED_INIT(genotype_missing_fraction);
+    SUPPRESS_MSSG_NESTED(genotype_missing_fraction);
+    warnvf("%8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n",
+           "untyped", "less", "greater", "geno-", "Marker + chr:pos",
+           "marker", "hard", "hard", "typing", "",
+           "0/0", "call", "call", "rate", "");
     for (Vecmarkerpp mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
         getline(ifs, line);
         if (ifs.eof()) break;
@@ -1005,7 +1030,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
         }
         mrk_idx++;  // hence the -1 above
         locus = &LTop->Locus[mrk_idx];
-// ?? totaltyped++
 
         token.more(A);
         token.more(B);
@@ -1068,10 +1092,16 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                 break;
             }
         }
-        if (greater < hard_call_warn_fraction * people_filtered) {
-            SUPPRESS_MSSG_NESTED(fraction_hard_call);
-            warnvf("%10d %10d %10d  %s %s:%s\n",
-                   zero, less, greater, 
+        if (greater < genotype_missing_fraction * people_filtered) {
+/* some day
+??          mp->skip = true;
+            LTop->Marker[mrk_idx].chromosome = MISSING_CHROMO;
+            locus->??
+            skip_count++;
+*/
+            SUPPRESS_MSSG_NESTED(genotype_missing_fraction);
+            warnvf("%8d %8d %8d %8.3f  %s %s:%s\n",
+                   zero, less, greater, ((double)greater)/people_filtered,
                    C(mp->name), C(mp->chr), C(mp->pos));
         }
 
@@ -1085,7 +1115,9 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     }
     tod_gen();
 //  SUPPRESS_MSSG_NESTED_FINI(skip);
-    SUPPRESS_MSSG_NESTED_FINI(fraction_hard_call);
+    SUPPRESS_MSSG_NESTED_FINI(genotype_missing_fraction);
 
+/*
     mssgvf("Markers remaining %d; Filtered by hard call threshold %d\n", markers_filtered, skip_count);
+*/
 }

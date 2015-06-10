@@ -634,7 +634,6 @@ static void annotated_map_file(linkage_locus_top *LTop, char *mfl_name)
 	} else {
             fprintf(fp,  "Name  Chromosome Map.p.a\n");
         }
-
         for (locus1 = 0; locus1 < NumChrLoci; locus1++) {
             int locus = ChrLoci[locus1];
             if (LTop->Locus[locus].Type == NUMBERED ||

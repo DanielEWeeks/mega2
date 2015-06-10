@@ -2574,6 +2574,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     
     // Get the names of maps from the headers.
     // These will be Genetic and Physical maps, and will not include trait markers!
+///    asm("int $3");
     EXLTop->MapCnt = num_maps =
         get_map_names(PLINK.plink == binary_PED_format ? file_desc->num_map_cols - 2 : file_desc->num_map_cols,
                       map_all_colnames,
@@ -3003,6 +3004,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     free(colnums);
 
     // Assign position data to those markers not listed in the map file....
+///    asm("int $3");
     mrk_missing_from_map = create_entries_for_markers_without_positions(LTop, EXLTop, total_maps_to_allocate);
 
     if (bad_chromo) {
@@ -4294,7 +4296,6 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     EXLTop = new_ex_llocustop();
 */
     std::vector<m2_map> additional_maps;
-//	asm("int $3");
     if (Input->has_map()) {
         Input->do_map(additional_maps);
         EXLTop = NULL; // but additional_maps.size() > 0 so see below; this makes compiler happy
@@ -4322,7 +4323,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             EXIT(FILE_READ_ERROR);
         }
     }
-
+///    asm("int $3");
     if (additional_maps.size() > 0) {
         EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);
         

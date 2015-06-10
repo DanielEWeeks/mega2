@@ -532,7 +532,7 @@ extern int Display_Errors, Display_Messages;
     }                                                                   \
     else if (displayed_errors == 0) {                                   \
         fflush(stdout);                                                 \
-        logf("===== Errors/warnings messages: ");  \
+        logf("===== Errors/warnings messages: ");                       \
         fflush(stdout);                                                 \
     }
 #endif
