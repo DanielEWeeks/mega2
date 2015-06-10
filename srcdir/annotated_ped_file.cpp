@@ -2509,14 +2509,14 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
                                                         const int num_maps)
 {
     int i, mrk_missing_from_map = 0;
-    SUPPRESS_MSSG_NESTED_INIT(unmapped);
+    SUPPRESS_MSSG_NESTED_INIT(locus_dropped);
     
     for (i = 0; i < LTop->LocusCnt; i++) {
         /* Check if maps are provided for all numbered loci */
         if (LTop->Locus[i].Class == MARKER) {
             if (LTop->Locus[i].number < 0) {
-                sprintf(err_msg, "Locus %s is not in map file.", LTop->Locus[i].Name);
-                SUPPRESS_MSSG_NESTED(unmapped);
+                sprintf(err_msg, "Locus %s is not in map file; flushed.", LTop->Locus[i].Name);
+                SUPPRESS_MSSG_NESTED(locus_dropped);
                 warnf(err_msg);
                 LTop->Marker[i].chromosome = MISSING_CHROMO;
                 mrk_missing_from_map++;
@@ -2530,7 +2530,7 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
           LTop->MarkerCnt,  num_maps * 3 * 8);
 #endif
 
-    SUPPRESS_MSSG_NESTED_FINI(unmapped);
+    SUPPRESS_MSSG_NESTED_FINI(locus_dropped);
 
     return mrk_missing_from_map;
 }
@@ -2558,7 +2558,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     int lch, has_error; /* simulated genotyping error column? */
     SUPPRESS_MSSG_NESTED_INIT(chrm_errors);
     SUPPRESS_MSSG_NESTED_INIT(max_morgans);
-    SUPPRESS_MSSG_NESTED_INIT(locus_not_found);
+    SUPPRESS_MSSG_NESTED_INIT(locus_extra);
     SUPPRESS_MSSG_NESTED_INIT(dup_locus);
     SUPPRESS_MSSG_NESTED_INIT(bad_position);
     
@@ -2574,12 +2574,10 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     
     // Get the names of maps from the headers.
     // These will be Genetic and Physical maps, and will not include trait markers!
-///    asm("int $3");
     EXLTop->MapCnt = num_maps =
         get_map_names(PLINK.plink == binary_PED_format ? file_desc->num_map_cols - 2 : file_desc->num_map_cols,
                       map_all_colnames,
                       reserved_colnames,
-//xx
                       allocate_additional_maps,
                       EXLTop);
     
@@ -2592,7 +2590,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     }
 
     // Maps from the Mega2 map file and maps to be filled in at a later time...
-//xx
+
     total_maps_to_allocate = num_maps + allocate_additional_maps;
     
 #ifndef HIDESTATUS
@@ -2738,16 +2736,16 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
             // Here it's "extra". It's in the map file but not in the data used to make LTop.
             // NOTE: that if the 'dname' is not in LTop then we never get here...
             /* Locus is not in locus file, warn and skip */
-//xxx
-            sprintf(err_msg,
-                    "Locus %s (line %d in %s) %s file; skipping this locus.",
-                    dname, line, map_file,
-		    (Input_Format == in_format_binary_VCF ||
-                     Input_Format == in_format_compressed_VCF ||
-                     Input_Format == in_format_VCF ?
-		     "has been filtered from the VCF" : "is not in the locus"));
-            SUPPRESS_MSSG_NESTED(locus_not_found);
-            warnf(err_msg);
+            SUPPRESS_MSSG_NESTED(locus_extra);
+            if (Input->xcf) 
+                warnvf("Locus %s (line %d in %s) has been filtered from the VCF file; ignoring this locus.\n",
+                       dname, line, map_file);
+            else if (Input->input_format == in_format_imputed)
+                warnvf("Locus %s (line %d in %s) extra locus data in this file; ignoring this locus.\n",
+                       dname, line, map_file);
+            else
+                warnvf("Locus %s (line %d in %s) is not in the locus file; ignoring this locus.\n",
+                       dname, line, map_file);
             mrk_missing_from_names++;
         } else {
             // Intersection...
@@ -2983,7 +2981,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
 
     SUPPRESS_MSSG_NESTED_FINI(chrm_errors);
     SUPPRESS_MSSG_NESTED_FINI(max_morgans);
-    SUPPRESS_MSSG_NESTED_FINI(locus_not_found);
+    SUPPRESS_MSSG_NESTED_FINI(locus_extra);
     SUPPRESS_MSSG_NESTED_FINI(dup_locus);
     SUPPRESS_MSSG_NESTED_FINI(bad_position);
     Display_Errors = 1;
@@ -3004,7 +3002,6 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     free(colnums);
 
     // Assign position data to those markers not listed in the map file....
-///    asm("int $3");
     mrk_missing_from_map = create_entries_for_markers_without_positions(LTop, EXLTop, total_maps_to_allocate);
 
     if (bad_chromo) {
@@ -3019,19 +3016,15 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     
     if (mrk_missing_from_map) {
         printf("Some marker loci in the %s file are missing from map file, see %s for details.\n",
-	       (Input_Format == in_format_binary_VCF ||
-               Input_Format == in_format_compressed_VCF ||
-               Input_Format == in_format_VCF ?
-		"VCF" : "names"),
+               (Input->xcf ? "VCF" : (Input->input_format == in_format_imputed ? "Imputed" : "names")),
                Mega2Err);
     }
     
     if (mrk_missing_from_names) {
         printf("Some marker loci in map file %s file, see %s for details.\n",
-	       (Input_Format == in_format_binary_VCF ||
-               Input_Format == in_format_compressed_VCF ||
-               Input_Format == in_format_VCF ?
-		"have been filtered from the VCF" : "are missing from the names"),
+               (Input->xcf ? "have been filtered from the VCF" : 
+                (Input->input_format == in_format_imputed ? "are missing from Imputed" :
+                 "are missing from the names")),
                Mega2Err);
     }
     
@@ -3075,7 +3068,6 @@ static ext_linkage_locus_top *read_annotated_map_file(const char *map_file,
                                                       std::vector<m2_map> additional_maps,
                                                       annotated_file_desc *file_desc)
 {
-//xxx
     list *userdef_colnames = new_list();
     col_hdr_type reserved_colnames[NUM_MAPCOL_NAMES];
     col_hdr_type *colname_item, *map_all_colnames;
@@ -3123,14 +3115,7 @@ static ext_linkage_locus_top *read_annotated_map_file(const char *map_file,
     while((colname_item =
            (col_hdr_type *) pop_first_list_entry(userdef_colnames))
           != NULL) {
-//xxx
-#if 0
-        if (Input_Format == in_format_binary_VCF ||
-            Input_Format == in_format_compressed_VCF ||
-            Input_Format == in_format_VCF)
-#else
         if (additional_maps.size()) {
-#endif
             for (size_t i = 0; i < additional_maps.size(); i++) {
                 m2_map map = additional_maps[i];
                 const char *illegal_annotated_map_name = map.get_name().c_str();
@@ -4012,11 +3997,11 @@ static void insert_m2_map_into_EXLTop(ext_linkage_locus_top *EXLTop,
                                       const int map_i,
                                       m2_map& map)
 {
-//xx
     int i, j;
     
     EXLTop->map_functions[map_i] = map.get_function();
     EXLTop->MapNames[map_i] = strdup(map.get_name().c_str());
+    EXLTop->MapNames[map_i][map.get_name().size()-2] = 0;
     EXLTop->SexMaps[map_i] = CALLOC((size_t) 3, int);
     // For a physical map, the data is stored as a SEX_AVERAGED_MAP...
     EXLTop->SexMaps[map_i][SEX_AVERAGED_MAP] = 1;
@@ -4107,9 +4092,9 @@ static void insert_zero_sex_average_genetic_map_in_EXLTop(ext_linkage_locus_top 
     // Allocate an additional slot in EXLTop for the map...
     // NOTE: When extending a region allocated with calloc(3), realloc(3)
     // does not guarantee that the additional memory is also zero-filled.
-    EXLTop->map_functions = (char *)realloc(EXLTop->map_functions, EXLTop->MapCnt);
-    EXLTop->MapNames = (char **)realloc(EXLTop->MapNames, EXLTop->MapCnt);
-    EXLTop->SexMaps = (int **)realloc(EXLTop->SexMaps, EXLTop->MapCnt);
+    EXLTop->map_functions = (char *)REALLOC(EXLTop->map_functions, EXLTop->MapCnt, char);
+    EXLTop->MapNames = (char **)REALLOC(EXLTop->MapNames, EXLTop->MapCnt, char *);
+    EXLTop->SexMaps = (int **)REALLOC(EXLTop->SexMaps, EXLTop->MapCnt, int *);
     
     EXLTop->map_functions[map_i] = 'h';
     EXLTop->MapNames[map_i] = strdup("DummyMap.h.a");
@@ -4119,9 +4104,15 @@ static void insert_zero_sex_average_genetic_map_in_EXLTop(ext_linkage_locus_top 
     for (int i=0; i < LTop->LocusCnt; i++)
         if (LTop->Locus[i].Class == MARKER) {
             // [re]Allocate space for an additional .pos* slot for the map structure...
-            EXLTop->EXLocus[i].positions = (double *)realloc(EXLTop->EXLocus[i].positions, EXLTop->MapCnt);
-            EXLTop->EXLocus[i].pos_male = (double *)realloc(EXLTop->EXLocus[i].pos_male, EXLTop->MapCnt);
-            EXLTop->EXLocus[i].pos_female = (double *)realloc(EXLTop->EXLocus[i].pos_female, EXLTop->MapCnt);
+            EXLTop->EXLocus[i].positions = (double *)REALLOC(EXLTop->EXLocus[i].positions,
+                                                             EXLTop->MapCnt,
+                                                             double);
+            EXLTop->EXLocus[i].pos_male = (double *)REALLOC(EXLTop->EXLocus[i].pos_male,
+                                                            EXLTop->MapCnt,
+                                                            double);
+            EXLTop->EXLocus[i].pos_female = (double *)REALLOC(EXLTop->EXLocus[i].pos_female,
+                                                              EXLTop->MapCnt,
+                                                              double);
             // Fill the slot that we just made room for...
             EXLTop->EXLocus[i].positions[map_i] = 0; // sex averaged data goes here
             EXLTop->EXLocus[i].pos_female[map_i] = UNKNOWN_POSITION;
@@ -4323,7 +4314,6 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             EXIT(FILE_READ_ERROR);
         }
     }
-///    asm("int $3");
     if (additional_maps.size() > 0) {
         EXLTop = read_annotated_map_file(map_file, LTop, additional_maps, &AnnotatedFileInfo);
         
@@ -4337,7 +4327,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             EXLTop->MapNames = CALLOC((size_t)1, char*);
             EXLTop->SexMaps = CALLOC((size_t)1, int *);
         }
-//xx here
+
         if (EXLTop->MapCnt == 0) {
             insert_m2_map_into_EXLTop(EXLTop, LTop, 0, additional_maps[0]);
             insert_zero_sex_average_genetic_map_in_EXLTop(EXLTop, LTop);
@@ -5604,4 +5594,3 @@ void m2_map_entry::set_chr(const string CHROM) {
         else this->chr = chr;
     }
 };
-
