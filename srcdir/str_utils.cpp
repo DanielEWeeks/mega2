@@ -286,6 +286,7 @@ void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
 }
 
 void join(Vecs &vec, Str& ans, Cstr& sep) {
+    ans = "";
     for (int i = 0, l = vec.size(); i < l; i++) {
         ans.append(vec[i]);
         if (i < l - 1)
