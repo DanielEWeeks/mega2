@@ -598,7 +598,7 @@ static void menu1_batch_set_files(file_format *infl_type,
                 size_t len = strlen(fln_tmp);
                 fln_tmp[len-1] = ' ';
                 strcat(&fln_tmp[len], "assumed to be unspecified");
-                missing_optional_keyword(i, fln_tmp);
+                missing_optional_keyword(bi, fln_tmp);
             }
             fln_free(*fln);
         }

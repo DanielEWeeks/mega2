@@ -1018,7 +1018,7 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
     Token token;
     Str lhs, rhs;
     Mapsbp lookup;
-    batch_item_type *bi;
+    batch_item_type *bi = (batch_item_type *) NULL;
 
     while (!feof(fp)) {
         get_line(fp, nextline);
