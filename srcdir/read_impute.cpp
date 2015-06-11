@@ -292,6 +292,7 @@ void ReadImputed::read_imputed_file ()
         EXIT(FILE_NOT_FOUND);
     }
 
+    read_info = false;  // this should be default ... but not for win mvc
     if (!info_file.empty()) {
         infs.open(info_file.c_str());
         if (! infs.is_open() ) {

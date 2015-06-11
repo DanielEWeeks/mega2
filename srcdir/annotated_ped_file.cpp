@@ -3073,6 +3073,9 @@ static ext_linkage_locus_top *read_annotated_map_file(const char *map_file,
     col_hdr_type *colname_item, *map_all_colnames;
     int num_userdef_cols;
     //int chr;
+
+    if (map_file == 0 || *map_file == 0) return (ext_linkage_locus_top *)NULL; // for _win
+
     FILE *mapfp = fopen(map_file, "r");
 
     if (mapfp == NULL) return (ext_linkage_locus_top *)NULL;
