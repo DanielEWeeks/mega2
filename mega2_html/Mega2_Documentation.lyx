@@ -13776,64 +13776,367 @@ IMPUTE2/Oxford
 \end_layout
 
 \begin_layout LyX-Code
- 1) Select input file format:                         IMPUTE2/Oxford format
+ 
+\change_deleted -1820302391 1434136525
+1) Select input file format:                         IMPUTE2/Oxford format
  (gen/impute2)
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
  2) Input file stem:                                  impute
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
  3) Oxford-single-chr [if required]:                  --
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
  4) Imputation info metric threshold:                 0.3000
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
  5) Hard call threshold:                              0.9000
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
  6) Hard call warn fraction:                          0.9000
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
  7) Codes for Missing value: (space separated)       
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
  8) Allow indels (toggle):                            [ yes ]
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
  9) IMPUTE2 file:       (IMPUTE2 .gen)     [required]_ 
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
 10) Imputed Info file:  (IMPUTE2 .gen_info)[optional] _
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
 11) Sample file:        (IMPUTE2 .sample)  [required] _ 
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
 12) Map file:           (Mega2 .map)       [optional] _ 
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
 13) Omit file:          (Mega2 .omit)      [optional] _ 
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
 14) Frequency file:     (Mega2 .freq)      [optional] _ 
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1434136525
 15) Penetrance file:    (Mega2 .pen)       [optional] _
+\change_inserted -1820302391 1434136546
+
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434136547
+Input menu item 1: Input file stem:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434136640
+The first item is a file stem.
+ When the input file stem (stem) is specified, Mega2 will search through
+ the current directory and retrieve files named stem.gen (or stem.impute2),
+ stem.gen_info (or stem.impute2_info), stem.sample, stem.map, stem.omit, stem.frequenc
+y and stem.penetrance, if they exist.
+ So it is a good idea to use the default file naming schemes, as many items
+ of the input menu are automatically populated once the correct stem has
+ been chosen.
+ Note: If stem.gen_info (or stem.impute2_info) exists in the directory, Mega2
+ will add it to the file list.
+ If you do not want to use an 
+\series bold
+info
+\series default
+ file, you must explicitly clear the file name, by selecting 11 and typing
+ 
+\begin_inset Quotes eld
+\end_inset
+
+clear
+\begin_inset Quotes erd
+\end_inset
+
+ as the file name.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434137759
+IMPUTE2 Genotype and IMPUTE2 Sample datafile
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434137914
+The IMPUTE2 file indicates the corresponding IMPUTE2 Genotype file (See
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Impute-File"
+
+\end_inset
+
+) and the IMPUTE2 Sample file indicates the corresponding info file (See
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Impute-Sample-File"
+
+\end_inset
+
+).
+ These roughly correspond to the pedigree file and the family file in other
+ input formats.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434137852
+
+\series bold
+IMPUTE2 Info datafile
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434137921
+The IMPUTE2 Info file indicates the corresponding IMPUTE2 Info file (See
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Impute-Info-File"
+
+\end_inset
+
+).
+ This file may or may not exist but should NOT be specified when NO filtering
+ on the 
+\series bold
+info
+\series default
+ parameter is desired.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434136566
+Input menu item: Map datafile:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434137965
+This specifies a Mega2 map file to provide genetic position information
+ for analysis modes.
+ This is in addition to the Map information that is derived from the IMPUTE2
+ Genotype file.
+ If this file is present, it is also used as a filter.
+ Any marker that is in the IMPUTE2 Genotype file, but not also in this file
+ will not appear in the output.
+ Markers in this file that are not in the IMPUTE2 Genotype file are not
+ in the output because there is no data for them.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434137978
+The IMPUTE2 Info file as well as the Mega2 map, omit, frequency and penetrance
+ files are optional.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434136566
+Input menu item: Oxford-single-chr:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434136566
+This specifies the chromosome being analyzed.
+ If every line of the Impute file explicitly specifies a chromosome, this
+ field is optional
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434136566
+Input menu item: Imputation info metric threshold:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434138003
+This fraction specifies the minimum acceptable 
+\series bold
+info
+\series default
+ value (from the IMPUTE2 Info file [See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Impute-Info-File"
+
+\end_inset
+
+]) that a marker must have.
+ Markers not in the acceptable range are ignored from all subsequent processing.
+ This parameter is ignored if the Impute Info File is not provided.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434136566
+Input menu item: "Impute2 style" hard call threshold:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434138089
+This fraction indicates the minimum acceptable value for the probability
+ of each selected genotype.
+ If the 
+\begin_inset Quotes eld
+\end_inset
+
+best
+\begin_inset Quotes erd
+\end_inset
+
+ genotype probability is less than this value, the genotype will be considered
+ to be untyped, i.e.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+0/0
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434136566
+Input menu item: Genotype missing fraction:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434136678
+This fraction is used to issue a report of markers that are poorly typed.
+ Markers that are not 
+\begin_inset Quotes eld
+\end_inset
+
+hard called
+\begin_inset Quotes erd
+\end_inset
+
+ for this fraction of the population will be displayed.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434136581
+Input menu item: Missing trait value codes: (space separated):
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434138058
+To be most flexible and compatible with existing usage, the phenotypes in
+ the IMPUTE2 Sample file may have several different values to indicate that
+ a measurement is missing.
+ All the values on this line are considered to code for a missing trait.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434136581
+Input menu item: Allow indels (toggle):
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434136650
+If this value is 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+yes
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+, indels are considered valid markers and will appear in the output.
+ (Beware: whether subsequent analysis can accept the allele names that will
+ appear.) If this value is 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+no
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+, indels are ignored from all subsequent processing.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -21958,11 +22261,37 @@ Analysis_Option
 
 \begin_layout Enumerate
 Analysis_Sub_option
+\change_inserted -1820302391 1434138792
+
 \end_layout
 
 \end_deeper
 \begin_layout Itemize
+
+\change_deleted -1820302391 1434138819
+Chromosome and marker selection items
+\change_inserted -1820302391 1434138875
+Input/Analysis Specific parameters
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\change_inserted -1820302391 1434138870
+IMPUTE2 format
+\change_deleted -1820302391 1434138831
+ 
+\change_inserted -1820302391 1434138829
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\change_inserted -1820302391 1434138814
 Chromosome and marker selection items 
+\change_unchanged
+
 \end_layout
 
 \begin_deeper
@@ -22271,6 +22600,16 @@ VCF compressed format (vcf.gz)
 
 \begin_layout Enumerate
 VCF format (vcf)
+\change_inserted -1820302391 1434138575
+
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1820302391 1434138581
+IMPUTE2 format
+\change_unchanged
+
 \end_layout
 
 \begin_layout Enumerate
@@ -22296,7 +22635,13 @@ This item specifies the input pedigree file name.
 \emph on
 linkage, Mega2 and PLINK PED
 \emph default
- input formats and the name of the 
+ input formats
+\change_inserted -1820302391 1434140345
+,
+\change_deleted -1820302391 1434140345
+ and
+\change_unchanged
+ the name of the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -22307,8 +22652,17 @@ linkage, Mega2 and PLINK PED
  file for 
 \emph on
 PLINK Binary PED input
+\change_inserted -1820302391 1434140337
+
 \emph default
+ and the name of the .sample
+\change_deleted -1820302391 1434140320
 .
+
+\change_inserted -1820302391 1434140363
+ file for IMPUTE2 format.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Paragraph
@@ -22492,7 +22846,19 @@ name "par:Input_Aux_File"
 
 \begin_layout Standard
 This item specifies the input auxiliary file name.
- This is an optional item available for either VCF format input files.
+ This is an optional item available for either 
+\change_inserted -1820302391 1434140184
+PLINK BED format, 
+\change_unchanged
+VCF format input
+\change_inserted -1820302391 1434140204
+, and IMPUTE2 format input
+\change_unchanged
+ 
+\change_deleted -1820302391 1434140209
+files
+\change_unchanged
+.
  The value should be a string without white-space characters.
  
 \end_layout
@@ -23685,6 +24051,184 @@ lm_ibdtests_lr(7)
 \end_inset
 
 
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434139343
+Input_Imputed_Info_File
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434139464
+This option indicates a corresponding IMPUTE2 Info file (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Impute-Info-File"
+
+\end_inset
+
+) exists and that filtering on the 
+\series bold
+info
+\series default
+ option (Imputed_Info_Metric_Threshold) is desired.
+\change_unchanged
+
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434139485
+Imputed_Oxford_Single_Chr 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434139567
+This option specifies a default chromosome for markers when it is not otherwise
+ specified in the IMPUTE2 Genotype file (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Impute-File"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434139591
+Imputed_Info_Metric_Threshold
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434139814
+This option is a fraction that specifies the minimum acceptable 
+\series bold
+info
+\series default
+ value (from the IMPUTE2 Info file [See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Impute-Info-File"
+
+\end_inset
+
+]) that a marker must have to be processed.
+ 
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434139604
+Imputed_Hard_Call_Threshold
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434139832
+This option is a fraction that indicates the minimum acceptable value for
+ the probability of each selected genotype.
+ If the 
+\begin_inset Quotes eld
+\end_inset
+
+best
+\begin_inset Quotes erd
+\end_inset
+
+ genotype probability is less than this value, the genotype will be considered
+ to be untyped, i.e.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+0/0
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434139618
+Imputed_Genotype_Missing_Fraction
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434140080
+This item is a fraction that is used to issue a report of markers that are
+ poorly typed.
+ Markers that are not 
+\begin_inset Quotes eld
+\end_inset
+
+hard called
+\begin_inset Quotes erd
+\end_inset
+
+ for this fraction of the population will be displayed.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434139627
+Imputed_Missing_Codes
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434139968
+All the values in the line are considered to code for a missing trait; values
+ are separated by space and do not have to be numeric, viz.
+ na and NA are valid.
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1434139636
+Imputed_Allow_Indels
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434140030
+If this option is 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+yes
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+, indels are considered valid markers and will appear in the output, if
+ this value is 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+no
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+, indels markers are ignored.
 \end_layout
 
 \begin_layout Paragraph
