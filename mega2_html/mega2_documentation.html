@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="generator" content="http://www.nongnu.org/elyxer/"/>
-<meta name="create-date" content="2015-01-13"/>
+<meta name="create-date" content="2015-06-12"/>
 <link rel="stylesheet" href="Mega2_Documentation.css" type="text/css" media="all"/>
 <title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses</title>
 </head>
@@ -17,7 +17,7 @@ A data-handling program for facilitating<br/>
 genetic linkage and association analyses
 </h1>
 <h2 class="Date">
-<span class="unknown">\today</span>
+Jun 12, 2015
 </h2>
 <div class="Standard">
 <div class="center">
@@ -48,7 +48,13 @@ Current Programmer: <i>Robert V. Baron</i>
 </tr>
 <tr>
 <td align="center" valign="top">
-Previous Programmers:<i> Charles P. Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill.</i>
+Previous Programmers:<i> </i>
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="top">
+<i>Charles P. Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill.</i>
 </td>
 
 </tr>
@@ -92,7 +98,7 @@ Table of Contents
 </div>
 <div class="tocindent">
 <div class="toc">
-<a class="Link" href="#toc-Subsection-1.1">Subsection 1.1: Graphical overview of Mega2</a>
+<a class="Link" href="#toc-Subsection-1.1">Subsection 1.1: Graphical overview of Mega2 (a bit out of date, from 2013)</a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection-1.2">Subsection 1.2: Supported formats</a>
@@ -114,16 +120,10 @@ Table of Contents
 </div>
 <div class="tocindent">
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.1">Subsection 3.1: Enhancements in Mega2 version 4.7.1</a>
+<a class="Link" href="#toc-Subsection-3.1">Subsection 3.1: Enhancements in Mega2 version 4.8.0</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.2">Subsection 3.2: Enhancements in Mega2 version 4.7.0</a>
-</div>
-<div class="toc">
-<a class="Link" href="#toc-Subsection-3.3">Subsection 3.3: Enhancements in Mega2 version 4.6.2</a>
-</div>
-<div class="toc">
-<a class="Link" href="#toc-Subsection-3.4">Subsection 3.4: Enhancements in Mega2 version 4.6.1</a>
+<a class="Link" href="#toc-Subsection-3.2">Subsection 3.2: Enhancements in Mega2 version 4.7.1</a>
 </div>
 </div>
 <div class="toc">
@@ -347,6 +347,35 @@ Table of Contents
 <a class="Link" href="#toc-Subsubsection-9.4.7">Subsubsection 9.4.7: Penetrance File (Optional)</a>
 </div>
 </div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-9.5">Subsection 9.5: IMPUTE2/Oxford input file format</a>
+</div>
+<div class="tocindent">
+<div class="toc">
+<a class="Link" href="#toc-Subsubsection-9.5.1">Subsubsection 9.5.1: IMPUTE2 standard file extensions</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsubsection-9.5.2">Subsubsection 9.5.2: IMPUTE2 File</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsubsection-9.5.3">Subsubsection 9.5.3: IMPUTE2 Sample File</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsubsection-9.5.4">Subsubsection 9.5.4: IMPUTE2 Info File (Optional)</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsubsection-9.5.5">Subsubsection 9.5.5: Map File (Optional)</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsubsection-9.5.6">Subsubsection 9.5.6: Omit File (Optional)</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsubsection-9.5.7">Subsubsection 9.5.7: Frequency File (Optional)</a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsubsection-9.5.8">Subsubsection 9.5.8: Penetrance File (Optional)</a>
+</div>
+</div>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Section-10">Section 10: Genetic Map Interpolator (GMI)</a>
@@ -388,13 +417,16 @@ Table of Contents
 <a class="Link" href="#toc-Subsection-12.6">Subsection 12.6: Input format: Variant Call Format files</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-12.7">Subsection 12.7: Input menu items: Omit, frequency and penetrance data files (optional):</a>
+<a class="Link" href="#toc-Subsection-12.7">Subsection 12.7: Input format: IMPUTE2/Oxford Format files</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-12.8">Subsection 12.8: Input menu item: Output Directory: </a>
+<a class="Link" href="#toc-Subsection-12.8">Subsection 12.8: Input menu items: Omit, frequency and penetrance data files (optional):</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-12.9">Subsection 12.9: Input menu item: Simulating genotyping errors: </a>
+<a class="Link" href="#toc-Subsection-12.9">Subsection 12.9: Input menu item: Output Directory: </a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-12.10">Subsection 12.10: Input menu item: Simulating genotyping errors: </a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection--1">Subsection: Genotyping error simulation </a>
@@ -406,29 +438,29 @@ Table of Contents
 <a class="Link" href="#toc-Subsection--3">Subsection: Error simulation output files</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-12.10">Subsection 12.10: Input menu item: Untyped pedigree exclusion option:</a>
+<a class="Link" href="#toc-Subsection-12.11">Subsection 12.11: Input menu item: Untyped pedigree exclusion option:</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-12.11">Subsection 12.11: Input menu item: Upper limit for squared deviation between input and observed allele frequencies </a>
+<a class="Link" href="#toc-Subsection-12.12">Subsection 12.12: Input menu item: Upper limit for squared deviation between input and observed allele frequencies </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-12.12">Subsection 12.12: Input menu item: Unknown allele and affection definition </a>
+<a class="Link" href="#toc-Subsection-12.13">Subsection 12.13: Input menu item: Unknown allele and affection definition </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-12.13">Subsection 12.13: Input menu item: Maximum number of alleles per marker </a>
+<a class="Link" href="#toc-Subsection-12.14">Subsection 12.14: Input menu item: Maximum number of alleles per marker </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-12.14">Subsection 12.14: Errors in input data </a>
+<a class="Link" href="#toc-Subsection-12.15">Subsection 12.15: Errors in input data </a>
 </div>
 <div class="tocindent">
 <div class="toc">
-<a class="Link" href="#toc-Subsubsection-12.14.1">Subsubsection 12.14.1: Problems with locus data </a>
+<a class="Link" href="#toc-Subsubsection-12.15.1">Subsubsection 12.15.1: Problems with locus data </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsubsection-12.14.2">Subsubsection 12.14.2: Problems with pedigree data.</a>
+<a class="Link" href="#toc-Subsubsection-12.15.2">Subsubsection 12.15.2: Problems with pedigree data.</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsubsection-12.14.3">Subsubsection 12.14.3: Genotype reset menu </a>
+<a class="Link" href="#toc-Subsubsection-12.15.3">Subsubsection 12.15.3: Genotype reset menu </a>
 </div>
 </div>
 </div>
@@ -676,13 +708,13 @@ Table of Contents
 <a class="Link" href="#toc-Subsection-22.1">Subsection 22.1: Species options</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-22.2">Subsection 22.2</a>
+<a class="Link" href="#toc-Subsection-22.2">Subsection 22.2: Input format options</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-22.3">Subsection 22.3</a>
+<a class="Link" href="#toc-Subsection-22.3">Subsection 22.3: Missing value options</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-22.4">Subsection 22.4</a>
+<a class="Link" href="#toc-Subsection-22.4">Subsection 22.4: General options</a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection-22.5">Subsection 22.5: Obsolete options</a>
@@ -929,40 +961,43 @@ Table of Contents
 <a class="Link" href="#toc-Subsection-28.1">Subsection 28.1: Recent releases</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.2">Subsection 28.2: Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)</a>
+<a class="Link" href="#toc-Subsection-28.2">Subsection 28.2: Changes from Version 4.7.1 to Version 4.8.0 (Released June 12, 2015)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.3">Subsection 28.3: Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)</a>
+<a class="Link" href="#toc-Subsection-28.3">Subsection 28.3: Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.4">Subsection 28.4: Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)</a>
+<a class="Link" href="#toc-Subsection-28.4">Subsection 28.4: Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.5">Subsection 28.5: Changes from Version 4.6.0 to Version 4.6.1 (Released Oct 21st, 2013)</a>
+<a class="Link" href="#toc-Subsection-28.5">Subsection 28.5: Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.6">Subsection 28.6: Changes from Version 4.5.9 to Version 4.6.0 (Released Sept 6th, 2013)</a>
+<a class="Link" href="#toc-Subsection-28.6">Subsection 28.6: Changes from Version 4.6.0 to Version 4.6.1 (Released Oct 21st, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.7">Subsection 28.7: Changes from Version 4.5.8 to Version 4.5.9 (Released July 5th, 2013)</a>
+<a class="Link" href="#toc-Subsection-28.7">Subsection 28.7: Changes from Version 4.5.9 to Version 4.6.0 (Released Sept 6th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.8">Subsection 28.8: Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)</a>
+<a class="Link" href="#toc-Subsection-28.8">Subsection 28.8: Changes from Version 4.5.8 to Version 4.5.9 (Released July 5th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.9">Subsection 28.9: Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) </a>
+<a class="Link" href="#toc-Subsection-28.9">Subsection 28.9: Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.10">Subsection 28.10: Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) </a>
+<a class="Link" href="#toc-Subsection-28.10">Subsection 28.10: Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.11">Subsection 28.11: Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) </a>
+<a class="Link" href="#toc-Subsection-28.11">Subsection 28.11: Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.12">Subsection 28.12: Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) </a>
+<a class="Link" href="#toc-Subsection-28.12">Subsection 28.12: Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.13">Subsection 28.13: Changes from Version 4.0 R5.2 Beta -<span class="formula"></span> Version 4.5.3 (Released June 15th, 2011) </a>
+<a class="Link" href="#toc-Subsection-28.13">Subsection 28.13: Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) </a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-28.14">Subsection 28.14: Changes from Version 4.0 R5.2 Beta -<span class="formula"></span> Version 4.5.3 (Released June 15th, 2011) </a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection--4">Subsection: Changes from Ver 4.0 R5.1 -<span class="formula"></span> Ver 4.0 R5.2 Beta </a>
@@ -1215,11 +1250,16 @@ Table of Contents
 </div>
 
 </div>
+<div class="Standard">
+<p><br/>
+</p>
+
+</div>
 <h1 class="Section">
 <a class="toc" name="toc-Section-1">1</a> Introduction
 </h1>
 <div class="Standard">
-During an association or linkage  analysis project, one may need to analyze the data with several different programs. Unfortunately, it can often be quite difficult to get one’s data in the proper format desired by each different computer program. Not only must the data be converted to the proper format, but also the loci must be reordered into their proper order. Writing custom reformatting scripts can be error-prone and very time-consuming. To address these problems, we created Mega2, which can be obtained following the instructions in Section <a class="Reference" href="#sec:Installation">8↓</a>.
+During an association or linkage analysis project, one may need to analyze the data with several different programs. Unfortunately, it can often be quite difficult to get one’s data in the proper format desired by each different computer program. Not only must the data be converted to the proper format, but also the loci must be reordered into their proper order. Writing custom reformatting scripts can be error-prone and very time-consuming. To address these problems, we created Mega2, which can be obtained following the instructions in Section <a class="Reference" href="#sec:Installation">8↓</a>.
 </div>
 <div class="Standard">
 The Quick Start Mega2 tutorial in <a class="Reference" href="#sec:Quickstart---get">Section 4↓</a> will help you get started using Mega2.
@@ -1250,7 +1290,7 @@ The ability to run in an automated way using batch files (See Section <a class="
 The availability of our Genetic Map Interpolator for aiding in constructing genetic maps of markers (See Section <a class="Reference" href="#sec:Genetic-Map-Interpolator">10↓</a>).
 </li>
 <li>
-The ability to simulate genotype errors (See section <a class="Reference" href="#sub:Simulate-errors">12.9↓</a>).
+The ability to simulate genotype errors (See section <a class="Reference" href="#sub:Simulate-errors">12.10↓</a>).
 </li>
 <li>
 Input and output support for Mega2 format files that contain informative header lines and are readable into R (See Section <a class="Reference" href="#sub:Annotated-file-formats">9.1↓</a>).
@@ -1273,12 +1313,11 @@ Creation of an HTML summary of the most recent run of Mega2, with links to input
 
 </ol>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-1.1">1.1</a> Graphical overview of Mega2
+<a class="toc" name="toc-Subsection-1.1">1.1</a> Graphical overview of Mega2 (a bit out of date, from 2013)
 </h2>
 <div class="Standard">
 <span class="environment"><span class="arrayrow">
 <span class="arraycell align-l">
- − 1.5cm − 1.5cm
 </span>
 
 </span>
@@ -1289,7 +1328,7 @@ Creation of an HTML summary of the most recent run of Mega2, with links to input
 
 </div>
 <div class="Standard">
-<span class="unknown">\end</span>adjustwidth*
+<span class="unknown">\end</span>
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-1.2">1.2</a> Supported formats
@@ -1305,16 +1344,19 @@ Mega2 supports the following input file formats:
 </div>
 <ol>
 <li>
-Mega2 format (See <a class="Reference" href="#sub:Annotated-file-formats">9.1↓</a>)
+Mega2 format (See Section <a class="Reference" href="#sub:Annotated-file-formats">9.1↓</a>)
 </li>
 <li>
-LINKAGE format (See <a class="Reference" href="#sub:Linkage-file-formats">9.3↓</a>)
+LINKAGE format (See Section <a class="Reference" href="#sub:Linkage-file-formats">9.3↓</a>)
 </li>
 <li>
-PLINK format (See <a class="Reference" href="#sub:PLINK-file-formats">9.2↓</a>)
+PLINK format (See Section <a class="Reference" href="#sub:PLINK-file-formats">9.2↓</a>)
 </li>
 <li>
-Variant Call Format (VCF, BCF, compressed VCF) (See <a class="Reference" href="#sub:VCF-file-formats">9.4↓</a>)
+Variant Call Format (VCF, BCF, compressed VCF) (See Section <a class="Reference" href="#sub:VCF-file-formats">9.4↓</a>)
+</li>
+<li>
+IMPUTE2 Format (See Section <a class="Reference" href="#sub:impute2-file-format">9.5↓</a>)
 </li>
 
 </ol>
@@ -1327,7 +1369,6 @@ Mega2 supports the following output file formats (For more detail, see Sections 
 <div class="Standard">
 <span class="environment"><span class="arrayrow">
 <span class="arraycell align-l">
-2
 </span>
 
 </span>
@@ -1448,7 +1489,7 @@ PSEQ format
 
 </ol>
 <div class="Standard">
-<span class="unknown">\end</span>multicols
+<span class="unknown">\end</span>
 </div>
 <h1 class="Section">
 <a class="toc" name="toc-Section-2">2</a> Download Mega2
@@ -1463,7 +1504,28 @@ Detailed installation instructions can be found in Section <a class="Reference" 
 <a class="toc" name="toc-Section-3">3</a> Recent improvements and changes
 </h1>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.1">3.1</a> Enhancements in Mega2 version 4.7.1
+<a class="toc" name="toc-Subsection-3.1">3.1</a> Enhancements in Mega2 version 4.8.0
+</h2>
+<ul>
+<li>
+Mega2 now supports reading imputed data in IMPUTE2 (Oxford) format (genotype/sample).
+</li>
+<li>
+Several issues affecting the performance processing VCF files have been fixed. Reading in VCF format data is now much faster than it was previously.
+</li>
+<li>
+The Mega2 log file now contains essentially what is displayed on the screen during program execution. The voluminous, complete listing of errors and warnings is now only in the Mega2 ERR(or) log file.
+</li>
+<li>
+Bug: PLINK Binary file generation in &ldquo;individual major&rdquo; order had been wrong and is now fixed. Note: the common SNP major order did not have this problem.
+</li>
+<li>
+Bug: S.A.G.E. Analysis and Mega2 Analysis modes did not correctly carry through non-numeric alleles to their output files.
+</li>
+
+</ul>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-3.2">3.2</a> Enhancements in Mega2 version 4.7.1
 </h2>
 <ul>
 <li>
@@ -1471,51 +1533,6 @@ Mega2 now gives you complete control to specify missing values for quantitative 
 </li>
 <li>
 Mega2’s performance is almost twice as fast as Version 4.7.0
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.2">3.2</a> Enhancements in Mega2 version 4.7.0
-</h2>
-<ul>
-<li>
-Mega2 now passes non-numeric alleles through (without recoding them to numeric alleles) to analysis programs that will accept non-numeric alleles (section <a class="Reference" href="#par:Using-non-numeric-allele">15↓</a>). This simplifies analyses, as it avoids relabelling alleles, making it easier to interpret the resulting output. Conversion to numeric alleles can still be requested if desired (section <a class="Reference" href="#force_numeric_alleles_cmd_line">22.4↓</a>).
-</li>
-<li>
-Bug Fix: A number of problems with Beagle Analysis have been addressed.
-</li>
-<li>
-Bug Fix: Resolved an issue specifying PLINK mode interactively.
-</li>
-<li>
-Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.3">3.3</a> Enhancements in Mega2 version 4.6.2
-</h2>
-<ul>
-<li>
-Mega2 can now read VCF, BCF, and compressed VCF input files, while applying optional ’VCFtools’ filters (See section <a class="Reference" href="#sub:VCF-file-formats">9.4↓</a>). 
-</li>
-<li>
-Initial interactive menus have been modified to improve the specification of different input file types (See section <a class="Reference" href="#sec:The-input-menu">12↓</a>).
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.4">3.4</a> Enhancements in Mega2 version 4.6.1
-</h2>
-<ul>
-<li>
-Mega2 can now produce PLINK/SEQ format files and a script for loading these files into a PLINK/SEQ project (See section <a class="Reference" href="#sub:Detailed-info-PSEQ">25.40↓</a>).
-</li>
-<li>
-Bug fix: Mega2 4.6.0 had broken support for Linkage format input when using a &ldquo;Names file&rdquo; (See section <a class="Reference" href="#sub:Names-file">9.3.7↓</a>).
-</li>
-<li>
-Added binaries for native Microsoft Windows 8 and MinGW built on Microsoft Windows 8.
 </li>
 
 </ul>
@@ -1622,7 +1639,7 @@ Assuming that the<i> Mega2</i> program has been installed according to the insta
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 4.7.1 input menu:
+              Mega2 4.8.0 input menu:
 ==========================================================
 0) Done with this menu - please proceed
  1) Select input file format:                   Mega2 format with header
@@ -1692,10 +1709,10 @@ Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)<br/>
  PMID: 15746282
 </blockquote>
 <div class="Standard">
-as well as citing the web site and the version that you used. For example, the web site citation for version 4.7.1 should be: 
+as well as citing the web site and the version that you used. For example, the web site citation for version 4.8.0 should be: 
 </div>
 <blockquote class="Quote">
-Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2013) Mega2 (Version 4.7.1). <a class="FlexURL" href="https://watson.hgen.pitt.edu">https://watson.hgen.pitt.edu</a> 
+Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2015) Mega2 (Version 4.8.0). <a class="FlexURL" href="https://watson.hgen.pitt.edu">https://watson.hgen.pitt.edu</a> 
 </blockquote>
 <div class="Standard">
 If you use Mega2 to convert VCF or BCF input files, then, as this makes use of a built-in copy of VCFtools, you should also cite the following paper:
@@ -1789,30 +1806,30 @@ Mega2 can be downloaded from:
 <a class="FlexURL" href="https://watson.hgen.pitt.edu/register">https://watson.hgen.pitt.edu/register</a> 
 </pre>
 <div class="Standard">
-The latest version is 4.7.1 
+The latest version is 4.8.0 
 </div>
 <ol>
 <li>
 Download the Mega2 distribution package: <pre class="LyX-Code">
-mega2_v4.7.1_src.tar.gz
+mega2_v4.8.0_src.tar.gz
 </pre>
 
 </li>
 <li>
 Uncompress the package using the "gunzip" Unix command. For example: <pre class="LyX-Code">
-gunzip mega2_v4.7.1_src.tar.gz 
+gunzip mega2_v4.8.0_src.tar.gz 
 </pre>
 
 </li>
 <li>
 Untar the result using the "tar" Unix command: <pre class="LyX-Code">
-tar xvf mega2_v4.7.1_src.tar 
+tar xvf mega2_v4.8.0_src.tar 
 </pre>
 <div class="Standard">
 NOTE: You may combine the above two steps via a single command: 
 </div>
 <div class="Standard">
-tar xzvf mega2_v4.7.1_src.tar.gz 
+tar xzvf mega2_v4.8.0_src.tar.gz 
 </div>
 <div class="Standard">
 The "z" instructs tar that it is a compressed archive. This is works for GNU-tar. 
@@ -1820,7 +1837,7 @@ The "z" instructs tar that it is a compressed archive. This is works for GNU-tar
 
 </li>
 <li>
-At this point, you should see a new folder named <b>mega2_v4.7.1_src</b>. This is the "distribution folder" which contains all the necessary components of Mega2.
+At this point, you should see a new folder named <b>mega2_v4.8.0_src</b>. This is the "distribution folder" which contains all the necessary components of Mega2.
 </li>
 
 </ol>
@@ -1900,7 +1917,7 @@ You should be able to see the above libraries in the list of installed libraries
 <a class="toc" name="toc-Subsubsection-8.3.1">8.3.1</a> Contents of a binary package
 </h3>
 <div class="Standard">
-If you downloaded and unpacked the mega2_v4.7.1_src.tar.gz bundle following the download section (<a class="Reference" href="#sub:Download-Instructions">8.1↑</a>), you should see a directory named mega2_v4.7.1_src containing the following directories (in bold) or files listed in alphabetical order:
+If you downloaded and unpacked the mega2_v4.8.0_src.tar.gz bundle following the download section (<a class="Reference" href="#sub:Download-Instructions">8.1↑</a>), you should see a directory named mega2_v4.8.0_src containing the following directories (in bold) or files listed in alphabetical order:
 </div>
 <blockquote class="Quotation">
 <table>
@@ -2110,7 +2127,7 @@ The <b>install.sh</b> program (below) determines whether any compiled binaries w
 <a class="toc" name="toc-Subsubsection-8.3.3">8.3.3</a> Installing Mega2
 </h3>
 <div class="Standard">
-To install the mega2 executable, Perl scripts and nplplot, from within the Mega2 package folder (i.e. mega2_v4.7.1_src in above step), type the command:
+To install the mega2 executable, Perl scripts and nplplot, from within the Mega2 package folder (i.e. mega2_v4.8.0_src in above step), type the command:
 </div>
 <pre class="LyX-Code">
 ./install.sh 
@@ -2137,7 +2154,7 @@ Mega2 can now be run on a set of data by simply typing the command "mega2". It s
 <a class="toc" name="toc-Subsection-8.4">8.4</a> Compiling and Installing Mega2 from Source <a class="Label" name="sub:Compiling-and-Installing"> </a>
 </h2>
 <div class="Standard">
-The mega2_v4.7.1_src.tar.gz package also includes a source code folder "srcdir" containing C source files, a Makefile, and several OS-specific Makedefs files that define compilation flags that govern locations of standard C libraries, and other OS-specific behavior.
+The mega2_v4.8.0_src.tar.gz package also includes a source code folder "srcdir" containing C source files, a Makefile, and several OS-specific Makedefs files that define compilation flags that govern locations of standard C libraries, and other OS-specific behavior.
 </div>
 <div class="Standard">
 Please note that GNU-make is required to compile Mega2.
@@ -2147,7 +2164,7 @@ To compile Mega2 follow these steps:
 </div>
 <ol>
 <li>
-From within the mega2_v4.7.1_src folder, type <pre class="LyX-Code">
+From within the mega2_v4.8.0_src folder, type <pre class="LyX-Code">
 ./install.sh
 </pre>
 <div class="Standard">
@@ -2323,7 +2340,7 @@ The example_output_pre, example_output_post, example_output_annotated, example_o
 <a class="toc" name="toc-Subsection-8.6">8.6</a> Mega2 Documentation
 </h2>
 <div class="Standard">
-The sub-folder called mega2_html/ within the mega2_v4.7.1_src folder contains documentation for mega2. The Mega2 documentation is also available on-line at 
+The sub-folder called mega2_html/ within the mega2_v4.8.0_src folder contains documentation for mega2. The Mega2 documentation is also available on-line at 
 </div>
 <pre class="LyX-Code">
 <a class="FlexURL" href="https://watson.hgen.pitt.edu/docs/mega2_html/">https://watson.hgen.pitt.edu/docs/mega2_html/</a> 
@@ -2576,11 +2593,11 @@ You need to have registered your e-mail before you can download software at this
 </div>
 <ol>
 <li>
-The Mega2 distribution package is named mega2_v4.7.1_src.tar.gz. Download this package into your Downloads folder.
+The Mega2 distribution package is named mega2_v4.8.0_src.tar.gz. Download this package into your Downloads folder.
 </li>
 <li>
 Depending on your browser settings, Windows may automatically untar the file, in which case you will see this folder on your desktop instead: <pre class="LyX-Code">
-mega2_v4.7.1_src.tar
+mega2_v4.8.0_src.tar
 </pre>
 
 </li>
@@ -2589,19 +2606,19 @@ Now please follow the common installation instructions in section <a class="Refe
 </li>
 <li>
 Note: In some cases, your file may be downloaded as: <pre class="LyX-Code">
-mega2_v4.7.1_src.tar.tar
+mega2_v4.8.0_src.tar.tar
 </pre>
 <div class="Standard">
 instead of as:
 </div>
 <pre class="LyX-Code">
-mega2_v4.7.1_src.tar.gz
+mega2_v4.8.0_src.tar.gz
 </pre>
 <div class="Standard">
 If that happens, then rename the “tar.tar” file as follows:
 </div>
 <pre class="LyX-Code">
-mv mega2_v4.7.1_src.tar.tar mega2_v4.7.1_src.tar.gz
+mv mega2_v4.8.0_src.tar.tar mega2_v4.8.0_src.tar.gz
 </pre>
 <div class="Standard">
 and then follow the common installation instructions in section <a class="Reference" href="#sub:Download-Instructions">8.1↑</a>. 
@@ -2760,6 +2777,9 @@ VCF format
 
 </ol>
 
+</li>
+<li>
+IMPUTE2 Format (See <a class="Reference" href="#sub:impute2-file-format">9.5↓</a>)
 </li>
 
 </ol>
@@ -4291,7 +4311,7 @@ The omit file can also be used to set trait phenotypes to unknown. Here is such 
 1 11 QUANT1
 </pre>
 <div class="Standard">
-These two lines direct Mega2 to &ldquo;untype&rdquo; person 11 of pedigree 1 at the affection status locus AFF2 and the QTL locus QUANT1. The affection status will be set to unknown (0), and the quantitative phenotype will be set to the appropriate missing value in the output (see <a class="Reference" href="#par:Value_Missing_Quant_On_Output">101↓</a>). These actions are logged as well.
+These two lines direct Mega2 to &ldquo;untype&rdquo; person 11 of pedigree 1 at the affection status locus AFF2 and the QTL locus QUANT1. The affection status will be set to unknown (0), and the quantitative phenotype will be set to the appropriate missing value in the output (see <a class="Reference" href="#par:Value_Missing_Quant_On_Output">117↓</a>). These actions are logged as well.
 </div>
 <div class="Standard">
 Please note that when the loci column contains the keyword &ldquo;All&rdquo;, it still refers to only marker loci; trait loci are left untouched. You may also use a locus named &ldquo;All&rdquo; in your input data so long as you do not use &ldquo;All&rdquo; as a loci in the omit file.
@@ -4337,13 +4357,13 @@ In the Mega2 file format, providing a frequency file will cause the allele-frequ
 <a class="toc" name="toc-Subsection-9.4">9.4</a> <a class="Label" name="inp:vcf_or_bcf"> </a>Variant Call Format (VCF, BCF, compressed VCF) input file formats<a class="Label" name="sub:VCF-file-formats"> </a>
 </h2>
 <div class="Standard">
-Variant Call Format (VCF) was designed to store information about genetic variants (See: <a class="URL" href="http://en.wikipedia.org/wiki/Variant_Call_Format">Wikipedia</a>). Mega2 currently uses source code from the popular VCFtools program (See: <a class="URL" href="http://vcftools.sourceforge.net">VCFtools</a>) as its underlying engine for parsing VCF files. VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format v4.1 (See: <a class="URL" href="http://vcftools.sourceforge.net/specs.html">VCF Specification</a>), and BCF format v2.1 (See: <a class="URL" href="http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2">BCF (Binary VCF) version 2</a>). Mega2 supports only the ’filtering’ options associated with the binary executable ’vcftools’ file (See: <a class="URL" href="http://vcftools.sourceforge.net/options.html">VCFtools Options</a>). In particular, the options supported are: the Site Filtering Options, the Individual Filters, and the Genotype Filters. These options are specified to Mega2 as they would be to the ’vcftools’ program in the form of a command line option string. In Mega2 interactive mode (See <a class="Reference" href="#sub:Common-Variant-Call-Format-menu-items">12.5↓</a>) Mega2 allows the user to specify the filtering options via the input menu, and in batch file mode the VCF_Args batch file item is used (See: <a class="Reference" href="#par:VCF_Args">80↓</a>).
+Variant Call Format (VCF) was designed to store information about genetic variants (See: <a class="URL" href="http://en.wikipedia.org/wiki/Variant_Call_Format">Wikipedia</a>). Mega2 currently uses source code from the popular VCFtools program (See: <a class="URL" href="http://vcftools.sourceforge.net">VCFtools</a>) as its underlying engine for parsing VCF files. VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format v4.1 (See: <a class="URL" href="http://vcftools.sourceforge.net/specs.html">VCF Specification</a>), and BCF format v2.1 (See: <a class="URL" href="http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2">BCF (Binary VCF) version 2</a>). Mega2 supports only the ’filtering’ options associated with the binary executable ’vcftools’ file (See: <a class="URL" href="http://vcftools.sourceforge.net/options.html">VCFtools Options</a>). In particular, the options supported are: the Site Filtering Options, the Individual Filters, and the Genotype Filters. These options are specified to Mega2 as they would be to the ’vcftools’ program in the form of a command line option string. In Mega2 interactive mode (See <a class="Reference" href="#sub:Common-Variant-Call-Format-menu-items">12.5↓</a>) Mega2 allows the user to specify the filtering options via the input menu, and in batch file mode the VCF_Args batch file item is used (See: <a class="Reference" href="#par:VCF_Args">89↓</a>).
 </div>
 <div class="Standard">
 VCF input format uses a subset of the PLINK parameters (See <a class="Reference" href="#par:VCF-Menu-item-PLINK-parameters">48↓</a>) to allow the user to specify phenotype information. With these the user can: specify a name for the pedigree file trait column (See <a class="Reference" href="#sub:VCF-Pedigree-File">9.4.2↓</a>), indicate the trait to be affection status or quantitative, specify the missing value for quantitative traits, and specify how the affection status is coded.
 </div>
 <div class="Standard">
-Mega2 and the ’vcftools’ program will accept variant call input files in one of three formats: text only, gzipped compressed text only, or binary file. The variant call file format is specified using the appropriate menu in Mega2 (See <a class="Reference" href="#sub:Common-Variant-Call-Format-menu-items">12.5↓</a>) or using the batch file item Input_Format_Type (See: <a class="Reference" href="#par:Input_Format_Type">69↓</a>) set to the values of: 5 for a .bcf (binary) file, 6 for a .vcf.gz (compressed text) file, and 7 for a .vcf (text) file.
+Mega2 and the ’vcftools’ program will accept variant call input files in one of three formats: text only, gzipped compressed text only, or binary file. The variant call file format is specified using the appropriate menu in Mega2 (See <a class="Reference" href="#sub:Common-Variant-Call-Format-menu-items">12.5↓</a>) or using the batch file item Input_Format_Type (See: <a class="Reference" href="#par:Input_Format_Type">78↓</a>) set to the values of: 5 for a .bcf (binary) file, 6 for a .vcf.gz (compressed text) file, and 7 for a .vcf (text) file.
 </div>
 <div class="Standard">
 In addition to variant information, Mega2 needs additional information (i.e., about family structure, genetic map positions, etc.) depending on the output analysis chosen (See <a class="Reference" href="#sec:The-analysis-menu">13↓</a>). The VCF file format allows for the possibility of user-defined fields, which could in theory specify this additional information within the VCF file. However, in many instances there is no consistent method for representing this information, and so Mega2 instead takes the approach of specifying additional information in separate files, which is consistent with other input file formats. As the VCF file standard evolves, we will revisit this decision. For example, the map position information in the variant file does not include genetic position information. Genetic position information can be easily input by providing a Mega2-format map file.
@@ -4355,7 +4375,7 @@ When using VCF-format input files, one needs to provide several files, which are
 <a class="toc" name="toc-Subsubsection-9.4.1">9.4.1</a> Variant Call File<a class="Label" name="sub:VCF-File"> </a>
 </h3>
 <div class="Standard">
-The Variant Call File (See: <a class="URL" href="http://vcftools.sourceforge.net/specs.html">VCF Specification</a>) is divided into three sections. The first section contains the meta information (lines from the beginning of the file that begin with the double hash mark ’##’). The second section contains only one line which is the header line (this line follows the last meta information line and begins with a single hash mark ’#’). The third section follows the header line, and contains all of the variant call information. The header line contains a number of required fields, followed by sample identifiers (See <a class="Reference" href="#sub:VCF-Phenotype-File">9.4.3↓</a> for rules on mapping individual identifiers to sample identifiers). In interactive mode the VCF file is specified through the &ldquo;Variant file&rdquo; menu item. In batch file input the VCF file is specified using the Input_Aux_File batch file item (See <a class="Reference" href="#par:Input_Aux_File">78↓</a>).
+The Variant Call File (See: <a class="URL" href="http://vcftools.sourceforge.net/specs.html">VCF Specification</a>) is divided into three sections. The first section contains the meta information (lines from the beginning of the file that begin with the double hash mark ’##’). The second section contains only one line which is the header line (this line follows the last meta information line and begins with a single hash mark ’#’). The third section follows the header line, and contains all of the variant call information. The header line contains a number of required fields, followed by sample identifiers (See <a class="Reference" href="#sub:VCF-Phenotype-File">9.4.3↓</a> for rules on mapping individual identifiers to sample identifiers). In interactive mode the VCF file is specified through the &ldquo;Variant file&rdquo; menu item. In batch file input the VCF file is specified using the Input_Aux_File batch file item (See <a class="Reference" href="#par:Input_Aux_File">87↓</a>).
 </div>
 <div class="Standard">
 A simple example VCF file is as follows:
@@ -4395,13 +4415,13 @@ This simple example VCF file specifies three biallelic markers (M1, M3, and M2).
 This VCF file contains seventeen (17) sample IDs (1_3, 1_4, ..., 2_10). If the sample IDs do not correspond to the person IDs in the family file, they can be mapped to individual IDs using a SAMPLEID column in the phenotype file (See <a class="Reference" href="#sub:VCF-Phenotype-File">9.4.3↓</a>).
 </div>
 <div class="Standard">
-The map information from the VCF File is parsed and made available by Mega2. In interactive mode the map is selectable as ’VCF.p’. In batch file mode this map is specified by setting the value of Value_Base_Pair_Position_Index (See <a class="Reference" href="#par:Value_Base_Pair_Position_Index">94↓</a>) equal to 0 if no Mega2 Map File is specified (See: <a class="Reference" href="#sub:Annotated-map-file">9.1.3↑</a>), or to one greater than the number of maps available in the Mega2 Map File. The map file (VCF.p) that is derived from the VCF file will contain all of the markers that have passed the vcftools filtering criteria. The Mega2 Map File may contain the same number of markers or less in which case it will provide additional filtering. That is, markers will be dropped if they do not appear in a map that is selected from a Mega2 Map File.
+The map information from the VCF File is parsed and made available by Mega2. In interactive mode the map is selectable as ’VCF.p’. In batch file mode this map is specified by setting the value of Value_Base_Pair_Position_Index (See <a class="Reference" href="#par:Value_Base_Pair_Position_Index">110↓</a>) equal to 0 if no Mega2 Map File is specified (See: <a class="Reference" href="#sub:Annotated-map-file">9.1.3↑</a>), or to one greater than the number of maps available in the Mega2 Map File. The map file (VCF.p) that is derived from the VCF file will contain all of the markers that have passed the vcftools filtering criteria. The Mega2 Map File may contain the same number of markers or less in which case it will provide additional filtering. That is, markers will be dropped if they do not appear in a map that is selected from a Mega2 Map File.
 </div>
 <div class="Standard">
 In many instances a Mega2 analysis option may require a genetic map. When using a VCF file, a genetic map can be specified using a optional Mega2 Map File (See <a class="Reference" href="#sub:Annotated-map-file">9.1.3↑</a>). However, if an analysis option requires a genetic map and a Mega2 Map File is not specified or if a map is selected that contains no genetic maps, then a dummy Sex Average genetic map (whose values are all 0) will be used for the required genetic map. For example, this would allow one to convert from VCF input format to PLINK output format (with a dummy genetic map) when only physical map positions are known. 
 </div>
 <div class="Standard">
-The marker associated with a line in the VCF file can be specified as the string associated with the ’ID’ field of the VCF file (as in the above example), or as the value associated with a key in the ’INFO’ field. This key can be specified in interactive mode, or in batch mode through the batch file identifier VCF_Marker_Alternative_INFO_Key. For a full description of how this is done please see <a class="Reference" href="#par:VCF_Marker_Alternative_INFO_Key">81↓</a>.
+The marker associated with a line in the VCF file can be specified as the string associated with the ’ID’ field of the VCF file (as in the above example), or as the value associated with a key in the ’INFO’ field. This key can be specified in interactive mode, or in batch mode through the batch file identifier VCF_Marker_Alternative_INFO_Key. For a full description of how this is done please see <a class="Reference" href="#par:VCF_Marker_Alternative_INFO_Key">90↓</a>.
 </div>
 <div class="Standard">
 <b>Converting from a VCF to a BCF file</b>
@@ -4467,7 +4487,7 @@ A Mega2 Map File (See <a class="Reference" href="#sub:Annotated-map-file">9.1.3�
 <a class="toc" name="toc-Subsubsection-9.4.5">9.4.5</a> Omit File (Optional)
 </h3>
 <div class="Standard">
-An omit file may be specified. Please see <a class="Reference" href="#par:Input_Omit_File">74↓</a>.
+An omit file may be specified. Please see <a class="Reference" href="#par:Input_Omit_File">83↓</a>.
 </div>
 <h3 class="Subsubsection">
 <a class="toc" name="toc-Subsubsection-9.4.6">9.4.6</a> Frequency File (Optional)
@@ -4488,6 +4508,156 @@ M3 C 0.500000
 </pre>
 <h3 class="Subsubsection">
 <a class="toc" name="toc-Subsubsection-9.4.7">9.4.7</a> Penetrance File (Optional)
+</h3>
+<div class="Standard">
+A Mega2 penetrance file may be specified. Please see <a class="Reference" href="#sub:Annotated-penetrance-file">9.1.6↑</a>.
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-9.5">9.5</a> <a class="Label" name="inp:impute2"> </a>IMPUTE2/Oxford input file format<a class="Label" name="sub:impute2-file-format"> </a>
+</h2>
+<div class="Standard">
+IMPUTE2 format was designed to store information about the probability of imputed markers added to a smaller collection of markers. (See: <a class="URL" href="http://en.wikipedia.org/wiki/imputation_(genetics)">Wikipedia</a>). A typical program to generate imputation data is IMPUTE2 (<a class="FlexURL" href="https://mathgen.stats.ox.ac.uk/impute/impute_v2.html">https://mathgen.stats.ox.ac.uk/impute/impute_v2.html</a>). Further analysis is illustrated in <a class="FlexURL" href="https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#best_practices">https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#best_practices</a> and <a class="FlexURL" href="http://genome.sph.umich.edu/wiki/IMPUTE2:_1000_Genomes_Imputation_Cookbook">http://genome.sph.umich.edu/wiki/IMPUTE2:_1000_Genomes_Imputation_Cookbook</a>
+</div>
+<div class="Standard">
+When using IMPUTE2 format input files, one needs to provide several files, which are described below. At a minimum, two files are required: 1) the IMPUTE2 Genotype File containing the markers and their imputed genotype probabilities, and 2) the IMPUTE2 Sample File containing the sample ID information. The latter file can be extended to contain family structure information and phenotypes; both are commonly needed by Mega2. Optional files include a special IMPUTE2 Info File, a map file, an omit file, an allele frequency file, and a penetrance file. More information on the IMPUTE2 file formats can be found in <a class="FlexURL" href="http://www.stats.ox.ac.uk/~marchini/software/gwas/file_format.html">http://www.stats.ox.ac.uk/~marchini/software/gwas/file_format.html</a>.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-9.5.1">9.5.1</a> IMPUTE2 standard file extensions
+</h3>
+<div class="Standard">
+When attempting to fill in IMPUTE2 file names based on a provided file name stem, Mega2 expects the following extensions:
+</div>
+<ol>
+<li>
+IMPUTE2 genotype file: .gen or .impute2
+</li>
+<li>
+IMPUTE2 info file: .gen_info or .impute2_info
+</li>
+<li>
+IMPUTE2 sample file: .sample
+</li>
+
+</ol>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-9.5.2">9.5.2</a> IMPUTE2 File<a class="Label" name="sub:Impute-File"> </a>
+</h3>
+<div class="Standard">
+The each line of the IMPUTE2 genotype file conceptually has two parts: the first describes the marker and the second lists the imputed genotype probabilities for all the samples. The samples are listed here in the same order as they appear in the IMPUTE2 Info File (See <a class="Reference" href="#sub:Impute-Info-File">9.5.4↓</a>). 
+</div>
+<div class="Standard">
+The marker information is stored in the first five columns. The first column is typically &ldquo;<b>---</b>&rdquo;, but can occasionally contain the chromosome number. The second column is the marker name. This can be an RS ID. Sometimes this name is not available. Then the second column usually contains fields separated by the &ldquo;<b>:</b>&rdquo; character. The first subfield is often the chromosome, the second subfield can be the base pair position of the marker and two subsequent subfields may be the allele names. However, these last three subfields also appear as the next columns on the line. So we will ignore these subfields. (Of course, sometimes all 4 subfields are not there; only the first two appear. And we have also occasionally seen a fifth subfield.) Again it is best to ignore this column unless it is an RS ID name or it starts with the chromosome number. The third column is the base pair position of the marker. The fourth column is the first allele name. Finally, the fifth column is the second allele name. Typically, the allele names are chosen from the standard collection of A, C, T, G. But if the markers are indels, the allele names will be strings of letters. There is no bound enforced on the number of letters in an allele name.
+</div>
+<div class="Standard">
+Some examples follow; the ellipses start the genotype probabilities part of the line:
+</div>
+<pre class="LyX-Code">
+--- rs188162445:1499924:T:C 1499924 T C        ...
+--- 20:1499962:T:C 1499962 T C                 ...
+--- 20:1499962 1499962 T G                     ...
+20  rs7261002 1002656 G A                      ...
+--- rs35306660:1020991:GTAAA:G 1020991 GTAAA G ...
+</pre>
+<div class="Standard">
+Note: If there are duplicate entries as determined by markers having the same chromosome and the same position, then Mega2 ignores all but the first marker.
+</div>
+<div class="Standard">
+The second part of each line is a series of three tuples one for each sample. The first value indicates the probability of genotype consisting of only the first allele. The second value indicates the probability of the heterozygous configuration. And the third value indicates the probability consisting of only the second allele. Typically, these values should sum to less than 1.0. The IMPUTE2 program determines a confidence for these numbers which is stored in the &ldquo;<b>info</b>&rdquo; column of the Imputed Info File (See <a class="Reference" href="#sub:Impute-Info-File">9.5.4↓</a>). 
+</div>
+<div class="Standard">
+We copy the simple VCF file from above and then show the corresponding IMPUTE2 file:
+</div>
+<pre class="LyX-Code">
+
+<span class="footnotesize">##fileformat=VCFv4.0</span>
+<span class="footnotesize">##fileDate=20131205</span>
+<span class="footnotesize">##FORMAT=&lt;ID=GT,Number=1,Type=String,Description="Genotype"&gt;</span>
+<span class="footnotesize">##FILTER=&lt;ID=PASS,Description="Passed variant FILTERs"&gt;</span>
+<span class="footnotesize">#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  1_3     1_4     1_5     1_6     1_7</span>
+<span class="footnotesize">5       2       M1      A       T       .       PASS    .       GT      1/1     0/1     1/1     1/1     1/1</span>
+<span class="footnotesize">5       4       M3      G       C       .       PASS    .       GT      0/1     0/1     0/1     0/1     0/1</span>
+<span class="footnotesize">5       6       M2      T       A       .       PASS    .       GT      0/1     0/1     0/1     0/0     0/1</span>
+</pre>
+<div class="Standard">
+The file continues off of right of the page with the following header and marker data.
+</div>
+<pre class="LyX-Code">
+<span class="footnotesize">1_8     1_9     1_10    1_11    2_3     2_4     2_5     2_6     2_7     2_8     2_9     2_10</span>
+<span class="footnotesize">1/1     1/1     1/1     1/1     0/0     0/0     0/0     1/1     0/0     0/1     0/0     0/0</span>
+<span class="footnotesize">0/0     0/0     0/0     0/1     0/1     0/1     0/1     0/1     0/1     0/1     0/1     0/1</span>
+<span class="footnotesize">0/0     0/0     0/0     0/1     0/1     0/1     0/1     0/1     0/1     0/1     0/1     0/1</span>
+</pre>
+<div class="Standard">
+Now for the IMPUTE2 data which captures the above model by using probabilities of either 0 or 1.
+</div>
+<pre class="LyX-Code">
+
+5	M1:A:T:2	2	A	T	0 1 0	0 1 0	0 0 1	0 1 0	0 0 1	0 0 1
+5	M3:G:C:4	4	G	C	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0	0 1 0
+5	M2:T:A:6	6	T	A	1 0 0	0 0 1	0 1 0	0 1 0	0 1 0	1 0 0
+</pre>
+<div class="Standard">
+The line continues off of right of the page with the following marker data.
+</div>
+<pre class="LyX-Code">
+0 0 1	0 0 1	0 0 1	0 0 1	0 0 1	0 1 0	1 0 0	1 0 0	1 0 0
+0 1 0	1 0 0	1 0 0	1 0 0	0 1 0	1 0 0	0 0 1	0 1 0	0 1 0
+0 1 0	1 0 0	1 0 0	1 0 0	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0
+</pre>
+<div class="Standard">
+And still more marker data.
+</div>
+<pre class="LyX-Code">
+1 0 0	0 0 1	1 0 0	0 1 0	1 0 0	1 0 0
+0 1 0	0 1 0	0 1 0	0 1 0	0 1 0	0 1 0
+0 1 0	0 1 0	0 1 0	0 1 0	0 1 0	0 1 0 
+</pre>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-9.5.3">9.5.3</a> IMPUTE2 Sample File<a class="Label" name="sub:Impute-Sample-File"> </a>
+</h3>
+<div class="Standard">
+The IMPUTE2 Sample file is used to list the sample names. In the header line, the first three columns MUST have the values: &ldquo;<b>ID_1</b>&rdquo;, &ldquo;<b>ID_2</b>&rdquo;, and &ldquo;<b>missing</b>&rdquo;. There is a second header line where the values for each of these three columns is 0. For the subsequent lines, the column data reports two components of the sample name and the missing data proportion, respectively. Although &ldquo;<b>ID_1</b>&rdquo;, &ldquo;<b>ID_2</b>&rdquo;, and &ldquo;<b>missing</b>&rdquo; are the only required fields, additional columns can be added. In particular, it makes sense to add the pedigree structure and phenotypes to this file. Our convention is to use the columns &ldquo;<b>father</b>&rdquo;, &ldquo;<b>mother</b>&rdquo;, and &ldquo;<b>sex</b>&rdquo; to label the pedigree data and any other columns are interpreted as phenotype information. There is no order prescribed for these extra columns. If any of the the &ldquo;<b>father</b>&rdquo;, &ldquo;<b>mother’</b>, or &ldquo;<b>sex</b>&rdquo; columns are omitted, Mega2 will internally generate these fields with a value of <b>0</b>. The second line of the header is extended for each column, and contains codes indicating the type of variable stored in each column. Mega2 maps codes &ldquo;B&rdquo; or &ldquo;D&rdquo; to an Affection status phenotype, while &ldquo;C&rdquo; and &ldquo;P&rdquo; are mapped to Quantitative phenotypes. (Officially, &ldquo;D&rdquo; indicates discrete covariate, &ldquo;C&rdquo; continuous covariate, &ldquo;P&rdquo; continuous phenotype and &ldquo;B&rdquo; binary phenotype.)
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-9.5.4">9.5.4</a> IMPUTE2 Info File<a class="Label" name="sub:Impute-Info-File"> </a> (Optional)
+</h3>
+<div class="Standard">
+The IMPUTE2 program generates an additional Info file containing an info metric for each marker. This info metric can be used to filter out poorly imputed markers. This file lists the markers in the same order as the IMPUTE2 file (See <a class="Reference" href="#sub:Impute-File">9.5.2↑</a>). The file has a header that identifies two special columns: the &ldquo;<b>info</b>&rdquo; column and the &ldquo;<b>certainty</b>&rdquo; column. These columns are used for filtering the markers based on confidence (See <a class="FlexURL" href="https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#info_metric_details">https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#info_metric_details</a>). Note: Historically, the first three column are &ldquo;<b>snp_id</b>&rdquo;, &ldquo;<b>rs_id</b>&rdquo;, and &ldquo;<b>position</b>&rdquo;. These names are checked for to confirm the correct file is being accessed. In addition, the corresponding column values are checked against the corresponding entry in the IMPUTE2 file to verify the consistency of this file with the Info File (See <a class="Reference" href="#sub:Impute-File">9.5.2↑</a>). The other columns in this file are not used.
+</div>
+<div class="Standard">
+If this file is not available as an input, the filtering based on the &ldquo;<b>info</b>&rdquo; value is not performed.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-9.5.5">9.5.5</a> Map File (Optional)
+</h3>
+<div class="Standard">
+A Mega2 map File (See <a class="Reference" href="#sub:Annotated-map-file">9.1.3↑</a>) is not required, but may be specified. The maps in the map file may be used in addition to the map found in the IMPUTE2 file (implicitly named IMPUTE.p). When used with a IMPUTE2 file, the Mega2 map file may not contain a map with the name IMPUTE.p. Note: As is the custom with Mega2 map files, the Mega2 map file can be used to prune the markers listed in the IMPUTE2 file; markers not in the Mega2 map file will be ignored and not reported in the Mega2 output. Further, markers that are in the Mega2 map file but not in the IMPUTE2 file are reported as extra and are ignored (There is no data for them in the IMPUTE2 file).
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-9.5.6">9.5.6</a> Omit File (Optional)
+</h3>
+<div class="Standard">
+A Mega2 omit file may be specified. Please see <a class="Reference" href="#par:Input_Omit_File">83↓</a>.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-9.5.7">9.5.7</a> Frequency File (Optional)
+</h3>
+<div class="Standard">
+A Mega2 frequency file may be specified. Please see <a class="Reference" href="#sub:Annotated-frequency-file">9.1.5↑</a>. The following file could be used with the example file shown in <a class="Reference" href="#sub:Impute-File">9.5.2↑</a>. Note that corresponding A and B alleles are used.
+</div>
+<pre class="LyX-Code">
+Name Allele Frequency
+A1 1 0.990000
+A1 2 0.010000
+M1 A 0.500000
+M1 T 0.500000
+M2 A 0.500000
+M2 T 0.500000
+M3 G 0.500000
+M3 C 0.500000
+</pre>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-9.5.8">9.5.8</a> Penetrance File (Optional)
 </h3>
 <div class="Standard">
 A Mega2 penetrance file may be specified. Please see <a class="Reference" href="#sub:Annotated-penetrance-file">9.1.6↑</a>.
@@ -4573,7 +4743,7 @@ Affection and unknown allele values are always interpreted as strings:
 <ul>
 <li class="nested">
 <pre class="LyX-Code">
-—-Unknown allele 0—-
+----Unknown allele 0----
 </pre>
 
 </li>
@@ -4620,7 +4790,7 @@ When you first started up Mega2, it will present a menu for entering input file 
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 4.7.1 input menu:
+              Mega2 4.8.0 input menu:
 ==========================================================
 0) Done with this menu - please proceed
  1) Select input file format:                   Mega2 format with header
@@ -4645,7 +4815,7 @@ Each line that selects an input file indicates the type of file, the format of t
 </div>
 <pre class="LyX-Code">
 ==========================================================
-Mega2 4.7.1 input file type menu:
+Mega2 4.8.0 input file type menu:
 ==========================================================
 0) Done with this menu - please proceed
 *1) Mega2 format with header
@@ -4656,14 +4826,15 @@ Mega2 4.7.1 input file type menu:
  6) BCF format (bcf)
  7) VCF compressed format (vcf.gz)
  8) VCF format (vcf) 
-Select from options 0-8 &gt;
+ 9) IMPUTE2/Oxford format (gen/impute2)
+Select from options 0-9 &gt;
 </pre>
 <div class="Standard">
 For example, selecting &ldquo;Line 6&rdquo; (BCF format (bcf)) replaces the old input menu with a new menu:
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 4.7.1 input menu:
+              Mega2 4.8.0 input menu:
 ==========================================================
 0) Done with this menu - please proceed
  1) Select input file format:                 BCF format (bcf)
@@ -4769,6 +4940,15 @@ VCF compressed format (vcf.gz)
 </td>
 <td align="left" valign="top">
 VCF format (vcf)
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="top">
+--gen
+</td>
+<td align="left" valign="top">
+IMPUTE2 format (gen)
 </td>
 
 </tr>
@@ -5184,19 +5364,88 @@ This specifies the pedigree file name (.fam file).
 This specifies a Mega2 map file to provide genetic position information for analysis modes.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-12.7">12.7</a> Input menu items: Omit, frequency and penetrance data files (optional):
+<a class="toc" name="toc-Subsection-12.7">12.7</a> Input format: IMPUTE2/Oxford Format files
+</h2>
+<pre class="LyX-Code">
+ 
+</pre>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-54"></a>Input menu item 1: Input file stem:
+</div>
+<div class="Standard">
+The first item is a file stem. When the input file stem (e.g., &ldquo;stem&rdquo;) is specified, Mega2 will search through the current directory and retrieve files named stem.gen (or stem.impute2), stem.gen_info (or stem.impute2_info), stem.sample, stem.map, stem.omit, stem.frequency and stem.penetrance, if they exist. So it is a good idea to use the default file naming schemes, as many items of the input menu are automatically populated once the correct stem has been chosen. Note: If stem.gen_info (or stem.impute2_info) exists in the directory, Mega2 will add it to the file list. If you do not want to use an <b>info</b> file, you must explicitly clear the file name, by selecting menu option 11 and typing &ldquo;clear&rdquo; as the file name.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-55"></a>IMPUTE2 Genotype and IMPUTE2 Sample datafile
+</div>
+<div class="Standard">
+The IMPUTE2 file indicates the corresponding IMPUTE2 Genotype file (See <a class="Reference" href="#sub:Impute-File">9.5.2↑</a>) and the IMPUTE2 Sample file indicates the corresponding info file (See <a class="Reference" href="#sub:Impute-Sample-File">9.5.3↑</a>). These roughly correspond to the pedigree file and the family file in other input formats.
+</div>
+<div class="Standard">
+<b>IMPUTE2 Info datafile</b>
+</div>
+<div class="Standard">
+The IMPUTE2 Info file indicates the corresponding IMPUTE2 Info file (See <a class="Reference" href="#sub:Impute-Info-File">9.5.4↑</a>). This file may or may not exist but should NOT be specified when NO filtering on the <b>info</b> parameter is desired.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-56"></a>Input menu item: Map datafile:
+</div>
+<div class="Standard">
+This specifies a Mega2 map file to provide genetic position information for analysis modes. This is in addition to the map information that is derived from the IMPUTE2 Genotype file. If this file is present, it is also used as a filter. Any marker that is in the IMPUTE2 Genotype file, but not also in this file will not appear in the output. Markers in this file that are not in the IMPUTE2 Genotype file are not in the output because there is no data for them.
+</div>
+<div class="Standard">
+The IMPUTE2 Info file as well as the Mega2 map, omit, frequency and penetrance files are optional.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-57"></a>Input menu item: Oxford-single-chr:
+</div>
+<div class="Standard">
+This specifies the chromosome being analyzed. If every line of the Impute file explicitly specifies a chromosome, this field is optional
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-58"></a>Input menu item: Imputation info metric threshold:
+</div>
+<div class="Standard">
+This fraction specifies the minimum acceptable <b>info</b> value (from the IMPUTE2 Info file [See <a class="Reference" href="#sub:Impute-Info-File">9.5.4↑</a>]) that a marker must have. Markers not in the acceptable range are ignored from all subsequent processing. This parameter is ignored if the Impute Info File is not provided.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-59"></a>Input menu item: "Impute2 style" hard call threshold:
+</div>
+<div class="Standard">
+This fraction indicates the minimum acceptable value for the probability of each selected genotype. If the &ldquo;best&rdquo; genotype probability is less than this value, the genotype will be considered to be untyped, i.e. &ldquo;<b>0/0</b>&rdquo;.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-60"></a>Input menu item: Genotype missing fraction:
+</div>
+<div class="Standard">
+This fraction is used to issue a report of markers that are poorly typed. Markers that are not &ldquo;hard called&rdquo; for this fraction of the population will be listed.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-61"></a>Input menu item: Missing trait value codes: (space separated):
+</div>
+<div class="Standard">
+To be most flexible and compatible with existing usage, the phenotypes in the IMPUTE2 Sample file may have several different missing value codes to indicate that a measurement is missing. All the values on this line are considered to code for a missing trait. This can be a string such as ’na’ or ’NA’.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-62"></a>Input menu item: Allow indels (toggle):
+</div>
+<div class="Standard">
+If this value is &ldquo;<b>yes</b>&rdquo;, indels are considered valid markers and will appear in the output. (Beware whether subsequent analysis can accept the allele names that will appear.) If this value is &ldquo;<b>no</b>&rdquo;, indels are ignored from all subsequent processing.
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-12.8">12.8</a> Input menu items: Omit, frequency and penetrance data files (optional):
 </h2>
 <div class="Standard">
 This specifies the names of the omit file, allele-frequency file and trait penetrance file respectively. The omit, frequency and penetrance input data files are all optional files. The frequency and penetrance files are read in only for the Mega2 file format. These files were created to support the Mega2 native file format, but we allow these files to be specified for PLINK and VCF file formats.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-12.8">12.8</a> Input menu item: Output Directory: 
+<a class="toc" name="toc-Subsection-12.9">12.9</a> Input menu item: Output Directory: 
 </h2>
 <div class="Standard">
 This specifies the name of the directory where Mega2 creates the output files. By default, this is set to the directory from which Mega2 is invoked. The output directory can be specified either as an absolute path (e.g., /home/user/mega2_results/example) or a relative path. Mega2 checks to see if the specified directory exists, if not, the user is asked if this directory should be created before proceeding. 
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-12.9">12.9</a> Input menu item: Simulating genotyping errors: <a class="Label" name="sub:Simulate-errors"> </a>
+<a class="toc" name="toc-Subsection-12.10">12.10</a> Input menu item: Simulating genotyping errors: <a class="Label" name="sub:Simulate-errors"> </a>
 </h2>
 <div class="Standard">
 This option can be toggled between <i>yes</i> and <i>no</i> by simply selecting option 8 of the input menu. The default value is no. Setting this option to &ldquo;yes&rdquo; will cause Mega2 to execute a genotyping error simulation step after selection and reordering of marker loci. In this step, genotypes of individuals are changed at user-selected marker loci, according to a user-specified error-probability model. 
@@ -5205,7 +5454,7 @@ This option can be toggled between <i>yes</i> and <i>no</i> by simply selecting 
 <a class="toc" name="toc-Subsection--1"></a>Genotyping error simulation 
 </h2>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-54"></a>Overview 
+<a class="toc" name="toc-Paragraph-63"></a>Overview 
 </div>
 <div class="Standard">
 This option was created in order to evaluate Genotyping error detection software. This allows the user to introduce errors at a certain percentage of genotypes within a marker, by changing the input genotype subject to certain requirements (such as allele frequencies, whether to select a homozygous or heterozygous genotype, etc.). This option can be turned on and off using in the Mega2 input menu. 
@@ -5294,7 +5543,7 @@ D06G025       1497      59         0.039  0.020  0.034  0.004  0.059  0.004
 The last 5 columns refer to the percentage of errors actually introduced in each error category.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-12.10">12.10</a> Input menu item: Untyped pedigree exclusion option:
+<a class="toc" name="toc-Subsection-12.11">12.11</a> Input menu item: Untyped pedigree exclusion option:
 </h2>
 <div class="Standard">
 This specifies the minimum number of typed members a pedigree should have in order to be included in the output. Selecting this option displays the following sub-menu: 
@@ -5309,7 +5558,7 @@ Untyped pedigree exclusion options:
  4) Exclude any pedigree with 1 or less marker-typed people
 </pre>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-12.11">12.11</a> Input menu item: Upper limit for squared deviation between input and observed allele frequencies 
+<a class="toc" name="toc-Subsection-12.12">12.12</a> Input menu item: Upper limit for squared deviation between input and observed allele frequencies 
 </h2>
 <div class="Standard">
 This is a floating-point value that defines when to flag discrepancies between observed and input allele-frequencies. The smaller this value, the more sensitive it is to such differences. Since the squared sum of differences between input and observed frequencies is expected to be less than 1.0, any value 1 and above would automatically disable flagging. By default flagging is turned off. <b>Note:</b> This menu item is not displayed unless a frequency file is specified in the input menu.
@@ -5318,17 +5567,17 @@ This is a floating-point value that defines when to flag discrepancies between o
 See also Mega2’s error checking procedure for allele-frequencies. 
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-12.12">12.12</a> Input menu item: Unknown allele and affection definition 
+<a class="toc" name="toc-Subsection-12.13">12.13</a> Input menu item: Unknown allele and affection definition 
 </h2>
 <div class="Standard">
 This is read in as a string value and compared against affection phenotypes and marker genotypes for an exact match. The unknown allele and affection status indicator is used only for Mega2 files.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-12.13">12.13</a> Input menu item: Maximum number of alleles per marker <a class="Label" name="sub:Input-menu-item:"> </a>
+<a class="toc" name="toc-Subsection-12.14">12.14</a> Input menu item: Maximum number of alleles per marker <a class="Label" name="sub:Input-menu-item:"> </a>
 </h2>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 4.7.1 Maximum alleles per marker menu:
+              Mega2 4.8.0 Maximum alleles per marker menu:
 ==========================================================
 0) Done with this menu - please proceed 
 *1) 2 alleles (2 bits/marker) 
@@ -5343,10 +5592,10 @@ In the first case, each genotype is represented internally with two bits; this i
 Note that in the 2 byte mode, if the input data are in Linkage format, all allele labels are integers used as is. This means that an allele with the label ’256’ would not be allowed. However, if the input data are in Mega2 format, then allele labels are treated as strings, and will be recoded to sequential integers; so ’256’ might be allowed if the labeling is sparse.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-12.14">12.14</a> Errors in input data 
+<a class="toc" name="toc-Subsection-12.15">12.15</a> Errors in input data 
 </h2>
 <h3 class="Subsubsection">
-<a class="toc" name="toc-Subsubsection-12.14.1">12.14.1</a> Problems with locus data 
+<a class="toc" name="toc-Subsubsection-12.15.1">12.15.1</a> Problems with locus data 
 </h3>
 <ol>
 <li>
@@ -5382,7 +5631,7 @@ Marker loci in the map file are matched against those in the locus file for miss
 
 </ol>
 <h3 class="Subsubsection">
-<a class="toc" name="toc-Subsubsection-12.14.2">12.14.2</a> Problems with pedigree data.
+<a class="toc" name="toc-Subsubsection-12.15.2">12.15.2</a> Problems with pedigree data.
 </h3>
 <div class="Standard">
 Mega2 reports problems such as incomplete pedigree records, invalid sex and proband fields, and missing parent records. In most cases, Mega2 will read in the entire pedigree file, and attempt to identify as many errors as it can. Here are a list of errors flagged by Mega2. 
@@ -5444,7 +5693,7 @@ Mega2 checks that the entire pedigree is one connected structure, i.e. each indi
 
 </ol>
 <h3 class="Subsubsection">
-<a class="toc" name="toc-Subsubsection-12.14.3">12.14.3</a> Genotype reset menu 
+<a class="toc" name="toc-Subsubsection-12.15.3">12.15.3</a> Genotype reset menu 
 </h3>
 <div class="Standard">
 This menu is displayed for Mega2 to look for problems with the pedigree data. It will display all four options or a subset depending on which problems were detected. 
@@ -5798,7 +6047,7 @@ This Analysis Menu option sets up the files necessary for running Merlin includi
  Web: <a class="FlexURL" href="http://www.sph.umich.edu/csg/abecasis/Merlin">http://www.sph.umich.edu/csg/abecasis/Merlin</a>
 </div>
 <div class="Standard">
-Please note that Merlin requires a sex-averaged map as well when the user sets up for sex-specific analysis (Value_Genetic_Distance_SexTypeMap = 1<a class="Reference" href="#par:Value_Genetic_Distance_SexTypeMa">93↓</a>).
+Please note that Merlin requires a sex-averaged map as well when the user sets up for sex-specific analysis (Value_Genetic_Distance_SexTypeMap = 1<a class="Reference" href="#par:Value_Genetic_Distance_SexTypeMa">109↓</a>).
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-13.28">13.28</a> Convert to LOKI format
@@ -6090,7 +6339,7 @@ This menu is used to indicate what values in the input data represents a missing
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 4.7.1 Missing Value menu:
+              Mega2 4.8.0 Missing Value menu:
 ==========================================================
 If it is necessary, specify a different value to indicate that a trait is missing 
 both for input to Mega2 and/or output from Mega2.
@@ -6240,7 +6489,7 @@ The asterisk indicates the current selection. Once you enter a number indicating
 <a class="toc" name="toc-Section-17">17</a> Map Selection Menus
 </h1>
 <div class="Standard">
-When a map file (see section <a class="Reference" href="#sub:Annotated-map-file">9.1.3↑</a>) contains multiple genetic or physical maps, the user needs to be able to specify which map is to be used for processing. When running with a batch file, this is done through the use of batch file parameters (see section <a class="Reference" href="#par:Map_Index">92↓</a>). When running in interactive mode, the user will be presented with menus that will allow them to select an input map. If only one genetic map is specified in the map file, then this map will be automatically used and no menu will be presented to the user (as there is no choice to be made).
+When a map file (see section <a class="Reference" href="#sub:Annotated-map-file">9.1.3↑</a>) contains multiple genetic or physical maps, the user needs to be able to specify which map is to be used for processing. When running with a batch file, this is done through the use of batch file parameters (see section <a class="Reference" href="#par:Map_Index">108↓</a>). When running in interactive mode, the user will be presented with menus that will allow them to select an input map. If only one genetic map is specified in the map file, then this map will be automatically used and no menu will be presented to the user (as there is no choice to be made).
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-17.1">17.1</a> The Genetic Map Selection Menu
@@ -6480,7 +6729,7 @@ As mentioned in the installation instructions, the package nplplot should be ins
 For users already familiar with nplplot, note that the nplplot.old function is the old nplplot function, provided only for backward compatibility, to support the old-style plot data file format. The function nplplot.multi replaces nplplot.old , and provides greater flexibility to customize your plots. The new input files are of two types, a<b> Scores</b> file that is strictly meant to contain a table of marker names, positions and scores, and a<b> Header</b> file, which is an R-language file to set various plot parameters. Examples of these files are provided in the general usage section below. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-55"></a>Installing nplplot from CRAN 
+<a class="toc" name="toc-Paragraph-64"></a>Installing nplplot from CRAN 
 </div>
 <div class="Standard">
 The nplplot package is distributed from within CRAN (The Comprehensive R Archive Network). Like any other R add-on package, nplplot can be installed from within R. It does not depend on any other package. 
@@ -6489,7 +6738,7 @@ The nplplot package is distributed from within CRAN (The Comprehensive R Archive
 In order to generate the plots from within Mega2, it is not necessary to invoke R. The scripts generated by Mega2 run R in batch mode to create the appropriate postscript or PDF files. Currently PDF files are the default; you need to go into the R plot menu and change output format to postscript, if you wish to generate postscript files. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-56"></a>Supported analysis options 
+<a class="toc" name="toc-Paragraph-65"></a>Supported analysis options 
 </div>
 <div class="Standard">
 The following Mega2 options can currently create R plots: 
@@ -6516,7 +6765,7 @@ FBAT
 <a class="toc" name="toc-Subsection-19.1">19.1</a> Statistics selection menu 
 </h2>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-57"></a>SimWalk2 statistic selection menu
+<a class="toc" name="toc-Paragraph-66"></a>SimWalk2 statistic selection menu
 </div>
 <div class="Standard">
 SimWalk2 computes 5 statistics for the NPL LOD score computation (see the SimWalk2 output file STATS-*.ALL for a description). This is also true of the Merlin-SimWalk2 option. Allegro computes LOD scores separately for 12 different non-parametric statistics. Each is stored in a separate output file named appropriately (e.g. allegro_linpairs_spt.01). Therefore, for each analysis option there is a specific statistic selection menu where the user can specify the ones to be included in the plots.
@@ -6552,7 +6801,7 @@ Selected statistics: BLOCKS MAX_TREE ENTROPY
 In the above example, the user has selected statistic BLOCKS, MAX-TREE, and ENTROPY for plotting. For the Merlin-SimWalk2 option, only statistics NPL_PAIRS and NPL_ALL, which correspond to Merlin’s Pairs and All statistics respectively, can be selected.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-58"></a>Merlin statistics selection menu
+<a class="toc" name="toc-Paragraph-67"></a>Merlin statistics selection menu
 </div>
 <div class="Standard">
 For Merlin, the statistics list is : 
@@ -6568,7 +6817,7 @@ For Merlin, the statistics list is :
 Plotting is still restricted to the &ldquo;one trait at a time&rdquo; mode of analysis.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-59"></a>Allegro statistics selection menu
+<a class="toc" name="toc-Paragraph-68"></a>Allegro statistics selection menu
 </div>
 <div class="Standard">
 The Allegro statistics selection menu is: 
@@ -6671,7 +6920,7 @@ Rsimwalk2.R or Rallegro.R (R-script run by the shell script to generate the plot
 Thus, first the user has to execute either the <i>npl.*.sh</i> or <i>al_script.*.sh</i> files (these could reside in separate trait directories, if multiple traits are analyzed), then run <i>Rsimwalk2.sh</i> or <i>Rallegro.sh</i> respectively. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-60"></a>Output 
+<a class="toc" name="toc-Paragraph-69"></a>Output 
 </div>
 <div class="Standard">
 The SimWalk2 output file is called SW2NPL.##.ps where ## stands for the chromosome number or SW2NPL.all.ps if multiple chromosomes are plotted into one file. 
@@ -6680,7 +6929,7 @@ The SimWalk2 output file is called SW2NPL.##.ps where ## stands for the chromoso
 The Allegro output file is called Allegro.##.ps. These files can be viewed using a PDF viewing utility such as ghostscript, or printed on a printer directly. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-61"></a>Re-using old Merlin analysis results with the new Rmerlin.pl
+<a class="toc" name="toc-Paragraph-70"></a>Re-using old Merlin analysis results with the new Rmerlin.pl
 </div>
 <div class="Standard">
 You can manually change the Rmerlin.*.sh scripts by replacing the arguments to the Rmerlin.pl command. The arguments following the -c switch need to be changed as follows: <br/>
@@ -6703,7 +6952,7 @@ Nplplot functions can also be used from within R. Start R, load in the library, 
 Example data files and code is included with the nplplot and nplplot.multi functions. These can be run using the example command available in R. Use these examples to create your own data files for plotting or use the example files given below. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-62"></a>Scores file
+<a class="toc" name="toc-Paragraph-71"></a>Scores file
 </div>
 <pre class="LyX-Code">
 marker location score1 score2 score3 
@@ -6713,7 +6962,7 @@ d1s347 2.00 0.446 0.245 0.342
 
 </pre>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-63"></a>Header file for nplplot.multi
+<a class="toc" name="toc-Paragraph-72"></a>Header file for nplplot.multi
 </div>
 <pre class="LyX-Code">
 # reference line, y-axis minimum and y-axis maximum 
@@ -6755,7 +7004,7 @@ If you wish to use nplplot only, then these parameters can be passed in as argum
 The nplplot package now has functions to create custom track files that then can be uploaded into the UCSC Genome Browser for further visualization. From within Mega2, the creation of custom track files is done automatically under the following conditions: 1) an option has been chosen where the creation of R plots is supported; 2) the input files are in Mega2 format; and 3) the map file contains a physical map giving the physical positions of the markers. When these conditions hold, the running of the C shell script to do the analyses and to create the R plots will also automatically create a set of custom track files for the UCSC Genome Browser. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-64"></a>Custom track output files
+<a class="toc" name="toc-Paragraph-73"></a>Custom track output files
 </div>
 <div class="Standard">
 Mega2 will create four types of output files: 
@@ -6788,7 +7037,7 @@ The GG.positions.all file will upload much faster into the UCSC Genome Browser t
 When creating your input physical map, it is important to use physical positions from the exact same build that you will be using within the UCSC Genome Browser to display your results. This is particularly important and vital when uploading results from the BED.*, BedGraph.*, and GG.positions.all files, as all of these files use and rely on the physical positions as originally provided in the input map file. In contrast, the GG.markers.all file does not contain any physical positions and so is not vulnerable to mismatches between your input physical map positions and the positions used in the UCSC Genome Browser. However, the UCSC Genome Browser will only display results from the GG.markers.all for which it was able to look up the marker name. If it fails to find a marker name for a record, that record will be dropped and not displayed. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-65"></a>Supported analysis options 
+<a class="toc" name="toc-Paragraph-74"></a>Supported analysis options 
 </div>
 <div class="Standard">
 The following options can currently create R-plots, and, if run on Mega2 input files with a map file containing a physical map, will also create UCSC Custom Track files: 
@@ -6809,7 +7058,7 @@ Merlin’s npl, pairs and vc analyses
 
 </ul>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-66"></a>Creation details
+<a class="toc" name="toc-Paragraph-75"></a>Creation details
 </div>
 <div class="Standard">
 The creation of the custom track files is done using R functions that are part of the nplplot package. For further details, please see the R help pages for these functions. 
@@ -6827,7 +7076,7 @@ prepareplot - Prepare input data files for plotting
 
 </ol>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-67"></a>General usage
+<a class="toc" name="toc-Paragraph-76"></a>General usage
 </div>
 <div class="Standard">
 To use the three track-related functions independently from within R, first run prepareplot. This function can be used to process multiple nplplot format scores datafile, by specifying a common prefix, a list of chromosomes, and a single Mega2-annotated format map file with physical positions for all the required markers and chromosomes. You can then run bedplot or genomeplot on the resulting files to further reformat the data for uploading into the UCSC genome browser.
@@ -6869,7 +7118,7 @@ This may seem undesirable for normal use, but is a useful space-saving feature w
 In addition to the sate and time of the last run and input file names, this file is a copy of Mega2’s screen output including summary statistics on the input pedigrees and locus data, the analysis option name, what loci were selected for reordering, pedigree statistics after locus selection, and finally, what output files were produced. 
 </div>
 <div class="Standard">
-It may also contain other important messages such as families and individuals excluded from analysis, breaking or re-connection of loops in inbred pedigrees, individuals whose genotypes were zeroed out, etc. If there were any warnings or error messages, they are written into this file in addition to the MEGA2.ERROR file. 
+It may also contain other important messages such as families and individuals excluded from analysis, breaking or re-connection of loops in inbred pedigrees, individuals whose genotypes were zeroed out, etc. If there were any warnings or error messages, they are no longer written ad nauseum into this file but only into the MEGA2.ERROR file. Of course, the first few lines for each warning/error will be written to this file as usual.
 </div>
 <div class="Standard">
 Note that the backup copy MEGA2.LOG.old is no longer created. 
@@ -6897,7 +7146,7 @@ This file contains a list of input and output pedigree and person identifiers. I
  Here is an example MEGA2.KEYS file. 
 </div>
 <pre class="LyX-Code">
-———————
+---------------------
 Fri Oct 11 13:15:05 2002
 Input file names
 locus file:    datain.ex
@@ -6905,7 +7154,7 @@ pedigree file: pedin.ex1
 map file:      map.ex
 omit file:     omit.ex
 Untyped pedigree option: Include all pedigrees whether typed or not
-———————
+---------------------
  INPUT                                                OUTPUT
  Pedigree    Person      Ped:       Per:    Loop id   Pedigree    Person
          1          1        1          1                  1          1
@@ -6945,7 +7194,7 @@ This file is created if the user selects random-genotyping error generation in t
 This file contains a list of recoded marker loci with the original allele names, recoded identifiers, allele frequencies, the type of individuals counted for the purpose of estimating allele frequencies, and total number of alleles counted for each allele and each marker. Given below is an excerpt for a recode summary file. 
 </div>
 <pre class="LyX-Code">
-———————————————-
+----------------------------------------------
         Mega2 version 3.0 R5
 Run date:                  2006-1-20-13-53
 This file created on       Fri Jan 20 13:53:20 2006
@@ -6959,9 +7208,9 @@ Half-typed individuals’ genotypes included in output.
 Allele frequency computed from:
      Genotyped founders or a randomly chosen individual
      excluding half-typed individuals.
-———————
+---------------------
 Recoded loci:
-———————————————
+---------------------------------------------
 Frequencies and counts:
    1=Founders       2=1+Random       3=2+Unique     4=Everyone
 Marker 2: marker2 has 6 alleles; frequencies computed using 11 individuals:
@@ -7213,44 +7462,44 @@ chromosome number for mitochondrial DNA.
 </h2>
 <ul>
 <li>
-<i>-<span class="unknown">\/</span></i>\strikeout off\uuline off\uwave off-mega2<span class="default">\uuline default\uwave default<br/>
+<i>--mega2</i><br/>
  <br/>
- </span>\strikeout off\uuline off\uwave off	Mega2 format with header
+ 	Mega2 format with header
 </li>
 <li>
-<i>-<span class="unknown">\/</span></i>\strikeout off\uuline off\uwave off-linkage<span class="default">\uuline default\uwave default<br/>
+<i>--linkage</i><br/>
  <br/>
- </span>\strikeout off\uuline off\uwave off	Linkage format
+       Linkage format
 </li>
 <li>
-<i>-<span class="unknown">\/</span></i>\strikeout off\uuline off\uwave off-extend_linkage<span class="default">\uuline default\uwave default<br/>
+<i>--extend_linkage</i><br/>
  <br/>
- </span>\strikeout off\uuline off\uwave off	Linkage with Mega2 names file
+ Linkage with Mega2 names file
 </li>
 <li>
-<i>-<span class="unknown">\/</span></i>\strikeout off\uuline off\uwave off-bed<span class="default">\uuline default\uwave default<br/>
+<i>--bed</i><br/>
  <br/>
- </span>\strikeout off\uuline off\uwave off	PLINK binary PED format (bed)
+ PLINK binary PED format (bed)
 </li>
 <li>
-<i>-<span class="unknown">\/</span></i>\strikeout off\uuline off\uwave off-ped<span class="default">\uuline default\uwave default<br/>
+<i>--ped</i><br/>
  <br/>
- </span>\strikeout off\uuline off\uwave off	PLINK PED format (ped)
+ PLINK PED format (ped)
 </li>
 <li>
-<i>-<span class="unknown">\/</span></i>\strikeout off\uuline off\uwave off-bcf<span class="default">\uuline default\uwave default<br/>
- <br/>
- </span>\strikeout off\uuline off\uwave off	BCF format (vcf)-
+<i>--bcf</i><br/>
+  <br/>
+  BCF format
 </li>
 <li>
-<i>-<span class="unknown">\/</span></i>\strikeout off\uuline off\uwave off-vcf.gz<span class="default">\uuline default\uwave default<br/>
+<i>--vcf.gz</i><br/>
  <br/>
- </span>\strikeout off\uuline off\uwave off	VCF compressed format (vcf.gz)
+ VCF compressed format (vcf.gz)
 </li>
 <li>
-<i>-<span class="unknown">\/</span></i>\strikeout off\uuline off\uwave off-vcf<span class="default">\uuline default\uwave default<br/>
+<i>--vcf</i><br/>
  <br/>
- </span>\strikeout off\uuline off\uwave off	VCF format (vcf)
+ VCF format (vcf)
 </li>
 
 </ul>
@@ -7540,6 +7789,15 @@ Analysis_Sub_option
 
 </li>
 <li>
+Input/Analysis Specific parameters<ol>
+<li>
+IMPUTE2 format
+</li>
+
+</ol>
+
+</li>
+<li>
 Chromosome and marker selection items <ol>
 <li>
 Chromosome_Single 
@@ -7707,7 +7965,7 @@ Structure.PopDataPheno
 
 </ul>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-68"></a>Special considerations 
+<a class="toc" name="toc-Paragraph-77"></a>Special considerations 
 </div>
 <div class="Standard">
 The order in which these options appear in the batch file does not affect Mega2’s behavior. Some options are dependent on the definition of others.<b> Each class is regarded as complete only if an adequate number of definitions in that class are provided.</b> For example, in the Input menu items class, one has to have at least the three file names (pedigree, locus and map), the untyped-ped option and the error-simulation setup flag. If one or more of these are missing, Mega2 will stop and require the user to go through the input menu before proceeding through the other sections. These and other requirements are described below, and also in the batch file generated by Mega2. <br/>
@@ -7720,7 +7978,7 @@ The order in which these options appear in the batch file does not affect Mega2�
 <a class="toc" name="toc-Subsection-23.5">23.5</a> Details on batch file items 
 </h2>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-69"></a>Input_Format_Type<a class="Label" name="par:Input_Format_Type"> </a>
+<a class="toc" name="toc-Paragraph-78"></a>Input_Format_Type<a class="Label" name="par:Input_Format_Type"> </a>
 </div>
 <div class="Standard">
 This item specifies the input file format type as follows:
@@ -7751,30 +8009,33 @@ VCF compressed format (vcf.gz)
 VCF format (vcf)
 </li>
 <li>
+IMPUTE2 format
+</li>
+<li>
 Traditional (4.6.1) input file format
 </li>
 
 </ol>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-70"></a>Input_Pedigree_File<a class="Label" name="par:Input_Pedigree_File"> </a>
+<a class="toc" name="toc-Paragraph-79"></a>Input_Pedigree_File<a class="Label" name="par:Input_Pedigree_File"> </a>
 </div>
 <div class="Standard">
-This item specifies the input pedigree file name. This is a required item. The value should be a string without any white-space characters. It will store the name of the pedigree file in <i>linkage, Mega2 and PLINK PED</i> input formats and the name of the &ldquo;.fam&rdquo; file for <i>PLINK Binary PED input</i>.
+This item specifies the input pedigree file name. This is a required item. The value should be a string without any white-space characters. It will store the name of the pedigree file in <i>linkage, Mega2 and PLINK PED</i> input formats, the name of the &ldquo;.fam&rdquo; file for <i>PLINK Binary PED input</i>, and the name of the .sample file for <i>IMPUTE2</i> format.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-71"></a>Input_Map_File<a class="Label" name="par:Input_Map_File"> </a>
+<a class="toc" name="toc-Paragraph-80"></a>Input_Map_File<a class="Label" name="par:Input_Map_File"> </a>
 </div>
 <div class="Standard">
 This item specifies the name of the input map file. This is a required item. The value should be a string without white-space characters. It will store the map file in <i>linkage, Mega2 and PLINK PED</i> input formats and the &ldquo;.bim&rdquo; file for <i>PLINK Binary PED input</i>. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-72"></a>Input_Locus_File<a class="Label" name="par:Input_Locus_File"> </a>
+<a class="toc" name="toc-Paragraph-81"></a>Input_Locus_File<a class="Label" name="par:Input_Locus_File"> </a>
 </div>
 <div class="Standard">
 This item specifies the name of the input locus data file. This is a required item for <i>linkage and Mega2 </i>input format, but it is not used for either PLINK input format. The value should be a string without white-space characters. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-73"></a>Input_Binary_File<a class="Label" name="par:Input_Binary_File"> </a>
+<a class="toc" name="toc-Paragraph-82"></a>Input_Binary_File<a class="Label" name="par:Input_Binary_File"> </a>
 </div>
 <div class="Standard">
 This item specifies the name of the PLINK binary PED format file. The value should be a string without white-space characters. 
@@ -7783,49 +8044,49 @@ This item specifies the name of the PLINK binary PED format file. The value shou
 <i>The first two file types above are always necessary and for PLINK PED format these two are sufficient. For Mega2 or linkage formats, the <b>Input_Locus_File</b> must also be provided. While for PLINK binary PED files, the <b>Input_Binary_File</b> must be present. Otherwise Mega2 will stop for user-input of the incomplete items at the Input menu. </i>
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-74"></a>Input_Omit_File<a class="Label" name="par:Input_Omit_File"> </a>
+<a class="toc" name="toc-Paragraph-83"></a>Input_Omit_File<a class="Label" name="par:Input_Omit_File"> </a>
 </div>
 <div class="Standard">
 This item specifies the input omit data file. This is an optional item. The value should be a string without white-space characters. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-75"></a>Input_Frequency_File<a class="Label" name="par:Input_Frequency_File"> </a>
+<a class="toc" name="toc-Paragraph-84"></a>Input_Frequency_File<a class="Label" name="par:Input_Frequency_File"> </a>
 </div>
 <div class="Standard">
 This item specifies the input allele frequency file name. This is an optional item for Mega2 and either PLINK format input files are used. The value should be a string without white-space characters. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-76"></a>Input_Penetrance_File<a class="Label" name="par:Input_Penetrance_File"> </a>
+<a class="toc" name="toc-Paragraph-85"></a>Input_Penetrance_File<a class="Label" name="par:Input_Penetrance_File"> </a>
 </div>
 <div class="Standard">
 This item specifies the input penetrance parameter file name. This is also an optional item, for Mega2 and either PLINK format input files are used. The value should be a string without white-space characters. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-77"></a>Input_Phenotype_File<a class="Label" name="par:Input_Phenotype_File"> </a>
+<a class="toc" name="toc-Paragraph-86"></a>Input_Phenotype_File<a class="Label" name="par:Input_Phenotype_File"> </a>
 </div>
 <div class="Standard">
 This item specifies the input phenotype file name. This is an optional item available for either PLINK format input files. The value should be a string without white-space characters. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-78"></a>Input_Aux_File<a class="Label" name="par:Input_Aux_File"> </a>
+<a class="toc" name="toc-Paragraph-87"></a>Input_Aux_File<a class="Label" name="par:Input_Aux_File"> </a>
 </div>
 <div class="Standard">
-This item specifies the input auxiliary file name. This is an optional item available for either VCF format input files. The value should be a string without white-space characters. 
+This item specifies the input auxiliary file name. This is an optional item available for either PLINK BED format (specifying the PLINK bed file), VCF format input (specifying the VCF file), and IMPUTE2 format input (specifying the IMPUTE2 genotype file). The value should be a string without white-space characters. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-79"></a>PLINK<a class="Label" name="par:PLINK_Args"> </a>
+<a class="toc" name="toc-Paragraph-88"></a>PLINK<a class="Label" name="par:PLINK_Args"> </a>
 </div>
 <div class="Standard">
 This parameter is for either PLINK input formats. It has an odd format as white space separated strings. The strings consist of flags and values as illustrated in section <a class="Reference" href="#sub:PLINK-parameters">39↑</a>.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-80"></a>VCF_Args<a class="Label" name="par:VCF_Args"> </a>
+<a class="toc" name="toc-Paragraph-89"></a>VCF_Args<a class="Label" name="par:VCF_Args"> </a>
 </div>
 <div class="Standard">
 This parameter is for any VCF file format. It is used to specify a subset of the command line options supported by the ’vcftools’ program. These are command line options are (See <a class="URL" href="http://vcftools.sourceforge.net/options.html">VCFtools Options</a>) the: Site Filtering Options, the Individual Filters, and the Genotype Filters.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-81"></a>VCF_Marker_Alternative_INFO_Key<a class="Label" name="par:VCF_Marker_Alternative_INFO_Key"> </a>
+<a class="toc" name="toc-Paragraph-90"></a>VCF_Marker_Alternative_INFO_Key<a class="Label" name="par:VCF_Marker_Alternative_INFO_Key"> </a>
 </div>
 <div class="Standard">
 The marker can be specified as the string associated with the ’ID’ field of the VCF file, or as the value associated with a key in the ’INFO’ field. If the user specifies a key (not null) then only the INFO field will be used, otherwise only the ’ID’ field will be used. One or the other is used, never switching between them.
@@ -7834,7 +8095,7 @@ The marker can be specified as the string associated with the ’ID’ field of 
 If from this the string value is a ’.’ (unknown) then the marker will be constructed from a prefix (’chr’) appending it to the CHROM and POS VCF file field values in the following way (chrCHROM_POS). This is not guaranteed to be unique since the VCF file specification allows multiple records to have the same POS. In the construction of this marker name ’X’, ’Y’, ’XY’, and ’MT’ will be used rather than the associated numbers for the chromosomes. This is done in accordance to the species option (See <a class="Reference" href="#sub:Species-options">22.1↑</a>) that Mega2 is told to use.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-82"></a>Input_Untyped_Ped_Option<a class="Label" name="par:Input_Untyped_Ped_Option"> </a>
+<a class="toc" name="toc-Paragraph-91"></a>Input_Untyped_Ped_Option<a class="Label" name="par:Input_Untyped_Ped_Option"> </a>
 </div>
 <div class="Standard">
 This item specifies the handling of marker-untyped pedigrees. This is also a necessary item. The value should be an integer greater than or equal to 1. Values 1-3 select one of the first 3 options of the Untyped pedigree option menu . Values 4 and onwards refer to the minimum number of the typed persons in a pedigree in order for it to be included in the analysis. <br/>
@@ -7843,19 +8104,19 @@ This item specifies the handling of marker-untyped pedigrees. This is also a nec
  and so on, i.e. included pedigrees must have at least<i> <span class="formula"> &lt; </span>value<span class="formula"> &gt; </span> - 3</i> typed persons. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-83"></a>Input_Do_Error_Sim<a class="Label" name="par:Input_Do_Error_Sim"> </a>
+<a class="toc" name="toc-Paragraph-92"></a>Input_Do_Error_Sim<a class="Label" name="par:Input_Do_Error_Sim"> </a>
 </div>
 <div class="Standard">
 This option is decides whether Mega2 should execute the random genotyping error simulation step. Valid values are <i>&ldquo;yes/no&rdquo;</i> . 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-84"></a>Output_Path<a class="Label" name="par:Output_Path"> </a>
+<a class="toc" name="toc-Paragraph-93"></a>Output_Path<a class="Label" name="par:Output_Path"> </a>
 </div>
 <div class="Standard">
 This option decides which directory to create the output files in. The value is a string which should be a valid path-name (absolute or relative path) or &ldquo;.&rdquo; which is the current directory. This is the default value. White space is not allowed within the path-name. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-85"></a>Analysis_Option<a class="Label" name="par:Analysis_Option"> </a>
+<a class="toc" name="toc-Paragraph-94"></a>Analysis_Option<a class="Label" name="par:Analysis_Option"> </a>
 </div>
 <div class="Standard">
 Valid strings identifying an analysis option are listed below. The analysis option string is case insensitive. 
@@ -7984,7 +8245,7 @@ PSEQ
 
 </ol>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-86"></a>Analysis_Sub_option <a class="Label" name="par:Analysis_Sub_option"> </a>
+<a class="toc" name="toc-Paragraph-95"></a>Analysis_Sub_option <a class="Label" name="par:Analysis_Sub_option"> </a>
 </div>
 <div class="Standard">
 This option allows the user to choose between a file output format or sub-program for a particular analysis option. For example, for SimWalk2 analysis the user must select from among 5 sub-options, Haplotyping, Parametric linkage, Nonparametric linkage, IBD estimation, and Mistyping detection. The analysis options are listed below along with their valid Analysis_Sub_options.
@@ -8338,35 +8599,77 @@ lm_ibdtests_lr(7)
 
 </blockquote>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-87"></a>Chromosome_Single 
+<a class="toc" name="toc-Paragraph-96"></a>Input_Imputed_Info_File
+</div>
+<div class="Standard">
+This option indicates a corresponding IMPUTE2 Info file (See <a class="Reference" href="#sub:Impute-Info-File">9.5.4↑</a>) exists and that filtering on the <b>info</b> option (Imputed_Info_Metric_Threshold) is desired.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-97"></a>Imputed_Oxford_Single_Chr 
+</div>
+<div class="Standard">
+This option specifies a default chromosome for markers when it is not otherwise specified in the IMPUTE2 Genotype file (See <a class="Reference" href="#sub:Impute-File">9.5.2↑</a>).
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-98"></a>Imputed_Info_Metric_Threshold
+</div>
+<div class="Standard">
+This option is a fraction that specifies the minimum acceptable <b>info</b> value (from the IMPUTE2 Info file [See <a class="Reference" href="#sub:Impute-Info-File">9.5.4↑</a>]) that a marker must have to be processed. 
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-99"></a>Imputed_Hard_Call_Threshold
+</div>
+<div class="Standard">
+This option is a fraction that indicates the minimum acceptable value for the probability of each selected genotype. If the &ldquo;best&rdquo; genotype probability is less than this value, the genotype will be considered to be untyped, i.e. &ldquo;<b>0/0</b>&rdquo;.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-100"></a>Imputed_Genotype_Missing_Fraction
+</div>
+<div class="Standard">
+This item is a fraction that is used to issue a report of markers that are poorly typed. Markers that are not &ldquo;hard called&rdquo; for this fraction of the population will be displayed.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-101"></a>Imputed_Missing_Codes
+</div>
+<div class="Standard">
+All the values in the line are considered to code for a missing trait; values are separated by space and do not have to be numeric, viz. na and NA are valid.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-102"></a>Imputed_Allow_Indels
+</div>
+<div class="Standard">
+If this option is &ldquo;<b>yes</b>&rdquo;, indels are considered valid markers and will appear in the output, if this value is &ldquo;<b>no</b>&rdquo;, indels markers are ignored.
+</div>
+<div class="Paragraph">
+<a class="toc" name="toc-Paragraph-103"></a>Chromosome_Single 
 </div>
 <div class="Standard">
 This option refers to the locus reordering menu option 1. It refers to the chromosome selected for analysis. If item <b>12</b> below is specified as well, then the marker numbers specified by <b>12</b> refer to markers on the chromosome specified by this option. The value should be a single integer. The validity of the chromosome is decided after the locus data file and map file are read in, and the chromosome numbers present within the input data are known.<br/>
  If there are no chromosomal markers, then this item is ignored, and the user is required to provide loci numbers using the Loci_Selected keyword. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-88"></a>Chromosomes_Multiple_Num <a class="Label" name="par:Chromosomes_Multiple_Num"> </a>
+<a class="toc" name="toc-Paragraph-104"></a>Chromosomes_Multiple_Num <a class="Label" name="par:Chromosomes_Multiple_Num"> </a>
 </div>
 <div class="Standard">
-This option is a single integer which decides how many chromosome numbers should be read in option 11. Valid values are positive integers. This option is necessary for option Chromosomes_Multiple<a class="Reference" href="#par:Chromosomes_Multiple">89↓</a> to work, otherwise Mega2 will report an error in the batch-file and terminate. 
+This option is a single integer which decides how many chromosome numbers should be read in option 11. Valid values are positive integers. This option is necessary for option Chromosomes_Multiple<a class="Reference" href="#par:Chromosomes_Multiple">105↓</a> to work, otherwise Mega2 will report an error in the batch-file and terminate. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-89"></a>Chromosomes_Multiple <a class="Label" name="par:Chromosomes_Multiple"> </a>
+<a class="toc" name="toc-Paragraph-105"></a>Chromosomes_Multiple <a class="Label" name="par:Chromosomes_Multiple"> </a>
 </div>
 <div class="Standard">
-This option specifies which chromosomes should be selected for output. It should be a list of integers, each being a chromosome number present in the input data (as decided by the map and locus data files). In addition to integers the values ’X’, ’Y’, ’XY’, and ’MT’ are also valid. This option also requires that the batch file option Chromosomes_Multiple_Num<a class="Reference" href="#par:Chromosomes_Multiple_Num">88↑</a> be specified. There must be at least as many chromosome numbers in this list as specified in option Chromosomes_Multiple_Num. 
+This option specifies which chromosomes should be selected for output. It should be a list of integers, each being a chromosome number present in the input data (as decided by the map and locus data files). In addition to integers the values ’X’, ’Y’, ’XY’, and ’MT’ are also valid. This option also requires that the batch file option Chromosomes_Multiple_Num<a class="Reference" href="#par:Chromosomes_Multiple_Num">104↑</a> be specified. There must be at least as many chromosome numbers in this list as specified in option Chromosomes_Multiple_Num. 
 </div>
 <div class="Standard">
 For the three options 8-10, if option 8 is specified, the others are ignored. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-90"></a>Loop_Over_Chromosomes<a class="Label" name="par:Loop_Over_Chromosomes"> </a>
+<a class="toc" name="toc-Paragraph-106"></a>Loop_Over_Chromosomes<a class="Label" name="par:Loop_Over_Chromosomes"> </a>
 </div>
 <div class="Standard">
 This option specifies whether data from multiple chromosomes are written to the same file or not. If true (y), each chromosome gets its own file. If false (n) only one file is produced which contains data for all chromosomes.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-91"></a>Loci_Selected 
+<a class="toc" name="toc-Paragraph-107"></a>Loci_Selected 
 </div>
 <div class="Standard">
 Important: From version 3.0 onwards, the keyword Markers_Selected_Num has been decommissioned, and the keyword Markers_Selected is now Loci_Selected. If the old keywords appear within the batch file, they will be ignored. <br/>
@@ -8374,7 +8677,7 @@ Important: From version 3.0 onwards, the keyword Markers_Selected_Num has been d
  The list of markers have to be terminated with &ldquo;e&rdquo;. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-92"></a>Value_Genetic_Distance_Index <a class="Label" name="par:Map_Index"> </a>
+<a class="toc" name="toc-Paragraph-108"></a>Value_Genetic_Distance_Index <a class="Label" name="par:Map_Index"> </a>
 </div>
 <div class="Standard">
 This item specifies which genetic map to use for analysis. The index is zero based. Maps are numbered in the order that they are first discovered in the map file, reading from left to right.
@@ -8390,13 +8693,13 @@ X          0.0     rs231   0.0     743     0.0    912    0.0       0.0
 X          4.0     rs232   1.0     862     6.0    954    4.0       0.0 
 </pre>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-93"></a>Value_Genetic_Distance_SexTypeMap<a class="Label" name="par:Value_Genetic_Distance_SexTypeMa"> </a> 
+<a class="toc" name="toc-Paragraph-109"></a>Value_Genetic_Distance_SexTypeMap<a class="Label" name="par:Value_Genetic_Distance_SexTypeMa"> </a> 
 </div>
 <div class="Standard">
 This item specifies the map type to be used from the selected genetic map. For a sex-averaged map the value is 0, for a sex_specific map the value is 1, for a female map the value is 2.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-94"></a>Value_Base_Pair_Position_Index<a class="Label" name="par:Value_Base_Pair_Position_Index"> </a> 
+<a class="toc" name="toc-Paragraph-110"></a>Value_Base_Pair_Position_Index<a class="Label" name="par:Value_Base_Pair_Position_Index"> </a> 
 </div>
 <div class="Standard">
 This item specifies the physical map to use for analysis. The index is zero based. If no physical map is to be used for analysis, an index value of -2 is used. Maps are numbered in the order that they are first discovered in the map file, reading left to right. As an example, if the input map file is that discussed in <a class="Reference" href="#sub:Annotated-map-file">9.1.3↑</a>, then map ‘M’ would be represented by an index value of 0, map ‘M2’ by an index value of 1, map ‘M3’ by an index value of 2, and map ‘M4’ by an index value of 3. Since only map ‘M2’ and ‘M3’ are physical maps valid values for ’Value_Base_Pair_Position_Index’ would include 1, 2, and also -2 (none). 
@@ -8409,27 +8712,27 @@ X          0.0     rs231   0.0     743     0.0    912    0.0       0.0
 X          4.0     rs232   1.0     862     6.0    954    4.0       0.0 
 </pre>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-95"></a>Trait_Single<a class="Label" name="par:Trait_Single"> </a>
+<a class="toc" name="toc-Paragraph-111"></a>Trait_Single<a class="Label" name="par:Trait_Single"> </a>
 </div>
 <div class="Standard">
 This option corresponds to the menu option 1 of the Trait reordering menu. It should be a positive integer, referring to the list of trait loci present in the input data. Trait loci are numbered 1 - N (the total number of trait loci) in order of their appearance in the locus data file.<br/>
  For example, if the locus data file lists loci 10-12 as &ldquo;trait1&rdquo; through &ldquo;trait3&rdquo;, specifying a &ldquo;1&rdquo; in this option selects &ldquo;trait1&rdquo; and so on. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-96"></a>Traits_Loop_Over<a class="Label" name="par:Traits_Loop_Over"> </a>
+<a class="toc" name="toc-Paragraph-112"></a>Traits_Loop_Over<a class="Label" name="par:Traits_Loop_Over"> </a>
 </div>
 <div class="Standard">
 This option corresponds to the menu item 2 of the trait reordering menu where traits are selected to be analyzed one at a time. Trait numbers should correspond to the order in which they are listed in the locus file, starting from 1 (as in option 14). 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-97"></a>Traits_Combine<a class="Label" name="par:Traits_Combine"> </a>
+<a class="toc" name="toc-Paragraph-113"></a>Traits_Combine<a class="Label" name="par:Traits_Combine"> </a>
 </div>
 <div class="Standard">
 This option corresponds to the menu item 3 of the trait reordering menu where trait loci are selected to be combined in the same output. The actual trait numbers should correspond to the order in which traits appear in the locus file, and these numbers can be permuted for the purpose of reordering them in the output. There should also be an item numbered <i>N + 1</i> where N is the number of traits. This item refers to the [MARKERS] item displayed in the trait selection menu-option 3. <br/>
  For options 13, 15 and 16, option 13 takes precedence over the other items, and option 15 takes precedence over option 16 i.e. if both &ldquo;Trait_Single&rdquo; and &ldquo;Traits_Loop_Over&rdquo; are defined then the latter is ignored. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-98"></a>Trait_Subdirs<a class="Label" name="par:Trait_Subdirs"> </a>
+<a class="toc" name="toc-Paragraph-114"></a>Trait_Subdirs<a class="Label" name="par:Trait_Subdirs"> </a>
 </div>
 <div class="Standard">
 These are trait-specific directories in which output files are created if the Traits_Loop_Over option is defined. The value is a list of strings separated by white-space in a single line. The number of directory names read in depend on option 14. <br/>
@@ -8437,37 +8740,37 @@ These are trait-specific directories in which output files are created if the Tr
  
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-99"></a>Value_Marker_Compression<a class="Label" name="par:Value_Marker_Compression"> </a>
+<a class="toc" name="toc-Paragraph-115"></a>Value_Marker_Compression<a class="Label" name="par:Value_Marker_Compression"> </a>
 </div>
 <div class="Standard">
 This is an integer value: 1, 2, or 3. The default value is 1. In this case, each pair of alleles is represented internally with two bits, the same as the PLINK compressed binary ’bed’ representation. This technique does not provide enough space to represent microsatellite markers or half-typed genotypes. For these data sets, the compression value of 2 should be adequate. It provides for up to 256 alleles. The compression value of 3 is left for historical comparisons - it should never be necessary.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-100"></a>Value_Missing_Quant_On_Input (Value_Missing_Quant is deprecated) 
+<a class="toc" name="toc-Paragraph-116"></a>Value_Missing_Quant_On_Input (Value_Missing_Quant is deprecated) 
 </div>
 <div class="Standard">
 If the list of trait loci selected include one or more quantitative traits or covariates, then this value is interpreted as the missing value code in the input data. The value should be a real number or the string ’NA’. In previous versions of Mega2 this item was Value_Missing_Quant, which still can be used but is not guaranteed to be supported in future versions of Mega2.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-101"></a>Value_Missing_Quant_On_Output<a class="Label" name="par:Value_Missing_Quant_On_Output"> </a>
+<a class="toc" name="toc-Paragraph-117"></a>Value_Missing_Quant_On_Output<a class="Label" name="par:Value_Missing_Quant_On_Output"> </a>
 </div>
 <div class="Standard">
 If the list of trait loci that will be output include one or more quantitative traits or covariates, then this value is used as the missing quantitative phenotype value in the output data for those analysis modes where missing values are not predefined (e.g., Merlin uses ’x’ for its output missing value).
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-102"></a>Value_Missing_Affect_On_Input
+<a class="toc" name="toc-Paragraph-118"></a>Value_Missing_Affect_On_Input
 </div>
 <div class="Standard">
 This value is interpreted as the missing value code for affection status traits in the input data. The value may be string ’NA’. PLINK uses -9 as the default missing value indicator and also allows you to change it via a flag (missing-phenotype) which Mega2 also honors. If it is not specified, the value for Value_Missing_Quant_On_Input is used.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-103"></a>Value_Missing_Affect_On_Output
+<a class="toc" name="toc-Paragraph-119"></a>Value_Missing_Affect_On_Output
 </div>
 <div class="Standard">
 This value is used as the missing phenotype value for affection status in the output data for those analysis modes where missing values are not predefined (e.g., Merlin uses ’x’). If it is not specified, the value for Value_Missing_Quant_On_Output is used.
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-104"></a>Value_Affecteds<a class="Label" name="par:Value_Affecteds"> </a>
+<a class="toc" name="toc-Paragraph-120"></a>Value_Affecteds<a class="Label" name="par:Value_Affecteds"> </a>
 </div>
 <div class="Standard">
 If any of the affection loci selected have more than one liability class, then this value refers to the list of <span class="formula"> &lt; </span>status<span class="formula"> &gt; </span>-<span class="formula"> &lt; </span>class<span class="formula"> &gt; </span> pairs which should be considered affected. <br/>
@@ -8483,31 +8786,31 @@ ValueAffecteds=TRAIT:2-1,2-3 trt2:2-*
 The &ldquo;*&rdquo; denotes a wild-card e.g., 2-* means status 2 and all classes. Similarly &ldquo;*-1&rdquo; would mean all known phenotypes in liability class 1 should be treated as being affected. Please also consult the affection label definition menu. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-105"></a>Error_Loci 
+<a class="toc" name="toc-Paragraph-121"></a>Error_Loci 
 </div>
 <div class="Standard">
 These and the following options are used by the genotyping error simulation module of Mega2. This option defines a set of locus numbers at which random genotyping errors will be introduced. These should be a subset of the marker loci chosen in the locus reordering step. The number of loci read in depends on option 23. The locus numbers are selected from all the loci selected in the reordering step. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-106"></a>Error_Except_Loci 
+<a class="toc" name="toc-Paragraph-122"></a>Error_Except_Loci 
 </div>
 <div class="Standard">
 If this option is defined instead of option 21, this list of loci is excepted from errors. The number of loci read in also depends on option 23 and locus numbers refer to the full list of loci selected in the locus-reordering step. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-107"></a>Error_Loci_Num 
+<a class="toc" name="toc-Paragraph-123"></a>Error_Loci_Num 
 </div>
 <div class="Standard">
 The value of this option is a single integer denoting how many markers to read in from options 21 or 22. It should be a positive integer. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-108"></a>Error_Model 
+<a class="toc" name="toc-Paragraph-124"></a>Error_Model 
 </div>
 <div class="Standard">
 This option specifies the error model to use in error simulation. This should be a single character, <i>&ldquo;u&rdquo; or &ldquo;U&rdquo;</i> , <i>&ldquo;m&rdquo; or &ldquo;M&rdquo;</i> , <i>&ldquo;s&rdquo; or &ldquo;S&rdquo;</i> . They refer to the Uniform error probability model, Marker-specific uniform error probability model, and the SimWalk2 error model respectively. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-109"></a>Error_Probabilities 
+<a class="toc" name="toc-Paragraph-125"></a>Error_Probabilities 
 </div>
 <div class="Standard">
 This option specifies the prior genotyping error probability or probabilities for error simulation. It should be a single real value, if the model specified in option 24 is &ldquo;Uniform&rdquo;, or a list of 5 real values, if the &ldquo;SimWalk2&rdquo; error model is specified. Marker-specific error probabilities can only be specified in the map file. <br/>
@@ -8515,37 +8818,37 @@ This option specifies the prior genotyping error probability or probabilities fo
  
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-110"></a>Default_Outfile_Names 
+<a class="toc" name="toc-Paragraph-126"></a>Default_Outfile_Names 
 </div>
 <div class="Standard">
 If set to<i> yes</i> , the output file-names menu will be skipped for all options. In addition to file names, some of these menus also contain options for selecting pedigree and person identifiers in the output files, these will be set to default values as well. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-111"></a>Default_Reset_Invalid<a class="Label" name="par:Default_Reset_Invalid"> </a>
+<a class="toc" name="toc-Paragraph-127"></a>Default_Reset_Invalid<a class="Label" name="par:Default_Reset_Invalid"> </a>
 </div>
 <div class="Standard">
 This option defines how invalid genotypes should be handled without pausing for user-input via the invalid-genotypes menu (which is skipped). If set to<i> yes</i> the genotypes will be reset to unknowns, and if set to<i> no</i> invalid genotypes will not be reset. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-112"></a>Default_Other_Values<a class="Label" name="par:Default_Other_Values"> </a>
+<a class="toc" name="toc-Paragraph-128"></a>Default_Other_Values<a class="Label" name="par:Default_Other_Values"> </a>
 </div>
 <div class="Standard">
 If set to <i>yes</i> Mega2’s default value settings will be used for miscellaneous parameters within various options (such as random seed for simulate), and Mega2 will skip the input menus meant for those parameters. This has not been completely implemented yet, so Mega2 may still halt and ask for input. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-113"></a>Default_Ignore_Nonfatal<a class="Label" name="par:Default_Ignore_Nonfatal"> </a>
+<a class="toc" name="toc-Paragraph-129"></a>Default_Ignore_Nonfatal<a class="Label" name="par:Default_Ignore_Nonfatal"> </a>
 </div>
 <div class="Standard">
 If set to <i>yes</i> Mega2 will not halt for user-input on whether to continue execution if non-critical inconsistencies are found in the input data such as extra locus names in map file or locus file. Otherwise, it will halt for user-input upon encountering such inconsistencies. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-114"></a>Default_Rplot_Options<a class="Label" name="par:Default_Rplot_Options"> </a>
+<a class="toc" name="toc-Paragraph-130"></a>Default_Rplot_Options<a class="Label" name="par:Default_Rplot_Options"> </a>
 </div>
 <div class="Standard">
 If set to<i> yes</i> , Mega2 will skip the Rplot parameters menu and use its default values instead for options that set up R plots. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-115"></a>Xlinked_Analysis_Mode<a class="Label" name="par:Xlinked_Analysis_Mode"> </a>
+<a class="toc" name="toc-Paragraph-131"></a>Xlinked_Analysis_Mode<a class="Label" name="par:Xlinked_Analysis_Mode"> </a>
 </div>
 <div class="Standard">
 This value can be 0, 1, or 2 depending on how the data should be analyzed: 0 indicates that all data should be treated as autosomal, 1 indicates that all data should be considered sex-linked, and 2 implies that the data is a mixture of autosomal and x-linked loci. Markers on the SEX-CHROMOSOME, set to 23 by default in Mega2 should be treated as X-linked, whereas loci on all other chromosomes will be considered autosomal. <br/>
@@ -8553,13 +8856,13 @@ This value can be 0, 1, or 2 depending on how the data should be analyzed: 0 ind
 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-116"></a>Covariates_Selected 
+<a class="toc" name="toc-Paragraph-132"></a>Covariates_Selected 
 </div>
 <div class="Standard">
 The trait loci defined in this keyword are output as covariates for the GeneHunter format option. In future releases, we plan to include more options that make use of this keyword. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-117"></a>Count_Genotypes<a class="Label" name="par:Count_Genotypes"> </a>
+<a class="toc" name="toc-Paragraph-133"></a>Count_Genotypes<a class="Label" name="par:Count_Genotypes"> </a>
 </div>
 <div class="Standard">
 This item is used in Mega2’s Recode facility, and refers to which individuals are counted for the purpose of estimating allele frequencies. The values correspond to the choices in the Individuals selection menu.
@@ -8580,38 +8883,38 @@ All genotyped individuals (default)
 
 </ol>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-118"></a>Rplot_Statistics 
+<a class="toc" name="toc-Paragraph-134"></a>Rplot_Statistics 
 </div>
 <div class="Standard">
 This is a list of numbers that refer to the list of statistics that are to be plotted within SimWalk2-NPL, Merlin-SimWalk2, Merlin and Allegro. Please refer to the individual analysis options for a list of statistics that are supported. The numbers match with the statistics menu displayed in the interactive mode. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-119"></a>Count_Halftyped 
+<a class="toc" name="toc-Paragraph-135"></a>Count_Halftyped 
 </div>
 <div class="Standard">
 Starting with the R5 revision of Mega2 version 3, the inclusion of half-typed individuals within the recoding process is optional. Setting this to yes means that individuals who are typed only at one allele are considered to be &ldquo;genotyped&rdquo;, and counted in the allele frequency computation if they otherwise fall within one of the individual selection categories given in the &ldquo;Individual Selections&rdquo; menu.<br/>
- Please note that setting this to &ldquo;yes&rdquo; does not imply that they will also be included in the output files. This latter choice is made in the &ldquo;Invalid genotypes&rdquo; menu after error-checking of the data . The corresponding batch item is Default_Reset_Invalid<a class="Reference" href="#par:Default_Reset_Invalid">111↑</a>. 
+ Please note that setting this to &ldquo;yes&rdquo; does not imply that they will also be included in the output files. This latter choice is made in the &ldquo;Invalid genotypes&rdquo; menu after error-checking of the data . The corresponding batch item is Default_Reset_Invalid<a class="Reference" href="#par:Default_Reset_Invalid">127↑</a>. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-120"></a>AlleleFreq_SquaredDev 
+<a class="toc" name="toc-Paragraph-136"></a>AlleleFreq_SquaredDev 
 </div>
 <div class="Standard">
 This is a real value which is used to decide whether input allele-frequencies are different from that observed in the data for any marker locus. If the sum of squared deviation for all alleles of a marker exceeds the specified value, the user is notified and prompted whether Mega2 should be terminated. Setting this value to a very large number, or setting Default_Reset_Invalid should prevent Mega2 from halting for user-input in the batch mode. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-121"></a>Count_HWE_genotypes 
+<a class="toc" name="toc-Paragraph-137"></a>Count_HWE_genotypes 
 </div>
 <div class="Standard">
-This is similar to the &ldquo;Count_Genotypes<a class="Reference" href="#par:Count_Genotypes">117↑</a>&rdquo; item, however, only considered within the HWE estimation option of Mega2. Refer to the HWE option details for what the value should be. 
+This is similar to the &ldquo;Count_Genotypes<a class="Reference" href="#par:Count_Genotypes">133↑</a>&rdquo; item, however, only considered within the HWE estimation option of Mega2. Refer to the HWE option details for what the value should be. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-122"></a>Value_Missing_Allele_Aff 
+<a class="toc" name="toc-Paragraph-138"></a>Value_Missing_Allele_Aff 
 </div>
 <div class="Standard">
 The Mega2 map file allows the user to also specify the indicator for unknown allele and affection status values. This is again an optional item, and used only if Mega2 format input files are used. 
 </div>
 <div class="Paragraph">
-<a class="toc" name="toc-Paragraph-123"></a>Structure.PopDataPheno<a class="Label" name="par:Structure.PopDataPheno"> </a>
+<a class="toc" name="toc-Paragraph-139"></a>Structure.PopDataPheno<a class="Label" name="par:Structure.PopDataPheno"> </a>
 </div>
 <div class="Standard">
 Structure allows the user to specify a user-defined population for each individual; when this option is used, Structure expects each individual to be assigned an integer code representing their population. In Mega2, this information can be stored in a quantitative trait column in the pedigree file. This batch file item Structure.PopDataPheno specifies the name of the quantitative trait containing the population assignments for each individual. Only the integer portion will be used as the population group IDs, and an error will be generated if any of the values are negative. 
@@ -8789,7 +9092,7 @@ If user selected to set up R-graphics for the non-parametric analysis option, th
 Given below is an example of this combined shell script for two traits on a single chromosome: 
 </div>
 <pre class="LyX-Code">
-#———————————————-
+#----------------------------------------------
 #   Mega2 version 4.2
 #   Run date:                2009-4-15-09-49
 #   This script created on   Wed Apr 15 09:49:08 2009
@@ -8798,7 +9101,7 @@ Given below is an example of this combined shell script for two traits on a sing
 #          Locus file:              names.01
 #            Map file:              map.01
 #    Untyped pedigree option  Include all pedigrees whether typed or not
-#———————————————-
+#----------------------------------------------
 echo SimWalk2 analysis for chromosome 1 ,trait 1 ...
 echo This may take a while.
 cd Trait-1
@@ -9232,7 +9535,7 @@ Selection Menu: Summary file options
 0 unaffected members with status 1.
  Segregation Mating Table Counts:
 Mo Fa              0           1           2 Seg Ratio Aff/(Unaff + Aff)
-——           —         —         —  ——-- ——--
+------           —         —         —  -------- --------
 0 x 0 -&gt;           0           0           0                 
 0 x 1 -&gt;           0           0           0                 
 0 x 2 -&gt;           0           0           4   100.000  100.000
@@ -9346,23 +9649,23 @@ HINT: If one has case-control data, one can use Mega2 to generate the appropriat
  
 </div>
 <pre class="LyX-Code">
-———————
+---------------------
 Thu Jun  6 14:18:47 2002
 Input file names
 locus file:    datain.01
 pedigree file: pedin.01
 map file:      map.01
 Untyped pedigree option: Include all pedigrees whether typed or not
-———————
+---------------------
  Genotyping success rate summary for chromosome 1
-—————————————————
+---------------------------------------------------
 Per person genotyping rate :
 Number of markers: 4
 Maximum number of markers typed 4
 Minimum number of markers typed 0
-—————————————————
+---------------------------------------------------
 Ped      Person   #Markers typed  Success Rate
-—————————————————
+---------------------------------------------------
 3         1                   4         1.00
 3         2                   4         1.00
 3         3                   4         1.00
@@ -9377,22 +9680,22 @@ Per marker genotyping rate:
 Total number of individuals: 384
 Maximum number of individuals typed at a marker 364
 Minimum number of individuals typed at a marker 356
-—————————————————
+---------------------------------------------------
 Marker      Alleles   #Individuals   #Percentage
                        Typed          Typed
-—————————————————
+---------------------------------------------------
 d1s196            4            356          0.93
 d1s238            4            364          0.95
 d1s229            4            364          0.95
 d1s103            4            364          0.95
-—————————————————
+---------------------------------------------------
 </pre>
 <div class="Standard">
 <i>Option 5) Quantitative phenotype summary .</i> <br/>
  This creates a summary of phenotype values for selected quantitative loci present in the pedigree file. The user can create separate file for each quantitative trait locus or a combined file for all loci. The output file is called <i>phenotyping_rate.##</i> . Here is an excerpt form a typical output file: 
 </div>
 <pre class="LyX-Code">
-———————
+---------------------
 Mon Mar  8 15:04:59 2004
 Input file names
 locus file:    datain.06
@@ -9400,9 +9703,9 @@ pedigree file: pedin.06
 map file:      map.06
 omit file:     omit.06
 Untyped pedigree option: Include all pedigrees whether typed or not
-———————
+---------------------
 Phenotype Summary for Q1
-—————————————
+---------------------------------------
                         All                             Founders
 Pedigree        Members Phenotyped       %Phenotyped    Total   Phenotyped      %
 1               52              37              0.71    17      8               0.47
@@ -9628,7 +9931,7 @@ any of these results,please cite:
 Guo, S.-W., Thompson, E. T. (1992)
 Performing the Exact Test of Hardy-Weinberg Proportion
 for Multiple Alleles. Biometrics 48:361-372
-———————
+---------------------
 Mon Feb 12 14:27:44 2001
 Input file names
 locus file:    datain.01
@@ -9636,7 +9939,7 @@ pedigree file: pedin.01
 map file:      map.01
 Counted individuals consist of:
     Genotyped founders or a randomly chosen genotyped person from each pedigree
-———————
+---------------------
  
  
 Marker       Alleles   Expected      Observed       P-value    Std Error   #Genotypes
@@ -9896,7 +10199,7 @@ Merlin files are created separately for each chromosome except for the shell-scr
  Merlin now allows the user to enter a string containing valid Merlin analysis options selected from a list displayed at the beginning of this menu. (these can also be seen at the beginning of each run of Merlin). Some of these options such as --steps, --grid etc. should be followed by a numeric argument, and Mega2 checks for this as well. Merlin graphics are only set up in --markerNames option is not selected, and if either or both of the linkage options are selected (--npl and --pairs). 
 </div>
 <div class="Standard">
-Please note that Merlin requires a sex-averaged map as well when the user sets up for sex-specific analysis (Value_Genetic_Distance_SexTypeMap = 1 <a class="Reference" href="#par:Value_Genetic_Distance_SexTypeMa">93↑</a>).
+Please note that Merlin requires a sex-averaged map as well when the user sets up for sex-specific analysis (Value_Genetic_Distance_SexTypeMap = 1 <a class="Reference" href="#par:Value_Genetic_Distance_SexTypeMa">109↑</a>).
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-25.28">25.28</a> <a class="Label" name="ext:loki"> </a>Convert to Loki format
@@ -10142,7 +10445,7 @@ Beagle is used for imputing genotypes, inferring haplotype phase, and performing
 <b>Important:</b> Note that to get correct results when converting to Beagle, your input data must contain the appropriate data. If you wish to set up data in the &ldquo;unphased unrelated&rdquo; Beagle format, then your input data must consist of unrelated case/control individuals. If you wish to set up data in the &ldquo;unphased trio&rdquo; Beagle format, then your input data must consist of parent-child trio families with unaffected parents and affected children. 
 </div>
 <div class="Standard">
-Mega2 supports three of the valid Beagle genotype files (unphased unrelated, unphased trio, and unphased pair) through the sub-analysis options for Beagle (See <a class="Reference" href="#Beagle">86↑</a>). Beagle marker files can contain either physical or genetic map information. Both genetic (.gmrk.gz) and physical (.pmrk.gz) map files will be output if the maps are available on input. However, if both physical and genetic maps exist, the genetic map will be used by the shell file produced by Mega2 . You may change this by editing the shell file.
+Mega2 supports three of the valid Beagle genotype files (unphased unrelated, unphased trio, and unphased pair) through the sub-analysis options for Beagle (See <a class="Reference" href="#Beagle">95↑</a>). Beagle marker files can contain either physical or genetic map information. Both genetic (.gmrk.gz) and physical (.pmrk.gz) map files will be output if the maps are available on input. However, if both physical and genetic maps exist, the genetic map will be used by the shell file produced by Mega2 . You may change this by editing the shell file.
 </div>
 <div class="Standard">
 Beagle is written in Java and is distributed in the form of a Java ARchive (.jar) file as ’beagle.jar’. The shell script produced by Mega2 assumes that the Beagle .jar file is referenced by the shell environment variable BEAGLE_JAR (which defaults to a file named ’beagle.jar’ in the current directory). The shell script will generate an error if the .jar file is not found. 
@@ -10175,7 +10478,7 @@ If you encounter a &ldquo;Java heap space&rdquo; exception while running Beagle,
 Please note that Unphased pair and trio data is not permitted to have any Mendelian inconsistencies. Genotypes causing Mendelian inconsistencies for a trio must be replaced with missing genotypes.
 </div>
 <div class="Standard">
-Please also note that Loop_Over_Chromosomes = y is assumed when converting to Beagle format files (See <a class="Reference" href="#par:Loop_Over_Chromosomes">90↑</a>).
+Please also note that Loop_Over_Chromosomes = y is assumed when converting to Beagle format files (See <a class="Reference" href="#par:Loop_Over_Chromosomes">106↑</a>).
 </div>
 <div class="Standard">
 The genetic map output for Beagle will be in Haldane cM.
@@ -10199,7 +10502,7 @@ EIGENSTRAT pedigree file:   eigenstrat.01.ped
 EIGENSTRAT shell file:      eigenstrat.01.sh
 </pre>
 <div class="Standard">
-Eigenstrat will take as input several different file formats. The formats that Mega2 creates for Eigenstrat are either PLINK binary format or PLINK ped format. The PLINK binary format is more efficient. The analysis sub-option for this analysis mode is used to the type of output produced (See <a class="Reference" href="#Eigenstrat">86↑</a>).
+Eigenstrat will take as input several different file formats. The formats that Mega2 creates for Eigenstrat are either PLINK binary format or PLINK ped format. The PLINK binary format is more efficient. The analysis sub-option for this analysis mode is used to the type of output produced (See <a class="Reference" href="#Eigenstrat">95↑</a>).
 </div>
 <div class="Standard">
 In order to successfully run Eigenstrat from the shell scripts produced by Mega2 the Eigenstrat bin directory must be put in the PATH. Here are some examples of how to set the PATH so that smartpca.perl and smarteigenstrat.perl may be found as suggested by the EIG4.2/EIGENSTRAT/README documentation file. These examples assume that you have installed the Eigenstrat distribution at the location ’/usr/local/src/EIG4.2’.
@@ -10240,7 +10543,7 @@ STRUCTURE shell file:       structure.01.sh
 Structure is used for inferring population structure using genotype data. Mega2 will produce files that are used by the "computational part" (sometimes referred to the structure kernel or the console) of the program &ldquo;structure&rdquo; that is written in C. On the &ldquo;Download Structure 2.3.4&rdquo; web page, to obtain the kernel version of ’structure’ you should use the links allowing you to &ldquo;Download package without front end.&rdquo; (See <a class="FlexURL" href="http://pritch.bsd.uchicago.edu/structure_software/release_versions/v2.3.4/html/structure.html">http://pritch.bsd.uchicago.edu/structure_software/release_versions/v2.3.4/html/structure.html</a>).
 </div>
 <div class="Standard">
-The structure kernel reads two control files and one data file. Examples of both of these control files and a data file are included as a part of the structure download. One of the control files "extraparams" contains parameters that describes algorithm variable settings (e.g., how the program runs) and so is not of concern for our purposes in data file conversion. Mega2 will create an empty &ldquo;extraparams&rdquo; file if one does not already exist, but you may need to customize this file for your specific needs. The "mainparams" control file contains parameters that describe the data file used as input to structure, and so is of concern here. Mega2 will produce a data file which stores data for each individual on one line (rather than the default two lines per individual). Mega2 allows you to choose to associate a quantitative phenotype to a population identifier through the use of the batch file parameter Structure.PopDataPheno (See <a class="Reference" href="#par:Structure.PopDataPheno">123↑</a>).
+The structure kernel reads two control files and one data file. Examples of both of these control files and a data file are included as a part of the structure download. One of the control files "extraparams" contains parameters that describes algorithm variable settings (e.g., how the program runs) and so is not of concern for our purposes in data file conversion. Mega2 will create an empty &ldquo;extraparams&rdquo; file if one does not already exist, but you may need to customize this file for your specific needs. The "mainparams" control file contains parameters that describe the data file used as input to structure, and so is of concern here. Mega2 will produce a data file which stores data for each individual on one line (rather than the default two lines per individual). Mega2 allows you to choose to associate a quantitative phenotype to a population identifier through the use of the batch file parameter Structure.PopDataPheno (See <a class="Reference" href="#par:Structure.PopDataPheno">139↑</a>).
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-25.40">25.40</a> <a class="Label" name="ext:pseq"> </a>Convert to PSEQ (PLINK/SEQ) format<a class="Label" name="sub:Detailed-info-PSEQ"> </a>
@@ -10692,6 +10995,21 @@ C-shell scripts are produced for the many of the analysis options. These C-shell
 Patched version
 </td>
 <td align="right" valign="top">
+4.8.0
+</td>
+<td align="none" valign="middle">
+June 12, 2015
+</td>
+<td align="none" valign="middle">
+June 15, 2016
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="top">
+Patched version
+</td>
+<td align="right" valign="top">
 4.7.1
 </td>
 <td align="none" valign="middle">
@@ -10994,7 +11312,37 @@ March 31, 2008
 
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.2">28.2</a> Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)
+<a class="toc" name="toc-Subsection-28.2">28.2</a> Changes from Version 4.7.1 to Version 4.8.0 (Released June 12, 2015)
+</h2>
+<ul>
+<li>
+Mega2 now supports reading imputed data in IMPUTE2 (Oxford) format (genotype/sample).
+</li>
+<li>
+The Mega2 log file now contains essentially what is displayed on the screen during program execution. The voluminous, complete listing of errors and warnings is now only in the Mega2 ERR(or) log file.
+</li>
+<li>
+Several issues effecting the performance processing VCF files have been fixed: in one case, using to a hash lookup vs n**2 search and in another moving an expensive constant calculation out of a loop.
+</li>
+<li>
+Bug: A problem with finding the marker name when it is appears in the VCF info field has been fixed.
+</li>
+<li>
+Bug: PLINK Binary file generation in &ldquo;individual major&rdquo; order had been wrong and is now fixed. Note: the common SNP major order did not have this problem.
+</li>
+<li>
+Bug: S.A.G.E. Analysis and Mega2 Analysis modes did not correctly carry through non-numeric alleles to their output files; they always recoded the allele name to numbers.
+</li>
+<li>
+Bug: Most compiler warnings have been silenced though it depends on the platform; less on Windows MSVC while more for gcc.
+</li>
+<li>
+Bug: Several compilation flags have been made unnecessary and hence removed.
+</li>
+
+</ul>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-28.3">28.3</a> Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)
 </h2>
 <ul>
 <li>
@@ -11015,7 +11363,7 @@ Bug Fix: Detect missing suboption when it is required.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.3">28.3</a> Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)
+<a class="toc" name="toc-Subsection-28.4">28.4</a> Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)
 </h2>
 <ul>
 <li>
@@ -11033,7 +11381,7 @@ Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.4">28.4</a> Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)
+<a class="toc" name="toc-Subsection-28.5">28.5</a> Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)
 </h2>
 <ul>
 <li>
@@ -11048,7 +11396,7 @@ Bug Fix: Binary file support (mainly .bed files) was broken on Windows and Mingw
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.5">28.5</a> Changes from Version 4.6.0 to Version 4.6.1 (Released Oct 21st, 2013)
+<a class="toc" name="toc-Subsection-28.6">28.6</a> Changes from Version 4.6.0 to Version 4.6.1 (Released Oct 21st, 2013)
 </h2>
 <ul>
 <li>
@@ -11063,7 +11411,7 @@ Enhancement: Added binaries for native Microsoft Windows 8 and MinGW built on Mi
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.6">28.6</a> Changes from Version 4.5.9 to Version 4.6.0 (Released Sept 6th, 2013)
+<a class="toc" name="toc-Subsection-28.7">28.7</a> Changes from Version 4.5.9 to Version 4.6.0 (Released Sept 6th, 2013)
 </h2>
 <ul>
 <li>
@@ -11072,7 +11420,7 @@ Enhancement: Mega2 compresses allele data to handle much larger datasets.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.7">28.7</a> Changes from Version 4.5.8 to Version 4.5.9 (Released July 5th, 2013)
+<a class="toc" name="toc-Subsection-28.8">28.8</a> Changes from Version 4.5.8 to Version 4.5.9 (Released July 5th, 2013)
 </h2>
 <ul>
 <li>
@@ -11081,7 +11429,7 @@ Bug fix: Mega2 will now compile properly on Red Hat (RHEL), CentOS, and Solaris 
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.8">28.8</a> Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)
+<a class="toc" name="toc-Subsection-28.9">28.9</a> Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)
 </h2>
 <ul>
 <li>
@@ -11105,7 +11453,7 @@ Bug fix: You can now specific a value to represent the missing value code for a 
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.9">28.9</a> Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) 
+<a class="toc" name="toc-Subsection-28.10">28.10</a> Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) 
 </h2>
 <ul>
 <li>
@@ -11141,7 +11489,7 @@ Bug-fix: Allow menus to input and output X, Y, XY, MT and U as chromosomes witho
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.10">28.10</a> Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) 
+<a class="toc" name="toc-Subsection-28.11">28.11</a> Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) 
 </h2>
 <ul>
 <li>
@@ -11156,7 +11504,7 @@ Bug-fix: Generate better error diagnostics.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.11">28.11</a> Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) 
+<a class="toc" name="toc-Subsection-28.12">28.12</a> Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) 
 </h2>
 <ul>
 <li>
@@ -11192,7 +11540,7 @@ Bug-fix: In general, code in critical loops or using large memory allocations ha
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.12">28.12</a> Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) 
+<a class="toc" name="toc-Subsection-28.13">28.13</a> Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) 
 </h2>
 <ul>
 <li>
@@ -11210,7 +11558,7 @@ Bug-fix: The mega2log2html.pl Perl program in some cases tried to read from a cl
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.13">28.13</a> Changes from Version 4.0 R5.2 Beta -<span class="formula"> &gt; </span> Version 4.5.3 (Released June 15th, 2011) 
+<a class="toc" name="toc-Subsection-28.14">28.14</a> Changes from Version 4.0 R5.2 Beta -<span class="formula"> &gt; </span> Version 4.5.3 (Released June 15th, 2011) 
 </h2>
 <ul>
 <li>
@@ -13913,7 +14261,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2015-01-13T10:11:27.338603</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.5 (2013-03-10)</a> on <span class="create-date">2015-06-12T17:12:16.332392</span>
 </div>
 </div>
 </body>

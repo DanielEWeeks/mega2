@@ -79,13 +79,11 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1820302391 "Robert V. Baron" 
-\author 1332494340 "Daniel E. Weeks" 
 \end_header
 
 \begin_body
@@ -354,8 +352,6 @@ LatexCommand tableofcontents
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 1332494340 1434135485
 \begin_inset Newpage pagebreak
 \end_inset
 
@@ -367,12 +363,8 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-During an association or linkage
-\change_deleted 1332494340 1434135515
- 
-\change_unchanged
- analysis project, one may need to analyze the data with several different
- programs.
+During an association or linkage analysis project, one may need to analyze
+ the data with several different programs.
  Unfortunately, it can often be quite difficult to get one's data in the
  proper format desired by each different computer program.
  Not only must the data be converted to the proper format, but also the
@@ -579,9 +571,7 @@ reference "sub:MEGA2run.html-and-related"
 \end_layout
 
 \begin_layout Subsection
-Graphical overview of Mega2
-\change_inserted 1332494340 1434135711
- (from 2013)
+Graphical overview of Mega2 (a bit out of date, from 2013)
 \end_layout
 
 \begin_layout Standard
@@ -651,11 +641,7 @@ Mega2 supports the following input file formats:
 \end_layout
 
 \begin_layout Enumerate
-Mega2 format (See 
-\change_inserted 1332494340 1434135779
-Section 
-\change_unchanged
-
+Mega2 format (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-file-formats"
@@ -666,11 +652,7 @@ reference "sub:Annotated-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-LINKAGE format (See 
-\change_inserted 1332494340 1434135787
-Section 
-\change_unchanged
-
+LINKAGE format (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Linkage-file-formats"
@@ -681,11 +663,7 @@ reference "sub:Linkage-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-PLINK format (See 
-\change_inserted 1332494340 1434135790
-Section 
-\change_unchanged
-
+PLINK format (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:PLINK-file-formats"
@@ -696,11 +674,7 @@ reference "sub:PLINK-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-Variant Call Format (VCF, BCF, compressed VCF) (See
-\change_inserted 1332494340 1434135795
- Section
-\change_unchanged
- 
+Variant Call Format (VCF, BCF, compressed VCF) (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:VCF-file-formats"
@@ -711,17 +685,7 @@ reference "sub:VCF-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-
-\change_deleted 1332494340 1434133773
-Impute2
-\change_inserted 1332494340 1434133773
-IMPUTE2
-\change_unchanged
- Format (See
-\change_inserted 1332494340 1434135800
- Section
-\change_unchanged
- 
+IMPUTE2 Format (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:impute2-file-format"
@@ -980,67 +944,25 @@ Enhancements in Mega2 version 4.8.0
 \end_layout
 
 \begin_layout Itemize
-Mega2 now supports
-\change_inserted 1332494340 1434131870
- reading imputed data in
-\change_unchanged
- 
-\change_deleted 1332494340 1434131794
-Impute2
-\change_inserted 1332494340 1434131795
-IMPUTE2
-\change_unchanged
- (
-\change_deleted 1332494340 1434131738
-/
-\change_unchanged
-Oxford) 
-\change_deleted 1332494340 1434131880
-style input files that indicate the probability for each genotype
-\change_inserted 1332494340 1434131983
-format (genotype/sample)
-\change_unchanged
-.
+Mega2 now supports reading imputed data in IMPUTE2 (Oxford) format (genotype/sam
+ple).
 \end_layout
 
 \begin_layout Itemize
-Several issues 
-\change_inserted 1332494340 1434131915
-a
-\change_deleted 1332494340 1434131914
-e
-\change_unchanged
-ffecting the performance processing VCF files have been fixed.
-
-\change_inserted 1332494340 1434135283
+Several issues affecting the performance processing VCF files have been
+ fixed.
  Reading in VCF format data is now much faster than it was previously.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted 1332494340 1434135284
 The Mega2 log file now contains essentially what is displayed on the screen
  during program execution.
  The voluminous, complete listing of errors and warnings is now only in
  the Mega2 ERR(or) log file.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
-Bug: 
-\change_deleted 1332494340 1434132131
-Plink
-\change_inserted 1332494340 1434132131
-PLINK
-\change_unchanged
- Binary file generation 
-\change_deleted 1332494340 1434132174
-for
-\change_inserted 1332494340 1434132174
-in
-\change_unchanged
- 
+Bug: PLINK Binary file generation in 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1048,44 +970,14 @@ individual major
 \begin_inset Quotes erd
 \end_inset
 
- order ha
-\change_inserted 1332494340 1434132146
-d
-\change_deleted 1332494340 1434132145
-s
-\change_unchanged
- been wrong 
-\change_deleted 1332494340 1434132184
-for a long time
-\change_unchanged
- and 
-\change_deleted 1332494340 1434132170
-now is 
-\change_inserted 1332494340 1434132171
-is now 
-\change_unchanged
-fixed.
-
-\change_inserted 1332494340 1434135150
+ order had been wrong and is now fixed.
  Note: the common SNP major order did not have this problem.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
-Bug: 
-\change_deleted 1332494340 1434132191
-Sage
-\change_inserted 1332494340 1434132194
-S.A.G.E.
-
-\change_unchanged
+Bug: S.A.G.E.
  Analysis and Mega2 Analysis modes did not correctly carry through non-numeric
- alleles
-\change_inserted 1332494340 1434132219
- to their output files
-\change_unchanged
-.
+ alleles to their output files.
 \end_layout
 
 \begin_layout Subsection
@@ -1728,13 +1620,7 @@ as well as citing the web site and the version that you used.
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (201
-\change_inserted 1332494340 1434132263
-5
-\change_deleted 1332494340 1434132259
-3
-\change_unchanged
-) Mega2 (Version 4.8.0).
+ Weeks DE (2015) Mega2 (Version 4.8.0).
  
 \begin_inset Flex URL
 status collapsed
@@ -4245,19 +4131,11 @@ VCF compressed format
 
 \begin_layout Enumerate
 VCF format 
-\change_inserted -1820302391 1434128960
-
 \end_layout
 
 \end_deeper
 \begin_layout Enumerate
-
-\change_deleted 1332494340 1434132440
-Impute
-\change_inserted 1332494340 1434132444
-IMPUTE2
-\change_unchanged
- Format (See 
+IMPUTE2 Format (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:impute2-file-format"
@@ -10462,13 +10340,7 @@ name "inp:impute2"
 
 \end_inset
 
-
-\change_deleted 1332494340 1434132472
-Impute2
-\change_inserted 1332494340 1434132482
-IMPUTE2
-\change_unchanged
-/Oxford input file format
+IMPUTE2/Oxford input file format
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:impute2-file-format"
@@ -10479,20 +10351,8 @@ name "sub:impute2-file-format"
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted 1332494340 1434132486
-Impute
-\change_inserted 1332494340 1434132489
-IMPUTE2
-\change_unchanged
- 
-\change_inserted 1332494340 1434132497
-f
-\change_deleted 1332494340 1434132496
-F
-\change_unchanged
-ormat was designed to store information about the probability of imputed
- markers added to a smaller collection of markers.
+IMPUTE2 format was designed to store information about the probability of
+ imputed markers added to a smaller collection of markers.
  (See: 
 \begin_inset CommandInset href
 LatexCommand href
@@ -10502,17 +10362,7 @@ target "http://en.wikipedia.org/wiki/imputation_(genetics)"
 \end_inset
 
 ).
- A typical program to 
-\change_deleted 1332494340 1434132528
-manipulate/
-\change_unchanged
-generate imputation data is 
-\change_deleted 1332494340 1434132511
-Impute2
-\change_inserted 1332494340 1434132514
-IMPUTE2
-\change_unchanged
- (
+ A typical program to generate imputation data is IMPUTE2 (
 \begin_inset Flex URL
 status open
 
@@ -10550,64 +10400,16 @@ http://genome.sph.umich.edu/wiki/IMPUTE2:_1000_Genomes_Imputation_Cookbook
 \end_layout
 
 \begin_layout Standard
-When using 
-\change_deleted 1332494340 1434132574
-Impute
-\change_inserted 1332494340 1434132574
-IMPUTE2
-\change_unchanged
- format input files, one needs to provide several files, which are described
- below.
- At a minimum, two files are required: 1) the 
-\change_deleted 1332494340 1434132654
-Impute
-\change_inserted 1332494340 1434132663
-IMPUTE2 Genotype
-\change_unchanged
- File containing the marker
-\change_inserted 1332494340 1434132674
-s
-\change_unchanged
- and their 
-\change_inserted 1332494340 1434132682
-imputed 
-\change_unchanged
-genotype
-\change_inserted 1332494340 1434132832
- probabilities
-\change_deleted 1332494340 1434132827
-s
-\change_unchanged
-, and 2) the 
-\change_deleted 1332494340 1434132580
-Impute
-\change_inserted 1332494340 1434132580
-IMPUTE2
-\change_unchanged
- Sample File containing the sample 
-\change_deleted 1332494340 1434132693
-id
-\change_inserted 1332494340 1434132693
-ID
-\change_unchanged
- information.
+When using IMPUTE2 format input files, one needs to provide several files,
+ which are described below.
+ At a minimum, two files are required: 1) the IMPUTE2 Genotype File containing
+ the markers and their imputed genotype probabilities, and 2) the IMPUTE2
+ Sample File containing the sample ID information.
  The latter file can be extended to contain family structure information
  and phenotypes; both are commonly needed by Mega2.
- Optional files include a special 
-\change_deleted 1332494340 1434132716
-Imputed
-\change_inserted 1332494340 1434132718
-IMPUTE2
-\change_unchanged
- Info File, a map file, an omit file, an allele frequency file, and a penetrance
- file.
- More information on the 
-\change_deleted 1332494340 1434132583
-Impute
-\change_inserted 1332494340 1434132583
-IMPUTE2
-\change_unchanged
- file formats can be found in 
+ Optional files include a special IMPUTE2 Info File, a map file, an omit
+ file, an allele frequency file, and a penetrance file.
+ More information on the IMPUTE2 file formats can be found in 
 \begin_inset Flex URL
 status open
 
@@ -10619,49 +10421,31 @@ http://www.stats.ox.ac.uk/~marchini/software/gwas/file_format.html
 \end_inset
 
 .
-\change_inserted 1332494340 1434134311
-
 \end_layout
 
 \begin_layout Subsubsection
-
-\change_inserted 1332494340 1434134349
 IMPUTE2 standard file extensions
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 1332494340 1434134586
 When attempting to fill in IMPUTE2 file names based on a provided file name
  stem, Mega2 expects the following extensions:
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted 1332494340 1434134645
 IMPUTE2 genotype file: .gen or .impute2
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted 1332494340 1434134647
 IMPUTE2 info file: .gen_info or .impute2_info
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted 1332494340 1434134589
 IMPUTE2 sample file: .sample
 \end_layout
 
 \begin_layout Subsubsection
-
-\change_deleted 1332494340 1434132585
-Impute
-\change_inserted 1332494340 1434132585
-IMPUTE2
-\change_unchanged
- File
+IMPUTE2 File
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Impute-File"
@@ -10672,36 +10456,10 @@ name "sub:Impute-File"
 \end_layout
 
 \begin_layout Standard
-The each line of the 
-\change_deleted 1332494340 1434132586
-Impute
-\change_inserted 1332494340 1434132586
-IMPUTE2
-\change_unchanged
- 
-\change_inserted 1332494340 1434134286
-genotype f
-\change_deleted 1332494340 1434134284
-F
-\change_unchanged
-ile conceptually has two parts: the first describes the marker and the second
- lists the 
-\change_inserted 1332494340 1434132851
-imputed 
-\change_unchanged
-genotype
-\change_inserted 1332494340 1434132860
- probabilities
-\change_deleted 1332494340 1434132854
-s
-\change_unchanged
- for all the samples.
- The samples are listed here in the same order as they appear in the 
-\change_deleted 1332494340 1434132588
-Impute
-\change_inserted 1332494340 1434132588
-IMPUTE2
-\change_unchanged
+The each line of the IMPUTE2 genotype file conceptually has two parts: the
+ first describes the marker and the second lists the imputed genotype probabilit
+ies for all the samples.
+ The samples are listed here in the same order as they appear in the IMPUTE2
  Info File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10714,13 +10472,7 @@ reference "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Standard
-The 
-\change_deleted 1332494340 1434133060
-first part consist of 5
-\change_inserted 1332494340 1434133067
-marker information is stored in the first five
-\change_unchanged
- columns.
+The marker information is stored in the first five columns.
  The first column is typically 
 \begin_inset Quotes eld
 \end_inset
@@ -10733,31 +10485,11 @@ marker information is stored in the first five
 \begin_inset Quotes erd
 \end_inset
 
-, but can occasionally contain the chromosome
-\change_inserted 1332494340 1434133078
- number
-\change_unchanged
-.
+, but can occasionally contain the chromosome number.
  The second column is the marker name.
- This can be a
-\change_inserted 1332494340 1434133086
-n
-\change_unchanged
- RS
-\change_inserted 1332494340 1434133100
- 
-\change_deleted 1332494340 1434133100
-_
-\change_unchanged
-ID.
+ This can be an RS ID.
  Sometimes this name is not available.
- Then the second column usually 
-\change_deleted 1332494340 1434133123
-is
-\change_inserted 1332494340 1434133124
-contains
-\change_unchanged
- fields separated by the 
+ Then the second column usually contains fields separated by the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -10779,13 +10511,8 @@ contains
  (Of course, sometimes all 4 subfields are not there; only the first two
  appear.
  And we have also occasionally seen a fifth subfield.) Again it is best to
- ignore this column unless it is an RS
-\change_deleted 1332494340 1434133168
-_
-\change_inserted 1332494340 1434133168
- 
-\change_unchanged
-ID name or it starts with the chromosome number.
+ ignore this column unless it is an RS ID name or it starts with the chromosome
+ number.
  The third column is the base pair position of the marker.
  The fourth column is the first allele name.
  Finally, the fifth column is the second allele name.
@@ -10821,27 +10548,9 @@ Some examples follow; the ellipses start the genotype probabilities part
 \end_layout
 
 \begin_layout Standard
-Note: 
-\change_deleted 1332494340 1434133222
-There can be 
-\change_inserted 1332494340 1434133224
-If there are 
-\change_unchanged
-duplicate entries 
-\change_inserted 1332494340 1434133229
-as 
-\change_unchanged
-determined by markers having the same chromosome and the same position
-\change_inserted 1332494340 1434133242
-, then Mega2 ignores
-\change_deleted 1332494340 1434133234
-;
-\change_unchanged
- all but the first marker
-\change_deleted 1332494340 1434133259
- are ignored
-\change_unchanged
-.
+Note: If there are duplicate entries as determined by markers having the
+ same chromosome and the same position, then Mega2 ignores all but the first
+ marker.
 \end_layout
 
 \begin_layout Standard
@@ -10852,14 +10561,8 @@ The second part of each line is a series of three tuples one for each sample.
  And the third value indicates the probability consisting of only the second
  allele.
  Typically, these values should sum to less than 1.0.
- The 
-\change_deleted 1332494340 1434133272
-Impute2
-\change_inserted 1332494340 1434133274
-IMPUTE2
-\change_unchanged
- program determines a confidence for these numbers which is stored in the
- 
+ The IMPUTE2 program determines a confidence for these numbers which is
+ stored in the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -10883,16 +10586,7 @@ reference "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Standard
-We copy the simple VCF file from above
-\change_inserted 1332494340 1434133329
- and
-\change_unchanged
- then show the corresponding 
-\change_deleted 1332494340 1434132591
-Impute
-\change_inserted 1332494340 1434132591
-IMPUTE2
-\change_unchanged
+We copy the simple VCF file from above and then show the corresponding IMPUTE2
  file:
 \end_layout
 
@@ -10989,14 +10683,8 @@ The file continues off of right of the page with the following header and
 \end_layout
 
 \begin_layout Standard
-Now for the 
-\change_deleted 1332494340 1434132594
-Impute
-\change_inserted 1332494340 1434132594
-IMPUTE2
-\change_unchanged
- data which captures the above model by using probabilities of either 0
- or 1.
+Now for the IMPUTE2 data which captures the above model by using probabilities
+ of either 0 or 1.
 \end_layout
 
 \begin_layout LyX-Code
@@ -11048,13 +10736,7 @@ And still more marker data.
 \end_layout
 
 \begin_layout Subsubsection
-
-\change_deleted 1332494340 1434133779
-Impute2
-\change_inserted 1332494340 1434133779
-IMPUTE2
-\change_unchanged
- Sample File
+IMPUTE2 Sample File
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Impute-Sample-File"
@@ -11065,13 +10747,7 @@ name "sub:Impute-Sample-File"
 \end_layout
 
 \begin_layout Standard
-The 
-\change_deleted 1332494340 1434132596
-Impute
-\change_inserted 1332494340 1434132596
-IMPUTE2
-\change_unchanged
- Sample file is used to list the sample names.
+The IMPUTE2 Sample file is used to list the sample names.
  In the header line, the first three columns MUST have the values: 
 \begin_inset Quotes eld
 \end_inset
@@ -11112,18 +10788,8 @@ missing
  There is a second header line where the values for each of these three
  columns is 0.
  For the subsequent lines, the column data reports two components of the
- sample name and the 
-\change_deleted 1332494340 1434133474
-probability XXX
-\change_inserted 1332494340 1434133479
-missing data proportion
-\change_unchanged
-, respectively.
+ sample name and the missing data proportion, respectively.
  Although 
-\change_deleted 1332494340 1434133516
-these
-\change_inserted 1332494340 1434133516
-
 \begin_inset Quotes eld
 \end_inset
 
@@ -11159,8 +10825,6 @@ missing
 \begin_inset Quotes erd
 \end_inset
 
-
-\change_unchanged
  are the only required fields, additional columns can be added.
  In particular, it makes sense to add the pedigree structure and phenotypes
  to this file.
@@ -11202,13 +10866,7 @@ sex
 
  to label the pedigree data and any other columns are interpreted as phenotype
  information.
- There is no order 
-\change_deleted 1332494340 1434133570
-pro
-\change_inserted 1332494340 1434133570
-pre
-\change_unchanged
-scribed for these extra columns.
+ There is no order prescribed for these extra columns.
  If any of the the 
 \begin_inset Quotes eld
 \end_inset
@@ -11247,22 +10905,9 @@ sex
 0
 \series default
 .
- The second line of the header is extended for each column
-\change_inserted 1332494340 1434133637
-, and contains codes indicating the type of variable stored in each column
-\change_unchanged
-.
- 
-\change_deleted 1332494340 1434133661
-The
-\change_inserted 1332494340 1434133662
-Mega2 maps
-\change_unchanged
- code
-\change_inserted 1332494340 1434133656
-s
-\change_unchanged
- 
+ The second line of the header is extended for each column, and contains
+ codes indicating the type of variable stored in each column.
+ Mega2 maps codes 
 \begin_inset Quotes eld
 \end_inset
 
@@ -11278,10 +10923,6 @@ D
 \begin_inset Quotes erd
 \end_inset
 
- 
-\change_deleted 1332494340 1434133670
-are mapped
-\change_unchanged
  to an Affection status phenotype, while 
 \begin_inset Quotes eld
 \end_inset
@@ -11335,13 +10976,7 @@ B
 \end_layout
 
 \begin_layout Subsubsection
-
-\change_deleted 1332494340 1434132598
-Impute
-\change_inserted 1332494340 1434132598
-IMPUTE2
-\change_unchanged
- Info File
+IMPUTE2 Info File
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Impute-Info-File"
@@ -11352,33 +10987,11 @@ name "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Standard
-The 
-\change_deleted 1332494340 1434133699
-Impute2
-\change_inserted 1332494340 1434133699
-IMPUTE2
-\change_unchanged
- program generates an additional
-\change_inserted 1332494340 1434133970
- Info
-\change_unchanged
- file 
-\change_inserted 1332494340 1434134068
-containing an info metric for each marker.
+The IMPUTE2 program generates an additional Info file containing an info
+ metric for each marker.
  This info metric can be used to filter out poorly imputed markers.
- This file 
-\change_deleted 1332494340 1434134030
-with
-\change_inserted 1332494340 1434134032
-lists the
-\change_unchanged
- markers in the same order as the 
-\change_deleted 1332494340 1434132600
-Impute
-\change_inserted 1332494340 1434132600
-IMPUTE2
-\change_unchanged
- file (See 
+ This file lists the markers in the same order as the IMPUTE2 file (See
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Impute-File"
@@ -11463,13 +11076,8 @@ position
 .
  These names are checked for to confirm the correct file is being accessed.
  In addition, the corresponding column values are checked against the correspond
-ing entry in the 
-\change_deleted 1332494340 1434132605
-Impute
-\change_inserted 1332494340 1434132605
-IMPUTE2
-\change_unchanged
- file to verify the consistency of this file with the Info File (See 
+ing entry in the IMPUTE2 file to verify the consistency of this file with
+ the Info File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Impute-File"
@@ -11501,13 +11109,7 @@ Map File (Optional)
 \end_layout
 
 \begin_layout Standard
-A Mega2 
-\change_inserted 1332494340 1434134173
-m
-\change_deleted 1332494340 1434134172
-M
-\change_unchanged
-ap File (See 
+A Mega2 map File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
@@ -11516,83 +11118,15 @@ reference "sub:Annotated-map-file"
 
 ) is not required, but may be specified.
  The maps in the map file may be used in addition to the map found in the
- 
-\change_deleted 1332494340 1434133702
-Impute2
-\change_inserted 1332494340 1434133702
-IMPUTE2
-\change_unchanged
- file (implicitly named IMPUTE.p).
- When used with a 
-\change_deleted 1332494340 1434133704
-Impute2
-\change_inserted 1332494340 1434133704
-IMPUTE2
-\change_unchanged
- file, the Mega2 
-\change_inserted 1332494340 1434134183
-m
-\change_deleted 1332494340 1434134182
-M
-\change_unchanged
-ap file may not contain a map with the name IMPUTE.p.
- Note: As is the custom with Mega2 
-\change_inserted 1332494340 1434134189
-m
-\change_deleted 1332494340 1434134187
-M
-\change_unchanged
-ap files, 
-\change_deleted 1332494340 1434134115
-this
-\change_inserted 1332494340 1434134193
-the Mega2 map
-\change_unchanged
- file can be used to prune the markers listed in the 
-\change_deleted 1332494340 1434133706
-Impute2
-\change_inserted 1332494340 1434133706
-IMPUTE2
-\change_unchanged
- file; markers not in the Mega2 
-\change_inserted 1332494340 1434134199
-m
-\change_deleted 1332494340 1434134198
-M
-\change_unchanged
-ap file will be ignored and not reported in the Mega2 output.
- Further, markers that are in the Mega2 
-\change_inserted 1332494340 1434134208
-m
-\change_deleted 1332494340 1434134203
-M
-\change_unchanged
-ap file but not in the 
-\change_deleted 1332494340 1434133708
-Impute2
-\change_inserted 1332494340 1434133708
-IMPUTE2
-\change_unchanged
- file are reported as extra and are ignored
-\change_deleted 1332494340 1434134140
-.
-
-\change_unchanged
- (There is no data for them in the 
-\change_deleted 1332494340 1434132620
-Impute
-\change_inserted 1332494340 1434132620
-IMPUTE2
-\change_unchanged
- file
-\change_deleted 1332494340 1434134143
-.
-\change_unchanged
-)
-\change_inserted 1332494340 1434134151
-.
-\change_unchanged
-
+ IMPUTE2 file (implicitly named IMPUTE.p).
+ When used with a IMPUTE2 file, the Mega2 map file may not contain a map
+ with the name IMPUTE.p.
+ Note: As is the custom with Mega2 map files, the Mega2 map file can be
+ used to prune the markers listed in the IMPUTE2 file; markers not in the
+ Mega2 map file will be ignored and not reported in the Mega2 output.
+ Further, markers that are in the Mega2 map file but not in the IMPUTE2
+ file are reported as extra and are ignored (There is no data for them in
+ the IMPUTE2 file).
 \end_layout
 
 \begin_layout Subsubsection
@@ -11600,13 +11134,7 @@ Omit File (Optional)
 \end_layout
 
 \begin_layout Standard
-A
-\change_inserted 1332494340 1434134163
- Mega2
-\change_deleted 1332494340 1434134161
-n
-\change_unchanged
- omit file may be specified.
+A Mega2 omit file may be specified.
  Please see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -12551,13 +12079,7 @@ VCF format (vcf)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_deleted 1332494340 1434134697
-Oxford/Impute2
-\change_inserted 1332494340 1434134718
-IMPUTE2
-\change_unchanged
- format (gen)
+IMPUTE2 format (gen)
 \end_layout
 
 \end_inset
@@ -13766,122 +13288,31 @@ This specifies a Mega2 map file to provide genetic position information
 \end_layout
 
 \begin_layout Subsection
-Input format: 
-\change_deleted 1332494340 1434134756
-Oxford/Impute2
-\change_inserted 1332494340 1434134749
-IMPUTE2/Oxford
-\change_unchanged
- Format files
+Input format: IMPUTE2/Oxford Format files
 \end_layout
 
 \begin_layout LyX-Code
  
-\change_deleted -1820302391 1434136525
-1) Select input file format:                         IMPUTE2/Oxford format
- (gen/impute2)
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
- 2) Input file stem:                                  impute
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
- 3) Oxford-single-chr [if required]:                  --
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
- 4) Imputation info metric threshold:                 0.3000
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
- 5) Hard call threshold:                              0.9000
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
- 6) Hard call warn fraction:                          0.9000
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
- 7) Codes for Missing value: (space separated)       
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
- 8) Allow indels (toggle):                            [ yes ]
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
- 9) IMPUTE2 file:       (IMPUTE2 .gen)     [required]_ 
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
-10) Imputed Info file:  (IMPUTE2 .gen_info)[optional] _
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
-11) Sample file:        (IMPUTE2 .sample)  [required] _ 
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
-12) Map file:           (Mega2 .map)       [optional] _ 
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
-13) Omit file:          (Mega2 .omit)      [optional] _ 
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
-14) Frequency file:     (Mega2 .freq)      [optional] _ 
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -1820302391 1434136525
-15) Penetrance file:    (Mega2 .pen)       [optional] _
-\change_inserted -1820302391 1434136546
-
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434136547
 Input menu item 1: Input file stem:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434136640
 The first item is a file stem.
- When the input file stem (stem) is specified, Mega2 will search through
- the current directory and retrieve files named stem.gen (or stem.impute2),
- stem.gen_info (or stem.impute2_info), stem.sample, stem.map, stem.omit, stem.frequenc
-y and stem.penetrance, if they exist.
+ When the input file stem (e.g., 
+\begin_inset Quotes eld
+\end_inset
+
+stem
+\begin_inset Quotes erd
+\end_inset
+
+) is specified, Mega2 will search through the current directory and retrieve
+ files named stem.gen (or stem.impute2), stem.gen_info (or stem.impute2_info),
+ stem.sample, stem.map, stem.omit, stem.frequency and stem.penetrance, if they
+ exist.
  So it is a good idea to use the default file naming schemes, as many items
  of the input menu are automatically populated once the correct stem has
  been chosen.
@@ -13891,8 +13322,8 @@ y and stem.penetrance, if they exist.
 \series bold
 info
 \series default
- file, you must explicitly clear the file name, by selecting 11 and typing
- 
+ file, you must explicitly clear the file name, by selecting menu option
+ 11 and typing 
 \begin_inset Quotes eld
 \end_inset
 
@@ -13904,14 +13335,10 @@ clear
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434137759
 IMPUTE2 Genotype and IMPUTE2 Sample datafile
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434137914
 The IMPUTE2 file indicates the corresponding IMPUTE2 Genotype file (See
  
 \begin_inset CommandInset ref
@@ -13935,15 +13362,11 @@ reference "sub:Impute-Sample-File"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434137852
-
 \series bold
 IMPUTE2 Info datafile
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434137921
 The IMPUTE2 Info file indicates the corresponding IMPUTE2 Info file (See
  
 \begin_inset CommandInset ref
@@ -13962,17 +13385,13 @@ info
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434136566
 Input menu item: Map datafile:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434137965
 This specifies a Mega2 map file to provide genetic position information
  for analysis modes.
- This is in addition to the Map information that is derived from the IMPUTE2
+ This is in addition to the map information that is derived from the IMPUTE2
  Genotype file.
  If this file is present, it is also used as a filter.
  Any marker that is in the IMPUTE2 Genotype file, but not also in this file
@@ -13982,35 +13401,25 @@ This specifies a Mega2 map file to provide genetic position information
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434137978
 The IMPUTE2 Info file as well as the Mega2 map, omit, frequency and penetrance
  files are optional.
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434136566
 Input menu item: Oxford-single-chr:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434136566
 This specifies the chromosome being analyzed.
  If every line of the Impute file explicitly specifies a chromosome, this
  field is optional
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434136566
 Input menu item: Imputation info metric threshold:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434138003
 This fraction specifies the minimum acceptable 
 \series bold
 info
@@ -14028,14 +13437,10 @@ reference "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434136566
 Input menu item: "Impute2 style" hard call threshold:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434138089
 This fraction indicates the minimum acceptable value for the probability
  of each selected genotype.
  If the 
@@ -14064,14 +13469,10 @@ best
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434136566
 Input menu item: Genotype missing fraction:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434136678
 This fraction is used to issue a report of markers that are poorly typed.
  Markers that are not 
 \begin_inset Quotes eld
@@ -14081,33 +13482,26 @@ hard called
 \begin_inset Quotes erd
 \end_inset
 
- for this fraction of the population will be displayed.
+ for this fraction of the population will be listed.
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434136581
 Input menu item: Missing trait value codes: (space separated):
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434138058
 To be most flexible and compatible with existing usage, the phenotypes in
- the IMPUTE2 Sample file may have several different values to indicate that
- a measurement is missing.
+ the IMPUTE2 Sample file may have several different missing value codes
+ to indicate that a measurement is missing.
  All the values on this line are considered to code for a missing trait.
+ This can be a string such as 'na' or 'NA'.
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434136581
 Input menu item: Allow indels (toggle):
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434136650
 If this value is 
 \begin_inset Quotes eld
 \end_inset
@@ -14121,7 +13515,7 @@ yes
 \end_inset
 
 , indels are considered valid markers and will appear in the output.
- (Beware: whether subsequent analysis can accept the allele names that will
+ (Beware whether subsequent analysis can accept the allele names that will
  appear.) If this value is 
 \begin_inset Quotes eld
 \end_inset
@@ -14135,8 +13529,6 @@ no
 \end_inset
 
 , indels are ignored from all subsequent processing.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -22261,37 +21653,21 @@ Analysis_Option
 
 \begin_layout Enumerate
 Analysis_Sub_option
-\change_inserted -1820302391 1434138792
-
 \end_layout
 
 \end_deeper
 \begin_layout Itemize
-
-\change_deleted -1820302391 1434138819
-Chromosome and marker selection items
-\change_inserted -1820302391 1434138875
 Input/Analysis Specific parameters
 \end_layout
 
 \begin_deeper
 \begin_layout Enumerate
-
-\change_inserted -1820302391 1434138870
 IMPUTE2 format
-\change_deleted -1820302391 1434138831
- 
-\change_inserted -1820302391 1434138829
-
 \end_layout
 
 \end_deeper
 \begin_layout Itemize
-
-\change_inserted -1820302391 1434138814
 Chromosome and marker selection items 
-\change_unchanged
-
 \end_layout
 
 \begin_deeper
@@ -22600,16 +21976,10 @@ VCF compressed format (vcf.gz)
 
 \begin_layout Enumerate
 VCF format (vcf)
-\change_inserted -1820302391 1434138575
-
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1820302391 1434138581
 IMPUTE2 format
-\change_unchanged
-
 \end_layout
 
 \begin_layout Enumerate
@@ -22635,13 +22005,7 @@ This item specifies the input pedigree file name.
 \emph on
 linkage, Mega2 and PLINK PED
 \emph default
- input formats
-\change_inserted -1820302391 1434140345
-,
-\change_deleted -1820302391 1434140345
- and
-\change_unchanged
- the name of the 
+ input formats, the name of the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -22652,17 +22016,12 @@ linkage, Mega2 and PLINK PED
  file for 
 \emph on
 PLINK Binary PED input
-\change_inserted -1820302391 1434140337
-
 \emph default
- and the name of the .sample
-\change_deleted -1820302391 1434140320
-.
-
-\change_inserted -1820302391 1434140363
- file for IMPUTE2 format.
-\change_unchanged
-
+, and the name of the .sample file for 
+\shape slanted
+IMPUTE2
+\shape default
+ format.
 \end_layout
 
 \begin_layout Paragraph
@@ -22846,19 +22205,9 @@ name "par:Input_Aux_File"
 
 \begin_layout Standard
 This item specifies the input auxiliary file name.
- This is an optional item available for either 
-\change_inserted -1820302391 1434140184
-PLINK BED format, 
-\change_unchanged
-VCF format input
-\change_inserted -1820302391 1434140204
-, and IMPUTE2 format input
-\change_unchanged
- 
-\change_deleted -1820302391 1434140209
-files
-\change_unchanged
-.
+ This is an optional item available for either PLINK BED format (specifying
+ the PLINK bed file), VCF format input (specifying the VCF file), and IMPUTE2
+ format input (specifying the IMPUTE2 genotype file).
  The value should be a string without white-space characters.
  
 \end_layout
@@ -24054,14 +23403,10 @@ lm_ibdtests_lr(7)
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434139343
 Input_Imputed_Info_File
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434139464
 This option indicates a corresponding IMPUTE2 Info file (See 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -24074,19 +23419,13 @@ reference "sub:Impute-Info-File"
 info
 \series default
  option (Imputed_Info_Metric_Threshold) is desired.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434139485
 Imputed_Oxford_Single_Chr 
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434139567
 This option specifies a default chromosome for markers when it is not otherwise
  specified in the IMPUTE2 Genotype file (See 
 \begin_inset CommandInset ref
@@ -24099,14 +23438,10 @@ reference "sub:Impute-File"
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434139591
 Imputed_Info_Metric_Threshold
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434139814
 This option is a fraction that specifies the minimum acceptable 
 \series bold
 info
@@ -24123,14 +23458,10 @@ reference "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434139604
 Imputed_Hard_Call_Threshold
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434139832
 This option is a fraction that indicates the minimum acceptable value for
  the probability of each selected genotype.
  If the 
@@ -24159,14 +23490,10 @@ best
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434139618
 Imputed_Genotype_Missing_Fraction
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434140080
 This item is a fraction that is used to issue a report of markers that are
  poorly typed.
  Markers that are not 
@@ -24181,28 +23508,20 @@ hard called
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434139627
 Imputed_Missing_Codes
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434139968
 All the values in the line are considered to code for a missing trait; values
  are separated by space and do not have to be numeric, viz.
  na and NA are valid.
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1434139636
 Imputed_Allow_Indels
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434140030
 If this option is 
 \begin_inset Quotes eld
 \end_inset
@@ -33481,13 +32800,9 @@ March 31, 2008
 
 \begin_layout Subsection
 Changes from Version 4.7.1 to Version 4.8.0 (Released June 12, 2015)
-\change_inserted -1820302391 1434048105
-
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted 1332494340 1434134926
 Mega2 now supports reading imputed data in IMPUTE2 (Oxford) format (genotype/sam
 ple).
 \end_layout
@@ -33501,12 +32816,8 @@ The Mega2 log file now contains essentially what is displayed on the screen
 
 \begin_layout Itemize
 Several issues effecting the performance processing VCF files have been
- fixed: in on
-\change_deleted 1332494340 1434134992
-c
-\change_unchanged
-e case, using to a hash lookup vs n**2 search and in another moving an expensive
- constant calculation out of a loop.
+ fixed: in one case, using to a hash lookup vs n**2 search and in another
+ moving an expensive constant calculation out of a loop.
 \end_layout
 
 \begin_layout Itemize
@@ -33515,8 +32826,6 @@ Bug: A problem with finding the marker name when it is appears in the VCF
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted 1332494340 1434135057
 Bug: PLINK Binary file generation in 
 \begin_inset Quotes eld
 \end_inset
@@ -33526,19 +32835,13 @@ individual major
 \end_inset
 
  order had been wrong and is now fixed.
- 
-\change_unchanged
-Note: the common SNP major order did not have this problem.
+ Note: the common SNP major order did not have this problem.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted 1332494340 1434135044
 Bug: S.A.G.E.
  Analysis and Mega2 Analysis modes did not correctly carry through non-numeric
- alleles to their output files
-\change_unchanged
-; they always recoded the allele name to numbers.
+ alleles to their output files; they always recoded the allele name to numbers.
 \end_layout
 
 \begin_layout Itemize
