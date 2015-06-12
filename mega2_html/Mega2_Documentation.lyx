@@ -85,6 +85,7 @@
 \html_css_as_file 0
 \html_be_strict false
 \author -1820302391 "Robert V. Baron" 
+\author 1332494340 "Daniel E. Weeks" 
 \end_header
 
 \begin_body
@@ -230,12 +231,6 @@ Robert V.
 Previous Programmers:
 \emph on
  
-\change_deleted -1820302391 1434128628
-Charles P.
- Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P.
- Mulvihill.
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -246,8 +241,6 @@ Charles P.
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1434128615
 
 \emph on
 Charles P.
@@ -360,31 +353,33 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Standard
+
+\change_inserted 1332494340 1434135485
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Introduction
 \end_layout
 
 \begin_layout Standard
-During an association or linkage  analysis project, one may need to analyze
- the data with several different programs.
+During an association or linkage
+\change_deleted 1332494340 1434135515
+ 
+\change_unchanged
+ analysis project, one may need to analyze the data with several different
+ programs.
  Unfortunately, it can often be quite difficult to get one's data in the
  proper format desired by each different computer program.
  Not only must the data be converted to the proper format, but also the
  loci must be reordered into their proper order.
  Writing custom reformatting scripts can be error-prone and very time-consuming.
- To address 
-\change_inserted -1820302391 1434128478
-
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Impute-Info-File-1"
-
-\end_inset
-
-
-\change_unchanged
-these problems, we created Mega2, which can be obtained following the instructio
-ns in Section 
+ To address these problems, we created Mega2, which can be obtained following
+ the instructions in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Installation"
@@ -585,6 +580,8 @@ reference "sub:MEGA2run.html-and-related"
 
 \begin_layout Subsection
 Graphical overview of Mega2
+\change_inserted 1332494340 1434135711
+ (from 2013)
 \end_layout
 
 \begin_layout Standard
@@ -655,6 +652,10 @@ Mega2 supports the following input file formats:
 
 \begin_layout Enumerate
 Mega2 format (See 
+\change_inserted 1332494340 1434135779
+Section 
+\change_unchanged
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-file-formats"
@@ -666,6 +667,10 @@ reference "sub:Annotated-file-formats"
 
 \begin_layout Enumerate
 LINKAGE format (See 
+\change_inserted 1332494340 1434135787
+Section 
+\change_unchanged
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Linkage-file-formats"
@@ -677,6 +682,10 @@ reference "sub:Linkage-file-formats"
 
 \begin_layout Enumerate
 PLINK format (See 
+\change_inserted 1332494340 1434135790
+Section 
+\change_unchanged
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:PLINK-file-formats"
@@ -687,7 +696,11 @@ reference "sub:PLINK-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-Variant Call Format (VCF, BCF, compressed VCF) (See 
+Variant Call Format (VCF, BCF, compressed VCF) (See
+\change_inserted 1332494340 1434135795
+ Section
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:VCF-file-formats"
@@ -695,14 +708,20 @@ reference "sub:VCF-file-formats"
 \end_inset
 
 )
-\change_inserted -1820302391 1434051428
-
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1434128819
-Impute2 Format (See 
+\change_deleted 1332494340 1434133773
+Impute2
+\change_inserted 1332494340 1434133773
+IMPUTE2
+\change_unchanged
+ Format (See
+\change_inserted 1332494340 1434135800
+ Section
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:impute2-file-format"
@@ -710,8 +729,6 @@ reference "sub:impute2-file-format"
 \end_inset
 
 )
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsubsection
@@ -959,33 +976,71 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
-Enhancements in Mega2 version 4.
-\change_inserted -1820302391 1433535839
-8.0
-\change_deleted -1820302391 1433535836
-7.1
-\change_inserted -1820302391 1434051280
+Enhancements in Mega2 version 4.8.0
+\end_layout
 
+\begin_layout Itemize
+Mega2 now supports
+\change_inserted 1332494340 1434131870
+ reading imputed data in
+\change_unchanged
+ 
+\change_deleted 1332494340 1434131794
+Impute2
+\change_inserted 1332494340 1434131795
+IMPUTE2
+\change_unchanged
+ (
+\change_deleted 1332494340 1434131738
+/
+\change_unchanged
+Oxford) 
+\change_deleted 1332494340 1434131880
+style input files that indicate the probability for each genotype
+\change_inserted 1332494340 1434131983
+format (genotype/sample)
+\change_unchanged
+.
+\end_layout
+
+\begin_layout Itemize
+Several issues 
+\change_inserted 1332494340 1434131915
+a
+\change_deleted 1332494340 1434131914
+e
+\change_unchanged
+ffecting the performance processing VCF files have been fixed.
+
+\change_inserted 1332494340 1434135283
+ Reading in VCF format data is now much faster than it was previously.
 \end_layout
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1434051282
-Mega2 now supports Impute2 (/Oxford) style input files that indicate the
- probability for each genotype.
+\change_inserted 1332494340 1434135284
+The Mega2 log file now contains essentially what is displayed on the screen
+ during program execution.
+ The voluminous, complete listing of errors and warnings is now only in
+ the Mega2 ERR(or) log file.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1434051362
-Several issues effecting the performance processing VCF files have been
- fixed.
-\end_layout
-
-\begin_layout Itemize
-
-\change_inserted -1820302391 1434051282
-Bug: Plink Binary file generation for 
+Bug: 
+\change_deleted 1332494340 1434132131
+Plink
+\change_inserted 1332494340 1434132131
+PLINK
+\change_unchanged
+ Binary file generation 
+\change_deleted 1332494340 1434132174
+for
+\change_inserted 1332494340 1434132174
+in
+\change_unchanged
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -993,22 +1048,48 @@ individual major
 \begin_inset Quotes erd
 \end_inset
 
- order has been wrong for a long time and now is fixed.
+ order ha
+\change_inserted 1332494340 1434132146
+d
+\change_deleted 1332494340 1434132145
+s
+\change_unchanged
+ been wrong 
+\change_deleted 1332494340 1434132184
+for a long time
+\change_unchanged
+ and 
+\change_deleted 1332494340 1434132170
+now is 
+\change_inserted 1332494340 1434132171
+is now 
+\change_unchanged
+fixed.
+
+\change_inserted 1332494340 1434135150
+ Note: the common SNP major order did not have this problem.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
+Bug: 
+\change_deleted 1332494340 1434132191
+Sage
+\change_inserted 1332494340 1434132194
+S.A.G.E.
 
-\change_inserted -1820302391 1434051412
-Bug: Sage Analysis and Mega2 Analysis modes did not correctly carry through
- non-numeric alleles.
+\change_unchanged
+ Analysis and Mega2 Analysis modes did not correctly carry through non-numeric
+ alleles
+\change_inserted 1332494340 1434132219
+ to their output files
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1433535833
 Enhancements in Mega2 version 4.7.1
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
@@ -1019,116 +1100,6 @@ Mega2 now gives you complete control to specify missing values for quantitative
 
 \begin_layout Itemize
 Mega2's performance is almost twice as fast as Version 4.7.0
-\end_layout
-
-\begin_layout Subsection
-Enhancements in Mega2 version 4.7.0
-\end_layout
-
-\begin_layout Itemize
-Mega2 now passes non-numeric alleles through (without recoding them to numeric
- alleles) to analysis programs that will accept non-numeric alleles (section
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "par:Using-non-numeric-allele"
-
-\end_inset
-
-).
- This simplifies analyses, as it avoids relabelling alleles, making it easier
- to interpret the resulting output.
- Conversion to numeric alleles can still be requested if desired (section
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "force_numeric_alleles_cmd_line"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Itemize
-Bug Fix: A number of problems with Beagle Analysis have been addressed.
-\end_layout
-
-\begin_layout Itemize
-Bug Fix: Resolved an issue specifying PLINK mode interactively.
-\end_layout
-
-\begin_layout Itemize
-Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.
-\end_layout
-
-\begin_layout Subsection
-Enhancements in Mega2 version 4.6.2
-\end_layout
-
-\begin_layout Itemize
-Mega2 can now read VCF, BCF, and compressed VCF input files, while applying
- optional 'VCFtools' filters (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:VCF-file-formats"
-
-\end_inset
-
-).
- 
-\end_layout
-
-\begin_layout Itemize
-Initial interactive menus have been modified to improve the specification
- of different input file types (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:The-input-menu"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Subsection
-Enhancements in Mega2 version 4.6.1
-\end_layout
-
-\begin_layout Itemize
-Mega2 can now produce PLINK/SEQ format files and a script for loading these
- files into a PLINK/SEQ project (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Detailed-info-PSEQ"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Itemize
-Bug fix: Mega2 4.6.0 had broken support for Linkage format input when using
- a 
-\begin_inset Quotes eld
-\end_inset
-
-Names file
-\begin_inset Quotes erd
-\end_inset
-
- (See section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Names-file"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Itemize
-Added binaries for native Microsoft Windows 8 and MinGW built on Microsoft
- Windows 8.
 \end_layout
 
 \begin_layout Standard
@@ -1473,13 +1444,7 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1433535853
-4.7.1
-\change_inserted -1820302391 1433535853
-4.8.0
-\change_unchanged
- input menu:
+              Mega2 4.8.0 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1758,24 +1723,18 @@ Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 
-\change_deleted -1820302391 1433535856
-4.7.1
-\change_inserted -1820302391 1433535856
-4.8.0
-\change_unchanged
- should be: 
+ For example, the web site citation for version 4.8.0 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2013) Mega2 (Version 
-\change_deleted -1820302391 1433535857
-4.7.1
-\change_inserted -1820302391 1433535857
-4.8.0
+ Weeks DE (201
+\change_inserted 1332494340 1434132263
+5
+\change_deleted 1332494340 1434132259
+3
 \change_unchanged
-).
+) Mega2 (Version 4.8.0).
  
 \begin_inset Flex URL
 status collapsed
@@ -2032,13 +1991,7 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 
-\change_deleted -1820302391 1433535872
-4.7.1
-\change_inserted -1820302391 1433535872
-4.8.0
-\change_unchanged
- 
+The latest version is 4.8.0 
 \end_layout
 
 \begin_layout Enumerate
@@ -2047,13 +2000,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1433535874
-4.7.1
-\change_inserted -1820302391 1433535874
-4.8.0
-\change_unchanged
-_src.tar.gz
+mega2_v4.8.0_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -2064,13 +2011,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v
-\change_deleted -1820302391 1433535874
-4.7.1
-\change_inserted -1820302391 1433535874
-4.8.0
-\change_unchanged
-_src.tar.gz 
+gunzip mega2_v4.8.0_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -2080,13 +2021,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v
-\change_deleted -1820302391 1433535875
-4.7.1
-\change_inserted -1820302391 1433535875
-4.8.0
-\change_unchanged
-_src.tar 
+tar xvf mega2_v4.8.0_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -2094,13 +2029,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v
-\change_deleted -1820302391 1433535876
-4.7.1
-\change_inserted -1820302391 1433535876
-4.8.0
-\change_unchanged
-_src.tar.gz 
+tar xzvf mega2_v4.8.0_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -2113,13 +2042,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v
-\change_deleted -1820302391 1433535877
-4.7.1
-\change_inserted -1820302391 1433535877
-4.8.0
-\change_unchanged
-_src
+mega2_v4.8.0_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2299,27 +2222,16 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v
-\change_deleted -1820302391 1433535878
-4.7.1
-\change_inserted -1820302391 1433535878
-4.8.0
-\change_unchanged
-_src.tar.gz bundle following the download section (
+If you downloaded and unpacked the mega2_v4.8.0_src.tar.gz bundle following
+ the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v
-\change_deleted -1820302391 1433535880
-4.7.1
-\change_inserted -1820302391 1433535880
-4.8.0
-\change_unchanged
-_src containing the following directories (in bold) or files listed in alphabeti
-cal order:
+), you should see a directory named mega2_v4.8.0_src containing the following
+ directories (in bold) or files listed in alphabetical order:
 \end_layout
 
 \begin_layout Quotation
@@ -2847,13 +2759,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v
-\change_deleted -1820302391 1433535883
-4.7.1
-\change_inserted -1820302391 1433535883
-4.8.0
-\change_unchanged
-_src in above step), type the command:
+ mega2_v4.8.0_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2904,16 +2810,10 @@ name "sub:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v
-\change_deleted -1820302391 1433535885
-4.7.1
-\change_inserted -1820302391 1433535885
-4.8.0
-\change_unchanged
-_src.tar.gz package also includes a source code folder "srcdir" containing
- C source files, a Makefile, and several OS-specific Makedefs files that
- define compilation flags that govern locations of standard C libraries,
- and other OS-specific behavior.
+The mega2_v4.8.0_src.tar.gz package also includes a source code folder "srcdir"
+ containing C source files, a Makefile, and several OS-specific Makedefs
+ files that define compilation flags that govern locations of standard C
+ libraries, and other OS-specific behavior.
 \end_layout
 
 \begin_layout Standard
@@ -2925,13 +2825,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v
-\change_deleted -1820302391 1433535886
-4.7.1
-\change_inserted -1820302391 1433535886
-4.8.0
-\change_unchanged
-_src folder, type 
+From within the mega2_v4.8.0_src folder, type 
 \end_layout
 
 \begin_deeper
@@ -3212,13 +3106,8 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v
-\change_deleted -1820302391 1433535889
-4.7.1
-\change_inserted -1820302391 1433535889
-4.8.0
-\change_unchanged
-_src folder contains documentation for mega2.
+The sub-folder called mega2_html/ within the mega2_v4.8.0_src folder contains
+ documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
 
@@ -3870,13 +3759,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v
-\change_deleted -1820302391 1433535890
-4.7.1
-\change_inserted -1820302391 1433535890
-4.8.0
-\change_unchanged
-_src.tar.gz.
+The Mega2 distribution package is named mega2_v4.8.0_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -3887,13 +3770,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1433535891
-4.7.1
-\change_inserted -1820302391 1433535891
-4.8.0
-\change_unchanged
-_src.tar
+mega2_v4.8.0_src.tar
 \end_layout
 
 \end_deeper
@@ -3915,13 +3792,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1433535891
-4.7.1
-\change_inserted -1820302391 1433535891
-4.8.0
-\change_unchanged
-_src.tar.tar
+mega2_v4.8.0_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -3929,13 +3800,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1433535892
-4.7.1
-\change_inserted -1820302391 1433535892
-4.8.0
-\change_unchanged
-_src.tar.gz
+mega2_v4.8.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -3943,19 +3808,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v
-\change_deleted -1820302391 1433535892
-4.7.1
-\change_inserted -1820302391 1433535892
-4.8.0
-\change_unchanged
-_src.tar.tar mega2_v
-\change_deleted -1820302391 1433535894
-4.7.1
-\change_inserted -1820302391 1433535894
-4.8.0
-\change_unchanged
-_src.tar.gz
+mv mega2_v4.8.0_src.tar.tar mega2_v4.8.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4399,8 +4252,12 @@ VCF format
 \end_deeper
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1434128999
-Impute Format (See 
+\change_deleted 1332494340 1434132440
+Impute
+\change_inserted 1332494340 1434132444
+IMPUTE2
+\change_unchanged
+ Format (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:impute2-file-format"
@@ -4408,8 +4265,6 @@ reference "sub:impute2-file-format"
 \end_inset
 
 )
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -10598,20 +10453,22 @@ reference "sub:Annotated-penetrance-file"
 \end_inset
 
 .
-\change_inserted -1820302391 1434051933
-
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1434052723
 \begin_inset CommandInset label
 LatexCommand label
 name "inp:impute2"
 
 \end_inset
 
-Impute2/Oxford input file format
+
+\change_deleted 1332494340 1434132472
+Impute2
+\change_inserted 1332494340 1434132482
+IMPUTE2
+\change_unchanged
+/Oxford input file format
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:impute2-file-format"
@@ -10623,9 +10480,19 @@ name "sub:impute2-file-format"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434128065
-Impute Format was designed to store information about the probability of
- imputed markers added to a smaller collection of markers.
+\change_deleted 1332494340 1434132486
+Impute
+\change_inserted 1332494340 1434132489
+IMPUTE2
+\change_unchanged
+ 
+\change_inserted 1332494340 1434132497
+f
+\change_deleted 1332494340 1434132496
+F
+\change_unchanged
+ormat was designed to store information about the probability of imputed
+ markers added to a smaller collection of markers.
  (See: 
 \begin_inset CommandInset href
 LatexCommand href
@@ -10635,17 +10502,23 @@ target "http://en.wikipedia.org/wiki/imputation_(genetics)"
 \end_inset
 
 ).
- A typical program to manipulate/generate imputation data is Impute2 (
+ A typical program to 
+\change_deleted 1332494340 1434132528
+manipulate/
+\change_unchanged
+generate imputation data is 
+\change_deleted 1332494340 1434132511
+Impute2
+\change_inserted 1332494340 1434132514
+IMPUTE2
+\change_unchanged
+ (
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1434128333
-
 https://mathgen.stats.ox.ac.uk/impute/impute_v2.html
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -10657,11 +10530,7 @@ status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1434128053
-
 https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#best_practices
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -10672,11 +10541,7 @@ status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1434128107
-
 http://genome.sph.umich.edu/wiki/IMPUTE2:_1000_Genomes_Imputation_Cookbook
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -10685,39 +10550,118 @@ http://genome.sph.umich.edu/wiki/IMPUTE2:_1000_Genomes_Imputation_Cookbook
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434126903
-When using Impute format input files, one needs to provide several files,
- which are described below.
- At a minimum, two files are required: 1) the Impute File containing the
- marker and their genotypes, and 2) the Impute Sample File containing the
- sample id information.
+When using 
+\change_deleted 1332494340 1434132574
+Impute
+\change_inserted 1332494340 1434132574
+IMPUTE2
+\change_unchanged
+ format input files, one needs to provide several files, which are described
+ below.
+ At a minimum, two files are required: 1) the 
+\change_deleted 1332494340 1434132654
+Impute
+\change_inserted 1332494340 1434132663
+IMPUTE2 Genotype
+\change_unchanged
+ File containing the marker
+\change_inserted 1332494340 1434132674
+s
+\change_unchanged
+ and their 
+\change_inserted 1332494340 1434132682
+imputed 
+\change_unchanged
+genotype
+\change_inserted 1332494340 1434132832
+ probabilities
+\change_deleted 1332494340 1434132827
+s
+\change_unchanged
+, and 2) the 
+\change_deleted 1332494340 1434132580
+Impute
+\change_inserted 1332494340 1434132580
+IMPUTE2
+\change_unchanged
+ Sample File containing the sample 
+\change_deleted 1332494340 1434132693
+id
+\change_inserted 1332494340 1434132693
+ID
+\change_unchanged
+ information.
  The latter file can be extended to contain family structure information
  and phenotypes; both are commonly needed by Mega2.
- Optional files include a special Imputed Info File, a map file, an omit
- file, an allele frequency file, and a penetrance file.
- More information on the Impute file formats can be found in 
+ Optional files include a special 
+\change_deleted 1332494340 1434132716
+Imputed
+\change_inserted 1332494340 1434132718
+IMPUTE2
+\change_unchanged
+ Info File, a map file, an omit file, an allele frequency file, and a penetrance
+ file.
+ More information on the 
+\change_deleted 1332494340 1434132583
+Impute
+\change_inserted 1332494340 1434132583
+IMPUTE2
+\change_unchanged
+ file formats can be found in 
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1434128016
-
 http://www.stats.ox.ac.uk/~marchini/software/gwas/file_format.html
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
 .
+\change_inserted 1332494340 1434134311
+
 \end_layout
 
 \begin_layout Subsubsection
 
-\change_inserted -1820302391 1434053418
-Impute File
+\change_inserted 1332494340 1434134349
+IMPUTE2 standard file extensions
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 1332494340 1434134586
+When attempting to fill in IMPUTE2 file names based on a provided file name
+ stem, Mega2 expects the following extensions:
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted 1332494340 1434134645
+IMPUTE2 genotype file: .gen or .impute2
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted 1332494340 1434134647
+IMPUTE2 info file: .gen_info or .impute2_info
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted 1332494340 1434134589
+IMPUTE2 sample file: .sample
+\end_layout
+
+\begin_layout Subsubsection
+
+\change_deleted 1332494340 1434132585
+Impute
+\change_inserted 1332494340 1434132585
+IMPUTE2
+\change_unchanged
+ File
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Impute-File"
@@ -10728,11 +10672,36 @@ name "sub:Impute-File"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434129254
-The each line of the Impute File conceptually has two parts: the first describes
- the marker and the second lists the genotypes for all the samples.
- The samples are listed here in the same order as they appear in the Impute
+The each line of the 
+\change_deleted 1332494340 1434132586
+Impute
+\change_inserted 1332494340 1434132586
+IMPUTE2
+\change_unchanged
+ 
+\change_inserted 1332494340 1434134286
+genotype f
+\change_deleted 1332494340 1434134284
+F
+\change_unchanged
+ile conceptually has two parts: the first describes the marker and the second
+ lists the 
+\change_inserted 1332494340 1434132851
+imputed 
+\change_unchanged
+genotype
+\change_inserted 1332494340 1434132860
+ probabilities
+\change_deleted 1332494340 1434132854
+s
+\change_unchanged
+ for all the samples.
+ The samples are listed here in the same order as they appear in the 
+\change_deleted 1332494340 1434132588
+Impute
+\change_inserted 1332494340 1434132588
+IMPUTE2
+\change_unchanged
  Info File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10745,9 +10714,13 @@ reference "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434129365
-The first part consist of 5 columns.
+The 
+\change_deleted 1332494340 1434133060
+first part consist of 5
+\change_inserted 1332494340 1434133067
+marker information is stored in the first five
+\change_unchanged
+ columns.
  The first column is typically 
 \begin_inset Quotes eld
 \end_inset
@@ -10760,11 +10733,31 @@ The first part consist of 5 columns.
 \begin_inset Quotes erd
 \end_inset
 
-, but can occasionally contain the chromosome.
+, but can occasionally contain the chromosome
+\change_inserted 1332494340 1434133078
+ number
+\change_unchanged
+.
  The second column is the marker name.
- This can be a RS_ID.
+ This can be a
+\change_inserted 1332494340 1434133086
+n
+\change_unchanged
+ RS
+\change_inserted 1332494340 1434133100
+ 
+\change_deleted 1332494340 1434133100
+_
+\change_unchanged
+ID.
  Sometimes this name is not available.
- Then the second column usually is fields separated by the 
+ Then the second column usually 
+\change_deleted 1332494340 1434133123
+is
+\change_inserted 1332494340 1434133124
+contains
+\change_unchanged
+ fields separated by the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -10786,8 +10779,13 @@ The first part consist of 5 columns.
  (Of course, sometimes all 4 subfields are not there; only the first two
  appear.
  And we have also occasionally seen a fifth subfield.) Again it is best to
- ignore this column unless it is an RS_ID name or it starts with the chromosome
- number.
+ ignore this column unless it is an RS
+\change_deleted 1332494340 1434133168
+_
+\change_inserted 1332494340 1434133168
+ 
+\change_unchanged
+ID name or it starts with the chromosome number.
  The third column is the base pair position of the marker.
  The fourth column is the first allele name.
  Finally, the fifth column is the second allele name.
@@ -10798,52 +10796,55 @@ The first part consist of 5 columns.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434126624
 Some examples follow; the ellipses start the genotype probabilities part
  of the line:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434124330
 --- rs188162445:1499924:T:C 1499924 T C        ...
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434124327
 --- 20:1499962:T:C 1499962 T C                 ...
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434124325
 --- 20:1499962 1499962 T G                     ...
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434124323
 20  rs7261002 1002656 G A                      ...
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434124316
 --- rs35306660:1020991:GTAAA:G 1020991 GTAAA G ...
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434126669
-Note: There can be duplicate entries determined by markers having the same
- chromosome and the same position; all but the first marker are ignored.
+Note: 
+\change_deleted 1332494340 1434133222
+There can be 
+\change_inserted 1332494340 1434133224
+If there are 
+\change_unchanged
+duplicate entries 
+\change_inserted 1332494340 1434133229
+as 
+\change_unchanged
+determined by markers having the same chromosome and the same position
+\change_inserted 1332494340 1434133242
+, then Mega2 ignores
+\change_deleted 1332494340 1434133234
+;
+\change_unchanged
+ all but the first marker
+\change_deleted 1332494340 1434133259
+ are ignored
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434125265
 The second part of each line is a series of three tuples one for each sample.
  The first value indicates the probability of genotype consisting of only
  the first allele.
@@ -10851,8 +10852,14 @@ The second part of each line is a series of three tuples one for each sample.
  And the third value indicates the probability consisting of only the second
  allele.
  Typically, these values should sum to less than 1.0.
- The Impute2 program determines a confidence for these numbers which is
- stored in the 
+ The 
+\change_deleted 1332494340 1434133272
+Impute2
+\change_inserted 1332494340 1434133274
+IMPUTE2
+\change_unchanged
+ program determines a confidence for these numbers which is stored in the
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -10876,21 +10883,24 @@ reference "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434127026
-We copy the simple VCF file from above then show the corresponding Impute
+We copy the simple VCF file from above
+\change_inserted 1332494340 1434133329
+ and
+\change_unchanged
+ then show the corresponding 
+\change_deleted 1332494340 1434132591
+Impute
+\change_inserted 1332494340 1434132591
+IMPUTE2
+\change_unchanged
  file:
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1434124625
-
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 
 \size footnotesize
 ##fileformat=VCFv4.0
@@ -10898,15 +10908,11 @@ We copy the simple VCF file from above then show the corresponding Impute
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-
 \size footnotesize
 ##fileDate=20131205
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 
 \size footnotesize
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
@@ -10914,15 +10920,11 @@ We copy the simple VCF file from above then show the corresponding Impute
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-
 \size footnotesize
 ##FILTER=<ID=PASS,Description="Passed variant FILTERs">
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 
 \size footnotesize
 #CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT 
@@ -10930,8 +10932,6 @@ We copy the simple VCF file from above then show the corresponding Impute
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 
 \size footnotesize
 5       2       M1      A       T       .
@@ -10941,8 +10941,6 @@ We copy the simple VCF file from above then show the corresponding Impute
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-
 \size footnotesize
 5       4       M3      G       C       .
        PASS    .
@@ -10951,8 +10949,6 @@ We copy the simple VCF file from above then show the corresponding Impute
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-
 \size footnotesize
 5       6       M2      T       A       .
        PASS    .
@@ -10960,15 +10956,11 @@ We copy the simple VCF file from above then show the corresponding Impute
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434052725
 The file continues off of right of the page with the following header and
  marker data.
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 
 \size footnotesize
 1_8     1_9     1_10    1_11    2_3     2_4     2_5     2_6     2_7    
@@ -10977,8 +10969,6 @@ The file continues off of right of the page with the following header and
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-
 \size footnotesize
 1/1     1/1     1/1     1/1     0/0     0/0     0/0     1/1     0/0    
  0/1     0/0     0/0
@@ -10986,16 +10976,12 @@ The file continues off of right of the page with the following header and
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-
 \size footnotesize
 0/0     0/0     0/0     0/1     0/1     0/1     0/1     0/1     0/1    
  0/1     0/1     0/1
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434125166
 
 \size footnotesize
 0/0     0/0     0/0     0/1     0/1     0/1     0/1     0/1     0/1    
@@ -11003,88 +10989,72 @@ The file continues off of right of the page with the following header and
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434125220
-Now for the Impute data which captures the above model by using probabilities
- of either 0 or 1.
+Now for the 
+\change_deleted 1332494340 1434132594
+Impute
+\change_inserted 1332494340 1434132594
+IMPUTE2
+\change_unchanged
+ data which captures the above model by using probabilities of either 0
+ or 1.
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1434124772
-
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434125155
 5	M1:A:T:2	2	A	T	0 1 0	0 1 0	0 0 1	0 1 0	0 0 1	0 0 1
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434125151
 5	M3:G:C:4	4	G	C	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0	0 1 0
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434125146
 5	M2:T:A:6	6	T	A	1 0 0	0 0 1	0 1 0	0 1 0	0 1 0	1 0 0
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434129447
 The line continues off of right of the page with the following marker data.
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434124985
 0 0 1	0 0 1	0 0 1	0 0 1	0 0 1	0 1 0	1 0 0	1 0 0	1 0 0
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434125000
 0 1 0	1 0 0	1 0 0	1 0 0	0 1 0	1 0 0	0 0 1	0 1 0	0 1 0
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434125050
 0 1 0	1 0 0	1 0 0	1 0 0	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434125082
 And still more marker data.
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434125093
 1 0 0	0 0 1	1 0 0	0 1 0	1 0 0	1 0 0
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434125100
 0 1 0	0 1 0	0 1 0	0 1 0	0 1 0	0 1 0
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434125104
 0 1 0	0 1 0	0 1 0	0 1 0	0 1 0	0 1 0 
 \end_layout
 
 \begin_layout Subsubsection
 
-\change_inserted -1820302391 1434053353
-Impute2 Sample File
+\change_deleted 1332494340 1434133779
+Impute2
+\change_inserted 1332494340 1434133779
+IMPUTE2
+\change_unchanged
+ Sample File
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Impute-Sample-File"
@@ -11095,9 +11065,13 @@ name "sub:Impute-Sample-File"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434127825
-The Impute Sample file is used to list the sample names.
+The 
+\change_deleted 1332494340 1434132596
+Impute
+\change_inserted 1332494340 1434132596
+IMPUTE2
+\change_unchanged
+ Sample file is used to list the sample names.
  In the header line, the first three columns MUST have the values: 
 \begin_inset Quotes eld
 \end_inset
@@ -11138,9 +11112,56 @@ missing
  There is a second header line where the values for each of these three
  columns is 0.
  For the subsequent lines, the column data reports two components of the
- sample name and the probability XXX, respectively.
- Although these are the only required fields, additional columns can be
- added.
+ sample name and the 
+\change_deleted 1332494340 1434133474
+probability XXX
+\change_inserted 1332494340 1434133479
+missing data proportion
+\change_unchanged
+, respectively.
+ Although 
+\change_deleted 1332494340 1434133516
+these
+\change_inserted 1332494340 1434133516
+
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+ID_1
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+ID_2
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+, and 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+missing
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+
+\change_unchanged
+ are the only required fields, additional columns can be added.
  In particular, it makes sense to add the pedigree structure and phenotypes
  to this file.
  Our convention is to use the columns 
@@ -11181,7 +11202,13 @@ sex
 
  to label the pedigree data and any other columns are interpreted as phenotype
  information.
- There is no order proscribed for these extra columns.
+ There is no order 
+\change_deleted 1332494340 1434133570
+pro
+\change_inserted 1332494340 1434133570
+pre
+\change_unchanged
+scribed for these extra columns.
  If any of the the 
 \begin_inset Quotes eld
 \end_inset
@@ -11220,8 +11247,22 @@ sex
 0
 \series default
 .
- The second line of the header is extended for each column.
- The code 
+ The second line of the header is extended for each column
+\change_inserted 1332494340 1434133637
+, and contains codes indicating the type of variable stored in each column
+\change_unchanged
+.
+ 
+\change_deleted 1332494340 1434133661
+The
+\change_inserted 1332494340 1434133662
+Mega2 maps
+\change_unchanged
+ code
+\change_inserted 1332494340 1434133656
+s
+\change_unchanged
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -11237,7 +11278,11 @@ D
 \begin_inset Quotes erd
 \end_inset
 
- are mapped to an Affection status phenotype, while 
+ 
+\change_deleted 1332494340 1434133670
+are mapped
+\change_unchanged
+ to an Affection status phenotype, while 
 \begin_inset Quotes eld
 \end_inset
 
@@ -11291,8 +11336,12 @@ B
 
 \begin_layout Subsubsection
 
-\change_inserted -1820302391 1434053533
-Impute Info File
+\change_deleted 1332494340 1434132598
+Impute
+\change_inserted 1332494340 1434132598
+IMPUTE2
+\change_unchanged
+ Info File
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Impute-Info-File"
@@ -11303,10 +11352,33 @@ name "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434129767
-The Impute2 program generates an additional file with markers in the same
- order as the Impute file (See 
+The 
+\change_deleted 1332494340 1434133699
+Impute2
+\change_inserted 1332494340 1434133699
+IMPUTE2
+\change_unchanged
+ program generates an additional
+\change_inserted 1332494340 1434133970
+ Info
+\change_unchanged
+ file 
+\change_inserted 1332494340 1434134068
+containing an info metric for each marker.
+ This info metric can be used to filter out poorly imputed markers.
+ This file 
+\change_deleted 1332494340 1434134030
+with
+\change_inserted 1332494340 1434134032
+lists the
+\change_unchanged
+ markers in the same order as the 
+\change_deleted 1332494340 1434132600
+Impute
+\change_inserted 1332494340 1434132600
+IMPUTE2
+\change_unchanged
+ file (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Impute-File"
@@ -11346,11 +11418,7 @@ status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1434128174
-
 https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#info_metric_details
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -11395,8 +11463,13 @@ position
 .
  These names are checked for to confirm the correct file is being accessed.
  In addition, the corresponding column values are checked against the correspond
-ing entry in the Impute file to verify the consistency of this file with
- the Info File (See 
+ing entry in the 
+\change_deleted 1332494340 1434132605
+Impute
+\change_inserted 1332494340 1434132605
+IMPUTE2
+\change_unchanged
+ file to verify the consistency of this file with the Info File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Impute-File"
@@ -11408,8 +11481,6 @@ reference "sub:Impute-File"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434054195
 If this file is not available as an input, the filtering based on the 
 \begin_inset Quotes eld
 \end_inset
@@ -11426,15 +11497,17 @@ info
 \end_layout
 
 \begin_layout Subsubsection
-
-\change_inserted -1820302391 1434052725
 Map File (Optional)
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434129807
-A Mega2 Map File (See 
+A Mega2 
+\change_inserted 1332494340 1434134173
+m
+\change_deleted 1332494340 1434134172
+M
+\change_unchanged
+ap File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Annotated-map-file"
@@ -11443,27 +11516,97 @@ reference "sub:Annotated-map-file"
 
 ) is not required, but may be specified.
  The maps in the map file may be used in addition to the map found in the
- Impute2 file (implicitly named IMPUTE.p).
- When used with a Impute2 file, the Mega2 Map file may not contain a map
- with the name IMPUTE.p.
- Note: As is the custom with Mega2 Map files, this file can be used to prune
- the markers listed in the Impute2 file; markers not in the Mega2 Map file
- will be ignored and not reported in the Mega2 output.
- Further, markers that are in the Mega2 Map file but not in the Impute2
- file are reported as extra and are ignored.
- (There is no data for them in the Impute file.)
+ 
+\change_deleted 1332494340 1434133702
+Impute2
+\change_inserted 1332494340 1434133702
+IMPUTE2
+\change_unchanged
+ file (implicitly named IMPUTE.p).
+ When used with a 
+\change_deleted 1332494340 1434133704
+Impute2
+\change_inserted 1332494340 1434133704
+IMPUTE2
+\change_unchanged
+ file, the Mega2 
+\change_inserted 1332494340 1434134183
+m
+\change_deleted 1332494340 1434134182
+M
+\change_unchanged
+ap file may not contain a map with the name IMPUTE.p.
+ Note: As is the custom with Mega2 
+\change_inserted 1332494340 1434134189
+m
+\change_deleted 1332494340 1434134187
+M
+\change_unchanged
+ap files, 
+\change_deleted 1332494340 1434134115
+this
+\change_inserted 1332494340 1434134193
+the Mega2 map
+\change_unchanged
+ file can be used to prune the markers listed in the 
+\change_deleted 1332494340 1434133706
+Impute2
+\change_inserted 1332494340 1434133706
+IMPUTE2
+\change_unchanged
+ file; markers not in the Mega2 
+\change_inserted 1332494340 1434134199
+m
+\change_deleted 1332494340 1434134198
+M
+\change_unchanged
+ap file will be ignored and not reported in the Mega2 output.
+ Further, markers that are in the Mega2 
+\change_inserted 1332494340 1434134208
+m
+\change_deleted 1332494340 1434134203
+M
+\change_unchanged
+ap file but not in the 
+\change_deleted 1332494340 1434133708
+Impute2
+\change_inserted 1332494340 1434133708
+IMPUTE2
+\change_unchanged
+ file are reported as extra and are ignored
+\change_deleted 1332494340 1434134140
+.
+
+\change_unchanged
+ (There is no data for them in the 
+\change_deleted 1332494340 1434132620
+Impute
+\change_inserted 1332494340 1434132620
+IMPUTE2
+\change_unchanged
+ file
+\change_deleted 1332494340 1434134143
+.
+\change_unchanged
+)
+\change_inserted 1332494340 1434134151
+.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsubsection
-
-\change_inserted -1820302391 1434052725
 Omit File (Optional)
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434052725
-An omit file may be specified.
+A
+\change_inserted 1332494340 1434134163
+ Mega2
+\change_deleted 1332494340 1434134161
+n
+\change_unchanged
+ omit file may be specified.
  Please see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -11475,14 +11618,10 @@ reference "par:Input_Omit_File"
 \end_layout
 
 \begin_layout Subsubsection
-
-\change_inserted -1820302391 1434052725
 Frequency File (Optional)
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434052857
 A Mega2 frequency file may be specified.
  Please see 
 \begin_inset CommandInset ref
@@ -11504,68 +11643,46 @@ reference "sub:Impute-File"
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 Name Allele Frequency
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 A1 1 0.990000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 A1 2 0.010000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 M1 A 0.500000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 M1 T 0.500000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 M2 A 0.500000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 M2 T 0.500000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 M3 G 0.500000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1434052725
 M3 C 0.500000
 \end_layout
 
 \begin_layout Subsubsection
-
-\change_inserted -1820302391 1434052725
 Penetrance File (Optional)
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1434052725
 A Mega2 penetrance file may be specified.
  Please see 
 \begin_inset CommandInset ref
@@ -11975,13 +12092,7 @@ When you first started up Mega2, it will present a menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1433535909
-4.7.1
-\change_inserted -1820302391 1433535909
-4.8.0
-\change_unchanged
- input menu:
+              Mega2 4.8.0 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -12072,13 +12183,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 
-\change_deleted -1820302391 1433535911
-4.7.1
-\change_inserted -1820302391 1433535911
-4.8.0
-\change_unchanged
- input file type menu:
+Mega2 4.8.0 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -12119,26 +12224,14 @@ Mega2
 
 \begin_layout LyX-Code
  8) VCF format (vcf) 
-\change_inserted -1820302391 1433536241
-
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536251
  9) IMPUTE2/Oxford format (gen/impute2)
-\change_unchanged
-
 \end_layout
 
 \begin_layout LyX-Code
-Select from options 0-
-\change_inserted -1820302391 1433536256
-9
-\change_deleted -1820302391 1433536255
-8
-\change_unchanged
- >
+Select from options 0-9 >
 \end_layout
 
 \begin_layout Standard
@@ -12158,13 +12251,7 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1433535912
-4.7.1
-\change_inserted -1820302391 1433535912
-4.8.0
-\change_unchanged
- input menu:
+              Mega2 4.8.0 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -12455,8 +12542,6 @@ VCF format (vcf)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1433536350
 --gen
 \end_layout
 
@@ -12467,8 +12552,12 @@ VCF format (vcf)
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1433536370
-Oxford/Impute2 format (gen)
+\change_deleted 1332494340 1434134697
+Oxford/Impute2
+\change_inserted 1332494340 1434134718
+IMPUTE2
+\change_unchanged
+ format (gen)
 \end_layout
 
 \end_inset
@@ -13674,107 +13763,77 @@ Input menu item: Map datafile:
 \begin_layout Standard
 This specifies a Mega2 map file to provide genetic position information
  for analysis modes.
-\change_inserted -1820302391 1433536490
-
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1433536520
-Input format: Oxford/Impute2 Format files
+Input format: 
+\change_deleted 1332494340 1434134756
+Oxford/Impute2
+\change_inserted 1332494340 1434134749
+IMPUTE2/Oxford
+\change_unchanged
+ Format files
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536604
  1) Select input file format:                         IMPUTE2/Oxford format
  (gen/impute2)
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536611
  2) Input file stem:                                  impute
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536614
  3) Oxford-single-chr [if required]:                  --
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536616
  4) Imputation info metric threshold:                 0.3000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536617
  5) Hard call threshold:                              0.9000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536619
  6) Hard call warn fraction:                          0.9000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536687
  7) Codes for Missing value: (space separated)       
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536690
  8) Allow indels (toggle):                            [ yes ]
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536660
  9) IMPUTE2 file:       (IMPUTE2 .gen)     [required]_ 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536641
 10) Imputed Info file:  (IMPUTE2 .gen_info)[optional] _
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536646
 11) Sample file:        (IMPUTE2 .sample)  [required] _ 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536648
 12) Map file:           (Mega2 .map)       [optional] _ 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536650
 13) Omit file:          (Mega2 .omit)      [optional] _ 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536653
 14) Frequency file:     (Mega2 .freq)      [optional] _ 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1433536595
 15) Penetrance file:    (Mega2 .pen)       [optional] _
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -14177,13 +14236,7 @@ name "sub:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1433535914
-4.7.1
-\change_inserted -1820302391 1433535914
-4.8.0
-\change_unchanged
- Maximum alleles per marker menu:
+              Mega2 4.8.0 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -17012,13 +17065,7 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1433535919
-4.7.1
-\change_inserted -1820302391 1433535919
-4.8.0
-\change_unchanged
- Missing Value menu:
+              Mega2 4.8.0 Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -19304,31 +19351,10 @@ In addition to the sate and time of the last run and input file names, this
 It may also contain other important messages such as families and individuals
  excluded from analysis, breaking or re-connection of loops in inbred pedigrees,
  individuals whose genotypes were zeroed out, etc.
- If there were any warnings or error messages, they are 
-\change_inserted -1820302391 1434130202
-no longer 
-\change_unchanged
-written 
-\change_inserted -1820302391 1434130252
-ad nauseum 
-\change_unchanged
-into this file 
-\change_deleted -1820302391 1434130122
-in addition
-\change_inserted -1820302391 1434130126
-but only
-\change_unchanged
- 
-\change_inserted -1820302391 1434130134
-in
-\change_unchanged
-to the MEGA2.ERROR file.
- 
-\change_inserted -1820302391 1434130292
-Of course, the first few lines for each warning/error will be written to
+ If there were any warnings or error messages, they are no longer written
+ ad nauseum into this file but only into the MEGA2.ERROR file.
+ Of course, the first few lines for each warning/error will be written to
  this file as usual.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -32118,13 +32144,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-4.
-\change_inserted -1820302391 1433535953
-8.0
-\change_deleted -1820302391 1433535951
-7.1
-\change_unchanged
-
+4.8.0
 \end_layout
 
 \end_inset
@@ -32133,19 +32153,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1433535976
-June 12
-\change_deleted -1820302391 1433535970
-Oct 17
-\change_unchanged
-, 201
-\change_inserted -1820302391 1433535966
-5
-\change_deleted -1820302391 1433535966
-4
-\change_unchanged
-
+June 12, 2015
 \end_layout
 
 \end_inset
@@ -32154,13 +32162,7 @@ Oct 17
 \begin_inset Text
 
 \begin_layout Plain Layout
-June 15, 201
-\change_inserted -1820302391 1433535960
-6
-\change_deleted -1820302391 1433535960
-5
-\change_unchanged
-
+June 15, 2016
 \end_layout
 
 \end_inset
@@ -32171,8 +32173,6 @@ June 15, 201
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1433535946
 Patched version
 \end_layout
 
@@ -32182,8 +32182,6 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1433535946
 4.7.1
 \end_layout
 
@@ -32193,8 +32191,6 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1433535946
 Oct 17, 2014
 \end_layout
 
@@ -32204,8 +32200,6 @@ Oct 17, 2014
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1433535946
 June 15, 2015
 \end_layout
 
@@ -32942,45 +32936,19 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.
-\change_deleted -1820302391 1433536000
-6.2
-\change_inserted -1820302391 1433536002
-7.1
-\change_unchanged
- to Version 4.
-\change_deleted -1820302391 1433536007
-7.1
-\change_inserted -1820302391 1433536008
-8.0
-\change_unchanged
- (Released 
-\change_deleted -1820302391 1433536013
-Oct 16
-\change_inserted -1820302391 1433536019
-June 12
-\change_unchanged
-, 201
-\change_inserted -1820302391 1433536024
-5
-\change_deleted -1820302391 1433536024
-4
-\change_unchanged
-)
+Changes from Version 4.7.1 to Version 4.8.0 (Released June 12, 2015)
 \change_inserted -1820302391 1434048105
 
 \end_layout
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1434050748
-Mega2 now supports Impute2 (/Oxford) style input files that indicate the
- probability for each genotype.
+\change_inserted 1332494340 1434134926
+Mega2 now supports reading imputed data in IMPUTE2 (Oxford) format (genotype/sam
+ple).
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1434050781
 The Mega2 log file now contains essentially what is displayed on the screen
  during program execution.
  The voluminous, complete listing of errors and warnings is now only in
@@ -32988,24 +32956,24 @@ The Mega2 log file now contains essentially what is displayed on the screen
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1434050839
 Several issues effecting the performance processing VCF files have been
- fixed: in once case, using to a hash lookup vs n**2 search and in another
- moving an expensive constant calculation out of a loop.
+ fixed: in on
+\change_deleted 1332494340 1434134992
+c
+\change_unchanged
+e case, using to a hash lookup vs n**2 search and in another moving an expensive
+ constant calculation out of a loop.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1434050912
 Bug: A problem with finding the marker name when it is appears in the VCF
  info field has been fixed.
 \end_layout
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1434050978
-Bug: Plink Binary file generation for 
+\change_inserted 1332494340 1434135057
+Bug: PLINK Binary file generation in 
 \begin_inset Quotes eld
 \end_inset
 
@@ -33013,36 +32981,33 @@ individual major
 \begin_inset Quotes erd
 \end_inset
 
- order has been wrong for a long time and now is fixed.
- Note: the common SNP major order did not have this problem.
+ order had been wrong and is now fixed.
+ 
+\change_unchanged
+Note: the common SNP major order did not have this problem.
 \end_layout
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1434051020
-Bug: Sage Analysis and Mega2 Analysis modes did not correctly carry through
- non-numeric alleles; they always recoded the allele name to numbers.
+\change_inserted 1332494340 1434135044
+Bug: S.A.G.E.
+ Analysis and Mega2 Analysis modes did not correctly carry through non-numeric
+ alleles to their output files
+\change_unchanged
+; they always recoded the allele name to numbers.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1434050717
 Bug: Most compiler warnings have been silenced though it depends on the
  platform; less on Windows MSVC while more for gcc.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1434049528
 Bug: Several compilation flags have been made unnecessary and hence removed.
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1433535990
 Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
