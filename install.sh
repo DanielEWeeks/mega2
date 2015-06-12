@@ -241,6 +241,7 @@ function pgm_linux() {
         pgm=mega2_${VERSION}_linux_centos.${v}x${x}
         return
     fi
+    pgm=mega2_${VERSION}_linux
 }
 
 # export so that makefiles in subdirectories have access to these...
