@@ -132,7 +132,7 @@ today
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="1">
+<lyxtabular version="3" rows="8" columns="1">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <row>
@@ -229,7 +229,28 @@ Robert V.
 \begin_layout Plain Layout
 Previous Programmers:
 \emph on
- Charles P.
+ 
+\change_deleted -1820302391 1434128628
+Charles P.
+ Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P.
+ Mulvihill.
+\change_unchanged
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1434128615
+
+\emph on
+Charles P.
  Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P.
  Mulvihill.
 \end_layout
@@ -351,8 +372,19 @@ During an association or linkage  analysis project, one may need to analyze
  Not only must the data be converted to the proper format, but also the
  loci must be reordered into their proper order.
  Writing custom reformatting scripts can be error-prone and very time-consuming.
- To address these problems, we created Mega2, which can be obtained following
- the instructions in Section 
+ To address 
+\change_inserted -1820302391 1434128478
+
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Impute-Info-File-1"
+
+\end_inset
+
+
+\change_unchanged
+these problems, we created Mega2, which can be obtained following the instructio
+ns in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Installation"
@@ -669,8 +701,15 @@ reference "sub:VCF-file-formats"
 
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1434051446
-Impute2 Format (See
+\change_inserted -1820302391 1434128819
+Impute2 Format (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:impute2-file-format"
+
+\end_inset
+
+)
 \change_unchanged
 
 \end_layout
@@ -4353,9 +4392,26 @@ VCF compressed format
 
 \begin_layout Enumerate
 VCF format 
+\change_inserted -1820302391 1434128960
+
 \end_layout
 
 \end_deeper
+\begin_layout Enumerate
+
+\change_inserted -1820302391 1434128999
+Impute Format (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:impute2-file-format"
+
+\end_inset
+
+)
+\change_unchanged
+
+\end_layout
+
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
@@ -10567,166 +10623,95 @@ name "sub:impute2-file-format"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434052725
-Variant Call Format (VCF) was designed to store information about genetic
- variants (See: 
+\change_inserted -1820302391 1434128065
+Impute Format was designed to store information about the probability of
+ imputed markers added to a smaller collection of markers.
+ (See: 
 \begin_inset CommandInset href
 LatexCommand href
 name "Wikipedia"
-target "http://en.wikipedia.org/wiki/Variant_Call_Format"
+target "http://en.wikipedia.org/wiki/imputation_(genetics)"
 
 \end_inset
 
 ).
- Mega2 currently uses source code from the popular VCFtools program (See:
- 
-\begin_inset CommandInset href
-LatexCommand href
-name "VCFtools"
-target "http://vcftools.sourceforge.net"
+ A typical program to manipulate/generate imputation data is Impute2 (
+\begin_inset Flex URL
+status open
 
-\end_inset
+\begin_layout Plain Layout
 
-) as its underlying engine for parsing VCF files.
- VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format
- v4.1 (See: 
-\begin_inset CommandInset href
-LatexCommand href
-name "VCF Specification"
-target "http://vcftools.sourceforge.net/specs.html"
+\change_inserted -1820302391 1434128333
 
-\end_inset
+https://mathgen.stats.ox.ac.uk/impute/impute_v2.html
+\change_unchanged
 
-), and BCF format v2.1 (See: 
-\begin_inset CommandInset href
-LatexCommand href
-name "BCF (Binary VCF) version 2"
-target "http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2"
+\end_layout
 
 \end_inset
 
 ).
- Mega2 supports only the 'filtering' options associated with the binary
- executable 'vcftools' file (See: 
-\begin_inset CommandInset href
-LatexCommand href
-name "VCFtools Options"
-target "http://vcftools.sourceforge.net/options.html"
+ Further analysis is illustrated in 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1434128053
+
+https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#best_practices
+\change_unchanged
+
+\end_layout
 
 \end_inset
 
-).
- In particular, the options supported are: the Site Filtering Options, the
- Individual Filters, and the Genotype Filters.
- These options are specified to Mega2 as they would be to the 'vcftools'
- program in the form of a command line option string.
- In Mega2 interactive mode (See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Common-Variant-Call-Format-menu-items"
+ and 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1434128107
+
+http://genome.sph.umich.edu/wiki/IMPUTE2:_1000_Genomes_Imputation_Cookbook
+\change_unchanged
+
+\end_layout
 
 \end_inset
 
-) Mega2 allows the user to specify the filtering options via the input menu,
- and in batch file mode the VCF_Args batch file item is used (See: 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "par:VCF_Args"
 
-\end_inset
-
-).
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434052725
-VCF input format uses a subset of the PLINK parameters (See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "par:VCF-Menu-item-PLINK-parameters"
+\change_inserted -1820302391 1434126903
+When using Impute format input files, one needs to provide several files,
+ which are described below.
+ At a minimum, two files are required: 1) the Impute File containing the
+ marker and their genotypes, and 2) the Impute Sample File containing the
+ sample id information.
+ The latter file can be extended to contain family structure information
+ and phenotypes; both are commonly needed by Mega2.
+ Optional files include a special Imputed Info File, a map file, an omit
+ file, an allele frequency file, and a penetrance file.
+ More information on the Impute file formats can be found in 
+\begin_inset Flex URL
+status open
 
-\end_inset
+\begin_layout Plain Layout
 
-) to allow the user to specify phenotype information.
- With these the user can: specify a name for the pedigree file trait column
- (See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Impute-Sample-File"
+\change_inserted -1820302391 1434128016
 
-\end_inset
+http://www.stats.ox.ac.uk/~marchini/software/gwas/file_format.html
+\change_unchanged
 
-), indicate the trait to be affection status or quantitative, specify the
- missing value for quantitative traits, and specify how the affection status
- is coded.
 \end_layout
 
-\begin_layout Standard
-
-\change_inserted -1820302391 1434052725
-Mega2 and the 'vcftools' program will accept variant call input files in
- one of three formats: text only, gzipped compressed text only, or binary
- file.
- The variant call file format is specified using the appropriate menu in
- Mega2 (See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Common-Variant-Call-Format-menu-items"
-
 \end_inset
 
-) or using the batch file item Input_Format_Type (See: 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "par:Input_Format_Type"
-
-\end_inset
-
-) set to the values of: 5 for a .bcf (binary) file, 6 for a .vcf.gz (compressed
- text) file, and 7 for a .vcf (text) file.
-\end_layout
-
-\begin_layout Standard
-\noindent
-
-\change_inserted -1820302391 1434052725
-In addition to variant information, Mega2 needs additional information (i.e.,
- about family structure, genetic map positions, etc.) depending on the output
- analysis chosen (See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:The-analysis-menu"
-
-\end_inset
-
-).
- The VCF file format allows for the possibility of user-defined fields,
- which could in theory specify this additional information within the VCF
- file.
- However, in many instances there is no consistent method for representing
- this information, and so Mega2 instead takes the approach of specifying
- additional information in separate files, which is consistent with other
- input file formats.
- As the VCF file standard evolves, we will revisit this decision.
- For example, the map position information in the variant file does not
- include genetic position information.
- Genetic position information can be easily input by providing a Mega2-format
- map file.
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -1820302391 1434052725
-When using VCF-format input files, one needs to provide several files, which
- are described below.
- At a minimum, two files are required: 1) the VCF file containing the marker
- genotypes, and 2) the PLINK-format family file containing the family structure
- information.
- Optional files include a phenotype file, a map file, an omit file, an allele
- frequency file, and a penetrance file.
- The phenotype file may include a SAMPLEID column specifying the key mapping
- individuals in the family file to the samples in the VCF file.
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -10744,56 +10729,163 @@ name "sub:Impute-File"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434052725
-The Variant Call File (See: 
-\begin_inset CommandInset href
-LatexCommand href
-name "VCF Specification"
-target "http://vcftools.sourceforge.net/specs.html"
-
-\end_inset
-
-) is divided into three sections.
- The first section contains the meta information (lines from the beginning
- of the file that begin with the double hash mark '##').
- The second section contains only one line which is the header line (this
- line follows the last meta information line and begins with a single hash
- mark '#').
- The third section follows the header line, and contains all of the variant
- call information.
- The header line contains a number of required fields, followed by sample
- identifiers (See 
+\change_inserted -1820302391 1434129254
+The each line of the Impute File conceptually has two parts: the first describes
+ the marker and the second lists the genotypes for all the samples.
+ The samples are listed here in the same order as they appear in the Impute
+ Info File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Impute-Info-File"
 
 \end_inset
 
- for rules on mapping individual identifiers to sample identifiers).
- In interactive mode the VCF file is specified through the 
-\begin_inset Quotes eld
-\end_inset
-
-Variant file
-\begin_inset Quotes erd
-\end_inset
-
- menu item.
- In batch file input the VCF file is specified using the Input_Aux_File
- batch file item (See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "par:Input_Aux_File"
-
-\end_inset
-
 ).
+ 
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434052725
-A simple example VCF file is as follows:
+\change_inserted -1820302391 1434129365
+The first part consist of 5 columns.
+ The first column is typically 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+---
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+, but can occasionally contain the chromosome.
+ The second column is the marker name.
+ This can be a RS_ID.
+ Sometimes this name is not available.
+ Then the second column usually is fields separated by the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+:
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+ character.
+ The first subfield is often the chromosome, the second subfield can be
+ the base pair position of the marker and two subsequent subfields may be
+ the allele names.
+ However, these last three subfields also appear as the next columns on
+ the line.
+ So we will ignore these subfields.
+ (Of course, sometimes all 4 subfields are not there; only the first two
+ appear.
+ And we have also occasionally seen a fifth subfield.) Again it is best to
+ ignore this column unless it is an RS_ID name or it starts with the chromosome
+ number.
+ The third column is the base pair position of the marker.
+ The fourth column is the first allele name.
+ Finally, the fifth column is the second allele name.
+ Typically, the allele names are chosen from the standard collection of
+ A, C, T, G.
+ But if the markers are indels, the allele names will be strings of letters.
+ There is no bound enforced on the number of letters in an allele name.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434126624
+Some examples follow; the ellipses start the genotype probabilities part
+ of the line:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1434124330
+--- rs188162445:1499924:T:C 1499924 T C        ...
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1434124327
+--- 20:1499962:T:C 1499962 T C                 ...
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1434124325
+--- 20:1499962 1499962 T G                     ...
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1434124323
+20  rs7261002 1002656 G A                      ...
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1434124316
+--- rs35306660:1020991:GTAAA:G 1020991 GTAAA G ...
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434126669
+Note: There can be duplicate entries determined by markers having the same
+ chromosome and the same position; all but the first marker are ignored.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434125265
+The second part of each line is a series of three tuples one for each sample.
+ The first value indicates the probability of genotype consisting of only
+ the first allele.
+ The second value indicates the probability of the heterozygous configuration.
+ And the third value indicates the probability consisting of only the second
+ allele.
+ Typically, these values should sum to less than 1.0.
+ The Impute2 program determines a confidence for these numbers which is
+ stored in the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+info
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+ column of the Imputed Info File (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Impute-Info-File"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1434127026
+We copy the simple VCF file from above then show the corresponding Impute
+ file:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1434124625
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -10903,7 +10995,7 @@ The file continues off of right of the page with the following header and
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
+\change_inserted -1820302391 1434125166
 
 \size footnotesize
 0/0     0/0     0/0     0/1     0/1     0/1     0/1     0/1     0/1    
@@ -10912,119 +11004,81 @@ The file continues off of right of the page with the following header and
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434052725
-This simple example VCF file specifies three biallelic markers (M1, M3,
- and M2).
- It should be noted that Mega2 is not restricted to biallelic markers.
- The markers and their information is as follows:
+\change_inserted -1820302391 1434125220
+Now for the Impute data which captures the above model by using probabilities
+ of either 0 or 1.
 \end_layout
 
-\begin_layout Description
+\begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-M1 chromosome: 5; physical position: 2; reference allele: 1; alternate allele:
- 2
+\change_inserted -1820302391 1434124772
+
 \end_layout
 
-\begin_layout Description
+\begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-M3 chromosome: 5; physical position: 4; reference allele: 2; alternate allele:
- 1
+\change_inserted -1820302391 1434125155
+5	M1:A:T:2	2	A	T	0 1 0	0 1 0	0 0 1	0 1 0	0 0 1	0 0 1
 \end_layout
 
-\begin_layout Description
+\begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-M2 chromosome: 5; physical position: 6; reference allele: 1; alternate allele:
- 2
+\change_inserted -1820302391 1434125151
+5	M3:G:C:4	4	G	C	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0	0 1 0
 \end_layout
 
-\begin_layout Standard
+\begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-This VCF file contains seventeen (17) sample IDs (1_3, 1_4, ..., 2_10).
- If the sample IDs do not correspond to the person IDs in the family file,
- they can be mapped to individual IDs using a SAMPLEID column in the phenotype
- file (See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Impute-Info-File"
-
-\end_inset
-
-).
+\change_inserted -1820302391 1434125146
+5	M2:T:A:6	6	T	A	1 0 0	0 0 1	0 1 0	0 1 0	0 1 0	1 0 0
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434052725
-The map information from the VCF File is parsed and made available by Mega2.
- In interactive mode the map is selectable as 'VCF.p'.
- In batch file mode this map is specified by setting the value of Value_Base_Pai
-r_Position_Index (See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "par:Value_Base_Pair_Position_Index"
+\change_inserted -1820302391 1434129447
+The line continues off of right of the page with the following marker data.
+\end_layout
 
-\end_inset
+\begin_layout LyX-Code
 
-) equal to 0 if no Mega2 Map File is specified (See: 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Annotated-map-file"
+\change_inserted -1820302391 1434124985
+0 0 1	0 0 1	0 0 1	0 0 1	0 0 1	0 1 0	1 0 0	1 0 0	1 0 0
+\end_layout
 
-\end_inset
+\begin_layout LyX-Code
 
-), or to one greater than the number of maps available in the Mega2 Map
- File.
- The map file (VCF.p) that is derived from the VCF file will contain all
- of the markers that have passed the vcftools filtering criteria.
- The Mega2 Map File may contain the same number of markers or less in which
- case it will provide additional filtering.
- That is, markers will be dropped if they do not appear in a map that is
- selected from a Mega2 Map File.
+\change_inserted -1820302391 1434125000
+0 1 0	1 0 0	1 0 0	1 0 0	0 1 0	1 0 0	0 0 1	0 1 0	0 1 0
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1434125050
+0 1 0	1 0 0	1 0 0	1 0 0	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434052725
-In many instances a Mega2 analysis option may require a genetic map.
- When using a VCF file, a genetic map can be specified using a optional
- Mega2 Map File (See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Annotated-map-file"
-
-\end_inset
-
-).
- However, if an analysis option requires a genetic map and a Mega2 Map File
- is not specified or if a map is selected that contains no genetic maps,
- then a dummy Sex Average genetic map (whose values are all 0) will be used
- for the required genetic map.
- For example, this would allow one to convert from VCF input format to PLINK
- output format (with a dummy genetic map) when only physical map positions
- are known.
- 
+\change_inserted -1820302391 1434125082
+And still more marker data.
 \end_layout
 
-\begin_layout Standard
+\begin_layout LyX-Code
 
-\change_inserted -1820302391 1434052725
-The marker associated with a line in the VCF file can be specified as the
- string associated with the 'ID' field of the VCF file (as in the above
- example), or as the value associated with a key in the 'INFO' field.
- This key can be specified in interactive mode, or in batch mode through
- the batch file identifier VCF_Marker_Alternative_INFO_Key.
- For a full description of how this is done please see 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "par:VCF_Marker_Alternative_INFO_Key"
+\change_inserted -1820302391 1434125093
+1 0 0	0 0 1	1 0 0	0 1 0	1 0 0	1 0 0
+\end_layout
 
-\end_inset
+\begin_layout LyX-Code
 
-.
+\change_inserted -1820302391 1434125100
+0 1 0	0 1 0	0 1 0	0 1 0	0 1 0	0 1 0
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1434125104
+0 1 0	0 1 0	0 1 0	0 1 0	0 1 0	0 1 0 
 \end_layout
 
 \begin_layout Subsubsection
@@ -11042,7 +11096,7 @@ name "sub:Impute-Sample-File"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434054804
+\change_inserted -1820302391 1434127825
 The Impute Sample file is used to list the sample names.
  In the header line, the first three columns MUST have the values: 
 \begin_inset Quotes eld
@@ -11127,6 +11181,112 @@ sex
 
  to label the pedigree data and any other columns are interpreted as phenotype
  information.
+ There is no order proscribed for these extra columns.
+ If any of the the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+father
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+mother'
+\series default
+, or 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+sex
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+ columns are omitted, Mega2 will internally generate these fields with a
+ value of 
+\series bold
+0
+\series default
+.
+ The second line of the header is extended for each column.
+ The code 
+\begin_inset Quotes eld
+\end_inset
+
+B
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+D
+\begin_inset Quotes erd
+\end_inset
+
+ are mapped to an Affection status phenotype, while 
+\begin_inset Quotes eld
+\end_inset
+
+C
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+P
+\begin_inset Quotes erd
+\end_inset
+
+ are mapped to Quantitative phenotypes.
+ (Officially, 
+\begin_inset Quotes eld
+\end_inset
+
+D
+\begin_inset Quotes erd
+\end_inset
+
+ indicates discrete covariate, 
+\begin_inset Quotes eld
+\end_inset
+
+C
+\begin_inset Quotes erd
+\end_inset
+
+ continuous covariate, 
+\begin_inset Quotes eld
+\end_inset
+
+P
+\begin_inset Quotes erd
+\end_inset
+
+ continuous phenotype and 
+\begin_inset Quotes eld
+\end_inset
+
+B
+\begin_inset Quotes erd
+\end_inset
+
+ binary phenotype.)
 \end_layout
 
 \begin_layout Subsubsection
@@ -11144,7 +11304,7 @@ name "sub:Impute-Info-File"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434053999
+\change_inserted -1820302391 1434129767
 The Impute2 program generates an additional file with markers in the same
  order as the Impute file (See 
 \begin_inset CommandInset ref
@@ -11179,7 +11339,23 @@ certainty
 \end_inset
 
  column.
- These columns are used for filtering the markers based on confidence.
+ These columns are used for filtering the markers based on confidence (See
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1434128174
+
+https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#info_metric_details
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+).
  Note: Historically, the first three column are 
 \begin_inset Quotes eld
 \end_inset
@@ -11218,8 +11394,16 @@ position
 
 .
  These names are checked for to confirm the correct file is being accessed.
- In addition, the column values are checked against the corresponding entry
- in the Impute file to guarantee consistency.
+ In addition, the corresponding column values are checked against the correspond
+ing entry in the Impute file to verify the consistency of this file with
+ the Info File (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Impute-File"
+
+\end_inset
+
+).
  The other columns in this file are not used.
 \end_layout
 
@@ -11249,7 +11433,7 @@ Map File (Optional)
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1434054137
+\change_inserted -1820302391 1434129807
 A Mega2 Map File (See 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -11259,7 +11443,7 @@ reference "sub:Annotated-map-file"
 
 ) is not required, but may be specified.
  The maps in the map file may be used in addition to the map found in the
- Impute2 file (named IMPUTE.p).
+ Impute2 file (implicitly named IMPUTE.p).
  When used with a Impute2 file, the Mega2 Map file may not contain a map
  with the name IMPUTE.p.
  Note: As is the custom with Mega2 Map files, this file can be used to prune
@@ -19120,9 +19304,31 @@ In addition to the sate and time of the last run and input file names, this
 It may also contain other important messages such as families and individuals
  excluded from analysis, breaking or re-connection of loops in inbred pedigrees,
  individuals whose genotypes were zeroed out, etc.
- If there were any warnings or error messages, they are written into this
- file in addition to the MEGA2.ERROR file.
+ If there were any warnings or error messages, they are 
+\change_inserted -1820302391 1434130202
+no longer 
+\change_unchanged
+written 
+\change_inserted -1820302391 1434130252
+ad nauseum 
+\change_unchanged
+into this file 
+\change_deleted -1820302391 1434130122
+in addition
+\change_inserted -1820302391 1434130126
+but only
+\change_unchanged
  
+\change_inserted -1820302391 1434130134
+in
+\change_unchanged
+to the MEGA2.ERROR file.
+ 
+\change_inserted -1820302391 1434130292
+Of course, the first few lines for each warning/error will be written to
+ this file as usual.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
