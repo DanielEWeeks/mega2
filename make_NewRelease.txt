@@ -42,3 +42,8 @@ mega2_toc.html
 Update the release info in the 'mega2.html' file in the root directory.
 
 Update the version information on the mega2 wikipedia page.
+
+Tag the version in Bitbucket:
+ git tag -a v4.8.0 -m "Version 4.8.0, released 13 June 2015"
+ git push origin v4.8.0
+
