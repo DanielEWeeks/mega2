@@ -1595,22 +1595,26 @@ If you use Mega2 as part of a published work, please remember to reference
 \end_layout
 
 \begin_layout Quote
-Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)
-\begin_inset Newline newline
+Baron RV, Kollar C, Mukhopadhyay N, Weeks DE (2014) Mega2: validated data-reform
+atting for linkage and association analyses.
+ Source Code for Biology and Medicine 9:26.
+ PubMed PMID: 25687422; PubMed Central PMCID: 
+\begin_inset CommandInset href
+LatexCommand href
+name "PMC4269913"
+target "http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4269913/?report=reader"
+
 \end_inset
 
- Mega2: data-handling for facilitating genetic linkage and association analyses.
+ DOI: 
+\begin_inset CommandInset href
+LatexCommand href
+name "10.1186/s13029-014-0026-y"
+target "http://doi.org/10.1186/s13029-014-0026-y"
+
+\end_inset
+
  
-\begin_inset Newline newline
-\end_inset
-
- Bioinformatics.
- 2005 May 15;21(10):2556-7.
- 
-\begin_inset Newline newline
-\end_inset
-
- PMID: 15746282
 \end_layout
 
 \begin_layout Standard
@@ -32016,7 +32020,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-June 12, 2015
+June 13, 2015
 \end_layout
 
 \end_inset
@@ -32799,7 +32803,7 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.7.1 to Version 4.8.0 (Released June 12, 2015)
+Changes from Version 4.7.1 to Version 4.8.0 (Released June 13, 2015)
 \end_layout
 
 \begin_layout Itemize
