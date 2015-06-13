@@ -27,10 +27,11 @@ Rename the mega2 folder appropriately.
 
 Update the exclusion file
 
-tar zcvf mega2_v4.7.1_src.tar.gz mega2_v4.7.1_src/ -X exclude_v4.7.1
+tar -X exclude_v4.8.0 -zcvf mega2_v4.8.0_src.tar.gz mega2_v4.8.0_src/
 
 Copy the mega2*.tar.gz file into the 'mega2' distribution folder on the web server.
 Update the 'readme' and copy it to the .message file
+Update the information in the version file on the web server.
 
 Copy three documentation files into the docs/mega2_html file on the web server
 
