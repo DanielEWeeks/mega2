@@ -359,11 +359,11 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                 }
             }
         }
-        Display_Errors = 1;
-	displayed_errors = 0;
         if (strlen(err_msg) > 0) {
             warnf(err_msg);
         }
+        Display_Errors = 1;
+	displayed_errors = 0;
     }
     tod_cl();
 
