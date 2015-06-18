@@ -8,11 +8,11 @@ import re
 import pdb
 
 PARSED   = "parsed_wik"
-DIR      = "conversionsX"
+DIR      = "conversions"
 TEMPLATE = "template.html"
 TEMPLAT2 = "template_mega2.html"
-URME     = "file:///Users/rbaron/mega2/bb/mega2_html"
-#URME     = "https://watson.hgen.pitt.edu/docs/mega2_html"
+#URME     = "file:///Users/rbaron/mega2/bb/mega2_html"
+URME     = "https://watson.hgen.pitt.edu/docs/mega2_html"
 
 DB   = {}
 DBREF= {}
@@ -47,7 +47,7 @@ def parse_info(options):
     File.close()
 
 def show_input():
-    for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF'):
+    for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF', 'IMPUTE2'):
         print('\n{0}\n\t{1}\n\t{2}\n\t['.format(inp, DB[inp][1], DB[inp][0]))
 #       for ref in DB[inp][0]:
 #            if ref in DBREF:
@@ -75,16 +75,24 @@ class Citation(object):
     def url(self, ustr):
         self.all.append('  <a href="{0}">{1}</a>  '.format(DBREF[ustr]['url'], ustr[:-4]) )
 
-    elements = (('title','{0}. '), ('author','{0}. '), \
-                ('last','{0} '),   ('first','{0}, '), ('coauthors','{0}. '), \
+    elements = (('title','{0}. '), ('author','{0}'), \
+                ('last','{0} '),   ('first','{0}'), \
+                ('author2', ', {0}'), ('author3', ', {0}'), \
+                ('author4', ', {0}'), ('author5', ', {0}'), \
+                ('coauthors',', {0}'), ('', '. '),\
                 ('date','({0}) '), ('journal','{0} '), \
                 ('volume','{0}'),  ('issue','({0})'), \
-                ('pages',':{0}.'), ('url','<span><a href="{0}">{0}</a></span>'))
+                ('pages',':{0}.'), ('url','<span><a href="{0}">{0}</a></span>'), \
+                ('doi','<span><a class="FlexURL" href="http://doi.org/{0}"> DOI: {0}</a></span>') )
     def mkcite(self, citename):
         cite = DBREF[citename]
+        if not cite:
+            return
         text = []
         for el in self.elements:
-            if el[0] in cite:
+            if el[0] == '':
+                text.append(el[1])
+            elif el[0] in cite:
                 text.append(el[1].format(cite[el[0]]))
         self.all.append("".join(text))
 
@@ -183,6 +191,7 @@ tr.RowEven {
         print('<tr class="RowOdd">', file=self.File)
         print('<th class="ColOdd">LINKAGE</th><th class="ColEven">Mega2</th>', file=self.File)
         print('<th class="ColOdd">PLINK</th><th class="ColEven">VCF or BCF</th>', file=self.File)
+        print('<th class="ColOdd">IMPUTE2</th>', file=self.File)
         print('</tr>', file=self.File)
         self.TabRow = self.TabRow + 1
 
@@ -213,6 +222,8 @@ def main():
                      help="input file as wikipedia info");
     parse.add_option("-o", "--output", action="store", default=DIR,
                      help="output file many htmls into DIR");
+    parse.add_option("-u", "--urlbase", "--url", action="store", default=URME,
+                     help="base url directory");
 
     options, args = parse.parse_args()
 
@@ -230,9 +241,9 @@ def main():
 
 #   show_input()
 #   Create frame_inp_<INPUT>.html file
-    for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF'):
+    for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF', 'IMPUTE2'):
         inp = inp.replace(' ', '_').lower()
-        T2.map('**path**', URME)
+        T2.map('**path**', options.urlbase)
         T2.map('**anchor**', "#inp:{0}".format(inp))
         file_name = options.output + "/frame_inp_{0}.html".format(inp)
         T2.write(file_name)
@@ -242,7 +253,7 @@ def main():
         an  = analy.split()[0]
         anr = an.replace('/', '').lower()
 
-        T2.map('**path**', URME)
+        T2.map('**path**', options.urlbase)
         T2.map('**anchor**', "#ext:{0}".format(anr))
         file_name = options.output + "/frame_ext_{0}.html".format(anr)
         T2.write(file_name)
@@ -251,7 +262,7 @@ def main():
         ahref = Citation('/', '')
 
 #       ahref.mega2('<a href="{0}#ext:{1}"> Mega2 Analysis documentation: {2}</a>',
-#                   URME, an.lower(), analy)
+#                   options.urlbase, an.lower(), analy)
         file_name = "frame_ext_{0}.html".format(anr)
         ahref.mega2('<a href="{0}"> Mega2 Analysis documentation: {2}</a>',
                     file_name, anr, analy)
@@ -266,12 +277,12 @@ def main():
 
         TabFile.row()
 
-        for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF'):
+        for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF', 'IMPUTE2'):
             inpr = inp.replace(' ', '_').lower()
 
             ihref = Citation(' ', '_')
 #           ihref.mega2('<a href="{0}#inp:{1}"> Mega2 Input documentation: {2}</a>',
-#                       URME, inp.lower(), inp)
+#                       options.urlbase, inp.lower(), inp)
             file_name = "frame_inp_{0}.html".format(inpr)
             ihref.mega2('<a href="{0}"> Mega2 Input documentation: {2}</a>',
                         file_name, inpr, inp)
