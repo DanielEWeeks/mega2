@@ -75,17 +75,19 @@ class Citation(object):
     def url(self, ustr):
         self.all.append('  <a class="FlexURL" target="_blank" href="{0}">{1}</a>  '.format(DBREF[ustr]['url'], ustr[:-4]) )
 
-    elements = (('title','{0}. '), ('author','{0}'), \
+    elements = (('author','{0}'), \
                 ('last','{0} '),   ('first','{0}'), \
                 ('author2', ', {0}'), ('author3', ', {0}'), \
                 ('author4', ', {0}'), ('author5', ', {0}'), \
                 ('coauthors',', {0}'), ('', '. '),\
-                ('date','({0}) '), ('journal','{0} '), \
+                ('date','({0}) '), \
+                ('title','{0}. '),  \
+                ('journal','{0} '), \
                 ('volume','{0}'),  ('issue','({0})'), \
                 ('pages',':{0}.'), ('url','<span><a class="FlexURL" target="_blank" href="{0}">{0}</a></span>'), \
-                ('doi', '<span><a class="FlexURL" target="_blank" href="http://doi.org/{0}"> doi: {0}.</a></span>'), \
-                ('pmid','<span><a class="FlexURL" target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/{0}"> PMID: {0}.</a></span>'), \
-                ('pmc', '<span><a class="FlexURL" target="_blank" href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC{0}"> PMC{0}.</a></span>') )
+                ('doi', ' <span><a class="FlexURL" target="_blank" href="http://doi.org/{0}">doi: {0}</a></span>.'), \
+                ('pmid',' <span><a class="FlexURL" target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/{0}">PMID: {0}</a></span>.'), \
+                ('pmc', ' <span><a class="FlexURL" target="_blank" href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC{0}">PMC{0}</a></span>.') )
     def mkcite(self, citename):
         cite = DBREF[citename]
         if not cite:
@@ -203,6 +205,7 @@ tr.RowEven {
     def endrow(self):
         print('</tr>', file=self.File)
         self.TabRow = self.TabRow + 1
+        self.TabCol = 1
 
     def col(self, Filename, analy):
         print('<td class="{0}">'.format("ColOdd" if (self.TabCol & 1) else "ColEven"), file=self.File)
