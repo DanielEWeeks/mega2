@@ -73,7 +73,7 @@ class Citation(object):
         self.all.append(anchr.format(urme, tag.replace(self.match, self.repl), anly) )
 
     def url(self, ustr):
-        self.all.append('  <a href="{0}">{1}</a>  '.format(DBREF[ustr]['url'], ustr[:-4]) )
+        self.all.append('  <a class="FlexURL" target="_blank" href="{0}">{1}</a>  '.format(DBREF[ustr]['url'], ustr[:-4]) )
 
     elements = (('title','{0}. '), ('author','{0}'), \
                 ('last','{0} '),   ('first','{0}'), \
@@ -82,8 +82,10 @@ class Citation(object):
                 ('coauthors',', {0}'), ('', '. '),\
                 ('date','({0}) '), ('journal','{0} '), \
                 ('volume','{0}'),  ('issue','({0})'), \
-                ('pages',':{0}.'), ('url','<span><a href="{0}">{0}</a></span>'), \
-                ('doi','<span><a class="FlexURL" href="http://doi.org/{0}"> DOI: {0}</a></span>') )
+                ('pages',':{0}.'), ('url','<span><a class="FlexURL" target="_blank" href="{0}">{0}</a></span>'), \
+                ('doi', '<span><a class="FlexURL" target="_blank" href="http://doi.org/{0}"> doi: {0}.</a></span>'), \
+                ('pmid','<span><a class="FlexURL" target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/{0}"> PMID: {0}.</a></span>'), \
+                ('pmc', '<span><a class="FlexURL" target="_blank" href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC{0}"> PMC{0}.</a></span>') )
     def mkcite(self, citename):
         cite = DBREF[citename]
         if not cite:
@@ -264,7 +266,7 @@ def main():
 #       ahref.mega2('<a href="{0}#ext:{1}"> Mega2 Analysis documentation: {2}</a>',
 #                   options.urlbase, an.lower(), analy)
         file_name = "frame_ext_{0}.html".format(anr)
-        ahref.mega2('<a href="{0}"> Mega2 Analysis documentation: {2}</a>',
+        ahref.mega2('<a class="FlexURL" target="_blank" href="{0}"> Mega2 Analysis documentation: {2}</a>',
                     file_name, anr, analy)
 
         for cit in DB[analy]:
@@ -284,7 +286,7 @@ def main():
 #           ihref.mega2('<a href="{0}#inp:{1}"> Mega2 Input documentation: {2}</a>',
 #                       options.urlbase, inp.lower(), inp)
             file_name = "frame_inp_{0}.html".format(inpr)
-            ihref.mega2('<a href="{0}"> Mega2 Input documentation: {2}</a>',
+            ihref.mega2('<a class="FlexURL" target="_blank" href="{0}"> Mega2 Input documentation: {2}</a>',
                         file_name, inpr, inp)
 
             for cit in DB[inp]:

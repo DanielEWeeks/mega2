@@ -66,7 +66,7 @@ def get_citations(topic, line):
                 if field != 'cite journal':  # no =; but this is how a citation begins
                     print("{0} discarding cit element \"{1}\"".format(topic, field))
                 continue
-            refhash[kv[0]] = kv[1]
+            refhash[kv[0].rstrip()] = kv[1].lstrip()
 
 def get_urls(topic, line):
     for m in URL.finditer(line):
