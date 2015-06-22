@@ -47,3 +47,26 @@ Tag the version in Bitbucket:
  git tag -a v4.8.0 -m "Version 4.8.0, released 13 June 2015"
  git push origin v4.8.0
 
+Update the set of conversion-specific web pages:
+
+ 1. Go to the mega2 wikipedia page, select edit and then select all and
+ put the contents in a file in meta2_html.  I use “wik”.  (I have done
+ this already.)
+    
+    Note: I expect the file to have certain section headers so I can
+    parse the correct sections.  If they change …
+
+  2. run seo_parse_raw_wiki.py
+      This reads “wik” (-i argument) and writes “parsed_wik”  (-o
+      argument)  [wik/parsed_wik are the defaults].  parsed_wik is
+      pretty readable and can be hand edited if necessary.
+
+  3. run seo_gen_from_template.py
+      This reads “parsed_wik” (-i argument) and writes “conversions” (-o
+     argument).  One more argument -u (viz -u
+     file:///Users/rbaron/mega2/bb/mega2_html) exists if if you want to
+     test locally vs using 
+     "https://watson.hgen.pitt.edu/docs/mega2_html”
+     
+When deploying on the web server, make sure that the
+'Mega2_Conversions.css' file is placed in the 'conversions' folder.
