@@ -247,7 +247,8 @@ void save_premakeped_peds(char *outfl_name, linkage_ped_top *Top,
                    affection status loci with multiple liability
                    classes. */
 
-                if (num_affection > 0) paff_status=&(aff_status[0]);
+//n             if (num_affection > 0) paff_status=&(aff_status[0]);
+                paff_status=aff_status;
 
                 for (loc1 = 0; loc1 < NumChrLoci; loc1++) {
                     locus = ChrLoci[loc1];

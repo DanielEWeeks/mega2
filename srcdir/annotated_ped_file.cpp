@@ -4099,8 +4099,8 @@ static void insert_zero_sex_average_genetic_map_in_EXLTop(ext_linkage_locus_top 
     EXLTop->MapNames = (char **)REALLOC(EXLTop->MapNames, EXLTop->MapCnt, char *);
     EXLTop->SexMaps = (int **)REALLOC(EXLTop->SexMaps, EXLTop->MapCnt, int *);
     
-    EXLTop->map_functions[map_i] = 'h';
-    EXLTop->MapNames[map_i] = strdup("DummyMap.h.a");
+    EXLTop->map_functions[map_i] = 'k';
+    EXLTop->MapNames[map_i] = strdup("DummyMap.k.a");
     EXLTop->SexMaps[map_i] = (int *)CALLOC((size_t) 3, int);
     EXLTop->SexMaps[map_i][SEX_AVERAGED_MAP] = 1;
     

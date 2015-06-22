@@ -475,7 +475,7 @@ int check_pre_makeped(FILE *fp, int *num_lines)
     int num_unknown_sex=0;
     int num_invalid_sex=0;
 #ifndef HIDEFILE
-    int first_unknown;
+    int first_unknown = 1;
     int first_invalid = 0; // too hard for compiler
 #endif
     *num_lines=0;

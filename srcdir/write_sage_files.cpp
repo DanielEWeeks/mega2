@@ -1032,6 +1032,7 @@ static void sage_file_names(char *file_names[], linkage_ped_top *Top)
     }
 
     while(select != 0) {
+        name = NULL;
         i=4;
         draw_line();
         print_outfile_mssg();
@@ -1147,8 +1148,14 @@ static void sage_file_names(char *file_names[], linkage_ped_top *Top)
             printf("Unknown option %s\n", cselect);  select=-1;    break;
         }
         if (select > 0) {
-            printf("Enter NEW %s file name %s > ", filename, stem);
-            fcmap(stdin, "%s", name); newline;
+//n
+            if (name == NULL) {
+                printf("Too few traits for selection number\n.  Select again.");
+                newline;
+            } else {
+                printf("Enter NEW %s file name %s > ", filename, stem);
+                fcmap(stdin, "%s", name); newline;
+            }
         }
         strcpy(cselect,  "");
     }

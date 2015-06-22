@@ -600,7 +600,7 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
     return;
 }
 
-static void annotated_map_file(linkage_locus_top *LTop, char *mfl_name)
+static void annotated_map_file(linkage_locus_top *LTop, ext_linkage_locus_top *EXLTop, char *mfl_name)
 
 {
 
@@ -619,51 +619,69 @@ static void annotated_map_file(linkage_locus_top *LTop, char *mfl_name)
             EXIT(FILE_WRITE_ERROR);
         }
 
-        if (LTop->map_distance_type == 'k' ||
-            LTop->map_distance_type == 'h') {
-	  if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-              fprintf(fp,  "Name  Chromosome  Map.%c.a\n",
-                      LTop->map_distance_type);
-	  } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
-		     genetic_distance_sex_type_map == FEMALE_GDMT) {
-	    // We need a heading for the male map even though there may not be one...
-	    fprintf(fp, "Name  Chromosome  Map.%c.f  Map.%c.m\n",
-		    LTop->map_distance_type,
-		    LTop->map_distance_type);
-	  }
-	} else {
-            fprintf(fp,  "Name  Chromosome Map.p.a\n");
+        fprintf(fp,  "Name  Chromosome ");
+        if (genetic_distance_index >= 0) {
+            if (LTop->map_distance_type == 'k' ||
+                LTop->map_distance_type == 'h') {
+                if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
+                    fprintf(fp,  "       Map.%c.a ",
+                            LTop->map_distance_type);
+                } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
+                           genetic_distance_sex_type_map == FEMALE_GDMT) {
+                    // We need a heading for the male map even though there may not be one...
+                    fprintf(fp, "      Map.%c.f       Map.%c.m ",
+                            LTop->map_distance_type,
+                            LTop->map_distance_type);
+                }
+            }
         }
+        if (base_pair_position_index >= 0) {
+            fprintf(fp,  "       BP.p ");
+        }
+        fprintf(fp,  "\n");
+
         for (locus1 = 0; locus1 < NumChrLoci; locus1++) {
             int locus = ChrLoci[locus1];
             if (LTop->Locus[locus].Type == NUMBERED ||
                 LTop->Locus[locus].Type == BINARY) {
 
                 if (LTop->Marker[locus].chromosome < SEX_CHROMOSOME) {
-                    fprintf(fp, "%-15s %2d",
+                    fprintf(fp, "%-13s %2d",
                             LTop->Locus[locus].Name,
                             LTop->Marker[locus].chromosome);
                 } else {
-                    fprintf(fp, "%-15s %s",
+                    fprintf(fp, "%-13s %s",
                             LTop->Locus[locus].Name,
                             chrom_num_to_name(LTop->Marker[locus].chromosome, &(chrom_name[0])));
                 }
 
-		// NOTE: the old version of mega2 would output three columns if there were
-		// sex specific maps available. The new mega2 does not allow you to pick
-		// all three (a, m, f) even if they exist.
-		if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-		    fprintf(fp, " %10f\n",
-			    LTop->Marker[locus].pos_avg);
-		} else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
-		    fprintf(fp, "    %10f     %10f\n", 
-			    LTop->Marker[locus].pos_female,
-			    LTop->Marker[locus].pos_male);
-		} else if (genetic_distance_sex_type_map == FEMALE_GDMT &&
-			   LTop->Marker[locus].chromosome != SEX_CHROMOSOME) {
-		    errorvf("When a female only map is specified only operations on the X chromosome are permitted.\n");
-		    EXIT(INPUT_DATA_ERROR);
-		}
+                if (genetic_distance_index >= 0) {
+                    // NOTE: the old version of mega2 would output three columns if there were
+                    // sex specific maps available. The new mega2 does not allow you to pick
+                    // all three (a, m, f) even if they exist.
+                    if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
+                        fprintf(fp, "     %10.6f ",
+//    			        LTop->Marker[locus].pos_avg
+                                EXLTop->EXLocus[locus].positions[genetic_distance_index]
+                            );
+                    } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
+                        fprintf(fp, "    %10.6f    %10.6f ", 
+//			        LTop->Marker[locus].pos_female,
+//			        LTop->Marker[locus].pos_male
+                                EXLTop->EXLocus[locus].pos_female[genetic_distance_index],
+                                EXLTop->EXLocus[locus].pos_male[genetic_distance_index]
+                            );
+                    } else if (genetic_distance_sex_type_map == FEMALE_GDMT &&
+                               LTop->Marker[locus].chromosome != SEX_CHROMOSOME) {
+                        errorvf("When a female only map is specified only operations on the X chromosome are permitted.\n");
+                        EXIT(INPUT_DATA_ERROR);
+                    }
+                }
+                if (base_pair_position_index >= 0) {
+                    fprintf(fp, " %10.0f ",
+                            EXLTop->EXLocus[locus].positions[base_pair_position_index]);
+                }
+                fprintf(fp, "\n");
             }
         }
         fclose(fp);
@@ -842,6 +860,7 @@ void create_mega2annot_files(linkage_ped_top **LPedTop, char *file_names[],
     int combine_chromo=0;    // One set of output files per chromosome (default)...
     analysis_type analysis = MEGA2ANNOT;
     linkage_locus_top *LTop = Top->LocusTop;
+    ext_linkage_locus_top *EXLTop = Top->EXLTop;
 
     /* get the output file names, whether combined output for all chromosomes etc. */
     mega2annot_file_names(file_names, &combine_chromo, Top->OrigIds, Top->UniqueIds);
@@ -919,7 +938,7 @@ void create_mega2annot_files(linkage_ped_top **LPedTop, char *file_names[],
         sprintf(err_msg, "        Names file:           %s", file_names[1]);
         mssgf(err_msg);
 
-        annotated_map_file(LTop, file_names[2]);
+        annotated_map_file(LTop, EXLTop, file_names[2]);
         sprintf(err_msg, "        Map file:             %s", file_names[2]);
         mssgf(err_msg);
 

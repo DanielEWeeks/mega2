@@ -1070,7 +1070,7 @@ void  create_aspex_files(linkage_ped_top **LPedTop,
     char		  chr_str[3], aspin_name1[FILENAME_LENGTH];
 
     int             SelectRiskOpt, SelectionNumber;
-    int             num_ratios;
+    int             num_ratios = 0;  // But not used unless (SelectRiskOpt==2)
 
     double           this_risk, left, right, risk, *risk_ratios = NULL, InitRisk,
         RiskIncrement, FinalRisk;  //Note: risk_rations is only used if riskopt == 2
@@ -1232,7 +1232,6 @@ void  create_aspex_files(linkage_ped_top **LPedTop,
                         AspexProgram[SelectionNumber-1], SelectionNumber,
                         file_names[5], SelectRiskOpt, num_ratios,
                         risk_ratios);
-
         first_time=0;
 
         if (!global_cshell) {
