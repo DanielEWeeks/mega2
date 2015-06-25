@@ -65,16 +65,10 @@ const char *errstr;
 #define SOCK_ERRh(sfd) (sfd < 0)
 #define SOCK_ERR(sfd)  (sfd < 0)
 
-// The system error message strings can be accessed directly using the external array 'sys_errlist'.
 // The external value 'sys_nerr' contains a count of the messages in 'sys_errlist'.
 // THE USE OF THESE VARIABLES IS DEPRECATED; strerror() or strerror_r() should be used instead.
 // This fails for gcc version 4.5.2; target i386-pc-solaris2.11
-#ifdef __sun
 #define ERR_STR() errstr = strerror(errno)
-#else /* __sun */
-#define ERR_STR() errstr = errno < sys_nerr ? sys_errlist[errno] : "oops"
-#endif /* __sun */
-
 #define STR_ERR() 
 const char *errstr;
 
@@ -201,8 +195,7 @@ static int refill(SOCK fd, char *buffer, size_t blen)
         return -1;
     } else {
         ERR_STR();
-        switch(errno) {
-        default:
+        if (errno) {
             warnvf("test: recv() %d failed with errno %d (\"%s\")\n",
 		   len, errno, errstr);
             STR_ERR();
@@ -240,8 +233,7 @@ void test_socket_fd(void)
                 return;
             }
             ERR_STR();
-            switch(errno) {
-            default:
+            if (errno) {
                 warnvf("test: fgets() %s failed with errno %d (\"%s\")\n",
 		       ret, errno, errstr);
                 STR_ERR();
@@ -280,8 +272,7 @@ FILE *http_response_body(const char *request, const char *host, unsigned short p
                 return NULL;
             }
             ERR_STR();
-            switch(errno) {
-            default:
+            if (errno) {
                 warnvf("test: fgets() %s failed with errno %d (\"%s\")\n",
 		       ret, errno, errstr);
                 STR_ERR();
@@ -335,8 +326,7 @@ SOCK http_request(const char *request, const char *host, unsigned short port)
     len = send(fd, socket_buffer, len, 0);
     if (SOCK_ERR(len)) {
         ERR_STR();
-        switch(errno) {
-        default:
+        if (errno) {
             warnvf("http_request: write() failed with errno %d (\"%s\")\n",
 		   errno, errstr);
             STR_ERR();
@@ -368,8 +358,7 @@ SOCK socket_fd(const char *host, unsigned short port)
     sfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (SOCK_ERRh(sfd)) {
         ERR_STR();
-        switch(errno) {
-        default:
+        if (errno) {
             warnvf("socket_fd: socket() failed with errno %d (\"%s\")\n", errno, errstr);
             STR_ERR();
 #if defined(_WIN) || defined(MINGW)
@@ -425,8 +414,7 @@ SOCK socket_fd(const char *host, unsigned short port)
         } // fall thru
 #endif
             ERR_STR();
-        switch(errno) {
-        default:
+        if (errno) {
             fflush(stdout); fflush(stderr);
             warnvf("socket_fd: connect(%s:%d) failed with errno %d (\"%s\")\n",
 		   host, port, errno, errstr);
@@ -487,8 +475,7 @@ void socket_close_fd(FILE *FD)
 
 /*     len = write(fd, socket_buffer, len); */
 /*     if (len < 0) { */
-/*         switch(errno) { */
-/*         default: */
+/*         if (errno) { */
 /*             errorvf("http_request: write() failed with errno %d (\"%s\")\n", */
 /*                     errno, errno < sys_nerr ? sys_errlist[errno] : "oops"); */
 
@@ -521,8 +508,7 @@ void socket_close_fd(FILE *FD)
 
 /*     sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP); */
 /*     if (sfd < 0) { */
-/*         switch(errno) { */
-/*         default: */
+/*         if (errno) { */
 /*             errorvf("socket_fd: socket() failed with errno %d (\"%s\")\n", */
 /*                     errno, errno < sys_nerr ? sys_errlist[errno] : "oops"); */
 /*             return -1; */
@@ -545,8 +531,7 @@ void socket_close_fd(FILE *FD)
 
 /*     err = connect(sfd, (struct sockaddr *)&saddr, sizeof (struct sockaddr_in)); */
 /*     if (err < 0) { */
-/*         switch(errno) { */
-/*         default: */
+/*         if (errno) { */
 /*             errorvf("socket_fd: connect(%s:%d) failed with errno %d (\"%s\")\n", */
 /*                     host, port, errno, errno < sys_nerr ? sys_errlist[errno] : "oops"); */
 

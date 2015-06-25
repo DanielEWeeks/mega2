@@ -639,21 +639,17 @@ static void append_to_fd(const char *file_name, const char *str, FILE *FDo)
     while (1) {
         lenr =  fread(multi_use_buffer, sizeof (multi_use_buffer), 1, FDi);
         if (lenr != sizeof (multi_use_buffer) && ferror(FDi)) {
-            switch(errno) {
-            default:
+            if (errno) {
                 warnvf("append_to_fd: fread(%s, , %d, 1) = %d failed with errno %d (\"%s\")\n",
 		       file_name, ((int)sizeof (multi_use_buffer)), lenr,
 		       errno, strerror(errno));
-                break;
             }
         }
         lenw = fwrite(multi_use_buffer, lenr, 1, FDo);
         if (lenr != lenw && ferror(FDo)) {
-            switch(errno) {
-            default:
+            if (errno) {
                 warnvf("append_to_fd: fwrite(%s, , %d) = %d failed with errno %d (\"%s\")\n",
 		       "ErrLog", lenr, lenw, errno, strerror(errno));
-                break;
             }
         }
         /*
@@ -1093,8 +1089,7 @@ void chmod_X_file(const char *flname)
     int err;
     err = stat(flname, &stbuf);
     if (err < 0) {
-        switch(errno) {
-        default:
+        if (errno) {
             warnvf("chmod_X_file: stat(%s, buf) failed with errno %d (\"%s\")\n",
 		   flname, errno, strerror(errno));
         }
@@ -1108,8 +1103,7 @@ void chmod_X_file(const char *flname)
     stbuf.st_mode |= (S_IXUSR|S_IXGRP|S_IXOTH);
     err = chmod(flname, stbuf.st_mode);
     if (err < 0) {
-        switch(errno) {
-        default:
+        if (errno) {
             warnvf("chmod_X_file: chmod(%s, +x) failed with errno %d (\"%s\")\n",
 		   flname, errno, strerror(errno));
         }
@@ -1124,7 +1118,7 @@ void delete_file(const char *flname)
     if (access(flname, F_OK)==0) {
         err = unlink(flname);
         if (err < 0) {
-            switch(errno) {
+            switch (errno) {
             case EACCES:
             case ENOENT:
             default:
@@ -1144,8 +1138,7 @@ void copy_file(char *flname1, char *flname2)
     if (access(flname1, F_OK)==0) {
         fdi = open(flname1, O_RDONLY | O_BINARY);
         if (fdi < 0) {
-            switch(errno) {
-            default:
+            if (errno) {
                 warnvf("copy_file: open(%s, \"r\") failed with errno %d (\"%s\")\n",
 		       flname1, errno, strerror(errno));
             }
@@ -1169,22 +1162,18 @@ void copy_file(char *flname1, char *flname2)
         while (1) {
             lenr =  read(fdi, multi_use_buffer, sizeof (multi_use_buffer));
             if (lenr < 0) {
-                switch(errno) {
-                default:
+                if (errno) {
                     warnvf("copy_file: read(%s, , %d) = %d failed with errno %d (\"%s\")\n",
 			   flname1, ((int)sizeof (multi_use_buffer)), lenr,
 			   errno, strerror(errno));
-                    break;
                 }
             }
             lenw = write(fdo, multi_use_buffer, lenr);
             if (lenr != lenw) {
-                switch(errno) {
-                default:
+                if (errno) {
                     warnvf("copy_file: write(%s, , %d) = %d failed with errno %d (\"%s\")\n",
 			   flname2, lenr, lenw,
 			   errno, strerror(errno));
-                    break;
                 }
             }
             /*
@@ -1195,16 +1184,14 @@ void copy_file(char *flname1, char *flname2)
         }
         err = close(fdo);
         if (err < 0) {
-            switch(errno) {
-            default:
+            if (errno) {
                 warnvf("copy_file: close(%s) failed with errno %d (\"%s\")\n",
 		       flname2, errno, strerror(errno));
             }
         }
         err = close(fdi);
         if (err < 0) {
-            switch(errno) {
-            default:
+            if (errno) {
                 warnvf("copy_file: close(%s) failed with errno %d (\"%s\")\n",
 		       flname1, errno, strerror(errno));
             }
@@ -1230,8 +1217,7 @@ void init_file(char *file_name)
     if (fd >= 0) {
         fd = close(fd);
         if (fd < 0) {
-            switch(errno) {
-            default:
+            if (errno) {
                 warnvf("init_file: close(%s) failed with errno %d (\"%s\")\n",
 		       file_name, errno, strerror(errno));
             }
@@ -1314,8 +1300,7 @@ int is_dir(char *dirname)
     struct stat stbuf;
     int err = stat(dirname, &stbuf);
     if (err < 0) {
-        switch(errno) {
-        default:
+        if (errno) {
             warnvf("can not stat: stat(%s, buf) failed with errno %d (\"%s\")\n",
                    dirname, errno, strerror(errno));
         }
@@ -1837,6 +1822,7 @@ void mega2_opts(int argc, char **argv)
 
         case 'h':
             print_mega2_help();
+            exit(0);
             break;
 
         case 'v':
@@ -1980,9 +1966,10 @@ void mega2_opts(int argc, char **argv)
 		    argv++; --argc;
 		    affect_out = *argv;
 		    missingv_flags |= 8;
-		} else if (strcasecmp(as, "help") == 0)
+		} else if (strcasecmp(as, "help") == 0) {
                     print_mega2_help();
-                else if (strcasecmp(as, "version") == 0)
+                    exit(0);
+                } else if (strcasecmp(as, "version") == 0)
                     print_mega2_version();
                 else {
                     print_mega2_help();
@@ -1990,7 +1977,7 @@ void mega2_opts(int argc, char **argv)
                 }
             } else {
                 extern int MARKER_SCHEME;
-                while ((c = *++as)) {
+                for (c = *++as; c; c = *++as) {
                     switch (c) {
                     case 'w': case 'W':
                         check_web_ver = 0;
@@ -2000,6 +1987,7 @@ void mega2_opts(int argc, char **argv)
                         break;
                     case 'h': case 'H':
                         print_mega2_help();
+                        exit(0);
                         break;
                     case 'd': case 'D':
                         debug++;
@@ -2109,8 +2097,6 @@ void print_mega2_help(void)
     printf("                    Print this message.\n");
     printf("             -v, --version\n");
     printf("                    Print mega2 version number.\n");
-    exit(0);
-
 }
 
 void print_mega2_version(void)

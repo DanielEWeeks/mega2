@@ -30,6 +30,7 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+#include <errno.h>
 
 #include "common.h"
 #include "typedefs.h"
@@ -630,8 +631,9 @@ char *canonical_allele(const char *ra)
         Allele_Array[allele_count] = Ara;
 
         char *endptr;
-        int i1 = strtod(cra, &endptr);
-        if (endptr == cra || (*endptr)) {
+        errno = 0;
+        int i1 = strtol(cra, &endptr, 10);
+        if (endptr == cra || (*endptr) || errno) {
             // non integer;
         } else if (i1 >= ALLELE_ARRAY && MARKER_SCHEME != MARKER_SCHEME_PTR) {
             Display_Errors = 1;
@@ -652,7 +654,7 @@ int read_numbered_data(FILE *filep, int locusnm,
 		       record_type rec, int last_marker)
 {
 
-    int a1=0, a2=0, lch, i, c;
+    int a1=0, a2=0, lch=0, i, c;
     char ra1[ALL_LEN], ra2[ALL_LEN];
     char *cra1 = NULL, *cra2 = NULL; //silly compiler
     char *rap;
@@ -668,14 +670,16 @@ int read_numbered_data(FILE *filep, int locusnm,
     while (((c = fgetc(filep)) != -1) && (!isalnum(c)) && c != 10) ;
     if (c == -1 || c == 10) {
         lch = 10;
-    } while ((*rap++ = (char)c)) {
-      c = (int)fgetc(filep);
-        if (c == -1 || c == 10) {
-            lch = 10;
-            c = 0;
-        } else if (!isalnum(c)) {
-            lch = 32;
-            c = 0;
+    } else {
+        for (*rap++ = (char)c; c ; *rap++ = (char)c) {
+            c = (int)fgetc(filep);
+            if (c == -1 || c == 10) {
+                lch = 10;
+                c = 0;
+            } else if (!isalnum(c)) {
+                lch = 32;
+                c = 0;
+            }
         }
     }
     ungetc(lch, filep);
@@ -690,8 +694,9 @@ int read_numbered_data(FILE *filep, int locusnm,
 
         /* else everything is okay */
         char *endptr;
-        a1 = strtod(ra1, &endptr);
-        if (endptr == ra1 || (*endptr)) {
+        errno = 0;
+        a1 = strtol(ra1, &endptr, 10);
+        if (endptr == ra1 || (*endptr) || errno) {
             undef = 1; // non integer; can not happen here
         } else if (a1 >= ALLELE_ARRAY && MARKER_SCHEME != MARKER_SCHEME_PTR) {
             Display_Errors = 1;
@@ -708,11 +713,12 @@ int read_numbered_data(FILE *filep, int locusnm,
 
 /*    lch = fcmap(filep, "%s", ra2);*/
     rap = ra2;
-    while (((c = fgetc(filep)) != -1) && (!isalnum(c)) && c != 10) ;
+    c = fgetc(filep);
+    while ((c != -1) && (!isalnum(c)) && c != 10) c = fgetc(filep);
     if (c == -1 || c == 10) {
         lch = 10;
-    } while ((*rap++ = (char)c)) {
-      c = (int)fgetc(filep);
+    } for (*rap++ = (char)c; c; *rap++ = (char)c) {
+        c = (int)fgetc(filep);
         if (c == -1 || c == 10) {
             lch = 10;
             c = 0;
@@ -733,8 +739,9 @@ int read_numbered_data(FILE *filep, int locusnm,
         }
 
         char *endptr;
-        a2 = strtod(ra2, &endptr);
-        if (endptr == ra2 || (*endptr)) {
+        errno = 0;
+        a2 = strtol(ra2, &endptr, 10);
+        if (endptr == ra2 || (*endptr) || errno) {
             undef = 1; // non integer; can not happen here
         } else if (a2 >= ALLELE_ARRAY && MARKER_SCHEME != MARKER_SCHEME_PTR) {
             Display_Errors = 1;
