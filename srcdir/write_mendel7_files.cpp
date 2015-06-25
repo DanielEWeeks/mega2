@@ -366,7 +366,8 @@ void  csv_write_mendel_locus_file(char *file_name,
 
     NLOOP;
 
-    if (num_affec > 0) trp = &(global_trait_entries[0]);
+//    if (num_affec > 0) trp = &(global_trait_entries[0]);
+    trp = global_trait_entries;
 
     for (tr=0; tr <= nloop; tr++) {
         if (nloop > 1 && tr == 0) continue;
@@ -757,7 +758,7 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
 static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top *LTop,
 						    analysis_type analysis, int xlinked)
 {
-    int i, j, tr, nloop=0, *trp, num_affec=num_traits;
+    int i, j, tr, nloop=0, *trp = 0, num_affec=num_traits;
     int num_markers, *markers, num_numbered=0;
     char mapfl_name[2*FILENAME_LENGTH];
     double difff = INVALID_POS_DIFF, diffm = INVALID_POS_DIFF;
@@ -814,7 +815,7 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
         }
 
         if (num_numbered == 0) {
-            if (LoopOverTrait == 1 && LTop->Locus[*trp].Type == AFFECTION) {
+            if (LoopOverTrait == 1 && trp && LTop->Locus[*trp].Type == AFFECTION) {
                 fprintf(filep, "%s\n", strtail(LTop->Locus[*trp].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
 		fprintf(filep, ",\n");
             }
@@ -902,7 +903,7 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
 static void csv_write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top *LTop,
 						    analysis_type analysis)
 {
-  int i, j, tr, nloop=0, *trp, num_affec=num_traits, display_warn_x=0;
+  int i, j, tr, nloop=0, *trp = 0, num_affec=num_traits, display_warn_x=0;
     int num_markers, *markers, num_numbered=0;
     char mapfl_name[2*FILENAME_LENGTH];
     double diff = INVALID_POS_DIFF;
@@ -957,7 +958,7 @@ static void csv_write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus
         }
 
         if (num_numbered == 0) {
-            if (LoopOverTrait == 1 && LTop->Locus[*trp].Type == AFFECTION) {
+            if (LoopOverTrait == 1 && trp && LTop->Locus[*trp].Type == AFFECTION) {
 	      fprintf(filep, "%s\n", strtail(LTop->Locus[*trp].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
 		fprintf(filep, "\n");
             }

@@ -587,8 +587,9 @@ static void   write_slink_pedigree(ped_top *PTop, linkage_ped_top *Top,
 
     NLOOP;
 
-    if (num_affec > 0)
-        tr_pos = &global_trait_entries[0];
+//  if (num_affec > 0)
+//      tr_pos = &global_trait_entries[0];
+    tr_pos = global_trait_entries;
 
     loc_order = CALLOC((size_t) NumChrLoci+1, int);
 

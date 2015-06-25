@@ -420,6 +420,7 @@ void   create_summary_file(linkage_ped_top * LPedTreeTop,
         makenucs1(LPedTreeTop, PedTreeTop, NewTop);
         NLOOP;
         if (LoopOverTrait == 0) {
+            trp = global_trait_entries;
             for (tr=0; tr < num_traits; tr++) {
                 if (global_trait_entries[tr] < 0) continue;
                 if (LPedTreeTop->LocusTop->Locus[global_trait_entries[tr]].Type == AFFECTION) {

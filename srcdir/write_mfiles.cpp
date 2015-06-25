@@ -1314,7 +1314,8 @@ void            write_mendel_locus_file(char *file_name,
     simwalk2  = (SIMWALK2(analysis)? 1 : 0);
     NLOOP;
 
-    if (num_affec > 0) trp = &(global_trait_entries[0]);
+//  if (num_affec > 0) trp = &(global_trait_entries[0]);
+    trp = global_trait_entries;
     for (tr=0; tr <= nloop; tr++) {
         if (nloop > 1 && tr == 0) continue;
         sprintf(loutfl_name, "%s/%s", output_paths[tr], file_name);
@@ -1762,7 +1763,7 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
 						analysis_type analysis)
 {
 
-    int i, j, nloop, tr, *trp, num_affec=num_traits;
+    int i, j, nloop, tr, *trp = 0, num_affec=num_traits;
     char mapfl_name[2*FILENAME_LENGTH];
     double difff = INVALID_POS_DIFF, diffm = INVALID_POS_DIFF; //compiler: this makes diff f/m defined for truly odd cases
 
@@ -1800,7 +1801,7 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
 
     for (tr=0; tr <= nloop; tr++) {
         if (nloop > 1 && tr == 0) continue;
-        if (analysis != TO_HWETEST && num_affec > 0 && *trp == -1) {
+        if (analysis != TO_HWETEST && num_affec > 0 && trp && *trp == -1) {
             trp++;
         }
         sprintf(mapfl_name, "%s/%s", output_paths[tr], mapfile);
@@ -1814,7 +1815,7 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
         }
 
         if (num_affec > 0) {
-            if (LoopOverTrait == 1 && LTop->Locus[*trp].Type == AFFECTION) {
+            if (LoopOverTrait == 1 && trp && LTop->Locus[*trp].Type == AFFECTION) {
                 fprintf(filep, "%-8s\n", strtail(LTop->Locus[*trp].Name, MENDEL_MAX_LOCUS_NAME_LEN));
                 fprintf(filep, "        0.50000 0.50000 ! %s\n",
                         (LTop->map_distance_type  == 'h' ? "Haldane" : "Kosambi"));
@@ -1912,7 +1913,7 @@ static void write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top
 
 {
 
-    int i, j, nloop, tr, *trp, num_affec=num_traits;
+    int i, j, nloop, tr, *trp = 0, num_affec=num_traits;
     char mapfl_name[2*FILENAME_LENGTH];
     double diff = INVALID_POS_DIFF; //compiler: this makes diff defined for truly odd cases
 
@@ -1947,7 +1948,7 @@ static void write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top
 
     for (tr=0; tr <= nloop; tr++) {
         if (nloop > 1 && tr == 0) continue;
-        if (analysis != TO_HWETEST && num_affec > 0 && *trp == -1) {
+        if (analysis != TO_HWETEST && num_affec > 0 && trp && *trp == -1) {
             trp++;
         }
         sprintf(mapfl_name, "%s/%s", output_paths[tr], mapfile);
@@ -1961,7 +1962,7 @@ static void write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top
         }
 
         if (num_affec > 0) {
-            if (LoopOverTrait == 1 && LTop->Locus[*trp].Type == AFFECTION) {
+            if (LoopOverTrait == 1 && trp && LTop->Locus[*trp].Type == AFFECTION) {
                 fprintf(filep, "%-8s\n", strtail(LTop->Locus[*trp].Name, MENDEL_MAX_LOCUS_NAME_LEN));
                 fprintf(filep, "        0.50000\n");
             }
@@ -2038,7 +2039,7 @@ void write_mendel_map(char *mapfl, linkage_locus_top *LTop, analysis_type analys
 {
     if (genetic_distance_index > -1) {
         if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-	    write_mendel_map_using_sex_averaged(mapfl, LTop, analysis);
+  	    write_mendel_map_using_sex_averaged(mapfl, LTop, analysis);
         } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
             write_mendel_map_using_sex_specific(mapfl, LTop, analysis);
         } else {

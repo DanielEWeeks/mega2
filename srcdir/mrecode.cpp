@@ -585,15 +585,25 @@ void assign_dummy_alleles(marker_type *marker_list,
         if (LTop->Locus[m].Type == NUMBERED ||
            LTop->Locus[m].Type == XLINKED ||
            LTop->Locus[m].Type == YLINKED) {
-
             if (marker_list[m].num_alleles == 1) {
-                marker_list[m].first_allele->allele_freq.freq=1.0;
-                all=CALLOC((size_t) 1, allele_list_type);
-                all->allele_freq.freq  = 0.0;
-                all->allele_freq.name  = canonical_allele("dummy");
-                all->allele_freq.index = 2;
-                all->next = NULL;
-                marker_list[m].first_allele->next = all;
+                if (strcmp(marker_list[m].first_allele->allele_freq.name, "2") != 0) {
+                    marker_list[m].first_allele->allele_freq.freq=1.0;
+                    all=CALLOC((size_t) 1, allele_list_type);
+                    all->allele_freq.freq  = 0.0;
+                    all->allele_freq.name  = canonical_allele("dummy");
+                    all->allele_freq.index = 2;
+                    all->next = NULL;
+                    marker_list[m].first_allele->next = all;
+                } else {
+                    marker_list[m].first_allele->allele_freq.freq=1.0;
+                    all=CALLOC((size_t) 1, allele_list_type);
+                    all->allele_freq.freq  = 0.0;
+                    all->allele_freq.name  = canonical_allele("dummy");
+                    all->allele_freq.index = 1;
+                    all->next = marker_list[m].first_allele;
+                    marker_list[m].first_allele->allele_freq.index=2;
+                    marker_list[m].first_allele = all;
+                }
                 marker_list[m].num_alleles=2;
             } else if (marker_list[m].num_alleles == 0) {
                 all = CALLOC((size_t) 1, allele_list_type);

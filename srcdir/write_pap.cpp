@@ -394,9 +394,10 @@ static int save_pap_hdr(char *hdr_file_name, linkage_locus_top *LocusTop,
 
     NLOOP;
 
-    if (num_affec > 0) {
-        trp = &(global_trait_entries[0]);
-    }
+//  if (num_affec > 0) {
+//      trp = &(global_trait_entries[0]);
+//  }
+    trp = global_trait_entries;
 
     for (tr=0; tr<=nloop; tr++) {
         if (tr==0 && nloop > 1) continue;
