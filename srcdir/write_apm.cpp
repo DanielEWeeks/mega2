@@ -682,8 +682,11 @@ void create_APMULT(char *pedfl_name, char *locusfl_name, int disease_locus,
                 ReOrderMappedLoci_new() ... like everyone else
             ReOrderMappedLoci(LPedTreeTop, numchr);
 #endif
+#ifdef MOREDEFUNCT
+            to silence abort() above
             change_output_chr(file_names[3], *numchr);
             change_output_chr(file_names[14], *numchr);
+#endif
         }
         CHR_STR(*numchr, chr);
 

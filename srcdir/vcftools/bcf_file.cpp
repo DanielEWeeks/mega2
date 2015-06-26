@@ -124,7 +124,8 @@ void bcf_file::scan_file(const set<string> &chrs_to_keep, const set<string> &exc
 
 	if (could_read_index_file == false)
 	{
-		int POS, last_POS = -1;
+//		int POS, last_POS = -1;  POS is always set in read_...() below unless header is broken [read 4 ints fail]
+		int POS = - 2, last_POS = -1;
 		char magic[5];
 
 		endpos = get_eof();

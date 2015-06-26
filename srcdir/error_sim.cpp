@@ -810,8 +810,8 @@ static void error_sim_menu(linkage_ped_top *Top,
                               "Marker-specific",
                               "SimWalk2"};
 
-    int locus_opt, model_opt, num_select, *loc_select, *loc_select_i=NULL;
-    char uerr_str[10];
+    int locus_opt, model_opt, num_select, *loc_select=NULL, *loc_select_i=NULL; // loc_select relatively safe
+    char uerr_str[10];                                                          // reset before use
     float err_prob;
     int item;
     char fl_stat[12];

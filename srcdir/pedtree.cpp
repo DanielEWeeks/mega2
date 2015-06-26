@@ -349,7 +349,7 @@ int set_locus_orderDEFUNCT(ped_top *Top, int *order)
 static int sort_affecteds(ped_tree *Ped)
 {
     int aff, aff2, lowest_ID;
-    ped_rec **lowest_aff;
+    ped_rec **lowest_aff = 0; // will be set unless lowest_ID remains 0; but 0 does not allow ref of lowest_aff
     register ped_rec *tmp_aff;
 
     for (aff = 0; aff < Ped->AffectedCnt; aff++) {
@@ -597,7 +597,7 @@ void remove_untyped_affecteds(ped_tree *Ped, locus_top *LTop, int mode,
     int aff, affcnt;
     int newaff;
     int *typed;
-    ped_rec **NewAffected;
+    ped_rec **NewAffected = 0;  // stupid msvc: if affcnt > 0 NewAFfected is assigned ... and used
 
     /* Record which ones are typed and their number. */
     affcnt = 0;

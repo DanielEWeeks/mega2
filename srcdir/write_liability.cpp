@@ -390,7 +390,7 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
 
     if (!tab_text) {
         fp = fopen(liablefl_name[0], "a");
-//n
+    } else {
         file_ext = NULL;
         ou_file_name = NULL;
     }

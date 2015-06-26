@@ -1045,6 +1045,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                     a1 = a2 = 0;
                     if (UntypedPeds[ped] == 1) {
                         geno_recoded[0]=geno_recoded[1]=1;
+                        all1 = all2 = "0";  // for compiler; line above guarantees all1/2 not used
                     } else {
                         get_2Ralleles(marker, m, &all1, &all2);
                         geno_recoded[0]=geno_recoded[1]=0;
