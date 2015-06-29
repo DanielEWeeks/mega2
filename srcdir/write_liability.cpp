@@ -377,8 +377,8 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
 		       int empty_rows, int empty_cols, int tab_text)
 
 {
-    char *disease_name, *header, *ou_file_name;
-    char *file_ext;
+    char *disease_name, *header, *ou_file_name=NULL;  //MSVC not smart enough to tell
+    char *file_ext=NULL;                              //prev code was ok
     int *loci_NUMBERED, lclasses, locus_AFFECTION, num_alleles;
     int num_genos, **genotypes, *header_p;
     FILE *fp = NULL; //silly compiler; set immediately below or eventually in loop
@@ -390,9 +390,6 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
 
     if (!tab_text) {
         fp = fopen(liablefl_name[0], "a");
-    } else {
-        file_ext = NULL;
-        ou_file_name = NULL;
     }
 
     for (kk=0; kk<num_AFFECTION; kk++){

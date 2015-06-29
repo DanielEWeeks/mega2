@@ -98,16 +98,16 @@ static const char *source_name[] = {
 #endif
 
 struct itl Value_Missing[]  =  {
-    {Value_Missing_Quant_On_Input,   0, Str_Missing_Quant_On_Input,
+    /*17,fl*/    {Value_Missing_Quant_On_Input,   0, Str_Missing_Quant_On_Input,
      "Quantitative", "Input",   fix_Value_Missing_Quant_On_Input, 0, 0},
 
-    {Value_Missing_Quant_On_Output,  0,  Str_Missing_Quant_On_Output,
+    /*49,ln*/    {Value_Missing_Quant_On_Output,  0,  Str_Missing_Quant_On_Output,
      "Quantitative", "Output",  fix_Value_Missing_Quant_On_Output, 0, 0},
 
-    {Value_Missing_Affect_On_Input,  0,  Str_Missing_Affect_on_Input,
+    /*58,ln*/   {Value_Missing_Affect_On_Input,  0,  Str_Missing_Affect_on_Input,
      "Affection", "Input",      fix_Value_Missing_Affect_On_Input, 0, 0},
 
-    {Value_Missing_Affect_On_Output, 1, Str_Missing_Affect_On_Output,
+    /*59,ln*/    {Value_Missing_Affect_On_Output, 1, Str_Missing_Affect_On_Output,
      "Affection", "Output",     fix_Value_Missing_Affect_On_Output, 0, 0},
 
     {0, 0, 0, 
@@ -743,6 +743,7 @@ void Value_Missing_get(analysis_type *analysis)
 {
     int allow;
     struct itl *itp = &Value_Missing[0], *itpn;
+    int l;
 
     for (int i = 0; i < 4; i++) {
 	itpn = itp + i;
@@ -781,7 +782,7 @@ void Value_Missing_get(analysis_type *analysis)
 
     itpn = itp + 0;
     if (Mega2BatchItems[itpn->it].value.fvalue == QMISSING)
-        msgvf("%s  %s Missing Value \"%s\"",
+        msgvf("%s  %s Missing Value \"%6s\"",
               itpn->name, itpn->put, "NA");
     else
         msgvf("%s  %s Missing Value  %g ",
@@ -792,24 +793,27 @@ void Value_Missing_get(analysis_type *analysis)
     msgvf("\n");
 
     itpn = itp + 2;
-    msgvf("%s     %s Missing Value \"%s\"",
-          itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name);
+    l = strlen(itpn->str);
+    msgvf("%s     %s Missing Value %*s\"%s\"",
+          itpn->name, itpn->put, 6-l, "", Mega2BatchItems[itpn->it].value.name);
 #ifdef HIDESTATUS
     msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
 #endif
     msgvf("\n");
 
     itpn = itp + 1;
-    msgvf("%s %s Missing Value \"%s\"",
-          itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name);
+    l = strlen(itpn->str);
+    msgvf("%s %s Missing Value %*s\"%s\"",
+          itpn->name, itpn->put, 6-l, "", Mega2BatchItems[itpn->it].value.name);
 #ifdef HIDESTATUS
     msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
 #endif
     msgvf("\n");
 
     itpn = itp + 3;
-    msgvf("%s    %s Missing Value \"%s\"",
-          itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.name);
+    l = strlen(itpn->str);
+    msgvf("%s    %s Missing Value %*s\"%s\"",
+          itpn->name, itpn->put, 6-l, "", Mega2BatchItems[itpn->it].value.name);
 #ifdef HIDESTATUS
     msgvf(" [\"%s\" %s]", itpn->str,  source_name[itpn->source]);
 #endif

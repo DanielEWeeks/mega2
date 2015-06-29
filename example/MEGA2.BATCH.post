@@ -83,7 +83,6 @@ AlleleFreq_SquaredDev=999999.000000
 Analysis_Option=Cranefoot
 Chromosomes_Multiple_Num=2
 Chromosomes_Multiple=5 6 
-Traits_Num=2
 Traits_Combine=1 2 
 Default_Outfile_Names=y
 Default_Reset_Invalid=y

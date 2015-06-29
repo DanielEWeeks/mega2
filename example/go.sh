@@ -19,3 +19,13 @@ mv MEGA2.{ERR,KEYS,LOG} *.html ../example_output_pre
 
 Mega2 --nosave MEGA2.BATCH.preannotated
 mv MEGA2.{ERR,KEYS,LOG} *.html ../example_output_preannotated
+
+Mega2 --nosave MEGA2.BATCH.bcf
+mv MEGA2.{ERR,KEYS,LOG} *.html ../example_output_bcf
+
+Mega2 --nosave MEGA2.BATCH.vcf
+mv MEGA2.{ERR,KEYS,LOG} *.html ../example_output_vcf
+
+Mega2 --nosave MEGA2.BATCH.impute
+mv MEGA2.{ERR,KEYS,LOG} *.html ../example_output_impute
+
