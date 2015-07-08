@@ -51,7 +51,7 @@
 #include <map>
 
 /*
-     error_messages_ext.h:  Mega2LogF mssgf my_calloc warnf
+     error_messages_ext.h:  mssgf my_calloc warnf
               fcmap_ext.h:  fcmap
       genetic_utils_ext.h:  chrom_num_to_name kosambi_to_haldane
         grow_string_ext.h:  grow
@@ -688,8 +688,6 @@ int write_quant_stats(linkage_ped_top *Top,
     person_node_type *person;
     int ZeroQuant=0, missing_between_min_and_max, found_missing_quant=0;
     int *num_phenotyped_peds, *num_phenos, this_ped_phenotyped, *loc_missing;
-/* void (*logf)() = mssgf; */
-    FILE *logfp;
 
     // Does this analysis type allow quantitative traits?
     if (!(analysis)->qtl_allow()) return 0;
@@ -728,24 +726,22 @@ int write_quant_stats(linkage_ped_top *Top,
             *qlocp++ = covariates[l];
         }
 
-        logfp = Mega2LogF();
-        fprintf(logfp,
-                "------------------------------------------------------------\n");
-        fprintf(logfp,
-                "Per-pedigree quantitative phenotype summary:\n");
-        fprintf(logfp,
-                "Pedigree     Mean      Std Dev     Minimum    Maximum  #Phenotypes\n");
-        fprintf(logfp,
-                "------------------------------------------------------------\n");
+        SECTION_MSG_INIT(quant_stat);
+        SECTION_MSG(quant_stat);
+        mssgf("------------------------------------------------------------");
+        mssgf("Per-pedigree quantitative phenotype summary:");
+        mssgf("Pedigree     Mean      Std Dev     Minimum    Maximum  #Phenotypes");
+        mssgf("------------------------------------------------------------");
+        SECTION_MSG_HEADER(quant_stat)
         q=0;
         for (l=0; l < num_traits+num_covariates; l++) {
             if (qloc[l] == -1) continue;
 
             if (Top->LocusTop->Locus[qloc[l]].Type == QUANT) {
                 i = qloc[l];
-                fprintf(logfp, "%s\n", Top->LocusTop->Locus[i].Name);
-                fprintf(logfp,
-                        "------------------------------------------------------------\n");
+                SECTION_MSG(quant_stat);
+                mssgf(Top->LocusTop->Locus[i].Name);
+                mssgf("------------------------------------------------------------");
                 /* initialize across-ped variables */
                 num_phenotyped_peds[q]=0;
                 sumq=0.0; num_phenos[q]=0;
@@ -859,8 +855,8 @@ int write_quant_stats(linkage_ped_top *Top,
                 /* Second pass to set the skew and curtosis after computing mean.
                    Sums of devs raised to 2,3,4 power while looping over individuals.
                 */
-                fprintf(logfp,
-                        "------------------------------------------------------------\n");
+//              SECTION_MSG(quant_stat);
+                mssgf("------------------------------------------------------------");
                 for (j=0; j < Top->PedCnt; j++) {
                     this_ped_phenotyped=0;
                     ped_stdev[j]=0.0;
@@ -901,12 +897,13 @@ int write_quant_stats(linkage_ped_top *Top,
                         ped_stdev[j] = 0.0;
                     }
                     /* write the quant stats for pedigree */
+                    SECTION_MSG(quant_stat);
                     if (Top->pedfile_type == PREMAKEPED_PFT) {
-                        fprintf(logfp, "%-10d ", Top->PTop[j].ped);
+                        msgvf("%-10d ", Top->PTop[j].ped);
                     } else {
-                        fprintf(logfp, "%-10s ", Top->Ped[j].Name);
+                        msgvf("%-10s ", Top->Ped[j].Name);
                     }
-                    fprintf(logfp, "%10.5f %10.5f %10.5f %10.5f %8d\n",
+                    msgvf("%10.5f %10.5f %10.5f %10.5f %8d\n",
                             ped_mean[j], ped_stdev[j], ped_min[j],
                             ped_max[j], this_ped_phenotyped);
 
@@ -934,7 +931,6 @@ int write_quant_stats(linkage_ped_top *Top,
                 q++;
             }
         }
-        fflush(logfp);
         /* Now display combined statistics on screen as well as log */
         mssgf("               Quantitative trait phenotype statistics");
         mssgf("-------------------------------------------------------------------------------");
@@ -956,6 +952,7 @@ int write_quant_stats(linkage_ped_top *Top,
                     missing_between_min_and_max_flag = FLAG_USED_TO_INDICATE_MISSING_BETWEEN_MIN_AND_MAX;
                     missing_between_min_and_max = 1;
                 }
+                SECTION_MSG(quant_stat);
                 mssgvf("%-15s %6d%c %7.3f  %8.3f   %9d   %9d    %9d\n",
                        Top->LocusTop->Locus[i].Name,
                        loc_missing[q], missing_between_min_and_max_flag,
@@ -988,12 +985,14 @@ int write_quant_stats(linkage_ped_top *Top,
                         "%-15s %8.3f  %8.3f  %8.3f  %8.3f",
                         Top->LocusTop->Locus[i].Name,
                         loc_mean[q], loc_stdev[q], loc_skew[q], loc_curt[q]);
+                SECTION_MSG(quant_stat);
                 mssgf(err_msg);
                 q++;
             }
         }
 
         log_line(mssgf);
+        SECTION_MSG_FINI(quant_stat);
         if (ZeroQuant) {
             warnf("Found KNOWN quantitative phenotypes with value 0.0");
             warnf("Linkage-format UNKNOWN quantitative phenotype is assigned 0.0");

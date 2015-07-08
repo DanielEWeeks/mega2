@@ -671,7 +671,7 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
                                              const unsigned int person_n)
 {
     vector<int> person_indv_v(person_n); // created on the stack
-    SUPPRESS_MSSG_NESTED_INIT(untyped);
+    SECTION_LOG_INIT(untyped);
     
     // For each person in Mega2....
     for (unsigned int pi=0; pi<person_n; pi++) {
@@ -715,7 +715,7 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
         if (vcf_sample_matches.size() == 0) {
             // NOTE: The actual assignment of the missing genotype happens in VCFtools_process_next_entry() when
             // persons_indv_v[pi] == -1 where the individual genotype is made 0/0.
-            SUPPRESS_MSSG_NESTED(untyped);
+            SECTION_LOG(untyped);
             warnvf("Pedigree %s person %s not in vcf file so will be untyped.\n", ped, per);
         } else if (vcf_sample_matches.size() == 1) {
             // On a good day, we should find just one match....
@@ -744,7 +744,7 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
             EXIT(DATA_TYPE_ERROR);
         }
     }
-    SUPPRESS_MSSG_NESTED_FINI(untyped);
+    SECTION_LOG_FINI(untyped);
 
     return person_indv_v;
 }

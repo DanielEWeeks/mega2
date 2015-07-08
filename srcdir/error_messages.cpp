@@ -41,7 +41,6 @@
 void           open_logs(void);
 void           time_stamp_logs(void);
 void           close_logs(void);
-FILE*          Mega2LogF(void);
 void           err_or_warn(FILE **errfp, FILE **logfp);
 void           errorf(const char *messg);
 void           warnf(const char *messg);
@@ -92,11 +91,6 @@ void close_logs(void)
 
     Mega2logf = NULL;
     Mega2errf = NULL;
-}
-
-FILE *Mega2LogF(void)
-{
-    return Mega2logf;
 }
 
 void err_or_warn(FILE **errfp, FILE **logfp)

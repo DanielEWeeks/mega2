@@ -89,7 +89,7 @@
  annotated_ped_file_ext.h:  copy_exmap_locmap
         batch_input_ext.h:  batchf
      create_summary_ext.h:  log_quant_selections
-     error_messages_ext.h:  Mega2LogF errorf mssgf my_calloc my_realloc warnf
+     error_messages_ext.h:  errorf mssgf my_calloc my_realloc warnf
               fcmap_ext.h:  fcmap
       genetic_utils_ext.h:  check_map_positions loc_type_name log_marker_selections
         grow_string_ext.h:  grow
@@ -162,7 +162,7 @@ static int index_selections(int num_select, int *selections,
 static void display_trait_names(int num_tr, int *trs,
 				linkage_locus_top *LTop,
 				int offset, int *indexes,
-				FILE *stream, int base, int marker_item);
+				int base, int marker_item);
 static void remove_from_covar(int num_select, int *slct,
 			      int *num_covar, int *cvariates);
 
@@ -245,8 +245,8 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
 {
     int i, j, ui, total_list = 0;
     int new_chr, chr_index;
-    SUPPRESS_MSSG_NESTED_INIT(unmapped_errors);
-    SUPPRESS_MSSG_NESTED_INIT(invalid_chromosome);
+    SECTION_LOG_INIT(unmapped_errors);
+    SECTION_LOG_INIT(invalid_chromosome);
     ui = 0;
 
     for (j = 0; j < LTop->LocusCnt; j++) {
@@ -255,7 +255,7 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
 
         if (LTop->Marker[j].chromosome == UNKNOWN_CHROMO) {
 
-            SUPPRESS_MSSG_NESTED(unmapped_errors);
+            SECTION_LOG(unmapped_errors);
             warnvf("Locus %s is unmapped\n", LTop->Marker[j].Name);
             unmapped_markers[ui++] = j;
         } else if (LTop->Marker[j].chromosome == MISSING_CHROMO) {
@@ -263,7 +263,7 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
             // unmapped_markers[ui++] = j;
             continue;
         } else if (LTop->Marker[j].chromosome < 1) {
-            SUPPRESS_MSSG_NESTED(invalid_chromosome);
+            SECTION_LOG(invalid_chromosome);
             warnvf("Invalid chromosome number %d on locus %s.\n",
                     LTop->Marker[j].chromosome, LTop->Marker[j].Name);
             if (exit_upon_no_chr) {
@@ -300,8 +300,8 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
             }
         }
     }
-    SUPPRESS_MSSG_NESTED_FINI(unmapped_errors);
-    SUPPRESS_MSSG_NESTED_FINI(invalid_chromosome);
+    SECTION_LOG_FINI(unmapped_errors);
+    SECTION_LOG_FINI(invalid_chromosome);
     /* Now add counts for any markers with unknown chromosome on the end */
     if (ui > 0) {
         counts[total_list] = ui;
@@ -352,7 +352,6 @@ static int is_int_in_string(const char *str, const int i)
 void get_trait_list(linkage_locus_top *LocusTop, const int check_traits_combine)
 {
     int i, j, *affec = NULL, *quant = NULL;
-    FILE *fp;
     int   num_affec=0, num_quant=0;
     int *covp, *trp, *affp = NULL, *quantp = NULL;
 
@@ -486,13 +485,8 @@ void get_trait_list(linkage_locus_top *LocusTop, const int check_traits_combine)
                 ((num_affec > 1)? "loci: " : "locus: "));
         mssgf(err_msg);
         display_trait_names(num_affec, affec, LocusTop,
-                            16, NULL, stdout, 0, LocusTop->PhenoCnt+1);
+                            16, NULL, 0, LocusTop->PhenoCnt+1);
         newline;
-        fp = Mega2LogF();
-        display_trait_names(num_affec, affec, LocusTop,
-                            16, NULL, fp, 0, LocusTop->PhenoCnt+1);
-        fprintf(fp, "\n");
-        fflush(fp);
     }
 
     if (num_quant > 0) {
@@ -500,12 +494,7 @@ void get_trait_list(linkage_locus_top *LocusTop, const int check_traits_combine)
                 ((num_quant > 1)? "loci: " : "locus: "));
         mssgf(err_msg);
         display_trait_names(num_quant, quant, LocusTop,
-                            16, NULL, stdout, 0, LocusTop->PhenoCnt+1);
-        fp = Mega2LogF();
-        display_trait_names(num_quant, quant, LocusTop,
-                            16, NULL, fp, 0, LocusTop->PhenoCnt+1);
-        fflush(fp);
-        mssgf(" ");
+                            16, NULL, 0, LocusTop->PhenoCnt+1);
     }
 
     /*  log_line(mssgf); */
@@ -533,7 +522,7 @@ void get_trait_list(linkage_locus_top *LocusTop, const int check_traits_combine)
 static void display_trait_names(int num_tr, int *trs,
 				linkage_locus_top *LTop,
 				int offset, int *indexes,
-				FILE *stream, int base,
+				int base,
 				int marker_item)
 
 {
@@ -541,7 +530,7 @@ static void display_trait_names(int num_tr, int *trs,
     int col=0;
 
     for (i=0; i < offset; i++) {
-        fprintf(stream, " ");
+        msgvf(" ");
     }
     for (i=0; i < num_tr; i++) {
         if (trs[i] < marker_item) {
@@ -551,25 +540,26 @@ static void display_trait_names(int num_tr, int *trs,
             else {
                 k = indexes[trs[i]-base];
             }
-            fprintf(stream, "%s", LTop->Locus[k].Name);
+            msgvf("%s", LTop->Locus[k].Name);
             col += (int) strlen(LTop->Locus[k].Name);
         }
         else {
-            fprintf(stream, "[MARKERS]");
+            msgvf("[MARKERS]");
             col += 9;
         }
 
         if ((col + offset) >= 70) {
-            fprintf(stream, "\n"); col=0;
-            for (j=0; j < offset; j++) fprintf(stream, " ");
+            msgvf("\n"); col=0;
+            for (j=0; j < offset; j++) logvf(" ");
         }
         else {
             if ( i < (num_tr - 1)) {
-                fprintf(stream, " ");
+                msgvf(" ");
                 col +=1;
             }
         }
     }
+    msgvf("\n");
     return;
 }
 
@@ -2603,7 +2593,6 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
     };
 
     int base=0, cbase=0, marker_item;
-    FILE *fp;
     int overwrite;
     int *covar_items;
 
@@ -2754,7 +2743,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
                    ((LoopOverTrait == 0)? " and marker" : ""));
             display_trait_names(num_trait_select, traits,
                                 LTop->LocusTop, 0, global_trait_entries,
-                                stdout, base, num_traits+1);
+                                base, num_traits+1);
             printf("]\n");
 
             if (allow_covariates(analysis) && num_traits > 1) {
@@ -2762,7 +2751,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
                 printf(" %d) Covariates selected: [", item);
                 display_trait_names(num_covariates, covariates,
                                     LTop->LocusTop, 0, global_trait_entries,
-                                    stdout, cbase, num_traits+1);
+                                    cbase, num_traits+1);
                 printf("]\n");
             }
 
@@ -3137,14 +3126,9 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
     }
 
     display_trait_names(num_trait_select, traits, LTop->LocusTop,
-                        16, NULL, stdout, 0, marker_item);
+                        16, NULL, 0, marker_item);
     newline;
 
-    fp = Mega2LogF();
-    display_trait_names(num_trait_select, traits, LTop->LocusTop,
-                        16, NULL, fp, 0, marker_item);
-    fprintf(fp, "\n");
-    fflush(fp);
     if ((analysis == TO_SAGE && num_trait_select > 1)
        && (LoopOverTrait == 0)) {
         mssgf("                      SAGE: Combine-traits");
@@ -3158,13 +3142,8 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
     if (num_covariates > 0) {
         mssgf("Output will include the following covariates:");
         display_trait_names(num_covariates, covariates, LTop->LocusTop,
-                            16, NULL, stdout, 0, marker_item);
+                            16, NULL, 0, marker_item);
         newline;
-        fp = Mega2LogF();
-        display_trait_names(num_covariates, covariates, LTop->LocusTop,
-                            16, NULL, fp, 0, marker_item);
-        fprintf(fp, "\n");
-        fflush(fp);
         /* Change the class of covariates to COVARIATES */
 
         for (i=0; i < num_covariates; i++) {

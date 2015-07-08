@@ -43,7 +43,7 @@
 #include "user_input_ext.h"
 #include "append_locus_array_ext.h"
 /*
-     error_messages_ext.h:  Mega2LogF errorf mssgf my_calloc my_malloc my_realloc warnf
+     error_messages_ext.h:  errorf mssgf my_calloc my_malloc my_realloc warnf
                list_ext.h:  append_to_list_tail free_all_from_list list_free_all list_iterate new_list pop_first_list_entry
             makeped_ext.h:  copy_pedrec_data copy_preped_peds free_marriage_graph
             pedtree_ext.h:  copy_le_static_data
@@ -1388,11 +1388,11 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
     size_t this_person_typed, this_male_typed, this_female_typed, this_ped_typed;
     size_t numloc;
     int first_time=1;
-    FILE *logfp;
 
     *peds_typed = *males_typed = *females_typed = 0;
     *num_half_typed = 0;
     strcpy(err_msg, "");
+    SECTION_MSG_INIT(untyped_pedigree);
     for (i = 0; i < Top->PedCnt; i++) {
         this_ped_typed = 0;
         individual_count = individual_count + Top->Ped[i].EntryCnt;
@@ -1461,15 +1461,15 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
         if (! this_ped_typed) {
             /* output the pedigree number into log file */
             if (strlen(err_msg) > 70) {
-                logfp = Mega2LogF();
                 if (first_time) {
-                    fprintf(logfp,
-                            "------------------------------------------------------------\n");
-                    fprintf(logfp, "Completely untyped pedigrees:\n");
+                    SECTION_MSG(untyped_pedigree);
+                    mssgf("------------------------------------------------------------");
+                    mssgf("Completely untyped pedigrees:");
+                    SECTION_MSG_HEADER(untyped_pedigree);
                     first_time=0;
                 }
-                fprintf(logfp, "%s\n", err_msg);
-                fflush(logfp);
+                SECTION_MSG(untyped_pedigree);
+                mssgf(err_msg);
                 strcpy(err_msg, "");
             }
             strcat(err_msg, Top->Ped[i].Name); strcat(err_msg, " ");
@@ -1478,17 +1478,18 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
     }
 
     if (strlen(err_msg) > 0) {
-        logfp = Mega2LogF();
         if (first_time) {
-            fprintf(logfp,
-                    "------------------------------------------------------------\n");
-            fprintf(logfp, "Completely untyped pedigrees:\n");
+            SECTION_MSG(untyped_pedigree);
+            mssgf("------------------------------------------------------------");
+            mssgf("Completely untyped pedigrees:");
+            SECTION_MSG_HEADER(untyped_pedigree);
             first_time=0;
         }
-        fprintf(logfp, "%s\n", err_msg);
+        SECTION_MSG(untyped_pedigree);
+        mssgf(err_msg);
         strcpy(err_msg, "");
-        fflush(logfp);
     }
+    SECTION_MSG_FINI(untyped_pedigree);
 
     *num_inds=individual_count;
     *males = male_count;

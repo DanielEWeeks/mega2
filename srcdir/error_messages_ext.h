@@ -29,8 +29,6 @@
 #ifndef ERROR_MESSAGES_EXT_H
 #define ERROR_MESSAGES_EXT_H
 
-extern FILE*          Mega2LogF(void);
-
 extern void           close_logs(void);
 
 extern void           empty_file(const char *filename, error_type etype);

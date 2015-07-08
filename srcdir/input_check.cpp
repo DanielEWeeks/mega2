@@ -115,14 +115,11 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
     int j, i, all, num_alleles, found_problem=0;
     double *sum_squared, diff;
     allele_freq_struct ar;
-    int displayed_errors, first_time=1, flush=0;
+    int first_time=1, flush=0;
 
     sum_squared = CALLOC((size_t) num_reordered, double);
 
-    Display_Errors=1;
-    Display_Messages=1;
-    displayed_errors = 0;
-
+    SECTION_MSG_INIT(freq_check);
     for (j = 0; j < num_reordered; j++) {
         i = reordered_marker_loci[j];
         sum_squared[j] = 0.0;
@@ -155,12 +152,14 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
 
                 if (first_time) {
                     /* First error */
+                    SECTION_MSG(freq_check);
                     log_line(mssgf);
-                    warnf("For these markers, sum of squared differences between ");
+                    mssgf("For these markers, sum of squared differences between ");
                     sprintf(err_msg,
                             "input and observed allele frequencies exceeded threshold %9.7f.",
                             threshold);
-                    warnf(err_msg);
+                    mssgf(err_msg);
+                    SECTION_MSG_HEADER(freq_check);
                     strcpy(err_msg, "  ");
                     first_time = 0;
                 }
@@ -169,12 +168,8 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
 
                 flush++;
                 if (flush == 2) {
-                    SUPPRESS_MSSG(displayed_errors)
-                        if (displayed_errors > MAX_PED_ERRORS) {
-                            Display_Messages = 0;
-                        }
+                    SECTION_MSG(freq_check);
                     mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
-                    displayed_errors++;
                 }
             }
             free(ar.Allele_Bin); ar.Allele_Bin= NULL;
@@ -183,95 +178,21 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
     }
 
     if (flush) {
+        SECTION_MSG(freq_check);
         mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
     }
 
-    if (Display_Messages == 0) {
+    if (SECTION_LOG_COUNT(freq_check) > 0) {
         printf("Check error logs for full list of reset genotypes.\n");
         draw_line();
-        Display_Messages=1;
     }
+    SECTION_MSG_FINI(freq_check);
 
     free(sum_squared);
 
     return found_problem;
 }
 
-#if 0
-static void write_and_free1(FILE *fp, loc_list *invalidp, ped_top *PedTop,
-			   locus_top *LTop)
-{
-    loc_list *next;
-    for (; invalidp != NULL; invalidp = next) {
-       next = invalidp->next;
-       fprintf(fp, "%s      All   %s\n", 
-               PedTop->PedTree[invalidp->ped].Name, 
-               LTop->Locus[invalidp->locus].Name);
-       free(invalidp);
-    }
-}
-
-static void write_and_free2(FILE *fp, person_loc_list *invalidp, 
-			    ped_top *PedTop,  locus_top *LTop, int uniqueids)
-{
-    person_loc_list *next;
-
-    for (; invalidp != NULL; invalidp = next) {
-        next = invalidp->next;
-        fprintf(fp, "%s   %s   %s\n", PedTop->PedTree[invalidp->ped].Name,
-                ((uniqueids == 1)? 
-                 PedTop->PedTree[invalidp->ped].Entry[invalidp->person].LEntry->UniqueID :
-                 PedTop->PedTree[invalidp->ped].Entry[invalidp->person].LEntry->OrigID),
-                LTop->Locus[invalidp->locus].Name);
-        free(invalidp);
-    }
-}
-
-
-static  void  write_reset_summary(ped_top *PedTop,
-				  loc_list *invalidp,
-				  person_loc_list *halftypedp,
-				  person_loc_list *outofboundsp,
-				  int imend, int ht, int aexceed,
-				  int uniqueids)
-{
-
-    FILE *reset_fp;
-
-    if (!imend && !ht && !aexceed) {
-        return;
-    }
-
-    reset_fp = fopen(Mega2ResetRun, "w");
-    summary_time_stamp(mega2_input_files, reset_fp, "");
-
-    if (imend) {
-        Display_Messages=1;
-
-        fprintf(reset_fp, "Mendelianly inconsistent pedigrees:\n");
-        fprintf(reset_fp, "Pedigree   Person    Marker\n");
-
-        write_and_free1(reset_fp, invalidp, PedTop, PedTop->LocusTop);
-    }
-
-    if (ht) {
-        Display_Messages=1;
-        fprintf(reset_fp, "Half-typed genotypes:\n");
-        fprintf(reset_fp, "Pedigree   Person    Marker\n");
-        write_and_free2(reset_fp, halftypedp, PedTop, PedTop->LocusTop, uniqueids);
-    }
-
-    if (aexceed) {
-        Display_Messages=1;
-        fprintf(reset_fp, "Genotypes with out-of-bounds alleles.\n");
-        fprintf(reset_fp, "Pedigree   Person    Marker\n");
-        write_and_free2(reset_fp, outofboundsp, PedTop, PedTop->LocusTop, uniqueids);
-    }
-
-    fclose(reset_fp);
-    return;
-}
-#endif
 
 /*---------------------------------------------------------------+
   | Given the pedtree Top, check all the pedigree and locus data. |
@@ -280,6 +201,13 @@ static  void  write_reset_summary(ped_top *PedTop,
   | infl_type is used to determine if sex errors should be        |
   | ignored (since APM files do not contain sex data).            |
   +---------------------------------------------------------------*/
+
+SECTION_LOG_INIT(check_locus);
+SECTION_LOG_INIT(check_ped_relations);
+SECTION_LOG_INIT(check_half_type);
+SECTION_LOG_INIT(check_oob);
+SECTION_LOG_INIT(check_inheritance);
+SECTION_LOG_INIT(check_sibship_alleles);
 
 void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 		     analysis_type analysis)
@@ -322,36 +250,31 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     /*       }	 */
     /*     } */
     Tod tod_cl("check_locus");
-    Display_Errors=1;
     plink_locus_num = LTop->LocusCnt;
     if (num_reordered > 0) {
         for (locus = 0; locus < LTop->LocusCnt; locus++) {
 // LTop is only markers
             stat=check_locus(&(LTop->Locus[locus]),
-                             &displayed_errors, analysis,
-                             &plink_locus_num);
+                             analysis, &plink_locus_num);
             abortl = imax(abortl, stat);
         }
+        SECTION_LOG_FINI(check_locus);
     }
-    Display_Errors=1;
-    displayed_errors = 0;
     tod_cl();
 
     Tod tod_ac("AlleleCnt check");
     if ((analysis == TO_PLINK || analysis == IQLS) && plink_locus_num < LTop->LocusCnt) {
         int first_time=1;
+        SECTION_LOG_INIT(not_bialleleic);
+        SECTION_LOG(not_bialleleic);
         warnf("Excluding these markers because they have more than 2 alleles.");
+        SECTION_LOG_HEADER(not_bialleleic);
         strcpy(err_msg, "");
         for (locus = 0; locus < LTop->LocusCnt; locus++) {
             if (LTop->Locus[locus].AlleleCnt > 2) {
-                SUPPRESS_MSSG(displayed_errors)
-                    if (displayed_errors > MAX_PED_ERRORS) {
-                        Display_Errors = 0;
-                    }
-
                 if (strlen(err_msg) >= 67 || first_time) {
+                    SECTION_LOG(not_bialleleic);
                     warnf(err_msg);
-                    displayed_errors++;
                     strcpy(err_msg, LTop->Locus[locus].Name);
                     first_time = 0;
                 } else {
@@ -360,10 +283,10 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             }
         }
         if (strlen(err_msg) > 0) {
+            SECTION_LOG(not_bialleleic);
             warnf(err_msg);
         }
-        Display_Errors = 1;
-	displayed_errors = 0;
+        SECTION_LOG_FINI(not_bialleleic);
     }
     tod_cl();
 
@@ -389,7 +312,6 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         Display_Errors=1;
     }
 
-    displayed_errors = 0;
     printf("Checking pedigree integrity...\n");
     /* separated out the checking of pedigree ids and relationships from
        checking genotypes, so that we can skip the latter, if there are no
@@ -426,6 +348,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         stat = check_ped_relations(&(Top->PedTree[ped]), &PedStat);
         abortf = imax(abortf, stat);
     }
+    SECTION_LOG_FINI(check_ped_relations); // does not use MSSG but should
     tod_cpr();
 
     Tod tod_mito("mito_transmission_report");
@@ -646,7 +569,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             tod_hmend.reset();
             for (locus = 0; locus < LTop->LocusCnt; locus++) {
                 stat = check_half_type(&(Top->PedTree[ped]), &PedStat, LTop,
-                                       ped, locus, &displayed_errors, LPedTop->UniqueIds,
+                                       ped, locus, LPedTop->UniqueIds,
                                        &reset_fp, &first, hmend);
                 abortf = imax(abortf, stat);
                 if (stat) {
@@ -655,6 +578,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             }
             tod_hmend("reset half typed");
         }
+        SECTION_LOG_FINI(check_half_type);
         /* set invalid genos to 0 0 */
         if (reset_fp != NULL)
             fclose(reset_fp);
@@ -664,12 +588,10 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         HalfTypedReset=0;
     }
 
-    if (Display_Errors == 0) {
+    if (SECTION_LOG_COUNT(check_half_type) >= 0) {
         printf("Check error logs for full list of half typed genotypes.\n");
         draw_line();
-        Display_Errors=1;
     }
-    displayed_errors = 0;
 
     Tod tod_xmend_all("reset ALL out-of-bound genotypes");
     Tod tod_xmend(20);
@@ -682,7 +604,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             tod_xmend.reset();
             for (locus = 0; locus < LTop->LocusCnt; locus++) {
                 stat = check_out_of_bounds(&(Top->PedTree[ped]), &PedStat, LTop,
-                                           ped, locus, &displayed_errors, LPedTop->UniqueIds,
+                                           ped, locus, LPedTop->UniqueIds,
                                            &reset_fp, &first, aexceed);
                 abortf = imax(abortf, stat);
                 if (stat) {
@@ -691,6 +613,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             }
             tod_xmend("reset out-of-bound genotypes");
         }
+        SECTION_LOG_FINI(check_oob);
         /* set invalid genos to 0 0 */
         if (reset_fp != NULL)
             fclose(reset_fp);
@@ -700,12 +623,10 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 //      OOBReset=0;
     }
 
-    if (Display_Errors == 0) {
+    if (SECTION_LOG_COUNT(check_oob) >= 0) {
         printf("Check error logs for full list of out-of-bound genotypes.\n");
         draw_line();
-        Display_Errors=1;
     }
-    displayed_errors = 0;
 
     Tod tod_imend_all("reset ALL non mendelian");
     Tod tod_imend(20);
@@ -721,7 +642,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                     continue;           /* Continue without inheritance checks */
                 }
                 rm = check_invalid_fam(&(Top->PedTree[ped]), &PedStat, LTop,
-                                       ped, locus, &displayed_errors, LPedTop->UniqueIds,
+                                       ped, locus, LPedTop->UniqueIds,
                                        Sibs);
                 if (rm) {
                     if (reset_fp == NULL) {
@@ -754,6 +675,8 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             tod_imend("reset non mendelian");
             free(Sibs);
         }
+        SECTION_LOG_FINI(check_inheritance);
+        SECTION_LOG_FINI(check_sibship_alleles);
         if (reset_fp != NULL) {
             fclose(reset_fp);
         }
@@ -762,12 +685,11 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         NonMendelianReset=0;
     }
 
-    if (Display_Errors == 0) {
+    if (SECTION_LOG_COUNT(check_inheritance) > 0 || 
+        SECTION_LOG_COUNT(check_sibship_alleles) > 0) {
         printf("Check error logs for full list of pedigrees with reset genotypes.\n");
         draw_line();
-        Display_Errors=1;
     }
-    displayed_errors = 0;
 
     /* Store the resets instead of freeing */
     Tod tod_wrs("write_reset_summary");

@@ -547,27 +547,28 @@ int             purge_unneeded_pedigrees(ped_top *Top, int *save)
     }
 
     if (peds_killed > 0) {
-        FILE *msg, *err;
-        err_or_warn(&err, &msg);
-        fprintf(msg, "WARNING: Not saving untyped pedigrees: \n");
-        fprintf(err, "WARNING: Not saving untyped pedigrees: \n");
+        SECTION_LOG_INIT(purge_ped);
+        SECTION_LOG(purge_ped);
+        warnvf("Not saving untyped pedigrees: \n");
+        SECTION_LOG_HEADER(purge_ped);
         sprintf(err_msg, " ");
         for(ped=0; ped < Top->PedCnt; ped++) {
             if (save[ped] == 0) {
                 strcat(err_msg, Top->PedTree[ped].Name); strcat(err_msg, " ");
                 c += (int) strlen(Top->PedTree[ped].Name) + 1;
                 if (c >= 70) {
-                    fprintf(msg, "%s\n", err_msg);
-                    fprintf(err, "%s\n", err_msg);
+                    SECTION_LOG(purge_ped);
+                    logf(err_msg, "", 1);
                     sprintf(err_msg, " ");
                     c=0;
                 }
             }
         }
         if (c > 0) {
-            fprintf(msg, "%s\n", err_msg);      fprintf(err, "%s\n", err_msg);
+            SECTION_LOG(purge_ped);
+            logf(err_msg, "", 1);
         }
-        fflush(err); fflush(msg);
+        SECTION_LOG_FINI(purge_ped);
     }
     return peds_killed;
 

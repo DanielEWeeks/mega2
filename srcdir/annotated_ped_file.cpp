@@ -1502,7 +1502,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
       }
     }
 
-//  SUPPRESS_MSSG_NESTED_INIT(untyped_msg);
+//  SECTION_LOG_INIT(untyped_msg);
     p=0;
     Tod tod_cp_all_eof("read ped file");
     Tod tod_cp_eof(20);
@@ -1540,7 +1540,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
             persons[p].genocnt = crunch_Rnotype(&persons[p].marker, LTop);
             if (persons[p].genocnt == 0) {
 /*
-                SUPPRESS_MSSG_NESTED(untyped_msg);
+                SECTION_LOG(untyped_msg);
                 warnvf("Untyped person %4d linenum %d: person %s, fa %s, ma %s\n",
                        untyped, p+1, persons[p].ID, persons[p].Father, persons[p].Mother);
 */
@@ -1562,7 +1562,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         }
         num_err += num_pheno_errs;
     }
-//  SUPPRESS_MSSG_NESTED_FINI(untyped_msg);
+//  SECTION_LOG_FINI(untyped_msg);
     tod_cp_all_eof();
     num_ped_records = p;
 #ifdef SHOWSTATUS
@@ -1668,14 +1668,14 @@ linkage_ped_top *mk_ped_top(annotated_ped_rec *persons, int num_ped_records,
     linkage_ped_top *Top;
 
     Tod tod_cp_cru("check all markers untyped");
-    SUPPRESS_MSSG_NESTED_INIT(untyped_msg);
+    SECTION_LOG_INIT(untyped_msg);
     if (check_ungenotyped) {
         for (int pp=0; pp < num_ped_records; pp++) {
             // looping through the individuals...
             persons[pp].genocnt = crunch_Rnotype(&persons[pp].marker, LTop);
             if (persons[pp].genocnt == 0) {
 /*
-                SUPPRESS_MSSG_NESTED(untyped_msg);
+                SECTION_LOG(untyped_msg);
                 warnvf("Untyped person %4d snp major record %d: person %s, fa %s, ma %s\n",
                        untyped, pp, persons[pp].ID, persons[pp].Father, persons[pp].Mother);
 */
@@ -1685,10 +1685,10 @@ linkage_ped_top *mk_ped_top(annotated_ped_rec *persons, int num_ped_records,
     }
     tod_cp_cru();
 
-    SUPPRESS_MSSG_NESTED_FORCE(untyped_msg);
+    SECTION_LOG_FORCE(untyped_msg);
     if (untyped > 0)
         warnvf("Individuals untyped: %d out of %d\n", untyped, totaltyped);
-    SUPPRESS_MSSG_NESTED_FINI(untyped_msg);
+    SECTION_LOG_FINI(untyped_msg);
 
     if (num_err == 0) {
         Tod tod_cp_hmm("sort, copy ann to premake/lpedtop");
@@ -2509,14 +2509,14 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
                                                         const int num_maps)
 {
     int i, mrk_missing_from_map = 0;
-    SUPPRESS_MSSG_NESTED_INIT(locus_dropped);
+    SECTION_LOG_INIT(locus_dropped);
     
     for (i = 0; i < LTop->LocusCnt; i++) {
         /* Check if maps are provided for all numbered loci */
         if (LTop->Locus[i].Class == MARKER) {
             if (LTop->Locus[i].number < 0) {
                 sprintf(err_msg, "Locus %s is not in map file; flushed.", LTop->Locus[i].Name);
-                SUPPRESS_MSSG_NESTED(locus_dropped);
+                SECTION_LOG(locus_dropped);
                 warnf(err_msg);
                 LTop->Marker[i].chromosome = MISSING_CHROMO;
                 mrk_missing_from_map++;
@@ -2530,7 +2530,7 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
           LTop->MarkerCnt,  num_maps * 3 * 8);
 #endif
 
-    SUPPRESS_MSSG_NESTED_FINI(locus_dropped);
+    SECTION_LOG_FINI(locus_dropped);
 
     return mrk_missing_from_map;
 }
@@ -2556,11 +2556,11 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     int num_maps;
     int num_positions, num_read;
     int lch, has_error; /* simulated genotyping error column? */
-    SUPPRESS_MSSG_NESTED_INIT(chrm_errors);
-    SUPPRESS_MSSG_NESTED_INIT(max_morgans);
-    SUPPRESS_MSSG_NESTED_INIT(locus_extra);
-    SUPPRESS_MSSG_NESTED_INIT(dup_locus);
-    SUPPRESS_MSSG_NESTED_INIT(bad_position);
+    SECTION_LOG_INIT(chrm_errors);
+    SECTION_LOG_INIT(max_morgans);
+    SECTION_LOG_INIT(locus_extra);
+    SECTION_LOG_INIT(dup_locus);
+    SECTION_LOG_INIT(bad_position);
     
     /* These are all error flags */
     int mrk_missing_from_map, mrk_missing_from_names=0, duplicate_mrk=0;
@@ -2646,7 +2646,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
                 if ((chr = STR_CHR(dummy)) == -1) {
                     sprintf(err_msg, "Chromosome number %s on line %d is invalid.",
                             dummy, line);
-                    SUPPRESS_MSSG_NESTED(chrm_errors);
+                    SECTION_LOG(chrm_errors);
                     errorf(err_msg);
                     bad_chromo++;
                 } else if (chr == 0) {
@@ -2680,7 +2680,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
                         // This is not done if this is a 3 column map (e.g., --map3)...
                         if (PLINK.plink != not_plink_format && j==2 && PLINK.cM != 1 && PLINK.map3 != 1) {
                             if (exceeded_max_morgan_value(positions[m])) {
-                                SUPPRESS_MSSG_NESTED(max_morgans);
+                                SECTION_LOG(max_morgans);
                                 warnvf("Line %d of the map file contains a genetic distance value of %lf in Morgans.\n",
                                        line, positions[m]);
                             }
@@ -2736,7 +2736,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
             // Here it's "extra". It's in the map file but not in the data used to make LTop.
             // NOTE: that if the 'dname' is not in LTop then we never get here...
             /* Locus is not in locus file, warn and skip */
-            SUPPRESS_MSSG_NESTED(locus_extra);
+            SECTION_LOG(locus_extra);
             if (Input->xcf) 
                 warnvf("Locus %s (line %d in %s) has been filtered from the VCF file; ignoring this locus.\n",
                        dname, line, map_file);
@@ -2754,7 +2754,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
                 sprintf(err_msg,
                         "Duplicate marker name in %s on line %d.",
                         dname, line);
-                SUPPRESS_MSSG_NESTED(dup_locus);
+                SECTION_LOG(dup_locus);
                 errorf(err_msg);
                 duplicate_mrk++;
             } else {
@@ -2965,7 +2965,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
                     }
                     
                     if (has_error) {
-                        SUPPRESS_MSSG_NESTED(bad_position);
+                        SECTION_LOG(bad_position);
                         warnf(err_msg);
                     }
 //#endif 0 /* no chr check */
@@ -2979,11 +2979,11 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     // just processed the map file and so you know the final set of markers that
     // you will be using for this run of Mega2.
 
-    SUPPRESS_MSSG_NESTED_FINI(chrm_errors);
-    SUPPRESS_MSSG_NESTED_FINI(max_morgans);
-    SUPPRESS_MSSG_NESTED_FINI(locus_extra);
-    SUPPRESS_MSSG_NESTED_FINI(dup_locus);
-    SUPPRESS_MSSG_NESTED_FINI(bad_position);
+    SECTION_LOG_FINI(chrm_errors);
+    SECTION_LOG_FINI(max_morgans);
+    SECTION_LOG_FINI(locus_extra);
+    SECTION_LOG_FINI(dup_locus);
+    SECTION_LOG_FINI(bad_position);
     Display_Errors = 1;
 
 #ifdef ALL_ZERO_GENETIC_MAP_INVALID
@@ -4125,6 +4125,7 @@ static void insert_zero_sex_average_genetic_map_in_EXLTop(ext_linkage_locus_top 
 
 m2_map save_vcf_map;
 
+SECTION_LOG_INIT(y_female);
 linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                                       char *map_file, char *freq_file,
                                       char *pen_file, char *omit_file,
@@ -4145,7 +4146,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     class_list_type *lclass;
     int   phe_cols = 0;
     int   bp_map   = 0;
-    int displayed_messages = 0, duplicate_mrk=0;
+    int   duplicate_mrk=0;
     const char *names_fn = (PLINK.plink == binary_PED_format) ? mega2_input_files[6] : mega2_input_files[0];
 
     m2_map vcf_map;
@@ -4217,23 +4218,18 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     clear_marker();
     Display_Errors = 1;
     Tod tod_init("hash markers names");
+    SECTION_LOG_INIT(duplicate_markers);
     for (i=0; i < LTop->LocusCnt; i++) {
         char *name = LTop->Locus[i].Name;
         int i_old = test_and_add_marker(name, i);
         if (i_old >= 0) {
-            sprintf(err_msg,
-                    "Duplicate marker name '%s' in '%s'", name, names_fn);
-            SUPPRESS_MSSG(displayed_messages);
-            if (displayed_messages > MAX_PED_ERRORS) {
-                Display_Errors = 0;
-            }
-            errorf(err_msg);
-            displayed_messages++;
+            SECTION_LOG(duplicate_markers);
+            errorvf("Duplicate marker name '%s' in '%s'\n", name, names_fn);
             duplicate_mrk++;
         }
     }
+    SECTION_LOG_FINI(duplicate_markers);
     tod_init();
-    Display_Errors = 1; displayed_messages = 0;
 
     if (duplicate_mrk) {
         printf("Duplicate locus names, see %s for details.\n",  Mega2Err);
@@ -4435,7 +4431,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         tod_hash();
     }
 
-    SUPPRESS_MSSG_NESTED_SET(FLOAT_AFFECT);
+    SECTION_LOG_EXTERN(FLOAT_AFFECT);
 
     if (Input->has_ped()) {
         pedfile_type = PREMAKEPED_PFT;
@@ -4466,15 +4462,15 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     if (AnnotatedFileInfo.ped_file_columns)
         free(AnnotatedFileInfo.ped_file_columns);
 
-    SUPPRESS_MSSG_NESTED_FORCE(FLOAT_AFFECT);
-    if (SUPPRESS_MSSG_COUNT(FLOAT_AFFECT) > 0) {
+    SECTION_LOG_FORCE(FLOAT_AFFECT);
+    if (SECTION_LOG_COUNT(FLOAT_AFFECT) > 0) {
         warnvf("There were %d instances of decimal numbers read where affection status were expected.\n",
-               SUPPRESS_MSSG_COUNT(FLOAT_AFFECT) );
+               SECTION_LOG_COUNT(FLOAT_AFFECT) );
         if (PLINK.plink) {
             warnvf("Perhaps you should rerun Mega2 and specify that the fam/ped trait is quantitative.\n");
         }
     }
-    SUPPRESS_MSSG_NESTED_FINI(FLOAT_AFFECT);
+    SECTION_LOG_FINI(FLOAT_AFFECT);
 
     count_Missing_Quant_consistency();
 
@@ -4539,7 +4535,6 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     }
 
     {
-        SUPPRESS_MSSG_NESTED_INIT(y_female);
         int ped, entrycount;
         allelecnt **member_ids;
         Tod tod_cal_init("init member_ids (for allele/freq counting)");
@@ -4568,6 +4563,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         Tod tod_cal("create allele list");
         Tod tod_fr(20); // 0.000,688
         Tod tod_fr_x4(20);
+        SECTION_LOG_EXTERN(y_female);
         for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
             tod_fr.reset();
             tod_fr_x4.reset();
@@ -4587,7 +4583,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             free(member_ids[ped]);
         }
         free(member_ids);
-        SUPPRESS_MSSG_NESTED_FINI(y_female);
+        SECTION_LOG_FINI(y_female);
         tod_cal();
     }
 

@@ -56,7 +56,7 @@
 #include "read_files_ext.h"
 #include "utils_ext.h"
 /*
-     error_messages_ext.h:  Mega2LogF errorf mssgf my_calloc my_malloc my_realloc
+     error_messages_ext.h:  errorf mssgf my_calloc my_malloc my_realloc
               fcmap_ext.h:  fcmap
         grow_string_ext.h:  grow
             linkage_ext.h:  clear_lpedrec connect_loops free_all_from_lpedtop new_lpedtop
@@ -145,7 +145,7 @@ static int read_peds(int line_count, FILE *pfilep,
     int i, lch = ' ', num_read, unique=0;
     int col;
     int expected_col=5+LTop->NumPedigreeCols, last_marker;
-    SUPPRESS_MSSG_NESTED_INIT(untyped);
+    SECTION_LOG_INIT(untyped);
     int untyped = 0, totaltyped = 0;
     int a1, a2;
     const char *ar1, *ar2;
@@ -292,17 +292,17 @@ static int read_peds(int line_count, FILE *pfilep,
         persons[i].genocnt  = crunch_notype(&persons[i].marker, LTop);
         if (persons[i].genocnt == 0) {
 /*
-            SUPPRESS_MSSG_NESTED(untyped);
+            SECTION_LOG(untyped);
             warnvf("Untyped person %4d linenum %d: person %d/%d, fa %d, ma %d\n",
                    untyped, i+1, persons[i].ped, persons[i].indiv, persons[i].father, persons[i].mother);
 */
             untyped++;
         }
     }
-    SUPPRESS_MSSG_NESTED_FORCE(untyped);
+    SECTION_LOG_FORCE(untyped);
     if (untyped > 0)
         warnvf("Individuals untyped: %d out of %d\n", untyped, totaltyped);
-    SUPPRESS_MSSG_NESTED_FINI(untyped);
+    SECTION_LOG_FINI(untyped);
 
     count_Missing_Quant_consistency();
 
@@ -1513,7 +1513,10 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
        Vitesse, SIMULATE
     */
 
-    if (Top->pedfile_type == POSTMAKEPED_PFT) {
+//yy
+//    if (Top->pedfile_type == POSTMAKEPED_PFT || true)
+    if (Top->pedfile_type == POSTMAKEPED_PFT)
+    {
 	/*
 	 * If your option requires broken loops to be
          * maintained when post-makeped pedigrees are provided, then add the
@@ -1724,13 +1727,13 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
     int male_count=0, female_count=0;
     int this_person_typed, this_ped_typed, this_male_typed, this_female_typed;
     int numloc, l, first_time=1;
-    FILE *logfp;
 
     *peds_typed = *males_typed = *females_typed = 0;
     *half_typed = 0;
 
     strcpy(err_msg, "");
     // For each Pedigree...
+    SECTION_MSG_INIT(untyped_pedigree1);
     for(i=0; i < Top->PedCnt; i++) {
         this_ped_typed = 0;
 
@@ -1799,16 +1802,16 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
         if (! this_ped_typed) {
             /* output the pedigree number into log file */
             if (strlen(err_msg) > 70) {
-                logfp = Mega2LogF();
                 if (first_time) {
-                    fprintf(logfp,
-                            "------------------------------------------------------------\n");
-                    fprintf(logfp, "Completely untyped pedigrees:\n");
+                    SECTION_MSG(untyped_pedigree1);
+                    mssgf("------------------------------------------------------------");
+                    mssgf("Completely untyped pedigrees:");
+                    SECTION_MSG_HEADER(untyped_pedigree1);
                     first_time=0;
                 }
-                fprintf(logfp, "%s\n", err_msg);
+                SECTION_MSG(untyped_pedigree1);
+                mssgf(err_msg);
                 strcpy(err_msg, "");
-                fflush(logfp);
             }
             strcat(err_msg, Top->PTop[i].Name); strcat(err_msg, " ");
         }
@@ -1816,17 +1819,18 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
     }
 
     if (strlen(err_msg) > 0) {
-        logfp = Mega2LogF();
         if (first_time) {
-            fprintf(logfp,
-                    "------------------------------------------------------------\n");
-            fprintf(logfp, "Completely untyped pedigrees:\n");
+            SECTION_MSG(untyped_pedigree1);
+            mssgf("------------------------------------------------------------");
+            mssgf("Completely untyped pedigrees:");
+            SECTION_MSG_HEADER(untyped_pedigree1);
             first_time=0;
         }
-        fprintf(logfp, "%s\n", err_msg);
+        SECTION_MSG(untyped_pedigree1);
+        mssgf(err_msg);
         strcpy(err_msg, "");
-        fflush(logfp);
     }
+    SECTION_MSG_FINI(untyped_pedigree1);
 
     *num_inds=ind_count;
     *males = male_count;

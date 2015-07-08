@@ -1009,7 +1009,6 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
     int rall;
     const char *all;
     int geno_recoded[2], allele_unrecoded=0;
-    int displayed_errors=0;
     const char *all1, *all2;
     int a1, a2;
 
@@ -1030,6 +1029,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
 #ifndef HIDESTATUS
     mssgf("Recoding pedigree genotypes ... ");
 #endif
+    SECTION_LOG_INIT(allele_recode);
     for(ped=0; ped < Top->PedCnt; ped++) {
         entrycnt = ((pedfile_type == POSTMAKEPED_PFT) ?
                     Top->Ped[ped].EntryCnt :
@@ -1105,12 +1105,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                         }
 
                         grow(err_msg, " in genotype %s/%s", all1, all2);
-
-                        SUPPRESS_MSSG(displayed_errors)
-                            if (displayed_errors > MAX_PED_ERRORS) {
-                                Display_Errors = 0;
-                            }
-                        displayed_errors++;
+                        SECTION_LOG(allele_recode);
                         errorf(err_msg);
                         allele_unrecoded=1;
                     }
@@ -1128,12 +1123,11 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
         }
     }
     
-    if (Display_Errors == 0) {
+    if (SECTION_LOG_COUNT(allele_recode) > 0) {
         printf("Check error logs for full list of unrecoded alleles.\n");
         draw_line();
-        Display_Errors=1;
     }
-
+    SECTION_LOG_FINI(allele_recode);
 
     if (allele_unrecoded) {
         log_line(mssgf);
@@ -1196,7 +1190,6 @@ linkage_locus_top *read_marker_data(FILE *fp,
     int num_read, lch, line_num;
     /* error flags */
     int invalid_marker_type =0, missing_columns = 0;
-    int displayed_messages = 0;
     int loci_name_space = 0;
 
     num_markers=linecount(fp);
@@ -1204,8 +1197,6 @@ linkage_locus_top *read_marker_data(FILE *fp,
     types = CALLOC((size_t) num_markers, char);
     names = CALLOC((size_t) num_markers, char *);
     num_markers = 0;
-
-    Display_Errors = 1;
 
     if (type_col < 0) {
         type_col = 0;
@@ -1219,6 +1210,7 @@ linkage_locus_top *read_marker_data(FILE *fp,
         line_num=1;
     }
     i=-1;
+    SECTION_LOG_INIT(read_markers);
     while(!feof(fp)) {
         *nextline = 0;
         (void)fgets(nextline, FILENAME_LENGTH - 1, fp);
@@ -1238,12 +1230,8 @@ linkage_locus_top *read_marker_data(FILE *fp,
             sprintf(err_msg,
                     "Line %d: Found fewer than 2 columns (at least 2 required).",
                     line_num);
-            SUPPRESS_MSSG(displayed_messages);
-            if (displayed_messages > MAX_PED_ERRORS) {
-                Display_Errors = 0;
-            }
+            SECTION_LOG(read_markers);
             errorf(err_msg);
-            displayed_messages++;
             missing_columns++;
         } else {
             if ((!strcmp(ltype, "M")) || (!strcmp(ltype, "A")) ||
@@ -1269,17 +1257,13 @@ linkage_locus_top *read_marker_data(FILE *fp,
                 sprintf(err_msg,
                         "Marker type %s for marker %s not recognized.",
                         ltype, marker);
-                SUPPRESS_MSSG(displayed_messages);
-                if (displayed_messages > MAX_PED_ERRORS) {
-                    Display_Errors = 0;
-                }
+                SECTION_LOG(read_markers);
                 errorf(err_msg);
-                displayed_messages++;
                 invalid_marker_type++;
             }
         }
     }
-    Display_Errors = 1;
+    SECTION_LOG_FINI(read_markers);
 
     if (missing_columns) {
         printf("Found lines with less than 2 columns, see %s for details.\n",
@@ -1774,7 +1758,7 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
 }
 
 //w
-SUPPRESS_MSSG_NESTED_INIT(y_female);
+SECTION_LOG_EXTERN(y_female);
 linkage_ped_top *create_allele_list(linkage_ped_top *Top,
 				    int locus,
 				    marker_type *marker_listi,
@@ -1864,7 +1848,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                             if (al2p) al2p->allele_freq.everyone_count++;
                         } else if (LocType == YLINKED) {
                             if (allelecmp(all1, REC_UNKNOWN) || allelecmp(all2, REC_UNKNOWN)) {
-                                SUPPRESS_MSSG_NESTED(y_female);
+                                SECTION_LOG(y_female);
                                 warnvf("marker %s (on Y chromosome) observed for female (%s) with value%s %s/%s\n",
                                        Top->LocusTop->Locus[locus].Name,
                                        Top->Ped[ped].Entry[per].UniqueID,
@@ -1932,7 +1916,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                             if (al2p) al2p->allele_freq.everyone_count++;
                         } else if (LocType == YLINKED) {
                             if (allelecmp(all1, REC_UNKNOWN) || allelecmp(all2, REC_UNKNOWN)) {
-                                SUPPRESS_MSSG_NESTED(y_female);
+                                SECTION_LOG(y_female);
                                 warnvf("marker %s (on Y chromosome) observed for female (%s) with value%s %s/%s\n",
                                        Top->LocusTop->Locus[locus].Name,
                                        Top->PTop[ped].persons[per].uniqueid,
@@ -2494,7 +2478,7 @@ linkage_ped_top  *create_full_marker_data(
         free(member_ids);
         tod_cal1();
     }
-    SUPPRESS_MSSG_NESTED_FINI(y_female);
+//  SECTION_LOG_FINI(y_female);
 
     count_raw_alleles(marker_list, Top->LocusTop);
 
@@ -2705,7 +2689,6 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
     int num_read, line_num;
     /* error flags */
     int invalid_marker_type =0, missing_columns = 0;
-    int displayed_messages = 0;
     int loci_name_space = 0;
 
     num_markers = linecount(fp);
@@ -2731,7 +2714,7 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
     }
     i--;
 
-    Display_Errors = 1;
+    SECTION_LOG_INIT(read_names);
     while(!feof(fp)) {
         *nextline = 0;
         (void)fgets(nextline, FILENAME_LENGTH - 1, fp);
@@ -2747,12 +2730,8 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
             sprintf(err_msg,
                     "Line %d: Found fewer than 2 columns (at least 2 required).",
                     line_num);
-            SUPPRESS_MSSG(displayed_messages);
-            if (displayed_messages > MAX_PED_ERRORS) {
-                Display_Errors = 0;
-            }
+            SECTION_LOG(read_names);
             errorf(err_msg);
-            displayed_messages++;
             missing_columns++;
         } else {
             if (!strcasecmp(ltype, SEX_CHROMOSOME_STR) || !strcasecmp(ltype, "X"))
@@ -2776,17 +2755,13 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
                 sprintf(err_msg,
                         "Marker type %s for marker %s not recognized.",
                         ltype, marker);
-                SUPPRESS_MSSG(displayed_messages);
-                if (displayed_messages > MAX_PED_ERRORS) {
-                    Display_Errors = 0;
-                }
+                SECTION_LOG(read_names);
                 errorf(err_msg);
-                displayed_messages++;
                 invalid_marker_type++;
             }
         }
     }
-    Display_Errors = 1;
+    SECTION_LOG_FINI(read_names);
 
     if (missing_columns) {
         printf("Found lines with less than 2 columns, see %s for details.\n",
