@@ -119,7 +119,7 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
 
     sum_squared = CALLOC((size_t) num_reordered, double);
 
-    SECTION_MSG_INIT(freq_check);
+    SECTION_LOG_INIT(freq_check);
     for (j = 0; j < num_reordered; j++) {
         i = reordered_marker_loci[j];
         sum_squared[j] = 0.0;
@@ -152,14 +152,14 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
 
                 if (first_time) {
                     /* First error */
-                    SECTION_MSG(freq_check);
+                    SECTION_LOG(freq_check);
                     log_line(mssgf);
                     mssgf("For these markers, sum of squared differences between ");
                     sprintf(err_msg,
                             "input and observed allele frequencies exceeded threshold %9.7f.",
                             threshold);
                     mssgf(err_msg);
-                    SECTION_MSG_HEADER(freq_check);
+                    SECTION_LOG_HEADER(freq_check);
                     strcpy(err_msg, "  ");
                     first_time = 0;
                 }
@@ -168,7 +168,7 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
 
                 flush++;
                 if (flush == 2) {
-                    SECTION_MSG(freq_check);
+                    SECTION_LOG(freq_check);
                     mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
                 }
             }
@@ -178,15 +178,15 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
     }
 
     if (flush) {
-        SECTION_MSG(freq_check);
+        SECTION_LOG(freq_check);
         mssgf(err_msg); flush=0; strcpy(err_msg, "  ");
     }
 
-    if (SECTION_LOG_COUNT(freq_check) > 0) {
+    if (SECTION_ERR_COUNT(freq_check) > 0) {
         printf("Check error logs for full list of reset genotypes.\n");
         draw_line();
     }
-    SECTION_MSG_FINI(freq_check);
+    SECTION_LOG_FINI(freq_check);
 
     free(sum_squared);
 
@@ -202,12 +202,12 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
   | ignored (since APM files do not contain sex data).            |
   +---------------------------------------------------------------*/
 
-SECTION_LOG_INIT(check_locus);
-SECTION_LOG_INIT(check_ped_relations);
-SECTION_LOG_INIT(check_half_type);
-SECTION_LOG_INIT(check_oob);
-SECTION_LOG_INIT(check_inheritance);
-SECTION_LOG_INIT(check_sibship_alleles);
+SECTION_ERR_INIT(check_locus);
+SECTION_ERR_INIT(check_ped_relations);
+SECTION_ERR_INIT(check_half_type);
+SECTION_ERR_INIT(check_oob);
+SECTION_ERR_INIT(check_inheritance);
+SECTION_ERR_INIT(check_sibship_alleles);
 
 void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 		     analysis_type analysis)
@@ -258,22 +258,22 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                              analysis, &plink_locus_num);
             abortl = imax(abortl, stat);
         }
-        SECTION_LOG_FINI(check_locus);
+        SECTION_ERR_FINI(check_locus);
     }
     tod_cl();
 
     Tod tod_ac("AlleleCnt check");
     if ((analysis == TO_PLINK || analysis == IQLS) && plink_locus_num < LTop->LocusCnt) {
         int first_time=1;
-        SECTION_LOG_INIT(not_bialleleic);
-        SECTION_LOG(not_bialleleic);
+        SECTION_ERR_INIT(not_bialleleic);
+        SECTION_ERR(not_bialleleic);
         warnf("Excluding these markers because they have more than 2 alleles.");
-        SECTION_LOG_HEADER(not_bialleleic);
+        SECTION_ERR_HEADER(not_bialleleic);
         strcpy(err_msg, "");
         for (locus = 0; locus < LTop->LocusCnt; locus++) {
             if (LTop->Locus[locus].AlleleCnt > 2) {
                 if (strlen(err_msg) >= 67 || first_time) {
-                    SECTION_LOG(not_bialleleic);
+                    SECTION_ERR(not_bialleleic);
                     warnf(err_msg);
                     strcpy(err_msg, LTop->Locus[locus].Name);
                     first_time = 0;
@@ -283,10 +283,10 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             }
         }
         if (strlen(err_msg) > 0) {
-            SECTION_LOG(not_bialleleic);
+            SECTION_ERR(not_bialleleic);
             warnf(err_msg);
         }
-        SECTION_LOG_FINI(not_bialleleic);
+        SECTION_ERR_FINI(not_bialleleic);
     }
     tod_cl();
 
@@ -348,7 +348,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         stat = check_ped_relations(&(Top->PedTree[ped]), &PedStat);
         abortf = imax(abortf, stat);
     }
-    SECTION_LOG_FINI(check_ped_relations); // does not use MSSG but should
+    SECTION_ERR_FINI(check_ped_relations); // does not use MSSG but should
     tod_cpr();
 
     Tod tod_mito("mito_transmission_report");
@@ -578,7 +578,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             }
             tod_hmend("reset half typed");
         }
-        SECTION_LOG_FINI(check_half_type);
+        SECTION_ERR_FINI(check_half_type);
         /* set invalid genos to 0 0 */
         if (reset_fp != NULL)
             fclose(reset_fp);
@@ -588,7 +588,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         HalfTypedReset=0;
     }
 
-    if (SECTION_LOG_COUNT(check_half_type) >= 0) {
+    if (SECTION_ERR_COUNT(check_half_type) >= 0) {
         printf("Check error logs for full list of half typed genotypes.\n");
         draw_line();
     }
@@ -613,7 +613,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             }
             tod_xmend("reset out-of-bound genotypes");
         }
-        SECTION_LOG_FINI(check_oob);
+        SECTION_ERR_FINI(check_oob);
         /* set invalid genos to 0 0 */
         if (reset_fp != NULL)
             fclose(reset_fp);
@@ -623,7 +623,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 //      OOBReset=0;
     }
 
-    if (SECTION_LOG_COUNT(check_oob) >= 0) {
+    if (SECTION_ERR_COUNT(check_oob) >= 0) {
         printf("Check error logs for full list of out-of-bound genotypes.\n");
         draw_line();
     }
@@ -675,8 +675,8 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             tod_imend("reset non mendelian");
             free(Sibs);
         }
-        SECTION_LOG_FINI(check_inheritance);
-        SECTION_LOG_FINI(check_sibship_alleles);
+        SECTION_ERR_FINI(check_inheritance);
+        SECTION_ERR_FINI(check_sibship_alleles);
         if (reset_fp != NULL) {
             fclose(reset_fp);
         }
@@ -685,8 +685,8 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         NonMendelianReset=0;
     }
 
-    if (SECTION_LOG_COUNT(check_inheritance) > 0 || 
-        SECTION_LOG_COUNT(check_sibship_alleles) > 0) {
+    if (SECTION_ERR_COUNT(check_inheritance) > 0 || 
+        SECTION_ERR_COUNT(check_sibship_alleles) > 0) {
         printf("Check error logs for full list of pedigrees with reset genotypes.\n");
         draw_line();
     }

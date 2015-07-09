@@ -121,10 +121,10 @@ void premakeped_omit_file(linkage_ped_top *Top,
 			  const char *omitfl_name,
                           const int raw_allele);
 
-SECTION_LOG_INIT(BAD_QMISSING_OUT);
-SECTION_LOG_INIT(FLOAT_AFFECT);
-SECTION_LOG_INIT(illegal_affect);
-SECTION_LOG_INIT(illegal_quant);
+SECTION_ERR_INIT(BAD_QMISSING_OUT);
+SECTION_ERR_INIT(FLOAT_AFFECT);
+SECTION_ERR_INIT(illegal_affect);
+SECTION_ERR_INIT(illegal_quant);
 
 /**************************************/
 static int check_ped_file_cols(int cols, FILE *fp, char *file_name)
@@ -202,7 +202,7 @@ static void check_quant_vs_MissingQuants(double quant)
             QuantOutHi  = quant;
 
         if (!isnan(QuantOutLow) && MissingOutQuant >= QuantOutLow && MissingOutQuant <= QuantOutHi) {
-            SECTION_LOG(BAD_QMISSING_OUT);
+            SECTION_ERR(BAD_QMISSING_OUT);
             errorvf("The missing quantitative output value (%g) is among the values found \n", MissingOutQuant);
             errorvf("in the set of quantitative values [%g..%g].\n", QuantOutLow, QuantOutHi);
         }
@@ -230,7 +230,7 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
         if (endptr == quantstr || (*endptr)) {
             /* conversion failed */
             quant=QUNDEF;
-            SECTION_LOG(illegal_quant);
+            SECTION_ERR(illegal_quant);
             errorvf("Entry %d: %s Invalid quantitative phenotype for locus %s\n",
                     line, quantstr, locus->Name);
             err = 1;
@@ -334,7 +334,7 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
         status = -1;
         status = strtol(cstatus, &endptr, 10);
         if (*endptr) {
-            SECTION_LOG(FLOAT_AFFECT);
+            SECTION_ERR(FLOAT_AFFECT);
             if (*endptr == '.')
                 errorvf("Line %d, %s: Floating point number used for an affection status %s, setting to unknown.\n",
                         line, locus->Name, cstatus);
@@ -362,7 +362,7 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
                     line, locus->Name, locus->col_num, cstatus);
             errorf(err_msg);
 #else
-            SECTION_LOG(illegal_affect);
+            SECTION_ERR(illegal_affect);
             err = 1;
             sprintf(err_msg,
                     "Line %d, %s: Illegal affection status %s, setting to unknown.",
@@ -420,7 +420,7 @@ int read_aff_phen(FILE *filep, int locusnm,
         status = strtol(cstatus, &endptr, 10);
     }
     if (endptr && *endptr) {
-        SECTION_LOG(FLOAT_AFFECT);
+        SECTION_ERR(FLOAT_AFFECT);
         if (*endptr == '.')
             errorvf("Line %d, %s: Floating point number used for an affection status %s, setting to unknown.\n",
                     anentry->rec_num, locus->Name, cstatus);
@@ -1192,7 +1192,7 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
     linkage_loop_rec *loop;
     int i;
     int origuniq = 0;
-    SECTION_LOG_INIT(untyped);
+    SECTION_ERR_INIT(untyped);
     int untyped = 0, totaltyped = 0;
 
     if (filep == NULL) return NULL;
@@ -1221,7 +1221,7 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
             NewEntry->genocnt = crunch_notype(&NewEntry->Marker, LTop);
             if (NewEntry->genocnt == 0) {
 /*
-                SECTION_LOG(untyped);
+                SECTION_ERR(untyped);
                 warnvf("Untyped person %4d linenum %d: person %s/%d, fa %d, ma %d\n",
                        untyped, linenum, NewEntry->FamName, NewEntry->ID, NewEntry->Father, NewEntry->Mother);
 */
@@ -1319,10 +1319,10 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
         }
     }
 
-    SECTION_LOG_FORCE(untyped);
+    SECTION_ERR_FORCE(untyped);
     if (untyped > 0)
         warnvf("Individuals untyped: %d out of %d\n", untyped, totaltyped);
-    SECTION_LOG_FINI(untyped);
+    SECTION_ERR_FINI(untyped);
 
     if ((err == -1) || (err == -2)) {
         errorvf("fatal error reading linkage record!\n");
@@ -1396,13 +1396,13 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
 
 void count_Missing_Quant_consistency()
 {
-    SECTION_LOG_FORCE(BAD_QMISSING_OUT);
-    if (SECTION_LOG_COUNT(BAD_QMISSING_OUT)) {
+    SECTION_ERR_FORCE(BAD_QMISSING_OUT);
+    if (SECTION_ERR_COUNT(BAD_QMISSING_OUT)) {
         errorvf("Output Quantitative Missing Value was found among the quantitative data %d times\n",
-                SECTION_LOG_COUNT(BAD_QMISSING_OUT));
+                SECTION_ERR_COUNT(BAD_QMISSING_OUT));
 //tmp   EXIT(INPUT_DATA_ERROR);
     }
-    SECTION_LOG_FINI(BAD_QMISSING_OUT);
+    SECTION_ERR_FINI(BAD_QMISSING_OUT);
 }
 
 
@@ -2022,12 +2022,12 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
             }
             set_missing_quant_input((linkage_ped_top *) NULL, analysis);
             Top = read_linkage_ped_file(pfilep, LTop, col2locus);
-            SECTION_LOG_FORCE(FLOAT_AFFECT);
-            if (SECTION_LOG_COUNT(FLOAT_AFFECT) > 0) {
+            SECTION_ERR_FORCE(FLOAT_AFFECT);
+            if (SECTION_ERR_COUNT(FLOAT_AFFECT) > 0) {
                 warnvf("There were %d instances of decimal numbers read where affects were expected.\n",
-                       SECTION_LOG_COUNT(FLOAT_AFFECT));
+                       SECTION_ERR_COUNT(FLOAT_AFFECT));
             }
-            SECTION_LOG_FINI(FLOAT_AFFECT);
+            SECTION_ERR_FINI(FLOAT_AFFECT);
             Top->EXLTop = EXLTop;
         }
         log_line(mssgf);
@@ -2201,7 +2201,7 @@ static void untype_locus_for_pedfile_type(linkage_ped_top *Top,
  @return void
  */
 
-SECTION_MSG_INIT(read_omit_file);
+SECTION_LOG_INIT(read_omit_file);
 
 static void untype_locus_for_pedfile_type_ped_per(linkage_ped_top *Top,
                                                   const int omitped,
@@ -2248,7 +2248,7 @@ static void untype_locus_for_pedfile_type_ped_per(linkage_ped_top *Top,
                 // Because of the double loop, it would be time consuming to check for this sooner.
                 // It would also make this option less useful if there were a few exceptions and we errored
                 // out here since there is no method to enumerate the exclusions...
-                SECTION_MSG(read_omit_file);
+                SECTION_LOG(read_omit_file);
                 sprintf(err_msg, "Could not locate following individual for untyping in");
                 other_pedid(ped_i, Top);
                 warnf(err_msg);
@@ -2328,7 +2328,7 @@ void omit_file_data_processing(linkage_ped_top *Top,
         EXIT(INPUT_DATA_ERROR);
     }
     
-    SECTION_MSG_EXTERN(read_omit_file);
+    SECTION_LOG_EXTERN(read_omit_file);
     do {
         char line[3][MAX_NAMELEN], *omitped_str, *omitper_str, *omitloci, *comment_p;
         int omitped, omitped_i, omitper, omitper_i, omitloci_i;
@@ -2470,7 +2470,7 @@ void omit_file_data_processing(linkage_ped_top *Top,
         if (strcasecmp(omitloci, "All") == 0) {
             int loci_i;
             strcat(err_msg, " at all marker loci.");
-            SECTION_MSG(read_omit_file);
+            SECTION_LOG(read_omit_file);
             mssgf(err_msg);
             // From "Omit file "documentation:
             // "If All is used, the person or pedigree indicated will be untyped at all marker loci.
@@ -2483,7 +2483,7 @@ void omit_file_data_processing(linkage_ped_top *Top,
                                                           raw_allele);
         } else { // Just the given loci...
             grow(err_msg, " at locus %s.", omitloci);
-            SECTION_MSG(read_omit_file);
+            SECTION_LOG(read_omit_file);
             mssgf(err_msg);
             
             // From "Omit file "documentation:
@@ -2493,7 +2493,7 @@ void omit_file_data_processing(linkage_ped_top *Top,
         }
         
     } while (!feof(omitfp));
-    SECTION_MSG_FINI(read_omit_file);
+    SECTION_LOG_FINI(read_omit_file);
 }
 
 /**
@@ -2777,7 +2777,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
     fcmap(filep, "%=\n", lch); 
     linenum=1;
 
-    SECTION_LOG_INIT(read_map_file);
+    SECTION_ERR_INIT(read_map_file);
     do { // For each data line in the file...
         bad_line=0;
         linenum++;
@@ -2800,7 +2800,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
 	// The line must have the three required columns plus MAKE,FEMALE,ERROR if specified...
         if (num_read < (num_extras + 3)) {
             sprintf(err_msg, "Line %d: Premature end of line in map file", linenum);
-            SECTION_LOG(read_map_file);
+            SECTION_ERR(read_map_file);
             errorf(err_msg);
             bad_line++;
         }
@@ -2811,7 +2811,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
                     "Line %d: invalid chromosome number (setting to unknown).",
                     linenum);
 
-            SECTION_LOG(read_map_file);
+            SECTION_ERR(read_map_file);
             errorf(err_msg);
             non_fatal++;
             num=UNKNOWN_CHROMO; // default value
@@ -2824,7 +2824,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
             sprintf(err_msg,
                     "Line %d: non-numeric or negative value in the sex-averaged position column.",
                     linenum);
-            SECTION_LOG(read_map_file);
+            SECTION_ERR(read_map_file);
             warnf(err_msg);
             position = UNKNOWN_POSITION; // default value
         } else {
@@ -2839,7 +2839,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
                 sprintf(err_msg,
                         "Line %d: non-numeric or negative values in",
                         linenum);
-                SECTION_LOG(read_map_file);
+                SECTION_ERR(read_map_file);
                 errorf(err_msg);
                 errorf("         error probability/sex-specific position columns.");
                 extras[i-2] = UNKNOWN_POSITION;
@@ -2863,7 +2863,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
                     sprintf(err_msg,
                             "Duplicate marker name in %s in map file.",
                             dname);
-                    SECTION_LOG(read_map_file);
+                    SECTION_ERR(read_map_file);
                     errorf(err_msg);
                     fatal++;
                 } else {
@@ -2967,11 +2967,11 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
                     LTop1->Locus[i].number = num_chr_loc[num-1]++;
 
                     if (is_non_fatal) {
-                        SECTION_LOG(read_map_file);
+                        SECTION_ERR(read_map_file);
                         warnf(err_msg);
                         non_fatal++;
                     } else if (is_fatal) {
-                        SECTION_LOG(read_map_file);
+                        SECTION_ERR(read_map_file);
                         errorf(err_msg);
                         fatal++;
                     }
@@ -2985,7 +2985,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
                                 "Markers not in map order in the map file (locus %s).",
                                 dname);
 
-                        SECTION_LOG(read_map_file);
+                        SECTION_ERR(read_map_file);
                         warnf(err_msg);
                     }
                 }
@@ -2997,11 +2997,11 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
             sprintf(err_msg,
                     "Locus %s in the map file is not in the locus file.",
                     dname);
-            SECTION_LOG(read_map_file);
+            SECTION_ERR(read_map_file);
             warnf(err_msg);
         }
     }  while (!feof(filep)); // For each data line in the file...
-    SECTION_LOG_FINI(read_map_file);
+    SECTION_ERR_FINI(read_map_file);
 
     fclose(filep);
     free(loc_pos); free(num_chr_loc);
@@ -3009,13 +3009,13 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
     // Go through the markers and complain if it was never assigned to a chromosome.
     // This could be because it was not found in the map file, or it was a duplicate marker.
     // This same code occurs in annotated_ped_file.cpp:create_entries_for_markers_without_positions().
-    SECTION_LOG_INIT(not_mapped);
+    SECTION_ERR_INIT(not_mapped);
     for (i = 0; i < LTop1->LocusCnt; i++) {
         if (LTop1->Locus[i].Class == MARKER) {
             if (LTop1->Locus[i].number < 0) {
                 non_fatal++;
                 sprintf(err_msg, "Locus %s is not in map file.", LTop1->Locus[i].Name);
-                SECTION_LOG(not_mapped);
+                SECTION_ERR(not_mapped);
                 warnf(err_msg);
                 LTop1->Marker[i].chromosome = MISSING_CHROMO;
                 // no EXLTop entry is created at this point so
@@ -3023,7 +3023,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
             }
         }
     }
-    SECTION_LOG_FINI(not_mapped);
+    SECTION_ERR_FINI(not_mapped);
 
     if (fatal > 0 || non_fatal > 0) {
         errorvf("Found %d errors in map file, %d fatal errors, %d non-fatal errors.\n",

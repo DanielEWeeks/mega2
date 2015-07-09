@@ -245,8 +245,8 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
 {
     int i, j, ui, total_list = 0;
     int new_chr, chr_index;
-    SECTION_LOG_INIT(unmapped_errors);
-    SECTION_LOG_INIT(invalid_chromosome);
+    SECTION_ERR_INIT(unmapped_errors);
+    SECTION_ERR_INIT(invalid_chromosome);
     ui = 0;
 
     for (j = 0; j < LTop->LocusCnt; j++) {
@@ -255,7 +255,7 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
 
         if (LTop->Marker[j].chromosome == UNKNOWN_CHROMO) {
 
-            SECTION_LOG(unmapped_errors);
+            SECTION_ERR(unmapped_errors);
             warnvf("Locus %s is unmapped\n", LTop->Marker[j].Name);
             unmapped_markers[ui++] = j;
         } else if (LTop->Marker[j].chromosome == MISSING_CHROMO) {
@@ -263,7 +263,7 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
             // unmapped_markers[ui++] = j;
             continue;
         } else if (LTop->Marker[j].chromosome < 1) {
-            SECTION_LOG(invalid_chromosome);
+            SECTION_ERR(invalid_chromosome);
             warnvf("Invalid chromosome number %d on locus %s.\n",
                     LTop->Marker[j].chromosome, LTop->Marker[j].Name);
             if (exit_upon_no_chr) {
@@ -300,8 +300,8 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
             }
         }
     }
-    SECTION_LOG_FINI(unmapped_errors);
-    SECTION_LOG_FINI(invalid_chromosome);
+    SECTION_ERR_FINI(unmapped_errors);
+    SECTION_ERR_FINI(invalid_chromosome);
     /* Now add counts for any markers with unknown chromosome on the end */
     if (ui > 0) {
         counts[total_list] = ui;
@@ -550,7 +550,7 @@ static void display_trait_names(int num_tr, int *trs,
 
         if ((col + offset) >= 70) {
             msgvf("\n"); col=0;
-            for (j=0; j < offset; j++) logvf(" ");
+            for (j=0; j < offset; j++) msgvf(" ");
         }
         else {
             if ( i < (num_tr - 1)) {

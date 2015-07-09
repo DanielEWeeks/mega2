@@ -145,7 +145,7 @@ static int read_peds(int line_count, FILE *pfilep,
     int i, lch = ' ', num_read, unique=0;
     int col;
     int expected_col=5+LTop->NumPedigreeCols, last_marker;
-    SECTION_LOG_INIT(untyped);
+    SECTION_ERR_INIT(untyped);
     int untyped = 0, totaltyped = 0;
     int a1, a2;
     const char *ar1, *ar2;
@@ -292,17 +292,17 @@ static int read_peds(int line_count, FILE *pfilep,
         persons[i].genocnt  = crunch_notype(&persons[i].marker, LTop);
         if (persons[i].genocnt == 0) {
 /*
-            SECTION_LOG(untyped);
+            SECTION_ERR(untyped);
             warnvf("Untyped person %4d linenum %d: person %d/%d, fa %d, ma %d\n",
                    untyped, i+1, persons[i].ped, persons[i].indiv, persons[i].father, persons[i].mother);
 */
             untyped++;
         }
     }
-    SECTION_LOG_FORCE(untyped);
+    SECTION_ERR_FORCE(untyped);
     if (untyped > 0)
         warnvf("Individuals untyped: %d out of %d\n", untyped, totaltyped);
-    SECTION_LOG_FINI(untyped);
+    SECTION_ERR_FINI(untyped);
 
     count_Missing_Quant_consistency();
 
@@ -1733,7 +1733,7 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
 
     strcpy(err_msg, "");
     // For each Pedigree...
-    SECTION_MSG_INIT(untyped_pedigree1);
+    SECTION_LOG_INIT(untyped_pedigree1);
     for(i=0; i < Top->PedCnt; i++) {
         this_ped_typed = 0;
 
@@ -1803,13 +1803,13 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
             /* output the pedigree number into log file */
             if (strlen(err_msg) > 70) {
                 if (first_time) {
-                    SECTION_MSG(untyped_pedigree1);
+                    SECTION_LOG(untyped_pedigree1);
                     mssgf("------------------------------------------------------------");
                     mssgf("Completely untyped pedigrees:");
-                    SECTION_MSG_HEADER(untyped_pedigree1);
+                    SECTION_LOG_HEADER(untyped_pedigree1);
                     first_time=0;
                 }
-                SECTION_MSG(untyped_pedigree1);
+                SECTION_LOG(untyped_pedigree1);
                 mssgf(err_msg);
                 strcpy(err_msg, "");
             }
@@ -1820,17 +1820,17 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
 
     if (strlen(err_msg) > 0) {
         if (first_time) {
-            SECTION_MSG(untyped_pedigree1);
+            SECTION_LOG(untyped_pedigree1);
             mssgf("------------------------------------------------------------");
             mssgf("Completely untyped pedigrees:");
-            SECTION_MSG_HEADER(untyped_pedigree1);
+            SECTION_LOG_HEADER(untyped_pedigree1);
             first_time=0;
         }
-        SECTION_MSG(untyped_pedigree1);
+        SECTION_LOG(untyped_pedigree1);
         mssgf(err_msg);
         strcpy(err_msg, "");
     }
-    SECTION_MSG_FINI(untyped_pedigree1);
+    SECTION_LOG_FINI(untyped_pedigree1);
 
     *num_inds=ind_count;
     *males = male_count;

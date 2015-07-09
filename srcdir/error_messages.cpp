@@ -103,7 +103,7 @@ void err_or_warn(FILE **errfp, FILE **logfp)
    message is a char pointer, implemented as a
    global variable */
 
-void logf(const char *messg, const char *shout, int showerrf)
+void errf(const char *messg, const char *shout, int showerrf)
 {
     if (showerrf && Mega2errf != NULL) {
         fprintf(Mega2errf, "%s%s\n", shout, messg);
@@ -122,13 +122,13 @@ void logf(const char *messg, const char *shout, int showerrf)
 
 void warnf(const char *messg)
 {
-    logf(messg, "WARNING: ", 1);
+    errf(messg, "WARNING: ", 1);
 }
 
 /* write in ERROR file as well as LOG file */
 void errorf(const char *messg)
 {
-    logf(messg, "ERROR: ", 1);
+    errf(messg, "ERROR: ", 1);
 }
 
 /* logf is called only  */
@@ -145,7 +145,7 @@ void mssgf(const char *messg)
     }
 }
 
-void logvf(const char *fmt, ...)
+void errvf(const char *fmt, ...)
 {
     va_list ap;
 

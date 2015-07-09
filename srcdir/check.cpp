@@ -130,7 +130,7 @@ void clear_ped_status(ped_status *Stat)
 
 /* Ignore females' genotypes for y-linked loci */
 
-SECTION_LOG_EXTERN(check_inheritance);
+SECTION_ERR_EXTERN(check_inheritance);
 static int check_inheritance(ped_rec *PedEntry,
 			     locus_top *LTop1, const int locus1, const int ploc, 
                              int A1, int A2, const char *name,
@@ -152,7 +152,7 @@ static int check_inheritance(ped_rec *PedEntry,
     if ((sex_linked  || y_linked) && IS_MALE(*PedEntry)) {
         /* if child is male,  must be a homozygote */
         if (!R(A1,A2)) {
-            SECTION_LOG(check_inheritance);
+            SECTION_ERR(check_inheritance);
             warnvf("Ped %s: Male %s is a heterozygote at %c-linked locus %s.\n",
 		   name,
 		   ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
@@ -182,7 +182,7 @@ static int check_inheritance(ped_rec *PedEntry,
             return 1;
         }
 
-        SECTION_LOG(check_inheritance);
+        SECTION_ERR(check_inheritance);
         warnvf("Ped %s: Entry %s has non-mendelian genotype at locus %s (chr %d).\n",
 	       name,
 	       ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
@@ -213,7 +213,7 @@ static int check_inheritance(ped_rec *PedEntry,
             return 1;
         }
 
-        SECTION_LOG(check_inheritance);
+        SECTION_ERR(check_inheritance);
         warnvf("Ped %s: Male %s has non-mendelian genotype at X-linked locus %s\n",
 	       name,
 	       ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
@@ -237,7 +237,7 @@ static int check_inheritance(ped_rec *PedEntry,
             return 1;
         }
 
-        SECTION_LOG(check_inheritance);
+        SECTION_ERR(check_inheritance);
         warnvf("Ped %s: Male %s has non-mendelian genotype at locus %s\n",
 	       name, PedEntry->LEntry->OrigID,
 	       (LTop1->Locus[ploc].linkage_loc_rec)->Name);
@@ -257,7 +257,7 @@ static int check_inheritance(ped_rec *PedEntry,
 
 /* check the PA_sibs and MA_sibs */
 /* locus1 is the index of locus being checked in locus_top */
-SECTION_LOG_EXTERN(check_sibship_alleles);
+SECTION_ERR_EXTERN(check_sibship_alleles);
 static int check_sibship_alleles(ped_tree *PedTree, ped_rec **Sibs,
                                  const int locus1,
 				 locus_top *LTop1, int *checked_sibship,
@@ -336,7 +336,7 @@ static int check_sibship_alleles(ped_tree *PedTree, ped_rec **Sibs,
                     }
                 }
                 if (inc) {
-                    SECTION_LOG(check_sibship_alleles);
+                    SECTION_ERR(check_sibship_alleles);
                     sprintf(err_msg,
                             "Ped %s: Too many distinct alleles in sibship at %slocus %s:",
                             PedTree->Name,
@@ -392,7 +392,7 @@ static int check_sibship_alleles(ped_tree *PedTree, ped_rec **Sibs,
                         }
                     }
                     if (inc) {
-                        SECTION_LOG(check_sibship_alleles);
+                        SECTION_ERR(check_sibship_alleles);
                         sprintf(err_msg,
                                 "Ped %s: Too many distinct Y-alleles in sibship at locus %s:",
                                 PedTree->Name,
@@ -550,7 +550,7 @@ int check_unique_ids(linkage_ped_top *Top)
 
     uniq=0;
     compare_ids = cmp_ids;
-    SECTION_LOG_INIT(check_unique_ids);
+    SECTION_ERR_INIT(check_unique_ids);
     for (ped=0; ped < Top->PedCnt; ped++) {
         for (per=0; per < Top->Ped[ped].EntryCnt; per++) {
             if ((Top->Ped[ped].Entry[per].loopbreakers != NULL) ||
@@ -580,7 +580,7 @@ int check_unique_ids(linkage_ped_top *Top)
             id_count++;
         } else {
             if (id_count > 1) {
-                SECTION_LOG(check_unique_ids);
+                SECTION_ERR(check_unique_ids);
                 warnvf("\"ID\" value %s duplicated in %d pedigrees.\n", uniq_ids[i].id, id_count);
                 nonuniq=1;
             }
@@ -589,12 +589,12 @@ int check_unique_ids(linkage_ped_top *Top)
     }
     if (!strcmp(uniq_ids[i-1].id, uniq_ids[i].id)) {
         if (id_count > 1) {
-            SECTION_LOG(check_unique_ids);
+            SECTION_ERR(check_unique_ids);
             warnvf("\"ID\" value %s duplicated in %d pedigrees.\n", uniq_ids[i].id, id_count);
             nonuniq=1;
         }
     }
-    SECTION_LOG_FINI(check_unique_ids);
+    SECTION_ERR_FINI(check_unique_ids);
     for (i=0; i < Top->IndivCnt; i++) {
         free(uniq_ids[i].id);
     }
@@ -712,7 +712,7 @@ int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
     lloc = LTop->Locus[locus].linkage_loc_num;
     int AlleleCnt = LTop->Locus[locus].AlleleCnt;
 
-    SECTION_LOG_EXTERN(check_oob);
+    SECTION_ERR_EXTERN(check_oob);
 
     for (entry = 0; entry < PedTree->EntryCnt; entry++) {
         PedEntry = &(PedTree->Entry[entry]);
@@ -721,7 +721,7 @@ int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
         get_2alleles(PedEntry->LEntry->Marker, lloc, &all1, &all2);
 
         if (all1 > AlleleCnt) {
-            SECTION_LOG(check_oob);
+            SECTION_ERR(check_oob);
             warnvf("Ped %s: Entry %s allele1 %d out of bounds at locus %s.\n",
                    PedTree->Name,
                    ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
@@ -731,7 +731,7 @@ int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
         }
 
         if (all2 > AlleleCnt) {
-            SECTION_LOG(check_oob);
+            SECTION_ERR(check_oob);
             warnvf("Ped %s: Entry %s allele2 %d out of bounds at locus %s.\n",
                    PedTree->Name,
                    ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
@@ -780,7 +780,7 @@ int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
 
     lloc = LTop->Locus[locus].linkage_loc_num;
 
-    SECTION_LOG_EXTERN(check_half_type);
+    SECTION_ERR_EXTERN(check_half_type);
 
     for (entry = 0; entry < PedTree->EntryCnt; entry++) {
         PedEntry = &(PedTree->Entry[entry]);
@@ -794,7 +794,7 @@ int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
             abortf=1;
             PedStatus->halftyped++;
             HalfTypedReset=1;
-            SECTION_LOG(check_half_type);
+            SECTION_ERR(check_half_type);
             warnvf("Ped %s: Entry %s is half-typed at locus %s.\n",
                    PedTree->Name,
                    ((uniqueids == 1)? PedEntry->LEntry->UniqueID : PedEntry->LEntry->OrigID),
@@ -890,17 +890,17 @@ int check_locus(locus_rec *Locus,
     int retval = 0;
     char messg[200];
     linkage_locus_rec *LLocus;
-    SECTION_LOG_EXTERN(check_locus);
+    SECTION_ERR_EXTERN(check_locus);
 
     if (Locus->Name == NULL) {
-        SECTION_LOG(check_locus);
+        SECTION_ERR(check_locus);
         errorf("Name is UNDEFINED");
         strcpy(Locus->Name, "UNDEF");
         retval= 2;
     }
 
     if (Locus->AlleleCnt <= 0) {
-        SECTION_LOG(check_locus);
+        SECTION_ERR(check_locus);
         sprintf(messg, "Locus %s has invalid number of alleles %d",
                 Locus->Name, Locus->AlleleCnt);
         errorf(messg);
@@ -910,7 +910,7 @@ int check_locus(locus_rec *Locus,
     LLocus = Locus->linkage_loc_rec;
 
     if ((LLocus->Allele == NULL) && (Locus->AlleleCnt != 0)) {
-        SECTION_LOG(check_locus);
+        SECTION_ERR(check_locus);
         sprintf(messg, "Locus %s has corrupt or incomplete record",
                 Locus->Name);
         errorf(messg);
@@ -919,7 +919,7 @@ int check_locus(locus_rec *Locus,
 
     /* check the alleles */
     if (LLocus->Allele == NULL) {
-        SECTION_LOG(check_locus);
+        SECTION_ERR(check_locus);
         sprintf(messg, "Locus %s has NULL allele array",
                 Locus->Name);
         errorf(messg);
@@ -934,7 +934,7 @@ int check_locus(locus_rec *Locus,
             // It should still warn about negative allele frequencies (but I'm not
             // sure how that would occur - maybe an error in an input file?).
             if ((LLocus->Allele[allele].Frequency < 0.0) || (LLocus->Allele[allele].Frequency > 1.0)) {
-                SECTION_LOG(check_locus);
+                SECTION_ERR(check_locus);
                 warnvf(//"Allele %d of locus %s has a negative or zero frequency %5.4f\n",
                        "Allele %s of locus %s has a frequency %5.4f which is not in the range 0.0 - 1.0 (inclusive)\n",
                        format_allele(LLocus, allele+1),
@@ -945,7 +945,7 @@ int check_locus(locus_rec *Locus,
         }
 
         if (((fsum - 1.0) > 0.001001) || ((1.0 - fsum) > 0.001001)) {
-            SECTION_LOG(check_locus);
+            SECTION_ERR(check_locus);
 
             sprintf(messg, "Sum of allele frequencies of locus %s",
                     Locus->Name);
@@ -959,13 +959,13 @@ int check_locus(locus_rec *Locus,
     }
 
     if (Locus->AlleleCnt < 2) {
-        SECTION_LOG(check_locus);
+        SECTION_ERR(check_locus);
 
         sprintf(messg, "Locus %s has less than 2 alleles", Locus->Name);
         warnf(messg);
         retval = 1;
     } else if (Locus->AlleleCnt > 2 && (analysis == TO_PLINK || analysis == IQLS)) {
-        SECTION_LOG(check_locus);
+        SECTION_ERR(check_locus);
         sprintf(messg, "Locus %s has more than 2 alleles unacceptable for PLINK or IQLS", Locus->Name);
         warnf(messg);
         (*plink_locus_num)--;
@@ -1055,7 +1055,7 @@ void mito_transmission_report(ped_top *PTop,
 
     *num_hetero=*num_non_maternal = 0;
 
-    SECTION_LOG_INIT(check_mito);
+    SECTION_ERR_INIT(check_mito);
     for (locus1 = &(PedTreeMito[0]); *locus1 != -99; locus1++) {
         int lloc = PTop->LocusTop->Locus[*locus1].linkage_loc_num;
         int ped;
@@ -1074,7 +1074,7 @@ void mito_transmission_report(ped_top *PTop,
                              PTop->PedTree[ped].Entry[entry].LEntry->OrigID),
                             (PTop->LocusTop->Locus[*locus1].linkage_loc_rec)->Name);
 
-                    SECTION_LOG(check_mito);
+                    SECTION_ERR(check_mito);
                     warnf(err_msg);
                 }
                 if (PTop->PedTree[ped].Entry[entry].Mother != NULL) {
@@ -1085,7 +1085,7 @@ void mito_transmission_report(ped_top *PTop,
                         ;
                     } else {
                         (*num_non_maternal)++;
-                        SECTION_LOG(check_mito);
+                        SECTION_ERR(check_mito);
                         warnvf("Ped %s: %s does not match maternal alleles at mitochondrial locus %s.\n",
                                PTop->PedTree[ped].Name,
                                ((InputFileFormat == ANNOTATED)?
@@ -1107,5 +1107,5 @@ void mito_transmission_report(ped_top *PTop,
             }
         }
     }
-    SECTION_LOG_FINI(check_mito);
+    SECTION_ERR_FINI(check_mito);
 }

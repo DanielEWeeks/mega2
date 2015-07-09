@@ -521,24 +521,67 @@ extern char awk_str[5];
 
 // (up to 10 displayed)
 
-#ifndef SECTION_LOG
+#ifndef SECTION_ERR
 extern int Display_Errors, Display_Messages;
 
 #define MAX_PED_ERRORS 9
 
-#define SECTION_LOG(errors)  	        if (_##errors##_++ == 0) {         \
+#define SECTION_ERR(errors)  	        if (_##errors##_++ == 0) {         \
         fflush(stdout);                                                    \
         if (Display_##errors##_ != 0)                                      \
-            logf("\n===== Errors/warnings of type \"" #errors "\": "); \
+            errf("\n===== Errors/warnings of type \"" #errors "\": "); \
         Display_Errors = Display_##errors##_ = 1;                          \
         fflush(stdout);                                                    \
     } else if (_##errors##_ == (MAX_PED_ERRORS+2)) {                       \
         fflush(stdout);                                                    \
-        logf("===== Too many \"" #errors "\" records, display is temporarily suspended ..", "", 0); \
+        errf("===== Too many \"" #errors "\" records, display is temporarily suspended ..", "", 0); \
         fflush(stdout);                                                    \
         Display_Errors = Display_##errors##_ = 0;                          \
     } else {                                                               \
         Display_Errors = Display_##errors##_;                              \
+    }
+#endif
+
+#ifndef SECTION_ERR_INIT
+#define SECTION_ERR_INIT(errors)     int Display_##errors##_ = 1, _##errors##_ = 0;
+#endif
+
+#ifndef SECTION_ERR_HEADER
+#define SECTION_ERR_HEADER(errors)   Display_##errors##_ = _##errors##_ = 0;
+#endif
+
+#ifndef SECTION_ERR_EXTERN
+#define SECTION_ERR_EXTERN(errors)   extern int Display_##errors##_, _##errors##_;
+#endif
+
+#ifndef SECTION_ERR_FINI 
+#define SECTION_ERR_FINI(errors)	                                \
+    {                                                                   \
+        Display_Errors = Display_##errors##_ = 1;                       \
+        fflush(stdout);                                                 \
+        if (_##errors##_) errvf("===== %d total records of type \"" #errors "\" are in the ERR log.\n\n", _##errors##_); \
+        fflush(stdout);                                                 \
+        _##errors##_ = 0;                                               \
+    }
+#endif
+
+#ifndef SECTION_ERR_COUNT
+#define SECTION_ERR_COUNT(errors)  (_##errors##_)
+#endif
+
+#ifndef SECTION_ERR_FORCE
+#define SECTION_ERR_FORCE(errors)  Display_Errors = 1;
+#endif
+
+#ifndef SECTION_LOG
+#define SECTION_LOG(errors)  	        if (_##errors##_++ == 0) {         \
+        fflush(stdout);                                                    \
+        if (Display_##errors##_ != 0)                                      \
+            mssgf("\n===== Messages of type \"" #errors "\": "); \
+        Display_Messages = Display_##errors##_ = 1;                        \
+        fflush(stdout);                                                    \
+    } else {                                                               \
+        Display_Messages = Display_##errors##_;                            \
     }
 #endif
 
@@ -554,55 +597,12 @@ extern int Display_Errors, Display_Messages;
 #define SECTION_LOG_EXTERN(errors)   extern int Display_##errors##_, _##errors##_;
 #endif
 
-#ifndef SECTION_LOG_FINI 
-#define SECTION_LOG_FINI(errors)	                                \
-    {                                                                   \
-        Display_Errors = Display_##errors##_ = 1;                       \
-        fflush(stdout);                                                 \
-        if (_##errors##_) logvf("===== %d total records of type \"" #errors "\" are in the ERR log.\n\n", _##errors##_); \
-        fflush(stdout);                                                 \
-        _##errors##_ = 0;                                               \
-    }
-#endif
-
 #ifndef SECTION_LOG_COUNT
 #define SECTION_LOG_COUNT(errors)  (_##errors##_)
 #endif
 
-#ifndef SECTION_LOG_FORCE
-#define SECTION_LOG_FORCE(errors)  Display_Errors = 1;
-#endif
-
-#ifndef SECTION_MSG
-#define SECTION_MSG(errors)  	        if (_##errors##_++ == 0) {         \
-        fflush(stdout);                                                    \
-        if (Display_##errors##_ != 0)                                      \
-            mssgf("\n===== Messages of type \"" #errors "\": "); \
-        Display_Messages = Display_##errors##_ = 1;                        \
-        fflush(stdout);                                                    \
-    } else {                                                               \
-        Display_Messages = Display_##errors##_;                            \
-    }
-#endif
-
-#ifndef SECTION_MSG_INIT
-#define SECTION_MSG_INIT(errors)     int Display_##errors##_ = 1, _##errors##_ = 0;
-#endif
-
-#ifndef SECTION_MSG_HEADER
-#define SECTION_MSG_HEADER(errors)   Display_##errors##_ = _##errors##_ = 0;
-#endif
-
-#ifndef SECTION_MSG_EXTERN
-#define SECTION_MSG_EXTERN(errors)   extern int Display_##errors##_, _##errors##_;
-#endif
-
-#ifndef SECTION_MSG_COUNT
-#define SECTION_MSG_COUNT(errors)  (_##errors##_)
-#endif
-
-#ifndef SECTION_MSG_FINI 
-#define SECTION_MSG_FINI(errors)	                                \
+#ifndef SECTION_LOG_FINI 
+#define SECTION_LOG_FINI(errors)	                                \
     {                                                                   \
         Display_Messages = Display_##errors##_ = 1;                     \
         fflush(stdout);                                                 \

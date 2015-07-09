@@ -40,8 +40,8 @@ extern void           errorvf(const char *fmt, ...);
 
 extern void           errsimf(const char *messg);
 
-extern void           logf(const char *messg, const char *shout="", int showerrf = 1);
-extern void           logvf(const char *fmt, ...);
+extern void           errf(const char *messg, const char *shout="", int showerrf = 1);
+extern void           errvf(const char *fmt, ...);
 
 extern void           mssgf(const char *messg);
 extern void           mssgvf(const char *fmt, ...);

@@ -310,8 +310,8 @@ void ReadImputed::read_imputed_file ()
 
     Str  name;
     Str  chrm;
-    SECTION_LOG_INIT(bad_line);
-    SECTION_LOG_INIT(halftyped);
+    SECTION_ERR_INIT(bad_line);
+    SECTION_ERR_INIT(halftyped);
     while (! ifs.eof() ) {
 
         ifs >> hmm;
@@ -364,7 +364,7 @@ void ReadImputed::read_imputed_file ()
                     chrm  =  oxford_single_chr;
                     name = fields[0];
                 } else {
-                    SECTION_LOG(bad_line);
+                    SECTION_ERR(bad_line);
                     errorvf("impute2 file: bad line(%d): %s %s %s\nrs_id field first item unexpected: no chromosome was specified and can not be inferred\n", 
                            C(line_n), C(hmm), C(rsid), C(pos));
                     nochr++;
@@ -377,29 +377,29 @@ void ReadImputed::read_imputed_file ()
                     cout << fields[3] << " ";
                 }
                 if (fields.size() > 1 && fields[1] != pos) {
-                    SECTION_LOG(bad_line);
+                    SECTION_ERR(bad_line);
                     warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id pos field (%s) does not match position column (%s)\n",
                            C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[1]), C(pos));
                 }
                 if (check_format && fields.size() > 2 && fields[2] != A) {
-                    SECTION_LOG(bad_line);
+                    SECTION_ERR(bad_line);
                     warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id A allele field (%s) does not match A column (%s)\n",
                            C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[2]), C(A));
                 }
                 if (check_format && fields.size() > 3 && fields[3] != B) {
-                    SECTION_LOG(bad_line);
+                    SECTION_ERR(bad_line);
                     warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id B allele field (%s) does not match B column (%s)\n",
                            C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[3]), C(B));
                 }
                 if (A != B && (A == "0" || B == "0")) {
-                    SECTION_LOG(halftyped);
+                    SECTION_ERR(halftyped);
                     warnvf("impute2 file: odd line(%d): %s %s %s %s %s\n         heterozygote samples will appear halftyped because only one allele is 0\n",
                            C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B));
 
                 }
             }
             if (check_format && hmm != "---") {
-                SECTION_LOG(bad_line);
+                SECTION_ERR(bad_line);
                 warnvf("impute file: bad line(%d): %s %s %s %s %s\n         first field is not --- or chromosome\n",
                        C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B));
             }
@@ -414,8 +414,8 @@ void ReadImputed::read_imputed_file ()
         markers.push_back(new ImpMarker(name, chrm, pos, A, B, read_info));
     }
 
-    SECTION_LOG_FINI(bad_line);
-    SECTION_LOG_FINI(halftyped);
+    SECTION_ERR_FINI(bad_line);
+    SECTION_ERR_FINI(halftyped);
     if (nochr) {
         errorvf("read_imputed_file: can not determine chromosomes for %d markers\n",
                 nochr);
@@ -433,7 +433,7 @@ void ReadImputed::check_indelsNdups()
     int line_n = 0;
     int skip_count = 0;
 
-    SECTION_LOG_INIT(indel);
+    SECTION_ERR_INIT(indel);
     for (Vecmarkerpp mpp = markers.cbegin(); mpp != markers.cend(); mpp++) {
         mp     = *mpp;
 
@@ -444,11 +444,11 @@ void ReadImputed::check_indelsNdups()
         if ( ( mp->A.size() > 1 && mp->A.compare(0, 5, "dummy" )) || 
              ( mp->B.size() > 1 && mp->B.compare(0, 5, "dummy" )) ) {
             if (allow_indels == 'y') {
-                SECTION_LOG(indel);
+                SECTION_ERR(indel);
                 warnvf("Marker: %s (bp %s) indel alleles[%s/%s] allowed [line %d].\n",
                        C(mp->name), C(mp->pos), C(mp->A), C(mp->B), line_n);
             } else {
-                SECTION_LOG(indel);
+                SECTION_ERR(indel);
                 warnvf("Marker: %s (bp %s) indel alleles[%s/%s] ignored [line %d].\n",
                        C(mp->name), C(mp->pos), C(mp->A), C(mp->B), line_n);
                 skip_count++;
@@ -456,7 +456,7 @@ void ReadImputed::check_indelsNdups()
             }
         }
     } 
-    SECTION_LOG_FINI(indel);
+    SECTION_ERR_FINI(indel);
     markers_filtered = markers_filtered - skip_count;
     if (allow_indels == 'y')
         mssgvf("Markers remaining %d; NO Filtering by indels\n", markers_filtered);
@@ -466,7 +466,7 @@ void ReadImputed::check_indelsNdups()
     mp = NULL;
     line_n = 0;
     skip_count = 0;
-    SECTION_LOG_INIT(duplicate);
+    SECTION_ERR_INIT(duplicate);
     for (Vecmarkerpp mpp = markers.cbegin(); mpp != markers.cend(); mpp++) {
         mpprev = mp;
         mp     = *mpp;
@@ -478,14 +478,14 @@ void ReadImputed::check_indelsNdups()
         if (mpprev == NULL)
             ;
         else if (mpprev->pos == mp->pos) {
-            SECTION_LOG(duplicate);
+            SECTION_ERR(duplicate);
             warnvf("Markers: %s (bp %s) repeated with different alleles [%s/%s %s/%s] ignored repeat [line %d].\n",
                    C(mp->name), C(mp->pos), C(mpprev->A), C(mpprev->B), C(mp->A), C(mp->B), line_n);
             skip_count++;
             mp->skip = true;
         }
     }
-    SECTION_LOG_FINI(duplicate);
+    SECTION_ERR_FINI(duplicate);
     markers_filtered = markers_filtered - skip_count;
 
     mssgvf("Markers remaining %d; Filtered by dups %d\n\n", markers_filtered, skip_count);
@@ -545,7 +545,7 @@ void ReadImputed::read_info_file ()
     int    skip_count = 0;
     double info;
 
-    SECTION_LOG_INIT(info_threshold);
+    SECTION_ERR_INIT(info_threshold);
     ImpMarker *mp;
     for (mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
         mp = *mpp;
@@ -572,7 +572,7 @@ void ReadImputed::read_info_file ()
                 skip_count++;
                 mp->skip = true;
 
-                SECTION_LOG(info_threshold);
+                SECTION_ERR(info_threshold);
                 warnvf("Marker: %s %s %s %s %s info (%.4f) < threshold (%.4f) [line %d]\n", 
                        C(fields[0]), C(fields[1]), C(fields[2]), C(fields[3]), C(fields[4]),
                        info, info_threshold, line_n);
@@ -581,7 +581,7 @@ void ReadImputed::read_info_file ()
     }
 
     markers_filtered = markers_filtered - skip_count;
-    SECTION_LOG_FINI(info_threshold);
+    SECTION_ERR_FINI(info_threshold);
 
     if (mpp != markers.cend() || line_n != markers.size()) {
         errorvf("Files \"%s\" and \"%s\" are different lengths: %d vs %d\n",
@@ -835,8 +835,8 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
     int curr_ped_index = 0;
     int num_errors     = 0;
 
-    SECTION_LOG_EXTERN(illegal_affect);
-    SECTION_LOG_EXTERN(illegal_quant);
+    SECTION_ERR_EXTERN(illegal_affect);
+    SECTION_ERR_EXTERN(illegal_quant);
     for (Vecvecsp peop = people.cbegin(); peop != people.cend(); peop++) {
 
         const VecsDB& pp = (*peop);
@@ -922,14 +922,14 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
                 num_errors += ret;
 
                 if (entry->pheno[i].Affection.Status == UNDEF) {
-                    SECTION_LOG(illegal_affect);
+                    SECTION_ERR(illegal_affect);
                     errorvf("File %s, Entry %d : Invalid status at locus %s\n",
                             C(sample_file), entry->rec_num+HDR, LTop->Locus[i].Name);
                     num_errors++;
                 }
                 if (LTop->Pheno[i].Props.Affection.ClassCnt != 1) {
                     if (entry->pheno[i].Affection.Class == UNDEF) {
-                        SECTION_LOG(illegal_affect);
+                        SECTION_ERR(illegal_affect);
                         errorvf("File \"%s\", Entry %d : Invalid liability class at locus %s\n\n",
                                 C(sample_file), entry->rec_num+HDR, LTop->Locus[i].Name);
                         num_errors++;
@@ -945,8 +945,8 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
             }
         }
     }
-    SECTION_LOG_FINI(illegal_affect);
-    SECTION_LOG_FINI(illegal_quant);
+    SECTION_ERR_FINI(illegal_affect);
+    SECTION_ERR_FINI(illegal_quant);
     printf("number phenotype errors: %d\n", num_errors);
 
 #ifdef SHOWSTATUS
@@ -995,11 +995,11 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     char *callele2;
     char *callele0  = canonical_allele(C("0"));
 
-//  SECTION_LOG_INIT(skip);
+//  SECTION_ERR_INIT(skip);
 
     Tod tod_gen("impute genotypes");
-    SECTION_LOG_INIT(genotype_missing_fraction);
-    SECTION_LOG(genotype_missing_fraction);
+    SECTION_ERR_INIT(genotype_missing_fraction);
+    SECTION_ERR(genotype_missing_fraction);
     warnvf("%8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n",
            "untyped", "less", "greater", "geno-", "Marker + chr:pos",
            "marker", "hard", "hard", "typing", "",
@@ -1024,7 +1024,7 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                 EXIT(DATA_INCONSISTENCY);
         }
         if (mp->skip) {
-//          SECTION_LOG(skip);
+//          SECTION_ERR(skip);
 //          warnvf("Marker: skipped %s %s %s info (%.4f) < threshold (%.4f)\n", 
 //                 C(mp->name), C(mp->chr), C(mp->pos), mp->info, info_threshold);
             continue;
@@ -1100,7 +1100,7 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
             locus->??
             skip_count++;
 */
-            SECTION_LOG(genotype_missing_fraction);
+            SECTION_ERR(genotype_missing_fraction);
             warnvf("%8d %8d %8d %8.3f  %s %s:%s\n",
                    zero, less, greater, ((double)greater)/people_filtered,
                    C(mp->name), C(mp->chr), C(mp->pos));
@@ -1115,8 +1115,8 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 */
     }
     tod_gen();
-//  SECTION_LOG_FINI(skip);
-    SECTION_LOG_FINI(genotype_missing_fraction);
+//  SECTION_ERR_FINI(skip);
+    SECTION_ERR_FINI(genotype_missing_fraction);
 
 /*
     mssgvf("Markers remaining %d; Filtered by hard call threshold %d\n", markers_filtered, skip_count);
