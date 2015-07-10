@@ -135,14 +135,15 @@ static void  write_nuclear_peds(char *outfl, linkage_ped_top *Top2,
                     Top2->Ped[ped].Num = ped+1;
                     sprintf(fformat, "%%%dd ", fwid);
                     fprintf(filep, fformat, ped+1);
-                } else {
-                    if (linkage_format || OrigIds[1] == 5) {
+                } else if (linkage_format || OrigIds[1] == 5) {
                         sprintf(fformat, "%%%dd ", fwid);
                         fprintf(filep, fformat, Top2->Ped[ped].Num);
-                    } else {
+                } else if (OrigIds[1] == 2) {
                         sprintf(fformat, "%%%ds ", fwid);
                         fprintf(filep, fformat, Top2->Ped[ped].Name);
-                    }
+                } else if (OrigIds[1] == 4) {
+                        sprintf(fformat, "%%%ds ", fwid);
+                        fprintf(filep, fformat, Top2->Ped[ped].PedPre);
                 }
 
                 sprintf(fformat, "%%%dd ", pwid);

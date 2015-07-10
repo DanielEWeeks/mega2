@@ -481,8 +481,7 @@ int save_linkage_peds(char *outfl_name, linkage_ped_top *Top,
                     }
                 }
                 /* finally, write the silly ped# and per# */
-                fprintf(filep, "  Ped: %s   Per: %s", Top->Ped[ped].Name,
-                        Entry->OrigID);
+                fprintf(filep, "  Ped: %s   Per: %s", Top->Ped[ped].Name, Entry->OrigID);
                 if (Top->UniqueIds && analysis  == TO_LINKAGE) {
                     fprintf(filep, "  ID: %s ",  Entry->UniqueID);
                 }

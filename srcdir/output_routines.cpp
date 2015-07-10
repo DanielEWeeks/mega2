@@ -247,30 +247,30 @@ void field_widths(linkage_ped_top *TTop, linkage_locus_top *LTop,
 #define WRITE_ENTRY_RECORD(id)                                          \
                                                                         \
     /* print the linkage ids */                                         \
-    if (1) {                                             \
+    if (1) {                                                            \
         sprintf(format, "%%-%dd ", fid);                                \
         fprintf(fp, format, Top->Ped[ped].Num);                         \
-        sprintf(format, " %%-%dd ", pid);                                \
+        sprintf(format, " %%-%dd ", pid);                               \
         fprintf(fp, format, id);                                        \
                                                                         \
     }                                                                   \
-    if (Top->OrigIds == 1) {                        \
-        sprintf(format, " %%-%ds ", fnam);                               \
+    if (Top->OrigIds == 1) {                                            \
+        sprintf(format, " %%-%ds ", fnam);                              \
         fprintf(fp, format, Top->Ped[ped].Name);                        \
-        sprintf(format, " %%-%ds ", pnam);                               \
+        sprintf(format, " %%-%ds ", pnam);                              \
         fprintf(fp, format, Top->Ped[ped].Entry[per].OrigID);           \
     }                                                                   \
                                                                         \
-    if (Top->UniqueIds == 1) {                                           \
-        sprintf(format, " %%-%ds ", fnam);                               \
+    if (Top->UniqueIds == 1) {                                          \
+        sprintf(format, " %%-%ds ", fnam);                              \
         fprintf(fp, format, Top->Ped[ped].Name);                        \
-	sprintf(format, " %%-%ds ", uid);                                \
+	sprintf(format, " %%-%ds ", uid);                               \
 	fprintf(fp, format, Top->Ped[ped].Entry[per].UniqueID);         \
     }                                                                   \
     /* print the loop id */                                             \
-    if ((Top->Ped[ped].Entry[per].loopbreakers != NULL) ||               \
+    if ((Top->Ped[ped].Entry[per].loopbreakers != NULL) ||              \
        (Top->Ped[ped].Entry[per].OrigProband > 1)) {                    \
-	fprintf(fp, "      %2d ", Top->Ped[ped].Entry[per].OrigProband); \
+	fprintf(fp, "      %2d ", Top->Ped[ped].Entry[per].OrigProband);\
     }                                                                   \
     else {                                                              \
         fprintf(fp, "         ");                                       \
@@ -278,34 +278,40 @@ void field_widths(linkage_ped_top *TTop, linkage_locus_top *LTop,
                                                                         \
     /* print the output pedigree and person values */                   \
                                                                         \
-    if (OrigIds[1] == 2 || OrigIds[1] == 4) {                            \
-	sprintf(format, " %%-%ds ", oped);                               \
+    if (OrigIds[1] == 2) {                                              \
+	sprintf(format, " %%-%ds ", oped);                              \
 	fprintf(fp, format, Top->Ped[ped].Name);                        \
     }                                                                   \
-    else if (OrigIds[1] == 3) {                                          \
-        sprintf(format, " %%-%dd ", oped);                               \
+    else if (OrigIds[1] == 3) {                                         \
+        sprintf(format, " %%-%dd ", oped);                              \
 	fprintf(fp, format, ped+1);                                     \
-    }                                                                   \
-    else {                                                              \
-	sprintf(format, " %%-%dd ", oped);                               \
+    } else if (OrigIds[1] == 4) {                                       \
+	sprintf(format, " %%-%ds ", oped);                              \
+	fprintf(fp, format, Top->Ped[ped].PedPre);                      \
+    } else {								\
+	sprintf(format, " %%-%dd ", oped);                              \
 	fprintf(fp, format, Top->Ped[ped].Num);                         \
     }                                                                   \
                                                                         \
     switch(OrigIds[0]) {                                                \
     case 1:                                                             \
-    case 2:                                                             \
-	sprintf(format, " %%-%ds ", oper);                               \
+	sprintf(format, " %%-%ds ", oper);                              \
 	fprintf(fp, format, Top->Ped[ped].Entry[per].OrigID);           \
+	break;                                                          \
+                                                                        \
+    case 2:                                                             \
+	sprintf(format, " %%-%ds ", oper);                              \
+	fprintf(fp, format, Top->Ped[ped].Entry[per].PerPre);           \
 	break;                                                          \
                                                                         \
     case 3:                                                             \
     case 4:                                                             \
-	sprintf(format, " %%-%ds ", oper);                               \
+	sprintf(format, " %%-%ds ", oper);                              \
 	fprintf(fp, format, Top->Ped[ped].Entry[per].UniqueID);         \
 	break;                                                          \
                                                                         \
     default:                                                            \
-	sprintf(format, " %%-%dd ", oper);                               \
+	sprintf(format, " %%-%dd ", oper);                              \
 	fprintf(fp, format, Top->Ped[ped].Entry[per].ID);               \
 	break;                                                          \
     }                                                                   \
@@ -313,6 +319,88 @@ void field_widths(linkage_ped_top *TTop, linkage_locus_top *LTop,
     fprintf(fp, "\n");
 
 /* macro WRITE_ENTRY_RECORD */
+
+void prID_ped(FILE *fp, int ped, const char *format, linkage_ped_tree *pedp, const char *end)
+{
+    if (OrigIds[1] == 2) {
+        fprintf(fp, format ? format : "%s", pedp->Name);
+    } else if (OrigIds[1] == 3) {
+        fprintf(fp, format ? format : "%d", ped+1);
+    } else if (OrigIds[1] == 4) {
+        fprintf(fp, format ? format : "%s", pedp->PedPre);
+    } else {
+        fprintf(fp, format ? format : "%d", pedp->Num);
+    }
+    if (end && *end != 0) fputs(end, fp);
+}
+
+void prID_per(FILE *fp, const char *format, linkage_ped_rec *tpme, const char *end)
+{
+    if (OrigIds[0] == 1) {
+        fprintf(fp, format ? format : "%s", tpme->OrigID);
+    } else if (OrigIds[0] == 2) {
+        fprintf(fp, format ? format : "%s", tpme->PerPre);
+    } else if (OrigIds[0] == 3) {
+        fprintf(fp, format ? format : "%s", tpme->UniqueID);
+    } else if (OrigIds[0] == 4) {
+        fprintf(fp, format ? format : "%s", tpme->UniqueID);
+    } else {
+        fprintf(fp, format ? format : "%d", tpme->ID);
+    }
+    if (end && *end != 0) fputs(end, fp);
+}
+
+void prID_fam(FILE *fp, const char *format, linkage_ped_rec *tpme, linkage_ped_rec *tpe, const char *end)
+{
+    prID_per(fp, format, tpme, end);
+
+    if (tpme->Father>0) {
+        if (OrigIds[0] == 1) {
+            fprintf(fp, format ? format : "%s", tpe[tpme->Father-1].OrigID);
+        } else if (OrigIds[0] == 2) {
+            fprintf(fp, format ? format : "%s", tpe[tpme->Father-1].PerPre);
+        } else if (OrigIds[0] == 3) {
+            fprintf(fp, format ? format : "%s", tpe[tpme->Father-1].UniqueID);
+        } else if (OrigIds[0] == 4) {
+            fprintf(fp, format ? format : "%s", tpe[tpme->Father-1].UniqueID);
+        } else {
+            fprintf(fp, format ? format : "%d", tpe[tpme->Father-1].ID);
+        }
+        if (end && *end != 0) fputs(end, fp);
+
+        if (OrigIds[0] == 1) {
+            fprintf(fp, format ? format : "%s", tpe[tpme->Mother-1].OrigID);
+        } else if (OrigIds[0] == 2) {
+            fprintf(fp, format ? format : "%s", tpe[tpme->Mother-1].PerPre);
+        } else if (OrigIds[0] == 3) {
+            fprintf(fp, format ? format : "%s", tpe[tpme->Mother-1].UniqueID);
+        } else if (OrigIds[0] == 4) {
+            fprintf(fp, format ? format : "%s", tpe[tpme->Mother-1].UniqueID);
+        } else {
+            fprintf(fp, format ? format : "%d", tpe[tpme->Mother-1].ID);
+        }
+        if (end && *end != 0) fputs(end, fp);
+    }
+}
+
+void prID_rel(FILE *fp, const char *format, int key, linkage_ped_rec *tpe, const char *end)
+{
+    if (key != 0) {
+        if (OrigIds[0] == 1)
+            fprintf(fp, format ? format : "%s", tpe[key-1].OrigID);
+        else if (OrigIds[0] == 2)
+            fprintf(fp, format ? format : "%s", tpe[key-1].PerPre);
+        else if (OrigIds[0] == 3)
+            fprintf(fp, format ? format : "%s", tpe[key-1].UniqueID);
+        else if (OrigIds[0] == 4)
+            fprintf(fp, format ? format : "%s", tpe[key-1].UniqueID);
+        else
+            fprintf(fp, format ? format : "%d", tpe[key-1].ID);
+    } else
+        fprintf(fp, format ? format : "%s", "0");
+    if (end && *end != 0) fputs(end, fp);
+}
+
 
 /* write a mapping of the input pedigree, person, UniqueIDs to output ids*/
 void write_key_file(char *ID_file, linkage_ped_top *Top)
@@ -593,9 +681,12 @@ void write_nuc_ped_key_file(char *ID_file,
             if (OrigIds[0] == 3 || OrigIds[0] == 4) {
                 sprintf(format, " %%-%ds ", oper);
                 fprintf(fp, format, NukeTop->Ped[ped].Entry[per].UniqueID);
-            } else if (OrigIds[0] == 1 || OrigIds[0] == 2) {
+            } else if (OrigIds[0] == 1) {
                 sprintf(format, " %%-%ds ", oper);
                 fprintf(fp, format, NukeTop->Ped[ped].Entry[per].OrigID);
+            } else if (OrigIds[0] == 2) {
+                sprintf(format, " %%-%ds ", oper);
+                fprintf(fp, format, NukeTop->Ped[ped].Entry[per].PerPre);
             } else {
                 sprintf(format, " %%-%dd ", oper);
                 fprintf(fp, format, NukeTop->Ped[ped].Entry[per].ID);

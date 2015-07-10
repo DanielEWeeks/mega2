@@ -37,6 +37,7 @@
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
 #include "genetic_utils_ext.h"
+#include "output_routines_ext.h"
 #include "utils_ext.h"
 #include "user_input_ext.h"
 #include "write_files_ext.h"
@@ -120,43 +121,11 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* Write the pedigree id */
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                    fprintf(filep, "%s,", Top->Ped[ped].Name);
-                } else if (OrigIds[1] == 3) {
-                    fprintf(filep, "%d,", ped+1);
-                } else {
-                    fprintf(filep, "%d,", Top->Ped[ped].Num);
-                }
+                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
                 /* write the entry number  */
-                if (OrigIds[0] == 3 || OrigIds[0] == 4) {
-                    // The individual's name...
-                    fprintf(filep, "%s,", Entry->UniqueID);
-                    // Name of parent #1, parent #2
-                    if (Entry->Father) {
-                        fprintf(filep, "%s,%s,",
-                                Top->Ped[ped].Entry[Entry->Father-1].UniqueID,
-                                Top->Ped[ped].Entry[Entry->Mother-1].UniqueID);
-                    } else {
-                        fprintf(filep, ",,");
-                    }
-                } else if (OrigIds[0] == 1 || OrigIds[0] == 2) {
-                    // The individual's name...
-                    fprintf(filep, "%s,", Entry->OrigID);
-                    // Name of parent #1, parent #2
-                    if (Entry->Father) {
-                        fprintf(filep, "%s,%s,",
-                                Top->Ped[ped].Entry[Entry->Father-1].OrigID,
-                                Top->Ped[ped].Entry[Entry->Mother-1].OrigID);
-                    } else {
-                        fprintf(filep, ",,");
-                    }
-                } else {
-                    fprintf(filep, "%d,", Entry->ID);
-                    if (Entry->Father > 0) {
-                        fprintf(filep, "%d,%d,", Entry->Father, Entry->Mother);
-                    } else {
-                        fprintf(filep, ",,");
-                    }
+                prID_fam(filep, 0, Entry, Top->Ped[ped].Entry, ",");
+                if (Entry->Father == 0) {
+                    fprintf(filep, ",,");
                 }
 
                 // Individual's sex...
@@ -552,21 +521,9 @@ void csv_mendel7_pen_file(char *fl_name, linkage_ped_top *Top, int sex_linked)
 
                     if (pen > 0.0) {
                         /* Write the pedigree id */
-                        if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                            fprintf(filep, "%s,", Top->Ped[ped].Name);
-                        } else if (OrigIds[1] == 3) {
-                            fprintf(filep, "%d,", ped+1);
-                        } else {
-                            fprintf(filep, "%d,", Top->Ped[ped].Num);
-                        }
+                        prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
                         /* write the entry number  */
-                        if (OrigIds[0] == 3 || OrigIds[0] == 4) {
-                            fprintf(filep, "%s,", Entry->UniqueID);
-                        } else if (OrigIds[0] == 1 || OrigIds[0] == 2) {
-                            fprintf(filep, "%s,", Entry->OrigID);
-                        } else {
-                            fprintf(filep, "%d,", Entry->ID);
-                        }
+                        prID_per(filep, 0, Entry, ",");
 
                         fprintf(filep, "%s,%s,%8f,%d\n",
                                 strtail(Locus->Name, MENDEL7_MAX_LOCUS_NAME_LEN), genostr[ipen], pen, affected);

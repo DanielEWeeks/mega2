@@ -974,41 +974,13 @@ static void AspexPedFile(char *aspdat_name, tcl_opts_type opt,
 
         for (j = 0; j < TTop->PedCnt; j++)  {
             for (i = 0; i < TTop->Ped[j].EntryCnt; i++) {
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                    fprintf(fp, fformat, TTop->Ped[j].Name);
-                } else if (OrigIds[1] == 3) {
-                    fprintf(fp, fformat, (int) j+1);
-                } else {
-                    fprintf(fp, fformat, TTop->Ped[j].Num);
-                }
-
+                prID_ped(fp, j, fformat, &TTop->Ped[j], "");
                 tpe = &(TTop->Ped[j].Entry[i]);
-
-                if (OrigIds[0] == 3 || OrigIds[0] == 4) {
-                    fprintf(fp, pformat, tpe->UniqueID);
-                    if (tpe->Father>0) {
-                        fprintf(fp, pformat, TTop->Ped[j].Entry[tpe->Father-1].UniqueID);
-                        fprintf(fp, pformat, TTop->Ped[j].Entry[tpe->Mother-1].UniqueID);
-                    } else {
+                prID_fam(fp, pformat, tpe, TTop->Ped[j].Entry, "");
+                if (tpe->Father == 0) {
+                    if (OrigIds[0] <= 4) {
                         fprintf(fp, pformat, "0");
                         fprintf(fp, pformat, "0");
-                    }
-                }
-
-                else if (OrigIds[0] == 1 || OrigIds[0] == 2) {
-                    fprintf(fp, pformat, tpe->OrigID);
-                    if (tpe->Father>0) {
-                        fprintf(fp, pformat, TTop->Ped[j].Entry[tpe->Father-1].OrigID);
-                        fprintf(fp, pformat, TTop->Ped[j].Entry[tpe->Mother-1].OrigID);
-                    } else {
-                        fprintf(fp, pformat, "0");
-                        fprintf(fp, pformat, "0");
-                    }
-                } else {
-                    fprintf(fp, pformat, tpe->ID);
-                    if (tpe->Father > 0) {
-                        fprintf(fp, pformat, TTop->Ped[j].Entry[tpe->Father-1].ID);
-                        fprintf(fp, pformat, TTop->Ped[j].Entry[tpe->Mother-1].ID);
                     } else {
                         fprintf(fp, pformat, 0);
                         fprintf(fp, pformat, 0);

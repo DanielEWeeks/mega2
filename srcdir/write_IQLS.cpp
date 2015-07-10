@@ -249,11 +249,7 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
                 }
                 for (per = 0; per < _Top->Ped[ped].EntryCnt; per++) {
                     tpe = &(_Top->Ped[ped].Entry[per]);
-                    if ((OrigIds[0] == 1) || (OrigIds[0] == 2)) {
-                        pr_printf(" %3s", tpe->OrigID);
-                    } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
-                        pr_printf("%3s ", tpe->UniqueID);
-                    }
+                    pr_per(tpe);
                 }
             }
             pr_nl();

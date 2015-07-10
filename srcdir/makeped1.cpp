@@ -1334,6 +1334,7 @@ static void make_linkage_record(int pid, marriage_graph_type mped,
     if (prec.loop_breaker_id > 0){
         sprintf(lrec->OrigID, "%d", prec.loop_breaker_id);
     } else {
+//yy        asm("int $3");
         sprintf(lrec->OrigID, "%d", prec.indiv);
     }
 

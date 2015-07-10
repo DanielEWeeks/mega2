@@ -617,4 +617,10 @@ extern int Display_Errors, Display_Messages;
 #define ALLOW_SEX_MAP(analysis)  ((analysis)->allow_sex_map())
 
 #define Ignore_Unmapped(m) (((m) == UNKNOWN_CHROMO) && (NumUnmapped < 1 || !AllowUnmapped))
+
+//TEMP
+#define PerPre OrigID
+#define PedPre Name
+
+
 #endif

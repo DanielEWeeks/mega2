@@ -1953,13 +1953,7 @@ static void            aff_rel_count(ped_top *Top, int *numchr,
         if (PedTree->min_off_aff == 99) PedTree->min_off_aff = 0;
         if (PedTree->max_off_aff == -99) PedTree->max_off_aff = 0;
 
-        if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-            fprintf(cntfp, format, LPedTreeTop->Ped[ped].Name);
-        } else if (OrigIds[1] == 3) {
-            fprintf(cntfp, format, ped+1);
-        } else {
-            fprintf(cntfp, format, LPedTreeTop->Ped[ped].Num);
-        }
+        prID_ped(cntfp, ped, format, &LPedTreeTop->Ped[ped], "");
         fprintf(cntfp, ":  %4d %4d %4d|%4d %4d %4d|%4d %4d %4d  %5d|",
                 PedTree->EntryCnt, PedTree->Ntyped,
                 PedTree->Ntyped_all, PedTree->Naff, PedTree->Naff_typed,
@@ -2024,11 +2018,7 @@ static void            aff_rel_count(ped_top *Top, int *numchr,
                     frac_part = modf(k, &int_part);
                     if (!(int_part == 2 || int_part == 4 || int_part == 6 || int_part == 8) ||
                         frac_part != 0.0 ) {
-                        if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                            fprintf(cntfp, format, LPedTreeTop->Ped[ped].Name);
-                        } else {
-                            fprintf(cntfp, format, LPedTreeTop->Ped[ped].Num);
-                        }
+                        prID_ped(cntfp, ped, format, &LPedTreeTop->Ped[ped], "");
                         fprintf(cntfp, ": pair %3d %3d has ",
                                 PedTree->Affected[i]->ID, PedTree->Affected[j]->ID);
                         fprintf(cntfp, "kinship = %7.5f/32\n", k);
@@ -2065,11 +2055,7 @@ static void            aff_rel_count(ped_top *Top, int *numchr,
                     if (PedEntry->Offspring[0] != NULL) {
                         if (PedEntry->Offspring[0]->Father->Off_aff !=
                             PedEntry->Off_aff) {
-                            if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                                fprintf(cntfp, format, LPedTreeTop->Ped[ped].Name);
-                            } else {
-                                fprintf(cntfp, format, LPedTreeTop->Ped[ped].Num);
-                            }
+                            prID_ped(cntfp, ped, format, &LPedTreeTop->Ped[ped], "");
                             fprintf(cntfp,
                                     ": Father & mother have different numbers of affected offspring: %d %d\n",
                                     PedEntry->Offspring[0]->Father->Off_aff, PedEntry->Off_aff);
@@ -2085,11 +2071,7 @@ static void            aff_rel_count(ped_top *Top, int *numchr,
             "            Num Ntyped  all  Naff typed typed_all Sibs Halfsibs ParChld Avunc\n");
     for (ped = 0; ped < Top->PedCnt; ped++)   {
         PedTree = &(Top->PedTree[ped]);
-        if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-            fprintf(cntfp, format, LPedTreeTop->Ped[ped].Name);
-        } else {
-            fprintf(cntfp, format, LPedTreeTop->Ped[ped].Num);
-        }
+        prID_ped(cntfp, ped, format, &LPedTreeTop->Ped[ped], "");
         fprintf(cntfp, ": %5d %5d %5d %5d %5d %5d   %6d %6d %6d %6d\n",
                 PedTree->EntryCnt, PedTree->Ntyped,
                 PedTree->Ntyped_all, PedTree->Naff, PedTree->Naff_typed, PedTree->Naff_typed_all,

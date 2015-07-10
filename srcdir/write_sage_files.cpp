@@ -804,13 +804,7 @@ static int   save_SAGE_peds(char *outfl_name, linkage_ped_top *Top,
                     fprintf(filep, fformat, Top->Ped[ped].Num);
                 } else {
                     /* Write the pedigree id as a "fwid" numeric code */
-                    if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                        fprintf(filep, fformat, Top->Ped[ped].Name);
-                    } else if (OrigIds[1] == 3) {
-                        fprintf(filep, fformat, ped+1);
-                    } else {
-                        fprintf(filep, fformat, Top->Ped[ped].Num);
-                    }
+                    prID_ped(filep, ped, fformat, &Top->Ped[ped], "");
                 }
                 /* write the entry number  */
                 if (analysis == TO_SAGE) {
@@ -824,36 +818,10 @@ static int   save_SAGE_peds(char *outfl_name, linkage_ped_top *Top,
                             fprintf(filep, " ");
                     }
                 } else {
-                    if (OrigIds[0]==1 || OrigIds[0] == 2) {
-                        fprintf(filep, pformat, Entry->OrigID);
-                        if (Entry->Father != 0) {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Father-1].OrigID);
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Mother-1].OrigID);
-                        }
-                    } else if (OrigIds[0] == 3 || OrigIds[0] == 4) {
-                        fprintf(filep, pformat, Entry->UniqueID);
-                        if (Entry->Father != 0) {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Father-1].UniqueID);
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Mother-1].UniqueID);
-                        }
-                    } else {
-                        fprintf(filep, pformat, Entry->ID);
-                        if (Entry->Father != 0) {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Father-1].ID);
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Mother-1].ID);
-                        }
-                    }
+                    prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry, "");
                     if (Entry->Father == 0) {
-                        int i;
-                        for (i=0; i < 2*(pwid+1); i++) {
+                        for(b=0; b<2*(pwid + 1); b++)
                             fprintf(filep, " ");
-                        }
                     }
                 }
                 /* write the sex */

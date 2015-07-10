@@ -38,6 +38,7 @@
 #include "linkage_ext.h"
 #include "omit_ped_ext.h"
 #include "output_file_names_ext.h"
+#include "output_routines_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
 #include "write_files_ext.h"
@@ -158,36 +159,12 @@ static int save_SOLAR_peds(char *fl_name, linkage_ped_top *Top)
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* Write the pedigree id */
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                    fprintf(filep, "%s,", Top->Ped[ped].Name);
-                } else if (OrigIds[1] == 3) {
-                    fprintf(filep, "%d,", ped+1);
-                } else {
-                    fprintf(filep, "%d,", Top->Ped[ped].Num);
-                }
+                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
                 /* write the entry number  */
+                prID_fam(filep, 0, Entry, Top->Ped[ped].Entry, ",");
                 /* write the parents */
-                if (OrigIds[0] == 3 || OrigIds[0] == 4) {
-                    fprintf(filep, "%s,", Entry->UniqueID);
-                    if (Entry->Father) {
-                        fprintf(filep, "%s,%s,",
-                                Top->Ped[ped].Entry[Entry->Father-1].UniqueID,
-                                Top->Ped[ped].Entry[Entry->Mother-1].UniqueID);
-                    } else {
-                        fprintf(filep, "0,0,");
-                    }
-                } else if (OrigIds[0] == 1 || OrigIds[0] == 2) {
-                    fprintf(filep, "%s,", Entry->OrigID);
-                    if (Entry->Father) {
-                        fprintf(filep, "%s,%s,",
-                                Top->Ped[ped].Entry[Entry->Father-1].OrigID,
-                                Top->Ped[ped].Entry[Entry->Mother-1].OrigID);
-                    } else {
-                        fprintf(filep, "0,0,");
-                    }
-                } else {
-                    fprintf(filep, "%d,", Entry->ID);
-                    fprintf(filep, "%d,%d,", Entry->Father, Entry->Mother);
+                if (Entry->Father == 0) {
+                    fprintf(filep, "0,0,");
                 }
 
                 /* write the sex */
@@ -307,21 +284,10 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* Write the pedigree id */
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                    fprintf(filep, "%s,", Top->Ped[ped].Name);
-                } else if (OrigIds[1] == 3) {
-                    fprintf(filep, "%d,", ped+1);
-                } else {
-                    fprintf(filep, "%d,", Top->Ped[ped].Num);
-                }
+                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
+
                 /* write the entry number  */
-                if (OrigIds[0] == 3 || OrigIds[0] == 4) {
-                    fprintf(filep, "%s", Entry->UniqueID);
-                } else if (OrigIds[0] == 1 || OrigIds[0] == 2) {
-                    fprintf(filep, "%s", Entry->OrigID);
-                } else {
-                    fprintf(filep, "%d", Entry->ID);
-                }
+                prID_per(filep, 0, Entry, "");
 
                 /* now write genotype data  */
                 for(tr=0; tr<num_affec; tr++) {
@@ -389,21 +355,9 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
                 Entry = &(Top->Ped[ped].Entry[entry]);
 
                 /* Write the pedigree id */
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                    fprintf(filep, "%s,", Top->Ped[ped].Name);
-                } else if (OrigIds[1] == 3) {
-                    fprintf(filep, "%d,", ped+1);
-                } else {
-                    fprintf(filep, "%d,", Top->Ped[ped].Num);
-                }
+                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
                 /* write the entry number  */
-                if (OrigIds[0] == 3 || OrigIds[0] == 4) {
-                    fprintf(filep, "%s", Entry->UniqueID);
-                } else if (OrigIds[0] == 1 || OrigIds[0] == 2) {
-                    fprintf(filep, "%s", Entry->OrigID);
-                } else {
-                    fprintf(filep, "%d", Entry->ID);
-                }
+                prID_per(filep, 0, Entry, "");
 
                 /* now write genotype data  */
                 switch (Locus->Type)  {
@@ -493,22 +447,10 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* Write the pedigree id */
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                    fprintf(filep, "%s,", Top->Ped[ped].Name);
-                } else if (OrigIds[1] == 3) {
-                    fprintf(filep, "%d,", ped+1);
-                } else {
-                    fprintf(filep, "%d,", Top->Ped[ped].Num);
-                }
+                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
 
                 /* write the entry number  */
-                if (OrigIds[0] == 3 || OrigIds[0] == 4) {
-                    fprintf(filep, "%s", Entry->UniqueID);
-                } else if (OrigIds[0] == 1 || OrigIds[0] == 2) {
-                    fprintf(filep, "%s", Entry->OrigID);
-                } else {
-                    fprintf(filep, "%d", Entry->ID);
-                }
+                prID_per(filep, 0, Entry, "");
 
                 /* now write genotype data  */
                 for (locus1 = 0; locus1 < NumChrLoci; locus1++)  {

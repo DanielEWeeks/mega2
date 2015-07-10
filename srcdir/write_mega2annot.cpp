@@ -445,40 +445,9 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* write the pedigree and entry numbers */
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                    fprintf(filep, fformat, Top->Ped[ped].Name);
-                } else if (OrigIds[1] == 3) {
-                    fprintf(filep, fformat, ped+1);
-                } else {
-                    fprintf(filep, fformat, Top->Ped[ped].Num);
-                }
-
-                if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
-                    fprintf(filep, pformat, Entry->OrigID);
-                } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
-                    fprintf(filep, pformat, Entry->UniqueID);
-                } else {
-                    fprintf(filep, pformat, Entry->ID);
-                }
-
-                if (Entry->Father != 0) {
-                    if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
-                        fprintf(filep, pformat,
-                                Top->Ped[ped].Entry[Entry->Father-1].OrigID);
-                        fprintf(filep, pformat,
-                                Top->Ped[ped].Entry[Entry->Mother-1].OrigID);
-                    } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
-                        fprintf(filep, pformat,
-                                Top->Ped[ped].Entry[Entry->Father-1].UniqueID);
-                        fprintf(filep, pformat,
-                                Top->Ped[ped].Entry[Entry->Mother-1].UniqueID);
-                    } else {
-                        fprintf(filep, pformat,
-                                Top->Ped[ped].Entry[Entry->Father-1].ID);
-                        fprintf(filep, pformat,
-                                Top->Ped[ped].Entry[Entry->Mother-1].ID);
-                    }
-                } else {
+                prID_ped(filep, ped, fformat, &Top->Ped[ped], "");
+                prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry, "");
+                if (Entry->Father == 0) {
                     /* create the 0 strings */
                     for(p=0; p < (pwid-1); p++)    fprintf(filep, " ");
                     fprintf(filep, "0 ");
@@ -487,55 +456,9 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
                 }
 
                 if (pedfile_type == POSTMAKEPED_PFT) {
-                    if (Entry->First_Offspring != 0) {
-                        if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->First_Offspring-1].OrigID);
-                        } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->First_Offspring-1].UniqueID);
-                        } else {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->First_Offspring-1].ID);
-                        }
-                    } else {
-                        /* create the 0 strings */
-                        for(p=0; p < (pwid-1); p++)    fprintf(filep, " ");
-                        fprintf(filep, "0 ");
-                    }
-
-
-                    if (Entry->Next_PA_Sib != 0) {
-                        if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Next_PA_Sib-1].OrigID);
-                        } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Next_PA_Sib-1].UniqueID);
-                        } else {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Next_PA_Sib-1].ID);
-                        }
-                    } else {
-                        for (p=0; p< (pwid-1); p++)    fprintf(filep, " ");
-                        fprintf(filep, "0 ");
-                    }
-
-                    if (Entry->Next_MA_Sib != 0) {
-                        if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Next_MA_Sib-1].OrigID);
-                        } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Next_MA_Sib-1].UniqueID);
-                        } else {
-                            fprintf(filep, pformat,
-                                    Top->Ped[ped].Entry[Entry->Next_MA_Sib-1].ID);
-                        }
-                    } else {
-                        for (p=0; p< (pwid-1); p++)    fprintf(filep, " ");
-                        fprintf(filep, "0 ");
-                    }
+                    prID_rel(filep, pformat, Entry->First_Offspring, Top->Ped[ped].Entry, "");
+                    prID_rel(filep, pformat, Entry->Next_PA_Sib, Top->Ped[ped].Entry, "");
+                    prID_rel(filep, pformat, Entry->Next_MA_Sib, Top->Ped[ped].Entry, "");
                 }
 
                 /* write the sex */

@@ -1028,19 +1028,37 @@ static void  save_mendel_peds(char *outfl_name, linkage_ped_top *Top,
 {
 #define LTOP Top->LocusTop
 
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     int      nloop, tr, i, ped, entry, locus1, *trp, loc;
     int      num_affec = num_traits, naff=num_affection, *aff_status = NULL, *paff_status;
-    register linkage_ped_rec *Entry;
+    linkage_ped_rec *Entry, *TEntry;
     int      fwid, pwid;
     char     ofl[2*FILENAME_LENGTH],  fformat[6], pformat[6];
-    char     *namestr;
     FILE     *filep;
     int      loc1, j;
 
     /* We already have the number of affection status loci in a global */
     /* set the number of affection loci to decide how many quantitative
        variables need to be written at the end */
+
+    linkage_ped_tree *TailPed = CALLOC((size_t) Top->PedCnt, linkage_ped_tree);
+    for (ped = 0; ped < Top->PedCnt; ped++)  {
+        strcpy(TailPed[ped].Name, strtail(Top->Ped[ped].Name, MENDEL_MAX_PEDIGREE_NAME_LEN));
+
+        TailPed[ped].EntryCnt=Top->Ped[ped].EntryCnt;
+        TailPed[ped].Entry = CALLOC((size_t) TailPed[ped].EntryCnt, linkage_ped_rec);
+        for (entry = 0; entry < TailPed[ped].EntryCnt; entry++)  {
+            TEntry = &(TailPed[ped].Entry[entry]);
+             Entry = &(Top->Ped[ped].Entry[entry]);
+
+            strcpy(TEntry->OrigID,   strtail(Entry->OrigID,   MENDEL_MAX_PEDIGREE_NAME_LEN));
+            strcpy(TEntry->UniqueID, strtail(Entry->UniqueID, MENDEL_MAX_PEDIGREE_NAME_LEN));
+//          strcpy(TEntry->PerPre,   strtail(Entry->PerPre,   MENDEL_MAX_PEDIGREE_NAME_LEN));
+            TEntry->ID     = Entry->ID;
+            TEntry->Father = Entry->Father;
+            TEntry->Mother = Entry->Mother;
+        }
+    }
 
     if (analysis != TO_MENDEL4) {
         if (naff > 0 && LoopOverTrait == 0) {
@@ -1075,6 +1093,7 @@ static void  save_mendel_peds(char *outfl_name, linkage_ped_top *Top,
         fprintf(filep, "(I5,1x,A%d)\n", fwid);
         /*  If we want a line of length 70, then we can have 6 phenotype fields */
         fprintf(filep, "(3A%d,1X,2A1,(T%d,3(A8),:))\n", pwid, 3*pwid+4);
+
         for (ped = 0; ped < Top->PedCnt; ped++)  {
             if (UntypedPeds != NULL) {
                 if (UntypedPeds[ped]) {
@@ -1083,51 +1102,20 @@ static void  save_mendel_peds(char *outfl_name, linkage_ped_top *Top,
             }
             /* Write total number of persons and the pedigree id */
             fprintf(filep, "%5d ", Top->Ped[ped].EntryCnt);
-            if (OrigIds[1] == 2 || OrigIds[1] == 4) {
-                fprintf(filep, fformat, strtail(Top->Ped[ped].Name, MENDEL_MAX_PEDIGREE_NAME_LEN));
-            } else if (OrigIds[1] == 3) {
-                fprintf(filep, fformat, ped+1);
-            } else {
-                fprintf(filep, fformat, Top->Ped[ped].Num);
-            }
+            prID_ped(filep, ped, fformat, &TailPed[ped], "");
             fprintf(filep, "\n");
 
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* write the entry number then parents */
-                if (OrigIds[0]==1 || OrigIds[0] == 2) {
-                    fprintf(filep, pformat, strtail(Entry->OrigID, MENDEL_MAX_PEDIGREE_NAME_LEN));
-                    if (Entry->Father != 0) {
 
-                        namestr = strtail(Top->Ped[ped].Entry[Entry->Father-1].OrigID, MENDEL_MAX_PEDIGREE_NAME_LEN);
-                        fprintf(filep, pformat, namestr);
-
-                        namestr = strtail(Top->Ped[ped].Entry[Entry->Mother-1].OrigID, MENDEL_MAX_PEDIGREE_NAME_LEN);
-                        fprintf(filep, pformat, namestr);
-                    }
-                } else if (OrigIds[0] == 3 || OrigIds[0] == 4) {
-		  fprintf(filep, pformat, strtail(Entry->UniqueID, MENDEL_MAX_PEDIGREE_NAME_LEN));
-                    if (Entry->Father != 0) {
-                        namestr = strtail(Top->Ped[ped].Entry[Entry->Father-1].UniqueID, MENDEL_MAX_PEDIGREE_NAME_LEN);
-                        fprintf(filep, pformat, namestr);
-
-                        namestr = strtail(Top->Ped[ped].Entry[Entry->Mother-1].UniqueID, MENDEL_MAX_PEDIGREE_NAME_LEN);
-                        fprintf(filep, pformat, namestr);
-                    }
-                } else {
-                    fprintf(filep, pformat, Entry->ID);
-                    if (Entry->Father != 0) {
-                        fprintf(filep, pformat,
-                                Top->Ped[ped].Entry[Entry->Father-1].ID);
-                        fprintf(filep, pformat,
-                                Top->Ped[ped].Entry[Entry->Mother-1].ID);
-                    }
-                }
+                prID_fam(filep, pformat, &TailPed[ped].Entry[entry], TailPed[ped].Entry, "");
                 if (Entry->Father == 0) {
                     for (i=0; i < 2*pwid; i++) {
                         fprintf(filep, " ");
                     }
                 }
+
                 /* write the sex */
                 if (Entry->Sex == MALE_ID)	   fprintf(filep, " M ");
                 if (Entry->Sex == FEMALE_ID)      fprintf(filep, " F ");
@@ -1287,6 +1275,12 @@ static void  save_mendel_peds(char *outfl_name, linkage_ped_top *Top,
     sprintf(err_msg, "        Pedigree file:        %s", outfl_name);
     mssgf(err_msg);
     free(aff_status);
+
+    for (ped = 0; ped < Top->PedCnt; ped++)  {
+        free(TailPed[ped].Entry);
+    }
+    free(TailPed);
+
     return;
 }
 

@@ -67,10 +67,12 @@ void person_locus_entry::pr_fam()
     if (_fwid == 0) {
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
-    } else if (OrigIds[1] == 2 || OrigIds[1] == 4) {
+    } else if (OrigIds[1] == 2) {
         pr_printf(_fformat, _tp->Name);
     } else if (OrigIds[1] == 3) {
         pr_printf(_fformat, _ped+1);
+    } else if (OrigIds[1] == 4) {
+        pr_printf(_fformat, _tp->PedPre);
     } else {
         pr_printf(_fformat, _tp->Num);
     }
@@ -85,8 +87,10 @@ void person_locus_entry::pr_per(linkage_ped_rec  *tpe)
     if (_fwid == 0) {
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
-    } else if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
+    } else if (OrigIds[0] == 1) {
         pr_printf(_pformat, tpe->OrigID);
+    } else if (OrigIds[0] == 2)  {
+        pr_printf(_pformat, tpe->PerPre);
     } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
         pr_printf(_pformat, tpe->UniqueID);
     } else {
@@ -100,9 +104,12 @@ void person_locus_entry::pr_father()
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
     } else if (_tpe->Father != 0) {
-        if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
+        if (OrigIds[0] == 1) {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Father-1].OrigID);
+        } else if (OrigIds[0] == 2)  {
+            pr_printf(_pformat,
+                    _tp->Entry[_tpe->Father-1].PerPre);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Father-1].UniqueID);
@@ -125,9 +132,12 @@ void person_locus_entry::pr_mother()
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
     } else if (_tpe->Father != 0) {
-        if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
+        if (OrigIds[0] == 1) {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Mother-1].OrigID);
+        } else if (OrigIds[0] == 2)  {
+            pr_printf(_pformat,
+                    _tp->Entry[_tpe->Mother-1].PerPre);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Mother-1].UniqueID);
@@ -150,11 +160,16 @@ void person_locus_entry::pr_parent()
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
     } else if (_tpe->Father != 0) {
-        if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
+        if (OrigIds[0] == 1) {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Father-1].OrigID);
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Mother-1].OrigID);
+        } else if (OrigIds[0] == 2)  {
+            pr_printf(_pformat,
+                    _tp->Entry[_tpe->Father-1].PerPre);
+            pr_printf(_pformat,
+                    _tp->Entry[_tpe->Mother-1].PerPre);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Father-1].UniqueID);
