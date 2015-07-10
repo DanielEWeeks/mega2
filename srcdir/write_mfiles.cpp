@@ -1043,7 +1043,9 @@ static void  save_mendel_peds(char *outfl_name, linkage_ped_top *Top,
 
     linkage_ped_tree *TailPed = CALLOC((size_t) Top->PedCnt, linkage_ped_tree);
     for (ped = 0; ped < Top->PedCnt; ped++)  {
-        strcpy(TailPed[ped].Name, strtail(Top->Ped[ped].Name, MENDEL_MAX_PEDIGREE_NAME_LEN));
+        strcpy(TailPed[ped].Name,   strtail(Top->Ped[ped].Name, MENDEL_MAX_PEDIGREE_NAME_LEN));
+//      strcpy(TailPed[ped].PedPre, strtail(Top->Ped[ped].PedPre, MENDEL_MAX_PEDIGREE_NAME_LEN));
+        TailPed[ped].Num =                  Top->Ped[ped].Num;
 
         TailPed[ped].EntryCnt=Top->Ped[ped].EntryCnt;
         TailPed[ped].Entry = CALLOC((size_t) TailPed[ped].EntryCnt, linkage_ped_rec);
