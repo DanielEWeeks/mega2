@@ -671,8 +671,20 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
                                              const unsigned int person_n)
 {
     vector<int> person_indv_v(person_n); // created on the stack
+
+    boolean ManyPerson = false;
+    const char *ID = 0;
+    for (unsigned int pi=0; pi<person_n; pi++) {
+        const char *per = persons[pi].ID;
+        if (ID == 0)
+            ID = per;
+        else if (strcasecmp(per, ID)) { // not eq
+            ManyPerson = true;
+            break;
+        }
+    }
+
     SECTION_ERR_INIT(untyped);
-    
     // For each person in Mega2....
     for (unsigned int pi=0; pi<person_n; pi++) {
         string map_sample; // what we match on in the sample
@@ -690,7 +702,10 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
         // [VCF ID -> per ] mapping should be used.
         if (SAMPLEIDS == NULL) {
             // Search for a per mapping...
-            map_sample = string(per);
+            if (ManyPerson)
+                map_sample = string(per);
+            else
+                map_sample = string(ped);
         } else {
             pair<string,string> key = pair<string,string>(string(ped),string(per));
             // Look for a <ped,per> mapping from the SAMPLEID value of the phenotype file...
@@ -722,7 +737,7 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
             person_indv_v[pi] = vcf_sample_matches[0];
             // But, if there is no SAMPLEID column at all in the phenotype file and if any ID in the
             // VCF file is non-unique in the fam file, then stop with an error.
-            if (SAMPLEIDS == NULL) {
+            if (SAMPLEIDS == NULL && ManyPerson) {
                 // So here after having found a match in the VCF file, we look for duplicate 'per's in the fam file...
                 unsigned int per_found = 0;
                 for (unsigned int pi2=0; pi2<person_n; pi2++) {
@@ -1125,6 +1140,7 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
     Tod vcffetch(50);
     Tod vcfstore(50);
     Tod vcfl1(50);
+    SECTION_ERR_INIT(vcf_chr_name);
     for (unsigned int entry_i = 0; entry_i < (unsigned int)vf->N_total_sites(); entry_i++) {
         // If it didn't pass the filtering criteria, don't include the marker in the map...
         if (vf->include_entry[entry_i] == false) continue;
@@ -1140,14 +1156,22 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
 
         vcfstore.reset();
         m2_map_entry map_entry;
-        map_entry.set_chr(e->get_CHROM());
+        string chrm = e->get_CHROM();
+        if (chrm.compare(0, 3, "chr") == 0 || chrm.compare(0, 3, "CHR") == 0) {
+            chrm.erase(0, 3);
+        }
+        map_entry.set_chr(chrm);
         map_entry.set_POS(e->get_POS());
         map_entry.set_marker_name(get_marker_name(info_id_alternative_key, unknown_marker_prefix));
 	map_entry.set_REF(e->get_REF());
         map.push_back_entry(map_entry);
         vcfstore("vcf store");                   // 2?
 
-        int chr = STR_CHR((e->get_CHROM()).c_str());
+        int chr = STR_CHR(chrm.c_str());
+        if (chr == -1) {
+            SECTION_ERR(vcf_chr_name);
+            errorvf("VCF Illegal chromosome name: %s\n", C(e->get_CHROM()));
+        }
         if (chr == SEX_CHROMOSOME) {
             human_x++;
 //          if (LTop->Locus[mrk_num].Type != XLINKED) {
@@ -1170,7 +1194,8 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
         }
         vcfme();
     }
-    
+    SECTION_ERR_FINI(vcf_chr_name);
+
     vf->set_filepos(file_pos); // rewind the stream...
     
     return map;

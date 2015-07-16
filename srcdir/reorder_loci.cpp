@@ -256,7 +256,7 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
         if (LTop->Marker[j].chromosome == UNKNOWN_CHROMO) {
 
             SECTION_ERR(unmapped_errors);
-            warnvf("Locus %s is unmapped\n", LTop->Marker[j].Name);
+            warnvf("Locus %s chromosome is incorrect.\n", LTop->Marker[j].Name);
             unmapped_markers[ui++] = j;
         } else if (LTop->Marker[j].chromosome == MISSING_CHROMO) {
 	    // The entry for this locus (marker assumed) was not found in the map file.

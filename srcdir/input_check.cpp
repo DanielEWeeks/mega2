@@ -272,9 +272,11 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         strcpy(err_msg, "");
         for (locus = 0; locus < LTop->LocusCnt; locus++) {
             if (LTop->Locus[locus].AlleleCnt > 2) {
-                if (strlen(err_msg) >= 67 || first_time) {
+                if (strlen(err_msg) >= 67) {
                     SECTION_ERR(not_bialleleic);
                     warnf(err_msg);
+                    strcpy(err_msg, LTop->Locus[locus].Name);
+                } else if (first_time) {
                     strcpy(err_msg, LTop->Locus[locus].Name);
                     first_time = 0;
                 } else {
