@@ -184,6 +184,35 @@ void BatchValueGet(Vecs& vec, Cstr &item);
 void BatchValueGet(Vecd& vec, Cstr &item);
 void BatchValueGet(Veci& vec, Cstr &item);
 
+inline void BatchValueIfSet(int &num, Cstr &item) {
+    batch_item_type *bi = BatchItemGet(item);
+    if (bi->items_read)
+        num = BatchItemGet(item)->value.option;
+}
+
+inline void BatchValueIfSet(double &dbl, Cstr &item) {
+    batch_item_type *bi = BatchItemGet(item);
+    if (bi->items_read)
+        dbl = BatchItemGet(item)->value.fvalue;
+}
+
+inline void BatchValueIfSet(Str &str, Cstr &item) {
+    batch_item_type *bi = BatchItemGet(item);
+    if (bi->items_read)
+        str = std::string(BatchItemGet(item)->value.name);
+}
+
+inline void BatchValueIfSet(char *&str, Cstr &item) {
+    batch_item_type *bi = BatchItemGet(item);
+    if (bi->items_read)
+        strcpy(str, BatchItemGet(item)->value.name);
+}
+
+inline void BatchValueIfSet(char &str, Cstr &item) {
+    batch_item_type *bi = BatchItemGet(item);
+    if (bi->items_read)
+        str = BatchItemGet(item)->value.copt;
+}
 
 extern void RawBatchValueSet(char *value, batch_item_type *bi);
 extern void RawBatchValueSet(char *value, int i);

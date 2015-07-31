@@ -977,7 +977,8 @@ void menu1(file_format *infl_type,
         printf("0) Done with this menu - please proceed\n");
         idx=1;
         printf("%2d) %-*s%s\n", idx, line_len,
-               "Select input file format:", INPUT_FORMAT_STR[Input_Format]);
+               "Select input file format:", (Input_Format != in_format_traditional ) ?
+               INPUT_FORMAT_STR[Input_Format] : INPUT_FORMAT_STR100);
         choiceA[idx++] = file_format_i;
 
         if (plinkf || xcf) {

@@ -209,6 +209,7 @@ write_simulate_files_ext.h:  create_SIMULATE_format_files
 /* global variables that control output behaviour*/
 // strings associated with common.h: genetic_distance_map_type
 int             MARKER_SCHEME;
+int             marker_scheme_mega2_opts = 0;
 const char *genetic_distance_map_type_string[3] = {
   "sex-averaged", "sex-specific", "female"
 };
@@ -700,7 +701,10 @@ int             main(int argc, char **argv)
         genetic_distance_index = Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option;
         base_pair_position_index = Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option;
         genetic_distance_sex_type_map = Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option;
-        MARKER_SCHEME = Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option;
+//      MARKER_SCHEME = Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option;
+        BatchValueIfSet(MARKER_SCHEME, "Value_Marker_Compression");
+        if (marker_scheme_mega2_opts)
+            MARKER_SCHEME = marker_scheme_mega2_opts;
         if (MARKER_SCHEME > MARKER_SCHEME_PTR || MARKER_SCHEME < MARKER_SCHEME_BITS) {
             printf("MARKER_SCHEME is %d.  Allowed values are 1, 2 or 3\n", MARKER_SCHEME);
             EXIT(OUTOF_BOUNDS_ERROR);

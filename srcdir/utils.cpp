@@ -1976,7 +1976,7 @@ void mega2_opts(int argc, char **argv)
                     EXIT(INPUT_DATA_ERROR);
                 }
             } else {
-                extern int MARKER_SCHEME;
+                extern int marker_scheme_mega2_opts;
                 for (c = *++as; c; c = *++as) {
                     switch (c) {
                     case 'w': case 'W':
@@ -2001,13 +2001,13 @@ void mega2_opts(int argc, char **argv)
                         break;
 #endif
                     case '1':
-                        MARKER_SCHEME = MARKER_SCHEME_BITS;
+                        marker_scheme_mega2_opts = MARKER_SCHEME_BITS;
                         break;
                     case '2':
-                        MARKER_SCHEME = MARKER_SCHEME_BYTE;
+                        marker_scheme_mega2_opts = MARKER_SCHEME_BYTE;
                         break;
                     case '3':
-                        MARKER_SCHEME = MARKER_SCHEME_PTR;
+                        marker_scheme_mega2_opts = MARKER_SCHEME_PTR;
                         break;
                     case 'v': case 'V':
                         print_mega2_version();
