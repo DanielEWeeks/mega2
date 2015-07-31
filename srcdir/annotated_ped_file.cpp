@@ -1091,8 +1091,11 @@ void unique_id(char *reslt, char *ped, char *per) {
 char *unique_id_per(char *reslt, char *ped) {
     if (UNIQUEid || PLINK.no_fid)
         return reslt;
-    else
-        return reslt + strlen(ped) + 1;
+    char *mid = strrchr(reslt, '_');
+    if (mid)
+        return mid + 1;
+     else
+        return reslt;
 }
 
 static marriage_graph_type *copy_annotated_to_premake(linkage_locus_top *LTop,

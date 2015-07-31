@@ -153,7 +153,7 @@ void Token::getD(double vec[3], int cnt) {
     }
 }
 
-void Token::getDC(double vec[3], int cnt) {
+void Token::getDC(d3 &vec, int cnt) {
     char *token;
     double dbl;
     char *fin;

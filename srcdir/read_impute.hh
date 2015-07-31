@@ -115,6 +115,7 @@ public:
     double        hard_call_threshold;
     double        genotype_missing_fraction;
     char          allow_indels;
+    char          allow_dups;
     Input_Impute *input;
     int           check_format;
 private:
@@ -143,6 +144,8 @@ static const
     int imputed_missing_code_i              = 8000005;
 static const
     int imputed_allow_indels_i              = 8000006;
+static const
+    int imputed_allow_dups_i                = 8000007;
 
 };
 

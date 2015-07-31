@@ -207,9 +207,10 @@ static keyw_t keywords[] = {
     {"Output_File_Stem",                      STRING,     ""},
     {"Imputed_Oxford_Single_Chr",             STRING,   "--"},
     {"Imputed_Info_Metric_Threshold",         FLOAT,   "0.3"},
-    {"Imputed_Hard_Call_Threshold",           FLOAT,   "0.9"},
+    {"Imputed_Hard_Call_Threshold",           FLOAT,   "0.1"},
     {"Imputed_Genotype_Missing_Fraction",     FLOAT,   "0.1"},
     {"Imputed_Missing_Codes",                 NAME_LIST,  ""},
+    {"Imputed_Allow_Duplicate_Markers",       YORN,      "n"},
     {"Imputed_Allow_Indels",                  YORN,      "n"},
     {"Input_Imputed_Info_File",               STRING,     ""},
 };
@@ -224,6 +225,7 @@ pair<Cstr,Cstr> keyword_aliases[] = {
     make_pair("AlleleFreq_SquaredDev", "AlleleFreq_SquaredError"),
     make_pair("Count_Halftyped", "Count_Halftypes"),
     make_pair("REMOutput_Map_Num", "Output_Map_Num"),
+    make_pair("Imputed_Allow_Duplicate_Markers", "Imputed_Allow_Duplicates"),
     make_pair("","")  //sentinel
 };
 

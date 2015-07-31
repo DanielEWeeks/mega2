@@ -54,7 +54,8 @@ public:
 
     void getD(Vecd& vec, int cnt=0);
     void getD(double vec[3], int cnt=0);
-    void getDC(double vec[3], int cnt=0);
+    typedef double d3[3];
+    void getDC(d3 &vec, int cnt=0);
 
     void set(Cstr& line);
     void set(char *line);

@@ -619,7 +619,7 @@ char *canonical_allele(const char *ra)
          */
         if (allele_count >= ALLELE_ARRAY) {
             Display_Errors = 1;
-            if (MARKER_SCHEME != MARKER_SCHEME_PTR) {
+            if (MARKER_SCHEME == MARKER_SCHEME_BYTE) {
                 errorvf("This version of Mega2 only supports %d unique alleles.\n", ALLELE_ARRAY);
                 EXIT(OUTOF_BOUNDS_ERROR);
             } else {
@@ -2416,8 +2416,8 @@ void omit_file_data_processing(linkage_ped_top *Top,
                 if (strcmp(this_ped, omitped_str) == 0) { omitped_i=i; break; }
             }
             if (omitped_i == -1) {
-                errorvf("Omit file (%s) line (%d) Pedigree id (%d) not found.\n",
-                        omitfl_name, omitfl_lineno, omitped);
+                errorvf("Omit file (%s) line (%d) Pedigree id (%s) not found.\n",
+                        omitfl_name, omitfl_lineno, omitped_str);
                 EXIT(DATA_INCONSISTENCY);
             }
         }

@@ -96,6 +96,10 @@ void ReadImputed::do_menu_display(int &idx, int line_len, int choiceA[])
            BatchItemGet("Imputed_Allow_Indels")->value.copt == 'y' ? "yes" : "no");
     choiceA[idx++] = imputed_allow_indels_i;
 
+    printf("%2d) %-*s[ %s ]\n", idx, line_len, "Allow duplicate markers (toggle):",
+           BatchItemGet("Imputed_Allow_Duplicates")->value.copt == 'y' ? "yes" : "no");
+    choiceA[idx++] = imputed_allow_dups_i;
+
 }
 
 int ReadImputed::do_menu_parse(int choice_)
@@ -172,6 +176,12 @@ int ReadImputed::do_menu_parse(int choice_)
 
         bip->items_read = 1;
 	ret = 1;
+    } else if (choice_ == imputed_allow_dups_i) {
+        batch_item_type *bip = BatchItemGet("Imputed_Allow_Duplicates");
+        bip->value.copt = bip->value.copt == 'y' ? 'n' : 'y';
+
+        bip->items_read = 1;
+	ret = 1;
     }
     return ret;
 }
@@ -184,6 +194,7 @@ void ReadImputed::do_menu2batch()
                       "Imputed_Genotype_Missing_Fraction", 
                       "Imputed_Missing_Codes",
                       "Imputed_Allow_Indels" 
+                      "Imputed_Allow_Duplicates"
     };
                       
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -200,6 +211,7 @@ void ReadImputed::do_batch2local()
     BatchValueGet(this->hard_call_threshold, "Imputed_Hard_Call_Threshold");
     BatchValueGet(this->genotype_missing_fraction, "Imputed_Genotype_Missing_Fraction");
     BatchValueGet(this->allow_indels, "Imputed_Allow_Indels");
+    BatchValueGet(this->allow_dups, "Imputed_Allow_Duplicates");
     BatchValueGet(this->info_file, "Input_Imputed_Info_File");
 
     Vecs vec;
@@ -215,7 +227,8 @@ void ReadImputed::show_settings()
     msgvf("Impute2 Analysis Info Metric Threshold:     %.3f\n", this->info_threshold);
     msgvf("Impute2 Analysis Hard Call Threshold:       %.3f\n", this->hard_call_threshold);
     msgvf("Impute2 Analysis Genotype Missing Fraction: %.3f\n", this->genotype_missing_fraction);
-    msgvf("Impute2 Analysis Allow Indels:              %c\n", this->allow_indels);
+    msgvf("Impute2 Analysis Allow Duplicate Markers:   %c\n",   this->allow_dups);
+    msgvf("Impute2 Analysis Allow Indels:              %c\n",   this->allow_indels);
 
     Vecs vec;
     BatchValueGet(vec, "Imputed_Missing_Codes");
@@ -463,10 +476,13 @@ void ReadImputed::check_indelsNdups()
     else
         mssgvf("Markers remaining %d; Filtered by indels %d\n", markers_filtered, skip_count);
 
+    int same_name = 0;
+    int same_run  = 0;
     mp = NULL;
     line_n = 0;
     skip_count = 0;
     SECTION_ERR_INIT(duplicate);
+    SECTION_ERR_INIT(duplicate_map);
     for (Vecmarkerpp mpp = markers.cbegin(); mpp != markers.cend(); mpp++) {
         mpprev = mp;
         mp     = *mpp;
@@ -475,20 +491,51 @@ void ReadImputed::check_indelsNdups()
 
         if (mp->skip) continue;
 
+        same_run = 0;
+
         if (mpprev == NULL)
             ;
         else if (mpprev->pos == mp->pos) {
+
             SECTION_ERR(duplicate);
-            warnvf("Markers: %s (bp %s) repeated with different alleles [%s/%s %s/%s] ignored repeat [line %d].\n",
-                   C(mp->name), C(mp->pos), C(mpprev->A), C(mpprev->B), C(mp->A), C(mp->B), line_n);
-            skip_count++;
-            mp->skip = true;
+            if (mp->name == mpprev->name) {
+                same_name++;
+                same_run++;
+                warnvf("Markers: %s ", C(mp->name));
+            } else {
+                warnvf("Markers: %s,%s ", C(mpprev->name), C(mp->name));
+            }
+            if (allow_dups == 'y') {
+                errvf("(bp %s) repeated with different alleles [%s/%s %s/%s] both allowed [line %d].\n",
+                       C(mp->pos), C(mpprev->A), C(mpprev->B), C(mp->A), C(mp->B), line_n);
+                if (same_run) {
+                    char N[10];
+                    sprintf(N, "@%d", same_run+1);
+
+                    SECTION_ERR(duplicate_map);
+                    warnvf("Remapping %s to ", C(mp->name));
+                    mp->name.append(N);
+                    errvf("%s\n", C(mp->name));
+                }
+            } else {
+                errvf("(bp %s) repeated with different alleles [%s/%s %s/%s] ignored repeat [line %d].\n",
+                       C(mp->pos), C(mpprev->A), C(mpprev->B), C(mp->A), C(mp->B), line_n);
+                skip_count++;
+                mp->skip = true;
+            }
         }
     }
     SECTION_ERR_FINI(duplicate);
+    SECTION_ERR_FINI(duplicate_map);
     markers_filtered = markers_filtered - skip_count;
 
-    mssgvf("Markers remaining %d; Filtered by dups %d\n\n", markers_filtered, skip_count);
+    if (allow_dups == 'y')
+        mssgvf("Markers remaining %d; NO Filtering by duplicate markers\n", markers_filtered);
+    else
+        mssgvf("Markers remaining %d; Filtered by duplicate markers %d\n",
+               markers_filtered, skip_count);
+    if (same_name)
+        mssgvf("\t%d duplicate markers had same name.\n\n", same_name);
 }
 
 Str ReadImputed::info_file_hdr = "snp_id rs_id position a0 a1 exp_freq_a1 info certainty type";
@@ -974,7 +1021,8 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 
     string hmm, rsid, pos, A, B;
 //  vector<double> nums;
-    double nums[3];
+//  double nums[3];
+    Token::d3 nums;
 
     ifs.open(impute_file);
     if (! ifs.is_open() ) {
@@ -998,6 +1046,7 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 //  SECTION_ERR_INIT(skip);
 
     Tod tod_gen("impute genotypes");
+    Tod tod_per(30);
     SECTION_ERR_INIT(genotype_missing_fraction);
     SECTION_ERR(genotype_missing_fraction);
     warnvf("%8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n",
@@ -1008,7 +1057,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
         getline(ifs, line);
         if (ifs.eof()) break;
         line_n++;
-
         token.set(line);
 
 //	ifs >> hmm; // +A+B+ nums() all read via >> @ 14.62 sec
@@ -1043,18 +1091,12 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
         int zero = 0, less = 0, greater = 0;
         int p = 0;
 
+        tod_per.reset();
 	for( ; p < people_filtered; p++) {
             annotated_ped_rec *entry = &persons[p];
             sam++;
             token.getDC(nums);
             maxx = 0.0;
-
-            if (dbg) {
-                cout << "#";
-                cout << line_n << ": ";
-                cout << mp->name << " ";
-                cout << nums[0] << " " << nums[1] << " " << nums[2] << "\n";
-            }
 
             if (nums[0] > nums[1]) {
                 maxx = nums[0];
@@ -1071,11 +1113,19 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
             if (maxx == 0) {
                 i = 2;
                 zero++;
-            } else if (maxx < hard_call_threshold) {
+            } else if (1 - maxx >= hard_call_threshold) {
                 i = 2;
                 less++;
             } else {
                 greater++;
+            }
+
+            if (dbg) {
+                cout << "#";
+                cout << line_n << "@";
+                cout << sam << ": ";
+                cout << mp->name << " ";
+                cout << nums[0] << " " << nums[1] << " " << nums[2] << "  " << i << "\n";
             }
 
             switch (i) {
@@ -1093,6 +1143,7 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                 break;
             }
         }
+        tod_per("impute person loop");
         if (greater < genotype_missing_fraction * people_filtered) {
 /* some day
 ??          mp->skip = true;
