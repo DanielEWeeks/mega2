@@ -43,6 +43,7 @@ extern void           errsimf(const char *messg);
 extern void           errf(const char *messg, const char *shout="", int showerrf = 1);
 extern void           errvf(const char *fmt, ...);
 
+extern void           mssgf(const char *messg, int show);
 extern void           mssgf(const char *messg);
 extern void           mssgvf(const char *fmt, ...);
 extern void           msgvf(const char *fmt, ...);

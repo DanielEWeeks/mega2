@@ -214,6 +214,9 @@ endif
 all: $(MODULE)_$(OSTYPE)
 
 dbg:
+	$(MAKE) $(MAKEFLAGS) TEST=2 HIDE=1 OPT=-g all
+
+tod:
 	$(MAKE) $(MAKEFLAGS) TEST=2 HIDE=1 OPT=-g FLAGS=-DTOD all
 
 gcc_info.o: $(OBJS)

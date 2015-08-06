@@ -172,8 +172,11 @@ void Token::set(Cstr& lin) {
     this->line = lin;
 
     if (Cline) free(Cline);
-    Cline = CALLOC(lin.size()+1, char); // to be safe
-    strcpy(Cline, lin.c_str());
+    int sz = lin.size();
+    Cline = CALLOC(sz+1, char); // to be safe
+
+    lin.copy(Cline, sz, 0);
+    Cline[sz] = 0;
 
     of = line.find_first_not_of(sep);
     if (of == std::string::npos) of = 0;

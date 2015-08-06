@@ -70,7 +70,7 @@ public:
         double td = tdiff();
         if (str != NULL) {
             if (lim == 0 || cnt++ < lim) 
-                printf("%s %s: %.6f\n", td > 30 ? "@@@@": "@@", str, td);
+                printf("%s %s: %.6f\n", td > 1.0 ? "@@@@": "@@", str, td);
             
             return td;
         }

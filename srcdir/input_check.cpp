@@ -230,7 +230,6 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     int             exceedall_select = -1, invalid_select=-1;
     int             uniq_select = -1;
 
-    int             displayed_errors=0;
     int             plink_locus_num;
 
     int             num_mito_hetero = 0, num_mito_non_maternal = 0;
@@ -367,7 +366,6 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         Display_Errors=1;
     }
     printf("Done checking pedigree integrity.\n");
-    displayed_errors = 0;
     tod_mito();
 
     Tod tod_iofc("input_observed_freq_check");
@@ -550,7 +548,6 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     /* else abort = 1*/
     Display_Errors=1;
-    displayed_errors=0;
     bool first = true;
 
     Tod tod_hmend_all("reset all half typed");

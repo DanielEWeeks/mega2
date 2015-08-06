@@ -941,10 +941,12 @@ batch_item_type *BatchItemGet(Cstr& key)
 void BatchValueGet(Vecs& vec, Cstr &item)   // for lists
 {
     batch_item_type *bi = BatchItemGet(item);
+    vec.clear();
+    if (bi->items_read <= 0) return;
+
     int capacity = bi->items_read - 1;
     int j = 0;
 
-    vec.clear();
     switch(bi->value_type) {
 
     case NAME_LIST:
@@ -959,10 +961,12 @@ void BatchValueGet(Vecs& vec, Cstr &item)   // for lists
 void BatchValueGet(Vecd& vec, Cstr &item)   // for lists
 {
     batch_item_type *bi = BatchItemGet(item);
+    vec.clear();
+    if (bi->items_read <= 0) return;
+
     int capacity = bi->items_read - 1;
     int j = 0;
 
-    vec.clear();
     switch(bi->value_type) {
 
     case FLOAT_LIST:
@@ -976,10 +980,12 @@ void BatchValueGet(Vecd& vec, Cstr &item)   // for lists
 void BatchValueGet(Veci& vec, Cstr &item)   // for lists
 {
     batch_item_type *bi = BatchItemGet(item);
+    vec.clear();
+    if (bi->items_read <= 0) return;
+
     int capacity = bi->items_read - 1;
     int j = 0;
 
-    vec.clear();
     switch(bi->value_type) {
 
     case CHRM_LIST:

@@ -1019,8 +1019,8 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     ifstream ifs;
     string line;
 
-    string hmm, rsid, pos, A, B;
-//  vector<double> nums;
+    string hmm, rsid, pos;
+    char *A, *B;
 //  double nums[3];
     Token::d3 nums;
 
@@ -1030,9 +1030,8 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                 impute_file);
         EXIT(FILE_NOT_FOUND);
     }
-
     int line_n = 0;
-//    int skip_count = 0;
+//  int skip_count = 0;
     Token token(3);
     ImpMarker   *mp;
 
@@ -1047,6 +1046,8 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 
     Tod tod_gen("impute genotypes");
     Tod tod_per(30);
+    Tod tod_im_line(30);
+    Tod tod_im_line_cpy(30);
     SECTION_ERR_INIT(genotype_missing_fraction);
     SECTION_ERR(genotype_missing_fraction);
     warnvf("%8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n",
@@ -1054,10 +1055,14 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
            "marker", "hard", "hard", "typing", "",
            "0/0", "call", "call", "rate", "");
     for (Vecmarkerpp mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
+        tod_im_line.reset();
+        tod_im_line_cpy.reset();
+
         getline(ifs, line);
+        tod_im_line("impute read line  ");
         if (ifs.eof()) break;
-        line_n++;
         token.set(line);
+        tod_im_line("impute set line   ");
 
 //	ifs >> hmm; // +A+B+ nums() all read via >> @ 14.62 sec
 //                               vector<double> nums  12.26
@@ -1065,6 +1070,8 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
         token.more(hmm);
         token.more(rsid);
         token.more(pos);
+
+        line_n++;
         mp = *mpp;
         if (pos != mp->pos) {
             errorvf("internal error: impute_file (\"%s\") second pass does not match first pass at line %d\n",
@@ -1082,21 +1089,20 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 
         token.more(A);
         token.more(B);
-        callele1    = canonical_allele(C(A));
-        callele2    = canonical_allele(C(B));
-        
+        callele1    = canonical_allele(A);
+        callele2    = canonical_allele(B);
+
         int i;
         int sam = 0;
         double maxx;
         int zero = 0, less = 0, greater = 0;
-        int p = 0;
 
         tod_per.reset();
-	for( ; p < people_filtered; p++) {
+	for(int p = 0 ; p < people_filtered; p++) {
             annotated_ped_rec *entry = &persons[p];
             sam++;
             token.getDC(nums);
-            maxx = 0.0;
+//          maxx = 0.0;
 
             if (nums[0] > nums[1]) {
                 maxx = nums[0];
@@ -1157,19 +1163,9 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                    C(mp->name), C(mp->chr), C(mp->pos));
         }
 
-/*
-        token.getD(nums);  // last one on line
-        if (nums.size() != 0) {
-            errorvf("internal error: impute_file (\"%s\") second pass does not match first pass at line %d for number of genotypes\n",
-                    impute_file, line_n);
-        }
-*/
     }
     tod_gen();
 //  SECTION_ERR_FINI(skip);
     SECTION_ERR_FINI(genotype_missing_fraction);
 
-/*
-    mssgvf("Markers remaining %d; Filtered by hard call threshold %d\n", markers_filtered, skip_count);
-*/
 }

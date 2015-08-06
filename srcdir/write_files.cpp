@@ -731,13 +731,14 @@ int write_quant_stats(linkage_ped_top *Top,
         mssgf("Per-pedigree quantitative phenotype summary:");
         mssgf("Pedigree     Mean      Std Dev     Minimum    Maximum  #Phenotypes");
         mssgf("------------------------------------------------------------");
-        SECTION_LOG_HEADER(quant_stat)
+//      SECTION_LOG_HEADER(quant_stat)
         q=0;
         for (l=0; l < num_traits+num_covariates; l++) {
             if (qloc[l] == -1) continue;
 
             if (Top->LocusTop->Locus[qloc[l]].Type == QUANT) {
                 i = qloc[l];
+                SECTION_LOG_HEADER(quant_stat);
                 SECTION_LOG(quant_stat);
                 mssgf(Top->LocusTop->Locus[i].Name);
                 mssgf("------------------------------------------------------------");
@@ -854,7 +855,8 @@ int write_quant_stats(linkage_ped_top *Top,
                 /* Second pass to set the skew and curtosis after computing mean.
                    Sums of devs raised to 2,3,4 power while looping over individuals.
                 */
-//              SECTION_LOG(quant_stat);
+                SECTION_LOG_HEADER(quant_stat);
+                SECTION_LOG(quant_stat);
                 mssgf("------------------------------------------------------------");
                 for (j=0; j < Top->PedCnt; j++) {
                     this_ped_phenotyped=0;
@@ -930,13 +932,18 @@ int write_quant_stats(linkage_ped_top *Top,
                 q++;
             }
         }
+        SECTION_LOG_FINI(quant_stat);
+
         /* Now display combined statistics on screen as well as log */
+        SECTION_LOG_INIT(quant_stat_sum);
+        SECTION_LOG(quant_stat_sum);
         mssgf("               Quantitative trait phenotype statistics");
         mssgf("-------------------------------------------------------------------------------");
         mssgf("QTL            Missing  Minimum   Maximum   Total      Pedigrees    Total");
         mssgf("                                            pedigrees  phenotyped   phenotypes");
         mssgf("-------------------------------------------------------------------------------");
-        
+        SECTION_LOG_HEADER(quant_stat_sum);
+
         #define FLAG_USED_TO_INDICATE_MISSING_BETWEEN_MIN_AND_MAX                 '*'
         missing_between_min_and_max = 0;
         for (q=0,l=0; l < num_traits+num_covariates; l++) {
@@ -951,7 +958,7 @@ int write_quant_stats(linkage_ped_top *Top,
                     missing_between_min_and_max_flag = FLAG_USED_TO_INDICATE_MISSING_BETWEEN_MIN_AND_MAX;
                     missing_between_min_and_max = 1;
                 }
-                SECTION_LOG(quant_stat);
+                SECTION_LOG(quant_stat_sum);
                 mssgvf("%-15s %6d%c %7.3f  %8.3f   %9d   %9d    %9d\n",
                        Top->LocusTop->Locus[i].Name,
                        loc_missing[q], missing_between_min_and_max_flag,
@@ -961,18 +968,21 @@ int write_quant_stats(linkage_ped_top *Top,
             }
         }
         if (missing_between_min_and_max != 0) {
-            warnvf("Missing value counts marked with a '%c' have a value that falls between\n",
+            mssgvf("Missing value counts marked with a '%c' have a value that falls between\n",
                    FLAG_USED_TO_INDICATE_MISSING_BETWEEN_MIN_AND_MAX);
-            warnvf("the Minimum and Maximum.\n");
+            mssgvf("the Minimum and Maximum.\n");
         }
 	if (fabs(MissingQuant - QMISSING) <= EPSILON)
-	  mssgvf("NOTE: The Missing QTL value on input has been assigned as 'NA'.\n");
+            mssgvf("NOTE: The Missing QTL value on input has been assigned as 'NA'.\n");
 	else
-	  mssgvf("NOTE: The Missing QTL value on input has been assigned as '%4.2f'.\n",  MissingQuant);
+            mssgvf("NOTE: The Missing QTL value on input has been assigned as '%4.2f'.\n",  MissingQuant);
 
+        SECTION_LOG_HEADER(quant_stat_sum)
+        SECTION_LOG(quant_stat_sum)
         mssgf("-------------------------------------------------------------------------");
         mssgf("QTL                 Mean   Std Dev  Skewness  Kurtosis");
         mssgf("-------------------------------------------------------------------------");
+        SECTION_LOG_HEADER(quant_stat_sum);
         q=0;
         for (l=0; l < num_traits+num_covariates; l++) {
             if (qloc[l] == -1) {
@@ -984,14 +994,14 @@ int write_quant_stats(linkage_ped_top *Top,
                         "%-15s %8.3f  %8.3f  %8.3f  %8.3f",
                         Top->LocusTop->Locus[i].Name,
                         loc_mean[q], loc_stdev[q], loc_skew[q], loc_curt[q]);
-                SECTION_LOG(quant_stat);
+                SECTION_LOG(quant_stat_sum);
                 mssgf(err_msg);
                 q++;
             }
         }
 
         log_line(mssgf);
-        SECTION_LOG_FINI(quant_stat);
+        SECTION_LOG_FINI(quant_stat_sum);
         if (ZeroQuant) {
             warnf("Found KNOWN quantitative phenotypes with value 0.0");
             warnf("Linkage-format UNKNOWN quantitative phenotype is assigned 0.0");

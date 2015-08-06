@@ -132,9 +132,9 @@ void errorf(const char *messg)
 }
 
 /* logf is called only  */
-void mssgf(const char *messg)
+void mssgf(const char *messg, int show)
 {
-    if (Mega2logf != NULL) {
+    if (show && Mega2logf != NULL) {
         fprintf(Mega2logf, "%s\n", messg);
         fflush(Mega2logf);
     }
@@ -143,6 +143,10 @@ void mssgf(const char *messg)
         fprintf(stdout, "%s\n", messg);
         fflush(stdout);
     }
+}
+void mssgf(const char *messg)
+{
+    mssgf(messg, 1);
 }
 
 void errvf(const char *fmt, ...)

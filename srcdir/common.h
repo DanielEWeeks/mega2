@@ -580,6 +580,11 @@ extern int Display_Errors, Display_Messages;
             mssgf("\n===== Messages of type \"" #errors "\": "); \
         Display_Messages = Display_##errors##_ = 1;                        \
         fflush(stdout);                                                    \
+    } else if (_##errors##_ == (MAX_PED_ERRORS+2)) {                       \
+        fflush(stdout);                                                    \
+        mssgf("===== Too many \"" #errors "\" records, display is temporarily suspended ..", 0); \
+        fflush(stdout);                                                    \
+        Display_Messages = Display_##errors##_ = 0;                        \
     } else {                                                               \
         Display_Messages = Display_##errors##_;                            \
     }
@@ -606,7 +611,7 @@ extern int Display_Errors, Display_Messages;
     {                                                                   \
         Display_Messages = Display_##errors##_ = 1;                     \
         fflush(stdout);                                                 \
-        if (_##errors##_) msgvf("===== %d total records of type \"" #errors "\" are here.\n\n", _##errors##_); \
+        if (_##errors##_) msgvf("===== %d total records of type \"" #errors "\" are in the log.\n\n", _##errors##_); \
         fflush(stdout);                                                 \
         _##errors##_ = 0;                                               \
     }
