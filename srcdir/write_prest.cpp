@@ -107,8 +107,8 @@ static void save_prest_peds(char *pedfl,
         for(per=0; per < Top->Ped[ped].EntryCnt; per++) {
             Entry = &(Top->Ped[ped].Entry[per]);
             /* pedigree, person, father, mother, sex and 0 affection status */
-            prID_ped(filep, ped, fformat, &Top->Ped[ped], "");
-            prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry, "");
+            prID_ped(filep, ped, fformat, &Top->Ped[ped]);
+            prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry);
             if (Entry->Father == 0){
                 /* create the 0 strings */
                 for(p=0; p < (pwid-1); p++)    fprintf(filep, " ");

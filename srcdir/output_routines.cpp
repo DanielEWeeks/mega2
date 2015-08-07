@@ -320,87 +320,143 @@ void field_widths(linkage_ped_top *TTop, linkage_locus_top *LTop,
 
 /* macro WRITE_ENTRY_RECORD */
 
-void prID_ped(FILE *fp, int ped, const char *format, linkage_ped_tree *pedp, const char *end)
+void prID_ped(FILE *fp, int ped, const char *format, linkage_ped_tree *pedp)
 {
     if (OrigIds[1] == 2) {
-        fprintf(fp, format ? format : "%s", pedp->Name);
+        fprintf(fp, format, pedp->Name);
     } else if (OrigIds[1] == 3) {
-        fprintf(fp, format ? format : "%d", ped+1);
+        fprintf(fp, format, ped+1);
     } else if (OrigIds[1] == 4) {
-        fprintf(fp, format ? format : "%s", pedp->PedPre);
+        fprintf(fp, format, pedp->PedPre);
     } else {
-        fprintf(fp, format ? format : "%d", pedp->Num);
+        fprintf(fp, format, pedp->Num);
     }
-    if (end && *end != 0) fputs(end, fp);
 }
 
-void prID_per(FILE *fp, const char *format, linkage_ped_rec *tpme, const char *end)
+void prID_per(FILE *fp, const char *format, linkage_ped_rec *tpme)
 {
     if (OrigIds[0] == 1) {
-        fprintf(fp, format ? format : "%s", tpme->OrigID);
+        fprintf(fp, format, tpme->OrigID);
     } else if (OrigIds[0] == 2) {
-        fprintf(fp, format ? format : "%s", tpme->PerPre);
+        fprintf(fp, format, tpme->PerPre);
     } else if (OrigIds[0] == 3) {
-        fprintf(fp, format ? format : "%s", tpme->UniqueID);
+        fprintf(fp, format, tpme->UniqueID);
     } else if (OrigIds[0] == 4) {
-        fprintf(fp, format ? format : "%s", tpme->UniqueID);
+        fprintf(fp, format, tpme->UniqueID);
     } else {
-        fprintf(fp, format ? format : "%d", tpme->ID);
+        fprintf(fp, format, tpme->ID);
     }
-    if (end && *end != 0) fputs(end, fp);
 }
 
-void prID_fam(FILE *fp, const char *format, linkage_ped_rec *tpme, linkage_ped_rec *tpe, const char *end)
+void prID_fam(FILE *fp, const char *format, linkage_ped_rec *tpme, linkage_ped_rec *tpe)
 {
-    prID_per(fp, format, tpme, end);
+    prID_per(fp, format, tpme);
 
     if (tpme->Father>0) {
         if (OrigIds[0] == 1) {
-            fprintf(fp, format ? format : "%s", tpe[tpme->Father-1].OrigID);
+            fprintf(fp, format, tpe[tpme->Father-1].OrigID);
+            fprintf(fp, format, tpe[tpme->Mother-1].OrigID);
         } else if (OrigIds[0] == 2) {
-            fprintf(fp, format ? format : "%s", tpe[tpme->Father-1].PerPre);
+            fprintf(fp, format, tpe[tpme->Father-1].PerPre);
+            fprintf(fp, format, tpe[tpme->Mother-1].PerPre);
         } else if (OrigIds[0] == 3) {
-            fprintf(fp, format ? format : "%s", tpe[tpme->Father-1].UniqueID);
+            fprintf(fp, format, tpe[tpme->Father-1].UniqueID);
+            fprintf(fp, format, tpe[tpme->Mother-1].UniqueID);
         } else if (OrigIds[0] == 4) {
-            fprintf(fp, format ? format : "%s", tpe[tpme->Father-1].UniqueID);
+            fprintf(fp, format, tpe[tpme->Father-1].UniqueID);
+            fprintf(fp, format, tpe[tpme->Mother-1].UniqueID);
         } else {
-            fprintf(fp, format ? format : "%d", tpe[tpme->Father-1].ID);
+            fprintf(fp, format, tpe[tpme->Father-1].ID);
+            fprintf(fp, format, tpe[tpme->Mother-1].ID);
         }
-        if (end && *end != 0) fputs(end, fp);
-
-        if (OrigIds[0] == 1) {
-            fprintf(fp, format ? format : "%s", tpe[tpme->Mother-1].OrigID);
-        } else if (OrigIds[0] == 2) {
-            fprintf(fp, format ? format : "%s", tpe[tpme->Mother-1].PerPre);
-        } else if (OrigIds[0] == 3) {
-            fprintf(fp, format ? format : "%s", tpe[tpme->Mother-1].UniqueID);
-        } else if (OrigIds[0] == 4) {
-            fprintf(fp, format ? format : "%s", tpe[tpme->Mother-1].UniqueID);
-        } else {
-            fprintf(fp, format ? format : "%d", tpe[tpme->Mother-1].ID);
-        }
-        if (end && *end != 0) fputs(end, fp);
     }
 }
 
-void prID_rel(FILE *fp, const char *format, int key, linkage_ped_rec *tpe, const char *end)
+void prID_rel(FILE *fp, const char *format, int key, linkage_ped_rec *tpe)
 {
     if (key != 0) {
         if (OrigIds[0] == 1)
-            fprintf(fp, format ? format : "%s", tpe[key-1].OrigID);
+            fprintf(fp, format, tpe[key-1].OrigID);
         else if (OrigIds[0] == 2)
-            fprintf(fp, format ? format : "%s", tpe[key-1].PerPre);
+            fprintf(fp, format, tpe[key-1].PerPre);
         else if (OrigIds[0] == 3)
-            fprintf(fp, format ? format : "%s", tpe[key-1].UniqueID);
+            fprintf(fp, format, tpe[key-1].UniqueID);
         else if (OrigIds[0] == 4)
-            fprintf(fp, format ? format : "%s", tpe[key-1].UniqueID);
+            fprintf(fp, format, tpe[key-1].UniqueID);
         else
-            fprintf(fp, format ? format : "%d", tpe[key-1].ID);
+            fprintf(fp, format, tpe[key-1].ID);
     } else
-        fprintf(fp, format ? format : "%s", "0");
-    if (end && *end != 0) fputs(end, fp);
+        fprintf(fp, format, "0");
 }
 
+void prID_ped(FILE *fp, int ped, int w, linkage_ped_tree *pedp, const char *beg, const char *end)
+{
+    if (OrigIds[1] == 2) {
+        fprintf(fp, "%s%*s%s", beg, w, pedp->Name, end);
+    } else if (OrigIds[1] == 3) {
+        fprintf(fp, "%s%*d%s", beg, w, ped+1, end);
+    } else if (OrigIds[1] == 4) {
+        fprintf(fp, "%s%*s%s", beg, w, pedp->PedPre, end);
+    } else {
+        fprintf(fp, "%s%*d%s", beg, w, pedp->Num, end);
+    }
+}
+
+void prID_per(FILE *fp, int w, linkage_ped_rec *tpme, const char *beg, const char *end)
+{
+    if (OrigIds[0] == 1) {
+        fprintf(fp, "%s%*s%s", beg, w, tpme->OrigID, end);
+    } else if (OrigIds[0] == 2) {
+        fprintf(fp, "%s%*s%s", beg, w, tpme->PerPre, end);
+    } else if (OrigIds[0] == 3) {
+        fprintf(fp, "%s%*s%s", beg, w, tpme->UniqueID, end);
+    } else if (OrigIds[0] == 4) {
+        fprintf(fp, "%s%*s%s", beg, w, tpme->UniqueID, end);
+    } else {
+        fprintf(fp, "%s%*d%s", beg, w, tpme->ID, end);
+    }
+}
+
+void prID_fam(FILE *fp, int w, linkage_ped_rec *tpme, linkage_ped_rec *tpe, const char *beg, const char *end)
+{
+    prID_per(fp, w, tpme, beg, end);
+
+    if (tpme->Father>0) {
+        if (OrigIds[0] == 1) {
+            fprintf(fp, "%s%*s%s", beg, w, tpe[tpme->Father-1].OrigID, end);
+            fprintf(fp, "%s%*s%s", beg, w, tpe[tpme->Mother-1].OrigID, end);
+        } else if (OrigIds[0] == 2) {
+            fprintf(fp, "%s%*s%s", beg, w, tpe[tpme->Father-1].PerPre, end);
+            fprintf(fp, "%s%*s%s", beg, w, tpe[tpme->Mother-1].PerPre, end);
+        } else if (OrigIds[0] == 3) {
+            fprintf(fp, "%s%*s%s", beg, w, tpe[tpme->Father-1].UniqueID, end);
+            fprintf(fp, "%s%*s%s", beg, w, tpe[tpme->Mother-1].UniqueID, end);
+        } else if (OrigIds[0] == 4) {
+            fprintf(fp, "%s%*s%s", beg, w, tpe[tpme->Father-1].UniqueID, end);
+            fprintf(fp, "%s%*s%s", beg, w, tpe[tpme->Mother-1].UniqueID, end);
+        } else {
+            fprintf(fp, "%s%*d%s", beg, w, tpe[tpme->Father-1].ID, end);
+            fprintf(fp, "%s%*d%s", beg, w, tpe[tpme->Mother-1].ID, end);
+        }
+    }
+}
+
+void prID_rel(FILE *fp, int w, int key, linkage_ped_rec *tpe, const char *beg, const char *end)
+{
+    if (key != 0) {
+        if (OrigIds[0] == 1)
+            fprintf(fp, "%s%*s%s", beg, w, tpe[key-1].OrigID, end);
+        else if (OrigIds[0] == 2)
+            fprintf(fp, "%s%*s%s", beg, w, tpe[key-1].PerPre, end);
+        else if (OrigIds[0] == 3)
+            fprintf(fp, "%s%*s%s", beg, w, tpe[key-1].UniqueID, end);
+        else if (OrigIds[0] == 4)
+            fprintf(fp, "%s%*s%s", beg, w, tpe[key-1].UniqueID, end);
+        else
+            fprintf(fp, "%s%*d%s", beg, w, tpe[key-1].ID, end);
+    } else
+        fprintf(fp, "%s%*s%s", beg, w, "0", end);
+}
 
 /* write a mapping of the input pedigree, person, UniqueIDs to output ids*/
 void write_key_file(char *ID_file, linkage_ped_top *Top)

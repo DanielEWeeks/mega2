@@ -804,7 +804,7 @@ static int   save_SAGE_peds(char *outfl_name, linkage_ped_top *Top,
                     fprintf(filep, fformat, Top->Ped[ped].Num);
                 } else {
                     /* Write the pedigree id as a "fwid" numeric code */
-                    prID_ped(filep, ped, fformat, &Top->Ped[ped], "");
+                    prID_ped(filep, ped, fformat, &Top->Ped[ped]);
                 }
                 /* write the entry number  */
                 if (analysis == TO_SAGE) {
@@ -818,7 +818,7 @@ static int   save_SAGE_peds(char *outfl_name, linkage_ped_top *Top,
                             fprintf(filep, " ");
                     }
                 } else {
-                    prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry, "");
+                    prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry);
                     if (Entry->Father == 0) {
                         for(b=0; b<2*(pwid + 1); b++)
                             fprintf(filep, " ");

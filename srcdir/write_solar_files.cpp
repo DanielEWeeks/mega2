@@ -159,9 +159,9 @@ static int save_SOLAR_peds(char *fl_name, linkage_ped_top *Top)
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* Write the pedigree id */
-                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
+                prID_ped(filep, ped, 0, &Top->Ped[ped], "", ",");
                 /* write the entry number  */
-                prID_fam(filep, 0, Entry, Top->Ped[ped].Entry, ",");
+                prID_fam(filep, 0, Entry, Top->Ped[ped].Entry, "", ",");
                 /* write the parents */
                 if (Entry->Father == 0) {
                     fprintf(filep, "0,0,");
@@ -284,10 +284,10 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* Write the pedigree id */
-                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
+                prID_ped(filep, ped, 0, &Top->Ped[ped], "", ",");
 
                 /* write the entry number  */
-                prID_per(filep, 0, Entry, "");
+                prID_per(filep, 0, Entry, "", "");
 
                 /* now write genotype data  */
                 for(tr=0; tr<num_affec; tr++) {
@@ -355,9 +355,9 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
                 Entry = &(Top->Ped[ped].Entry[entry]);
 
                 /* Write the pedigree id */
-                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
+                prID_ped(filep, ped, 0, &Top->Ped[ped], "", ",");
                 /* write the entry number  */
-                prID_per(filep, 0, Entry, "");
+                prID_per(filep, 0, Entry, "", "");
 
                 /* now write genotype data  */
                 switch (Locus->Type)  {
@@ -447,10 +447,10 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* Write the pedigree id */
-                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
+                prID_ped(filep, ped, 0, &Top->Ped[ped], "", ",");
 
                 /* write the entry number  */
-                prID_per(filep, 0, Entry, "");
+                prID_per(filep, 0, Entry, "", "");
 
                 /* now write genotype data  */
                 for (locus1 = 0; locus1 < NumChrLoci; locus1++)  {

@@ -1104,14 +1104,14 @@ static void  save_mendel_peds(char *outfl_name, linkage_ped_top *Top,
             }
             /* Write total number of persons and the pedigree id */
             fprintf(filep, "%5d ", Top->Ped[ped].EntryCnt);
-            prID_ped(filep, ped, fformat, &TailPed[ped], "");
+            prID_ped(filep, ped, fformat, &TailPed[ped]);
             fprintf(filep, "\n");
 
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* write the entry number then parents */
 
-                prID_fam(filep, pformat, &TailPed[ped].Entry[entry], TailPed[ped].Entry, "");
+                prID_fam(filep, pformat, &TailPed[ped].Entry[entry], TailPed[ped].Entry);
                 if (Entry->Father == 0) {
                     for (i=0; i < 2*pwid; i++) {
                         fprintf(filep, " ");

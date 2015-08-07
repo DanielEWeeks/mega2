@@ -974,9 +974,9 @@ static void AspexPedFile(char *aspdat_name, tcl_opts_type opt,
 
         for (j = 0; j < TTop->PedCnt; j++)  {
             for (i = 0; i < TTop->Ped[j].EntryCnt; i++) {
-                prID_ped(fp, j, fformat, &TTop->Ped[j], "");
+                prID_ped(fp, j, fformat, &TTop->Ped[j]);
                 tpe = &(TTop->Ped[j].Entry[i]);
-                prID_fam(fp, pformat, tpe, TTop->Ped[j].Entry, "");
+                prID_fam(fp, pformat, tpe, TTop->Ped[j].Entry);
                 if (tpe->Father == 0) {
                     if (OrigIds[0] <= 4) {
                         fprintf(fp, pformat, "0");

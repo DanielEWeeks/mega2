@@ -445,8 +445,8 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* write the pedigree and entry numbers */
-                prID_ped(filep, ped, fformat, &Top->Ped[ped], "");
-                prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry, "");
+                prID_ped(filep, ped, fformat, &Top->Ped[ped]);
+                prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry);
                 if (Entry->Father == 0) {
                     /* create the 0 strings */
                     for(p=0; p < (pwid-1); p++)    fprintf(filep, " ");
@@ -456,9 +456,9 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
                 }
 
                 if (pedfile_type == POSTMAKEPED_PFT) {
-                    prID_rel(filep, pformat, Entry->First_Offspring, Top->Ped[ped].Entry, "");
-                    prID_rel(filep, pformat, Entry->Next_PA_Sib, Top->Ped[ped].Entry, "");
-                    prID_rel(filep, pformat, Entry->Next_MA_Sib, Top->Ped[ped].Entry, "");
+                    prID_rel(filep, pformat, Entry->First_Offspring, Top->Ped[ped].Entry);
+                    prID_rel(filep, pformat, Entry->Next_PA_Sib, Top->Ped[ped].Entry);
+                    prID_rel(filep, pformat, Entry->Next_MA_Sib, Top->Ped[ped].Entry);
                 }
 
                 /* write the sex */

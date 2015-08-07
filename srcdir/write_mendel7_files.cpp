@@ -121,9 +121,9 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++)  {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* Write the pedigree id */
-                prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
+                prID_ped(filep, ped, 0, &Top->Ped[ped], "", ",");
                 /* write the entry number  */
-                prID_fam(filep, 0, Entry, Top->Ped[ped].Entry, ",");
+                prID_fam(filep, 0, Entry, Top->Ped[ped].Entry, "", ",");
                 if (Entry->Father == 0) {
                     fprintf(filep, ",,");
                 }
@@ -521,9 +521,9 @@ void csv_mendel7_pen_file(char *fl_name, linkage_ped_top *Top, int sex_linked)
 
                     if (pen > 0.0) {
                         /* Write the pedigree id */
-                        prID_ped(filep, ped, 0, &Top->Ped[ped], ",");
+                        prID_ped(filep, ped, 0, &Top->Ped[ped], "", ",");
                         /* write the entry number  */
-                        prID_per(filep, 0, Entry, ",");
+                        prID_per(filep, 0, Entry, "", ",");
 
                         fprintf(filep, "%s,%s,%8f,%d\n",
                                 strtail(Locus->Name, MENDEL7_MAX_LOCUS_NAME_LEN), genostr[ipen], pen, affected);

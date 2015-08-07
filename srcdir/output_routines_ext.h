@@ -46,19 +46,28 @@ extern void ped_name_width(linkage_ped_top *TTop, int *FidWidth);
 
 extern void person_id_width(linkage_ped_top *TTop, int *PidWidth);
 
-extern void prID_fam(FILE *fp, const char *format, linkage_ped_rec *tpme, linkage_ped_rec *tpe, const char *end);
-extern void prID_famMT(FILE *fp, const char *format, linkage_ped_rec *tpme, linkage_ped_rec *tpe, const char *end);
+extern void prID_fam(FILE *fp, const char *format, linkage_ped_rec *tpme, linkage_ped_rec *tpe);
 
-extern void prID_ped(FILE *fp, int ped, const char *format, linkage_ped_tree *pedp, const char *end);
+extern const char *prID_ped_type(int Id);
+extern void prID_ped(FILE *fp, int ped, const char *format, linkage_ped_tree *pedp);
 
-extern void prID_per(FILE *fp, const char *format, linkage_ped_rec *tpme, const char *end);
+extern const char *prID_per_type(int Id);
+extern void prID_per(FILE *fp, const char *format, linkage_ped_rec *tpme);
 
-extern void prID_rel(FILE *fp, const char *format, int key, linkage_ped_rec *tpe, const char *end);
+extern void prID_rel(FILE *fp, const char *format, int key, linkage_ped_rec *tpe);
 
 extern void write_key_file(char *ID_file, linkage_ped_top *Top);
 
 extern void write_nuc_ped_key_file(char *ID_file, linkage_ped_top *Top,
 				   linkage_ped_top *NukeTop);
+
+extern void prID_fam(FILE *fp, int w, linkage_ped_rec *tpme, linkage_ped_rec *tpe, const char *beg, const char *end);
+
+extern void prID_ped(FILE *fp, int ped, int w, linkage_ped_tree *pedp, const char *beg, const char *end);
+
+extern void prID_per(FILE *fp, int w, linkage_ped_rec *tpme, const char *beg, const char *end);
+
+extern void prID_rel(FILE *fp, int w, int key, linkage_ped_rec *tpe, const char *beg, const char *end);
 
 
 /*

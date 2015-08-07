@@ -157,8 +157,8 @@ void save_premakeped_peds(char *outfl_name, linkage_ped_top *Top,
                 /* write the pedigree and entry numbers */
                 printf("0 %d, 1 %d\n", OrigIds[0], OrigIds[1]); fflush(stdout);
 
-                prID_ped(filep, ped, fformat, &Top->Ped[ped], "");
-                prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry, "");
+                prID_ped(filep, ped, fformat, &Top->Ped[ped]);
+                prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry);
                 if (Entry->Father == 0) {
                     /* create the 0 strings */
                     for(p=0; p < (pwid-1); p++)    fprintf(filep, " ");
@@ -769,7 +769,7 @@ static void merlin_output_ped_order(linkage_ped_top *Top, char *order_fl)
         }
 
         for(ped=0; ped < Top->PedCnt; ped++) {
-            prID_ped(fp, ped, 0, &Top->Ped[ped], "\t");
+            prID_ped(fp, ped, 0, &Top->Ped[ped], "", "\t");
         }
         fprintf(fp, "\n");
 
