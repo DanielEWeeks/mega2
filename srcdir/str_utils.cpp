@@ -155,16 +155,23 @@ void Token::getD(double vec[3], int cnt) {
 
 void Token::getDC(d3 &vec, int cnt) {
     char *token;
-    double dbl;
     char *fin;
     for (int i = 0, l = cnt ? cnt : _cnt; mo && i < l; i++) {
         mo = more(token);
-        dbl = strtod(token, &fin);
+        if (token[1] == 0) {
+            if (*token == '1') {
+                vec[i] = 1.0;
+                continue;
+            } else if (*token == '0') {
+                vec[i] = 0.0;
+                continue;
+            }
+        }
+        vec[i] = strtod(token, &fin);
         if (*fin != 0) {
-            dbl = 0.0;
+            vec[i] = 0.0;
             warnvf("Invalid floating point number: %s\n", token);
         }
-        vec[i] = dbl;
     }
 }
 

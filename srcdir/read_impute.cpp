@@ -1031,7 +1031,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
         EXIT(FILE_NOT_FOUND);
     }
     int line_n = 0;
-//  int skip_count = 0;
     Token token(3);
     ImpMarker   *mp;
 
@@ -1041,8 +1040,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
     char *callele1;
     char *callele2;
     char *callele0  = canonical_allele(C("0"));
-
-//  SECTION_ERR_INIT(skip);
 
     Tod tod_gen("impute genotypes");
     Tod tod_per(30);
@@ -1079,9 +1076,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                 EXIT(DATA_INCONSISTENCY);
         }
         if (mp->skip) {
-//          SECTION_ERR(skip);
-//          warnvf("Marker: skipped %s %s %s info (%.4f) < threshold (%.4f)\n", 
-//                 C(mp->name), C(mp->chr), C(mp->pos), mp->info, info_threshold);
             continue;
         }
         mrk_idx++;  // hence the -1 above
@@ -1094,33 +1088,28 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 
         int i;
         int sam = 0;
-        double maxx;
         int zero = 0, less = 0, greater = 0;
 
         tod_per.reset();
+        annotated_ped_rec *entry = persons;
 	for(int p = 0 ; p < people_filtered; p++) {
-            annotated_ped_rec *entry = &persons[p];
             sam++;
             token.getDC(nums);
-//          maxx = 0.0;
 
             if (nums[0] > nums[1]) {
-                maxx = nums[0];
                 i = 0;
             } else {
-                maxx = nums[1];
                 i = 1;
             }
-            if (nums[2] > maxx) {
-                maxx = nums[2];
-                i = 3;
+            if (nums[2] > nums[i]) {
+                i = 2;
             }
 
-            if (maxx == 0) {
-                i = 2;
+            if (nums[i] == 0) {
+                i = 3;
                 zero++;
-            } else if (1 - maxx >= hard_call_threshold) {
-                i = 2;
+            } else if (1 - nums[i] >= hard_call_threshold) {
+                i = 3;
                 less++;
             } else {
                 greater++;
@@ -1134,20 +1123,17 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                 cout << nums[0] << " " << nums[1] << " " << nums[2] << "  " << i << "\n";
             }
 
-            switch (i) {
-            case 0:
+            if (i == 0)
                 set_2Ralleles(entry->marker, mrk_idx, locus, callele1, callele1);
-                break;
-            case 1:
+            else if (i == 1)
                 set_2Ralleles(entry->marker, mrk_idx, locus, callele1, callele2);
-                break;
-            case 2:
-                set_2Ralleles(entry->marker, mrk_idx, locus, callele0, callele0);
-                break;
-            case 3:
+            else if (i == 2)
                 set_2Ralleles(entry->marker, mrk_idx, locus, callele2, callele2);
-                break;
-            }
+            else if (i == 3)
+                set_2Ralleles(entry->marker, mrk_idx, locus, callele0, callele0);
+
+            entry++;
+
         }
         tod_per("impute person loop");
         if (greater < genotype_missing_fraction * people_filtered) {
@@ -1165,7 +1151,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 
     }
     tod_gen();
-//  SECTION_ERR_FINI(skip);
     SECTION_ERR_FINI(genotype_missing_fraction);
 
 }
