@@ -664,15 +664,15 @@ static void degree_genotyped(person_node_type *entry, linkage_locus_top *LTop)
 
 {
 
-    int m, allele1, allele2, deg, j;
+    int m, allele1, allele2, deg;
     /* now compute the degree_genotyped based on selected loci */
     /* This is after reordering, so both the loci list and a person's
        phenotype has only the selected loci in the proper order */
 
     deg=0;
-    /*  for (j=0; j < LTop->LocusCnt; j++) { */
-    for (j=0; j < num_reordered; j++) {
-        m = reordered_marker_loci[j];
+    for (m=0; m < LTop->LocusCnt; m++) {
+//  for (j=0; j < num_reordered; j++) 
+//      m = reordered_marker_loci[j];
         if (LTop->Locus[m].Type == NUMBERED ||
             LTop->Locus[m].Type == BINARY ||
             LTop->Locus[m].Type == XLINKED ||

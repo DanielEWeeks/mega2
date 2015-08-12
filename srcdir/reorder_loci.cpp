@@ -188,7 +188,7 @@ typedef struct _tmpnum {
 } tmpnum;
 
 #define INDX_INC(num, indx, i, marker_item)                             \
-    for (i=0; i < num; i++) if (indx[i] != marker_item) {indx[i]++;}
+    for (i=0; i < num; i++) {indx[i]++;}
 
 /*==============================*/
 
@@ -256,7 +256,7 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
         if (LTop->Marker[j].chromosome == UNKNOWN_CHROMO) {
 
             SECTION_ERR(unmapped_errors);
-            warnvf("Locus %s chromosome is incorrect.\n", LTop->Marker[j].Name);
+            warnvf("Locus %s chromosome is unavailable.\n", LTop->Marker[j].Name);
             unmapped_markers[ui++] = j;
         } else if (LTop->Marker[j].chromosome == MISSING_CHROMO) {
 	    // The entry for this locus (marker assumed) was not found in the map file.
@@ -3060,11 +3060,11 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
             traits = CALLOC((size_t) num_trait_select, int);
             for (i = 0; i < num_trait_select; i++) {
                 traits[i] = number1[i];
-                if (traits[i] < 0 || traits[i] >= LTop->LocusTop->LocusCnt) {
-                    errorvf("The trait number %d is out of the bounds [1, %d].\n",
+                if (traits[i] < 0 || traits[i] >= LTop->LocusTop->PhenoCnt+1) {
+                    errorvf("The \"Traits_Combine\" trait number %d is out of the range for traits: [1, %d].\n",
 			    traits[i]+1,
-			    LTop->LocusTop->LocusCnt);
-                    EXIT(EARLY_TERMINATION);
+			    LTop->LocusTop->PhenoCnt+1);
+//xx                    EXIT(EARLY_TERMINATION);
                 }
 
             }
@@ -3362,11 +3362,11 @@ static void get_trait_positions(linkage_locus_top *LTop,
 }
 #endif
 
-static int     check_trait_selection(linkage_ped_top *Top,
-				     analysis_type analysis,
-				     int num_select,
-				     int *trait_order,
-				     int marker_item)
+static int  check_trait_selection(linkage_ped_top *Top,
+                                  analysis_type analysis,
+                                  int num_select,
+                                  int *trait_order,
+                                  int marker_item)
 {
     int j, tr;
     int marker_position=-1;
@@ -3374,7 +3374,6 @@ static int     check_trait_selection(linkage_ped_top *Top,
     if (num_select == 0) {
         return -1;
     }
-
 
     /* are numbers within bounds and marker item present ? */
     if (marker_item > 0) {
@@ -3397,7 +3396,7 @@ static int     check_trait_selection(linkage_ped_top *Top,
     for (j=0; j < num_select; j++) {
         if (trait_order[j] != marker_item &&
             (trait_order[j] < 1 || trait_order[j] > num_traits)) {
-            printf("Invalid selection %d, previous list unchanged.\n",
+            printf("Invalid selection: trait %d, previous list unchanged.\n",
                    trait_order[j]);
             return 0;
         }
