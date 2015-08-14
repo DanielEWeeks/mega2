@@ -1092,6 +1092,10 @@ int             main(int argc, char **argv)
     }
     tod_files();
 
+    if (Input->has_gc()) {
+        Input->do_gc();
+    }
+
     Tod tod_makeped("makeped");
     if (LPedTreeTop->pedfile_type == POSTMAKEPED_PFT) {
         infl_type = LINKAGE;

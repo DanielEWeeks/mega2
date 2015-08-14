@@ -97,13 +97,14 @@ public:
     virtual boolean has_names() { return false; }
     virtual boolean has_map()   { return false; }
     virtual boolean has_ped()   { return false; }
+    virtual boolean has_gc()    { return false; }
 
 //  these functions are define the corresponding function above returns true;
     virtual void do_init()  { }
     virtual linkage_locus_top *do_names(const char *&names_fn) { return (linkage_locus_top *)0; }
     virtual void do_map(std::vector<m2_map>& additional_maps) { }
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop) { return (linkage_ped_top *) 0; }
-
+    virtual void do_gc() { }
 
 public:
     INPUT_FORMAT_t input_format;
@@ -232,11 +233,13 @@ public:
     virtual boolean has_names() { return true; }
     virtual boolean has_map()   { return true; }
     virtual boolean has_ped()   { return true; }
+    virtual boolean has_gc()    { return true; }
 
     virtual void do_init()  { Obj.do_init(this); }
     virtual linkage_locus_top *do_names(const char *&names_fn) { return Obj.do_names(names_fn); }
     virtual void do_map(std::vector<m2_map>& additional_maps) { Obj.do_map(additional_maps); }
     linkage_ped_top *do_ped(linkage_locus_top *LTop) { return Obj.do_ped(LTop); }
+    virtual void do_gc() { Obj.do_gc(); }
 
 public:
     ReadImputed Obj;

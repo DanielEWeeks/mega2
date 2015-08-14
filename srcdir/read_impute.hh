@@ -79,6 +79,7 @@ public:
     virtual linkage_locus_top *do_names(const char *&names_fn);
     virtual void do_map(std::vector<m2_map>& additional_maps);
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
+    virtual void do_gc();
 
     void files(char *imp, Cstr& sam) {
         impute_file = imp;
@@ -119,9 +120,11 @@ public:
     Input_Impute *input;
     int           check_format;
 private:
-    const   char *impute_file;
-    Str     info_file;
-    Str     sample_file;
+    const char   *impute_file;
+    Str           info_file;
+    Str           sample_file;
+    m2_map        impute_map;
+
 static
     Str     info_file_hdr;
 static

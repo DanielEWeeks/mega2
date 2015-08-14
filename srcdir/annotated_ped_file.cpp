@@ -5596,3 +5596,9 @@ void m2_map_entry::set_chr(const string CHROM) {
         else this->chr = chr;
     }
 };
+
+void m2_map::gc()
+{
+    this->entries.clear();
+    vector<m2_map_entry>().swap(this->entries);
+}

@@ -121,6 +121,8 @@ public:
     void push_back_entry(m2_map_entry e) { entries.push_back(e); };
 
     const size_t size() { return entries.size(); };
+
+    void gc();
 };
 
 #endif

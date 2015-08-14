@@ -267,7 +267,8 @@ linkage_locus_top *ReadImputed::do_names(const char *&names_fn)
 
 void ReadImputed::do_map(std::vector<m2_map>& additional_maps)
 {
-    m2_map impute_map("IMPUTE", 'p');
+//  m2_map 
+    impute_map = m2_map("IMPUTE", 'p');
 
     build_impute2_map(impute_map);
 
@@ -290,6 +291,27 @@ linkage_ped_top *ReadImputed::do_ped(linkage_locus_top *LTop)
 
     return Top;
 
+}
+
+void ReadImputed::do_gc()
+{
+    for (int m; m < markers_all; m++) {
+        delete markers[m];
+    }
+    markers.clear();
+    Vecmarkerp().swap(markers);
+//  msgvf("read_impute markers %d %d\n", markers.size(), markers.capacity());
+
+    for (int p; p < people_all; p++) {
+        people[p].clear();
+        VecsDB().swap(people[p]);
+//      msgvf("read_impute people[i] %d %d\n", people[p].size(), people[p].capacity());
+    }
+    people.clear();
+    Vecvecs().swap(people);
+//  msgvf("read_impute people %d %d\n", people.size(), people.capacity());
+
+    impute_map.gc();
 }
 
 void ReadImputed::read_imputed_file ()
