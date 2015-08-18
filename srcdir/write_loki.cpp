@@ -191,8 +191,8 @@ static void loki_file_names(char *file_names[], int orig_ids[2],
     char cchoice[10], stem[15];
     char fl_stat[12], null_str[3] = "";
 
-    orig_ids[0] = 1;
-    orig_ids[1] = 1;
+//  orig_ids[0] = 1;
+//  orig_ids[1] = 1;
 
 
     if (DEFAULT_OUTFILES) {

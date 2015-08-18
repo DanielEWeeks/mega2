@@ -1020,7 +1020,8 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+//      OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = 1;  //code expects this.
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,

@@ -92,7 +92,7 @@ void ReadImputed::do_menu_display(int &idx, int line_len, int choiceA[])
     printf("\n");
     choiceA[idx++] = imputed_missing_code_i;
 
-    printf("%2d) %-*s[ %s ]\n", idx, line_len, "Allow indels (toggle):", 
+    printf("%2d) %-*s[ %s ]\n", idx, line_len, "Allow indels (toggle):",
            BatchItemGet("Imputed_Allow_Indels")->value.copt == 'y' ? "yes" : "no");
     choiceA[idx++] = imputed_allow_indels_i;
 
@@ -196,7 +196,7 @@ void ReadImputed::do_menu2batch()
                       "Imputed_Allow_Indels" 
                       "Imputed_Allow_Duplicates"
     };
-                      
+
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
         batch_item_type *bip = BatchItemGet(Values[i]);
         if (bip->items_read) 
@@ -295,14 +295,14 @@ linkage_ped_top *ReadImputed::do_ped(linkage_locus_top *LTop)
 
 void ReadImputed::do_gc()
 {
-    for (int m; m < markers_all; m++) {
+    for (int m = 0; m < markers_all; m++) {
         delete markers[m];
     }
     markers.clear();
     Vecmarkerp().swap(markers);
 //  msgvf("read_impute markers %d %d\n", markers.size(), markers.capacity());
 
-    for (int p; p < people_all; p++) {
+    for (int p = 0; p < people_all; p++) {
         people[p].clear();
         VecsDB().swap(people[p]);
 //      msgvf("read_impute people[i] %d %d\n", people[p].size(), people[p].capacity());

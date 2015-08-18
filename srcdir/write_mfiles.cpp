@@ -987,7 +987,7 @@ void create_mendel_formats(int famwid, int perwid,
 {
 
     if (fformat != NULL) {
-        if (OrigIds[1] == 2 || OrigIds[1] == 4) {
+        if (OrigIds[1] == 2 || OrigIds[1] == 4 || OrigIds[1] == 6) {
             sprintf(fformat, "%%%ds", famwid);
         } else {
             sprintf(fformat, "%%%dd", famwid);
@@ -998,6 +998,8 @@ void create_mendel_formats(int famwid, int perwid,
         if ((OrigIds[0] == 1) || (OrigIds[0] == 2))  {
             sprintf(pformat, "%%%ds", perwid);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
+            sprintf(pformat, "%%%ds", perwid);
+        } else if (OrigIds[0] == 6) {
             sprintf(pformat, "%%%ds", perwid);
         } else {
             sprintf(pformat, "%%%dd", perwid);

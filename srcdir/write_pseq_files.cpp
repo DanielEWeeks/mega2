@@ -141,16 +141,16 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
                 if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
                 _tp = &(_Top->Ped[_ped]);
 //yy
-                if (OrigIds[1] == 2) sfid.insert(_tp->Name);
+                if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tp->Name);
                 else if (OrigIds[1] == 3) {convert << _ped+1; sfid.insert(convert.str()); }
-                else if (OrigIds[1] == 4) sfid.insert(_tp->PedPre);
+                else if (OrigIds[1] == 6) sfid.insert(_tp->PedPre);
                 else {convert << _tp->Num; sfid.insert(convert.str()); }
                 
                 for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
                     _tpe = &(_tp->Entry[_per]);
-                    if (OrigIds[0] == 1)  siid.insert(_tpe->OrigID);
-                    else if (OrigIds[0] == 2) siid.insert(_tpe->PerPre);
+                    if (OrigIds[0] == 1 || OrigIds[0] == 2)  siid.insert(_tpe->OrigID);
                     else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) siid.insert(_tpe->UniqueID);
+                    else if (OrigIds[0] == 6) siid.insert(_tpe->PerPre);
                     else {convert << _tpe->ID; siid.insert(convert.str()); }
                     ni++;
                 }

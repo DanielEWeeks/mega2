@@ -978,7 +978,7 @@ static void AspexPedFile(char *aspdat_name, tcl_opts_type opt,
                 tpe = &(TTop->Ped[j].Entry[i]);
                 prID_fam(fp, pformat, tpe, TTop->Ped[j].Entry);
                 if (tpe->Father == 0) {
-                    if (OrigIds[0] <= 4) {
+                    if (OrigIds[0] <= 4 || OrigIds[0] == 6) {
                         fprintf(fp, pformat, "0");
                         fprintf(fp, pformat, "0");
                     } else {

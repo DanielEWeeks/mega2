@@ -143,6 +143,9 @@ static void  write_nuclear_peds(char *outfl, linkage_ped_top *Top2,
                         fprintf(filep, fformat, Top2->Ped[ped].Name);
                 } else if (OrigIds[1] == 4) {
                         sprintf(fformat, "%%%ds ", fwid);
+                        fprintf(filep, fformat, Top2->Ped[ped].Name);
+                } else if (OrigIds[1] == 6) {
+                        sprintf(fformat, "%%%ds ", fwid);
                         fprintf(filep, fformat, Top2->Ped[ped].PedPre);
                 }
 
@@ -537,6 +540,7 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
             To->Num = nuke_pednum+1;
             To->Loops=NULL;
             strcpy(To->Name, Top->Ped[ped].Name);
+            strcpy(To->PedPre, Top->Ped[ped].PedPre);
             To->Proband = 1;
             To->OriginalID = Top->Ped[ped].Num;
             To->origped = ped;
@@ -564,6 +568,7 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
                 To->Num = nuke_pednum + 1;
                 To->Loops=NULL;
                 strcpy(To->Name, Top->Ped[ped].Name);
+                strcpy(To->PedPre, Top->Ped[ped].PedPre);
                 To->Proband = 1;
                 To->OriginalID = Top->Ped[ped].Num;
                 To->origped = ped;
@@ -579,6 +584,8 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
 
                 /* adjust some fields for mum */
                 To->Entry[0].ID=1;
+//pp
+                strcpy(To->Entry[0].PerPre, (PedTop->PedTree[ped].Entry[mother-1].LEntry)->PerPre);
                 To->Entry[0].Father=0;
                 To->Entry[0].Mother=0;
                 To->Entry[0].Next_PA_Sib=0;
@@ -596,6 +603,8 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
 
                 /* adjust some fields for papa */
                 To->Entry[1].ID=2;
+//pp
+                strcpy(To->Entry[1].PerPre, (PedTop->PedTree[ped].Entry[father-1].LEntry)->PerPre);
                 To->Entry[1].Father=0;
                 To->Entry[1].Mother=0;
                 To->Entry[1].Next_PA_Sib=0;
@@ -619,6 +628,8 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
 
                             /* adjust some fields for offspring */
                             To->Entry[newentry].ID=newentry+1;
+//pp
+                            sprintf(To->Entry[newentry].PerPre, "%d", newentry+1);
                             To->Entry[newentry].Father=2;
                             To->Entry[newentry].Mother=1;
                             To->Entry[newentry].Next_PA_Sib=

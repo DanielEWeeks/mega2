@@ -1094,7 +1094,7 @@ char *unique_id_per(char *reslt, char *ped) {
     char *mid = strrchr(reslt, '_');
     if (mid)
         return mid + 1;
-     else
+    else
         return reslt;
 }
 
@@ -1125,6 +1125,8 @@ static marriage_graph_type *copy_annotated_to_premake(linkage_locus_top *LTop,
         ped = persons[per].ped_index - 1;
         if (pped[ped].num_persons == 0) {
             strcpy(pped[ped].Name, persons[per].Pedigree);
+//pp        strcpy(pped[ped].Name, persons[per].PedID);
+            strcpy(pped[ped].PedPre, persons[per].PedID);
         }
         pped[ped].num_persons++;
     }
@@ -1181,8 +1183,12 @@ static marriage_graph_type *copy_annotated_to_premake(linkage_locus_top *LTop,
 
             unique_id(pped[curr_ped].persons[p].uniqueid, persons[per].Pedigree, persons[per].ID);
             strcpy(pped[curr_ped].persons[p].origid, persons[per].PerID);
+            strcpy(pped[curr_ped].persons[p].perpre, persons[per].PerID);
+//          strcpy(pped[curr_ped].persons[p].pedpre, persons[per].Pedigree); // do this later
             strcpy(pped[curr_ped].persons[p].famname, persons[per].Pedigree);
-            if ((persons[per].Sex == '1') || (tolower((unsigned char)persons[per].Sex) == 'm')) {
+//          strcpy(pped[curr_ped].persons[p].pedpre, persons[per].PedID);  // do this later
+//pp        strcpy(pped[curr_ped].persons[p].famname, persons[per].PedID); // cause lpedtop does
+	    if ((persons[per].Sex == '1') || (tolower((unsigned char)persons[per].Sex) == 'm')) {
                 pped[curr_ped].persons[p].gender = 1;
             } else if ((persons[per].Sex == '2') || (tolower((unsigned char)persons[per].Sex) == 'f')) {
                 pped[curr_ped].persons[p].gender = 2;
@@ -1262,6 +1268,9 @@ static linkage_ped_tree *copy_annotated_to_lpedtop(linkage_locus_top *LTop,
         if (lped[ped].EntryCnt == 0) {
             lped[ped].Num = persons[per].LinkPedID;
             strcpy(lped[ped].Name, persons[per].Pedigree);
+            strcpy(lped[ped].PedPre, persons[per].Pedigree);
+//pp        strcpy(lped[ped].Name, persons[per].PedID);
+//pp        strcpy(lped[ped].PedPre, persons[per].PedID);
         }
         lped[ped].EntryCnt++;
     }
@@ -1335,6 +1344,7 @@ static linkage_ped_tree *copy_annotated_to_lpedtop(linkage_locus_top *LTop,
 
             unique_id(entry->UniqueID, persons[per].Pedigree, persons[per].ID);
             strcpy(entry->OrigID, persons[per].PerID);
+            strcpy(entry->PerPre, persons[per].PerID);
             strcpy(entry->FamName, persons[per].PedID);
             entry->ID = persons[per].LinkPerID;
             entry->Father = links[per][pa];

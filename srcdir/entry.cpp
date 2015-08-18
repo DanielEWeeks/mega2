@@ -72,6 +72,8 @@ void person_locus_entry::pr_fam()
     } else if (OrigIds[1] == 3) {
         pr_printf(_fformat, _ped+1);
     } else if (OrigIds[1] == 4) {
+        pr_printf(_fformat, _tp->Name);
+    } else if (OrigIds[1] == 6) {
         pr_printf(_fformat, _tp->PedPre);
     } else {
         pr_printf(_fformat, _tp->Num);
@@ -90,9 +92,11 @@ void person_locus_entry::pr_per(linkage_ped_rec  *tpe)
     } else if (OrigIds[0] == 1) {
         pr_printf(_pformat, tpe->OrigID);
     } else if (OrigIds[0] == 2)  {
-        pr_printf(_pformat, tpe->PerPre);
+        pr_printf(_pformat, tpe->OrigID);
     } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
         pr_printf(_pformat, tpe->UniqueID);
+    } else if (OrigIds[0] == 6)  {
+        pr_printf(_pformat, tpe->PerPre);
     } else {
         pr_printf(_pformat, tpe->ID);
     }
@@ -109,10 +113,13 @@ void person_locus_entry::pr_father()
                     _tp->Entry[_tpe->Father-1].OrigID);
         } else if (OrigIds[0] == 2)  {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].PerPre);
+                    _tp->Entry[_tpe->Father-1].OrigID);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Father-1].UniqueID);
+        } else if (OrigIds[0] == 6)  {
+            pr_printf(_pformat,
+                    _tp->Entry[_tpe->Father-1].PerPre);
         } else {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Father-1].ID);
@@ -137,10 +144,13 @@ void person_locus_entry::pr_mother()
                     _tp->Entry[_tpe->Mother-1].OrigID);
         } else if (OrigIds[0] == 2)  {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].PerPre);
+                    _tp->Entry[_tpe->Mother-1].OrigID);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Mother-1].UniqueID);
+        } else if (OrigIds[0] == 6)  {
+            pr_printf(_pformat,
+                    _tp->Entry[_tpe->Mother-1].PerPre);
         } else {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Mother-1].ID);
@@ -167,14 +177,19 @@ void person_locus_entry::pr_parent()
                     _tp->Entry[_tpe->Mother-1].OrigID);
         } else if (OrigIds[0] == 2)  {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].PerPre);
+                    _tp->Entry[_tpe->Father-1].OrigID);
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].PerPre);
+                    _tp->Entry[_tpe->Mother-1].OrigID);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Father-1].UniqueID);
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Mother-1].UniqueID);
+        } else if (OrigIds[0] == 6)  {
+            pr_printf(_pformat,
+                    _tp->Entry[_tpe->Father-1].PerPre);
+            pr_printf(_pformat,
+                    _tp->Entry[_tpe->Mother-1].PerPre);
         } else {
             pr_printf(_pformat,
                     _tp->Entry[_tpe->Father-1].ID);

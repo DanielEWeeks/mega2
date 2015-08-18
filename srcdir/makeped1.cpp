@@ -337,6 +337,8 @@ marriage_graph_type *make_ped_structure(pre_makeped_record *persons,
         pped[i].marriages=NULL;
         pped[i].ped=persons[last_line_read].ped;
         sprintf(pped[i].Name, "%d", pped[i].ped);
+//pp order may matter, but read_pre_makeped requires this
+        strcpy(pped[i].PedPre, pped[i].Name);    // delayed from earlier
         pped[i].max_id=0;
         pped[i].num_persons = indcount[i];
         pped[i].persons = CALLOC((size_t) indcount[i], person_node_type);
@@ -344,6 +346,11 @@ marriage_graph_type *make_ped_structure(pre_makeped_record *persons,
             person=&(persons[last_line_read + j]);
             strcpy(pped[i].persons[j].uniqueid, person->uniqueid);
             pped[i].persons[j].indiv=person->indiv;
+//pp all this was omitted earlier.  Origid & famname where created but ... perpre
+            sprintf(pped[i].persons[j].origid, "%d", person->indiv);
+            sprintf(pped[i].persons[j].perpre, "%d",  person->indiv);
+            sprintf(pped[i].persons[j].famname, "%d",  pped[i].ped);
+//pp
             pped[i].persons[j].father=person->father;
             pped[i].persons[j].mother=person->mother;
             pped[i].persons[j].gender=person->gender;
@@ -1084,6 +1091,7 @@ static void copy_node_remove_parents(int proband, person_node_type *p1,
     p2->node_id=new_id;
     strcpy(p2->uniqueid, p1->uniqueid);
     p2->indiv=new_indiv;
+    strcpy(p2->perpre, p1->perpre);
     p2->father=0; p2->mother=0;
     p2->from_marriage_node_id=-1;
     p2->degree_genotyped=p1->degree_genotyped;
@@ -1339,6 +1347,7 @@ static void make_linkage_record(int pid, marriage_graph_type mped,
     }
 
     strcpy(lrec->UniqueID, prec.uniqueid);
+    strcpy(lrec->PerPre,   prec.perpre);
     lrec->ID=pid+1;
     lrec->Sex=prec.gender;
     lrec->OrigProband=prec.proband;
@@ -1567,7 +1576,10 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
     for (i=0; i < Top->PedCnt; i++) {
         Top->Ped[i].EntryCnt=Top->PTop[i].num_persons;
         Top->Ped[i].Num=i+1;
+//xx
+//      sprintf(Top->Ped[i].Name, "%d", Top->Ped[i].Num);
         strcpy(Top->Ped[i].Name, Top->PTop[i].Name);
+        strcpy(Top->Ped[i].PedPre, Top->PTop[i].PedPre);
         Top->Ped[i].Loops=NULL;
         Top->Ped[i].Entry = CALLOC((size_t) Top->Ped[i].EntryCnt, linkage_ped_rec);
         /*    Top->Ped[i].Name = CALLOC(100, char); */

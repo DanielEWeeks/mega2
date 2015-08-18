@@ -65,6 +65,7 @@ void copy_le_static_data(const linkage_ped_rec *From, linkage_ped_rec *To)
 {
     int i;
     strcpy(To->OrigID, From->OrigID);
+    strcpy(To->PerPre, From->PerPre);
     strcpy(To->UniqueID, From->UniqueID);
     /* FamName is not copied over because it is not needed anymore */
     strcpy(To->FamName, From->FamName);

@@ -43,6 +43,7 @@
 #include "reorder_loci_ext.h"
 #include "grow_string_ext.h"
 #include "output_file_names_ext.h"
+#include "output_routines_ext.h"
 #include "plink_ext.h"
 #include "utils_ext.h"
 #include "user_input_ext.h"
@@ -2423,6 +2424,10 @@ static char *ind_id_choice_messg(int opt, char *ind_id_messg)
         sprintf(ind_id_messg, "Renumber consecutively in pedigree");
         break;
 
+    case 6:
+        sprintf(ind_id_messg, "Original pre makeped person");
+        break;
+
     default:
         break;
     }
@@ -2444,6 +2449,7 @@ int individual_id_item(int item_number, analysis_type analysis,
     char ind_id_messg[45];
     char opt_[10];
     int new_opt = -1;
+    int choice[10];
     int i;
 
 
@@ -2453,12 +2459,15 @@ int individual_id_item(int item_number, analysis_type analysis,
                 ind_id_choice_messg(current_opt_val, &(ind_id_messg[0])));
         mssgf(err_msg);
         log_line(mssgf);
+        if (InputMode == INTERACTIVE_INPUTMODE) {
+            batchf("ID_person");
+        }
         return 0;
     }
 
     if (get_disp_log==2) {
-        printf(" %d) Person id in output pedigree file:        %s\n",
-               item_number,
+        printf(" %d) %sPerson id in output pedigree file:   %s\n",
+               item_number, (item_number == 9) ? " " : "",
                ind_id_choice_messg(current_opt_val, &(ind_id_messg[0])));
         return 0;
     }
@@ -2475,24 +2484,28 @@ int individual_id_item(int item_number, analysis_type analysis,
                    ((current_opt_val == 1) ? '*' : ' '),
                    i,
                    ind_id_choice_messg(1, &(ind_id_messg[0])));
-            i++;
+            choice[i++] = 1;
+
             if (has_orig) {
                 printf("%c%d) %s\n",
                        ((current_opt_val == 2) ? '*' : ' '),
                        i,
                        ind_id_choice_messg(2, &(ind_id_messg[0])));
-                i++;
+                choice[i++] = 2;
             }
+
             if (has_uniq) {
                 printf("%c%d) %s\n",
                        ((current_opt_val == 3) ? '*' : ' '),
                        i,
                        ind_id_choice_messg(3, &(ind_id_messg[0])));
+                choice[i] = 3;
             } else {
                 printf("%c%d) %s\n",
                        ((current_opt_val == 4) ? '*' : ' '),
                        i,
                        ind_id_choice_messg(4, &(ind_id_messg[0])));
+                choice[i] = 4;
             }
             i++;
 
@@ -2500,11 +2513,24 @@ int individual_id_item(int item_number, analysis_type analysis,
                    ((current_opt_val == 5) ? '*' : ' '),
                    i,
                    ind_id_choice_messg(5, &(ind_id_messg[0])));
+            choice[i++] = 5;
+
+            printf("%c%d) %s\n",
+                   ((current_opt_val == 6) ? '*' : ' '),
+                   i,
+                   ind_id_choice_messg(6, &(ind_id_messg[0])));
+            choice[i] = 6;
 
             printf("Select from options 0 - %d > ", i);
             fcmap(stdin, "%s", opt_);
             new_opt = atoi(opt_);
 
+            if (new_opt < 0 || new_opt > i) {
+                warn_unknown(opt_);
+                continue;
+            } else if (new_opt > 0)
+                current_opt_val = choice[new_opt];
+#if 0
             switch(new_opt) {
             case 0:
                 break;
@@ -2538,10 +2564,15 @@ int individual_id_item(int item_number, analysis_type analysis,
             default:
                 warn_unknown(opt_);
                 break;
+            case 5:
+                current_opt_val = 6;
+                break;
             }
+#endif
         }
 
     }
+    BatchValueSet(current_opt_val, "ID_person");
     return current_opt_val;
 }
 
@@ -2578,6 +2609,10 @@ static char *ped_id_choice_messg(int opt, char *id_messg)
         sprintf(id_messg, "With multipliers e.g 1002 etc.");
         break;
 
+    case 6:
+        sprintf(id_messg, "Original pre makeped pedigree");
+        break;
+
     default:
         break;
     }
@@ -2599,6 +2634,7 @@ int pedigree_id_item(int item_number, analysis_type analysis,
 
     char id_messg[45];
     char opt_[10];
+    int choice[10];
     int new_opt = -1;
     int i;
 
@@ -2608,11 +2644,14 @@ int pedigree_id_item(int item_number, analysis_type analysis,
                 ped_id_choice_messg(current_opt_val, &(id_messg[0])));
         mssgf(err_msg);
         log_line(mssgf);
+        if (InputMode == INTERACTIVE_INPUTMODE) {
+            batchf("ID_pedigree");
+        }
         return 0;
     }
 
     if (get_disp_log == 2) {
-        printf(" %d) Pedigree id in output pedigree file:      %s\n",
+        printf(" %d) Pedigree id in output pedigree file: %s\n",
                item_number,
                ped_id_choice_messg(current_opt_val, &(id_messg[0])));
         return 0;
@@ -2629,13 +2668,14 @@ int pedigree_id_item(int item_number, analysis_type analysis,
                        ((current_opt_val == 5) ? '*' : ' '),
                        i,
                        ped_id_choice_messg(5, &(id_messg[0])));
-                i++;
+                choice[i++] = 5;
+
             } else if (pedfile_type == POSTMAKEPED_PFT) {
                 printf("%c%d) %s\n",
                        ((current_opt_val == 1) ? '*' : ' '),
                        i,
                        ped_id_choice_messg(1, &(id_messg[0])));
-                i++;
+                choice[i++] = 1;
             }
 
             if (analysis == TO_NUKE) {
@@ -2643,31 +2683,45 @@ int pedigree_id_item(int item_number, analysis_type analysis,
                        ((current_opt_val == 4) ? '*' : ' '),
                        i,
                        ped_id_choice_messg(4, &(id_messg[0])));
-                i++;
+                choice[i++] = 4;
+
             } else if (has_orig && pedfile_type == POSTMAKEPED_PFT) {
                 printf("%c%d) %s\n",
                        ((current_opt_val == 2) ? '*' : ' '),
                        i,
                        ped_id_choice_messg(2, &(id_messg[0])));
-                i++;
+                choice[i++] = 2;
+
             } else if (pedfile_type == PREMAKEPED_PFT) {
                 printf("%c%d) %s\n",
                        ((current_opt_val == 2) ? '*' : ' '),
                        i,
                        ped_id_choice_messg(2, &(id_messg[0])));
-                i++;
+                choice[i++] = 2;
             }
             printf("%c%d) %s\n",
                    ((current_opt_val == 3) ? '*' : ' '),
                    i,
                    ped_id_choice_messg(3, &(id_messg[0])));
+            choice[i++] = 3;
+
+            printf("%c%d) %s\n",
+                   ((current_opt_val == 6) ? '*' : ' '),
+                   i,
+                   ped_id_choice_messg(6, &(id_messg[0])));
+            choice[i] = 6;
 
             printf("Select from options 0 - %d > ", i);
             fcmap(stdin, "%s", opt_);
             new_opt = atoi(opt_);
 
+            if (new_opt < 0 || new_opt > i) {
+                warn_unknown(opt_);
+                continue;
+            } else if (new_opt > 0)
+                current_opt_val = choice[new_opt];
+#if 0
             switch(new_opt) {
-            case 0: break;
             case 1:
                 if (analysis == TO_NUKE) {
                     current_opt_val = 5;
@@ -2694,12 +2748,17 @@ int pedigree_id_item(int item_number, analysis_type analysis,
             default:
                 warn_unknown(opt_);
                 break;
+            case 4:
+                current_opt_val = 6;
+                break;
             }
+#endif
         }
     }
     if (current_opt_val == 1 && pedfile_type == PREMAKEPED_PFT) {
         current_opt_val = 2;
     }
+    BatchValueSet(current_opt_val, "ID_pedigree");
     return current_opt_val;
 
 }
@@ -2728,6 +2787,9 @@ void ped_ind_defaults(int unique, analysis_type analysis)
     */
 
     analysis->ped_ind_defaults(unique);
+
+    BatchValueIfSet(OrigIds[1],  "ID_pedigree");
+    BatchValueIfSet(OrigIds[0],  "ID_person");
 
 }
 

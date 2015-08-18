@@ -752,6 +752,7 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
         PPed = &(PTop->PedTree[ped]);
         clear_ped_tree(PPed);
         PPed->Name = strdup(LPed->Name);
+        PPed->PedPre = strdup(LPed->PedPre);
         PPed->EntryCnt = LPed->EntryCnt;
 
         PPed->Entry = CALLOC((size_t) PPed->EntryCnt, ped_rec);

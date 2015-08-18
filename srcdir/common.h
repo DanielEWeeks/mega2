@@ -623,9 +623,4 @@ extern int Display_Errors, Display_Messages;
 
 #define Ignore_Unmapped(m) (((m) == UNKNOWN_CHROMO) && (NumUnmapped < 1 || !AllowUnmapped))
 
-//TEMP
-#define PerPre OrigID
-#define PedPre Name
-
-
 #endif

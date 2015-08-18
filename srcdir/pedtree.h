@@ -147,6 +147,7 @@ typedef struct _ped_rec {
 /* so we can treat entries as members of a tree or an array */
 typedef struct _ped_tree {
     char     *Name;
+    char     *PedPre;
     ped_rec *Entry;       /* will be Entry[]    */
     int      EntryCnt;
     int      AffectedCnt;

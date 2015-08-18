@@ -327,6 +327,7 @@ void            clear_lpedrec(linkage_ped_rec *Entry)
     Entry->TmpData = NULL;
     Entry->Ngeno = 0;
     strcpy(Entry->OrigID, "");
+    strcpy(Entry->PerPre, "");
     strcpy(Entry->FamName, "");
     strcpy(Entry->UniqueID, "");
     Entry->loopbreakers=NULL;
@@ -792,6 +793,7 @@ void  copy_lpedtree1(linkage_ped_tree *From, linkage_ped_tree *To)
 
     To->Num = From->Num;
     strcpy(To->Name, From->Name);
+    strcpy(To->PedPre, From->PedPre);
     To->EntryCnt = From->EntryCnt;
     To->Proband = From->Proband;
     To->OriginalID = From->OriginalID;

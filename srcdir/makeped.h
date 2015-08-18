@@ -95,6 +95,7 @@ typedef struct _marriage_graph_ {
     person_node_type *persons;
     marriage_node_type *marriages;
     char Name[FILENAME_LENGTH];
+    char PedPre[FILENAME_LENGTH];
 } marriage_graph_type;
 
 class   CLASS_ANALYSIS;

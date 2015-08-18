@@ -1105,6 +1105,7 @@ static int read_linkage_record(FILE *filep, linkage_ped_rec *entry,
             *origuniq=1;
             strcpy(entry->UniqueID, dummy[1]);
             sprintf(entry->OrigID, "%d", entry->ID);
+            sprintf(entry->PerPre, "%d", entry->ID);
             sprintf(entry->FamName, "%d", lrecdata->PedID);
         } else {
             *origuniq=0;
@@ -1115,10 +1116,12 @@ static int read_linkage_record(FILE *filep, linkage_ped_rec *entry,
         if (!(strcasecmp(dummy[0], "ped:")) && !(strcasecmp(dummy[2], "per:"))) {
             *origuniq=2;
             strcpy(entry->OrigID, dummy[3]);
+            strcpy(entry->PerPre, dummy[3]);
             strcpy(entry->FamName, dummy[1]);
         } else {
             *origuniq=0;
             sprintf(entry->OrigID, "%d", entry->ID);
+            sprintf(entry->PerPre, "%d", entry->ID);
             sprintf(entry->FamName, "%d", lrecdata->PedID);
         }
         sprintf(entry->UniqueID, "%d_%d", lrecdata->PedID, entry->ID);
@@ -1129,17 +1132,20 @@ static int read_linkage_record(FILE *filep, linkage_ped_rec *entry,
             *origuniq=3;
             strcpy(entry->UniqueID, dummy[5]);
             strcpy(entry->OrigID, dummy[3]);
+            strcpy(entry->PerPre, dummy[3]);
             strcpy(entry->FamName, dummy[1]);
         } else if (!(strcasecmp(dummy[2], "ped:")) && !(strcasecmp(dummy[4], "per:")) &&
                  !(strcasecmp(dummy[0], "id:"))) {
             *origuniq=3;
             strcpy(entry->OrigID, dummy[5]);
+            strcpy(entry->PerPre, dummy[5]);
             strcpy(entry->FamName, dummy[3]);
             strcpy(entry->UniqueID, dummy[1]);
         } else {
             *origuniq=0;
             sprintf(entry->UniqueID, "%d_%d", lrecdata->PedID, entry->ID);
             sprintf(entry->OrigID, "%d", entry->ID);
+            sprintf(entry->PerPre, "%d", entry->ID);
             sprintf(entry->FamName, "%d", lrecdata->PedID);
         }
         break;
@@ -1147,6 +1153,7 @@ static int read_linkage_record(FILE *filep, linkage_ped_rec *entry,
         *origuniq=0;
         sprintf(entry->UniqueID, "%d_%d", lrecdata->PedID, entry->ID);
         sprintf(entry->OrigID, "%d", entry->ID);
+        sprintf(entry->PerPre, "%d", entry->ID);
         sprintf(entry->FamName, "%d", lrecdata->PedID);
         break;
     }
@@ -1237,6 +1244,7 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
             LastPedID = lrecdata.PedID;
             NewPed->Num = lrecdata.PedID;
             strcpy(NewPed->Name, NewEntry->FamName);
+            strcpy(NewPed->PedPre, NewEntry->FamName);
         }
         if ((LastPedID == lrecdata.PedID) && (err == 0)) {
             if (lrecdata.Proband >= 1) {
@@ -1299,6 +1307,7 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
                 LastPedID = lrecdata.PedID;
                 NewPed->Num = lrecdata.PedID;
                 strcpy(NewPed->Name, NewEntry->FamName);
+                strcpy(NewPed->PedPre, NewEntry->FamName);
                 if (lrecdata.Proband >= 1) {
                     if (lrecdata.Proband == 1) {
                         /* could be only the proband or

@@ -321,6 +321,7 @@ typedef struct _marker_pedrec_char {
  */
 typedef struct _linkage_ped_rec {
     char UniqueID[NAMELEN], OrigID[NAMELEN], FamName[NAMELEN];
+    char PerPre[MAX_NAMELEN];
     int ID;              /* linkage ID */
     int Father, Mother;  /* linkage ID */
     int First_Offspring; /* linkage ID */
@@ -363,6 +364,7 @@ typedef struct _linkage_ped_tree {
     linkage_ped_rec *Entry;         /* will be Entry[] */
     int IsTyped;
     char Name[MAX_NAMELEN];
+    char PedPre[MAX_NAMELEN];
     int OriginalID;
     int origped; /* only to be used for conversion to nukepeds */
     int Proband;
@@ -382,6 +384,7 @@ typedef struct pre_makeped_record_ {
 
 typedef struct _person_node_ {
     char uniqueid[MAX_NAMELEN],  origid[MAX_NAMELEN], famname[MAX_NAMELEN];
+    char perpre[MAX_NAMELEN];
     int node_id;
     int indiv, father, mother, gender;
     int proband;

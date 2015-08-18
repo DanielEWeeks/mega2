@@ -213,6 +213,8 @@ static keyw_t keywords[] = {
     {"Imputed_Allow_Duplicate_Markers",       YORN,      "n"},
     {"Imputed_Allow_Indels",                  YORN,      "n"},
     {"Input_Imputed_Info_File",               STRING,     ""},
+    {"ID_pedigree",                           INT,       "0"},
+    {"ID_person",                             INT,       "0"},
 };
 
 int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);
@@ -437,6 +439,7 @@ void check_batch_items(void)
             missing_item_goto_menu(1, "Input menu");
         } else if (!ITEM_READ(/* 2 */ Input_Map_File)) {
             missing_item_goto_menu(2, "Input menu");
+//pp is this necessary
         } else if (!ITEM_READ(/* 4 */ Input_Untyped_Ped_Option)) {
             missing_item_goto_menu(4, "Input menu");
         }
@@ -1210,6 +1213,7 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
 // Write the item associated with the Mega2BatchItem to the batch file.
 // It will be written based on the format (batch_item_value) for which it was defined (item_value_type).
 // see batch_input.h
+// NOTE: this always outputs an item to BATCH FILE
 void batchf(int item)
 {
     int index, *opt;
@@ -1295,19 +1299,22 @@ void batchf(int item)
     fclose(batchfp);
 }
 
+// NOTE: these two MAY output an item to BATCH FILE
 void batchf(Cstr& keyword)
 {
     batch_item_type *bi = NULL;
-    if (map_get(BatchItemMap, keyword, bi))
-        batchf(bi->item_number);
-    else {
+    if (map_get(BatchItemMap, keyword, bi)) {
+        if (bi->items_read)
+            batchf(bi->item_number);
+    } else {
         warnvf("batchf: key %s not found %s\n:", C(keyword));
         return;
     }
 }
 
 void batchf(batch_item_type *bi) {
-    batchf(bi->item_number);
+    if (bi->items_read)
+        batchf(bi->item_number);
 }
 
 #endif /* NEW_BATCH */

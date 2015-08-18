@@ -155,7 +155,6 @@ void save_premakeped_peds(char *outfl_name, linkage_ped_top *Top,
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* write the pedigree and entry numbers */
-                printf("0 %d, 1 %d\n", OrigIds[0], OrigIds[1]); fflush(stdout);
 
                 prID_ped(filep, ped, fformat, &Top->Ped[ped]);
                 prID_fam(filep, pformat, Entry, Top->Ped[ped].Entry);
