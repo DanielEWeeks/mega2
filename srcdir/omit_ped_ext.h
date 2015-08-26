@@ -30,11 +30,13 @@
 #define OMIT_PED_EXT_H
 
 
-extern int is_phenotyped(entry_type Entry, int pedfl_type,
+extern int is_phenotyped(entry_type Entry,
+                         linkage_ped_top *Top,
 			 linkage_locus_top *LTop);
 
 extern int is_typed_at_markers(entry_type Entry,
-			       int pedfl_type, linkage_locus_top *LTop,
+			       linkage_ped_top *Top,
+                               linkage_locus_top *LTop,
 			       double *percent_typed);
 
 extern void omit_peds(int untyped_ped_opt, linkage_ped_top *LPedTreeTop);

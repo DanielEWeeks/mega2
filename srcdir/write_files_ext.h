@@ -70,7 +70,7 @@ extern void write_numbered_data(FILE *filep,
                                 linkage_ped_rec *entry);
 
 
-extern void write_ped_stats(linkage_ped_top *Top, int pedfl_type);
+extern void write_ped_stats(linkage_ped_top *Top);
 
 extern int write_quant_stats(linkage_ped_top *Top, analysis_type analysis);
 

@@ -769,7 +769,7 @@ void ReadImputed::read_sample_file ()
         Cstr fill[] = {"", "", "0", "0", "0"};
         mappedfields.insert(mappedfields.end(), fill, fill+5);
         i = 0;
-        int ret = 0;
+        ret = 0;
         for (VecspDB fp = fields.cbegin(); fp != fields.cend(); i++, fp++) {
             if (map_get(idx2rsvd, i, ret)) {
                 if (ret < 5)

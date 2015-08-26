@@ -2041,7 +2041,7 @@ static void convert_merlin2R(R_plot_params_type Rplot_params,
 }
 
 static void nplplot_init_header(R_plot_params_type Rplot_params,
-				char *Rdatafile, int trait, int chromosome)
+				char *RdataFile, int trait, int chromosome)
 
 
 {
@@ -2049,8 +2049,8 @@ static void nplplot_init_header(R_plot_params_type Rplot_params,
     char *Rheaderfile;
     FILE *fp;
 
-    Rheaderfile = CALLOC(strlen(Rdatafile) + strlen(output_paths[trait]) + 7, char);
-    sprintf(Rheaderfile, "%s/%s.hdr", output_paths[trait], Rdatafile);
+    Rheaderfile = CALLOC(strlen(RdataFile) + strlen(output_paths[trait]) + 7, char);
+    sprintf(Rheaderfile, "%s/%s.hdr", output_paths[trait], RdataFile);
 
     fp=fopen(Rheaderfile, "w");
     if (fp == NULL) {

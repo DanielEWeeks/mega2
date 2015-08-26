@@ -2409,7 +2409,7 @@ linkage_ped_top  *create_full_marker_data(
     mssgf("Input pedigree data contains:");
 
     order_heterozygous_allele(Top);
-    write_ped_stats(Top, pedfile_type);
+    write_ped_stats(Top);
     if (omitfl_name != NULL) {
         premakeped_omit_file(Top, omitfl_name,1);
     }
@@ -2511,7 +2511,7 @@ linkage_ped_top  *create_full_marker_data(
     Mega2Status = DONE_RECODE;
     log_line(mssgf);
     mssgf("Pedigree data summary after recoding:");
-    write_ped_stats(Top, pedfile_type);
+    write_ped_stats(Top);
 
     for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
         free_marker_item(marker_list[i].first_allele);

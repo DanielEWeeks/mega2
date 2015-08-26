@@ -93,13 +93,13 @@ public:
     void set_chr(const std::string CHROM);
     
     const double get_POS() { return POS; };
-    void set_POS(const double POS) { this->POS = POS; };
+    void set_POS(const double POSx) { this->POS = POSx; };
     
     const std::string get_marker_name() { return marker_name; };
-    void set_marker_name(const std::string marker_name) { this->marker_name = marker_name; };
+    void set_marker_name(const std::string marker_nameX) { this->marker_name = marker_nameX; };
     
     const std::string get_REF() { return REF; };
-    void set_REF(const std::string REF) { this->REF = REF; };
+    void set_REF(const std::string REFx) { this->REF = REFx; };
 };
 
 class m2_map {

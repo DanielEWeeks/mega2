@@ -174,11 +174,11 @@ void bcf_entry::set_FORMAT()
 	parsed_FORMAT = true;
 }
 
-void bcf_entry::add_FORMAT_entry(const string &in, const unsigned int &fmt_key, const unsigned int &pos, const unsigned int &line_pos, const unsigned int &type, const unsigned int &size)
+void bcf_entry::add_FORMAT_entry(const string &in, const unsigned int &fmt_key, const unsigned int &pos, const unsigned int &line_pos_, const unsigned int &type, const unsigned int &size)
 {
 	FORMAT.push_back(in);
 	FORMAT_to_idx[in] = pos;
-	FORMAT_positions[pos] = line_pos;
+	FORMAT_positions[pos] = line_pos_;
 	FORMAT_types[pos] = type;
 	FORMAT_sizes[pos] = size;
 	FORMAT_keys[pos] = fmt_key;

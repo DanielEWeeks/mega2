@@ -183,7 +183,7 @@ class BatchItem {
     
   // BIG NOTE: The 'valueString' should be pulled from the base class since it will
   // not be valid after the value is reset.
-  virtual void setValue(string valueString) { this->valueString = valueString; }
+  virtual void setValue(string valueString_) { this->valueString = valueString_; }
     
  public:
   virtual ~BatchItem() {}
@@ -315,24 +315,24 @@ class BatchItemInt : public BatchItem {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
+  void setValue(string valueString_) {
     // BIG NOTE: The 'valueString' should be pulled from the base class since it will not be valid after the value is reset.
-    BatchItem::setValue(valueString); // record the string in the base class.
-    stringstream ss(valueString);
+    BatchItem::setValue(valueString_); // record the string in the base class.
+    stringstream ss(valueString_);
     if ((ss >> value).fail()) {
-      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString + "' should be an Integer.",
+      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString_ + "' should be an Integer.",
 			       BATCHFILE_VALUE_NOT_INTEGER);
     }
   }
             
  public:
   // see the documentation for BatchItem::setValue() for a description...
-  void replaceValue(string valueString) {
-    setValue(valueString);
+  void replaceValue(string valueString_) {
+    setValue(valueString_);
     setValueWasReplaced();
   }
-  void replaceValue(int value) {
-    this->value = value;
+  void replaceValue(int value_) {
+    this->value = value_;
     setValueWasReplaced();
   }
   int getValue() { return value; }
@@ -374,17 +374,17 @@ protected:
     }
     
     // see the documentation for BatchItem::setValue() for a description...
-    void setValue(string valueString) {
-        // BIG NOTE: The 'valueString' should be pulled from the base class since it will not be valid after the value is reset.
-        BatchItemInt::setValue(valueString);
+    void setValue(string valueString_) {
+        // BIG NOTE: The 'valueString_' should be pulled from the base class since it will not be valid after the value is reset.
+        BatchItemInt::setValue(valueString_);
         // Now check to see if the value in the valuesPermitted vector is legal...
         valueCheck();
     }
     
 public:
     // see the documentation for BatchItem::setValue() for a description...
-    void replaceValue(int value) {
-        BatchItemInt::replaceValue(value);
+    void replaceValue(int value_) {
+        BatchItemInt::replaceValue(value_);
         valueCheck();
     }
     
@@ -410,19 +410,19 @@ class BatchItemIntGt0 : public BatchItemInt {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    BatchItemInt::setValue(valueString);
+  void setValue(string valueString_) {
+    BatchItemInt::setValue(valueString_);
     checkValue();
   }
             
  public:
   // see the documentation for BatchItem::setValue() for a description...
-  void replaceValue(int value) {
-    BatchItemInt::replaceValue(value);
+  void replaceValue(int value_) {
+    BatchItemInt::replaceValue(value_);
     checkValue();
   }
             
-  // So that it can instantiate this item...
+  // so that it can instantiate this item...
   friend class BatchFile;
 };
 
@@ -440,22 +440,21 @@ class BatchItemIntGe0 : public BatchItemInt {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    BatchItemInt::setValue(valueString);
+  void setValue(string valueString_) {
+    BatchItemInt::setValue(valueString_);
     checkValue();
   }
             
  public:
   // see the documentation for BatchItem::setValue() for a description...
-  void replaceValue(int value) {
-    BatchItemInt::replaceValue(value);
+  void replaceValue(int value_) {
+    BatchItemInt::replaceValue(value_);
     checkValue();
   }
             
   // So that it can instantiate this item...
   friend class BatchFile;
 };
-        
         
 class BatchItemIntVector : public BatchItem {
  private:
@@ -471,16 +470,16 @@ class BatchItemIntVector : public BatchItem {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    BatchItem::setValue(valueString);
-    stringstream ss(valueString);
+  void setValue(string valueString_) {
+    BatchItem::setValue(valueString_);
+    stringstream ss(valueString_);
                 
     // parse the integers and put them into the vector
     value.clear();
     for (int i; ss >> i;) { value.push_back(i); if (ss.eof()) break; }
                 
     if (ss.fail()) {
-      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString + "' should be a Vector of Integers.",
+      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString_ + "' should be a Vector of Integers.",
 			       BATCHFILE_VALUE_NOT_INTEGER_VECTOR);
     }
   }
@@ -488,12 +487,12 @@ class BatchItemIntVector : public BatchItem {
  public:
   // see the documentation for BatchItem::setValue() for a description...
   void resetValue() { value = defaultValue; }
-  void replaceValue(string valueString) {
-    setValue(valueString);
+  void replaceValue(string valueString_) {
+    setValue(valueString_);
     setValueWasReplaced();
   }
-  void replaceValue(vector<int> value) {
-    this->value = value;
+  void replaceValue(vector<int> value_) {
+    this->value = value_;
     setValueWasReplaced();
   }
   // Process an array of values 'n' items in length...
@@ -505,8 +504,8 @@ class BatchItemIntVector : public BatchItem {
   void clear() {
     value.clear();
   }
-  void appendToValue(int value) {
-    this->value.push_back(value);
+  void appendToValue(int value_) {
+    this->value.push_back(value_);
     setValueWasReplaced();
   }
   vector<int> getValue() { return value; }
@@ -543,9 +542,9 @@ protected:
     BatchItemIntVectorChromosome(string keyword, string section, vector<int> defaultValue) : BatchItemIntVector(keyword, section, defaultValue) { }
     
     // see the documentation for BatchItem::setValue() for a description...
-    void setValue(string valueString) {
-        BatchItem::setValue(valueString);
-        stringstream ss(valueString);
+    void setValue(string valueString_) {
+        BatchItem::setValue(valueString_);
+        stringstream ss(valueString_);
         
         // parse the integers and put them into the vector
         for (string ch; ss >> ch;) {
@@ -554,10 +553,10 @@ protected:
             if (i != -1) {
                 value.push_back(i);
             } else {
-                stringstream ss;
-                ss << "A chromosome must be a positive integer less than '" << lastautosome+4 << "' or one of the following: X, Y, XY, MT, U.\n";
+                stringstream ss2;
+                ss2 << "A chromosome must be a positive integer less than '" << lastautosome+4 << "' or one of the following: X, Y, XY, MT, U.\n";
                 //ss << "A chromosome must be a positive integer or one of the following: X, Y, XY, MT, U.\n";
-                throw BatchFileException(ss.str(), BATCHFILE_VALUE_NOT_IN_PERMITTED_LIST);
+                throw BatchFileException(ss2.str(), BATCHFILE_VALUE_NOT_IN_PERMITTED_LIST);
             }
             if (ss.eof()) break;
         }
@@ -578,9 +577,9 @@ class BatchItemIntVectorEterm : public BatchItemIntVector {
  BatchItemIntVectorEterm(string keyword, string section, vector<int> defaultValue) : BatchItemIntVector(keyword, section, defaultValue) { }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    BatchItem::setValue(valueString);
-    stringstream ss(valueString);
+  void setValue(string valueString_) {
+    BatchItem::setValue(valueString_);
+    stringstream ss(valueString_);
                 
     // This should be a string of integers terminated by the 'e' character...
     for (int i; ss >> i;) {this->value.push_back(i); if (ss.eof()) break;}
@@ -594,7 +593,7 @@ class BatchItemIntVectorEterm : public BatchItemIntVector {
       string x;
       ss >> x; // get the remainder of the line as a string which and better be an "e"
       if (x != "e")
-	throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString + "' should be a Vector of Integers terminated with the 'e' character.",
+	throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString_ + "' should be a Vector of Integers terminated with the 'e' character.",
 				 BATCHFILE_VALUE_NOT_INTEGER_VECTOR_ETERM);
     }        // parse the integers and put them into the vector
   }
@@ -628,26 +627,26 @@ class BatchItemDouble : public BatchItem {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    BatchItem::setValue(valueString);
-    stringstream ss(valueString);
+  void setValue(string valueString_) {
+    BatchItem::setValue(valueString_);
+    stringstream ss(valueString_);
     if ((ss >> value).fail()) {
-      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString + "' should be a Double.",
+      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString_ + "' should be a Double.",
 			       BATCHFILE_VALUE_NOT_DOUBLE);
     }
   }
-  void setValue(double value) {
-    this->value = value;
+  void setValue(double value_) {
+    this->value = value_;
   }
             
  public:
   // see the documentation for BatchItem::setValue() for a description...
-  void replaceValue(string valueString) {
-    setValue(valueString);
+  void replaceValue(string valueString_) {
+    setValue(valueString_);
     setValueWasReplaced();
   }
-  void replaceValue(double value) {
-    this->value = value;
+  void replaceValue(double value_) {
+    this->value = value_;
     setValueWasReplaced();
   }
   double getValue() const { return value; }
@@ -677,15 +676,15 @@ class BatchItemDoubleGe0 : public BatchItemDouble {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    BatchItemDouble::setValue(valueString);
+  void setValue(string valueString_) {
+    BatchItemDouble::setValue(valueString_);
     checkValue();
   }
             
  public:
   // see the documentation for BatchItem::setValue() for a description...
-  void replaceValue(int value) {
-    BatchItemDouble::replaceValue(value);
+  void replaceValue(int value_) {
+    BatchItemDouble::replaceValue(value_);
     checkValue();
     setValueWasReplaced();
   }
@@ -701,12 +700,12 @@ class BatchItemMissingQuant : public BatchItemDouble {
  BatchItemMissingQuant(string keyword, string section, double defaultValue) : BatchItemDouble(keyword, section, defaultValue) {}
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    if (valueString == "NA") BatchItemDouble::replaceValue(QMISSING);
-    else BatchItemDouble::setValue(valueString);
+  void setValue(string valueString_) {
+    if (valueString_ == "NA") BatchItemDouble::replaceValue(QMISSING);
+    else BatchItemDouble::setValue(valueString_);
   }
-  void setValue(double value) {
-    BatchItemDouble::setValue(value);
+  void setValue(double value_) {
+    BatchItemDouble::setValue(value_);
   }
             
  public:
@@ -728,28 +727,28 @@ class BatchItemDoubleVector : public BatchItem {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    BatchItem::setValue(valueString);
-    stringstream ss(valueString);
+  void setValue(string valueString_) {
+    BatchItem::setValue(valueString_);
+    stringstream ss(valueString_);
                 
     // parse the integers and put them into the vector
     for (double i; ss >> i; ) { value.push_back(i); if (ss.eof()) break; }
                 
     if (ss.fail()) {
-      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString + "' should be a Vector of Doubles.",
+      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString_ + "' should be a Vector of Doubles.",
 			       BATCHFILE_VALUE_NOT_DOUBLE_VECTOR);
     }
   }
             
  public:
   // see the documentation for BatchItem::setValue() for a description...
-  void replaceValue(string valueString) {
+  void replaceValue(string valueString_) {
     value.clear();
-    setValue(valueString);
+    setValue(valueString_);
     setValueWasReplaced();
   }
-  void replaceValue(vector<double> value) {
-    this->value = value;
+  void replaceValue(vector<double> value_) {
+    this->value = value_;
     setValueWasReplaced();
   }
   // Process an array of values 'n' items in length...
@@ -761,8 +760,8 @@ class BatchItemDoubleVector : public BatchItem {
   void clear() {
     value.clear();
   }
-  void appendToValue(double value) {
-    this->value.push_back(value);
+  void appendToValue(double value_) {
+    this->value.push_back(value_);
     setValueWasReplaced();
   }
   virtual const char *getValueCstr() const {
@@ -807,43 +806,43 @@ class BatchItemBoolean : public BatchItem {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    BatchItem::setValue(valueString);
-    valueString = toUpper(valueString);
-    if (valueString == "YES" || valueString == "Y" || valueString == "TRUE" || valueString == "T" || valueString == "1") {
+  void setValue(string valueString_) {
+    BatchItem::setValue(valueString_);
+    valueString_ = toUpper(valueString_);
+    if (valueString_ == "YES" || valueString_ == "Y" || valueString_ == "TRUE" || valueString_ == "T" || valueString_ == "1") {
       value = true;
-    } else if (valueString == "NO" || valueString == "N" || valueString == "FALSE" || valueString == "F" || valueString == "0") {
+    } else if (valueString_ == "NO" || valueString_ == "N" || valueString_ == "FALSE" || valueString_ == "F" || valueString_ == "0") {
       value = false;
     } else {
-      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString + "' should be a Boolean (e.g.. yes, y, true, t, 1, no, n, false, f, 0).",
+      throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + valueString_ + "' should be a Boolean (e.g.. yes, y, true, t, 1, no, n, false, f, 0).",
 			       BATCHFILE_VALUE_NOT_DOUBLE);
     }
   }
             
  public:
   // see the documentation for BatchItem::setValue() for a description...
-  void replaceValue(string valueString) {
-    setValue(valueString);
+  void replaceValue(string valueString_) {
+    setValue(valueString_);
     setValueWasReplaced();
   }
-  void replaceValue(bool value) {
-    this->value = value;
+  void replaceValue(bool value_) {
+    this->value = value_;
     setValueWasReplaced();
   }
-  void replaceValueInt(int value) {
-    if (value == 1) this->value = true;
-    else if (value == 0) this->value = false;
+  void replaceValueInt(int value_) {
+    if (value_ == 1) this->value = true;
+    else if (value_ == 0) this->value = false;
     else {
         stringstream ss;
-        ss << value;
+        ss << value_;
         throw BatchFileException("Batch Item '" + getKeyword() + "' value '" + ss.str() + "' Integer boolean values must be either 1 or 0.",
                                  BATCHFILE_VALUE_NOT_BOOLEAN);
     }
     setValueWasReplaced();
   }
-  void replaceValueYorN(int value) {
-    if (value == 'y' || value == 'Y') this->value = true;
-    else if (value == 'n' || value == 'N') this->value = false;
+  void replaceValueYorN(int value_) {
+    if (value_ == 'y' || value_ == 'Y') this->value = true;
+    else if (value_ == 'n' || value_ == 'N') this->value = false;
     else {
 	throw BatchFileException("Batch Item '" + getKeyword() + "' value must be either {y,Y,n,N}.",
                              BATCHFILE_VALUE_NOT_BOOLEAN);
@@ -879,14 +878,14 @@ class BatchItemString : public BatchItem {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    value = this->value = valueString;
+  void setValue(string valueString_) {
+    value = this->value = valueString_;
   }
             
  public:
   // see the documentation for BatchItem::setValue() for a description...
-  void replaceValue(string valueString) {
-    value = valueString;
+  void replaceValue(string valueString_) {
+    value = valueString_;
     setValueWasReplaced();
   }
   string getValue() { return value; }
@@ -896,12 +895,12 @@ class BatchItemString : public BatchItem {
   const char* getDefaultValueCstr() { return defaultValue.c_str(); }
 
   const bool is_numeric() const {
-    const char *value = this->value.c_str();
+    const char *value_ = this->value.c_str();
     char *end;
-    // The converted value is thrown away, because we just want to know if it is valid...
-    (void) strtod((const char *)value, &end);
+    // The converted value_ is thrown away, because we just want to know if it is valid...
+    (void) strtod((const char *)value_, &end);
     // See user_input.cpp:set_missing_quant_input() for an explaination of this test...
-    return (strlen(value) != 0 && strlen(end) == 0 && errno != ERANGE);
+    return (strlen(value_) != 0 && strlen(end) == 0 && errno != ERANGE);
   }
             
   // So that it can instantiate this item...
@@ -938,15 +937,15 @@ class BatchItemStringOf : public BatchItemString {
   }
             
   // see the documentation for BatchItem::setValue() for a description...
-  void setValue(string valueString) {
-    BatchItemString::setValue(valueString);
+  void setValue(string valueString_) {
+    BatchItemString::setValue(valueString_);
     // Now check to see if the value in the valuesPermitted vector is legal...
     valueCheck();
   }
             
  public:
-  void replaceValue(string value) {
-    BatchItemString::setValue(value);
+  void replaceValue(string value_) {
+    BatchItemString::setValue(value_);
     // Now check to see if the value in the valuesPermitted vector is legal...
     valueCheck();
     setValueWasReplaced();
@@ -963,17 +962,17 @@ class BatchItemStringVector : public BatchItem {
             
   // break the string into tokens separated by white space and
   // store them into the value vector...
-  void tokenizeStringAndSetValue(string valueString, string delimiters) {
+  void tokenizeStringAndSetValue(string valueString_, string delimiters) {
     size_t startpos = 0;
-    size_t pos = valueString.find_first_of(delimiters, startpos);
+    size_t pos = valueString_.find_first_of(delimiters, startpos);
     string token;
                 
     while (string::npos != pos || string::npos != startpos) {
-      token = valueString.substr(startpos, pos - startpos);
+      token = valueString_.substr(startpos, pos - startpos);
       value.push_back(token.substr(0, token.length()));
                     
-      startpos = valueString.find_first_not_of(delimiters, pos);
-      pos = valueString.find_first_of(delimiters, startpos);
+      startpos = valueString_.find_first_not_of(delimiters, pos);
+      pos = valueString_.find_first_of(delimiters, startpos);
     }
                 
     setWasReadFromBatchFile();
@@ -988,20 +987,20 @@ class BatchItemStringVector : public BatchItem {
     value = this->defaultValue = defaultValue;
   }
             
-  void setValue(string valueString) {
-    BatchItem::setValue(valueString);
-    tokenizeStringAndSetValue(valueString, " \t");
+  void setValue(string valueString_) {
+    BatchItem::setValue(valueString_);
+    tokenizeStringAndSetValue(valueString_, " \t");
   }
             
  public:
   // see the documentation for BatchItem::setValue() for a description...
-  void replaceValue(string valueString) {
+  void replaceValue(string valueString_) {
     value.clear();
-    setValue(valueString);
+    setValue(valueString_);
     setValueWasReplaced();
   }
-  void replaceValue(vector<string> value) {
-    this->value = value;
+  void replaceValue(vector<string> value_) {
+    this->value = value_;
     setValueWasReplaced();
   }
   // Process an array of values 'n' items in length...
@@ -1067,14 +1066,14 @@ class BatchItemFileInput : public BatchItemFile {
 #endif /* DISABLE_FILE_CHECKS */
   }
 
-  void setValue(string valueString) {
-    BatchItemFile::setValue(valueString);
+  void setValue(string valueString_) {
+    BatchItemFile::setValue(valueString_);
     valueCheck();
   }
 
  public:
-  void replaceValue(string valueString) {
-    setValue(valueString);
+  void replaceValue(string valueString_) {
+    setValue(valueString_);
     setValueWasReplaced();
   }
             
@@ -1090,18 +1089,18 @@ class BatchItemDirectory : public BatchItemString {
 
   void valueCheck(); // in batch_input.cpp
 
-  void setValue(string valueString) {
-    BatchItemString::setValue(valueString);
+  void setValue(string valueString_) {
+    BatchItemString::setValue(valueString_);
     valueCheck();
   }
 
  public:
-  void replaceValue(string valueString) {
-    setValue(valueString);
+  void replaceValue(string valueString_) {
+    setValue(valueString_);
     setValueWasReplaced();
   }
-  void replaceValueNoCheck(string valueString) {
-    BatchItemString::setValue(valueString);
+  void replaceValueNoCheck(string valueString_) {
+    BatchItemString::setValue(valueString_);
     setValueWasReplaced();
   }
             
@@ -1119,11 +1118,11 @@ class BatchItemAnalysis : public BatchItem {
 
     BatchItemAnalysis(string keyword, string section) : BatchItem(keyword, section) { }
             
-    void setValue(CLASS_ANALYSIS *value) {
-        this->value = value;
+    void setValue(CLASS_ANALYSIS *value_) {
+        this->value = value_;
     }
-    void setValue(string valueString) {
-        BatchItem::setValue(valueString);
+    void setValue(string valueString_) {
+        BatchItem::setValue(valueString_);
 
         bool found = false;
 	// This is a list of the "top level" analysis. That is to say, those analysis modes that
@@ -1137,14 +1136,14 @@ class BatchItemAnalysis : public BatchItem {
             analysis_types at = analysis_list[i];
             CLASS_ANALYSIS *a = at.analysis;
             const char *analysisName = a->_name;
-            if (strcasecmp(analysisName, valueString.c_str()) == 0) {
+            if (strcasecmp(analysisName, valueString_.c_str()) == 0) {
                 found = true;
                 value = a;
                 break;
             }
         }
         if (!found) {
-            throw BatchFileException("Batch Item '" + getKeyword() + "' the analysis option '" + valueString + "' is unknown.",
+            throw BatchFileException("Batch Item '" + getKeyword() + "' the analysis option '" + valueString_ + "' is unknown.",
                                      BATCHFILE_ANALYSIS_OPTION_UNKNOWN);
         }
         setWasReadFromBatchFile();
@@ -1158,12 +1157,12 @@ class BatchItemAnalysis : public BatchItem {
     return value->_name;
   }
             
-  void replaceValue(string valueString) {
-    setValue(valueString);
+  void replaceValue(string valueString_) {
+    setValue(valueString_);
     setValueWasReplaced();
   }
-  void replaceValue(CLASS_ANALYSIS *value) {
-    this->value = value;
+  void replaceValue(CLASS_ANALYSIS *value_) {
+    this->value = value_;
     setValueWasReplaced();
   }
             

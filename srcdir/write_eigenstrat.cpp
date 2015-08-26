@@ -146,7 +146,6 @@ void CLASS_EIGENSTRAT::interactive_sub_prog_name_to_sub_option(analysis_type *an
 // The genotype information that is included at the end fo the .PED file
 // is not included, this information is written to the .LGEN file. In binary format
 // the genotype information is written to the .BIM (allele names), and .BED (values).
-extern char *file_names[];
 
 void CLASS_EIGENSTRAT::save_pedsix_file(linkage_ped_top *Top,
                                         const int pwid,
@@ -158,9 +157,9 @@ void CLASS_EIGENSTRAT::save_pedsix_file(linkage_ped_top *Top,
         eigenstrat_pedsix(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::ped_per(Top) { }
         void make_file() {
             //if (_tte == (linkage_locus_rec *)NULL) return;
-            mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, ::file_names[0]);  //fam
+            mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, Outfile_Names[0]);  //fam
             missing_affection_status = 0;
-            run_loop(::file_names[0]);
+            run_loop(Outfile_Names[0]);
         }
         void inner() {
             if (!has_pheno()) {
@@ -201,9 +200,9 @@ void CLASS_EIGENSTRAT::save_ped_file(linkage_ped_top *Top,
         eigenstrat_ped(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_loci(Top) { }
         void make_file() {
             //if (_tte == (linkage_locus_rec *)NULL) return;
-            mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, ::file_names[0]);
+            mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, Outfile_Names[0]);
             missing_affection_status = 0;
-            run_loop(::file_names[0]);
+            run_loop(Outfile_Names[0]);
         }
         void per_start() {
             process_per = 1;
@@ -275,8 +274,8 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
             ~eigenstrat_snp_major() {}
             void make_file() {
                 //if (_tte == (linkage_locus_rec *)NULL) return;
-                mssgvf("        EIGENSTRAT binary file snp: %s/%s\n", *_opath, ::file_names[3]);
-                run_loop(*_opath, ::file_names[3], write_binary);
+                mssgvf("        EIGENSTRAT binary file snp: %s/%s\n", *_opath, Outfile_Names[3]);
+                run_loop(*_opath, Outfile_Names[3], write_binary);
             }
             void file_header() {
                 plink_binary::file_header(_filep);

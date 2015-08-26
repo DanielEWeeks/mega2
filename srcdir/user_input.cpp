@@ -88,7 +88,7 @@ void            define_affection_labels(linkage_ped_top *Top,
 void           set_missing_quant_input(linkage_ped_top *Top, analysis_type analysis);
 
 int            gh_cov_selection(int num_select, int *trait_order,
-				int *covariates,
+				int *local_covariates,
 				linkage_locus_top *LTop);
 char           *untyped_ped_messg(int opt, char *messg);
 
@@ -2289,8 +2289,8 @@ static void untyped_ped_menu(int *opt)
     return;
 }
 
-int gh_cov_selection(int num_traits, int *traits,
-                     int *covariates, linkage_locus_top *LTop)
+int gh_cov_selection(int num_select, int *traits,
+                     int *local_covariates, linkage_locus_top *LTop)
 {
 
     int t, n, numq, num_cov=0, done=0, *quants, *selected;
@@ -2298,7 +2298,7 @@ int gh_cov_selection(int num_traits, int *traits,
 
 
     numq=0;
-    for(t=0; t<num_traits; t++) {
+    for(t=0; t<num_select; t++) {
         if (LTop->Locus[traits[t]].Type == QUANT) numq++;
     }
 
@@ -2309,7 +2309,7 @@ int gh_cov_selection(int num_traits, int *traits,
     for(t=0; t<numq; t++) selected[t]=0;
 
     numq=0;
-    for(t=0; t<num_traits; t++) {
+    for(t=0; t<num_select; t++) {
         if (LTop->Locus[traits[t]].Type == QUANT) {
             quants[numq]=t; /* index of element in trait */
             numq++;
@@ -2336,7 +2336,7 @@ int gh_cov_selection(int num_traits, int *traits,
         newline;
         str_p=&(cselect[0]);
         while(*str_p != '\0') {
-            if (num_cov >= num_traits) {
+            if (num_cov >= num_select) {
                 done=1; break;
             } else if (*str_p == 'e' || *str_p == 'E') {
                 done=1; break;
@@ -2353,13 +2353,13 @@ int gh_cov_selection(int num_traits, int *traits,
                     }
                 }
                 cnum[n]='\0';
-                if (atoi(cnum) >= 1 && atoi(cnum) <= num_traits) {
+                if (atoi(cnum) >= 1 && atoi(cnum) <= num_select) {
                     selected[atoi(cnum)-1]=1;
                     num_cov++;
                 } else {
                     printf("Invalid selection %s, please re-select.\n",
                            cnum);
-                    for (t=0; t<num_traits; t++) {
+                    for (t=0; t<num_select; t++) {
                         selected[t]=0;
                     }
                     strcpy(cnum, ""); strcpy(cselect, "");
@@ -2368,7 +2368,7 @@ int gh_cov_selection(int num_traits, int *traits,
                 }
             } else {
                 printf("Non-numeric characters in input, please re-select.\n");
-                for (t=0; t<num_traits; t++) {
+                for (t=0; t<num_select; t++) {
                     selected[t]=0;
                 }
                 strcpy(cnum, ""); strcpy(cselect, "");
@@ -2381,7 +2381,7 @@ int gh_cov_selection(int num_traits, int *traits,
     if (num_cov > 0) {
         for(t=0; t<numq; t++) {
             if (selected[t]==1) {
-                covariates[quants[t]]=1;
+                local_covariates[quants[t]]=1;
             }
         }
 
@@ -2390,7 +2390,7 @@ int gh_cov_selection(int num_traits, int *traits,
         for (t=0; t<numq; t++) {
             sprintf(err_msg, "%d) %s %s", t+1,
                     LTop->Locus[traits[quants[t]]].Name,
-                    (covariates[quants[t]]? "[covariate]":""));
+                    (local_covariates[quants[t]]? "[covariate]":""));
             mssgf(err_msg);
         }
         draw_line();

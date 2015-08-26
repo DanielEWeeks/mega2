@@ -322,7 +322,7 @@ void vcf_entry::print(ostream &out, const set<string> &INFO_to_keep, bool keep_a
 	string GFILTER_tmp;
 	if (FORMAT.size() > 0)
 	{
-		char PHASE;
+		char PHASE_;
 		out << '\t' << get_FORMAT();
 
 		for (unsigned int ui=0; ui<N_indv; ui++)
@@ -338,13 +338,13 @@ void vcf_entry::print(ostream &out, const set<string> &INFO_to_keep, bool keep_a
 					if (include_genotype[ui] == true)
 					{
 						get_indv_GENOTYPE_ids(ui, genotype);
-						PHASE = get_indv_PHASE(ui);
+						PHASE_ = get_indv_PHASE(ui);
 						if ((genotype.first != -1) && (genotype.second != -1))
-							out << int2str(genotype.first) << PHASE << int2str(genotype.second);
-						else if ((PHASE == '|') && (genotype.second == -1))
+							out << int2str(genotype.first) << PHASE_ << int2str(genotype.second);
+						else if ((PHASE_ == '|') && (genotype.second == -1))
 							out << int2str(genotype.first);	// Handle haploid case
 						else
-							out << int2str(genotype.first) << PHASE << int2str(genotype.second);
+							out << int2str(genotype.first) << PHASE_ << int2str(genotype.second);
 					}
 					else
 						out << "./.";

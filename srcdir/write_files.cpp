@@ -574,7 +574,7 @@ void  create_linkage_files(linkage_ped_top **LPedTop, int *numchr, char *file_na
 
     int i, glob_files;
     int no_orig_ped=0;
-    int sex_linked, unmapped_markers=0;
+    int sex_linked, unmapped_markers_p=0;
 
     analysis_type analysis=TO_LINKAGE;
 
@@ -609,7 +609,7 @@ void  create_linkage_files(linkage_ped_top **LPedTop, int *numchr, char *file_na
 
     for (i=0; i < main_chromocnt; i++) {
         if (global_chromo_entries[i] == UNKNOWN_CHROMO) {
-            unmapped_markers = 1;
+            unmapped_markers_p = 1;
             break;
         }
     }
@@ -628,7 +628,7 @@ void  create_linkage_files(linkage_ped_top **LPedTop, int *numchr, char *file_na
         } else {
             *numchr = 0;
             get_loci_on_chromosome(0);
-            if (unmapped_markers) {
+            if (unmapped_markers_p) {
                 /* append the unmapped loci */
                 get_unmapped_loci(1);
             }
@@ -1124,7 +1124,7 @@ void write_locus_stats(linkage_locus_top *LTop, file_format locus_file_type)
     log_line(mssgf);
 }
 
-void write_ped_stats(linkage_ped_top *Top, int pedfile_type)
+void write_ped_stats(linkage_ped_top *Top)
 
 {
     size_t individual_count, male_count, female_count;
@@ -1136,7 +1136,7 @@ void write_ped_stats(linkage_ped_top *Top, int pedfile_type)
         return;
     }
 
-    if (pedfile_type == PREMAKEPED_PFT) {
+    if (Top->pedfile_type == PREMAKEPED_PFT) {
         count_pgenotypes(Top, &individual_count, &male_count, &female_count,
                          &untyped, &typed, &peds_typed, &male_typed, &female_typed,
                          &half_typed);
@@ -1152,7 +1152,7 @@ void write_ped_stats(linkage_ped_top *Top, int pedfile_type)
                          &untyped, &typed, &peds_typed, &male_typed, &female_typed,
                          &half_typed);
 #ifndef HIDESTATUS
-        if (pedfile_type == POSTMAKEPED_PFT) {
+        if (Top->pedfile_type == POSTMAKEPED_PFT) {
             mssgf("Input pedigree file is in post-makeped format.");
         }
 #endif /* HIDESTATUS */

@@ -27,6 +27,8 @@
 #include <string.h>
 #ifndef _WIN
 #include <unistd.h>
+#else
+#define fdopen _fdopen
 #endif
 #include <assert.h>
 #ifdef BGZF_MT

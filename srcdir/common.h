@@ -360,7 +360,7 @@ extern int             ErrorSimOpt; /* Flag for whether to introduce errors */
 // OrigIds[0]==?; ID (int)
 extern int             OrigIds[2];
 
-extern char           *file_names[NUM_OUTFILES];
+extern char           *Outfile_Names[NUM_OUTFILES];
 extern int            CreateRunFolder;  /* create time-stamped folder for each run? */
 extern int            check_web_ver;
 extern int            BatchFileCreated; /* 1 if batchfile is created during run */

@@ -2043,7 +2043,7 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
         mssgf("Input pedigree data contains:");
 
         order_heterozygous_allele(Top);
-        write_ped_stats(Top, pedfile_type);
+        write_ped_stats(Top);
         if (omitfl_name != NULL) {
             premakeped_omit_file(Top, omitfl_name, 0);
         }
@@ -2063,7 +2063,7 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
                 mssgf("After excluding untyped pedigrees :");
             }
 #endif
-            write_ped_stats(Top, pedfile_type);
+            write_ped_stats(Top);
         }
     }
 
@@ -2477,7 +2477,7 @@ void omit_file_data_processing(linkage_ped_top *Top,
         // Step 4: Iterate over the locus to be untyped...
         
         if (strcasecmp(omitloci, "All") == 0) {
-            int loci_i;
+            int all_i;
             strcat(err_msg, " at all marker loci.");
             SECTION_LOG(read_omit_file);
             mssgf(err_msg);
@@ -2486,9 +2486,9 @@ void omit_file_data_processing(linkage_ped_top *Top,
             // Trait phenotypes will not be set to unknown."
             // "Please note that when the locus column contains the keyword “All”, it still refers
             // to only marker loci, trait loci are left untouched."
-            for (loci_i = Top->LocusTop->PhenoCnt; loci_i< Top->LocusTop->LocusCnt; loci_i++)
-                if (Top->LocusTop->Locus[loci_i].Class == MARKER)
-                    untype_locus_for_pedfile_type_ped_per(Top, omitped, omitped_i, omitper, omitper_i, loci_i,
+            for (all_i = Top->LocusTop->PhenoCnt; all_i< Top->LocusTop->LocusCnt; all_i++)
+                if (Top->LocusTop->Locus[all_i].Class == MARKER)
+                    untype_locus_for_pedfile_type_ped_per(Top, omitped, omitped_i, omitper, omitper_i, all_i,
                                                           raw_allele);
         } else { // Just the given loci...
             grow(err_msg, " at locus %s.", omitloci);

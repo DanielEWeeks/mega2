@@ -167,8 +167,8 @@ void CLASS_PLINK::save_pedsix_file(linkage_ped_top *Top,
     struct plink_pedsix: public loop::trait, loop::ped_per {
         plink_pedsix(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::ped_per(Top) { }
         void make_file() {
-            mssgvf("        PLINK pedigree file:       %s/%s\n", *_opath, ::file_names[0]);  //fam
-            run_loop(::file_names[0]);
+            mssgvf("        PLINK pedigree file:       %s/%s\n", *_opath, Outfile_Names[0]);  //fam
+            run_loop(Outfile_Names[0]);
         }
         void inner() {
 #if 0
@@ -205,8 +205,8 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
 
         plink_ped(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::ped_per_loci(Top) {}
         void make_file() {
-            mssgvf("        PLINK ped file:            %s/%s\n", *_opath, ::file_names[0]);
-            run_loop(::file_names[0]);
+            mssgvf("        PLINK ped file:            %s/%s\n", *_opath, Outfile_Names[0]);
+            run_loop(Outfile_Names[0]);
         }
         void per_start() {
 #if 0
@@ -272,8 +272,8 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
            ~plink_snp_major() {}
             void make_file() {
                 Tod tod_lmf("make bed file for chr");
-                mssgvf("        PLINK binary file snp:     %s/%s\n", *_opath, ::file_names[3]);
-                run_loop(*_opath, ::file_names[3], write_binary);
+                mssgvf("        PLINK binary file snp:     %s/%s\n", *_opath, Outfile_Names[3]);
+                run_loop(*_opath, Outfile_Names[3], write_binary);
                 tod_lmf();
             }
             void file_header() {
@@ -302,8 +302,8 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
             plink_indiv_major(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), ped_per_loci(Top) { }
            ~plink_indiv_major() {}
             void make_file() {
-                mssgvf("        PLINK binary file indiv:   %s/%s\n", *_opath, ::file_names[3]);
-                run_loop(*_opath, ::file_names[3], write_binary);
+                mssgvf("        PLINK binary file indiv:   %s/%s\n", *_opath, Outfile_Names[3]);
+                run_loop(*_opath, Outfile_Names[3], write_binary);
             }
             void file_header() {
                 plink_binary::file_header(_filep);
@@ -498,8 +498,8 @@ static void write_PLINK_reference_allele_file(linkage_ped_top *Top) {
         
         plink_reference_allele_file(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::null(Top) {}
         void make_file() {
-            mssgvf("        PLINK VCF REF file:        %s/%s\n", *_opath, ::file_names[9]);
-            run_loop(::file_names[9]);
+            mssgvf("        PLINK VCF REF file:        %s/%s\n", *_opath, Outfile_Names[9]);
+            run_loop(Outfile_Names[9]);
         }
         void inner() {
             markers_on_chromosome(_numchr);

@@ -332,7 +332,7 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
             sh_cat(cmd, target);
 
             sprintf(cmd, "%s/%s", "$MORGAN_RELEASE", pgm_path[subopt]);
-            sh_find_pgm(cmd, pgm_path[subopt], pgm);
+            sh_find_pgm(cmd, pgm_path[subopt]);
 
             sprintf(cmd+strlen(cmd), " %s", target);
             strcat(target, ".log");
@@ -349,7 +349,7 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
                 sh_save_output(pgm, "pedfile.dat", target);
             }
         }
-        void sh_find_pgm(const char *fullpath, const char *path, const char *pgm) {
+        void sh_find_pgm(const char *fullpath, const char *path) {
             pr_printf("if ( $?MORGAN_RELEASE  ) then\n");
             pr_printf("  set morgan_def=1\n");
             pr_printf("else\n");

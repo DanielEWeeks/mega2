@@ -903,7 +903,6 @@ static int read_annotated_pedrec(FILE *filep,
         Tod tod_pl_nmj("plink read indiv major bed");
         int allele_i = 0;               // an index for the alleles array
         char allele1[2], allele2[2];    // for converting allele characters to string arrays
-        int i;
         allele1[1] = '\0';
         allele2[1] = '\0';
         // cycle through the locusts searching for allele markers....
@@ -4362,7 +4361,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             // of the marker from a mega2 map, position data for these markers will not have been created.
             // This is OK if any of the maps from the mega2 map file are used because the mega2 map
             // is used to 'subset' the markers found in the VCF file.
-            for (int i= LTop->PhenoCnt; i < LTop->LocusCnt; i++)
+            for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++)
                 if (EXLTop->EXLocus[i].positions == NULL)
                     new_EXLTop_positions(EXLTop, i, EXLTop->MapCnt+1);
             // When processing a vcf file, we have asked 'read_common_map_file()' above to create
@@ -4516,7 +4515,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     tod_hraw();
 
     Tod tod_pstat("write_ped_stats");
-    write_ped_stats(Top, pedfile_type);
+    write_ped_stats(Top);
     tod_pstat();
 
     Tod tod_omit("read annotated omit file");
@@ -4653,7 +4652,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     mssgf("Pedigree data summary after recoding:");
 #endif
     Tod tod_pstat2("write_ped_stats 2");
-    write_ped_stats(Top, pedfile_type);
+    write_ped_stats(Top);
     tod_pstat2();
 
 
@@ -5599,11 +5598,11 @@ void m2_map_entry::set_chr(const string CHROM) {
     } else if (CHROM == "chrMT" || CHROM == "MT") {
         chr = MITO_CHROMOSOME;
     } else {
-        int chr;
+        int chrm;
         istringstream ss(CHROM);
         // If we can convert it into a number then use it, otherwise designate it as unknown.
-        if (!(ss >> chr)) this->chr = UNKNOWN_CHROMO; // "U"
-        else this->chr = chr;
+        if (!(ss >> chrm)) this->chr = UNKNOWN_CHROMO; // "U"
+        else this->chr = chrm;
     }
 };
 

@@ -102,29 +102,29 @@ void output_log::printLOG(string s) {
     mssgf(s.c_str());
 }
 
-void output_log::error(string err_msg, int error_code) {
-    errorf(err_msg.c_str());
+void output_log::error(string errmsg, int error_code) {
+    errorf(errmsg.c_str());
     EXIT(error_code); // We need to factor this into a Mega2 error code somehow
 }
 
-void output_log::error(string err_msg, double value1, double value2, int error_code) {
+void output_log::error(string errmsg, double value1, double value2, int error_code) {
     stringstream ss;
     ss << "Value1=" << value1 << " Value2=" << value2 << endl;
     errorf(ss.str().c_str());
     EXIT(error_code);
 }
 
-void output_log::warning(string err_msg) {
-    warnf(err_msg.c_str());
+void output_log::warning(string errmsg) {
+    warnf(errmsg.c_str());
 }
 
-void output_log::one_off_warning(string err_msg) {
+void output_log::one_off_warning(string errmsg) {
     static set<string> previous_warnings;
-    if (previous_warnings.find(err_msg) == previous_warnings.end())
+    if (previous_warnings.find(errmsg) == previous_warnings.end())
     {
         // if the warning was not found before....
-        warnf(err_msg.c_str());
-        previous_warnings.insert(err_msg);
+        warnf(errmsg.c_str());
+        previous_warnings.insert(errmsg);
     }
 }
 

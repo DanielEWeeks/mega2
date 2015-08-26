@@ -1400,7 +1400,7 @@ void CLASS_SAGE::create_output_file(
     int *numchr,
     linkage_ped_top **Top2) {
     infl_type = LPedTreeTop->pedfile_type == POSTMAKEPED_PFT ? LINKAGE : PREMAKEPED;
-    char *mapfl_name = NULL; // assignment to supress warning
+//  char *mapfl_name = NULL; // assignment to supress warning
     int trait_locus_first;
 
     create_SAGE_file(&LPedTreeTop, mapfl_name, &trait_locus_first,

@@ -1160,7 +1160,7 @@ static void merlin_shell_script(int numchr, int global,
             continue;
         }
 
-        sprintf(mfl, "%s/%s", output_paths[tr], file_names[13]);
+        sprintf(mfl, "%s/%s", output_paths[tr], Outfile_Names[13]);
         if ((filep = fopen(mfl, "w")) == NULL) {
             errorvf("Unable to open %s for writing.\n", mfl);
             EXIT(FILE_WRITE_ERROR);
@@ -1171,7 +1171,7 @@ static void merlin_shell_script(int numchr, int global,
 #ifdef HIDEPATH
                 NOPATH
 #else
-                file_names[13]
+                Outfile_Names[13]
 #endif
             );
         script_time_stamp(filep);
@@ -1309,7 +1309,7 @@ static void merlin_shell_script(int numchr, int global,
             if (strcmp(trait_paths[tr], ".")) {
                 fprintf(filep, "cd %s\n", trait_paths[tr]);
             }
-            fprintf(filep, "./%s\n", file_names[13]);
+            fprintf(filep, "./%s\n", Outfile_Names[13]);
             if (strcmp(trait_paths[tr], ".")) {
                 fprintf(filep, "cd ..\n");
             }

@@ -332,7 +332,7 @@ int phe::search(const char *ped, const char *per, vector<string> &v)
     return success;
 }
 
-void phe::test(const string path)
+void phe::test(const string filepath)
 {
     vector<string> v;
     string rest;
@@ -340,7 +340,7 @@ void phe::test(const string path)
     int i;
 
 //    printf("phe::test\n"); fflush(stdout);
-    ifstream ifs(path.c_str(), ifstream::in);
+    ifstream ifs(filepath.c_str(), ifstream::in);
     while (true) {
         ifs >> ped;
         if (!ifs.good()) break;
@@ -417,14 +417,14 @@ int phesearch(const char *ped, const char *per, char **out)
 {
     char **p = out;
     vector<string> v;
-    int debug = 0;
+    int dbg = 0;
     int i, l;
     int ret = PHE.search(ped, per, v);
 
     if (ret == 0) {
         return 0;
     }
-    if (debug)
+    if (dbg)
         printf(
 #if defined(_WIN) || defined(MINGW)
             "phesearch: %s %s %d #%Iu# ",
@@ -433,11 +433,11 @@ int phesearch(const char *ped, const char *per, char **out)
 #endif
             ped, per, ret, v.size());
     for (i = 0, l = (int)v.size(); i < l; i++) {
-        if (debug)
+        if (dbg)
             printf("%d      : %s ", i, v[i].c_str());
         *p++ = strdup(v[i].c_str());
     }
-    if (debug) printf("\n");
+    if (dbg) printf("\n");
     return l;
 }
 

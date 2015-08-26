@@ -339,9 +339,7 @@ void write_annotated_names_file(linkage_locus_top *LTop,
     return;
 }
 
-static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top,
-			       int pedfile_type)
-
+static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top)
 {
 
     int tr, nloop, num_affec=num_traits;
@@ -853,7 +851,7 @@ void create_mega2annot_files(linkage_ped_top **LPedTop, char *file_names[],
         omit_peds(untyped_ped_opt, Top);
 
         rename_mega2annot_locus(Top->LocusTop);
-        annotated_ped_file(file_names[0], Top, pedfile_type);
+        annotated_ped_file(file_names[0], Top);
         sprintf(err_msg, "        Pedigree file:        %s", file_names[0]);
         mssgf(err_msg);
 

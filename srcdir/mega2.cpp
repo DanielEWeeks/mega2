@@ -244,7 +244,7 @@ int             ErrorSimOpt; /* Flag for whether to introduce errors */
 int             OrigIds[2];
 /* which id field to use from the linkage ped file,
    ele1 - for ind id, ele2, for ped id */
-char           *file_names[NUM_OUTFILES];
+char           *Outfile_Names[NUM_OUTFILES];
 int            CreateRunFolder;  /* create time-stamped folder for each run? This is the default. Turned off with the -nosave option */
 int            check_web_ver;
 int            BatchFileCreated; /* 1 if batchfile is created during run */
@@ -520,9 +520,9 @@ static void free_globals(void)
     }
 */
     for (ii=0; ii < NUM_OUTFILES; ii++) {
-        /*    if (file_names[ii] != NULL)
+        /*    if (Outfile_Names[ii] != NULL)
               check not necessary, as they are always allocated */
-        free(file_names[ii]);
+        free(Outfile_Names[ii]);
     }
 /*  superceded by Free_batch_items() */
     return;
@@ -733,7 +733,7 @@ int             main(int argc, char **argv)
     main_chromocnt = 1; numchr = 1;
 
     for (ii=0; ii<NUM_OUTFILES; ii++) {
-        file_names[ii]=CALLOC((size_t)FILENAME_LENGTH, char);
+        Outfile_Names[ii]=CALLOC((size_t)FILENAME_LENGTH, char);
     }
 
     /* init local variables */
@@ -919,12 +919,12 @@ int             main(int argc, char **argv)
         af = check_annotated_file_format(mega2_input_files);
         if (af == 0) {
             if (locusfl_name && *locusfl_name != 0) {
-                FILE *fp = fopen(locusfl_name, "r");
-                if (check_locus_file_format(fp) == NAMES)
+                FILE *tfp = fopen(locusfl_name, "r");
+                if (check_locus_file_format(tfp) == NAMES)
                     Input_Format = in_format_extended_linkage;
                 else
                     Input_Format = in_format_linkage;
-                fclose(fp);
+                fclose(tfp);
             } else {
                 errorvf("The input format is linkage and the locus file is missing.\n");
                 EXIT(EARLY_TERMINATION);
@@ -966,7 +966,7 @@ int             main(int argc, char **argv)
             EXIT(INPUT_DATA_ERROR);
         }
     } else if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED) {
-        int it = PLINK_Args;
+        it = PLINK_Args;
         if (Mega2BatchItems[it].items_read == 0) {
             errorvf("PLINK arguments not specified.\n");
             EXIT(BATCH_FILE_ITEM_ERROR);
@@ -993,7 +993,7 @@ int             main(int argc, char **argv)
     } else if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
                Input_Format == in_format_VCF) {
 
-        int it = PLINK_Args;
+        it = PLINK_Args;
         if (Mega2BatchItems[it].items_read)
             PLINK_args(Mega2BatchItems[it].value.name, 1);
 
@@ -1141,10 +1141,10 @@ int             main(int argc, char **argv)
     tod_reorder();
 
     /*  Mega2Status=TRAIT_SELECTED_M2S; */
-    default_outfile_names(analysis, &(global_chromo_entries[0]), file_names, logdir);
+    default_outfile_names(analysis, &(global_chromo_entries[0]), Outfile_Names, logdir);
 
     /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-    set_output_paths(analysis, LPedTreeTop, Mega2OutputPath);
+    set_output_paths(analysis, LPedTreeTop);
 
     /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
 
@@ -1173,11 +1173,11 @@ int             main(int argc, char **argv)
     if (analysis != QUANT_SUMMARY) {
         log_line(mssgf);
         mssgf("Pedigree statistics after selecting chromosomes and marker loci:");
-        write_ped_stats(LPedTreeTop, -1);
+        write_ped_stats(LPedTreeTop);
     }
     /* Insert error simulation steps here */
     if (ErrorSimOpt) {
-        simulate_errors(LPedTreeTop, numchr, file_names);
+        simulate_errors(LPedTreeTop, numchr, Outfile_Names);
     }
     tod_stat1();
 
@@ -1189,11 +1189,11 @@ int             main(int argc, char **argv)
 
     // Create the data files, and then the shell scripts...
     Tod tod_out("create_output_files");
-    analysis->create_output_file(LPedTreeTop, &analysis, file_names,
+    analysis->create_output_file(LPedTreeTop, &analysis, Outfile_Names,
                                  UntypedPedOpt, &numchr, &Top2);
     tod_out();
     Tod tod_sh("create_shell_file");
-    analysis->create_sh_file(LPedTreeTop, file_names, numchr);
+    analysis->create_sh_file(LPedTreeTop, Outfile_Names, numchr);
     tod_sh();
 
     if (FirstIterMenu == 1 && InputMode == INTERACTIVE_INPUTMODE) {

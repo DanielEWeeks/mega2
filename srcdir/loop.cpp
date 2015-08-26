@@ -66,14 +66,14 @@ void loop::outer::iterate()
 
         if (_chrom_loop) {
             _numchr=global_chromo_entries[i];
-            _Top->analysis->replace_chr_number(file_names, _numchr);
+            _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
         } else {
             if (main_chromocnt > 1) {
                 _numchr=-1;
-                _Top->analysis->replace_chr_number(file_names, 0); // all
+                _Top->analysis->replace_chr_number(Outfile_Names, 0); // all
             } else {
                 _numchr=global_chromo_entries[i];
-                _Top->analysis->replace_chr_number(file_names, _numchr);
+                _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
             }
         }
 
@@ -149,14 +149,14 @@ void loop::chr::iterate()
 
         if (_chrom_loop) {
             _numchr=global_chromo_entries[i];
-            _Top->analysis->replace_chr_number(file_names, _numchr);
+            _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
         } else {
             if (main_chromocnt > 1) {
                 _numchr=-1;
-                _Top->analysis->replace_chr_number(file_names, 0);
+                _Top->analysis->replace_chr_number(Outfile_Names, 0);
             } else {
                 _numchr=global_chromo_entries[i];
-                _Top->analysis->replace_chr_number(file_names, _numchr);
+                _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
             }
         }
 

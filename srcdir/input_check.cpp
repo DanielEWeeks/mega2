@@ -415,114 +415,115 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
               set the three _select items which denote which flag to
               toggle or to exit */
         exclaim(); draw_line();
+    }
 
-	// Default_Reset_Invalid
-	// This option defines how invalid genotypes should be handled without pausing for user-input
-	// via the invalid-genotypes menu (which is skipped). If set to yes the genotypes will be reset
-	// to unknowns, and if set to no invalid genotypes will not be reset.
-        if (InputMode != INTERACTIVE_INPUTMODE &&
-            Mega2BatchItems[/* 26 */ Default_Reset_Invalid].items_read) {
-            if (Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'n' ||
-                Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'N')
-                hmend = imend = aexceed = 0;
-        } else {
-            int imendf = 0, hmendf = 0, aexceedf = 0;
-            printf("Specify whether to reset poorly typed individuals and families:\n");
-            while (select != 0) {
-                strcpy(toggle_str, "");
-                menu_item=0;
-                draw_line();
-                printf("0) Done with this menu - please proceed\n"); menu_item++;
-                if (chk_hmend /* PedStat.halftyped */) {
-                    if (analysis == TO_MENDEL || SIMWALK2(analysis)) {
-                        printf(" NOTE: Proceeding will zero out all half-typed individuals.\n");
-                    } else {
-                        printf(" %d) Set half-typed genotypes to unknown [%s].\n", menu_item,
-                               yorn[hmendf]);
-                        if (!hmendf) {
-                            printf("    If \"no\" is indicated, half-typed genotypes\n");
-                            printf("    will not be looked for.\n");
-                        }
-                        sprintf(toggle_str, "; options %d", menu_item);
-                        halftyped_select = menu_item++;
-                    }
-                }
-                if (chk_imend /* PedStat.genotype_invalid */) {
-                    printf(" %d) Set all genotypes to unknown within entire pedigrees\n",
-                           menu_item);
-                    printf("    at each Mendelianly-inconsistent locus? [%s]\n",
-                           yorn[imendf]);
-                    if (!imendf) {
-                        printf("    If \"no\" is indicated, Mendelianly-inconsistent loci\n");
+    // Default_Reset_Invalid
+    // This option defines how invalid genotypes should be handled without pausing for user-input
+    // via the invalid-genotypes menu (which is skipped). If set to yes the genotypes will be reset
+    // to unknowns, and if set to no invalid genotypes will not be reset.
+    if (InputMode != INTERACTIVE_INPUTMODE &&
+        Mega2BatchItems[/* 26 */ Default_Reset_Invalid].items_read) {
+        if (Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'n' ||
+            Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'N')
+            hmend = imend = aexceed = 0;
+    } else {
+        int imendf = 0, hmendf = 0, aexceedf = 0;
+        printf("Specify whether to reset poorly typed individuals and families:\n");
+        while (select != 0) {
+            strcpy(toggle_str, "");
+            menu_item=0;
+            draw_line();
+            printf("0) Done with this menu - please proceed\n"); menu_item++;
+            if (chk_hmend /* PedStat.halftyped */) {
+                if (analysis == TO_MENDEL || SIMWALK2(analysis)) {
+                    printf(" NOTE: Proceeding will zero out all half-typed individuals.\n");
+                } else {
+                    printf(" %d) Set half-typed genotypes to unknown [%s].\n", menu_item,
+                           yorn[hmendf]);
+                    if (!hmendf) {
+                        printf("    If \"no\" is indicated, half-typed genotypes\n");
                         printf("    will not be looked for.\n");
                     }
-                    grow(toggle_str, ", %d", menu_item);
-                    invalid_select = menu_item++;
-                }
-                if (chk_aexceed /* PedStat.exceed_allcnt */) {
-                    printf(" %d) Set out-of-bound genotypes to unknown? [%s]\n",
-                           menu_item, yorn[aexceedf]);
-                    if (!aexceedf) {
-                        printf("    If \"no\" is indicated, out-of-bound genotypes\n");
-                        printf("    will not be looked for.\n");
-                    }
-                    grow(toggle_str, ", %d", menu_item);
-                    exceedall_select = menu_item++;
-                }
-
-		// NOTE: There seems to be no batch file item to cover this case...
-                if (nonuniq && analysis != TO_PAP && analysis != CRANEFOOT && analysis != IQLS) {
-                    printf(" %d) Generate new unique IDs? [%s]\n", menu_item, yorn[set_uniq]);
-                    grow(toggle_str, ", %d", menu_item);
-                    uniq_select = menu_item++;
-                }
-
-                if (freq_mis) {
-                    printf("Don't know how to correct for frequency mismatches.\n");
-                }
-//              if (PedStat.genotype_invalid || PedStat.halftyped || PedStat.exceed_allcnt) {
-                    strcat(toggle_str, " toggle");
-//              }
-                printf(" %d) EXIT Mega2.\n", menu_item);
-                exit_select=menu_item;
-
-                printf("Select from options 0-%d%s > ", menu_item, toggle_str);
-                fcmap(stdin, "%s", select_); newline;
-                sscanf(select_, "%d", &select);
-                switch(select) {
-                case 0:
-                    break;
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                    if (select == halftyped_select) {
-                        hmendf = (hmendf ? 0 : 1);
-                        break;
-                    } else if (select == invalid_select) {
-                        imendf = (imendf ? 0 : 1);
-                        break;
-                    } else if (select == exceedall_select) {
-                        aexceedf = (aexceedf ? 0 : 1);
-                        break;
-                    } else if (select == uniq_select) {
-                        set_uniq = (set_uniq ? 0 : 1);
-                        break;
-                    } else if (select == exit_select) {
-                        printf("Terminating Mega2.\n");
-                        EXIT(EARLY_TERMINATION);
-                    }
-                default:
-                    printf("Unknown option %s\n", select_);
-                    break;
+                    sprintf(toggle_str, "; options %d", menu_item);
+                    halftyped_select = menu_item++;
                 }
             }
-            hmend = hmendf;
-            imend = imendf;
-            aexceed = aexceedf;
+            if (chk_imend /* PedStat.genotype_invalid */) {
+                printf(" %d) Set all genotypes to unknown within entire pedigrees\n",
+                       menu_item);
+                printf("    at each Mendelianly-inconsistent locus? [%s]\n",
+                       yorn[imendf]);
+                if (!imendf) {
+                    printf("    If \"no\" is indicated, Mendelianly-inconsistent loci\n");
+                    printf("    will not be looked for.\n");
+                }
+                grow(toggle_str, ", %d", menu_item);
+                invalid_select = menu_item++;
+            }
+            if (chk_aexceed /* PedStat.exceed_allcnt */) {
+                printf(" %d) Set out-of-bound genotypes to unknown? [%s]\n",
+                       menu_item, yorn[aexceedf]);
+                if (!aexceedf) {
+                    printf("    If \"no\" is indicated, out-of-bound genotypes\n");
+                    printf("    will not be looked for.\n");
+                }
+                grow(toggle_str, ", %d", menu_item);
+                exceedall_select = menu_item++;
+            }
+
+            // NOTE: There seems to be no batch file item to cover this case...
+            if (nonuniq && analysis != TO_PAP && analysis != CRANEFOOT && analysis != IQLS) {
+                printf(" %d) Generate new unique IDs? [%s]\n", menu_item, yorn[set_uniq]);
+                grow(toggle_str, ", %d", menu_item);
+                uniq_select = menu_item++;
+            }
+
+            if (freq_mis) {
+                printf("Don't know how to correct for frequency mismatches.\n");
+            }
+//              if (PedStat.genotype_invalid || PedStat.halftyped || PedStat.exceed_allcnt) {
+                strcat(toggle_str, " toggle");
+//              }
+            printf(" %d) EXIT Mega2.\n", menu_item);
+            exit_select=menu_item;
+
+            printf("Select from options 0-%d%s > ", menu_item, toggle_str);
+            fcmap(stdin, "%s", select_); newline;
+            sscanf(select_, "%d", &select);
+            switch(select) {
+            case 0:
+                break;
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                if (select == halftyped_select) {
+                    hmendf = (hmendf ? 0 : 1);
+                    break;
+                } else if (select == invalid_select) {
+                    imendf = (imendf ? 0 : 1);
+                    break;
+                } else if (select == exceedall_select) {
+                    aexceedf = (aexceedf ? 0 : 1);
+                    break;
+                } else if (select == uniq_select) {
+                    set_uniq = (set_uniq ? 0 : 1);
+                    break;
+                } else if (select == exit_select) {
+                    printf("Terminating Mega2.\n");
+                    EXIT(EARLY_TERMINATION);
+                }
+            default:
+                printf("Unknown option %s\n", select_);
+                break;
+            }
         }
+        hmend = hmendf;
+        imend = imendf;
+        aexceed = aexceedf;
     }
+
     tod_cepi();
     if (abortf == 2 || abortl == 3) {
         exclaim();

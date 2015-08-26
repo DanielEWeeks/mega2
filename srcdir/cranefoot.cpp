@@ -911,7 +911,7 @@ static void genotyped_percent(linkage_ped_top *LPedTreeTop)
     for (i = 0; i < LPedTreeTop->PedCnt; i++) {
         for (j=0; j < LPedTreeTop->Ped[i].EntryCnt; j++) {
             Entry.LEntry = &(LPedTreeTop->Ped[i].Entry[j]);
-            is_typed_at_markers(Entry, LPedTreeTop->pedfile_type,
+            is_typed_at_markers(Entry, LPedTreeTop,
                                 LPedTreeTop->LocusTop, &percent_typed);
             LPedTreeTop->Ped[i].Entry[j].PercentTyped = percent_typed;
         }

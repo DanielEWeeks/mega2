@@ -59,6 +59,7 @@ public:
         infl_type  = LINKAGE;
         outfl_type = UNKNOWN;
         PedTreeTop = NULL;
+        mapfl_name = NULL;
     }
     virtual ~CLASS_ANALYSIS() {}
 

@@ -921,9 +921,8 @@ batch_item_type *BatchItemGet(int i)
 {
     if (i >= NUM_KEYS) {
         warnvf("Mega2BatchItemGet: index %d too large\n:", i);
-//      throw std::runtime_error(Str("Mega2BatchItemGet: index too large"));
         throw Mega2BatchItemException("Mega2BatchItemGet: index too large");
-        return (batch_item_type *) NULL;
+//      return (batch_item_type *) NULL;
     }
     return &Mega2BatchItems[i];
 }
@@ -935,9 +934,8 @@ batch_item_type *BatchItemGet(Cstr& key)
         return bi;
     else {
         warnvf("Mega2BatchItemGet: key \"%s\" not found\n:", C(key));
-//      throw std::runtime_error(Str("Mega2BatchItemGet: bad key"));
         throw Mega2BatchItemException("Mega2BatchItemGet: bad key");
-        return (batch_item_type *) NULL;
+//      return (batch_item_type *) NULL;
     }
 }
 
@@ -1004,7 +1002,6 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
 {
     char nextline[FILENAME_LENGTH];
     char value[FILENAME_LENGTH];
-    Str  keyword;
     int errtok = 0, errline = 0, cnt = 0;
     extern int debug;
 
@@ -1155,10 +1152,10 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
 
     // Finally process all the other batch arguments
     for (Listbp BatchItemListp = BatchItemList.begin(); BatchItemListp != BatchItemList.end(); BatchItemListp++) {
-        batch_item_type *bi = (*BatchItemListp);
-        Str& keyword = bi->keyword;
-        Str& bivalue = bi->value_str;
-        strcpy(value, bi->value_str.c_str());
+        batch_item_type *bibatch = (*BatchItemListp);
+        Str& keyword = bibatch->keyword;
+        Str& bivalue = bibatch->value_str;
+        strcpy(value, bibatch->value_str.c_str());
         if (debug) msgvf("key %s, val %s\n", C(keyword), value);
 
 //err: does this do anything
@@ -1168,7 +1165,7 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
             malformed_batch_line(C(keyword));
         }
 
-        RawBatchValueSet(value, bi);
+        RawBatchValueSet(value, bibatch);
     }
 
     if (errtok + errline) {

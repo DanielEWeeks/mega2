@@ -51,6 +51,9 @@ bool variant_file::read_index_file(const string &index_filename)
 	idx_read(in, meta_buffer, l_meta, 1);
 	idx_read(in, indv_buffer, l_indv, 1);
 
+        meta_buffer[l_meta] = 0;
+        indv_buffer[l_indv] = 0;
+
 	// Split the strings
 	meta.resize(0);
 	char * pch;

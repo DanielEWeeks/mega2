@@ -83,8 +83,8 @@ static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
 
         plink_core_lgen(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::loci_ped_per(Top) {}
         void make_file() {
-            mssgvf("        PLINK lgen file:           %s/%s\n", *_opath, ::file_names[3]);
-            run_loop(::file_names[3]);
+            mssgvf("        PLINK lgen file:           %s/%s\n", *_opath, Outfile_Names[3]);
+            run_loop(Outfile_Names[3]);
         }
         void inner() {
             if (!_allele1 || !_allele2) return;
@@ -117,8 +117,8 @@ static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
 
         plink_core_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) {}
         void make_file() {
-            msgvf("        PLINK phenotype file:      %s/%s\n", *_opath, ::file_names[2]);
-            run_loop(::file_names[2]);
+            msgvf("        PLINK phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
+            run_loop(Outfile_Names[2]);
         }
         void file_header() {
             int tr;
@@ -148,7 +148,7 @@ void CLASS_PLINK_CORE::save_pheno_file(linkage_ped_top *Top,
 				       const int pwid,
 				       const int fwid)
 {
-  save_PLINK_pheno(::file_names[2], Top, pwid, fwid);
+  save_PLINK_pheno(Outfile_Names[2], Top, pwid, fwid);
 }
 
 // MAP_MISSING is used for an unknown or missing map value...
@@ -314,8 +314,8 @@ static void write_PLINK_map(linkage_ped_top *LPTop,
 
         plink_core_map(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::null(Top) {}
         void make_file() {
-            mssgvf("        PLINK map file:            %s/%s\n", *_opath, ::file_names[1]);
-            run_loop(::file_names[1]);
+            mssgvf("        PLINK map file:            %s/%s\n", *_opath, Outfile_Names[1]);
+            run_loop(Outfile_Names[1]);
         }
         void file_header() {
             // It seems that PLINK map (.BIM) files cannot handle comments...

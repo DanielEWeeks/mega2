@@ -160,8 +160,8 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
             use_iid = ni == siid.size();
             use_joint = !use_fid && !use_iid;
             
-            msgvf("         PSEQ phenotype file:      %s/%s\n", *_opath, ::file_names[2]);
-            run_loop(::file_names[2]);
+            msgvf("         PSEQ phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
+            run_loop(Outfile_Names[2]);
         }
         void file_header() {
             int tr, first;
@@ -248,7 +248,7 @@ void CLASS_PSEQ::save_pheno_file(linkage_ped_top *Top,
     // The first trait will be placed in the .FAM file, all others in the PSEQ pheno file.
     // Remember to account for the '-1' in this list, so there are N-1 traits actually
     // listed in global_trait_entries[]
-    if (num_traits > 2) save_PSEQ_pheno(::file_names[2], Top, pwid, fwid);
+    if (num_traits > 2) save_PSEQ_pheno(Outfile_Names[2], Top, pwid, fwid);
 }
 
 void CLASS_PSEQ::create_output_file(

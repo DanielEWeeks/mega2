@@ -145,7 +145,7 @@ void vcf_file::scan_file(const set<string> &chrs_to_keep, const set<string> &exc
 	bool could_read_index_file = false;
 	if (force_write_index == false)
 		could_read_index_file = read_index_file(index_filename);
-	string CHROM, last_CHROM="";
+//	string CHROM, last_CHROM="";
 	unsigned int meta_counter = 1;
 
 	if (could_read_index_file == false)
@@ -245,6 +245,7 @@ void vcf_file::scan_file(const set<string> &chrs_to_keep, const set<string> &exc
 	if ((exclude_by_chr == true) || (filter_by_chr == true))
 	{
 		unsigned int N_found_required_chr = chrs_to_keep.size();
+                string CHROM, last_CHROM="";
 		LOG.printLOG("Filtering by chromosome.\n");
 		for (unsigned int ui=0; ui<N_entries; ui++)
 		{
@@ -513,9 +514,9 @@ void vcf_file::get_entry(unsigned int entry_num, vector<char> &out)
 	read_line(out);
 }
 
-entry* vcf_file::get_entry_object(unsigned int N_indv)
+entry* vcf_file::get_entry_object(unsigned int n_indv)
 {
-	return new vcf_entry(N_indv);
+	return new vcf_entry(n_indv);
 }
 
 void vcf_file::read_line(string &out)

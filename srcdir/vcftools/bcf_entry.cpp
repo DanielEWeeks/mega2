@@ -749,8 +749,8 @@ void bcf_entry::print_bcf(BGZF* out, const set<string> &INFO_to_keep, bool keep_
 			l_pos = FORMAT_positions[ui] + FORMAT_skip[ui]*uj;
 
 			if ( ((int)uj == GT_idx) and (include_genotype[uj] == false) )
-				for (unsigned int ploidy = 0; ploidy < FORMAT_skip[ui]; ploidy++)
-					tmp_vector[ploidy] = (int8_t)0x00;
+				for (unsigned int ploidyi = 0; ploidyi < FORMAT_skip[ui]; ploidyi++)
+					tmp_vector[ploidyi] = (int8_t)0x00;
 			else
 				memcpy(&tmp_vector[0], &line[l_pos], FORMAT_skip[ui]);
 

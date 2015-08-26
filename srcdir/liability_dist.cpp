@@ -151,13 +151,13 @@ static liable_allele_dist *alloc_allele_dist(int num_affected, int *loci_affecte
     return LiableAlleleDist;
 }
 
-static void free_allele_dist(liable_allele_dist *allele_dist, int num_affection, int num_NUMBERED)
+static void free_allele_dist(liable_allele_dist *allele_dist, int num_AFFECTION, int num_NUMBERED)
 
 {
     int ii, jj, kk;
     int num_ALLELES;
 
-    for (ii=0; ii<num_affection; ii++) {
+    for (ii=0; ii<num_AFFECTION; ii++) {
         for (jj=0; jj<num_NUMBERED; jj++){
             num_ALLELES=allele_dist[ii].MarkerLiability[jj].num_alleles;
             for (kk=0; kk< num_ALLELES; kk++)

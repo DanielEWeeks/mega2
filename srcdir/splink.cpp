@@ -609,7 +609,6 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                         EXIT(FILE_WRITE_ERROR);
                     }
                     for (m = 0; m < Top2->PedCnt; m++) {
-                        int a1, a2;
                         for (i = 0; i < Top2->Ped[m].EntryCnt; i++)  {
                             tpe = &(Top2->Ped[m].Entry[i]);
                             fprintf(fp, fformat, Top2->Ped[m].Name);

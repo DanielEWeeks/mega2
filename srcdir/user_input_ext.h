@@ -92,7 +92,7 @@ extern int base_pair_position_index;
 /*
 
 extern int  gh_cov_selection(int num_select,
-			     int *trait_order, int *cvariates,
+			     int *trait_order, int *local_covariates,
 			     linkage_locus_top *LTop);
 
 extern void  seg_affected_by_status(linkage_ped_top *Top, int locus,

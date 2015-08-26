@@ -47,8 +47,7 @@ extern void           print_outfile_mssg(void);
 
 
 extern void           set_output_paths(analysis_type analysis,
-				       linkage_ped_top *Top,
-				       char *Mega2OutputPth);
+				       linkage_ped_top *Top);
 
 extern void           shorten_path(char *old_path, char *new_path);
 

@@ -242,8 +242,7 @@ void change_output_chr(char *OP_files, const int numchr)
 /*---------------------------------------------------------*/
 
 void           set_output_paths(analysis_type analysis,
-				linkage_ped_top *Top,
-				char *Mega2OutputPath)
+				linkage_ped_top *Top)
 
 
 {

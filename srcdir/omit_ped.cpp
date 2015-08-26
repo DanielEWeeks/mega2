@@ -49,10 +49,11 @@
 
 
 int is_typed_at_markers(entry_type Entry,
-			int pedfile_type, linkage_locus_top *LTop,
+                        linkage_ped_top *Top,
+                        linkage_locus_top *LTop,
 			double *percent_typed);
 
-int is_phenotyped(entry_type Entry, int pedfile_type, linkage_locus_top *LTop);
+int is_phenotyped(entry_type Entry, linkage_ped_top *Top, linkage_locus_top *LTop);
 
 /* static void delete_pedigree(linkage_ped_top *Top, int untyped); */
 
@@ -184,7 +185,7 @@ void omit_peds(int untyped_ped_opt, linkage_ped_top *LPedTreeTop)
                 Entry.LEntry = &(LPedTreeTop->Ped[i].Entry[j]);
             }
 
-            if (is_typed_at_markers(Entry, LPedTreeTop->pedfile_type,
+            if (is_typed_at_markers(Entry, LPedTreeTop,
                                     LPedTreeTop->LocusTop, &percent_typed) == 1) {
                 IsTyped ++;
             }
@@ -243,7 +244,7 @@ void omit_peds(int untyped_ped_opt, linkage_ped_top *LPedTreeTop)
    locus is known
 */
 
-int is_typed_at_markers(entry_type Entry, int pedfile_type,
+int is_typed_at_markers(entry_type Entry, linkage_ped_top *Top,
 			linkage_locus_top *LTop, double *percent_typed)
 
 {
@@ -253,7 +254,7 @@ int is_typed_at_markers(entry_type Entry, int pedfile_type,
     const char *ar1, *ar2;
     int a1, a2;
 
-    if (pedfile_type == POSTMAKEPED_PFT) {
+    if (Top->pedfile_type == POSTMAKEPED_PFT) {
         marker = Entry.LEntry->Marker;
     } else {
         marker = Entry.PEntry->marker;
@@ -299,7 +300,7 @@ int is_typed_at_markers(entry_type Entry, int pedfile_type,
 
 }
 
-int is_phenotyped(entry_type Entry, int pedfile_type, linkage_locus_top *LTop)
+int is_phenotyped(entry_type Entry, linkage_ped_top *Top, linkage_locus_top *LTop)
 
 {
 
@@ -311,7 +312,7 @@ int is_phenotyped(entry_type Entry, int pedfile_type, linkage_locus_top *LTop)
         if (i  == -1) continue;
 
         if (LTop->Locus[i].Type == QUANT) {
-            if (pedfile_type == POSTMAKEPED_PFT) {
+            if (Top->pedfile_type == POSTMAKEPED_PFT) {
                 /* linkage format  */
                 is_typed += ((fabs(Entry.LEntry->Pheno[i].Quant - MissingQuant) > EPSILON)?
                              1 : 0);
@@ -321,7 +322,7 @@ int is_phenotyped(entry_type Entry, int pedfile_type, linkage_locus_top *LTop)
                              1 : 0);
             }
         } else  if (LTop->Locus[i].Type == AFFECTION) {
-            if (pedfile_type == POSTMAKEPED_PFT) {
+            if (Top->pedfile_type == POSTMAKEPED_PFT) {
                 is_typed += ((Entry.LEntry->Pheno[i].Affection.Status)? 1 : 0);
             } else {
                 is_typed += ((Entry.PEntry->pheno[i].Affection.Status)? 1 : 0);

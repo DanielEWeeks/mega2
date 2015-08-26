@@ -449,7 +449,8 @@ void socket_close_s(SOCK fd)
 void socket_close_fd(FILE *FD)
 {
 #if defined(_WIN) || defined(MINGW)
-    int fd = FD->_file;
+//  int fd = FD->_file;
+    int fd = _fileno(FD);
     closesocket(fd);
     WSACleanup();
 #else

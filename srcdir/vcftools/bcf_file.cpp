@@ -299,9 +299,9 @@ void bcf_file::get_entry(unsigned int entry_num, vector<char> &out)
 	read(&out[2*sizeof(uint32_t)], 1, read_size);
 }
 
-entry* bcf_file::get_entry_object(unsigned int N_indv)
+entry* bcf_file::get_entry_object(unsigned int n_indv)
 {
-	return new bcf_entry(N_indv, header_obj);
+	return new bcf_entry(n_indv, header_obj);
 }
 
 int bcf_file::read(void *buffer, unsigned int len, size_t size)
@@ -393,29 +393,29 @@ void bcf_file::read_header(bool skip_meta)
 			vector<string> tmp;
 			has_header = true;
 			entry::tokenize(headers[ui],'\t',tmp);
-			for (unsigned int ui = 0; ui < tmp.size(); ui++)
+			for (unsigned int tui = 0; tui < tmp.size(); tui++)
 			{
-				switch (ui)
+				switch (tui)
 				{
-					case 0: if (tmp[ui] != "#CHROM") LOG.warning("First Header entry should be #CHROM: " + tmp[ui]); break;
-					case 1: if (tmp[ui] != "POS") LOG.warning("Second Header entry should be POS: " + tmp[ui]); break;
-					case 2: if (tmp[ui] != "ID") LOG.warning("Third Header entry should be ID: " + tmp[ui]); break;
-					case 3: if (tmp[ui] != "REF") LOG.warning("Fourth Header entry should be REF: " + tmp[ui]); break;
-					case 4: if (tmp[ui] != "ALT") LOG.warning("Fifth Header entry should be ALT: " + tmp[ui]); break;
-					case 5: if (tmp[ui] != "QUAL") LOG.warning("Sixth Header entry should be QUAL: " + tmp[ui]); break;
-					case 6: if (tmp[ui] != "FILTER") LOG.warning("Seventh Header entry should be FILTER: " + tmp[ui]); break;
-					case 7: if (tmp[ui] != "INFO") LOG.warning("Eighth Header entry should be INFO: " + tmp[ui]); break;
+					case 0: if (tmp[tui] != "#CHROM") LOG.warning("First Header entry should be #CHROM: " + tmp[tui]); break;
+					case 1: if (tmp[tui] != "POS") LOG.warning("Second Header entry should be POS: " + tmp[tui]); break;
+					case 2: if (tmp[tui] != "ID") LOG.warning("Third Header entry should be ID: " + tmp[tui]); break;
+					case 3: if (tmp[tui] != "REF") LOG.warning("Fourth Header entry should be REF: " + tmp[tui]); break;
+					case 4: if (tmp[tui] != "ALT") LOG.warning("Fifth Header entry should be ALT: " + tmp[tui]); break;
+					case 5: if (tmp[tui] != "QUAL") LOG.warning("Sixth Header entry should be QUAL: " + tmp[tui]); break;
+					case 6: if (tmp[tui] != "FILTER") LOG.warning("Seventh Header entry should be FILTER: " + tmp[tui]); break;
+					case 7: if (tmp[tui] != "INFO") LOG.warning("Eighth Header entry should be INFO: " + tmp[tui]); break;
 					case 8:
-						if (tmp[ui] != "FORMAT")
-							LOG.warning("Ninth Header entry should be FORMAT: " + tmp[ui]);
+						if (tmp[tui] != "FORMAT")
+							LOG.warning("Ninth Header entry should be FORMAT: " + tmp[tui]);
 						else
 							has_genotypes = true;
 						break;
 					default:
 					{
-						if (ui <= 8)
+						if (tui <= 8)
 							LOG.error("Incorrectly formatted header.");
-						indv.push_back(tmp[ui]);
+						indv.push_back(tmp[tui]);
 						N_header_indv++;
 					}
 					break;

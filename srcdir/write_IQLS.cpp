@@ -64,14 +64,14 @@ void create_IQLS_files(linkage_ped_top **LPedTop, char *file_names[],
 static void IQLS_file_names(char *file_names[], int *glob_files,
                             int has_orig, int has_uniq);
 /* static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
-   int pedfile_type, int pwid, int fwid);
+   int pedfile_type_, int pwid, int fwid);
    static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name); */
 
 static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *file_names[]);
 
 /* static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name); */
 static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
-                                int pedfile_type, int pwid, int fwid);
+                                int pedfile_type_, int pwid, int fwid);
 
 static void write_IQLS_shell_script(linkage_ped_top *Top,
                                     int numchr, char *file_names[],
@@ -123,8 +123,8 @@ int index_renumber_ped(ped_tree *Ped, int *index);
 */
 
 static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
-                                int pedfile_type, int pwid, int fwid)
-//pedfile_type is not used
+                                int pedfile_type_, int pwid, int fwid)
+//pedfile_type_ is not used
 {
 /* IQLS pedigree/phenotype file:
    This file contains the pedigree and phenotype information. Individuals who are not
@@ -164,8 +164,8 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
 
         IQLS_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
-            msgvf("        IQLS pedigree file:        %s/%s\n", *_opath, file_names[0]);
-            run_loop(file_names[0]);
+            msgvf("        IQLS pedigree file:        %s/%s\n", *_opath, Outfile_Names[0]);
+            run_loop(Outfile_Names[0]);
         }
         void inner()  {
             pr_id();
@@ -233,8 +233,8 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 
         IQLS_marker(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
         void make_file() {
-            msgvf("        IQLS marker file:          %s/%s\n", *_opath, file_names[1]);
-            run_loop(file_names[1]);
+            msgvf("        IQLS marker file:          %s/%s\n", *_opath, Outfile_Names[1]);
+            run_loop(Outfile_Names[1]);
         }
         void file_header() {
             int ped, per;
@@ -333,8 +333,8 @@ static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]
 
         IQLS_parameter(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::null(Top) {}
         void make_file() {
-            msgvf("        IQLS parameter file:       %s/%s\n", *_opath, file_names[2]);
-            run_loop(file_names[2]);
+            msgvf("        IQLS parameter file:       %s/%s\n", *_opath, Outfile_Names[2]);
+            run_loop(Outfile_Names[2]);
         }
         void inner() {
             pr_printf("0.05\n");
@@ -406,7 +406,7 @@ static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file
 }
 
 static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
-                                   int pedfile_type, int pwid, int fwid) {
+                                   int pedfile_type_, int pwid, int fwid) {
 /*
   Pedigree file:
   Each line in the pedigree file should correspond to one individual in
@@ -429,8 +429,8 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
 
         Idcoefs_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
-            msgvf("        Idcoefs pedigree file:     %s/%s\n", *_opath, file_names[4]);
-            run_loop(file_names[4]);
+            msgvf("        Idcoefs pedigree file:     %s/%s\n", *_opath, Outfile_Names[4]);
+            run_loop(Outfile_Names[4]);
         }
         void trait_start() {
             PedTreeTop = convert_to_pedtree(_Top, 0);
@@ -500,7 +500,7 @@ int index_renumber_ped(ped_tree *Ped, int *index) {
 }
 
 static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
-                                int pedfile_type, int pwid, int fwid)
+                                int pedfile_type_, int pwid, int fwid)
 {
 /*
   Studyfile:
@@ -531,8 +531,8 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
 
         IDcoefs_study(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
         void make_file() {
-            msgvf("        Idcoefs study file:        %s/%s\n", *_opath, file_names[5]);
-            run_loop(file_names[5]);
+            msgvf("        Idcoefs study file:        %s/%s\n", *_opath, Outfile_Names[5]);
+            run_loop(Outfile_Names[5]);
         }
         void ped_start () {
             eligible = CALLOC((size_t) (_Top->Ped[_ped].EntryCnt), int);

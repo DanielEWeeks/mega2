@@ -276,8 +276,8 @@ static void save_pap_phen(char *phen_file_name,
 
             for(per=0; per < Top->Ped[ped].EntryCnt; per++) {
                 comb_entry.LEntry = &(Top->Ped[ped].Entry[per]);
-                if (is_typed_at_markers(comb_entry, 0, Top->LocusTop, NULL) ||
-                    is_phenotyped(comb_entry, 0, Top->LocusTop)) {
+                if (is_typed_at_markers(comb_entry, Top, Top->LocusTop, NULL) ||
+                    is_phenotyped(comb_entry, Top, Top->LocusTop)) {
                     
                     // B.4. Phenotype Data: phen.dat and ascer.dat
                     // (see section II.4

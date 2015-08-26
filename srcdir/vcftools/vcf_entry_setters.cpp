@@ -243,17 +243,17 @@ void vcf_entry::set_indv_GFILTER(unsigned int indv, const string &in)
 	}
 }
 
-void vcf_entry::set_FILTER(const string &FILTER_str)
+void vcf_entry::set_FILTER(const string &FILTER_str_)
 {
 	FILTER.resize(0);
 	passed_filters = false;
-	if (FILTER_str == "PASS")
+	if (FILTER_str_ == "PASS")
 		passed_filters = true;
 	else
 	{
-		if (FILTER_str != ".")
+		if (FILTER_str_ != ".")
 		{
-			istringstream ss(FILTER_str);
+			istringstream ss(FILTER_str_);
 			string ith_FILTER;
 			while (!ss.eof())
 			{
@@ -266,12 +266,12 @@ void vcf_entry::set_FILTER(const string &FILTER_str)
 	parsed_FILTER = true;
 }
 
-void vcf_entry::set_INFO(const string &INFO_str)
+void vcf_entry::set_INFO(const string &INFO_str_)
 {
 	INFO.resize(0);
-	if ((INFO_str.size() > 0) && (INFO_str != "."))
+	if ((INFO_str_.size() > 0) && (INFO_str_ != "."))
 	{
-		istringstream ss(INFO_str);
+		istringstream ss(INFO_str_);
 		string tmpstr;
 		while(!ss.eof())
 		{
