@@ -79,7 +79,7 @@ extern void free_all_from_lpedtree(linkage_ped_tree *Ped, int offset);
 
 extern void free_all_including_lpedtop(linkage_ped_top **PTop);
 
-extern linkage_loop_rec *get_llooprec(list **List, int Num);
+extern linkage_loop_rec *get_llooprec(listhandle **List, int Num);
 
 extern void get_loci_on_chromosome(int chromosome);
 

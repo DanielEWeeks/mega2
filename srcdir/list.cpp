@@ -43,18 +43,18 @@
 list_rec *new_list(void);
 list_entry *new_list_entry(void);
 list_entry *make_list_entry(list_entry *Next, list_data NewData);
-list_entry *append_to_list_head(list *List, list_data NewData);
-list_entry *append_to_list_tail(list *List, list_data NewData);
+list_entry *append_to_list_head(listhandle *List, list_data NewData);
+list_entry *append_to_list_tail(listhandle *List, list_data NewData);
 list_entry *insert_between_list_entries(list_entry *Before, list_entry *After, list_data NewData);
-list_entry *list_insert_when_told(list *List, list_data NewData, int (*insert_when_true_fun)(list_data EntryData, list_data NewData, int flag));
-list_data pop_first_list_entry(list *List);
+list_entry *list_insert_when_told(listhandle *List, list_data NewData, int (*insert_when_true_fun)(list_data EntryData, list_data NewData, int flag));
+list_data pop_first_list_entry(listhandle *List);
 list_entry *list_entry_free_all(list_entry *Entry, void (*free_data_fun)(list_data EntryData));
-void list_free_all(list *List, void (*free_data_fun)(list_data EntryData));
-void free_all_from_list(list *List, void (*free_data_fun)(list_data EntryData));
-void *list_iterate(list *List, void *Foo, void *(*fun)());
-void list_iterate_simple(list *List, int (*fun)(list_data EntryData));
-void *list_iterate_with_pop(list *List, void *Foo, void *(*fun)());
-void list_iterate_sinple_with_pop(list *List, int (*fun)(list_data EntryData));
+void list_free_all(listhandle *List, void (*free_data_fun)(list_data EntryData));
+void free_all_from_list(listhandle *List, void (*free_data_fun)(list_data EntryData));
+void *list_iterate(listhandle *List, void *Foo, void *(*fun)());
+void list_iterate_simple(listhandle *List, int (*fun)(list_data EntryData));
+void *list_iterate_with_pop(listhandle *List, void *Foo, void *(*fun)());
+void list_iterate_sinple_with_pop(listhandle *List, int (*fun)(list_data EntryData));
 #endif
 
 /* Create a new list and set the head and tail pointers to NULL.
@@ -104,7 +104,7 @@ list_entry *make_list_entry(list_entry *Next, list_data NewData)
  * Return NULL if the list doesn't exist or can't create the new
  * entry, or else return a pointer to the new entry.
  */
-list_entry *append_to_list_head(list *List, list_data NewData)
+list_entry *append_to_list_head(listhandle *List, list_data NewData)
 /*   list *List;
      list_data NewData; */
 {
@@ -120,7 +120,7 @@ list_entry *append_to_list_head(list *List, list_data NewData)
 
 /* Same as above only do it at the end of the list.
  */
-list_entry *append_to_list_tail(list *List, list_data NewData)
+list_entry *append_to_list_tail(listhandle *List, list_data NewData)
 /*   list *List;
      list_data NewData; */
 {
@@ -159,7 +159,7 @@ list_entry *insert_between_list_entries(list_entry *Before, list_entry *After, l
  * insert_when_true_fun() should get all the information it needs from
  * it's single argument, Data.
  */
-list_entry *list_insert_when_told(list *List, list_data NewData, int (*insert_when_true_fun)(list_data EntryData, list_data NewData, int flag))
+list_entry *list_insert_when_told(listhandle *List, list_data NewData, int (*insert_when_true_fun)(list_data EntryData, list_data NewData, int flag))
 /*     list *List;
        list_data NewData;
        #ifdef USE_PROTOS
@@ -206,7 +206,7 @@ list_entry *list_insert_when_told(list *List, list_data NewData, int (*insert_wh
 
 /* Free the first entry and return a pointer to the data.
  */
-list_data pop_first_list_entry(list *List)
+list_data pop_first_list_entry(listhandle *List)
 /* list *List; */
 {
     list_data OldData;
@@ -256,7 +256,7 @@ list_entry *list_entry_free_all(list_entry *Entry, void (*free_data_fun)(list_da
 
 /* Free the whole list. Must have a function to free the data.
  */
-void list_free_all(list *List, void (*free_data_fun)(list_data EntryData))
+void list_free_all(listhandle *List, void (*free_data_fun)(list_data EntryData))
 /*     list *List;
        #ifdef USE_PROTOS
        void (*free_data_fun)(list_data EntryData);
@@ -281,7 +281,7 @@ void list_free_all(list *List, void (*free_data_fun)(list_data EntryData))
 
 /* Free all entries and data and clear head
  */
-void free_all_from_list(list *List, void (*free_data_fun)(list_data EntryData))
+void free_all_from_list(listhandle *List, void (*free_data_fun)(list_data EntryData))
 {
     list_entry *Entry;
     if (List == NULL) return;
@@ -302,7 +302,7 @@ void free_all_from_list(list *List, void (*free_data_fun)(list_data EntryData))
  * of some user data structure between calls. Return the void* returned
  * by the fun() that quit.
  */
-void *list_iterate(list *List, void *Foo, void *(*fun)(list_data EntryData, void *Foo))
+void *list_iterate(listhandle *List, void *Foo, void *(*fun)(list_data EntryData, void *Foo))
 {
     list_entry *Entry;
     void *ret = NULL;
@@ -318,7 +318,7 @@ void *list_iterate(list *List, void *Foo, void *(*fun)(list_data EntryData, void
 /* Same as above only don't bother passing around a data structure,
  * and don't return anything.
  */
-void list_iterate_simple(list *List, int (*fun)(list_data EntryData))
+void list_iterate_simple(listhandle *List, int (*fun)(list_data EntryData))
 {
     list_entry *Entry;
     if (List == NULL) return;
@@ -332,7 +332,7 @@ void list_iterate_simple(list *List, int (*fun)(list_data EntryData))
  * of some user data structure between calls. Destroy the list (but not
  * List itself).
  */
-void *list_iterate_with_pop(list *List, void *Foo, void *(*fun)(list_data EntryData, void *Foo))
+void *list_iterate_with_pop(listhandle *List, void *Foo, void *(*fun)(list_data EntryData, void *Foo))
 {
     list_data Data;
     void *ret = NULL;
@@ -346,7 +346,7 @@ void *list_iterate_with_pop(list *List, void *Foo, void *(*fun)(list_data EntryD
 
 /* Same as above only don't bother passing around a data structure.
  */
-void list_iterate_sinple_with_pop(list *List, int (*fun)(list_data EntryData))
+void list_iterate_sinple_with_pop(listhandle *List, int (*fun)(list_data EntryData))
 {
     list_data Data;
     if (List == NULL) return;

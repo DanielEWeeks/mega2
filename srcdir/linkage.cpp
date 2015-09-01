@@ -92,7 +92,7 @@ void free_all_from_lpedtop(linkage_ped_top *PTop);
 void free_all_including_lpedtop(linkage_ped_top **PTop);
 void free_all_including_llocustop(linkage_locus_top *LTop);
 void copy_linkage_locus_top(linkage_locus_top *from, linkage_locus_top *to);
-linkage_loop_rec *get_llooprec(list **List, int Num);
+linkage_loop_rec *get_llooprec(listhandle **List, int Num);
 void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds, size_t *males,
 		      size_t *females, size_t *num_untyped, size_t *num_typed,
 		      size_t *peds_typed, size_t *males_typed, size_t *females_typed,
@@ -1096,7 +1096,7 @@ static void    *loop_list_iterate(list_data EntryData, void *Arg)
  * Get the loop record number Num. If it doesn't exist, create it.
  * Note that the list may need to be created, too.
  */
-linkage_loop_rec *get_llooprec(list **List, int Num)
+linkage_loop_rec *get_llooprec(listhandle **List, int Num)
 
 {
 
@@ -1157,7 +1157,7 @@ static void    collapse_lpedtree(linkage_ped_tree *Ped,
     linkage_ped_rec *NewEntry;
 
     id_pair_type *id_pair;
-    list         *Modified = new_list();
+    listhandle     *Modified = new_list();
 
     int offset = Top->LocusTop->PhenoCnt;
 

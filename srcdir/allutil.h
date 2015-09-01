@@ -146,12 +146,12 @@ typedef struct _list_rec {
     list_entry *Tail;
 } list_rec;
 
-typedef list_rec list;
-typedef list *list_ptr;
+typedef list_rec listhandle;
+typedef listhandle *list_ptr;
 
 typedef struct _program_data_rec {
     int Frac;
-    list *IntervalList;
+    listhandle *IntervalList;
 } program_data_rec;
 
 /* taken out all the extern definitions from below-Nandita */

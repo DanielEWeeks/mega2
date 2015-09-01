@@ -29,34 +29,34 @@
 #ifndef LIST_EXT_H
 #define LIST_EXT_H
 
-extern list_entry *append_to_list_tail(list *List, list_data NewData);
+extern list_entry *append_to_list_tail(listhandle *List, list_data NewData);
 
-extern void free_all_from_list(list *List, void (*free_data_fun)(list_data EntryData));
+extern void free_all_from_list(listhandle *List, void (*free_data_fun)(list_data EntryData));
 
-extern void list_free_all(list *List, void (*free_data_fun)(list_data EntryData));
+extern void list_free_all(listhandle *List, void (*free_data_fun)(list_data EntryData));
 
-extern list_entry *list_insert_when_told(list *List, list_data NewData, int (*insert_when_true_fun)(list_data EntryData, list_data NewData, int flag));
+extern list_entry *list_insert_when_told(listhandle *List, list_data NewData, int (*insert_when_true_fun)(list_data EntryData, list_data NewData, int flag));
 
-extern void *list_iterate(list *List, void *Foo, void *(*fun)(list_data EntryData, void *Foo));
+extern void *list_iterate(listhandle *List, void *Foo, void *(*fun)(list_data EntryData, void *Foo));
 
 
 extern list_rec *new_list(void);
 
-extern list_data pop_first_list_entry(list *List);
+extern list_data pop_first_list_entry(listhandle *List);
 
 
 /*
-extern list_entry *append_to_list_head(list *List, list_data NewData);
+extern list_entry *append_to_list_head(listhandle *List, list_data NewData);
 
 extern list_entry *insert_between_list_entries(list_entry *Before, list_entry *After, list_data NewData);
 
 extern list_entry *list_entry_free_all(list_entry *Entry, void (*free_data_fun)());
 
-extern void list_iterate_simple(list *List, int (*fun)());
+extern void list_iterate_simple(listhandle *List, int (*fun)());
 
-extern void list_iterate_sinple_with_pop(list *List, int (*fun)());
+extern void list_iterate_sinple_with_pop(listhandle *List, int (*fun)());
 
-extern void *list_iterate_with_pop(list *List, void *Foo, void *(*fun)());
+extern void *list_iterate_with_pop(listhandle *List, void *Foo, void *(*fun)());
 
 extern list_entry *make_list_entry(list_entry *Next, list_data NewData);
 

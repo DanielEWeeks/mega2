@@ -129,7 +129,7 @@ static void init_reserved_pedcol_names(void);
 
 static int parse_variable_width_hdr(FILE *file,
 				    col_hdr_type *reserved_colnames,
-				    list *userdef_ped_cols,
+				    listhandle *userdef_ped_cols,
 				    const int num_reserved_cols,
 				    const int required_cols,
 				    const char **valid_header_item_extensions);
@@ -294,7 +294,7 @@ static void loctype_to_descriptor(linkage_locus_top *LTop, int i, char loctype[]
 
 static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
                                                 int num_userdef_cols,
-                                                list *userdef_colnames,
+                                                listhandle *userdef_colnames,
                                                 linkage_locus_top *LTop,
                                                 int *num_reserved_cols,
                                                 int *has_extra_ids)
@@ -417,7 +417,7 @@ static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
 
 static int parse_pedigree_header(FILE *pedfile,
                                  col_hdr_type *reserved_pedcols,
-                                 list *userdef_pedcols)
+                                 listhandle *userdef_pedcols)
 {
     int colnum;
     /* ped, person, father, mother, sex */
@@ -437,7 +437,7 @@ static int parse_pedigree_header(FILE *pedfile,
 /* returns the number of non-reserved columns */
 static int parse_variable_width_hdr(FILE *file,
                                     col_hdr_type *reserved_colnames,
-                                    list *userdef_ped_cols,
+                                    listhandle *userdef_ped_cols,
                                     const int num_reserved_cols,
                                     const int required_cols,
                                     const char **valid_header_item_extensions)
@@ -1423,7 +1423,7 @@ static linkage_ped_top *read_annotated_ped_file(char *pedfile,
     int num_userdef_cols, num_reserved_cols, c;
     int has_extra_ids = 0;
     int num_ped_records;
-    list *userdef_colnames = new_list();
+    listhandle *userdef_colnames = new_list();
     col_hdr_type *ped_all_colnames;
 
     FILE *filep = fopen(pedfile, "r");
@@ -2023,7 +2023,7 @@ static int read_annotated_names_file(char *names_file,
 
 static int parse_map_file_header(FILE *mapfp,
                                  col_hdr_type *reserved_mapcols,
-                                 list *userdef_mapcols)
+                                 listhandle *userdef_mapcols)
 {
     int colnum =
         parse_variable_width_hdr(mapfp,
@@ -3080,7 +3080,7 @@ static ext_linkage_locus_top *read_annotated_map_file(const char *map_file,
                                                       std::vector<m2_map> additional_maps,
                                                       annotated_file_desc *file_desc)
 {
-    list *userdef_colnames = new_list();
+    listhandle *userdef_colnames = new_list();
     col_hdr_type reserved_colnames[NUM_MAPCOL_NAMES];
     col_hdr_type *colname_item, *map_all_colnames;
     int num_userdef_cols;

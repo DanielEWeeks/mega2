@@ -75,7 +75,7 @@ int MarkerErrorProb; /* flag to specify if map file contains errors */
 static void error_at_locus(int locnum, int loc_index, linkage_ped_top *Top,
 			   genotype (*err_model)(genotype gen, int number,
                                                  linkage_locus_rec Loc,
-                                                 sw2_error_class *err_type), list **err_list,
+                                                 sw2_error_class *err_type), listhandle **err_list,
 			   int *typed, int *numhomo, int *numhetero);
 genotype uniform_error_model(genotype gen, int number,
 			     linkage_locus_rec Loc, sw2_error_class *err);
@@ -110,7 +110,7 @@ static void error_sim_menu(linkage_ped_top *Top,
 static void init_error_probs(void);
 
 static void output_err_files(int *loci, int num_loci, char *error_model,
-			     list **error_recs,
+			     listhandle **error_recs,
 			     linkage_ped_top *Top, char *fl_names[],
 			     int *NumTyped, int *NumHomo, int *NumHetero);
 
@@ -124,7 +124,7 @@ static void error_at_locus(int locnum, int loc_index, linkage_ped_top *Top,
 			   genotype (*err_model)(genotype gen, int number,
                                                  linkage_locus_rec Loc,
                                                  sw2_error_class *err_type),
-			   list **err_list, int *typed, int *homo,
+			   listhandle **err_list, int *typed, int *homo,
 			   int *hetero)
 
 {
@@ -1288,7 +1288,7 @@ static void error_sim_menu(linkage_ped_top *Top,
 /* routine for creation of log files */
 
 static void output_err_files(int *loci, int num_loci, char *err_model,
-			     list **error_recs,
+			     listhandle **error_recs,
 			     linkage_ped_top *Top, char *file_names[],
 			     int *NumTyped, int *NumHetero, int *NumHomo)
 
@@ -1461,7 +1461,7 @@ void simulate_errors(linkage_ped_top *Top, int numchr, char *file_names[])
     genotype (*err_model_function)(genotype gen, int number,
                                    linkage_locus_rec Loc,
                                    sw2_error_class *err_type);
-    list **error_recs;
+    listhandle **error_recs;
     int *NumTyped, *NumHomo, *NumHetero;
 
     if (main_chromocnt > 1) {

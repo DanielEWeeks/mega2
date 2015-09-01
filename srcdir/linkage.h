@@ -368,7 +368,7 @@ typedef struct _linkage_ped_tree {
     int OriginalID;
     int origped; /* only to be used for conversion to nukepeds */
     int Proband;
-    list *Loops; /* will be NULL if no loops */
+    listhandle *Loops; /* will be NULL if no loops */
 } linkage_ped_tree;
 
 typedef struct pre_makeped_record_ {

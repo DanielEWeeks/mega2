@@ -1188,7 +1188,7 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
                                        int *col2locus)
 {
     linkage_ped_top *Top;
-    list *PedList, *EntryList;
+    listhandle *PedList, *EntryList;
     register linkage_ped_rec *NewEntry, *NewEntry2;
     register linkage_ped_tree *NewPed=NULL;
     int LastPedID = -9;
