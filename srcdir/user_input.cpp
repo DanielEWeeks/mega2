@@ -113,7 +113,8 @@ const char *INPUT_FORMAT_STR[] = {
      "BCF format (bcf)",
      "VCF compressed format (vcf.gz)",
      "VCF format (vcf)",
-     "IMPUTE2/Oxford format (gen/impute2)"
+     "IMPUTE2/Oxford format (gen/impute2)",
+     "IMPUTE2/Oxford binary format (bgen)",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -820,7 +821,6 @@ void menu1(file_format *infl_type,
     fln_alloc(auxfl_name,   auxo);
     fln_alloc(phefl_name,   pheo);
     fln_alloc(infofl_name,  info);
-
     if (batchINPUTFILES) {
 
         Input = InputCreate::createinput(Input_Format);
@@ -958,6 +958,17 @@ void menu1(file_format *infl_type,
 //              fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
 
+            } else if (Input_Format == in_format_bgen) {
+                strcpy(extension_name, "bgen");
+
+                fln_init(pedo, "IMPUTE2", "sample", "[required]", "sample");
+                pedo->title = "Sample file:";
+                fln_init(auxo, "IMPUTE2", "bgen", "[required]", "bgen");
+                auxo->title = "IMPUTE2 bgen file:";
+                _aux_i = imputed_i;
+                fln_init(info, "IMPUTE2", "gen_info", "[optional]", "gen_info", "impute2_info");
+//              fln_init_plink(! PMAP_REQ);
+                fln_init_mega2(! MAP_REQ);
             }
             reset_extension = 1;
         }
@@ -1190,19 +1201,20 @@ void menu1(file_format *infl_type,
                 draw_line();
                 printf("              Mega2 %s input file type menu:\n", Mega2Version);
                 draw_line();
-//      ignore 9th entry (only for old batch files)
-                for (ans = 0; ans < 9; ans++)
+
+                int cnt = sizeof (INPUT_FORMAT_STR) / sizeof (char *);
+                for (ans = 0; ans < cnt; ans++)
                     printf("%1d) %s\n", ans+1, INPUT_FORMAT_STR[ans]);
-                printf("Select from options 1-9 > ");
+                printf("Select from options 1-%d > ", cnt);
 
                 fcmap(stdin, "%d", &ans); newline;
-                if (ans <= 9 && ans >= 1) {
+                if (ans <= cnt && ans >= 1) {
                     Input_Format = (INPUT_FORMAT_t) (ans - 1);
                     if (Input != 0) delete Input;
 		    Input = InputCreate::createinput(Input_Format);
                     break;
                 } else
-                    printf("allowed values are 1, 2, 3, 4, 5, 6, 7, 8, 9.\n");
+                    printf("allowed values are 1 - %d.\n", cnt);
             }
             reset = 1;
 

@@ -2752,7 +2752,8 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
             if (Input->xcf) 
                 warnvf("Locus %s (line %d in %s) has been filtered from the VCF file; ignoring this locus.\n",
                        dname, line, map_file);
-            else if (Input->input_format == in_format_imputed)
+            else if ( (Input->input_format == in_format_imputed) ||
+                      (Input->input_format == in_format_bgen) )
                 warnvf("Locus %s (line %d in %s) extra locus data in this file; ignoring this locus.\n",
                        dname, line, map_file);
             else
@@ -3028,7 +3029,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     
     if (mrk_missing_from_map) {
         printf("Some marker loci in the %s file are missing from map file, see %s for details.\n",
-               (Input->xcf ? "VCF" : (Input->input_format == in_format_imputed ? "Imputed" : "names")),
+               (Input->xcf ? "VCF" : (Input->input_format == in_format_imputed ? "Imputed" : (Input->input_format == in_format_bgen ? "Bgen" : "names"))),
                Mega2Err);
     }
     
@@ -3036,7 +3037,8 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
         printf("Some marker loci in map file %s file, see %s for details.\n",
                (Input->xcf ? "have been filtered from the VCF" : 
                 (Input->input_format == in_format_imputed ? "are missing from Imputed" :
-                 "are missing from the names")),
+                 (Input->input_format == in_format_bgen ? "are missing from Bgen" :
+                 "are missing from the names"))),
                Mega2Err);
     }
     

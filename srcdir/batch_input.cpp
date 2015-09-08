@@ -207,7 +207,7 @@ static keyw_t keywords[] = {
     {"Output_File_Stem",                      STRING,     ""},
     {"Imputed_Oxford_Single_Chr",             STRING,   "--"},
     {"Imputed_Info_Metric_Threshold",         FLOAT,   "0.3"},
-    {"Imputed_Hard_Call_Threshold",           FLOAT,   "0.1"},
+    {"Imputed_Hard_Call_Uncertainty",         FLOAT,   "0.1"},
     {"Imputed_Genotype_Missing_Fraction",     FLOAT,   "0.1"},
     {"Imputed_Missing_Codes",                 NAME_LIST,  ""},
     {"Imputed_Allow_Duplicate_Markers",       YORN,      "n"},
@@ -425,8 +425,11 @@ void check_batch_items(void)
     /* Input files */
 
     if (ITEM_READ(/* 0 */ Input_Pedigree_File) &&
-        (ITEM_READ(/* 1 */ Input_Locus_File) || Mega2BatchItems[PLINK_Args].items_read || Mega2BatchItems[VCF_Args].items_read || Input_Format == in_format_imputed) &&
-        (ITEM_READ(/* 2 */ Input_Map_File) || (Input_Format == in_format_VCF || Input_Format == in_format_compressed_VCF || Input_Format == in_format_binary_VCF || Input_Format == in_format_PED || Input_Format == in_format_binary_PED || Input_Format == in_format_imputed) ) &&
+// #1
+        (ITEM_READ(/* 1 */ Input_Locus_File) || Input->req_locus_file == 0) &&
+// #2
+        (ITEM_READ(/* 2 */ Input_Map_File)   || Input->req_map_file == 0)  &&
+// #3
         ITEM_READ(/* 4 */ Input_Untyped_Ped_Option)) {
         // NOTE: You don't need a Map_File if you are working with a VCF file because it contains one map (VCF.p)...
         batchINPUTFILES=1;
@@ -1179,7 +1182,6 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
 	// this is where the batch items are read from the batch file, and checked for consistency...
     parse_batch_file(batch_file_name, analysis);
     check_dependencies(analysis);
-    check_batch_items();
 
     int input_set = 0;
     int xcf = 0;
@@ -1204,6 +1206,10 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
     }
     if (!input_set)
         Input_Format = in_format_traditional;
+
+    Input = InputCreate::createinput(Input_Format);
+
+    check_batch_items();
 }
 
 //

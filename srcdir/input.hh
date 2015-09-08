@@ -30,10 +30,12 @@
 #define INPUT_HH
 
 class Input_Impute;
+class Input_BGEN;
 
 // #include "types.hh" // common.h includes types.hh
 #include "str_utils.hh"
 #include "read_impute.hh"
+#include "read_impute_bgen.hh"
 
 class Input_Base;
 extern Input_Base *Input;
@@ -49,6 +51,7 @@ enum INPUT_FORMAT {
     in_format_compressed_VCF = 6,
     in_format_VCF = 7,
     in_format_imputed = 8,
+    in_format_bgen    = 9,
     in_format_traditional = 100,
 } INPUT_FORMAT_t;
 
@@ -154,6 +157,7 @@ public:
     Input_PLINK_Common(INPUT_FORMAT_t i): Input_Old(i) {
         plink          = 1;
         req_locus_file = 0;
+        req_map_file   = 0;
         req_stem_flag  = 1;
     }
     virtual ~Input_PLINK_Common() {};
@@ -216,7 +220,7 @@ public:
         req_map_file   = 0;
         req_stem_flag  = 1;
     }
-    ~Input_Impute() {};
+    virtual ~Input_Impute() {};
 
     virtual boolean has_menu_display() { return true; }
     virtual boolean has_menu_parse()   { return true; }
@@ -238,11 +242,29 @@ public:
     virtual void do_init()  { Obj.do_init(this); }
     virtual linkage_locus_top *do_names(const char *&names_fn) { return Obj.do_names(names_fn); }
     virtual void do_map(std::vector<m2_map>& additional_maps) { Obj.do_map(additional_maps); }
-    linkage_ped_top *do_ped(linkage_locus_top *LTop) { return Obj.do_ped(LTop); }
+    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop) { return Obj.do_ped(LTop); }
     virtual void do_gc() { Obj.do_gc(); }
 
 public:
+
     ReadImputed Obj;
+
+};
+
+class Input_BGEN : public Input_Impute {
+public:
+    Input_BGEN(INPUT_FORMAT_t i) : Input_Impute(i) {};
+   ~Input_BGEN() {};
+
+public:
+
+    virtual void do_init()  { bgen.do_init(this); }
+    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop) { return bgen.do_ped(LTop); }
+
+public:
+
+    ReadBgen bgen;
+
 };
 
 class Input_Traditional : public Input_Old {
@@ -251,6 +273,15 @@ public:
     virtual ~Input_Traditional() {};
 };
 
+/*
+ *      Requires corresponding addition/change to
+ *              input.hh: add to enum INPUT_FORMAT {                   | around line 44
+ *              bstch_input.cpp: check_batch_items                     | around line 427
+ *              user_input.cpp: INPUT_FORMAT_STR[]                     | around line  107
+ *              user_input.cpp: "if (choice_ == file_format_i)" case   | around line 1187
+ *              user_input.cpp: "if (Input_Format == in_format_xxx)" case | around line 963
+ *              mega2.cpp: "if (Input_Format == in_format_bgen)        | around line 1087
+ */
 class InputCreate {
 public:
     static
@@ -283,6 +314,9 @@ public:
             break;
         case in_format_imputed:
             return new Input_Impute(in_format);
+            break;
+        case in_format_bgen:
+            return new Input_BGEN(in_format);
             break;
         case in_format_traditional:
             return new Input_Traditional(in_format);

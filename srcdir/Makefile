@@ -96,7 +96,7 @@ SRCS =  input_check.cpp     select_index.cpp \
 	write_pangaea.cpp   write_beagle.cpp     plink_core_files.cpp \
 	write_eigenstrat.cpp write_structure.cpp batch.cpp \
 	compress.cpp        write_pseq_files.cpp menu_value_missing.cpp \
-	str_utils.cpp       read_impute.cpp
+	str_utils.cpp       read_impute.cpp	 read_impute_bgen.cpp
 
 OBJS =  $(SRCS:.cpp=.o)
 
@@ -276,8 +276,9 @@ input_check.o: batch_input.h input_check.h hwe.h compress_ext.h tod.hh
 input_check.o: check_ext.h create_summary_ext.h error_messages_ext.h
 input_check.o: fcmap_ext.h genetic_utils_ext.h grow_string_ext.h
 input_check.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-input_check.o: annotated_ped_file.h input_check_ext.h pedtree_ext.h
-input_check.o: utils_ext.h write_pap_ext.h batch_input_ext.h
+input_check.o: annotated_ped_file.h read_impute_bgen.hh zlib.h zconf.h
+input_check.o: input_check_ext.h pedtree_ext.h utils_ext.h write_pap_ext.h
+input_check.o: batch_input_ext.h
 select_index.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 select_index.o: linkage_external.h makeped.h pedtree.h analysis.h
 select_index.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -295,7 +296,8 @@ aspex.o: error_messages_ext.h fcmap_ext.h genetic_utils_ext.h
 aspex.o: grow_string_ext.h linkage_ext.h makenucs_ext.h omit_ped_ext.h
 aspex.o: output_file_names_ext.h output_routines_ext.h scripts_ext.h
 aspex.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-aspex.o: annotated_ped_file.h utils_ext.h write_files_ext.h
+aspex.o: annotated_ped_file.h read_impute_bgen.hh zlib.h zconf.h utils_ext.h
+aspex.o: write_files_ext.h
 liability_dist.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 liability_dist.o: linkage_external.h makeped.h pedtree.h analysis.h
 liability_dist.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -321,7 +323,8 @@ linkage.o: write_eigenstrat_ext.h write_pangaea_ext.h write_beagle_ext.h
 linkage.o: write_structure_ext.h write_pseq_ext.h batch_input.h input_check.h
 linkage.o: hwe.h compress_ext.h error_messages_ext.h list_ext.h makeped_ext.h
 linkage.o: pedtree_ext.h utils_ext.h user_input_ext.h input.hh str_utils.hh
-linkage.o: read_impute.hh annotated_ped_file.h append_locus_array_ext.h
+linkage.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh zlib.h
+linkage.o: zconf.h append_locus_array_ext.h
 output_file_names.o: common.h types.hh typedefs.h errorno.h allutil.h
 output_file_names.o: linkage.h linkage_external.h makeped.h pedtree.h
 output_file_names.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -372,8 +375,9 @@ user_input.o: batch_input_ext.h cw_routines_ext.h error_messages_ext.h
 user_input.o: fcmap_ext.h genetic_utils_ext.h reorder_loci_ext.h
 user_input.o: grow_string_ext.h output_file_names_ext.h output_routines_ext.h
 user_input.o: plink_ext.h utils_ext.h user_input_ext.h input.hh str_utils.hh
-user_input.o: read_impute.hh annotated_ped_file.h
-user_input.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
+user_input.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh zlib.h
+user_input.o: zconf.h vcftools/mega2_vcftools_interface.h
+user_input.o: annotated_ped_file.h
 cal_prob.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 cal_prob.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 cal_prob.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -388,7 +392,8 @@ utils.o: write_eigenstrat_ext.h write_pangaea_ext.h write_beagle_ext.h
 utils.o: write_structure_ext.h write_pseq_ext.h batch_input.h input_check.h
 utils.o: hwe.h compress_ext.h batch_input_ext.h error_messages_ext.h
 utils.o: fcmap_ext.h net_ext.h user_input_ext.h input.hh str_utils.hh
-utils.o: read_impute.hh annotated_ped_file.h utils_ext.h version.h
+utils.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh zlib.h
+utils.o: zconf.h utils_ext.h version.h
 check.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 check.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 check.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -410,6 +415,7 @@ mega2.o: mega2annot_ext.h menu_value_missing_ext.h output_file_names_ext.h
 mega2.o: output_routines_ext.h pedtree_ext.h plink_ext.h read_files_ext.h
 mega2.o: reorder_loci_ext.h scripts_ext.h slink_ext.h splink_ext.h
 mega2.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
+mega2.o: read_impute_bgen.hh zlib.h zconf.h
 mega2.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h utils_ext.h
 mega2.o: write_IQLS_ext.h write_SUP_files_ext.h write_apm_ext.h
 mega2.o: write_files_ext.h write_ghfiles_ext.h write_loki_ext.h
@@ -425,7 +431,8 @@ write_apm.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
 write_apm.o: fcmap_ext.h genetic_utils_ext.h input_check_ext.h linkage_ext.h
 write_apm.o: omit_ped_ext.h output_file_names_ext.h pedtree_ext.h
 write_apm.o: reorder_loci_ext.h user_input_ext.h input.hh str_utils.hh
-write_apm.o: read_impute.hh annotated_ped_file.h utils_ext.h
+write_apm.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh zlib.h
+write_apm.o: zconf.h utils_ext.h
 output_routines.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 output_routines.o: linkage_external.h makeped.h pedtree.h analysis.h
 output_routines.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -444,7 +451,8 @@ write_files.o: error_messages_ext.h fcmap_ext.h genetic_utils_ext.h
 write_files.o: grow_string_ext.h linkage_ext.h makeped_ext.h omit_ped_ext.h
 write_files.o: output_file_names_ext.h reorder_loci_ext.h user_input_ext.h
 write_files.o: input.hh str_utils.hh read_impute.hh annotated_ped_file.h
-write_files.o: utils_ext.h write_ghfiles_ext.h plink_ext.h
+write_files.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
+write_files.o: write_ghfiles_ext.h plink_ext.h
 do_switch.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 do_switch.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 do_switch.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -467,7 +475,8 @@ write_ghfiles.o: R_output_ext.h error_messages_ext.h fcmap_ext.h
 write_ghfiles.o: genetic_utils_ext.h linkage_ext.h makenucs_ext.h
 write_ghfiles.o: omit_ped_ext.h output_file_names_ext.h output_routines_ext.h
 write_ghfiles.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-write_ghfiles.o: annotated_ped_file.h utils_ext.h write_files_ext.h
+write_ghfiles.o: annotated_ped_file.h read_impute_bgen.hh zlib.h zconf.h
+write_ghfiles.o: utils_ext.h write_files_ext.h
 fcmap.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 fcmap.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 fcmap.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -490,6 +499,7 @@ write_liability.o: input_check.h hwe.h compress_ext.h liable.h
 write_liability.o: error_messages_ext.h fcmap_ext.h genetic_utils_ext.h
 write_liability.o: output_file_names_ext.h user_input_ext.h input.hh
 write_liability.o: str_utils.hh read_impute.hh annotated_ped_file.h
+write_liability.o: read_impute_bgen.hh zlib.h zconf.h
 random_choose.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 random_choose.o: linkage_external.h makeped.h pedtree.h analysis.h
 random_choose.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -507,8 +517,9 @@ write_mfiles.o: create_summary_ext.h error_messages_ext.h fcmap_ext.h
 write_mfiles.o: genetic_utils_ext.h linkage_ext.h omit_ped_ext.h
 write_mfiles.o: output_file_names_ext.h output_routines_ext.h
 write_mfiles.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-write_mfiles.o: annotated_ped_file.h utils_ext.h write_mendel7_files_ext.h
-write_mfiles.o: write_files_ext.h write_mfiles_ext.h
+write_mfiles.o: annotated_ped_file.h read_impute_bgen.hh zlib.h zconf.h
+write_mfiles.o: utils_ext.h write_mendel7_files_ext.h write_files_ext.h
+write_mfiles.o: write_mfiles_ext.h
 mrecode.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 mrecode.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 mrecode.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -528,7 +539,7 @@ gen_user_input.o: batch_input.h input_check.h hwe.h compress_ext.h
 gen_user_input.o: error_messages_ext.h fcmap_ext.h genetic_utils_ext.h
 gen_user_input.o: output_file_names_ext.h user_input_ext.h input.hh
 gen_user_input.o: str_utils.hh read_impute.hh annotated_ped_file.h
-gen_user_input.o: utils_ext.h
+gen_user_input.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
 write_sage_files.o: common.h types.hh typedefs.h errorno.h allutil.h
 write_sage_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_sage_files.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -540,8 +551,8 @@ write_sage_files.o: error_messages_ext.h fcmap_ext.h genetic_utils_ext.h
 write_sage_files.o: linkage_ext.h makenucs_ext.h omit_ped_ext.h
 write_sage_files.o: output_file_names_ext.h output_routines_ext.h
 write_sage_files.o: read_files_ext.h user_input_ext.h input.hh str_utils.hh
-write_sage_files.o: read_impute.hh annotated_ped_file.h utils_ext.h
-write_sage_files.o: write_files_ext.h
+write_sage_files.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh
+write_sage_files.o: zlib.h zconf.h utils_ext.h write_files_ext.h
 splink.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 splink.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 splink.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -551,7 +562,7 @@ splink.o: hwe.h compress_ext.h create_summary_ext.h error_messages_ext.h
 splink.o: fcmap_ext.h linkage_ext.h makenucs_ext.h omit_ped_ext.h
 splink.o: output_file_names_ext.h output_routines_ext.h user_input_ext.h
 splink.o: input.hh str_utils.hh read_impute.hh annotated_ped_file.h
-splink.o: utils_ext.h write_files_ext.h
+splink.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h write_files_ext.h
 genetic_utils.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 genetic_utils.o: linkage_external.h makeped.h pedtree.h analysis.h
 genetic_utils.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -560,7 +571,7 @@ genetic_utils.o: write_beagle_ext.h write_structure_ext.h write_pseq_ext.h
 genetic_utils.o: batch_input.h input_check.h hwe.h compress_ext.h
 genetic_utils.o: error_messages_ext.h grow_string_ext.h utils_ext.h
 genetic_utils.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-genetic_utils.o: annotated_ped_file.h
+genetic_utils.o: annotated_ped_file.h read_impute_bgen.hh zlib.h zconf.h
 read_data.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 read_data.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 read_data.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -578,7 +589,8 @@ write_simulate_files.o: compress_ext.h error_messages_ext.h fcmap_ext.h
 write_simulate_files.o: genetic_utils_ext.h linkage_ext.h omit_ped_ext.h
 write_simulate_files.o: output_file_names_ext.h user_input_ext.h input.hh
 write_simulate_files.o: str_utils.hh read_impute.hh annotated_ped_file.h
-write_simulate_files.o: utils_ext.h write_files_ext.h write_ghfiles_ext.h
+write_simulate_files.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
+write_simulate_files.o: write_files_ext.h write_ghfiles_ext.h
 homozygosity.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 homozygosity.o: linkage_external.h makeped.h pedtree.h analysis.h
 homozygosity.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -598,7 +610,8 @@ read_files.o: makeped_ext.h marker_lookup_ext.h mrecode_ext.h
 read_files.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
 read_files.o: omit_ped_ext.h plink_ext.h read_files_ext.h reorder_loci_ext.h
 read_files.o: utils_ext.h user_input_ext.h input.hh str_utils.hh
-read_files.o: read_impute.hh batch_input_ext.h write_files_ext.h
+read_files.o: read_impute.hh read_impute_bgen.hh zlib.h zconf.h
+read_files.o: batch_input_ext.h write_files_ext.h
 write_solar_files.o: common.h types.hh typedefs.h errorno.h allutil.h
 write_solar_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_solar_files.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -610,7 +623,8 @@ write_solar_files.o: compress_ext.h error_messages_ext.h fcmap_ext.h
 write_solar_files.o: genetic_utils_ext.h linkage_ext.h omit_ped_ext.h
 write_solar_files.o: output_file_names_ext.h output_routines_ext.h
 write_solar_files.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-write_solar_files.o: annotated_ped_file.h utils_ext.h write_files_ext.h
+write_solar_files.o: annotated_ped_file.h read_impute_bgen.hh zlib.h zconf.h
+write_solar_files.o: utils_ext.h write_files_ext.h
 hwe.o: hwe.h check_file_ext.h hwe_ext.h read_data_ext.h
 reorder_loci.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 reorder_loci.o: linkage_external.h makeped.h pedtree.h analysis.h
@@ -623,7 +637,8 @@ reorder_loci.o: batch_input_ext.h create_summary_ext.h error_messages_ext.h
 reorder_loci.o: fcmap_ext.h genetic_utils_ext.h grow_string_ext.h
 reorder_loci.o: linkage_ext.h output_routines_ext.h output_file_names_ext.h
 reorder_loci.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-reorder_loci.o: utils_ext.h write_files_ext.h
+reorder_loci.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
+reorder_loci.o: write_files_ext.h
 write_vitesse.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_vitesse.o: linkage_external.h makeped.h pedtree.h analysis.h
 write_vitesse.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -633,7 +648,8 @@ write_vitesse.o: batch_input.h input_check.h hwe.h compress_ext.h
 write_vitesse.o: batch_input_ext.h error_messages_ext.h fcmap_ext.h
 write_vitesse.o: genetic_utils_ext.h linkage_ext.h omit_ped_ext.h
 write_vitesse.o: output_file_names_ext.h user_input_ext.h input.hh
-write_vitesse.o: str_utils.hh read_impute.hh annotated_ped_file.h utils_ext.h
+write_vitesse.o: str_utils.hh read_impute.hh annotated_ped_file.h
+write_vitesse.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
 write_vitesse.o: write_files_ext.h
 hwe_user_input.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 hwe_user_input.o: linkage_external.h makeped.h pedtree.h analysis.h
@@ -647,7 +663,8 @@ hwe_user_input.o: homozygosity_ext.h hwe_ext.h linkage_ext.h
 hwe_user_input.o: output_file_names_ext.h output_routines_ext.h
 hwe_user_input.o: select_individuals_ext.h user_input_ext.h input.hh
 hwe_user_input.o: str_utils.hh read_impute.hh annotated_ped_file.h
-hwe_user_input.o: utils_ext.h write_mendel7_files_ext.h write_mfiles_ext.h
+hwe_user_input.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
+hwe_user_input.o: write_mendel7_files_ext.h write_mfiles_ext.h
 hwe_user_input.o: write_files_ext.h
 scripts.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 scripts.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
@@ -657,8 +674,8 @@ scripts.o: write_structure_ext.h write_pseq_ext.h batch_input.h input_check.h
 scripts.o: hwe.h compress_ext.h error_messages_ext.h fcmap_ext.h
 scripts.o: genetic_utils_ext.h linkage_ext.h makenucs_ext.h omit_ped_ext.h
 scripts.o: output_file_names_ext.h user_input_ext.h input.hh str_utils.hh
-scripts.o: read_impute.hh annotated_ped_file.h utils_ext.h write_files_ext.h
-scripts.o: write_ghfiles_ext.h
+scripts.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh zlib.h
+scripts.o: zconf.h utils_ext.h write_files_ext.h write_ghfiles_ext.h
 makeped1.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 makeped1.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 makeped1.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -674,7 +691,8 @@ omit_ped.o: write_eigenstrat_ext.h write_pangaea_ext.h write_beagle_ext.h
 omit_ped.o: write_structure_ext.h write_pseq_ext.h batch_input.h
 omit_ped.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
 omit_ped.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-omit_ped.o: annotated_ped_file.h utils_ext.h
+omit_ped.o: annotated_ped_file.h read_impute_bgen.hh zlib.h zconf.h
+omit_ped.o: utils_ext.h
 slink.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 slink.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 slink.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -683,8 +701,8 @@ slink.o: write_structure_ext.h write_pseq_ext.h batch_input.h input_check.h
 slink.o: hwe.h compress_ext.h error_messages_ext.h fcmap_ext.h
 slink.o: genetic_utils_ext.h linkage_ext.h omit_ped_ext.h
 slink.o: output_file_names_ext.h pedtree_ext.h user_input_ext.h input.hh
-slink.o: str_utils.hh read_impute.hh annotated_ped_file.h utils_ext.h
-slink.o: write_ghfiles_ext.h
+slink.o: str_utils.hh read_impute.hh annotated_ped_file.h read_impute_bgen.hh
+slink.o: zlib.h zconf.h utils_ext.h write_ghfiles_ext.h
 R_output.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 R_output.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 R_output.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -694,6 +712,7 @@ R_output.o: input_check.h hwe.h compress_ext.h R_output.h batch_input_ext.h
 R_output.o: error_messages_ext.h fcmap_ext.h grow_string_ext.h
 R_output.o: output_file_names_ext.h utils_ext.h plink_ext.h user_input_ext.h
 R_output.o: input.hh str_utils.hh read_impute.hh annotated_ped_file.h
+R_output.o: read_impute_bgen.hh zlib.h zconf.h
 write_premakeped.o: common.h types.hh typedefs.h errorno.h allutil.h
 write_premakeped.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_premakeped.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -706,8 +725,8 @@ write_premakeped.o: fcmap_ext.h genetic_utils_ext.h linkage_ext.h
 write_premakeped.o: omit_ped_ext.h output_file_names_ext.h
 write_premakeped.o: output_routines_ext.h user_input_ext.h input.hh
 write_premakeped.o: str_utils.hh read_impute.hh annotated_ped_file.h
-write_premakeped.o: utils_ext.h write_files_ext.h write_ghfiles_ext.h
-write_premakeped.o: write_mfiles_ext.h
+write_premakeped.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
+write_premakeped.o: write_files_ext.h write_ghfiles_ext.h write_mfiles_ext.h
 create_summary.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 create_summary.o: linkage_external.h makeped.h pedtree.h analysis.h
 create_summary.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -719,7 +738,8 @@ create_summary.o: grow_string_ext.h input_check_ext.h liability_dist_ext.h
 create_summary.o: linkage_ext.h makenucs_ext.h omit_ped_ext.h
 create_summary.o: output_file_names_ext.h output_routines_ext.h pedtree_ext.h
 create_summary.o: reorder_loci_ext.h user_input_ext.h input.hh str_utils.hh
-create_summary.o: read_impute.hh annotated_ped_file.h utils_ext.h
+create_summary.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh
+create_summary.o: zlib.h zconf.h utils_ext.h
 write_prest.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_prest.o: linkage_external.h makeped.h pedtree.h analysis.h
 write_prest.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -729,7 +749,8 @@ write_prest.o: batch_input.h input_check.h hwe.h compress_ext.h
 write_prest.o: error_messages_ext.h fcmap_ext.h linkage_ext.h omit_ped_ext.h
 write_prest.o: output_file_names_ext.h output_routines_ext.h user_input_ext.h
 write_prest.o: input.hh str_utils.hh read_impute.hh annotated_ped_file.h
-write_prest.o: utils_ext.h write_files_ext.h write_ghfiles_ext.h
+write_prest.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
+write_prest.o: write_files_ext.h write_ghfiles_ext.h
 write_pap.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_pap.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 write_pap.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -738,7 +759,8 @@ write_pap.o: write_structure_ext.h write_pseq_ext.h batch_input.h
 write_pap.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
 write_pap.o: fcmap_ext.h linkage_ext.h omit_ped_ext.h output_file_names_ext.h
 write_pap.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-write_pap.o: annotated_ped_file.h utils_ext.h write_files_ext.h
+write_pap.o: annotated_ped_file.h read_impute_bgen.hh zlib.h zconf.h
+write_pap.o: utils_ext.h write_files_ext.h
 batch_input.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 batch_input.o: linkage_external.h makeped.h pedtree.h analysis.h
 batch_input.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -748,7 +770,8 @@ batch_input.o: batch_input.h input_check.h hwe.h compress_ext.h
 batch_input.o: batch_input_ext.h error_messages_ext.h
 batch_input.o: menu_value_missing_ext.h genetic_utils_ext.h
 batch_input.o: reorder_loci_ext.h user_input_ext.h input.hh str_utils.hh
-batch_input.o: read_impute.hh annotated_ped_file.h plink_ext.h utils_ext.h
+batch_input.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh zlib.h
+batch_input.o: zconf.h plink_ext.h utils_ext.h
 makenucs.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 makenucs.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 makenucs.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -758,8 +781,9 @@ makenucs.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
 makenucs.o: fcmap_ext.h linkage_ext.h makenucs_ext.h omit_ped_ext.h
 makenucs.o: output_file_names_ext.h output_routines_ext.h pedtree_ext.h
 makenucs.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-makenucs.o: annotated_ped_file.h utils_ext.h write_files_ext.h
-makenucs.o: write_ghfiles_ext.h append_locus_array_ext.h
+makenucs.o: annotated_ped_file.h read_impute_bgen.hh zlib.h zconf.h
+makenucs.o: utils_ext.h write_files_ext.h write_ghfiles_ext.h
+makenucs.o: append_locus_array_ext.h
 append_locus_array.o: common.h types.hh typedefs.h errorno.h allutil.h
 append_locus_array.o: linkage.h linkage_external.h makeped.h pedtree.h
 append_locus_array.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -785,8 +809,8 @@ write_loki.o: write_beagle_ext.h write_structure_ext.h write_pseq_ext.h
 write_loki.o: batch_input.h input_check.h hwe.h compress_ext.h
 write_loki.o: error_messages_ext.h fcmap_ext.h linkage_ext.h omit_ped_ext.h
 write_loki.o: output_file_names_ext.h user_input_ext.h input.hh str_utils.hh
-write_loki.o: read_impute.hh annotated_ped_file.h utils_ext.h
-write_loki.o: write_premakeped_ext.h write_files_ext.h
+write_loki.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh zlib.h
+write_loki.o: zconf.h utils_ext.h write_premakeped_ext.h write_files_ext.h
 error_messages.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 error_messages.o: linkage_external.h makeped.h pedtree.h analysis.h
 error_messages.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -809,8 +833,8 @@ annotated_ped_file.o: vcftools/mega2_vcftools_interface.h
 annotated_ped_file.o: annotated_ped_file.h omit_ped_ext.h phe_lookup_ext.h
 annotated_ped_file.o: read_files_ext.h reorder_loci_ext.h
 annotated_ped_file.o: select_individuals_ext.h user_input_ext.h input.hh
-annotated_ped_file.o: str_utils.hh read_impute.hh utils_ext.h
-annotated_ped_file.o: write_files_ext.h plink_ext.h
+annotated_ped_file.o: str_utils.hh read_impute.hh read_impute_bgen.hh zlib.h
+annotated_ped_file.o: zconf.h utils_ext.h write_files_ext.h plink_ext.h
 write_SUP_files.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_SUP_files.o: linkage_external.h makeped.h pedtree.h analysis.h
 write_SUP_files.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -821,7 +845,8 @@ write_SUP_files.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
 write_SUP_files.o: fcmap_ext.h linkage_ext.h omit_ped_ext.h
 write_SUP_files.o: output_file_names_ext.h user_input_ext.h input.hh
 write_SUP_files.o: str_utils.hh read_impute.hh annotated_ped_file.h
-write_SUP_files.o: utils_ext.h write_files_ext.h
+write_SUP_files.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
+write_SUP_files.o: write_files_ext.h
 write_mendel7_files.o: common.h types.hh typedefs.h errorno.h allutil.h
 write_mendel7_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_mendel7_files.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -833,8 +858,8 @@ write_mendel7_files.o: compress_ext.h write_mfiles.h create_summary_ext.h
 write_mendel7_files.o: error_messages_ext.h genetic_utils_ext.h
 write_mendel7_files.o: output_routines_ext.h utils_ext.h user_input_ext.h
 write_mendel7_files.o: input.hh str_utils.hh read_impute.hh
-write_mendel7_files.o: annotated_ped_file.h write_files_ext.h
-write_mendel7_files.o: write_mendel7_files_ext.h
+write_mendel7_files.o: annotated_ped_file.h read_impute_bgen.hh zlib.h
+write_mendel7_files.o: zconf.h write_files_ext.h write_mendel7_files_ext.h
 write_plink_files.o: common.h types.hh typedefs.h errorno.h allutil.h
 write_plink_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_plink_files.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -842,13 +867,14 @@ write_plink_files.o: write_plink_ext.h plink_core_ext.h
 write_plink_files.o: write_eigenstrat_ext.h write_pangaea_ext.h
 write_plink_files.o: write_beagle_ext.h write_structure_ext.h
 write_plink_files.o: write_pseq_ext.h batch_input.h input_check.h hwe.h
-write_plink_files.o: compress_ext.h tod.hh loop.h file_ops.h ./zlib.h zconf.h
+write_plink_files.o: compress_ext.h tod.hh loop.h file_ops.h zlib.h zconf.h
 write_plink_files.o: error_messages_ext.h utils_ext.h entry.h
 write_plink_files.o: create_summary_ext.h output_routines_ext.h sh_util.h
 write_plink_files.o: linkage_ext.h fcmap_ext.h omit_ped_ext.h
 write_plink_files.o: output_file_names_ext.h user_input_ext.h input.hh
 write_plink_files.o: str_utils.hh read_impute.hh annotated_ped_file.h
-write_plink_files.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
+write_plink_files.o: read_impute_bgen.hh vcftools/mega2_vcftools_interface.h
+write_plink_files.o: annotated_ped_file.h
 cranefoot.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 cranefoot.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 cranefoot.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -857,8 +883,8 @@ cranefoot.o: write_structure_ext.h write_pseq_ext.h batch_input.h
 cranefoot.o: input_check.h hwe.h compress_ext.h create_summary_ext.h
 cranefoot.o: error_messages_ext.h fcmap_ext.h linkage_ext.h omit_ped_ext.h
 cranefoot.o: output_file_names_ext.h user_input_ext.h input.hh str_utils.hh
-cranefoot.o: read_impute.hh annotated_ped_file.h utils_ext.h
-cranefoot.o: write_files_ext.h
+cranefoot.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh zlib.h
+cranefoot.o: zconf.h utils_ext.h write_files_ext.h
 write_mega2annot.o: common.h types.hh typedefs.h errorno.h allutil.h
 write_mega2annot.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_mega2annot.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -870,7 +896,8 @@ write_mega2annot.o: annotated_ped_file_ext.h error_messages_ext.h fcmap_ext.h
 write_mega2annot.o: genetic_utils_ext.h linkage_ext.h omit_ped_ext.h
 write_mega2annot.o: output_file_names_ext.h output_routines_ext.h
 write_mega2annot.o: user_input_ext.h input.hh str_utils.hh read_impute.hh
-write_mega2annot.o: utils_ext.h write_files_ext.h
+write_mega2annot.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
+write_mega2annot.o: write_files_ext.h
 grow_string.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 grow_string.o: linkage_external.h makeped.h pedtree.h analysis.h
 grow_string.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -892,8 +919,9 @@ write_IQLS.o: batch_input.h input_check.h hwe.h compress_ext.h
 write_IQLS.o: create_summary_ext.h error_messages_ext.h fcmap_ext.h
 write_IQLS.o: linkage_ext.h omit_ped_ext.h output_file_names_ext.h
 write_IQLS.o: output_routines_ext.h pedtree_ext.h user_input_ext.h input.hh
-write_IQLS.o: str_utils.hh read_impute.hh annotated_ped_file.h utils_ext.h
-write_IQLS.o: loop.h file_ops.h ./zlib.h zconf.h entry.h sh_util.h
+write_IQLS.o: str_utils.hh read_impute.hh annotated_ped_file.h
+write_IQLS.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h loop.h
+write_IQLS.o: file_ops.h entry.h sh_util.h
 net.o: common.h types.hh error_messages_ext.h
 phe_lookup.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 phe_lookup.o: linkage_external.h makeped.h pedtree.h analysis.h
@@ -925,21 +953,22 @@ write_fbat.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
 write_fbat.o: plink_core_ext.h write_eigenstrat_ext.h write_pangaea_ext.h
 write_fbat.o: write_beagle_ext.h write_structure_ext.h write_pseq_ext.h
 write_fbat.o: batch_input.h input_check.h hwe.h compress_ext.h loop.h
-write_fbat.o: file_ops.h ./zlib.h zconf.h error_messages_ext.h utils_ext.h
+write_fbat.o: file_ops.h zlib.h zconf.h error_messages_ext.h utils_ext.h
 write_fbat.o: entry.h create_summary_ext.h output_routines_ext.h sh_util.h
 write_fbat.o: linkage_ext.h fcmap_ext.h omit_ped_ext.h
 write_fbat.o: output_file_names_ext.h user_input_ext.h input.hh str_utils.hh
-write_fbat.o: read_impute.hh annotated_ped_file.h fbat.R.h
-entry.o: file_ops.h ./zlib.h zconf.h common.h types.hh typedefs.h errorno.h
+write_fbat.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh
+write_fbat.o: fbat.R.h
+entry.o: file_ops.h zlib.h zconf.h common.h types.hh typedefs.h errorno.h
 entry.o: allutil.h linkage.h linkage_external.h makeped.h pedtree.h
 entry.o: analysis.h analysis_ext.h write_fbat_ext.h write_plink_ext.h
 entry.o: plink_core_ext.h write_eigenstrat_ext.h write_pangaea_ext.h
 entry.o: write_beagle_ext.h write_structure_ext.h write_pseq_ext.h
 entry.o: batch_input.h input_check.h hwe.h compress_ext.h
 entry.o: error_messages_ext.h utils_ext.h user_input_ext.h input.hh
-entry.o: str_utils.hh read_impute.hh annotated_ped_file.h entry.h
-entry.o: create_summary_ext.h output_routines_ext.h write_files_ext.h
-loop.o: loop.h file_ops.h ./zlib.h zconf.h common.h types.hh typedefs.h
+entry.o: str_utils.hh read_impute.hh annotated_ped_file.h read_impute_bgen.hh
+entry.o: entry.h create_summary_ext.h output_routines_ext.h write_files_ext.h
+loop.o: loop.h file_ops.h zlib.h zconf.h common.h types.hh typedefs.h
 loop.o: errorno.h allutil.h linkage.h linkage_external.h makeped.h pedtree.h
 loop.o: analysis.h analysis_ext.h write_fbat_ext.h write_plink_ext.h
 loop.o: plink_core_ext.h write_eigenstrat_ext.h write_pangaea_ext.h
@@ -953,23 +982,24 @@ write_pangaea.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
 write_pangaea.o: plink_core_ext.h write_eigenstrat_ext.h write_pangaea_ext.h
 write_pangaea.o: write_beagle_ext.h write_structure_ext.h write_pseq_ext.h
 write_pangaea.o: batch_input.h input_check.h hwe.h compress_ext.h loop.h
-write_pangaea.o: file_ops.h ./zlib.h zconf.h error_messages_ext.h utils_ext.h
+write_pangaea.o: file_ops.h zlib.h zconf.h error_messages_ext.h utils_ext.h
 write_pangaea.o: entry.h create_summary_ext.h output_routines_ext.h sh_util.h
 write_pangaea.o: linkage_ext.h fcmap_ext.h genetic_utils_ext.h omit_ped_ext.h
 write_pangaea.o: output_file_names_ext.h user_input_ext.h input.hh
 write_pangaea.o: str_utils.hh read_impute.hh annotated_ped_file.h
+write_pangaea.o: read_impute_bgen.hh
 write_beagle.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_beagle.o: linkage_external.h makeped.h pedtree.h analysis.h
 write_beagle.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
 write_beagle.o: plink_core_ext.h write_eigenstrat_ext.h write_pangaea_ext.h
 write_beagle.o: write_beagle_ext.h write_structure_ext.h write_pseq_ext.h
 write_beagle.o: batch_input.h input_check.h hwe.h compress_ext.h loop.h
-write_beagle.o: file_ops.h ./zlib.h zconf.h error_messages_ext.h utils_ext.h
+write_beagle.o: file_ops.h zlib.h zconf.h error_messages_ext.h utils_ext.h
 write_beagle.o: entry.h create_summary_ext.h output_routines_ext.h sh_util.h
 write_beagle.o: linkage_ext.h fcmap_ext.h omit_ped_ext.h
 write_beagle.o: output_file_names_ext.h user_input_ext.h input.hh
 write_beagle.o: str_utils.hh read_impute.hh annotated_ped_file.h
-write_beagle.o: genetic_utils_ext.h write_files_ext.h
+write_beagle.o: read_impute_bgen.hh genetic_utils_ext.h write_files_ext.h
 plink_core_files.o: common.h types.hh typedefs.h errorno.h allutil.h
 plink_core_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 plink_core_files.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -977,11 +1007,12 @@ plink_core_files.o: write_plink_ext.h plink_core_ext.h write_eigenstrat_ext.h
 plink_core_files.o: write_pangaea_ext.h write_beagle_ext.h
 plink_core_files.o: write_structure_ext.h write_pseq_ext.h batch_input.h
 plink_core_files.o: input_check.h hwe.h compress_ext.h tod.hh loop.h
-plink_core_files.o: file_ops.h ./zlib.h zconf.h error_messages_ext.h
+plink_core_files.o: file_ops.h zlib.h zconf.h error_messages_ext.h
 plink_core_files.o: utils_ext.h entry.h create_summary_ext.h
 plink_core_files.o: output_routines_ext.h sh_util.h linkage_ext.h fcmap_ext.h
 plink_core_files.o: omit_ped_ext.h output_file_names_ext.h user_input_ext.h
 plink_core_files.o: input.hh str_utils.hh read_impute.hh annotated_ped_file.h
+plink_core_files.o: read_impute_bgen.hh
 write_eigenstrat.o: common.h types.hh typedefs.h errorno.h allutil.h
 write_eigenstrat.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_eigenstrat.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -989,11 +1020,12 @@ write_eigenstrat.o: write_plink_ext.h plink_core_ext.h write_eigenstrat_ext.h
 write_eigenstrat.o: write_pangaea_ext.h write_beagle_ext.h
 write_eigenstrat.o: write_structure_ext.h write_pseq_ext.h batch_input.h
 write_eigenstrat.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h
-write_eigenstrat.o: ./zlib.h zconf.h error_messages_ext.h utils_ext.h entry.h
+write_eigenstrat.o: zlib.h zconf.h error_messages_ext.h utils_ext.h entry.h
 write_eigenstrat.o: create_summary_ext.h output_routines_ext.h sh_util.h
 write_eigenstrat.o: linkage_ext.h fcmap_ext.h omit_ped_ext.h
 write_eigenstrat.o: output_file_names_ext.h user_input_ext.h input.hh
 write_eigenstrat.o: str_utils.hh read_impute.hh annotated_ped_file.h
+write_eigenstrat.o: read_impute_bgen.hh
 write_structure.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_structure.o: linkage_external.h makeped.h pedtree.h analysis.h
 write_structure.o: analysis_ext.h write_fbat_ext.h write_plink_ext.h
@@ -1001,11 +1033,12 @@ write_structure.o: plink_core_ext.h write_eigenstrat_ext.h
 write_structure.o: write_pangaea_ext.h write_beagle_ext.h
 write_structure.o: write_structure_ext.h write_pseq_ext.h batch_input.h
 write_structure.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h
-write_structure.o: ./zlib.h zconf.h error_messages_ext.h utils_ext.h entry.h
+write_structure.o: zlib.h zconf.h error_messages_ext.h utils_ext.h entry.h
 write_structure.o: create_summary_ext.h output_routines_ext.h sh_util.h
 write_structure.o: linkage_ext.h fcmap_ext.h omit_ped_ext.h
 write_structure.o: output_file_names_ext.h user_input_ext.h input.hh
 write_structure.o: str_utils.hh read_impute.hh annotated_ped_file.h
+write_structure.o: read_impute_bgen.hh
 batch.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 batch.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 batch.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -1013,8 +1046,8 @@ batch.o: write_eigenstrat_ext.h write_pangaea_ext.h write_beagle_ext.h
 batch.o: write_structure_ext.h write_pseq_ext.h batch_input.h input_check.h
 batch.o: hwe.h compress_ext.h batch.h reorder_loci_ext.h batch_input_ext.h
 batch.o: error_messages_ext.h genetic_utils_ext.h user_input_ext.h input.hh
-batch.o: str_utils.hh read_impute.hh annotated_ped_file.h plink_ext.h
-batch.o: utils_ext.h cw_routines_ext.h
+batch.o: str_utils.hh read_impute.hh annotated_ped_file.h read_impute_bgen.hh
+batch.o: zlib.h zconf.h plink_ext.h utils_ext.h cw_routines_ext.h
 compress.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 compress.o: linkage_external.h makeped.h pedtree.h analysis.h analysis_ext.h
 compress.o: write_fbat_ext.h write_plink_ext.h plink_core_ext.h
@@ -1029,11 +1062,12 @@ write_pseq_files.o: write_plink_ext.h plink_core_ext.h write_eigenstrat_ext.h
 write_pseq_files.o: write_pangaea_ext.h write_beagle_ext.h
 write_pseq_files.o: write_structure_ext.h write_pseq_ext.h batch_input.h
 write_pseq_files.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h
-write_pseq_files.o: ./zlib.h zconf.h error_messages_ext.h utils_ext.h entry.h
+write_pseq_files.o: zlib.h zconf.h error_messages_ext.h utils_ext.h entry.h
 write_pseq_files.o: create_summary_ext.h output_routines_ext.h sh_util.h
 write_pseq_files.o: linkage_ext.h fcmap_ext.h omit_ped_ext.h
 write_pseq_files.o: output_file_names_ext.h user_input_ext.h input.hh
 write_pseq_files.o: str_utils.hh read_impute.hh annotated_ped_file.h
+write_pseq_files.o: read_impute_bgen.hh
 menu_value_missing.o: common.h types.hh typedefs.h errorno.h allutil.h
 menu_value_missing.o: linkage.h linkage_external.h makeped.h pedtree.h
 menu_value_missing.o: analysis.h analysis_ext.h write_fbat_ext.h
@@ -1044,7 +1078,7 @@ menu_value_missing.o: write_pseq_ext.h batch_input.h input_check.h hwe.h
 menu_value_missing.o: compress_ext.h batch_input_ext.h error_messages_ext.h
 menu_value_missing.o: fcmap_ext.h plink_ext.h user_input_ext.h input.hh
 menu_value_missing.o: str_utils.hh read_impute.hh annotated_ped_file.h
-menu_value_missing.o: utils_ext.h
+menu_value_missing.o: read_impute_bgen.hh zlib.h zconf.h utils_ext.h
 str_utils.o: common.h types.hh error_messages_ext.h str_utils.hh
 read_impute.o: common.h types.hh tod.hh error_messages_ext.h typedefs.h
 read_impute.o: errorno.h allutil.h linkage.h linkage_external.h makeped.h
@@ -1056,4 +1090,14 @@ read_impute.o: compress_ext.h fcmap_ext.h batch_input_ext.h mrecode.h
 read_impute.o: mrecode_ext.h vcftools/mega2_vcftools_interface.h
 read_impute.o: annotated_ped_file.h reorder_loci_ext.h plink_ext.h
 read_impute.o: annotated_ped_file_ext.h annotated_ped_file.h read_files_ext.h
-read_impute.o: str_utils.hh input.hh read_impute.hh
+read_impute.o: str_utils.hh input.hh read_impute.hh read_impute_bgen.hh
+read_impute.o: zlib.h zconf.h
+read_impute_bgen.o: zlib.h zconf.h common.h types.hh tod.hh
+read_impute_bgen.o: error_messages_ext.h typedefs.h errorno.h allutil.h
+read_impute_bgen.o: linkage.h linkage_external.h makeped.h pedtree.h
+read_impute_bgen.o: analysis.h analysis_ext.h write_fbat_ext.h
+read_impute_bgen.o: write_plink_ext.h plink_core_ext.h write_eigenstrat_ext.h
+read_impute_bgen.o: write_pangaea_ext.h write_beagle_ext.h
+read_impute_bgen.o: write_structure_ext.h write_pseq_ext.h batch_input.h
+read_impute_bgen.o: input_check.h hwe.h compress_ext.h input.hh str_utils.hh
+read_impute_bgen.o: read_impute.hh annotated_ped_file.h read_impute_bgen.hh

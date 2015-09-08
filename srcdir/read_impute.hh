@@ -113,15 +113,19 @@ public:
 
     Str           oxford_single_chr;
     double        info_threshold;
-    double        hard_call_threshold;
+    double        hard_call_uncertainty;
     double        genotype_missing_fraction;
     char          allow_indels;
     char          allow_dups;
     Input_Impute *input;
     int           check_format;
-private:
-    const char   *impute_file;
+
+public:
+    Vecs    sample_file_hdr2b;
     Str           info_file;
+
+protected:
+    const char   *impute_file;
     Str           sample_file;
     m2_map        impute_map;
 
@@ -133,14 +137,13 @@ static
     Vecs    sample_file_hdr1a;
     Vecs    sample_file_hdr1b;
     Vecs    sample_file_hdr2a;
-    Vecs    sample_file_hdr2b;
 
 static const
     int imputed_oxford_single_chr_i         = 8000001;
 static const
     int imputed_info_metric_threshold_i     = 8000002;
 static const
-    int imputed_hard_call_threshold_i       = 8000003;
+    int imputed_hard_call_uncertainty_i     = 8000003;
 static const
     int imputed_genotype_missing_fraction_i = 8000004;
 static const

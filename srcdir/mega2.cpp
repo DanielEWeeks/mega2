@@ -961,10 +961,6 @@ int             main(int argc, char **argv)
                                            freqfl_name, penfl_name,    omitfl_name,
                                            bedfl_name,  phefl_name,
                                            UntypedPedOpt, analysis, plink_info);
-        if (LPedTreeTop == NULL) {
-            errorvf("Unsuccessful in reading Mega2 format files - aborting mega2!\n");
-            EXIT(INPUT_DATA_ERROR);
-        }
     } else if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED) {
         it = PLINK_Args;
         if (Mega2BatchItems[it].items_read == 0) {
@@ -986,10 +982,6 @@ int             main(int argc, char **argv)
                                            freqfl_name, penfl_name,    omitfl_name,
                                            bedfl_name,  phefl_name,
                                            UntypedPedOpt, analysis, plink_info);
-        if (LPedTreeTop == NULL) {
-            errorvf("Unsuccessful in reading input files - aborting mega2!\n");
-            EXIT(INPUT_DATA_ERROR);
-        }
     } else if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
                Input_Format == in_format_VCF) {
 
@@ -1034,10 +1026,6 @@ int             main(int argc, char **argv)
                                            freqfl_name, penfl_name, omitfl_name,
                                            bedfl_name,  phefl_name,
                                            UntypedPedOpt, analysis, plink_info);
-        if (LPedTreeTop == NULL) {
-            errorvf("Unsuccessful in reading input files - aborting mega2!\n");
-            EXIT(INPUT_DATA_ERROR);
-        }
     } else if (Input_Format == in_format_linkage || Input_Format == in_format_extended_linkage) {
 
 #ifndef HIDESTATUS
@@ -1063,11 +1051,7 @@ int             main(int argc, char **argv)
         LPedTreeTop = read_linkage2(pedfl_name, locusfl_name,
                                     omitfl_name, mapfl_name,
                                     UntypedPedOpt, analysis);
-        if (LPedTreeTop == NULL) {
-            errorvf("Unsuccessful in reading linkage files - aborting mega2!\n");
-            EXIT(INPUT_DATA_ERROR);
-        }
-    } else if (Input_Format == in_format_imputed) {
+    } else if (Input->has_names()) {
  
        if (Input->has_batch2local())
             Input->do_batch2local();
@@ -1079,17 +1063,17 @@ int             main(int argc, char **argv)
                                            freqfl_name, penfl_name, omitfl_name,
                                            bedfl_name,  phefl_name,
                                            UntypedPedOpt, analysis, plink_info);
-        if (LPedTreeTop == NULL) {
-            errorvf("Unsuccessful in reading input files - aborting mega2!\n");
-            EXIT(INPUT_DATA_ERROR);
-        }
-
     } else {
         errorf("Input files appear to be in mixed Mega2 format and LINKAGE format.");
         errorf("Please use only Mega2 files or only LINKAGE files.");
         errorf("Unsuccessful in reading input files - aborting mega2!\n");
         EXIT(INPUT_DATA_ERROR);
     }
+    if (LPedTreeTop == NULL) {
+        errorvf("Unsuccessful in reading input files - aborting mega2!\n");
+        EXIT(INPUT_DATA_ERROR);
+    }
+
     tod_files();
 
     if (Input->has_gc()) {
