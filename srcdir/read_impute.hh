@@ -29,7 +29,11 @@
 #ifndef READ_IMPUTE_HH
 #define READ_IMPUTE_HH
 
-#include "batch_input.h"
+#include <fstream>
+#include <string>
+
+#include "input_ops.hh"
+#include "str_utils.hh"
 #include "annotated_ped_file.h"
 
 class ImpMarker {
@@ -63,11 +67,26 @@ enum Column_Type {RESERVED, MISSING, PHENO, GENO};
 typedef vectordb<Column_Type> Vecct;
 typedef vectordb<Column_Type>::const_iterator Vecctp;
 
-class ReadImputed {
+class GenotypeReadHelper
+{
+public:
+    virtual void genotypes_init() {}
+    virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& rsid, std::string& pos,
+                                         const char* &A, const char* &B) { return true; }
+    virtual void genotypes_sample_prob(Token::d3& nums) {}
+    virtual void genotypes_end() {}
+};
+
+class ReadImputed : public Input_Ops
+{
 public:
     ReadImputed() :  check_format(0), HDR(2) {};  // two line header
     ~ReadImputed() { (void) markers[0]; };
 
+    virtual boolean has_menu_display() { return true; }
+    virtual boolean has_menu_parse()   { return true; }
+    virtual boolean has_menu2batch()   { return true; }
+    virtual boolean has_batch2local()  { return true; }
     virtual void do_menu_display(int &idx, int line_len, int choiceA[]);
     virtual int  do_menu_parse(int choice);
     virtual void do_menu2batch();
@@ -75,7 +94,12 @@ public:
 
     void show_settings();
 
-    virtual void do_init(Input_Impute *inp);
+    virtual boolean has_init()  { return true; }
+    virtual boolean has_names() { return true; }
+    virtual boolean has_map()   { return true; }
+    virtual boolean has_ped()   { return true; }
+    virtual boolean has_gc()    { return true; }
+    virtual void do_init(Input_Base *inp);
     virtual linkage_locus_top *do_names(const char *&names_fn);
     virtual void do_map(std::vector<m2_map>& additional_maps);
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
@@ -86,21 +110,18 @@ public:
         sample_file = sam;
     }
 
-    void read_imputed_file();
+    virtual void read_input_file();
+    virtual void build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
+
+    void build_internal_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons, GenotypeReadHelper &gh);
 
     void check_indelsNdups();
-
     void read_info_file();
-
     void read_sample_file();
-
     linkage_locus_top *build_impute2_names();
-
     void build_impute2_map(m2_map& impute_map);
-
     annotated_ped_rec *build_impute2_ped(linkage_locus_top *LTop, int *num_peds);
 
-    void build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
 
 public:
     Vecmarkerp    markers;
@@ -117,11 +138,11 @@ public:
     double        genotype_missing_fraction;
     char          allow_indels;
     char          allow_dups;
-    Input_Impute *input;
+    Input_Base   *input;
     int           check_format;
 
 public:
-    Vecs    sample_file_hdr2b;
+    Vecs          sample_file_hdr2b;
     Str           info_file;
 
 protected:
@@ -153,6 +174,24 @@ static const
 static const
     int imputed_allow_dups_i                = 8000007;
 
+};
+
+class ReadImputedGenotypeReadHelper : public GenotypeReadHelper
+{
+public:
+    virtual void genotypes_init();
+    virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& rsid, std::string& pos,
+                                         const char* &A, const char* &B);
+    virtual void genotypes_sample_prob(Token::d3& nums);
+    virtual void genotypes_end();
+
+public:
+    std::string impute_file;
+    std::ifstream ifs;
+    Token token;
+    ReadImputed *rip;
+    std::string line;
+    int line_n;
 };
 
 #endif

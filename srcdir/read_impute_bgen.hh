@@ -31,17 +31,21 @@
 
 #include <string>
 #include "zlib.h"
+#include "read_impute.hh"
 
-class ReadBgen {
+class ReadBgen : public ReadImputed {
 public:
-    ReadBgen() : debug(0) {};
-    ReadBgen(int i) : debug(i) {};
-   ~ReadBgen() {};
+    virtual void read_input_file();
+    virtual void build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
+};
 
-    virtual void do_init(Input_BGEN *inp);
-    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
+class ReadBgenFile {
+public:
+    ReadBgenFile() : debug(0) {};
+    ReadBgenFile(int i) : debug(i) {};
+   ~ReadBgenFile() {};
 
-    void read_bgen_file();
+    void read_input_file();
 
     void open(const char *path);
     void close();
@@ -80,8 +84,6 @@ public:
     void read_expanded_block_12(unsigned long DC, unsigned char *zp);
     void process_12(int i);
 
-    void build_bgen_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
-
 public:
     unsigned long offset;
     unsigned long header;
@@ -93,8 +95,12 @@ public:
 #define compressF  1
 #define layoutFld  (0xF<<2)
 #define sidF       0x80000000
+
     unsigned long layout;
     long badname;
+    long scale;
+    unsigned char *zp;
+    int pass;
 
     struct SNPblock {
         unsigned long  N;
@@ -121,13 +127,25 @@ public:
         VecsDB   samples;
     } sample;
 
+    std::string impute_file;
+    ReadImputed *rip;
+
 private:
-    char *bgen_file;
-    int pass;
     gzFile fd;
     unsigned char ibuf[4];
     int debug;
-    ReadImputed *rip;
 };
+
+
+class ReadBgenGenotypeReadHelper : public GenotypeReadHelper, public ReadBgenFile
+{
+public:
+    virtual void genotypes_init();
+    virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& rsid, std::string& pos,
+                                         const char* &A, const char* &B);
+    virtual void genotypes_sample_prob(Token::d3& nums);
+    virtual void genotypes_end();
+};
+
 
 #endif

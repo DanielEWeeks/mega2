@@ -4170,10 +4170,12 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                Input_Format == in_format_compressed_VCF ||
                Input_Format == in_format_VCF;
 
-    if (Input->has_init()) Input->do_init();
+    if (Input->GetOps()->has_init()) {
+	Input->GetOps()->do_init(Input);
+    }
 
-    if (Input->has_names()) {
-        LTop = Input->do_names(names_fn);
+    if (Input->GetOps()->has_names()) {
+        LTop = Input->GetOps()->do_names(names_fn);
 	ann_files = 1;
     } else if (PLINK.plink || xcf) {
         char **phe_names = NULL;
@@ -4300,8 +4302,8 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     EXLTop = new_ex_llocustop();
 */
     std::vector<m2_map> additional_maps;
-    if (Input->has_map()) {
-        Input->do_map(additional_maps);
+    if (Input->GetOps()->has_map()) {
+        Input->GetOps()->do_map(additional_maps);
         EXLTop = NULL; // but additional_maps.size() > 0 so see below; this makes compiler happy
     } else if (PLINK.plink) {
         // if this is PLINK format (double negative)
@@ -4447,9 +4449,9 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     SECTION_ERR_EXTERN(FLOAT_AFFECT);
 
-    if (Input->has_ped()) {
+    if (Input->GetOps()->has_ped()) {
         pedfile_type = PREMAKEPED_PFT;
-        Top = Input->do_ped(LTop);
+        Top = Input->GetOps()->do_ped(LTop);
     } else if (PLINK.plink ||
 	Input_Format == in_format_binary_VCF ||
         Input_Format == in_format_compressed_VCF ||

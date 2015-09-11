@@ -241,16 +241,27 @@ void ReadImputed::show_settings()
 
 }
 
-
-void ReadImputed::do_init(Input_Impute *inp)
+void ReadImputed::do_init(Input_Base *inp)
 {
     this->input = inp;
     this->files(*inp->input_files.bedfl, *inp->input_files.pedfl);
     show_settings();
 
-    read_imputed_file();
+    read_input_file();
 
-    if (this->read_info) read_info_file();
+    read_info = false;  // this should be default ... but not for win mvc
+    if (!info_file.empty()) {
+        ifstream infs;
+        infs.open(info_file.c_str());
+        if (! infs.is_open() ) {
+            errorvf("read_imputed_file: Info file can not be opened: \"%s\"\n", C(info_file));
+            EXIT(FILE_NOT_FOUND);
+        }
+        infs.close();
+        read_info = true;
+
+        read_info_file();
+    }
 
     check_indelsNdups();
 
@@ -281,7 +292,7 @@ linkage_ped_top *ReadImputed::do_ped(linkage_locus_top *LTop)
 
     annotated_ped_rec *persons = build_impute2_ped(LTop, &num_peds);
 
-    build_impute2_genotypes(LTop, persons);
+    build_genotypes(LTop, persons);
 
     linkage_ped_top *Top;
     Top = mk_ped_top(persons, this->people.size(), LTop, num_peds,
@@ -314,28 +325,15 @@ void ReadImputed::do_gc()
     impute_map.gc();
 }
 
-void ReadImputed::read_imputed_file ()
+void ReadImputed::read_input_file ()
 {
-//  asm("int $3");
     int dbg = 0;
 
     ifstream ifs;
-    ifstream infs;
     ifs.open(impute_file);
     if (! ifs.is_open() ) {
         errorvf("read_imputed_file: Can not open \"%s\" file\n", impute_file);
         EXIT(FILE_NOT_FOUND);
-    }
-
-    read_info = false;  // this should be default ... but not for win mvc
-    if (!info_file.empty()) {
-        infs.open(info_file.c_str());
-        if (! infs.is_open() ) {
-            errorvf("read_imputed_file: Info file can not be opened: \"%s\"\n", C(info_file));
-            EXIT(FILE_NOT_FOUND);
-        }
-        infs.close();
-        read_info = true;
     }
 
     Str hmm, rsid, pos, A, B;
@@ -1033,27 +1031,69 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
     return persons;
 }
 
-void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
+//need to share ifs and token
+void ReadImputedGenotypeReadHelper::genotypes_init()
 {
-//  asm("int $3");
-    int dbg = 0;
-
-    ifstream ifs;
-    string line;
-
-    string hmm, rsid, pos;
-    char *A, *B;
-//  double nums[3];
-    Token::d3 nums;
-
-    ifs.open(impute_file);
+    ifs.open(C(impute_file));
     if (! ifs.is_open() ) {
         errorvf("read_imputed_genotype_file: Can not open \"%s\" file\n",
-                impute_file);
+                C(impute_file));
         EXIT(FILE_NOT_FOUND);
     }
-    int line_n = 0;
-    Token token(3);
+    line_n = 0;
+}
+
+boolean ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& rsid, string& pos,
+                                                        const char* &A, const char* &B)
+{
+    getline(ifs, line);
+    line_n++;
+//?    tod_im_line("impute read line  ");
+    if (ifs.eof()) return false;
+    token.set(line);
+//?    tod_im_line("impute set line   ");
+
+//	ifs >> hmm; // +A+B+ nums() all read via >> @ 14.62 sec
+//                               vector<double> nums  12.26
+//                               double nums[3]       11.59
+    token.more(hmm);
+    token.more(rsid);
+    token.more(pos);
+    token.more(A);
+    token.more(B);
+
+    return true;
+}
+
+void ReadImputedGenotypeReadHelper::genotypes_sample_prob(Token::d3& nums)
+{
+    token.getDC(nums, 3);
+}
+
+void ReadImputedGenotypeReadHelper::genotypes_end()
+{
+    ifs.close();
+}
+
+void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
+{
+    ReadImputedGenotypeReadHelper  gh;
+    gh.impute_file = impute_file;
+    gh.rip = this;
+
+    build_internal_genotypes(LTop, persons, gh);
+}
+
+void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
+                                           GenotypeReadHelper &gh)
+{
+    int dbg = 0;
+
+    string hmm, rsid, pos;
+    const char *A, *B;
+    Token::d3 nums;
+
+    gh.genotypes_init();
     ImpMarker   *mp;
 
     int   mrk_idx = sample_file_hdr2b.size() - 5 -1;
@@ -1073,28 +1113,18 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
            "untyped", "uncertain", "good", "geno-", "Marker + chr:pos",
            "marker", "hard", "hard", "typing", "",
            "0/0", "call", "call", "rate", "");
-    for (Vecmarkerpp mpp = markers.cbegin(); ! ifs.eof(); mpp++) {
+    for (Vecmarkerpp mpp = markers.begin(); mpp != markers.end(); mpp++) {
         tod_im_line.reset();
         tod_im_line_cpy.reset();
 
-        getline(ifs, line);
+        gh.genotypes_marker_hdr(mrk_idx, hmm, rsid, pos, A, B);
         tod_im_line("impute read line  ");
-        if (ifs.eof()) break;
-        token.set(line);
-        tod_im_line("impute set line   ");
 
-//	ifs >> hmm; // +A+B+ nums() all read via >> @ 14.62 sec
-//                               vector<double> nums  12.26
-//                               double nums[3]       11.59
-        token.more(hmm);
-        token.more(rsid);
-        token.more(pos);
-
-        line_n++;
         mp = *mpp;
+
         if (pos != mp->pos) {
-            errorvf("internal error: impute_file (\"%s\") second pass does not match first pass at line %d\n",
-                    impute_file, line_n);
+            errorvf("internal error: impute_bgen_file (\"%s\") second pass does not match first pass at marker #%d %s\n",
+                    impute_file, mrk_idx, C(rsid));
                 EXIT(DATA_INCONSISTENCY);
         }
         if (mp->skip) {
@@ -1103,8 +1133,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
         mrk_idx++;  // hence the -1 above
         locus = &LTop->Locus[mrk_idx];
 
-        token.more(A);
-        token.more(B);
         callele1    = canonical_allele(A);
         callele2    = canonical_allele(B);
 
@@ -1115,10 +1143,13 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
         tod_per.reset();
         annotated_ped_rec *entry = persons;
 //      if (mrk_idx == 237)
-	for(int p = 0 ; p < people_filtered; p++) {
+//          warnvf("Marker 237 == %s, scale = \n", locus->Name);
+	for(int p = 0 ; p < people_filtered; p++, entry++) {
             sam++;
-            token.getDC(nums);
 
+            gh.genotypes_sample_prob(nums);
+//          if (mrk_idx == 237)
+//              warnvf("sam %d, %.4f %.4f %.4f\n", sam, nums[0], nums[1], nums[2]);
             if (nums[0] > nums[1]) {
                 i = 0;
             } else {
@@ -1140,7 +1171,7 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
 
             if (dbg) {
                 cout << "#";
-                cout << line_n << "@";
+//              cout << line_n << "@";
                 cout << sam << ": ";
                 cout << mp->name << " ";
                 cout << nums[0] << " " << nums[1] << " " << nums[2] << "  " << i << "\n";
@@ -1154,9 +1185,6 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                 set_2Ralleles(entry->marker, mrk_idx, locus, callele2, callele2);
             else if (i == 3)
                 set_2Ralleles(entry->marker, mrk_idx, locus, callele0, callele0);
-
-            entry++;
-
         }
         tod_per("impute person loop");
         if (good < genotype_missing_fraction * people_filtered) {
@@ -1171,9 +1199,9 @@ void ReadImputed::build_impute2_genotypes(linkage_locus_top *LTop, annotated_ped
                    zero, uncertain, good, ((double)good)/people_filtered,
                    C(mp->name), C(mp->chr), C(mp->pos));
         }
-
     }
     tod_gen();
     SECTION_ERR_FINI(genotype_missing_fraction);
 
+    gh.genotypes_end();
 }

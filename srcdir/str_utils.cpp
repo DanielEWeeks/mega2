@@ -61,7 +61,7 @@ bool Token::more(Str& token, int dbg) {
 }
 
 
-bool Token::more(char *&token) {
+bool Token::more(const char *&token) {
     fo = line.find_first_of(sep, of);
     if (fo == std::string::npos) {
         fo = line.size();
@@ -154,7 +154,7 @@ void Token::getD(double vec[3], int cnt) {
 }
 
 void Token::getDC(d3 &vec, int cnt) {
-    char *token;
+    const char *token;
     char *fin;
     for (int i = 0, l = cnt ? cnt : _cnt; mo && i < l; i++) {
         mo = more(token);

@@ -1051,10 +1051,10 @@ int             main(int argc, char **argv)
         LPedTreeTop = read_linkage2(pedfl_name, locusfl_name,
                                     omitfl_name, mapfl_name,
                                     UntypedPedOpt, analysis);
-    } else if (Input->has_names()) {
+    } else if (Input->GetOps()->has_names()) {
  
-       if (Input->has_batch2local())
-            Input->do_batch2local();
+        if (Input->GetOps()->has_batch2local())
+            Input->GetOps()->do_batch2local();
 
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -1076,8 +1076,8 @@ int             main(int argc, char **argv)
 
     tod_files();
 
-    if (Input->has_gc()) {
-        Input->do_gc();
+    if (Input->GetOps()->has_gc()) {
+        Input->GetOps()->do_gc();
     }
 
     Tod tod_makeped("makeped");

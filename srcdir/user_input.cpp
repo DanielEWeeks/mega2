@@ -1022,7 +1022,7 @@ void menu1(file_format *infl_type,
         }
         choiceA[idx++] = ext_i;
 
-        if (Input->has_menu_display()) Input->do_menu_display(idx, line_len, choiceA);
+        if (Input->GetOps()->has_menu_display()) Input->GetOps()->do_menu_display(idx, line_len, choiceA);
 
         choiceA[idx] = fln_print(auxo, idx, _aux_i);
         if (choiceA[idx]) idx++;
@@ -1226,7 +1226,7 @@ void menu1(file_format *infl_type,
             fcmap(stdin, "%s", extension_name); newline;
             reset_extension = 1;
 
-        } else if (Input->has_menu_parse() && Input->do_menu_parse(choice_) ) {
+        } else if (Input->GetOps()->has_menu_parse() && Input->GetOps()->do_menu_parse(choice_) ) {
             ; // work handled in do_menu_parse iff it returns 1
 
         } else if (choice_ == inf_i) {
@@ -1428,7 +1428,7 @@ void menu1(file_format *infl_type,
             if (xcf) batchf(VCF_Marker_Alternative_INFO_Key);
         }
 
-        if (Input->has_menu2batch()) Input->do_menu2batch();
+        if (Input->GetOps()->has_menu2batch()) Input->GetOps()->do_menu2batch();
 
         menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
     }

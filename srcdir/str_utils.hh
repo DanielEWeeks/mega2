@@ -43,7 +43,7 @@ public:
     }
 
     bool more(Str& token, int dbg=0);
-    bool more(char *& token);
+    bool more(const char *& token);
     void rest(Str& token) {
         token = line.substr(of);
     }

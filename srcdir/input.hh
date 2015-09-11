@@ -29,105 +29,18 @@
 #ifndef INPUT_HH
 #define INPUT_HH
 
-class Input_Impute;
-class Input_BGEN;
+#include "input_ops.hh"
 
-// #include "types.hh" // common.h includes types.hh
-#include "str_utils.hh"
 #include "read_impute.hh"
 #include "read_impute_bgen.hh"
 
-class Input_Base;
-extern Input_Base *Input;
-
-typedef
-enum INPUT_FORMAT {
-    in_format_mega2 = 0,
-    in_format_linkage = 1,
-    in_format_extended_linkage = 2,
-    in_format_binary_PED = 3,
-    in_format_PED = 4,
-    in_format_binary_VCF = 5,
-    in_format_compressed_VCF = 6,
-    in_format_VCF = 7,
-    in_format_imputed = 8,
-    in_format_bgen    = 9,
-    in_format_traditional = 100,
-} INPUT_FORMAT_t;
-
-class Input_Files {
-public:
-    char **pedfl;
-    char **locusfl;
-    char **mapfl;
-    char **pmapfl;
-    char **omitfl;
-    char **freqfl;
-    char **penfl;
-    char **bedfl;
-    char **phefl;
-
-    Input_Files() :
-        pedfl(&mega2_input_files[PEDIGREE]),
-        locusfl(&mega2_input_files[LOCUS]),
-        mapfl(&mega2_input_files[MAP]),
-        pmapfl(&mega2_input_files[PMAP]),
-        omitfl(&mega2_input_files[OMIT]),
-        freqfl(&mega2_input_files[FREQ]),
-        penfl(&mega2_input_files[PEN]),
-        bedfl(&mega2_input_files[BED]),
-        phefl(&mega2_input_files[PHEfl]) {  };
-
-};
-
-class Input_Base {
-public:
-    Input_Base(INPUT_FORMAT_t i): input_format(i), plink(0), xcf(0), req_aux_file(0), req_locus_file(1), req_map_file(1), req_stem_flag(0)  {}
-    virtual ~Input_Base() {};
-
-    virtual boolean has_menu_display() { return false; }
-    virtual boolean has_menu_parse()   { return false; }
-    virtual boolean has_menu2batch()   { return false; }
-    virtual boolean has_batch2local()  { return false; }
-
-    virtual void do_menu_display(int &idx, int line_len, int choiceA[])   { }
-    virtual int  do_menu_parse(int choice) { return 0; }   // 0 indicates no match ; but false (above) means this is not called.
-    virtual void do_menu2batch() { }
-    virtual void do_batch2local() { }
-
-
-    virtual boolean has_init()  { return false; }
-    virtual boolean has_names() { return false; }
-    virtual boolean has_map()   { return false; }
-    virtual boolean has_ped()   { return false; }
-    virtual boolean has_gc()    { return false; }
-
-//  these functions are define the corresponding function above returns true;
-    virtual void do_init()  { }
-    virtual linkage_locus_top *do_names(const char *&names_fn) { return (linkage_locus_top *)0; }
-    virtual void do_map(std::vector<m2_map>& additional_maps) { }
-    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop) { return (linkage_ped_top *) 0; }
-    virtual void do_gc() { }
-
-public:
-    INPUT_FORMAT_t input_format;
-    Input_Files input_files;
-    Globals G;
-    Str     MissingCodes;
-    Sets    MissingCodesSet;
-
-    int plink;
-    int xcf;
-    int req_aux_file;
-    int req_locus_file;
-    int req_map_file;
-    int req_stem_flag;
-};
 
 class Input_Old : public Input_Base {
 public:
     Input_Old(INPUT_FORMAT_t i): Input_Base(i) {}
     virtual ~Input_Old() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 ////////////////
@@ -136,18 +49,24 @@ class Input_Mega2 : public Input_Old {
 public:
     Input_Mega2(INPUT_FORMAT_t i): Input_Old(i) {}
     virtual ~Input_Mega2() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 class Input_Linkage : public Input_Old {
 public:
     Input_Linkage(INPUT_FORMAT_t i): Input_Old(i) {}
     virtual ~Input_Linkage() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 class Input_Extended_Linkage : public Input_Old {
 public:
     Input_Extended_Linkage(INPUT_FORMAT_t i): Input_Old(i) {}
     virtual ~Input_Extended_Linkage() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 ////////////////
@@ -161,6 +80,8 @@ public:
         req_stem_flag  = 1;
     }
     virtual ~Input_PLINK_Common() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 class Input_PED_Binary : public Input_PLINK_Common {
@@ -169,12 +90,16 @@ public:
         req_aux_file   = 1;
     }
     virtual ~Input_PED_Binary() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 class Input_PED : public Input_PLINK_Common {
 public:
     Input_PED(INPUT_FORMAT_t i): Input_PLINK_Common(i) {}
     virtual ~Input_PED() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 ////////////////
@@ -188,24 +113,32 @@ public:
         req_stem_flag  = 1;
 }
     virtual ~Input_VCF_Common() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 class Input_VCF_Binary : public Input_VCF_Common {
 public:
     Input_VCF_Binary(INPUT_FORMAT_t i): Input_VCF_Common(i) {}
     virtual ~Input_VCF_Binary() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 class Input_VCF_Compressed : public Input_VCF_Common {
 public:
     Input_VCF_Compressed(INPUT_FORMAT_t i): Input_VCF_Common(i) {}
     virtual ~Input_VCF_Compressed() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 class Input_VCF : public Input_VCF_Common {
 public:
     Input_VCF(INPUT_FORMAT_t i): Input_VCF_Common(i) {}
     virtual ~Input_VCF() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
 };
 
 ////////////////
@@ -221,56 +154,30 @@ public:
         req_stem_flag  = 1;
     }
     virtual ~Input_Impute() {};
-
-    virtual boolean has_menu_display() { return true; }
-    virtual boolean has_menu_parse()   { return true; }
-    virtual boolean has_menu2batch()   { return true; }
-    virtual boolean has_batch2local()  { return true; }
-
-    virtual void do_menu_display(int &idx, int line_len, int choiceA[])    { Obj.do_menu_display(idx, line_len, choiceA); }
-    virtual int  do_menu_parse(int choice) { return Obj.do_menu_parse(choice); }
-    virtual void do_menu2batch() { Obj.do_menu2batch(); }
-    virtual void do_batch2local() { Obj.do_batch2local(); }
-
-
-    virtual boolean has_init()  { return true; }
-    virtual boolean has_names() { return true; }
-    virtual boolean has_map()   { return true; }
-    virtual boolean has_ped()   { return true; }
-    virtual boolean has_gc()    { return true; }
-
-    virtual void do_init()  { Obj.do_init(this); }
-    virtual linkage_locus_top *do_names(const char *&names_fn) { return Obj.do_names(names_fn); }
-    virtual void do_map(std::vector<m2_map>& additional_maps) { Obj.do_map(additional_maps); }
-    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop) { return Obj.do_ped(LTop); }
-    virtual void do_gc() { Obj.do_gc(); }
-
-public:
-
-    ReadImputed Obj;
-
+    virtual Input_Ops *GetOps() {return &Ops;};
+    ReadImputed Ops;
 };
 
-class Input_BGEN : public Input_Impute {
+class Input_BGEN : public Input_Base {
 public:
-    Input_BGEN(INPUT_FORMAT_t i) : Input_Impute(i) {};
+    Input_BGEN(INPUT_FORMAT_t i) : Input_Base(i) {
+        req_aux_file   = 1;
+        req_locus_file = 0;
+        req_map_file   = 0;
+        req_stem_flag  = 1;
+    };
    ~Input_BGEN() {};
-
-public:
-
-    virtual void do_init()  { bgen.do_init(this); }
-    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop) { return bgen.do_ped(LTop); }
-
-public:
-
-    ReadBgen bgen;
-
+    virtual Input_Ops *GetOps() {return &Ops;};
+    ReadBgen Ops;
 };
 
 class Input_Traditional : public Input_Old {
 public:
     Input_Traditional(INPUT_FORMAT_t i): Input_Old(i) {}
     virtual ~Input_Traditional() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+//  virtual Input_Ops &GetOps() {return Ops;};
+    Input_Ops Ops;
 };
 
 /*

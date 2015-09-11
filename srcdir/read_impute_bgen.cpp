@@ -53,84 +53,99 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #include "annotated_ped_file_ext.h"
 #include "annotated_ped_file.h"
 
-#include "input.hh"
+#include "input_ops.hh"
 #include "read_impute.hh"
 #include "read_impute_bgen.hh"
 
+
 SECTION_ERR_INIT(bad_marker_name);
-void ReadBgen::do_init(Input_BGEN *inp)
+void ReadBgen::read_input_file()
 {
-    
-    asm("int $3");
+    ReadBgenFile bgen;
+    bgen.impute_file = impute_file;
+    bgen.rip = this;
 
-    Input_Impute *ii = inp;  // up chain
-    ReadImputed& ri  = ii->Obj;
-    rip  = &ri;
-
-    ri.input = inp;
-    ri.files(*inp->input_files.bedfl, *inp->input_files.pedfl);
-    bgen_file = *inp->input_files.bedfl;
-
-    ri.show_settings();
-
-    read_bgen_file();
-    SECTION_ERR_FINI(bad_marker_name);
-    if (badname > 0) {
-        errorvf("read_imputed_bgen_file: can not determine chromosomes for %d markers\n",
-                badname);
-        EXIT(DATA_INCONSISTENCY);
-    }
-
-    rip->read_info = false;  // this should be default ... but not for win mvc
-    if (!rip->info_file.empty()) {
-        ifstream infs;
-        infs.open(rip->info_file.c_str());
-        if (! infs.is_open() ) {
-            errorvf("read_imputed_file: Info file can not be opened: \"%s\"\n", C(rip->info_file));
-            EXIT(FILE_NOT_FOUND);
-        }
-        infs.close();
-        rip->read_info = true;
-    }
-
-    if (ri.read_info) ri.read_info_file();
-
-    ri.check_indelsNdups();
-
-    ri.read_sample_file();
+    bgen.read_input_file();
 }
 
-linkage_ped_top *ReadBgen::do_ped(linkage_locus_top *LTop)
+void ReadBgen::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
 {
-    int num_peds = 0;
+    ReadBgenGenotypeReadHelper gh;
+    gh.impute_file = impute_file;
+    gh.rip = this;
 
-    annotated_ped_rec *persons = rip->build_impute2_ped(LTop, &num_peds);
-
-    build_bgen_genotypes(LTop, persons);
-
-    linkage_ped_top *Top;
-    Top = mk_ped_top(persons, rip->people.size(), LTop, num_peds,
-                     /*untyped*/ 0, /*totaltyped*/ rip->people_filtered,
-                     /*groups*/ NULL, 0, 0, 
-                     /*num_err*/0, 1);
-
-    return Top;
-
+    build_internal_genotypes(LTop, persons, gh);
 }
 
-void ReadBgen::read_bgen_file()
+void ReadBgenGenotypeReadHelper::genotypes_init()
 {
+    open(C(impute_file));
+    pass = 1;
+    read_header();
+    pass = 2;
+    if (layout < 2) {
+        block.cdata = new unsigned char[6 * samples];
+        block.rdata = new unsigned char[6 * samples];
+        if (layout == 0)
+            scale = 10000;
+        else if (layout == 1)
+            scale = 32768;
+    } else if (layout == 2) {
+    } else {
+//      ERROR
+    }
+}
+
+boolean ReadBgenGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& rsid, string& pos,
+                                                     const char* &A, const char* &B)
+{
+    if (layout == 0) {
+        process_10(mrk_idx);
+    } else if (layout == 1) {
+        process_11(mrk_idx);
+    } else if (layout == 2) {
+        process_12(mrk_idx);
+    }
+
+    if ((flags & compressF) > 0)
+        zp = block.cdata;
+    else
+        zp = 0;
+
+    hmm = "---";
+    rsid = block.rsid;
+    fix_marker_pos(pos);
+    A = C(block.allele[0]);
+    B = C(block.allele[1]);
+
+    return true;
+}
+
+void ReadBgenGenotypeReadHelper::genotypes_sample_prob(Token::d3& nums)
+{
+    nums[0] = ((double)read_ushort(zp)) / scale;
+    nums[1] = ((double)read_ushort(zp)) / scale;
+    nums[2] = ((double)read_ushort(zp)) / scale;
+}
+
+void ReadBgenGenotypeReadHelper::genotypes_end()
+{
+    if (layout < 2) {
+        delete [] block.cdata;
+        delete [] block.rdata;
+    }
+}
+
+void ReadBgenFile::read_input_file()
+{
+//  asm("int $3");
     unsigned long i;
 
-    open(bgen_file);
+    open(C(impute_file));
     pass = 1;
 
     read_header();
 
-    if (flags & sidF)
-        read_samples();
-
-    layout = (flags & layoutFld) >> 2;
     if (layout < 2) {
         block.cdata = new unsigned char[6 * samples];
         block.rdata = new unsigned char[6 * samples];
@@ -156,7 +171,7 @@ void ReadBgen::read_bgen_file()
 }
 
 
-void ReadBgen::open(const char *path)
+void ReadBgenFile::open(const char *path)
 {
     fd = gzopen(path, "rb");
     if (fd == NULL) {
@@ -164,7 +179,7 @@ void ReadBgen::open(const char *path)
     }
 }
 
-void ReadBgen::close()
+void ReadBgenFile::close()
 {
     long gzsz = gzclose_r(fd);
     if (gzsz == Z_OK) return;
@@ -174,7 +189,7 @@ void ReadBgen::close()
     }
 }
 
-void ReadBgen::read_bytes(unsigned char *buf, long len)
+void ReadBgenFile::read_bytes(unsigned char *buf, long len)
 {
     long gzsz = gzread(fd, buf, len);
     if (gzsz == len) return;
@@ -186,7 +201,7 @@ void ReadBgen::read_bytes(unsigned char *buf, long len)
     }
 }
 
-void ReadBgen::seek_bytes(long len)
+void ReadBgenFile::seek_bytes(long len)
 {
     long gzsz = gzseek(fd, len, /* SEEK_CUR */ 1);
 
@@ -197,13 +212,13 @@ void ReadBgen::seek_bytes(long len)
     }
 }
 
-unsigned long ReadBgen::read_uchar()
+unsigned long ReadBgenFile::read_uchar()
 {
     unsigned char *zp = NULL;
     return read_uchar(zp);
 }
 
-unsigned long ReadBgen::read_uchar(unsigned char *& zp)
+unsigned long ReadBgenFile::read_uchar(unsigned char *& zp)
 {
     if (zp == 0)
         read_bytes(ibuf, 1);
@@ -213,13 +228,13 @@ unsigned long ReadBgen::read_uchar(unsigned char *& zp)
     return ibuf[0];
 }
 
-unsigned long ReadBgen::read_ushort()
+unsigned long ReadBgenFile::read_ushort()
 {
     unsigned char *zp = NULL;
     return read_ushort(zp);
 }
 
-unsigned long ReadBgen::read_ushort(unsigned char *& zp)
+unsigned long ReadBgenFile::read_ushort(unsigned char *& zp)
 {
     unsigned long ret = 0;
     if (zp == 0)
@@ -234,13 +249,13 @@ unsigned long ReadBgen::read_ushort(unsigned char *& zp)
     return ret;
 }
 
-unsigned long ReadBgen::read_ulong()
+unsigned long ReadBgenFile::read_ulong()
 {
     unsigned char *zp = NULL;
     return read_ulong(zp);
 }
 
-unsigned long ReadBgen::read_ulong(unsigned char *& zp)
+unsigned long ReadBgenFile::read_ulong(unsigned char *& zp)
 {
     unsigned long ret = 0;
     if (zp == 0)
@@ -258,7 +273,7 @@ unsigned long ReadBgen::read_ulong(unsigned char *& zp)
 }
 
 #define BGEN (((((('b' << 8) | 'g') << 8 ) | 'e') << 8 ) | 'n')
-void ReadBgen::read_header()
+void ReadBgenFile::read_header()
 {
     offset  = read_ulong();
     header  = read_ulong();
@@ -272,6 +287,9 @@ void ReadBgen::read_header()
         gzseek(fd, 4 + header - 4, 0);
 
     flags   = read_ulong();
+    if (flags & sidF)
+        read_samples();
+    layout = (flags & layoutFld) >> 2;
 
     if (offset != header)
         gzseek(fd, offset + 4, 0);
@@ -285,25 +303,25 @@ void ReadBgen::read_header()
     }
 }
 
-void ReadBgen::read_samples()
+void ReadBgenFile::read_samples()
 {
     unsigned short size;
 
     sample.length = read_ulong();
     sample.count  = read_ulong();
-    for (unsigned long i; i < sample.count; i++) {
+    for (unsigned long i = 0; i < sample.count; i++) {
         string str;
         read_embedded_ushort(str, size);
         sample.samples.push_back(str);
     }
 }
 
-void ReadBgen::read_str(unsigned char *buf, long len)
+void ReadBgenFile::read_str(unsigned char *buf, long len)
 {
     read_bytes(buf, len);
 }
 
-void ReadBgen::read_embedded_uchar(Str& str, long len, unsigned char& l)
+void ReadBgenFile::read_embedded_uchar(Str& str, long len, unsigned char& l)
 {
     read_bytes(ibuf, 1);
     l = ibuf[0];
@@ -314,7 +332,7 @@ void ReadBgen::read_embedded_uchar(Str& str, long len, unsigned char& l)
     delete [] tmp;
 }
 
-void ReadBgen::read_embedded_ushort(Str& str, unsigned short& len)
+void ReadBgenFile::read_embedded_ushort(Str& str, unsigned short& len)
 {
     len  = read_ushort();
     char *tmp = new char [len];
@@ -323,7 +341,7 @@ void ReadBgen::read_embedded_ushort(Str& str, unsigned short& len)
     delete [] tmp;
 }
 
-void ReadBgen::read_embedded_ulong(Str& str, unsigned long& len)
+void ReadBgenFile::read_embedded_ulong(Str& str, unsigned long& len)
 {
     len  = read_ulong();
     char *tmp = new char [len];
@@ -332,13 +350,13 @@ void ReadBgen::read_embedded_ulong(Str& str, unsigned long& len)
     delete [] tmp;
 }
 
-void ReadBgen::fix_marker_pos(string& ccpos) {
+void ReadBgenFile::fix_marker_pos(string& ccpos) {
     char cpos[10];
     sprintf(cpos, "%ld", block.pos);
     ccpos = string(cpos);
 }
 
-void ReadBgen::validate_marker_name(string& rsid, const string& ccpos) {
+void ReadBgenFile::validate_marker_name(string& rsid, const string& ccpos) {
     VecsDB fields;
     split(fields, block.rsid, ":", 3);
 
@@ -365,7 +383,7 @@ void ReadBgen::validate_marker_name(string& rsid, const string& ccpos) {
     }
 }
 
-void ReadBgen::read_snpblock_header_10()
+void ReadBgenFile::read_snpblock_header_10()
 {
     unsigned char uchar;
 
@@ -399,8 +417,6 @@ void ReadBgen::read_snpblock_header_10()
     block.allele.push_back(str2);
 
     if (pass == 1) {
-//      for v1.0 & v1.1
-//      some checks please ...
         string ccpos;
         fix_marker_pos(ccpos);
 
@@ -410,7 +426,7 @@ void ReadBgen::read_snpblock_header_10()
     }
 }
 
-void ReadBgen::read_compressed_block_10(long scale = 10000)
+void ReadBgenFile::read_compressed_block_10(long scale = 10000)
 {
     unsigned long dest_len = 6 * block.N;
     unsigned long CB = read_ulong();
@@ -435,7 +451,7 @@ void ReadBgen::read_compressed_block_10(long scale = 10000)
 
 }
 
-void ReadBgen::read_expanded_block_10(long scale = 10000, unsigned char *zp = NULL)
+void ReadBgenFile::read_expanded_block_10(long scale = 10000, unsigned char *zp = NULL)
 {
     unsigned long dest_len = 6 * block.N;
 
@@ -447,21 +463,11 @@ void ReadBgen::read_expanded_block_10(long scale = 10000, unsigned char *zp = NU
     if (pass == 2)
         return;
 
-//  long AA, AB, BB;
     double num[3];
     for (unsigned long i = 0; i < block.N; i++) {
-        num[0] = read_ushort(zp);
-        num[1] = read_ushort(zp);
-        num[2] = read_ushort(zp);
-
-/*
-        AA = num[0];
-        AB = num[1];
-        BB = num[2];
-*/
-        num[0] /= scale;
-        num[1] /= scale;
-        num[2] /= scale;
+        num[0] = ((double)read_ushort(zp)) / scale;
+        num[1] = ((double)read_ushort(zp)) / scale;
+        num[2] = ((double)read_ushort(zp)) / scale;
 
         if (debug) {
             cout << "sample#" << i << " ";
@@ -472,7 +478,7 @@ void ReadBgen::read_expanded_block_10(long scale = 10000, unsigned char *zp = NU
     }
 }
 
-void ReadBgen::process_10(int i)
+void ReadBgenFile::process_10(int i)
 {
     read_snpblock_header_10();
 
@@ -491,7 +497,7 @@ void ReadBgen::process_10(int i)
 }
 
 
-void ReadBgen::read_snpblock_header_11()
+void ReadBgenFile::read_snpblock_header_11()
 {
     unsigned long size;
 
@@ -517,8 +523,6 @@ void ReadBgen::read_snpblock_header_11()
     }
 
     if (pass == 1) {
-//      for v1.0 & v1.1
-//      some checks please ...
         string ccpos;
         fix_marker_pos(ccpos);
 
@@ -528,17 +532,17 @@ void ReadBgen::read_snpblock_header_11()
     }
 }
 
-void ReadBgen::read_compressed_block_11()
+void ReadBgenFile::read_compressed_block_11()
 {
     read_compressed_block_10(32768);
 }
 
-void ReadBgen::read_expanded_block_11()
+void ReadBgenFile::read_expanded_block_11()
 {
     read_expanded_block_10(32768);
 }
 
-void ReadBgen::process_11(int i)
+void ReadBgenFile::process_11(int i)
 {
     read_snpblock_header_11();
     if (debug) {
@@ -556,8 +560,9 @@ void ReadBgen::process_11(int i)
         read_expanded_block_11();
 }
 
-void ReadBgen::read_compressed_block_12()
+void ReadBgenFile::read_compressed_block_12()
 {
+//
     asm("int $3");
     unsigned long CB = read_ulong();
     unsigned long DC = read_ulong();
@@ -581,7 +586,7 @@ void ReadBgen::read_compressed_block_12()
     delete [] block.cdata;
 }
 
-void ReadBgen::read_expanded_block_12(unsigned long DC, unsigned char *zp = NULL)
+void ReadBgenFile::read_expanded_block_12(unsigned long DC, unsigned char *zp = NULL)
 {
 #ifdef SOMEDAY
     unsigned long Nx, allelesx, min, max, phase, bits;
@@ -598,7 +603,7 @@ void ReadBgen::read_expanded_block_12(unsigned long DC, unsigned char *zp = NULL
 #endif
 }
 
-void ReadBgen::process_12(int i)
+void ReadBgenFile::process_12(int i)
 {
     read_snpblock_header_11();
     if (debug) {
@@ -616,236 +621,3 @@ void ReadBgen::process_12(int i)
         read_expanded_block_12(DC);
     }
 }
-
-void ReadBgen::build_bgen_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
-{
-    asm("int $3");
-    int dbg = 0;
-
-//    string line;
-
-    string hmm, rsid, pos;
-    const char *A, *B;
-//  double nums[3];
-    Token::d3 nums;
-
-    open(bgen_file);
-    pass = 2;
-    read_header();
-    int scale;
-    if (layout < 2) {
-        block.cdata = new unsigned char[6 * samples];
-        block.rdata = new unsigned char[6 * samples];
-        if (layout == 0)
-            scale = 10000;
-        else if (layout == 1)
-            scale = 32768;
-    } else if (layout == 2) {
-    } else {
-//      ERROR
-    }
-
-/*
-    ifs.open(impute_file);
-    if (! ifs.is_open() ) {
-        errorvf("read_imputed_genotype_file: Can not open \"%s\" file\n",
-                impute_file);
-        EXIT(FILE_NOT_FOUND);
-    }
-*/
-//    int line_n = 0;
-//    Token token(3);
-    ImpMarker   *mp;
-
-    int   mrk_idx = rip->sample_file_hdr2b.size() - 5 -1;
-    linkage_locus_rec *locus;
-
-    char *callele1;
-    char *callele2;
-    char *callele0  = canonical_allele(C("0"));
-
-    Tod tod_gen("impute genotypes");
-    Tod tod_per(30);
-    Tod tod_im_line(30);
-    Tod tod_im_line_cpy(30);
-    SECTION_ERR_INIT(genotype_missing_fraction);
-    SECTION_ERR(genotype_missing_fraction);
-    warnvf("%8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n",
-           "untyped", "uncertain", "good", "geno-", "Marker + chr:pos",
-           "marker", "hard", "hard", "typing", "",
-           "0/0", "call", "call", "rate", "");
-    for (Vecmarkerpp mpp = (rip->markers).begin(); mpp != (rip->markers).end(); mpp++) {
-        tod_im_line.reset();
-        tod_im_line_cpy.reset();
-
-        if (layout == 0) {
-            process_10(mrk_idx);
-        } else if (layout == 1) {
-            process_11(mrk_idx);
-        } else if (layout == 2) {
-            process_12(mrk_idx);
-        }
-
-        hmm = "---";
-        rsid = block.rsid;
-        fix_marker_pos(pos);
-        tod_im_line("impute read line  ");
-/*
-        getline(ifs, line);
-        tod_im_line("impute read line  ");
-        if (ifs.eof()) break;
-        token.set(line);
-        tod_im_line("impute set line   ");
-
-//	ifs >> hmm; // +A+B+ nums() all read via >> @ 14.62 sec
-//                               vector<double> nums  12.26
-//                               double nums[3]       11.59
-        token.more(hmm);
-        token.more(rsid);
-        token.more(pos);
-*/
-//        line_n++;
-        mp = *mpp;
-
-        if (pos != mp->pos) {
-            errorvf("internal error: impute_bgen_file (\"%s\") second pass does not match first pass at marker #%d %s\n",
-                    bgen_file, mrk_idx, C(rsid));
-                EXIT(DATA_INCONSISTENCY);
-        }
-        if (mp->skip) {
-            continue;
-        }
-        mrk_idx++;  // hence the -1 above
-        locus = &LTop->Locus[mrk_idx];
-
-        A = C(block.allele[0]);
-        B = C(block.allele[1]);
-/*
-        token.more(A);
-        token.more(B);
-*/
-        callele1    = canonical_allele(A);
-        callele2    = canonical_allele(B);
-
-        int i;
-        unsigned char *zp;
-        int sam = 0;
-        int zero = 0, uncertain = 0, good = 0;
-        if ((flags & compressF) > 0)
-            zp = block.cdata;
-        else
-            zp = 0;
-
-        tod_per.reset();
-        annotated_ped_rec *entry = persons;
-	for(int p = 0 ; p < rip->people_filtered; p++, entry++) {
-            sam++;
-
-            nums[0] = ((double)read_ushort(zp)) / scale;
-            nums[1] = ((double)read_ushort(zp)) / scale;
-            nums[2] = ((double)read_ushort(zp)) / scale;
-
-/*
-            token.getDC(nums);
-*/
-            
-            if (nums[0] > nums[1]) {
-                i = 0;
-            } else {
-                i = 1;
-            }
-            if (nums[2] > nums[i]) {
-                i = 2;
-            }
-
-            if (nums[i] == 0) {
-                i = 3;
-                zero++;
-            } else if (nums[i] <= 1 - rip->hard_call_uncertainty) {
-                i = 3;
-                uncertain++;
-            } else {
-                good++;
-            }
-
-            if (dbg) {
-                cout << "#";
-//              cout << line_n << "@";
-                cout << sam << ": ";
-                cout << mp->name << " ";
-                cout << nums[0] << " " << nums[1] << " " << nums[2] << "  " << i << "\n";
-            }
-
-            if (i == 0)
-                set_2Ralleles(entry->marker, mrk_idx, locus, callele1, callele1);
-            else if (i == 1)
-                set_2Ralleles(entry->marker, mrk_idx, locus, callele1, callele2);
-            else if (i == 2)
-                set_2Ralleles(entry->marker, mrk_idx, locus, callele2, callele2);
-            else if (i == 3)
-                set_2Ralleles(entry->marker, mrk_idx, locus, callele0, callele0);
-        }
-        tod_per("impute person loop");
-        if (good < rip->genotype_missing_fraction * rip->people_filtered) {
-/* some day
-??          mp->skip = true;
-            LTop->Marker[mrk_idx].chromosome = MISSING_CHROMO;
-            locus->??
-            skip_count++;
-*/
-            SECTION_ERR(genotype_missing_fraction);
-            warnvf("%8d %8d %8d %8.3f  %s %s:%s\n",
-                   zero, uncertain, good, ((double)good)/rip->people_filtered,
-                   C(mp->name), C(mp->chr), C(mp->pos));
-        }
-    }
-    tod_gen();
-    SECTION_ERR_FINI(genotype_missing_fraction);
-
-    if (layout < 2) {
-        delete [] block.cdata;
-        delete [] block.rdata;
-    }
-}
-
-
-
-#ifdef TEST
-main(int argc, char **argv)
-{
-
-    ReadBgen bgen;
-    int i;
-
-    bgen.open(argv[1]);
-
-//  bgen.open("/Users/rbaron/test.bgen");
-    asm("int $3");
-
-    bgen.read_header();
-
-    if (bgen.flags & sidF)
-        bgen.read_samples();
-
-    bgen.layout = (bgen.flags & layoutFld) >> 2;
-    if (bgen.layout < 2) {
-        bgen.block.cdata = new unsigned char[6 * bgen.samples];
-        bgen.block.rdata = new unsigned char[6 * bgen.samples];
-
-        if ( bgen.layout == 1)
-            for (i = 0; i < bgen.snps; i++)
-                bgen.process_11(i);
-        else if (bgen.layout == 0)
-            for (i = 0; i < bgen.snps; i++)
-                bgen.process_10(i);
-
-        delete [] bgen.block.rdata;
-        delete [] bgen.block.cdata;
-    } else if ( bgen.layout == 2) {
-        for (i = 0; i < bgen.snps; i++)
-            bgen.process_12(i);
-    } else {
-//      ERROR
-    }
-}
-#endif
