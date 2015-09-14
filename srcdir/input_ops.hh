@@ -45,7 +45,8 @@ enum INPUT_FORMAT {
     in_format_compressed_VCF = 6,
     in_format_VCF = 7,
     in_format_imputed = 8,
-    in_format_bgen    = 9,
+    in_format_bgen  = 9,
+    in_format_bgen2 = 10,
     in_format_traditional = 100,
 } INPUT_FORMAT_t;
 
@@ -77,33 +78,23 @@ public:
 class Input_Ops
 {
 public:
-    virtual boolean has_menu_display() { return false; }
-    virtual boolean has_menu_parse()   { return false; }
-    virtual boolean has_menu2batch()   { return false; }
-    virtual boolean has_batch2local()  { return false; }
+    virtual boolean use_getops() { return false; }
 
     virtual void do_menu_display(int &idx, int line_len, int choiceA[])   { }
     virtual int  do_menu_parse(int choice) { return 0; }   // 0 indicates no match ; but false (above) means this is not called.
-    virtual void do_menu2batch() { }
+    virtual void do_menu2batch()  { }
     virtual void do_batch2local() { }
-
-
-    virtual boolean has_init()  { return false; }
-    virtual boolean has_names() { return false; }
-    virtual boolean has_map()   { return false; }
-    virtual boolean has_ped()   { return false; }
-    virtual boolean has_gc()    { return false; }
 
     virtual void do_init(Input_Base *inp)  { }
     virtual linkage_locus_top *do_names(const char *&names_fn) { return (linkage_locus_top *)0; }
-    virtual void do_map(std::vector<m2_map>& additional_maps) { }
-    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop) { return (linkage_ped_top *) 0; }
+    virtual void do_map(std::vector<m2_map>& additional_maps)  { }
+    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop)   { return (linkage_ped_top *) 0; }
     virtual void do_gc() { }
 };
 
 class Input_Base {
 public:
-    Input_Base(INPUT_FORMAT_t i): input_format(i), plink(0), xcf(0), req_aux_file(0), req_locus_file(1), req_map_file(1), req_stem_flag(0)  {}
+    Input_Base(INPUT_FORMAT_t i): input_format(i), plink(0), xcf(0), impute(0), req_aux_file(0), req_locus_file(1), req_map_file(1), req_stem_flag(0)  {}
     virtual ~Input_Base() {}
     virtual Input_Ops *GetOps() {return (Input_Ops *) 0;}
 
@@ -116,6 +107,7 @@ public:
 
     int plink;
     int xcf;
+    int impute;
     int req_aux_file;
     int req_locus_file;
     int req_map_file;

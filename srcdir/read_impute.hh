@@ -83,10 +83,8 @@ public:
     ReadImputed() :  check_format(0), HDR(2) {};  // two line header
     ~ReadImputed() { (void) markers[0]; };
 
-    virtual boolean has_menu_display() { return true; }
-    virtual boolean has_menu_parse()   { return true; }
-    virtual boolean has_menu2batch()   { return true; }
-    virtual boolean has_batch2local()  { return true; }
+    virtual int  use_getops() {return true;}
+
     virtual void do_menu_display(int &idx, int line_len, int choiceA[]);
     virtual int  do_menu_parse(int choice);
     virtual void do_menu2batch();
@@ -94,11 +92,6 @@ public:
 
     void show_settings();
 
-    virtual boolean has_init()  { return true; }
-    virtual boolean has_names() { return true; }
-    virtual boolean has_map()   { return true; }
-    virtual boolean has_ped()   { return true; }
-    virtual boolean has_gc()    { return true; }
     virtual void do_init(Input_Base *inp);
     virtual linkage_locus_top *do_names(const char *&names_fn);
     virtual void do_map(std::vector<m2_map>& additional_maps);

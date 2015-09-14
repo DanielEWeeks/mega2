@@ -115,6 +115,7 @@ const char *INPUT_FORMAT_STR[] = {
      "VCF format (vcf)",
      "IMPUTE2/Oxford format (gen/impute2)",
      "IMPUTE2/Oxford binary format (bgen)",
+     "IMPUTE2/Oxford binary format2 (bgen)",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -946,6 +947,7 @@ void menu1(file_format *infl_type,
                 _aux_i = site_vcf_i;
                 fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
+
             } else if (Input_Format == in_format_imputed) {
                 strcpy(extension_name, "impute");
 
@@ -958,7 +960,7 @@ void menu1(file_format *infl_type,
 //              fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
 
-            } else if (Input_Format == in_format_bgen) {
+            } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen) {
                 strcpy(extension_name, "bgen");
 
                 fln_init(pedo, "IMPUTE2", "sample", "[required]", "sample");
@@ -1022,7 +1024,7 @@ void menu1(file_format *infl_type,
         }
         choiceA[idx++] = ext_i;
 
-        if (Input->GetOps()->has_menu_display()) Input->GetOps()->do_menu_display(idx, line_len, choiceA);
+        Input->GetOps()->do_menu_display(idx, line_len, choiceA);
 
         choiceA[idx] = fln_print(auxo, idx, _aux_i);
         if (choiceA[idx]) idx++;
@@ -1226,7 +1228,7 @@ void menu1(file_format *infl_type,
             fcmap(stdin, "%s", extension_name); newline;
             reset_extension = 1;
 
-        } else if (Input->GetOps()->has_menu_parse() && Input->GetOps()->do_menu_parse(choice_) ) {
+        } else if (Input->GetOps()->do_menu_parse(choice_) ) {
             ; // work handled in do_menu_parse iff it returns 1
 
         } else if (choice_ == inf_i) {
@@ -1428,7 +1430,7 @@ void menu1(file_format *infl_type,
             if (xcf) batchf(VCF_Marker_Alternative_INFO_Key);
         }
 
-        if (Input->GetOps()->has_menu2batch()) Input->GetOps()->do_menu2batch();
+        Input->GetOps()->do_menu2batch();
 
         menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
     }

@@ -143,8 +143,6 @@ public:
 
 ////////////////
 
-class Input_Impute;
-
 class Input_Impute : public Input_Base {
 public:
     Input_Impute(INPUT_FORMAT_t i): Input_Base(i) {
@@ -152,6 +150,7 @@ public:
         req_locus_file = 0;
         req_map_file   = 0;
         req_stem_flag  = 1;
+        impute         = 1;
     }
     virtual ~Input_Impute() {};
     virtual Input_Ops *GetOps() {return &Ops;};
@@ -165,8 +164,23 @@ public:
         req_locus_file = 0;
         req_map_file   = 0;
         req_stem_flag  = 1;
+        impute         = 1;
     };
    ~Input_BGEN() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    ReadBgen Ops;
+};
+
+class Input_BGEN2 : public Input_Base {
+public:
+    Input_BGEN2(INPUT_FORMAT_t i) : Input_Base(i) {
+        req_aux_file   = 1;
+        req_locus_file = 0;
+        req_map_file   = 0;
+        req_stem_flag  = 1;
+        impute         = 1;
+    };
+   ~Input_BGEN2() {};
     virtual Input_Ops *GetOps() {return &Ops;};
     ReadBgen Ops;
 };
@@ -183,11 +197,10 @@ public:
 /*
  *      Requires corresponding addition/change to
  *              input.hh: add to enum INPUT_FORMAT {                   | around line 44
- *              bstch_input.cpp: check_batch_items                     | around line 427
+ ?              batch_input.cpp: check_batch_items                     | around line 427
  *              user_input.cpp: INPUT_FORMAT_STR[]                     | around line  107
- *              user_input.cpp: "if (choice_ == file_format_i)" case   | around line 1187
+ ?              user_input.cpp: "if (choice_ == file_format_i)" case   | around line 1187
  *              user_input.cpp: "if (Input_Format == in_format_xxx)" case | around line 963
- *              mega2.cpp: "if (Input_Format == in_format_bgen)        | around line 1087
  */
 class InputCreate {
 public:
@@ -195,7 +208,6 @@ public:
     Input_Base *createinput(INPUT_FORMAT in_format) {
         switch(in_format) {
         case in_format_mega2:
-	default:
             return new Input_Mega2(in_format);
             break;
         case in_format_linkage:
@@ -225,9 +237,17 @@ public:
         case in_format_bgen:
             return new Input_BGEN(in_format);
             break;
+        case in_format_bgen2:
+            return new Input_BGEN2(in_format);
+            break;
         case in_format_traditional:
             return new Input_Traditional(in_format);
             break;
+	default:
+            printf("Invalid input format selected. #%d\n", in_format+1);
+extern void         Exit(int arg, const char *file, const int line, const char *err);
+            EXIT(DATA_INCONSISTENCY);
+            return new Input_Traditional(in_format);
         }
     }
 };

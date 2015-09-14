@@ -2752,8 +2752,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
             if (Input->xcf) 
                 warnvf("Locus %s (line %d in %s) has been filtered from the VCF file; ignoring this locus.\n",
                        dname, line, map_file);
-            else if ( (Input->input_format == in_format_imputed) ||
-                      (Input->input_format == in_format_bgen) )
+            else if (Input->impute)
                 warnvf("Locus %s (line %d in %s) extra locus data in this file; ignoring this locus.\n",
                        dname, line, map_file);
             else
@@ -3029,16 +3028,15 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     
     if (mrk_missing_from_map) {
         printf("Some marker loci in the %s file are missing from map file, see %s for details.\n",
-               (Input->xcf ? "VCF" : (Input->input_format == in_format_imputed ? "Imputed" : (Input->input_format == in_format_bgen ? "Bgen" : "names"))),
+               (Input->xcf ? "VCF" : (Input->impute ? "Impute2" : "names")),
                Mega2Err);
     }
     
     if (mrk_missing_from_names) {
         printf("Some marker loci in map file %s file, see %s for details.\n",
                (Input->xcf ? "have been filtered from the VCF" : 
-                (Input->input_format == in_format_imputed ? "are missing from Imputed" :
-                 (Input->input_format == in_format_bgen ? "are missing from Bgen" :
-                 "are missing from the names"))),
+                (Input->impute ? "are missing from Imputed" :
+                 "are missing from the names")),
                Mega2Err);
     }
     
@@ -4170,11 +4168,9 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                Input_Format == in_format_compressed_VCF ||
                Input_Format == in_format_VCF;
 
-    if (Input->GetOps()->has_init()) {
-	Input->GetOps()->do_init(Input);
-    }
+    Input->GetOps()->do_init(Input);
 
-    if (Input->GetOps()->has_names()) {
+    if (Input->GetOps()->use_getops()) {
         LTop = Input->GetOps()->do_names(names_fn);
 	ann_files = 1;
     } else if (PLINK.plink || xcf) {
@@ -4302,7 +4298,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     EXLTop = new_ex_llocustop();
 */
     std::vector<m2_map> additional_maps;
-    if (Input->GetOps()->has_map()) {
+    if (Input->GetOps()->use_getops()) {
         Input->GetOps()->do_map(additional_maps);
         EXLTop = NULL; // but additional_maps.size() > 0 so see below; this makes compiler happy
     } else if (PLINK.plink) {
@@ -4449,7 +4445,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     SECTION_ERR_EXTERN(FLOAT_AFFECT);
 
-    if (Input->GetOps()->has_ped()) {
+    if (Input->GetOps()->use_getops()) {
         pedfile_type = PREMAKEPED_PFT;
         Top = Input->GetOps()->do_ped(LTop);
     } else if (PLINK.plink ||
