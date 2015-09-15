@@ -43,6 +43,7 @@ public:
             info = 1.0;
         else
             info = 0.0;
+        certainty = 0.0;
         skip = false;
     }
 
@@ -73,6 +74,7 @@ public:
     virtual void genotypes_init() {}
     virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& rsid, std::string& pos,
                                          const char* &A, const char* &B) { return true; }
+    virtual void genotypes_skip() {}
     virtual void genotypes_sample_prob(Token::d3& nums) {}
     virtual void genotypes_end() {}
 };

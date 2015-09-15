@@ -58,7 +58,7 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #include "read_impute_bgen.hh"
 
 
-SECTION_ERR_INIT(bad_marker_name);
+SECTION_ERR_INIT(bad_name);
 void ReadBgen::read_input_file()
 {
     ReadBgenFile bgen;
@@ -376,7 +376,7 @@ void ReadBgenFile::validate_marker_name(string& rsid, const string& ccpos) {
             block.chrm = rip->oxford_single_chr;
             rsid = fields[0];
         } else {
-            SECTION_ERR(bad_marker_name);
+            SECTION_ERR(bad_name);
             errorvf("impute2 file: bad marker name %s\n", C(block.rsid));
             badname++;
         }

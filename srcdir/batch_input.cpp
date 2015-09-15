@@ -38,6 +38,7 @@
 
 #include "batch_input.h"
 
+#include "input_ops.hh"
 #include "batch_input_ext.h"
 #include "compress_ext.h"
 #include "error_messages_ext.h"
@@ -1207,7 +1208,8 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
     if (!input_set)
         Input_Format = in_format_traditional;
 
-    Input = InputCreate::createinput(Input_Format);
+    extern Input_Base *createinput(INPUT_FORMAT in_format);
+    Input = createinput(Input_Format);
 
     check_batch_items();
 }

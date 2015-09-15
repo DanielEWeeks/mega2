@@ -29,7 +29,7 @@
 #ifndef USER_INPUT_EXT_H
 #define USER_INPUT_EXT_H
 
-#include "input.hh"
+#include "input_ops.hh"
 
 extern INPUT_FORMAT_t Input_Format;
 extern const char *INPUT_FORMAT_STR[];

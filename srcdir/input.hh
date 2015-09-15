@@ -33,6 +33,7 @@
 
 #include "read_impute.hh"
 #include "read_impute_bgen.hh"
+#include "read_impute_bgen2.hh"
 
 
 class Input_Old : public Input_Base {
@@ -182,7 +183,7 @@ public:
     };
    ~Input_BGEN2() {};
     virtual Input_Ops *GetOps() {return &Ops;};
-    ReadBgen Ops;
+    ReadBgen2 Ops;
 };
 
 class Input_Traditional : public Input_Old {
@@ -193,64 +194,5 @@ public:
 //  virtual Input_Ops &GetOps() {return Ops;};
     Input_Ops Ops;
 };
-
-/*
- *      Requires corresponding addition/change to
- *              input.hh: add to enum INPUT_FORMAT {                   | around line 44
- ?              batch_input.cpp: check_batch_items                     | around line 427
- *              user_input.cpp: INPUT_FORMAT_STR[]                     | around line  107
- ?              user_input.cpp: "if (choice_ == file_format_i)" case   | around line 1187
- *              user_input.cpp: "if (Input_Format == in_format_xxx)" case | around line 963
- */
-class InputCreate {
-public:
-    static
-    Input_Base *createinput(INPUT_FORMAT in_format) {
-        switch(in_format) {
-        case in_format_mega2:
-            return new Input_Mega2(in_format);
-            break;
-        case in_format_linkage:
-            return new Input_Linkage(in_format);
-            break;
-        case in_format_extended_linkage:
-            return new Input_Extended_Linkage(in_format);
-            break;
-        case in_format_binary_PED:
-            return new Input_PED_Binary(in_format);
-            break;
-        case in_format_PED:
-            return new Input_PED(in_format);
-            break;
-        case in_format_binary_VCF:
-            return new Input_VCF_Binary(in_format);
-            break;
-        case in_format_compressed_VCF:
-            return new Input_VCF_Compressed(in_format);
-            break;
-        case in_format_VCF:
-            return new Input_VCF(in_format);
-            break;
-        case in_format_imputed:
-            return new Input_Impute(in_format);
-            break;
-        case in_format_bgen:
-            return new Input_BGEN(in_format);
-            break;
-        case in_format_bgen2:
-            return new Input_BGEN2(in_format);
-            break;
-        case in_format_traditional:
-            return new Input_Traditional(in_format);
-            break;
-	default:
-            printf("Invalid input format selected. #%d\n", in_format+1);
-extern void         Exit(int arg, const char *file, const int line, const char *err);
-            EXIT(DATA_INCONSISTENCY);
-            return new Input_Traditional(in_format);
-        }
-    }
-};
-
 
 #endif

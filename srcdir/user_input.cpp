@@ -35,6 +35,9 @@
 #include "common.h"
 #include "typedefs.h"
 
+#include "input_ops.hh"
+#include "input.hh"
+
 #include "batch_input_ext.h"
 #include "cw_routines_ext.h"
 #include "error_messages_ext.h"
@@ -49,7 +52,6 @@
 #include "user_input_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
 
-#include "input.hh"
 
 #ifdef _WIN
 #define R_OK 4
@@ -126,6 +128,61 @@ int genetic_distance_index;
 //cpk genetic_distance_map_type genetic_distance_sex_type_map; // see common.h
 int genetic_distance_sex_type_map; // see common.h
 int base_pair_position_index;
+
+/*===========================================================================*/
+/*
+ *      Requires corresponding addition/change to
+ *              input.hh: add to enum INPUT_FORMAT {                   | around line 44
+ ?              batch_input.cpp: check_batch_items                     | around line 427
+ *              user_input.cpp: INPUT_FORMAT_STR[]                     | around line  107
+ ?              user_input.cpp: "if (choice_ == file_format_i)" case   | around line 1187
+ *              user_input.cpp: "if (Input_Format == in_format_xxx)" case | around line 963
+ */
+Input_Base *createinput(INPUT_FORMAT in_format) {
+    switch(in_format) {
+    case in_format_mega2:
+        return new Input_Mega2(in_format);
+        break;
+    case in_format_linkage:
+        return new Input_Linkage(in_format);
+        break;
+    case in_format_extended_linkage:
+        return new Input_Extended_Linkage(in_format);
+        break;
+    case in_format_binary_PED:
+        return new Input_PED_Binary(in_format);
+        break;
+    case in_format_PED:
+        return new Input_PED(in_format);
+        break;
+    case in_format_binary_VCF:
+        return new Input_VCF_Binary(in_format);
+        break;
+    case in_format_compressed_VCF:
+        return new Input_VCF_Compressed(in_format);
+        break;
+    case in_format_VCF:
+        return new Input_VCF(in_format);
+        break;
+    case in_format_imputed:
+        return new Input_Impute(in_format);
+        break;
+    case in_format_bgen:
+        return new Input_BGEN(in_format);
+        break;
+    case in_format_bgen2:
+        return new Input_BGEN2(in_format);
+        break;
+    case in_format_traditional:
+        return new Input_Traditional(in_format);
+        break;
+    default:
+        printf("Invalid input format selected. #%d\n", in_format+1);
+//extern void         Exit(int arg, const char *file, const int line, const char *err);
+        EXIT(DATA_INCONSISTENCY);
+        return new Input_Traditional(in_format);
+    }
+}
 
 /*===========================================================================*/
 /* menu for user loci selection for the user's selection/reordering option
@@ -824,7 +881,7 @@ void menu1(file_format *infl_type,
     fln_alloc(infofl_name,  info);
     if (batchINPUTFILES) {
 
-        Input = InputCreate::createinput(Input_Format);
+        Input = createinput(Input_Format);
 
         if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
             Input_Format == in_format_VCF)
@@ -844,7 +901,7 @@ void menu1(file_format *infl_type,
         return;
     }
 
-    Input = InputCreate::createinput(Input_Format);  // may be changed later but need something for now
+    Input = createinput(Input_Format);  // may be changed later but need something for now
 
     sprintf(*output_path, ".");
     sprintf(*input_path, ".");
@@ -1213,7 +1270,7 @@ void menu1(file_format *infl_type,
                 if (ans <= cnt && ans >= 1) {
                     Input_Format = (INPUT_FORMAT_t) (ans - 1);
                     if (Input != 0) delete Input;
-		    Input = InputCreate::createinput(Input_Format);
+		    Input = createinput(Input_Format);
                     break;
                 } else
                     printf("allowed values are 1 - %d.\n", cnt);

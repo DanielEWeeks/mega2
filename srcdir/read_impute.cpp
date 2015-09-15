@@ -58,7 +58,9 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #include "read_files_ext.h"
 
 #include "str_utils.hh"
-#include "input.hh"
+#include "input_ops.hh"
+
+#include "read_impute.hh"
 
 // g++ does not like these const operators on "vectordb" classes
 #define cbegin() begin()
@@ -247,8 +249,6 @@ void ReadImputed::do_init(Input_Base *inp)
     this->files(*inp->input_files.bedfl, *inp->input_files.pedfl);
     show_settings();
 
-    read_input_file();
-
     read_info = false;  // this should be default ... but not for win mvc
     if (!info_file.empty()) {
         ifstream infs;
@@ -259,9 +259,12 @@ void ReadImputed::do_init(Input_Base *inp)
         }
         infs.close();
         read_info = true;
-
-        read_info_file();
     }
+
+    read_input_file();
+
+    if (read_info)
+        read_info_file();
 
     check_indelsNdups();
 
@@ -446,6 +449,8 @@ void ReadImputed::read_input_file ()
         }
         markers.push_back(new ImpMarker(name, chrm, pos, A, B, read_info));
     }
+
+    ifs.close();
 
     SECTION_ERR_FINI(bad_line);
     SECTION_ERR_FINI(halftyped);
@@ -1128,6 +1133,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
                 EXIT(DATA_INCONSISTENCY);
         }
         if (mp->skip) {
+            gh.genotypes_skip();
             continue;
         }
         mrk_idx++;  // hence the -1 above
