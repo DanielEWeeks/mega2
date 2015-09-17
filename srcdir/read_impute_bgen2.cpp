@@ -222,7 +222,7 @@ void BgenParser::validate_marker_name(string& rsid, string& chrm, string& rsid_f
 // and outputs it as a VCF file.
 void BgenParser::read_input_file()
 {
-    asm("int $3");
+//  asm("int $3");
     try {
         open( ) ;
 
@@ -294,7 +294,8 @@ void BgenParser::read_input_file()
 //        return 0 ;
     }
     catch( genfile::bgen::BGenError const& e ) {
-        std::cerr << "!! Uh-oh, error parsing bgen file.\n" ;
+        std::cerr << "!! Uh-oh, error parsing bgen file: ";
+        std::cerr << e.what() << "\n";
 	throw;
 //        return -1 ;
     }

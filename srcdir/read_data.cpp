@@ -66,7 +66,7 @@ int read_data (int *a, int *no_allele, int *total,
     for ( i = 0; i < *no_allele; ++i ) {
         for ( j = 0; j <= i; ++j ) {
             l = LL(i, j);
-            (void)fscanf (*infile, "%d ", &a[l]);
+            IgnoreValue(fscanf (*infile, "%d ", &a[l]));
             *total += a[l];
         }
     }

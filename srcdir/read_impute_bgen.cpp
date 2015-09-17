@@ -212,13 +212,13 @@ void ReadBgenFile::seek_bytes(long len)
     }
 }
 
-unsigned long ReadBgenFile::read_uchar()
+unsigned char ReadBgenFile::read_uchar()
 {
     unsigned char *zp = NULL;
     return read_uchar(zp);
 }
 
-unsigned long ReadBgenFile::read_uchar(unsigned char *& zp)
+unsigned char ReadBgenFile::read_uchar(unsigned char *& zp)
 {
     if (zp == 0)
         read_bytes(ibuf, 1);
@@ -228,15 +228,15 @@ unsigned long ReadBgenFile::read_uchar(unsigned char *& zp)
     return ibuf[0];
 }
 
-unsigned long ReadBgenFile::read_ushort()
+unsigned short ReadBgenFile::read_ushort()
 {
     unsigned char *zp = NULL;
     return read_ushort(zp);
 }
 
-unsigned long ReadBgenFile::read_ushort(unsigned char *& zp)
+unsigned short ReadBgenFile::read_ushort(unsigned char *& zp)
 {
-    unsigned long ret = 0;
+    unsigned short ret = 0;
     if (zp == 0)
         read_bytes(ibuf, 2);
     else {
@@ -403,7 +403,7 @@ void ReadBgenFile::read_snpblock_header_10()
     block.uchrm = ibuf[0];
     char uchr[16];
     sprintf(uchr, "%d", block.uchrm);
-    block.LC = strlen(uchr);
+    block.LC = (unsigned short)strlen(uchr);
     block.chrm = string(uchr);
 
     block.pos = read_ulong();
@@ -562,8 +562,7 @@ void ReadBgenFile::process_11(int i)
 
 void ReadBgenFile::read_compressed_block_12()
 {
-//
-    asm("int $3");
+//  asm("int $3");
     unsigned long CB = read_ulong();
     unsigned long DC = read_ulong();
     unsigned long dest_len = DC;

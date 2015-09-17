@@ -165,7 +165,7 @@ static int check_ped_file_cols(int cols, FILE *fp, char *file_name)
             ungetc(lch, fp);
             num_read++;
         }
-        (void)fgets(rest, 399, fp);
+        IgnoreValue(fgets(rest, 399, fp));
         linenum++;
     }
 
@@ -1093,7 +1093,7 @@ static int read_linkage_record(FILE *filep, linkage_ped_rec *entry,
 
 /* This code will break if the extra stuff is too long! */
     if (lch != '\n') {
-        (void)fgets(rest, 399, filep);
+        IgnoreValue(fgets(rest, 399, filep));
         i=sscanf(rest, "%s %s %s %s %s %s", dummy[0], dummy[1],
                  dummy[2], dummy[3], dummy[4], dummy[5]);
     }
@@ -1543,7 +1543,7 @@ static linkage_locus_top *read_linkage_locus_file(FILE *filep, int linkagecols, 
          The remainder of the line gives the name of the locus following a '#' character...
          */
         strcpy(dummystrg, "");
-        (void)fgets(dummystrg, DUMMYSTRG_LENGTH - 1, filep);
+        IgnoreValue(fgets(dummystrg, DUMMYSTRG_LENGTH - 1, filep));
         // Throw away the white space leading up to the '#' character...
         dummy = &(dummystrg[0]);
         while(isspace((int) *dummy) && dummy != NULL){
@@ -2717,7 +2717,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
     }
     strcpy(rest[0], "");   strcpy(rest[1], "");   strcpy(rest[2], "");
 
-    (void)fgets(line, 2*FILENAME_LENGTH-1, filep);
+    IgnoreValue(fgets(line, 2*FILENAME_LENGTH-1, filep));
     // CHROMOSOME KOSAMBI NAME [MALE FEMALE ERROR]
     if (sscanf(line, "%s %s %s %s %s %s",
                dum, CM, dum, rest[0], rest[1], rest[2]) < 3) {
@@ -2747,7 +2747,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
     // Also to decide number of unmapped loci (second field == UNKNOWN_CHROMO.
     while (!feof(filep)) {
         num=0;
-        (void)fscanf(filep, "%d", &num);
+        IgnoreValue(fscanf(filep, "%d", &num));
         if (num == UNKNOWN_CHROMO) {
             ui++;
         } else if (num > MaxChromo) MaxChromo=num;
@@ -2791,7 +2791,7 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
         bad_line=0;
         linenum++;
         strcpy(line, "");
-        (void)fgets(line, 2*FILENAME_LENGTH-1, filep);
+        IgnoreValue(fgets(line, 2*FILENAME_LENGTH-1, filep));
         for (i=0; i < 5; i++) {
             strcpy(numeric_str[i], "");
         }
@@ -3223,7 +3223,7 @@ int check_dos_file(FILE *fp)
     cold = 0;
     while(!feof(fp))  {
         *buffer = 0;
-        (void)fgets(buffer, sizeof(buffer), fp);
+        IgnoreValue(fgets(buffer, sizeof(buffer), fp));
         if (*buffer == 0) break;
         for (cp = buffer; (c = *cp++) != 0; ) {
             if (cold == CR) {

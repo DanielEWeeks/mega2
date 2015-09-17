@@ -463,7 +463,7 @@ static int parse_variable_width_hdr(FILE *file,
         }
         read_size = READ_CHUNK - overflow_size;
 
-        (void)fgets(buffer + overflow_size, (int)read_size, file);
+        IgnoreValue(fgets(buffer + overflow_size, (int)read_size, file));
         read_length = strlen(buffer);
         /* check if line overflows the buffer, and there is a string that
            spans two consecutive reads */
@@ -1956,7 +1956,7 @@ static int parse_names_file_header(FILE *filep,
     INIT_COLNAME(file_desc->names_file_columns, 1, STRING_AN, "Name");
 
     strcpy(buffer, "");
-    (void)fgets(buffer, READ_CHUNK, filep);
+    IgnoreValue(fgets(buffer, READ_CHUNK, filep));
 /*  fcmap(filep, "%=\n", lch); can't mix fcmap & fgets; latter already read entire line */
     nextstr = strtok(buffer, "\t \n");
     while(1) {
@@ -2189,7 +2189,7 @@ static int get_map_names(int num_cols,
         }
 #endif
         printf("Proceed without a map ? (y/n) ");
-        (void)scanf("%c", &(Yorn[0])); fflush(stdin);
+        IgnoreValue(scanf("%c", &(Yorn[0]))); fflush(stdin);
         newline;
         if (Yorn[0] == 'y' || Yorn[0] == 'Y') {
             warnf("Continuing without map information, analysis options will be limited.");
@@ -3174,7 +3174,7 @@ static int parse_frequency_file_header(FILE *filep,
     INIT_COLNAME(file_desc->freq_file_columns,
                  2, FLOAT_AN, "Frequency");
 
-    (void)fgets(buffer, READ_CHUNK, filep);
+    IgnoreValue(fgets(buffer, READ_CHUNK, filep));
     if (strlen(buffer) >= READ_CHUNK && buffer[strlen(buffer)-1] != '\n') {
         fcmap(filep, "%=\n", lch);
     }
@@ -3347,7 +3347,7 @@ static int read_annotated_freq_file(char *freq_file_name,
     
     while (!feof(filep)) {
         strcpy(frequency_line, "");
-        (void)fgets(frequency_line, READ_CHUNK, filep);
+        IgnoreValue(fgets(frequency_line, READ_CHUNK, filep));
         if (*frequency_line == 0) break;
         line_num++;
         // don't process empty or comment lines...
@@ -3438,7 +3438,7 @@ static int parse_penetrance_file_header(FILE *filep, char *pen_file_name,
     INIT_COLNAME(file_desc->pen_file_columns,
                  5, FLOAT_AN, "Pen.22");
 
-    (void)fgets(buffer, READ_CHUNK, filep);
+    IgnoreValue(fgets(buffer, READ_CHUNK, filep));
 /* Not used:
  * read_length=strlen(buffer); */
 
@@ -3641,7 +3641,7 @@ static int read_annotated_pen_file(char *pen_file_name,
     line_num=1;
     while(!feof(filep)) {
         strcpy(penetrance_line, "");
-        (void)fgets(penetrance_line, READ_CHUNK, filep);
+        IgnoreValue(fgets(penetrance_line, READ_CHUNK, filep));
         if (*penetrance_line == 0) break;
         line_num++;
         if (penetrance_line[0] == '#') {
@@ -3927,7 +3927,7 @@ static void annotated_omit_file(linkage_ped_top *Top,
     INIT_COLNAME(file_desc->omit_file_columns,
                  2, STRING_AN, "Marker");
     
-    (void)fgets(buffer, READ_CHUNK, omitfp);
+    IgnoreValue(fgets(buffer, READ_CHUNK, omitfp));
     if (buffer[strlen(buffer)-1] != '\n') {
         fcmap(omitfp, "%=\n", lch);
     }
@@ -4890,7 +4890,7 @@ int check_annotated_file_format(char *input_files[])
             }
             read_size = READ_CHUNK - overflow_size;
 
-            (void)fgets(buffer + overflow_size, (int)read_size, fp);
+            IgnoreValue(fgets(buffer + overflow_size, (int)read_size, fp));
             read_length = strlen(buffer);
             /* check if line overflows the buffer, and there is a string that
                spans two consecutive reads */

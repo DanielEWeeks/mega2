@@ -1261,7 +1261,7 @@ static void R_plot_params(R_plot_params_type *Rplot_params, int numchr)
                item, toggle, change);
         fflush(stdout);
 
-        (void)fgets(cselect, 9, stdin); fflush(stdin);
+        IgnoreValue(fgets(cselect, 9, stdin)); fflush(stdin);
         sscanf(cselect, "%d", &item);
         newline;
         

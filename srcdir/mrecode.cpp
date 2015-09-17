@@ -1213,7 +1213,7 @@ linkage_locus_top *read_marker_data(FILE *fp,
     SECTION_ERR_INIT(read_markers);
     while(!feof(fp)) {
         *nextline = 0;
-        (void)fgets(nextline, FILENAME_LENGTH - 1, fp);
+        IgnoreValue(fgets(nextline, FILENAME_LENGTH - 1, fp));
         if (*nextline == 0) {
             break;
         }
@@ -2537,9 +2537,9 @@ file_format check_locus_file_format(FILE *fp)
 {
     char first_char;
 
-    (void)fscanf(fp, "%c", &first_char);
+    IgnoreValue(fscanf(fp, "%c", &first_char));
     while(isspace((int)first_char)) {
-        (void)fscanf(fp, "%c", &first_char);
+        IgnoreValue(fscanf(fp, "%c", &first_char));
     }
     rewind(fp);
 
@@ -2717,7 +2717,7 @@ linkage_locus_top *read_marker_only_data(FILE *fp, int cols, char **phe_names, i
     SECTION_ERR_INIT(read_names);
     while(!feof(fp)) {
         *nextline = 0;
-        (void)fgets(nextline, FILENAME_LENGTH - 1, fp);
+        IgnoreValue(fgets(nextline, FILENAME_LENGTH - 1, fp));
         if (*nextline == 0) {
             break;
         }

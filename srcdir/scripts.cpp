@@ -237,7 +237,7 @@ void create_TDTMAX(linkage_ped_top **LPTop,
                 choice_ = TOGGLE(choice_);
             } else if (opt == 2) {
                 printf("Enter number of permutations > ");
-                (void)scanf("%d", &nperm); newline;
+                IgnoreValue(scanf("%d", &nperm)); newline;
             }
         }
     }

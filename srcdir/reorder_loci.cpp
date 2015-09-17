@@ -1436,7 +1436,7 @@ int display_selections(linkage_ped_top *Top, int *entries,
                     break;
                 } else if (inp == -1 && scanned_str != NULL) {
                     fflush(stdout);
-                    (void)fgets(user_input, 99, stdin);
+                    IgnoreValue(fgets(user_input, 99, stdin));
                     strcat(scanned_str, user_input);
                     scanned_text=1;
                 }
@@ -1529,7 +1529,7 @@ int display_selections(linkage_ped_top *Top, int *entries,
                     break;
                 } else if (inp == -1 && scanned_str != NULL) {
                     fflush(stdout);
-                    (void)fgets(user_input, 99, stdin);
+                    IgnoreValue(fgets(user_input, 99, stdin));
                     strcat(scanned_str, user_input);
                     scanned_text=1;
                 }
@@ -1942,7 +1942,7 @@ static int       ReOrderLociByPositionNumber(linkage_ped_top *Top,
             if (press_retval == 0) {
                 printf("Enter 'v', 'm', 'o', 'e' or a set of locus numbers > ");
                 fflush(stdout);
-                (void)fgets(entrydummy, FILENAME_LENGTH - 1, stdin);
+                IgnoreValue(fgets(entrydummy, FILENAME_LENGTH - 1, stdin));
                 newline;
             }
             entry = &(entrydummy[0]);
@@ -2391,7 +2391,7 @@ static int    chromo_and_loci_selection(linkage_ped_top *LPedTreeTop,
                 strcpy(chromo_string, "");
                 fflush(stdout);
                 /* fgets will store the newline */
-                (void)fgets(chromo_string, 200, stdin); printf("\n");
+                IgnoreValue(fgets(chromo_string, 200, stdin)); printf("\n");
                 entry_index = 0;
                 chromo_string_p = &chromo_string[0];
                 while (*chromo_string_p != '\n' && *chromo_string_p != 'e') {
@@ -2856,7 +2856,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
                         }
 
                         fflush(stdout);
-                        (void)fgets(str, FILENAME_LENGTH-1, stdin);    newline;
+                        IgnoreValue(fgets(str, FILENAME_LENGTH-1, stdin));    newline;
                         parse_string(str, trait_select, &num_select, num_allowed, 1);
                         INDX_INC(num_select, trait_select, i, marker_item);
 

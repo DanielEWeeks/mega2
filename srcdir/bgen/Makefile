@@ -29,17 +29,20 @@
 # NOTE: -lz is needed when the library is linked...
 ifeq ($(OSTYPE),windows)
 UP = ..\\
-WINO = -Fo$(@D)/$*.o
+#WINO = -Fo$(@D)/$*.o
+WINO = -Fo$*.o
 else
 UP = ../
 WINO = -o $@
 endif
 
-CFLAGS += -std=c++11 -Igenfile/include 
+#FLAGS += -std=c++11 -Igenfile/include 
+CFLAGS += -Igenfile/include 
 
 OUT = $(UP)libbgen.a
 
-BSRC = example/bgen_to_vcf.cpp src/MissingValue.cpp src/bgen.cpp src/zlib.cpp
+#SRC = example/bgen_to_vcf.cpp src/MissingValue.cpp src/bgen.cpp src/zlib.cpp
+BSRC = src/MissingValue.cpp src/bgen.cpp src/zlib.cpp
 BOBJ = $(BSRC:.cpp=.o)
 
 # include directories '.' for other vcftools headers, '..' for Mega2 headers... and zlib headers

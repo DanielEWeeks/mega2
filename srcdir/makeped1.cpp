@@ -279,7 +279,7 @@ static int read_peds(int line_count, FILE *pfilep,
         strcpy(dummy1, " ");
         strcpy(dummy2, " ");
         if (lch != LF && lch != CR) {
-            (void)fgets(rest, FILENAME_LENGTH-1, pfilep);
+            IgnoreValue(fgets(rest, FILENAME_LENGTH-1, pfilep));
             sscanf(rest, "%s %s", dummy1, dummy2);
             if (!strcasecmp(dummy1, "id:")) {
                 unique=1;
@@ -494,7 +494,7 @@ int check_pre_makeped(FILE *fp, int *num_lines)
     // NOTE: The actual data read from the file is thrown away...
     while (!feof(fp)) {
         strcpy(line, "");
-        (void)fgets(line, FILENAME_LENGTH - 1, fp);
+        IgnoreValue(fgets(line, FILENAME_LENGTH - 1, fp));
         if (*line == 0) break;
         strcpy(ped, ""); strcpy(ind, "");
         father= 0;
@@ -2129,7 +2129,7 @@ static int force_no_founders(void)
                (force? ' ': '*'));
         printf("Enter 1 or 2 to select, 0 to exit > ");
         fflush(stdout);
-        (void)fgets(yesorno, 3, stdin); newline;
+        IgnoreValue(fgets(yesorno, 3, stdin)); newline;
         sscanf(yesorno, "%d", &item);
         if (item==1) {
             force = 1;

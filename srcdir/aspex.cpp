@@ -223,7 +223,7 @@ static void AspexRiskRatio(int AspexPrg,
             *SelectRiskOpt=2; Marker[1]='*'; Marker[0]=' ';
             printf("Enter new start, increment and final risk ratios \n(enter \"none\" to use default values) > ");
             fflush(stdout);
-            (void)fgets(risk_str, 49, stdin); printf("\n");
+            IgnoreValue(fgets(risk_str, 49, stdin)); printf("\n");
             if (strcmp(risk_str, "none")) {
                 sscanf(risk_str, "%lg %lg %lg", InitRisk, RiskIncrement, FinalRisk);
             }

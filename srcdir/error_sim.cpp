@@ -761,7 +761,7 @@ static void errsim_file_names(const char *type, char *file_names[], int numchr)
     if (!strcmp(type, "log")) {
         printf("Enter new genotypes file name > ");
         fflush(stdout);
-        (void)fgets(filename_str, FILENAME_LENGTH - 1, stdin);
+        IgnoreValue(fgets(filename_str, FILENAME_LENGTH - 1, stdin));
         newline;
         if ((sscanf(filename_str, "%s", filename)) == 1) {
             strcpy(file_names[15], filename);
@@ -772,7 +772,7 @@ static void errsim_file_names(const char *type, char *file_names[], int numchr)
     if (!strcmp(type, "sum")) {
         printf("Enter new summary file name > ");
         fflush(stdout);
-        (void)fgets(filename_str, FILENAME_LENGTH - 1, stdin);
+        IgnoreValue(fgets(filename_str, FILENAME_LENGTH - 1, stdin));
         newline;
         if ((sscanf(filename_str, "%s", filename)) == 1) {
             strcpy(file_names[16], filename);
@@ -987,7 +987,7 @@ static void error_sim_menu(linkage_ped_top *Top,
                 item);
 
             fflush(stdout);
-            (void)fgets(copt, 4, stdin); newline;
+            IgnoreValue(fgets(copt, 4, stdin)); newline;
 
             sscanf(copt, "%d", &not_done);
 
@@ -1020,7 +1020,7 @@ static void error_sim_menu(linkage_ped_top *Top,
                     while(!done_loci_select) {
                         printf("Enter a set of loci numbers ('e' to terminate) > ");
                         fflush(stdout);
-                        (void)fgets(str, FILENAME_LENGTH - 1, stdin);  newline;
+                        IgnoreValue(fgets(str, FILENAME_LENGTH - 1, stdin));  newline;
                         str_p = &(str[0]);
                         while(str_p != NULL) {
                             if (num_select >= num_markers) {
@@ -1126,7 +1126,7 @@ static void error_sim_menu(linkage_ped_top *Top,
                     printf("%c3) Simwalk2 error model\n", model_item[2]);
                     printf("\n Select from options 1 - 3 > ");
                     fflush(stdout);
-                    (void)fgets(copt, 4, stdin); newline;
+                    IgnoreValue(fgets(copt, 4, stdin)); newline;
                     sscanf(copt, "%d", &model_opt);
                     strcpy(model_item, "   ");
                     model_item[model_opt-1] = '*';
@@ -1136,7 +1136,7 @@ static void error_sim_menu(linkage_ped_top *Top,
                         printf("Current uniform error probability = %4.3f\n", UniformErrProb);
                         printf("Enter new value (< 9 char, blank to keep old value) > ");
                         fflush(stdout);
-                        (void)fgets(uerr_str, 9, stdin); newline;
+                        IgnoreValue(fgets(uerr_str, 9, stdin)); newline;
                         if (sscanf(uerr_str, "%g", &err_prob) >= 1 ) {
                             if (err_prob >= 0.0){
                                 UniformErrProb = err_prob;
@@ -1150,7 +1150,7 @@ static void error_sim_menu(linkage_ped_top *Top,
                                SW2ErrProb[3], SW2ErrProb[4]);
                         printf("Enter 5 new error probabilities(<= 50 char) > ");
                         fflush(stdout);
-                        (void)fgets(serr_str, 50, stdin); newline;
+                        IgnoreValue(fgets(serr_str, 50, stdin)); newline;
                         if (sscanf(serr_str, "%g %g %g %g %g",
                                   &serr[0],  &serr[1],  &serr[2],
                                   &serr[3],  &serr[4]) == 5) {

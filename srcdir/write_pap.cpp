@@ -776,7 +776,7 @@ static void pap_file_names(char *file_names[], int *include_sex,
                yorn[*use_pop_file]);
         printf("Select options 1-5 to enter new file names, 6 and 7 to toggle > ");
         fflush(stdout);
-        (void)fgets(cselect, 4, stdin); newline;
+        IgnoreValue(fgets(cselect, 4, stdin)); newline;
         sscanf(cselect, "%d", &i);
         test_modified(i);
 

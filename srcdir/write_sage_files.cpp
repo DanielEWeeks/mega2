@@ -1062,7 +1062,7 @@ static void sage_file_names(char *file_names[], linkage_ped_top *Top)
 
         printf("Enter option 0 - %d > ", i);
         fflush(stdout);
-        (void)fgets(cselect, 4, stdin); newline;
+        IgnoreValue(fgets(cselect, 4, stdin)); newline;
         select=-1;
         sscanf(cselect, "%d", &select);
         test_modified(select);

@@ -393,7 +393,7 @@ static void    init_globals(char *argv0)
 #endif
     check_web_ver = 1;
     MARKER_SCHEME = MARKER_SCHEME_BITS;
-    (void)getcwd(InputPath, (size_t) FILENAME_LENGTH);
+    IgnoreValue(getcwd(InputPath, (size_t) FILENAME_LENGTH));
     strcpy(mega2_path1, argv0);
     path_end=strrchr(mega2_path1, '/');
     if (path_end != NULL) {

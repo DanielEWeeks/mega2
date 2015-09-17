@@ -52,12 +52,12 @@ public:
     void read_bytes(unsigned char *buf, long len);
     void seek_bytes(long len);
 
-    unsigned long read_uchar();
-    unsigned long read_uchar(unsigned char *& zp);
-    unsigned long read_ushort();
-    unsigned long read_ushort(unsigned char *& zp);
-    unsigned long read_ulong();
-    unsigned long read_ulong(unsigned char *& zp);
+    unsigned char  read_uchar();
+    unsigned char  read_uchar(unsigned char *& zp);
+    unsigned short read_ushort();
+    unsigned short read_ushort(unsigned char *& zp);
+    unsigned long  read_ulong();
+    unsigned long  read_ulong(unsigned char *& zp);
 
     void read_header();
     void read_samples();

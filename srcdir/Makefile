@@ -120,7 +120,7 @@ endif
 
 # CC, CFLAGS are defined in Makedefs
 
-user_input.o read_impute_bgen2.o: IFLAGS += -Ibgen/genfile/include -std=c++11
+user_input.o read_impute_bgen2.o: IFLAGS += -Ibgen/genfile/include $(stdC11)
 
 write_IQLS.o write_beagle.o write_fbat.o write_loki.o write_mfiles.o: DFLAGS += -DRUNSHELL_SETUP
 write_pangaea.o write_plink_files.o write_premakeped.o: DFLAGS += -DRUNSHELL_SETUP
@@ -199,7 +199,8 @@ AROUT ?=
 ZLIBS ?= libz.a
 CLIBS += libvcftools.a libbgen.a $(ZLIBS)
 
-WINO ?=
+stdC11  ?= -std=c++11
+WINO    ?=
 
 .c.o:
 ifeq ($(MINGW),)

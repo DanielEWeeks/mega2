@@ -160,7 +160,7 @@ int ReadImputed::do_menu_parse(int choice_)
 	char selection[100];
         if (1) {
 	    printf("Please enter space separated list of missing trait value codes: ");
-            (void)fgets(selection, sizeof(selection)-1, stdin); newline;
+            IgnoreValue(fgets(selection, sizeof(selection)-1, stdin)); newline;
 	}
         Str MissingCodes = string(selection);
         Vecs vec;

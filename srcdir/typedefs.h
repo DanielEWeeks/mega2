@@ -40,6 +40,12 @@
 #define USE_PROTOS prototypes
 #define ANSI ansi
 
+//In current gcc/glib you can not ignore the value returned by some functions.
+//#define IgnoreValue(x) ((void)x)
+//should be good enough
+template<typename v>
+void inline IgnoreValue(v x) {}
+
 #ifdef ANSI
 #include <stdarg.h>
 #else

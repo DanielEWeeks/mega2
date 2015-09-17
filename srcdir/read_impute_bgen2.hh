@@ -167,8 +167,11 @@ public:
                 setter( m_sample_ids[i] ) ;
             }
         } else {
+            char numb[24];
             for( std::size_t i = 0; i < m_context.number_of_samples; ++i ) {
-                setter( "(unknown_sample_" + std::to_string( i+1 ) + ")" ) ;
+                sprintf(numb, "%d", (int)(i+1));
+//              setter( "(unknown_sample_" + std::to_string( i+1 ) + ")" ) ;
+                setter( "(unknown_sample_" + std::string(numb) + ")" ) ;
             }
         }
     }

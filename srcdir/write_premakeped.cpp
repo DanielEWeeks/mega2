@@ -1427,7 +1427,7 @@ static int merlin_option_check(char *option,
                         printf("Create model file(s) %s in output folder? [y/n](default n)",
                                file_names[14]);
                         fflush(stdout);
-                        (void)fgets(y, 9, stdin); newline; fflush(stdin);
+                        IgnoreValue(fgets(y, 9, stdin)); newline; fflush(stdin);
                         if (y[0] == 'Y' || y[0] == 'y') {
                             *create_merlin_model=1;
                         } else {
@@ -1578,7 +1578,7 @@ static void merlin_options(char *option,
                 printf("\nEnter options as text (at most 200 characters) > ");
                 strcpy(option, "");
                 fflush(stdout);
-                (void)fgets(option, FILENAME_LENGTH-1, stdin); newline;
+                IgnoreValue(fgets(option, FILENAME_LENGTH-1, stdin)); newline;
                 option[strlen(option)-1]='\0';
                 if (!merlin_option_check(option, merlin_opt, file_names, create_liability_model)) {
                     printf("Error: bad option string, discarding options.\n");

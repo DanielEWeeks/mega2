@@ -593,7 +593,7 @@ void goodbye(int exit)
         sprintf(syscmd, "which %s", LOG2HTML);
         pfd = popen(syscmd, "r");
         syscmd[0] = '0';
-        (void)fgets(syscmd, sizeof (syscmd), pfd);
+        IgnoreValue(fgets(syscmd, sizeof (syscmd), pfd));
         pclose(pfd);
         if (syscmd[0] == '0')
 #endif
@@ -821,7 +821,7 @@ void fcopy(const char *file1, const char *file2, const char *write_mode)
         return;
     }
 
-    (void)fgets(line, 100, f1);
+    IgnoreValue(fgets(line, 100, f1));
     while (1) {
         fputs(line, f2);
         if (fgets(line, 100, f1)==NULL) break;
@@ -1432,7 +1432,7 @@ void get_line(FILE *fp, char *retline)
     } else {
         ungetc(c, fp);
         strcpy(retline, "");
-        (void)fgets(retline, FILENAME_LENGTH-1, fp);
+        IgnoreValue(fgets(retline, FILENAME_LENGTH-1, fp));
         if (!strcmp(retline, "\n")) {
             strcpy(retline, "");
         }
@@ -1746,7 +1746,7 @@ void mega2_version_check(void)
             printf("        Your    version: %d.%d.%d\n", Mega2Ver, Mega2Rev, Mega2Patch);
             printf("Exit Mega2 now, while you update [y/n] ? ");
 
-            (void)scanf("%c", &ans); /* newline; */
+            IgnoreValue(scanf("%c", &ans)); /* newline; */
             if (ans == 'y' || ans == 'Y') {
                 exit(0); // without writing to the log...
             } else {

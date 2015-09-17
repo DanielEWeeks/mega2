@@ -678,7 +678,7 @@ void   check_map_positions(linkage_ped_top *Top, int numchr,
                 " 1) Set inconsistent genetic distances to 0.0999\n");
             printf("Enter option 0 or 1 > ");
             fflush(stdout);
-            (void)fgets(cselect, 4, stdin); newline;
+            IgnoreValue(fgets(cselect, 4, stdin)); newline;
             sscanf(cselect, "%d", &opt);
             if (opt==1) {
                 done =1;

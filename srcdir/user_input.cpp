@@ -1342,7 +1342,7 @@ void menu1(file_format *infl_type,
                 printf("   %s\n", *output_path);
                 printf("   Yes or No (y/n)[default no] > ");
                 fflush(stdout);
-                (void)fgets(y, 9, stdin); newline; fflush(stdin);
+                IgnoreValue(fgets(y, 9, stdin)); newline; fflush(stdin);
                 if (y[0] == 'Y' || y[0] == 'y') {
                     makedir(*output_path);
                 } else {
@@ -1384,7 +1384,7 @@ void menu1(file_format *infl_type,
             PLINK_usage(xcf);
             while (1) {
                 fflush(stdout);
-                (void)fgets(PLINKArgs, sizeof(PLINKArgs)-1, stdin); newline;
+                IgnoreValue(fgets(PLINKArgs, sizeof(PLINKArgs)-1, stdin)); newline;
                 i = (int)strlen(PLINKArgs);
                 if (PLINKArgs[i-1] == '\n') PLINKArgs[i-1] = 0;
                 if (PLINKArgs[i-1] == '\r') PLINKArgs[i-1] = 0;
@@ -1407,7 +1407,7 @@ void menu1(file_format *infl_type,
                 printf("Enter new VCF parameters: ");
                 strcpy(new_VCFArgs, VCFArgs);
                 fflush(stdout);
-                (void)fgets(new_VCFArgs, sizeof(new_VCFArgs)-1, stdin); newline;
+                IgnoreValue(fgets(new_VCFArgs, sizeof(new_VCFArgs)-1, stdin)); newline;
                 i = (int)strlen(new_VCFArgs);
                 if (new_VCFArgs[i-1] == '\n') new_VCFArgs[i-1] = 0;
                 if (new_VCFArgs[i-1] == '\r') new_VCFArgs[i-1] = 0;
@@ -1694,7 +1694,7 @@ static void define_labels(linkage_ped_top *Top, int tr, char *affdata_str)
     printf("e.g., 2-* means status 2 and all classes). \n");
     printf("Separate pairs with commas (e.g. 2-1,2-3) > ");
     fflush(stdout);
-    (void)fgets(affdata_str, MAX_NAMELEN-1, stdin); newline;
+    IgnoreValue(fgets(affdata_str, MAX_NAMELEN-1, stdin)); newline;
     aff_copy = strdup(affdata_str);
     if (!check_affdata_str(aff_copy, num_classes)) {
         /* put back to the default */
@@ -2403,7 +2403,7 @@ int gh_cov_selection(int num_select, int *traits,
         printf("\nEnter only 'e' if no covariates are desired.\n");
         printf("Enter trait numbers ('e' to terminate) > ");
         fflush(stdout);
-        (void)fgets(cselect, 199, stdin);
+        IgnoreValue(fgets(cselect, 199, stdin));
         newline;
         str_p=&(cselect[0]);
         while(*str_p != '\0') {

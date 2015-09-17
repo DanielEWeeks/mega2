@@ -363,7 +363,7 @@ static void prest_file_names(char *file_names[],
         printf("Enter option 0-7 > ");
 
         fflush(stdout);
-        (void)fgets(cselect, 9, stdin); newline;
+        IgnoreValue(fgets(cselect, 9, stdin)); newline;
         sscanf(cselect, "%d", &item);
         test_modified(item);
 

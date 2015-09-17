@@ -374,7 +374,7 @@ static void get_sim_trait_pos(double *trait_positions,
         default:
             if (item >= 1 && item <= num_traits) {
                 printf("Enter position [%7.4f] >", trait_positions[item-1]);
-                (void)scanf("%lf", &trait_positions[item-1]); newline;
+                IgnoreValue(scanf("%lf", &trait_positions[item-1])); newline;
             } else {
                 warn_unknown(input_str);
             }

@@ -122,7 +122,7 @@ static void loki_run_options(loki_param_type *loki_params, int numchr)
                loki_params->start_mean);
         printf("Select from options 0-6 > ");
         fflush(stdout);
-        (void)fgets(cchoice, 9, stdin);
+        IgnoreValue(fgets(cchoice, 9, stdin));
         sscanf(cchoice, "%d", &(choice)); newline;
         dummy=0; fdum=0.0;
         strcpy(logfile, "");

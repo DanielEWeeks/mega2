@@ -344,7 +344,7 @@ static void            CreateSplinkCShell(char *options, int single_loci)
             printf("Terminate string by pressing <RETURN> or <Entry> key > ");
             strcpy(choice, "");
             fflush(stdout);
-            (void)fgets(choice, 100, stdin); newline;
+            IgnoreValue(fgets(choice, 100, stdin)); newline;
 
             if (choice == NULL) break;
 

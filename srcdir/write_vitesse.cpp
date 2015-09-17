@@ -335,7 +335,7 @@ static void verify_intv_size(int *intv_size, int num_loci, int numchr)
             printf(" 1) Linkmap interval size : %d \n", *intv_size);
             printf("Enter 0 or 1 > ");
             fflush(stdout);
-            (void)fgets(cselect, 9, stdin); newline;
+            IgnoreValue(fgets(cselect, 9, stdin)); newline;
             choice=atoi(cselect);
             if (choice  != 0 &&  choice  != 1) {
                 warn_unknown(cselect);
