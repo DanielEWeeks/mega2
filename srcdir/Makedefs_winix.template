@@ -52,3 +52,6 @@ RM=rm -f
 CP=cp
 
 #now on for all code: marker_lookup.o phe_lookup.o batch.o write_pseq_files.o: CFLAGS += -EHsc
+
+$(info changing OSTYPE from $(OSTYPE) to windows)
+OSTYPE=windows

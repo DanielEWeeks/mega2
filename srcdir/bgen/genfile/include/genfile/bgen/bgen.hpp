@@ -386,7 +386,7 @@ namespace genfile {
 			uint32_t const layout = context.flags & e_Layout ;
 			
 			if( layout == e_v11Layout || layout == e_v10Layout ) {
-				uint32_t number_of_samples ;
+				uint32_t number_of_samples = 0;
 				read_little_endian_integer( aStream, &number_of_samples ) ;
 				if( !aStream ) {
 					return false ;
@@ -492,7 +492,7 @@ namespace genfile {
 					char const* const end,
 					uint64_t* data,
 					int* size,
-					uint8_t const bits
+					int const bits
 				) ;
 
 				double parse_bit_representation(
@@ -562,7 +562,7 @@ namespace genfile {
 					int size = 0 ;
 					for( uint32_t i = 0; i < numberOfSamples; ++i, ++ploidy_p ) {
 						uint32_t const ploidy = uint32_t(*reinterpret_cast< unsigned char const* >( ploidy_p ) & 0x3F) ;
-						bool const missing = (*reinterpret_cast< unsigned char const* >( ploidy_p ) & 0x80) ;
+						bool const missing = (*reinterpret_cast< unsigned char const* >( ploidy_p ) & 0x80) == 0x80;
 						uint32_t const valueCount
 							= phased
 							? (ploidy * numberOfAlleles)

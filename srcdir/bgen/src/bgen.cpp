@@ -140,7 +140,7 @@ namespace genfile {
 #endif
 				std::string const& identifier = sample_ids[i] ;
 				assert( identifier.size() <= std::size_t( std::numeric_limits< uint16_t >::max() ) ) ;
-				uint16_t const id_size = identifier.size() ;
+				uint16_t const id_size = (uint16_t)identifier.size() ;
 				write_length_followed_by_data( aStream, id_size, identifier ) ;
 			}
 			return block_size ;
@@ -190,7 +190,7 @@ namespace genfile {
 				std::string* second_allele
 			) {
 				// v1.0-style layout, deprecated
-				uint32_t number_of_samples ;
+				uint32_t number_of_samples = 0;
 				unsigned char max_id_size = 0;
 				unsigned char SNPID_size = 0;
 				unsigned char RSID_size = 0;
@@ -217,7 +217,7 @@ namespace genfile {
 					aStream.ignore( max_id_size - RSID_size ) ;
 				}
 				if( aStream ) {
-					unsigned char chromosome_char ;
+					unsigned char chromosome_char = 0;
 					read_little_endian_integer( aStream, &chromosome_char ) ;
 					read_little_endian_integer( aStream, SNP_position ) ;
 
@@ -348,6 +348,7 @@ namespace genfile {
 					} else {
 						// v1.2 style (or other) blocks, these are treated differently and this function does not apply.
 						assert(0) ;
+                                                return 0;
 					}
 				}
 			}
@@ -358,7 +359,7 @@ namespace genfile {
 			Context const& context
 		) {
 			if( context.flags & bgen::e_CompressedSNPBlocks ) {
-				uint32_t compressed_data_size ;
+				uint32_t compressed_data_size = 0;
 				read_little_endian_integer( aStream, &compressed_data_size ) ;
 				aStream.ignore( compressed_data_size ) ;
 			}
@@ -423,7 +424,7 @@ namespace genfile {
 					char const* const end,
 					uint64_t* data,
 					int* size,
-					uint8_t const bits
+					int const bits
 				) {
 					// fill data with up to 8 bytes.
 					while( (*size) < bits && buffer < end ) {
@@ -487,14 +488,14 @@ namespace genfile {
 				}
 
 				void round_probs_to_scaled_simplex( double* p, std::size_t* index, std::size_t const n, int const number_of_bits ) {
-					double const scale = ( 0xFFFFFFFFFFFFFFFF >> ( 64 - number_of_bits ) ) ;
+                                    double const scale = (double )( 0xFFFFFFFFFFFFFFFF >> ( 64 - number_of_bits ) ) ;
 					double total_fractional_part = 0.0 ;
 					for( std::size_t i = 0; i < n; ++i ) {
 						p[i] *= scale ;
 						index[i] = i ;
 						total_fractional_part += p[i] - std::floor( p[i] ) ;
 					}
-					std::size_t const upper = std::floor( total_fractional_part + 0.5 ) ;
+					std::size_t const upper = (std::size_t)std::floor( total_fractional_part + 0.5 ) ;
 					std::sort( index, index + n, CompareFractionalPart( p, n ) ) ;
 
 	#if DEBUG_BGEN_FORMAT > 2
