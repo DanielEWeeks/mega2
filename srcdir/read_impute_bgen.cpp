@@ -90,9 +90,10 @@ void ReadBgenGenotypeReadHelper::genotypes_init()
             scale = 10000;
         else if (layout == 1)
             scale = 32768;
-    } else if (layout == 2) {
+//  } else if (layout == 2) {
     } else {
-//      ERROR
+        errorvf("read_imputed_bgen: layout not supported %d\n", layout);
+        EXIT(DATA_INCONSISTENCY);
     }
 }
 
@@ -161,11 +162,12 @@ void ReadBgenFile::read_input_file()
         }
         delete [] block.rdata;
         delete [] block.cdata;
-    } else if ( layout == 2) {
-        for (i = 0; i < snps; i++)
-            process_12(i);
+//  } else if ( layout == 2) {
+//      for (i = 0; i < snps; i++)
+//          process_12(i);
     } else {
-//      ERROR
+        errorvf("read_imputed_bgen: layout not supported %d\n", layout);
+        EXIT(DATA_INCONSISTENCY);
     }
 
     close();
@@ -177,7 +179,8 @@ void ReadBgenFile::open(const char *path)
 {
     fd = gzopen(path, "rb");
     if (fd == NULL) {
-//        ERROR
+        errorvf("read_imputed_bgen: bgen file can not be opened: \"%s\"\n", path);
+        EXIT(FILE_NOT_FOUND);
     }
 }
 
@@ -185,10 +188,8 @@ void ReadBgenFile::close()
 {
     long gzsz = gzclose_r(fd);
     if (gzsz == Z_OK) return;
-
-    {
-//      ERROR
-    }
+    errorvf("read_imputed_bgen libz: gz_close_r bad return value %d\n", gzsz);
+    EXIT(DATA_INCONSISTENCY);
 }
 
 void ReadBgenFile::read_bytes(unsigned char *buf, long len)
@@ -197,9 +198,11 @@ void ReadBgenFile::read_bytes(unsigned char *buf, long len)
     if (gzsz == len) return;
 
     if (gzsz > 0 && gzsz < len && gzeof(fd)) {
-//short ??
+        errorvf("read_imputed_bgen libz: gzread short return value %d\n", gzsz);
+        EXIT(DATA_INCONSISTENCY);
     } else {
-//      ERROR
+        errorvf("read_imputed_bgen libz: gzread bad return value %d\n", gzsz);
+        EXIT(DATA_INCONSISTENCY);
     }
 }
 
@@ -207,10 +210,9 @@ void ReadBgenFile::seek_bytes(long len)
 {
     long gzsz = gzseek(fd, len, /* SEEK_CUR */ 1);
 
-    if (gzsz > 0 && gzsz < len && gzeof(fd)) {
-//short ??
-    } else {
-//      ERROR
+    if (gzsz < 0) {
+        errorvf("read_imputed_bgen libz: gzseek bad return value %d\n", gzsz);
+        EXIT(DATA_INCONSISTENCY);
     }
 }
 
@@ -283,7 +285,7 @@ void ReadBgenFile::read_header()
     samples = read_ulong();
     rsvd    = read_ulong();
     if (rsvd != 0 && rsvd != BGEN) {
-// error
+        errorvf("read_imputed_bgen libz: read_header bad rsvd value %d\n", rsvd);
     }
     if (header != 20)
         gzseek(fd, 4 + header - 4, 0);
@@ -442,11 +444,11 @@ void ReadBgenFile::read_compressed_block_10()
     read_bytes(block.rdata, CB);
     int z_stat = uncompress(block.cdata, &dest_len, block.rdata, CB);
     if (z_stat == Z_MEM_ERROR) {
-//        NO MEM
+        errorvf("read_imputed_bgen libz: uncompress mem_error %d\n", z_stat);
     } else if (z_stat != Z_OK) {
-//        CORRUPTION
+        errorvf("read_imputed_bgen libz: uncompress misc error %d\n", z_stat);
     } else if (dest_len != 6 * block.N) {
-//        short fill
+        errorvf("read_imputed_bgen libz: uncompress short read %d vs %d\n", dest_len, 6 * block.N);
     }
 
     read_expanded_block_10(block.cdata);
@@ -574,11 +576,11 @@ void ReadBgenFile::read_compressed_block_12()
     read_bytes(block.rdata, CB);
     int z_stat = uncompress(block.cdata, &dest_len, block.rdata, CB);
     if (z_stat == Z_MEM_ERROR) {
-//        NO MEM
+        errorvf("read_imputed_bgen libz: uncompress mem_error %d\n", z_stat);
     } else if (z_stat != Z_OK) {
-//        CORRUPTION
+        errorvf("read_imputed_bgen libz: uncompress misc error %d\n", z_stat);
     } else if (dest_len != 6 * block.N) {
-//        short fill
+        errorvf("read_imputed_bgen libz: uncompress short read %d vs %d\n", dest_len, 6 * block.N);
     }
 
     read_expanded_block_12(DC, block.cdata);

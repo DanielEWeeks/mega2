@@ -85,24 +85,6 @@ void BgenParserGenotypeReadHelper::genotypes_init()
     open();
     summarise( std::cerr ) ;
     get_sample_ids( [this]( std::string const& id ) { } );
-
-/*
-    open(C(impute_file));
-    pass = 1;
-    read_header();
-    pass = 2;
-    if (layout < 2) {
-        block.cdata = new unsigned char[6 * samples];
-        block.rdata = new unsigned char[6 * samples];
-        if (layout == 0)
-            scale = 10000;
-        else if (layout == 1)
-            scale = 32768;
-    } else if (layout == 2) {
-    } else {
-//      ERROR
-    }
-*/
 }
 
 boolean BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& rsid, string& pos,
@@ -122,27 +104,6 @@ boolean BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& 
 
     n_prob_sample = 0;
     return ret;
-/*
-    if (layout == 0) {
-        process_10(mrk_idx);
-    } else if (layout == 1) {
-        process_11(mrk_idx);
-    } else if (layout == 2) {
-        process_12(mrk_idx);
-    }
-
-    if ((flags & compressF) > 0)
-        zp = block.cdata;
-    else
-        zp = 0;
-
-    hmm = "---";
-    rsid = block.rsid;
-    fix_marker_pos(pos);
-    A = C(block.allele[0]);
-    B = C(block.allele[1]);
-
-*/
 }
 
 void BgenParserGenotypeReadHelper::genotypes_skip()
@@ -164,22 +125,11 @@ void BgenParserGenotypeReadHelper::genotypes_sample_prob(Token::d3& nums)
     if (n_prob_sample == m_context.number_of_samples) {
         n_prob_sample = 0;
     }
-/*
-    nums[0] = ((double)read_ushort(zp)) / scale;
-    nums[1] = ((double)read_ushort(zp)) / scale;
-    nums[2] = ((double)read_ushort(zp)) / scale;
-*/
 }
 
 void BgenParserGenotypeReadHelper::genotypes_end()
 {
     close();
-/*
-    if (layout < 2) {
-        delete [] block.cdata;
-        delete [] block.rdata;
-    }
-*/
 }
 
 
@@ -234,16 +184,6 @@ void BgenParser::read_input_file()
 
         summarise( std::cerr ) ;
 
-/*
-        // Output header
-        std::cout << "##fileformat=VCFv4.2\n"
-            << "FORMAT=<ID=GP,Type=Float,Number=G,Description=\"Genotype call probabilities\">\n"
-            << "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT" ;
-        get_sample_ids(
-            []( std::string const& id ) { std::cout << "\t" << id ; }
-        ) ;
-        std::cout << "\n" ;
-*/        
         get_sample_ids(
             [this]( std::string const& id ) { n_sample.samples.push_back(id) ; }
             );
@@ -253,19 +193,8 @@ void BgenParser::read_input_file()
         uint32_t position ;
         std::string rsid ;
         std::vector< std::string > alleles ;
-//        std::vector< std::vector< double > > probs ;
-
     
         while( read_variant( &chromosome, &position, &rsid, &alleles )) {
-/*
-              std::cout << chromosome << '\t'
-                << position << '\t'
-                << rsid << '\t' ;
-            for( std::size_t i = 0; i < alleles.size(); ++i ) {
-                std::cout << ( i > 0 ? "," : "" ) << alleles[i] ;
-            }
-            std::cout << "\t.\t.\t.\tGP" ;
-*/
             string ccpos;
             fix_marker_pos(ccpos, position);
 
@@ -274,29 +203,11 @@ void BgenParser::read_input_file()
             n_rip->markers.push_back(new ImpMarker(rsid_name, chrm, ccpos, alleles[0], alleles[1], n_rip->read_info));
 
             ignore_probs() ;
-/*
-            read_probs( &probs ) ;
-
-            for( std::size_t i = 0; i < probs.size(); ++i ) {
-              std::cout << '\t' ;
-                for( std::size_t j = 0; j < probs[i].size(); ++j ) {
-                    std::cout << ( j > 0 ? "," : "" ) ;
-                    if( probs[i][j] == -1 ) {
-                        std::cout << "." ;
-                    } else {
-                        std::cout << probs[i][j] ;
-                    }
-                }
-            }
-          std::cout << "\n" ;
-*/
         }
-//        return 0 ;
     }
     catch( genfile::bgen::BGenError const& e ) {
         std::cerr << "!! Uh-oh, error parsing bgen file: ";
         std::cerr << e.what() << "\n";
 	throw;
-//        return -1 ;
     }
 }

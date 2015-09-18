@@ -107,11 +107,6 @@ public:
     void open( )
     {
         // Open the stream
-/*
-        m_stream.reset(
-            new std::ifstream( filename, std::ifstream::binary )
-        ) ;
-*/
         m_stream = new std::ifstream( C(m_filename), std::ifstream::binary );
         if( !*m_stream ) {
             throw std::invalid_argument( m_filename ) ;
@@ -246,9 +241,7 @@ public:
     } n_sample;
 
 private:
-//rvb    std::unique_ptr< std::ifstream > m_stream ;
-//rvb    std::auto_ptr< std::fstream > m_stream ;
-        std::ifstream *m_stream ;
+    std::ifstream *m_stream ;
 
 protected:
     // bgen::Context object holds information from the header block,
