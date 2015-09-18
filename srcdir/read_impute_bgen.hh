@@ -70,8 +70,8 @@ public:
     void validate_marker_name(std::string& rsid, const std::string& ccpos);
 
     void read_snpblock_header_10();
-    void read_compressed_block_10(long scale);
-    void read_expanded_block_10(long scale, unsigned char *zp);
+    void read_compressed_block_10();
+    void read_expanded_block_10(unsigned char *bp);
     void process_10(int i);
 
     void read_snpblock_header_11();
@@ -81,7 +81,7 @@ public:
 
     void read_snpblock_header_12();
     void read_compressed_block_12();
-    void read_expanded_block_12(unsigned long DC, unsigned char *zp);
+    void read_expanded_block_12(unsigned long DC, unsigned char *bp);
     void process_12(int i);
 
 public:

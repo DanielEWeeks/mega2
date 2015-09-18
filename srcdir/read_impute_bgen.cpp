@@ -150,13 +150,15 @@ void ReadBgenFile::read_input_file()
         block.cdata = new unsigned char[6 * samples];
         block.rdata = new unsigned char[6 * samples];
 
-        if ( layout == 1)
+        if ( layout == 1) {
+            scale = 32768;
             for (i = 0; i < snps; i++)
                 process_11(i);
-        else if (layout == 0)
+        } else if (layout == 0) {
+            scale = 10000;
             for (i = 0; i < snps; i++)
                 process_10(i);
-
+        }
         delete [] block.rdata;
         delete [] block.cdata;
     } else if ( layout == 2) {
@@ -426,7 +428,7 @@ void ReadBgenFile::read_snpblock_header_10()
     }
 }
 
-void ReadBgenFile::read_compressed_block_10(long scale = 10000)
+void ReadBgenFile::read_compressed_block_10()
 {
     unsigned long dest_len = 6 * block.N;
     unsigned long CB = read_ulong();
@@ -447,11 +449,11 @@ void ReadBgenFile::read_compressed_block_10(long scale = 10000)
 //        short fill
     }
 
-    read_expanded_block_10(scale, block.cdata);
+    read_expanded_block_10(block.cdata);
 
 }
 
-void ReadBgenFile::read_expanded_block_10(long scale = 10000, unsigned char *bp = NULL)
+void ReadBgenFile::read_expanded_block_10(unsigned char *bp = NULL)
 {
     unsigned long dest_len = 6 * block.N;
 
@@ -478,12 +480,12 @@ void ReadBgenFile::read_expanded_block_10(long scale = 10000, unsigned char *bp 
     }
 }
 
-void ReadBgenFile::process_10(int i)
+void ReadBgenFile::process_10(int snpn)
 {
     read_snpblock_header_10();
 
     if (debug) {
-        cout << "snp#" << i << " ";
+        cout << "snp#" << snpn << " ";
         cout << block.rsid << " ";
         cout << block.chrm << ":" << block.pos << " ";
         for (unsigned long i = 0; i < block.alleles; i++)
@@ -534,19 +536,19 @@ void ReadBgenFile::read_snpblock_header_11()
 
 void ReadBgenFile::read_compressed_block_11()
 {
-    read_compressed_block_10(32768);
+    read_compressed_block_10();
 }
 
 void ReadBgenFile::read_expanded_block_11()
 {
-    read_expanded_block_10(32768);
+    read_expanded_block_10();
 }
 
-void ReadBgenFile::process_11(int i)
+void ReadBgenFile::process_11(int snpn)
 {
     read_snpblock_header_11();
     if (debug) {
-        cout << "snp#" << i << " ";
+        cout << "snp#" << snpn << " ";
         cout << block.rsid << " ";
         cout << block.chrm << ":" << block.pos << " ";
         for (unsigned long i = 0; i < block.alleles; i++)
@@ -602,11 +604,11 @@ void ReadBgenFile::read_expanded_block_12(unsigned long DC, unsigned char *bp = 
 #endif
 }
 
-void ReadBgenFile::process_12(int i)
+void ReadBgenFile::process_12(int snpn)
 {
     read_snpblock_header_11();
     if (debug) {
-        cout << "snp#" << i << " ";
+        cout << "snp#" << snpn << " ";
         cout << block.rsid << " ";
         cout << block.chrm << ":" << block.pos << " ";
         for (unsigned long i = 0; i < block.alleles; i++)
