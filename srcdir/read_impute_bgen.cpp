@@ -214,34 +214,34 @@ void ReadBgenFile::seek_bytes(long len)
 
 unsigned char ReadBgenFile::read_uchar()
 {
-    unsigned char *zp = NULL;
-    return read_uchar(zp);
+    unsigned char *bp = NULL;
+    return read_uchar(bp);
 }
 
-unsigned char ReadBgenFile::read_uchar(unsigned char *& zp)
+unsigned char ReadBgenFile::read_uchar(unsigned char *& bp)
 {
-    if (zp == 0)
+    if (bp == 0)
         read_bytes(ibuf, 1);
     else {
-        ibuf[0] = *zp++;
+        ibuf[0] = *bp++;
     }
     return ibuf[0];
 }
 
 unsigned short ReadBgenFile::read_ushort()
 {
-    unsigned char *zp = NULL;
-    return read_ushort(zp);
+    unsigned char *bp = NULL;
+    return read_ushort(bp);
 }
 
-unsigned short ReadBgenFile::read_ushort(unsigned char *& zp)
+unsigned short ReadBgenFile::read_ushort(unsigned char *& bp)
 {
     unsigned short ret = 0;
-    if (zp == 0)
+    if (bp == 0)
         read_bytes(ibuf, 2);
     else {
-        ibuf[0] = *zp++;
-        ibuf[1] = *zp++;
+        ibuf[0] = *bp++;
+        ibuf[1] = *bp++;
     }
     unsigned char *cp = ibuf;
     for (int i = 0; i < 16; i+=8)
@@ -251,20 +251,20 @@ unsigned short ReadBgenFile::read_ushort(unsigned char *& zp)
 
 unsigned long ReadBgenFile::read_ulong()
 {
-    unsigned char *zp = NULL;
-    return read_ulong(zp);
+    unsigned char *bp = NULL;
+    return read_ulong(bp);
 }
 
-unsigned long ReadBgenFile::read_ulong(unsigned char *& zp)
+unsigned long ReadBgenFile::read_ulong(unsigned char *& bp)
 {
     unsigned long ret = 0;
-    if (zp == 0)
+    if (bp == 0)
         read_bytes(ibuf, 4);
     else {
-        ibuf[0] = *zp++;
-        ibuf[1] = *zp++;
-        ibuf[2] = *zp++;
-        ibuf[3] = *zp++;
+        ibuf[0] = *bp++;
+        ibuf[1] = *bp++;
+        ibuf[2] = *bp++;
+        ibuf[3] = *bp++;
     }
     unsigned char *cp = ibuf;
     for (int i = 0; i < 32; i+=8)
@@ -451,7 +451,7 @@ void ReadBgenFile::read_compressed_block_10(long scale = 10000)
 
 }
 
-void ReadBgenFile::read_expanded_block_10(long scale = 10000, unsigned char *zp = NULL)
+void ReadBgenFile::read_expanded_block_10(long scale = 10000, unsigned char *bp = NULL)
 {
     unsigned long dest_len = 6 * block.N;
 
@@ -465,9 +465,9 @@ void ReadBgenFile::read_expanded_block_10(long scale = 10000, unsigned char *zp 
 
     double num[3];
     for (unsigned long i = 0; i < block.N; i++) {
-        num[0] = ((double)read_ushort(zp)) / scale;
-        num[1] = ((double)read_ushort(zp)) / scale;
-        num[2] = ((double)read_ushort(zp)) / scale;
+        num[0] = ((double)read_ushort(bp)) / scale;
+        num[1] = ((double)read_ushort(bp)) / scale;
+        num[2] = ((double)read_ushort(bp)) / scale;
 
         if (debug) {
             cout << "sample#" << i << " ";
@@ -585,20 +585,20 @@ void ReadBgenFile::read_compressed_block_12()
     delete [] block.cdata;
 }
 
-void ReadBgenFile::read_expanded_block_12(unsigned long DC, unsigned char *zp = NULL)
+void ReadBgenFile::read_expanded_block_12(unsigned long DC, unsigned char *bp = NULL)
 {
 #ifdef SOMEDAY
     unsigned long Nx, allelesx, min, max, phase, bits;
     unsigned char *ploidy;
 
-    Nx       = read_ulong(zp);
-    allelesx = read_ushort(zp);
-    min      = read_uchar(zp);
-    max      = read_uchar(zp);
+    Nx       = read_ulong(bp);
+    allelesx = read_ushort(bp);
+    min      = read_uchar(bp);
+    max      = read_uchar(bp);
     ploidy   = new unsigned char [ Nx ];
     read_bytes(ploidy, Nx);
-    phase    = read_uchar(zp);
-    bits     = read_uchar(zp);
+    phase    = read_uchar(bp);
+    bits     = read_uchar(bp);
 #endif
 }
 

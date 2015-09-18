@@ -29,10 +29,12 @@
 # NOTE: -lz is needed when the library is linked...
 ifeq ($(OSTYPE),windows)
 UP = ..\\
+WINDIR=\\
 #WINO = -Fo$(@D)/$*.o
 WINO = -Fo$*.o
 else
 UP = ../
+WINDIR=/
 WINO = -o $@
 endif
 
@@ -44,6 +46,7 @@ OUT = $(UP)libbgen.a
 #SRC = example/bgen_to_vcf.cpp src/MissingValue.cpp src/bgen.cpp src/zlib.cpp
 BSRC = src/MissingValue.cpp src/bgen.cpp src/zlib.cpp
 BOBJ = $(BSRC:.cpp=.o)
+WOBJ = $(subst /,$(WINDIR),$(BOBJ))
 
 # include directories '.' for other vcftools headers, '..' for Mega2 headers... and zlib headers
 LOCFLAGS += -I..
@@ -60,7 +63,7 @@ $(OUT): $(BOBJ)
 	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(BOBJ)
 
 clean:
-	$(RM) $(BOBJ) $(OUT) Makefile.bak
+	$(RM) $(WOBJ) $(OUT) Makefile.bak
 
 distclean: clean
 

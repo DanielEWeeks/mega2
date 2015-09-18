@@ -30,10 +30,10 @@ unexport MAKEFLAGS
 unexport MFLAGS
 
 $(TARGET)::
-	nmake -f win32/Makefile.msc $(TARGET)
+	nmake -nologo -f win32/Makefile.msc $(TARGET)
 
 clean::
-	nmake -f win32/Makefile.msc clean
+	nmake -nologo -f win32/Makefile.msc clean
 
 else ifeq ($(OSTYPE),mingw) #### MINGW ####
 

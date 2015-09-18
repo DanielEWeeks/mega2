@@ -161,7 +161,7 @@ public:
     // (If there are no sample IDs in the file, we report a dummy identifier).
     template< typename Setter >
     void get_sample_ids( Setter setter ) {
-        sample.count = m_context.number_of_samples;
+        n_sample.count = m_context.number_of_samples;
         if( m_have_sample_ids ) {
             for( std::size_t i = 0; i < m_context.number_of_samples; ++i ) {
                 setter( m_sample_ids[i] ) ;
@@ -234,16 +234,16 @@ public:
     void read_input_file();
 
     std::string m_filename ;
-    ReadImputed *rip;
-    unsigned long badname;
+    ReadImputed *n_rip;
+    unsigned long n_badname;
 
-    std::vector< std::vector< double > > probs ;
-    unsigned int prob_sample;
+    unsigned int n_prob_sample;
+    std::vector< std::vector< double > > n_probs ;
 
     struct Sampleblock {
         unsigned count;
         VecsDB   samples;
-    } sample;
+    } n_sample;
 
 private:
 //rvb    std::unique_ptr< std::ifstream > m_stream ;
