@@ -374,7 +374,11 @@ SOCK socket_fd(const char *host, unsigned short port)
         return INVALID_SOCKET;
     }
 
+#if defined(_WIN) || defined(MINGW)
+    int soptbuff;
+#else
     int fl;
+#endif
     for (rp = result; rp != 0; rp = rp->ai_next) {
 
         sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
@@ -391,7 +395,7 @@ SOCK socket_fd(const char *host, unsigned short port)
         }
 
 #if defined(_WIN) || defined(MINGW)
-        int soptbuff = 1;
+        soptbuff = 1;
         if (ioctlsocket(sfd, FIONBIO, (u_long *)&soptbuff) != NO_ERROR) {
             ERR_STR();
             warnvf("ioctlsocket: set non blocking failed\n");
