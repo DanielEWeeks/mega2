@@ -137,7 +137,9 @@ public:
         delete m_stream;
     }
 
-    std::ostream& summarise( std::ostream& o ) const {
+    std::ostream& summarise( std::ostream& o ) const;
+/*
+{
         o << "BgenParser: bgen file ("
             << ( m_context.flags & genfile::bgen::e_v12Layout ? "v1.2 layout" : "v1.1 layout" )
             << ", "
@@ -146,7 +148,8 @@ public:
             << m_context.number_of_samples << " samples and "
             << m_context.number_of_variants << " variants.\n" ;
         return o ;
-    }
+}
+*/
 
     std::size_t number_of_samples() const {
         return m_context.number_of_samples ;

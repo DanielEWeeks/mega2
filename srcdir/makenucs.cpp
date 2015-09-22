@@ -584,7 +584,6 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
 
                 /* adjust some fields for mum */
                 To->Entry[0].ID=1;
-//pp
                 strcpy(To->Entry[0].PerPre, (PedTop->PedTree[ped].Entry[mother-1].LEntry)->PerPre);
                 To->Entry[0].Father=0;
                 To->Entry[0].Mother=0;
@@ -603,7 +602,6 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
 
                 /* adjust some fields for papa */
                 To->Entry[1].ID=2;
-//pp
                 strcpy(To->Entry[1].PerPre, (PedTop->PedTree[ped].Entry[father-1].LEntry)->PerPre);
                 To->Entry[1].Father=0;
                 To->Entry[1].Mother=0;
@@ -628,7 +626,6 @@ void makenucs1(linkage_ped_top *Top, ped_top *PedTop,
 
                             /* adjust some fields for offspring */
                             To->Entry[newentry].ID=newentry+1;
-//pp
                             sprintf(To->Entry[newentry].PerPre, "%d", newentry+1);
                             To->Entry[newentry].Father=2;
                             To->Entry[newentry].Mother=1;

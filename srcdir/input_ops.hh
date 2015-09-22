@@ -45,8 +45,10 @@ enum INPUT_FORMAT {
     in_format_compressed_VCF = 6,
     in_format_VCF = 7,
     in_format_imputed = 8,
-    in_format_bgen  = 9,
-    in_format_bgen2 = 10,
+//  in_format_bgen  = 9,
+//  in_format_bgen2 = 10,
+    in_format_bgen2 = 9,
+    in_format_bgen  = 10,
     in_format_traditional = 100,
 } INPUT_FORMAT_t;
 

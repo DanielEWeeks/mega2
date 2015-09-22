@@ -1523,8 +1523,6 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
        Vitesse, SIMULATE
     */
 
-//yy
-//    if (Top->pedfile_type == POSTMAKEPED_PFT || true)
     if (Top->pedfile_type == POSTMAKEPED_PFT)
     {
 	/*

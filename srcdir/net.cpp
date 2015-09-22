@@ -33,6 +33,7 @@
 
 #if defined(_WIN) || defined(MINGW)
 #include <winsock2.h>
+#include <ws2tcpip.h>
 
 #ifdef _WIN
 #pragma comment (lib, "Ws2_32.lib")
@@ -341,8 +342,9 @@ SOCK socket_fd(const char *host, unsigned short port)
 {
     int err;
     SOCK  sfd;
-    struct sockaddr_in saddr;
-    struct hostent *mega2_server;
+//    struct sockaddr_in saddr;
+//    struct hostent *mega2_server;
+    struct addrinfo hints, *result = 0, *rp;
 
 #if defined(_WIN) || defined(MINGW)
     WSADATA wsaData;
@@ -355,44 +357,66 @@ SOCK socket_fd(const char *host, unsigned short port)
     }
 #endif
 
-    sfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (SOCK_ERRh(sfd)) {
-        ERR_STR();
-        if (errno) {
-            warnvf("socket_fd: socket() failed with errno %d (\"%s\")\n", errno, errstr);
-            STR_ERR();
-#if defined(_WIN) || defined(MINGW)
-            WSACleanup();
-#endif
-            return INVALID_SOCKET;
-        }
-    }
+    memset(&hints, 0, sizeof (hints));
+    hints.ai_family   = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = IPPROTO_TCP;
+    hints.ai_flags    = 0;
 
-    mega2_server = gethostbyname(host);
-    if (mega2_server == NULL) {
-        warnvf("socket_fd: gethostbyname(%s) failed\n", host);
-        socket_close_s(sfd);
+    char port_s[16];
+    sprintf(port_s, "%d", port);
+    err = getaddrinfo(host, port_s, &hints, &result);
+    if (err < 0) {
+        warnvf("socket_fd: getaddrinfo(%s, %d) failed\n", host, port);
+#if defined(_WIN) || defined(MINGW)
+        WSACleanup();
+#endif
         return INVALID_SOCKET;
     }
 
-    memset(&saddr, 0, sizeof (struct sockaddr_in));
-    saddr.sin_family      = AF_INET;
-    saddr.sin_port        = htons(port);
+    int fl;
+    for (rp = result; rp != 0; rp = rp->ai_next) {
 
-    memcpy(&saddr.sin_addr, mega2_server->h_addr_list[0], sizeof (struct in_addr));
+        sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+        if (SOCK_ERRh(sfd)) {
+            ERR_STR();
+            if (errno) {
+                warnvf("socket_fd: socket() failed with errno %d (\"%s\")\n", errno, errstr);
+                STR_ERR();
+#if defined(_WIN) || defined(MINGW)
+                WSACleanup();
+#endif
+                return INVALID_SOCKET;
+            }
+        }
 
 #if defined(_WIN) || defined(MINGW)
-    int soptbuff = 1;
-    if (ioctlsocket(sfd, FIONBIO, (u_long *)&soptbuff) != NO_ERROR) {
-        ERR_STR();
-        warnvf("ioctlsocket: set non blocking failed\n");
-    }
+        int soptbuff = 1;
+        if (ioctlsocket(sfd, FIONBIO, (u_long *)&soptbuff) != NO_ERROR) {
+            ERR_STR();
+            warnvf("ioctlsocket: set non blocking failed\n");
+        }
 #else
-    int fl = fcntl(sfd, F_GETFL);
-    fcntl(sfd, F_SETFL, O_NONBLOCK);
+        fl = fcntl(sfd, F_GETFL);
+        fcntl(sfd, F_SETFL, O_NONBLOCK);
 #endif
+        err = connect(sfd, rp->ai_addr, rp->ai_addrlen);
+        if (err != -1) {
+            break;
+        } else if (errno == EINPROGRESS || errno == EALREADY)
+            break;
 
-    err = connect(sfd, (struct sockaddr *)&saddr, sizeof (struct sockaddr_in));
+        socket_close_s(sfd);
+    }
+    if (rp == 0) {
+        warnvf("socket_fd: connect's() on all getaddrinfo failed\n");
+        STR_ERR();
+#if defined(_WIN) || defined(MINGW)
+        WSACleanup();
+#endif
+        return INVALID_SOCKET;
+    }
+
 
     fd_set fds;
     FD_ZERO(&fds);

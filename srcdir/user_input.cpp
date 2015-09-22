@@ -117,7 +117,7 @@ const char *INPUT_FORMAT_STR[] = {
      "VCF format (vcf)",
      "IMPUTE2/Oxford format (gen/impute2)",
      "IMPUTE2/Oxford binary format (bgen)",
-     "IMPUTE2/Oxford binary format2 (bgen)",
+//   "IMPUTE2/Oxford binary format2 (bgen)",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -1017,7 +1017,7 @@ void menu1(file_format *infl_type,
 //              fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
 
-            } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen) {
+            } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen2) {
                 strcpy(extension_name, "bgen");
 
                 fln_init(pedo, "IMPUTE2", "sample", "[required]", "sample");
