@@ -1924,30 +1924,35 @@ void mega2_opts(int argc, char **argv)
                         check_web_ver = 0;
                 else if (strcasecmp(as, "nosave") == 0)
                     CreateRunFolder=0;
+
                 else if (strcasecmp(as, "bed") == 0)
                     Input_Format = in_format_binary_PED;
                 else if (strcasecmp(as, "ped") == 0)
                     Input_Format = in_format_PED;
+
                 else if (strcasecmp(as, "bcf") == 0)
                     Input_Format = in_format_binary_VCF;
                 else if (strcasecmp(as, "vcf.gz") == 0)
                     Input_Format = in_format_compressed_VCF;
                 else if (strcasecmp(as, "vcf") == 0)
                     Input_Format = in_format_VCF;
+
                 else if (strcasecmp(as, "mega2") == 0)
                     Input_Format = in_format_mega2;
                 else if (strcasecmp(as, "linkage") == 0)
                     Input_Format = in_format_linkage;
                 else if (strcasecmp(as, "extended_linkage") == 0)
                     Input_Format = in_format_extended_linkage;
-                else if (strcasecmp(as, "input") == 0)
-                    Input_Format = in_format_traditional;
-                else if (strcasecmp(as, "mega2") == 0)
-                    Input_Format = in_format_mega2;
-                else if (strcasecmp(as, "linkage") == 0)
-                    Input_Format = in_format_linkage;
                 else if (strcasecmp(as, "hybrid") == 0)
                     Input_Format = in_format_extended_linkage;
+                else if (strcasecmp(as, "input") == 0)
+                    Input_Format = in_format_traditional;
+
+                else if (strcasecmp(as, "gen") == 0)
+                    Input_Format = in_format_imputed;
+                else if (strcasecmp(as, "bgen") == 0)
+                    Input_Format = in_format_bgen2;
+
                 else if (strcasecmp(as, "force_numeric_alleles") == 0)
                     force_numeric_alleles = 1;
                 else if (strcasecmp(as, "quant_in") == 0) {
@@ -2079,6 +2084,10 @@ void print_mega2_help(void)
     printf("                input files are in compressed Variant Call File (VCF) format (vcf.gz).\n");
     printf("             --vcf\n");
     printf("                input files are in Variant Call File (VCF) format (vcf).\n");
+    printf("             --gen\n");
+    printf("                input files are in IMPUTE2 File (IMPUTE2) format (gen).\n");
+    printf("             --bgen\n");
+    printf("                input files are in IMPUTE2 BGEN File (BGEN) format (bgen).\n");
     printf("             --mega2\n");
     printf("                input files are in Mega2 format (tabular files with header line).\n");
     printf("             --linkage\n");

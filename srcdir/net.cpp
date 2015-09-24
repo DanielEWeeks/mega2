@@ -412,6 +412,7 @@ SOCK socket_fd(const char *host, unsigned short port)
 
         socket_close_s(sfd);
     }
+    freeaddrinfo(result);
     if (rp == 0) {
         warnvf("socket_fd: connect's() on all getaddrinfo failed\n");
         STR_ERR();
