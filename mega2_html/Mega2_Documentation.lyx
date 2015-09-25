@@ -538,6 +538,24 @@ reference "sub:VCF-file-formats"
 \end_inset
 
 ).
+\change_inserted -1820302391 1443120293
+
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1820302391 1443121837
+Input support for IMPUTE2 GEN format and binary IMPUTE2 GEN format (BGEN)
+ files (See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:impute2-file-format"
+
+\end_inset
+
+).
+\change_unchanged
+
 \end_layout
 
 \begin_layout Enumerate
@@ -686,9 +704,13 @@ reference "sub:VCF-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-IMPUTE2 Format 
-\change_inserted -1820302391 1443034497
-and Binary IMPUTE2 Format (BGEN) 
+IMPUTE2 
+\change_inserted -1820302391 1443121852
+GEN 
+\change_unchanged
+Format 
+\change_inserted -1820302391 1443121858
+and Binary IMPUTE2 GEN Format (BGEN) 
 \change_unchanged
 (See Section 
 \begin_inset CommandInset ref
@@ -952,8 +974,8 @@ Enhancements in Mega2 version 4.8.1
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443033774
-Mega2 now supports reading BINARY imputed data in BGEN format (bgen/sample).
+\change_inserted -1820302391 1443121885
+Mega2 now supports reading BINARY IMPUTE2 GEN data in BGEN format (bgen/sample).
  In addition, for both formats of imputed data, you can specify that duplicate
  markers be passed on to Mega2.
 \end_layout
@@ -1775,15 +1797,25 @@ target "http://dx.doi.org/10.1093/bioinformatics/btr330"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1443035051
-Use of Mega2 to convert IMPUTE2 or BGEN input files makes use of a built-in
- copy of bgen; you should also cite the following paper:
+\change_inserted -1820302391 1443123539
+Use of Mega2 to convert IMPUTE2 GEN or binary IMPUTE2 GEN format (BGEN)
+ input files makes use of a built-in copy of bgen; you should also cite
+ the following work:
 \end_layout
 
-\begin_layout Standard
+\begin_layout Quote
 
-\change_inserted -1820302391 1443035051
-XX
+\change_inserted -1820302391 1443123865
+The BGEN format: A compressed binary format for typed and imputed genotype
+ data, 
+\begin_inset CommandInset href
+LatexCommand href
+name "Bgen"
+target "http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html"
+
+\end_inset
+
+, Gavin Band Jonathan Marchini 
 \end_layout
 
 \begin_layout Section
@@ -3179,8 +3211,9 @@ three
  The VCFtools library handles reading of the various Variant Call Format
  (VCF) input files.
  
-\change_inserted -1820302391 1443104874
-The BGEN library handles the reading of the IMPUTE2 BGEN format input file.
+\change_inserted -1820302391 1443122016
+The BGEN library handles the reading of the binary IMPUTE2 GEN format input
+ file.
  
 \change_unchanged
 ZLIB is needed by the 
@@ -3221,9 +3254,16 @@ reference "sub:MIT-License---"
 
 .
  
-\change_inserted -1820302391 1443104957
-The BGEN library is released under the Boost license.
- XX 
+\change_inserted -1820302391 1443122150
+The BGEN library is released under the Boost license Ref:
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:License-for-BGEN"
+
+\end_inset
+
+.
+ 
 \change_unchanged
 The license for ZLIB is shown in 
 \begin_inset CommandInset ref
@@ -4313,14 +4353,14 @@ reference "sub:impute2-file-format"
 \begin_deeper
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1443105209
-IMUTE2 format 
+\change_inserted -1820302391 1443123374
+IMUTE2 GEN format 
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1443105221
-BGEN binary format 
+\change_inserted -1820302391 1443123365
+binary IMPUTE2 GEN format 
 \change_unchanged
 
 \end_layout
@@ -10772,7 +10812,11 @@ IMPUTE2 sample file: .sample
 \end_layout
 
 \begin_layout Subsubsection
-IMPUTE2 File
+IMPUTE2 
+\change_inserted -1820302391 1443122238
+GEN 
+\change_unchanged
+File
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Impute-File"
@@ -13661,12 +13705,16 @@ This specifies a Mega2 map file to provide genetic position information
 
 \begin_layout Subsection
 Input format: IMPUTE2/Oxford 
-\change_inserted -1820302391 1443108369
-and BGEN 
+\change_inserted -1820302391 1443122373
+GEN and binary GEN (BGEN) 
 \change_unchanged
 Format file
 \change_deleted -1820302391 1443108396
 s
+\change_inserted -1820302391 1443122379
+s
+\change_deleted -1820302391 1443108396
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -13720,8 +13768,8 @@ IMPUTE2 Genotype and IMPUTE2 Sample datafile
 
 \begin_layout Standard
 The IMPUTE2 file indicates the corresponding IMPUTE2 Genotype 
-\change_inserted -1820302391 1443108482
-or BGEN 
+\change_inserted -1820302391 1443122424
+or binary IMPUTE2 Genotype (BGEN) 
 \change_unchanged
 file (See 
 \begin_inset CommandInset ref
@@ -21270,7 +21318,7 @@ gen
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443110152
+\change_inserted -1820302391 1443122439
 
 \emph on
 -
@@ -21332,7 +21380,7 @@ status collapsed
 \uwave off
 \noun off
 \color none
-	IMPUTE2 BGEN format (bgen)
+	IBinary MPUTE2 GEN format (bgen)
 \change_unchanged
 
 \end_layout
@@ -22572,8 +22620,8 @@ IMPUTE2 format
 
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1443111048
-IMPUTE2 BGEN format (bgen)
+\change_inserted -1820302391 1443122549
+IMPUTE2 binary GEN format (bgen)
 \change_unchanged
 
 \end_layout
@@ -33503,8 +33551,8 @@ Changes from Version 4.8.0 to Version 4.8.1 (Released September 30, 2015)
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443031227
-Mega2 now supports reading BINARY imputed data in BGEN format (bgen/sample).
+\change_inserted -1820302391 1443122620
+Mega2 now supports reading binary IMPUTE2 GEN data in BGEN format (bgen/sample).
  In addition, for both formats of imputed data, you can specify that duplicate
  markers be passed on to Mega2.
 \end_layout

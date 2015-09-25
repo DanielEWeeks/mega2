@@ -33,6 +33,14 @@
 
 #if defined(_WIN) || defined(MINGW)
 #include <winsock2.h>
+
+#ifdef MINGW
+#undef  _WIN32_WINNT
+#define _WIN32_WINNT 0x501
+#define EINPROGRESS WSAEINPROGRESS
+#define EALREADY    WSAEALREADY
+#endif
+
 #include <ws2tcpip.h>
 
 #ifdef _WIN
