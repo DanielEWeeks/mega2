@@ -544,9 +544,9 @@ reference "sub:VCF-file-formats"
 
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1443121837
-Input support for IMPUTE2 GEN format and binary IMPUTE2 GEN format (BGEN)
- files (See Section 
+\change_inserted -1820302391 1443196545
+Input support for IMPUTE2 GEN format files and binary IMPUTE2 GEN format
+ (BGEN) files (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:impute2-file-format"
@@ -974,10 +974,10 @@ Enhancements in Mega2 version 4.8.1
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443121885
-Mega2 now supports reading BINARY IMPUTE2 GEN data in BGEN format (bgen/sample).
- In addition, for both formats of imputed data, you can specify that duplicate
- markers be passed on to Mega2.
+\change_inserted -1820302391 1443197383
+Mega2 now supports reading BINARY IMPUTE2 GEN data in BGEN format.
+ In addition, for both formats of imputed data, you can now specify that
+ duplicate markers be passed on to Mega2.
 \end_layout
 
 \begin_layout Itemize
@@ -1017,8 +1017,8 @@ Bug: Loop break Proband is chosen more appropriately.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443033774
-Bug: Requesting Mega2 to not reset inconsistent data (half typed or mendelian)
+\change_inserted -1820302391 1443197667
+Bug: Requesting Mega2 not to reset inconsistent data (half typed or mendelian)
  now works correctly.
 \end_layout
 
@@ -1044,9 +1044,9 @@ Bug: Large numbers of alleles as arising from imputed indels are now supported.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443033774
+\change_inserted -1820302391 1443197506
 Bug: The example data and example_output directories for vcf, bcf, and impute2
- have been added.
+ input formats have been added.
 \change_unchanged
 
 \end_layout
@@ -1775,7 +1775,11 @@ If you use Mega2 to convert VCF or BCF input files, then, as this makes
 Use of Mega2 to convert VCF or BCF input files makes use of a built-in copy
  of VCFtools; 
 \change_unchanged
-you should also cite the following paper:
+you should 
+\change_deleted -1820302391 1443197890
+also
+\change_unchanged
+ cite the following paper:
 \end_layout
 
 \begin_layout Quote
@@ -1805,7 +1809,7 @@ Use of Mega2 to convert IMPUTE2 GEN or binary IMPUTE2 GEN format (BGEN)
 
 \begin_layout Quote
 
-\change_inserted -1820302391 1443123865
+\change_inserted -1820302391 1443197929
 The BGEN format: A compressed binary format for typed and imputed genotype
  data, 
 \begin_inset CommandInset href
@@ -1815,7 +1819,7 @@ target "http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html"
 
 \end_inset
 
-, Gavin Band Jonathan Marchini 
+, Gavin Band and Jonathan Marchini 
 \end_layout
 
 \begin_layout Section
@@ -2777,10 +2781,33 @@ mega2_bin
  Typically, the Mega2 binary references dynamic load libraries (.dll's or
  .so's) for a particular platform/version and will not necessarily work on
  other versions of the platform.
- There are separate native binaries for Microsoft Windows 7 vs Microsoft
- Windows 8.
+ There are separate native binaries for Microsoft Windows 7
+\change_inserted -1820302391 1443198007
+,
+\change_unchanged
+ 
+\change_deleted -1820302391 1443198010
+vs
+\change_unchanged
+ Microsoft Windows 8
+\change_inserted -1820302391 1443198025
+ and Microsoft Windows 10
+\change_unchanged
+.
  Also, the binaries for MinGW are labeled according to whether they were
- built on Windows 7 vs Windows 8.
+ built on Windows 7
+\change_inserted -1820302391 1443198034
+,
+\change_unchanged
+ 
+\change_deleted -1820302391 1443198037
+vs
+\change_unchanged
+ Windows 8
+\change_inserted -1820302391 1443198049
+, or Windows 10
+\change_unchanged
+.
  (MinGW needs two .dll's if you wish to install just Mega2 without the whole
  MinGW.
  They are included and depend on Windows Version.)
@@ -3254,8 +3281,8 @@ reference "sub:MIT-License---"
 
 .
  
-\change_inserted -1820302391 1443122150
-The BGEN library is released under the Boost license Ref:
+\change_inserted -1820302391 1443198111
+The BGEN library is released under the Boost License Ref:
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:License-for-BGEN"
@@ -9216,13 +9243,48 @@ Select from options 0 - 3 >
 
 \begin_layout Standard
 The current choice is indicated with an asterisk.
- Option 
-\change_deleted -1820302391 1443106650
-2
-\change_inserted -1820302391 1443106650
-3
-\change_unchanged
- can be either selecting unique IDs, if these are present as the 
+ 
+\change_inserted -1820302391 1443456307
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1443457151
+Option 1 is either the integer number of the person in a pedigree or the
+ ID number from the 
+\series bold
+makeped
+\series default
+ program if the data were previously processed by 
+\series bold
+makeped
+\series default
+.
+ Option 2 is identical to option 1.
+ Option 3 is the unique ID specified in the data if these are present as
+ the 
+\begin_inset Quotes eld
+\end_inset
+
+:ID
+\begin_inset Quotes erd
+\end_inset
+
+ field or generated by Mega2 from the data by concatenating the pedigree
+ ID, an 
+\begin_inset Quotes eld
+\end_inset
+
+_
+\begin_inset Quotes erd
+\end_inset
+
+, and the person ID.
+ 
+\change_deleted -1820302391 1443456931
+Option 2 can be either selecting unique IDs, if these are present as the
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -9233,8 +9295,11 @@ The current choice is indicated with an asterisk.
  field in the input pedigree file, or creation of unique IDs by Mega2 if
  they are absent.
  
-\change_inserted -1820302391 1443106698
-Option 5 will use the person id that was supplied in the pedigree file.
+\change_inserted -1820302391 1443457196
+ Option 4 is the integer number of the person in a pedigree.
+ Option 5 is the person ID that is supplied in the pedigree file.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -9278,8 +9343,8 @@ Premakeped Pedigree number.
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1443106867
- 3) Original pre makeped pedigre
+\change_inserted -1820302391 1443457212
+ 3) Original pre makeped pedigree
 \change_unchanged
 
 \end_layout
@@ -9298,8 +9363,13 @@ Select from options 0 -
 ==========================================================
 \end_layout
 
-\begin_layout LyX-Code
+\begin_layout Standard
 
+\change_inserted -1820302391 1443457816
+Option 1 is the pedigree file pedigree ID.
+ Option 2 is the integer index of the pedigree.
+ Finally, as above, Option 3 is the pedigree ID that was supplied in the
+ pedigree file.
 \end_layout
 
 \begin_layout Standard
@@ -10651,9 +10721,13 @@ name "inp:impute2"
 
 \end_inset
 
-IMPUTE2/Oxford input file format
-\change_inserted -1820302391 1443107063
- and BGEN binary format
+IMPUTE2/Oxford 
+\change_inserted -1820302391 1443209602
+(GEN) and binary IMPUTE2 (BGEN) 
+\change_unchanged
+input file format
+\change_inserted -1820302391 1443209561
+s
 \change_unchanged
 
 \begin_inset CommandInset label
@@ -10666,8 +10740,12 @@ name "sub:impute2-file-format"
 \end_layout
 
 \begin_layout Standard
-IMPUTE2 format was designed to store information about the probability of
- imputed markers added to a smaller collection of markers.
+IMPUTE2 
+\change_inserted -1820302391 1443209675
+GEN 
+\change_unchanged
+format was designed to store information about the probability of imputed
+ markers added to a smaller collection of markers.
  (See: 
 \begin_inset CommandInset href
 LatexCommand href
@@ -10678,10 +10756,10 @@ target "http://en.wikipedia.org/wiki/imputation_(genetics)"
 
 ).
 
-\change_inserted -1820302391 1443107278
- This can generate large data files.
- Thus as with the VCF scheme discussed above there is also a binary representati
-on for this same data (
+\change_inserted -1820302391 1443209711
+ Imputation can generate large data files.
+ Thus as with the VCF scheme discussed above there is also a binary IMPUTE2
+ (BGEN) representation for this data (
 \begin_inset Flex URL
 status open
 
@@ -10765,17 +10843,41 @@ When using IMPUTE2 format input files, one needs to provide several files,
 \change_inserted -1820302391 1443107729
 a
 \change_unchanged
-) the IMPUTE2 Genotype File containing the markers and their imputed genotype
- probabilities,
-\change_inserted -1820302391 1443107827
- 1b) the BGEN File containing the exact same markers and their imputed genotype
- probabilities that could be provided in simple IMPUTE2 GENOTYPE format
+) the IMPUTE2 
+\change_inserted -1820302391 1443209785
+(GEN) 
+\change_unchanged
+Genotype File containing the markers and their imputed genotype probabilities
+\change_inserted -1820302391 1443209796
+ or
+\change_deleted -1820302391 1443209796
+,
+\change_inserted -1820302391 1443209816
+ 1b) the binary IMPUTE2 (BGEN) File containing the markers and their imputed
+ genotype probabilities
 \change_unchanged
  and 2) the IMPUTE2 Sample File containing the sample ID information.
  The latter file can be extended to contain family structure information
  and phenotypes; both are commonly needed by Mega2.
- Optional files include a special IMPUTE2 Info File, a map file, an omit
- file, an allele frequency file, and a penetrance file.
+ Optional files include a special IMPUTE2 Info File, 
+\change_inserted -1820302391 1443209905
+as well as the customary 
+\change_deleted -1820302391 1443209910
+a
+\change_unchanged
+ map file, 
+\change_deleted -1820302391 1443209914
+an
+\change_unchanged
+ omit file, 
+\change_deleted -1820302391 1443209917
+an
+\change_unchanged
+ allele frequency file, and 
+\change_deleted -1820302391 1443209920
+a
+\change_unchanged
+ penetrance file.
  More information on the IMPUTE2 file formats can be found in 
 \begin_inset Flex URL
 status open
@@ -10801,6 +10903,10 @@ When attempting to fill in IMPUTE2 file names based on a provided file name
 
 \begin_layout Enumerate
 IMPUTE2 genotype file: .gen or .impute2
+\change_inserted -1820302391 1443210461
+ OR binary IMPUTE2 genotype file: .bgen
+\change_unchanged
+
 \end_layout
 
 \begin_layout Enumerate
@@ -11110,16 +11216,16 @@ And still more marker data.
 
 \begin_layout Paragraph*
 
-\change_inserted -1820302391 1443107920
-BGEN File
+\change_inserted -1820302391 1443210530
+Binary IMPUTE2 BGEN File
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1443112529
-This file format can be used instead of the IMPUTE2 genotype file illustrated
- above; it is not intended to be read or edited by people.
- It is thoroughly described in 
+\change_inserted -1820302391 1443210604
+This file format can be used instead of the IMPUTE2 GEN genotype file illustrate
+d above; it is not intended to be read or edited by people.
+ For the curious reader, it is thoroughly described in 
 \begin_inset Flex URL
 status open
 
@@ -11134,9 +11240,9 @@ http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html
 
 \end_inset
 
- for the curious reader.
+.
  We have seen a factor of 20 size reduction using this format versus the
- IMPUTE2 genotype format.
+ IMPUTE2 GEN genotype format.
 \change_unchanged
 
 \end_layout
@@ -12109,7 +12215,20 @@ Line 1
 
  (Select input file format) introduces a special menu that lets you select
  a specific input type from Linkage, Mega2, PLINK (choosing among various
- subtypes) and Variant Call Format (VCF) (choosing among various subtypes).
+ subtypes)
+\change_inserted -1820302391 1443210698
+,
+\change_deleted -1820302391 1443210698
+ and
+\change_unchanged
+ Variant Call Format (VCF) (choosing among various subtypes)
+\change_deleted -1820302391 1443210722
+.
+
+\change_inserted -1820302391 1443210739
+ and IMPUTE2 format (choosing among various subtypes).
+\change_unchanged
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -12297,7 +12416,7 @@ Mega2 format with header
 
 \begin_layout LyX-Code
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="2">
+<lyxtabular version="3" rows="11" columns="2">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="left" valignment="top">
@@ -12482,7 +12601,7 @@ VCF format (vcf)
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -12491,11 +12610,35 @@ VCF format (vcf)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 IMPUTE2 format (gen)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1443210808
+--bgen
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1443210821
+binary IMPUTE2 format (bgen)
 \end_layout
 
 \end_inset
@@ -13705,8 +13848,8 @@ This specifies a Mega2 map file to provide genetic position information
 
 \begin_layout Subsection
 Input format: IMPUTE2/Oxford 
-\change_inserted -1820302391 1443122373
-GEN and binary GEN (BGEN) 
+\change_inserted -1820302391 1443212274
+GEN and binary IMPUTE2 GEN (BGEN) 
 \change_unchanged
 Format file
 \change_deleted -1820302391 1443108396
@@ -13741,11 +13884,24 @@ stem
  files named stem.gen (or stem.impute2), stem.gen_info (or stem.impute2_info),
  stem.sample, stem.map, stem.omit, stem.frequency and stem.penetrance, if they
  exist.
- So it is a good idea to use the default file naming schemes, as many items
+ 
+\change_inserted -1820302391 1443212367
+If binary IMPUTE2 is selected, it will look for stem.bgen rather than stem.gen.
+ 
+\change_unchanged
+So it is a good idea to use the default file naming schemes, as many items
  of the input menu are automatically populated once the correct stem has
  been chosen.
  Note: If stem.gen_info (or stem.impute2_info) exists in the directory, Mega2
- will add it to the file list.
+ will add it to the 
+\change_deleted -1820302391 1443212429
+file
+\change_unchanged
+ list
+\change_inserted -1820302391 1443212434
+ of files
+\change_unchanged
+.
  If you do not want to use an 
 \series bold
 info
@@ -13829,11 +13985,26 @@ This specifies a Mega2 map file to provide genetic position information
  for analysis modes.
  This is in addition to the map information that is derived from the IMPUTE2
  Genotype file.
- If this file is present, it is also used as a filter.
- Any marker that is in the IMPUTE2 Genotype file, but not also in this file
- will not appear in the output.
+ If 
+\change_deleted -1820302391 1443212509
+this
+\change_inserted -1820302391 1443212510
+the map
+\change_unchanged
+ file is present, it is also used as a filter.
+ Any marker that is in the IMPUTE2 Genotype file, but not also in 
+\change_deleted -1820302391 1443212528
+this
+\change_inserted -1820302391 1443212531
+the map
+\change_unchanged
+ file will not appear in the output.
  Markers in this file that are not in the IMPUTE2 Genotype file are not
  in the output because there is no data for them.
+
+\change_inserted -1820302391 1443212647
+ (When IMPUTE2 Genotype file was used in this discussion, it was intended
+ to also apply to the binary BGEN file.)
 \end_layout
 
 \begin_layout Standard
@@ -13953,9 +14124,13 @@ Input menu item: Missing trait value codes: (space separated):
 \end_layout
 
 \begin_layout Standard
-To be most flexible and compatible with existing usage, the phenotypes in
- the IMPUTE2 Sample file may have several different missing value codes
- to indicate that a measurement is 
+To be 
+\change_deleted -1820302391 1443212729
+most
+\change_unchanged
+ flexible and compatible with existing usage, the phenotypes in the IMPUTE2
+ Sample file may have several different missing value codes to indicate
+ that a measurement is 
 \change_deleted -1820302391 1443108781
 missing
 \change_inserted -1820302391 1443108785
@@ -13969,7 +14144,24 @@ This
 \change_inserted -1820302391 1443108808
 Items
 \change_unchanged
- can be a string such as 'na' or 'NA'.
+ 
+\change_deleted -1820302391 1443212782
+can be a
+\change_inserted -1820302391 1443212782
+are
+\change_unchanged
+ string
+\change_inserted -1820302391 1443212786
+s
+\change_unchanged
+ such as 'na' or 'NA'
+\change_deleted -1820302391 1443212791
+.
+
+\change_inserted -1820302391 1443212793
+ or numbers.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Paragraph
@@ -13990,8 +14182,21 @@ yes
 \end_inset
 
 , indels are considered valid markers and will appear in the output.
- (Beware whether subsequent analysis can accept the allele names that will
- appear.) If this value is 
+ (Beware 
+\change_deleted -1820302391 1443212823
+whether
+\change_unchanged
+ subsequent analysis 
+\change_deleted -1820302391 1443212827
+can
+\change_inserted -1820302391 1443212827
+must
+\change_unchanged
+ accept the 
+\change_inserted -1820302391 1443212832
+long 
+\change_unchanged
+allele names that will appear.) If this value is 
 \begin_inset Quotes eld
 \end_inset
 
@@ -14016,7 +14221,7 @@ Input menu item: Allow duplicate markers (toggle):
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1443109049
+\change_inserted -1820302391 1443212854
 If this value is 
 \begin_inset Quotes eld
 \end_inset
@@ -14029,7 +14234,7 @@ no
 \begin_inset Quotes erd
 \end_inset
 
-, only the first marker is output when multiple markers indicate the same
+, only the first marker is output when multiple markers appear at the same
  position.
  If the value is 
 \begin_inset Quotes eld
@@ -21318,7 +21523,7 @@ gen
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443122439
+\change_inserted -1820302391 1443213140
 
 \emph on
 -
@@ -21380,7 +21585,7 @@ status collapsed
 \uwave off
 \noun off
 \color none
-	IBinary MPUTE2 GEN format (bgen)
+	Binary IMPUTE2 GEN format (bgen)
 \change_unchanged
 
 \end_layout
@@ -22273,6 +22478,8 @@ VCF_Args
 
 \begin_layout Enumerate
 VCF_Marker_Alternative_INFO_Key
+\change_inserted -1820302391 1443213947
+
 \end_layout
 
 \end_deeper
@@ -22578,6 +22785,16 @@ name "par:Input_Format_Type"
 
 \begin_layout Standard
 This item specifies the input file format type as follows:
+\change_inserted -1820302391 1443214478
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1443214495
+DAN: any idea how to get the enumeration to start at 0 ?????????
+\change_unchanged
+
 \end_layout
 
 \begin_layout Enumerate
@@ -24212,7 +24429,11 @@ no
 \begin_inset Quotes erd
 \end_inset
 
-, indels markers are ignored.
+, indel
+\change_deleted -1820302391 1443215570
+s
+\change_unchanged
+ markers are ignored.
 \change_inserted -1820302391 1443111412
 
 \end_layout
@@ -33551,10 +33772,10 @@ Changes from Version 4.8.0 to Version 4.8.1 (Released September 30, 2015)
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443122620
-Mega2 now supports reading binary IMPUTE2 GEN data in BGEN format (bgen/sample).
- In addition, for both formats of imputed data, you can specify that duplicate
- markers be passed on to Mega2.
+\change_inserted -1820302391 1443197582
+Mega2 now supports reading binary IMPUTE2 GEN data in BGEN format.
+ In addition, for both formats of imputed data, you can now specify that
+ duplicate markers be passed on to Mega2.
 \end_layout
 
 \begin_layout Itemize
@@ -33594,8 +33815,8 @@ Bug: Loop break Proband is chosen more appropriately.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443033737
-Bug: Requesting Mega2 to not reset inconsistent data (half typed or mendelian)
+\change_inserted -1820302391 1443197624
+Bug: Requesting Mega2 not to reset inconsistent data (half typed or mendelian)
  now works correctly.
 \end_layout
 
@@ -33621,9 +33842,9 @@ Bug: Large numbers of alleles as arising from imputed indels are now supported.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1443033750
+\change_inserted -1820302391 1443197644
 Bug: The example data and example_output directories for vcf, bcf, and impute2
- have been added.
+ input format have been added.
 \change_unchanged
 
 \end_layout

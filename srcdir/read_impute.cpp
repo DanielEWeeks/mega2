@@ -350,12 +350,43 @@ void ReadImputed::read_input_file ()
     SECTION_ERR_INIT(halftyped);
     while (! ifs.eof() ) {
 
-        ifs >> hmm;
-        ifs >> rsid;
-        ifs >> pos;
-        ifs >> A;
-        ifs >> B;
-        ifs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (Ncol == 0) {
+            Str l;
+            Vecs ls;
+            getline(ifs, l);
+            split(ls, l);
+            fflush(stdout);
+            Ncol = ( (ls.size() - 5) % 3 == 0) ? 5 : 6;
+            if (Ncol == 5) {
+                hmm  = ls[0];
+                rsid = ls[1];
+                pos  = ls[2];
+                A    = ls[3];
+                B    = ls[4];
+            } else {
+                hmm  = ls[0];
+                chrm = ls[1];
+                rsid = ls[2];
+                pos  = ls[3];
+                A    = ls[4];
+                B    = ls[5];
+            }
+        } else if (Ncol == 5) {
+            ifs >> hmm;
+            ifs >> rsid;
+            ifs >> pos;
+            ifs >> A;
+            ifs >> B;
+            ifs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        } else if (Ncol == 6) {
+            ifs >> hmm;
+            ifs >> chrm;
+            ifs >> rsid;
+            ifs >> pos;
+            ifs >> A;
+            ifs >> B;
+            ifs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
 
         if (ifs.eof()) break;
         line_n++;
@@ -383,9 +414,12 @@ void ReadImputed::read_input_file ()
                 cout << rsid << " ";
                 cout << "#" << fields.size() << " ";
             }
-            if (rsid == "." || rsid == "NA" || rsid == "na") {
+            if (Ncol == 6) {
+//              chrm = oxford_single_chr;  // already set
+                name = "chr" + chrm + "_" + pos;
+            } else if (rsid == "." || rsid == "NA" || rsid == "na") {
                 chrm = oxford_single_chr;
-                name = "chr" + oxford_single_chr + "_" + pos;
+                name = "chr" + chrm + "_" + pos;
             } else if (fields.size() > 0) {
                 if (fields[0].compare(0, 3, "chr") == 0) {
                     fields[0].erase(0, 3);
@@ -1048,8 +1082,8 @@ void ReadImputedGenotypeReadHelper::genotypes_init()
     line_n = 0;
 }
 
-boolean ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& rsid, string& pos,
-                                                        const char* &A, const char* &B)
+boolean ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& chrm, string& rsid,
+                                                            string& pos, const char* &A, const char* &B)
 {
     getline(ifs, line);
     line_n++;
@@ -1061,11 +1095,20 @@ boolean ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string&
 //	ifs >> hmm; // +A+B+ nums() all read via >> @ 14.62 sec
 //                               vector<double> nums  12.26
 //                               double nums[3]       11.59
-    token.more(hmm);
-    token.more(rsid);
-    token.more(pos);
-    token.more(A);
-    token.more(B);
+    if (rip->Ncol == 5) {
+        token.more(hmm);
+        token.more(rsid);
+        token.more(pos);
+        token.more(A);
+        token.more(B);
+    } else {
+        token.more(hmm);
+        token.more(chrm);
+        token.more(rsid);
+        token.more(pos);
+        token.more(A);
+        token.more(B);
+    }
 
     return true;
 }
@@ -1094,7 +1137,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
 {
     int dbg = 0;
 
-    string hmm, rsid, pos;
+    string hmm, chrm, rsid, pos;
     const char *A, *B;
     Token::d3 nums;
 
@@ -1122,7 +1165,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
         tod_im_line.reset();
         tod_im_line_cpy.reset();
 
-        gh.genotypes_marker_hdr(mrk_idx, hmm, rsid, pos, A, B);
+        gh.genotypes_marker_hdr(mrk_idx, hmm, chrm, rsid, pos, A, B);
         tod_im_line("impute read line  ");
 
         mp = *mpp;

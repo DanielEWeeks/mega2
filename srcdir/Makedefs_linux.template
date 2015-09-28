@@ -27,6 +27,7 @@ MAKEDEFS = DEFINED
 
 # c compiler
 CC = gcc
+stdC11 = -std=gnu++11
 
 # compiler options
 #CFLAGS = -Wall -ggdb

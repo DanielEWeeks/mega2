@@ -97,8 +97,8 @@ void ReadBgenGenotypeReadHelper::genotypes_init()
     }
 }
 
-boolean ReadBgenGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& rsid, string& pos,
-                                                     const char* &A, const char* &B)
+boolean ReadBgenGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
+                                                         std::string& pos, const char* &A, const char* &B)
 {
     if (layout == 0) {
         process_10(mrk_idx);
@@ -115,6 +115,7 @@ boolean ReadBgenGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hm
 
     hmm = "---";
     rsid = block.rsid;
+    chrm = block.chrm;
     fix_marker_pos(pos);
     A = C(block.allele[0]);
     B = C(block.allele[1]);

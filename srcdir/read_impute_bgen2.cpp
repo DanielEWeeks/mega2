@@ -87,15 +87,14 @@ void BgenParserGenotypeReadHelper::genotypes_init()
     get_sample_ids( [this]( std::string const& id ) { } );
 }
 
-boolean BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& rsid, string& pos,
-                                                     const char* &A, const char* &B)
+boolean BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
+                                                           std::string& pos, const char* &A, const char* &B)
 {
     bool ret;
-    string chromosome;
     uint32_t position;
     vector<string> alleles;
 
-    ret = read_variant( &chromosome, &position, &rsid, &alleles );
+    ret = read_variant( &chrm, &position, &rsid, &alleles );
 
     hmm = "---";
     fix_marker_pos(pos, position);

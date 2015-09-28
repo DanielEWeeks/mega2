@@ -72,8 +72,8 @@ class GenotypeReadHelper
 {
 public:
     virtual void genotypes_init() {}
-    virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& rsid, std::string& pos,
-                                         const char* &A, const char* &B) { return true; }
+    virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid,
+                                         std::string& pos, const char* &A, const char* &B) { return true; }
     virtual void genotypes_skip() {}
     virtual void genotypes_sample_prob(Token::d3& nums) {}
     virtual void genotypes_end() {}
@@ -82,7 +82,7 @@ public:
 class ReadImputed : public Input_Ops
 {
 public:
-    ReadImputed() :  check_format(0), HDR(2) {};  // two line header
+    ReadImputed() :  check_format(0), Ncol(0), HDR(2) { };  // two line header
     ~ReadImputed() { (void) markers[0]; };
 
     virtual int  use_getops() {return true;}
@@ -139,6 +139,8 @@ public:
 public:
     Vecs          sample_file_hdr2b;
     Str           info_file;
+    int           Ncol;
+
 
 protected:
     const char   *impute_file;
@@ -175,8 +177,8 @@ class ReadImputedGenotypeReadHelper : public GenotypeReadHelper
 {
 public:
     virtual void genotypes_init();
-    virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& rsid, std::string& pos,
-                                         const char* &A, const char* &B);
+    virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
+                                         std::string& pos, const char* &A, const char* &B);
     virtual void genotypes_sample_prob(Token::d3& nums);
     virtual void genotypes_end();
 
