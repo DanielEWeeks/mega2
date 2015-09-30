@@ -123,30 +123,34 @@ void BgenParserGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
             EXIT(INPUT_DATA_ERROR);
         }
     }
-//new
+
     int idx = 0;
-#ifdef me
+/* an alternate ordering ...
     for (int i = 1; i <= (int) m_alleles; i++)
         for (int j = 1; j <= i; j++) 
             Q.push(ProbID(n_probs[n_prob_sample][idx++], j, i));
-#else
-    for (int i = 1; i <= (int) m_alleles; i++)
-        for (int j = i; j <= (int) m_alleles; j++) 
-            Q.push(ProbID(n_probs[n_prob_sample][idx++], i, j));
-#endif
+*/
+    if (m_phased == 0) {
+        for (int i = 1; i <= (int) m_alleles; i++)
+            for (int j = i; j <= (int) m_alleles; j++) 
+                Q.push(ProbID(n_probs[n_prob_sample][idx++], i, j));
+    } else {
+        double p, pi, pj;
+        for (int i = 1; i <= (int) m_alleles; i++)
+            for (int j = i; j <= (int) m_alleles; j++) {
+                pi = n_probs[n_prob_sample][i];
+                pj = n_probs[n_prob_sample][m_alleles+j];
+                p = pi * pj * ((i == j) ? 1 : 2);
+                Q.push(ProbID(p, i, j));
+            }
+    }
 /*
     for (int k = 0; k < idx; k++) {
         ProbID C = Q.top();
         Q.pop();
         printf("%d prob %.6f [%d, %d]\n", k, C.dd, C.ii, C.jj);
     }
-
-    Token::d3 nums;
-    nums[0] = n_probs[n_prob_sample][0];
-    nums[1] = n_probs[n_prob_sample][1];
-    nums[2] = n_probs[n_prob_sample][2];
-    printf("* prob %.6f %.6f %.6f\n\n", nums[0], nums[1], nums[2]);
- */
+*/
     n_prob_sample++;
 
     if (n_prob_sample == m_context.number_of_samples) {

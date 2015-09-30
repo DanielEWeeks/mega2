@@ -474,7 +474,7 @@ void ReadBgenFile::read_expanded_block_10(unsigned char *bp = NULL)
 
     if (pass == 2)
         return;
-// never gets here
+/* never gets here
     double num[3];
     for (unsigned long i = 0; i < block.N; i++) {
         num[0] = ((double)read_ushort(bp)) / scale;
@@ -488,6 +488,7 @@ void ReadBgenFile::read_expanded_block_10(unsigned char *bp = NULL)
             cout << num[2] << "\n";
         }
     }
+*/
 }
 
 void ReadBgenFile::process_10(int snpn)
