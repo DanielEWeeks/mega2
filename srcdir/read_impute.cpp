@@ -1083,8 +1083,9 @@ void ReadImputedGenotypeReadHelper::genotypes_init()
 }
 
 boolean ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& chrm, string& rsid,
-                                                            string& pos, const char* &A, const char* &B)
+                                                            string& pos, vector<string>& alleles)
 {
+    Str tmp;
     getline(ifs, line);
     line_n++;
 //?    tod_im_line("impute read line  ");
@@ -1099,23 +1100,36 @@ boolean ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string&
         token.more(hmm);
         token.more(rsid);
         token.more(pos);
-        token.more(A);
-        token.more(B);
+
+        alleles.clear();
+        token.more(tmp);
+        alleles.push_back(tmp);
+        token.more(tmp);
+        alleles.push_back(tmp);
     } else {
         token.more(hmm);
         token.more(chrm);
         token.more(rsid);
         token.more(pos);
-        token.more(A);
-        token.more(B);
+
+        alleles.clear();
+        token.more(tmp);
+        alleles.push_back(tmp);
+        token.more(tmp);
+        alleles.push_back(tmp);
     }
 
     return true;
 }
 
-void ReadImputedGenotypeReadHelper::genotypes_sample_prob(Token::d3& nums)
+void ReadImputedGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
 {
+    Token::d3 nums;
     token.getDC(nums, 3);
+
+    Q.push(ProbID(nums[0], 1, 1));
+    Q.push(ProbID(nums[1], 1, 2));
+    Q.push(ProbID(nums[2], 2, 2));
 }
 
 void ReadImputedGenotypeReadHelper::genotypes_end()
@@ -1135,10 +1149,13 @@ void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *pe
 void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                                            GenotypeReadHelper &gh)
 {
+//  asm("int $3");
     int dbg = 0;
 
     string hmm, chrm, rsid, pos;
-    const char *A, *B;
+    char **calleles = 0;
+    Vecs alleles;
+    int c1, c2;
     Token::d3 nums;
 
     gh.genotypes_init();
@@ -1147,10 +1164,11 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
     int   mrk_idx = sample_file_hdr2b.size() - 5 -1;
     linkage_locus_rec *locus;
 
+/*
     char *callele1;
     char *callele2;
     char *callele0  = canonical_allele(C("0"));
-
+*/
     Tod tod_gen("impute genotypes");
     Tod tod_per(30);
     Tod tod_im_line(30);
@@ -1165,7 +1183,8 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
         tod_im_line.reset();
         tod_im_line_cpy.reset();
 
-        gh.genotypes_marker_hdr(mrk_idx, hmm, chrm, rsid, pos, A, B);
+        gh.genotypes_marker_hdr(mrk_idx, hmm, chrm, rsid, pos, alleles);
+
         tod_im_line("impute read line  ");
 
         mp = *mpp;
@@ -1182,23 +1201,48 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
         mrk_idx++;  // hence the -1 above
         locus = &LTop->Locus[mrk_idx];
 
+/*
         callele1    = canonical_allele(A);
         callele2    = canonical_allele(B);
-
-        int i;
+*/
+        if (calleles)
+            delete [] calleles;
+        calleles = new char *[alleles.size()+1];
+        calleles[0] = canonical_allele(C("0"));
+        for (int i = 1; i <= (int)alleles.size(); i++) {
+            calleles[i]  = canonical_allele(C(alleles[i-1]));
+        }
+//        int i;
         int sam = 0;
         int zero = 0, uncertain = 0, good = 0;
+        ProbID probid;
 
         tod_per.reset();
         annotated_ped_rec *entry = persons;
-//      if (mrk_idx == 237)
-//          warnvf("Marker 237 == %s, scale = \n", locus->Name);
+      if (mrk_idx == 237)
+          warnvf("Marker 237 == %s, scale = \n", locus->Name);
 	for(int p = 0 ; p < people_filtered; p++, entry++) {
             sam++;
 
-            gh.genotypes_sample_prob(nums);
-//          if (mrk_idx == 237)
-//              warnvf("sam %d, %.4f %.4f %.4f\n", sam, nums[0], nums[1], nums[2]);
+            ProbQ Q;
+            gh.genotypes_sample_prob(Q);
+            probid = Q.top();
+            if (mrk_idx == 237) {
+                nums[0] = nums[1] = nums[2] = 0;
+                for (int ii = 0; ii < 3; ii++) {
+                    ProbID probid = Q.top();
+                    Q.pop();
+                    if (probid.ii == 1 && probid.jj == 1)
+                        nums[0] = probid.dd;
+                    else if (probid.ii == 1 && probid.jj == 2)
+                        nums[1] = probid.dd;
+                    else if (probid.ii == 2 && probid.jj == 2)
+                        nums[2] = probid.dd;
+                }
+                warnvf("sam %d, %.4f %.4f %.4f\n", sam, nums[0], nums[1], nums[2]);
+            }
+          
+/*
             if (nums[0] > nums[1]) {
                 i = 0;
             } else {
@@ -1217,15 +1261,28 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
             } else {
                 good++;
             }
+*/
+            if (probid.dd == 0) {
+                c1 = c2 = 0;
+                zero++;
+            } else if (probid.dd <= 1 - hard_call_uncertainty) {
+                c1 = c2 = 0;
+                uncertain++;
+            } else {
+                c1 = probid.ii;
+                c2 = probid.jj;
+                good++;
+            }
 
             if (dbg) {
                 cout << "#";
 //              cout << line_n << "@";
                 cout << sam << ": ";
                 cout << mp->name << " ";
-                cout << nums[0] << " " << nums[1] << " " << nums[2] << "  " << i << "\n";
+                cout << nums[0] << " " << nums[1] << " " << nums[2] << "  " << c1 << " " << c2 << "\n";
             }
 
+/*
             if (i == 0)
                 set_2Ralleles(entry->marker, mrk_idx, locus, callele1, callele1);
             else if (i == 1)
@@ -1234,6 +1291,8 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
                 set_2Ralleles(entry->marker, mrk_idx, locus, callele2, callele2);
             else if (i == 3)
                 set_2Ralleles(entry->marker, mrk_idx, locus, callele0, callele0);
+*/
+            set_2Ralleles(entry->marker, mrk_idx, locus, calleles[c1], calleles[c2]);
         }
         tod_per("impute person loop");
         if (good < genotype_missing_fraction * people_filtered) {

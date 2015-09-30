@@ -60,6 +60,9 @@ public:
     void initialise( std::size_t number_of_samples, std::size_t number_of_alleles ) {
         m_result->clear() ;
         m_result->resize( number_of_samples ) ;
+
+        n_samples = number_of_samples;
+        n_alleles = number_of_alleles;
     }
     
     // Called once per sample to determine whether we want data for this sample
@@ -80,6 +83,22 @@ public:
         m_entry_i = 0 ;
     }
 
+    void set_number_of_entries(
+        std::size_t number_of_entries,
+        genfile::OrderType order_type,
+        genfile::ValueType value_type,
+        std::size_t ploidy,
+        std::size_t phased
+    ) {
+        assert( value_type == genfile::eProbability ) ;
+        m_result->at( m_sample_i ).resize( number_of_entries ) ;
+        m_entry_i = 0 ;
+
+        n_entries = number_of_entries;
+        n_ploidy  = ploidy ;
+        n_phased  = phased ;
+    }
+
     void operator()( double value ) {
         m_result->at( m_sample_i ).at( m_entry_i++ ) = value ;
     }
@@ -88,6 +107,22 @@ public:
         // Here we encode missing probabilities with -1
         m_result->at( m_sample_i ).at( m_entry_i++ ) = -1 ;
     }
+
+public:
+    std::size_t n_samples;
+    std::size_t n_alleles;
+    std::size_t n_entries;  // valueCount
+    std::size_t n_ploidy;
+    std::size_t n_phased;
+/*
+    uint32_t const valueCount
+            = phased
+            ? (ploidy * numberOfAlleles)
+            : ((numberOfAlleles == 2) ? (ploidy+1) : 
+                  impl::n_choose_k( ploidy + numberOfAlleles - 1, numberOfAlleles - 1 )) ;
+    uint32_t const storedValueCount = valueCount - ( phased ? ploidy : 1 ) ;
+
+*/
 
 private:
     Data* m_result ;
@@ -112,6 +147,7 @@ public:
             throw std::invalid_argument( m_filename ) ;
         }
         m_state = e_Open ;
+        m_first   = 1;
 
         // Read the offset, header, and sample IDs if present.
         genfile::bgen::read_offset( *m_stream, &m_offset ) ;
@@ -217,6 +253,11 @@ public:
             &m_buffer2
         ) ;
         m_state = e_ReadyForVariant ;
+        m_samples = setter.n_samples;
+        m_alleles = setter.n_alleles;
+        m_entries = setter.n_entries;
+        m_ploidy  = setter.n_ploidy;
+        m_phased  = setter.n_phased;
     }
 
     // Ignore genotype probability data for the SNP just read using read_variant()
@@ -250,6 +291,12 @@ protected:
     // bgen::Context object holds information from the header block,
     // including bgen flags
     genfile::bgen::Context m_context ;
+    std::size_t m_samples;
+    std::size_t m_alleles;
+    std::size_t m_entries;
+    std::size_t m_ploidy;
+    std::size_t m_phased;
+    std::size_t m_first;
 
 private:
     // offset byte from top of bgen file.
@@ -276,9 +323,9 @@ class BgenParserGenotypeReadHelper : public GenotypeReadHelper, public BgenParse
 public:
     virtual void genotypes_init();
     virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
-                                         std::string& pos, const char* &A, const char* &B);
+                                         std::string& pos, std::vector<std::string>& alleles);
     virtual void genotypes_skip();
-    virtual void genotypes_sample_prob(Token::d3& nums);
+    virtual void genotypes_sample_prob(ProbQ& Q);
     virtual void genotypes_end();
 };
 

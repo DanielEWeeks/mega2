@@ -80,9 +80,8 @@ void ReadBgen::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *perso
 void ReadBgenGenotypeReadHelper::genotypes_init()
 {
     open(C(impute_file));
-    pass = 1;
-    read_header();
     pass = 2;
+    read_header();
     if (layout < 2) {
         block.cdata = new unsigned char[6 * samples];
         block.rdata = new unsigned char[6 * samples];
@@ -98,7 +97,7 @@ void ReadBgenGenotypeReadHelper::genotypes_init()
 }
 
 boolean ReadBgenGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
-                                                         std::string& pos, const char* &A, const char* &B)
+                                                         std::string& pos, vector<string>& alleles)
 {
     if (layout == 0) {
         process_10(mrk_idx);
@@ -117,17 +116,25 @@ boolean ReadBgenGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::strin
     rsid = block.rsid;
     chrm = block.chrm;
     fix_marker_pos(pos);
-    A = C(block.allele[0]);
-    B = C(block.allele[1]);
+
+    alleles.clear();
+    alleles.push_back(block.allele[0]);
+    alleles.push_back(block.allele[1]);
 
     return true;
 }
 
-void ReadBgenGenotypeReadHelper::genotypes_sample_prob(Token::d3& nums)
+void ReadBgenGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
 {
+    Token::d3 nums;
     nums[0] = ((double)read_ushort(zp)) / scale;
     nums[1] = ((double)read_ushort(zp)) / scale;
     nums[2] = ((double)read_ushort(zp)) / scale;
+
+    Q.push(ProbID(nums[0], 1, 1));
+    Q.push(ProbID(nums[1], 1, 2));
+    Q.push(ProbID(nums[2], 2, 2));
+
 }
 
 void ReadBgenGenotypeReadHelper::genotypes_end()
@@ -467,7 +474,7 @@ void ReadBgenFile::read_expanded_block_10(unsigned char *bp = NULL)
 
     if (pass == 2)
         return;
-
+// never gets here
     double num[3];
     for (unsigned long i = 0; i < block.N; i++) {
         num[0] = ((double)read_ushort(bp)) / scale;

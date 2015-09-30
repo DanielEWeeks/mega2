@@ -473,7 +473,7 @@ namespace genfile {
 				double const probability_conversion_factor = impl::get_probability_conversion_factor( context.flags ) ;
 				for ( uint32_t i = 0 ; i < context.number_of_samples ; ++i ) {
 					setter.set_sample( i ) ;
-					setter.set_number_of_entries( 3, ePerUnorderedGenotype, eProbability ) ;
+					setter.set_number_of_entries( 3, ePerUnorderedGenotype, eProbability, 2, 0 ) ;
 					assert( end >= buffer + 6 ) ;
 					for( std::size_t g = 0; g < 3; ++g ) {
 						uint16_t prob ;
@@ -584,7 +584,9 @@ namespace genfile {
 							setter.set_number_of_entries(
 								valueCount, 
 								phased ? ePerPhasedHaplotypePerAllele : ePerUnorderedGenotype,
-								eProbability
+								eProbability,
+                                                                ploidy,
+                                                                phased
 							) ;
 							if( missing ) {
 								for( std::size_t h = 0; h < valueCount; ++h ) {

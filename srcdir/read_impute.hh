@@ -31,6 +31,8 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
+#include <queue>
 
 #include "input_ops.hh"
 #include "str_utils.hh"
@@ -68,14 +70,28 @@ enum Column_Type {RESERVED, MISSING, PHENO, GENO};
 typedef vectordb<Column_Type> Vecct;
 typedef vectordb<Column_Type>::const_iterator Vecctp;
 
+struct ProbID {
+    ProbID(): dd(0), ii(0), jj(0) {};
+    ProbID(double d, int i, int j): dd(d), ii(i), jj(j) {};
+    double dd;
+    int    ii;
+    int    jj;
+};
+struct ProbIDComp {
+    bool operator()(ProbID& a, ProbID& b) {return a.dd < b.dd;}
+};
+
+typedef std::priority_queue<ProbID, std::vector<ProbID>, ProbIDComp> ProbQ;
+
+
 class GenotypeReadHelper
 {
 public:
     virtual void genotypes_init() {}
     virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid,
-                                         std::string& pos, const char* &A, const char* &B) { return true; }
+                                         std::string& pos, std::vector<std::string>& alleles) { return true; }
     virtual void genotypes_skip() {}
-    virtual void genotypes_sample_prob(Token::d3& nums) {}
+    virtual void genotypes_sample_prob(ProbQ& Q) {}
     virtual void genotypes_end() {}
 };
 
@@ -178,8 +194,8 @@ class ReadImputedGenotypeReadHelper : public GenotypeReadHelper
 public:
     virtual void genotypes_init();
     virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
-                                         std::string& pos, const char* &A, const char* &B);
-    virtual void genotypes_sample_prob(Token::d3& nums);
+                                         std::string& pos, std::vector<std::string>& alleles);
+    virtual void genotypes_sample_prob(ProbQ& Q);
     virtual void genotypes_end();
 
 public:

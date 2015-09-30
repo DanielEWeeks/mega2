@@ -142,8 +142,8 @@ class ReadBgenGenotypeReadHelper : public GenotypeReadHelper, public ReadBgenFil
 public:
     virtual void genotypes_init();
     virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
-                                         std::string& pos, const char* &A, const char* &B);
-    virtual void genotypes_sample_prob(Token::d3& nums);
+                                         std::string& pos, std::vector<std::string>& alleles);
+    virtual void genotypes_sample_prob(ProbQ& Q);
     virtual void genotypes_end();
 };
 
