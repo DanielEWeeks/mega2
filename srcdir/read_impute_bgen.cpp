@@ -27,8 +27,6 @@
 */
 
 
-using namespace std;
-
 #include <stdio.h>
 
 #include <string.h>
@@ -56,6 +54,8 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #include "input_ops.hh"
 #include "read_impute.hh"
 #include "read_impute_bgen.hh"
+
+using namespace std;
 
 
 SECTION_ERR_INIT(bad_name);
