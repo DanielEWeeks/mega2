@@ -66,6 +66,8 @@ void ReadBgen::read_input_file()
     bgen.rip = this;
 
     bgen.read_input_file();
+
+    SECTION_ERR_FINI(bad_name);
 }
 
 void ReadBgen::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
@@ -370,28 +372,25 @@ void ReadBgenFile::fix_marker_pos(string& ccpos) {
 
 void ReadBgenFile::validate_marker_name(string& rsid, const string& ccpos) {
     VecsDB fields;
-    split(fields, block.rsid, ":", 3);
+    rsid = "";
+    split(fields, block.rsid, rip->rsid_sep, 3);
+    if (fields[0].compare(0, 3, "chr") == 0)
+        fields[0].erase(0, 3);
+    if (inMap(fields[0], Input->G.chrm_set)) {
+        block.chrm = fields[0];
+        rsid = "chr" + block.chrm + "_" + ccpos;
+    } else if (block.chrm == "NA" && rip->oxford_single_chr != "--")
+        block.chrm = rip->oxford_single_chr;
 
-    if (fields.size() == 1) {
-        rsid = fields[0];
-        if (rsid == "." || rsid == "NA" || rsid == "na") {
-            block.chrm = rip->oxford_single_chr;
-            rsid = "chr" + rip->oxford_single_chr + "_" + ccpos;
-        }
+    if (rsid != "") {
     } else {
-        if (fields[0].compare(0, 3, "chr") == 0)
-            fields[0].erase(0, 3);
-        if (inMap(fields[0], Input->G.chrm_set)) {
-            block.chrm = fields[0];
-            rsid = "chr" + fields[0] + "_" + ccpos;
-        } else if (fields[0].compare(0, 2, "rs") == 0 && rip->oxford_single_chr != "--") {
-            block.chrm = rip->oxford_single_chr;
-            rsid = fields[0];
-        } else {
+        if (fields[0].compare(0, 2, "rs") != 0) {
             SECTION_ERR(bad_name);
-            errorvf("impute2 file: bad marker name %s\n", C(block.rsid));
+            errorvf("impute2 file: odd rsid(%s) for marker name; using %s for marker name\n",
+                    C(block.rsid), C(fields[0]));
             badname++;
         }
+        rsid = fields[0];
     }
 }
 
@@ -427,6 +426,10 @@ void ReadBgenFile::read_snpblock_header_10()
 
     read_embedded_uchar(str2, 0, uchar);
     block.allele.push_back(str2);
+    Vecs alleles(2);
+    alleles.clear();
+    alleles.push_back(str);
+    alleles.push_back(str2);
 
     if (pass == 1) {
         string ccpos;
@@ -434,7 +437,7 @@ void ReadBgenFile::read_snpblock_header_10()
 
         string rsid;
         validate_marker_name(rsid, ccpos);
-        rip->markers.push_back(new ImpMarker(rsid, block.chrm, ccpos, str, str2, 0));
+        rip->markers.push_back(new ImpMarker(rsid, block.chrm, ccpos, alleles, 0));
     }
 }
 
@@ -541,7 +544,7 @@ void ReadBgenFile::read_snpblock_header_11()
 
         string rsid;
         validate_marker_name(rsid, ccpos);
-        rip->markers.push_back(new ImpMarker(rsid, block.chrm, ccpos, block.allele[0], block.allele[1], 0));
+        rip->markers.push_back(new ImpMarker(rsid, block.chrm, ccpos, block.allele, 0));
     }
 }
 

@@ -59,17 +59,18 @@ typedef std::vector<std::string>::const_iterator            Vecsp;
 typedef std::vector<int>::const_iterator                    Vecip;
 typedef std::vector<double>::const_iterator                 Vecdp;
 
-template <typename T>
+template <class T>
 class vectordb : public std::vector<T> {
 public:
-    T& operator[](std::size_t i);
-    const T& operator[](std::size_t i) const;
+    T& operator[](unsigned long i);
+    const T& operator[](unsigned long i) const;
 };
 
-template <typename T>
-T& vectordb<T>::operator[](std::size_t i) { return (std::vector<T>::data()[i]); }
-template <typename T>
-const T& vectordb<T>::operator[](std::size_t i) const { return (std::vector<T>::data()[i]); }
+template <class T>
+T&      vectordb<T>::operator[](unsigned long i) { return (std::vector<T>::data()[i]); }
+
+template <class T>
+const T& vectordb<T>::operator[](unsigned long i) const { return (std::vector<T>::data()[i]); }
 
 typedef vectordb<std::string> VecsDB;
 typedef vectordb<int>         VeciDB;

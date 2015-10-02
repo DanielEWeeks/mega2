@@ -40,7 +40,7 @@
 
 class ImpMarker {
 public:
-    ImpMarker(Cstr name, Cstr chr, Cstr pos, Cstr A, Cstr B, bool read_info): name(name), chr(chr), pos(pos), A(A), B(B) {
+    ImpMarker(Cstr& name, Cstr& chr, Cstr& pos, std::vector<std::string>& alleles, bool read_info): name(name), chr(chr), pos(pos), alleles(alleles) {
         if (! read_info)
             info = 1.0;
         else
@@ -51,10 +51,9 @@ public:
 
 public:
     Str name;
-    Str chr;
-    Str pos;
-    Str A;
-    Str B;
+    Cstr chr;
+    Cstr pos;
+    std::vector<std::string> alleles;
     double info;
     double certainty;
     bool skip;
@@ -149,6 +148,7 @@ public:
     double        genotype_missing_fraction;
     char          allow_indels;
     char          allow_dups;
+    Str           rsid_sep;
     Input_Base   *input;
     int           check_format;
 
@@ -186,6 +186,8 @@ static const
     int imputed_allow_indels_i              = 8000006;
 static const
     int imputed_allow_dups_i                = 8000007;
+static const
+    int imputed_rsid_sep_i                  = 8000008;
 
 };
 

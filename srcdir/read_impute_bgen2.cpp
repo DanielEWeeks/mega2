@@ -69,6 +69,8 @@ void ReadBgen2::read_input_file()
     bgen.n_rip = this;
 
     bgen.read_input_file();
+
+    SECTION_ERR_FINI(bad_marker_name);
 }
 
 void ReadBgen2::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
@@ -174,28 +176,26 @@ void BgenParser::fix_marker_pos(string& ccpos, unsigned long pos)
 void BgenParser::validate_marker_name(string& rsid, string& chrm, string& rsid_field, const string& ccpos)
 {
     VecsDB fields;
-    split(fields, rsid_field, ":", 3);
+    rsid = "";
+    split(fields, rsid_field, n_rip->rsid_sep, 3);
 
-    if (fields.size() == 1) {
-        rsid = fields[0];
-        if (rsid == "." || rsid == "NA" || rsid == "na") {
-            chrm = n_rip->oxford_single_chr;
-            rsid = "chr" + n_rip->oxford_single_chr + "_" + ccpos;
-        }
+    if (fields[0].compare(0, 3, "chr") == 0)
+        fields[0].erase(0, 3);
+    if (inMap(fields[0], Input->G.chrm_set)) {
+        chrm = fields[0];
+        rsid = "chr" + chrm + "_" + ccpos;
+    } else if (chrm == "NA" && n_rip->oxford_single_chr != "--")
+        chrm = n_rip->oxford_single_chr;
+
+    if (rsid != "") {
     } else {
-        if (fields[0].compare(0, 3, "chr") == 0)
-            fields[0].erase(0, 3);
-        if (inMap(fields[0], Input->G.chrm_set)) {
-            chrm = fields[0];
-            rsid = "chr" + fields[0] + "_" + ccpos;
-        } else if (fields[0].compare(0, 2, "rs") == 0 && n_rip->oxford_single_chr != "--") {
-            chrm = n_rip->oxford_single_chr;
-            rsid = fields[0];
-        } else {
+        if (fields[0].compare(0, 2, "rs") != 0) {
             SECTION_ERR(bad_marker_name);
-            errorvf("impute2 file: bad marker name %s\n", C(rsid_field));
+            errorvf("impute2 file: odd rsid(%s) for marker name; using %s for marker name\n",
+                    C(rsid_field), C(fields[0]));
             n_badname++;
         }
+        rsid = fields[0];
     }
 }
 
@@ -241,9 +241,9 @@ void BgenParser::read_input_file()
             string ccpos;
             fix_marker_pos(ccpos, position);
 
-            string rsid_name, chrm;
-            validate_marker_name(rsid_name, chrm, rsid, ccpos);
-            n_rip->markers.push_back(new ImpMarker(rsid_name, chrm, ccpos, alleles[0], alleles[1], n_rip->read_info));
+            string rsid_name;
+            validate_marker_name(rsid_name, chromosome, rsid, ccpos);
+            n_rip->markers.push_back(new ImpMarker(rsid_name, chromosome, ccpos, alleles, n_rip->read_info));
 
             ignore_probs() ;
         }

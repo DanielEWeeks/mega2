@@ -102,6 +102,10 @@ void ReadImputed::do_menu_display(int &idx, int line_len, int choiceA[])
            BatchItemGet("Imputed_Allow_Duplicates")->value.copt == 'y' ? "yes" : "no");
     choiceA[idx++] = imputed_allow_dups_i;
 
+    printf("%2d) %-*s[ %s ]\n", idx, line_len, "RSID field separator:",
+           BatchItemGet("Imputed_RSID_Separator")->value.name);
+    choiceA[idx++] = imputed_rsid_sep_i;
+
 }
 
 int ReadImputed::do_menu_parse(int choice_)
@@ -184,6 +188,16 @@ int ReadImputed::do_menu_parse(int choice_)
 
         bip->items_read = 1;
 	ret = 1;
+    } else if (choice_ == imputed_rsid_sep_i) {
+	char selection[100], *sp = selection;
+        if (1) {
+	    printf("Please enter a separator character for rsid field: ");
+            IgnoreValue(fgets(selection, sizeof(selection)-1, stdin)); newline;
+	}
+
+        selection[strlen(selection)] = 0;
+        BatchValueSet(sp, "Imputed_RSID_Separator");
+	ret = 1;
     }
     return ret;
 }
@@ -196,7 +210,8 @@ void ReadImputed::do_menu2batch()
                       "Imputed_Genotype_Missing_Fraction", 
                       "Imputed_Missing_Codes",
                       "Imputed_Allow_Indels",
-                      "Imputed_Allow_Duplicates"
+                      "Imputed_Allow_Duplicates",
+                      "Imputed_RSID_Separator"
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -214,6 +229,7 @@ void ReadImputed::do_batch2local()
     BatchValueGet(this->genotype_missing_fraction, "Imputed_Genotype_Missing_Fraction");
     BatchValueGet(this->allow_indels, "Imputed_Allow_Indels");
     BatchValueGet(this->allow_dups, "Imputed_Allow_Duplicates");
+    BatchValueGet(this->rsid_sep, "Imputed_RSID_Separator");
     BatchValueGet(this->info_file, "Input_Imputed_Info_File");
 
     Vecs vec;
@@ -229,6 +245,7 @@ void ReadImputed::show_settings()
     msgvf("Impute2 Analysis Info Metric Threshold:     %.3f\n", this->info_threshold);
     msgvf("Impute2 Analysis Hard Call Uncertainty:     %.3f\n", this->hard_call_uncertainty);
     msgvf("Impute2 Analysis Genotype Missing Fraction: %.3f\n", this->genotype_missing_fraction);
+    msgvf("Impute2 Analysis RSID Field Separator:      %s\n", C(this->rsid_sep));
     msgvf("Impute2 Analysis Allow Duplicate Markers:   %c\n",   this->allow_dups);
     msgvf("Impute2 Analysis Allow Indels:              %c\n",   this->allow_indels);
 
@@ -350,6 +367,7 @@ void ReadImputed::read_input_file ()
     SECTION_ERR_INIT(halftyped);
     while (! ifs.eof() ) {
 
+        chrm = "0";
         if (Ncol == 0) {
             Str l;
             Vecs ls;
@@ -398,82 +416,71 @@ void ReadImputed::read_input_file ()
         if (hmm.compare(0, 3, "chr") == 0) {
             hmm.erase(0, 3);
         }
-        if (inMap(hmm, input->G.chrm_set)) {
+
+        name = "";
+        fields.clear();
+        split(fields, rsid, rsid_sep, 3);
+        if (Ncol == 6)
+            ;  // already read chrm
+        else if (inMap(hmm, input->G.chrm_set))
             chrm = hmm;
-            fields.clear();
-            split(fields, rsid, ":", 3);
-            if (rsid == "." || rsid == "NA" || rsid == "na")
+        else {
+            if (fields[0].compare(0, 3, "chr") == 0)
+                fields[0].erase(0, 3);
+            if (inMap(fields[0], input->G.chrm_set)) {
+                chrm = fields[0];
                 name = "chr" + chrm + "_" + pos;
-            else
-                name = fields[0];  // it seems to be this way
-        } else /* if (hmm == "---") */ {   // first column can be -9 ... anything
-            fields.clear();
-            split(fields, rsid, ":", 3);
-
-            if (dbg) {
-                cout << rsid << " ";
-                cout << "#" << fields.size() << " ";
-            }
-            if (Ncol == 6) {
-//              chrm = oxford_single_chr;  // already set
-                name = "chr" + chrm + "_" + pos;
-            } else if (rsid == "." || rsid == "NA" || rsid == "na") {
+            } else if (oxford_single_chr != "--")
                 chrm = oxford_single_chr;
-                name = "chr" + chrm + "_" + pos;
-            } else if (fields.size() > 0) {
-                if (fields[0].compare(0, 3, "chr") == 0) {
-                    fields[0].erase(0, 3);
-                }
-                if (inMap(fields[0], input->G.chrm_set)) {
-                    chrm = fields[0];
-                    name = "chr" + fields[0] + "_" + pos;
-                } else if (fields[0].compare(0, 2, "rs") == 0 && oxford_single_chr != "--") {
-                    chrm  =  oxford_single_chr;
-                    name = fields[0];
-                } else if (oxford_single_chr != "--") {
-                    chrm  =  oxford_single_chr;
-                    name = fields[0];
-                } else {
-                    SECTION_ERR(bad_line);
-                    errorvf("impute2 file: bad line(%d): %s %s %s\nrs_id field first item unexpected: no chromosome was specified and can not be inferred\n", 
-                           C(line_n), C(hmm), C(rsid), C(pos));
-                    nochr++;
-                    continue;
-                }
-                if (dbg) {
-                    cout << fields[0] << " ";
-                    cout << fields[1] << " ";
-                    cout << fields[2] << " ";
-                    cout << fields[3] << " ";
-                }
-                if (fields.size() > 1 && fields[1] != pos) {
-                    SECTION_ERR(bad_line);
-                    warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id pos field (%s) does not match position column (%s)\n",
-                           C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[1]), C(pos));
-                }
-                if (check_format && fields.size() > 2 && fields[2] != A) {
-                    SECTION_ERR(bad_line);
-                    warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id A allele field (%s) does not match A column (%s)\n",
-                           C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[2]), C(A));
-                }
-                if (check_format && fields.size() > 3 && fields[3] != B) {
-                    SECTION_ERR(bad_line);
-                    warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id B allele field (%s) does not match B column (%s)\n",
-                           C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[3]), C(B));
-                }
-                if (A != B && (A == "0" || B == "0")) {
-                    SECTION_ERR(halftyped);
-                    warnvf("impute2 file: odd line(%d): %s %s %s %s %s\n         heterozygote samples will appear halftyped because only one allele is 0\n",
-                           C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B));
-
-                }
-            }
-            if (check_format && hmm != "---") {
+            else {
                 SECTION_ERR(bad_line);
-                warnvf("impute file: bad line(%d): %s %s %s %s %s\n         first field is not --- or chromosome\n",
-                       C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B));
+                errorvf("impute2 file: bad line(%d): %s %s %s\nCannot determine chromosome from data\n", 
+                        C(line_n), C(hmm), C(rsid), C(pos));
+                nochr++;
             }
+        }
 
+        if (name != "") {
+        } else if (rsid == "." || rsid == "NA" || rsid == "na")
+            name = "chr" + chrm + "_" + pos;
+        else {
+            if (fields[0].compare(0, 2, "rs") != 0) {
+                SECTION_ERR(bad_line);
+                errorvf("impute2 file: bad line(%d): %s %s %s\nrs_id field first subfield(\"%s\"): not normal rsid but using it anyway for marker name.\n", 
+                        C(line_n), C(hmm), C(rsid), C(pos), C(fields[0]));
+            }
+            name = fields[0];
+        }
+
+/* NOTE:
+ * This format only allows for two alleles; so that is all we are checking.  But in general, the rest of 
+ * processing handles a vector<string> of alleles.  Bgen format supports this.
+ */
+        if (fields.size() > 1 && fields[1] != pos) {
+            SECTION_ERR(bad_line);
+            warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id pos field (%s) does not match position column (%s)\n",
+                   C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[1]), C(pos));
+        }
+        if (check_format && fields.size() > 2 && fields[2] != A) {
+            SECTION_ERR(bad_line);
+            warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id A allele field (%s) does not match A column (%s)\n",
+                   C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[2]), C(A));
+        }
+        if (check_format && fields.size() > 3 && fields[3] != B) {
+            SECTION_ERR(bad_line);
+            warnvf("impute2 file: bad line(%d): %s %s %s %s %s\n         rs_id B allele field (%s) does not match B column (%s)\n",
+                   C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B), C(fields[3]), C(B));
+        }
+        if (A != B && (A == "0" || B == "0")) {
+            SECTION_ERR(halftyped);
+            warnvf("impute2 file: odd line(%d): %s %s %s %s %s\n         heterozygote samples will appear halftyped because only one allele is 0\n",
+                   C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B));
+
+        }
+        if (check_format && hmm != "---") {
+            SECTION_ERR(bad_line);
+            warnvf("impute file: bad line(%d): %s %s %s %s %s\n         first field is not --- or chromosome\n",
+                   C(line_n), C(hmm), C(rsid), C(pos), C(A), C(B));
         }
         if (dbg) {
             cout << pos << " ";
@@ -481,13 +488,19 @@ void ReadImputed::read_input_file ()
             cout << B << " ";
             cout << endl;
         }
-        markers.push_back(new ImpMarker(name, chrm, pos, A, B, read_info));
+
+        Vecs alleles(2);
+        alleles.clear();
+        alleles.push_back(A);
+        alleles.push_back(B);
+        markers.push_back(new ImpMarker(name, chrm, pos, alleles, read_info));
     }
 
     ifs.close();
 
     SECTION_ERR_FINI(bad_line);
     SECTION_ERR_FINI(halftyped);
+
     if (nochr) {
         errorvf("read_imputed_file: can not determine chromosomes for %d markers\n",
                 nochr);
@@ -513,16 +526,18 @@ void ReadImputed::check_indelsNdups()
 
         if (mp->skip) continue;
 
-        if ( ( mp->A.size() > 1 && mp->A.compare(0, 5, "dummy" )) || 
-             ( mp->B.size() > 1 && mp->B.compare(0, 5, "dummy" )) ) {
+        if ( ( mp->alleles[0].size() > 1 && mp->alleles[0].compare(0, 5, "dummy" )) || 
+             ( mp->alleles[1].size() > 1 && mp->alleles[1].compare(0, 5, "dummy" )) ) {
+            Str tmp;
+            join(mp->alleles, tmp, "/");
             if (allow_indels == 'y') {
                 SECTION_ERR(indel);
-                warnvf("Marker: %s (bp %s) indel alleles[%s/%s] allowed [line %d].\n",
-                       C(mp->name), C(mp->pos), C(mp->A), C(mp->B), line_n);
+                warnvf("Marker: %s (bp %s) indel alleles[%s] allowed [line %d].\n",
+                       C(mp->name), C(mp->pos), C(tmp), line_n);
             } else {
                 SECTION_ERR(indel);
-                warnvf("Marker: %s (bp %s) indel alleles[%s/%s] ignored [line %d].\n",
-                       C(mp->name), C(mp->pos), C(mp->A), C(mp->B), line_n);
+                warnvf("Marker: %s (bp %s) indel alleles[%s] ignored [line %d].\n",
+                       C(mp->name), C(mp->pos), C(tmp), line_n);
                 skip_count++;
                 mp->skip = true;
             }
@@ -564,9 +579,12 @@ void ReadImputed::check_indelsNdups()
             } else {
                 warnvf("Markers: %s,%s ", C(mpprev->name), C(mp->name));
             }
+            Str tmp1, tmp2;
+            join(mp->alleles, tmp1, "/");
+            join(mpprev->alleles, tmp2, "/");
             if (allow_dups == 'y') {
-                errvf("(bp %s) repeated with different alleles [%s/%s %s/%s] both allowed [line %d].\n",
-                       C(mp->pos), C(mpprev->A), C(mpprev->B), C(mp->A), C(mp->B), line_n);
+                errvf("(bp %s) repeated with different alleles [%s %s] both allowed [line %d].\n",
+                      C(mp->pos), C(tmp2), C(tmp1), line_n);
                 if (same_run) {
                     char N[10];
                     sprintf(N, "@%d", same_run+1);
@@ -577,8 +595,8 @@ void ReadImputed::check_indelsNdups()
                     errvf("%s\n", C(mp->name));
                 }
             } else {
-                errvf("(bp %s) repeated with different alleles [%s/%s %s/%s] ignored repeat [line %d].\n",
-                       C(mp->pos), C(mpprev->A), C(mpprev->B), C(mp->A), C(mp->B), line_n);
+                errvf("(bp %s) repeated with different alleles [%s %s] ignored repeat [line %d].\n",
+                      C(mp->pos), C(tmp2), C(tmp1), line_n);
                 skip_count++;
                 mp->skip = true;
             }
@@ -893,7 +911,7 @@ void ReadImputed::build_impute2_map(m2_map& map)
             map_entry.set_chr(mp->chr);
             pos = atof(C(mp->pos));
             map_entry.set_POS(pos);
-            map_entry.set_REF(mp->A);
+            map_entry.set_REF(mp->alleles[0]);
             map_entry.set_marker_name(mp->name);
             map.push_back_entry(map_entry);
 

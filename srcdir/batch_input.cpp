@@ -213,6 +213,7 @@ static keyw_t keywords[] = {
     {"Imputed_Missing_Codes",                 NAME_LIST,  ""},
     {"Imputed_Allow_Duplicate_Markers",       YORN,      "n"},
     {"Imputed_Allow_Indels",                  YORN,      "n"},
+    {"Imputed_RSID_Separator",                STRING,    ":"},
     {"Input_Imputed_Info_File",               STRING,     ""},
     {"ID_pedigree",                           INT,       "0"},
     {"ID_person",                             INT,       "0"},
