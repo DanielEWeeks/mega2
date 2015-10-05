@@ -898,7 +898,7 @@ class BatchItemString : public BatchItem {
     const char *value_ = this->value.c_str();
     char *end;
     // The converted value_ is thrown away, because we just want to know if it is valid...
-    (void) strtod((const char *)value_, &end);
+    IgnoreValue(strtod((const char *)value_, &end));
     // See user_input.cpp:set_missing_quant_input() for an explaination of this test...
     return (strlen(value_) != 0 && strlen(end) == 0 && errno != ERANGE);
   }

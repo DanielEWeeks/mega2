@@ -341,7 +341,7 @@ namespace genfile {
 		) {
 			uint32_t block_size = 0 ;
 			uint32_t number_of_samples = 0 ;
-			uint16_t identifier_size ;
+			uint16_t identifier_size = 0 ;
 			std::string identifier ;
 			std::size_t bytes_read = 0 ;
 

@@ -363,9 +363,9 @@ static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *
     if (num || qnum) {
         char *end;
         if (qnum)
-            (void) strtod(value, &end);
+            IgnoreValue(strtod(value, &end));
         else // if (num)
-            (void) strtol(value, &end, 10);
+            IgnoreValue(strtol(value, &end, 10));
         if (strlen(value) == 0 || strlen(end) != 0 || errno == ERANGE) {
             // Conversion of the entire string was not successful or some other error...
             errorvf("%s %s missing value \"%s\" must be a numeric string representing %s number.\n",
