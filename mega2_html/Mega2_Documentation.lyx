@@ -85,6 +85,7 @@
 \html_css_as_file 0
 \html_be_strict false
 \author -1820302391 "Robert V. Baron" 
+\author 1332494340 "Daniel E. Weeks" 
 \end_header
 
 \begin_body
@@ -545,8 +546,15 @@ reference "sub:VCF-file-formats"
 \begin_layout Enumerate
 
 \change_inserted -1820302391 1443196545
-Input support for IMPUTE2 GEN format files and binary IMPUTE2 GEN format
- (BGEN) files (See Section 
+Input support for IMPUTE2 GEN format files and binary IMPUTE2 
+\change_inserted 1332494340 1444158503
+B
+\change_inserted -1820302391 1443196545
+GEN format 
+\change_deleted 1332494340 1444158510
+(BGEN)
+\change_inserted -1820302391 1443196545
+ files (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:impute2-file-format"
@@ -710,7 +718,15 @@ GEN
 \change_unchanged
 Format 
 \change_inserted -1820302391 1443121858
-and Binary IMPUTE2 GEN Format (BGEN) 
+and Binary IMPUTE2 
+\change_inserted 1332494340 1444158528
+B
+\change_inserted -1820302391 1443121858
+GEN Format 
+\change_deleted 1332494340 1444158537
+(BGEN)
+\change_inserted -1820302391 1443121858
+ 
 \change_unchanged
 (See Section 
 \begin_inset CommandInset ref
@@ -1543,8 +1559,15 @@ Note that option 1 allows one to instruct Mega2 to read
  or Variant Call Format (VCF) input files in either binary (.bcf), compressed
  (.vcf.gz), or text (.vcf) format
 \change_inserted -1820302391 1443034782
-; IMPUTE2 Format input files, either in binary format (.bgen) or in text
- format (.gen or .impute2).
+; IMPUTE2 Format input files, either in binary
+\change_inserted 1332494340 1444158569
+ BGEN
+\change_inserted -1820302391 1443034782
+ format (.bgen) or in text 
+\change_inserted 1332494340 1444158576
+GEN 
+\change_inserted -1820302391 1443034782
+format (.gen or .impute2).
 \change_deleted -1820302391 1443034673
 .
 \change_unchanged
@@ -1802,7 +1825,14 @@ target "http://dx.doi.org/10.1093/bioinformatics/btr330"
 \begin_layout Standard
 
 \change_inserted -1820302391 1443123539
-Use of Mega2 to convert IMPUTE2 GEN or binary IMPUTE2 GEN format (BGEN)
+Use of Mega2 to convert IMPUTE2 GEN or binary IMPUTE2 
+\change_inserted 1332494340 1444158598
+B
+\change_inserted -1820302391 1443123539
+GEN format 
+\change_deleted 1332494340 1444158605
+(BGEN)
+\change_inserted -1820302391 1443123539
  input files makes use of a built-in copy of bgen; you should also cite
  the following work:
 \end_layout
@@ -4387,7 +4417,11 @@ IMUTE2 GEN format
 \begin_layout Enumerate
 
 \change_inserted -1820302391 1443123365
-binary IMPUTE2 GEN format 
+binary IMPUTE2 
+\change_inserted 1332494340 1444158659
+B
+\change_inserted -1820302391 1443123365
+GEN format 
 \change_unchanged
 
 \end_layout
@@ -21518,7 +21552,11 @@ gen
 \uwave off
 \noun off
 \color none
-	IMPUTE2 format (gen or impute2)-
+	IMPUTE2 
+\change_inserted 1332494340 1444157944
+GEN 
+\change_inserted -1820302391 1443110125
+format (gen or impute2)-
 \end_layout
 
 \begin_layout Itemize
@@ -21585,7 +21623,11 @@ status collapsed
 \uwave off
 \noun off
 \color none
-	Binary IMPUTE2 GEN format (bgen)
+	Binary IMPUTE2 
+\change_inserted 1332494340 1444157950
+B
+\change_inserted -1820302391 1443213140
+GEN format (bgen)
 \change_unchanged
 
 \end_layout
@@ -22830,7 +22872,11 @@ VCF format (vcf)
 \end_layout
 
 \begin_layout Enumerate
-IMPUTE2 format
+IMPUTE2 
+\change_inserted 1332494340 1444157982
+GEN 
+\change_unchanged
+format
 \change_inserted -1820302391 1443111055
  (gen or impute2)
 \end_layout
@@ -22838,7 +22884,11 @@ IMPUTE2 format
 \begin_layout Enumerate
 
 \change_inserted -1820302391 1443122549
-IMPUTE2 binary GEN format (bgen)
+IMPUTE2 binary 
+\change_inserted 1332494340 1444157985
+B
+\change_inserted -1820302391 1443122549
+GEN format (bgen)
 \change_unchanged
 
 \end_layout
@@ -24446,6 +24496,9 @@ Imputed_Allow_Duplicates
 
 \begin_layout Standard
 
+\change_inserted 1332494340 1444158153
+Some input files may contain more than one marker at a single position.
+ 
 \change_inserted -1820302391 1443111534
 If this option is 
 \begin_inset Quotes eld
@@ -24459,7 +24512,15 @@ no
 \begin_inset Quotes erd
 \end_inset
 
-, only the first markers at a position is used; the rest are ignored.
+, only the first marker
+\change_deleted 1332494340 1444158102
+s
+\change_inserted -1820302391 1443111534
+ at a 
+\change_inserted 1332494340 1444158110
+given 
+\change_inserted -1820302391 1443111534
+position is used; the rest are ignored.
  If this option is 
 \begin_inset Quotes eld
 \end_inset
@@ -24472,8 +24533,11 @@ yes
 \begin_inset Quotes erd
 \end_inset
 
-, the markers after the first at a position have a counter appended to their
- name to make the names unique.
+, the markers after the first at a
+\change_inserted 1332494340 1444158122
+ given
+\change_inserted -1820302391 1443111534
+ position have a counter appended to their name to make the names unique.
 \change_unchanged
 
 \end_layout
@@ -33773,9 +33837,16 @@ Changes from Version 4.8.0 to Version 4.8.1 (Released September 30, 2015)
 \begin_layout Itemize
 
 \change_inserted -1820302391 1443197582
-Mega2 now supports reading binary IMPUTE2 GEN data in BGEN format.
- In addition, for both formats of imputed data, you can now specify that
- duplicate markers be passed on to Mega2.
+Mega2 now supports reading binary IMPUTE2 
+\change_deleted 1332494340 1444158403
+GEN
+\change_inserted -1820302391 1443197582
+ data in BGEN format.
+ In addition, for both formats of imputed data
+\change_inserted 1332494340 1444158422
+ (GEN and BGEN)
+\change_inserted -1820302391 1443197582
+, you can now specify that duplicate markers be passed on to Mega2.
 \end_layout
 
 \begin_layout Itemize
@@ -33797,7 +33868,17 @@ Pedigree ID
 \begin_inset Quotes erd
 \end_inset
 
- submenus, allows the original pedigree and or person to be selected.
+ submenus
+\change_deleted 1332494340 1444158433
+,
+\change_inserted -1820302391 1443033628
+ allows the original pedigree and
+\change_inserted 1332494340 1444158439
+/
+\change_deleted 1332494340 1444158438
+ 
+\change_inserted -1820302391 1443033628
+or person to be selected.
 \end_layout
 
 \begin_layout Itemize
@@ -33842,8 +33923,10 @@ Bug: Large numbers of alleles as arising from imputed indels are now supported.
 
 \begin_layout Itemize
 
+\change_deleted 1332494340 1444158469
+Bug: 
 \change_inserted -1820302391 1443197644
-Bug: The example data and example_output directories for vcf, bcf, and impute2
+The example data and example_output directories for vcf, bcf, and impute2
  input format have been added.
 \change_unchanged
 
