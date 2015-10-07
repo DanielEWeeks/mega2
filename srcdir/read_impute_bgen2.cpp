@@ -189,12 +189,14 @@ void BgenParser::validate_marker_name(string& rsid, string& chrm, string& rsid_f
 
     if (rsid != "") {
     } else {
+/*
         if (fields[0].compare(0, 2, "rs") != 0) {
             SECTION_ERR(bad_marker_name);
             errorvf("impute2 file: odd rsid(%s) for marker name; using %s for marker name\n",
                     C(rsid_field), C(fields[0]));
             n_badname++;
         }
+*/
         rsid = fields[0];
     }
 }

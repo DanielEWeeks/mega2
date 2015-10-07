@@ -115,9 +115,9 @@ const char *INPUT_FORMAT_STR[] = {
      "BCF format (bcf)",
      "VCF compressed format (vcf.gz)",
      "VCF format (vcf)",
-     "IMPUTE2/Oxford format (gen/impute2)",
-     "IMPUTE2/Oxford binary format (bgen)",
-//   "IMPUTE2/Oxford binary format2 (bgen)",
+     "IMPUTE2 GEN format (gen/impute2)",
+     "IMPUTE2 BGEN format (bgen)",
+//   "IMPUTE2 BGEN format2 (bgen)",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 

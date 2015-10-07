@@ -78,9 +78,9 @@ void ReadImputed::do_menu_display(int &idx, int line_len, int choiceA[])
            BatchItemGet("Imputed_Info_Metric_Threshold")->value.fvalue);
     choiceA[idx++] = imputed_info_metric_threshold_i;
 
-    printf("%2d) %-*s%.4f\n", idx, line_len, "\"Impute2 style\" hard call uncertainty:", 
-           BatchItemGet("Imputed_Hard_Call_Uncertainty")->value.fvalue);
-    choiceA[idx++] = imputed_hard_call_uncertainty_i;
+    printf("%2d) %-*s%.4f\n", idx, line_len, "Hard call threshold:", 
+           BatchItemGet("Imputed_Hard_Call_Threshold")->value.fvalue);
+    choiceA[idx++] = imputed_hard_call_threshold_i;
 
     printf("%2d) %-*s%.4f\n", idx, line_len, "Genotype missing fraction:", 
            BatchItemGet("Imputed_Genotype_Missing_Fraction")->value.fvalue);
@@ -136,17 +136,17 @@ int ReadImputed::do_menu_parse(int choice_)
 
 	BatchValueSet(ansd, "Imputed_Info_Metric_Threshold");
 	ret = 1;
-    } else if (choice_ == imputed_hard_call_uncertainty_i) {
+    } else if (choice_ == imputed_hard_call_threshold_i) {
 	double ansd;
 	while (1) {
 	    printf("Please enter hard call fraction ");
 	    fcmap(stdin, "%g", &ansd); newline;
 	    if (ansd < 0.0 || ansd > 1.0) {
-		printf("uncertainty must be between 0.0 and 1.0\n");
+		printf("threshold must be between 0.0 and 1.0\n");
 	    } else break;
 	}
 
-	BatchValueSet(ansd, "Imputed_Hard_Call_Uncertainty");
+	BatchValueSet(ansd, "Imputed_Hard_Call_Threshold");
 	ret = 1;
     } else if (choice_ == imputed_genotype_missing_fraction_i) {
 	double ansd;
@@ -154,7 +154,7 @@ int ReadImputed::do_menu_parse(int choice_)
 	    printf("Please enter genotype missing fraction ");
 	    fcmap(stdin, "%g", &ansd); newline;
 	    if (ansd < 0.0 || ansd > 1.0) {
-		printf("uncertainty must be between 0.0 and 1.0\n");
+		printf("threshold must be between 0.0 and 1.0\n");
 	    } else break;
 	}
 
@@ -206,7 +206,7 @@ void ReadImputed::do_menu2batch()
 {
     Cstr Values[] = { "Imputed_Oxford_Single_Chr",
                       "Imputed_Info_Metric_Threshold", 
-                      "Imputed_Hard_Call_Uncertainty", 
+                      "Imputed_Hard_Call_Threshold", 
                       "Imputed_Genotype_Missing_Fraction", 
                       "Imputed_Missing_Codes",
                       "Imputed_Allow_Indels",
@@ -225,7 +225,7 @@ void ReadImputed::do_batch2local()
 {
     BatchValueGet(this->oxford_single_chr, "Imputed_Oxford_Single_Chr");
     BatchValueGet(this->info_threshold, "Imputed_Info_Metric_Threshold");
-    BatchValueGet(this->hard_call_uncertainty, "Imputed_Hard_Call_Uncertainty");
+    BatchValueGet(this->hard_call_threshold, "Imputed_Hard_Call_Threshold");
     BatchValueGet(this->genotype_missing_fraction, "Imputed_Genotype_Missing_Fraction");
     BatchValueGet(this->allow_indels, "Imputed_Allow_Indels");
     BatchValueGet(this->allow_dups, "Imputed_Allow_Duplicates");
@@ -243,7 +243,7 @@ void ReadImputed::show_settings()
     msgvf("\n");
     msgvf("Impute2 Analysis Oxford Single Chr:         %s\n", C(this->oxford_single_chr));
     msgvf("Impute2 Analysis Info Metric Threshold:     %.3f\n", this->info_threshold);
-    msgvf("Impute2 Analysis Hard Call Uncertainty:     %.3f\n", this->hard_call_uncertainty);
+    msgvf("Impute2 Analysis Hard Call Threshold:       %.3f\n", this->hard_call_threshold);
     msgvf("Impute2 Analysis Genotype Missing Fraction: %.3f\n", this->genotype_missing_fraction);
     msgvf("Impute2 Analysis RSID Field Separator:      %s\n", C(this->rsid_sep));
     msgvf("Impute2 Analysis Allow Duplicate Markers:   %c\n",   this->allow_dups);
@@ -444,11 +444,13 @@ void ReadImputed::read_input_file ()
         } else if (rsid == "." || rsid == "NA" || rsid == "na")
             name = "chr" + chrm + "_" + pos;
         else {
+/*
             if (fields[0].compare(0, 2, "rs") != 0) {
                 SECTION_ERR(bad_line);
                 errorvf("impute2 file: bad line(%d): %s %s %s\nrs_id field first subfield(\"%s\"): not normal rsid but using it anyway for marker name.\n", 
                         C(line_n), C(hmm), C(rsid), C(pos), C(fields[0]));
             }
+*/
             name = fields[0];
         }
 
@@ -1189,7 +1191,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
     SECTION_ERR_INIT(genotype_missing_fraction);
     SECTION_ERR(genotype_missing_fraction);
     warnvf("%8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n",
-           "untyped", "uncertain", "good", "geno-", "Marker + chr:pos",
+           "untyped", "poor", "good", "geno-", "Marker + chr:pos",
            "marker", "hard", "hard", "typing", "",
            "0/0", "call", "call", "rate", "");
     for (Vecmarkerpp mpp = markers.begin(); mpp != markers.end(); mpp++) {
@@ -1223,7 +1225,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
         }
 
         int sam = 0;
-        int zero = 0, uncertain = 0, good = 0;
+        int zero = 0, poor = 0, good = 0;
         ProbID probid;
 
         tod_per.reset();
@@ -1256,9 +1258,9 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
             if (probid.dd == 0) {
                 c1 = c2 = 0;
                 zero++;
-            } else if (probid.dd <= 1 - hard_call_uncertainty) {
+            } else if (probid.dd <= hard_call_threshold) {
                 c1 = c2 = 0;
-                uncertain++;
+                poor++;
             } else {
                 c1 = probid.ii;
                 c2 = probid.jj;
@@ -1285,7 +1287,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
 */
             SECTION_ERR(genotype_missing_fraction);
             warnvf("%8d %8d %8d %8.3f  %s %s:%s\n",
-                   zero, uncertain, good, ((double)good)/people_filtered,
+                   zero, poor, good, ((double)good)/people_filtered,
                    C(mp->name), C(mp->chr), C(mp->pos));
         }
     }

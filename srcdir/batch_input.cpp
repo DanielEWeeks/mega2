@@ -208,7 +208,7 @@ static keyw_t keywords[] = {
     {"Output_File_Stem",                      STRING,     ""},
     {"Imputed_Oxford_Single_Chr",             STRING,   "--"},
     {"Imputed_Info_Metric_Threshold",         FLOAT,   "0.3"},
-    {"Imputed_Hard_Call_Uncertainty",         FLOAT,   "0.1"},
+    {"Imputed_Hard_Call_Threshold",           FLOAT,   "0.9"},
     {"Imputed_Genotype_Missing_Fraction",     FLOAT,   "0.1"},
     {"Imputed_Missing_Codes",                 NAME_LIST,  ""},
     {"Imputed_Allow_Duplicate_Markers",       YORN,      "n"},

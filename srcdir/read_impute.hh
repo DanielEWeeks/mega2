@@ -144,7 +144,7 @@ public:
 
     Str           oxford_single_chr;
     double        info_threshold;
-    double        hard_call_uncertainty;
+    double        hard_call_threshold;
     double        genotype_missing_fraction;
     char          allow_indels;
     char          allow_dups;
@@ -177,7 +177,7 @@ static const
 static const
     int imputed_info_metric_threshold_i     = 8000002;
 static const
-    int imputed_hard_call_uncertainty_i     = 8000003;
+    int imputed_hard_call_threshold_i       = 8000003;
 static const
     int imputed_genotype_missing_fraction_i = 8000004;
 static const

@@ -384,12 +384,14 @@ void ReadBgenFile::validate_marker_name(string& rsid, const string& ccpos) {
 
     if (rsid != "") {
     } else {
+/*
         if (fields[0].compare(0, 2, "rs") != 0) {
             SECTION_ERR(bad_name);
             errorvf("impute2 file: odd rsid(%s) for marker name; using %s for marker name\n",
                     C(block.rsid), C(fields[0]));
             badname++;
         }
+*/
         rsid = fields[0];
     }
 }
