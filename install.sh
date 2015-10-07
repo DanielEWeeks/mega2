@@ -221,6 +221,8 @@ elif [[ ${OSTYPE:0:6} == CYGWIN ]]; then
     OSTYPE=cygwin
 elif [[ ${OSTYPE:0:10} == MINGW32_NT ]]; then
     OSTYPE=mingw
+elif [[ ${OSTYPE:0:7} == MSYS_NT ]]; then
+    OSTYPE=msys2
 fi
 export OSTYPE
 echo OS $OSTYPE
@@ -274,6 +276,11 @@ for scr in $scripts; do
             which=where
             v=`uname -r|sed -n -e "s/\\(.*\\)(.*)/\\1/p"`
             pgm=mega2_${VERSION}_mingw.${v}
+        elif [[ $OSTYPE == msys2 ]]; then
+            CC=gcc
+            which=where
+            v=`uname -r|sed -n -e "s/\\(.*\\)(.*)/\\1/p"`
+            pgm=mega2_${VERSION}_msys2.${v}
         fi
 
         if [[ -x mega2_bin/$pgm && $pgm != "none" && $scr != "mega2compile" ]]; then
@@ -350,6 +357,8 @@ for scr in $scripts; do
 
             if [[ ${SAVE:-""} == "" ]]; then
                 $MAKE all
+            elif [[ ${SAVE:-""} == "static" ]]; then
+                $MAKE LN="" STATIC="use" distclean all
             else
                 $MAKE LN="" distclean all
             fi

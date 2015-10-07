@@ -311,7 +311,7 @@ int phe::search(const char *ped, const char *per, vector<string> &v)
         if (debug) {
             size_t lim = v.size();
             printf(
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
                 "ped %s, per %s; %Iu# %s %s %s %s %s\n",
 #else
                 "ped %s, per %s; %zu# %s %s %s %s %s\n",
@@ -380,7 +380,7 @@ void phe::debug_dump_pydict()
         pedper pp        = n->first;
         vector<string> v = n->second;
         printf(
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
             "ped %s, per %s; %Iu# %s %s %s %s %s\n",
 #else
             "ped %s, per %s; %zu# %s %s %s %s %s\n",
@@ -426,7 +426,7 @@ int phesearch(const char *ped, const char *per, char **out)
     }
     if (dbg)
         printf(
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
             "phesearch: %s %s %d #%Iu# ",
 #else
             "phesearch: %s %s %d #%zu# ",

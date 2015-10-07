@@ -53,6 +53,8 @@ ifeq ($(OSTYPE), )
 	OSTYPE = cygwin
     else ifeq "$(findstring MINGW32,$(OSTYPE))" "MINGW32"
 	OSTYPE = mingw
+    else ifeq "$(findstring MSYS_NT,$(OSTYPE))" "MSYS_NT"
+	OSTYPE = msys2
     else
         $(warning OSTYPE is $(OSTYPE))
     endif
@@ -199,7 +201,7 @@ AROUT ?=
 ZLIBS ?= libz.a
 CLIBS += libvcftools.a libbgen.a $(ZLIBS)
 
-stdC11  ?= -std=c++11
+stdC11  ?= -std=c++0x
 WINO    ?=
 
 .c.o:

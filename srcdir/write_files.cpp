@@ -1164,7 +1164,7 @@ void write_ped_stats(linkage_ped_top *Top)
     mssgf("     Pedigrees   People   Males   Females       Typed    Typed     Total");
 
     sprintf(err_msg,
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
             "TOTAL   %6d %8Iu %7Iu   %7Iu    %8Iu %8Iu %9Iu",
 #else
             "TOTAL   %6d %8zu %7zu   %7zu    %8zu %8zu %9zu",
@@ -1173,7 +1173,7 @@ void write_ped_stats(linkage_ped_top *Top)
             typed, half_typed, typed+untyped+half_typed);
     mssgf(err_msg);
     sprintf(err_msg,
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
             "Typed   %6Iu %8Iu %7Iu   %7Iu",
 #else
             "Typed   %6zu %8zu %7zu   %7zu",
@@ -1181,7 +1181,7 @@ void write_ped_stats(linkage_ped_top *Top)
             peds_typed, male_typed+female_typed, male_typed, female_typed);
     mssgf(err_msg);
     sprintf(err_msg,
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
             "Untyped %6Iu %8Iu %7Iu   %7Iu",
 #else
             "Untyped %6zu %8zu %7zu   %7zu",

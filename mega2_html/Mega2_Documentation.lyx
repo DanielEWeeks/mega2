@@ -699,7 +699,17 @@ reference "sub:VCF-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-IMPUTE2 GEN Format and Binary BGEN Format (See Section 
+IMPUTE2 GEN Format and 
+\change_inserted -1820302391 1444237823
+b
+\change_deleted -1820302391 1444237708
+B
+\change_unchanged
+inary 
+\change_inserted -1820302391 1444237703
+IMPUTE2 
+\change_unchanged
+BGEN Format (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:impute2-file-format"
@@ -10933,15 +10943,39 @@ Now for the IMPUTE2 data which captures the above model by using probabilities
 \end_layout
 
 \begin_layout LyX-Code
-5	M1:A:T:2	2	A	T	0 1 0	0 1 0	0 0 1	0 1 0	0 0 1	0 0 1
+5	M1:
+\change_inserted -1820302391 1444238044
+2:
+\change_unchanged
+A:T
+\change_deleted -1820302391 1444238080
+:2
+\change_unchanged
+	2	A	T	0 1 0	0 1 0	0 0 1	0 1 0	0 0 1	0 0 1
 \end_layout
 
 \begin_layout LyX-Code
-5	M3:G:C:4	4	G	C	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0	0 1 0
+5	M3:
+\change_inserted -1820302391 1444238054
+4:
+\change_unchanged
+G:C
+\change_deleted -1820302391 1444238074
+:4
+\change_unchanged
+	4	G	C	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0	0 1 0
 \end_layout
 
 \begin_layout LyX-Code
-5	M2:T:A:6	6	T	A	1 0 0	0 0 1	0 1 0	0 1 0	0 1 0	1 0 0
+5	M2:
+\change_inserted -1820302391 1444238068
+6:
+\change_unchanged
+T:A
+\change_deleted -1820302391 1444238071
+:6
+\change_unchanged
+	6	T	A	1 0 0	0 0 1	0 1 0	0 1 0	0 1 0	1 0 0
 \end_layout
 
 \begin_layout Standard
@@ -13913,23 +13947,12 @@ reference "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Paragraph
-Input menu item: "Impute2 style" hard call 
-\change_deleted -1820302391 1443108605
-threshold
-\change_inserted -1820302391 1443108607
-uncertainty
-\change_unchanged
-:
+Input menu item: "Impute2 style" hard call threshold:
 \end_layout
 
 \begin_layout Standard
-This fraction indicates the minimum acceptable 
-\change_deleted -1820302391 1443108661
-value
-\change_inserted -1820302391 1443108664
-uncertainty
-\change_unchanged
- for the probability of each selected genotype.
+This fraction indicates the minimum acceptable value for the probability
+ of each selected genotype.
  If the 
 \begin_inset Quotes eld
 \end_inset
@@ -13938,24 +13961,8 @@ best
 \begin_inset Quotes erd
 \end_inset
 
- genotype probability is less than 
-\change_inserted -1820302391 1443108707
-
-\begin_inset Quotes eld
-\end_inset
-
-one minus 
-\change_unchanged
-this value
-\change_inserted -1820302391 1443108727
-
-\begin_inset Quotes erd
-\end_inset
-
- (viz.
- 1-uncertainty)
-\change_unchanged
-, the genotype will be considered to be untyped, i.e.
+ genotype probability is less than this value, the genotype will be considered
+ to be untyped, i.e.
  
 \begin_inset Quotes eld
 \end_inset
@@ -21160,7 +21167,13 @@ status collapsed
 \uwave off
 \noun off
 \color none
-	BCF format (vcf)-
+	BCF format (
+\change_inserted -1820302391 1444237488
+b
+\change_deleted -1820302391 1444237488
+v
+\change_unchanged
+cf)-
 \end_layout
 
 \begin_layout Itemize
@@ -22649,7 +22662,15 @@ IMPUTE2 GEN format (gen or impute2)
 \end_layout
 
 \begin_layout Enumerate
-IMPUTE2 binary BGEN format (bgen)
+
+\change_inserted -1820302391 1444238257
+binary 
+\change_unchanged
+IMPUTE2 
+\change_deleted -1820302391 1444238260
+binary
+\change_unchanged
+ BGEN format (bgen)
 \end_layout
 
 \begin_layout Enumerate
@@ -24128,13 +24149,7 @@ reference "sub:Impute-Info-File"
 \end_layout
 
 \begin_layout Paragraph
-Imputed_Hard_Call_
-\change_deleted -1820302391 1443111275
-Threshold
-\change_inserted -1820302391 1443111278
-Uncertainty
-\change_unchanged
-
+Imputed_Hard_Call_Threshold
 \end_layout
 
 \begin_layout Standard
@@ -24148,23 +24163,8 @@ best
 \begin_inset Quotes erd
 \end_inset
 
- genotype probability is less than 
-\change_inserted -1820302391 1443111295
-
-\begin_inset Quotes eld
-\end_inset
-
-one minus 
-\change_unchanged
-this value
-\change_inserted -1820302391 1443111329
-
-\begin_inset Quotes erd
-\end_inset
-
-
-\change_unchanged
-, the genotype will be considered to be untyped, i.e.
+ genotype probability is less than this value, the genotype will be considered
+ to be untyped, i.e.
  
 \begin_inset Quotes eld
 \end_inset
@@ -33567,7 +33567,17 @@ Changes from Version 4.8.0 to Version 4.8.1 (Released September 30, 2015)
 \end_layout
 
 \begin_layout Itemize
-Mega2 now supports reading binary IMPUTE2 data in BGEN format.
+Mega2 now supports reading binary IMPUTE2 
+\change_deleted -1820302391 1444238352
+data in 
+\change_unchanged
+BGEN 
+\change_deleted -1820302391 1444238356
+format
+\change_inserted -1820302391 1444238356
+data
+\change_unchanged
+.
  In addition, for both formats of imputed data (GEN and BGEN), you can now
  specify that duplicate markers be passed on to Mega2.
 \end_layout

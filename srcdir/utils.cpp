@@ -2231,7 +2231,7 @@ void * my_calloc(void * const ptr, const size_t nelem, const size_t elsize, cons
         sprintf(err_msg, "WARNING: calloc allocating no memory at line %i of file %s\n",line,file);
         mssgf(err_msg);
         sprintf(err_msg,
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
                 "WARNING: my_calloc called with nelem=%Iu elsize=%Iu\n",
 #else
                 "WARNING: my_calloc called with nelem=%zu elsize=%zu\n",
@@ -2246,7 +2246,7 @@ void * my_calloc(void * const ptr, const size_t nelem, const size_t elsize, cons
     if (mem==NULL)
         {
             sprintf(err_msg,
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
                     "ERROR: ran out of memory: allocation of %Iu bytes failed on line %i of file %s\n",
 #else
                     "ERROR: ran out of memory: allocation of %zu bytes failed on line %i of file %s\n",
@@ -2274,7 +2274,7 @@ void * my_malloc(void * const ptr, const size_t nelem, const size_t elsize, cons
         sprintf(err_msg, "WARNING: malloc allocating no memory at line %i of file %s\n",line,file);
         mssgf(err_msg);
         sprintf(err_msg,
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
                 "WARNING: my_malloc called with elsize=%Iu\n",
 #else
                 "WARNING: my_malloc called with elsize=%zu\n",
@@ -2289,7 +2289,7 @@ void * my_malloc(void * const ptr, const size_t nelem, const size_t elsize, cons
     if (mem==NULL)
         {
             sprintf(err_msg,
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
                     "ERROR: ran out of memory: allocation of %Iu bytes failed on line %i of file %s\n",
 #else
                     "ERROR: ran out of memory: allocation of %zu bytes failed on line %i of file %s\n",
@@ -2320,7 +2320,7 @@ void * my_realloc(void * const ptr, const size_t nelem, const size_t elsize, con
         sprintf(err_msg, "WARNING: realloc allocating no memory at line %i of file %s\n",line,file);
         mssgf(err_msg);
         sprintf(err_msg,
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
                 "WARNING: my_realloc called with nelem=%Iu elsize=%Iu\n",
 #else
                 "WARNING: my_realloc called with nelem=%zu elsize=%zu\n",
@@ -2335,7 +2335,7 @@ void * my_realloc(void * const ptr, const size_t nelem, const size_t elsize, con
     if (mem==NULL)
         {
             sprintf(err_msg,
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(__USE_MINGW_ANSI_STDIO))
                     "ERROR: ran out of memory: reallocation of %Iu bytes failed on line %i of file %s\n",
 #else
                     "ERROR: ran out of memory: reallocation of %zu bytes failed on line %i of file %s\n",

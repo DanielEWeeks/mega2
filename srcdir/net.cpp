@@ -37,8 +37,12 @@
 #ifdef MINGW
 #undef  _WIN32_WINNT
 #define _WIN32_WINNT 0x501
+#ifndef EINPROGRESS
 #define EINPROGRESS WSAEINPROGRESS
+#endif
+#ifndef EALREADY
 #define EALREADY    WSAEALREADY
+#endif
 #endif
 
 #include <ws2tcpip.h>
