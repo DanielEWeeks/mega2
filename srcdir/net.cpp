@@ -37,12 +37,16 @@
 #ifdef MINGW
 #undef  _WIN32_WINNT
 #define _WIN32_WINNT 0x501
-#ifndef EINPROGRESS
+
+#undef  EINPROGRESS
 #define EINPROGRESS WSAEINPROGRESS
-#endif
-#ifndef EALREADY
+
+#undef  EWOULDBLOCK
+#define EWOULDBLOCK WSAEWOULDBLOCK
+
+#undef EALREADY
 #define EALREADY    WSAEALREADY
-#endif
+
 #endif
 
 #include <ws2tcpip.h>
@@ -352,7 +356,7 @@ SOCK http_request(const char *request, const char *host, unsigned short port)
 
 SOCK socket_fd(const char *host, unsigned short port)
 {
-    int err;
+    int err, errn;
     SOCK  sfd;
 //    struct sockaddr_in saddr;
 //    struct hostent *mega2_server;
@@ -412,14 +416,18 @@ SOCK socket_fd(const char *host, unsigned short port)
             ERR_STR();
             warnvf("ioctlsocket: set non blocking failed\n");
         }
+        err  = connect(sfd, rp->ai_addr, rp->ai_addrlen);
+        errn = WSAGetLastError();
 #else
         fl = fcntl(sfd, F_GETFL);
         fcntl(sfd, F_SETFL, O_NONBLOCK);
+        err  = connect(sfd, rp->ai_addr, rp->ai_addrlen);
+        errn = errno;
 #endif
-        err = connect(sfd, rp->ai_addr, rp->ai_addrlen);
         if (err != -1) {
             break;
-        } else if (errno == EINPROGRESS || errno == EALREADY)
+        } else if (errn == EINPROGRESS || errn == EALREADY ||
+                   errn == EWOULDBLOCK)
             break;
 
         socket_close_s(sfd);

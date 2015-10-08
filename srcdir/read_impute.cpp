@@ -1188,12 +1188,8 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
     Tod tod_per(30);
     Tod tod_im_line(30);
     Tod tod_im_line_cpy(30);
+    int genotype_missing_count = 0;
     SECTION_ERR_INIT(genotype_missing_fraction);
-    SECTION_ERR(genotype_missing_fraction);
-    warnvf("%8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n",
-           "untyped", "poor", "good", "geno-", "Marker + chr:pos",
-           "marker", "hard", "hard", "typing", "",
-           "0/0", "call", "call", "rate", "");
     for (Vecmarkerpp mpp = markers.begin(); mpp != markers.end(); mpp++) {
         tod_im_line.reset();
         tod_im_line_cpy.reset();
@@ -1286,6 +1282,15 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
             skip_count++;
 */
             SECTION_ERR(genotype_missing_fraction);
+            if (genotype_missing_count++ == 0) {
+                warnvf("Statistics for genotyping rate < genotype_missing_fraction\n");
+                warnvf("%8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n         %8s %8s %8s %8s  %s\n",
+                       "untyped", "poor", "good", "geno-", "Marker + chr:pos",
+                       "marker", "hard", "hard", "typing", "",
+                       "0/0", "call", "call", "rate", "");
+                SECTION_ERR_HEADER(genotype_missing_fraction);
+                SECTION_ERR(genotype_missing_fraction);
+            }
             warnvf("%8d %8d %8d %8.3f  %s %s:%s\n",
                    zero, poor, good, ((double)good)/people_filtered,
                    C(mp->name), C(mp->chr), C(mp->pos));
