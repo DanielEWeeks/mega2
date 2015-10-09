@@ -238,10 +238,12 @@ function pgm_linux() {
         pgm=mega2_${VERSION}_linux_ubuntu.${v}x${x}
         return
     fi
-    v=`sed -n /etc/issue -e "1s/^CentOS release \\([0-9\\.]*\\) .*/\\1/p"`
-    if [ "$v" != "" ] ; then
-        pgm=mega2_${VERSION}_linux_centos.${v}x${x}
-        return
+    if [ -f /etc/centos-release ] ; then 
+        v=`sed -n /etc/centos-release -e "1s/^CentOS Linux release \\([0-9\\.]*\\) (Core)/\\1/p"`
+        if [ "$v" != "" ] ; then
+            pgm=mega2_${VERSION}_linux_centos.${v}
+            return
+        fi
     fi
     pgm=mega2_${VERSION}_linux
 }
