@@ -79,13 +79,11 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1820302391 "Robert V. Baron" 
-\author 1332494340 "Daniel E. Weeks" 
 \end_header
 
 \begin_body
@@ -699,17 +697,7 @@ reference "sub:VCF-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-IMPUTE2 GEN Format and 
-\change_inserted -1820302391 1444237823
-b
-\change_deleted -1820302391 1444237708
-B
-\change_unchanged
-inary 
-\change_inserted -1820302391 1444237703
-IMPUTE2 
-\change_unchanged
-BGEN Format (See Section 
+IMPUTE2 GEN Format and binary IMPUTE2 BGEN Format (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:impute2-file-format"
@@ -965,8 +953,6 @@ Recent improvements and changes
 
 \begin_layout Subsection
 Enhancements in Mega2 version 4.8.1
-\change_inserted -1820302391 1443033773
-
 \end_layout
 
 \begin_layout Itemize
@@ -1760,34 +1746,16 @@ Use of Mega2 to convert IMPUTE2 GEN or binary IMPUTE2 BGEN format input
 \begin_layout Quote
 The BGEN format: A compressed binary format for typed and imputed genotype
  data, 
-\change_deleted 1332494340 1444166647
-
-\begin_inset CommandInset href
-LatexCommand href
-name "Bgen"
-target "http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html"
-
-\end_inset
-
-
-\change_inserted 1332494340 1444166654
-
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted 1332494340 1444166656
-
 http://www.well.ox.ac.uk/~gav/bgen_format/bgen_format_v1.2.html
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_unchanged
 , Gavin Band and Jonathan Marchini 
 \end_layout
 
@@ -9105,15 +9073,11 @@ Select from options 0 - 5 >
 \begin_layout Standard
 The current choice is indicated with an asterisk.
  
-\change_inserted -1820302391 1444661962
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1444841620
 The definition of the options depends on the whether the pedigree file is
- linkage format or not, and whether the pedigree file has been processed
+ Linkage format or not, and whether the pedigree file has been processed
  by 
 \series bold
 makeped
@@ -9198,8 +9162,6 @@ _
 \end_layout
 
 \begin_layout Quotation
-
-\change_inserted -1820302391 1444665149
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="5">
 <features rotate="0" tabularvalignment="middle">
@@ -9214,12 +9176,8 @@ _
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1444841466
-
 \series bold
 Option
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9228,8 +9186,6 @@ Option
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444667181
 
 \series bold
 common usage
@@ -9237,12 +9193,8 @@ common usage
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1444667199
-
 \emph on
 no makeped and no override
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9251,13 +9203,9 @@ no makeped and no override
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444841342
 
 \series bold
 makeped processsed columns
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9267,12 +9215,8 @@ makeped processsed columns
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1444665277
-
 \series bold
 override columns
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9282,15 +9226,11 @@ override columns
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1444769234
-
 \series bold
 override columns
 \end_layout
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444841357
 
 \series bold
 makeped processed columns 
@@ -9305,12 +9245,8 @@ makeped processed columns
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1444665213
-
 \series bold
 1
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9319,11 +9255,7 @@ makeped processed columns
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444667326
 person index
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9332,11 +9264,7 @@ person index
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444667320
 person ID
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9345,8 +9273,6 @@ person ID
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444769264
 person index
 \end_layout
 
@@ -9356,8 +9282,6 @@ person index
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444769264
 person ID
 \end_layout
 
@@ -9369,13 +9293,9 @@ person ID
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444665207
 
 \series bold
 2
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9384,13 +9304,9 @@ person ID
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444666019
 
 \emph on
 person index
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9399,13 +9315,9 @@ person index
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444666574
 
 \emph on
 person index
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9414,13 +9326,9 @@ person index
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444666685
 
 \emph on
 person index
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9429,8 +9337,6 @@ person index
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444769222
 
 \emph on
 person index
@@ -9444,13 +9350,9 @@ person index
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444665216
 
 \series bold
 3
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9459,8 +9361,6 @@ person index
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444667036
 pedigree ID 
 \begin_inset Quotes eld
 \end_inset
@@ -9473,11 +9373,7 @@ _
 \end_layout
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444666640
 person ID
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9486,8 +9382,6 @@ person ID
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444667048
 pedigree ID 
 \begin_inset Quotes eld
 \end_inset
@@ -9500,11 +9394,7 @@ _
 \end_layout
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444666644
 person ID
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9513,11 +9403,7 @@ person ID
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444841777
 ID: (from linkage)
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9526,8 +9412,6 @@ ID: (from linkage)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444841832
 ID: (from linkage)
 \end_layout
 
@@ -9539,13 +9423,9 @@ ID: (from linkage)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444665220
 
 \series bold
 4
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9581,8 +9461,6 @@ ID: (from linkage)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444769222
 
 \end_layout
 
@@ -9595,12 +9473,8 @@ ID: (from linkage)
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1444665224
-
 \series bold
 5
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9609,13 +9483,9 @@ ID: (from linkage)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444666074
 
 \emph on
 person ID
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9624,13 +9494,9 @@ person ID
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444769328
 
 \emph on
 person ID
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9639,13 +9505,9 @@ person ID
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444769332
 
 \emph on
 person ID
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -9654,8 +9516,6 @@ person ID
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1444769334
 
 \emph on
 person ID
@@ -9672,8 +9532,6 @@ person ID
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1444841045
 PLINK format (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -9755,13 +9613,6 @@ processed
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted -1820302391 1443106663
-\begin_inset Newline newline
-\end_inset
-
- 
-\change_unchanged
 Selecting option 7 will display the pedigree id selection menu: 
 \end_layout
 
@@ -9798,8 +9649,6 @@ Select from options 0 - 3 >
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1444842145
 The options for this menu do not depend on the input file type as we have
  seen previously.
  Option 1 is the pedigree ID from the pedigree file.
@@ -11536,39 +11385,15 @@ Now for the IMPUTE2 data which captures the above model by using probabilities
 \end_layout
 
 \begin_layout LyX-Code
-5	M1:
-\change_inserted -1820302391 1444238044
-2:
-\change_unchanged
-A:T
-\change_deleted -1820302391 1444238080
-:2
-\change_unchanged
-	2	A	T	0 1 0	0 1 0	0 0 1	0 1 0	0 0 1	0 0 1
+5	M1:2:A:T	2	A	T	0 1 0	0 1 0	0 0 1	0 1 0	0 0 1	0 0 1
 \end_layout
 
 \begin_layout LyX-Code
-5	M3:
-\change_inserted -1820302391 1444238054
-4:
-\change_unchanged
-G:C
-\change_deleted -1820302391 1444238074
-:4
-\change_unchanged
-	4	G	C	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0	0 1 0
+5	M3:4:G:C	4	G	C	0 1 0	0 0 1	0 1 0	0 1 0	0 1 0	0 1 0
 \end_layout
 
 \begin_layout LyX-Code
-5	M2:
-\change_inserted -1820302391 1444238068
-6:
-\change_unchanged
-T:A
-\change_deleted -1820302391 1444238071
-:6
-\change_unchanged
-	6	T	A	1 0 0	0 0 1	0 1 0	0 1 0	0 1 0	1 0 0
+5	M2:6:T:A	6	T	A	1 0 0	0 0 1	0 1 0	0 1 0	0 1 0	1 0 0
 \end_layout
 
 \begin_layout Standard
@@ -12647,29 +12472,11 @@ Mega2 4.8.1 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
- 9) IMPUTE2
-\change_deleted 1332494340 1444163413
-/Oxford
-\change_inserted 1332494340 1444163416
- GEN
-\change_unchanged
- format (gen/impute2)
-\change_inserted -1820302391 1443108256
-
+ 9) IMPUTE2 GEN format (gen/impute2)
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1443108261
- 10) IMPUTE2
-\change_deleted 1332494340 1444163423
-/Oxford binary
-\change_inserted 1332494340 1444163426
- BGEN
-\change_inserted -1820302391 1443108261
- format (bgen)
-\change_unchanged
-
+ 10) IMPUTE2 BGEN format (bgen)
 \end_layout
 
 \begin_layout LyX-Code
@@ -14667,13 +14474,9 @@ yes
 
 , the first marker name will be output as it appears; all subsequent markers
  will have a counter appended to their name to make the name unique.
-\change_inserted -1820302391 1444836388
-
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1444836700
 Input menu item: RSID field separator (
 \emph on
 the default is 
@@ -14690,8 +14493,6 @@ the default is
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1444836793
 Often, the RSID field is made up of several subfields that we need to process.
  Several different characters are commonly used to separate the subfields.
  To be flexible and compatible with existing usage, we let you specify the
@@ -14704,8 +14505,6 @@ Often, the RSID field is made up of several subfields that we need to process.
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -21799,13 +21598,7 @@ status collapsed
 \uwave off
 \noun off
 \color none
-	BCF format (
-\change_inserted -1820302391 1444237488
-b
-\change_deleted -1820302391 1444237488
-v
-\change_unchanged
-cf)-
+	BCF format (bcf)-
 \end_layout
 
 \begin_layout Itemize
@@ -22926,8 +22719,6 @@ VCF_Args
 
 \begin_layout Enumerate
 VCF_Marker_Alternative_INFO_Key
-\change_inserted -1820302391 1443213947
-
 \end_layout
 
 \end_deeper
@@ -23233,31 +23024,21 @@ name "par:Input_Format_Type"
 
 \begin_layout Standard
 This item specifies the input file format type as follows:
-\change_inserted -1820302391 1443214478
-
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted 1332494340 1444163873
 \begin_inset ERT
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted 1332494340 1444163886
-
 [0.]
 \backslash
 setcounter{enumi}{0}
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_unchanged
 Mega2 format with header
 \end_layout
 
@@ -23294,15 +23075,7 @@ IMPUTE2 GEN format (gen or impute2)
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1820302391 1444238257
-binary 
-\change_unchanged
-IMPUTE2 
-\change_deleted -1820302391 1444238260
-binary
-\change_unchanged
- BGEN format (bgen)
+binary IMPUTE2 BGEN format (bgen)
 \end_layout
 
 \begin_layout Enumerate
@@ -24906,19 +24679,13 @@ yes
 
 , the markers after the first at the same position have a counter appended
  to their name to make the names unique.
-\change_inserted -1820302391 1444837141
-
 \end_layout
 
 \begin_layout Paragraph
-
-\change_inserted -1820302391 1444837226
 Imputed_RSID_Separator
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1444837286
 Often, the RSID field is made up of several subfields that we need to process.
  To be flexible and compatible with existing usage, we let you specify the
  separator character.
@@ -24931,8 +24698,6 @@ Often, the RSID field is made up of several subfields that we need to process.
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout Paragraph
@@ -33401,13 +33166,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_deleted -1820302391 1444837640
-September 30
-\change_inserted -1820302391 1444837642
-October 15
-\change_unchanged
-, 2015
+October 22, 2015
 \end_layout
 
 \end_inset
@@ -34228,27 +33987,11 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.8.0 to Version 4.8.1 (Released 
-\change_deleted -1820302391 1444837624
-September 30
-\change_inserted -1820302391 1444837629
-October 15
-\change_unchanged
-, 2015)
+Changes from Version 4.8.0 to Version 4.8.1 (Released October 22, 2015)
 \end_layout
 
 \begin_layout Itemize
-Mega2 now supports reading binary IMPUTE2 
-\change_deleted -1820302391 1444238352
-data in 
-\change_unchanged
-BGEN 
-\change_deleted -1820302391 1444238356
-format
-\change_inserted -1820302391 1444238356
-data
-\change_unchanged
-.
+Mega2 now supports reading binary IMPUTE2 BGEN data.
  In addition, for both formats of imputed data (GEN and BGEN), you can now
  specify that duplicate markers be passed on to Mega2.
 \end_layout
