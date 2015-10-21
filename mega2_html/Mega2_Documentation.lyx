@@ -13,7 +13,7 @@
 
 \setcounter{tocdepth}{2}
 \end_preamble
-\use_default_options false
+\use_default_options true
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -46,8 +46,8 @@
 \pdf_colorlinks false
 \pdf_backref false
 \pdf_pdfusetitle true
-\papersize default
-\use_geometry false
+\papersize letterpaper
+\use_geometry true
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 0
@@ -71,6 +71,10 @@
 \shortcut idx
 \color #008000
 \end_index
+\leftmargin 0.6in
+\topmargin 0.6in
+\rightmargin 0.6in
+\bottommargin 0.6in
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation skip
@@ -1288,39 +1292,11 @@ Convert to Mega2 format files: Use the l2a.py utility to convert the three
  files you created as illustrated below: 
 \end_layout
 
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 l2a.py -p pedin.txt -d names.txt -m map.txt -x 01 
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
 
 \end_layout
 
@@ -1371,32 +1347,10 @@ Run mega2
 \begin_layout Standard
 From within a Unix (or Cygwin) shell, at the Unix prompt, type the command:
  
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
+\begin_layout LyX-Code
 mega2 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -3987,6 +3941,273 @@ reference "sec:List-of-third-party"
 , there are several third party programs that are needed by Mega2.
  Mingw only provides Perl and Bash.
  You will have to download Python and R and csh if you need them.
+\end_layout
+
+\begin_layout Subsection
+Windows Msys2/Mingw64 installation
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Windows-Msys2-installation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Msys2 may be thought of as the next generation of the Msys build environment
+ available under Mingw described above.
+ A good source of information on Msys2 is its wiki 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://sourceforge.net/p/msys2/wiki/Home/
+\end_layout
+
+\end_inset
+
+.
+ Msys2 is a minimal environment that includes a package system to allow
+ a user to add various packages to the (Windows) environment including the
+ compiler tool chain.
+ The compiler used with Msys2 is Mingw-w64 (or its 32 bit cousin); its home
+ page is 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://mingw-w64.org/doku.php
+\end_layout
+
+\end_inset
+
+.
+ This compiler is a re-port of the gcc compiler and is not derived from
+ the Mingw compiler port.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Msys2/Mingw64 POSIX windows environment
+\end_layout
+
+\begin_layout Standard
+Msys2 provides a minimal environment running on top of a 
+\series bold
+W
+\series default
+indows platform.
+ The environment is just sufficient to support a package manager and pull
+ down the traditional gcc C++ language compiler.
+ Some additional programs have been ported as well, such as bash, tcsh and
+ python and are available as separate packages.
+ All major libraries and services used are supplied by Windows.
+ Thus, most Unix programs have to be modified to compile and link in this
+ environment.
+ Still, Msys2 programs will run faster than the equivalent programs available
+ under Cygwin which has an interface library between the programs and the
+ Windows services.
+\end_layout
+
+\begin_layout Standard
+Before you attempt to install and run Mega2, Msys2/Mingw-w64 should already
+ have been installed on your Windows machine.
+\end_layout
+
+\begin_layout Paragraph
+Installing Msys2
+\end_layout
+
+\begin_layout Standard
+Download and execute the Msys2 sourceforge page download image
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://sourceforge.net/projects/msys2/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This installation will end and start up the 
+\series bold
+msys2_shell.bat
+\series default
+ for you.
+ You then need to make sure the loaded environment is up to date, run
+\end_layout
+
+\begin_layout LyX-Code
+update-core
+\end_layout
+
+\begin_layout Standard
+followed by
+\end_layout
+
+\begin_layout LyX-Code
+pacman -Su
+\end_layout
+
+\begin_layout Standard
+(Note, if 
+\series bold
+update-core
+\series default
+ indicates packages are in need of update, you need to exit the 
+\series bold
+msys2_shell.bat
+\series default
+ and then restart it before issuing the 
+\series bold
+pacman
+\series default
+ command.)
+\end_layout
+
+\begin_layout Standard
+To prepare to compile Mega2, you must fetch the compiler tool chain and
+ basic support.
+ So you should start the 
+\series bold
+msys2_shell.bat
+\series default
+ program and type
+\end_layout
+
+\begin_layout LyX-Code
+pacman -Sy base-devel
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+pacman -Sy mingw-w64-x86_64-toolchain
+\end_layout
+
+\begin_layout Standard
+In addition, you might want to install the source control system
+\begin_inset Quotes eld
+\end_inset
+
+git
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://git-scm.com/docs/
+\end_layout
+
+\end_inset
+
+.
+ Simply type:
+\end_layout
+
+\begin_layout LyX-Code
+pacman -Sy git
+\end_layout
+
+\begin_layout Standard
+The above process is explained in much more detail in the Msys2 wiki.
+ These tools will bring over more shells script that sets the paths so you
+ can use msys2 and the compiler.
+ Alternately, you can add the repositories to your path by adding
+\end_layout
+
+\begin_layout LyX-Code
+c:
+\backslash
+msys2
+\backslash
+mingw64
+\backslash
+bin
+\end_layout
+
+\begin_layout Standard
+and 
+\end_layout
+
+\begin_layout LyX-Code
+c:
+\backslash
+msys2
+\backslash
+usr
+\backslash
+bin 
+\end_layout
+
+\begin_layout Paragraph
+Building Mega2
+\end_layout
+
+\begin_layout Standard
+You should follow the previous instructions for downloading Mega2 on Windows
+ (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Mega2-Download-instructions"
+
+\end_inset
+
+) and then just build Mega2.
+ The instructions for compiling were given in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Compiling-and-Installing"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Using Mega2
+\end_layout
+
+\begin_layout Standard
+Following the previous recipe, you will have a Mega2 binary program.
+ But as discussed earlier and summarized in section
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:List-of-third-party"
+
+\end_inset
+
+, there are several third party programs that are needed by Mega2.
+ Msys2 provides packages for Perl, Python, Gawk, Tcsh and Bash.
+ Currently, you will have to get R (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.r-project.org/about.html
+\end_layout
+
+\end_inset
+
+) for Msys2 from its site though it may be available as a package soon.
 \end_layout
 
 \begin_layout Subsection
@@ -8526,42 +8747,16 @@ http://linkage.rockefeller.edu/soft/linkage/
 
 ) .
  
-\begin_inset Newline newline
-\end_inset
-
- pre-Makeped LINKAGE pedigree file consist of columns of integer data.
- The pre-Makeped columns are: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
-Pedigree Person Father Mother Gender Phenotype1 Phenotype2 Phenotype3 ...
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
+A pre-Makeped LINKAGE pedigree file consist of columns of integer data.
+ The pre-Makeped columns are: 
 \end_layout
 
-\end_inset
-
-
+\begin_layout LyX-Code
+Pedigree Person Father Mother Gender Phenotype1 Phenotype2 Phenotype3 ...
+ 
 \end_layout
 
 \begin_layout Standard
@@ -8572,17 +8767,17 @@ where missing parents are entered as 0 (zero), and, for the gender column,
  to enter by hand) and breaks loops, which is required by the LINKAGE programs.Th
 e columns should be separated by spaces or tabs (any number of these is
  allowed).
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
- While the order of the phenotypes is arbitrary, it is common to put the
+\begin_layout Standard
+While the order of the phenotypes is arbitrary, it is common to put the
  affection status phenotype first, followed by the marker phenotypes (which,
  for co-dominant markers, are the same as the genotypes).
  
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
- 
+\begin_layout Standard
+
 \series bold
 Phenotype coding: 
 \series default
@@ -8782,9 +8977,9 @@ If not, Mega2 gives you the option to generate unique IDs by prepending
  the total number of individuals, thus it neither checks, nor generates
  unique IDs.
  
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Standard
 Non-numeric pedigree and person identifiers can be indicated using the 
 \begin_inset Quotes eld
 \end_inset
@@ -8857,9 +9052,9 @@ Per:
  If these are provided, Mega2 simply ignores these fields as long as they
  are placed after the phenotype/genotype columns.
  
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Standard
 There is no restriction on the ordering of Ped:, Per: and ID: field pairs
  except that each label has to be followed by the appropriate value.
  Thus these are correct 
@@ -8867,83 +9062,29 @@ There is no restriction on the ordering of Ped:, Per: and ID: field pairs
 \end_inset
 
  
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 ...
  ID: 10001 Ped: 101 Per: 10001
 \end_layout
 
-\begin_layout Standard
+\begin_layout LyX-Code
 ...
  Ped: 101 Per: 10001 ID: 10001
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
- whereas this is not a correct order: 
+whereas this is not a correct order: 
 \begin_inset Newline newline
 \end_inset
 
  
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 ...
  Per: Ped: 10001 101 ID: 10001
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -9171,7 +9312,7 @@ _
 <column alignment="center" valignment="top" width="0.9in">
 <column alignment="center" valignment="top" width="0.9in">
 <row>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9182,7 +9323,7 @@ Option
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9199,7 +9340,7 @@ no makeped and no override
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9210,7 +9351,7 @@ makeped processsed columns
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9221,7 +9362,7 @@ override columns
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9240,7 +9381,7 @@ makeped processed columns
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9251,7 +9392,7 @@ makeped processed columns
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9260,7 +9401,7 @@ person index
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9269,7 +9410,7 @@ person ID
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9278,7 +9419,7 @@ person index
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9289,7 +9430,7 @@ person ID
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9300,7 +9441,7 @@ person ID
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9311,7 +9452,7 @@ person index
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9322,7 +9463,7 @@ person index
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9333,7 +9474,7 @@ person index
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9346,7 +9487,7 @@ person index
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9357,7 +9498,7 @@ person index
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9378,7 +9519,7 @@ person ID
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9399,7 +9540,7 @@ person ID
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9408,7 +9549,7 @@ ID: (from linkage)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9419,7 +9560,7 @@ ID: (from linkage)
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9430,7 +9571,7 @@ ID: (from linkage)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9439,7 +9580,7 @@ ID: (from linkage)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9448,7 +9589,7 @@ ID: (from linkage)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9457,7 +9598,7 @@ ID: (from linkage)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9468,7 +9609,7 @@ ID: (from linkage)
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9479,7 +9620,7 @@ ID: (from linkage)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9490,7 +9631,7 @@ person ID
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9501,7 +9642,7 @@ person ID
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -9512,7 +9653,7 @@ person ID
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15104,41 +15245,12 @@ Corrupt or incomplete records
 Depending on the number and type of loci given in the locus data file, Mega2
  expects each line of the pedigree file to have a certain number of entries.
  It does allow extra entries at the end, which are skipped.
- Thus, if The record does not have all the necessary fields, Mega2 will
+ Thus, if the record does not have all the necessary fields, Mega2 will
  generate error messages like: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 Pedigree 100: entry record 3 is corrupt or incomplete
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \end_deeper
@@ -19919,19 +20031,6 @@ status collapsed
 \emph default
 nosave option, i.e.
  
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -19960,18 +20059,6 @@ mega2 -x
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
 
 \end_layout
 
@@ -20641,7 +20728,7 @@ mitochondrial
 \emph on
 -
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -21218,12 +21305,44 @@ chromosome number for mitochondrial DNA.
 \end_layout
 
 \begin_layout Subsection
-
-\series bold
 Input format options 
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="11" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+flag
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+interpretation
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21240,53 +21359,27 @@ status collapsed
 \end_inset
 
 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
 -mega2
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	Mega2 format with header
 \end_layout
 
-\begin_layout Itemize
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+Mega2 format with header
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21303,53 +21396,26 @@ status collapsed
 \end_inset
 
 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
 -linkage
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	Linkage format
 \end_layout
 
-\begin_layout Itemize
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linkage format
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21366,53 +21432,27 @@ status collapsed
 \end_inset
 
 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
 -extend_linkage
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	Linkage with Mega2 names file
 \end_layout
 
-\begin_layout Itemize
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+Linkage with Mega2 names file
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21429,53 +21469,27 @@ status collapsed
 \end_inset
 
 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
 -bed
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	PLINK binary PED format (bed)
 \end_layout
 
-\begin_layout Itemize
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+PLINK binary PED format (bed)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21492,53 +21506,27 @@ status collapsed
 \end_inset
 
 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
 -ped
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	PLINK PED format (ped)
 \end_layout
 
-\begin_layout Itemize
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+PLINK PED format (ped)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21555,53 +21543,27 @@ status collapsed
 \end_inset
 
 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
 -bcf
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	BCF format (bcf)-
 \end_layout
 
-\begin_layout Itemize
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+BCF format (bcf)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21618,53 +21580,27 @@ status collapsed
 \end_inset
 
 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
 -vcf.gz
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	VCF compressed format (vcf.gz)
 \end_layout
 
-\begin_layout Itemize
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+VCF compressed format (vcf.gz)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21680,54 +21616,28 @@ status collapsed
 
 \end_inset
 
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
--vcf
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	VCF format (vcf)
+-
+vcf
 \end_layout
 
-\begin_layout Itemize
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+VCF format (vcf)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21743,32 +21653,29 @@ status collapsed
 
 \end_inset
 
-
+-
 \emph default
 gen
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	IMPUTE2 GEN format (gen or impute2)-
 \end_layout
 
-\begin_layout Itemize
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+IMPUTE2 GEN format (gen or impute2)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 -
@@ -21784,56 +21691,31 @@ status collapsed
 
 \end_inset
 
+-
+bgen
+\end_layout
 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
--bgen
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
 
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+Binary IMPUTE2 BGEN format (bgen)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
 \end_inset
 
- 
-\begin_inset Newline newline
-\end_inset
 
- 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-	Binary IMPUTE2 BGEN format (bgen)
 \end_layout
 
 \begin_layout Subsection
-
-\series bold
 Missing Value options 
 \end_layout
 
@@ -22106,8 +21988,6 @@ reference "par:value_missing"
 \end_layout
 
 \begin_layout Subsection
-
-\series bold
 General options 
 \end_layout
 
@@ -22404,39 +22284,10 @@ Overview
 \begin_layout Standard
 Mega2 can be run in a batch-mode by invoking it with a single argument which
  is a batch file name: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-> mega2 MEGA2.BATCH
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
+\begin_layout LyX-Code
+mega2 MEGA2.BATCH
 \end_layout
 
 \begin_layout Standard
@@ -25232,40 +25083,11 @@ class
  The value should contain one entry per multiple-liability trait, with white-spa
 ce separating each entry.
  Each entry specifies the trait name followed by the list of affection labels,
- and looks like the following: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
+ and looks like the following:
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 ValueAffecteds=TRAIT:2-1,2-3 trt2:2-*
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -27466,76 +27288,18 @@ This option creates the files needed for analysis via the Affected Pedigree
  Member method (single marker analyses).
  A single file is created for all the markers irrespective of whether they
  are on the same chromosome or not: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 kinml.06
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 for only chromosome 6 and 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 kinml.all
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -27835,43 +27599,6 @@ Create summary files
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Selection Menu: Summary file options 1) Create segregation and relative
- count summary files.
- 2) Create allele frequency summary table.
- 3) Count alleles and genotypes within groups.
- 4) Create genotyping success rate summary.
- 5) Create quantitative phenotype summary.
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
 
 \end_layout
 
@@ -29424,39 +29151,6 @@ GEN
 \end_inset
 
  HWE files: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-hweresults.01 hwetable.01
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout LyX-Code
@@ -30696,76 +30390,18 @@ fam
  file.
  If multiple traits are combined into one output, these are written into
  a separate phenotype file named: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Phenotype file: plinkpheno.05
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
+\begin_layout LyX-Code
+Phenotype file: plink.phe
 \end_layout
 
 \begin_layout Standard
 The shell script for running PLINK is named: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Shell file: plinkshell.05
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
+\begin_layout LyX-Code
+Shell file: plink.05.sh
 \end_layout
 
 \begin_layout Standard
@@ -30833,75 +30469,21 @@ Output files created by Mega2 for Cranefoot 3.2.3:
 \begin_layout Standard
 If there are multiple chromosomes in the data, the combined shell script
  is named 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 C-shell file: crnftshell.all.sh
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Chromosome-specific shell scripts are named: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 C-Shell file: crnftshell.05.sh
 \end_layout
 
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
+\begin_layout LyX-Code
 
 \end_layout
 
@@ -32236,140 +31818,40 @@ mapmarsh.awk frameworkMap.22 22 > mapk.22
 \begin_layout Standard
 [So now we have three chromosome specific map files in Kosambi cM.
  We will place these in one file using the 'cat' command: ] 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 cat mapk.* > map.kos
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
+[Now we must edit the 'map.kos' file to remove the extra internal title lines.]
+ 
 \end_layout
 
-\end_inset
-
- [Now we must edit the 'map.kos' file to remove the extra internal title
- lines.] 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 vi map.kos
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
+[ Convert this file into intermarker format:] 
 \end_layout
 
-\end_inset
-
- [ Convert this file into intermarker format:] 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 mapout.awk map.kos > mapin.kos
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
- [ Convert the intermarker format file into a Mega2 format file in Haldane
+[ Convert the intermarker format file into a Mega2 format file in Haldane
  cM: ] 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\begin_layout LyX-Code
 kos2hal.awk mapin.kos > map.hal
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
- [ And here it is: ] 
+[ And here it is: ] 
 \end_layout
 
 \begin_layout LyX-Code
@@ -38410,19 +37892,6 @@ This is a list of bugs reported by users of Mega2 2.1 beta:
 No spacing between the liability status and liability class if the selected
  affection locus had multiple liability classes.
  Affected options are: 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{verbatim}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -38433,18 +37902,6 @@ begin{verbatim}
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{verbatim}
-\end_layout
-
-\end_inset
-
 
 \end_layout
 
