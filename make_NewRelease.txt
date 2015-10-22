@@ -18,7 +18,7 @@ Check the generated HTML documentation for any formatting mistakes
     
 git clone https://bitbucket.org/dweeks/mega2.git
 
-git clone https://bitbucket.org/dweeks/mega2_binaries.git
+git clone git@bitbucket.org:dweeks/mega2_binaries.git
 
 Move the binaries from the 'mega2_binaries' repository into
 the mega2_bin folder.
