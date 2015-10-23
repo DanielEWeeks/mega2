@@ -608,7 +608,7 @@ static void create_sex_allele_freq_tables(FILE *filep, linkage_ped_top *Top1,
         if (ar->TotalKnownAlleles == 0) {
             sprintf(err_msg,
                     "Marker %s is fully untyped, skipping this marker\n",
-                    Top1->LocusTop->Locus[k].Name);
+                    Top1->LocusTop->Locus[k].LocusName);
             mssgf(err_msg);
             fprintf(filep, "----------------------------------------\n");
             fprintf(filep, "%s\n", err_msg);
@@ -765,7 +765,7 @@ static void create_Y_allele_freq_tables(FILE *filep, linkage_ped_top *Top1,
         if (ar->TotalMaleAlleles == 0) {
             sprintf(err_msg,
                     "Marker %s is fully untyped, skipping this marker\n",
-                    Top1->LocusTop->Locus[k].Name);
+                    Top1->LocusTop->Locus[k].LocusName);
             mssgf(err_msg);
             fprintf(filep, "----------------------------------------\n");
             fprintf(filep, "%s\n", err_msg);
@@ -922,7 +922,7 @@ static void  create_allele_freq_tables(FILE *filep, linkage_ped_top *Top1,
         if (ar.TotalKnownAlleles == 0) {
             sprintf(err_msg,
                     "Marker %s is fully untyped, skipping this marker.",
-                    Top1->LocusTop->Locus[k].Name);
+                    Top1->LocusTop->Locus[k].LocusName);
             mssgf(err_msg);
             fprintf(filep, "----------------------------------------\n");
             fprintf(filep, "%s\n", err_msg);
@@ -982,7 +982,7 @@ static void  write_sex_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
     fprintf(filep, "\n---------------------------------------------------------\n");
 
     if (Top1->LocusTop->Locus[index].Type == AFFECTION)    {
-        fprintf(filep, "Disease locus '%s'\n", Top1->LocusTop->Locus[index].Name);
+        fprintf(filep, "Disease locus '%s'\n", Top1->LocusTop->Locus[index].LocusName);
         fprintf(filep, "There are %d pedigrees containing %d individuals,\nof whom %d are phenotyped.\n",
                 NumTypedPeds, ar->TotalPeople, ar->PhenoCount);
         return;
@@ -990,7 +990,7 @@ static void  write_sex_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
 
     fprintf(filep, "\nChromosome %d : locus %s with %d alleles\n",
             Top1->LocusTop->Marker[index].chromosome,
-            Top1->LocusTop->Locus[index].Name,
+            Top1->LocusTop->Locus[index].LocusName,
             Top1->LocusTop->Locus[index].AlleleCnt);
 
     fprintf(filep, "There are %d pedigrees containing %d individuals, of whom \n",
@@ -1128,7 +1128,7 @@ static void  write_Y_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
     fprintf(filep, "\n---------------------------------------------------------\n");
 
     if (Top1->LocusTop->Locus[index].Type == AFFECTION)    {
-        fprintf(filep, "Disease locus '%s'\n", Top1->LocusTop->Locus[index].Name);
+        fprintf(filep, "Disease locus '%s'\n", Top1->LocusTop->Locus[index].LocusName);
         fprintf(filep,
                 "There are %d pedigrees containing %d males,\nof whom %d are phenotyped.\n",
                 NumTypedPeds, ar->MaleCnt, ar->PhenoCount);
@@ -1137,7 +1137,7 @@ static void  write_Y_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
 
     fprintf(filep, "\nChromosome %d : locus %s with %d alleles\n",
             Top1->LocusTop->Marker[index].chromosome,
-            Top1->LocusTop->Locus[index].Name,
+            Top1->LocusTop->Locus[index].LocusName,
             Top1->LocusTop->Locus[index].AlleleCnt);
 
     fprintf(filep, "There are %d pedigrees containing %d males, of whom \n",
@@ -1196,7 +1196,7 @@ static void            write_allele_freq_table(FILE *filep,
     fprintf(filep, "\n-----------------------------------------------------------\n");
 
     if (Top1->LocusTop->Locus[index].Type == AFFECTION)    {
-        fprintf(filep, "Disease locus '%s'\n", Top1->LocusTop->Locus[index].Name);
+        fprintf(filep, "Disease locus '%s'\n", Top1->LocusTop->Locus[index].LocusName);
         fprintf(filep, "There are %d pedigrees containing %d individuals,\n",
                 NumTypedPeds, ar->TotalPeople);
         fprintf(filep, "of whom %d are phenotyped.\n", ar->PhenoCount);
@@ -1221,7 +1221,7 @@ static void            write_allele_freq_table(FILE *filep,
 
     fprintf(filep, "\nChromosome %d : locus %s with %d alleles\n",
             Top1->LocusTop->Marker[index].chromosome,
-            Top1->LocusTop->Locus[index].Name,
+            Top1->LocusTop->Locus[index].LocusName,
             Top1->LocusTop->Locus[index].AlleleCnt);
 
     fprintf(filep, "There are %d pedigrees containing %d individuals, of whom\n",
@@ -1390,7 +1390,7 @@ void            affected_by_status(linkage_ped_top *Top, int locus)
 #ifdef DEBUG
     sprintf(err_msg,
             "Found %d members with affection status 2 at locus %s.\n",
-            AffEntryCnt, Top->LocusTop->Locus[locus].Name);
+            AffEntryCnt, Top->LocusTop->Locus[locus].LocusName);
     mssgf(err_msg);
 #endif
     return;
@@ -1444,7 +1444,7 @@ void            seg_affected_by_status(linkage_ped_top *Top,
     }
 
     sprintf(message, "Affection status locus %s",
-            Top->LocusTop->Locus[locus].Name);
+            Top->LocusTop->Locus[locus].LocusName);
 
     summary_time_stamp(input_files, segfp, message);
     for (i1 = 0; i1 < 4; i1++)
@@ -1546,7 +1546,7 @@ void            seg_affected_by_status(linkage_ped_top *Top,
         }
     }
     sprintf(err_msg, "Summary for affection status locus %s:",
-            Top->LocusTop->Locus[locus].Name);
+            Top->LocusTop->Locus[locus].LocusName);
     mssgf(err_msg);
     sprintf(err_msg, "%d affected members with status 2.\n", AffEntryCnt);
     mssgf(err_msg);
@@ -1922,7 +1922,7 @@ static void            aff_rel_count(ped_top *Top, int *numchr,
         else
             trel_print[i] = false;
     fprintf(cntfp, "   Summary Counts for affection status locus %s:\n",
-            LPedTreeTop->LocusTop->Locus[trait_pos].Name);
+            LPedTreeTop->LocusTop->Pheno[trait_pos].TraitName);
     fprintf(cntfp, "There are %d pedigrees, of which %d are typed at \n",
             Top->PedCnt, typed);
     if (main_chromocnt == 1)
@@ -2161,7 +2161,7 @@ static void aff_sib_count(linkage_ped_top *NewTop, char *sib_sum_name,
     /* First the sibship section for all nuclear families */
 
     fprintf(sibfp, "Affection status counts for sibships for %s\n",
-            NewTop->LocusTop->Locus[tr].Name);
+            NewTop->LocusTop->Locus[tr].LocusName);
     fprintf(sibfp,
             "--------------------------------------------------------------------------\n");
     fprintf(sibfp,
@@ -2270,7 +2270,7 @@ static void aff_sib_count(linkage_ped_top *NewTop, char *sib_sum_name,
             "--------------------------------------------------------------------------\n");
 
     fprintf(sibfp, "\nAffection status of parents for %s\n",
-            NewTop->LocusTop->Locus[tr].Name);
+            NewTop->LocusTop->Locus[tr].LocusName);
     fprintf(sibfp,
             "---------------------------------------------------\n");
 
@@ -2367,7 +2367,7 @@ static void aff_sib_count(linkage_ped_top *NewTop, char *sib_sum_name,
             continue;
         }
         fprintf(sibfp,"    %-15s %d\n",
-                NewTop->LocusTop->Locus[ChrLoci[loc]].Name,
+                NewTop->LocusTop->Locus[ChrLoci[loc]].LocusName,
                 counts.stdt_pairs[loc]);
     }
     fprintf(sibfp,
@@ -2552,7 +2552,7 @@ void marker_typing_summary(FILE *sum_fp, linkage_ped_top *LPedTreeTop,
            (LPedTreeTop->LocusTop->Locus[loc].Type == BINARY)) {
             fprintf(sum_fp,
                     "%-10s  %7d   %12d          %5.2f\n",
-                    LPedTreeTop->LocusTop->Locus[loc].Name,
+                    LPedTreeTop->LocusTop->Locus[loc].LocusName,
                     LPedTreeTop->LocusTop->Locus[loc].AlleleCnt,
                     typed_per_marker[loc1],
                     100.0 * ((double)typed_per_marker[loc1]/max_per_marker));
@@ -2627,7 +2627,7 @@ static void quant_phenotype_summary(linkage_ped_top *Top, char *file_names[])
         combine_loci = 1;
     } else {
         change_output_chr(file_names[0], -9);
-        grow(file_names[0], ".%s", Top->LocusTop->Locus[qindex].Name);
+        grow(file_names[0], ".%s", Top->LocusTop->Locus[qindex].LocusName);
     }
 
     if (! DEFAULT_OUTFILES) {
@@ -2684,7 +2684,7 @@ static void quant_phenotype_summary(linkage_ped_top *Top, char *file_names[])
         if (Top->LocusTop->Locus[i].Type != QUANT) continue;
         if (!combine_loci && num_quant > 1) {
             sprintf(fname, "%s/%s.%s", output_paths[0],
-                    file_names[0], Top->LocusTop->Locus[i].Name);
+                    file_names[0], Top->LocusTop->Locus[i].LocusName);
         } else {
             sprintf(fname, "%s/%s", output_paths[0], file_names[0]);
         }
@@ -2696,7 +2696,7 @@ static void quant_phenotype_summary(linkage_ped_top *Top, char *file_names[])
             summary_time_stamp(mega2_input_files, fp, "");
         }
         fprintf(fp, "Phenotype Summary for %s\n",
-                Top->LocusTop->Locus[i].Name);
+                Top->LocusTop->Locus[i].LocusName);
         fprintf(fp, "---------------------------------------\n");
         fprintf(fp,
                 "\t\t\tAll\t\t\t\tFounders\n");
@@ -2735,7 +2735,7 @@ static void quant_phenotype_summary(linkage_ped_top *Top, char *file_names[])
         fclose(fp);
         if (!combine_loci && num_quant > 1) {
             sprintf(err_msg, "   Summary file:     %s.%s", file_names[0],
-                    Top->LocusTop->Locus[i].Name);
+                    Top->LocusTop->Locus[i].LocusName);
             mssgf(err_msg);
         }
     }

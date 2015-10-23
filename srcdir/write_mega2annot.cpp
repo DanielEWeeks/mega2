@@ -90,8 +90,8 @@ void create_mega2annot_files(linkage_ped_top **LPedTop, char *file_names[],
 /*   *MrkWidth=0; */
 /*   for(m=0; m < LTop->LocusCnt; m++) { */
 /*     *MrkWidth =  */
-/*       ((strlen(LTop->Locus[m].Name) > *MrkWidth)? */
-/*        strlen(LTop->Locus[m].Name) :  *MrkWidth); */
+/*       ((strlen(LTop->Locus[m].LocusName) > *MrkWidth)? */
+/*        strlen(LTop->Locus[m].LocusName) :  *MrkWidth); */
 /*   } */
 /*   return; */
 /* } */
@@ -107,7 +107,7 @@ static void rename_mega2annot_locus(linkage_locus_top *LTop)
     char *dot;
 
     for (i=0; i < NumChrLoci; i++) {
-        dot = strchr(LTop->Locus[ChrLoci[i]].Name, '.');
+        dot = strchr(LTop->Locus[ChrLoci[i]].LocusName, '.');
         if (dot != NULL) {
 //why       printf("%s\n", dot);
             *dot = '_';
@@ -294,7 +294,7 @@ void write_annotated_names_file(linkage_locus_top *LTop,
             } else {
                 fprintf(fp, "T  ");
             }
-            fprintf(fp, "%s\n", LTop->Locus[*trp].Name);
+            fprintf(fp, "%s\n", LTop->Pheno[*trp].TraitName);
             trp++;
         }
 
@@ -303,28 +303,28 @@ void write_annotated_names_file(linkage_locus_top *LTop,
             switch (LTop->Locus[m].Type) {
             case NUMBERED:
                 if (LTop->Marker[m].chromosome == SEX_CHROMOSOME) {
-                    fprintf(fp, " X  %s\n", LTop->Locus[m].Name);
+                    fprintf(fp, " X  %s\n", LTop->Locus[m].LocusName);
                 } else if (LTop->Marker[m].chromosome == MALE_CHROMOSOME) {
-                    fprintf(fp, " Y  %s\n", LTop->Locus[m].Name);
+                    fprintf(fp, " Y  %s\n", LTop->Locus[m].LocusName);
                 } else {
-                    fprintf(fp, " M  %s\n", LTop->Locus[m].Name);
+                    fprintf(fp, " M  %s\n", LTop->Locus[m].LocusName);
                 }
                 break;
             case AFFECTION:
                 if (LoopOverTrait == 0) {
                     if (LTop->Pheno[m].Props.Affection.ClassCnt > 1) {
-                        fprintf(fp, " L  %s\n", LTop->Locus[m].Name);
+                        fprintf(fp, " L  %s\n", LTop->Locus[m].LocusName);
                     } else {
-                        fprintf(fp, " A  %s\n", LTop->Locus[m].Name);
+                        fprintf(fp, " A  %s\n", LTop->Locus[m].LocusName);
                     }
                 }
                 break;
             case QUANT:
                 if (LoopOverTrait == 0 || LTop->Locus[m].Class == COVARIATE) {
                     if (LTop->Locus[m].Class == COVARIATE) {
-                        fprintf(fp, " C  %s\n", LTop->Locus[m].Name);
+                        fprintf(fp, " C  %s\n", LTop->Locus[m].LocusName);
                     } else {
-                        fprintf(fp, " T  %s\n", LTop->Locus[m].Name);
+                        fprintf(fp, " T  %s\n", LTop->Locus[m].LocusName);
                     }
                 }
                 break;
@@ -387,11 +387,11 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top)
             switch(LTop->Locus[*trp].Type) {
             case AFFECTION:
                 ((LTop->Pheno[*trp].Props.Affection.ClassCnt > 1)?
-                 fprintf(filep, "%s.L.1 %s.L.2 ", LTop->Locus[*trp].Name,  LTop->Locus[*trp].Name) :
-                 fprintf(filep, "%s.A ", LTop->Locus[*trp].Name));
+                 fprintf(filep, "%s.L.1 %s.L.2 ", LTop->Pheno[*trp].TraitName,  LTop->Pheno[*trp].TraitName) :
+                 fprintf(filep, "%s.A ", LTop->Pheno[*trp].TraitName));
                 break;
             case QUANT:
-                fprintf(filep, "%s.T ", LTop->Locus[*trp].Name);
+                fprintf(filep, "%s.T ", LTop->Pheno[*trp].TraitName);
                 break;
             default:
                 break;
@@ -407,12 +407,12 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top)
                 if (LoopOverTrait == 0) {
                     (Loc->Pheno->Props.Affection.ClassCnt > 1)?
                         fprintf(filep, "%s.L.1 %s.L.2 ",
-                                Loc->Name,  Loc->Name) :  fprintf(filep, "%s.A ", Loc->Name);
+                                Loc->LocusName,  Loc->LocusName) :  fprintf(filep, "%s.A ", Loc->LocusName);
                 }
                 break;
             case QUANT:
                 if (LoopOverTrait == 0) {
-                    fprintf(filep, "%s.T ", Loc->Name);
+                    fprintf(filep, "%s.T ", Loc->LocusName);
                 }
                 break;
             case NUMBERED:
@@ -423,7 +423,7 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top)
                 } else {
                     ext = 'M';
                 }
-                fprintf(filep, "%s.%c.1 %s.%c.2 ", Loc->Name,  ext, Loc->Name, ext);
+                fprintf(filep, "%s.%c.1 %s.%c.2 ", Loc->LocusName,  ext, Loc->LocusName, ext);
                 break;
 
             default:
@@ -568,11 +568,11 @@ static void annotated_map_file(linkage_locus_top *LTop, ext_linkage_locus_top *E
 
                 if (LTop->Marker[locus].chromosome < SEX_CHROMOSOME) {
                     fprintf(fp, "%-13s %2d",
-                            LTop->Locus[locus].Name,
+                            LTop->Locus[locus].LocusName,
                             LTop->Marker[locus].chromosome);
                 } else {
                     fprintf(fp, "%-13s %s",
-                            LTop->Locus[locus].Name,
+                            LTop->Locus[locus].LocusName,
                             chrom_num_to_name(LTop->Marker[locus].chromosome, &(chrom_name[0])));
                 }
 
@@ -635,17 +635,17 @@ static void annotated_frequency_file(linkage_locus_top *LTop, char *freqfl)
             locus = ChrLoci[locus1];
             if (LTop->Locus[locus].Class == MARKER)
                 for (all = 0; all < LTop->Locus[locus].AlleleCnt; all++) {
-//                  fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].Name, all + 1,
+//                  fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].LocusName, all + 1,
 //                          LTop->Locus[locus].Allele[all].Frequency);
-                    fprintf(fp, "%s %s %8f\n", LTop->Locus[locus].Name,
+                    fprintf(fp, "%s %s %8f\n", LTop->Locus[locus].LocusName,
                             format_allele(&LTop->Locus[locus], all+1),
                             LTop->Locus[locus].Allele[all].Frequency);
                 }
             else
                 for (all = 0; all < LTop->Locus[locus].AlleleCnt; all++) {
-//                  fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].Name, all + 1,
+//                  fprintf(fp, "%s %d %8f\n", LTop->Locus[locus].LocusName, all + 1,
 //                          LTop->Locus[locus].Allele[all].Frequency);
-                    fprintf(fp, "%s %s %8f\n", LTop->Locus[locus].Name,
+                    fprintf(fp, "%s %s %8f\n", LTop->Locus[locus].LocusName,
                             format_allele(&LTop->Locus[locus], all+1),
                             LTop->Locus[locus].Allele[all].Frequency);
                 }
@@ -668,7 +668,7 @@ static void write_loc_pen(FILE *filep, linkage_locus_rec *Locus, linkage_affecti
         if (xlinked) {
             if (xlinked == 2) {
                 if (clp[tmpi2 - 1].AutoDef == 0) {
-                    fprintf(filep, "%s %d autosomal", Locus->Name, tmpi2);
+                    fprintf(filep, "%s %d autosomal", Locus->LocusName, tmpi2);
                     for (i = 0; i < Locus->Pheno->Props.Affection.PenCnt; i++)
                         fprintf(filep, " %f",  clp[tmpi2 - 1].AutoPen[i]);
                     fprintf(filep, "\n");
@@ -676,20 +676,20 @@ static void write_loc_pen(FILE *filep, linkage_locus_rec *Locus, linkage_affecti
             }
 
             if (clp[tmpi2 - 1].FemaleDef == 0) {
-                fprintf(filep, "%s %d female", Locus->Name, tmpi2);
+                fprintf(filep, "%s %d female", Locus->LocusName, tmpi2);
                 for (i = 0; i < Locus->Pheno->Props.Affection.PenCnt; i++)
                     fprintf(filep, " %f",  clp[tmpi2 - 1].FemalePen[i]);
                 fprintf(filep, "\n");
             }
 
             if (clp[tmpi2 - 1].MaleDef == 0) {
-                fprintf(filep, "%s %d male", Locus->Name, tmpi2);
+                fprintf(filep, "%s %d male", Locus->LocusName, tmpi2);
                 for (i = 0; i < Locus->AlleleCnt; i++)
                     fprintf(filep, " %f",  clp[tmpi2 - 1].MalePen[i]);
                 fprintf(filep, "\n");
             }
         } else {
-            fprintf(filep, "%s %d", Locus->Name, tmpi2);
+            fprintf(filep, "%s %d", Locus->LocusName, tmpi2);
             for (i = 0; i < Locus->Pheno->Props.Affection.PenCnt; i++)
                 fprintf(filep, " %f",  clp[tmpi2 - 1].AutoPen[i]);
             fprintf(filep, "\n");

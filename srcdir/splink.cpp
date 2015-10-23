@@ -599,7 +599,7 @@ void            create_SPLINK(linkage_ped_top **LPTop,
             kk=ChrLoci[k];
             if ((LTop->Locus[kk].Type == NUMBERED) ||
                 (LTop->Locus[kk].Type == BINARY)) {
-                sprintf(pfl, "%s.%s", file_names[0], locus->Name);
+                sprintf(pfl, "%s.%s", file_names[0], locus->LocusName);
                 trp = &(global_trait_entries[0]);
                 for (tr = 0; tr <= nloop; tr++) {
                     if (nloop > 1 && tr==0) continue;
@@ -643,9 +643,9 @@ void            create_SPLINK(linkage_ped_top **LPTop,
                             EXIT(FILE_WRITE_ERROR);
                         }
                     }
-                    fprintf(cfp, "echo Running SPLINK on the marker %s\n", locus->Name);
+                    fprintf(cfp, "echo Running SPLINK on the marker %s\n", locus->LocusName);
                     fprintf(cfp, "splink -l1 -i%s -S+ %s < %s > /dev/null \n",
-                            locus->Name, options, pfl);
+                            locus->LocusName, options, pfl);
                     if (niter == locus_cnt) {
                         fprintf(cfp, "echo SPLINK analyses are completed.\n");
                         fprintf(cfp,

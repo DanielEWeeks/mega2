@@ -264,14 +264,14 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
         void loci_start() {
             if (_tle->Marker->chromosome != UNKNOWN_CHROMO) {
                 pr_printf("%-15s %2d %d ",
-                          _tle->Name,
+                          _tle->LocusName,
                           _tle->Marker->chromosome,
                           (int) _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
             }
             if (_tle->Marker->Props.Numbered.Recoded) {
                 pr_printf("   +  %4s %4s ",
-                          _tle->Allele[0].name,
-                          _tle->Allele[_tle->AlleleCnt == 1 ? 0 : 1].name);
+                          _tle->Allele[0].AlleleName,
+                          _tle->Allele[_tle->AlleleCnt == 1 ? 0 : 1].AlleleName);
             } else {
                 pr_printf("   -  %4s %4s ","A","G"); /* Use dummy labels A/G for markers input with numbered alleles */
             }
@@ -279,8 +279,8 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
         void inner() {
             if (_tle->Marker->Props.Numbered.Recoded) {
                 pr_printf(" %1s%1s ",
-                          (_allele1== 0) ? "N" : _tle->Allele[_allele1 - 1].name,
-                          (_allele2== 0) ? "N" : _tle->Allele[_allele2 - 1].name);
+                          (_allele1== 0) ? "N" : _tle->Allele[_allele1 - 1].AlleleName,
+                          (_allele2== 0) ? "N" : _tle->Allele[_allele2 - 1].AlleleName);
             } else {
                 char all1[2], all2[2];
                 /* If input allele labels were numeric, then use dummy alleles 'A' and 'G' and

@@ -203,7 +203,7 @@ static int read_peds(int line_count, FILE *pfilep,
                 if (persons[i].pheno[locus].Quant <= QUNDEF) {
                     errorvf("File %s, Line %d, Col %d: Invalid quant data at locus %s.\n",
                             mega2_input_files[0], i+1, num_read+lch,
-                            LTop->Locus[locus].Name);
+                            LTop->Locus[locus].LocusName);
                     EXIT(INPUT_DATA_ERROR);
                 }
                 col++;
@@ -215,7 +215,7 @@ static int read_peds(int line_count, FILE *pfilep,
                     persons[i].pheno[locus].Affection.Class == UNDEF) {
                     errorvf("File %s, Line %d, Col %d: Invalid affection data at locus %s.\n",
                             mega2_input_files[0], i+1, num_read+lch,
-                            LTop->Locus[locus].Name);
+                            LTop->Locus[locus].LocusName);
                     EXIT(INPUT_DATA_ERROR);
                 }
                 if (LTop->Pheno[locus].Props.Affection.ClassCnt > 1) {
@@ -232,7 +232,7 @@ static int read_peds(int line_count, FILE *pfilep,
                 if (a1 == UNDEF || a2 == UNDEF) {
                     errorvf("File %s, Line %d, Col %d: Invalid binary data at locus %s.\n",
                             mega2_input_files[0], i+1, num_read+lch,
-                            LTop->Locus[locus].Name);
+                            LTop->Locus[locus].LocusName);
                     EXIT(INPUT_DATA_ERROR);
                 }
                 col += 2;
@@ -251,7 +251,7 @@ static int read_peds(int line_count, FILE *pfilep,
                         if (a1 == UNDEF || a2 == UNDEF) {
                             errorvf("File %s, Line %d, Col %d: Invalid numbered data at locus %s.\n",
                                     mega2_input_files[0], i+1, num_read+lch,
-                                    LTop->Locus[locus].Name);
+                                    LTop->Locus[locus].LocusName);
                             EXIT(INPUT_DATA_ERROR);
                         }
                         break;
@@ -261,7 +261,7 @@ static int read_peds(int line_count, FILE *pfilep,
                             !strcmp(ar2, REC_UNDEF)) {
                             errorvf("File %s, Line %d, Col %d: Invalid numbered data at locus %s.\n",
                                     mega2_input_files[0], i+1, num_read+lch,
-                                    LTop->Locus[locus].Name);
+                                    LTop->Locus[locus].LocusName);
                             EXIT(INPUT_DATA_ERROR);
                         }
                         break;
@@ -638,7 +638,7 @@ linkage_ped_top *read_pre_makeped(FILE *fp, int pedcount,
             errorf("Could not allocate enough memory, exiting.");
             EXIT(MEMORY_ALLOC_ERROR);
         }
-        // NOTE: This never sets LTop->Locus[i].Allele[j].name for entry.cpp::pr_marker_alleles()
+        // NOTE: This never sets LTop->Locus[i].Allele[j].AlleleName for entry.cpp::pr_marker_alleles()
         unique=read_peds(linecount, fp, persons, LTop, col2locus);
         if (!unique) {
             for (i=0; i<linecount; i++) {

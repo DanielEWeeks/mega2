@@ -285,7 +285,7 @@ void create_TDTMAX(linkage_ped_top **LPTop,
             j=reordered_marker_loci[j1];
             if (LTop->Locus[j].Type != NUMBERED &&
                 LTop->Locus[j].Type != BINARY) continue;
-            sprintf(infl, "%s.%s", file_names[0], LTop->Locus[j].Name);
+            sprintf(infl, "%s.%s", file_names[0], LTop->Locus[j].LocusName);
             sprintf(pedfl, "%s/%s", output_paths[tr], infl);
 
             if ((fp = fopen(pedfl, "w")) == NULL)	   {
@@ -334,7 +334,7 @@ void create_TDTMAX(linkage_ped_top **LPTop,
 
             /* now print analysis lines into the shell file */
             fprintf(cfp, "echo Running TDTMAX on the marker %s\n",
-                    Top2->LocusTop->Locus[j].Name);
+                    Top2->LocusTop->Locus[j].LocusName);
             fprintf(cfp, "rm -f data.txt permdata permout permute\n");
             fprintf(cfp, "cp %s data.txt\n", infl);
             fprintf(cfp, "convert << DATA > /dev/null\n");
@@ -349,7 +349,7 @@ void create_TDTMAX(linkage_ped_top **LPTop,
             fprintf(cfp, "$s[1]\n");
             fprintf(cfp, "%d\n",nperm);   /* Number of permutations */
             fprintf(cfp, "DATA2\n");
-            fprintf(cfp, "echo \"Locus: %s  %10.7f  %d\" >> tdtmax.lst\n",Top2->LocusTop->Marker[j].Name, Top2->LocusTop->Marker[j].pos_avg, Top2->LocusTop->Marker[j].chromosome);
+            fprintf(cfp, "echo \"Locus: %s  %10.7f  %d\" >> tdtmax.lst\n",Top2->LocusTop->Marker[j].MarkerName, Top2->LocusTop->Marker[j].pos_avg, Top2->LocusTop->Marker[j].chromosome);
             fprintf(cfp, "cat permout >> tdtmax.lst\n");
             fprintf(cfp, "echo \"----------------------------------\" >> tdtmax.lst\n");
         }  /* for j */
@@ -530,7 +530,7 @@ static void lod2_cshell_file(char *shellfl, char *outfl_name,
                 LTopp->Locus[i].Type == BINARY) {
                 chromosome=LTopp->Marker[i].chromosome;
                 fprintf(lod2_shell_p, " echo Analyzing marker %s\n",
-                        LTopp->Locus[i].Name);
+                        LTopp->Locus[i].LocusName);
                 fprintf(lod2_shell_p, " rm -f outfile.dat \n");
                 fprintf(lod2_shell_p,
                         " lsp mlink %s %s 2 1   %d 0 0 1 0.02 0.48 0 \n",

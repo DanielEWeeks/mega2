@@ -814,9 +814,9 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
         EXIT(SYSTEM_ERROR);
     }
     // Consistency check: Make sure that the marker names (Locus and VCF file marker entry) really do match....
-    if (strcmp(LTop->Locus[Locus_i].Name,ID.c_str()) != 0) {
+    if (strcmp(LTop->Locus[Locus_i].LocusName,ID.c_str()) != 0) {
         errorvf("INTERNAL: Mega2 Locus name '%s' does not match ID '%s' from VCF file.\n",
-                LTop->Locus[Locus_i].Name, ID.c_str());
+                LTop->Locus[Locus_i].LocusName, ID.c_str());
         EXIT(SYSTEM_ERROR);
     }
     // Consistency check: Make sure that the type of the Locus is really a marker...
@@ -824,7 +824,7 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
     linkage_locus_type lltype = LLR->Type;
     linkage_locus_class llclass = LLR->Class;
     if (llclass != MARKER || !(lltype == NUMBERED || lltype == XLINKED || lltype == YLINKED)) {
-        errorvf("INTERNAL: Mega2 Locus name '%s' is not a Marker.\n", LTop->Locus[Locus_i].Name);
+        errorvf("INTERNAL: Mega2 Locus name '%s' is not a Marker.\n", LTop->Locus[Locus_i].LocusName);
         EXIT(SYSTEM_ERROR);
     }
     

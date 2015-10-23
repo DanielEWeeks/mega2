@@ -210,10 +210,10 @@ static void convert_SW2R(R_plot_params_type Rplot_params,
                 if (global_trait_entries[tr] < 0) continue;
                 if (trr == 0) {
                     fprintf(shfp, " -t%s",
-                            Rplot_params.LocusTop->Locus[global_trait_entries[0]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[0]].TraitName);
                 } else {
                     fprintf(shfp, ",%s",
-                            Rplot_params.LocusTop->Locus[global_trait_entries[tr]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[tr]].TraitName);
                 }
                 trr++;
             }
@@ -249,7 +249,7 @@ static void convert_SW2R(R_plot_params_type Rplot_params,
                                 output_stats[st]+1);
                     }
                     fprintf(shfp, " -t%s",
-                            Rplot_params.LocusTop->Locus[global_trait_entries[tr-1]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[tr-1]].TraitName);
 
                     fprintf(shfp, " -o%s/%s", trait_paths[tr], Rdatafile);
                     fprintf(shfp, " %s/%s", trait_paths[tr], swoutfile);
@@ -270,7 +270,7 @@ static void convert_SW2R(R_plot_params_type Rplot_params,
                             output_stats[st]+1);
                 }
                 fprintf(shfp, " -t%s",
-                        Rplot_params.LocusTop->Locus[global_trait_entries[0]].Name);
+                        Rplot_params.LocusTop->Pheno[global_trait_entries[0]].TraitName);
                 fprintf(shfp, " -o%s", Rdatafile);
                 fprintf(shfp, " %s", swoutfile);
                 fprintf(shfp, "\n");
@@ -510,7 +510,7 @@ static void draw_graphs(R_plot_params_type Rplot_params,
                     /* Trait-specific Rdata files are in current folder */
                     change_output_chr(Rdatafile, -9);
                     sprintf(rdataf, "%s_%s", Rdatafile,
-                            Rplot_params.LocusTop->Locus[global_trait_entries[tr-1]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[tr-1]].TraitName);
                 } else if (LoopOverTrait == 1) {
                     sprintf(rdataf, "%s/%s", trait_paths[tr], Rdatafile);
                 } else {
@@ -550,7 +550,7 @@ static void draw_graphs(R_plot_params_type Rplot_params,
                     /* Trait-specific Rdata files are in current folder */
                     change_output_chr(Rdatafile, -9);
                     sprintf(rdataf, "%s_%s", Rdatafile,
-                            Rplot_params.LocusTop->Locus[global_trait_entries[tr-1]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[tr-1]].TraitName);
                 } else if (LoopOverTrait == 1) {
                     sprintf(rdataf,"%s/%s", trait_paths[tr], Rdatafile);
                 } else {
@@ -607,7 +607,7 @@ static void draw_graphs(R_plot_params_type Rplot_params,
                     if (analysis == TO_MERLINONLY && LoopOverTrait == 0 && num_traits > 2) {
                         change_output_chr(Rdatafile, -9);
                         sprintf(rdataf, "%s_%s", Rdatafile,
-                                Rplot_params.LocusTop->Locus[global_trait_entries[tr-1]].Name);
+                                Rplot_params.LocusTop->Pheno[global_trait_entries[tr-1]].TraitName);
                     } else if (LoopOverTrait == 1) {
                         sprintf(rdataf, "%s/%s", trait_paths[tr], Rdatafile);
                     } else {
@@ -643,7 +643,7 @@ static void draw_graphs(R_plot_params_type Rplot_params,
                         /* Trait-specific Rdata files are in current folder */
                         change_output_chr(Rdatafile, -9);
                         sprintf(rdataf, "%s_%s", Rdatafile,
-                                Rplot_params.LocusTop->Locus[global_trait_entries[tr-1]].Name);
+                                Rplot_params.LocusTop->Pheno[global_trait_entries[tr-1]].TraitName);
                     } else if (LoopOverTrait == 1) {
                         sprintf(rdataf, "%s/%s", trait_paths[tr], Rdatafile);
                     } else {
@@ -1513,12 +1513,12 @@ static void convert_allegro2R(R_plot_params_type Rplot_params,
 
             if (global_trait_entries[0] >= 0) {
                 fprintf(shfp, " -t%s",
-                        Rplot_params.LocusTop->Locus[global_trait_entries[0]].Name);
+                        Rplot_params.LocusTop->Pheno[global_trait_entries[0]].TraitName);
             }
             for (tr=1; tr < num_traits; tr++) {
                 if (global_trait_entries[tr] >= 0) {
                     fprintf(shfp, ",%s",
-                            Rplot_params.LocusTop->Locus[global_trait_entries[tr]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[tr]].TraitName);
                 }
             }
             fprintf(shfp, " -o%s", Rdatafile);
@@ -1551,7 +1551,7 @@ static void convert_allegro2R(R_plot_params_type Rplot_params,
                         fprintf(shfp, ",%d", output_stats[st]+1);
                     }
                     fprintf(shfp, " -t%s",
-                            Rplot_params.LocusTop->Locus[global_trait_entries[tr-1]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[tr-1]].TraitName);
                     fprintf(shfp, " -o%s/%s", trait_paths[tr], Rdatafile);
                     fprintf(shfp, " %s", trait_paths[tr]);
                     fprintf(shfp, "`\n");
@@ -1578,7 +1578,7 @@ static void convert_allegro2R(R_plot_params_type Rplot_params,
                             output_stats[st]+1);
                 }
                 fprintf(shfp, " -t%s",
-                        Rplot_params.LocusTop->Locus[global_trait_entries[0]].Name);
+                        Rplot_params.LocusTop->Pheno[global_trait_entries[0]].TraitName);
                 fprintf(shfp, " -o%s", Rdatafile);
                 fprintf(shfp, " . ");
                 fprintf(shfp, "`\n");
@@ -1861,13 +1861,13 @@ static void convert_merlin2R(R_plot_params_type Rplot_params,
 
                 if (global_trait_entries[0] >= 0) {
                     fprintf(shfp, " -t %s",
-                            Rplot_params.LocusTop->Locus[global_trait_entries[0]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[0]].TraitName);
                 }
 
                 for (tr=1; tr < num_traits; tr++) {
                     if (global_trait_entries[tr] >= 0) {
                         fprintf(shfp, ",%s",
-                                Rplot_params.LocusTop->Locus[global_trait_entries[tr]].Name);
+                                Rplot_params.LocusTop->Pheno[global_trait_entries[tr]].TraitName);
                     }
                 }
                 fprintf(shfp, " -o %s", Rdatafile);
@@ -1900,7 +1900,7 @@ static void convert_merlin2R(R_plot_params_type Rplot_params,
                                 input_stat_names[output_stats[st]]);
                     }
                     fprintf(shfp, " -t %s",
-                            Rplot_params.LocusTop->Locus[global_trait_entries[tr-1]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[tr-1]].TraitName);
                     fprintf(shfp, " -o %s/%s", trait_paths[tr], Rdatafile);
                     fprintf(shfp, " %s/%s", trait_paths[tr], merlinoutfile);
                     fprintf(shfp, "`\n");
@@ -1927,7 +1927,7 @@ static void convert_merlin2R(R_plot_params_type Rplot_params,
                     if (global_trait_entries[tr] < 0) continue;
                     change_output_chr(Rdatafile, -9);
                     sprintf(rdataf, "%s_%s", Rdatafile,
-                            Rplot_params.LocusTop->Locus[global_trait_entries[tr]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[tr]].TraitName);
                     change_output_chr(rdataf, numchr);
                     remove_old_file_command(shfp, ".", rdataf);
 
@@ -1938,7 +1938,7 @@ static void convert_merlin2R(R_plot_params_type Rplot_params,
                                 input_stat_names[output_stats[st]]);
                     }
                     fprintf(shfp, " -t %s",
-                            Rplot_params.LocusTop->Locus[global_trait_entries[tr]].Name);
+                            Rplot_params.LocusTop->Pheno[global_trait_entries[tr]].TraitName);
 
                     fprintf(shfp, " -o %s", rdataf);
                     fprintf(shfp, " %s", merlinoutfile);
@@ -1971,10 +1971,10 @@ static void convert_merlin2R(R_plot_params_type Rplot_params,
                     if (global_trait_entries[tr] < 0)  continue;
                     if (trr == 0) {
                         fprintf(shfp, " -t %s",
-                                Rplot_params.LocusTop->Locus[global_trait_entries[tr]].Name);
+                                Rplot_params.LocusTop->Pheno[global_trait_entries[tr]].TraitName);
                     } else {
                         fprintf(shfp, ",%s",
-                                Rplot_params.LocusTop->Locus[global_trait_entries[tr]].Name);
+                                Rplot_params.LocusTop->Pheno[global_trait_entries[tr]].TraitName);
                     }
                     trr++;
                 }
@@ -2011,7 +2011,7 @@ static void convert_merlin2R(R_plot_params_type Rplot_params,
                 tr=0;
             }
             fprintf(shfp, " -t %s",
-                    Rplot_params.LocusTop->Locus[global_trait_entries[tr]].Name);
+                    Rplot_params.LocusTop->Pheno[global_trait_entries[tr]].TraitName);
             fprintf(shfp, " -o %s", Rdatafile);
             fprintf(shfp, " %s", merlinoutfile);
             fprintf(shfp, "`\n");

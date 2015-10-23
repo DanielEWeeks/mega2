@@ -85,7 +85,7 @@ quantitative trait or an affection status column: PLINK will automatically detec
 For PSEQ documentation see: http://atgu.mgh.harvard.edu/plinkseq/input.shtml#plink
 
 By default, the phenotype encoded in column 6 of the FAM file is assumed to be a dichotomous
-case/control phenotype, and is labelled 'phe1'. To give a different name, add: --phenotype t2d
+case/control phenotype, and is labelled 'phe1'. To give a different AlleleName, add: --phenotype t2d
 
 Discussion...
 
@@ -174,14 +174,14 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
                 if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
                 if (first == 1) {
                     skip_trait = global_trait_entries[tr];
-                    //fam_file_phenotype_name = _Top->LocusTop->Locus[global_trait_entries[tr]].Name;
+                    //fam_file_phenotype_name = _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
                     first = 0;
                     continue;
                 }
                 switch (_Top->LocusTop->Locus[global_trait_entries[tr]].Type) {
                     case QUANT:
                         pr_printf("##%s,Float,%s,\"Quantitative trait description\"\n",
-                                  _Top->LocusTop->Locus[global_trait_entries[tr]].Name,
+                                  _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName,
                                   Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read ?
                                   Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9"
                                   );
@@ -191,7 +191,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
                         // status, we will use the customary default of '0'...
                         // The assumption here is that: Case == 2, Control == 1, and Missing == 0
                         pr_printf("##%s,Integer,0,\"Affection status description\"\n",
-                                  _Top->LocusTop->Locus[global_trait_entries[tr]].Name);
+                                  _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName);
                         break;
                     default:
                         // This is an internal error....
@@ -204,7 +204,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
             for (tr = 0, first = 1; tr < num_traits; tr++) {
                 if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
                 if (first == 1) { first = 0; continue; }
-                pr_printf("\t%s", _Top->LocusTop->Locus[global_trait_entries[tr]].Name);
+                pr_printf("\t%s", _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName);
             }
             pr_nl();
         }
@@ -242,7 +242,7 @@ void CLASS_PSEQ::save_pheno_file(linkage_ped_top *Top,
     // phenotype that will go into the .FAM file for the PSEQ --phenotype command line argument.
     for (tr = 0; tr < num_traits; tr++) {
         if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
-        fam_file_phenotype_name = Top->LocusTop->Locus[global_trait_entries[tr]].Name;
+        fam_file_phenotype_name = Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
         break;
     }
     // The first trait will be placed in the .FAM file, all others in the PSEQ pheno file.

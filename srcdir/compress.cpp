@@ -193,11 +193,11 @@ void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *a
                 }
                 const char * estr = "While you set the maximum number of alleles to 2, there are more than two alleles in the data:\nMarker %s has the alleles %s, %s; trying to add %s.\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n";
                 if ( (all1 != allelep->Allele_1) && (all1 != allelep->Allele_2) ) {
-                    errorvf(estr, locus->Name, allelep->Allele_1, allelep->Allele_2, all1);
+                    errorvf(estr, locus->LocusName, allelep->Allele_1, allelep->Allele_2, all1);
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }
                 if ( (all2 != allelep->Allele_1) && (all2 != allelep->Allele_2) ) {
-                    errorvf(estr, locus->Name, allelep->Allele_1, allelep->Allele_2, all2);
+                    errorvf(estr, locus->LocusName, allelep->Allele_1, allelep->Allele_2, all2);
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }
             }
@@ -490,11 +490,11 @@ void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int 
                 }
                 const char * estr = "While you set the maximum number of alleles to 2, there are more than two alleles in the data:\nMarker %s has the alleles %d, %d; trying to add%d.\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n";
                 if ( (all1 != allelep->Allele_1) && (all1 != allelep->Allele_2) ) {
-                    errorvf(estr, locus->Name, allelep->Allele_1, allelep->Allele_2, all1);
+                    errorvf(estr, locus->LocusName, allelep->Allele_1, allelep->Allele_2, all1);
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }
                 if ( (all2 != allelep->Allele_1) && (all2 != allelep->Allele_2) ) {
-                    errorvf(estr, locus->Name, allelep->Allele_1, allelep->Allele_2, all2);
+                    errorvf(estr, locus->LocusName, allelep->Allele_1, allelep->Allele_2, all2);
                     EXIT(OUTOF_BOUNDS_ERROR);
                 }
 

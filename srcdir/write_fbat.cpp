@@ -106,7 +106,7 @@ static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
                 // not quant, skip it ...
 //              if (_LTop->Locus[trait].Type != QUANT) continue;
 
-                pr_printf("%s ", _LTop->Locus[trait].Name);
+                pr_printf("%s ", _LTop->Pheno[trait].TraitName);
             }
             pr_nl();
         }
@@ -154,7 +154,7 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
                 locus = ChrLoci[m];
                 lpe = &(_LTop->Locus[locus]);
                 if (lpe->Class == MARKER)
-                    pr_printf("%s ", _Top->LocusTop->Locus[locus].Name);
+                    pr_printf("%s ", _Top->LocusTop->Locus[locus].LocusName);
             }
             pr_nl();
         }
@@ -285,7 +285,7 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
                           file_names[6],  //fbat.R
                           ((LoopOverTrait && num_traits > 1) ? "../" : ""),
                           file_names[1],  // map
-                          _LTop->Locus[_trait].Name,  // trait
+                          _LTop->Pheno[_trait].TraitName,  // trait
                           file_names[6],              // stem
                           out_fl);                    // chr
                 pr_printf("echo A table of the FBAT results can be found in %s/%s.%s.tbl\n",
@@ -445,8 +445,8 @@ static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
             double pp = base_pair_position_index >= 0 ?_EXLTop->EXLocus[_locus].positions[base_pair_position_index] : 0;
             if (pp < 0) pp = 0;
 
-            double gp = get_gp(_EXLTop, _tle->Type, _tle->Marker->chromosome, _tle->Name, _locus);
-            pr_printf("%s %d %.6f %.0f %d\n", _tle->Name, chr, gp, pp, _tle->Marker->chromosome == SEX_CHROMOSOME);
+            double gp = get_gp(_EXLTop, _tle->Type, _tle->Marker->chromosome, _tle->LocusName, _locus);
+            pr_printf("%s %d %.6f %.0f %d\n", _tle->LocusName, chr, gp, pp, _tle->Marker->chromosome == SEX_CHROMOSOME);
         }
     } *xp = new FBAT_map(Top);
 

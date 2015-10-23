@@ -157,11 +157,11 @@ static void   write_SAGE_sibpal(char *sibfl_name, int numchr,
         }
         if (LoopOverTrait == 1 || num_traits == 2) {
             /* single trait */
-            if (strlen(LLTop->LocusTop->Locus[*trp].Name) > 10) {
-                strncpy(trait_name, LLTop->LocusTop->Locus[*trp].Name, (size_t) 10);
+            if (strlen(LLTop->LocusTop->Pheno[*trp].TraitName) > 10) {
+                strncpy(trait_name, LLTop->LocusTop->Pheno[*trp].TraitName, (size_t) 10);
                 trait_name[10]='\0';
             } else {
-                strcpy(trait_name, LLTop->LocusTop->Locus[*trp].Name);
+                strcpy(trait_name, LLTop->LocusTop->Pheno[*trp].TraitName);
             }
 
             if (LLTop->LocusTop->Locus[*trp].Type == AFFECTION) {
@@ -205,23 +205,23 @@ static void   write_SAGE_sibpal(char *sibfl_name, int numchr,
                 if (HasAff) {
                     fprintf(filep, "    2%5d%5d    0    1    0\n",
                             nmrk, ntr);
-                    if (strlen(LLTop->LocusTop->Locus[*trp].Name) > 10) {
-                        strncpy(trait_name, LLTop->LocusTop->Locus[*trp].Name,
+                    if (strlen(LLTop->LocusTop->Pheno[*trp].TraitName) > 10) {
+                        strncpy(trait_name, LLTop->LocusTop->Pheno[*trp].TraitName,
                                 (size_t) 10);
                         trait_name[10]='\0';
                     } else {
-                        strcpy(trait_name, LLTop->LocusTop->Locus[*trp].Name);
+                        strcpy(trait_name, LLTop->LocusTop->Pheno[*trp].TraitName);
                     }
 
                     for (i=0; i < num_affec; i++) {
                         if (global_trait_entries[i] < 0) continue;
-                        if (strlen(LLTop->LocusTop->Locus[global_trait_entries[i]].Name) > 10) {
+                        if (strlen(LLTop->LocusTop->Pheno[global_trait_entries[i]].TraitName) > 10) {
                             strncpy(trait_name,
-                                    LLTop->LocusTop->Locus[global_trait_entries[i]].Name, (size_t) 10);
+                                    LLTop->LocusTop->Pheno[global_trait_entries[i]].TraitName, (size_t) 10);
                             trait_name[10] = '\0';
                         } else {
                             strcpy(trait_name,
-                                   LLTop->LocusTop->Locus[global_trait_entries[i]].Name);
+                                   LLTop->LocusTop->Pheno[global_trait_entries[i]].TraitName);
                         }
                         fprintf(filep, "%10s   0    0     2    1\n", trait_name);
                     }
@@ -235,12 +235,12 @@ static void   write_SAGE_sibpal(char *sibfl_name, int numchr,
                             nmrk, ntr);
                     for (i=0; i < num_affec; i++) {
                         if (global_trait_entries[i] < 0) continue;
-                        if (strlen(LLTop->LocusTop->Locus[global_trait_entries[i]].Name) > 10) {
-                            strncpy(trait_name, LLTop->LocusTop->Locus[global_trait_entries[i]].Name, (size_t) 10);
+                        if (strlen(LLTop->LocusTop->Pheno[global_trait_entries[i]].TraitName) > 10) {
+                            strncpy(trait_name, LLTop->LocusTop->Pheno[global_trait_entries[i]].TraitName, (size_t) 10);
                             trait_name[10] = '\0';
                         } else {
                             strcpy(trait_name,
-                                   LLTop->LocusTop->Locus[global_trait_entries[i]].Name);
+                                   LLTop->LocusTop->Pheno[global_trait_entries[i]].TraitName);
                         }
                         fprintf(filep, "%10s   0 %4d.    2    1\n", trait_name, (int)MissingQuant);
                     }
@@ -476,7 +476,7 @@ static void  write_SAGE_cntpar(char  *cbatfl_name, int numchr,
         if (LoopOverTrait == 1 || num_traits == 1) {
             if (LLTop->LocusTop->Locus[*trp].Type == AFFECTION) {
                 fprintf(filep, "Genotyped affected relative pairs for %s\n",
-                        LLTop->LocusTop->Locus[*trp].Name);
+                        LLTop->LocusTop->Pheno[*trp].TraitName);
                 fprintf(filep, "    1    1    0    0    0    0    0\n");
                 fprintf(filep, "MF\n");
                 fprintf(filep, "(4X,I%d,1X,A%d,1X,T%d,A1,1X,F8.0)\n",
@@ -484,7 +484,7 @@ static void  write_SAGE_cntpar(char  *cbatfl_name, int numchr,
                 /* length("FSP ") + family_id + 3*per_id + 1 +tab to" */
             } else {
                 fprintf(filep, "Correlations for QTL %s\n",
-                        LLTop->LocusTop->Locus[*trp].Name);
+                        LLTop->LocusTop->Pheno[*trp].TraitName);
                 fprintf(filep, "    1    1\n");
                 fprintf(filep, "MF\n");
                 fprintf(filep, "(4X,I%d,1X,A%d,T%d,A1,1X,F7.3)\n",
@@ -493,11 +493,11 @@ static void  write_SAGE_cntpar(char  *cbatfl_name, int numchr,
             }
 
             /* only the current trait locus */
-            if (strlen(LLTop->LocusTop->Locus[*trp].Name) > 10) {
-                strncpy(trait_name, LLTop->LocusTop->Locus[*trp].Name, (size_t) 10);
+            if (strlen(LLTop->LocusTop->Pheno[*trp].TraitName) > 10) {
+                strncpy(trait_name, LLTop->LocusTop->Pheno[*trp].TraitName, (size_t) 10);
                 trait_name[10] = '\0';
             } else {
-                strcpy(trait_name, LLTop->LocusTop->Locus[*trp].Name);
+                strcpy(trait_name, LLTop->LocusTop->Pheno[*trp].TraitName);
             }
             fprintf(filep, "%s\n", trait_name);
             if (LLTop->LocusTop->Locus[*trp].Type == QUANT) {
@@ -521,12 +521,12 @@ static void  write_SAGE_cntpar(char  *cbatfl_name, int numchr,
             /* Now the names and default values */
             for (i=0; i<num_traits; i++) {
                 SKIP_TRII(*trp);
-                if (strlen(LLTop->LocusTop->Locus[*trp].Name) > 10) {
-                    strncpy(trait_name, LLTop->LocusTop->Locus[*trp].Name,
+                if (strlen(LLTop->LocusTop->Pheno[*trp].TraitName) > 10) {
+                    strncpy(trait_name, LLTop->LocusTop->Pheno[*trp].TraitName,
                             (size_t) 10);
                     trait_name[10] = '\0';
                 } else {
-                    strcpy(trait_name, LLTop->LocusTop->Locus[*trp].Name);
+                    strcpy(trait_name, LLTop->LocusTop->Pheno[*trp].TraitName);
                 }
                 fprintf(filep, "%-10s", trait_name);
                 trp++;
@@ -943,8 +943,8 @@ static void  write_SAGE_locus_file(char *loutfl_name,
         for (locus1 = 0; locus1 < NumChrLoci; locus1++)  {
             Locus = &(LTop->Locus[ChrLoci[locus1]]);
             if (Locus->Type == NUMBERED) {
-                if (Locus->Name != NULL)
-                    fprintf(filep, "%-8s", Locus->Name);
+                if (Locus->LocusName != NULL)
+                    fprintf(filep, "%-8s", Locus->LocusName);
                 else
                     fprintf(filep, "%8d", locus1 + 1);
                 fprintf(filep, "\n");
@@ -1500,8 +1500,8 @@ static void write_SAGE4_par(char *poutfl_name,
                 // quantitative traits. So we use the batch file value if specified.
                 // Since the batch file item must be specified (or is set) if there are missing
                 // values then we know that if it is not then there are no missing values...
-                //fprintf(fp,"  trait=%s,missing=\"NA\"\n", Top->LocusTop->Locus[*trp].Name);
-                fprintf(fp,"  trait=%s", Top->LocusTop->Locus[*trp].Name);
+                //fprintf(fp,"  trait=%s,missing=\"NA\"\n", Top->LocusTop->Pheno[*trp].TraitName);
+                fprintf(fp,"  trait=%s", Top->LocusTop->Pheno[*trp].TraitName);
                 if (ITEM_READ(Value_Missing_Quant_On_Output))
                     fprintf(fp,",missing=\"%s\"",
                             Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
@@ -1509,7 +1509,7 @@ static void write_SAGE4_par(char *poutfl_name,
                 break;
             case AFFECTION:
                 fprintf(fp, "  phenotype=%s,binary,",
-                        Top->LocusTop->Locus[*trp].Name);
+                        Top->LocusTop->Pheno[*trp].TraitName);
                 fprintf(fp, "affected=\"2\",");
                 fprintf(fp, "unaffected=\"1\",");
                 fprintf(fp, "missing=\" \"\n"); /* affection 0 1 2 */
@@ -1527,8 +1527,8 @@ static void write_SAGE4_par(char *poutfl_name,
             case QUANT:
                 if (LoopOverTrait==0) {
                     /* quant phenotype */
-                    //fprintf(fp,"  trait=%s,missing=\"NA\"\n", Top->LocusTop->Locus[*trp].Name);
-                    fprintf(fp,"  trait=%s", Top->LocusTop->Locus[m1].Name);
+                    //fprintf(fp,"  trait=%s,missing=\"NA\"\n", Top->LocusTop->Pheno[*trp].TraitName);
+                    fprintf(fp,"  trait=%s", Top->LocusTop->Pheno[m1].TraitName);
                     if (ITEM_READ(Value_Missing_Quant_On_Output)) {
                         fprintf(fp,",missing=\"%s\"",
                                 Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
@@ -1539,7 +1539,7 @@ static void write_SAGE4_par(char *poutfl_name,
             case AFFECTION:
                 if (LoopOverTrait==0) {
                     fprintf(fp, "  phenotype=%s,binary,",
-                            Top->LocusTop->Locus[m1].Name);
+                            Top->LocusTop->Locus[m1].LocusName);
                     fprintf(fp, "affected=\"2\",");
                     fprintf(fp, "unaffected=\"1\",");
                     fprintf(fp, "missing=\" \"\n"); /* affection 0 1 2 */
@@ -1548,7 +1548,7 @@ static void write_SAGE4_par(char *poutfl_name,
             case BINARY:
             case NUMBERED:
                 fprintf(fp, "  marker=%s",
-                        Top->LocusTop->Locus[m1].Name);
+                        Top->LocusTop->Locus[m1].LocusName);
                 fprintf(fp, ",missing=\"0\"\n");
                 break;
             default:
@@ -1606,7 +1606,7 @@ static void   write_SAGE4_map(char *mapfl_name,
                  "Haldane": "Kosambi"));
         fprintf(fp,"  region=chr%d\n  {\n",  numchr);
         fprintf(fp, "    marker = %s\n",
-                LTop->Locus[markers[0]].Name);
+                LTop->Marker[markers[0]].MarkerName);
         for(m=1; m<i; m++) {
             if ((LTop->Marker[markers[m]].pos_avg -
                 LTop->Marker[markers[m-1]].pos_avg) < 0.0) {
@@ -1620,7 +1620,7 @@ static void   write_SAGE4_map(char *mapfl_name,
                 fprintf(fp, "    theta = %0.7g\n", theta);
             }
             fprintf(fp, "    marker = %s\n",
-                    LTop->Locus[markers[m]].Name);
+                    LTop->Marker[markers[m]].MarkerName);
         }
         fprintf(fp, "  }\n}\n");
         fclose(fp);

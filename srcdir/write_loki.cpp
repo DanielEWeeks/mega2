@@ -350,16 +350,16 @@ static void write_LOKI_map(char *map_file, int numchr,
 	        // different types of sex map types....
 		if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
 		  fprintf(fp, "Position  %-15s %6.3f, %10.7f\n",
-			  LTop->Locus[ChrLoci[locus]].Name,
+			  LTop->Locus[ChrLoci[locus]].LocusName,
 			  LTop->Marker[ChrLoci[locus]].pos_male,
 			  LTop->Marker[ChrLoci[locus]].pos_female);
 		} else if (genetic_distance_sex_type_map == FEMALE_GDMT) {
 		  fprintf(fp, "Position  %-15s %10.7f\n",
-			  LTop->Locus[ChrLoci[locus]].Name,
+			  LTop->Locus[ChrLoci[locus]].LocusName,
 			  LTop->Marker[ChrLoci[locus]].pos_female);
 		} else if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
 		  fprintf(fp, "Position  %-15s %10.7f\n",
-			  LTop->Locus[ChrLoci[locus]].Name,
+			  LTop->Locus[ChrLoci[locus]].LocusName,
 			  LTop->Marker[ChrLoci[locus]].pos_avg);
 		} else {
 		  // This should never happen...
@@ -397,7 +397,7 @@ static void write_LOKI_freq(char *freq_file, int numchr,
             if (LTop->Locus[ChrLoci[locus]].Type == NUMBERED ||
                 LTop->Locus[ChrLoci[locus]].Type == BINARY) {
                 fprintf(fp, "Frequency  %s",
-                        LTop->Locus[ChrLoci[locus]].Name);
+                        LTop->Locus[ChrLoci[locus]].LocusName);
                 for (all=0; all < LTop->Locus[ChrLoci[locus]].AlleleCnt; all++) {
                     fprintf(fp, " %s,%7.6f",
 			    format_allele(&LTop->Locus[ChrLoci[locus]], all+1),
@@ -461,7 +461,7 @@ static void write_LOKI_marker(char *marker_file, int numchr,
                 pedigree_file);
 
         if (LoopOverTrait == 1) {
-            fprintf(fp, ",%s", LTop->Locus[*trp].Name);
+            fprintf(fp, ",%s", LTop->Pheno[*trp].TraitName);
         }
 
         mrk=0; lastmrk=1;
@@ -485,7 +485,7 @@ static void write_LOKI_marker(char *marker_file, int numchr,
                         }
                     }
                     lastmrk=mrk+1;
-                    fprintf(fp, ",%s", LTop->Locus[locus].Name);
+                    fprintf(fp, ",%s", LTop->Locus[locus].LocusName);
                 }
                 break;
 
@@ -521,7 +521,7 @@ static void write_LOKI_marker(char *marker_file, int numchr,
                 mrk++;
                 fprintf(fp,
                         "marker locus %s [hap1_%d(%d), hap2_%d(%d)]\n",
-                        LTop->Locus[ChrLoci[locus]].Name,
+                        LTop->Locus[ChrLoci[locus]].LocusName,
                         numchr, mrk, numchr, mrk);
             }
         }
@@ -555,7 +555,7 @@ static void write_LOKI_link(char *chromo_file, int numchr,
         for (locus = 0; locus < NumChrLoci; locus++) {
             if (LTop->Locus[ChrLoci[locus]].Type == BINARY ||
                 LTop->Locus[ChrLoci[locus]].Type == NUMBERED) {
-                fprintf(fp, ",\n %s", LTop->Locus[ChrLoci[locus]].Name);
+                fprintf(fp, ",\n %s", LTop->Locus[ChrLoci[locus]].LocusName);
             }
         }
         fclose(fp);
@@ -685,8 +685,8 @@ static void write_LOKI_control(char *file_names[], int numchr,
                         // which is called by 'write_premakeped.cpp:save_premakeped_peds()' which is called by
                         // 'create_LOKI_files()'. 'write_affection_data()' always uses '0' for a missing affection status.
                         fprintf(fp, "MISSING \"0\", %s\n",
-                                LTop->Locus[*trp].Name);
-                        warn_if_LOKI_keyword(LTop->Locus[*trp].Name);
+                                LTop->Pheno[*trp].TraitName);
+                        warn_if_LOKI_keyword(LTop->Pheno[*trp].TraitName);
                         break;
                     case QUANT:
                         // Only write the MISSING command if the trait has a missing value (e.g., .item.read true).
@@ -698,9 +698,9 @@ static void write_LOKI_control(char *file_names[], int numchr,
                         if (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read) {
                             fprintf(fp, "MISSING \"%s\", %s\n",
                                     Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
-                                    LTop->Locus[*trp].Name);
+                                    LTop->Pheno[*trp].TraitName);
                         }
-                        warn_if_LOKI_keyword(LTop->Locus[*trp].Name);
+                        warn_if_LOKI_keyword(LTop->Pheno[*trp].TraitName);
                         break;
                         
                     default:
@@ -713,8 +713,8 @@ static void write_LOKI_control(char *file_names[], int numchr,
                         case AFFECTION:
                             // This really is not necessary because the MISSING [PG] statement covers this...
                             fprintf(fp, "MISSING \"0\", %s\n",
-                                    LTop->Locus[global_trait_entries[locus]].Name);
-                            warn_if_LOKI_keyword(LTop->Locus[global_trait_entries[locus]].Name);
+                                    LTop->Pheno[global_trait_entries[locus]].TraitName);
+                            warn_if_LOKI_keyword(LTop->Pheno[global_trait_entries[locus]].TraitName);
                             break;
                             
                         case QUANT:
@@ -723,9 +723,9 @@ static void write_LOKI_control(char *file_names[], int numchr,
                             if (Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read) {
                                 fprintf(fp, "MISSING \"%s\", %s\n",
                                         Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
-                                        LTop->Locus[global_trait_entries[locus]].Name);
+                                        LTop->Pheno[global_trait_entries[locus]].TraitName);
                             }
-                            warn_if_LOKI_keyword(LTop->Locus[global_trait_entries[locus]].Name);
+                            warn_if_LOKI_keyword(LTop->Pheno[global_trait_entries[locus]].TraitName);
                             break;
                             
                         default:
@@ -738,7 +738,7 @@ static void write_LOKI_control(char *file_names[], int numchr,
             fprintf(fp, "TRAIT LOCUS QTL\n");
             fprintf(fp, "# Insert your own model here. \n");
             if (LoopOverTrait == 1) {
-                fprintf(fp, "model %s=QTL\n", LTop->Locus[*trp].Name);
+                fprintf(fp, "model %s=QTL\n", LTop->Pheno[*trp].TraitName);
             } else {
                 if (num_traits > 1) {
                     // THIS LOOKS LIKE A BUG TO ME....
@@ -746,10 +746,10 @@ static void write_LOKI_control(char *file_names[], int numchr,
                     if (global_trait_entries[0] < 0) {
                         /* write only the first QTL */
                         fprintf(fp, "model %s=QTL\n",
-                                LTop->Locus[global_trait_entries[1]].Name);
+                                LTop->Pheno[global_trait_entries[1]].TraitName);
                     } else {
                         fprintf(fp, "model %s=QTL\n",
-                                LTop->Locus[global_trait_entries[0]].Name);
+                                LTop->Pheno[global_trait_entries[0]].TraitName);
                     }
                 }
             }

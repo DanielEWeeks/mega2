@@ -223,8 +223,8 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
             case AFFECTION:
                 fprintf(filep, "%d %d", (int) Locus->Type - 1,
                         Locus->AlleleCnt);
-                if (Locus->Name != NULL)
-                    fprintf(filep, " # %s", Locus->Name);
+                if (Locus->LocusName != NULL)
+                    fprintf(filep, " # %s", Locus->LocusName);
                 fputc('\n', filep);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                     fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
@@ -274,8 +274,8 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
                 if (LoopOverTrait == 0) {
                     fprintf(filep, "%d %d", (int) Locus->Type - 1,
                             Locus->AlleleCnt);
-                    if (Locus->Name != NULL)
-                        fprintf(filep, " # %s", Locus->Name);
+                    if (Locus->LocusName != NULL)
+                        fprintf(filep, " # %s", Locus->LocusName);
                     fputc('\n', filep);
                     for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                         fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
@@ -304,8 +304,8 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
             case BINARY:
                 fprintf(filep, "%d %d", (int) Locus->Type - 1,
                         Locus->AlleleCnt);
-                if (Locus->Name != NULL)
-                    fprintf(filep, " # %s", Locus->Name);
+                if (Locus->LocusName != NULL)
+                    fprintf(filep, " # %s", Locus->LocusName);
                 fputc('\n', filep);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                     fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
@@ -324,9 +324,9 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
                    (if it is a qtl) */
                 if (Top->LocusTop->Locus[*trp].Type == QUANT) {
                     fprintf(filep, "0 2 ");
-                    if (Top->LocusTop->Locus[*trp].Name != NULL)
+                    if (Top->LocusTop->Pheno[*trp].TraitName != NULL)
                         fprintf(filep, " # %s",
-                                Top->LocusTop->Locus[*trp].Name);
+                                Top->LocusTop->Pheno[*trp].TraitName);
                     fprintf(filep, "\n\n\n\n\n\n");
                     /* 5 blank lines */
                 }
@@ -343,8 +343,8 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
                             break;
                         case QUANT:
                             fprintf(filep, "0 2 ");
-                            if (Locus->Name != NULL)
-                                fprintf(filep, " # %s", Locus->Name);
+                            if (Locus->LocusName != NULL)
+                                fprintf(filep, " # %s", Locus->LocusName);
                             fprintf(filep, "\n\n\n\n\n\n");
                             /* 5 blank lines */
                             break;
@@ -357,9 +357,9 @@ static int gh_locus_file1(char *loutfl_name, linkage_ped_top *Top,
             /* Now print the covariates */
             if (num_covariates > 0) {
                 for(tmpi=0; tmpi < num_covariates; tmpi++) {
-                    if (Top->LocusTop->Locus[covariates[tmpi]].Name != NULL)
+                    if (Top->LocusTop->Locus[covariates[tmpi]].LocusName != NULL)
                         fprintf(filep, "4 0  # %s\n",
-                                Top->LocusTop->Locus[covariates[tmpi]].Name);
+                                Top->LocusTop->Locus[covariates[tmpi]].LocusName);
                     else
                         fprintf(filep, "4 0 \n");
                 }
@@ -956,8 +956,8 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
             case AFFECTION:
             case QUANT:
                 fprintf(filep, "%d %d", (int) Locus->Type - 1, Locus->AlleleCnt);
-                if (Locus->Name != NULL)
-                    fprintf(filep, " # %s\n", Locus->Name);
+                if (Locus->LocusName != NULL)
+                    fprintf(filep, " # %s\n", Locus->LocusName);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                     fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
                 }
@@ -966,8 +966,8 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
             case BINARY:
             case NUMBERED:
                 fprintf(filep, "%d %d", (int) Locus->Type - 1, Locus->AlleleCnt);
-                if (Locus->Name != NULL)
-                    fprintf(filep, " # %s\n", Locus->Name);
+                if (Locus->LocusName != NULL)
+                    fprintf(filep, " # %s\n", Locus->LocusName);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                     fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
                 }
@@ -1018,8 +1018,8 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
             case AFFECTION:
                 if (LoopOverTrait == 0 || Locus->Class == COVARIATE) {
                     fprintf(filep, "%d %d", (int) Locus->Type - 1, Locus->AlleleCnt);
-                    if (Locus->Name != NULL)
-                        fprintf(filep, " # %s", Locus->Name);
+                    if (Locus->LocusName != NULL)
+                        fprintf(filep, " # %s", Locus->LocusName);
                     fputc('\n', filep);
                     for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                         fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
@@ -1046,8 +1046,8 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
             case QUANT:
                 if (LoopOverTrait == 0 || Locus->Class == COVARIATE) {
                     fprintf(filep, "%d %d", (int) Locus->Type - 1, Locus->AlleleCnt);
-                    if (Locus->Name != NULL)
-                        fprintf(filep, " # %s", Locus->Name);
+                    if (Locus->LocusName != NULL)
+                        fprintf(filep, " # %s", Locus->LocusName);
                     fputc('\n', filep);
                     for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                         fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
@@ -1069,8 +1069,8 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
 
             case BINARY:
                 fprintf(filep, "%d %d", (int) Locus->Type - 1, Locus->AlleleCnt);
-                if (Locus->Name != NULL)
-                    fprintf(filep, " # %s", Locus->Name);
+                if (Locus->LocusName != NULL)
+                    fprintf(filep, " # %s", Locus->LocusName);
 		// THE COMMENT CAN COME HERE AFTER THE LOCUS NAME>...
                 fputc('\n', filep);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
@@ -1086,8 +1086,8 @@ void write_gh_locus_file(char *loutfl_name, linkage_locus_top *LTop,
                 break;
             case NUMBERED:
                 fprintf(filep, "%d %d", (int) Locus->Type - 1, Locus->AlleleCnt);
-                if (Locus->Name != NULL)
-                    fprintf(filep, " # %s", Locus->Name);
+                if (Locus->LocusName != NULL)
+                    fprintf(filep, " # %s", Locus->LocusName);
                 fputc('\n', filep);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                     fprintf(filep, " %7.6f", Locus->Allele[allele].Frequency);
@@ -1591,10 +1591,10 @@ static void   write_gh_cshell_file(char *gh_script, int *numchr, char *gh_in,
                         if (diff < 0.0)   {
                             warnvf("loci are not in correct order\n");
                             warnvf("    Locus %d (%s) is at position %5.1f\n",
-                                    *locus,LTop->Locus[*locus].Name,
+                                    *locus,LTop->Locus[*locus].LocusName,
                                     LTop->Marker[*locus].pos_avg);
                             warnvf("    Locus %d (%s) is at position %5.1f\n",
-                                    *locus1,LTop->Locus[*locus1].Name,
+                                    *locus1,LTop->Locus[*locus1].LocusName,
                                     LTop->Marker[*locus1].pos_avg);
                         } else {
                             diff = ((LTop->map_distance_type == 'h') ? diff : haldane_x(kosambi_theta(diff)));
@@ -1640,9 +1640,9 @@ static void   write_gh_cshell_file(char *gh_script, int *numchr, char *gh_in,
                 if (position[tmpi2]/100.0 - prev > gap) {
                         fprintf(fp, "echo \"@xaxis tick %d, %.3f\" >> ghp_xmgr.%s \n",
 				ntick, position[tmpi2]/100.0, chr_str);
-                        if (Locus->Name != NULL)
+                        if (Locus->LocusName != NULL)
                             fprintf(fp, "echo \'@xaxis ticklabel %d, \"%s\"\' >> ghp_xmgr.%s \n",
-				    ntick, Locus->Name, chr_str);
+				    ntick, Locus->LocusName, chr_str);
                         ntick++;
                         prev = position[tmpi2]/100.0;
                     }
@@ -2248,8 +2248,8 @@ void            create_gh_file(linkage_ped_top **Top,
 /* 		LTop->Marker[markers[numbered[i+1]]].pos_avg >= 0.0) { */
 /* 	      sprintf(err_msg,  */
 /* 		      "%s and %s are not in order of increasing map distance!", */
-/* 		      LTop->Locus[markers[numbered[i]]].Name, */
-/* 		      LTop->Locus[markers[numbered[i+1]]].Name); */
+/* 		      LTop->Marker[markers[numbered[i]]].MarkerName, */
+/* 		      LTop->Marker[markers[numbered[i+1]]].MarkerName); */
 /* 	      warnf(err_msg); */
 /* 	      sprintf(err_msg, */
 /* 		      "Their respective map positions are %7.4g and %7.4g respectively.",  */
@@ -2350,8 +2350,8 @@ void print_recomb_fracs(FILE *filep,
                 // If the markers are real, are they in the right order?
                 if (delta < 0.0 && marker >= 0.0 && marker_next >= 0.0) {
                     warnvf("%s (%.5g) and %s (%.5g) are not ordered by increasing map distance; using abs(distance)!\n",
-                           LTop->Locus[markers[i]].Name, marker,
-                           LTop->Locus[markers[i+1]].Name, marker_next);
+                           LTop->Marker[markers[i]].MarkerName, marker,
+                           LTop->Marker[markers[i+1]].MarkerName, marker_next);
                     //CPK: warnf("Setting the distance between these to zero cM.");
                 }
 	        // Both these conversion functions return 0 thetas if difference is negative.

@@ -98,7 +98,7 @@ int             UnMappedLociCheck(linkage_ped_top * Top)
             (Top->LocusTop->Locus[reordered_marker_loci[i]].Type == NUMBERED ||
              Top->LocusTop->Locus[reordered_marker_loci[i]].Type == BINARY)) {
             printf("%s ",
-                   Top->LocusTop->Locus[reordered_marker_loci[i]].Name);
+                   Top->LocusTop->Marker[reordered_marker_loci[i]].MarkerName);
             unmapped = 1;
         }
     }
@@ -164,7 +164,7 @@ int  input_observed_freq_check(linkage_ped_top *Top, double threshold)
                     first_time = 0;
                 }
                 grow(err_msg, "%s: SSD=%9.7f ",
-                     Top->LocusTop->Locus[i].Name, sum_squared[j]);
+                     Top->LocusTop->Locus[i].LocusName, sum_squared[j]);
 
                 flush++;
                 if (flush == 2) {
@@ -274,12 +274,12 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                 if (strlen(err_msg) >= 67) {
                     SECTION_ERR(not_bialleleic);
                     warnf(err_msg);
-                    strcpy(err_msg, LTop->Locus[locus].Name);
+                    strcpy(err_msg, LTop->Locus[locus].LocusName);
                 } else if (first_time) {
-                    strcpy(err_msg, LTop->Locus[locus].Name);
+                    strcpy(err_msg, LTop->Locus[locus].LocusName);
                     first_time = 0;
                 } else {
-                    grow(err_msg, ", %s", LTop->Locus[locus].Name);
+                    grow(err_msg, ", %s", LTop->Locus[locus].LocusName);
                 }
             }
         }
@@ -658,7 +658,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                     }
                     fprintf(reset_fp, "%s      All   %s\n", 
                             Top->PedTree[ped].Name, 
-                            LTop->Locus[locus].Name);
+                            LTop->Locus[locus].LocusName);
 
                     NonMendelianReset = 1;
                     if (imend) {

@@ -425,14 +425,14 @@ static int save_pap_hdr(char *hdr_file_name, linkage_locus_top *LocusTop,
         }
         if (LoopOverTrait == 1) {
             Locus = &(LocusTop->Locus[*trp]);
-            if (strlen(Locus->Name) <= 8)
-                fprintf(filep, "%8s", Locus->Name);
+            if (strlen(Locus->LocusName) <= 8)
+                fprintf(filep, "%8s", Locus->LocusName);
             else {
                 for (tmpi=0 ; tmpi < 8; tmpi++)
-                    lname[tmpi]=Locus->Name[strlen(Locus->Name) - 8 + tmpi];
+                    lname[tmpi]=Locus->LocusName[strlen(Locus->LocusName) - 8 + tmpi];
                 lname[8]='\0';
                 fprintf(filep, "%8s", lname);
-                /*	    strcpy(Locus->Name, lname); */
+                /*	    strcpy(Locus->LocusName, lname); */
             }
             ncol++;
         }
@@ -446,14 +446,14 @@ static int save_pap_hdr(char *hdr_file_name, linkage_locus_top *LocusTop,
             case AFFECTION:
             case QUANT:
                 if (LoopOverTrait == 0)  {
-                    if (strlen(Locus->Name) <= 8)
-                        fprintf(filep, "%8s", Locus->Name);
+                    if (strlen(Locus->LocusName) <= 8)
+                        fprintf(filep, "%8s", Locus->LocusName);
                     else {
                         for (tmpi=0 ; tmpi < 8; tmpi++)
-                            lname[tmpi]=Locus->Name[strlen(Locus->Name) - 8 + tmpi];
+                            lname[tmpi]=Locus->LocusName[strlen(Locus->LocusName) - 8 + tmpi];
                         lname[8]='\0';
                         fprintf(filep, "%8s", lname);
-                        /*	    strcpy(Locus->Name, lname); */
+                        /*	    strcpy(Locus->LocusName, lname); */
                     }
                     ncol++;
                 }
@@ -461,14 +461,14 @@ static int save_pap_hdr(char *hdr_file_name, linkage_locus_top *LocusTop,
 
             case NUMBERED:
             case BINARY:
-                if (strlen(Locus->Name) <= 8)
-                    fprintf(filep, "%8s", Locus->Name);
+                if (strlen(Locus->LocusName) <= 8)
+                    fprintf(filep, "%8s", Locus->LocusName);
                 else {
                     for (tmpi=0 ; tmpi < 8; tmpi++)
-                        lname[tmpi]=Locus->Name[strlen(Locus->Name) - 8 + tmpi];
+                        lname[tmpi]=Locus->LocusName[strlen(Locus->LocusName) - 8 + tmpi];
                     lname[8]='\0';
                     fprintf(filep, "%8s", lname);
-                    /*	    strcpy(Locus->Name, lname); */
+                    /*	    strcpy(Locus->LocusName, lname); */
                 }
                 ncol++;
                 break;

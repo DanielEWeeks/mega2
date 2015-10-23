@@ -146,7 +146,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             markers_i++;
         }
         void inner() {
-            pr_printf("%15s ", _tle->Name);
+            pr_printf("%15s ", _tle->LocusName);
             markers_per_chromo[markers_i]++;
         }
         void file_trailer() {
@@ -243,7 +243,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             if (Mega2BatchItems[Structure$PopDataPheno].items_read) {
                 char *PopDataPheno = Mega2BatchItems[Structure$PopDataPheno].value.name;
                 for (i=0; i<_LTop->LocusCnt; i++) {
-                    if (_LTop->Locus[i].Type == QUANT && strcasecmp(PopDataPheno, _LTop->Locus[i].Name) == 0) {
+                    if (_LTop->Locus[i].Type == QUANT && strcasecmp(PopDataPheno, _LTop->Locus[i].LocusName) == 0) {
                         PopDataPheno_i = i;
                         popdata = 1;
                     }

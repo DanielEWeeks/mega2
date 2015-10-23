@@ -79,7 +79,7 @@ typedef struct _allele_rec {
 /* structure containing the information on a locus and
    it alleles' substructures */
 typedef struct _locus_rec {
-    char       *Name;
+    char       *LocusName;
     int         AlleleCnt;
     int         chromosome;
     int         linkage_loc_num;

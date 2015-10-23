@@ -329,10 +329,10 @@ void           set_output_paths(analysis_type analysis,
                     output_paths[j] = Mega2BatchItems[/* 16 */ Trait_Subdirs].value.mult_names[j-1];
                 } else {
                     output_paths[j] =
-                        CALLOC(strlen(Top->LocusTop->Locus[trait_loc_num[i-1]].Name)+1,
+                        CALLOC(strlen(Top->LocusTop->Pheno[trait_loc_num[i-1]].TraitName)+1,
                                char);
                     strcpy(output_paths[j],
-                           Top->LocusTop->Locus[trait_loc_num[i-1]].Name);
+                           Top->LocusTop->Pheno[trait_loc_num[i-1]].TraitName);
                 }
                 j++;
             }
@@ -343,7 +343,7 @@ void           set_output_paths(analysis_type analysis,
                 output_paths[j] = CALLOC((size_t) 2*FILENAME_LENGTH, char);
                 if (analysis->skip_trait(Top->LocusTop, trait_loc_num[i-1])) continue;
                 sprintf(output_paths[j], "%s",
-                        Top->LocusTop->Locus[trait_loc_num[i-1]].Name);
+                        Top->LocusTop->Pheno[trait_loc_num[i-1]].TraitName);
                 j++;
             }
             /* first print the n path_names */
@@ -365,7 +365,7 @@ void           set_output_paths(analysis_type analysis,
 
                     printf(" %d) Output directory for %-15s:    %s[%s]\n",
                            j,
-                           Top->LocusTop->Locus[trait_loc_num[i-1]].Name,
+                           Top->LocusTop->Pheno[trait_loc_num[i-1]].TraitName,
                            output_paths[j],
                            ((access(dirname, F_OK)? "new":"existing")));
                     trait_skip[j] = i-1;
@@ -379,7 +379,7 @@ void           set_output_paths(analysis_type analysis,
 
                 if (choice > 0 && choice <= j-1) {
                     printf("Enter new directory name for trait %s > ",
-                           Top->LocusTop->Locus[trait_loc_num[trait_skip[choice]]].Name);
+                           Top->LocusTop->Pheno[trait_loc_num[trait_skip[choice]]].TraitName);
                     fcmap(stdin, "%s", output_paths[choice]);
                 }
                 else

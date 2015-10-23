@@ -130,7 +130,7 @@ void make_marker(linkage_locus_top *LTop)
     MARKERS.clear();
 
     for (m=0; m < LTop->LocusCnt; m++) {
-        MARKERS[LTop->Locus[m].Name] = m;
+        MARKERS[LTop->Locus[m].LocusName] = m;
     }
 
     return;

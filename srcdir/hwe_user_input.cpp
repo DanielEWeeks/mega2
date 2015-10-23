@@ -659,7 +659,7 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
     for (m = 0; m < num_loci; m++) {
         linkage_locus_rec *locus = &Top->LocusTop->Locus[loci_indexes[m]];
         /* initialize R file for every marker */
-        sprintf(mrkfl, "%s.%s", geno_file, locus->Name);
+        sprintf(mrkfl, "%s.%s", geno_file, locus->LocusName);
         hwe_in = fopen(mrkfl, "w");
         fprintf(hwe_in, "Pedigree Individual allele1\tallele2\n");
 
@@ -698,7 +698,7 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
         }
         fclose(hwe_in);
         /* Log the number of half-types */
-        sprintf(err_msg, "Marker %s: Found %d fully-typed", locus->Name, num_fulltyped);
+        sprintf(err_msg, "Marker %s: Found %d fully-typed", locus->LocusName, num_fulltyped);
         if (num_halftyped > 0) {
             grow(err_msg, " and %d half-typed individuals.",
                  num_halftyped);
@@ -709,9 +709,9 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
 
         /* add the marker name to the list in the R-script */
         if (m < (num_loci-1)) {
-            fprintf(Rfl, "\"%s\", ", locus->Name);
+            fprintf(Rfl, "\"%s\", ", locus->LocusName);
         } else {
-            fprintf(Rfl, "\"%s\");\n", locus->Name);
+            fprintf(Rfl, "\"%s\");\n", locus->LocusName);
         }
     }
 
@@ -892,7 +892,7 @@ void hwe_user_input(linkage_ped_top *LPedTreeTop, int *numchr,
     char R_script[30], chr[4];
     char prog_names[5][8] = { "GEN", "HWE", "CHISQ", "EXACT", "MENDEL"};
 
-#define _mrk_name(i)   (ltop->Locus[i].Name)
+#define _mrk_name(i)   (ltop->Marker[i].MarkerName)
 #define _num_all(i)   (ltop->Locus[i].AlleleCnt)
 
     input_files=mega2_input_files;
@@ -1016,7 +1016,7 @@ void hwe_user_input(linkage_ped_top *LPedTreeTop, int *numchr,
         create_mssg(TO_HWETEST);
         for (ii=0; ii < num_loci; ii++) {
             sprintf(err_msg, "    Genotypes file:             %s.%s",
-                    file_names[0], LPedTreeTop->LocusTop->Locus[loci_indxs[ii]].Name);
+                    file_names[0], LPedTreeTop->LocusTop->Locus[loci_indxs[ii]].LocusName);
             mssgf(err_msg);
         }
         if (access(outfile_name1, F_OK) == 0) {

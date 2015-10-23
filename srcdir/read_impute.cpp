@@ -1050,14 +1050,14 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
                 if (entry->pheno[i].Affection.Status == UNDEF) {
                     SECTION_ERR(illegal_affect);
                     errorvf("File %s, Entry %d : Invalid status at locus %s\n",
-                            C(sample_file), entry->rec_num+HDR, LTop->Locus[i].Name);
+                            C(sample_file), entry->rec_num+HDR, LTop->Locus[i].LocusName);
                     num_errors++;
                 }
                 if (LTop->Pheno[i].Props.Affection.ClassCnt != 1) {
                     if (entry->pheno[i].Affection.Class == UNDEF) {
                         SECTION_ERR(illegal_affect);
                         errorvf("File \"%s\", Entry %d : Invalid liability class at locus %s\n\n",
-                                C(sample_file), entry->rec_num+HDR, LTop->Locus[i].Name);
+                                C(sample_file), entry->rec_num+HDR, LTop->Locus[i].LocusName);
                         num_errors++;
                     }
                 }
@@ -1227,7 +1227,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
         tod_per.reset();
         annotated_ped_rec *entry = persons;
 //      if (mrk_idx == 237)
-//          warnvf("Marker 237 == %s, scale = \n", locus->Name);
+//          warnvf("Marker 237 == %s, scale = \n", locus->LocusName);
 	for(int p = 0 ; p < people_filtered; p++, entry++) {
             sam++;
 

@@ -347,7 +347,7 @@ void liability_summary(char **input_files, linkage_ped_top *LPedTreeTop,
         if (global_trait_entries[kk] < 0) continue;
         if (ltop->Locus[global_trait_entries[kk]].Type == AFFECTION) {
             loci_AFFECTION[i_AFF++]=global_trait_entries[kk];
-            sprintf(err_msg, "  %s", ltop->Locus[global_trait_entries[kk]].Name);
+            sprintf(err_msg, "  %s", ltop->Pheno[global_trait_entries[kk]].TraitName);
             mssgf(err_msg);
         }
     }

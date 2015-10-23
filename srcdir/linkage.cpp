@@ -276,7 +276,7 @@ static    void  copy_llocusdata(linkage_locus_rec *fromrec, linkage_locus_rec *t
 void clear_llocusrec(linkage_locus_rec *Locus, linkage_locus_type Type)
 {
     if (Locus == NULL) return;
-    Locus->Name = NULL;
+    Locus->LocusName = NULL;
     Locus->AlleleCnt = 0;
     Locus->Allele = NULL;
     Locus->Type = TYPE_UNSET;
@@ -444,9 +444,9 @@ void   free_all_from_llocusrec(linkage_locus_rec *Locus)
 
     if (Locus == NULL)
         return;
-    if (Locus->Name != NULL) {
-        free(Locus->Name);
-        Locus->Name = NULL;
+    if (Locus->LocusName != NULL) {
+        free(Locus->LocusName);
+        Locus->LocusName = NULL;
     }
     if (Locus->Allele != NULL)     {
         free(Locus->Allele);
@@ -630,8 +630,8 @@ void  copy_linkage_locus_rec(linkage_locus_rec *from,
 
     int j;
 
-    if (from->Name != NULL)
-        strcpy(to->Name, from->Name);
+    if (from->LocusName != NULL)
+        strcpy(to->LocusName, from->LocusName);
     to->AlleleCnt = from->AlleleCnt;
     to->Type = from->Type;
 //  to->Class = to->Class; broken since v4.5.4
@@ -942,7 +942,7 @@ void malloc_linkage_locus_top(linkage_ped_top *Original,
     Copy->LocusTop->Marker = (CALLOC((size_t) Original->LocusTop->MarkerCnt, marker_rec)) - Original->LocusTop->PhenoCnt;
 
     for (i = 0; i < locuscnt; i++) {
-        Copy->LocusTop->Locus[i].Name = CALLOC((size_t) FILENAME_LENGTH, char);
+        Copy->LocusTop->Locus[i].LocusName = CALLOC((size_t) FILENAME_LENGTH, char);
         linkage_locus_rec *Locus = &Copy->LocusTop->Locus[i];
         switch(Original->LocusTop->Locus[i].Type) {
         case BINARY:
@@ -1004,7 +1004,7 @@ void malloc_linkage_locus_top1(linkage_ped_top *Original,
     Copy->LocusTop->Locus = CALLOC(locuscnt, linkage_locus_rec);
 
     for (i = 0; i < locuscnt; i++) {
-        Copy->LocusTop->Locus[i].Name = CALLOC((size_t) FILENAME_LENGTH, char);
+        Copy->LocusTop->Locus[i].LocusName = CALLOC((size_t) FILENAME_LENGTH, char);
         if (alloc_alleles) {
             Copy->LocusTop->Locus[i].Allele =
                 CALLOC((size_t) Original->LocusTop->Locus[locus_inds[i]].AlleleCnt,
@@ -1515,7 +1515,7 @@ static void connect_loopbreakers(linkage_ped_rec *S_Entry,
         case QUANT:
             if (fabs(S_Entry->Pheno[locus1].Quant - D_Entry->Pheno[locus1].Quant) >= EPSILON) {
                 sprintf(err_msg, "Ped %d, Trait locus %s:",
-                        Ped->Num, Top1->LocusTop->Locus[locus1].Name);
+                        Ped->Num, Top1->LocusTop->Locus[locus1].LocusName);
                 errorf(err_msg);
                 sprintf(err_msg, "Loop person %d has phenotype %10.7f",
                         S_Entry->ID, S_Entry->Pheno[locus1].Quant);
@@ -1529,7 +1529,7 @@ static void connect_loopbreakers(linkage_ped_rec *S_Entry,
         case AFFECTION:
             if (S_Entry->Pheno[locus1].Affection.Status != D_Entry->Pheno[locus1].Affection.Status) {
                 sprintf(err_msg, "Ped %d, Trait locus %s:",
-                        Ped->Num, Top1->LocusTop->Locus[locus1].Name);
+                        Ped->Num, Top1->LocusTop->Locus[locus1].LocusName);
                 errorf(err_msg);
                 sprintf(err_msg, "Loop person %d has status %d",
                         S_Entry->ID, S_Entry->Pheno[locus1].Affection.Status);
@@ -1542,7 +1542,7 @@ static void connect_loopbreakers(linkage_ped_rec *S_Entry,
             if (Top1->LocusTop->Pheno[locus1].Props.Affection.ClassCnt > 1) {
                 if (S_Entry->Pheno[locus1].Affection.Class != D_Entry->Pheno[locus1].Affection.Class) {
                     sprintf(err_msg, "Ped %d, Trait locus %s:",
-                            Ped->Num, Top1->LocusTop->Locus[locus1].Name);
+                            Ped->Num, Top1->LocusTop->Locus[locus1].LocusName);
                     errorf(err_msg);
                     sprintf(err_msg, "Loop person %d has class %d",
                             S_Entry->ID, S_Entry->Pheno[locus1].Affection.Class);
@@ -1965,7 +1965,7 @@ void clean_reordered_markers(linkage_locus_top *LTop, analysis_type analysis)
                      LTop->Marker[reordered_marker_loci[j]].pos_female)/2.0;
                 } else {
                     warnvf("Missing map position for marker %s, it will be excluded from analysis.\n",
-                            LTop->Marker[reordered_marker_loci[j]].Name);
+                            LTop->Marker[reordered_marker_loci[j]].MarkerName);
                     chromo_loci_final_count[i]--;
                 }
 #else /* USEOLDMAPCODE */
@@ -1991,7 +1991,7 @@ void clean_reordered_markers(linkage_locus_top *LTop, analysis_type analysis)
                     num_valid++;
                 } else {
                     warnvf("Missing or unusable map position for marker %s, it will be excluded from analysis.\n",
-                            LTop->Marker[reordered_marker_loci[j]].Name);
+                            LTop->Marker[reordered_marker_loci[j]].MarkerName);
                     chromo_loci_final_count[i]--;
                 }
 #endif /* USEOLDMAPCODE */

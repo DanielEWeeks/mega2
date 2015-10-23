@@ -51,7 +51,7 @@ typedef struct liability_class_ {
 
 typedef struct allele_freq_ {
 /*  char name[ALL_LEN+1];*/
-    const char *name;
+    const char *AlleleName;
     int index; /* initially 1 .. num_alleles in ascending order */
     double freq;
     int count;

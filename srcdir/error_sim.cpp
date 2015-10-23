@@ -137,7 +137,7 @@ static void error_at_locus(int locnum, int loc_index, linkage_ped_top *Top,
 
     errsimf(" ");
     sprintf(err_msg, "Introducing errors at locus %s",
-            Top->LocusTop->Locus[locnum].Name);
+            Top->LocusTop->Locus[locnum].LocusName);
     errsimf(err_msg);
 
     *err_list = new_list();
@@ -723,7 +723,7 @@ static int check_loc_selection(linkage_locus_top *LTop,
             }
             if (found == 0) {
                 printf("ERROR: Locus number %d (%s) not in reordered loci.\n",
-                       loc_select[i], LTop->Locus[loc_select[i]-1].Name);
+                       loc_select[i], LTop->Locus[loc_select[i]-1].LocusName);
                 return 0;
             }
         }
@@ -1354,7 +1354,7 @@ static void output_err_files(int *loci, int num_loci, char *err_model,
                err_sim_item != NULL) {
             num_errors++;
 
-            fprintf(fp1, lformat, Top->LocusTop->Locus[loci[loc]].Name);
+            fprintf(fp1, lformat, Top->LocusTop->Locus[loci[loc]].LocusName);
             fprintf(fp1, fformat, Top->Ped[err_sim_item->ped].Name);
             fprintf(fp1, pformat,
                     Top->Ped[err_sim_item->ped].Entry[err_sim_item->entry].OrigID);
@@ -1423,7 +1423,7 @@ static void output_err_files(int *loci, int num_loci, char *err_model,
             fprintf(fp1, "%15s\n", err_type_name);
         }
 
-        fprintf(fp2, lformat, Top->LocusTop->Locus[loci[loc]].Name);
+        fprintf(fp2, lformat, Top->LocusTop->Locus[loci[loc]].LocusName);
 
         fprintf(fp2, "%10d  %6d         %4.3f",
                 NumTyped[loc], num_errors,
@@ -1492,7 +1492,7 @@ void simulate_errors(linkage_ped_top *Top, int numchr, char *file_names[])
             } else {
                 warnf("Uniform mistyping probability value is 0 and");
                 warnvf("Locus %s requires a non-zero uniform mistyping probability.\n",
-                        Top->LocusTop->Locus[reordered_marker_loci[loc]].Name);
+                        Top->LocusTop->Marker[reordered_marker_loci[loc]].MarkerName);
             }
         } else if (error_model[loc] == 'S') {
             if ((SW2ErrProb[0]+SW2ErrProb[1]+SW2ErrProb[2]+
@@ -1501,7 +1501,7 @@ void simulate_errors(linkage_ped_top *Top, int numchr, char *file_names[])
             } else {
                 warnf("All SimWalk2 mistyping probabilities are 0 and");
                 warnvf("Locus %s requires non-zero SimWalk2 mistyping probabilities.\n",
-                        Top->LocusTop->Locus[reordered_marker_loci[loc]].Name);
+                        Top->LocusTop->Marker[reordered_marker_loci[loc]].MarkerName);
             }
         } else if (error_model[loc] == 'M') {
             if (Top->LocusTop->Marker[reordered_marker_loci[loc]].error_prob >
@@ -1509,7 +1509,7 @@ void simulate_errors(linkage_ped_top *Top, int numchr, char *file_names[])
                 num_error_loci++;
             } else {
                 warnvf("Marker-specific mistyping probability for locus %s is 0.\n",
-                        Top->LocusTop->Locus[reordered_marker_loci[loc]].Name);
+                        Top->LocusTop->Marker[reordered_marker_loci[loc]].MarkerName);
                 error_model[loc] = 'X';
             }
         }

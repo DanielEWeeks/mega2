@@ -561,7 +561,7 @@ static void ped_count_message(int ped_cnt, linkage_locus_top *LocusTop,
 
     if (disease_loc >= 0) {
         sprintf(err_msg, "Saving %d pedigrees for trait %s.", ped_cnt,
-                LocusTop->Locus[disease_loc].Name);
+                LocusTop->Locus[disease_loc].LocusName);
     } else {
         sprintf(err_msg, "Saving %d pedigrees (no trait).", ped_cnt);
     }
@@ -946,7 +946,7 @@ static int select_disease_locus(linkage_locus_top *LTopp)
                     printf(" ");
                 }
                 printf("%d) %s\n", j + 1,
-                       LTopp->Locus[global_trait_entries[i]].Name);
+                       LTopp->Pheno[global_trait_entries[i]].TraitName);
                 j++;
             }
             printf(

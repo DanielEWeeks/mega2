@@ -225,15 +225,15 @@ const char *format_allele(const linkage_locus_rec *locus, const int allele)
         allele <= locus->AlleleCnt &&
         // When the input is linkage there will be no name array
         // entry for this allele.
-        locus->Allele[allele-1].name != NULL &&
+        locus->Allele[allele-1].AlleleName != NULL &&
         // When the allele is not present for any of the markers
         // it is the case that Frequency == 0 and so we will use
         // numeric representation instead.
         locus->Allele[allele-1].Frequency != 0 &&
         // seem mrecode.cpp
-        strncmp("dummy", locus->Allele[allele-1].name, 5) != 0) {
+        strncmp("dummy", locus->Allele[allele-1].AlleleName, 5) != 0) {
 
-        return locus->Allele[allele-1].name;
+        return locus->Allele[allele-1].AlleleName;
     }
 
     // Here, the character allele is not used, or not available.
@@ -740,7 +740,7 @@ int write_quant_stats(linkage_ped_top *Top,
                 i = qloc[l];
                 SECTION_LOG_HEADER(quant_stat);
                 SECTION_LOG(quant_stat);
-                mssgf(Top->LocusTop->Locus[i].Name);
+                mssgf(Top->LocusTop->Locus[i].LocusName);
                 mssgf("------------------------------------------------------------");
                 /* initialize across-ped variables */
                 num_phenotyped_peds[q]=0;
@@ -960,7 +960,7 @@ int write_quant_stats(linkage_ped_top *Top,
                 }
                 SECTION_LOG(quant_stat_sum);
                 mssgvf("%-15s %6d%c %7.3f  %8.3f   %9d   %9d    %9d\n",
-                       Top->LocusTop->Locus[i].Name,
+                       Top->LocusTop->Locus[i].LocusName,
                        loc_missing[q], missing_between_min_and_max_flag,
                        loc_min[q], loc_max[q],
                        Top->PedCnt, num_phenotyped_peds[q], num_phenos[q]);
@@ -992,7 +992,7 @@ int write_quant_stats(linkage_ped_top *Top,
                 i = qloc[l];
                 sprintf(err_msg,
                         "%-15s %8.3f  %8.3f  %8.3f  %8.3f",
-                        Top->LocusTop->Locus[i].Name,
+                        Top->LocusTop->Locus[i].LocusName,
                         loc_mean[q], loc_stdev[q], loc_skew[q], loc_curt[q]);
                 SECTION_LOG(quant_stat_sum);
                 mssgf(err_msg);
@@ -1300,8 +1300,8 @@ static void write_linkage_locfile_inorder_sex_averaged(linkage_locus_top *LTop,
                 Locus=&(LTop->Locus[locus_order[locus]]);
             }
             fprintf(filep, "%d %d", Locus->Type - 1, Locus->AlleleCnt);
-            if (Locus->Name != NULL)
-                fprintf(filep, " #%s\n", Locus->Name);
+            if (Locus->LocusName != NULL)
+                fprintf(filep, " #%s\n", Locus->LocusName);
             for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                 fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
             }
@@ -1492,8 +1492,8 @@ static void write_linkage_locfile_inorder_sex_specific(linkage_locus_top *LTop,
                 Locus=&(LTop->Locus[locus_order[locus]]);
             }
             fprintf(filep, "%d %d", Locus->Type - 1, Locus->AlleleCnt);
-            if (Locus->Name != NULL)
-                fprintf(filep, " #%s\n", Locus->Name);
+            if (Locus->LocusName != NULL)
+                fprintf(filep, " #%s\n", Locus->LocusName);
             for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                 fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
             }

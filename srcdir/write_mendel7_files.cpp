@@ -263,7 +263,7 @@ static void fprint_mendel7_affection_header(FILE *fp,
                                             const int sex_linked)
 {
     fprintf(fp, "%s,%s,%d,2\n",
-            Locus->Name,
+            Locus->LocusName,
             ((sex_linked == 1) ? "X-LINKED" : "AUTOSOME"),
             Locus->AlleleCnt);
     for (int allele = 0; allele < Locus->AlleleCnt; allele++)  {
@@ -364,8 +364,8 @@ void  csv_write_mendel_locus_file(char *file_name,
         for (locus1 = 0; locus1 < NumChrLoci; locus1++) {
             Locus = &(LTop->Locus[ChrLoci[locus1]]);
             if (Locus->Type == NUMBERED || Locus->Type == BINARY) {
-                if (Locus->Name != NULL) {
-                    fprintf(fp, "%s,", strtail(Locus->Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+                if (Locus->LocusName != NULL) {
+                    fprintf(fp, "%s,", strtail(Locus->LocusName, MENDEL7_MAX_LOCUS_NAME_LEN));
                 }
                 else
                     fprintf(fp, "%d,", locus1 + 1);
@@ -399,7 +399,7 @@ void  csv_write_mendel_locus_file(char *file_name,
                 break;
             case QUANT:
                 if (LoopOverTrait == 0) {
-		  fprintf(fp, "%s,variable,0\n", strtail(Locus->Name, MENDEL7_MAX_VARIABLE_NAME_LEN));
+		  fprintf(fp, "%s,variable,0\n", strtail(Locus->LocusName, MENDEL7_MAX_VARIABLE_NAME_LEN));
                 }
                 break;
             default:
@@ -413,7 +413,7 @@ void  csv_write_mendel_locus_file(char *file_name,
                traits being looped over. */
             Locus = &(LTop->Locus[*trp]);
             if (Locus->Type == QUANT) {
-	      fprintf(fp, "%s,variable,0\n", strtail(LTop->Locus[*trp].Name, MENDEL7_MAX_VARIABLE_NAME_LEN));
+	      fprintf(fp, "%s,variable,0\n", strtail(LTop->Pheno[*trp].TraitName, MENDEL7_MAX_VARIABLE_NAME_LEN));
             }
         }
         trp++;
@@ -526,7 +526,7 @@ void csv_mendel7_pen_file(char *fl_name, linkage_ped_top *Top, int sex_linked)
                         prID_per(filep, 0, Entry, "", ",");
 
                         fprintf(filep, "%s,%s,%8f,%d\n",
-                                strtail(Locus->Name, MENDEL7_MAX_LOCUS_NAME_LEN), genostr[ipen], pen, affected);
+                                strtail(Locus->LocusName, MENDEL7_MAX_LOCUS_NAME_LEN), genostr[ipen], pen, affected);
                     }
                 }
             }
@@ -611,7 +611,7 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
 
         if (num_numbered == 0) {
             if (LoopOverTrait == 1 && LTop->Locus[*trp].Type == AFFECTION) {
-	      fprintf(filep, "%s\n", strtail(LTop->Locus[*trp].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+	      fprintf(filep, "%s\n", strtail(LTop->Pheno[*trp].TraitName, MENDEL7_MAX_LOCUS_NAME_LEN));
                 if (xlinked) {
                     fprintf(filep, ",\n");
                 } else {
@@ -654,7 +654,7 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
             }
 
             if (diffm <= INVALID_POS_DIFF) {
-	      fprintf(filep, "%s\n", strtail(LTop->Locus[markers[i-1]].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+	      fprintf(filep, "%s\n", strtail(LTop->Marker[markers[i-1]].MarkerName, MENDEL7_MAX_LOCUS_NAME_LEN));
                 if (xlinked) {
                     fprintf(filep, ",\n");
                 } else {
@@ -691,7 +691,7 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
                         difff=haldane_theta(difff);
                     }
                 }
-                fprintf(filep, "%s\n", strtail(LTop->Locus[markers[i-1]].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%s\n", strtail(LTop->Marker[markers[i-1]].MarkerName, MENDEL7_MAX_LOCUS_NAME_LEN));
                 if (xlinked) {
 		    fprintf(filep, "%f,%f ! %s\n", difff, diffm,
 			    (LTop->map_distance_type  == 'h' ? "Haldane" : "Kosambi"));
@@ -702,7 +702,7 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
             }
         }
 
-        fprintf(filep, "%s\n", strtail(LTop->Locus[markers[num_markers-1]].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+        fprintf(filep, "%s\n", strtail(LTop->Marker[markers[num_markers-1]].MarkerName, MENDEL7_MAX_LOCUS_NAME_LEN));
         fclose(filep);
         if (nloop == 1) break;
     }
@@ -773,7 +773,7 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
 
         if (num_numbered == 0) {
             if (LoopOverTrait == 1 && trp && LTop->Locus[*trp].Type == AFFECTION) {
-                fprintf(filep, "%s\n", strtail(LTop->Locus[*trp].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%s\n", strtail(LTop->Pheno[*trp].TraitName, MENDEL7_MAX_LOCUS_NAME_LEN));
 		fprintf(filep, ",\n");
             }
         }
@@ -816,20 +816,20 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
             }
 
             if (diffm <= INVALID_POS_DIFF) {
-                fprintf(filep, "%s\n", strtail(LTop->Locus[markers[i-1]].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%s\n", strtail(LTop->Marker[markers[i-1]].MarkerName, MENDEL7_MAX_LOCUS_NAME_LEN));
 		fprintf(filep, ",\n");
             } else {
                 if (diffm < 0.0) {
                     warnvf("%s (%.4g) and %s (%.4g) are not ordered by increasing male map distance!\n",
-                            LTop->Marker[markers[i-1]].Name, LTop->Marker[markers[i-1]].pos_male,
-                            LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_male);
+                            LTop->Marker[markers[i-1]].MarkerName, LTop->Marker[markers[i-1]].pos_male,
+                            LTop->Marker[markers[i]].MarkerName, LTop->Marker[markers[i]].pos_male);
                     warnf("Setting the distance between these to 0.001 cM.");
                     diffm=0.001;
                 }
                 if (difff < 0.0) {
 		    warnvf("%s (%.4g) and %s (%.4g) are not ordered by increasing female map distance!\n",
-			    LTop->Marker[markers[i-1]].Name, LTop->Marker[markers[i-1]].pos_female,
-			    LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_female);
+			    LTop->Marker[markers[i-1]].MarkerName, LTop->Marker[markers[i-1]].pos_female,
+			    LTop->Marker[markers[i]].MarkerName, LTop->Marker[markers[i]].pos_female);
 		    warnf("Setting the distance between these to 0.001 cM.");
                     difff=0.001;
                 }
@@ -841,13 +841,13 @@ static void csv_write_mendel_map_using_sex_specific(char *mapfile, linkage_locus
                     diffm=haldane_theta(diffm);
 		    difff=haldane_theta(difff);
                 }
-                fprintf(filep, "%s\n", strtail(LTop->Locus[markers[i-1]].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%s\n", strtail(LTop->Marker[markers[i-1]].MarkerName, MENDEL7_MAX_LOCUS_NAME_LEN));
 		fprintf(filep, "%f,%f ! %s\n", difff, diffm,
 			(LTop->map_distance_type  == 'h' ? "Haldane" : "Kosambi"));
             }
         }
 
-        fprintf(filep, "%s\n", strtail(LTop->Locus[markers[num_markers-1]].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+        fprintf(filep, "%s\n", strtail(LTop->Marker[markers[num_markers-1]].MarkerName, MENDEL7_MAX_LOCUS_NAME_LEN));
         fclose(filep);
         if (nloop == 1) break;
     }
@@ -916,7 +916,7 @@ static void csv_write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus
 
         if (num_numbered == 0) {
             if (LoopOverTrait == 1 && trp && LTop->Locus[*trp].Type == AFFECTION) {
-	      fprintf(filep, "%s\n", strtail(LTop->Locus[*trp].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+	      fprintf(filep, "%s\n", strtail(LTop->Pheno[*trp].TraitName, MENDEL7_MAX_LOCUS_NAME_LEN));
 		fprintf(filep, "\n");
             }
         }
@@ -965,13 +965,13 @@ static void csv_write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus
             }
 
             if (diff <= INVALID_POS_DIFF) {
-                fprintf(filep, "%s\n", strtail(LTop->Locus[markers[i-1]].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%s\n", strtail(LTop->Marker[markers[i-1]].MarkerName, MENDEL7_MAX_LOCUS_NAME_LEN));
 		fprintf(filep, "\n");
             } else {
                 if (diff < 0.0) {
                   warnvf("%s (%.4g) and %s (%.4g) are not ordered by increasing map distance!\n",
-                          LTop->Marker[markers[i-1]].Name, LTop->Marker[markers[i-1]].pos_avg,
-                          LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_avg);
+                          LTop->Marker[markers[i-1]].MarkerName, LTop->Marker[markers[i-1]].pos_avg,
+                          LTop->Marker[markers[i]].MarkerName, LTop->Marker[markers[i]].pos_avg);
                   warnf("Setting the distance between these to 0.001 cM.");
                   diff = 0.001;
                 }
@@ -981,13 +981,13 @@ static void csv_write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus
                 } else {
                   diff=haldane_theta(diff);
                 }
-                fprintf(filep, "%s\n", strtail(LTop->Locus[markers[i-1]].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%s\n", strtail(LTop->Marker[markers[i-1]].MarkerName, MENDEL7_MAX_LOCUS_NAME_LEN));
                 fprintf(filep, "%f ! %s\n", diff,
                         (LTop->map_distance_type  == 'h' ? "Haldane" : "Kosambi"));
             }
         }
 
-        fprintf(filep, "%s\n", strtail(LTop->Locus[markers[num_markers-1]].Name, MENDEL7_MAX_LOCUS_NAME_LEN));
+        fprintf(filep, "%s\n", strtail(LTop->Marker[markers[num_markers-1]].MarkerName, MENDEL7_MAX_LOCUS_NAME_LEN));
         fclose(filep);
         if (nloop == 1) break;
     }

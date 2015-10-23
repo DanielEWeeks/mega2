@@ -324,7 +324,7 @@ static void sup_sim_opts(double *trait_positions, int *seed, int *repl,
         for (tr=0; tr < num_traits; tr++) {
             if (global_trait_entries[tr] < 0) continue;
             sprintf(err_msg, "%3d) %15s  %7.4f",
-                    t+1, LTop->Locus[global_trait_entries[tr]].Name,
+                    t+1, LTop->Pheno[global_trait_entries[tr]].TraitName,
                     trait_positions[tr]);
             mssgf(err_msg);
             t++;
@@ -357,7 +357,7 @@ static void get_sim_trait_pos(double *trait_positions,
             }
 
             printf(" %2d)  %-13s   %f\n", m1+1,
-                   LTop->Locus[global_trait_entries[m]].Name,
+                   LTop->Pheno[global_trait_entries[m]].TraitName,
                    trait_positions[m]);
             m1++;
         }
@@ -437,7 +437,7 @@ static void write_SLINK_locus_file(linkage_locus_top *LTop,
             fprintf(filep, "1 2 3\n");
             fprintf(filep, "%d %d", (int) LTop->Locus[*trp].Type - 1,
                     LTop->Locus[*trp].AlleleCnt);
-            fprintf(filep, " # %s\n", LTop->Locus[*trp].Name);
+            fprintf(filep, " # %s\n", LTop->Pheno[*trp].TraitName);
             hap1_freq = LTop->Locus[*trp].Allele[0].Frequency/(double)num_founders;
             hap2_freq = LTop->Locus[*trp].Allele[1].Frequency/(double)num_founders;
 
@@ -694,7 +694,7 @@ static void   write_mega2_locus(char *loutfl_name, linkage_locus_top *LTop,
         fprintf(filep, "1 2 3\n");
         fprintf(filep, "%d %d", (int) LTop->Locus[*trp].Type - 1,
                 LTop->Locus[*trp].AlleleCnt);
-        fprintf(filep, " # %s\n", LTop->Locus[*trp].Name);
+        fprintf(filep, " # %s\n", LTop->Pheno[*trp].TraitName);
         for (tmpi2 = 0; tmpi2 < LTop->Locus[*trp].AlleleCnt; tmpi2++) {
             fprintf(filep, " %.6f", LTop->Locus[*trp].Allele[tmpi2].Frequency);
         }

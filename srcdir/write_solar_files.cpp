@@ -129,7 +129,7 @@ static int save_SOLAR_peds(char *fl_name, linkage_ped_top *Top)
 
     for(tr=0; tr < num_traits; tr++) {
         SKIP_TRI(tr);
-        if (!(strcmp(Top->LocusTop->Locus[global_trait_entries[tr]].Name, "HHID"))) {
+        if (!(strcmp(Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName, "HHID"))) {
             hhid=global_trait_entries[tr];
             break;
         }
@@ -210,8 +210,8 @@ static void  write_SOLAR_locus_file(char *fl_name, linkage_locus_top *LTop)
         for (locus1 = 0; locus1 < NumChrLoci; locus1++) {
             Locus = &(LTop->Locus[ChrLoci[locus1]]);
             if (Locus->Type == NUMBERED || Locus->Type == BINARY) {
-                if (Locus->Name != NULL)
-                    fprintf(filep, "%-8s ", Locus->Name);
+                if (Locus->LocusName != NULL)
+                    fprintf(filep, "%-8s ", Locus->LocusName);
                 else
                     fprintf(filep, "%8d ", locus1 + 1);
                 for (allele = 0; allele < Locus->AlleleCnt; allele++)   {
@@ -248,7 +248,7 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
 
     if ((num_affec == 1) &&
 	((global_trait_entries[0] < 0) ||
-	 (!strcmp(Top->LocusTop->Locus[global_trait_entries[0]].Name, "HHID")))) {
+	 (!strcmp(Top->LocusTop->Pheno[global_trait_entries[0]].TraitName, "HHID")))) {
         printf("No trait loci, solar phenotype file not created.\n");
         return 0;
     }
@@ -265,13 +265,13 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
             SKIP_TRI(tr);
             locus1=global_trait_entries[tr];
             Locus = &(Top->LocusTop->Locus[locus1]);
-            if (strcmp(Locus->Name, "HHID")) {
-                fprintf(filep, ",%s", Locus->Name);
+            if (strcmp(Locus->LocusName, "HHID")) {
+                fprintf(filep, ",%s", Locus->LocusName);
             }
         }
         for(cov=0; cov < num_covariates; cov++) {
             fprintf(filep, ",%s",
-                    Top->LocusTop->Locus[covariates[cov]].Name);
+                    Top->LocusTop->Locus[covariates[cov]].LocusName);
         }
 
         fprintf(filep, "\n");
@@ -295,7 +295,7 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
                     locus1=global_trait_entries[tr];
                     switch (Top->LocusTop->Locus[locus1].Type)  {
                     case QUANT:
-                        if (strcmp(Top->LocusTop->Locus[locus1].Name, "HHID")) {
+                        if (strcmp(Top->LocusTop->Locus[locus1].LocusName, "HHID")) {
                             fprintf(filep, ",");
                             SOLARwrite_quantitative_data(filep, locus1, Entry);
                         }
@@ -344,10 +344,10 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
         }
         fprintf(filep,"FAMID,ID");
         Locus = &(Top->LocusTop->Locus[*trp]);
-        fprintf(filep, ",%s", Locus->Name);
+        fprintf(filep, ",%s", Locus->LocusName);
         for(cov=0; cov < num_covariates; cov++) {
             fprintf(filep, ",%s",
-                    Top->LocusTop->Locus[covariates[cov]].Name);
+                    Top->LocusTop->Locus[covariates[cov]].LocusName);
         }
         fprintf(filep, "\n");
         for (ped = 0; ped < Top->PedCnt; ped++) {
@@ -362,7 +362,7 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
                 /* now write genotype data  */
                 switch (Locus->Type)  {
                 case QUANT:
-                    if (strcmp(Locus->Name, "HHID")) {
+                    if (strcmp(Locus->LocusName, "HHID")) {
                         fprintf(filep, ",");
                         SOLARwrite_quantitative_data(filep, *trp, Entry);
                     }
@@ -379,7 +379,7 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
                     Locus = &(Top->LocusTop->Locus[covariates[cov]]);
                     switch (Locus->Type)  {
                     case QUANT:
-                        if (strcmp(Locus->Name, "HHID")) {
+                        if (strcmp(Locus->LocusName, "HHID")) {
                             fprintf(filep, ",");
                             SOLARwrite_quantitative_data(filep,
                                                          covariates[cov],
@@ -429,8 +429,8 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
         for (locus1 = 0; locus1 < NumChrLoci; locus1++) {
             Locus = &(Top->LocusTop->Locus[ChrLoci[locus1]]);
             if (Locus->Type == NUMBERED)  {
-                if (Locus->Name != NULL)
-                    fprintf(filep, ",%s", Locus->Name);
+                if (Locus->LocusName != NULL)
+                    fprintf(filep, ",%s", Locus->LocusName);
                 else
                     fprintf(filep, ",%d", locus1 + 1);
                 /*     if (locus1 < Top->LocusTop->LocusCnt-1)
@@ -511,7 +511,7 @@ static int write_SOLAR_map(char *fl_name, linkage_ped_top *Top, int chr)
         for (locus1 = 0; locus1 < NumChrLoci; locus1++)  {
             Locus = &(Top->LocusTop->Locus[ChrLoci[locus1]]);
             if (Locus->Type == NUMBERED || Locus->Type == BINARY)  {
-                fprintf(filep, "%10s  %10f\n", Locus->Name,
+                fprintf(filep, "%10s  %10f\n", Locus->LocusName,
                         (Top->LocusTop->map_distance_type == 'h') ?
                         position[locus1] : Locus->Marker->pos_avg);
             }

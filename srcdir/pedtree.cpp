@@ -178,7 +178,7 @@ void free_all_from_ped_tree(ped_tree *Ped, void (*PTmpFreeFun)(void *TmpData),
 static void free_all_from_locus_rec(locus_rec *Locus)
 {
     if (Locus == NULL) return;
-    if (Locus->Name != NULL) free(Locus->Name);
+    if (Locus->LocusName != NULL) free(Locus->LocusName);
 }
 
 
@@ -723,7 +723,7 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
             }
             llocus1 = reordered_marker_loci[l1];
             /* Set the name. */
-            PLTop->Locus[locus1].Name = strdup(LLTop->Locus[llocus1].Name);
+            PLTop->Locus[locus1].LocusName = strdup(LLTop->Locus[llocus1].LocusName);
             PLTop->Locus[locus1].chromosome = LLTop->Marker[llocus1].chromosome;
             /* Allele records are identical. */
             PLTop->Locus[locus1].AlleleCnt = LLTop->Locus[llocus1].AlleleCnt;

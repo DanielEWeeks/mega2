@@ -331,26 +331,26 @@ static void merlin_model_file(char *model_file, linkage_locus_top *LTop)
                     fprintf(filep, "AFFECTION        ALLELE_FREQ   PENETRANCES  LABEL\n");
                 }
                 Loc = &(LTop->Locus[global_trait_entries[l]]);
-                fprintf(filep, "%15s ", Loc->Name);
+                fprintf(filep, "%15s ", Loc->LocusName);
                 fprintf(filep, "%f ", Loc->Allele[1].Frequency);
                 if (Loc->Pheno->Props.Affection.ClassCnt == 1) {
                     fprintf(filep, "%f,%f,%f  ",
                             Loc->Pheno->Props.Affection.Class[0].AutoPen[0],
                             Loc->Pheno->Props.Affection.Class[0].AutoPen[1],
                             Loc->Pheno->Props.Affection.Class[0].AutoPen[2]);
-                    fprintf(filep, "%s\n", Loc->Name);
+                    fprintf(filep, "%s\n", Loc->LocusName);
                 } else {
-                    fprintf(filep, "*       %s\n", Loc->Name);
+                    fprintf(filep, "*       %s\n", Loc->LocusName);
                     for (a=0; a < Loc->Pheno->Props.Affection.ClassCnt; a++) {
                         fprintf(filep, "%15s_covar = %d    ",
-                                Loc->Name, (liability_multiplier + a + 1));
+                                Loc->LocusName, (liability_multiplier + a + 1));
                         /* Use 1-Pen */
                         fprintf(filep, "%f,%f,%f\n",
                                 (1.0 - Loc->Pheno->Props.Affection.Class[a].AutoPen[0]),
                                 (1.0 - Loc->Pheno->Props.Affection.Class[a].AutoPen[1]),
                                 (1.0 - Loc->Pheno->Props.Affection.Class[a].AutoPen[2]));
                         fprintf(filep, "%15s_covar = %d    ",
-                                Loc->Name, (liability_multiplier*2 + a + 1));
+                                Loc->LocusName, (liability_multiplier*2 + a + 1));
                         /* Use Pen */
                         fprintf(filep, "%f,%f,%f\n",
                                 Loc->Pheno->Props.Affection.Class[a].AutoPen[0],
@@ -775,7 +775,7 @@ static void merlin_output_ped_order(linkage_ped_top *Top, char *order_fl)
         for(loc=0; loc < NumChrLoci; loc++) {
             if (Top->LocusTop->Locus[ChrLoci[loc]].Type == NUMBERED)
                 fprintf(fp, "%s\t",
-                        strtail(Top->LocusTop->Locus[ChrLoci[loc]].Name, MERLIN_MAX_LOCUS_NAME_LEN));
+                        strtail(Top->LocusTop->Locus[ChrLoci[loc]].LocusName, MERLIN_MAX_LOCUS_NAME_LEN));
         }
         fprintf(fp, "\n");
         fclose(fp);
@@ -866,8 +866,8 @@ static void write_merlin_map(linkage_locus_top *LTop,
                 fprintf(fp, "%2d  %-15s",
                         LTop->Marker[locus].chromosome,
                         ((analysis == TO_MERLIN) ?
-                         strtail(LTop->Locus[locus].Name, MERLIN_MAX_LOCUS_NAME_LEN) :
-                         LTop->Locus[locus].Name));
+                         strtail(LTop->Locus[locus].LocusName, MERLIN_MAX_LOCUS_NAME_LEN) :
+                         LTop->Locus[locus].LocusName));
                 
                 if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
                     // Even for the X chromosome we use the sex-averaged position to give the user an opportunity
@@ -961,8 +961,8 @@ static void write_merlin_freq(linkage_locus_top *LTop,
                 // The marker name preceeds the frequency informaiton...
                 fprintf(fp, "M  %s\n",
                         ((analysis == TO_MERLIN)?
-                         strtail(LTop->Locus[locus].Name, MERLIN_MAX_LOCUS_NAME_LEN) :
-                         LTop->Locus[locus].Name));
+                         strtail(LTop->Locus[locus].LocusName, MERLIN_MAX_LOCUS_NAME_LEN) :
+                         LTop->Locus[locus].LocusName));
                 // Merlin will accept character alleles but you need to use the
                 // "Extended allele frequency format" documented here:
                 // http://www.sph.umich.edu/csg/abecasis/merlin/tour/input_files.html
@@ -1016,8 +1016,8 @@ static void write_qtdt_locus_file(char *loc_file, linkage_locus_top *LTop,
             }
             fprintf(fp, "%s\n",
                     ((analysis == TO_MERLIN) ?
-                     strtail(LTop->Locus[*trp].Name, MERLIN_MAX_LOCUS_NAME_LEN) :
-                     LTop->Locus[*trp].Name));
+                     strtail(LTop->Pheno[*trp].TraitName, MERLIN_MAX_LOCUS_NAME_LEN) :
+                     LTop->Pheno[*trp].TraitName));
         }
 
         for (locus1 = 0; locus1 < NumChrLoci; locus1++) {
@@ -1025,8 +1025,8 @@ static void write_qtdt_locus_file(char *loc_file, linkage_locus_top *LTop,
 
             locus = ChrLoci[locus1];
             locname =  ((analysis == TO_MERLIN) ?
-                        strtail(LTop->Locus[locus].Name, MERLIN_MAX_LOCUS_NAME_LEN) :
-                        LTop->Locus[locus].Name);
+                        strtail(LTop->Locus[locus].LocusName, MERLIN_MAX_LOCUS_NAME_LEN) :
+                        LTop->Locus[locus].LocusName);
 
             if (LTop->Locus[locus].Class == COVARIATE) {
                 fprintf(fp, "C  %s\n", locname);
@@ -1056,13 +1056,13 @@ static void write_qtdt_locus_file(char *loc_file, linkage_locus_top *LTop,
         if (model_file) {
             if (LoopOverTrait == 1 && LTop->Locus[*trp].Type == AFFECTION
                 && LTop->Pheno[*trp].Props.Affection.ClassCnt > 1) {
-                fprintf(fp, "C  %s_covar\n", LTop->Locus[*trp].Name);
+                fprintf(fp, "C  %s_covar\n", LTop->Pheno[*trp].TraitName);
             } else {
                 for (locus=0; locus < num_traits; locus++) {
                     SKIP_TRI(locus)
                         if (LTop->Locus[global_trait_entries[locus]].Type == AFFECTION
                             && LTop->Pheno[global_trait_entries[locus]].Props.Affection.ClassCnt > 1) {
-                            fprintf(fp, "C  %s_covar\n", LTop->Locus[global_trait_entries[locus]].Name);
+                            fprintf(fp, "C  %s_covar\n", LTop->Pheno[global_trait_entries[locus]].TraitName);
                         }
                 }
             }

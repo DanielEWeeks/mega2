@@ -205,8 +205,8 @@ static void prest_locus_file(char *locfl, linkage_ped_top *Top,
 	    // For each marker/locu, output the type and allele count...
 	    fprintf(filep, "%d %d", (int) Top->LocusTop->Locus[loc].Type - 1,
                     Top->LocusTop->Locus[loc].AlleleCnt);
-            if (Top->LocusTop->Locus[loc].Name != NULL)
-                fprintf(filep, " # %s", Top->LocusTop->Locus[loc].Name);
+            if (Top->LocusTop->Locus[loc].LocusName != NULL)
+                fprintf(filep, " # %s", Top->LocusTop->Locus[loc].LocusName);
             fputc('\n', filep);
 	    // On the next line output the frequency of each allele for that marker...
             for (allele = 0; allele < Top->LocusTop->Locus[loc].AlleleCnt; allele++) {

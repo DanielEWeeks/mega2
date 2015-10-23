@@ -138,7 +138,7 @@ static void save_CRANEFOOT_pedigrees(char *pedfl_name, linkage_ped_top *Top,
         fprintf(filep, "Pedigree\tName\tFather\tMother\tGender");
 
         if (LoopOverTrait == 1) {
-            fprintf(filep, "\t%s", Top->LocusTop->Locus[*trp].Name);
+            fprintf(filep, "\t%s", Top->LocusTop->Pheno[*trp].TraitName);
 
         }
         /* Now print all the markers */
@@ -146,19 +146,19 @@ static void save_CRANEFOOT_pedigrees(char *pedfl_name, linkage_ped_top *Top,
             switch (Top->LocusTop->Locus[ChrLoci[locus]].Type)   {
             case AFFECTION:
                 if (LoopOverTrait == 0) {
-                    fprintf(filep, "\t%s", Top->LocusTop->Locus[ChrLoci[locus]].Name);
+                    fprintf(filep, "\t%s", Top->LocusTop->Locus[ChrLoci[locus]].LocusName);
                 }
                 break;
 
             case QUANT:
                 if (LoopOverTrait == 0) {
-                    fprintf(filep, "\t%s", Top->LocusTop->Locus[ChrLoci[locus]].Name);
+                    fprintf(filep, "\t%s", Top->LocusTop->Locus[ChrLoci[locus]].LocusName);
                 }
                 break;
 
             case BINARY:
             case NUMBERED:
-                fprintf(filep, "\t%s", Top->LocusTop->Locus[ChrLoci[locus]].Name);
+                fprintf(filep, "\t%s", Top->LocusTop->Locus[ChrLoci[locus]].LocusName);
                 break;
             default:
                 break;
@@ -609,10 +609,10 @@ static void write_CRANEFOOT_control(char *file_names[], int numchr,
         if (LoopOverTrait == 1) {
             switch(LTop->Locus[trp].Type) {
             case AFFECTION:
-                fprintf(fp, "PatternVariable %s\n", LTop->Locus[trp].Name);
+                fprintf(fp, "PatternVariable %s\n", LTop->Pheno[trp].TraitName);
                 break;
             case QUANT:
-                fprintf(fp, "TextVariable %s \n", LTop->Locus[trp].Name);
+                fprintf(fp, "TextVariable %s \n", LTop->Pheno[trp].TraitName);
                 break;
             default:
                 break;
@@ -625,22 +625,22 @@ static void write_CRANEFOOT_control(char *file_names[], int numchr,
             case AFFECTION:
                 if (LoopOverTrait == 0) {
                     if (primary_aff == ChrLoci[loc]) {
-                        fprintf(fp, "PatternVariable %s\n", LTop->Locus[ChrLoci[loc]].Name);
+                        fprintf(fp, "PatternVariable %s\n", LTop->Locus[ChrLoci[loc]].LocusName);
                         fprintf(fp, "PatternInfo Unknown 11\n");
                         fprintf(fp, "PatternInfo Affected 99\n");
                     } else {
-                        fprintf(fp, "TextVariable %s\n", LTop->Locus[ChrLoci[loc]].Name);
+                        fprintf(fp, "TextVariable %s\n", LTop->Locus[ChrLoci[loc]].LocusName);
                     }
                 }
                 break;
             case QUANT:
                 if (LoopOverTrait == 0) {
-                    fprintf(fp, "TextVariable %s\n", LTop->Locus[ChrLoci[loc]].Name);
+                    fprintf(fp, "TextVariable %s\n", LTop->Locus[ChrLoci[loc]].LocusName);
                 }
                 break;
             case BINARY:
             case NUMBERED:
-                fprintf(fp, "TextVariable %s\n", LTop->Locus[ChrLoci[loc]].Name);
+                fprintf(fp, "TextVariable %s\n", LTop->Locus[ChrLoci[loc]].LocusName);
                 break;
 
             default:
@@ -764,7 +764,7 @@ static void CRANEFOOT_file_names(char *file_names[], int *combine_chromo,
             } else if (*primary_aff == -2) {
                 printf("genotyped-status\n");
             } else {
-                printf("%s\n", LTop->Locus[*primary_aff].Name);
+                printf("%s\n", LTop->Locus[*primary_aff].LocusName);
             }
 
             iprime = i;
@@ -864,9 +864,9 @@ static void cranefoot_primary_aff(linkage_locus_top *LTop, int *primary_aff)
         printf("0) Done with this menu - please proceed.\n");
         for (loc=0; loc < a; loc++) {
             if (affs[loc] == *primary_aff) {
-                printf("*%d) %s\n", loc+1, LTop->Locus[affs[loc]].Name);
+                printf("*%d) %s\n", loc+1, LTop->Locus[affs[loc]].LocusName);
             } else {
-                printf(" %d) %s\n", loc+1, LTop->Locus[affs[loc]].Name);
+                printf(" %d) %s\n", loc+1, LTop->Locus[affs[loc]].LocusName);
             }
         }
         if (HasMarkers) {

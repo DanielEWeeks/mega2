@@ -102,7 +102,7 @@ static int save_apm_peds_ML(FILE *filep, ped_top *Top, int *save)
         /* write number of alleles and locus name for each locus */
         fprintf(filep, "  %2d   %s\n",
                 Top->LocusTop->Locus[loc].AlleleCnt,
-                Top->LocusTop->Locus[loc].Name);
+                Top->LocusTop->Locus[loc].LocusName);
         /* write allele frequencies for this locus */
         charcnt = 0;
         for (allele = 0; allele < Top->LocusTop->Locus[loc].AlleleCnt; allele++) {
@@ -265,7 +265,7 @@ static int save_apm_peds_MULT(char *outfl_name, ped_top *Top,
             locus=order[loc];
             fprintf(filep, "  %2d   %s\n",
                     Top->LocusTop->Locus[locus].AlleleCnt,
-                    Top->LocusTop->Locus[locus].Name);
+                    Top->LocusTop->Locus[locus].LocusName);
             /* write allele frequencies for this locus */
             charcnt = 0;
             for (allele=0; allele <Top->LocusTop->Locus[locus].AlleleCnt; allele++) {
@@ -423,7 +423,7 @@ void create_APM_file(char *pedfl_name, char *locusfl_name,
         peds_saved = peds_total - purge_unneeded_pedigrees(PedTreeTop, save);
         if (peds_saved == 0) {
             printf("WARNING: No pedigrees to save for disease locus %s.\n",
-                   LPedTreeTop->LocusTop->Locus[*trp].Name);
+                   LPedTreeTop->LocusTop->Pheno[*trp].TraitName);
         } else {
             if ((filep = fopen(outfl_name, "w")) == NULL) {
                 errorvf("Could not open file %s.\n", outfl_name);
@@ -431,7 +431,7 @@ void create_APM_file(char *pedfl_name, char *locusfl_name,
             }
             save_apm_peds_ML(filep, PedTreeTop, save);
             printf("Saved %d pedigrees out of %d for disease locus %s.\n",
-                   peds_saved, peds_total, LPedTreeTop->LocusTop->Locus[*trp].Name);
+                   peds_saved, peds_total, LPedTreeTop->LocusTop->Pheno[*trp].TraitName);
         }
         if (nloop == 1) break;
         trp++;
@@ -524,9 +524,9 @@ static void  create_apmult_script_file(linkage_ped_top *Copy,
             /*      theta = ((Copy->LocusTop->map_distance_type == 'h')?
                     haldane_theta(dx): kosambi_theta(dx)); */
             fprintf(fp, "echo \"%10s - %7.5f - %-10s\" >> %-s\n",
-                    Copy->LocusTop->Locus[numbered[markers[i-1]]].Name,
+                    Copy->LocusTop->Marker[numbered[markers[i-1]]].MarkerName,
                     dx,
-                    Copy->LocusTop->Locus[numbered[markers[i]]].Name, apmult_sum);
+                    Copy->LocusTop->Marker[numbered[markers[i]]].MarkerName, apmult_sum);
         }
 
         fprintf(fp, "grep \"Theta\" table.out >> %s\n", apmult_sum);

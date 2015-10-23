@@ -399,20 +399,20 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
         header_p=NULL;
         header_p=CALLOC((size_t) lclasses*3, int);
 
-        disease_name = ltop->Locus[locus_AFFECTION].Name;
+        disease_name = ltop->Locus[locus_AFFECTION].LocusName;
         loci_NUMBERED=allele_dist[kk].loci_NUMBERED;
         for (nn=0; nn<num_NUMBERED; nn++){
             if (tab_text) {
-                file_ext= CALLOC(strlen(ltop->Locus[loci_NUMBERED[nn]].Name)+
+                file_ext= CALLOC(strlen(ltop->Locus[loci_NUMBERED[nn]].LocusName)+
                                  strlen(disease_name)+3, char);
-                sprintf(file_ext, "_%s.%s", disease_name, ltop->Locus[loci_NUMBERED[nn]].Name);
+                sprintf(file_ext, "_%s.%s", disease_name, ltop->Locus[loci_NUMBERED[nn]].LocusName);
                 ou_file_name =
                     CALLOC((strlen(liablefl_name[1])+strlen(file_ext)+1), char);
                 strncpy(ou_file_name, liablefl_name[1], strlen(liablefl_name[1]));
                 strcat(ou_file_name, file_ext);
                 fp = fopen(ou_file_name, "w");
             }
-/*       marker_str = ltop->Locus[loci_NUMBERED[nn]].Name; */
+/*       marker_str = ltop->Marker[loci_NUMBERED[nn]].MarkerName; */
 
             num_alleles=ltop->Locus[loci_NUMBERED[nn]].AlleleCnt;
             create_header_p(empty_cols, header_p, allele_dist[kk], nn, lclasses);
@@ -420,12 +420,12 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
 
             /* for each marker, write the allele_data first, then the genotype_data */
             if (tab_text) {
-                fprintf(fp, "%s%sTotal", ltop->Locus[loci_NUMBERED[nn]].Name, header);
+                fprintf(fp, "%s%sTotal", ltop->Locus[loci_NUMBERED[nn]].LocusName, header);
                 if (ou_percent) fprintf(fp, "\tTotal Freq");
             } else {
                 fprintf(fp, "Trait %s\n", disease_name);
                 fprintf(fp, "      Allele counts for marker  %s\n",
-                        ltop->Locus[loci_NUMBERED[nn]].Name);
+                        ltop->Locus[loci_NUMBERED[nn]].LocusName);
                 fprintf(fp, "Allele   %s Total    ", header);
                 if (ou_percent) fprintf(fp, "Total Freq");
             }
@@ -562,11 +562,11 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
 
             num_genos=NUMGENOS(num_alleles);  genotypes=create_genos(num_alleles);
             if (tab_text) {
-                fprintf(fp, "%s%sTotal", ltop->Locus[loci_NUMBERED[nn]].Name, header);
+                fprintf(fp, "%s%sTotal", ltop->Locus[loci_NUMBERED[nn]].LocusName, header);
                 if (ou_percent) fprintf(fp, "\tTotal Freq");
             } else {
                 fprintf(fp, "\n      Genotype counts for marker  %s\n",
-                        ltop->Locus[loci_NUMBERED[nn]].Name);
+                        ltop->Locus[loci_NUMBERED[nn]].LocusName);
                 fprintf(fp, "Genotype %s Total   ", header);
                 if (ou_percent) fprintf(fp, "Total Freq");
             }

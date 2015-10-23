@@ -87,7 +87,7 @@ typedef enum {
 typedef struct _linkage_allele_rec {
     double Frequency;
 /*  char name[ALL_LEN+1];*/
-    const char *name;
+    const char *AlleleName;
     int index; /* initially 1 .. num_alleles in ascending order */
 } linkage_allele_rec;
 
@@ -157,7 +157,7 @@ typedef union _pheno_data {
 } pheno_data;
 
 typedef struct _pheno_rec {
-    char *Name;
+    char *TraitName;
     pheno_data Props;
     int col_num; /* for annotated files only for now */ //X
 } pheno_rec;
@@ -168,7 +168,7 @@ typedef union _marker_data {
 } marker_data;
 
 typedef struct _marker_rec {
-    char *Name;
+    char *MarkerName;
     marker_data Props;
     // UNKNOWN_POSITION is used in the following fields pos[ition|_male|_female], & error_prob
     // when a non-numeric or negative value is read, a value is missing, or un-initialized.
@@ -187,7 +187,7 @@ typedef union _linkage_locus_data {
 } linkage_locus_data;
 
 typedef struct _linkage_locus_rec {
-    char *Name;
+    char *LocusName;
     int AlleleCnt;
     linkage_allele_rec *Allele;     /* will be Allele[] */
     linkage_locus_type Type;

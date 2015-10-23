@@ -33,7 +33,7 @@
 
 #include "typedefs.h"
 
-#define MENDEL_AFFECTION fprintf(fp, "%-8s",  strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN));	\
+#define MENDEL_AFFECTION fprintf(fp, "%-8s",  strtail(Locus->LocusName, MENDEL_MAX_LOCUS_NAME_LEN));	\
     if ((sex_linked  == 1) ||                                           \
         (sex_linked == 2 && Locus->Marker->chromosome == SEX_CHROMOSOME)) {     \
 	fprintf(fp, "X-LINKED");                                        \

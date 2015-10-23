@@ -120,12 +120,12 @@ void log_marker_selections(linkage_ped_top *Top, int *entries,
         if (asterisks != NULL) {
             sprintf(err_msg, "%c%-6d %-15s %-9s",
                     asterisks[k], k+1,
-                    LocusTop->Locus[number1[k]].Name,
+                    LocusTop->Locus[number1[k]].LocusName,
                     loc_type_name(LocusTop->Locus[number1[k]].Type));
         } else {
             sprintf(err_msg, " %-6d %-15s %-9s",
                     k+1,
-                    LocusTop->Locus[number1[k]].Name,
+                    LocusTop->Locus[number1[k]].LocusName,
                     loc_type_name(LocusTop->Locus[number1[k]].Type));
         }
 
@@ -382,8 +382,8 @@ void            switch_map(linkage_locus_top *LTop, double *position, sex_map_ty
                 if (((LTop->Marker[ChrLoci[l]].pos_avg - lastpos) < 0.0) &&
                     (pl >= 0)) {
                     warnvf("%s (%.5g) and %s (%.5g) are not ordered by increasing average map distance!\n",
-                            LTop->Marker[ChrLoci[pl]].Name, LTop->Marker[ChrLoci[pl]].pos_avg,
-                            LTop->Marker[ChrLoci[l]].Name, LTop->Marker[ChrLoci[l]].pos_avg);
+                            LTop->Marker[ChrLoci[pl]].MarkerName, LTop->Marker[ChrLoci[pl]].pos_avg,
+                            LTop->Marker[ChrLoci[l]].MarkerName, LTop->Marker[ChrLoci[l]].pos_avg);
                     warnf("Assigning a 0 inter-marker distance, map conversion may be inaccurate.");
                 }
                 position[l] = ppos +
@@ -397,8 +397,8 @@ void            switch_map(linkage_locus_top *LTop, double *position, sex_map_ty
                 if (((LTop->Marker[ChrLoci[l]].pos_male - lastpos) < 0.0) &&
                     (pl >= 0)) {
                     warnvf("%s (%.5g) and %s (%.5g) are not ordered by increasing male map distance!\n",
-                            LTop->Marker[ChrLoci[pl]].Name, LTop->Marker[ChrLoci[pl]].pos_male,
-                            LTop->Marker[ChrLoci[l]].Name, LTop->Marker[ChrLoci[l]].pos_male);
+                            LTop->Marker[ChrLoci[pl]].MarkerName, LTop->Marker[ChrLoci[pl]].pos_male,
+                            LTop->Marker[ChrLoci[l]].MarkerName, LTop->Marker[ChrLoci[l]].pos_male);
                     warnf("Assigning a 0 inter-marker distance, male map conversion may be inaccurate.");
                 }
                 position[l] = ppos +
@@ -412,8 +412,8 @@ void            switch_map(linkage_locus_top *LTop, double *position, sex_map_ty
                 if (((LTop->Marker[ChrLoci[l]].pos_female - lastpos) < 0.0) &&
                     (pl >= 0)) {
                     warnvf("%s (%.5g) and %s (%.5g) are not ordered by increasing female map distance!\n",
-                            LTop->Marker[ChrLoci[pl]].Name, LTop->Marker[ChrLoci[pl]].pos_female,
-                            LTop->Marker[ChrLoci[l]].Name, LTop->Marker[ChrLoci[l]].pos_female);
+                            LTop->Marker[ChrLoci[pl]].MarkerName, LTop->Marker[ChrLoci[pl]].pos_female,
+                            LTop->Marker[ChrLoci[l]].MarkerName, LTop->Marker[ChrLoci[l]].pos_female);
                     warnf("Assigning a 0 inter-marker distance, female map conversion may be inaccurate.");
                 }
                 position[l] = ppos +
@@ -648,12 +648,12 @@ void   check_map_positions(linkage_ped_top *Top, int numchr,
                         numchr);
                 warnf(err_msg);
                 sprintf(err_msg, "   Locus %d (%s) is at position %10.7f",
-                        markers[i]+1, LTop->Locus[markers[i]].Name,
+                        markers[i]+1, LTop->Marker[markers[i]].MarkerName,
                         LTop->Marker[markers[i]].pos_avg);
                 warnf(err_msg);
                 sprintf(err_msg, "   Locus %d (%s) is at position %10.7f",
                         markers[i+1]+1,
-                        LTop->Locus[markers[i + 1]].Name,
+                        LTop->Marker[markers[i + 1]].MarkerName,
                         LTop->Marker[markers[i + 1]].pos_avg);
                 warnf(err_msg);
                 found_neg=1;
@@ -661,8 +661,8 @@ void   check_map_positions(linkage_ped_top *Top, int numchr,
                 Display_Errors=1;
                 sprintf(err_msg,
                         "Recombination fraction between %s and %s set to 0.0999.",
-                        LTop->Locus[markers[i]].Name,
-                        LTop->Locus[markers[i+1]].Name);
+                        LTop->Marker[markers[i]].MarkerName,
+                        LTop->Marker[markers[i+1]].MarkerName);
                 warnf(err_msg);
             }
         }

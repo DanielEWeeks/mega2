@@ -539,9 +539,9 @@ static void write_batch(char *loutfl_name, char *outfl_name,
                 }
                 fprintf(filep, "9\n");   /* Option 9 */
                 /* Have the loci names been truncated by now? */
-                fprintf(filep, "%s\n", strtail(LTop->Locus[*trp].Name, MENDEL_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%s\n", strtail(LTop->Pheno[*trp].TraitName, MENDEL_MAX_LOCUS_NAME_LEN));
                 /* Name of trait locus */
-                fprintf(filep, "%s\n", strtail(LTop->Locus[ChrLoci[i]].Name, MENDEL_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%s\n", strtail(LTop->Locus[ChrLoci[i]].LocusName, MENDEL_MAX_LOCUS_NAME_LEN));
                 /* Name of marker locus */
                 fprintf(filep, "\n");
                 fprintf(filep, "21\n");
@@ -1337,8 +1337,8 @@ void            write_mendel_locus_file(char *file_name,
         for (locus1 = 0; locus1 < NumChrLoci; locus1++) {
             Locus = &(LTop->Locus[ChrLoci[locus1]]);
             if (Locus->Type == NUMBERED || Locus->Type == BINARY) {
-                if (Locus->Name != NULL) {
-                    fprintf(fp, "%-8s", strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN));
+                if (Locus->LocusName != NULL) {
+                    fprintf(fp, "%-8s", strtail(Locus->LocusName, MENDEL_MAX_LOCUS_NAME_LEN));
                 }
                 else
                     fprintf(fp, "%8d ", locus1 + 1);
@@ -1453,8 +1453,8 @@ static int  write_mendel_pen_file(char *fl_name, linkage_locus_top * LTop,
             continue;
         }
 
-        ((Locus->Name != NULL) ?
-         fprintf(filep, "%-8s", strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN)) :
+        ((Locus->LocusName != NULL) ?
+         fprintf(filep, "%-8s", strtail(Locus->LocusName, MENDEL_MAX_LOCUS_NAME_LEN)) :
          fprintf(filep, "%8d", global_trait_entries[tr] + 1));
         fprintf(filep, "%8d                    <= Trait name, Number of liability classes\n",
                 Locus->Pheno->Props.Affection.ClassCnt);
@@ -1541,8 +1541,8 @@ static int write_mendel5_pen_file(char *fl_name,
             /* write single affection locus */
 
             fprintf(filep, "%8sPROB    %8s        %2d\n",
-                    strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN),
-                    strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN),
+                    strtail(Locus->LocusName, MENDEL_MAX_LOCUS_NAME_LEN),
+                    strtail(Locus->LocusName, MENDEL_MAX_LOCUS_NAME_LEN),
                     2*Locus->Pheno->Props.Affection.ClassCnt);
             for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.ClassCnt; tmpi2++) {
                 /* For unaffected status */
@@ -1579,8 +1579,8 @@ static int write_mendel5_pen_file(char *fl_name,
             /* if tr > 0, file is already open */
             /* print the current locus info */
             fprintf(filep, "%8sPROB    %8s        %2d\n",
-                    strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN),
-                    strtail(Locus->Name, MENDEL_MAX_LOCUS_NAME_LEN),
+                    strtail(Locus->LocusName, MENDEL_MAX_LOCUS_NAME_LEN),
+                    strtail(Locus->LocusName, MENDEL_MAX_LOCUS_NAME_LEN),
                     2*Locus->Pheno->Props.Affection.ClassCnt);
             for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.ClassCnt; tmpi2++) {
                 /* For unaffected status */
@@ -1654,7 +1654,7 @@ static void write_mendel5_variable_file(char *varfl_name,
         }
 
         fprintf(filep, "%8s               \n",
-                strtail(LTop->Locus[*tr].Name, MENDEL_MAX_LOCUS_NAME_LEN));
+                strtail(LTop->Locus[*tr].LocusName, MENDEL_MAX_LOCUS_NAME_LEN));
         tr++;
         if (LoopOverTrait == 1 && num_traits > 1) {
             fclose(filep);
@@ -1739,7 +1739,7 @@ static void write_batch3(char *loutfl_name, char *outfl_name,
                 }
                 fprintf(filep, "9\n");   /* Option 9 */
                 /* Have the loci names been truncated by now? */
-                fprintf(filep, "%s\n", strtail(LTop->Locus[ChrLoci[i]].Name, MENDEL_MAX_LOCUS_NAME_LEN));  /* Name of marker locus */
+                fprintf(filep, "%s\n", strtail(LTop->Locus[ChrLoci[i]].LocusName, MENDEL_MAX_LOCUS_NAME_LEN));  /* LocusName of marker locus */
                 fprintf(filep, "\n");
                 fprintf(filep, "17\n");  /* Set number of parameters */
                 fprintf(filep, "%d\n",LTop->Locus[ChrLoci[i]].AlleleCnt); /* to the # of alleles */
@@ -1814,7 +1814,7 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
 
         if (num_affec > 0) {
             if (LoopOverTrait == 1 && trp && LTop->Locus[*trp].Type == AFFECTION) {
-                fprintf(filep, "%-8s\n", strtail(LTop->Locus[*trp].Name, MENDEL_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%-8s\n", strtail(LTop->Pheno[*trp].TraitName, MENDEL_MAX_LOCUS_NAME_LEN));
                 fprintf(filep, "        0.50000 0.50000 ! %s\n",
                         (LTop->map_distance_type  == 'h' ? "Haldane" : "Kosambi"));
             }
@@ -1862,8 +1862,8 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
                 if (diffm < 0.0) {
                     sprintf(err_msg,
                             "%s (%7.4g) and %s (%7.4g) are not ordered by increasing male map distance!",
-                            LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_male,
-                            LTop->Marker[markers[i+1]].Name, LTop->Marker[markers[i+1]].pos_male);
+                            LTop->Marker[markers[i]].MarkerName, LTop->Marker[markers[i]].pos_male,
+                            LTop->Marker[markers[i+1]].MarkerName, LTop->Marker[markers[i+1]].pos_male);
                     warnf(err_msg);
                     warnf("Setting the distance between these to 0.001 cM.");
                     diffm=0.001;
@@ -1871,8 +1871,8 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
                 if (difff < 0.0) {
                     sprintf(err_msg,
                             "%s (%7.4g) and %s (%7.4g) are not ordered by increasing female map distance!",
-                            LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_female,
-                            LTop->Marker[markers[i+1]].Name, LTop->Marker[markers[i+1]].pos_female);
+                            LTop->Marker[markers[i]].MarkerName, LTop->Marker[markers[i]].pos_female,
+                            LTop->Marker[markers[i+1]].MarkerName, LTop->Marker[markers[i+1]].pos_female);
                     warnf(err_msg);
                     warnf("Setting the distance between these to 0.001 cM.");
                     difff=0.001;
@@ -1887,14 +1887,14 @@ static void write_mendel_map_using_sex_specific(char *mapfile, linkage_locus_top
                 }
             }
 
-            fprintf(filep, "%-8s\n", strtail(LTop->Locus[markers[i-1]].Name, MENDEL_MAX_LOCUS_NAME_LEN));
+            fprintf(filep, "%-8s\n", strtail(LTop->Locus[markers[i-1]].LocusName, MENDEL_MAX_LOCUS_NAME_LEN));
             fprintf(filep, "        %7.5f %7.5f ! %s\n",
                     difff, diffm,
                     (LTop->map_distance_type  == 'h' ? "Haldane" : "Kosambi"));
         }
 
         fprintf(filep, "%-8s\n",
-                strtail(LTop->Locus[markers[num_markers-1]].Name, MENDEL_MAX_LOCUS_NAME_LEN));
+                strtail(LTop->Marker[markers[num_markers-1]].MarkerName, MENDEL_MAX_LOCUS_NAME_LEN));
         fclose(filep);
         if (nloop == 1) break;
         if (num_affec > 0) trp++;
@@ -1961,7 +1961,7 @@ static void write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top
 
         if (num_affec > 0) {
             if (LoopOverTrait == 1 && trp && LTop->Locus[*trp].Type == AFFECTION) {
-                fprintf(filep, "%-8s\n", strtail(LTop->Locus[*trp].Name, MENDEL_MAX_LOCUS_NAME_LEN));
+                fprintf(filep, "%-8s\n", strtail(LTop->Pheno[*trp].TraitName, MENDEL_MAX_LOCUS_NAME_LEN));
                 fprintf(filep, "        0.50000\n");
             }
         }
@@ -2003,8 +2003,8 @@ static void write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top
                 if (diff < 0.0) {
                     sprintf(err_msg,
                             "%s (%7.4g) and %s (%7.4g) are not ordered by increasing map distance!",
-                            LTop->Marker[markers[i]].Name, LTop->Marker[markers[i]].pos_avg,
-                            LTop->Marker[markers[i+1]].Name, LTop->Marker[markers[i+1]].pos_avg);
+                            LTop->Marker[markers[i]].MarkerName, LTop->Marker[markers[i]].pos_avg,
+                            LTop->Marker[markers[i+1]].MarkerName, LTop->Marker[markers[i+1]].pos_avg);
                     warnf(err_msg);
                     diff=0.001;
                     warnf("Setting the distance between these to 0.001 cM.");
@@ -2017,11 +2017,11 @@ static void write_mendel_map_using_sex_averaged(char *mapfile, linkage_locus_top
                 }
             }
 
-            fprintf(filep, "%-8s\n", strtail(LTop->Locus[markers[i-1]].Name, MENDEL_MAX_LOCUS_NAME_LEN));
+            fprintf(filep, "%-8s\n", strtail(LTop->Locus[markers[i-1]].LocusName, MENDEL_MAX_LOCUS_NAME_LEN));
             fprintf(filep, "        %7.5f\n", diff);
         }
 
-        fprintf(filep, "%-8s\n", strtail(LTop->Locus[markers[num_markers-1]].Name, MENDEL_MAX_LOCUS_NAME_LEN));
+        fprintf(filep, "%-8s\n", strtail(LTop->Marker[markers[num_markers-1]].MarkerName, MENDEL_MAX_LOCUS_NAME_LEN));
         fclose(filep);
         if (nloop == 1) break;
         if (num_affec > 0) trp++;
@@ -2117,8 +2117,8 @@ static void write_mendel4_control(char *file_names[], int numchr,
                 fprintf(fp, "AFFECTED = 2\n");
                 fprintf(fp, "AFFECTED_LOCUS_OR_FACTOR = %s\n",
                         ((analysis== TO_MENDEL7_CSV)?
-                         strtail(LTop->Locus[global_trait_entries[i]].Name, MENDEL7_MAX_LOCUS_NAME_LEN) :
-                         strtail(LTop->Locus[global_trait_entries[i]].Name, MENDEL_MAX_LOCUS_NAME_LEN)));
+                         strtail(LTop->Pheno[global_trait_entries[i]].TraitName, MENDEL7_MAX_LOCUS_NAME_LEN) :
+                         strtail(LTop->Pheno[global_trait_entries[i]].TraitName, MENDEL_MAX_LOCUS_NAME_LEN)));
 
                 if (LTop->Pheno[global_trait_entries[i]].Props.Affection.ClassCnt == 1) {
                     fprintf(fp, "PENETRANCE = %5.4f :: 1/1\n",
@@ -2135,8 +2135,8 @@ static void write_mendel4_control(char *file_names[], int numchr,
                 fprintf(fp, "AFFECTED = 2\n");
                 fprintf(fp, "AFFECTED_LOCUS_OR_FACTOR = %s\n",
                         ((analysis== TO_MENDEL7_CSV)?
-                         strtail(LTop->Locus[global_trait_entries[trp]].Name, MENDEL7_MAX_LOCUS_NAME_LEN) :
-                         strtail(LTop->Locus[global_trait_entries[trp]].Name, MENDEL_MAX_LOCUS_NAME_LEN)));
+                         strtail(LTop->Pheno[global_trait_entries[trp]].TraitName, MENDEL7_MAX_LOCUS_NAME_LEN) :
+                         strtail(LTop->Pheno[global_trait_entries[trp]].TraitName, MENDEL_MAX_LOCUS_NAME_LEN)));
 
                 if (LTop->Pheno[global_trait_entries[trp]].Props.Affection.ClassCnt > 1) {
                     fprintf(fp, "PENETRANCE_FILE = %s\n", file_names[6]);

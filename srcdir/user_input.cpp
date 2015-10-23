@@ -1798,7 +1798,7 @@ void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
 
             /* find the trait number */
             for (tr = 0; tr < num_mult_tr; tr ++) {
-                if (!strcmp(Top->LocusTop->Locus[ml_traits[tr]].Name,
+                if (!strcmp(Top->LocusTop->Pheno[ml_traits[tr]].TraitName,
                             trait_name)) {
                     found=tr;
                     break;
@@ -1852,7 +1852,7 @@ void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
             printf("Affection label menu:\n");
             printf("0) Done with this menu - please proceed\n");
             for(i=0; i < num_mult_tr; i++) {
-                printf(" %d) %s [%s]\n", i+1, Top->LocusTop->Locus[ml_traits[i]].Name,
+                printf(" %d) %s [%s]\n", i+1, Top->LocusTop->Pheno[ml_traits[i]].TraitName,
                        Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[i]);
             }
             printf("Enter 0 or a trait item between 1-%d >",
@@ -1879,7 +1879,7 @@ void define_affection_labels(linkage_ped_top *Top, analysis_type analysis)
             /* Now prepend each affdata-string with the trait name */
             affdata_str = strdup(Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[i]);
             sprintf(Mega2BatchItems[/* 18 */ Value_Affecteds].value.mult_names[i], "%s:%s",
-                    Top->LocusTop->Locus[ml_traits[i]].Name,
+                    Top->LocusTop->Pheno[ml_traits[i]].TraitName,
                     affdata_str);
             free(affdata_str);
         }
@@ -2397,7 +2397,7 @@ int gh_cov_selection(int num_select, int *traits,
         printf("Trait loci list:\n");
         for (t=0; t<numq; t++) {
             printf("%c %d) %s\n", (selected[t]? '*': ' '),
-                   t+1, LTop->Locus[traits[quants[t]]].Name);
+                   t+1, LTop->Pheno[traits[quants[t]]].TraitName);
         }
         draw_line();
         printf("\nEnter only 'e' if no covariates are desired.\n");
@@ -2460,7 +2460,7 @@ int gh_cov_selection(int num_select, int *traits,
         mssgf(err_msg);
         for (t=0; t<numq; t++) {
             sprintf(err_msg, "%d) %s %s", t+1,
-                    LTop->Locus[traits[quants[t]]].Name,
+                    LTop->Pheno[traits[quants[t]]].TraitName,
                     (local_covariates[quants[t]]? "[covariate]":""));
             mssgf(err_msg);
         }

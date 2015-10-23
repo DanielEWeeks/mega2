@@ -419,14 +419,14 @@ static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
             extern m2_map save_vcf_map;
             //int chr = LTop->Marker[m].chromosome;
             //if (chr == UNKNOWN_CHROMO) chr = 0;
-            string target_marker_name(LTop->Locus[m].Name);
+            string target_marker_name(LTop->Marker[m].MarkerName);
             
             for(unsigned int j = 0; j < save_vcf_map.size(); j++) {
                 m2_map_entry map_entry = save_vcf_map.get_entry(j);
                 string marker_name = map_entry.get_marker_name();
                 if (target_marker_name == marker_name) {
                     string reference_allele = map_entry.get_REF();
-                    fprintf(ref_fp, "%s\t%s\n", LTop->Locus[m].Name, reference_allele.c_str());
+                    fprintf(ref_fp, "%s\t%s\n", LTop->Locus[m].LocusName, reference_allele.c_str());
                     break;
                 }
             }
@@ -468,14 +468,14 @@ static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
         if (LTop->Locus[m].Class == MARKER) {
             //int chr = LTop->Marker[m].chromosome;
             //if (chr == UNKNOWN_CHROMO) chr = 0;
-            string target_marker_name(LTop->Locus[m].Name);
+            string target_marker_name(LTop->Marker[m].MarkerName);
 
             write_PLINK_reference_mapi mapi = PLINK_reference_map.find(target_marker_name);
             if (mapi == PLINK_reference_map.end()) {
                 printf("tilt: %s not found\n", target_marker_name.c_str());
             } else {
                 string ref_allele = mapi->second;
-                fprintf(ref_fp, "%s\t%s\n", LTop->Locus[m].Name, ref_allele.c_str());
+                fprintf(ref_fp, "%s\t%s\n", LTop->Locus[m].LocusName, ref_allele.c_str());
             }
             
         }

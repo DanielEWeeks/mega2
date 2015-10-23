@@ -229,7 +229,7 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
                 sort_basepair_positions();
             }
             void inner() {
-                pr_printf("%15s ", _tle->Name);
+                pr_printf("%15s ", _tle->LocusName);
                 //pr_marker_name();
                 (void)pr_physical_distance(NULL); // for the marker...
                 pr_marker_alleles(); // Print the alleles associated with the marker...
@@ -262,7 +262,7 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
                 int warnp;
                 double genetic_distance = get_genetic_distance(&warnp);
                 pr_genetic_distance_warning(warnp);
-                pr_printf("%15s ", _tle->Name);
+                pr_printf("%15s ", _tle->LocusName);
                 // Haldane cM was intended for use in Beagle...
 #ifdef DONT_CONVERT_TO_HALDANE_FOR_BEAGLE
                 warnf("*****************************************************************");
@@ -503,7 +503,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             // Quantitative traits are marked with a 'T', and Covariates with a 'C'.
             // NOTE: Quantitative and Covariate traits are not currently used by Beagle.
 
-            if (_tte != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_tte->Type == AFFECTION ? "A" : "T"), _tte->Name);
+            if (_tte != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_tte->Type == AFFECTION ? "A" : "T"), _tte->LocusName);
             else warnf("The genotype file contains no phenotypes.");
         }
         void inner() {
@@ -544,7 +544,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             }
         }
         void loci_start() {
-            pr_printf("M %s ", _tle->Name);
+            pr_printf("M %s ", _tle->LocusName);
         }
         void inner() {
             if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
@@ -704,7 +704,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             // It is necessary only when performing association testing.
             // Quantitative traits are marked with a 'T', and Covariates with a 'C'.
             // NOTE: Quantitative and Covariate traits are not currently used by Beagle.
-            if (_tte != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_tte->Type == AFFECTION ? "A" : "T"), _tte->Name);
+            if (_tte != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_tte->Type == AFFECTION ? "A" : "T"), _tte->LocusName);
             else warnf("The genotype file contains no phenotypes.");
         }
         void inner() {
@@ -753,7 +753,7 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             }
         }
         void loci_start() {
-            pr_printf("M %s ", _tle->Name);
+            pr_printf("M %s ", _tle->LocusName);
         }
         void inner() {
             if (_tpe->Father != 0) {
@@ -947,7 +947,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             // It is necessary only when performing association testing.
             // Quantitative traits are marked with a 'T', and Covariates with a 'C'.
             // NOTE: Quantitative and Covariate traits are not currently used by Beagle.
-            if (_tte != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_tte->Type == AFFECTION ? "A" : "T"), _tte->Name);
+            if (_tte != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_tte->Type == AFFECTION ? "A" : "T"), _tte->LocusName);
             else warnf("The genotype file contains no phenotypes.");
         }
         void inner() {
@@ -998,7 +998,7 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             }
         }
         void loci_start() {
-            pr_printf("M %s ", _tle->Name);
+            pr_printf("M %s ", _tle->LocusName);
         }
         void inner() {
             if (_tpe->Father != 0) {

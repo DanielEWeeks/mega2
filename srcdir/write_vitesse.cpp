@@ -266,7 +266,7 @@ static void vitesse_linkmap_marker_interval(int *mint_opt, int *intv_size,
                 printf("Markers available for selection:\n");
                 for(i=0; i < num_chr_markers; i++) {
                     printf(" %d) %s\n",
-                           i+1, LTop->Locus[chr_markers[i]].Name);
+                           i+1, LTop->Marker[chr_markers[i]].MarkerName);
                 }
                 printf("Enter size of new interval > ");
                 fcmap(stdin, "%d", intv_size); newline;
@@ -650,15 +650,15 @@ static void write_vitesse_lsplog(FILE *flog, char *file_names[],
             fprintf(flog, " %d", LTop->Run.linkmap.trait_marker +1);
         } else {
             fprintf(flog, " %d", loci1[i]);
-            /*LTop->Locus[loci[i]].Name); */
+            /*LTop->Locus[loci[i]].LocusName); */
         }
     }
     fprintf(flog, "\n");
     fprintf(flog, "     Locus Names                :");
     for (i=0; i< locus_num;i++) {
         if (loci[i]==-9) fprintf(flog, " %s",
-                                 LTop->Locus[LTop->Run.linkmap.trait_marker].Name);
-        else fprintf(flog, " %s", LTop->Locus[loci[i]].Name);
+                                 LTop->Pheno[LTop->Run.linkmap.trait_marker].TraitName);
+        else fprintf(flog, " %s", LTop->Locus[loci[i]].LocusName);
     }
     fprintf(flog, "\n");
     if (LTop->Program == LINKMAP) {
@@ -726,8 +726,8 @@ static void write_vitesse_locus_file(char *loutfl_name,
             if (locus == trait_locus)	Locus=&(LTop->Locus[*trp]);
             else Locus=&(LTop->Locus[loci[locus]]);
             fprintf(filep, "%d %d", Locus->Type - 1, Locus->AlleleCnt);
-            if (Locus->Name != NULL)
-                fprintf(filep, " #%s", Locus->Name);
+            if (Locus->LocusName != NULL)
+                fprintf(filep, " #%s", Locus->LocusName);
             fputc('\n', filep);
             for (allele = 0; allele < Locus->AlleleCnt; allele++) {
                 fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
@@ -858,9 +858,9 @@ static void write_vitesse_order_run(char *shell, int *perm,
         fprintf(fshell, "echo Loci: ");
         for (i=0; i<num_markers; i++) {
             if (perm[i] == -9) {
-                fprintf(fshell, "%s ", Top->LocusTop->Locus[*trp].Name);
+                fprintf(fshell, "%s ", Top->LocusTop->Pheno[*trp].TraitName);
             } else {
-                fprintf(fshell, "%s ", Top->LocusTop->Locus[perm[i]].Name);
+                fprintf(fshell, "%s ", Top->LocusTop->Locus[perm[i]].LocusName);
             }
         }
         fprintf(fshell, "\n");
@@ -1118,13 +1118,13 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
 
                     }
 
-                    file_ext = CALLOC(strlen(LTop->LocusTop->Locus[markers[0]].Name) +
-                                      strlen(LTop->LocusTop->Locus[markers[intv_size-1]].Name) +
+                    file_ext = CALLOC(strlen(LTop->LocusTop->Marker[markers[0]].MarkerName) +
+                                      strlen(LTop->LocusTop->Marker[markers[intv_size-1]].MarkerName) +
                                       3 + intv_size_width, char);
 
                     sprintf(file_ext, "%s-%s_%d",
-                            LTop->LocusTop->Locus[markers[0]].Name,
-                            LTop->LocusTop->Locus[markers[intv_size-1]].Name, j+1);
+                            LTop->LocusTop->Marker[markers[0]].MarkerName,
+                            LTop->LocusTop->Marker[markers[intv_size-1]].MarkerName, j+1);
                     outfl_name = CALLOC(strlen(file_ext)+strlen(file_names[0]) +
                                         strlen(chr_str)+5, char);
                     loutfl_name = CALLOC(strlen(file_ext)+strlen(file_names[1]) +
@@ -1236,12 +1236,12 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
                              haldane_theta(th) : kosambi_theta(th));
 
                     }
-                    file_ext = CALLOC(strlen(LTop->LocusTop->Locus[markers[0]].Name) +
-                                      strlen(LTop->LocusTop->Locus[markers[intv_size-1]].Name) +
+                    file_ext = CALLOC(strlen(LTop->LocusTop->Marker[markers[0]].MarkerName) +
+                                      strlen(LTop->LocusTop->Marker[markers[intv_size-1]].MarkerName) +
                                       3 + intv_size_width, char);
                     sprintf(file_ext, "%s-%s_%d",
-                            LTop->LocusTop->Locus[markers[0]].Name,
-                            LTop->LocusTop->Locus[markers[intv_size-1]].Name, k+1);
+                            LTop->LocusTop->Marker[markers[0]].MarkerName,
+                            LTop->LocusTop->Marker[markers[intv_size-1]].MarkerName, k+1);
                     outfl_name = CALLOC(strlen(file_ext)+strlen(file_names[0]) +
                                         strlen(chr_str)+5, char);
                     loutfl_name = CALLOC(strlen(file_ext)+strlen(file_names[1]) +
@@ -1282,12 +1282,12 @@ void create_vitesse_files(linkage_ped_top **Top, int *numchr,
                 perms[1]=chr_markers[j];
                 perms1[1]=j+2;
                 outfl_name = CALLOC(strlen(file_names[0]) +
-                                    strlen(LTop->LocusTop->Locus[perms[1]].Name)+5, char);
+                                    strlen(LTop->LocusTop->Locus[perms[1]].LocusName)+5, char);
                 loutfl_name = CALLOC(strlen(file_names[1]) +
-                                     strlen(LTop->LocusTop->Locus[perms[1]].Name)+5, char);
+                                     strlen(LTop->LocusTop->Locus[perms[1]].LocusName)+5, char);
 
-                sprintf(outfl_name, "%s.%s", file_names[0], LTop->LocusTop->Locus[perms[1]].Name);
-                sprintf(loutfl_name, "%s.%s", file_names[1], LTop->LocusTop->Locus[perms[1]].Name);
+                sprintf(outfl_name, "%s.%s", file_names[0], LTop->LocusTop->Locus[perms[1]].LocusName);
+                sprintf(loutfl_name, "%s.%s", file_names[1], LTop->LocusTop->Locus[perms[1]].LocusName);
 
                 save_linkage_peds(outfl_name, LTop, analysis, 2, perms);
                 write_vitesse_locus_file(loutfl_name, LTop->LocusTop, 2, perms, xlinked);

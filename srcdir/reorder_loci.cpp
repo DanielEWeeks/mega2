@@ -256,7 +256,7 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
         if (LTop->Marker[j].chromosome == UNKNOWN_CHROMO) {
 
             SECTION_ERR(unmapped_errors);
-            warnvf("Locus %s chromosome is unavailable.\n", LTop->Marker[j].Name);
+            warnvf("Locus %s chromosome is unavailable.\n", LTop->Marker[j].MarkerName);
             unmapped_markers[ui++] = j;
         } else if (LTop->Marker[j].chromosome == MISSING_CHROMO) {
 	    // The entry for this locus (marker assumed) was not found in the map file.
@@ -265,7 +265,7 @@ int get_chromosome_list(linkage_locus_top *LTop, int *local_list,
         } else if (LTop->Marker[j].chromosome < 1) {
             SECTION_ERR(invalid_chromosome);
             warnvf("Invalid chromosome number %d on locus %s.\n",
-                    LTop->Marker[j].chromosome, LTop->Marker[j].Name);
+                    LTop->Marker[j].chromosome, LTop->Marker[j].MarkerName);
             if (exit_upon_no_chr) {
                 errorvf("Please correct and restart mega2!\n");
                 EXIT(DATA_TYPE_ERROR);
@@ -540,8 +540,8 @@ static void display_trait_names(int num_tr, int *trs,
             else {
                 k = indexes[trs[i]-base];
             }
-            msgvf("%s", LTop->Locus[k].Name);
-            col += (int) strlen(LTop->Locus[k].Name);
+            msgvf("%s", LTop->Locus[k].LocusName);
+            col += (int) strlen(LTop->Locus[k].LocusName);
         }
         else {
             msgvf("[MARKERS]");
@@ -1240,7 +1240,7 @@ static int verify_markers(int entrycount, int *number,
         else if (Top->LocusTop->Locus[number[i]].Type != QUANT &&
                  analysis == QUANT_SUMMARY) {
             errorvf("Locus %s is not a quantitative trait locus. Only quantitative loci allowed for %s.\n",
-                    Top->LocusTop->Locus[number[i]].Name,
+                    Top->LocusTop->Locus[number[i]].LocusName,
 		    ProgName);
             EXIT(EARLY_TERMINATION);
         }
@@ -1449,7 +1449,7 @@ int display_selections(linkage_ped_top *Top, int *entries,
                 printf(" ");
             }
             printf("%4d) ", k+1);
-            printf(namestr, LocusTop->Locus[number1[k]].Name);
+            printf(namestr, LocusTop->Locus[number1[k]].LocusName);
             if (traits_only == 1) {
                 printf(" %-9s ", loc_type_name(LocusTop->Locus[number1[k]].Type));
             } else {
@@ -1487,7 +1487,7 @@ int display_selections(linkage_ped_top *Top, int *entries,
                     printf(" ");
                 }
                 printf("%4d) ", k+2);
-                printf(namestr, LocusTop->Locus[number1[k+1]].Name);
+                printf(namestr, LocusTop->Locus[number1[k+1]].LocusName);
                 if (traits_only == 1) {
                     printf(" %-9s ", loc_type_name(LocusTop->Locus[number1[k+1]].Type));
                 } else {
@@ -1540,7 +1540,7 @@ int display_selections(linkage_ped_top *Top, int *entries,
                 printf("%c ", asterisks[k]);
             }
             printf("%-4d ", k+1);
-            printf(namestr, LocusTop->Locus[number1[k]].Name);
+            printf(namestr, LocusTop->Locus[number1[k]].LocusName);
             if (traits_only == 1) {
                 printf("%-9s ", loc_type_name(LocusTop->Locus[number1[k]].Type));
             } else {
@@ -2629,7 +2629,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
     if (naff == 1 && no_trait_allowed(analysis, 0) == 0) {
         marker_item = num_traits + 1;
         printf("Found one affection trait locus %s\n",
-               LTop->LocusTop->Locus[global_trait_entries[default_trait]].Name);
+               LTop->LocusTop->Pheno[global_trait_entries[default_trait]].TraitName);
         printf("%s requires at least one trait, selecting this locus for analysis.\n",
                ProgName);
         /* sleep(2); */
@@ -2815,7 +2815,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
                         for (i=0; i < num_traits; i++) {
                             int trait = global_trait_entries[i];
                             printf("%d)     %-15s      %s\n", i+1,
-                                   LTop->LocusTop->Locus[trait].Name,
+                                   LTop->LocusTop->Pheno[trait].TraitName,
                                    LocusTypeName[LTop->LocusTop->Locus[trait].Type]);
                         }
 
@@ -2831,7 +2831,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
                         printf("Select covariate(s) from the following list:\n");
                         for (i=0; i < num_traits_left; i++) {
                             printf("%d)     %-15s      %s\n", covar_items[i]+1,
-                                   LTop->LocusTop->Locus[traits_left[i]].Name,
+                                   LTop->LocusTop->Pheno[traits_left[i]].TraitName,
                                    LocusTypeName[LTop->LocusTop->Locus[traits_left[i]].Type]);
                         }
                         num_allowed = num_traits_left;
@@ -3327,11 +3327,11 @@ static void get_trait_positions(linkage_locus_top *LTop,
             while(1) {
                 if (j == 1) {
                     printf("Enter position for %s (2nd unmapped locus) in cM > ",
-                           LTop->Locus[traits[0]].Name);
+                           LTop->Pheno[traits[0]].TraitName);
                 } else {
                     printf("Enter upto %d trait locus positions in cM,\n", j);
                     printf("starting with 2nd unmapped locus %s.\n",
-                           LTop->Locus[traits[0]].Name);
+                           LTop->Pheno[traits[0]].TraitName);
                     printf("if fewer than %d positions are provided, \n", j);
                     printf("the last position will be assigned to the remainder of the unmapped loci > ");
                 }

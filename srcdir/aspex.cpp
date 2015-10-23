@@ -706,7 +706,7 @@ static int assign_distances(tcl_opts_type *opt, int numchr,
     for (i=0,j=0; i<num_traits; i++) {
         if (global_trait_entries[i] < 0) continue;
         opt->dlocus_name[j] = CALLOC((size_t)MAX_NAMELEN, char);
-        sprintf(opt->dlocus_name[j++], "%s", LTop1->Locus[global_trait_entries[i]].Name);
+        sprintf(opt->dlocus_name[j++], "%s", LTop1->Pheno[global_trait_entries[i]].TraitName);
     }
     for (i = 0; i < NumChrLoci; i++)  {
         if (LTop1->Locus[ChrLoci[i]].Type == NUMBERED ||
@@ -737,7 +737,7 @@ static int assign_distances(tcl_opts_type *opt, int numchr,
 
         }
         for (i = 0; i < miss; i++) {
-            sprintf(err_msg, "%s ", LTop1->Locus[missing_index[i]].Name);
+            sprintf(err_msg, "%s ", LTop1->Locus[missing_index[i]].LocusName);
             errorf(err_msg);
         }
         printf("Do you wish to abort mega2 ? (y/n)[y] > ");
@@ -770,8 +770,8 @@ static int assign_distances(tcl_opts_type *opt, int numchr,
     for (nloc = 0; nloc < opt->nloc; nloc++)  {
         i=ok_index[nloc];
         opt->locus_names[nloc]=
-            CALLOC(strlen(LTop1->Locus[i].Name)+1, char);
-        strcpy(opt->locus_names[nloc], LTop1->Locus[i].Name);
+            CALLOC(strlen(LTop1->Locus[i].LocusName)+1, char);
+        strcpy(opt->locus_names[nloc], LTop1->Locus[i].LocusName);
         opt->allele_cnt[nloc] = (int) LTop1->Locus[i].AlleleCnt;
         opt->allele_freq[nloc]=
             CALLOC((size_t) LTop1->Locus[i].AlleleCnt, double);

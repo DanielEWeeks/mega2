@@ -369,7 +369,7 @@ void person_locus_entry::pr_marker_name()
         EXIT(SYSTEM_ERROR);
     } else
       //pr_printf(_mformat, _tte->Name);
-      pr_printf(_mformat, _LTop->Locus[_locus].Name);
+      pr_printf(_mformat, _LTop->Locus[_locus].LocusName);
 }
 
 /**
@@ -389,7 +389,7 @@ void person_locus_entry::pr_marker_alleles()
 {
     int i;
     for (i=0; i <_tle->AlleleCnt; i++) {
-        const char *name = _tle->Allele[i].name;
+        const char *name = _tle->Allele[i].AlleleName;
         if (name == (const char *)NULL) {
             // This problem seems to appear when _LTop->PedRecDataType == Premakeped
             // This base problem needs to be fixed properly.
@@ -468,7 +468,7 @@ void person_locus_entry::pr_genetic_distance_warning(int warnp)
         break;
     case 1:
         warnf("Since only a sex-averaged genetic map was used, these positions have been used");
-        warnvf("for markers (%d, %s) on the X and Y chromosomes.\n", _tle->Marker->chromosome, _tle->Name);
+        warnvf("for markers (%d, %s) on the X and Y chromosomes.\n", _tle->Marker->chromosome, _tle->LocusName);
         break;
     case 2:
         // autozomes will be set to missing is a result of the decision made to allow the user
@@ -539,7 +539,7 @@ const char *person_locus_entry::recode_name(const int allele, const char *zero, 
     if (allele == 0) 
         return zero;
     else if (allele <= _LTop->Locus[_locus].AlleleCnt)
-        return lar[allele-1].name;
+        return lar[allele-1].AlleleName;
     else 
         return other;
 }

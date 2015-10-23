@@ -128,7 +128,7 @@ static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
                 // If this is a marker, skip it...
                 if (global_trait_entries[tr] == -1) continue;
                 pr_printf(" %s",
-                          _Top->LocusTop->Locus[global_trait_entries[tr]].Name);
+                          _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName);
             }
             pr_nl();
         }
@@ -193,7 +193,7 @@ static void write_PLINK_map_data(linkage_ped_top *LPTop,
         if (LTop->Locus[m].Class == MARKER) {
 //          int LType = LTop->Locus[m].Type;
             int chr = LTop->Marker[m].chromosome;
-            char *snp = LTop->Locus[m].Name;
+            char *snp = LTop->Locus[m].LocusName;
             // These are the defaults (e.g. nothing was specified)...
             double genetic_distance = MAP_MISSING, base_pair_position = MAP_MISSING;
             
@@ -288,7 +288,7 @@ static void write_PLINK_map_data(linkage_ped_top *LPTop,
                     // When PLINK makes the .BIM file, the minor allele is listed before major allele.
                     // We do not list alleles based on frequency...
                     fprintf(map_fp, "\t%s\t%s",
-                            LTop->Locus[m].Allele[0].name, LTop->Locus[m].Allele[1].name);
+                            LTop->Locus[m].Allele[0].AlleleName, LTop->Locus[m].Allele[1].AlleleName);
                 }
                 
                 fprintf(map_fp, "\n");

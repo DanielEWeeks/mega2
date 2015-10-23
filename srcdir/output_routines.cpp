@@ -72,9 +72,9 @@ void locus_name_width(linkage_locus_top *TTop, int *LocWidth)
 {
     int i, new_loc_wid;
 
-    *LocWidth = (int) strlen(TTop->Locus[0].Name);
+    *LocWidth = (int) strlen(TTop->Locus[0].LocusName);
     for (i = 1; i < TTop->LocusCnt; i++) {
-        new_loc_wid= (int) strlen(TTop->Locus[i].Name);
+        new_loc_wid= (int) strlen(TTop->Locus[i].LocusName);
         *LocWidth = ((new_loc_wid > *LocWidth)? new_loc_wid : *LocWidth);
     }
     return;

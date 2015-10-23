@@ -832,14 +832,14 @@ static int read_annotated_pedrec(FILE *filep,
 
                 if (entry->pheno[mrkindex].Affection.Status == UNDEF) {
                     errorvf("File %s, Line %d : Invalid status at locus %s\n",
-                            pedfile, entry->rec_num, LTop->Locus[mrkindex].Name);
+                            pedfile, entry->rec_num, LTop->Marker[mrkindex].MarkerName);
                     (*num_errors)++;
                 }
 
                 if (LTop->Pheno[mrkindex].Props.Affection.ClassCnt != 1) {
                     if (entry->pheno[mrkindex].Affection.Class == UNDEF) {
                         errorvf("Ped File \"%s\", Line %d : Invalid liability class at locus %s\n\n",
-                                pedfile, entry->rec_num, LTop->Locus[mrkindex].Name);
+                                pedfile, entry->rec_num, LTop->Marker[mrkindex].MarkerName);
                         (*num_errors)++;
                     }
                     i++;
@@ -861,7 +861,7 @@ static int read_annotated_pedrec(FILE *filep,
 		// There should be a better way...
                 if (entry->pheno[mrkindex].Quant == QUNDEF) {
                     errorvf("Ped File \"%s\", Line %d : Invalid quantitative phenotype at locus %s\n",
-                            pedfile, entry->rec_num, LTop->Locus[mrkindex].Name);
+                            pedfile, entry->rec_num, LTop->Marker[mrkindex].MarkerName);
                     (*num_errors)++;
                 }
                 break;
@@ -1811,13 +1811,13 @@ void clear_YLINKED_females(linkage_ped_top *Top, int raw_allele, int hdr)
                                         Top->PTop[pedi].persons[peri].famname,
                                         unique_id_per(Top->PTop[pedi].persons[peri].uniqueid,
                                                       Top->PTop[pedi].persons[peri].famname),
-                                        LTop->Locus[mrkindex].Name);
+                                        LTop->Marker[mrkindex].MarkerName);
                             } else {
                                 fprintf(omitfp, "%s %s %s\n",
                                         Top->Ped[pedi].Entry[peri].FamName,
                                         unique_id_per(Top->Ped[pedi].Entry[peri].UniqueID,
                                                       Top->Ped[pedi].Entry[peri].FamName),
-                                        LTop->Locus[mrkindex].Name);
+                                        LTop->Marker[mrkindex].MarkerName);
                             }
                         }
                     }
@@ -2527,7 +2527,7 @@ static int create_entries_for_markers_without_positions(linkage_locus_top *LTop,
         /* Check if maps are provided for all numbered loci */
         if (LTop->Locus[i].Class == MARKER) {
             if (LTop->Locus[i].number < 0) {
-                sprintf(err_msg, "Locus %s is not in map file; flushed.", LTop->Locus[i].Name);
+                sprintf(err_msg, "Locus %s is not in map file; flushed.", LTop->Locus[i].LocusName);
                 SECTION_ERR(locus_dropped);
                 warnf(err_msg);
                 LTop->Marker[i].chromosome = MISSING_CHROMO;
@@ -3215,7 +3215,7 @@ static void freq_insert_into_allele_list(allele_list_type **marker_item,
     
     new_entry = CALLOC((size_t)1, allele_list_type);
     /* all_val is a random string in the file */
-    new_entry->allele_freq.name = canonical_allele(allele_name);
+    new_entry->allele_freq.AlleleName = canonical_allele(allele_name);
     new_entry->allele_freq.freq = frequency_val;
     
     new_entry->allele_freq.count =
@@ -3232,12 +3232,12 @@ static void freq_insert_into_allele_list(allele_list_type **marker_item,
     } else {
         while((marker_itemp != NULL) &&
               // POSSIBLE BUG: SHouldn't this be '== 0'???
-              (strcmp(marker_itemp->allele_freq.name, allele_name) <= 0)) {
+              (strcmp(marker_itemp->allele_freq.AlleleName, allele_name) <= 0)) {
             marker_itemp1 = marker_itemp;
             marker_itemp = marker_itemp->next;
         }
         
-        if (allelecmp(marker_itemp1->allele_freq.name,allele_name)==0) {
+        if (allelecmp(marker_itemp1->allele_freq.AlleleName,allele_name)==0) {
             /* warn the user */
             warnvf("Duplicate allele record for %s, marker %s\n", allele_name, marker_name);
             warnf("Ignoring duplicate entries.");
@@ -4232,7 +4232,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     Tod tod_init("hash markers names");
     SECTION_ERR_INIT(duplicate_markers);
     for (i=0; i < LTop->LocusCnt; i++) {
-        char *name = LTop->Locus[i].Name;
+        char *name = LTop->Locus[i].LocusName;
         int i_old = test_and_add_marker(name, i);
         if (i_old >= 0) {
             SECTION_ERR(duplicate_markers);
@@ -5519,7 +5519,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
              (loctype[0] == 'Y' && loctype[1] == 'M') ||
              (loctype[0] == 'U' && loctype[1] == 'U')) {
             for (j = 0; j < /*llr.AlleleCnt*/2; j++) {
-                INIT_COLNAME(tmp, 0, STRING_AN, llr.Name);
+                INIT_COLNAME(tmp, 0, STRING_AN, llr.LocusName);
                 tmp[0].input_col = output_col;
                 copy_colname(tmp, ped_all_colnames + output_col);
                 ped_all_colnames[output_col].output_col = output_col;
@@ -5529,14 +5529,14 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
                 output_col++;
             }
         } else if ( (loctype[0] == 'A' && loctype[1] == 'A')) {
-            INIT_COLNAME(tmp, 0, STRING_AN, llr.Name);
+            INIT_COLNAME(tmp, 0, STRING_AN, llr.LocusName);
             tmp[0].input_col = output_col;
             copy_colname(tmp, ped_all_colnames + output_col);
             ped_all_colnames[output_col].output_col = output_col;
             ped_all_colnames[output_col].locus_number = i /* locus */;
             output_col++;
         } else {
-            INIT_COLNAME(tmp, 0, STRING_AN, llr.Name);
+            INIT_COLNAME(tmp, 0, STRING_AN, llr.LocusName);
             tmp[0].input_col = output_col;
             copy_colname(tmp, ped_all_colnames + output_col);
             ped_all_colnames[output_col].output_col = output_col;
