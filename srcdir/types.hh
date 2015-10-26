@@ -30,12 +30,18 @@
 #define TYPES_HH
 
 
-#include <map>
 #include <set>
 #include <string>
 #include <vector>
 #include <list>
 #include <limits>
+#include <map>
+#ifdef _WIN
+//#include <hash_map>
+#include <unordered_map>
+#else
+#include <unordered_map>
+#endif
 
 typedef std::string                         Str;
 typedef const std::string                   Cstr;
@@ -53,9 +59,11 @@ bool inline inSet(Cstr& str, T& set) {
 ////
 
 typedef std::vector<std::string>            Vecs;
+typedef std::vector<const char *>           Vecc;
 typedef std::vector<int>                    Veci;
 typedef std::vector<double>                 Vecd;
 typedef std::vector<std::string>::const_iterator            Vecsp;
+typedef std::vector<const char *>::const_iterator           Veccp;
 typedef std::vector<int>::const_iterator                    Vecip;
 typedef std::vector<double>::const_iterator                 Vecdp;
 
@@ -72,10 +80,12 @@ T&      vectordb<T>::operator[](unsigned long i) { return (std::vector<T>::data(
 template <class T>
 const T& vectordb<T>::operator[](unsigned long i) const { return (std::vector<T>::data()[i]); }
 
-typedef vectordb<std::string> VecsDB;
-typedef vectordb<int>         VeciDB;
-typedef vectordb<double>      VecdDB;
+typedef vectordb<std::string>  VecsDB;
+typedef vectordb<const char *> VeccDB;
+typedef vectordb<int>          VeciDB;
+typedef vectordb<double>       VecdDB;
 typedef vectordb<std::string>::const_iterator            VecspDB;
+typedef vectordb<const char *>::const_iterator           VeccpDB;
 typedef vectordb<int>::const_iterator                    VecipDB;
 typedef vectordb<double>::const_iterator                 VecdpDB;
 
@@ -94,12 +104,22 @@ bool inline inList(Cstr& str, T& list) {
 
 typedef std::map<const std::string, std::string>  Mapss;
 typedef std::map<const std::string, int>          Mapsi;
-typedef std::map<int, std::string>          Mapis;
-typedef std::map<int, int>                  Mapii;
-typedef std::map<const std::string, std::string>::const_iterator  Mapssp;
-typedef std::map<const std::string, int>::const_iterator          Mapsip;
-typedef std::map<int, std::string>::const_iterator                Mapisp;
-typedef std::map<int, int>::const_iterator                        Mapiip;
+class charsless {
+public:
+    bool operator() (const char *a, const char *b) const {
+        return strcmp(a, b) < 0;
+    }
+};
+typedef std::map<const char *, const char *, charsless>  Mapcc;
+typedef std::map<const char *, int, charsless>           Mapci;
+typedef std::map<int, std::string>                       Mapis;
+typedef std::map<int, int>                               Mapii;
+typedef std::map<const std::string, std::string>::const_iterator        Mapssp;
+typedef std::map<const std::string, int>::const_iterator                Mapsip;
+typedef std::map<const char *, const char *, charsless>::const_iterator Mapccp;
+typedef std::map<const char *, int, charsless>::const_iterator          Mapcip;
+typedef std::map<int, std::string>::const_iterator                      Mapisp;
+typedef std::map<int, int>::const_iterator                              Mapiip;
 
 template <typename T>
 bool inline inMap(typename T::key_type& str, T& map) {
@@ -119,6 +139,27 @@ bool map_get(T& map, typename T::key_type& lookup, typename T::mapped_type& ret)
         return true;
     }
 }
+
+////
+
+typedef std::unordered_map<const std::string, std::string, std::hash<std::string> >        Hmapss;
+typedef std::unordered_map<const std::string, int, std::hash<std::string> >                Hmapsi;
+class charseq {
+public:
+    bool operator() (const char *a, const char *b) const {
+        return strcmp(a, b) == 0;
+    }
+};
+typedef std::unordered_map<const char *, const char *, std::hash<const char *>, charseq>  Hmapcc;
+typedef std::unordered_map<const char *, int, std::hash<const char *>, charseq>           Hmapci;
+typedef std::unordered_map<int, std::string, std::hash<int> >                              Hmapis;
+typedef std::unordered_map<int, int, std::hash<int> >                                      Hmapii;
+typedef std::unordered_map<const std::string, std::string, std::hash<std::string> >::const_iterator   Hmapssp;
+typedef std::unordered_map<const std::string, int, std::hash<std::string> >::const_iterator           Hmapsip;
+typedef std::unordered_map<const char *, const char *, std::hash<const char *>, charseq>::const_iterator Hmapccp;
+typedef std::unordered_map<const char *, int, std::hash<const char *>, charseq>::const_iterator       Hmapcip;
+typedef std::unordered_map<int, std::string, std::hash<int> >::const_iterator                         Hmapisp;
+typedef std::unordered_map<int, int, std::hash<int> >::const_iterator                                 Hmapiip;
 
 ////
 
