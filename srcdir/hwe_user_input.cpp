@@ -892,7 +892,7 @@ void hwe_user_input(linkage_ped_top *LPedTreeTop, int *numchr,
     char R_script[30], chr[4];
     char prog_names[5][8] = { "GEN", "HWE", "CHISQ", "EXACT", "MENDEL"};
 
-#define _mrk_name(i)   (ltop->Marker[i].MarkerName)
+#define _mrk_name(i)   (ltop->Locus[i].LocusName)
 #define _num_all(i)   (ltop->Locus[i].AlleleCnt)
 
     input_files=mega2_input_files;
