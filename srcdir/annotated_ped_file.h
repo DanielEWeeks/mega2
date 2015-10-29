@@ -43,13 +43,14 @@
 
 /* How many characters to read in at a time */
 #define READ_CHUNK 400
+/*
 #define INIT_COLNAME(colnames, i, type, name)   strcpy(colnames[i].ColName, name); \
     colnames[i].value_type=type;                                        \
     colnames[i].input_col = -1;                                         \
     colnames[i].locus_number = -1;                                      \
     colnames[i].map_number = -1;                                        \
     colnames[i].sex_map_number = -1;
-
+*/
 typedef enum _col_hdr_err_type {
     CORRECT, UNKNOWN_HDR, NO_MAIN_PART, NO_EXT, LONG_EXT,
     UNKNOWN_EXT, MISSING_REQ_HDR
@@ -61,14 +62,15 @@ typedef enum _col_value_type {
 
 
 typedef struct _col_hdr_type_ {
-    char ColName[COLNAMEWIDTH]; /* resreved keyword name, Ped, ID, Sex etc. */
+//    char ColName[COLNAMEWIDTH]; /* resreved keyword name, Ped, ID, Sex etc. */
+    const char *ColName;
     col_value_type value_type; /* what type of data */
     int input_col; /* which column in input file, set after parsing header */
     int output_col; /* which column to output after matching various files*/
     int locus_number; /* relevant only for pedigree file */
     int map_number, sex_map_number; /* relevant only for map file */
     int output_length;
-    char output_format[10];
+    char output_format[8];
 } col_hdr_type;
 
 typedef struct _annotated_file_desc {
@@ -89,10 +91,10 @@ typedef struct _annotated_file_desc {
 typedef struct _annotated_ped_rec {
     int rec_num, ped_index, per_index;
     /* record number, pedigree number and membership in pedigree */
-    char ID[MAX_NAMELEN];
-    char Pedigree[MAX_NAMELEN], Father[MAX_NAMELEN], Mother[MAX_NAMELEN];
-    char PedID[MAX_NAMELEN], PerID[MAX_NAMELEN];
-    char FirstOff[MAX_NAMELEN], NextMatSib[MAX_NAMELEN], NextPatSib[MAX_NAMELEN];
+    const char *ID;
+    const char *Pedigree, *Father, *Mother;
+    const char *PedID, *PerID;
+    const char *FirstOff, *NextMatSib, *NextPatSib;
     char Sex;
     int MZTwin, DZTwin, Proband, Group;
     int genocnt;

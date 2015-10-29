@@ -108,6 +108,19 @@
 
 col_hdr_type    ReservedColnames[NUM_PEDCOL_NAMES];
 
+Mapci ped2idx;
+
+#if 0
+VeccDB PedName;
+VeccDB PedIdName;
+VeccDB PedLinkIdName;
+VeccDB PerName;
+VeccDB PerIdName;
+VeccDB PerLinkIdName;
+VeccDB PerUniqName;
+#endif
+
+
 
 static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
                                              plink_info_type *plink_info,
@@ -211,7 +224,7 @@ static const char *map_valid_header_item_extensions[] = {
 // header extension check routines...
 static int is_valid_hdr_ext(const char *colname,
                             const char **valid_header_item_extensions);
-static void error_hdr_ext(char *colname,
+static void error_hdr_ext(const char *colname,
                           const int column_index,
                           const char **valid_header_item_extensions);
 
@@ -229,9 +242,73 @@ static void skip_long_line(FILE *fp, int c)
     }
 }
 
+Mapcc canonicalName;
+const char *canonicalColName(const char *p)
+{
+    char *r;
+    const char *a;
+    if (map_get(canonicalName, p, a)) {
+    } else {
+        r = new char[strlen(p)+1];
+        strcpy(r, p);
+        a = r;
+        canonicalName[a] = a;
+    }
+    return a;
+}
+#define SAME(a,b) (a == b)
+
+struct _TKN { 
+    const char *MT;
+    const char *Zero;
+    const char *NA;
+
+    const char *Pedigree;
+    const char *ID;
+    const char *Father;
+    const char *Mother;
+    const char *Sex;
+    const char *PedID;
+    const char *LinkPedID;
+    const char *PerID;
+    const char *LinkPerID;
+    const char *FirstOff;
+    const char *NextMatSib;
+    const char *NextPatSib;
+    const char *MZTwin;
+    const char *DZTwin;
+    const char *Proband;
+    const char *Group;
+} TKN;
+
+static void init_tokens()
+{
+    TKN.MT   = canonicalColName("");
+    TKN.Zero = canonicalColName("0");
+    TKN.NA   = canonicalColName("NA");
+
+    TKN.Pedigree = canonicalColName("Pedigree");
+    TKN.ID = canonicalColName("ID");
+    TKN.Father = canonicalColName("Father");
+    TKN.Mother = canonicalColName("Mother");
+    TKN.Sex = canonicalColName("Sex");
+    TKN.PedID = canonicalColName("PedID");
+    TKN.LinkPedID = canonicalColName("LinkPedID");
+    TKN.PerID = canonicalColName("PerID");
+    TKN.LinkPerID = canonicalColName("LinkPerID");
+    TKN.FirstOff = canonicalColName("FirstOff");
+    TKN.NextMatSib = canonicalColName("NextMatSib");
+    TKN.NextPatSib = canonicalColName("NextPatSib");
+    TKN.MZTwin = canonicalColName("MZTwin");
+    TKN.DZTwin = canonicalColName("DZTwin");
+    TKN.Proband = canonicalColName("Proband");
+    TKN.Group = canonicalColName("Group");
+}
+
 static void copy_colname(col_hdr_type *from, col_hdr_type *to)
 {
-    strcpy(to->ColName, from->ColName);
+//  strcpy(to->ColName, from->ColName);
+    to->ColName        = from->ColName;
     to->value_type     = from->value_type;
     to->input_col      = from->input_col;
     to->output_length  = from->output_length;
@@ -331,19 +408,19 @@ static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
             (*num_reserved_cols)++;
             output_col++;
             /*      printf("%s\n", reserved_colnames[i].ColName); */
-            if (!strcmp(reserved_colnames[i].ColName, "FirstOff")) {
+            if (SAME(reserved_colnames[i].ColName, TKN.FirstOff)) {
                 pedfile_type = POSTMAKEPED_PFT;
             }
-            if (!strcmp(reserved_colnames[i].ColName, "LinkPedID")) {
+            if (SAME(reserved_colnames[i].ColName, TKN.LinkPedID)) {
                 *has_extra_ids |= 2;
             }
-            if (!strcmp(reserved_colnames[i].ColName, "LinkPerID")) {
+            if (SAME(reserved_colnames[i].ColName, TKN.LinkPerID)) {
                 *has_extra_ids |= 1;
             }
-            if (!strcmp(reserved_colnames[i].ColName, "PedID")) {
+            if (SAME(reserved_colnames[i].ColName, TKN.PedID)) {
                 *has_extra_ids |= 8;
             }
-            if (!strcmp(reserved_colnames[i].ColName, "PerID")) {
+            if (SAME(reserved_colnames[i].ColName, TKN.PerID)) {
                 *has_extra_ids |= 4;
             }
         }
@@ -444,7 +521,8 @@ static int parse_variable_width_hdr(FILE *file,
 {
     int i, col_num=0;
     char buffer[READ_CHUNK+1];
-    char *token, col_name[40];
+    char *token;//, col_name[40];
+    const char *col_name;
     col_hdr_type *user_col;
     int reserved, invalid_extension=0;
     int reading=1;
@@ -480,8 +558,8 @@ static int parse_variable_width_hdr(FILE *file,
 
         /* Inner loop to get tokens from each chunk */
         while (token != NULL) {
-            strcpy(col_name, token);
-
+//          strcpy(col_name, token);
+            col_name = canonicalColName(token);
 	    // 7.2 Annotated input file formats
             // A column is read in and ignored if its name contains “X.” as the first two characters.
 	    // Note that the “#” character at the beginning of the column name also works, but the “X.”
@@ -489,7 +567,8 @@ static int parse_variable_width_hdr(FILE *file,
             if (col_name[0] == '#' || (col_name[0] == 'X' && col_name[1] == '.')) {
                 /* create a column header for the user defined column */
                 user_col=CALLOC((size_t)1, col_hdr_type);
-                sscanf(col_name, "%s", user_col->ColName);
+//              sscanf(col_name, "%s", user_col->ColName);
+                user_col->ColName = col_name;
                 user_col->value_type = IGNORE;
                 user_col->input_col = col_num;
                 user_col->output_length = 0;
@@ -499,7 +578,7 @@ static int parse_variable_width_hdr(FILE *file,
                 /*	printf("token %s\n", col_name); */
                 reserved=0;
                 for (i=0; i < num_reserved_cols; i++) {
-                    if (!(strcmp(reserved_colnames[i].ColName, col_name))) {
+                    if (SAME(reserved_colnames[i].ColName, col_name)) {
                         reserved_colnames[i].input_col = col_num;
                         reserved = 1;
                         break;
@@ -512,7 +591,8 @@ static int parse_variable_width_hdr(FILE *file,
 		    }
                     /* create a column header for the user defined column */
                     user_col=CALLOC((size_t) 1, col_hdr_type);
-                    sscanf(col_name, "%s", user_col->ColName);
+//                  sscanf(col_name, "%s", user_col->ColName);
+                    user_col->ColName = col_name;
                     user_col->value_type = STRING_AN;
                     user_col->input_col = col_num;
                     user_col->output_length = 0;
@@ -624,6 +704,21 @@ static void process_binary_genotype(FILE *bed_filep, annotated_ped_rec *entry,
 
 /* NM: 8-21-08: Changed this routine to read the */
 
+static const char *INIT_COLNAME(col_hdr_type *colnames, int i,
+                                col_value_type type, const char *name)
+{
+//  strcpy(colnames[i].ColName, name);
+    name = canonicalColName(name);
+    colnames[i].ColName = name;
+    colnames[i].value_type=type;
+    colnames[i].input_col = -1;
+    colnames[i].locus_number = -1;
+    colnames[i].map_number = -1;
+    colnames[i].sex_map_number = -1;
+
+    return name;
+}
+
 static int read_annotated_pedrec(FILE *filep,
                                  char *pedfile,
                                  plink_info_type *plink_info,
@@ -639,8 +734,9 @@ static int read_annotated_pedrec(FILE *filep,
     /* the file descriptor has been reorganized to match the column order
        in the input pedigree file, and locus number have been filled in.
     */
-    int i, pi, lch, found=-1;
-    char dummy[FILENAME_LENGTH];
+    int i, lch, found=-1;
+    char token[FILENAME_LENGTH];
+    const char *tokenp = 0;
     int has_pedid = 0;
     int has_link_pedid = 0;
     int has_perid = 0;
@@ -669,15 +765,24 @@ static int read_annotated_pedrec(FILE *filep,
     // CPK: Here we go through the actual number of columns in the file.
     // For a .ped file this is usually 6 plus the number of alleles;
     // for a .bim file this is usually just 6...
+//  int REC_NUM = entry->rec_num - 1;
+
     for (i=0; i < file_desc->num_ped_cols; i++) {
+
+        if (ped_col_names[i].locus_number < 0) {
+            lch=fcmap(filep, "%s", token);
+            tokenp = token;
+            tokenp = canonicalColName(tokenp);
+        }
+
         if (ped_col_names[i].value_type == IGNORE) {
             int mrkindex=ped_col_names[i].locus_number;
-            lch=fcmap(filep, "%s", dummy);
+            lch=fcmap(filep, "%s", token);
             switch(LTop->Locus[mrkindex].Type) {
                 case NUMBERED:
                 case XLINKED:
                 case YLINKED:
-                    lch=fcmap(filep, "%s", dummy);
+                    lch=fcmap(filep, "%s", token);
                     annot_ignore_numbered_data(entry->rec_num, &(LTop->Locus[mrkindex]),
                                                entry->marker, mrkindex);  /* this will set the pair */
                     
@@ -695,7 +800,27 @@ static int read_annotated_pedrec(FILE *filep,
                 default:
                     break;
             }
-        } else if (!strcmp(ped_col_names[i].ColName, "Pedigree") ) {
+        } else if (SAME(ped_col_names[i].ColName, TKN.Pedigree) ) {
+#if 1
+//          PedName[REC_NUM] = tokenp;
+            entry->Pedigree = tokenp;
+           
+            if (map_get(ped2idx, tokenp, found)) {
+                entry->ped_index = found;
+                entry->per_index = ++(*curr_per_index);
+            } else {
+                entry->ped_index = ++(*curr_ped_index);
+                *curr_per_index = 1;
+                entry->per_index = *curr_per_index;
+                ped2idx[tokenp] = entry->ped_index;
+            }
+//          PED_NUM = entry->ped_index - 1;
+//          PER_NUM = entry->per_index - 1;
+            if (PLINK.no_fid) {
+//              PerName[REC_NUM] = tokenp;
+                entry->ID = entry->Pedigree;
+            }
+#else
             lch=fcmap(filep, "%s", entry->Pedigree);
             found = -1;
             for (pi=0; pi < *curr_ped_index; pi++) {
@@ -720,10 +845,11 @@ static int read_annotated_pedrec(FILE *filep,
             if (PLINK.no_fid) {
                 strcpy(entry->ID, entry->Pedigree);
             }
-        } else if (!strcmp(ped_col_names[i].ColName, "ID")) {
+#endif
+        } else if (SAME(ped_col_names[i].ColName, TKN.ID)) {
             PLINK.individuals += 1;
             if (PLINK.no_fid == 0)
-                lch=fcmap(filep, "%s", entry->ID);
+                entry->ID = tokenp;
 #ifdef IDS
             printf("Ped/per: %s/%s; pedi/peri %d/%d; ",
                    entry->Pedigree, entry->ID, *curr_ped_index, *curr_per_index);
@@ -732,20 +858,22 @@ static int read_annotated_pedrec(FILE *filep,
             if (phe_cols > 0)
                 phe_cnt = phesearch(entry->Pedigree, entry->ID, phe_vals);
 //
-        } else if (!strcmp(ped_col_names[i].ColName, "Father")) {
+//        } else if (SAME(ped_col_names[i].ColName, Father)) {
+        } else if (SAME(ped_col_names[i].ColName, TKN.Father)) {
             if (PLINK.no_parents)
-                strcpy(entry->Father, "0");
+                entry->Father = TKN.Zero;
             else
-                lch=fcmap(filep, "%s", entry->Father);
-        } else if (!strcmp(ped_col_names[i].ColName, "Mother")) {
+//              lch=fcmap(filep, "%s", entry->Father);
+                entry->Father = tokenp;
+        } else if (SAME(ped_col_names[i].ColName, TKN.Mother)) {
             if (PLINK.no_parents)
-                strcpy(entry->Mother, "0");
+                entry->Mother = TKN.Zero;
             else
-                lch=fcmap(filep, "%s", entry->Mother);
-        } else if (!strcmp(ped_col_names[i].ColName, "Sex")) {
-            lch=fcmap(filep, "%c", &(entry->Sex));
+                entry->Mother = tokenp;
+        } else if (SAME(ped_col_names[i].ColName, TKN.Sex)) {
+            entry->Sex = *tokenp++;
             while(isspace((unsigned char)entry->Sex)) {
-                lch=fcmap(filep, "%c", &(entry->Sex));
+                entry->Sex = *tokenp++;
             }
             if (tolower((unsigned char)entry->Sex) == 'm' || entry->Sex == '1') {
                 PLINK.males += 1;
@@ -755,40 +883,43 @@ static int read_annotated_pedrec(FILE *filep,
                 PLINK.unspecified_sex += 1;
                 entry->Sex = '0' ;
             }
-        } else if (!strcmp(ped_col_names[i].ColName, "PedID")) {
-            lch=fcmap(filep, "%s", entry->PedID);
-            if (strcmp(entry->PedID, "NA")) {
+        } else if (SAME(ped_col_names[i].ColName, TKN.PedID)) {
+            entry->PedID = tokenp;
+            if (!SAME(entry->PedID, TKN.NA)) {
                 has_pedid=1;
             }
-        } else if (!strcmp(ped_col_names[i].ColName, "LinkPedID")) {
-            lch=fcmap(filep, "%d", &(entry->LinkPedID));
+        } else if (SAME(ped_col_names[i].ColName, TKN.LinkPedID)) {
+//          lch=fcmap(filep, "%d", &(entry->LinkPedID));
+            entry->LinkPedID = atoi(tokenp);
             if (entry->LinkPedID > 0) {
                 has_link_pedid=1;
             }
-        } else if (!strcmp(ped_col_names[i].ColName, "PerID")) {
-            lch=fcmap(filep, "%s", entry->PerID);
-            if (strcmp(entry->PedID, "NA")) {
+        } else if (SAME(ped_col_names[i].ColName, TKN.PerID)) {
+            entry->PerID = tokenp;
+            if (!SAME(entry->PedID, TKN.NA)) {
                 has_perid=1;
             }
-        } else if (!strcmp(ped_col_names[i].ColName, "LinkPerID")) {
-            lch=fcmap(filep, "%d", &(entry->LinkPerID));
+        } else if (SAME(ped_col_names[i].ColName, TKN.LinkPerID)) {
+            entry->LinkPerID = atoi(tokenp);
             if (entry->LinkPerID > 0) {
                 has_link_perid=1;
             }
-        } else if (!strcmp(ped_col_names[i].ColName, "FirstOff")) {
-            lch=fcmap(filep, "%s", entry->FirstOff);
-        } else if (!strcmp(ped_col_names[i].ColName, "NextMatSib")) {
-            lch=fcmap(filep, "%s", entry->NextMatSib);
-        } else if (!strcmp(ped_col_names[i].ColName, "NextPatSib")) {
-            lch=fcmap(filep, "%s", entry->NextPatSib);
-        } else if (!strcmp(ped_col_names[i].ColName, "MZTwin")) {
-            lch=fcmap(filep, "%d", &(entry->MZTwin));
-        } else if (!strcmp(ped_col_names[i].ColName, "DZTwin")) {
-            lch=fcmap(filep, "%d", &(entry->DZTwin));
-        } else if (!strcmp(ped_col_names[i].ColName, "Proband")) {
-            lch=fcmap(filep, "%d", &(entry->Proband));
-        } else if (!strcmp(ped_col_names[i].ColName, "Group")) {
-            lch=fcmap(filep, "%d", &(entry->Group));
+        } else if (SAME(ped_col_names[i].ColName, TKN.FirstOff)) {
+            entry->FirstOff = tokenp;
+        } else if (SAME(ped_col_names[i].ColName, TKN.NextMatSib)) {
+            entry->NextMatSib = tokenp;
+        } else if (SAME(ped_col_names[i].ColName, TKN.NextPatSib)) {
+            entry->NextPatSib = tokenp;
+
+        } else if (SAME(ped_col_names[i].ColName, TKN.MZTwin)) {
+            entry->MZTwin = atoi(tokenp);
+        } else if (SAME(ped_col_names[i].ColName, TKN.DZTwin)) {
+            entry->DZTwin = atoi(tokenp);
+        } else if (SAME(ped_col_names[i].ColName, TKN.Proband)) {
+            entry->Proband = atoi(tokenp);
+        } else if (SAME(ped_col_names[i].ColName, TKN.Group)) {
+            entry->Group = atoi(tokenp);
+
         } else for (; i < file_desc->num_ped_cols; i++) {
             // Here we process the Phenotypes and Genotypes (.ped file)...
             int mrkindex=ped_col_names[i].locus_number;
@@ -883,7 +1014,7 @@ static int read_annotated_pedrec(FILE *filep,
         }
     } /* for */
 
-    if (strcmp(entry->Mother, "0") == 0 && strcmp(entry->Father, "0") == 0) {
+    if (SAME(entry->Mother, TKN.Zero) && SAME(entry->Father, TKN.Zero) == 0) {
         PLINK.founders += 1;
     } else {
         PLINK.non_founders += 1;
@@ -947,7 +1078,7 @@ static int read_annotated_pedrec(FILE *filep,
 /*      if (has_link_pedid) {
             sprintf(entry->PedID, "%d", entry->LinkPedID);
         } else {
-*/            strcpy(entry->PedID, entry->Pedigree);
+*/            entry->PedID = entry->Pedigree;
 /*      }*/
     }
 
@@ -955,11 +1086,11 @@ static int read_annotated_pedrec(FILE *filep,
 /*      if (has_link_perid) {
             sprintf(entry->PerID, "%d", entry->LinkPerID);
         } else {
-*/            strcpy(entry->PerID, entry->ID);
+*/            entry->PerID = entry->ID;
 /*      }*/
     }
 
-    entry->per_index = *curr_per_index;
+//  entry->per_index = *curr_per_index;
 #ifdef IDS
     printf("Ped/per: %s/%s; Lped/Lperi %d/%d; %d; %s\n",
            entry->PedID, entry->PerID, entry->LinkPedID, entry->LinkPerID, *curr_per_index,
@@ -1034,13 +1165,13 @@ static int sort_and_check(int num_recs, annotated_ped_rec *persons,
             sex_err++;
         }
         /* check both parents are defined or NA */
-        if (!strcmp(persons[p].Father, "NA") &&
-            strcmp(persons[p].Mother, "NA")) {
+        if (SAME(persons[p].Father, TKN.NA) &&
+            !SAME(persons[p].Mother, TKN.NA)) {
             errorvf("Father defined & mother undefined in record %d.\n",
                     persons[p].rec_num);
             par_err++;
-        } else if (strcmp(persons[p].Father, "NA") &&
-                   !strcmp(persons[p].Mother, "NA")) {
+        } else if (!SAME(persons[p].Father, TKN.NA) &&
+                   SAME(persons[p].Mother, TKN.NA)) {
             errorvf("Mother defined & father undefined in record %d.\n",
                     persons[p].rec_num);
             par_err++;
@@ -1080,7 +1211,7 @@ static int sort_and_check(int num_recs, annotated_ped_rec *persons,
 */
 static int UNIQUEid = 0; /* unless LinkPerID/LinkPedID is set */
 
-void unique_id(char *reslt, char *ped, char *per) {
+void unique_id(char *reslt, const char *ped, const char *per) {
     if (UNIQUEid || PLINK.no_fid)
         strcpy(reslt, per);
     else
@@ -1156,15 +1287,15 @@ static marriage_graph_type *copy_annotated_to_premake(linkage_locus_top *LTop,
             pped[curr_ped].ped = persons[per].LinkPedID;
         }
         /*    printf("%d - %d\n", lower_p, upper_p); */
-        if (!strcmp(persons[per].Father, "NA")) {
+        if (SAME(persons[per].Father, TKN.NA)) {
             fathers[per] = 0;
             mothers[per] = 0;
         } else {
             for (p = lower_p; p < upper_p; p++) {
-                if (!strcmp(persons[p].ID, persons[per].Father)) {
+                if (SAME(persons[p].ID, persons[per].Father)) {
                     fathers[per] = persons[p].LinkPerID;
                 }
-                if (!strcmp(persons[p].ID, persons[per].Mother)) {
+                if (SAME(persons[p].ID, persons[per].Mother)) {
                     mothers[per] = persons[p].LinkPerID;
                 }
             }
@@ -1297,37 +1428,37 @@ static linkage_ped_tree *copy_annotated_to_lpedtop(linkage_locus_top *LTop,
         }
 
         for (p=lower_p; p < upper_p; p++) {
-            if (!strcmp(persons[per].Father, "NA")) {
+            if (SAME(persons[per].Father, TKN.NA)) {
                 links[per][pa] = 0;
                 links[per][mom] = 0;
             } else {
-                if (!strcmp(persons[p].ID, persons[per].Father)) {
+                if (SAME(persons[p].ID, persons[per].Father)) {
                     links[per][pa]=persons[p].LinkPerID;
                 }
-                if (!strcmp(persons[p].ID, persons[per].Mother)) {
+                if (SAME(persons[p].ID, persons[per].Mother)) {
                     links[per][mom]=persons[p].LinkPerID;
                 }
             }
-            if (!strcmp(persons[per].FirstOff, "NA")) {
+            if (SAME(persons[per].FirstOff, TKN.NA)) {
                 links[per][first_off]=0;
             } else {
-                if (!strcmp(persons[p].ID, persons[per].FirstOff)) {
+                if (SAME(persons[p].ID, persons[per].FirstOff)) {
                     links[per][first_off]=persons[p].LinkPerID;
                 }
             }
 
-            if (!strcmp(persons[per].NextPatSib, "NA")) {
+            if (SAME(persons[per].NextPatSib, TKN.NA)) {
                 links[per][next_p_sib]=0;
             } else {
-                if (!strcmp(persons[p].ID, persons[per].NextPatSib)) {
+                if (SAME(persons[p].ID, persons[per].NextPatSib)) {
                     links[per][next_p_sib]=persons[p].LinkPerID;
                 }
             }
 
-            if (!strcmp(persons[per].NextMatSib, "NA")) {
+            if (SAME(persons[per].NextMatSib, TKN.NA)) {
                 links[per][next_m_sib]=0;
             } else {
-                if (!strcmp(persons[p].ID, persons[per].NextMatSib)) {
+                if (SAME(persons[p].ID, persons[per].NextMatSib)) {
                     links[per][next_m_sib]=persons[p].LinkPerID;
                 }
             }
@@ -1493,6 +1624,15 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         phe_vals = CALLOC((size_t)phecols, char *); /* buffer */
 
     ped_names = CALLOC((size_t)num_ped_records, char *);
+#if 0
+    PedName.resize(num_ped_records);
+    PedIdName.resize(num_ped_records);
+    PedLinkIdName.resize(num_ped_records);
+    PerName.resize(num_ped_records);
+    PerIdName.resize(num_ped_records);
+    PerLinkIdName.resize(num_ped_records);
+    PerUniqName.resize(num_ped_records);
+#endif
 /*
  *  Note: annotated_ped_rec is 2352 bytes because of tall the MAX_NAMELEN allocated strings.
  *  It is freed at the end of this function.
@@ -1885,45 +2025,55 @@ static void ann_field_widths(linkage_ped_top *TTop,
 /*   twin_width(TTop, &TwinWidth); */
 
     /* pedigree file */
+    const char *ID = canonicalColName("ID");
+    const char *Father = canonicalColName("Father");
+    const char *Mother = canonicalColName("Mother");
+    const char *Pedigree = canonicalColName("Pedigree");
+    const char *PerID = canonicalColName("PerID");
+    const char *PedID = canonicalColName("PedID");
+    const char *DZTwin = canonicalColName("DZTwin");
+    const char *MZTwin = canonicalColName("MZTwin");
+    const char *Proband = canonicalColName("Proband");
+
     for (col=0; col < file_desc->num_ped_cols; col++) {
-        if (!strcmp(file_desc->ped_file_columns[col].ColName, "ID") ||
-            !strcmp(file_desc->ped_file_columns[col].ColName, "Father") ||
-            !strcmp(file_desc->ped_file_columns[col].ColName, "Mother")) {
+        if (SAME(file_desc->ped_file_columns[col].ColName, TKN.ID) ||
+            SAME(file_desc->ped_file_columns[col].ColName, TKN.Father) ||
+            SAME(file_desc->ped_file_columns[col].ColName, TKN.Mother)) {
             file_desc->ped_file_columns[col].output_length = PidWidth;
             sprintf(file_desc->ped_file_columns[col].output_format,
                     "%%%ds", PidWidth);
             continue;
         }
 
-        if (!strcmp(file_desc->ped_file_columns[col].ColName, "Pedigree")) {
+        if (SAME(file_desc->ped_file_columns[col].ColName, TKN.Pedigree)) {
             file_desc->ped_file_columns[col].output_length = FidWidth;
             sprintf(file_desc->ped_file_columns[col].output_format,
                     "%%%ds", FidWidth);
             continue;
         }
 
-        if (!strcmp(file_desc->ped_file_columns[col].ColName, "PerID")) {
+        if (SAME(file_desc->ped_file_columns[col].ColName, TKN.PerID)) {
             file_desc->ped_file_columns[col].output_length = PnameWidth;
             sprintf(file_desc->ped_file_columns[col].output_format,
                     "%%%ds", PnameWidth);
             continue;
         }
-        if (!strcmp(file_desc->ped_file_columns[col].ColName, "PedID")) {
+        if (SAME(file_desc->ped_file_columns[col].ColName, TKN.PedID)) {
             file_desc->ped_file_columns[col].output_length = FnameWidth;
             sprintf(file_desc->ped_file_columns[col].output_format,
                     "%%%ds", FnameWidth);
             continue;
         }
 
-        if (!strcmp(file_desc->ped_file_columns[col].ColName, "DZTwin") ||
-            !strcmp(file_desc->ped_file_columns[col].ColName, "MZTwin")) {
+        if (SAME(file_desc->ped_file_columns[col].ColName, TKN.DZTwin) ||
+            SAME(file_desc->ped_file_columns[col].ColName, TKN.MZTwin)) {
             file_desc->ped_file_columns[col].output_length = TwinWidth;
             sprintf(file_desc->ped_file_columns[col].output_format,
                     "%%%ds", TwinWidth);
             continue;
         }
 
-        if (!strcmp(file_desc->ped_file_columns[col].ColName, "Proband")) {
+        if (SAME(file_desc->ped_file_columns[col].ColName, TKN.Proband)) {
             file_desc->ped_file_columns[col].output_length = ProWidth;
             sprintf(file_desc->ped_file_columns[col].output_format,
                     "%%%ds", ProWidth);
@@ -2626,6 +2776,9 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
 
     
     /* Now read in the rest of the file, the part that contains the data */
+    /* NOTE: not worth "canonicalName-ifying these tokens (dummy) because they are
+       typically different fp numbers.  (unless they are NA or 0)
+     */
     MaxChromo = NumUnmapped = 0;
     while (!feof(mapfp)) {
         line++;
@@ -3831,7 +3984,7 @@ static int is_valid_hdr_ext(const char *colname,
 
 // Create an error message stating that the header 'colname' was found not to have
 // a valid extension.
-static void error_hdr_ext(char *colname,
+static void error_hdr_ext(const char *colname,
                           const int column_index,
                           const char **valid_header_item_extensions)
 {
@@ -4167,6 +4320,8 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     int  xcf = Input_Format == in_format_binary_VCF ||
                Input_Format == in_format_compressed_VCF ||
                Input_Format == in_format_VCF;
+
+    init_tokens();
 
     Input->GetOps()->do_init(Input);
 
@@ -5393,6 +5548,12 @@ static ext_linkage_locus_top *read_plink_map_file(const char *map_file,
     copy_colname(tmp, map_all_colnames + col);
     map_all_colnames[col].output_col = col;
 
+//11
+    if (PLINK.plink == binary_PED_format) {
+        map_all_colnames[4].ColName = TKN.MT;
+        map_all_colnames[5].ColName = TKN.MT;
+    }
+
     return read_common_map_file(mapfp, map_file, LTop, 0, reserved_colnames, file_desc, PLINK.plink == binary_PED_format ? &plink_info->alleles : NULL);
 }
 
@@ -5507,6 +5668,10 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
         copy_colname(&(ReservedColnames[i]), colname_item);
         colname_item->output_col = output_col;
         output_col++;
+    }
+//11
+    for (; i < num_userdef_cols ; i++) {
+        ped_all_colnames[i].ColName = TKN.MT;
     }
     for (i=0; i < (PLINK.plink != binary_PED_format && PLINK.plink != PED_format ? 0 : LTop->LocusCnt); i++) {
         llr = LTop->Locus[i];

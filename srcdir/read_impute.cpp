@@ -982,7 +982,7 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
             printf("%s %s %s %s %s\n  ", C(pp[0]), C(pp[1]), C(pp[2]), C(pp[3]), C(pp[4]));
 
 // 0 ID_1 -> Pedigree
-        strcpy(entry->Pedigree, C(pp[0]));
+        entry->Pedigree = canonicalColName(C(pp[0]));
         if (map_get(ped_names, pp[0], p_idx)) {
             entry->ped_index = p_idx;
             curr_per_index++;
@@ -994,7 +994,7 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
         }
 
 // 1 ID_2 -> ID
-        strcpy(entry->ID, C(pp[1]));
+        entry->ID =  canonicalColName(C(pp[1]));
         PLINK.individuals += 1;
         entry->per_index = curr_per_index;
 #ifdef IDS
@@ -1003,8 +1003,8 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
 #endif
 
 // 2,3 father,mother
-        strcpy(entry->Father,  C(pp[2]));
-        strcpy(entry->Mother,  C(pp[3]));
+        entry->Father = canonicalColName(C(pp[2]));
+        entry->Mother = canonicalColName(C(pp[3]));
 
 // 4 sex
         entry->Sex = pp[4][0];
@@ -1022,8 +1022,8 @@ ReadImputed::build_impute2_ped(linkage_locus_top *LTop, int *num_peds)
 	entry->LinkPerID = curr_per_index;
         entry->LinkPedID = curr_ped_index;
 
-	strcpy(entry->PedID, entry->Pedigree);
-	strcpy(entry->PerID, entry->ID);
+	entry->PedID = entry->Pedigree;
+	entry->PerID = entry->ID;
 
 #ifdef IDS
 	printf("Ped/per: %s/%s; Lped/Lperi %d/%d; %d; %s\n",

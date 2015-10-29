@@ -30,6 +30,8 @@
 #define ANNOTATED_PED_FILE_EXT_H
 
 
+extern const char *canonicalColName(const char *p);
+
 extern int check_annotated_file_format(char *input_files[]);
 
 
