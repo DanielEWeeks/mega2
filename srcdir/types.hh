@@ -36,12 +36,6 @@
 #include <list>
 #include <limits>
 #include <map>
-#ifdef _WIN
-//#include <hash_map>
-#include <unordered_map>
-#else
-#include <unordered_map>
-#endif
 
 typedef std::string                         Str;
 typedef const std::string                   Cstr;
@@ -142,14 +136,30 @@ bool map_get(T& map, typename T::key_type& lookup, typename T::mapped_type& ret)
 
 ////
 
-typedef std::unordered_map<const std::string, std::string, std::hash<std::string> >        Hmapss;
-typedef std::unordered_map<const std::string, int, std::hash<std::string> >                Hmapsi;
+#ifdef __APPLE__
+#include <unordered_map>
+#define UM std::unordered_map
+#define HH std::hash
+
+#elif defined(_WIN)
+#include <unordered_map>
+#define UM std::unordered_map
+#define HH std::hash
+
+#else
+#include <tr1/unordered_map>
+#define UM std::tr1::unordered_map
+#define HH std::tr1::hash
+#endif
+
 class charseq {
 public:
     bool operator() (const char *a, const char *b) const {
         return strcmp(a, b) == 0;
     }
-};
+}
+;
+#if defined(__APPLE__) || defined(_WIN)
 namespace std {
     template<>
     struct hash<const unsigned char *> {
@@ -174,16 +184,47 @@ namespace std {
         }
     };
 }
-typedef std::unordered_map<const char *, const char *, std::hash<const char *>, charseq>  HMapcc;
-typedef std::unordered_map<const char *, int, std::hash<const char *>, charseq>           HMapci;
-typedef std::unordered_map<int, std::string, std::hash<int> >                              HMapis;
-typedef std::unordered_map<int, int, std::hash<int> >                                      HMapii;
-typedef std::unordered_map<const std::string, std::string, std::hash<std::string> >::const_iterator   HMapssp;
-typedef std::unordered_map<const std::string, int, std::hash<std::string> >::const_iterator           HMapsip;
-typedef std::unordered_map<const char *, const char *, std::hash<const char *>, charseq>::const_iterator HMapccp;
-typedef std::unordered_map<const char *, int, std::hash<const char *>, charseq>::const_iterator       HMapcip;
-typedef std::unordered_map<int, std::string, std::hash<int> >::const_iterator                         HMapisp;
-typedef std::unordered_map<int, int, std::hash<int> >::const_iterator                                 HMapiip;
+#else
+namespace std {
+  namespace tr1 {
+    template<>
+    struct hash<const unsigned char *> {
+    public:
+        std::size_t operator()(const unsigned char *up) const {
+            std::size_t r = 5381;
+            int c;
+            while ((c = *up++))
+                r = ((r << 5) + r) + c;
+            return r;
+        }
+    };
+    template<>
+    struct hash<const char *> {
+    public:
+        std::size_t operator()(const char * cp) const {
+            std::size_t r = 5381;
+            int c;
+            while ((c = *cp++))
+                r = ((r << 5) + r) + c;
+            return r;
+        }
+    };
+  }
+}
+#endif
+
+typedef UM<const std::string, std::string, HH<std::string> >        Hmapss;
+typedef UM<const std::string, int, HH<std::string> >                Hmapsi;
+typedef UM<const char *, const char *, HH<const char *>, charseq>   HMapcc;
+typedef UM<const char *, int, HH<const char *>, charseq>            HMapci;
+typedef UM<int, std::string, HH<int> >                              HMapis;
+typedef UM<int, int, HH<int> >                                      HMapii;
+typedef UM<const std::string, std::string, HH<std::string> >::const_iterator   HMapssp;
+typedef UM<const std::string, int, HH<std::string> >::const_iterator           HMapsip;
+typedef UM<const char *, const char *, HH<const char *>, charseq>::const_iterator HMapccp;
+typedef UM<const char *, int, HH<const char *>, charseq>::const_iterator       HMapcip;
+typedef UM<int, std::string, HH<int> >::const_iterator                         HMapisp;
+typedef UM<int, int, HH<int> >::const_iterator                                 HMapiip;
 
 ////
 

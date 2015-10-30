@@ -717,6 +717,7 @@ static const char *INIT_COLNAME(col_hdr_type *colnames, int i,
     colnames[i].locus_number = -1;
     colnames[i].map_number = -1;
     colnames[i].sex_map_number = -1;
+    colnames[i].output_length = 0;
 
     return name;
 }
