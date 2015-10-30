@@ -29,7 +29,7 @@
 #ifndef TYPES_HH
 #define TYPES_HH
 
-
+#include <string.h>
 #include <set>
 #include <string>
 #include <vector>
