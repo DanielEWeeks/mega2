@@ -33,6 +33,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "class_old.h"
 #include "tod.hh"
 
 #include "input_check.h"
@@ -64,7 +65,6 @@
 
 
 int Display_Errors, Display_Messages;
-
 
 /* prototype definitions */
 void            full_check(ped_top *Top, linkage_ped_top *LPedTop,

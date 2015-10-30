@@ -72,10 +72,6 @@ depend:
 
 # DO NOT DELETE
 
-example/bgen_to_vcf.o: genfile/include/genfile/bgen/bgen.hpp
-example/bgen_to_vcf.o: genfile/include/genfile/zlib.hpp
-example/bgen_to_vcf.o: genfile/include/genfile/types.hpp
-example/bgen_to_vcf.o: genfile/include/genfile/MissingValue.hpp
 src/MissingValue.o: genfile/include/genfile/MissingValue.hpp
 src/bgen.o: genfile/include/genfile/types.hpp
 src/bgen.o: genfile/include/genfile/bgen/bgen.hpp

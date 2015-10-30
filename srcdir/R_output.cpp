@@ -45,6 +45,8 @@
 #include "plink_ext.h"
 #include "user_input_ext.h"
 
+#include "class_old.h"
+
 /*
         batch_input_ext.h:  batchf
      error_messages_ext.h:  errorf mssgf my_calloc warnf

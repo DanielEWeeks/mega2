@@ -72,9 +72,6 @@ void inline IgnoreValue(v x) {}
 #include "makeped.h"
 #include "pedtree.h"
 
-#include "analysis.h"
-#include "analysis_ext.h"
-
 extern analysis_type   AnalysisOpt; /* analysis option */
 
 #include "batch_input.h"

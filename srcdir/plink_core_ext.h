@@ -28,6 +28,8 @@
 #ifndef PLINK_CORE_EXT_H
 #define PLINK_CORE_EXT_H
 
+#include "analysis.h"
+
 //
 // The names associated with these selections are defined in the subclass files
 // (e.g., write_plink_ext.h, and write_eigenstat_ext.h).

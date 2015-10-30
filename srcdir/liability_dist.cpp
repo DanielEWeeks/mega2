@@ -41,6 +41,9 @@
 #include "omit_ped_ext.h"
 #include "output_file_names_ext.h"
 #include "utils_ext.h"
+
+#include "class_old.h"
+
 /*
      error_messages_ext.h:  mssgf my_calloc my_malloc
       genetic_utils_ext.h:  create_genos genoindx safe_divide

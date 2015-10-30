@@ -37,7 +37,6 @@
 
 #include "loop.h"
 
-#include "analysis_ext.h"
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
@@ -59,6 +58,8 @@
          user_input_ext.h:  individual_id_item pedigree_id_item test_modified
               utils_ext.h:  EXIT draw_line script_time_stamp summary_time_stamp
 */
+
+#include "plink_core_ext.h"
 
 void write_R_PLINK_map_file(linkage_ped_top *LPTop, char *map_file_name);
 

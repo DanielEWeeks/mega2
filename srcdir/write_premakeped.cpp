@@ -48,6 +48,9 @@
 #include "write_files_ext.h"
 #include "write_ghfiles_ext.h"
 #include "write_mfiles_ext.h"
+
+#include "class_old.h"
+
 /*
            R_output_ext.h:  append_R_commands merlin_R_setup
      create_summary_ext.h:  aff_status_entry

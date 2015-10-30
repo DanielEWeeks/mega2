@@ -84,4 +84,6 @@ public:
     void file_names_w_stem(char **file_names, char *num, const char *stem);
 };
 
+extern CLASS_PLINK              *TO_PLINK;
+
 #endif /* WRITE_PLINK_FILES_EXT_H */

@@ -47,6 +47,9 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 #include "write_files_ext.h"
+
+#include "class_old.h"
+
 /*
         batch_input_ext.h:  batchf
      create_summary_ext.h:  aff_status_entry

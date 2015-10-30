@@ -28,6 +28,8 @@
 #ifndef WRITE_FBAT_EXT_H
 #define WRITE_FBAT_EXT_H
 
+#include "analysis.h"
+
 class CLASS_FBAT: public CLASS_ANALYSIS {
 public:
     CLASS_FBAT() : CLASS_ANALYSIS() {
@@ -86,5 +88,7 @@ public:
     void file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
+
+extern CLASS_FBAT               *FBAT;
 
 #endif

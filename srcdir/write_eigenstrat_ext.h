@@ -77,4 +77,6 @@ public:
     void file_names_w_stem(char **file_names, char *num, const char *stem);
 };
 
+extern CLASS_EIGENSTRAT         *EIGENSTRAT;
+
 #endif /* WRITE_EIGENSTRAT_FILES_EXT_H */

@@ -28,6 +28,8 @@
 #ifndef WRITE_BEAGLE_EXT_H
 #define WRITE_BEAGLE_EXT_H
 
+#include "analysis.h"
+
 class CLASS_BEAGLE: public CLASS_ANALYSIS {
 public:
     CLASS_BEAGLE() : CLASS_ANALYSIS() {
@@ -104,5 +106,7 @@ public:
     // to come through with Linkage input...
     virtual bool allow_missing_parent_in_linkage_input()  { return true; }
 };
+
+extern CLASS_BEAGLE             *BEAGLE;
 
 #endif

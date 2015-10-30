@@ -39,6 +39,9 @@
 #include "error_messages_ext.h"
 #include "grow_string_ext.h"
 #include "write_files_ext.h"
+
+#include "class_old.h"
+
 /*
      error_messages_ext.h:  errorf my_calloc warnf
         grow_string_ext.h:  grow

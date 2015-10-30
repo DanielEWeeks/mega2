@@ -47,6 +47,8 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 
+#include "write_eigenstrat_ext.h"
+
 /*
      create_summary_ext.h:  aff_status_entry marker_typing_summary
      error_messages_ext.h:  mssgf my_calloc warnf

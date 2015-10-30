@@ -45,6 +45,8 @@
 // for access()
 #include "cw_routines_ext.h"
 
+#include "class_old.h"
+
 
 //
 // The static (class variable) that holds the BatchFile singleton...

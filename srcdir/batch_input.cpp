@@ -35,6 +35,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "analysis.h"
 
 #include "batch_input.h"
 
@@ -75,6 +76,9 @@ batch_item_type *Mega2BatchItems;
 
 int batchINPUTFILES, batchANALYSIS, batchREORDER;
 int batchTRAIT, batchAFFVALUE, batchERROR;
+
+extern void prog_name_to_num(char *prog_name, analysis_type *analysis);
+
 
 /* end of exports */
 /*    Current keywords

@@ -37,7 +37,6 @@
 
 #include "loop.h"
 
-#include "plink_core_ext.h"
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
@@ -48,6 +47,8 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
+
+#include "write_plink_ext.h"
 
 using namespace std;
 /*

@@ -50,6 +50,9 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 #include "write_files_ext.h"
+
+#include "class_old.h"
+
 /*
  annotated_ped_file_ext.h:  write_annotated_aff write_annotated_numbered write_annotated_quant
      error_messages_ext.h:  mssgf

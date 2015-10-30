@@ -52,11 +52,12 @@
 
 #include "plink_core_ext.h"
 #include "write_plink_ext.h"
-#include "write_pseq_ext.h"
+
+#include "write_impute2_ext.h"
 
 // This will be the first affection status that we find in the list of traits.
 // What if there are no affection status in the list of traits?
-char *fam_file_phenotype_name = NULL;
+char *fam_file_phenotype_nameY = NULL;
 
 /*
      create_summary_ext.h:  aff_status_entry marker_typing_summary
@@ -82,34 +83,9 @@ A PED file must have 1 and only 1 phenotype in the sixth column. The phenotype c
 quantitative trait or an affection status column: PLINK will automatically detect which type
 (i.e. based on whether a value other than 0, 1, 2 or the missing genotype code is observed).
 
-For PSEQ documentation see: http://atgu.mgh.harvard.edu/plinkseq/input.shtml#plink
-
-By default, the phenotype encoded in column 6 of the FAM file is assumed to be a dichotomous
-case/control phenotype, and is labelled 'phe1'. To give a different AlleleName, add: --phenotype t2d
-
-Discussion...
-
-It is also clear that there is no explicit way telling PSEQ if there is a quantitative phenotype
-(from above PSEQ documenation it is assumed to be affection status (e.g., case/control)) in the
-.FAM file (column 6). However the code in 'plinkseq/lib/bed.cpp:BEDReader::read_fam()' figures
-out if the trait is quantitative or case/control by looking at the values. If all values are in
-the set {-9,0,1,2} then the trait is defined as case/control any value outside of that set causes
-the trait to be defined as quantitative.
-
-In reading over the PSEQ code, it does not seem that it can take a five column .FAM file (e.g.,
-PLINK command line option --no-pheno), if there is such a thing. The PLINK documentation states
-the the .FAM file should be the first six columns of the .PED file. None the less, in PSEQ mode
-you must give one phenotype.
-
-
-Possible source of error in running PDEQ...
-
-If the PSEQ database is not deleted between runs of the script there is an extra column geneated,
-one with the label given with the '--phenotype' command line argument and one with a label of 'phe1'.
-
 */
 
-static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
+static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
                             const int pwid, const int fwid)
 {
     struct pseq_pheno: public loop::once, loop::ped_per_trait {
@@ -117,14 +93,14 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
         bool use_fid, use_iid, use_joint;
         
         // The '_trait' value of the first trait which will be found in the .FAM file.
-        // This trait will not go into this file (the PSEQ pheno file).
+        // This trait will not go into this file (the IMPUTE2 pheno file).
         int skip_trait;
         
         pseq_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) { }
         
         void make_file() {
             // Here we loop over the pedigrees and individuals to determine what to use
-            // as an "ID" for the PSEQ phenotype file. This should be the same as what PSEQ
+            // as an "ID" for the PSEQ phenotype file. This should be the same as what IMPUTE2
             // uses for the "ID". This code is found in...
             // lib/bed.cpp:int BEDReader::read_fam()
             //
@@ -160,12 +136,12 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
             use_iid = ni == siid.size();
             use_joint = !use_fid && !use_iid;
             
-            msgvf("         PSEQ phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
+            msgvf("      IMPUTE2 phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
             run_loop(Outfile_Names[2]);
         }
         void file_header() {
             int tr, first;
-            // The PSEQ header takes one line per phenotype listed in the file, followed
+            // The IMPUTE2 header takes one line per phenotype listed in the file, followed
             // by a header line that has the "ID" followed by the phenotype names.
             // NOTE: PLINK/SEQ is really picky about having or not havings spaces/tabs in the right places.
             
@@ -174,7 +150,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
                 if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
                 if (first == 1) {
                     skip_trait = global_trait_entries[tr];
-                    //fam_file_phenotype_name = _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
+                    //fam_file_phenotype_nameY = _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
                     first = 0;
                     continue;
                 }
@@ -214,7 +190,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
             // B) if the family ids are not unique, but the individual ids are, then the individual id is used (use_id == 2),
             // C) finally if neither famiy, nor individual ids are unique a concatination of the two is used (use_id == 3).
             // with an interveinign underscore.
-            // Consult the PSEQ code found in this method:
+            // Consult the IMPUTE2 code found in this method:
             // lib/bed.cpp:int BEDReader::read_fam( )
             if (use_joint || use_fid) pr_fam();
             if (use_joint) pr_printf("_");
@@ -225,7 +201,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
     } *sp = new pseq_pheno(Top);
     
     // So that we can make up a string like "FID_IID".
-    // In addition PSEQ requires tab delimited data, it seems to get confused if sperious spaces are introduced.
+    // In addition IMPUTE2 requires tab delimited data, it seems to get confused if sperious spaces are introduced.
     sp->load_formats_no_space(-1);
     
     sp->iterate();
@@ -233,25 +209,25 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
     delete sp;
 }
 
-void CLASS_PSEQ::save_pheno_file(linkage_ped_top *Top,
+void CLASS_IMPUTE2::save_pheno_file(linkage_ped_top *Top,
                                  const int pwid,
                                  const int fwid)
 {
     int tr;
-    // Even if there is no PSEQ pheno file generated, we still need to know the name of the
-    // phenotype that will go into the .FAM file for the PSEQ --phenotype command line argument.
+    // Even if there is no IMPUTE2 pheno file generated, we still need to know the name of the
+    // phenotype that will go into the .FAM file for the IMPUTE2 --phenotype command line argument.
     for (tr = 0; tr < num_traits; tr++) {
         if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
-        fam_file_phenotype_name = Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
+        fam_file_phenotype_nameY = Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
         break;
     }
-    // The first trait will be placed in the .FAM file, all others in the PSEQ pheno file.
+    // The first trait will be placed in the .FAM file, all others in the IMPUTE2 pheno file.
     // Remember to account for the '-1' in this list, so there are N-1 traits actually
     // listed in global_trait_entries[]
-    if (num_traits > 2) save_PSEQ_pheno(Outfile_Names[2], Top, pwid, fwid);
+    if (num_traits > 2) save_IMPUTE2_pheno(Outfile_Names[2], Top, pwid, fwid);
 }
 
-void CLASS_PSEQ::create_output_file(
+void CLASS_IMPUTE2::create_output_file(
     linkage_ped_top *LPedTreeTop,
     analysis_type *analysis,
     char *file_names[],
@@ -275,7 +251,7 @@ void CLASS_PSEQ::create_output_file(
     }
 }
 
-void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
+void CLASS_IMPUTE2::create_sh_file(linkage_ped_top *Top,
                                 char *file_names[],
                                 const int numchr)
 {
@@ -286,14 +262,14 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
         }
     } *sh = 0;
     
-    struct PSEQ_sh_script: public loop::outer, all_sh {
+    struct IMPUTE2_sh_script: public loop::outer, all_sh {
         typedef char *str;
         str *file_names;
         all_sh *sh;
         
-        PSEQ_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
+        IMPUTE2_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
         void make_file() {
-            mssgvf("         PSEQ shell file:          %s/%s\n", *_opath, file_names[8]);
+            mssgvf("      IMPUTE2 shell file:          %s/%s\n", *_opath, file_names[8]);
             run_loop(file_names[8]);
         }
         void file_header() {
@@ -304,11 +280,11 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             
             // This handles the environment variable setup to allow the checking
             // functions in 'batch_run' to work correctly...
-            fprintf_env_checkset_csh(_filep, "_PSEQ", "pseq");
+            fprintf_env_checkset_csh(_filep, "_IMPUTE2", "pseq");
             pr_printf("\n");
-            pr_printf("alias usage 'echo \"Usage: %s [ PSEQ_PROJ [ PSEQ_RESDIR ] ]\"\\\n", file_names[8]);
-            pr_printf("  echo \" PSEQ_PROJ    the project name\"\\\n");
-            pr_printf("  echo \" PSEQ_RESDIR  the resource directory\"\\\n");
+            pr_printf("alias usage 'echo \"Usage: %s [ IMPUTE2_PROJ [ IMPUTE2_RESDIR ] ]\"\\\n", file_names[8]);
+            pr_printf("  echo \" IMPUTE2_PROJ    the project name\"\\\n");
+            pr_printf("  echo \" IMPUTE2_RESDIR  the resource directory\"\\\n");
             pr_printf("  exit'\n");
             pr_printf("\n");
             pr_printf("if ($1 == '?' || $1 == 'help' || $#argv > 2) then\n");
@@ -323,7 +299,7 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             pr_printf("\n");
 
             if (_numchr > 0) {
-                pr_printf("echo Running PSEQ on chromosome %d markers\n", _numchr);
+                pr_printf("echo Running IMPUTE2 on chromosome %d markers\n", _numchr);
                 pr_printf("echo\n");
             }
 
@@ -343,21 +319,21 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             pr_printf("\n");
             pr_printf("# Assign a project name...\n");
             pr_printf("if ($#argv > 0) then\n");
-            pr_printf("  set PSEQ_PROJ=$argv[1]\n");
-            pr_printf("  echo Using the user specified project name of \\\"$PSEQ_PROJ\\\".\n");
+            pr_printf("  set IMPUTE2_PROJ=$argv[1]\n");
+            pr_printf("  echo Using the user specified project name of \\\"$IMPUTE2_PROJ\\\".\n");
             pr_printf("else\n");
-            pr_printf("  set PSEQ_PROJ=%s\n", file_names[7]);
-            pr_printf("  echo Using the default project name of \\\"$PSEQ_PROJ\\\".\n");
+            pr_printf("  set IMPUTE2_PROJ=%s\n", file_names[7]);
+            pr_printf("  echo Using the default project name of \\\"$IMPUTE2_PROJ\\\".\n");
             pr_printf("endif\n");
 
             pr_printf("\n");
             pr_printf("# Assign a resource directory...\n");
             pr_printf("if ($#argv > 1) then\n");
-            pr_printf("  set PSEQ_RESDIR=$argv[2]\n");
-            pr_printf("  echo Using the user specified resource directory of \\\"$PSEQ_RESDIR\\\".\n");
+            pr_printf("  set IMPUTE2_RESDIR=$argv[2]\n");
+            pr_printf("  echo Using the user specified resource directory of \\\"$IMPUTE2_RESDIR\\\".\n");
             pr_printf("else\n");
-            pr_printf("  set PSEQ_RESDIR=${PSEQ_PROJ}_res\n");
-            pr_printf("  echo Using the default resource directory of \\\"$PSEQ_RESDIR\\\".\n");
+            pr_printf("  set IMPUTE2_RESDIR=${IMPUTE2_PROJ}_res\n");
+            pr_printf("  echo Using the default resource directory of \\\"$IMPUTE2_RESDIR\\\".\n");
             pr_printf("endif\n");
 
 	    // TODO: I still need to figure out how to tell what the former resource directory
@@ -365,70 +341,70 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
 	    // they do.
             pr_printf("\n");
             pr_printf("# It is an error if the resource directory does not exist...\n");
-            pr_printf("if (! -d $PSEQ_RESDIR) then\n");
+            pr_printf("if (! -d $IMPUTE2_RESDIR) then\n");
             pr_printf("  echo\n");
-            pr_printf("  echo The resource directory \\\"$PSEQ_RESDIR\\\" does not exist.\n");
+            pr_printf("  echo The resource directory \\\"$IMPUTE2_RESDIR\\\" does not exist.\n");
             pr_printf("  echo\n");
             pr_printf("  usage\n");
             pr_printf("endif\n");
 
             pr_printf("\n");
             pr_printf("# Do not create a new project if it already exists...\n");
-            pr_printf("if (! -f $PSEQ_PROJ) then\n");
+            pr_printf("if (! -f $IMPUTE2_PROJ) then\n");
             pr_printf("echo\n");
             pr_printf("echo ... Creating a new project ...\n");
-            sprintf(cmd, "$_PSEQ $PSEQ_PROJ new-project --resources $PSEQ_RESDIR\n");
-            sh_run("PSEQ", cmd);
-            fprintf_status_check_csh(_filep, "PSEQ", 1);
+            sprintf(cmd, "$_IMPUTE2 $IMPUTE2_PROJ new-project --resources $IMPUTE2_RESDIR\n");
+            sh_run("IMPUTE2", cmd);
+            fprintf_status_check_csh(_filep, "IMPUTE2", 1);
             pr_printf("else\n");
-            pr_printf("  echo Using existing project \\\"${PSEQ_PROJ}\\\".\n");
+            pr_printf("  echo Using existing project \\\"${IMPUTE2_PROJ}\\\".\n");
             pr_printf("endif\n");
             
             pr_printf("\n");
-            pr_printf("mkdir -p ${PSEQ_PROJ}_out\n");
-            pr_printf("if (-f ${PSEQ_PROJ}_out/%s.bed) then\n",file_names[7]);
+            pr_printf("mkdir -p ${IMPUTE2_PROJ}_out\n");
+            pr_printf("if (-f ${IMPUTE2_PROJ}_out/%s.bed) then\n",file_names[7]);
             pr_printf("  echo\n");
-            pr_printf("  echo ERROR: Attemping to move your trio of PLINK files into the \\\"${PSEQ_PROJ}_out\\\" PSEQ project folder.\n");
-            pr_printf("  echo ERROR: The PSEQ project folder \\\"${PSEQ_PROJ}_out\\\" already contains PLINK files of the same name.\n");
+            pr_printf("  echo ERROR: Attemping to move your trio of PLINK files into the \\\"${IMPUTE2_PROJ}_out\\\" IMPUTE2 project folder.\n");
+            pr_printf("  echo ERROR: The IMPUTE2 project folder \\\"${IMPUTE2_PROJ}_out\\\" already contains PLINK files of the same name.\n");
             pr_printf("  exit\n");
             pr_printf("endif\n");
 
             pr_printf("\n");
-            pr_printf("cp %s.bed %s.bim %s.fam ${PSEQ_PROJ}_out\n", file_names[7], file_names[7], file_names[7]);
+            pr_printf("cp %s.bed %s.bim %s.fam ${IMPUTE2_PROJ}_out\n", file_names[7], file_names[7], file_names[7]);
             pr_printf("echo\n");
-            pr_printf("echo Your trio of PLINK files has been moved into the \\\"${PSEQ_PROJ}_out\\\" PSEQ project folder.\n");
+            pr_printf("echo Your trio of PLINK files has been moved into the \\\"${IMPUTE2_PROJ}_out\\\" IMPUTE2 project folder.\n");
             pr_printf("echo Do not move or alter these files for the duration of your project.\n");
 
             pr_printf("\n");
             pr_printf("echo\n");
             pr_printf("echo ... Loading plink binary files ...\n");
-            sprintf(cmd, "$_PSEQ $PSEQ_PROJ load-plink --file ${PSEQ_PROJ}_out/%s --phenotype %s --id $PSEQ_PROJ --check-reference\n",
-                    file_names[7], fam_file_phenotype_name);
-            sh_run("PSEQ", cmd);
-            fprintf_status_check_csh(_filep, "PSEQ", 1);
+            sprintf(cmd, "$_IMPUTE2 $IMPUTE2_PROJ load-plink --file ${IMPUTE2_PROJ}_out/%s --phenotype %s --id $IMPUTE2_PROJ --check-reference\n",
+                    file_names[7], fam_file_phenotype_nameY);
+            sh_run("IMPUTE2", cmd);
+            fprintf_status_check_csh(_filep, "IMPUTE2", 1);
 
             
             if (num_traits > 2) {
                 pr_printf("\n");
                 pr_printf("echo ... Load additional pheotypes ...\n");
-                sprintf(cmd, "$_PSEQ $PSEQ_PROJ load-pheno --file %s\n", file_names[2]);
-                sh_run("PSEQ", cmd);
-                fprintf_status_check_csh(_filep, "PSEQ", 1);
+                sprintf(cmd, "$_IMPUTE2 $IMPUTE2_PROJ load-pheno --file %s\n", file_names[2]);
+                sh_run("IMPUTE2", cmd);
+                fprintf_status_check_csh(_filep, "IMPUTE2", 1);
             }
             
             pr_printf("\n");
             pr_printf("echo\n");
             pr_printf("echo ... Listing some individuals in the project/file ...\n");
-            sprintf(cmd, "$_PSEQ $PSEQ_PROJ i-view | head\n");
-            sh_run("PSEQ", cmd);
+            sprintf(cmd, "$_IMPUTE2 $IMPUTE2_PROJ i-view | head\n");
+            sh_run("IMPUTE2", cmd);
 
             // can't do this because we get the status from the 'head' that we pipe the data to...
-            //fprintf_status_check_csh(_filep, "PSEQ", 1);
+            //fprintf_status_check_csh(_filep, "IMPUTE2", 1);
         }
         void file_post() {
             chmod_X_file(path_);
         }
-    } *xp = new PSEQ_sh_script(Top);
+    } *xp = new IMPUTE2_sh_script(Top);
     
     xp->file_names = file_names;
     xp->sh         = sh;

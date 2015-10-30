@@ -50,6 +50,9 @@
 #include "write_mendel7_files_ext.h"
 #include "write_mfiles_ext.h"
 #include "write_files_ext.h"
+
+#include "class_old.h"
+
 /*
         batch_input_ext.h:  batchf
      error_messages_ext.h:  errorf mssgf my_calloc warnf

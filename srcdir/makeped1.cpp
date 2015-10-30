@@ -46,6 +46,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "analysis.h"
 
 #include "makeped.h"
 

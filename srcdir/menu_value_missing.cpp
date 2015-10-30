@@ -45,7 +45,8 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 
-#include "analysis.h"
+#include "class_old.h"
+#include "write_pseq_ext.h"
 
 /*
      error_messages_ext.h:  errorf mssgf my_calloc warnf

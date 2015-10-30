@@ -46,6 +46,8 @@
 
 #include "loop.h"
 
+#include "class_old.h"
+
 /*
      create_summary_ext.h:  aff_status_entry
      error_messages_ext.h:  errorf mssgf my_calloc

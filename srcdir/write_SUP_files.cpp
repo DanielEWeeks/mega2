@@ -49,6 +49,9 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 #include "write_files_ext.h"
+
+#include "class_old.h"
+
 /*
      error_messages_ext.h:  mssgf my_calloc my_realloc
               fcmap_ext.h:  fcmap

@@ -85,11 +85,6 @@ distclean: clean
 mega2_vcftools_interface.o: ../common.h ../types.hh ../typedefs.h
 mega2_vcftools_interface.o: ../errorno.h ../allutil.h ../linkage.h
 mega2_vcftools_interface.o: ../linkage_external.h ../makeped.h ../pedtree.h
-mega2_vcftools_interface.o: ../analysis.h ../analysis_ext.h
-mega2_vcftools_interface.o: ../write_fbat_ext.h ../write_plink_ext.h
-mega2_vcftools_interface.o: ../plink_core_ext.h ../write_eigenstrat_ext.h
-mega2_vcftools_interface.o: ../write_pangaea_ext.h ../write_beagle_ext.h
-mega2_vcftools_interface.o: ../write_structure_ext.h ../write_pseq_ext.h
 mega2_vcftools_interface.o: ../batch_input.h ../input_check.h ../hwe.h
 mega2_vcftools_interface.o: ../compress_ext.h ../tod.hh ../utils_ext.h
 mega2_vcftools_interface.o: ../genetic_utils_ext.h ../error_messages_ext.h

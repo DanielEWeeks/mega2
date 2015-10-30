@@ -44,6 +44,8 @@
 #define WRITE_MENDEL7_FILES_EXT_H
 #include "write_mendel7_files_ext.h"
 
+#include "class_old.h"
+
 /*
      create_summary_ext.h:  aff_status_entry
      error_messages_ext.h:  mssgf my_calloc warnf

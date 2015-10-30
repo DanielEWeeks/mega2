@@ -46,6 +46,9 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 #include "write_files_ext.h"
+
+#include "class_old.h"
+
 /*
            R_output_ext.h:  allegro_R_setup append_R_commands
      error_messages_ext.h:  mssgf my_calloc warnf

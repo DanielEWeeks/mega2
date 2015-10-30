@@ -52,6 +52,7 @@
 #include "user_input_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
 
+#include "class_old.h"
 
 #ifdef _WIN
 #define R_OK 4
@@ -276,10 +277,16 @@ extern int count_analysis_list;
 extern Missing_Value missing_value;
 extern Missing_Value missing_values[];
 
+static int sort_analysis(const void *a, const void *b)
+{
+    return strcasecmp(analysis_list[*(const int *)a].option_name,
+                      analysis_list[*(const int *)b].option_name);
+}
+
 int analysis_menu1(analysis_type  *analysis)
 {
     char            choice[50], sub_prog[50];
-    int             i, choice_=0;
+    int             i, choice_=-1, toggle = 0;
     int             num_per_screen;
     char            option_col1[35], option_col2[35];
 /* When adding a new output option:
@@ -306,36 +313,54 @@ int analysis_menu1(analysis_type  *analysis)
  */
     } else {
         num_per_screen = HALF(count_analysis_list);
+        int *sort_array = CALLOC(count_analysis_list, int);
+        for (i = 0; i < count_analysis_list; i++)
+            sort_array[i] = i;
 
-        while (choice_ < 1 || choice_ > (count_analysis_list) || !analysis_list[choice_-1].analysis->is_enabled())  {
+        for (;;) {
             printf("                 ANALYSIS MENU \n");
             draw_line();
+            if (toggle == 0)
+                printf("%17s %2d Sort by Analysis Name\n", "", 0);
+            else
+                printf("%17s %2d Sort by Analysis Number\n", "", 0);
+
             for (i = 0; i < num_per_screen; i++) {
-                sprintf(option_col1, "%2d %s", i+1, analysis_list[i].option_name);
+                sprintf(option_col1, "%2d %s", i+1, analysis_list[sort_array[i]].option_name);
                 if ((num_per_screen +i) < (count_analysis_list)) {
                     sprintf(option_col2, "%2d %s",
-                            num_per_screen+i+1, analysis_list[num_per_screen+i].option_name);
+                            num_per_screen+i+1, analysis_list[sort_array[num_per_screen+i]].option_name);
                 } else {
                     strcpy(option_col2, "");
                 }
                 printf("%-34s %-34s\n", option_col1, option_col2);
             }
 
-            printf("\nSelect an option between 1-%2d > ", count_analysis_list);
+            printf("\nSelect an option between 0-%2d > ", count_analysis_list);
             fcmap(stdin, "%s", choice); newline;
-            choice_ = 0;
+            choice_ = -1;
             sscanf(choice, "%d", &choice_);
-            if (choice_ >= 1 && choice_ <= (count_analysis_list)) {
-                if (analysis_list[choice_-1].analysis->is_enabled())
-                    printf("    You have selected: %s\n", analysis_list[choice_-1].option_name);
-                else
+            if (choice_ == 0) {
+                if (toggle == 0) {
+                    qsort((void *) sort_array, (size_t) count_analysis_list, sizeof (int), sort_analysis);
+                } else {
+                    for (i = 0; i < count_analysis_list; i++)
+                        sort_array[i] = i;
+                }
+                toggle = !toggle;
+            } else if (choice_ >= 1 && choice_ <= (count_analysis_list)) {
+                choice_ = sort_array[choice_ - 1];
+                if (analysis_list[choice_].analysis->is_enabled()) {
+                    printf("    You have selected: %s\n", analysis_list[choice_].option_name);
+                    break;
+                } else
                     printf("Disabled choice \"%s\". Please select again.\n",
-                           analysis_list[choice_-1].option_name);
+                           analysis_list[choice_].option_name);
             } else
-                printf("Choice out of range. Please select again from options 1-%2d.\n",
+                printf("Choice out of range. Please select again from options 0-%2d.\n",
                     count_analysis_list);
         }
-        *analysis = analysis_list[choice_-1].analysis;
+        *analysis = analysis_list[choice_].analysis;
         /* note the analysis may be changed */
         if ((*analysis)->has_sub_options())
             (*analysis)->interactive_sub_prog_name_to_sub_option(analysis);

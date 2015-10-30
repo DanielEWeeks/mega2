@@ -41,6 +41,9 @@
 #include "utils_ext.h"
 #include "write_premakeped_ext.h"
 #include "write_files_ext.h"
+
+#include "class_old.h"
+
 /*
      error_messages_ext.h:  errorf mssgf my_calloc warnf
               fcmap_ext.h:  fcmap

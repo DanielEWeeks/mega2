@@ -51,6 +51,8 @@
 #include "write_files_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
 
+#include "class_old.h"
+
 /*
      error_messages_ext.h:  errorf mssgf my_calloc warnf
               fcmap_ext.h:  fcmap

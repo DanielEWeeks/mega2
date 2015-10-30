@@ -43,7 +43,6 @@
 
 #include "common.h"
 #include "analysis.h"
-#include "analysis_ext.h"
 #include "batch_input.h"
 #include "reorder_loci_ext.h"
 

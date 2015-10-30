@@ -32,6 +32,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "analysis.h"
 
 #include "linkage.h"
 

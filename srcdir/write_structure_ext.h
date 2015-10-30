@@ -28,6 +28,8 @@
 #ifndef WRITE_STRUCTURE_EXT_H
 #define WRITE_STRUCTURE_EXT_H
 
+#include "analysis.h"
+
 class CLASS_STRUCTURE: public CLASS_ANALYSIS {
 public:
     CLASS_STRUCTURE() : CLASS_ANALYSIS() {
@@ -69,5 +71,7 @@ public:
     void replace_chr_number(char *file_names[], int numchr);
 
 };
+
+extern CLASS_STRUCTURE          *STRUCTURE;
 
 #endif

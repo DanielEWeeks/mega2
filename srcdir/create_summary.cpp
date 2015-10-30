@@ -49,6 +49,9 @@
 #include "reorder_loci_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
+
+#include "class_old.h"
+
 /*
      error_messages_ext.h:  errorf mssgf my_calloc my_malloc warnf
               fcmap_ext.h:  fcmap

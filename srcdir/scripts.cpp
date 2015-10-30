@@ -43,6 +43,9 @@
 #include "utils_ext.h"
 #include "write_files_ext.h"
 #include "write_ghfiles_ext.h"
+
+#include "class_old.h"
+
 /*
      error_messages_ext.h:  errorf mssgf warnf
               fcmap_ext.h:  fcmap

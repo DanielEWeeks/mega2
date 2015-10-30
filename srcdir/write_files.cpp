@@ -47,6 +47,8 @@
 #include "write_ghfiles_ext.h"
 #include "plink_ext.h"
 
+#include "class_old.h"
+
 #include <string>
 #include <map>
 

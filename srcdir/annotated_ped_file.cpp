@@ -87,6 +87,8 @@
 #include "str_utils.hh"
 #include "read_impute.hh"
 
+#include "class_old.h"
+
 /*
      error_messages_ext.h:  errorf mssgf my_calloc my_malloc warnf
               fcmap_ext.h:  fcmap

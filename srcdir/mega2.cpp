@@ -160,6 +160,9 @@
 #include "write_solar_files_ext.h"
 #include "write_vitesse_ext.h"
 #include "version.h"
+
+#include "class_old.h"
+
 /*
  annotated_ped_file_ext.h:  check_annotated_file_format read_annotated_files Free_annotated_files
               aspex_ext.h:  create_aspex_files

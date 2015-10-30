@@ -28,6 +28,7 @@
 
 #include "loop.h"
 #include "tod.hh"
+#include "analysis.h"
 
 void loop::once::iterate()
 {

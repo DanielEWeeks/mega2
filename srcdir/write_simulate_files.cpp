@@ -31,6 +31,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "analysis.h"
 
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"

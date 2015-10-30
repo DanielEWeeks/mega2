@@ -45,6 +45,8 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 
+#include "write_structure_ext.h"
+
 /*
      error_messages_ext.h:  mssgf my_calloc warnf
               fcmap_ext.h:  fcmap

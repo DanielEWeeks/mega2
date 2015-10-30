@@ -28,6 +28,8 @@
 #ifndef WRITE_PANGAEA_EXT_H
 #define WRITE_PANGAEA_EXT_H
 
+#include "analysis.h"
+
 class CLASS_PANGAEA: public CLASS_ANALYSIS {
 public:
     CLASS_PANGAEA() : CLASS_ANALYSIS() {
@@ -75,5 +77,7 @@ public:
     void file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
+
+extern CLASS_PANGAEA            *PANGAEA;
 
 #endif

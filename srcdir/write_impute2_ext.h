@@ -25,19 +25,19 @@
 
 */
 
-#ifndef WRITE_PSEQ_FILES_EXT_H
-#define WRITE_PSEQ_FILES_EXT_H
+#ifndef WRITE_IMPUTE2_FILES_EXT_H
+#define WRITE_IMPUTE2_FILES_EXT_H
 
 #include "write_plink_ext.h"
 
 
-class CLASS_PSEQ: public CLASS_PLINK {
+class CLASS_IMPUTE2: public CLASS_PLINK {
 public:
-    CLASS_PSEQ() : CLASS_PLINK() {
-        _name = "PSEQ";
-	strcpy(file_name_stem, "pseq");
+    CLASS_IMPUTE2() : CLASS_PLINK() {
+        _name = "IMPUTE2";
+	strcpy(file_name_stem, "impute2");
     }
-   ~CLASS_PSEQ() {}
+   ~CLASS_IMPUTE2() {}
 
     bool has_sub_options()    { return false; }
 
@@ -62,6 +62,4 @@ public:
 			const int numchr);
 };
 
-extern CLASS_PSEQ               *TO_PSEQ;
-
-#endif /* WRITE_PSEQ_FILES_EXT_H */
+#endif

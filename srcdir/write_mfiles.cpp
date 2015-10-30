@@ -55,6 +55,8 @@
 #define WRITE_MFILES_EXT_H
 #include "write_mfiles_ext.h"
 
+#include "class_old.h"
+
 /*
            R_output_ext.h:  append_R_commands sw2_R_setup
      create_summary_ext.h:  aff_status_entry

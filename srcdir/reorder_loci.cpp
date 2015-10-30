@@ -85,6 +85,9 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 #include "write_files_ext.h"
+
+#include "class_old.h"
+
 /*
  annotated_ped_file_ext.h:  copy_exmap_locmap
         batch_input_ext.h:  batchf
