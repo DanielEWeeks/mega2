@@ -29,8 +29,11 @@
 #ifndef SH_UTIL_H
 #define SH_UTIL_H
 
-class sh_util: public virtual person_locus_entry {
+#include "loop.h"
+
+class sh_util: public person_locus_entry {
 public:
+    fileloop::fileloop_data *fileloop;
 
     sh_util(linkage_ped_top  *Top) : person_locus_entry(Top) { }
     virtual ~sh_util() {}
@@ -171,13 +174,19 @@ public:
     }
 
     virtual void inner() {}
-    void run_loop(const char *fl_name) { run_loop(*_opath, fl_name, "w"); }
-    void run_loop(const char *dir, const char *fl_name, const char *mode="w")
+
+    void run_loop(const char *opath, const char *fl_name) { run_loop(opath, fl_name, "w"); }
+    void run_loop(const char *dir, const char *fl_name, const char *mode)
     {
+        _tte    = fileloop->_ftte;
+        _numchr = fileloop->_fnumchr;
+        _trait  = fileloop->_ftrait;
+
         filep_open(dir, fl_name, mode);
         inner();
         filep_close();
     }
+
 };
 
 #endif /* SH_UTIL_H */

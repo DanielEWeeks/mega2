@@ -30,32 +30,32 @@
 #include "tod.hh"
 #include "analysis.h"
 
-void loop::once::iterate()
+void fileloop::once::iterate()
 {
     int tr;
     linkage_locus_rec *tte;
 
-    _tte = (linkage_locus_rec *)NULL; // None was selected
+    _ftte = (linkage_locus_rec *)NULL; // None was selected
     for (tr=0; tr < num_traits; tr++) {
 
-        _trait = *_trp++;
-        if (_trait == -1) continue;
-        if (_trait == -99) break;
+        _ftrait = *_trp++;
+        if (_ftrait == -1) continue;
+        if (_ftrait == -99) break;
 
-        tte = &(_LTop->Locus[_trait]);
+        tte = &(_fLTop->Locus[_ftrait]);
         if (_trait_affect && tte->Type != AFFECTION)
             continue;
         if (_trait_quant  && tte->Type != QUANT)
             continue;
-        _tte = tte;
+        _ftte = tte;
         break;
     }
 
-    make_file(); // which must call run_loop() to access an 'inner' loop
+    make_file(); // which must call data_loop( ) to access an 'inner' loop
 }
 
 // Sets both the trait and the chromosome... outer == chr_trait
-void loop::outer::iterate()
+void fileloop::both::iterate()
 {
     int i;
     int tr;
@@ -66,15 +66,15 @@ void loop::outer::iterate()
     for (i = 0; i < main_chromocnt; i++) {
 
         if (_chrom_loop) {
-            _numchr=global_chromo_entries[i];
-            _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
+            _fnumchr=global_chromo_entries[i];
+            _fTop->analysis->replace_chr_number(Outfile_Names, _fnumchr);
         } else {
             if (main_chromocnt > 1) {
-                _numchr=-1;
-                _Top->analysis->replace_chr_number(Outfile_Names, 0); // all
+                _fnumchr=-1;
+                _fTop->analysis->replace_chr_number(Outfile_Names, 0); // all
             } else {
-                _numchr=global_chromo_entries[i];
-                _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
+                _fnumchr=global_chromo_entries[i];
+                _fTop->analysis->replace_chr_number(Outfile_Names, _fnumchr);
             }
         }
 
@@ -83,22 +83,22 @@ void loop::outer::iterate()
 
         chr_start();
 
-        _tte = (linkage_locus_rec *)NULL; // None was selected
+        _ftte = (linkage_locus_rec *)NULL; // None was selected
         for (tr=0; tr < num_traits; tr++) {
 
-            _trait = *_trp++;
-            if (_trait == -1) continue;
-            if (_trait == -99) break;
+            _ftrait = *_trp++;
+            if (_ftrait == -1) continue;
+            if (_ftrait == -99) break;
 
-            tte = &(_LTop->Locus[_trait]);
+            tte = &(_fLTop->Locus[_ftrait]);
             if (_trait_affect && tte->Type != AFFECTION)
                 continue;
             if (_trait_quant  && tte->Type != QUANT)
                 continue;
 
-            _tte = tte;
+            _ftte = tte;
 
-            // A trait (_tte) must be selected to get here...
+            // A trait (_ftte) must be selected to get here...
             trait_start();
 
             make_file();
@@ -111,7 +111,7 @@ void loop::outer::iterate()
 
         }
 
-        if (_tte == 0) { // NO traits
+        if (_ftte == 0) { // NO traits
             _opath = &output_paths[0];
             make_file();
         }
@@ -125,45 +125,45 @@ void loop::outer::iterate()
     }
 }
 
-void loop::chr::iterate()
+void fileloop::chr::iterate()
 {
     int i, tr;
     linkage_locus_rec *tte;
 
-    _tte = (linkage_locus_rec *)NULL; // None was selected
+    _ftte = (linkage_locus_rec *)NULL; // None was selected
     for (tr=0; tr < num_traits; tr++) {
 
-        _trait = *_trp++;
-        if (_trait == -1) continue;
-        if (_trait == -99) break;
+        _ftrait = *_trp++;
+        if (_ftrait == -1) continue;
+        if (_ftrait == -99) break;
 
-        tte = &(_LTop->Locus[_trait]);
+        tte = &(_fLTop->Locus[_ftrait]);
         if (_trait_affect && tte->Type != AFFECTION)
             continue;
         if (_trait_quant  && tte->Type != QUANT)
             continue;
-        _tte = tte;
+        _ftte = tte;
         break;
     }
 
     for (i = 0; i < main_chromocnt; i++) {
 
         if (_chrom_loop) {
-            _numchr=global_chromo_entries[i];
-            _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
+            _fnumchr=global_chromo_entries[i];
+            _fTop->analysis->replace_chr_number(Outfile_Names, _fnumchr);
         } else {
             if (main_chromocnt > 1) {
-                _numchr=-1;
-                _Top->analysis->replace_chr_number(Outfile_Names, 0);
+                _fnumchr=-1;
+                _fTop->analysis->replace_chr_number(Outfile_Names, 0);
             } else {
-                _numchr=global_chromo_entries[i];
-                _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
+                _fnumchr=global_chromo_entries[i];
+                _fTop->analysis->replace_chr_number(Outfile_Names, _fnumchr);
             }
         }
 
         chr_start();
 
-        make_file(); // which must call run_loop() to access an 'inner' loop
+        make_file(); // which must call data_loop( ) to access an 'inner' loop
 
         chr_end();
 
@@ -172,26 +172,26 @@ void loop::chr::iterate()
     }
 }
 
-void loop::trait::iterate()
+void fileloop::trait::iterate()
 {
     int tr;
     linkage_locus_rec *tte;
 
     for (tr=0; tr < num_traits; tr++) {
 
-        _trait = *_trp++;
-        if (_trait == -1) continue;
-        if (_trait == -99) break;
+        _ftrait = *_trp++;
+        if (_ftrait == -1) continue;
+        if (_ftrait == -99) break;
 
-        tte = &(_LTop->Locus[_trait]);
+        tte = &(_fLTop->Locus[_ftrait]);
         if (_trait_affect && tte->Type != AFFECTION)
             continue;
         if (_trait_quant  && tte->Type != QUANT)
             continue;
 
-        _tte = tte;
+        _ftte = tte;
 
-        // A trait (_tte) must be selected to get here...
+        // A trait (_ftte) must be selected to get here...
         trait_start();
 
         make_file();
@@ -204,7 +204,7 @@ void loop::trait::iterate()
 
     }
 
-    if (_tte == 0) { // NO traits
+    if (_ftte == 0) { // NO traits
         _opath = &output_paths[0];
         make_file();
     }
@@ -215,8 +215,12 @@ void loop::trait::iterate()
 //                       inner loops
 ////////////////////////////////////////////////////////////////
 
-void loop::null::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::null::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
+    _tte    = fileloop->_ftte;
+    _numchr = fileloop->_fnumchr;
+    _trait  = fileloop->_ftrait;
+
     filep_open(dir, fl_name, mode);
 
     inner();
@@ -224,8 +228,12 @@ void loop::null::run_loop(const char *dir, const char *fl_name, const char *mode
     filep_close();
 }
 
-void loop::ped_per::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
+
+    _tte    = fileloop->_ftte;
+    _numchr = fileloop->_fnumchr;
+    _trait  = fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -250,10 +258,14 @@ void loop::ped_per::run_loop(const char *dir, const char *fl_name, const char *m
     filep_close();
 }
 
-void loop::ped_per_trait::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::ped_per_trait::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int tr;
     int *retrp;
+
+    _tte    = fileloop->_ftte;
+    _numchr = fileloop->_fnumchr;
+    _trait  = fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -297,10 +309,14 @@ void loop::ped_per_trait::run_loop(const char *dir, const char *fl_name, const c
     filep_close();
 }
 
-void loop::trait_ped_per::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::trait_ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int tr;
     int *retrp;
+
+    _tte    = fileloop->_ftte;
+    _numchr = fileloop->_fnumchr;
+    _trait  = fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -345,11 +361,15 @@ void loop::trait_ped_per::run_loop(const char *dir, const char *fl_name, const c
     filep_close();
 }
 
-void loop::ped_per_loci::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::ped_per_loci::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int m;
 
-    // Loop through the Loci...
+     _tte   = fileloop->_ftte;
+    _numchr = fileloop->_fnumchr;
+    _trait  = fileloop->_ftrait;
+
+   // Loop through the Loci...
     markers_on_chromosome(_numchr);
 
     filep_open(dir, fl_name, mode);
@@ -395,9 +415,13 @@ void loop::ped_per_loci::run_loop(const char *dir, const char *fl_name, const ch
     filep_close();
 }
 
-void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::loci_ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int m;
+
+     _tte   = fileloop->_ftte;
+    _numchr = fileloop->_fnumchr;
+    _trait  = fileloop->_ftrait;
 
     // Loop through the SELECTED Loci (by count)...
     Tod tod_lpp_markers("get markers_on_chromosomes");
@@ -449,9 +473,13 @@ void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const ch
     filep_close();
 }
 
-void loop::loci::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::loci::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int m;
+
+     _tte   = fileloop->_ftte;
+    _numchr = fileloop->_fnumchr;
+    _trait  = fileloop->_ftrait;
 
     // Loop through the SELECTED Loci (by count)...
     markers_on_chromosome(_numchr);

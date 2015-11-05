@@ -39,6 +39,7 @@
 #include "typedefs.h"
 
 #include "loop.h"
+#include "sh_util.h"
 
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
@@ -88,7 +89,7 @@ quantitative trait or an affection status column: PLINK will automatically detec
 static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
                             const int pwid, const int fwid)
 {
-    struct pseq_pheno: public loop::once, loop::ped_per_trait {
+    struct pseq_pheno: public fileloop::once, dataloop::ped_per_trait {
         
         bool use_fid, use_iid, use_joint;
         
@@ -96,7 +97,7 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
         // This trait will not go into this file (the IMPUTE2 pheno file).
         int skip_trait;
         
-        pseq_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) { }
+        pseq_pheno(linkage_ped_top *Top) : fileloop::once(Top), dataloop::ped_per_trait(Top) { }
         
         void make_file() {
             // Here we loop over the pedigrees and individuals to determine what to use
@@ -137,7 +138,7 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
             use_joint = !use_fid && !use_iid;
             
             msgvf("      IMPUTE2 phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
-            run_loop(Outfile_Names[2]);
+            data_loop(*_opath, Outfile_Names[2]);
         }
         void file_header() {
             int tr, first;
@@ -202,6 +203,7 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
     
     // So that we can make up a string like "FID_IID".
     // In addition IMPUTE2 requires tab delimited data, it seems to get confused if sperious spaces are introduced.
+    sp->fileloop = sp;
     sp->load_formats_no_space(-1);
     
     sp->iterate();
@@ -262,15 +264,15 @@ void CLASS_IMPUTE2::create_sh_file(linkage_ped_top *Top,
         }
     } *sh = 0;
     
-    struct IMPUTE2_sh_script: public loop::outer, all_sh {
+    struct IMPUTE2_sh_script: public fileloop::both, all_sh {
         typedef char *str;
         str *file_names;
         all_sh *sh;
         
-        IMPUTE2_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
+        IMPUTE2_sh_script(linkage_ped_top *Top) : fileloop::both(Top), all_sh(Top) { }
         void make_file() {
             mssgvf("      IMPUTE2 shell file:          %s/%s\n", *_opath, file_names[8]);
-            run_loop(file_names[8]);
+            run_loop(*_opath, file_names[8]);
         }
         void file_header() {
             if (sh) sh->sh_sh(this);
@@ -406,6 +408,7 @@ void CLASS_IMPUTE2::create_sh_file(linkage_ped_top *Top,
         }
     } *xp = new IMPUTE2_sh_script(Top);
     
+    xp->fileloop   = xp;
     xp->file_names = file_names;
     xp->sh         = sh;
     

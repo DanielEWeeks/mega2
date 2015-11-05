@@ -57,6 +57,7 @@ public:
     void save_pheno_file(linkage_ped_top *Top,
 			 const int pwid,
 			 const int fwid);
+
     void create_sh_file(linkage_ped_top *Top,
 			char *file_names[],
 			const int numchr);

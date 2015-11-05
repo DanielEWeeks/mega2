@@ -42,9 +42,8 @@ public:
     bool has_sub_options()    { return false; }
 
 /*  this is necessary because we are inheriting from CLASS_PLINK not CLASS_ANALYSIS */
-    virtual const char* output_quant_default_value() { return "NA"; }
-
-    virtual const char* output_affect_default_value() { return "0"; }
+    virtual const char* output_quant_default_value() { return "-9"; }
+    virtual const char* output_affect_default_value() { return "-9"; }
     virtual bool output_affect_must_be_numeric() { return true; }
 
     virtual void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -56,10 +55,13 @@ public:
 
     void save_pheno_file(linkage_ped_top *Top,
 			 const int pwid,
-			 const int fwid);
+			 const int fwid) {} ;  // Nothing here for shapeit
+
     void create_sh_file(linkage_ped_top *Top,
 			char *file_names[],
 			const int numchr);
 };
+
+extern CLASS_SHAPEIT *SHAPEIT;
 
 #endif /* WRITE_SHAPEIT_FILES_EXT_H */

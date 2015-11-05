@@ -39,6 +39,8 @@
 #include "typedefs.h"
 
 #include "loop.h"
+#include "sh_util.h"
+
 
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
@@ -112,7 +114,7 @@ one with the label given with the '--phenotype' command line argument and one wi
 static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
                             const int pwid, const int fwid)
 {
-    struct pseq_pheno: public loop::once, loop::ped_per_trait {
+    struct pseq_pheno: public fileloop::once, dataloop::ped_per_trait {
         
         bool use_fid, use_iid, use_joint;
         
@@ -120,7 +122,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
         // This trait will not go into this file (the PSEQ pheno file).
         int skip_trait;
         
-        pseq_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) { }
+        pseq_pheno(linkage_ped_top *Top) : fileloop::once(Top), dataloop::ped_per_trait(Top) { }
         
         void make_file() {
             // Here we loop over the pedigrees and individuals to determine what to use
@@ -136,10 +138,10 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
             size_t ni = 0;
             
             // for each pedigree (consulting the linkage_ped_top structure)...
-            for (_ped=0; _ped < _Top->PedCnt; _ped++) {
+            for (_ped=0; _ped < _fTop->PedCnt; _ped++) {
                 // It there is some indication as to why this pedigree should not be included, don't...
                 if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
-                _tp = &(_Top->Ped[_ped]);
+                _tp = &(_fTop->Ped[_ped]);
 //yy
                 if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tp->Name);
                 else if (OrigIds[1] == 3) {convert << _ped+1; sfid.insert(convert.str()); }
@@ -161,7 +163,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
             use_joint = !use_fid && !use_iid;
             
             msgvf("         PSEQ phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
-            run_loop(Outfile_Names[2]);
+            data_loop(*_opath, Outfile_Names[2]);
         }
         void file_header() {
             int tr, first;
@@ -226,6 +228,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
     
     // So that we can make up a string like "FID_IID".
     // In addition PSEQ requires tab delimited data, it seems to get confused if sperious spaces are introduced.
+    sp->fileloop = sp;
     sp->load_formats_no_space(-1);
     
     sp->iterate();
@@ -286,15 +289,15 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
         }
     } *sh = 0;
     
-    struct PSEQ_sh_script: public loop::outer, all_sh {
+    struct PSEQ_sh_script: public fileloop::both, all_sh {
         typedef char *str;
         str *file_names;
         all_sh *sh;
         
-        PSEQ_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
+        PSEQ_sh_script(linkage_ped_top *Top) : fileloop::both(Top), all_sh(Top) { }
         void make_file() {
             mssgvf("         PSEQ shell file:          %s/%s\n", *_opath, file_names[8]);
-            run_loop(file_names[8]);
+            run_loop(*_opath, file_names[8]);
         }
         void file_header() {
             if (sh) sh->sh_sh(this);
@@ -322,8 +325,8 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
             
             pr_printf("\n");
 
-            if (_numchr > 0) {
-                pr_printf("echo Running PSEQ on chromosome %d markers\n", _numchr);
+            if (_fnumchr > 0) {
+                pr_printf("echo Running PSEQ on chromosome %d markers\n", _fnumchr);
                 pr_printf("echo\n");
             }
 
@@ -430,6 +433,7 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
         }
     } *xp = new PSEQ_sh_script(Top);
     
+    xp->fileloop   = xp;
     xp->file_names = file_names;
     xp->sh         = sh;
     

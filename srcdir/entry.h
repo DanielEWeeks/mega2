@@ -60,11 +60,10 @@ public:
     char _mformat[100];
 
     int _trait;
-
     int _numchr;
-    int _chrom_loop;
+
 public:
-    person_locus_entry() {
+    person_locus_entry() : file_ops() {
         // It's really nice to initialize everything to '0' so that when
         // the code blows up, you know that the variable was never written
         // too as opposed to someone wrote some funny number there...
@@ -75,11 +74,10 @@ public:
         _tpe = (linkage_ped_rec  *)NULL;
         _tp = (linkage_ped_tree *)NULL;
         _tle = (linkage_locus_rec *)NULL;
-        _tte = (linkage_locus_rec *)NULL;
         _fformat[0] = _pformat[0] = _mformat[0] = 0;
-        _fwid = _pwid = _mwid = _trait = _numchr = _chrom_loop = 0;
+        _fwid = _pwid = _mwid = _trait = 0;
     }
-    person_locus_entry(linkage_ped_top *Top) {
+    person_locus_entry(linkage_ped_top *Top) : file_ops() {
         person_locus_entry();
         if (Top != (linkage_ped_top *)NULL) {
             this->_Top = Top;

@@ -39,6 +39,7 @@
 #include "typedefs.h"
 
 #include "loop.h"
+#include "sh_util.h"
 
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
@@ -85,148 +86,6 @@ quantitative trait or an affection status column: PLINK will automatically detec
 
 */
 
-static void save_SHAPEIT_pheno(const char *phenofl_name, linkage_ped_top *Top,
-                            const int pwid, const int fwid)
-{
-    struct pseq_pheno: public loop::once, loop::ped_per_trait {
-        
-        bool use_fid, use_iid, use_joint;
-        
-        // The '_trait' value of the first trait which will be found in the .FAM file.
-        // This trait will not go into this file (the SHAPEIT pheno file).
-        int skip_trait;
-        
-        pseq_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) { }
-        
-        void make_file() {
-            // Here we loop over the pedigrees and individuals to determine what to use
-            // as an "ID" for the PSEQ phenotype file. This should be the same as what SHAPEIT
-            // uses for the "ID". This code is found in...
-            // lib/bed.cpp:int BEDReader::read_fam()
-            //
-            // Similar methods are used below...
-            
-            std::ostringstream convert;   // stream used for the conversion
-            std::set<std::string> sfid;
-            std::set<std::string> siid;
-            size_t ni = 0;
-            
-            // for each pedigree (consulting the linkage_ped_top structure)...
-            for (_ped=0; _ped < _Top->PedCnt; _ped++) {
-                // It there is some indication as to why this pedigree should not be included, don't...
-                if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
-                _tp = &(_Top->Ped[_ped]);
-//yy
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tp->Name);
-                else if (OrigIds[1] == 3) {convert << _ped+1; sfid.insert(convert.str()); }
-                else if (OrigIds[1] == 6) sfid.insert(_tp->PedPre);
-                else {convert << _tp->Num; sfid.insert(convert.str()); }
-                
-                for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
-                    _tpe = &(_tp->Entry[_per]);
-                    if (OrigIds[0] == 1 || OrigIds[0] == 2)  siid.insert(_tpe->OrigID);
-                    else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) siid.insert(_tpe->UniqueID);
-                    else if (OrigIds[0] == 6) siid.insert(_tpe->PerPre);
-                    else {convert << _tpe->ID; siid.insert(convert.str()); }
-                    ni++;
-                }
-            }
-            
-            use_fid = ni == sfid.size();
-            use_iid = ni == siid.size();
-            use_joint = !use_fid && !use_iid;
-            
-            msgvf("      SHAPEIT phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
-            run_loop(Outfile_Names[2]);
-        }
-        void file_header() {
-            int tr, first;
-            // The SHAPEIT header takes one line per phenotype listed in the file, followed
-            // by a header line that has the "ID" followed by the phenotype names.
-            // NOTE: PLINK/SEQ is really picky about having or not havings spaces/tabs in the right places.
-            
-            // The first lines (one line for each trait) in the file contain trait meta data...
-            for (tr = 0, first = 1; tr < num_traits; tr++) {
-                if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
-                if (first == 1) {
-                    skip_trait = global_trait_entries[tr];
-                    //fam_file_phenotype_nameX = _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
-                    first = 0;
-                    continue;
-                }
-                switch (_Top->LocusTop->Locus[global_trait_entries[tr]].Type) {
-                    case QUANT:
-                        pr_printf("##%s,Float,%s,\"Quantitative trait description\"\n",
-                                  _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName,
-                                  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read ?
-                                  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9"
-                                  );
-                        break;
-                    case AFFECTION:
-                        // Since we have no way of specifying the value of the missing affection
-                        // status, we will use the customary default of '0'...
-                        // The assumption here is that: Case == 2, Control == 1, and Missing == 0
-                        pr_printf("##%s,Integer,0,\"Affection status description\"\n",
-                                  _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName);
-                        break;
-                    default:
-                        // This is an internal error....
-                        break;
-                }
-            }
-            
-            // The last line of the header containing the ID followed by tab delimited trait names...
-            pr_printf("#ID");
-            for (tr = 0, first = 1; tr < num_traits; tr++) {
-                if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
-                if (first == 1) { first = 0; continue; }
-                pr_printf("\t%s", _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName);
-            }
-            pr_nl();
-        }
-        void per_start() {
-            // The "ID" comes in one of three forms depending on the input data:
-            // A) if each family is unique then the family ID is used (use_id == 1),
-            // B) if the family ids are not unique, but the individual ids are, then the individual id is used (use_id == 2),
-            // C) finally if neither famiy, nor individual ids are unique a concatination of the two is used (use_id == 3).
-            // with an interveinign underscore.
-            // Consult the SHAPEIT code found in this method:
-            // lib/bed.cpp:int BEDReader::read_fam( )
-            if (use_joint || use_fid) pr_fam();
-            if (use_joint) pr_printf("_");
-            if (use_joint || use_iid) pr_per();
-        }
-        void inner()     { if (skip_trait != _trait) { pr_printf("\t"); pr_pheno(); } }
-        void per_end()   { pr_nl(); }
-    } *sp = new pseq_pheno(Top);
-    
-    // So that we can make up a string like "FID_IID".
-    // In addition SHAPEIT requires tab delimited data, it seems to get confused if sperious spaces are introduced.
-    sp->load_formats_no_space(-1);
-    
-    sp->iterate();
-    
-    delete sp;
-}
-
-void CLASS_SHAPEIT::save_pheno_file(linkage_ped_top *Top,
-                                 const int pwid,
-                                 const int fwid)
-{
-    int tr;
-    // Even if there is no SHAPEIT pheno file generated, we still need to know the name of the
-    // phenotype that will go into the .FAM file for the SHAPEIT --phenotype command line argument.
-    for (tr = 0; tr < num_traits; tr++) {
-        if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
-        fam_file_phenotype_nameX = Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
-        break;
-    }
-    // The first trait will be placed in the .FAM file, all others in the SHAPEIT pheno file.
-    // Remember to account for the '-1' in this list, so there are N-1 traits actually
-    // listed in global_trait_entries[]
-    if (num_traits > 2) save_SHAPEIT_pheno(Outfile_Names[2], Top, pwid, fwid);
-}
-
 void CLASS_SHAPEIT::create_output_file(
     linkage_ped_top *LPedTreeTop,
     analysis_type *analysis,
@@ -238,17 +97,7 @@ void CLASS_SHAPEIT::create_output_file(
     // The missing phenotype value for quantitative traits is, by default, -9.
     // Here we use the value of 'MissingQuant' which should be derived from the batch
     // file item "Value_Missing_Quant_On_Input".
-    //if (have_trait_b(LPedTreeTop->LocusTop) != 0 && PLINK_OUT.no_pheno == 1) {
-    if (have_trait_b(LPedTreeTop->LocusTop) != 0) {
-        // See #defines for PLINK_SUB_OPTION_*_INT for the value of _suboption
-        // NOTE: Analysis_Sub_Option MUST BE 'SNP major binary', the use of 'Individual major binary'                       
-        // will generate the pseq message, and data will not be properly loaded...                                          
-        // plinkseq warning: problems detected loading BED file, ./plink.all     
-        create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "pseq", analysis);
-    } else {
-        errorf("There are no traits available for column 6 of the PLINK phenotype file.");
-        EXIT(EARLY_TERMINATION);
-    }
+        create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "shapeit", analysis);
 }
 
 void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
@@ -262,15 +111,15 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
         }
     } *sh = 0;
     
-    struct SHAPEIT_sh_script: public loop::outer, all_sh {
+    struct SHAPEIT_sh_script: public fileloop::both, all_sh {
         typedef char *str;
         str *file_names;
         all_sh *sh;
         
-        SHAPEIT_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
+        SHAPEIT_sh_script(linkage_ped_top *Top) : fileloop::both(Top), all_sh(Top) { }
         void make_file() {
             mssgvf("      SHAPEIT shell file:          %s/%s\n", *_opath, file_names[8]);
-            run_loop(file_names[8]);
+            run_loop(*_opath, file_names[8]);
         }
         void file_header() {
             if (sh) sh->sh_sh(this);
@@ -298,8 +147,8 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
             
             pr_printf("\n");
 
-            if (_numchr > 0) {
-                pr_printf("echo Running SHAPEIT on chromosome %d markers\n", _numchr);
+            if (_fnumchr > 0) {
+                pr_printf("echo Running SHAPEIT on chromosome %d markers\n", _fnumchr);
                 pr_printf("echo\n");
             }
 
@@ -406,6 +255,7 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
         }
     } *xp = new SHAPEIT_sh_script(Top);
     
+    xp->fileloop   = xp;
     xp->file_names = file_names;
     xp->sh         = sh;
     

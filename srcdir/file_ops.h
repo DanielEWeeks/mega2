@@ -44,7 +44,6 @@ protected:
     const char *dir_;
     const char *file_;
 public:
-    char **_opath;
     FILE *_filep;
     // In Version 1.2.6 gzFile is (gzFile_s *), and in 1.2.5 it is (voidp) which is a (Byte *).
     // So, it really is a pointer and not an inline structure, and so we can compare it to NULL.
