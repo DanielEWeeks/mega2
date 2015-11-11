@@ -168,7 +168,7 @@ void CLASS_PLINK::save_pedsix_file(linkage_ped_top *Top,
 {
     Tod tod_pedsix("save ped/fam file six cols");
 
-    FLPtrait *floop = new FLPtrait(Top, Outfile_Names[0], "w");
+    FLOOPtrait *floop = new FLOOPtrait(Top, Outfile_Names[0], "w");
     floop->file_type = "        PLINK pedigree file:       ";
 
     struct plink_pedsix: public dataloop::ped_per {
@@ -208,7 +208,7 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
 {
     Tod tod_ped("save ped file");
 
-    FLPchr *floop = new FLPchr(Top, Outfile_Names[0], "w");
+    FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[0], "w");
     floop->file_type = "        PLINK ped file:            ";
 
     struct plink_ped: public dataloop::ped_per_loci {
@@ -274,7 +274,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
     if (binary_mode_flag == 1) {
         Tod tod_bed1("save bed file plink snp major");
 
-	FLPchr *floop = new FLPchr(Top, Outfile_Names[3], write_binary);
+	FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[3], write_binary);
 	floop->file_type = "        PLINK binary file snp:     ";
 
         struct plink_snp_major: public dataloop::loci_ped_per, public plink_binary {
@@ -306,7 +306,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
     } else if (binary_mode_flag == 2) {
         Tod tod_bed2("save bed file plink indiv major");
 
-	FLPchr *floop = new FLPchr(Top, Outfile_Names[3], write_binary);
+	FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[3], write_binary);
 	floop->file_type = "        PLINK binary file indiv:   ";
 
 	struct plink_indiv_major: public dataloop::ped_per_loci,  public plink_binary{
@@ -503,7 +503,7 @@ static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
  */
 static void write_PLINK_reference_allele_file(linkage_ped_top *Top) {
     
-    FLPchr *floop = new FLPchr(Top, Outfile_Names[9], "w");
+    FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[9], "w");
     floop->file_type = "        PLINK VCF REF file:        ";
 
     struct plink_reference_allele_file: public dataloop::null {
@@ -569,7 +569,7 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-    FLPboth *floop = new FLPboth(Top, file_names[8], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[8], "w");
     floop->file_type = "        PLINK shell file:          ";
 
     struct PLINK_sh_script: public DTshell {

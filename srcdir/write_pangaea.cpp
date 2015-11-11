@@ -67,7 +67,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
                               const int pwid, const int fwid, const int subopt)
 {
-    FLPtrait *floop = new FLPtrait(Top, file_names[0], "w");
+    FLOOPtrait *floop = new FLOOPtrait(Top, file_names[0], "w");
     floop->file_type = "        PANGAEA pedigree file:      ";
 
     struct save_peds: public dataloop::ped_per {
@@ -84,20 +84,20 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
             pr_printf("input pedigree size %d\n", _Top->IndivCnt);
             pr_printf("input pedigree record father mother\n");
             pr_printf("input pedigree record gender present\n");
-            if (_tte == 0) {
-            } else if (_tte->Type == AFFECTION && _tte->Pheno->Props.Affection.ClassCnt > 1) {
+            if (_ttraitp == 0) {
+            } else if (_ttraitp->Type == AFFECTION && _ttraitp->Pheno->Props.Affection.ClassCnt > 1) {
                 pr_printf("# file columns %d,%d (integer pair) correspond to trait name %s\n",
-                          col, col+1,  _tte->LocusName);
+                          col, col+1,  _ttraitp->LocusName);
                 col += 2;
                 nint += 2;
-            } else if (_tte->Type == AFFECTION) {
+            } else if (_ttraitp->Type == AFFECTION) {
                 pr_printf("# file column %d (integer) corresponds to trait name %s\n",
-                          col,  _tte->LocusName);
+                          col,  _ttraitp->LocusName);
                 col++;
                 nint++;
-            } else if (_tte->Type == QUANT) {
+            } else if (_ttraitp->Type == QUANT) {
                 pr_printf("# file column %d (real) corresponds to trait name %s\n",
-                          nquant+1+nint+1,  _tte->LocusName);
+                          nquant+1+nint+1,  _ttraitp->LocusName);
                 nquant++;
             }
             pr_printf("input pedigree record names 3 integers %d", nint + 1 /* sex */);
@@ -110,8 +110,8 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
         void ped_start() {
             if (subopt == 6) {
 /*
-                if (_tp->EntryCnt > 50 || _ped > 100) {
-                    warnvf("Skipping family %s; too many families for analysis\n",_tp->Name);
+                if (_tpedtreep->EntryCnt > 50 || _ped > 100) {
+                    warnvf("Skipping family %s; too many families for analysis\n",_tpedtreep->Name);
                     skip = 1;
                 } else
 */
@@ -124,23 +124,23 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
             pr_per();
             pr_parent();
             pr_sex();
-            if (_tte == 0) {
-            } else if (_tte->Type == AFFECTION) {
+            if (_ttraitp == 0) {
+            } else if (_ttraitp->Type == AFFECTION) {
 /*
                 int ase;
-                ase = aff_status_entry(_tpe->Data[_trait].Affection.Status,
-                                       _tpe->Data[_trait].Affection.Class,
+                ase = aff_status_entry(_tpersonp->Data[_trait].Affection.Status,
+                                       _tpersonp->Data[_trait].Affection.Class,
                                        &(_Top->LocusTop->Locus[_trait]));
                 pr_printf("%1d   ", ase);
 */
-                pr_printf("%1d   ", _tpe->Pheno[_trait].Affection.Status);
-                if (_tte->Pheno->Props.Affection.ClassCnt > 1)
-                    pr_printf("%1d   ", _tpe->Pheno[_trait].Affection.Class);
-            } else if (_tte->Type == QUANT) {
-                if (fabs(_tpe->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
+                pr_printf("%1d   ", _tpersonp->Pheno[_trait].Affection.Status);
+                if (_ttraitp->Pheno->Props.Affection.ClassCnt > 1)
+                    pr_printf("%1d   ", _tpersonp->Pheno[_trait].Affection.Class);
+            } else if (_ttraitp->Type == QUANT) {
+                if (fabs(_tpersonp->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
                     pr_printf("%10.5f ",  999.0);
                 } else {
-                    pr_printf("%10.5f ", _tpe->Pheno[_trait].Quant);
+                    pr_printf("%10.5f ", _tpersonp->Pheno[_trait].Quant);
                 }
             } else {
                 pr_printf("%d ", 0);
@@ -155,7 +155,7 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
     delete sp;
     delete floop;
 
-    FLPonce *floop1 = new FLPonce(Top, file_names[9], "w");
+    FLOOPonce *floop1 = new FLOOPonce(Top, file_names[9], "w");
     floop1->file_type = "        PANGAEA pedigree file:      ";
 
     struct save_peds_all: public dataloop::ped_per_trait {
@@ -207,23 +207,23 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
             pr_nl();
         }
         void inner() {
-            if (_tte == 0) {
-            } else if (_tte->Type == AFFECTION) {
+            if (_ttraitp == 0) {
+            } else if (_ttraitp->Type == AFFECTION) {
 /*
                 int ase;
-                ase = aff_status_entry(_tpe->Data[_trait].Affection.Status,
-                                       _tpe->Data[_trait].Affection.Class,
+                ase = aff_status_entry(_tpersonp->Data[_trait].Affection.Status,
+                                       _tpersonp->Data[_trait].Affection.Class,
                                        &(_Top->LocusTop->Locus[_trait]));
                 pr_printf("%1d   ", ase);
 */
-                pr_printf("%1d   ", _tpe->Pheno[_trait].Affection.Status);
-                if (_tte->Pheno->Props.Affection.ClassCnt > 1)
-                    pr_printf("%1d   ", _tpe->Pheno[_trait].Affection.Class);
-            } else if (_tte->Type == QUANT) {
-                if (fabs(_tpe->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
+                pr_printf("%1d   ", _tpersonp->Pheno[_trait].Affection.Status);
+                if (_ttraitp->Pheno->Props.Affection.ClassCnt > 1)
+                    pr_printf("%1d   ", _tpersonp->Pheno[_trait].Affection.Class);
+            } else if (_ttraitp->Type == QUANT) {
+                if (fabs(_tpersonp->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
                     pr_printf("%10.5f ",  999.0);
                 } else {
-                    pr_printf("%10.5f ", _tpe->Pheno[_trait].Quant);
+                    pr_printf("%10.5f ", _tpersonp->Pheno[_trait].Quant);
                 }
             } else {
                 pr_printf("%d ", 0);
@@ -283,7 +283,7 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
         sh->sh_main();
     }
 
-    FLPboth *floop = new FLPboth(Top, file_names[3], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[3], "w");
     floop->file_type = "        PANGAEA shell file:         ";
 
     struct PANGAEA_sh_script: public DTshell {
@@ -393,7 +393,7 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
     }
 }
 
-typedef FLPboth par_var_loop;
+typedef FLOOPboth par_var_loop;
 
 struct par_var: public dataloop::null {
     par_var(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) {
@@ -410,15 +410,15 @@ struct par_var: public dataloop::null {
         pr_printf("# chromosome data does not depend on traits so is in the above directory\n");
         pr_printf("input marker data file '%s%s'\n", pfx, file_names[1]);
         pr_nl();
-        if (_tte != 0) {
-            if (_tte->Type == AFFECTION && _tte->Pheno->Props.Affection.ClassCnt > 1) {
-                pr_printf("input extra file '%s.liability.extra'\n", _tte->LocusName);
+        if (_ttraitp != 0) {
+            if (_ttraitp->Type == AFFECTION && _ttraitp->Pheno->Props.Affection.ClassCnt > 1) {
+                pr_printf("input extra file '%s.liability.extra'\n", _ttraitp->LocusName);
                 pr_printf("input pedigree record trait 1 integer pairs 2 3\n");
                 pr_printf("set trait 1 data discrete with liability\n");
-            } else if (_tte->Type == AFFECTION) {
+            } else if (_ttraitp->Type == AFFECTION) {
                 pr_printf("input pedigree record trait 1 integer 2\n");
                 pr_printf("set trait 1 data discrete\n");
-            } else if (_tte->Type == QUANT) {
+            } else if (_ttraitp->Type == QUANT) {
                 pr_printf("input pedigree record trait 1 real 1\n");
                 pr_printf("set trait 1 data quant\n");
             }
@@ -444,8 +444,8 @@ struct liability_traits: public dataloop::null {
 
     void inner() {
         int i = 0;
-        int cnt  = _tte->Pheno->Props.Affection.ClassCnt;
-        linkage_affection_class *pen = _tte->Pheno->Props.Affection.Class; //.{Male/Female/Auto}Pen[0]@3 MaleDef
+        int cnt  = _ttraitp->Pheno->Props.Affection.ClassCnt;
+        linkage_affection_class *pen = _ttraitp->Pheno->Props.Affection.Class; //.{Male/Female/Auto}Pen[0]@3 MaleDef
 
         for (i = 1; i <= cnt; i++) {
             pr_printf("%d %.6f %.6f %.6f\n",
@@ -472,7 +472,7 @@ static void write_PANGAEA_par_template(linkage_ped_top *Top, char *file_names[],
     delete xp1;
     delete floop1;
 
-    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    FLOOPtrait *floop2 = new FLOOPtrait(Top, file_names[10], "w");
     floop2->file_type = "        PANGAEA user par file:      ";
 
     struct template_par_user: public dataloop::null {
@@ -505,7 +505,7 @@ static void write_PANGAEA_par_template(linkage_ped_top *Top, char *file_names[],
 
 static void write_PANGAEA_par_pedcheck(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
-    FLPboth *floop1 = new FLPboth(Top, file_names[7], "w");
+    FLOOPboth *floop1 = new FLOOPboth(Top, file_names[7], "w");
     floop1->file_type = "        PANGAEA chr var  par file:  ";
 
     struct pedcheck_xx_par_var: public dataloop::null {
@@ -527,7 +527,7 @@ static void write_PANGAEA_par_pedcheck(linkage_ped_top *Top, char *file_names[],
     delete xp1;
     delete floop1;
 
-    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    FLOOPtrait *floop2 = new FLOOPtrait(Top, file_names[10], "w");
     floop2->file_type = "        PANGAEA user par file:      ";
 
     struct pedcheck_par_user: public dataloop::null {
@@ -549,7 +549,7 @@ static void write_PANGAEA_par_pedcheck(linkage_ped_top *Top, char *file_names[],
 
 static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
-    FLPboth *floop1A = new FLPboth(Top, file_names[7], "w");
+    FLOOPboth *floop1A = new FLOOPboth(Top, file_names[7], "w");
     floop1A->file_type = "        PANGAEA chr var  par file:  ";
 
     struct kin_xx_par_varA: public dataloop::ped_per {
@@ -567,14 +567,14 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
         }
         void ped_start() {
             ++i;
-            if (_tp->EntryCnt == 1) pr_printf("# ");
+            if (_tpedtreep->EntryCnt == 1) pr_printf("# ");
             pr_printf("compute component %d kinship coeff ", i);
         }
         void inner() {
             int nper;
             for (nper = _per+1; nper < _Top->Ped[_ped].EntryCnt; nper++) {
                 pr_per();
-                pr_per(&_tp->Entry[nper]);
+                pr_per(&_tpedtreep->Entry[nper]);
             }
         }
         void ped_end() {
@@ -593,7 +593,7 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
     delete xp1A;
     delete floop1A;
 
-    FLPboth *floop1B = new FLPboth(Top, file_names[7], "a");
+    FLOOPboth *floop1B = new FLOOPboth(Top, file_names[7], "a");
     floop1B->file_type = "        PANGAEA chr var  par file:  ";
 
     struct kin_xx_par_varB: public dataloop::ped_per {
@@ -625,7 +625,7 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
     delete xp1B;
     delete floop1B;
 
-    FLPboth *floop1C = new FLPboth(Top, file_names[7], "a");
+    FLOOPboth *floop1C = new FLOOPboth(Top, file_names[7], "a");
     floop1C->file_type = "        PANGAEA chr var  par file:  ";
 
     struct kin_xx_par_varC: public dataloop::ped_per {
@@ -656,7 +656,7 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
     delete xp1C;
     delete floop1C;
 
-    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    FLOOPtrait *floop2 = new FLOOPtrait(Top, file_names[10], "w");
     floop2->file_type = "        PANGAEA user par file:      ";
 
     struct kin_par_user: public dataloop::null {
@@ -678,9 +678,9 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
 static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
 
-    struct translink_xx_par_var_loop: public FLPboth {
+    struct translink_xx_par_var_loop: public FLOOPboth {
         translink_xx_par_var_loop(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
-            FLPboth(Top, f_name, f_mode) {}
+            FLOOPboth(Top, f_name, f_mode) {}
 //HERE
         void make_file() {
             if (_ftte == 0) {
@@ -704,27 +704,27 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
         char pfx[4];
 
         void inner () {
-            if (_tte == 0) {
+            if (_ttraitp == 0) {
                 return;
-            } else if (_tte->Type == AFFECTION && _tte->Pheno->Props.Affection.ClassCnt > 1) {
+            } else if (_ttraitp->Type == AFFECTION && _ttraitp->Pheno->Props.Affection.ClassCnt > 1) {
                 return; // leave empty file
-            } else if (_tte->Type == QUANT) {
+            } else if (_ttraitp->Type == QUANT) {
                 return;
             }
             pr_printf("input pedigree file '%s'\n", file_names[0]);
             pr_printf("output overwrite pedigree file '%s.out'\n", file_names[0]);
             pr_printf("# chromosome data does not depend on traits so is in the above directory\n");
             pr_printf("input marker data file '%s%s'\n", pfx, file_names[1]);
-            if (_tte != 0) {
-                if (_tte->Type == AFFECTION && _tte->Pheno->Props.Affection.ClassCnt > 1) {
+            if (_ttraitp != 0) {
+                if (_ttraitp->Type == AFFECTION && _ttraitp->Pheno->Props.Affection.ClassCnt > 1) {
                     pr_printf("# liability classes are not supported for translink.\n");
-                    pr_printf("# input extra file '%s.liability.extra'\n", _tte->LocusName);
+                    pr_printf("# input extra file '%s.liability.extra'\n", _ttraitp->LocusName);
                     pr_printf("input pedigree record trait 1 integer pairs 2 3\n");
                     pr_printf("set trait 1 data discrete with liability\n");
-                } else if (_tte->Type == AFFECTION) {
+                } else if (_ttraitp->Type == AFFECTION) {
                     pr_printf("input pedigree record trait 1 integer 2\n");
                     pr_printf("set trait 1 data discrete\n");
-                } else if (_tte->Type == QUANT) {
+                } else if (_ttraitp->Type == QUANT) {
                     pr_printf("input pedigree record trait 1 real 1\n");
                     pr_printf("set trait 1 data quant\n");
                 }
@@ -739,7 +739,7 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
     delete xp1;
     delete floop1;
 
-    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    FLOOPtrait *floop2 = new FLOOPtrait(Top, file_names[10], "w");
     floop2->file_type = "        PANGAEA user par file:      ";
 
     struct translink_par_user: public dataloop::null {
@@ -811,7 +811,7 @@ static void write_PANGAEA_par_lod(linkage_ped_top *Top, char *file_names[], char
     delete xp1;
     delete floop1;
 
-    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    FLOOPtrait *floop2 = new FLOOPtrait(Top, file_names[10], "w");
     floop2->file_type = "        PANGAEA user par file:      ";
 
     struct lod_par_user: public dataloop::null {
@@ -884,7 +884,7 @@ static void write_PANGAEA_par_ibd_tests(linkage_ped_top *Top, char *file_names[]
     delete xp1;
     delete floop1;
 
-    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    FLOOPtrait *floop2 = new FLOOPtrait(Top, file_names[10], "w");
     floop2->file_type = "        PANGAEA user par file:      ";
 
     struct lod_par_user: public dataloop::null {
@@ -967,7 +967,7 @@ static double get_gp(ext_linkage_locus_top *EXLTop, int LType, int chr, char *sn
 */
 static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subopt)
 {
-    FLPchr *floop = new FLPchr(Top, file_names[1], "w");
+    FLOOPchr *floop = new FLOOPchr(Top, file_names[1], "w");
     floop->file_type = "        PANGAEA names map file:     ";
 
     struct PANGAEA_map_names: public dataloop::loci {
@@ -981,7 +981,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         }
         void inner() {
             if (token++ >= 100) { pr_nl(); token = 1; }
-            pr_printf("%s ", _tle->LocusName);
+            pr_printf("%s ", _tlocusp->LocusName);
         }
         void file_trailer() {
             pr_nl();
@@ -994,7 +994,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
     delete xp;
     delete floop;
 
-    FLPchr *floop1 = new FLPchr(Top, file_names[1], "a");
+    FLOOPchr *floop1 = new FLOOPchr(Top, file_names[1], "a");
     floop1->file_type = "        PANGAEA dist map file:      ";
 
     struct PANGAEA_map_dist: public dataloop::loci {
@@ -1014,10 +1014,10 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
             ogp = 0 - delta;
         }
         void inner () {
-            int chr = _tle->Marker->chromosome;
+            int chr = _tlocusp->Marker->chromosome;
             if (chr == UNKNOWN_CHROMO || chr >= MITO_CHROMOSOME) chr = 0;
 
-            double gp = get_gp(_EXLTop, _tle->Type, _tle->Marker->chromosome, _tle->LocusName, _locus, choice);
+            double gp = get_gp(_EXLTop, _tlocusp->Type, _tlocusp->Marker->chromosome, _tlocusp->LocusName, _locus, choice);
 //          gp = kosambi_to_haldane(gp);
 //          pr_printf(" <%.6f, %.6f> ", gp, ogp);
             if (ogp > gp - delta) gp = ogp + delta;
@@ -1045,7 +1045,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         delete xp1;
         delete floop1;
 
-        floop1 = new FLPchr(Top, file_names[1], "a");
+        floop1 = new FLOOPchr(Top, file_names[1], "a");
         floop1->file_type = "        PANGAEA dist map file:      ";
 
         xp1 = new PANGAEA_map_dist(Top, floop1);
@@ -1056,7 +1056,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         delete floop1;
     }
 
-    FLPchr *floop2 = new FLPchr(Top, file_names[1], "a");
+    FLOOPchr *floop2 = new FLOOPchr(Top, file_names[1], "a");
     floop2->file_type = "        PANGAEA freq map file:      ";
 
     struct PANGAEA_map_freq: public dataloop::loci {
@@ -1070,8 +1070,8 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         void inner() {
             int j;
             pr_printf("set marker %d allele freqs ", ++i);
-            linkage_allele_rec *allele_info = _tle->Allele;
-            for (j = 0; j < _tle->AlleleCnt; j++) {
+            linkage_allele_rec *allele_info = _tlocusp->Allele;
+            for (j = 0; j < _tlocusp->AlleleCnt; j++) {
                 pr_printf("%.4f ", allele_info[j].Frequency);
             }
             pr_nl();
@@ -1083,7 +1083,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
     delete xp2;
     delete floop2;
 
-    FLPchr *floop3 = new FLPchr(Top, file_names[1], "a");
+    FLOOPchr *floop3 = new FLOOPchr(Top, file_names[1], "a");
     floop3->file_type = "        PANGAEA data map file:      ";
 
     struct PANGAEA_map_data: public dataloop::ped_per_loci {
@@ -1104,7 +1104,7 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         void ped_start() {
             if (subopt == 6) {
 /*
-                if (_tp->EntryCnt > 50 || _ped > 100) {
+                if (_tpedtreep->EntryCnt > 50 || _ped > 100) {
                     skip = 1;
                 } else
 */

@@ -155,7 +155,7 @@ void CLASS_EIGENSTRAT::save_pedsix_file(linkage_ped_top *Top,
                                         const int pwid,
                                         const int fwid)
 {
-    FLPtrait *floop = new FLPtrait(Top, Outfile_Names[0], "w");
+    FLOOPtrait *floop = new FLOOPtrait(Top, Outfile_Names[0], "w");
     floop->file_type = "        EIGENSTRAT pedigree file:  ";
 
     struct eigenstrat_pedsix: public dataloop::ped_per {
@@ -199,7 +199,7 @@ void CLASS_EIGENSTRAT::save_ped_file(linkage_ped_top *Top,
                                      const int fwid,
                                      const int mwid)
 {
-    FLPboth *floop = new FLPboth(Top, Outfile_Names[0], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[0], "w");
     floop->file_type = "        EIGENSTRAT pedigree file:  ";
 
     struct eigenstrat_ped: public dataloop::ped_per_loci {
@@ -278,7 +278,7 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
                                      const int binary_mode_flag)
 {
     if (binary_mode_flag == 1) {
-        FLPboth *floop = new FLPboth(Top, Outfile_Names[3], write_binary);
+        FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[3], write_binary);
         floop->file_type = "        EIGENSTRAT binary file snp: ";
 
         struct eigenstrat_snp_major: dataloop::loci_ped_per, public plink_binary {
@@ -403,7 +403,7 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-    FLPboth *floop = new FLPboth(Top, file_names[8], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[8], "w");
     floop->file_type = "        EIGENSTRAT shell file:     ";
 
     struct EIGENSTRAT_sh_script: public DTshell {
@@ -482,7 +482,7 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
                           file_names[9], // .pca
                           file_names[13], // .chisq
                           file_names[14], // .e_log
-                          (_tte->Type == QUANT ? " -q YES" : "")
+                          (_ttraitp->Type == QUANT ? " -q YES" : "")
                     );
                 pr_printf("\n");
 #ifdef TEST
@@ -518,7 +518,7 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
                           file_names[9], // .pca
                           file_names[13], // .chisq
                           file_names[14], // .e_log
-                          (_tte->Type == QUANT ? " -q YES" : "")
+                          (_ttraitp->Type == QUANT ? " -q YES" : "")
                     );
                 pr_printf("\n");
 #ifdef TEST

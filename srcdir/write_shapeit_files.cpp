@@ -108,7 +108,7 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
 {
     DTshell *sh = 0;
 
-    FLPboth *floop = new FLPboth(Top, file_names[8], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[8], "w");
     floop->file_type = "      SHAPEIT shell file:          ";
 
     struct SHAPEIT_sh_script: public DTshell {

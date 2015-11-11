@@ -217,9 +217,9 @@ void fileloop::trait::iterate()
 
 void dataloop::null::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
-    _tte    = _fileloop->_ftte;
-    _numchr = _fileloop->_fnumchr;
-    _trait  = _fileloop->_ftrait;
+    _ttraitp = _fileloop->_ftte;
+    _numchr  = _fileloop->_fnumchr;
+    _trait   = _fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -230,10 +230,9 @@ void dataloop::null::data_loop(const char *dir, const char *fl_name, const char 
 
 void dataloop::ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
-
-    _tte    = _fileloop->_ftte;
-    _numchr = _fileloop->_fnumchr;
-    _trait  = _fileloop->_ftrait;
+    _ttraitp = _fileloop->_ftte;
+    _numchr  = _fileloop->_fnumchr;
+    _trait   = _fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -244,13 +243,13 @@ void dataloop::ped_per::data_loop(const char *dir, const char *fl_name, const ch
         if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
         // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
 
-        _tp = &(_Top->Ped[_ped]);
+        _tpedtreep = &(_Top->Ped[_ped]);
         ped_start();
 
         for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
             // record for the individual (a linkage_ped_rec)...
-            _tpe = &(_tp->Entry[_per]);
-            //_tpe = &(_Top->Ped[_ped].Entry[_per]);
+            _tpersonp = &(_tpedtreep->Entry[_per]);
+            //_tpersonp = &(_Top->Ped[_ped].Entry[_per]);
             inner();
         }
         ped_end();
@@ -263,9 +262,9 @@ void dataloop::ped_per_trait::data_loop(const char *dir, const char *fl_name, co
     int tr;
     int *retrp;
 
-    _tte    = _fileloop->_ftte;
-    _numchr = _fileloop->_fnumchr;
-    _trait  = _fileloop->_ftrait;
+    _ttraitp = _fileloop->_ftte;
+    _numchr  = _fileloop->_fnumchr;
+    _trait   = _fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -276,13 +275,13 @@ void dataloop::ped_per_trait::data_loop(const char *dir, const char *fl_name, co
         if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
         // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
 
-        _tp = &(_Top->Ped[_ped]);
+        _tpedtreep = &(_Top->Ped[_ped]);
         ped_start();
 
         for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
             // record for the individual (a linkage_ped_rec)...
-            _tpe = &(_tp->Entry[_per]);
-            //_tpe = &(_Top->Ped[_ped].Entry[_per]);
+            _tpersonp = &(_tpedtreep->Entry[_per]);
+            //_tpersonp = &(_Top->Ped[_ped].Entry[_per]);
             per_start();
 
             retrp = trp;
@@ -294,10 +293,10 @@ void dataloop::ped_per_trait::data_loop(const char *dir, const char *fl_name, co
 	        if (_trait == -1) continue;
                 if (_trait == -99) break;
 
-                _tte = &(_LTop->Locus[_trait]);
-                if (trait_affect && _tte->Type != AFFECTION)
+                _ttraitp = &(_LTop->Locus[_trait]);
+                if (trait_affect && _ttraitp->Type != AFFECTION)
                     continue;
-                if (trait_quant  && _tte->Type != QUANT)
+                if (trait_quant  && _ttraitp->Type != QUANT)
                     continue;
 
                 inner();
@@ -314,9 +313,9 @@ void dataloop::trait_ped_per::data_loop(const char *dir, const char *fl_name, co
     int tr;
     int *retrp;
 
-    _tte    = _fileloop->_ftte;
-    _numchr = _fileloop->_fnumchr;
-    _trait  = _fileloop->_ftrait;
+    _ttraitp = _fileloop->_ftte;
+    _numchr  = _fileloop->_fnumchr;
+    _trait   = _fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -329,10 +328,10 @@ void dataloop::trait_ped_per::data_loop(const char *dir, const char *fl_name, co
 
       if (_trait == -99) break;
 
-      _tte = &(_LTop->Locus[_trait]);
-      if (trait_affect && _tte->Type != AFFECTION)
+      _ttraitp = &(_LTop->Locus[_trait]);
+      if (trait_affect && _ttraitp->Type != AFFECTION)
 	continue;
-      if (trait_quant  && _tte->Type != QUANT)
+      if (trait_quant  && _ttraitp->Type != QUANT)
 	continue;
 
       trait_start();
@@ -344,13 +343,13 @@ void dataloop::trait_ped_per::data_loop(const char *dir, const char *fl_name, co
         if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
 
         // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
-        _tp = &(_Top->Ped[_ped]);
+        _tpedtreep = &(_Top->Ped[_ped]);
 	ped_start();
 
         for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
             // record for the individual (a linkage_ped_rec)...
-            _tpe = &(_tp->Entry[_per]);
-            //_tpe = &(_Top->Ped[_ped].Entry[_per]);
+            _tpersonp = &(_tpedtreep->Entry[_per]);
+            //_tpersonp = &(_Top->Ped[_ped].Entry[_per]);
 	    
 	    inner();
 	}
@@ -365,9 +364,9 @@ void dataloop::ped_per_loci::data_loop(const char *dir, const char *fl_name, con
 {
     int m;
 
-     _tte   = _fileloop->_ftte;
-    _numchr = _fileloop->_fnumchr;
-    _trait  = _fileloop->_ftrait;
+    _ttraitp = _fileloop->_ftte;
+    _numchr  = _fileloop->_fnumchr;
+    _trait   = _fileloop->_ftrait;
 
    // Loop through the Loci...
     markers_on_chromosome(_numchr);
@@ -381,29 +380,29 @@ void dataloop::ped_per_loci::data_loop(const char *dir, const char *fl_name, con
         if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
         // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
 
-        _tp = &(_Top->Ped[_ped]);
+        _tpedtreep = &(_Top->Ped[_ped]);
         ped_start();
 
         for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
             // record for the individual (a linkage_ped_rec)...
 
-            _tpe = &(_Top->Ped[_ped].Entry[_per]);
+            _tpersonp = &(_Top->Ped[_ped].Entry[_per]);
 
             per_start();
 
             for (m=0; m < NumChrLoci; m++) {
                 // The actual Loci number associated with a SELECTED Loci...
                 _locus = ChrLoci[m];
-                _tle = &(_LTop->Locus[_locus]);
+                _tlocusp = &(_LTop->Locus[_locus]);
                 
                 // Ignore anything but a marker.
                 // This should get us things of Locus[?].Type == {NUMBERED, BINARY, XLINKED, YLINKED}.
-                if (_tle->Class == MARKER) {
+                if (_tlocusp->Class == MARKER) {
                     
-                    if (_loci_allele_limit && _tle->AlleleCnt > _loci_allele_limit) continue;
+                    if (_loci_allele_limit && _tlocusp->AlleleCnt > _loci_allele_limit) continue;
                     
                     // The markers for this individual...
-                    get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
+                    get_2alleles(_tpersonp->Marker, _locus, &_allele1, &_allele2);
 
                     inner();
                 }
@@ -419,9 +418,9 @@ void dataloop::loci_ped_per::data_loop(const char *dir, const char *fl_name, con
 {
     int m;
 
-     _tte   = _fileloop->_ftte;
-    _numchr = _fileloop->_fnumchr;
-    _trait  = _fileloop->_ftrait;
+    _ttraitp = _fileloop->_ftte;
+    _numchr  = _fileloop->_fnumchr;
+    _trait   = _fileloop->_ftrait;
 
     // Loop through the SELECTED Loci (by count)...
     Tod tod_lpp_markers("get markers_on_chromosomes");
@@ -434,13 +433,13 @@ void dataloop::loci_ped_per::data_loop(const char *dir, const char *fl_name, con
     for (m=0; m < NumChrLoci; m++) {
         // The actual Loci number associated with a SELECTED Loci...
         _locus = ChrLoci[m];
-        _tle = &(_LTop->Locus[_locus]);
+        _tlocusp = &(_LTop->Locus[_locus]);
 
         // Ignore anything but a marker.
         // This should get us things of Locus[?].Type == {NUMBERED, BINARY, XLINKED, YLINKED}.
-        if (_tle->Class == MARKER) {
+        if (_tlocusp->Class == MARKER) {
 
-            if (_loci_allele_limit && _tle->AlleleCnt > _loci_allele_limit) continue;
+            if (_loci_allele_limit && _tlocusp->AlleleCnt > _loci_allele_limit) continue;
 
             loci_start();
 
@@ -452,15 +451,15 @@ void dataloop::loci_ped_per::data_loop(const char *dir, const char *fl_name, con
                 if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
                 // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
 
-                _tp = &(_Top->Ped[_ped]);
+                _tpedtreep = &(_Top->Ped[_ped]);
                 ped_start();
 
-                _tpe = _tp->Entry;
-                for (_per = 0; _per < _tp->EntryCnt; _per++, _tpe++) {
+                _tpersonp = _tpedtreep->Entry;
+                for (_per = 0; _per < _tpedtreep->EntryCnt; _per++, _tpersonp++) {
                     // record for the individual (a linkage_ped_rec)...
-                    //_tpe = &(_Top->Ped[_ped].Entry[_per]);
+                    //_tpersonp = &(_Top->Ped[_ped].Entry[_per]);
 
-                    get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
+                    get_2alleles(_tpersonp->Marker, _locus, &_allele1, &_allele2);
                     inner();
                 }
                 ped_end();
@@ -477,9 +476,9 @@ void dataloop::loci::data_loop(const char *dir, const char *fl_name, const char 
 {
     int m;
 
-     _tte   = _fileloop->_ftte;
-    _numchr = _fileloop->_fnumchr;
-    _trait  = _fileloop->_ftrait;
+    _ttraitp = _fileloop->_ftte;
+    _numchr  = _fileloop->_fnumchr;
+    _trait   = _fileloop->_ftrait;
 
     // Loop through the SELECTED Loci (by count)...
     markers_on_chromosome(_numchr);
@@ -489,13 +488,13 @@ void dataloop::loci::data_loop(const char *dir, const char *fl_name, const char 
     for (m=0; m < NumChrLoci; m++) {
         // The actual Loci number associated with a SELECTED Loci...
         _locus = ChrLoci[m];
-        _tle = &(_LTop->Locus[_locus]);
+        _tlocusp = &(_LTop->Locus[_locus]);
 
         // Ignore anything but a marker.
         // This should get us things of Locus[?].Type == {NUMBERED, BINARY, XLINKED, YLINKED}.
-        if (_tle->Class == MARKER) {
+        if (_tlocusp->Class == MARKER) {
 
-            if (_loci_allele_limit && _tle->AlleleCnt > _loci_allele_limit) continue;
+            if (_loci_allele_limit && _tlocusp->AlleleCnt > _loci_allele_limit) continue;
 
             inner();
         }

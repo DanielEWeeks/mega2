@@ -82,7 +82,7 @@ void CLASS_PLINK_CORE::replace_chr_number(char *file_names[], int numchr) {
 static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
                                 const int pwid, const int fwid, const int mwid)
 {
-    FLPchr *floop = new FLPchr(Top, Outfile_Names[3], "w");
+    FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[3], "w");
     floop->file_type = "        PLINK lgen file:           ";
 
     struct plink_core_lgen: public dataloop::loci_ped_per {
@@ -116,7 +116,7 @@ static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
 static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
                              const int pwid, const int fwid)
 {
-    FLPonce *floop = new FLPonce(Top, Outfile_Names[2], "w");
+    FLOOPonce *floop = new FLOOPonce(Top, Outfile_Names[2], "w");
     floop->file_type = "        PLINK phenotype file:      ";
 
     struct plink_core_pheno: public dataloop::ped_per_trait {
@@ -311,7 +311,7 @@ static void write_PLINK_map(linkage_ped_top *LPTop,
     ext_linkage_locus_top *EXLTop = LPTop->EXLTop;
 #endif /* PLINK_MAP_FILE_COMMENTS */        
 
-    FLPchr *floop = new FLPchr(LPTop, Outfile_Names[1], "w");
+    FLOOPchr *floop = new FLOOPchr(LPTop, Outfile_Names[1], "w");
     floop->file_type = "        PLINK map file:            ";
 
     struct plink_core_map: public dataloop::null {

@@ -177,9 +177,9 @@ public:
     void run_loop(const char *opath, const char *fl_name) { run_loop(opath, fl_name, "w"); }
     void run_loop(const char *dir, const char *fl_name, const char *mode)
     {
-        _tte    = _fileloop->_ftte;
-        _numchr = _fileloop->_fnumchr;
-        _trait  = _fileloop->_ftrait;
+        _ttraitp = _fileloop->_ftte;
+        _numchr  = _fileloop->_fnumchr;
+        _trait   = _fileloop->_ftrait;
 
         filep_open(dir, fl_name, mode);
         inner();
@@ -189,9 +189,9 @@ public:
     void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
     void data_loop(const char *dir, const char *fl_name, const char *mode)
     {
-        _tte    = _fileloop->_ftte;
-        _numchr = _fileloop->_fnumchr;
-        _trait  = _fileloop->_ftrait;
+        _ttraitp = _fileloop->_ftte;
+        _numchr  = _fileloop->_fnumchr;
+        _trait   = _fileloop->_ftrait;
 
         filep_open(dir, fl_name, mode);
         inner();

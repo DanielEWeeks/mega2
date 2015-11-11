@@ -88,7 +88,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
                             const int pwid, const int fwid)
 {
-    FLPonce *floop = new FLPonce(Top, file_names[2], "w");
+    FLOOPonce *floop = new FLOOPonce(Top, file_names[2], "w");
     floop->file_type = "        FBAT phenotype file:   ";
 
     struct save_pheno: public dataloop::ped_per_trait {
@@ -129,7 +129,7 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
                            const bool has_x)
 {
 //HERE
-    FLPboth *floop = new FLPboth(Top, file_names[0], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[0], "w");
     floop->file_type     = "        FBAT pedigree file:    ";
 
     struct save_peds: public dataloop::ped_per_loci {
@@ -198,7 +198,7 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
         sh->sh_main();
     }
 
-    FLPboth *floop = new FLPboth(Top, file_names[3], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[3], "w");
     floop->file_type = "        FBAT shell file:       ";
     floop->_trait_affect = true;
 
@@ -310,7 +310,7 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
 
 static void write_FBAT_Rhdr(linkage_ped_top *Top, char *file_names[])
 {
-    FLPboth *floop = new FLPboth(Top, file_names[7], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[7], "w");
     floop->file_type = "        FBAT R hdr file:       ";
     floop->_trait_affect = true;
 
@@ -413,7 +413,7 @@ static double get_gp(ext_linkage_locus_top *EXLTop, int LType, int chr, char *sn
 */
 static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
 {
-    FLPchr *floop = new FLPchr(Top, file_names[1], "w");
+    FLOOPchr *floop = new FLOOPchr(Top, file_names[1], "w");
     floop->file_type = "        FBAT map file:         ";
 
     struct FBAT_map: public dataloop::loci {
@@ -421,15 +421,15 @@ static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
 
 //         marker_name   chr#   genetic_pos   physical_pos   sex_link
         void inner () {
-            int chr = _tle->Marker->chromosome;
+            int chr = _tlocusp->Marker->chromosome;
             if (chr == UNKNOWN_CHROMO || chr >= MITO_CHROMOSOME) chr = 0;
             else if (chr == PSEUDO_X) chr = SEX_CHROMOSOME;
 
             double pp = base_pair_position_index >= 0 ?_EXLTop->EXLocus[_locus].positions[base_pair_position_index] : 0;
             if (pp < 0) pp = 0;
 
-            double gp = get_gp(_EXLTop, _tle->Type, _tle->Marker->chromosome, _tle->LocusName, _locus);
-            pr_printf("%s %d %.6f %.0f %d\n", _tle->LocusName, chr, gp, pp, _tle->Marker->chromosome == SEX_CHROMOSOME);
+            double gp = get_gp(_EXLTop, _tlocusp->Type, _tlocusp->Marker->chromosome, _tlocusp->LocusName, _locus);
+            pr_printf("%s %d %.6f %.0f %d\n", _tlocusp->LocusName, chr, gp, pp, _tlocusp->Marker->chromosome == SEX_CHROMOSOME);
         }
     } *xp = new FBAT_map(Top, floop);
     xp->_loci_allele_limit = 40;

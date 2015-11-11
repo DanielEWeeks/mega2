@@ -162,8 +162,8 @@ static void sort_genetic_positions() {
 }
 
 //HERE
-struct LCLchr: public FLPchr {
-    LCLchr(linkage_ped_top *Top, const char *f_name, const char *f_mode) : FLPchr(Top, f_name, f_mode) {}
+struct LCLchr: public FLOOPchr {
+    LCLchr(linkage_ped_top *Top, const char *f_name, const char *f_mode) : FLOOPchr(Top, f_name, f_mode) {}
     void make_file() {
         if (_fnumchr > lastautosome) return; // because we have already issued a warning.
         if (*file_type) mssgvf("%s%s/%s\n", file_type, *_opath, file_name);
@@ -171,8 +171,8 @@ struct LCLchr: public FLPchr {
     }
 };
 
-struct LCLboth: public FLPboth {
-    LCLboth(linkage_ped_top *Top, const char *f_name, const char *f_mode) : FLPboth(Top, f_name, f_mode) {}
+struct LCLboth: public FLOOPboth {
+    LCLboth(linkage_ped_top *Top, const char *f_name, const char *f_mode) : FLOOPboth(Top, f_name, f_mode) {}
     void make_file() {
         if (_fnumchr > lastautosome) {
             if (*file_type) warnf("Beagle analysis can only be run on autosomes.");
@@ -251,7 +251,7 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
                 sort_basepair_positions();
             }
             void inner() {
-                pr_printf("%15s ", _tle->LocusName);
+                pr_printf("%15s ", _tlocusp->LocusName);
                 //pr_marker_name();
                 (void)pr_physical_distance(NULL); // for the marker...
                 pr_marker_alleles(); // Print the alleles associated with the marker...
@@ -282,7 +282,7 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
                 int warnp;
                 double genetic_distance = get_genetic_distance(&warnp);
                 pr_genetic_distance_warning(warnp);
-                pr_printf("%15s ", _tle->LocusName);
+                pr_printf("%15s ", _tlocusp->LocusName);
                 // Haldane cM was intended for use in Beagle...
 #ifdef DONT_CONVERT_TO_HALDANE_FOR_BEAGLE
                 warnf("*****************************************************************");
@@ -404,7 +404,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             // The sampling ID must be unique throughout....
 
             // Here we use UniqueID explicitly...
-            pr_printf("%s %s ", _tpe->UniqueID, _tpe->UniqueID);
+            pr_printf("%s %s ", _tpersonp->UniqueID, _tpersonp->UniqueID);
             //pr_per(); pr_per();
         }
         void file_trailer() {
@@ -431,10 +431,10 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             pr_printf("PID Father ");
         }
         void inner() {
-            // The indexes for IDs in linkage_ped_rec (_tpe) are 1-based with 0 used for NA.
+            // The indexes for IDs in linkage_ped_rec (_tpersonp) are 1-based with 0 used for NA.
             // Since something is output for the child/individual then we need to
             // output something here so that the data in the subsequent columns is consistent.
-            const char *fid = (_tpe->Father != 0) ? _tp->Entry[_tpe->Father-1].UniqueID : MISSING_ID_CODE;
+            const char *fid = (_tpersonp->Father != 0) ? _tpedtreep->Entry[_tpersonp->Father-1].UniqueID : MISSING_ID_CODE;
             pr_printf("%s %s ", fid, fid);
             //pr_father(); pr_father();
         }
@@ -462,7 +462,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             pr_printf("MID Mother ");
         }
         void inner() {
-            const char *mid = (_tpe->Mother != 0) ? _tp->Entry[_tpe->Mother-1].UniqueID : MISSING_ID_CODE;
+            const char *mid = (_tpersonp->Mother != 0) ? _tpedtreep->Entry[_tpersonp->Mother-1].UniqueID : MISSING_ID_CODE;
             pr_printf("%s %s ", mid, mid);
             //pr_mother(); pr_mother();
         }
@@ -519,14 +519,14 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             // Quantitative traits are marked with a 'T', and Covariates with a 'C'.
             // NOTE: Quantitative and Covariate traits are not currently used by Beagle.
 
-            if (_tte != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_tte->Type == AFFECTION ? "A" : "T"), _tte->LocusName);
+            if (_ttraitp != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_ttraitp->Type == AFFECTION ? "A" : "T"), _ttraitp->LocusName);
             else warnf("The genotype file contains no phenotypes.");
         }
         void inner() {
             pr_pheno(); pr_pheno();
         }
         void file_trailer() {
-            if (_tte != (linkage_locus_rec *)NULL) pr_nl();
+            if (_ttraitp != (linkage_locus_rec *)NULL) pr_nl();
         }
     } *sAT = new save_phenotypes(Top, floopAT);
 
@@ -561,7 +561,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             }
         }
         void loci_start() {
-            pr_printf("M %s ", _tle->LocusName);
+            pr_printf("M %s ", _tlocusp->LocusName);
         }
         void inner() {
             if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
@@ -651,9 +651,9 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             pr_nl();
         }
         void inner() {
-            const char *fid = (_tpe->Father != 0) ? _tp->Entry[_tpe->Father-1].UniqueID : MISSING_ID_CODE;
-            const char *mid = (_tpe->Mother != 0) ? _tp->Entry[_tpe->Mother-1].UniqueID : MISSING_ID_CODE;
-            pr_printf("%s %s %s %s %s %s ", fid, fid, mid, mid, _tpe->UniqueID, _tpe->UniqueID);
+            const char *fid = (_tpersonp->Father != 0) ? _tpedtreep->Entry[_tpersonp->Father-1].UniqueID : MISSING_ID_CODE;
+            const char *mid = (_tpersonp->Mother != 0) ? _tpedtreep->Entry[_tpersonp->Mother-1].UniqueID : MISSING_ID_CODE;
+            pr_printf("%s %s %s %s %s %s ", fid, fid, mid, mid, _tpersonp->UniqueID, _tpersonp->UniqueID);
             //pr_father(); pr_father();
             //pr_mother(); pr_mother();
             //pr_per(); pr_per();
@@ -682,13 +682,13 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             pr_nl();
         }
         void inner() {
-            if (_tpe->Father != 0) {
-                pr_sex(&_tp->Entry[_tpe->Father-1]); pr_sex(&_tp->Entry[_tpe->Father-1]);
+            if (_tpersonp->Father != 0) {
+                pr_sex(&_tpedtreep->Entry[_tpersonp->Father-1]); pr_sex(&_tpedtreep->Entry[_tpersonp->Father-1]);
             } else {
                 pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
-            if (_tpe->Mother != 0) {
-                pr_sex(&_tp->Entry[_tpe->Mother-1]); pr_sex(&_tp->Entry[_tpe->Mother-1]);
+            if (_tpersonp->Mother != 0) {
+                pr_sex(&_tpedtreep->Entry[_tpersonp->Mother-1]); pr_sex(&_tpedtreep->Entry[_tpersonp->Mother-1]);
             } else {
                 pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
@@ -717,24 +717,24 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             // It is necessary only when performing association testing.
             // Quantitative traits are marked with a 'T', and Covariates with a 'C'.
             // NOTE: Quantitative and Covariate traits are not currently used by Beagle.
-            if (_tte != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_tte->Type == AFFECTION ? "A" : "T"), _tte->LocusName);
+            if (_ttraitp != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_ttraitp->Type == AFFECTION ? "A" : "T"), _ttraitp->LocusName);
             else warnf("The genotype file contains no phenotypes.");
         }
         void inner() {
-            if (_tpe->Father != 0) {
-                pr_pheno(&_tp->Entry[_tpe->Father-1]); pr_pheno(&_tp->Entry[_tpe->Father-1]);
+            if (_tpersonp->Father != 0) {
+                pr_pheno(&_tpedtreep->Entry[_tpersonp->Father-1]); pr_pheno(&_tpedtreep->Entry[_tpersonp->Father-1]);
             } else {
                 pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
-            if (_tpe->Mother != 0) {
-                pr_pheno(&_tp->Entry[_tpe->Mother-1]); pr_pheno(&_tp->Entry[_tpe->Mother-1]);
+            if (_tpersonp->Mother != 0) {
+                pr_pheno(&_tpedtreep->Entry[_tpersonp->Mother-1]); pr_pheno(&_tpedtreep->Entry[_tpersonp->Mother-1]);
             } else {
                 pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
             pr_pheno(); pr_pheno();
         }
         void file_trailer() {
-            if (_tte != (linkage_locus_rec *)NULL) pr_nl();
+            if (_ttraitp != (linkage_locus_rec *)NULL) pr_nl();
         }
     } *sAT = new save_phenotypes(Top, floopAT);
     
@@ -766,12 +766,12 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
             }
         }
         void loci_start() {
-            pr_printf("M %s ", _tle->LocusName);
+            pr_printf("M %s ", _tlocusp->LocusName);
         }
         void inner() {
-            if (_tpe->Father != 0) {
+            if (_tpersonp->Father != 0) {
                 int _allele1_f, _allele2_f;
-                linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[_tpe->Father-1]);
+                linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[_tpersonp->Father-1]);
                 get_2alleles(_tpe_f->Marker, _locus, &_allele1_f, &_allele2_f);
                 if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                     pr_printf("%s %s ",
@@ -786,9 +786,9 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                 pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
 
-            if (_tpe->Mother != 0) {
+            if (_tpersonp->Mother != 0) {
                 int _allele1_m, _allele2_m;
-                linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[_tpe->Mother-1]);
+                linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[_tpersonp->Mother-1]);
                 get_2alleles(_tpe_m->Marker, _locus, &_allele1_m, &_allele2_m);
                 if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                     pr_printf("%s %s ",
@@ -889,11 +889,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             pr_nl();
         }
         void inner() {
-            const char *fid = (_tpe->Father != 0) ? _tp->Entry[_tpe->Father-1].UniqueID : MISSING_ID_CODE;
-            const char *mid = (_tpe->Mother != 0) ? _tp->Entry[_tpe->Mother-1].UniqueID : MISSING_ID_CODE;
-            pr_printf("%s %s %s %s ",fid, fid, _tpe->UniqueID, _tpe->UniqueID);
+            const char *fid = (_tpersonp->Father != 0) ? _tpedtreep->Entry[_tpersonp->Father-1].UniqueID : MISSING_ID_CODE;
+            const char *mid = (_tpersonp->Mother != 0) ? _tpedtreep->Entry[_tpersonp->Mother-1].UniqueID : MISSING_ID_CODE;
+            pr_printf("%s %s %s %s ",fid, fid, _tpersonp->UniqueID, _tpersonp->UniqueID);
 
-            pr_printf("%s %s %s %s ", mid, mid, _tpe->UniqueID, _tpe->UniqueID);
+            pr_printf("%s %s %s %s ", mid, mid, _tpersonp->UniqueID, _tpersonp->UniqueID);
         }
     } *sI = new save_pers(Top, floopI);
     
@@ -919,15 +919,15 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             pr_nl();
         }
         void inner() {
-            if (_tpe->Father != 0) {
-                pr_sex(&_tp->Entry[_tpe->Father-1]); pr_sex(&_tp->Entry[_tpe->Father-1]);
+            if (_tpersonp->Father != 0) {
+                pr_sex(&_tpedtreep->Entry[_tpersonp->Father-1]); pr_sex(&_tpedtreep->Entry[_tpersonp->Father-1]);
             } else {
                 pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
             pr_sex(); pr_sex();
 
-            if (_tpe->Mother != 0) {
-                pr_sex(&_tp->Entry[_tpe->Mother-1]); pr_sex(&_tp->Entry[_tpe->Mother-1]);
+            if (_tpersonp->Mother != 0) {
+                pr_sex(&_tpedtreep->Entry[_tpersonp->Mother-1]); pr_sex(&_tpedtreep->Entry[_tpersonp->Mother-1]);
             } else {
                 pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
@@ -956,26 +956,26 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             // It is necessary only when performing association testing.
             // Quantitative traits are marked with a 'T', and Covariates with a 'C'.
             // NOTE: Quantitative and Covariate traits are not currently used by Beagle.
-            if (_tte != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_tte->Type == AFFECTION ? "A" : "T"), _tte->LocusName);
+            if (_ttraitp != (linkage_locus_rec *)NULL) pr_printf("%s %s ", (_ttraitp->Type == AFFECTION ? "A" : "T"), _ttraitp->LocusName);
             else warnf("The genotype file contains no phenotypes.");
         }
         void inner() {
-            if (_tpe->Father != 0) {
-                pr_pheno(&_tp->Entry[_tpe->Father-1]); pr_pheno(&_tp->Entry[_tpe->Father-1]);
+            if (_tpersonp->Father != 0) {
+                pr_pheno(&_tpedtreep->Entry[_tpersonp->Father-1]); pr_pheno(&_tpedtreep->Entry[_tpersonp->Father-1]);
             } else {
                 pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
             pr_pheno(); pr_pheno();
 
-            if (_tpe->Mother != 0) {
-                pr_pheno(&_tp->Entry[_tpe->Mother-1]); pr_pheno(&_tp->Entry[_tpe->Mother-1]);
+            if (_tpersonp->Mother != 0) {
+                pr_pheno(&_tpedtreep->Entry[_tpersonp->Mother-1]); pr_pheno(&_tpedtreep->Entry[_tpersonp->Mother-1]);
             } else {
                 pr_printf("%s %s ", MISSING_ID_CODE, MISSING_ID_CODE);
             }
             pr_pheno(); pr_pheno();
         }
         void file_trailer() {
-            if (_tte != (linkage_locus_rec *)NULL) pr_nl();
+            if (_ttraitp != (linkage_locus_rec *)NULL) pr_nl();
         }
     } *sAT = new save_phenotypes(Top, floopAT);
     
@@ -1007,12 +1007,12 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
             }
         }
         void loci_start() {
-            pr_printf("M %s ", _tle->LocusName);
+            pr_printf("M %s ", _tlocusp->LocusName);
         }
         void inner() {
-            if (_tpe->Father != 0) {
+            if (_tpersonp->Father != 0) {
                 int _allele1_f, _allele2_f;
-                linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[_tpe->Father-1]);
+                linkage_ped_rec  *_tpe_f = &(_Top->Ped[_ped].Entry[_tpersonp->Father-1]);
                 get_2alleles(_tpe_f->Marker, _locus, &_allele1_f, &_allele2_f);
                 if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                     pr_printf("%s %s ",
@@ -1037,9 +1037,9 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
                           format_allele(Locus, _allele1), format_allele(Locus, _allele2));
             }
 
-            if (_tpe->Mother != 0) {
+            if (_tpersonp->Mother != 0) {
                 int _allele1_m, _allele2_m;
-                linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[_tpe->Mother-1]);
+                linkage_ped_rec  *_tpe_m = &(_Top->Ped[_ped].Entry[_tpersonp->Mother-1]);
                 get_2alleles(_tpe_m->Marker, _locus, &_allele1_m, &_allele2_m);
                 if (_LTop->Marker[_locus].Props.Numbered.Recoded) {
                     pr_printf("%s %s ",
@@ -1196,7 +1196,7 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
             pr_printf("\necho\n");
             
             // There needs to be a trait for association testing
-            if (_tte != (linkage_locus_rec *)NULL) {
+            if (_ttraitp != (linkage_locus_rec *)NULL) {
 #define OUT_NAME                      "assoc"
                 pr_printf("echo 'Association Testing...'\n");
 
@@ -1208,7 +1208,7 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
 		// System.exit(N); code that it returns on a failure.
                 pr_printf("$_JAVA -jar $BEAGLE_JAR data=%s.%s.phased.gz trait=%s out=%s",
                           file_names[5], file_names[0],
-                          _tte->Name, OUT_NAME);
+                          _ttraitp->Name, OUT_NAME);
                 if ((*analysis)->_suboption == BEAGLE_UNPHASED_PAIR_SUBOPTION)
                     pr_printf(" diplotypes=false");
                 pr_printf("\n");

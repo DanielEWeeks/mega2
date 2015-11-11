@@ -137,7 +137,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
                          const int pwid, const int fwid)
 {
     // #define MARKERNAMES      1  // (B) data file contains row of marker names
-    FLPboth *floopsmn = new FLPboth(Top, file_names[0], "w");
+    FLOOPboth *floopsmn = new FLOOPboth(Top, file_names[0], "w");
     floopsmn->file_type = "";
 
     struct save_marker_names: public dataloop::loci {
@@ -152,7 +152,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             markers_i++;
         }
         void inner() {
-            pr_printf("%15s ", _tle->LocusName);
+            pr_printf("%15s ", _tlocusp->LocusName);
             markers_per_chromo[markers_i]++;
         }
         void file_trailer() {
@@ -178,7 +178,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
         mapdistances = 1;
         // #define MAPDISTANCES     1  // (B) data file contains row of map distances between loci
 //HERE
-        FLPboth *floopsgdM = new FLPboth(Top, file_names[LoopOverChrm_save == 1 ? 0 : 8], "a");
+        FLOOPboth *floopsgdM = new FLOOPboth(Top, file_names[LoopOverChrm_save == 1 ? 0 : 8], "a");
         floopsgdM->file_type = "";
 
         struct save_genetic_distance_markers: public dataloop::loci {
@@ -260,9 +260,9 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
         }
     }
 
-    struct save_pers_loop: public FLPboth {
+    struct save_pers_loop: public FLOOPboth {
         save_pers_loop(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
-            FLPboth(Top, f_name, f_mode) { chr_i = -1;}
+            FLOOPboth(Top, f_name, f_mode) { chr_i = -1;}
 
         int chr_i;
 
@@ -294,10 +294,10 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             // exclude completely untyped people who have no known genotypes at the selected markers at all.
             for (m=0; m < NumChrLoci; m++) {
                 int _locus = ChrLoci[m];
-                linkage_locus_rec *_tle = &(_LTop->Locus[_locus]);
-                if (_tle->Class == MARKER) {
+                linkage_locus_rec *_tlocusp = &(_LTop->Locus[_locus]);
+                if (_tlocusp->Class == MARKER) {
                     int _allele1, _allele2;
-                    get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
+                    get_2alleles(_tpersonp->Marker, _locus, &_allele1, &_allele2);
                     if (_allele1 || _allele2) { personHasMarkers = 1; break; }
                 }
             }
@@ -307,14 +307,14 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             // #define LABEL     1     // (B) Input file contains individual labels
             // Label (Optional; string) A string of integers or characters used to designate each
             // individual in the sample.
-            pr_printf("%s ", _tpe->UniqueID);
+            pr_printf("%s ", _tpersonp->UniqueID);
             
             // #define POPDATA   1     // (B) Input file contains a population identifier
             // Only the integer portion is valid here. We already know that it's a QUANT from 'make_file()'
             // above so there is no need to check here, just use it...
 //HERE
             if (PopDataPheno_i != -1) {
-                double popData = _tpe->Pheno[PopDataPheno_i].Quant;
+                double popData = _tpersonp->Pheno[PopDataPheno_i].Quant;
                 if (popData < 0) {
                     errorvf("Processing a user-defined population-of-origin data (POPDATA) value\n");
                     errorvf("using quantitative phenotype information '%s' specified by the\n",
@@ -322,10 +322,10 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
                     errorvf("Batch Item 'Structure.PopDataPheno'.\n");
                     if (popData == QMISSING)
                         errorvf("Found a missing value indicator for individual '%s'.\n",
-                                _tpe->UniqueID);
+                                _tpersonp->UniqueID);
                     else
                         errorvf("Found a negative value of '%lf' for individual '%s'.\n",
-                                popData, _tpe->UniqueID);
+                                popData, _tpersonp->UniqueID);
                     EXIT(DATA_TYPE_ERROR);
                 }
                 pr_printf("%10.0f ", popData);
@@ -369,7 +369,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
 static void write_mainparams(linkage_ped_top *Top, char *file_names[],
                              const int pwid, const int fwid)
 {
-    FLPboth *floop = new FLPboth(Top, file_names[5], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[5], "w");
     floop->file_type = "        STRUCTURE mainparams:         ";
 
     struct save_mainparams: public dataloop::null {
@@ -433,7 +433,7 @@ static void write_mainparams(linkage_ped_top *Top, char *file_names[],
 static void write_extraparams(linkage_ped_top *Top, char *file_names[],
 			      const int pwid, const int fwid)
 {
-    FLPboth *floop = new FLPboth(Top, file_names[7], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[7], "w");
     floop->file_type = "        STRUCTURE extraparams:         ";
 
     struct save_extraparams: public dataloop::null {
@@ -524,7 +524,7 @@ static void write_sh(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-    FLPboth *floop = new FLPboth(Top, file_names[3], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[3], "w");
     floop->file_type = "        STRUCTURE shell file:         ";
 
     struct STRUCTURE_sh_script: public DTshell {

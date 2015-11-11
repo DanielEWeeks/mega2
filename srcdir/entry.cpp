@@ -68,15 +68,15 @@ void person_locus_entry::pr_fam()
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
     } else if (OrigIds[1] == 2) {
-        pr_printf(_fformat, _tp->Name);
+        pr_printf(_fformat, _tpedtreep->Name);
     } else if (OrigIds[1] == 3) {
         pr_printf(_fformat, _ped+1);
     } else if (OrigIds[1] == 4) {
-        pr_printf(_fformat, _tp->Name);
+        pr_printf(_fformat, _tpedtreep->Name);
     } else if (OrigIds[1] == 6) {
-        pr_printf(_fformat, _tp->PedPre);
+        pr_printf(_fformat, _tpedtreep->PedPre);
     } else {
-        pr_printf(_fformat, _tp->Num);
+        pr_printf(_fformat, _tpedtreep->Num);
     }
 }
 
@@ -107,22 +107,22 @@ void person_locus_entry::pr_father()
     if (_fwid == 0) {
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
-    } else if (_tpe->Father != 0) {
+    } else if (_tpersonp->Father != 0) {
         if (OrigIds[0] == 1) {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].OrigID);
+                    _tpedtreep->Entry[_tpersonp->Father-1].OrigID);
         } else if (OrigIds[0] == 2)  {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].OrigID);
+                    _tpedtreep->Entry[_tpersonp->Father-1].OrigID);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].UniqueID);
+                    _tpedtreep->Entry[_tpersonp->Father-1].UniqueID);
         } else if (OrigIds[0] == 6)  {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].PerPre);
+                    _tpedtreep->Entry[_tpersonp->Father-1].PerPre);
         } else {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].ID);
+                    _tpedtreep->Entry[_tpersonp->Father-1].ID);
         }
     } else {
     // If there was no father then print 0 (e.g., none)...
@@ -138,22 +138,22 @@ void person_locus_entry::pr_mother()
     if (_fwid == 0) {
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
-    } else if (_tpe->Father != 0) {
+    } else if (_tpersonp->Father != 0) {
         if (OrigIds[0] == 1) {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].OrigID);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].OrigID);
         } else if (OrigIds[0] == 2)  {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].OrigID);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].OrigID);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].UniqueID);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].UniqueID);
         } else if (OrigIds[0] == 6)  {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].PerPre);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].PerPre);
         } else {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].ID);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].ID);
         }
     } else {
     // If there was no father (or mother) then print 0 (e.g., none)...
@@ -169,32 +169,32 @@ void person_locus_entry::pr_parent()
     if (_fwid == 0) {
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
-    } else if (_tpe->Father != 0) {
+    } else if (_tpersonp->Father != 0) {
         if (OrigIds[0] == 1) {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].OrigID);
+                    _tpedtreep->Entry[_tpersonp->Father-1].OrigID);
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].OrigID);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].OrigID);
         } else if (OrigIds[0] == 2)  {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].OrigID);
+                    _tpedtreep->Entry[_tpersonp->Father-1].OrigID);
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].OrigID);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].OrigID);
         } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].UniqueID);
+                    _tpedtreep->Entry[_tpersonp->Father-1].UniqueID);
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].UniqueID);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].UniqueID);
         } else if (OrigIds[0] == 6)  {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].PerPre);
+                    _tpedtreep->Entry[_tpersonp->Father-1].PerPre);
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].PerPre);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].PerPre);
         } else {
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Father-1].ID);
+                    _tpedtreep->Entry[_tpersonp->Father-1].ID);
             pr_printf(_pformat,
-                    _tp->Entry[_tpe->Mother-1].ID);
+                    _tpedtreep->Entry[_tpersonp->Mother-1].ID);
         }
     } else {
     // If there was no father (or mother) then print 0 (e.g., none)...
@@ -220,17 +220,17 @@ void person_locus_entry::pr_sex(linkage_ped_rec  *tpe)
 */
 int person_locus_entry::has_pheno(linkage_ped_rec  *tpe)
 {
-    if (_tte == (linkage_locus_rec *)NULL) return 0;
+    if (_ttraitp == (linkage_locus_rec *)NULL) return 0;
 
-    switch(_tte->Type) {
+    switch(_ttraitp->Type) {
         case AFFECTION:
             int ase;
-            if (_tte->Pheno->Props.Affection.ClassCnt == 1)
+            if (_ttraitp->Pheno->Props.Affection.ClassCnt == 1)
                 ase = tpe->Pheno[_trait].Affection.Status;
             else
                 ase = aff_status_entry(tpe->Pheno[_trait].Affection.Status,
                                        tpe->Pheno[_trait].Affection.Class,
-                                       _tte); //&(_Top->LocusTop->Locus[_trait]))
+                                       _ttraitp); //&(_Top->LocusTop->Locus[_trait]))
             
             if (ase == 0) return 0; // missing phenotype
             break;
@@ -251,18 +251,18 @@ int person_locus_entry::has_pheno(linkage_ped_rec  *tpe)
  */
 int person_locus_entry::is_affected_pheno(linkage_ped_rec  *tpe)
 {
-    if (_tte == (linkage_locus_rec *)NULL) return -1;
+    if (_ttraitp == (linkage_locus_rec *)NULL) return -1;
     
-    if (_tte->Type == AFFECTION) {
+    if (_ttraitp->Type == AFFECTION) {
             int ase;
             // linkage.h:linkage_pedrec_data is a union (Affection(2xint),
             // Quant(2xint), Alleles (2xint), RAlleles (2xchar*)
-            if (_tte->Pheno->Props.Affection.ClassCnt == 1)
+            if (_ttraitp->Pheno->Props.Affection.ClassCnt == 1)
                 ase = tpe->Pheno[_trait].Affection.Status;
             else
                 ase = aff_status_entry(tpe->Pheno[_trait].Affection.Status,
                                        tpe->Pheno[_trait].Affection.Class,
-                                       _tte); //&(_Top->LocusTop->Locus[_trait]))
+                                       _ttraitp); //&(_Top->LocusTop->Locus[_trait]))
             
 	    return ase-1;
     }
@@ -274,21 +274,21 @@ void person_locus_entry::pr_pheno(linkage_ped_rec  *tpe, const int affection_as_
 {
     int ase;
 
-    if (_tte == NULL) {  // no traits
+    if (_ttraitp == NULL) {  // no traits
         pr_printf("%1d ", 0);
         return;
     }
 
-    switch(_tte->Type) {
+    switch(_ttraitp->Type) {
         case AFFECTION:
             // linkage.h:linkage_pedrec_data is a union (Affection(2xint),
             // Quant(2xint), Alleles (2xint), RAlleles (2xchar*)
-            if (_tte->Pheno->Props.Affection.ClassCnt == 1)
+            if (_ttraitp->Pheno->Props.Affection.ClassCnt == 1)
                 ase = tpe->Pheno[_trait].Affection.Status;
             else
                 ase = aff_status_entry(tpe->Pheno[_trait].Affection.Status,
                                        tpe->Pheno[_trait].Affection.Class,
-                                       _tte); //&(_Top->LocusTop->Locus[_trait]))
+                                       _ttraitp); //&(_Top->LocusTop->Locus[_trait]))
             
             if (affection_as_string == 1) {
                 // Currently only used for Eigenstrat...
@@ -322,16 +322,16 @@ void person_locus_entry::pr_aff()
 {
     int ase;
 
-    switch(_tte->Type) {
+    switch(_ttraitp->Type) {
     case AFFECTION:
         // linkage.h:linkage_pedrec_data is a union (Affection(2xint),
         // Quant(2xint), Alleles (2xint), RAlleles (2xchar*)
-        if (_tte->Pheno->Props.Affection.ClassCnt == 1)
-            ase = _tpe->Pheno[_trait].Affection.Status;
+        if (_ttraitp->Pheno->Props.Affection.ClassCnt == 1)
+            ase = _tpersonp->Pheno[_trait].Affection.Status;
         else
-            ase = aff_status_entry(_tpe->Pheno[_trait].Affection.Status,
-                                   _tpe->Pheno[_trait].Affection.Class,
-                                   _tte); //&(_Top->LocusTop->Locus[_trait]))
+            ase = aff_status_entry(_tpersonp->Pheno[_trait].Affection.Status,
+                                   _tpersonp->Pheno[_trait].Affection.Class,
+                                   _ttraitp); //&(_Top->LocusTop->Locus[_trait]))
         if (ase == 0) {
             pr_printf("%s ", Mega2BatchItems[/* 59 */ Value_Missing_Affect_On_Output].value.name);
         } else {
@@ -347,12 +347,12 @@ void person_locus_entry::pr_quant()
 {
     // This if statement protects the switch statement from invalid loop indexes (which should
     // in itself be sufficient) and also limits the locus to traits.
-    switch(_tte->Type) {
+    switch(_ttraitp->Type) {
     case QUANT:
-        if (fabs(_tpe->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
+        if (fabs(_tpersonp->Pheno[_trait].Quant - MissingQuant) <= EPSILON) {
             pr_printf(" %s ", Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
         } else {
-            pr_printf("%10.5f ", _tpe->Pheno[_trait].Quant);
+            pr_printf("%10.5f ", _tpersonp->Pheno[_trait].Quant);
         }
         break;
     default:
@@ -368,7 +368,7 @@ void person_locus_entry::pr_marker_name()
         errorvf("Internal Error: load_formats() method not called.\n");
         EXIT(SYSTEM_ERROR);
     } else
-      //pr_printf(_mformat, _tte->Name);
+      //pr_printf(_mformat, _ttraitp->Name);
       pr_printf(_mformat, _LTop->Locus[_locus].LocusName);
 }
 
@@ -388,8 +388,8 @@ void person_locus_entry::pr_marker(const int locus, linkage_locus_rec *tle, link
 void person_locus_entry::pr_marker_alleles()
 {
     int i;
-    for (i=0; i <_tle->AlleleCnt; i++) {
-        const char *name = _tle->Allele[i].AlleleName;
+    for (i=0; i <_tlocusp->AlleleCnt; i++) {
+        const char *name = _tlocusp->Allele[i].AlleleName;
         if (name == (const char *)NULL) {
             // This problem seems to appear when _LTop->PedRecDataType == Premakeped
             // This base problem needs to be fixed properly.
@@ -427,24 +427,24 @@ double person_locus_entry::get_genetic_distance(int *warnp)
             // we were told to only use the average map, or only an average map was specified...
             genetic_distance = _EXLTop->EXLocus[_locus].positions[genetic_distance_index];
             // But tell the user about it if used for a sex linked chromosome...
-//          if (_tle->Type == XLINKED || _tle->Type == YLINKED) 
-            if (_tle->Marker->chromosome == SEX_CHROMOSOME || _tle->Marker->chromosome == MALE_CHROMOSOME) {
+//          if (_tlocusp->Type == XLINKED || _tlocusp->Type == YLINKED) 
+            if (_tlocusp->Marker->chromosome == SEX_CHROMOSOME || _tlocusp->Marker->chromosome == MALE_CHROMOSOME) {
                 if (warnp != (int *)NULL) *warnp = 1; // Using average position for a sex map
             }
         } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {
             // Male, Female are available, so pick the right one given the current locus type...
-//          if (_tle->Type == XLINKED) // X or SEX_CHROMOSOME
-            if (_tle->Marker->chromosome == SEX_CHROMOSOME) // X or SEX_CHROMOSOME
+//          if (_tlocusp->Type == XLINKED) // X or SEX_CHROMOSOME
+            if (_tlocusp->Marker->chromosome == SEX_CHROMOSOME) // X or SEX_CHROMOSOME
                 genetic_distance = _EXLTop->EXLocus[_locus].pos_female[genetic_distance_index];
-//          else if (_tle->Type == YLINKED) // Y or MALE_CHROMOSOME
-            else if (_tle->Marker->chromosome == MALE_CHROMOSOME)  // Y or MALE_CHROMOSOME
+//          else if (_tlocusp->Type == YLINKED) // Y or MALE_CHROMOSOME
+            else if (_tlocusp->Marker->chromosome == MALE_CHROMOSOME)  // Y or MALE_CHROMOSOME
                 genetic_distance = _EXLTop->EXLocus[_locus].pos_male[genetic_distance_index];
             else {
                 if (warnp != (int *)NULL) *warnp = 2; // Autosome when a sex map specified
             }
         } else if (genetic_distance_sex_type_map == FEMALE_GDMT) {
-//          if (_tle->Type == XLINKED) // X or SEX_CHROMOSOME
-            if (_tle->Marker->chromosome == SEX_CHROMOSOME) // X or SEX_CHROMOSOME
+//          if (_tlocusp->Type == XLINKED) // X or SEX_CHROMOSOME
+            if (_tlocusp->Marker->chromosome == SEX_CHROMOSOME) // X or SEX_CHROMOSOME
                 genetic_distance = _EXLTop->EXLocus[_locus].pos_female[genetic_distance_index];
             else {
                 if (warnp != (int *)NULL) *warnp = 3; // Female map so only X chromosome analysis is possible?
@@ -468,7 +468,7 @@ void person_locus_entry::pr_genetic_distance_warning(int warnp)
         break;
     case 1:
         warnf("Since only a sex-averaged genetic map was used, these positions have been used");
-        warnvf("for markers (%d, %s) on the X and Y chromosomes.\n", _tle->Marker->chromosome, _tle->LocusName);
+        warnvf("for markers (%d, %s) on the X and Y chromosomes.\n", _tlocusp->Marker->chromosome, _tlocusp->LocusName);
         break;
     case 2:
         // autozomes will be set to missing is a result of the decision made to allow the user

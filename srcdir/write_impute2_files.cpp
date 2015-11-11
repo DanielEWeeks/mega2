@@ -98,8 +98,8 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
     // Similar methods are used below...
 
     int _ped, _per;
-    linkage_ped_tree *_tp;
-    linkage_ped_rec  *_tpe;
+    linkage_ped_tree *_tpedtreep;
+    linkage_ped_rec  *_tpersonp;
     bool use_fid, use_iid, use_joint;
     std::ostringstream convert;   // stream used for the conversion
     std::set<std::string> sfid;
@@ -110,19 +110,19 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
     for (_ped=0; _ped < Top->PedCnt; _ped++) {
 	// It there is some indication as to why this pedigree should not be included, don't...
 	if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
-	_tp = &(Top->Ped[_ped]);
+	_tpedtreep = &(Top->Ped[_ped]);
 //yy
-	if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tp->Name);
+	if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tpedtreep->Name);
 	else if (OrigIds[1] == 3) {convert << _ped+1; sfid.insert(convert.str()); }
-	else if (OrigIds[1] == 6) sfid.insert(_tp->PedPre);
-	else {convert << _tp->Num; sfid.insert(convert.str()); }
+	else if (OrigIds[1] == 6) sfid.insert(_tpedtreep->PedPre);
+	else {convert << _tpedtreep->Num; sfid.insert(convert.str()); }
 
 	for (_per = 0; _per < Top->Ped[_ped].EntryCnt; _per++) {
-	    _tpe = &(_tp->Entry[_per]);
-	    if (OrigIds[0] == 1 || OrigIds[0] == 2)  siid.insert(_tpe->OrigID);
-	    else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) siid.insert(_tpe->UniqueID);
-	    else if (OrigIds[0] == 6) siid.insert(_tpe->PerPre);
-	    else {convert << _tpe->ID; siid.insert(convert.str()); }
+	    _tpersonp = &(_tpedtreep->Entry[_per]);
+	    if (OrigIds[0] == 1 || OrigIds[0] == 2)  siid.insert(_tpersonp->OrigID);
+	    else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) siid.insert(_tpersonp->UniqueID);
+	    else if (OrigIds[0] == 6) siid.insert(_tpersonp->PerPre);
+	    else {convert << _tpersonp->ID; siid.insert(convert.str()); }
 	    ni++;
 	}
     }
@@ -131,7 +131,7 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
     use_iid = ni == siid.size();
     use_joint = !use_fid && !use_iid;
 
-    FLPonce *floop = new FLPonce(Top, Outfile_Names[2], "w");
+    FLOOPonce *floop = new FLOOPonce(Top, Outfile_Names[2], "w");
     floop->file_type = "         PSEQ phenotype file:      ";
 
     struct pseq_pheno: public dataloop::ped_per_trait {
@@ -265,7 +265,7 @@ void CLASS_IMPUTE2::create_sh_file(linkage_ped_top *Top,
 {
     DTshell *sh = 0;
 
-    FLPboth *floop = new FLPboth(Top, file_names[8], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[8], "w");
     floop->file_type = "      IMPUTE2 shell file:          ";
 
     struct IMPUTE2_sh_script: public DTshell {

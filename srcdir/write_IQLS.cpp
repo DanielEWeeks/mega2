@@ -164,7 +164,7 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
    different families are listed.
 
 */
-    FLPboth *floop = new FLPboth(Top, Outfile_Names[0], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[0], "w");
     floop->file_type = "        IQLS pedigree file:        ";
 
     struct IQLS_pedigree: dataloop::ped_per {
@@ -233,7 +233,7 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 
 */
 
-    FLPboth *floop = new FLPboth(Top, Outfile_Names[1], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[1], "w");
     floop->file_type = "        IQLS marker file:          ";
 
     struct IQLS_marker: public dataloop::loci_ped_per {
@@ -265,25 +265,25 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
             }
         }
         void loci_start() {
-            if (_tle->Marker->chromosome != UNKNOWN_CHROMO) {
+            if (_tlocusp->Marker->chromosome != UNKNOWN_CHROMO) {
                 pr_printf("%-15s %2d %d ",
-                          _tle->LocusName,
-                          _tle->Marker->chromosome,
+                          _tlocusp->LocusName,
+                          _tlocusp->Marker->chromosome,
                           (int) _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
             }
-            if (_tle->Marker->Props.Numbered.Recoded) {
+            if (_tlocusp->Marker->Props.Numbered.Recoded) {
                 pr_printf("   +  %4s %4s ",
-                          _tle->Allele[0].AlleleName,
-                          _tle->Allele[_tle->AlleleCnt == 1 ? 0 : 1].AlleleName);
+                          _tlocusp->Allele[0].AlleleName,
+                          _tlocusp->Allele[_tlocusp->AlleleCnt == 1 ? 0 : 1].AlleleName);
             } else {
                 pr_printf("   -  %4s %4s ","A","G"); /* Use dummy labels A/G for markers input with numbered alleles */
             }
         }
         void inner() {
-            if (_tle->Marker->Props.Numbered.Recoded) {
+            if (_tlocusp->Marker->Props.Numbered.Recoded) {
                 pr_printf(" %1s%1s ",
-                          (_allele1== 0) ? "N" : _tle->Allele[_allele1 - 1].AlleleName,
-                          (_allele2== 0) ? "N" : _tle->Allele[_allele2 - 1].AlleleName);
+                          (_allele1== 0) ? "N" : _tlocusp->Allele[_allele1 - 1].AlleleName,
+                          (_allele2== 0) ? "N" : _tlocusp->Allele[_allele2 - 1].AlleleName);
             } else {
                 char all1[2], all2[2];
                 /* If input allele labels were numeric, then use dummy alleles 'A' and 'G' and
@@ -334,7 +334,7 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 
 static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]) {
 
-    FLPchr *floop = new FLPchr(Top, Outfile_Names[2], "w");
+    FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[2], "w");
     floop->file_type = "        IQLS parameter file:       ";
 
     struct IQLS_parameter: public dataloop::null {
@@ -355,7 +355,7 @@ static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]
 static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file_names[],
                                     int first_time)
 {
-    FLPboth *floop = new FLPboth(Top, file_names[3], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, file_names[3], "w");
     floop->file_type = "        IQLS shell script file:    ";
 
     struct IQLS_shell_script: public sh_util {
@@ -429,7 +429,7 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
 
 */
 //HERE
-    FLPboth *floop = new FLPboth(Top, Outfile_Names[4], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[4], "w");
     floop->file_type = "        Idcoefs pedigree file:     ";
 
     struct Idcoefs_pedigree: public dataloop::ped_per {
@@ -455,12 +455,12 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
             index_renumber_ped(&(PedTreeTop->PedTree[_ped]), this->index);
         }
         void inner() {
-            _tpe = &(_Top->Ped[_ped].Entry[index[_per]]);
+            _tpersonp = &(_Top->Ped[_ped].Entry[index[_per]]);
             pr_per();
             pr_parent();
             pr_printf(" ");
             pr_fam();
-            pr_printf(_pformat, _tpe->OrigID);
+            pr_printf(_pformat, _tpersonp->OrigID);
             pr_nl();
         }
         void ped_end() { free(index); }
@@ -547,7 +547,7 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
    himself/herself.
 
 */
-    FLPboth *floop = new FLPboth(Top, Outfile_Names[5], "w");
+    FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[5], "w");
     floop->file_type = "        Idcoefs study file:        ";
 
     struct IDcoefs_study : public dataloop::ped_per {
@@ -561,18 +561,18 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
         void inner() {
             int aff;
             eligible[_per] = 0;
-            if (_tpe->IsTyped > 0)
+            if (_tpersonp->IsTyped > 0)
                 eligible[_per] = 1;
 
             /* trait locus */
-            switch(_tte->Type) {
+            switch(_ttraitp->Type) {
             case AFFECTION:
                 // linkage.h    :linkage_pedrec_data is a union (Affection(2xint),
                 // Quant(2xint), Alleles         (2xint), RAlleles (2xchar*)
-                if (_tte->Pheno->Props.Affection.ClassCnt == 1)
-                    aff = _tpe->Pheno[_trait].Affection.Status;
+                if (_ttraitp->Pheno->Props.Affection.ClassCnt == 1)
+                    aff = _tpersonp->Pheno[_trait].Affection.Status;
                 else           
-                    aff = aff_status_entry(_tpe->Pheno[_trait].Affection.Status, _tpe->Pheno[_trait].Affection.Class, _tte);
+                    aff = aff_status_entry(_tpersonp->Pheno[_trait].Affection.Status, _tpersonp->Pheno[_trait].Affection.Class, _ttraitp);
                 if (aff > 0)
                     eligible[_per]=1;
                 break;
