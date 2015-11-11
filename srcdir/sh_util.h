@@ -31,11 +31,10 @@
 
 #include "loop.h"
 
-class sh_util: public person_locus_entry {
+class sh_util: public dataloop::dataloop_data {
 public:
-    fileloop::fileloop_data *fileloop;
-
-    sh_util(linkage_ped_top  *Top) : person_locus_entry(Top) { }
+    sh_util(linkage_ped_top  *Top) : dataloop::dataloop_data(Top) { }
+    sh_util(linkage_ped_top  *Top, fileloop::fileloop_data *fl) : dataloop::dataloop_data(Top, fl) { }
     virtual ~sh_util() {}
     void sh_shell_type() {
         pr_printf("#!/bin/csh -f\n");
@@ -178,9 +177,21 @@ public:
     void run_loop(const char *opath, const char *fl_name) { run_loop(opath, fl_name, "w"); }
     void run_loop(const char *dir, const char *fl_name, const char *mode)
     {
-        _tte    = fileloop->_ftte;
-        _numchr = fileloop->_fnumchr;
-        _trait  = fileloop->_ftrait;
+        _tte    = _fileloop->_ftte;
+        _numchr = _fileloop->_fnumchr;
+        _trait  = _fileloop->_ftrait;
+
+        filep_open(dir, fl_name, mode);
+        inner();
+        filep_close();
+    }
+
+    void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
+    void data_loop(const char *dir, const char *fl_name, const char *mode)
+    {
+        _tte    = _fileloop->_ftte;
+        _numchr = _fileloop->_fnumchr;
+        _trait  = _fileloop->_ftrait;
 
         filep_open(dir, fl_name, mode);
         inner();

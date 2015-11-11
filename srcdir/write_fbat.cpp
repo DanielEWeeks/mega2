@@ -36,6 +36,7 @@
 
 #include "loop.h"
 #include "sh_util.h"
+#include "loop_templates.h"
 
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
@@ -87,15 +88,25 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
                             const int pwid, const int fwid)
 {
-    struct save_pheno: public fileloop::once, dataloop::ped_per_trait {
+/*
+    struct save_pheno_loop: public fileloop::once {
         typedef char *str;
         str *file_names;
 
-        save_pheno(linkage_ped_top *Top) : fileloop::once(Top), dataloop::ped_per_trait(Top) {}
+        save_pheno_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::once(Top) { }
         void make_file() {
             msgvf("        FBAT phenotype file:   %s/%s\n", *_opath, file_names[2]);
             data_loop(*_opath, file_names[2]);
         }
+    } *fl = new save_pheno_loop(Top);
+*/
+
+    FLPonce *floop = new FLPonce(Top, file_names[2], "w");
+    floop->file_type = "        FBAT phenotype file:   ";
+
+    struct save_pheno: public dataloop::ped_per_trait {
+
+        save_pheno(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_trait(Top, fl) { }
         void file_header() {
             int tr;
             int trait;
@@ -117,35 +128,54 @@ static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
             /* trait locus */
             pr_pheno();
         }
-    } *sp = new save_pheno(Top);
-
-    sp->fileloop   = sp;
-    sp->file_names = file_names;
+    } *sp = new save_pheno(Top, floop);
     sp->load_formats(fwid, pwid, -1);
 
-    sp->iterate();
+    floop->iterate();
 
     delete sp;
+    delete floop;
 }
 
 static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
                            const int pwid, const int fwid,
                            const bool has_x)
 {
-    struct save_peds: public fileloop::both, dataloop::ped_per_loci {
+/*
+    struct save_peds_loop: public fileloop::both {
         typedef char *str;
         str *file_names;
-        bool has_x;
 
-        save_peds(linkage_ped_top *Top) : fileloop::both(Top), dataloop::ped_per_loci(Top) { }
+        save_peds_loop(linkage_ped_top *Top) : fileloop::both(Top) { }
         void make_file() {
             mssgvf("        FBAT pedigree file:    %s/%s\n", *_opath, file_names[0]);
-            if (fileloop->_ftte == NULL) {
+            if (_ftte == NULL) {
                 mssgvf("        FBAT pedigree file:    needs a trait value to be defined\nExiting\n");
                 EXIT(DATA_INCONSISTENCY);
             }
-            data_loop(*_opath, file_names[0]);
+            dataloop->data_loop(*_opath, file_names[0]);
         }
+    } *fl = new save_peds_loop(Top);
+    fl->file_names    = file_names;
+    fl->_trait_affect = true;
+*/
+//HERE
+    FLPboth *floop = new FLPboth(Top, file_names[0], "w");
+    floop->file_type     = "        FBAT pedigree file:    ";
+    floop->_trait_affect = true;
+    floop->_needs_trait  = true;
+
+    struct save_peds: public dataloop::ped_per_loci {
+        bool has_x;
+
+//HERE
+        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
+/*
+        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) {
+            fileloop = fl;
+            fl->dataloop = this;
+        }
+*/
         void file_header() {
             int locus;
             int m;
@@ -171,20 +201,16 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
         void inner() {
             pr_marker();
         }
-    } *sp = new save_peds(Top);
-
-    sp->fileloop   = sp;
-    sp->file_names = file_names;
-    sp->has_x      = has_x;
-
-    sp->_trait_affect = true;
+    } *sp = new save_peds(Top, floop);
+    sp->has_x              = has_x;
     sp->_loci_allele_limit = 40;
-
     sp->load_formats(fwid, pwid, -1);
 
-    sp->iterate();
+    floop->iterate();
 
+//HERE
     delete sp;
+    delete floop;
 }
 
 /**
@@ -195,31 +221,47 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
         strcmp(output_paths[0], ".");
 
+/*
     struct all_sh: public sh_util {
         all_sh(linkage_ped_top *Top) : sh_util(Top) {}
+        all_sh(linkage_ped_top *Top, fileloop::fileloop_data *fl) : sh_util(Top, fl) { }
         virtual ~all_sh() {}
         virtual void file_post() {
             chmod_X_file(path_);
         }
     }  *sh = 0;
-
+*/
+    DTshell *sh = 0;
     if (top_shell) {
-        sh = new all_sh(Top);
+        sh = new DTshell(Top);
         sh->filep_open(output_paths[0], file_names[4], "w");
         sh->sh_main();
     }
 
-    struct FBAT_sh_script: public fileloop::both, all_sh {
+/*
+    struct FBAT_sh_script_loop: public fileloop::both {
         typedef char *str;
         str *file_names;
-        all_sh *sh;
-        bool has_x;
 
-        FBAT_sh_script(linkage_ped_top *Top) : fileloop::both(Top), all_sh(Top) { }
+        FBAT_sh_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             mssgvf("        FBAT shell file:       %s/%s\n", *_opath, file_names[3]);
             run_loop(*_opath, file_names[3]);
         }
+    } *fl = new FBAT_sh_script_loop(Top);
+*/
+
+    FLPboth *floop = new FLPboth(Top, file_names[3], "w");
+    floop->file_type = "        FBAT shell file:       ";
+    floop->_trait_affect = true;
+
+    struct FBAT_sh_script: public DTshell {
+        typedef char *str;
+        str *file_names;
+        DTshell *sh;
+        bool has_x;
+
+        FBAT_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
         void file_header() {
             if (sh)
                 sh->sh_sh(this);
@@ -272,7 +314,7 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
             pr_printf("EOF\n");
 
             pr_printf("echo The raw FBAT output can be found in %s/%s.log\n",
-                      *_opath, file_names[3]);
+                      *_fileloop->_opath, file_names[3]);
 
             fprintf_status_check_csh(_filep, "fbat", 0);
 
@@ -282,6 +324,7 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
                     CHR_STR(_numchr, out_fl);
                 else
                     strcpy(out_fl, "all");
+
                 pr_printf("Rscript --vanilla %s%s.R %s%s %s %s %s\n",
                           ((LoopOverTrait && num_traits > 1) ? "../" : ""),
                           file_names[6],  //fbat.R
@@ -291,26 +334,23 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
                           file_names[6],              // stem
                           out_fl);                    // chr
                 pr_printf("echo A table of the FBAT results can be found in %s/%s.%s.tbl\n",
-                          *_opath, file_names[6], out_fl);
+                          *_fileloop->_opath, file_names[6], out_fl);
                 pr_printf("echo A graph of the FBAT results can be found in %s/R%s.%s.pdf\n",
-                          *_opath, file_names[6], out_fl);
+                          *_fileloop->_opath, file_names[6], out_fl);
             }
         }
         void file_post() {
             chmod_X_file(path_);
         }
-    } *xp = new FBAT_sh_script(Top);
-
-    xp->fileloop   = xp;
+    } *xp = new FBAT_sh_script(Top, floop);
     xp->file_names = file_names;
     xp->sh         = sh;
     xp->has_x      = has_x;
 
-    xp->_trait_affect = true;
-
-    xp->iterate();
+    floop->iterate();
 
     delete xp;
+    delete floop;
 
     if (top_shell) {
         mssgvf("        FBAT top shell file:   %s/%s\n", output_paths[0], file_names[4]);
@@ -322,16 +362,27 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
 
 static void write_FBAT_Rhdr(linkage_ped_top *Top, char *file_names[])
 {
-    struct FBAT_Rhdr: public fileloop::both, dataloop::null {
+/*
+    struct FBAT_Rhdr_loop: public fileloop::both {
         typedef char *str;
         str *file_names;
-        char strchr[4];
 
-        FBAT_Rhdr(linkage_ped_top *Top) : fileloop::both(Top), dataloop::null(Top) { }
+        FBAT_Rhdr_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             mssgvf("        FBAT R hdr file:       %s/%s\n", *_opath, file_names[7]);
             data_loop(*_opath, file_names[7]);
         }
+    } *fl = new FBAT_Rhdr_loop(Top);
+*/
+
+    FLPboth *floop = new FLPboth(Top, file_names[7], "w");
+    floop->file_type = "        FBAT R hdr file:       ";
+    floop->_trait_affect = true;
+
+    struct FBAT_Rhdr: public dataloop::null {
+        char strchr[4];
+
+        FBAT_Rhdr(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { }
         void inner () {
 
             pr_printf("# reference line, y-axis minimum and y-axis maximum\n");
@@ -368,16 +419,12 @@ static void write_FBAT_Rhdr(linkage_ped_top *Top, char *file_names[])
             pr_printf("#---inserted by Mega2----- \n");
 
         }
-    } *xp = new FBAT_Rhdr(Top);
+    } *xp = new FBAT_Rhdr(Top, floop);
 
-    xp->fileloop   = xp;
-    xp->file_names = file_names;
-
-    xp->_trait_affect = true;
-
-    xp->iterate();
+    floop->iterate();
 
     delete xp;
+    delete floop;
 }
 
 int display_error_sagm = 0, display_error_ssgm = 0, display_error_fgm = 0;
@@ -431,16 +478,26 @@ static double get_gp(ext_linkage_locus_top *EXLTop, int LType, int chr, char *sn
 */
 static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
 {
-    struct FBAT_map: public fileloop::chr, dataloop::loci {
+/*
+    struct FBAT_map_loop: public fileloop::chr {
         typedef char *str;
         str *file_names;
 
-        FBAT_map(linkage_ped_top *Top) : fileloop::chr(Top), dataloop::loci(Top) { }
-//         marker_name   chr#   genetic_pos   physical_pos   sex_link
+        FBAT_map_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
         void make_file() {
             mssgvf("        FBAT map file:         %s/%s\n", *_opath, file_names[1]);
             data_loop(*_opath, file_names[1]);
         }
+    } *fl = new FBAT_map_loop(Top);
+*/
+
+    FLPchr *floop = new FLPchr(Top, file_names[1], "w");
+    floop->file_type = "        FBAT map file:         ";
+
+    struct FBAT_map: public dataloop::loci {
+
+        FBAT_map(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { }
+//         marker_name   chr#   genetic_pos   physical_pos   sex_link
         void inner () {
             int chr = _tle->Marker->chromosome;
             if (chr == UNKNOWN_CHROMO || chr >= MITO_CHROMOSOME) chr = 0;
@@ -452,16 +509,13 @@ static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
             double gp = get_gp(_EXLTop, _tle->Type, _tle->Marker->chromosome, _tle->LocusName, _locus);
             pr_printf("%s %d %.6f %.0f %d\n", _tle->LocusName, chr, gp, pp, _tle->Marker->chromosome == SEX_CHROMOSOME);
         }
-    } *xp = new FBAT_map(Top);
-
-    xp->fileloop       = xp;
-    xp->file_names     = file_names;
-
+    } *xp = new FBAT_map(Top, floop);
     xp->_loci_allele_limit = 40;
 
-    xp->iterate();
+    floop->iterate();
 
     delete xp;
+    delete floop;
 }
 
 void CLASS_FBAT::create_output_file(

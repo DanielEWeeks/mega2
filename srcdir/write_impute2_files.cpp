@@ -40,6 +40,7 @@
 
 #include "loop.h"
 #include "sh_util.h"
+#include "loop_templates.h"
 
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
@@ -89,60 +90,72 @@ quantitative trait or an affection status column: PLINK will automatically detec
 static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
                             const int pwid, const int fwid)
 {
-    struct pseq_pheno: public fileloop::once, dataloop::ped_per_trait {
-        
-        bool use_fid, use_iid, use_joint;
-        
-        // The '_trait' value of the first trait which will be found in the .FAM file.
-        // This trait will not go into this file (the IMPUTE2 pheno file).
-        int skip_trait;
-        
-        pseq_pheno(linkage_ped_top *Top) : fileloop::once(Top), dataloop::ped_per_trait(Top) { }
-        
-        void make_file() {
-            // Here we loop over the pedigrees and individuals to determine what to use
-            // as an "ID" for the PSEQ phenotype file. This should be the same as what IMPUTE2
-            // uses for the "ID". This code is found in...
-            // lib/bed.cpp:int BEDReader::read_fam()
-            //
-            // Similar methods are used below...
-            
-            std::ostringstream convert;   // stream used for the conversion
-            std::set<std::string> sfid;
-            std::set<std::string> siid;
-            size_t ni = 0;
-            
-            // for each pedigree (consulting the linkage_ped_top structure)...
-            for (_ped=0; _ped < _Top->PedCnt; _ped++) {
-                // It there is some indication as to why this pedigree should not be included, don't...
-                if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
-                _tp = &(_Top->Ped[_ped]);
+    // Here we loop over the pedigrees and individuals to determine what to use
+    // as an "ID" for the PSEQ phenotype file. This should be the same as what PSEQ
+    // uses for the "ID". This code is found in...
+    // lib/bed.cpp:int BEDReader::read_fam()
+    //
+    // Similar methods are used below...
+
+    int _ped, _per;
+    linkage_ped_tree *_tp;
+    linkage_ped_rec  *_tpe;
+    bool use_fid, use_iid, use_joint;
+    std::ostringstream convert;   // stream used for the conversion
+    std::set<std::string> sfid;
+    std::set<std::string> siid;
+    size_t ni = 0;
+
+    // for each pedigree (consulting the linkage_ped_top structure)...
+    for (_ped=0; _ped < Top->PedCnt; _ped++) {
+	// It there is some indication as to why this pedigree should not be included, don't...
+	if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
+	_tp = &(Top->Ped[_ped]);
 //yy
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tp->Name);
-                else if (OrigIds[1] == 3) {convert << _ped+1; sfid.insert(convert.str()); }
-                else if (OrigIds[1] == 6) sfid.insert(_tp->PedPre);
-                else {convert << _tp->Num; sfid.insert(convert.str()); }
-                
-                for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
-                    _tpe = &(_tp->Entry[_per]);
-                    if (OrigIds[0] == 1 || OrigIds[0] == 2)  siid.insert(_tpe->OrigID);
-                    else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) siid.insert(_tpe->UniqueID);
-                    else if (OrigIds[0] == 6) siid.insert(_tpe->PerPre);
-                    else {convert << _tpe->ID; siid.insert(convert.str()); }
-                    ni++;
-                }
-            }
-            
-            use_fid = ni == sfid.size();
-            use_iid = ni == siid.size();
-            use_joint = !use_fid && !use_iid;
-            
-            msgvf("      IMPUTE2 phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
+	if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tp->Name);
+	else if (OrigIds[1] == 3) {convert << _ped+1; sfid.insert(convert.str()); }
+	else if (OrigIds[1] == 6) sfid.insert(_tp->PedPre);
+	else {convert << _tp->Num; sfid.insert(convert.str()); }
+
+	for (_per = 0; _per < Top->Ped[_ped].EntryCnt; _per++) {
+	    _tpe = &(_tp->Entry[_per]);
+	    if (OrigIds[0] == 1 || OrigIds[0] == 2)  siid.insert(_tpe->OrigID);
+	    else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) siid.insert(_tpe->UniqueID);
+	    else if (OrigIds[0] == 6) siid.insert(_tpe->PerPre);
+	    else {convert << _tpe->ID; siid.insert(convert.str()); }
+	    ni++;
+	}
+    }
+
+    use_fid = ni == sfid.size();
+    use_iid = ni == siid.size();
+    use_joint = !use_fid && !use_iid;
+
+/*
+    struct pseq_pheno_loop: public fileloop::once {
+        pseq_pheno_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::once(Top) { }
+        void make_file() {
+            msgvf("         PSEQ phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
             data_loop(*_opath, Outfile_Names[2]);
         }
+    } *floop = new pseq_pheno_loop(Top);
+*/
+
+    FLPonce *floop = new FLPonce(Top, Outfile_Names[2], "w");
+    floop->file_type = "         PSEQ phenotype file:      ";
+
+    struct pseq_pheno: public dataloop::ped_per_trait {
+
+        bool use_fid, use_iid, use_joint;
+        // The '_trait' value of the first trait which will be found in the .FAM file.
+        // This trait will not go into this file (the PSEQ pheno file).
+        int skip_trait;
+        
+        pseq_pheno(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_trait(Top, fl) { }
+        
         void file_header() {
             int tr, first;
-            // The IMPUTE2 header takes one line per phenotype listed in the file, followed
+            // The PSEQ header takes one line per phenotype listed in the file, followed
             // by a header line that has the "ID" followed by the phenotype names.
             // NOTE: PLINK/SEQ is really picky about having or not havings spaces/tabs in the right places.
             
@@ -151,7 +164,7 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
                 if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
                 if (first == 1) {
                     skip_trait = global_trait_entries[tr];
-                    //fam_file_phenotype_nameY = _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
+                    //fam_file_phenotype_name = _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
                     first = 0;
                     continue;
                 }
@@ -191,7 +204,7 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
             // B) if the family ids are not unique, but the individual ids are, then the individual id is used (use_id == 2),
             // C) finally if neither famiy, nor individual ids are unique a concatination of the two is used (use_id == 3).
             // with an interveinign underscore.
-            // Consult the IMPUTE2 code found in this method:
+            // Consult the PSEQ code found in this method:
             // lib/bed.cpp:int BEDReader::read_fam( )
             if (use_joint || use_fid) pr_fam();
             if (use_joint) pr_printf("_");
@@ -199,16 +212,19 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
         }
         void inner()     { if (skip_trait != _trait) { pr_printf("\t"); pr_pheno(); } }
         void per_end()   { pr_nl(); }
-    } *sp = new pseq_pheno(Top);
+    } *sp = new pseq_pheno(Top, floop);
     
     // So that we can make up a string like "FID_IID".
-    // In addition IMPUTE2 requires tab delimited data, it seems to get confused if sperious spaces are introduced.
-    sp->fileloop = sp;
+    // In addition PSEQ requires tab delimited data, it seems to get confused if sperious spaces are introduced.
+    sp->use_fid   = use_fid;
+    sp->use_iid   = use_iid;
+    sp->use_joint = use_joint;
     sp->load_formats_no_space(-1);
     
-    sp->iterate();
+    floop->iterate();
     
     delete sp;
+    delete floop;
 }
 
 void CLASS_IMPUTE2::save_pheno_file(linkage_ped_top *Top,
@@ -257,23 +273,36 @@ void CLASS_IMPUTE2::create_sh_file(linkage_ped_top *Top,
                                 char *file_names[],
                                 const int numchr)
 {
+/*
     struct all_sh: public sh_util {
         all_sh(linkage_ped_top *Top) : sh_util(Top) {}
         virtual void file_post() {
             chmod_X_file(path_);
         }
     } *sh = 0;
-    
-    struct IMPUTE2_sh_script: public fileloop::both, all_sh {
-        typedef char *str;
-        str *file_names;
-        all_sh *sh;
-        
-        IMPUTE2_sh_script(linkage_ped_top *Top) : fileloop::both(Top), all_sh(Top) { }
+*/
+    DTshell *sh = 0;
+
+/*
+    struct IMPUTE2_sh_script_loop: public fileloop::both {
+        IMPUTE2_sh_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             mssgvf("      IMPUTE2 shell file:          %s/%s\n", *_opath, file_names[8]);
             run_loop(*_opath, file_names[8]);
         }
+    } *floop = new IMPUTE2_sh_script_loop(Top);
+*/
+
+    FLPboth *floop = new FLPboth(Top, file_names[8], "w");
+    floop->file_type = "      IMPUTE2 shell file:          ";
+
+    struct IMPUTE2_sh_script: public DTshell {
+        typedef char *str;
+        str *file_names;
+        DTshell *sh;
+        
+        IMPUTE2_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
+
         void file_header() {
             if (sh) sh->sh_sh(this);
             sh_shell_type();
@@ -406,13 +435,13 @@ void CLASS_IMPUTE2::create_sh_file(linkage_ped_top *Top,
         void file_post() {
             chmod_X_file(path_);
         }
-    } *xp = new IMPUTE2_sh_script(Top);
+    } *xp = new IMPUTE2_sh_script(Top, floop);
     
-    xp->fileloop   = xp;
     xp->file_names = file_names;
     xp->sh         = sh;
     
-    xp->iterate();
+    floop->iterate();
     
     delete xp;
+    delete floop;
 }

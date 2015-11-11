@@ -36,6 +36,7 @@
 
 #include "loop.h"
 #include "sh_util.h"
+#include "loop_templates.h"
 
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
@@ -66,17 +67,24 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
                               const int pwid, const int fwid, const int subopt)
 {
-    struct save_peds: public fileloop::trait, dataloop::ped_per {
-        typedef char *str;
-        str *file_names;
-        int subopt;
-        int skip;
-
-        save_peds(linkage_ped_top *Top) : fileloop::trait(Top), dataloop::ped_per(Top) { }
+/*
+    struct save_peds_loop: public fileloop::trait {
+        save_peds_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::trait(Top) { }
         void make_file() {
             mssgvf("        PANGAEA pedigree file:      %s/%s\n", *_opath, file_names[0]);
             data_loop(*_opath, file_names[0]);
         }
+    } *floop = new save_peds_loop(Top);
+*/
+
+    FLPtrait *floop = new FLPtrait(Top, file_names[0], "w");
+    floop->file_type = "        PANGAEA pedigree file:      ";
+
+    struct save_peds: public dataloop::ped_per {
+        int subopt;
+        int skip;
+
+        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
         void file_header() {
             int nquant = 0, nint = 0, col = 5;
 
@@ -148,24 +156,30 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
             }
             pr_nl();
         }
-    } *sp = new save_peds(Top);
-
-    sp->fileloop   = sp;
-    sp->file_names = file_names;
+    } *sp = new save_peds(Top, floop);
     sp->subopt     = subopt;
     sp->load_formats(fwid, pwid, -1);
-    sp->iterate();
+
+    floop->iterate();
     delete sp;
+    delete floop;
 
-    struct save_peds_all: public fileloop::once, dataloop::ped_per_trait {
-        typedef char *str;
-        str *file_names;
-
-        save_peds_all(linkage_ped_top *Top) : fileloop::once(Top), dataloop::ped_per_trait(Top) { }
+/*
+    struct save_peds_all_loop: public fileloop::once {
+        save_peds_all_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::once(Top) { }
         void make_file() {
             mssgvf("        PANGAEA pedigree file:      %s/%s\n", *_opath, file_names[9]);
             data_loop(*_opath, file_names[9]);
         }
+    } *floop = new save_peds_all_loop(Top);
+*/
+
+    FLPonce *floop1 = new FLPonce(Top, file_names[9], "w");
+    floop1->file_type = "        PANGAEA pedigree file:      ";
+
+    struct save_peds_all: public dataloop::ped_per_trait {
+
+        save_peds_all(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_trait(Top, fl) { }
         void file_header() {
             int i, j;
             int nquant = 0, nint = 0;
@@ -250,14 +264,13 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
         }
     } ;
 /*
-   *sp1 = new save_peds_all(Top);
+   *sp1 = new save_peds_all(Top, floop1);
 
-    sp1->fileloop = sp1;
-    sp1->file_names = file_names;
     sp1->load_formats(fwid, pwid, -1);
     sp1->sort_quant_last();
-    sp1->iterate();
+    floop1->iterate();
     delete sp1;
+    delete floop1;
 */
 
 }
@@ -279,7 +292,7 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
 {
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
         strcmp(output_paths[0], ".");
-
+/*
     struct all_sh: public sh_util {
         all_sh(linkage_ped_top *Top) : sh_util(Top) {}
 //      virtual ~all_sh() {}
@@ -287,27 +300,37 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
             chmod_X_file(path_);
         }
     } *sh = 0;
-
+*/
+    DTshell *sh = 0;
     if (top_shell) {
-        sh = new all_sh(Top);
+        sh = new DTshell(Top);
         sh->filep_open(output_paths[0], file_names[4], "w");
         sh->sh_main();
     }
 
-    struct PANGAEA_sh_script: public fileloop::both, all_sh {
+/*
+    struct PANGAEA_sh_script_loop: public fileloop::both {
+        PANGAEA_sh_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
+        void make_file() {
+            mssgvf("        PANGAEA shell file:         %s/%s\n", *_opath, file_names[3]);
+            run_loop(*_opath, file_names[3]);
+        }
+    } *floop = new PANGAEA_sh_script_loop(Top);
+*/
+
+    FLPboth *floop = new FLPboth(Top, file_names[3], "w");
+    floop->file_type = "        PANGAEA shell file:         ";
+
+    struct PANGAEA_sh_script: public DTshell {
         typedef char *str;
         str *file_names;
-        all_sh *sh;
+        DTshell *sh;
         char *pgm;
         int subopt;
         char pfx[4];
 
-        PANGAEA_sh_script(linkage_ped_top *Top) : fileloop::both(Top), all_sh(Top) {
+        PANGAEA_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
-        }
-        void make_file() {
-            mssgvf("        PANGAEA shell file:         %s/%s\n", *_opath, file_names[3]);
-            run_loop(*_opath, file_names[3]);
         }
         void file_header() {
             if (sh)
@@ -385,15 +408,16 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
             pr_printf("endif\n");
             pr_nl();
         }
-    } *xp = new PANGAEA_sh_script(Top);
-
-    xp->fileloop   = xp;
+    } *xp = new PANGAEA_sh_script(Top, floop);
     xp->file_names = file_names;
     xp->sh         = sh;
     xp->pgm        = pgm;
     xp->subopt     = subopt;
-    xp->iterate();
+
+    floop->iterate();
+
     delete xp;
+    delete floop;
 
     if (top_shell) {
         mssgvf("        PANGAEA top shell file:     %s/%s\n", output_paths[0], file_names[4]);
@@ -403,18 +427,27 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
     }
 }
 
-struct par_var: public fileloop::both, dataloop::null {
-    typedef char *str;
-    str *file_names;
-    char pfx[4];
+typedef FLPboth par_var_loop;
 
-    par_var(linkage_ped_top *Top) : fileloop::both(Top), dataloop::null(Top) {
-        strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
-    }
+/*
+    struct par_var_loop: public fileloop::both {
+        par_var_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
     void make_file() {
         mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
         data_loop(*_opath, file_names[7]);
     }
+    } *floop = new par_var_loop(Top);
+*/
+
+struct par_var: public dataloop::null {
+    typedef char *str;
+    str *file_names;
+    char pfx[4];
+
+    par_var(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) {
+        strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
+    }
+
     void inner () {
         pr_printf("input pedigree file '%s'\n", file_names[0]);
         pr_printf("output overwrite pedigree file '%s.out'\n", file_names[0]);
@@ -437,19 +470,22 @@ struct par_var: public fileloop::both, dataloop::null {
     }
 };
 
-struct liability_traits: public fileloop::trait, dataloop::null {
-    typedef char *str;
-    str *file_names;
+struct liability_traits_loop: public fileloop::trait {
+    liability_traits_loop(linkage_ped_top *Top) : fileloop::trait(Top) { }
 
-    liability_traits(linkage_ped_top *Top) : fileloop::trait(Top), dataloop::null(Top) { }
     void make_file() {
-        if (fileloop->_ftte == 0 || fileloop->_ftte->Type != AFFECTION || fileloop->_ftte->Pheno->Props.Affection.ClassCnt <= 1)
+        if (_ftte == 0 || _ftte->Type != AFFECTION || _ftte->Pheno->Props.Affection.ClassCnt <= 1)
             return;
         char outfl[FILENAME_LENGTH];
-        sprintf(outfl, "%s.liability.extra", fileloop->_ftte->LocusName);
+        sprintf(outfl, "%s.liability.extra", _ftte->LocusName);
         mssgvf("        PANGAEA liability file:     %s/%s\n", *_opath, outfl);
-        data_loop(*_opath, outfl);
+        _dataloop->data_loop(*_opath, outfl);
     }
+};
+
+struct liability_traits: public dataloop::null {
+    liability_traits(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { }
+
     void inner() {
         int i = 0;
         int cnt  = _tte->Pheno->Props.Affection.ClassCnt;
@@ -471,21 +507,31 @@ struct liability_traits: public fileloop::trait, dataloop::null {
 */
 static void write_PANGAEA_par_template(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
-    par_var *xp1 = new par_var(Top);
-    xp1->fileloop       = xp1;
-    xp1->file_names     = file_names;
-    xp1->iterate();
+    par_var_loop *floop1 = new par_var_loop(Top, file_names[7], "w");
+    floop1->file_type    = "        PANGAEA chr var  par file:  ";
+
+    par_var *xp1 = new par_var(Top, floop1);
+    xp1->file_names = file_names;
+    floop1->iterate();
     delete xp1;
+    delete floop1;
 
-    struct template_par_user: public fileloop::trait, dataloop::null {
-        typedef char *str;
-        str *file_names;
-
-        template_par_user(linkage_ped_top *Top) : fileloop::trait(Top), dataloop::null(Top) { }
+/*
+    struct template_par_user_loop: public fileloop::trait {
+        template_par_user_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::trait(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             data_loop(*_opath, file_names[10]);
         }
+    } *floop = new template_par_user_loop(Top);
+*/
+
+    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    floop2->file_type = "        PANGAEA user par file:      ";
+
+    struct template_par_user: public dataloop::null {
+
+        template_par_user(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { }
         void inner() {
             pr_printf("set printlevel 5\n");
             pr_printf("output pedigree chronological\n");
@@ -505,71 +551,94 @@ static void write_PANGAEA_par_template(linkage_ped_top *Top, char *file_names[],
             pr_printf("set MC iterations 1\n");
             pr_printf("set proband gametes 202 0 202 1\n");
         }
-    } *xp2 = new template_par_user(Top);
-    xp2->fileloop       = xp2;
-    xp2->file_names     = file_names;
-    xp2->iterate(); 
+    } *xp2 = new template_par_user(Top, floop2);
+    floop2->iterate(); 
     delete xp2;
+    delete floop2;
 }
 
 static void write_PANGAEA_par_pedcheck(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
 
-    struct pedcheck_xx_par_var: public fileloop::both, dataloop::null {
-        typedef char *str;
-        str *file_names;
-
-        pedcheck_xx_par_var(linkage_ped_top *Top) : fileloop::both(Top), dataloop::null(Top) { }
+/*
+    struct pedcheck_xx_par_var_loop: public fileloop::both {
+        pedcheck_xx_par_var_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
             data_loop(*_opath, file_names[7]);
         }
+    } *floop = new pedcheck_xx_par_var_loop(Top);
+*/
+
+    FLPboth *floop1 = new FLPboth(Top, file_names[7], "w");
+    floop1->file_type = "        PANGAEA chr var  par file:  ";
+
+    struct pedcheck_xx_par_var: public dataloop::null {
+        typedef char *str;
+        str *file_names;
+
+        pedcheck_xx_par_var(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { }
         void inner () {
             pr_printf("input pedigree file '%s'\n", file_names[0]);
             pr_printf("output overwrite pedigree file '%s.out'\n", file_names[0]);
         }
-    } *xp1 = new pedcheck_xx_par_var(Top);
-    xp1->fileloop       = xp1;
+    } *xp1 = new pedcheck_xx_par_var(Top, floop1);
     xp1->file_names     = file_names;
-    xp1->iterate();
+    floop1->iterate();
     delete xp1;
+    delete floop1;
 
-    struct pedcheck_par_user: public fileloop::trait, dataloop::null {
-        typedef char *str;
-        str *file_names;
-
-        pedcheck_par_user(linkage_ped_top *Top) : fileloop::trait(Top), dataloop::null(Top) { }
+/*
+    struct pedcheck_par_user_loop: public fileloop::trait {
+        pedcheck_par_user_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::trait(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             data_loop(*_opath, file_names[10]);
         }
+    } *floop = new pedcheck_par_user_loop(Top);
+*/
+
+    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    floop2->file_type = "        PANGAEA user par file:      ";
+
+    struct pedcheck_par_user: public dataloop::null {
+        pedcheck_par_user(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { }
         void inner() {
             pr_printf("set printlevel 5\n");
             pr_printf("output pedigree chronological\n");
             pr_printf("output pedigree record father mother\n");
 
         }
-    } *xp2 = new pedcheck_par_user(Top);
-    xp2->fileloop       = xp2;
-    xp2->file_names     = file_names;
-    xp2->iterate(); 
+    } *xp2 = new pedcheck_par_user(Top, floop2);
+    floop2->iterate(); 
     delete xp2;
+    delete floop2;
 }
 
 static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
-    struct kin_xx_par_varA: public fileloop::both, dataloop::ped_per {
-        typedef char *str;
-        str *file_names;
-        int i;
-
-        kin_xx_par_varA(linkage_ped_top *Top) : fileloop::both(Top), dataloop::ped_per(Top) { }
+/*
+    struct kin_xx_par_varA_loop: public fileloop::both {
+        kin_xx_par_varA_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             i = 0;
             mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
             data_loop(*_opath, file_names[7]);
         }
+    } *floop = new kin_xx_par_varA_loop(Top);
+*/
+
+    FLPboth *floop1A = new FLPboth(Top, file_names[7], "w");
+    floop1A->file_type = "        PANGAEA chr var  par file:  ";
+
+    struct kin_xx_par_varA: public dataloop::ped_per {
+        typedef char *str;
+        str *file_names;
+        int i;
+
+        kin_xx_par_varA(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
         void file_header () {
+            i = 0;
             pr_printf("input pedigree file '%s'\n", file_names[0]);
             pr_printf("output overwrite pedigree file '%s.out'\n", file_names[0]);
             pr_nl();
@@ -592,23 +661,35 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
         void file_trailer() {
             pr_nl();
         }
-    } *xp1A = new kin_xx_par_varA(Top);
-    xp1A->fileloop       = xp1A;
-    xp1A->file_names     = file_names;
+    } *xp1A = new kin_xx_par_varA(Top, floop1A);
+    xp1A->file_names = file_names;
     xp1A->load_formats(5, 5, -1);   //?
-    xp1A->iterate();
+
+    floop1A->iterate();
+
     delete xp1A;
+    delete floop1A;
 
-    struct kin_xx_par_varB: public fileloop::both, dataloop::ped_per {
-        typedef char *str;
-        str *file_names;
-        int i;
-
-        kin_xx_par_varB(linkage_ped_top *Top) : fileloop::both(Top), dataloop::ped_per(Top) { }
+/*
+    struct kin_xx_par_varB_loop: public fileloop::both {
+        kin_xx_par_varB_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             i = 0;
             mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
             data_loop(*_opath, file_names[7], "a");
+        }
+    } *floop = new kin_xx_par_varB_loop(Top);
+*/
+
+    FLPboth *floop1B = new FLPboth(Top, file_names[7], "a");
+    floop1B->file_type = "        PANGAEA chr var  par file:  ";
+
+    struct kin_xx_par_varB: public dataloop::ped_per {
+        int i;
+
+        kin_xx_par_varB(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+        void file_header() {
+            i = 0;
         }
         void ped_start() {
             pr_printf("compute component %d inbreeding coeff ", ++i);
@@ -622,23 +703,34 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
         void file_trailer() {
             pr_nl();
         }
-    } *xp1B = new kin_xx_par_varB(Top);
-    xp1B->fileloop       = xp1B;
-    xp1B->file_names     = file_names;
+    } *xp1B = new kin_xx_par_varB(Top, floop1B);
     xp1B->load_formats(5, 5, -1);   //?
-    xp1B->iterate();
+
+    floop1B->iterate();
+
     delete xp1B;
+    delete floop1B;
 
-    struct kin_xx_par_varC: public fileloop::both, dataloop::ped_per {
-        typedef char *str;
-        str *file_names;
-        int i;
-
-        kin_xx_par_varC(linkage_ped_top *Top) : fileloop::both(Top), dataloop::ped_per(Top) { }
+/*
+    struct kin_xx_par_varC_loop: public fileloop::both {
+        kin_xx_par_varC_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             i = 0;
             mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
             data_loop(*_opath, file_names[7], "a");
+        }
+    } *floop = new kin_xx_par_varC_loop(Top);
+*/
+
+    FLPboth *floop1C = new FLPboth(Top, file_names[7], "a");
+    floop1C->file_type = "        PANGAEA chr var  par file:  ";
+
+    struct kin_xx_par_varC: public dataloop::ped_per {
+        int i;
+
+        kin_xx_par_varC(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+        void file_header() {
+            i = 0;
         }
         void ped_start() {
             pr_printf("compute component %d two-locus inbreeding coeff ", ++i);
@@ -652,54 +744,71 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
         void file_trailer() {
             pr_nl();
         }
-    } *xp1C = new kin_xx_par_varC(Top);
-    xp1C->fileloop       = xp1C;
-    xp1C->file_names     = file_names;
+    } *xp1C = new kin_xx_par_varC(Top, floop1C);
     xp1C->load_formats(5, 5, -1);   //?
-    xp1C->iterate();
+
+    floop1C->iterate();
+
     delete xp1C;
+    delete floop1C;
 
-    struct kin_par_user: public fileloop::trait, dataloop::null {
-        typedef char *str;
-        str *file_names;
-
-        kin_par_user(linkage_ped_top *Top) : fileloop::trait(Top), dataloop::null(Top) { }
+/*
+    struct kin_par_user_loop: public fileloop::trait {
+        kin_par_user_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::trait(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             data_loop(*_opath, file_names[10]);
         }
+    } *floop = new kin_par_user_loop(Top);
+*/
+
+    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    floop2->file_type = "        PANGAEA user par file:      ";
+
+    struct kin_par_user: public dataloop::null {
+
+        kin_par_user(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { }
         void inner() {
             pr_printf("set printlevel 5\n");
             pr_printf("# output pedigree chronological\n");
 
         }
-    } *xp2 = new kin_par_user(Top);
-    xp2->fileloop       = xp2;
-    xp2->file_names     = file_names;
-    xp2->iterate(); 
+    } *xp2 = new kin_par_user(Top, floop2);
+
+    floop2->iterate(); 
+
     delete xp2;
+    delete floop2;
 }
 
 static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
 
-    struct translink_xx_par_var: public fileloop::both, dataloop::null {
+    struct translink_xx_par_var_loop: public FLPboth {
+        translink_xx_par_var_loop(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
+            FLPboth(Top, f_name, f_mode) {}
+
+//HERE
+        void make_file() {
+            if (_ftte == 0) {
+            } else if (_ftte->Type == AFFECTION && _ftte->Pheno->Props.Affection.ClassCnt > 1) {
+                warnvf("%s: Trait with Liability Class is not supported.  Trait will be ignored.\n", _ftte->LocusName);
+            } else if (_ftte->Type == QUANT) {
+                warnvf("%s: QUANT type is not supported.  Trait will be ignored.\n", _ftte->LocusName);
+            }
+            mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_name);
+            _dataloop->data_loop(*_opath, file_name);
+        }
+    } *floop1 = new translink_xx_par_var_loop(Top, file_names[7], "w");
+//  FLPboth *floop = new FLPboth(Top);
+
+    struct translink_xx_par_var: public dataloop::null {
         typedef char *str;
         str *file_names;
         char pfx[4];
 
-        translink_xx_par_var(linkage_ped_top *Top) : fileloop::both(Top), dataloop::null(Top) {
+        translink_xx_par_var(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
-        }
-        void make_file() {
-            if (fileloop->_ftte == 0) {
-            } else if (fileloop->_ftte->Type == AFFECTION && fileloop->_ftte->Pheno->Props.Affection.ClassCnt > 1) {
-                warnvf("%s: Trait with Liability Class is not supported.  Trait will be ignored.\n", _ftte->LocusName);
-            } else if (fileloop->_ftte->Type == QUANT) {
-                warnvf("%s: QUANT type is not supported.  Trait will be ignored.\n", fileloop->_ftte->LocusName);
-            }
-            mssgvf("        PANGAEA chr var  par file:  %s/%s\n", *_opath, file_names[7]);
-            data_loop(*_opath, file_names[7]);
         }
         void inner () {
             if (_tte == 0) {
@@ -728,23 +837,35 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
                 }
             }
         }
-    } *xp1 = new translink_xx_par_var(Top);
-    xp1->fileloop       = xp1;
-    xp1->file_names     = file_names;
-    xp1->iterate();
-    delete xp1;
+    } *xp1 = new translink_xx_par_var(Top, floop1);
 
-    struct translink_par_user: public fileloop::trait, dataloop::null {
+    xp1->file_names     = file_names;
+
+    floop1->iterate();
+
+    delete xp1;
+    delete floop1;
+
+/*
+    struct translink_par_user_loop: public fileloop::trait {
+        translink_par_user_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::trait(Top) { }
+        void make_file() {
+            mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
+            data_loop(*_opath, file_names[10]);
+        }
+    } *floop = new translink_par_user_loop(Top);
+*/
+
+    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    floop2->file_type = "        PANGAEA user par file:      ";
+
+    struct translink_par_user: public dataloop::null {
         typedef char *str;
         str *file_names;
         char pfx[4];
 
-        translink_par_user(linkage_ped_top *Top) : fileloop::trait(Top), dataloop::null(Top) {
+        translink_par_user(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
-        }
-        void make_file() {
-            mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
-            data_loop(*_opath, file_names[10]);
         }
         void inner() {
             pr_printf("input extra file '%s%s.extra'\n", pfx, file_names[6]);
@@ -762,11 +883,14 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
             pr_printf("set MC iterations 1\n");
             pr_printf("set proband gametes 202 0 202 1\n");
         }
-    } *xp2 = new translink_par_user(Top);
-    xp2->fileloop       = xp2;
+    } *xp2 = new translink_par_user(Top, floop2);
+
     xp2->file_names     = file_names;
-    xp2->iterate(); 
+
+    floop2->iterate();
+
     delete xp2;
+    delete floop2;
 
     sh_util *Xpgm = new sh_util(Top);
     char outfl[FILENAME_LENGTH];
@@ -793,22 +917,33 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
 
 static void write_PANGAEA_par_lod(linkage_ped_top *Top, char *file_names[], char *pgm, int subopt)
 {
-    par_var *xp1 = new par_var(Top);
-    xp1->fileloop       = xp1;
-    xp1->file_names     = file_names;
-    xp1->iterate();
+    par_var_loop *floop1 = new par_var_loop(Top, file_names[7], "w");
+    floop1->file_type    = "        PANGAEA chr var  par file:  ";
+
+    par_var *xp1 = new par_var(Top, floop1);
+    xp1->file_names = file_names;
+    floop1->iterate();
+
     delete xp1;
+    delete floop1;
 
-    struct lod_par_user: public fileloop::trait, dataloop::null {
-        typedef char *str;
-        str *file_names;
-        int subopt;
-
-        lod_par_user(linkage_ped_top *Top) : fileloop::trait(Top), dataloop::null(Top) { }
+/*
+    struct lod_par_user_loop: public fileloop::trait {
+        lod_par_user_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::trait(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             data_loop(*_opath, file_names[10]);
         }
+    } *floop = new lod_par_user_loop(Top);
+, file_names[7], "w"*/
+
+    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    floop2->file_type = "        PANGAEA user par file:      ";
+
+    struct lod_par_user: public dataloop::null {
+        int subopt;
+
+        lod_par_user(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { }
         void inner() {
             pr_printf("#For default seeds comment out the following lines\n");
             pr_printf("#To save seeds remove comments\n");
@@ -845,38 +980,51 @@ static void write_PANGAEA_par_lod(linkage_ped_top *Top, char *file_names[], char
             }
 
         }
-    } *xp2 = new lod_par_user(Top);
-    xp2->fileloop       = xp2;
-    xp2->file_names     = file_names;
+    } *xp2 = new lod_par_user(Top, floop2);
     xp2->subopt         = subopt;
-    xp2->iterate(); 
-    delete xp2;
 
-    liability_traits *xp3 = new liability_traits(Top);
-    xp3->fileloop       = xp3;
-    xp3->file_names     = file_names;
-    xp3->iterate();
+    floop2->iterate(); 
+    delete xp2;
+    delete floop2;
+
+    liability_traits_loop *floop3 = new liability_traits_loop(Top);
+
+    liability_traits *xp3 = new liability_traits(Top, floop3);
+    floop3->iterate();
+
     delete xp3;
+    delete floop3;
 }
 
 static void write_PANGAEA_par_ibd_tests(linkage_ped_top *Top, char *file_names[], char *pgm, int subopt)
 {
-    par_var *xp1 = new par_var(Top);
-    xp1->fileloop       = xp1;
-    xp1->file_names     = file_names;
-    xp1->iterate();
+    par_var_loop *floop1 = new par_var_loop(Top, file_names[7], "w");
+    floop1->file_type    = "        PANGAEA chr var  par file:  ";
+
+    par_var *xp1 = new par_var(Top, floop1);
+    xp1->file_names = file_names;
+
+    floop1->iterate();
     delete xp1;
+    delete floop1;
 
-    struct lod_par_user: public fileloop::trait, dataloop::null {
-        typedef char *str;
-        str *file_names;
-        int subopt;
-
-        lod_par_user(linkage_ped_top *Top) : fileloop::trait(Top), dataloop::null(Top) { }
+/*
+    struct lod_par_user_loop: public fileloop::trait {
+        lod_par_user_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::trait(Top) { }
         void make_file() {
             mssgvf("        PANGAEA user par file:      %s/%s\n", *_opath, file_names[10]);
             data_loop(*_opath, file_names[10]);
         }
+    } *floop = new lod_par_user_loop(Top);
+*/
+
+    FLPtrait *floop2 = new FLPtrait(Top, file_names[10], "w");
+    floop2->file_type = "        PANGAEA user par file:      ";
+
+    struct lod_par_user: public dataloop::null {
+        int subopt;
+
+        lod_par_user(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { }
         void inner() {
             pr_printf("#For default seeds comment out the following lines\n");
             pr_printf("#To save seeds remove comments\n");
@@ -911,18 +1059,21 @@ static void write_PANGAEA_par_ibd_tests(linkage_ped_top *Top, char *file_names[]
                 pr_printf("set like lambda-p model grid 6 9\n");
             }
         }
-    } *xp2 = new lod_par_user(Top);
-    xp2->fileloop       = xp2;
-    xp2->file_names     = file_names;
+    } *xp2 = new lod_par_user(Top, floop2);
     xp2->subopt         = subopt;
-    xp2->iterate(); 
-    delete xp2;
 
-    liability_traits *xp3 = new liability_traits(Top);
-    xp3->fileloop       = xp3;
-    xp3->file_names     = file_names;
-    xp3->iterate();
+    floop2->iterate(); 
+
+    delete xp2;
+    delete floop2;
+
+    liability_traits_loop *floop3 = new liability_traits_loop(Top);
+
+    liability_traits *xp3 = new liability_traits(Top, floop3);
+    floop3->iterate();
+
     delete xp3;
+    delete floop3;
 }
 
 static double get_gp(ext_linkage_locus_top *EXLTop, int LType, int chr, char *snp, int m, int choice)
@@ -949,16 +1100,23 @@ static double get_gp(ext_linkage_locus_top *EXLTop, int LType, int chr, char *sn
 static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subopt)
 {
 
-    struct PANGAEA_map_names: public fileloop::chr, dataloop::loci {
-        typedef char *str;
-        str *file_names;
-        int token;
-
-        PANGAEA_map_names(linkage_ped_top *Top) : fileloop::chr(Top), dataloop::loci(Top) {  }
+/*
+    struct PANGAEA_map_names_loop: public fileloop::chr {
+        PANGAEA_map_names_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
         void make_file() {
             mssgvf("        PANGAEA names map file:     %s/%s\n", *_opath, file_names[1]);
             data_loop(*_opath, file_names[1]);
         }
+    } *floop = new PANGAEA_map_names_loop(Top);
+*/
+
+    FLPchr *floop = new FLPchr(Top, file_names[1], "w");
+    floop->file_type = "        PANGAEA names map file:     ";
+
+    struct PANGAEA_map_names: public dataloop::loci {
+        int token;
+
+        PANGAEA_map_names(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) {  }
         void file_header() {
             pr_printf("set marker names ");
             token = 0;
@@ -971,32 +1129,41 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
             pr_nl();
         }
 
-    } *xp = new PANGAEA_map_names(Top);
-    xp->fileloop       = xp;
-    xp->file_names     = file_names;
-    xp->iterate(); 
-    delete xp;
+    } *xp = new PANGAEA_map_names(Top, floop);
 
-    struct PANGAEA_map_dist: public fileloop::chr, dataloop::loci {
-        typedef char *str;
-        str *file_names;
+    floop->iterate(); 
+
+    delete xp;
+    delete floop;
+
+/*
+    struct PANGAEA_map_dist_loop: public fileloop::chr {
+        PANGAEA_map_dist_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
+        void make_file() {
+            ogp = 0 - delta;
+            mssgvf("        PANGAEA dist map file:      %s/%s\n", *_opath, file_names[1]);
+            data_loop(*_opath, file_names[1], "a");
+        }
+    } *floop = new PANGAEA_map_dist_loop(Top);
+*/
+
+    FLPchr *floop1 = new FLPchr(Top, file_names[1], "a");
+    floop1->file_type = "        PANGAEA dist map file:      ";
+
+    struct PANGAEA_map_dist: public dataloop::loci {
         double ogp;
         char *name;
         int choice;
         int token;
         double delta;
 
-        PANGAEA_map_dist(linkage_ped_top *Top) : fileloop::chr(Top), dataloop::loci(Top) {
+        PANGAEA_map_dist(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) {
             delta = .000001;
-        }
-        void make_file() {
-            ogp = 0 - delta;
-            mssgvf("        PANGAEA dist map file:      %s/%s\n", *_opath, file_names[1]);
-            data_loop(*_opath, file_names[1], "a");
         }
         void file_header() {
             pr_printf("map %s marker Kosambi positions ", name);
             token = 0;
+            ogp = 0 - delta;
         }
         void inner () {
             int chr = _tle->Marker->chromosome;
@@ -1016,43 +1183,50 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
     };
 
     if (genetic_distance_sex_type_map == SEX_AVERAGED_MAP) {
-        PANGAEA_map_dist *xp1 = new PANGAEA_map_dist(Top);
-        xp1->fileloop   = xp1;
-        xp1->file_names = file_names;
+        PANGAEA_map_dist *xp1 = new PANGAEA_map_dist(Top, floop1);
         xp1->name       = (char *)"";
         xp1->choice     = 1;
-        xp1->iterate();
+        floop1->iterate();
         delete xp1;
+        delete floop1;
     } else {
-        PANGAEA_map_dist *xp1 = new PANGAEA_map_dist(Top);
-        xp1->fileloop   = xp1;
-        xp1->file_names = file_names;
+        PANGAEA_map_dist *xp1 = new PANGAEA_map_dist(Top, floop1);
         xp1->name       = (char *)"gender f";
         xp1->choice     = 2;
-        xp1->iterate();
+        floop1->iterate();
         delete xp1;
+        delete floop1;
 
-        xp1 = new PANGAEA_map_dist(Top);
-        xp1->fileloop   = xp1;
-        xp1->file_names = file_names;
+        floop1 = new FLPchr(Top, file_names[1], "a");
+        floop1->file_type = "        PANGAEA dist map file:      ";
+
+        xp1 = new PANGAEA_map_dist(Top, floop1);
         xp1->name       = (char *)"gender m";
         xp1->choice     = 3;
-        xp1->iterate();
+        floop1->iterate();
         delete xp1;
+        delete floop1;
     }
-
-    struct PANGAEA_map_freq: public fileloop::chr, dataloop::loci {
-        typedef char *str;
-        str *file_names;
-        int i;
-        int token;
-
-        PANGAEA_map_freq(linkage_ped_top *Top) : fileloop::chr(Top), dataloop::loci(Top) { i = 0; }
+/*
+    struct PANGAEA_map_freq_loop: public fileloop::chr {
+        PANGAEA_map_freq_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
         void make_file() {
             mssgvf("        PANGAEA freq map file:      %s/%s\n", *_opath, file_names[1]);
             data_loop(*_opath, file_names[1], "a");
         }
-        void chr_start() { i = 0; }
+    } *floop = new PANGAEA_map_freq_loop(Top);
+*/
+
+    FLPchr *floop2 = new FLPchr(Top, file_names[1], "a");
+    floop2->file_type = "        PANGAEA freq map file:      ";
+
+    struct PANGAEA_map_freq: public dataloop::loci {
+        int i;
+        int token;
+
+        PANGAEA_map_freq(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { i = 0; }
+//HERE        void chr_start() { i = 0; }
+        void file_header() { i = 0; }
         void inner() {
             int j;
             pr_printf("set marker %d allele freqs ", ++i);
@@ -1062,24 +1236,32 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
             }
             pr_nl();
         }
-    } *xp2 = new PANGAEA_map_freq(Top);
-    xp2->fileloop       = xp2;
-    xp2->file_names     = file_names;
-    xp2->iterate(); 
+    } *xp2 = new PANGAEA_map_freq(Top, floop2);
+
+    floop2->iterate(); 
+
     delete xp2;
+    delete floop2;
 
-    struct PANGAEA_map_data: public fileloop::chr, dataloop::ped_per_loci {
-        typedef char *str;
-        str *file_names;
-        int token;
-        int subopt;
-        int skip;
-
-        PANGAEA_map_data(linkage_ped_top *Top) : fileloop::chr(Top), dataloop::ped_per_loci(Top) { }
+/*
+    struct PANGAEA_map_data_loop: public fileloop::chr {
+        PANGAEA_map_data_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
         void make_file() {
             mssgvf("        PANGAEA data map file:      %s/%s\n", *_opath, file_names[1]);
             data_loop(*_opath, file_names[1], "a");
         }
+    } *floop = new PANGAEA_map_data_loop(Top);
+*/
+
+    FLPchr *floop3 = new FLPchr(Top, file_names[1], "a");
+    floop3->file_type = "        PANGAEA data map file:      ";
+
+    struct PANGAEA_map_data: public dataloop::ped_per_loci {
+        int token;
+        int subopt;
+        int skip;
+
+        PANGAEA_map_data(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
         void file_header() { 
             int i, j = NumChrLoci;
             for (i = 0; i < num_traits; i++) { // num_traits as a count includes space for -1 and -99
@@ -1112,13 +1294,14 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
             if (skip) return;
             pr_nl();
         }
-    } *xp3 = new PANGAEA_map_data(Top);
-    xp3->fileloop       = xp3;
-    xp3->file_names     = file_names;
+    } *xp3 = new PANGAEA_map_data(Top, floop3);
     xp3->subopt         = subopt;
     xp3->load_formats(5, 5, -1);   //?
-    xp3->iterate(); 
+
+    floop3->iterate();
+
     delete xp3;
+    delete floop3;
 }
 
 void CLASS_PANGAEA::create_output_file(

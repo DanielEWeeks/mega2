@@ -34,11 +34,14 @@
 
 #include "linkage_ext.h"
 
-class fileloop {
+namespace dataloop {
+    class dataloop_data;
+};
+
+namespace fileloop {
 ////////////////////////////////////////////////////////////////
 //                       Outer loops
 ////////////////////////////////////////////////////////////////
-public:
     class fileloop_data {
     public:
         fileloop_data() {
@@ -66,9 +69,9 @@ public:
         linkage_ped_top  *_fTop;   // copy same as dataloop
         linkage_locus_top  *_fLTop;// copy same as dataloop
 
+        dataloop::dataloop_data *_dataloop; // who called
     };
 
-public:
     class once: public fileloop_data {
     public:
         once(linkage_ped_top *Top) : fileloop_data(Top) {
@@ -90,7 +93,6 @@ public:
         virtual void make_file() {}
     };
 
-public:
     class both: public fileloop_data {
     public:
         both(linkage_ped_top *Top) : fileloop_data(Top) {
@@ -116,7 +118,6 @@ public:
         virtual void chr_end() {}
     };
 
-public:
     class chr: public fileloop_data {
     public:
         chr(linkage_ped_top *Top) : fileloop_data(Top) {
@@ -140,7 +141,6 @@ public:
         virtual void chr_end() {}
     };
 
-public:
     class trait: public fileloop_data {
     public:
         trait(linkage_ped_top *Top) : fileloop_data(Top) {
@@ -167,20 +167,25 @@ public:
 ////////////////////////////////////////////////////////////////
 //                       inner loops
 ////////////////////////////////////////////////////////////////
-class dataloop {
-public:
+namespace dataloop {
     class dataloop_data: public person_locus_entry {
     public:
-        dataloop_data(linkage_ped_top *Top) : person_locus_entry(Top) { }
+        fileloop::fileloop_data *_fileloop;
 
-        fileloop::fileloop_data *fileloop;
+        dataloop_data(linkage_ped_top *Top) : person_locus_entry(Top) { }
+        dataloop_data(linkage_ped_top *Top, fileloop::fileloop_data *fl) : person_locus_entry(Top) {
+            _fileloop = fl;
+            fl->_dataloop = this;
+        }
+        virtual void data_loop(const char *dir, const char *fl_name, const char *mode) {};
+        virtual void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
     };
 
-public:
     class null: public dataloop_data {
     public:
 
         null(linkage_ped_top *Top) : dataloop_data(Top) { }
+        null(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop_data(Top, fl) { }
        ~null() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
@@ -188,10 +193,10 @@ public:
         virtual void inner() {}
     };
 
-public:
     class ped_per: public dataloop_data {
     public:
         ped_per(linkage_ped_top *Top) : dataloop_data(Top) { }
+        ped_per(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop_data(Top, fl) { }
        ~ped_per() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
@@ -201,7 +206,6 @@ public:
         virtual void ped_end() {};
     };
 
-public:
     class ped_per_trait: public dataloop_data {
         int *trp;
         bool trait_affect;
@@ -212,7 +216,11 @@ public:
             trait_affect = false;
             trait_quant  = false;
         }
-
+        ped_per_trait(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop_data(Top, fl) {
+            trp          = global_trait_entries;
+            trait_affect = false;
+            trait_quant  = false;
+        }
        ~ped_per_trait() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
@@ -224,7 +232,6 @@ public:
         virtual void ped_end() {};
     };
 
-public:
     class trait_ped_per: public dataloop_data {
         int *trp;
         bool trait_affect;
@@ -235,7 +242,11 @@ public:
             trait_affect = false;
             trait_quant  = false;
         }
-
+        trait_ped_per(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop_data(Top, fl) {
+            trp          = global_trait_entries;
+            trait_affect = false;
+            trait_quant  = false;
+        }
        ~trait_ped_per() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
@@ -247,12 +258,14 @@ public:
         virtual void trait_end() {};
     };
 
-public:
     class ped_per_loci: public dataloop_data {
     public:
         int _loci_allele_limit;
 
         ped_per_loci(linkage_ped_top *Top) : dataloop_data(Top) {
+            _loci_allele_limit = 0;
+        }
+        ped_per_loci(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop_data(Top, fl) {
             _loci_allele_limit = 0;
         }
        ~ped_per_loci() {}
@@ -266,12 +279,14 @@ public:
         virtual void ped_end() {}
     };
 
-public:
     class loci_ped_per: public dataloop_data {
     public:
         int _loci_allele_limit;
 
         loci_ped_per(linkage_ped_top *Top) : dataloop_data(Top) {
+            _loci_allele_limit = 0;
+        }
+        loci_ped_per(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop_data(Top, fl) {
             _loci_allele_limit = 0;
         }
        ~loci_ped_per() {}
@@ -285,12 +300,14 @@ public:
         virtual void loci_end() {}
     };
 
-public:
     class loci: public dataloop_data {
     public:
         int _loci_allele_limit;
 
         loci(linkage_ped_top *Top) : dataloop_data(Top) {
+            _loci_allele_limit = 0;
+        }
+        loci(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop_data(Top, fl) {
             _loci_allele_limit = 0;
         }
        ~loci() {}

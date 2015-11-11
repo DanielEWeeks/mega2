@@ -217,9 +217,9 @@ void fileloop::trait::iterate()
 
 void dataloop::null::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
-    _tte    = fileloop->_ftte;
-    _numchr = fileloop->_fnumchr;
-    _trait  = fileloop->_ftrait;
+    _tte    = _fileloop->_ftte;
+    _numchr = _fileloop->_fnumchr;
+    _trait  = _fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -231,9 +231,9 @@ void dataloop::null::data_loop(const char *dir, const char *fl_name, const char 
 void dataloop::ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
 
-    _tte    = fileloop->_ftte;
-    _numchr = fileloop->_fnumchr;
-    _trait  = fileloop->_ftrait;
+    _tte    = _fileloop->_ftte;
+    _numchr = _fileloop->_fnumchr;
+    _trait  = _fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -263,9 +263,9 @@ void dataloop::ped_per_trait::data_loop(const char *dir, const char *fl_name, co
     int tr;
     int *retrp;
 
-    _tte    = fileloop->_ftte;
-    _numchr = fileloop->_fnumchr;
-    _trait  = fileloop->_ftrait;
+    _tte    = _fileloop->_ftte;
+    _numchr = _fileloop->_fnumchr;
+    _trait  = _fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -314,9 +314,9 @@ void dataloop::trait_ped_per::data_loop(const char *dir, const char *fl_name, co
     int tr;
     int *retrp;
 
-    _tte    = fileloop->_ftte;
-    _numchr = fileloop->_fnumchr;
-    _trait  = fileloop->_ftrait;
+    _tte    = _fileloop->_ftte;
+    _numchr = _fileloop->_fnumchr;
+    _trait  = _fileloop->_ftrait;
 
     filep_open(dir, fl_name, mode);
 
@@ -365,9 +365,9 @@ void dataloop::ped_per_loci::data_loop(const char *dir, const char *fl_name, con
 {
     int m;
 
-     _tte   = fileloop->_ftte;
-    _numchr = fileloop->_fnumchr;
-    _trait  = fileloop->_ftrait;
+     _tte   = _fileloop->_ftte;
+    _numchr = _fileloop->_fnumchr;
+    _trait  = _fileloop->_ftrait;
 
    // Loop through the Loci...
     markers_on_chromosome(_numchr);
@@ -419,9 +419,9 @@ void dataloop::loci_ped_per::data_loop(const char *dir, const char *fl_name, con
 {
     int m;
 
-     _tte   = fileloop->_ftte;
-    _numchr = fileloop->_fnumchr;
-    _trait  = fileloop->_ftrait;
+     _tte   = _fileloop->_ftte;
+    _numchr = _fileloop->_fnumchr;
+    _trait  = _fileloop->_ftrait;
 
     // Loop through the SELECTED Loci (by count)...
     Tod tod_lpp_markers("get markers_on_chromosomes");
@@ -477,9 +477,9 @@ void dataloop::loci::data_loop(const char *dir, const char *fl_name, const char 
 {
     int m;
 
-     _tte   = fileloop->_ftte;
-    _numchr = fileloop->_fnumchr;
-    _trait  = fileloop->_ftrait;
+     _tte   = _fileloop->_ftte;
+    _numchr = _fileloop->_fnumchr;
+    _trait  = _fileloop->_ftrait;
 
     // Loop through the SELECTED Loci (by count)...
     markers_on_chromosome(_numchr);

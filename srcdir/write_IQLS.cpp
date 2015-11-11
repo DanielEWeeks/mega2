@@ -46,6 +46,7 @@
 
 #include "loop.h"
 #include "sh_util.h"
+#include "loop_templates.h"
 
 #include "class_old.h"
 
@@ -163,13 +164,12 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
    different families are listed.
 
 */
-    struct IQLS_pedigree: public fileloop::both, dataloop::ped_per {
+    FLPboth *floop = new FLPboth(Top, Outfile_Names[0], "w");
+    floop->file_type = "        IQLS pedigree file:        ";
 
-        IQLS_pedigree(linkage_ped_top *Top) : fileloop::both(Top), dataloop::ped_per(Top) { }
-        void make_file() {
-            msgvf("        IQLS pedigree file:        %s/%s\n", *_opath, Outfile_Names[0]);
-            data_loop(*_opath, Outfile_Names[0]);
-        }
+    struct IQLS_pedigree: dataloop::ped_per {
+
+        IQLS_pedigree(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
         void inner()  {
             pr_id();
             pr_parent();
@@ -177,13 +177,13 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
             pr_aff();
             pr_nl();
         }
-    } *xp = new IQLS_pedigree(Top);
-
-    xp->fileloop = xp;
+    } *xp = new IQLS_pedigree(Top, floop);
     xp->load_formats(fwid, pwid, -1);
-    xp->iterate();
+
+    floop->iterate();
 
     delete xp;
+    delete floop;
 }
 
 static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, int fwid, int mwid)
@@ -233,13 +233,22 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 
 */
 
-    struct IQLS_marker: public fileloop::both, dataloop::loci_ped_per {
-
-        IQLS_marker(linkage_ped_top *Top) : fileloop::both(Top), dataloop::loci_ped_per(Top) { }
+/*
+    struct IQLS_marker_loop: public fileloop::both {
+        IQLS_marker_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             msgvf("        IQLS marker file:          %s/%s\n", *_opath, Outfile_Names[1]);
             data_loop(*_opath, Outfile_Names[1], "w");
         }
+    } *floop = new IQLS_marker_loop(Top);
+*/
+
+    FLPboth *floop = new FLPboth(Top, Outfile_Names[1], "w");
+    floop->file_type = "        IQLS marker file:          ";
+
+    struct IQLS_marker: public dataloop::loci_ped_per {
+
+        IQLS_marker(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) { }
         void file_header() {
             int ped, per;
             linkage_ped_rec *tpe;
@@ -324,48 +333,65 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
         void loci_end() {
             pr_nl();
         }
-    } *xp = new IQLS_marker(Top);
-
-    xp->fileloop = xp;
+    } *xp = new IQLS_marker(Top, floop);
     xp->load_formats(fwid, pwid, mwid);
-    xp->iterate();
+
+    floop->iterate();
 
     delete xp;
+    delete floop;
 }
 
 static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]) {
-    struct IQLS_parameter: public fileloop::chr, dataloop::null {
-
-        IQLS_parameter(linkage_ped_top *Top) : fileloop::chr(Top), dataloop::null(Top) {}
+/*
+    struct IQLS_parameter_loop: public fileloop::chr {
+        IQLS_parameter_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
         void make_file() {
             msgvf("        IQLS parameter file:       %s/%s\n", *_opath, Outfile_Names[2]);
             data_loop(*_opath, Outfile_Names[2]);
         }
+    } *floop = new IQLS_parameter_loop(Top);
+*/
+
+    FLPchr *floop = new FLPchr(Top, Outfile_Names[2], "w");
+    floop->file_type = "        IQLS parameter file:       ";
+
+    struct IQLS_parameter: public dataloop::null {
+
+        IQLS_parameter(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) {}
         void inner() {
             pr_printf("0.05\n");
             pr_printf("2\n");
         }
-    } *xp = new IQLS_parameter(Top);
+    } *xp = new IQLS_parameter(Top, floop);
 
-    xp->fileloop = xp;
-
-    xp->iterate();
+    floop->iterate();
 
     delete xp;
+    delete floop;
 }
 
 static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file_names[],
                                     int first_time)
 {
-    struct IQLS_shell_script: public fileloop::both, sh_util {
-        typedef char *str;
-        str *file_names;
-
-        IQLS_shell_script(linkage_ped_top *Top) : fileloop::both(Top), sh_util(Top) { }
+/*
+    struct IQLS_shell_script_loop: public fileloop::both {
+        IQLS_shell_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             msgvf("        IQLS shell script file:    %s/%s\n", *_opath, file_names[3]);
             run_loop(*_opath, file_names[3]);
         }
+    } *floop = new IQLS_shell_script_loop(Top);
+*/
+
+    FLPboth *floop = new FLPboth(Top, file_names[3], "w");
+    floop->file_type = "        IQLS shell script file:    ";
+
+    struct IQLS_shell_script: public sh_util {
+        typedef char *str;
+        str *file_names;
+
+        IQLS_shell_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : sh_util(Top, fl) { }
         void file_header() {
             sh_shell_type();
             sh_id();
@@ -381,8 +407,8 @@ static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file
             char cmd[2*FILENAME_LENGTH];
             char out_fl[2*FILENAME_LENGTH];
 
-            if (_fnumchr > 0)
-                pr_printf("echo Running Idcoefs and IQLS on chromosome %d\n", _fnumchr);
+            if (_numchr > 0)
+                pr_printf("echo Running Idcoefs and IQLS on chromosome %d\n", _numchr);
 
             sprintf(cmd, "$_IDCOEFS -p %s -s %s -o IBDfile\n", file_names[4], file_names[5]);
             sh_rm("IBDfile");
@@ -390,7 +416,7 @@ static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file
             fprintf_status_check_csh(_filep, "IDCOEFS", 1);
             sh_status("idcoefs", "IBDfile");
 
-            sprintf(out_fl, "IQLStest_out.%02d", _fnumchr);
+            sprintf(out_fl, "IQLStest_out.%02d", _numchr);
             sprintf(cmd, "$_IQLS -pheno %s -geno %s -r %s -ibd IBDfile\n", file_names[0], file_names[1], file_names[2]);
             sh_rm("IQLStest.out");
             sh_run("IQLS", cmd);
@@ -403,14 +429,13 @@ static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file
         void file_post() {
             chmod_X_file(path_);
         }
-    } *xp = new IQLS_shell_script(Top);
-
-    xp->fileloop   = xp;
+    } *xp = new IQLS_shell_script(Top, floop);
     xp->file_names = file_names;
 
-    xp->iterate();
+    floop->iterate();
 
     delete xp;
+    delete floop;
 }
 
 static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
@@ -431,21 +456,42 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
   NOTE the requirement regarding ORDERING of the pedigree!
 
 */
-    struct Idcoefs_pedigree: public fileloop::both, dataloop::ped_per {
-        ped_top *PedTreeTop;
-        int     *index;
-
-        Idcoefs_pedigree(linkage_ped_top *Top) : fileloop::both(Top), dataloop::ped_per(Top) { }
+/*
+    struct Idcoefs_pedigree_loop: public fileloop::both {
+        Idcoefs_pedigree_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             msgvf("        Idcoefs pedigree file:     %s/%s\n", *_opath, Outfile_Names[4]);
             data_loop(*_opath, Outfile_Names[4]);
         }
+    } *floop = new Idcoefs_pedigree_loop(Top);
+*/
+
+//HERE             PedTreeTop = convert_to_pedtree(_Top, 0);
+//HERE    FLPboth *floop = new FLPboth(PedTreeTop, Outfile_Names[4], "w");
+    FLPboth *floop = new FLPboth(Top, Outfile_Names[4], "w");
+    floop->file_type = "        Idcoefs pedigree file:     ";
+
+//    asm("int $3");
+    struct Idcoefs_pedigree: public dataloop::ped_per {
+        ped_top *PedTreeTop;
+        int     *index;
+
+        Idcoefs_pedigree(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) {
+	    PedTreeTop = 0;
+	}
+/*
         void trait_start() {
             PedTreeTop = convert_to_pedtree(_Top, 0);
         }
+*/
         void ped_start() {
-            index = CALLOC((size_t) PedTreeTop->PedTree[_ped].EntryCnt, int);
-            index_renumber_ped(&(PedTreeTop->PedTree[_ped]), index);
+/*
+	    if (PedTreeTop)
+		free_all_including_ped_top(PedTreeTop, NULL, NULL); }
+            PedTreeTop = convert_to_pedtree(_Top, 0);
+*/
+            this->index = CALLOC((size_t) PedTreeTop->PedTree[_ped].EntryCnt, int);
+            index_renumber_ped(&(PedTreeTop->PedTree[_ped]), this->index);
         }
         void inner() {
             _tpe = &(_Top->Ped[_ped].Entry[index[_per]]);
@@ -457,14 +503,20 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
             pr_nl();
         }
         void ped_end() { free(index); }
+/*
         void trait_end() { free_all_including_ped_top(PedTreeTop, NULL, NULL); }
-    } *xp = new Idcoefs_pedigree(Top);
-
-    xp->fileloop = xp;
+*/
+    } *xp = new Idcoefs_pedigree(Top, floop);
     xp->load_formats(fwid, pwid, -1);
-    xp->iterate();
+
+    xp->PedTreeTop = convert_to_pedtree(Top, 0);
+
+    floop->iterate();
+
+    free_all_including_ped_top(xp->PedTreeTop, NULL, NULL);
 
     delete xp;
+    delete floop;
 }
 
 int index_renumber_ped(ped_tree *Ped, int *index) {
@@ -535,14 +587,23 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
    himself/herself.
 
 */
-    struct IDcoefs_study : public fileloop::both, dataloop::ped_per {
-        int *eligible;
-
-        IDcoefs_study(linkage_ped_top *Top) : fileloop::both(Top), dataloop::ped_per(Top) { }
+/*
+    struct IDcoefs_study _loop: public fileloop::both {
+        IDcoefs_study _loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
         void make_file() {
             msgvf("        Idcoefs study file:        %s/%s\n", *_opath, Outfile_Names[5]);
             data_loop(*_opath, Outfile_Names[5]);
         }
+    } *floop = new IDcoefs_study _loop(Top);
+*/
+
+    FLPboth *floop = new FLPboth(Top, Outfile_Names[5], "w");
+    floop->file_type = "        Idcoefs study file:        ";
+
+    struct IDcoefs_study : public dataloop::ped_per {
+        int *eligible;
+
+        IDcoefs_study(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
         void ped_start () {
             eligible = CALLOC((size_t) (_Top->Ped[_ped].EntryCnt), int);
         }
@@ -583,13 +644,13 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
             }
             free(eligible);
         }
-    } *xp = new IDcoefs_study(Top);
-
-    xp->fileloop = xp;
+    } *xp = new IDcoefs_study(Top, floop);
     xp->load_formats(fwid, pwid, -1);
-    xp->iterate();
+
+    floop->iterate();
 
     delete xp;
+    delete floop;
 }
 
 /* This allows the

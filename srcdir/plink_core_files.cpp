@@ -36,6 +36,8 @@
 #include "tod.hh"
 
 #include "loop.h"
+#include "sh_util.h"
+#include "loop_templates.h"
 
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
@@ -80,13 +82,12 @@ void CLASS_PLINK_CORE::replace_chr_number(char *file_names[], int numchr) {
 static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
                                 const int pwid, const int fwid, const int mwid)
 {
-    struct plink_core_lgen: public fileloop::chr, dataloop::loci_ped_per {
+    FLPchr *floop = new FLPchr(Top, Outfile_Names[3], "w");
+    floop->file_type = "        PLINK lgen file:           ";
 
-        plink_core_lgen(linkage_ped_top *Top) : fileloop::chr(Top), dataloop::loci_ped_per(Top) {}
-        void make_file() {
-            mssgvf("        PLINK lgen file:           %s/%s\n", *_opath, Outfile_Names[3]);
-            data_loop(*_opath, Outfile_Names[3]);
-        }
+    struct plink_core_lgen: public dataloop::loci_ped_per {
+        plink_core_lgen(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) {}
+
         void inner() {
             if (!_allele1 || !_allele2) return;
             pr_id();
@@ -103,25 +104,24 @@ static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
             }
             pr_nl();
         }
-    } *sp = new plink_core_lgen(Top);
-
-    sp->fileloop = sp;
+    } *sp = new plink_core_lgen(Top, floop);
     sp->load_formats(fwid, pwid, mwid);
-    sp->iterate();
+
+    floop->iterate();
 
     delete sp;
+    delete floop;
 }
 
 static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
                              const int pwid, const int fwid)
 {
-    struct plink_core_pheno: public fileloop::once, dataloop::ped_per_trait {
+    FLPonce *floop = new FLPonce(Top, Outfile_Names[2], "w");
+    floop->file_type = "        PLINK phenotype file:      ";
 
-        plink_core_pheno(linkage_ped_top *Top) : fileloop::once(Top), dataloop::ped_per_trait(Top) {}
-        void make_file() {
-            msgvf("        PLINK phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
-            data_loop(*_opath, Outfile_Names[2]);
-        }
+    struct plink_core_pheno: public dataloop::ped_per_trait {
+        plink_core_pheno(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_trait(Top, fl) {}
+
         void file_header() {
             int tr;
             /* print the file header */
@@ -137,14 +137,13 @@ static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
         void per_start() { pr_id(); }
         void per_end()   { pr_nl(); }
         void inner()     { pr_pheno(); }
-    } *sp = new plink_core_pheno(Top);
-
-    sp->fileloop = sp;
+    } *sp = new plink_core_pheno(Top, floop);
     sp->load_formats(fwid, pwid, -1);
 
-    sp->iterate();
+    floop->iterate();
 
     delete sp;
+    delete floop;
 }
 
 void CLASS_PLINK_CORE::save_pheno_file(linkage_ped_top *Top,
@@ -312,14 +311,13 @@ static void write_PLINK_map(linkage_ped_top *LPTop,
     ext_linkage_locus_top *EXLTop = LPTop->EXLTop;
 #endif /* PLINK_MAP_FILE_COMMENTS */        
 
-    struct plink_core_map: public fileloop::chr, dataloop::null {
+    FLPchr *floop = new FLPchr(LPTop, Outfile_Names[1], "w");
+    floop->file_type = "        PLINK map file:            ";
+
+    struct plink_core_map: public dataloop::null {
+        plink_core_map(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) {}
         int generate_bim_file;
 
-        plink_core_map(linkage_ped_top *Top) : fileloop::chr(Top), dataloop::null(Top) {}
-        void make_file() {
-            mssgvf("        PLINK map file:            %s/%s\n", *_opath, Outfile_Names[1]);
-            data_loop(*_opath, Outfile_Names[1]);
-        }
         void file_header() {
             // It seems that PLINK map (.BIM) files cannot handle comments...
 #ifdef PLINK_MAP_FILE_COMMENTS
@@ -360,14 +358,13 @@ static void write_PLINK_map(linkage_ped_top *LPTop,
 #endif
 
         }
-    } *sp = new plink_core_map(LPTop);
-
-    sp->fileloop = sp;
+    } *sp = new plink_core_map(LPTop, floop);
     sp->generate_bim_file = generate_bim_file;
 
-    sp->iterate();
+    floop->iterate();
 
     delete sp;
+    delete floop;
 }
 
 void  create_PLINK_files(linkage_ped_top **LPedTop,

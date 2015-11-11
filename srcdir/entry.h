@@ -64,6 +64,9 @@ public:
 
 public:
     person_locus_entry() : file_ops() {
+        init();
+    }
+    void init() {
         // It's really nice to initialize everything to '0' so that when
         // the code blows up, you know that the variable was never written
         // too as opposed to someone wrote some funny number there...
@@ -78,7 +81,7 @@ public:
         _fwid = _pwid = _mwid = _trait = 0;
     }
     person_locus_entry(linkage_ped_top *Top) : file_ops() {
-        person_locus_entry();
+        init();
         if (Top != (linkage_ped_top *)NULL) {
             this->_Top = Top;
             _LTop   = Top->LocusTop;
