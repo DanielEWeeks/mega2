@@ -178,7 +178,6 @@ namespace dataloop {
             fl->_dataloop = this;
         }
         virtual void data_loop(const char *dir, const char *fl_name, const char *mode) {};
-        virtual void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
     };
 
     class null: public dataloop_data {

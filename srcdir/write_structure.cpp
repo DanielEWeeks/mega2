@@ -137,22 +137,14 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
                          const int pwid, const int fwid)
 {
     // #define MARKERNAMES      1  // (B) data file contains row of marker names
-/*
-    struct save_marker_names_loop: public fileloop::both {
-        save_marker_names_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            data_loop(*_opath, file_names[0]);
-        }
-    } *floop = new save_marker_names_loop(Top);
-*/
-
     FLPboth *floopsmn = new FLPboth(Top, file_names[0], "w");
     floopsmn->file_type = "";
 
     struct save_marker_names: public dataloop::loci {
+        save_marker_names(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { markers_i = -1; }
+
         int markers_i;
         
-        save_marker_names(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { markers_i = -1; }
         void file_header() {
             markers_i++;
         }
@@ -185,24 +177,18 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
 
         mapdistances = 1;
         // #define MAPDISTANCES     1  // (B) data file contains row of map distances between loci
-/*
-    struct save_genetic_distance_markers_loop: public fileloop::both {
-        save_genetic_distance_markers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-            void make_file() {
-                char *fn = file_names[(LoopOverChrm_save == 1 ? 0 : 8)];
-                data_loop(*_opath, fn, "a");
-            }
-    } *floop = new save_genetic_distance_markers_loop(Top);
-*/
 //HERE
         FLPboth *floopsgdM = new FLPboth(Top, file_names[LoopOverChrm_save == 1 ? 0 : 8], "a");
         floopsgdM->file_type = "";
 
         struct save_genetic_distance_markers: public dataloop::loci {
+            save_genetic_distance_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl, int LoopOverChrm_save) : dataloop::loci(Top, fl) {
+                this->LoopOverChrm_save = LoopOverChrm_save;
+            }
+
             double last_genetic_distance;
             int new_chromo, warnp, LoopOverChrm_save;
             
-            save_genetic_distance_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl, int LoopOverChrm_save) : dataloop::loci(Top, fl) { this->LoopOverChrm_save = LoopOverChrm_save; }
             void chr_start() {
                 new_chromo = 1;
             }
@@ -275,9 +261,11 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
     }
 
     struct save_pers_loop: public FLPboth {
-        int chr_i;
         save_pers_loop(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
             FLPboth(Top, f_name, f_mode) { chr_i = -1;}
+
+        int chr_i;
+
         void make_file() {
             if (_ftte != (linkage_locus_rec *)NULL) phenotype = 1;
 
@@ -287,17 +275,14 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
         }
     } *floop = new save_pers_loop(Top, file_names[0], "a");
     floop->file_type = "";
-/*
 
-    FLPboth *floop = new FLPboth(Top, file_names[X], "w");
-    floop->file_type = "";
-*/
     struct save_pers: public dataloop::ped_per_loci {
+        save_pers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { chr_i = -1; }
+
         typedef char *str;
         str *file_names;
         int PopDataPheno_i, personHasMarkers, chr_i;
         
-        save_pers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { chr_i = -1; }
         void file_header() {
             ++chr_i;
         }
@@ -364,7 +349,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
         void file_trailer() {
 //HERE
 //          mssgvf("        STRUCTURE Data File:          %s/%s\n", *fileloop->_opath, file_names[0]);
-            mssgvf("        STRUCTURE Data File:          %s/n", path_);
+            mssgvf("        STRUCTURE Data File:          %s\n", path_);
             if (numinds[chr_i] != _Top->IndivCnt) {
                 warnvf("%d People were filtered out because they were not genotyped at the selected markers.\n",
                        _Top->IndivCnt - numinds[chr_i]);
@@ -384,25 +369,16 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
 static void write_mainparams(linkage_ped_top *Top, char *file_names[],
                              const int pwid, const int fwid)
 {
-/*
-    struct save_mainparams_loop: public fileloop::both {
-        save_mainparams_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            mssgvf("        STRUCTURE mainparams:         %s/%s\n", *_opath, file_names[5]);
-            data_loop(*_opath, file_names[5]);
-        }
-    } *floop = new save_mainparams_loop(Top);
-*/
-
     FLPboth *floop = new FLPboth(Top, file_names[5], "w");
     floop->file_type = "        STRUCTURE mainparams:         ";
 
     struct save_mainparams: public dataloop::null {
+        save_mainparams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { markers_i = inds_i = -1; }
+
         typedef char *str;
         str *file_names;
         int markers_i, inds_i;
         
-        save_mainparams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { markers_i = inds_i = -1; }
         void inner () {
             //pr_printf("#define MAXPOPS          %d\n", _Top->PedCnt);
             pr_printf("#define MAXPOPS          3\n");
@@ -457,23 +433,14 @@ static void write_mainparams(linkage_ped_top *Top, char *file_names[],
 static void write_extraparams(linkage_ped_top *Top, char *file_names[],
 			      const int pwid, const int fwid)
 {
-/*
-    struct save_extraparams_loop: public fileloop::both {
-        save_extraparams_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            mssgvf("        STRUCTURE extraparams:         %s/%s\n", *_opath, file_names[7]);
-            data_loop(*_opath, file_names[7]);
-        }
-    } *floop = new save_extraparams_loop(Top);
-*/
-
     FLPboth *floop = new FLPboth(Top, file_names[7], "w");
     floop->file_type = "        STRUCTURE extraparams:         ";
 
     struct save_extraparams: public dataloop::null {
+        save_extraparams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { markers_i = -1; }
+
         int markers_i;
         
-        save_extraparams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { markers_i = -1; }
         void inner () {
             // Data taken from the file 'structure2.3.1_console/extraparams'...
             pr_printf("PROGRAM OPTIONS\n");
@@ -549,14 +516,7 @@ static void write_sh(linkage_ped_top *Top,
                     char *file_names[])
 {
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1);
-/*    
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-*/
+
     DTshell *sh = 0;
     if (top_shell) {
         sh = new DTshell(Top);
@@ -564,28 +524,19 @@ static void write_sh(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-/*
-    struct STRUCTURE_sh_script_loop: public fileloop::both {
-        STRUCTURE_sh_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            mssgvf("        STRUCTURE shell file:         %s/%s\n", *_opath, file_names[3]);
-            run_loop(*_opath, file_names[3]);
-        }
-    } *floop = new STRUCTURE_sh_script_loop(Top);
-*/
-
     FLPboth *floop = new FLPboth(Top, file_names[3], "w");
     floop->file_type = "        STRUCTURE shell file:         ";
 
     struct STRUCTURE_sh_script: public DTshell {
+        STRUCTURE_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl, analysis_type *analysis) : DTshell(Top, fl) {
+            this->analysis = analysis;
+        }
+
         typedef char *str;
         str *file_names;
         DTshell *sh;
         analysis_type *analysis;
         
-        STRUCTURE_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl, analysis_type *analysis) : DTshell(Top, fl) {
-            this->analysis = analysis;
-        }
         void file_header() {
             if (sh) sh->sh_sh(this);
             sh_shell_type();

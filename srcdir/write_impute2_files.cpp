@@ -131,27 +131,16 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
     use_iid = ni == siid.size();
     use_joint = !use_fid && !use_iid;
 
-/*
-    struct pseq_pheno_loop: public fileloop::once {
-        pseq_pheno_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::once(Top) { }
-        void make_file() {
-            msgvf("         PSEQ phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
-            data_loop(*_opath, Outfile_Names[2]);
-        }
-    } *floop = new pseq_pheno_loop(Top);
-*/
-
     FLPonce *floop = new FLPonce(Top, Outfile_Names[2], "w");
     floop->file_type = "         PSEQ phenotype file:      ";
 
     struct pseq_pheno: public dataloop::ped_per_trait {
-
+        pseq_pheno(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_trait(Top, fl) { }
+        
         bool use_fid, use_iid, use_joint;
         // The '_trait' value of the first trait which will be found in the .FAM file.
         // This trait will not go into this file (the PSEQ pheno file).
         int skip_trait;
-        
-        pseq_pheno(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_trait(Top, fl) { }
         
         void file_header() {
             int tr, first;
@@ -216,6 +205,7 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
     
     // So that we can make up a string like "FID_IID".
     // In addition PSEQ requires tab delimited data, it seems to get confused if sperious spaces are introduced.
+//HERE
     sp->use_fid   = use_fid;
     sp->use_iid   = use_iid;
     sp->use_joint = use_joint;
@@ -273,36 +263,18 @@ void CLASS_IMPUTE2::create_sh_file(linkage_ped_top *Top,
                                 char *file_names[],
                                 const int numchr)
 {
-/*
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-*/
     DTshell *sh = 0;
-
-/*
-    struct IMPUTE2_sh_script_loop: public fileloop::both {
-        IMPUTE2_sh_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            mssgvf("      IMPUTE2 shell file:          %s/%s\n", *_opath, file_names[8]);
-            run_loop(*_opath, file_names[8]);
-        }
-    } *floop = new IMPUTE2_sh_script_loop(Top);
-*/
 
     FLPboth *floop = new FLPboth(Top, file_names[8], "w");
     floop->file_type = "      IMPUTE2 shell file:          ";
 
     struct IMPUTE2_sh_script: public DTshell {
+        IMPUTE2_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
+
         typedef char *str;
         str *file_names;
         DTshell *sh;
         
-        IMPUTE2_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
-
         void file_header() {
             if (sh) sh->sh_sh(this);
             sh_shell_type();

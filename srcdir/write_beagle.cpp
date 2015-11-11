@@ -237,22 +237,13 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
 
     if (base_pair_position_index >= 0) {
         // If we have the data create the file...
-/*
-  struct save_base_pair_position_markers_loop: public fileloop::chr {
-        save_base_pair_position_markers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
-            void make_file() {
-                if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-                mssgvf("        BEAGLE base position marker file:    %s/%s\n", *_opath, file_names[1]);
-                data_loop(*_opath, file_names[1]);
-            }
-    } *floop = new save_base_pair_position_markers_loop(Top);
-*/
 
-    LCLchr *floopM = new LCLchr(Top, file_names[1], "w");
-    floopM->file_type = "        BEAGLE base position marker file:    ";
+        LCLchr *floopM = new LCLchr(Top, file_names[1], "w");
+        floopM->file_type = "        BEAGLE base position marker file:    ";
 
         struct save_base_pair_position_markers: public dataloop::loci {
             save_base_pair_position_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { }
+
             // The name 'file_header()' is a bit of a misnomer. It's really the place to do some work
             // just before processing on the data to build the output file begins. You could output a header,
             // or in this case sort the data that will be used to build the output file (see method 'inner()').
@@ -267,7 +258,6 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
                 pr_nl();
             }
         } *sbppM = new save_base_pair_position_markers(Top, floopM);
-        
         sbppM->load_formats(fwid, pwid, -1);
 
         floopM->iterate();
@@ -278,23 +268,13 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
 
     if (genetic_distance_index >= 0) {
         // If we have the data create the file...
-/*
-    struct save_genetic_distance_markers_loop: public fileloop::chr {
-        save_genetic_distance_markers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
-            void make_file() {
-                if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-                mssgvf("        BEAGLE genetic distance marker file: %s/%s\n", *_opath, file_names[2]);
-                data_loop(*_opath, file_names[2]);
-            }
-    } *floop = new save_genetic_distance_markers_loop(Top);
-*/
 
-    LCLchr *floopgdM = new LCLchr(Top, file_names[2], "w");
-    floopgdM->file_type = "        BEAGLE genetic distance marker file: ";
+        LCLchr *floopgdM = new LCLchr(Top, file_names[2], "w");
+        floopgdM->file_type = "        BEAGLE genetic distance marker file: ";
 
         struct save_genetic_distance_markers: public dataloop::loci {
-            
             save_genetic_distance_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { }
+
             void file_header() {
                 sort_genetic_positions();
             }
@@ -380,26 +360,13 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
 {
     // Pedigree...
     // 'fileloop::both' loops over chromosome, and then trait...
-/*
-    struct save_fams_loop: public fileloop::both {
-        save_fams_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) {
-                warnf("Beagle analysis can only be run on autosomes.");
-                return;
-            }
-            mssgvf("        BEAGLE genotype file:                %s/%s\n", *_opath, file_names[0]);
-            data_loop(*_opath, file_names[0]);
-        }
-    } *floop = new save_fams_loop(Top);
-*/
 
     LCLboth *floopP = new LCLboth(Top, file_names[0], "w");
     floopP->file_type = "        BEAGLE genotype file:                ";
 
     struct save_fams: public dataloop::ped_per {
-
         save_fams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             pr_printf("P Pedigree ");
         }
@@ -421,22 +388,13 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     
     // Person...
     // The person or identifier line is not currently required, but will be in future versions of Beagle.
-/*
-    struct save_pers_loop: public fileloop::both {
-        save_pers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_pers_loop(Top);
-*/
 
     LCLboth *floopI = new LCLboth(Top, file_names[0], "a");
     floopI->file_type = "";
 
     struct save_pers: public dataloop::ped_per {
-        
         save_pers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             pr_printf("I ID ");
         }
@@ -462,22 +420,13 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     delete floopI;
     
     // Father...
-/*
-    struct save_fathers_loop: public fileloop::both {
-        save_fathers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_fathers_loop(Top);
-*/
 
     LCLboth *floopPID = new LCLboth(Top, file_names[0], "a");
     floopPID->file_type = "";
 
     struct save_fathers: public dataloop::ped_per {
-        
         save_fathers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             pr_printf("PID Father ");
         }
@@ -502,22 +451,13 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     delete floopPID;
     
     // Mother...
-/*
-    struct save_mothers_loop: public fileloop::both {
-        save_mothers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_mothers_loop(Top);
-*/
 
     LCLboth *floopMID = new LCLboth(Top, file_names[0], "a");
     floopMID->file_type = "";
 
     struct save_mothers: public dataloop::ped_per {
-        
         save_mothers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             pr_printf("MID Mother ");
         }
@@ -539,24 +479,13 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     delete floopMID;
     
     // Sex...
-/*
-    struct save_sexs_loop: public fileloop::both {
-        save_sexs_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_sexs_loop(Top);
-*/
 
     LCLboth *floopC = new LCLboth(Top, file_names[0], "a");
     floopC->file_type = "";
 
     struct save_sexs: public dataloop::ped_per {
-        typedef char *str;
-        str *file_names;
-        
         save_sexs(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+        
         void file_header() {
             pr_printf("C Sex ");
         }
@@ -577,22 +506,13 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
 
 #ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
-/*
-    struct save_phenotypes_loop: public fileloop::both {
-        save_phenotypes_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_phenotypes_loop(Top);
-*/
 
     LCLboth *floopAT = new LCLboth(Top, file_names[0], "a");
     floopAT->file_type = "";
 
     struct save_phenotypes: public dataloop::ped_per {
-        
         save_phenotypes(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             // The affection status 'A' is of the form (1 == unaffected, 2 == affected) for each person.
             // It is necessary only when performing association testing.
@@ -609,7 +529,7 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
             if (_tte != (linkage_locus_rec *)NULL) pr_nl();
         }
     } *sAT = new save_phenotypes(Top, floopAT);
-    
+
     sAT->_trait_affect = true;
     sAT->load_formats(fwid, pwid, -1);
 
@@ -625,22 +545,13 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     // So, they must be written in the same order as written in the marker file @see write_BEAGLE_marker_file
     //
     // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
-/*
-    struct save_markers_loop: public fileloop::both {
-        save_markers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_markers_loop(Top);
-*/
 
     LCLboth *floopM = new LCLboth(Top, file_names[0], "a");
     floopM->file_type = "";
 
     struct save_markers: public dataloop::loci_ped_per {
-        
         save_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) { }
+
         void file_header() {
             if (genetic_distance_index >= 0) {
                 // Beagle only uses sex-averaged maps, so if we get to here that's what we have
@@ -698,28 +609,13 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                                                      const int pwid, const int fwid)
 {
     // Pedigree...
-/*
-    struct save_fams_loop: public fileloop::both {
-        save_fams_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) {
-                warnf("Beagle analysis can only be run on autosomes.");
-                return;
-            }
-            mssgvf("        BEAGLE genotype file:                %s/%s\n", *_opath, file_names[0]);
-            data_loop(*_opath, file_names[0]);
-        }
-    } *floop = new save_fams_loop(Top);
-*/
 
     LCLboth *floopP = new LCLboth(Top, file_names[0], "w");
     floopP->file_type = "        BEAGLE genotype file:                ";
 
     struct save_fams: public dataloop::ped_per {
-        typedef char *str;
-        str *file_names;
-        
         save_fams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             pr_printf("P Pedigree ");
         }
@@ -741,24 +637,13 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     delete floopP;
     
     // Father, Mother, Child (6-tuple)...
-/*
-    struct save_pers_loop: public fileloop::both {
-        save_pers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_pers_loop(Top);
-*/
 
     LCLboth *floopI = new LCLboth(Top, file_names[0], "a");
     floopI->file_type = "";
 
     struct save_pers: public dataloop::ped_per {
-        typedef char *str;
-        str *file_names;
-        
         save_pers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             pr_printf("I ID ");
         }
@@ -783,22 +668,13 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     delete floopI;
     
     // Sex...
-/*
-    struct save_sexs_loop: public fileloop::both {
-        save_sexs_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_sexs_loop(Top);
-*/
 
     LCLboth *floopC = new LCLboth(Top, file_names[0], "a");
     floopC->file_type = "";
 
     struct save_sexs: public dataloop::ped_per {
-        
         save_sexs(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             pr_printf("C Sex ");
         }
@@ -829,22 +705,13 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     
 #ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
-/*
-    struct save_phenotypes_loop: public fileloop::both {
-        save_phenotypes_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_phenotypes_loop(Top);
-*/
 
     LCLboth *floopAT = new LCLboth(Top, file_names[0], "a");
     floopAT->file_type = "";
 
     struct save_phenotypes: public dataloop::ped_per {
-        
         save_phenotypes(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             // The affection status 'A' is of the form (1 == unaffected, 2 == affected) for each person.
             // It is necessary only when performing association testing.
@@ -883,24 +750,13 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
     // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
-/*
-    struct save_markers_loop: public fileloop::both {
-        save_markers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_markers_loop(Top);
-*/
 
     LCLboth *floopM = new LCLboth(Top, file_names[0], "a");
     floopM->file_type = "";
 
     struct save_markers: public dataloop::loci_ped_per {
-        typedef char *str;
-        str *file_names;
-        
         save_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) { }
+
         void file_header() {
             if (genetic_distance_index >= 0) {
                 // Beagle only uses sex-averaged maps, so if we get to here that's what we have
@@ -989,19 +845,6 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
                                                      const int pwid, const int fwid)
 {
     // Pedigree...
-/*
-    struct save_fams_loop: public fileloop::both {
-        save_fams_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) {
-                warnf("Beagle analysis can only be run on autosomes.");
-                return;
-            }
-            mssgvf("        BEAGLE genotype file:                %s/%s\n", *_opath, file_names[0]);
-            data_loop(*_opath, file_names[0]);
-        }
-    } *floop = new save_fams_loop(Top);
-*/
 
     LCLboth *floopP = new LCLboth(Top, file_names[0], "w");
     floopP->file_type = "        BEAGLE genotype file:                ";
@@ -1032,24 +875,13 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     // Each set of four consecutive columns (beginning with columns 3-6) gives the genotype data
     // for one parent-offspring pair. In each set of four columns, the first two columns give the
     // genotypes for the genotyped parent, and the last two columns give the genotypes for the offspring.
-/*
-    struct save_pers_loop: public fileloop::both {
-        save_pers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_pers_loop(Top);
-*/
 
     LCLboth *floopI = new LCLboth(Top, file_names[0], "a");
     floopI->file_type = "";
 
     struct save_pers: public dataloop::ped_per {
-        typedef char *str;
-        str *file_names;
-        
         save_pers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             pr_printf("I ID ");
         }
@@ -1073,22 +905,13 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     delete floopI;
     
     // Sex...
-/*
-    struct save_sexs_loop: public fileloop::both {
-        save_sexs_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_sexs_loop(Top);
-*/
 
     LCLboth *floopC = new LCLboth(Top, file_names[0], "a");
     floopC->file_type = "";
 
     struct save_sexs: public dataloop::ped_per {
-        
         save_sexs(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         void file_header() {
             pr_printf("C Sex ");
         }
@@ -1121,22 +944,13 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     
 #ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
-/*
-    struct save_phenotypes_loop: public fileloop::both {
-        save_phenotypes_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_phenotypes_loop(Top);
-*/
 
     LCLboth *floopAT = new LCLboth(Top, file_names[0], "a");
     floopAT->file_type = "";
 
     struct save_phenotypes: public dataloop::trait_ped_per {
-        
         save_phenotypes(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::trait_ped_per(Top, fl) { }
+
         void file_header() {
             // The affection status 'A' is of the form (1 == unaffected, 2 == affected) for each person.
             // It is necessary only when performing association testing.
@@ -1177,22 +991,13 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
     // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
-/*
-    struct save_markers_loop: public fileloop::both {
-        save_markers_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            data_loop(*_opath, file_names[0], "a");
-        }
-    } *floop = new save_markers_loop(Top);
-*/
 
     LCLboth *floopM = new LCLboth(Top, file_names[0], "a");
     floopM->file_type = "";
 
     struct save_markers: public dataloop::loci_ped_per {
-        
         save_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) { }
+
         void file_header() {
             if (genetic_distance_index >= 0) {
                 // Beagle only uses sex-averaged maps, so if we get to here that's what we have
@@ -1290,14 +1095,6 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
 {
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1);
     
-/*
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-*/
     DTshell *sh = 0;
     if (top_shell) {
         sh = new DTshell(Top);
@@ -1305,29 +1102,19 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-/*
-    struct BEAGLE_sh_script_loop: public fileloop::both {
-        BEAGLE_sh_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            if (fileloop->_fnumchr > lastautosome) return; // because we have already issued a warning.
-            mssgvf("        BEAGLE shell file:                   %s/%s\n", *_opath, file_names[3]);
-            run_loop(*_opath, file_names[3]);
-        }
-    } *floop = new BEAGLE_sh_script_loop(Top);
-*/
-
     LCLboth *floop = new LCLboth(Top, file_names[3], "w");
     floop->file_type = "        BEAGLE shell file:                   ";
 
     struct BEAGLE_sh_script: public DTshell {
+        BEAGLE_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl, analysis_type *analysis) : DTshell(Top, fl) {
+          this->analysis = analysis;
+        }
+
         typedef char *str;
         str *file_names;
         DTshell *sh;
         analysis_type *analysis;
         
-        BEAGLE_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl, analysis_type *analysis) : DTshell(Top, fl) {
-          this->analysis = analysis;
-        }
         void file_header() {
             if (sh) sh->sh_sh(this);
             sh_shell_type();

@@ -167,15 +167,6 @@ void CLASS_PLINK::save_pedsix_file(linkage_ped_top *Top,
 				   const int fwid)
 {
     Tod tod_pedsix("save ped/fam file six cols");
-/*
-    struct plink_pedsix_loop: public fileloop::trait {
-        plink_pedsix_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::trait(Top) { }
-        void make_file() {
-            mssgvf("        PLINK pedigree file:       %s/%s\n", *_opath, Outfile_Names[0]);  //fam
-            data_loop(*_opath, Outfile_Names[0]);
-        }
-    } *floop = new plink_pedsix_loop(Top);
-*/
 
     FLPtrait *floop = new FLPtrait(Top, Outfile_Names[0], "w");
     floop->file_type = "        PLINK pedigree file:       ";
@@ -216,15 +207,6 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
 				const int mwid)
 {
     Tod tod_ped("save ped file");
-/*
-    struct plink_ped_loop: public fileloop::chr {
-        plink_ped_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
-        void make_file() {
-            mssgvf("        PLINK ped file:            %s/%s\n", *_opath, Outfile_Names[0]);
-            data_loop(*_opath, Outfile_Names[0]);
-        }
-    } *floop = new plink_ped_loop(Top);
-*/
 
     FLPchr *floop = new FLPchr(Top, Outfile_Names[0], "w");
     floop->file_type = "        PLINK ped file:            ";
@@ -264,6 +246,7 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
 
     sp->_loci_allele_limit = 2;
     sp->load_formats(fwid, pwid, mwid);
+
     floop->iterate();
 
     delete sp;
@@ -291,20 +274,6 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
     if (binary_mode_flag == 1) {
         Tod tod_bed1("save bed file plink snp major");
 
-/*
-        struct plink_snp_major: public fileloop::chr, dataloop::loci_ped_per, public plink_binary {
-
-    struct plink_snp_major_loop: public fileloop::chr {
-        plink_snp_major_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
-            void make_file() {
-                Tod tod_lmf("make bed file for chr");
-                mssgvf("        PLINK binary file snp:     %s/%s\n", *_opath, Outfile_Names[3]);
-                data_loop(*_opath, Outfile_Names[3], write_binary);
-                tod_lmf();
-            }
-    } *floop = new plink_snp_major_loop(Top);
-*/
-
 	FLPchr *floop = new FLPchr(Top, Outfile_Names[3], write_binary);
 	floop->file_type = "        PLINK binary file snp:     ";
 
@@ -329,23 +298,13 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
         } *xp = new plink_snp_major(Top, floop);
 
         floop->iterate();
+
         delete xp;
         delete floop;
         tod_bed1();
 
     } else if (binary_mode_flag == 2) {
         Tod tod_bed2("save bed file plink indiv major");
-/*
-        struct plink_indiv_major: public fileloop::chr, dataloop::ped_per_loci, public plink_binary {
-
-    struct plink_indiv_major_loop: public fileloop::chr {
-        plink_indiv_major_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
-            void make_file() {
-                mssgvf("        PLINK binary file indiv:   %s/%s\n", *_opath, Outfile_Names[3]);
-                data_loop(*_opath, Outfile_Names[3], write_binary);
-            }
-    } *floop = new plink_indiv_major_loop(Top);
-*/
 
 	FLPchr *floop = new FLPchr(Top, Outfile_Names[3], write_binary);
 	floop->file_type = "        PLINK binary file indiv:   ";
@@ -544,16 +503,6 @@ static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
  */
 static void write_PLINK_reference_allele_file(linkage_ped_top *Top) {
     
-/*
-    struct plink_reference_allele_file_loop: public fileloop::chr {
-        plink_reference_allele_file_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::chr(Top) { }
-        void make_file() {
-            mssgvf("        PLINK VCF REF file:        %s/%s\n", *_opath, Outfile_Names[9]);
-            data_loop(*_opath, Outfile_Names[9]);
-        }
-    } *floop = new plink_reference_allele_file_loop(Top);
-*/
-
     FLPchr *floop = new FLPchr(Top, Outfile_Names[9], "w");
     floop->file_type = "        PLINK VCF REF file:        ";
 
@@ -613,14 +562,6 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         write_PLINK_reference_allele_file(Top);
     }
 
-/*
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-*/
     DTshell *sh = 0;
     if (top_shell) {
         sh = new DTshell(Top);
@@ -628,28 +569,18 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-/*
-    struct PLINK_sh_script_loop: public fileloop::both {
-        PLINK_sh_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            mssgvf("        PLINK shell file:          %s/%s\n", *_opath, file_names[8]);
-            run_loop(*_opath, file_names[8]);
-        }
-    } *floop = new PLINK_sh_script_loop(Top);
-*/
-
     FLPboth *floop = new FLPboth(Top, file_names[8], "w");
     floop->file_type = "        PLINK shell file:          ";
 
     struct PLINK_sh_script: public DTshell {
+        PLINK_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
+
         typedef char *str;
         str *file_names;
         DTshell *sh;
         int suboption;
         int xcf;
         
-        PLINK_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
-
         void file_header() {
             if (sh)
                 sh->sh_sh(this);

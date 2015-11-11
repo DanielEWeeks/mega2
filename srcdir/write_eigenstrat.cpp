@@ -155,25 +155,14 @@ void CLASS_EIGENSTRAT::save_pedsix_file(linkage_ped_top *Top,
                                         const int pwid,
                                         const int fwid)
 {
-/*
-    struct eigenstrat_pedsix_loop: public fileloop::trait {
-        eigenstrat_pedsix_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::trait(Top) { }
-        void make_file() {
-            //if (fileloop->_ftte == (linkage_locus_rec *)NULL) return;
-            mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, Outfile_Names[0]);  //fam
-            missing_affection_status = 0;
-            data_loop(*_opath, Outfile_Names[0]);
-        }
-    } *floop = new eigenstrat_pedsix_loop(Top);
-*/
-
     FLPtrait *floop = new FLPtrait(Top, Outfile_Names[0], "w");
     floop->file_type = "        EIGENSTRAT pedigree file:  ";
 
     struct eigenstrat_pedsix: public dataloop::ped_per {
+        eigenstrat_pedsix(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+
         int missing_affection_status;
 
-        eigenstrat_pedsix(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
         void file_header() {
             missing_affection_status = 0;
         }
@@ -210,25 +199,15 @@ void CLASS_EIGENSTRAT::save_ped_file(linkage_ped_top *Top,
                                      const int fwid,
                                      const int mwid)
 {
-/*
-    struct eigenstrat_ped_loop: public fileloop::both {
-        eigenstrat_ped_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            //if (fileloop->_ftte == (linkage_locus_rec *)NULL) return;
-            mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, Outfile_Names[0]);
-            missing_affection_status = 0;
-            data_loop(*_opath, Outfile_Names[0]);
-        }
-    } *floop = new eigenstrat_ped_loop(Top);
-*/
-
     FLPboth *floop = new FLPboth(Top, Outfile_Names[0], "w");
     floop->file_type = "        EIGENSTRAT pedigree file:  ";
 
     struct eigenstrat_ped: public dataloop::ped_per_loci {
+        eigenstrat_ped(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
+
         int missing_affection_status;
         int process_per;
-        eigenstrat_ped(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
+
         void file_header() {
             missing_affection_status = 0;
         }
@@ -299,19 +278,13 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
                                      const int binary_mode_flag)
 {
     if (binary_mode_flag == 1) {
-/*
-            void make_file() {
-                //if (fileloop->_ftte == (linkage_locus_rec *)NULL) return;
-                mssgvf("        EIGENSTRAT binary file snp: %s/%s\n", *_opath, Outfile_Names[3]);
-                data_loop(*_opath, Outfile_Names[3], write_binary);
-            }
-*/
         FLPboth *floop = new FLPboth(Top, Outfile_Names[3], write_binary);
         floop->file_type = "        EIGENSTRAT binary file snp: ";
 
         struct eigenstrat_snp_major: dataloop::loci_ped_per, public plink_binary {
             eigenstrat_snp_major(linkage_ped_top *Top, fileloop::fileloop_data *fl) : loci_ped_per(Top, fl) { }
            ~eigenstrat_snp_major() {}
+
             void file_header() {
                 plink_binary::file_header(_filep);
                 
@@ -423,14 +396,6 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
     
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1);
     
-/*
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-*/
     DTshell *sh = 0;
     if (top_shell) {
         sh = new DTshell(Top);
@@ -438,27 +403,17 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-/*
-    struct EIGENSTRAT_sh_script_loop: public fileloop::both {
-        EIGENSTRAT_sh_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            //if (fileloop->_ftte == (linkage_locus_rec *)NULL) return;
-            mssgvf("        EIGENSTRAT shell file:     %s/%s\n", *_opath, file_names[8]);
-            run_loop(*_opath, file_names[8]);
-        }
-    } *floop = new EIGENSTRAT_sh_script_loop(Top);
-*/
-
     FLPboth *floop = new FLPboth(Top, file_names[8], "w");
     floop->file_type = "        EIGENSTRAT shell file:     ";
 
     struct EIGENSTRAT_sh_script: public DTshell {
+        EIGENSTRAT_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
+
         typedef char *str;
         str *file_names;
         DTshell *sh;
         int subOption;
         
-        EIGENSTRAT_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
         void file_header() {
             if (sh) sh->sh_sh(this);
             sh_shell_type();

@@ -106,36 +106,18 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
                                 char *file_names[],
                                 const int numchr)
 {
-/*
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-*/
     DTshell *sh = 0;
-
-/*
-    struct SHAPEIT_sh_script_loop: public fileloop::both {
-        SHAPEIT_sh_script_loop(linkage_ped_top *Top, fileloop::fileloop_data *dl) : fileloop::both(Top) { }
-        void make_file() {
-            mssgvf("      SHAPEIT shell file:          %s/%s\n", *_opath, file_names[8]);
-            run_loop(*_opath, file_names[8]);
-        }
-    } *floop = new SHAPEIT_sh_script_loop(Top);
-*/
 
     FLPboth *floop = new FLPboth(Top, file_names[8], "w");
     floop->file_type = "      SHAPEIT shell file:          ";
 
     struct SHAPEIT_sh_script: public DTshell {
+        SHAPEIT_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
+
         typedef char *str;
         str *file_names;
         DTshell *sh;
         
-        SHAPEIT_sh_script(linkage_ped_top *Top, fileloop::fileloop_data *fl) : DTshell(Top, fl) { }
-
         void file_header() {
             if (sh) sh->sh_sh(this);
             sh_shell_type();
