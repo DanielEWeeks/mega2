@@ -189,7 +189,6 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
     sp->load_formats(fwid, pwid, -1);
 
     floop->_trait_affect = true;
-    floop->_needs_trait  = true;
     floop->iterate();
 
 //HERE
