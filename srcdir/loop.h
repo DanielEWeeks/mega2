@@ -167,6 +167,7 @@ namespace fileloop {
 ////////////////////////////////////////////////////////////////
 //                       inner loops
 ////////////////////////////////////////////////////////////////
+
 namespace dataloop {
     class dataloop_data: public person_locus_entry {
     public:
@@ -188,7 +189,6 @@ namespace dataloop {
        ~null() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
-        void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
         virtual void inner() {}
     };
 
@@ -199,7 +199,6 @@ namespace dataloop {
        ~ped_per() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
-        void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
         virtual void ped_start() {};
         virtual void inner() {};
         virtual void ped_end() {};
@@ -223,7 +222,6 @@ namespace dataloop {
        ~ped_per_trait() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
-        void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
         virtual void ped_start() {};
         virtual void per_start() {};
         virtual void inner() {};
@@ -249,7 +247,6 @@ namespace dataloop {
        ~trait_ped_per() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
-        void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
         virtual void trait_start() {};
         virtual void ped_start() {};
         virtual void inner() {};
@@ -270,7 +267,6 @@ namespace dataloop {
        ~ped_per_loci() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
-        void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
         virtual void ped_start() {}
         virtual void per_start() {}
         virtual void inner() {}
@@ -291,7 +287,6 @@ namespace dataloop {
        ~loci_ped_per() {}
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
-        void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
         virtual void loci_start() {}
         virtual void ped_start() {}
         virtual void inner() {}
@@ -313,7 +308,6 @@ namespace dataloop {
         void delete_file(const char *opath, const char *file) { filep_delete(opath, file); }
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
-        void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
         virtual void inner() {}
     };
 

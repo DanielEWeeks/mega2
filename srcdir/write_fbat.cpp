@@ -84,7 +84,6 @@ static void write_FBAT_map(linkage_ped_top *Top, char *file_names[]);
 
 static void inner_file_names(char **file_names, const char *num, const char *stem = "fbat");
 
-
 static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
                             const int pwid, const int fwid)
 {
@@ -124,12 +123,27 @@ static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
     delete floop;
 }
 
+struct LCLboth: public FLOOPboth {
+    LCLboth(linkage_ped_top *Top) : FLOOPboth(Top) {}
+    LCLboth(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
+        FLOOPboth(Top, f_name, f_mode) {}
+
+    void make_file() {
+        if (*file_type) msgvf("%s%s/%s\n", file_type, *_opath, file_name);
+        if (_ftte == NULL) {
+            mssgvf("%sneeds a trait value to be defined.\nExiting.\n", file_type);
+            EXIT(DATA_INCONSISTENCY);
+        }
+        _dataloop->data_loop(*_opath, file_name, file_mode);
+    }
+};
+
 static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
                            const int pwid, const int fwid,
                            const bool has_x)
 {
 //HERE
-    FLOOPboth *floop = new FLOOPboth(Top, file_names[0], "w");
+    LCLboth *floop = new LCLboth(Top, file_names[0], "w");
     floop->file_type     = "        FBAT pedigree file:    ";
 
     struct save_peds: public dataloop::ped_per_loci {

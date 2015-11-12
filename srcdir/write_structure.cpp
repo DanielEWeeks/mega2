@@ -262,15 +262,10 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
 
     struct save_pers_loop: public FLOOPboth {
         save_pers_loop(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
-            FLOOPboth(Top, f_name, f_mode) { chr_i = -1;}
-
-        int chr_i;
+            FLOOPboth(Top, f_name, f_mode) { }
 
         void make_file() {
             if (_ftte != (linkage_locus_rec *)NULL) phenotype = 1;
-
-            numinds[++chr_i] = _fTop->IndivCnt; // initially consider all of the individuals
-
             _dataloop->data_loop(*_opath, file_name, file_mode);
         }
     } *floop = new save_pers_loop(Top, file_names[0], "a");
@@ -284,7 +279,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
         int PopDataPheno_i, personHasMarkers, chr_i;
         
         void file_header() {
-            ++chr_i;
+            numinds[++chr_i] = _Top->IndivCnt; // initially consider all of the individuals
         }
         void per_start() {
             int m;
