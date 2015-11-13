@@ -1729,7 +1729,8 @@ void mega2_version_check(void)
                 printf("    Latest version: %d.%d.%d\n", newver, newrev, newpatch);
                 printf("    Your   version: %d.%d.%d\n", Mega2Ver, Mega2Rev, Mega2Patch);
             } else {
-                printf("There is a new minor revision of Mega2; You might want to get it.\n");
+//              printf("There is a new minor revision of Mega2; You might want to get it.\n");
+                printf("There is an improved version of Mega2 available - please upgrade!");
                 printf("    Latest version: %d.%d.%d\n", newver, newrev, newpatch);
                 printf("    Your   version: %d.%d.%d\n", Mega2Ver, Mega2Rev, Mega2Patch);
 
