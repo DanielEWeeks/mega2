@@ -123,9 +123,9 @@ static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
     delete floop;
 }
 
-struct LCLboth: public FLOOPboth {
-    LCLboth(linkage_ped_top *Top) : FLOOPboth(Top) {}
-    LCLboth(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
+struct FBTboth: public FLOOPboth {
+    FBTboth(linkage_ped_top *Top) : FLOOPboth(Top) {}
+    FBTboth(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
         FLOOPboth(Top, f_name, f_mode) {}
 
     void make_file() {
@@ -143,13 +143,16 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
                            const bool has_x)
 {
 //HERE
-    LCLboth *floop = new LCLboth(Top, file_names[0], "w");
+    FBTboth *floop = new FBTboth(Top, file_names[0], "w");
     floop->file_type     = "        FBAT pedigree file:    ";
 
-    struct save_peds: public dataloop::ped_per_loci {
 //HERE
+    struct save_peds: public dataloop::ped_per_loci {
         save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
 /*
+    struct save_peds: publix dataloop::ped_per_loci {
+        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
+
         save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) {
             fileloop = fl;
             fl->dataloop = this;
