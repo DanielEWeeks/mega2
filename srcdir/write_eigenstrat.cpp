@@ -158,8 +158,8 @@ void CLASS_EIGENSTRAT::save_pedsix_file(linkage_ped_top *Top,
     FLOOPtrait *floop = new FLOOPtrait(Top, Outfile_Names[0], "w");
     floop->file_type = "        EIGENSTRAT pedigree file:  ";
 
-    struct eigenstrat_pedsix: public dataloop::ped_per {
-        eigenstrat_pedsix(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(eigenstrat_pedsix,ped_per) {
+     lpCTOR(eigenstrat_pedsix,ped_per) { }
 
         int missing_affection_status;
 
@@ -202,8 +202,8 @@ void CLASS_EIGENSTRAT::save_ped_file(linkage_ped_top *Top,
     FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[0], "w");
     floop->file_type = "        EIGENSTRAT pedigree file:  ";
 
-    struct eigenstrat_ped: public dataloop::ped_per_loci {
-        eigenstrat_ped(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
+    lpCLASS(eigenstrat_ped,ped_per_loci) {
+     lpCTOR(eigenstrat_ped,ped_per_loci) { }
 
         int missing_affection_status;
         int process_per;

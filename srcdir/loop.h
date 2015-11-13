@@ -34,6 +34,10 @@
 
 #include "linkage_ext.h"
 
+#define lpCLASS(derived,base) struct derived: public dataloop::base
+#define  lpCTOR(derived,base) derived(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::base(Top, fl)
+
+
 namespace dataloop {
     class dataloop_data;
 };

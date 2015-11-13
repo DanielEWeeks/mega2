@@ -134,8 +134,8 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
     FLOOPonce *floop = new FLOOPonce(Top, Outfile_Names[2], "w");
     floop->file_type = "         PSEQ phenotype file:      ";
 
-    struct pseq_pheno: public dataloop::ped_per_trait {
-        pseq_pheno(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_trait(Top, fl) { }
+    lpCLASS(pseq_pheno,ped_per_trait) {
+     lpCTOR(pseq_pheno,ped_per_trait) { }
         
         bool use_fid, use_iid, use_joint;
         // The '_trait' value of the first trait which will be found in the .FAM file.

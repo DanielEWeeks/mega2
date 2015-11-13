@@ -90,8 +90,8 @@ static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
     FLOOPonce *floop = new FLOOPonce(Top, file_names[2], "w");
     floop->file_type = "        FBAT phenotype file:   ";
 
-    struct save_pheno: public dataloop::ped_per_trait {
-        save_pheno(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_trait(Top, fl) { }
+    lpCLASS(save_pheno,ped_per_trait) {
+     lpCTOR(save_pheno,ped_per_trait) { }
 
         void file_header() {
             int tr;
@@ -147,17 +147,18 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
     floop->file_type     = "        FBAT pedigree file:    ";
 
 //HERE
-    struct save_peds: public dataloop::ped_per_loci {
-        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
 /*
     struct save_peds: publix dataloop::ped_per_loci {
-        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
-
-        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) {
+        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top) {
             fileloop = fl;
             fl->dataloop = this;
         }
+
+        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
+
 */
+    lpCLASS(save_peds,ped_per_loci) {
+     lpCTOR(save_peds,ped_per_loci) { }
 
         bool has_x;
 
@@ -330,8 +331,8 @@ static void write_FBAT_Rhdr(linkage_ped_top *Top, char *file_names[])
     floop->file_type = "        FBAT R hdr file:       ";
     floop->_trait_affect = true;
 
-    struct FBAT_Rhdr: public dataloop::null {
-        FBAT_Rhdr(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { }
+    lpCLASS(FBAT_Rhdr,null) {
+     lpCTOR(FBAT_Rhdr,null) { }
 
         char strchr[4];
 
@@ -432,8 +433,8 @@ static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
     FLOOPchr *floop = new FLOOPchr(Top, file_names[1], "w");
     floop->file_type = "        FBAT map file:         ";
 
-    struct FBAT_map: public dataloop::loci {
-        FBAT_map(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { }
+    lpCLASS(FBAT_map,loci) {
+     lpCTOR(FBAT_map,loci) { }
 
 //         marker_name   chr#   genetic_pos   physical_pos   sex_link
         void inner () {

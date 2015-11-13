@@ -85,8 +85,8 @@ static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
     FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[3], "w");
     floop->file_type = "        PLINK lgen file:           ";
 
-    struct plink_core_lgen: public dataloop::loci_ped_per {
-        plink_core_lgen(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) {}
+    lpCLASS(plink_core_lgen,loci_ped_per) {
+     lpCTOR(plink_core_lgen,loci_ped_per) {}
 
         void inner() {
             if (!_allele1 || !_allele2) return;
@@ -119,8 +119,8 @@ static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
     FLOOPonce *floop = new FLOOPonce(Top, Outfile_Names[2], "w");
     floop->file_type = "        PLINK phenotype file:      ";
 
-    struct plink_core_pheno: public dataloop::ped_per_trait {
-        plink_core_pheno(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_trait(Top, fl) {}
+    lpCLASS(plink_core_pheno,ped_per_trait) {
+     lpCTOR(plink_core_pheno,ped_per_trait) {}
 
         void file_header() {
             int tr;
@@ -314,8 +314,8 @@ static void write_PLINK_map(linkage_ped_top *LPTop,
     FLOOPchr *floop = new FLOOPchr(LPTop, Outfile_Names[1], "w");
     floop->file_type = "        PLINK map file:            ";
 
-    struct plink_core_map: public dataloop::null {
-        plink_core_map(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) {}
+    lpCLASS(plink_core_map,null) {
+     lpCTOR(plink_core_map,null) {}
         int generate_bim_file;
 
         void file_header() {

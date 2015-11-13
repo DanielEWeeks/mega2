@@ -140,8 +140,8 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
     FLOOPboth *floopsmn = new FLOOPboth(Top, file_names[0], "w");
     floopsmn->file_type = "";
 
-    struct save_marker_names: public dataloop::loci {
-        save_marker_names(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { markers_i = -1; }
+    lpCLASS(save_marker_names,loci) {
+     lpCTOR(save_marker_names,loci) { markers_i = -1; }
 
         int markers_i;
         
@@ -181,7 +181,8 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
         FLOOPboth *floopsgdM = new FLOOPboth(Top, file_names[LoopOverChrm_save == 1 ? 0 : 8], "a");
         floopsgdM->file_type = "";
 
-        struct save_genetic_distance_markers: public dataloop::loci {
+        lpCLASS(save_genetic_distance_markers,loci) {
+//         lpCTOR(save_genetic_distance_markers,loci)
             save_genetic_distance_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl, int LoopOverChrm_save) : dataloop::loci(Top, fl) {
                 this->LoopOverChrm_save = LoopOverChrm_save;
             }
@@ -271,8 +272,8 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
     } *floop = new save_pers_loop(Top, file_names[0], "a");
     floop->file_type = "";
 
-    struct save_pers: public dataloop::ped_per_loci {
-        save_pers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { chr_i = -1; }
+    lpCLASS(save_pers,ped_per_loci) {
+     lpCTOR(save_pers,ped_per_loci) { chr_i = -1; }
 
         typedef char *str;
         str *file_names;
@@ -367,8 +368,8 @@ static void write_mainparams(linkage_ped_top *Top, char *file_names[],
     FLOOPboth *floop = new FLOOPboth(Top, file_names[5], "w");
     floop->file_type = "        STRUCTURE mainparams:         ";
 
-    struct save_mainparams: public dataloop::null {
-        save_mainparams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { markers_i = inds_i = -1; }
+    lpCLASS(save_mainparams,null) {
+     lpCTOR(save_mainparams,null) { markers_i = inds_i = -1; }
 
         typedef char *str;
         str *file_names;
@@ -431,8 +432,8 @@ static void write_extraparams(linkage_ped_top *Top, char *file_names[],
     FLOOPboth *floop = new FLOOPboth(Top, file_names[7], "w");
     floop->file_type = "        STRUCTURE extraparams:         ";
 
-    struct save_extraparams: public dataloop::null {
-        save_extraparams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) { markers_i = -1; }
+    lpCLASS(save_extraparams,null) {
+     lpCTOR(save_extraparams,null) { markers_i = -1; }
 
         int markers_i;
         

@@ -241,8 +241,8 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
         BGLchr *floopM = new BGLchr(Top, file_names[1], "w");
         floopM->file_type = "        BEAGLE base position marker file:    ";
 
-        struct save_base_pair_position_markers: public dataloop::loci {
-            save_base_pair_position_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { }
+        lpCLASS(save_base_pair_position_markers,loci) {
+         lpCTOR(save_base_pair_position_markers,loci) { }
 
             // The name 'file_header()' is a bit of a misnomer. It's really the place to do some work
             // just before processing on the data to build the output file begins. You could output a header,
@@ -272,8 +272,8 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
         BGLchr *floopgdM = new BGLchr(Top, file_names[2], "w");
         floopgdM->file_type = "        BEAGLE genetic distance marker file: ";
 
-        struct save_genetic_distance_markers: public dataloop::loci {
-            save_genetic_distance_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci(Top, fl) { }
+        lpCLASS(save_genetic_distance_markers,loci) {
+         lpCTOR(save_genetic_distance_markers,loci) { }
 
             void file_header() {
                 sort_genetic_positions();
@@ -364,8 +364,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     BGLboth *floopP = new BGLboth(Top, file_names[0], "w");
     floopP->file_type = "        BEAGLE genotype file:                ";
 
-    struct save_fams: public dataloop::ped_per {
-        save_fams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_fams,ped_per) {
+     lpCTOR(save_fams,ped_per) { }
 
         void file_header() {
             pr_printf("P Pedigree ");
@@ -392,8 +392,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     BGLboth *floopI = new BGLboth(Top, file_names[0], "a");
     floopI->file_type = "";
 
-    struct save_pers: public dataloop::ped_per {
-        save_pers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_pers,ped_per) {
+     lpCTOR(save_pers,ped_per) { }
 
         void file_header() {
             pr_printf("I ID ");
@@ -424,8 +424,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     BGLboth *floopPID = new BGLboth(Top, file_names[0], "a");
     floopPID->file_type = "";
 
-    struct save_fathers: public dataloop::ped_per {
-        save_fathers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_fathers,ped_per) {
+     lpCTOR(save_fathers,ped_per) { }
 
         void file_header() {
             pr_printf("PID Father ");
@@ -455,8 +455,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     BGLboth *floopMID = new BGLboth(Top, file_names[0], "a");
     floopMID->file_type = "";
 
-    struct save_mothers: public dataloop::ped_per {
-        save_mothers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_mothers,ped_per) {
+     lpCTOR(save_mothers,ped_per) { }
 
         void file_header() {
             pr_printf("MID Mother ");
@@ -483,8 +483,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     BGLboth *floopC = new BGLboth(Top, file_names[0], "a");
     floopC->file_type = "";
 
-    struct save_sexs: public dataloop::ped_per {
-        save_sexs(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_sexs,ped_per) {
+     lpCTOR(save_sexs,ped_per) { }
         
         void file_header() {
             pr_printf("C Sex ");
@@ -510,8 +510,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     BGLboth *floopAT = new BGLboth(Top, file_names[0], "a");
     floopAT->file_type = "";
 
-    struct save_phenotypes: public dataloop::ped_per {
-        save_phenotypes(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_phenotypes,ped_per) {
+     lpCTOR(save_phenotypes,ped_per) { }
 
         void file_header() {
             // The affection status 'A' is of the form (1 == unaffected, 2 == affected) for each person.
@@ -549,8 +549,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     BGLboth *floopM = new BGLboth(Top, file_names[0], "a");
     floopM->file_type = "";
 
-    struct save_markers: public dataloop::loci_ped_per {
-        save_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) { }
+    lpCLASS(save_markers,loci_ped_per) {
+     lpCTOR(save_markers,loci_ped_per) { }
 
         void file_header() {
             if (genetic_distance_index >= 0) {
@@ -613,8 +613,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     BGLboth *floopP = new BGLboth(Top, file_names[0], "w");
     floopP->file_type = "        BEAGLE genotype file:                ";
 
-    struct save_fams: public dataloop::ped_per {
-        save_fams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_fams,ped_per) {
+     lpCTOR(save_fams,ped_per) { }
 
         void file_header() {
             pr_printf("P Pedigree ");
@@ -641,8 +641,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     BGLboth *floopI = new BGLboth(Top, file_names[0], "a");
     floopI->file_type = "";
 
-    struct save_pers: public dataloop::ped_per {
-        save_pers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_pers,ped_per) {
+     lpCTOR(save_pers,ped_per) { }
 
         void file_header() {
             pr_printf("I ID ");
@@ -672,8 +672,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     BGLboth *floopC = new BGLboth(Top, file_names[0], "a");
     floopC->file_type = "";
 
-    struct save_sexs: public dataloop::ped_per {
-        save_sexs(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_sexs,ped_per) {
+     lpCTOR(save_sexs,ped_per) { }
 
         void file_header() {
             pr_printf("C Sex ");
@@ -709,8 +709,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     BGLboth *floopAT = new BGLboth(Top, file_names[0], "a");
     floopAT->file_type = "";
 
-    struct save_phenotypes: public dataloop::ped_per {
-        save_phenotypes(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_phenotypes,ped_per) {
+     lpCTOR(save_phenotypes,ped_per) { }
 
         void file_header() {
             // The affection status 'A' is of the form (1 == unaffected, 2 == affected) for each person.
@@ -754,8 +754,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     BGLboth *floopM = new BGLboth(Top, file_names[0], "a");
     floopM->file_type = "";
 
-    struct save_markers: public dataloop::loci_ped_per {
-        save_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) { }
+    lpCLASS(save_markers,loci_ped_per) {
+     lpCTOR(save_markers,loci_ped_per) { }
 
         void file_header() {
             if (genetic_distance_index >= 0) {
@@ -849,8 +849,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     BGLboth *floopP = new BGLboth(Top, file_names[0], "w");
     floopP->file_type = "        BEAGLE genotype file:                ";
 
-    struct save_fams: public dataloop::ped_per {
-        save_fams(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_fams,ped_per) {
+     lpCTOR(save_fams,ped_per) { }
 
         void file_header() {
             pr_printf("P Pedigree ");
@@ -879,8 +879,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     BGLboth *floopI = new BGLboth(Top, file_names[0], "a");
     floopI->file_type = "";
 
-    struct save_pers: public dataloop::ped_per {
-        save_pers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_pers,ped_per) {
+     lpCTOR(save_pers,ped_per) { }
 
         void file_header() {
             pr_printf("I ID ");
@@ -909,8 +909,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     BGLboth *floopC = new BGLboth(Top, file_names[0], "a");
     floopC->file_type = "";
 
-    struct save_sexs: public dataloop::ped_per {
-        save_sexs(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(save_sexs,ped_per) {
+     lpCTOR(save_sexs,ped_per) { }
 
         void file_header() {
             pr_printf("C Sex ");
@@ -948,8 +948,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     BGLboth *floopAT = new BGLboth(Top, file_names[0], "a");
     floopAT->file_type = "";
 
-    struct save_phenotypes: public dataloop::trait_ped_per {
-        save_phenotypes(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::trait_ped_per(Top, fl) { }
+    lpCLASS(save_phenotypes,trait_ped_per) {
+     lpCTOR(save_phenotypes,trait_ped_per) { }
 
         void file_header() {
             // The affection status 'A' is of the form (1 == unaffected, 2 == affected) for each person.
@@ -995,8 +995,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     BGLboth *floopM = new BGLboth(Top, file_names[0], "a");
     floopM->file_type = "";
 
-    struct save_markers: public dataloop::loci_ped_per {
-        save_markers(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) { }
+    lpCLASS(save_markers,loci_ped_per) {
+     lpCTOR(save_markers,loci_ped_per) { }
 
         void file_header() {
             if (genetic_distance_index >= 0) {

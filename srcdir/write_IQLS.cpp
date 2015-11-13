@@ -236,8 +236,8 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
     FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[1], "w");
     floop->file_type = "        IQLS marker file:          ";
 
-    struct IQLS_marker: public dataloop::loci_ped_per {
-        IQLS_marker(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) { }
+    lpCLASS(IQLS_marker,loci_ped_per) {
+     lpCTOR(IQLS_marker,loci_ped_per) { }
 
         void file_header() {
             int ped, per;
@@ -337,8 +337,8 @@ static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]
     FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[2], "w");
     floop->file_type = "        IQLS parameter file:       ";
 
-    struct IQLS_parameter: public dataloop::null {
-        IQLS_parameter(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) {}
+    lpCLASS(IQLS_parameter,null) {
+     lpCTOR(IQLS_parameter,null) {}
 
         void inner() {
             pr_printf("0.05\n");
@@ -432,8 +432,8 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
     FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[4], "w");
     floop->file_type = "        Idcoefs pedigree file:     ";
 
-    struct Idcoefs_pedigree: public dataloop::ped_per {
-        Idcoefs_pedigree(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) {
+    lpCLASS(Idcoefs_pedigree,ped_per) {
+     lpCTOR(Idcoefs_pedigree,ped_per) {
 	    PedTreeTop = 0;
 	}
 
@@ -550,8 +550,8 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
     FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[5], "w");
     floop->file_type = "        Idcoefs study file:        ";
 
-    struct IDcoefs_study : public dataloop::ped_per {
-        IDcoefs_study(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(IDcoefs_study ,ped_per) {
+     lpCTOR(IDcoefs_study ,ped_per) { }
 
         int *eligible;
 

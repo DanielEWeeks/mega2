@@ -171,8 +171,8 @@ void CLASS_PLINK::save_pedsix_file(linkage_ped_top *Top,
     FLOOPtrait *floop = new FLOOPtrait(Top, Outfile_Names[0], "w");
     floop->file_type = "        PLINK pedigree file:       ";
 
-    struct plink_pedsix: public dataloop::ped_per {
-        plink_pedsix(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per(Top, fl) { }
+    lpCLASS(plink_pedsix,ped_per) {
+     lpCTOR(plink_pedsix,ped_per) { }
 
         void inner() {
 #if 0
@@ -211,8 +211,8 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
     FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[0], "w");
     floop->file_type = "        PLINK ped file:            ";
 
-    struct plink_ped: public dataloop::ped_per_loci {
-        plink_ped(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) {}
+    lpCLASS(plink_ped,ped_per_loci) {
+     lpCTOR(plink_ped,ped_per_loci) {}
 
         void per_start() {
 #if 0
@@ -278,7 +278,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
 	floop->file_type = "        PLINK binary file snp:     ";
 
         struct plink_snp_major: public dataloop::loci_ped_per, public plink_binary {
-            plink_snp_major(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::loci_ped_per(Top, fl) { }
+         lpCTOR(plink_snp_major,loci_ped_per) { }
            ~plink_snp_major() {}
 
             void file_header() {
@@ -309,8 +309,8 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
 	FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[3], write_binary);
 	floop->file_type = "        PLINK binary file indiv:   ";
 
-	struct plink_indiv_major: public dataloop::ped_per_loci,  public plink_binary{
-            plink_indiv_major(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
+	struct plink_indiv_major: public dataloop::ped_per_loci,  public plink_binary {
+	 lpCTOR(plink_indiv_major,ped_per_loci) { }
            ~plink_indiv_major() {}
 
             void file_header() {
@@ -506,8 +506,8 @@ static void write_PLINK_reference_allele_file(linkage_ped_top *Top) {
     FLOOPchr *floop = new FLOOPchr(Top, Outfile_Names[9], "w");
     floop->file_type = "        PLINK VCF REF file:        ";
 
-    struct plink_reference_allele_file: public dataloop::null {
-        plink_reference_allele_file(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::null(Top, fl) {}
+    lpCLASS(plink_reference_allele_file,null) {
+     lpCTOR(plink_reference_allele_file,null) {}
 
         void inner() {
             markers_on_chromosome(_numchr);
