@@ -45,6 +45,7 @@
 #include "utils_ext.h"
 
 #include "loop.h"
+#include "sh_util.h"
 
 #include "class_old.h"
 
@@ -162,12 +163,12 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
    different families are listed.
 
 */
-    struct IQLS_pedigree: public loop::outer, loop::ped_per {
+    struct IQLS_pedigree: public fileloop::both, dataloop::ped_per {
 
-        IQLS_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
-        void make_file() {
+        IQLS_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+        void file_loop() {
             msgvf("        IQLS pedigree file:        %s/%s\n", *_opath, Outfile_Names[0]);
-            run_loop(Outfile_Names[0]);
+            data_loop(*_opath, Outfile_Names[0], "w");
         }
         void inner()  {
             pr_id();
@@ -231,12 +232,12 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 
 */
 
-    struct IQLS_marker: public loop::outer, loop::loci_ped_per {
+    struct IQLS_marker: public fileloop::both, dataloop::loci_ped_per {
 
-        IQLS_marker(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::loci_ped_per(Top) { }
-        void make_file() {
+        IQLS_marker(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::loci_ped_per(Top) { }
+        void file_loop() {
             msgvf("        IQLS marker file:          %s/%s\n", *_opath, Outfile_Names[1]);
-            run_loop(Outfile_Names[1]);
+            data_loop(*_opath, Outfile_Names[1], "w");
         }
         void file_header() {
             int ped, per;
@@ -264,25 +265,25 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
             }
         }
         void loci_start() {
-            if (_tle->Marker->chromosome != UNKNOWN_CHROMO) {
+            if (_tlocusp->Marker->chromosome != UNKNOWN_CHROMO) {
                 pr_printf("%-15s %2d %d ",
-                          _tle->LocusName,
-                          _tle->Marker->chromosome,
+                          _tlocusp->LocusName,
+                          _tlocusp->Marker->chromosome,
                           (int) _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
             }
-            if (_tle->Marker->Props.Numbered.Recoded) {
+            if (_tlocusp->Marker->Props.Numbered.Recoded) {
                 pr_printf("   +  %4s %4s ",
-                          _tle->Allele[0].AlleleName,
-                          _tle->Allele[_tle->AlleleCnt == 1 ? 0 : 1].AlleleName);
+                          _tlocusp->Allele[0].AlleleName,
+                          _tlocusp->Allele[_tlocusp->AlleleCnt == 1 ? 0 : 1].AlleleName);
             } else {
                 pr_printf("   -  %4s %4s ","A","G"); /* Use dummy labels A/G for markers input with numbered alleles */
             }
         }
         void inner() {
-            if (_tle->Marker->Props.Numbered.Recoded) {
+            if (_tlocusp->Marker->Props.Numbered.Recoded) {
                 pr_printf(" %1s%1s ",
-                          (_allele1== 0) ? "N" : _tle->Allele[_allele1 - 1].AlleleName,
-                          (_allele2== 0) ? "N" : _tle->Allele[_allele2 - 1].AlleleName);
+                          (_allele1== 0) ? "N" : _tlocusp->Allele[_allele1 - 1].AlleleName,
+                          (_allele2== 0) ? "N" : _tlocusp->Allele[_allele2 - 1].AlleleName);
             } else {
                 char all1[2], all2[2];
                 /* If input allele labels were numeric, then use dummy alleles 'A' and 'G' and
@@ -331,12 +332,12 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 }
 
 static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]) {
-    struct IQLS_parameter: public loop::chr, loop::null {
+    struct IQLS_parameter: public fileloop::chr, dataloop::null {
 
-        IQLS_parameter(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::null(Top) {}
-        void make_file() {
+        IQLS_parameter(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::null(Top) {}
+        void file_loop() {
             msgvf("        IQLS parameter file:       %s/%s\n", *_opath, Outfile_Names[2]);
-            run_loop(Outfile_Names[2]);
+            data_loop(*_opath, Outfile_Names[2], "w");
         }
         void inner() {
             pr_printf("0.05\n");
@@ -352,14 +353,14 @@ static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]
 static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file_names[],
                                     int first_time)
 {
-    struct IQLS_shell_script: public loop::outer, sh_util {
+    struct IQLS_shell_script: public fileloop::both, sh_util {
         typedef char *str;
         str *file_names;
 
-        IQLS_shell_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), sh_util(Top) { }
-        void make_file() {
+        IQLS_shell_script(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), sh_util(Top) { }
+        void file_loop() {
             msgvf("        IQLS shell script file:    %s/%s\n", *_opath, file_names[3]);
-            run_loop(file_names[3]);
+            data_loop(*_opath, Outfile_Names[3], "w");
         }
         void file_header() {
             sh_shell_type();
@@ -425,14 +426,14 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
   NOTE the requirement regarding ORDERING of the pedigree!
 
 */
-    struct Idcoefs_pedigree: public loop::outer, loop::ped_per {
+    struct Idcoefs_pedigree: public fileloop::both, dataloop::ped_per {
         ped_top *PedTreeTop;
         int     *index;
 
-        Idcoefs_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
-        void make_file() {
+        Idcoefs_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+        void file_loop() {
             msgvf("        Idcoefs pedigree file:     %s/%s\n", *_opath, Outfile_Names[4]);
-            run_loop(Outfile_Names[4]);
+            data_loop(*_opath, Outfile_Names[4], "w");
         }
         void trait_start() {
             PedTreeTop = convert_to_pedtree(_Top, 0);
@@ -442,12 +443,12 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
             index_renumber_ped(&(PedTreeTop->PedTree[_ped]), index);
         }
         void inner() {
-            _tpe = &(_Top->Ped[_ped].Entry[index[_per]]);
+            _tpersonp = &(_Top->Ped[_ped].Entry[index[_per]]);
             pr_per();
             pr_parent();
             pr_printf(" ");
             pr_fam();
-            pr_printf(_pformat, _tpe->OrigID);
+            pr_printf(_pformat, _tpersonp->OrigID);
             pr_nl();
         }
         void ped_end() { free(index); }
@@ -528,13 +529,13 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
    himself/herself.
 
 */
-    struct IDcoefs_study : public loop::outer, loop::ped_per {
+    struct IDcoefs_study : public fileloop::both, dataloop::ped_per {
         int *eligible;
 
-        IDcoefs_study(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per(Top) { }
-        void make_file() {
+        IDcoefs_study(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+        void file_loop() {
             msgvf("        Idcoefs study file:        %s/%s\n", *_opath, Outfile_Names[5]);
-            run_loop(Outfile_Names[5]);
+            data_loop(*_opath, Outfile_Names[5], "w");
         }
         void ped_start () {
             eligible = CALLOC((size_t) (_Top->Ped[_ped].EntryCnt), int);
@@ -542,18 +543,18 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
         void inner() {
             int aff;
             eligible[_per] = 0;
-            if (_tpe->IsTyped > 0)
+            if (_tpersonp->IsTyped > 0)
                 eligible[_per] = 1;
 
             /* trait locus */
-            switch(_tte->Type) {
+            switch(_ttraitp->Type) {
             case AFFECTION:
                 // linkage.h    :linkage_pedrec_data is a union (Affection(2xint),
                 // Quant(2xint), Alleles         (2xint), RAlleles (2xchar*)
-                if (_tte->Pheno->Props.Affection.ClassCnt == 1)
-                    aff = _tpe->Pheno[_trait].Affection.Status;
+                if (_ttraitp->Pheno->Props.Affection.ClassCnt == 1)
+                    aff = _tpersonp->Pheno[_trait].Affection.Status;
                 else           
-                    aff = aff_status_entry(_tpe->Pheno[_trait].Affection.Status, _tpe->Pheno[_trait].Affection.Class, _tte);
+                    aff = aff_status_entry(_tpersonp->Pheno[_trait].Affection.Status, _tpersonp->Pheno[_trait].Affection.Class, _ttraitp);
                 if (aff > 0)
                     eligible[_per]=1;
                 break;

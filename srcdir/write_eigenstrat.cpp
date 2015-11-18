@@ -35,6 +35,7 @@
 #include "typedefs.h"
 
 #include "loop.h"
+#include "sh_util.h"
 
 #include "plink_core_ext.h"
 #include "create_summary_ext.h"
@@ -153,15 +154,15 @@ void CLASS_EIGENSTRAT::save_pedsix_file(linkage_ped_top *Top,
                                         const int pwid,
                                         const int fwid)
 {
-    struct eigenstrat_pedsix: public loop::trait, loop::ped_per {
+    struct eigenstrat_pedsix: public fileloop::trait, dataloop::ped_per {
         int missing_affection_status;
 
-        eigenstrat_pedsix(linkage_ped_top *Top) : person_locus_entry(Top), loop::trait(Top), loop::ped_per(Top) { }
-        void make_file() {
-            //if (_tte == (linkage_locus_rec *)NULL) return;
+        eigenstrat_pedsix(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::trait(Top), dataloop::ped_per(Top) { }
+        void file_loop() {
+            //if (_ttraitp == (linkage_locus_rec *)NULL) return;
             mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, Outfile_Names[0]);  //fam
             missing_affection_status = 0;
-            run_loop(Outfile_Names[0]);
+            data_loop(*_opath, Outfile_Names[0], "w");
         }
         void inner() {
             if (!has_pheno()) {
@@ -196,15 +197,15 @@ void CLASS_EIGENSTRAT::save_ped_file(linkage_ped_top *Top,
                                      const int fwid,
                                      const int mwid)
 {
-    struct eigenstrat_ped: public loop::outer, loop::ped_per_loci {
+    struct eigenstrat_ped: public fileloop::both, dataloop::ped_per_loci {
         int missing_affection_status;
         int process_per;
-        eigenstrat_ped(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::ped_per_loci(Top) { }
-        void make_file() {
-            //if (_tte == (linkage_locus_rec *)NULL) return;
+        eigenstrat_ped(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per_loci(Top) { }
+        void file_loop() {
+            //if (_ttraitp == (linkage_locus_rec *)NULL) return;
             mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, Outfile_Names[0]);
             missing_affection_status = 0;
-            run_loop(Outfile_Names[0]);
+            data_loop(*_opath, Outfile_Names[0], "w");
         }
         void per_start() {
             process_per = 1;
@@ -271,13 +272,13 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
                                      const int binary_mode_flag)
 {
     if (binary_mode_flag == 1) {
-        struct eigenstrat_snp_major: public loop::outer, loop::loci_ped_per, public plink_binary {
-            eigenstrat_snp_major(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loci_ped_per(Top) { }
+        struct eigenstrat_snp_major: public fileloop::both, dataloop::loci_ped_per, public plink_binary {
+            eigenstrat_snp_major(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), loci_ped_per(Top) { }
             ~eigenstrat_snp_major() {}
-            void make_file() {
-                //if (_tte == (linkage_locus_rec *)NULL) return;
+            void file_loop() {
+                //if (_ttraitp == (linkage_locus_rec *)NULL) return;
                 mssgvf("        EIGENSTRAT binary file snp: %s/%s\n", *_opath, Outfile_Names[3]);
-                run_loop(*_opath, Outfile_Names[3], write_binary);
+                data_loop(*_opath, Outfile_Names[3], write_binary);
             }
             void file_header() {
                 plink_binary::file_header(_filep);
@@ -401,17 +402,17 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-    struct EIGENSTRAT_sh_script: public loop::outer, all_sh {
+    struct EIGENSTRAT_sh_script: public fileloop::both, all_sh {
         typedef char *str;
         str *file_names;
         all_sh *sh;
         int subOption;
         
-        EIGENSTRAT_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
-        void make_file() {
-            //if (_tte == (linkage_locus_rec *)NULL) return;
+        EIGENSTRAT_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), all_sh(Top) { }
+        void file_loop() {
+            //if (_ttraitp == (linkage_locus_rec *)NULL) return;
             mssgvf("        EIGENSTRAT shell file:     %s/%s\n", *_opath, file_names[8]);
-            run_loop(file_names[8]);
+            data_loop(*_opath, file_names[8], "w");
         }
         void file_header() {
             if (sh) sh->sh_sh(this);
@@ -481,7 +482,7 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
                           file_names[9], // .pca
                           file_names[13], // .chisq
                           file_names[14], // .e_log
-                          (_tte->Type == QUANT ? " -q YES" : "")
+                          (_ttraitp->Type == QUANT ? " -q YES" : "")
                     );
                 pr_printf("\n");
 #ifdef TEST
@@ -517,7 +518,7 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
                           file_names[9], // .pca
                           file_names[13], // .chisq
                           file_names[14], // .e_log
-                          (_tte->Type == QUANT ? " -q YES" : "")
+                          (_ttraitp->Type == QUANT ? " -q YES" : "")
                     );
                 pr_printf("\n");
 #ifdef TEST

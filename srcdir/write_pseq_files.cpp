@@ -39,6 +39,7 @@
 #include "typedefs.h"
 
 #include "loop.h"
+#include "sh_util.h"
 
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
@@ -112,7 +113,7 @@ one with the label given with the '--phenotype' command line argument and one wi
 static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
                             const int pwid, const int fwid)
 {
-    struct pseq_pheno: public loop::once, loop::ped_per_trait {
+    struct pseq_pheno: public fileloop::once, dataloop::ped_per_trait {
         
         bool use_fid, use_iid, use_joint;
         
@@ -120,9 +121,9 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
         // This trait will not go into this file (the PSEQ pheno file).
         int skip_trait;
         
-        pseq_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) { }
+        pseq_pheno(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::once(Top), dataloop::ped_per_trait(Top) { }
         
-        void make_file() {
+        void file_loop() {
             // Here we loop over the pedigrees and individuals to determine what to use
             // as an "ID" for the PSEQ phenotype file. This should be the same as what PSEQ
             // uses for the "ID". This code is found in...
@@ -139,19 +140,19 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
             for (_ped=0; _ped < _Top->PedCnt; _ped++) {
                 // It there is some indication as to why this pedigree should not be included, don't...
                 if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
-                _tp = &(_Top->Ped[_ped]);
+                _tpedtreep = &(_Top->Ped[_ped]);
 //yy
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tp->Name);
+                if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tpedtreep->Name);
                 else if (OrigIds[1] == 3) {convert << _ped+1; sfid.insert(convert.str()); }
-                else if (OrigIds[1] == 6) sfid.insert(_tp->PedPre);
-                else {convert << _tp->Num; sfid.insert(convert.str()); }
+                else if (OrigIds[1] == 6) sfid.insert(_tpedtreep->PedPre);
+                else {convert << _tpedtreep->Num; sfid.insert(convert.str()); }
                 
                 for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
-                    _tpe = &(_tp->Entry[_per]);
-                    if (OrigIds[0] == 1 || OrigIds[0] == 2)  siid.insert(_tpe->OrigID);
-                    else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) siid.insert(_tpe->UniqueID);
-                    else if (OrigIds[0] == 6) siid.insert(_tpe->PerPre);
-                    else {convert << _tpe->ID; siid.insert(convert.str()); }
+                    _tpersonp = &(_tpedtreep->Entry[_per]);
+                    if (OrigIds[0] == 1 || OrigIds[0] == 2)  siid.insert(_tpersonp->OrigID);
+                    else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) siid.insert(_tpersonp->UniqueID);
+                    else if (OrigIds[0] == 6) siid.insert(_tpersonp->PerPre);
+                    else {convert << _tpersonp->ID; siid.insert(convert.str()); }
                     ni++;
                 }
             }
@@ -161,7 +162,7 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
             use_joint = !use_fid && !use_iid;
             
             msgvf("         PSEQ phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
-            run_loop(Outfile_Names[2]);
+            data_loop(*_opath, Outfile_Names[2], "w");
         }
         void file_header() {
             int tr, first;
@@ -286,15 +287,15 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
         }
     } *sh = 0;
     
-    struct PSEQ_sh_script: public loop::outer, all_sh {
+    struct PSEQ_sh_script: public fileloop::both, all_sh {
         typedef char *str;
         str *file_names;
         all_sh *sh;
         
-        PSEQ_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), all_sh(Top) { }
-        void make_file() {
+        PSEQ_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), all_sh(Top) { }
+        void file_loop() {
             mssgvf("         PSEQ shell file:          %s/%s\n", *_opath, file_names[8]);
-            run_loop(file_names[8]);
+            data_loop(*_opath, file_names[8], "w");
         }
         void file_header() {
             if (sh) sh->sh_sh(this);

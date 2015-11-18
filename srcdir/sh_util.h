@@ -171,8 +171,7 @@ public:
     }
 
     virtual void inner() {}
-    void run_loop(const char *fl_name) { run_loop(*_opath, fl_name, "w"); }
-    void run_loop(const char *dir, const char *fl_name, const char *mode="w")
+    virtual void data_loop(const char *dir, const char *fl_name, const char *mode)
     {
         filep_open(dir, fl_name, mode);
         inner();

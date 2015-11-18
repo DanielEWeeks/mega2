@@ -48,10 +48,10 @@ public:
     linkage_ped_top  *_Top;
     linkage_locus_top  *_LTop;
     ext_linkage_locus_top *_EXLTop;
-    linkage_ped_rec  *_tpe;
-    linkage_ped_tree *_tp;
-    linkage_locus_rec *_tle;
-    linkage_locus_rec *_tte;
+    linkage_ped_rec  *_tpersonp;
+    linkage_ped_tree *_tpedtreep;
+    linkage_locus_rec *_tlocusp;
+    linkage_locus_rec *_ttraitp;
     int  _fwid;
     int  _pwid;
     int  _mwid;
@@ -68,19 +68,22 @@ public:
         // It's really nice to initialize everything to '0' so that when
         // the code blows up, you know that the variable was never written
         // too as opposed to someone wrote some funny number there...
+        init();
+    }
+    void init() {
         _ped = _per = _locus = _allele1 = _allele2 = 0;
         _Top    = (linkage_ped_top  *)NULL;
         _LTop   = (linkage_locus_top  *)NULL;
         _EXLTop = (ext_linkage_locus_top *)NULL;
-        _tpe = (linkage_ped_rec  *)NULL;
-        _tp = (linkage_ped_tree *)NULL;
-        _tle = (linkage_locus_rec *)NULL;
-        _tte = (linkage_locus_rec *)NULL;
+        _tpersonp = (linkage_ped_rec  *)NULL;
+        _tpedtreep = (linkage_ped_tree *)NULL;
+        _tlocusp = (linkage_locus_rec *)NULL;
+        _ttraitp = (linkage_locus_rec *)NULL;
         _fformat[0] = _pformat[0] = _mformat[0] = 0;
         _fwid = _pwid = _mwid = _trait = _numchr = _chrom_loop = 0;
     }
     person_locus_entry(linkage_ped_top *Top) {
-        person_locus_entry();
+        init();
         if (Top != (linkage_ped_top *)NULL) {
             this->_Top = Top;
             _LTop   = Top->LocusTop;
@@ -93,24 +96,24 @@ public:
 
     void pr_id();
     void pr_fam();
-    void pr_per() { pr_per(_tpe); }
+    void pr_per() { pr_per(_tpersonp); }
     void pr_per(linkage_ped_rec  *tpe);
     void pr_father();
     void pr_mother();
     void pr_parent(); // prints father then mother
 
-    void pr_sex() { pr_sex(_tpe); }
+    void pr_sex() { pr_sex(_tpersonp); }
     void pr_sex(linkage_ped_rec  *tpe);
 
     // returns -1 missing phenotype; 0 Control (unaffected); 1 Case (affected)
-    int is_affected_pheno() { return is_affected_pheno(_tpe); }
+    int is_affected_pheno() { return is_affected_pheno(_tpersonp); }
     int is_affected_pheno(linkage_ped_rec  *tpe);
 
-    int has_pheno() { return has_pheno(_tpe); }
+    int has_pheno() { return has_pheno(_tpersonp); }
     int has_pheno(linkage_ped_rec  *tpe);
 
-    void pr_pheno() { pr_pheno(_tpe, 0); }
-    void pr_pheno(const int affection_as_string) { pr_pheno(_tpe, affection_as_string); }
+    void pr_pheno() { pr_pheno(_tpersonp, 0); }
+    void pr_pheno(const int affection_as_string) { pr_pheno(_tpersonp, affection_as_string); }
     void pr_pheno(linkage_ped_rec  *tpe) { pr_pheno(tpe, 0); }
     void pr_pheno(linkage_ped_rec  *tpe, const int affection_as_string);
 
@@ -119,8 +122,8 @@ public:
     void pr_marker_name();
 
     // From loop.cpp it appears that _locus and _tle are always defined together...
-    void pr_marker() { pr_marker(_locus, _tle, _tpe); }
-    void pr_marker(const int locus, linkage_locus_rec *tle, linkage_ped_rec *tpe);
+    void pr_marker() { pr_marker(_locus, _tlocusp, _tpersonp); }
+    void pr_marker(const int locus, linkage_locus_rec *tlocusp, linkage_ped_rec *tpersonp);
 
     void pr_marker_alleles();
 

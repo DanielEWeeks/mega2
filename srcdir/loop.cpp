@@ -30,12 +30,12 @@
 #include "tod.hh"
 #include "analysis.h"
 
-void loop::once::iterate()
+void fileloop::once::iterate()
 {
     int tr;
     linkage_locus_rec *tte;
 
-    _tte = (linkage_locus_rec *)NULL; // None was selected
+    _ttraitp = (linkage_locus_rec *)NULL; // None was selected
     for (tr=0; tr < num_traits; tr++) {
 
         _trait = *_trp++;
@@ -47,15 +47,15 @@ void loop::once::iterate()
             continue;
         if (_trait_quant  && tte->Type != QUANT)
             continue;
-        _tte = tte;
+        _ttraitp = tte;
         break;
     }
 
-    make_file(); // which must call run_loop() to access an 'inner' loop
+    file_loop(); // which must call data_loop() to access an 'inner' loop
 }
 
 // Sets both the trait and the chromosome... outer == chr_trait
-void loop::outer::iterate()
+void fileloop::both::iterate()
 {
     int i;
     int tr;
@@ -83,7 +83,7 @@ void loop::outer::iterate()
 
         chr_start();
 
-        _tte = (linkage_locus_rec *)NULL; // None was selected
+        _ttraitp = (linkage_locus_rec *)NULL; // None was selected
         for (tr=0; tr < num_traits; tr++) {
 
             _trait = *_trp++;
@@ -96,12 +96,12 @@ void loop::outer::iterate()
             if (_trait_quant  && tte->Type != QUANT)
                 continue;
 
-            _tte = tte;
+            _ttraitp = tte;
 
-            // A trait (_tte) must be selected to get here...
+            // A trait (_ttraitp) must be selected to get here...
             trait_start();
 
-            make_file();
+            file_loop();
 
             trait_end();
 
@@ -111,9 +111,9 @@ void loop::outer::iterate()
 
         }
 
-        if (_tte == 0) { // NO traits
+        if (_ttraitp == 0) { // NO traits
             _opath = &output_paths[0];
-            make_file();
+            file_loop();
         }
 
         chr_end();
@@ -125,12 +125,12 @@ void loop::outer::iterate()
     }
 }
 
-void loop::chr::iterate()
+void fileloop::chr::iterate()
 {
     int i, tr;
     linkage_locus_rec *tte;
 
-    _tte = (linkage_locus_rec *)NULL; // None was selected
+    _ttraitp = (linkage_locus_rec *)NULL; // None was selected
     for (tr=0; tr < num_traits; tr++) {
 
         _trait = *_trp++;
@@ -142,7 +142,7 @@ void loop::chr::iterate()
             continue;
         if (_trait_quant  && tte->Type != QUANT)
             continue;
-        _tte = tte;
+        _ttraitp = tte;
         break;
     }
 
@@ -163,7 +163,7 @@ void loop::chr::iterate()
 
         chr_start();
 
-        make_file(); // which must call run_loop() to access an 'inner' loop
+        file_loop(); // which must call data_loop() to access an 'inner' loop
 
         chr_end();
 
@@ -172,7 +172,7 @@ void loop::chr::iterate()
     }
 }
 
-void loop::trait::iterate()
+void fileloop::trait::iterate()
 {
     int tr;
     linkage_locus_rec *tte;
@@ -189,12 +189,12 @@ void loop::trait::iterate()
         if (_trait_quant  && tte->Type != QUANT)
             continue;
 
-        _tte = tte;
+        _ttraitp = tte;
 
-        // A trait (_tte) must be selected to get here...
+        // A trait (_ttraitp) must be selected to get here...
         trait_start();
 
-        make_file();
+        file_loop();
 
         trait_end();
 
@@ -204,9 +204,9 @@ void loop::trait::iterate()
 
     }
 
-    if (_tte == 0) { // NO traits
+    if (_ttraitp == 0) { // NO traits
         _opath = &output_paths[0];
-        make_file();
+        file_loop();
     }
 
 }
@@ -215,7 +215,7 @@ void loop::trait::iterate()
 //                       inner loops
 ////////////////////////////////////////////////////////////////
 
-void loop::null::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::null::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     filep_open(dir, fl_name, mode);
 
@@ -224,7 +224,7 @@ void loop::null::run_loop(const char *dir, const char *fl_name, const char *mode
     filep_close();
 }
 
-void loop::ped_per::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
 
     filep_open(dir, fl_name, mode);
@@ -236,13 +236,13 @@ void loop::ped_per::run_loop(const char *dir, const char *fl_name, const char *m
         if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
         // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
 
-        _tp = &(_Top->Ped[_ped]);
+        _tpedtreep = &(_Top->Ped[_ped]);
         ped_start();
 
         for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
             // record for the individual (a linkage_ped_rec)...
-            _tpe = &(_tp->Entry[_per]);
-            //_tpe = &(_Top->Ped[_ped].Entry[_per]);
+            _tpersonp = &(_tpedtreep->Entry[_per]);
+            //_tpersonp = &(_Top->Ped[_ped].Entry[_per]);
             inner();
         }
         ped_end();
@@ -250,7 +250,7 @@ void loop::ped_per::run_loop(const char *dir, const char *fl_name, const char *m
     filep_close();
 }
 
-void loop::ped_per_trait::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::ped_per_trait::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int tr;
     int *retrp;
@@ -264,13 +264,13 @@ void loop::ped_per_trait::run_loop(const char *dir, const char *fl_name, const c
         if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
         // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
 
-        _tp = &(_Top->Ped[_ped]);
+        _tpedtreep = &(_Top->Ped[_ped]);
         ped_start();
 
         for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
             // record for the individual (a linkage_ped_rec)...
-            _tpe = &(_tp->Entry[_per]);
-            //_tpe = &(_Top->Ped[_ped].Entry[_per]);
+            _tpersonp = &(_tpedtreep->Entry[_per]);
+            //_tpersonp = &(_Top->Ped[_ped].Entry[_per]);
             per_start();
 
             retrp = trp;
@@ -282,10 +282,10 @@ void loop::ped_per_trait::run_loop(const char *dir, const char *fl_name, const c
 	        if (_trait == -1) continue;
                 if (_trait == -99) break;
 
-                _tte = &(_LTop->Locus[_trait]);
-                if (trait_affect && _tte->Type != AFFECTION)
+                _ttraitp = &(_LTop->Locus[_trait]);
+                if (trait_affect && _ttraitp->Type != AFFECTION)
                     continue;
-                if (trait_quant  && _tte->Type != QUANT)
+                if (trait_quant  && _ttraitp->Type != QUANT)
                     continue;
 
                 inner();
@@ -297,7 +297,7 @@ void loop::ped_per_trait::run_loop(const char *dir, const char *fl_name, const c
     filep_close();
 }
 
-void loop::trait_ped_per::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::trait_ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int tr;
     int *retrp;
@@ -313,10 +313,10 @@ void loop::trait_ped_per::run_loop(const char *dir, const char *fl_name, const c
 
       if (_trait == -99) break;
 
-      _tte = &(_LTop->Locus[_trait]);
-      if (trait_affect && _tte->Type != AFFECTION)
+      _ttraitp = &(_LTop->Locus[_trait]);
+      if (trait_affect && _ttraitp->Type != AFFECTION)
 	continue;
-      if (trait_quant  && _tte->Type != QUANT)
+      if (trait_quant  && _ttraitp->Type != QUANT)
 	continue;
 
       trait_start();
@@ -328,13 +328,13 @@ void loop::trait_ped_per::run_loop(const char *dir, const char *fl_name, const c
         if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
 
         // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
-        _tp = &(_Top->Ped[_ped]);
+        _tpedtreep = &(_Top->Ped[_ped]);
 	ped_start();
 
         for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
             // record for the individual (a linkage_ped_rec)...
-            _tpe = &(_tp->Entry[_per]);
-            //_tpe = &(_Top->Ped[_ped].Entry[_per]);
+            _tpersonp = &(_tpedtreep->Entry[_per]);
+            //_tpersonp = &(_Top->Ped[_ped].Entry[_per]);
 	    
 	    inner();
 	}
@@ -345,11 +345,11 @@ void loop::trait_ped_per::run_loop(const char *dir, const char *fl_name, const c
     filep_close();
 }
 
-void loop::ped_per_loci::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::ped_per_loci::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int m;
 
-    // Loop through the Loci...
+    // Dataloop through the Loci...
     markers_on_chromosome(_numchr);
 
     filep_open(dir, fl_name, mode);
@@ -361,29 +361,29 @@ void loop::ped_per_loci::run_loop(const char *dir, const char *fl_name, const ch
         if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
         // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
 
-        _tp = &(_Top->Ped[_ped]);
+        _tpedtreep = &(_Top->Ped[_ped]);
         ped_start();
 
         for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
             // record for the individual (a linkage_ped_rec)...
 
-            _tpe = &(_Top->Ped[_ped].Entry[_per]);
+            _tpersonp = &(_Top->Ped[_ped].Entry[_per]);
 
             per_start();
 
             for (m=0; m < NumChrLoci; m++) {
                 // The actual Loci number associated with a SELECTED Loci...
                 _locus = ChrLoci[m];
-                _tle = &(_LTop->Locus[_locus]);
+                _tlocusp = &(_LTop->Locus[_locus]);
                 
                 // Ignore anything but a marker.
                 // This should get us things of Locus[?].Type == {NUMBERED, BINARY, XLINKED, YLINKED}.
-                if (_tle->Class == MARKER) {
+                if (_tlocusp->Class == MARKER) {
                     
-                    if (_loci_allele_limit && _tle->AlleleCnt > _loci_allele_limit) continue;
+                    if (_loci_allele_limit && _tlocusp->AlleleCnt > _loci_allele_limit) continue;
                     
                     // The markers for this individual...
-                    get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
+                    get_2alleles(_tpersonp->Marker, _locus, &_allele1, &_allele2);
 
                     inner();
                 }
@@ -395,7 +395,7 @@ void loop::ped_per_loci::run_loop(const char *dir, const char *fl_name, const ch
     filep_close();
 }
 
-void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::loci_ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int m;
 
@@ -410,13 +410,13 @@ void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const ch
     for (m=0; m < NumChrLoci; m++) {
         // The actual Loci number associated with a SELECTED Loci...
         _locus = ChrLoci[m];
-        _tle = &(_LTop->Locus[_locus]);
+        _tlocusp = &(_LTop->Locus[_locus]);
 
         // Ignore anything but a marker.
         // This should get us things of Locus[?].Type == {NUMBERED, BINARY, XLINKED, YLINKED}.
-        if (_tle->Class == MARKER) {
+        if (_tlocusp->Class == MARKER) {
 
-            if (_loci_allele_limit && _tle->AlleleCnt > _loci_allele_limit) continue;
+            if (_loci_allele_limit && _tlocusp->AlleleCnt > _loci_allele_limit) continue;
 
             loci_start();
 
@@ -428,15 +428,15 @@ void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const ch
                 if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
                 // for each person/inividual in that pedigree (cousulting the linkage_ped_tree)...
 
-                _tp = &(_Top->Ped[_ped]);
+                _tpedtreep = &(_Top->Ped[_ped]);
                 ped_start();
 
-                _tpe = _tp->Entry;
-                for (_per = 0; _per < _tp->EntryCnt; _per++, _tpe++) {
+                _tpersonp = _tpedtreep->Entry;
+                for (_per = 0; _per < _tpedtreep->EntryCnt; _per++, _tpersonp++) {
                     // record for the individual (a linkage_ped_rec)...
-                    //_tpe = &(_Top->Ped[_ped].Entry[_per]);
+                    //_tpersonp = &(_Top->Ped[_ped].Entry[_per]);
 
-                    get_2alleles(_tpe->Marker, _locus, &_allele1, &_allele2);
+                    get_2alleles(_tpersonp->Marker, _locus, &_allele1, &_allele2);
                     inner();
                 }
                 ped_end();
@@ -449,7 +449,7 @@ void loop::loci_ped_per::run_loop(const char *dir, const char *fl_name, const ch
     filep_close();
 }
 
-void loop::loci::run_loop(const char *dir, const char *fl_name, const char *mode)
+void dataloop::loci::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int m;
 
@@ -461,13 +461,13 @@ void loop::loci::run_loop(const char *dir, const char *fl_name, const char *mode
     for (m=0; m < NumChrLoci; m++) {
         // The actual Loci number associated with a SELECTED Loci...
         _locus = ChrLoci[m];
-        _tle = &(_LTop->Locus[_locus]);
+        _tlocusp = &(_LTop->Locus[_locus]);
 
         // Ignore anything but a marker.
         // This should get us things of Locus[?].Type == {NUMBERED, BINARY, XLINKED, YLINKED}.
-        if (_tle->Class == MARKER) {
+        if (_tlocusp->Class == MARKER) {
 
-            if (_loci_allele_limit && _tle->AlleleCnt > _loci_allele_limit) continue;
+            if (_loci_allele_limit && _tlocusp->AlleleCnt > _loci_allele_limit) continue;
 
             inner();
         }

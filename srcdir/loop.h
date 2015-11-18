@@ -31,83 +31,98 @@
 
 #include "file_ops.h"
 #include "entry.h"
-#include "sh_util.h"
 
 #include "linkage_ext.h"
 
-class loop {
+#define lpCLASS(derived,outer,inner) struct derived: public fileloop::outer, public dataloop::inner
+#define  lpCTOR(derived,outer,inner) derived(linkage_ped_top *Top) : person_locus_entry(Top), loop::outer(Top), loop::inner(Top)
+
+namespace dataloop {
+    class dataloop_data;
+};
+
+namespace fileloop {
 ////////////////////////////////////////////////////////////////
 //                       Outer loops
 ////////////////////////////////////////////////////////////////
-public:
-    class once: public virtual person_locus_entry {
+    class fileloop_data: public virtual person_locus_entry {
     public:
+        fileloop_data(linkage_ped_top *Top) : person_locus_entry(Top) { }
+        int    _trait_loop;
         int   *_trp;
-        bool _trait_affect;
-        bool _trait_quant;
+        bool   _trait_affect;
+        bool   _trait_quant;
+        int    _chrom_loop;
+        char **_opath;
 
-        once(linkage_ped_top *Top) : person_locus_entry(Top) {
-            _numchr     = 0;
-            _chrom_loop = LoopOverChrm && main_chromocnt > 1;
+/*
+        linkage_locus_rec *_tte; // shared to dataloop
+        int _numchr;             // shared to dataloop
+        int _trait;              // shared to dataloop
+
+        linkage_ped_top  *_Top;   // copy same as dataloop
+        linkage_locus_top  *_LTop;// copy same as dataloop
+*/
+    };
+
+    class once: public fileloop_data {
+    public:
+        once(linkage_ped_top *Top) : fileloop_data(Top) {
+            _ttraitp     = 0;
+            _numchr      = 0;
+
+            _chrom_loop   = LoopOverChrm && main_chromocnt > 1;
 
             _trp          = global_trait_entries;
+            _trait_loop   = false;
             _trait_affect = false;
             _trait_quant  = false;
-            _tte          = 0;
 
             _opath      = &output_paths[0];
         }
         virtual ~once() {}
 
         void iterate();
-        virtual void make_file() {}
+        virtual void file_loop() {}
     };
 
-public:
-    class outer: public virtual person_locus_entry {
+    class both: public fileloop_data {
     public:
-        int _trait_loop;
-        int   *_trp;
-        bool _trait_affect;
-        bool _trait_quant;
+        both(linkage_ped_top *Top) : fileloop_data(Top) {
+            _ttraitp     = 0;
+            _numchr      = 0;
 
-        outer(linkage_ped_top *Top) : person_locus_entry(Top) {
-            _numchr       = 0;
             _chrom_loop   = LoopOverChrm && main_chromocnt > 1;
 
             _trait_loop   = LoopOverTrait && num_traits > 1;
             _trp          = global_trait_entries;
             _trait_affect = false;
             _trait_quant  = false;
-            _tte          = 0;
 
             _opath        = _trait_loop ? &output_paths[1] : &output_paths[0];
         }
-        virtual ~outer() {}
+        virtual ~both() {}
 
         void iterate();
         virtual void chr_start() {}
         virtual void trait_start() {}
-        virtual void make_file() {}
+        virtual void file_loop() {}
         virtual void trait_end() {}
         virtual void chr_end() {}
     };
 
-public:
-    class chr: public virtual person_locus_entry {
+    class chr: public fileloop_data {
     public:
-        int   *_trp;
-        bool _trait_affect;
-        bool _trait_quant;
+        chr(linkage_ped_top *Top) : fileloop_data(Top) {
+            _ttraitp     = 0;
+            _numchr      = 0;
 
-        chr(linkage_ped_top *Top) : person_locus_entry(Top) {
-            _numchr     = 0;
-            _chrom_loop = LoopOverChrm && main_chromocnt > 1;
+            _chrom_loop   = LoopOverChrm && main_chromocnt > 1;
 
             _trp          = global_trait_entries;
+            _trait_loop   = false;
             _trait_affect = false;
             _trait_quant  = false;
-            _tte          = 0;
 
             _opath      = &output_paths[0];
         }
@@ -115,25 +130,20 @@ public:
 
         void iterate();
         virtual void chr_start() {}
-        virtual void make_file() {}
+        virtual void file_loop() {}
         virtual void chr_end() {}
     };
 
-public:
-    class trait: public virtual person_locus_entry {
+    class trait: public fileloop_data {
     public:
-        int _trait_loop;
-        int   *_trp;
-        bool _trait_affect;
-        bool _trait_quant;
+        trait(linkage_ped_top *Top) : fileloop_data(Top) {
+            _ttraitp     = 0;
+            _numchr      = 0;
 
-        trait(linkage_ped_top *Top) : person_locus_entry(Top) {
-            _numchr       = 0;
             _chrom_loop   = LoopOverChrm && main_chromocnt > 1;
 
             _trait_loop   = LoopOverTrait && num_traits > 1;
             _trp          = global_trait_entries;
-            _tte          = 0;
             _trait_affect = false;
             _trait_quant  = false;
 
@@ -143,55 +153,56 @@ public:
 
         void iterate();
         virtual void trait_start() {}
-        virtual void make_file() {}
+        virtual void file_loop() {}
         virtual void trait_end() {}
     };
-
+};
 ////////////////////////////////////////////////////////////////
 //                       inner loops
 ////////////////////////////////////////////////////////////////
 
-public:
-    class null: public virtual person_locus_entry {
+namespace dataloop {
+    class dataloop_data: public virtual person_locus_entry {
+    public:
+        dataloop_data(linkage_ped_top *Top) : person_locus_entry(Top) { }
+
+        virtual void data_loop(const char *dir, const char *fl_name, const char *mode) {};
+    };
+
+    class null: public dataloop_data {
     public:
 
-        null(linkage_ped_top *Top) : person_locus_entry(Top) { }
+        null(linkage_ped_top *Top) : dataloop_data(Top) { }
        ~null() {}
 
-        void run_loop(const char *dir, const char *fl_name, const char *mode="w");
-        void run_loop(const char *fl_name) { run_loop(*_opath, fl_name, "w"); }
+        void data_loop(const char *dir, const char *fl_name, const char *mode);
         virtual void inner() {}
     };
 
-public:
-    class ped_per: public virtual person_locus_entry {
+    class ped_per: public dataloop_data {
     public:
-        ped_per(linkage_ped_top *Top) : person_locus_entry(Top) { }
+        ped_per(linkage_ped_top *Top) : dataloop_data(Top) { }
        ~ped_per() {}
 
-        void run_loop(const char *dir, const char *fl_name, const char *mode="w");
-        void run_loop(const char *fl_name) { run_loop(*_opath, fl_name, "w"); }
+        void data_loop(const char *dir, const char *fl_name, const char *mode);
         virtual void ped_start() {};
         virtual void inner() {};
         virtual void ped_end() {};
     };
 
-public:
-    class ped_per_trait: public virtual person_locus_entry {
+    class ped_per_trait: public dataloop_data {
         int *trp;
         bool trait_affect;
         bool trait_quant;
     public:
-        ped_per_trait(linkage_ped_top *Top) : person_locus_entry(Top) {
+        ped_per_trait(linkage_ped_top *Top) : dataloop_data(Top) {
             trp          = global_trait_entries;
             trait_affect = false;
             trait_quant  = false;
         }
-
        ~ped_per_trait() {}
 
-        void run_loop(const char *dir, const char *fl_name, const char *mode="w");
-        void run_loop(const char *fl_name) { run_loop(*_opath, fl_name, "w"); }
+        void data_loop(const char *dir, const char *fl_name, const char *mode);
         virtual void ped_start() {};
         virtual void per_start() {};
         virtual void inner() {};
@@ -199,22 +210,19 @@ public:
         virtual void ped_end() {};
     };
 
-public:
-    class trait_ped_per: public virtual person_locus_entry {
+    class trait_ped_per: public dataloop_data {
         int *trp;
         bool trait_affect;
         bool trait_quant;
     public:
-        trait_ped_per(linkage_ped_top *Top) : person_locus_entry(Top) {
+        trait_ped_per(linkage_ped_top *Top) : dataloop_data(Top) {
             trp          = global_trait_entries;
             trait_affect = false;
             trait_quant  = false;
         }
-
        ~trait_ped_per() {}
 
-        void run_loop(const char *dir, const char *fl_name, const char *mode="w");
-        void run_loop(const char *fl_name) { run_loop(*_opath, fl_name, "w"); }
+        void data_loop(const char *dir, const char *fl_name, const char *mode);
         virtual void trait_start() {};
         virtual void ped_start() {};
         virtual void inner() {};
@@ -222,18 +230,16 @@ public:
         virtual void trait_end() {};
     };
 
-public:
-    class ped_per_loci: public virtual person_locus_entry {
+    class ped_per_loci: public dataloop_data {
     public:
         int _loci_allele_limit;
 
-        ped_per_loci(linkage_ped_top *Top) : person_locus_entry(Top) {
+        ped_per_loci(linkage_ped_top *Top) : dataloop_data(Top) {
             _loci_allele_limit = 0;
         }
        ~ped_per_loci() {}
 
-        void run_loop(const char *dir, const char *fl_name, const char *mode="w");
-        void run_loop(const char *fl_name) { run_loop(*_opath, fl_name, "w"); }
+        void data_loop(const char *dir, const char *fl_name, const char *mode);
         virtual void ped_start() {}
         virtual void per_start() {}
         virtual void inner() {}
@@ -241,18 +247,16 @@ public:
         virtual void ped_end() {}
     };
 
-public:
-    class loci_ped_per: public virtual person_locus_entry {
+    class loci_ped_per: public dataloop_data {
     public:
         int _loci_allele_limit;
 
-        loci_ped_per(linkage_ped_top *Top) : person_locus_entry(Top) {
+        loci_ped_per(linkage_ped_top *Top) : dataloop_data(Top) {
             _loci_allele_limit = 0;
         }
        ~loci_ped_per() {}
 
-        void run_loop(const char *dir, const char *fl_name, const char *mode="w");
-        void run_loop(const char *fl_name) { run_loop(*_opath, fl_name, "w"); }
+        void data_loop(const char *dir, const char *fl_name, const char *mode);
         virtual void loci_start() {}
         virtual void ped_start() {}
         virtual void inner() {}
@@ -260,19 +264,17 @@ public:
         virtual void loci_end() {}
     };
 
-public:
-    class loci: public virtual person_locus_entry {
+    class loci: public dataloop_data {
     public:
         int _loci_allele_limit;
 
-        loci(linkage_ped_top *Top) : person_locus_entry(Top) {
+        loci(linkage_ped_top *Top) : dataloop_data(Top) {
             _loci_allele_limit = 0;
         }
        ~loci() {}
-        void delete_file(const char *file) { filep_delete(*_opath, file); }
+        void delete_file(const char *opath, const char *file) { filep_delete(opath, file); }
 
-        void run_loop(const char *dir, const char *fl_name, const char *mode="w");
-        void run_loop(const char *fl_name) { run_loop(*_opath, fl_name, "w"); }
+        void data_loop(const char *dir, const char *fl_name, const char *mode);
         virtual void inner() {}
     };
 

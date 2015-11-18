@@ -36,6 +36,7 @@
 #include "tod.hh"
 
 #include "loop.h"
+#include "sh_util.h"
 
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
@@ -80,12 +81,12 @@ void CLASS_PLINK_CORE::replace_chr_number(char *file_names[], int numchr) {
 static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
                                 const int pwid, const int fwid, const int mwid)
 {
-    struct plink_core_lgen: public loop::chr, loop::loci_ped_per {
+    struct plink_core_lgen: public fileloop::chr, dataloop::loci_ped_per {
 
-        plink_core_lgen(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::loci_ped_per(Top) {}
-        void make_file() {
+        plink_core_lgen(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::loci_ped_per(Top) {}
+        void file_loop() {
             mssgvf("        PLINK lgen file:           %s/%s\n", *_opath, Outfile_Names[3]);
-            run_loop(Outfile_Names[3]);
+            data_loop(*_opath, Outfile_Names[3], "w");
         }
         void inner() {
             if (!_allele1 || !_allele2) return;
@@ -114,12 +115,12 @@ static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
 static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
                              const int pwid, const int fwid)
 {
-    struct plink_core_pheno: public loop::once, loop::ped_per_trait {
+    struct plink_core_pheno: public fileloop::once, dataloop::ped_per_trait {
 
-        plink_core_pheno(linkage_ped_top *Top) : person_locus_entry(Top), loop::once(Top), loop::ped_per_trait(Top) {}
-        void make_file() {
+        plink_core_pheno(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::once(Top), dataloop::ped_per_trait(Top) {}
+        void file_loop() {
             msgvf("        PLINK phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
-            run_loop(Outfile_Names[2]);
+            data_loop(*_opath, Outfile_Names[2], "w");
         }
         void file_header() {
             int tr;
@@ -310,13 +311,13 @@ static void write_PLINK_map(linkage_ped_top *LPTop,
     ext_linkage_locus_top *EXLTop = LPTop->EXLTop;
 #endif /* PLINK_MAP_FILE_COMMENTS */        
 
-    struct plink_core_map: public loop::chr, loop::null {
+    struct plink_core_map: public fileloop::chr, dataloop::null {
         int generate_bim_file;
 
-        plink_core_map(linkage_ped_top *Top) : person_locus_entry(Top), loop::chr(Top), loop::null(Top) {}
-        void make_file() {
+        plink_core_map(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::null(Top) {}
+        void file_loop() {
             mssgvf("        PLINK map file:            %s/%s\n", *_opath, Outfile_Names[1]);
-            run_loop(Outfile_Names[1]);
+            data_loop(*_opath, Outfile_Names[1], "w");
         }
         void file_header() {
             // It seems that PLINK map (.BIM) files cannot handle comments...
