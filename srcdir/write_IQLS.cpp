@@ -353,11 +353,11 @@ static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]
 static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file_names[],
                                     int first_time)
 {
-    struct IQLS_shell_script: public fileloop::both, sh_util {
+    lpCLASS(IQLS_shell_script,both,sh_exec) {
+     lpCTOR(IQLS_shell_script,both,sh_exec) { }
         typedef char *str;
         str *file_names;
 
-        IQLS_shell_script(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), sh_util(Top) { }
         void file_loop() {
             msgvf("        IQLS shell script file:    %s/%s\n", *_opath, file_names[3]);
             data_loop(*_opath, Outfile_Names[3], "w");

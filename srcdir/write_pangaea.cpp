@@ -278,31 +278,24 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
         strcmp(output_paths[0], ".");
 
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-//      virtual ~all_sh() {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-
+    dataloop::sh_exec *sh = 0;
     if (top_shell) {
-        sh = new all_sh(Top);
+        sh = new dataloop::sh_exec(Top);
         sh->filep_open(output_paths[0], file_names[4], "w");
         sh->sh_main();
     }
 
-    struct PANGAEA_sh_script: public fileloop::both, all_sh {
+    lpCLASS(PANGAEA_sh_script,both,sh_exec) {
+     lpCTOR(PANGAEA_sh_script,both,sh_exec) {
+            strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
+        }
         typedef char *str;
         str *file_names;
-        all_sh *sh;
+        dataloop::sh_exec *sh;
         char *pgm;
         int subopt;
         char pfx[4];
 
-        PANGAEA_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), all_sh(Top) {
-            strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
-        }
         void file_loop() {
             mssgvf("        PANGAEA shell file:         %s/%s\n", *_opath, file_names[3]);
             data_loop(*_opath, file_names[3], "w");
@@ -755,7 +748,7 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
     xp2->iterate(); 
     delete xp2;
 
-    sh_util *Xpgm = new sh_util(Top);
+    dataloop::sh_util *Xpgm = new dataloop::sh_util(Top);
     char outfl[FILENAME_LENGTH];
     sprintf(outfl, "%s.extra", file_names[6]);
     Xpgm->filep_open(output_paths[0], outfl, "w");

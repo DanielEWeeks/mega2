@@ -1086,28 +1086,25 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
 {
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1);
     
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-    
+    dataloop::sh_exec *sh = 0;
     if (top_shell) {
-        sh = new all_sh(Top);
+        sh = new dataloop::sh_exec(Top);
         sh->filep_open(output_paths[0], file_names[4], "w");
         sh->sh_main();
     }
     
-    struct BEAGLE_sh_script: public fileloop::both, all_sh {
-        typedef char *str;
-        str *file_names;
-        all_sh *sh;
-        analysis_type *analysis;
-        
-        BEAGLE_sh_script(linkage_ped_top *Top, analysis_type *analysis) : person_locus_entry(Top), fileloop::both(Top), all_sh(Top) {
+    lpCLASS(BEAGLE_sh_script,both,sh_exec) {
+     lpCTOR(BEAGLE_sh_script,both,sh_exec) { }
+/*
+       BEAGLE_sh_script(linkage_ped_top *Top, analysis_type *analysis) : person_locus_entry(Top), fileloop::both(Top), dataloop::sh_exec(Top)  {
           this->analysis = analysis;
         }
+*/
+        typedef char *str;
+        str *file_names;
+        dataloop::sh_exec *sh;
+        analysis_type *analysis;
+        
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             mssgvf("        BEAGLE shell file:                   %s/%s\n", *_opath, file_names[3]);
@@ -1218,10 +1215,11 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
         void file_post() {
             chmod_X_file(path_);
         }
-    } *xp = new BEAGLE_sh_script(Top, analysis);
+    } *xp = new BEAGLE_sh_script(Top);
     
     xp->file_names = file_names;
     xp->sh         = sh;
+    xp->analysis   = analysis;
     xp->iterate();
     
     delete xp;

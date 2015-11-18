@@ -194,27 +194,20 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
         strcmp(output_paths[0], ".");
 
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-//        virtual ~all_sh() {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-
+    dataloop::sh_exec *sh = 0;
     if (top_shell) {
-        sh = new all_sh(Top);
+        sh = new dataloop::sh_exec(Top);
         sh->filep_open(output_paths[0], file_names[4], "w");
         sh->sh_main();
     }
 
-    struct FBAT_sh_script: public fileloop::both, all_sh {
+    lpCLASS(FBAT_sh_script,both,sh_exec) {
+     lpCTOR(FBAT_sh_script,both,sh_exec) { }
         typedef char *str;
         str *file_names;
-        all_sh *sh;
+        sh_exec *sh;
         bool has_x;
 
-        FBAT_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), all_sh(Top) { }
         void file_loop() {
             mssgvf("        FBAT shell file:       %s/%s\n", *_opath, file_names[3]);
             data_loop(*_opath, file_names[3], "w");
@@ -504,15 +497,15 @@ void CLASS_FBAT::create_output_file(
 
     //Tilt combine_chromo = main_chromocnt > 1;
 
-    sh_util *Rpgm = NULL;
-    Rpgm = new sh_util(Top);
+    dataloop::sh_exec *Rpgm = NULL;
+    Rpgm = new dataloop::sh_exec(Top);
     Rpgm->filep_open(output_paths[0], "fbat.R", "w");
     mssgvf("        FBAT R code file:      %s/%s\n", output_paths[0], "fbat.R");
     Rpgm->pr_printf(fbatR);
     delete Rpgm;
     Rpgm = NULL;
 
-    sh_util *Fpgm = new sh_util(Top);
+    dataloop::sh_exec *Fpgm = new dataloop::sh_exec(Top);
     char outfl[FILENAME_LENGTH];
     sprintf(outfl, "%s.cmd.txt", file_names[6]);
     Fpgm->filep_open(output_paths[0], outfl, "w");

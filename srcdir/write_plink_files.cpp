@@ -557,27 +557,21 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         write_PLINK_reference_allele_file(Top);
     }
 
-    struct all_sh: public sh_util {
-        all_sh(linkage_ped_top *Top) : sh_util(Top) {}
-        virtual void file_post() {
-            chmod_X_file(path_);
-        }
-    } *sh = 0;
-    
+    dataloop::sh_exec *sh = 0;
     if (top_shell) {
-        sh = new all_sh(Top);
+        sh = new dataloop::sh_exec(Top);
         sh->filep_open(output_paths[0], file_names[4], "w");
         sh->sh_main();
     }
     
-    struct PLINK_sh_script: public fileloop::both, all_sh {
+    lpCLASS(PLINK_sh_script,both,sh_exec) {
+     lpCTOR(PLINK_sh_script,both,sh_exec) { }
         typedef char *str;
         str *file_names;
-        all_sh *sh;
+        sh_exec *sh;
         int suboption;
         int xcf;
         
-        PLINK_sh_script(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), all_sh(Top) { }
         void file_loop() {
             mssgvf("        PLINK shell file:          %s/%s\n", *_opath, file_names[8]);
             data_loop(*_opath, Outfile_Names[8], "w");
