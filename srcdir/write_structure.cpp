@@ -136,12 +136,12 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
                          const int pwid, const int fwid)
 {
     // #define MARKERNAMES      1  // (B) data file contains row of marker names
-    struct save_marker_names: public fileloop::both, dataloop::loci {
+    lpCLASS(save_marker_names,both,loci) {
+     lpCTOR(save_marker_names,both,loci) { markers_i = -1; }
         typedef char *str;
         str *file_names;
         int markers_i;
         
-        save_marker_names(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::loci(Top) { markers_i = -1; }
         void file_loop() {
             data_loop(*_opath, file_names[0], "w");
         }
@@ -172,13 +172,15 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
 
         mapdistances = 1;
         // #define MAPDISTANCES     1  // (B) data file contains row of map distances between loci
-        struct save_genetic_distance_markers: public fileloop::both, dataloop::loci {
+        lpCLASS(save_genetic_distance_markers,both,loci) {
+         save_genetic_distance_markers(linkage_ped_top *Top, int LoopOverChrm_save) : person_locus_entry(Top), fileloop::both(Top), dataloop::loci(Top) {
+             this->LoopOverChrm_save = LoopOverChrm_save;
+         }
             typedef char *str;
             str *file_names;
             double last_genetic_distance;
             int new_chromo, warnp, LoopOverChrm_save;
             
-            save_genetic_distance_markers(linkage_ped_top *Top, int LoopOverChrm_save) : person_locus_entry(Top), fileloop::both(Top), dataloop::loci(Top) { this->LoopOverChrm_save = LoopOverChrm_save; }
             void file_loop() {
                 char *fn = file_names[(LoopOverChrm_save == 1 ? 0 : 8)];
                 data_loop(*_opath, fn, "a");
@@ -232,12 +234,12 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
     phenotype = popdata = 0;
     // 2.3 Individual/genotype data
     // Each row of individual data contains the following elements. These form columns in the data file.
-    struct save_pers: public fileloop::both, dataloop::ped_per_loci {
+    lpCLASS(save_pers,both,ped_per_loci) {
+     lpCTOR(save_pers,both,ped_per_loci) { chr_i = -1; }
         typedef char *str;
         str *file_names;
         int PopDataPheno_i, personHasMarkers, chr_i;
         
-        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per_loci(Top) { chr_i = -1; }
         void file_loop() {
             int i;
             // The user can specify an integer (quantitative phenotype) designating a user-defined
@@ -340,12 +342,12 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
 static void write_mainparams(linkage_ped_top *Top, char *file_names[],
                              const int pwid, const int fwid)
 {
-    struct save_mainparams: public fileloop::both, dataloop::null {
+    lpCLASS(save_mainparams,both,null) {
+     lpCTOR(save_mainparams,both,null) { markers_i = inds_i = -1; }
         typedef char *str;
         str *file_names;
         int markers_i, inds_i;
         
-        save_mainparams(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::null(Top) { markers_i = inds_i = -1; }
         void file_loop() {
             mssgvf("        STRUCTURE mainparams:         %s/%s\n", *_opath, file_names[5]);
             data_loop(*_opath, file_names[5], "w");
@@ -401,12 +403,12 @@ static void write_mainparams(linkage_ped_top *Top, char *file_names[],
 static void write_extraparams(linkage_ped_top *Top, char *file_names[],
 			      const int pwid, const int fwid)
 {
-    struct save_extraparams: public fileloop::both, dataloop::null {
+    lpCLASS(save_extraparams,both,null) {
+     lpCTOR(save_extraparams,both,null) { markers_i = -1; }
         typedef char *str;
         str *file_names;
         int markers_i;
         
-        save_extraparams(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::null(Top) { markers_i = -1; }
         void file_loop() {
             mssgvf("        STRUCTURE extraparams:         %s/%s\n", *_opath, file_names[7]);
             data_loop(*_opath, file_names[7], "w");

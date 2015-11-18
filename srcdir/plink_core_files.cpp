@@ -81,9 +81,9 @@ void CLASS_PLINK_CORE::replace_chr_number(char *file_names[], int numchr) {
 static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
                                 const int pwid, const int fwid, const int mwid)
 {
-    struct plink_core_lgen: public fileloop::chr, dataloop::loci_ped_per {
+    lpCLASS(plink_core_lgen,chr,loci_ped_per) {
+     lpCTOR(plink_core_lgen,chr,loci_ped_per) { }
 
-        plink_core_lgen(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::loci_ped_per(Top) {}
         void file_loop() {
             mssgvf("        PLINK lgen file:           %s/%s\n", *_opath, Outfile_Names[3]);
             data_loop(*_opath, Outfile_Names[3], "w");
@@ -115,9 +115,9 @@ static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
 static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
                              const int pwid, const int fwid)
 {
-    struct plink_core_pheno: public fileloop::once, dataloop::ped_per_trait {
+    lpCLASS(plink_core_pheno,once,ped_per_trait) {
+     lpCTOR(plink_core_pheno,once,ped_per_trait) { }
 
-        plink_core_pheno(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::once(Top), dataloop::ped_per_trait(Top) {}
         void file_loop() {
             msgvf("        PLINK phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
             data_loop(*_opath, Outfile_Names[2], "w");
@@ -311,10 +311,10 @@ static void write_PLINK_map(linkage_ped_top *LPTop,
     ext_linkage_locus_top *EXLTop = LPTop->EXLTop;
 #endif /* PLINK_MAP_FILE_COMMENTS */        
 
-    struct plink_core_map: public fileloop::chr, dataloop::null {
+    lpCLASS(plink_core_map,chr,null) {
+     lpCTOR(plink_core_map,chr,null) { }
         int generate_bim_file;
 
-        plink_core_map(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::null(Top) {}
         void file_loop() {
             mssgvf("        PLINK map file:            %s/%s\n", *_opath, Outfile_Names[1]);
             data_loop(*_opath, Outfile_Names[1], "w");

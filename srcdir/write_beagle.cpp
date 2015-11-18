@@ -214,10 +214,11 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
 
     if (base_pair_position_index >= 0) {
         // If we have the data create the file...
-        struct save_base_pair_position_markers: public fileloop::chr, dataloop::loci {
+        lpCLASS(save_base_pair_position_markers,chr,loci) {
+         lpCTOR(save_base_pair_position_markers,chr,loci) { }
             typedef char *str;
             str *file_names;
-            save_base_pair_position_markers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::loci(Top) { }
+
             void file_loop() {
                 if (_numchr > lastautosome) return; // because we have already issued a warning.
                 mssgvf("        BEAGLE base position marker file:    %s/%s\n", *_opath, file_names[1]);
@@ -246,11 +247,11 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
 
     if (genetic_distance_index >= 0) {
         // If we have the data create the file...
-        struct save_genetic_distance_markers: public fileloop::chr, dataloop::loci {
+        lpCLASS(save_genetic_distance_markers,chr,loci) {
+         lpCTOR(save_genetic_distance_markers,chr,loci) { }
             typedef char *str;
             str *file_names;
-            
-            save_genetic_distance_markers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::loci(Top) { }
+
             void file_loop() {
                 if (_numchr > lastautosome) return; // because we have already issued a warning.
                 mssgvf("        BEAGLE genetic distance marker file: %s/%s\n", *_opath, file_names[2]);
@@ -339,11 +340,11 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
 {
     // Pedigree...
     // 'fileloop::both' loops over chromosome, and then trait...
-    struct save_fams: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_fams,both,ped_per) {
+     lpCTOR(save_fams,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
-        save_fams(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
         void file_loop() {
             if (_numchr > lastautosome) {
                 warnf("Beagle analysis can only be run on autosomes.");
@@ -371,11 +372,11 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     
     // Person...
     // The person or identifier line is not currently required, but will be in future versions of Beagle.
-    struct save_pers: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_pers,both,ped_per) {
+     lpCTOR(save_pers,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -403,11 +404,11 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     delete sI;
     
     // Father...
-    struct save_fathers: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_fathers,both,ped_per) {
+     lpCTOR(save_fathers,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_fathers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -434,11 +435,11 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     delete sPID;
     
     // Mother...
-    struct save_mothers: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_mothers,both,ped_per) {
+     lpCTOR(save_mothers,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_mothers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -462,11 +463,11 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     delete sMID;
     
     // Sex...
-    struct save_sexs: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_sexs,both,ped_per) {
+     lpCTOR(save_sexs,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_sexs(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -489,11 +490,11 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
 
 #ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
-    struct save_phenotypes: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_phenotypes,both,ped_per) {
+     lpCTOR(save_phenotypes,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_phenotypes(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -527,11 +528,11 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     // So, they must be written in the same order as written in the marker file @see write_BEAGLE_marker_file
     //
     // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
-    struct save_markers: public fileloop::both, dataloop::loci_ped_per {
+    lpCLASS(save_markers,both,loci_ped_per) {
+     lpCTOR(save_markers,both,loci_ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_markers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::loci_ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -591,11 +592,11 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                                                      const int pwid, const int fwid)
 {
     // Pedigree...
-    struct save_fams: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_fams,both,ped_per) {
+     lpCTOR(save_fams,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_fams(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) {
                 warnf("Beagle analysis can only be run on autosomes.");
@@ -623,11 +624,11 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     delete sP;
     
     // Father, Mother, Child (6-tuple)...
-    struct save_pers: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_pers,both,ped_per) {
+     lpCTOR(save_pers,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -654,11 +655,11 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     delete sI;
     
     // Sex...
-    struct save_sexs: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_sexs,both,ped_per) {
+     lpCTOR(save_sexs,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_sexs(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -691,11 +692,11 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     
 #ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
-    struct save_phenotypes: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_phenotypes,both,ped_per) {
+     lpCTOR(save_phenotypes,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_phenotypes(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -736,11 +737,11 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
     // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
-    struct save_markers: public fileloop::both, dataloop::loci_ped_per {
+    lpCLASS(save_markers,both,loci_ped_per) {
+     lpCTOR(save_markers,both,loci_ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_markers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::loci_ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -831,11 +832,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
                                                      const int pwid, const int fwid)
 {
     // Pedigree...
-    struct save_fams: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_fams,both,ped_per) {
+     lpCTOR(save_fams,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_fams(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) {
                 warnf("Beagle analysis can only be run on autosomes.");
@@ -865,11 +866,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     // Each set of four consecutive columns (beginning with columns 3-6) gives the genotype data
     // for one parent-offspring pair. In each set of four columns, the first two columns give the
     // genotypes for the genotyped parent, and the last two columns give the genotypes for the offspring.
-    struct save_pers: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_pers,both,ped_per) {
+     lpCTOR(save_pers,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_pers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -895,11 +896,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     delete sI;
     
     // Sex...
-    struct save_sexs: public fileloop::both, dataloop::ped_per {
+    lpCLASS(save_sexs,both,ped_per) {
+     lpCTOR(save_sexs,both,ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_sexs(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -934,11 +935,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     
 #ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
-    struct save_phenotypes: public fileloop::both, dataloop::trait_ped_per {
+    lpCLASS(save_phenotypes,both,trait_ped_per) {
+     lpCTOR(save_phenotypes,both,trait_ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_phenotypes(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::trait_ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");
@@ -981,11 +982,11 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
     // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
-    struct save_markers: public fileloop::both, dataloop::loci_ped_per {
+    lpCLASS(save_markers,both,loci_ped_per) {
+     lpCTOR(save_markers,both,loci_ped_per) { }
         typedef char *str;
         str *file_names;
-        
-        save_markers(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::loci_ped_per(Top) { }
+
         void file_loop() {
             if (_numchr > lastautosome) return; // because we have already issued a warning.
             data_loop(*_opath, file_names[0], "a");

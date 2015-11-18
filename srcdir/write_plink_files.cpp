@@ -166,8 +166,9 @@ void CLASS_PLINK::save_pedsix_file(linkage_ped_top *Top,
 				   const int fwid)
 {
     Tod tod_pedsix("save ped/fam file six cols");
-    struct plink_pedsix: public fileloop::trait, dataloop::ped_per {
-        plink_pedsix(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::trait(Top), dataloop::ped_per(Top) { }
+    lpCLASS(plink_pedsix,trait,ped_per) {
+     lpCTOR(plink_pedsix,trait,ped_per) { }
+
         void file_loop() {
             mssgvf("        PLINK pedigree file:       %s/%s\n", *_opath, Outfile_Names[0]);  //fam
             data_loop(*_opath, Outfile_Names[0], "w");
@@ -203,9 +204,9 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
 				const int mwid)
 {
     Tod tod_ped("save ped file");
-    struct plink_ped: public fileloop::chr, dataloop::ped_per_loci {
+    lpCLASS(plink_ped,chr,ped_per_loci) {
+     lpCTOR(plink_ped,chr,ped_per_loci) { }
 
-        plink_ped(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::ped_per_loci(Top) {}
         void file_loop() {
             mssgvf("        PLINK ped file:            %s/%s\n", *_opath, Outfile_Names[0]);
             data_loop(*_opath, Outfile_Names[0], "w");
@@ -268,9 +269,9 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
 {
     if (binary_mode_flag == 1) {
         Tod tod_bed1("save bed file plink snp major");
-        struct plink_snp_major: public fileloop::chr, dataloop::loci_ped_per, public plink_binary {
+        struct plink_snp_major: public fileloop::chr, public dataloop::loci_ped_per, public plink_binary {
+         lpCTOR(plink_snp_major,chr,loci_ped_per) { }
 
-            plink_snp_major(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), loci_ped_per(Top) { }
            ~plink_snp_major() {}
             void file_loop() {
                 Tod tod_lmf("make bed file for chr");
@@ -300,8 +301,9 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
 
     } else if (binary_mode_flag == 2) {
         Tod tod_bed2("save bed file plink indiv major");
-        struct plink_indiv_major: public fileloop::chr, dataloop::ped_per_loci, public plink_binary {
-            plink_indiv_major(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), ped_per_loci(Top) { }
+        struct plink_indiv_major: public fileloop::chr, public dataloop::ped_per_loci, public plink_binary {
+         lpCTOR(plink_indiv_major,chr,ped_per_loci) { }
+
            ~plink_indiv_major() {}
             void file_loop() {
                 mssgvf("        PLINK binary file indiv:   %s/%s\n", *_opath, Outfile_Names[3]);
@@ -496,9 +498,9 @@ static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
  */
 static void write_PLINK_reference_allele_file(linkage_ped_top *Top) {
     
-    struct plink_reference_allele_file: public fileloop::chr, dataloop::null {
-        
-        plink_reference_allele_file(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::null(Top) {}
+    lpCLASS(plink_reference_allele_file,chr,null) {
+     lpCTOR(plink_reference_allele_file,chr,null) { }
+
         void file_loop() {
             mssgvf("        PLINK VCF REF file:        %s/%s\n", *_opath, Outfile_Names[9]);
             data_loop(*_opath, Outfile_Names[9], "w");

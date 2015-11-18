@@ -154,10 +154,10 @@ void CLASS_EIGENSTRAT::save_pedsix_file(linkage_ped_top *Top,
                                         const int pwid,
                                         const int fwid)
 {
-    struct eigenstrat_pedsix: public fileloop::trait, dataloop::ped_per {
+    lpCLASS(eigenstrat_pedsix,trait,ped_per) {
+     lpCTOR(eigenstrat_pedsix,trait,ped_per) { }
         int missing_affection_status;
 
-        eigenstrat_pedsix(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::trait(Top), dataloop::ped_per(Top) { }
         void file_loop() {
             //if (_ttraitp == (linkage_locus_rec *)NULL) return;
             mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, Outfile_Names[0]);  //fam
@@ -197,10 +197,11 @@ void CLASS_EIGENSTRAT::save_ped_file(linkage_ped_top *Top,
                                      const int fwid,
                                      const int mwid)
 {
-    struct eigenstrat_ped: public fileloop::both, dataloop::ped_per_loci {
+    lpCLASS(eigenstrat_ped,both,ped_per_loci) {
+     lpCTOR(eigenstrat_ped,both,ped_per_loci) { }
         int missing_affection_status;
         int process_per;
-        eigenstrat_ped(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per_loci(Top) { }
+
         void file_loop() {
             //if (_ttraitp == (linkage_locus_rec *)NULL) return;
             mssgvf("        EIGENSTRAT pedigree file:  %s/%s\n", *_opath, Outfile_Names[0]);
@@ -272,8 +273,9 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
                                      const int binary_mode_flag)
 {
     if (binary_mode_flag == 1) {
-        struct eigenstrat_snp_major: public fileloop::both, dataloop::loci_ped_per, public plink_binary {
-            eigenstrat_snp_major(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), loci_ped_per(Top) { }
+        struct eigenstrat_snp_major: public fileloop::both, public dataloop::loci_ped_per, public plink_binary {
+         lpCTOR(eigenstrat_snp_major,both,loci_ped_per) { }
+
             ~eigenstrat_snp_major() {}
             void file_loop() {
                 //if (_ttraitp == (linkage_locus_rec *)NULL) return;

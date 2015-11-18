@@ -87,11 +87,11 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
                             const int pwid, const int fwid)
 {
-    struct save_pheno: public fileloop::once, dataloop::ped_per_trait {
+    lpCLASS(save_pheno,once,ped_per_trait) {
+     lpCTOR(save_pheno,once,ped_per_trait) { }
         typedef char *str;
         str *file_names;
 
-        save_pheno(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::once(Top), dataloop::ped_per_trait(Top) {}
         void file_loop() {
             msgvf("        FBAT phenotype file:   %s/%s\n", *_opath, file_names[2]);
             data_loop(*_opath, file_names[2], "w");
@@ -132,12 +132,12 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
                            const int pwid, const int fwid,
                            const bool has_x)
 {
-    struct save_peds: public fileloop::both, dataloop::ped_per_loci {
+    lpCLASS(save_peds,both,ped_per_loci) {
+     lpCTOR(save_peds,both,ped_per_loci) { }
         typedef char *str;
         str *file_names;
         bool has_x;
 
-        save_peds(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per_loci(Top) { }
         void file_loop() {
             mssgvf("        FBAT pedigree file:    %s/%s\n", *_opath, file_names[0]);
             if (_ttraitp == NULL) {
@@ -320,12 +320,12 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
 
 static void write_FBAT_Rhdr(linkage_ped_top *Top, char *file_names[])
 {
-    struct FBAT_Rhdr: public fileloop::both, dataloop::null {
+    lpCLASS(FBAT_Rhdr,both,null) {
+     lpCTOR(FBAT_Rhdr,both,null) { }
         typedef char *str;
         str *file_names;
         char strchr[4];
 
-        FBAT_Rhdr(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::null(Top) { }
         void file_loop() {
             mssgvf("        FBAT R hdr file:       %s/%s\n", *_opath, file_names[7]);
             data_loop(*_opath, file_names[7], "w");
@@ -428,11 +428,11 @@ static double get_gp(ext_linkage_locus_top *EXLTop, int LType, int chr, char *sn
 */
 static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
 {
-    struct FBAT_map: public fileloop::chr, dataloop::loci {
+    lpCLASS(FBAT_map,chr,loci) {
+     lpCTOR(FBAT_map,chr,loci) { }
         typedef char *str;
         str *file_names;
 
-        FBAT_map(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::loci(Top) { }
 //         marker_name   chr#   genetic_pos   physical_pos   sex_link
         void file_loop() {
             mssgvf("        FBAT map file:         %s/%s\n", *_opath, file_names[1]);

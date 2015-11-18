@@ -163,9 +163,9 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
    different families are listed.
 
 */
-    struct IQLS_pedigree: public fileloop::both, dataloop::ped_per {
+    lpCLASS(IQLS_pedigree,both,ped_per) {
+     lpCTOR(IQLS_pedigree,both,ped_per) { }
 
-        IQLS_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
         void file_loop() {
             msgvf("        IQLS pedigree file:        %s/%s\n", *_opath, Outfile_Names[0]);
             data_loop(*_opath, Outfile_Names[0], "w");
@@ -232,9 +232,9 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 
 */
 
-    struct IQLS_marker: public fileloop::both, dataloop::loci_ped_per {
+    lpCLASS(IQLS_marker,both,loci_ped_per) {
+     lpCTOR(IQLS_marker,both,loci_ped_per) { }
 
-        IQLS_marker(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::loci_ped_per(Top) { }
         void file_loop() {
             msgvf("        IQLS marker file:          %s/%s\n", *_opath, Outfile_Names[1]);
             data_loop(*_opath, Outfile_Names[1], "w");
@@ -332,9 +332,9 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 }
 
 static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]) {
-    struct IQLS_parameter: public fileloop::chr, dataloop::null {
+    lpCLASS(IQLS_parameter,chr,null) {
+     lpCTOR(IQLS_parameter,chr,null) { }
 
-        IQLS_parameter(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::chr(Top), dataloop::null(Top) {}
         void file_loop() {
             msgvf("        IQLS parameter file:       %s/%s\n", *_opath, Outfile_Names[2]);
             data_loop(*_opath, Outfile_Names[2], "w");
@@ -426,11 +426,11 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
   NOTE the requirement regarding ORDERING of the pedigree!
 
 */
-    struct Idcoefs_pedigree: public fileloop::both, dataloop::ped_per {
+    lpCLASS(Idcoefs_pedigree,both,ped_per) {
+     lpCTOR(Idcoefs_pedigree,both,ped_per) { }
         ped_top *PedTreeTop;
         int     *index;
 
-        Idcoefs_pedigree(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
         void file_loop() {
             msgvf("        Idcoefs pedigree file:     %s/%s\n", *_opath, Outfile_Names[4]);
             data_loop(*_opath, Outfile_Names[4], "w");
@@ -529,10 +529,10 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
    himself/herself.
 
 */
-    struct IDcoefs_study : public fileloop::both, dataloop::ped_per {
+    lpCLASS(IDcoefs_study ,both,ped_per) {
+     lpCTOR(IDcoefs_study ,both,ped_per) { }
         int *eligible;
 
-        IDcoefs_study(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::both(Top), dataloop::ped_per(Top) { }
         void file_loop() {
             msgvf("        Idcoefs study file:        %s/%s\n", *_opath, Outfile_Names[5]);
             data_loop(*_opath, Outfile_Names[5], "w");

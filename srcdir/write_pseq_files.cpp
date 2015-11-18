@@ -113,15 +113,13 @@ one with the label given with the '--phenotype' command line argument and one wi
 static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
                             const int pwid, const int fwid)
 {
-    struct pseq_pheno: public fileloop::once, dataloop::ped_per_trait {
+    lpCLASS(pseq_pheno,once,ped_per_trait) {
+     lpCTOR(pseq_pheno,once,ped_per_trait) { }
         
         bool use_fid, use_iid, use_joint;
-        
         // The '_trait' value of the first trait which will be found in the .FAM file.
         // This trait will not go into this file (the PSEQ pheno file).
         int skip_trait;
-        
-        pseq_pheno(linkage_ped_top *Top) : person_locus_entry(Top), fileloop::once(Top), dataloop::ped_per_trait(Top) { }
         
         void file_loop() {
             // Here we loop over the pedigrees and individuals to determine what to use
