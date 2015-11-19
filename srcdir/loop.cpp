@@ -217,6 +217,8 @@ void fileloop::trait::iterate()
 
 void dataloop::null::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
+    data_init();
+
     filep_open(dir, fl_name, mode);
 
     inner();
@@ -226,6 +228,7 @@ void dataloop::null::data_loop(const char *dir, const char *fl_name, const char 
 
 void dataloop::ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
+    data_init();
 
     filep_open(dir, fl_name, mode);
 
@@ -254,6 +257,8 @@ void dataloop::ped_per_trait::data_loop(const char *dir, const char *fl_name, co
 {
     int tr;
     int *retrp;
+
+    data_init();
 
     filep_open(dir, fl_name, mode);
 
@@ -302,6 +307,8 @@ void dataloop::trait_ped_per::data_loop(const char *dir, const char *fl_name, co
     int tr;
     int *retrp;
 
+    data_init();
+
     filep_open(dir, fl_name, mode);
 
     retrp = trp;
@@ -348,6 +355,8 @@ void dataloop::trait_ped_per::data_loop(const char *dir, const char *fl_name, co
 void dataloop::ped_per_loci::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int m;
+
+    data_init();
 
     // Dataloop through the Loci...
     markers_on_chromosome(_numchr);
@@ -398,6 +407,8 @@ void dataloop::ped_per_loci::data_loop(const char *dir, const char *fl_name, con
 void dataloop::loci_ped_per::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int m;
+
+    data_init();
 
     // Loop through the SELECTED Loci (by count)...
     Tod tod_lpp_markers("get markers_on_chromosomes");
@@ -452,6 +463,8 @@ void dataloop::loci_ped_per::data_loop(const char *dir, const char *fl_name, con
 void dataloop::loci::data_loop(const char *dir, const char *fl_name, const char *mode)
 {
     int m;
+
+    data_init();
 
     // Loop through the SELECTED Loci (by count)...
     markers_on_chromosome(_numchr);

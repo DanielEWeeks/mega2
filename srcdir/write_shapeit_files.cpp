@@ -89,8 +89,8 @@ quantitative trait or an affection status column: PLINK will automatically detec
 static void save_SHAPEIT_pheno(const char *phenofl_name, linkage_ped_top *Top,
                             const int pwid, const int fwid)
 {
-    lpCLASS(pseq_pheno,once,ped_per_trait) {
-     lpCTOR(pseq_pheno,once,ped_per_trait) { }
+    vlpCLASS(pseq_pheno,once,ped_per_trait) {
+     vlpCTOR(pseq_pheno,once,ped_per_trait) { }
         
         bool use_fid, use_iid, use_joint;
         // The '_trait' value of the first trait which will be found in the .FAM file.
@@ -256,8 +256,8 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
 {
     dataloop::sh_exec *sh = 0;
 
-    lpCLASS(SHAPEIT_sh_script,both,sh_exec) {
-     lpCTOR(SHAPEIT_sh_script,both,sh_exec) { }
+    vlpCLASS(SHAPEIT_sh_script,both,sh_exec) {
+     vlpCTOR(SHAPEIT_sh_script,both,sh_exec) { }
         typedef char *str;
         str *file_names;
         dataloop::sh_exec *sh;

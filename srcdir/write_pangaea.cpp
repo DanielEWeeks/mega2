@@ -66,8 +66,8 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
                               const int pwid, const int fwid, const int subopt)
 {
-    lpCLASS(save_peds,trait,ped_per) {
-     lpCTOR(save_peds,trait,ped_per) { }
+    vlpCLASS(save_peds,trait,ped_per) {
+     vlpCTOR(save_peds,trait,ped_per) { }
         typedef char *str;
         str *file_names;
         int subopt;
@@ -156,8 +156,8 @@ static void save_PANGAEA_peds(linkage_ped_top *Top, char *file_names[],
     sp->iterate();
     delete sp;
 
-    lpCLASS(save_peds_all,both,ped_per_trait) {
-     lpCTOR(save_peds_all,both,ped_per_trait) { }
+    vlpCLASS(save_peds_all,both,ped_per_trait) {
+     vlpCTOR(save_peds_all,both,ped_per_trait) { }
         typedef char *str;
         str *file_names;
 
@@ -285,8 +285,8 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
         sh->sh_main();
     }
 
-    lpCLASS(PANGAEA_sh_script,both,sh_exec) {
-     lpCTOR(PANGAEA_sh_script,both,sh_exec) {
+    vlpCLASS(PANGAEA_sh_script,both,sh_exec) {
+     vlpCTOR(PANGAEA_sh_script,both,sh_exec) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
         }
         typedef char *str;
@@ -393,8 +393,8 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
     }
 }
 
-lpCLASS(par_var,both,null) {
- lpCTOR(par_var,both,null) {
+vlpCLASS(par_var,both,null) {
+ vlpCTOR(par_var,both,null) {
         strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
     }
     typedef char *str;
@@ -427,8 +427,8 @@ lpCLASS(par_var,both,null) {
     }
 };
 
-lpCLASS(liability_traits,trait,null) {
- lpCTOR(liability_traits,trait,null) { }
+vlpCLASS(liability_traits,trait,null) {
+ vlpCTOR(liability_traits,trait,null) { }
     typedef char *str;
     str *file_names;
 
@@ -466,8 +466,8 @@ static void write_PANGAEA_par_template(linkage_ped_top *Top, char *file_names[],
     xp1->iterate();
     delete xp1;
 
-    lpCLASS(template_par_user,trait,null) {
-     lpCTOR(template_par_user,trait,null) { }
+    vlpCLASS(template_par_user,trait,null) {
+     vlpCTOR(template_par_user,trait,null) { }
         typedef char *str;
         str *file_names;
 
@@ -503,8 +503,8 @@ static void write_PANGAEA_par_template(linkage_ped_top *Top, char *file_names[],
 static void write_PANGAEA_par_pedcheck(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
 
-    lpCLASS(pedcheck_xx_par_var,both,null) {
-     lpCTOR(pedcheck_xx_par_var,both,null) { }
+    vlpCLASS(pedcheck_xx_par_var,both,null) {
+     vlpCTOR(pedcheck_xx_par_var,both,null) { }
         typedef char *str;
         str *file_names;
 
@@ -521,8 +521,8 @@ static void write_PANGAEA_par_pedcheck(linkage_ped_top *Top, char *file_names[],
     xp1->iterate();
     delete xp1;
 
-    lpCLASS(pedcheck_par_user,trait,null) {
-     lpCTOR(pedcheck_par_user,trait,null) { }
+    vlpCLASS(pedcheck_par_user,trait,null) {
+     vlpCTOR(pedcheck_par_user,trait,null) { }
         typedef char *str;
         str *file_names;
 
@@ -544,8 +544,8 @@ static void write_PANGAEA_par_pedcheck(linkage_ped_top *Top, char *file_names[],
 
 static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
-    lpCLASS(kin_xx_par_varA,both,ped_per) {
-     lpCTOR(kin_xx_par_varA,both,ped_per) { }
+    vlpCLASS(kin_xx_par_varA,both,ped_per) {
+     vlpCTOR(kin_xx_par_varA,both,ped_per) { }
         typedef char *str;
         str *file_names;
         int i;
@@ -584,8 +584,8 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
     xp1A->iterate();
     delete xp1A;
 
-    lpCLASS(kin_xx_par_varB,both,ped_per) {
-     lpCTOR(kin_xx_par_varB,both,ped_per) { }
+    vlpCLASS(kin_xx_par_varB,both,ped_per) {
+     vlpCTOR(kin_xx_par_varB,both,ped_per) { }
         typedef char *str;
         str *file_names;
         int i;
@@ -613,8 +613,8 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
     xp1B->iterate();
     delete xp1B;
 
-    lpCLASS(kin_xx_par_varC,both,ped_per) {
-     lpCTOR(kin_xx_par_varC,both,ped_per) { }
+    vlpCLASS(kin_xx_par_varC,both,ped_per) {
+     vlpCTOR(kin_xx_par_varC,both,ped_per) { }
         typedef char *str;
         str *file_names;
         int i;
@@ -642,8 +642,8 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
     xp1C->iterate();
     delete xp1C;
 
-    lpCLASS(kin_par_user,trait,null) {
-     lpCTOR(kin_par_user,trait,null) { }
+    vlpCLASS(kin_par_user,trait,null) {
+     vlpCTOR(kin_par_user,trait,null) { }
         typedef char *str;
         str *file_names;
 
@@ -665,8 +665,8 @@ static void write_PANGAEA_par_kin(linkage_ped_top *Top, char *file_names[], char
 static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[], char *pgm)
 {
 
-    lpCLASS(translink_xx_par_var,both,null) {
-     lpCTOR(translink_xx_par_var,both,null) {
+    vlpCLASS(translink_xx_par_var,both,null) {
+     vlpCTOR(translink_xx_par_var,both,null) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
         }
         typedef char *str;
@@ -715,8 +715,8 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
     xp1->iterate();
     delete xp1;
 
-    lpCLASS(translink_par_user,trait,null) {
-     lpCTOR(translink_par_user,trait,null) {
+    vlpCLASS(translink_par_user,trait,null) {
+     vlpCTOR(translink_par_user,trait,null) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
         }
         typedef char *str;
@@ -778,8 +778,8 @@ static void write_PANGAEA_par_lod(linkage_ped_top *Top, char *file_names[], char
     xp1->iterate();
     delete xp1;
 
-    lpCLASS(lod_par_user,trait,null) {
-     lpCTOR(lod_par_user,trait,null) { }
+    vlpCLASS(lod_par_user,trait,null) {
+     vlpCTOR(lod_par_user,trait,null) { }
         typedef char *str;
         str *file_names;
         int subopt;
@@ -843,8 +843,8 @@ static void write_PANGAEA_par_ibd_tests(linkage_ped_top *Top, char *file_names[]
     xp1->iterate();
     delete xp1;
 
-    lpCLASS(lod_par_user,trait,null) {
-     lpCTOR(lod_par_user,trait,null) { }
+    vlpCLASS(lod_par_user,trait,null) {
+     vlpCTOR(lod_par_user,trait,null) { }
         typedef char *str;
         str *file_names;
         int subopt;
@@ -923,8 +923,8 @@ static double get_gp(ext_linkage_locus_top *EXLTop, int LType, int chr, char *sn
 static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subopt)
 {
 
-    lpCLASS(PANGAEA_map_names,chr,loci) {
-     lpCTOR(PANGAEA_map_names,chr,loci) { }
+    vlpCLASS(PANGAEA_map_names,chr,loci) {
+     vlpCTOR(PANGAEA_map_names,chr,loci) { }
         typedef char *str;
         str *file_names;
         int token;
@@ -950,8 +950,8 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
     xp->iterate(); 
     delete xp;
 
-    lpCLASS(PANGAEA_map_dist,chr,loci) {
-     lpCTOR(PANGAEA_map_dist,chr,loci) {
+    vlpCLASS(PANGAEA_map_dist,chr,loci) {
+     vlpCTOR(PANGAEA_map_dist,chr,loci) {
             delta = .000001;
         }
         typedef char *str;
@@ -1011,8 +1011,8 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         delete xp1;
     }
 
-    lpCLASS(PANGAEA_map_freq,chr,loci) {
-     lpCTOR(PANGAEA_map_freq,chr,loci) { i = 0; }
+    vlpCLASS(PANGAEA_map_freq,chr,loci) {
+     vlpCTOR(PANGAEA_map_freq,chr,loci) { i = 0; }
         typedef char *str;
         str *file_names;
         int i;
@@ -1037,8 +1037,8 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
     xp2->iterate(); 
     delete xp2;
 
-    lpCLASS(PANGAEA_map_data,chr,ped_per_loci) {
-     lpCTOR(PANGAEA_map_data,chr,ped_per_loci) { }
+    vlpCLASS(PANGAEA_map_data,chr,ped_per_loci) {
+     vlpCTOR(PANGAEA_map_data,chr,ped_per_loci) { }
         typedef char *str;
         str *file_names;
         int token;

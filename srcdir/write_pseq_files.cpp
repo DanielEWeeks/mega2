@@ -113,8 +113,8 @@ one with the label given with the '--phenotype' command line argument and one wi
 static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
                             const int pwid, const int fwid)
 {
-    lpCLASS(pseq_pheno,once,ped_per_trait) {
-     lpCTOR(pseq_pheno,once,ped_per_trait) { }
+    vlpCLASS(pseq_pheno,once,ped_per_trait) {
+     vlpCTOR(pseq_pheno,once,ped_per_trait) { }
         
         bool use_fid, use_iid, use_joint;
         // The '_trait' value of the first trait which will be found in the .FAM file.
@@ -280,8 +280,8 @@ void CLASS_PSEQ::create_sh_file(linkage_ped_top *Top,
 {
     dataloop::sh_exec *sh = 0;
 
-    lpCLASS(PSEQ_sh_script,both,sh_exec) {
-     lpCTOR(PSEQ_sh_script,both,sh_exec) { }
+    vlpCLASS(PSEQ_sh_script,both,sh_exec) {
+     vlpCTOR(PSEQ_sh_script,both,sh_exec) { }
         typedef char *str;
         str *file_names;
         dataloop::sh_exec *sh;

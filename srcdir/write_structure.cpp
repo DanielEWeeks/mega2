@@ -136,8 +136,8 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
                          const int pwid, const int fwid)
 {
     // #define MARKERNAMES      1  // (B) data file contains row of marker names
-    lpCLASS(save_marker_names,both,loci) {
-     lpCTOR(save_marker_names,both,loci) { markers_i = -1; }
+    vlpCLASS(save_marker_names,both,loci) {
+     vlpCTOR(save_marker_names,both,loci) { markers_i = -1; }
         typedef char *str;
         str *file_names;
         int markers_i;
@@ -172,7 +172,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
 
         mapdistances = 1;
         // #define MAPDISTANCES     1  // (B) data file contains row of map distances between loci
-        lpCLASS(save_genetic_distance_markers,both,loci) {
+        vlpCLASS(save_genetic_distance_markers,both,loci) {
          save_genetic_distance_markers(linkage_ped_top *Top, int LoopOverChrm_save) : person_locus_entry(Top), fileloop::both(Top), dataloop::loci(Top) {
              this->LoopOverChrm_save = LoopOverChrm_save;
          }
@@ -234,8 +234,8 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
     phenotype = popdata = 0;
     // 2.3 Individual/genotype data
     // Each row of individual data contains the following elements. These form columns in the data file.
-    lpCLASS(save_pers,both,ped_per_loci) {
-     lpCTOR(save_pers,both,ped_per_loci) { chr_i = -1; }
+    vlpCLASS(save_pers,both,ped_per_loci) {
+     vlpCTOR(save_pers,both,ped_per_loci) { chr_i = -1; }
         typedef char *str;
         str *file_names;
         int PopDataPheno_i, personHasMarkers, chr_i;
@@ -342,8 +342,8 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
 static void write_mainparams(linkage_ped_top *Top, char *file_names[],
                              const int pwid, const int fwid)
 {
-    lpCLASS(save_mainparams,both,null) {
-     lpCTOR(save_mainparams,both,null) { markers_i = inds_i = -1; }
+    vlpCLASS(save_mainparams,both,null) {
+     vlpCTOR(save_mainparams,both,null) { markers_i = inds_i = -1; }
         typedef char *str;
         str *file_names;
         int markers_i, inds_i;
@@ -403,8 +403,8 @@ static void write_mainparams(linkage_ped_top *Top, char *file_names[],
 static void write_extraparams(linkage_ped_top *Top, char *file_names[],
 			      const int pwid, const int fwid)
 {
-    lpCLASS(save_extraparams,both,null) {
-     lpCTOR(save_extraparams,both,null) { markers_i = -1; }
+    vlpCLASS(save_extraparams,both,null) {
+     vlpCTOR(save_extraparams,both,null) { markers_i = -1; }
         typedef char *str;
         str *file_names;
         int markers_i;
@@ -494,8 +494,8 @@ static void write_sh(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-    lpCLASS(STRUCTURE_sh_script,both,sh_exec) {
-     lpCTOR(STRUCTURE_sh_script,both,sh_exec) { }
+    vlpCLASS(STRUCTURE_sh_script,both,sh_exec) {
+     vlpCTOR(STRUCTURE_sh_script,both,sh_exec) { }
 /*
         STRUCTURE_sh_script(linkage_ped_top *Top, analysis_type *analysis) : person_locus_entry(Top), fileloop::both(Top), dataloop::sh_exec(Top) {
             this->analysis = analysis;

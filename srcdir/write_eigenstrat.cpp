@@ -154,8 +154,8 @@ void CLASS_EIGENSTRAT::save_pedsix_file(linkage_ped_top *Top,
                                         const int pwid,
                                         const int fwid)
 {
-    lpCLASS(eigenstrat_pedsix,trait,ped_per) {
-     lpCTOR(eigenstrat_pedsix,trait,ped_per) { }
+    vlpCLASS(eigenstrat_pedsix,trait,ped_per) {
+     vlpCTOR(eigenstrat_pedsix,trait,ped_per) { }
         int missing_affection_status;
 
         void file_loop() {
@@ -197,8 +197,8 @@ void CLASS_EIGENSTRAT::save_ped_file(linkage_ped_top *Top,
                                      const int fwid,
                                      const int mwid)
 {
-    lpCLASS(eigenstrat_ped,both,ped_per_loci) {
-     lpCTOR(eigenstrat_ped,both,ped_per_loci) { }
+    vlpCLASS(eigenstrat_ped,both,ped_per_loci) {
+     vlpCTOR(eigenstrat_ped,both,ped_per_loci) { }
         int missing_affection_status;
         int process_per;
 
@@ -274,7 +274,7 @@ void CLASS_EIGENSTRAT::save_bed_file(const char *bedfl_name,
 {
     if (binary_mode_flag == 1) {
         struct eigenstrat_snp_major: public fileloop::both, public dataloop::loci_ped_per, public plink_binary {
-         lpCTOR(eigenstrat_snp_major,both,loci_ped_per) { }
+         vlpCTOR(eigenstrat_snp_major,both,loci_ped_per) { }
 
             ~eigenstrat_snp_major() {}
             void file_loop() {
@@ -398,8 +398,8 @@ void CLASS_EIGENSTRAT::create_sh_file(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-    lpCLASS(EIGENSTRAT_sh_script,both,sh_exec) {
-     lpCTOR(EIGENSTRAT_sh_script,both,sh_exec) { }
+    vlpCLASS(EIGENSTRAT_sh_script,both,sh_exec) {
+     vlpCTOR(EIGENSTRAT_sh_script,both,sh_exec) { }
         typedef char *str;
         str *file_names;
         dataloop::sh_exec *sh;

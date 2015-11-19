@@ -84,11 +84,12 @@ static void write_FBAT_map(linkage_ped_top *Top, char *file_names[]);
 static void inner_file_names(char **file_names, const char *num, const char *stem = "fbat");
 
 
+#if 0
 static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
                             const int pwid, const int fwid)
 {
-    lpCLASS(save_pheno,once,ped_per_trait) {
-     lpCTOR(save_pheno,once,ped_per_trait) { }
+    vlpCLASS(save_pheno,once,ped_per_trait) {
+     vlpCTOR(save_pheno,once,ped_per_trait) { }
         typedef char *str;
         str *file_names;
 
@@ -127,13 +128,54 @@ static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
 
     delete sp;
 }
+#else
+static void save_FBAT_pheno(linkage_ped_top *Top, char *file_names[],
+                            const int pwid, const int fwid)
+{
+    FLOOPonce *floop = new FLOOPonce(Top, file_names[2], "w");
+    floop->file_type = "        FBAT phenotype file:   ";
 
+    lpCLASS(save_pheno,ped_per_trait) {
+     lpCTOR(save_pheno,ped_per_trait) { }
+
+        void file_header() {
+            int tr;
+            int trait;
+            /* print the file header */
+            for (tr = 0; tr < num_traits; tr++) {
+                trait = global_trait_entries[tr];
+                // If this is a marker, skip it...
+                if (trait == -1) continue;
+                // not quant, skip it ...
+//              if (_LTop->Locus[trait].Type != QUANT) continue;
+
+                pr_printf("%s ", _LTop->Pheno[trait].TraitName);
+            }
+            pr_nl();
+        }
+        void per_start() { pr_id(); }
+        void per_end()   { pr_nl(); }
+        void inner() {
+            /* trait locus */
+            pr_pheno();
+        }
+    } *sp = new save_pheno(Top, floop);
+    sp->load_formats(fwid, pwid, -1);
+
+    floop->iterate();
+
+    delete sp;
+    delete floop;
+}
+#endif
+
+#if 0
 static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
                            const int pwid, const int fwid,
                            const bool has_x)
 {
-    lpCLASS(save_peds,both,ped_per_loci) {
-     lpCTOR(save_peds,both,ped_per_loci) { }
+    vlpCLASS(save_peds,both,ped_per_loci) {
+     vlpCTOR(save_peds,both,ped_per_loci) { }
         typedef char *str;
         str *file_names;
         bool has_x;
@@ -185,6 +227,74 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
 
     delete sp;
 }
+#else
+struct FBTboth: public fileloop::both {
+    const char *file_name;
+    const char *file_type;
+    const char *file_mode;
+
+    FBTboth(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
+        person_locus_entry(Top), fileloop::both(Top), file_name(f_name), file_mode(f_mode) { }
+
+    void file_loop() {
+        if (*file_type) mssgvf("%s%s/%s\n", file_type, *_opath, file_name);
+        if (_ttraitp == NULL) {
+            mssgvf("%sneeds a trait value to be defined.\nExiting.\n", file_type);
+            EXIT(DATA_INCONSISTENCY);
+        }
+        _dataloop->data_loop(*_opath, file_name, file_mode);
+    }
+};
+
+static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
+                           const int pwid, const int fwid,
+                           const bool has_x)
+{
+    FBTboth *floop = new FBTboth(Top, file_names[0], "w");
+    floop->file_type     = "        FBAT pedigree file:    ";
+
+    lpCLASS(save_peds,ped_per_loci) {
+     lpCTOR(save_peds,ped_per_loci) { }
+
+        bool has_x;
+
+        void file_header() {
+            int locus;
+            int m;
+            linkage_locus_rec *lpe;
+            if (has_x) return;
+            for (m=0; m < NumChrLoci; m++) {
+                locus = ChrLoci[m];
+                lpe = &(_LTop->Locus[locus]);
+                if (lpe->Class == MARKER)
+                    pr_printf("%s ", _Top->LocusTop->Locus[locus].LocusName);
+            }
+            pr_nl();
+        }
+        void per_start() {
+            pr_id();
+            pr_parent();
+            pr_sex();
+            pr_aff();
+        }
+        void per_end() {
+            pr_nl();
+        }
+        void inner() {
+            pr_marker();
+        }
+    } *sp = new save_peds(Top, floop);
+    sp->has_x              = has_x;
+    sp->_loci_allele_limit = 40;
+    sp->load_formats(fwid, pwid, -1);
+
+    floop->_trait_affect = true;
+    floop->iterate();
+
+    delete sp;
+    delete floop;
+}
+#endif
 
 /**
    @param output_format determines how the files are written:
@@ -201,8 +311,8 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
         sh->sh_main();
     }
 
-    lpCLASS(FBAT_sh_script,both,sh_exec) {
-     lpCTOR(FBAT_sh_script,both,sh_exec) { }
+    vlpCLASS(FBAT_sh_script,both,sh_exec) {
+     vlpCTOR(FBAT_sh_script,both,sh_exec) { }
         typedef char *str;
         str *file_names;
         sh_exec *sh;
@@ -313,8 +423,8 @@ static void write_FBAT_sh(linkage_ped_top *Top, char *file_names[], bool has_x)
 
 static void write_FBAT_Rhdr(linkage_ped_top *Top, char *file_names[])
 {
-    lpCLASS(FBAT_Rhdr,both,null) {
-     lpCTOR(FBAT_Rhdr,both,null) { }
+    vlpCLASS(FBAT_Rhdr,both,null) {
+     vlpCTOR(FBAT_Rhdr,both,null) { }
         typedef char *str;
         str *file_names;
         char strchr[4];
@@ -421,8 +531,8 @@ static double get_gp(ext_linkage_locus_top *EXLTop, int LType, int chr, char *sn
 */
 static void write_FBAT_map(linkage_ped_top *Top, char *file_names[])
 {
-    lpCLASS(FBAT_map,chr,loci) {
-     lpCTOR(FBAT_map,chr,loci) { }
+    vlpCLASS(FBAT_map,chr,loci) {
+     vlpCTOR(FBAT_map,chr,loci) { }
         typedef char *str;
         str *file_names;
 

@@ -214,8 +214,8 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
 
     if (base_pair_position_index >= 0) {
         // If we have the data create the file...
-        lpCLASS(save_base_pair_position_markers,chr,loci) {
-         lpCTOR(save_base_pair_position_markers,chr,loci) { }
+        vlpCLASS(save_base_pair_position_markers,chr,loci) {
+         vlpCTOR(save_base_pair_position_markers,chr,loci) { }
             typedef char *str;
             str *file_names;
 
@@ -247,8 +247,8 @@ static void write_BEAGLE_marker_file(linkage_ped_top *Top, char *file_names[],
 
     if (genetic_distance_index >= 0) {
         // If we have the data create the file...
-        lpCLASS(save_genetic_distance_markers,chr,loci) {
-         lpCTOR(save_genetic_distance_markers,chr,loci) { }
+        vlpCLASS(save_genetic_distance_markers,chr,loci) {
+         vlpCTOR(save_genetic_distance_markers,chr,loci) { }
             typedef char *str;
             str *file_names;
 
@@ -340,8 +340,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
 {
     // Pedigree...
     // 'fileloop::both' loops over chromosome, and then trait...
-    lpCLASS(save_fams,both,ped_per) {
-     lpCTOR(save_fams,both,ped_per) { }
+    vlpCLASS(save_fams,both,ped_per) {
+     vlpCTOR(save_fams,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -372,8 +372,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     
     // Person...
     // The person or identifier line is not currently required, but will be in future versions of Beagle.
-    lpCLASS(save_pers,both,ped_per) {
-     lpCTOR(save_pers,both,ped_per) { }
+    vlpCLASS(save_pers,both,ped_per) {
+     vlpCTOR(save_pers,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -404,8 +404,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     delete sI;
     
     // Father...
-    lpCLASS(save_fathers,both,ped_per) {
-     lpCTOR(save_fathers,both,ped_per) { }
+    vlpCLASS(save_fathers,both,ped_per) {
+     vlpCTOR(save_fathers,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -435,8 +435,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     delete sPID;
     
     // Mother...
-    lpCLASS(save_mothers,both,ped_per) {
-     lpCTOR(save_mothers,both,ped_per) { }
+    vlpCLASS(save_mothers,both,ped_per) {
+     vlpCTOR(save_mothers,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -463,8 +463,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     delete sMID;
     
     // Sex...
-    lpCLASS(save_sexs,both,ped_per) {
-     lpCTOR(save_sexs,both,ped_per) { }
+    vlpCLASS(save_sexs,both,ped_per) {
+     vlpCTOR(save_sexs,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -490,8 +490,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
 
 #ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
-    lpCLASS(save_phenotypes,both,ped_per) {
-     lpCTOR(save_phenotypes,both,ped_per) { }
+    vlpCLASS(save_phenotypes,both,ped_per) {
+     vlpCTOR(save_phenotypes,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -528,8 +528,8 @@ static void write_BEAGLE_genotype_unphased_unrelated_file(linkage_ped_top *Top, 
     // So, they must be written in the same order as written in the marker file @see write_BEAGLE_marker_file
     //
     // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
-    lpCLASS(save_markers,both,loci_ped_per) {
-     lpCTOR(save_markers,both,loci_ped_per) { }
+    vlpCLASS(save_markers,both,loci_ped_per) {
+     vlpCTOR(save_markers,both,loci_ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -592,8 +592,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
                                                      const int pwid, const int fwid)
 {
     // Pedigree...
-    lpCLASS(save_fams,both,ped_per) {
-     lpCTOR(save_fams,both,ped_per) { }
+    vlpCLASS(save_fams,both,ped_per) {
+     vlpCTOR(save_fams,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -624,8 +624,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     delete sP;
     
     // Father, Mother, Child (6-tuple)...
-    lpCLASS(save_pers,both,ped_per) {
-     lpCTOR(save_pers,both,ped_per) { }
+    vlpCLASS(save_pers,both,ped_per) {
+     vlpCTOR(save_pers,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -655,8 +655,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     delete sI;
     
     // Sex...
-    lpCLASS(save_sexs,both,ped_per) {
-     lpCTOR(save_sexs,both,ped_per) { }
+    vlpCLASS(save_sexs,both,ped_per) {
+     vlpCTOR(save_sexs,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -692,8 +692,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     
 #ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
-    lpCLASS(save_phenotypes,both,ped_per) {
-     lpCTOR(save_phenotypes,both,ped_per) { }
+    vlpCLASS(save_phenotypes,both,ped_per) {
+     vlpCTOR(save_phenotypes,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -737,8 +737,8 @@ static void write_BEAGLE_genotype_unphased_trio_file(linkage_ped_top *Top, char 
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
     // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
-    lpCLASS(save_markers,both,loci_ped_per) {
-     lpCTOR(save_markers,both,loci_ped_per) { }
+    vlpCLASS(save_markers,both,loci_ped_per) {
+     vlpCTOR(save_markers,both,loci_ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -832,8 +832,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
                                                      const int pwid, const int fwid)
 {
     // Pedigree...
-    lpCLASS(save_fams,both,ped_per) {
-     lpCTOR(save_fams,both,ped_per) { }
+    vlpCLASS(save_fams,both,ped_per) {
+     vlpCTOR(save_fams,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -866,8 +866,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     // Each set of four consecutive columns (beginning with columns 3-6) gives the genotype data
     // for one parent-offspring pair. In each set of four columns, the first two columns give the
     // genotypes for the genotyped parent, and the last two columns give the genotypes for the offspring.
-    lpCLASS(save_pers,both,ped_per) {
-     lpCTOR(save_pers,both,ped_per) { }
+    vlpCLASS(save_pers,both,ped_per) {
+     vlpCTOR(save_pers,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -896,8 +896,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     delete sI;
     
     // Sex...
-    lpCLASS(save_sexs,both,ped_per) {
-     lpCTOR(save_sexs,both,ped_per) { }
+    vlpCLASS(save_sexs,both,ped_per) {
+     vlpCTOR(save_sexs,both,ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -935,8 +935,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     
 #ifdef BEAGLE_INCLUDE_PHENOTYPE
     // Phenotypes...
-    lpCLASS(save_phenotypes,both,trait_ped_per) {
-     lpCTOR(save_phenotypes,both,trait_ped_per) { }
+    vlpCLASS(save_phenotypes,both,trait_ped_per) {
+     vlpCTOR(save_phenotypes,both,trait_ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -982,8 +982,8 @@ static void write_BEAGLE_genotype_unphased_pair_file(linkage_ped_top *Top, char 
     // Markers...
     // Markers must be listed in chromosomial order, and must all appear at the end of the file.
     // NOTE: Mega2 annotated input file format (7.2) uses {M|X|Y} for marker names rather then just 'M' here...
-    lpCLASS(save_markers,both,loci_ped_per) {
-     lpCTOR(save_markers,both,loci_ped_per) { }
+    vlpCLASS(save_markers,both,loci_ped_per) {
+     vlpCTOR(save_markers,both,loci_ped_per) { }
         typedef char *str;
         str *file_names;
 
@@ -1093,8 +1093,8 @@ static void write_BEAGLE_sh(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-    lpCLASS(BEAGLE_sh_script,both,sh_exec) {
-     lpCTOR(BEAGLE_sh_script,both,sh_exec) { }
+    vlpCLASS(BEAGLE_sh_script,both,sh_exec) {
+     vlpCTOR(BEAGLE_sh_script,both,sh_exec) { }
 /*
        BEAGLE_sh_script(linkage_ped_top *Top, analysis_type *analysis) : person_locus_entry(Top), fileloop::both(Top), dataloop::sh_exec(Top)  {
           this->analysis = analysis;

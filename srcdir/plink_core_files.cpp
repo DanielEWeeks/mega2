@@ -81,8 +81,8 @@ void CLASS_PLINK_CORE::replace_chr_number(char *file_names[], int numchr) {
 static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
                                 const int pwid, const int fwid, const int mwid)
 {
-    lpCLASS(plink_core_lgen,chr,loci_ped_per) {
-     lpCTOR(plink_core_lgen,chr,loci_ped_per) { }
+    vlpCLASS(plink_core_lgen,chr,loci_ped_per) {
+     vlpCTOR(plink_core_lgen,chr,loci_ped_per) { }
 
         void file_loop() {
             mssgvf("        PLINK lgen file:           %s/%s\n", *_opath, Outfile_Names[3]);
@@ -115,8 +115,8 @@ static void save_PLINK_lgen(const char *genofl_name, linkage_ped_top *Top,
 static void save_PLINK_pheno(const char *phenofl_name, linkage_ped_top *Top,
                              const int pwid, const int fwid)
 {
-    lpCLASS(plink_core_pheno,once,ped_per_trait) {
-     lpCTOR(plink_core_pheno,once,ped_per_trait) { }
+    vlpCLASS(plink_core_pheno,once,ped_per_trait) {
+     vlpCTOR(plink_core_pheno,once,ped_per_trait) { }
 
         void file_loop() {
             msgvf("        PLINK phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
@@ -311,8 +311,8 @@ static void write_PLINK_map(linkage_ped_top *LPTop,
     ext_linkage_locus_top *EXLTop = LPTop->EXLTop;
 #endif /* PLINK_MAP_FILE_COMMENTS */        
 
-    lpCLASS(plink_core_map,chr,null) {
-     lpCTOR(plink_core_map,chr,null) { }
+    vlpCLASS(plink_core_map,chr,null) {
+     vlpCTOR(plink_core_map,chr,null) { }
         int generate_bim_file;
 
         void file_loop() {

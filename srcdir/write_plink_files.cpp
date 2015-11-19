@@ -166,8 +166,8 @@ void CLASS_PLINK::save_pedsix_file(linkage_ped_top *Top,
 				   const int fwid)
 {
     Tod tod_pedsix("save ped/fam file six cols");
-    lpCLASS(plink_pedsix,trait,ped_per) {
-     lpCTOR(plink_pedsix,trait,ped_per) { }
+    vlpCLASS(plink_pedsix,trait,ped_per) {
+     vlpCTOR(plink_pedsix,trait,ped_per) { }
 
         void file_loop() {
             mssgvf("        PLINK pedigree file:       %s/%s\n", *_opath, Outfile_Names[0]);  //fam
@@ -204,8 +204,8 @@ void CLASS_PLINK::save_ped_file(linkage_ped_top *Top,
 				const int mwid)
 {
     Tod tod_ped("save ped file");
-    lpCLASS(plink_ped,chr,ped_per_loci) {
-     lpCTOR(plink_ped,chr,ped_per_loci) { }
+    vlpCLASS(plink_ped,chr,ped_per_loci) {
+     vlpCTOR(plink_ped,chr,ped_per_loci) { }
 
         void file_loop() {
             mssgvf("        PLINK ped file:            %s/%s\n", *_opath, Outfile_Names[0]);
@@ -270,7 +270,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
     if (binary_mode_flag == 1) {
         Tod tod_bed1("save bed file plink snp major");
         struct plink_snp_major: public fileloop::chr, public dataloop::loci_ped_per, public plink_binary {
-         lpCTOR(plink_snp_major,chr,loci_ped_per) { }
+         vlpCTOR(plink_snp_major,chr,loci_ped_per) { }
 
            ~plink_snp_major() {}
             void file_loop() {
@@ -302,7 +302,7 @@ void CLASS_PLINK::save_bed_file(const char *bedfl_name,
     } else if (binary_mode_flag == 2) {
         Tod tod_bed2("save bed file plink indiv major");
         struct plink_indiv_major: public fileloop::chr, public dataloop::ped_per_loci, public plink_binary {
-         lpCTOR(plink_indiv_major,chr,ped_per_loci) { }
+         vlpCTOR(plink_indiv_major,chr,ped_per_loci) { }
 
            ~plink_indiv_major() {}
             void file_loop() {
@@ -498,8 +498,8 @@ static void write_PLINK_reference_allele_data(linkage_ped_top *LPTop,
  */
 static void write_PLINK_reference_allele_file(linkage_ped_top *Top) {
     
-    lpCLASS(plink_reference_allele_file,chr,null) {
-     lpCTOR(plink_reference_allele_file,chr,null) { }
+    vlpCLASS(plink_reference_allele_file,chr,null) {
+     vlpCTOR(plink_reference_allele_file,chr,null) { }
 
         void file_loop() {
             mssgvf("        PLINK VCF REF file:        %s/%s\n", *_opath, Outfile_Names[9]);
@@ -564,8 +564,8 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         sh->sh_main();
     }
     
-    lpCLASS(PLINK_sh_script,both,sh_exec) {
-     lpCTOR(PLINK_sh_script,both,sh_exec) { }
+    vlpCLASS(PLINK_sh_script,both,sh_exec) {
+     vlpCTOR(PLINK_sh_script,both,sh_exec) { }
         typedef char *str;
         str *file_names;
         sh_exec *sh;

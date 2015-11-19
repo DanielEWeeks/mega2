@@ -163,8 +163,8 @@ static void write_IQLS_pedigree(char *outfl_name, linkage_ped_top *Top,
    different families are listed.
 
 */
-    lpCLASS(IQLS_pedigree,both,ped_per) {
-     lpCTOR(IQLS_pedigree,both,ped_per) { }
+    vlpCLASS(IQLS_pedigree,both,ped_per) {
+     vlpCTOR(IQLS_pedigree,both,ped_per) { }
 
         void file_loop() {
             msgvf("        IQLS pedigree file:        %s/%s\n", *_opath, Outfile_Names[0]);
@@ -232,8 +232,8 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 
 */
 
-    lpCLASS(IQLS_marker,both,loci_ped_per) {
-     lpCTOR(IQLS_marker,both,loci_ped_per) { }
+    vlpCLASS(IQLS_marker,both,loci_ped_per) {
+     vlpCTOR(IQLS_marker,both,loci_ped_per) { }
 
         void file_loop() {
             msgvf("        IQLS marker file:          %s/%s\n", *_opath, Outfile_Names[1]);
@@ -332,8 +332,8 @@ static void write_IQLS_marker(linkage_ped_top *Top, char *outfl_name, int pwid, 
 }
 
 static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]) {
-    lpCLASS(IQLS_parameter,chr,null) {
-     lpCTOR(IQLS_parameter,chr,null) { }
+    vlpCLASS(IQLS_parameter,chr,null) {
+     vlpCTOR(IQLS_parameter,chr,null) { }
 
         void file_loop() {
             msgvf("        IQLS parameter file:       %s/%s\n", *_opath, Outfile_Names[2]);
@@ -353,8 +353,8 @@ static void write_IQLS_parameter(linkage_ped_top *Top, int numchr, char *files[]
 static void write_IQLS_shell_script(linkage_ped_top *Top, int numchr, char *file_names[],
                                     int first_time)
 {
-    lpCLASS(IQLS_shell_script,both,sh_exec) {
-     lpCTOR(IQLS_shell_script,both,sh_exec) { }
+    vlpCLASS(IQLS_shell_script,both,sh_exec) {
+     vlpCTOR(IQLS_shell_script,both,sh_exec) { }
         typedef char *str;
         str *file_names;
 
@@ -426,8 +426,8 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
   NOTE the requirement regarding ORDERING of the pedigree!
 
 */
-    lpCLASS(Idcoefs_pedigree,both,ped_per) {
-     lpCTOR(Idcoefs_pedigree,both,ped_per) { }
+    vlpCLASS(Idcoefs_pedigree,both,ped_per) {
+     vlpCTOR(Idcoefs_pedigree,both,ped_per) { }
         ped_top *PedTreeTop;
         int     *index;
 
@@ -529,8 +529,8 @@ static void write_Idcoefs_study(linkage_ped_top *Top, char *outfl_name,
    himself/herself.
 
 */
-    lpCLASS(IDcoefs_study ,both,ped_per) {
-     lpCTOR(IDcoefs_study ,both,ped_per) { }
+    vlpCLASS(IDcoefs_study ,both,ped_per) {
+     vlpCTOR(IDcoefs_study ,both,ped_per) { }
         int *eligible;
 
         void file_loop() {
