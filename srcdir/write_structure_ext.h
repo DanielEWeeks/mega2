@@ -65,8 +65,11 @@ public:
 			    int *numchr,
                 linkage_ped_top **Top2);
 
-    void get_file_names(char *file_names[], char *prefix,
-                        int has_orig, int has_uniq, int *combine_chromo);
+//    void get_file_names(char *file_names[], char *prefix,
+//                        int has_orig, int has_uniq, int *combine_chromo);
+    void user_queries(char **file_names,
+                      int *combine_chromo, int *create_summary);
+
     void file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 

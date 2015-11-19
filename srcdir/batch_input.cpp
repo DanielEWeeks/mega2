@@ -210,6 +210,7 @@ static keyw_t keywords[] = {
     {"Value_Missing_Affect_On_Input",         LINE,      "0"},
     {"Value_Missing_Affect_On_Output",        LINE,      "0"},
     {"Output_File_Stem",                      STRING,     ""},
+
     {"Imputed_Oxford_Single_Chr",             STRING,   "--"},
     {"Imputed_Info_Metric_Threshold",         FLOAT,   "0.3"},
     {"Imputed_Hard_Call_Threshold",           FLOAT,   "0.9"},
@@ -219,8 +220,15 @@ static keyw_t keywords[] = {
     {"Imputed_Allow_Indels",                  YORN,      "n"},
     {"Imputed_RSID_Separator",                STRING,    ":"},
     {"Input_Imputed_Info_File",               STRING,     ""},
+
     {"ID_pedigree",                           INT,       "0"},
     {"ID_person",                             INT,       "0"},
+
+    {"Shapeit_recomb_dir",                    STRING,     ""},
+    {"Shapeit_recomb_pre",                    STRING,     ""} ,
+    {"Shapeit_recomb_post",                   STRING,     ""},
+    {"Shapeit_file_stem",                     STRING,     ""},
+
 };
 
 int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);

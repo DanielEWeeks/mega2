@@ -81,6 +81,14 @@ namespace dataloop {
             pr_printf("echo\n");
             pr_printf("%s >& %s\n", cmd, out);
         }
+        void sh_echo(const char *cmd) {
+            pr_printf("echo %s\n", cmd);
+            pr_printf("%s\n", cmd);
+        }
+        void sh_echo(const char *cmd, const char *out) {
+            pr_printf("echo %s \">&\" %s\n", cmd, out);
+            pr_printf("%s >& %s\n", cmd, out);
+        }
         void sh_cat(const char *cmd, const char *target) {
             pr_printf("if (-e %s.old) then\n", target);
             pr_printf("  echo rm %s.old\n", target);

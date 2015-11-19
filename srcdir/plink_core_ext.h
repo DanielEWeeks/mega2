@@ -90,9 +90,6 @@ public:
                             int untyped_ped_opt,
                             int *numchr,
                             linkage_ped_top **Top2) = 0;
-    virtual void save_pheno_file(linkage_ped_top *Top,
-                                  const int pwid,
-                                  const int fwid);
     virtual void save_pedsix_file(linkage_ped_top *Top,
                                   const int pwid,
                                   const int fwid) = 0;
@@ -103,6 +100,8 @@ public:
     virtual void save_bed_file(const char *bedfl_name,
 			       linkage_ped_top *Top,
 			       const int binary_mode_flag) = 0;
+    virtual void save_pheno_file(linkage_ped_top *Top,
+                                 const int pwid, const int fwid);
     virtual void create_sh_file(linkage_ped_top *Top,
                         char *file_names[],
                         const int numchr) = 0;
@@ -118,7 +117,7 @@ public:
       file_names_w_stem(file_names, num, file_name_stem);
     }
 
-    void user_queries(char **file_names, int *combine_chromo, int *create_summary, plink_analysis_type analysis);
+    void user_queries(char **file_names, int *combine_chromo, int *create_summary);
 };
 
 

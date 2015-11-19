@@ -557,9 +557,8 @@ static void write_sh(linkage_ped_top *Top,
     }
 }
 
-static void user_queries(char *file_names[],
-                         int *combine_chromo,
-                         analysis_type anal)
+void CLASS_STRUCTURE::user_queries(char **file_names,
+                                   int *combine_chromo, int *create_summary)
 {
     int i, choice = -1, icc=-1, istem=-1;
     
@@ -576,7 +575,7 @@ static void user_queries(char *file_names[],
         }
 
         printf(" %d) Change file names stem?                   %s\n",
-               i, anal->file_name_stem);
+               i, this->file_name_stem);
         istem=i++;
         
         printf("Enter options 0-%d > ", i-1);
@@ -588,11 +587,11 @@ static void user_queries(char *file_names[],
             *combine_chromo = TOGGLE(*combine_chromo);
         } else if (choice == istem) {
             printf("Enter new stem for the output file names > ");
-            fcmap(stdin, "%s", anal->file_name_stem);    newline;
+            fcmap(stdin, "%s", this->file_name_stem);    newline;
             // It doesn't matter what the parameter 'num' in the method file_names() is. It will get
             // changed to the appropriate thing later in the code. The method should be rewritten
             // globally without num and a place holder inserted instead.
-            inner_file_names(file_names, (char *)"xx", anal->file_name_stem);
+            inner_file_names(file_names, (char *)"xx", this->file_name_stem);
         } else {
             printf("Unknown option %d\n", choice);
         }
@@ -625,9 +624,10 @@ void CLASS_STRUCTURE::create_output_file(linkage_ped_top *LPedTreeTop,
             combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
     }
 
+    int create_summary = 0;  // don't care
     // NOTE: comnine_chromo is passed in because the user can change it via a menu.
     if (InputMode == INTERACTIVE_INPUTMODE || (! DEFAULT_OUTFILES))
-        user_queries(file_names, &combine_chromo, *analysis);
+        (*analysis)->user_queries(file_names, &combine_chromo, &create_summary);
 
     LoopOverChrm = ! combine_chromo;
     

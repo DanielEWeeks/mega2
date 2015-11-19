@@ -41,6 +41,7 @@
 #include "loop.h"
 #include "sh_util.h"
 
+#include "batch_input_ext.h"
 #include "create_summary_ext.h"
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
@@ -51,14 +52,9 @@
 #include "user_input_ext.h"
 #include "utils_ext.h"
 
-#include "plink_core_ext.h"
-#include "write_plink_ext.h"
-
 #include "write_shapeit_ext.h"
 
-// This will be the first affection status that we find in the list of traits.
-// What if there are no affection status in the list of traits?
-char *fam_file_phenotype_nameX = NULL;
+// I don't believe shapeit cares about affection status
 
 /*
      create_summary_ext.h:  aff_status_entry marker_typing_summary
@@ -86,146 +82,6 @@ quantitative trait or an affection status column: PLINK will automatically detec
 
 */
 
-static void save_SHAPEIT_pheno(const char *phenofl_name, linkage_ped_top *Top,
-                            const int pwid, const int fwid)
-{
-    vlpCLASS(pseq_pheno,once,ped_per_trait) {
-     vlpCTOR(pseq_pheno,once,ped_per_trait) { }
-        
-        bool use_fid, use_iid, use_joint;
-        // The '_trait' value of the first trait which will be found in the .FAM file.
-        // This trait will not go into this file (the SHAPEIT pheno file).
-        int skip_trait;
-        
-        void file_loop() {
-            // Here we loop over the pedigrees and individuals to determine what to use
-            // as an "ID" for the PSEQ phenotype file. This should be the same as what SHAPEIT
-            // uses for the "ID". This code is found in...
-            // lib/bed.cpp:int BEDReader::read_fam()
-            //
-            // Similar methods are used below...
-            
-            std::ostringstream convert;   // stream used for the conversion
-            std::set<std::string> sfid;
-            std::set<std::string> siid;
-            size_t ni = 0;
-            
-            // for each pedigree (consulting the linkage_ped_top structure)...
-            for (_ped=0; _ped < _Top->PedCnt; _ped++) {
-                // It there is some indication as to why this pedigree should not be included, don't...
-                if (UntypedPeds != NULL && UntypedPeds[_ped]) continue;
-                _tpedtreep = &(_Top->Ped[_ped]);
-//yy
-                if (OrigIds[1] == 2 || OrigIds[1] == 4) sfid.insert(_tpedtreep->Name);
-                else if (OrigIds[1] == 3) {convert << _ped+1; sfid.insert(convert.str()); }
-                else if (OrigIds[1] == 6) sfid.insert(_tpedtreep->PedPre);
-                else {convert << _tpedtreep->Num; sfid.insert(convert.str()); }
-                
-                for (_per = 0; _per < _Top->Ped[_ped].EntryCnt; _per++) {
-                    _tpersonp = &(_tpedtreep->Entry[_per]);
-                    if (OrigIds[0] == 1 || OrigIds[0] == 2)  siid.insert(_tpersonp->OrigID);
-                    else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) siid.insert(_tpersonp->UniqueID);
-                    else if (OrigIds[0] == 6) siid.insert(_tpersonp->PerPre);
-                    else {convert << _tpersonp->ID; siid.insert(convert.str()); }
-                    ni++;
-                }
-            }
-            
-            use_fid = ni == sfid.size();
-            use_iid = ni == siid.size();
-            use_joint = !use_fid && !use_iid;
-            
-            msgvf("      SHAPEIT phenotype file:      %s/%s\n", *_opath, Outfile_Names[2]);
-            data_loop(*_opath, Outfile_Names[2], "w");
-        }
-        void file_header() {
-            int tr, first;
-            // The SHAPEIT header takes one line per phenotype listed in the file, followed
-            // by a header line that has the "ID" followed by the phenotype names.
-            // NOTE: PLINK/SEQ is really picky about having or not havings spaces/tabs in the right places.
-            
-            // The first lines (one line for each trait) in the file contain trait meta data...
-            for (tr = 0, first = 1; tr < num_traits; tr++) {
-                if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
-                if (first == 1) {
-                    skip_trait = global_trait_entries[tr];
-                    //fam_file_phenotype_nameX = _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
-                    first = 0;
-                    continue;
-                }
-                switch (_Top->LocusTop->Locus[global_trait_entries[tr]].Type) {
-                    case QUANT:
-                        pr_printf("##%s,Float,%s,\"Quantitative trait description\"\n",
-                                  _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName,
-                                  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].items_read ?
-                                  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name : "-9"
-                                  );
-                        break;
-                    case AFFECTION:
-                        // Since we have no way of specifying the value of the missing affection
-                        // status, we will use the customary default of '0'...
-                        // The assumption here is that: Case == 2, Control == 1, and Missing == 0
-                        pr_printf("##%s,Integer,0,\"Affection status description\"\n",
-                                  _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName);
-                        break;
-                    default:
-                        // This is an internal error....
-                        break;
-                }
-            }
-            
-            // The last line of the header containing the ID followed by tab delimited trait names...
-            pr_printf("#ID");
-            for (tr = 0, first = 1; tr < num_traits; tr++) {
-                if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
-                if (first == 1) { first = 0; continue; }
-                pr_printf("\t%s", _Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName);
-            }
-            pr_nl();
-        }
-        void per_start() {
-            // The "ID" comes in one of three forms depending on the input data:
-            // A) if each family is unique then the family ID is used (use_id == 1),
-            // B) if the family ids are not unique, but the individual ids are, then the individual id is used (use_id == 2),
-            // C) finally if neither famiy, nor individual ids are unique a concatination of the two is used (use_id == 3).
-            // with an interveinign underscore.
-            // Consult the SHAPEIT code found in this method:
-            // lib/bed.cpp:int BEDReader::read_fam( )
-            if (use_joint || use_fid) pr_fam();
-            if (use_joint) pr_printf("_");
-            if (use_joint || use_iid) pr_per();
-        }
-        void inner()     { if (skip_trait != _trait) { pr_printf("\t"); pr_pheno(); } }
-        void per_end()   { pr_nl(); }
-    } *sp = new pseq_pheno(Top);
-    
-    // So that we can make up a string like "FID_IID".
-    // In addition SHAPEIT requires tab delimited data, it seems to get confused if sperious spaces are introduced.
-    sp->load_formats_no_space(-1);
-    
-    sp->iterate();
-    
-    delete sp;
-}
-
-void CLASS_SHAPEIT::save_pheno_file(linkage_ped_top *Top,
-                                 const int pwid,
-                                 const int fwid)
-{
-    int tr;
-    // Even if there is no SHAPEIT pheno file generated, we still need to know the name of the
-    // phenotype that will go into the .FAM file for the SHAPEIT --phenotype command line argument.
-    for (tr = 0; tr < num_traits; tr++) {
-        if (global_trait_entries[tr] == -1) continue; // If this is a marker, skip it...
-        fam_file_phenotype_nameX = Top->LocusTop->Pheno[global_trait_entries[tr]].TraitName;
-        break;
-    }
-    // The first trait will be placed in the .FAM file, all others in the SHAPEIT pheno file.
-    // Remember to account for the '-1' in this list, so there are N-1 traits actually
-    // listed in global_trait_entries[]
-    if (num_traits > 2) save_SHAPEIT_pheno(Outfile_Names[2], Top, pwid, fwid);
-}
-
 void CLASS_SHAPEIT::create_output_file(
     linkage_ped_top *LPedTreeTop,
     analysis_type *analysis,
@@ -234,174 +90,228 @@ void CLASS_SHAPEIT::create_output_file(
     int *numchr,
     linkage_ped_top **Top2) {
 
-    // The missing phenotype value for quantitative traits is, by default, -9.
-    // Here we use the value of 'MissingQuant' which should be derived from the batch
-    // file item "Value_Missing_Quant_On_Input".
-    //if (have_trait_b(LPedTreeTop->LocusTop) != 0 && PLINK_OUT.no_pheno == 1) {
-    if (have_trait_b(LPedTreeTop->LocusTop) != 0) {
-        // See #defines for PLINK_SUB_OPTION_*_INT for the value of _suboption
-        // NOTE: Analysis_Sub_Option MUST BE 'SNP major binary', the use of 'Individual major binary'                       
-        // will generate the pseq message, and data will not be properly loaded...                                          
-        // plinkseq warning: problems detected loading BED file, ./plink.all     
-        create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "pseq", analysis);
-    } else {
-        errorf("There are no traits available for column 6 of the PLINK phenotype file.");
-        EXIT(EARLY_TERMINATION);
+    create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "shapeit", analysis);
+}
+
+
+void CLASS_SHAPEIT::user_queries(char **file_names_array,
+                                 int *combine_chromo, int *create_summary)
+{
+    int i, choice = -1, istem = -1;
+    int idir = -1, ipre = -1, ipost = -1;
+    char selection[100], *sp = selection;
+
+    *combine_chromo = 0;
+
+    asm("int $3");
+    while (choice != 0) {
+        print_outfile_mssg();
+        draw_line();
+        printf("0) Done with this menu - please proceed\n");
+        i=1;
+
+        printf(" %d) Specify genetic map directory?            %s\n",
+               i, BatchItemGet("Shapeit_recomb_dir")->value.name);
+        idir=i++;
+
+        printf(" %d) Specify genetic map file name (pre chrm)?  %s\n",
+               i, BatchItemGet("Shapeit_recomb_pre")->value.name);
+        ipre=i++;
+
+        printf(" %d) Specify genetic map file name (post chrm)? %s\n",
+               i, BatchItemGet("Shapeit_recomb_post")->value.name);
+        ipost=i++;
+
+        printf(" %d) Change file names stem?                   %s\n",
+               i, BatchItemGet("Shapeit_file_stem")->value.name);
+//               i, this->file_name_stem);
+        istem=i++;
+
+// specify recomb map
+
+        printf("Enter options 0-%d > ", i-1);
+        fcmap(stdin, "%d", &choice); printf("\n");
+
+        if (choice == 0) {
+            ; // OK...
+
+        } else if (choice == idir) {
+            printf("Enter directory for genetic map with recombination rate > ");
+            IgnoreValue(fgets(selection, sizeof(selection)-1, stdin)); newline;
+            i = strlen(selection) - 1;
+            if (selection[i] == '\n')
+                selection[i] = 0;
+            BatchValueSet(sp, "Shapeit_recomb_dir");
+
+        } else if (choice == ipre) {
+            printf("Enter recombination map file name up to where chromosome is specified > ");
+            IgnoreValue(fgets(selection, sizeof(selection)-1, stdin)); newline;
+            i = strlen(selection) - 1;
+            if (selection[i] == '\n')
+                selection[i] = 0;
+            BatchValueSet(sp, "Shapeit_recomb_pre");
+
+        } else if (choice == ipost) {
+            printf("Enter recombination map file name after chromosome is specified  > ");
+            IgnoreValue(fgets(selection, sizeof(selection)-1, stdin)); newline;
+            i = strlen(selection) - 1;
+            if (selection[i] == '\n')
+                selection[i] = 0;
+            BatchValueSet(sp, "Shapeit_recomb_post");
+
+        } else if (choice == istem) {
+            char *fn = this->file_name_stem;
+            printf("Enter new stem for the output file names > ");
+            fcmap(stdin, "%s", this->file_name_stem);    newline;
+            // It doesn't matter what the parameter 'num' in the method file_names() is. It will get
+            // changed to the appropriate thing later in the code. The method should be rewritten
+            // globally without num and a place holder inserted instead.
+            this->file_names(file_names_array, (char *)"xx");
+            BatchValueSet(fn, "Shapeit_file_stem");
+
+        } else {
+            printf("Unknown option %d\n", choice);
+        }
+    }
+    batch_out();
+}
+
+/*
+static keyw_t keywords[] = {
+    {"Shapeit_recomb_dir",                             STRING, ""},
+    {"Shapeit_recomb_pre",                             STRING, ""} ,
+    {"Shapeit_recomb_post",                            STRING, ""},
+    {"Shapeit_file_stem",                              STRING, ""}
+};
+*/
+
+void CLASS_SHAPEIT::batch_out()
+{
+    Cstr Values[] = { "Shapeit_recomb_dir",
+                      "Shapeit_recomb_pre",
+                      "Shapeit_recomb_post",
+                      "Shapeit_file_stem",
+    };
+
+    for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
+        batch_item_type *bip = BatchItemGet(Values[i]);
+        if (bip->items_read)
+            batchf(bip);
     }
 }
 
+void CLASS_SHAPEIT::batch_in()
+{
+    BatchValueGet(this->dir,  "Shapeit_recomb_dir");
+    BatchValueGet(this->pre,  "Shapeit_recomb_pre");
+    BatchValueGet(this->post, "Shapeit_recomb_post");
+    BatchValueGet(this->file_stem, "Shapeit_file_stem");
+}
+
+void CLASS_SHAPEIT::batch_show()
+{
+    msgvf("\n");
+    msgvf("Shapeit recombination data directory:     %s\n", C(this->dir));
+    msgvf("Shapeit recombination file pre chrm:      %s\n", C(this->pre));
+    msgvf("Shapeit recombination file post chrm:     %s\n", C(this->post));
+    msgvf("Shapeit data file stem:                   %s\n", C(this->file_stem));
+
+ }
+
+
 void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
-                                char *file_names[],
+                                char *file_names_array[],
                                 const int numchr)
 {
+/*
+p Outfile_Names[0]  "2015-11-17-10-44/shapeit.05.fam"
+p Outfile_Names[1]  "2015-11-17-10-44/shapeit.05.bim"
+p Outfile_Names[2]  "2015-11-17-10-44/shapeit.phe"
+p Outfile_Names[3]  "2015-11-17-10-44/shapeit.05.bed"
+p Outfile_Names[4]  "2015-11-17-10-44/shapeit.all.sh"
+p Outfile_Names[5]  "2015-11-17-10-44/shapeit_geno_summary.05"
+p Outfile_Names[6]  "2015-11-17-10-44/shapeit.05.fam"
+p Outfile_Names[7]  "2015-11-17-10-44/shapeit.05"
+p Outfile_Names[8]  "2015-11-17-10-44/shapeit.05.sh"
+p Outfile_Names[9]  "2015-11-17-10-44/shapeit.05.ref"
+p Outfile_Names[10] "2015-11-17-10-44/"
+
+-. batch_input.cpp: shapeit_xxx; batch_in/batch_out
+0. make pedigree be unique ID (ORIGID[1] option ??)
+1. needs boost libraries _iostream, _parameters
+2. indicate where output is generated.
+3. gen args file set MoreArgs=
+4. which types of shapeit runs to make
+5. --duohmm
+*/
+
+//    int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
+//        strcmp(output_paths[0], ".");
+    int top_shell = 1;
+
     dataloop::sh_exec *sh = 0;
+    if (top_shell) {
+        sh = new dataloop::sh_exec(Top);
+        sh->filep_open(output_paths[0], file_names_array[4], "w");
+        sh->sh_main();
+    }
 
     vlpCLASS(SHAPEIT_sh_script,both,sh_exec) {
      vlpCTOR(SHAPEIT_sh_script,both,sh_exec) { }
         typedef char *str;
-        str *file_names;
+        str *file_names_intrnl;
         dataloop::sh_exec *sh;
+        CLASS_SHAPEIT *clss;
         
         void file_loop() {
-            mssgvf("      SHAPEIT shell file:          %s/%s\n", *_opath, file_names[8]);
-            data_loop(*_opath, file_names[8], "w");
+            mssgvf("      SHAPEIT shell file:          %s/%s\n", *_opath, file_names_intrnl[8]);
+            data_loop(*_opath, file_names_intrnl[8], "w");
         }
         void file_header() {
             if (sh) sh->sh_sh(this);
             sh_shell_type();
             sh_id();
             script_time_stamp(_filep);
-            
+            pr_nl();
+
             // This handles the environment variable setup to allow the checking
             // functions in 'batch_run' to work correctly...
-            fprintf_env_checkset_csh(_filep, "_SHAPEIT", "pseq");
-            pr_printf("\n");
-            pr_printf("alias usage 'echo \"Usage: %s [ SHAPEIT_PROJ [ SHAPEIT_RESDIR ] ]\"\\\n", file_names[8]);
-            pr_printf("  echo \" SHAPEIT_PROJ    the project name\"\\\n");
-            pr_printf("  echo \" SHAPEIT_RESDIR  the resource directory\"\\\n");
+            fprintf_env_checkset_csh(_filep, "_SHAPEIT", "shapeit");
+pr_nl();
+            pr_printf("alias usage 'echo \"Usage: %s \"\\\n", file_names_intrnl[8]);
             pr_printf("  exit'\n");
-            pr_printf("\n");
+            pr_nl();
             pr_printf("if ($1 == '?' || $1 == 'help' || $#argv > 2) then\n");
             pr_printf("  usage\n");
             pr_printf("endif\n");
         }
         void inner () {
-
             char cmd[2*FILENAME_LENGTH];
-            char out_fl[2*FILENAME_LENGTH];
-            
-            pr_printf("\n");
 
-            if (_numchr > 0) {
-                pr_printf("echo Running SHAPEIT on chromosome %d markers\n", _numchr);
-                pr_printf("echo\n");
-            }
+            pr_nl();
+            sprintf(cmd, "source %s.args", file_names_intrnl[4]);
+            sh_echo(cmd);
+            pr_nl();
 
-            if (num_traits > 1) {
-                if (LoopOverTrait) {
-                    sprintf(out_fl, "../%s", file_names[3]); //bed
-                    sh_ln(out_fl, file_names[3]);
-                    
-                    sprintf(out_fl, "../%s", file_names[1]); //map&bim
-                    sh_ln(out_fl, file_names[1]);
-                }
-            }
-            
-            if (strcmp(file_names[0], file_names[6]))        //fam
-                sh_ln(file_names[0], file_names[6]);
-            
-            pr_printf("\n");
-            pr_printf("# Assign a project name...\n");
-            pr_printf("if ($#argv > 0) then\n");
-            pr_printf("  set SHAPEIT_PROJ=$argv[1]\n");
-            pr_printf("  echo Using the user specified project name of \\\"$SHAPEIT_PROJ\\\".\n");
-            pr_printf("else\n");
-            pr_printf("  set SHAPEIT_PROJ=%s\n", file_names[7]);
-            pr_printf("  echo Using the default project name of \\\"$SHAPEIT_PROJ\\\".\n");
-            pr_printf("endif\n");
-
-            pr_printf("\n");
-            pr_printf("# Assign a resource directory...\n");
-            pr_printf("if ($#argv > 1) then\n");
-            pr_printf("  set SHAPEIT_RESDIR=$argv[2]\n");
-            pr_printf("  echo Using the user specified resource directory of \\\"$SHAPEIT_RESDIR\\\".\n");
-            pr_printf("else\n");
-            pr_printf("  set SHAPEIT_RESDIR=${SHAPEIT_PROJ}_res\n");
-            pr_printf("  echo Using the default resource directory of \\\"$SHAPEIT_RESDIR\\\".\n");
-            pr_printf("endif\n");
-
-	    // TODO: I still need to figure out how to tell what the former resource directory
-	    // for a project it so that the user doesn't use something different, or warn them if
-	    // they do.
-            pr_printf("\n");
-            pr_printf("# It is an error if the resource directory does not exist...\n");
-            pr_printf("if (! -d $SHAPEIT_RESDIR) then\n");
-            pr_printf("  echo\n");
-            pr_printf("  echo The resource directory \\\"$SHAPEIT_RESDIR\\\" does not exist.\n");
-            pr_printf("  echo\n");
-            pr_printf("  usage\n");
-            pr_printf("endif\n");
-
-            pr_printf("\n");
-            pr_printf("# Do not create a new project if it already exists...\n");
-            pr_printf("if (! -f $SHAPEIT_PROJ) then\n");
             pr_printf("echo\n");
-            pr_printf("echo ... Creating a new project ...\n");
-            sprintf(cmd, "$_SHAPEIT $SHAPEIT_PROJ new-project --resources $SHAPEIT_RESDIR\n");
+            sprintf(cmd, "$_SHAPEIT --input-bed %s %s %s --input-map %s/%s%d%s --output-max %s.haps %s.sample %s\n",
+                    file_names_intrnl[3], file_names_intrnl[1], file_names_intrnl[0],
+                    C(clss->dir), C(clss->pre), _numchr, C(clss->post),
+                    file_names_intrnl[7], file_names_intrnl[7],
+                    "$MoreArgs");
+
             sh_run("SHAPEIT", cmd);
+            pr_nl();
             fprintf_status_check_csh(_filep, "SHAPEIT", 1);
-            pr_printf("else\n");
-            pr_printf("  echo Using existing project \\\"${SHAPEIT_PROJ}\\\".\n");
-            pr_printf("endif\n");
-            
-            pr_printf("\n");
-            pr_printf("mkdir -p ${SHAPEIT_PROJ}_out\n");
-            pr_printf("if (-f ${SHAPEIT_PROJ}_out/%s.bed) then\n",file_names[7]);
-            pr_printf("  echo\n");
-            pr_printf("  echo ERROR: Attemping to move your trio of PLINK files into the \\\"${SHAPEIT_PROJ}_out\\\" SHAPEIT project folder.\n");
-            pr_printf("  echo ERROR: The SHAPEIT project folder \\\"${SHAPEIT_PROJ}_out\\\" already contains PLINK files of the same name.\n");
-            pr_printf("  exit\n");
-            pr_printf("endif\n");
-
-            pr_printf("\n");
-            pr_printf("cp %s.bed %s.bim %s.fam ${SHAPEIT_PROJ}_out\n", file_names[7], file_names[7], file_names[7]);
-            pr_printf("echo\n");
-            pr_printf("echo Your trio of PLINK files has been moved into the \\\"${SHAPEIT_PROJ}_out\\\" SHAPEIT project folder.\n");
-            pr_printf("echo Do not move or alter these files for the duration of your project.\n");
-
-            pr_printf("\n");
-            pr_printf("echo\n");
-            pr_printf("echo ... Loading plink binary files ...\n");
-            sprintf(cmd, "$_SHAPEIT $SHAPEIT_PROJ load-plink --file ${SHAPEIT_PROJ}_out/%s --phenotype %s --id $SHAPEIT_PROJ --check-reference\n",
-                    file_names[7], fam_file_phenotype_nameX);
-            sh_run("SHAPEIT", cmd);
-            fprintf_status_check_csh(_filep, "SHAPEIT", 1);
-
-            
-            if (num_traits > 2) {
-                pr_printf("\n");
-                pr_printf("echo ... Load additional pheotypes ...\n");
-                sprintf(cmd, "$_SHAPEIT $SHAPEIT_PROJ load-pheno --file %s\n", file_names[2]);
-                sh_run("SHAPEIT", cmd);
-                fprintf_status_check_csh(_filep, "SHAPEIT", 1);
-            }
-            
-            pr_printf("\n");
-            pr_printf("echo\n");
-            pr_printf("echo ... Listing some individuals in the project/file ...\n");
-            sprintf(cmd, "$_SHAPEIT $SHAPEIT_PROJ i-view | head\n");
-            sh_run("SHAPEIT", cmd);
 
             // can't do this because we get the status from the 'head' that we pipe the data to...
             //fprintf_status_check_csh(_filep, "SHAPEIT", 1);
         }
-        void file_post() {
-            chmod_X_file(path_);
-        }
     } *xp = new SHAPEIT_sh_script(Top);
     
-    xp->file_names = file_names;
-    xp->sh         = sh;
+    xp->file_names_intrnl = file_names_array;
+    xp->clss              = this;
+    xp->sh                = sh;
     
     xp->iterate();
     
