@@ -28,6 +28,7 @@
 #ifndef WRITE_SHAPEIT_FILES_EXT_H
 #define WRITE_SHAPEIT_FILES_EXT_H
 
+#include "types.hh"
 #include "write_plink_ext.h"
 
 
@@ -54,12 +55,27 @@ public:
                             linkage_ped_top **Top2);
 
     void save_pheno_file(linkage_ped_top *Top,
-			 const int pwid,
-			 const int fwid) {} ;  // Nothing here for shapeit
+			 const int pwid, const int fwid) {} ;  // Nothing here for shapeit
 
     void create_sh_file(linkage_ped_top *Top,
-			char *file_names[],
+			char *file_names_array[],
 			const int numchr);
+
+    void user_queries(char **file_names_array,
+                      int *combine_chromo, int *create_summary);
+
+    virtual void batch_in();
+
+    virtual void batch_out();
+
+    virtual void batch_show();
+
+public:
+    Str dir;
+    Str pre;
+    Str post;
+    Str file_stem;
+
 };
 
 extern CLASS_SHAPEIT *SHAPEIT;

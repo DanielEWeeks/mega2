@@ -428,7 +428,6 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
   NOTE the requirement regarding ORDERING of the pedigree!
 
 */
-//HERE
     FLOOPboth *floop = new FLOOPboth(Top, Outfile_Names[4], "w");
     floop->file_type = "        Idcoefs pedigree file:     ";
 

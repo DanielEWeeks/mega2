@@ -142,21 +142,9 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
                            const int pwid, const int fwid,
                            const bool has_x)
 {
-//HERE
     FBTboth *floop = new FBTboth(Top, file_names[0], "w");
     floop->file_type     = "        FBAT pedigree file:    ";
 
-//HERE
-/*
-    struct save_peds: publix dataloop::ped_per_loci {
-        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top) {
-            fileloop = fl;
-            fl->dataloop = this;
-        }
-
-        save_peds(linkage_ped_top *Top, fileloop::fileloop_data *fl) : dataloop::ped_per_loci(Top, fl) { }
-
-*/
     lpCLASS(save_peds,ped_per_loci) {
      lpCTOR(save_peds,ped_per_loci) { }
 
@@ -195,7 +183,6 @@ static void save_FBAT_peds(linkage_ped_top *Top, char *file_names[],
     floop->_trait_affect = true;
     floop->iterate();
 
-//HERE
     delete sp;
     delete floop;
 }

@@ -681,7 +681,7 @@ static void write_PANGAEA_par_translink(linkage_ped_top *Top, char *file_names[]
     struct translink_xx_par_var_loop: public FLOOPboth {
         translink_xx_par_var_loop(linkage_ped_top *Top, const char *f_name, const char *f_mode) :
             FLOOPboth(Top, f_name, f_mode) {}
-//HERE
+
         void make_file() {
             if (_ftte == 0) {
             } else if (_ftte->Type == AFFECTION && _ftte->Pheno->Props.Affection.ClassCnt > 1) {
@@ -1065,7 +1065,6 @@ static void write_PANGAEA_map(linkage_ped_top *Top, char *file_names[], int subo
         int i;
         int token;
 
-//HERE        void chr_start() { i = 0; }
         void file_header() { i = 0; }
         void inner() {
             int j;

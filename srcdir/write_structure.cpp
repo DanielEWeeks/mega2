@@ -177,7 +177,7 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
 
         mapdistances = 1;
         // #define MAPDISTANCES     1  // (B) data file contains row of map distances between loci
-//HERE
+
         FLOOPboth *floopsgdM = new FLOOPboth(Top, file_names[LoopOverChrm_save == 1 ? 0 : 8], "a");
         floopsgdM->file_type = "";
 
@@ -308,7 +308,6 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             // #define POPDATA   1     // (B) Input file contains a population identifier
             // Only the integer portion is valid here. We already know that it's a QUANT from 'make_file()'
             // above so there is no need to check here, just use it...
-//HERE
             if (PopDataPheno_i != -1) {
                 double popData = _tpersonp->Pheno[PopDataPheno_i].Quant;
                 if (popData < 0) {
@@ -343,8 +342,6 @@ static void write_INFILE(linkage_ped_top *Top, char *file_names[],
             pr_nl();
         }
         void file_trailer() {
-//HERE
-//          mssgvf("        STRUCTURE Data File:          %s/%s\n", *fileloop->_opath, file_names[0]);
             mssgvf("        STRUCTURE Data File:          %s\n", path_);
             if (numinds[chr_i] != _Top->IndivCnt) {
                 warnvf("%d People were filtered out because they were not genotyped at the selected markers.\n",
@@ -581,9 +578,8 @@ static void write_sh(linkage_ped_top *Top,
     }
 }
 
-static void user_queries(char *file_names[],
-                         int *combine_chromo,
-                         analysis_type anal)
+void CLASS_STRUCTURE::user_queries(char **file_names,
+                                   int *combine_chromo, int *create_summary)
 {
     int i, choice = -1, icc=-1, istem=-1;
     
@@ -600,7 +596,7 @@ static void user_queries(char *file_names[],
         }
 
         printf(" %d) Change file names stem?                   %s\n",
-               i, anal->file_name_stem);
+               i, this->file_name_stem);
         istem=i++;
         
         printf("Enter options 0-%d > ", i-1);
@@ -612,11 +608,11 @@ static void user_queries(char *file_names[],
             *combine_chromo = TOGGLE(*combine_chromo);
         } else if (choice == istem) {
             printf("Enter new stem for the output file names > ");
-            fcmap(stdin, "%s", anal->file_name_stem);    newline;
+            fcmap(stdin, "%s", this->file_name_stem);    newline;
             // It doesn't matter what the parameter 'num' in the method file_names() is. It will get
             // changed to the appropriate thing later in the code. The method should be rewritten
             // globally without num and a place holder inserted instead.
-            inner_file_names(file_names, (char *)"xx", anal->file_name_stem);
+            inner_file_names(file_names, (char *)"xx", this->file_name_stem);
         } else {
             printf("Unknown option %d\n", choice);
         }
@@ -649,9 +645,10 @@ void CLASS_STRUCTURE::create_output_file(linkage_ped_top *LPedTreeTop,
             combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
     }
 
+    int create_summary = 0;  // don't care
     // NOTE: comnine_chromo is passed in because the user can change it via a menu.
     if (InputMode == INTERACTIVE_INPUTMODE || (! DEFAULT_OUTFILES))
-        user_queries(file_names, &combine_chromo, *analysis);
+        (*analysis)->user_queries(file_names, &combine_chromo, &create_summary);
 
     LoopOverChrm = ! combine_chromo;
     

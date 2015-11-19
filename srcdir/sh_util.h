@@ -81,6 +81,14 @@ public:
         pr_printf("echo\n");
         pr_printf("%s >& %s\n", cmd, out);
     }
+    void sh_echo(const char *cmd) {
+        pr_printf("echo %s\n", cmd);
+        pr_printf("%s\n", cmd);
+    }
+    void sh_echo(const char *cmd, const char *out) {
+        pr_printf("echo %s \">&\" %s\n", cmd, out);
+        pr_printf("%s >& %s\n", cmd, out);
+    }
     void sh_cat(const char *cmd, const char *target) {
         pr_printf("if (-e %s.old) then\n", target);
         pr_printf("  echo rm %s.old\n", target);
@@ -174,19 +182,7 @@ public:
 
     virtual void inner() {}
 
-    void run_loop(const char *opath, const char *fl_name) { run_loop(opath, fl_name, "w"); }
-    void run_loop(const char *dir, const char *fl_name, const char *mode)
-    {
-        _ttraitp = _fileloop->_ftte;
-        _numchr  = _fileloop->_fnumchr;
-        _trait   = _fileloop->_ftrait;
-
-        filep_open(dir, fl_name, mode);
-        inner();
-        filep_close();
-    }
-
-    void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
+//  void data_loop(const char *opath, const char *fl_name) { data_loop(opath, fl_name, "w"); }
     void data_loop(const char *dir, const char *fl_name, const char *mode)
     {
         _ttraitp = _fileloop->_ftte;

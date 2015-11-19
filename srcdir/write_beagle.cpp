@@ -161,7 +161,6 @@ static void sort_genetic_positions() {
               sizeof(int), cmp_marker_genetic_positions);
 }
 
-//HERE
 struct BGLchr: public FLOOPchr {
     BGLchr(linkage_ped_top *Top, const char *f_name, const char *f_mode) : FLOOPchr(Top, f_name, f_mode) {}
     void make_file() {

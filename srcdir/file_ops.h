@@ -159,7 +159,7 @@ public:
 
        NOTE: We should consider doing the right thing when writing a file in windows (e.g., "\r\n").
     */
-    void pr_nl() { pr_printf("\n"); }
+    void pr_nl() { pr_puts("\n"); }
 
     void file_flush() {
       if ((void *)_gzfile != (void *)NULL)

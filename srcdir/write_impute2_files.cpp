@@ -205,7 +205,6 @@ static void save_IMPUTE2_pheno(const char *phenofl_name, linkage_ped_top *Top,
     
     // So that we can make up a string like "FID_IID".
     // In addition PSEQ requires tab delimited data, it seems to get confused if sperious spaces are introduced.
-//HERE
     sp->use_fid   = use_fid;
     sp->use_iid   = use_iid;
     sp->use_joint = use_joint;

@@ -329,6 +329,22 @@ public:
     virtual void create_sh_file(linkage_ped_top *Top,
 				char *file_names[],
 				const int numchr) {}
+/*
+ */
+    virtual void user_queries(char **file_names_array,
+                              int *combine_chromo, int *create_summary) {}
+
+/*
+ */
+    virtual void batch_in() {}
+
+/*
+ */
+    virtual void batch_out() {}
+
+/*
+ */
+    virtual void batch_show() {}
 
 /*
    initialize the file_names array with the names of outputs for this analysis

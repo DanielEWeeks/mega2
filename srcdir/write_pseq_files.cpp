@@ -121,7 +121,6 @@ static void save_PSEQ_pheno(const char *phenofl_name, linkage_ped_top *Top,
     //
     // Similar methods are used below...
 
-//HERE
     int _ped, _per;
     linkage_ped_tree *_tpedtreep;
     linkage_ped_rec  *_tpersonp;

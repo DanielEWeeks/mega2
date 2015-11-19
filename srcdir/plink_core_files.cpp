@@ -404,7 +404,10 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
 
     // NOTE: comnine_chromo is passed in because the user can change it via a menu.
     if (InputMode == INTERACTIVE_INPUTMODE || (! DEFAULT_OUTFILES))
-      ((plink_analysis_type)*analysis)->user_queries(file_names, &combine_chromo, &create_geno_summary, (plink_analysis_type)*analysis);
+        (*analysis)->user_queries(file_names, &combine_chromo, &create_geno_summary);
+    else
+        (*analysis)->batch_in();
+    (*analysis)->batch_show();
 
     LoopOverChrm = ! combine_chromo;
 
@@ -523,8 +526,7 @@ void write_R_PLINK_map_file(linkage_ped_top *LPTop, char *map_file_name) {
 // .LGEN mode (== 0),
 // .BED mode: (SNP major == 1; Individual major == 2).
 void CLASS_PLINK_CORE::user_queries(char **file_names,
-				    int *combine_chromo, int *create_summary,
-				    plink_analysis_type anal)
+				    int *combine_chromo, int *create_summary)
 {
     int i, choice = -1, icc=-1, isum=-1, istem=-1;
     
@@ -545,7 +547,7 @@ void CLASS_PLINK_CORE::user_queries(char **file_names,
         isum=i++;
         
         printf(" %d) Change file names stem?                   %s\n",
-               i, anal->file_name_stem);
+               i, this->file_name_stem);
         istem=i++;
         
         printf("Enter options 0-%d > ", i-1);
@@ -559,11 +561,11 @@ void CLASS_PLINK_CORE::user_queries(char **file_names,
             *create_summary = TOGGLE(*create_summary);
         } else if (choice == istem) {
             printf("Enter new stem for the output file names > ");
-            fcmap(stdin, "%s", anal->file_name_stem);    newline;
+            fcmap(stdin, "%s", this->file_name_stem);    newline;
             // It doesn't matter what the parameter 'num' in the method file_names() is. It will get
             // changed to the appropriate thing later in the code. The method should be rewritten
             // globally without num and a place holder inserted instead.
-            anal->file_names(file_names, (char *)"xx");
+            this->file_names(file_names, (char *)"xx");
         } else {
             printf("Unknown option %d\n", choice);
         }
