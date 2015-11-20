@@ -404,7 +404,6 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
     }
 
     // NOTE: comnine_chromo is passed in because the user can change it via a menu.
-    asm("int $3");
     if (InputMode == INTERACTIVE_INPUTMODE || (! DEFAULT_OUTFILES))
         (*analysis)->user_queries(file_names, &combine_chromo, &create_geno_summary);
     else
