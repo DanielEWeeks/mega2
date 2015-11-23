@@ -72,10 +72,12 @@ public:
     virtual void batch_show();
 
 public:
-    Str dir;
-    Str pre;
-    Str post;
+    Str rdir;
+    Str rpre;
+    Str rpost;
     Str file_stem;
 };
+
+extern CLASS_SHAPEIT *SHAPEIT;
 
 #endif /* WRITE_SHAPEIT_FILES_EXT_H */

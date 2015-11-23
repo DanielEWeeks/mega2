@@ -162,6 +162,7 @@
 #include "version.h"
 
 #include "class_old.h"
+#include "write_shapeit_ext.h"
 
 /*
  annotated_ped_file_ext.h:  check_annotated_file_format read_annotated_files Free_annotated_files
@@ -1183,8 +1184,12 @@ int             main(int argc, char **argv)
     tod_sh();
 
     if (FirstIterMenu == 1 && InputMode == INTERACTIVE_INPUTMODE) {
-        Mega2BatchItems[/* 25 */ Default_Outfile_Names].value.copt = 'y';
-        batchf(/* 25 */ Default_Outfile_Names);
+        if (analysis == SHAPEIT) {
+            analysis->batch_out();
+        } else {
+            Mega2BatchItems[/* 25 */ Default_Outfile_Names].value.copt = 'y';
+            batchf(/* 25 */ Default_Outfile_Names);
+        }
     }
     Mega2Status = TERM_MEGA2;
 

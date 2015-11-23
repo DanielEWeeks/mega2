@@ -224,9 +224,8 @@ static keyw_t keywords[] = {
     {"ID_pedigree",                           INT,       "0"},
     {"ID_person",                             INT,       "0"},
 
-    {"Shapeit_recomb_dir",                    STRING,     ""},
-    {"Shapeit_recomb_pre",                    STRING,     ""} ,
-    {"Shapeit_recomb_post",                   STRING,     ""},
+    {"Shapeit_recomb_rdir",                   STRING,     ""},
+    {"Shapeit_recomb_rfile",                  STRING,     ""} ,
     {"Shapeit_file_stem",                     STRING,     ""},
 
 };
