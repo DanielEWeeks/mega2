@@ -79,7 +79,7 @@ void CLASS_ALLEGRO::create_output_file(
                    analysis, file_names, UntypedPedOpt, Top2);
 }
 
-void CLASS_ALLEGRO::file_names(char **file_names, char *num) {
+void CLASS_ALLEGRO::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "al_ped.%s", num);
     sprintf(file_names[1], "al_dat.%s", num);
     sprintf(file_names[2], "al_in.%s", num);
@@ -106,7 +106,7 @@ void CLASS_ALLELE_FREQ::create_output_file(
                         UntypedPedOpt, numchr);
 }
 
-void CLASS_ALLELE_FREQ::file_names(char **file_names, char *num) {
+void CLASS_ALLELE_FREQ::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "freq.%s", num);
 }
 
@@ -130,7 +130,7 @@ void CLASS_APM::create_output_file(
                     analysis, omitfl_name, UntypedPedOpt);
 }
 
-void CLASS_APM::file_names(char **file_names, char *num) {
+void CLASS_APM::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "kin_ml.%s", num);
 }
 
@@ -157,7 +157,7 @@ void CLASS_APM_MULT::create_output_file(
                   UntypedPedOpt);
 }
 
-void CLASS_APM_MULT::file_names(char **file_names, char *num) {
+void CLASS_APM_MULT::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "kin_mult");
     sprintf(file_names[3], "apmmult.%2s.sh", num);
     sprintf(file_names[14], "apmmult_sum.%2s", num);
@@ -210,7 +210,7 @@ void CLASS_ASPEX::create_output_file(
                       *numchr, file_names, UntypedPedOpt, Top2);
 }
 
-void CLASS_ASPEX::file_names(char **file_names, char *num) {
+void CLASS_ASPEX::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[4], "asp_in.%s", num);
     sprintf(file_names[5], "asp_dat.%s", num);
 }
@@ -232,7 +232,7 @@ void CLASS_CRANEFOOT::create_output_file(
     create_CRANEFOOT_files(&LPedTreeTop, file_names, UntypedPedOpt);
 }
 
-void CLASS_CRANEFOOT::file_names(char **file_names, char *num) {
+void CLASS_CRANEFOOT::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "crnft_ped.%s", num);
     sprintf(file_names[1], "crnft_control.%s", num);
     sprintf(file_names[2], "crnft_shell.%s.sh", num);
@@ -255,7 +255,7 @@ void CLASS_CREATE_SUMMARY::create_output_file(
                         UntypedPedOpt, numchr);
 }
 
-void CLASS_CREATE_SUMMARY::file_names(char **file_names, char *num) {
+void CLASS_CREATE_SUMMARY::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "seg_sum.%s", num);
     sprintf(file_names[1], "cnt_sum.%s", num);
     sprintf(file_names[2], "sib_sum.%s", num);
@@ -281,7 +281,7 @@ void CLASS_GENEHUNTER::create_output_file(
                    analysis, file_names, UntypedPedOpt, Top2);
 }
 
-void CLASS_GENEHUNTER::file_names(char **file_names, char *num) {
+void CLASS_GENEHUNTER::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "gh_ped.%s", num);
     sprintf(file_names[1], "gh_dat.%s", num);
     sprintf(file_names[2], "gh_in.%s", num);
@@ -309,7 +309,7 @@ void CLASS_GENEHUNTERPLUS::create_output_file(
                    analysis, file_names, UntypedPedOpt, Top2);
 }
 
-void CLASS_GENEHUNTERPLUS::file_names(char **file_names, char *num) {
+void CLASS_GENEHUNTERPLUS::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "ghp_ped.%s", num);
     sprintf(file_names[1], "ghp_dat.%s", num);
     sprintf(file_names[2], "ghp_in.%s", num);
@@ -336,7 +336,7 @@ void CLASS_GENOTYPING_SUMMARY::create_output_file(
                         UntypedPedOpt, numchr);
 }
 
-void CLASS_GENOTYPING_SUMMARY::file_names(char **file_names, char *num) {
+void CLASS_GENOTYPING_SUMMARY::gen_file_names(char **file_names, char *num) {
     strcpy(file_names[0], "genotyping_rate");
 }
 
@@ -357,7 +357,7 @@ void CLASS_GHMLB::create_output_file(
                    analysis, file_names, UntypedPedOpt, Top2);
 }
 
-void CLASS_GHMLB::file_names(char **file_names, char *num) {
+void CLASS_GHMLB::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "mlb_ped.%s", num);
     sprintf(file_names[1], "mlb_dat.%s", num);
     sprintf(file_names[2], "mlb_in.%s", num);
@@ -387,7 +387,7 @@ void CLASS_HAPLOTYPE::create_output_file(
                              UntypedPedOpt);
 }
 
-void CLASS_HAPLOTYPE::file_names(char **file_names, char *num) {
+void CLASS_HAPLOTYPE::gen_file_names(char **file_names, char *num) {
        sprintf(file_names[0], "sw2_pedigree.%s", num);
        sprintf(file_names[1], "sw2_locus.%s", num);
        sprintf(file_names[2], "sw2_batch.%s", num);
@@ -445,7 +445,7 @@ void CLASS_HWETEST::create_output_file(
     hwe_user_input(LPedTreeTop, numchr, file_names);
 }
 
-void CLASS_HWETEST::file_names(char **file_names, char *num) {
+void CLASS_HWETEST::gen_file_names(char **file_names, char *num) {
 }
 
 void CLASS_HWETEST::replace_chr_number(char *file_names[], int numchr) {
@@ -466,7 +466,7 @@ void CLASS_IBD_EST::create_output_file(
                              UntypedPedOpt);
 }
 
-void CLASS_IBD_EST::file_names(char **file_names, char *num) {
+void CLASS_IBD_EST::gen_file_names(char **file_names, char *num) {
        sprintf(file_names[0], "sw2_pedigree.%s", num);
        sprintf(file_names[1], "sw2_locus.%s", num);
        sprintf(file_names[2], "sw2_batch.%s", num);
@@ -501,7 +501,7 @@ void CLASS_IQLS::create_output_file(
     create_IQLS_files(&LPedTreeTop, file_names, UntypedPedOpt);
 }
 
-void CLASS_IQLS::file_names(char **file_names, char *num) {
+void CLASS_IQLS::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "IQLS_pedigree.%s", num);
     sprintf(file_names[1], "IQLS_marker.%s", num);
     sprintf(file_names[2], "IQLS_parameter.%s", num);
@@ -531,7 +531,7 @@ void CLASS_LIABLE_FREQ::create_output_file(
                         UntypedPedOpt, numchr);
 }
 
-void CLASS_LIABLE_FREQ::file_names(char **file_names, char *num) {
+void CLASS_LIABLE_FREQ::gen_file_names(char **file_names, char *num) {
     strcpy(file_names[0], "liabililty_freq");
 }
 
@@ -550,7 +550,7 @@ void CLASS_LINKAGE::create_output_file(
     create_linkage_files(&LPedTreeTop, numchr, file_names, UntypedPedOpt);
 }
 
-void CLASS_LINKAGE::file_names(char **file_names, char *num) {
+void CLASS_LINKAGE::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "Lpedin.%s", num);
     sprintf(file_names[1], "Ldatain.%s", num);
 }
@@ -576,7 +576,7 @@ void CLASS_LOCATION::create_output_file(
                              UntypedPedOpt);
 }
 
-void CLASS_LOCATION::file_names(char **file_names, char *num) {
+void CLASS_LOCATION::gen_file_names(char **file_names, char *num) {
        sprintf(file_names[0], "sw2_pedigree.%s", num);
        sprintf(file_names[1], "sw2_locus.%s", num);
        sprintf(file_names[2], "sw2_batch.%s", num);
@@ -606,7 +606,7 @@ void CLASS_LOD2::create_output_file(
                              UntypedPedOpt);
 }
 
-void CLASS_LOD2::file_names(char **file_names, char *num) {
+void CLASS_LOD2::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "lod2ped.%s", num);
     sprintf(file_names[1], "lod2data.%s", num);
     sprintf(file_names[3], "lod2.%s.sh", num);
@@ -631,7 +631,7 @@ void CLASS_LOKI::create_output_file(
                       UntypedPedOpt, *analysis);
 }
 
-void CLASS_LOKI::file_names(char **file_names, char *num) {
+void CLASS_LOKI::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "Loki_ped.%s", num);
     sprintf(file_names[1], "Loki_freq.%s", num);
     sprintf(file_names[2], "Loki_map.%s", num);
@@ -664,7 +664,7 @@ void CLASS_MEGA2ANNOT::create_output_file(
     create_mega2annot_files(&LPedTreeTop, file_names, UntypedPedOpt);
 }
 
-void CLASS_MEGA2ANNOT::file_names(char **file_names, char *num) {
+void CLASS_MEGA2ANNOT::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "pedin.%s.mega2", num);
     sprintf(file_names[1], "names.%s.mega2", num);
     sprintf(file_names[2], "map.%s.mega2", num);
@@ -691,7 +691,7 @@ void CLASS_MENDEL4::create_output_file(
     create_mega2annot_files(&LPedTreeTop, file_names, UntypedPedOpt);
 }
 
-void CLASS_MENDEL4::file_names(char **file_names, char *num) {
+void CLASS_MENDEL4::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[4], "mendel_map.%s", num);
     sprintf(file_names[0], "mendel_ped.%s", num);
     sprintf(file_names[1], "mendel_locus.%s", num);
@@ -719,7 +719,7 @@ void CLASS_MENDEL7_CSV::create_output_file(
                              UntypedPedOpt);
 }
 
-void CLASS_MENDEL7_CSV::file_names(char **file_names, char *num) {
+void CLASS_MENDEL7_CSV::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[4], "mendel_map.%s", num);
     sprintf(file_names[0], "mendel_ped.%s", num);
     sprintf(file_names[1], "mendel_locus.%s", num);
@@ -747,7 +747,7 @@ void CLASS_MENDEL::create_output_file(
                              UntypedPedOpt);
 }
 
-void CLASS_MENDEL::file_names(char **file_names, char *num) {
+void CLASS_MENDEL::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "pedm.%s", num);
     sprintf(file_names[1], "locus.%s", num);
     sprintf(file_names[6], "pen.%s", num);
@@ -782,7 +782,7 @@ void CLASS_MERLIN::create_output_file(
                        UntypedPedOpt);
 }
 
-void CLASS_MERLIN::file_names(char **file_names, char *num) {
+void CLASS_MERLIN::gen_file_names(char **file_names, char *num) {
     /* set simwalk2 file names */
     sprintf(file_names[0], "PEDIGREE.%s", num);
     sprintf(file_names[1], "LOCUS.%s", num);
@@ -828,7 +828,7 @@ void CLASS_MERLINONLY::create_output_file(
                         file_names, UntypedPedOpt, *analysis);
 }
 
-void CLASS_MERLINONLY::file_names(char **file_names, char *num) {
+void CLASS_MERLINONLY::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[9], "merlin_freq.%s", num);
     sprintf(file_names[10], "merlin_ped.%s", num);
     sprintf(file_names[11], "merlin_data.%s", num);
@@ -860,7 +860,7 @@ void CLASS_MISTYPING::create_output_file(
                              UntypedPedOpt);
 }
 
-void CLASS_MISTYPING::file_names(char **file_names, char *num) {
+void CLASS_MISTYPING::gen_file_names(char **file_names, char *num) {
        sprintf(file_names[0], "sw2_pedigree.%s", num);
        sprintf(file_names[1], "sw2_locus.%s", num);
        sprintf(file_names[2], "sw2_batch.%s", num);
@@ -893,7 +893,7 @@ void CLASS_NONPARAMETRIC::create_output_file(
                              UntypedPedOpt);
 }
 
-void CLASS_NONPARAMETRIC::file_names(char **file_names, char *num) {
+void CLASS_NONPARAMETRIC::gen_file_names(char **file_names, char *num) {
        sprintf(file_names[0], "sw2_pedigree.%s", num);
        sprintf(file_names[1], "sw2_locus.%s", num);
        sprintf(file_names[2], "sw2_batch.%s", num);
@@ -924,7 +924,7 @@ void CLASS_NUKE::create_output_file(
                             analysis, &infl_type, UntypedPedOpt, Top2);
 }
 
-void CLASS_NUKE::file_names(char **file_names, char *num) {
+void CLASS_NUKE::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[1], "nuke_data.%s", num);
     sprintf(file_names[0], "nuke_ped.%s", num);
 }
@@ -947,7 +947,7 @@ void CLASS_PAP::create_output_file(
     create_pap_files(&LPedTreeTop, file_names, UntypedPedOpt, numchr, &infl_type);
 }
 
-void CLASS_PAP::file_names(char **file_names, char *num) {
+void CLASS_PAP::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "trip.%s", num);
     sprintf(file_names[1], "header.%s", num);
     sprintf(file_names[2], "phen.%s", num);
@@ -976,7 +976,7 @@ void CLASS_PREMAKEPED::create_output_file(
                             file_names, UntypedPedOpt);
 }
 
-void CLASS_PREMAKEPED::file_names(char **file_names, char *num) {
+void CLASS_PREMAKEPED::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "Ppedin.%s", num);
     sprintf(file_names[1], "Pdatain.%s", num);
 }
@@ -1001,7 +1001,7 @@ void CLASS_PREST::create_output_file(
                        &infl_type);
 }
 
-void CLASS_PREST::file_names(char **file_names, char *num) {
+void CLASS_PREST::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "prest_ped.%s", num);
     sprintf(file_names[1], "prest_loc.%s", num);
     sprintf(file_names[2], "prest_geno.%s", num);
@@ -1029,7 +1029,7 @@ void CLASS_QUANT_SUMMARY::create_output_file(
                         UntypedPedOpt, numchr);
 }
 
-void CLASS_QUANT_SUMMARY::file_names(char **file_names, char *num) {
+void CLASS_QUANT_SUMMARY::gen_file_names(char **file_names, char *num) {
     strcpy(file_names[0], "phenotyping_rate");
 }
 
@@ -1049,7 +1049,7 @@ void CLASS_SAGE4::create_output_file(
                       numchr, analysis, file_names, UntypedPedOpt);
 }
 
-void CLASS_SAGE4::file_names(char **file_names, char *num) {
+void CLASS_SAGE4::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "sage4_ped.%s", num);
     sprintf(file_names[1], "sage4_dat.%s", num);
     sprintf(file_names[6], "sage4_par.%s", num);
@@ -1079,7 +1079,7 @@ void CLASS_SAGE::create_output_file(
                      numchr, analysis, file_names, UntypedPedOpt);
 }
 
-void CLASS_SAGE::file_names(char **file_names, char *num) {
+void CLASS_SAGE::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "sage_ped.%s", num);
     sprintf(file_names[1], "sage_loc.%s", num);
     sprintf(file_names[2], "sage_par.%s", num);
@@ -1116,7 +1116,7 @@ void CLASS_SIMULATE::create_output_file(
                                  UntypedPedOpt);
 }
 
-void CLASS_SIMULATE::file_names(char **file_names, char *num) {
+void CLASS_SIMULATE::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "simped.%s", num);
     sprintf(file_names[1], "simdata.%s", num);
     sprintf(file_names[2], "problem.%s", num);
@@ -1211,7 +1211,7 @@ void CLASS_SLINK::create_output_file(
                               UntypedPedOpt);
 }
 
-void CLASS_SLINK::file_names(char **file_names, char *num) {
+void CLASS_SLINK::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "simped.%s", num);
     sprintf(file_names[1], "simdata.%s", num);
     sprintf(file_names[2], "slinkin.%s", num);
@@ -1240,7 +1240,7 @@ void CLASS_SOLAR::create_output_file(
                        numchr, mapfl_name, file_names, UntypedPedOpt);
 }
 
-void CLASS_SOLAR::file_names(char **file_names, char *num) {
+void CLASS_SOLAR::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "solar_ped.%s", num);
     sprintf(file_names[1], "solar_freq.%s", num);
     sprintf(file_names[6], "solar_phen.%s", num);
@@ -1270,7 +1270,7 @@ void CLASS_SPLINK::create_output_file(
                   file_names, UntypedPedOpt);
 }
 
-void CLASS_SPLINK::file_names(char **file_names, char *num) {
+void CLASS_SPLINK::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "splink_ped.%s", num);
     sprintf(file_names[3], "splink.%s.sh", num);
 }
@@ -1358,7 +1358,7 @@ void CLASS_SUMMARY::sub_prog_name_to_sub_option(char *sub_prog_name, analysis_ty
     }
 }
 
-void CLASS_SUP::file_names(char **file_names, char *num) {
+void CLASS_SUP::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "sup_simped.%s", num);
     sprintf(file_names[1], "sup_simdata.%s", num);
     sprintf(file_names[2], "sup_locus.%s", num);
@@ -1388,7 +1388,7 @@ void CLASS_TDTMAX::create_output_file(
 }
 
 
-void CLASS_TDTMAX::file_names(char **file_names, char *num) {
+void CLASS_TDTMAX::gen_file_names(char **file_names, char *num) {
     strcpy(file_names[0], "tdtmax_data");
     sprintf(file_names[3], "tdtmax.%s.sh", num);
 }
@@ -1423,7 +1423,7 @@ void CLASS_VITESSE::create_output_file(
     create_vitesse_files(&LPedTreeTop, numchr, file_names, UntypedPedOpt);
 }
 
-void CLASS_VITESSE::file_names(char **file_names, char *num) {
+void CLASS_VITESSE::gen_file_names(char **file_names, char *num) {
     sprintf(file_names[0], "vpedin.%s", num);
     sprintf(file_names[1], "vdatain.%s", num);
     sprintf(file_names[3], "vitesse.%s.sh", num);

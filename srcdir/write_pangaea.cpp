@@ -1363,7 +1363,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[11], ".%s.dat", num);
 }
 
-void CLASS_PANGAEA::file_names(char **file_names, char *num)
+void CLASS_PANGAEA::gen_file_names(char **file_names, char *num)
 {
     inner_file_names(file_names, num);
 }

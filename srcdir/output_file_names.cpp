@@ -142,7 +142,7 @@ void default_outfile_names(const analysis_type  analysis,
  
     // This is not really the right place to call this.
     // 'num' get's over written later...
-    analysis->file_names(file_names, num);
+    analysis->gen_file_names(file_names, num);
 
     if (ErrorSimOpt == 1) {
         sprintf(file_names[15], "error_genos.%s", num);

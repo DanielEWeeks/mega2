@@ -70,7 +70,7 @@ public:
     void user_queries(char **file_names,
                       int *combine_chromo, int *create_summary);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 
 };

@@ -169,7 +169,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
             // It doesn't matter what the parameter 'num' in the method file_names() is. It will get
             // changed to the appropriate thing later in the code. The method should be rewritten
             // globally without num and a place holder inserted instead.
-            this->file_names(file_names_array, (char *)"xx");
+            this->gen_file_names(file_names_array, (char *)"xx");
             BatchValueSet(fn, "Shapeit_file_stem");
             file_stem = fn;
 

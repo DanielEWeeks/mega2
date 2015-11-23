@@ -67,7 +67,7 @@ public:
 
     void get_file_names(char *file_names[], char *prefix,
                         int has_orig, int has_uniq, int *combine_chromo);
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 
     void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);

@@ -566,7 +566,7 @@ void CLASS_PLINK_CORE::user_queries(char **file_names,
             // It doesn't matter what the parameter 'num' in the method file_names() is. It will get
             // changed to the appropriate thing later in the code. The method should be rewritten
             // globally without num and a place holder inserted instead.
-            this->file_names(file_names, (char *)"xx");
+            this->gen_file_names(file_names, (char *)"xx");
         } else {
             printf("Unknown option %d\n", choice);
         }

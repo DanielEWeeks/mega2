@@ -57,7 +57,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -82,7 +82,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -122,7 +122,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -144,7 +144,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -184,7 +184,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -226,7 +226,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -258,7 +258,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -291,7 +291,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -374,7 +374,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -410,7 +410,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -447,7 +447,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -483,7 +483,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -521,7 +521,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -553,7 +553,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -591,7 +591,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -624,7 +624,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -655,7 +655,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -694,7 +694,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -738,7 +738,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -774,7 +774,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -803,7 +803,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -841,7 +841,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -882,7 +882,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -920,7 +920,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -961,7 +961,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -999,7 +999,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1039,7 +1039,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1067,7 +1067,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1098,7 +1098,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1137,7 +1137,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1160,7 +1160,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1194,7 +1194,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1230,7 +1230,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1266,7 +1266,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1315,7 +1315,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1341,7 +1341,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1370,7 +1370,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1403,7 +1403,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1430,7 +1430,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1453,7 +1453,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1481,7 +1481,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 
@@ -1518,7 +1518,7 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void file_names(char **file_names, char *num);
+    void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 };
 

@@ -832,7 +832,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[7], "R%s.%s.hdr", stem, num);
 }
 
-void CLASS_FBAT::file_names(char **file_names, char *num)
+void CLASS_FBAT::gen_file_names(char **file_names, char *num)
 {
     inner_file_names(file_names, num);
 }

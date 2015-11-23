@@ -71,7 +71,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[8], "%s.all.data", stem);
 }
 
-void CLASS_STRUCTURE::file_names(char **file_names, char *num)
+void CLASS_STRUCTURE::gen_file_names(char **file_names, char *num)
 {
     inner_file_names(file_names, num, "structure");
 }
