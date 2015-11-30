@@ -404,10 +404,18 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
     }
 
     // NOTE: comnine_chromo is passed in because the user can change it via a menu.
-    if (InputMode == INTERACTIVE_INPUTMODE || (! DEFAULT_OUTFILES))
+    if (InputMode == INTERACTIVE_INPUTMODE)
         (*analysis)->user_queries(file_names, &combine_chromo, &create_geno_summary);
     else
         (*analysis)->batch_in();
+
+//  file_stem may have been reset
+    if (! DEFAULT_OUTFILES) {
+	(*((CLASS_PLINK_CORE **) analysis))->file_names_w_stem(file_names, (char *)"xx", (*analysis)->file_name_stem);
+	add_sumdirs(file_names);
+    }
+
+
     (*analysis)->batch_show();
 
     LoopOverChrm = ! combine_chromo;

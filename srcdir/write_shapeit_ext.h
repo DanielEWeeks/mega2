@@ -40,12 +40,15 @@ public:
     }
    ~CLASS_SHAPEIT() {}
 
-    bool has_sub_options()    { return false; }
+    bool has_sub_options()    { return true; }
+    virtual void sub_prog_name(int sub_opt, char *subprog);
+    virtual void sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis);
+    virtual void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
 
 /*  this is necessary because we are inheriting from CLASS_PLINK not CLASS_ANALYSIS */
-    virtual const char* output_quant_default_value() { return "NA"; }
+    virtual const char* output_quant_default_value() { return "-9"; }
 
-    virtual const char* output_affect_default_value() { return "0"; }
+    virtual const char* output_affect_default_value() { return "-9"; }
     virtual bool output_affect_must_be_numeric() { return true; }
 
     virtual void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -55,12 +58,31 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
+    void gen_file_names(char *file_names[], char *num) {
+	int subopt = _suboption;
+	_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
+	file_names_w_stem(file_names, num, file_name_stem);
+	_suboption = subopt;
+    }
+
+    void save_pedsix_file(linkage_ped_top *Top,
+                          const int pwid,
+                          const int fwid);
+
     void save_pheno_file(linkage_ped_top *Top,
 			 const int pwid, const int fwid) {}; // Nothing here for shapeit
 
     void create_sh_file(linkage_ped_top *Top,
 			char *file_names_array[],
 			const int numchr);
+
+    void create_sh_file_phased(linkage_ped_top *Top,
+                               char *file_names_array[],
+                               const int numchr);
+
+    void create_sh_file_check(linkage_ped_top *Top,
+                              char *file_names_array[],
+                              const int numchr);
 
     void user_queries(char **file_names_array,
                       int *combine_chromo, int *create_summary);
@@ -75,7 +97,6 @@ public:
     Str rdir;
     Str rpre;
     Str rpost;
-    Str file_stem;
 };
 
 extern CLASS_SHAPEIT *SHAPEIT;

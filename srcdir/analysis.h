@@ -349,7 +349,7 @@ public:
 /*
    initialize the file_names array with the names of outputs for this analysis
  */
-    virtual void gen_file_names(char **file_names, char *num) {}
+    virtual void gen_file_names(char *file_names[], char *num) {}
 
 /*
     change those file names that have the chromosome number embeded.

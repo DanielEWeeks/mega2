@@ -95,6 +95,7 @@ public:
     void load_formats(const int fwid, const int pwid, const int mwid);
 
     void pr_id();
+    void pr_uid();
     void pr_fam();
     void pr_per() { pr_per(_tpersonp); }
     void pr_per(linkage_ped_rec  *tpe);

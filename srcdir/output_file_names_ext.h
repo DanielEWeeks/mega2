@@ -33,6 +33,9 @@ extern void           CHR_STR(int numchr, char chr_str[]);
 
 extern void           change_output_chr(char *file_name, const int numchr);
 
+extern void           add_sumdirs(char *filenames[]);
+extern void           add_sumdir(char *filename);
+
 extern void           create_mssg(analysis_type analysis);
 
 extern void           default_outfile_names(const analysis_type  analysis,

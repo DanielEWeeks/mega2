@@ -1184,12 +1184,11 @@ int             main(int argc, char **argv)
     tod_sh();
 
     if (FirstIterMenu == 1 && InputMode == INTERACTIVE_INPUTMODE) {
-        if (analysis == SHAPEIT) {
-            analysis->batch_out();
-        } else {
+	analysis->batch_out();
+        if (analysis != SHAPEIT) {
             Mega2BatchItems[/* 25 */ Default_Outfile_Names].value.copt = 'y';
-            batchf(/* 25 */ Default_Outfile_Names);
         }
+	batchf(/* 25 */ Default_Outfile_Names);
     }
     Mega2Status = TERM_MEGA2;
 

@@ -91,15 +91,52 @@ void CLASS_SHAPEIT::create_output_file(
     int untyped_ped_opt,
     int *numchr,
     linkage_ped_top **Top2) {
+    int subopt = _suboption;
 
+    _suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
     create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "shapeit", analysis);
+    _suboption = subopt;
 }
 
+void CLASS_SHAPEIT::save_pedsix_file(linkage_ped_top *Top,
+                                     const int pwid,
+                                     const int fwid)
+{
+    vlpCLASS(plink_pedsix,trait,ped_per) {
+     vlpCTOR(plink_pedsix,trait,ped_per) { }
+
+        void file_loop() {
+            mssgvf("        PLINK pedigree file:       %s/%s\n", *_opath, Outfile_Names[0]);  //fam
+            data_loop(*_opath, Outfile_Names[0], "w");
+        }
+        void inner() {
+#if 0
+            if (PLINK_OUT.no_fid != 1) pr_fam();
+            pr_per();
+            if (PLINK_OUT.no_parents != 1) pr_parent(); // father-id & mother-id
+            if (PLINK_OUT.no_sex != 1) pr_sex();
+            if (PLINK_OUT.no_pheno != 1) pr_pheno();
+#endif
+            pr_uid();
+            pr_parent();
+            pr_sex();
+            pr_pheno();
+
+            pr_nl();
+        }
+    } *sp = new plink_pedsix(Top);
+
+    sp->load_formats(fwid, pwid, -1);
+
+    sp->iterate();
+
+    delete sp;
+}
 
 void CLASS_SHAPEIT::user_queries(char **file_names_array,
                                  int *combine_chromo, int *create_summary)
 {
-    int i, choice = -1, istem = -1;
+    int i, choice = -1, istem = -1, idef = -1;
     int idir = -1, ifile = -1;
     char selection[100], *sp = selection;
 
@@ -119,9 +156,13 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
                i, BatchItemGet("Shapeit_recomb_rfile")->value.name);
         ifile=i++;
 
+	printf(" %d) Use default filenames?                             %s\n",
+	       i, yorn[DEFAULT_OUTFILES]);
+	idef=i++;
+
         printf(" %d) Change file names stem?                            \"%s\"\n",
-               i, BatchItemGet("Shapeit_file_stem")->value.name);
-//               i, this->file_name_stem);
+//             i, BatchItemGet("Shapeit_file_stem")->value.name);
+               i, this->file_name_stem);
         istem=i++;
 
 // specify recomb map
@@ -130,7 +171,10 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
         fcmap(stdin, "%d", &choice); printf("\n");
 
         if (choice == 0) {
-            ; // OK...
+	    if (rpre == "" && rpost == "") {
+		printf("You must specify the recombination rate file (and if necessary the path)\n");
+		choice = i;
+	    }
 
         } else if (choice == idir) {
             printf("Enter directory for genetic map with recombination rate > ");
@@ -162,16 +206,17 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
                 rpost = filesplit[1];
                 break;
             }
+
+        } else if (choice == idef) {
+	    printf("Please type \"yes\" or \"no\" > ");
+            fcmap(stdin, "%s", selection);    newline;
+	    BatchValueSet(selection[0], "Default_Outfile_Names");
+
         } else if (choice == istem) {
             char *fn = this->file_name_stem;
             printf("Enter new stem for the output file names > ");
             fcmap(stdin, "%s", this->file_name_stem);    newline;
-            // It doesn't matter what the parameter 'num' in the method file_names() is. It will get
-            // changed to the appropriate thing later in the code. The method should be rewritten
-            // globally without num and a place holder inserted instead.
-            this->gen_file_names(file_names_array, (char *)"xx");
             BatchValueSet(fn, "Shapeit_file_stem");
-            file_stem = fn;
 
         } else {
             printf("Unknown option %d\n", choice);
@@ -203,12 +248,13 @@ void CLASS_SHAPEIT::batch_out()
 
 void CLASS_SHAPEIT::batch_in()
 {
+    char *fn = this->file_name_stem;
     Str file;
     Vecs filesplit;
 
-    BatchValueGet(this->rdir,  "Shapeit_recomb_rdir");
-    BatchValueGet(       file, "Shapeit_recomb_rfile");
-    BatchValueGet(this->file_stem, "Shapeit_file_stem");
+    BatchValueIfSet(this->rdir,  "Shapeit_recomb_rdir");
+    BatchValueGet  (       file, "Shapeit_recomb_rfile");
+    BatchValueIfSet(       fn,   "Shapeit_file_stem");
 
     split(filesplit, file, "?");
     if (filesplit.size() != 2) {
@@ -224,12 +270,32 @@ void CLASS_SHAPEIT::batch_show()
     msgvf("\n");
     msgvf("Shapeit recombination data directory:     %s\n",    C(this->rdir));
     msgvf("Shapeit recombination file:               %s?%s\n", C(this->rpre), C(this->rpost));
-    msgvf("Shapeit data file stem:                   %s\n",    C(this->file_stem));
+    msgvf("Shapeit data file stem:                   %s\n",    C(this->file_name_stem));
     msgvf("\n");
  }
 
 
 void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
+                                char *file_names[],
+                                const int numchr)
+{
+    char prefix[100];
+
+    sub_prog_name(_suboption, prefix);
+    sprintf(file_names[4], "shapeit_%s.all.sh", prefix);
+    sprintf(file_names[8], "shapeit_%s.%02d.sh", prefix, numchr);
+    add_sumdir(file_names[4]);
+    add_sumdir(file_names[8]);
+
+    switch (_suboption) {
+    case 0:
+    case 1:  create_sh_file_phased(Top, file_names, numchr);   break;
+    case 2:  create_sh_file_check (Top, file_names, numchr);   break;
+    default: break;
+    }
+}
+
+void CLASS_SHAPEIT::create_sh_file_phased(linkage_ped_top *Top,
                                 char *file_names_array[],
                                 const int numchr)
 {
@@ -245,11 +311,6 @@ p Outfile_Names[7]  "2015-11-17-10-44/shapeit.05"
 p Outfile_Names[8]  "2015-11-17-10-44/shapeit.05.sh"
 p Outfile_Names[9]  "2015-11-17-10-44/shapeit.05.ref"
 p Outfile_Names[10] "2015-11-17-10-44/"
-
-0. make pedigree be unique ID (ORIGID[1] option ??)
-2. indicate where output is generated.
-4. which types of shapeit runs to make
-5. --duohmm
 */
 
 //    int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
@@ -261,7 +322,6 @@ p Outfile_Names[10] "2015-11-17-10-44/"
     dataloop::sh_exec arg(Top);
     arg.filep_open(output_paths[0], argfile, "w");
     arg.pr_puts(SHAPEIT_ARGS);
-//  arg.pr_puts("set MoreArgs=--duohmm\n");
     arg.filep_close();
 
     
@@ -311,9 +371,12 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             pr_nl();
 
             pr_printf("echo\n");
-            sprintf(cmd, "$_SHAPEIT --input-bed %s %s %s --input-map %s/%s%d%s --output-max %s.haps %s.sample %s\n",
-                    file_names_intrnl[3], file_names_intrnl[1], file_names_intrnl[0],
-                    C(clss->rdir), C(clss->rpre), _numchr, C(clss->rpost),
+            sprintf(cmd, "$_SHAPEIT --input-bed %s %s %s --input-map ",
+                    file_names_intrnl[3], file_names_intrnl[1], file_names_intrnl[0]);
+	    if (clss->rdir != "")
+		sprintf(cmd, "%s %s/", cmd, C(clss->rdir));
+            sprintf(cmd, "%s%s%d%s --output-max %s.haps %s.sample %s\n",
+                    cmd, C(clss->rpre), _numchr, C(clss->rpost),
                     file_names_intrnl[7], file_names_intrnl[7],
                     "$MoreArgs");
 
@@ -334,8 +397,155 @@ p Outfile_Names[10] "2015-11-17-10-44/"
     delete xp;
 
     if (top_shell) {
+        mssgvf("      SHAPEIT top shell file:      %s/%s\n", output_paths[0], file_names_array[4]);
+        mssgvf("              the above shell runs all shells\n");
 
         sh->filep_close();
         delete sh;
+    }
+}
+
+void CLASS_SHAPEIT::create_sh_file_check(linkage_ped_top *Top,
+                                char *file_names_array[],
+                                const int numchr)
+{
+/*
+p Outfile_Names[0]  "2015-11-17-10-44/shapeit.05.fam"
+p Outfile_Names[1]  "2015-11-17-10-44/shapeit.05.bim"
+p Outfile_Names[2]  "2015-11-17-10-44/shapeit.phe"
+p Outfile_Names[3]  "2015-11-17-10-44/shapeit.05.bed"
+p Outfile_Names[4]  "2015-11-17-10-44/shapeit.all.sh"
+p Outfile_Names[5]  "2015-11-17-10-44/shapeit_geno_summary.05"
+p Outfile_Names[6]  "2015-11-17-10-44/shapeit.05.fam"
+p Outfile_Names[7]  "2015-11-17-10-44/shapeit.05"
+p Outfile_Names[8]  "2015-11-17-10-44/shapeit.05.sh"
+p Outfile_Names[9]  "2015-11-17-10-44/shapeit.05.ref"
+p Outfile_Names[10] "2015-11-17-10-44/"
+
+2. indicate where output is generated.
+*/
+
+//    int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
+//        strcmp(output_paths[0], ".");
+    int top_shell = 1;
+
+    dataloop::sh_exec *sh = 0;
+    if (top_shell) {
+        sh = new dataloop::sh_exec(Top);
+        sh->filep_open(output_paths[0], file_names_array[4], "w");
+        sh->sh_main();
+    }
+
+    vlpCLASS(SHAPEIT_sh_script,both,sh_exec) {
+     vlpCTOR(SHAPEIT_sh_script,both,sh_exec) { }
+        typedef char *str;
+        str *file_names_intrnl;
+        dataloop::sh_exec *sh;
+        CLASS_SHAPEIT *clss;
+        
+        void file_loop() {
+            mssgvf("      SHAPEIT shell file:          %s/%s\n", *_opath, file_names_intrnl[8]);
+            data_loop(*_opath, file_names_intrnl[8], "w");
+        }
+        void file_header() {
+//            asm("int $3");
+            if (sh) sh->sh_sh(this);
+            sh_shell_type();
+            sh_id();
+            script_time_stamp(_filep);
+            pr_nl();
+
+            // This handles the environment variable setup to allow the checking
+            // functions in 'batch_run' to work correctly...
+            fprintf_env_checkset_csh(_filep, "_SHAPEIT", "shapeit");
+            pr_nl();
+            pr_printf("alias usage 'echo \"Usage: %s \"\\\n", file_names_intrnl[8]);
+            pr_printf("  exit'\n");
+            pr_nl();
+            pr_printf("if ($1 == '?' || $1 == 'help' || $#argv > 2) then\n");
+            pr_printf("  usage\n");
+            pr_printf("endif\n");
+        }
+        void inner () {
+            char cmd[2*FILENAME_LENGTH];
+
+            pr_printf("echo\n");
+            sprintf(cmd, "$_SHAPEIT -check --input-bed %s %s %s --input-map %s/%s%d%s\n",
+                    file_names_intrnl[3], file_names_intrnl[1], file_names_intrnl[0],
+                    C(clss->rdir), C(clss->rpre), _numchr, C(clss->rpost));
+
+            sh_run("SHAPEIT", cmd);
+            pr_nl();
+            fprintf_status_check_csh(_filep, "SHAPEIT", 1);
+
+            // can't do this because we get the status from the 'head' that we pipe the data to...
+            //fprintf_status_check_csh(_filep, "SHAPEIT", 1);
+        }
+    } *xp = new SHAPEIT_sh_script(Top);
+    
+    xp->file_names_intrnl = file_names_array;
+    xp->clss              = this;
+    xp->sh                = sh;
+    
+    xp->iterate();
+    delete xp;
+
+    if (top_shell) {
+        mssgvf("      SHAPEIT top shell file:      %s/%s\n", output_paths[0], file_names_array[4]);
+        mssgvf("              the above shell runs all shells\n");
+
+        sh->filep_close();
+        delete sh;
+    }
+}
+
+void CLASS_SHAPEIT::sub_prog_name(int sub_opt, char *subprog) {
+    switch(sub_opt) {
+    case 0:
+    case 1:  strcpy(subprog, "phased");              break;
+    case 2:  strcpy(subprog, "check");               break;
+    default:                                         break;
+    }
+}
+
+void CLASS_SHAPEIT::interactive_sub_prog_name_to_sub_option(analysis_type *analysis)
+{
+    int selection = 1;
+    int selected  = 1;
+    char select[10];
+
+    if (batchANALYSIS) {
+        if (Mega2BatchItems[/* 6 */ Analysis_Sub_Option].items_read) {
+            selection = (*analysis)->_suboption;
+        } else {
+            selection = 1;
+        }
+    } else {
+        while (selected != 0) {
+            draw_line();
+            printf("Selection Menu: Shapeit shell file options\n");
+            printf("0) Done with this menu - please proceed\n");
+            printf("%c1) generate Shapeit phased shell files\n",
+                   selection == 1 ? '*' : ' ');
+            printf("%c2) generate Shapeit check shell files\n",
+                   selection == 2 ? '*' : ' ');
+            printf("Enter selection: 0 - 2 > ");
+            fcmap(stdin,"%s", select); newline;
+            sscanf(select, "%d", &selected);
+            if (selected < 0 || selected > 2) warn_unknown(select);
+            else if (selected) selection = selected;
+        }
+    }
+    (*analysis)->_suboption = selection;
+}
+
+void CLASS_SHAPEIT::sub_prog_name_to_sub_option(char *subprog_name, analysis_type *analysis) {
+    switch(tolower((unsigned char)subprog_name[0])) {
+    case 'p': // phased
+        (*analysis)->_suboption = 1; break;
+    case 'c': // check
+        (*analysis)->_suboption = 2; break;
+    default:
+        break;
     }
 }

@@ -357,7 +357,7 @@ void CLASS_PLINK::create_output_file(
     }
 }
 
-void CLASS_PLINK::file_names_w_stem(char **file_names, char *num, const char *stem)
+void CLASS_PLINK::file_names_w_stem(char *file_names[], char *num, const char *stem)
 {
     if (_suboption == PLINK_SUB_OPTION_PED_INT)
         sprintf(file_names[0], "%s.%s.ped", stem, num);

@@ -106,10 +106,6 @@ void default_outfile_names(const analysis_type  analysis,
                            const char *logdir)
 {
     char            num[3];
-#ifdef LOGDIR
-    char            tmp[FILENAME_LENGTH];
-    int             i;
-#endif
 
     /* This is approximately the contents of the file_names[] array
        file_names[0] = outfl_name (pedigree file)
@@ -148,16 +144,37 @@ void default_outfile_names(const analysis_type  analysis,
         sprintf(file_names[15], "error_genos.%s", num);
         sprintf(file_names[16], "error_sum.%s", num);
     }
-#ifdef LOGDIR
-    if (strcmp(Mega2OutputPath, ".") != 0)  return;
-    if (strcmp(logdir, ".") == 0)  return;
-    for (i = 0; i < 17; i++) {
-        strcpy(tmp, file_names[i]);
-        sprintf(file_names[i], "%s/%s", logdir, tmp);
-    }
+    add_sumdirs(file_names);
+}
+
+void add_sumdirs(char *filenames[])
+{
+#ifndef LOGDIR
+    return;
+#else
+    for (int i = 0; i < 17; i++)
+        add_sumdir(filenames[i]);
+
 #endif
 }
 
+void add_sumdir(char *filename)
+{
+#ifndef LOGDIR
+    return;
+#else
+    int    l;
+    extern char sumdir[];
+
+    if (strcmp(Mega2OutputPath, ".") != 0)  return;
+    if (strcmp(sumdir, ".") == 0)  return;
+
+    l = strlen(sumdir);
+    memmove(filename+l+1, filename, strlen(filename)+1);
+    strcpy(filename, sumdir);
+    filename[l] = '/';
+#endif
+}
 
 //
 // Insert the chromosome number into OP_files (in place).

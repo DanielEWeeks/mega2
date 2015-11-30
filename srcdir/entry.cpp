@@ -61,6 +61,12 @@ void person_locus_entry::pr_id()
     pr_per();
 }
 
+void person_locus_entry::pr_uid()
+{
+    pr_per();
+    pr_per();
+}
+
 void person_locus_entry::pr_fam()
 {
     // Family or pedigree (see comments for OrigIds in common.h)...
