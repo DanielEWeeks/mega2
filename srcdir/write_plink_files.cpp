@@ -357,18 +357,19 @@ void CLASS_PLINK::create_output_file(
     }
 }
 
-void CLASS_PLINK::file_names_w_stem(char *file_names[], char *num, const char *stem)
+void CLASS_PLINK::file_names_w_stem(char *file_names[], char *num, const char *stem,
+                                    const int suboption)
 {
-    if (_suboption == PLINK_SUB_OPTION_PED_INT)
+    if (suboption == PLINK_SUB_OPTION_PED_INT)
         sprintf(file_names[0], "%s.%s.ped", stem, num);
     else // for PLINK_SUB_OPTION_SNP_MAJOR, or PLINK_SUB_OPTION_INDIVIDUAL_MAJOR.
         sprintf(file_names[0], "%s.%s.fam", stem, num);
     
-    if (_suboption == PLINK_SUB_OPTION_LGEN_INT) {
+    if (suboption == PLINK_SUB_OPTION_LGEN_INT) {
         sprintf(file_names[1], "%s.%s.map", stem, num);
         sprintf(file_names[3], "%s.%s.lgen", stem, num);
 
-    } else if (_suboption == PLINK_SUB_OPTION_PED_INT) {
+    } else if (suboption == PLINK_SUB_OPTION_PED_INT) {
         sprintf(file_names[1], "%s.%s.map", stem, num);
 
     } else { // for PLINK_SUB_OPTION_SNP_MAJOR, or PLINK_SUB_OPTION_INDIVIDUAL_MAJOR.

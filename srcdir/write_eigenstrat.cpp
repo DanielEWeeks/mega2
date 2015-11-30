@@ -338,9 +338,10 @@ void CLASS_EIGENSTRAT::create_output_file(linkage_ped_top *LPedTreeTop,
 }
 
 
-void CLASS_EIGENSTRAT::file_names_w_stem(char **file_names, char *num, const char *stem)
+void CLASS_EIGENSTRAT::file_names_w_stem(char **file_names, char *num, const char *stem,
+                                         const int suboption)
 {
-    if (_suboption == PLINK_SUB_OPTION_PED_INT) {
+    if (suboption == PLINK_SUB_OPTION_PED_INT) {
         sprintf(file_names[1], "%s.%s.map", stem, num); // use .map file format not .snp
         sprintf(file_names[0], "%s.%s.ped", stem, num); // use .ped file format not .geno
     } else { // for PLINK_SUB_OPTION_SNP_MAJOR

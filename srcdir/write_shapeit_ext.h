@@ -59,10 +59,8 @@ public:
                             linkage_ped_top **Top2);
 
     void gen_file_names(char *file_names[], char *num) {
-	int subopt = _suboption;
-	_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
-	file_names_w_stem(file_names, num, file_name_stem);
-	_suboption = subopt;
+	file_names_w_stem(file_names, num, file_name_stem,
+                          PLINK_SUB_OPTION_SNP_MAJOR_INT);
     }
 
     void save_pedsix_file(linkage_ped_top *Top,

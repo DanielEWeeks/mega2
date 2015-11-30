@@ -621,6 +621,8 @@ void goodbye(int exit)
         mssgf(err_msg);
 
         log_line(mssgf);
+    } else {
+        mssgf("FAILURE! FAILURE! FAILURE! due to ERROR messages noted previously in the LOG and ERR files.");
     }
     close_logs();
 /*
@@ -985,9 +987,9 @@ void Exit(int arg, const char *file, const int line, const char *err)
     close_logs();
     exit(arg);
 #else
+    errorvf("%s:%d Mega2 terminated. Error \"%s\" (#%d).\n", file, line, err, arg);
     log_line(mssgf);
     goodbye(arg);
-    printf("%s:%d Mega2 terminated. Error \"%s\" (#%d).\n", file, line, err, arg);
     fflush(stdout);
     exit(arg);
 #endif

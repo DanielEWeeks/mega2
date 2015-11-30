@@ -110,11 +110,12 @@ public:
     // the default, or with a "custom stem" during user interactive mode.
     virtual void file_names_w_stem(char **file_names,
                                    char *num,
-                                   const char *stem) = 0;
+                                   const char *stem,
+                                   const int suboption) = 0;
     // This is the method that must be defined for the CLASS_ANALYSIS.
     // It is just a stub that calls the real method with the default stem.
     void gen_file_names(char *file_names[], char *num) {
-	file_names_w_stem(file_names, num, file_name_stem);
+	file_names_w_stem(file_names, num, file_name_stem, _suboption);
     }
 
     void user_queries(char **file_names, int *combine_chromo, int *create_summary);

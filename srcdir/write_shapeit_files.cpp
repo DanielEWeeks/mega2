@@ -91,11 +91,8 @@ void CLASS_SHAPEIT::create_output_file(
     int untyped_ped_opt,
     int *numchr,
     linkage_ped_top **Top2) {
-    int subopt = _suboption;
 
-    _suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
     create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "shapeit", analysis);
-    _suboption = subopt;
 }
 
 void CLASS_SHAPEIT::save_pedsix_file(linkage_ped_top *Top,
@@ -142,28 +139,31 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
 
     *combine_chromo = 0;
 
+    print_outfile_mssg();
     while (choice != 0) {
-        print_outfile_mssg();
         draw_line();
         printf("0) Done with this menu - please proceed\n");
         i=1;
 
-        printf(" %d) Specify genetic recombination map directory?       \"%s\"\n",
-               i, BatchItemGet("Shapeit_recomb_rdir")->value.name);
-        idir=i++;
+        if (_suboption == 1) {
+            printf(" %d) Specify genetic recombination map directory?       \"%s\"\n",
+                   i, BatchItemGet("Shapeit_recomb_rdir")->value.name);
+            idir=i++;
 
-        printf(" %d) Specify genetic recombination map file name?       \"%s\"\n",
-               i, BatchItemGet("Shapeit_recomb_rfile")->value.name);
-        ifile=i++;
-
+            printf(" %d) Specify genetic recombination map file name?       \"%s\"\n",
+                   i, BatchItemGet("Shapeit_recomb_rfile")->value.name);
+            ifile=i++;
+        }
 	printf(" %d) Use default filenames?                             %s\n",
 	       i, yorn[DEFAULT_OUTFILES]);
 	idef=i++;
 
-        printf(" %d) Change file names stem?                            \"%s\"\n",
-//             i, BatchItemGet("Shapeit_file_stem")->value.name);
-               i, this->file_name_stem);
+        if (! DEFAULT_OUTFILES) {
+            printf(" %d) Change filenames stem?                            \"%s\"\n",
+//                   i, BatchItemGet("Shapeit_file_stem")->value.name);
+                   i, this->file_name_stem);
         istem=i++;
+        }
 
 // specify recomb map
 
@@ -171,7 +171,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
         fcmap(stdin, "%d", &choice); printf("\n");
 
         if (choice == 0) {
-	    if (rpre == "" && rpost == "") {
+	    if (_suboption == 1 && rpre == "" && rpost == "") {
 		printf("You must specify the recombination rate file (and if necessary the path)\n");
 		choice = i;
 	    }
@@ -252,25 +252,32 @@ void CLASS_SHAPEIT::batch_in()
     Str file;
     Vecs filesplit;
 
-    BatchValueIfSet(this->rdir,  "Shapeit_recomb_rdir");
-    BatchValueGet  (       file, "Shapeit_recomb_rfile");
-    BatchValueIfSet(       fn,   "Shapeit_file_stem");
+    BatchValueIfSet(           fn,   "Shapeit_file_stem");
 
-    split(filesplit, file, "?");
-    if (filesplit.size() != 2) {
-        printf("Please include one and only one ? in the file name\n");
-        return;
+    if (_suboption == 1) {
+        BatchValueIfSet(this->rdir,  "Shapeit_recomb_rdir");
+        BatchValueGet  (       file, "Shapeit_recomb_rfile");
+
+        split(filesplit, file, "?");
+        if (filesplit.size() != 2) {
+            printf("Please include one and only one ? in the file name\n");
+            return;
+        }
+        rpre  = filesplit[0];
+        rpost = filesplit[1];
     }
-    rpre  = filesplit[0];
-    rpost = filesplit[1];
 }
 
 void CLASS_SHAPEIT::batch_show()
 {
     msgvf("\n");
-    msgvf("Shapeit recombination data directory:     %s\n",    C(this->rdir));
-    msgvf("Shapeit recombination file:               %s?%s\n", C(this->rpre), C(this->rpost));
-    msgvf("Shapeit data file stem:                   %s\n",    C(this->file_name_stem));
+    if (_suboption == 1) {
+        msgvf("Shapeit recombination data directory:     %s\n",    C(this->rdir));
+        msgvf("Shapeit recombination file:               %s?%s\n", C(this->rpre), C(this->rpost));
+    }
+    if (! DEFAULT_OUTFILES) {
+        msgvf("Shapeit data file stem:                   %s\n",    C(this->file_name_stem));
+    }
     msgvf("\n");
  }
 
@@ -358,7 +365,7 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             pr_printf("alias usage 'echo \"Usage: %s \"\\\n", file_names_intrnl[8]);
             pr_printf("  exit'\n");
             pr_nl();
-            pr_printf("if ($1 == '?' || $1 == 'help' || $#argv > 2) then\n");
+            pr_printf("if ($1 == '?' || $1 == 'help') then\n");
             pr_printf("  usage\n");
             pr_printf("endif\n");
         }
@@ -462,7 +469,7 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             pr_printf("alias usage 'echo \"Usage: %s \"\\\n", file_names_intrnl[8]);
             pr_printf("  exit'\n");
             pr_nl();
-            pr_printf("if ($1 == '?' || $1 == 'help' || $#argv > 2) then\n");
+            pr_printf("if ($1 == '?' || $1 == 'help') then\n");
             pr_printf("  usage\n");
             pr_printf("endif\n");
         }
@@ -470,9 +477,8 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             char cmd[2*FILENAME_LENGTH];
 
             pr_printf("echo\n");
-            sprintf(cmd, "$_SHAPEIT -check --input-bed %s %s %s --input-map %s/%s%d%s\n",
-                    file_names_intrnl[3], file_names_intrnl[1], file_names_intrnl[0],
-                    C(clss->rdir), C(clss->rpre), _numchr, C(clss->rpost));
+            sprintf(cmd, "$_SHAPEIT -check --input-bed %s %s %s\n",
+                    file_names_intrnl[3], file_names_intrnl[1], file_names_intrnl[0]);
 
             sh_run("SHAPEIT", cmd);
             pr_nl();

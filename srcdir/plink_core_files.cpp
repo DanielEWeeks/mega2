@@ -411,7 +411,7 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
 
 //  file_stem may have been reset
     if (! DEFAULT_OUTFILES) {
-	(*((CLASS_PLINK_CORE **) analysis))->file_names_w_stem(file_names, (char *)"xx", (*analysis)->file_name_stem);
+	(*((CLASS_PLINK_CORE **) analysis))->file_names_w_stem(file_names, (char *)"xx", (*analysis)->file_name_stem, output_format+1);
 	add_sumdirs(file_names);
     }
 
