@@ -324,14 +324,7 @@ p Outfile_Names[10] "2015-11-17-10-44/"
 //        strcmp(output_paths[0], ".");
     int top_shell = 1;
 
-    char argfile[2*FILENAME_LENGTH];
-    sprintf(argfile, "%s.args", file_names_array[4]);
-    dataloop::sh_exec arg(Top);
-    arg.filep_open(output_paths[0], argfile, "w");
-    arg.pr_puts(SHAPEIT_ARGS);
-    arg.filep_close();
-
-    
+ 
     dataloop::sh_exec *sh = 0;
     if (top_shell) {
         sh = new dataloop::sh_exec(Top);
@@ -410,6 +403,14 @@ p Outfile_Names[10] "2015-11-17-10-44/"
         sh->filep_close();
         delete sh;
     }
+
+    char argfile[2*FILENAME_LENGTH];
+    sprintf(argfile, "%s.args", file_names_array[4]);
+    dataloop::sh_exec arg(Top);
+    arg.filep_open(output_paths[0], argfile, "w");
+    arg.pr_puts(SHAPEIT_ARGS);
+    arg.filep_close();
+    mssgvf("      SHAPEIT shell argument file: %s/%s.args\n", output_paths[0], file_names_array[4]);
 }
 
 void CLASS_SHAPEIT::create_sh_file_check(linkage_ped_top *Top,

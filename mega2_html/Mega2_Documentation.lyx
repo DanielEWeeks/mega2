@@ -15415,8 +15415,8 @@ name "sec:The-analysis-menu"
 
 \begin_layout Standard
 After all the input files and the chromosome number have been specified,
- then one proceeds to the Analysis menu, which presents a variety of different
- conversion options: 
+ the Analysis menu is presented; it shows a variety of different conversion
+ options: 
 \begin_inset Newline newline
 \end_inset
 
@@ -15436,83 +15436,91 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
- 1 SimWalk2 format                 21 MLBQTL format
+                    0 Sort by Analysis Name
 \end_layout
 
 \begin_layout LyX-Code
- 2 Vintage Mendel format           22 SAGE format
+ 1 SimWalk2 format                 22 SAGE format
 \end_layout
 
 \begin_layout LyX-Code
- 3 ASPEX format                    23 Pre-makeped format
+ 2 Vintage Mendel format           23 Pre-makeped format
 \end_layout
 
 \begin_layout LyX-Code
- 4 GeneHunter-Plus format          24 Merlin/SimWalk2-NPL format
+ 3 ASPEX format                    24 Merlin/SimWalk2-NPL format
 \end_layout
 
 \begin_layout LyX-Code
- 5 GeneHunter format               25 PREST format
+ 4 GeneHunter-Plus format          25 PREST format
 \end_layout
 
 \begin_layout LyX-Code
- 6 APM format [DISABLED]           26 PAP format
+ 5 GeneHunter format               26 PAP format
 \end_layout
 
 \begin_layout LyX-Code
- 7 APM-MULT format [DISABLED]      27 Merlin format
+ 6 APM format [DISABLED]           27 Merlin format
 \end_layout
 
 \begin_layout LyX-Code
- 8 Create nuclear families         28 Loki format
+ 7 APM-MULT format [DISABLED]      28 Loki format
 \end_layout
 
 \begin_layout LyX-Code
- 9 SLINK format                    29 Mendel format
+ 8 Create nuclear families         29 Mendel format
 \end_layout
 
 \begin_layout LyX-Code
-10 SPLINK format                   30 SUP format
+ 9 SLINK format                    30 SUP format
 \end_layout
 
 \begin_layout LyX-Code
-11 Homogeneity analyses            31 PLINK format
+10 SPLINK format                   31 PLINK format
 \end_layout
 
 \begin_layout LyX-Code
-12 SIMULATE format                 32 CRANEFOOT format
+11 Homogeneity analyses            32 CRANEFOOT format
 \end_layout
 
 \begin_layout LyX-Code
-13 Create summary files            33 Mega2  format
+12 SIMULATE format                 33 Mega2 format
 \end_layout
 
 \begin_layout LyX-Code
-14 Old SAGE format                 34 IQLS/Idcoefs format
+13 Create summary files            34 IQLS/Idcoefs format
 \end_layout
 
 \begin_layout LyX-Code
-15 TDTMax analyses [DISABLED]      35 FBAT format
+14 Old SAGE format                 35 FBAT format
 \end_layout
 
 \begin_layout LyX-Code
-16 SOLAR format                    36 PANGAEA MORGAN format
+15 TDTMax analyses [DISABLED]      36 PANGAEA MORGAN format
 \end_layout
 
 \begin_layout LyX-Code
-17 Vitesse format                  37 Beagle format
+16 SOLAR format                    37 Beagle format
 \end_layout
 
 \begin_layout LyX-Code
-18 Linkage format                  38 Eigenstrat format
+17 Vitesse format                  38 Eigenstrat format
 \end_layout
 
 \begin_layout LyX-Code
-19 Test loci for HWE               39 Structure format
+18 Linkage format                  39 Structure format
 \end_layout
 
 \begin_layout LyX-Code
-20 Allegro format                  40 PSEQ format
+19 Test loci for HWE               40 PSEQ format
+\end_layout
+
+\begin_layout LyX-Code
+20 Allegro format                  41 SHAPEIT format
+\end_layout
+
+\begin_layout LyX-Code
+21 MLBQTL format                   42 IMPUTE2 format
 \end_layout
 
 \begin_layout LyX-Code
@@ -15520,7 +15528,7 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-Select an option between 1-40 > 
+Select an option between 0-42 > 
 \end_layout
 
 \begin_layout LyX-Code
@@ -15537,23 +15545,25 @@ Overview:
 \end_inset
 
  Note that we can not provide in depth documentation for each of the programs
- for which Mega2 can create files; in fact, we assume that the user will
- read the documentation of the appropriate program.
- Also, since many of these external programs are written by others, it is
- possible (and perhaps likely) that Mega2 will be out of sync with a newly
- updated version of one of these programs.
- If you notice this, please notify us as soon as possible.
+ for which Mega2 can create files; we suggest that the user read the documentati
+on of the appropriate program.
+ Since many of these external programs are written by others, it is possible
+ (and perhaps likely) that Mega2 will be out of sync with a newly updated
+ version of one of these programs.
+ If you experience this, please notify us as soon as possible.
  
 \end_layout
 
 \begin_layout Standard
-In brief, the various options in the Analysis menu are listed below.
+The various options in the Analysis menu are listed briefly below.
+ You may follow the reference to a more detailed discussion later in this
+ document.
  Note that in most cases, in addition to generating appropriately re-formatted
  files, Mega2 also generates a C-shell script that will automatically run
  the desired program.
  However, these C-shell scripts will only function correctly if the needed
- programs (with the appropriate names) are in your path and installed properly
- on your workstation.
+ analysis programs (with the expected names) are in your path and installed
+ properly on your workstation.
  
 \begin_inset Newline newline
 \end_inset
@@ -15561,2216 +15571,466 @@ In brief, the various options in the Analysis menu are listed below.
 
 \end_layout
 
-\begin_layout Subsection
-Create SimWalk2 format files
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for haplotyping, parametric
- analysis, non-parametric analysis, or IBD estimation via the SIMWALK2 program.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: SIMWALK2 2.82
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-https://watson.hgen.pitt.edu/register
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Sobel and Lange 1996)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Vintage Mendel format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates output files in the old Vintage Mendel
- format.
-\begin_inset Newline newline
-\end_inset
-
- NOTE: This option will also place the chromosome and map position information
- into the locus data file, as required by the RELPAIR program by Michael
- Boehnke and William L.
- Duren (Boehnke and Cox 1997).
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Vintage Mendel
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.genetics.ucla.edu/software/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Lange et al.
- 1988)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to ASPEX format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates files in the appropriate format for analysis
- via the many modules (sib_ibd, sib_tdt, sib_phase, sib_map) of the ASPEX
- program.
- There is an option to convert larger pedigrees to their component nuclear
- families if needed.
-\begin_inset Newline newline
-\end_inset
-
- Name: ASPEX
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://aspex.sourceforge.net/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Hinds and Risch 1996)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to GeneHunter-Plus format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for analysis via the
- GeneHunter-Plus program.
-\begin_inset Newline newline
-\end_inset
-
- Name: GeneHunter-Plus
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://galton.uchicago.edu/genehunterplus/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Kong and Cox 1997)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to GeneHunter format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for analysis via the
- GeneHunter program.
-\begin_inset Newline newline
-\end_inset
-
- Name: GeneHunter
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.broadinstitute.org/ftp/distribution/software/genehunter/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Kruglyak et al.
- 1996)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to APM format [DISABLED]
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for analysis via the
- Affected Pedigree Member method (single marker analyses).
-\begin_inset Newline newline
-\end_inset
-
- Name: APM and APM Mult
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-https://watson.hgen.pitt.edu/register
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Weeks and Lange 1988)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to APM MULT multiple locus format [DISABLED]
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for analysis via the
- multilocus version of the Affected Pedigree member method.
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Create nuclear families
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option breaks down larger pedigrees into their component
- nuclear families (parents plus children), and output the resulting locus
- and pedigree files in LINKAGE format.
- 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to SLINK format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for input into the simulation
- program SLINK.
-\begin_inset Newline newline
-\end_inset
-
- Name: SLINK, FASTSLINK (Use FASTSLINK instead of SLINK)
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-https://watson.hgen.pitt.edu/register
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Ott 1989; Weeks et al.
- 1990)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to SPLINK format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for linkage analyses
- using affected sib-pairs as implemented in the SPLINK program by David
- Clayton.
-\begin_inset Newline newline
-\end_inset
-
- Name: SPLINK
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www-gene.cimr.cam.ac.uk/clayton/software/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Holmans 1993)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Set up for homogeneity analyses
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed to compute lod scores
- under heterogeneity, using component programs from the ANALYZE package.
-\begin_inset Newline newline
-\end_inset
-
- Name: ANALYZE package
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.helsinki.fi/~tsjuntun/linkage/analyze/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Terwilliger 1996)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to SIMULATE format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for input into the simulation
- program SIMULATE.
-\begin_inset Newline newline
-\end_inset
-
- Name: SIMULATE
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-ftp://linkage.rockefeller.edu/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Terwilliger et al.
- 1993)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Create summary files
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates summary files providing information about
- the segregation of the trait, counts of affected relative pairs and affected
- sibling pairs, marker allele frequencies (including observed and expected
- heterozygosity), genotyping success rate, and phenotype counts summaries.
- There is also an option to create counts of alleles and genotypes within
- categories (affection status categories or liability class categories).
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- The different summary options can be selected using the Summary file option
- sub-menu: 
-\end_layout
-
-\begin_layout LyX-Code
-Selection Menu: Summary file options
-\end_layout
-
-\begin_layout LyX-Code
-1) Create segregation and relative count summary files.
-\end_layout
-
-\begin_layout LyX-Code
-2) Create allele frequency summary table.
-\end_layout
-
-\begin_layout LyX-Code
-3) Count alleles and genotypes within groups.
-\end_layout
-
-\begin_layout LyX-Code
-4) Create genotyping success rate summary.
-\end_layout
-
-\begin_layout LyX-Code
-5) Create quantitative phenotype summary.
-\end_layout
-
-\begin_layout LyX-Code
-Enter selection: 1 - 5 >
-\end_layout
-
-\begin_layout LyX-Code
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Old SAGE format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for analysis via the
- SAGE package.
- This supports the old FORTRAN-like SAGE format (rather than the new more
- elegant format now available in beta-version).
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: SAGE
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://darwin.cwru.edu/sage/index.php
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s):
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Set up for TDTMax analyses[DISABLED]
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for analysis via the
- TDTMax program.
-\begin_inset Newline newline
-\end_inset
-
- Name: TDTMax
-\begin_inset Newline newline
-\end_inset
-
- Web: Current location unknown 
-\begin_inset Newline newline
-\end_inset
-
- used to be 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.rdg.ac.uk/AcaDepts/sn/wsn1/dept/APM.html
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Morris et al.
- 1997)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to SOLAR format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for analysis via the
- SOLAR package.
-\begin_inset Newline newline
-\end_inset
-
- Name: SOLAR
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://txbiomed.org/departments/genetics_detail.aspx?p=37
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Blangero and Almasy 1997; Almasy and Blangero 1998)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Vitesse format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates files in LINKAGE format for analysis with
- Vitesse.
- Note it also sets up shell-scripts that automate MLINK-like and LINKMAP-like
- analyses.
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Vitesse
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-https://watson.hgen.pitt.edu/register
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (O'Connell and Weeks 1995)
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Linkage format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates files in LINKAGE format.
- This is useful for reordering loci or selecting subsets of loci from large
- files.
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: LINKAGE
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-ftp://linkage.rockefeller.edu/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Lathrop and Lalouel 1984; Lathrop et al.
- 1986; Lathrop and Lalouel 1988)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Test loci for Hardy-Weinberg Equilibrium
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option permits one to test markers for Hardy-Weinberg
- equilibrium using either the 
-\begin_inset Quotes eld
-\end_inset
-
-hwe
-\begin_inset Quotes erd
-\end_inset
-
- program by Guo and Thompson (1992) or the 
-\begin_inset Quotes eld
-\end_inset
-
-Gen
-\begin_inset Quotes erd
-\end_inset
-
- program by Lazzeroni and Lange (1997).
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: hwe
-\begin_inset Newline newline
-\end_inset
-
- Web:
-\begin_inset Newline newline
-\end_inset
-
- Authors: Guo and Thompson
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Gen
-\begin_inset Newline newline
-\end_inset
-
- Web:
-\begin_inset Newline newline
-\end_inset
-
- Authors: Lazzeroni and Lange
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Exact test for bialleleic markers from the R genetics library
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://cran.r-project.org/web/packages/genetics/index.html
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Authors: Gregory Warnes and Friedrich Leisch 
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Chi-sq test for bi- and multi-allelic markers from the R genetics
- library
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://cran.r-project.org/web/packages/genetics/index.html
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Authors: Gregory Warnes and Friedrich Leisch 
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Hardy-Weinberg equilibrium test from Mendel 
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.genetics.ucla.edu/software/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Authors: Lange et al.
- 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Allegro format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for analysis via the
- Allegro program.
- Further information is available at the URL below.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Allegro
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.decode.com/software/
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): Allegro, a new computer program for multipoint linkage
- analysis; (May 2000, Gudbjartsson DF, Jonasson K, Frigge ML, Kong A) 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to MLBQTL format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for the analysis of quantitat
-ive traits as well as affection status loci via the Maximum-Likelihood-Binomial
- extension of the GENEHUNTER program.
- Please make sure that quantitative data are normalized, as required by
- the MLBQTL program.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: MLBQTL
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.hgid.net/hgid/site/site.php?rubr=9
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Alcais A, Abel L.
- 1999)
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to SAGE format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates the files needed for using SAGE 4.0 and
- up version.
- Currently, the user has to manually add sections required for running various
- SAGE programs to the bottom of the parameter file.
- The pedinfo program can be run as is.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: S.A.G.E.
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://darwin.cwru.edu/
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to pre-makeped format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option will output pedigree and locus files where the
- pedigrees are in pre-makeped format.
- If the input pedigree file was in a post-makeped format, this option will
- also connect together loops in the output.
- 
-\end_layout
-
-\begin_layout Subsection
-Setup for Merlin-SimWalk2 combined analysis
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option sets up one set of output data files which can
- be run through Merlin's NPL analysis option, and a second set which can
- be run through SimWalk's NPL option.
- It also sets up the requisite scripts that run these two programs in tandem,
- feeding in NPL results from Merlin to SimWalk2.
- To use this option, the latest versions of Merlin (0.10.2 or higher) and
- Simwalk2 (2.89 or higher) are required.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Merlin and SimWalk2
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.sph.umich.edu/csg/abecasis/Merlin
-\end_layout
-
-\end_inset
-
- and 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-https://watson.hgen.pitt.edu/register
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to PREST format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option sets up pedigree, chromosome, control and script
- files for analyzing with PREST (Pedigree RElationship Statistical Test)
- version 3.0.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: PREST
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://galton.uchicago.edu/~mcpeek/software/prest/
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to PAP format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option sets up the files necessary for running PAP (Pedigree
- Analysis Package) including the triplets file (trip.dat), the phenotypes
- file (phen.dat), the control file (header.dat), and the locus file (popln.dat).
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: PAP
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://hasstedt.genetics.utah.edu/
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Merlin format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option sets up the files necessary for running Merlin
- including the pedigree, locus and map files.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Merlin
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.sph.umich.edu/csg/abecasis/Merlin
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Please note that Merlin requires a sex-averaged map as well when the user
- sets up for sex-specific analysis (Value_Genetic_Distance_SexTypeMap =
- 1
+\begin_layout Enumerate
+Create SimWalk2 format files (Section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "par:Value_Genetic_Distance_SexTypeMa"
+reference "ext:simwalk2"
 
 \end_inset
 
-).
+)
 \end_layout
 
-\begin_layout Subsection
-Convert to LOKI format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option sets up the files necessary for running LOKI including
- the pedigree file, control files, and link files.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Loki 
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.stat.washington.edu/thompson/Genepi/Loki.shtml
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Mendel format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option sets up the files necessary for running Mendel
- (version 7 and later) including per-chromosome pedigree file, locus, map,
- penetrance, variable and control files.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Mendel 
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.genetics.ucla.edu/software/
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): (Lange et al.
- 1988) 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to SUP format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option sets up files for simulation of marker data with
- the SUP simulation program.
- It sets up a SLINK format pedigree and locus file which act as templates
- to simulate inheritance patterns, and a SUP formatted locus file which
- contain the actual marker loci to be simulated.
- An C-shell script is created to run the analysis.
- 
-\begin_inset Newline newline
-\end_inset
-
- If the pedigree data contains either loops (premakeped format) or loop-breakers
- (post-makeped format), then the SLINK pedigree file will have its loops
- broken.
- However, SUP requires loops to be reconnected so that the simulated genotypes
- reflect the fact that some individuals are in fact copies of other individuals.
- Therefore a set of Mega2 formatted files are created to reconnect loops
- inside the pedigree output file 
-\begin_inset Quotes eld
-\end_inset
-
-pedfile.dat
-\begin_inset Quotes erd
-\end_inset
-
- that is created by SLINK, and output a new pedigree file for SUP.
- The analysis script contains commands to invoke Mega2 to reconnect loops.
- 
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Caution:
-\series default
- Files created for SUP should not have loops reconnected, but the loops
- do need to be reconnected after running SLINK and before running SUP.
-\end_layout
-
-\begin_layout Standard
-If the loops are broken, then 'slink' is happy, but SUP itself does not
- do the correct thing, because the 'sup.*.sh' script now needs another step,
- which is to use Mega2 to reconnect the loops 
-\shape italic
-after
-\shape default
- running SLINK and 
-\shape italic
-before
-\shape default
- running SUP, as the SUP documentation states:
-\end_layout
-
-\begin_layout Standard
-"LOOPS:
-\end_layout
-
-\begin_layout Standard
-If there are inbreeding loops in your pedigrees, you have to select loop-breaker
-s prior to creating the simped.dat file that SLINK needs (by use of makeped
- if you have a list of loop breakers, or maybe by use of Mega2, which can
- select them for you).
- In SLINK's output traitfile.dat, the loops are still broken, and prior to
- using SUP, you need to reconnect them.
- Following the suggestion of a reviewer, by far the easiest way is to use
- Mega2.
- The file traitfile.dat can be used as one of Mega2's required input file,
- and by choosing to create, say, a "Pre-makeped" format file in the analysis
- menu, Mega2 takes care of reconnecting the pedigrees.
- You can then use the output created by Mega2 along with the -pre <pedfile>
- flag."
-\end_layout
-
-\begin_layout Standard
-Name: SUP
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://mlemire.freeshell.org/software.html
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Primary reference(s): Lemire M (2006) SUP: An extension to SLINK to allow
- a larger number of marker loci to be simulated in pedigrees conditional
- on trait values.
- BMC Genet.
- 7:40 
-\begin_inset Newline newline
-\end_inset
-
- SLINK and FASTSLINK references 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to PLINK format 
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Analysis-PLINK-option"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu options sets up pedigree, genotype, phenotype and map
- files in PLINK format.
- If output consists of a single trait, then this would be included inside
- the pedigree file, and phenotype file is created.
- For multiple traits, the pedigree file contains a dummy trait column, and
- phenotypes are written out into a separate file.
- When the 'lgen' PLINK output file option is chosen, the genotype file is
- in 
-\series bold
-long format
-\series default
- (lgen) with a single genotype in every line.
- There are two binary output file options, which produce files that are
- much more compact than the lgen format.
- PLINK requires a physical map, and only our Mega2 format allows physical
- maps, therefore this option can only be used with Mega2 format files.
- 
-\begin_inset Newline newline
-\end_inset
-
-Name: PLINK
-\begin_inset Newline newline
-\end_inset
-
-Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://pngu.mgh.harvard.edu/~purcell/plink/
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
-Primary reference: Purcell S, Neale B, Todd-Brown K, Thomas L, Ferreira
- MAR, Bender D, Maller J, Sklar P, de Bakker PIW, Daly MJ & Sham PC (2007)
- PLINK: a toolset for whole-genome association and population-based linkage
- analysis.
- American Journal of Human Genetics, 81.
- 
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to CRANEFOOT format 
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option sets up pedigree and control files for each chromosome
- in Cranefoot format for drawing pedigree diagrams using the Cranefoot program.
- The user can select affection status or quantitative traits as well as
- markers in order to display phenotypes and genotypes along with each individual.
- Each individual can also be shaded according to her affected status based
- on their primary affection trait (as selected by the user via a menu).
- In addition, you can choose to shade the individuals according to their
- genotyped status (black = genotyped, unshaded = not genotyped).
- A shell script is also created to run Cranefoot on all output files, or
- you can choose to have separate shell scripts created for each chromosome.
- 
-\begin_inset Newline newline
-\end_inset
-
- Name: Cranefoot
-\begin_inset Newline newline
-\end_inset
-
- Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.finndiane.fi/software/cranefoot/
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Primary reference: Mäkinen et al.
- (2005) High-throughput pedigree drawing.
- Eur J Hum Gen 13:987-989.
- 
-\end_layout
-
-\begin_layout Subsection
-Convert to Mega2 format
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates pedigree, names, map, frequency, and penetranc
-e files in Mega2 format.
- If the input pedigree file is pre-makeped, then so is the output file,
- and vice-versa.
- This can be used instead of l2a.py, provided that your pedigree and person
- identifiers are all integers, since Mega2 makes this assumption when reading
- in Linkage format files.
- It possesses a few advantages over the Python converter, namely, you can
- make use of Mega2's allele-frequency and recoding functionalities in order
- to produce frequency and penetrance files, there is no omit file, since
- the output was already produced using one, and the corresponding genotypes
- reset.
- Additionally, You can use Mega2's chromosome, locus and trait selection
- functions to slice and dice the data, to create chromosome and trait-specific
- output files instead of creating a single set of files.
- 
-\end_layout
-
-\begin_layout Subsection
-Convert to IQLS/Idcoefs format
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:IQLS-Idcoefs"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates pedigree, marker, and parameter files
- for the IQLS program, as well as pedigree and study files for the Idcoefs
- program.
- In addition, it creates an executable shell file that will first run the
- Idcoefs program, and then run the IQLS program.
- Note that IQLS only supports two-allele markers and needs to know the physical
- positions of the markers.
- Thus, this option should only be run on input data in Mega2 format that
- contains two-allele markers, at least one affection status trait, and where
- a physical map has been specified.
- The output IQLS marker file has to contain only character allele names,
- so if your input marker has numbered alleles 1 and 2, these will be remapped
- to character alleles A and G respectively.
-\end_layout
-
-\begin_layout Standard
-If a marker was originally input with text allele labels in the input Mega2
- pedigree file, then those original allele labels are used on output into
- the IQLS marker file, and the strand orientation is set to '+'.
-\end_layout
-
-\begin_layout Standard
-If a marker was originally input with numeric allele labels, then it is
- output using the dummy alleles 'A' and 'G', and the strand orientation
- is set to '-'.
-\end_layout
-
-\begin_layout Standard
-As far as I can tell, it appears that the orientation information is not
- used by the IQLS program.
- 
-\end_layout
-
-\begin_layout Standard
-IQLS requires that for each run, all the markers should be on a single chromosom
-e.
- So to analyze more than one chromosome, a separate run must be performed
- for each chromosome.
- Accordingly, when multiple chromosomes are selected, Mega2 will set up
- chromosome-specific sets of files.
-\end_layout
-
-\begin_layout Standard
-Name: IQLS Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://galton.uchicago.edu/~mcpeek/software/IQLS/index.html
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Primary references: Wang, Z., and McPeek, M.S.
- (2009).
- An incomplete-data quasi-likelihood approach to haplotype-based genetic
- association studies on related individuals.
- J.
- Am.
- Stat.
- Assoc.
- 104, 1251-1260; Wang, Z., and McPeek, M.S.
- (2009).
- ATRIUM: Testing untyped SNPs in case-control association studies with related
- individuals.
- Am.
- J.
- Hum.
- Genet.
- 85, 667-678.
-\begin_inset Newline newline
-\end_inset
-
- Name: Idcoefs Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://home.uchicago.edu/~abney/abney_web/Software.html
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
- Primary reference: Abney M, McPeek MS, Ober C (2000) Estimation of variance
- components of quantitative traits in inbred populations.
- Am J Hum Genet 66:629–650.
-\end_layout
-
-\begin_layout Subsection
-Convert to FBAT format 
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Analysis-FBAT-option"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates files for analysis with FBAT.
- By default, Mega2 chooses to use FBAT with an explicit 
-\begin_inset Quotes eld
-\end_inset
-
-map
-\begin_inset Quotes erd
-\end_inset
-
- file.
- The additional marker position information in the 
-\begin_inset Quotes eld
-\end_inset
-
-map
-\begin_inset Quotes erd
-\end_inset
-
- file is needed for the plots that will be produced.
- Note: Mega2 also sets up shell-scripts that automate running various analyses
- available under the FBAT program.
- Several scripts may be produced: one to perform the analysis commands (See
- the FBAT manual for more details.) and others to load into FBAT the files
- required for a particular (or several) chromosome(s), traits and phenotypes.
- The user is expected to revise the primary script with the analysis commands
- for his/her particular needs, but should not need to change any of the
- other scripts.
- There is also a script that will run all the other scripts.
-\begin_inset Newline newline
-\end_inset
-
- 
-\begin_inset Newline newline
-\end_inset
-
-Name: FBAT
-\begin_inset Newline newline
-\end_inset
-
-Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.biostat.harvard.edu/fbat/default.html
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-Primary reference(s): Laird, N., Horvath, S.
- and Xu, X.
- (2000) "Implementing a unified approach to family based tests of association."
- Genet Epidemiol 19(Suppl 1): S36-S42
-\begin_inset Newline newline
-\end_inset
-
-Documentation reference(s): Nan M.
- Laird (laird@hsph.harvard.edu), Family-Based Association Tests and the FBAT-toolk
-it, Horvbath_FBAT_Manual_2009.pdf
-\end_layout
-
-\begin_layout Subsection
-Convert to Morgan format 
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Analysis-Morgan-option"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-MORGAN (Monte Carlo Genetic Analysis) is a collection of programs and libraries
- developed at the University of Washington under the PANGAEA (Pedigree Analysis
- for Genetics and Epidemiological Attributes) umbrella.
- This software implements a number of methods for the analysis of data observed
- on members of a pedigree, with the main programs implementing Markov Chain
- Monte Carlo (MCMC) methods.
-\begin_inset Quotes erd
-\end_inset
-
- (Taken from the tutorial introduction.) More details are provided in section
- 
+\begin_layout Enumerate
+Convert to Vintage Mendel format (Section  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Detailed-info-Pangaea-Morgan"
+reference "ext:vintage"
 
 \end_inset
 
-,
+)
 \end_layout
 
-\begin_layout Standard
-The suboption to the Morgan analysis request specifies which analysis of
- those listed below is desired.
- Mega2 produces the 
-\begin_inset Quotes eld
-\end_inset
-
-ped
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-marker
-\begin_inset Quotes erd
-\end_inset
-
- and a template 
-\begin_inset Quotes eld
-\end_inset
-
-par
-\begin_inset Quotes erd
-\end_inset
-
- file to perform the selected analysis.
- The user is expected to improve/change the 
-\begin_inset Quotes eld
-\end_inset
-
-par
-\begin_inset Quotes erd
-\end_inset
-
- file to his/her specific needs.
- Shell scripts are created to run the analysis on the 
-\begin_inset Quotes eld
-\end_inset
-
-par
-\begin_inset Quotes erd
-\end_inset
-
- file for all the traits and chromosomes selected.
-\end_layout
-
-\begin_layout Standard
-Name: Morgan: pedcheck, kin, translink, lm_linkage, lm_bayes, lm_ibdtests,
- ...
-\end_layout
-
-\begin_layout Standard
-Web: 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-http://www.stat.washington.edu/thompson/Genepi/MORGAN/Morgan.shtml
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Primary references: 
-\end_layout
-
-\begin_layout Standard
-E.
- A.
- Thompson (1995) Monte Carlo in Genetic Analysis.
- Technical report No.
- 294, Department of Statistics, University of Washington.
- 
-\end_layout
-
-\begin_layout Standard
-E.
- A.
- Thompson (2000) Statistical Inferences from Genetic Data on Pedigrees NSF-CBMS
- Regional Conference Series in Probability and Statistics.
- Volume 6.
- IMS, Beachwood, OH.
- 
-\end_layout
-
-\begin_layout Standard
-Thompson, E.
- A.
- (2005) MCMC in the Analysis of Genetic Data on Pedigrees.
- In Markov Chain Monte Carlo: Innovations and Applications.
- Pp.
- 183--216.
- F.
- Liang, J-S Wang, and W.
- Kendall (eds).
- Lecture Note Series of the IMS, National University of Singapore.
- World Scientific Co Pte Ltd, Singapore.
-\end_layout
-
-\begin_layout Standard
-Documentation: 
-\end_layout
-
-\begin_layout Standard
-HTML: 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-http://www.stat.washington.edu/thompson/Genepi/MORGAN/morgan311-tut-html/morgan-tut.
-html
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-PDF: 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-http://faculty.washington.edu/eathomp/Anonftp/PANGAEA/MORGAN/morgan-tut/morgan311-
-tut.pdf
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Beagle format 
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Analysis-BEAGLE-option"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This option creates files for analysis with Beagle.
- For further information please see the section concerning detailed information
- on Beagle Analysis 
+\begin_layout Enumerate
+Convert to ASPEX format (Section  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Detailed-info-Beagle"
+reference "ext:aspex"
 
 \end_inset
 
-.
+)
 \end_layout
 
-\begin_layout Standard
-
-\series bold
-Important:
-\series default
- Note that to get correct results when converting to Beagle, your input
- data must contain the appropriate data.
- If you wish to set up data in the 
-\begin_inset Quotes eld
-\end_inset
-
-unphased unrelated
-\begin_inset Quotes erd
-\end_inset
-
- Beagle format, then your input data must consist of unrelated case/control
- individuals.
- If you wish to set up data in the 
-\begin_inset Quotes eld
-\end_inset
-
-unphased trio
-\begin_inset Quotes erd
-\end_inset
-
- Beagle format, then your input data must consist of parent-child trio families
- with unaffected parents and affected children.
- 
-\end_layout
-
-\begin_layout Standard
-Name: Beagle
-\end_layout
-
-\begin_layout Standard
-Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://faculty.washington.edu/browning/beagle/beagle.html
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Primary references:
-\end_layout
-
-\begin_layout Standard
-If you use BEAGLE in a published analysis, please report the BEAGLE version
- used and cite the appropriate publication or publications listed below.
- Please check 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://faculty.washington.edu/browning/beagle/beagle.html
-\end_layout
-
-\end_inset
-
- for the most up-to-date citations.
-\end_layout
-
-\begin_layout Standard
-BEAGLE's fastIBD method is described in
-\end_layout
-
-\begin_layout Standard
-B L Browning and S R Browning (2011) A fast, powerful method for detecting
- identity by descent.
- The American Journal of Human Genetics 88:173-182.
- 
-\end_layout
-
-\begin_layout Standard
-BEAGLE's methods for detecting homozygosity-by-descent and identity-by-descent
- are described in
-\end_layout
-
-\begin_layout Standard
-S R Browning and B L Browning (2010) High-resolution detection of identity
- by descent in unrelated individuals.
- The American Journal of Human Genetics 86:526-539.
- 
-\end_layout
-
-\begin_layout Standard
-BEAGLE's methods for calling genotypes from genotype likelihood data are
- described in
-\end_layout
-
-\begin_layout Standard
-B L Browning and Z Yu (2009) Simultaneous genotype calling and haplotype
- phase inference improves genotype accuracy and reduces false positive associati
-ons for genome-wide association studies.
- The American Journal of Human Genetics 85:847-861.
- 
-\end_layout
-
-\begin_layout Standard
-BEAGLE's methods for imputing ungenotyped markers and phasing parent-offspring
- trios are described in
-\end_layout
-
-\begin_layout Standard
-B L Browning and S R Browning (2009) A unified approach to genotype imputation
- and haplotype phase inference for large data sets of trios and unrelated
- individuals.
- Am J Hum Genet 84:210-223.
- 
-\end_layout
-
-\begin_layout Standard
-BEAGLE's methods for inferring haplotype phase or sporadic missing data
- in unrelated individuals are described in
-\end_layout
-
-\begin_layout Standard
-S R Browning and B L Browning (2007) Rapid and accurate haplotype phasing
- and missing data inference for whole genome association studies using localized
- haplotype clustering.
- Am J Hum Genet 81:1084-1097.
- 
-\end_layout
-
-\begin_layout Standard
-BEAGLE's methods for association testing are described in
-\end_layout
-
-\begin_layout Standard
-B L Browning and S R Browning (2007) Efficient multilocus association mapping
- for whole genome association studies using localized haplotype clustering.
- Genet Epidemiol 31:365-375.
- 
-\end_layout
-
-\begin_layout Standard
-BEAGLE's haplotype frequency model was first described in:
-\end_layout
-
-\begin_layout Standard
-S R Browning (2006) Multilocus association mapping using variable-length
- Markov chains.
- Am J Hum Genet 78:903-13.
- 
-\end_layout
-
-\begin_layout Standard
-Documentation: See 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://faculty.washington.edu/browning/beagle/beagle.html#download
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Eigenstrat format 
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Analysis-Eigenstrat-option"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates files for analysis with Eigenstrat.
- For further information please see the section concerning detailed information
- on Eigenstrat Analysis 
+\begin_layout Enumerate
+Convert to GeneHunter-Plus format (Section  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Detailed-info-Eigenstrat"
+reference "ext:genehunter-plus"
 
 \end_inset
 
-.
+)
 \end_layout
 
-\begin_layout Standard
-Name: Eigenstrat, part of the Eigensoft package
-\end_layout
-
-\begin_layout Standard
-Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.hsph.harvard.edu/alkes-price/software/
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Primary references:
-\end_layout
-
-\begin_layout Standard
-Price AL, Patterson NJ, Plenge RM, Weinblatt ME, Shadick NA, Reich D.
- Principal components analysis corrects for stratification in genome-wide
- association studies.
- Nat Genet.
- 2006 Aug;38(8):904-9.
- Epub 2006 Jul 23.
- PubMed PMID: 16862161.
-\end_layout
-
-\begin_layout Standard
-Patterson N, Price AL, Reich D (2006) Population Structure and Eigenanalysis.
- PLoS Genet 2(12): e190.
- doi:10.1371/journal.pgen.0020190
-\end_layout
-
-\begin_layout Standard
-Documentation: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://www.hsph.harvard.edu/alkes-price/software/
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to Structure format 
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Analysis-Structure-option"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates files for analysis with Structure.
- For further information please see the section concerning detailed information
- on Structure Analysis 
+\begin_layout Enumerate
+Convert to GeneHunter format (Section  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Detailed-info-Structure"
+reference "ext:genehunter"
 
 \end_inset
 
-.
+)
 \end_layout
 
-\begin_layout Standard
-Name: Structure
-\end_layout
-
-\begin_layout Standard
-Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://pritch.bsd.uchicago.edu/structure.html
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Primary references:
-\end_layout
-
-\begin_layout Standard
-Pritchard JK, Stephens M, Donnelly P.
- Inference of population structure using multilocus genotype data.
- Genetics.
- 2000 Jun;155(2):945-59.
- PubMed PMID: 10835412; PubMed Central PMCID: PMC1461096.
-\end_layout
-
-\begin_layout Standard
-Falush D, Stephens M, Pritchard JK.
- Inference of population structure using multilocus genotype data: linked
- loci and correlated allele frequencies.
- Genetics.
- 2003 Aug;164(4):1567-87.
- PubMed PMID: 12930761; PubMed Central PMCID: PMC1462648.
-\end_layout
-
-\begin_layout Standard
-Falush D, Stephens M, Pritchard JK.
- Inference of population structure using multilocus genotype data: dominant
- markers and null alleles.
- Mol Ecol Notes.
- 2007 Jul 1;7(4):574-578.
- PubMed PMID: 18784791; PubMed Central PMCID: PMC1974779.
-\end_layout
-
-\begin_layout Standard
-Hubisz MJ, Falush D, Stephens M, Pritchard JK.
- Inferring weak population structure with the assistance of sample group
- information.
- Mol Ecol Resour.
- 2009 Sep;9(5):1322-32.
- doi: 10.1111/j.1755-0998.2009.02591.x.
- Epub 2009 Apr 1.
- PubMed PMID: 21564903; PubMed Central PMCID: PMC3518025.
-\end_layout
-
-\begin_layout Standard
-Documentation: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://pritch.bsd.uchicago.edu/structure.html
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Convert to PSEQ (PLINK/SEQ) format 
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Analysis-PSEQ-option"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This Analysis Menu option creates files for analysis with PLINK/SEQ.
- For further information please see the section concerning detailed information
- on PLINK-SEQ Analysis 
+\begin_layout Enumerate
+Convert to APM format [DISABLED] (Section  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Detailed-info-PSEQ"
+reference "ext:apm"
 
 \end_inset
 
-.
+)
 \end_layout
 
-\begin_layout Standard
-Name: PSEQ
-\end_layout
-
-\begin_layout Standard
-Web: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://atgu.mgh.harvard.edu/plinkseq/
-\end_layout
+\begin_layout Enumerate
+Convert to APM MULT multiple locus format [DISABLED] (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:apmmult"
 
 \end_inset
 
-
+)
 \end_layout
 
-\begin_layout Standard
-Primary references:
-\end_layout
-
-\begin_layout Standard
-TBD
-\end_layout
-
-\begin_layout Standard
-Documentation: 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://atgu.mgh.harvard.edu/plinkseq/pseq.shtml
-\end_layout
+\begin_layout Enumerate
+Create nuclear families (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:nuclear"
 
 \end_inset
 
+)
+\end_layout
 
+\begin_layout Enumerate
+Convert to SLINK format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:slink"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to SPLINK format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:splink"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Set up for homogeneity analyses (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:homogenetity"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to SIMULATE format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:simulate"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Create Summary files (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:summary"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Old SAGE format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:oldsage"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Set up for TDTMax analyses [DISABLED] (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:tdtmax"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to SOLAR format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:solar"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Vitesse format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:vitesse"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Linkage format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:linkage"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Test loci for Hardy-Weinberg Equilibrium (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:hwe"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Allegro format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:allegro"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to MLBQTL format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:mlbqtl"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to SAGE format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:sage"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to pre-makeped format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:pre-makeped"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Setup for Merlin-SimWalk2 combined analysis (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:merlinsimwalk2-npl"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to PREST format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:prest"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to PAP format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:pap"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Merlin format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:merlin"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to LOKI format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:loki"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Mendel format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:mendel"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to SUP format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:sup"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to PLINK format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:plink"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to CRANEFOOT format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:cranefoot"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Mega2 format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:mega2"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to IQLS/Idcoefs format (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:iqlsidcoefs"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to FBAT format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:fbat"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Morgan format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:pangaea"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Beagle format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:beagle"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Eigenstrat format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:eigenstrat"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to Structure format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:structure"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to PSEQ (PLINK/SEQ) format (Section  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:pseq"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to SHAPEIT format (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:shapeit"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+Convert to IMPUTE2 format (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:impute2"
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Section
@@ -21358,7 +19618,6 @@ status collapsed
 
 \end_inset
 
-
 -mega2
 \end_layout
 
@@ -21368,7 +19627,6 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-
 Mega2 format with header
 \end_layout
 
@@ -21394,7 +19652,6 @@ status collapsed
 \end_layout
 
 \end_inset
-
 
 -linkage
 \end_layout
@@ -21431,7 +19688,6 @@ status collapsed
 
 \end_inset
 
-
 -extend_linkage
 \end_layout
 
@@ -21441,7 +19697,6 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-
 Linkage with Mega2 names file
 \end_layout
 
@@ -21468,7 +19723,6 @@ status collapsed
 
 \end_inset
 
-
 -bed
 \end_layout
 
@@ -21478,7 +19732,6 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-
 PLINK binary PED format (bed)
 \end_layout
 
@@ -21505,7 +19758,6 @@ status collapsed
 
 \end_inset
 
-
 -ped
 \end_layout
 
@@ -21515,7 +19767,6 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-
 PLINK PED format (ped)
 \end_layout
 
@@ -21542,7 +19793,6 @@ status collapsed
 
 \end_inset
 
-
 -bcf
 \end_layout
 
@@ -21552,7 +19802,6 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-
 BCF format (bcf)
 \end_layout
 
@@ -21579,7 +19828,6 @@ status collapsed
 
 \end_inset
 
-
 -vcf.gz
 \end_layout
 
@@ -21589,7 +19837,6 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-
 VCF compressed format (vcf.gz)
 \end_layout
 
@@ -21616,8 +19863,7 @@ status collapsed
 
 \end_inset
 
--
-vcf
+-vcf
 \end_layout
 
 \end_inset
@@ -21626,7 +19872,6 @@ vcf
 \begin_inset Text
 
 \begin_layout Plain Layout
-
 VCF format (vcf)
 \end_layout
 
@@ -21664,7 +19909,6 @@ gen
 \begin_inset Text
 
 \begin_layout Plain Layout
-
 IMPUTE2 GEN format (gen or impute2)
 \end_layout
 
@@ -21691,8 +19935,7 @@ status collapsed
 
 \end_inset
 
--
-bgen
+-bgen
 \end_layout
 
 \end_inset
@@ -21701,7 +19944,6 @@ bgen
 \begin_inset Text
 
 \begin_layout Plain Layout
-
 Binary IMPUTE2 BGEN format (bgen)
 \end_layout
 
@@ -26064,16 +24306,61 @@ Create SimWalk2 format files
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for haplotyping, parametric analysis, non-parametric
+ analysis, or IBD estimation via the SIMWALK2 program.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: SIMWALK2 2.82
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Sobel and Lange 1996)
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Choosing this option will lead you to this sub-menu of SimWalk2 specific
  options:
 \begin_inset Newline newline
 \end_inset
 
  
-\begin_inset Newline newline
-\end_inset
-
-
 \end_layout
 
 \begin_layout LyX-Code
@@ -26348,7 +24635,63 @@ name "ext:vintage"
 
 \end_inset
 
-Convert to MENDEL format
+Convert to Vintage MENDEL format
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates output files in the old Vintage Mendel format.
+\begin_inset Newline newline
+\end_inset
+
+ NOTE: This option will also place the chromosome and map position information
+ into the locus data file, as required by the RELPAIR program by Michael
+ Boehnke and William L.
+ Duren (Boehnke and Cox 1997).
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Vintage Mendel
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.genetics.ucla.edu/software/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Lange et al.
+ 1988)
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -26696,6 +25039,52 @@ Convert to ASPEX format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files in the appropriate format for analysis via the many modules
+ (sib_ibd, sib_tdt, sib_phase, sib_map) of the ASPEX program.
+ There is an option to convert larger pedigrees to their component nuclear
+ families if needed.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: ASPEX
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://aspex.sourceforge.net/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Hinds and Risch 1996)
+\end_layout
+
+\begin_layout Standard
 The Aspex option has 4 sub-options 
 \end_layout
 
@@ -26924,6 +25313,49 @@ Convert to GeneHunter-Plus format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for analysis via the GeneHunter-Plus program.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: GeneHunter-Plus
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://galton.uchicago.edu/genehunterplus/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Kong and Cox 1997)
+\end_layout
+
+\begin_layout Standard
 For each chromosome Mega2 creates the following set of GeneHunter-Plus format
  files (for e.g.
  chromosome 6):
@@ -27021,6 +25453,54 @@ name "ext:genehunter"
 \end_inset
 
 Convert to GeneHunter format
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for analysis via the GeneHunter program.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: GeneHunter
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.broadinstitute.org/ftp/distribution/software/genehunter/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Kruglyak et al.
+ 1996)
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -27280,7 +25760,55 @@ name "ext:apm"
 
 \end_inset
 
-Convert to APM format
+Convert to APM format [DISABLED]
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for analysis via the Affected Pedigree Member
+ method (single marker analyses).
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: APM and APM Mult
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Weeks and Lange 1988)
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -27318,7 +25846,51 @@ name "ext:apmmult"
 
 \end_inset
 
-Convert to APM MULT multiple locus format
+Convert to APM MULT multiple locus format [DISABLED]
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for analysis via the multilocus version of the
+ Affected Pedigree member method.
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Name
+\series default
+: APM Mult
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Weeks and Lange 1988)
 \end_layout
 
 \begin_layout Standard
@@ -27357,6 +25929,27 @@ name "ext:nuclear"
 \end_inset
 
 Create nuclear families
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for analysis via the multilocus version of the
+ Affected Pedigree member method.
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Name
+\series default
+: Create nuclear families
+\begin_inset Newline newline
+\end_inset
+
+ 
 \end_layout
 
 \begin_layout Standard
@@ -27415,6 +26008,50 @@ Convert to SLINK format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for input into the simulation program SLINK.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: SLINK, FASTSLINK (Use FASTSLINK instead of SLINK)
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Ott 1989; Weeks et al.
+ 1990)
+\end_layout
+
+\begin_layout Standard
 This option creates the files needed for input into the simulation programs
  SLINK and FASTSLINK.
  User can choose from a list of options that control the output files, such
@@ -27452,6 +26089,50 @@ name "ext:splink"
 \end_inset
 
 Convert to SPLINK format
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for linkage analyses using affected sib-pairs
+ as implemented in the SPLINK program by David Clayton.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: SPLINK
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www-gene.cimr.cam.ac.uk/clayton/software/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Holmans 1993)
 \end_layout
 
 \begin_layout Standard
@@ -27528,6 +26209,54 @@ Set up for homogeneity analyses
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed to compute lod scores under heterogeneity, using
+ component programs from the ANALYZE package.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Homogeneity analyses ANALYZE package
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.helsinki.fi/~tsjuntun/linkage/analyze/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+ Primary reference
+\series default
+(s): (Terwilliger 1996)
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 This option creates the files needed to compute LOD scores under heterogeneity,
  using component programs from the ANALYZE package.
  Output from multiple chromosomes can be combined into a single set of output
@@ -27566,6 +26295,50 @@ Convert to SIMULATE format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for input into the simulation program SIMULATE.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: SIMULATE
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+ftp://linkage.rockefeller.edu/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Terwilliger et al.
+ 1993)
+\end_layout
+
+\begin_layout Standard
 This option creates the files needed for input into the simulation program
  SIMULATE.
  The following files are created (one set per chromosome): 
@@ -27600,6 +26373,32 @@ Create summary files
 
 \begin_layout Standard
 
+\series bold
+This Analysis Menu option
+\series default
+ creates summary files providing information about the segregation of the
+ trait, counts of affected relative pairs and affected sibling pairs, marker
+ allele frequencies (including observed and expected heterozygosity), genotyping
+ success rate, and phenotype counts summaries.
+ There is also an option to create counts of alleles and genotypes within
+ categories (affection status categories or liability class categories).
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Create summary files
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ The different summary options can be selected using the Summary file option
+ sub-menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -28451,7 +27250,53 @@ name "ext:oldsage"
 
 \end_inset
 
-Convert to SAGE format
+Convert to Old SAGE format
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for analysis via the SAGE package.
+ This supports the old FORTRAN-like SAGE format (rather than the new more
+ elegant format now available in beta-version).
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: SAGE
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+We
+\series default
+b: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://darwin.cwru.edu/sage/index.php
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s):
 \end_layout
 
 \begin_layout Standard
@@ -28634,7 +27479,59 @@ name "ext:tdtmax"
 
 \end_inset
 
-Set up for TDTMax analyses
+Set up for TDTMax analyses [DISABLED]
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for analysis via the TDTMax program.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: TDTMax
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: Current location unknown 
+\begin_inset Newline newline
+\end_inset
+
+ used to be 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.rdg.ac.uk/AcaDepts/sn/wsn1/dept/APM.html
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Morris et al.
+ 1997)
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -28775,6 +27672,53 @@ Convert to SOLAR format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for analysis via the SOLAR package.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: SOLAR
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://txbiomed.org/departments/genetics_detail.aspx?p=37
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+ Primary reference
+\series default
+(s): (Blangero and Almasy 1997; Almasy and Blangero 1998)
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Mega2 creates one set of files per chromosome in the SOLAR input format,
  along with a combined Tcl script for all chromosomes, e.g.: 
 \end_layout
@@ -28871,6 +27815,51 @@ Convert to Vitesse format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files in LINKAGE format for analysis with Vitesse.
+ Note it also sets up shell-scripts that automate MLINK-like and LINKMAP-like
+ analyses.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Vitesse
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+ Primary reference
+\series default
+(s): (O'Connell and Weeks 1995)
+\end_layout
+
+\begin_layout Standard
 The Vitesse option offers a choice of two kinds of output, MLINK and LINKMAP.
  In the case of MLINK, a trait locus is analyzed against every marker, so
  we obtain one set of pedigree and locus files per marker locus.
@@ -28899,7 +27888,7 @@ The Vitesse option offers a choice of two kinds of output, MLINK and LINKMAP.
 \end_layout
 
 \begin_layout LyX-Code
-         Cshell file          vitesse.06.sh  
+         Cshell file         vitesse.06.sh  
 \end_layout
 
 \begin_layout Standard
@@ -28976,6 +27965,52 @@ Convert to Linkage format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files in LINKAGE format.
+ This is useful for reordering loci or selecting subsets of loci from large
+ files.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: LINKAGE
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+ftp://linkage.rockefeller.edu/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+ Primary reference
+\series default
+(s): (Lathrop and Lalouel 1984; Lathrop et al.
+ 1986; Lathrop and Lalouel 1988)
+\end_layout
+
+\begin_layout Standard
 This option creates files in LINKAGE format.
  This is useful for reordering loci or selecting subsets of loci from large
  files.
@@ -29019,7 +28054,198 @@ name "ext:hwe"
 
 \end_inset
 
-Test loci for Hardy-Weinberg Equilibrium
+Test loci for HWE (Hardy-Weinberg Equilibrium)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ permits one to test markers for Hardy-Weinberg equilibrium using either
+ the 
+\begin_inset Quotes eld
+\end_inset
+
+hwe
+\begin_inset Quotes erd
+\end_inset
+
+ program by Guo and Thompson (1992) or the 
+\begin_inset Quotes eld
+\end_inset
+
+Gen
+\begin_inset Quotes erd
+\end_inset
+
+ program by Lazzeroni and Lange (1997).
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: hwe
+\begin_inset Newline newline
+\end_inset
+
+ Web:
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Authors
+\series default
+: Guo and Thompson
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Gen
+\begin_inset Newline newline
+\end_inset
+
+ Web:
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Authors
+\series default
+: Lazzeroni and Lange
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Exact test for bialleleic markers from the R genetics library
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://cran.r-project.org/web/packages/genetics/index.html
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Authors
+\series default
+: Gregory Warnes and Friedrich Leisch 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Chi-sq test for bi- and multi-allelic markers from the R genetics library
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://cran.r-project.org/web/packages/genetics/index.html
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Authors
+\series default
+: Gregory Warnes and Friedrich Leisch 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Hardy-Weinberg equilibrium test from Mendel 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.genetics.ucla.edu/software/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Authors
+\series default
+: Lange et al.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -29387,6 +28613,56 @@ Convert to Allegro format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for analysis via the Allegro program.
+ Further information is available at the URL below.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Allegro
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.decode.com/software/
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary
+\series default
+ 
+\series bold
+reference
+\series default
+(s): Allegro, a new computer program for multipoint linkage analysis; (May
+ 2000, Gudbjartsson DF, Jonasson K, Frigge ML, Kong A) 
+\end_layout
+
+\begin_layout Standard
 This option creates the files needed for analysis via the Allegro program.
  The pedigree and locus files are similar to the GeneHunter format files.
  Allegro supports only one trait locus per analysis, and only binary traits.
@@ -29491,7 +28767,56 @@ Convert to MLBQTL format
 \end_layout
 
 \begin_layout Standard
-This creates files for analysis by MLBQTL.
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for the analysis of quantitative traits as well
+ as affection status loci via the Maximum-Likelihood-Binomial extension
+ of the GENEHUNTER program.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: MLBQTL
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.hgid.net/hgid/site/site.php?rubr=9
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Alcais A, Abel L.
+ 1999)
+\end_layout
+
+\begin_layout Standard
+Please make sure that quantitative data are normalized, as required by the
+ MLBQTL program.
+ This creates files for analysis by MLBQTL.
  The pedigree and locus files are identical to the GeneHunter format.
  However, extended pedigrees are first converted to nuclear families.
  Each chromosome-specific set of files includes: 
@@ -29538,6 +28863,61 @@ name "ext:sage"
 
 Convert to S.A.G.E.
  4.0 format
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates the files needed for using SAGE 4.0 and up version.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: S.A.G.E.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://darwin.cwru.edu/
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary
+\series default
+ 
+\series bold
+reference
+\series default
+(s): 
+\end_layout
+
+\begin_layout Standard
+Currently, the user has to manually add sections required for running various
+ SAGE programs to the bottom of the parameter file.
+ The pedinfo program can be run as is.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -29691,6 +29071,30 @@ Convert to pre-makeped format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ will output pedigree and locus files where the pedigrees are in pre-makeped
+ format.
+ If the input pedigree file was in a post-makeped format, this option will
+ also connect together loops in the output.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Name
+\series default
+: Pre-makeped format
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Pre-makeped files created by Mega2: 
 \end_layout
 
@@ -29717,7 +29121,64 @@ name "ext:merlinsimwalk2-npl"
 
 \end_inset
 
-Convert to Merlin-SimWalk2 format
+Convert to Merlin-SimWalk2 combined analysis format
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ sets up one set of output data files which can be run through Merlin's
+ NPL analysis option, and a second set which can be run through SimWalk's
+ NPL option.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Merlin and SimWalk2
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.sph.umich.edu/csg/abecasis/Merlin
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It also sets up the requisite scripts that run these two programs in tandem,
+ feeding in NPL results from Merlin to SimWalk2.
+ To use this option, the latest versions of Merlin (0.10.2 or higher) and
+ Simwalk2 (2.89 or higher) are required.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -29833,6 +29294,43 @@ name "ext:prest"
 \end_inset
 
 Convert to PREST format
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ sets up pedigree, chromosome, control and script files for analyzing with
+ PREST (Pedigree RElationship Statistical Test) version 3.0.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: PREST
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://galton.uchicago.edu/~mcpeek/software/prest/
+\end_layout
+
+\end_inset
+
+ 
 \end_layout
 
 \begin_layout Standard
@@ -29952,6 +29450,48 @@ Convert to PAP format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ sets up the files necessary for running PAP (Pedigree Analysis Package)
+ including the triplets file (trip.dat), the phenotypes file (phen.dat), the
+ control file (header.dat), and the locus file (popln.dat).
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: PAP
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://hasstedt.genetics.utah.edu/
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Output files created by Mega2 for PAP: 
 \end_layout
 
@@ -29991,6 +29531,56 @@ name "ext:merlin"
 \end_inset
 
 Convert to Merlin format
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ sets up the files necessary for running Merlin including the pedigree,
+ locus and map files.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Merlin
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.sph.umich.edu/csg/abecasis/Merlin
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Please note that Merlin requires a sex-averaged map as well when the user
+ sets up for sex-specific analysis (Value_Genetic_Distance_SexTypeMap =
+ 1
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:Value_Genetic_Distance_SexTypeMa"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -30106,6 +29696,43 @@ Convert to Loki format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ sets up the files necessary for running LOKI including the pedigree file,
+ control files, and link files.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Loki 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.stat.washington.edu/thompson/Genepi/Loki.shtml
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
 Output files created by Mega2 for Loki:
 \begin_inset Newline newline
 \end_inset
@@ -30183,6 +29810,53 @@ name "ext:mendel"
 \end_inset
 
 Convert to Mendel format
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ sets up the files necessary for running Mendel (version 7 and later) including
+ per-chromosome pedigree file, locus, map, penetrance, variable and control
+ files.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Mendel 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.genetics.ucla.edu/software/
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+(s): (Lange et al.
+ 1988) 
 \end_layout
 
 \begin_layout Standard
@@ -30274,6 +29948,124 @@ Convert to SUP format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ sets up files for simulation of marker data with the SUP simulation program.
+ It sets up a SLINK format pedigree and locus file which act as templates
+ to simulate inheritance patterns, and a SUP formatted locus file which
+ contain the actual marker loci to be simulated.
+ An C-shell script is created to run the analysis.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Name
+\series default
+: SUP
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://mlemire.freeshell.org/software.html
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+ Primary reference
+\series default
+(s): Lemire M (2006) SUP: An extension to SLINK to allow a larger number
+ of marker loci to be simulated in pedigrees conditional on trait values.
+ BMC Genet.
+ 7:40 
+\begin_inset Newline newline
+\end_inset
+
+ SLINK and FASTSLINK references 
+\end_layout
+
+\begin_layout Standard
+If the pedigree data contains either loops (premakeped format) or loop-breakers
+ (post-makeped format), then the SLINK pedigree file will have its loops
+ broken.
+ However, SUP requires loops to be reconnected so that the simulated genotypes
+ reflect the fact that some individuals are in fact copies of other individuals.
+ Therefore a set of Mega2 formatted files are created to reconnect loops
+ inside the pedigree output file 
+\begin_inset Quotes eld
+\end_inset
+
+pedfile.dat
+\begin_inset Quotes erd
+\end_inset
+
+ that is created by SLINK, and output a new pedigree file for SUP.
+ The analysis script contains commands to invoke Mega2 to reconnect loops.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Caution:
+\series default
+ Files created for SUP should not have loops reconnected, but the loops
+ do need to be reconnected after running SLINK and before running SUP.
+\end_layout
+
+\begin_layout Standard
+If the loops are broken, then 'slink' is happy, but SUP itself does not
+ do the correct thing, because the 'sup.*.sh' script now needs another step,
+ which is to use Mega2 to reconnect the loops 
+\shape italic
+after
+\shape default
+ running SLINK and 
+\shape italic
+before
+\shape default
+ running SUP, as the SUP documentation states:
+\end_layout
+
+\begin_layout Standard
+"LOOPS:
+\end_layout
+
+\begin_layout Standard
+If there are inbreeding loops in your pedigrees, you have to select loop-breaker
+s prior to creating the simped.dat file that SLINK needs (by use of makeped
+ if you have a list of loop breakers, or maybe by use of Mega2, which can
+ select them for you).
+ In SLINK's output traitfile.dat, the loops are still broken, and prior to
+ using SUP, you need to reconnect them.
+ Following the suggestion of a reviewer, by far the easiest way is to use
+ Mega2.
+ The file traitfile.dat can be used as one of Mega2's required input file,
+ and by choosing to create, say, a "Pre-makeped" format file in the analysis
+ menu, Mega2 takes care of reconnecting the pedigrees.
+ You can then use the output created by Mega2 along with the -pre <pedfile>
+ flag."
+\end_layout
+
+\begin_layout Standard
 Output files created by Mega2 for SUP:
 \begin_inset Newline newline
 \end_inset
@@ -30329,7 +30121,80 @@ name "ext:plink"
 
 \end_inset
 
-Convert to PLINK format
+Convert to PLINK format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Analysis-PLINK-option"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu options
+\series default
+ sets up pedigree, genotype, phenotype and map files in PLINK format.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Name
+\series default
+: PLINK
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://pngu.mgh.harvard.edu/~purcell/plink/
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Primary reference
+\series default
+: Purcell S, Neale B, Todd-Brown K, Thomas L, Ferreira MAR, Bender D, Maller
+ J, Sklar P, de Bakker PIW, Daly MJ & Sham PC (2007) PLINK: a toolset for
+ whole-genome association and population-based linkage analysis.
+ American Journal of Human Genetics, 81.
+ 
+\end_layout
+
+\begin_layout Standard
+If output consists of a single trait, then this would be included inside
+ the pedigree file, and phenotype file is created.
+ For multiple traits, the pedigree file contains a dummy trait column, and
+ phenotypes are written out into a separate file.
+ When the 'lgen' PLINK output file option is chosen, the genotype file is
+ in 
+\series bold
+long format
+\series default
+ (lgen) with a single genotype in every line.
+ There are two binary output file options, which produce files that are
+ much more compact than the lgen format.
+ PLINK requires a physical map, and only our Mega2 format allows physical
+ maps, therefore this option can only be used with Mega2 format files.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -30451,6 +30316,66 @@ Convert to Cranefoot format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ sets up pedigree and control files for each chromosome in Cranefoot format
+ for drawing pedigree diagrams using the Cranefoot program.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Cranefoot
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.finndiane.fi/software/cranefoot/
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+: Mäkinen et al.
+ (2005) High-throughput pedigree drawing.
+ Eur J Hum Gen 13:987-989.
+ 
+\end_layout
+
+\begin_layout Standard
+The user can select affection status or quantitative traits as well as markers
+ in order to display phenotypes and genotypes along with each individual.
+ Each individual can also be shaded according to her affected status based
+ on their primary affection trait (as selected by the user via a menu).
+ In addition, you can choose to shade the individuals according to their
+ genotyped status (black = genotyped, unshaded = not genotyped).
+ A shell script is also created to run Cranefoot on all output files, or
+ you can choose to have separate shell scripts created for each chromosome.
+ 
+\end_layout
+
+\begin_layout Standard
 Output files created by Mega2 for Cranefoot 3.2.3:
 \begin_inset Newline newline
 \end_inset
@@ -30526,6 +30451,40 @@ Convert to Mega2 format
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates pedigree, names, map, frequency, and penetrance files in Mega2
+ format.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: Cranefoot 
+\end_layout
+
+\begin_layout Standard
+If the input pedigree file is pre-makeped, then so is the output file, and
+ vice-versa.
+ This can be used instead of l2a.py, provided that your pedigree and person
+ identifiers are all integers, since Mega2 makes this assumption when reading
+ in Linkage format files.
+ It possesses a few advantages over the Python converter, namely, you can
+ make use of Mega2's allele-frequency and recoding functionalities in order
+ to produce frequency and penetrance files, there is no omit file, since
+ the output was already produced using one, and the corresponding genotypes
+ reset.
+ Additionally, You can use Mega2's chromosome, locus and trait selection
+ functions to slice and dice the data, to create chromosome and trait-specific
+ output files instead of creating a single set of files.
+ 
+\end_layout
+
+\begin_layout Standard
 The following chromosome specific files are created for Mega2 format: 
 \end_layout
 
@@ -30583,7 +30542,152 @@ name "ext:iqlsidcoefs"
 
 \end_inset
 
-Convert to IQLS/Idcoefs format
+Convert to IQLS/Idcoefs format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:IQLS-Idcoefs "
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates pedigree, marker, and parameter files for the IQLS program, as
+ well as pedigree and study files for the Idcoefs program.
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Name
+\series default
+: IQLS
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://galton.uchicago.edu/~mcpeek/software/IQLS/index.html
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+ Primary references
+\series default
+: Wang, Z., and McPeek, M.S.
+ (2009).
+ An incomplete-data quasi-likelihood approach to haplotype-based genetic
+ association studies on related individuals.
+ J.
+ Am.
+ Stat.
+ Assoc.
+ 104, 1251-1260; Wang, Z., and McPeek, M.S.
+ (2009).
+ ATRIUM: Testing untyped SNPs in case-control association studies with related
+ individuals.
+ Am.
+ J.
+ Hum.
+ Genet.
+ 85, 667-678.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Name
+\series default
+: Idcoefs
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://home.uchicago.edu/~abney/abney_web/Software.html
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ 
+\series bold
+Primary reference
+\series default
+: Abney M, McPeek MS, Ober C (2000) Estimation of variance components of
+ quantitative traits in inbred populations.
+ Am J Hum Genet 66:629–650.
+\end_layout
+
+\begin_layout Standard
+It also creates an executable shell file that will first run the Idcoefs
+ program, and then run the IQLS program.
+ Note that IQLS only supports two-allele markers and needs to know the physical
+ positions of the markers.
+ Thus, this option should only be run on input data in Mega2 format that
+ contains two-allele markers, at least one affection status trait, and where
+ a physical map has been specified.
+ The output IQLS marker file has to contain only character allele names,
+ so if your input marker has numbered alleles 1 and 2, these will be remapped
+ to character alleles A and G respectively.
+\end_layout
+
+\begin_layout Standard
+If a marker was originally input with text allele labels in the input Mega2
+ pedigree file, then those original allele labels are used on output into
+ the IQLS marker file, and the strand orientation is set to '+'.
+\end_layout
+
+\begin_layout Standard
+If a marker was originally input with numeric allele labels, then it is
+ output using the dummy alleles 'A' and 'G', and the strand orientation
+ is set to '-'.
+\end_layout
+
+\begin_layout Standard
+As far as I can tell, it appears that the orientation information is not
+ used by the IQLS program.
+ 
+\end_layout
+
+\begin_layout Standard
+IQLS requires that for each run, all the markers should be on a single chromosom
+e.
+ So to analyze more than one chromosome, a separate run must be performed
+ for each chromosome.
+ Accordingly, when multiple chromosomes are selected, Mega2 will set up
+ chromosome-specific sets of files.
 \end_layout
 
 \begin_layout Standard
@@ -30625,7 +30729,105 @@ name "ext:fbat"
 
 \end_inset
 
-Convert to FBAT format
+Convert to FBAT format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Analysis-FBAT-option"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files for analysis with FBAT.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Name
+\series default
+: FBAT
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.biostat.harvard.edu/fbat/default.html
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Primary reference
+\series default
+(s): Laird, N., Horvath, S.
+ and Xu, X.
+ (2000) "Implementing a unified approach to family based tests of association."
+ Genet Epidemiol 19(Suppl 1): S36-S42
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Documentation
+\series default
+ 
+\series bold
+reference
+\series default
+(s): Nan M.
+ Laird (laird@hsph.harvard.edu), Family-Based Association Tests and the FBAT-toolk
+it, Horvbath_FBAT_Manual_2009.pdf
+\end_layout
+
+\begin_layout Standard
+By default, Mega2 chooses to use FBAT with an explicit 
+\begin_inset Quotes eld
+\end_inset
+
+map
+\begin_inset Quotes erd
+\end_inset
+
+ file.
+ The additional marker position information in the 
+\begin_inset Quotes eld
+\end_inset
+
+map
+\begin_inset Quotes erd
+\end_inset
+
+ file is needed for the plots that will be produced.
+ Note: Mega2 also sets up shell-scripts that automate running various analyses
+ available under the FBAT program.
+ Several scripts may be produced: one to perform the analysis commands (See
+ the FBAT manual for more details.) and others to load into FBAT the files
+ required for a particular (or several) chromosome(s), traits and phenotypes.
+ The user is expected to revise the primary script with the analysis commands
+ for his/her particular needs, but should not need to change any of the
+ other scripts.
+ There is also a script that will run all the other scripts.
 \end_layout
 
 \begin_layout Standard
@@ -30752,7 +30954,136 @@ name "ext:pangaea"
 Convert to PANGAEA MORGAN format 
 \begin_inset CommandInset label
 LatexCommand label
+name "sub:Analysis-Morgan-option"
+
+\end_inset
+
+ 
+\begin_inset CommandInset label
+LatexCommand label
 name "sub:Detailed-info-Pangaea-Morgan"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files for several different analyses available under the PANGAEA
+ MORGAN software package.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Name
+\series default
+: PANGAEA Morgan; 
+\series bold
+Suboption
+\series default
+: pedcheck, kin, translink, lm_linkage, lm_bayes, lm_ibdtests
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.stat.washington.edu/thompson/Genepi/MORGAN/Morgan.shtml
+\end_layout
+
+\end_inset
+
+
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Primary references
+\series default
+: 
+\begin_inset Newline newline
+\end_inset
+
+E.
+ A.
+ Thompson (1995) Monte Carlo in Genetic Analysis.
+ Technical report No.
+ 294, Department of Statistics, University of Washington.
+ 
+\begin_inset Newline newline
+\end_inset
+
+E.
+ A.
+ Thompson (2000) Statistical Inferences from Genetic Data on Pedigrees NSF-CBMS
+ Regional Conference Series in Probability and Statistics.
+ Volume 6.
+ IMS, Beachwood, OH.
+ 
+\begin_inset Newline newline
+\end_inset
+
+Thompson, E.
+ A.
+ (2005) MCMC in the Analysis of Genetic Data on Pedigrees.
+ In Markov Chain Monte Carlo: Innovations and Applications.
+ Pp.
+ 183--216.
+ F.
+ Liang, J-S Wang, and W.
+ Kendall (eds).
+ Lecture Note Series of the IMS, National University of Singapore.
+ World Scientific Co Pte Ltd, Singapore.
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Documentation
+\series default
+: 
+\begin_inset Newline newline
+\end_inset
+
+HTML: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.stat.washington.edu/thompson/Genepi/MORGAN/morgan311-tut-html/morgan-tut.
+html
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+PDF: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://faculty.washington.edu/eathomp/Anonftp/PANGAEA/MORGAN/morgan-tut/morgan311-
+tut.pdf
+\end_layout
 
 \end_inset
 
@@ -30772,7 +31103,11 @@ MORGAN (Monte Carlo Genetic Analysis) is a collection of programs and libraries
 \begin_inset Quotes erd
 \end_inset
 
- (Taken from the tutorial introduction.) The 
+ (Quotation copied from the tutorial introduction.) 
+\end_layout
+
+\begin_layout Standard
+A 
 \begin_inset Quotes eld
 \end_inset
 
@@ -30782,7 +31117,7 @@ Morgan tutorial
 
  is available at 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -30911,12 +31246,7 @@ MORGAN
 \series bold
 MORGAN
 \series default
- programs to produce data and parameter files for rather than for all the
- 
-\series bold
-MORGAN
-\series default
- programs: we support: 
+ programs for which to produce data and parameter files: we support: 
 \emph on
 pedcheck
 \emph default
@@ -30950,7 +31280,7 @@ MORGAN
  functionality.
  We also have split the parameter files into two subfiles.
  One that refers to the pedigree and marker data and the other has the parameter
-s for the desired program to be run.
+s for the program to be run.
  We do not expect to have specified all the parameters that someone might
  want in all cases and expect that the user will change and customize the
  parameters as needed.
@@ -31022,7 +31352,14 @@ name "ext:beagle"
 
 \end_inset
 
-Convert to Beagle format
+Convert to Beagle format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Analysis-BEAGLE-option"
+
+\end_inset
+
+ 
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Detailed-info-Beagle"
@@ -31030,6 +31367,229 @@ name "sub:Detailed-info-Beagle"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This option
+\series default
+ creates files for analysis with Beagle.
+ For further information please see the section concerning detailed information
+ on Beagle Analysis 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Detailed-info-Beagle"
+
+\end_inset
+
+.
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Name
+\series default
+: Beagle
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://faculty.washington.edu/browning/beagle/beagle.html
+\end_layout
+
+\end_inset
+
+
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Primary references
+\series default
+:
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+BEAGLE's fastIBD
+\emph default
+ method is described in
+\begin_inset Newline newline
+\end_inset
+
+B L Browning and S R Browning (2011) A fast, powerful method for detecting
+ identity by descent.
+ The American Journal of Human Genetics 88:173-182.
+ 
+\begin_inset Newline newline
+\end_inset
+
+BEAGLE's methods for detecting homozygosity-by-descent and identity-by-descent
+ are described in
+\begin_inset Newline newline
+\end_inset
+
+S R Browning and B L Browning (2010) High-resolution detection of identity
+ by descent in unrelated individuals.
+ The American Journal of Human Genetics 86:526-539.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+BEAGLE's methods for calling genotypes
+\emph default
+ from genotype likelihood data are described in
+\begin_inset Newline newline
+\end_inset
+
+B L Browning and Z Yu (2009) Simultaneous genotype calling and haplotype
+ phase inference improves genotype accuracy and reduces false positive associati
+ons for genome-wide association studies.
+ The American Journal of Human Genetics 85:847-861.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+BEAGLE's methods for imputing ungenotyped 
+\emph default
+markers and phasing parent-offspring trios are described in
+\begin_inset Newline newline
+\end_inset
+
+B L Browning and S R Browning (2009) A unified approach to genotype imputation
+ and haplotype phase inference for large data sets of trios and unrelated
+ individuals.
+ Am J Hum Genet 84:210-223.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+BEAGLE's methods for inferring haplotype phase
+\emph default
+ or sporadic missing data in unrelated individuals are described in
+\end_layout
+
+\begin_layout Standard
+S R Browning and B L Browning (2007) Rapid and accurate haplotype phasing
+ and missing data inference for whole genome association studies using localized
+ haplotype clustering.
+ Am J Hum Genet 81:1084-1097.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+BEAGLE's methods for association testing
+\emph default
+ are described in
+\end_layout
+
+\begin_layout Standard
+B L Browning and S R Browning (2007) Efficient multilocus association mapping
+ for whole genome association studies using localized haplotype clustering.
+ Genet Epidemiol 31:365-375.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+BEAGLE's haplotype frequency model
+\emph default
+ was first described in:
+\end_layout
+
+\begin_layout Standard
+S R Browning (2006) Multilocus association mapping using variable-length
+ Markov chains.
+ Am J Hum Genet 78:903-13.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Documentation
+\series default
+: See 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://faculty.washington.edu/browning/beagle/beagle.html#download
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If you use BEAGLE in a published analysis, please report the BEAGLE version
+ used and cite the appropriate publication or publications listed below.
+ Please check 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://faculty.washington.edu/browning/beagle/beagle.html
+\end_layout
+
+\end_inset
+
+ for the most up-to-date citations.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Important:
+\series default
+ Note that to get correct results when converting to Beagle, your input
+ data must contain the appropriate data.
+ If you wish to set up data in the 
+\begin_inset Quotes eld
+\end_inset
+
+unphased unrelated
+\begin_inset Quotes erd
+\end_inset
+
+ Beagle format, then your input data must consist of unrelated case/control
+ individuals.
+ If you wish to set up data in the 
+\begin_inset Quotes eld
+\end_inset
+
+unphased trio
+\begin_inset Quotes erd
+\end_inset
+
+ Beagle format, then your input data must consist of parent-child trio families
+ with unaffected parents and affected children.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -31073,36 +31633,6 @@ Beagle is used for imputing genotypes, inferring haplotype phase, and performing
  genetic association analysis.
  Since Beagle can read gzipped files, the marker and genotype files are
  output in gzip format for those platforms that support it.
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Important:
-\series default
- Note that to get correct results when converting to Beagle, your input
- data must contain the appropriate data.
- If you wish to set up data in the 
-\begin_inset Quotes eld
-\end_inset
-
-unphased unrelated
-\begin_inset Quotes erd
-\end_inset
-
- Beagle format, then your input data must consist of unrelated case/control
- individuals.
- If you wish to set up data in the 
-\begin_inset Quotes eld
-\end_inset
-
-unphased trio
-\begin_inset Quotes erd
-\end_inset
-
- Beagle format, then your input data must consist of parent-child trio families
- with unaffected parents and affected children.
- 
 \end_layout
 
 \begin_layout Standard
@@ -31263,10 +31793,104 @@ name "ext:eigenstrat"
 
 \end_inset
 
-Convert to Eigenstrat format
+Convert to Eigenstrat format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Analysis-Eigenstrat-option"
+
+\end_inset
+
+
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Detailed-info-Eigenstrat"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files for analysis with Eigenstrat.
+ For further information please see the section concerning detailed information
+ on Eigenstrat Analysis 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Detailed-info-Eigenstrat"
+
+\end_inset
+
+.
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Name
+\series default
+: Eigenstrat, part of the Eigensoft package
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.hsph.harvard.edu/alkes-price/software/
+\end_layout
+
+\end_inset
+
+
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Primary references
+\series default
+:
+\end_layout
+
+\begin_layout Standard
+Price AL, Patterson NJ, Plenge RM, Weinblatt ME, Shadick NA, Reich D.
+ Principal components analysis corrects for stratification in genome-wide
+ association studies.
+ Nat Genet.
+ 2006 Aug;38(8):904-9.
+ Epub 2006 Jul 23.
+ PubMed PMID: 16862161.
+\end_layout
+
+\begin_layout Standard
+Patterson N, Price AL, Reich D (2006) Population Structure and Eigenanalysis.
+ PLoS Genet 2(12): e190.
+ doi:10.1371/journal.pgen.0020190
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Documentation
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.hsph.harvard.edu/alkes-price/software/
+\end_layout
 
 \end_inset
 
@@ -31426,10 +32050,125 @@ name "ext:structure"
 
 \end_inset
 
-Convert to Structure format
+Convert to Structure format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Analysis-Structure-option"
+
+\end_inset
+
+ 
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Detailed-info-Structure"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files for analysis with Structure.
+ For further information please see the section concerning detailed information
+ on Structure Analysis 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Detailed-info-Structure"
+
+\end_inset
+
+.
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Name
+\series default
+: Structure
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://pritch.bsd.uchicago.edu/structure.html
+\end_layout
+
+\end_inset
+
+
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Primary references
+\series default
+:
+\end_layout
+
+\begin_layout Standard
+Pritchard JK, Stephens M, Donnelly P.
+ Inference of population structure using multilocus genotype data.
+ Genetics.
+ 2000 Jun;155(2):945-59.
+ PubMed PMID: 10835412; PubMed Central PMCID: PMC1461096.
+\end_layout
+
+\begin_layout Standard
+Falush D, Stephens M, Pritchard JK.
+ Inference of population structure using multilocus genotype data: linked
+ loci and correlated allele frequencies.
+ Genetics.
+ 2003 Aug;164(4):1567-87.
+ PubMed PMID: 12930761; PubMed Central PMCID: PMC1462648.
+\end_layout
+
+\begin_layout Standard
+Falush D, Stephens M, Pritchard JK.
+ Inference of population structure using multilocus genotype data: dominant
+ markers and null alleles.
+ Mol Ecol Notes.
+ 2007 Jul 1;7(4):574-578.
+ PubMed PMID: 18784791; PubMed Central PMCID: PMC1974779.
+\end_layout
+
+\begin_layout Standard
+Hubisz MJ, Falush D, Stephens M, Pritchard JK.
+ Inferring weak population structure with the assistance of sample group
+ information.
+ Mol Ecol Resour.
+ 2009 Sep;9(5):1322-32.
+ doi: 10.1111/j.1755-0998.2009.02591.x.
+ Epub 2009 Apr 1.
+ PubMed PMID: 21564903; PubMed Central PMCID: PMC3518025.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Documentation
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://pritch.bsd.uchicago.edu/structure.html
+\end_layout
 
 \end_inset
 
@@ -31536,10 +32275,92 @@ name "ext:pseq"
 
 \end_inset
 
-Convert to PSEQ (PLINK/SEQ) format
+Convert to PSEQ (PLINK/SEQ) format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Analysis-PSEQ-option"
+
+\end_inset
+
+ 
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Detailed-info-PSEQ"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files for analysis with PLINK/SEQ.
+ For further information please see the section concerning detailed information
+ on PLINK-SEQ Analysis 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Detailed-info-PSEQ"
+
+\end_inset
+
+.
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Name
+\series default
+: PSEQ
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Web
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://atgu.mgh.harvard.edu/plinkseq/
+\end_layout
+
+\end_inset
+
+
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+Primary references
+\series default
+:
+\end_layout
+
+\begin_layout Standard
+TBD
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Documentation
+\series default
+: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://atgu.mgh.harvard.edu/plinkseq/pseq.shtml
+\end_layout
 
 \end_inset
 
@@ -31623,6 +32444,335 @@ _out
  folder before importing them into the PLINK/SEQ project.
  As PLINK/SEQ does not make a copy of the PLINK data, the trio of PLINK
  files must remain in the project folder - do not move them or delete them.
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:shapeit"
+
+\end_inset
+
+Convert to SHAPEIT format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Detailed-info-Shapeit"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files for phasing with SHAPEIT.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Name
+\series default
+: SHAPEIT
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html#home
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Primary reference
+\series default
+(s): 
+\begin_inset Newline newline
+\end_inset
+
+O.
+ Delaneau, J.
+ Marchini, JF.
+ Zagury (2012) A linear complexity phasing method for thousands of genomes.
+ Nat Methods.
+ 9(2):179-81.
+ doi: 10.1038/nmeth.1785
+\end_layout
+
+\begin_layout Standard
+O.
+ Delaneau, JF.
+ Zagury, J.
+ Marchini (2013) Improved whole chromosome phasing for disease and population
+ genetic studies.
+ Nat Methods.
+ 10(1):5-6.
+ doi: 10.1038/nmeth.2307
+\end_layout
+
+\begin_layout Standard
+O.
+ Delaneau, B.
+ Howie, A.
+ Cox, J-F.
+ Zagury, J.
+ Marchini (2013) Haplotype estimation using sequence reads.
+ American Journal of Human Genetics 93 (4) 787-696
+\end_layout
+
+\begin_layout Standard
+J.
+ O'Connell, D.
+ Gurdasani, O.
+ Delaneau, et al.
+ (2014) A general approach for haplotype phasing across the full spectrum
+ of relatedness.
+ PLoS Genetics
+\end_layout
+
+\begin_layout Standard
+O.
+ Delaneau, J.
+ Marchini, The 1000 Genomes Project Consortium (2014) Integrating sequence
+ and array data to create an improved 1000 Genomes Project haplotype reference
+ panel.
+ Nature Communications 5 3934
+\end_layout
+
+\begin_layout Standard
+The SHAPEIT program supports several different input data formats; the most
+ space (and time) efficient is PLINK binary format.
+ Thus Mega2 has chosen to convert its input to PLINK binary format to be
+ used as input for SHAPEIT.
+ Mega2 must generate a separate collection of PLINK files for each chromosome
+ to satisfy SHAPEIT requirements.
+ Similarly, Mega2 also uses the same unique identifier for pedigree and
+ person slot in the .ped file.
+\end_layout
+
+\begin_layout Standard
+The following files are created for SHAPEIT for a typical chromosome (chromosome
+ 05):
+\end_layout
+
+\begin_layout LyX-Code
+  PLINK map file:             shapeit.05.bim
+\end_layout
+
+\begin_layout LyX-Code
+  PLINK pedigree file:        shapeit.05.fam
+\end_layout
+
+\begin_layout LyX-Code
+  PLINK binary file snp:      shapeit.05.bed
+\end_layout
+
+\begin_layout LyX-Code
+SHAPEIT shell file:           shapeit_phased.05.sh
+\end_layout
+
+\begin_layout LyX-Code
+SHAPEIT top shell file:       shapeit_phased.all.sh
+\end_layout
+
+\begin_layout LyX-Code
+        the above shell runs all shells
+\end_layout
+
+\begin_layout LyX-Code
+SHAPEIT shell argument file:  shapeit_phased.all.sh.args
+\end_layout
+
+\begin_layout Standard
+The file stem, 
+\series bold
+shapeit
+\series default
+, may be changed in the SHAPEIT menu if different sample cohorts are to
+ be processed in the same directory and would otherwise use the same file
+ name as previously used.
+ The SHAPEIT menu also lets the user choose between operating SHAPEIT in
+ 
+\begin_inset Quotes eld
+\end_inset
+
+phased
+\begin_inset Quotes erd
+\end_inset
+
+ mode versus 
+\begin_inset Quotes eld
+\end_inset
+
+check
+\begin_inset Quotes erd
+\end_inset
+
+ mode.
+ (For the latter choice, the shell names shown above would be 
+\begin_inset Quotes eld
+\end_inset
+
+shapeit_check.05.sh
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+shapeit_check.all.sh
+\begin_inset Quotes erd
+\end_inset
+
+.) 
+\end_layout
+
+\begin_layout Standard
+For either mode, the .all.sh script will run the shell scripts produced for
+ all the chromosome being analyzed.
+ The .05.sh script runs the 
+\series bold
+shapeit 
+\series default
+program with arguments that specify the PLINK input and SHAPEIT output.
+ The script also lets you specify additional arguments that might be necessary
+ for tailoring the SHAPEIT run.
+ A template for additional arguments is given in shapeit_phased.all.sh.args.
+ This file is included (sourced) in the .05.sh script (and those for all other
+ chromosomes).
+ Thus a change made in shapeit_phased.all.sh.args will affect all shell scripts.
+ 
+\end_layout
+
+\begin_layout Standard
+Finally, SHAPEIT in phased mode requires a genetic file with recombination
+ rate for each marker.
+ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html#gmap
+\end_layout
+
+\end_inset
+
+ describes the file format and provides pointers to a repository of data
+ for build 36 and build 37.
+ The SHAPEIT menu for the 
+\begin_inset Quotes eld
+\end_inset
+
+phased
+\begin_inset Quotes erd
+\end_inset
+
+ suboption will request a directory and a file name to these data.
+ The directory may be left empty if the data are in the directory of the
+ PLINK binary files.
+ The file name should include a 
+\begin_inset Quotes eld
+\end_inset
+
+?
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This character will be replaced with the chromosome number when a reference
+ to the recombination rate data is generated in the shell for each chromosome.
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:impute2"
+
+\end_inset
+
+Convert to IMPUTE2 format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Detailed-info-Impute2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This Analysis Menu option
+\series default
+ creates files for 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Name
+\series default
+: 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+ 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Primary reference
+\series default
+(s): 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Documentation
+\series default
+ 
+\series bold
+reference
+\series default
+(s): 
 \end_layout
 
 \begin_layout Section

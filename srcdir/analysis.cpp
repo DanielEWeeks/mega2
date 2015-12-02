@@ -145,8 +145,8 @@ analysis_types analysis_list[] = {
     { "Eigenstrat format",          EIGENSTRAT },
     { "Structure format",           STRUCTURE },
     { "PSEQ format",                TO_PSEQ },
-    { "Shapeit format",             SHAPEIT},
-    { "Impute2 format",             IMPUTE2}
+    { "SHAPEIT format",             SHAPEIT},
+    { "IMPUTE2 format",             IMPUTE2}
 };
 
 int count_analysis_list = sizeof(analysis_list) / sizeof (analysis_types);
