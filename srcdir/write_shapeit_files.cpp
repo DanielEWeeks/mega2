@@ -141,13 +141,16 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
 
     print_outfile_mssg();
     while (choice != 0) {
+        printf("             SHAPEIT input menu:\n");
         draw_line();
         printf("0) Done with this menu - please proceed\n");
         i=1;
 
+        batch_in();
+
         if (_suboption == 1) {
             printf(" %d) Specify genetic recombination map directory?       \"%s\"\n",
-                   i, BatchItemGet("Shapeit_recomb_rdir")->value.name);
+                   i, C(rdir));
             idir=i++;
 
             printf(" %d) Specify genetic recombination map file name?       \"%s\"\n",
@@ -160,7 +163,6 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
 
         if (! DEFAULT_OUTFILES) {
             printf(" %d) Change filenames stem?                            \"%s\"\n",
-//                   i, BatchItemGet("Shapeit_file_stem")->value.name);
                    i, this->file_name_stem);
         istem=i++;
         }
@@ -255,12 +257,14 @@ void CLASS_SHAPEIT::batch_in()
     BatchValueIfSet(           fn,   "Shapeit_file_stem");
 
     if (_suboption == 1) {
-        BatchValueIfSet(this->rdir,  "Shapeit_recomb_rdir");
-        BatchValueGet  (       file, "Shapeit_recomb_rfile");
+        BatchValueGet(this->rdir,  "Shapeit_recomb_rdir");
+        BatchValueGet(       file, "Shapeit_recomb_rfile");
 
+        if (file == "") return;
         split(filesplit, file, "?");
         if (filesplit.size() != 2) {
-            printf("Please include one and only one ? in the file name\n");
+            printf("Please include one and only one ? in the file name \"%s\"\n",
+                   C(file));
             return;
         }
         rpre  = filesplit[0];
@@ -289,8 +293,8 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
     char prefix[100];
 
     sub_prog_name(_suboption, prefix);
-    sprintf(file_names[4], "shapeit_%s.all.sh", prefix);
-    sprintf(file_names[8], "shapeit_%s.%02d.sh", prefix, numchr);
+    sprintf(file_names[4], "%s_%s.all.sh", file_name_stem, prefix);
+    sprintf(file_names[8], "%s_%s.%02d.sh", file_name_stem, prefix, numchr);
     add_sumdir(file_names[4]);
     add_sumdir(file_names[8]);
 

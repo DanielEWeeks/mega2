@@ -160,6 +160,16 @@ extern batch_item_type *Mega2BatchItems;
 extern batch_item_type *BatchItemGet(int i);
 extern batch_item_type *BatchItemGet(const std::string& key);
 
+inline int BatchValueRead(int item) {
+    batch_item_type *bi = BatchItemGet(item);
+    return bi->items_read;
+}
+
+inline int BatchValueRead(Cstr &item) {
+    batch_item_type *bi = BatchItemGet(item);
+    return bi->items_read;
+}
+
 inline void BatchValueGet(int &num, Cstr &item) {
     num = BatchItemGet(item)->value.option;
 }

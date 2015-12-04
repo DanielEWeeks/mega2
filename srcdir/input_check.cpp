@@ -423,11 +423,28 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     // to unknowns, and if set to no invalid genotypes will not be reset.
     if (InputMode != INTERACTIVE_INPUTMODE &&
         Mega2BatchItems[/* 26 */ Default_Reset_Invalid].items_read) {
-        if (Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'n' ||
-            Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt == 'N')
+        int mask = Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt;
+        if (mask == 'n' || mask ==  'N')
             hmend = imend = aexceed = 0;
+    } else if (InputMode != INTERACTIVE_INPUTMODE && (
+                   BatchValueRead("Default_Reset_Halftype") ||
+                   BatchValueRead("Default_Reset_Mendelerr") ||
+                   BatchValueRead("Default_Reset_Alleleerr") ||
+                   BatchValueRead("Default_Set_Uniq")  )) {
+
+        char ch;
+        BatchValueGet(ch, "Default_Reset_Halftype");
+        hmend = ch;
+        BatchValueGet(ch, "Default_Reset_Mendelerr");
+        imend = ch;
+        BatchValueGet(ch, "Default_Reset_Alleleerr");
+        aexceed = ch;
+        BatchValueGet(ch, "Default_Set_Uniq");
+        set_uniq = ch;
+
     } else {
         int imendf = 0, hmendf = 0, aexceedf = 0;
+        int mask = 0;
         printf("Specify whether to reset poorly typed individuals and families:\n");
         while (select != 0) {
             strcpy(toggle_str, "");
@@ -500,15 +517,19 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             case 5:
                 if (select == halftyped_select) {
                     hmendf = (hmendf ? 0 : 1);
+                    mask = 1;
                     break;
                 } else if (select == invalid_select) {
                     imendf = (imendf ? 0 : 1);
+                    mask = 1;
                     break;
                 } else if (select == exceedall_select) {
                     aexceedf = (aexceedf ? 0 : 1);
+                    mask = 1;
                     break;
                 } else if (select == uniq_select) {
                     set_uniq = (set_uniq ? 0 : 1);
+                    mask = 1;
                     break;
                 } else if (select == exit_select) {
                     printf("Terminating Mega2.\n");
@@ -518,6 +539,22 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                 printf("Unknown option %s\n", select_);
                 break;
             }
+        }
+        if (mask == 0) {
+            BatchValueSet(yorn[mask][0], "Default_Reset_Invalid");
+            batchf("Default_Reset_Invalid");
+        } else {
+            BatchValueSet(yorn[hmendf][0], "Default_Reset_Halftype");
+            batchf("Default_Reset_Halftype");
+
+            BatchValueSet(yorn[imendf][0], "Default_Reset_Mendelerr");
+            batchf("Default_Reset_Mendelerr");
+
+            BatchValueSet(yorn[aexceedf][0], "Default_Reset_Alleleerr");
+            batchf("Default_Reset_Alleleerr");
+                                    
+            BatchValueSet(yorn[set_uniq][0], "Default_Set_Uniq");
+            batchf("Default_Set_Uniq");
         }
         hmend = hmendf;
         imend = imendf;
@@ -543,8 +580,8 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         // It is possible to have reached the above menu from batch or interactive mode.
         // Here we note it in the batch file.
         // NOTE: The manual says "Yes" and "No" are the values, but 'copt' is a char.
-        Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt = 'Y';
-        batchf(Default_Reset_Invalid);
+//      Mega2BatchItems[/* 26 */ Default_Reset_Invalid].value.copt = 'Y';
+//      batchf(Default_Reset_Invalid);
     }
 
     /* else abort = 1*/

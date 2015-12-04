@@ -28,6 +28,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
@@ -211,6 +212,11 @@ static keyw_t keywords[] = {
     {"Value_Missing_Affect_On_Output",        LINE,      "0"},
     {"Output_File_Stem",                      STRING,     ""},
 
+    {"Default_Reset_Halftype",                YORN,      "y"},
+    {"Default_Reset_Mendelerr",               YORN,      "y"},
+    {"Default_Reset_Alleleerr",               YORN,      "y"},
+    {"Default_Set_Uniq",                      YORN,      "y"},
+
     {"Imputed_Oxford_Single_Chr",             STRING,   "--"},
     {"Imputed_Info_Metric_Threshold",         FLOAT,   "0.3"},
     {"Imputed_Hard_Call_Threshold",           FLOAT,   "0.9"},
@@ -325,6 +331,7 @@ void create_batchfile(void)
 void batchfile_init_Mega2BatchItems(void)
 {
     int i;
+    extern int env;
 
 //  Mega2BatchItems = CALLOC((size_t)NUM_KEYS, batch_item_type); // Only on OSX
     Mega2BatchItems = new batch_item_type[NUM_KEYS];
@@ -342,6 +349,14 @@ void batchfile_init_Mega2BatchItems(void)
         Cstr& name      = bi->keyword;
         BatchItemMap[name]  = bi;
 
+        if (env & 1) {
+            char *xp = getenv(C(name));
+            if (xp != NULL) {
+                warnvf("parameter %s\n\treplacing default value (\"%s\") with value from environment (\"%s\")\n",
+                       C(bi->keyword), C(deflt), xp);
+                deflt = string(xp);
+            }
+        }
         switch(type) {
         case STRING:
         case LINE:
@@ -1020,6 +1035,7 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
     char value[FILENAME_LENGTH];
     int errtok = 0, errline = 0, cnt = 0;
     extern int debug;
+    extern int env;
 
     /* First the the verseion number */
     FILE *fp = fopen(batch_file_name, "r");
@@ -1174,6 +1190,14 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
         strcpy(value, bibatch->value_str.c_str());
         if (debug) msgvf("key %s, val %s\n", C(keyword), value);
 
+        if (env & 2) {
+            char *xp = getenv(C(keyword));
+            if (xp != NULL) {
+                warnvf("parameter %s\n\treplacing batch file value (\"%s\") with value from environment (\"%s\")\n",
+                       C(keyword), value, xp);
+                strcpy(value, xp);
+            }
+        }
 //err: does this do anything
         if (bivalue == "" && !keyword.compare(0, 14, "value_missing_") ) {
             *value = 0;

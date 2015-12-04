@@ -1873,6 +1873,7 @@ extern void set_chromosomes_human(); /* { set_chromosomes(22, 25, 26); } */
 extern int lastautosome, pseudoautosome, mitoautosome;
 extern int missingv_flags;
 extern char *quant_in, *quant_out, *affect_in, *affect_out;
+int env = 0;
 
 void mega2_opts(int argc, char **argv)
 {
@@ -1973,7 +1974,13 @@ void mega2_opts(int argc, char **argv)
 		    argv++; --argc;
 		    affect_out = *argv;
 		    missingv_flags |= 8;
-		} else if (strcasecmp(as, "help") == 0) {
+
+                } else if (strcasecmp(as, "envdefault") == 0 || strcasecmp(as, "ed") == 0)
+                    env |= 1;
+                else if (strcasecmp(as, "envbatch") == 0 || strcasecmp(as, "eb") == 0)
+                    env |= 2;
+
+		else if (strcasecmp(as, "help") == 0) {
                     print_mega2_help();
                     exit(0);
                 } else if (strcasecmp(as, "version") == 0)
