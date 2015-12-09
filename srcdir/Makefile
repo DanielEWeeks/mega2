@@ -380,7 +380,7 @@ mega2.o: write_files_ext.h write_ghfiles_ext.h write_loki_ext.h
 mega2.o: write_mfiles_ext.h write_pap_ext.h write_premakeped_ext.h
 mega2.o: write_prest_ext.h write_sage_files_ext.h write_simulate_files_ext.h
 mega2.o: write_solar_files_ext.h write_vitesse_ext.h version.h class_old.h
-mega2.o: analysis.h write_plink_ext.h plink_core_ext.h
+mega2.o: analysis.h write_plink_ext.h plink_core_ext.h write_shapeit_ext.h
 write_apm.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_apm.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_apm.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
@@ -669,7 +669,7 @@ write_plink_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_plink_files.o: batch_input.h input_check.h hwe.h compress_ext.h tod.hh
 write_plink_files.o: loop.h file_ops.h zlib.h zconf.h error_messages_ext.h
 write_plink_files.o: utils_ext.h entry.h create_summary_ext.h
-write_plink_files.o: output_routines_ext.h sh_util.h linkage_ext.h
+write_plink_files.o: output_routines_ext.h linkage_ext.h sh_util.h
 write_plink_files.o: fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_plink_files.o: user_input_ext.h input_ops.hh str_utils.hh
 write_plink_files.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
@@ -721,7 +721,7 @@ loop.o: loop.h file_ops.h zlib.h zconf.h common.h types.hh typedefs.h
 loop.o: errorno.h allutil.h linkage.h linkage_external.h makeped.h pedtree.h
 loop.o: batch_input.h input_check.h hwe.h compress_ext.h error_messages_ext.h
 loop.o: utils_ext.h entry.h create_summary_ext.h output_routines_ext.h
-loop.o: sh_util.h linkage_ext.h tod.hh analysis.h
+loop.o: linkage_ext.h tod.hh analysis.h
 compress.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 compress.o: linkage_external.h makeped.h pedtree.h batch_input.h
 compress.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
@@ -750,25 +750,25 @@ write_pangaea.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_pangaea.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_pangaea.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h zlib.h
 write_pangaea.o: zconf.h error_messages_ext.h utils_ext.h entry.h
-write_pangaea.o: create_summary_ext.h output_routines_ext.h sh_util.h
-write_pangaea.o: linkage_ext.h fcmap_ext.h genetic_utils_ext.h omit_ped_ext.h
+write_pangaea.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
+write_pangaea.o: sh_util.h fcmap_ext.h genetic_utils_ext.h omit_ped_ext.h
 write_pangaea.o: output_file_names_ext.h user_input_ext.h input_ops.hh
 write_pangaea.o: str_utils.hh write_pangaea_ext.h analysis.h
 write_beagle.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_beagle.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_beagle.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h zlib.h
 write_beagle.o: zconf.h error_messages_ext.h utils_ext.h entry.h
-write_beagle.o: create_summary_ext.h output_routines_ext.h sh_util.h
-write_beagle.o: linkage_ext.h fcmap_ext.h omit_ped_ext.h
-write_beagle.o: output_file_names_ext.h user_input_ext.h input_ops.hh
-write_beagle.o: str_utils.hh genetic_utils_ext.h write_files_ext.h
-write_beagle.o: write_beagle_ext.h analysis.h
+write_beagle.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
+write_beagle.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
+write_beagle.o: user_input_ext.h input_ops.hh str_utils.hh
+write_beagle.o: genetic_utils_ext.h write_files_ext.h write_beagle_ext.h
+write_beagle.o: analysis.h
 plink_core_files.o: common.h types.hh typedefs.h errorno.h allutil.h
 plink_core_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 plink_core_files.o: batch_input.h input_check.h hwe.h compress_ext.h tod.hh
 plink_core_files.o: loop.h file_ops.h zlib.h zconf.h error_messages_ext.h
 plink_core_files.o: utils_ext.h entry.h create_summary_ext.h
-plink_core_files.o: output_routines_ext.h sh_util.h linkage_ext.h fcmap_ext.h
+plink_core_files.o: output_routines_ext.h linkage_ext.h sh_util.h fcmap_ext.h
 plink_core_files.o: omit_ped_ext.h output_file_names_ext.h user_input_ext.h
 plink_core_files.o: input_ops.hh str_utils.hh plink_core_ext.h analysis.h
 write_eigenstrat.o: common.h types.hh typedefs.h errorno.h allutil.h
@@ -776,7 +776,7 @@ write_eigenstrat.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_eigenstrat.o: batch_input.h input_check.h hwe.h compress_ext.h loop.h
 write_eigenstrat.o: file_ops.h zlib.h zconf.h error_messages_ext.h
 write_eigenstrat.o: utils_ext.h entry.h create_summary_ext.h
-write_eigenstrat.o: output_routines_ext.h sh_util.h linkage_ext.h
+write_eigenstrat.o: output_routines_ext.h linkage_ext.h sh_util.h
 write_eigenstrat.o: plink_core_ext.h analysis.h fcmap_ext.h omit_ped_ext.h
 write_eigenstrat.o: output_file_names_ext.h user_input_ext.h input_ops.hh
 write_eigenstrat.o: str_utils.hh write_eigenstrat_ext.h
@@ -784,8 +784,8 @@ write_structure.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_structure.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_structure.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h
 write_structure.o: zlib.h zconf.h error_messages_ext.h utils_ext.h entry.h
-write_structure.o: create_summary_ext.h output_routines_ext.h sh_util.h
-write_structure.o: linkage_ext.h fcmap_ext.h omit_ped_ext.h
+write_structure.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
+write_structure.o: sh_util.h fcmap_ext.h omit_ped_ext.h
 write_structure.o: output_file_names_ext.h user_input_ext.h input_ops.hh
 write_structure.o: str_utils.hh write_structure_ext.h analysis.h
 batch.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
@@ -798,16 +798,16 @@ write_fbat.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_fbat.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_fbat.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h zlib.h
 write_fbat.o: zconf.h error_messages_ext.h utils_ext.h entry.h
-write_fbat.o: create_summary_ext.h output_routines_ext.h sh_util.h
-write_fbat.o: linkage_ext.h fcmap_ext.h omit_ped_ext.h
-write_fbat.o: output_file_names_ext.h user_input_ext.h input_ops.hh
-write_fbat.o: str_utils.hh write_fbat_ext.h analysis.h fbat.R.h
+write_fbat.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
+write_fbat.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
+write_fbat.o: user_input_ext.h input_ops.hh str_utils.hh write_fbat_ext.h
+write_fbat.o: analysis.h fbat.R.h
 write_pseq_files.o: common.h types.hh typedefs.h errorno.h allutil.h
 write_pseq_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_pseq_files.o: batch_input.h input_check.h hwe.h compress_ext.h loop.h
 write_pseq_files.o: file_ops.h zlib.h zconf.h error_messages_ext.h
 write_pseq_files.o: utils_ext.h entry.h create_summary_ext.h
-write_pseq_files.o: output_routines_ext.h sh_util.h linkage_ext.h fcmap_ext.h
+write_pseq_files.o: output_routines_ext.h linkage_ext.h sh_util.h fcmap_ext.h
 write_pseq_files.o: omit_ped_ext.h output_file_names_ext.h user_input_ext.h
 write_pseq_files.o: input_ops.hh str_utils.hh plink_core_ext.h analysis.h
 write_pseq_files.o: write_plink_ext.h write_pseq_ext.h
@@ -851,17 +851,17 @@ write_shapeit_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_shapeit_files.o: batch_input.h input_check.h hwe.h compress_ext.h
 write_shapeit_files.o: loop.h file_ops.h zlib.h zconf.h error_messages_ext.h
 write_shapeit_files.o: utils_ext.h entry.h create_summary_ext.h
-write_shapeit_files.o: output_routines_ext.h sh_util.h linkage_ext.h
-write_shapeit_files.o: fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
-write_shapeit_files.o: user_input_ext.h input_ops.hh str_utils.hh
-write_shapeit_files.o: plink_core_ext.h analysis.h write_plink_ext.h
-write_shapeit_files.o: write_shapeit_ext.h
+write_shapeit_files.o: output_routines_ext.h linkage_ext.h sh_util.h
+write_shapeit_files.o: batch_input_ext.h fcmap_ext.h omit_ped_ext.h
+write_shapeit_files.o: output_file_names_ext.h user_input_ext.h input_ops.hh
+write_shapeit_files.o: str_utils.hh write_shapeit_ext.h write_plink_ext.h
+write_shapeit_files.o: plink_core_ext.h analysis.h write_shapeit_args.h
 write_impute2_files.o: common.h types.hh typedefs.h errorno.h allutil.h
 write_impute2_files.o: linkage.h linkage_external.h makeped.h pedtree.h
 write_impute2_files.o: batch_input.h input_check.h hwe.h compress_ext.h
 write_impute2_files.o: loop.h file_ops.h zlib.h zconf.h error_messages_ext.h
 write_impute2_files.o: utils_ext.h entry.h create_summary_ext.h
-write_impute2_files.o: output_routines_ext.h sh_util.h linkage_ext.h
+write_impute2_files.o: output_routines_ext.h linkage_ext.h sh_util.h
 write_impute2_files.o: fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_impute2_files.o: user_input_ext.h input_ops.hh str_utils.hh
 write_impute2_files.o: plink_core_ext.h analysis.h write_plink_ext.h

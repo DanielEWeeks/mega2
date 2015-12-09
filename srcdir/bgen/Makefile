@@ -38,7 +38,7 @@ WINDIR=/
 WINO = -o $@
 endif
 
-#FLAGS += -std=c++11 -Igenfile/include 
+L0xFLAGS= -std=c++11
 CFLAGS += -Igenfile/include 
 
 OUT = $(UP)libbgen.a
@@ -58,6 +58,15 @@ LOCFLAGS += -I..
 	$(CXX) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) $(FLAGS) -c $< $(WINO)
 
 all: $(OUT)
+
+more: $(OUT) example/bgen_to_vcf
+
+example/bgen_to_vcf: example/bgen_to_vcf.o
+	$(CXX) example/bgen_to_vcf.o $(WINO) $(OUT) -lz
+
+example/bgen_to_vcf.o: example/bgen_to_vcf.cpp
+example/bgen_to_vcf.o: CFLAGS += $(L0xFLAGS)
+
 
 $(OUT): $(BOBJ)
 	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(BOBJ)

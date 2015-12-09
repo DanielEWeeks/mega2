@@ -31,8 +31,9 @@
 
 #include <iostream>
 #include <fstream>
-#include <memory>
 #include <stdexcept>
+#include <memory>
+#include "genfile/types.hpp"
 #include "genfile/bgen/bgen.hpp"
 
 #include "read_impute.hh"
@@ -65,6 +66,15 @@ public:
         n_alleles = number_of_alleles;
     }
     
+    // If present with this signature, called once after initialise()
+    // to set the minimum and maximum ploidy and numbers of probabilities among samples in the data.
+    // This enables us to set up storage for the data ahead of time.
+    void set_min_max_ploidy( uint32_t min_ploidy, uint32_t max_ploidy, uint32_t min_entries, uint32_t max_entries ) {
+        for( std::size_t i = 0; i < m_result->size(); ++i ) {
+            m_result->at( i ).reserve( max_entries ) ;
+        }
+    }
+
     // Called once per sample to determine whether we want data for this sample
     bool set_sample( std::size_t i ) {
         m_sample_i = i ;
@@ -74,6 +84,7 @@ public:
     
     // Called once per sample to set the number of probabilities that are present.
     void set_number_of_entries(
+        std::size_t ploidy,
         std::size_t number_of_entries,
         genfile::OrderType order_type,
         genfile::ValueType value_type
@@ -81,29 +92,18 @@ public:
         assert( value_type == genfile::eProbability ) ;
         m_result->at( m_sample_i ).resize( number_of_entries ) ;
         m_entry_i = 0 ;
-    }
-
-    void set_number_of_entries(
-        std::size_t number_of_entries,
-        genfile::OrderType order_type,
-        genfile::ValueType value_type,
-        std::size_t ploidy,
-        std::size_t phased
-    ) {
-        assert( value_type == genfile::eProbability ) ;
-        m_result->at( m_sample_i ).resize( number_of_entries ) ;
-        m_entry_i = 0 ;
 
         n_entries = number_of_entries;
         n_ploidy  = ploidy ;
-        n_phased  = phased ;
+        n_phased  = order_type == genfile::ePerOrderedHaplotype ||
+                    order_type == genfile::ePerPhasedHaplotypePerAllele;
     }
 
-    void operator()( double value ) {
+    void set_value( uint32_t, double value ) {
         m_result->at( m_sample_i ).at( m_entry_i++ ) = value ;
     }
 
-    void operator()( genfile::MissingValue value ) {
+    void set_value( uint32_t, genfile::MissingValue value ) {
         // Here we encode missing probabilities with -1
         m_result->at( m_sample_i ).at( m_entry_i++ ) = -1 ;
     }
@@ -165,7 +165,6 @@ public:
 
         // We keep track of state (though it's not really needed for this implementation.)
         m_state = e_ReadyForVariant ;
-
     }
 
     void close() {
@@ -285,8 +284,10 @@ public:
     } n_sample;
 
 private:
+//  std::string const m_filename ;  moved above  (public)
     std::ifstream *m_stream ;
-
+//  genfile::bgen::Context m_context ; // moved next (protected)
+    uint32_t m_offset ;
 protected:
     // bgen::Context object holds information from the header block,
     // including bgen flags
@@ -299,8 +300,6 @@ protected:
     std::size_t m_first;
 
 private:
-    // offset byte from top of bgen file.
-    uint32_t m_offset ;
 
     // We keep track of our state in the file.
     // Not strictly necessary for this implentation but makes it clear that
@@ -314,7 +313,7 @@ private:
     std::vector< std::string > m_sample_ids ;
     
     // Buffers, these are used as working space by bgen implementation.
-    std::vector< char > m_buffer1, m_buffer2 ;
+    std::vector< genfile::byte_t > m_buffer1, m_buffer2 ;
 } ;
 
 
