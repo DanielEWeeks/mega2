@@ -538,7 +538,7 @@ namespace genfile {
 
 			template< typename Setter >
 			void call_finalise(
-				Setter& setter, tag< false > const&
+				Setter& /*setter*/, tag< false > const&
 			) {
 				// do nothing
 			}
@@ -602,7 +602,7 @@ namespace genfile {
 					uint32_t ploidy,
 					uint32_t number_of_entries,
 					OrderType const order_type,
-					ValueType const value_type
+					ValueType const /*value_type*/
 				) {
 					assert( m_state == eSampleSet ) ;
 					assert( ploidy == uint32_t(2) ) ;
@@ -612,7 +612,7 @@ namespace genfile {
 					m_state = eNumberOfEntriesSet ;
 				}
 
-				void set_value( uint32_t entry_i, genfile::MissingValue const value ) {
+				void set_value( uint32_t /*entry_i*/, genfile::MissingValue const /*value*/ ) {
 					assert( m_state == eNumberOfEntriesSet || m_state == eValueSet ) ;
 					assert( m_entry_i < 3 ) ;
 					assert( m_entry_i == 0 || m_missing == eMissing ) ;
@@ -626,7 +626,7 @@ namespace genfile {
 					}
 				}
 
-				void set_value( uint32_t entry_i, double const value ) {
+				void set_value( uint32_t /*entry_i*/, double const value ) {
 					assert( m_state == eNumberOfEntriesSet || m_state == eValueSet ) ;
 					assert( m_missing == eNotSet || m_missing == eNotMissing ) ;
 					assert( m_entry_i < 3 ) ;
@@ -812,7 +812,7 @@ namespace genfile {
 					int size = 0 ;
 					for( uint32_t i = 0; i < numberOfSamples; ++i, ++ploidy_p ) {
 						uint32_t const ploidy = uint32_t(*ploidy_p & 0x3F) ;
-						bool const missing = (*ploidy_p & 0x80) ;
+						bool const missing = (*ploidy_p & 0x80) == 0x80 ;
 						uint32_t const valueCount
 							= phased
 							? (ploidy * numberOfAlleles)
@@ -968,7 +968,7 @@ namespace genfile {
 					m_state = eNumberOfEntriesSet ;
 				}
 
-				void set_value( uint32_t entry_i, genfile::MissingValue const value ) {
+				void set_value( uint32_t /*entry_i*/, genfile::MissingValue const /*value*/ ) {
 					assert( m_state == eNumberOfEntriesSet || m_state == eValueSet || m_state == eBaked ) ;
 					assert( m_entry_i < m_number_of_entries ) ;
 					assert( m_entry_i == 0 || m_missing == eMissing ) ;
@@ -987,7 +987,7 @@ namespace genfile {
 					}
 				}
 
-				void set_value( uint32_t entry_i, double const value ) {
+				void set_value( uint32_t /*entry_i*/, double const value ) {
 					assert( m_state == eNumberOfEntriesSet || m_state == eValueSet || m_state == eBaked ) ;
 					assert( m_missing == eNotSet || m_missing == eNotMissing ) ;
 					assert( m_entry_i < m_number_of_entries ) ;
