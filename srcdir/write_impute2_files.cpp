@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2015 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -274,20 +274,18 @@ void CLASS_IMPUTE2::create_sh_file(linkage_ped_top *Top,
             
             // This handles the environment variable setup to allow the checking
             // functions in 'batch_run' to work correctly...
-            fprintf_env_checkset_csh(_filep, "_IMPUTE2", "pseq");
+            fprintf_env_checkset_csh(_filep, "_IMPUTE2", "impute2");
             pr_printf("\n");
             pr_printf("alias usage 'echo \"Usage: %s [ IMPUTE2_PROJ [ IMPUTE2_RESDIR ] ]\"\\\n", file_names[8]);
-            pr_printf("  echo \" IMPUTE2_PROJ    the project name\"\\\n");
-            pr_printf("  echo \" IMPUTE2_RESDIR  the resource directory\"\\\n");
             pr_printf("  exit'\n");
             pr_printf("\n");
-            pr_printf("if ($1 == '?' || $1 == 'help' || $#argv > 2) then\n");
+            pr_printf("if ($1 == '?' || $1 == 'help') then\n");
             pr_printf("  usage\n");
             pr_printf("endif\n");
         }
         void inner () {
 
-            char cmd[2*FILENAME_LENGTH];
+//          char cmd[2*FILENAME_LENGTH];
             char out_fl[2*FILENAME_LENGTH];
             
             pr_printf("\n");
@@ -311,89 +309,7 @@ void CLASS_IMPUTE2::create_sh_file(linkage_ped_top *Top,
                 sh_ln(file_names[0], file_names[6]);
             
             pr_printf("\n");
-            pr_printf("# Assign a project name...\n");
-            pr_printf("if ($#argv > 0) then\n");
-            pr_printf("  set IMPUTE2_PROJ=$argv[1]\n");
-            pr_printf("  echo Using the user specified project name of \\\"$IMPUTE2_PROJ\\\".\n");
-            pr_printf("else\n");
-            pr_printf("  set IMPUTE2_PROJ=%s\n", file_names[7]);
-            pr_printf("  echo Using the default project name of \\\"$IMPUTE2_PROJ\\\".\n");
-            pr_printf("endif\n");
 
-            pr_printf("\n");
-            pr_printf("# Assign a resource directory...\n");
-            pr_printf("if ($#argv > 1) then\n");
-            pr_printf("  set IMPUTE2_RESDIR=$argv[2]\n");
-            pr_printf("  echo Using the user specified resource directory of \\\"$IMPUTE2_RESDIR\\\".\n");
-            pr_printf("else\n");
-            pr_printf("  set IMPUTE2_RESDIR=${IMPUTE2_PROJ}_res\n");
-            pr_printf("  echo Using the default resource directory of \\\"$IMPUTE2_RESDIR\\\".\n");
-            pr_printf("endif\n");
-
-	    // TODO: I still need to figure out how to tell what the former resource directory
-	    // for a project it so that the user doesn't use something different, or warn them if
-	    // they do.
-            pr_printf("\n");
-            pr_printf("# It is an error if the resource directory does not exist...\n");
-            pr_printf("if (! -d $IMPUTE2_RESDIR) then\n");
-            pr_printf("  echo\n");
-            pr_printf("  echo The resource directory \\\"$IMPUTE2_RESDIR\\\" does not exist.\n");
-            pr_printf("  echo\n");
-            pr_printf("  usage\n");
-            pr_printf("endif\n");
-
-            pr_printf("\n");
-            pr_printf("# Do not create a new project if it already exists...\n");
-            pr_printf("if (! -f $IMPUTE2_PROJ) then\n");
-            pr_printf("echo\n");
-            pr_printf("echo ... Creating a new project ...\n");
-            sprintf(cmd, "$_IMPUTE2 $IMPUTE2_PROJ new-project --resources $IMPUTE2_RESDIR\n");
-            sh_run("IMPUTE2", cmd);
-            fprintf_status_check_csh(_filep, "IMPUTE2", 1);
-            pr_printf("else\n");
-            pr_printf("  echo Using existing project \\\"${IMPUTE2_PROJ}\\\".\n");
-            pr_printf("endif\n");
-            
-            pr_printf("\n");
-            pr_printf("mkdir -p ${IMPUTE2_PROJ}_out\n");
-            pr_printf("if (-f ${IMPUTE2_PROJ}_out/%s.bed) then\n",file_names[7]);
-            pr_printf("  echo\n");
-            pr_printf("  echo ERROR: Attemping to move your trio of PLINK files into the \\\"${IMPUTE2_PROJ}_out\\\" IMPUTE2 project folder.\n");
-            pr_printf("  echo ERROR: The IMPUTE2 project folder \\\"${IMPUTE2_PROJ}_out\\\" already contains PLINK files of the same name.\n");
-            pr_printf("  exit\n");
-            pr_printf("endif\n");
-
-            pr_printf("\n");
-            pr_printf("cp %s.bed %s.bim %s.fam ${IMPUTE2_PROJ}_out\n", file_names[7], file_names[7], file_names[7]);
-            pr_printf("echo\n");
-            pr_printf("echo Your trio of PLINK files has been moved into the \\\"${IMPUTE2_PROJ}_out\\\" IMPUTE2 project folder.\n");
-            pr_printf("echo Do not move or alter these files for the duration of your project.\n");
-
-            pr_printf("\n");
-            pr_printf("echo\n");
-            pr_printf("echo ... Loading plink binary files ...\n");
-            sprintf(cmd, "$_IMPUTE2 $IMPUTE2_PROJ load-plink --file ${IMPUTE2_PROJ}_out/%s --phenotype %s --id $IMPUTE2_PROJ --check-reference\n",
-                    file_names[7], fam_file_phenotype_nameY);
-            sh_run("IMPUTE2", cmd);
-            fprintf_status_check_csh(_filep, "IMPUTE2", 1);
-
-            
-            if (num_traits > 2) {
-                pr_printf("\n");
-                pr_printf("echo ... Load additional pheotypes ...\n");
-                sprintf(cmd, "$_IMPUTE2 $IMPUTE2_PROJ load-pheno --file %s\n", file_names[2]);
-                sh_run("IMPUTE2", cmd);
-                fprintf_status_check_csh(_filep, "IMPUTE2", 1);
-            }
-            
-            pr_printf("\n");
-            pr_printf("echo\n");
-            pr_printf("echo ... Listing some individuals in the project/file ...\n");
-            sprintf(cmd, "$_IMPUTE2 $IMPUTE2_PROJ i-view | head\n");
-            sh_run("IMPUTE2", cmd);
-
-            // can't do this because we get the status from the 'head' that we pipe the data to...
-            //fprintf_status_check_csh(_filep, "IMPUTE2", 1);
         }
         void file_post() {
             chmod_X_file(path_);

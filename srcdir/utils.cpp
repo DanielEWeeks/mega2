@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2015 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -399,7 +399,7 @@ void            hello(FILE *fp)
 
     fprintf(fp, "==========================================================\n");
     fprintf(fp, "                          MEGA2 %s\n", Mega2Version);
-    fprintf(fp, "     Copyright (C) 1999-2015 Robert Baron, Charles P. Kollar,\n");
+    fprintf(fp, "     Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,\n");
     fprintf(fp, "     Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,\n");
     fprintf(fp, "     Daniel E. Weeks, and University of Pittsburgh\n\n");
 #ifndef HIDEFILE

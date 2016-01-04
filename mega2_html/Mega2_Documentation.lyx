@@ -205,7 +205,7 @@ status collapsed
 
 \end_inset
 
- 1997-2015 by the University of Pittsburgh 
+ 1997-2016 by the University of Pittsburgh 
 \end_layout
 
 \end_inset
@@ -1294,10 +1294,6 @@ Convert to Mega2 format files: Use the l2a.py utility to convert the three
 
 \begin_layout LyX-Code
 l2a.py -p pedin.txt -d names.txt -m map.txt -x 01 
-\end_layout
-
-\begin_layout Standard
-
 \end_layout
 
 \begin_layout Standard
@@ -15520,7 +15516,7 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-21 MLBQTL format                   42 IMPUTE2 format
+21 MLBQTL format                   
 \end_layout
 
 \begin_layout LyX-Code
@@ -15528,7 +15524,7 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-Select an option between 0-42 > 
+Select an option between 0-41 > 
 \end_layout
 
 \begin_layout LyX-Code

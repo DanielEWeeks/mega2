@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2015 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2016 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -146,7 +146,7 @@ analysis_types analysis_list[] = {
     { "Structure format",           STRUCTURE },
     { "PSEQ format",                TO_PSEQ },
     { "SHAPEIT format",             SHAPEIT},
-    { "IMPUTE2 format",             IMPUTE2}
+//  { "IMPUTE2 format",             IMPUTE2}
 };
 
 int count_analysis_list = sizeof(analysis_list) / sizeof (analysis_types);
