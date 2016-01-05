@@ -473,7 +473,7 @@ namespace genfile {
 				}
 
 				void compute_approximate_probabilities( double* p, std::size_t* index, std::size_t const n, int const number_of_bits ) {
-					double const scale = ( 0xFFFFFFFFFFFFFFFF >> ( 64 - number_of_bits ) ) ;
+                                    double const scale = (double)( 0xFFFFFFFFFFFFFFFF >> ( 64 - number_of_bits ) ) ;
 					double total_fractional_part = 0.0 ;
 					double sum = 0.0 ;
 					for( std::size_t i = 0; i < n; ++i ) {
@@ -493,7 +493,7 @@ namespace genfile {
 					// Total fractional part is therefore of the form r ± delta where r is an integer.
 					// Since scale = sum_i floor(p_i) + r, rounding up r of the p_i's yields a
 					// set of integers summing to scale.
-					std::size_t const r = std::floor( total_fractional_part + 0.5 ) ;
+					std::size_t const r = (std::size_t)std::floor( total_fractional_part + 0.5 ) ;
 					std::sort( index, index + n, CompareFractionalPart( p, n ) ) ;
 
 					for( std::size_t i = 0; i < r; ++i ) {
