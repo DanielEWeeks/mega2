@@ -219,6 +219,8 @@ elif [[ $OSTYPE == Linux ]]; then
     OSTYPE=linux
 elif [[ ${OSTYPE:0:6} == CYGWIN ]]; then
     OSTYPE=cygwin
+elif [[ ${OSTYPE:0:10} == MINGW64_NT ]]; then
+    OSTYPE=msys2
 elif [[ ${OSTYPE:0:10} == MINGW32_NT ]]; then
     OSTYPE=mingw
 elif [[ ${OSTYPE:0:7} == MSYS_NT ]]; then

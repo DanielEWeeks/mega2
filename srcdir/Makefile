@@ -53,6 +53,8 @@ ifeq ($(OSTYPE), )
 	OSTYPE = cygwin
     else ifeq "$(findstring MINGW32,$(OSTYPE))" "MINGW32"
 	OSTYPE = mingw
+    else ifeq "$(findstring MINGW64,$(OSTYPE))" "MINGW64"
+	OSTYPE = msys2
     else ifeq "$(findstring MSYS_NT,$(OSTYPE))" "MSYS_NT"
 	OSTYPE = msys2
     else

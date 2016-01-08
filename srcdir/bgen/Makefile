@@ -73,7 +73,7 @@ $(OUT): $(BOBJ)
 
 clean:
 	$(RM) $(WOBJ) $(OUT) Makefile.bak
-	$(RM) example/bgen_to_vcf
+	$(RM) example$(WINDIR)bgen_to_vcf
 
 distclean: clean
 
