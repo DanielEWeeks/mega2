@@ -414,7 +414,7 @@ reference "sub:Input-formats"
 
 \begin_layout Standard
 Mega2 then takes the input files and, via a menu-driven interface, transforms
- them into various other file formats (listed here 
+ them into various other file formats (listed in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Output-formats"
@@ -587,7 +587,7 @@ reference "sub:MEGA2run.html-and-related"
 \end_layout
 
 \begin_layout Subsection
-Graphical overview of Mega2 (a bit out of date, from 2013)
+Graphical overview of Mega2 (from 2013)
 \end_layout
 
 \begin_layout Standard
@@ -905,6 +905,10 @@ Structure format
 PSEQ format 
 \end_layout
 
+\begin_layout Enumerate
+SHAPEIT format
+\end_layout
+
 \begin_layout Standard
 \begin_inset ERT
 status collapsed
@@ -953,6 +957,10 @@ reference "sec:Installation"
 
 \begin_layout Section
 Recent improvements and changes
+\end_layout
+
+\begin_layout Subsection
+Enhancements in Mega2 version 4.8.2
 \end_layout
 
 \begin_layout Subsection
@@ -1363,7 +1371,7 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.8.1 input menu:
+              Mega2 4.8.2 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1375,43 +1383,43 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
- 1) Select input file format:                   Mega2 format with header
+ 1) Select input file format:                  Mega2 format with header
 \end_layout
 
 \begin_layout LyX-Code
- 2) Input file suffix:                          01
+ 2) Input file suffix:                         01
 \end_layout
 
 \begin_layout LyX-Code
- 3) Locus file:       (Mega2 names.) [required] _
+ 3) Locus file:       (Mega2 names.)[required] names.01
 \end_layout
 
 \begin_layout LyX-Code
- 4) Pedigree file:    (Mega2 pedin.) [required] _
+ 4) Pedigree file:    (Mega2 pedin.)[required] pedin.01
 \end_layout
 
 \begin_layout LyX-Code
- 5) Map file:         (Mega2 map.)   [required] _
+ 5) Map file:         (Mega2 map.)  [required] map.01
 \end_layout
 
 \begin_layout LyX-Code
- 6) Omit file:        (Mega2 omit.)  [optional] _
+ 6) Omit file:        (Mega2 omit.) [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 7) Frequency file:   (Mega2 freq.)  [optional] _
+ 7) Frequency file:   (Mega2 freq.) [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 8) Penetrance file:  (Mega2 pen.)   [optional] _
+ 8) Penetrance file:  (Mega2 pen.)  [optional] _
 \end_layout
 
 \begin_layout LyX-Code
- 9) Output Directory:                           [ Current directory ]
+ 9) Output Directory:                          [ Current directory ]
 \end_layout
 
 \begin_layout LyX-Code
-10) Simulate genotyping errors:                 [ no ]
+10) Simulate genotyping errors:                [ no ]
 \end_layout
 
 \begin_layout LyX-Code
@@ -1419,11 +1427,11 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-12) Maximum number of alleles per marker:       2 alleles
+12) Maximum number of alleles per marker:      2 alleles
 \end_layout
 
 \begin_layout LyX-Code
-Select from options 0-12 >
+Select from options 0-12 > 
 \end_layout
 
 \begin_layout Standard
@@ -1647,19 +1655,19 @@ target "http://doi.org/10.1186/s13029-014-0026-y"
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.8.1 should be: 
+ For example, the web site citation for version 4.8.2 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2015) Mega2 (Version 4.8.1).
+ Weeks DE (2015) Mega2 (Version 4.8.2).
  
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
-https://watson.hgen.pitt.edu
+https://watson.hgen.pitt.edu/mega2.html
 \end_layout
 
 \end_inset
@@ -1930,7 +1938,7 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.8.1 
+The latest version is 4.8.2 
 \end_layout
 
 \begin_layout Enumerate
@@ -1939,7 +1947,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.8.1_src.tar.gz
+mega2_v4.8.2_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -1950,7 +1958,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.8.1_src.tar.gz 
+gunzip mega2_v4.8.2_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -1960,7 +1968,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.8.1_src.tar 
+tar xvf mega2_v4.8.2_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -1968,7 +1976,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.8.1_src.tar.gz 
+tar xzvf mega2_v4.8.2_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -1981,7 +1989,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.8.1_src
+mega2_v4.8.2_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2161,7 +2169,7 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.8.1_src.tar.gz bundle following
+If you downloaded and unpacked the mega2_v4.8.2_src.tar.gz bundle following
  the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2169,7 +2177,7 @@ reference "sub:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.8.1_src containing the following
+), you should see a directory named mega2_v4.8.2_src containing the following
  directories (in bold) or files listed in alphabetical order:
 \end_layout
 
@@ -2698,7 +2706,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.8.1_src in above step), type the command:
+ mega2_v4.8.2_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2749,7 +2757,7 @@ name "sub:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.8.1_src.tar.gz package also includes a source code folder "srcdir"
+The mega2_v4.8.2_src.tar.gz package also includes a source code folder "srcdir"
  containing C source files, a Makefile, and several OS-specific Makedefs
  files that define compilation flags that govern locations of standard C
  libraries, and other OS-specific behavior.
@@ -2764,7 +2772,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.8.1_src folder, type 
+From within the mega2_v4.8.2_src folder, type 
 \end_layout
 
 \begin_deeper
@@ -3035,7 +3043,7 @@ The example_output_pre, example_output_post, example_output_annotated, example_o
 utput_ped, example_output_bed and example_output_preannotated directories
  contain output from Mega2 when run using the MEGA2.BATCH.pre, MEGA2.BATCH.post,
  MEGA2.BATCH.annotated, MEGA2.BATCH.ped, MEGA2.BATCH.bed and MEGA2.BATCH.preannotated
- batch files in the example/ directory.
+ batch files, respectively, in the example/ directory.
  
 \end_layout
 
@@ -3045,7 +3053,7 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.8.1_src folder contains
+The sub-folder called mega2_html/ within the mega2_v4.8.2_src folder contains
  documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
@@ -3708,7 +3716,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.8.1_src.tar.gz.
+The Mega2 distribution package is named mega2_v4.8.2_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -3719,7 +3727,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.8.1_src.tar
+mega2_v4.8.2_src.tar
 \end_layout
 
 \end_deeper
@@ -3741,7 +3749,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.8.1_src.tar.tar
+mega2_v4.8.2_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -3749,7 +3757,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.8.1_src.tar.gz
+mega2_v4.8.2_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -3757,7 +3765,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.8.1_src.tar.tar mega2_v4.8.1_src.tar.gz
+mv mega2_v4.8.2_src.tar.tar mega2_v4.8.2_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -12473,7 +12481,7 @@ When you first started up Mega2, it will present a menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.8.1 input menu:
+              Mega2 4.8.2 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -12565,7 +12573,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.8.1 input file type menu:
+Mega2 4.8.2 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -12637,7 +12645,7 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.8.1 input menu:
+              Mega2 4.8.2 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -15044,7 +15052,7 @@ name "sub:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.8.1 Maximum alleles per marker menu:
+              Mega2 4.8.2 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -15540,26 +15548,33 @@ Overview:
 \begin_inset Newline newline
 \end_inset
 
- Note that we can not provide in depth documentation for each of the programs
+Note that we can not provide in depth documentation for each of the programs
  for which Mega2 can create files; we suggest that the user read the documentati
 on of the appropriate program.
  Since many of these external programs are written by others, it is possible
  (and perhaps likely) that Mega2 will be out of sync with a newly updated
  version of one of these programs.
- If you experience this, please notify us as soon as possible.
+ If you experience this, please notify us as soon as possible following
+ the instructions in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Support-bugreports-feedback"
+
+\end_inset
+
+.
  
 \end_layout
 
 \begin_layout Standard
 The various options in the Analysis menu are listed briefly below.
- You may follow the reference to a more detailed discussion later in this
- document.
+ You may follow the link to a more detailed discussion later in this document.
  Note that in most cases, in addition to generating appropriately re-formatted
  files, Mega2 also generates a C-shell script that will automatically run
  the desired program.
  However, these C-shell scripts will only function correctly if the needed
  analysis programs (with the expected names) are in your path and installed
- properly on your workstation.
+ properly on your computer.
  
 \begin_inset Newline newline
 \end_inset
@@ -16104,7 +16119,7 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.8.1 Missing Value menu:
+              Mega2 4.8.2 Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -32556,8 +32571,8 @@ O.
 \begin_layout Standard
 The SHAPEIT program supports several different input data formats; the most
  space (and time) efficient is PLINK binary format.
- Thus Mega2 has chosen to convert its input to PLINK binary format to be
- used as input for SHAPEIT.
+ Thus Mega2 converts its input to PLINK binary format to be used as input
+ for SHAPEIT.
  Mega2 must generate a separate collection of PLINK files for each chromosome
  to satisfy SHAPEIT requirements.
  Similarly, Mega2 also uses the same unique identifier for pedigree and
@@ -32565,48 +32580,8 @@ The SHAPEIT program supports several different input data formats; the most
 \end_layout
 
 \begin_layout Standard
-The following files are created for SHAPEIT for a typical chromosome (chromosome
- 05):
-\end_layout
-
-\begin_layout LyX-Code
-  PLINK map file:             shapeit.05.bim
-\end_layout
-
-\begin_layout LyX-Code
-  PLINK pedigree file:        shapeit.05.fam
-\end_layout
-
-\begin_layout LyX-Code
-  PLINK binary file snp:      shapeit.05.bed
-\end_layout
-
-\begin_layout LyX-Code
-SHAPEIT shell file:           shapeit_phased.05.sh
-\end_layout
-
-\begin_layout LyX-Code
-SHAPEIT top shell file:       shapeit_phased.all.sh
-\end_layout
-
-\begin_layout LyX-Code
-        the above shell runs all shells
-\end_layout
-
-\begin_layout LyX-Code
-SHAPEIT shell argument file:  shapeit_phased.all.sh.args
-\end_layout
-
-\begin_layout Standard
-The file stem, 
-\series bold
-shapeit
-\series default
-, may be changed in the SHAPEIT menu if different sample cohorts are to
- be processed in the same directory and would otherwise use the same file
- name as previously used.
- The SHAPEIT menu also lets the user choose between operating SHAPEIT in
- 
+When converting to SHAPEIT format, the user early on chooses between operating
+ SHAPEIT in 
 \begin_inset Quotes eld
 \end_inset
 
@@ -32639,29 +32614,77 @@ shapeit_check.all.sh
 \begin_inset Quotes erd
 \end_inset
 
-.) 
+.) Then, later, near the end of the process, you will encounter the SHAPEIT
+ input menu.
+ If you have chosen the 
+\begin_inset Quotes eld
+\end_inset
+
+phased
+\begin_inset Quotes erd
+\end_inset
+
+ option the menu will look like this:
+\end_layout
+
+\begin_layout LyX-Code
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+             SHAPEIT input menu:
+\end_layout
+
+\begin_layout LyX-Code
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+0) Done with this menu - please proceed
+\end_layout
+
+\begin_layout LyX-Code
+ 1) Specify genetic recombination map directory?       ""
+\end_layout
+
+\begin_layout LyX-Code
+ 2) Specify genetic recombination map file name?       ""
+\end_layout
+
+\begin_layout LyX-Code
+ 3) Use default filenames?                             no 
+\end_layout
+
+\begin_layout LyX-Code
+ 4) Change filenames stem?                            "shapeit"
+\end_layout
+
+\begin_layout LyX-Code
+Enter options 0-4
 \end_layout
 
 \begin_layout Standard
-For either mode, the .all.sh script will run the shell scripts produced for
- all the chromosome being analyzed.
- The .05.sh script runs the 
+The file stem, 
 \series bold
-shapeit 
+shapeit
 \series default
-program with arguments that specify the PLINK input and SHAPEIT output.
- The script also lets you specify additional arguments that might be necessary
- for tailoring the SHAPEIT run.
- A template for additional arguments is given in shapeit_phased.all.sh.args.
- This file is included (sourced) in the .05.sh script (and those for all other
- chromosomes).
- Thus a change made in shapeit_phased.all.sh.args will affect all shell scripts.
+, may be changed in the SHAPEIT input menu using the 
+\begin_inset Quotes eld
+\end_inset
+
+Change filenames stem?
+\begin_inset Quotes erd
+\end_inset
+
+ option if desired (this may be useful when different sample cohorts are
+ to be processed in the same directory and Mega2 would otherwise use the
+ same file name as previously used).
  
 \end_layout
 
 \begin_layout Standard
-Finally, SHAPEIT in phased mode requires a genetic file with recombination
- rate for each marker.
+SHAPEIT in phased mode requires a genetic file with recombination rate for
+ each marker.
  
 \begin_inset Flex URL
 status collapsed
@@ -32675,7 +32698,7 @@ https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html#gmap
 
  describes the file format and provides pointers to a repository of data
  for build 36 and build 37.
- The SHAPEIT menu for the 
+ The SHAPEIT input menu for the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -32683,10 +32706,12 @@ phased
 \begin_inset Quotes erd
 \end_inset
 
- suboption will request a directory and a file name to these data.
+ suboption, as shown above, will request a directory and a file name to
+ these data.
  The directory may be left empty if the data are in the directory of the
  PLINK binary files.
- The file name should include a 
+ Your specification of the name of the genetic recombination map file should
+ include a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -32696,7 +32721,59 @@ phased
 
 .
  This character will be replaced with the chromosome number when a reference
- to the recombination rate data is generated in the shell for each chromosome.
+ to the recombination rate data file is generated in the shell for each
+ chromosome.
+\end_layout
+
+\begin_layout Standard
+The following files are created by Mega2 for SHAPEIT for a typical chromosome
+ (chromosome 05):
+\end_layout
+
+\begin_layout LyX-Code
+  PLINK map file:             shapeit.05.bim
+\end_layout
+
+\begin_layout LyX-Code
+  PLINK pedigree file:        shapeit.05.fam
+\end_layout
+
+\begin_layout LyX-Code
+  PLINK binary file snp:      shapeit.05.bed
+\end_layout
+
+\begin_layout LyX-Code
+SHAPEIT shell file:           shapeit_phased.05.sh
+\end_layout
+
+\begin_layout LyX-Code
+SHAPEIT top shell file:       shapeit_phased.all.sh
+\end_layout
+
+\begin_layout LyX-Code
+        the above shell runs all shells
+\end_layout
+
+\begin_layout LyX-Code
+SHAPEIT shell argument file:  shapeit_phased.all.sh.args
+\end_layout
+
+\begin_layout Standard
+For either mode, the *.all.sh script will run the shell scripts produced for
+ all the chromosome being analyzed.
+ The *.05.sh script runs the 
+\series bold
+shapeit 
+\series default
+program with arguments that specify the PLINK input and SHAPEIT output.
+ The script also lets you specify additional SHAPEIT arguments that might
+ be necessary for tailoring the SHAPEIT run by editing the shapeit_phased.all.sh.ar
+gs file.
+ This file is included (sourced) in the .05.sh script (and those for all other
+ chromosomes).
+ Thus a change made in the shapeit_phased.all.sh.args file will affect all
+ shell scripts.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -32721,7 +32798,10 @@ name "sub:Detailed-info-Impute2"
 \series bold
 This Analysis Menu option
 \series default
- creates files for 
+ creates files in IMPUTE2 format.
+ This option is not available in the current release, but hopefully will
+ be included in the next release.
+ 
 \begin_inset Newline newline
 \end_inset
 
