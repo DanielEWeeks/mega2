@@ -1731,9 +1731,10 @@ void mega2_version_check(void)
                 printf("    Latest version: %d.%d.%d\n", newver, newrev, newpatch);
                 printf("    Your   version: %d.%d.%d\n", Mega2Ver, Mega2Rev, Mega2Patch);
             } else {
-                printf("There is a new minor revision of Mega2; You might want to get it.\n");
+                printf("There is a new version Mega2 available.\n");
                 printf("    Latest version: %d.%d.%d\n", newver, newrev, newpatch);
                 printf("    Your   version: %d.%d.%d\n", Mega2Ver, Mega2Rev, Mega2Patch);
+                printf("We highly recommend upgrading to the latest version!\n");
 
                 sprintf(version_name, ".bug.%d.%d.%d", Mega2Ver, Mega2Rev, Mega2Patch);
                 mega2_version_report_check(version_name); // ... new name
