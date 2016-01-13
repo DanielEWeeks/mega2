@@ -294,7 +294,7 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
 
     sub_prog_name(_suboption, prefix);
     sprintf(file_names[4], "%s_%s.all.sh", file_name_stem, prefix);
-    sprintf(file_names[8], "%s_%s.%02d.sh", file_name_stem, prefix, numchr);
+    sprintf(file_names[8], "%s.%02d.sh", file_name_stem, numchr);
     add_sumdir(file_names[4]);
     add_sumdir(file_names[8]);
 
@@ -337,10 +337,13 @@ p Outfile_Names[10] "2015-11-17-10-44/"
     }
 
     vlpCLASS(SHAPEIT_sh_script,both,sh_exec) {
-     vlpCTOR(SHAPEIT_sh_script,both,sh_exec) { }
+     vlpCTOR(SHAPEIT_sh_script,both,sh_exec) {
+         strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
+     }
         typedef char *str;
         str *file_names_intrnl;
         dataloop::sh_exec *sh;
+        char pfx[4];
         CLASS_SHAPEIT *clss;
         
         void file_loop() {
@@ -348,7 +351,7 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             data_loop(*_opath, file_names_intrnl[8], "w");
         }
         void file_header() {
-//            asm("int $3");
+//          asm("int $3");
             if (sh) sh->sh_sh(this);
             sh_shell_type();
             sh_id();
@@ -370,13 +373,13 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             char cmd[2*FILENAME_LENGTH];
 
             pr_nl();
-            sprintf(cmd, "source %s.args", file_names_intrnl[4]);
+            sprintf(cmd, "source %s%s.args", pfx, file_names_intrnl[4]);
             sh_echo(cmd);
             pr_nl();
 
             pr_printf("echo\n");
-            sprintf(cmd, "$_SHAPEIT --input-bed %s %s %s --input-map ",
-                    file_names_intrnl[3], file_names_intrnl[1], file_names_intrnl[0]);
+            sprintf(cmd, "$_SHAPEIT --input-bed %s%s %s%s %s --input-map ",
+                    pfx, file_names_intrnl[3], pfx, file_names_intrnl[1], file_names_intrnl[0]);
 	    if (clss->rdir != "")
 		sprintf(cmd, "%s %s/", cmd, C(clss->rdir));
             sprintf(cmd, "%s%s%d%s --output-max %s.haps %s.sample %s\n",
@@ -449,10 +452,13 @@ p Outfile_Names[10] "2015-11-17-10-44/"
     }
 
     vlpCLASS(SHAPEIT_sh_script,both,sh_exec) {
-     vlpCTOR(SHAPEIT_sh_script,both,sh_exec) { }
+     vlpCTOR(SHAPEIT_sh_script,both,sh_exec) {
+         strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
+     }
         typedef char *str;
         str *file_names_intrnl;
         dataloop::sh_exec *sh;
+        char pfx[4];
         CLASS_SHAPEIT *clss;
         
         void file_loop() {
@@ -482,8 +488,8 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             char cmd[2*FILENAME_LENGTH];
 
             pr_printf("echo\n");
-            sprintf(cmd, "$_SHAPEIT -check --input-bed %s %s %s\n",
-                    file_names_intrnl[3], file_names_intrnl[1], file_names_intrnl[0]);
+            sprintf(cmd, "$_SHAPEIT -check --input-bed %s%s %s%s %s\n",
+                    pfx, file_names_intrnl[3], pfx, file_names_intrnl[1], file_names_intrnl[0]);
 
             sh_run("SHAPEIT", cmd);
             pr_nl();

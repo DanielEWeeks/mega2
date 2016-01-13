@@ -276,6 +276,7 @@ extern int count_analysis_list;
 
 extern Missing_Value missing_value;
 extern Missing_Value missing_values[];
+extern int count_missing_values;
 
 static int sort_analysis(const void *a, const void *b)
 {
@@ -366,11 +367,25 @@ int analysis_menu1(analysis_type  *analysis)
             (*analysis)->interactive_sub_prog_name_to_sub_option(analysis);
     }
 
-    for (i = 0; i < count_analysis_list; i++) {
-	if (*analysis == missing_values[i].analysis) {
-	    missing_value = missing_values[i];
-	    break;
+    const char *key = (*analysis)->_missing_value_key;
+    if (*key == 0)
+        for (i = 0; i < count_missing_values; i++) {
+            if (! strcmp((*analysis)->_name, (missing_values[i].analysis)->_name)) {
+                missing_value = missing_values[i];
+                break;
+            }
 	}
+    else
+        for (i = 0; i < count_missing_values; i++) {
+            if (! strcmp(key, (missing_values[i].analysis)->_subname)) {
+                missing_value = missing_values[i];
+                break;
+            }
+	}
+    if (i == count_missing_values) {
+        errorvf("Internal error: analysis type %s/%s was not found in missing_values table.\n",
+                (*analysis)->_name, (*analysis)->_subname);
+        EXIT(SYSTEM_ERROR);
     }
 
     AllowUnmapped = (ALLOW_NO_CHR(*analysis) ? 1 : 0);

@@ -108,5 +108,12 @@ public:
 };
 
 extern CLASS_BEAGLE             *BEAGLE;
+/**
+   These classes define the sub-options associated with the different Genotype file
+   that Beagle can produce. See the section on 'Beagle Genotype files'.
+ */
+extern CLASS_BEAGLE_UNPHASED_UNRELATED *BEAGLE_UNPHASED_UNRELATED;
+extern CLASS_BEAGLE_UNPHASED_TRIO *BEAGLE_UNPHASED_TRIO;
+extern CLASS_BEAGLE_UNPHASED_PAIR *BEAGLE_UNPHASED_PAIR;
 
 #endif

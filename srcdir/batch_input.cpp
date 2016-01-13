@@ -1116,7 +1116,7 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
     // Then Select Analysis Mode
     if (map_get(BatchItemMap, "Analysis_Option", bi)) {
         if (bi->items_read == 0) {
-            errorvf("%s option not set %s\n:", "Analysis_Option");
+            errorvf("%s option not set\n", "Analysis_Option");
             err++;
         } else {
             sscanf(bi->value_str.c_str(), "%s", analysis_name);

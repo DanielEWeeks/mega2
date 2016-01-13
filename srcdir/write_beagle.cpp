@@ -50,14 +50,6 @@
 
 #include "write_beagle_ext.h"
 
-/**
-   These classes define the sub-options associated with the different Genotype file
-   that Beagle can produce. See the section on 'Beagle Genotype files'.
- */
-CLASS_BEAGLE_UNPHASED_UNRELATED *BEAGLE_UNPHASED_UNRELATED = new CLASS_BEAGLE_UNPHASED_UNRELATED();
-CLASS_BEAGLE_UNPHASED_TRIO *BEAGLE_UNPHASED_TRIO = new CLASS_BEAGLE_UNPHASED_TRIO();
-CLASS_BEAGLE_UNPHASED_PAIR *BEAGLE_UNPHASED_PAIR = new CLASS_BEAGLE_UNPHASED_PAIR();
-
 //
 // The emtry.cpp code uses 0 for missing in pr_pheno(), pr_father(), pr_mother()...
 #define MISSING_ID_CODE                    "0"

@@ -278,6 +278,14 @@ Missing_Value  missing_values[] = {
       /*affect*/      "NA", Missing_Value::Any, Missing_Value::Varies,
       /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
 
+    { "SHAPEIT format",              SHAPEIT,
+      /*
+       *
+       */
+      /*quant*/       "-9", Missing_Value::Num, Missing_Value::Varies,
+      /*affect*/      "-9", Missing_Value::Num, Missing_Value::Varies,
+      /*allele*/      "0", Missing_Value::Num, Missing_Value::Fixed },
+
     { "SIMULATE format",            TO_SIMULATE,
       /*
        * If the first locus is an affection status locus, it is carried through unchanged; 
@@ -289,6 +297,16 @@ Missing_Value  missing_values[] = {
       /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
 
     { "SimWalk2 format",            TO_SIMWALK2,
+      /*
+       * Missing values for any field are represented by blanks
+       */
+      /*quant*/       " ", Missing_Value::Any, Missing_Value::Fixed,
+      /*affect*/      " ", Missing_Value::Any, Missing_Value::Fixed,
+      /*allele*/      " ", Missing_Value::Any, Missing_Value::Fixed },
+
+//  pretend  sub analysis HAPLOTYPE is different from simwalk2 defaults
+//  see class_old for HAPLOTYPE (defines _missing_value_key).
+    { "Haplotype format",            HAPLOTYPE,
       /*
        * Missing values for any field are represented by blanks
        */
@@ -388,5 +406,7 @@ Missing_Value  missing_values[] = {
       /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
 
 };
+
+int count_missing_values = sizeof (missing_values) / sizeof (Missing_Value);
 
 #endif

@@ -40,6 +40,7 @@ class CLASS_ANALYSIS {
 public:
     const char  *_name;
     const char  *_subname;
+    const char  *_missing_value_key;
     int          _suboption;
     char file_name_stem[100];
 
@@ -54,6 +55,7 @@ public:
 
         _name      = "";
         _subname   = "";
+        _missing_value_key = "";
         _suboption = -1;
 
         infl_type  = LINKAGE;

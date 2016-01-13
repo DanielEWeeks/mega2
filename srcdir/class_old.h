@@ -346,6 +346,7 @@ class CLASS_HAPLOTYPE: public CLASS_SIMWALK2 {
 public:
     CLASS_HAPLOTYPE() : CLASS_SIMWALK2() {
         _subname = "Haplotype analysis";
+        _missing_value_key = "Haplotype analysis";
       _suboption = 1;
     }
    ~CLASS_HAPLOTYPE() {}
