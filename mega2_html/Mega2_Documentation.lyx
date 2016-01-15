@@ -965,7 +965,7 @@ Enhancements in Mega2 version 4.8.2
 
 \begin_layout Itemize
 Mega2 now supports preparing input for SHAPEIT analysis (in phased and checked
- modes.)
+ modes).
 \end_layout
 
 \begin_layout Itemize
@@ -973,12 +973,13 @@ Mega2 was upgraded to support the latest IMPUTE2 BGEN format (version v1.2).
 \end_layout
 
 \begin_layout Itemize
-Mega2 documentation chapters 13 and 25 have been merged which makes for
- better comprehension.
+Detailed information about the analysis options has been consolidated into
+ Chapter 25 of the Mega2 documentation; previously it was scattered between
+ Chapter 25 and the section about the Analysis Menu.
 \end_layout
 
 \begin_layout Itemize
-The analysis menu can now appear in legacy format or can be sorted.
+The Analysis menu now can be sorted if desired.
 \end_layout
 
 \begin_layout Itemize
@@ -995,7 +996,7 @@ mingw64_shell.bat
 \end_layout
 
 \begin_layout Itemize
-Bug: When using native Microsoft Binaries, the documentation now suggests
+Bug: When using native Microsoft binaries, the documentation now suggests
  downloading the appropriate Microsoft Visual C++ Redistributable.
 \end_layout
 
@@ -32877,9 +32878,9 @@ phased
 \end_inset
 
 .
- This character will be replaced with the chromosome number when a reference
- to the recombination rate data file is generated in the shell for each
- chromosome.
+ This question mark character will be replaced with the chromosome number
+ when a reference to the recombination rate data file is generated in the
+ shell file for each chromosome.
 \end_layout
 
 \begin_layout Standard
