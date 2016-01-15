@@ -963,6 +963,42 @@ Recent improvements and changes
 Enhancements in Mega2 version 4.8.2
 \end_layout
 
+\begin_layout Itemize
+Mega2 now supports preparing input for SHAPEIT analysis (in phased and checked
+ modes.)
+\end_layout
+
+\begin_layout Itemize
+Mega2 was upgraded to support the latest IMPUTE2 BGEN format (version v1.2).
+\end_layout
+
+\begin_layout Itemize
+Mega2 documentation chapters 13 and 25 have been merged which makes for
+ better comprehension.
+\end_layout
+
+\begin_layout Itemize
+The analysis menu can now appear in legacy format or can be sorted.
+\end_layout
+
+\begin_layout Itemize
+Bug: Missing_Value defaults were incorrectly set for Beagle, Simwalk and
+ Summary analysis.
+\end_layout
+
+\begin_layout Itemize
+Bug: Msys2 has been enhanced to allow compilation under the 
+\series bold
+mingw64_shell.bat
+\series default
+ environment.
+\end_layout
+
+\begin_layout Itemize
+Bug: When using native Microsoft Binaries, the documentation now suggests
+ downloading the appropriate Microsoft Visual C++ Redistributable.
+\end_layout
+
 \begin_layout Subsection
 Enhancements in Mega2 version 4.8.1
 \end_layout
@@ -2676,13 +2712,145 @@ mega2_bin
  Typically, the Mega2 binary references dynamic load libraries (.dll's or
  .so's) for a particular platform/version and will not necessarily work on
  other versions of the platform.
- There are separate native binaries for Microsoft Windows 7, Microsoft Windows
- 8, and Microsoft Windows 10.
- Also, the binaries for MinGW are labeled according to whether they were
- built on Windows 7, Windows 8, or Windows 10.
- (MinGW needs two .dll's if you wish to install just Mega2 without the whole
+ 
+\end_layout
+
+\begin_layout Standard
+There are separate native binaries for Microsoft Windows 7 and Microsoft
+ Windows 10.
+ Also, the binaries for MinGW were built on Windows 7 while those for Msys2
+ were build on Windows 10.
+ MinGW needs two .dll's if you wish to install just Mega2 without the whole
  MinGW.
- They are included and depend on Windows Version.)
+ They are included and depend on Windows Version.
+ The Msys2 version of Mega2 does not need any additional libraries.
+ Finally, if you run Mega2 at the 
+\begin_inset Quotes eld
+\end_inset
+
+dos
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+cmd
+\begin_inset Quotes erd
+\end_inset
+
+ shell and get a warning that MSVCP100.dll or MSVCP140.dll can not be found,
+ you must download the Microsoft Visual C++ Redistributable.
+ You should do a Google search for:
+\end_layout
+
+\begin_layout Quotation
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+dll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+platform
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+search
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MSVCP100.dll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+windows7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Microsoft Visual C++ 2010 Redistributable
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MSVCP140.dll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+windows10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Microsoft Visual C++ 2015 Redistributable
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You will need the x86 (32 bit) or the x64 (64 bit) version of the download
+ depending on your machine.
+ It does not hurt to try to download the wrong one, because it will not
+ install.
 \end_layout
 
 \begin_layout Standard
@@ -16027,17 +16195,6 @@ Convert to SHAPEIT format (Section
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:shapeit"
-
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Enumerate
-Convert to IMPUTE2 format (Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "ext:impute2"
 
 \end_inset
 
@@ -32580,8 +32737,8 @@ The SHAPEIT program supports several different input data formats; the most
 \end_layout
 
 \begin_layout Standard
-When converting to SHAPEIT format, the user early on chooses between operating
- SHAPEIT in 
+When converting to SHAPEIT format, the user early on chooses a subanalysis
+ between operating SHAPEIT in 
 \begin_inset Quotes eld
 \end_inset
 
@@ -32602,7 +32759,7 @@ check
 \begin_inset Quotes eld
 \end_inset
 
-shapeit_check.05.sh
+shapeit.05.sh
 \begin_inset Quotes erd
 \end_inset
 
@@ -32614,8 +32771,8 @@ shapeit_check.all.sh
 \begin_inset Quotes erd
 \end_inset
 
-.) Then, later, near the end of the process, you will encounter the SHAPEIT
- input menu.
+.) Then, later, near the end of the interactive menus process, you will encounter
+ the SHAPEIT input menu.
  If you have chosen the 
 \begin_inset Quotes eld
 \end_inset
@@ -32624,7 +32781,7 @@ phased
 \begin_inset Quotes erd
 \end_inset
 
- option the menu will look like this:
+ subanalysis, the menu will look like this:
 \end_layout
 
 \begin_layout LyX-Code
@@ -32743,7 +32900,7 @@ The following files are created by Mega2 for SHAPEIT for a typical chromosome
 \end_layout
 
 \begin_layout LyX-Code
-SHAPEIT shell file:           shapeit_phased.05.sh
+SHAPEIT shell file:           shapeit.05.sh
 \end_layout
 
 \begin_layout LyX-Code
@@ -32776,79 +32933,20 @@ gs file.
  
 \end_layout
 
-\begin_layout Subsection
-\begin_inset CommandInset label
-LatexCommand label
-name "ext:impute2"
-
-\end_inset
-
-Convert to IMPUTE2 format 
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Detailed-info-Impute2"
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Standard
-
+NOTE: The file name, 
 \series bold
-This Analysis Menu option
+shapeit.05.sh
 \series default
- creates files in IMPUTE2 format.
- This option is not available in the current release, but hopefully will
- be included in the next release.
- 
-\begin_inset Newline newline
-\end_inset
-
-
+, above should really be 
 \series bold
-Name
+shapeit_phased.05.sh
 \series default
-: 
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-Web
-\series default
-: 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
- 
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-Primary reference
-\series default
-(s): 
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-Documentation
-\series default
- 
-\series bold
-reference
-\series default
-(s): 
+.
+ (This change would be necessary for every other chromosome, too.) Currently,
+ the shell file from the check option will overwrite that for the phased
+ option (or vice versa) if both are used in the same directory.
+ This will be fixed in the next release.
 \end_layout
 
 \begin_layout Section
@@ -33799,7 +33897,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="23" columns="4">
+<lyxtabular version="3" rows="24" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="right" valignment="top">
@@ -33846,6 +33944,44 @@ Release date
 
 \series bold
 Valid until
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.8.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+January 15, 2016
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 2016
 \end_layout
 
 \end_inset
@@ -34692,6 +34828,77 @@ March 31, 2008
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Changes from Version 4.8.1 to Version 4.8.2 (Released January 15, 2016)
+\end_layout
+
+\begin_layout Itemize
+Mega2 now supports preparing input for SHAPEIT analysis (in phased and checked
+ modes.)
+\end_layout
+
+\begin_layout Itemize
+Mega2 was upgraded to support the latest IMPUTE2 BGEN format (version v1.2).
+\end_layout
+
+\begin_layout Itemize
+Mega2 documentation chapters 13 and 25 have been merged which makes for
+ better comprehension.
+\end_layout
+
+\begin_layout Itemize
+The analysis menu can now appear in legacy format or can be sorted.
+\end_layout
+
+\begin_layout Itemize
+Bug: Missing_Value defaults were incorrectly set for Beagle, Simwalk and
+ Summary analysis.
+\end_layout
+
+\begin_layout Itemize
+Bug: Msys2 has been enhanced to allow compilation under the 
+\series bold
+mingw64_shell.bat
+\series default
+ environment.
+\end_layout
+
+\begin_layout Itemize
+Bug: When using native Microsoft Binaries, the documentation now suggests
+ downloading the appropriate Microsoft Visual C++ Redistributable.
+\end_layout
+
+\begin_layout Itemize
+Internals: Hide fileloop and dataloop class setup with macros and provide
+ non virtual inheritance usage types for these loops.
+\end_layout
+
+\begin_layout Itemize
+Internals: Add support for char* types in addition to strings for Vectors
+ and Maps.
+ Add support for unordered maps in addition to traditional maps.
+\end_layout
+
+\begin_layout Itemize
+Internals: The 
+\begin_inset Quotes eld
+\end_inset
+
+name
+\begin_inset Quotes erd
+\end_inset
+
+ member was renamed to TraitName, LocusName, AlleleName, ...
+ as appropriate.
+ Some cryptic variables (as _tte, _tle, _tp, _tpe ...) have been more appropriately
+ named.
+\end_layout
+
+\begin_layout Itemize
+Internals: The token, file_name, was a function and an array and a parameter.
+ Now each use has a different name.
 \end_layout
 
 \begin_layout Subsection
