@@ -404,6 +404,7 @@ int analysis_menu1(analysis_type  *analysis)
 	    // Write out the Mega2BatchItem given. The value written will be the '.value.option'...
             batchf(Analysis_Sub_Option);
             grow(ProgName, "-%s", sub_prog);
+            mssgvf("Analysis sub-option: %s.\n", sub_prog);
         }
     } else {
         if ((*analysis)->is_sub_option() || (*analysis)->has_sub_options()) {
@@ -414,6 +415,7 @@ int analysis_menu1(analysis_type  *analysis)
             mssgvf("Analysis sub-option: %s.\n", sub_prog);
         }
     }
+    mssgvf("Analysis format: %s.\n", ProgName);
 
     return 1;
 }   /* end of analysis_menu */

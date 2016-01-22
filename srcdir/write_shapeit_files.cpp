@@ -133,15 +133,16 @@ void CLASS_SHAPEIT::save_pedsix_file(linkage_ped_top *Top,
 void CLASS_SHAPEIT::user_queries(char **file_names_array,
                                  int *combine_chromo, int *create_summary)
 {
-    int i, choice = -1, istem = -1, idef = -1;
+    int i, choice = -1, istem = -1; //, idef = -1;
     int idir = -1, ifile = -1;
     char selection[100], *sp = selection;
 
+    int Outfile_Names = 0;
     *combine_chromo = 0;
 
     print_outfile_mssg();
     while (choice != 0) {
-        printf("             SHAPEIT input menu:\n");
+        printf("\n    SHAPEIT parameters menu:\n");
         draw_line();
         printf("0) Done with this menu - please proceed\n");
         i=1;
@@ -157,11 +158,12 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
                    i, BatchItemGet("Shapeit_recomb_rfile")->value.name);
             ifile=i++;
         }
+/*
 	printf(" %d) Use default filenames?                             %s\n",
 	       i, yorn[DEFAULT_OUTFILES]);
 	idef=i++;
 
-        if (! DEFAULT_OUTFILES) {
+        if (! DEFAULT_OUTFILES)*/ {
             printf(" %d) Change filenames stem?                            \"%s\"\n",
                    i, this->file_name_stem);
         istem=i++;
@@ -209,20 +211,29 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
                 break;
             }
 
+/*
         } else if (choice == idef) {
-	    printf("Please type \"yes\" or \"no\" > ");
+            printf("Please type \"yes\" or \"no\" > ");
             fcmap(stdin, "%s", selection);    newline;
-	    BatchValueSet(selection[0], "Default_Outfile_Names");
-
+            BatchValueSet(selection[0], "Default_Outfile_Names");
+*/
         } else if (choice == istem) {
             char *fn = this->file_name_stem;
             printf("Enter new stem for the output file names > ");
             fcmap(stdin, "%s", this->file_name_stem);    newline;
             BatchValueSet(fn, "Shapeit_file_stem");
+            Outfile_Names++;
+            selection[0] = 'n';
+            BatchValueSet(selection[0], "Default_Outfile_Names");
 
         } else {
             printf("Unknown option %d\n", choice);
         }
+    }
+
+    if (Outfile_Names == 0) {
+        selection[0] = 'y';
+        BatchValueSet(selection[0], "Default_Outfile_Names");
     }
 }
 
@@ -293,8 +304,8 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
     char prefix[100];
 
     sub_prog_name(_suboption, prefix);
-    sprintf(file_names[4], "%s_%s.all.sh", file_name_stem, prefix);
-    sprintf(file_names[8], "%s.%02d.sh", file_name_stem, numchr);
+    sprintf(file_names[4], "%s_%s.sh", file_name_stem, prefix);
+    sprintf(file_names[8], "%s_%s.%02d.sh", file_name_stem, prefix, numchr);
     add_sumdir(file_names[4]);
     add_sumdir(file_names[8]);
 
@@ -540,11 +551,11 @@ void CLASS_SHAPEIT::interactive_sub_prog_name_to_sub_option(analysis_type *analy
     } else {
         while (selected != 0) {
             draw_line();
-            printf("Selection Menu: Shapeit shell file options\n");
+            printf("Shapeit mode selection Menu:\n");
             printf("0) Done with this menu - please proceed\n");
-            printf("%c1) generate Shapeit phased shell files\n",
+            printf("%c1) generate Shapeit phased mode shell file\n",
                    selection == 1 ? '*' : ' ');
-            printf("%c2) generate Shapeit check shell files\n",
+            printf("%c2) generate Shapeit check mode shell file\n",
                    selection == 2 ? '*' : ' ');
             printf("Enter selection: 0 - 2 > ");
             fcmap(stdin,"%s", select); newline;
