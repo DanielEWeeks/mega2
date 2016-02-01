@@ -489,7 +489,7 @@ void get_trait_list(linkage_locus_top *LocusTop, const int check_traits_combine)
         mssgf(err_msg);
         display_trait_names(num_affec, affec, LocusTop,
                             16, NULL, 0, LocusTop->PhenoCnt+1);
-        newline;
+        msgvf("\n");
     }
 
     if (num_quant > 0) {
@@ -498,6 +498,7 @@ void get_trait_list(linkage_locus_top *LocusTop, const int check_traits_combine)
         mssgf(err_msg);
         display_trait_names(num_quant, quant, LocusTop,
                             16, NULL, 0, LocusTop->PhenoCnt+1);
+        msgvf("\n");
     }
 
     /*  log_line(mssgf); */
@@ -562,7 +563,6 @@ static void display_trait_names(int num_tr, int *trs,
             }
         }
     }
-    msgvf("\n");
     return;
 }
 
@@ -2747,7 +2747,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
             display_trait_names(num_trait_select, traits,
                                 LTop->LocusTop, 0, global_trait_entries,
                                 base, num_traits+1);
-            printf("]\n");
+            msgvf("]\n");
 
             if (allow_covariates(analysis) && num_traits > 1) {
                 item++;
@@ -2755,7 +2755,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
                 display_trait_names(num_covariates, covariates,
                                     LTop->LocusTop, 0, global_trait_entries,
                                     cbase, num_traits+1);
-                printf("]\n");
+                msgvf("\n");
             }
 
             printf("Enter option 0 - %d > ", item);
@@ -3130,7 +3130,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
 
     display_trait_names(num_trait_select, traits, LTop->LocusTop,
                         16, NULL, 0, marker_item);
-    newline;
+    msgvf("\n");
 
     if ((analysis == TO_SAGE && num_trait_select > 1)
        && (LoopOverTrait == 0)) {
@@ -3146,7 +3146,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
         mssgf("Output will include the following covariates:");
         display_trait_names(num_covariates, covariates, LTop->LocusTop,
                             16, NULL, 0, marker_item);
-        newline;
+        msgvf("\n");
         /* Change the class of covariates to COVARIATES */
 
         for (i=0; i < num_covariates; i++) {

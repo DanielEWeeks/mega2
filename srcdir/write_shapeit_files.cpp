@@ -136,13 +136,19 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
     int i, choice = -1, istem = -1; //, idef = -1;
     int idir = -1, ifile = -1;
     char selection[100], *sp = selection;
+    char shapeitopt[16];
 
     int Outfile_Names = 0;
     *combine_chromo = 0;
 
+    sub_prog_name(_suboption, shapeitopt);
+
     print_outfile_mssg();
     while (choice != 0) {
-        printf("\n    SHAPEIT parameters menu:\n");
+        printf("  SHAPEIT %s parameters menu:\n", shapeitopt);
+        printf("    The recombination map directory defaults to the current directory.\n");
+        printf("    The recombination map file name should contain a ? character which\n");
+        printf("      will be replaced with a chomomosome number.\n");
         draw_line();
         printf("0) Done with this menu - please proceed\n");
         i=1;
@@ -150,11 +156,11 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
         batch_in();
 
         if (_suboption == 1) {
-            printf(" %d) Specify genetic recombination map directory?       \"%s\"\n",
-                   i, C(rdir));
+            printf(" %d) Genetic recombination map directory:       \"%s\"\n",
+                   i, (rdir == "" )? "." : C(rdir));
             idir=i++;
 
-            printf(" %d) Specify genetic recombination map file name?       \"%s\"\n",
+            printf(" %d) Genetic recombination map file name:       \"%s\"\n",
                    i, BatchItemGet("Shapeit_recomb_rfile")->value.name);
             ifile=i++;
         }
@@ -164,7 +170,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
 	idef=i++;
 
         if (! DEFAULT_OUTFILES)*/ {
-            printf(" %d) Change filenames stem?                            \"%s\"\n",
+            printf(" %d) Filenames stem:                            \"%s\"\n",
                    i, this->file_name_stem);
         istem=i++;
         }
@@ -553,9 +559,9 @@ void CLASS_SHAPEIT::interactive_sub_prog_name_to_sub_option(analysis_type *analy
             draw_line();
             printf("Shapeit mode selection Menu:\n");
             printf("0) Done with this menu - please proceed\n");
-            printf("%c1) generate Shapeit phased mode shell file\n",
+            printf("%c1) Shapeit phased mode\n",
                    selection == 1 ? '*' : ' ');
-            printf("%c2) generate Shapeit check mode shell file\n",
+            printf("%c2) Shapeit check mode\n",
                    selection == 2 ? '*' : ' ');
             printf("Enter selection: 0 - 2 > ");
             fcmap(stdin,"%s", select); newline;

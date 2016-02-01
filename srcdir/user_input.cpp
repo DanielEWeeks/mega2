@@ -391,8 +391,9 @@ int analysis_menu1(analysis_type  *analysis)
     AllowUnmapped = (ALLOW_NO_CHR(*analysis) ? 1 : 0);
 
     (*analysis)->prog_name(ProgName);
-    mssgvf("Analysis option: %s.\n", ProgName);
+    mssgvf("Analysis Class: %s.\n", ProgName);
 
+    int subo = 0;
     if (InputMode == INTERACTIVE_INPUTMODE) {
         // Write the Analysis_Option, and Analysis_Sub_Option to the batch file ...
         strcpy(Mega2BatchItems[/* 5 */ Analysis_Option].value.name, ProgName);
@@ -404,7 +405,8 @@ int analysis_menu1(analysis_type  *analysis)
 	    // Write out the Mega2BatchItem given. The value written will be the '.value.option'...
             batchf(Analysis_Sub_Option);
             grow(ProgName, "-%s", sub_prog);
-            mssgvf("Analysis sub-option: %s.\n", sub_prog);
+            mssgvf("Sub-option: %s.\n", sub_prog);
+            subo++;
         }
     } else {
         if ((*analysis)->is_sub_option() || (*analysis)->has_sub_options()) {
@@ -412,10 +414,11 @@ int analysis_menu1(analysis_type  *analysis)
             (*analysis)->sub_prog_name((*analysis)->_suboption, &(sub_prog[0]));
 
             grow(ProgName, "-%s", sub_prog);
-            mssgvf("Analysis sub-option: %s.\n", sub_prog);
+            mssgvf("Sub-option: %s.\n", sub_prog);
+            subo++;
         }
     }
-    mssgvf("Analysis format: %s.\n", ProgName);
+    if (subo) mssgvf("Analysis: %s.\n", ProgName);
 
     return 1;
 }   /* end of analysis_menu */
