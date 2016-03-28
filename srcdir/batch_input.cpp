@@ -355,6 +355,8 @@ void batchfile_init_Mega2BatchItems(void)
                 warnvf("parameter %s\n\treplacing default value (\"%s\") with value from environment (\"%s\")\n",
                        C(bi->keyword), C(deflt), xp);
                 deflt = string(xp);
+//              bi->items_read  = 1;
+//              batchf(bi);
             }
         }
         switch(type) {

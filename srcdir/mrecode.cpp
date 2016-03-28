@@ -938,8 +938,9 @@ void recode_locus_top(marker_type *marker_list, pheno_type *pheno_list, linkage_
             LTop->Locus[m].Allele = 	CALLOC((size_t) 2, linkage_allele_rec);
 
             LTop->Locus[m].Allele[0].Frequency = pheno_list[m].first_allele->allele_freq.freq;
+            LTop->Locus[m].Allele[0].index = 1;
             LTop->Locus[m].Allele[1].Frequency = pheno_list[m].first_allele->next->allele_freq.freq;
-
+            LTop->Locus[m].Allele[1].index = 2;
 //          LTop->Pheno[m].Props.Affection.ClassCnt = marker_list[m].num_classes;
 
             recode_liability_class(pheno_list, LTop, m);
@@ -952,8 +953,10 @@ void recode_locus_top(marker_type *marker_list, pheno_type *pheno_list, linkage_
             LTop->Locus[m].Allele = CALLOC((size_t) 2, linkage_allele_rec);
             LTop->Locus[m].Allele[0].Frequency =
                 pheno_list[m].first_allele->allele_freq.freq;
+            LTop->Locus[m].Allele[0].index = 1;
             LTop->Locus[m].Allele[1].Frequency =
                 pheno_list[m].first_allele->next->allele_freq.freq;
+            LTop->Locus[m].Allele[1].index = 2;
 
             LTop->Pheno[m].Props.Quant.ClassCnt=1;
             LTop->Pheno[m].Props.Quant.Mean = CALLOC((size_t) 1, double *);
@@ -1406,6 +1409,8 @@ linkage_locus_top *read_common_marker_data(int all_loci, int num_markers, char *
                 Pheno->Props.Affection.ClassCnt = 1;
                 Locus->AlleleCnt = 2;
                 Locus->Allele = CALLOC((size_t) 2, linkage_allele_rec);
+                Locus->Allele[0].index = 1;
+                Locus->Allele[1].index = 2;
                 Pheno->Props.Affection.Class = CALLOC((size_t) 1, linkage_affection_class);
                 Pheno->Props.Affection.PenCnt = 3;
                 clear_laffclass(&(Pheno->Props.Affection.Class[0]));
@@ -1560,7 +1565,9 @@ linkage_ped_top *count_allele_freq(linkage_ped_top *Top,
 
     if (LocType == AFFECTION || LocType == QUANT) {
         marker_listi->first_allele = CALLOC((size_t) 1, allele_list_type);
+        marker_listi->first_allele->allele_freq.index = 1;
         marker_listi->first_allele->next = CALLOC((size_t) 1, allele_list_type);
+        marker_listi->first_allele->next->allele_freq.index = 2;
         marker_listi->first_allele->next->next = NULL;
     } else if ((LocType == NUMBERED) || (LocType == XLINKED) || (LocType == YLINKED)) {
 
@@ -2362,8 +2369,10 @@ linkage_ped_top  *create_full_marker_data(
             pheno_listi->estimate_frequencies = 1;
             pheno_listi->first_allele = CALLOC((size_t) 1, allele_list_type);
             pheno_listi->first_allele->allele_freq.freq = 0.5;
+            pheno_listi->first_allele->allele_freq.index = 1;
             pheno_listi->first_allele->next = CALLOC((size_t) 1, allele_list_type);
             pheno_listi->first_allele->next->allele_freq.freq = 0.5;
+            pheno_listi->first_allele->next->allele_freq.index = 2;
             pheno_listi->first_allele->next->next = NULL;
             if (LTop->Locus[i].Type == QUANT) {
                 pheno_listi->num_classes = 1;

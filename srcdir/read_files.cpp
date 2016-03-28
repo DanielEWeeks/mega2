@@ -1593,6 +1593,7 @@ static linkage_locus_top *read_linkage_locus_file(FILE *filep, int linkagecols, 
         for (allele = 0; allele < Locus->AlleleCnt; allele++) {
             clear_lallelerec(&(Locus->Allele[allele]));
             lch = fcmap(filep, "%g", &(Locus->Allele[allele].Frequency));
+            Locus->Allele[allele].index = allele + 1;
             /*        if (Locus->Allele[allele].Frequency > 1.0) { */
             /*  	errorf */
         }

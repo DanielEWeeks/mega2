@@ -645,6 +645,7 @@ void  copy_linkage_locus_rec(linkage_locus_rec *from,
     case NUMBERED:
         for (j = 0; j < from->AlleleCnt; j++)  {
             to->Allele[j].Frequency = from->Allele[j].Frequency;
+            to->Allele[j].index = from->Allele[j].index;
         }
         to->Marker->pos_avg = from->Marker->pos_avg;
         to->Marker->pos_male = from->Marker->pos_male;
@@ -656,6 +657,7 @@ void  copy_linkage_locus_rec(linkage_locus_rec *from,
     case QUANT:
         for (j = 0; j < from->AlleleCnt; j++)  {
             to->Allele[j].Frequency = from->Allele[j].Frequency;
+            to->Allele[j].index = from->Allele[j].index;
         }
         break;
     default:
