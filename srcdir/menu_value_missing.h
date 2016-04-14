@@ -405,6 +405,17 @@ Missing_Value  missing_values[] = {
       /*affect*/      "", Missing_Value::Numeric, Missing_Value::Change,
       /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
 
+    { "New Merlin", NEWMERLIN,
+            /*
+             *
+             */
+            /*quant*/       "", Missing_Value::Numeric, Missing_Value::Change,
+            /*affect*/      "", Missing_Value::Numeric, Missing_Value::Change,
+            /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
+
+
+
+
 };
 
 int count_missing_values = sizeof (missing_values) / sizeof (Missing_Value);

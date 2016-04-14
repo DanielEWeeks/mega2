@@ -44,6 +44,7 @@
 #include "write_pseq_ext.h"
 #include "write_shapeit_ext.h"
 #include "write_impute2_ext.h"
+#include "write_merlin_ext.h"
 
 CLASS_HAPLOTYPE          *HAPLOTYPE = new CLASS_HAPLOTYPE();
 CLASS_LOCATION           *LOCATION = new CLASS_LOCATION();
@@ -96,6 +97,8 @@ CLASS_SUMMARY            *TO_SUMMARY  = new CLASS_SUMMARY();
 CLASS_PANGAEA            *PANGAEA = new CLASS_PANGAEA();
 
 CLASS_BEAGLE             *BEAGLE = new CLASS_BEAGLE();
+
+
 /**
    These classes define the sub-options associated with the different Genotype file
    that Beagle can produce. See the section on 'Beagle Genotype files'.
@@ -110,6 +113,9 @@ CLASS_PSEQ               *TO_PSEQ = new CLASS_PSEQ();
 
 CLASS_SHAPEIT            *SHAPEIT = new CLASS_SHAPEIT();
 CLASS_IMPUTE2            *IMPUTE2 = new CLASS_IMPUTE2();
+
+//test for adding in new class...
+CLASS_NEWMERLIN          *NEWMERLIN = new CLASS_NEWMERLIN();
 
 
 analysis_types analysis_list[] = {
@@ -155,6 +161,7 @@ analysis_types analysis_list[] = {
     { "PSEQ format",                TO_PSEQ },
     { "SHAPEIT format",             SHAPEIT},
 //  { "IMPUTE2 format",             IMPUTE2}
+    { "New Merlin",                 NEWMERLIN},
 };
 
 int count_analysis_list = sizeof(analysis_list) / sizeof (analysis_types);
@@ -306,8 +313,21 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
         break;
 
     case 'n':
-        *analysis = TO_NUKE; // 8. Nuclear families 
-        break;
+        //temporary switch while merlin is named "NEWMERLIN" move to M and replace merlin eventually
+        switch(tolower((unsigned char)prog_name[strlen(prog_name) - 1])) {
+
+            case 'u':
+                *analysis = TO_NUKE; // 8. Nuclear families
+                break;
+
+            case 'e':
+                *analysis = NEWMERLIN;
+                break;
+        }
+            break;
+
+            //*analysis = TO_NUKE; // 8. Nuclear families
+        //break;
 
     case 'h':  // hX
         /* homogeneity, hardy-weinberg */

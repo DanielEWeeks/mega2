@@ -102,7 +102,8 @@ SRCS =  input_check.cpp     select_index.cpp \
 	write_eigenstrat.cpp write_structure.cpp batch.cpp \
 	write_fbat.cpp      write_pseq_files.cpp menu_value_missing.cpp \
 	read_impute.cpp	    read_impute_bgen.cpp read_impute_bgen2.cpp \
-	write_shapeit_files.cpp                  write_impute2_files.cpp
+	write_shapeit_files.cpp                  write_impute2_files.cpp \
+	write_merlin.cpp
 
 OBJS =  $(SRCS:.cpp=.o)
 
@@ -735,7 +736,7 @@ analysis.o: input_check.h hwe.h compress_ext.h utils_ext.h analysis.h
 analysis.o: class_old.h write_plink_ext.h plink_core_ext.h write_fbat_ext.h
 analysis.o: write_eigenstrat_ext.h write_pangaea_ext.h write_beagle_ext.h
 analysis.o: write_structure_ext.h write_pseq_ext.h write_shapeit_ext.h
-analysis.o: write_impute2_ext.h menu_value_missing.h
+analysis.o: write_impute2_ext.h write_merlin_ext.h menu_value_missing.h
 class_old.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 class_old.o: linkage_external.h makeped.h pedtree.h batch_input.h
 class_old.o: input_check.h hwe.h compress_ext.h analysis.h utils_ext.h
@@ -869,3 +870,11 @@ write_impute2_files.o: fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_impute2_files.o: user_input_ext.h input_ops.hh str_utils.hh
 write_impute2_files.o: plink_core_ext.h analysis.h write_plink_ext.h
 write_impute2_files.o: write_impute2_ext.h
+write_merlin.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+write_merlin.o: linkage_external.h makeped.h pedtree.h batch_input.h
+write_merlin.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h zlib.h
+write_merlin.o: zconf.h error_messages_ext.h utils_ext.h entry.h
+write_merlin.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
+write_merlin.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
+write_merlin.o: user_input_ext.h input_ops.hh str_utils.hh write_merlin_ext.h
+write_merlin.o: analysis.h
