@@ -70,8 +70,8 @@ static void save_MERLIN_peds(linkage_ped_top *Top, char *file_names[],
                              const bool has_x)
 {
 
-    vlpCLASS(merlin_ped, once, ped_per_trait) {
-        vlpCTOR(merlin_ped, once, ped_per_trait) { }
+    vlpCLASS(merlin_ped, both, ped_per) {
+        vlpCTOR(merlin_ped, both, ped_per) { }
 
         typedef char *str;
         str *file_names;
@@ -88,12 +88,21 @@ static void save_MERLIN_peds(linkage_ped_top *Top, char *file_names[],
             pr_father();
             pr_mother();
             pr_sex();
+
+        }
+
+
+        void inner() {
+            pr_id();
+            pr_per();
+            pr_father();
+            pr_mother();
+            pr_sex();
         }
 
         void per_end() {
             pr_nl();
         }
-
     } *merlin_peds = new merlin_ped(Top);
 
     merlin_peds->file_names = file_names;
@@ -170,31 +179,28 @@ static void write_MERLIN_data(linkage_ped_top *Top, char *file_names[])
             msgvf("        Merlin Data File:   %s/%s\n", *_opath, file_names[2]);
             data_loop(*_opath, file_names[2], "w");
         }
-            void inner() {
+        void inner() {
 
-                //not sure what to pull for disease
-                int disease = _tlocusp->Type;
-                //I feel like this isn't disease...
-                pr_printf("A %d", disease);
-                pr_nl();
+            int disease = _tlocusp->Type;
+            pr_printf("A %d", disease);
+            pr_nl();
 
-                //this seems correct for trait
+            //this seems correct for trait
 
-                str trait = _ttraitp->Pheno->TraitName;
-                pr_printf("T ");
-                pr_printf(trait);
-                pr_nl();
+            str trait = _ttraitp->Pheno->TraitName;
+            pr_printf("T ");
+            pr_printf(trait);
+            pr_nl();
 
-                str marker = _tlocusp->Marker->MarkerName;
-                pr_printf("M ");
-                pr_printf(marker);
-                pr_nl();
+            str marker = _tlocusp->Marker->MarkerName;
+            pr_printf("M ");
+            pr_printf(marker);
+            pr_nl();
 
-            //_tlocusp->Type
+        }
+    } *merlin_dats = new merlin_dat(Top);
 
-
-            }
-    } *merlin_dats = new struct merlin_dat(Top);
+    merlin_dats->file_names = file_names;
 
     merlin_dats->iterate();
 
