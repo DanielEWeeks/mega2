@@ -91,18 +91,19 @@ static void save_MERLIN_peds(linkage_ped_top *Top, char *file_names[],
 
         }
 
-
-        void inner() {
-            pr_id();
-            pr_per();
-            pr_father();
-            pr_mother();
-            pr_sex();
-        }
+//        void inner() {
+//            pr_id();
+//            pr_per();
+//            pr_father();
+//            pr_mother();
+//            pr_sex();
+//            pr_nl();
+//        }
 
         void per_end() {
             pr_nl();
         }
+
     } *merlin_peds = new merlin_ped(Top);
 
     merlin_peds->file_names = file_names;
@@ -255,8 +256,8 @@ static void write_MERLIN_freq(linkage_ped_top *Top, char *file_names[])
 
 //this will generate a c-shell script
 static void write_MERLIN_sh(linkage_ped_top *Top, char *file_names[]) {
-    vlpCLASS(merlin_sh, chr, loci) {
-        vlpCTOR(merlin_sh, chr, loci) { }
+    vlpCLASS(merlin_sh, both, sh_exec) {
+        vlpCTOR(merlin_sh, both, sh_exec) { }
 
         typedef char *str;
         str *file_names;
@@ -433,11 +434,12 @@ void CLASS_NEWMERLIN::get_file_names(char *file_names[], char *prefix,
 
     static void inner_file_names(char **file_names, const char *num, const char *stem) {
 
-        sprintf(file_names[0], "%s.%s.ped", stem, num);
-        sprintf(file_names[1], "%s.%s.map", stem, num);
-        sprintf(file_names[2], "%s.%s.dat", stem, num);
-        sprintf(file_names[3], "%s.%s.freq", stem, num);
-        sprintf(file_names[4], "%s.all.sh", stem);
+        //this should reflect the original naming convention of merlin in mega2
+        sprintf(file_names[0], "%s_ped.%s",stem,  num);
+        sprintf(file_names[1], "%s_map.%s",stem, num);
+        sprintf(file_names[2], "%s_data.%s",stem, num);
+        sprintf(file_names[3], "%s_freq.%s",stem,  num);
+        sprintf(file_names[4], "%s.all.sh",stem, stem);
     }
 
 void CLASS_NEWMERLIN::gen_file_names(char **file_names, char *num)
