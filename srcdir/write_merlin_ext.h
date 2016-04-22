@@ -30,12 +30,48 @@
 
 #include "analysis.h"
 
+
 class CLASS_NEWMERLIN: public CLASS_ANALYSIS {
 public:
     CLASS_NEWMERLIN() : CLASS_ANALYSIS() {
         _name = "NEWMERLIN";
     }
    ~CLASS_NEWMERLIN() {}
+
+//	virtual bool allow_affection_liability_class()  { return true; }
+//  virtual bool allow_no_aff_trait()     { return true; }
+//	virtual bool allow_no_chr()     { return true; }
+//  virtual bool allow_no_trait()  { return true; }
+/*
+ *  turn off suboptions until there is a good use for them
+    virtual bool has_sub_options()  { return true; }
+    virtual bool is_sub_option()  { return true; }
+ */
+	virtual bool loops()  { return true; }
+	virtual bool Loop_Over_Chromosomes_implemented() { return true; }
+	// missing values are always replaced with an '-'
+
+//  virtual bool output_quant_can_define_missing_value() { return false; }
+//	virtual const char* output_quant_default_value() { return " - "; }
+//	virtual const char* output_affect_default_value() { return "0"; }
+//	virtual bool output_affect_must_be_numeric() { return true; }
+
+	virtual bool require_physical_map()  { return false; }
+/*
+    You can select them ... they just can not be a dir ... just .phe file
+*/
+/*	virtual bool skip_trait(linkage_locus_top *LocusTop, int trait)  {
+		return (LocusTop->Locus[trait].Type != AFFECTION);
+	}
+ */
+
+	virtual void ped_ind_defaults(int unique)  {
+		/* options that require ids, mostly linkage options and
+           gh-like options*/
+		OrigIds[0] = 1; /* Renumbered */
+		OrigIds[1] = 2; /* Ped num */
+	}
+
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
 			    analysis_type *analysis,
