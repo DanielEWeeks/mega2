@@ -161,7 +161,7 @@ analysis_types analysis_list[] = {
     { "PSEQ format",                TO_PSEQ },
     { "SHAPEIT format",             SHAPEIT},
 //  { "IMPUTE2 format",             IMPUTE2}
-    { "New Merlin",                 NEWMERLIN},
+    { "NewMerlin format",                 NEWMERLIN},
 };
 
 int count_analysis_list = sizeof(analysis_list) / sizeof (analysis_types);
@@ -320,7 +320,7 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
                 *analysis = TO_NUKE; // 8. Nuclear families
                 break;
 
-            case 'e':
+            case 'n':
                 *analysis = NEWMERLIN;
                 break;
         }

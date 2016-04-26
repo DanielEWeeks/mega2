@@ -57,9 +57,9 @@ public:
 //	virtual bool output_affect_must_be_numeric() { return true; }
 
 	virtual bool require_physical_map()  { return false; }
-/*
-    You can select them ... they just can not be a dir ... just .phe file
-*/
+
+	virtual bool allele_data_use_name_if_available() { return true; }
+
 /*	virtual bool skip_trait(linkage_locus_top *LocusTop, int trait)  {
 		return (LocusTop->Locus[trait].Type != AFFECTION);
 	}
