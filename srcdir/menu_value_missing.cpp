@@ -777,30 +777,35 @@ void Value_Missing_get(analysis_type *analysis)
 
         if (fix_Value_Missing_all(analysis))
             EXIT(DATA_INCONSISTENCY);
+
     } else {
         Value_Missing_menu(analysis);
     }
 
     itpn = itp + 0;
-    if (Mega2BatchItems[itpn->it].value.fvalue == QMISSING)
-        msgvf("%s  %s Missing Value \"%6s\"",
-              itpn->name, itpn->put, "NA");
-    else
-        msgvf("%s  %s Missing Value  %g ",
-              itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.fvalue);
-#ifdef HIDESTATUS
-    msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
-#endif
-    msgvf("\n");
+    if (! database_read) {
+        if (Mega2BatchItems[itpn->it].value.fvalue == QMISSING)
+            msgvf("%s  %s Missing Value \"%6s\"",
+                  itpn->name, itpn->put, "NA");
+        else
+            msgvf("%s  %s Missing Value  %g ",
+                  itpn->name, itpn->put, Mega2BatchItems[itpn->it].value.fvalue);
+    #ifdef HIDESTATUS
+        msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
+    #endif
+        msgvf("\n");
+    }
 
     itpn = itp + 2;
-    l = strlen(itpn->str);
-    msgvf("%s     %s Missing Value %*s\"%s\"",
-          itpn->name, itpn->put, 6-l, "", Mega2BatchItems[itpn->it].value.name);
-#ifdef HIDESTATUS
-    msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
-#endif
-    msgvf("\n");
+    if (! database_read) {
+        l = strlen(itpn->str);
+        msgvf("%s     %s Missing Value %*s\"%s\"",
+              itpn->name, itpn->put, 6-l, "", Mega2BatchItems[itpn->it].value.name);
+    #ifdef HIDESTATUS
+        msgvf(" [\"%s\" %s]", itpn->str, source_name[itpn->source]);
+    #endif
+        msgvf("\n");
+    }
 
     itpn = itp + 1;
     l = strlen(itpn->str);

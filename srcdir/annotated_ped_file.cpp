@@ -2603,7 +2603,7 @@ static void init_ext_linkage_locus_top (ext_linkage_locus_top *EXLTop,
    @param LTop       If 'LTop' is not NULL then initialize as well.
    @return ext_linkage_locus_top *
  */
-static ext_linkage_locus_top *new_EXLTop(linkage_locus_top *LTop)
+ext_linkage_locus_top *new_EXLTop(linkage_locus_top *LTop)
 {
     ext_linkage_locus_top *EXLTop = MALLOC(ext_linkage_locus_top);
     
@@ -4555,6 +4555,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     }
 
     Tod tod_cl("get_chromosome_list");
+
     NumChromo=get_chromosome_list(LTop, global_chromo_entries,
                                   chromo_loci_count, 0, analysis);
     tod_cl();
@@ -4920,53 +4921,64 @@ static void Free_ped(linkage_ped_top *PTop)
                 if (Entry->loopbreakers != NULL)
                     free(Entry->loopbreakers);
             }
-            free(LPed);
+            if (! database_read) free(LPed);
         }
         free(LPedT);
     }
 
     LTop = PTop->LocusTop;
     pheno_rec *Pheno;
-    for (l = 0; l < LTop->LocusCnt; l++) {
-        Locus = &(LTop->Locus[l]);
-        Pheno = &(LTop->Pheno[l]);
-        switch (Locus->Type) {
-        case NUMBERED:
-        case XLINKED:
-        case YLINKED:
-            if (Locus->AlleleCnt) free(Locus->Allele);
-            break;
-        case AFFECTION:
-//            if (Locus->AlleleCnt) free(Allele);
-/*          wierd; old code sets Penetrance;  New (mrecode.c) code sets AvgPen then assigns Penetrance = AvgPen ... So */
-            for (i = 0; i < Pheno->Props.Affection.ClassCnt; i++) {
-                if (Pheno->Props.Affection.Class[i].AutoPen != NULL)
-                    free(Pheno->Props.Affection.Class[i].AutoPen);
-                if (Pheno->Props.Affection.Class[i].FemalePen != NULL)
-                    free(Pheno->Props.Affection.Class[i].FemalePen);
-                if (Pheno->Props.Affection.Class[i].MalePen != NULL)
-                    free(Pheno->Props.Affection.Class[i].MalePen);
+    if (! database_read) {
+        for (l = 0; l < LTop->LocusCnt; l++) {
+            Locus = &(LTop->Locus[l]);
+            Pheno = &(LTop->Pheno[l]);
+            switch (Locus->Type) {
+            case NUMBERED:
+            case XLINKED:
+            case YLINKED:
+                if (Locus->AlleleCnt) free(Locus->Allele);
+                break;
+            case AFFECTION:
+    //            if (Locus->AlleleCnt) free(Allele);
+    /*          wierd; old code sets Penetrance;  New (mrecode.c) code sets AvgPen then assigns Penetrance = AvgPen ... So */
+                for (i = 0; i < Pheno->Props.Affection.ClassCnt; i++) {
+                    if (Pheno->Props.Affection.Class[i].AutoPen != NULL)
+                        free(Pheno->Props.Affection.Class[i].AutoPen);
+                    if (Pheno->Props.Affection.Class[i].FemalePen != NULL)
+                        free(Pheno->Props.Affection.Class[i].FemalePen);
+                    if (Pheno->Props.Affection.Class[i].MalePen != NULL)
+                        free(Pheno->Props.Affection.Class[i].MalePen);
+                }
+                free(Pheno->Props.Affection.Class);                  /* read_annotated_names_files */
+                if (Locus->AlleleCnt) free(Locus->Allele);
+                break;
+            case QUANT:
+                if (Locus->AlleleCnt) free(Locus->Allele);
+                free(Pheno->Props.Quant.Mean[0]);
+                free(Pheno->Props.Quant.Mean);
+                free(Pheno->Props.Quant.Variance[0]);
+                free(Pheno->Props.Quant.Variance);
+                break;
+            case TYPE_UNSET:
+            case BINARY:
+                if (Locus->AlleleCnt) free(Locus->Allele);
+                break;
             }
-            free(Pheno->Props.Affection.Class);                  /* read_annotated_names_files */
-            if (Locus->AlleleCnt) free(Locus->Allele);
-            break;
-        case QUANT:
-            if (Locus->AlleleCnt) free(Locus->Allele);
-            free(Pheno->Props.Quant.Mean[0]);
-            free(Pheno->Props.Quant.Mean);
-            free(Pheno->Props.Quant.Variance[0]);
-            free(Pheno->Props.Quant.Variance);
-            break;
-        case TYPE_UNSET:
-        case BINARY:
-            if (Locus->AlleleCnt) free(Locus->Allele);
-            break;
         }
+        free(LTop->Locus);
+        free(LTop->Pheno);
+        if (LTop->Marker != 0)
+            free( ((marker_rec *)LTop->Marker) + LTop->PhenoCnt );
+    } else {
+        extern linkage_allele_rec *Allele_rec;
+        extern linkage_affection_class *AffectClass_rec;
+
+        delete [] Allele_rec;
+        delete [] AffectClass_rec;
+        delete [] (((marker_rec *)LTop->Marker) + LTop->PhenoCnt);
+        delete [] LTop->Pheno;
+        delete [] LTop->Locus;
     }
-    free(LTop->Locus);
-    free(LTop->Pheno);
-    if (LTop->Marker != 0)
-        free( ((marker_rec *)LTop->Marker) + LTop->PhenoCnt );
     free(LTop->MaleRecomb);
 
     EXLTop = PTop->EXLTop;                                /* read_annotated_map_files */
@@ -4980,7 +4992,7 @@ static void Free_ped(linkage_ped_top *PTop)
         if (EXLTop->EXLocus)
             free( EXLTop->EXLocus + LTop->PhenoCnt );
     }
-    free(LTop);
+    if (! database_read) free(LTop);
 
 /* Free_map_names
     free(EXLTop->map_functions);
@@ -4991,7 +5003,7 @@ static void Free_ped(linkage_ped_top *PTop)
 */
     free(EXLTop);
 
-    free(PTop);
+    if (! database_read) free(PTop);
 
     free(global_chromo_entries);
     free(chromo_loci_count);

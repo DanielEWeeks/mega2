@@ -65,6 +65,19 @@ int marker_size(int size)
     }
 }
 
+void *marker_start(void *marker, int offset) {
+    if (marker == NULL) return marker;
+    if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
+        return ((void *) ((marker_pedrec_data *)marker + offset));
+
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        return marker;
+
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
+        return ((void *) ((marker_pedrec_char *)marker + offset));
+    }
+}
+
 void *marker_alloc(size_t size, int offset) {
     if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
         return ((void *) ((CALLOC(size, marker_pedrec_data)) - offset));

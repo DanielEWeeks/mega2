@@ -37,6 +37,8 @@ extern void *NOTYPED_ALLELES;
 
 extern int  marker_size(int size);
 
+extern void *marker_start(void *marker, int offset);
+
 extern void *marker_alloc(size_t size, int offset);
 
 extern void *people_alloc(size_t size);

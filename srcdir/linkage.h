@@ -89,6 +89,7 @@ typedef struct _linkage_allele_rec {
 /*  char name[ALL_LEN+1];*/
     const char *AlleleName;
     int index; /* initially 1 .. num_alleles in ascending order */
+    int locus_link;
 } linkage_allele_rec;
 
 #define allelecmp(a1, a2) (a1 != a2)
@@ -124,6 +125,7 @@ typedef struct _linkage_quant_data {      /* Quantitative Trait */
     double **Mean;
     double **Variance;
     double Multiplier;
+    int locus_link;
 } linkage_quant_data;
 
 
@@ -147,6 +149,7 @@ typedef struct _linkage_affection_data {  /* Affection Status   */
     linkage_affection_class *Class;   /* will be Class[] */
     int NumLabels;
     int *Labels;
+    int locus_link;
 } linkage_affection_data;
 
 /* new */
@@ -175,6 +178,7 @@ typedef struct _marker_rec {
     double pos_avg, pos_male, pos_female, error_prob;
     int chromosome;
     int col_num;
+    int locus_link;
 } marker_rec;
 
 /* end new */
@@ -196,6 +200,7 @@ typedef struct _linkage_locus_rec {
     marker_rec *Marker;
     int number;
     int col_num; /* for annotated files only for now */ //X
+    int locus_link;
 } linkage_locus_rec;
 
 /* Recombination mode constants */
@@ -342,7 +347,8 @@ typedef struct _linkage_ped_rec {
     int ext_ped_num, ext_per_num;
     int MZTwin, DZTwin, Group; /* new fields added  6-27-05 */
     int rec_num; /* for storing line number of input file */
-
+    int pedigree_link; /* matches with linkage_ped_rec for this pedigree */
+    int person_link;   /* to find phenotype and genotype data */
     /* This field stores the ids of loop-breakers corresponding to this entry */
 } linkage_ped_rec;
 
@@ -369,6 +375,7 @@ typedef struct _linkage_ped_tree {
     int origped; /* only to be used for conversion to nukepeds */
     int Proband;
     listhandle *Loops; /* will be NULL if no loops */
+    int pedigree_link; /* matches with linkage_ped_rec for this pedigree */
 } linkage_ped_tree;
 
 typedef struct pre_makeped_record_ {

@@ -1901,7 +1901,16 @@ void mega2_opts(int argc, char **argv)
                 EXIT(INPUT_DATA_ERROR);
             } else if (*(as+1) == '-') {
                 as += 2;
-                if ( (strcasecmp(as, "autosome") == 0) || (strcasecmp(as, "pseudo") == 0) ||
+                if (strcasecmp(as, "dbdump") == 0) {
+                    database_dump++;
+                } else if (strcasecmp(as, "dbread") == 0) {
+                    database_read++;
+                } else if (strcasecmp(as, "dbfile") == 0) {
+                    extern int database_read;
+                    extern char DBfile[255];
+		    argv++; --argc;
+		    strcpy(DBfile, *argv);
+                } else if ( (strcasecmp(as, "autosome") == 0) || (strcasecmp(as, "pseudo") == 0) ||
                      (strcasecmp(as, "mito") == 0)) {
                     int tmp;
                     if (--argc > 0) {
