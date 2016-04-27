@@ -111,6 +111,7 @@ private:
  * \brief split line into fields using sep
  */
 void split(Vecs &fields, Cstr& line, Cstr& sep=" \t\n\r", int cnt=0);
+void split(Vecc &fields, char *line, const char *sep=" \t\n\r", int cnt=0);
 
 void join(Vecs &vec, Str& ans, Cstr& sep);
 

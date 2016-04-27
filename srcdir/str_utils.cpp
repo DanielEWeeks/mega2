@@ -178,9 +178,9 @@ void Token::getDC(d3 &vec, int cnt) {
 void Token::set(Cstr& lin) {
     this->line = lin;
 
-    if (Cline) free(Cline);
+    if (Cline) delete[] Cline;
     int sz = lin.size();
-    Cline = CALLOC(sz+1, char); // to be safe
+    Cline = new char[sz+1]; // to be safe
 
     lin.copy(Cline, sz, 0);
     Cline[sz] = 0;
@@ -266,14 +266,20 @@ void TokenSstream::set(Cstr& line) {
  */
 
 void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
+    int mult = (sep.find_first_of(" ") != std::string::npos) ? 1 : 0;
     size_t  fo = 0;
+    size_t  of;
+    if (mult) {
+	of = line.find_first_not_of(sep, fo);
+	if (of == std::string::npos) {
+	    fields.push_back(line);
+	    return;
+	}
+    } else
+	of = fo;
+
     bool mo = true;
-    size_t  of = line.find_first_not_of(sep, fo);
-    if (of == std::string::npos) {
-        fields.push_back(line);
-        return;
-    }
-    int  i  = 1;
+    int i = 1;
     while (mo) {
         fo = line.find_first_of(sep, of);
 //      if (dbg) cout << "of: " << of << "; fo: " << fo << endl;
@@ -286,12 +292,54 @@ void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
         } else {
 //          if (dbg) cout << line.substr(of, fo-of) << endl;
             fields.push_back(line.substr(of, fo-of));
-            of = line.find_first_not_of(sep, fo);
+            if (mult == 1) {
+                of = line.find_first_not_of(sep, fo);
+		if (of == std::string::npos) {
+//		    fields.push_back("");
+		    return;
+		}
+            } else
+                of = fo + 1;
+
             if (cnt && i++ >= cnt) {
                 fields.push_back(line.substr(of, line.size()-of+1));
                 return;
             }
-            if (of == std::string::npos) return;
+        }
+    }
+}
+
+void split(Vecc &fields, char *line, const char *sep, int cnt) {
+    int mult = index(sep, ' ') != 0 ? 1 : 0;
+    char *fo = line;
+    char *of = fo;
+    if (mult) {
+	while ( *of && index(sep, *of) ) of++;
+	if (of == 0) {
+	    fields.push_back(line);
+	    return;
+	}
+    }
+
+    bool mo = true;
+    int i = 1;
+    while (mo) {
+        fo = strpbrk(of, sep);
+        if (fo == 0) {
+            fields.push_back(of);
+            return;
+        } else {
+            *fo = 0;
+            fields.push_back(of);
+	    of = fo + 1;
+            if (mult == 1) {
+		while ( *of && index(sep, *of) ) of++;
+		if (of == 0) return;
+	    }
+            if (cnt && i++ >= cnt) {
+                fields.push_back(of);
+                return;
+            }
         }
     }
 }
