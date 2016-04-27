@@ -114,7 +114,7 @@ void           summary_time_stamp(char **input_files, FILE *fp,
 void           script_time_stamp(FILE *script_fp);
 double         randomnum( void );
 void           seed_random(void);
-void           write_time(FILE *fil);
+const char    *write_time();
 int            imax(int i1, int i2);
 double         dmax(double d1, double d2);
 int            icomp(int i, int j);
@@ -663,6 +663,18 @@ static void append_to_fd(const char *file_name, const char *str, FILE *FDo)
     fclose(FDi);
 }
 
+void   summary_time_stamp_msgvf()
+{
+    msgvf("-----------------------------------------------------\n");
+    msgvf("        Mega2 version %s\n", Mega2Version);
+#ifdef HIDEDATE
+    msgvf("Run date:                  %s\n", THEDATE);
+#else
+    msgvf("Run date:                  %s\n", RunDate);
+#endif
+    msgvf("This file created on       %s", write_time());
+}
+
 void   summary_time_stamp(char **input_files, FILE *fp, const char *message)
 {
 
@@ -676,8 +688,7 @@ void   summary_time_stamp(char **input_files, FILE *fp, const char *message)
 #else
     fprintf(fp, "Run date:                  %s\n", RunDate);
 #endif
-    fprintf(fp, "This file created on       ");
-    write_time(fp);
+    fprintf(fp, "This file created on       %s", write_time());
     if (input_files != NULL) {
         fprintf(fp, "Input file names\n");
 
@@ -751,8 +762,7 @@ void script_time_stamp(FILE *script_fp)
 #else
     fprintf(script_fp, "#   Run date:                %s\n", RunDate);
 #endif
-    fprintf(script_fp, "#   This script created on   ");
-    write_time(script_fp);
+    fprintf(script_fp, "#   This script created on   %s", write_time());
     fprintf(script_fp, "#   Input file names:\n");
 
     for (i=0; i< 3; i++) {
@@ -902,12 +912,13 @@ void            enter_number(int *num)
     return;
 }
 
+int RANDS = 0;
 double randomnum( void )
 
 {
     /*Global variable used:  seed1*/
     double r;
-
+    RANDS++;
     /*From FORTRAN code:
       THIS FUNCTION GENERATES INDEPENDENT UNIFORM DEVIATES ON
       THE INTERVAL (0.0,1.0).  SEE THE REFERENCE:  WICHMAN B.A.
@@ -1007,8 +1018,7 @@ void print_only (const char *messg)
 
 time_t NOTIMEval;
 
-void write_time(FILE *fil)
-
+const char *write_time()
 {
 /*  extern   time_t  time();
     extern   struct  tm  *localtime(); */
@@ -1035,7 +1045,7 @@ void write_time(FILE *fil)
       time_stt->tm_mday,month[time_stt->tm_mon],time_stt->tm_year,
       time_stt->tm_hour,time_stt->tm_min,time_stt->tm_sec);
     */
-    fprintf(fil, "%s", asctime(time_stt));
+    return asctime(time_stt);
 }
 
 

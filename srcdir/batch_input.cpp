@@ -355,8 +355,6 @@ void batchfile_init_Mega2BatchItems(void)
                 warnvf("parameter %s\n\treplacing default value (\"%s\") with value from environment (\"%s\")\n",
                        C(bi->keyword), C(deflt), xp);
                 deflt = string(xp);
-//              bi->items_read  = 1;
-//              batchf(bi);
             }
         }
         switch(type) {
@@ -463,7 +461,8 @@ void check_batch_items(void)
         ITEM_READ(/* 4 */ Input_Untyped_Ped_Option)) {
         // NOTE: You don't need a Map_File if you are working with a VCF file because it contains one map (VCF.p)...
         batchINPUTFILES=1;
-        mssgf("Input filenames and missing value indicator read in from batch file.");
+        if (!database_read)
+            mssgf("Input filenames and missing value indicator read in from batch file.");
     } else {
         if (!ITEM_READ(/* 0 */ Input_Pedigree_File)) {
             missing_item_goto_menu(0, "Input menu");
@@ -1280,8 +1279,8 @@ void batchf(int item)
 
     if (first_time) {
         fprintf(batchfp, "%cVersion4.4\n", COMMENT_CHAR);
-        fprintf(batchfp, "%c          ", COMMENT_CHAR);
-        write_time(batchfp);
+        fprintf(batchfp, "%c          %s",
+                COMMENT_CHAR, write_time());
         batch_file_doc(batchfp);
     }
 

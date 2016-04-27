@@ -853,7 +853,7 @@ static void write_contents(char *aspin_name, char *aspex_program,
                 mega2_input_files[2]
 #endif
             );
-        fprintf(fp, "#Date     :      "); write_time(fp);
+        fprintf(fp, "#Date     :      %s", write_time());
         fprintf(fp, "#This is a TCL parameter file for ASPEX '%s' program.\n", aspex_program);
         fprintf(fp, "#the set linkage_format must be set true to use these ASPEX output files.\n");
         if (num_affec >= 1) {
