@@ -97,12 +97,15 @@ SRCS =  input_check.cpp     select_index.cpp \
 	grow_string.cpp     marker_lookup.cpp    write_IQLS.cpp \
 	net.cpp             phe_lookup.cpp       str_utils.cpp \
 	entry.cpp           loop.cpp             compress.cpp \
-        analysis.cpp        class_old.cpp \
+        analysis.cpp        class_old.cpp        \
 	write_pangaea.cpp   write_beagle.cpp     plink_core_files.cpp \
 	write_eigenstrat.cpp write_structure.cpp batch.cpp \
 	write_fbat.cpp      write_pseq_files.cpp menu_value_missing.cpp \
 	read_impute.cpp	    read_impute_bgen.cpp read_impute_bgen2.cpp \
-	write_shapeit_files.cpp                  write_impute2_files.cpp
+	write_shapeit_files.cpp                  write_impute2_files.cpp \
+	dbmega2.cpp         dbmisc.cpp           dbbatch.cpp \
+	dbpedigree.cpp      dballele.cpp         dbloci.cpp \
+	dbmap.cpp           dbgenotype.cpp
 
 OBJS =  $(SRCS:.cpp=.o)
 
@@ -124,6 +127,8 @@ include $(TOP)/Makedefs_$(OSTYPE).template
 endif
 
 # CC, CFLAGS are defined in Makedefs
+
+#dblite.o dbmega2.o: IFLAGS += -Ilib/sqlite3
 
 user_input.o read_impute_bgen2.o: IFLAGS += -Ibgen/genfile/include $(stdC11)
 
@@ -163,12 +168,14 @@ write_plink_files.o: DFLAGS += $(DsFLAGS)
 
 # -DHIDEPATH
 aspex.o cranefoot.o mega2.o R_output.o write_SUP_files.o write_ghfiles.o write_premakeped.o: DFLAGS += $(DpFLAGS)
+dbbatch.o: DFLAGS += $(DpFLAGS)
 
 # -DHIDEFILE
 annotated_ped_file.o makeped1.o mega2.o read_files.o utils.o: DFLAGS += $(DfFLAGS)
 write_IQLS.o write_beagle.o write_eigenstrat.o write_fbat.o: DFLAGS += $(DfFLAGS)
 write_pangaea.o write_plink_files.o write_pseq_files.o write_shapeit_files.o: DFLAGS += $(DfFLAGS)
 write_impute2_files.o write_structure.o: DFLAGS += $(DfFLAGS)
+dbmega2.o: DFLAGS += $(DfFLAGS)
 
 # -DDATE -DHIDEPATH
 write_mfiles.o write_vitesse.o utils.o: DFLAGS += $(DdFLAGS) $(DpFLAGS)
@@ -203,7 +210,7 @@ ARFLAGS ?= rcs
 AROUT ?=
 
 ZLIBS ?= libz.a
-CLIBS += libvcftools.a libbgen.a $(ZLIBS)
+CLIBS += libvcftools.a libbgen.a $(ZLIBS) libsqlite3.a
 
 stdC11  ?= -std=c++0x
 WINO    ?=
@@ -222,6 +229,7 @@ endif
 
 all: $(MODULE)_$(OSTYPE)
 
+
 dbg:
 	$(MAKE) $(MAKEFLAGS) TEST=2 HIDE=1 OPT=-g all
 
@@ -230,18 +238,22 @@ tod:
 
 gcc_info.o: $(OBJS)
 
-SUBDIRS = vcftools bgen zlib-1.2.8
+SUBDIRS = bgen lib/sqlite3 vcftools zlib-1.2.8
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
 	$(MAKE) $(MFLAGS) -C $@
-vcftools: zlib-1.2.8
-libvcftools.a: vcftools
-libz.a: zlib-1.2.8
 
 libbgen.a: bgen
 bgen: zlib-1.2.8
 
-$(MODULE)_$(OSTYPE): $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libvcftools.a libbgen.a libz.a
+libsqlite3.a: lib/sqlite3
+
+vcftools: zlib-1.2.8
+libvcftools.a: vcftools
+
+libz.a: zlib-1.2.8
+
+$(MODULE)_$(OSTYPE): $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libvcftools.a libbgen.a libz.a libsqlite3.a
 	$(RM) $(MODULE)
 	$(LINK) $(LFLAGS) $(LTARGET) $(OBJS) $(FLAGS) gcc_info.o $(CLIBS)
 
@@ -263,9 +275,10 @@ clean:
 distclean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
 #	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) RM="$(RM)" distclean &&) echo on
-	$(MAKE) $(MFLAGS) -C vcftools   RM="$(RM)" distclean
-	$(MAKE) $(MFLAGS) -C bgen       RM="$(RM)" distclean
-	$(MAKE) $(MFLAGS) -C zlib-1.2.8 RM="$(RM)" distclean
+	$(MAKE) $(MFLAGS) -C vcftools    RM="$(RM)" distclean
+	$(MAKE) $(MFLAGS) -C bgen        RM="$(RM)" distclean
+	$(MAKE) $(MFLAGS) -C zlib-1.2.8  RM="$(RM)" distclean
+	$(MAKE) $(MFLAGS) -C lib/sqlite3 RM="$(RM)" distclean
 
 clean1:
 	$(RM) *~
@@ -277,8 +290,9 @@ srcdist:
 
 depend:
 	makedepend -Y. -- $(CFLAGS) -- $(SRCS)
-	$(MAKE) -C vcftools depend
-	$(MAKE) -C bgen     depend
+	$(MAKE) -C vcftools    depend
+	$(MAKE) -C bgen        depend
+	$(MAKE) -C lib/sqlite3 depend
 
 # DO NOT DELETE
 
