@@ -1033,7 +1033,7 @@ void hwe_user_input(linkage_ped_top *LPedTreeTop, int *numchr,
         free(exec_cp);
         free(outfile_name1); free(outfile_name2);
         OrigIds[0]=5;
-        OrigIds[1]= (pedfile_type == 0)? 1 : 2;
+        OrigIds[1]= (basefile_type == 0)? 1 : 2;
     } else if (!strcmp(hwe_option, "MENDEL")) {
         int csv_format;
         int sex_linked =

@@ -68,7 +68,7 @@ public:
 //      OrigIds[0] = 1; // OrigID
 //      OrigIds[0] = 3; // UniqueID
         OrigIds[0] = 3; // OrigID 
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
     
     void replace_chr_number(char *file_names[], int numchr);

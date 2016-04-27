@@ -379,11 +379,11 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top)
         }
         /* print the header */
         fprintf(filep, "Pedigree ID Father Mother ");
-        if (pedfile_type == POSTMAKEPED_PFT) {
+        if (basefile_type == POSTMAKEPED_PFT) {
             fprintf(filep, "FirstOff NextMatSib NextPatSib ");
         }
         fprintf(filep, "Sex ");
-        if (pedfile_type == POSTMAKEPED_PFT) {
+        if (basefile_type == POSTMAKEPED_PFT) {
             fprintf(filep, "Proband ");
         }
         if (LoopOverTrait == 1) {
@@ -456,7 +456,7 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top)
                     fprintf(filep, "0 ");
                 }
 
-                if (pedfile_type == POSTMAKEPED_PFT) {
+                if (basefile_type == POSTMAKEPED_PFT) {
                     prID_rel(filep, pformat, Entry->First_Offspring, Top->Ped[ped].Entry);
                     prID_rel(filep, pformat, Entry->Next_PA_Sib, Top->Ped[ped].Entry);
                     prID_rel(filep, pformat, Entry->Next_MA_Sib, Top->Ped[ped].Entry);
@@ -467,7 +467,7 @@ static void annotated_ped_file(char *outfl_name, linkage_ped_top *Top)
                 else if (Entry->Sex == FEMALE_ID) fprintf(filep, " %d", FEMALE_ID);
                 else fprintf(filep, " 0");
 
-                if (pedfile_type == POSTMAKEPED_PFT) {
+                if (basefile_type == POSTMAKEPED_PFT) {
                     /* write the proband */
                     fprintf(filep, " %d ", Entry->OrigProband);
                 }

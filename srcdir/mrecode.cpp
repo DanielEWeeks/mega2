@@ -633,7 +633,6 @@ void write_recode_summary(marker_type *markers,
 			  linkage_locus_top *LTop, int inc_ht)
 
 {
-
     int m, found_freq_est = 0;
     int found_recode_alleles = 0;
     char count_info[FILENAME_LENGTH];
@@ -2416,6 +2415,7 @@ linkage_ped_top  *create_full_marker_data(
         rewind(fp);
         Top = read_linkage_ped_file(fp, LTop, col2locus);
     }
+    basefile_type = pedfile_type;
     log_line(mssgf);
     mssgf("Input pedigree data contains:");
 

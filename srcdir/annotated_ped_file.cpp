@@ -392,6 +392,7 @@ static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
     *num_reserved_cols=0;
     *has_extra_ids = 0;
     pedfile_type = PREMAKEPED_PFT;
+    basefile_type = pedfile_type;
 
     ped_all_colnames = CALLOC((size_t)num_userdef_cols, col_hdr_type);
 #ifdef SHOWSTATUS
@@ -412,6 +413,7 @@ static col_hdr_type *pedcol_check_reverse_index(col_hdr_type *reserved_colnames,
             /*      printf("%s\n", reserved_colnames[i].ColName); */
             if (SAME(reserved_colnames[i].ColName, TKN.FirstOff)) {
                 pedfile_type = POSTMAKEPED_PFT;
+                basefile_type = pedfile_type;
             }
             if (SAME(reserved_colnames[i].ColName, TKN.LinkPedID)) {
                 *has_extra_ids |= 2;
@@ -4605,12 +4607,14 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     if (Input->GetOps()->use_getops()) {
         pedfile_type = PREMAKEPED_PFT;
+        basefile_type = pedfile_type;
         Top = Input->GetOps()->do_ped(LTop);
     } else if (PLINK.plink ||
 	Input_Format == in_format_binary_VCF ||
         Input_Format == in_format_compressed_VCF ||
 	Input_Format == in_format_VCF) {
         pedfile_type = PREMAKEPED_PFT;
+        basefile_type = pedfile_type;
         // CPK: If the .ped file is a .fam file, then we process the alleles as per the .bed file..
         Tod tod_ppf("read plink ped file");
         Top = read_plink_ped_file(ped_file, bed_file, plink_info,

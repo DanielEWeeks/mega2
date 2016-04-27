@@ -312,12 +312,12 @@ const char *prID_ped_type(int Id)
 {
     switch (Id) {
         case 1:
-        if (pedfile_type == POSTMAKEPED_PFT) {
+        if (basefile_type == POSTMAKEPED_PFT) {
             return ("Pedigree number (#1)");
         }
 
     case 2:
-        if (pedfile_type == POSTMAKEPED_PFT) {
+        if (basefile_type == POSTMAKEPED_PFT) {
             return ("Ped: field (#2)");
         } else {
             return ("Premakeped pedigree number (#2).");

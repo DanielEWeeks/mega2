@@ -405,8 +405,6 @@ int analysis_menu1(analysis_type  *analysis)
 	    // Write out the Mega2BatchItem given. The value written will be the '.value.option'...
             batchf(Analysis_Sub_Option);
             grow(ProgName, "-%s", sub_prog);
-            mssgvf("Sub-option: %s.\n", sub_prog);
-            subo++;
         }
     } else {
         if ((*analysis)->is_sub_option() || (*analysis)->has_sub_options()) {
@@ -2696,13 +2694,13 @@ static char *ped_id_choice_messg(int opt, char *id_messg)
 {
     switch(opt) {
     case 1:
-        if (pedfile_type == POSTMAKEPED_PFT) {
+        if (basefile_type == POSTMAKEPED_PFT) {
             sprintf(id_messg, "Pedigree number");
             break;
         }
 
     case 2:
-        if (pedfile_type == POSTMAKEPED_PFT) {
+        if (basefile_type == POSTMAKEPED_PFT) {
             sprintf(id_messg, "Ped: field");
             break;
         } else {

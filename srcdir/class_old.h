@@ -109,7 +109,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void sub_prog_name(int sub_opt, char *subprog);
@@ -174,7 +174,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -365,7 +365,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -401,7 +401,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -438,7 +438,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -474,7 +474,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -512,7 +512,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -582,7 +582,7 @@ public:
         /* Always unique ids for persons */
         /* Set the output pedigree and per field choices */
         OrigIds[0] = 3;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -684,7 +684,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-//      OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+//      OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
         OrigIds[1] = 1;  //code expects this.
     }
 
@@ -729,7 +729,7 @@ public:
         /* Always unique ids for persons */
         /* Set the output pedigree and per field choices */
         OrigIds[0] = 3;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -765,7 +765,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -832,7 +832,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -873,7 +873,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -911,7 +911,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -990,7 +990,7 @@ public:
         /* Always unique ids for persons */
         /* Set the output pedigree and per field choices */
         OrigIds[0] = 3;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -1030,7 +1030,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -1058,7 +1058,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -1128,7 +1128,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -1221,7 +1221,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -1306,7 +1306,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -1394,7 +1394,7 @@ public:
         /* Set the pedigree default to pedigree field
            set individual default to person field */
         OrigIds[0] = 1;
-        OrigIds[1] = (pedfile_type == POSTMAKEPED_PFT)? 1 : 2;
+        OrigIds[1] = (basefile_type == POSTMAKEPED_PFT)? 1 : 2;
     }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,

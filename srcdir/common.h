@@ -318,6 +318,7 @@ typedef enum
 /* int             quiet; */
 /* global variables that control output behaviour*/
 extern int             MARKER_SCHEME;
+extern int             database_read, database_dump;
 extern const char     *genetic_distance_map_type_string[3];
 extern int             LoopOverTrait; /* flag for looping over traits */
 extern int             LoopOverChrm; /* flag for looping over chromosomes */
@@ -383,6 +384,7 @@ extern char            mega2_path[256]; /* path to mega2 executable */
 extern char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES];
 extern char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][21];
 extern int             pedfile_type; /* whether input-file is pre-makeped or not */
+extern int             basefile_type; /* type for original pedfile type */
 extern int             HasLoops;
 extern int             HasAff;
 extern int             HasMarkers;

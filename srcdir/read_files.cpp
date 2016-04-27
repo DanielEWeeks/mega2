@@ -231,7 +231,7 @@ int plink_annot_string_quant_phen(int line, pheno_rec *locus,
             /* conversion failed */
             quant=QUNDEF;
             SECTION_ERR(illegal_quant);
-            errorvf("Entry %d: %s Invalid quantitative phenotype for locus %s\n",
+            errorvf("Entry %d: \"%s\" Invalid quantitative phenotype for locus \"%s\"\n",
                     line, quantstr, locus->TraitName);
             err = 1;
         } else if (quant == QMISSING || quant == QUNDEF) {
@@ -596,6 +596,21 @@ int ALLELE_ARRAY = 256;
 allele_prop **Allele_Array = CALLOC((size_t) ALLELE_ARRAY, allele_prop *);
 
 
+allele_prop *canonical_allele_internal(const char *ra) {
+    char *cra;
+    allele_prop *Ara;
+
+    int len = strlen(ra);
+    if (len <= ALL_LEN)
+        Ara = CALLOC((size_t) 1, allele_prop);
+    else
+        Ara = (allele_prop *)CALLOC(((size_t) sizeof(allele_prop)) + len - ALL_LEN , char);
+    cra = allele_prop_allele(Ara);
+    strcpy(cra, ra);
+    add_allele(cra, cra);  /* need key on heap */
+    return Ara;
+}
+
 char *canonical_allele(const char *ra)
 {
     extern int MARKER_SCHEME;
@@ -604,14 +619,7 @@ char *canonical_allele(const char *ra)
     allele_prop *Ara;
     cra = search_allele(ra);
     if (cra == NULL) {
-        int len = strlen(ra);
-        if (len <= ALL_LEN)
-            Ara = CALLOC((size_t) 1, allele_prop);
-        else
-            Ara = (allele_prop *)CALLOC(((size_t) sizeof(allele_prop)) + len - ALL_LEN , char);
-        cra = allele_prop_allele(Ara);
-        strcpy(cra, ra);
-        add_allele(cra, cra);  /* need key on heap */
+        Ara = canonical_allele_internal(ra);
         Ara->idx = ++allele_count;
 
         /*
@@ -630,6 +638,7 @@ char *canonical_allele(const char *ra)
         }
         Allele_Array[allele_count] = Ara;
 
+        cra = allele_prop_allele(Ara);
         char *endptr;
         errno = 0;
         int i1 = strtol(cra, &endptr, 10);
@@ -2015,6 +2024,7 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
 
         if (ped_count > 0)    {
             pedfile_type=PREMAKEPED_PFT;
+            basefile_type=pedfile_type;
             LTop->PedRecDataType = Premakeped;
             if (check_ped_file_cols(5+LTop->NumPedigreeCols, pfilep, pedfile) != 1) {
                 errorvf("Data input error while checking pedegree file %s \n", pedfl_name);
@@ -2025,6 +2035,7 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
             Top->EXLTop = EXLTop;
         } else {
             pedfile_type=POSTMAKEPED_PFT;
+            basefile_type=pedfile_type;
             LTop->PedRecDataType = Postmakeped;
             if (check_ped_file_cols(9+LTop->NumPedigreeCols, pfilep, pedfile) != 1) {
 	        errorvf("Data input error while checking pedegree file %s \n", pedfl_name);
