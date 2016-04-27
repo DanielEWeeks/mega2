@@ -31,7 +31,7 @@
 
 #ifdef TOD
 #include <sys/time.h>
-//extern void msgvf(const char *fmt, ...);
+extern void msgvf(const char *fmt, ...);
 #endif
 
 class Tod {
@@ -70,7 +70,7 @@ public:
         double td = tdiff();
         if (str != NULL) {
             if (lim == 0 || cnt++ < lim) 
-                printf("%s %s: %.6f\n", td > 1.0 ? "@@@@": "@@", str, td);
+                msgvf("%s %s: %.6f\n", td > 1.0 ? "@@@@": "@@", str, td);
             
             return td;
         }
@@ -81,7 +81,7 @@ public:
     void operator()(const char *xx) {
         double td = tdiff();
         if (lim == 0 || cnt++ < lim)
-            printf("%s %s: %.6f\n", td > 30 ? "@@@@": "@@", xx, td);
+            msgvf("%s %s: %.6f\n", td > 30 ? "@@@@": "@@", xx, td);
     }
 
     int ok(void) {

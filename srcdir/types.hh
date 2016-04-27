@@ -230,6 +230,7 @@ typedef UM<int, int, HH<int> >::const_iterator                                 H
 
 typedef std::pair<std::string, std::string> Pairss;
 typedef std::pair<std::string, int>         Pairsi;
+typedef std::pair<int, int>                 Pairii;
 
 ////
 

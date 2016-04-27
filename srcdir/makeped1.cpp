@@ -1161,6 +1161,7 @@ static void reassign_to_marriage(marriage_graph_type *m_graph,
     p1->num_to_marriages--;
 }
 
+SECTION_ERR_INIT(beagle_fix);
 void break_loops(int ped_count, marriage_graph_type *mped,
 		 linkage_locus_top *LTop, int break_loop)
 
@@ -1179,12 +1180,14 @@ void break_loops(int ped_count, marriage_graph_type *mped,
     minimizing_graph_type *min_graph;
     person_node_type *p1, *p2;
 
+    SECTION_ERR_EXTERN(beagle_fix);
     for (i=0; i<ped_count; i++) {
         for (j=0; j < mped->num_persons; j++)
             degree_genotyped(&(mped->persons[j]), LTop);
         make_marriage_graph(&(mped[i]));
         fatal_err += check_and_reassign_parents(&(mped[i]));
     }
+    SECTION_ERR_FINI(beagle_fix);
 
     /* The disconnected pedigrees are a problem only if we need to
        break loops, so is this necessary? */
@@ -1869,6 +1872,8 @@ static int check_and_reassign_parents(marriage_graph_type *mped)
             }
         }
     } else {
+        SECTION_ERR_EXTERN(beagle_fix);
+        SECTION_ERR(beagle_fix);
         warnf("Relaxing missing parent in Linkage input rule for this Analysis type.");
     }
 

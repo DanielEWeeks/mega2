@@ -209,12 +209,12 @@ SECTION_ERR_INIT(check_oob);
 SECTION_ERR_INIT(check_inheritance);
 SECTION_ERR_INIT(check_sibship_alleles);
 
+ped_status      PedStat;
 void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 		     analysis_type analysis)
 {
     int chr;
     int             entry, lloc, ped, locus, select=-1, menu_item=0;
-    ped_status      PedStat;
     int             stat, abortl=0, abortf=0, loc_err=0;
     /* below are the error flags */
     int             aexceed, imend, hmend, freq_mis;
@@ -825,6 +825,13 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
     Display_Messages=1;
     Display_Errors=1;
+}
+
+void show_reset_input() {
+    msgvf("\t%d mendelian-inconsistent markers.\n", PedStat.genotype_invalid);
+    msgvf("\t%d half-typed markers.\n", PedStat.halftyped);
+    msgvf("\t%d out-of-bound allele values.\n", PedStat.exceed_allcnt);
+    msgvf("\n");
 }
 
 
