@@ -333,8 +333,8 @@ void dblocus_import(linkage_locus_top *LTop) {
 
     extern map<const char *, unsigned char *, charsless> Stuff_hash;
 
-    const char *k;
-    unsigned char *d;
+    const char *k = (const char *)0;
+    unsigned char *d = (unsigned char *)0;
     k = "MaleRecomb";
     if (!map_get(Stuff_hash, k, d)) {
         printf("Stuff read failed for %s\n", k);

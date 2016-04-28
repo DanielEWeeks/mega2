@@ -98,7 +98,11 @@ public:
         int bytes = cnt * sizeof(pheno_pedrec_data);
         long long ll = xhash(p->Pheno, bytes);
         printf("PHP %2d %3d ", p->pedigree_link, p->person_link);
-        printf("%d %d %p %llx\n", cnt, bytes, p->Pheno, ll);
+#ifdef MS_PRINTF
+        printf("%d %d %p %I64d\n", cnt, bytes, p->Pheno, ll);
+#else
+        printf("%d %d %p %lld\n", cnt, bytes, p->Pheno, ll);
+#endif
     }
 
     void close() {
@@ -183,7 +187,11 @@ public:
         int bytes = marker_size(cnt);
         long long ll = xhash(p->Marker, bytes);
         printf("GHP %2d %3d ", p->pedigree_link, p->person_link);
-        printf("%d %d %p %llx\n", cnt, bytes, p->Marker, ll);
+#ifdef MS_PRINTF
+        printf("%d %d %p %I64d\n", cnt, bytes, p->Marker, ll);
+#else
+        printf("%d %d %p %lld\n", cnt, bytes, p->Marker, ll);
+#endif
     }
 
     void close() {

@@ -166,7 +166,11 @@ public:
         return ok(sqlite3_bind_int(stmt, col, val), "bind");
     }
     int bind(int col, long long val) {
+#ifdef MS_PRINTF
+        if (verbose > 1) printf("bind: %d %I64d\n", col, val);
+#else
         if (verbose > 1) printf("bind: %d %lld\n", col, val);
+#endif
         return ok(sqlite3_bind_int64(stmt, col, val), "bind");
     }
     int bind(int col, double val) {
@@ -234,7 +238,11 @@ public:
     }
     int column(int col, long long &val) {
         val = sqlite3_column_int64(stmt, col);
+#ifdef MS_PRINTF
+        if (verbose > 1) printf("colm: %d %I64d\n", col, val);
+#else
         if (verbose > 1) printf("colm: %d %lld\n", col, val);
+#endif
         return 1;
     }
     int column(int col, double &val) {

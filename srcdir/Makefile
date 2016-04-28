@@ -202,6 +202,7 @@ export CC
 export AR
 export ARFLAGS
 export AROUT
+export SQLxDEFS
 
 LINK ?= $(CXX)
 LTARGET ?= -o $(EXEC)

@@ -158,7 +158,7 @@ void dbmap_import(linkage_ped_top *Top) {
         printf("Int read failed for %s\n", a);
     }
     a = "map_functions";
-    unsigned char *aa;
+    unsigned char *aa = (unsigned char *)0;
     if (!map_get(Stuff_hash, a, aa)) {
         printf("Int read failed for %s\n", a);
     }

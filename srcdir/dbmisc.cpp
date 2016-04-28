@@ -110,9 +110,9 @@ int Stuff_table::db_getall() {
     while (ret) {
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
-            const char *k;
-            const unsigned char *v = 0;
-            unsigned char *u = 0;
+            const char *k = (const char *)0;
+            const unsigned char *v = (const unsigned char *)0;
+            unsigned char *u = (unsigned char *)0;;
             int bytes = 0;
             ret = select(k, v, bytes);
             if (bytes) {
