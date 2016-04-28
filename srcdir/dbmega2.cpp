@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2015 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -201,7 +201,7 @@ void dbmega2_stat(linkage_ped_top *Top)
 
     show_reset_input();
 
-    write_locus_stats(Top->LocusTop, UNKNOWN);
+//  write_locus_stats(Top->LocusTop, UNKNOWN);
 }
 
 void dbmega2_import(linkage_ped_top *Top)

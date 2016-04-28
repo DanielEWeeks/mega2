@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2015 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -36,7 +36,6 @@
 #include "dbloci.hh"
 #include "dbmisc.hh"
 
-#define TOD 1
 #include "Tod.hh"
 
 using namespace std;

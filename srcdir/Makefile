@@ -883,3 +883,36 @@ write_impute2_files.o: fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_impute2_files.o: user_input_ext.h input_ops.hh str_utils.hh
 write_impute2_files.o: plink_core_ext.h analysis.h write_plink_ext.h
 write_impute2_files.o: write_impute2_ext.h
+dbmega2.o: types.hh common.h typedefs.h errorno.h allutil.h linkage.h
+dbmega2.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
+dbmega2.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h
+dbmega2.o: write_files_ext.h dblite.hh dbbatch.hh dbmisc.hh dbpedigree.hh
+dbmega2.o: dballele.hh dbloci.hh dbmap.hh dbgenotype.hh
+dbmisc.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+dbmisc.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
+dbmisc.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h dblite.hh
+dbmisc.o: dbmisc.hh Tod.hh
+dbbatch.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+dbbatch.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
+dbbatch.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h dblite.hh
+dbbatch.o: dbbatch.hh Tod.hh
+dbpedigree.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+dbpedigree.o: linkage_external.h makeped.h pedtree.h batch_input.h
+dbpedigree.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
+dbpedigree.o: utils_ext.h dblite.hh dbpedigree.hh Tod.hh
+dballele.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+dballele.o: linkage_external.h makeped.h pedtree.h batch_input.h
+dballele.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
+dballele.o: utils_ext.h dblite.hh dbmisc.hh dballele.hh Tod.hh
+dbloci.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+dbloci.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
+dbloci.o: hwe.h compress_ext.h read_files_ext.h error_messages_ext.h
+dbloci.o: utils_ext.h dblite.hh dbloci.hh dbmisc.hh Tod.hh
+dbmap.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+dbmap.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
+dbmap.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h dblite.hh
+dbmap.o: dbmisc.hh dbmap.hh Tod.hh
+dbgenotype.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+dbgenotype.o: linkage_external.h makeped.h pedtree.h batch_input.h
+dbgenotype.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
+dbgenotype.o: utils_ext.h dblite.hh dbgenotype.hh Tod.hh

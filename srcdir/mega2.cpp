@@ -770,6 +770,7 @@ int             main(int argc, char **argv, char **env)
  Select from options 0-13 >
  */
 
+// DB ON BY DEFAULT if not commented out
     if ( (database_read ^ database_dump) == 0)
         database_read = database_dump = 1;
 
@@ -1201,7 +1202,7 @@ int             main(int argc, char **argv, char **env)
     if (database_dump && database_read) {
         int i, j;
         char *name = argv[0];
-        char **argvn = CALLOC((size_t) argc+1, char *);
+        char **argvn = CALLOC((size_t) argc+3, char *);
         argvn[0] = argv[0];
         argvn[1] = (char *)"--dbread";
         for (i = 1, j = 2; i < argc; i++) {
@@ -1211,7 +1212,8 @@ int             main(int argc, char **argv, char **env)
         if (InputMode == INTERACTIVE_INPUTMODE) {
             argvn[j++] = Mega2Batch;
         }
-        execve(name, argvn, env);
+        argvn[j++] = 0;
+        execvp(name, argvn);
     }
     // Create the data files, and then the shell scripts...
     Tod tod_out("create_output_files");
