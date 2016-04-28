@@ -318,7 +318,7 @@ typedef enum
 /* int             quiet; */
 /* global variables that control output behaviour*/
 extern int             MARKER_SCHEME;
-extern int             database_read, database_dump;
+extern int             database_read, database_dump, database_off;
 extern const char     *genetic_distance_map_type_string[3];
 extern int             LoopOverTrait; /* flag for looping over traits */
 extern int             LoopOverChrm; /* flag for looping over chromosomes */

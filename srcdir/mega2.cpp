@@ -771,7 +771,9 @@ int             main(int argc, char **argv, char **env)
  */
 
 // DB ON BY DEFAULT if not commented out
-    if ( (database_read ^ database_dump) == 0)
+    if (database_off)
+        database_read = database_dump = 0;
+    else  if ( (database_read ^ database_dump) == 0)
         database_read = database_dump = 1;
 
 

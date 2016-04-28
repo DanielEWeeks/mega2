@@ -51,6 +51,7 @@ DBlite MasterDB;
 int MasterDBreset = 1;
 int database_dump = 0;
 int database_read = 0;
+int database_off  = 0;
 
 //const char *select1(const char *select)
 template<typename cs>
