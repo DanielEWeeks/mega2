@@ -74,8 +74,8 @@ void File_table::stat() {
 
 int File_table::db_getall() {
     int ret = select_stmt && select_stmt->abort();
-    int k;
-    char *f, *t;
+    int k = 0;
+    char *f = (char *)0, *t = (char *)0;
 
     while (ret) {
         ret = select_stmt->step();

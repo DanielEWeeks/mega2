@@ -68,7 +68,6 @@ int Person_table::db_getall(linkage_ped_rec *p) {
     while (ret) {
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
-//            asm("int $3");
             ret = select(p);
             Person_hash[p->person_link] = p;
 

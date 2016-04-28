@@ -51,8 +51,8 @@ extern map<const char *, unsigned char *, charsless> Stuff_hash;
 
 void Map_table::db_getall(linkage_ped_top *Top) {
     int ret = select_stmt && select_stmt->abort();
-    int i, j;
-    double position, pos_female, pos_male;
+    int i = 0, j = 0;
+    double position = 0, pos_female = 0, pos_male = 0;
 
     while (ret) {
         ret = select_stmt->step();
@@ -73,9 +73,9 @@ void Map_table::db_getall(linkage_ped_top *Top) {
 
 void MapNames_table::db_getall(linkage_ped_top *Top) {
     int ret = select_stmt && select_stmt->abort();
-    int j;
-    int sex_averaged_map, male_sex_map, female_sex_map;
-    char *name;
+    int j = 0;
+    int sex_averaged_map = 0, male_sex_map = 0, female_sex_map = 0;
+    char *name = (char *)0;
 
     while (ret) {
         ret = select_stmt->step();

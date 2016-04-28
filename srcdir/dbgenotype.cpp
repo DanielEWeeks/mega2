@@ -49,8 +49,8 @@ int Phenotype_table::db_getall(linkage_locus_top *LTop, pheno_pedrec_data **Phen
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
 //            ret = select(p);
-            int link, cnt, bytes;
-            unsigned char *data;
+            int link = 0, cnt = 0, bytes = 0;
+            unsigned char *data = (unsigned char *)0;
             ret = select(link, cnt, bytes, data);
             Phenotypes[link] = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
             memcpy(Phenotypes[link], data, bytes);
@@ -71,8 +71,8 @@ int Genotype_table::db_getall(linkage_locus_top *LTop, void **Genotypes) {
     while (ret) {
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
-            int link, cnt, bytes;
-            unsigned char *data;
+            int link = 0, cnt = 0, bytes = 0;
+            unsigned char *data = (unsigned char*)0;
             ret = select(link, cnt, bytes, data);
             if (data) {
 //              Genotypes[link] = marker_alloc((size_t) LTop->MarkerCnt, 0);

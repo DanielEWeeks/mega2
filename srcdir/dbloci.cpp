@@ -130,7 +130,7 @@ int TraitAff_table::db_getall(linkage_affection_data *p) {
 
 int  AffectClass_table::db_getall(linkage_affection_class *p) {
     linkage_affection_class *op = p;
-    int l_link, c_link, cm, cf, ca;
+    int l_link = 0, c_link = 0, cm = 0, cf = 0, ca = 0;
     double *ds;
     int ret = select_stmt && select_stmt->abort();
 

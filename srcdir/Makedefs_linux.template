@@ -33,7 +33,7 @@ CC = gcc
 OPT ?= -O3
 CFLAGS = -Wall $(OPT)
 
-CLIBS = -lm
+CLIBS = -lm -pthread -ldl
 
 #no one uses LINUX_OS flag, ... yet
 #mega2.o cw_routines.o: DFLAGS += -DLINUX_OS

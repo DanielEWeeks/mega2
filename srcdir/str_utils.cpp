@@ -309,6 +309,15 @@ void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
     }
 }
 
+#ifdef MINGW
+static const char *index(const char *, char c) {
+    const char *sp;
+    for (sp = s; *sp != 0 && *sp != c; sp++) ;
+
+    return *sp ? sp : (const char *) 0;
+}
+#endif
+
 void split(Vecc &fields, char *line, const char *sep, int cnt) {
     int mult = index(sep, ' ') != 0 ? 1 : 0;
     char *fo = line;

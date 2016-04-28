@@ -54,8 +54,8 @@ extern Alleles_int *MARKER_SCHEME3_alleles;
 
 void CanonicalAllele_table::db_getall(linkage_ped_top *Top) {
     int ret = select_stmt && select_stmt->abort();
-    int k;
-    const char *v;
+    int k = 0;
+    const char *v = (char *)0;
 
     while (ret) {
         ret = select_stmt->step();
@@ -76,7 +76,7 @@ void CanonicalAllele_table::db_getall(linkage_ped_top *Top) {
 
 void MarkerScheme_table::db_getall(linkage_ped_top *Top) {
     int ret = select_stmt && select_stmt->abort();
-    int k, allele1, allele2;
+    int k = 0, allele1 = 0, allele2 = 0;
 
     while (ret) {
         ret = select_stmt->step();

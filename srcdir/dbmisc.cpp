@@ -51,8 +51,8 @@ int Int_table::db_getall() {
     while (ret) {
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
-            const char *k;
-            int v;
+            const char *k = (const char *)0;
+            int v = 0;
             ret = select(k, v);
             Int_hash[strdup(k)] = v;
         } else if (ret == SQLITE_DONE) {
@@ -67,13 +67,11 @@ int Int_table::db_getall() {
 int Double_table::db_getall() {
     int ret = select_stmt && select_stmt->abort();
 
-//    asm("int $3");
-
     while (ret) {
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
-            const char *k;
-            double v;
+            const char *k = (const char* )0;
+            double v = 0;
             ret = select(k, v);
             Double_hash[strdup(k)] = v;
         } else if (ret == SQLITE_DONE) {
@@ -89,13 +87,11 @@ int Double_table::db_getall() {
 int Charstar_table::db_getall() {
     int ret = select_stmt && select_stmt->abort();
 
-//    asm("int $3");
-
     while (ret) {
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
-            const char *k;
-            char *v;
+            const char *k = (const char *)0;
+            char *v = (char *)0;
             ret = select(k, v);
             Charstar_hash[strdup(k)] = strdup(v);
         } else if (ret == SQLITE_DONE) {
@@ -117,7 +113,7 @@ int Stuff_table::db_getall() {
             const char *k;
             const unsigned char *v = 0;
             unsigned char *u = 0;
-            int bytes;
+            int bytes = 0;
             ret = select(k, v, bytes);
             if (bytes) {
                 u = CALLOC((size_t) bytes, unsigned char);
