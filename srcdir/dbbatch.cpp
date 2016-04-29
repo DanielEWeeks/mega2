@@ -30,6 +30,7 @@
 #include "typedefs.h"
 #include "error_messages_ext.h"
 #include "utils_ext.h"
+#include "input_ops.hh"
 
 #include "dblite.hh"
 #include "dbbatch.hh"
@@ -39,7 +40,7 @@
 using namespace std;
 
 extern DBlite MasterDB;
-extern int Input_Format;
+extern INPUT_FORMAT_t Input_Format;
 
 static
 const char *INPUT_FORMAT_DATA[] = {

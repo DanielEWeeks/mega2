@@ -110,6 +110,9 @@
 #endif
 #include <math.h>
 #include <ctype.h>
+#ifdef _WIN
+#include <process.h>
+#endif
 
 #include "common.h"
 #include "typedefs.h"
@@ -1215,7 +1218,11 @@ int             main(int argc, char **argv, char **env)
             argvn[j++] = Mega2Batch;
         }
         argvn[j++] = 0;
+#ifdef _WIN
+        _execvp(name, argvn);
+#else
         execvp(name, argvn);
+#endif
     }
     // Create the data files, and then the shell scripts...
     Tod tod_out("create_output_files");

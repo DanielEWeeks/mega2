@@ -31,6 +31,7 @@
 #include "error_messages_ext.h"
 #include "utils_ext.h"
 #include "input_check.h"
+#include "input_ops.hh"
 
 #include "dblite.hh"
 #include "dbmisc.hh"
@@ -141,7 +142,7 @@ void dbmisc_export(linkage_ped_top *Top) {
     int_table.insert("Seed2", seed2);
     int_table.insert("Seed3", seed3);
 
-    extern int Input_Format;
+    extern INPUT_FORMAT_t Input_Format;
     int_table.insert("Input_Format", Input_Format);
 
     // for each genotype (consulting the linkage_ped_top structure)...
@@ -229,8 +230,10 @@ void dbmisc_import(linkage_ped_top *Top) {
     int_table.get("Seed2", seed2);
     int_table.get("Seed3", seed3);
 
-    extern int Input_Format;
-    int_table.get("Input_Format", Input_Format);
+    extern INPUT_FORMAT_t Input_Format;
+    int Input = 0;
+    int_table.get("Input_Format", Input);
+    Input_Format = (INPUT_FORMAT_t)Input;
 
     int_table.get("PedCnt", Top->PedCnt);
     int_table.get("IndivCnt", Top->IndivCnt);
@@ -275,7 +278,7 @@ void dbmisc_import(linkage_ped_top *Top) {
 
     int c = 0;
     int_table.get("MapDistanceType", c);
-    Top->LocusTop->map_distance_type = c;
+    Top->LocusTop->map_distance_type = (unsigned char)c;
 
 //asked
     extern int genetic_distance_index;
