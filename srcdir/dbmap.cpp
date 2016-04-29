@@ -38,7 +38,7 @@
 #include "dbmisc.hh"
 #include "dbmap.hh"
 
-#include "Tod.hh"
+#include "tod.hh"
 
 using namespace std;
 

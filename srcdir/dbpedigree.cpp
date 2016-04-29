@@ -34,7 +34,7 @@
 #include "dblite.hh"
 #include "dbpedigree.hh"
 
-#include "Tod.hh"
+#include "tod.hh"
 
 using namespace std;
 

@@ -34,7 +34,7 @@
 #include "dblite.hh"
 #include "dbgenotype.hh"
 
-#include "Tod.hh"
+#include "tod.hh"
 
 using namespace std;
 

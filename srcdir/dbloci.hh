@@ -472,11 +472,11 @@ typedef struct _linkage_affection_class {
             && select_stmt->column(idx++, vf, cf)
             && select_stmt->column(idx++, va, ca)
             && select_stmt->row(idx, i, j);
-        p->MaleDef = dm;
+        p->MaleDef = (unsigned char)dm;
         p->MalePen = (double *)vm;
-        p->FemaleDef = df;
+        p->FemaleDef = (unsigned char)df;
         p->FemalePen = (double *)vf;
-        p->AutoDef = da;
+        p->AutoDef = (unsigned char)da;
         p->AutoPen = (double *)va;
         return ret;
     }

@@ -34,7 +34,7 @@
 #include "dblite.hh"
 #include "dbbatch.hh"
 
-#include "Tod.hh"
+#include "tod.hh"
 
 using namespace std;
 
@@ -84,7 +84,6 @@ int File_table::db_getall() {
 
             if (*f != 0) {
                 if (mega2_input_files[k]) {
-                    asm("int $3");
                     free(mega2_input_files[k]);
                 }
                 mega2_input_files[k] = strdup(f);
@@ -122,9 +121,3 @@ void dbbatch_file_import(linkage_ped_top *Top) {
 
     MasterDB.commit();
 }
-
-
-
-
-
-
