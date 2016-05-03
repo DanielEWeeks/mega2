@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <ctime>
 
 #include "common.h"
 #include "typedefs.h"
@@ -126,7 +127,6 @@ static void write_MERLIN_map(linkage_ped_top *Top, char *file_names[])
 
         //format of Merlin map: Chromosome, Marker, Position
         void inner() {
-
             int chr = _tlocusp->Marker->chromosome;
             str marker = _tlocusp->Marker->MarkerName;
             double pos = _tlocusp->Marker->pos_avg;
@@ -273,23 +273,31 @@ static void write_MERLIN_freq(linkage_ped_top *Top, char *file_names[])
                 pr_printf("#   Mega2 version 4.8.2\n");
                 //current date/time
                 //yyyy-mm-dd-hh-mm
-                pr_printf("#   Run date:                %s\n","testtime");
+                time_t rawtime1;
+                struct tm *timeinfo1;
+                char buffer1 [50];
+                time (&rawtime1);
+                timeinfo1 = localtime (&rawtime1);
+                strftime(buffer1,50,"%Y-%m-%d-%h-%M",timeinfo1);
+                pr_printf("#   Run date:                %s\n",buffer1);
                 //current date/time again, but this time formatted differently!
                 //{day of week abreviated}{space}{month abreviated}{space}{date}{space}{hh:mm}{space}{yyyy}
-                pr_printf("#   This script created on   %s\n","testtime");
+                time_t rawtime2;
+                struct tm *timeinfo2;
+                char buffer2 [100];
+                time (&rawtime2);
+                timeinfo2 = localtime (&rawtime2);
+                strftime(buffer2,100, "%c",timeinfo2);
+                pr_printf("#   This script created on   %s\n",buffer2);
                 pr_printf("#   Input file names:\n");
                 //perhaps?
-                pr_printf("#       Pedigree file:              %s\n",_Top->Ped->Name);
-                pr_printf("#          Locus file:              %s\n","testLocus"/*_Top->LocusTop/*locus file?? probably not*/);
-                pr_printf("#            Map file:              %s\n","testmaps"/*maps*/);
+                pr_printf("#       Pedigree file:              %s\n",Input->input_files.pedfl[0]);
+                pr_printf("#          Locus file:              %s\n",Input->input_files.locusfl[0]);
+                pr_printf("#            Map file:              %s\n",Input->input_files.locusfl[0]);
                 //these need to come in from inputs
                 pr_printf("#    Untyped pedigree option  Include all pedigrees whether typed or not\n");
                 pr_printf("#----------------------------------------------\n");
                 pr_printf("# Chromosome number:    %d\n",_numchr);
-
-
-
-
 
             }
 
@@ -361,10 +369,12 @@ void CLASS_NEWMERLIN::create_output_file(
 
     write_MERLIN_freq(Top,file_names);
 
-    write_MERLIN_sh(Top, file_names);
-
     write_MERLIN_peds(Top, file_names, pwid, fwid,
                       use_map);
+
+    write_MERLIN_sh(Top, file_names);
+
+
 }
 
 

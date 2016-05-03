@@ -47,6 +47,8 @@ public:
     virtual bool has_sub_options()  { return true; }
     virtual bool is_sub_option()  { return true; }
  */
+
+
 	virtual bool loops()  { return true; }
 	virtual bool Loop_Over_Chromosomes_implemented() { return true; }
 	// missing values are always replaced with an '-'

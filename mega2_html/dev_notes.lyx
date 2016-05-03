@@ -80,11 +80,12 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle plain
-\tracking_changes false
+\tracking_changes true
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1123876542 "Justin" 
 \end_header
 
 \begin_body
@@ -1128,6 +1129,7 @@ Output Loop Classes
 \begin_layout Standard
 The loop classes are defined in the files: 
 \series bold
+\bar under
 loop.h 
 \series default
 and 
@@ -1135,6 +1137,8 @@ and
 loop.cpp
 \series default
 .
+
+\bar default
  These supply an Inner loop and Outer loop.
  Both loops contain several different classes each of which iterates through
  people, chromosomes and markers in a designated order.
@@ -2485,6 +2489,7 @@ inline false
 status open
 
 \begin_layout Plain Layout
+
  1 
 \backslash
 
@@ -2493,6 +2498,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+
  2 
 \backslash
 
@@ -2501,6 +2507,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+
  3 
 \backslash
 
@@ -2509,6 +2516,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+
  4 
 \backslash
 
@@ -2517,6 +2525,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+
  5 
 \backslash
 
@@ -2525,6 +2534,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+
  6 
 \backslash
 
@@ -2533,6 +2543,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+
  7 
 \backslash
 
@@ -2541,6 +2552,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+
  8 
 \backslash
 
@@ -2549,6 +2561,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+
  9 
 \backslash
 
@@ -2557,6 +2570,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+
 10 
 \backslash
 
@@ -2566,6 +2580,7 @@ Top), loop::ped_per_loci(Top) { }
 \end_layout
 
 \begin_layout Plain Layout
+
 11 
 \backslash
 
@@ -2574,6 +2589,7 @@ Top), loop::ped_per_loci(Top) { }
 \end_layout
 
 \begin_layout Plain Layout
+
 12 
 \backslash
 
@@ -2584,6 +2600,7 @@ n", *_opath, file_names[0]);
 \end_layout
 
 \begin_layout Plain Layout
+
 13 
 \backslash
 
@@ -2592,6 +2609,7 @@ n", *_opath, file_names[0]);
 \end_layout
 
 \begin_layout Plain Layout
+
 14 
 \backslash
 
@@ -2605,6 +2623,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 15 
 \backslash
 
@@ -2613,6 +2632,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 16 
 \backslash
 
@@ -2621,6 +2641,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 17 
 \backslash
 
@@ -2629,6 +2650,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 18 
 \backslash
 
@@ -2637,6 +2659,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 19 
 \backslash
 
@@ -2645,6 +2668,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 20 
 \backslash
 
@@ -2653,6 +2677,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 21 
 \backslash
 
@@ -2661,6 +2686,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 22 
 \backslash
 
@@ -2669,6 +2695,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 23 
 \backslash
 
@@ -2677,6 +2704,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 24 
 \backslash
 
@@ -2685,6 +2713,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 25 
 \backslash
 
@@ -2693,6 +2722,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 26 
 \backslash
 
@@ -2701,6 +2731,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 27 
 \backslash
 
@@ -2709,6 +2740,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 28 
 \backslash
 
@@ -2717,6 +2749,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 29 
 \backslash
 
@@ -2725,6 +2758,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 30 
 \backslash
 
@@ -2733,6 +2767,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 31 
 \backslash
 
@@ -2741,6 +2776,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 32 
 \backslash
 
@@ -2749,6 +2785,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 33 
 \backslash
 
@@ -2757,6 +2794,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 34 
 \backslash
 
@@ -2765,6 +2803,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 35 
 \backslash
 
@@ -2773,6 +2812,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 36 
 \backslash
 
@@ -2781,6 +2821,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 37 
 \backslash
 
@@ -2789,6 +2830,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 38 
 \backslash
 
@@ -2797,6 +2839,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 39 
 \backslash
 
@@ -2805,6 +2848,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 40 
 \backslash
 
@@ -2813,6 +2857,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 41 
 \backslash
 
@@ -2821,6 +2866,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 42 
 \backslash
 
@@ -2829,6 +2875,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 43 
 \backslash
 
@@ -2837,6 +2884,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 44 
 \backslash
 
@@ -2845,6 +2893,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 45 
 \backslash
 
@@ -2853,6 +2902,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 46 
 \backslash
 
@@ -2861,6 +2911,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 47 
 \backslash
 
@@ -2869,6 +2920,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 48 
 \backslash
 
@@ -2877,6 +2929,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 49 
 \backslash
 
@@ -2885,6 +2938,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 50 
 \backslash
 
@@ -2893,6 +2947,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 51 
 \backslash
 
@@ -2901,6 +2956,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 52 
 \backslash
 
@@ -2909,6 +2965,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 53 
 \backslash
 
@@ -2917,6 +2974,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 54 
 \backslash
 
@@ -2925,6 +2983,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 55 
 \backslash
 
@@ -2933,6 +2992,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 56 
 \backslash
 
@@ -2941,6 +3001,7 @@ n");
 \end_layout
 
 \begin_layout Plain Layout
+
 57 
 \backslash
 
@@ -2955,6 +3016,114 @@ n");
 \end_inset
 
 
+\change_deleted -1123876542 1462296405
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462294458
+
+\series bold
+Additional notes on loops:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462294882
+In general you can loop over: Chromosome and/or trait as an outer loop.
+ These are further out as they create different output files and directories
+ and so must be the outermost level of the loop.
+ So you can call either both, chr, or trait in that regard.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462295118
+Also in general the inner loop is more robust and can be a series of loops,
+ For instance you can loop ped_per (pedigree, then person), ped_per_trait
+ (pedigree, then person, then trait), trait_ped_per (trait, then pedigree,
+ then person) etc.
+ Though these are all in a single file.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462295144
+So for instance if you want to create a simple pedigree file split by chromosome
+, you would loop call an outer loop of a chromosome, then call an innerloop
+ of ped_per (or ped_per_loci if you want to include markers).
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462295195
+You can address parts of the loop using the inner() function, or at per_start,
+ per_end, chr_start etc.
+ depending on the type of loops you are using.
+ So if you wanted to create a pedigree, you can see above you would use
+ per_start to get your personal information, then th einner loop to get
+ all the loci information.
+\change_deleted -1123876542 1462295696
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462295423
+The global values also need to be set, make sure globals that apply to your
+ situation are correctly set.
+ For instance if you want to loop over chromosomes (not just do them all
+ at once) you want to make sure combine_chromo = false and loopoverchromo
+ is true.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462297110
+Run_loop() in the example has been renamed to data_loop(), it is still important
+ to make sure that function is called to trigger the object oriented looping.
+ Also is now generally wrapped in a voided function called file_loop() (which
+ iterate() calls).
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462297096
+sp->iterate() is a key function to trigger the whole 
+\begin_inset Quotes eld
+\end_inset
+
+looping
+\begin_inset Quotes erd
+\end_inset
+
+ mechanic 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462295703
+Make sure that you examine the magic code very well.
+ Some aspects of these loops are subtle.
+ For instance if fwid and pwid are not set (they are the widths of values
+ put into files) then they can be set to arbitrarily large numbers and cause
+ problems.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462295717
+Then you need to make sure you do the sp->load_formats function
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462297038
+sp-> file_names is necessary if you're updating the file names and not just
+ looping, in the previous case we're adding a value to file_names at the
+ zeroth index
 \end_layout
 
 \begin_layout Section
@@ -3230,6 +3399,96 @@ make
 to compile Mega2.
  The binary that is produced is self contained and will run on any windows
  system.
+\change_inserted -1123876542 1462293467
+
+\end_layout
+
+\begin_layout Section
+
+\change_inserted -1123876542 1462293468
+Debugging Tricks
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462293468
+You'll begin by making sure you have lldb installed.
+ You can check if it's already on your machine by typing.
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1462293468
+whereis lldb
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462293516
+If it's not installed you should go and install by following the instructinons
+ at 
+\begin_inset CommandInset href
+LatexCommand href
+name "http://lldb.llvm.org/build.html"
+target "http://lldb.llvm.org/build.html"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462293468
+Next you want to go back to your 
+\series bold
+Mega2/srcdir 
+\series default
+now instead type:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1462293577
+make dgb
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462295305
+This calls the flags appropriately so that you can begin debugging.
+ From there you can use either lldb directly in the command line or use
+ emacs.
+ To use lldb you can either set breakpoints and step through as normal or
+ use a print statement like the following:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1462293877
+asm(
+\begin_inset Quotes eld
+\end_inset
+
+int $3
+\begin_inset Quotes erd
+\end_inset
+
+);
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462293892
+This command forces a breakpoint.
+ From here you can debug as normal using lldb.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1462295268
+A current goal is to use gdb (or lldb) to debug on Eclipse, so far this
+ has not been accomplished.
 \end_layout
 
 \end_body
