@@ -309,7 +309,7 @@ void split(Vecs &fields, Cstr& line, Cstr& sep, int cnt) {
     }
 }
 
-#if defined(MINGW) || defined(_WIN)
+#if defined(MINGW) || defined(_WIN) || defined(SOLARIS)
 static const char *index(const char *s, char c) {
     const char *sp;
     for (sp = s; *sp != 0 && *sp != c; sp++) ;

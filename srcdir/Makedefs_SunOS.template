@@ -37,7 +37,7 @@ CFLAGS = -Wall $(OPT)
 # for send() and recv() on Solaris11, libsocket needs to be linked in.
 CLIBS  = -lm -lnsl -lsocket
 
-mega2.o cw_routines.o: DFLAGS += -DSOLARIS
+str_utils.o mega2.o cw_routines.o: DFLAGS += -DSOLARIS
 
 # these values are used in all the makefiles inside mega2
 # to override, redefine CC and COPTS inside individual makefiles
