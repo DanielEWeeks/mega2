@@ -35,7 +35,7 @@ class CLASS_PSEQ: public CLASS_PLINK {
 public:
     CLASS_PSEQ() : CLASS_PLINK() {
         _name = "PSEQ";
-	strcpy(file_name_stem, "pseq");
+	file_name_stem = strdup("pseq");
     }
    ~CLASS_PSEQ() {}
 

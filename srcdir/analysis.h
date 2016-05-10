@@ -42,7 +42,7 @@ public:
     const char  *_subname;
     const char  *_missing_value_key;
     int          _suboption;
-    char file_name_stem[100];
+    char        *file_name_stem;
 
 protected:
     file_format infl_type;
@@ -51,7 +51,7 @@ protected:
 //not yet
     char *mapfl_name;
 public:
-    CLASS_ANALYSIS() {
+    CLASS_ANALYSIS() : file_name_stem(NULL) {
 
         _name      = "";
         _subname   = "";
@@ -63,7 +63,12 @@ public:
         PedTreeTop = NULL;
         mapfl_name = NULL;
     }
-    virtual ~CLASS_ANALYSIS() {}
+    virtual ~CLASS_ANALYSIS() {
+        if (file_name_stem) {
+            free(file_name_stem);
+            file_name_stem = NULL;
+        }
+    }
 
 /*
   If your option cannot handle affection status variables with

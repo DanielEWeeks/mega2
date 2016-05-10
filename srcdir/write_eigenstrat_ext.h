@@ -39,7 +39,7 @@ class CLASS_EIGENSTRAT: public CLASS_PLINK_CORE {
 public:
     CLASS_EIGENSTRAT() : CLASS_PLINK_CORE() {
         _name = "Eigenstrat";
-	strcpy(file_name_stem, "eigenstrat");
+	file_name_stem = strdup("eigenstrat");
     }
    ~CLASS_EIGENSTRAT() {}
 

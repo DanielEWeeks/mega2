@@ -35,7 +35,7 @@ class CLASS_IMPUTE2: public CLASS_PLINK {
 public:
     CLASS_IMPUTE2() : CLASS_PLINK() {
         _name = "IMPUTE2";
-	strcpy(file_name_stem, "impute2");
+	file_name_stem = strdup("impute2");
     }
    ~CLASS_IMPUTE2() {}
 

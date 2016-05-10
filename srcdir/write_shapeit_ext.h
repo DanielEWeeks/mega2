@@ -36,7 +36,7 @@ class CLASS_SHAPEIT: public CLASS_PLINK {
 public:
     CLASS_SHAPEIT() : CLASS_PLINK() {
         _name = "SHAPEIT";
-	strcpy(file_name_stem, "shapeit");
+	file_name_stem = strdup("shapeit");
     }
    ~CLASS_SHAPEIT() {}
 

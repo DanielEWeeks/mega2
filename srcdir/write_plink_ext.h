@@ -41,7 +41,7 @@ class CLASS_PLINK: public CLASS_PLINK_CORE {
 public:
     CLASS_PLINK() : CLASS_PLINK_CORE() {
         _name = "PLINK";
-	strcpy(file_name_stem, "plink");
+	file_name_stem = strdup("plink");
     }
    ~CLASS_PLINK() {}
 

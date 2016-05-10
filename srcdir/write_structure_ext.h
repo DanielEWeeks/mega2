@@ -35,7 +35,7 @@ public:
     CLASS_STRUCTURE() : CLASS_ANALYSIS() {
         _name = "Structure";
         _suboption = -1;
-        strcpy(file_name_stem, "structure");
+        file_name_stem = strdup("structure");
     }
    ~CLASS_STRUCTURE() {}
 
