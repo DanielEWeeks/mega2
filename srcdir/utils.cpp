@@ -2072,7 +2072,7 @@ void mega2_opts(int argc, char **argv)
     else if (argc == 1)  {
         strcpy(Mega2Batch, *argv);
     } else {
-        printf("Invalid arguments to Mega2.\n");
+        printf("Invalid arguments to Mega2. %d\n", argc);
         print_mega2_help();
         EXIT(INPUT_DATA_ERROR);
     }

@@ -190,15 +190,18 @@ void dbmega2_stat(linkage_ped_top *Top)
     msgvf("\t%d markers (%d traits)\n",
           Top->LocusTop->MarkerCnt, Top->LocusTop->PhenoCnt);
     if (genetic_distance_index > -1)
-        msgvf("\tgenetic distance(map name/type/idx) %s/%c/%d, Sex map type %d\n",
+        msgvf("\tgenetic distance(map name/type/idx) \"%s\"/%s/%d, Sex map type %s\n",
               Top->EXLTop->MapNames[genetic_distance_index], 
-              Top->EXLTop->map_functions[genetic_distance_index], genetic_distance_index, 
-              genetic_distance_sex_type_map);
+              Top->EXLTop->map_functions[genetic_distance_index] == 'k' ? "kosambi" : "haldane", 
+              genetic_distance_index, 
+              genetic_distance_sex_type_map == 0 ? "AVERAGED_MAP" : 
+              (genetic_distance_sex_type_map == 1 ? "MALE_MAP" : "FEMALE_SEX_MAP"));
 
     if (base_pair_position_index > -1)
-        msgvf("\tbase pair distance (map name/type/idx) %s/%c/%d\n\n",
+        msgvf("\tbase pair distance (map name/type/idx) \"%s\"/%s/%d\n\n",
               Top->EXLTop->MapNames[base_pair_position_index], 
-              Top->EXLTop->map_functions[base_pair_position_index], base_pair_position_index);
+              Top->EXLTop->map_functions[base_pair_position_index] == 'p' ? "base pair" : "???",
+              base_pair_position_index);
 
     show_reset_input();
 
