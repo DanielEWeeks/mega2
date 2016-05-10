@@ -346,7 +346,7 @@ static void            CreateSplinkCShell(char *options, int single_loci)
             fflush(stdout);
             IgnoreValue(fgets(choice, 100, stdin)); newline;
 
-            if (choice == NULL) break;
+            if (*choice == 0) break;
 
             if (strncasecmp("help", choice, (size_t) 4) == 0) {
                 /* print the help right here */

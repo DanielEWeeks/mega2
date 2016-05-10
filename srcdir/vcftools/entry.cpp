@@ -817,7 +817,8 @@ string entry::get_typed_string(unsigned int * line_position, const vector<char>&
 	memcpy(tmp, &line[*line_position], size*sizeof(char));
 	*line_position += size;
 	out = string( tmp, size );
-	delete tmp; // cpk: Memory leak
+// orig	delete tmp; // cpk: Memory leak
+	delete [] tmp;
 
 	if (out == "" or out == " ") out = ".";
 
