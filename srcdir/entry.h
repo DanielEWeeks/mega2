@@ -55,9 +55,9 @@ public:
     int  _fwid;
     int  _pwid;
     int  _mwid;
-    char _fformat[100];
-    char _pformat[100];
-    char _mformat[100];
+    char _fformat[16];
+    char _pformat[16];
+    char _mformat[16];
 
     int _trait;
 
@@ -90,9 +90,16 @@ public:
             _EXLTop = Top->EXLTop;
         }
     }
-    virtual ~person_locus_entry() {}
+    virtual ~person_locus_entry() {
+        if (_fln) {
+            free(_fln);
+            _fln = NULL;
+        }
+    }
     void load_formats_no_space(const int mwid);
     void load_formats(const int fwid, const int pwid, const int mwid);
+
+    void setfln(const char *prefix, const char *sfx);
 
     void pr_id();
     void pr_uid();

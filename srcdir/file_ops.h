@@ -40,10 +40,11 @@
 
 class file_ops {
 protected:
-    char path_[2*FILENAME_LENGTH];
+    char *path_;
     const char *dir_;
     const char *file_;
 public:
+    char *_fln;
     char **_opath;
     FILE *_filep;
     // In Version 1.2.6 gzFile is (gzFile_s *), and in 1.2.5 it is (voidp) which is a (Byte *).
@@ -51,7 +52,7 @@ public:
     // Also note that the documentation for 'gzFile gzopen()' states that it returns NULL on failure.
     gzFile _gzfile;
 
-    file_ops() : _filep(NULL), _gzfile(NULL)  { }
+    file_ops() : path_(NULL), _fln(NULL), _filep(NULL), _gzfile(NULL)  { }
 
     virtual ~file_ops() {
         // It is not a problem to try to close the file multiple times...
@@ -80,7 +81,10 @@ public:
        @param[in] mode      string "w"rite, "a"ppend
     */
     void filep_open(const char *dir, const char *file, const char *mode) {
-        sprintf(path_, "%s/%s", dir, file);
+        char path[2*FILENAME_LENGTH];
+        sprintf(path, "%s/%s", dir, _fln ? _fln : file);
+        path_ = strdup(path);
+
         int _is_gzfile = (strlen(file) > 3 && strcasecmp(".gz", &file[strlen(file)-3]) == 0) ? 1 : 0;
 
         // The current implementation of this object is for output only, so make sure that we are never reading...
@@ -204,6 +208,10 @@ public:
             fclose(_filep);
             _filep = NULL;
             file_post();
+        }
+        if (path_ != NULL) {
+            free(path_);
+            path_ = NULL;
         }
     }
 

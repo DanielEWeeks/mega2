@@ -30,6 +30,8 @@
 #include "tod.hh"
 #include "analysis.h"
 
+#include "output_file_names_ext.h"
+
 void fileloop::once::iterate()
 {
     int tr;
@@ -77,6 +79,7 @@ void fileloop::both::iterate()
                 _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
             }
         }
+        if (_fln) change_output_chr(_fln, _numchr);
 
         sv_trp   = _trp;
         sv_opath = _opath;
@@ -160,6 +163,7 @@ void fileloop::chr::iterate()
                 _Top->analysis->replace_chr_number(Outfile_Names, _numchr);
             }
         }
+        if (_fln) change_output_chr(_fln, _numchr);
 
         chr_start();
 

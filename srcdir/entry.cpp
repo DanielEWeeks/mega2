@@ -55,6 +55,15 @@ void person_locus_entry::load_formats(const int fwid, const int pwid, const int 
     }
 }
 
+void person_locus_entry::setfln(const char *prefix, const char *sfx) 
+{
+    char fa[FILENAME_LENGTH];
+
+    sprintf(fa, "%s%s", prefix, sfx);
+
+    _fln = strdup(fa);
+}
+
 void person_locus_entry::pr_id()
 {
     pr_fam();

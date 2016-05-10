@@ -195,7 +195,7 @@ void change_output_chr(char *OP_files, const int numchr)
 
     pos[0]=pos[1]= -1;
 
-    if (numchr == 0) {
+    if (numchr <= 0) {
         strcpy(chr_str, "all");
     } else if (numchr > 0) {
         CHR_STR(numchr, chr_str);
