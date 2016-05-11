@@ -584,10 +584,11 @@ int exceeded_max_morgan_value(const double position) {
 
 /* -------------------------- here is main()----------------------------*/
 
+extern void init_analysis();
+
 extern void db_open_db();
 extern void db_init_all();
 extern void db_fini_all();
-
 
 int             main(int argc, char **argv, char **env)
 {
@@ -616,10 +617,8 @@ int             main(int argc, char **argv, char **env)
 
     plink_info_type *plink_info = (plink_info_type *)NULL;
     char          *zero = canonical_allele("0");
-
     
-    Tod tod_all("total elapsed time")
-;
+    Tod tod_all("total elapsed time");
     Tod tod_init("mega2 init");
 
     Mega2Status = INIT;
@@ -627,6 +626,7 @@ int             main(int argc, char **argv, char **env)
     init_globals(argv[0]);
     TimeStampWritten[0]=0; TimeStampWritten[1]=0;
     mega2_opts(argc, argv);
+    init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
 
     genetic_distance_index = -1;
@@ -676,7 +676,7 @@ int             main(int argc, char **argv, char **env)
 
     // Try to open the batch file if it's name is anything other than 'none'.
     // This signifies BATCH_FILE_INPUTMODE...
-    if (strcmp(Mega2Batch, "none")) {
+    if (*Mega2Batch != 0 && strcmp(Mega2Batch, "none")) {
         if (access(Mega2Batch, F_OK) != 0) {
             printf("ERROR: Cannot find batch file %s!\n", Mega2Batch);
             printf("       Terminating Mega2.\n");
@@ -779,24 +779,20 @@ int             main(int argc, char **argv, char **env)
     else  if ( (database_read ^ database_dump) == 0)
         database_read = database_dump = 1;
 
+    if (database_dump || ! database_read) {
+        Tod tod_menu1("menu1");
+        menu1(&infl_type, &pedfl_name, &locusfl_name,
+              &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
+              &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
+              &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
+              &FreqMismatchThreshold);
+        tod_menu1();
 
-//  if (database_read != 2) {
-    Tod tod_menu1("menu1");
-    menu1(&infl_type, &pedfl_name, &locusfl_name,
-          &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
-          &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
-          &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
-          &FreqMismatchThreshold);
-    tod_menu1();
-//  }
+        Input_Files& inf = Input->input_files;  // Input is set in menu1 as soon as possible.
 
-    Input_Files& inf = Input->input_files;  // Input is set in menu1 as soon as possible.
-
-    plink_info->plinkf = (Input_Format == in_format_binary_PED) ? binary_PED_format : 
+        plink_info->plinkf = (Input_Format == in_format_binary_PED) ? binary_PED_format : 
                                (Input_Format == in_format_PED) ? PED_format : not_plink_format;
 
-    if (database_dump || ! database_read) {
-//xx should free this mem if names are coming from database
         *inf.pedfl   = pedfl_name;
         *inf.locusfl = locusfl_name;
         *inf.mapfl   = mapfl_name;
@@ -834,7 +830,13 @@ int             main(int argc, char **argv, char **env)
         if (ferr) EXIT(FILE_READ_ERROR);
 
         check_size_dos();
+    } else {
+        Tod tod_menu1a("menu1a");
+        menu1a(&UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
+               &FreqMismatchThreshold);
+        tod_menu1a();
     }
+
     log_line(mssgf);
     /*
      Display the Analysis Menu, and return when the user enters a valid analysis number...
@@ -885,7 +887,7 @@ int             main(int argc, char **argv, char **env)
     }
 #endif
 
-    Value_Missing_get(&analysis);
+//    Value_Missing_get(&analysis);  //moved to after db read
 
 #ifndef HIDESTATUS
     int guess;
@@ -1095,6 +1097,7 @@ int             main(int argc, char **argv, char **env)
     Mega2Status = INPUT_FILES_READ;
     LPedTreeTop->analysis = analysis;
 
+    Value_Missing_get(&analysis);
     if (database_dump || ! database_read) {
         Input->GetOps()->do_gc();
     } else {
@@ -1231,8 +1234,7 @@ int             main(int argc, char **argv, char **env)
                                  UntypedPedOpt, &numchr, &Top2);
     tod_out();
     Tod tod_sh("create_shell_file");
-    analysis->create_sh_file(LPedTreeTop,
-                             Outfile_Names, numchr);
+    analysis->create_sh_file(LPedTreeTop, Outfile_Names, numchr);
     tod_sh();
 
     if (FirstIterMenu == 1 && InputMode == INTERACTIVE_INPUTMODE) {

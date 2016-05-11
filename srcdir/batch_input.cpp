@@ -452,7 +452,10 @@ void check_batch_items(void)
     int read_a_section;
     /* Input files */
 
-    if (ITEM_READ(/* 0 */ Input_Pedigree_File) &&
+    if (database_read)
+        batchINPUTFILES=1;
+
+    else if (ITEM_READ(/* 0 */ Input_Pedigree_File) &&
 // #1
         (ITEM_READ(/* 1 */ Input_Locus_File) || Input->req_locus_file == 0) &&
 // #2
@@ -461,8 +464,7 @@ void check_batch_items(void)
         ITEM_READ(/* 4 */ Input_Untyped_Ped_Option)) {
         // NOTE: You don't need a Map_File if you are working with a VCF file because it contains one map (VCF.p)...
         batchINPUTFILES=1;
-        if (!database_read)
-            mssgf("Input filenames and missing value indicator read in from batch file.");
+        mssgf("Input filenames and missing value indicator read in from batch file.");
     } else {
         if (!ITEM_READ(/* 0 */ Input_Pedigree_File)) {
             missing_item_goto_menu(0, "Input menu");
@@ -488,7 +490,7 @@ void check_batch_items(void)
 
     if (ITEM_READ(/* 7 */ Chromosome_Single) || (ITEM_READ(/* 8 */ Chromosomes_Multiple_Num) && ITEM_READ(/* 9 */ Chromosomes_Multiple))) {
         batchREORDER = 1;
-        mssgf("Markers, chromosome(s) and read in from batch file.");
+        mssgf("Chromosome(s) and markers read in from batch file.");
     } else {
         warnf("Locus selections not specified in batch file.");
         missing_item_goto_menu(-1, "Reorder menu");
@@ -1120,7 +1122,8 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
             errorvf("%s option not set\n", "Analysis_Option");
             err++;
         } else {
-            sscanf(bi->value_str.c_str(), "%s", analysis_name);
+//5/16      sscanf(bi->value_str.c_str(), "%s", analysis_name);
+            strcpy(analysis_name, bi->value_str.c_str());
             strcpy(bi->value.name, analysis_name);
 
             // This is where the 'analysis' variable get's assiged too...
@@ -1145,6 +1148,7 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
                        analysis_name);
             } else {
                 strcpy(sub_analysis_name, bi->value_str.c_str());
+                strcpy(bi->value.name, sub_analysis_name);
             }
             (*analysis)->sub_prog_name_to_sub_option(sub_analysis_name, analysis);
             if (*analysis == NULL) {
