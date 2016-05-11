@@ -669,7 +669,7 @@ static void menu1_batch_set_files(file_format *infl_type,
                                   char **input_path, char **omitfl_name,
                                   char **freqfl_name, char **penfl_name,
                                   char **auxfl_name, char **phefl_name,
-                                  char **output_path, int plinkf, int xcf)
+                                  int plinkf, int xcf)
 {
     int i;
 
@@ -708,6 +708,24 @@ static void menu1_batch_set_files(file_format *infl_type,
         fln++;
     }
 
+    if (Mega2BatchItems[/* 54 */ Input_Path].items_read) {
+        if (access(Mega2BatchItems[/* 54 */ Input_Path].value.name, R_OK) == 0 &&
+            is_dir(Mega2BatchItems[/* 54 */ Input_Path].value.name)) {
+            strcpy(*input_path, Mega2BatchItems[/* 54 */ Input_Path].value.name);
+        } else {
+            errorvf("file path %s named by keyword %s is not a readable directory.\n",
+                    Mega2BatchItems[/* 54 */ Input_Path].value.name,
+                    C(Mega2BatchItems[/* 33 */ Input_Path].keyword));
+            EXIT(FILE_NOT_FOUND);
+        }
+    } else {
+        missing_optional_keyword(Input_Path,  "using default '.' (current directory)");
+        strcpy(*input_path, ".");
+    }
+}
+
+static void menu1_batch_set_outfiles(char **output_path)
+{
     if (Mega2BatchItems[/* 33 */ Output_Path].items_read) {
         if (access(Mega2BatchItems[/* 33 */ Output_Path].value.name, W_OK) == 0 &&
             is_dir(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
@@ -722,21 +740,6 @@ static void menu1_batch_set_files(file_format *infl_type,
     } else {
         missing_optional_keyword(Output_Path,  "using default '.' (current directory)");
         strcpy(*output_path, ".");
-    }
-
-    if (Mega2BatchItems[/* 54 */ Input_Path].items_read) {
-        if (access(Mega2BatchItems[/* 54 */ Input_Path].value.name, R_OK) == 0 &&
-            is_dir(Mega2BatchItems[/* 54 */ Input_Path].value.name)) {
-            strcpy(*input_path, Mega2BatchItems[/* 54 */ Input_Path].value.name);
-        } else {
-            errorvf("file path %s named by keyword %s is not a readable directory.\n",
-                    Mega2BatchItems[/* 54 */ Input_Path].value.name,
-                    C(Mega2BatchItems[/* 33 */ Input_Path].keyword));
-            EXIT(FILE_NOT_FOUND);
-        }
-    } else {
-        missing_optional_keyword(Input_Path,  "using default '.' (current directory)");
-        strcpy(*input_path, ".");
     }
 }
 
@@ -804,10 +807,12 @@ static int menu1_show_misc(int *Untyped_ped_opt, int *Error_sim_opt,
         choiceA[idx++] = _thresh_i;
     }
 
-    printf("%2d) %-*s%s\n", idx, line_len,
-           "Maximum number of alleles per marker:",
-           MARKER_SCHEME == 1 ? "2 alleles" : (MARKER_SCHEME == 2 ? "255 alleles" : (MARKER_SCHEME == 3 ? "256 or more alleles" : "???")) );
-    choiceA[idx++] = compress_i;
+    if (compress_i) {
+        printf("%2d) %-*s%s\n", idx, line_len,
+               "Maximum number of alleles per marker:",
+               MARKER_SCHEME == 1 ? "2 alleles" : (MARKER_SCHEME == 2 ? "255 alleles" : (MARKER_SCHEME == 3 ? "256 or more alleles" : "???")) );
+        choiceA[idx++] = compress_i;
+    }
 
     return idx;
 }
@@ -863,10 +868,6 @@ static void menu1_batch_save_misc(int *Untyped_ped_opt, int *Error_sim_opt,
 
     Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue = *freq_mismatch_thresh;
     batchf(AlleleFreq_SquaredDev);
-
-    Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option = MARKER_SCHEME;
-    batchf(Value_Marker_Compression);
-
 }
 
 void menu1(file_format *infl_type,
@@ -937,7 +938,9 @@ void menu1(file_format *infl_type,
         menu1_batch_set_files(infl_type, pedfl_name, locusfl_name,
                               mapfl_name, pmapfl_name, input_path, omitfl_name,
                               freqfl_name, penfl_name, auxfl_name, phefl_name,
-                              output_path, plinkf, xcf);
+                              plinkf, xcf);
+
+        menu1_batch_set_outfiles(output_path);
 
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
 
@@ -1533,9 +1536,139 @@ void menu1(file_format *infl_type,
         Input->GetOps()->do_menu2batch();
 
         menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
+
+        Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option = MARKER_SCHEME;
+        batchf(Value_Marker_Compression);
+
     }
 
     if (! Input->req_locus_file) fln_free(loco);
+}
+
+void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
+            char **output_path, double *freq_mismatch_thresh)
+{
+    int            choice_ = -1;
+    char           cchoice[10];
+    int            exit_loop=0;
+
+    int            out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
+    int            compress_i = 17;
+    int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
+
+    *Untyped_ped_opt=2; /* Exclude any pedigree with 1 or less untyped people */
+    *Error_sim_opt = 0;
+    *freq_mismatch_thresh = LARGE;
+
+    fln_alloc(output_path);
+
+    if (batchINPUTFILES) {
+
+        menu1_batch_set_outfiles(output_path);
+
+        menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
+
+        return;
+    }
+
+    sprintf(*output_path, ".");
+
+    int line_len = 45;
+    while (!exit_loop) {
+
+        printf("              Mega2 %s input menu:\n", Mega2Version);
+        draw_line();
+        printf("0) Done with this menu - please proceed\n");
+        idx=1;
+
+        printf("%2d) %-*s%s\n", idx, line_len,
+               "Output Directory:",
+               ((!strcmp(*output_path, "."))?"[ Current directory ]" : *output_path));
+        choiceA[idx] = out_i;
+        idx++;
+
+        _thresh_i = 1 ?  thresh_i : 0;
+        idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
+                              err_i, untyp_i, _thresh_i, 0 /*compress_i*/,
+                              choiceA, idx, line_len);
+
+        printf("Select from options 0-%d > ", idx-1);
+
+        while (1) {
+            fcmap(stdin, "%s", cchoice); newline;
+            if (!strcmp(cchoice, "q")) {
+                printf("Exiting Mega2.\n");
+                EXIT(1);
+            }
+            choice_ = -1;
+            sscanf(cchoice, "%d", &choice_);
+            if (choice_ < idx) {
+                if (choice_ > 0) choice_ = choiceA[choice_];
+                break;
+            } else
+                printf("Select from options 0-%d > ", idx-1);
+        }
+
+        if (choice_ == 0) {
+            exit_loop = 1;
+
+        } else if (choice_ == out_i) {   /* The output directory */
+            draw_line();
+            printf("Please enter output directory name > ");
+            fcmap(stdin, "%s", *output_path); newline;
+
+            if (access(*output_path, F_OK)) {
+                char y[100];
+                printf("WARNING: Could not find directory %s\n", *output_path);
+                printf("Create this new directory \n");
+                printf("   %s\n", *output_path);
+                printf("   Yes or No (y/n)[default no] > ");
+                fflush(stdout);
+                IgnoreValue(fgets(y, 9, stdin)); newline; fflush(stdin);
+                if (y[0] == 'Y' || y[0] == 'y') {
+                    makedir(*output_path);
+                } else {
+                    strcpy(*output_path, ".");
+                }
+            } else if (! is_dir(*output_path)) {
+                    printf("WARNING: %s is not a directory.\n", *output_path);
+                    printf("Please specify a new or valid directory.\n");
+                    strcpy(*output_path, ".");
+            } else if (access(*output_path, W_OK)) {
+                    printf("WARNING: %s is not a writable directory.\n", *output_path);
+                    printf("Please specify a new or valid directory.\n");
+            }
+
+        } else if (choice_ == miss_i) {
+            draw_line();
+            printf("Please enter missing value indicator > ");
+            fcmap(stdin, "%s", REC_UNKNOWN); newline;
+
+        } else if (menu1_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
+                                  err_i, untyp_i, thresh_i, compress_i, choice_)) {
+                       // above function looks for match and does action
+        } else {
+            printf("Invalid option %s, select from options 0-%d.\n", cchoice, idx-1);
+        }
+
+        if (choice_) draw_line();
+    }
+
+    if (InputMode == INTERACTIVE_INPUTMODE) {
+
+        strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
+        batchf(Output_Path);
+
+#ifdef USER_UNKNOWN
+        strcpy(Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name, REC_UNKNOWN);
+        batchf(Value_Missing_Allele);
+#endif
+        // Handle the batch file item only if the user input something...
+        // Note: these PLINKArgs and friends are stack variables so we don't have to check for != NULL...
+
+        menu1_batch_save_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
+    }
+
 }
 
 /* static void default_labels(char *msg, int *liability, int *status, int num_classes) */
@@ -2585,7 +2718,6 @@ int individual_id_item(int item_number, analysis_type analysis,
                ind_id_choice_messg(current_opt_val, &(ind_id_messg[0])));
         return 0;
     }
-
 
     if (get_disp_log == 1) {
 
