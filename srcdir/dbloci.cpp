@@ -112,7 +112,6 @@ int TraitAff_table::db_getall(linkage_affection_data *p) {
             ret = select(p);
 
             if (p->Labels) {
-                printf("LBL sel %p\n", p->Labels);
                 int *v = p->Labels;
                 p->Labels = CALLOC((size_t) p->NumLabels, int);
                 memcpy(p->Labels, v, p->NumLabels * sizeof (int));

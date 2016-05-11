@@ -525,7 +525,7 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
 */
         } else if (choice == iprev) {
             printf("Enter prevalence percent > ");
-            fcmap(stdin, "%f", *prevalence);    newline;
+            fcmap(stdin, "%g", prevalence);    newline;
         } else if (choice == ioui) {
             OrigIds[0] = individual_id_item(0, analysis, OrigIds[0], 35, 1, has_orig, has_uniq);
             individual_id_item(0, analysis, OrigIds[0], 0, 3, has_orig, has_uniq);
