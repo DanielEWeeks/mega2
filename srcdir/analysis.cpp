@@ -25,11 +25,16 @@
 
 */
 
+/*
+ * You MUST make the appropriate changes as indicated below to add a new analysis:
+ * See changes 1. - 4.
+ */
 #include <stdio.h>
 #include "common.h"
 #include "typedefs.h"
 
 #include "ctype.h"
+#include "error_messages_ext.h"
 #include "utils_ext.h"
 
 #include "analysis.h"
@@ -44,6 +49,12 @@
 #include "write_pseq_ext.h"
 #include "write_shapeit_ext.h"
 #include "write_impute2_ext.h"
+#include "write_roadtrips_ext.h"
+/*
+ * You MUST make the appropriate changes here to define the new header and class.
+ * (item 1.)
+ */
+
 
 CLASS_HAPLOTYPE          *HAPLOTYPE = new CLASS_HAPLOTYPE();
 CLASS_LOCATION           *LOCATION = new CLASS_LOCATION();
@@ -110,6 +121,11 @@ CLASS_PSEQ               *TO_PSEQ = new CLASS_PSEQ();
 
 CLASS_SHAPEIT            *SHAPEIT = new CLASS_SHAPEIT();
 CLASS_IMPUTE2            *IMPUTE2 = new CLASS_IMPUTE2();
+CLASS_ROADTRIPS          *ROADTRIPS = new CLASS_ROADTRIPS();
+/*
+ * You MUST make the appropriate changes here to define the new analysis object
+ * (item 2.)
+ */
 
 
 analysis_types analysis_list[] = {
@@ -155,11 +171,23 @@ analysis_types analysis_list[] = {
     { "PSEQ format",                TO_PSEQ },
     { "SHAPEIT format",             SHAPEIT},
 //  { "IMPUTE2 format",             IMPUTE2}
+    { "RoadTrips format",           ROADTRIPS}
+/*
+ * You MUST make the appropriate changes here to define the mapping from the name
+ * to the new analysis object
+ * (item 3.)
+ */
 };
 
 int count_analysis_list = sizeof(analysis_list) / sizeof (analysis_types);
 
 #include "menu_value_missing.h"
+/*
+ * You MUST make the appropriate changes in the menu_value_missing.h file to show how the
+ * new analysis object represents missing quants and affects
+ * (item 4.)
+ */
+
 
 //
 // The two routines 'prog_name()', and 'prog_name_to_num()' are intertwined.
@@ -171,10 +199,40 @@ int count_analysis_list = sizeof(analysis_list) / sizeof (analysis_types);
 // 'prog_name()' is used to output a string to the batch file that is understandable to the user.
 // 'prog_name_to_num()' does the inverse converting the string to a number that is used internally.
 // So clearly, if you change one, you must change the other.
+
+//typedef UM<const char *, analysis_type *, HH<const char *> charseq> Prog_to_analysis;
+typedef std::map<char *, analysis_type, charsless> Prog_to_analysis;
+Prog_to_analysis P2A;
+
+void init_analysis()
+{
+    analysis_types *al = analysis_list;
+    char *key;
+    for (int i = 0; i < count_analysis_list; i++, al++) {
+        key = strdup(al->option_name);
+        for (char *cp = key; *cp; cp++) *cp = tolower(*cp);
+        P2A[key] = al->analysis;  // key/string from analysis_list item
+
+        key = strdup(al->analysis->_name);
+        for (char *cp = key; *cp; cp++) *cp = tolower(*cp);
+        P2A[key] = al->analysis;  // key/string from CLASS_ANALYSIS subclass
+    }
+}
 
 void prog_name_to_num(char *prog_name, analysis_type *analysis)
 {
     *analysis = (analysis_type )0;
+
+    char *key = strdup(prog_name);
+    for (char *cp = key; *cp; cp++) *cp = tolower(*cp);
+    analysis_type a = NULL;
+    if (map_get(P2A, key, a)) {
+        *analysis = a;
+        return;
+    }
+    errorvf("Analysis: prog_name_to_num() key (%s) lookup failed\n", key);
+
+#if 0
     switch(tolower((unsigned char)prog_name[0])) {
     case 's':
         /* Simwalk2, Summary, Sage 3 and 4, Simulate, splink, slink, solar,
@@ -391,8 +449,20 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
         *analysis = EIGENSTRAT; // 38. EIGENSTRAT
         break;
 
+    case 'r':
+        *analysis = ROADTRIPS;
+        break;
+
     default:
         unknown_prog(prog_name);
     }
+
+    msgvf("Analysis: %p (%s) == %p (%s)\n",
+          *analysis, (*analysis)->_name, tmp, tmp->_name);
+    if (*analysis != tmp) {
+        msgvf("Analysis: %p (%s) != %p (%s)\n",
+              *analysis, (*analysis)->_name, tmp, tmp->_name);
+    }
+#endif
 }
 

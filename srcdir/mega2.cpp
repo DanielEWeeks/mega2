@@ -887,7 +887,7 @@ int             main(int argc, char **argv, char **env)
     }
 #endif
 
-//    Value_Missing_get(&analysis);  //moved to after db read
+    Value_Missing_get(&analysis);  //moved to after db read
 
 #ifndef HIDESTATUS
     int guess;
@@ -1097,7 +1097,7 @@ int             main(int argc, char **argv, char **env)
     Mega2Status = INPUT_FILES_READ;
     LPedTreeTop->analysis = analysis;
 
-    Value_Missing_get(&analysis);
+//  Value_Missing_get(&analysis);
     if (database_dump || ! database_read) {
         Input->GetOps()->do_gc();
     } else {

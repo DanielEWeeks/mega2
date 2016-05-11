@@ -103,6 +103,7 @@ SRCS =  input_check.cpp     select_index.cpp \
 	write_fbat.cpp      write_pseq_files.cpp menu_value_missing.cpp \
 	read_impute.cpp	    read_impute_bgen.cpp read_impute_bgen2.cpp \
 	write_shapeit_files.cpp                  write_impute2_files.cpp \
+	write_roadtrips.cpp \
 	dbmega2.cpp         dbmisc.cpp           dbbatch.cpp \
 	dbpedigree.cpp      dballele.cpp         dbloci.cpp \
 	dbmap.cpp           dbgenotype.cpp
@@ -739,18 +740,19 @@ loop.o: loop.h file_ops.h zlib.h zconf.h common.h types.hh typedefs.h
 loop.o: errorno.h allutil.h linkage.h linkage_external.h makeped.h pedtree.h
 loop.o: batch_input.h input_check.h hwe.h compress_ext.h error_messages_ext.h
 loop.o: utils_ext.h entry.h create_summary_ext.h output_routines_ext.h
-loop.o: linkage_ext.h tod.hh analysis.h
+loop.o: linkage_ext.h tod.hh analysis.h output_file_names_ext.h
 compress.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 compress.o: linkage_external.h makeped.h pedtree.h batch_input.h
 compress.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
 compress.o: utils_ext.h annotated_ped_file.h
 analysis.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 analysis.o: linkage_external.h makeped.h pedtree.h batch_input.h
-analysis.o: input_check.h hwe.h compress_ext.h utils_ext.h analysis.h
-analysis.o: class_old.h write_plink_ext.h plink_core_ext.h write_fbat_ext.h
-analysis.o: write_eigenstrat_ext.h write_pangaea_ext.h write_beagle_ext.h
-analysis.o: write_structure_ext.h write_pseq_ext.h write_shapeit_ext.h
-analysis.o: write_impute2_ext.h menu_value_missing.h
+analysis.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
+analysis.o: utils_ext.h analysis.h class_old.h write_plink_ext.h
+analysis.o: plink_core_ext.h write_fbat_ext.h write_eigenstrat_ext.h
+analysis.o: write_pangaea_ext.h write_beagle_ext.h write_structure_ext.h
+analysis.o: write_pseq_ext.h write_shapeit_ext.h write_impute2_ext.h
+analysis.o: write_roadtrips_ext.h menu_value_missing.h
 class_old.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 class_old.o: linkage_external.h makeped.h pedtree.h batch_input.h
 class_old.o: input_check.h hwe.h compress_ext.h analysis.h utils_ext.h
@@ -884,6 +886,14 @@ write_impute2_files.o: fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_impute2_files.o: user_input_ext.h input_ops.hh str_utils.hh
 write_impute2_files.o: plink_core_ext.h analysis.h write_plink_ext.h
 write_impute2_files.o: write_impute2_ext.h
+write_roadtrips.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+write_roadtrips.o: linkage_external.h makeped.h pedtree.h batch_input.h
+write_roadtrips.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h
+write_roadtrips.o: zlib.h zconf.h error_messages_ext.h utils_ext.h entry.h
+write_roadtrips.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
+write_roadtrips.o: sh_util.h fcmap_ext.h genetic_utils_ext.h omit_ped_ext.h
+write_roadtrips.o: output_file_names_ext.h user_input_ext.h input_ops.hh
+write_roadtrips.o: str_utils.hh write_roadtrips_ext.h analysis.h
 dbmega2.o: types.hh common.h typedefs.h errorno.h allutil.h linkage.h
 dbmega2.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
 dbmega2.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h

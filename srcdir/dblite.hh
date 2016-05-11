@@ -333,7 +333,7 @@ public:
 //      if (ok(sqlite3_open_v2(file, &db, SQLITE_OPEN_READWRITE, 0), "open"))
         if (ok(sqlite3_open(file, &db), "open")) {
 #ifndef HIDEFILE
-            msgvf("DB open (file \"%s\") succeeded. Sqlite3 lib version %s\n",
+            msgvf("DB open (file \"%s\") succeeded. SQLite3 lib version %s\n",
                   dbfile, sqlite3_libversion());
 #endif
             ret = 1;

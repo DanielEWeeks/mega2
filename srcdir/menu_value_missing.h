@@ -269,6 +269,15 @@ Missing_Value  missing_values[] = {
       /*affect*/      "0", Missing_Value::Num, Missing_Value::Fixed,
       /*allele*/      "0", Missing_Value::Num, Missing_Value::Fixed },
 
+    { "ROADTRIPS format",             ROADTRIPS,
+      /*
+       * Analyzes a single affection status trait:  
+         0=unknown, 1=unaffected, 2=affected; NN for missing genotype.
+       */
+      /*quant*/       "",   Missing_Value::Any, Missing_Value::NoQnt,
+      /*affect*/      "0" , Missing_Value::Num, Missing_Value::Fixed,
+      /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
+
     { "SAGE format",                TO_SAGE4,
       /*
        * Missing value code defined by the 'missing' attribute of the trait declaration.  Can be a string, so use 'NA'.
