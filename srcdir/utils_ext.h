@@ -114,6 +114,8 @@ extern void           summary_time_stamp(char **input_files, FILE *fp,  const ch
 
 extern char *         strtail(const char *name, const size_t n);
 
+extern char          *write_time();
+
 extern void executable_in_path_does_not_exist_csh(FILE *fp, const char *prog, const char *msg);
 
 extern void fprintf_env_checkset_csh (FILE *fp, const char *var, const char *default_value);

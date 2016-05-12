@@ -165,12 +165,12 @@ static void save_ROADTRIPS_gens(linkage_ped_top *Top, const char *prefix,
     delete sp;
 }
 
-static void save_ROADTRIPS_prev(linkage_ped_top *Top, const char *prefix,
+static void save_ROADTRIPS_prvl(linkage_ped_top *Top, const char *prefix,
                                 const int pwid, const int fwid,
                                 double prevalence)
 {
-    vlpCLASS(roadtrips_prev,chr,null) {
-     vlpCTOR(roadtrips_prev,chr,null) { }
+    vlpCLASS(roadtrips_prvl,chr,null) {
+     vlpCTOR(roadtrips_prvl,chr,null) { }
      double prevalence;
 
         void file_loop() {
@@ -181,10 +181,10 @@ static void save_ROADTRIPS_prev(linkage_ped_top *Top, const char *prefix,
             pr_printf("%.4f\n", prevalence);
         }
 
-    } *sp = new roadtrips_prev(Top);
+    } *sp = new roadtrips_prvl(Top);
 
     sp->prevalence = prevalence;
-    sp->setfln(prefix, ".XX.prev");
+    sp->setfln(prefix, ".XX.prvl");
     
     sp->load_formats(fwid, pwid, -1);
     sp->iterate();
@@ -247,7 +247,7 @@ void CLASS_ROADTRIPS::create_output_file(
     save_ROADTRIPS_phes(Top, file_name_stem, pwid, fwid);
     save_ROADTRIPS_peds(Top, file_name_stem, pwid, fwid);
     save_ROADTRIPS_gens(Top, file_name_stem, pwid, fwid);
-    save_ROADTRIPS_prev(Top, file_name_stem, pwid, fwid, prevalence);
+    save_ROADTRIPS_prvl(Top, file_name_stem, pwid, fwid, prevalence);
     save_ROADTRIPS_snps(Top, file_name_stem, pwid, fwid);
     write_key_file(Mega2KeysRun, Top);
 
@@ -297,14 +297,11 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
 	    fprintf_env_checkset_csh(_filep, "_ROADTRIPS", "roadtrips");
 #endif /* RUNSHELL_SETUP */
         }
-        void mkfln(char *buf, const char *prefix, const char *sfx) {
-            sprintf(buf, "%s%s", prefix, sfx);
-            if (strchr(sfx+1, '.'))
-                change_output_chr(buf, _numchr);
-        }
+
         void inner () {
             char cmd[2*FILENAME_LENGTH];
             char target[FILENAME_LENGTH];
+            
 
             sprintf(cmd, "%s/%s", "$ROADTRIPS", "roadtrips");
             sh_find_pgm(cmd, "roadtrips");
@@ -317,15 +314,15 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -k %s", cmd, target);
 
-            mkfln(target, prefix, ".XX.gens");
+            mkfln(target, pfx, prefix, ".XX.gens");
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -g %s", cmd, target);
 
-            mkfln(target, prefix, ".XX.prev");
+            mkfln(target, pfx, prefix, ".XX.prvl");
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -r %s", cmd, target);
 
-            mkfln(target, prefix, ".XX.snps");
+            mkfln(target, pfx, prefix, ".XX.snps");
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -s %s", cmd, target);
 
@@ -387,50 +384,6 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
     }
 }
 
-void CLASS_ROADTRIPS::sub_prog_name(int sub_opt, char *subprog) {
-}
-
-void CLASS_ROADTRIPS::interactive_sub_prog_name_to_sub_option(analysis_type *analysis)
-{
-/*
-    int selection = 1;
-    int selected  = 1;
-    char select[10];
-
-    if (batchANALYSIS) {
-        if (Mega2BatchItems[/ * 6 * / Analysis_Sub_Option].items_read) {
-            selection = (*analysis)->_suboption;
-        } else {
-            selection = 1;
-        }
-    } else {
-
-        while (selected != 0) {
-            draw_line();
-            printf("Selection Menu: ROADTRIPS output file options\n");
-            printf("0) Done with this menu - please proceed\n");
-            printf("%c1) generate ROADTRIPS pedcheck Output files\n",
-                   selection == 1 ? '*' : ' ');
-            printf("Enter selection: 0 - 7 > ");
-            fcmap(stdin,"%s", select); newline;
-            sscanf(select, "%d", &selected);
-            if (selected < 0 || selected > 7) warn_unknown(select);
-            else if (selected) selection = selected;
-        }
-    }
-    (*analysis)->_suboption = selection;
-*/
-}
-
-void CLASS_ROADTRIPS::sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis) {
-/*
-    switch(tolower((unsigned char)sub_prog_name[0])) {
-    case 'p': // pedcheck
-        (*analysis)->_suboption = 1; break;
-    }
-*/
-}
-
 void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_uniq,
                                      int *combine_chromo, double *prevalence)
 {
@@ -464,12 +417,13 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         analysis->replace_chr_number(file_names, global_chromo_entries[0]);
     }
 */
+
     /* output file name menu */
     igl = ipre = iphen = ish = ioui = ioup = isum = isumf = iprev = -1;
     // If the default output files are used we do not go here.
     // Otherwise, enter with choice -- -1.
     while (choice != 0) {
-        draw_line();
+//        draw_line();
         print_outfile_mssg();
         printf(" %s menu:\n", _subname ? _subname : _name);
         printf("0) Done with this menu - please proceed\n");
@@ -537,6 +491,7 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         } else {
             printf("Unknown option %d\n", choice);
         }
+        draw_line();
     }
     file_name_stem = strdup(prefix);
 }

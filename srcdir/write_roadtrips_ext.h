@@ -37,14 +37,7 @@ public:
     }
    ~CLASS_ROADTRIPS() {}
 
-    virtual bool allow_affection_liability_class()  { return true; }
-    virtual bool allow_no_genetic_map()  { return (_suboption <= 2) ? false : true; }
-    virtual bool allow_no_map()     { return (_suboption <= 2) ? false : true; }
-    virtual bool allow_trait_combination()  { return true; }
-//  virtual bool forbid_trait_directories()  { return true; }
-    virtual bool has_sub_options()  { return true; }
     virtual bool loops()  { return true; }
-    virtual bool Loop_Over_Chromosomes_implemented() { return true; }
 
     virtual const char* output_quant_default_value() { return "999.0"; }
     virtual bool output_quant_must_be_numeric() { return true; }
@@ -58,12 +51,6 @@ public:
         OrigIds[0] = 5; /* uniqueIds */
         OrigIds[1] = 3; /* Ped num */
     }
-
-    virtual void sub_prog_name(int sub_opt, char *subprog);
-
-    virtual void sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis);
-
-    virtual void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
 			    analysis_type *analysis,

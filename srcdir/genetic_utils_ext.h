@@ -89,7 +89,7 @@ extern float        safe_divide(int a, int b);
 
 extern void         switch_map(linkage_locus_top *LTop, double *position, sex_map_types sex);
 
-extern const char  *write_time();
+extern char        *write_time();
 
 
 /*

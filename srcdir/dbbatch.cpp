@@ -57,11 +57,8 @@ const char *INPUT_FORMAT_DATA[] = {
 };
 
 void File_table::stat() {
-    extern void  summary_time_stamp_msgvf();
-    summary_time_stamp_msgvf();
-
     int xx = sizeof (INPUT_FORMAT_DATA) / sizeof (char *);
-    msgvf("\nThis database was created from %s using the following files:\n",
+    msgvf("This database was created from %s using the following files:\n",
           Input_Format >= xx ? "just" : INPUT_FORMAT_DATA[Input_Format]);
 
 #ifndef HIDEPATH

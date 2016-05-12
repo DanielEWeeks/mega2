@@ -83,9 +83,7 @@
 #define SETSEED
 #endif
 
-#ifdef HIDEDATE
 #define THEDATE "1997-8-29-02-14"
-#endif
 
 #define LOG2HTML          "mega2log2html.pl"
 
@@ -114,7 +112,7 @@ void           summary_time_stamp(char **input_files, FILE *fp,
 void           script_time_stamp(FILE *script_fp);
 double         randomnum( void );
 void           seed_random(void);
-const char    *write_time();
+char          *write_time();
 int            imax(int i1, int i2);
 double         dmax(double d1, double d2);
 int            icomp(int i, int j);
@@ -663,18 +661,6 @@ static void append_to_fd(const char *file_name, const char *str, FILE *FDo)
     fclose(FDi);
 }
 
-void   summary_time_stamp_msgvf()
-{
-    msgvf("-----------------------------------------------------\n");
-    msgvf("        Mega2 version %s\n", Mega2Version);
-#ifdef HIDEDATE
-    msgvf("Run date:                  %s\n", THEDATE);
-#else
-    msgvf("Run date:                  %s\n", RunDate);
-#endif
-    msgvf("This file created on       %s", write_time());
-}
-
 void   summary_time_stamp(char **input_files, FILE *fp, const char *message)
 {
 
@@ -683,11 +669,7 @@ void   summary_time_stamp(char **input_files, FILE *fp, const char *message)
 
     fprintf(fp, "-----------------------------------------------------\n");
     fprintf(fp, "        Mega2 version %s\n", Mega2Version);
-#ifdef HIDEDATE
-    fprintf(fp, "Run date:                  %s\n", THEDATE);
-#else
     fprintf(fp, "Run date:                  %s\n", RunDate);
-#endif
     fprintf(fp, "This file created on       %s", write_time());
     if (input_files != NULL) {
         fprintf(fp, "Input file names\n");
@@ -757,11 +739,7 @@ void script_time_stamp(FILE *script_fp)
     /* mega2_input_files is a global */
     fprintf(script_fp, "#----------------------------------------------\n");
     fprintf(script_fp, "#   Mega2 version %s\n", Mega2Version);
-#ifdef HIDEDATE
-    fprintf(script_fp, "#   Run date:                %s\n", THEDATE);
-#else
     fprintf(script_fp, "#   Run date:                %s\n", RunDate);
-#endif
     fprintf(script_fp, "#   This script created on   %s", write_time());
     fprintf(script_fp, "#   Input file names:\n");
 
@@ -1018,7 +996,7 @@ void print_only (const char *messg)
 
 time_t NOTIMEval;
 
-const char *write_time()
+char *write_time()
 {
 /*  extern   time_t  time();
     extern   struct  tm  *localtime(); */
@@ -1332,9 +1310,15 @@ void getRunDate(void)
 /* Should be defined in time.h
    extern time_t time();
    extern struct tm *localtime(); */
+
+    char *time_str = &(RunDate[0]);
+
+#ifdef HIDEDATE
+    strcpy(time_str, THEDATE);
+
+#else
     time_t time_val;
     struct tm *time_struct;
-    char *time_str = &(RunDate[0]);
     char day[3], hour[3], min[3];
 
     time(&time_val);
@@ -1358,8 +1342,7 @@ void getRunDate(void)
     sprintf(time_str, "%4d-%d-%s-%s-%s",
             time_struct->tm_year+1900, time_struct->tm_mon+1,
             day, hour, min);
-    return;
-
+#endif
 }
 
 void LogFileNames(void)
@@ -2086,6 +2069,17 @@ void print_mega2_help(void)
 
     printf("Usage: mega2 [options] [batch-file-name]\n");
     printf("  acceptable options:\n");
+
+    printf("             --DBoff\n");
+    printf("                Mega2 writes a SQLite database file and then exec’s a new copy of Mega2 to process the database,\n");
+    printf("                 UNLESS --DBoff IS SET.\n");
+    printf("             --DBfile\n");
+    printf("                change the database name from dbmega2.db to the next argument.\n");
+    printf("             --DBdump\n");
+    printf("                only dump the database; do not do any analysis.\n");
+    printf("             --DBread\n");
+    printf("                read an existing database file and do an analysis.\n");
+
     printf("             --cow\n");
     printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for cow.\n");
     printf("             --dog\n");

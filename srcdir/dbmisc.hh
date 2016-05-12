@@ -144,6 +144,13 @@ public:
 
     int db_getall();
 
+
+    void get(const char *key, double &val) {
+        extern std::map<const char *, double, charsless> Double_hash;
+        if (!map_get(Double_hash, key, val)) {
+            printf("Double read failed for %s\n", key);
+        }
+    }
 };
 
 extern Double_table double_table;
@@ -195,6 +202,13 @@ public:
     }
 
     int db_getall();
+
+    void get(const char *key, char* &val) {
+        extern std::map<const char *, char *, charsless> Charstar_hash;
+        if (!map_get(Charstar_hash, key, val)) {
+            printf("Char* read failed for %s\n", key);
+        }
+    }
 
 };
 
@@ -253,6 +267,13 @@ public:
     }
 
     int db_getall();
+
+    void get(const char *key, unsigned char* &val) {
+        extern std::map<const char *, unsigned char *, charsless> Stuff_hash;
+        if (!map_get(Stuff_hash, key, val)) {
+            printf("Unsigned char* read failed for %s\n", key);
+        }
+    }
 
 };
 

@@ -137,6 +137,11 @@ void dbmisc_export(linkage_ped_top *Top) {
 
     MasterDB.begin();
 
+    extern char *SQLversion;
+    charstar_table.insert("DBCreateTime", RunDate);
+    charstar_table.insert("DBMega2Version", Mega2Version);
+    charstar_table.insert("DBVersion", SQLversion);
+    
     extern int seed1, seed2, seed3;
     int_table.insert("Seed1", seed1);
     int_table.insert("Seed2", seed2);
@@ -224,6 +229,11 @@ void dbmisc_import(linkage_ped_top *Top) {
     stuff_table.db_getall();
 
     MasterDB.commit();
+
+    extern char *DBCreateTime, *DBMega2Version, *DBversion;
+    charstar_table.get("DBCreateTime", DBCreateTime);
+    charstar_table.get("DBMega2Version", DBMega2Version);
+    charstar_table.get("DBVersion", DBversion);
 
     extern int seed1, seed2, seed3;
     int_table.get("Seed1", seed1);

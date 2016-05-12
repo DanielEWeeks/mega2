@@ -99,7 +99,24 @@ public:
     void load_formats_no_space(const int mwid);
     void load_formats(const int fwid, const int pwid, const int mwid);
 
-    void setfln(const char *prefix, const char *sfx);
+    void setfln(const char *prefix, const char *sfx) 
+    {
+        char fa[FILENAME_LENGTH];
+        sprintf(fa, "%s%s", prefix, sfx);
+        _fln = strdup(fa);
+    }
+    void mkfln(char *buf, const char *prefix, const char *sfx) {
+        extern void change_output_chr(char *buf, int _numchr);
+        sprintf(buf, "%s%s", prefix, sfx);
+        if (strchr(sfx+1, '.'))
+            change_output_chr(buf, _numchr);
+    }
+    void mkfln(char *buf, const char *dir, const char *prefix, const char *sfx) {
+        extern void change_output_chr(char *buf, int _numchr);
+        sprintf(buf, "%s%s%s", dir, prefix, sfx);
+        if (strchr(sfx+1, '.'))
+            change_output_chr(buf+strlen(dir), _numchr);
+    }
 
     void pr_id();
     void pr_uid();

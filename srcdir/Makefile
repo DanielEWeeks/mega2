@@ -159,7 +159,7 @@ endif
 R_output.o hwe_user_input.o mega2.o mrecode.o utils.o read_files.o write_sage_files.o: DFLAGS += $(DtFLAGS)
 
 # -DDATE
-stamp_time.o: DFLAGS += $(DdFLAGS)
+dbmega2.o stamp_time.o: DFLAGS += $(DdFLAGS)
 
 # -DHIDESTATUS
 aspex.o annotated_ped_file.o batch_input.o genetic_utils.o makeped1.o mega2.o: DFLAGS += $(DsFLAGS)

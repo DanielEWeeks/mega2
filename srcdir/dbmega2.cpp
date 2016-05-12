@@ -49,9 +49,15 @@ using namespace std;
 char DBfile[255] = "";
 DBlite MasterDB;
 int MasterDBreset = 1;
+
 int database_dump = 0;
 int database_read = 0;
 int database_off  = 0;
+
+char *DBCreateTime;
+char *DBMega2Version;
+char *DBversion;
+char *SQLversion;
 
 //const char *select1(const char *select)
 template<typename cs>
@@ -183,6 +189,13 @@ void dbmega2_stat(linkage_ped_top *Top)
     extern int genetic_distance_sex_type_map;
     extern int base_pair_position_index;
     extern void show_reset_input();
+    extern const char *THEDATE;
+
+    log_line(mssgf);
+    msgvf("The path to this SQLite3 database is %s.\n", DBfile);
+    msgvf("This database was created using Mega2 version %s.\n", DBMega2Version);
+    msgvf("This database was created using SQLite3 %s on %s.\n", DBversion, DBCreateTime);
+    msgvf("This database is being processed using SQLite3 %s on %s.\n", SQLversion, RunDate);
 
     file_table.stat();
     msgvf("This database contains:\n\t%d persons (%d pedigrees)\n",
@@ -205,6 +218,7 @@ void dbmega2_stat(linkage_ped_top *Top)
 
     show_reset_input();
 
+    draw_line();
 //  write_locus_stats(Top->LocusTop, UNKNOWN);
 }
 
@@ -292,10 +306,9 @@ void db_open_db() {
         }
     }
 
+    select1("SELECT SQLITE_VERSION();", SQLversion);
 #ifndef HIDEFILE
-    char *sqlver = 0;
-    select1("SELECT SQLITE_VERSION();", sqlver);
-    msgvf("SQLITE3 DB (%s) Version = %s\n", DBfile, sqlver);
+    msgvf("SQLITE3 DB (%s) Version = %s\n", DBfile, SQLversion);
 #endif
 }
 

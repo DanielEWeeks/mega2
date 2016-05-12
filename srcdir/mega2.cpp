@@ -830,6 +830,7 @@ int             main(int argc, char **argv, char **env)
         if (ferr) EXIT(FILE_READ_ERROR);
 
         check_size_dos();
+        log_line(mssgf);
     } else {
         Tod tod_menu1a("menu1a");
         menu1a(&UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
@@ -837,7 +838,7 @@ int             main(int argc, char **argv, char **env)
         tod_menu1a();
     }
 
-    log_line(mssgf);
+//    log_line(mssgf);
     /*
      Display the Analysis Menu, and return when the user enters a valid analysis number...
      
@@ -887,7 +888,7 @@ int             main(int argc, char **argv, char **env)
     }
 #endif
 
-    Value_Missing_get(&analysis);  //moved to after db read
+    Value_Missing_get(&analysis);  // needed before file read
 
 #ifndef HIDESTATUS
     int guess;
@@ -1097,7 +1098,6 @@ int             main(int argc, char **argv, char **env)
     Mega2Status = INPUT_FILES_READ;
     LPedTreeTop->analysis = analysis;
 
-//  Value_Missing_get(&analysis);
     if (database_dump || ! database_read) {
         Input->GetOps()->do_gc();
     } else {
