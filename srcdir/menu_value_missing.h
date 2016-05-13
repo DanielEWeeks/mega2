@@ -163,16 +163,17 @@ Missing_Value  missing_values[] = {
       /*affect*/      " ", Missing_Value::Any, Missing_Value::Varies,
       /*allele*/      "",  Missing_Value::Any, Missing_Value::Fixed },
 
-    { "Merlin format",              TO_MERLINONLY,
-      /*
-       * Do not give the user a choice - use 'x' for the missing value throughout.
-         Quant: Quantitative traits are encoded as numeric values with X denoting missing values; any? Nch?
-         Affect: X or 0 for missing  Any? Nch?
-         Allele: either a 0, an X or an N can be used
-       */
-      /*quant*/      "x", Missing_Value::Any, Missing_Value::Fixed,
-      /*affect*/     "x", Missing_Value::Any, Missing_Value::Fixed,
-      /*allele*/     "x", Missing_Value::Any, Missing_Value::Fixed },
+    //Commented out in place of the new "NEW Merlin" code directing
+//    { "Merlin format",              TO_MERLINONLY,
+//      /*
+//       * Do not give the user a choice - use 'x' for the missing value throughout.
+//         Quant: Quantitative traits are encoded as numeric values with X denoting missing values; any? Nch?
+//         Affect: X or 0 for missing  Any? Nch?
+//         Allele: either a 0, an X or an N can be used
+//       */
+//      /*quant*/      "x", Missing_Value::Any, Missing_Value::Fixed,
+//      /*affect*/     "x", Missing_Value::Any, Missing_Value::Fixed,
+//      /*allele*/     "x", Missing_Value::Any, Missing_Value::Fixed },
 
     { "Merlin/SimWalk2-NPL format", TO_MERLIN,
       /*
@@ -405,13 +406,16 @@ Missing_Value  missing_values[] = {
       /*affect*/      "", Missing_Value::Numeric, Missing_Value::Change,
       /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
 
-    { "New Merlin", NEWMERLIN,
-            /*
-             *
-             */
-            /*quant*/       "", Missing_Value::Numeric, Missing_Value::Change,
-            /*affect*/      "", Missing_Value::Numeric, Missing_Value::Change,
-            /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
+    { "Merlin format",              NEWMERLIN,
+      /*
+       * Do not give the user a choice - use 'x' for the missing value throughout.
+         Quant: Quantitative traits are encoded as numeric values with X denoting missing values; any? Nch?
+         Affect: X or 0 for missing  Any? Nch?
+         Allele: either a 0, an X or an N can be used
+       */
+      /*quant*/      "x", Missing_Value::Any, Missing_Value::Fixed,
+      /*affect*/     "x", Missing_Value::Any, Missing_Value::Fixed,
+      /*allele*/     "x", Missing_Value::Any, Missing_Value::Fixed },
 
 
 

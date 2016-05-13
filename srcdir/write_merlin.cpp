@@ -356,6 +356,7 @@ void CLASS_NEWMERLIN::create_output_file(
     //
     // Set the default value...
     // write everything to one file (unless only one chromosome has been selected).
+
     combine_chromo = main_chromocnt > 1;
 
     get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
@@ -436,6 +437,7 @@ void CLASS_NEWMERLIN::get_file_names(char *file_names[], char *prefix,
         }
 
         printf(" %d) File name stem:                           %-15s\n", i, prefix);
+
         ipre=i++;
 
         printf(" %d) Shell file name:                          %-15s\t%s\n",

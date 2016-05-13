@@ -145,7 +145,7 @@ analysis_types analysis_list[] = {
     { "Merlin/SimWalk2-NPL format", TO_MERLIN },
     { "PREST format",               TO_PREST },
     { "PAP format",                 TO_PAP },
-    { "Merlin format",              TO_MERLINONLY },
+    { "Merlin format",              NEWMERLIN },
     { "Loki format",                TO_LOKI },
     { "Mendel format",              TO_MENDEL7_CSV },
     { "SUP format",                 TO_SUP },
@@ -161,7 +161,6 @@ analysis_types analysis_list[] = {
     { "PSEQ format",                TO_PSEQ },
     { "SHAPEIT format",             SHAPEIT},
 //  { "IMPUTE2 format",             IMPUTE2}
-    { "NewMerlin format",                 NEWMERLIN},
 };
 
 int count_analysis_list = sizeof(analysis_list) / sizeof (analysis_types);
@@ -269,7 +268,7 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
 
         case 'n':
             /* merlin only */
-            *analysis = TO_MERLINONLY; // 27. Merlin 
+            *analysis = NEWMERLIN; // 27. Merlin
             break;
 
         case '2':
