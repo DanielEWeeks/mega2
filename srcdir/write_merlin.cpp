@@ -85,10 +85,13 @@ static void write_MERLIN_peds(linkage_ped_top *Top, char **file_names,
         //Format of pedigree file: ID, Person, Father, Mother, Sex
         void per_start() {
             pr_id();
-            pr_per();
+            //this appears to be the id again
+            //pr_per();
             pr_father();
             pr_mother();
             pr_sex();
+            //trait affection status?
+            pr_aff();
         }
 
         void per_end() {
@@ -125,14 +128,19 @@ static void write_MERLIN_map(linkage_ped_top *Top, char *file_names[])
             data_loop(*_opath, file_names[1], "w");
         }
 
+        void file_header(){
+            pr_printf("CHR\tMARKER\tPOSITION");
+            pr_nl();
+        }
+
         //format of Merlin map: Chromosome, Marker, Position
         void inner() {
             int chr = _tlocusp->Marker->chromosome;
             str marker = _tlocusp->Marker->MarkerName;
             double pos = _tlocusp->Marker->pos_avg;
 
-            pr_printf("%d ",chr);
-            pr_printf(marker);
+            pr_printf("%d\t",chr);
+            pr_printf("%s\t",marker);
             pr_printf(" %f",pos);
             pr_nl();
 
@@ -164,8 +172,8 @@ static void write_MERLIN_data(linkage_ped_top *Top, char *file_names[])
      */
 
 
-    vlpCLASS(merlin_dat,chr,loci) {
-        vlpCTOR(merlin_dat,chr,loci) { }
+    vlpCLASS(merlin_dat,both,loci) {
+        vlpCTOR(merlin_dat,both,loci) { }
 
         typedef char *str;
         str *file_names;
@@ -174,18 +182,36 @@ static void write_MERLIN_data(linkage_ped_top *Top, char *file_names[])
             msgvf("        Merlin Data File:   %s/%s\n", *_opath, file_names[2]);
             data_loop(*_opath, file_names[2], "w");
         }
+
+        //this is for some reason causing a seg fault but I believe is the correct way to get this file looking the way it should
+
+//        void trait_start(){
+//            str trait = _ttraitp->Pheno->TraitName;
+//            pr_printf("A ");
+//            pr_printf(trait);
+//            pr_nl();
+//
+////            int disease = _tlocusp->Type;
+////            pr_printf("A %d", disease);
+////            pr_nl();
+//        }
+
+
         void inner() {
 
-            int disease = _tlocusp->Type;
-            pr_printf("A %d", disease);
-            pr_nl();
+            //need to figure out a way to split up these loops
+            //it looks like in the merlin files we've been outputting we only want trait and marker
+            //i.e. A and M can stay
+            //then it should be a list like
+            //a  trait
+            //m m1
+            //m m2 etc.
 
-            //this seems correct for trait
-
-            str trait = _ttraitp->Pheno->TraitName;
-            pr_printf("T ");
-            pr_printf(trait);
-            pr_nl();
+            //moved to trait_start()
+//            str trait = _ttraitp->Pheno->TraitName;
+//            pr_printf("T ");
+//            pr_printf(trait);
+//            pr_nl();
 
             str marker = _tlocusp->Marker->MarkerName;
             pr_printf("M ");
@@ -193,6 +219,7 @@ static void write_MERLIN_data(linkage_ped_top *Top, char *file_names[])
             pr_nl();
 
         }
+
     } *merlin_dats = new merlin_dat(Top);
 
     merlin_dats->file_names = file_names;
@@ -224,7 +251,21 @@ static void write_MERLIN_freq(linkage_ped_top *Top, char *file_names[])
          * M another_marker
          * F 0.6
          * F 0.4
+         *
+         * It appears this was incorrect and the original merlin output uses the extended frequency format
+         * that goes:
+         * M some_marker
+         * A size_of_base_pairs frequency
          */
+
+        //loci start is not defined for loci...
+        void loci_start(){
+            str marker = _tlocusp->Marker->MarkerName;
+            pr_printf("M ");
+            pr_printf(marker);
+            pr_nl();
+        }
+
         void inner (){
             str marker = _tlocusp->Marker->MarkerName;
             pr_printf("M ");
@@ -232,7 +273,8 @@ static void write_MERLIN_freq(linkage_ped_top *Top, char *file_names[])
             pr_nl();
 
             double freq = _tlocusp->Allele->Frequency;
-            pr_printf("F %d\n", freq);
+            //const char * name = _tlocusp->Allele->AlleleName;
+            pr_printf("A %s %f\n", _tlocusp->Allele->AlleleName, freq);
         }
 
     } *merlin_freqs = new merlin_freq(Top);
@@ -303,10 +345,29 @@ static void write_MERLIN_freq(linkage_ped_top *Top, char *file_names[])
 
 
             void inner() {
+                pr_printf("if ( ! $?_MERLIN) then\n");
+                pr_printf("\tset _MERLIN='merlin'\n");
+                pr_printf("\tendif\n");
+                pr_printf("if ( ! $?_MERLIN2SW2) then\n");
+                pr_printf("\tset _MERLIN2SW2='merlin2sw2.pl'\n");
+                pr_printf("\tendif\n");
+                pr_printf("if ( ! $?_SIMWALK2) then\n");
+                pr_printf("\tset _SIMWALK2='simwalk2'\n");
+                pr_printf("\tendif\n");
+                pr_printf("if (-e merlin_out.%d) then\n",_numchr);
+                pr_printf("\t/bin/rm merlin_out.%d\n",_numchr);
+                pr_printf("\tendif\n");
+                pr_printf("if (-e merlin_table.%d) then\n",_numchr);
+                pr_printf("\t/bin/rm merlin_table.%d\n",_numchr);
+                pr_printf("\tendif\n");
+                pr_printf("  if (-e merlin_out.%d.pdf) then\n",_numchr);
+                pr_printf("\t/bin/rm merlin_out.%d.pdf\n",_numchr);
+                pr_printf("\tendif\n");
+
                 //actual merlin command
                 pr_printf("echo Running merlin on %s and  %s\n",file_names[0],file_names[2]);
-                pr_printf("$_MERLIN -p %s -d %s -m %s -f %s --npl --pairs --tabulate  --markerNames >> merlin_out.10\n"
-                        ,file_names[0],file_names[2],file_names[1],file_names[3]);
+                pr_printf("$_MERLIN -p %s -d %s -m %s -f %s --npl --pairs --tabulate  --markerNames >> merlin_out.%d\n"
+                        ,file_names[0],file_names[2],file_names[1],file_names[3],_numchr);
                 //?
                 pr_printf("set merlin_status=$status\n");
                 pr_printf("echo $merlin_status > merlin_status\n");
@@ -361,6 +422,9 @@ void CLASS_NEWMERLIN::create_output_file(
 
     get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
     LoopOverChrm = ! combine_chromo;
+
+    //adding in looping over traits for the data file
+    LoopOverTrait = num_traits != 1;
 
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
