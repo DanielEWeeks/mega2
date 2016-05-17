@@ -79,15 +79,9 @@ static void save_ROADTRIPS_phes(linkage_ped_top *Top, const char *prefix,
         }
         void inner() {
             pr_id();
-
-            if (_ttraitp == 0) {
-            } else if (_ttraitp->Type == AFFECTION) {
-                int ase;
-                ase = aff_status_entry(_tpersonp->Pheno[_trait].Affection.Status,
-                                       _tpersonp->Pheno[_trait].Affection.Class,
-                                       &(_Top->LocusTop->Locus[_trait]));
-                pr_printf("%3d", ase);
-            }
+            pr_parent();
+            pr_sex();
+            pr_pheno();
             pr_nl();
         }
     } *sp = new roadtrips_phes(Top);
@@ -134,6 +128,40 @@ static void save_ROADTRIPS_peds(linkage_ped_top *Top, const char *prefix,
     delete sp;
 }
 
+static void save_ROADTRIPS_tpeds(linkage_ped_top *Top, const char *prefix,
+                                const int pwid, const int fwid)
+{
+    vlpCLASS(roadtrips_tpeds,chr,loci_ped_per) {
+     vlpCTOR(roadtrips_tpeds,chr,loci_ped_per) { }
+
+        void file_loop() {
+            mssgvf("        ROADTRIPS genotype file:      %s/%s\n", *_opath, _fln);
+            data_loop(*_opath, _fln, "w");
+        }
+        void loci_start() {
+            pr_printf("%d %s ", _numchr, _tlocusp->LocusName);
+            pr_genetic_distance(0, 0);
+            pr_physical_distance(0);
+            pr_printf("  ");
+        }
+        void inner() {
+            pr_printf("%d %d   ", _allele1, _allele2);
+        }
+        void loci_end() {
+            pr_nl();
+        }
+    } *sp = new roadtrips_tpeds(Top);
+
+    sp->setfln(prefix, ".XX.tpeds");
+    
+    sp->load_formats(fwid, pwid, -1);
+
+    sp->_trait_affect = true;
+    sp->iterate();
+    delete sp;
+}
+
+/*
 static void save_ROADTRIPS_gens(linkage_ped_top *Top, const char *prefix,
                                 const int pwid, const int fwid)
 {
@@ -165,6 +193,80 @@ static void save_ROADTRIPS_gens(linkage_ped_top *Top, const char *prefix,
     delete sp;
 }
 
+static void save_ROADTRIPS_snps(linkage_ped_top *Top, const char *prefix,
+                                const int pwid, const int fwid)
+{
+    vlpCLASS(roadtrips_snps,chr,loci) {
+     vlpCTOR(roadtrips_snps,chr,loci) { }
+
+        void file_loop() {
+            mssgvf("        ROADTRIPS snps file:          %s/%s\n", *_opath, _fln);
+            data_loop(*_opath, _fln, "w");
+        }
+        void inner() {
+            pr_printf("%s\n", _tlocusp->LocusName);
+        }
+    } *sp = new roadtrips_snps(Top);
+
+    sp->setfln(prefix, ".XX.snps");
+    
+    sp->load_formats(fwid, pwid, -1);
+
+    sp->iterate();
+    delete sp;
+}
+*/
+
+
+static void save_ROADTRIPS_kins(linkage_ped_top *Top, const char *prefix,
+                                const int pwid, const int fwid)
+{
+    vlpCLASS(roadtrips_kins,trait,ped_per) {
+     vlpCTOR(roadtrips_kins,trait,ped_per) { }
+
+        void file_loop() {
+            mssgvf("        ROADTRIPS family file:        %s/%s\n", *_opath, _fln);
+            data_loop(*_opath, _fln, "w");
+        }
+        void inner() {
+            pr_id();
+            pr_parent();
+            pr_nl();
+        }
+    } *sp = new roadtrips_kins(Top);
+
+    sp->setfln(prefix, ".fams");
+    
+    sp->load_formats(fwid, pwid, -1);
+
+    sp->_trait_affect = true;
+    sp->iterate();
+
+    delete sp;
+
+    vlpCLASS(roadtrips_lsts,trait,ped_per) {
+     vlpCTOR(roadtrips_lsts,trait,ped_per) { }
+
+        void file_loop() {
+            mssgvf("        ROADTRIPS family list file:   %s/%s\n", *_opath, _fln);
+            data_loop(*_opath, _fln, "w");
+        }
+        void inner() {
+            pr_id();
+            pr_nl();
+        }
+    } *lp = new roadtrips_lsts(Top);
+
+    lp->setfln(prefix, ".lst");
+    
+    lp->load_formats(fwid, pwid, -1);
+
+    lp->_trait_affect = true;
+    lp->iterate();
+
+    delete lp;
+}
+
 static void save_ROADTRIPS_prvl(linkage_ped_top *Top, const char *prefix,
                                 const int pwid, const int fwid,
                                 double prevalence)
@@ -187,29 +289,6 @@ static void save_ROADTRIPS_prvl(linkage_ped_top *Top, const char *prefix,
     sp->setfln(prefix, ".XX.prvl");
     
     sp->load_formats(fwid, pwid, -1);
-    sp->iterate();
-    delete sp;
-}
-
-static void save_ROADTRIPS_snps(linkage_ped_top *Top, const char *prefix,
-                                const int pwid, const int fwid)
-{
-    vlpCLASS(roadtrips_snps,chr,loci) {
-     vlpCTOR(roadtrips_snps,chr,loci) { }
-
-        void file_loop() {
-            mssgvf("        ROADTRIPS snps file:          %s/%s\n", *_opath, _fln);
-            data_loop(*_opath, _fln, "w");
-        }
-        void inner() {
-            pr_printf("%s\n", _tlocusp->LocusName);
-        }
-    } *sp = new roadtrips_snps(Top);
-
-    sp->setfln(prefix, ".XX.snps");
-    
-    sp->load_formats(fwid, pwid, -1);
-
     sp->iterate();
     delete sp;
 }
@@ -246,9 +325,13 @@ void CLASS_ROADTRIPS::create_output_file(
 
     save_ROADTRIPS_phes(Top, file_name_stem, pwid, fwid);
     save_ROADTRIPS_peds(Top, file_name_stem, pwid, fwid);
+/*
     save_ROADTRIPS_gens(Top, file_name_stem, pwid, fwid);
-    save_ROADTRIPS_prvl(Top, file_name_stem, pwid, fwid, prevalence);
     save_ROADTRIPS_snps(Top, file_name_stem, pwid, fwid);
+*/
+    save_ROADTRIPS_tpeds(Top, file_name_stem, pwid, fwid);
+    save_ROADTRIPS_kins(Top, file_name_stem, pwid, fwid);
+    save_ROADTRIPS_prvl(Top, file_name_stem, pwid, fwid, prevalence);
     write_key_file(Mega2KeysRun, Top);
 
 }
@@ -275,11 +358,13 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
     vlpCLASS(ROADTRIPS_sh_script,both,sh_exec) {
      vlpCTOR(ROADTRIPS_sh_script,both,sh_exec) {
             strcpy(pfx, (LoopOverTrait && num_traits > 1) ? "../" : "");
+            do_pedigree = 1;
         }
         dataloop::sh_exec *sh;
         const char *pgm;
         const char *prefix;
         char pfx[4];
+        int do_pedigree;
 
         void file_loop() {
             mssgvf("        ROADTRIPS shell file:         %s/%s\n", *_opath, _fln);
@@ -302,29 +387,69 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
             char cmd[2*FILENAME_LENGTH];
             char target[FILENAME_LENGTH];
             
+            if (do_pedigree) {
+    /*
+     *          GEN kinship matrix
+     */
 
+                sprintf(cmd, "%s/%s", "$ROADTRIPS", "KinInbcoef");
+                sh_find_pgm("ROADTRIPS", cmd, "KinInbcoef");
+
+                mkfln(target, prefix, ".fams");
+                sh_need_data(pgm, target);
+                sprintf(cmd, "%s %s", cmd, target);
+
+                mkfln(target, prefix, ".lst");
+                sh_need_data(pgm, target);
+                sprintf(cmd, "%s %s", cmd, target);
+
+                mkfln(target, prefix, ".kins");
+    //          sh_need_data(pgm, target);
+                sprintf(cmd, "%s %s", cmd, target);
+                pr_nl();
+
+                mkfln(target, prefix, ".log");
+                sh_rm(target);
+                sh_run(pgm, cmd, target);
+                fprintf_status_check_csh(_filep, "KinInbcoef", 0);
+                pr_nl();
+                pr_nl();
+            }
+/*
+ *          Run ROADTRIPS
+ */
             sprintf(cmd, "%s/%s", "$ROADTRIPS", "roadtrips");
-            sh_find_pgm(cmd, "roadtrips");
+            sh_find_pgm("ROADTRIPS", cmd, "roadtrips");
 
             mkfln(target, prefix, ".phes");
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -p %s", cmd, target);
 
-            mkfln(target, prefix, ".peds");
+            if (do_pedigree) 
+                mkfln(target, prefix, ".kins");
+            else
+                mkfln(target, prefix, ".peds");
+
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -k %s", cmd, target);
-
+/*
             mkfln(target, pfx, prefix, ".XX.gens");
+            sh_need_data(pgm, target);
+            sprintf(cmd, "%s -g %s", cmd, target);
+
+            mkfln(target, pfx, prefix, ".XX.snps");
+            sh_need_data(pgm, target);
+            sprintf(cmd, "%s -s %s", cmd, target);
+*/
+
+            mkfln(target, pfx, prefix, ".XX.tpeds");
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -g %s", cmd, target);
 
             mkfln(target, pfx, prefix, ".XX.prvl");
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -r %s", cmd, target);
-
-            mkfln(target, pfx, prefix, ".XX.snps");
-            sh_need_data(pgm, target);
-            sprintf(cmd, "%s -s %s", cmd, target);
+            pr_nl();
 
             mkfln(target, prefix, ".XX.log");
             sh_rm(target);
@@ -333,33 +458,33 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
 
             sh_show(pgm, target);
         }
-        void sh_find_pgm(const char *fullpath, const char *path) {
-            pr_printf("if ( $?ROADTRIPS  ) then\n");
-            pr_printf("  set roadtrips_def=1\n");
+        void sh_find_pgm(const char *NAME, const char *fullpath, const char *path) {
+            pr_printf("if ( $?%s  ) then\n", NAME);
+            pr_printf("  set %s_def=1\n", NAME);
             pr_printf("else\n");
-            pr_printf("  set roadtrips_def=0\n");
-            pr_printf("  set ROADTRIPS=ROADTRIPS\n");
+            pr_printf("  set %s_def=0\n", NAME);
+            pr_printf("  set %s=%s\n", NAME, NAME);
             pr_printf("endif\n");
             pr_printf("echo\n");
-            pr_printf("if (! $roadtrips_def  || ! -x \"%s\" ) then\n", fullpath);
+            pr_printf("if (! $%s_def  || ! -x \"%s\" ) then\n", NAME, fullpath);
             pr_printf("  echo The %s executable was not found - \n", fullpath);
-            pr_printf("  echo please set your ROADTRIPS environment variable properly so %s can be found.\n", pgm);
+            pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", NAME, pgm);
             pr_printf("  echo\n");
-            pr_printf("    if (! $roadtrips_def) then\n");
-            pr_printf("      echo ROADTRIPS is not defined.\n");
+            pr_printf("    if (! $%s_def) then\n", NAME);
+            pr_printf("      echo %s is not defined.\n", NAME);
             pr_printf("    else\n");
-            pr_printf("      echo ROADTRIPS is $ROADTRIPS.\n");
+            pr_printf("      echo %s is $%s.\n", NAME, NAME);
             pr_printf("    endif\n");
             pr_printf("  echo\n");
             pr_printf("  echo If using Bash and ksh you would use something like this:\n");
-            pr_printf("  echo export ROADTRIPS=path_to/ROADTRIPS\n");
+            pr_printf("  echo export %s=dir_to_%s\n", NAME, NAME);
             pr_printf("  echo\n");
             pr_printf("  echo If using csh you would use something like this:\n");
-            pr_printf("  echo setenv ROADTRIPS path_to/ROADTRIPS\n");
+            pr_printf("  echo setenv %s dir_to_%s\n", NAME, NAME);
             pr_printf("  echo\n");
             pr_printf("  echo \"Be sure to run 'make %s' to build %s in the %s\"\n",
                       pgm, pgm, path);
-            pr_printf("  echo sub directory of ROADTRIPS.\n");
+            pr_printf("  echo sub directory of %s.\n", NAME);
             pr_printf("  echo\n");
             pr_printf("  echo \"For further details, please see 'ROADTRIPS' section of the Mega2 documentation.\"\n");
             pr_printf("  exit 0\n");

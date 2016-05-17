@@ -37,6 +37,8 @@ public:
     }
    ~CLASS_ROADTRIPS() {}
 
+    virtual bool allow_trait_combination()  { return true; }
+
     virtual bool loops()  { return true; }
 
     virtual const char* output_quant_default_value() { return "999.0"; }

@@ -192,7 +192,9 @@ void dbmega2_stat(linkage_ped_top *Top)
     extern const char *THEDATE;
 
     log_line(mssgf);
+#ifndef HIDEFILE
     msgvf("The path to this SQLite3 database is %s.\n", DBfile);
+#endif
     msgvf("This database was created using Mega2 version %s.\n", DBMega2Version);
     msgvf("This database was created using SQLite3 %s on %s.\n", DBversion, DBCreateTime);
     msgvf("This database is being processed using SQLite3 %s on %s.\n", SQLversion, RunDate);
