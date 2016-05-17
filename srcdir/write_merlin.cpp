@@ -62,8 +62,22 @@ static void write_MERLIN_freq(linkage_ped_top *Top, char *file_names[]);
 
 static void write_MERLIN_sh(linkage_ped_top *Top, char *file_names[]);
 
+static int merlin_option_check(char *option,
+                               merlin_opt_type *merlin_opt,
+                               char *file_names[],
+                               int *create_merlin_model);
+
+static void init_merlin_opts(merlin_opt_type *merlin_opt);
+
+static void merlin_options(char *option,
+                           merlin_opt_type *merlin_opt,
+                           char *file_names[],
+                           int *create_liability_model);
+
 
 static void inner_file_names(char **file_names, const char *num, const char *stem = "merlin");
+
+
 
 
 static void write_MERLIN_peds(linkage_ped_top *Top, char **file_names,
@@ -185,16 +199,20 @@ static void write_MERLIN_data(linkage_ped_top *Top, char *file_names[])
 
         //this is for some reason causing a seg fault but I believe is the correct way to get this file looking the way it should
 
-//        void trait_start(){
-//            str trait = _ttraitp->Pheno->TraitName;
-//            pr_printf("A ");
-//            pr_printf(trait);
+        void trait_start(){
+            str trait = _ttraitp->LocusName;
+            //str trait = _ttraitp->Pheno->TraitName;
+            pr_printf("A ");
+            pr_printf(trait);
+            pr_nl();
+
+
+
+//            int disease = _tlocusp->Type;
+//            pr_printf("A %d", disease);
 //            pr_nl();
-//
-////            int disease = _tlocusp->Type;
-////            pr_printf("A %d", disease);
-////            pr_nl();
-//        }
+        }
+
 
 
         void inner() {
@@ -287,11 +305,8 @@ static void write_MERLIN_freq(linkage_ped_top *Top, char *file_names[])
 
 }
 
-
-
 //this will generate a c-shell script
-//will need to figure out if I need the top shell stuff...
-    static void write_MERLIN_sh(linkage_ped_top *Top, char *file_names[])
+static void write_MERLIN_sh(linkage_ped_top *Top, char *file_names[])
     {
         vlpCLASS(merlin_sh, both, sh_exec) {
             vlpCTOR(merlin_sh, both, sh_exec) { }
@@ -395,6 +410,7 @@ static void write_MERLIN_freq(linkage_ped_top *Top, char *file_names[])
 }
 
 
+
 void CLASS_NEWMERLIN::create_output_file(
         linkage_ped_top *LPedTreeTop,
         analysis_type *analysis,
@@ -410,6 +426,55 @@ void CLASS_NEWMERLIN::create_output_file(
     bool use_map;
 
     use_map = true;
+
+
+    //add in code to call the merlin options menu...
+    merlin_opt_type merlin_opt;
+    init_merlin_opts(&merlin_opt);
+
+    /* Input merlin options */
+    if (analysis == TO_MERLINONLY) {
+        merlin_options(&(opts[0]), &(merlin_opt), file_names, &model_file);
+
+        if (!DEFAULT_OPTIONS) {
+            if (strcmp(opts, "")) {
+                sprintf(err_msg, "User options to Merlin: %s.", opts);
+                mssgf(err_msg);
+            } else {
+                if (HasAff) {
+                    sprintf(opts, "--npl --pairs");
+                    mssgf("Using default Merlin options --npl and --pairs");
+                    merlin_opt.npl=merlin_opt.pairs=1;
+                    merlin_opt.markernames=0;
+                } else if (HasQuant) {
+                    sprintf(opts, "--qtl");
+                    merlin_opt.qtl=1;
+                    mssgf("Using default Merlin option --qtl.");
+                } else {
+                    sprintf(opts, "--ibd");
+                    mssgf("Using default Merlin option --ibd.");
+                }
+            }
+            log_line(mssgf);
+        }
+    }
+
+    for (i=0; i < num_traits; i++) {
+        SKIP_TRI(i)
+        if ((*LPedTop)->LocusTop->Locus[global_trait_entries[i]].Type == AFFECTION ||
+            (*LPedTop)->LocusTop->Locus[global_trait_entries[i]].Type == QUANT) {
+            num_affec++;
+        }
+    }
+
+    if ((analysis == TO_MERLINONLY) &&
+        (merlin_opt.npl==1 ||  merlin_opt.pairs==1 ||
+         merlin_opt.qtl==1 ||  merlin_opt.vc==1 ||
+         merlin_opt.parametric == 1)) {
+        R_setup = 1;
+    }
+
+
 
 
     // if 'combine_chromo == 0' each chromosome gets it's own file.
@@ -441,6 +506,289 @@ void CLASS_NEWMERLIN::create_output_file(
 
 
 }
+
+
+
+/*
+ * The following functions merlin_option_check, init_merlin_options, and merlin_options all came from write_premakeped.cpp
+ * THe hope is that they can be refitted to create the correct option menu functionality for this "newmerlin"
+ * */
+
+static int merlin_option_check(char *option,
+                               merlin_opt_type *merlin_opt,
+                               char *file_names[],
+                               int *create_merlin_model)
+
+{
+    char opt_copy[FILENAME_LENGTH];
+    char opt_output[FILENAME_LENGTH];
+    char *nextopt, prevopt[100];
+    float num;
+    int valid, i;
+    char y[10];
+
+
+    char knownopts[NUM_MERLIN_OPTS][20] =
+            {
+                    "--error", "--information", "--likelihood", "--model",
+                    "--ibd", "--kinship", "--matrices", "--extended", "--select",
+                    "--npl", "--pairs", "--qtl", "--deviates", "--exp",
+                    "--vc", "--useCovariates", "--ascertainment", "--unlinked",
+                    "--infer", "--assoc", "--fastAssoc", "--filter", "--custom",
+                    "--best", "--sample", "--all", "--founders", "--horizontal",
+                    "--zero", "--one", "--two", "--three", "--singlepoint",
+                    "--steps", "--maxStep", "--minStep", "--grid", "--start", "--stop",
+                    "--clusters", "--distance", "--rsq", "--cfreq",
+                    "--bits", "--megabytes", "--minutes",
+                    "--trim", "--noCoupleBits", "--swap", "--smallSwap",
+                    "--quiet", "--markerNames", "--frequencies", "--perFamily", "--pdf",
+                    "--tabulate", "--prefix",
+                    "--simulate", "--reruns", "--save", "--trait"
+            };
+
+    init_merlin_opts(merlin_opt);
+
+
+    strcpy(opt_copy, option);
+    nextopt=strtok(opt_copy, " ");
+    strcpy(opt_output, "");
+
+    while (nextopt != NULL) {
+        if (!strncmp(nextopt, "--",(size_t) 2)) {
+            valid=0;
+            for (i=0; i < NUM_MERLIN_OPTS; i++) {
+                if (!strcmp(nextopt, knownopts[i])) {
+                    valid=1; break;
+                }
+            }
+            if (!valid) { sprintf(err_msg, "Unknown option %s.\n", nextopt); warnf(err_msg);}
+        }
+        nextopt = strtok(NULL, " ");
+    }
+
+    /* Now re-initialize the string */
+    strcpy(opt_copy, option);
+    nextopt=strtok(opt_copy, " ");
+
+    while(nextopt != NULL) {
+        strcat(opt_output, nextopt);
+        strcat(opt_output, " ");
+        /* Check that these options are followed by another arguments */
+        if (!strcmp(nextopt, "--unlinked") || !strcmp(nextopt, "--steps") ||
+            !strcmp(nextopt, "--maxStep") || !strcmp(nextopt, "--minStep") ||
+            !strcmp(nextopt, "--grid") || !strcmp(nextopt, "--start") ||
+            !strcmp(nextopt, "--stop") || !strcmp(nextopt, "--bits") ||
+            !strcmp(nextopt, "--rsq") || !strcmp(nextopt, "--distance") ||
+            !strcmp(nextopt, "--reruns") ||
+            !strcmp(nextopt, "--megabytes") || !strcmp(nextopt, "--minutes")) {
+
+            strcpy(prevopt, nextopt);
+            nextopt = strtok(NULL, " ");
+            if (nextopt != NULL) {
+                if (sscanf(nextopt, "%f", &num) != 1) {
+                    printf("ERROR: Option %s needs a numeric argument.\n", prevopt);
+                    return 0;
+                }
+            } else {
+                printf("ERROR: Option %s needs a numeric argument.\n", prevopt);
+                return 0;
+            }
+            strcat(opt_output, nextopt); strcat(opt_output, " ");
+        } else if (!strcmp(nextopt, "--model") || !strcmp(nextopt, "--custom")) {
+            strcpy(prevopt, nextopt);
+            /* Before reading in the next option we need to figure out whether
+               this is a constant or another option */
+            nextopt = strtok(NULL, " ");
+            if (nextopt == NULL || ! strncmp(nextopt, "--", (size_t) 2)) {
+                printf("ERROR: Option %s needs a file name argument.\n", prevopt);
+                return 0;
+            }
+
+            if (!strcmp(prevopt, "--model")) {
+                shorten_path(nextopt, file_names[14]);
+                if (access(file_names[14], F_OK) != 0) {
+                    if (*create_merlin_model) {
+                        printf("File %s will be created from traits automatically.\n",
+                               file_names[14]);
+                    } else {
+                        printf("WARNING: File %s not found, Merlin may not run correctly.\n",
+                               file_names[14]);
+
+                        printf("Create model file(s) %s in output folder? [y/n](default n)",
+                               file_names[14]);
+                        fflush(stdout);
+                        IgnoreValue(fgets(y, 9, stdin)); newline; fflush(stdin);
+                        if (y[0] == 'Y' || y[0] == 'y') {
+                            *create_merlin_model=1;
+                        } else {
+                            printf("WARNING: No model file, Merlin may not run correctly.\n");
+                        }
+                    }
+                }
+                if (strcmp(file_names[14], "None")) {
+                    strcat(opt_output, file_names[14]); strcat(opt_output, " ");
+                }
+                merlin_opt->parametric = 1;
+            } else {
+                strcat(opt_output, nextopt); strcat(opt_output, " ");
+                if (access(nextopt, F_OK) != 0) {
+                    printf("WARNING: file %s provided for %s does not exist or is unreadable.\n",
+                           prevopt, nextopt);
+                }
+            }
+        } else if (!strcmp(nextopt, "--prefix")) {
+            nextopt = strtok(NULL, " ");
+            if (nextopt == NULL || !strncmp(nextopt, "--", (size_t) 2)) {
+                printf("ERROR: Option %s needs a string name argument.\n", prevopt);
+                return 0;
+            }
+            strcat(opt_output, nextopt); strcat(opt_output, " ");
+            warnf("Mega2 generated shell script recognizes only the default prefix \"merlin\"");
+            warnf("Merlin shell script will fail with alternate prefixes.");
+            merlin_opt->prefix=1;
+            /* otherwise process this string as an option */
+        } else {
+            if (!strcmp(nextopt, "--npl")) { merlin_opt->npl=1; }
+            if (!strcmp(nextopt, "--pairs")) { merlin_opt->pairs=1; }
+            if (!strcmp(nextopt, "--qtl")) { merlin_opt->qtl=1; }
+            if (!strcmp(nextopt, "--vc")) { merlin_opt->vc=1; }
+            if (!strcmp(nextopt, "--markerNames")) { merlin_opt->markernames=1; }
+            if (!strcmp(nextopt, "--pdf")) { merlin_opt->pdf=1; }
+            if (!strcmp(nextopt, "--tabulate")) { merlin_opt->tabulate=1; }
+        }
+        nextopt = strtok(NULL, " ");
+    }
+
+    strcpy(option, opt_output);
+
+    return 1;
+
+}
+
+static void init_merlin_opts(merlin_opt_type *merlin_opt)
+{
+    merlin_opt->npl=
+    merlin_opt->qtl =
+    merlin_opt->pairs =
+    merlin_opt->vc =
+    merlin_opt->parametric =
+    merlin_opt->pdf =
+    merlin_opt->markernames =
+    merlin_opt->prefix =
+    merlin_opt->tabulate = 0;
+}
+
+static void merlin_options(char *option,
+                           merlin_opt_type *merlin_opt,
+                           char *file_names[],
+                           int *create_liability_model)
+
+{
+    int done_ = 0;
+    char cdone_[10];
+
+
+    if (HasAff) {
+        strcpy(option, "--npl --pairs --tabulate");
+    } else if (HasQuant) {
+        strcpy(option, "--qtl --tabulate");
+    } else {
+        strcpy(option, "--ibd");
+    }
+
+    *create_liability_model = 0;
+
+    if (DEFAULT_OPTIONS) {
+        /* This is called only to set the correct flags in merlin_opt structure */
+        merlin_option_check(option, merlin_opt, file_names, create_liability_model);
+    } else {
+        done_ = -1;
+        while(done_) {
+            /* New merlin run parameters menu */
+            draw_line();
+            printf("Merlin run options menu:\n");
+            printf("0) Done with this menu, please proceed.\n");
+            printf(" 1) Select Merlin option [%s].\n", option);
+            if (strcmp(file_names[14], "None")) {
+                printf(" 2) %s Merlin model file %s from affection trait parameters [%s].\n",
+                       ((access(file_names[14], F_OK) == 0)?
+                        "Recreate" : "Create"),
+                       file_names[14],
+                       yorn[*create_liability_model]);
+            } else {
+                printf(" 2) Create Merlin model file from affection trait parameters [%s].\n",
+                       yorn[*create_liability_model]);
+            }
+            if (*create_liability_model && strcmp(file_names[14], "None")) {
+                printf("    To use this model file, use the Merlin analysis option:\n");
+                printf("       --model %s\n", file_names[14]);
+            }
+            printf("Select 0-2 (2 to toggle) > ");
+            fcmap(stdin, "%s", cdone_);
+            newline;
+/*       done_ = atoi(cdone_); */
+            done_ = (int)strtol(cdone_, (char **)NULL, 10);
+/*       printf("%d\n", done_); */
+/*       sleep(1); */
+            switch(done_) {
+                case 0:
+                    if (!merlin_option_check(option, merlin_opt, file_names, create_liability_model)) {
+                        printf("Error: bad option string, discarding options.\n");
+                        strcpy(option, "");
+                    }
+                    break;
+                case 1:
+                    draw_line();
+                    printf("Merlin option selection:\n");
+                    printf("Enter one or more of the options listed below, ");
+                    printf("separated by spaces, \n");
+                    printf("   e.g. --steps 2 --bits 32 \n");
+                    printf("Some options must be followed by a number as indicated\n");
+
+                    printf("For no options press <RETURN> or <Enter>\n\n");
+
+                    printf("         General : --error, --information, --likelihood, --model\n");
+                    printf("      IBD States : --ibd, --kinship, --matrices, --extended, --select\n");
+                    printf("     NPL Linkage : --npl, --pairs, --qtl, --deviates, --exp\n");
+                    printf("     VC Linkage  : --vc, --useCovariates, --ascertainment\n");
+                    printf("     Association : --infer, --assoc, --fastAssoc, --filter, --custom\n");
+                    printf("     Haplotyping : --best, --sample, --all, --founders, --horizontal\n");
+                    printf("   Recombination : --zero, --one, --two, --three, --singlepoint\n");
+                    printf("       Positions : --steps, --maxStep, --minStep, --grid, --start, --stop\n");
+                    printf(" Marker Clusters : --clusters, --distance, --rsq, --cfreq\n");
+                    printf("          Limits : --bits, --megabytes, --minutes\n");
+                    printf("     Performance : --trim, --noCoupleBits, --swap, --cache\n");
+                    printf("          Output : --quiet, --markerNames, --frequencies, --perFamily, --pdf,\n");
+                    printf("                   --prefix\n");
+                    printf("      Simulation : --simulate, --reruns, --save\n");
+
+                    printf("These options can be followed by one additional argument each:\n");
+                    printf(" model, custom, steps, maxStep, minStep, grid, start, stop, \n");
+                    printf(" clusters, megabytes, minutes, cache, prefix\n");
+                    printf("\nEnter options as text (at most 200 characters) > ");
+                    strcpy(option, "");
+                    fflush(stdout);
+                    IgnoreValue(fgets(option, FILENAME_LENGTH-1, stdin)); newline;
+                    option[strlen(option)-1]='\0';
+                    if (!merlin_option_check(option, merlin_opt, file_names, create_liability_model)) {
+                        printf("Error: bad option string, discarding options.\n");
+                        strcpy(option, "");
+                    }
+                    break;
+                case 2:
+                    printf("Set value to \"yes\" to automatically generate model file\n");
+                    printf("using affection status trait locus parameters from input files.\n");
+                    *create_liability_model = TOGGLE(*create_liability_model);
+                    break;
+                default:
+                    warn_unknown(cdone_);
+                    break;
+            }
+        }
+    }
+}
+
+
 
 
 void CLASS_NEWMERLIN::get_file_names(char *file_names[], char *prefix,

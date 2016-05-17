@@ -91,6 +91,18 @@ public:
     void replace_chr_number(char *file_names[], int numchr);
 };
 
+typedef struct merlin_opt_ {
+    int npl;
+    int qtl;
+    int pairs;
+    int vc;
+    int parametric;
+    int markernames;
+    int tabulate;
+    int prefix;
+    int pdf;
+} merlin_opt_type;
+
 extern CLASS_NEWMERLIN            *MERLIN;
 
 #endif
