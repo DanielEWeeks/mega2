@@ -34,6 +34,7 @@ class CLASS_ROADTRIPS: public CLASS_ANALYSIS {
 public:
     CLASS_ROADTRIPS() : CLASS_ANALYSIS() {
         _name = "Roadtrips";
+        file_name_stem = strdup("roadtrips");
     }
    ~CLASS_ROADTRIPS() {}
 
@@ -64,9 +65,20 @@ public:
     void create_sh_file(linkage_ped_top *Top, char *file_names[], const int numchr);
 
     void get_file_names(char *file_names[], int has_orig, int has_uniq,
-                        int *combine_chromo, double *prevalence);
+                        int *combine_chromo);
     void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
+
+    virtual void batch_in();
+
+    virtual void batch_out();
+
+    virtual void batch_show();
+
+public:
+
+    double male_prevalence;
+    double female_prevalence;
 };
 
 extern CLASS_ROADTRIPS            *ROADTRIPS;

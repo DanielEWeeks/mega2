@@ -231,8 +231,12 @@ static keyw_t keywords[] = {
     {"ID_person",                             INT,       "0"},
 
     {"Shapeit_recomb_rdir",                   STRING,     ""},
-    {"Shapeit_recomb_rfile",                  STRING,     ""} ,
+    {"Shapeit_recomb_rfile",                  STRING,     ""},
     {"Shapeit_file_stem",                     STRING,     ""},
+
+    {"file_name_stem",                        STRING,     ""},
+    {"RoadTrips_male_prevalence",             FLOAT,      "0.123"},
+    {"RoadTrips_female_prevalence",           FLOAT,      "0.123"},
 
 };
 
