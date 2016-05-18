@@ -50,6 +50,7 @@
 #include "write_shapeit_ext.h"
 #include "write_impute2_ext.h"
 #include "write_roadtrips_ext.h"
+#include "write_mach_ext.h"
 /*
  * You MUST make the appropriate changes here to define the new header and class.
  * (item 1.)
@@ -122,6 +123,7 @@ CLASS_PSEQ               *TO_PSEQ = new CLASS_PSEQ();
 CLASS_SHAPEIT            *SHAPEIT = new CLASS_SHAPEIT();
 CLASS_IMPUTE2            *IMPUTE2 = new CLASS_IMPUTE2();
 CLASS_ROADTRIPS          *ROADTRIPS = new CLASS_ROADTRIPS();
+CLASS_MACH               *MACH = new CLASS_MACH();
 /*
  * You MUST make the appropriate changes here to define the new analysis object
  * (item 2.)
@@ -171,7 +173,8 @@ analysis_types analysis_list[] = {
     { "PSEQ format",                TO_PSEQ },
     { "SHAPEIT format",             SHAPEIT},
 //  { "IMPUTE2 format",             IMPUTE2}
-    { "RoadTrips format",           ROADTRIPS}
+    { "RoadTrips format",           ROADTRIPS},
+    { "MaCH format",                MACH},
 /*
  * You MUST make the appropriate changes here to define the mapping from the name
  * to the new analysis object
@@ -330,6 +333,11 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
 	      *analysis = TO_MERLIN; // 24. Merlin/SimWalk2 
             }
             break;
+
+        case 'h':
+            *analysis = MACH; //MACH
+            break;
+
 
         default:
             unknown_prog(prog_name);

@@ -129,6 +129,10 @@ public:
 
     void pr_sex() { pr_sex(_tpersonp); }
     void pr_sex(linkage_ped_rec  *tpe);
+    //natural language print sex
+    void pr_sex_l(){ pr_sex_l(_tpersonp,"U");}
+    void pr_sex_l(const char *unknown){ pr_sex_l(_tpersonp,unknown);}
+    void pr_sex_l(linkage_ped_rec *tpe, const char *unkown);
 
     // returns -1 missing phenotype; 0 Control (unaffected); 1 Case (affected)
     int is_affected_pheno() { return is_affected_pheno(_tpersonp); }
