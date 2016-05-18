@@ -223,10 +223,10 @@ void person_locus_entry::pr_sex(linkage_ped_rec  *tpe)
 //natural language print of sex
 void person_locus_entry::pr_sex_l(linkage_ped_rec  *tpe,  const char *unkown = "U"){
     // The sex of the individual...
-    if((tpe->Sex=1)){
+    if (tpe->Sex==1) {
         pr_printf("M ");
     }
-    else if((tpe->Sex=2)){
+    else if (tpe-> Sex==2) {
         pr_printf("F ");
     }
     else{
