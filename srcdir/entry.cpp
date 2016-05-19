@@ -221,7 +221,7 @@ void person_locus_entry::pr_sex(linkage_ped_rec  *tpe)
 }
 
 //natural language print of sex
-void person_locus_entry::pr_sex_l(linkage_ped_rec  *tpe,  const char *unkown = "U"){
+void person_locus_entry::pr_sex_l(linkage_ped_rec  *tpe,  const char *unknown = "U"){
     // The sex of the individual...
     if (tpe->Sex==1) {
         pr_printf("M ");
@@ -230,7 +230,7 @@ void person_locus_entry::pr_sex_l(linkage_ped_rec  *tpe,  const char *unkown = "
         pr_printf("F ");
     }
     else{
-        pr_printf(unkown);
+        pr_printf("%s ", unknown);
     }
 }
 
