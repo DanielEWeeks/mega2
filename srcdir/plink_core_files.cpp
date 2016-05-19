@@ -404,9 +404,10 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
     }
 
     // NOTE: comnine_chromo is passed in because the user can change it via a menu.
-    if (InputMode == INTERACTIVE_INPUTMODE)
+    if (InputMode == INTERACTIVE_INPUTMODE) {
         (*analysis)->user_queries(file_names, &combine_chromo, &create_geno_summary);
-    else
+        LoopOverChrm = ! combine_chromo;
+    } else
         (*analysis)->batch_in();
 
 //  file_stem may have been reset
@@ -417,8 +418,6 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
 
 
     (*analysis)->batch_show();
-
-    LoopOverChrm = ! combine_chromo;
 
     // http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#map
     // in PLINK a 3 column map is one that is missing the Genetic Distance column.

@@ -38,7 +38,7 @@ public:
     }
    ~CLASS_ROADTRIPS() {}
 
-    virtual bool allow_trait_combination()  { return true; }
+//  virtual bool allow_trait_combination()  { return true; }
 
     virtual bool loops()  { return true; }
 
@@ -48,7 +48,8 @@ public:
     virtual const char* output_affect_default_value() { return "0"; }
     virtual bool output_affect_must_be_numeric() { return true; }
 
-    virtual bool qtl_allow()        { return true; }
+//  virtual bool qtl_allow()        { return true; }
+    virtual bool qtl_disallow()        { return true; }
 
     virtual void ped_ind_defaults(int unique)  {
         OrigIds[0] = 5; /* uniqueIds */
@@ -79,6 +80,7 @@ public:
 
     double male_prevalence;
     double female_prevalence;
+    Str    additional_program_args;
 };
 
 extern CLASS_ROADTRIPS            *ROADTRIPS;

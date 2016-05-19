@@ -45,6 +45,8 @@ public:
     virtual void sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis);
     virtual void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
 
+    virtual bool Loop_Over_Chromosomes_implemented() { return true; }
+
 /*  this is necessary because we are inheriting from CLASS_PLINK not CLASS_ANALYSIS */
     virtual const char* output_quant_default_value() { return "-9"; }
 

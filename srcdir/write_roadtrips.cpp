@@ -135,7 +135,7 @@ static void save_ROADTRIPS_tpeds(linkage_ped_top *Top, const char *prefix,
             data_loop(*_opath, _fln, "w");
         }
         void loci_start() {
-            pr_printf("%d %s ", _numchr, _tlocusp->LocusName);
+            pr_printf("%d %s ", _tlocusp->Marker->chromosome, _tlocusp->LocusName);
             pr_genetic_distance(0, 0);
             pr_physical_distance(0);
             pr_printf("  ");
@@ -210,8 +210,8 @@ static void save_ROADTRIPS_prvl(linkage_ped_top *Top, const char *prefix,
                                 const int pwid, const int fwid,
                                 double male_prevalence, double female_prevalence)
 {
-    vlpCLASS(roadtrips_prvl,chr,null) {
-     vlpCTOR(roadtrips_prvl,chr,null) { }
+    vlpCLASS(roadtrips_prvl,once,null) {
+     vlpCTOR(roadtrips_prvl,once,null) { }
      double male_prevalence, female_prevalence;
 
         void file_loop() {
@@ -226,7 +226,7 @@ static void save_ROADTRIPS_prvl(linkage_ped_top *Top, const char *prefix,
 
     sp->male_prevalence = male_prevalence;
     sp->female_prevalence = female_prevalence;
-    sp->setfln(prefix, ".XX.prvl");
+    sp->setfln(prefix, ".prvl");
     
     sp->load_formats(fwid, pwid, -1);
     sp->iterate();
@@ -298,6 +298,7 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
         dataloop::sh_exec *sh;
         const char *pgm;
         const char *prefix;
+        const char *additional_program_args;
         char pfx[4];
         int do_pedigree;
 
@@ -323,19 +324,21 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
             char target[FILENAME_LENGTH];
             
             if (do_pedigree) {
+                const char *lpgm = "KinInbcoef";
 /*
  *              GEN kinship matrix
  */
 
                 sprintf(cmd, "%s/%s", "$ROADTRIPS", "KinInbcoef");
                 sh_find_pgm("ROADTRIPS", cmd, "KinInbcoef");
+                sprintf(cmd, "$%s_program ", "KinInbcoef");
 
                 mkfln(target, prefix, ".fams");
-                sh_need_data(pgm, target);
+                sh_need_data(lpgm, target);
                 sprintf(cmd, "%s %s", cmd, target);
 
                 mkfln(target, prefix, ".lst");
-                sh_need_data(pgm, target);
+                sh_need_data(lpgm, target);
                 sprintf(cmd, "%s %s", cmd, target);
 
                 mkfln(target, prefix, ".kins");
@@ -344,10 +347,10 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
 
                 mkfln(target, prefix, ".log");
                 sh_rm(target);
-                sh_run(pgm, cmd, target);
+                sh_run(lpgm, cmd, target);
                 fprintf_status_check_csh(_filep, "KinInbcoef", 0);
                 mkfln(target, prefix, ".kins");
-                sh_need_data(pgm, target);
+                sh_need_data(lpgm, target);
                 pr_nl();
                 pr_nl();
             }
@@ -356,6 +359,7 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
  */
             sprintf(cmd, "%s/%s", "$ROADTRIPS", "roadtrips");
             sh_find_pgm("ROADTRIPS", cmd, "roadtrips");
+            sprintf(cmd, "$%s_program ", "roadtrips");
 
             mkfln(target, prefix, ".phes");
             sh_need_data(pgm, target);
@@ -373,9 +377,12 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -g %s", cmd, target);
 
-            mkfln(target, pfx, prefix, ".XX.prvl");
+            mkfln(target, pfx, prefix, ".prvl");
             sh_need_data(pgm, target);
             sprintf(cmd, "%s -r %s", cmd, target);
+            pr_nl();
+
+            sprintf(cmd, "%s %s ", cmd, additional_program_args);
             pr_nl();
 
             mkfln(target, prefix, ".XX.log");
@@ -390,17 +397,22 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
             pr_printf("  set %s_def=1\n", NAME);
             pr_printf("else\n");
             pr_printf("  set %s_def=0\n", NAME);
-            pr_printf("  set %s=%s\n", NAME, NAME);
             pr_printf("endif\n");
             pr_printf("echo\n");
-            pr_printf("if (! $%s_def  || ! -x \"%s\" ) then\n", NAME, fullpath);
+            pr_printf("if ( \"`type -t %s`\" == \"file\" ) then\n", path);
+            pr_printf("  echo set %s_program=`type -p %s`\n", path, path);
+            pr_printf("  set %s_program=`type -p %s`\n", path, path);
+            pr_printf("else if ( $%s_def && -x \"%s\" ) then\n", NAME, fullpath);
+            pr_printf("  echo set %s_program=%s\n", path, fullpath);
+            pr_printf("  set %s_program=%s\n", path, fullpath);
+            pr_printf("else\n");
             pr_printf("  echo The %s executable was not found - \n", fullpath);
             pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", NAME, path);
             pr_printf("  echo\n");
             pr_printf("    if (! $%s_def) then\n", NAME);
             pr_printf("      echo %s is not defined.\n", NAME);
             pr_printf("    else\n");
-            pr_printf("      echo %s is $%s.\n", NAME, NAME);
+            pr_printf("      echo %s is set to \"$%s\".\n", NAME, NAME);
             pr_printf("    endif\n");
             pr_printf("  echo\n");
             pr_printf("  echo If using Bash and ksh you would use something like this:\n");
@@ -422,6 +434,7 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
 
     xp->setfln(file_name_stem, ".XX.sh");
     xp->prefix = file_name_stem;
+    xp->additional_program_args = C(additional_program_args);
 
     xp->sh         = sh;
     xp->pgm        = "ROADTRIPS";
@@ -440,10 +453,11 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
                                      int *combine_chromo)
 {
     int i, choice;
-    int igl, ipre, iphen, ish, ioui, ioup, isum, isumf, iprevm, iprevf;
+    int iarg, igl, ipre, iphen, ish, ioui, ioup, isum, isumf, iprevm, iprevf;
     int Outfile_Names = 0;
     analysis_type analysis = this;
-    char selection[100];
+    char selection[MAX_NAMELEN];
+    char *selectionp = selection;
 
     batch_in();
 
@@ -453,18 +467,12 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
     } else {
         choice = -1;
     }
-    if (main_chromocnt > 1) {
-        // This is the batch file item that controls whether you wish to comnine the
-        // chromosomes in the same file or not. If true (y), each chromosome gets it's own file.
-        // This is a derective from the user which will override the default...
-        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read)
-            *combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
-        else
-            *combine_chromo=0;
-    }
+    *combine_chromo = 1;
+    int tmp = ! *combine_chromo;
+    BatchValueSet(tmp, "Loop_Over_Chromosomes");
 
     /* output file name menu */
-    igl = ipre = iphen = ish = ioui = ioup = isum = isumf = iprevm = iprevf = -1;
+    iarg = igl = ipre = iphen = ish = ioui = ioup = isum = isumf = iprevm = iprevf = -1;
     // If the default output files are used we do not go here.
     // Otherwise, enter with choice -- -1.
     while (choice != 0) {
@@ -473,20 +481,23 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         printf(" %s menu:\n", (_subname && (*_subname != 0)) ? _subname : _name);
         printf("0) Done with this menu - please proceed\n");
         i=1;
-
+/*
         if (main_chromocnt > 1) {
             printf(" %d) Combine chromosomes?                      %s\n",
                    i, yorn[*combine_chromo]);
             igl=i++;
         }
-
-        printf(" %d) Filename stem:                           %-15s\n", i, file_name_stem);
+*/
+        printf(" %d) Filename stem:                       %-15s\n", i, file_name_stem);
         ipre=i++;
 
-        printf(" %d) Male prevalence percent                  %-15.4f\n", i, male_prevalence);
+        printf(" %d) Additional ROADTRIPS arguments:      %-15s\n", i, C(additional_program_args));
+        iarg=i++;
+
+        printf(" %d) Male prevalence percent              %-15.4f\n", i, male_prevalence);
         iprevm=i++;
 
-        printf(" %d) Female prevalence percent                %-15.4f\n", i, female_prevalence);
+        printf(" %d) Female prevalence percent            %-15.4f\n", i, female_prevalence);
         iprevf=i++;
 
         individual_id_item(i, analysis, OrigIds[0], 48, 2, 0, 0);
@@ -504,16 +515,24 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         } else if (choice == 0) {
             ;
 
-        } else if (choice == igl) {
-            *combine_chromo = TOGGLE(*combine_chromo);
+//      } else if (choice == igl) {
+//          *combine_chromo = TOGGLE(*combine_chromo);
 
         } else if (choice == ipre) {
             printf("Enter output filename stem > ");
-            fcmap(stdin, "%s", this->file_name_stem);    newline;
+            fcmap(stdin, "%s", selection);    newline;
+            free(file_name_stem);
+            file_name_stem = strdup(selection);
             BatchValueSet(file_name_stem, "file_name_stem");
             Outfile_Names++;
             selection[0] = 'n';
             BatchValueSet(selection[0], "Default_Outfile_Names");
+
+        } else if (choice == iarg) {
+            printf("Enter additional arguments for ROADTRIP > ");
+            fcmap(stdin, "%s", selection);    newline;
+            BatchValueSet(selectionp, "additional_program_args");
+            additional_program_args = selectionp;
 
         } else if (choice == iprevm) {
             printf("Enter male prevalence fraction > ");
@@ -561,8 +580,10 @@ void CLASS_ROADTRIPS::batch_out()
     extern void batchf(batch_item_type *bi);
 
     Cstr Values[] =  { "file_name_stem",
+                       "additional_program_args",
                        "RoadTrips_male_prevalence",
                        "RoadTrips_female_prevalence",
+                       "Loop_Over_Chromosomes",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -577,21 +598,25 @@ void CLASS_ROADTRIPS::batch_in()
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(                fn,   "file_name_stem");
+    
+    BatchValueGet(additional_program_args, "additional_program_args");
+    BatchValueGet(male_prevalence,         "RoadTrips_male_prevalence");
+    BatchValueGet(female_prevalence,       "RoadTrips_female_prevalence");
 
-    BatchValueGet(this->male_prevalence,    "RoadTrips_male_prevalence");
-    BatchValueGet(this->female_prevalence,  "RoadTrips_female_prevalence");
-
+    BatchValueGet(LoopOverChrm,            "Loop_Over_Chromosomes");
 }
 
 void CLASS_ROADTRIPS::batch_show()
 {
     msgvf("\n");
-    msgvf("RoadTrips Male Prevalence:                %.4f\n",   this->male_prevalence);
-    msgvf("RoadTrips Female Prevalence:              %.4f\n",   this->female_prevalence);
-
     if (! DEFAULT_OUTFILES) {
-        msgvf("Output file stem:                          %s\n",    C(this->file_name_stem));
+        msgvf("Output file stem:                         %s\n",    C(file_name_stem));
     }
+    msgvf("Additional ROADTRIPS program args:       %s\n",      C(additional_program_args));
+
+    msgvf("ROADTRIPS Male Prevalence:                %.4f\n",   male_prevalence);
+    msgvf("ROADTRIPS Female Prevalence:              %.4f\n",   female_prevalence);
+
     msgvf("\n");
  }
 
