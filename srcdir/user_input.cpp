@@ -1235,7 +1235,7 @@ void menu1(file_format *infl_type,
                            PLINK.trait);
                     printf("      is %s trait.  You also have specified the --missing-phenotype is %g.\n",
                            PLINK.traitType ? "a quantitative" : "an affective",  PLINK.pheno_value);
-                    printf("NOTE: If this is not what you intended, got back and edit menu line 2.\n");
+                    printf("NOTE: If this is not what you intended, go back and edit menu line 2.\n");
                 }
 
             }

@@ -139,7 +139,10 @@ static void Value_Missing_menu(analysis_type *analysis)
         printf("              Mega2 %s Missing Value menu:\n", Mega2Version);
         draw_line();
         printf("If it is necessary, specify a different value to indicate that a trait is missing\n");
-        printf("both for input to Mega2 and/or output from Mega2.\n");
+        if (database_dump || ! database_read)
+            printf("both for input to Mega2 and/or output from Mega2.\n");
+        else
+            printf("for output from Mega2.\n");
         printf("Note: Output entries that are marked with a \"#\" can not be changed.\n\n");
 
         printf("0) Done with this menu - please proceed\n");
@@ -150,7 +153,7 @@ static void Value_Missing_menu(analysis_type *analysis)
             trans[ttl] = all_i;
         }
 */
-        if (1) {
+        if (database_dump || ! database_read) {
             printf("%2d) Specify input missing value for Quantitative traits:  %7s",
                    ++ttl, Value_Missing[qin_i-2].str);
 #ifdef HIDESTATUS
@@ -160,7 +163,7 @@ static void Value_Missing_menu(analysis_type *analysis)
             trans[ttl] = qin_i;
         }
 
-        if (1) {
+        if (database_dump || ! database_read) {
             printf("%2d) Specify input missing value for Affection status:     %7s",
                    ++ttl, Value_Missing[ain_i-2].str);
 #ifdef HIDESTATUS
@@ -170,11 +173,17 @@ static void Value_Missing_menu(analysis_type *analysis)
             trans[ttl] = ain_i;
         }
 
+        int allow1 = fix_Value_Missing_check_allow(analysis, 1);
+        int allow3 = fix_Value_Missing_check_allow(analysis, 3);
+        if (database_dump || ! database_read) {
+            if (allow1 == 0 && allow3 == 0)
+                return;
+        }
         show = Value_Missing[qout_i-2].str;
 //      if (!*show) show = (*analysis)->output_quant_default_value();
 	if (!*show) show = missing_value.quant_str;
         if (!show) show = "";
-        if (fix_Value_Missing_check_allow(analysis, 1)) {
+        if (allow1) {
             printf("%2d) Specify output missing value for Quantitative traits: %7s",
                    ++ttl, show);
 #ifdef HIDESTATUS
@@ -196,7 +205,7 @@ static void Value_Missing_menu(analysis_type *analysis)
 //      if (!*show) show = (*analysis)->output_affect_default_value();
         if (!*show) show = missing_value.affect_str;
         if (!show) show = "";
-        if (fix_Value_Missing_check_allow(analysis, 3)) {
+        if (allow3) {
             printf("%2d) Specify output missing value for Affection status:    %7s",
                    ++ttl, show);
 #ifdef HIDESTATUS
@@ -783,7 +792,7 @@ void Value_Missing_get(analysis_type *analysis)
     }
 
     itpn = itp + 0;
-    if (! database_read) {
+    if (database_dump || ! database_read) {
         if (Mega2BatchItems[itpn->it].value.fvalue == QMISSING)
             msgvf("%s  %s Missing Value \"%6s\"",
                   itpn->name, itpn->put, "NA");
@@ -797,7 +806,7 @@ void Value_Missing_get(analysis_type *analysis)
     }
 
     itpn = itp + 2;
-    if (! database_read) {
+    if (database_dump || ! database_read) {
         l = strlen(itpn->str);
         msgvf("%s     %s Missing Value %*s\"%s\"",
               itpn->name, itpn->put, 6-l, "", Mega2BatchItems[itpn->it].value.name);
