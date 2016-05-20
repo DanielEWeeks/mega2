@@ -76,7 +76,7 @@ static void write_MACH_peds(linkage_ped_top *Top, char **file_names, const int p
         str *file_names;
 
         void file_loop() {
-            msgvf("        Mach Phenotype File:   %s/%s\n", *_opath, file_names[0]);
+            msgvf("        Mach Pedigree File:   %s/%s\n", *_opath, file_names[0]);
             data_loop(*_opath, file_names[0], "w");
         }
 
@@ -151,11 +151,36 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
     delete mach_dats;
 }
 
-
-//this will generate a c-shell script
+/*Shell should look like the following in order to produce prephased VCF according to minimac documentation
+ *
+ * mach1 -d Gwas.chr20.Unphased.dat \
+      -p Gwas.chr20.Unphased.ped \
+      --rounds 20 \
+      --states 200 \
+      --phase \
+      --interim 5 \
+      --sample 5 \
+      --prefix Gwas.Chr20.Phased.Output
+      */
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
+
+    int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
+                    strcmp(output_paths[0], ".");
+
+    dataloop::sh_exec *sh = 0;
+    if (top_shell) {
+        sh = new dataloop::sh_exec(Top);
+        sh->filep_open(output_paths[0], file_names[3], "w");
+        sh->sh_main();
+    }
+
     vlpCLASS(mach_sh, both, sh_exec) {
         vlpCTOR(mach_sh, both, sh_exec) { }
+
+        void file_loop() {
+            mssgvf("        MaCH shell file:       %s/%s\n", *_opath, file_names[2]);
+            data_loop(*_opath, file_names[2], "w");
+        }
 
         typedef char *str;
         str *file_names;
@@ -163,7 +188,19 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
         bool has_x;
 
         void file_header() {
-
+            //if (sh)
+            //    sh->sh_sh(this);
+            sh_shell_type();
+            sh_id();
+            script_time_stamp(_filep);
+#ifdef RUNSHELL_SETUP
+            // This handles the environment variable setup to allow the checking
+	    // functions in 'batch_run' to work correctly...
+	    fprintf_env_checkset_csh(_filep, "_MACH", "mach");
+#endif /* RUNSHELL_SETUP */
+        }
+        void inner() {
+            pr_printf ("mach1 -d %s -p %s --rounds 20 --states 200 --phase --interim 5 --sample 5 --prefix Chr%d.Phased.Output", file_names[1], file_names[0],_numchr);
         }
 
     } *mach_shs = new mach_sh(Top);
@@ -340,10 +377,10 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
 static void inner_file_names(char **file_names, const char *num, const char *stem) {
 
     //this should reflect the original naming convention of mach in mega2
-    sprintf(file_names[0], "%s_ped.%s",stem,  num);
-    sprintf(file_names[1], "%s_data.%s",stem, num);
-    sprintf(file_names[2], "%s_freq.%s",stem,  num);
-    sprintf(file_names[3], "%s.%s.sh",stem, num);
+    sprintf(file_names[0], "%s_ped.%s", stem, num);
+    sprintf(file_names[1], "%s_data.%s", stem, num);
+    sprintf(file_names[2], "%s.%s.sh", stem, num);
+    sprintf(file_names[3], "%s.all.sh", stem);
 }
 
 void CLASS_MACH::gen_file_names(char **file_names, char *num)

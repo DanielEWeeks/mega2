@@ -888,7 +888,8 @@ int             main(int argc, char **argv, char **env)
     }
 #endif
 
-    Value_Missing_get(&analysis);  // needed before file read
+    if ( ! analysis->no_missing_menu() )
+        Value_Missing_get(&analysis);  // needed before file read
 
 #ifndef HIDESTATUS
     int guess;

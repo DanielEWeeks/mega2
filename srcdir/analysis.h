@@ -195,6 +195,11 @@ public:
 */
     virtual bool nuke_opts()        { return false; }
 
+/*
+ * Do not request the missing menu for Mega2.
+ */
+    virtual bool no_missing_menu() { return false; }
+
     //
     // NOTE: A distinction is made between the analysis types that take numeric and
     // non-numeric hard coded values. Those that use a letter (e.g., Merlin, Mendel7,
