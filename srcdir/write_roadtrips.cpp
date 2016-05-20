@@ -284,7 +284,7 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
     if (top_shell) {
         sh = new dataloop::sh_exec(Top);
 
-        sh->setfln(file_name_stem, ".sh");
+        sh->setfln(file_name_stem, ".top.sh");
 
         sh->filep_open(output_paths[0], sh->_fln, "w");
         sh->sh_main();

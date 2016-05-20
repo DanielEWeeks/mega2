@@ -315,7 +315,7 @@ void CLASS_SHAPEIT::create_sh_file(linkage_ped_top *Top,
     char prefix[100];
 
     sub_prog_name(_suboption, prefix);
-    sprintf(file_names[4], "%s_%s.sh", file_name_stem, prefix);
+    sprintf(file_names[4], "%s_%s.top.sh", file_name_stem, prefix);
     sprintf(file_names[8], "%s_%s.%02d.sh", file_name_stem, prefix, numchr);
     add_sumdir(file_names[4]);
     add_sumdir(file_names[8]);

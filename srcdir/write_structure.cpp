@@ -64,7 +64,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 {
     sprintf(file_names[0], "%s.%s.data", stem, num);
     sprintf(file_names[3], "%s.%s.sh", stem, num);
-    sprintf(file_names[4], "%s.all.sh", stem);
+    sprintf(file_names[4], "%s.top.sh", stem);
     sprintf(file_names[5], "%s.%s.mainparams", stem, num);
     sprintf(file_names[6], "%s.%s.results", stem, num);
     sprintf(file_names[7], "%s.%s.extraparams", stem, num);

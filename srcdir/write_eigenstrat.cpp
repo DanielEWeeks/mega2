@@ -353,7 +353,7 @@ void CLASS_EIGENSTRAT::file_names_w_stem(char **file_names, char *num, const cha
     }
     sprintf(file_names[2], "%s.phe", stem);
     
-    sprintf(file_names[4], "%s.all.sh", stem);
+    sprintf(file_names[4], "%s.top.sh", stem);
     sprintf(file_names[5], "%s_geno_summary.%s", stem, num);
     sprintf(file_names[6], "%s.%s.pedind", stem, num);
     //sprintf(file_names[6], "%s.%s.fam", stem, num);

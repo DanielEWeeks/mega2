@@ -826,7 +826,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[1], "%s.%s.map", stem, num);
     sprintf(file_names[2], "%s.phe", stem);
     sprintf(file_names[3], "%s.%s.sh", stem, num);
-    sprintf(file_names[4], "%s.all.sh", stem);
+    sprintf(file_names[4], "%s.top.sh", stem);
     sprintf(file_names[5], "%s.%s.", stem, num);
     sprintf(file_names[6], "%s", stem);
     sprintf(file_names[7], "R%s.%s.hdr", stem, num);
