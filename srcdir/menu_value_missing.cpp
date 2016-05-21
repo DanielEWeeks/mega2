@@ -524,7 +524,8 @@ static int fix_Value_Missing(analysis_type *analysis, int vmidx)
             ret = fix_Value_Missing_check_numeric(analysis, itp, itp->str);
             if (! ret ) {
                 itp->store(analysis, itp, itp->str);
-                if (! batchINPUTFILES) {
+                if (!database_dump && database_read && (vmidx == 0 || vmidx == 2)) {
+                } else if (! batchINPUTFILES) {
                     Mega2BatchItems[itp->it].items_read = 1;
                     batchf(itp->it);
                 }
