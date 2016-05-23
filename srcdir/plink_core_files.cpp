@@ -391,7 +391,8 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
     // (if more than one chromosome has been specified) by changing the menu item
     // 'Combine chromosomes?'
     combine_chromo = (output_format > 0 && main_chromocnt > 1) ? 1 : 0;
-    
+    LoopOverChrm = ! combine_chromo;
+
     if (main_chromocnt > 1) {
         // This is the batch file item that controls whether you wish to comnine the
         // chromosomes in the same file or not. If true (y), each chromosome gets it's own file.
@@ -399,8 +400,10 @@ void  create_PLINK_files(linkage_ped_top **LPedTop,
         // NOTE that for interactive input, reorder_loci.cpp:ReOrderLoci() will ask the user
         // if they want to write chromosomes to one file or one file for each cromosome IF the user selects
         // multiple chromosomes in the preceeding menu. The answer will be stored in "Loop_Over_Chromosomes".
-        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read)
+        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read) {
             combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
+            LoopOverChrm = ! combine_chromo;
+        }
     }
 
     // NOTE: comnine_chromo is passed in because the user can change it via a menu.
