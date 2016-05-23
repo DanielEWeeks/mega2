@@ -54,7 +54,7 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]);
 
 //general function to output options for mach and then parse them.
-static void mach_option_menu();
+static void mach_option_menu(char *filenames[]);
 
 
 static void inner_file_names(char **file_names, const char *num, const char *stem = "mach");
@@ -151,7 +151,7 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
     delete mach_dats;
 }
 
-/*Shell should look like the following in order to produce prephased VCF according to minimac documentation
+/*Shell should look like the following in order to produce prephased file according to minimac documentation
  *
  * mach1 -d Gwas.chr20.Unphased.dat \
       -p Gwas.chr20.Unphased.ped \
@@ -161,7 +161,20 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
       --interim 5 \
       --sample 5 \
       --prefix Gwas.Chr20.Phased.Output
+
+      It looks like we'll the shell to create a pipeline to go MaCH->VCF->minimac3.
+
+      For this full pipeline users will need mach1, mach2vcf, and minimac3 installed on their machines and in their path
+
+      To get the vcf from the mach output we need a command like:
+      mach2VCF --haps Gwas.Chr20.Phased.Output.hap \
+         --snps Gwas.Chr20.Phased.Output.snps \
+         --prefix Gwas.Chr20.Phased.Output.VCF.format
+
+      Finally with a phased vcf we need to set up a script for minimac3 with chunking enabled.
       */
+
+
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
     int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
@@ -200,7 +213,14 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 #endif /* RUNSHELL_SETUP */
         }
         void inner() {
+            //mach1 run, might need additional parameters, specifically do we need hapmap and snps files or are those only used with mach2vcf
             pr_printf ("mach1 -d %s -p %s --rounds 20 --states 200 --phase --interim 5 --sample 5 --prefix Chr%d.Phased.Output", file_names[1], file_names[0],_numchr);
+            pr_nl();
+            pr_nl();
+
+            //based on what I've read, we want the out put file from mach1 to be the haps file for mach2VCF, I'm assuming the user needs to input a snpfile using the menu
+            pr_printf ("mach2VCF --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", _numchr,file_names[5],_numchr);
+            pr_nl();
         }
 
     } *mach_shs = new mach_sh(Top);
@@ -229,6 +249,9 @@ void CLASS_MACH::create_output_file(
     combine_chromo = main_chromocnt > 1;
 
     get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
+
+    mach_option_menu(file_names);
+
     LoopOverChrm = ! combine_chromo;
 
     //adding in looping over traits for the data file
@@ -246,8 +269,53 @@ void CLASS_MACH::create_output_file(
 }
 
 //this will create and parse the options
-void mach_option_menu(){
+void static mach_option_menu(char *file_names[]){
+    int done, hap, snp, choice;
+    done = 0;
+    hap = 1;
+    snp = 2;
+    choice = -1;
 
+
+    //after thinking about it I'm less sure that I need a hapfile option here, if my understanding is correct the hapfile is created by mach1 and is the output
+    //then using the reference snp file (which would be input here) we run mach2vcf then minmac3
+    char hap_file[100];
+    strcpy(hap_file, "testhapfile");
+    char snp_file[100];
+    strcpy(snp_file, "testsnpfile");
+
+    while (choice != 0) {
+        draw_line();
+        printf("Mach File Selection Menu:\n");
+        printf("%d) Done with this menu - please proceed\n",done);
+        printf("%d) Choose hap file                      %s\n", hap,hap_file);
+        printf("%d) Choose snp file                      %s\n", snp,snp_file);
+        printf("Enter selection: 0 - %d > ",snp);
+        fcmap(stdin,"%d", &choice); newline;
+
+        if (choice < done) {
+            printf("Unknown option %d\n", choice);
+        }
+        else if (choice == done) {
+            //do nothing, will break out of while loop
+        }
+        else if (choice == hap) {
+            //menu to set hap file
+            printf("Enter new hap file > ");
+            fcmap(stdin, "%s", &hap_file);    newline;
+        }
+        else if (choice == snp) {
+            //menu to set snp file
+            printf("Enter new snp file > ");
+            fcmap(stdin, "%s", &snp_file);    newline;
+        }
+        else {
+            printf("Unknown option %d\n", choice);
+        }
+    }
+
+    file_names[4] = hap_file;
+    file_names[5] = snp_file;
 }
 
 
