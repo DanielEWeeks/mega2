@@ -441,7 +441,7 @@ void ReadImputed::read_input_file ()
         }
 
         if (name != "") {
-        } else if (rsid == "." || rsid == "NA" || rsid == "na")
+        } else if (rsid == "." || rsid == "NA" || rsid == "na" || rsid == "---")
             name = "chr" + chrm + "_" + pos;
         else {
 /*
@@ -506,6 +506,8 @@ void ReadImputed::read_input_file ()
     if (nochr) {
         errorvf("read_imputed_file: can not determine chromosomes for %d markers\n",
                 nochr);
+        errorvf("If your input data consist of data from a single chromosome, please rerun Mega2 and inform ");
+        errorvf("Mega2 of the chromosome number via Option  3 \"Oxford-single-chr\" of the IMPUTE input menu.");
         EXIT(DATA_INCONSISTENCY);
     }
 
@@ -597,6 +599,10 @@ void ReadImputed::check_indelsNdups()
                     errvf("%s\n", C(mp->name));
                 }
             } else {
+                if (! skip_count) {
+                    errorvf("If you wish to allow multiple markers at the same position, please rerun Mega2 and inform ");
+                    errorvf("Mega2 to allow duplicate markers via Option  9 \"Allow duplicate markers\" of the IMPUTE input menu.");
+                }
                 errvf("(bp %s) repeated with different alleles [%s %s] ignored repeat [line %d].\n",
                       C(mp->pos), C(tmp2), C(tmp1), line_n);
                 skip_count++;
