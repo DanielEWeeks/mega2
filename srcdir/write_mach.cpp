@@ -213,14 +213,51 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 #endif /* RUNSHELL_SETUP */
         }
         void inner() {
+            pr_nl();
             //mach1 run, might need additional parameters, specifically do we need hapmap and snps files or are those only used with mach2vcf
+            pr_printf ("#use mega2 output in mach1 to prephasedata\n");
             pr_printf ("mach1 -d %s -p %s --rounds 20 --states 200 --phase --interim 5 --sample 5 --prefix Chr%d.Phased.Output", file_names[1], file_names[0],_numchr);
             pr_nl();
             pr_nl();
 
             //based on what I've read, we want the out put file from mach1 to be the haps file for mach2VCF, I'm assuming the user needs to input a snpfile using the menu
+            pr_printf ("#use mach2VCF to create a VCF output of prephased data\n");
             pr_printf ("mach2VCF --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", _numchr,file_names[5],_numchr);
             pr_nl();
+            pr_nl();
+
+            //note for target chunking, there are loops for each chromosome in the documentation, however we are only working on one chromosome in this shell script
+            pr_printf ("#Chunk current chromosome and run minimac on it\n");
+            pr_printf ("@ length = 2500\n");
+            pr_printf ("@ overlap = 500\n");
+            pr_nl();
+
+            pr_printf ("ChunkChromosome -d chr%d.dat -n $length -o $overlap\n",_numchr);
+            pr_nl();
+
+            pr_printf ("foreach chunk (chunk*-chr%d.dat)\n",_numchr);
+            pr_nl();
+
+            pr_printf ("\tmach -d $chunk -p chr%d.ped --prefix ${chunk:r} --rounds 20 --states 200 --phase --sample 5 >& ${chunk:r}-mach.log &\n",_numchr);
+            pr_nl();
+
+            pr_printf ("end\n");
+            pr_printf ("wait\n");
+            pr_nl();
+
+            pr_printf ("foreach chunk (chunk*-chr%d.dat)\n",_numchr);
+            pr_nl();
+
+            pr_printf ("\tset haps = %s\n","hapsfilegoeshere");
+            pr_printf ("\tset snps = %s\n","snpsfilegoeshere");
+            pr_printf ("\tminimac --refHaps $haps --refSnps $snps  --vcfReference --haps ${chunk:r}.gz --snps ${chunk}.snps  --autoClip autoChunk-chr$chr.dat --prefix ${chunk:r}.imputed >& ${chunk:r}-minimac.log &\n");
+            pr_nl();
+
+            pr_printf ("end\n");
+            pr_printf ("wait\n");
+            pr_nl();
+
+
         }
 
     } *mach_shs = new mach_sh(Top);
