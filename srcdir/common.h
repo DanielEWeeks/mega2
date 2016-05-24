@@ -561,7 +561,7 @@ extern int Display_Errors, Display_Messages;
     {                                                                   \
         Display_Errors = Display_##errors##_ = 1;                       \
         fflush(stdout);                                                 \
-        if (_##errors##_) errvf("===== %d total records of type \"" #errors "\" are in the ERR log.\n\n", _##errors##_); \
+        if (_##errors##_) errvf("===== %d total records of type \"" #errors "\" are in %s\n\n", _##errors##_, Mega2Err); \
         fflush(stdout);                                                 \
         _##errors##_ = 0;                                               \
     }
@@ -613,7 +613,7 @@ extern int Display_Errors, Display_Messages;
     {                                                                   \
         Display_Messages = Display_##errors##_ = 1;                     \
         fflush(stdout);                                                 \
-        if (_##errors##_) msgvf("===== %d total records of type \"" #errors "\" are in the log.\n\n", _##errors##_); \
+        if (_##errors##_) msgvf("===== %d total records of type \"" #errors "\" are in %s\n\n", _##errors##_, Mega2Log); \
         fflush(stdout);                                                 \
         _##errors##_ = 0;                                               \
     }

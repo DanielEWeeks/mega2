@@ -625,7 +625,14 @@ int             main(int argc, char **argv, char **env)
     /* Set the default modes/options/initializations */
     init_globals(argv[0]);
     TimeStampWritten[0]=0; TimeStampWritten[1]=0;
+
     mega2_opts(argc, argv);
+//  DB ON BY DEFAULT if not commented out
+    if (database_off)
+        database_read = database_dump = 0;
+    else  if ( (database_read ^ database_dump) == 0)
+        database_read = database_dump = 1;
+
     init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
 
@@ -772,12 +779,6 @@ int             main(int argc, char **argv, char **env)
  13) Switch to PLINK input menu (ped format)
  Select from options 0-13 >
  */
-
-// DB ON BY DEFAULT if not commented out
-    if (database_off)
-        database_read = database_dump = 0;
-    else  if ( (database_read ^ database_dump) == 0)
-        database_read = database_dump = 1;
 
     if (database_dump || ! database_read) {
         Tod tod_menu1("menu1");
