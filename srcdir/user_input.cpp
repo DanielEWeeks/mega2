@@ -1552,9 +1552,11 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     char           cchoice[10];
     int            exit_loop=0;
 
-    int            out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
+    int            db_i=7, out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
     int            compress_i = 17;
     int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
+    extern char    DBfile[255];
+    char          *fn = DBfile;
 
     *Untyped_ped_opt=2; /* Exclude any pedigree with 1 or less untyped people */
     *Error_sim_opt = 0;
@@ -1566,12 +1568,17 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
         menu1_batch_set_outfiles(output_path);
 
+        if (*fn == 0)
+            BatchValueIfSet(fn,   "DBfile_name");
+
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
 
         return;
     }
 
     sprintf(*output_path, ".");
+    if (*fn == 0)
+        BatchValueGet(fn,   "DBfile_name");
 
     int line_len = 45;
     while (!exit_loop) {
@@ -1585,6 +1592,10 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
                "Output Directory:",
                ((!strcmp(*output_path, "."))?"[ Current directory ]" : *output_path));
         choiceA[idx] = out_i;
+        idx++;
+
+        printf("%2d) %-*s%s\n", idx, line_len, "Database filename:", fn);
+        choiceA[idx] = db_i;
         idx++;
 
         _thresh_i = 1 ?  thresh_i : 0;
@@ -1639,6 +1650,19 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
                     printf("Please specify a new or valid directory.\n");
             }
 
+        } else if (choice_ == db_i) {   /* The database file */
+            draw_line();
+            printf("Please enter SQLite database filename > ");
+            fcmap(stdin, "%s", fn); newline;
+            
+/*
+            if (access(*output_path, F_OK)) {
+                char y[100];
+            } else if (access(*output_path, W_OK)) {
+                    printf("WARNING: %s is not a writable directory.\n", *output_path);
+                    printf("Please specify a new or valid directory.\n");
+            }
+*/
         } else if (choice_ == miss_i) {
             draw_line();
             printf("Please enter missing value indicator > ");
@@ -1655,6 +1679,9 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     }
 
     if (InputMode == INTERACTIVE_INPUTMODE) {
+
+        BatchValueSet(fn, "DBfile_name");
+        batchf("DBfile_name");
 
         strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
         batchf(Output_Path);

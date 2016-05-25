@@ -176,6 +176,7 @@ static void Value_Missing_menu(analysis_type *analysis)
         int allow1 = fix_Value_Missing_check_allow(analysis, 1);
         int allow3 = fix_Value_Missing_check_allow(analysis, 3);
         if (database_dump || ! database_read) {
+        } else {
             if (allow1 == 0 && allow3 == 0)
                 return;
         }

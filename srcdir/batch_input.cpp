@@ -239,6 +239,8 @@ static keyw_t keywords[] = {
     {"RoadTrips_male_prevalence",             FLOAT,      "0.123"},
     {"RoadTrips_female_prevalence",           FLOAT,      "0.123"},
 
+    {"DBfile_name",                           STRING,     "dbmega2.db"},
+
 };
 
 int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);

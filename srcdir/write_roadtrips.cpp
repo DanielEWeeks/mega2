@@ -452,7 +452,7 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
 void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_uniq,
                                      int *combine_chromo)
 {
-    int i, choice;
+    int i, choice, nl;
     int iarg, igl, ipre, iphen, ish, ioui, ioup, isum, isumf, iprevm, iprevf;
     int Outfile_Names = 0;
     analysis_type analysis = this;
@@ -491,13 +491,15 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         printf(" %d) Filename stem:                       %-15s\n", i, file_name_stem);
         ipre=i++;
 
-        printf(" %d) Additional ROADTRIPS arguments:      %-15s\n", i, C(additional_program_args));
+        printf(" %d) Additional ROADTRIPS arguments:      %-15s\n", i, 
+               (additional_program_args.size() > 0 ? C(additional_program_args) : 
+                "<none specified>"));
         iarg=i++;
 
-        printf(" %d) Male prevalence percent              %-15.4f\n", i, male_prevalence);
+        printf(" %d) Male prevalence percent:             %-15.4f\n", i, male_prevalence);
         iprevm=i++;
 
-        printf(" %d) Female prevalence percent            %-15.4f\n", i, female_prevalence);
+        printf(" %d) Female prevalence percent:           %-15.4f\n", i, female_prevalence);
         iprevf=i++;
 
         individual_id_item(i, analysis, OrigIds[0], 48, 2, 0, 0);
@@ -530,7 +532,9 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
 
         } else if (choice == iarg) {
             printf("Enter additional arguments for ROADTRIP > ");
-            fcmap(stdin, "%s", selection);    newline;
+            IgnoreValue(fgets(selection, MAX_NAMELEN-1, stdin));
+            nl = strlen(selection);
+            if (selection[nl-1] == '\n') selection[nl-1] = 0;
             BatchValueSet(selectionp, "additional_program_args");
             additional_program_args = selectionp;
 
