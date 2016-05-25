@@ -51,6 +51,8 @@ static void write_MACH_peds(linkage_ped_top *Top, char *file_names[], const int 
 
 static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid);
 
+static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid);
+
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]);
 
 //general function to output options for mach and then parse them.
@@ -58,6 +60,8 @@ static void mach_option_menu(char *filenames[]);
 
 
 static void inner_file_names(char **file_names, const char *num, const char *stem = "mach");
+
+int g_cpus =1;
 
 
 // Output like this
@@ -76,7 +80,7 @@ static void write_MACH_peds(linkage_ped_top *Top, char **file_names, const int p
         str *file_names;
 
         void file_loop() {
-            msgvf("        Mach Pedigree File:   %s/%s\n", *_opath, file_names[0]);
+            msgvf("        MaCH Pedigree File:   %s/%s\n", *_opath, file_names[0]);
             data_loop(*_opath, file_names[0], "w");
         }
 
@@ -125,7 +129,7 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
         str *file_names;
 
         void file_loop() {
-            msgvf("        Mach Data File:   %s/%s\n", *_opath, file_names[1]);
+            msgvf("        MaCH Data File:   %s/%s\n", *_opath, file_names[1]);
             data_loop(*_opath, file_names[1], "w");
         }
 
@@ -150,6 +154,37 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
 
     delete mach_dats;
 }
+
+
+// Doesn't seem that MaCH can create the snp file, so we can write it ourselves
+static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
+{
+    vlpCLASS(mach_snp,chr,loci) {
+        vlpCTOR(mach_snp,chr,loci) { }
+
+        typedef char *str;
+        str *file_names;
+
+        void file_loop() {
+            msgvf("        MaCH SNP File:   %s/%s\n", *_opath, file_names[4]);
+            data_loop(*_opath, file_names[4], "w");
+        }
+
+        void inner() {
+            pr_printf("%d:%d\n",_numchr,_tlocusp->number);
+        }
+
+    } *mach_snps = new mach_snp(Top);
+
+    mach_snps->file_names = file_names;
+
+    mach_snps->load_formats(fwid, pwid, -1);
+
+    mach_snps->iterate();
+
+    delete mach_snps;
+}
+
 
 /*Shell should look like the following in order to produce prephased file according to minimac documentation
  *
@@ -222,40 +257,52 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
             //based on what I've read, we want the out put file from mach1 to be the haps file for mach2VCF, I'm assuming the user needs to input a snpfile using the menu
             pr_printf ("#use mach2VCF to create a VCF output of prephased data\n");
-            pr_printf ("mach2VCF --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", _numchr,file_names[5],_numchr);
+            pr_printf ("mach2VCF --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", _numchr,file_names[4],_numchr);
             pr_nl();
             pr_nl();
+
+            //Using the appropriate minimac3 commands...
+            //pr_printf ("set haps = %s\n",file_names[5]);
+            //pr_printf ("set snps = %s\n",file_names[6]);
+
+            //So I'm looking into why this is happening but when I make Minimac3, the Minimac-omp part doesn't build, in theory this code should work for multiple cpus however.
+
+            //if (g_cpus == 1)
+            pr_printf ("Minimac3 --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",file_names[5],_numchr,_numchr,_numchr);
+            //if (g_cpus > 1)
+            //    pr_printf ("Minimac3-omp --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",file_names[5],_numchr, _numchr,_numchr,g_cpus);
+
 
             //note for target chunking, there are loops for each chromosome in the documentation, however we are only working on one chromosome in this shell script
-            pr_printf ("#Chunk current chromosome and run minimac on it\n");
-            pr_printf ("@ length = 2500\n");
-            pr_printf ("@ overlap = 500\n");
-            pr_nl();
-
-            pr_printf ("ChunkChromosome -d chr%d.dat -n $length -o $overlap\n",_numchr);
-            pr_nl();
-
-            pr_printf ("foreach chunk (chunk*-chr%d.dat)\n",_numchr);
-            pr_nl();
-
-            pr_printf ("\tmach -d $chunk -p chr%d.ped --prefix ${chunk:r} --rounds 20 --states 200 --phase --sample 5 >& ${chunk:r}-mach.log &\n",_numchr);
-            pr_nl();
-
-            pr_printf ("end\n");
-            pr_printf ("wait\n");
-            pr_nl();
-
-            pr_printf ("foreach chunk (chunk*-chr%d.dat)\n",_numchr);
-            pr_nl();
-
-            pr_printf ("\tset haps = %s\n","hapsfilegoeshere");
-            pr_printf ("\tset snps = %s\n","snpsfilegoeshere");
-            pr_printf ("\tminimac --refHaps $haps --refSnps $snps  --vcfReference --haps ${chunk:r}.gz --snps ${chunk}.snps  --autoClip autoChunk-chr$chr.dat --prefix ${chunk:r}.imputed >& ${chunk:r}-minimac.log &\n");
-            pr_nl();
-
-            pr_printf ("end\n");
-            pr_printf ("wait\n");
-            pr_nl();
+//            pr_printf ("#Chunk current chromosome and run minimac on it\n");
+//            pr_printf ("@ length = 2500\n");
+//            pr_printf ("@ overlap = 500\n");
+//            pr_nl();
+//
+//            pr_printf ("ChunkChromosome -d chr%d.dat -n $length -o $overlap\n",_numchr);
+//            pr_nl();
+//
+//            pr_printf ("foreach chunk (chunk*-chr%d.dat)\n",_numchr);
+//            pr_nl();
+//
+//            pr_printf ("\tmach -d $chunk -p chr%d.ped --prefix ${chunk:r} --rounds 20 --states 200 --phase --sample 5 >& ${chunk:r}-mach.log &\n",_numchr);
+//            pr_nl();
+//
+//            pr_printf ("end\n");
+//            pr_printf ("wait\n");
+//            pr_nl();
+//
+//            pr_printf ("foreach chunk (chunk*-chr%d.dat)\n",_numchr);
+//            pr_nl();
+//
+//            pr_printf ("\tset haps = %s\n",file_names[5]);
+//            pr_printf ("\tset snps = %s\n",file_names[6]);
+//            pr_printf ("\tminimac --refHaps $haps --refSnps $snps  --vcfReference --haps ${chunk:r}.gz --snps ${chunk}.snps  --autoClip autoChunk-chr$chr.dat --prefix ${chunk:r}.imputed >& ${chunk:r}-minimac.log &\n");
+//            pr_nl();
+//
+//            pr_printf ("end\n");
+//            pr_printf ("wait\n");
+//            pr_nl();
 
 
         }
@@ -300,6 +347,8 @@ void CLASS_MACH::create_output_file(
 
     write_MACH_peds(Top, file_names, pwid, fwid);
 
+    write_MACH_snps(Top, file_names, pwid, fwid);
+
     write_MACH_sh(Top, file_names);
 
 
@@ -316,18 +365,18 @@ void static mach_option_menu(char *file_names[]){
 
     //after thinking about it I'm less sure that I need a hapfile option here, if my understanding is correct the hapfile is created by mach1 and is the output
     //then using the reference snp file (which would be input here) we run mach2vcf then minmac3
-    char hap_file[100];
+    char hap_file[255];
     strcpy(hap_file, "testhapfile");
-    char snp_file[100];
+    char snp_file[255];
     strcpy(snp_file, "testsnpfile");
 
     while (choice != 0) {
         draw_line();
         printf("Mach File Selection Menu:\n");
         printf("%d) Done with this menu - please proceed\n",done);
-        printf("%d) Choose hap file                      %s\n", hap,hap_file);
-        printf("%d) Choose snp file                      %s\n", snp,snp_file);
-        printf("Enter selection: 0 - %d > ",snp);
+        printf("%d) Choose reference haplotype file                %s\n", hap,hap_file);
+        //printf("%d) Choose Reference snp file                      %s\n", snp,snp_file);
+        printf("Enter selection: 0 - %d > ",1);
         fcmap(stdin,"%d", &choice); newline;
 
         if (choice < done) {
@@ -338,21 +387,48 @@ void static mach_option_menu(char *file_names[]){
         }
         else if (choice == hap) {
             //menu to set hap file
-            printf("Enter new hap file > ");
+            printf("Enter new haplotype file > ");
             fcmap(stdin, "%s", &hap_file);    newline;
         }
-        else if (choice == snp) {
-            //menu to set snp file
-            printf("Enter new snp file > ");
-            fcmap(stdin, "%s", &snp_file);    newline;
-        }
+//        else if (choice == snp) {
+//            //menu to set snp file
+//            printf("Enter new snp file > ");
+//            fcmap(stdin, "%s", &snp_file);    newline;
+//        }
         else {
             printf("Unknown option %d\n", choice);
         }
     }
 
-    file_names[4] = hap_file;
-    file_names[5] = snp_file;
+    sprintf(file_names[5], hap_file);
+    sprintf(file_names[6], snp_file);
+
+    //check for multithreading
+    choice = -1;
+    while (choice !=0){
+        draw_line();
+        printf("How Many CPUS would you like to use for Minimac3 Imputation?:\n");
+        printf("%d) Done with this menu - please proceed\n",done);
+        printf("%d) Number of CPUS                %d\n", 1,g_cpus);
+        printf("Enter selection: 0 - 1 > ");
+        fcmap(stdin,"%d", &choice); newline;
+
+        if (choice < done) {
+            printf("Unknown option %d\n", choice);
+        }
+        else if (choice == done) {
+            //do nothing, will break out of while loop
+        }
+
+        else if (choice == 1) {
+            printf("Number of CPUS for Minimac3 imputation > ");
+            fcmap(stdin, "%d", &g_cpus);    newline;
+        }
+
+        else {
+            printf("Unknown option %d\n", choice);
+        }
+    }
 }
 
 
@@ -486,6 +562,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[1], "%s_data.%s", stem, num);
     sprintf(file_names[2], "%s.%s.sh", stem, num);
     sprintf(file_names[3], "%s.all.sh", stem);
+    sprintf(file_names[4], "%s.%s.snps", stem,num);
 }
 
 void CLASS_MACH::gen_file_names(char **file_names, char *num)
@@ -497,5 +574,6 @@ void CLASS_MACH::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
     change_output_chr(file_names[1], numchr);
     change_output_chr(file_names[2], numchr);
+    change_output_chr(file_names[4], numchr);
 }
 
