@@ -927,12 +927,25 @@ void menu1(file_format *infl_type,
 
         Input = createinput(Input_Format);
 
-        if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
-            Input_Format == in_format_VCF)
-            xcf = 1;
-
-        if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED)
+        if (Input_Format == in_format_PED)
             plinkf = 1;
+        else if (Input_Format == in_format_binary_PED) {
+            strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
+            plinkf = 1;
+        } else if (Input_Format == in_format_binary_VCF) {
+            strcpy(&mega2_input_file_type[BED][0],  "Binary Variant file");
+            xcf = 1;
+        } else if (Input_Format == in_format_compressed_VCF) {
+            strcpy(&mega2_input_file_type[BED][0],  "Compressed Variant file");
+            xcf = 1;
+        } else if (Input_Format == in_format_VCF) {
+            strcpy(&mega2_input_file_type[BED][0],  "Variant file");
+            xcf = 1;
+        } else if (Input_Format == in_format_imputed) {
+            strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 GEN file");
+        } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen2) {
+            strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 BGEN file");
+        }
 
 
         menu1_batch_set_files(infl_type, pedfl_name, locusfl_name,
@@ -993,6 +1006,7 @@ void menu1(file_format *infl_type,
                 fln_init(pmapo, "PLINK", "bim", "[required]", "bim");
                 fln_init(auxo, "PLINK", "bed", "[required]", "bed");
                 auxo->title = "Binary data file:";
+                strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
                 _aux_i = plink_bed_i;
                 fln_init_plink(  PMAP_REQ);
 //              fln_init_mega2(! MAP_REQ);
@@ -1019,6 +1033,7 @@ void menu1(file_format *infl_type,
                 fln_init_plink(0);
                 fln_init(auxo, "binary", "bcf", "[required]", "bcf");
                 auxo->title = "Variant file:";
+                strcpy(&mega2_input_file_type[BED][0],  "Binary Variant file");
                 _aux_i = site_bcf_i;
 
                 fln_init_mega2(! MAP_REQ);
@@ -1033,6 +1048,7 @@ void menu1(file_format *infl_type,
                 fln_init(pedo, "PLINK", "fam", "[required]", "fam");
                 fln_init(auxo, "compressed", "vcf.gz", "[required]", "vcf.gz");
                 auxo->title = "Variant file:";
+                strcpy(&mega2_input_file_type[BED][0],  "Compressed Variant file");
                 _aux_i = site_vcf_gz_i;
                 fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
@@ -1047,6 +1063,7 @@ void menu1(file_format *infl_type,
                 fln_init(pedo, "PLINK", "fam", "[required]", "fam");
                 fln_init(auxo, "text", "vcf", "[required]", "vcf");
                 auxo->title = "Variant file:";
+                strcpy(&mega2_input_file_type[BED][0],  "Variant file");
                 _aux_i = site_vcf_i;
                 fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
@@ -1058,6 +1075,7 @@ void menu1(file_format *infl_type,
                 pedo->title = "Sample file:";
                 fln_init(auxo, "IMPUTE2", "gen", "[required]", "gen", "impute2");
                 auxo->title = "IMPUTE2 file:";
+                strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 GEN file");
                 _aux_i = imputed_i;
                 fln_init(info, "IMPUTE2", "gen_info", "[optional]", "gen_info", "impute2_info");
 //              fln_init_plink(! PMAP_REQ);
@@ -1070,6 +1088,7 @@ void menu1(file_format *infl_type,
                 pedo->title = "Sample file:";
                 fln_init(auxo, "IMPUTE2", "bgen", "[required]", "bgen");
                 auxo->title = "IMPUTE2 bgen file:";
+                strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 BGEN file");
                 _aux_i = imputed_i;
                 fln_init(info, "IMPUTE2", "gen_info", "[optional]", "gen_info", "impute2_info");
 //              fln_init_plink(! PMAP_REQ);

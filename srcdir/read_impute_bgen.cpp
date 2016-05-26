@@ -126,7 +126,7 @@ boolean ReadBgenGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::strin
     return true;
 }
 
-void ReadBgenGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
+boolean ReadBgenGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
 {
     Token::d3 nums;
     nums[0] = ((double)read_ushort(zp)) / scale;
@@ -137,6 +137,7 @@ void ReadBgenGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
     Q.push(ProbID(nums[1], 1, 2));
     Q.push(ProbID(nums[2], 2, 2));
 
+    return true;
 }
 
 void ReadBgenGenotypeReadHelper::genotypes_end()
