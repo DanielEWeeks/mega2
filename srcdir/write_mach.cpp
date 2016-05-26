@@ -63,6 +63,11 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 
 int g_cpus =1;
 
+extern int allele_count;
+extern int ALLELE_ARRAY;
+extern allele_prop **Allele_Array;
+extern allele_prop *canonical_allele_internal(const char *v);
+
 
 // Output like this
 //  FAM1001   ID1234  0   0   M  A A   A C   C C
@@ -171,7 +176,9 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
         }
 
         void inner() {
-            pr_printf("%d:%d\n",_numchr,_tlocusp->number);
+            pr_printf("%d:",_numchr);
+            pr_physical_distance(NULL);
+            pr_nl();
         }
 
     } *mach_snps = new mach_snp(Top);
@@ -267,10 +274,10 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
             //So I'm looking into why this is happening but when I make Minimac3, the Minimac-omp part doesn't build, in theory this code should work for multiple cpus however.
 
-            //if (g_cpus == 1)
-            pr_printf ("Minimac3 --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",file_names[5],_numchr,_numchr,_numchr);
-            //if (g_cpus > 1)
-            //    pr_printf ("Minimac3-omp --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",file_names[5],_numchr, _numchr,_numchr,g_cpus);
+            if (g_cpus == 1)
+                pr_printf ("Minimac3 --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",file_names[5],_numchr,_numchr,_numchr);
+            if (g_cpus > 1)
+                pr_printf ("Minimac3-omp --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",file_names[5],_numchr, _numchr,_numchr,g_cpus);
 
 
             //note for target chunking, there are loops for each chromosome in the documentation, however we are only working on one chromosome in this shell script
@@ -330,8 +337,6 @@ void CLASS_MACH::create_output_file(
     linkage_ped_top *Top = LPedTreeTop;
 
 
-    combine_chromo = main_chromocnt > 1;
-
     get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
 
     mach_option_menu(file_names);
@@ -340,6 +345,19 @@ void CLASS_MACH::create_output_file(
 
     //adding in looping over traits for the data file
     LoopOverTrait = num_traits != 1;
+
+    //need to make sure we only have A,C,T,G for allele markers
+    allele_prop *current_allele;
+    char *allele_name;
+    for (int i = 0; i < allele_count;i++){
+        current_allele = Allele_Array[i];
+        allele_name = current_allele->name;
+        if ( !((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0) || (strcmp(allele_name,"0") == 0))){
+            errorf("The MaCH Minimac3 pipline requires Alleles to be labeled as \"A\",\"C\",\"T\",\"G\".");
+            EXIT(DATA_TYPE_ERROR);
+        }
+    }
+
 
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
@@ -400,8 +418,8 @@ void static mach_option_menu(char *file_names[]){
         }
     }
 
-    sprintf(file_names[5], hap_file);
-    sprintf(file_names[6], snp_file);
+    sprintf(file_names[5], "%s", hap_file);
+    sprintf(file_names[6], "%s", snp_file);
 
     //check for multithreading
     choice = -1;
