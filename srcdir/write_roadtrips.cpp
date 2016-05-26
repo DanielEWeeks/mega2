@@ -496,10 +496,10 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
                 "<none specified>"));
         iarg=i++;
 
-        printf(" %d) Male prevalence percent:             %-15.4f\n", i, male_prevalence);
+        printf(" %d) Male prevalence fraction:            %-15.4f\n", i, male_prevalence);
         iprevm=i++;
 
-        printf(" %d) Female prevalence percent:           %-15.4f\n", i, female_prevalence);
+        printf(" %d) Female prevalence fraction:          %-15.4f\n", i, female_prevalence);
         iprevf=i++;
 
         individual_id_item(i, analysis, OrigIds[0], 48, 2, 0, 0);
@@ -567,7 +567,7 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         BatchValueSet(selection[0], "Default_Outfile_Names");
     }
 
-    batch_out();
+    if (! batchINPUTFILES) batch_out();
     batch_show();
 }
 
@@ -616,7 +616,9 @@ void CLASS_ROADTRIPS::batch_show()
     if (! DEFAULT_OUTFILES) {
         msgvf("Output file stem:                         %s\n",    C(file_name_stem));
     }
-    msgvf("Additional ROADTRIPS program args:       %s\n",      C(additional_program_args));
+    msgvf("Additional ROADTRIPS program args:       %s\n",
+          (additional_program_args.size() > 0 ? C(additional_program_args) : 
+            "<none specified>"));
 
     msgvf("ROADTRIPS Male Prevalence:                %.4f\n",   male_prevalence);
     msgvf("ROADTRIPS Female Prevalence:              %.4f\n",   female_prevalence);

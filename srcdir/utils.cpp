@@ -414,6 +414,7 @@ void            hello(FILE *fp)
     fprintf(fp, "     See LICENSE.txt for terms of copying, modifying & redistributing Mega2.\n");
     fprintf(fp, "==========================================================\n");
     fprintf(fp, "NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.\n\n");
+    fprintf(fp, "Run date:                  %s\n\n", RunDate);
 }
 
 const char *mklogdir(void)
