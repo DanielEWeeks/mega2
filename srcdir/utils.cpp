@@ -414,6 +414,7 @@ void            hello(FILE *fp)
     fprintf(fp, "     See LICENSE.txt for terms of copying, modifying & redistributing Mega2.\n");
     fprintf(fp, "==========================================================\n");
     fprintf(fp, "NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.\n\n");
+    fprintf(fp, "Run date:                  %s\n\n", RunDate);
 }
 
 const char *mklogdir(void)
@@ -1347,22 +1348,28 @@ void getRunDate(void)
 
 void LogFileNames(void)
 {
-    sprintf(Mega2Log, "MEGA2.LOG");
+    const char *mega2;
+    if (database_dump)
+        mega2 = "MEGA2.DB";
+    else
+        mega2 = "MEGA2";
+
+    sprintf(Mega2Log, "%s.LOG", mega2);
     sprintf(Mega2LogRun, "%s/%s", sumdir, Mega2Log);
 
-    sprintf(Mega2Err, "MEGA2.ERR");
+    sprintf(Mega2Err, "%s.ERR", mega2);
     sprintf(Mega2ErrRun, "%s/%s", sumdir, Mega2Err);
 
-    sprintf(Mega2Sim, "MEGA2.SIM");
+    sprintf(Mega2Sim, "%s.SIM", mega2);
     sprintf(Mega2SimRun, "%s/%s", sumdir, Mega2Sim);
 
-    sprintf(Mega2Keys, "MEGA2.KEYS");
+    sprintf(Mega2Keys, "%s.KEYS", mega2);
     sprintf(Mega2KeysRun, "%s/%s", sumdir, Mega2Keys);
 
-    sprintf(Mega2Recode, "MEGA2.RECODE");
+    sprintf(Mega2Recode, "%s.RECODE", mega2);
     sprintf(Mega2RecodeRun, "%s/%s", sumdir, Mega2Recode);
 
-    sprintf(Mega2Reset, "MEGA2.RESET");
+    sprintf(Mega2Reset, "%s.RESET", mega2);
     sprintf(Mega2ResetRun, "%s/%s", sumdir, Mega2Reset);
     return;
 }

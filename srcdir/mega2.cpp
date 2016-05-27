@@ -625,7 +625,14 @@ int             main(int argc, char **argv, char **env)
     /* Set the default modes/options/initializations */
     init_globals(argv[0]);
     TimeStampWritten[0]=0; TimeStampWritten[1]=0;
+
     mega2_opts(argc, argv);
+//  DB ON BY DEFAULT if not commented out
+    if (database_off)
+        database_read = database_dump = 0;
+    else  if ( (database_read ^ database_dump) == 0)
+        database_read = database_dump = 1;
+
     init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
 
@@ -773,13 +780,8 @@ int             main(int argc, char **argv, char **env)
  Select from options 0-13 >
  */
 
-// DB ON BY DEFAULT if not commented out
-    if (database_off)
-        database_read = database_dump = 0;
-    else  if ( (database_read ^ database_dump) == 0)
-        database_read = database_dump = 1;
-
     if (database_dump || ! database_read) {
+        mega2_input_file_type[BED][0] = 0;  // just to be safe
         Tod tod_menu1("menu1");
         menu1(&infl_type, &pedfl_name, &locusfl_name,
               &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
@@ -810,7 +812,8 @@ int             main(int argc, char **argv, char **env)
         strcpy(&mega2_input_file_type[OMIT][0],  "Omit file");
         strcpy(&mega2_input_file_type[FREQ][0],  "Frequency file");
         strcpy(&mega2_input_file_type[PEN][0],  "Penetrance file");
-        strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
+        if (mega2_input_file_type[BED][0] == 0)
+            strcpy(&mega2_input_file_type[BED][0],  "Aux file");
         strcpy(&mega2_input_file_type[PHEfl][0],  "PLINK Phenotype file");
 
         Mega2Status = FILE_NAMES_READ;

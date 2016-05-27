@@ -278,6 +278,8 @@ void ReadImputed::do_init(Input_Base *inp)
         read_info = true;
     }
 
+    read_sample_file();
+
     read_input_file();
 
     if (read_info)
@@ -285,7 +287,6 @@ void ReadImputed::do_init(Input_Base *inp)
 
     check_indelsNdups();
 
-    read_sample_file();
 }
 
 linkage_locus_top *ReadImputed::do_names(const char *&names_fn)
@@ -373,8 +374,20 @@ void ReadImputed::read_input_file ()
             Vecs ls;
             getline(ifs, l);
             split(ls, l);
+            int lsl = ls.size();
             fflush(stdout);
-            Ncol = ( (ls.size() - 5) % 3 == 0) ? 5 : 6;
+//          Ncol = ( (ls.size() - 5) % 3 == 0) ? 5 : 6;
+            if (lsl == people_all * 3 + 5)
+                Ncol = 5;
+            else if (lsl == people_all * 3 + 6)
+                Ncol = 6;
+            else {
+                errorvf("\"%s\" file should have 3 probabilities per person (%d) plus a 5 or 6 field header,\n",
+                        impute_file, people_all);
+                errorvf(" i.e.  %d or %d columns but it has %d columns.\n",
+                        3 * people_all + 5, 3 * people_all + 6, lsl);
+                EXIT(DATA_INCONSISTENCY);
+            }
             if (Ncol == 5) {
                 hmm  = ls[0];
                 rsid = ls[1];
@@ -441,7 +454,7 @@ void ReadImputed::read_input_file ()
         }
 
         if (name != "") {
-        } else if (rsid == "." || rsid == "NA" || rsid == "na")
+        } else if (rsid == "." || rsid == "NA" || rsid == "na" || rsid == "---")
             name = "chr" + chrm + "_" + pos;
         else {
 /*
@@ -506,6 +519,8 @@ void ReadImputed::read_input_file ()
     if (nochr) {
         errorvf("read_imputed_file: can not determine chromosomes for %d markers\n",
                 nochr);
+        errorvf("If your input data consist of data from a single chromosome, please rerun Mega2 and inform ");
+        errorvf("Mega2 of the chromosome number via Option  3 \"Oxford-single-chr\" of the IMPUTE input menu.");
         EXIT(DATA_INCONSISTENCY);
     }
 
@@ -597,6 +612,10 @@ void ReadImputed::check_indelsNdups()
                     errvf("%s\n", C(mp->name));
                 }
             } else {
+                if (! skip_count) {
+                    errorvf("If you wish to allow multiple markers at the same position, please rerun Mega2 and inform ");
+                    errorvf("Mega2 to allow duplicate markers via Option  9 \"Allow duplicate markers\" of the IMPUTE input menu.");
+                }
                 errvf("(bp %s) repeated with different alleles [%s %s] ignored repeat [line %d].\n",
                       C(mp->pos), C(tmp2), C(tmp1), line_n);
                 skip_count++;
@@ -1142,19 +1161,31 @@ boolean ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string&
     return true;
 }
 
-void ReadImputedGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
+boolean ReadImputedGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
 {
     Token::d3 nums;
-    token.getDC(nums, 3);
+    boolean ok = token.getDC(nums, 3);
 
     Q.push(ProbID(nums[0], 1, 1));
     Q.push(ProbID(nums[1], 1, 2));
     Q.push(ProbID(nums[2], 2, 2));
+
+    return ok;
 }
 
 void ReadImputedGenotypeReadHelper::genotypes_end()
 {
     ifs.close();
+}
+
+boolean ReadImputedGenotypeReadHelper::genotypes_eol(int person) {
+    SECTION_ERR_EXTERN(incomplete_prob);
+    if (! token.mo) {
+        SECTION_ERR(incomplete_prob);
+        errorvf("Line %d, Person at offset %d: Incomplete probability tuple:\n %s\n",
+                line_n, person, C(line));
+    }
+    return ! token.mo;
 }
 
 void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
@@ -1166,6 +1197,7 @@ void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *pe
     build_internal_genotypes(LTop, persons, gh);
 }
 
+SECTION_ERR_INIT(incomplete_prob);
 void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                                            GenotypeReadHelper &gh)
 {
@@ -1189,6 +1221,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
     Tod tod_im_line(30);
     Tod tod_im_line_cpy(30);
     int genotype_missing_count = 0;
+    int short_prob = 0;
     SECTION_ERR_INIT(genotype_missing_fraction);
     for (Vecmarkerpp mpp = markers.begin(); mpp != markers.end(); mpp++) {
         tod_im_line.reset();
@@ -1231,8 +1264,16 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
 	for(int p = 0 ; p < people_filtered; p++, entry++) {
             sam++;
 
+            if (gh.genotypes_eol(sam)) {
+                short_prob++;
+                continue;
+            }
             ProbQ Q;
-            gh.genotypes_sample_prob(Q);
+            boolean ok = gh.genotypes_sample_prob(Q);
+            if (!ok && gh.genotypes_eol(sam)) {
+                short_prob++;
+                continue;
+            }
             probid = Q.top();
 /*
             if (mrk_idx == 237) {
@@ -1297,7 +1338,12 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
         }
     }
     tod_gen();
+    SECTION_ERR_FINI(incomplete_prob);
     SECTION_ERR_FINI(genotype_missing_fraction);
 
     gh.genotypes_end();
+
+    if (short_prob) {
+        EXIT(DATA_INCONSISTENCY);
+    }
 }

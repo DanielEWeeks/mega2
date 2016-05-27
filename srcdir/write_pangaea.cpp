@@ -1135,7 +1135,7 @@ void CLASS_PANGAEA::create_output_file(
 
     sub_prog_name(_suboption, prefix);
     sprintf(file_names[3], "%s..sh", prefix);
-    sprintf(file_names[4], "%s.all.sh", prefix);
+    sprintf(file_names[4], "%s.top.sh", prefix);
     sprintf(file_names[5], "%s..", prefix);
     sprintf(file_names[6], "%s", prefix);
     sprintf(file_names[7], "%s..par_chr_trt", prefix);
@@ -1353,7 +1353,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[0], "%s.ped", stem);
     sprintf(file_names[1], "%s.%s.map", stem, num);
     sprintf(file_names[3], "%s.%s.sh", stem, num);
-    sprintf(file_names[4], "%s.all.sh", stem);
+    sprintf(file_names[4], "%s.top.sh", stem);
     sprintf(file_names[5], "%s.%s.", stem, num);
     sprintf(file_names[6], "%s", stem);
     sprintf(file_names[7], "%s.%s.par_chr_trt", stem, num);

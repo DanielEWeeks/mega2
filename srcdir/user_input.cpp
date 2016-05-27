@@ -927,12 +927,25 @@ void menu1(file_format *infl_type,
 
         Input = createinput(Input_Format);
 
-        if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
-            Input_Format == in_format_VCF)
-            xcf = 1;
-
-        if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED)
+        if (Input_Format == in_format_PED)
             plinkf = 1;
+        else if (Input_Format == in_format_binary_PED) {
+            strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
+            plinkf = 1;
+        } else if (Input_Format == in_format_binary_VCF) {
+            strcpy(&mega2_input_file_type[BED][0],  "Binary Variant file");
+            xcf = 1;
+        } else if (Input_Format == in_format_compressed_VCF) {
+            strcpy(&mega2_input_file_type[BED][0],  "Compressed Variant file");
+            xcf = 1;
+        } else if (Input_Format == in_format_VCF) {
+            strcpy(&mega2_input_file_type[BED][0],  "Variant file");
+            xcf = 1;
+        } else if (Input_Format == in_format_imputed) {
+            strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 GEN file");
+        } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen2) {
+            strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 BGEN file");
+        }
 
 
         menu1_batch_set_files(infl_type, pedfl_name, locusfl_name,
@@ -993,6 +1006,7 @@ void menu1(file_format *infl_type,
                 fln_init(pmapo, "PLINK", "bim", "[required]", "bim");
                 fln_init(auxo, "PLINK", "bed", "[required]", "bed");
                 auxo->title = "Binary data file:";
+                strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
                 _aux_i = plink_bed_i;
                 fln_init_plink(  PMAP_REQ);
 //              fln_init_mega2(! MAP_REQ);
@@ -1019,6 +1033,7 @@ void menu1(file_format *infl_type,
                 fln_init_plink(0);
                 fln_init(auxo, "binary", "bcf", "[required]", "bcf");
                 auxo->title = "Variant file:";
+                strcpy(&mega2_input_file_type[BED][0],  "Binary Variant file");
                 _aux_i = site_bcf_i;
 
                 fln_init_mega2(! MAP_REQ);
@@ -1033,6 +1048,7 @@ void menu1(file_format *infl_type,
                 fln_init(pedo, "PLINK", "fam", "[required]", "fam");
                 fln_init(auxo, "compressed", "vcf.gz", "[required]", "vcf.gz");
                 auxo->title = "Variant file:";
+                strcpy(&mega2_input_file_type[BED][0],  "Compressed Variant file");
                 _aux_i = site_vcf_gz_i;
                 fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
@@ -1047,6 +1063,7 @@ void menu1(file_format *infl_type,
                 fln_init(pedo, "PLINK", "fam", "[required]", "fam");
                 fln_init(auxo, "text", "vcf", "[required]", "vcf");
                 auxo->title = "Variant file:";
+                strcpy(&mega2_input_file_type[BED][0],  "Variant file");
                 _aux_i = site_vcf_i;
                 fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
@@ -1058,6 +1075,7 @@ void menu1(file_format *infl_type,
                 pedo->title = "Sample file:";
                 fln_init(auxo, "IMPUTE2", "gen", "[required]", "gen", "impute2");
                 auxo->title = "IMPUTE2 file:";
+                strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 GEN file");
                 _aux_i = imputed_i;
                 fln_init(info, "IMPUTE2", "gen_info", "[optional]", "gen_info", "impute2_info");
 //              fln_init_plink(! PMAP_REQ);
@@ -1070,6 +1088,7 @@ void menu1(file_format *infl_type,
                 pedo->title = "Sample file:";
                 fln_init(auxo, "IMPUTE2", "bgen", "[required]", "bgen");
                 auxo->title = "IMPUTE2 bgen file:";
+                strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 BGEN file");
                 _aux_i = imputed_i;
                 fln_init(info, "IMPUTE2", "gen_info", "[optional]", "gen_info", "impute2_info");
 //              fln_init_plink(! PMAP_REQ);
@@ -1235,7 +1254,7 @@ void menu1(file_format *infl_type,
                            PLINK.trait);
                     printf("      is %s trait.  You also have specified the --missing-phenotype is %g.\n",
                            PLINK.traitType ? "a quantitative" : "an affective",  PLINK.pheno_value);
-                    printf("NOTE: If this is not what you intended, got back and edit menu line 2.\n");
+                    printf("NOTE: If this is not what you intended, go back and edit menu line 2.\n");
                 }
 
             }
@@ -1552,9 +1571,11 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     char           cchoice[10];
     int            exit_loop=0;
 
-    int            out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
+    int            db_i=7, out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
     int            compress_i = 17;
     int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
+    extern char    DBfile[255];
+    char          *fn = DBfile;
 
     *Untyped_ped_opt=2; /* Exclude any pedigree with 1 or less untyped people */
     *Error_sim_opt = 0;
@@ -1566,12 +1587,17 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
         menu1_batch_set_outfiles(output_path);
 
+        if (*fn == 0)
+            BatchValueIfSet(fn,   "DBfile_name");
+
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
 
         return;
     }
 
     sprintf(*output_path, ".");
+    if (*fn == 0)
+        BatchValueGet(fn,   "DBfile_name");
 
     int line_len = 45;
     while (!exit_loop) {
@@ -1585,6 +1611,10 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
                "Output Directory:",
                ((!strcmp(*output_path, "."))?"[ Current directory ]" : *output_path));
         choiceA[idx] = out_i;
+        idx++;
+
+        printf("%2d) %-*s%s\n", idx, line_len, "Database filename:", fn);
+        choiceA[idx] = db_i;
         idx++;
 
         _thresh_i = 1 ?  thresh_i : 0;
@@ -1639,6 +1669,19 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
                     printf("Please specify a new or valid directory.\n");
             }
 
+        } else if (choice_ == db_i) {   /* The database file */
+            draw_line();
+            printf("Please enter SQLite database filename > ");
+            fcmap(stdin, "%s", fn); newline;
+            
+/*
+            if (access(*output_path, F_OK)) {
+                char y[100];
+            } else if (access(*output_path, W_OK)) {
+                    printf("WARNING: %s is not a writable directory.\n", *output_path);
+                    printf("Please specify a new or valid directory.\n");
+            }
+*/
         } else if (choice_ == miss_i) {
             draw_line();
             printf("Please enter missing value indicator > ");
@@ -1655,6 +1698,9 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     }
 
     if (InputMode == INTERACTIVE_INPUTMODE) {
+
+        BatchValueSet(fn, "DBfile_name");
+        batchf("DBfile_name");
 
         strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
         batchf(Output_Path);

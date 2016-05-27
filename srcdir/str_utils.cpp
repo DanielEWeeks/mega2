@@ -73,7 +73,10 @@ bool Token::more(const char *&token) {
         Cline[fo] = 0;
 
         of = line.find_first_not_of(sep, fo);
-        return true;
+        if (of == std::string::npos)
+            return false;
+        else
+            return true;
     }
 }
 
@@ -153,10 +156,11 @@ void Token::getD(double vec[3], int cnt) {
     }
 }
 
-void Token::getDC(d3 &vec, int cnt) {
+boolean Token::getDC(d3 &vec, int cnt) {
     const char *token;
     char *fin;
-    for (int i = 0, l = cnt ? cnt : _cnt; mo && i < l; i++) {
+    int i, l;
+    for (i = 0, l = cnt ? cnt : _cnt; mo && i < l; i++) {
         mo = more(token);
         if (token[1] == 0) {
             if (*token == '1') {
@@ -173,6 +177,7 @@ void Token::getDC(d3 &vec, int cnt) {
             warnvf("Invalid floating point number: %s\n", token);
         }
     }
+    return i == 3;
 }
 
 void Token::set(Cstr& lin) {

@@ -110,7 +110,7 @@ void BgenParserGenotypeReadHelper::genotypes_skip()
     ignore_probs();
 }
 
-void BgenParserGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
+boolean BgenParserGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
 {
     if (n_prob_sample == 0) {
         read_probs(&n_probs);
@@ -158,6 +158,8 @@ void BgenParserGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
     if (n_prob_sample == m_context.number_of_samples) {
         n_prob_sample = 0;
     }
+
+    return true;
 }
 
 void BgenParserGenotypeReadHelper::genotypes_end()

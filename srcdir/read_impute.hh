@@ -90,8 +90,9 @@ public:
     virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid,
                                          std::string& pos, std::vector<std::string>& alleles) { return true; }
     virtual void genotypes_skip() {}
-    virtual void genotypes_sample_prob(ProbQ& Q) {}
+    virtual boolean genotypes_sample_prob(ProbQ& Q) {return true;}
     virtual void genotypes_end() {}
+    virtual boolean genotypes_eol(int person) {return false;}
 };
 
 class ReadImputed : public Input_Ops
@@ -197,8 +198,9 @@ public:
     virtual void genotypes_init();
     virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
                                          std::string& pos, std::vector<std::string>& alleles);
-    virtual void genotypes_sample_prob(ProbQ& Q);
+    virtual boolean genotypes_sample_prob(ProbQ& Q);
     virtual void genotypes_end();
+    virtual boolean genotypes_eol(int person);
 
 public:
     std::string impute_file;

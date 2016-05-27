@@ -52,7 +52,9 @@ public:
     virtual bool loops()  { return true; }
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
 
+    //new methods to hide these menus
     virtual bool no_missing_menu() { return true; }
+    virtual bool no_trait_covariate_menu() { return true; }
 
     // missing values are always replaced with an '-'
 
