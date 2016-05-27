@@ -1360,18 +1360,18 @@ void LogFileNames(void)
     sprintf(Mega2Err, "%s.ERR", mega2);
     sprintf(Mega2ErrRun, "%s/%s", sumdir, Mega2Err);
 
-    sprintf(Mega2Sim, "%s.SIM", mega2);
+    strcpy (Mega2Sim, "MEGA2.SIM");
     sprintf(Mega2SimRun, "%s/%s", sumdir, Mega2Sim);
 
-    sprintf(Mega2Keys, "%s.KEYS", mega2);
+    strcpy (Mega2Keys, "MEGA2.KEYS");
     sprintf(Mega2KeysRun, "%s/%s", sumdir, Mega2Keys);
 
-    sprintf(Mega2Recode, "%s.RECODE", mega2);
+    strcpy (Mega2Recode, "MEGA2.RECODE");
     sprintf(Mega2RecodeRun, "%s/%s", sumdir, Mega2Recode);
 
-    sprintf(Mega2Reset, "%s.RESET", mega2);
+    strcpy (Mega2Reset, "MEGA2.RESET");
     sprintf(Mega2ResetRun, "%s/%s", sumdir, Mega2Reset);
-    return;
+
 }
 
 void move_logs(char *new_location)
