@@ -357,6 +357,7 @@ int plink_annot_string_aff_phen(int line, pheno_rec *locus,
 */
         else {
 #if 0
+            SECTION_ERR(illegal_affect);
             sprintf(err_msg,
                     "Line %d, %s: column %d: Illegal affection status %s, setting to unknown.",
                     line, locus->TraitName, locus->col_num, cstatus);
@@ -465,12 +466,14 @@ int read_aff_phen(FILE *filep, int locusnm,
                 status = 0;
 */
             else {
+                SECTION_ERR(illegal_affect);
                 sprintf(err_msg,
                         "Line %d, column %d: Illegal affection status %s, setting to unknown.",
                         anentry->rec_num, locus->col_num, cstatus);
                 errorf(err_msg);
             }
         } else {
+            SECTION_ERR(illegal_affect);
             sprintf(err_msg,
                     "Line %d, column %d: Illegal affection status %s, setting to unknown.",
                     ((rec == Premakeped)? pentry->rec_num : entry->rec_num),
@@ -590,7 +593,7 @@ void annot_ignore_numbered_data(int line, linkage_locus_rec *locus,
     
 }
 
-int allele_count = -1;
+int allele_count = 0;
 int ALLELE_ARRAY = 256;
 //allele_prop *Allele_Array[ALLELE_ARRAY];
 allele_prop **Allele_Array = CALLOC((size_t) ALLELE_ARRAY, allele_prop *);
@@ -620,7 +623,7 @@ char *canonical_allele(const char *ra)
     cra = search_allele(ra);
     if (cra == NULL) {
         Ara = canonical_allele_internal(ra);
-        Ara->idx = ++allele_count;
+        Ara->idx = allele_count;
 
         /*
          * Test on string (i.e. annotated) values
@@ -636,7 +639,7 @@ char *canonical_allele(const char *ra)
                 Allele_Array = REALLOC(Allele_Array, (size_t) ALLELE_ARRAY, allele_prop *);
             }
         }
-        Allele_Array[allele_count] = Ara;
+        Allele_Array[allele_count++] = Ara;
 
         cra = allele_prop_allele(Ara);
         char *endptr;

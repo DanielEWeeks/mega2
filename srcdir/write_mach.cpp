@@ -279,39 +279,6 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             if (g_cpus > 1)
                 pr_printf ("Minimac3-omp --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",file_names[5],_numchr, _numchr,_numchr,g_cpus);
 
-
-            //note for target chunking, there are loops for each chromosome in the documentation, however we are only working on one chromosome in this shell script
-//            pr_printf ("#Chunk current chromosome and run minimac on it\n");
-//            pr_printf ("@ length = 2500\n");
-//            pr_printf ("@ overlap = 500\n");
-//            pr_nl();
-//
-//            pr_printf ("ChunkChromosome -d chr%d.dat -n $length -o $overlap\n",_numchr);
-//            pr_nl();
-//
-//            pr_printf ("foreach chunk (chunk*-chr%d.dat)\n",_numchr);
-//            pr_nl();
-//
-//            pr_printf ("\tmach -d $chunk -p chr%d.ped --prefix ${chunk:r} --rounds 20 --states 200 --phase --sample 5 >& ${chunk:r}-mach.log &\n",_numchr);
-//            pr_nl();
-//
-//            pr_printf ("end\n");
-//            pr_printf ("wait\n");
-//            pr_nl();
-//
-//            pr_printf ("foreach chunk (chunk*-chr%d.dat)\n",_numchr);
-//            pr_nl();
-//
-//            pr_printf ("\tset haps = %s\n",file_names[5]);
-//            pr_printf ("\tset snps = %s\n",file_names[6]);
-//            pr_printf ("\tminimac --refHaps $haps --refSnps $snps  --vcfReference --haps ${chunk:r}.gz --snps ${chunk}.snps  --autoClip autoChunk-chr$chr.dat --prefix ${chunk:r}.imputed >& ${chunk:r}-minimac.log &\n");
-//            pr_nl();
-//
-//            pr_printf ("end\n");
-//            pr_printf ("wait\n");
-//            pr_nl();
-
-
         }
 
     } *mach_shs = new mach_sh(Top);
@@ -343,8 +310,9 @@ void CLASS_MACH::create_output_file(
 
     LoopOverChrm = ! combine_chromo;
 
-    //adding in looping over traits for the data file
-    LoopOverTrait = num_traits != 1;
+    //There are no traits for MaCH/Minimac3
+    LoopOverTrait = 0;
+    num_traits = 0;
 
     //need to make sure we only have A,C,T,G for allele markers
     allele_prop *current_allele;
@@ -352,7 +320,7 @@ void CLASS_MACH::create_output_file(
     for (int i = 0; i < allele_count;i++){
         current_allele = Allele_Array[i];
         allele_name = current_allele->name;
-        if ( !((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0) || (strcmp(allele_name,"0") == 0))){
+        if ( !((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0) || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0))){
             errorf("The MaCH Minimac3 pipline requires Alleles to be labeled as \"A\",\"C\",\"T\",\"G\".");
             EXIT(DATA_TYPE_ERROR);
         }
@@ -379,7 +347,6 @@ void static mach_option_menu(char *file_names[]){
     hap = 1;
     snp = 2;
     choice = -1;
-
 
     //after thinking about it I'm less sure that I need a hapfile option here, if my understanding is correct the hapfile is created by mach1 and is the output
     //then using the reference snp file (which would be input here) we run mach2vcf then minmac3
