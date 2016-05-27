@@ -199,6 +199,12 @@ public:
  * Do not request the missing menu for Mega2.
  */
     virtual bool no_missing_menu() { return false; }
+/*
+ * Do not request the trait and covariate menu for Mega2.
+ */
+    virtual bool no_trait_covariate_menu() { return false; }
+
+
 
     //
     // NOTE: A distinction is made between the analysis types that take numeric and
