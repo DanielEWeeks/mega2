@@ -56,7 +56,7 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]);
 
 //general function to output options for mach and then parse them.
-static void mach_option_menu(char *filenames[]);
+static void mach_option_menu ( char *filenames[]);
 
 
 static void inner_file_names(char **file_names, const char *num, const char *stem = "mach");
@@ -171,8 +171,8 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
         str *file_names;
 
         void file_loop() {
-            msgvf("        MaCH SNP File:   %s/%s\n", *_opath, file_names[4]);
-            data_loop(*_opath, file_names[4], "w");
+            msgvf("        MaCH SNP File:   %s/%s\n", *_opath, file_names[3]);
+            data_loop(*_opath, file_names[3], "w");
         }
 
         void inner() {
@@ -219,15 +219,15 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
 
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
-    int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
-                    strcmp(output_paths[0], ".");
-
-    dataloop::sh_exec *sh = 0;
-    if (top_shell) {
-        sh = new dataloop::sh_exec(Top);
-        sh->filep_open(output_paths[0], file_names[3], "w");
-        sh->sh_main();
-    }
+//    int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
+//                    strcmp(output_paths[0], ".");
+//
+//    dataloop::sh_exec *sh = 0;
+//    if (top_shell) {
+//        sh = new dataloop::sh_exec(Top);
+//        sh->filep_open(output_paths[0], file_names[4], "w");
+//        sh->sh_main();
+//    }
 
     vlpCLASS(mach_sh, both, sh_exec) {
         vlpCTOR(mach_sh, both, sh_exec) { }
@@ -264,7 +264,7 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
             //based on what I've read, we want the out put file from mach1 to be the haps file for mach2VCF, I'm assuming the user needs to input a snpfile using the menu
             pr_printf ("#use mach2VCF to create a VCF output of prephased data\n");
-            pr_printf ("mach2VCF --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", _numchr,file_names[4],_numchr);
+            pr_printf ("mach2VCF --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", _numchr,file_names[3],_numchr);
             pr_nl();
             pr_nl();
 
@@ -341,7 +341,7 @@ void CLASS_MACH::create_output_file(
 }
 
 //this will create and parse the options
-void static mach_option_menu(char *file_names[]){
+void static mach_option_menu (char *file_names[]){
     int done, hap, snp, choice;
     done = 0;
     hap = 1;
@@ -351,7 +351,7 @@ void static mach_option_menu(char *file_names[]){
     //after thinking about it I'm less sure that I need a hapfile option here, if my understanding is correct the hapfile is created by mach1 and is the output
     //then using the reference snp file (which would be input here) we run mach2vcf then minmac3
     char hap_file[255];
-    strcpy(hap_file, "testhapfile");
+    strcpy(hap_file, "%d.100g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
     char snp_file[255];
     strcpy(snp_file, "testsnpfile");
 
@@ -468,21 +468,21 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
             igl=i++;
         }
 
-        if (num_traits > 2 && LoopOverTrait == 0) {
-            printf(" %d) Phenotype file name                       %-15s\t%s\n",
-                   i, file_names[2],
-                   file_status(file_names[2], fl_stat));
-            iphen=i++;
-        }
+//        if (num_traits > 2 && LoopOverTrait == 0) {
+//            printf(" %d) Phenotype file name                       %-15s\t%s\n",
+//                   i, file_names[2],
+//                   file_status(file_names[2], fl_stat));
+//            iphen=i++;
+//        }
 
         printf(" %d) File name stem:                           %-15s\n", i, prefix);
 
         ipre=i++;
 
         printf(" %d) Shell file name:                          %-15s\t%s\n",
-               i, file_names[3],
+               i, file_names[2],
                ((main_chromocnt <= 1 || *combine_chromo == 1) ?
-                file_status(file_names[3], fl_stat) : ""));
+                file_status(file_names[2], fl_stat) : ""));
         ish=i++;
 
         individual_id_item(i, analysis, OrigIds[0], 43, 2,0, 0);
@@ -511,18 +511,21 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
 
         } else if (choice == ipre) {
             printf("Enter new file name stem > ");
-            fcmap(stdin, "%s", prefix);    newline;
+            fcmap(stdin, "%s", prefix);
+            newline;
             inner_file_names(file_names, "", prefix);
             if (main_chromocnt > 1 && *combine_chromo)
                 analysis->replace_chr_number(file_names, 0);
             else
                 analysis->replace_chr_number(file_names, global_chromo_entries[0]);
+        }
 
-        } else if (choice == iphen) {
-            printf("Enter new phenotype file name > ");
-            fcmap(stdin, "%s", file_names[2]);    newline;
+//         else if (choice == iphen) {
+//            printf("Enter new phenotype file name > ");
+//            fcmap(stdin, "%s", file_names[2]);    newline;
 
-        } else if (choice == ish) {
+//        }
+        else if (choice == ish) {
             printf("Enter new shell script name %s > ", file_names[3]);
             fcmap(stdin, "%s", file_names[3]);    newline;
 
@@ -546,8 +549,8 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[0], "%s_ped.%s", stem, num);
     sprintf(file_names[1], "%s_data.%s", stem, num);
     sprintf(file_names[2], "%s.%s.sh", stem, num);
-    sprintf(file_names[3], "%s.all.sh", stem);
-    sprintf(file_names[4], "%s.%s.snps", stem,num);
+    sprintf(file_names[3], "%s.%s.snps", stem,num);
+    //sprintf(file_names[3], "%s.all.sh", stem);
 }
 
 void CLASS_MACH::gen_file_names(char **file_names, char *num)
@@ -559,6 +562,6 @@ void CLASS_MACH::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
     change_output_chr(file_names[1], numchr);
     change_output_chr(file_names[2], numchr);
-    change_output_chr(file_names[4], numchr);
+    change_output_chr(file_names[3], numchr);
 }
 
