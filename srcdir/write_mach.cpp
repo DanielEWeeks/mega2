@@ -37,6 +37,7 @@
 
 #include "loop.h"
 #include "sh_util.h"
+#include "batch_input.h"
 
 #include "fcmap_ext.h"
 #include "omit_ped_ext.h"
@@ -54,9 +55,6 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
 static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid);
 
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]);
-
-//general function to output options for mach and then parse them.
-static void mach_option_menu ( char *filenames[]);
 
 
 static void inner_file_names(char **file_names, const char *num, const char *stem = "mach");
@@ -171,8 +169,8 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
         str *file_names;
 
         void file_loop() {
-            msgvf("        MaCH SNP File:   %s/%s\n", *_opath, file_names[3]);
-            data_loop(*_opath, file_names[3], "w");
+            msgvf("        MaCH SNP File:   %s/%s\n", *_opath, file_names[4]);
+            data_loop(*_opath, file_names[4], "w");
         }
 
         void inner() {
@@ -219,15 +217,16 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
 
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
-//    int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
-//                    strcmp(output_paths[0], ".");
-//
-//    dataloop::sh_exec *sh = 0;
-//    if (top_shell) {
-//        sh = new dataloop::sh_exec(Top);
-//        sh->filep_open(output_paths[0], file_names[4], "w");
-//        sh->sh_main();
-//    }
+    int top_shell = 1;
+    //int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
+    //                strcmp(output_paths[0], ".");
+
+    dataloop::sh_exec *sh = 0;
+    if (top_shell) {
+        sh = new dataloop::sh_exec(Top);
+        sh->filep_open(output_paths[0], file_names[3], "w");
+        sh->sh_main();
+    }
 
     vlpCLASS(mach_sh, both, sh_exec) {
         vlpCTOR(mach_sh, both, sh_exec) { }
@@ -243,8 +242,8 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
         bool has_x;
 
         void file_header() {
-            //if (sh)
-            //    sh->sh_sh(this);
+            if (sh)
+                sh->sh_sh(this);
             sh_shell_type();
             sh_id();
             script_time_stamp(_filep);
@@ -264,7 +263,7 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
             //based on what I've read, we want the out put file from mach1 to be the haps file for mach2VCF, I'm assuming the user needs to input a snpfile using the menu
             pr_printf ("#use mach2VCF to create a VCF output of prephased data\n");
-            pr_printf ("mach2VCF --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", _numchr,file_names[3],_numchr);
+            pr_printf ("mach2VCF --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", _numchr,file_names[4],_numchr);
             pr_nl();
             pr_nl();
 
@@ -285,7 +284,17 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
     mach_shs->file_names = file_names;
 
+    mach_shs->sh         = sh;
     mach_shs->iterate();
+
+    if (top_shell) {
+        mssgvf("      MaCH top shell file:      %s/%s\n", output_paths[0], file_names[3]);
+        mssgvf("              the above shell runs all shells\n");
+
+        sh->filep_close();
+        delete sh;
+    }
+
 
     delete mach_shs;
 }
@@ -299,16 +308,21 @@ void CLASS_MACH::create_output_file(
         linkage_ped_top **Top2)
 {
     int pwid, fwid, mwid;
-    int combine_chromo=0;
+    int combine_chromo = 0;
     char prefix[100];
     linkage_ped_top *Top = LPedTreeTop;
 
+    //batch_in();
 
     get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
 
     mach_option_menu(file_names);
 
-    LoopOverChrm = ! combine_chromo;
+    //if (! batchINPUTFILES) batch_out();
+    //batch_show();
+
+    combine_chromo = 0;
+    LoopOverChrm  = ! combine_chromo;
 
     //There are no traits for MaCH/Minimac3
     LoopOverTrait = 0;
@@ -341,7 +355,7 @@ void CLASS_MACH::create_output_file(
 }
 
 //this will create and parse the options
-void static mach_option_menu (char *file_names[]){
+void CLASS_MACH::mach_option_menu (char *file_names[]){
     int done, hap, snp, choice;
     done = 0;
     hap = 1;
@@ -368,7 +382,6 @@ void static mach_option_menu (char *file_names[]){
             printf("Unknown option %d\n", choice);
         }
         else if (choice == done) {
-            //do nothing, will break out of while loop
         }
         else if (choice == hap) {
             //menu to set hap file
@@ -386,6 +399,7 @@ void static mach_option_menu (char *file_names[]){
     }
 
     sprintf(file_names[5], "%s", hap_file);
+    mach_reference_haplotype_file = hap_file;
     sprintf(file_names[6], "%s", snp_file);
 
     //check for multithreading
@@ -402,7 +416,7 @@ void static mach_option_menu (char *file_names[]){
             printf("Unknown option %d\n", choice);
         }
         else if (choice == done) {
-            //do nothing, will break out of while loop
+            //BatchValueSet (g_cpus, "mach_batch_cpu_count");
         }
 
         else if (choice == 1) {
@@ -422,7 +436,6 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
                                      int has_orig, int has_uniq, int *combine_chromo)
 {
     int i, choice;
-    char fl_stat[12];
     int igl, ipre, iphen, ish, ioui, ioup, isum, isumf;
     analysis_type analysis = this;
 
@@ -435,20 +448,8 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
         choice = -1;
     }
     if (main_chromocnt > 1) {
-        // This is the batch file item that controls whether you wish to comnine the
-        // chromosomes in the same file or not. If true (y), each chromosome gets it's own file.
-        // This is a derective from the user which will override the default...
-        if (Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].items_read)
-            *combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
-        else
-            *combine_chromo=0;
-    }
-
-    if (main_chromocnt > 1 && *combine_chromo) {
-        // replaces <extension> with 'all', keeping <extension> and <rest> if they exist...
-        analysis->replace_chr_number(file_names, 0);
-    } else {
-        analysis->replace_chr_number(file_names, global_chromo_entries[0]);
+        // we never want to combine chromosomes for MaCH
+        *combine_chromo=0;
     }
 
     /* output file name menu */
@@ -462,34 +463,8 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
         printf("0) Done with this menu - please proceed\n");
         i=1;
 
-        if (main_chromocnt > 1) {
-            printf(" %d) Combine chromosomes?                      %s\n",
-                   i, yorn[*combine_chromo]);
-            igl=i++;
-        }
-
-//        if (num_traits > 2 && LoopOverTrait == 0) {
-//            printf(" %d) Phenotype file name                       %-15s\t%s\n",
-//                   i, file_names[2],
-//                   file_status(file_names[2], fl_stat));
-//            iphen=i++;
-//        }
-
         printf(" %d) File name stem:                           %-15s\n", i, prefix);
-
-        ipre=i++;
-
-        printf(" %d) Shell file name:                          %-15s\t%s\n",
-               i, file_names[2],
-               ((main_chromocnt <= 1 || *combine_chromo == 1) ?
-                file_status(file_names[2], fl_stat) : ""));
-        ish=i++;
-
-        individual_id_item(i, analysis, OrigIds[0], 43, 2,0, 0);
-        ioui=i++;
-
-        pedigree_id_item(i, analysis, OrigIds[1], 43, 2, 0);
-        ioup=i;
+        ipre=i;
 
         printf("Enter options 0-%d > ", i);
         fcmap(stdin, "%d", &choice); printf("\n");
@@ -498,16 +473,7 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
         if (choice < 0) {
             printf("Unknown option %d\n", choice);
         } else if (choice == 0) {
-            ;
-
-        } else if (choice == igl) {
-            *combine_chromo = TOGGLE(*combine_chromo);
-            if (main_chromocnt > 1 && *combine_chromo) {
-                // replaces <extension> with 'all', keeping <extension> and <rest> if they exist...
-                analysis->replace_chr_number(file_names, 0);
-            } else {
-                analysis->replace_chr_number(file_names, global_chromo_entries[0]);
-            }
+            BatchValueSet (prefix, "file_name_stem");
 
         } else if (choice == ipre) {
             printf("Enter new file name stem > ");
@@ -519,25 +485,7 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
             else
                 analysis->replace_chr_number(file_names, global_chromo_entries[0]);
         }
-
-//         else if (choice == iphen) {
-//            printf("Enter new phenotype file name > ");
-//            fcmap(stdin, "%s", file_names[2]);    newline;
-
-//        }
-        else if (choice == ish) {
-            printf("Enter new shell script name %s > ", file_names[3]);
-            fcmap(stdin, "%s", file_names[3]);    newline;
-
-        } else if (choice == ioui) {
-            OrigIds[0] = individual_id_item(0, analysis, OrigIds[0], 35, 1, has_orig, has_uniq);
-            individual_id_item(0, analysis, OrigIds[0], 0, 3, has_orig, has_uniq);
-
-        } else if (choice == ioup) {
-            OrigIds[1] = pedigree_id_item(0, analysis, OrigIds[1], 35, 1, has_orig);
-            pedigree_id_item(0, analysis, OrigIds[1], 0, 3, has_orig);
-
-        } else {
+        else {
             printf("Unknown option %d\n", choice);
         }
     }
@@ -549,8 +497,8 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[0], "%s_ped.%s", stem, num);
     sprintf(file_names[1], "%s_data.%s", stem, num);
     sprintf(file_names[2], "%s.%s.sh", stem, num);
-    sprintf(file_names[3], "%s.%s.snps", stem,num);
-    //sprintf(file_names[3], "%s.all.sh", stem);
+    sprintf(file_names[3], "%s.top.sh", stem);
+    sprintf(file_names[4], "%s.%s.snps", stem,num);
 }
 
 void CLASS_MACH::gen_file_names(char **file_names, char *num)
@@ -562,6 +510,43 @@ void CLASS_MACH::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
     change_output_chr(file_names[1], numchr);
     change_output_chr(file_names[2], numchr);
-    change_output_chr(file_names[3], numchr);
+    change_output_chr(file_names[4], numchr);
+}
+
+void CLASS_MACH::batch_out()
+{
+    extern void batchf(batch_item_type *bi);
+
+    Cstr Values[] =  { "file_name_stem",
+                       "mach_reference_haplotype_file",
+                       "mach_batch_cpu_count",
+    };
+
+    for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
+        batch_item_type *bip = BatchItemGet(Values[i]);
+        if (bip->items_read)
+            batchf(bip);
+    }
+}
+
+void CLASS_MACH::batch_in()
+{
+    char *fn = this->file_name_stem;
+
+    BatchValueIfSet(                fn,   "file_name_stem");
+    BatchValueIfSet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
+    BatchValueIfSet(g_cpus, "mach_batch_cpu_count");
+}
+
+void CLASS_MACH::batch_show()
+{
+    msgvf("\n");
+    if (! DEFAULT_OUTFILES) {
+        msgvf("Output file stem:                         %s\n",    C(file_name_stem));
+    }
+    msgvf("MaCH Reference Haplotype Files:           %s\n", C(mach_reference_haplotype_file));
+    msgvf("MaCH CPU Count                            %s\n", C(g_cpus));
+
+    msgvf("\n");
 }
 

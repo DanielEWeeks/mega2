@@ -87,12 +87,23 @@ public:
                             int untyped_ped_opt,
                             int *numchr, linkage_ped_top **Top2);
 
+    void mach_option_menu (char *file_names[]);
+
     void get_file_names(char *file_names[], char *prefix,
                         int has_orig, int has_uniq, int *combine_chromo);
 
     void gen_file_names(char **file_names, char *num);
 
     void replace_chr_number(char *file_names[], int numchr);
+
+    virtual void batch_in();
+
+    virtual void batch_out();
+
+    virtual void batch_show();
+
+    public:
+        Str mach_reference_haplotype_file;
 };
 
 
