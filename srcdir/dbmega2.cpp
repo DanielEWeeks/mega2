@@ -189,7 +189,6 @@ void dbmega2_stat(linkage_ped_top *Top)
     extern int genetic_distance_sex_type_map;
     extern int base_pair_position_index;
     extern void show_reset_input();
-    extern const char *THEDATE;
 
     log_line(mssgf);
 #ifndef HIDEFILE

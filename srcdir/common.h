@@ -382,7 +382,7 @@ extern file_format     InputFileFormat; /* Annotated or linkage */
 extern char            mega2_path[256]; /* path to mega2 executable */
 #define NUMBER_OF_MEGA2_INPUT_FILES         9
 extern char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES];
-extern char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][21];
+extern char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][24];
 extern int             pedfile_type; /* whether input-file is pre-makeped or not */
 extern int             basefile_type; /* type for original pedfile type */
 extern int             HasLoops;

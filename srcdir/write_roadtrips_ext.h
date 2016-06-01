@@ -48,6 +48,8 @@ public:
     virtual const char* output_affect_default_value() { return "0"; }
     virtual bool output_affect_must_be_numeric() { return true; }
 
+    virtual bool forbid_sex_linked_loci() {return true;}
+
 //  virtual bool qtl_allow()        { return true; }
     virtual bool qtl_disallow()        { return true; }
 

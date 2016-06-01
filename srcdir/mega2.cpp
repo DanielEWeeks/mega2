@@ -271,7 +271,7 @@ InputModeType   InputMode; // see common.h
 file_format     InputFileFormat; /* Annotated or linkage */
 char            mega2_path[256]; /* path to mega2 executable */
 char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES]; /* ped, loc, map, freq, pen, and omit files */
-char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][21];
+char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][24];
 int             pedfile_type; /* whether input-file is pre-makeped or not */
 int             basefile_type; /* type for original pedfile type */
 int             HasLoops;
