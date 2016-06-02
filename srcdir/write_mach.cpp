@@ -254,16 +254,42 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 #endif /* RUNSHELL_SETUP */
         }
         void inner() {
+            char cmd1[2*FILENAME_LENGTH];
+            char cmd2[2*FILENAME_LENGTH];
+            char cmd3[2*FILENAME_LENGTH];
+
+            //get our program names from sh_find_pgm instead of having them static and hoping they're on the path
+            sprintf(cmd1, "%s/%s", "MACH1", "mach1");
+            sh_find_pgm("MACH1", cmd1, "mach1");
+            sprintf(cmd1, "$%s_program ", "mach1");
+
+            sprintf(cmd2, "%s/%s", "MACH2VCF", "mach2VCF");
+            sh_find_pgm("MACH2VCF", cmd2, "mach2VCF");
+            sprintf(cmd2, "$%s_program ", "mach2VCF");
+
+            //we can make the split between minimac3 and minimac3-omp here instead
+            if (g_cpus == 1) {
+                sprintf(cmd3, "%s/%s", "MINIMAC3", "minimac3");
+                sh_find_pgm("MINIMAC3", cmd3, "minimac3");
+                sprintf(cmd3, "$%s_program ", "minimac3");
+            }
+
+            if (g_cpus > 1) {
+                sprintf(cmd3, "%s/%s", "MINIMAC3OMP", "minimac3-omp");
+                sh_find_pgm("MINIMAC3OMP", cmd3, "minimac3-omp");
+                sprintf(cmd3, "$%s_program ", "minimac3-omp");
+            }
+
             pr_nl();
             //mach1 run, might need additional parameters, specifically do we need hapmap and snps files or are those only used with mach2vcf
             pr_printf ("#use mega2 output in mach1 to prephasedata\n");
-            pr_printf ("mach1 -d %s -p %s --rounds 20 --states 200 --phase --interim 5 --sample 5 --prefix Chr%d.Phased.Output", file_names[1], file_names[0],_numchr);
+            pr_printf ("%s -d %s -p %s --rounds 20 --states 200 --phase --interim 5 --sample 5 --prefix Chr%d.Phased.Output", cmd1, file_names[1], file_names[0],_numchr);
             pr_nl();
             pr_nl();
 
             //based on what I've read, we want the out put file from mach1 to be the haps file for mach2VCF, I'm assuming the user needs to input a snpfile using the menu
             pr_printf ("#use mach2VCF to create a VCF output of prephased data\n");
-            pr_printf ("mach2VCF --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", _numchr,file_names[4],_numchr);
+            pr_printf ("%s --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", cmd2, _numchr,file_names[4],_numchr);
             pr_nl();
             pr_nl();
 
@@ -271,13 +297,47 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             //pr_printf ("set haps = %s\n",file_names[5]);
             //pr_printf ("set snps = %s\n",file_names[6]);
 
-            //So I'm looking into why this is happening but when I make Minimac3, the Minimac-omp part doesn't build, in theory this code should work for multiple cpus however.
+            pr_printf ("%s --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, file_names[5],_numchr,_numchr,_numchr);
 
-            if (g_cpus == 1)
-                pr_printf ("Minimac3 --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",file_names[5],_numchr,_numchr,_numchr);
-            if (g_cpus > 1)
-                pr_printf ("Minimac3-omp --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",file_names[5],_numchr, _numchr,_numchr,g_cpus);
-
+        }
+        //finds the program to run dynamically and gives an error if it can't be found.
+        void sh_find_pgm(const char *NAME, const char *fullpath, const char *path) {
+            pr_printf("if ( $?%s  ) then\n", NAME);
+            pr_printf("  set %s_def=1\n", NAME);
+            pr_printf("else\n");
+            pr_printf("  set %s_def=0\n", NAME);
+            pr_printf("endif\n");
+            pr_printf("echo\n");
+            pr_printf("if ( \"`type -t %s`\" == \"file\" ) then\n", path);
+            pr_printf("  echo set %s_program=`type -p %s`\n", path, path);
+            pr_printf("  set %s_program=`type -p %s`\n", path, path);
+            pr_printf("else if ( $%s_def && -x \"%s\" ) then\n", NAME, fullpath);
+            pr_printf("  echo set %s_program=%s\n", path, fullpath);
+            pr_printf("  set %s_program=%s\n", path, fullpath);
+            pr_printf("else\n");
+            pr_printf("  echo The %s executable was not found - \n", fullpath);
+            pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", NAME, path);
+            pr_printf("  echo\n");
+            pr_printf("    if (! $%s_def) then\n", NAME);
+            pr_printf("      echo %s is not defined.\n", NAME);
+            pr_printf("    else\n");
+            pr_printf("      echo %s is set to \"$%s\".\n", NAME, NAME);
+            pr_printf("    endif\n");
+            pr_printf("  echo\n");
+            pr_printf("  echo If using Bash and ksh you would use something like this:\n");
+            pr_printf("  echo export %s=dir_to_%s\n", NAME, path);
+            pr_printf("  echo\n");
+            pr_printf("  echo If using csh you would use something like this:\n");
+            pr_printf("  echo setenv %s dir_to_%s\n", NAME, path);
+            pr_printf("  echo\n");
+//          pr_printf("  echo \"Be sure to run 'make %s' to build %s in the %s\"\n",
+//                      pgm, pgm, path);
+//          pr_printf("  echo sub directory of %s.\n", NAME);
+            pr_printf("  echo\n");
+            pr_printf("  echo \"For further details, please see '%s' section of the Mega2 documentation.\"\n", NAME);
+            pr_printf("  exit 0\n");
+            pr_printf("endif\n");
+            pr_nl();
         }
 
     } *mach_shs = new mach_sh(Top);
