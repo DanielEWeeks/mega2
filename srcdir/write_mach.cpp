@@ -297,7 +297,10 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             //pr_printf ("set haps = %s\n",file_names[5]);
             //pr_printf ("set snps = %s\n",file_names[6]);
 
-            pr_printf ("%s --refHaps %s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, file_names[5],_numchr,_numchr,_numchr);
+            Vecs hapsplit;
+            split(hapsplit, file_names[5], "?");
+
+            pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr);
 
         }
         //finds the program to run dynamically and gives an error if it can't be found.
@@ -372,7 +375,7 @@ void CLASS_MACH::create_output_file(
     char prefix[100];
     linkage_ped_top *Top = LPedTreeTop;
 
-    //batch_in();
+    batch_in();
 
     get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
 
@@ -422,19 +425,13 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
     snp = 2;
     choice = -1;
 
-    //after thinking about it I'm less sure that I need a hapfile option here, if my understanding is correct the hapfile is created by mach1 and is the output
-    //then using the reference snp file (which would be input here) we run mach2vcf then minmac3
-    char hap_file[255];
-    strcpy(hap_file, "%d.100g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
-    char snp_file[255];
-    strcpy(snp_file, "testsnpfile");
+    char hap_file_input[255];
 
     while (choice != 0) {
         draw_line();
-        printf("Mach File Selection Menu:\n");
+        printf("MaCH/Minimac3 File Selection Menu:\n");
         printf("%d) Done with this menu - please proceed\n",done);
-        printf("%d) Choose reference haplotype file                %s\n", hap,hap_file);
-        //printf("%d) Choose Reference snp file                      %s\n", snp,snp_file);
+        printf("%d) Choose reference haplotype file                %s?%s\n", hap,haplotype_pre.c_str(),haplotype_post.c_str());
         printf("Enter selection: 0 - %d > ",1);
         fcmap(stdin,"%d", &choice); newline;
 
@@ -444,23 +441,33 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
         else if (choice == done) {
         }
         else if (choice == hap) {
-            //menu to set hap file
-            printf("Enter new haplotype file > ");
-            fcmap(stdin, "%s", &hap_file);    newline;
+            while (1) {
+                printf("Enter reference haplotype file name >\n");
+                printf(" Reserve space for the chromosome number with a ? > ");
+
+                fcmap(stdin, "%s", &hap_file_input);
+                newline;
+                Vecs hapsplit;
+                split(hapsplit, hap_file_input, "?");
+
+                if (hapsplit.size() != 2) {
+                    printf("Please include one and only one ? in the file name\n");
+                    continue;
+                }
+
+                haplotype_pre = hapsplit[0];
+                haplotype_post = hapsplit[1];
+                break;
+            }
         }
-//        else if (choice == snp) {
-//            //menu to set snp file
-//            printf("Enter new snp file > ");
-//            fcmap(stdin, "%s", &snp_file);    newline;
-//        }
         else {
             printf("Unknown option %d\n", choice);
         }
     }
 
-    sprintf(file_names[5], "%s", hap_file);
-    mach_reference_haplotype_file = hap_file;
-    sprintf(file_names[6], "%s", snp_file);
+    sprintf(file_names[5], "%s", hap_file_input);
+    mach_reference_haplotype_file = file_names[5];
+    BatchValueSet (mach_reference_haplotype_file, "mach_reference_haplotype_file");
 
     //check for multithreading
     choice = -1;
@@ -476,7 +483,7 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
             printf("Unknown option %d\n", choice);
         }
         else if (choice == done) {
-            //BatchValueSet (g_cpus, "mach_batch_cpu_count");
+            BatchValueSet (g_cpus, "mach_batch_cpu_count");
         }
 
         else if (choice == 1) {
@@ -594,8 +601,8 @@ void CLASS_MACH::batch_in()
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(                fn,   "file_name_stem");
-    BatchValueIfSet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
-    BatchValueIfSet(g_cpus, "mach_batch_cpu_count");
+    BatchValueGet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
+    BatchValueGet(g_cpus, "mach_batch_cpu_count");
 }
 
 void CLASS_MACH::batch_show()

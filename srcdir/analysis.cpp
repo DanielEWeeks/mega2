@@ -174,7 +174,7 @@ analysis_types analysis_list[] = {
     { "SHAPEIT format",             SHAPEIT},
 //  { "IMPUTE2 format",             IMPUTE2}
     { "RoadTrips format",           ROADTRIPS},
-    { "MaCH format",                MACH},
+    { "MaCH/minimac3 format",       MACH},
 /*
  * You MUST make the appropriate changes here to define the mapping from the name
  * to the new analysis object

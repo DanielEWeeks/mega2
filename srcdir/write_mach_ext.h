@@ -104,6 +104,8 @@ public:
 
     public:
         Str mach_reference_haplotype_file;
+        Str haplotype_pre;
+        Str haplotype_post;
 };
 
 

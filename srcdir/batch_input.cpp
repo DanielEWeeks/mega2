@@ -239,6 +239,9 @@ static keyw_t keywords[] = {
     {"RoadTrips_male_prevalence",             FLOAT,      "0.123"},
     {"RoadTrips_female_prevalence",           FLOAT,      "0.123"},
 
+    {"mach_reference_haplotype_file",         STRING,      ""},
+    {"mach_batch_cpu_count",                  INT,         "1"},
+
     {"DBfile_name",                           STRING,     "dbmega2.db"},
 
 };
