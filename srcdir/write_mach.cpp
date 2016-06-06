@@ -300,7 +300,10 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             Vecs hapsplit;
             split(hapsplit, file_names[5], "?");
 
-            pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr);
+            if (g_cpus == 1)
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr);
+            if (g_cpus > 1)
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
 
         }
         //finds the program to run dynamically and gives an error if it can't be found.
@@ -377,11 +380,17 @@ void CLASS_MACH::create_output_file(
 
     batch_in();
 
-    get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
+    printf("%s\n", file_name_stem);
+    printf("%s\n", mach_reference_haplotype_file);
 
-    mach_option_menu(file_names);
+    if ( strcmp(file_name_stem,"") == 0)
+        get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
 
-    //if (! batchINPUTFILES) batch_out();
+    if ( mach_reference_haplotype_file.empty())
+        mach_option_menu(file_names);
+
+
+    if (! batchINPUTFILES) batch_out();
     //batch_show();
 
     combine_chromo = 0;
@@ -426,6 +435,11 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
     choice = -1;
 
     char hap_file_input[255];
+
+    Vecs hapbatchsplit;
+    split (hapbatchsplit, mach_reference_haplotype_file,"?");
+    haplotype_pre = hapbatchsplit[0];
+    haplotype_post = hapbatchsplit[1];
 
     while (choice != 0) {
         draw_line();
@@ -504,9 +518,8 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
 {
     int i, choice;
     int igl, ipre, iphen, ish, ioui, ioup, isum, isumf;
-    analysis_type analysis = this;
 
-    strcpy(prefix, "mach");
+    strcpy(prefix, file_name_stem);
 
     if (DEFAULT_OUTFILES) {
         mssgf("Output file names set to defaults.");
@@ -540,17 +553,17 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
         if (choice < 0) {
             printf("Unknown option %d\n", choice);
         } else if (choice == 0) {
-            BatchValueSet (prefix, "file_name_stem");
+
+            free(file_name_stem);
+            file_name_stem = strdup(prefix);
+            BatchValueSet(file_name_stem, "file_name_stem");
 
         } else if (choice == ipre) {
             printf("Enter new file name stem > ");
             fcmap(stdin, "%s", prefix);
             newline;
             inner_file_names(file_names, "", prefix);
-            if (main_chromocnt > 1 && *combine_chromo)
-                analysis->replace_chr_number(file_names, 0);
-            else
-                analysis->replace_chr_number(file_names, global_chromo_entries[0]);
+
         }
         else {
             printf("Unknown option %d\n", choice);
@@ -599,6 +612,7 @@ void CLASS_MACH::batch_out()
 void CLASS_MACH::batch_in()
 {
     char *fn = this->file_name_stem;
+    //asm("int $3");
 
     BatchValueIfSet(                fn,   "file_name_stem");
     BatchValueGet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
@@ -609,9 +623,9 @@ void CLASS_MACH::batch_show()
 {
     msgvf("\n");
     if (! DEFAULT_OUTFILES) {
-        msgvf("Output file stem:                         %s\n",    C(file_name_stem));
+        //msgvf("Output file stem:                         %s\n",    C(file_name_stem));
     }
-    msgvf("MaCH Reference Haplotype Files:           %s\n", C(mach_reference_haplotype_file));
+    //msgvf("MaCH Reference Haplotype Files:           %s\n", C(mach_reference_haplotype_file));
     msgvf("MaCH CPU Count                            %s\n", C(g_cpus));
 
     msgvf("\n");

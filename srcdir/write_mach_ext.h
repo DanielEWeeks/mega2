@@ -35,6 +35,7 @@ class CLASS_MACH: public CLASS_ANALYSIS {
 public:
     CLASS_MACH() : CLASS_ANALYSIS() {
         _name = "MACH";
+        file_name_stem = strdup("mach");
     }
     ~CLASS_MACH() {}
 
