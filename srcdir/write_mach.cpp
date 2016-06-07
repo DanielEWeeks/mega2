@@ -56,7 +56,6 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
 
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]);
 
-
 static void inner_file_names(char **file_names, const char *num, const char *stem = "mach");
 
 int g_cpus =1;
@@ -67,12 +66,10 @@ extern allele_prop **Allele_Array;
 extern allele_prop *canonical_allele_internal(const char *v);
 
 
-// Output like this
+//  Output will like this:
 //  FAM1001   ID1234  0   0   M  A A   A C   C C
 //  FAM1002   ID1234  0   0   F  A C   C C   G G
-//  or
-//  FAM1001   ID1234  0   0   M   1 1   1 2   2 2
-//  FAM1002   ID5678  0   0   F   1 2   2 2   3 3
+//  Input should only have ACTG as alleles so the output should as well.
 static void write_MACH_peds(linkage_ped_top *Top, char **file_names, const int pwid, const int fwid)
 {
 
@@ -115,16 +112,14 @@ static void write_MACH_peds(linkage_ped_top *Top, char **file_names, const int p
 }
 
 
-static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
-{
-
 /*<Example of a simple data file>
  *  M marker1
  *  M marker2
  *  ...
  *  <End of simple data file>
  *  */
-
+static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
+{
     vlpCLASS(mach_dat,chr,loci) {
         vlpCTOR(mach_dat,chr,loci) { }
 
@@ -138,8 +133,6 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
 
         void inner() {
             pr_printf("M ");
-            //seems to not pull up the marker name and print it out
-            //pr_marker_name();
 
             //this works though
             char *markername = _tlocusp->Marker->MarkerName;
@@ -159,7 +152,9 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
 }
 
 
-// Doesn't seem that MaCH can create the snp file, so we can write it ourselves
+// Format of file:
+// CHR:PhysicalMapDistance
+// Needed to create this file for mach2VCF as an input
 static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
 {
     vlpCLASS(mach_snp,chr,loci) {
@@ -204,22 +199,26 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
 
       It looks like we'll the shell to create a pipeline to go MaCH->VCF->minimac3.
 
-      For this full pipeline users will need mach1, mach2vcf, and minimac3 installed on their machines and in their path
+      For this full pipeline users will need mach1, mach2vcf, and minimac3/minimac3-omp installed on their machines and in their path
 
       To get the vcf from the mach output we need a command like:
       mach2VCF --haps Gwas.Chr20.Phased.Output.hap \
          --snps Gwas.Chr20.Phased.Output.snps \
          --prefix Gwas.Chr20.Phased.Output.VCF.format
 
-      Finally with a phased vcf we need to set up a script for minimac3 with chunking enabled.
+      Finally with a phased vcf we need to set up a script for minimac3 or minimac3-omp
+      something like this:
+      Minimac3 --refHaps ReferencePanel.Chr20.1000Genomes.vcf \
+                --haps Gwas.Chr20.Phased.Output.VCF.format.vcf \
+                --prefix Gwas.Chr20.Imputed.Output
+
+      or alternatively it Minimac3 with Minimac3-omp and add a flag of --cpus # if more than one cpu is selected.
       */
 
 
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
     int top_shell = 1;
-    //int top_shell = (LoopOverChrm && main_chromocnt > 1) || (LoopOverTrait && num_traits > 1) ||
-    //                strcmp(output_paths[0], ".");
 
     dataloop::sh_exec *sh = 0;
     if (top_shell) {
@@ -293,10 +292,6 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_nl();
             pr_nl();
 
-            //Using the appropriate minimac3 commands...
-            //pr_printf ("set haps = %s\n",file_names[5]);
-            //pr_printf ("set snps = %s\n",file_names[6]);
-
             Vecs hapsplit;
             split(hapsplit, file_names[5], "?");
 
@@ -336,9 +331,6 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_printf("  echo If using csh you would use something like this:\n");
             pr_printf("  echo setenv %s dir_to_%s\n", NAME, path);
             pr_printf("  echo\n");
-//          pr_printf("  echo \"Be sure to run 'make %s' to build %s in the %s\"\n",
-//                      pgm, pgm, path);
-//          pr_printf("  echo sub directory of %s.\n", NAME);
             pr_printf("  echo\n");
             pr_printf("  echo \"For further details, please see '%s' section of the Mega2 documentation.\"\n", NAME);
             pr_printf("  exit 0\n");
@@ -361,7 +353,6 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
         delete sh;
     }
 
-
     delete mach_shs;
 }
 
@@ -378,20 +369,16 @@ void CLASS_MACH::create_output_file(
     char prefix[100];
     linkage_ped_top *Top = LPedTreeTop;
 
-    batch_in();
 
-    printf("%s\n", file_name_stem);
-    printf("%s\n", mach_reference_haplotype_file);
-
-    if ( strcmp(file_name_stem,"") == 0)
+    if ( InputMode == INTERACTIVE_INPUTMODE ) {
         get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
-
-    if ( mach_reference_haplotype_file.empty())
         mach_option_menu(file_names);
-
-
-    if (! batchINPUTFILES) batch_out();
-    //batch_show();
+        //for some reason getting two sets of batch outputs with this on?
+        //batch_out();
+    }
+    else {
+        batch_in();
+    }
 
     combine_chromo = 0;
     LoopOverChrm  = ! combine_chromo;
@@ -428,18 +415,16 @@ void CLASS_MACH::create_output_file(
 
 //this will create and parse the options
 void CLASS_MACH::mach_option_menu (char *file_names[]){
-    int done, hap, snp, choice;
+    int done, hap, snp, choice, renamed;
     done = 0;
     hap = 1;
     snp = 2;
     choice = -1;
+    renamed = 0;
 
     char hap_file_input[255];
-
-    Vecs hapbatchsplit;
-    split (hapbatchsplit, mach_reference_haplotype_file,"?");
-    haplotype_pre = hapbatchsplit[0];
-    haplotype_post = hapbatchsplit[1];
+    Vecs hapsplit;
+    haplotype_post = ".1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
 
     while (choice != 0) {
         draw_line();
@@ -453,6 +438,8 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
             printf("Unknown option %d\n", choice);
         }
         else if (choice == done) {
+            if(!renamed)
+                strcpy (hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
         }
         else if (choice == hap) {
             while (1) {
@@ -461,7 +448,6 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
 
                 fcmap(stdin, "%s", &hap_file_input);
                 newline;
-                Vecs hapsplit;
                 split(hapsplit, hap_file_input, "?");
 
                 if (hapsplit.size() != 2) {
@@ -471,6 +457,7 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
 
                 haplotype_pre = hapsplit[0];
                 haplotype_post = hapsplit[1];
+                renamed =1;
                 break;
             }
         }
@@ -480,8 +467,9 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
     }
 
     sprintf(file_names[5], "%s", hap_file_input);
-    mach_reference_haplotype_file = file_names[5];
+    mach_reference_haplotype_file = hap_file_input;
     BatchValueSet (mach_reference_haplotype_file, "mach_reference_haplotype_file");
+
 
     //check for multithreading
     choice = -1;
@@ -512,7 +500,6 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
 }
 
 
-//there should be a new way to do this.
 void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
                                      int has_orig, int has_uniq, int *combine_chromo)
 {
@@ -572,8 +559,6 @@ void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
 }
 
 static void inner_file_names(char **file_names, const char *num, const char *stem) {
-
-    //this should reflect the original naming convention of mach in mega2
     sprintf(file_names[0], "%s_ped.%s", stem, num);
     sprintf(file_names[1], "%s_data.%s", stem, num);
     sprintf(file_names[2], "%s.%s.sh", stem, num);
@@ -612,22 +597,8 @@ void CLASS_MACH::batch_out()
 void CLASS_MACH::batch_in()
 {
     char *fn = this->file_name_stem;
-    //asm("int $3");
 
     BatchValueIfSet(                fn,   "file_name_stem");
-    BatchValueGet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
+    BatchValueIfSet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
     BatchValueGet(g_cpus, "mach_batch_cpu_count");
 }
-
-void CLASS_MACH::batch_show()
-{
-    msgvf("\n");
-    if (! DEFAULT_OUTFILES) {
-        //msgvf("Output file stem:                         %s\n",    C(file_name_stem));
-    }
-    //msgvf("MaCH Reference Haplotype Files:           %s\n", C(mach_reference_haplotype_file));
-    msgvf("MaCH CPU Count                            %s\n", C(g_cpus));
-
-    msgvf("\n");
-}
-

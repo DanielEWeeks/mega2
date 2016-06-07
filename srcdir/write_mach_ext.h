@@ -101,8 +101,6 @@ public:
 
     virtual void batch_out();
 
-    virtual void batch_show();
-
     public:
         Str mach_reference_haplotype_file;
         Str haplotype_pre;
