@@ -394,7 +394,7 @@ void CLASS_MACH::create_output_file(
         current_allele = Allele_Array[i];
         allele_name = current_allele->name;
         if ( !((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0) || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0))){
-            errorf("The MaCH Minimac3 pipline requires Alleles to be labeled as \"A\",\"C\",\"T\",\"G\".");
+            errorf("The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.");
             EXIT(DATA_TYPE_ERROR);
         }
     }
