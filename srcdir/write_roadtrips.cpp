@@ -567,7 +567,7 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         BatchValueSet(selection[0], "Default_Outfile_Names");
     }
 
-    if (! batchINPUTFILES) batch_out();
+    if (! batchANALYSIS) batch_out();
     batch_show();
 }
 

@@ -732,6 +732,10 @@ int             main(int argc, char **argv, char **env)
             InputMode=BATCH_FILE_INPUTMODE;
     } else {
         InputMode=INTERACTIVE_INPUTMODE;
+
+        // Since we are in interactive mode, we need to setup for writing a batch file...
+        strcpy(Mega2Batch, "MEGA2.BATCH");
+        backup_file(&(Mega2Batch[0]));
     }
     tod_batch();
     // determine if we should go out to the web and check to see if the user is running the latest release of MEGA2...
@@ -740,12 +744,6 @@ int             main(int argc, char **argv, char **env)
         ;
     } else {
         mega2_version_check();
-    }
-
-    if (InputMode == INTERACTIVE_INPUTMODE) {
-        // Since we are in interactive mode, we need to setup for writing a batch file...
-        strcpy(Mega2Batch, "MEGA2.BATCH");
-        backup_file(&(Mega2Batch[0]));
     }
 
     main_chromocnt = 1; numchr = 1;
