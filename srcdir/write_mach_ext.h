@@ -57,6 +57,9 @@ public:
     virtual bool no_missing_menu() { return true; }
     virtual bool no_trait_covariate_menu() { return true; }
 
+    //gives an error if user selects X,Y,etc.
+    virtual bool forbid_sex_linked_loci()  { return true; }
+
     // missing values are always replaced with an '-'
 
 
@@ -88,10 +91,7 @@ public:
                             int untyped_ped_opt,
                             int *numchr, linkage_ped_top **Top2);
 
-    void mach_option_menu (char *file_names[]);
-
-    void get_file_names(char *file_names[], char *prefix,
-                        int has_orig, int has_uniq, int *combine_chromo);
+    void mach_option_menu (char *file_names[],char *prefix);
 
     void gen_file_names(char **file_names, char *num);
 

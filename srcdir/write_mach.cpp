@@ -332,7 +332,7 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_printf("  echo setenv %s dir_to_%s\n", NAME, path);
             pr_printf("  echo\n");
             pr_printf("  echo\n");
-            pr_printf("  echo \"For further details, please see '%s' section of the Mega2 documentation.\"\n", NAME);
+            pr_printf("  echo \"For further details, please see MaCH/Minimac3 section of the Mega2 documentation.\"\n");
             pr_printf("  exit 0\n");
             pr_printf("endif\n");
             pr_nl();
@@ -370,9 +370,10 @@ void CLASS_MACH::create_output_file(
     linkage_ped_top *Top = LPedTreeTop;
 
 
+    //AnalyInputMode will be new variabl
     if ( InputMode == INTERACTIVE_INPUTMODE ) {
-        get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
-        mach_option_menu(file_names);
+        //get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
+        mach_option_menu(file_names,prefix);
         //for some reason getting two sets of batch outputs with this on?
         //batch_out();
     }
@@ -393,8 +394,15 @@ void CLASS_MACH::create_output_file(
     for (int i = 0; i < allele_count;i++){
         current_allele = Allele_Array[i];
         allele_name = current_allele->name;
-        if ( !((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0) || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0))){
-            errorf("The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.");
+        //printf("%s\n",allele_name);
+
+        //it looks like the behavior of the Allele Array is as follows: If there is a single unknown, it adds a blank space "" to the array, if there is a second unknown it adds a string "dummy" any further it looks like it stops adding new dummies
+        if ( ! ((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0)
+                || (strcmp(allele_name,"") == 0) || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0) ||  (strcmp(allele_name,"dummy1") == 0) || (strcmp(allele_name,"dummy2") == 0) )){
+            char error[255];
+            strcat(error, "The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
+            strcat(error, allele_name);
+            errorf(error);
             EXIT(DATA_TYPE_ERROR);
         }
     }
@@ -414,13 +422,16 @@ void CLASS_MACH::create_output_file(
 }
 
 //this will create and parse the options
-void CLASS_MACH::mach_option_menu (char *file_names[]){
-    int done, hap, snp, choice, renamed;
+void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
+    int done, hap, cpus, choice, renamed, stem;
     done = 0;
-    hap = 1;
-    snp = 2;
+    stem = 1;
+    hap = 2;
+    cpus = 3;
     choice = -1;
     renamed = 0;
+
+    strcpy(prefix, file_name_stem);
 
     char hap_file_input[255];
     Vecs hapsplit;
@@ -428,20 +439,38 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
 
     while (choice != 0) {
         draw_line();
-        printf("MaCH/Minimac3 File Selection Menu:\n");
+        printf("MaCH/Minimac3 Analysis Menu:\n");
         printf("%d) Done with this menu - please proceed\n",done);
-        printf("%d) Choose reference haplotype file                %s?%s\n", hap,haplotype_pre.c_str(),haplotype_post.c_str());
-        printf("Enter selection: 0 - %d > ",1);
+        printf("%d) File name stem:                                     %-15s\n", stem, prefix);
+        printf("%d) Choose reference haplotype file:                    %s?%s\n", hap, haplotype_pre.c_str(), haplotype_post.c_str());
+        printf("%d) Number of CPUS for Minimac3 Imputation:             %d\n",    cpus, g_cpus);
+        printf("Enter selection: 0 - %d > ",3);
+
         fcmap(stdin,"%d", &choice); newline;
 
-        if (choice < done) {
+        if ( choice < done ) {
             printf("Unknown option %d\n", choice);
         }
-        else if (choice == done) {
-            if(!renamed)
+
+        else if ( choice == done ) {
+            if (!renamed)
                 strcpy (hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
+
+            BatchValueSet (g_cpus, "mach_batch_cpu_count");
+
+            free(file_name_stem);
+            file_name_stem = strdup(prefix);
+            BatchValueSet(file_name_stem, "file_name_stem");
         }
-        else if (choice == hap) {
+
+        else if ( choice == stem ) {
+            printf("Enter new file name stem > ");
+            fcmap(stdin, "%s", prefix);
+            newline;
+            inner_file_names(file_names, "", prefix);
+        }
+
+        else if ( choice == hap ) {
             while (1) {
                 printf("Enter reference haplotype file name >\n");
                 printf(" Reserve space for the chromosome number with a ? > ");
@@ -461,6 +490,22 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
                 break;
             }
         }
+
+        else if ( choice == cpus ) {
+            while (1) {
+                printf("Number of CPUS for Minimac3 imputation > ");
+                fcmap(stdin, "%d", &g_cpus);
+                newline;
+
+                if (g_cpus < 1){
+                    printf("Please enter a valid number of cpus\n");
+                    continue;
+                }
+
+                break;
+            }
+        }
+
         else {
             printf("Unknown option %d\n", choice);
         }
@@ -470,92 +515,6 @@ void CLASS_MACH::mach_option_menu (char *file_names[]){
     mach_reference_haplotype_file = hap_file_input;
     BatchValueSet (mach_reference_haplotype_file, "mach_reference_haplotype_file");
 
-
-    //check for multithreading
-    choice = -1;
-    while (choice !=0){
-        draw_line();
-        printf("How Many CPUS would you like to use for Minimac3 Imputation?:\n");
-        printf("%d) Done with this menu - please proceed\n",done);
-        printf("%d) Number of CPUS                %d\n", 1,g_cpus);
-        printf("Enter selection: 0 - 1 > ");
-        fcmap(stdin,"%d", &choice); newline;
-
-        if (choice < done) {
-            printf("Unknown option %d\n", choice);
-        }
-        else if (choice == done) {
-            BatchValueSet (g_cpus, "mach_batch_cpu_count");
-        }
-
-        else if (choice == 1) {
-            printf("Number of CPUS for Minimac3 imputation > ");
-            fcmap(stdin, "%d", &g_cpus);    newline;
-        }
-
-        else {
-            printf("Unknown option %d\n", choice);
-        }
-    }
-}
-
-
-void CLASS_MACH::get_file_names(char *file_names[], char *prefix,
-                                     int has_orig, int has_uniq, int *combine_chromo)
-{
-    int i, choice;
-    int igl, ipre, iphen, ish, ioui, ioup, isum, isumf;
-
-    strcpy(prefix, file_name_stem);
-
-    if (DEFAULT_OUTFILES) {
-        mssgf("Output file names set to defaults.");
-        choice = 0;
-    } else {
-        choice = -1;
-    }
-    if (main_chromocnt > 1) {
-        // we never want to combine chromosomes for MaCH
-        *combine_chromo=0;
-    }
-
-    /* output file name menu */
-    igl = ipre = iphen = ish = ioui = ioup = isum = isumf = -1;
-    // If the default output files are used we do not go here.
-    // Otherwise, enter with choice -- -1.
-    while (choice != 0) {
-        draw_line();
-        print_outfile_mssg();
-        printf("Output file names menu:\n");
-        printf("0) Done with this menu - please proceed\n");
-        i=1;
-
-        printf(" %d) File name stem:                           %-15s\n", i, prefix);
-        ipre=i;
-
-        printf("Enter options 0-%d > ", i);
-        fcmap(stdin, "%d", &choice); printf("\n");
-        test_modified(choice);
-
-        if (choice < 0) {
-            printf("Unknown option %d\n", choice);
-        } else if (choice == 0) {
-
-            free(file_name_stem);
-            file_name_stem = strdup(prefix);
-            BatchValueSet(file_name_stem, "file_name_stem");
-
-        } else if (choice == ipre) {
-            printf("Enter new file name stem > ");
-            fcmap(stdin, "%s", prefix);
-            newline;
-            inner_file_names(file_names, "", prefix);
-
-        }
-        else {
-            printf("Unknown option %d\n", choice);
-        }
-    }
 }
 
 static void inner_file_names(char **file_names, const char *num, const char *stem) {
