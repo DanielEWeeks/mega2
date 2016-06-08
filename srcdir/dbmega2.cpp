@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -189,7 +189,6 @@ void dbmega2_stat(linkage_ped_top *Top)
     extern int genetic_distance_sex_type_map;
     extern int base_pair_position_index;
     extern void show_reset_input();
-    extern const char *THEDATE;
 
     log_line(mssgf);
 #ifndef HIDEFILE

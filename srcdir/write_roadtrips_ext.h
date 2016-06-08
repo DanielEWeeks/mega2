@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2016 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -47,6 +47,8 @@ public:
 
     virtual const char* output_affect_default_value() { return "0"; }
     virtual bool output_affect_must_be_numeric() { return true; }
+
+    virtual bool forbid_sex_linked_loci() {return true;}
 
 //  virtual bool qtl_allow()        { return true; }
     virtual bool qtl_disallow()        { return true; }

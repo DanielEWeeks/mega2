@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2016 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -48,7 +48,6 @@
 #include "write_structure_ext.h"
 #include "write_pseq_ext.h"
 #include "write_shapeit_ext.h"
-#include "write_impute2_ext.h"
 #include "write_roadtrips_ext.h"
 #include "write_mach_ext.h"
 /*
@@ -121,7 +120,6 @@ CLASS_STRUCTURE          *STRUCTURE = new CLASS_STRUCTURE();
 CLASS_PSEQ               *TO_PSEQ = new CLASS_PSEQ();
 
 CLASS_SHAPEIT            *SHAPEIT = new CLASS_SHAPEIT();
-CLASS_IMPUTE2            *IMPUTE2 = new CLASS_IMPUTE2();
 CLASS_ROADTRIPS          *ROADTRIPS = new CLASS_ROADTRIPS();
 CLASS_MACH               *MACH = new CLASS_MACH();
 /*
@@ -442,8 +440,6 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
     case 'i':
         if (tolower((unsigned char)prog_name[1]) == 'q') {
             *analysis = IQLS; // 34. IQLS/Idcoefs
-        } else if (tolower((unsigned char)prog_name[1]) == 'm') {
-            *analysis = IMPUTE2;
         } else {
             unknown_prog(prog_name);
         }

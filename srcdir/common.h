@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -230,7 +230,7 @@ typedef enum {
 } sex_map_types;
 
 typedef enum {
-  BATCH_FILE_INPUTMODE = 0, INTERACTIVE_INPUTMODE = 1
+    NO_INPUTMODE = -1, BATCH_FILE_INPUTMODE = 0, INTERACTIVE_INPUTMODE = 1
 } InputModeType;
 
 
@@ -382,7 +382,7 @@ extern file_format     InputFileFormat; /* Annotated or linkage */
 extern char            mega2_path[256]; /* path to mega2 executable */
 #define NUMBER_OF_MEGA2_INPUT_FILES         9
 extern char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES];
-extern char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][21];
+extern char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][24];
 extern int             pedfile_type; /* whether input-file is pre-makeped or not */
 extern int             basefile_type; /* type for original pedfile type */
 extern int             HasLoops;

@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2016 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -38,10 +38,10 @@
  */
 
 #define MEGA2VER 4
-#define MEGA2REV 8
-#define MEGA2PATCH 2
+#define MEGA2REV 9
+#define MEGA2PATCH 0
 
-#define EXPIRE_YEAR 2016
+#define EXPIRE_YEAR 2017
 /* June */
 #define EXPIRE_MO 5
 #define EXPIRE_DATE 15

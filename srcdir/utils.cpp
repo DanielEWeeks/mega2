@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -397,7 +397,7 @@ void            hello(FILE *fp)
 
     fprintf(fp, "==========================================================\n");
     fprintf(fp, "                          MEGA2 %s\n", Mega2Version);
-    fprintf(fp, "     Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,\n");
+    fprintf(fp, "     Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,\n");
     fprintf(fp, "     Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,\n");
     fprintf(fp, "     Daniel E. Weeks, and University of Pittsburgh\n\n");
 #ifndef HIDEFILE
@@ -1874,6 +1874,7 @@ extern void set_chromosomes_human(); /* { set_chromosomes(22, 25, 26); } */
 extern int lastautosome, pseudoautosome, mitoautosome;
 extern int missingv_flags;
 extern char *quant_in, *quant_out, *affect_in, *affect_out;
+extern InputModeType InputMode;
 int env = 0;
 
 void mega2_opts(int argc, char **argv)
@@ -1901,6 +1902,8 @@ void mega2_opts(int argc, char **argv)
                     extern char DBfile[255];
 		    argv++; --argc;
 		    strcpy(DBfile, *argv);
+                } else if (strcasecmp(as, "interactive") == 0) {
+                    InputMode = INTERACTIVE_INPUTMODE;
                 } else if ( (strcasecmp(as, "autosome") == 0) || (strcasecmp(as, "pseudo") == 0) ||
                      (strcasecmp(as, "mito") == 0)) {
                     int tmp;
@@ -2013,6 +2016,9 @@ void mega2_opts(int argc, char **argv)
                     case 'h': case 'H':
                         print_mega2_help();
                         exit(0);
+                        break;
+                    case 'i': case 'I':
+                        InputMode = INTERACTIVE_INPUTMODE;
                         break;
                     case 'd': case 'D':
                         debug++;

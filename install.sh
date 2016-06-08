@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #   Mega2: Manipulation Environment for Genetic Analysis
-#   Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
+#   Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
 #   Daniel E. Weeks, and University of Pittsburgh
 #  
@@ -28,7 +28,7 @@
 
 # NOTE: Please refer to 'srcdir/version.h' which also encodes the Mega2 version
 # information.
-#VERSION=v4.8.2
+#VERSION=v4.9.0
 
 VERSION_H='./srcdir/version.h'
 MEGA2VER=`grep MEGA2VER ${VERSION_H} | sed -n 's/^#define MEGA2VER \(.*\)/\1/p'`

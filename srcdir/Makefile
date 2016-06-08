@@ -1,5 +1,5 @@
 #   Mega2: Manipulation Environment for Genetic Analysis
-#   Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
+#   Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
 #   Daniel E. Weeks, and University of Pittsburgh
 #  
@@ -877,16 +877,6 @@ write_shapeit_files.o: batch_input_ext.h fcmap_ext.h omit_ped_ext.h
 write_shapeit_files.o: output_file_names_ext.h user_input_ext.h input_ops.hh
 write_shapeit_files.o: str_utils.hh write_shapeit_ext.h write_plink_ext.h
 write_shapeit_files.o: plink_core_ext.h analysis.h write_shapeit_args.h
-write_impute2_files.o: common.h types.hh typedefs.h errorno.h allutil.h
-write_impute2_files.o: linkage.h linkage_external.h makeped.h pedtree.h
-write_impute2_files.o: batch_input.h input_check.h hwe.h compress_ext.h
-write_impute2_files.o: loop.h file_ops.h zlib.h zconf.h error_messages_ext.h
-write_impute2_files.o: utils_ext.h entry.h create_summary_ext.h
-write_impute2_files.o: output_routines_ext.h linkage_ext.h sh_util.h
-write_impute2_files.o: fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
-write_impute2_files.o: user_input_ext.h input_ops.hh str_utils.hh
-write_impute2_files.o: plink_core_ext.h analysis.h write_plink_ext.h
-write_impute2_files.o: write_impute2_ext.h
 write_roadtrips.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_roadtrips.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_roadtrips.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h

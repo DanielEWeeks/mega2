@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 2012-2016 Robert Baron, Charles P. Kollar,
+  Copyright (C) 2012-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -103,6 +103,12 @@ public:
     {
         char fa[FILENAME_LENGTH];
         sprintf(fa, "%s%s", prefix, sfx);
+        _fln = strdup(fa);
+    }
+    void setfln(const char *prefix, const char *type, const char *sfx) 
+    {
+        char fa[FILENAME_LENGTH];
+        sprintf(fa, "%s%s%s", prefix, type, sfx);
         _fln = strdup(fa);
     }
     void mkfln(char *buf, const char *prefix, const char *sfx) {

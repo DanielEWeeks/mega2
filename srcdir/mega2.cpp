@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
+  Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -267,11 +267,11 @@ int             Mega2Status;
 char           *Mega2OutputPath;
 int             FirstIterMenu;
 /* globals that describe input data */
-InputModeType   InputMode; // see common.h
+InputModeType   InputMode = NO_INPUTMODE; // see common.h
 file_format     InputFileFormat; /* Annotated or linkage */
 char            mega2_path[256]; /* path to mega2 executable */
 char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES]; /* ped, loc, map, freq, pen, and omit files */
-char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][21];
+char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][24];
 int             pedfile_type; /* whether input-file is pre-makeped or not */
 int             basefile_type; /* type for original pedfile type */
 int             HasLoops;
@@ -728,7 +728,8 @@ int             main(int argc, char **argv, char **env)
         }
 //  printf("MARKER_SCHEME = %d\n", MARKER_SCHEME);
 
-        InputMode=BATCH_FILE_INPUTMODE;
+        if (InputMode == NO_INPUTMODE)
+            InputMode=BATCH_FILE_INPUTMODE;
     } else {
         InputMode=INTERACTIVE_INPUTMODE;
     }
@@ -1214,7 +1215,7 @@ int             main(int argc, char **argv, char **env)
     if (database_dump && database_read) {
         int i, j;
         char *name = argv[0];
-        char **argvn = CALLOC((size_t) argc+3, char *);
+        char **argvn = CALLOC((size_t) argc+4, char *);
         argvn[0] = argv[0];
         argvn[1] = (char *)"--dbread";
         for (i = 1, j = 2; i < argc; i++) {
@@ -1222,6 +1223,7 @@ int             main(int argc, char **argv, char **env)
                 argvn[j++] = argv[i];
         }
         if (InputMode == INTERACTIVE_INPUTMODE) {
+            argvn[j++] = (char *)"--interactive";
             argvn[j++] = Mega2Batch;
         }
         argvn[j++] = 0;
