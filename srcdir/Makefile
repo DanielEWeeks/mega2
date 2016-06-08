@@ -102,8 +102,7 @@ SRCS =  input_check.cpp     select_index.cpp \
 	write_eigenstrat.cpp write_structure.cpp batch.cpp \
 	write_fbat.cpp      write_pseq_files.cpp menu_value_missing.cpp \
 	read_impute.cpp	    read_impute_bgen.cpp read_impute_bgen2.cpp \
-	write_shapeit_files.cpp                  write_impute2_files.cpp \
-	write_roadtrips.cpp \
+	write_shapeit_files.cpp                  write_roadtrips.cpp \
 	write_mach.cpp \
 	dbmega2.cpp         dbmisc.cpp           dbbatch.cpp \
 	dbpedigree.cpp      dballele.cpp         dbloci.cpp \
@@ -752,8 +751,8 @@ analysis.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
 analysis.o: utils_ext.h analysis.h class_old.h write_plink_ext.h
 analysis.o: plink_core_ext.h write_fbat_ext.h write_eigenstrat_ext.h
 analysis.o: write_pangaea_ext.h write_beagle_ext.h write_structure_ext.h
-analysis.o: write_pseq_ext.h write_shapeit_ext.h write_impute2_ext.h
-analysis.o: write_roadtrips_ext.h write_mach_ext.h menu_value_missing.h
+analysis.o: write_pseq_ext.h write_shapeit_ext.h write_roadtrips_ext.h
+analysis.o: write_mach_ext.h menu_value_missing.h
 class_old.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 class_old.o: linkage_external.h makeped.h pedtree.h batch_input.h
 class_old.o: input_check.h hwe.h compress_ext.h analysis.h utils_ext.h
