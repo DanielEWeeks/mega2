@@ -1874,6 +1874,7 @@ extern void set_chromosomes_human(); /* { set_chromosomes(22, 25, 26); } */
 extern int lastautosome, pseudoautosome, mitoautosome;
 extern int missingv_flags;
 extern char *quant_in, *quant_out, *affect_in, *affect_out;
+extern InputModeType InputMode;
 int env = 0;
 
 void mega2_opts(int argc, char **argv)
@@ -1901,6 +1902,8 @@ void mega2_opts(int argc, char **argv)
                     extern char DBfile[255];
 		    argv++; --argc;
 		    strcpy(DBfile, *argv);
+                } else if (strcasecmp(as, "interactive") == 0) {
+                    InputMode = INTERACTIVE_INPUTMODE;
                 } else if ( (strcasecmp(as, "autosome") == 0) || (strcasecmp(as, "pseudo") == 0) ||
                      (strcasecmp(as, "mito") == 0)) {
                     int tmp;
@@ -2013,6 +2016,9 @@ void mega2_opts(int argc, char **argv)
                     case 'h': case 'H':
                         print_mega2_help();
                         exit(0);
+                        break;
+                    case 'i': case 'I':
+                        InputMode = INTERACTIVE_INPUTMODE;
                         break;
                     case 'd': case 'D':
                         debug++;

@@ -105,6 +105,12 @@ public:
         sprintf(fa, "%s%s", prefix, sfx);
         _fln = strdup(fa);
     }
+    void setfln(const char *prefix, const char *type, const char *sfx) 
+    {
+        char fa[FILENAME_LENGTH];
+        sprintf(fa, "%s%s%s", prefix, type, sfx);
+        _fln = strdup(fa);
+    }
     void mkfln(char *buf, const char *prefix, const char *sfx) {
         extern void change_output_chr(char *buf, int _numchr);
         sprintf(buf, "%s%s", prefix, sfx);

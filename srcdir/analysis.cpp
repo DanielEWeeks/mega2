@@ -48,7 +48,6 @@
 #include "write_structure_ext.h"
 #include "write_pseq_ext.h"
 #include "write_shapeit_ext.h"
-#include "write_impute2_ext.h"
 #include "write_roadtrips_ext.h"
 /*
  * You MUST make the appropriate changes here to define the new header and class.
@@ -120,7 +119,6 @@ CLASS_STRUCTURE          *STRUCTURE = new CLASS_STRUCTURE();
 CLASS_PSEQ               *TO_PSEQ = new CLASS_PSEQ();
 
 CLASS_SHAPEIT            *SHAPEIT = new CLASS_SHAPEIT();
-CLASS_IMPUTE2            *IMPUTE2 = new CLASS_IMPUTE2();
 CLASS_ROADTRIPS          *ROADTRIPS = new CLASS_ROADTRIPS();
 /*
  * You MUST make the appropriate changes here to define the new analysis object
@@ -170,8 +168,7 @@ analysis_types analysis_list[] = {
     { "Structure format",           STRUCTURE },
     { "PSEQ format",                TO_PSEQ },
     { "SHAPEIT format",             SHAPEIT},
-//  { "IMPUTE2 format",             IMPUTE2}
-    { "RoadTrips format",           ROADTRIPS}
+    { "ROADTRIPS format",           ROADTRIPS},
 /*
  * You MUST make the appropriate changes here to define the mapping from the name
  * to the new analysis object
@@ -434,8 +431,6 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
     case 'i':
         if (tolower((unsigned char)prog_name[1]) == 'q') {
             *analysis = IQLS; // 34. IQLS/Idcoefs
-        } else if (tolower((unsigned char)prog_name[1]) == 'm') {
-            *analysis = IMPUTE2;
         } else {
             unknown_prog(prog_name);
         }

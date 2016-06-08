@@ -230,7 +230,7 @@ typedef enum {
 } sex_map_types;
 
 typedef enum {
-  BATCH_FILE_INPUTMODE = 0, INTERACTIVE_INPUTMODE = 1
+    NO_INPUTMODE = -1, BATCH_FILE_INPUTMODE = 0, INTERACTIVE_INPUTMODE = 1
 } InputModeType;
 
 
