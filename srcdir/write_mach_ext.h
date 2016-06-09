@@ -78,10 +78,8 @@ public:
  */
 
     virtual void ped_ind_defaults(int unique)  {
-        /* options that require ids, mostly linkage options and
-           gh-like options*/
-        OrigIds[0] = 1; /* Renumbered */
-        OrigIds[1] = 2; /* Ped num */
+        OrigIds[0] = 6; /* Keeps Per ID that was input*/
+        OrigIds[1] = 6; /* Keeps Ped ID that was input*/
     }
 
 

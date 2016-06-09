@@ -80,7 +80,7 @@ static void write_MACH_peds(linkage_ped_top *Top, char **file_names, const int p
         str *file_names;
 
         void file_loop() {
-            msgvf("        MaCH Pedigree File:   %s/%s\n", *_opath, file_names[0]);
+            msgvf("     MaCH Pedigree File:      %s/%s\n", *_opath, file_names[0]);
             data_loop(*_opath, file_names[0], "w");
         }
 
@@ -127,7 +127,7 @@ static void write_MACH_data(linkage_ped_top *Top, char *file_names[], const int 
         str *file_names;
 
         void file_loop() {
-            msgvf("        MaCH Data File:   %s/%s\n", *_opath, file_names[1]);
+            msgvf("     MaCH Data File:          %s/%s\n", *_opath, file_names[1]);
             data_loop(*_opath, file_names[1], "w");
         }
 
@@ -164,7 +164,7 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
         str *file_names;
 
         void file_loop() {
-            msgvf("        MaCH SNP File:   %s/%s\n", *_opath, file_names[4]);
+            msgvf("     MaCH SNP File:           %s/%s\n", *_opath, file_names[4]);
             data_loop(*_opath, file_names[4], "w");
         }
 
@@ -231,7 +231,7 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
         vlpCTOR(mach_sh, both, sh_exec) { }
 
         void file_loop() {
-            mssgvf("        MaCH shell file:       %s/%s\n", *_opath, file_names[2]);
+            mssgvf("     MaCH Shell File:         %s/%s\n", *_opath, file_names[2]);
             data_loop(*_opath, file_names[2], "w");
         }
 
@@ -292,6 +292,7 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_nl();
             pr_nl();
 
+
             Vecs hapsplit;
             split(hapsplit, file_names[5], "?");
 
@@ -346,8 +347,8 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
     mach_shs->iterate();
 
     if (top_shell) {
-        mssgvf("      MaCH top shell file:      %s/%s\n", output_paths[0], file_names[3]);
-        mssgvf("              the above shell runs all shells\n");
+        mssgvf("     MaCH Top Shell File:     %s/%s\n", output_paths[0], file_names[3]);
+        mssgvf("     The above shell runs all shells.\n");
 
         sh->filep_close();
         delete sh;
@@ -379,6 +380,8 @@ void CLASS_MACH::create_output_file(
     }
     else {
         batch_in();
+        sprintf( file_names[5], "%s", mach_reference_haplotype_file.c_str());
+        inner_file_names(file_names, "", file_name_stem);
     }
 
     combine_chromo = 0;
@@ -394,7 +397,7 @@ void CLASS_MACH::create_output_file(
     for (int i = 0; i < allele_count;i++){
         current_allele = Allele_Array[i];
         allele_name = current_allele->name;
-        //printf("%s\n",allele_name);
+        printf("%s\n",allele_name);
 
         //it looks like the behavior of the Allele Array is as follows: If there is a single unknown, it adds a blank space "" to the array, if there is a second unknown it adds a string "dummy" any further it looks like it stops adding new dummies
         if ( ! ((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0)
@@ -522,7 +525,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[1], "%s_data.%s", stem, num);
     sprintf(file_names[2], "%s.%s.sh", stem, num);
     sprintf(file_names[3], "%s.top.sh", stem);
-    sprintf(file_names[4], "%s.%s.snps", stem,num);
+    sprintf(file_names[4], "%s_snps.%s", stem,num);
 }
 
 void CLASS_MACH::gen_file_names(char **file_names, char *num)
