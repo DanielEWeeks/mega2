@@ -171,7 +171,7 @@ analysis_types analysis_list[] = {
     { "PSEQ format",                TO_PSEQ },
     { "SHAPEIT format",             SHAPEIT},
 //  { "IMPUTE2 format",             IMPUTE2}
-    { "RoadTrips format",           ROADTRIPS},
+    { "ROADTRIPS format",           ROADTRIPS},
     { "MaCH/minimac3 format",       MACH},
 /*
  * You MUST make the appropriate changes here to define the mapping from the name
