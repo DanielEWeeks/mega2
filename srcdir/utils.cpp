@@ -1903,7 +1903,9 @@ void mega2_opts(int argc, char **argv)
 		    argv++; --argc;
 		    strcpy(DBfile, *argv);
                 } else if (strcasecmp(as, "interactive") == 0) {
-                    InputMode = INTERACTIVE_INPUTMODE;
+                    AnalyInputMode = INTERACTIVE_INPUTMODE;
+                } else if (strcasecmp(as, "batch_file") == 0) {
+                    AnalyInputMode = BATCH_FILE_INPUTMODE;
                 } else if ( (strcasecmp(as, "autosome") == 0) || (strcasecmp(as, "pseudo") == 0) ||
                      (strcasecmp(as, "mito") == 0)) {
                     int tmp;
@@ -2018,7 +2020,10 @@ void mega2_opts(int argc, char **argv)
                         exit(0);
                         break;
                     case 'i': case 'I':
-                        InputMode = INTERACTIVE_INPUTMODE;
+                        AnalyInputMode = INTERACTIVE_INPUTMODE;
+                        break;
+                    case 'b': case 'B':
+                        AnalyInputMode = BATCH_FILE_INPUTMODE;
                         break;
                     case 'd': case 'D':
                         debug++;

@@ -475,6 +475,9 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
     iarg = igl = ipre = iphen = ish = ioui = ioup = isum = isumf = iprevm = iprevf = -1;
     // If the default output files are used we do not go here.
     // Otherwise, enter with choice -- -1.
+
+    if (InputMode == BATCH_FILE_INPUTMODE) choice = 0;
+
     while (choice != 0) {
 //        draw_line();
         print_outfile_mssg();
@@ -567,7 +570,7 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         BatchValueSet(selection[0], "Default_Outfile_Names");
     }
 
-    if (! batchANALYSIS) batch_out();
+    if (InputMode == INTERACTIVE_INPUTMODE) batch_out();
     batch_show();
 }
 
@@ -613,10 +616,9 @@ void CLASS_ROADTRIPS::batch_in()
 void CLASS_ROADTRIPS::batch_show()
 {
     msgvf("\n");
-    if (! DEFAULT_OUTFILES) {
-        msgvf("Output file stem:                         %s\n",    C(file_name_stem));
-    }
-    msgvf("Additional ROADTRIPS program args:       %s\n",
+    msgvf("Output file stem:                         %s\n",    C(file_name_stem));
+    
+    msgvf("Additional ROADTRIPS program args:        %s\n",
           (additional_program_args.size() > 0 ? C(additional_program_args) : 
             "<none specified>"));
 

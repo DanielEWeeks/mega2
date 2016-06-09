@@ -267,7 +267,8 @@ int             Mega2Status;
 char           *Mega2OutputPath;
 int             FirstIterMenu;
 /* globals that describe input data */
-InputModeType   InputMode = NO_INPUTMODE; // see common.h
+InputModeType   InputMode; // see common.h
+InputModeType   AnalyInputMode = NOEXEC_INPUTMODE; // see common.h
 file_format     InputFileFormat; /* Annotated or linkage */
 char            mega2_path[256]; /* path to mega2 executable */
 char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES]; /* ped, loc, map, freq, pen, and omit files */
@@ -728,8 +729,7 @@ int             main(int argc, char **argv, char **env)
         }
 //  printf("MARKER_SCHEME = %d\n", MARKER_SCHEME);
 
-        if (InputMode == NO_INPUTMODE)
-            InputMode=BATCH_FILE_INPUTMODE;
+        InputMode=BATCH_FILE_INPUTMODE;
     } else {
         InputMode=INTERACTIVE_INPUTMODE;
 
@@ -737,6 +737,9 @@ int             main(int argc, char **argv, char **env)
         strcpy(Mega2Batch, "MEGA2.BATCH");
         backup_file(&(Mega2Batch[0]));
     }
+    if (AnalyInputMode == NOEXEC_INPUTMODE)
+        AnalyInputMode = InputMode;
+
     tod_batch();
     // determine if we should go out to the web and check to see if the user is running the latest release of MEGA2...
     if ((InputMode == BATCH_FILE_INPUTMODE && access(Mega2Batch, F_OK) == 0) ||
@@ -1215,13 +1218,16 @@ int             main(int argc, char **argv, char **env)
         char **argvn = CALLOC((size_t) argc+4, char *);
         argvn[0] = argv[0];
         argvn[1] = (char *)"--dbread";
-        for (i = 1, j = 2; i < argc; i++) {
-            if (strcmp(argv[i], "--dbdump") && strcmp(argv[i], "--dbread"))
-                argvn[j++] = argv[i];
-        }
+        j = 2;
         if (InputMode == INTERACTIVE_INPUTMODE) {
             argvn[j++] = (char *)"--interactive";
             argvn[j++] = Mega2Batch;
+        } else if (InputMode == BATCH_FILE_INPUTMODE) {
+            argvn[j++] = (char *)"--batch_file";
+        }
+        for (i = 1; i < argc; i++) {
+            if (strcmp(argv[i], "--dbdump") && strcmp(argv[i], "--dbread"))
+                argvn[j++] = argv[i];
         }
         argvn[j++] = 0;
 #ifdef _WIN
@@ -1230,6 +1236,7 @@ int             main(int argc, char **argv, char **env)
         execvp(name, argvn);
 #endif
     }
+    InputMode = AnalyInputMode;  //What was it before the exec
     // Create the data files, and then the shell scripts...
     Tod tod_out("create_output_files");
     analysis->create_output_file(LPedTreeTop, 
