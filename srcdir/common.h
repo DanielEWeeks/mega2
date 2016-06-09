@@ -230,7 +230,7 @@ typedef enum {
 } sex_map_types;
 
 typedef enum {
-    NO_INPUTMODE = -1, BATCH_FILE_INPUTMODE = 0, INTERACTIVE_INPUTMODE = 1
+    NOEXEC_INPUTMODE = -1, BATCH_FILE_INPUTMODE = 0, INTERACTIVE_INPUTMODE = 1
 } InputModeType;
 
 
@@ -378,6 +378,7 @@ extern char           *Mega2OutputPath;
 extern int             FirstIterMenu;
 /* globals that describe input data */
 extern InputModeType   InputMode; /* Not batch mode? */
+extern InputModeType   AnalyInputMode; /* Not batch mode? */
 extern file_format     InputFileFormat; /* Annotated or linkage */
 extern char            mega2_path[256]; /* path to mega2 executable */
 #define NUMBER_OF_MEGA2_INPUT_FILES         9

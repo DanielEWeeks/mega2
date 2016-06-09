@@ -235,7 +235,7 @@ static keyw_t keywords[] = {
     {"Shapeit_file_stem",                     STRING,     ""},
 
     {"file_name_stem",                        STRING,     ""},
-    {"additional_program_args",               STRING,     ""},
+    {"additional_program_args",               LINE,       ""},
     {"RoadTrips_male_prevalence",             FLOAT,      "0.123"},
     {"RoadTrips_female_prevalence",           FLOAT,      "0.123"},
 

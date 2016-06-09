@@ -2731,7 +2731,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     
     /* These are all error flags */
     int mrk_missing_from_map, mrk_missing_from_names=0, duplicate_mrk=0;
-    int missing_columns=0, bad_chromo=0;
+    int missing_columns=0, bad_chromo=0, bad_allele=0;
     int display_Y_message=1;
     char yesorno[4];
     int alleles_i = 0;
@@ -2834,7 +2834,13 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
                     if (strlen(dummy) == 1) {
                         (*alleles)[alleles_i++] = dummy[0];
                     } else {
-                        mssgf("ERROR: For a PLINK .bim file; an allele must be only one character!");
+                        (*alleles)[alleles_i++] = '*';
+                        if (!strcmp(dummy, "dummy") || !strcmp(dummy, "dummy1") || !strcmp(dummy, "dummy2") ) {
+                            // leave it alone
+                        } else {
+                            errorvf("For a PLINK .bim file; each allele (\"%s\") must be only one character!\n", dummy);
+                            bad_allele++;
+                        }
                     }
                 } else {
                     if (!strcmp(dummy, "NA")) {
@@ -3175,23 +3181,23 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     mrk_missing_from_map = create_entries_for_markers_without_positions(LTop, EXLTop, total_maps_to_allocate);
 
     if (bad_chromo) {
-        printf("Invalid chromosome numbers in map file, see %s for details.\n",
-               Mega2Err);
+        warnvf("Invalid chromosome numbers in map file, see %s for details.\n",
+              Mega2Err);
     }
     
     if (missing_columns) {
-        printf("Found lines with less than required number of fields, see %s for details.\n",
-               Mega2Err);
+        warnvf("Found lines with less than required number of fields, see %s for details.\n",
+              Mega2Err);
     }
     
     if (mrk_missing_from_map) {
-        printf("Some marker loci in the %s file are missing from map file, see %s for details.\n",
-               (Input->xcf ? "VCF" : (Input->impute ? "Impute2" : "names")),
-               Mega2Err);
+        warnvf("Some marker loci in the %s file are missing from map file, see %s for details.\n",
+              (Input->xcf ? "VCF" : (Input->impute ? "Impute2" : "names")),
+              Mega2Err);
     }
     
     if (mrk_missing_from_names) {
-        printf("Some marker loci in map file %s file, see %s for details.\n",
+        warnvf("Some marker loci in map file %s file, see %s for details.\n",
                (Input->xcf ? "have been filtered from the VCF" : 
                 (Input->impute ? "are missing from Imputed" :
                  "are missing from the names")),
@@ -3199,7 +3205,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     }
     
     /* terminate or continue */
-    if (missing_columns || duplicate_mrk) {
+    if (missing_columns || duplicate_mrk || bad_allele) {
         EXIT(INPUT_DATA_ERROR);
     } else if (bad_chromo || mrk_missing_from_map || mrk_missing_from_names) {
         if (InputMode == INTERACTIVE_INPUTMODE || Mega2BatchItems[/* 28 */ Default_Ignore_Nonfatal].items_read == 0) {
