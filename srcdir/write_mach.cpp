@@ -397,11 +397,11 @@ void CLASS_MACH::create_output_file(
     for (int i = 0; i < allele_count;i++){
         current_allele = Allele_Array[i];
         allele_name = current_allele->name;
-        printf("%s\n",allele_name);
+        //printf("%s\n",allele_name);
 
         //it looks like the behavior of the Allele Array is as follows: If there is a single unknown, it adds a blank space "" to the array, if there is a second unknown it adds a string "dummy" any further it looks like it stops adding new dummies
         if ( ! ((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0)
-                || (strcmp(allele_name,"") == 0) || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0) ||  (strcmp(allele_name,"dummy1") == 0) || (strcmp(allele_name,"dummy2") == 0) )){
+                || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0) ||  (strcmp(allele_name,"dummy1") == 0) || (strcmp(allele_name,"dummy2") == 0) || (strcmp(allele_name,"*") == 0) )){
             char error[255];
             strcat(error, "The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
             strcat(error, allele_name);
