@@ -258,8 +258,8 @@ public:
     }
 
 
-    int prep(const char *sql, int verbose) {
-        return prep(sql, -1, 0, verbose);
+    int prep(const char *sql, int verbose_) {
+        return prep(sql, -1, 0, verbose_);
     }
     int prep(const char *sql, int sqllen, const char * *sqlp, int verbose_) {
         int ret = 0;
@@ -368,11 +368,11 @@ public:
     }
 
     int exec(const char *sql) {
-        char *err_msg = 0;
+        char *error_msg = 0;
         if (verbose > 2) printf("\n\n");
         if (verbose) printf("exec: %s\n", sql);
-        int ans = sqlite3_exec(db, sql, 0, 0, &err_msg);
-        return (ok(ans, "sqlite3_exec", err_msg));
+        int ans = sqlite3_exec(db, sql, 0, 0, &error_msg);
+        return (ok(ans, "sqlite3_exec", error_msg));
     }
 
     int begin()    { return (autocommit) ? exec("BEGIN TRANSACTION") : 1; }

@@ -139,7 +139,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
     char shapeitopt[16];
     int tmp = 1;
 
-    int Outfile_Names = 0;
+    int Outfile_named = 0;
     *combine_chromo = 0;
     BatchValueSet(tmp, "Loop_Over_Chromosomes");
 
@@ -231,7 +231,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
             free(file_name_stem);
             file_name_stem = strdup(selection);
             BatchValueSet(file_name_stem, "Shapeit_file_stem");
-            Outfile_Names++;
+            Outfile_named++;
             selection[0] = 'n';
             BatchValueSet(selection[0], "Default_Outfile_Names");
 
@@ -240,7 +240,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
         }
     }
 
-    if (Outfile_Names == 0) {
+    if (Outfile_named == 0) {
         selection[0] = 'y';
         BatchValueSet(selection[0], "Default_Outfile_Names");
     }
