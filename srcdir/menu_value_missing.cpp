@@ -220,7 +220,6 @@ static void Value_Missing_menu(analysis_type *analysis)
             printf("\n");
         }
 
-        asm("int $3");
         if (database_dump || ! database_read) {
         } else {
             if (allow1 == 0 && allow3 == 0) {
