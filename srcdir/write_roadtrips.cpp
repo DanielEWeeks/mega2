@@ -590,7 +590,6 @@ void CLASS_ROADTRIPS::batch_out()
                        "additional_program_args",
                        "RoadTrips_male_prevalence",
                        "RoadTrips_female_prevalence",
-                       "Loop_Over_Chromosomes",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {

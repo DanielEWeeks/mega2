@@ -274,7 +274,7 @@ Missing_Value  missing_values[] = {
        * Analyzes a single affection status trait:  
          0=unknown, 1=unaffected, 2=affected; NN for missing genotype.
        */
-      /*quant*/       "",   Missing_Value::Any, Missing_Value::NoQnt,
+      /*quant*/       "*",  Missing_Value::Any, Missing_Value::NoQnt,
       /*affect*/      "0" , Missing_Value::Num, Missing_Value::Fixed,
       /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
 

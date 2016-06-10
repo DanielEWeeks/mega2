@@ -175,11 +175,7 @@ static void Value_Missing_menu(analysis_type *analysis)
 
         int allow1 = fix_Value_Missing_check_allow(analysis, 1);
         int allow3 = fix_Value_Missing_check_allow(analysis, 3);
-        if (database_dump || ! database_read) {
-        } else {
-            if (allow1 == 0 && allow3 == 0)
-                return;
-        }
+
         show = Value_Missing[qout_i-2].str;
 //      if (!*show) show = (*analysis)->output_quant_default_value();
 	if (!*show) show = missing_value.quant_str;
@@ -224,9 +220,20 @@ static void Value_Missing_menu(analysis_type *analysis)
             printf("\n");
         }
 
-        printf("Select from options 0-%d > ", ttl);
+        asm("int $3");
+        if (database_dump || ! database_read) {
+        } else {
+            if (allow1 == 0 && allow3 == 0) {
+                printf("   NOTE: output missing values can not be changed.\n");
+            }
+        }
 
-        fcmap(stdin, "%d", &ans); newline;
+        if (ttl) {
+            printf("Select from options 0-%d > ", ttl);
+            fcmap(stdin, "%d", &ans); newline;
+        } else
+            ans = 0;
+
         if (ans == 0) {
 //          asm("int $3");
             not_done = fix_Value_Missing_all(analysis);
