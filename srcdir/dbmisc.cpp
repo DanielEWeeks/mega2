@@ -241,9 +241,9 @@ void dbmisc_import(linkage_ped_top *Top) {
     int_table.get("Seed3", seed3);
 
     extern INPUT_FORMAT_t Input_Format;
-    int Input = 0;
-    int_table.get("Input_Format", Input);
-    Input_Format = (INPUT_FORMAT_t)Input;
+    int Input_tmp = 0;
+    int_table.get("Input_Format", Input_tmp);
+    Input_Format = (INPUT_FORMAT_t)Input_tmp;
 
     int_table.get("PedCnt", Top->PedCnt);
     int_table.get("IndivCnt", Top->IndivCnt);
