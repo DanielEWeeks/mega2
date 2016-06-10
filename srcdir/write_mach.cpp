@@ -410,6 +410,7 @@ void CLASS_MACH::create_output_file(
         }
     }
 
+    printf("Mega2 created the following file(s) for MaCH/Minimac3:\n");
 
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
