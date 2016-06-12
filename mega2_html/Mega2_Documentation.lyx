@@ -88,8 +88,7 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1820302391 "Robert V. Baron" 
-\author -1123876542 "Justin" 
+\author 1332494340 "Daniel E. Weeks" 
 \end_header
 
 \begin_body
@@ -218,19 +217,11 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-Current Programmer
-\change_inserted -1820302391 1465391527
-s
-\change_unchanged
-: 
+Current Programmers: 
 \shape italic
 Robert V.
- Baron
-\change_inserted -1820302391 1465391541
- and Justin R.
+ Baron and Justin R.
  Stickel
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -720,6 +711,24 @@ reference "sub:impute2-file-format"
 \end_inset
 
 )
+\change_inserted 1332494340 1465761399
+
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted 1332494340 1465761485
+SQLite3 database format, as created by Mega2 from any of the above input
+ formats (See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:SQLite3"
+
+\end_inset
+
+).
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -918,22 +927,14 @@ PSEQ format
 
 \begin_layout Enumerate
 SHAPEIT format
-\change_inserted -1820302391 1465401304
-
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1820302391 1465401759
 ROADTRIPS format
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1820302391 1465401768
 MaCH/Minimac3 format
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -984,31 +985,45 @@ reference "sec:Installation"
 
 \begin_layout Section
 Recent improvements and changes
-\change_inserted -1820302391 1465401143
-
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1465401195
 Enhancements in Mega2 version 4.9.0
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465401152
 Mega2 now supports preparing input for MaCH/Minimac3 analysis.
+
+\change_inserted 1332494340 1465760809
+ See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:minimac"
+
+\end_inset
+
+.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465401152
 Mega2 now supports preparing input for ROADTRIPS analysis.
+
+\change_inserted 1332494340 1465760805
+ See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:roadtrips"
+
+\end_inset
+
+.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465401152
 Mega2 now stores its input in an SQLite3 database and fetches data for processin
 g from the SQLite3 database.
  (This is explained further in section 
@@ -1018,7 +1033,31 @@ reference "sub:SQLite3"
 
 \end_inset
 
-.) SQLite3 input uses a variant menu for 
+.) 
+\change_inserted 1332494340 1465758806
+When reading from a 
+\change_unchanged
+SQLite3 
+\change_deleted 1332494340 1465758809
+input
+\change_inserted 1332494340 1465758815
+database, Mega2
+\change_unchanged
+ uses a
+\change_inserted 1332494340 1465758820
+n
+\change_unchanged
+ 
+\change_deleted 1332494340 1465758818
+variant
+\change_unchanged
+ 
+\change_inserted 1332494340 1465758847
+alternate input 
+\change_unchanged
+menu 
+\change_deleted 1332494340 1465758843
+for 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1026,6 +1065,8 @@ the input menu
 \begin_inset Quotes erd
 \end_inset
 
+
+\change_unchanged
  (section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1049,14 +1090,23 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 ).
+
+\change_inserted 1332494340 1465759004
+ When doing multiple different Mega2 runs on the same set of input data,
+ it will be substantially faster to read in the pre-processed data from
+ the SQLite3 database.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
 \align left
-
-\change_inserted -1820302391 1465401152
 Bug: IMPUTE2 GEN input now checks for well formed probability 3-tuples and
- verifies there are the correct number of them.
+ verifies there are the correct number of them
+\change_inserted 1332494340 1465758862
+ in each line of the input file
+\change_unchanged
+.
  Also, a 
 \begin_inset Quotes eld
 \end_inset
@@ -1085,14 +1135,10 @@ NA
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465401152
 Bug: Fix name for Aux file reported in the logs based on input type.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465401152
 Feature: The Analysis name used in a batch file can either be the 
 \begin_inset Quotes eld
 \end_inset
@@ -1112,28 +1158,27 @@ reference "sec:The-analysis-menu"
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465401152
-Feature: Rename top level shell, that runs all the analysis shells, to <name>.top.
-sh versus <name>.all.sh; the latter could cause conflicts with chromosome
- no loopover chromosome.
+Feature: Rename
+\change_inserted 1332494340 1465758884
+d
+\change_unchanged
+ top level shell, that runs all the analysis shells, to <name>.top.sh versus
+ <name>.all.sh; the latter could cause conflicts 
+\change_deleted 1332494340 1465758917
+with chromosome no loopover chromosome
+\change_inserted 1332494340 1465758920
+in certain cases
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465401152
 Internals: Lots of NEW code to dump and restore arrays of data into the
  SQLite3 database.
 \end_layout
 
 \begin_layout Subsection
-Enhancements in Mega2 version 
-\change_inserted -1820302391 1465401172
-4.8.2
-\change_deleted -1820302391 1465391604
-4.8.2
-\change_unchanged
-
+Enhancements in Mega2 version 4.8.2
 \end_layout
 
 \begin_layout Itemize
@@ -1581,13 +1626,7 @@ Assuming that the
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1465391607
-4.8.2
-\change_inserted -1820302391 1465391607
-4.9.0
-\change_unchanged
- input menu:
+              Mega2 4.9.0 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1871,24 +1910,12 @@ target "http://doi.org/10.1186/s13029-014-0026-y"
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 
-\change_deleted -1820302391 1465391609
-4.8.2
-\change_inserted -1820302391 1465391609
-4.9.0
-\change_unchanged
- should be: 
+ For example, the web site citation for version 4.9.0 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2015) Mega2 (Version 
-\change_deleted -1820302391 1465391616
-4.8.2
-\change_inserted -1820302391 1465391616
-4.9.0
-\change_unchanged
-).
+ Weeks DE (2015) Mega2 (Version 4.9.0).
  
 \begin_inset Flex URL
 status open
@@ -2166,13 +2193,7 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 
-\change_deleted -1820302391 1465391621
-4.8.2
-\change_inserted -1820302391 1465391621
-4.9.0
-\change_unchanged
- 
+The latest version is 4.9.0 
 \end_layout
 
 \begin_layout Enumerate
@@ -2181,13 +2202,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1465391623
-4.8.2
-\change_inserted -1820302391 1465391623
-4.9.0
-\change_unchanged
-_src.tar.gz
+mega2_v4.9.0_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -2198,13 +2213,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v
-\change_deleted -1820302391 1465391624
-4.8.2
-\change_inserted -1820302391 1465391624
-4.9.0
-\change_unchanged
-_src.tar.gz 
+gunzip mega2_v4.9.0_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -2214,13 +2223,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v
-\change_deleted -1820302391 1465391625
-4.8.2
-\change_inserted -1820302391 1465391625
-4.9.0
-\change_unchanged
-_src.tar 
+tar xvf mega2_v4.9.0_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -2228,13 +2231,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v
-\change_deleted -1820302391 1465391627
-4.8.2
-\change_inserted -1820302391 1465391627
-4.9.0
-\change_unchanged
-_src.tar.gz 
+tar xzvf mega2_v4.9.0_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -2247,13 +2244,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v
-\change_deleted -1820302391 1465391628
-4.8.2
-\change_inserted -1820302391 1465391628
-4.9.0
-\change_unchanged
-_src
+mega2_v4.9.0_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2433,27 +2424,16 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v
-\change_deleted -1820302391 1465391630
-4.8.2
-\change_inserted -1820302391 1465391630
-4.9.0
-\change_unchanged
-_src.tar.gz bundle following the download section (
+If you downloaded and unpacked the mega2_v4.9.0_src.tar.gz bundle following
+ the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v
-\change_deleted -1820302391 1465391631
-4.8.2
-\change_inserted -1820302391 1465391631
-4.9.0
-\change_unchanged
-_src containing the following directories (in bold) or files listed in alphabeti
-cal order:
+), you should see a directory named mega2_v4.9.0_src containing the following
+ directories (in bold) or files listed in alphabetical order:
 \end_layout
 
 \begin_layout Quotation
@@ -3113,13 +3093,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v
-\change_deleted -1820302391 1465391633
-4.8.2
-\change_inserted -1820302391 1465391633
-4.9.0
-\change_unchanged
-_src in above step), type the command:
+ mega2_v4.9.0_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -3170,16 +3144,10 @@ name "sub:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v
-\change_deleted -1820302391 1465391637
-4.8.2
-\change_inserted -1820302391 1465391637
-4.9.0
-\change_unchanged
-_src.tar.gz package also includes a source code folder "srcdir" containing
- C source files, a Makefile, and several OS-specific Makedefs files that
- define compilation flags that govern locations of standard C libraries,
- and other OS-specific behavior.
+The mega2_v4.9.0_src.tar.gz package also includes a source code folder "srcdir"
+ containing C source files, a Makefile, and several OS-specific Makedefs
+ files that define compilation flags that govern locations of standard C
+ libraries, and other OS-specific behavior.
 \end_layout
 
 \begin_layout Standard
@@ -3191,13 +3159,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v
-\change_deleted -1820302391 1465391638
-4.8.2
-\change_inserted -1820302391 1465391638
-4.9.0
-\change_unchanged
-_src folder, type 
+From within the mega2_v4.9.0_src folder, type 
 \end_layout
 
 \begin_deeper
@@ -3478,13 +3440,8 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v
-\change_deleted -1820302391 1465391641
-4.8.2
-\change_inserted -1820302391 1465391641
-4.9.0
-\change_unchanged
-_src folder contains documentation for mega2.
+The sub-folder called mega2_html/ within the mega2_v4.9.0_src folder contains
+ documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
 
@@ -4146,13 +4103,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v
-\change_deleted -1820302391 1465391643
-4.8.2
-\change_inserted -1820302391 1465391643
-4.9.0
-\change_unchanged
-_src.tar.gz.
+The Mega2 distribution package is named mega2_v4.9.0_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -4163,13 +4114,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1465391644
-4.8.2
-\change_inserted -1820302391 1465391644
-4.9.0
-\change_unchanged
-_src.tar
+mega2_v4.9.0_src.tar
 \end_layout
 
 \end_deeper
@@ -4191,13 +4136,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1465391644
-4.8.2
-\change_inserted -1820302391 1465391644
-4.9.0
-\change_unchanged
-_src.tar.tar
+mega2_v4.9.0_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -4205,13 +4144,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1465391649
-4.8.2
-\change_inserted -1820302391 1465391649
-4.9.0
-\change_unchanged
-_src.tar.gz
+mega2_v4.9.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4219,19 +4152,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v
-\change_deleted -1820302391 1465391650
-4.8.2
-\change_inserted -1820302391 1465391650
-4.9.0
-\change_unchanged
-_src.tar.tar mega2_v
-\change_deleted -1820302391 1465391651
-4.8.2
-\change_inserted -1820302391 1465391651
-4.9.0
-\change_unchanged
-_src.tar.gz
+mv mega2_v4.9.0_src.tar.tar mega2_v4.9.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -12947,13 +12868,7 @@ When you first started up Mega2, it will present a menu for entering input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1465391658
-4.8.2
-\change_inserted -1820302391 1465391658
-4.9.0
-\change_unchanged
- input menu:
+              Mega2 4.9.0 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -13045,13 +12960,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 
-\change_deleted -1820302391 1465391659
-4.8.2
-\change_inserted -1820302391 1465391659
-4.9.0
-\change_unchanged
- input file type menu:
+Mega2 4.9.0 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -13123,13 +13032,7 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1465391662
-4.8.2
-\change_inserted -1820302391 1465391662
-4.9.0
-\change_unchanged
- input menu:
+              Mega2 4.9.0 input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -15447,16 +15350,12 @@ The last 5 columns refer to the percentage of errors actually introduced
 
 \begin_layout Subsection
 Input menu item: Untyped pedigree exclusion option:
-\change_inserted -1820302391 1464287069
-
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:UntypedPedigree"
 
 \end_inset
 
-
-\change_unchanged
 
 \end_layout
 
@@ -15497,16 +15396,12 @@ Untyped pedigree exclusion options:
 \begin_layout Subsection
 Input menu item: Upper limit for squared deviation between input and observed
  allele frequencies 
-\change_inserted -1820302391 1464287369
-
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:AlleleFreq"
 
 \end_inset
 
-
-\change_unchanged
 
 \end_layout
 
@@ -15558,13 +15453,7 @@ name "sub:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1465391667
-4.8.2
-\change_inserted -1820302391 1465391667
-4.9.0
-\change_unchanged
- Maximum alleles per marker menu:
+              Mega2 4.9.0 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -15919,8 +15808,6 @@ Item 3) only appears for linkage format inputs.
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -1820302391 1464288233
 The alternate input menu (experimental feature)
 \begin_inset CommandInset label
 LatexCommand label
@@ -15932,8 +15819,6 @@ name "sec:The-alternate-input-menu"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464373015
 NOTE: A more lengthy discussion about the SQLite3 database creation can
  be found in section 
 \begin_inset CommandInset ref
@@ -15946,8 +15831,6 @@ reference "sub:SQLite3"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464373189
 If you invoke Mega2 with the flag, 
 \series bold
 \emph on
@@ -15956,8 +15839,6 @@ If you invoke Mega2 with the flag,
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1464287672
 
 
 \backslash
@@ -15990,56 +15871,38 @@ reference "sec:The-input-menu"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464373208
 The alternate input menu is shown below and explained immediately following:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464195497
 0) Done with this menu - please proceed
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464285909
  1) Output Directory:                            [ Current directory ]
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464285907
  2) Database filename:                           dbmega2.db 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464285904
  3) Simulate genotyping errors:                  [ no ] 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464195523
  4) Include all pedigrees whether typed or not 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464285903
  5) Allele frequency error measure threshold:    No limit 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198901
 Select from options 0-5 > 0 
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464373274
 The 
 \emph on
 Output Directory
@@ -16065,8 +15928,6 @@ Database filename
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1464287689
 
 
 \backslash
@@ -16121,8 +15982,6 @@ reference "sub:AlleleFreq"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464373454
 If this alternate 
 \series bold
 input menu
@@ -16133,136 +15992,94 @@ input menu
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198911
 =========================================================== 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198915
 The path to this SQLite3 database is dbmega2.db.
  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198918
 This database was created using Mega2 version X.Y.Z.
  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198921
 This database was created using SQLite3 3.9.2 on 1997-8-29-02-14.
  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198923
 This database was processed using SQLite3 3.9.2 on 2016-5-25-13-51.
  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198932
 This database was created from Mega2 format data with header using the following
  files: 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198974
                Pedigree file ../OME_PLINK/pedin.01 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198984
                Locus file    ../OME_PLINK/names.01 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464199015
                Map file      ../OME_PLINK/map.01 
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1464198988
-
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464199019
 This database contains: 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464199048
         2222 persons (548 pedigrees) 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464199051
        11630 markers (1 traits) 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464373514
        genetic distance(map name/type/idx) "Map"/kosambi/0, Sex map type
  AVERAGED_MAP
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464373523
        base pair distance (map name/type/idx) "BP"/base pair/1
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1464199080
-
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1464199071
-
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464199088
        4613 mendelian-inconsistent markers.
  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464199094
        0 half-typed markers.
  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464199096
        0 out-of-bound allele values.
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464198868
 ========================================================== 
 \end_layout
 
@@ -16300,115 +16117,155 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-                    0 Sort by Analysis Name
-\end_layout
 
-\begin_layout LyX-Code
- 1 SimWalk2 format                 22 SAGE format
-\end_layout
-
-\begin_layout LyX-Code
- 2 Vintage Mendel format           23 Pre-makeped format
-\end_layout
-
-\begin_layout LyX-Code
- 3 ASPEX format                    24 Merlin/SimWalk2-NPL format
-\end_layout
-
-\begin_layout LyX-Code
- 4 GeneHunter-Plus format          25 PREST format
-\end_layout
-
-\begin_layout LyX-Code
- 5 GeneHunter format               26 PAP format
-\end_layout
-
-\begin_layout LyX-Code
- 6 APM format [DISABLED]           27 Merlin format
-\end_layout
-
-\begin_layout LyX-Code
- 7 APM-MULT format [DISABLED]      28 Loki format
-\end_layout
-
-\begin_layout LyX-Code
- 8 Create nuclear families         29 Mendel format
-\end_layout
-
-\begin_layout LyX-Code
- 9 SLINK format                    30 SUP format
-\end_layout
-
-\begin_layout LyX-Code
-10 SPLINK format                   31 PLINK format
-\end_layout
-
-\begin_layout LyX-Code
-11 Homogeneity analyses            32 CRANEFOOT format
-\end_layout
-
-\begin_layout LyX-Code
-12 SIMULATE format                 33 Mega2 format
-\end_layout
-
-\begin_layout LyX-Code
-13 Create summary files            34 IQLS/Idcoefs format
-\end_layout
-
-\begin_layout LyX-Code
-14 Old SAGE format                 35 FBAT format
-\end_layout
-
-\begin_layout LyX-Code
-15 TDTMax analyses [DISABLED]      36 PANGAEA MORGAN format
-\end_layout
-
-\begin_layout LyX-Code
-16 SOLAR format                    37 Beagle format
-\end_layout
-
-\begin_layout LyX-Code
-17 Vitesse format                  38 Eigenstrat format
-\end_layout
-
-\begin_layout LyX-Code
-18 Linkage format                  39 Structure format
-\end_layout
-
-\begin_layout LyX-Code
-19 Test loci for HWE               40 PSEQ format
-\end_layout
-
-\begin_layout LyX-Code
-20 Allegro format                  41 SHAPEIT format
-\end_layout
-
-\begin_layout LyX-Code
-21 MLBQTL format                   
-\change_inserted -1820302391 1465401611
-42 ROADTRIPS format
+\change_inserted 1332494340 1465759550
+                   0 Sort by Analysis Name
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1465401640
-43 MaCH/Minimac3 (awaiting jrs merge)
+\change_inserted 1332494340 1465759550
+ 1 SimWalk2 format                 23 Pre-makeped format             
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+ 2 Vintage Mendel format           24 Merlin/SimWalk2-NPL format     
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+ 3 ASPEX format                    25 PREST format                   
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+ 4 GeneHunter-Plus format          26 PAP format                     
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+ 5 GeneHunter format               27 Merlin format                  
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+ 6 APM format [DISABLED]           28 Loki format                    
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+ 7 APM-MULT format [DISABLED]      29 Mendel format                  
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+ 8 Create nuclear families         30 SUP format                     
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+ 9 SLINK format                    31 PLINK format                   
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+10 SPLINK format                   32 CRANEFOOT format               
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+11 Homogeneity analyses            33 Mega2 format                   
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+12 SIMULATE format                 34 IQLS/Idcoefs format            
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+13 Create summary files            35 FBAT format                    
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+14 Old SAGE format                 36 PANGAEA MORGAN format          
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+15 TDTMax analyses [DISABLED]      37 Beagle format                  
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+16 SOLAR format                    38 Eigenstrat format              
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+17 Vitesse format                  39 Structure format               
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+18 Linkage format                  40 PSEQ format                    
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+19 Test loci for HWE               41 SHAPEIT format                 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+20 Allegro format                  42 ROADTRIPS format               
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+21 MLBQTL format                   43 MaCH/minimac3 format           
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+22 SAGE format                                                       
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465759550
+Select an option between 0-43 >
 \change_unchanged
 
-\end_layout
-
-\begin_layout LyX-Code
-                                 
-\end_layout
-
-\begin_layout LyX-Code
-Select an option between 0-4
-\change_inserted -1820302391 1465396564
-2
-\change_deleted -1820302391 1465396564
-1
-\change_unchanged
- > 
 \end_layout
 
 \begin_layout LyX-Code
@@ -16907,13 +16764,9 @@ reference "ext:shapeit"
 \end_inset
 
 )
-\change_inserted -1820302391 1465401381
-
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1820302391 1465401478
 Convert to ROADTRIPS format (Section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -16925,8 +16778,6 @@ reference "ext:roadtrips"
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1820302391 1465401719
 Convert to MaCH/Minimac3 format (Section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -16935,8 +16786,6 @@ reference "ext:minimac"
 \end_inset
 
 )
-\change_unchanged
-
 \end_layout
 
 \begin_layout Section
@@ -17014,13 +16863,7 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1465391669
-4.8.2
-\change_inserted -1820302391 1465391669
-4.9.0
-\change_unchanged
- Missing Value menu:
+              Mega2 4.9.0 Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -33644,21 +33487,11 @@ The following files are created by Mega2 for SHAPEIT for a typical chromosome
 \end_layout
 
 \begin_layout LyX-Code
-SHAPEIT shell file:           shapeit
-\change_inserted -1820302391 1465401885
-_phased
-\change_unchanged
-.05.sh
+SHAPEIT shell file:           shapeit_phased.05.sh
 \end_layout
 
 \begin_layout LyX-Code
-SHAPEIT top shell file:       shapeit_phased.
-\change_deleted -1820302391 1465401824
-all
-\change_inserted -1820302391 1465401824
-top
-\change_unchanged
-.sh
+SHAPEIT top shell file:       shapeit_phased.top.sh
 \end_layout
 
 \begin_layout LyX-Code
@@ -33666,72 +33499,28 @@ top
 \end_layout
 
 \begin_layout LyX-Code
-SHAPEIT shell argument file:  shapeit_phased.
-\change_deleted -1820302391 1465401829
-all
-\change_inserted -1820302391 1465401829
-top
-\change_unchanged
-.sh.args
+SHAPEIT shell argument file:  shapeit_phased.top.sh.args
 \end_layout
 
 \begin_layout Standard
-For either mode, the *.
-\change_deleted -1820302391 1465401922
-all
-\change_inserted -1820302391 1465401922
-top
-\change_unchanged
-.sh script will run the shell scripts produced for all the chromosome being
- analyzed.
+For either mode, the *.top.sh script will run the shell scripts produced for
+ all the chromosome being analyzed.
  The *.05.sh script runs the 
 \series bold
 shapeit 
 \series default
 program with arguments that specify the PLINK input and SHAPEIT output.
  The script also lets you specify additional SHAPEIT arguments that might
- be necessary for tailoring the SHAPEIT run by editing the shapeit_phased.
-\change_deleted -1820302391 1465401903
-all
-\change_inserted -1820302391 1465401903
-top
-\change_unchanged
-.sh.args file.
+ be necessary for tailoring the SHAPEIT run by editing the shapeit_phased.top.sh.ar
+gs file.
  This file is included (sourced) in the .05.sh script (and those for all other
  chromosomes).
- Thus a change made in the shapeit_phased.
-\change_deleted -1820302391 1465401909
-all
-\change_inserted -1820302391 1465401909
-top
-\change_unchanged
-.sh.args file will affect all shell scripts.
+ Thus a change made in the shapeit_phased.top.sh.args file will affect all
+ shell scripts.
  
 \end_layout
 
-\begin_layout Standard
-
-\change_deleted -1820302391 1465401897
-NOTE: The file name, 
-\series bold
-shapeit.05.sh
-\series default
-, above should really be 
-\series bold
-shapeit_phased.05.sh
-\series default
-.
- (This change would be necessary for every other chromosome, too.) Currently,
- the shell file from the check option will overwrite that for the phased
- option (or vice versa) if both are used in the same directory.
- This will be fixed in the next release.
-\change_unchanged
-
-\end_layout
-
 \begin_layout Subsection
-
-\change_inserted -1820302391 1464195662
 \begin_inset CommandInset label
 LatexCommand label
 name "ext:roadtrips"
@@ -33749,8 +33538,6 @@ name "sub:Detailed-info-Roadtrips"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464194894
 
 \series bold
 This Analysis Menu option
@@ -33780,8 +33567,6 @@ status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1464192209
-
 http://faculty.washington.edu/tathornt/software/ROADTRIPS2/
 \end_layout
 
@@ -33809,8 +33594,6 @@ y Unknown Population and Pedigree Structure” American Journal of Human Genetic
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1464193753
-
 \series bold
 Contact
 \series default
@@ -33818,58 +33601,40 @@ Contact
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193766
 Timothy A.
  Thornton
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193770
 Department of Biostatistics
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193773
 University of Washington
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193778
 Health Sciences Building F-600
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193781
 Box 357232 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193785
 Seattle, WA 98195-7232 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193760
 email: tathornt@u.washington.edu
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464373628
 (The additional software, KinInbcoef, is needed for this program; KinInbcoef
  computes kinship and inbreeding coefficients.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464192702
 
 \series bold
 Name
@@ -33879,8 +33644,6 @@ Name
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1464193115
-
 \series bold
 Web
 \series default
@@ -33889,8 +33652,6 @@ Web
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1464193132
-
 \series bold
 Primary reference
 \series default
@@ -33898,22 +33659,16 @@ Primary reference
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464193658
 This program computes inbreeding and kinship coefficients for general pedigrees
  using the algorithm proposed by KARIGL (1981,Ann.
  Hum Genet 45:299-305)
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464193671
 Copyright(C) 2003, 2009 Catherine Bourgain, Qian Zhang
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464193182
 
 \series bold
 Contact
@@ -33922,82 +33677,61 @@ Contact
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193435
 Catherine Bourgain
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193451
 INSERM U535
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193454
 Bat.Leriche
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193461
 Hopital Paul Brousse
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193468
 BP 1000
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193476
 94817 Villejuif Cedex
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193478
 France
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193481
 Tel : +33 1 45 59 53 85
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193483
 Fax : +33 1 45 59 53 31
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464193280
 bourgain@vjf.inserm.fr
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464194334
 )
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464373795
 The ROADTRIPS program computes a case-control association given incomplete
  family structure information.
- It needs a pedigree file, that contains the family id, individual id, father,
- mother, sex and case-control indicator; a kinship file that contains the
- family id, individual 1 id, individual 2 id and kinship/inbreeding coefficient
- for all pairs of individuals in a family, and a file that for each marker
- gives the genotypes (as numbers) for each person (similar to a PLINK tped
- file).
+ It needs a pedigree file
+\change_deleted 1332494340 1465759684
+,
+\change_unchanged
+ that contains the family id, individual id, father, mother, sex and case-contro
+l indicator; a kinship file that contains the family id, individual 1 id,
+ individual 2 id and kinship/inbreeding coefficient for all pairs of individuals
+ in a family, and a file that for each marker gives the genotypes (as numbers)
+ for each person (similar to a PLINK tped file).
  Mega2 produces this information and a shell script to run ROADTRIPS.
  The shell script also runs the KinInbcoeff program to compute the kinship/inbre
 eding coefficient for each pair of individuals in a family.
@@ -34005,82 +33739,62 @@ eding coefficient for each pair of individuals in a family.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464373850
 Mega2 provides a menu to get supplemental information needed by ROADTRIPS;
- the items are explained immediately after the menu:
+ 
+\change_deleted 1332494340 1465759717
+the
+\change_inserted 1332494340 1465759718
+its
+\change_unchanged
+ items are explained immediately after the menu:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194348
 ==========================================================
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194386
              ROADTRIPS input menu:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194416
 ==========================================================
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194478
 0) Done with this menu - please proceed 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194441
 1) Filename stem:                       roadtrips       
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194446
 2) Additional ROADTRIPS arguments:      <none specified>  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464204175
 3) Male prevalence fraction:            0.1230          
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464204180
 4) Female prevalence fraction:          0.1230          
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194460
 5) Person id in output pedigree file:   Renumber consecutively in pedigree
  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194467
 6) Pedigree id in output pedigree file: Renumbered consecutively
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464373914
 Enter options 0-6 > 0 
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464374281
 The filename stem menu item can be changed to allow multiple experiments
  to be recorded in the same directory.
  While Mega2 generate the appropriate file arguments for ROADTRIPS, there
@@ -34128,56 +33842,38 @@ MEGA2.keys
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464374392
 The following files are created by Mega2 for ROADTRIPS & KinInbcoef:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194689
 ROADTRIPS phenotype file:   ./roadtrips.phes 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194687
 ROADTRIPS pedigree file:    ./roadtrips.peds 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194685
 ROADTRIPS genotype file:    ./roadtrips.all.tpeds 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194682
 ROADTRIPS family file:      ./roadtrips.fams 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194647
 ROADTRIPS family list file: ./roadtrips.lst 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194679
 ROADTRIPS prevalence file:  ./roadtrips.prvl 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1464194680
 ROADTRIPS shell file:       ./roadtrips.all.sh
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464374461
 The 
 \begin_inset Quotes eld
 \end_inset
@@ -34241,14 +33937,10 @@ The
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464280751
 Notes:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464374530
 The ROADTRIPS and KinInbcoef programs should be downloaded from their respective
  home pages and compiled.
  There are two alternatives to allow the Mega2 generated shell to find the
@@ -34260,8 +33952,6 @@ The ROADTRIPS and KinInbcoef programs should be downloaded from their respective
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1465401531
 The KinInbcoef program enforces a limit to the number of families to be
  analyzed at the same time (MAXFAM, currently set to 100) and the number
  of individuals per family (MAXINT, currently set to 1000).
@@ -34280,8 +33970,6 @@ The KinInbcoef program enforces a limit to the number of families to be
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1465401549
 \begin_inset CommandInset label
 LatexCommand label
 name "ext:minimac"
@@ -34296,30 +33984,79 @@ name "sub:Detailed-info-MaCHMinimac3"
 \end_inset
 
 
-\change_inserted -1123876542 1465587445
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587457
 
 \series bold
-This Analysis Menu option:
+This Analysis Menu option
+\change_deleted 1332494340 1465760350
+:
+\change_unchanged
+
 \series default
- Creates a script in order to do imputation using minimac3.
- Mega2 outputs files for MaCH.
+ 
+\change_inserted 1332494340 1465760348
+c
+\change_deleted 1332494340 1465760348
+C
+\change_unchanged
+reates a script in order to do imputation using minimac3.
+ Mega2 outputs files 
+\change_inserted 1332494340 1465761709
+formatted 
+\change_unchanged
+for MaCH.
  MaCH is a Markov Chain based haplotyper.
  It can resolve long haplotypes in samples of unrelated individuals.
- It is used to prophase the data for input into Minimac3 for imputation.
- Before that mach2VCF must be run in order to put the phased data into VCF
- format.
+ It is used to pr
+\change_inserted 1332494340 1465760362
+e-
+\change_deleted 1332494340 1465760359
+o
+\change_unchanged
+phase the data for input into Minimac3 for imputation.
+ 
+\change_deleted 1332494340 1465760380
+Before that
+\change_inserted 1332494340 1465760405
+After MaCH pre-phases the input, then
+\change_unchanged
+ mach2VCF must be run in order to 
+\change_deleted 1332494340 1465760410
+put
+\change_inserted 1332494340 1465760411
+convert
+\change_unchanged
+ the phased data into VCF format.
  Finally, Minimac3 performs imputation on the phased VCF file.
+\change_inserted 1332494340 1465761720
+
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1465587499
+\change_inserted 1332494340 1465761898
+For imputation to work properly, your input data has to be coded so alleles
+ are labelled by A, C, T, or G and a physical map of the markers in the
+ same build as your chosen set of reference haplotypes has to be provided.
+ You will also have to resolve any strand issues so that your data is encoded
+ on the same strand as used by your set of reference haplotypes.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 1332494340 1465762066
+The scripts produced will only work if the required executables have been
+ installed on your computer in your path.
+ The required programs are mach1, mach2VCF, and minimac3.
+ Optionally, if you have a multi-processor machine, mach3-omp can be used.
+ 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
 
 \series bold
 Name:
@@ -34329,8 +34066,6 @@ Name:
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1465587511
-
 \series bold
 Web:
 \series default
@@ -34338,8 +34073,6 @@ Web:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587745
 
 \series bold
 References:
@@ -34350,8 +34083,6 @@ References:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587623
 Genet Epidemiol 34:816-834.
  Li Y, Willer CJ, Sanna S and Abecasis GR (2009) Genotype Imputation.
  Annu Rev Genomics Hum Genet 10:387-406.
@@ -34360,8 +34091,6 @@ Genet Epidemiol 34:816-834.
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1465587623
-
 \series bold
 Contact
 \series default
@@ -34369,38 +34098,26 @@ Contact
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587630
 Yun Li
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587645
 Abecasis Lab
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587656
 Center for Statistical Genetics
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587662
 University of Michigan
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587678
 email: yun_li@med.unc.edu
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587719
 
 \series bold
 Name
@@ -34409,8 +34126,6 @@ Name
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587730
 
 \series bold
 Web
@@ -34421,8 +34136,6 @@ Web
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1465587736
-
 \series bold
 Primary
 \series default
@@ -34435,19 +34148,17 @@ References
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1465587740
+\change_deleted 1332494340 1465760427
 I couldn’t find any papers to Reference? 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587780
 Copyright(C) 2009 Regents of University of Michigan 
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587781
 
 \series bold
 Contact
@@ -34456,38 +34167,26 @@ Contact
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587795
 Sayantan Das
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587781
 Abecasis Lab
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587781
 Center for Statistical Genetics
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587781
 University of Michigan
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587808
 email: sayantan@umich.edu
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587816
 
 \series bold
 Name
@@ -34497,8 +34196,6 @@ Name
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1465587821
-
 \series bold
 Web
 \series default
@@ -34507,8 +34204,6 @@ Web
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1465587826
-
 \series bold
 Primary
 \series default
@@ -34516,18 +34211,18 @@ Primary
 \series bold
 References
 \series default
-: I couldn’t find any papers to Reference? 
+:
+\change_deleted 1332494340 1465760439
+ I couldn’t find any papers to Reference? 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587836
 Copyright(C) 2009 Regents of University of Michigan
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587836
 
 \series bold
 Contact
@@ -34536,38 +34231,26 @@ Contact
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587836
 Sayantan Das
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587836
 Abecasis Lab
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587836
 Center for Statistical Genetics
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587836
 University of Michigan
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587836
 email: sayantan@umich.edu
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587457
 Minimac3 is a low memory implementation of previous iterations of the minimac
  algorithm for genetic imputation, which works on phased genotypes to handle
  very large reference panels by identifying repeat patterns to simply calculatio
@@ -34579,8 +34262,23 @@ ns at no loss to accuracy.
  G.
  Additionally, Mega2 also creates a data file with a list of markers for
  MaCH.
- Finally for output data Mega2 creates a snp file with physical positions
- for mach2VCF.
+ Finally for output data Mega2 creates a 
+\change_inserted 1332494340 1465760471
+
+\begin_inset Quotes eld
+\end_inset
+
+
+\change_unchanged
+snp file
+\change_inserted 1332494340 1465760475
+
+\begin_inset Quotes erd
+\end_inset
+
+
+\change_unchanged
+ with physical positions for mach2VCF.
  Along with these data outputs Mega2 will output shell scripts that run
  MaCH on the pedigree and data file, mach2VCF on the output of MaCH and
  the snp file, and Minimac3 on the on the resultant VCF along with a reference
@@ -34588,83 +34286,153 @@ ns at no loss to accuracy.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587457
 Mega2 provides a menu to get supplemental information used by MaCH/Minimac3;
  the items are explained after the menu:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587858
 ==========================================================
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587888
 MaCH/Minimac3 Analysis menu:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587858
 0) Done with this menu - please proceed 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587898
 1) File name stem:                                     mach
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587904
 2) Choose reference haplotype file:                    ?.1000g.Phase3.v5.With.Paramet
 er.Estimates.m3vcf.gz
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587910
 3) Number of CPUS for Minimac3 Imputation:             1
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1465587957
 Enter options 0-3 > 0 
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587457
 The file name stem menu item can be changed to allow multiple experiments
  to be recorded in the same directory.
  The reference haplotype file menu item can be changed to choose which reference
  haplotype will be used for imputation by Minimac3.
  A wildcard “?” has been included which will be replaced with the number
  of the chromosome of the specified analysis.
- Reference panels can be found here http://genome.sph.umich.edu/wiki/Minimac3#Refer
-ence_Panels_for_Download .
- The number of cpus for Minimac3 imputation menu item allows you to choose
- a number of cpus to use for the imputation calculation.
+ Reference panels can be found here
+\change_inserted 1332494340 1465761046
+
+\end_layout
+
+\begin_layout Standard
+
+\change_deleted 1332494340 1465761066
+ http://genome.sph.umich.edu/wiki/Minimac3#Reference_Panels_for_Download
+\change_inserted 1332494340 1465761066
+
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted 1332494340 1465761066
+
+http://genome.sph.umich.edu/wiki/Minimac3#Reference_Panels_for_Download
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ .
+ 
+\change_inserted 1332494340 1465761050
+
+\end_layout
+
+\begin_layout Standard
+The number of 
+\change_deleted 1332494340 1465760517
+cpus
+\change_inserted 1332494340 1465760522
+CPUs
+\change_unchanged
+ for Minimac3 imputation menu item allows you to choose a number of 
+\change_deleted 1332494340 1465760525
+cpus
+\change_inserted 1332494340 1465760525
+CPUs
+\change_unchanged
+ to use for the imputation calculation.
  This allows you to run the shell script using minimac3-omp which allows
  for multithreading to speed up calculations.
 \end_layout
 
 \begin_layout Standard
+The following files are created by Mega2 for MaCH/Minimac3
+\change_inserted 1332494340 1465761320
+ for a typical chromosome (chromosome 5 in this example)
+\change_unchanged
+: 
+\change_inserted 1332494340 1465761293
 
-\change_inserted -1123876542 1465587457
-The following files are created by Mega2 for MaCH/Minimac3: MaCH Data File:
- ./mach_data.10 MaCH Pedigree File: ./mach_ped.10 MaCH SNP File: ./mach_snps.10
- MaCH Shell File: ./mach.10.sh MaCH Top Shell File: ./mach.top.sh
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465761302
+     MaCH Data File:          ./mach_data.05
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465761302
+     MaCH Pedigree File:      ./mach_ped.05
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465761302
+     MaCH SNP File:           ./mach_snps.05
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465761302
+     MaCH Shell File:         ./mach.05.sh
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465761302
+     MaCH Top Shell File:     ./mach.top.sh
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted 1332494340 1465761302
+
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1465587457
+\change_deleted 1332494340 1465761276
+MaCH Data File: ./mach_data.10 MaCH Pedigree File: ./mach_ped.10 MaCH SNP File:
+ ./mach_snps.10 MaCH Shell File: ./mach.10.sh MaCH Top Shell File: ./mach.top.sh
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
 The data file contains marker data.
  The ped file is the pedigree file as detailed above.
  The snp file contains the physical positions of snps.
@@ -34673,12 +34441,15 @@ The data file contains marker data.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1465587457
 MaCH, mach2VCF and Minimac3 should be downloaded from their respective home
  pages and compiled.
- There are two alternatives to allow the Mega2 generated shell to find the
- programs.
+ There are two alternatives 
+\change_deleted 1332494340 1465760595
+to
+\change_inserted 1332494340 1465760595
+that
+\change_unchanged
+ allow the Mega2 generated shell to find the programs.
  Either copy the executables to a directory on your PATH shell variable
  or copy the executables to a directory of your choosing.
  In the latter case, set the shell environment variables, MACH1, mach2VCF,
@@ -35625,13 +35396,9 @@ C-shell scripts are produced for the many of the analysis options.
 
 \begin_layout Section
 Changes made to Mega2
-\change_inserted -1820302391 1464195756
-
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1464288628
 Incorporation of SQLite3 into Mega2 
 \begin_inset CommandInset label
 LatexCommand label
@@ -35643,30 +35410,59 @@ name "sub:SQLite3"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464375061
 Mega2 is being converted to a design where the pedigree, phenotypes, and
  genotypes for a given experiment need only to be expensively processed
  once and stored in a database.
- Currently for each analysis, Mega2 determines a new allele values, computes
- allele frequencies, checks allele consistency, cleans allele, and recodes
- letter alleles to numeric alleles.
+ Currently for each analysis, Mega2 determines 
+\change_deleted 1332494340 1465759753
+a
+\change_unchanged
+ new allele values, computes allele frequencies, checks allele consistency,
+ cleans allele
+\change_inserted 1332494340 1465759762
+s
+\change_unchanged
+, and recodes letter alleles to numeric alleles.
  It also compresses the genotype information as much as possible for use
  by the analysis programs.
- In the future, these activities will be performed once and stored in an
- SQLite3 database.
+ 
+\change_deleted 1332494340 1465759787
+In the future
+\change_inserted 1332494340 1465759788
+Now
+\change_unchanged
+, these activities 
+\change_deleted 1332494340 1465759792
+will
+\change_inserted 1332494340 1465759793
+can
+\change_unchanged
+ be performed once and stored in an SQLite3 database.
  Thereafter, all the analysis programs of Mega2 can be run against this
- database eliminating the costly read in and validation phase.
+ database eliminating the 
+\change_deleted 1332494340 1465759813
+costly
+\change_inserted 1332494340 1465759818
+time-consuming
+\change_unchanged
+ read
+\change_inserted 1332494340 1465759807
+-
+\change_deleted 1332494340 1465759806
+ 
+\change_unchanged
+in and validation phase.
  Furthermore in the future, filtering on markers, chromosomes and individuals
  from the database before analysis will be supported.
  
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464375560
 We have taken a large step in this direction, but are not quite done yet.
  In the past, Mega2 read in its data in an existing supported data format
+\change_inserted 1332494340 1465759832
+,
+\change_unchanged
  did its validation and then proceeded to the analysis.
  If you specify the 
 \series bold
@@ -35675,8 +35471,6 @@ We have taken a large step in this direction, but are not quite done yet.
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1464292036
 
 
 \backslash
@@ -35688,7 +35482,15 @@ status collapsed
 -DBoff
 \series default
  flag, this is exactly what Mega2 will do currently.
- But without this flag, the default, Mega2 behaves very differently.
+ But without this flag, 
+\change_inserted 1332494340 1465759891
+(which is now 
+\change_unchanged
+the default
+\change_inserted 1332494340 1465759895
+)
+\change_unchanged
+, Mega2 behaves very differently.
  After Mega2 reads in its data and before the analysis is performed, Mega2
  writes out compressed data into several tables in an SQLite3 database.
  Then the existing Mega2 process exits starting another Mega2 process that
@@ -35706,8 +35508,6 @@ dbmega2.db
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1464292680
 
 
 \backslash
@@ -35728,8 +35528,6 @@ status collapsed
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1464292682
-
 
 \backslash
 /
@@ -35749,21 +35547,56 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1464375645
 Writing and then reading the SQLite3 database does make normal processing
  a bit slower.
  For reasonable size datasets, the additional processing time is a few percent
  with a warm cache.
  Eliminating all the data manipulation before the analysis can yield marked
- speedup.
- In one dataset with 3100 samples and 900,000 markers, 30 minutes of processing
- was eliminated.
+ speedup
+\change_inserted 1332494340 1465759943
+s
+\change_unchanged
+.
+ In one dataset with 3
+\change_inserted 1332494340 1465759947
+,
+\change_unchanged
+100 samples and 900,000 markers, 30 minutes of processing was eliminated.
+\change_inserted 1332494340 1465759963
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 1332494340 1465760113
+If you are going to be running Mega2 on the same set of input data several
+ times, after the initial first run (which will create the SQLite3 database),
+ use of the 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted 1332494340 1465760076
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBread
+\series default
+ flag on subsequent runs will instruct Mega2 to read its input from the
+ SQLite3 database, resulting in substantial speedups.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -35839,11 +35672,9 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-4.8.
-\change_inserted -1820302391 1464293395
-3
-\change_deleted -1820302391 1464293394
-2
+4.
+\change_inserted 1332494340 1465760164
+9.0
 \change_unchanged
 
 \end_layout
@@ -35854,17 +35685,9 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_deleted -1820302391 1464293403
-January
-\change_inserted -1820302391 1464293405
-June
-\change_unchanged
- 1
-\change_inserted -1820302391 1464293414
-3
-\change_deleted -1820302391 1464293414
-5
+June 1
+\change_inserted 1332494340 1465760246
+4
 \change_unchanged
 , 2016
 \end_layout
@@ -35875,13 +35698,7 @@ June
 \begin_inset Text
 
 \begin_layout Plain Layout
-June 15, 201
-\change_inserted -1820302391 1464293422
-7
-\change_deleted -1820302391 1464293422
-6
-\change_unchanged
-
+June 15, 2017
 \end_layout
 
 \end_inset
@@ -35892,8 +35709,6 @@ June 15, 201
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1464293390
 Patched version
 \end_layout
 
@@ -35903,8 +35718,6 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1464293390
 4.8.2
 \end_layout
 
@@ -36773,50 +36586,18 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.8.
-\change_inserted -1820302391 1464293462
-2
-\change_deleted -1820302391 1464293462
-1
-\change_unchanged
- to Version 4.
-\change_inserted -1820302391 1465391722
-9.0
-\change_deleted -1820302391 1465391715
-8.2
-\change_unchanged
- (Released J
-\change_deleted -1820302391 1464293474
-anuary
-\change_inserted -1820302391 1464293475
-une
-\change_unchanged
- 1
-\change_inserted -1820302391 1465391733
-4
-\change_deleted -1820302391 1465391732
-5
-\change_unchanged
-, 2016)
-\change_inserted -1820302391 1464293801
-
+Changes from Version 4.8.2 to Version 4.9.0 (Released June 14, 2016)
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465400281
 Mega2 now supports preparing input for MaCH/Minimac3 analysis.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465400285
 Mega2 now supports preparing input for ROADTRIPS analysis.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465400329
 Mega2 now stores its input in an SQLite3 database and fetches data for processin
 g from the SQLite3 database.
  (This is explained further in section 
@@ -36861,8 +36642,6 @@ reference "sec:The-alternate-input-menu"
 
 \begin_layout Itemize
 \align left
-
-\change_inserted -1820302391 1465400355
 Bug: IMPUTE2 GEN input now checks for well formed probability 3-tuples and
  verifies there are the correct number of them.
  Also, a 
@@ -36893,26 +36672,18 @@ NA
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465398399
 Bug: Beagle has been allowed to print too many error reports.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465399954
 Bug: Too many illegal affection value could be printed.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465400391
 Bug: Fix name for Aux file reported in the logs based on input type.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465400549
 Feature: The Analysis name used in a batch file can either be the 
 \begin_inset Quotes eld
 \end_inset
@@ -36932,23 +36703,17 @@ reference "sec:The-analysis-menu"
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465400644
 Feature: Rename top level shell, that runs all the analysis shells, to <name>.top.
 sh versus <name>.all.sh; the latter could cause conflicts with chromosome
  no loopover chromosome.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465398982
 Internals: Lots of NEW code to dump and restore arrays of data into the
  SQLite3 database.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465397170
 Internals: Original 
 \begin_inset Quotes eld
 \end_inset
@@ -36969,8 +36734,6 @@ basefile_type
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465397479
 Internals: Provide 
 \begin_inset Quotes eld
 \end_inset
@@ -36991,14 +36754,10 @@ file_name
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465397990
 Internals: allele_count variable was off by one.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465398044
 internals: Allele 
 \begin_inset Quotes eld
 \end_inset
@@ -37011,11 +36770,7 @@ index
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1464293458
 Changes from Version 4.8.1 to Version 4.8.2 (Released January 15, 2016)
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
