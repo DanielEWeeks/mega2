@@ -711,13 +711,9 @@ reference "sub:impute2-file-format"
 \end_inset
 
 )
-\change_inserted 1332494340 1465761399
-
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted 1332494340 1465761485
 SQLite3 database format, as created by Mega2 from any of the above input
  formats (See Section 
 \begin_inset CommandInset ref
@@ -727,8 +723,6 @@ reference "sub:SQLite3"
 \end_inset
 
 ).
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsubsection
@@ -993,8 +987,6 @@ Enhancements in Mega2 version 4.9.0
 
 \begin_layout Itemize
 Mega2 now supports preparing input for MaCH/Minimac3 analysis.
-
-\change_inserted 1332494340 1465760809
  See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1003,14 +995,10 @@ reference "ext:minimac"
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
 Mega2 now supports preparing input for ROADTRIPS analysis.
-
-\change_inserted 1332494340 1465760805
  See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1019,8 +1007,6 @@ reference "ext:roadtrips"
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
@@ -1033,39 +1019,13 @@ reference "sub:SQLite3"
 
 \end_inset
 
-.) 
-\change_inserted 1332494340 1465758806
-When reading from a 
-\change_unchanged
-SQLite3 
-\change_deleted 1332494340 1465758809
-input
-\change_inserted 1332494340 1465758815
-database, Mega2
-\change_unchanged
- uses a
-\change_inserted 1332494340 1465758820
-n
-\change_unchanged
+.) When reading from a SQLite3 database, Mega2 uses an
+\change_deleted 1332494340 1465762872
  
-\change_deleted 1332494340 1465758818
-variant
 \change_unchanged
+ alternate input menu
+\change_deleted 1332494340 1465762872
  
-\change_inserted 1332494340 1465758847
-alternate input 
-\change_unchanged
-menu 
-\change_deleted 1332494340 1465758843
-for 
-\begin_inset Quotes eld
-\end_inset
-
-the input menu
-\begin_inset Quotes erd
-\end_inset
-
-
 \change_unchanged
  (section 
 \begin_inset CommandInset ref
@@ -1090,23 +1050,16 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 ).
-
-\change_inserted 1332494340 1465759004
  When doing multiple different Mega2 runs on the same set of input data,
  it will be substantially faster to read in the pre-processed data from
  the SQLite3 database.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
 \align left
 Bug: IMPUTE2 GEN input now checks for well formed probability 3-tuples and
- verifies there are the correct number of them
-\change_inserted 1332494340 1465758862
- in each line of the input file
-\change_unchanged
-.
+ verifies there are the correct number of them in each line of the input
+ file.
  Also, a 
 \begin_inset Quotes eld
 \end_inset
@@ -1158,18 +1111,9 @@ reference "sec:The-analysis-menu"
 \end_layout
 
 \begin_layout Itemize
-Feature: Rename
-\change_inserted 1332494340 1465758884
-d
-\change_unchanged
- top level shell, that runs all the analysis shells, to <name>.top.sh versus
- <name>.all.sh; the latter could cause conflicts 
-\change_deleted 1332494340 1465758917
-with chromosome no loopover chromosome
-\change_inserted 1332494340 1465758920
-in certain cases
-\change_unchanged
-.
+Feature: Renamed top level shell, that runs all the analysis shells, to
+ <name>.top.sh versus <name>.all.sh; the latter could cause conflicts in certain
+ cases.
 \end_layout
 
 \begin_layout Itemize
@@ -16117,155 +16061,103 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
                    0 Sort by Analysis Name
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
  1 SimWalk2 format                 23 Pre-makeped format             
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
  2 Vintage Mendel format           24 Merlin/SimWalk2-NPL format     
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
  3 ASPEX format                    25 PREST format                   
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
  4 GeneHunter-Plus format          26 PAP format                     
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
  5 GeneHunter format               27 Merlin format                  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
  6 APM format [DISABLED]           28 Loki format                    
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
  7 APM-MULT format [DISABLED]      29 Mendel format                  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
  8 Create nuclear families         30 SUP format                     
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
  9 SLINK format                    31 PLINK format                   
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 10 SPLINK format                   32 CRANEFOOT format               
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 11 Homogeneity analyses            33 Mega2 format                   
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 12 SIMULATE format                 34 IQLS/Idcoefs format            
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 13 Create summary files            35 FBAT format                    
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 14 Old SAGE format                 36 PANGAEA MORGAN format          
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 15 TDTMax analyses [DISABLED]      37 Beagle format                  
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 16 SOLAR format                    38 Eigenstrat format              
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 17 Vitesse format                  39 Structure format               
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 18 Linkage format                  40 PSEQ format                    
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 19 Test loci for HWE               41 SHAPEIT format                 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 20 Allegro format                  42 ROADTRIPS format               
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 21 MLBQTL format                   43 MaCH/minimac3 format           
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 22 SAGE format                                                       
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted 1332494340 1465759550
-
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465759550
 Select an option between 0-43 >
-\change_unchanged
-
 \end_layout
 
 \begin_layout LyX-Code
@@ -16327,7 +16219,11 @@ reference "ext:simwalk2"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Vintage Mendel format (Section  
+Convert to Vintage Mendel format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:vintage"
@@ -16338,7 +16234,11 @@ reference "ext:vintage"
 \end_layout
 
 \begin_layout Enumerate
-Convert to ASPEX format (Section  
+Convert to ASPEX format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:aspex"
@@ -16349,7 +16249,11 @@ reference "ext:aspex"
 \end_layout
 
 \begin_layout Enumerate
-Convert to GeneHunter-Plus format (Section  
+Convert to GeneHunter-Plus format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:genehunter-plus"
@@ -16360,7 +16264,11 @@ reference "ext:genehunter-plus"
 \end_layout
 
 \begin_layout Enumerate
-Convert to GeneHunter format (Section  
+Convert to GeneHunter format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:genehunter"
@@ -16371,7 +16279,11 @@ reference "ext:genehunter"
 \end_layout
 
 \begin_layout Enumerate
-Convert to APM format [DISABLED] (Section  
+Convert to APM format [DISABLED] (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:apm"
@@ -16404,7 +16316,11 @@ reference "ext:nuclear"
 \end_layout
 
 \begin_layout Enumerate
-Convert to SLINK format (Section  
+Convert to SLINK format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:slink"
@@ -16415,7 +16331,11 @@ reference "ext:slink"
 \end_layout
 
 \begin_layout Enumerate
-Convert to SPLINK format (Section  
+Convert to SPLINK format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:splink"
@@ -16437,7 +16357,11 @@ reference "ext:homogenetity"
 \end_layout
 
 \begin_layout Enumerate
-Convert to SIMULATE format (Section  
+Convert to SIMULATE format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:simulate"
@@ -16459,7 +16383,11 @@ reference "ext:summary"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Old SAGE format (Section  
+Convert to Old SAGE format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:oldsage"
@@ -16481,7 +16409,11 @@ reference "ext:tdtmax"
 \end_layout
 
 \begin_layout Enumerate
-Convert to SOLAR format (Section  
+Convert to SOLAR format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:solar"
@@ -16492,7 +16424,11 @@ reference "ext:solar"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Vitesse format (Section  
+Convert to Vitesse format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:vitesse"
@@ -16503,7 +16439,11 @@ reference "ext:vitesse"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Linkage format (Section  
+Convert to Linkage format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:linkage"
@@ -16525,7 +16465,11 @@ reference "ext:hwe"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Allegro format (Section  
+Convert to Allegro format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:allegro"
@@ -16536,7 +16480,11 @@ reference "ext:allegro"
 \end_layout
 
 \begin_layout Enumerate
-Convert to MLBQTL format (Section  
+Convert to MLBQTL format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:mlbqtl"
@@ -16547,7 +16495,11 @@ reference "ext:mlbqtl"
 \end_layout
 
 \begin_layout Enumerate
-Convert to SAGE format (Section  
+Convert to SAGE format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:sage"
@@ -16558,7 +16510,11 @@ reference "ext:sage"
 \end_layout
 
 \begin_layout Enumerate
-Convert to pre-makeped format (Section  
+Convert to pre-makeped format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:pre-makeped"
@@ -16580,7 +16536,11 @@ reference "ext:merlinsimwalk2-npl"
 \end_layout
 
 \begin_layout Enumerate
-Convert to PREST format (Section  
+Convert to PREST format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:prest"
@@ -16591,7 +16551,11 @@ reference "ext:prest"
 \end_layout
 
 \begin_layout Enumerate
-Convert to PAP format (Section  
+Convert to PAP format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:pap"
@@ -16602,7 +16566,11 @@ reference "ext:pap"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Merlin format (Section  
+Convert to Merlin format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:merlin"
@@ -16613,7 +16581,11 @@ reference "ext:merlin"
 \end_layout
 
 \begin_layout Enumerate
-Convert to LOKI format (Section  
+Convert to LOKI format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:loki"
@@ -16624,7 +16596,11 @@ reference "ext:loki"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Mendel format (Section  
+Convert to Mendel format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:mendel"
@@ -16635,7 +16611,11 @@ reference "ext:mendel"
 \end_layout
 
 \begin_layout Enumerate
-Convert to SUP format (Section  
+Convert to SUP format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:sup"
@@ -16646,7 +16626,11 @@ reference "ext:sup"
 \end_layout
 
 \begin_layout Enumerate
-Convert to PLINK format (Section  
+Convert to PLINK format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:plink"
@@ -16657,7 +16641,11 @@ reference "ext:plink"
 \end_layout
 
 \begin_layout Enumerate
-Convert to CRANEFOOT format (Section  
+Convert to CRANEFOOT format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:cranefoot"
@@ -16668,7 +16656,11 @@ reference "ext:cranefoot"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Mega2 format (Section  
+Convert to Mega2 format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:mega2"
@@ -16690,7 +16682,11 @@ reference "ext:iqlsidcoefs"
 \end_layout
 
 \begin_layout Enumerate
-Convert to FBAT format (Section  
+Convert to FBAT format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:fbat"
@@ -16701,7 +16697,11 @@ reference "ext:fbat"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Morgan format (Section  
+Convert to Morgan format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:pangaea"
@@ -16712,7 +16712,11 @@ reference "ext:pangaea"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Beagle format (Section  
+Convert to Beagle format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:beagle"
@@ -16723,7 +16727,11 @@ reference "ext:beagle"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Eigenstrat format (Section  
+Convert to Eigenstrat format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:eigenstrat"
@@ -16734,7 +16742,11 @@ reference "ext:eigenstrat"
 \end_layout
 
 \begin_layout Enumerate
-Convert to Structure format (Section  
+Convert to Structure format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:structure"
@@ -16745,7 +16757,11 @@ reference "ext:structure"
 \end_layout
 
 \begin_layout Enumerate
-Convert to PSEQ (PLINK/SEQ) format (Section  
+Convert to PSEQ (PLINK/SEQ) format (Section
+\change_deleted 1332494340 1465762872
+ 
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:pseq"
@@ -19071,10 +19087,6 @@ nosave
 
 \begin_layout Standard
 mega2 -x
-\end_layout
-
-\begin_layout Standard
-
 \end_layout
 
 \begin_layout Standard
@@ -33723,15 +33735,12 @@ bourgain@vjf.inserm.fr
 \begin_layout Standard
 The ROADTRIPS program computes a case-control association given incomplete
  family structure information.
- It needs a pedigree file
-\change_deleted 1332494340 1465759684
-,
-\change_unchanged
- that contains the family id, individual id, father, mother, sex and case-contro
-l indicator; a kinship file that contains the family id, individual 1 id,
- individual 2 id and kinship/inbreeding coefficient for all pairs of individuals
- in a family, and a file that for each marker gives the genotypes (as numbers)
- for each person (similar to a PLINK tped file).
+ It needs a pedigree file that contains the family id, individual id, father,
+ mother, sex and case-control indicator; a kinship file that contains the
+ family id, individual 1 id, individual 2 id and kinship/inbreeding coefficient
+ for all pairs of individuals in a family, and a file that for each marker
+ gives the genotypes (as numbers) for each person (similar to a PLINK tped
+ file).
  Mega2 produces this information and a shell script to run ROADTRIPS.
  The shell script also runs the KinInbcoeff program to compute the kinship/inbre
 eding coefficient for each pair of individuals in a family.
@@ -33740,13 +33749,7 @@ eding coefficient for each pair of individuals in a family.
 
 \begin_layout Standard
 Mega2 provides a menu to get supplemental information needed by ROADTRIPS;
- 
-\change_deleted 1332494340 1465759717
-the
-\change_inserted 1332494340 1465759718
-its
-\change_unchanged
- items are explained immediately after the menu:
+ its items are explained immediately after the menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -33990,53 +33993,18 @@ name "sub:Detailed-info-MaCHMinimac3"
 
 \series bold
 This Analysis Menu option
-\change_deleted 1332494340 1465760350
-:
-\change_unchanged
-
 \series default
- 
-\change_inserted 1332494340 1465760348
-c
-\change_deleted 1332494340 1465760348
-C
-\change_unchanged
-reates a script in order to do imputation using minimac3.
- Mega2 outputs files 
-\change_inserted 1332494340 1465761709
-formatted 
-\change_unchanged
-for MaCH.
+ creates a script in order to do imputation using minimac3.
+ Mega2 outputs files formatted for MaCH.
  MaCH is a Markov Chain based haplotyper.
  It can resolve long haplotypes in samples of unrelated individuals.
- It is used to pr
-\change_inserted 1332494340 1465760362
-e-
-\change_deleted 1332494340 1465760359
-o
-\change_unchanged
-phase the data for input into Minimac3 for imputation.
- 
-\change_deleted 1332494340 1465760380
-Before that
-\change_inserted 1332494340 1465760405
-After MaCH pre-phases the input, then
-\change_unchanged
- mach2VCF must be run in order to 
-\change_deleted 1332494340 1465760410
-put
-\change_inserted 1332494340 1465760411
-convert
-\change_unchanged
- the phased data into VCF format.
+ It is used to pre-phase the data for input into Minimac3 for imputation.
+ After MaCH pre-phases the input, then mach2VCF must be run in order to
+ convert the phased data into VCF format.
  Finally, Minimac3 performs imputation on the phased VCF file.
-\change_inserted 1332494340 1465761720
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 1332494340 1465761898
 For imputation to work properly, your input data has to be coded so alleles
  are labelled by A, C, T, or G and a physical map of the markers in the
  same build as your chosen set of reference haplotypes has to be provided.
@@ -34045,15 +34013,11 @@ For imputation to work properly, your input data has to be coded so alleles
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 1332494340 1465762066
 The scripts produced will only work if the required executables have been
  installed on your computer in your path.
  The required programs are mach1, mach2VCF, and minimac3.
  Optionally, if you have a multi-processor machine, mach3-omp can be used.
  
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -34147,14 +34111,6 @@ References
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted 1332494340 1465760427
-I couldn’t find any papers to Reference? 
-\change_unchanged
-
-\end_layout
-
-\begin_layout Standard
 Copyright(C) 2009 Regents of University of Michigan 
 \end_layout
 
@@ -34212,10 +34168,6 @@ Primary
 References
 \series default
 :
-\change_deleted 1332494340 1465760439
- I couldn’t find any papers to Reference? 
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -34263,21 +34215,13 @@ ns at no loss to accuracy.
  Additionally, Mega2 also creates a data file with a list of markers for
  MaCH.
  Finally for output data Mega2 creates a 
-\change_inserted 1332494340 1465760471
-
 \begin_inset Quotes eld
 \end_inset
 
-
-\change_unchanged
 snp file
-\change_inserted 1332494340 1465760475
-
 \begin_inset Quotes erd
 \end_inset
 
-
-\change_unchanged
  with physical positions for mach2VCF.
  Along with these data outputs Mega2 will output shell scripts that run
  MaCH on the pedigree and data file, mach2VCF on the output of MaCH and
@@ -34327,108 +34271,56 @@ The file name stem menu item can be changed to allow multiple experiments
  A wildcard “?” has been included which will be replaced with the number
  of the chromosome of the specified analysis.
  Reference panels can be found here
-\change_inserted 1332494340 1465761046
-
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted 1332494340 1465761066
- http://genome.sph.umich.edu/wiki/Minimac3#Reference_Panels_for_Download
-\change_inserted 1332494340 1465761066
-
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted 1332494340 1465761066
-
 http://genome.sph.umich.edu/wiki/Minimac3#Reference_Panels_for_Download
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_unchanged
  .
  
-\change_inserted 1332494340 1465761050
-
 \end_layout
 
 \begin_layout Standard
-The number of 
-\change_deleted 1332494340 1465760517
-cpus
-\change_inserted 1332494340 1465760522
-CPUs
-\change_unchanged
- for Minimac3 imputation menu item allows you to choose a number of 
-\change_deleted 1332494340 1465760525
-cpus
-\change_inserted 1332494340 1465760525
-CPUs
-\change_unchanged
- to use for the imputation calculation.
+The number of CPUs for Minimac3 imputation menu item allows you to choose
+ a number of CPUs to use for the imputation calculation.
  This allows you to run the shell script using minimac3-omp which allows
  for multithreading to speed up calculations.
 \end_layout
 
 \begin_layout Standard
-The following files are created by Mega2 for MaCH/Minimac3
-\change_inserted 1332494340 1465761320
- for a typical chromosome (chromosome 5 in this example)
-\change_unchanged
-: 
-\change_inserted 1332494340 1465761293
-
+The following files are created by Mega2 for MaCH/Minimac3 for a typical
+ chromosome (chromosome 5 in this example): 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465761302
      MaCH Data File:          ./mach_data.05
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465761302
      MaCH Pedigree File:      ./mach_ped.05
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465761302
      MaCH SNP File:           ./mach_snps.05
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465761302
      MaCH Shell File:         ./mach.05.sh
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465761302
      MaCH Top Shell File:     ./mach.top.sh
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted 1332494340 1465761302
-
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted 1332494340 1465761276
-MaCH Data File: ./mach_data.10 MaCH Pedigree File: ./mach_ped.10 MaCH SNP File:
- ./mach_snps.10 MaCH Shell File: ./mach.10.sh MaCH Top Shell File: ./mach.top.sh
-\change_unchanged
 
 \end_layout
 
@@ -34443,13 +34335,8 @@ The data file contains marker data.
 \begin_layout Standard
 MaCH, mach2VCF and Minimac3 should be downloaded from their respective home
  pages and compiled.
- There are two alternatives 
-\change_deleted 1332494340 1465760595
-to
-\change_inserted 1332494340 1465760595
-that
-\change_unchanged
- allow the Mega2 generated shell to find the programs.
+ There are two alternatives that allow the Mega2 generated shell to find
+ the programs.
  Either copy the executables to a directory on your PATH shell variable
  or copy the executables to a directory of your choosing.
  In the latter case, set the shell environment variables, MACH1, mach2VCF,
@@ -35413,45 +35300,17 @@ name "sub:SQLite3"
 Mega2 is being converted to a design where the pedigree, phenotypes, and
  genotypes for a given experiment need only to be expensively processed
  once and stored in a database.
- Currently for each analysis, Mega2 determines 
-\change_deleted 1332494340 1465759753
-a
+ Currently for each analysis, Mega2 determines
+\change_deleted 1332494340 1465762872
+ 
 \change_unchanged
  new allele values, computes allele frequencies, checks allele consistency,
- cleans allele
-\change_inserted 1332494340 1465759762
-s
-\change_unchanged
-, and recodes letter alleles to numeric alleles.
+ cleans alleles, and recodes letter alleles to numeric alleles.
  It also compresses the genotype information as much as possible for use
  by the analysis programs.
- 
-\change_deleted 1332494340 1465759787
-In the future
-\change_inserted 1332494340 1465759788
-Now
-\change_unchanged
-, these activities 
-\change_deleted 1332494340 1465759792
-will
-\change_inserted 1332494340 1465759793
-can
-\change_unchanged
- be performed once and stored in an SQLite3 database.
+ Now, these activities can be performed once and stored in an SQLite3 database.
  Thereafter, all the analysis programs of Mega2 can be run against this
- database eliminating the 
-\change_deleted 1332494340 1465759813
-costly
-\change_inserted 1332494340 1465759818
-time-consuming
-\change_unchanged
- read
-\change_inserted 1332494340 1465759807
--
-\change_deleted 1332494340 1465759806
- 
-\change_unchanged
-in and validation phase.
+ database eliminating the time-consuming read-in and validation phase.
  Furthermore in the future, filtering on markers, chromosomes and individuals
  from the database before analysis will be supported.
  
@@ -35459,10 +35318,7 @@ in and validation phase.
 
 \begin_layout Standard
 We have taken a large step in this direction, but are not quite done yet.
- In the past, Mega2 read in its data in an existing supported data format
-\change_inserted 1332494340 1465759832
-,
-\change_unchanged
+ In the past, Mega2 read in its data in an existing supported data format,
  did its validation and then proceeded to the analysis.
  If you specify the 
 \series bold
@@ -35482,15 +35338,8 @@ status collapsed
 -DBoff
 \series default
  flag, this is exactly what Mega2 will do currently.
- But without this flag, 
-\change_inserted 1332494340 1465759891
-(which is now 
-\change_unchanged
-the default
-\change_inserted 1332494340 1465759895
-)
-\change_unchanged
-, Mega2 behaves very differently.
+ But without this flag, (which is now the default), Mega2 behaves very different
+ly.
  After Mega2 reads in its data and before the analysis is performed, Mega2
  writes out compressed data into several tables in an SQLite3 database.
  Then the existing Mega2 process exits starting another Mega2 process that
@@ -35555,23 +35404,12 @@ Writing and then reading the SQLite3 database does make normal processing
  For reasonable size datasets, the additional processing time is a few percent
  with a warm cache.
  Eliminating all the data manipulation before the analysis can yield marked
- speedup
-\change_inserted 1332494340 1465759943
-s
-\change_unchanged
-.
- In one dataset with 3
-\change_inserted 1332494340 1465759947
-,
-\change_unchanged
-100 samples and 900,000 markers, 30 minutes of processing was eliminated.
-\change_inserted 1332494340 1465759963
-
+ speedups.
+ In one dataset with 3,100 samples and 900,000 markers, 30 minutes of processing
+ was eliminated.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 1332494340 1465760113
 If you are going to be running Mega2 on the same set of input data several
  times, after the initial first run (which will create the SQLite3 database),
  use of the 
@@ -35581,8 +35419,6 @@ If you are going to be running Mega2 on the same set of input data several
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted 1332494340 1465760076
 
 
 \backslash
@@ -35595,8 +35431,6 @@ status collapsed
 \series default
  flag on subsequent runs will instruct Mega2 to read its input from the
  SQLite3 database, resulting in substantial speedups.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -35672,11 +35506,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-4.
-\change_inserted 1332494340 1465760164
-9.0
-\change_unchanged
-
+4.9.0
 \end_layout
 
 \end_inset
@@ -35685,11 +35515,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-June 1
-\change_inserted 1332494340 1465760246
-4
-\change_unchanged
-, 2016
+June 14, 2016
 \end_layout
 
 \end_inset
@@ -41271,10 +41097,6 @@ No spacing between the liability status and liability class if the selected
  Convert to SLINK-format 11) Set up for homogeneity analyses 12) Convert
  to SIMULATE-format 17) Convert to Vitesse-format 18) Convert to Linkage-format
  20) Convert to Allegro-format 21) Convert to MLBQTL format
-\end_layout
-
-\begin_layout Standard
-
 \end_layout
 
 \begin_layout Standard
