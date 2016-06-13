@@ -1034,7 +1034,7 @@ reference "sub:SQLite3"
 \end_inset
 
 .) 
-\change_inserted -1820302391 1465837495
+\change_inserted -1820302391 1465845952
 As a transition, while the database feature is still experimental, it is
  possible to turn off this feature with the 
 \emph on
@@ -1056,6 +1056,47 @@ status collapsed
 -
 \emph default
 DBoff flag and process input as the Mega2 v4.8.2 release did.
+ Note: This feature is not currently available for Windows; please add 
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465845440
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-
+\emph default
+DBoff (or 
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465845946
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-
+\emph default
+DBdump) to the command line in native Windows and MSYS2 environments.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
