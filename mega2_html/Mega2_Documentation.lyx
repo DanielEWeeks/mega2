@@ -88,6 +88,7 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1820302391 "Robert V. Baron" 
 \end_header
 
 \begin_body
@@ -12792,6 +12793,25 @@ name "sec:The-input-menu"
 \end_inset
 
 
+\change_inserted -1820302391 1465830712
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1465830821
+NOTE: If you start Mega2 with the option to read from a SQLite3 database,
+ the following section does not apply and you should skip to the next section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-alternate-input-menu"
+
+\end_inset
+
+.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -15922,8 +15942,15 @@ If this alternate
 \series bold
 input menu
 \series default
- is used, a brief summary of when the SQLite3 database is presented containing
- when it was created as well as its file and data contents.
+ is used, a brief summary 
+\change_inserted -1820302391 1465830597
+is shown 
+\change_unchanged
+of when the SQLite3 database 
+\change_deleted -1820302391 1465830581
+is presented containing when it 
+\change_unchanged
+was created as well as its file and data contents.
  A sample is shown below:
 \end_layout
 
@@ -18989,14 +19016,22 @@ This may seem undesirable for normal use, but is a useful space-saving feature
 
 \begin_layout Subsection
 MEGA2.LOG 
+\change_inserted -1820302391 1465828424
+(and MEGA2.DB.LOG)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
-In addition to the sate and time of the last run and input file names, this
- file is a copy of Mega2's screen output including summary statistics on
- the input pedigrees and locus data, the analysis option name, what loci
- were selected for reordering, pedigree statistics after locus selection,
- and finally, what output files were produced.
+In addition to the s
+\change_inserted -1820302391 1465828414
+t
+\change_unchanged
+ate and time of the last run and input file names, this file is a copy of
+ Mega2's screen output including summary statistics on the input pedigrees
+ and locus data, the analysis option name, what loci were selected for reorderin
+g, pedigree statistics after locus selection, and finally, what output files
+ were produced.
  
 \end_layout
 
@@ -19005,9 +19040,27 @@ It may also contain other important messages such as families and individuals
  excluded from analysis, breaking or re-connection of loops in inbred pedigrees,
  individuals whose genotypes were zeroed out, etc.
  If there were any warnings or error messages, they are no longer written
- ad nauseum into this file but only into the MEGA2.ERROR file.
+ ad nauseum into this file but only into the MEGA2.ERR
+\change_deleted -1820302391 1465828473
+OR
+\change_unchanged
+ file.
  Of course, the first few lines for each warning/error will be written to
  this file as usual.
+\change_inserted -1820302391 1465828479
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1465830099
+NOTE: The messages that appear before the SQLite3 database is dumped are
+ now reported in the MEGA2.DB.LOG file.
+ While the messages that appear after the SQLite3 database is read back
+ in (typically errors that are detected during an analysis run), are reported
+ in the MEGA2.LOG as in previous releases.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -19017,6 +19070,10 @@ Note that the backup copy MEGA2.LOG.old is no longer created.
 
 \begin_layout Subsection
 MEGA2.ERR 
+\change_inserted -1820302391 1465828432
+(and MEGA2.DB.ERR)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -19039,6 +19096,20 @@ ng documentation, if Mega2 terminates abnormally.
  as possible, in order to help the user debug her data.
  We always appreciate feedback and suggestions for improvement in this area.
  
+\change_inserted -1820302391 1465828613
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1465830107
+NOTE: The messages that appear before the SQLite3 database is produced are
+ now reported in the MEGA2.DB.ERR file.
+ While the messages that appear after the SQLite3 database is read back
+ in (typically errors that are detected during an analysis run), are reported
+ in the MEGA2.ERR as in previous releases.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -33668,11 +33739,14 @@ Enter options 0-6 > 0
 \begin_layout Standard
 The filename stem menu item can be changed to allow multiple experiments
  to be recorded in the same directory.
- While Mega2 generate the appropriate file arguments for ROADTRIPS, there
- are some additional arguments that can be supplied to ROADTRIPS: to ignore
- individuals with unknown phenotype (-u), to ignore samples for markers
- with unmeasured genotype (-m), and to request (and optionally use) a full
- kinship matrix (-f, -e).
+ While Mega2 
+\change_inserted -1820302391 1465831257
+does 
+\change_unchanged
+generate the appropriate file arguments for ROADTRIPS, there are some additional
+ arguments that can be supplied to ROADTRIPS: to ignore individuals with
+ unknown phenotype (-u), to ignore samples for markers with unmeasured genotype
+ (-m), and to request (and optionally use) a full kinship matrix (-f, -e).
  The ROADTRIPS documentation explains these and other flags; any necessary
  flags should be supplied in the ROADTRIPS menu.
  One of the statistics generated by ROADTRIPS can handle an 
@@ -33881,6 +33955,10 @@ For imputation to work properly, your input data has to be coded so alleles
 \end_layout
 
 \begin_layout Standard
+
+\change_inserted -1820302391 1465831870
+XX
+\change_unchanged
 The scripts produced will only work if the required executables have been
  installed on your computer in your path.
  The required programs are mach1, mach2VCF, and minimac3.
@@ -34119,8 +34197,15 @@ MaCH/Minimac3 Analysis menu:
 \end_layout
 
 \begin_layout LyX-Code
-2) Choose reference haplotype file:                    ?.1000g.Phase3.v5.With.Paramet
-er.Estimates.m3vcf.gz
+
+\change_inserted -1820302391 1465831923
+XX
+\change_unchanged
+2) Choose reference haplotype file:                
+\change_deleted -1820302391 1465831915
+    
+\change_unchanged
+?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz
 \end_layout
 
 \begin_layout LyX-Code
@@ -35168,16 +35253,31 @@ name "sub:SQLite3"
 Mega2 is being converted to a design where the pedigree, phenotypes, and
  genotypes for a given experiment need only to be expensively processed
  once and stored in a database.
- Currently for each analysis, Mega2 determines new allele values, computes
- allele frequencies, checks allele consistency, cleans alleles, and recodes
- letter alleles to numeric alleles.
+ Currently for each 
+\change_inserted -1820302391 1465829217
+new 
+\change_unchanged
+analysis, Mega2 determines 
+\change_deleted -1820302391 1465829221
+new
+\change_unchanged
+ allele values, computes allele frequencies, checks allele consistency,
+ cleans alleles, and recodes letter alleles to numeric alleles.
  It also compresses the genotype information as much as possible for use
  by the analysis programs.
  Now, these activities can be performed once and stored in an SQLite3 database.
  Thereafter, all the analysis programs of Mega2 can be run against this
  database eliminating the time-consuming read-in and validation phase.
  Furthermore in the future, filtering on markers, chromosomes and individuals
- from the database before analysis will be supported.
+ 
+\change_deleted -1820302391 1465828940
+from the database before analysis
+\change_unchanged
+ will be supported
+\change_inserted -1820302391 1465828948
+ as the database is read
+\change_unchanged
+.
  
 \end_layout
 
@@ -35207,8 +35307,14 @@ status collapsed
 ly.
  After Mega2 reads in its data and before the analysis is performed, Mega2
  writes out compressed data into several tables in an SQLite3 database.
- Then the existing Mega2 process exits starting another Mega2 process that
- will read the database and perform the analysis.
+ Then the 
+\change_deleted -1820302391 1465829011
+existing
+\change_inserted -1820302391 1465829019
+running
+\change_unchanged
+ Mega2 process exits starting another Mega2 process that will read the database
+ and perform the analysis.
  By default, the database is named 
 \series bold
 dbmega2.db
@@ -35261,6 +35367,12 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 .
+
+\change_inserted -1820302391 1465829171
+ NOTE: If a Mega2 run exits with a failure message, the SQLite3 database
+ is NOT created.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -43911,6 +44023,37 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  BE LIABLE FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT
  OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
  THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+\change_inserted -1820302391 1465829577
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1820302391 1465829622
+Acknowledgement of SQLite3
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1465829888
+We have include the SQLite3 database in Mega2; the source code is in the
+ srcdir/lib/sqlite3 directory of the Mega2 distribution.
+ This code has been minimally modified so as to integrate it with Mega2.
+ The SQLite3 home page is 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465829850
+
+http://www.sqlite.org/
+\end_layout
+
+\end_inset
+
+.
+ This software is in the public domain.
 \end_layout
 
 \begin_layout Section
