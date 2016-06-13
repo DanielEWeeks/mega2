@@ -83,13 +83,11 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1820302391 "Robert V. Baron" 
-\author -1123876542 "Justin" 
 \end_header
 
 \begin_body
@@ -1011,21 +1009,8 @@ reference "ext:roadtrips"
 \end_layout
 
 \begin_layout Itemize
-Mega2 now stores its input in an SQLite3 database
-\change_deleted -1820302391 1465837130
- 
-\change_inserted -1820302391 1465837094
- 
-\change_unchanged
-and 
-\change_inserted -1820302391 1465837100
-(then) 
-\change_unchanged
-fetches data for processing from the 
-\change_inserted -1820302391 1465837141
-same 
-\change_unchanged
-SQLite3 database.
+Mega2 now stores its input in an SQLite3 database and (then) fetches data
+ for processing from the same SQLite3 database.
  (This is explained further in section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1033,18 +1018,14 @@ reference "sub:SQLite3"
 
 \end_inset
 
-.) 
-\change_inserted -1820302391 1465845952
-As a transition, while the database feature is still experimental, it is
- possible to turn off this feature with the 
+.) As a transition, while the database feature is still experimental, it
+ is possible to turn off this feature with the 
 \emph on
 -
 \begin_inset ERT
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465837485
 
 
 \backslash
@@ -1064,8 +1045,6 @@ status collapsed
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1465845440
-
 
 \backslash
 /
@@ -1083,8 +1062,6 @@ status collapsed
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1465845946
-
 
 \backslash
 /
@@ -1095,23 +1072,12 @@ status collapsed
 -
 \emph default
 DBdump) to the command line in native Windows and MSYS2 environments.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1465837280
-Note: Mega2 can now experimentally accept an existing 
-\change_deleted -1820302391 1465837286
-When reading from a
-\change_unchanged
- SQLite3 database
-\change_inserted -1820302391 1465837315
- as input.
- In this case
-\change_unchanged
-, Mega2 uses an alternate input menu (section 
+Note: Mega2 can now experimentally accept an existing SQLite3 database as
+ input.
+ In this case, Mega2 uses an alternate input menu (section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-input-menu"
@@ -12884,13 +12850,9 @@ name "sec:The-input-menu"
 \end_inset
 
 
-\change_inserted -1820302391 1465830712
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1465830821
 NOTE: If you start Mega2 with the option to read from a SQLite3 database,
  the following section does not apply and you should skip to the next section
  
@@ -12901,8 +12863,6 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -16033,16 +15993,9 @@ If this alternate
 \series bold
 input menu
 \series default
- is used, a brief summary 
-\change_inserted -1820302391 1465830597
-is shown 
-\change_unchanged
-of when the SQLite3 database 
-\change_deleted -1820302391 1465830581
-is presented containing when it 
-\change_unchanged
-was created as well as its file and data contents.
- A sample is shown below:
+ is used, a brief summary is shown of when the SQLite3 database was created
+ as well as its file and data contents.
+ An example is shown below:
 \end_layout
 
 \begin_layout LyX-Code
@@ -19106,23 +19059,15 @@ This may seem undesirable for normal use, but is a useful space-saving feature
 \end_layout
 
 \begin_layout Subsection
-MEGA2.LOG 
-\change_inserted -1820302391 1465828424
-(and MEGA2.DB.LOG)
-\change_unchanged
-
+MEGA2.LOG (and MEGA2.DB.LOG)
 \end_layout
 
 \begin_layout Standard
-In addition to the s
-\change_inserted -1820302391 1465828414
-t
-\change_unchanged
-ate and time of the last run and input file names, this file is a copy of
- Mega2's screen output including summary statistics on the input pedigrees
- and locus data, the analysis option name, what loci were selected for reorderin
-g, pedigree statistics after locus selection, and finally, what output files
- were produced.
+In addition to the state and time of the last run and input file names,
+ this file is a copy of Mega2's screen output including summary statistics
+ on the input pedigrees and locus data, the analysis option name, what loci
+ were selected for reordering, pedigree statistics after locus selection,
+ and finally, what output files were produced.
  
 \end_layout
 
@@ -19131,27 +19076,17 @@ It may also contain other important messages such as families and individuals
  excluded from analysis, breaking or re-connection of loops in inbred pedigrees,
  individuals whose genotypes were zeroed out, etc.
  If there were any warnings or error messages, they are no longer written
- ad nauseum into this file but only into the MEGA2.ERR
-\change_deleted -1820302391 1465828473
-OR
-\change_unchanged
- file.
+ ad nauseum into this file but only into the MEGA2.ERR file.
  Of course, the first few lines for each warning/error will be written to
  this file as usual.
-\change_inserted -1820302391 1465828479
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1465830099
 NOTE: The messages that appear before the SQLite3 database is dumped are
  now reported in the MEGA2.DB.LOG file.
  While the messages that appear after the SQLite3 database is read back
  in (typically errors that are detected during an analysis run), are reported
  in the MEGA2.LOG as in previous releases.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -19160,11 +19095,7 @@ Note that the backup copy MEGA2.LOG.old is no longer created.
 \end_layout
 
 \begin_layout Subsection
-MEGA2.ERR 
-\change_inserted -1820302391 1465828432
-(and MEGA2.DB.ERR)
-\change_unchanged
-
+MEGA2.ERR (and MEGA2.DB.ERR)
 \end_layout
 
 \begin_layout Standard
@@ -19187,20 +19118,14 @@ ng documentation, if Mega2 terminates abnormally.
  as possible, in order to help the user debug her data.
  We always appreciate feedback and suggestions for improvement in this area.
  
-\change_inserted -1820302391 1465828613
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1465830107
 NOTE: The messages that appear before the SQLite3 database is produced are
  now reported in the MEGA2.DB.ERR file.
  While the messages that appear after the SQLite3 database is read back
  in (typically errors that are detected during an analysis run), are reported
  in the MEGA2.ERR as in previous releases.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -19638,14 +19563,10 @@ Usage:
 \emph on
  mega2
 \emph default
- [options] [batch-file-name] 
-\change_inserted -1820302391 1465835303
-or
+ [options] [batch-file-name] or
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1465835313
 
 \series bold
 Usage:
@@ -19657,8 +19578,6 @@ Usage:
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1465835367
 Database options: 
 \begin_inset CommandInset label
 LatexCommand label
@@ -19670,8 +19589,6 @@ name "sub:Database-options:"
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1465835367
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="2">
 <features rotate="0" tabularvalignment="middle">
@@ -19683,8 +19600,6 @@ name "sub:Database-options:"
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1465835367
-
 \series bold
 flag
 \end_layout
@@ -19695,8 +19610,6 @@ flag
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465835506
 
 \series bold
 interpretation
@@ -19711,16 +19624,12 @@ interpretation
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1465835374
-
 \emph on
 -
 \begin_inset ERT
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465835367
 
 
 \backslash
@@ -19738,8 +19647,6 @@ DBoff
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465835941
 do not dump the database and do not 
 \begin_inset Quotes eld
 \end_inset
@@ -19761,16 +19668,12 @@ exec
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1465835402
-
 \emph on
 -
 \begin_inset ERT
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465835367
 
 
 \backslash
@@ -19788,8 +19691,6 @@ DBdump
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465835983
 create the database and then exit Mega2 do not perform any analysis.
 \end_layout
 
@@ -19802,16 +19703,12 @@ create the database and then exit Mega2 do not perform any analysis.
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1465835407
-
 \emph on
 -
 \begin_inset ERT
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465835367
 
 
 \backslash
@@ -19829,8 +19726,6 @@ DBread
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465836071
 use the SQLite3 database as input for Mega2 and then proceed to perform
  batch or interactive Mega2 analysis if a batch file argument was specified
  or not, respectively.
@@ -19845,16 +19740,12 @@ use the SQLite3 database as input for Mega2 and then proceed to perform
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1465835447
-
 \emph on
 -
 \begin_inset ERT
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465835367
 
 
 \backslash
@@ -19872,8 +19763,6 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465835839
 specifies an argument which is the path to the SQLite3 database file.
 \end_layout
 
@@ -32415,7 +32304,7 @@ name "sub:Detailed-info-Beagle"
 \begin_layout Standard
 
 \series bold
-This option
+This Analysis Menu option
 \series default
  creates files for analysis with Beagle.
  For further information please see the section concerning detailed information
@@ -34005,10 +33894,6 @@ bourgain@vjf.inserm.fr
 \end_layout
 
 \begin_layout Standard
-)
-\end_layout
-
-\begin_layout Standard
 The ROADTRIPS program computes a case-control association given incomplete
  family structure information.
  It needs a pedigree file that contains the family id, individual id, father,
@@ -34076,14 +33961,11 @@ Enter options 0-6 > 0
 \begin_layout Standard
 The filename stem menu item can be changed to allow multiple experiments
  to be recorded in the same directory.
- While Mega2 
-\change_inserted -1820302391 1465831257
-does 
-\change_unchanged
-generate the appropriate file arguments for ROADTRIPS, there are some additional
- arguments that can be supplied to ROADTRIPS: to ignore individuals with
- unknown phenotype (-u), to ignore samples for markers with unmeasured genotype
- (-m), and to request (and optionally use) a full kinship matrix (-f, -e).
+ While Mega2 does generate the appropriate file arguments for ROADTRIPS,
+ there are some additional arguments that can be supplied to ROADTRIPS:
+ to ignore individuals with unknown phenotype (-u), to ignore samples for
+ markers with unmeasured genotype (-m), and to request (and optionally use)
+ a full kinship matrix (-f, -e).
  The ROADTRIPS documentation explains these and other flags; any necessary
  flags should be supplied in the ROADTRIPS menu.
  One of the statistics generated by ROADTRIPS can handle an 
@@ -34274,50 +34156,14 @@ name "sub:Detailed-info-MaCHMinimac3"
 This Analysis Menu option
 \series default
  creates a script in order to do imputation using minimac3.
- 
-\change_inserted -1123876542 1465832851
-In order to accomplish this 
-\change_unchanged
-Mega2 outputs files formatted for 
-\change_inserted -1123876542 1465832482
-input into 
-\change_unchanged
-MaCH
-\change_inserted -1123876542 1465832495
-,
-\change_deleted -1123876542 1465832495
-.
- MaCH is
-\change_unchanged
- a Markov Chain based haplotyper.
- 
-\change_inserted -1123876542 1465832870
-MaCH
-\change_deleted -1123876542 1465832868
-It
-\change_unchanged
- can resolve long haplotypes in samples of unrelated individuals
-\change_inserted -1123876542 1465832504
-, and
-\change_deleted -1123876542 1465832503
-.
- It
-\change_unchanged
+ In order to accomplish this Mega2 outputs files formatted for input into
+ MaCH, a Markov Chain based haplotyper.
+ MaCH can resolve long haplotypes in samples of unrelated individuals, and
  is used to pre-phase the data for input into Minimac3 for imputation.
- After MaCH pre-phases the input,
-\change_deleted -1123876542 1465832517
- then
-\change_unchanged
- mach2VCF must be run in order to convert the 
-\change_inserted -1123876542 1465832526
-resultant 
-\change_unchanged
-phased data into VCF format.
- Finally, Minimac3 performs imputation on the phased VCF file
-\change_inserted -1123876542 1465832537
- using a reference haplotype file chosen by the user
-\change_unchanged
-.
+ After MaCH pre-phases the input, mach2VCF must be run in order to convert
+ the resultant phased data into VCF format.
+ Finally, Minimac3 performs imputation on the phased VCF file using a reference
+ haplotype file chosen by the user.
 \end_layout
 
 \begin_layout Standard
@@ -34330,21 +34176,12 @@ For imputation to work properly, your input data has to be coded so alleles
 
 \begin_layout Standard
 The scripts produced will only work if the required executables have been
- installed on your computer in your path
-\change_inserted -1123876542 1465832936
-, or if their locations have been set to the environment variables: MACH1,
- mach2VCF, and MINIMAC3
-\change_unchanged
-.
+ installed on your computer in your path, or if their locations have been
+ set to the environment variables: MACH1, mach2VCF, and MINIMAC3.
  The required programs are mach1, mach2VCF, and minimac3.
- Optionally, if you have a multi-processor machine, 
-\change_deleted -1123876542 1465832550
-mach3-omp
-\change_inserted -1123876542 1465832570
-minimac3-omp (a dedicated mult-processor version of minimac3 utilizing the
- openMP library)
-\change_unchanged
- can be used.
+ Optionally, if you have a multi-processor machine, minimac3-omp (a dedicated
+ mult-processor version of minimac3 utilizing the openMP library) can be
+ used.
  
 \end_layout
 
@@ -34362,26 +34199,16 @@ Name:
 Web:
 \series default
  
-\change_inserted -1123876542 1465832606
-
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1123876542 1465832611
-
 http://csg.sph.umich.edu//abecasis/MACH/tour/ Primary 
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_deleted -1123876542 1465832609
-MaCH - http://csg.sph.umich.edu//abecasis/MACH/tour/ Primary 
-\change_unchanged
 
 \end_layout
 
@@ -34444,48 +34271,17 @@ Name
 Web
 \series default
 : 
-\change_inserted -1123876542 1465832590
-
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1123876542 1465832595
-
 http://genome.sph.umich.edu/wiki/Minimac3_Cookbook_:_Converting_Files_to_VCF
  
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_deleted -1123876542 1465832593
-http://genome.sph.umich.edu/wiki/Minimac3_Cookbook_:_Converting_Files_to_VCF
- 
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted -1123876542 1465832576
-
-\series bold
-Primary
-\series default
- 
-\series bold
-References
-\series default
-:
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted -1123876542 1465832576
-Copyright(C) 2009 Regents of University of Michigan 
-\change_unchanged
 
 \end_layout
 
@@ -34531,46 +34327,16 @@ Name
 Web
 \series default
 : 
-\change_inserted -1123876542 1465832615
-
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1123876542 1465832620
-
 http://genome.sph.umich.edu/wiki/Minimac3 
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_deleted -1123876542 1465832619
-http://genome.sph.umich.edu/wiki/Minimac3 
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted -1123876542 1465832581
-
-\series bold
-Primary
-\series default
- 
-\series bold
-References
-\series default
-:
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted -1123876542 1465832581
-Copyright(C) 2009 Regents of University of Michigan
-\change_unchanged
 
 \end_layout
 
@@ -34609,64 +34375,20 @@ Minimac3 is a low memory implementation of previous iterations of the minimac
 ns at no loss to accuracy.
  In order to run Minimac3 however, the user needs to get their data into
  phased vcf or m3vcf files.
- 
-\change_inserted -1123876542 1465832639
-To do this 
-\change_unchanged
-Mega2 will create 
-\change_inserted -1123876542 1465832659
-3 files: a ped file, a data file, and a snp file.
+ To do this Mega2 will create 3 files: a ped file, a data file, and a snp
+ file.
  Two files are used by MaCH, the ped and the data file, whereas the snp
  file is used by mach2VCF.
- The
-\change_deleted -1123876542 1465832667
-a
-\change_unchanged
- pedigree file 
-\change_deleted -1123876542 1465832675
-with
-\change_inserted -1123876542 1465832678
-is formatted
-\change_unchanged
- family id, individual id, father id, mother id, sex, and the series of
- markers encoded with A, C, T, and G.
- 
-\change_deleted -1123876542 1465832691
-Additionally, Mega2 also creates a data file with a list of markers for
- MaCH.
-
-\change_inserted -1123876542 1465832710
- The data file is formatted with an M inndicating marker and then the marker
+ The pedigree file is formatted family id, individual id, father id, mother
+ id, sex, and the series of markers encoded with A, C, T, and G.
+ The data file is formatted with an M indicating marker and then the marker
  number.
-
-\change_unchanged
- 
-\change_deleted -1123876542 1465832720
-Finally for output data Mega2 creates a 
-\begin_inset Quotes eld
-\end_inset
-
-snp file
-\begin_inset Quotes erd
-\end_inset
-
- with physical positions for mach2VCF.
-
-\change_unchanged
- 
-\change_inserted -1123876542 1465832737
-The snp file contains the chromsome and physical position information in
+ The snp file contains the chromsome and physical position information in
  the format chr:pos.
- 
-\change_unchanged
-Along with these data outputs Mega2 will output shell scripts that run MaCH
- on the pedigree and data file, mach2VCF on the output of MaCH and the snp
- file, and Minimac3 on the on the resultant VCF along with a reference haplotype
- file that has been chosen
-\change_inserted -1123876542 1465832749
- by the user interface
-\change_unchanged
-.
+ Along with these data outputs Mega2 will output shell scripts that run
+ MaCH on the pedigree and data file, mach2VCF on the output of MaCH and
+ the snp file, and Minimac3 on the on the resultant VCF along with a reference
+ haplotype file that has been chosen by the user interface.
 \end_layout
 
 \begin_layout Standard
@@ -34691,15 +34413,7 @@ MaCH/Minimac3 Analysis menu:
 \end_layout
 
 \begin_layout LyX-Code
-2) Choose reference haplotype file:                
-\change_deleted -1820302391 1465831915
-    
-\change_unchanged
-?.1000g.Phase3.v5
-\change_deleted -1123876542 1465832434
-.With.Parameter.Estimates.
-\change_unchanged
-m3vcf.gz
+2) Choose reference haplotype file:                ?.1000g.Phase3.v5m3vcf.gz
 \end_layout
 
 \begin_layout LyX-Code
@@ -34714,8 +34428,6 @@ Enter options 0-3 > 0
 The file name stem menu item can be changed to allow multiple experiments
  to be recorded in the same directory.
  
-\change_inserted -1123876542 1465832801
-
 \end_layout
 
 \begin_layout Standard
@@ -34779,16 +34491,11 @@ The following files are created by Mega2 for MaCH/Minimac3 for a typical
 
 \begin_layout Standard
 The data file contains marker data.
- The ped file is the pedigree file as detailed above.
- The snp file contains the physical positions of snps.
- The 
-\change_inserted -1123876542 1465832810
-05
-\change_deleted -1123876542 1465832809
-10
-\change_unchanged
-.sh is an individual chromosome shell.
- The top.sh runs all shells output by a single Mega2 run.
+ The pedigree file is the pedigree file as detailed above.
+ The SNP file contains the physical positions of snps.
+ The 05.sh shell file contains the commands to process an individual chromosome.
+ The top.sh top shell file runs all chromsome-specific shell script files
+ output by a single Mega2 run.
 \end_layout
 
 \begin_layout Standard
@@ -35759,31 +35466,16 @@ name "sub:SQLite3"
 Mega2 is being converted to a design where the pedigree, phenotypes, and
  genotypes for a given experiment need only to be expensively processed
  once and stored in a database.
- Currently for each 
-\change_inserted -1820302391 1465829217
-new 
-\change_unchanged
-analysis, Mega2 determines 
-\change_deleted -1820302391 1465829221
-new
-\change_unchanged
- allele values, computes allele frequencies, checks allele consistency,
- cleans alleles, and recodes letter alleles to numeric alleles.
+ Currently for each new analysis, Mega2 determines allele values, computes
+ allele frequencies, checks allele consistency, cleans alleles, and recodes
+ letter alleles to numeric alleles.
  It also compresses the genotype information as much as possible for use
  by the analysis programs.
  Now, these activities can be performed once and stored in an SQLite3 database.
  Thereafter, all the analysis programs of Mega2 can be run against this
  database eliminating the time-consuming read-in and validation phase.
  Furthermore in the future, filtering on markers, chromosomes and individuals
- 
-\change_deleted -1820302391 1465828940
-from the database before analysis
-\change_unchanged
- will be supported
-\change_inserted -1820302391 1465828948
- as the database is read
-\change_unchanged
-.
+ will be supported as the database is read.
  
 \end_layout
 
@@ -35813,14 +35505,8 @@ status collapsed
 ly.
  After Mega2 reads in its data and before the analysis is performed, Mega2
  writes out compressed data into several tables in an SQLite3 database.
- Then the 
-\change_deleted -1820302391 1465829011
-existing
-\change_inserted -1820302391 1465829019
-running
-\change_unchanged
- Mega2 process exits starting another Mega2 process that will read the database
- and perform the analysis.
+ Then the running Mega2 process exits starting another Mega2 process that
+ will read the database and perform the analysis.
  By default, the database is named 
 \series bold
 dbmega2.db
@@ -35873,16 +35559,23 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 .
+ 
+\end_layout
 
-\change_inserted -1820302391 1465836865
- NOTE: If a Mega2 run exits with a failure message, the SQLite3 database
+\begin_layout Standard
+NOTE: If a Mega2 run exits with a failure message, the SQLite3 database
  is NOT created.
- Also, the MEGA2.LOG and MEGA2.ERR files that are created while the data is
- read-in and validated will be name MEGA2.DB.LOG and MEGA2.DB.ERR instead.
- The names MEGA2.LOG and MEGA2.ERR will be used for the log and error files
- produced when reading from the database and performing the analysis.
-\change_unchanged
+ 
+\end_layout
 
+\begin_layout Standard
+Due to the restructuring into an initial database creation phase and a subsequen
+t execution phase that reads from the database, the log and error log files
+ that are created in the first phase while the data are read in and validated
+ will be named MEGA2.DB.LOG and MEGA2.DB.ERR.
+ The names MEGA2.LOG and MEGA2.ERR will be used for the log and error files
+ produced in the second phase when reading from the database and performing
+ the analysis.
 \end_layout
 
 \begin_layout Standard
@@ -44533,19 +44226,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  BE LIABLE FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT
  OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
  THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-\change_inserted -1820302391 1465829577
-
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1465829622
 Acknowledgement of SQLite3
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1465829888
 We have include the SQLite3 database in Mega2; the source code is in the
  srcdir/lib/sqlite3 directory of the Mega2 distribution.
  This code has been minimally modified so as to integrate it with Mega2.
@@ -44554,8 +44241,6 @@ We have include the SQLite3 database in Mega2; the source code is in the
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1465829850
 
 http://www.sqlite.org/
 \end_layout
