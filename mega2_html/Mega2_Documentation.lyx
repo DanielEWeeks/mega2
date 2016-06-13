@@ -1011,8 +1011,21 @@ reference "ext:roadtrips"
 \end_layout
 
 \begin_layout Itemize
-Mega2 now stores its input in an SQLite3 database and fetches data for processin
-g from the SQLite3 database.
+Mega2 now stores its input in an SQLite3 database
+\change_deleted -1820302391 1465837130
+ 
+\change_inserted -1820302391 1465837094
+ 
+\change_unchanged
+and 
+\change_inserted -1820302391 1465837100
+(then) 
+\change_unchanged
+fetches data for processing from the 
+\change_inserted -1820302391 1465837141
+same 
+\change_unchanged
+SQLite3 database.
  (This is explained further in section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1020,8 +1033,44 @@ reference "sub:SQLite3"
 
 \end_inset
 
-.) When reading from a SQLite3 database, Mega2 uses an alternate input menu
- (section 
+.) 
+\change_inserted -1820302391 1465837495
+As a transition, while the database feature is still experimental, it is
+ possible to turn off this feature with the 
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465837485
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-
+\emph default
+DBoff flag and process input as the Mega2 v4.8.2 release did.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1465837280
+Note: Mega2 can now experimentally accept an existing 
+\change_deleted -1820302391 1465837286
+When reading from a
+\change_unchanged
+ SQLite3 database
+\change_inserted -1820302391 1465837315
+ as input.
+ In this case
+\change_unchanged
+, Mega2 uses an alternate input menu (section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-input-menu"
@@ -19549,6 +19598,252 @@ Usage:
  mega2
 \emph default
  [options] [batch-file-name] 
+\change_inserted -1820302391 1465835303
+or
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1465835313
+
+\series bold
+Usage:
+\series default
+\emph on
+ mega2
+\emph default
+ [options] 
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1820302391 1465835367
+Database options: 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Database-options:"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1465835367
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="4in">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835367
+
+\series bold
+flag
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835506
+
+\series bold
+interpretation
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835374
+
+\emph on
+-
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835367
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+DBoff
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835941
+do not dump the database and do not 
+\begin_inset Quotes eld
+\end_inset
+
+exec
+\begin_inset Quotes erd
+\end_inset
+
+ a new copy of Mega2 to run the Mega2 analysis.
+ Proceed as Mega2 v4.8.2 would have.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835402
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835367
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+DBdump
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835983
+create the database and then exit Mega2 do not perform any analysis.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835407
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835367
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+DBread
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465836071
+use the SQLite3 database as input for Mega2 and then proceed to perform
+ batch or interactive Mega2 analysis if a batch file argument was specified
+ or not, respectively.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835447
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835367
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBfile
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1465835839
+specifies an argument which is the path to the SQLite3 database file.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -35538,9 +35833,13 @@ reference "sec:The-alternate-input-menu"
 
 .
 
-\change_inserted -1820302391 1465829171
+\change_inserted -1820302391 1465836865
  NOTE: If a Mega2 run exits with a failure message, the SQLite3 database
  is NOT created.
+ Also, the MEGA2.LOG and MEGA2.ERR files that are created while the data is
+ read-in and validated will be name MEGA2.DB.LOG and MEGA2.DB.ERR instead.
+ The names MEGA2.LOG and MEGA2.ERR will be used for the log and error files
+ produced when reading from the database and performing the analysis.
 \change_unchanged
 
 \end_layout
