@@ -89,6 +89,7 @@
 \html_css_as_file 0
 \html_be_strict false
 \author -1820302391 "Robert V. Baron" 
+\author -1123876542 "Justin" 
 \end_header
 
 \begin_body
@@ -33937,13 +33938,50 @@ name "sub:Detailed-info-MaCHMinimac3"
 This Analysis Menu option
 \series default
  creates a script in order to do imputation using minimac3.
- Mega2 outputs files formatted for MaCH.
- MaCH is a Markov Chain based haplotyper.
- It can resolve long haplotypes in samples of unrelated individuals.
- It is used to pre-phase the data for input into Minimac3 for imputation.
- After MaCH pre-phases the input, then mach2VCF must be run in order to
- convert the phased data into VCF format.
- Finally, Minimac3 performs imputation on the phased VCF file.
+ 
+\change_inserted -1123876542 1465832851
+In order to accomplish this 
+\change_unchanged
+Mega2 outputs files formatted for 
+\change_inserted -1123876542 1465832482
+input into 
+\change_unchanged
+MaCH
+\change_inserted -1123876542 1465832495
+,
+\change_deleted -1123876542 1465832495
+.
+ MaCH is
+\change_unchanged
+ a Markov Chain based haplotyper.
+ 
+\change_inserted -1123876542 1465832870
+MaCH
+\change_deleted -1123876542 1465832868
+It
+\change_unchanged
+ can resolve long haplotypes in samples of unrelated individuals
+\change_inserted -1123876542 1465832504
+, and
+\change_deleted -1123876542 1465832503
+.
+ It
+\change_unchanged
+ is used to pre-phase the data for input into Minimac3 for imputation.
+ After MaCH pre-phases the input,
+\change_deleted -1123876542 1465832517
+ then
+\change_unchanged
+ mach2VCF must be run in order to convert the 
+\change_inserted -1123876542 1465832526
+resultant 
+\change_unchanged
+phased data into VCF format.
+ Finally, Minimac3 performs imputation on the phased VCF file
+\change_inserted -1123876542 1465832537
+ using a reference haplotype file chosen by the user
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Standard
@@ -33955,14 +33993,22 @@ For imputation to work properly, your input data has to be coded so alleles
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1465831870
-XX
-\change_unchanged
 The scripts produced will only work if the required executables have been
- installed on your computer in your path.
+ installed on your computer in your path
+\change_inserted -1123876542 1465832936
+, or if their locations have been set to the environment variables: MACH1,
+ mach2VCF, and MINIMAC3
+\change_unchanged
+.
  The required programs are mach1, mach2VCF, and minimac3.
- Optionally, if you have a multi-processor machine, mach3-omp can be used.
+ Optionally, if you have a multi-processor machine, 
+\change_deleted -1123876542 1465832550
+mach3-omp
+\change_inserted -1123876542 1465832570
+minimac3-omp (a dedicated mult-processor version of minimac3 utilizing the
+ openMP library)
+\change_unchanged
+ can be used.
  
 \end_layout
 
@@ -33979,7 +34025,28 @@ Name:
 \series bold
 Web:
 \series default
- MaCH - http://csg.sph.umich.edu//abecasis/MACH/tour/ Primary 
+ 
+\change_inserted -1123876542 1465832606
+
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1465832611
+
+http://csg.sph.umich.edu//abecasis/MACH/tour/ Primary 
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_deleted -1123876542 1465832609
+MaCH - http://csg.sph.umich.edu//abecasis/MACH/tour/ Primary 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -34040,11 +34107,33 @@ Name
 \series bold
 Web
 \series default
-: http://genome.sph.umich.edu/wiki/Minimac3_Cookbook_:_Converting_Files_to_VCF
+: 
+\change_inserted -1123876542 1465832590
+
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1465832595
+
+http://genome.sph.umich.edu/wiki/Minimac3_Cookbook_:_Converting_Files_to_VCF
+ 
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_deleted -1123876542 1465832593
+http://genome.sph.umich.edu/wiki/Minimac3_Cookbook_:_Converting_Files_to_VCF
  
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -1123876542 1465832576
 
 \series bold
 Primary
@@ -34057,7 +34146,11 @@ References
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -1123876542 1465832576
 Copyright(C) 2009 Regents of University of Michigan 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -34101,10 +34194,31 @@ Name
 \series bold
 Web
 \series default
-: http://genome.sph.umich.edu/wiki/Minimac3 
+: 
+\change_inserted -1123876542 1465832615
+
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1465832620
+
+http://genome.sph.umich.edu/wiki/Minimac3 
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_deleted -1123876542 1465832619
+http://genome.sph.umich.edu/wiki/Minimac3 
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -1123876542 1465832581
 
 \series bold
 Primary
@@ -34117,7 +34231,11 @@ References
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -1123876542 1465832581
 Copyright(C) 2009 Regents of University of Michigan
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -34155,12 +34273,40 @@ Minimac3 is a low memory implementation of previous iterations of the minimac
 ns at no loss to accuracy.
  In order to run Minimac3 however, the user needs to get their data into
  phased vcf or m3vcf files.
- Mega2 will create a pedigree file with family id, individual id, father
- id, mother id, sex, and the series of markers encoded with A, C, T, and
- G.
- Additionally, Mega2 also creates a data file with a list of markers for
+ 
+\change_inserted -1123876542 1465832639
+To do this 
+\change_unchanged
+Mega2 will create 
+\change_inserted -1123876542 1465832659
+3 files: a ped file, a data file, and a snp file.
+ Two files are used by MaCH, the ped and the data file, whereas the snp
+ file is used by mach2VCF.
+ The
+\change_deleted -1123876542 1465832667
+a
+\change_unchanged
+ pedigree file 
+\change_deleted -1123876542 1465832675
+with
+\change_inserted -1123876542 1465832678
+is formatted
+\change_unchanged
+ family id, individual id, father id, mother id, sex, and the series of
+ markers encoded with A, C, T, and G.
+ 
+\change_deleted -1123876542 1465832691
+Additionally, Mega2 also creates a data file with a list of markers for
  MaCH.
- Finally for output data Mega2 creates a 
+
+\change_inserted -1123876542 1465832710
+ The data file is formatted with an M inndicating marker and then the marker
+ number.
+
+\change_unchanged
+ 
+\change_deleted -1123876542 1465832720
+Finally for output data Mega2 creates a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -34169,10 +34315,22 @@ snp file
 \end_inset
 
  with physical positions for mach2VCF.
- Along with these data outputs Mega2 will output shell scripts that run
- MaCH on the pedigree and data file, mach2VCF on the output of MaCH and
- the snp file, and Minimac3 on the on the resultant VCF along with a reference
- haplotype file that has been chosen.
+
+\change_unchanged
+ 
+\change_inserted -1123876542 1465832737
+The snp file contains the chromsome and physical position information in
+ the format chr:pos.
+ 
+\change_unchanged
+Along with these data outputs Mega2 will output shell scripts that run MaCH
+ on the pedigree and data file, mach2VCF on the output of MaCH and the snp
+ file, and Minimac3 on the on the resultant VCF along with a reference haplotype
+ file that has been chosen
+\change_inserted -1123876542 1465832749
+ by the user interface
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Standard
@@ -34197,15 +34355,15 @@ MaCH/Minimac3 Analysis menu:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1820302391 1465831923
-XX
-\change_unchanged
 2) Choose reference haplotype file:                
 \change_deleted -1820302391 1465831915
     
 \change_unchanged
-?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz
+?.1000g.Phase3.v5
+\change_deleted -1123876542 1465832434
+.With.Parameter.Estimates.
+\change_unchanged
+m3vcf.gz
 \end_layout
 
 \begin_layout LyX-Code
@@ -34219,7 +34377,13 @@ Enter options 0-3 > 0
 \begin_layout Standard
 The file name stem menu item can be changed to allow multiple experiments
  to be recorded in the same directory.
- The reference haplotype file menu item can be changed to choose which reference
+ 
+\change_inserted -1123876542 1465832801
+
+\end_layout
+
+\begin_layout Standard
+The reference haplotype file menu item can be changed to choose which reference
  haplotype will be used for imputation by Minimac3.
  A wildcard “?” has been included which will be replaced with the number
  of the chromosome of the specified analysis.
@@ -34281,7 +34445,13 @@ The following files are created by Mega2 for MaCH/Minimac3 for a typical
 The data file contains marker data.
  The ped file is the pedigree file as detailed above.
  The snp file contains the physical positions of snps.
- The 10.sh is an individual chromosome shell.
+ The 
+\change_inserted -1123876542 1465832810
+05
+\change_deleted -1123876542 1465832809
+10
+\change_unchanged
+.sh is an individual chromosome shell.
  The top.sh runs all shells output by a single Mega2 run.
 \end_layout
 
