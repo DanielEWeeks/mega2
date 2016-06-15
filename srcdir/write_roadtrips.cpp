@@ -454,7 +454,7 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
 {
     int i, choice, nl;
     int iarg, igl, ipre, iphen, ish, ioui, ioup, isum, isumf, iprevm, iprevf;
-    int Outfile_Names = 0;
+    int Outfile_named = 0;
     analysis_type analysis = this;
     char selection[MAX_NAMELEN];
     char *selectionp = selection;
@@ -529,7 +529,7 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
             free(file_name_stem);
             file_name_stem = strdup(selection);
             BatchValueSet(file_name_stem, "file_name_stem");
-            Outfile_Names++;
+            Outfile_named++;
             selection[0] = 'n';
             BatchValueSet(selection[0], "Default_Outfile_Names");
 
@@ -565,7 +565,7 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         draw_line();
     }
 
-    if (Outfile_Names == 0) {
+    if (Outfile_named == 0) {
         selection[0] = 'y';
         BatchValueSet(selection[0], "Default_Outfile_Names");
     }
@@ -590,7 +590,6 @@ void CLASS_ROADTRIPS::batch_out()
                        "additional_program_args",
                        "RoadTrips_male_prevalence",
                        "RoadTrips_female_prevalence",
-                       "Loop_Over_Chromosomes",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {

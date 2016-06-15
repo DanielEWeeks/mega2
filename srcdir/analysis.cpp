@@ -211,11 +211,11 @@ void init_analysis()
     char *key;
     for (int i = 0; i < count_analysis_list; i++, al++) {
         key = strdup(al->option_name);
-        for (char *cp = key; *cp; cp++) *cp = tolower(*cp);
+        for (char *cp = key; *cp; cp++) *cp = (char)tolower(*cp);
         P2A[key] = al->analysis;  // key/string from analysis_list item
 
         key = strdup(al->analysis->_name);
-        for (char *cp = key; *cp; cp++) *cp = tolower(*cp);
+        for (char *cp = key; *cp; cp++) *cp = (char)tolower(*cp);
         P2A[key] = al->analysis;  // key/string from CLASS_ANALYSIS subclass
     }
 }
@@ -225,7 +225,7 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
     *analysis = (analysis_type )0;
 
     char *key = strdup(prog_name);
-    for (char *cp = key; *cp; cp++) *cp = tolower(*cp);
+    for (char *cp = key; *cp; cp++) *cp = (char)tolower(*cp);
     analysis_type a = NULL;
     if (map_get(P2A, key, a)) {
         *analysis = a;

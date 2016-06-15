@@ -80,12 +80,11 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle plain
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1123876542 "Justin" 
 \end_header
 
 \begin_body
@@ -3288,19 +3287,13 @@ make
 to compile Mega2.
  The binary that is produced is self contained and will run on any windows
  system.
-\change_inserted -1123876542 1466010784
-
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -1123876542 1466010797
-Analysis Headers
+Analysis Header
 \end_layout
 
 \begin_layout Subsubsection*
-
-\change_inserted -1123876542 1466010797
 Sometimes while working on developing a new analysis mode you may think
  of a feature or ability you'd like to have.
  Before going and building the wheel yourself you should check out some
@@ -3309,101 +3302,162 @@ Sometimes while working on developing a new analysis mode you may think
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466010811
 Some are simple such as loops() which simply enables you to run loops as
  discussed above.
  Some are more compliated and I'll try to explain some of them here.
 \end_layout
 
 \begin_layout Subsection
+loops()
+\end_layout
 
-\change_inserted -1123876542 1466010833
+\begin_layout Standard
+This is probably the most important function to have for your analysis mode.
+ It allows for looping in general.
+\end_layout
+
+\begin_layout Subsection
+Allow_no_traits()/Allow_no_chr
+\end_layout
+
+\begin_layout Standard
+You can use this if you don't want the ability to break up your analysis
+ into different trait folders.
+ Useful if an analysis type doesn't do anything with traits.
+\end_layout
+
+\begin_layout Standard
+Also you can allow no chromsome information if an analysis is able to be
+ run without that information.
+\end_layout
+
+\begin_layout Subsection
+Allele_data_use_name_if_avaialable
+\end_layout
+
+\begin_layout Standard
+Suppose you need to force the use of the Letter names of the Alleles, this
+ requires mega2 to output with them.
+\end_layout
+
+\begin_layout Subsection
+Forbid_sex_linked_loci
+\end_layout
+
+\begin_layout Standard
+If your analysis mode is unable to work on the the X, Y and MT chromsomes
+ you will want to set this to true.
+\end_layout
+
+\begin_layout Subsection
 Ped_ind_defaults(int unique)
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466011821
 This is an interesting function because it defines how person and family
  ids are coded by Mega2 for your analysis mode.
  
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466011825
-// In some instances it is a name string, in others it is a number string
- (e.g., '1-5')
+There are two values in an array as part of this function, OrigIds[0] and
+ OrigIds[1], the 0th entry refers to Pedigree ID chioces, the 1st entry
+ refers to person ID choices.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466011828
-// in the last instance it is the position at which it was encountered in
- the input file
+These effect the way pr_fam and pr_per behave in the entry.cpp file.
+ You can set both OrigIds to int to correspond to different ways of printing
+ IDs according to whatever you need to output.
 \end_layout
 
 \begin_layout Standard
+Pedigree ID choices:
+\end_layout
 
-\change_inserted -1123876542 1466011832
-// OrigIds[1] pedigree...
+\begin_layout Standard
+1=Pedigree field for post-makeped format 
+\end_layout
+
+\begin_layout Standard
+2=Pedigree field for pre-makeped 
+\end_layout
+
+\begin_layout Standard
+3=Consecutive numerical ids for nuclear pedigrees 
+\end_layout
+
+\begin_layout Standard
+6=Original pedigree file id pulled from the input file.
+\end_layout
+
+\begin_layout Standard
+Individual ID choices:
+\end_layout
+
+\begin_layout Standard
+1= Person field for post- or pre-makeped files
+\end_layout
+
+\begin_layout Standard
+2 = Unique Ids 
+\end_layout
+
+\begin_layout Standard
+5 = Consecutively numbered person ids 
+\end_layout
+
+\begin_layout Standard
+3,4 = not used, although these are handled.
+\end_layout
+
+\begin_layout Standard
+6=The person id pulled in from the input file.
+\end_layout
+
+\begin_layout Subsection
+Batch_In, Batch_Out, Batch_Show
+\end_layout
+
+\begin_layout Standard
+These are options you can add to your analysis mode if you ask additional
+ queries of the user.
+ The idea is that you can load in values from MEGA2.BATCH and use them as
+ your user inputs.
  
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466011838
-// OrigIds[1]=={2|4} Ped[i].Name (string) 
+You can define these functions in your analysis mode and then call them
+ at the appropriate time to get information you need or to output information
+ for subsequent runs.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466011840
-// OrigIds[1]=={3} i (int) // OrigIds[1]=={5} Ped[i].Num (string) 
+Inside of Batch_Input.h there are a variety of functions defined to write
+ and read values to and from the Batch file.
+ You can use these for your new batch fields.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466011842
-// OrigIds[0] individual...
- // OrigIds[0]=={1|2} OrigID (string) 
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -1123876542 1466011845
-// OrigIds[0]=={3|4} UniqueID (string) 
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -1123876542 1466011822
-// OrigIds[0]==?; ID (int) extern int OrigIds[2];
+Batch_Show is simply used to display batch values that have been loaded
+ in.
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -1123876542 1466009974
 Debugging Tricks
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466009974
 You'll begin by making sure you have lldb installed.
  You can check if it's already on your machine by typing.
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1466009974
 whereis lldb
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466009974
 If it's not installed you should go and install by following the instructinons
  at 
 \begin_inset CommandInset href
@@ -3417,8 +3471,6 @@ target "http://lldb.llvm.org/build.html"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466009974
 Next you want to go back to your 
 \series bold
 Mega2/srcdir 
@@ -3427,14 +3479,10 @@ now instead type:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1466009974
 make dgb
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466009974
 This calls the flags appropriately so that you can begin debugging.
  From there you can use either lldb directly in the command line or use
  emacs.
@@ -3443,8 +3491,6 @@ This calls the flags appropriately so that you can begin debugging.
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1466009974
 asm(
 \begin_inset Quotes eld
 \end_inset
@@ -3457,15 +3503,11 @@ int $3
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466009974
 This command forces a breakpoint.
  From here you can debug as normal using lldb.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1466010010
 A current goal is to use gdb (or lldb) to debug on Eclipse, so far this
  has not been accomplished.
 \end_layout

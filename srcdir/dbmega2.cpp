@@ -166,6 +166,8 @@ void db_index_all() {
 
 void dbmega2_export(linkage_ped_top *Top)
 {
+    msgvf("Dumping SQLite3 DB\n");
+
     dbmisc_export(Top);
 
     dbbatch_file_export(Top);
@@ -225,6 +227,8 @@ void dbmega2_stat(linkage_ped_top *Top)
 
 void dbmega2_import(linkage_ped_top *Top)
 {
+    msgvf("Reading SQLite3 DB\n");
+
 //    asm("int $3");
     dbmisc_import(Top);
 
@@ -309,7 +313,7 @@ void db_open_db() {
 
     select1("SELECT SQLITE_VERSION();", SQLversion);
 #ifndef HIDEFILE
-    msgvf("SQLITE3 DB (%s) Version = %s\n", DBfile, SQLversion);
+//  msgvf("SQLITE3 DB (%s) Version = %s\n", DBfile, SQLversion);
 #endif
 }
 

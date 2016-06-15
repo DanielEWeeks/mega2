@@ -258,8 +258,8 @@ public:
     }
 
 
-    int prep(const char *sql, int verbose) {
-        return prep(sql, -1, 0, verbose);
+    int prep(const char *sql, int verbose_) {
+        return prep(sql, -1, 0, verbose_);
     }
     int prep(const char *sql, int sqllen, const char * *sqlp, int verbose_) {
         int ret = 0;
@@ -333,8 +333,8 @@ public:
 //      if (ok(sqlite3_open_v2(file, &db, SQLITE_OPEN_READWRITE, 0), "open"))
         if (ok(sqlite3_open(file, &db), "open")) {
 #ifndef HIDEFILE
-            msgvf("DB open (file \"%s\") succeeded. SQLite3 lib version %s\n",
-                  dbfile, sqlite3_libversion());
+//          msgvf("DB open (file \"%s\") succeeded. SQLite3 lib version %s\n",
+//                dbfile, sqlite3_libversion());
 #endif
             ret = 1;
         }
@@ -368,11 +368,11 @@ public:
     }
 
     int exec(const char *sql) {
-        char *err_msg = 0;
+        char *error_msg = 0;
         if (verbose > 2) printf("\n\n");
         if (verbose) printf("exec: %s\n", sql);
-        int ans = sqlite3_exec(db, sql, 0, 0, &err_msg);
-        return (ok(ans, "sqlite3_exec", err_msg));
+        int ans = sqlite3_exec(db, sql, 0, 0, &error_msg);
+        return (ok(ans, "sqlite3_exec", error_msg));
     }
 
     int begin()    { return (autocommit) ? exec("BEGIN TRANSACTION") : 1; }
