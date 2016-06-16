@@ -413,11 +413,18 @@ void CLASS_MACH::create_output_file(
         }
     }
 
-    // Omit pedigrees under certain circumstances...
+    // Omit pedigrees under certain circumstances, this was added to resolve a bug
     omit_peds(untyped_ped_opt, Top);
 
-    //can we just trivially use this function to additionally create plink files for use with shapeit?
-    create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "shapeit", analysis);
+    //So I believe we can use this function to create the general plink output (probably bed,bim etc.)
+    //This appears to be what write_shapeit uses to output the PLINK files for it's use so this shoudl work for our purposes as well
+    //Currently I'm trying to figure out the changes I would need to implement this, then I can change the shell to call these files for shapeit
+    //trying to decide if I should pull this out completely or if it can be an option done in this analysis mode
+
+    //printf("%d\n%d\n",PLINK_SUB_OPTION_SNP_MAJOR_INT-1,PLINK_SUB_OPTION_PED_INT);
+    //char * testfilesnames[10]; s
+
+    create_PLINK_files(&LPedTreeTop, file_names, untyped_ped_opt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, file_name_stem, analysis);
 
 
 //    for (int i = 0; i < allele_count;i++){

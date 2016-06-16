@@ -29,6 +29,7 @@
 #define WRITE_MACH_EXT_H
 
 #include "analysis.h"
+#include "write_plink_ext.h"
 
 
 class CLASS_MACH: public CLASS_ANALYSIS {
