@@ -413,6 +413,12 @@ void CLASS_MACH::create_output_file(
         }
     }
 
+    // Omit pedigrees under certain circumstances...
+    omit_peds(untyped_ped_opt, Top);
+
+    //can we just trivially use this function to additionally create plink files for use with shapeit?
+    create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "shapeit", analysis);
+
 
 //    for (int i = 0; i < allele_count;i++){
 //        current_allele = Allele_Array[i];
