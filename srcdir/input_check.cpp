@@ -79,7 +79,7 @@ static  void    write_reset_summary(ped_top *PTop, loc_list *invalidp,
 				    int imend, int ht, int aexceed,
 				    int uniqueids);
 */
-static void     create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
+void     create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
 
 /* end of prototypes */
 
@@ -209,6 +209,68 @@ SECTION_ERR_INIT(check_oob);
 SECTION_ERR_INIT(check_inheritance);
 SECTION_ERR_INIT(check_sibship_alleles);
 
+int      set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis)
+{
+    int nonuniq;
+    int set_uniq = 0;
+
+    if (LPedTop->UniqueIds && analysis != TO_PAP && analysis != IQLS) {
+        nonuniq = check_unique_ids(LPedTop); 
+/*     if (nonuniq) { */
+/*       set_uniq=1; */
+/*     } */
+    } else {
+        /* Mega2 created unique IDs */
+        nonuniq = 0;
+    }
+
+    if (analysis == TO_PAP || analysis == IQLS) {
+        set_uniq = 1;
+    } else {
+        if (nonuniq) {
+            if (analysis == CRANEFOOT) {
+                set_uniq = 1;
+            } else {
+                set_uniq = 0;
+            }
+        }
+    }
+
+    if (AnalyInputMode == BATCH_FILE_INPUTMODE && BatchValueRead("Default_Set_Uniq")) {
+        char ch = (char)set_uniq;
+        BatchValueIfSet(ch, "Default_Set_Uniq");
+        set_uniq = ch;
+    } else if (AnalyInputMode == INTERACTIVE_INPUTMODE && nonuniq &&
+               analysis != TO_PAP && analysis != CRANEFOOT && analysis != IQLS) {
+        char select_[10];
+        int  select;
+        int menu_item = 0;
+        draw_line();
+        printf("0) Done with this menu - please proceed\n"); menu_item++;
+        printf(" %d) Generate new unique IDs? [%s]\n", menu_item++, yorn[set_uniq]);
+
+        printf("Select from options 0-%d > ", menu_item-1);
+        fcmap(stdin, "%s", select_); newline;
+        sscanf(select_, "%d", &select);
+
+        switch(select) {
+        case 0:
+            break;
+        case 1:
+            if (select == 1)
+                set_uniq = (set_uniq ? 0 : 1);
+            BatchValueSet(yorn[set_uniq][0], "Default_Set_Uniq");
+            batchf("Default_Set_Uniq");
+            break;
+        default:
+            printf("Unknown option %s\n", select_);
+            break;
+        }
+    }
+        
+    return set_uniq;
+}
+
 ped_status      PedStat;
 void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 		     analysis_type analysis)
@@ -220,7 +282,6 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     int             aexceed, imend, hmend, freq_mis;
     int             chk_aexceed, chk_imend, chk_hmend;
     int             set_uniq=0, nonuniq;
-
     register locus_top *LTop = Top->LocusTop;
     char            select_[10];
     char            toggle_str[50];
@@ -742,12 +803,13 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         Display_Errors=1;
     }
 
-    Tod tod_uniq("create_unique_id");
-    if (set_uniq) {
-        /* Create unique IDs */
-        create_unique_ids(LPedTop, analysis);
+    /* Create unique IDs */
+    if (! database_dump) {
+        Tod tod_uniq("create_unique_id");
+        if (set_uniq)
+            create_unique_ids(LPedTop, analysis);
+        tod_uniq();
     }
-    tod_uniq();
 
     if (PedStat.genotype_invalid || PedStat.halftyped || PedStat.exceed_allcnt) {
         log_line(mssgf);
@@ -869,7 +931,7 @@ void            check_renumber_ped(ped_tree *Ped)
         }
 }
 
-static void     create_unique_ids(linkage_ped_top *Top, analysis_type analysis)
+void     create_unique_ids(linkage_ped_top *Top, analysis_type analysis)
 
 {
     int ped, per;
