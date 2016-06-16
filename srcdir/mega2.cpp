@@ -388,7 +388,6 @@ extern file_format check_locus_file_format(FILE *input_files);
    be freed safely */
 
 static void    init_globals(char *argv0)
-
 {
     int i;
     char *path_end, *p;
@@ -1216,27 +1215,43 @@ int             main(int argc, char **argv, char **env)
     if (database_dump && database_read) {
         int i, j;
         char *name = argv[0];
-        char **argvn = CALLOC((size_t) argc+4, char *);
+        char **argvn = CALLOC((size_t) argc+6, char *);
         argvn[0] = argv[0];
         argvn[1] = (char *)"--dbread";
         j = 2;
-        if (InputMode == INTERACTIVE_INPUTMODE) {
-            argvn[j++] = (char *)"--interactive";
-            argvn[j++] = Mega2Batch;
-        } else if (InputMode == BATCH_FILE_INPUTMODE) {
+
+        if (InputMode == BATCH_FILE_INPUTMODE)
             argvn[j++] = (char *)"--batch_file";
-        }
+        else if (InputMode == INTERACTIVE_INPUTMODE)
+            argvn[j++] = (char *)"--interactive";
+
+        argvn[j++] = (char *)"--run_date";
+        argvn[j++] = RunDate;
+
         for (i = 1; i < argc; i++) {
             if (strcmp(argv[i], "--dbdump") && strcmp(argv[i], "--dbread"))
                 argvn[j++] = argv[i];
         }
+
+        if (InputMode == INTERACTIVE_INPUTMODE)
+            argvn[j++] = Mega2Batch;
+
         argvn[j++] = 0;
-#ifdef _WIN
-        _execvp(name, argvn);
+        int eans = 0;
+        fflush(stdin);
+        fflush(stdout);
+        fflush(stderr);
+        close_logs();
+#if defined(_WIN) || defined(MINGW)
+        eans = _spawnvpe(P_WAIT, name, argvn, env);
+        exit(eans);
 #else
-        execvp(name, argvn);
+        eans = execvp(name, argvn);
 #endif
+        printf("exec failed: eans = %d, errno %d\n", eans, errno);
+        fflush(stdout);
     }
+
     InputMode = AnalyInputMode;  //What was it before the exec
     // Create the data files, and then the shell scripts...
     Tod tod_out("create_output_files");

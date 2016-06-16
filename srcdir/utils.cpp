@@ -1906,6 +1906,9 @@ void mega2_opts(int argc, char **argv)
                     AnalyInputMode = INTERACTIVE_INPUTMODE;
                 } else if (strcasecmp(as, "batch_file") == 0) {
                     AnalyInputMode = BATCH_FILE_INPUTMODE;
+                } else if (strcasecmp(as, "run_date") == 0) {
+		    argv++; --argc;
+		    strcpy(RunDate, *argv);
                 } else if ( (strcasecmp(as, "autosome") == 0) || (strcasecmp(as, "pseudo") == 0) ||
                      (strcasecmp(as, "mito") == 0)) {
                     int tmp;
