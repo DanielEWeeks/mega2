@@ -414,6 +414,10 @@ void CLASS_MACH::create_output_file(
     }
 
 
+    // Omit pedigrees under certain circumstances...
+    omit_peds(untyped_ped_opt, Top);
+
+
 //    for (int i = 0; i < allele_count;i++){
 //        current_allele = Allele_Array[i];
 //        allele_name = current_allele->name;
