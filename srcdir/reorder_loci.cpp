@@ -1042,7 +1042,9 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
        this may contain an item = -1 denoting the position of markers
     */
     /* define_affection labels  use the global_trait_entries */
-    define_affection_labels(Top, *analysis);
+    if (! database_dump) {
+        define_affection_labels(Top, *analysis);
+    }
 
     /* changed set_missing_quant_input and write_quant_stats to use global_trait_entries as well */
     set_missing_quant_input(Top, *analysis);
