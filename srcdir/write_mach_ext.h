@@ -32,9 +32,9 @@
 #include "write_plink_ext.h"
 
 
-class CLASS_MACH: public CLASS_ANALYSIS {
+class CLASS_MACH: public CLASS_PLINK {
 public:
-    CLASS_MACH() : CLASS_ANALYSIS() {
+    CLASS_MACH() : CLASS_PLINK() {
         _name = "MACH";
         file_name_stem = strdup("mach");
     }

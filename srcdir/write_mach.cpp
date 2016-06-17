@@ -56,6 +56,8 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
 
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]);
 
+//static void write_pedsix_file(linkage_ped_top *Top, char *file_names[] , const int pwid, const int fwid);
+
 static void inner_file_names(char **file_names, const char *num, const char *stem = "mach");
 
 int g_cpus =1;
@@ -357,6 +359,54 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
     delete mach_shs;
 }
 
+
+////take from write_shapeit_files to write a simple ped file for shapeit input
+////this may get moved to a sperate analaysis mode but is here while I'm trying it out
+//static void write_pedsix_file(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
+//{
+//    vlpCLASS(plink_pedsix,chr,ped_per_loci) {
+//        vlpCTOR(plink_pedsix,chr,ped_per_loci) { }
+//
+//        typedef char *str;
+//        str *file_names;
+//
+//        void file_loop() {
+//            mssgvf("        PLINK pedigree file:       %s/%s\n", *_opath, file_names[6]);  //fam
+//            data_loop(*_opath, file_names[6], "w");
+//        }
+//
+//        void per_start(){
+//#if 0
+//            if (PLINK_OUT.no_fid != 1) pr_fam();
+//            pr_per();
+//            if (PLINK_OUT.no_parents != 1) pr_parent(); // father-id & mother-id
+//            if (PLINK_OUT.no_sex != 1) pr_sex();
+//            if (PLINK_OUT.no_pheno != 1) pr_pheno();
+//#endif
+//            pr_uid();
+//            pr_parent();
+//            pr_sex();
+//            pr_pheno();
+//        }
+//
+//        void per_end() {
+//            pr_nl();
+//        }
+//
+//        void inner() {
+//            pr_marker();
+//        }
+//    } *sp = new plink_pedsix(Top);
+//
+//    sp->file_names = file_names;
+//
+//    sp->load_formats(fwid, pwid, -1);
+//
+//    sp->iterate();
+//
+//    delete sp;
+//}
+
 void CLASS_MACH::create_output_file(
         linkage_ped_top *LPedTreeTop,
         analysis_type *analysis,
@@ -424,7 +474,7 @@ void CLASS_MACH::create_output_file(
     //printf("%d\n%d\n",PLINK_SUB_OPTION_SNP_MAJOR_INT-1,PLINK_SUB_OPTION_PED_INT);
     //char * testfilesnames[10]; s
 
-    create_PLINK_files(&LPedTreeTop, file_names, untyped_ped_opt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, file_name_stem, analysis);
+    create_PLINK_files(&LPedTreeTop, file_names, untyped_ped_opt, PLINK_SUB_OPTION_SNP_MAJOR_INT, file_name_stem, analysis);
 
 
 //    for (int i = 0; i < allele_count;i++){
@@ -452,6 +502,8 @@ void CLASS_MACH::create_output_file(
     write_MACH_peds(Top, file_names, pwid, fwid);
 
     write_MACH_snps(Top, file_names, pwid, fwid);
+
+    //write_pedsix_file(Top, file_names, pwid, fwid);
 
     write_MACH_sh(Top, file_names);
 
@@ -560,6 +612,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[2], "%s.%s.sh", stem, num);
     sprintf(file_names[3], "%s.top.sh", stem);
     sprintf(file_names[4], "%s_snps.%s", stem,num);
+    //sprintf(file_names[6], "%s_pedsix.%s", stem, num);
 }
 
 void CLASS_MACH::gen_file_names(char **file_names, char *num)
@@ -572,6 +625,7 @@ void CLASS_MACH::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[1], numchr);
     change_output_chr(file_names[2], numchr);
     change_output_chr(file_names[4], numchr);
+    //change_output_chr(file_names[6], numchr);
 }
 
 void CLASS_MACH::batch_out()
