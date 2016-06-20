@@ -25,64 +25,43 @@
 
 */
 
-#ifndef WRITE_MACH_EXT_H
-#define WRITE_MACH_EXT_H
+#ifndef WRITE_MINIMAC_EXT_H
+#define WRITE_MINIMAC_EXT_H
 
 #include "analysis.h"
 #include "write_plink_ext.h"
 
 
-class CLASS_MACH: public CLASS_ANALYSIS {
+class CLASS_MINIMAC: public CLASS_PLINK {
 public:
-    CLASS_MACH() : CLASS_ANALYSIS() {
-        _name = "MACH";
-        file_name_stem = strdup("mach");
+    CLASS_MINIMAC() : CLASS_PLINK() {
+        _name = "MINIMAC";
+        file_name_stem = strdup("minimac");
     }
-    ~CLASS_MACH() {}
 
-//	virtual bool allow_affection_liability_class()  { return true; }
-//  virtual bool allow_no_aff_trait()     { return true; }
-//	virtual bool allow_no_chr()     { return true; }
-    virtual bool allow_no_trait()  { return true; }
-/*
- *  turn off suboptions until there is a good use for them
-    virtual bool has_sub_options()  { return true; }
-    virtual bool is_sub_option()  { return true; }
- */
+    ~CLASS_MINIMAC() { }
+
+    virtual bool allow_no_trait() { return true; }
 
 
-    virtual bool loops()  { return true; }
+    virtual bool loops() { return true; }
+
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
 
-    //new methods to hide these menus
     virtual bool no_missing_menu() { return true; }
+
     virtual bool no_trait_covariate_menu() { return true; }
 
-    //gives an error if user selects X,Y,etc.
-    virtual bool forbid_sex_linked_loci()  { return true; }
+    virtual bool forbid_sex_linked_loci() { return true; }
 
-    // missing values are always replaced with an '-'
-
-
-//  virtual bool output_quant_can_define_missing_value() { return false; }
-//	virtual const char* output_quant_default_value() { return " - "; }
-//	virtual const char* output_affect_default_value() { return "0"; }
-//	virtual bool output_affect_must_be_numeric() { return true; }
-
-    virtual bool require_physical_map()  { return false; }
+    virtual bool require_physical_map() { return false; }
 
     virtual bool allele_data_use_name_if_available() { return true; }
 
-/*	virtual bool skip_trait(linkage_locus_top *LocusTop, int trait)  {
-		return (LocusTop->Locus[trait].Type != AFFECTION);
-	}
- */
-
-    virtual void ped_ind_defaults(int unique)  {
+    virtual void ped_ind_defaults(int unique) {
         OrigIds[0] = 6; /* Keeps Per ID that was input*/
         OrigIds[1] = 6; /* Keeps Ped ID that was input*/
     }
-
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
                             analysis_type *analysis,
@@ -90,7 +69,7 @@ public:
                             int untyped_ped_opt,
                             int *numchr, linkage_ped_top **Top2);
 
-    void mach_option_menu (char *file_names[],char *prefix);
+    void minimac_option_menu(char *file_names[], char *prefix);
 
     void gen_file_names(char **file_names, char *num);
 
@@ -107,6 +86,6 @@ public:
 };
 
 
-extern CLASS_MACH            *MACH;
+extern CLASS_MINIMAC            *MINIMAC;
 
 #endif

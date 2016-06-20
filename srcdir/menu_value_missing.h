@@ -415,6 +415,8 @@ Missing_Value  missing_values[] = {
       /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
 
     { "Mach format",              MACH,},
+
+    { "Miminac format",              MINIMAC,},
 };
 
 int count_missing_values = sizeof (missing_values) / sizeof (Missing_Value);

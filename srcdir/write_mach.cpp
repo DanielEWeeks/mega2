@@ -474,7 +474,7 @@ void CLASS_MACH::create_output_file(
     //printf("%d\n%d\n",PLINK_SUB_OPTION_SNP_MAJOR_INT-1,PLINK_SUB_OPTION_PED_INT);
     //char * testfilesnames[10]; s
 
-    create_PLINK_files(&LPedTreeTop, file_names, untyped_ped_opt, PLINK_SUB_OPTION_SNP_MAJOR_INT, file_name_stem, analysis);
+    //create_PLINK_files(&LPedTreeTop, file_names, untyped_ped_opt, PLINK_SUB_OPTION_SNP_MAJOR_INT, file_name_stem, analysis);
 
 
 //    for (int i = 0; i < allele_count;i++){
