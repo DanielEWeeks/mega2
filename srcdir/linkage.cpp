@@ -326,7 +326,9 @@ void            clear_lpedrec(linkage_ped_rec *Entry)
     Entry->Pheno = NULL;
     Entry->Marker = NULL;
     Entry->TmpData = NULL;
+    Entry->Orig_status = 0;
     Entry->Ngeno = 0;
+    Entry->IsTyped  = 0;
     strcpy(Entry->OrigID, "");
     strcpy(Entry->PerPre, "");
     strcpy(Entry->FamName, "");
@@ -345,6 +347,8 @@ void            clear_lpedtree( linkage_ped_tree *Ped)
     Ped->Num = UNDEF;
     Ped->EntryCnt = 0;
     Ped->Entry = NULL;
+    Ped->OriginalID = 0;
+    Ped->IsTyped  = 0;
     Ped->Proband = UNDEF;
     Ped->Loops = NULL;
 }
