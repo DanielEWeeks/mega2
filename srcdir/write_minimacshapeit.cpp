@@ -52,6 +52,8 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]);
 
 static void inner_file_names(char **file_names, const char *num, const char *stem = "minimac");
 
+extern int g_cpus;
+
 void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
     int pwid, fwid, mwid;
     linkage_ped_top *Top = LPedTreeTop;
@@ -65,7 +67,7 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     omit_peds(untyped_ped_opt, Top);
 
     create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "minimac", analysis);
-    save_bed_file();
+    //save_bed_file();
 
 
     for(int i = 0; i<16; i++){
@@ -82,7 +84,6 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
 
 // Format of file:
 // CHR:PhysicalMapDistance
-// Needed to create this file for mach2VCF as an input
 static void write_MINIMAC_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
 {
     vlpCLASS(minimac_snp,chr,loci) {
@@ -115,6 +116,144 @@ static void write_MINIMAC_snps(linkage_ped_top *Top, char *file_names[], const i
 
 static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
 
+    int top_shell = 1;
+
+    dataloop::sh_exec *sh = 0;
+    if (top_shell) {
+        sh = new dataloop::sh_exec(Top);
+        sh->filep_open(output_paths[0], file_names[12], "w");
+        sh->sh_main();
+    }
+
+    vlpCLASS(minimac_sh, both, sh_exec) {
+        vlpCTOR(minimac_sh, both, sh_exec) { }
+
+        void file_loop() {
+            mssgvf("     Minimac Shell File:         %s/%s\n", *_opath, file_names[11]);
+            data_loop(*_opath, file_names[11], "w");
+        }
+
+        typedef char *str;
+        str *file_names;
+        sh_exec *sh;
+        bool has_x;
+
+        void file_header() {
+            if (sh)
+                sh->sh_sh(this);
+            sh_shell_type();
+            sh_id();
+            script_time_stamp(_filep);
+#ifdef RUNSHELL_SETUP
+            // This handles the environment variable setup to allow the checking
+	    // functions in 'batch_run' to work correctly...
+	    fprintf_env_checkset_csh(_filep, "_MINIMAC", "minimac");
+#endif /* RUNSHELL_SETUP */
+        }
+        void inner() {
+            char cmd1[2*FILENAME_LENGTH];
+            //char cmd2[2*FILENAME_LENGTH];
+            char cmd3[2*FILENAME_LENGTH];
+
+            //get our program names from sh_find_pgm instead of having them static and hoping they're on the path
+            sprintf(cmd1, "%s/%s", "SHAPEIT", "shapeit");
+            sh_find_pgm("SHAPEIT", cmd1, "shapeit");
+            sprintf(cmd1, "$%s_program ", "shapeit");
+
+            //we can make the split between minimac3 and minimac3-omp here instead
+            if (g_cpus == 1) {
+                sprintf(cmd3, "%s/%s", "MINIMAC3", "minimac3");
+                sh_find_pgm("MINIMAC3", cmd3, "minimac3");
+                sprintf(cmd3, "$%s_program ", "minimac3");
+            }
+
+            if (g_cpus > 1) {
+                sprintf(cmd3, "%s/%s", "MINIMAC3OMP", "minimac3-omp");
+                sh_find_pgm("MINIMAC3OMP", cmd3, "minimac3-omp");
+                sprintf(cmd3, "$%s_program ", "minimac3-omp");
+            }
+
+            pr_nl();
+            pr_printf ("#use mega2 plink formatted output to run shapeit checks\n");
+            pr_printf ("%s -check --input-bed %s %s %s --output-log Chr%d.checks",cmd1,"chr.bed","chr.bim","chr.fam",_numchr,_numchr);
+            pr_nl();
+            pr_nl();
+
+            pr_printf ("#use mega2 plink formatted output to run shapeit convert\n");
+            pr_printf ("%s -convert --input-bed %s %s %s --output-vcf Chr%d.Phased.Output.VCF.format.vcf.gz --thread %d",cmd1,"chr.bed","chr.bim","chr.fam",_numchr,g_cpus);
+            pr_nl();
+            pr_nl();
+
+            // hapsplit;
+            //split(hapsplit, file_names[5], "?");
+
+            str test = "test";
+
+            //remove this once input is placed back in.
+            if (g_cpus == 1)
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, test,_numchr,test,_numchr,_numchr,_numchr);
+            if (g_cpus > 1)
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, test,_numchr,test ,_numchr,_numchr,_numchr,g_cpus);
+
+//            if (g_cpus == 1)
+//                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr);
+//            if (g_cpus > 1)
+//                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
+
+        }
+        //finds the program to run dynamically and gives an error if it can't be found.
+        void sh_find_pgm(const char *NAME, const char *fullpath, const char *path) {
+            pr_printf("if ( $?%s  ) then\n", NAME);
+            pr_printf("  set %s_def=1\n", NAME);
+            pr_printf("else\n");
+            pr_printf("  set %s_def=0\n", NAME);
+            pr_printf("endif\n");
+            pr_printf("echo\n");
+            pr_printf("if ( \"`type -t %s`\" == \"file\" ) then\n", path);
+            pr_printf("  echo set %s_program=`type -p %s`\n", path, path);
+            pr_printf("  set %s_program=`type -p %s`\n", path, path);
+            pr_printf("else if ( $%s_def && -x \"%s\" ) then\n", NAME, fullpath);
+            pr_printf("  echo set %s_program=%s\n", path, fullpath);
+            pr_printf("  set %s_program=%s\n", path, fullpath);
+            pr_printf("else\n");
+            pr_printf("  echo The %s executable was not found - \n", fullpath);
+            pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", NAME, path);
+            pr_printf("  echo\n");
+            pr_printf("    if (! $%s_def) then\n", NAME);
+            pr_printf("      echo %s is not defined.\n", NAME);
+            pr_printf("    else\n");
+            pr_printf("      echo %s is set to \"$%s\".\n", NAME, NAME);
+            pr_printf("    endif\n");
+            pr_printf("  echo\n");
+            pr_printf("  echo If using Bash and ksh you would use something like this:\n");
+            pr_printf("  echo export %s=dir_to_%s\n", NAME, path);
+            pr_printf("  echo\n");
+            pr_printf("  echo If using csh you would use something like this:\n");
+            pr_printf("  echo setenv %s dir_to_%s\n", NAME, path);
+            pr_printf("  echo\n");
+            pr_printf("  echo\n");
+            pr_printf("  echo \"For further details, please see Shapeit/Minimac3 section of the Mega2 documentation.\"\n");
+            pr_printf("  exit 0\n");
+            pr_printf("endif\n");
+            pr_nl();
+        }
+
+    } *minimac_shs = new minimac_sh(Top);
+
+    minimac_shs->file_names = file_names;
+
+    minimac_shs->sh         = sh;
+    minimac_shs->iterate();
+
+    if (top_shell) {
+        mssgvf("     MaCH Top Shell File:     %s/%s\n", output_paths[0], file_names[12]);
+        mssgvf("     The above shell runs all shells.\n");
+
+        sh->filep_close();
+        delete sh;
+    }
+
+    delete minimac_shs;
 }
 
 
@@ -126,6 +265,8 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
 
 static void inner_file_names(char **file_names, const char *num, const char *stem) {
     sprintf(file_names[10], "%s_snps.%s", stem,num);
+    sprintf(file_names[11], "%s.%s.sh", stem, num);
+    sprintf(file_names[12], "%s.top.sh", stem);
 }
 
 void CLASS_MINIMAC::gen_file_names(char **file_names, char *num){
@@ -134,6 +275,8 @@ void CLASS_MINIMAC::gen_file_names(char **file_names, char *num){
 
 void CLASS_MINIMAC::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[10], numchr);
+    change_output_chr(file_names[11], numchr);
+    change_output_chr(file_names[12], numchr);
 }
 
 void CLASS_MINIMAC::batch_out()
