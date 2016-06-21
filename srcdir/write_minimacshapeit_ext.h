@@ -69,6 +69,8 @@ public:
                             int untyped_ped_opt,
                             int *numchr, linkage_ped_top **Top2);
 
+    void user_queries(char **file_names_array, int *combine_chromo, int *create_summary);
+
     void minimac_option_menu(char *file_names[], char *prefix);
 
     void gen_file_names(char **file_names, char *num);

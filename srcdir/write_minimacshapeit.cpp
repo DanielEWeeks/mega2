@@ -256,7 +256,9 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
     delete minimac_shs;
 }
 
+void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary){
 
+}
 
 //this will create and parse the options
 void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
