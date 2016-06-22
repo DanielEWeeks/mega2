@@ -56,7 +56,13 @@ extern int g_cpus;
 
 void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
     int pwid, fwid, mwid;
+    char prefix[100];
     linkage_ped_top *Top = LPedTreeTop;
+
+
+    if ( InputMode == INTERACTIVE_INPUTMODE ) {
+        minimac_option_menu(file_names,prefix);
+    }
 
     int combine_chromo = 0;
     LoopOverChrm  = ! combine_chromo;
@@ -66,15 +72,15 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
 
     omit_peds(untyped_ped_opt, Top);
 
-    create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "minimac", analysis);
-    //save_bed_file();
+    field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
+    (*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
+    create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "minimac", analysis);
 
     for(int i = 0; i<16; i++){
         printf("%s\n",file_names[i]);
     }
 
-    field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
     printf("Mega2 created the following file(s) for SHAPEIT/Minimac3:\n");
     write_MINIMAC_snps(Top, file_names, pwid, fwid);
@@ -256,13 +262,105 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
     delete minimac_shs;
 }
 
-void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary){
+void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary) {
 
+    printf("HERE");
+    //(*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
 }
 
-//this will create and parse the options
+//need to switch some of the inputs for shapeit
 void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
+    int done, hap, cpus, choice, renamed, stem;
+    done = 0;
+    stem = 1;
+    hap = 2;
+    cpus = 3;
+    choice = -1;
+    renamed = 0;
 
+    strcpy(prefix, file_name_stem);
+
+    char hap_file_input[255];
+    Vecs hapsplit;
+    haplotype_post = ".1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
+
+    while (choice != 0) {
+        draw_line();
+        printf("Shapeit/Minimac3 Analysis Menu:\n");
+        printf("%d) Done with this menu - please proceed\n",done);
+        printf("%d) File name stem:                                     %-15s\n", stem, prefix);
+        printf("%d) Choose reference haplotype file:                    %s?%s\n", hap, haplotype_pre.c_str(), haplotype_post.c_str());
+        printf("%d) Number of CPUS for Minimac3 Imputation:             %d\n",    cpus, g_cpus);
+        printf("Enter selection: 0 - %d > ",3);
+
+        fcmap(stdin,"%d", &choice); newline;
+
+        if ( choice < done ) {
+            printf("Unknown option %d\n", choice);
+        }
+
+        else if ( choice == done ) {
+            if (!renamed)
+                strcpy (hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
+
+            BatchValueSet (g_cpus, "mach_batch_cpu_count");
+
+            free(file_name_stem);
+            file_name_stem = strdup(prefix);
+            BatchValueSet(file_name_stem, "file_name_stem");
+        }
+
+        else if ( choice == stem ) {
+            printf("Enter new file name stem > ");
+            fcmap(stdin, "%s", prefix);
+            newline;
+            inner_file_names(file_names, "", prefix);
+        }
+
+        else if ( choice == hap ) {
+            while (1) {
+                printf("Enter reference haplotype file name >\n");
+                printf(" Reserve space for the chromosome number with a ? > ");
+
+                fcmap(stdin, "%s", &hap_file_input);
+                newline;
+                split(hapsplit, hap_file_input, "?");
+
+                if (hapsplit.size() != 2) {
+                    printf("Please include one and only one ? in the file name\n");
+                    continue;
+                }
+
+                haplotype_pre = hapsplit[0];
+                haplotype_post = hapsplit[1];
+                renamed =1;
+                break;
+            }
+        }
+
+        else if ( choice == cpus ) {
+            while (1) {
+                printf("Number of CPUS for Minimac3 imputation > ");
+                fcmap(stdin, "%d", &g_cpus);
+                newline;
+
+                if (g_cpus < 1){
+                    printf("Please enter a valid number of cpus\n");
+                    continue;
+                }
+
+                break;
+            }
+        }
+
+        else {
+            printf("Unknown option %d\n", choice);
+        }
+    }
+
+    sprintf(file_names[5], "%s", hap_file_input);
+    mach_reference_haplotype_file = hap_file_input;
+    BatchValueSet (mach_reference_haplotype_file, "mach_reference_haplotype_file");
 }
 
 static void inner_file_names(char **file_names, const char *num, const char *stem) {

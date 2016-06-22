@@ -41,8 +41,9 @@ public:
 
     ~CLASS_MINIMAC() { }
 
-    virtual bool allow_no_trait() { return true; }
+    bool has_sub_options()    { return true; }
 
+    virtual bool allow_no_trait() { return true; }
 
     virtual bool loops() { return true; }
 
