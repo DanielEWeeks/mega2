@@ -927,7 +927,7 @@ int check_locus(locus_rec *Locus,
                 Locus->LocusName);
         errorf(messg);
         retval= 2;
-    } else if (analysis != TO_PLINK) {
+    } else if (analysis != TO_PLINK && (database_dump == 0 && database_read == 0))  {
         /*  check allele frequencies (only if not PLINK) */
         for (allele = 0; allele < Locus->AlleleCnt; allele++) {
             // I can't remember which analysis programs didn't like it when some alleles had a

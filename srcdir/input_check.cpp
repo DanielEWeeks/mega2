@@ -271,6 +271,59 @@ int      set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis)
     return set_uniq;
 }
 
+void allelecnt_check(linkage_ped_top *Top, analysis_type analysis)
+{
+
+    Tod tod_ac("AlleleCnt check");
+    register linkage_locus_top *LTop = Top->LocusTop;
+    int plink_locus_num = LTop->MarkerCnt;
+    int first_time=1;
+    int locus = 0;
+
+    SECTION_ERR_INIT(not_bialleleic);
+
+    strcpy(err_msg, "");
+    for (locus = LTop->PhenoCnt; locus < LTop->LocusCnt; locus++) {
+        if (LTop->Locus[locus].AlleleCnt > 2) {
+            plink_locus_num--;
+
+            if (strlen(err_msg) >= 67) {
+                SECTION_ERR(not_bialleleic);
+                warnf(err_msg);
+                strcpy(err_msg, LTop->Locus[locus].LocusName);
+            } else if (first_time) {
+
+                SECTION_ERR(not_bialleleic);
+                warnf("Excluding these markers because they have more than 2 alleles.");
+                SECTION_ERR_HEADER(not_bialleleic);
+
+                strcpy(err_msg, LTop->Locus[locus].LocusName);
+                first_time = 0;
+            } else {
+                grow(err_msg, ", %s", LTop->Locus[locus].LocusName);
+            }
+        }
+    }
+    if (strlen(err_msg) > 0) {
+        SECTION_ERR(not_bialleleic);
+        warnf(err_msg);
+    }
+    SECTION_ERR_FINI(not_bialleleic);
+
+    tod_ac();
+
+    if (analysis == TO_PLINK && plink_locus_num <= 0) {
+        errorvf("No valid marker loci for PLINK to analyze, terminating Mega2!\n");
+        EXIT(OUTPUT_FORMAT_ERROR);
+    }
+
+    if (analysis == IQLS && plink_locus_num <= 0) {
+        errorvf("No valid marker loci for IQLS to analyze, terminating Mega2!\n");
+        EXIT(OUTPUT_FORMAT_ERROR);
+    }
+
+}
+
 ped_status      PedStat;
 void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 		     analysis_type analysis)
@@ -322,50 +375,13 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
     tod_cl();
 
-    Tod tod_ac("AlleleCnt check");
-    if ((analysis == TO_PLINK || analysis == IQLS) && plink_locus_num < LTop->LocusCnt) {
-        int first_time=1;
-        SECTION_ERR_INIT(not_bialleleic);
-        SECTION_ERR(not_bialleleic);
-        warnf("Excluding these markers because they have more than 2 alleles.");
-        SECTION_ERR_HEADER(not_bialleleic);
-        strcpy(err_msg, "");
-        for (locus = 0; locus < LTop->LocusCnt; locus++) {
-            if (LTop->Locus[locus].AlleleCnt > 2) {
-                if (strlen(err_msg) >= 67) {
-                    SECTION_ERR(not_bialleleic);
-                    warnf(err_msg);
-                    strcpy(err_msg, LTop->Locus[locus].LocusName);
-                } else if (first_time) {
-                    strcpy(err_msg, LTop->Locus[locus].LocusName);
-                    first_time = 0;
-                } else {
-                    grow(err_msg, ", %s", LTop->Locus[locus].LocusName);
-                }
-            }
-        }
-        if (strlen(err_msg) > 0) {
-            SECTION_ERR(not_bialleleic);
-            warnf(err_msg);
-        }
-        SECTION_ERR_FINI(not_bialleleic);
-    }
-    tod_cl();
+    if (! database_dump)
+        if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */)
+            allelecnt_check(LPedTop, analysis);
 
     if (abortl > 0 && abortl <= 4) {
         loc_err=1;
     }
-
-    if (analysis == TO_PLINK && plink_locus_num <= 0) {
-        errorvf("No valid marker loci for PLINK to analyze, terminating Mega2!\n");
-        EXIT(OUTPUT_FORMAT_ERROR);
-    }
-
-    if (analysis == IQLS && plink_locus_num <= 0) {
-        errorvf("No valid marker loci for IQLS to analyze, terminating Mega2!\n");
-        EXIT(OUTPUT_FORMAT_ERROR);
-    }
-
 
     printf("Done checking locus integrity.\n");
     if (Display_Errors == 0) {

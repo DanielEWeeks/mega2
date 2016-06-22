@@ -110,6 +110,7 @@
 #endif
 #include <math.h>
 #include <ctype.h>
+#include <errno.h>
 #ifdef _WIN
 #include <process.h>
 #endif
@@ -892,8 +893,7 @@ int             main(int argc, char **argv, char **env)
     }
 #endif
 
-    if ( ! analysis->no_missing_menu() )
-        Value_Missing_get(&analysis);  // needed before file read
+    Value_Missing_get(&analysis);  // needed before file read
 
 #ifndef HIDESTATUS
     int guess;
@@ -933,6 +933,7 @@ int             main(int argc, char **argv, char **env)
     if (!database_dump && database_read) {
         extern void dbmega2_import(linkage_ped_top *Top);
         extern int set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis);
+        extern void allelecnt_check(linkage_ped_top *Top, analysis_type analysis);
 
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -963,6 +964,9 @@ int             main(int argc, char **argv, char **env)
             extern void create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
             create_unique_ids(LPedTreeTop, analysis);
         }
+        if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */)
+            allelecnt_check(LPedTreeTop, analysis);
+
 
 //      Mega2OutputPath = strdup((char *)".");
 

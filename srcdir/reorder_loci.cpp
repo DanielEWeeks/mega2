@@ -871,17 +871,6 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
             
             //map_num = 0;
             if (Top->EXLTop != NULL) {
-#if 0
-                if (*analysis == TO_PLINK || *analysis == IQLS) {
-                    /* Set the default map to the first physical map found */
-                    for (i = 0; i < Top->EXLTop->MapCnt; i++) {
-                        if (Top->EXLTop->map_functions[i] == 'p') {
-                            map_num = i;
-                            break;
-                        }
-                    }
-                }
-#endif /* 0 */
                 if (*analysis == TO_PLINK || *analysis == IQLS) {
                     // in these analysis, a physical map is required...
                     if (base_pair_position_index != -2) {
@@ -898,7 +887,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
                 }
             }
 
-	  if (map_num >= 0) {
+            if (map_num >= 0) {
             while (selection != 0) {
                 // ==========================================================
                 // Locus Reordering Menu
@@ -4353,22 +4342,7 @@ static void get_map_num(int *map_num, ext_linkage_locus_top *EXLTop,
     if (m < 1 || m > EXLTop->MapCnt) {
         warn_unknown(mapnums);
     } else {
-/*     if (EXLTop->map_functions[m-1] == 'h' || EXLTop->map_functions[m-1] == 'k') { */
-/*       if (analysis != TO_PLINK) { */
-/* 	*map_num = m-1; */
-/*       } */
-/*       else { */
-/* 	printf("Only physical maps allowed for option %s\n", ProgName); */
-/*       } */
-/*     } */
-/*     else if (EXLTop->map_functions[m-1] == 'p') { */
-/*       if (analysis == TO_PLINK) { */
         *map_num = m-1;
-/*       } */
-/*       else { */
-/* 	printf("Only genetic map allowed for option %s\n", ProgName); */
-/*       } */
-    }
     return;
 
 }
