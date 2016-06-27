@@ -264,34 +264,48 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
 
 void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary) {
 
-    printf("HERE");
+    //not sure I need this...
+    //printf("HERE");
     //(*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
 }
 
 //need to switch some of the inputs for shapeit
 void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
-    int done, hap, cpus, choice, renamed, stem;
+    int done, hap, cpus, choice, hap_renamed, legend_renamed, stem, legend, sample;
     done = 0;
     stem = 1;
     hap = 2;
-    cpus = 3;
+    legend = 3;
+    sample = 4;
+    cpus = 5;
     choice = -1;
-    renamed = 0;
+    hap_renamed = 0;
+    legend_renamed = 0;
 
     strcpy(prefix, file_name_stem);
 
     char hap_file_input[255];
+    char legend_file_input[255];
+    char sample_file_input[255];
     Vecs hapsplit;
-    haplotype_post = ".1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
+    Vecs legendsplit;
+    haplotype_pre = "1000GP_Phase3_chr";
+    haplotype_post = ".hap.gz";
+    legend_pre = "1000GP_Phase3_chr";
+    legend_post = ".legend.gz";
+    reference_sample_file = "1000GP_Phase3.sample";
 
     while (choice != 0) {
         draw_line();
         printf("Shapeit/Minimac3 Analysis Menu:\n");
         printf("%d) Done with this menu - please proceed\n",done);
-        printf("%d) File name stem:                                     %-15s\n", stem, prefix);
-        printf("%d) Choose reference haplotype file:                    %s?%s\n", hap, haplotype_pre.c_str(), haplotype_post.c_str());
-        printf("%d) Number of CPUS for Minimac3 Imputation:             %d\n",    cpus, g_cpus);
-        printf("Enter selection: 0 - %d > ",3);
+        printf("%d) File name stem:                                             %-15s\n", stem, prefix);
+        printf("%d) Choose Shapeit reference haplotype file:                    %s?%s\n", hap, haplotype_pre.c_str(), haplotype_post.c_str());
+        printf("%d) Choose Shapeit reference legend file:                       %s?%s\n", legend, legend_pre.c_str(), legend_post.c_str());
+        printf("%d) Choose Shapeit reference sample file:                       %s\n",    sample, reference_sample_file.c_str());
+        printf("%d) Number of CPUS for Minimac3 Imputation:                     %d\n",    cpus, g_cpus);
+
+        printf("Enter selection: 0 - %d > ",5);
 
         fcmap(stdin,"%d", &choice); newline;
 
@@ -300,8 +314,11 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         }
 
         else if ( choice == done ) {
-            if (!renamed)
-                strcpy (hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
+            if (!hap_renamed)
+                strcpy(hap_file_input, "1000GP_Phase3_chr?.hap.gz");
+
+            if (!legend_renamed)
+                strcpy(legend_file_input, "1000GP_Phase3_chr?.legend.gz");
 
             BatchValueSet (g_cpus, "mach_batch_cpu_count");
 
@@ -333,10 +350,42 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
 
                 haplotype_pre = hapsplit[0];
                 haplotype_post = hapsplit[1];
-                renamed =1;
+                hap_renamed =1;
                 break;
             }
         }
+
+        else if (choice == legend) {
+            while (1) {
+                printf("Enter Shapeit Reference legend file name >\n");
+                printf(" Reserve space for the chromosome number with a ? > ");
+
+                fcmap(stdin, "%s", &legend_file_input);
+                newline;
+                split(legendsplit, legend_file_input, "?");
+
+                if (legendsplit.size() != 2) {
+                    printf("Please include one and only one ? in the file name\n");
+                    continue;
+                }
+
+                legend_pre = legendsplit[0];
+                legend_post = legendsplit[1];
+                legend_renamed =1;
+                break;
+            }
+        }
+        else if (choice == sample) {
+            while (1) {
+                printf("Enter Shapeit Reference legend file name >\n");
+
+                fcmap(stdin, "%s", &sample_file_input);
+                newline;
+                reference_sample_file = sample_file_input;
+                break;
+            }
+        }
+
 
         else if ( choice == cpus ) {
             while (1) {
@@ -353,14 +402,17 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
             }
         }
 
+
         else {
             printf("Unknown option %d\n", choice);
+            newline;
+
         }
     }
 
     sprintf(file_names[5], "%s", hap_file_input);
-    mach_reference_haplotype_file = hap_file_input;
-    BatchValueSet (mach_reference_haplotype_file, "mach_reference_haplotype_file");
+    reference_haplotype_file = hap_file_input;
+    BatchValueSet (reference_haplotype_file, "mach_reference_haplotype_file");
 }
 
 static void inner_file_names(char **file_names, const char *num, const char *stem) {
@@ -388,3 +440,27 @@ void CLASS_MINIMAC::batch_in()
 {
 
 }
+
+void CLASS_MINIMAC::sub_prog_name(int sub_opt, char *subprog) {
+    switch(sub_opt) {
+        case 0:
+        case 1:  strcpy(subprog, "Check and Phase");     break;
+        default:                                         break;
+    }
+}
+
+void CLASS_MINIMAC::interactive_sub_prog_name_to_sub_option(analysis_type *analysis)
+{
+    int selection = 1;
+    (*analysis)->_suboption = selection;
+}
+
+void CLASS_MINIMAC::sub_prog_name_to_sub_option(char *subprog_name, analysis_type *analysis) {
+    switch(tolower((unsigned char)subprog_name[0])) {
+        case 'C': // only one option, check and prephase for shapeit -> minimac3
+            (*analysis)->_suboption = 1; break;
+        default:
+            break;
+    }
+}
+

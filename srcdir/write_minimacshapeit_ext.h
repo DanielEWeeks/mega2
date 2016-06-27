@@ -82,10 +82,18 @@ public:
 
     virtual void batch_out();
 
-    public:
-        Str mach_reference_haplotype_file;
+    void sub_prog_name(int sub_opt, char *subprog);
+    void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
+    void sub_prog_name_to_sub_option(char *subprog_name, analysis_type *analysis);
+
+public:
+        Str reference_haplotype_file;
         Str haplotype_pre;
         Str haplotype_post;
+        Str reference_legend_file;
+        Str legend_pre;
+        Str legend_post;
+        Str reference_sample_file;
 };
 
 
