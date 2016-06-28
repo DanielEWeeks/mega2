@@ -86,14 +86,23 @@ public:
     void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
     void sub_prog_name_to_sub_option(char *subprog_name, analysis_type *analysis);
 
+    void create_sh_file(linkage_ped_top *Top,
+                        char *file_names_array[],
+                        const int numchr);
+
+    //void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]);
+
 public:
-        Str reference_haplotype_file;
-        Str haplotype_pre;
-        Str haplotype_post;
-        Str reference_legend_file;
-        Str legend_pre;
-        Str legend_post;
-        Str reference_sample_file;
+    Str reference_map_file;
+    Str map_pre;
+    Str map_post;
+    Str reference_haplotype_file;
+    Str haplotype_pre;
+    Str haplotype_post;
+    Str reference_legend_file;
+    Str legend_pre;
+    Str legend_post;
+    Str reference_sample_file;
 };
 
 
