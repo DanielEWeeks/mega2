@@ -312,16 +312,17 @@ void allelecnt_check(linkage_ped_top *Top, analysis_type analysis)
 
     tod_ac();
 
-    if (analysis == TO_PLINK && plink_locus_num <= 0) {
-        errorvf("No valid marker loci for PLINK to analyze, terminating Mega2!\n");
+    if (analysis == TO_PLINK && plink_locus_num < .5 * LTop->MarkerCnt) {
+        errorvf("%d (of %d) valid marker loci left for PLINK to analyze, terminating Mega2!\n",
+                plink_locus_num, LTop->MarkerCnt);
         EXIT(OUTPUT_FORMAT_ERROR);
     }
 
-    if (analysis == IQLS && plink_locus_num <= 0) {
-        errorvf("No valid marker loci for IQLS to analyze, terminating Mega2!\n");
+    if (analysis == IQLS && plink_locus_num < .5 * LTop->MarkerCnt) {
+        errorvf("%d (of %d) valid marker loci left for IQLS to analyze, terminating Mega2!\n",
+                plink_locus_num, LTop->MarkerCnt);
         EXIT(OUTPUT_FORMAT_ERROR);
     }
-
 }
 
 ped_status      PedStat;
@@ -375,12 +376,13 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
     tod_cl();
 
-    if (! database_dump)
+    if (! database_dump) {
         if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */)
             allelecnt_check(LPedTop, analysis);
 
-    if (abortl > 0 && abortl <= 4) {
-        loc_err=1;
+        if (abortl > 0 && abortl <= 4) {
+            loc_err=1;
+        }
     }
 
     printf("Done checking locus integrity.\n");
@@ -446,7 +448,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     tod_mito();
 
     Tod tod_iofc("input_observed_freq_check");
-    if (num_reordered > 0 && analysis != TO_PLINK) {
+    if (num_reordered > 0 /* && analysis != TO_PLINK */) {
         freq_mis = input_observed_freq_check(LPedTop, FreqMismatchThreshold);
         if (freq_mis > 0)
             abortf = imax(abortf, 1);

@@ -298,6 +298,7 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
             if (g_cpus == 1)
                 pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr);
+
             if (g_cpus > 1)
                 pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
 
@@ -591,6 +592,6 @@ void CLASS_MACH::batch_in()
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(                fn,   "file_name_stem");
-    BatchValueIfSet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
+    BatchValueGet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
     BatchValueGet(g_cpus, "mach_batch_cpu_count");
 }

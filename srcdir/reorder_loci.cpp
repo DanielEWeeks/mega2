@@ -871,18 +871,20 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
             
             //map_num = 0;
             if (Top->EXLTop != NULL) {
-                if (*analysis == TO_PLINK || *analysis == IQLS) {
-                    // in these analysis, a physical map is required...
-                    if (base_pair_position_index != -2) {
-                        // -2 == None
-                        // The user chooses the base_pair_position_index in the routine
-                        // user_input.c:get_base_pair_position_index(ext_linkage_locus_top *EXLTop)
-                        // which is run in mega2.c:main() before this function is called.
-                        // for PLINK and IQLS this function will force them to choose a position.
-                        map_num = base_pair_position_index;
-                    } else {
-                        errorvf("For the analysis type specified, a Physical Map was required, but none was chosen.\n");
-                        EXIT(EARLY_TERMINATION);
+                if (! database_dump ) {
+                    if (*analysis == TO_PLINK || *analysis == IQLS) {
+                        // in these analysis, a physical map is required...
+                        if (base_pair_position_index != -2) {
+                            // -2 == None
+                            // The user chooses the base_pair_position_index in the routine
+                            // user_input.c:get_base_pair_position_index(ext_linkage_locus_top *EXLTop)
+                            // which is run in mega2.c:main() before this function is called.
+                            // for PLINK and IQLS this function will force them to choose a position.
+                            map_num = base_pair_position_index;
+                        } else {
+                            errorvf("For the analysis type specified, a Physical Map was required, but none was chosen.\n");
+                            EXIT(EARLY_TERMINATION);
+                        }
                     }
                 }
             }
@@ -968,9 +970,9 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
 
     /* get_trait_list(Top, 0); */
 
-    if (*analysis == TO_ALLELE_FREQ || *analysis == TO_LIABLE_FREQ || *analysis
-        == TO_HWETEST || *analysis == GENOTYPING_SUMMARY || *analysis
-        == TO_PREST || *analysis == QUANT_SUMMARY) {
+    if (*analysis == TO_ALLELE_FREQ || *analysis == TO_LIABLE_FREQ || 
+        *analysis == TO_HWETEST     || *analysis == GENOTYPING_SUMMARY ||
+        *analysis == TO_PREST       || *analysis == QUANT_SUMMARY) {
 
         if (*analysis == QUANT_SUMMARY) {
             if (InputMode == INTERACTIVE_INPUTMODE) {
@@ -3263,102 +3265,6 @@ static int  quant_allowed(linkage_locus_rec Locus, analysis_type analysis)
     return 1;
 }
 
-#ifdef DEFUNCT
-static void get_trait_positions(linkage_locus_top *LTop,
-				analysis_type analysis)
-{
-    int i, i1, j, *traits = CALLOC((size_t) LTop->LocusCnt, int);
-    int non_monotonic;
-    char str[FILENAME_LENGTH];
-    char *c;
-    double lastval;
-
-    /*
-     * For some analysis options, a single trait can be
-     * placed between markers, using the reordering menu option 2, and this
-     * trait can have an unknown position. This function checks to see that
-     * there is only one such unmapped locus. Add your KEYWORD to the case
-     * block at the top, if this is appropriate.
-     */
-
-    switch(analysis) {
-    case TO_SLINK:
-    case TO_SIMULATE:
-        /* Check thetas */
-        j=0;
-        for (i1=0; i1 < num_reordered; i1++) {
-            i = reordered_marker_loci[i1];
-            if ((LTop->Locus[i].Type == AFFECTION ||
-                 LTop->Locus[i].Type == QUANT) &&
-                 (i > 0) &&
-		 (i < LTop->LocusCnt-1)) {
-
-	      if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-                non_monotonic=((LTop->Marker[i].pos_avg < 0)? 1: 0);
-                if (!non_monotonic) {
-                    if ((LTop->Marker[i].pos_avg >= LTop->Marker[i-1].pos_avg) &&
-                        (LTop->Marker[i+1].pos_avg >= LTop->Marker[i].pos_avg)) {
-                        non_monotonic=1;
-                    }
-                }
-	      } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
-			 genetic_distance_sex_type_map == FEMALE_GDMT) {
-                non_monotonic=((LTop->Marker[i].pos_female < 0)? 1: 0);
-                if (!non_monotonic) {
-                    if ((LTop->Marker[i].pos_female >= LTop->Marker[i-1].pos_female) &&
-                        (LTop->Marker[i+1].pos_female >= LTop->Marker[i].pos_female)) {
-                        non_monotonic=1;
-                    }
-                }
-	      }
-
-                if (non_monotonic) {
-                    traits[j]=i; j++;
-                }
-            }
-        }
-        if (j > 0) {
-            printf("Locus order contains multiple unmapped trait loci.\n");
-            printf("%s requires all loci but one to have genetic positions.\n",
-                   ProgName);
-            while(1) {
-                if (j == 1) {
-                    printf("Enter position for %s (2nd unmapped locus) in cM > ",
-                           LTop->Pheno[traits[0]].TraitName);
-                } else {
-                    printf("Enter upto %d trait locus positions in cM,\n", j);
-                    printf("starting with 2nd unmapped locus %s.\n",
-                           LTop->Pheno[traits[0]].TraitName);
-                    printf("if fewer than %d positions are provided, \n", j);
-                    printf("the last position will be assigned to the remainder of the unmapped loci > ");
-                }
-                fflush(stdout);
-                (void)fgets(str, FILENAME_LENGTH-1, stdin);
-                newline;
-                if (strcmp(str, "")) {
-                    c = strtok(str, " "); lastval=atof(c);
-                    for(i=0; i < j; i++) {
-                        LTop->Marker[traits[i]].pos_avg = lastval;
-                        c = strtok(NULL, " ");
-                        if (c != NULL) {
-                            lastval=atof(c);
-                        }
-                    }
-                    break;
-                }
-            }
-            /* set chromocome numbers */
-            for(i=0; i < j; i++) {
-                LTop->Marker[traits[i]].chromosome = LTop->Marker[traits[i]-1].chromosome;
-            }
-        }
-        break;
-    default:
-        break;
-    }
-}
-#endif
-
 static int  check_trait_selection(linkage_ped_top *Top,
                                   analysis_type analysis,
                                   int num_select,
@@ -3915,7 +3821,6 @@ int linkage_set_locus_order_new(int num_loci, int *order)
     return 1;
 }
 
-#ifdef DEFUNCT
 /* linkage_set_locus_order()  (Original by M. Schroeder; modified by DEW)
  * (also note that after this function is executed,
  *  the original data structure linkage_ped_top is
@@ -3950,103 +3855,6 @@ int linkage_set_locus_order_new(int num_loci, int *order)
  * later.
  */
 /* the terminating order number is -99 */
-
-int             linkage_set_locus_order(linkage_ped_top *Top, int *order)
-{
-    int             i, j;
-    register int    tmpi;
-    register linkage_locus_top *LTop = Top->LocusTop;
-    pheno_pedrec_data tmpdatapp;
-    register linkage_ped_rec *Entry;
-    register person_node_type *PEntry;
-    int             ped, entry_;
-    int            *place = CALLOC((size_t) LTop->LocusCnt, int);
-
-//xx rt
-    /*
-     * THIS IS VERY WRONG AND VERY BAD -- rvb
-     */
-
-    /* set up place to initial order which is always... */
-    for (i = 0; i < LTop->LocusCnt; i++)
-        place[i] = i + 1;
-
-    /* There's no really good way to do this. */
-    for (i = 0; (i < LTop->LocusCnt) && (order[i] != -99); i++) {
-        if (place[i] != order[i])  {
-//xx rt
-            abort();
-            if (i == LTop->LocusCnt - 1)   {
-                /* Last locus, and they don't agree? */
-                free(place);
-                errorvf("Internal error setting locus order!\n");
-                EXIT(SYSTEM_ERROR);
-            } else   {
-                for (j = i + 1; (j < LTop->LocusCnt) && (place[j] != order[i]); j++);
-                linkage_swap_loci(&(LTop->Locus[i]), &(LTop->Locus[j]));
-                /* Now for all pedigree members... */
-                for (ped = 0; ped < Top->PedCnt; ped++)
-                    if (Top->pedfile_type == POSTMAKEPED_PFT) {
-                        for (entry_ = 0; entry_ < Top->Ped[ped].EntryCnt; entry_++) {
-                            Entry = &(Top->Ped[ped].Entry[entry_]);
-
-                            tmpdatapp = Entry->Pheno[i];
-                            Entry->Pheno[i] = Entry->Pheno[j];
-                            Entry->Pheno[j] = tmpdatapp;
-                        }
-                    } else {
-                        /* pre makeped format */
-                        for (entry_ = 0; entry_ < Top->PTop[ped].num_persons; entry_++) {
-                            PEntry=&(Top->PTop[ped].persons[entry_]);
-                            tmpdatapp= PEntry->pheno[i];
-                            PEntry->pheno[i] = PEntry->pheno[j];
-                            PEntry->pheno[j] = tmpdatapp;
-                        }
-                    }
-
-                /* don't forget to change place */
-                tmpi = place[i];
-                place[i] = place[j];
-                place[j] = tmpi;
-            }
-        }
-    }
-    free(place);
-
-    /* Set locus count to the new count */
-    j = 0;
-    for (i = 0; i < LTop->LocusCnt && order[i] != -99; i++)
-        j += 1;
-
-    /* we should free up locus records
-       and entry data which are not mapped any more */
-    for(i=j; i < LTop->LocusCnt; i++) {
-        free_all_from_llocusrec(&(LTop->Locus[i]));
-    }
-
-    Top->LocusTop->LocusCnt = j;
-    /* The Data size is modified as necessary, otherwise we leave
-       unfreed memory */
-
-    for(ped=0; ped < Top->PedCnt; ped++) {
-        if (Top->pedfile_type == POSTMAKEPED_PFT) {
-            for(entry_=0; entry_ < Top->Ped[ped].EntryCnt; entry_++) {
-                Top->Ped[ped].Entry[entry_].Pheno =
-                    REALLOC(Top->Ped[ped].Entry[entry_].Pheno,
-                            (size_t) Top->LocusTop->PhenoCnt, pheno_pedrec_data);
-            }
-        } else {
-            for(entry_=0; entry_ < Top->PTop[ped].num_persons; entry_++) {
-                Top->PTop[ped].persons[entry_].pheno =
-                    REALLOC(Top->PTop[ped].persons[entry_].pheno,
-                            (size_t) Top->LocusTop->PhenoCnt, pheno_pedrec_data);
-            }
-        }
-    }
-
-    return 0;
-}
-#endif
 
 static int index_selections(int num_select, int *selections,
 			    int num_values, int *values,
@@ -4318,35 +4126,6 @@ int *init_trp (void)
     }
     return i;
 }
-
-#if 0
-/* New locus selection menu */
-static void get_map_num(int *map_num, ext_linkage_locus_top *EXLTop,
-			analysis_type analysis)
-
-{
-    int m;
-    char mapnums[10];
-
-    printf("List of maps:\n");
-    for (m=0; m < EXLTop->MapCnt; m++) {
-        if (m == *map_num) {
-            printf("*%d) %s\n", m+1, EXLTop->MapNames[m]);
-        } else {
-            printf(" %d) %s\n", m+1, EXLTop->MapNames[m]);
-        }
-    }
-    printf("Enter new map number 1 - %d > ", EXLTop->MapCnt);
-    fcmap(stdin, "%s", mapnums); newline;
-    sscanf(mapnums, "%d", &m);
-    if (m < 1 || m > EXLTop->MapCnt) {
-        warn_unknown(mapnums);
-    } else {
-        *map_num = m-1;
-    return;
-
-}
-#endif
 
 /* Set y-chromosome positions to 0, so that output map does not have
    genetic map positions or recombination fractions */

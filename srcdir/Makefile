@@ -174,8 +174,9 @@ dbbatch.o: DFLAGS += $(DpFLAGS)
 # -DHIDEFILE
 annotated_ped_file.o makeped1.o mega2.o read_files.o utils.o: DFLAGS += $(DfFLAGS)
 write_IQLS.o write_beagle.o write_eigenstrat.o write_fbat.o: DFLAGS += $(DfFLAGS)
-write_pangaea.o write_plink_files.o write_pseq_files.o write_shapeit_files.o: DFLAGS += $(DfFLAGS)
-write_impute2_files.o write_structure.o: DFLAGS += $(DfFLAGS)
+write_impute2_files.o write_mach.o write_pangaea.o write_plink_files.o: DFLAGS += $(DfFLAGS)
+write_pseq_files.o write_roadtrips.o: DFLAGS += $(DfFLAGS)
+write_shapeit_files.o write_structure.o: DFLAGS += $(DfFLAGS)
 dbmega2.o: DFLAGS += $(DfFLAGS)
 
 # -DDATE -DHIDEPATH

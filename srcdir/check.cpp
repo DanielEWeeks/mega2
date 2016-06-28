@@ -927,7 +927,7 @@ int check_locus(locus_rec *Locus,
                 Locus->LocusName);
         errorf(messg);
         retval= 2;
-    } else if (analysis != TO_PLINK && (database_dump == 0 && database_read == 0))  {
+    } else /* if (analysis != TO_PLINK) */  {
         /*  check allele frequencies (only if not PLINK) */
         for (allele = 0; allele < Locus->AlleleCnt; allele++) {
             // I can't remember which analysis programs didn't like it when some alleles had a
@@ -969,7 +969,7 @@ int check_locus(locus_rec *Locus,
         retval = 1;
     } else if (Locus->AlleleCnt > 2 && (analysis == TO_PLINK || analysis == IQLS)) {
         SECTION_ERR(check_locus);
-        sprintf(messg, "Locus %s has more than 2 alleles unacceptable for PLINK or IQLS", Locus->LocusName);
+        sprintf(messg, "Locus %s has more than 2 alleles; unacceptable for PLINK or IQLS", Locus->LocusName);
         warnf(messg);
         (*plink_locus_num)--;
         retval = 1;
