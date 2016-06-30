@@ -96,13 +96,16 @@ public:
     Str reference_map_file;
     Str map_pre;
     Str map_post;
-    Str reference_haplotype_file;
-    Str haplotype_pre;
-    Str haplotype_post;
+    Str shapeit_reference_haplotype_file;
+    Str s_haplotype_pre;
+    Str s_haplotype_post;
     Str reference_legend_file;
     Str legend_pre;
     Str legend_post;
     Str reference_sample_file;
+    Str minimac_reference_haplotype_file;
+    Str m_haplotype_pre;
+    Str m_haplotype_post;
 };
 
 

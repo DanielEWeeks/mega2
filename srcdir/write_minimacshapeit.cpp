@@ -53,10 +53,11 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]);
 static void inner_file_names(char **file_names, const char *num, const char *stem = "minimac");
 
 extern int g_cpus;
-Str haplotype_file;
+Str s_haplotype_file;
 Str legend_file;
 Str sample_file;
 Str map_file;
+Str m_haplotype_file;
 
 void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
     int pwid, fwid, mwid;
@@ -135,7 +136,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
     dataloop::sh_exec *sh = 0;
     if (top_shell) {
         sh = new dataloop::sh_exec(Top);
-        sh->filep_open(output_paths[0], file_names[12], "w");
+        sh->filep_open(output_paths[0], file_names[4], "w");
         sh->sh_main();
     }
 
@@ -143,8 +144,8 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
         vlpCTOR(minimac_sh, both, sh_exec) { }
 
         void file_loop() {
-            mssgvf("     Minimac Shell File:         %s/%s\n", *_opath, file_names[11]);
-            data_loop(*_opath, file_names[11], "w");
+            mssgvf("     Minimac Shell File:         %s/%s\n", *_opath, file_names[8]);
+            data_loop(*_opath, file_names[8], "w");
         }
 
         typedef char *str;
@@ -187,32 +188,34 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
                 sprintf(cmd3, "$%s_program ", "minimac3-omp");
             }
 
-            Vecs hapsplit;
-            split(hapsplit, haplotype_file,"?");
+            Vecs s_hapsplit;
+            split(s_hapsplit, s_haplotype_file,"?");
             Vecs legsplit;
             split(legsplit, legend_file,"?");
             Vecs mapsplit;
             split(mapsplit, map_file,"?");
+            Vecs m_hapsplit;
+            split(m_hapsplit, m_haplotype_file,"?");
 
 
             pr_nl();
             pr_printf ("#use mega2 plink formatted output to run shapeit checks\n");
             pr_printf ("%s -check --input-bed %s %s %s --input_map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks"
-                    ,cmd1,file_names[3],file_names[1],file_names[0],mapsplit[0].c_str(),_numchr,mapsplit[1].c_str(),hapsplit[0].c_str(),_numchr,hapsplit[1].c_str(),legsplit[0].c_str(),_numchr,legsplit[1].c_str(), sample_file.c_str(),_numchr);
+                    ,cmd1,file_names[3],file_names[1],file_names[0],mapsplit[0].c_str(),_numchr,mapsplit[1].c_str(),s_hapsplit[0].c_str(),_numchr,s_hapsplit[1].c_str(),legsplit[0].c_str(),_numchr,legsplit[1].c_str(), sample_file.c_str(),_numchr);
             pr_nl();
             pr_nl();
 
 
             pr_printf ("#use mega2 plink formatted output to run shapeit convert\n");
             pr_printf ("%s -convert --input-bed %s %s %s  --input-ref %s%d%s %s%d%s %s  --exclude-snp Chr%d.snp.strand.exclude --output-vcf Chr%d.Phased.Output.VCF.format.vcf.gz --thread %d"
-                    ,cmd1,file_names[3],file_names[1],file_names[0],hapsplit[0].c_str(),_numchr,hapsplit[1].c_str(),legsplit[0].c_str(),_numchr,legsplit[1].c_str(), sample_file.c_str(),_numchr,_numchr,g_cpus);
+                    ,cmd1,file_names[3],file_names[1],file_names[0],s_hapsplit[0].c_str(),_numchr,s_hapsplit[1].c_str(),legsplit[0].c_str(),_numchr,legsplit[1].c_str(), sample_file.c_str(),_numchr,_numchr,g_cpus);
             pr_nl();
             pr_nl();
 
             if (g_cpus == 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str(),_numchr,_numchr,_numchr);
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str(),_numchr,_numchr,_numchr);
             if (g_cpus > 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
 
         }
         //finds the program to run dynamically and gives an error if it can't be found.
@@ -260,7 +263,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
     minimac_shs->iterate();
 
     if (top_shell) {
-        mssgvf("     MaCH Top Shell File:     %s/%s\n", output_paths[0], file_names[12]);
+        mssgvf("     MaCH Top Shell File:     %s/%s\n", output_paths[0], file_names[4]);
         mssgvf("     The above shell runs all shells.\n");
 
         sh->filep_close();
@@ -275,10 +278,6 @@ void CLASS_MINIMAC::create_sh_file(linkage_ped_top *Top, char **file_names, cons
     char prefix[100];
 
     sub_prog_name(_suboption, prefix);
-    //sprintf(file_names[4], "%s_%s.top.sh", file_name_stem, prefix);
-    //sprintf(file_names[8], "%s_%s.%02d.sh", file_name_stem, prefix, numchr);
-    //add_sumdir(file_names[4]);
-    //add_sumdir(file_names[8]);
 
     switch (_suboption) {
         case 0:
@@ -288,56 +287,59 @@ void CLASS_MINIMAC::create_sh_file(linkage_ped_top *Top, char **file_names, cons
 }
 
 void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary) {
-
-    //not sure I need this...
-    //printf("HERE");
-    //(*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
 }
 
 //need to switch some of the inputs for shapeit
 void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
-    int done, hap, cpus, choice, hap_renamed, legend_renamed, stem, legend, sample, map, map_renamed;
+    int done, s_hap, cpus, choice, s_hap_renamed, legend_renamed, stem, legend, sample, map, map_renamed, m_hap, m_hap_renamed;
     done = 0;
     stem = 1;
     map = 2;
-    hap = 3;
+    s_hap = 3;
     legend = 4;
     sample = 5;
-    cpus = 6;
+    m_hap = 6;
+    cpus = 7;
     choice = -1;
     map_renamed = 0;
-    hap_renamed = 0;
+    s_hap_renamed = 0;
     legend_renamed = 0;
+    m_hap_renamed = 0;
 
     strcpy(prefix, file_name_stem);
 
     char map_file_input[255];
-    char hap_file_input[255];
+    char s_hap_file_input[255];
     char legend_file_input[255];
     char sample_file_input[255];
+    char m_hap_file_input[255];
     Vecs mapsplit;
-    Vecs hapsplit;
+    Vecs s_hapsplit;
     Vecs legendsplit;
+    Vecs m_hapsplit;
     map_pre = "genetic_map_chr";
     map_post = "_combined_b37.txt";
-    haplotype_pre = "1000GP_Phase3_chr";
-    haplotype_post = ".hap.gz";
+    s_haplotype_pre = "1000GP_Phase3_chr";
+    s_haplotype_post = ".hap.gz";
     legend_pre = "1000GP_Phase3_chr";
     legend_post = ".legend.gz";
     reference_sample_file = "1000GP_Phase3.sample";
+    m_haplotype_pre = "";
+    m_haplotype_post = ".1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
 
     while (choice != 0) {
         draw_line();
         printf("Shapeit/Minimac3 Analysis Menu:\n");
         printf("%d) Done with this menu - please proceed\n",done);
         printf("%d) File name stem:                                             %-15s\n", stem, prefix);
-        printf("%d) Choose Shapeit map  file:                                   %s?%s\n", hap, map_pre.c_str(), map_post.c_str());
-        printf("%d) Choose Shapeit reference haplotype file:                    %s?%s\n", hap, haplotype_pre.c_str(), haplotype_post.c_str());
+        printf("%d) Choose Shapeit map  file:                                   %s?%s\n", map, map_pre.c_str(), map_post.c_str());
+        printf("%d) Choose Shapeit reference haplotype file:                    %s?%s\n", s_hap, s_haplotype_pre.c_str(), s_haplotype_post.c_str());
         printf("%d) Choose Shapeit reference legend file:                       %s?%s\n", legend, legend_pre.c_str(), legend_post.c_str());
         printf("%d) Choose Shapeit reference sample file:                       %s\n",    sample, reference_sample_file.c_str());
-        printf("%d) Number of CPUS for Minimac3 Imputation:                     %d\n",    cpus, g_cpus);
+        printf("%d) Choose Minimac3 reference sample file:                      %s?%s\n", m_hap, m_haplotype_pre.c_str(),m_haplotype_post.c_str());
+        printf("%d) Number of CPUS for Shapeit Prephasing/Minimac3 Imputation:  %d\n",    cpus, g_cpus);
 
-        printf("Enter selection: 0 - %d > ",5);
+        printf("Enter selection: 0 - %d > ",7);
 
         fcmap(stdin,"%d", &choice); newline;
 
@@ -350,9 +352,9 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
                 strcpy(map_file_input, "genetic_map_chr?_combined_b37.txt");
                 reference_map_file = "genetic_map_chr?_combined_b37.txt";
             }
-            if (!hap_renamed){
-                strcpy(hap_file_input, "1000GP_Phase3_chr?.hap.gz");
-                reference_haplotype_file = "1000GP_Phase3_chr?.hap.gz";
+            if (!s_hap_renamed){
+                strcpy(s_hap_file_input, "1000GP_Phase3_chr?.hap.gz");
+                shapeit_reference_haplotype_file = "1000GP_Phase3_chr?.hap.gz";
             }
 
 
@@ -361,8 +363,22 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
                 reference_legend_file = "1000GP_Phase3_chr?.legend.gz";
             }
 
+            if (!m_hap_renamed){
+                strcpy(m_hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
+                minimac_reference_haplotype_file = "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
+            }
+            map_file = reference_map_file;
+            s_haplotype_file = shapeit_reference_haplotype_file;
+            legend_file = reference_legend_file;
+            sample_file = reference_sample_file;
+            m_haplotype_file = minimac_reference_haplotype_file;
 
-            BatchValueSet (g_cpus, "mach_batch_cpu_count");
+            BatchValueSet (shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
+            BatchValueSet (reference_legend_file, "shapeit_reference_legend_file");
+            BatchValueSet (reference_sample_file, "shapeit_reference_sample_file");
+            BatchValueSet (minimac_reference_haplotype_file, "minimac_reference_haplotype_file");
+
+            BatchValueSet (g_cpus, "batch_cpu_count");
 
             free(file_name_stem);
             file_name_stem = strdup(prefix);
@@ -398,24 +414,24 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
             }
         }
 
-        else if ( choice == hap ) {
+        else if ( choice == s_hap ) {
             while (1) {
-                printf("Enter reference haplotype file name >\n");
+                printf("Enter Shapeit reference haplotype file name >\n");
                 printf(" Reserve space for the chromosome number with a ? > ");
 
-                fcmap(stdin, "%s", &hap_file_input);
+                fcmap(stdin, "%s", &s_hap_file_input);
                 newline;
-                split(hapsplit, hap_file_input, "?");
+                split(s_hapsplit, s_hap_file_input, "?");
 
-                if (hapsplit.size() != 2) {
+                if (s_hapsplit.size() != 2) {
                     printf("Please include one and only one ? in the file name\n");
                     continue;
                 }
 
-                haplotype_pre = hapsplit[0];
-                haplotype_post = hapsplit[1];
-                reference_haplotype_file = hap_file_input;
-                hap_renamed =1;
+                s_haplotype_pre = s_hapsplit[0];
+                s_haplotype_post = s_hapsplit[1];
+                shapeit_reference_haplotype_file = s_hap_file_input;
+                s_hap_renamed =1;
                 break;
             }
         }
@@ -441,6 +457,7 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
                 break;
             }
         }
+
         else if (choice == sample) {
             while (1) {
                 printf("Enter Shapeit Reference legend file name >\n");
@@ -448,6 +465,28 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
                 fcmap(stdin, "%s", &sample_file_input);
                 newline;
                 reference_sample_file = sample_file_input;
+                break;
+            }
+        }
+
+        else if ( choice == m_hap ) {
+            while (1) {
+                printf("Enter Minimac3 reference haplotype file name >\n");
+                printf(" Reserve space for the chromosome number with a ? > ");
+
+                fcmap(stdin, "%s", &m_hap_file_input);
+                newline;
+                split(m_hapsplit, m_hap_file_input, "?");
+
+                if (m_hapsplit.size() != 2) {
+                    printf("Please include one and only one ? in the file name\n");
+                    continue;
+                }
+
+                m_haplotype_pre = m_hapsplit[0];
+                m_haplotype_post = m_hapsplit[1];
+                minimac_reference_haplotype_file = m_hap_file_input;
+                m_hap_renamed =1;
                 break;
             }
         }
@@ -475,20 +514,12 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
 
         }
     }
-
-    map_file = reference_map_file;
-    haplotype_file = reference_haplotype_file;
-    legend_file = reference_legend_file;
-    sample_file = reference_sample_file;
-    //BatchValueSet (reference_haplotype_file, "shapeit_reference_haplotype_file");
-    //BatchValueSet (reference_legend_file, "shapeit_reference_legend_file");
-    //BatchValueSet (reference_sample_file, "shapeit_reference_sample_file");
 }
 
 static void inner_file_names(char **file_names, const char *num, const char *stem) {
     sprintf(file_names[10], "%s_snps.%s", stem,num);
-    sprintf(file_names[11], "%s.%s.sh", stem, num);
-    sprintf(file_names[12], "%s.top.sh", stem);
+    sprintf(file_names[8], "%s.%s.sh", stem, num);
+    sprintf(file_names[4], "%s.top.sh", stem);
 }
 
 void CLASS_MINIMAC::gen_file_names(char **file_names, char *num){
@@ -497,41 +528,44 @@ void CLASS_MINIMAC::gen_file_names(char **file_names, char *num){
 
 void CLASS_MINIMAC::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[10], numchr);
-    change_output_chr(file_names[11], numchr);
-    change_output_chr(file_names[12], numchr);
+    change_output_chr(file_names[8], numchr);
+    //change_output_chr(file_names[4], numchr);
 }
 
 void CLASS_MINIMAC::batch_out()
 {
-//    extern void batchf(batch_item_type *bi);
-//
-//    Cstr Values[] =  { "file_name_stem",
-//                       "shapeit_reference_haplotype_file",
-//                       "shapeit_reference_legend_file",
-//                       "shapeit_reference_sample_file",
-//                       "batch_cpu_count",
-//    };
-//
-//    for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
-//        batch_item_type *bip = BatchItemGet(Values[i]);
-//        if (bip->items_read)
-//            batchf(bip);
-//    }
+    extern void batchf(batch_item_type *bi);
+
+    Cstr Values[] =  { "file_name_stem",
+                       "shapeit_reference_haplotype_file",
+                       "shapeit_reference_legend_file",
+                       "shapeit_reference_sample_file",
+                       "minimac_reference_haplotype_file",
+                       "batch_cpu_count",
+    };
+
+    for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
+        batch_item_type *bip = BatchItemGet(Values[i]);
+        if (bip->items_read)
+            batchf(bip);
+    }
 }
 
 void CLASS_MINIMAC::batch_in()
 {
-//    char *fn = this->file_name_stem;
-//
-//    BatchValueIfSet(fn,   "file_name_stem");
-//    BatchValueIfSet(reference_haplotype_file, "shapeit_reference_haplotype_file");
-//    BatchValueIfSet(reference_legend_file, "shapeit_reference_legend_file");
-//    BatchValueIfSet(reference_sample_file, "shapeit_reference_sample_file");
-//    BatchValueGet(g_cpus, "batch_cpu_count");
-//
-//    sample_file = reference_sample_file;
-//    legend_file = reference_legend_file;
-//    haplotype_file = reference_haplotype_file;
+    char *fn = this->file_name_stem;
+
+    BatchValueIfSet(fn,   "file_name_stem");
+    BatchValueIfSet(shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
+    BatchValueIfSet(reference_legend_file, "shapeit_reference_legend_file");
+    BatchValueIfSet(reference_sample_file, "shapeit_reference_sample_file");
+    BatchValueIfSet(minimac_reference_haplotype_file,"minimac_reference_haplotype_file");
+    BatchValueGet(g_cpus, "batch_cpu_count");
+
+    sample_file = reference_sample_file;
+    legend_file = reference_legend_file;
+    s_haplotype_file = shapeit_reference_haplotype_file;
+    m_haplotype_file = minimac_reference_haplotype_file;
 }
 
 void CLASS_MINIMAC::sub_prog_name(int sub_opt, char *subprog) {

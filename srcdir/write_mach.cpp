@@ -474,7 +474,7 @@ void CLASS_MACH::create_output_file(
     //printf("%d\n%d\n",PLINK_SUB_OPTION_SNP_MAJOR_INT-1,PLINK_SUB_OPTION_PED_INT);
     //char * testfilesnames[10]; s
 
-    //create_PLINK_files(&LPedTreeTop, file_names, untyped_ped_opt, PLINK_SUB_OPTION_SNP_MAJOR_INT, file_name_stem, analysis);
+    create_PLINK_files(&LPedTreeTop, file_names, untyped_ped_opt, PLINK_SUB_OPTION_SNP_MAJOR_INT, file_name_stem, analysis);
 
 
 //    for (int i = 0; i < allele_count;i++){
@@ -545,7 +545,7 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
             if (!renamed)
                 strcpy (hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
 
-            BatchValueSet (g_cpus, "mach_batch_cpu_count");
+            BatchValueSet (g_cpus, "batch_cpu_count");
 
             free(file_name_stem);
             file_name_stem = strdup(prefix);
@@ -602,7 +602,7 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
 
     sprintf(file_names[5], "%s", hap_file_input);
     mach_reference_haplotype_file = hap_file_input;
-    BatchValueSet (mach_reference_haplotype_file, "mach_reference_haplotype_file");
+    BatchValueSet (mach_reference_haplotype_file, "minimac_reference_haplotype_file");
 
 }
 
@@ -633,8 +633,8 @@ void CLASS_MACH::batch_out()
     extern void batchf(batch_item_type *bi);
 
     Cstr Values[] =  { "file_name_stem",
-                       "mach_reference_haplotype_file",
-                       "mach_batch_cpu_count",
+                       "minimac_reference_haplotype_file",
+                       "batch_cpu_count",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -649,6 +649,6 @@ void CLASS_MACH::batch_in()
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(                fn,   "file_name_stem");
-    BatchValueIfSet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
-    BatchValueGet(g_cpus, "mach_batch_cpu_count");
+    BatchValueIfSet(mach_reference_haplotype_file, "minimac_reference_haplotype_file");
+    BatchValueGet(g_cpus, "batch_cpu_count");
 }
