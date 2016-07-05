@@ -86,12 +86,12 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     (*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
     create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "minimac", analysis);
 
-    for(int i = 0; i<16; i++){
-        printf("%d --> %s\n",i, file_names[i]);
-    }
+//    for(int i = 0; i<16; i++){
+//        printf("%d --> %s\n",i, file_names[i]);
+//    }
 
 
-    printf("Mega2 created the following file(s) for SHAPEIT/Minimac3:\n");
+    printf("Mega2 created the following file(s) for SHAPEIT/MINIMAC3:\n");
     write_MINIMAC_snps(Top, file_names, pwid, fwid);
 
     write_MINIMAC_sh(Top, file_names);
@@ -108,7 +108,7 @@ static void write_MINIMAC_snps(linkage_ped_top *Top, char *file_names[], const i
         str *file_names;
 
         void file_loop() {
-            msgvf("     Minimac3 SNP File:           %s/%s\n", *_opath, file_names[10]);
+            msgvf("        Minimac3 SNP File:         %s/%s\n", *_opath, file_names[10]);
             data_loop(*_opath, file_names[10], "w");
         }
 
@@ -144,7 +144,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
         vlpCTOR(minimac_sh, both, sh_exec) { }
 
         void file_loop() {
-            mssgvf("     Minimac Shell File:         %s/%s\n", *_opath, file_names[8]);
+            mssgvf("        Minimac Shell File:        %s/%s\n", *_opath, file_names[8]);
             data_loop(*_opath, file_names[8], "w");
         }
 
@@ -263,8 +263,8 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
     minimac_shs->iterate();
 
     if (top_shell) {
-        mssgvf("     MaCH Top Shell File:     %s/%s\n", output_paths[0], file_names[4]);
-        mssgvf("     The above shell runs all shells.\n");
+        mssgvf("        MaCH Top Shell File:       %s/%s\n", output_paths[0], file_names[4]);
+        mssgvf("        The above shell runs all shells.\n");
 
         sh->filep_close();
         delete sh;
@@ -286,8 +286,9 @@ void CLASS_MINIMAC::create_sh_file(linkage_ped_top *Top, char **file_names, cons
     }
 }
 
-void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary) {
-}
+//looks like we don't need to override user_queries
+//void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary) {
+//}
 
 //need to switch some of the inputs for shapeit
 void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
@@ -491,7 +492,6 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
             }
         }
 
-
         else if ( choice == cpus ) {
             while (1) {
                 printf("Number of CPUS for Minimac3 imputation > ");
@@ -502,11 +502,9 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
                     printf("Please enter a valid number of cpus\n");
                     continue;
                 }
-
                 break;
             }
         }
-
 
         else {
             printf("Unknown option %d\n", choice);
@@ -529,7 +527,6 @@ void CLASS_MINIMAC::gen_file_names(char **file_names, char *num){
 void CLASS_MINIMAC::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[10], numchr);
     change_output_chr(file_names[8], numchr);
-    //change_output_chr(file_names[4], numchr);
 }
 
 void CLASS_MINIMAC::batch_out()
@@ -568,12 +565,9 @@ void CLASS_MINIMAC::batch_in()
     m_haplotype_file = minimac_reference_haplotype_file;
 }
 
+//overriding these functions but we only have one "suboption"
 void CLASS_MINIMAC::sub_prog_name(int sub_opt, char *subprog) {
-    switch(sub_opt) {
-        case 0:
-        case 1:  strcpy(subprog, "Check and Phase");     break;
-        default:                                         break;
-    }
+    strcpy(subprog, "Check and Phase");
 }
 
 void CLASS_MINIMAC::interactive_sub_prog_name_to_sub_option(analysis_type *analysis)
@@ -583,11 +577,6 @@ void CLASS_MINIMAC::interactive_sub_prog_name_to_sub_option(analysis_type *analy
 }
 
 void CLASS_MINIMAC::sub_prog_name_to_sub_option(char *subprog_name, analysis_type *analysis) {
-    switch(tolower((unsigned char)subprog_name[0])) {
-        case 'C': // only one option, check and prephase for shapeit -> minimac3
-            (*analysis)->_suboption = 1; break;
-        default:
-            break;
-    }
+    (*analysis)->_suboption = 1;
 }
 
