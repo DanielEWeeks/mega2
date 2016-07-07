@@ -139,6 +139,7 @@ typedef struct _ped_rec {
     int             connected;   /* flag for checking unconnected components  */
     int             sibship_checked; /* checked sibship for mendelian errors */
     linkage_ped_rec *LEntry;     /* pointer to corresponding linkage record */
+    void            *Marker;
 } ped_rec;
 
 

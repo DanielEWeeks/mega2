@@ -932,8 +932,6 @@ int             main(int argc, char **argv, char **env)
     Tod tod_files("read all files");
     if (!database_dump && database_read) {
         extern void dbmega2_import(linkage_ped_top *Top);
-        extern int set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis);
-        extern void allelecnt_check(linkage_ped_top *Top, analysis_type analysis);
 
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -959,14 +957,6 @@ int             main(int argc, char **argv, char **env)
                                         chromo_loci_count, 0, analysis);
 
         get_trait_list(LPedTreeTop->LocusTop, 1);
-
-        if (set_uniq_check(LPedTreeTop, analysis)) {
-            extern void create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
-            create_unique_ids(LPedTreeTop, analysis);
-        }
-        if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */)
-            allelecnt_check(LPedTreeTop, analysis);
-
 
 //      Mega2OutputPath = strdup((char *)".");
 
@@ -1180,7 +1170,21 @@ int             main(int argc, char **argv, char **env)
         /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
         PedTreeTop = NULL;
         FirstTime=0;
+
+    } else {
+        extern int set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis);
+        extern void allelecnt_check(linkage_ped_top *Top, analysis_type analysis, int plink_locus_num);
+
+        if (set_uniq_check(LPedTreeTop, analysis)) {
+            extern void create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
+            create_unique_ids(LPedTreeTop, analysis);
+        }
+
+        if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */) {
+            allelecnt_check(LPedTreeTop, analysis, LPedTreeTop->LocusTop->MarkerCnt);
+        }
     }
+
     if (true || database_dump || ! database_read) {
         Tod tod_stat1("write_ped_stat [again]");
         /* Output ped stats one more time */

@@ -765,6 +765,7 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
 
             PRec->Orig_status = LRec->Orig_status;
             PRec->LEntry = LRec;
+            PRec->Marker = LRec->Marker;
             PRec->ID = entry+1;
             PRec->Sex = LRec->Sex;
             PRec->connected = 0;
