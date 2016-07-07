@@ -200,22 +200,22 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
 
             pr_nl();
             pr_printf ("#use mega2 plink formatted output to run shapeit checks\n");
-            pr_printf ("%s -check --input-bed %s %s %s --input_map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks"
+            pr_printf ("%s -check --input-bed %s %s %s --input-map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks"
                     ,cmd1,file_names[3],file_names[1],file_names[0],mapsplit[0].c_str(),_numchr,mapsplit[1].c_str(),s_hapsplit[0].c_str(),_numchr,s_hapsplit[1].c_str(),legsplit[0].c_str(),_numchr,legsplit[1].c_str(), sample_file.c_str(),_numchr);
             pr_nl();
             pr_nl();
 
 
             pr_printf ("#use mega2 plink formatted output to run shapeit convert\n");
-            pr_printf ("%s -convert --input-bed %s %s %s  --input-ref %s%d%s %s%d%s %s  --exclude-snp Chr%d.snp.strand.exclude --output-vcf Chr%d.Phased.Output.VCF.format.vcf.gz --thread %d"
+            pr_printf ("%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.snp.strand.exclude -O Chr%d.Phased.Output --thread %d"
                     ,cmd1,file_names[3],file_names[1],file_names[0],s_hapsplit[0].c_str(),_numchr,s_hapsplit[1].c_str(),legsplit[0].c_str(),_numchr,legsplit[1].c_str(), sample_file.c_str(),_numchr,_numchr,g_cpus);
             pr_nl();
             pr_nl();
 
             if (g_cpus == 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str(),_numchr,_numchr,_numchr);
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str(),_numchr,_numchr,_numchr);
             if (g_cpus > 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
 
         }
         //finds the program to run dynamically and gives an error if it can't be found.
