@@ -1173,7 +1173,7 @@ int             main(int argc, char **argv, char **env)
 
     } else {
         extern int set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis);
-        extern void allelecnt_check(linkage_ped_top *Top, analysis_type analysis, int plink_locus_num);
+        extern void allelecnt_check(linkage_ped_top *Top, analysis_type analysis);
 
         if (set_uniq_check(LPedTreeTop, analysis)) {
             extern void create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
@@ -1181,7 +1181,7 @@ int             main(int argc, char **argv, char **env)
         }
 
         if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */) {
-            allelecnt_check(LPedTreeTop, analysis, LPedTreeTop->LocusTop->MarkerCnt);
+            allelecnt_check(LPedTreeTop, analysis);
         }
     }
 

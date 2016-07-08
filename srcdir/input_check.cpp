@@ -272,12 +272,11 @@ int      set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis)
     return set_uniq;
 }
 
-void allelecnt_check(linkage_ped_top *Top, analysis_type analysis, int locus_num)
+void allelecnt_check(linkage_ped_top *Top, analysis_type analysis)
 {
-
     Tod tod_ac("AlleleCnt check");
     linkage_locus_top *LTop = Top->LocusTop;
-    int num_nbi = locus_num;
+    int num_nbi = num_reordered;
     int first_time=1;
     int locus = 0;
 
@@ -317,15 +316,15 @@ void allelecnt_check(linkage_ped_top *Top, analysis_type analysis, int locus_num
 
     tod_ac();
 
-    if (analysis == TO_PLINK && num_nbi < .5 * locus_num) {
+    if (analysis == TO_PLINK && num_nbi < .5 * num_reordered) {
         errorvf("%d (of %d) valid marker loci left for PLINK to analyze, terminating Mega2!\n",
-                num_nbi, locus_num);
+                num_nbi, num_reordered);
         EXIT(OUTPUT_FORMAT_ERROR);
     }
 
-    if (analysis == IQLS && num_nbi < .5 * locus_num) {
+    if (analysis == IQLS && num_nbi < .5 * num_reordered) {
         errorvf("%d (of %d) valid marker loci left for IQLS to analyze, terminating Mega2!\n",
-                num_nbi, locus_num);
+                num_nbi, num_reordered);
         EXIT(OUTPUT_FORMAT_ERROR);
     }
 }
@@ -385,7 +384,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
     if (! database_dump) {
         if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */) {
-            allelecnt_check(LPedTop, analysis, num_reordered);
+            allelecnt_check(LPedTop, analysis);
         }
         if (abortl > 0 && abortl <= 4) {
             loc_err=1;
