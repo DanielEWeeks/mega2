@@ -41,13 +41,19 @@ public:
 
     ~CLASS_MINIMAC() { }
 
-    bool has_sub_options()    { return true; }
+
 
     virtual bool allow_no_trait() { return true; }
 
     virtual bool loops() { return true; }
 
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
+
+    /*  this is necessary because we are inheriting from CLASS_PLINK not CLASS_ANALYSIS */
+    virtual const char* output_quant_default_value() { return "-9"; }
+
+    virtual const char* output_affect_default_value() { return "-9"; }
+    virtual bool output_affect_must_be_numeric() { return true; }
 
     virtual bool no_missing_menu() { return true; }
 
@@ -82,6 +88,7 @@ public:
 
     virtual void batch_out();
 
+    bool has_sub_options()    { return true; }
     void sub_prog_name(int sub_opt, char *subprog);
     void interactive_sub_prog_name_to_sub_option(analysis_type *analysis);
     void sub_prog_name_to_sub_option(char *subprog_name, analysis_type *analysis);

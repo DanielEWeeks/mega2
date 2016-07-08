@@ -84,12 +84,7 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
     (*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
-    create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, "minimac", analysis);
-
-//    for(int i = 0; i<16; i++){
-//        printf("%d --> %s\n",i, file_names[i]);
-//    }
-
+    create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, file_name_stem, analysis);
 
     printf("Mega2 created the following file(s) for SHAPEIT/MINIMAC3:\n");
     write_MINIMAC_snps(Top, file_names, pwid, fwid);
@@ -521,6 +516,8 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 }
 
 void CLASS_MINIMAC::gen_file_names(char **file_names, char *num){
+    file_names_w_stem(file_names, num, file_name_stem,
+                      PLINK_SUB_OPTION_SNP_MAJOR_INT);
     inner_file_names(file_names, num);
 }
 
@@ -567,7 +564,7 @@ void CLASS_MINIMAC::batch_in()
 
 //overriding these functions but we only have one "suboption"
 void CLASS_MINIMAC::sub_prog_name(int sub_opt, char *subprog) {
-    strcpy(subprog, "Check and Phase");
+    strcpy(subprog, "CheckAndPhase");
 }
 
 void CLASS_MINIMAC::interactive_sub_prog_name_to_sub_option(analysis_type *analysis)

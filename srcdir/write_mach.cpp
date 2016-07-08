@@ -359,54 +359,6 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
     delete mach_shs;
 }
 
-
-////take from write_shapeit_files to write a simple ped file for shapeit input
-////this may get moved to a sperate analaysis mode but is here while I'm trying it out
-//static void write_pedsix_file(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
-//{
-//    vlpCLASS(plink_pedsix,chr,ped_per_loci) {
-//        vlpCTOR(plink_pedsix,chr,ped_per_loci) { }
-//
-//        typedef char *str;
-//        str *file_names;
-//
-//        void file_loop() {
-//            mssgvf("        PLINK pedigree file:       %s/%s\n", *_opath, file_names[6]);  //fam
-//            data_loop(*_opath, file_names[6], "w");
-//        }
-//
-//        void per_start(){
-//#if 0
-//            if (PLINK_OUT.no_fid != 1) pr_fam();
-//            pr_per();
-//            if (PLINK_OUT.no_parents != 1) pr_parent(); // father-id & mother-id
-//            if (PLINK_OUT.no_sex != 1) pr_sex();
-//            if (PLINK_OUT.no_pheno != 1) pr_pheno();
-//#endif
-//            pr_uid();
-//            pr_parent();
-//            pr_sex();
-//            pr_pheno();
-//        }
-//
-//        void per_end() {
-//            pr_nl();
-//        }
-//
-//        void inner() {
-//            pr_marker();
-//        }
-//    } *sp = new plink_pedsix(Top);
-//
-//    sp->file_names = file_names;
-//
-//    sp->load_formats(fwid, pwid, -1);
-//
-//    sp->iterate();
-//
-//    delete sp;
-//}
-
 void CLASS_MACH::create_output_file(
         linkage_ped_top *LPedTreeTop,
         analysis_type *analysis,
@@ -466,33 +418,6 @@ void CLASS_MACH::create_output_file(
     // Omit pedigrees under certain circumstances, this was added to resolve a bug
     omit_peds(untyped_ped_opt, Top);
 
-    //So I believe we can use this function to create the general plink output (probably bed,bim etc.)
-    //This appears to be what write_shapeit uses to output the PLINK files for it's use so this shoudl work for our purposes as well
-    //Currently I'm trying to figure out the changes I would need to implement this, then I can change the shell to call these files for shapeit
-    //trying to decide if I should pull this out completely or if it can be an option done in this analysis mode
-
-    //printf("%d\n%d\n",PLINK_SUB_OPTION_SNP_MAJOR_INT-1,PLINK_SUB_OPTION_PED_INT);
-    //char * testfilesnames[10]; s
-
-    create_PLINK_files(&LPedTreeTop, file_names, untyped_ped_opt, PLINK_SUB_OPTION_SNP_MAJOR_INT, file_name_stem, analysis);
-
-
-//    for (int i = 0; i < allele_count;i++){
-//        current_allele = Allele_Array[i];
-//        allele_name = current_allele->name;
-//        //printf("%s\n",allele_name);
-//
-//        //it looks like the behavior of the Allele Array is as follows: If there is a single unknown, it adds a blank space "" to the array, if there is a second unknown it adds a string "dummy" any further it looks like it stops adding new dummies
-//        if ( ! ((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0)
-//                || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0) ||  (strcmp(allele_name,"dummy1") == 0) || (strcmp(allele_name,"dummy2") == 0) || (strcmp(allele_name,"*") == 0) )){
-//            char error[255];
-//            strcat(error, "The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
-//            strcat(error, allele_name);
-//            errorf(error);
-//            EXIT(DATA_TYPE_ERROR);
-//        }
-//    }
-
     printf("Mega2 created the following file(s) for MaCH/Minimac3:\n");
 
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
@@ -502,8 +427,6 @@ void CLASS_MACH::create_output_file(
     write_MACH_peds(Top, file_names, pwid, fwid);
 
     write_MACH_snps(Top, file_names, pwid, fwid);
-
-    //write_pedsix_file(Top, file_names, pwid, fwid);
 
     write_MACH_sh(Top, file_names);
 
