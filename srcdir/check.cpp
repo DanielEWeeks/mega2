@@ -1038,7 +1038,7 @@ void mito_transmission_report(ped_top *PTop,
 
     SECTION_ERR_INIT(check_mito);
     for (locus1 = &(PedTreeMito[0]); *locus1 != -99; locus1++) {
-        int lloc = PTop->LocusTop->Locus[*locus1].linkage_loc_num;
+        int lloc = *locus1;
         int ped;
         for (ped = 0; ped < PTop->PedCnt; ped++) {
             int entry;

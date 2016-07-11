@@ -36,11 +36,11 @@ extern void free_all_including_ped_top(ped_top *Top,
 				       void (*PTmpFreeFun)(void *TmpData),
 				       void (*ETmpFreeFun)(void *TmpData));
 
-extern int is_typed(ped_rec *Entry, locus_top *LTop, int mode);
+extern int is_typed(ped_rec *Entry, linkage_locus_top *LTop, int mode);
 
 extern void reassign_affecteds(ped_top *Top);
 
-extern void remove_untyped_affecteds(ped_tree *Ped, locus_top *LTop, int mode,
+extern void remove_untyped_affecteds(ped_tree *Ped, linkage_locus_top *LTop, int mode,
 				     int *order, int n);
 
 extern int renumber_ped(ped_tree *Ped);

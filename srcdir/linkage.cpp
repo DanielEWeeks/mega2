@@ -1414,14 +1414,16 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                 female_count++;
             }
             Top->Ped[i].Entry[j].Ngeno = 0;
+//q
+            Top->Ped[i].Entry[j].IsTyped = 0;
             this_male_typed=0; this_female_typed=0;
-            if (Mega2Status < LOCI_REORDERED) {
+            if (Mega2Status < LOCI_REORDERED || database_dump || ! database_read) {
                 numloc = Top->LocusTop->LocusCnt;
             } else {
                 numloc = num_reordered;
             }
             for (l = 0; l < numloc; l++)   {
-                if (Mega2Status < LOCI_REORDERED) {
+                if (Mega2Status < LOCI_REORDERED || database_dump || ! database_read) {
                     k = l;
                 } else {
                     k = reordered_marker_loci[l];
@@ -1439,6 +1441,8 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                     } else {
                         this_person_typed = num_typed_2alleles(pp->Marker, k);
                     }
+//q
+                    Top->Ped[i].Entry[j].IsTyped += this_person_typed;
                     /* If we are in recode, we are counting half-types,
                        otherwise this rouitne is called after half-typed
                        individuals have been reset or not reset */
@@ -1460,6 +1464,12 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                         untyped++;
                 }
             }
+//q
+            if (Top->Ped[i].Entry[j].IsTyped == 2 * numloc)
+                Top->Ped[i].Entry[j].IsTyped = 2;
+            else if (Top->Ped[i].Entry[j].IsTyped)
+                Top->Ped[i].Entry[j].IsTyped = 1;
+//q
             if (gender == MALE_ID) {
                 *males_typed += this_male_typed;
             } else if (gender == FEMALE_ID) {

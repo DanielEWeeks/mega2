@@ -1764,7 +1764,7 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
                 female_count++;
             }
             this_male_typed=0; this_female_typed=0;
-            if (Mega2Status < LOCI_REORDERED) {
+            if (Mega2Status < LOCI_REORDERED || database_dump || ! database_read) {
                 numloc = Top->LocusTop->LocusCnt;
             } else {
 	      numloc = num_reordered; // A global defined in common.h
@@ -1772,7 +1772,7 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
 	    // For each loci associated with this person...
             for (l=0; l < numloc; l++) {
 	      // Account for reordered loci...
-                if (Mega2Status < LOCI_REORDERED) {
+                if (Mega2Status < LOCI_REORDERED || database_dump || ! database_read) {
                     k=l;
                 } else {
                     k = reordered_marker_loci[l];

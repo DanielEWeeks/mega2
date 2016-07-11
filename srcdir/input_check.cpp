@@ -84,6 +84,7 @@ void     create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
 
 /* end of prototypes */
 
+#if 0
 /* ==================================================================
    ,  check for  existence for all map positions*/
 /* will assume 1st locus is 'disease loci' and skip it in the following check...
@@ -105,6 +106,7 @@ int             UnMappedLociCheck(linkage_ped_top * Top)
     }
     return unmapped;
 }
+#endif
 
 /* Compute the sum of squared differences between input and output alleles
    for all numbered loci, warn if this is above the thershold value

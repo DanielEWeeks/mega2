@@ -47,38 +47,39 @@
 int set_locus_orderDEFUNCT(ped_top *Top, int *order);
 void clear_ped_tree( ped_tree *Tree);
 ped_top *new_ped_top(void);
-int is_typed(ped_rec *Entry, locus_top *LTop1, int mode);
+int is_typed(ped_rec *Entry, linkage_locus_top *LTop, int mode);
 ped_top        *convert_to_pedtree(linkage_ped_top *Top, int assign_affs);
 void free_all_including_ped_top(ped_top *Top,  void (*PTmpFreeFun)(void *TmpData),
 				void (*ETmpFreeFun)(void *TmpData));
 void free_all_from_ped_tree(ped_tree *Ped,
                             void (*PTmpFreeFun)(void *TmpData),
                             void (*ETmpFreeFun)(void *TmpData));
-void free_all_from_locus_top(locus_top *LTop);
+//z void free_all_from_locus_top(locus_top *LTop);
 void add_to_offspring(ped_rec *Parent, ped_rec *Child);
 int renumber_ped(ped_tree *Ped);
-void remove_untyped_affecteds(ped_tree *Ped, locus_top *LTop,
+void remove_untyped_affecteds(ped_tree *Ped, linkage_locus_top *LTop,
 			      int mode, int *order, int n);
 void reassign_affecteds(ped_top *PTop);
 
 /********************************************/
 
 /*        internal functions          */
-static void swap_lociDEFUNCT(locus_rec *locus1, locus_rec *locus2);
-static void clear_locus_top(locus_top *LTop);
+//z static void swap_lociDEFUNCT(locus_rec *locus1, locus_rec *locus2);
+//z static void clear_locus_top(locus_top *LTop);
 static void clear_ped_top(ped_top *Top);
 static void free_all_from_ped_rec(ped_rec *Entry,
 				  void (*TmpFreeFun)(void *TmpData));
-static void free_all_from_locus_rec(locus_rec *Locus);
+//z static void free_all_from_locus_rec(locus_rec *Locus);
 static void free_all_from_ped_top(ped_top *Top, void (*PTmpFreeFun)(void *TmpData),
                                   void (*ETmpFreeFun)(void *TmpData));
-static locus_top *new_locus_top(void);
+//z static locus_top *new_locus_top(void);
 static void clear_ped_rec(ped_rec *Entry);
 static int sort_affecteds(ped_tree *Ped);
 
 /* static void assign_ped_id(ped_rec *Entry, int *current_id); */
 /**********************************************/
 
+#if 0
 static void clear_locus_top(locus_top *LTop)
 {
     LTop->LocusCnt = 0;
@@ -93,7 +94,7 @@ static locus_top *new_locus_top(void)
     clear_locus_top(newtop);
     return newtop;
 }
-
+#endif
 
 static void clear_ped_rec(ped_rec *Entry)
 {
@@ -113,7 +114,7 @@ static void clear_ped_rec(ped_rec *Entry)
     Entry->LEntry = NULL;
 }
 
-void clear_ped_tree( ped_tree *Tree)
+void clear_ped_tree(ped_tree *Tree)
 {
     Tree->Name=NULL;
     Tree->Entry = NULL;
@@ -142,7 +143,6 @@ ped_top *new_ped_top(void) {
 
 
 static void free_all_from_ped_rec(ped_rec *Entry, void (*TmpFreeFun)(void *TmpData))
-
 {
     if (Entry == NULL) return;
     if (Entry->Offspring != NULL)
@@ -158,7 +158,6 @@ static void free_all_from_ped_rec(ped_rec *Entry, void (*TmpFreeFun)(void *TmpDa
 
 void free_all_from_ped_tree(ped_tree *Ped, void (*PTmpFreeFun)(void *TmpData),
 			    void (*ETmpFreeFun)(void *TmpData))
-
 {
     int entry;
     if (Ped == NULL) return;
@@ -174,13 +173,12 @@ void free_all_from_ped_tree(ped_tree *Ped, void (*PTmpFreeFun)(void *TmpData),
         PTmpFreeFun(Ped->TmpData);
 }
 
-
+#if 0
 static void free_all_from_locus_rec(locus_rec *Locus)
 {
     if (Locus == NULL) return;
     if (Locus->LocusName != NULL) free(Locus->LocusName);
 }
-
 
 void free_all_from_locus_top(locus_top *LTop)
 {
@@ -193,7 +191,7 @@ void free_all_from_locus_top(locus_top *LTop)
         free(LTop->Locus);  LTop->Locus = NULL;
     }
 }
-
+#endif
 
 static void free_all_from_ped_top(ped_top *Top, void (*PTmpFreeFun)(void *TmpData),
                                   void (*ETmpFreeFun)(void *TmpData))
@@ -207,10 +205,12 @@ static void free_all_from_ped_top(ped_top *Top, void (*PTmpFreeFun)(void *TmpDat
             free_all_from_ped_tree(&(Top->PedTree[ped]), PTmpFreeFun, ETmpFreeFun);
         free(Top->PedTree);  Top->PedTree = NULL;
     }
+#if 0
     if (Top->LocusTop != NULL) {
         free_all_from_locus_top(Top->LocusTop);
         free(Top->LocusTop);  Top->LocusTop = NULL;
     }
+#endif
 }
 
 
@@ -241,6 +241,7 @@ void add_to_offspring(ped_rec *Parent, ped_rec *Child)
 }
 
 
+#if 0
 /* swap_loci()
  *
  * Slave routine for set_locus_order(). Swaps data in locus records.
@@ -254,7 +255,7 @@ static void swap_lociDEFUNCT(locus_rec *locus1, locus_rec *locus2)
     *locus1 = *locus2;
     *locus2 = tmplocus;
 }
-
+#endif
 
 /* set_locus_order()
  *
@@ -286,6 +287,7 @@ static void swap_lociDEFUNCT(locus_rec *locus1, locus_rec *locus2)
  * Return non-zero on error.
  */
 
+#if 0
 int set_locus_orderDEFUNCT(ped_top *Top, int *order)
 {
     int i, j;
@@ -334,7 +336,7 @@ int set_locus_orderDEFUNCT(ped_top *Top, int *order)
     free(place);
     return 0;
 }
-
+#endif
 
 /* sort_affecteds()
  *
@@ -526,14 +528,14 @@ int renumber_ped(ped_tree *Ped)
  * is TYPED_AT_ALL_LOCI or TYPED_AT_ANY_LOCUS.
  */
 
-int is_typed(ped_rec *Entry, locus_top *LTop1, int mode)
+int is_typed(ped_rec *Entry, linkage_locus_top *LTop, int mode)
 {
 
     int typed;
 
-    typed = is_typed_lentry(*(Entry->LEntry), LTop1->LTop, mode, NULL);
+    typed = is_typed_lentry(*(Entry->LEntry), LTop, mode, NULL);
 
-/*   for (locus1 = 0; locus1 < LTop1->LocusCnt; locus1++) { */
+/*   for (locus1 = 0; locus1 < LTop->LocusCnt; locus1++) { */
 
 /*     if ((Entry->Allele_1[locus1] != 0) && (Entry->Allele_2[locus1] != 0)) */
 /*       typed++; */
@@ -544,7 +546,7 @@ int is_typed(ped_rec *Entry, locus_top *LTop1, int mode)
 /*     else return 0; */
 /*   } */
 /*   else { */
-/*     if (typed == LTop1->LocusCnt) return 1; */
+/*     if (typed == LTop->LocusCnt) return 1; */
 /*     else */
 /*       return 0; */
 /*   } */
@@ -591,7 +593,7 @@ static int is_typed_order(ped_rec *Entry,
  * (The former is the default.)
  */
 
-void remove_untyped_affecteds(ped_tree *Ped, locus_top *LTop, int mode,
+void remove_untyped_affecteds(ped_tree *Ped, linkage_locus_top *LTop, int mode,
 			      int *order, int num_loci)
 {
     int aff, affcnt;
@@ -663,13 +665,12 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
 
 {
     int             ped, entry1, entry, locus1;
-    int             llocus1, mito_locus, l1;
+    int             locus, mito_locus, l1;
     ped_top        *PTop;
     register ped_tree *PPed;
     register linkage_ped_tree *LPed;
     register ped_rec *PRec;
     register linkage_ped_rec *LRec;
-    locus_top      *PLTop;
     linkage_locus_top *LLTop;
     /*  int plocus, LocusMapSize, *LocusMap=NULL; */
 
@@ -698,6 +699,8 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
         }
     }
 
+#if 0
+    locus_top      *PLTop;
     locus1=0;
     for (l1 = 0; l1 < num_reordered; l1++) {
         if (LLTop->Locus[reordered_marker_loci[l1]].Class != TRAIT) {
@@ -743,6 +746,18 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
         PLTop->Locus=NULL;
     }
     PLTop->LTop = LLTop;
+#else
+    PTop->LocusTop = LLTop;
+    for (locus = LLTop->PhenoCnt, mito_locus = 0; locus < LLTop->LocusCnt; locus ++) {
+        if (LLTop->Marker[locus].chromosome == MITO_CHROMOSOME) {
+                PedTreeMito[mito_locus] = locus;
+                mito_locus++;
+        }
+    }
+    if (PedTreeMito != NULL) {
+        PedTreeMito[mito_locus] = -99;
+    }
+#endif
 
     PTop->PedCnt = Top->PedCnt;
     PTop->PedTree = CALLOC((size_t) PTop->PedCnt, ped_tree);
@@ -772,16 +787,15 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
             PRec->sibship_checked = 0;
 
             /* Initialize the allele arrays. */
+//z             for (l1=0; l1 < num_reordered; l1++)
+//z                 get_2alleles(LRec->Marker, reordered_marker_loci[l1], &a1, &a2);
             if (FirstTime) {
                 /* Set the IsTyped field of both PedTree and LPedTree */
                 LRec->IsTyped=0; PRec->IsTyped = 0;
                 locus1=0;
-                for (l1=0; l1 < num_reordered; l1++) {
+                for (locus = LLTop->PhenoCnt; locus < LLTop->LocusCnt; locus ++) {
                     int a1, a2;
-                    if (LLTop->Locus[reordered_marker_loci[l1]].Class == TRAIT) {
-                        continue;
-                    }
-                    get_2alleles(LRec->Marker, reordered_marker_loci[l1], &a1, &a2);
+                    get_2alleles(LRec->Marker, locus, &a1, &a2);
                     if (a1 > 0 && a2 > 0 ) {
                         PRec->IsTyped++;
                     }
