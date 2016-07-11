@@ -42,7 +42,6 @@ public:
     ~CLASS_MINIMAC() { }
 
 
-
     virtual bool allow_no_trait() { return true; }
 
     virtual bool loops() { return true; }
@@ -76,11 +75,15 @@ public:
                             int untyped_ped_opt,
                             int *numchr, linkage_ped_top **Top2);
 
-    //void user_queries(char **file_names_array, int *combine_chromo, int *create_summary);
+    void user_queries(char **file_names_array, int *combine_chromo, int *create_summary);
 
     void minimac_option_menu(char *file_names[], char *prefix);
 
     void gen_file_names(char **file_names, char *num);
+    //{
+//        file_names_w_stem(file_names, num, file_name_stem,
+//                          PLINK_SUB_OPTION_SNP_MAJOR_INT);
+    //};
 
     void replace_chr_number(char *file_names[], int numchr);
 

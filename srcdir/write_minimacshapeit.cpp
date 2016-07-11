@@ -281,9 +281,13 @@ void CLASS_MINIMAC::create_sh_file(linkage_ped_top *Top, char **file_names, cons
     }
 }
 
-//looks like we don't need to override user_queries
-//void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary) {
-//}
+//Override of user_queries method, don't want to query the user about combining chromosomes, genotyping summaries, or filename stem (again)
+//Since I wrote a different option menu function before realizing plink core had this method to override I realize now that it's easier to have a blank method in it's place and hide it's behavior
+void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary) {
+    combine_chromo = 0;
+    //do nothing since we have another menu.
+}
+
 
 //need to switch some of the inputs for shapeit
 void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
@@ -524,6 +528,8 @@ void CLASS_MINIMAC::gen_file_names(char **file_names, char *num){
 void CLASS_MINIMAC::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[10], numchr);
     change_output_chr(file_names[8], numchr);
+    change_output_chr(file_names[1], numchr);
+    change_output_chr(file_names[3], numchr);
 }
 
 void CLASS_MINIMAC::batch_out()
