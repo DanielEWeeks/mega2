@@ -79,6 +79,23 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     LoopOverTrait = 0;
     num_traits = 0;
 
+    //We need to check for only ACTG as alleles.
+    const char *allele_name;
+    for (int locus = Top->LocusTop->PhenoCnt; locus < Top->LocusTop->LocusCnt; locus++){
+        for (int allele = 0; allele < Top->LocusTop->Locus[locus].AlleleCnt; allele++){
+            allele_name = Top->LocusTop->Locus[locus].Allele[allele].AlleleName;
+            //printf("%s\n",allele_name);
+            if ( ! ((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0) || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0))) {
+                char error[255];
+                strcpy(error, "The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
+                strcat(error, allele_name);
+                errorf(error);
+                EXIT(DATA_TYPE_ERROR);
+            }
+        }
+    }
+
+
     omit_peds(untyped_ped_opt, Top);
 
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
@@ -193,6 +210,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             split(m_hapsplit, m_haplotype_file,"?");
 
 
+            //first we run check to get snps to exclude
             pr_nl();
             pr_printf ("#use mega2 plink formatted output to run shapeit checks\n");
             pr_printf ("%s -check --input-bed %s %s %s --input-map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks"
@@ -201,16 +219,27 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_nl();
 
 
-            pr_printf ("#use mega2 plink formatted output to run shapeit convert\n");
-            pr_printf ("%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.snp.strand.exclude -O Chr%d.Phased.Output --thread %d"
+            //next we run the shapeit phasing mode
+            pr_printf ("#use mega2 plink formatted output to run shapeit phase mode\n");
+            pr_printf ("%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d"
                     ,cmd1,file_names[3],file_names[1],file_names[0],s_hapsplit[0].c_str(),_numchr,s_hapsplit[1].c_str(),legsplit[0].c_str(),_numchr,legsplit[1].c_str(), sample_file.c_str(),_numchr,_numchr,g_cpus);
             pr_nl();
             pr_nl();
 
+            //finally we have to convert to VCF for a usable input for Minimac3
+            pr_printf ("#use mega2 plink formatted output to run shapeit phase mode\n");
+            pr_printf ("%s -convert --input-haps Chr%d.Phased.Output --output-vcf Chr%d.Phased.Output.vcf"
+                    ,cmd1,_numchr,_numchr);
+            pr_nl();
+            pr_nl();
+
+            //And last of all we run Minimac3 imputation
             if (g_cpus == 1)
                 pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str(),_numchr,_numchr,_numchr);
             if (g_cpus > 1)
                 pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
+
+            pr_nl();
 
         }
         //finds the program to run dynamically and gives an error if it can't be found.
@@ -244,7 +273,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_printf("  echo setenv %s dir_to_%s\n", NAME, path);
             pr_printf("  echo\n");
             pr_printf("  echo\n");
-            pr_printf("  echo \"For further details, please see Shapeit/Minimac3 section of the Mega2 documentation.\"\n");
+            pr_printf("  echo \"For further details, please see MaCH/Minimac3 section of the Mega2 documentation.\"\n");
             pr_printf("  exit 0\n");
             pr_printf("endif\n");
             pr_nl();
@@ -332,7 +361,7 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         printf("Shapeit/Minimac3 Analysis Menu:\n");
         printf("%d) Done with this menu - please proceed\n",done);
         printf("%d) File name stem:                                             %-15s\n", stem, prefix);
-        printf("%d) Choose Shapeit map  file:                                   %s?%s\n", map, map_pre.c_str(), map_post.c_str());
+        printf("%d) Choose Shapeit map file:                                   %s?%s\n", map, map_pre.c_str(), map_post.c_str());
         printf("%d) Choose Shapeit reference haplotype file:                    %s?%s\n", s_hap, s_haplotype_pre.c_str(), s_haplotype_post.c_str());
         printf("%d) Choose Shapeit reference legend file:                       %s?%s\n", legend, legend_pre.c_str(), legend_post.c_str());
         printf("%d) Choose Shapeit reference sample file:                       %s\n",    sample, reference_sample_file.c_str());
