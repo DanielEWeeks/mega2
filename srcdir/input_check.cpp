@@ -84,30 +84,6 @@ void     create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
 
 /* end of prototypes */
 
-#if 0
-/* ==================================================================
-   ,  check for  existence for all map positions*/
-/* will assume 1st locus is 'disease loci' and skip it in the following check...
-   POOR ASSUMPTION: NEED TO FIX THIS */
-
-int             UnMappedLociCheck(linkage_ped_top * Top)
-{
-    int             i, unmapped = 0;
-
-
-    for (i = 0; i < num_reordered; i++) {
-        if (Top->LocusTop->Marker[reordered_marker_loci[i]].pos_avg < 0.000 &&
-            (Top->LocusTop->Locus[reordered_marker_loci[i]].Type == NUMBERED ||
-             Top->LocusTop->Locus[reordered_marker_loci[i]].Type == BINARY)) {
-            printf("%s ",
-                   Top->LocusTop->Marker[reordered_marker_loci[i]].MarkerName);
-            unmapped = 1;
-        }
-    }
-    return unmapped;
-}
-#endif
-
 /* Compute the sum of squared differences between input and output alleles
    for all numbered loci, warn if this is above the thershold value
 */
