@@ -235,9 +235,9 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
 
             //And last of all we run Minimac3 imputation
             if (g_cpus == 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str(),_numchr,_numchr,_numchr);
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str(),_numchr,_numchr,_numchr);
             if (g_cpus > 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
+                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
 
             pr_nl();
 
@@ -320,20 +320,22 @@ void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, i
 
 //need to switch some of the inputs for shapeit
 void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
-    int done, s_hap, cpus, choice, s_hap_renamed, legend_renamed, stem, legend, sample, map, map_renamed, m_hap, m_hap_renamed;
+    int done, s_hap, cpus, choice, s_hap_renamed, legend_renamed, stem, legend, sample, map, map_renamed, m_hap, m_hap_renamed, ref_toggle, toggled;
     done = 0;
     stem = 1;
-    map = 2;
-    s_hap = 3;
-    legend = 4;
-    sample = 5;
-    m_hap = 6;
-    cpus = 7;
+    map = 4;
+    s_hap = 6;
+    legend = 7;
+    sample = 8;
+    m_hap = 3;
+    cpus = 2;
+    ref_toggle = 5;
     choice = -1;
     map_renamed = 0;
     s_hap_renamed = 0;
     legend_renamed = 0;
     m_hap_renamed = 0;
+    toggled = 0;
 
     strcpy(prefix, file_name_stem);
 
@@ -359,16 +361,24 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
     while (choice != 0) {
         draw_line();
         printf("Shapeit/Minimac3 Analysis Menu:\n");
-        printf("%d) Done with this menu - please proceed\n",done);
+        printf("%d) Done with this menu - please proceed\n",                              done);
         printf("%d) File name stem:                                             %-15s\n", stem, prefix);
-        printf("%d) Choose Shapeit map file:                                   %s?%s\n", map, map_pre.c_str(), map_post.c_str());
-        printf("%d) Choose Shapeit reference haplotype file:                    %s?%s\n", s_hap, s_haplotype_pre.c_str(), s_haplotype_post.c_str());
-        printf("%d) Choose Shapeit reference legend file:                       %s?%s\n", legend, legend_pre.c_str(), legend_post.c_str());
-        printf("%d) Choose Shapeit reference sample file:                       %s\n",    sample, reference_sample_file.c_str());
-        printf("%d) Choose Minimac3 reference sample file:                      %s?%s\n", m_hap, m_haplotype_pre.c_str(),m_haplotype_post.c_str());
         printf("%d) Number of CPUS for Shapeit Prephasing/Minimac3 Imputation:  %d\n",    cpus, g_cpus);
+        printf("%d) Choose Minimac3 reference sample file:                      %s?%s\n", m_hap, m_haplotype_pre.c_str(),m_haplotype_post.c_str());
+        printf("%d) Choose Shapeit map file:                                    %s?%s\n", map, map_pre.c_str(), map_post.c_str());
+        if(!toggled)
+            printf("%d) Use reference panel in HAPS/SAMPLE format for shapeit?      No   \n", ref_toggle);
+        else{
+            printf("%d) Use reference panel in HAPS/SAMPLE format for shapeit?      Yes  \n", ref_toggle);
+            printf("%d) Choose Shapeit reference haplotype file:                    %s?%s\n", s_hap, s_haplotype_pre.c_str(), s_haplotype_post.c_str());
+            printf("%d) Choose Shapeit reference legend file:                       %s?%s\n", legend, legend_pre.c_str(), legend_post.c_str());
+            printf("%d) Choose Shapeit reference sample file:                       %s\n",    sample, reference_sample_file.c_str());
+        }
 
-        printf("Enter selection: 0 - %d > ",7);
+
+
+
+        printf("Enter selection: 0 - %d > ",8);
 
         fcmap(stdin,"%d", &choice); newline;
 
@@ -532,6 +542,14 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
                 }
                 break;
             }
+        }
+
+        else if (choice == ref_toggle)
+        {
+            if (toggled == 0)
+                toggled = 1;
+            else
+                toggled = 0;
         }
 
         else {
