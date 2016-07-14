@@ -58,6 +58,7 @@ Str legend_file;
 Str sample_file;
 Str map_file;
 Str m_haplotype_file;
+int haps_sample_selected;
 
 void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
     int pwid, fwid, mwid;
@@ -209,27 +210,49 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             Vecs m_hapsplit;
             split(m_hapsplit, m_haplotype_file,"?");
 
+            //need a split for if the user has selected the HAPS, SAMPLE, and LEGEND files for shapeit or not
+            //something for users to note, without the haps, sample file for shapeit, there is no prebuilt exclusion (so I removed it from that corresponding script)
+            if(haps_sample_selected) {
+                pr_nl();
+                pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
+                pr_printf("%s -check --input-bed %s %s %s --input-map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks",
+                        cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(),
+                        s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr,
+                        legsplit[1].c_str(), sample_file.c_str(), _numchr);
+                pr_nl();
+                pr_nl();
 
-            //first we run check to get snps to exclude
-            pr_nl();
-            pr_printf ("#use mega2 plink formatted output to run shapeit checks\n");
-            pr_printf ("%s -check --input-bed %s %s %s --input-map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks"
-                    ,cmd1,file_names[3],file_names[1],file_names[0],mapsplit[0].c_str(),_numchr,mapsplit[1].c_str(),s_hapsplit[0].c_str(),_numchr,s_hapsplit[1].c_str(),legsplit[0].c_str(),_numchr,legsplit[1].c_str(), sample_file.c_str(),_numchr);
-            pr_nl();
-            pr_nl();
 
 
-            //next we run the shapeit phasing mode
-            pr_printf ("#use mega2 plink formatted output to run shapeit phase mode\n");
-            pr_printf ("%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d"
-                    ,cmd1,file_names[3],file_names[1],file_names[0],s_hapsplit[0].c_str(),_numchr,s_hapsplit[1].c_str(),legsplit[0].c_str(),_numchr,legsplit[1].c_str(), sample_file.c_str(),_numchr,_numchr,g_cpus);
-            pr_nl();
-            pr_nl();
+                //next we run the shapeit phasing mode
+                pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
+                pr_printf("%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d",
+                        cmd1, file_names[3], file_names[1], file_names[0], s_hapsplit[0].c_str(), _numchr,
+                        s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr, legsplit[1].c_str(), sample_file.c_str(),
+                        _numchr, _numchr, g_cpus);
+                pr_nl();
+                pr_nl();
+            }
+            else
+            {
+                //first we run check to get snps to exclude
+                pr_nl();
+                pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
+                pr_printf("%s -check --input-bed %s %s %s --input-map %s%d%s  --output-log Chr%d.checks", cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(), _numchr);
+                pr_nl();
+                pr_nl();
+
+                //next we run the shapeit phasing mode, Note that in this instance no exclusion file is included
+                pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
+                pr_printf("%s --input-bed %s %s %s -O Chr%d.Phased.Output --thread %d", cmd1, file_names[3], file_names[1], file_names[0], _numchr, g_cpus);
+                pr_nl();
+                pr_nl();
+
+            }
 
             //finally we have to convert to VCF for a usable input for Minimac3
             pr_printf ("#use mega2 plink formatted output to run shapeit phase mode\n");
-            pr_printf ("%s -convert --input-haps Chr%d.Phased.Output --output-vcf Chr%d.Phased.Output.vcf"
-                    ,cmd1,_numchr,_numchr);
+            pr_printf ("%s -convert --input-haps Chr%d.Phased.Output --output-vcf Chr%d.Phased.Output.vcf",cmd1,_numchr,_numchr);
             pr_nl();
             pr_nl();
 
@@ -320,7 +343,7 @@ void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, i
 
 //need to switch some of the inputs for shapeit
 void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
-    int done, s_hap, cpus, choice, s_hap_renamed, legend_renamed, stem, legend, sample, map, map_renamed, m_hap, m_hap_renamed, ref_toggle, toggled;
+    int done, s_hap, cpus, choice, s_hap_renamed, legend_renamed, stem, legend, sample, map, map_renamed, m_hap, m_hap_renamed, ref_toggle;
     done = 0;
     stem = 1;
     map = 4;
@@ -335,7 +358,7 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
     s_hap_renamed = 0;
     legend_renamed = 0;
     m_hap_renamed = 0;
-    toggled = 0;
+    haps_sample_selected = 0;
 
     strcpy(prefix, file_name_stem);
 
@@ -366,7 +389,7 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         printf("%d) Number of CPUS for Shapeit Prephasing/Minimac3 Imputation:  %d\n",    cpus, g_cpus);
         printf("%d) Choose Minimac3 reference sample file:                      %s?%s\n", m_hap, m_haplotype_pre.c_str(),m_haplotype_post.c_str());
         printf("%d) Choose Shapeit map file:                                    %s?%s\n", map, map_pre.c_str(), map_post.c_str());
-        if(!toggled)
+        if(!haps_sample_selected)
             printf("%d) Use reference panel in HAPS/SAMPLE format for shapeit?      No   \n", ref_toggle);
         else{
             printf("%d) Use reference panel in HAPS/SAMPLE format for shapeit?      Yes  \n", ref_toggle);
@@ -377,8 +400,10 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
 
 
 
-
-        printf("Enter selection: 0 - %d > ",8);
+        if(!haps_sample_selected)
+            printf("Enter selection: 0 - %d > ",5);
+        else
+            printf("Enter selection: 0 - %d > ",8);
 
         fcmap(stdin,"%d", &choice); newline;
 
@@ -546,10 +571,11 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
 
         else if (choice == ref_toggle)
         {
-            if (toggled == 0)
-                toggled = 1;
+            if (!haps_sample_selected)
+                haps_sample_selected = 1;
+
             else
-                toggled = 0;
+                haps_sample_selected = 0;
         }
 
         else {
