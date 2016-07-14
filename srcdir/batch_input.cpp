@@ -239,11 +239,11 @@ static keyw_t keywords[] = {
     {"RoadTrips_male_prevalence",             FLOAT,      "0.123"},
     {"RoadTrips_female_prevalence",           FLOAT,      "0.123"},
 
-    {"minimac_reference_haplotype_file",      STRING,     ""},
+    {"minimac_reference_haplotype_file",      STRING,     "?"},
     {"batch_cpu_count",                       INT,        "1"},
 
-    {"shapeit_reference_haplotype_file",      STRING,     ""},
-    {"shapeit_reference_legend_file",         STRING,     ""},
+    {"shapeit_reference_haplotype_file",      STRING,     "?"},
+    {"shapeit_reference_legend_file",         STRING,     "?"},
     {"shapeit_reference_sample_file",         STRING,     ""},
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
