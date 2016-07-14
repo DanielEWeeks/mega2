@@ -574,11 +574,6 @@ void CLASS_MACH::batch_in()
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(                fn,   "file_name_stem");
-<<<<<<< HEAD
     BatchValueIfSet(mach_reference_haplotype_file, "minimac_reference_haplotype_file");
     BatchValueGet(g_cpus, "batch_cpu_count");
-=======
-    BatchValueGet(mach_reference_haplotype_file, "mach_reference_haplotype_file");
-    BatchValueGet(g_cpus, "mach_batch_cpu_count");
->>>>>>> 438f8d364b7fbf4c9cf1edfe9f5c6533e8990fdd
 }
