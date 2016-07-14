@@ -266,7 +266,9 @@ void allelecnt_check(linkage_ped_top *Top, analysis_type analysis)
         locus = reordered_marker_loci[i];
 //      printf("%d %d: %d %s\n",
 //             i, locus, LTop->Locus[locus].AlleleCnt, LTop->Locus[locus].LocusName);
-        if (LTop->Locus[locus].AlleleCnt > 2) {
+        if (LTop->Locus[locus].Type == AFFECTION || LTop->Locus[locus].Type == QUANT) {
+            num_nbi--;
+        } else if (LTop->Locus[locus].AlleleCnt > 2) {
             num_nbi--;
 
             if (strlen(err_msg) >= 67) {
@@ -294,13 +296,13 @@ void allelecnt_check(linkage_ped_top *Top, analysis_type analysis)
 
     tod_ac();
 
-    if (analysis == TO_PLINK && num_nbi < .5 * num_reordered) {
+    if (analysis == TO_PLINK && num_nbi == 0) {
         errorvf("%d (of %d) valid marker loci left for PLINK to analyze, terminating Mega2!\n",
                 num_nbi, num_reordered);
         EXIT(OUTPUT_FORMAT_ERROR);
     }
 
-    if (analysis == IQLS && num_nbi < .5 * num_reordered) {
+    if (analysis == IQLS && num_nbi == 0) {
         errorvf("%d (of %d) valid marker loci left for IQLS to analyze, terminating Mega2!\n",
                 num_nbi, num_reordered);
         EXIT(OUTPUT_FORMAT_ERROR);
@@ -831,7 +833,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
                 msgvf(" Leave allele alone\n\n");
         }
     }
-
+/*
     if (PedStat.genotype_invalid) {
         if (imend) {
             mssgf("Mendelianly-inconsistent genotypes set to unknown as requested.");
@@ -860,11 +862,11 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             mssgf("User chose not to generate new \"ID\" values.\n");
         }
     }
-
+*/
     if (PedStat.genotype_invalid || PedStat.halftyped ||
         PedStat.exceed_allcnt || nonuniq) {
         log_line(mssgf);
-        warnvf("Mega2 also found these problems/errors in input data (see MEGA2.ERR for details): \n");
+        warnvf("Mega2 resolved these problems/errors in input data (see MEGA2.ERR for details): \n");
         if (PedStat.halftyped > 0) {
             warnvf(" -> %d Half-typed genotypes\n", PedStat.halftyped);
             /* if (analysis == TO_MENDEL || SIMWALK2(analysis)) */ {
