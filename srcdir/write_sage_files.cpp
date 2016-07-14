@@ -591,7 +591,15 @@ static void   sagewrite_quantitative_data(FILE *filep, int locusnm,
     if (fabs(entry->Pheno[locusnm].Quant - MissingQuant) <= EPSILON) {
         // This is the old sage for which I could not find source or documentation...
         // Should this be truncated to an int?
-        fprintf(filep, "%7.3f ", MissingQuant);
+        if (ITEM_READ(Value_Missing_Quant_On_Output)) {
+            fprintf(filep, " %s ",
+                    Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
+        } else {
+	  // This should have been caught before this point, but just in case...
+	  errorvf("The batch file item 'Value_Missing_Quant_On_Output' must be specified because\n");
+	  errorvf("one or more QTL has been found to be missing in the input data.\n");
+	  EXIT(BATCH_FILE_ITEM_ERROR);
+	}
     } else {
         fprintf(filep, "%7.3f ", entry->Pheno[locusnm].Quant);
     }

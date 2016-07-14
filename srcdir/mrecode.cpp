@@ -478,7 +478,7 @@ void convert_to_freq(marker_type *marker_list,
         if (LTop->Locus[m].Type == NUMBERED ||
                 LTop->Locus[m].Type == XLINKED ||
                 LTop->Locus[m].Type == YLINKED) {
-
+/*
             if (analysis == TO_PLINK && marker_list[m].num_alleles <= 2) {
                 continue;
             }
@@ -486,11 +486,11 @@ void convert_to_freq(marker_type *marker_list,
             if (analysis == TO_PLINK) {
                 marker_list[m].estimate_frequencies = 1;
             }
-
+*/
             if (marker_list[m].estimate_frequencies) {
-                count_option=count_option1;
+                count_option = count_option1;
             } else {
-                count_option=0;
+                count_option = 0;
             }
 
 
@@ -2426,9 +2426,12 @@ linkage_ped_top  *create_full_marker_data(
     }
 
     if (HasMarkers) {
-        count_option =
-            get_count_option(1, &count_halftyped,
-                             "Select individuals to compute allele frequencies\n       for recoded marker loci:");
+        if (analysis != TO_PLINK || database_dump) {
+            count_option =
+                get_count_option(1, &count_halftyped,
+                                 "Select individuals to compute allele frequencies\n       for recoded marker loci:");
+        } else
+            count_option=4;
     } else {
         count_option=4;
     }
@@ -2442,11 +2445,9 @@ linkage_ped_top  *create_full_marker_data(
         UntypedPeds = CALLOC((size_t) Top->PedCnt, int);
     }
     omit_peds(*untyped_ped_opt, Top);
-    if (analysis != TO_PLINK) {
-        mssgf("Counting alleles and computing frequencies ...");
-    } else {
-        mssgf("Counting alleles for each marker ...");
-    }
+
+    mssgf("Counting alleles and computing frequencies ...");
+
     {
         int ped, entrycount;
         allelecnt **member_ids;
@@ -2493,9 +2494,9 @@ linkage_ped_top  *create_full_marker_data(
 
     count_raw_alleles(marker_list, Top->LocusTop);
 
-    if (analysis != TO_PLINK) {
+//  if (analysis != TO_PLINK) {
         count_classes(pheno_list, Top->LocusTop);
-    }
+//  }
 
     /* see if alleles are numeric and consecutive, else
        needs recoding, also sort alleles */

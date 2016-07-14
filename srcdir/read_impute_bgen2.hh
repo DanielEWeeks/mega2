@@ -132,6 +132,7 @@ private:
 
 // BgenParser is a thin wrapper around the core functions in genfile/bgen/bgen.hpp.
 // This class tracks file state and handles passing the right callbacks.
+class BgenParser;
 class BgenParser {
 public:    
     BgenParser():
@@ -139,6 +140,16 @@ public:
         m_state( e_NotOpen ),
         m_have_sample_ids( false ) {}
 
+    class f0 {
+    public:
+        f0(BgenParser *hiss) : that(hiss) {}
+        ~f0() {}
+
+        void operator() ( std::string id )
+            { that->m_sample_ids.push_back( id ) ; }
+    private:
+        BgenParser *that;
+    };
     void open( )
     {
         // Open the stream
@@ -155,7 +166,10 @@ public:
         if( m_context.flags & genfile::bgen::e_SampleIdentifiers ) {
             genfile::bgen::read_sample_identifier_block(
                 *m_stream, m_context,
+/*
                 [this]( std::string id ) { m_sample_ids.push_back( id ) ; }
+*/
+                f0(this)
             ) ;
             m_have_sample_ids = true ;
         }
@@ -209,6 +223,28 @@ public:
         }
     }
 
+    class f1 {
+    public:
+        f1(std::vector< std::string >* &alleles) : f1_alleles(alleles) {}
+        ~f1() {}
+
+        void operator()( std::size_t n)
+             { f1_alleles->resize( n ) ; }
+    private:
+        std::vector< std::string >* &f1_alleles;
+    };
+
+    class f2 {
+    public:
+        f2(std::vector< std::string >* &alleles) : f2_alleles(alleles) {}
+        ~f2() {}
+
+        std::string const &operator()( std::size_t i, std::string const& allele )
+            { f2_alleles->at(i) = allele; return allele;}
+    private:
+        std::vector< std::string >* &f2_alleles;
+    };
+
     // Attempt to read identifying information about a variant from the bgen file, returning
     // it in the given fields.
     // If this method returns true, data was successfully read, and it should be safe to call read_probs()
@@ -227,8 +263,12 @@ public:
             genfile::bgen::read_snp_identifying_data(
                 *m_stream, m_context,
                 &SNPID, rsid, chromosome, position,
+/*
                 [&alleles]( std::size_t n ) { alleles->resize( n ) ; },
                 [&alleles]( std::size_t i, std::string const& allele ) { alleles->at(i) = allele ; }
+*/
+                f1(alleles),
+                f2(alleles)
             )
         ) {
             m_state = e_ReadyForProbs ;
@@ -237,7 +277,7 @@ public:
             return false ;
         }
     }
-    
+
     // Read genotype probability data for the SNP just read using read_variant()
     // After calling this method it should be safe to call read_variant() to fetch
     // the next variant from the file.

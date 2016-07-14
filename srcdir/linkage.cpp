@@ -326,7 +326,9 @@ void            clear_lpedrec(linkage_ped_rec *Entry)
     Entry->Pheno = NULL;
     Entry->Marker = NULL;
     Entry->TmpData = NULL;
+    Entry->Orig_status = 0;
     Entry->Ngeno = 0;
+    Entry->IsTyped  = 0;
     strcpy(Entry->OrigID, "");
     strcpy(Entry->PerPre, "");
     strcpy(Entry->FamName, "");
@@ -345,6 +347,8 @@ void            clear_lpedtree( linkage_ped_tree *Ped)
     Ped->Num = UNDEF;
     Ped->EntryCnt = 0;
     Ped->Entry = NULL;
+    Ped->OriginalID = 0;
+    Ped->IsTyped  = 0;
     Ped->Proband = UNDEF;
     Ped->Loops = NULL;
 }
@@ -1410,14 +1414,15 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                 female_count++;
             }
             Top->Ped[i].Entry[j].Ngeno = 0;
+            Top->Ped[i].Entry[j].IsTyped = 0;
             this_male_typed=0; this_female_typed=0;
-            if (Mega2Status < LOCI_REORDERED) {
+            if (Mega2Status < LOCI_REORDERED || database_dump || ! database_read) {
                 numloc = Top->LocusTop->LocusCnt;
             } else {
                 numloc = num_reordered;
             }
             for (l = 0; l < numloc; l++)   {
-                if (Mega2Status < LOCI_REORDERED) {
+                if (Mega2Status < LOCI_REORDERED || database_dump || ! database_read) {
                     k = l;
                 } else {
                     k = reordered_marker_loci[l];
@@ -1435,6 +1440,7 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                     } else {
                         this_person_typed = num_typed_2alleles(pp->Marker, k);
                     }
+                    Top->Ped[i].Entry[j].IsTyped += this_person_typed;
                     /* If we are in recode, we are counting half-types,
                        otherwise this rouitne is called after half-typed
                        individuals have been reset or not reset */
@@ -1456,6 +1462,11 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                         untyped++;
                 }
             }
+            if (Top->Ped[i].Entry[j].IsTyped == 2 * numloc)
+                Top->Ped[i].Entry[j].IsTyped = 2;
+            else if (Top->Ped[i].Entry[j].IsTyped)
+                Top->Ped[i].Entry[j].IsTyped = 1;
+
             if (gender == MALE_ID) {
                 *males_typed += this_male_typed;
             } else if (gender == FEMALE_ID) {

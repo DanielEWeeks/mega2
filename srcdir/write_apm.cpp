@@ -120,8 +120,8 @@ static int save_apm_peds_ML(FILE *filep, ped_top *Top, int *save)
             fprintf(filep, "Ped %s\n", Ped->Name);
             fprintf(filep, "   %d   %d", Ped->EntryCnt, Ped->AffectedCnt);
             typed=0;
-            for (loc = 0; loc < Top->LocusTop->LocusCnt; loc++) {
-                lloc = Top->LocusTop->Locus[loc].linkage_loc_num;
+            for (loc = 0; loc < num_reordered; loc++) {
+                lloc = reordered_marker_loci[loc];
                 for (entry = 0; entry < Ped->AffectedCnt; entry++) {
                     int a1, a2;
                     get_2alleles(Ped->Affected[entry]->LEntry->Marker, lloc, &a1, &a2);
@@ -179,9 +179,9 @@ static int save_apm_peds_ML(FILE *filep, ped_top *Top, int *save)
 
             if (charcnt > 0) fputc('\n', filep);
             /* write locus number and list of genotypes */
-            for (locus = 0; locus < Top->LocusTop->LocusCnt; locus++) {
+            for (loc = 0; loc < num_reordered; loc++) {
+                locus = reordered_marker_loci[loc];
                 /* First check if we are actually typed at this locus. */
-                lloc = Top->LocusTop->Locus[loc].linkage_loc_num;
                 typed = 0;
                 for (entry = 0; (typed == 0) && (entry < Ped->AffectedCnt); entry++) {
                     if ((Ped->Affected[entry]->Allele_1[locus] != 0)

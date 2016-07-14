@@ -4360,12 +4360,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             vcf_map = VCFtools_get_map(alternative_key, "chr");
             vcfgm();
 
-            if (analysis == TO_PLINK) {
-                // Store the map so that we can pull out the VCF reference alleles and drop then into a
-                // file to be read by PLINK using '--reference-allele fn'. It is unclear at this point
-                // whether the user will choose this map file or not.
-                save_vcf_map = vcf_map;
-            }
+            // Store the map so that we can pull out the VCF reference alleles and drop then into a
+            // file to be read by PLINK using '--reference-allele fn'. It is unclear at this point
+            // whether the user will choose this map file or not.
+            save_vcf_map = vcf_map;
             
             // Process the genotype (from VCF file 'vcf_map') and phenotype 'phe_*' marker data,
             // loading it into LTop...
@@ -4703,7 +4701,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     /* recode and compute frequencies if necessary */
     Mega2Status = INSIDE_RECODE;
-    if (analysis != TO_PLINK) {
+    if (analysis != TO_PLINK || database_dump) {
         if (HasFreqFileBeenRead == 0 || HasFreqFileBeenRead == 2) {
             count_option =
                 get_count_option(1, &count_halftyped,

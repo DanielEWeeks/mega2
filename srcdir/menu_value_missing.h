@@ -155,6 +155,15 @@ Missing_Value  missing_values[] = {
       /*affect*/      "x", Missing_Value::Any, Missing_Value::Varies,
       /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
 
+    { "Mach format",              MACH,
+      /*quant*/       "*",  Missing_Value::Any, Missing_Value::Fixed,
+      /*affect*/      "*" , Missing_Value::Any, Missing_Value::Fixed,
+      /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
+    { "Miminac format",              MINIMAC,
+            /*quant*/       "*",  Missing_Value::Any, Missing_Value::Fixed,
+            /*affect*/      "*" , Missing_Value::Any, Missing_Value::Fixed,
+            /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
+
     { "Mendel format",              TO_MENDEL7_CSV,
 /*?*/ /*
        *
@@ -413,10 +422,6 @@ Missing_Value  missing_values[] = {
       /*quant*/       "", Missing_Value::Numeric, Missing_Value::Change,
       /*affect*/      "", Missing_Value::Numeric, Missing_Value::Change,
       /*allele*/      "", Missing_Value::Any, Missing_Value::Fixed },
-
-    { "Mach format",              MACH,},
-
-    { "Miminac format",              MINIMAC,},
 };
 
 int count_missing_values = sizeof (missing_values) / sizeof (Missing_Value);

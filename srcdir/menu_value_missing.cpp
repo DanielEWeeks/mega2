@@ -234,7 +234,6 @@ static void Value_Missing_menu(analysis_type *analysis)
             ans = 0;
 
         if (ans == 0) {
-//          asm("int $3");
             not_done = fix_Value_Missing_all(analysis);
             continue;
         } else if (ans > ttl || ans < 1) {
@@ -680,13 +679,6 @@ static void fix_Value_Missing_Quant_On_Input(analysis_type *analysis, struct itl
         // Interesting, but MissingQuant was not assigned here in the past!
         // NOTE: the use of 'strtok' here assumes that there is no comment following the value
         MissingQuant = strtod(value, &endptr);
-
-        if (*analysis == TO_SAGE) {
-#ifndef HIDESTATUS
-            warnf("Decimal places in will be ignored since SAGE accepts only integers as missing values.");
-#endif
-            MissingQuant = (MissingQuant > 0 ? floor(MissingQuant) : ceil(MissingQuant));
-        }
         Mega2BatchItems[/* 17 */ Value_Missing_Quant_On_Input].value.fvalue = MissingQuant;
     }
 }
@@ -708,15 +700,27 @@ static void fix_Value_Missing_Quant_On_Output(analysis_type *analysis, struct it
     } else 
         MissingOutQuantSet = 0;
 
-    strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name, value);
+    if (MissingOutQuantSet && *analysis == TO_SAGE) {
+#ifndef HIDESTATUS
+        warnf("Decimal places in will be ignored since SAGE accepts only integers as missing values.");
+#endif
+        MissingOutQuant = (MissingOutQuant > 0 ? floor(MissingOutQuant) : ceil(MissingOutQuant));
+        sprintf(Mega2BatchItems[itp->it].value.name, "%d", (int) MissingOutQuant);
+    } else
+        strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name, value);
 }
 
 static void fix_Value_Missing_Affect_On_Input(analysis_type *analysis, struct itl *itp, const char *value) {
 //    if (strcasecmp(value, "NA") == 0)
 //        Mega2BatchItems[itp->it].value.option = 0;
 //    else
+    strcpy(Mega2BatchItems[itp->it].value.name, value);
+}
+
+static void fix_Value_Missing_Affect_On_Output(analysis_type *analysis, struct itl *itp, const char *value) {
     double Missing;
     char *end;
+
     if (*analysis == TO_SAGE) {
 #ifndef HIDESTATUS
 	warnf("Decimal places in will be ignored since SAGE accepts only integers as missing values.");
@@ -729,11 +733,7 @@ static void fix_Value_Missing_Affect_On_Input(analysis_type *analysis, struct it
 	    strcpy(Mega2BatchItems[itp->it].value.name, value);
 	}
     } else
-	strcpy(Mega2BatchItems[itp->it].value.name, value);
-}
-
-static void fix_Value_Missing_Affect_On_Output(analysis_type *analysis, struct itl *itp, const char *value) {
-    strcpy(Mega2BatchItems[/* 49 */ Value_Missing_Affect_On_Output].value.name, value);
+        strcpy(Mega2BatchItems[/* 59 */ Value_Missing_Affect_On_Output].value.name, value);
 }
 
 static int fix_Value_Missing_all(analysis_type *analysis) {

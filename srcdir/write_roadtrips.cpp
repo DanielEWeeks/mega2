@@ -148,7 +148,7 @@ static void save_ROADTRIPS_tpeds(linkage_ped_top *Top, const char *prefix,
         }
     } *sp = new roadtrips_tpeds(Top);
 
-    sp->setfln(prefix, ".XX.tpeds");
+    sp->setfln(prefix, ".XXX.tpeds");
     
     sp->load_formats(fwid, pwid, -1);
 
@@ -432,7 +432,7 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
         }
     } *xp = new ROADTRIPS_sh_script(Top);
 
-    xp->setfln(file_name_stem, ".XX.sh");
+    xp->setfln(file_name_stem, ".XXX.sh");
     xp->prefix = file_name_stem;
     xp->additional_program_args = C(additional_program_args);
 

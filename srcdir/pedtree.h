@@ -70,38 +70,6 @@
 #define TYPED_AT_ANY_LOCUS 1  /* bit 0 */
 #define APM_MODE           2  /* bit 1 */
 
-/* structure containing the data we have on an allele */
-typedef struct _allele_rec {
-    double Frequency;
-} allele_rec;
-
-
-/* structure containing the information on a locus and
-   it alleles' substructures */
-typedef struct _locus_rec {
-    char       *LocusName;
-    int         AlleleCnt;
-    int         chromosome;
-    int         linkage_loc_num;
-    linkage_locus_rec         *linkage_loc_rec;
-    allele_rec *Allele;       /* will be Allele[] */
-} locus_rec;
-
-
-/* the top of the locus information, containing the
-   locus structures */
-typedef struct _locus_top {
-    int        LocusCnt;
-    locus_rec *Locus;     /* will be Locus[] */
-    // SexLinked is defined as follows...
-    // ==0 the markers found in the map file were on MT or unknown chromosomes.
-    // ==1 says that at least one of the markers found in the map file was on the X or Y chromosome
-    // ==2 says the same as ==1 but in addition that at least one of the markers was on the XY or an autosome
-    int SexLinked;        /* non-zero if yes */
-    linkage_locus_top *LTop;
-} locus_top;
-
-
 /* Structure containing the information on an individual */
 /* Important note: The ID is an ordinal and must be equal
    to the index in the pedigree's Entry[] array (increased
@@ -139,6 +107,7 @@ typedef struct _ped_rec {
     int             connected;   /* flag for checking unconnected components  */
     int             sibship_checked; /* checked sibship for mendelian errors */
     linkage_ped_rec *LEntry;     /* pointer to corresponding linkage record */
+    void            *Marker;
 } ped_rec;
 
 
@@ -178,7 +147,7 @@ typedef struct _ped_tree {
 typedef struct _ped_top {
     int        PedCnt;
     ped_tree  *PedTree;   /* will be PedTree[] */
-    locus_top *LocusTop;
+    linkage_locus_top *LocusTop;
 } ped_top;
 
 /* from check.h */
