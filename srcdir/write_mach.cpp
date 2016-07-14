@@ -56,8 +56,6 @@ static void write_MACH_snps(linkage_ped_top *Top, char *file_names[], const int 
 
 static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]);
 
-//static void write_pedsix_file(linkage_ped_top *Top, char *file_names[] , const int pwid, const int fwid);
-
 static void inner_file_names(char **file_names, const char *num, const char *stem = "mach");
 
 int g_cpus =1;
@@ -402,14 +400,19 @@ void CLASS_MACH::create_output_file(
     //the reason for this is the possibility that a phenotype can come up as a marker and be coded as a number
     //while mach doesn't do anything with the trait we still don't want to error for it
     for (int locus = Top->LocusTop->PhenoCnt; locus < Top->LocusTop->LocusCnt; locus++){
-        for (int allele = 0; allele < Top->LocusTop->Locus[locus].AlleleCnt; allele++){
+        for (int allele = 0; allele < Top->LocusTop->Locus[locus].AlleleCnt; allele++) {
+            if (Top->LocusTop->Locus[locus].Allele[allele].AlleleName != NULL) {
             allele_name = Top->LocusTop->Locus[locus].Allele[allele].AlleleName;
-            //printf("%s\n",allele_name);
-            if ( ! ((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0) || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0))) {
-                char error[255];
-                strcpy(error, "The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
-                strcat(error, allele_name);
-                errorf(error);
+                if (!((strcmp(allele_name, "A") == 0) || (strcmp(allele_name, "C") == 0) || (strcmp(allele_name, "G") == 0) || (strcmp(allele_name, "T") == 0) || (strcmp(allele_name, "0") == 0) || (strcmp(allele_name, "dummy") == 0))) {
+                    char error[255];
+                    strcpy(error, "The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
+                    strcat(error, allele_name);
+                    errorf(error);
+                    EXIT(DATA_TYPE_ERROR);
+                }
+            }
+            else{
+                errorf("The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G. Entry without an Allele Name was found.  Check to make sure you aren't using numeric Alleles as input.\n");
                 EXIT(DATA_TYPE_ERROR);
             }
         }
@@ -535,7 +538,6 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
     sprintf(file_names[2], "%s.%s.sh", stem, num);
     sprintf(file_names[3], "%s.top.sh", stem);
     sprintf(file_names[4], "%s_snps.%s", stem,num);
-    //sprintf(file_names[6], "%s_pedsix.%s", stem, num);
 }
 
 void CLASS_MACH::gen_file_names(char **file_names, char *num)
@@ -548,7 +550,6 @@ void CLASS_MACH::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[1], numchr);
     change_output_chr(file_names[2], numchr);
     change_output_chr(file_names[4], numchr);
-    //change_output_chr(file_names[6], numchr);
 }
 
 void CLASS_MACH::batch_out()
