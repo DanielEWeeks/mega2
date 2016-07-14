@@ -629,10 +629,10 @@ void CLASS_MINIMAC::batch_in()
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(fn,   "file_name_stem");
-    BatchValueIfSet(shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
-    BatchValueIfSet(reference_legend_file, "shapeit_reference_legend_file");
-    BatchValueIfSet(reference_sample_file, "shapeit_reference_sample_file");
-    BatchValueIfSet(minimac_reference_haplotype_file,"minimac_reference_haplotype_file");
+    BatchValueGet(shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
+    BatchValueGet(reference_legend_file, "shapeit_reference_legend_file");
+    BatchValueGet(reference_sample_file, "shapeit_reference_sample_file");
+    BatchValueGet(minimac_reference_haplotype_file,"minimac_reference_haplotype_file");
     BatchValueGet(g_cpus, "batch_cpu_count");
 
     sample_file = reference_sample_file;
