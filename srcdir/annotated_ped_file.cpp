@@ -1562,7 +1562,7 @@ static linkage_ped_top *read_annotated_ped_file(char *pedfile,
     listhandle *userdef_colnames = new_list();
     col_hdr_type *ped_all_colnames;
 
-    FILE *filep = fopen(pedfile, "r");
+    FILE *filep = pedfile ? fopen(pedfile, "r") : NULL;
     if (filep == NULL) {
         errorvf("could not open %s for reading!\n", pedfile);
         EXIT(FILE_READ_ERROR);
@@ -2153,7 +2153,7 @@ static int read_annotated_names_file(char *names_file,
 {
     int annotated_format;
 
-    FILE *fp = fopen(names_file, "r");
+    FILE *fp = names_file ? fopen(names_file, "r") : NULL;
     if (fp == NULL) {
         errorvf("could not open %s for reading!\n", names_file);
         EXIT(FILE_READ_ERROR);
@@ -3496,7 +3496,7 @@ static int read_annotated_freq_file(char *freq_file_name,
     mssgf(err_msg);
 #endif
     
-    if ((filep=fopen(freq_file_name, "r")) == NULL) {
+    if ((filep=freq_file_name ? fopen(freq_file_name, "r") : NULL) == NULL) {
         errorvf("could not open %s for reading!\n", freq_file_name);
         EXIT(FILE_READ_ERROR);
     }
@@ -3792,7 +3792,7 @@ static int read_annotated_pen_file(char *pen_file_name,
     mssgf(err_msg);
 #endif
 
-    if ((filep=fopen(pen_file_name, "r")) == NULL) {
+    if ((filep=pen_file_name ? fopen(pen_file_name, "r") : NULL) == NULL) {
         errorvf("could not open %s for reading!\n", pen_file_name);
         EXIT(FILE_READ_ERROR);
     }
@@ -4076,7 +4076,7 @@ static void annotated_omit_file(linkage_ped_top *Top,
 #ifndef HIDEFILE
     msgvf("Reading Mega2 format omit file: %s\n", omitfl_name);
 #endif
-    if ((omitfp=fopen(omitfl_name, "r")) == NULL) {
+    if ((omitfp=omitfl_name ? fopen(omitfl_name, "r") : NULL) == NULL) {
         errorvf("could not open %s for reading!\n", omitfl_name);
         EXIT(FILE_READ_ERROR);
     }
@@ -5052,8 +5052,8 @@ int check_annotated_file_format(char *input_files[])
 #endif
         if (input_files[ifl] == NULL) continue;
 	if ((fp = fopen(input_files[ifl], "r")) == NULL) {
-        errorvf("could not open %s for reading!\n", input_files[ifl]);
-        EXIT(FILE_READ_ERROR);
+            errorvf("could not open %s for reading!\n", input_files[ifl]);
+            EXIT(FILE_READ_ERROR);
 	}
         flags[0]=flags[1]=0;
         read_line=1;
@@ -5392,7 +5392,7 @@ PLINK_str(char *ans, int len)
 
 static int parse_phe_types(char *phe_file, char ***phe_names, int **phe_types)
 {
-    FILE  *fp = fopen(phe_file, "r");
+    FILE  *fp = phe_file ? fopen(phe_file, "r") : NULL;
     int    cols, Xcols = 1;
 
     if (fp == NULL) {
@@ -5475,7 +5475,7 @@ static int read_plink_map_as_names_file(char *map_file, linkage_locus_top **LTop
 {
     int annotated_format;
 
-    FILE *fp = fopen(map_file, "r");
+    FILE *fp = map_file ? fopen(map_file, "r") : NULL;
     if (fp == NULL) {
         errorvf("could not open %s for reading!\n", map_file);
         EXIT(FILE_READ_ERROR);
@@ -5505,7 +5505,7 @@ static ext_linkage_locus_top *read_plink_map_file(const char *map_file,
     col_hdr_type *map_all_colnames;
     int num_userdef_cols;
 //
-    FILE *mapfp = fopen(map_file, "r");
+    FILE *mapfp = map_file ? fopen(map_file, "r") : NULL;
     if (mapfp == NULL) {
         errorvf("could not open %s for reading!\n", map_file);
         EXIT(FILE_READ_ERROR);
@@ -5607,7 +5607,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
     FILE *bed_filep = (FILE *)NULL;
 
     Tod pf_hdr("read plink ped file");
-    FILE *filep = fopen(pedfile, "r");
+    FILE *filep = pedfile ? fopen(pedfile, "r") : NULL;
     if (filep == NULL) {
         errorvf("could not open %s for reading!\n", pedfile);
         EXIT(FILE_READ_ERROR);
@@ -5627,7 +5627,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
         if (plink_info->allele_count == 0) {
             msgvf("WARNING... No alleles were discovered when the PLINK .bim file was read.\n");
         }
-        bed_filep = (bedfile != NULL) ? fopen(bedfile, read_binary) : NULL;
+        bed_filep = bedfile ? fopen(bedfile, read_binary) : NULL;
         if (bed_filep != (FILE *)NULL) {
             char magic[2];
             magic[0] = (char)fgetc(bed_filep);
