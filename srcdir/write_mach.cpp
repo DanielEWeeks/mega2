@@ -296,11 +296,19 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             Vecs hapsplit;
             split(hapsplit, file_names[5], "?");
 
-            if (g_cpus == 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr);
+            if(hapsplit.size() ==2) {
+                if (g_cpus == 1)
+                    pr_printf(
+                            "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",
+                            cmd3, hapsplit[0].c_str(), _numchr, hapsplit[1].c_str(), _numchr, _numchr, _numchr);
 
-            if (g_cpus > 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, hapsplit[0].c_str(),_numchr,hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
+                if (g_cpus > 1)
+                    pr_printf(
+                            "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",
+                            cmd3, hapsplit[0].c_str(), _numchr, hapsplit[1].c_str(), _numchr, _numchr, _numchr, g_cpus);
+            }
+            else
+                errorf("Error in input of Minimac3 reference files: haplotype.\n Make sure there to include one (and only one) '?' in the filename to be replaced with the chromosome number.\n");
 
         }
         //finds the program to run dynamically and gives an error if it can't be found.

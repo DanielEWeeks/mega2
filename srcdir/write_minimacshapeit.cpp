@@ -210,43 +210,58 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             Vecs m_hapsplit;
             split(m_hapsplit, m_haplotype_file,"?");
 
+
+
             //need a split for if the user has selected the HAPS, SAMPLE, and LEGEND files for shapeit or not
             //something for users to note, without the haps, sample file for shapeit, there is no prebuilt exclusion (so I removed it from that corresponding script)
             if(haps_sample_selected) {
-                pr_nl();
-                pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
-                pr_printf("%s -check --input-bed %s %s %s --input-map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks",
-                        cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(),
-                        s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr,
-                        legsplit[1].c_str(), sample_file.c_str(), _numchr);
-                pr_nl();
-                pr_nl();
 
+                //adding check for size of splits in case of batch mode
+                if (s_hapsplit.size() == 2 && legsplit.size() == 2 && mapsplit.size() == 2) {
+                    pr_nl();
+                    pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
+                    pr_printf(
+                            "%s -check --input-bed %s %s %s --input-map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks",
+                            cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr,
+                            mapsplit[1].c_str(),
+                            s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr,
+                            legsplit[1].c_str(), sample_file.c_str(), _numchr);
+                    pr_nl();
+                    pr_nl();
 
-
-                //next we run the shapeit phasing mode
-                pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
-                pr_printf("%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d",
-                        cmd1, file_names[3], file_names[1], file_names[0], s_hapsplit[0].c_str(), _numchr,
-                        s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr, legsplit[1].c_str(), sample_file.c_str(),
-                        _numchr, _numchr, g_cpus);
-                pr_nl();
-                pr_nl();
+                    //next we run the shapeit phasing mode
+                    pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
+                    pr_printf(
+                            "%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d",
+                            cmd1, file_names[3], file_names[1], file_names[0], s_hapsplit[0].c_str(), _numchr,
+                            s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr, legsplit[1].c_str(),
+                            sample_file.c_str(),
+                            _numchr, _numchr, g_cpus);
+                    pr_nl();
+                    pr_nl();
+                }
+                else
+                    errorf("Error in input of Shapeit reference files: haplotype, legend, and map.\nMake sure there to include one (and only one) '?' in the file name to be replaced with the chromosome number.\n");
             }
             else
             {
-                //first we run check to get snps to exclude
-                pr_nl();
-                pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
-                pr_printf("%s -check --input-bed %s %s %s --input-map %s%d%s  --output-log Chr%d.checks", cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(), _numchr);
-                pr_nl();
-                pr_nl();
+                //adding check for size of splits in case of batch mode
+                if (mapsplit.size() == 2) {
+                    //first we run check to get snps to exclude
+                    pr_nl();
+                    pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
+                    pr_printf("%s -check --input-bed %s %s %s --input-map %s%d%s  --output-log Chr%d.checks", cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(), _numchr);
+                    pr_nl();
+                    pr_nl();
 
-                //next we run the shapeit phasing mode, Note that in this instance no exclusion file is included
-                pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
-                pr_printf("%s --input-bed %s %s %s -O Chr%d.Phased.Output --thread %d", cmd1, file_names[3], file_names[1], file_names[0], _numchr, g_cpus);
-                pr_nl();
-                pr_nl();
+                    //next we run the shapeit phasing mode, Note that in this instance no exclusion file is included
+                    pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
+                    pr_printf("%s --input-bed %s %s %s -O Chr%d.Phased.Output --thread %d", cmd1, file_names[3], file_names[1], file_names[0], _numchr, g_cpus);
+                    pr_nl();
+                    pr_nl();
+                }
+                else
+                    errorf("Error in input of Shapeit reference files: map.\nMake sure there to include one (and only one) '?' in the filename to be replaced with the chromosome number.\n");
 
             }
 
@@ -257,10 +272,19 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_nl();
 
             //And last of all we run Minimac3 imputation
-            if (g_cpus == 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str(),_numchr,_numchr,_numchr);
-            if (g_cpus > 1)
-                pr_printf ("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",cmd3, m_hapsplit[0].c_str(),_numchr,m_hapsplit[1].c_str() ,_numchr,_numchr,_numchr,g_cpus);
+            if (m_hapsplit.size() == 2) {
+                if (g_cpus == 1)
+                    pr_printf(
+                            "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d\n",
+                            cmd3, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr);
+                if (g_cpus > 1)
+                    pr_printf(
+                            "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",
+                            cmd3, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr,
+                            g_cpus);
+            }
+            else
+                errorf("Error in input or Minimac3 reference files: haplotype.\n Make sure there to include one (and only one) '?' in the filename to be replaced with the chromosome number.\n");
 
             pr_nl();
 
@@ -437,6 +461,7 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
             sample_file = reference_sample_file;
             m_haplotype_file = minimac_reference_haplotype_file;
 
+            BatchValueSet (reference_map_file, "shapeit_reference_map_file");
             BatchValueSet (shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
             BatchValueSet (reference_legend_file, "shapeit_reference_legend_file");
             BatchValueSet (reference_sample_file, "shapeit_reference_sample_file");
@@ -610,6 +635,7 @@ void CLASS_MINIMAC::batch_out()
     extern void batchf(batch_item_type *bi);
 
     Cstr Values[] =  { "file_name_stem",
+                       "shapeit_reference_map_file",
                        "shapeit_reference_haplotype_file",
                        "shapeit_reference_legend_file",
                        "shapeit_reference_sample_file",
@@ -629,12 +655,14 @@ void CLASS_MINIMAC::batch_in()
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(fn,   "file_name_stem");
+    BatchValueGet(reference_map_file, "shapeit_reference_map_file");
     BatchValueGet(shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
     BatchValueGet(reference_legend_file, "shapeit_reference_legend_file");
     BatchValueGet(reference_sample_file, "shapeit_reference_sample_file");
     BatchValueGet(minimac_reference_haplotype_file,"minimac_reference_haplotype_file");
     BatchValueGet(g_cpus, "batch_cpu_count");
 
+    map_file = reference_map_file;
     sample_file = reference_sample_file;
     legend_file = reference_legend_file;
     s_haplotype_file = shapeit_reference_haplotype_file;
