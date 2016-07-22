@@ -412,6 +412,7 @@ static int check_sibship_alleles(ped_tree *PedTree, ped_rec **Sibs,
                 }
             }
         }
+        if (inc) break;
     }
 //  free(Sibs);
     return haserr;
@@ -956,76 +957,67 @@ int check_locus(linkage_locus_rec *Locus,
     return retval;
 }
 
-
-#define FOUND1(al, cn, ar, fl) fl=-1;           \
-    for (a=0; a < cn; a++) {                    \
-        if (al == ar[a]) {                       \
-            fl=a;                               \
-            break;                              \
-        }                                       \
-    }
-#define FOUND2(al, cn, ar, fl, ex) fl=-1;       \
-    for (a=0; a < cn; a++) {                    \
-        if (al == ar[a] && a != ex) {            \
-            fl=a;                               \
-            break;                              \
-        }                                       \
-    }
-#define CAN_ADD(cn)  cn < max_alleles
-
-#define ADD_ALLELE(al, ar, cn)  ar[cn]=al; cn++
-
 static int autosomal_or_female_xlinked(int all1, int all2,
 				       int *alleles, int *allelecnt,
 				       int max_alleles)
 {
     int a;
-    int found1, found2;
+    int found1 = -1, found2 = -1;
 
-    FOUND1(all1, *allelecnt, alleles, found1)
-        if (found1 < 0) {
-            if (CAN_ADD(*allelecnt)) {
-                ADD_ALLELE(all1, alleles, (*allelecnt));
-                found1=(*allelecnt)-1;
-            } else {
-                return 1;
-            }
+    for (a=0; a < *allelecnt; a++) {
+        if (all1 == alleles[a]) {
+            found1 = a;
+            break;
         }
-
-    FOUND2(all2, *allelecnt, alleles, found2, found1)
-        if (found2 < 0) {
-            if (CAN_ADD(*allelecnt)) {
-                ADD_ALLELE(all2, alleles, (*allelecnt));
-                return 0;
-            } else {
-                return 1;
-            }
+    }
+    if (found1 < 0) {
+        if ((*allelecnt) < max_alleles) {
+            alleles[(*allelecnt)++] = all1;
+            found1 = (*allelecnt) - 1;
         } else {
-            return 0;
+            return 1;
         }
+    }
 
+    for (a=0; a < *allelecnt; a++) {
+        if (all2 == alleles[a] && a != found1) {
+            found2 = a;
+            break;
+        }
+    }
+    if (found2 < 0) {
+        if ((*allelecnt) < max_alleles) {
+            alleles[(*allelecnt)++] = all2;
+            return 0;
+        } else {
+            return 1;
+        }
+    } else {
+        return 0;
+    }
 }
 
-#define CAN_ADD_MALE(cnt) cnt < 3
-
 static int male_xlinked(int all, int *alleles, int *allelecnt)
-
 {
     int a;
-    int found;
+    int found = -1;
 
-    FOUND1(all, *allelecnt, alleles, found)
-        if (found < 0) {
-            if (CAN_ADD_MALE(*allelecnt)) {
-                ADD_ALLELE(all, alleles, (*allelecnt));
-                return 0;
-            } else {
-                return 1;
-            }
-        } else {
-            return 0;
+    for (a=0; a < *allelecnt; a++) {
+        if (all == alleles[a]) {
+            found = a;
+            break;
         }
-
+    }
+    if (found < 0) {
+        if ((*allelecnt) < 3) {
+            alleles[(*allelecnt)++] = all;
+            return 0;
+        } else {
+            return 1;
+        }
+    } else {
+        return 0;
+    }
 }
 
 void mito_transmission_report(ped_top *PTop,
