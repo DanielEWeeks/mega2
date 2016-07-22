@@ -112,6 +112,7 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
 
 // Format of file:
 // CHR:PhysicalMapDistance
+// This file is used by Minimac3
 static void write_MINIMAC_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
 {
     vlpCLASS(minimac_snp,chr,loci) {
@@ -180,25 +181,23 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
         }
         void inner() {
             char cmd1[2*FILENAME_LENGTH];
-            //char cmd2[2*FILENAME_LENGTH];
-            char cmd3[2*FILENAME_LENGTH];
+            char cmd2[2*FILENAME_LENGTH];
 
-            //get our program names from sh_find_pgm instead of having them static and hoping they're on the path
             sprintf(cmd1, "%s/%s", "SHAPEIT", "shapeit");
             sh_find_pgm("SHAPEIT", cmd1, "shapeit");
             sprintf(cmd1, "$%s_program ", "shapeit");
 
             //we can make the split between minimac3 and minimac3-omp here instead
             if (g_cpus == 1) {
-                sprintf(cmd3, "%s/%s", "MINIMAC3", "minimac3");
-                sh_find_pgm("MINIMAC3", cmd3, "minimac3");
-                sprintf(cmd3, "$%s_program ", "minimac3");
+                sprintf(cmd2, "%s/%s", "MINIMAC3", "minimac3");
+                sh_find_pgm("MINIMAC3", cmd2, "minimac3");
+                sprintf(cmd2, "$%s_program ", "minimac3");
             }
 
             if (g_cpus > 1) {
-                sprintf(cmd3, "%s/%s", "MINIMAC3OMP", "minimac3-omp");
-                sh_find_pgm("MINIMAC3OMP", cmd3, "minimac3-omp");
-                sprintf(cmd3, "$%s_program ", "minimac3-omp");
+                sprintf(cmd2, "%s/%s", "MINIMAC3OMP", "minimac3-omp");
+                sh_find_pgm("MINIMAC3OMP", cmd2, "minimac3-omp");
+                sprintf(cmd2, "$%s_program ", "minimac3-omp");
             }
 
             Vecs s_hapsplit;
@@ -211,12 +210,12 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             split(m_hapsplit, m_haplotype_file,"?");
 
 
-
             //need a split for if the user has selected the HAPS, SAMPLE, and LEGEND files for shapeit or not
             //something for users to note, without the haps, sample file for shapeit, there is no prebuilt exclusion (so I removed it from that corresponding script)
+            //this section will run print out the shapeit check and phase with arguments depending on whether or not we're using HAPS etc. for shapeit
+            //If it's trying to use a file it checks to make sure it can insert the chromosome and if not errors
+            
             if(haps_sample_selected) {
-
-                //adding check for size of splits in case of batch mode
                 if (s_hapsplit.size() == 2 && legsplit.size() == 2 && mapsplit.size() == 2) {
                     pr_nl();
                     pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
@@ -229,7 +228,6 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
                     pr_nl();
                     pr_nl();
 
-                    //next we run the shapeit phasing mode
                     pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
                     pr_printf(
                             "%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d",
@@ -245,16 +243,13 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             }
             else
             {
-                //adding check for size of splits in case of batch mode
                 if (mapsplit.size() == 2) {
-                    //first we run check to get snps to exclude
                     pr_nl();
                     pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
                     pr_printf("%s -check --input-bed %s %s %s --input-map %s%d%s  --output-log Chr%d.checks", cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(), _numchr);
                     pr_nl();
                     pr_nl();
 
-                    //next we run the shapeit phasing mode, Note that in this instance no exclusion file is included
                     pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
                     pr_printf("%s --input-bed %s %s %s -O Chr%d.Phased.Output --thread %d", cmd1, file_names[3], file_names[1], file_names[0], _numchr, g_cpus);
                     pr_nl();
@@ -276,11 +271,11 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
                 if (g_cpus == 1)
                     pr_printf(
                             "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d\n",
-                            cmd3, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr);
+                            cmd2, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr);
                 if (g_cpus > 1)
                     pr_printf(
                             "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",
-                            cmd3, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr,
+                            cmd2, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr,
                             g_cpus);
             }
             else
@@ -365,7 +360,23 @@ void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, i
 }
 
 
-//need to switch some of the inputs for shapeit
+/*
+ * Renders the following menu:
+ *
+ * Shapeit/Minimac3 Analysis Menu:
+0) Done with this menu - please proceed
+1) File name stem:                                             minimac
+2) Number of CPUS for Shapeit Prephasing/Minimac3 Imputation:  1
+3) Choose Minimac3 reference sample file:                      ?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz
+4) Choose Shapeit map file:                                    genetic_map_chr?_combined_b37.txt
+5) Use reference panel in HAPS/SAMPLE format for shapeit?      Yes
+6) Choose Shapeit reference haplotype file:                    1000GP_Phase3_chr?.hap.gz
+7) Choose Shapeit reference legend file:                       1000GP_Phase3_chr?.legend.gz
+8) Choose Shapeit reference sample file:                       1000GP_Phase3.sample
+Enter selection: 0 - 8 > 0
+
+ Initially the 6-8 options are hidden until you select to use the HAps sample format
+ */
 void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
     int done, s_hap, cpus, choice, s_hap_renamed, legend_renamed, stem, legend, sample, map, map_renamed, m_hap, m_hap_renamed, ref_toggle;
     done = 0;
@@ -455,6 +466,7 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
                 strcpy(m_hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
                 minimac_reference_haplotype_file = "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
             }
+
             map_file = reference_map_file;
             s_haplotype_file = shapeit_reference_haplotype_file;
             legend_file = reference_legend_file;
@@ -465,7 +477,9 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
             BatchValueSet (shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
             BatchValueSet (reference_legend_file, "shapeit_reference_legend_file");
             BatchValueSet (reference_sample_file, "shapeit_reference_sample_file");
+            BatchValueSet (haps_sample_selected, "shapeit_haps_file_selected");
             BatchValueSet (minimac_reference_haplotype_file, "minimac_reference_haplotype_file");
+
 
             BatchValueSet (g_cpus, "batch_cpu_count");
 
@@ -630,6 +644,13 @@ void CLASS_MINIMAC::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[3], numchr);
 }
 
+/*
+ * Using some old Batch items from the MaCH/Miniimac format (batch, minimac reference
+ * As well as new reference items for References fro prephasing with Shapeit
+ * The seleccted flag indicates if the user wanted to use those references
+ * the Map is required
+ * then we have the Sample haplotype file indicators
+ */
 void CLASS_MINIMAC::batch_out()
 {
     extern void batchf(batch_item_type *bi);
@@ -639,6 +660,7 @@ void CLASS_MINIMAC::batch_out()
                        "shapeit_reference_haplotype_file",
                        "shapeit_reference_legend_file",
                        "shapeit_reference_sample_file",
+                       "shapeit_haps_file_selected",
                        "minimac_reference_haplotype_file",
                        "batch_cpu_count",
     };
@@ -659,6 +681,7 @@ void CLASS_MINIMAC::batch_in()
     BatchValueGet(shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
     BatchValueGet(reference_legend_file, "shapeit_reference_legend_file");
     BatchValueGet(reference_sample_file, "shapeit_reference_sample_file");
+    BatchValueGet(haps_sample_selected, "shapeit_haps_file_selected");
     BatchValueGet(minimac_reference_haplotype_file,"minimac_reference_haplotype_file");
     BatchValueGet(g_cpus, "batch_cpu_count");
 

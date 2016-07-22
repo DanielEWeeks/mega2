@@ -246,6 +246,7 @@ static keyw_t keywords[] = {
     {"shapeit_reference_haplotype_file",      STRING,     "?"},
     {"shapeit_reference_legend_file",         STRING,     "?"},
     {"shapeit_reference_sample_file",         STRING,     ""},
+    {"shapeit_haps_file_selected",            INT,        "0"},
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
 
