@@ -46,7 +46,7 @@
 #include "write_minimacshapeit_ext.h"
 
 
-static void write_MINIMAC_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid);
+//static void write_MINIMAC_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid);
 
 static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]);
 
@@ -104,8 +104,10 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     (*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
     create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, file_name_stem, analysis);
 
-    printf("Mega2 created the following file(s) for SHAPEIT/MINIMAC3:\n");
-    write_MINIMAC_snps(Top, file_names, pwid, fwid);
+    //remove this line so it doesn't look repetitive since this is output by PLINK too
+    //printf("Mega2 created the following file(s) for SHAPEIT/MINIMAC3:\n");
+    //Hindsight 20/20 this is not necessary as it was used for MaCH2VCF, I'll keep the function in, in case I realize we do need it but for now I don't think we need a snps file
+    //write_MINIMAC_snps(Top, file_names, pwid, fwid);
 
     write_MINIMAC_sh(Top, file_names);
 }
@@ -113,35 +115,35 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
 // Format of file:
 // CHR:PhysicalMapDistance
 // This file is used by Minimac3
-static void write_MINIMAC_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
-{
-    vlpCLASS(minimac_snp,chr,loci) {
-        vlpCTOR(minimac_snp,chr,loci) { }
-
-        typedef char *str;
-        str *file_names;
-
-        void file_loop() {
-            msgvf("        Minimac3 SNP File:         %s/%s\n", *_opath, file_names[10]);
-            data_loop(*_opath, file_names[10], "w");
-        }
-
-        void inner() {
-            pr_printf("%d:",_numchr);
-            pr_physical_distance(NULL);
-            pr_nl();
-        }
-
-    } *minimac_snps = new minimac_snp(Top);
-
-    minimac_snps->file_names = file_names;
-
-    minimac_snps->load_formats(fwid, pwid, -1);
-
-    minimac_snps->iterate();
-
-    delete minimac_snps;
-}
+//static void write_MINIMAC_snps(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid)
+//{
+//    vlpCLASS(minimac_snp,chr,loci) {
+//        vlpCTOR(minimac_snp,chr,loci) { }
+//
+//        typedef char *str;
+//        str *file_names;
+//
+//        void file_loop() {
+//            msgvf("        Minimac3 SNP File:         %s/%s\n", *_opath, file_names[10]);
+//            data_loop(*_opath, file_names[10], "w");
+//        }
+//
+//        void inner() {
+//            pr_printf("%d:",_numchr);
+//            pr_physical_distance(NULL);
+//            pr_nl();
+//        }
+//
+//    } *minimac_snps = new minimac_snp(Top);
+//
+//    minimac_snps->file_names = file_names;
+//
+//    minimac_snps->load_formats(fwid, pwid, -1);
+//
+//    minimac_snps->iterate();
+//
+//    delete minimac_snps;
+//}
 
 static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
 
@@ -694,7 +696,7 @@ void CLASS_MINIMAC::batch_in()
 
 //overriding these functions but we only have one "suboption"
 void CLASS_MINIMAC::sub_prog_name(int sub_opt, char *subprog) {
-    strcpy(subprog, "CheckAndPhase");
+    strcpy(subprog, "Check And Phase");
 }
 
 void CLASS_MINIMAC::interactive_sub_prog_name_to_sub_option(analysis_type *analysis)

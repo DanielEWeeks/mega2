@@ -83,15 +83,12 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes false
+\tracking_changes true
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-<<<<<<< HEAD
-\author 1332494340 "Daniel E. Weeks" 
-=======
->>>>>>> master
+\author -1123876542 "Justin" 
 \end_header
 
 \begin_body
@@ -1013,13 +1010,8 @@ reference "ext:roadtrips"
 \end_layout
 
 \begin_layout Itemize
-<<<<<<< HEAD
 Mega2 now stores its input in an SQLite3 database and fetches data for processin
 g from the SQLite3 database.
-=======
-Mega2 now stores its input in an SQLite3 database and (then) fetches data
- for processing from the same SQLite3 database.
->>>>>>> master
  (This is explained further in section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1027,78 +1019,8 @@ reference "sub:SQLite3"
 
 \end_inset
 
-<<<<<<< HEAD
-.) When reading from a SQLite3 database, Mega2 uses an
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- alternate input menu
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
+.) When reading from a SQLite3 database, Mega2 uses an alternate input menu
  (section 
-=======
-.) As a transition, while the database feature is still experimental, it
- is possible to turn off this feature with the 
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--
-\emph default
-DBoff flag and process input as the Mega2 v4.8.2 release did.
- Note: This feature is not currently available for Windows; please add 
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--
-\emph default
-DBoff (or 
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--
-\emph default
-DBdump) to the command line in native Windows and MSYS2 environments.
-\end_layout
-
-\begin_layout Itemize
-Note: Mega2 can now experimentally accept an existing SQLite3 database as
- input.
- In this case, Mega2 uses an alternate input menu (section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-input-menu"
@@ -16016,7 +15938,7 @@ input menu
 \series default
  is used, a brief summary is shown of when the SQLite3 database was created
  as well as its file and data contents.
- An example is shown below:
+ A sample is shown below:
 \end_layout
 
 \begin_layout LyX-Code
@@ -16303,15 +16225,7 @@ reference "ext:simwalk2"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Vintage Mendel format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Vintage Mendel format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:vintage"
@@ -16322,15 +16236,7 @@ reference "ext:vintage"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to ASPEX format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to ASPEX format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:aspex"
@@ -16341,15 +16247,7 @@ reference "ext:aspex"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to GeneHunter-Plus format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to GeneHunter-Plus format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:genehunter-plus"
@@ -16360,15 +16258,7 @@ reference "ext:genehunter-plus"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to GeneHunter format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to GeneHunter format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:genehunter"
@@ -16379,15 +16269,7 @@ reference "ext:genehunter"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to APM format [DISABLED] (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to APM format [DISABLED] (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:apm"
@@ -16420,15 +16302,7 @@ reference "ext:nuclear"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to SLINK format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to SLINK format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:slink"
@@ -16439,15 +16313,7 @@ reference "ext:slink"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to SPLINK format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to SPLINK format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:splink"
@@ -16469,15 +16335,7 @@ reference "ext:homogenetity"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to SIMULATE format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to SIMULATE format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:simulate"
@@ -16499,15 +16357,7 @@ reference "ext:summary"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Old SAGE format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Old SAGE format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:oldsage"
@@ -16529,15 +16379,7 @@ reference "ext:tdtmax"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to SOLAR format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to SOLAR format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:solar"
@@ -16548,15 +16390,7 @@ reference "ext:solar"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Vitesse format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Vitesse format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:vitesse"
@@ -16567,15 +16401,7 @@ reference "ext:vitesse"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Linkage format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Linkage format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:linkage"
@@ -16597,15 +16423,7 @@ reference "ext:hwe"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Allegro format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Allegro format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:allegro"
@@ -16616,15 +16434,7 @@ reference "ext:allegro"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to MLBQTL format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to MLBQTL format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:mlbqtl"
@@ -16635,15 +16445,7 @@ reference "ext:mlbqtl"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to SAGE format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to SAGE format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:sage"
@@ -16654,15 +16456,7 @@ reference "ext:sage"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to pre-makeped format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to pre-makeped format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:pre-makeped"
@@ -16684,15 +16478,7 @@ reference "ext:merlinsimwalk2-npl"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to PREST format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to PREST format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:prest"
@@ -16703,15 +16489,7 @@ reference "ext:prest"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to PAP format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to PAP format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:pap"
@@ -16722,15 +16500,7 @@ reference "ext:pap"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Merlin format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Merlin format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:merlin"
@@ -16741,15 +16511,7 @@ reference "ext:merlin"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to LOKI format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to LOKI format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:loki"
@@ -16760,15 +16522,7 @@ reference "ext:loki"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Mendel format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Mendel format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:mendel"
@@ -16779,15 +16533,7 @@ reference "ext:mendel"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to SUP format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to SUP format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:sup"
@@ -16798,15 +16544,7 @@ reference "ext:sup"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to PLINK format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to PLINK format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:plink"
@@ -16817,15 +16555,7 @@ reference "ext:plink"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to CRANEFOOT format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to CRANEFOOT format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:cranefoot"
@@ -16836,15 +16566,7 @@ reference "ext:cranefoot"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Mega2 format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Mega2 format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:mega2"
@@ -16866,15 +16588,7 @@ reference "ext:iqlsidcoefs"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to FBAT format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to FBAT format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:fbat"
@@ -16885,15 +16599,7 @@ reference "ext:fbat"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Morgan format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Morgan format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:pangaea"
@@ -16904,15 +16610,7 @@ reference "ext:pangaea"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Beagle format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Beagle format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:beagle"
@@ -16923,15 +16621,7 @@ reference "ext:beagle"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Eigenstrat format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Eigenstrat format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:eigenstrat"
@@ -16942,15 +16632,7 @@ reference "ext:eigenstrat"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to Structure format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to Structure format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:structure"
@@ -16961,15 +16643,7 @@ reference "ext:structure"
 \end_layout
 
 \begin_layout Enumerate
-<<<<<<< HEAD
-Convert to PSEQ (PLINK/SEQ) format (Section
-\change_deleted 1332494340 1465762872
- 
-\change_unchanged
- 
-=======
 Convert to PSEQ (PLINK/SEQ) format (Section 
->>>>>>> master
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:pseq"
@@ -19832,217 +19506,7 @@ Usage:
 \emph on
  mega2
 \emph default
- [options] [batch-file-name] or
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Usage:
-\series default
-\emph on
- mega2
-\emph default
- [options] 
-\end_layout
-
-\begin_layout Subsection
-Database options: 
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Database-options:"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout LyX-Code
-\begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="2">
-<features rotate="0" tabularvalignment="middle">
-<column alignment="left" valignment="top" width="0pt">
-<column alignment="left" valignment="top" width="4in">
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-flag
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-interpretation
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
--
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
-DBoff
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-do not dump the database and do not 
-\begin_inset Quotes eld
-\end_inset
-
-exec
-\begin_inset Quotes erd
-\end_inset
-
- a new copy of Mega2 to run the Mega2 analysis.
- Proceed as Mega2 v4.8.2 would have.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
-DBdump
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-create the database and then exit Mega2 do not perform any analysis.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
-DBread
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-use the SQLite3 database as input for Mega2 and then proceed to perform
- batch or interactive Mega2 analysis if a batch file argument was specified
- or not, respectively.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--DBfile
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-specifies an argument which is the path to the SQLite3 database file.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
+ [options] [batch-file-name] 
 \end_layout
 
 \begin_layout Subsection
@@ -32573,7 +32037,7 @@ name "sub:Detailed-info-Beagle"
 \begin_layout Standard
 
 \series bold
-This Analysis Menu option
+This option
 \series default
  creates files for analysis with Beagle.
  For further information please see the section concerning detailed information
@@ -34163,13 +33627,10 @@ bourgain@vjf.inserm.fr
 \end_layout
 
 \begin_layout Standard
-<<<<<<< HEAD
 )
 \end_layout
 
 \begin_layout Standard
-=======
->>>>>>> master
 The ROADTRIPS program computes a case-control association given incomplete
  family structure information.
  It needs a pedigree file that contains the family id, individual id, father,
@@ -34432,24 +33893,14 @@ name "sub:Detailed-info-MaCHMinimac3"
 This Analysis Menu option
 \series default
  creates a script in order to do imputation using minimac3.
-<<<<<<< HEAD
- Mega2 outputs files formatted for MaCH.
- MaCH is a Markov Chain based haplotyper.
- It can resolve long haplotypes in samples of unrelated individuals.
- It is used to pre-phase the data for input into Minimac3 for imputation.
- After MaCH pre-phases the input, then mach2VCF must be run in order to
- convert the phased data into VCF format.
- Finally, Minimac3 performs imputation on the phased VCF file.
-=======
- In order to accomplish this Mega2 outputs files formatted for input into
+ In order to accomplish thisMega2 outputs files formatted for input into
  MaCH, a Markov Chain based haplotyper.
- MaCH can resolve long haplotypes in samples of unrelated individuals, and
+ It can resolve long haplotypes in samples of unrelated individuals, and
  is used to pre-phase the data for input into Minimac3 for imputation.
  After MaCH pre-phases the input, mach2VCF must be run in order to convert
  the resultant phased data into VCF format.
  Finally, Minimac3 performs imputation on the phased VCF file using a reference
  haplotype file chosen by the user.
->>>>>>> master
 \end_layout
 
 \begin_layout Standard
@@ -34462,18 +33913,12 @@ For imputation to work properly, your input data has to be coded so alleles
 
 \begin_layout Standard
 The scripts produced will only work if the required executables have been
-<<<<<<< HEAD
- installed on your computer in your path.
- The required programs are mach1, mach2VCF, and minimac3.
- Optionally, if you have a multi-processor machine, mach3-omp can be used.
-=======
  installed on your computer in your path, or if their locations have been
- set to the environment variables: MACH1, mach2VCF, and MINIMAC3.
+ set to the environment variables: MACH, mach2VCF, and MINIMAC3.
  The required programs are mach1, mach2VCF, and minimac3.
  Optionally, if you have a multi-processor machine, minimac3-omp (a dedicated
  mult-processor version of minimac3 utilizing the openMP library) can be
  used.
->>>>>>> master
  
 \end_layout
 
@@ -34490,22 +33935,18 @@ Name:
 \series bold
 Web:
 \series default
-<<<<<<< HEAD
- MaCH - http://csg.sph.umich.edu//abecasis/MACH/tour/ Primary 
-=======
  
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-http://csg.sph.umich.edu//abecasis/MACH/index.html 
+http://csg.sph.umich.edu//abecasis/MACH/tour/ Primary 
 \end_layout
 
 \end_inset
 
 
->>>>>>> master
 \end_layout
 
 \begin_layout Standard
@@ -34566,26 +34007,6 @@ Name
 \series bold
 Web
 \series default
-<<<<<<< HEAD
-: http://genome.sph.umich.edu/wiki/Minimac3_Cookbook_:_Converting_Files_to_VCF
- 
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Primary
-\series default
- 
-\series bold
-References
-\series default
-:
-\end_layout
-
-\begin_layout Standard
-Copyright(C) 2009 Regents of University of Michigan 
-=======
 : 
 \begin_inset Flex URL
 status open
@@ -34599,7 +34020,6 @@ http://genome.sph.umich.edu/wiki/Minimac3_Cookbook_:_Converting_Files_to_VCF
 \end_inset
 
 
->>>>>>> master
 \end_layout
 
 \begin_layout Standard
@@ -34643,25 +34063,6 @@ Name
 \series bold
 Web
 \series default
-<<<<<<< HEAD
-: http://genome.sph.umich.edu/wiki/Minimac3 
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Primary
-\series default
- 
-\series bold
-References
-\series default
-:
-\end_layout
-
-\begin_layout Standard
-Copyright(C) 2009 Regents of University of Michigan
-=======
 : 
 \begin_inset Flex URL
 status open
@@ -34674,7 +34075,6 @@ http://genome.sph.umich.edu/wiki/Minimac3
 \end_inset
 
 
->>>>>>> master
 \end_layout
 
 \begin_layout Standard
@@ -34712,41 +34112,28 @@ Minimac3 is a low memory implementation of previous iterations of the minimac
 ns at no loss to accuracy.
  In order to run Minimac3 however, the user needs to get their data into
  phased vcf or m3vcf files.
-<<<<<<< HEAD
- Mega2 will create a pedigree file with family id, individual id, father
- id, mother id, sex, and the series of markers encoded with A, C, T, and
- G.
- Additionally, Mega2 also creates a data file with a list of markers for
- MaCH.
- Finally for output data Mega2 creates a 
-\begin_inset Quotes eld
-\end_inset
-
-snp file
-\begin_inset Quotes erd
-\end_inset
-
- with physical positions for mach2VCF.
- Along with these data outputs Mega2 will output shell scripts that run
- MaCH on the pedigree and data file, mach2VCF on the output of MaCH and
- the snp file, and Minimac3 on the on the resultant VCF along with a reference
- haplotype file that has been chosen.
-=======
  To do this Mega2 will create 3 files: a ped file, a data file, and a snp
  file.
  Two files are used by MaCH, the ped and the data file, whereas the snp
  file is used by mach2VCF.
  The pedigree file is formatted family id, individual id, father id, mother
  id, sex, and the series of markers encoded with A, C, T, and G.
- The data file is formatted with an M indicating marker and then the marker
+
+\change_deleted -1123876542 1469551086
+ 
+\change_unchanged
+ The data file is formatted with an M inndicating marker and then the marker
  number.
+
+\change_deleted -1123876542 1469551086
+ 
+\change_unchanged
  The snp file contains the chromsome and physical position information in
  the format chr:pos.
  Along with these data outputs Mega2 will output shell scripts that run
  MaCH on the pedigree and data file, mach2VCF on the output of MaCH and
  the snp file, and Minimac3 on the on the resultant VCF along with a reference
  haplotype file that has been chosen by the user interface.
->>>>>>> master
 \end_layout
 
 \begin_layout Standard
@@ -34771,12 +34158,11 @@ MaCH/Minimac3 Analysis menu:
 \end_layout
 
 \begin_layout LyX-Code
-<<<<<<< HEAD
-2) Choose reference haplotype file:                    ?.1000g.Phase3.v5.With.Paramet
-er.Estimates.m3vcf.gz
-=======
-2) Choose reference haplotype file:                ?.1000g.Phase3.v5m3vcf.gz
->>>>>>> master
+2) Choose reference haplotype file:                
+\change_inserted -1123876542 1469551725
+    
+\change_unchanged
+?.1000g.Phase3.v5m3vcf.gz
 \end_layout
 
 \begin_layout LyX-Code
@@ -34790,15 +34176,11 @@ Enter options 0-3 > 0
 \begin_layout Standard
 The file name stem menu item can be changed to allow multiple experiments
  to be recorded in the same directory.
-<<<<<<< HEAD
- The reference haplotype file menu item can be changed to choose which reference
-=======
  
 \end_layout
 
 \begin_layout Standard
 The reference haplotype file menu item can be changed to choose which reference
->>>>>>> master
  haplotype will be used for imputation by Minimac3.
  A wildcard “?” has been included which will be replaced with the number
  of the chromosome of the specified analysis.
@@ -34858,18 +34240,10 @@ The following files are created by Mega2 for MaCH/Minimac3 for a typical
 
 \begin_layout Standard
 The data file contains marker data.
-<<<<<<< HEAD
  The ped file is the pedigree file as detailed above.
  The snp file contains the physical positions of snps.
- The 10.sh is an individual chromosome shell.
+ The 05.sh is an individual chromosome shell.
  The top.sh runs all shells output by a single Mega2 run.
-=======
- The pedigree file is the pedigree file as detailed above.
- The SNP file contains the physical positions of snps.
- The 05.sh shell file contains the commands to process an individual chromosome.
- The top.sh top shell file runs all chromsome-specific shell script files
- output by a single Mega2 run.
->>>>>>> master
 \end_layout
 
 \begin_layout Standard
@@ -34881,6 +34255,616 @@ MaCH, mach2VCF and Minimac3 should be downloaded from their respective home
  or copy the executables to a directory of your choosing.
  In the latter case, set the shell environment variables, MACH1, mach2VCF,
  and MINIMAC3, to the path to that directory.
+ 
+\change_inserted -1123876542 1469551178
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1123876542 1469551402
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:minimac-shapeit"
+
+\end_inset
+
+Convert to SHAPEIT/Minimac3 format 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Detailed-info-SHAPEIT-Minimac3"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551771
+
+\series bold
+This Analysis Menu option
+\series default
+ creates a script in order to do imputation using Minimac3 like the previous
+ section of Minimac3.
+ However in this mode instead of prephasing with MaCH we instead prephase
+ using SHAPEIT.
+ Using the SHAPEIT output methods that were already functional with Mega2
+ as well as leveraging the previously existing Minimac3 conversion parts
+ of Mega2, Mega2 can now use SHAPEIT conversion and checks in order to speed
+ up imputation.
+ This process proceeds as follow: First SHAPEIT is used in check mode, this
+ can be done either with just a genetic map or with a genetic map and a
+ reference panel (in a SAMPLE/HAPS format).
+ After the checks are completed the SHAPEIT runs prephasing, afterwards
+ SHAPEIT is run again in order to convert to VCF for Minimac3.
+ From there Imputation is run on the output from SHAPEIT utilizing Minimac3.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551783
+For imputation to work properly, your input data has to be coded so alleles
+ are labelled by A, C, T, or G and a physical map of the markers in the
+ same build as your chosen set of reference haplotypes has to be provided.
+ You will also have to resolve any strand issues so that your data is encoded
+ on the same strand as used by your set of reference haplotypes.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551896
+The scripts produced will only work if the required executables have been
+ installed on your computer in your path, or if their locations have been
+ set to the environment variables: SHAPEIT and MINIMAC3.
+ The required programs are shapeit, and minimac3.
+ Optionally, if you have a multi-processor machine, minimac3-omp (a dedicated
+ mult-processor version of minimac3 utilizing the openMP library) can be
+ used, shapeit is able to handle multithreading in the same application
+ and does not need a seperate reference.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469552031
+
+\series bold
+Name:
+\series default
+ SHAPEIT (version 2 (r2837) released 2009) 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551897
+
+\series bold
+Web:
+\series default
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1469552002
+
+www.shapeit.fr
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551942
+
+\series bold
+References:
+\series default
+ O.
+ Delaneau, J.
+ Marchini, JF.
+ Zagury (2012) A linear complexity phasing method for thousands of genomes.
+ Nat Methods.
+ 9(2):179-81.
+ doi: 10.1038/nmeth.1785
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551963
+O.
+ Delaneau, JF.
+ Zagury, J.
+ Marchini (2013) Improved whole chromosome phasing for disease and population
+ genetic studies.
+ Nat Methods.
+ 10(1):5-6.
+ doi: 10.1038/nmeth.2307
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551971
+O.
+ Delaneau, B.
+ Howie, A.
+ Cox, J-F.
+ Zagury, J.
+ Marchini (2013) Haplotype estimation using sequence reads.
+ American Journal of Human Genetics 93 (4) 787-696
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551978
+J.
+ O'Connell, D.
+ Gurdasani, O.
+ Delaneau, et al.
+ (2014) A general approach for haplotype phasing across the full spectrum
+ of relatedness.
+ PLoS Genetics
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551978
+O.
+ Delaneau, J.
+ Marchini, The 1000 Genomes Project Consortium (2014) Integrating sequence
+ and array data to create an improved 1000 Genomes Project haplotype reference
+ panel.
+ Nature Communications 5 3934
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551897
+
+\series bold
+Contact
+\series default
+:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469552222
+For Questions about SHAPEIT refer to the 
+\begin_inset CommandInset href
+LatexCommand href
+name "OXSTATGEN mailing list"
+target "https://www.jiscmail.ac.uk/cgi-bin/webadmin?A0=OXSTATGEN"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469552229
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1469552230
+
+https://www.jiscmail.ac.uk/cgi-bin/webadmin?A0=OXSTATGEN
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551870
+
+\series bold
+Name
+\series default
+: Minimac3 (version 2.0.1 Released June 2016) 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551870
+
+\series bold
+Web
+\series default
+: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1469551870
+
+http://genome.sph.umich.edu/wiki/Minimac3 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469551870
+
+\series bold
+Contact
+\series default
+:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469551870
+Sayantan Das
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469551870
+Abecasis Lab
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469551870
+Center for Statistical Genetics
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469551870
+University of Michigan
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469552298
+email: sayantan@umich.edu
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469553018
+Minimac3 is a low memory implementation of previous iterations of the minimac
+ algorithm for genetic imputation, which works on phased genotypes to handle
+ very large reference panels by identifying repeat patterns to simply calculatio
+ns at no loss to accuracy.
+ In order to run Minimac3 however, the user needs to get their data into
+ phased vcf or m3vcf files.
+ To do this Mega2 will create 4 files: a bed file, a bim file, and a fam
+ file.
+ In addition to these output files this analysis mode can take a a number
+ of 
+\begin_inset Quotes eld
+\end_inset
+
+extra
+\begin_inset Quotes erd
+\end_inset
+
+ input files.
+ This includes: a reference panel for Minimac3 (in VCF or M3VCF), a genetic
+ map for SHAPEIT, and a seperately formatted but equivalent reference for
+ SHAPEIT (in fhte format of SAMPLE, HAPS, and LEGENDS).
+ The bed, bim and fam files are standard binary PLINK output, this is used
+ by SHAPIET as an input.
+ SHAPEIT in check mode, also takes in the genetic map file, and optionally
+ if the user chose it, it takes 3 files as a reference panel (the SAMPLE,
+ HAPS, and LEGENDS).
+ SHAPEIT in phase mode takes the optional reference panel files ( SAMPLE,
+ HAPS, and LEGENDS).
+ SHAPEIT in convert mode takes the output of phasing and converts it to
+ VCF for Minimac3.
+ Then Minimac3 uses the outputted VCF that has been phased alongside the
+ required imputation panel (in M3VCF or VCF format).
+ Along with these data outputs Mega2 produces will output shell scripts
+ that run SHAPEIT on the PLINK binary files in check, phase and convert
+ mode and then Minimac3 on the on the resultant VCF along with a reference
+ haplotype file that has been chosen by the user interface.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469554332
+Mega2 provides a menu to get supplemental information used by SHAPEIT/Minimac3;
+ the items are explained after the menu:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553165
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553178
+Shapeit/Minimac3 Analysis Menu:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553165
+0) Done with this menu - please proceed 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553230
+1) File name stem:                                              minimac
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553226
+2) Number of CPUS for Shapeit Prephasing/Minimac3 Imputation:   1
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553242
+3) Choose Minimac3 reference sample file:                       ?.1000g.Phase3.v5.Wi
+th.Parameter.Estimates.m3vcf.gz
+\change_unchanged
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553270
+4) Choose Shapeit map file:                                     genetic_map_chr?
+_combined_b37.txt
+\change_unchanged
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553283
+5) Use reference panel in HAPS/SAMPLE format for shapeit?       Yes
+\change_unchanged
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553300
+6) Choose Shapeit reference haplotype file:                     1000GP_Phase3_ch
+r?.hap.gz
+\change_unchanged
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553318
+7) Choose Shapeit reference legend file:                        1000GP_Phase3_ch
+r?.legend.gz
+\change_unchanged
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553341
+8) Choose Shapeit reference sample file:                        1000GP_Phase3.sam
+ple
+\change_unchanged
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469553327
+Enter options 0-8 > 0 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469553396
+Note: for simplicity sake the menu is only shown from after the point of
+ selecting 5 to toggle the SHAPEIT reference options.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469553397
+The file name stem menu item can be changed to allow multiple experiments
+ to be recorded in the same directory.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469553430
+The number of CPUs for Minimac3 imputation menu item allows you to choose
+ a number of CPUs to use for the imputation calculation.
+ This allows you to run the shell script using minimac3-omp which allows
+ for multithreading to speed up calculations.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469553752
+The Minimac3 reference sample file menu item can be changed to choose which
+ reference haplotype will be used for imputation by Minimac3, this must
+ be in VCF or M3VCF format.
+ A wildcard “?” has been included which will be replaced with the number
+ of the chromosome of the specified analysis.
+ Reference panels can be found here:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469553460
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1469553444
+
+http://genome.sph.umich.edu/wiki/Minimac3#Reference_Panels_for_Download
+\end_layout
+
+\end_inset
+
+ .
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469553591
+The SHAPEIT map file option allows you to select a genetic map for SHAPEIT
+ check mode.
+ A wildcard “?” has been included which will be replaced with the number
+ of the chromosome of the specified analysis.
+ Genetic maps for human populations can be found here:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469553610
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1469553604
+
+https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html#gmap
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469554094
+The 
+\begin_inset Quotes eld
+\end_inset
+
+Use reference panel in HAPS/SAMPLE format for shapeit?
+\begin_inset Quotes erd
+\end_inset
+
+ is initially set to No.
+ By selecting 5 you make options 6-8 appear.
+ These are the reference panel options for SHAPEIT checking and phasing.
+ For the HAPS and LEGEND A wildcard “?” has been included which will be
+ replaced with the number of the chromosome of the specified analysis.
+ The SAMPLE file is universal across all chromosomes.
+ The subtlety here is that these should be equiavlent to the Minimac3 reference,
+ but are required to be in a different format (HAPS/SAMPLE as opposed to
+ VCF/M3VCF, unfortunately SHAPEIT only takes HAPS/SAMPLE and Minimac3 only
+ takes the other).
+ Be careful to make sure you are using equivalent data in both formats (i.e.
+ 1000 Genomes Phase 3 b37 etc.) to make sure there are no ambiguity problems
+ from prephasing/checking on a difrerent reference from your imputation.
+ The reference haplotype, legend and sample files can be found:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469554122
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1469553909
+
+https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#reference
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469554159
+The following files are created by Mega2 for SHAPEIT/Minimac3 for a typical
+ chromosome (chromosome 5 in this example): 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469554190
+PLINK map file:          ./minimac.10.bim
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469554205
+PLINK pedigree file:     ./minimac.10.fam
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469554219
+PLINK binary file snp:   ./minimac.10.bed
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469554233
+Minimac Shell File:      ./minimac.10.sh
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1469554243
+MaCH Top Shell File:     ./minimac.top.sh
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469554290
+The bim, fam and bed files are the binary PLINK format output for SHAPEIT.
+ The 05.sh is an individual chromosome shell.
+ The top.sh runs all shells output by a single Mega2 run.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1469554324
+SHAPEIT and Minimac3 should be downloaded from their respective home pages
+ and compiled.
+ There are two alternatives that allow the Mega2 generated shell to find
+ the programs.
+ Either copy the executables to a directory on your PATH shell variable
+ or copy the executables to a directory of your choosing.
+ In the latter case, set the shell environment variables, SHAPEIT and MINIMAC3,
+ to the path to that directory.
  
 \end_layout
 
@@ -35840,24 +35824,21 @@ name "sub:SQLite3"
 Mega2 is being converted to a design where the pedigree, phenotypes, and
  genotypes for a given experiment need only to be expensively processed
  once and stored in a database.
-<<<<<<< HEAD
- Currently for each analysis, Mega2 determines
-\change_deleted 1332494340 1465762872
+ Currently for each new analysis, Mega2 determines
+\change_deleted -1123876542 1469551086
  
 \change_unchanged
- new allele values, computes allele frequencies, checks allele consistency,
+ allele values, computes allele frequencies, checks allele consistency,
  cleans alleles, and recodes letter alleles to numeric alleles.
-=======
- Currently for each new analysis, Mega2 determines allele values, computes
- allele frequencies, checks allele consistency, cleans alleles, and recodes
- letter alleles to numeric alleles.
->>>>>>> master
  It also compresses the genotype information as much as possible for use
  by the analysis programs.
  Now, these activities can be performed once and stored in an SQLite3 database.
  Thereafter, all the analysis programs of Mega2 can be run against this
  database eliminating the time-consuming read-in and validation phase.
  Furthermore in the future, filtering on markers, chromosomes and individuals
+\change_deleted -1123876542 1469551086
+ 
+\change_unchanged
  will be supported as the database is read.
  
 \end_layout
@@ -35942,32 +35923,11 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 .
-<<<<<<< HEAD
-\end_layout
-
-\begin_layout Standard
-=======
- 
-\end_layout
-
-\begin_layout Standard
-NOTE: If a Mega2 run exits with a failure message, the SQLite3 database
+ NOTE: If a Mega2 run exits with a failure message, the SQLite3 database
  is NOT created.
- 
 \end_layout
 
 \begin_layout Standard
-Due to the restructuring into an initial database creation phase and a subsequen
-t execution phase that reads from the database, the log and error log files
- that are created in the first phase while the data are read in and validated
- will be named MEGA2.DB.LOG and MEGA2.DB.ERR.
- The names MEGA2.LOG and MEGA2.ERR will be used for the log and error files
- produced in the second phase when reading from the database and performing
- the analysis.
-\end_layout
-
-\begin_layout Standard
->>>>>>> master
 Writing and then reading the SQLite3 database does make normal processing
  a bit slower.
  For reasonable size datasets, the additional processing time is a few percent
