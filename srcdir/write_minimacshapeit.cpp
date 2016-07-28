@@ -52,6 +52,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]);
 
 static void inner_file_names(char **file_names, const char *num, const char *stem = "minimac");
 
+//We need some general reference varablies, these are necessary to get things into the shell output.
 extern int g_cpus;
 Str s_haplotype_file;
 Str legend_file;
@@ -60,6 +61,7 @@ Str map_file;
 Str m_haplotype_file;
 int haps_sample_selected;
 
+//Main function, sets properties, calls PLINK file creation, calls shell creation
 void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
     int pwid, fwid, mwid;
     char prefix[100];
@@ -88,7 +90,7 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
             //printf("%s\n",allele_name);
             if ( ! ((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0) || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0))) {
                 char error[255];
-                strcpy(error, "The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
+                strcpy(error, "The SHAPEIT Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
                 strcat(error, allele_name);
                 errorf(error);
                 EXIT(DATA_TYPE_ERROR);
@@ -104,8 +106,6 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     (*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
     create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, file_name_stem, analysis);
 
-    //remove this line so it doesn't look repetitive since this is output by PLINK too
-    //printf("Mega2 created the following file(s) for SHAPEIT/MINIMAC3:\n");
     //Hindsight 20/20 this is not necessary as it was used for MaCH2VCF, I'll keep the function in, in case I realize we do need it but for now I don't think we need a snps file
     //write_MINIMAC_snps(Top, file_names, pwid, fwid);
 
@@ -145,6 +145,10 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
 //    delete minimac_snps;
 //}
 
+//Outputs the Shell file
+//Looks for Shapeit/Minimac3 if it can find them it runs them
+//First it runs shapeit check, then phase then convert
+//Finally it runs Minimac3
 static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
 
     int top_shell = 1;
@@ -160,7 +164,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
         vlpCTOR(minimac_sh, both, sh_exec) { }
 
         void file_loop() {
-            mssgvf("        Minimac Shell File:        %s/%s\n", *_opath, file_names[8]);
+            mssgvf("        Minimac3 Shell File:        %s/%s\n", *_opath, file_names[8]);
             data_loop(*_opath, file_names[8], "w");
         }
 
@@ -221,22 +225,16 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
                 if (s_hapsplit.size() == 2 && legsplit.size() == 2 && mapsplit.size() == 2) {
                     pr_nl();
                     pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
-                    pr_printf(
-                            "%s -check --input-bed %s %s %s --input-map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks",
-                            cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr,
-                            mapsplit[1].c_str(),
-                            s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr,
-                            legsplit[1].c_str(), sample_file.c_str(), _numchr);
+                    pr_printf("%s -check --input-bed %s %s %s --input-map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks",
+                            cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(),
+                            s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr, legsplit[1].c_str(), sample_file.c_str(), _numchr);
                     pr_nl();
                     pr_nl();
 
                     pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
-                    pr_printf(
-                            "%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d",
-                            cmd1, file_names[3], file_names[1], file_names[0], s_hapsplit[0].c_str(), _numchr,
-                            s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr, legsplit[1].c_str(),
-                            sample_file.c_str(),
-                            _numchr, _numchr, g_cpus);
+                    pr_printf("%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d",
+                            cmd1, file_names[3], file_names[1], file_names[0], s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(),
+                            legsplit[0].c_str(), _numchr, legsplit[1].c_str(), sample_file.c_str(), _numchr, _numchr, g_cpus);
                     pr_nl();
                     pr_nl();
                 }
@@ -271,14 +269,11 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             //And last of all we run Minimac3 imputation
             if (m_hapsplit.size() == 2) {
                 if (g_cpus == 1)
-                    pr_printf(
-                            "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d\n",
+                    pr_printf("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d\n",
                             cmd2, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr);
                 if (g_cpus > 1)
-                    pr_printf(
-                            "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",
-                            cmd2, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr,
-                            g_cpus);
+                    pr_printf("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",
+                            cmd2, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr, g_cpus);
             }
             else
                 errorf("Error in input or Minimac3 reference files: haplotype.\n Make sure there to include one (and only one) '?' in the filename to be replaced with the chromosome number.\n");
@@ -317,7 +312,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_printf("  echo setenv %s dir_to_%s\n", NAME, path);
             pr_printf("  echo\n");
             pr_printf("  echo\n");
-            pr_printf("  echo \"For further details, please see MaCH/Minimac3 section of the Mega2 documentation.\"\n");
+            pr_printf("  echo \"For further details, please see SHAPEIT/Minimac3 section of the Mega2 documentation.\"\n");
             pr_printf("  exit 0\n");
             pr_printf("endif\n");
             pr_nl();
@@ -331,7 +326,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
     minimac_shs->iterate();
 
     if (top_shell) {
-        mssgvf("        MaCH Top Shell File:       %s/%s\n", output_paths[0], file_names[4]);
+        mssgvf("        Minimac3 Top Shell File:       %s/%s\n", output_paths[0], file_names[4]);
         mssgvf("        The above shell runs all shells.\n");
 
         sh->filep_close();
@@ -341,6 +336,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
     delete minimac_shs;
 }
 
+//Since this is a PLINK output we needed to call this function while outputting shell files
 void CLASS_MINIMAC::create_sh_file(linkage_ped_top *Top, char **file_names, const int numchr) {
 
     char prefix[100];
@@ -627,27 +623,31 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
     }
 }
 
+//change... at this point just the shell file names
 static void inner_file_names(char **file_names, const char *num, const char *stem) {
-    sprintf(file_names[10], "%s_snps.%s", stem,num);
+    //sprintf(file_names[10], "%s_snps.%s", stem,num);
     sprintf(file_names[8], "%s.%s.sh", stem, num);
     sprintf(file_names[4], "%s.top.sh", stem);
 }
 
+//need to call inner file names for the names we change
+//need to call file_names_w_stem for PLINK output files
 void CLASS_MINIMAC::gen_file_names(char **file_names, char *num){
     file_names_w_stem(file_names, num, file_name_stem,
                       PLINK_SUB_OPTION_SNP_MAJOR_INT);
     inner_file_names(file_names, num);
 }
 
+//Replace the chromosomes for the PLINK files, bed, bim, fam
 void CLASS_MINIMAC::replace_chr_number(char *file_names[], int numchr) {
-    change_output_chr(file_names[10], numchr);
+    //change_output_chr(file_names[10], numchr);
     change_output_chr(file_names[8], numchr);
     change_output_chr(file_names[1], numchr);
     change_output_chr(file_names[3], numchr);
 }
 
 /*
- * Using some old Batch items from the MaCH/Miniimac format (batch, minimac reference
+ * Using some old Batch items from the MaCH/Minimac format (batch, minimac reference
  * As well as new reference items for References fro prephasing with Shapeit
  * The seleccted flag indicates if the user wanted to use those references
  * the Map is required
