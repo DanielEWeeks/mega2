@@ -53,10 +53,6 @@ public:
     virtual const char* output_affect_default_value() { return "-9"; }
     virtual bool output_affect_must_be_numeric() { return true; }
 
-    virtual bool no_missing_menu() { return true; }
-
-    virtual bool no_trait_covariate_menu() { return true; }
-
     virtual bool forbid_sex_linked_loci() { return true; }
 
     virtual bool require_physical_map() { return false; }

@@ -1020,9 +1020,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     /* If not one of the options that do not require trait selection */
     if (((option == 1 || option == 3) && main_chromocnt > 0)) {
         //method added for analysis type that does not need traits/covariate men, select trait loci renders that menu
-        if(!Top->analysis->no_trait_covariate_menu()) {
-            select_trait_loci(Top, *analysis);
-        }
+        select_trait_loci(Top, *analysis);
     }
 
     /* At this time we should have the following:
