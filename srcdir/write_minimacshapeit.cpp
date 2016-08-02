@@ -164,7 +164,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
         vlpCTOR(minimac_sh, both, sh_exec) { }
 
         void file_loop() {
-            mssgvf("        Minimac3 Shell File:        %s/%s\n", *_opath, file_names[8]);
+            mssgvf("        Minimac3 Shell File:       %s/%s\n", *_opath, file_names[8]);
             data_loop(*_opath, file_names[8], "w");
         }
 
@@ -326,7 +326,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
     minimac_shs->iterate();
 
     if (top_shell) {
-        mssgvf("        Minimac3 Top Shell File:       %s/%s\n", output_paths[0], file_names[4]);
+        mssgvf("        Minimac3 Top Shell File:   %s/%s\n", output_paths[0], file_names[4]);
         mssgvf("        The above shell runs all shells.\n");
 
         sh->filep_close();
