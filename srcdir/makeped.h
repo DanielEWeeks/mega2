@@ -107,7 +107,9 @@ typedef struct _linkage_ped_top {
     int UniqueIds;
     int pedfile_type;
     linkage_ped_tree *Ped;          /* will be Ped[] */
-    marriage_graph_type *PTop;     /* will be PTop[] */
+    linkage_ped_tree *PedRaw;       /* will be Ped[] as submited for premakeped*/
+    linkage_ped_tree *PedBroken;    /* will be Ped[] loops broken */
+    marriage_graph_type *PTop;      /* will be PTop[] */
     linkage_locus_top *LocusTop;
     ext_linkage_locus_top *EXLTop;
     analysis_type analysis;

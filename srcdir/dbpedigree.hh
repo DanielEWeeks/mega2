@@ -38,6 +38,7 @@
 extern DBlite MasterDB;
 
 class Pedigree_table {
+protected:
     DBstmt *insert_stmt;
     DBstmt *select_stmt;
 //    linkage_ped_rec *Entry;         /* will be Entry[] */
@@ -67,8 +68,10 @@ public:
     }
     int insert(linkage_ped_tree *t) {
         int idx = 1;
-        if (t->Loops)
-            printf("Ped#%d ins Loops = %p\n", t->pedigree_link, t->Loops);
+
+        t->Loops = 0;  // no need to save; BUT it would be a listhandle of arrays; YUCK
+                       // i.e. blobs would not work.
+
         return insert_stmt
             && insert_stmt->rowbind(idx, t->Num, t->EntryCnt, t->IsTyped)
             && insert_stmt->rowbind(idx, t->Name, t->PedPre)
@@ -88,10 +91,6 @@ public:
             && select_stmt->row(idx, t->OriginalID, t->origped, t->Proband)
             && select_stmt->column(idx++, v, sz)
             && select_stmt->row(idx, t->pedigree_link);
-        if (v) {
-            printf("Ped#%d sel Loops = %p\n", t->pedigree_link, v);
-            t->Loops = 0;
-        } else
             t->Loops = 0;
         return ret;
     }
@@ -112,11 +111,44 @@ public:
         return MasterDB.exec("CREATE Index Idx_pedigree_table IF NOT EXISTS on pedigree_table (Name);");
     }
 
-    int db_getall(linkage_ped_tree *t);
+    int db_getall(linkage_ped_tree *t, std::map<int, linkage_ped_tree *> &pedigree_hash);
 
 };
 
+class Pedigree_brkloop_table: public Pedigree_table {
+public:
+    int create() {
+        return MasterDB.exec(
+            "CREATE TABLE IF NOT EXISTS pedigree_brkloop_table (kId INTEGER PRIMARY KEY,"
+                " Num Integer, EntryCnt INTEGER, isTyped INTEGER, Name TEXT, PedPre TEXT,"
+                " OriginalID INTEGER, origped INTEGER, Proband INTEGER, Loops BLOB, "
+                " pedigree_link INTEGER);"
+            );
+    }
+    int init () {
+        insert_stmt = MasterDB.prep(
+            "INSERT INTO pedigree_brkloop_table("
+            " Num, EntryCnt, isTyped, Name, PedPre, OriginalID,"
+            " origped, Proband, Loops, pedigree_link"
+            ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        select_stmt = MasterDB.prep(
+            "SELECT "
+            " Num, EntryCnt, isTyped, Name, PedPre, "
+            " OriginalID, origped, Proband, Loops, pedigree_link"
+            "   FROM pedigree_brkloop_table;");
+        return insert_stmt && select_stmt && 1;
+    }    
+    int drop() {
+        return MasterDB.exec("DROP TABLE IF EXISTS pedigree_brkloop_table;");
+    }
+
+    int index() {
+        return MasterDB.exec("CREATE Index Idx_pedigree_brkloop_table IF NOT EXISTS on pedigree_brkloop_table (Name);");
+    }
+};
+
 extern Pedigree_table pedigree_table;
+extern Pedigree_brkloop_table pedigree_brkloop_table;
 
 class Person_table 
 {
@@ -170,9 +202,9 @@ public:
         return insert_stmt && select_stmt && 1;
     }
     int insert(linkage_ped_rec *p) {
-        int idx = 1;
+        int sz = 0, idx = 1;
         if (p->loopbreakers != NULL) {
-            printf("LPB ins %p\n", p->loopbreakers);
+            sz =(MAXLOOPMEMBERS + 1) * sizeof(int);
         }
         return insert_stmt 
             && insert_stmt->rowbind(idx, p->UniqueID, p->OrigID, p->FamName, p->PerPre)
@@ -183,7 +215,7 @@ public:
             && insert_stmt->rowbind(idx, p->PercentTyped)
             && insert_stmt->rowbind(idx, p->ext_ped_num, p->ext_per_num)
             && insert_stmt->rowbind(idx, p->MZTwin, p->DZTwin, p->Group, p->rec_num)
-            && insert_stmt->bind(idx++,  p->loopbreakers, (MAXLOOPMEMBERS + 1) * sizeof(int))
+            && insert_stmt->bind(idx++,  p->loopbreakers, sz)
             && insert_stmt->rowbind(idx, p->pedigree_link, p->person_link)
 
             && insert_stmt->step();
@@ -203,7 +235,7 @@ public:
             && select_stmt->row(idx, p->MZTwin, p->DZTwin, p->Group, p->rec_num)
             && select_stmt->column(idx++, v, sz)
             && select_stmt->row(idx, p->pedigree_link, p->person_link);
-        p->loopbreakers = (int *)v;
+        p->loopbreakers = (int *)v;  // might be 0
         return ret;
     }
     void print(linkage_ped_rec *p) {
@@ -233,8 +265,55 @@ public:
     int db_getall(linkage_ped_rec *p);
 };
 
+class Person_brkloop_table: public Person_table {
+public:
+    int create() {
+        return
+            MasterDB.exec(
+                "CREATE TABLE IF NOT EXISTS person_brkloop_table (kId INTEGER PRIMARY KEY,"
+                       " UniqueID TEXT, OrigID TEXT, FamName TEXT, PerPre TEXT,"
+                       " ID INTEGER, Father INTEGER, Mother INTEGER,"
+                       " First_Offspring INTEGER, Next_PA_Sib INTEGER, Next_MA_Sib INTEGER,"
+                       " Sex INTEGER, OrigProband INTEGER, genocnt INTEGER,"
+                       " Orig_status INTEGER, Ngeno INTEGER, IsTyped INTEGER,"
+                       " PercentTyped DOUBLE,"
+                       " ext_ped_num INTEGER, ext_per_num INTEGER,"
+                       " MZTwin INTEGER, DZTwin INTEGER, GroupX INTEGER, rec_num INTEGER,"
+                       " loopbreakers BLOB,"
+                       " pedigree_link INTEGER, person_link INTEGER);"
+            );
+    }
+    int init () {
+        insert_stmt = MasterDB.prep(
+            "INSERT INTO person_brkloop_table("
+            " UniqueID, OrigID, FamName, PerPre,"
+            " ID, Father, Mother, First_Offspring, Next_PA_Sib, Next_MA_Sib,"
+            " Sex, OrigProband, genocnt, Orig_status, Ngeno, IsTyped,"
+            " PercentTyped, ext_ped_num, ext_per_num,"
+            " MZTwin, DZTwin, GroupX, rec_num, loopbreakers, pedigree_link, person_link"
+            ")   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?);");
+        select_stmt = MasterDB.prep(
+            "SELECT "
+            " UniqueID, OrigID, FamName, PerPre,"
+            " ID, Father, Mother, First_Offspring, Next_PA_Sib, Next_MA_Sib,"
+            " Sex, OrigProband, genocnt, Orig_status, Ngeno, IsTyped,"
+            " PercentTyped, ext_ped_num, ext_per_num,"
+            " MZTwin, DZTwin, GroupX, rec_num, loopbreakers,"
+            " pedigree_link, person_link" 
+            "   FROM person_brkloop_table;");
+        return insert_stmt && select_stmt && 1;
+    }
+    int drop() {
+        return MasterDB.exec("DROP TABLE IF EXISTS person_brkloop_table;");
+    }
+
+    int index() {
+        return MasterDB.exec("CREATE Index Idx_person_brkloop_table IF NOT EXISTS on person_brkloop_table (Name);");
+    }
+};
 
 extern Person_table person_table;
+extern Person_brkloop_table person_brkloop_table;
 
 extern void dbpedigree_export(linkage_ped_top *Top);
 extern void dbpedigree_import(linkage_ped_top *Top);

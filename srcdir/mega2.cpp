@@ -1112,9 +1112,24 @@ int             main(int argc, char **argv, char **env)
         }
     }
 
-    Tod tod_makeped("makeped");
-    makeped(LPedTreeTop, analysis);  // if --db, might connect loops based on analysis
-    tod_makeped();
+    if (database_dump || ! database_read) {
+        Tod tod_makeped("makeped");
+        makeped(LPedTreeTop, analysis);  // if --db, might connect loops based on analysis
+        tod_makeped();
+    }
+//  if (analysis->break_loops() || analysis->maintain_broken_loops() )
+
+    if ( (basefile_type == POSTMAKEPED_PFT && analysis->maintain_broken_loops()) ||
+         (basefile_type != POSTMAKEPED_PFT && analysis->break_loops()) ) 
+        LPedTreeTop->Ped = LPedTreeTop->PedBroken;
+    else
+        LPedTreeTop->Ped = LPedTreeTop->PedRaw;
+
+    LPedTreeTop->IndivCnt = 0;
+    for (int ped = 0; ped < LPedTreeTop->PedCnt; ped++) {
+        LPedTreeTop->IndivCnt += LPedTreeTop->Ped[ped].EntryCnt;
+    }
+
 
     if (database_dump || ! database_read) {
         // Since the input mapfile may specify more than one genetic distance,

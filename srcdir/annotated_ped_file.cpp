@@ -4919,7 +4919,9 @@ static void Free_ped(linkage_ped_top *PTop)
             LPed = LPedT[p].Entry;
             for (i = 0; i < LPedT[p].EntryCnt; i++) {
                 Entry = &LPed[i];
-                free(Entry->Pheno);
+//y
+//                if (Entry->Pheno != NULL)
+//                    free(Entry->Pheno);
                 if (Entry->Marker != NOTYPED_ALLELES)
                     marker_free(Entry->Marker, PTop->LocusTop->PhenoCnt);
                 if (Entry->loopbreakers != NULL)

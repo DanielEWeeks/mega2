@@ -103,9 +103,9 @@ void dbgenotype_export(linkage_ped_top *Top) {
     // for each genotype (consulting the linkage_ped_top structure)...
     int pers = 0;
     for (ped=0; ped < Top->PedCnt; ped++) {
-        tpedtreep = &(Top->Ped[ped]);
+        tpedtreep = &(Top->PedBroken[ped]);  // vs Top->PedRaw
 
-        for (per = 0; per < Top->Ped[ped].EntryCnt; per++, pers++) {
+        for (per = 0; per < Top->PedBroken[ped].EntryCnt; per++, pers++) {
             // record for the individual phenotype and genotype
             tpersonp = &(tpedtreep->Entry[per]);
 
@@ -124,11 +124,10 @@ pheno_pedrec_data **Phenotypes;
 void **Genotypes;
 
 void dbgenotype_import(linkage_ped_top *Top) {
-    int ped, per, cnt = 0, Entries = 0;
-
+    int ped, per, Entries = 0;
 
     for (ped = 0; ped < Top->PedCnt; ped ++)
-        Entries += (Top->Ped + ped)->EntryCnt;
+        Entries += (Top->PedBroken + ped)->EntryCnt;  // vs Top->PedRaw
 
     Phenotypes = new pheno_pedrec_data * [Entries];
     Genotypes  = new void *[Entries];
@@ -141,10 +140,17 @@ void dbgenotype_import(linkage_ped_top *Top) {
     MasterDB.commit();
 
     for (ped = 0; ped < Top->PedCnt; ped ++) {
-        for (per = 0; per < (Top->Ped + ped)->EntryCnt; per++) {
-            Top->Ped[ped].Entry[per].Pheno = Phenotypes[cnt];
-            Top->Ped[ped].Entry[per].Marker = marker_start(Genotypes[cnt], -Top->LocusTop->PhenoCnt);
-            cnt++;
+        for (per = 0; per < (Top->PedBroken + ped)->EntryCnt; per++) {  // vs Top->PedRaw
+            int person_link = Top->PedBroken[ped].Entry[per].person_link;
+            Top->PedBroken[ped].Entry[per].Pheno = Phenotypes[person_link];
+            Top->PedBroken[ped].Entry[per].Marker = marker_start(Genotypes[person_link],
+                                                           -Top->LocusTop->PhenoCnt);
+        }
+        for (per = 0; per < (Top->PedRaw + ped)->EntryCnt; per++) {  // vs Top->PedRaw
+            int person_link = Top->PedRaw[ped].Entry[per].person_link;
+            Top->PedRaw[ped].Entry[per].Pheno = Phenotypes[person_link];
+            Top->PedRaw[ped].Entry[per].Marker = marker_start(Genotypes[person_link],
+                                                           -Top->LocusTop->PhenoCnt);
         }
     }
 

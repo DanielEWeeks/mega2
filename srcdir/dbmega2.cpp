@@ -114,7 +114,9 @@ Batch_file_parameters batch_file_parameters;
 File_table file_table;
 
 Pedigree_table pedigree_table;
+Pedigree_brkloop_table pedigree_brkloop_table;
 Person_table person_table;
+Person_brkloop_table person_brkloop_table;
 
 CanonicalAllele_table canonicalallele_table;
 MarkerScheme_table markerscheme_table;
@@ -145,6 +147,9 @@ void db_index_all() {
     pedigree_table.index();
     person_table.index();
 
+    pedigree_brkloop_table.index();
+    person_brkloop_table.index();
+
     canonicalallele_table.index();
     markerscheme_table.index();
 
@@ -166,6 +171,7 @@ void db_index_all() {
 
 void dbmega2_export(linkage_ped_top *Top)
 {
+//  asm("int $3");
     msgvf("Dumping SQLite3 DB\n");
 
     dbmisc_export(Top);
@@ -181,8 +187,6 @@ void dbmega2_export(linkage_ped_top *Top)
     dbmap_export(Top);
 
     dbgenotype_export(Top);
-
-//  asm("int $3");
 }
 
 void dbmega2_stat(linkage_ped_top *Top)
@@ -227,26 +231,21 @@ void dbmega2_stat(linkage_ped_top *Top)
 
 void dbmega2_import(linkage_ped_top *Top)
 {
+//    asm("int $3");
     msgvf("Reading SQLite3 DB\n");
 
-//    asm("int $3");
     dbmisc_import(Top);
 
-//    asm("int $3");
     dbbatch_file_import(Top);
 
-//    asm("int $3");
     dbpedigree_import(Top);
 
-//    asm("int $3");
     dballele_import(Top);
 
-//    asm("int $3");
     dblocus_import(Top->LocusTop);
 
     dbmap_import(Top);
 
-//    asm("int $3");
     dbgenotype_import(Top);
 
     dbmega2_stat(Top);
@@ -263,6 +262,9 @@ void db_drop_all() {
 
     pedigree_table.drop();
     person_table.drop();
+
+    pedigree_brkloop_table.drop();
+    person_brkloop_table.drop();
 
     canonicalallele_table.drop();
     markerscheme_table.drop();
@@ -336,6 +338,9 @@ void db_init_all() {
         pedigree_table.create();
         person_table.create();
 
+        pedigree_brkloop_table.create();
+        person_brkloop_table.create();
+
         canonicalallele_table.create();
         markerscheme_table.create();
 
@@ -364,6 +369,9 @@ void db_init_all() {
 
     pedigree_table.init();
     person_table.init();
+
+    pedigree_brkloop_table.init();
+    person_brkloop_table.init();
 
     canonicalallele_table.init();
     markerscheme_table.init();
@@ -418,6 +426,9 @@ void db_fini_all() {
 
     pedigree_table.close();
     person_table.close();
+
+    pedigree_brkloop_table.close();
+    person_brkloop_table.close();
 
     canonicalallele_table.close();
     markerscheme_table.close();

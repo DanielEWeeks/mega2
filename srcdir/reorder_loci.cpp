@@ -606,6 +606,26 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     int num_chromo, *selected_chromosomes = NULL;
     int num_loci, *selected_loci = NULL, has_quant;
 
+    if (database_dump || ! database_read) {
+        if (genetic_distance_index != -2) {
+            map_num = genetic_distance_index;
+            copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
+        } else {
+            errorvf("For the analysis type specified, a Genetic Map was required, but none was chosen.\n");
+            EXIT(EARLY_TERMINATION);
+        }
+
+        set_missing_quant_input(Top, *analysis);
+        if (*analysis == QUANT_SUMMARY) {
+            //nada
+        } else if (write_quant_stats(Top, *analysis) != 0)
+            set_missing_quant_output(Top, *analysis);
+
+        Mega2Status = LOCI_REORDERED;
+
+        return Top;
+    }
+
     ManualReorder = 0;
 
     // The user chooses the gentic_distance_index in the routine
@@ -1020,7 +1040,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     /* If not one of the options that do not require trait selection */
     if (((option == 1 || option == 3) && main_chromocnt > 0)) {
         //method added for analysis type that does not need traits/covariate men, select trait loci renders that menu
-        if(!Top->analysis->no_trait_covariate_menu()) {
+        if (!Top->analysis->no_trait_covariate_menu()) {
             select_trait_loci(Top, *analysis);
         }
     }
@@ -3195,7 +3215,7 @@ static int no_trait_allowed(analysis_type analysis, int mssg)
      * block of the case statement, if it needs to have traits.
      */
 
-    if (analysis->allow_no_trait()) {
+    if (analysis->require_traits() ) {
         if (mssg) {
             sprintf(err_msg, "%s requires at least one trait.", ProgName);
             errorf(err_msg);
@@ -3208,7 +3228,7 @@ static int no_trait_allowed(analysis_type analysis, int mssg)
 /*
   static int no_aff_trait_allowed(analysis_type analysis, int mssg)
   {
-    if (analysis->allow_no_aff_trait()) {
+    if (analysis->require_aff_trait()) {
       if (mssg) {
         sprintf(err_msg, "%s requires at least one trait.", ProgName);
         errorf(err_msg);

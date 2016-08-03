@@ -111,8 +111,10 @@ linkage_ped_top *read_pre_makeped(FILE *fp, int pedcount,
 				  linkage_locus_top *LTop,
                                   int *col2locus);
 int compare_edges(const void *e11, const void *e22);
+void do_marriage(int ped_count, marriage_graph_type *mped,
+		 linkage_locus_top *LTop);
 void break_loops(int ped_count, marriage_graph_type *mped,
-		 linkage_locus_top *LTop, int break_loop);
+		 linkage_locus_top *LTop);
 int makeped(linkage_ped_top *Top, analysis_type analysis);
 void copy_marriage_graph(marriage_graph_type *From, marriage_graph_type *To);
 void copy_marriage_graph_person(person_node_type *From,
@@ -821,7 +823,6 @@ static int make_marriage_graph(marriage_graph_type *mped)
     return ped_disconnected;
 }
 
-
 static void prune_leaf_members(marriage_graph_type *mped, int pedc)
 {
     /* take out all the persons (set removed to 1), who do not participate
@@ -925,7 +926,6 @@ static int make_minimizing_graph(marriage_graph_type mped,
 
     return 0;
 }
-
 
 int compare_edges(const void *e11, const void *e22)
 {
@@ -1162,9 +1162,9 @@ static void reassign_to_marriage(marriage_graph_type *m_graph,
 }
 
 SECTION_ERR_INIT(beagle_fix);
-void break_loops(int ped_count, marriage_graph_type *mped,
-		 linkage_locus_top *LTop, int break_loop)
-
+static int fatal_marriage_err = 0;
+void do_marriage(int ped_count, marriage_graph_type *mped,
+		 linkage_locus_top *LTop)
 {
     /* called after the pre-makeped pedigree file has been read in,
        forms the marriage graph, prunes the graph, then finds loop-breakers
@@ -1173,6 +1173,22 @@ void break_loops(int ped_count, marriage_graph_type *mped,
        genotypes, so we want loop-breakers, who are not in the spanning tree
        to have the highest degree of genotyping */
 
+    int i, j;
+
+    SECTION_ERR_EXTERN(beagle_fix);
+    for (i=0; i<ped_count; i++) {
+        for (j=0; j < mped->num_persons; j++)
+            degree_genotyped(&(mped->persons[j]), LTop);
+        make_marriage_graph(&(mped[i]));
+        fatal_marriage_err += check_and_reassign_parents(&(mped[i]));
+    }
+    SECTION_ERR_FINI(beagle_fix);
+
+}
+
+void break_loops(int ped_count, marriage_graph_type *mped,
+		 linkage_locus_top *LTop)
+{
     int i, j, num_persons, no_founder=-1;
     int **ind_ids, proband;
     int ped_err, fatal_err=0;
@@ -1180,34 +1196,12 @@ void break_loops(int ped_count, marriage_graph_type *mped,
     minimizing_graph_type *min_graph;
     person_node_type *p1, *p2;
 
-    SECTION_ERR_EXTERN(beagle_fix);
-    for (i=0; i<ped_count; i++) {
-        for (j=0; j < mped->num_persons; j++)
-            degree_genotyped(&(mped->persons[j]), LTop);
-        make_marriage_graph(&(mped[i]));
-        fatal_err += check_and_reassign_parents(&(mped[i]));
-    }
-    SECTION_ERR_FINI(beagle_fix);
-
-    /* The disconnected pedigrees are a problem only if we need to
-       break loops, so is this necessary? */
-
-    if (break_loop==0) return;
-
-    if (fatal_err) {
-        errorvf("Found fatal errors in pedigree file, aborting Mega2.\n");
-        EXIT(INPUT_DATA_ERROR);
-    }
-
     prune_leaf_members(mped, ped_count);
 
     for (i=0; i<ped_count; i++) {
         min_graph= MALLOC(minimizing_graph_type);
         ped_err = make_minimizing_graph(mped[i], min_graph);
-        if (break_loop == 0) {
-            /* checking process for connected pefs frees the min_graph if check fails */
-            continue;
-        }
+
         if (ped_err) {
             errorvf("Ped %d: Unable to break loops.\n", mped[i].ped);
             fatal_err += ped_err;
@@ -1307,7 +1301,6 @@ static void make_pointers(marriage_graph_type mped, int parent)
 static void make_linkage_record(int pid, marriage_graph_type mped,
 				linkage_locus_top *LTop,
 				linkage_ped_rec *lrec)
-
 {
     /* create a linkage (post-makeped) record from a pre-makeped record
        pointed to by the person pid. The sibling and offspring pointers are
@@ -1317,9 +1310,8 @@ static void make_linkage_record(int pid, marriage_graph_type mped,
     int first_pa_sib, first_ma_sib, first_off;
     int father=-1, mother=-1;
 
-    person_node_type prec;
+    person_node_type prec;  // why isn't this a pointer ???
     int mrec_from /*, mrec_to*/ ;
-
 
     prec=mped.persons[pid];
     mrec_from=prec.from_marriage_node_id;
@@ -1387,16 +1379,21 @@ static void make_linkage_record(int pid, marriage_graph_type mped,
     lrec->Data= CALLOC((size_t) LTop->LocusCnt, linkage_pedrec_data);
     lrec->Orig_status = copy_pedrec_data(prec.data, lrec->Data, LTop);
 */
-    lrec->Pheno  = prec.pheno;
-    lrec->Marker = prec.marker;
-    lrec->genocnt   = prec.genocnt;
+    lrec->Pheno   = prec.pheno;  // zero source later prec.pheno for fam and mped.persons[i].pheno
+    lrec->Marker  = prec.marker; // zero source later
+    lrec->genocnt = prec.genocnt;
+}
+
+void clear_phenotype_genotype(int pid, marriage_graph_type mped)
+{
+//z remove and test prec later
+    person_node_type prec = mped.persons[pid];
+
     prec.pheno  = NULL;
     prec.marker = NULL;
 /*  but prec.data is a copy of ... so zero it too */
     mped.persons[pid].pheno = NULL;
     mped.persons[pid].marker = NULL;
-
-    return;
 }
 
 #ifdef DEBUG_MAKEPED
@@ -1505,12 +1502,64 @@ static void check_any(linkage_ped_top *Top)
 */
 }
 
+void ptop2top(linkage_ped_top *Top, analysis_type analysis)
+{
+    int i, j;
+    linkage_ped_rec *Entry;
+
+    Top->IndivCnt = 0;
+
+    for (i=0; i < Top->PedCnt; i++) {
+        Top->Ped[i].EntryCnt=Top->PTop[i].num_persons;
+        Top->Ped[i].Num=i+1;
+//xx    sprintf(Top->Ped[i].Name, "%d", Top->Ped[i].Num);
+        strcpy(Top->Ped[i].Name, Top->PTop[i].Name);
+        strcpy(Top->Ped[i].PedPre, Top->PTop[i].PedPre);
+        Top->Ped[i].Loops=NULL;
+        Top->Ped[i].Entry = CALLOC((size_t) Top->Ped[i].EntryCnt, linkage_ped_rec);
+        /*    Top->Ped[i].Name = CALLOC(100, char); */
+        /* first initialized the linked fields */
+        for (j=0; j < Top->PTop[i].num_marriages; j++) {
+            Top->PTop[i].marriages[j].linked=0;
+        }
+        for (j=0; j < Top->PTop[i].num_persons; j++) {
+            Top->PTop[i].persons[j].first_off =
+                Top->PTop[i].persons[j].first_pa_sib =
+                Top->PTop[i].persons[j].first_ma_sib = -1;
+        }
+        for (j=0; j < Top->PTop[i].num_persons; j++) {
+            make_pointers(Top->PTop[i], j);
+        }
+        for (j=0; j < Top->PTop[i].num_persons; j++) {
+            if (Top->PTop[i].persons[j].proband == 1) {
+                Top->Ped[i].Proband = Top->PTop[i].persons[j].node_id + 1;
+            }
+            Entry=&(Top->Ped[i].Entry[j]);
+            clear_lpedrec(Entry);
+
+            make_linkage_record(j, Top->PTop[i], Top->LocusTop, Entry);
+        }
+
+        Top->IndivCnt += Top->Ped[i].EntryCnt;
+    }
+}
+
+void ptop2topClear(linkage_ped_top *Top)
+{
+    int i, j;
+
+    for (i=0; i < Top->PedCnt; i++) {
+        for (j=0; j < Top->PTop[i].num_persons; j++) {
+            clear_phenotype_genotype(j, Top->PTop[i]);
+        }
+    }
+}
+
 int makeped(linkage_ped_top *Top, analysis_type analysis)
 
 {
     /* int quiet; */
-    int ped, i, j;
-    linkage_ped_rec *Entry;
+    int ped;
     linkage_ped_tree *LPed;
 
 /*    FILE *fp; */
@@ -1536,26 +1585,31 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
          * pedigrees will have their loops identified and reconnected.
 	 *
 	 */
-        if (analysis->maintain_broken_loops()) {
-            Top->IndivCnt = 0;
-            for (ped = 0; ped < Top->PedCnt; ped++) {
-                LPed = &(Top->Ped[ped]);
-                Top->IndivCnt += LPed->EntryCnt;
-            }
-        } else {
-            /* else connect loops and count the total number of individuals */
-            Top->IndivCnt = 0;
-            for (ped = 0; ped < Top->PedCnt; ped++) {
-                LPed = &(Top->Ped[ped]);
-                if (LPed->Loops != NULL) {
-                    if (connect_loops(LPed, Top) < 0)   {
-                        errorf("Fatal error connecting loops. Aborting.");
-                        EXIT(LOOP_CONNECTION_ERROR);
-                    }
-                }
-                Top->IndivCnt += LPed->EntryCnt;
+
+        Top->PedBroken = Top->Ped;
+        Top->PedRaw    =  CALLOC((size_t) Top->PedCnt, linkage_ped_tree);
+
+        for (ped = 0; ped < Top->PedCnt; ped++) {
+            copy_lpedtree1(&Top->PedBroken[ped], &Top->PedRaw[ped]);
+            Top->PedRaw[ped].Entry = CALLOC((size_t) Top->PedRaw[ped].EntryCnt,
+                                            linkage_ped_rec);
+          for (int i = 0; i < Top->PedRaw[ped].EntryCnt; i++) {
+                copy_lpedrec(&Top->PedBroken[ped].Entry[i], &Top->PedRaw[ped].Entry[i], Top);
             }
         }
+
+        /* else connect loops and count the total number of individuals */
+        Top->IndivCnt = 0;
+        for (ped = 0; ped < Top->PedCnt; ped++) {
+            LPed = &(Top->PedRaw[ped]);
+            if (LPed->Loops != NULL) {
+                if (connect_loops(LPed, Top) < 0)   {
+                    errorf("Fatal error connecting loops. Aborting.");
+                    EXIT(LOOP_CONNECTION_ERROR);
+                }
+            }
+        }
+  
         check_any(Top);
         return 1;
     }
@@ -1567,47 +1621,25 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
      * add the KEYWORD to the second case statement in function
      * makeped(), which deals with pre-makeped format pedigree files.
      */
-    if (analysis->break_loops())
-        break_loops(Top->PedCnt, Top->PTop, Top->LocusTop, 1);
-    else 
-        break_loops(Top->PedCnt, Top->PTop, Top->LocusTop, 0);
-    /* copy from one to the other */
-    Top->Ped = CALLOC((size_t) Top->PedCnt, linkage_ped_tree);
-    Top->IndivCnt = 0;
 
-    for (i=0; i < Top->PedCnt; i++) {
-        Top->Ped[i].EntryCnt=Top->PTop[i].num_persons;
-        Top->Ped[i].Num=i+1;
-//xx
-//      sprintf(Top->Ped[i].Name, "%d", Top->Ped[i].Num);
-        strcpy(Top->Ped[i].Name, Top->PTop[i].Name);
-        strcpy(Top->Ped[i].PedPre, Top->PTop[i].PedPre);
-        Top->Ped[i].Loops=NULL;
-        Top->Ped[i].Entry = CALLOC((size_t) Top->Ped[i].EntryCnt, linkage_ped_rec);
-        /*    Top->Ped[i].Name = CALLOC(100, char); */
-        /* first initialized the linked fields */
-        for (j=0; j < Top->PTop[i].num_marriages; j++) {
-            Top->PTop[i].marriages[j].linked=0;
-        }
-        for (j=0; j < Top->PTop[i].num_persons; j++) {
-            Top->PTop[i].persons[j].first_off =
-                Top->PTop[i].persons[j].first_pa_sib =
-                Top->PTop[i].persons[j].first_ma_sib = -1;
-        }
-        for (j=0; j < Top->PTop[i].num_persons; j++) {
-            make_pointers(Top->PTop[i], j);
-        }
-        for (j=0; j < Top->PTop[i].num_persons; j++) {
-            if (Top->PTop[i].persons[j].proband == 1) {
-                Top->Ped[i].Proband = Top->PTop[i].persons[j].node_id + 1;
-            }
-            Entry=&(Top->Ped[i].Entry[j]);
-            clear_lpedrec(Entry);
-            make_linkage_record(j, Top->PTop[i], Top->LocusTop, Entry);
-        }
+    do_marriage(Top->PedCnt, Top->PTop, Top->LocusTop);
 
-        Top->IndivCnt += Top->Ped[i].EntryCnt;
+    Top->PedRaw = CALLOC((size_t) Top->PedCnt, linkage_ped_tree);
+    Top->Ped    = Top->PedRaw;
+    ptop2top(Top, analysis);
+
+    if (fatal_marriage_err) {
+        errorvf("Found fatal errors in pedigree file, aborting Mega2.\n");
+        EXIT(INPUT_DATA_ERROR);
     }
+    break_loops(Top->PedCnt, Top->PTop, Top->LocusTop);
+    Top->PedBroken = CALLOC((size_t) Top->PedCnt, linkage_ped_tree);
+    Top->Ped    = Top->PedBroken;
+    ptop2top(Top, analysis);
+
+    ptop2topClear(Top);
+
+    /* copy from one to the other */
     Top->OrigIds=1;
     printf("Created linkage ped tree\n");
     /*    fp=fopen("tmp_ped", "w"); */
@@ -1624,12 +1656,12 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
         fclose(fp); */
     /*  system("/bin/rm -f tmp_ped"); */
     check_any(Top);
+
     return 1;
 }
 
 void clear_prepedtree(marriage_graph_type *m_graph)
 {
-
     m_graph->num_persons=0;
     m_graph->num_marriages=0;
     m_graph->marriages=NULL;
@@ -1642,7 +1674,6 @@ void clear_prepedtree(marriage_graph_type *m_graph)
 void copy_marriage_graph_person(person_node_type *From,
 				person_node_type *To,
 				linkage_locus_top *LocusTop)
-
 {
     To->father = From->father;
     To->mother = From->mother;
@@ -1680,12 +1711,10 @@ void copy_marriage_graph_person(person_node_type *From,
         }
     }
 */
-    return;
 }
 
 void  malloc_ppedtree_entries(marriage_graph_type *Copy, int entrycount,
 			      int locuscnt)
-
 {
     /* This will allocate enough space for a premake-ped
        marriage-graph, given the number of entries and information
@@ -1696,12 +1725,10 @@ void  malloc_ppedtree_entries(marriage_graph_type *Copy, int entrycount,
     for (j = 0; j < entrycount; j++)
         Copy->persons[j].data = CALLOC((size_t) locuscnt, linkage_pedrec_data);
    */
-    return;
 }
 
 void copy_marriage_graph(marriage_graph_type *From,
                          marriage_graph_type *To)
-
 {
     /* pedigree-specific info */
     To->ped = From->ped;
@@ -1715,7 +1742,6 @@ void copy_marriage_graph(marriage_graph_type *From,
 
 
 void copy_preped_peds(linkage_ped_top *From, linkage_ped_top *To)
-
 {
     int i,j;
 

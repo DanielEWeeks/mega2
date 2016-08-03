@@ -154,7 +154,6 @@ void dbmisc_export(linkage_ped_top *Top) {
     linkage_locus_top *ELTop = Top->LocusTop;
 
     int_table.insert("PedCnt", Top->PedCnt);
-    int_table.insert("IndivCnt", Top->IndivCnt);
     int_table.insert("UniqueIds", Top->UniqueIds);
     int_table.insert("OrigIds", Top->OrigIds);
     int_table.insert("LocusCnt", ELTop->LocusCnt);
@@ -246,7 +245,6 @@ void dbmisc_import(linkage_ped_top *Top) {
     Input_Format = (INPUT_FORMAT_t)Input_tmp;
 
     int_table.get("PedCnt", Top->PedCnt);
-    int_table.get("IndivCnt", Top->IndivCnt);
     int_table.get("UniqueIds", Top->UniqueIds);
     int_table.get("OrigIds", Top->OrigIds);
     int_table.get("LocusCnt", ELTop->LocusCnt);
