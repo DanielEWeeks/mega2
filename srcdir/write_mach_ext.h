@@ -54,10 +54,6 @@ public:
     virtual bool loops()  { return true; }
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
 
-    //new methods to hide these menus
-    virtual bool no_missing_menu() { return true; }
-    virtual bool no_trait_covariate_menu() { return true; }
-
     //gives an error if user selects X,Y,etc.
     virtual bool forbid_sex_linked_loci()  { return true; }
 

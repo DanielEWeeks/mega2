@@ -50,13 +50,8 @@ public:
 
     /*  this is necessary because we are inheriting from CLASS_PLINK not CLASS_ANALYSIS */
     virtual const char* output_quant_default_value() { return "-9"; }
-
     virtual const char* output_affect_default_value() { return "-9"; }
     virtual bool output_affect_must_be_numeric() { return true; }
-
-    virtual bool no_missing_menu() { return true; }
-
-    virtual bool no_trait_covariate_menu() { return true; }
 
     virtual bool forbid_sex_linked_loci() { return true; }
 
@@ -80,10 +75,6 @@ public:
     void minimac_option_menu(char *file_names[], char *prefix);
 
     void gen_file_names(char **file_names, char *num);
-    //{
-//        file_names_w_stem(file_names, num, file_name_stem,
-//                          PLINK_SUB_OPTION_SNP_MAJOR_INT);
-    //};
 
     void replace_chr_number(char *file_names[], int numchr);
 
@@ -99,8 +90,6 @@ public:
     void create_sh_file(linkage_ped_top *Top,
                         char *file_names_array[],
                         const int numchr);
-
-    //void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]);
 
 public:
     Str reference_map_file;

@@ -242,9 +242,11 @@ static keyw_t keywords[] = {
     {"minimac_reference_haplotype_file",      STRING,     "?"},
     {"batch_cpu_count",                       INT,        "1"},
 
+    {"shapeit_reference_map_file",            STRING,     "?"},
     {"shapeit_reference_haplotype_file",      STRING,     "?"},
     {"shapeit_reference_legend_file",         STRING,     "?"},
     {"shapeit_reference_sample_file",         STRING,     ""},
+    {"shapeit_haps_file_selected",            INT,        "0"},
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
 
