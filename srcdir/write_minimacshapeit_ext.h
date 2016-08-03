@@ -105,6 +105,9 @@ public:
     Str minimac_reference_haplotype_file;
     Str m_haplotype_pre;
     Str m_haplotype_post;
+    Str map_directory_name;
+    Str shapeit_directory_name;
+    Str minimac_directory_name;
 };
 
 
