@@ -412,12 +412,21 @@ void CLASS_MACH::create_output_file(
         for (int allele = 0; allele < Top->LocusTop->Locus[locus].AlleleCnt; allele++) {
             if (Top->LocusTop->Locus[locus].Allele[allele].AlleleName != NULL) {
             allele_name = Top->LocusTop->Locus[locus].Allele[allele].AlleleName;
-                if (!((strcmp(allele_name, "A") == 0) || (strcmp(allele_name, "C") == 0) || (strcmp(allele_name, "G") == 0) || (strcmp(allele_name, "T") == 0) || (strcmp(allele_name, "0") == 0) || (strcmp(allele_name, "dummy") == 0))) {
+                if(allele_name == 0){
                     char error[255];
-                    strcpy(error, "The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
+                    strcpy(error, "The SHAPEIT Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
                     strcat(error, allele_name);
                     errorf(error);
                     EXIT(DATA_TYPE_ERROR);
+                }
+                else {
+                    if (!((strcmp(allele_name, "A") == 0) || (strcmp(allele_name, "C") == 0) || (strcmp(allele_name, "G") == 0) || (strcmp(allele_name, "T") == 0) || (strcmp(allele_name, "0") == 0) || (strcmp(allele_name, "dummy") == 0))) {
+                        char error[255];
+                        strcpy(error, "The MaCH Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
+                        strcat(error, allele_name);
+                        errorf(error);
+                        EXIT(DATA_TYPE_ERROR);
+                    }
                 }
             }
             else{

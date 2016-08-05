@@ -37,6 +37,7 @@
 #include "loop.h"
 #include "sh_util.h"
 #include "batch_input.h"
+#include "utils_ext.h"
 
 #include "fcmap_ext.h"
 #include "omit_ped_ext.h"
@@ -60,6 +61,10 @@ Str sample_file;
 Str map_file;
 Str m_haplotype_file;
 int haps_sample_selected;
+Str genetic_map_directory;
+Str shapeit_panel_directory;
+Str minimac_panel_directory;
+
 
 //Main function, sets properties, calls PLINK file creation, calls shell creation
 void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -88,12 +93,21 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
         for (int allele = 0; allele < Top->LocusTop->Locus[locus].AlleleCnt; allele++){
             allele_name = Top->LocusTop->Locus[locus].Allele[allele].AlleleName;
             //printf("%s\n",allele_name);
-            if ( ! ((strcmp(allele_name,"A") == 0) || (strcmp(allele_name,"C") == 0) || (strcmp(allele_name,"G") == 0)|| (strcmp(allele_name,"T") == 0) || (strcmp(allele_name,"0") == 0) || (strcmp(allele_name,"dummy") == 0))) {
+            if(allele_name == 0){
                 char error[255];
                 strcpy(error, "The SHAPEIT Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
                 strcat(error, allele_name);
                 errorf(error);
                 EXIT(DATA_TYPE_ERROR);
+            }
+            else {
+                if (!((strcmp(allele_name, "A") == 0) || (strcmp(allele_name, "C") == 0) || (strcmp(allele_name, "G") == 0) || (strcmp(allele_name, "T") == 0) || (strcmp(allele_name, "0") == 0) || (strcmp(allele_name, "dummy") == 0))) {
+                    char error[255];
+                    strcpy(error, "The SHAPEIT Minimac3 pipeline requires alleles to be labeled as A,C,T,G.\nInvalid allele label: ");
+                    strcat(error, allele_name);
+                    errorf(error);
+                    EXIT(DATA_TYPE_ERROR);
+                }
             }
         }
     }
@@ -225,16 +239,21 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
                 if (s_hapsplit.size() == 2 && legsplit.size() == 2 && mapsplit.size() == 2) {
                     pr_nl();
                     pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
-                    pr_printf("%s -check --input-bed %s %s %s --input-map %s%d%s --input-ref %s%d%s %s%d%s %s --output-log Chr%d.checks",
-                            cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(),
-                            s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(), legsplit[0].c_str(), _numchr, legsplit[1].c_str(), sample_file.c_str(), _numchr);
+                    pr_printf("%s -check --input-bed %s %s %s --input-map %s/%s%d%s --input-ref %s/%s%d%s %s/%s%d%s %s/%s --output-log Chr%d.checks",
+                              cmd1, file_names[3], file_names[1], file_names[0],
+                              genetic_map_directory.c_str(), mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(),
+                              shapeit_panel_directory.c_str(), s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(),
+                              shapeit_panel_directory.c_str(), legsplit[0].c_str(), _numchr, legsplit[1].c_str(),
+                              shapeit_panel_directory.c_str(), sample_file.c_str(), _numchr);
                     pr_nl();
                     pr_nl();
 
                     pr_printf("#use mega2 plink formatted output to run shapeit phase mode\n");
-                    pr_printf("%s --input-bed %s %s %s --input-ref %s%d%s %s%d%s %s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d",
-                            cmd1, file_names[3], file_names[1], file_names[0], s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(),
-                            legsplit[0].c_str(), _numchr, legsplit[1].c_str(), sample_file.c_str(), _numchr, _numchr, g_cpus);
+                    pr_printf("%s --input-bed %s %s %s --input-ref %s/%s%d%s %s/%s%d%s %s/%s --exclude-snp Chr%d.checks.snp.strand.exclude -O Chr%d.Phased.Output --thread %d",
+                              cmd1, file_names[3], file_names[1], file_names[0],
+                              shapeit_panel_directory.c_str(), s_hapsplit[0].c_str(), _numchr, s_hapsplit[1].c_str(),
+                              shapeit_panel_directory.c_str(), legsplit[0].c_str(), _numchr, legsplit[1].c_str(),
+                              shapeit_panel_directory.c_str(), sample_file.c_str(), _numchr, _numchr, g_cpus);
                     pr_nl();
                     pr_nl();
                 }
@@ -246,7 +265,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
                 if (mapsplit.size() == 2) {
                     pr_nl();
                     pr_printf("#use mega2 plink formatted output to run shapeit checks\n");
-                    pr_printf("%s -check --input-bed %s %s %s --input-map %s%d%s  --output-log Chr%d.checks", cmd1, file_names[3], file_names[1], file_names[0], mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(), _numchr);
+                    pr_printf("%s -check --input-bed %s %s %s --input-map %s/%s%d%s  --output-log Chr%d.checks", cmd1, file_names[3], file_names[1], file_names[0], genetic_map_directory.c_str(), mapsplit[0].c_str(), _numchr, mapsplit[1].c_str(), _numchr);
                     pr_nl();
                     pr_nl();
 
@@ -269,11 +288,11 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             //And last of all we run Minimac3 imputation
             if (m_hapsplit.size() == 2) {
                 if (g_cpus == 1)
-                    pr_printf("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d\n",
-                            cmd2, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr);
+                    pr_printf("%s --refHaps %s/%s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d\n",
+                            cmd2, minimac_panel_directory.c_str(), m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr);
                 if (g_cpus > 1)
-                    pr_printf("%s --refHaps %s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",
-                            cmd2, m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr, g_cpus);
+                    pr_printf("%s --refHaps %s/%s%d%s --haps Chr%d.Phased.Output.vcf --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",
+                            cmd2, minimac_panel_directory.c_str(), m_hapsplit[0].c_str(), _numchr, m_hapsplit[1].c_str(), _numchr, _numchr, _numchr, g_cpus);
             }
             else
                 errorf("Error in input or Minimac3 reference files: haplotype.\n Make sure there to include one (and only one) '?' in the filename to be replaced with the chromosome number.\n");
@@ -489,12 +508,20 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
             sample_file = reference_sample_file;
             m_haplotype_file = minimac_reference_haplotype_file;
 
+            genetic_map_directory = map_directory_name;
+            shapeit_panel_directory = shapeit_directory_name;
+            minimac_panel_directory = minimac_directory_name;
+
+
             BatchValueSet (reference_map_file, "shapeit_reference_map_file");
             BatchValueSet (shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
             BatchValueSet (reference_legend_file, "shapeit_reference_legend_file");
             BatchValueSet (reference_sample_file, "shapeit_reference_sample_file");
             BatchValueSet (haps_sample_selected, "shapeit_haps_file_selected");
             BatchValueSet (minimac_reference_haplotype_file, "minimac_reference_haplotype_file");
+            BatchValueSet (map_directory_name, "shapeit_reference_map_directory");
+            BatchValueSet (shapeit_directory_name, "shapeit_reference_panel_directory");
+            BatchValueSet (minimac_directory_name, "minimiac_reference_panel_directory");
 
 
             BatchValueSet (g_cpus, "batch_cpu_count");
@@ -635,43 +662,84 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
 
         else if (choice == map_dir){
             while (1) {
+                bool no = 0;
                 printf("Enter Shapeit genetic recombination map directory>\n");
                 fcmap(stdin, "%s", &map_dir_input);
-                if(access(*map_dir_input, F_OK)) {
+                if(!is_dir(map_dir_input)){
                     while (1){
                         printf("This directory does not exist on the current machine, are you sure you want to continue with this value? (Y/N)");
                         fcmap(stdin, "%s", &response);
                         if(response[0] =='Y' || response[0] == 'y')
                             break;
-                        else if (response[0] =='N' || response[0] == 'n')
-                            continue;
+                        else if (response[0] =='N' || response[0] == 'n'){
+                            no = 1;
+                            break;
+                        }
                         else{
-                            printf("Unknown response");
+                            printf("Unknown response\n");
                             continue;
                         }
                     }
                 }
                 newline;
-                map_directory_name = map_dir_input;
+                if(!no)
+                    map_directory_name = map_dir_input;
                 break;
             }
         }
         else if (choice == s_ref_dir){
             while (1) {
+                bool no = 0;
                 printf("Enter Shapeit reference panel directory>\n");
                 fcmap(stdin, "%s", &s_dir_input);
+                if(!is_dir(s_dir_input)) {
+                    while (1){
+                        printf("This directory does not exist on the current machine, are you sure you want to continue with this value? (Y/N)");
+                        fcmap(stdin, "%s", &response);
+                        if(response[0] =='Y' || response[0] == 'y')
+                            break;
+                        else if (response[0] =='N' || response[0] == 'n'){
+                            no = 1;
+                            break;
+                        }
+                        else{
+                            printf("Unknown response\n");
+                            continue;
+                        }
+                    }
+                }
 
                 newline;
-                shapeit_directory_name = s_dir_input;
+                if(!no)
+                    shapeit_directory_name = s_dir_input;
                 break;
             }
         }
         else if( choice == m_ref_dir){
             while (1) {
+                bool no = 0;
                 printf("Enter Minimac3 reference panel directory>\n");
                 fcmap(stdin, "%s", &m_dir_input);
+                if(!is_dir(m_dir_input)) {
+                    while (1){
+                        printf("This directory does not exist on the current machine, are you sure you want to continue with this value? (Y/N)");
+                        fcmap(stdin, "%s", &response);
+                        if(response[0] =='Y' || response[0] == 'y')
+                            break;
+                        else if (response[0] =='N' || response[0] == 'n'){
+                            no = 1;
+                            break;
+                        }
+                        else {
+                            printf("Unknown response\n");
+                            continue;
+                        }
+                    }
+                }
+
                 newline;
-                minimac_directory_name = m_dir_input;
+                if(!no)
+                    minimac_directory_name = m_dir_input;
                 break;
             }
         }
@@ -727,6 +795,10 @@ void CLASS_MINIMAC::batch_out()
                        "shapeit_haps_file_selected",
                        "minimac_reference_haplotype_file",
                        "batch_cpu_count",
+                       "shapeit_reference_map_directory",
+                       "shapeit_reference_panel_directory",
+                       "minimiac_reference_panel_directory",
+
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -748,12 +820,18 @@ void CLASS_MINIMAC::batch_in()
     BatchValueGet(haps_sample_selected, "shapeit_haps_file_selected");
     BatchValueGet(minimac_reference_haplotype_file,"minimac_reference_haplotype_file");
     BatchValueGet(g_cpus, "batch_cpu_count");
+    BatchValueGet(map_directory_name, "shapeit_reference_map_directory");
+    BatchValueGet(minimac_directory_name, "minimiac_reference_panel_directory");
+    BatchValueGet(shapeit_directory_name, "shapeit_reference_panel_directory");
 
     map_file = reference_map_file;
     sample_file = reference_sample_file;
     legend_file = reference_legend_file;
     s_haplotype_file = shapeit_reference_haplotype_file;
     m_haplotype_file = minimac_reference_haplotype_file;
+    genetic_map_directory = map_directory_name;
+    minimac_panel_directory = minimac_directory_name;
+    shapeit_panel_directory = shapeit_directory_name;
 }
 
 //overriding these functions but we only have one "suboption"
