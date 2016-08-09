@@ -159,10 +159,18 @@ Missing_Value  missing_values[] = {
       /*quant*/       "*",  Missing_Value::Any, Missing_Value::Fixed,
       /*affect*/      "*" , Missing_Value::Any, Missing_Value::Fixed,
       /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
+    
     { "Miminac format",              MINIMAC,
             /*quant*/       "*",  Missing_Value::Any, Missing_Value::Fixed,
             /*affect*/      "*" , Missing_Value::Any, Missing_Value::Fixed,
             /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
+
+    { "VCF format",              VCF,
+            /*quant*/       "*",  Missing_Value::Any, Missing_Value::Fixed,
+            /*affect*/      "*" , Missing_Value::Any, Missing_Value::Fixed,
+            /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
+
+
 
     { "Mendel format",              TO_MENDEL7_CSV,
 /*?*/ /*

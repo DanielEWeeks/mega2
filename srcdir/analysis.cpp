@@ -51,6 +51,7 @@
 #include "write_roadtrips_ext.h"
 #include "write_mach_ext.h"
 #include "write_minimacshapeit_ext.h"
+#include "write_vcf_ext.h"
 /*
  * You MUST make the appropriate changes here to define the new header and class.
  * (item 1.)
@@ -124,6 +125,7 @@ CLASS_SHAPEIT            *SHAPEIT = new CLASS_SHAPEIT();
 CLASS_ROADTRIPS          *ROADTRIPS = new CLASS_ROADTRIPS();
 CLASS_MACH               *MACH = new CLASS_MACH();
 CLASS_MINIMAC            *MINIMAC = new CLASS_MINIMAC();
+CLASS_VCF                *VCF = new CLASS_VCF();
 /*
  * You MUST make the appropriate changes here to define the new analysis object
  * (item 2.)
@@ -176,6 +178,7 @@ analysis_types analysis_list[] = {
     { "ROADTRIPS format",           ROADTRIPS},
     { "MaCH/minimac3 format",       MACH},
     { "SHAPEIT/minimac3 format",    MINIMAC},
+    { "VCF format",                 VCF},
 /*
  * You MUST make the appropriate changes here to define the mapping from the name
  * to the new analysis object
