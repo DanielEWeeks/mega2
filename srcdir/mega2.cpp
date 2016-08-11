@@ -958,6 +958,8 @@ int             main(int argc, char **argv, char **env)
 
         get_trait_list(LPedTreeTop->LocusTop, 1);
 
+        log_line(mssgf);
+
 //      Mega2OutputPath = strdup((char *)".");
 
     } else if (Input_Format == in_format_mega2) {
@@ -1117,13 +1119,15 @@ int             main(int argc, char **argv, char **env)
         makeped(LPedTreeTop, analysis);  // if --db, might connect loops based on analysis
         tod_makeped();
     }
-//  if (analysis->break_loops() || analysis->maintain_broken_loops() )
-
-    if ( (basefile_type == POSTMAKEPED_PFT && analysis->maintain_broken_loops()) ||
-         (basefile_type != POSTMAKEPED_PFT && analysis->break_loops()) ) 
-        LPedTreeTop->Ped = LPedTreeTop->PedBroken;
-    else
-        LPedTreeTop->Ped = LPedTreeTop->PedRaw;
+    if (database_dump) {
+        LPedTreeTop->Ped = LPedTreeTop->PedRaw;  // largest set of persons
+    } else {
+        if ( (basefile_type == POSTMAKEPED_PFT && analysis->maintain_broken_loops()) ||
+             (basefile_type != POSTMAKEPED_PFT && analysis->break_loops()) ) 
+            LPedTreeTop->Ped = LPedTreeTop->PedBroken;
+        else
+            LPedTreeTop->Ped = LPedTreeTop->PedRaw;
+    }
 
     LPedTreeTop->IndivCnt = 0;
     for (int ped = 0; ped < LPedTreeTop->PedCnt; ped++) {
@@ -1214,16 +1218,20 @@ int             main(int argc, char **argv, char **env)
         }
         tod_stat1();
     }
-    /*  Mega2Status=TRAIT_SELECTED_M2S; */
-    default_outfile_names(analysis, &(global_chromo_entries[0]), Outfile_Names, logdir);
 
-    /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-    set_output_paths(analysis, LPedTreeTop);
+//new
+    if (! database_dump) {
+        /*  Mega2Status=TRAIT_SELECTED_M2S; */
+        default_outfile_names(analysis, &(global_chromo_entries[0]), Outfile_Names, logdir);
 
-    /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+        set_output_paths(analysis, LPedTreeTop);
 
-    /* Now to analysis-specific options */
-    ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
+        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+
+        /* Now to analysis-specific options */
+        ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
+    }
 
     Mega2Status = INSIDE_ANALYSIS;
     /*  printf("num-traits = %d\n", num_traits); sleep(2); */

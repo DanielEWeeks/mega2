@@ -109,6 +109,7 @@ void dbgenotype_export(linkage_ped_top *Top) {
             // record for the individual phenotype and genotype
             tpersonp = &(tpedtreep->Entry[per]);
 
+//          if (tpersonp->person_link == 259) asm("int $3");
             phenotype_table.insert(tpersonp, Top->LocusTop->PhenoCnt);
             genotype_table.insert(tpersonp, Top->LocusTop->MarkerCnt, Top->LocusTop->PhenoCnt);
         }

@@ -609,16 +609,16 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     if (database_dump || ! database_read) {
         if (genetic_distance_index != -2) {
             map_num = genetic_distance_index;
-            copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
+            if (Top->EXLTop)
+                copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
+            main_chromocnt = NumChromo;
         } else {
             errorvf("For the analysis type specified, a Genetic Map was required, but none was chosen.\n");
             EXIT(EARLY_TERMINATION);
         }
 
         set_missing_quant_input(Top, *analysis);
-        if (*analysis == QUANT_SUMMARY) {
-            //nada
-        } else if (write_quant_stats(Top, *analysis) != 0)
+        if (write_quant_stats(Top, *analysis) != 0)
             set_missing_quant_output(Top, *analysis);
 
         Mega2Status = LOCI_REORDERED;
@@ -3319,8 +3319,8 @@ static int  check_trait_selection(linkage_ped_top *Top,
     for (j=0; j < num_select; j++) {
         if (trait_order[j] != marker_item &&
             (trait_order[j] < 1 || trait_order[j] > num_traits)) {
-            printf("Invalid selection: trait %d, previous list unchanged.\n",
-                   trait_order[j]);
+            msgvf("Invalid trait number selection: trait %d, previous list unchanged.\n",
+                  trait_order[j]);
             return 0;
         }
     }
@@ -3357,7 +3357,8 @@ static int  check_trait_selection(linkage_ped_top *Top,
         else {
             tr = global_trait_entries[trait_order[j]-1];
             if (quant_allowed(Top->LocusTop->Locus[tr], analysis) == 0) {
-                printf("Please re-select all loci.\n");
+                msgvf("Quantitative Loci are not allowed for this analysis.  ");
+                msgvf("Please re-select all loci.\n");
                 return 0;
             }
         }
@@ -4056,6 +4057,10 @@ int x_linked_check(int chromocnt, int *chromosomes, analysis_type analysis)
         sex_linked = 1;
     } else if (sex_chr == 0) {
         sex_linked = 0;
+    }
+
+    if (database_dump) {
+        return sex_linked;
     }
 
     /*   if (Mega2BatchItems[/ * 30 * / Xlinked_Analysis_Mode].items_read == 1) { */

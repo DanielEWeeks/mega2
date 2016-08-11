@@ -2283,9 +2283,10 @@ void set_missing_quant_output(linkage_ped_top *Top, analysis_type analysis)
                 }
         }
     }
-#endif
+
     mssgvf("NOTE: The Missing QTL value on output will be assigned as '%s'.\n",
            Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
+#endif
 }
 
 /**
@@ -2322,7 +2323,6 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
     // NOTE: It is pointless to do this if 'MissingQuant == QMISSING' as would be the case if we
     // were reading Mega2 files with NA used as the missing value.
     if (fabs(MissingQuant - QMISSING) > EPSILON) {
-        
         if (HasQuant) {
             for (i1 = 0; i1 < num_traits ; i1++) {
                 SKIP_TRI(i1)
@@ -2330,10 +2330,15 @@ void set_missing_quant_input(linkage_ped_top *Top, const analysis_type analysis)
                 if (Top->LocusTop->Locus[i].Type == QUANT) {
                     for(ped = 0; ped < Top->PedCnt; ped++) {
                         if (Top->pedfile_type == POSTMAKEPED_PFT) {
-                            for(entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
-                                if (fabs(Top->Ped[ped].Entry[entry].Pheno[i].Quant - QMISSING) <= EPSILON) {
+                            linkage_ped_tree *Ped;
+                            if (database_dump) 
+                                Ped = Top->PedBroken; // larger set of person id's 
+                            else
+                                Ped = Top->Ped;
+                            for(entry = 0; entry < Ped[ped].EntryCnt; entry++) {
+                                if (fabs(Ped[ped].Entry[entry].Pheno[i].Quant - QMISSING) <= EPSILON) {
                                     /* Set this to the proper missing quant value */
-                                    Top->Ped[ped].Entry[entry].Pheno[i].Quant = MissingQuant;
+                                    Ped[ped].Entry[entry].Pheno[i].Quant = MissingQuant;
                                 }
                             }
                         } else {

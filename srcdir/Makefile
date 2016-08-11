@@ -753,7 +753,8 @@ analysis.o: utils_ext.h analysis.h class_old.h write_plink_ext.h
 analysis.o: plink_core_ext.h write_fbat_ext.h write_eigenstrat_ext.h
 analysis.o: write_pangaea_ext.h write_beagle_ext.h write_structure_ext.h
 analysis.o: write_pseq_ext.h write_shapeit_ext.h write_roadtrips_ext.h
-analysis.o: write_mach_ext.h write_minimacshapeit_ext.h menu_value_missing.h
+analysis.o: write_mach_ext.h write_minimacshapeit_ext.h database_dump_ext.h
+analysis.o: menu_value_missing.h
 class_old.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 class_old.o: linkage_external.h makeped.h pedtree.h batch_input.h
 class_old.o: input_check.h hwe.h compress_ext.h analysis.h utils_ext.h
