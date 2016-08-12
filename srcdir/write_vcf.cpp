@@ -66,7 +66,6 @@ void CLASS_VCF::create_output_files(linkage_ped_top *LPedTreeTop, analysis_type 
 
     //We'll want a phenotype file, not sure if we'll want to loop over traits or have them split out
     //LoopOverTrait = 0;
-    //num_traits = 0;
 
     omit_peds(untyped_ped_opt, Top);
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
@@ -79,17 +78,99 @@ void CLASS_VCF::create_output_files(linkage_ped_top *LPedTreeTop, analysis_type 
 }
 
 void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid){
+    vlpCLASS(vcf_peds,both,ped_per) {
+        vlpCTOR(vcf_peds,both,ped_per) { }
 
+        void file_loop() {
+            mssgvf("        VCF format file:      %s/%s\n", *_opath, _fln);
+            data_loop(*_opath, _fln, "w");
+        }
+
+        //goal for inner loop:
+        //#CHROM POS ID REF ALT QUAL FILTER INFO FORMAT NA00001 NA00002 NA00003
+        //20 14370 rs6054257 G A 29 PASS NS=3;DP=14;AF=0.5;DB;H2 GT:GQ:DP:HQ 0|0:48:1:51,51 1|0:48:8:51,51 1/1:43:5:.,.
+        void inner() {
+            pr_printf("%d\t", _numchr);
+            pr_physical_distance(0);
+            pr_marker_name();
+            //pr_ref()
+            //pr_alt()
+            //pr_qual()
+            //pr_filter
+            //pr_info
+            //pr_format
+            //etc...
+
+        }
+    } *sp = new vcf_peds(Top);
+
+    sp->setfln(prefix, ".vcf");
+
+    sp->load_formats(fwid, pwid, -1);
+
+    sp->_trait_affect = true;
+    sp->iterate();
+
+    delete sp;
 }
 
 //this will write the pedigree in the PLINK fam file format
 void CLASS_VCF::write_VCF_ped(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid){
+    vlpCLASS(vcf_peds,trait,ped_per) {
+        vlpCTOR(vcf_peds,trait,ped_per) { }
 
+        void file_loop() {
+            mssgvf("        VCF pedigree file:      %s/%s\n", *_opath, _fln);
+            data_loop(*_opath, _fln, "w");
+        }
+        void inner() {
+            pr_fam();
+            pr_per();
+            pr_father();
+            pr_mother();
+            pr_sex();
+            pr_pheno();
+
+        }
+    } *sp = new vcf_peds(Top);
+
+    sp->setfln(prefix, ".peds");
+
+    sp->load_formats(fwid, pwid, -1);
+
+    sp->_trait_affect = true;
+    sp->iterate();
+
+    delete sp;
 }
 
 // this will write the phenotypic data in
 void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid){
+    vlpCLASS(vcf_phenos,trait,ped_per) {
+        vlpCTOR(vcf_phenos,trait,ped_per) { }
 
+        void file_loop() {
+            mssgvf("        VCF phenotype file:     %s/%s\n", *_opath, _fln);
+            data_loop(*_opath, _fln, "w");
+        }
+        void inner() {
+            pr_id();
+            pr_parent();
+            pr_pheno();
+            //what is sampleid?
+            //pr_sampleid
+            pr_nl();
+        }
+    } *sp = new vcf_phenos(Top);
+
+    sp->setfln(prefix, ".phes");
+
+    sp->load_formats(fwid, pwid, -1);
+
+    sp->_trait_affect = true;
+    sp->iterate();
+
+    delete sp;
 }
 
 //this will write the output of the VCF file
