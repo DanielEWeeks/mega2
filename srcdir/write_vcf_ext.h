@@ -41,21 +41,29 @@ public:
 
     ~CLASS_VCF() { }
 
-    void create_output_files(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2);
-
-    void write_VCF_file(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid);
-
-    void write_VCF_ped(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid);
-
-    void write_VCF_pheno(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid);
-
-    void write_VCF_sh(linkage_ped_top *Top, char *file_names[]);
-
     virtual bool loops() { return true; }
+    virtual bool Loop_Over_Chromosomes_implemented() { return true; }
+    virtual bool require_physical_map() { return true; }
+
+    void create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2);
+
+    void write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
+
+    void write_VCF_ped(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
+
+    void write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
+
+    void write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *file_names[]);
 
     virtual void batch_in();
 
     virtual void batch_out();
+
+    void gen_file_names(char **file_names, char *num);
+
+    void inner_file_names(char **file_names, const char *num, const char *stem);
+
+    void replace_chr_number(char *file_names[], int numchr);
 
 
 };

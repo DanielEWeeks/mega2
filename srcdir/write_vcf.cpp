@@ -47,22 +47,25 @@
 #include "write_vcf_ext.h"
 
 
-void CLASS_VCF::create_output_files(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
+void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
     int pwid, fwid, mwid;
     linkage_ped_top *Top = LPedTreeTop;
 
-
-    if ( InputMode == INTERACTIVE_INPUTMODE ) {
-
-    }
-    else {
-        batch_in();
-        //inner_file_names(file_names, "", file_name_stem);
-    }
+//    if ( InputMode == INTERACTIVE_INPUTMODE ) {
+//
+//    }
+//    else {
+//        batch_in();
+//        //inner_file_names(file_names, "", file_name_stem);
+//    }
 
     //I believe everything goes into one VCF file
     int combine_chromo = 1;
     LoopOverChrm  = ! combine_chromo;
+
+    LoopOverTrait = 0;
+
+    //get_file_names(file_names, Top->OrigIds, Top->UniqueIds, &combine_chromo);
 
     //We'll want a phenotype file, not sure if we'll want to loop over traits or have them split out
     //LoopOverTrait = 0;
@@ -70,58 +73,83 @@ void CLASS_VCF::create_output_files(linkage_ped_top *LPedTreeTop, analysis_type 
     omit_peds(untyped_ped_opt, Top);
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
+    file_name_stem = strdup("vcf");
+    inner_file_names(file_names,"",file_name_stem);
 
-    write_VCF_file(Top,file_names,pwid,fwid);
-    write_VCF_ped(Top, file_names,pwid,fwid);
-    write_VCF_pheno(Top,file_names,pwid,fwid);
-    write_VCF_sh(Top, file_names);
+
+    printf("Mega2 created the following file(s) for VCF Format:\n");
+    write_VCF_file(Top, file_name_stem,file_names ,pwid, fwid);
+    write_VCF_ped(Top, file_name_stem, file_names ,pwid, fwid);
+    write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
+    write_VCF_sh(Top, file_name_stem, file_names);
 }
 
-void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid){
-    vlpCLASS(vcf_peds,both,ped_per) {
-        vlpCTOR(vcf_peds,both,ped_per) { }
+void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
+    vlpCLASS(vcf_vcfs,chr,loci) {
+        vlpCTOR(vcf_vcfs,chr,loci) { }
+        typedef char *str;
+        str *file_names;
+        //linkage_locus_top *LTop = Top->LocusTop;
 
         void file_loop() {
-            mssgvf("        VCF format file:      %s/%s\n", *_opath, _fln);
-            data_loop(*_opath, _fln, "w");
+            mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
+            data_loop(*_opath, file_names[0], "w");
         }
+        //here we can put the VCF header data
+        void file_header(){
+            pr_printf("##fileformat=VCFv4.2\n");
+            pr_printf("##filedate=%s\n",__DATE__);
+            pr_printf("##source=MEGA2\n");
+            pr_printf("##FORMAT=<...>\n");
+            pr_printf("##FILTER=<...>\n");
+            pr_printf("#CHROM  POS  ID  REF  ALT  QUAL  FILTER  INFO  FORMAT  1_1\n");
+            //pr_printf("#CHRO\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t1_1\n");
+        }
+
 
         //goal for inner loop:
         //#CHROM POS ID REF ALT QUAL FILTER INFO FORMAT NA00001 NA00002 NA00003
         //20 14370 rs6054257 G A 29 PASS NS=3;DP=14;AF=0.5;DB;H2 GT:GQ:DP:HQ 0|0:48:1:51,51 1|0:48:8:51,51 1/1:43:5:.,.
         void inner() {
-            pr_printf("%d\t", _numchr);
+            pr_printf("%d", _numchr);
             pr_physical_distance(0);
+            //pr_printf("\t");
             pr_marker_name();
-            //pr_ref()
-            //pr_alt()
-            //pr_qual()
-            //pr_filter
-            //pr_info
-            //pr_format
-            //etc...
+            //pr_printf("\t");
+            pr_marker_alleles();
+            //pr_printf("\t");
+            //to do figure out what to put for these
+            //quality
+            pr_printf("%d",0);
+            //filter
+            pr_printf("%s","filter");
+            //info
+            pr_printf("%s","info");
+            pr_nl();
 
         }
-    } *sp = new vcf_peds(Top);
+    } *lp = new vcf_vcfs(Top);
 
-    sp->setfln(prefix, ".vcf");
+    lp->setfln(prefix, ".vcf");
+    lp->file_names = file_names;
 
-    sp->load_formats(fwid, pwid, -1);
+    lp->load_formats(fwid, pwid, -1);
 
-    sp->_trait_affect = true;
-    sp->iterate();
+    lp->iterate();
 
-    delete sp;
+    delete lp;
 }
 
 //this will write the pedigree in the PLINK fam file format
-void CLASS_VCF::write_VCF_ped(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid){
+void CLASS_VCF::write_VCF_ped(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
     vlpCLASS(vcf_peds,trait,ped_per) {
         vlpCTOR(vcf_peds,trait,ped_per) { }
+        typedef char *str;
+        str *file_names;
 
         void file_loop() {
-            mssgvf("        VCF pedigree file:      %s/%s\n", *_opath, _fln);
-            data_loop(*_opath, _fln, "w");
+            mssgvf("        VCF pedigree file:      %s/%s\n", *_opath, file_names[1]);
+            data_loop(*_opath, file_names[1], "w");
         }
         void inner() {
             pr_fam();
@@ -130,51 +158,64 @@ void CLASS_VCF::write_VCF_ped(linkage_ped_top *Top, char *file_names[], const in
             pr_mother();
             pr_sex();
             pr_pheno();
+            pr_nl();
 
         }
-    } *sp = new vcf_peds(Top);
+    } *lp = new vcf_peds(Top);
 
-    sp->setfln(prefix, ".peds");
+    lp->setfln(prefix, ".fam");
+    lp->file_names = file_names;
 
-    sp->load_formats(fwid, pwid, -1);
+    lp->load_formats(fwid, pwid, -1);
 
-    sp->_trait_affect = true;
-    sp->iterate();
+    lp->iterate();
 
-    delete sp;
+    delete lp;
 }
 
 // this will write the phenotypic data in
-void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, char *file_names[], const int pwid, const int fwid){
+void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
     vlpCLASS(vcf_phenos,trait,ped_per) {
         vlpCTOR(vcf_phenos,trait,ped_per) { }
+        typedef char *str;
+        str *file_names;
 
         void file_loop() {
-            mssgvf("        VCF phenotype file:     %s/%s\n", *_opath, _fln);
-            data_loop(*_opath, _fln, "w");
+            mssgvf("        VCF phenotype file:     %s/%s\n", *_opath, file_names[2]);
+            data_loop(*_opath, file_names[2], "w");
+        }
+        void file_header() {
+            pr_printf("FID\tIID\tA1\tSAMPLEID\n");
+//            pr_printf("FID");
+//            pr_printf("IID");
+//            pr_printf("A1");
+//            pr_printf("SAMPLEID");
+//            pr_nl();
         }
         void inner() {
-            pr_id();
-            pr_parent();
+            pr_fam();
+            pr_printf("\t");
+            pr_per();
+            pr_printf("\t");
             pr_pheno();
-            //what is sampleid?
-            //pr_sampleid
+            pr_printf("\t");
+            pr_printf("X_X");
             pr_nl();
         }
-    } *sp = new vcf_phenos(Top);
+    } *lp = new vcf_phenos(Top);
 
-    sp->setfln(prefix, ".phes");
+    lp->setfln(prefix, ".phe");
+    lp->file_names = file_names;
 
-    sp->load_formats(fwid, pwid, -1);
+    lp->load_formats(fwid, pwid, -1);
 
-    sp->_trait_affect = true;
-    sp->iterate();
+    lp->iterate();
 
-    delete sp;
+    delete lp;
 }
 
 //this will write the output of the VCF file
-void CLASS_VCF::write_VCF_sh(linkage_ped_top *Top, char *file_names[]) {
+void CLASS_VCF::write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *file_names[]) {
 
 }
 
@@ -184,4 +225,20 @@ void CLASS_VCF::batch_in(){
 
 void CLASS_VCF::batch_out(){
 
+}
+
+void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char *stem) {
+
+     sprintf(file_names[0], "%s", stem);
+     sprintf(file_names[1], "%s", stem);
+     sprintf(file_names[2], "%s", stem);
+}
+
+void CLASS_VCF::gen_file_names(char **file_names, char *num)
+{
+    inner_file_names(file_names, num, file_name_stem);
+}
+
+void CLASS_VCF::replace_chr_number(char *file_names[], int numchr) {
+    //change_output_chr(file_names[1], numchr);
 }
