@@ -1773,7 +1773,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                                     allelecnt **member_ids,
 				    int count_ht)
 {
-    int ped, per;
+    int ped, per, founder = 0;
     const char  *all1, *all2;
     int sex, entrycount;
 //  record_type rec;
@@ -1809,6 +1809,8 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 linkage_ped_rec *te = &Top->Ped[ped].Entry[0];
                 allelecnt *mpp = mp[0];
                 for(per=0; per < entrycount; per++, te++, mpp++) {
+                    founder = IS_LFOUNDER(*te);
+                    founder = 0;
                     get_2Ralleles(te->Marker, locus, &all1, &all2);
                     mpp->num  = 0;
                     mpp->all1 = all1;
@@ -1838,22 +1840,41 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         if (!count_ht)
                             continue; // if no half type allowed
                         marker_listi->ht_everyone++;
+                        if (founder)
+                            marker_listi->ht_founders++;
                     }
                     sex = te->Sex;
                     if (LocType == NUMBERED) {
                         marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
                         if (al1p) al1p->allele_freq.everyone_count++;
                         if (al2p) al2p->allele_freq.everyone_count++;
+                        if (founder) {
+                            marker_listi->num_founders++;  // one or the other must be != REC_UNKNOWN
+                            if (al1p) al1p->allele_freq.founder_count++;
+                            if (al2p) al2p->allele_freq.founder_count++;
+                        }
+
                     } else if (sex == 1) {
-                        if (al1p && (al1p == al2p)) {
+                        if (al1p && (al1p == al2p) ) {
                             marker_listi->num_everyone++;
                             al1p->allele_freq.everyone_count++;
+                        }
+                        if (al1p) {
+                            if (founder) {
+                                marker_listi->num_founders++;
+                                al1p->allele_freq.founder_count++;
+                            }
                         }
                     } else if (sex == 2) {
                         if (LocType == XLINKED) {
                             marker_listi->num_everyone++;
                             if (al1p) al1p->allele_freq.everyone_count++;
                             if (al2p) al2p->allele_freq.everyone_count++;
+                            if (founder) {
+                                marker_listi->num_founders++;
+                                if (al1p) al1p->allele_freq.founder_count++;
+                                if (al2p) al2p->allele_freq.founder_count++;
+                            }
                         } else if (LocType == YLINKED) {
                             if (allelecmp(all1, REC_UNKNOWN) || allelecmp(all2, REC_UNKNOWN)) {
                                 SECTION_ERR(y_female);
@@ -1877,10 +1898,22 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                 person_node_type *tp = &Top->PTop[ped].persons[0];
                 allelecnt *mpp = mp[0];
                 for(per=0; per < entrycount; per++, tp++, mpp++) {
+                    founder = PFOUNDER(*tp);
+                    founder = 0;
                     get_2Ralleles(tp->marker, locus, &all1, &all2);
                     mpp->num  = 0;
                     mpp->all1 = all1;
                     mpp->all2 = all2;
+//new
+                    /* Assumes that female genotypes have been set to unknown,
+                       skip heterozygous males */
+/*
+                    if (allelecmp(all1, REC_UNKNOWN) && allelecmp(all2, REC_UNKNOWN) &&
+                        allelecmp(all1, all2) && LocType == YLINKED) {
+                        continue;
+                    }
+*/
+//new
                     if (!allelecmp(all1, REC_UNKNOWN)) {
                         if (!allelecmp(all2, REC_UNKNOWN)) {
                             continue; // 0/0
@@ -1906,22 +1939,58 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                         if (!count_ht)
                             continue; // if no half type allowed
                         marker_listi->ht_everyone++;
+                        if (founder)
+                            marker_listi->ht_founders++;
                     }
                     sex = tp->gender;
                     if (LocType == NUMBERED) {
                         marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
                         if (al1p) al1p->allele_freq.everyone_count++;
                         if (al2p) al2p->allele_freq.everyone_count++;
-                    } else if (sex == 1) {
-                        if (al1p && (al1p == al2p)) {
+                        if (founder) {
+                            marker_listi->num_founders++;  // one or the other must be != REC_UNKNOWN
+                            if (al1p) al1p->allele_freq.founder_count++;
+                            if (al2p) al2p->allele_freq.founder_count++;
+                        }
+#if 0
+                    } else if (LocType == XLINKED) {
+                        marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
+                        if (al1p) al1p->allele_freq.everyone_count++;
+                        if (al2p && sex==2) al2p->allele_freq.everyone_count++;
+                        if (founder) {
+                            marker_listi->num_founders++;  // one or the other must be != REC_UNKNOWN
+                            if (al1p) al1p->allele_freq.founder_count++;
+                            if (al2p && sex==2) al2p->allele_freq.founder_count++;
+                        }
+                    } else if (LocType == YLINKED && sex==1) {
+                        marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
+                        if (al1p) al1p->allele_freq.everyone_count++;
+                        if (founder) {
+                            marker_listi->num_founders++;  // one or the other must be != REC_UNKNOWN
+                            if (al1p) al1p->allele_freq.founder_count++;
+                        }
+#endif
+                    } else if (sex == 1) { 
+                        if (al1p  && (al1p == al2p) ) {
                             marker_listi->num_everyone++;
                             al1p->allele_freq.everyone_count++;
+                        }
+                        if (al1p /* && (al1p == al2p)*/) {
+                            if (founder) {
+                                marker_listi->num_founders++;
+                                al1p->allele_freq.founder_count++;
+                            }
                         }
                     } else if (sex == 2) {
                         if (LocType == XLINKED) {
                             marker_listi->num_everyone++;
                             if (al1p) al1p->allele_freq.everyone_count++;
                             if (al2p) al2p->allele_freq.everyone_count++;
+                            if (founder) {
+                                marker_listi->num_founders++;
+                                if (al1p) al1p->allele_freq.founder_count++;
+                                if (al2p) al2p->allele_freq.founder_count++;
+                            }
                         } else if (LocType == YLINKED) {
                             if (allelecmp(all1, REC_UNKNOWN) || allelecmp(all2, REC_UNKNOWN)) {
                                 SECTION_ERR(y_female);
@@ -2475,8 +2544,10 @@ linkage_ped_top  *create_full_marker_data(
                                    member_ids, count_halftyped);
             
                 tod_fr1("create allele list 1 freq");
-                if ( (count_option != 4 || analysis == TO_HWETEST || analysis == TO_SIMULATE) &&
+                if ( (count_option == 1 || count_option == 2 || count_option == 3
+                      /* || analysis == TO_HWETEST || analysis == TO_SIMULATE */) &&
                       LTop->Locus[i].number != -1 ) {
+
                     count_allele_list(Top, i, count_option, &(marker_list[i]),
                                       member_ids, count_halftyped);
                     tod_fr1_x4("create allele list 4 freq");

@@ -4750,8 +4750,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                 create_allele_list(Top, (int) i, &(marker_list[i]),
                                    member_ids, count_halftyped);
                 tod_fr("create allele list 1 freq");
-                if ( (count_option != 4 || analysis == TO_HWETEST || analysis == TO_SIMULATE) &&
-                      LTop->Locus[i].number != -1 ) {
+
+                if ( (count_option == 1 || count_option == 2 || count_option == 3
+                      /* || analysis == TO_HWETEST || analysis == TO_SIMULATE */) &&
+                     LTop->Locus[i].number != -1 ) {
                     count_allele_list(Top, (int) i, count_option, &(marker_list[i]),
                                       member_ids, count_halftyped);
                     tod_fr_x4("create allele list 4 freq");
