@@ -80,13 +80,15 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     printf("Mega2 created the following file(s) for VCF Format:\n");
     write_VCF_file(Top, file_name_stem,file_names ,pwid, fwid);
     write_VCF_ped(Top, file_name_stem, file_names ,pwid, fwid);
-    write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
+    //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
+    if(num_traits>1)
+        write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
     write_VCF_sh(Top, file_name_stem, file_names);
 }
 
 void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
-    vlpCLASS(vcf_vcfs,chr,loci) {
-        vlpCTOR(vcf_vcfs,chr,loci) { }
+    vlpCLASS(vcf_vcfs,chr,loci_ped_per) {
+        vlpCTOR(vcf_vcfs,chr,loci_ped_per) { }
         typedef char *str;
         str *file_names;
         //linkage_locus_top *LTop = Top->LocusTop;
@@ -100,31 +102,43 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("##fileformat=VCFv4.2\n");
             pr_printf("##filedate=%s\n",__DATE__);
             pr_printf("##source=MEGA2\n");
-            pr_printf("##FORMAT=<...>\n");
-            pr_printf("##FILTER=<...>\n");
-            pr_printf("#CHROM  POS  ID  REF  ALT  QUAL  FILTER  INFO  FORMAT  1_1\n");
-            //pr_printf("#CHRO\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t1_1\n");
+            pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency\">");
+            pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">");
+            pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">");
+            pr_printf("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">");
+            pr_printf("##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
+            pr_printf("#CHROM    POS    ID    REF    ALT    QUAL    FILTER    INFO    FORMAT    \n");
+
+            //pr_printf("#CHRO\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n");
+        }
+
+        void per_start() {
+            pr_fam();
+            pr_printf("_");
+            pr_per();
+            //pr_printf("%d_%d    ",);
         }
 
 
         //goal for inner loop:
-        //#CHROM POS ID REF ALT QUAL FILTER INFO FORMAT NA00001 NA00002 NA00003
+        //#CHROM POS ID REF ALT QUAL FILTER INFO FORMAT 1_1 1_2 2_1
         //20 14370 rs6054257 G A 29 PASS NS=3;DP=14;AF=0.5;DB;H2 GT:GQ:DP:HQ 0|0:48:1:51,51 1|0:48:8:51,51 1/1:43:5:.,.
-        void inner() {
-            pr_printf("%d", _numchr);
+        void loci_start() {
+            pr_printf("%d    ", _numchr);
             pr_physical_distance(0);
-            //pr_printf("\t");
+            pr_printf("    ");
             pr_marker_name();
-            //pr_printf("\t");
+            pr_printf("    ");
             pr_marker_alleles();
-            //pr_printf("\t");
-            //to do figure out what to put for these
-            //quality
-            pr_printf("%d",0);
-            //filter
-            pr_printf("%s","filter");
-            //info
-            pr_printf("%s","info");
+            pr_printf("    ");
+            //info line, we want Allele frequency, genotype count, and # of samples
+            //alle
+            pr_printf("AF=%s;GC=%s,%s,%s;NS=%s;","frequency","count1","count2","count3","number");
+            pr_printf("    ");
+            pr_printf("%s","PASS");
+            pr_printf("    ");
+            pr_printf("%s",".");
+            pr_printf("    ");
             pr_nl();
 
         }
