@@ -81,16 +81,20 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     write_VCF_file(Top, file_name_stem,file_names ,pwid, fwid);
     write_VCF_ped(Top, file_name_stem, file_names ,pwid, fwid);
     //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
-    if(num_traits>1)
+    //if(num_traits>1)
         write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
     write_VCF_sh(Top, file_name_stem, file_names);
 }
 
 void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
+    //need a second loop to make header?? one of just ped_per
+
+
     vlpCLASS(vcf_vcfs,chr,loci_ped_per) {
         vlpCTOR(vcf_vcfs,chr,loci_ped_per) { }
         typedef char *str;
         str *file_names;
+        int firstrun;
         //linkage_locus_top *LTop = Top->LocusTop;
 
         void file_loop() {
@@ -98,25 +102,34 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             data_loop(*_opath, file_names[0], "w");
         }
         //here we can put the VCF header data
-        void file_header(){
+        void file_header() {
             pr_printf("##fileformat=VCFv4.2\n");
-            pr_printf("##filedate=%s\n",__DATE__);
+            pr_printf("##filedate=%s\n", __DATE__);
             pr_printf("##source=MEGA2\n");
             pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency\">");
             pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">");
             pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">");
             pr_printf("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">");
             pr_printf("##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
-            pr_printf("#CHROM    POS    ID    REF    ALT    QUAL    FILTER    INFO    FORMAT    \n");
+            pr_printf("#CHROM    POS    ID    REF    ALT    QUAL    FILTER    INFO    FORMAT    ");
 
             //pr_printf("#CHRO\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n");
+
+            firstrun = 1;
+
         }
 
-        void per_start() {
-            pr_fam();
-            pr_printf("_");
-            pr_per();
-            //pr_printf("%d_%d    ",);
+        void inner() {
+            if(firstrun){
+                pr_fam();
+                pr_printf("_");
+                pr_per();
+                //pr_printf("%d_%d    ",);
+                firstrun = 0;
+            }
+            else
+                pr_marker();
+
         }
 
 
@@ -132,7 +145,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_marker_alleles();
             pr_printf("    ");
             //info line, we want Allele frequency, genotype count, and # of samples
-            //alle
             pr_printf("AF=%s;GC=%s,%s,%s;NS=%s;","frequency","count1","count2","count3","number");
             pr_printf("    ");
             pr_printf("%s","PASS");
@@ -147,7 +159,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     lp->setfln(prefix, ".vcf");
     lp->file_names = file_names;
 
-    lp->load_formats(fwid, pwid, -1);
+    lp->load_formats_no_space(-1);
+    //lp->load_formats(fwid, pwid, -1);
 
     lp->iterate();
 
@@ -213,7 +226,9 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
             pr_printf("\t");
             pr_pheno();
             pr_printf("\t");
-            pr_printf("X_X");
+            pr_fam();
+            pr_printf("_");
+            pr_per();
             pr_nl();
         }
     } *lp = new vcf_phenos(Top);
@@ -221,7 +236,8 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
     lp->setfln(prefix, ".phe");
     lp->file_names = file_names;
 
-    lp->load_formats(fwid, pwid, -1);
+    //lp->load_formats(fwid, pwid, -1);
+    lp->load_formats_no_space(-1);
 
     lp->iterate();
 
