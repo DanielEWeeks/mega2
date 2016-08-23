@@ -628,11 +628,13 @@ int             main(int argc, char **argv, char **env)
     TimeStampWritten[0]=0; TimeStampWritten[1]=0;
 
     mega2_opts(argc, argv);
+
 //  DB ON BY DEFAULT if not commented out
     if (database_off)
         database_read = database_dump = 0;
-    else  if ( (database_read ^ database_dump) == 0)
+    else  if ( (database_read || database_dump) == 0) {
         database_read = database_dump = 1;
+    }
 
     init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
@@ -640,26 +642,6 @@ int             main(int argc, char **argv, char **env)
     genetic_distance_index = -1;
     base_pair_position_index = -1;
     genetic_distance_sex_type_map = UNKNOWN_GDMT;
-
-/*   if (argc > 4) { */
-/*     printf("Invalid arguments to Mega2.\n"); */
-/*     EXIT(INPUT_DATA_ERROR); */
-/*   } */
-/*   else { */
-/*     for(i=1; i < argc; i++) { */
-/*       /\* first check if this argument is -nosave *\/ */
-
-/*       if (!strcmp(argv[i], "-nosave") || !strcmp(argv[i] , "--nosave")) { */
-/* 	CreateRunFolder=0; */
-/*       } */
-/*       else if (!strcmp(argv[i], "-noweb") || !strcmp(argv[i], "--noweb")) { */
-/* 	check_web_ver=0; */
-/*       } */
-/*       else { */
-/* 	strcpy(Mega2Batch, argv[i]); */
-/*       } */
-/*     } */
-/*   }     */
 
 #ifdef TEST
 #undef EXPIRE
@@ -739,6 +721,19 @@ int             main(int argc, char **argv, char **env)
     }
     if (AnalyInputMode == NOEXEC_INPUTMODE)
         AnalyInputMode = InputMode;
+
+#if 0
+//  DB ON BY DEFAULT if not commented out
+    extern char DBfile[255];
+    if (database_off)
+        database_read = database_dump = 0;
+    else if (DBfile[0] != 0 || BatchValueRead("DBfile_name")) {
+        if (database_dump == 0)
+            database_read = 1;
+    } else if ( (database_read || database_dump) == 0) {
+        database_read = database_dump = 1;
+    }
+#endif
 
     tod_batch();
     // determine if we should go out to the web and check to see if the user is running the latest release of MEGA2...
@@ -932,6 +927,7 @@ int             main(int argc, char **argv, char **env)
     Tod tod_files("read all files");
     if (!database_dump && database_read) {
         extern void dbmega2_import(linkage_ped_top *Top);
+        extern void exit_pos_req_not_avail();
 
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -944,6 +940,8 @@ int             main(int argc, char **argv, char **env)
         db_fini_all();
 
         dbimport();
+
+        exit_pos_req_not_avail();
 
         LPedTreeTop = &SQLop;
 
@@ -1219,8 +1217,7 @@ int             main(int argc, char **argv, char **env)
         tod_stat1();
     }
 
-//new
-    if (! database_dump) {
+    {
         /*  Mega2Status=TRAIT_SELECTED_M2S; */
         default_outfile_names(analysis, &(global_chromo_entries[0]), Outfile_Names, logdir);
 
@@ -1322,7 +1319,8 @@ int             main(int argc, char **argv, char **env)
 
 
     Tod tod_fin("epilogue");
-    if (strcmp(output_paths[0], ".") &&
+    if (output_paths == 0) {
+    } else if (!strcmp(output_paths[0], ".") &&
         ((LoopOverTrait == 1 && num_traits > 1) ||
          (LoopOverTrait == 0 && num_traits > 2 && (analysis == TO_SAGE && HasAff)))) {
         sprintf(err_msg,

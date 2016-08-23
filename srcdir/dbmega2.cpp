@@ -285,23 +285,46 @@ void db_drop_all() {
 
 }
 
+int db_exists_db() {
+//  delete_file(DBfile);
+
+    if (DBfile[0] == 0)
+        return 0;
+
+    FILE *f = fopen(DBfile, "r");
+    if (f == NULL) {
+        return 0;
+    }
+    fclose(f);
+    return 1;
+}
+
 void db_open_db() {
     extern void delete_file(const char *);
     extern void add_sumdir(char *);
     if (!database_dump && !database_read) return;
 
-//    delete_file(DBfile);
-    if (DBfile[0] == 0)
-        sprintf(DBfile, "%s/%s", Mega2OutputPath, "dbmega2.db");
+    if (DBfile[0] == 0) { // not on commandline
+        char *cp = DBfile;
+        BatchValueGet(cp, "DBfile_name");
+    }
+    if (strchr(DBfile, '/')) {
+        /* leave alone*/;
+    } else if (Mega2OutputPath){
+        int l = strlen(Mega2OutputPath);
+        memmove(DBfile+l+1, DBfile, strlen(DBfile)+1);
+        strcpy(DBfile, Mega2OutputPath);
+        DBfile[l] = '/';
+    } 
+
     if (!database_dump && database_read) {
-        FILE *f = fopen(DBfile, "r");
-        if (f == NULL) {
+        if (! db_exists_db()) {
             msgvf("\n");
             errorvf("Database file \"%s\" not found.\n", DBfile);
             EXIT(EARLY_TERMINATION);
         }
-        fclose(f);
     }
+
     if (! MasterDB.open(DBfile, debug)) {
             EXIT(FILE_NOT_FOUND);
     }

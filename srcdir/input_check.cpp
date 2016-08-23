@@ -385,17 +385,15 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         nonuniq = 0;
     }
 
-#if 0
     if (! database_dump) {
         if (analysis == TO_PAP || analysis == IQLS) {
             set_uniq = 1;
         } else {
             if (nonuniq) {
-                printf("Warning: Duplicate values in the \"ID\" column.\n");
+//              printf("Warning: Duplicate values in the \"ID\" column.\n");
                 if (analysis == CRANEFOOT) {
-                    printf(
-                        "    Unique IDs will be automatically generated as required by %s\n",
-                        ProgName);
+//                  printf("    Unique IDs will be automatically generated as required by %s\n",
+//                         ProgName);
                     set_uniq = 1;
                 } else {
                     set_uniq = 0;
@@ -403,7 +401,6 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             }
         }
     }
-#endif
 
     printf("Checking pedigree integrity...\n");
     /* separated out the checking of pedigree ids and relationships from

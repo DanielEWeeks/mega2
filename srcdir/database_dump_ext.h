@@ -38,7 +38,18 @@ public:
     }
    ~CLASS_DUMP() {}
 
+    virtual bool allow_covariates()  { return true; }
     virtual bool loops()  { return true; }
+    virtual bool allow_no_genetic_map()  { return true; }
+    virtual bool Loop_Over_Chromosomes_implemented() { return true; }
+    virtual bool allele_data_use_name_if_available() { return true; }
+
+    virtual void ped_ind_defaults(int unique)  {
+        /* Always unique ids for persons */
+        /* Set the output pedigree and per field choices */
+        OrigIds[0] = 5;
+        OrigIds[1] = 1;
+    }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
 			    analysis_type *analysis,
@@ -46,6 +57,7 @@ public:
 			    int untyped_ped_opt,
 			    int *numchr,
                             linkage_ped_top **Top2) {};
+
 
     void create_sh_file(linkage_ped_top *Top, char *file_names[], const int numchr) {};
 

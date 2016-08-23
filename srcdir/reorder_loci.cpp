@@ -606,7 +606,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     int num_chromo, *selected_chromosomes = NULL;
     int num_loci, *selected_loci = NULL, has_quant;
 
-    if (database_dump || ! database_read) {
+    if (database_dump) {
         if (genetic_distance_index != -2) {
             map_num = genetic_distance_index;
             if (Top->EXLTop)

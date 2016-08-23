@@ -71,7 +71,10 @@
               utils_ext.h:  EXIT chomp draw_line log_line
 */
 
-
+void batchfdb(int i) {
+    if (! database_dump && ! database_read) 
+        batchf(i);
+}
 
 /* prototypes */
 int             ReOrderMenu(int num_chromo, int *chromsomes, int *selection);
@@ -3266,10 +3269,10 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
         // We should only write to the batch file if we believe that this value has not already been
         // written. Should probably check, but at this point is should not have been.
         Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option = genetic_distance_index;
-        batchf(Value_Genetic_Distance_Index);
+        batchfdb(Value_Genetic_Distance_Index);
         
         Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option = genetic_distance_sex_type_map;
-        batchf(Value_Genetic_Distance_SexTypeMap);
+        batchfdb(Value_Genetic_Distance_SexTypeMap);
         
         free(gdi); free(gdsm);
         return;
@@ -3293,10 +3296,10 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
             genetic_distance_sex_type_map = gdsm[0];
             
             Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option = genetic_distance_index;
-            batchf(Value_Genetic_Distance_Index);
+            batchfdb(Value_Genetic_Distance_Index);
             
             Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option = genetic_distance_sex_type_map;
-            batchf(Value_Genetic_Distance_SexTypeMap);
+            batchfdb(Value_Genetic_Distance_SexTypeMap);
             
             free(gdi); free(gdsm);
             return;
@@ -3382,10 +3385,10 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     
     // Store the relevant distance and sex map according to the user's selection...
     Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option = genetic_distance_index;
-    batchf(Value_Genetic_Distance_Index);
+    batchfdb(Value_Genetic_Distance_Index);
     
     Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option = genetic_distance_sex_type_map;
-    batchf(Value_Genetic_Distance_SexTypeMap);
+    batchfdb(Value_Genetic_Distance_SexTypeMap);
     
     free(gdi);
     free(gdsm);
@@ -3423,6 +3426,25 @@ NOTE:
 //
 // For 'AnalysisOpt' in 'RequiresPhysicalMap', do not give the user the 'None' option when
 // allowing them to choose the physical map.
+void exit_pos_req_not_avail() {
+
+    if (base_pair_position_index == -2 && AnalysisOpt->require_physical_map() ) {
+        errorvf("For the analysis type specified, a physical map is required.\n");
+        errorvf("However, none is in the database (value specified as -2).\n");
+        EXIT(INPUT_DATA_ERROR);
+    }
+
+    int requires_genetic_map_p = AnalysisOpt->allow_no_genetic_map() ? 0 : 1;
+    // always require a genetic map for now since genetic maps are entangled in the code...
+    requires_genetic_map_p = 1;
+
+    if (genetic_distance_index == -2 && requires_genetic_map_p) {
+        errorvf("For the analysis type specified, a genetic map is required.\n");
+        errorvf("However, none is in the database (value specified as -2).\n");
+        EXIT(INPUT_DATA_ERROR);
+    }
+}
+
 void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
     int i, requires_physical_map_p = 0, bpps = 0, bpps2, *bppi = NULL;
     int option, option_selected, valid_map_p = 0;
@@ -3455,6 +3477,8 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
             EXIT(INPUT_DATA_ERROR);
         } else {
             // So, 'None' is OK...
+            warnvf("No physical map was specified for the database.  So analysis as\n");
+            warnvf("PLINK, PSEQ, Eigenstrat, SHAPEIT, IQLS and others will not be allowed.\n");
             free(bppi);
             return;
         }
@@ -3494,7 +3518,7 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
         base_pair_position_index = -2; // choose 'None' for the user...
         
         Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option = base_pair_position_index;
-        batchf(Value_Base_Pair_Position_Index);
+        batchfdb(Value_Base_Pair_Position_Index);
         
         free(bppi);	
         return;
@@ -3512,7 +3536,7 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
             base_pair_position_index = bppi[0];
             
             Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option = base_pair_position_index;
-            batchf(Value_Base_Pair_Position_Index);
+            batchfdb(Value_Base_Pair_Position_Index);
             
             free(bppi);
             return;
@@ -3570,7 +3594,7 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
     
     if (InputMode == INTERACTIVE_INPUTMODE) {
         Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option = base_pair_position_index;
-        batchf(Value_Base_Pair_Position_Index);
+        batchfdb(Value_Base_Pair_Position_Index);
     }
     
     free(bppi);
