@@ -110,15 +110,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
             pr_printf("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
             pr_printf("##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
-//            pr_printf("%-7s","#CHROM");
-//            pr_printf("%-10s","POS");
-//            pr_printf("%-15s","ID");
-//            pr_printf("%-6s","REF");
-//            pr_printf("%-6s","ALT");
-//            pr_printf("%-5s","QUAL");
-//            pr_printf("%-7s","FILTER");
-//            pr_printf("%-65s","INFO");
-//            pr_printf("%-7s","FORMAT");
             pr_printf("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t");
         }
 
@@ -126,7 +117,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_fam();
             pr_printf("_");
             pr_per();
-            pr_printf(" ");
+            pr_printf("\t");
         }
 
 //        void filep_close(){
@@ -149,7 +140,11 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         vlpCTOR(vcf_vcfs,chr,loci_ped_per) { }
         typedef char *str;
         str *file_names;
-        int firstrun;
+        //need to save the ref for comparison
+        std::string ref;
+        //need to save a list of alts for comparison
+        std::vector<std::string> alt;
+        std::string altstring;
         linkage_locus_top *LTop ;
 
         void file_loop() {
@@ -163,26 +158,49 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner() {
-            str a1, a2;
-            if (_allele1 == 1)
-                a1 = strdup("0");
-            else if (_allele1 == 2)
-                a1 = strdup("1");
+//            if (ref != NULL) {
+//            if (strcmp(ref.c_str(), _tlocusp->Allele[_allele1].AlleleName) &&
+//                strcmp(ref.c_str(), _tlocusp->Allele[_allele2].AlleleName))
+//                pr_printf("0/0\t");
+//            }
+
+            if(_tlocusp->Allele[_allele1].AlleleName != NULL && _tlocusp->Allele[_allele2].AlleleName != NULL) {
+                if ((strcmp(ref.c_str(), _tlocusp->Allele[_allele1].AlleleName) == 0) && (strcmp(ref.c_str(), _tlocusp->Allele[_allele1].AlleleName) == 0))
+                    pr_printf("0/0\t");
+                else if((strcmp(ref.c_str(), _tlocusp->Allele[_allele2].AlleleName) == 0) || (strcmp(ref.c_str(), _tlocusp->Allele[_allele2].AlleleName) == 0))
+                    pr_printf("0/1\t");
+                else
+                    pr_printf("0/0\t");
+                //pr_printf("%s,%s", _tlocusp->Allele[_allele1].AlleleName, _tlocusp->Allele[_allele2].AlleleName);
+                pr_printf("  %d-%d",_allele1,_allele2);
+                pr_printf("  %s:%s-%s",ref.c_str(), _tlocusp->Allele[_allele1].AlleleName, _tlocusp->Allele[_allele2].AlleleName);
+                pr_printf("  %d-%d    ",strcmp(ref.c_str(), _tlocusp->Allele[_allele1].AlleleName)==0,strcmp(ref.c_str(), _tlocusp->Allele[_allele2].AlleleName)==0);
+                //for (std::vector<std::string>::const_iterator i = alt.begin(); i != alt.end(); ++i) {
+                //    altstring = *i;
+                //    pr_printf("%s", altstring.c_str());
+                //}
+
+            }
             else
-                a1 = strdup(".");
+                pr_printf("./.\t");
 
-            if (_allele2 == 1)
-                a2 = strdup("0");
-            else if (_allele2 == 2)
-                a2 = strdup("1");
-            else
-                a2 = strdup(".");
-
-            pr_printf("%s/%s\t", a1, a2);
-            //pr_printf("%s/%s\t", format_allele(_tlocusp, _allele1), format_allele(_tlocusp, _allele1));
-            //pr_printf("%s/%s ", format_allele(_tlocusp, _allele1), format_allele(_tlocusp, _allele1));
-            //pr_printf("%d/%d    ",_allele1,_allele2);
-
+//            std::string a1 = "";
+//            std::string a2 = "";
+//            if (_allele1 == 1)
+//                a1 = "0";
+//            else if (_allele1 == 2)
+//                a1 = "1";
+//            else
+//                a1 = ".";
+//
+//            if (_allele2 == 1)
+//                a2 = "0";
+//            else if (_allele2 == 2)
+//                a2 = "1";
+//            else
+//                a2 = ".";
+//
+//            pr_printf("%s/%s\t", a1.c_str(), a2.c_str());
         }
 
 
@@ -192,34 +210,37 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_physical_distance(0);
             pr_printf("\t");
             pr_printf("%s\t",_tlocusp->LocusName);
-            str a1, a2;
-            if(!strcmp(_tlocusp->Allele[_allele1].AlleleName,"dummy"))
-                a1 = strdup(".");
-            else
-                a1 = strdup(_tlocusp->Allele[_allele1].AlleleName);
 
-            if(!strcmp(_tlocusp->Allele[_allele2].AlleleName,"dummy"))
-                a2 = strdup(".");
-            else
-                a2 = strdup(_tlocusp->Allele[_allele2].AlleleName);
-            pr_printf("%s\t%s\t",a1,a2);
+            //Here we want to loop over all Alleles, first value is the ref allele, all other comma seperated Alt alelles.
+            std::string a1;
+            std::string a2;
+            for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
+                if (allele==0){
+                    if(!strcmp(_tlocusp->Allele[allele].AlleleName,"dummy"))
+                        a1 = ".";
+                    else
+                        a1 = _tlocusp->Allele[allele].AlleleName;
+                    ref = a1;
+                }
+                else {
+                    if(!strcmp(_tlocusp->Allele[allele].AlleleName,"dummy")) {
+                        alt.push_back(".");
+                        a2 = a2 + ".";
+                    }
+                    else {
+                        alt.push_back(_tlocusp->Allele[allele].AlleleName);
+                        a2 = a2 + _tlocusp->Allele[allele].AlleleName;
+                    }
+                }
+
+            }
+
+            pr_printf("%s\t%s\t",a1.c_str(),a2.c_str());
             pr_printf(".\t");
             pr_printf("PASS\t");
             //info line: genetic distance in centimorgans, a (triple float avg, male, female), Allele frequency (float), genotype count (triple of ints?), and # of samples for data (int)
             pr_printf("CM=%.2f,%.2f,%.2f;AF=%.2f;GC=%s,%s,%s;NS=%d;\t",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female,_tlocusp->Allele[_allele2].Frequency,"count1","count2","count3",0);
             pr_printf("GT\t");
-
-
-//            pr_printf("%-7d", _numchr);
-//            pr_physical_distance(0);
-//            pr_printf("%-1s","");
-//            pr_printf("%-15s",_tlocusp->LocusName);
-//            pr_printf("%-6s%-6s",_tlocusp->Allele[_allele1].AlleleName,_tlocusp->Allele[_allele2].AlleleName);
-//            pr_printf("%-5s",".");
-//            pr_printf("%-7s","PASS");
-//            //info line, we want Allele frequency, genotype count, and # of samples
-//            pr_printf("CM=%.2f,%.2f,%.2f;AF=%.2f;GC=%s,%s,%s;NS=%d%-6s ",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female,_tlocusp->Allele[_allele2].Frequency,"count1","count2","count3",_tlocusp->Marker->col_num,";");
-//            pr_printf("%-7s","GT");
         }
 
         void loci_end(){
@@ -231,7 +252,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     lp->file_names = file_names;
 
     lp->load_formats_no_space(-1);
-    //lp->load_formats(fwid, pwid, -1);
 
     lp->iterate();
 
