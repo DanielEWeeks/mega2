@@ -46,6 +46,7 @@
 #include "write_files_ext.h"
 
 #include "write_vcf_ext.h"
+#include "vcftools/mega2_vcftools_interface.h"
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -81,6 +82,8 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     printf("Mega2 created the following file(s) for VCF Format:\n");
     write_VCF_file(Top, file_name_stem,file_names ,pwid, fwid);
     write_VCF_ped(Top, file_name_stem, file_names ,pwid, fwid);
+    //VCFtools_process_cmd_line_w_file()
+
     //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
     if(num_traits>1)
         write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
@@ -91,38 +94,73 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 //CHROM POS ID REF ALT QUAL FILTER INFO FORMAT 1_1 1_2 2_1
 //20 14370 rs6054257 G A 29 PASS NS=3;DP=14;AF=0.5;DB;H2 GT:GQ:DP:HQ 0|0:48:1:51,51 1|0:48:8:51,51 1/1:43:5:.,.
 void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
-    vlpCLASS(vcf_vcfs_header,chr,ped_per) {
-        vlpCTOR(vcf_vcfs_header, chr, ped_per) { }
+    //needed a loop to calculate the length for the contig flag
+    vlpCLASS(vcf_vcfs_header_start,chr,loci) {
+        vlpCTOR(vcf_vcfs_header_start, chr, loci) { }
         typedef char *str;
         str *file_names;
+        bool first;
 
         void file_loop() {
             mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
             data_loop(*_opath, file_names[0], "w");
         }
-
-        void file_header() {
+        void file_header(){
             pr_printf("##fileformat=VCFv4.2\n");
-            pr_printf("##filedate=%s\n", __DATE__);
+            pr_printf("##filedate=%s\n",__TIMESTAMP__);
             pr_printf("##source=MEGA2\n");
+            if(base_pair_position_index > 0)
+                pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in (centimorgans avg, male, female)\">\n");
             pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency\">\n");
             pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
             pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
             pr_printf("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
             pr_printf("##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
-            pr_printf("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t");
+            first = true;
         }
 
         void inner(){
+            if(first){
+                int diff = _EXLTop->EXLocus[0+num_traits].positions[base_pair_position_index] - _EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index];
+                pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_numchr,diff,"b37");
+                first = false;
+            }
+        }
+
+
+    } *hlps = new vcf_vcfs_header_start(Top);
+
+    hlps->setfln(prefix, ".vcf");
+    hlps->file_names = file_names;
+
+    hlps->load_formats_no_space(-1);
+
+    hlps->iterate();
+
+    //then we need a loop to make the header for the individuals 1_1 1_2 etc.
+    vlpCLASS(vcf_vcfs_header,chr,ped_per) {
+        vlpCTOR(vcf_vcfs_header, chr, ped_per) { }
+        typedef char *str;
+        str *file_names;
+        bool first;
+
+        void file_loop() {
+            //mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
+            data_loop(*_opath, file_names[0], "a");
+        }
+
+        void file_header() {
+            pr_printf("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t");
+        }
+
+
+        void inner() {
             pr_fam();
             pr_printf("_");
             pr_per();
             pr_printf("\t");
-        }
 
-//        void filep_close(){
-//            pr_nl();
-//        }
+        }
 
     } *hlp = new vcf_vcfs_header(Top);
 
@@ -130,12 +168,11 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     hlp->file_names = file_names;
 
     hlp->load_formats_no_space(-1);
-    //lp->load_formats(fwid, pwid, -1);
 
     hlp->iterate();
 
 
-
+    //finally a large loop for the data
     vlpCLASS(vcf_vcfs,chr,loci_ped_per) {
         vlpCTOR(vcf_vcfs,chr,loci_ped_per) { }
         typedef char *str;
@@ -158,49 +195,18 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner() {
-//            if (ref != NULL) {
-//            if (strcmp(ref.c_str(), _tlocusp->Allele[_allele1].AlleleName) &&
-//                strcmp(ref.c_str(), _tlocusp->Allele[_allele2].AlleleName))
-//                pr_printf("0/0\t");
-//            }
-
-            if(_tlocusp->Allele[_allele1].AlleleName != NULL && _tlocusp->Allele[_allele2].AlleleName != NULL) {
-                if ((strcmp(ref.c_str(), _tlocusp->Allele[_allele1].AlleleName) == 0) && (strcmp(ref.c_str(), _tlocusp->Allele[_allele1].AlleleName) == 0))
-                    pr_printf("0/0\t");
-                else if((strcmp(ref.c_str(), _tlocusp->Allele[_allele2].AlleleName) == 0) || (strcmp(ref.c_str(), _tlocusp->Allele[_allele2].AlleleName) == 0))
-                    pr_printf("0/1\t");
-                else
-                    pr_printf("0/0\t");
-                //pr_printf("%s,%s", _tlocusp->Allele[_allele1].AlleleName, _tlocusp->Allele[_allele2].AlleleName);
-                pr_printf("  %d-%d",_allele1,_allele2);
-                pr_printf("  %s:%s-%s",ref.c_str(), _tlocusp->Allele[_allele1].AlleleName, _tlocusp->Allele[_allele2].AlleleName);
-                pr_printf("  %d-%d    ",strcmp(ref.c_str(), _tlocusp->Allele[_allele1].AlleleName)==0,strcmp(ref.c_str(), _tlocusp->Allele[_allele2].AlleleName)==0);
-                //for (std::vector<std::string>::const_iterator i = alt.begin(); i != alt.end(); ++i) {
-                //    altstring = *i;
-                //    pr_printf("%s", altstring.c_str());
-                //}
-
-            }
+            std::string a1, a2;
+            if(_allele1 - 1 == -1)
+                a1 = ".";
             else
-                pr_printf("./.\t");
+                a1 = std::to_string(_allele1-1);
 
-//            std::string a1 = "";
-//            std::string a2 = "";
-//            if (_allele1 == 1)
-//                a1 = "0";
-//            else if (_allele1 == 2)
-//                a1 = "1";
-//            else
-//                a1 = ".";
-//
-//            if (_allele2 == 1)
-//                a2 = "0";
-//            else if (_allele2 == 2)
-//                a2 = "1";
-//            else
-//                a2 = ".";
-//
-//            pr_printf("%s/%s\t", a1.c_str(), a2.c_str());
+            if(_allele2 - 1 == -1)
+                a2 = ".";
+            else
+                a2 = std::to_string(_allele2-1);
+
+            pr_printf("%s/%s\t",a1.c_str(),a2.c_str());
         }
 
 
@@ -223,14 +229,26 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     ref = a1;
                 }
                 else {
-                    if(!strcmp(_tlocusp->Allele[allele].AlleleName,"dummy")) {
-                        alt.push_back(".");
-                        a2 = a2 + ".";
+                    if (a2.empty()) {
+                        if (!strcmp(_tlocusp->Allele[allele].AlleleName, "dummy")) {
+                            alt.push_back(".");
+                            a2 = a2 + ".";
+                        }
+                        else {
+                            alt.push_back(_tlocusp->Allele[allele].AlleleName);
+                            a2 = a2 + _tlocusp->Allele[allele].AlleleName;
+                        }
                     }
-                    else {
-                        alt.push_back(_tlocusp->Allele[allele].AlleleName);
-                        a2 = a2 + _tlocusp->Allele[allele].AlleleName;
-                    }
+                    else{
+                        if (!strcmp(_tlocusp->Allele[allele].AlleleName, "dummy")) {
+                            alt.push_back(".");
+                            a2 = a2 + ",.";
+                        }
+                        else {
+                            alt.push_back(_tlocusp->Allele[allele].AlleleName);
+                            a2 = a2 + ","+ _tlocusp->Allele[allele].AlleleName;
+                        }}
+
                 }
 
             }
@@ -238,8 +256,12 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("%s\t%s\t",a1.c_str(),a2.c_str());
             pr_printf(".\t");
             pr_printf("PASS\t");
-            //info line: genetic distance in centimorgans, a (triple float avg, male, female), Allele frequency (float), genotype count (triple of ints?), and # of samples for data (int)
-            pr_printf("CM=%.2f,%.2f,%.2f;AF=%.2f;GC=%s,%s,%s;NS=%d;\t",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female,_tlocusp->Allele[_allele2].Frequency,"count1","count2","count3",0);
+            //if(base_pair_position_index > 0)
+            //   pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
+            pr_printf("AF=%.6f;",_tlocusp->Allele[_allele2].Frequency);
+            //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
+            //pr_printf("NS=%d;",0);
+            pr_printf("\t");
             pr_printf("GT\t");
         }
 
@@ -257,6 +279,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
     delete lp;
     delete hlp;
+    delete hlps;
 }
 
 //this will write the pedigree in the PLINK fam file format
