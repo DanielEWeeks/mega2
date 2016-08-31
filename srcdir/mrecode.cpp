@@ -1067,20 +1067,26 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                         if (allelecmp(all1, REC_UNKNOWN) ||
                             allelecmp(all2, REC_UNKNOWN)) {
                             allele = marker_list[m].first_allele;
+//xx
+                            int idx = 1;
+                            a1 = a2 = 0;
                             while(allele != NULL) {
                                 rall = allele->allele_freq.index;
                                  all = allele->allele_freq.AlleleName;
 
                                 if (allelecmp(all1, all) == 0) {
-                                    a1 = rall;
+//xx                                    a1 = rall;
+                                    a1 = idx;
                                     geno_recoded[0]=1;
                                 }
 
                                 if (allelecmp(all2, all) == 0) {
-                                    a2 = rall;
+//xx                                    a2 = rall;
+                                    a2 = idx;
                                     geno_recoded[1]=1;
                                 }
                                 allele = allele->next;
+                                idx++;
                             }
                         }
                     }

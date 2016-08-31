@@ -167,6 +167,7 @@
 
 #include "class_old.h"
 #include "write_shapeit_ext.h"
+#include "database_dump_ext.h"
 
 /*
  annotated_ped_file_ext.h:  check_annotated_file_format read_annotated_files Free_annotated_files
@@ -865,28 +866,54 @@ int             main(int argc, char **argv, char **env)
      
      Select an option between 1-34 > 
      */
-    analysis_menu1(&analysis);
-    Mega2Status = ANALYSIS_NAME_READ;
-    AnalysisOpt = analysis;
-#ifdef DARWIN_OS
-    if (SIMWALK2(analysis)) {
-        char *xmap = mega2_input_files[2] != 0 ? mega2_input_files[MAP] : mega2_input_files[PMAP];
-        if ( !(xmap && strcasecmp(xmap, "map.dat")) &&
-            !(strcasecmp(Mega2OutputPath, InputPath))) {
-            char reply;
-            warnf("Darwin file names are case-insensitive.");
-            sprintf(err_msg, "Simwalk2 shell script will overwrite %s.",
-                    mega2_input_files[2]);
-            warnf(err_msg);
-            printf("Terminate mega2 ? [y/n] (default 'y') > ");
-            fcmap(stdin, "%c", &reply);
-            if (tolower(reply) != 'n') {
-                EXIT(EARLY_TERMINATION);
-            }
-            fflush(stdin);
+    if (database_dump) {
+        extern Missing_Value missing_value;
+        extern Missing_Value missing_values[];
+        extern int count_missing_values;
+
+        analysis = DUMP;
+        Mega2Status = ANALYSIS_NAME_READ;
+        AnalysisOpt = analysis;
+        if (InputMode == INTERACTIVE_INPUTMODE) {
+            // Write the Analysis_Option
+            strcpy(Mega2BatchItems[/* 5 */ Analysis_Option].value.name, analysis->_name);
+            batchf(Analysis_Option);
         }
-    }
+
+        analysis->prog_name(ProgName);
+        mssgvf("Analysis Class: %s.\n", ProgName);
+        for (int i = 0; i < count_missing_values; i++) {
+            if (! strcmp(analysis->_name, (missing_values[i].analysis)->_name)) {
+                missing_value = missing_values[i];
+                break;
+            }
+        }
+
+    } else {
+
+        analysis_menu1(&analysis);
+        Mega2Status = ANALYSIS_NAME_READ;
+        AnalysisOpt = analysis;
+#ifdef DARWIN_OS
+        if (SIMWALK2(analysis)) {
+            char *xmap = mega2_input_files[2] != 0 ? mega2_input_files[MAP] : mega2_input_files[PMAP];
+            if ( !(xmap && strcasecmp(xmap, "map.dat")) &&
+                !(strcasecmp(Mega2OutputPath, InputPath))) {
+                char reply;
+                warnf("Darwin file names are case-insensitive.");
+                sprintf(err_msg, "Simwalk2 shell script will overwrite %s.",
+                        mega2_input_files[2]);
+                warnf(err_msg);
+                printf("Terminate mega2 ? [y/n] (default 'y') > ");
+                fcmap(stdin, "%c", &reply);
+                if (tolower(reply) != 'n') {
+                    EXIT(EARLY_TERMINATION);
+                }
+                fflush(stdin);
+            }
+        }
 #endif
+    }
 
     Value_Missing_get(&analysis);  // needed before file read
 

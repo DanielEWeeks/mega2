@@ -172,10 +172,12 @@ void dbmisc_export(linkage_ped_top *Top) {
     int_table.insert("MARKER_SCHEME", MARKER_SCHEME);
     int_table.insert("MARKER_SCHEME3_offset", MARKER_SCHEME3_offset);
     int_table.insert("HasMarkers", HasMarkers);
+
     extern int MaxChromo, NumUnmapped;
     int_table.insert("MaxChromo", MaxChromo);
     int_table.insert("NumUnmapped", NumUnmapped);
     int_table.insert("basefile_type", basefile_type);
+
     extern int human_unknown, human_x, human_xy, human_y, human_mt;
     int_table.insert("human_unknown", human_unknown);
     int_table.insert("human_x",  human_x);
@@ -234,10 +236,16 @@ void dbmisc_import(linkage_ped_top *Top) {
     charstar_table.get("DBMega2Version", DBMega2Version);
     charstar_table.get("DBVersion", DBversion);
 
+
+#ifdef TEST
+#define SETSEED
+#endif
+#ifdef SETSEED
     extern int seed1, seed2, seed3;
     int_table.get("Seed1", seed1);
     int_table.get("Seed2", seed2);
     int_table.get("Seed3", seed3);
+#endif
 
     extern INPUT_FORMAT_t Input_Format;
     int Input_tmp = 0;
@@ -262,10 +270,12 @@ void dbmisc_import(linkage_ped_top *Top) {
     int_table.get("MARKER_SCHEME", MARKER_SCHEME);
     int_table.get("MARKER_SCHEME3_offset", MARKER_SCHEME3_offset);
     int_table.get("HasMarkers", HasMarkers);
+
     extern int MaxChromo, NumUnmapped;
     int_table.get("MaxChromo", MaxChromo);
     int_table.get("NumUnmapped", NumUnmapped);
     int_table.get("basefile_type", basefile_type);
+
     extern int human_unknown, human_x, human_xy, human_y, human_mt;
     int_table.get("human_unknown", human_unknown);
     int_table.get("human_x",  human_x);
