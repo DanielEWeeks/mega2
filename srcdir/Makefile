@@ -156,7 +156,8 @@ ifdef HIDE
 endif
 
 # -DTEST
-R_output.o hwe_user_input.o mega2.o mrecode.o utils.o read_files.o write_sage_files.o: DFLAGS += $(DtFLAGS)
+R_output.o dbmisc.o hwe_user_input.o mega2.o mrecode.o utils.o: DFLAGS += $(DtFLAGS)
+read_files.o write_sage_files.o: DFLAGS += $(DtFLAGS)
 
 # -DDATE
 dbmega2.o stamp_time.o: DFLAGS += $(DdFLAGS)
@@ -174,7 +175,8 @@ dbbatch.o: DFLAGS += $(DpFLAGS)
 # -DHIDEFILE
 annotated_ped_file.o makeped1.o mega2.o read_files.o utils.o: DFLAGS += $(DfFLAGS)
 write_IQLS.o write_beagle.o write_eigenstrat.o write_fbat.o: DFLAGS += $(DfFLAGS)
-write_impute2_files.o write_mach.o write_pangaea.o write_plink_files.o: DFLAGS += $(DfFLAGS)
+write_impute2_files.o write_mach.o write_minimachshapeit.o: DFLAGS += $(DfFLAGS)
+write_pangaea.o write_plink_files.o: DFLAGS += $(DfFLAGS)
 write_pseq_files.o write_roadtrips.o: DFLAGS += $(DfFLAGS)
 write_shapeit_files.o write_structure.o: DFLAGS += $(DfFLAGS)
 dbmega2.o: DFLAGS += $(DfFLAGS)
@@ -753,7 +755,11 @@ analysis.o: utils_ext.h analysis.h class_old.h write_plink_ext.h
 analysis.o: plink_core_ext.h write_fbat_ext.h write_eigenstrat_ext.h
 analysis.o: write_pangaea_ext.h write_beagle_ext.h write_structure_ext.h
 analysis.o: write_pseq_ext.h write_shapeit_ext.h write_roadtrips_ext.h
+<<<<<<< HEAD
 analysis.o: write_mach_ext.h write_minimacshapeit_ext.h write_vcf_ext.h
+=======
+analysis.o: write_mach_ext.h write_minimacshapeit_ext.h database_dump_ext.h
+>>>>>>> master
 analysis.o: menu_value_missing.h
 class_old.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 class_old.o: linkage_external.h makeped.h pedtree.h batch_input.h

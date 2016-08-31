@@ -74,6 +74,11 @@ Missing_Value  missing_values[] = {
       /*affect*/      "\\t11",   Missing_Value::Any, Missing_Value::Fixed,
       /*allele*/      "",        Missing_Value::Any, Missing_Value::Fixed },
 
+    { "Database",              DUMP,
+      /*quant*/       "*",  Missing_Value::Any, Missing_Value::Fixed,
+      /*affect*/      "*" , Missing_Value::Any, Missing_Value::Fixed,
+      /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
+
     { "Eigenstrat format",          EIGENSTRAT,
       /*
        * For a quantitative variable: 'The value -100.0 signifies "missing data".'

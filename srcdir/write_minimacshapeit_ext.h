@@ -42,7 +42,7 @@ public:
     ~CLASS_MINIMAC() { }
 
 
-    virtual bool allow_no_trait() { return true; }
+//  virtual bool require_traits() { return false; }
 
     virtual bool loops() { return true; }
 

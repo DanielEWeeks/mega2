@@ -154,7 +154,6 @@ void save_premakeped_peds(char *outfl_name, linkage_ped_top *Top,
                 }
             }
 
-//yy            asm("int $3");
             for (entry = 0; entry < Top->Ped[ped].EntryCnt; entry++) {
                 Entry = &(Top->Ped[ped].Entry[entry]);
                 /* write the pedigree and entry numbers */

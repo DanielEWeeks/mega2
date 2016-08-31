@@ -38,9 +38,9 @@ public:
    ~CLASS_FBAT() {}
 
     virtual bool allow_affection_liability_class()  { return true; }
-//  virtual bool allow_no_aff_trait()     { return true; }
+//  virtual bool require_aff_trait()     { return true; }
     virtual bool allow_no_chr()     { return true; }
-//  virtual bool allow_no_trait()  { return true; }
+//  virtual bool require_traits()  { return true; }
 /*
  *  turn off suboptions until there is a good use for them
     virtual bool has_sub_options()  { return true; }

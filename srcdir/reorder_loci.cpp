@@ -606,6 +606,26 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     int num_chromo, *selected_chromosomes = NULL;
     int num_loci, *selected_loci = NULL, has_quant;
 
+    if (database_dump) {
+        if (genetic_distance_index != -2) {
+            map_num = genetic_distance_index;
+            if (Top->EXLTop)
+                copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
+            main_chromocnt = NumChromo;
+        } else {
+            errorvf("For the analysis type specified, a Genetic Map was required, but none was chosen.\n");
+            EXIT(EARLY_TERMINATION);
+        }
+
+        set_missing_quant_input(Top, *analysis);
+        if (write_quant_stats(Top, *analysis) != 0)
+            set_missing_quant_output(Top, *analysis);
+
+        Mega2Status = LOCI_REORDERED;
+
+        return Top;
+    }
+
     ManualReorder = 0;
 
     // The user chooses the gentic_distance_index in the routine
@@ -1020,7 +1040,9 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     /* If not one of the options that do not require trait selection */
     if (((option == 1 || option == 3) && main_chromocnt > 0)) {
         //method added for analysis type that does not need traits/covariate men, select trait loci renders that menu
-        select_trait_loci(Top, *analysis);
+        if (!Top->analysis->no_trait_covariate_menu()) {
+            select_trait_loci(Top, *analysis);
+        }
     }
 
     /* At this time we should have the following:
@@ -3193,7 +3215,7 @@ static int no_trait_allowed(analysis_type analysis, int mssg)
      * block of the case statement, if it needs to have traits.
      */
 
-    if (analysis->allow_no_trait()) {
+    if (analysis->require_traits() ) {
         if (mssg) {
             sprintf(err_msg, "%s requires at least one trait.", ProgName);
             errorf(err_msg);
@@ -3206,7 +3228,7 @@ static int no_trait_allowed(analysis_type analysis, int mssg)
 /*
   static int no_aff_trait_allowed(analysis_type analysis, int mssg)
   {
-    if (analysis->allow_no_aff_trait()) {
+    if (analysis->require_aff_trait()) {
       if (mssg) {
         sprintf(err_msg, "%s requires at least one trait.", ProgName);
         errorf(err_msg);
@@ -3297,8 +3319,8 @@ static int  check_trait_selection(linkage_ped_top *Top,
     for (j=0; j < num_select; j++) {
         if (trait_order[j] != marker_item &&
             (trait_order[j] < 1 || trait_order[j] > num_traits)) {
-            printf("Invalid selection: trait %d, previous list unchanged.\n",
-                   trait_order[j]);
+            msgvf("Invalid trait number selection: trait %d, previous list unchanged.\n",
+                  trait_order[j]);
             return 0;
         }
     }
@@ -3335,7 +3357,8 @@ static int  check_trait_selection(linkage_ped_top *Top,
         else {
             tr = global_trait_entries[trait_order[j]-1];
             if (quant_allowed(Top->LocusTop->Locus[tr], analysis) == 0) {
-                printf("Please re-select all loci.\n");
+                msgvf("Quantitative Loci are not allowed for this analysis.  ");
+                msgvf("Please re-select all loci.\n");
                 return 0;
             }
         }
@@ -4034,6 +4057,10 @@ int x_linked_check(int chromocnt, int *chromosomes, analysis_type analysis)
         sex_linked = 1;
     } else if (sex_chr == 0) {
         sex_linked = 0;
+    }
+
+    if (database_dump) {
+        return sex_linked;
     }
 
     /*   if (Mega2BatchItems[/ * 30 * / Xlinked_Analysis_Mode].items_read == 1) { */

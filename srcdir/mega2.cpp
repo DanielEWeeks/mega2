@@ -167,6 +167,7 @@
 
 #include "class_old.h"
 #include "write_shapeit_ext.h"
+#include "database_dump_ext.h"
 
 /*
  annotated_ped_file_ext.h:  check_annotated_file_format read_annotated_files Free_annotated_files
@@ -628,11 +629,13 @@ int             main(int argc, char **argv, char **env)
     TimeStampWritten[0]=0; TimeStampWritten[1]=0;
 
     mega2_opts(argc, argv);
+
 //  DB ON BY DEFAULT if not commented out
     if (database_off)
         database_read = database_dump = 0;
-    else  if ( (database_read ^ database_dump) == 0)
+    else  if ( (database_read || database_dump) == 0) {
         database_read = database_dump = 1;
+    }
 
     init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
@@ -640,26 +643,6 @@ int             main(int argc, char **argv, char **env)
     genetic_distance_index = -1;
     base_pair_position_index = -1;
     genetic_distance_sex_type_map = UNKNOWN_GDMT;
-
-/*   if (argc > 4) { */
-/*     printf("Invalid arguments to Mega2.\n"); */
-/*     EXIT(INPUT_DATA_ERROR); */
-/*   } */
-/*   else { */
-/*     for(i=1; i < argc; i++) { */
-/*       /\* first check if this argument is -nosave *\/ */
-
-/*       if (!strcmp(argv[i], "-nosave") || !strcmp(argv[i] , "--nosave")) { */
-/* 	CreateRunFolder=0; */
-/*       } */
-/*       else if (!strcmp(argv[i], "-noweb") || !strcmp(argv[i], "--noweb")) { */
-/* 	check_web_ver=0; */
-/*       } */
-/*       else { */
-/* 	strcpy(Mega2Batch, argv[i]); */
-/*       } */
-/*     } */
-/*   }     */
 
 #ifdef TEST
 #undef EXPIRE
@@ -739,6 +722,19 @@ int             main(int argc, char **argv, char **env)
     }
     if (AnalyInputMode == NOEXEC_INPUTMODE)
         AnalyInputMode = InputMode;
+
+#if 0
+//  DB ON BY DEFAULT if not commented out
+    extern char DBfile[255];
+    if (database_off)
+        database_read = database_dump = 0;
+    else if (DBfile[0] != 0 || BatchValueRead("DBfile_name")) {
+        if (database_dump == 0)
+            database_read = 1;
+    } else if ( (database_read || database_dump) == 0) {
+        database_read = database_dump = 1;
+    }
+#endif
 
     tod_batch();
     // determine if we should go out to the web and check to see if the user is running the latest release of MEGA2...
@@ -870,28 +866,54 @@ int             main(int argc, char **argv, char **env)
      
      Select an option between 1-34 > 
      */
-    analysis_menu1(&analysis);
-    Mega2Status = ANALYSIS_NAME_READ;
-    AnalysisOpt = analysis;
-#ifdef DARWIN_OS
-    if (SIMWALK2(analysis)) {
-        char *xmap = mega2_input_files[2] != 0 ? mega2_input_files[MAP] : mega2_input_files[PMAP];
-        if ( !(xmap && strcasecmp(xmap, "map.dat")) &&
-            !(strcasecmp(Mega2OutputPath, InputPath))) {
-            char reply;
-            warnf("Darwin file names are case-insensitive.");
-            sprintf(err_msg, "Simwalk2 shell script will overwrite %s.",
-                    mega2_input_files[2]);
-            warnf(err_msg);
-            printf("Terminate mega2 ? [y/n] (default 'y') > ");
-            fcmap(stdin, "%c", &reply);
-            if (tolower(reply) != 'n') {
-                EXIT(EARLY_TERMINATION);
-            }
-            fflush(stdin);
+    if (database_dump) {
+        extern Missing_Value missing_value;
+        extern Missing_Value missing_values[];
+        extern int count_missing_values;
+
+        analysis = DUMP;
+        Mega2Status = ANALYSIS_NAME_READ;
+        AnalysisOpt = analysis;
+        if (InputMode == INTERACTIVE_INPUTMODE) {
+            // Write the Analysis_Option
+            strcpy(Mega2BatchItems[/* 5 */ Analysis_Option].value.name, analysis->_name);
+            batchf(Analysis_Option);
         }
-    }
+
+        analysis->prog_name(ProgName);
+        mssgvf("Analysis Class: %s.\n", ProgName);
+        for (int i = 0; i < count_missing_values; i++) {
+            if (! strcmp(analysis->_name, (missing_values[i].analysis)->_name)) {
+                missing_value = missing_values[i];
+                break;
+            }
+        }
+
+    } else {
+
+        analysis_menu1(&analysis);
+        Mega2Status = ANALYSIS_NAME_READ;
+        AnalysisOpt = analysis;
+#ifdef DARWIN_OS
+        if (SIMWALK2(analysis)) {
+            char *xmap = mega2_input_files[2] != 0 ? mega2_input_files[MAP] : mega2_input_files[PMAP];
+            if ( !(xmap && strcasecmp(xmap, "map.dat")) &&
+                !(strcasecmp(Mega2OutputPath, InputPath))) {
+                char reply;
+                warnf("Darwin file names are case-insensitive.");
+                sprintf(err_msg, "Simwalk2 shell script will overwrite %s.",
+                        mega2_input_files[2]);
+                warnf(err_msg);
+                printf("Terminate mega2 ? [y/n] (default 'y') > ");
+                fcmap(stdin, "%c", &reply);
+                if (tolower(reply) != 'n') {
+                    EXIT(EARLY_TERMINATION);
+                }
+                fflush(stdin);
+            }
+        }
 #endif
+    }
 
     Value_Missing_get(&analysis);  // needed before file read
 
@@ -932,6 +954,7 @@ int             main(int argc, char **argv, char **env)
     Tod tod_files("read all files");
     if (!database_dump && database_read) {
         extern void dbmega2_import(linkage_ped_top *Top);
+        extern void exit_pos_req_not_avail();
 
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -945,6 +968,8 @@ int             main(int argc, char **argv, char **env)
 
         dbimport();
 
+        exit_pos_req_not_avail();
+
         LPedTreeTop = &SQLop;
 
         if (NumUnmapped > 0)
@@ -957,6 +982,8 @@ int             main(int argc, char **argv, char **env)
                                         chromo_loci_count, 0, analysis);
 
         get_trait_list(LPedTreeTop->LocusTop, 1);
+
+        log_line(mssgf);
 
 //      Mega2OutputPath = strdup((char *)".");
 
@@ -1112,9 +1139,26 @@ int             main(int argc, char **argv, char **env)
         }
     }
 
-    Tod tod_makeped("makeped");
-    makeped(LPedTreeTop, analysis);  // if --db, might connect loops based on analysis
-    tod_makeped();
+    if (database_dump || ! database_read) {
+        Tod tod_makeped("makeped");
+        makeped(LPedTreeTop, analysis);  // if --db, might connect loops based on analysis
+        tod_makeped();
+    }
+    if (database_dump) {
+        LPedTreeTop->Ped = LPedTreeTop->PedRaw;  // largest set of persons
+    } else {
+        if ( (basefile_type == POSTMAKEPED_PFT && analysis->maintain_broken_loops()) ||
+             (basefile_type != POSTMAKEPED_PFT && analysis->break_loops()) ) 
+            LPedTreeTop->Ped = LPedTreeTop->PedBroken;
+        else
+            LPedTreeTop->Ped = LPedTreeTop->PedRaw;
+    }
+
+    LPedTreeTop->IndivCnt = 0;
+    for (int ped = 0; ped < LPedTreeTop->PedCnt; ped++) {
+        LPedTreeTop->IndivCnt += LPedTreeTop->Ped[ped].EntryCnt;
+    }
+
 
     if (database_dump || ! database_read) {
         // Since the input mapfile may specify more than one genetic distance,
@@ -1199,16 +1243,19 @@ int             main(int argc, char **argv, char **env)
         }
         tod_stat1();
     }
-    /*  Mega2Status=TRAIT_SELECTED_M2S; */
-    default_outfile_names(analysis, &(global_chromo_entries[0]), Outfile_Names, logdir);
 
-    /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-    set_output_paths(analysis, LPedTreeTop);
+    {
+        /*  Mega2Status=TRAIT_SELECTED_M2S; */
+        default_outfile_names(analysis, &(global_chromo_entries[0]), Outfile_Names, logdir);
 
-    /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+        set_output_paths(analysis, LPedTreeTop);
 
-    /* Now to analysis-specific options */
-    ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
+        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+
+        /* Now to analysis-specific options */
+        ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
+    }
 
     Mega2Status = INSIDE_ANALYSIS;
     /*  printf("num-traits = %d\n", num_traits); sleep(2); */
@@ -1261,9 +1308,9 @@ int             main(int argc, char **argv, char **env)
         exit(eans);
 #else
         eans = execvp(name, argvn);
-#endif
         printf("exec failed: eans = %d, errno %d\n", eans, errno);
         fflush(stdout);
+#endif
     }
 
     InputMode = AnalyInputMode;  //What was it before the exec
@@ -1299,7 +1346,8 @@ int             main(int argc, char **argv, char **env)
 
 
     Tod tod_fin("epilogue");
-    if (strcmp(output_paths[0], ".") &&
+    if (output_paths == 0) {
+    } else if (!strcmp(output_paths[0], ".") &&
         ((LoopOverTrait == 1 && num_traits > 1) ||
          (LoopOverTrait == 0 && num_traits > 2 && (analysis == TO_SAGE && HasAff)))) {
         sprintf(err_msg,

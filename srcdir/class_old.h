@@ -46,8 +46,8 @@ public:
 
     virtual bool is_enabled() { return false; }
 
-    virtual bool allow_no_aff_trait() { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait() { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool qtl_disallow() { return true; }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -71,8 +71,8 @@ public:
 
     virtual bool is_enabled() { return false; }
 
-    virtual bool allow_no_aff_trait() { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait() { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool qtl_disallow() { return true; }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -94,8 +94,8 @@ public:
    ~CLASS_ASPEX() {}
 
     virtual bool allow_affection_liability_class()  { return true; }
-    virtual bool allow_no_aff_trait()     { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait()     { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool has_sub_options()    { return true; }
     virtual bool nuke_opts()    { return true; }
 
@@ -133,8 +133,8 @@ public:
     }
    ~CLASS_ALLEGRO() {}
 
-    virtual bool allow_no_aff_trait() { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait() { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool qtl_disallow() { return true; }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
@@ -195,7 +195,7 @@ public:
     }
    ~CLASS_GHMLB() {}
 
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool allow_trait_combination()  { return true; }
     virtual bool nuke_opts()     { return true; }
 
@@ -271,8 +271,8 @@ public:
     }
    ~CLASS_GENEHUNTERPLUS() {}
 
-    virtual bool allow_no_aff_trait()     { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait()     { return true; }
+    virtual bool require_traits()  { return true; }
 
     virtual bool output_quant_can_define_missing_value() { return true; }
     virtual const char* output_quant_default_value() { return "0"; }
@@ -390,8 +390,8 @@ public:
     virtual bool has_sub_options()    { return false; }
 
     virtual bool allow_affection_liability_class()  { return true; }
-    virtual bool allow_no_aff_trait()     { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait()     { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool is_sub_option()  { return true; }
 //  virtual bool output_quant_can_define_missing_value() { return false; }
     virtual bool qtl_disallow() { return true; }
@@ -426,8 +426,8 @@ public:
     virtual bool has_sub_options()    { return false; }
 
     virtual bool allow_affection_liability_class()  { return true; }
-    virtual bool allow_no_aff_trait()     { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait()     { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool allow_sex_map() { return true; }
     virtual bool is_sub_option()  { return true; }
 //  virtual bool output_quant_can_define_missing_value() { return false; }
@@ -568,7 +568,7 @@ public:
     virtual bool allow_affection_liability_class()  { return true; }
     virtual bool loops()  { return true; }
     virtual bool allow_no_genetic_map()  { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_traits()  { return true; }
     // IQLS always writes one file per chromosome. see write_IQLS.cpp:create_IQLS_files()
     // So we can't allow the user to turn it off....
     //virtual bool Loop_Over_Chromosomes_implemented() { return false; }
@@ -854,8 +854,8 @@ public:
    ~CLASS_MERLIN() {}
 
     virtual bool allow_affection_liability_class()  { return true; }
-    virtual bool allow_no_aff_trait()     { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait()     { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool allow_sex_map() { return true; }
 
     // Accepts character alleles...
@@ -1243,8 +1243,8 @@ public:
    ~CLASS_SPLINK() {}
 
     virtual bool allow_affection_liability_class()  { return true; }
-    virtual bool allow_no_aff_trait() { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait() { return true; }
+    virtual bool require_traits()  { return true; }
 
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
@@ -1295,10 +1295,10 @@ public:
     virtual bool has_sub_options()    { return false; }
 
     virtual bool allow_affection_liability_class()  { return true; }
-    virtual bool allow_no_aff_trait() { return true; }
+    virtual bool require_aff_trait() { return true; }
     virtual bool allow_no_chr() { return true; }
     virtual bool allow_no_map() { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool is_sub_option()  { return true; }
     virtual bool qtl_disallow() { return true; }
 
@@ -1356,10 +1356,10 @@ public:
 
     virtual bool has_sub_options()    { return false; }
 
-    virtual bool allow_no_aff_trait() { return true; }
+    virtual bool require_aff_trait() { return true; }
     virtual bool allow_no_chr() { return true; }
     virtual bool allow_no_map() { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool forbid_trait_directories()  { return true; }
     virtual bool is_sub_option()  { return true; }
     virtual bool qtl_disallow() { return true; }
@@ -1442,7 +1442,7 @@ public:
     }
    ~CLASS_SUP() {}
 
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool break_loops()  { return true; }
     virtual bool maintain_broken_loops()  { return true; }
     virtual bool qtl_allow() { return true; }
@@ -1468,8 +1468,8 @@ public:
 
     virtual bool is_enabled() { return false; }
 
-    virtual bool allow_no_aff_trait() { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait() { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool break_loops()  { return true; }
     virtual bool maintain_broken_loops()  { return true; }
     virtual bool nuke_opts()    { return true; }
@@ -1493,8 +1493,8 @@ public:
     }
    ~CLASS_VITESSE() {}
 
-    virtual bool allow_no_aff_trait() { return true; }
-    virtual bool allow_no_trait()  { return true; }
+    virtual bool require_aff_trait() { return true; }
+    virtual bool require_traits()  { return true; }
     virtual bool break_loops()  { return true; }
     virtual bool has_sub_options()    { return true; }
     virtual bool maintain_broken_loops()  { return true; }

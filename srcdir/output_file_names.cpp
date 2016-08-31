@@ -457,6 +457,8 @@ void Free_output_paths(analysis_type analysis) {
         ntraits = num_traits;
     }
     
+    if (output_paths == 0) return;
+
     if (ntraits > 1  && (LoopOverTrait == 1 || (analysis == TO_SAGE && HasAff))) {
         for (i=1; i <= ntraits; i++) {
             /* output_path[it] may be aliased to 

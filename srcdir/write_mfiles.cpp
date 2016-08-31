@@ -1163,7 +1163,7 @@ static void  save_mendel_peds(char *outfl_name, linkage_ped_top *Top,
 
                 /* now write the genotypes and QTLs */
 
-//xx            if (naff > 0) paff_status=&(aff_status[0]);
+//              if (naff > 0) paff_status=&(aff_status[0]);
                 paff_status=&(aff_status[0]);
 
                 for (loc1 = 0; loc1 < NumChrLoci; loc1++)   {

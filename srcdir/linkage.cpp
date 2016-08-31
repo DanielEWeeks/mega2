@@ -304,6 +304,7 @@ void            clear_llocustop(linkage_locus_top *LTop)
     LTop->Haplotype = UNDEF;
     LTop->MutMale = UNDEF;
     LTop->MutFemale = UNDEF;
+    LTop->map_distance_type = 0;
     LTop->SexDiff = UNDEF;
     LTop->Interference = UNDEF;
     LTop->MaleRecomb = NULL;
@@ -1368,6 +1369,9 @@ int  connect_loops(linkage_ped_tree *Ped, linkage_ped_top *Top1)
     /* free the memory associated with all deleted entries */
     for (j=0; j<Ped->EntryCnt; j++) {
         if (delete_ppl[j] == 1) { // implies D_Entry was defined via above code
+//     free_all_from_lpedrec() must ignore Pheno&Marker
+            D_Entry->Pheno = 0;
+            D_Entry->Marker = 0;
             free_all_from_lpedrec(D_Entry, offset);
             /* mark it as deleted */
             Ped->Entry[j].ID = UNDEF;
@@ -1416,13 +1420,14 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
             Top->Ped[i].Entry[j].Ngeno = 0;
             Top->Ped[i].Entry[j].IsTyped = 0;
             this_male_typed=0; this_female_typed=0;
-            if (Mega2Status < LOCI_REORDERED || database_dump || ! database_read) {
+
+            if (Mega2Status < LOCI_REORDERED || database_dump) {
                 numloc = Top->LocusTop->LocusCnt;
             } else {
                 numloc = num_reordered;
             }
             for (l = 0; l < numloc; l++)   {
-                if (Mega2Status < LOCI_REORDERED || database_dump || ! database_read) {
+                if (Mega2Status < LOCI_REORDERED || database_dump) {
                     k = l;
                 } else {
                     k = reordered_marker_loci[l];
@@ -1462,7 +1467,7 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                         untyped++;
                 }
             }
-            if (Top->Ped[i].Entry[j].IsTyped == 2 * numloc)
+            if (Top->Ped[i].Entry[j].IsTyped == (int)(2 * numloc) )
                 Top->Ped[i].Entry[j].IsTyped = 2;
             else if (Top->Ped[i].Entry[j].IsTyped)
                 Top->Ped[i].Entry[j].IsTyped = 1;

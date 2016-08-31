@@ -4750,8 +4750,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
                 create_allele_list(Top, (int) i, &(marker_list[i]),
                                    member_ids, count_halftyped);
                 tod_fr("create allele list 1 freq");
-                if ( (count_option != 4 || analysis == TO_HWETEST || analysis == TO_SIMULATE) &&
-                      LTop->Locus[i].number != -1 ) {
+
+                if ( (count_option == 1 || count_option == 2 || count_option == 3
+                      /* || analysis == TO_HWETEST || analysis == TO_SIMULATE */) &&
+                     LTop->Locus[i].number != -1 ) {
                     count_allele_list(Top, (int) i, count_option, &(marker_list[i]),
                                       member_ids, count_halftyped);
                     tod_fr_x4("create allele list 4 freq");
@@ -4919,7 +4921,8 @@ static void Free_ped(linkage_ped_top *PTop)
             LPed = LPedT[p].Entry;
             for (i = 0; i < LPedT[p].EntryCnt; i++) {
                 Entry = &LPed[i];
-                free(Entry->Pheno);
+//                if (Entry->Pheno != NULL)
+//                    free(Entry->Pheno);
                 if (Entry->Marker != NOTYPED_ALLELES)
                     marker_free(Entry->Marker, PTop->LocusTop->PhenoCnt);
                 if (Entry->loopbreakers != NULL)

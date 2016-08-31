@@ -91,7 +91,8 @@ public:
 
 /*
  */
-    virtual bool allow_no_aff_trait()     { return false; }
+//  virtual bool allow_no_aff_trait()     { return false; }
+    virtual bool requires_aff_trait()     { return false; }
 
 /*
   Should the analysis option allow selection of markers whose
@@ -120,7 +121,8 @@ public:
   This function returns FALSE(0) if the analysis option requires at
   least one trait, TRUE (1) otherwise.
  */
-    virtual bool allow_no_trait()  { return false; }
+//  virtual bool allow_no_trait()  { return false; }
+    virtual bool require_traits()  { return false; }
 
 /*
   Should analysis option allow selection of markers on X-chromosome?

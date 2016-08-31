@@ -108,12 +108,14 @@ typedef std::map<const char *, const char *, charsless>  Mapcc;
 typedef std::map<const char *, int, charsless>           Mapci;
 typedef std::map<int, std::string>                       Mapis;
 typedef std::map<int, int>                               Mapii;
+typedef std::map<const void *, int>                      Mapvi;
 typedef std::map<const std::string, std::string>::const_iterator        Mapssp;
 typedef std::map<const std::string, int>::const_iterator                Mapsip;
 typedef std::map<const char *, const char *, charsless>::const_iterator Mapccp;
 typedef std::map<const char *, int, charsless>::const_iterator          Mapcip;
 typedef std::map<int, std::string>::const_iterator                      Mapisp;
 typedef std::map<int, int>::const_iterator                              Mapiip;
+typedef std::map<const void *, int>::const_iterator                     Mapvip;
 
 template <typename T>
 bool inline inMap(typename T::key_type& str, T& map) {
@@ -219,12 +221,14 @@ typedef UM<const char *, const char *, HH<const char *>, charseq>   HMapcc;
 typedef UM<const char *, int, HH<const char *>, charseq>            HMapci;
 typedef UM<int, std::string, HH<int> >                              HMapis;
 typedef UM<int, int, HH<int> >                                      HMapii;
+typedef UM<const void *, int, HH<const void *> >                    HMapvi;
 typedef UM<const std::string, std::string, HH<std::string> >::const_iterator   HMapssp;
 typedef UM<const std::string, int, HH<std::string> >::const_iterator           HMapsip;
 typedef UM<const char *, const char *, HH<const char *>, charseq>::const_iterator HMapccp;
 typedef UM<const char *, int, HH<const char *>, charseq>::const_iterator       HMapcip;
 typedef UM<int, std::string, HH<int> >::const_iterator                         HMapisp;
 typedef UM<int, int, HH<int> >::const_iterator                                 HMapiip;
+typedef UM<const void *, int, HH<const void *> >::const_iterator               HMapvip;
 
 ////
 

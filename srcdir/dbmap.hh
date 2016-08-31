@@ -134,11 +134,11 @@ public:
 	delete select_stmt;
     }
     int drop() {
-	return MasterDB.exec("DROP TABLE IF EXISTS map_table;");
+	return MasterDB.exec("DROP TABLE IF EXISTS mapnames_table;");
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_map_table IF NOT EXISTS on map_table (key);");
+	return MasterDB.exec("CREATE Index Idx_map_table IF NOT EXISTS on mapnames_table (key);");
     }
 
     void db_getall(linkage_ped_top *Top);

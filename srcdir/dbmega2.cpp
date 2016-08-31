@@ -114,7 +114,9 @@ Batch_file_parameters batch_file_parameters;
 File_table file_table;
 
 Pedigree_table pedigree_table;
+Pedigree_brkloop_table pedigree_brkloop_table;
 Person_table person_table;
+Person_brkloop_table person_brkloop_table;
 
 CanonicalAllele_table canonicalallele_table;
 MarkerScheme_table markerscheme_table;
@@ -145,6 +147,9 @@ void db_index_all() {
     pedigree_table.index();
     person_table.index();
 
+    pedigree_brkloop_table.index();
+    person_brkloop_table.index();
+
     canonicalallele_table.index();
     markerscheme_table.index();
 
@@ -166,6 +171,7 @@ void db_index_all() {
 
 void dbmega2_export(linkage_ped_top *Top)
 {
+//  asm("int $3");
     msgvf("Dumping SQLite3 DB\n");
 
     dbmisc_export(Top);
@@ -181,8 +187,6 @@ void dbmega2_export(linkage_ped_top *Top)
     dbmap_export(Top);
 
     dbgenotype_export(Top);
-
-//  asm("int $3");
 }
 
 void dbmega2_stat(linkage_ped_top *Top)
@@ -227,26 +231,21 @@ void dbmega2_stat(linkage_ped_top *Top)
 
 void dbmega2_import(linkage_ped_top *Top)
 {
+//    asm("int $3");
     msgvf("Reading SQLite3 DB\n");
 
-//    asm("int $3");
     dbmisc_import(Top);
 
-//    asm("int $3");
     dbbatch_file_import(Top);
 
-//    asm("int $3");
     dbpedigree_import(Top);
 
-//    asm("int $3");
     dballele_import(Top);
 
-//    asm("int $3");
     dblocus_import(Top->LocusTop);
 
     dbmap_import(Top);
 
-//    asm("int $3");
     dbgenotype_import(Top);
 
     dbmega2_stat(Top);
@@ -263,6 +262,9 @@ void db_drop_all() {
 
     pedigree_table.drop();
     person_table.drop();
+
+    pedigree_brkloop_table.drop();
+    person_brkloop_table.drop();
 
     canonicalallele_table.drop();
     markerscheme_table.drop();
@@ -283,23 +285,46 @@ void db_drop_all() {
 
 }
 
+int db_exists_db() {
+//  delete_file(DBfile);
+
+    if (DBfile[0] == 0)
+        return 0;
+
+    FILE *f = fopen(DBfile, "r");
+    if (f == NULL) {
+        return 0;
+    }
+    fclose(f);
+    return 1;
+}
+
 void db_open_db() {
     extern void delete_file(const char *);
     extern void add_sumdir(char *);
     if (!database_dump && !database_read) return;
 
-//    delete_file(DBfile);
-    if (DBfile[0] == 0)
-        sprintf(DBfile, "%s/%s", Mega2OutputPath, "dbmega2.db");
+    if (DBfile[0] == 0) { // not on commandline
+        char *cp = DBfile;
+        BatchValueGet(cp, "DBfile_name");
+    }
+    if (strchr(DBfile, '/')) {
+        /* leave alone*/;
+    } else if (Mega2OutputPath){
+        int l = strlen(Mega2OutputPath);
+        memmove(DBfile+l+1, DBfile, strlen(DBfile)+1);
+        strcpy(DBfile, Mega2OutputPath);
+        DBfile[l] = '/';
+    } 
+
     if (!database_dump && database_read) {
-        FILE *f = fopen(DBfile, "r");
-        if (f == NULL) {
+        if (! db_exists_db()) {
             msgvf("\n");
             errorvf("Database file \"%s\" not found.\n", DBfile);
             EXIT(EARLY_TERMINATION);
         }
-        fclose(f);
     }
+
     if (! MasterDB.open(DBfile, debug)) {
             EXIT(FILE_NOT_FOUND);
     }
@@ -336,6 +361,9 @@ void db_init_all() {
         pedigree_table.create();
         person_table.create();
 
+        pedigree_brkloop_table.create();
+        person_brkloop_table.create();
+
         canonicalallele_table.create();
         markerscheme_table.create();
 
@@ -364,6 +392,9 @@ void db_init_all() {
 
     pedigree_table.init();
     person_table.init();
+
+    pedigree_brkloop_table.init();
+    person_brkloop_table.init();
 
     canonicalallele_table.init();
     markerscheme_table.init();
@@ -418,6 +449,9 @@ void db_fini_all() {
 
     pedigree_table.close();
     person_table.close();
+
+    pedigree_brkloop_table.close();
+    person_brkloop_table.close();
 
     canonicalallele_table.close();
     markerscheme_table.close();
