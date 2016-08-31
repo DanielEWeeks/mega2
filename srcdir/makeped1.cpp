@@ -1338,7 +1338,6 @@ static void make_linkage_record(int pid, marriage_graph_type mped,
     if (prec.loop_breaker_id > 0){
         sprintf(lrec->OrigID, "%d", prec.loop_breaker_id);
     } else {
-//yy        asm("int $3");
         sprintf(lrec->OrigID, "%d", prec.indiv);
     }
 
@@ -1386,12 +1385,6 @@ static void make_linkage_record(int pid, marriage_graph_type mped,
 
 void clear_phenotype_genotype(int pid, marriage_graph_type mped)
 {
-//z remove and test prec later
-    person_node_type prec = mped.persons[pid];
-
-    prec.pheno  = NULL;
-    prec.marker = NULL;
-/*  but prec.data is a copy of ... so zero it too */
     mped.persons[pid].pheno = NULL;
     mped.persons[pid].marker = NULL;
 }

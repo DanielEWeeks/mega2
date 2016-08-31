@@ -84,7 +84,7 @@ void *marker_alloc(size_t size, int offset) {
     } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         if (MARKER_SCHEME3_offset == -1) {
             MARKER_SCHEME3_offset = offset;
-//xx lazy
+// lazy
             MARKER_SCHEME3_alleles  = CALLOC(size + offset, Alleles_int);
             MARKER_SCHEME3_Ralleles = CALLOC(size + offset, Alleles_str);
         }

@@ -1281,9 +1281,9 @@ int             main(int argc, char **argv, char **env)
         exit(eans);
 #else
         eans = execvp(name, argvn);
-#endif
         printf("exec failed: eans = %d, errno %d\n", eans, errno);
         fflush(stdout);
+#endif
     }
 
     InputMode = AnalyInputMode;  //What was it before the exec

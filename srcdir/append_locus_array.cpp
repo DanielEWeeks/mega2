@@ -157,8 +157,6 @@ static int copy_marker_loc_data(void *From, int from,
     case NUMBERED:
     case BINARY:
         copy_2alleles(To, From, to, from);
-//xx    To->Alleles.Allele_1 = From->Alleles.Allele_1;
-//xx    To->Alleles.Allele_2 = From->Alleles.Allele_2;
         copied=1;
         break;
     case AFFECTION:

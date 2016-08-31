@@ -1467,7 +1467,7 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                         untyped++;
                 }
             }
-            if (Top->Ped[i].Entry[j].IsTyped == 2 * numloc)
+            if (Top->Ped[i].Entry[j].IsTyped == (int)(2 * numloc) )
                 Top->Ped[i].Entry[j].IsTyped = 2;
             else if (Top->Ped[i].Entry[j].IsTyped)
                 Top->Ped[i].Entry[j].IsTyped = 1;
