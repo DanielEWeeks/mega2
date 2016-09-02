@@ -866,7 +866,8 @@ int             main(int argc, char **argv, char **env)
      
      Select an option between 1-34 > 
      */
-    if (database_dump) {
+    if (database_dump && ! database_read) {
+
         extern Missing_Value missing_value;
         extern Missing_Value missing_values[];
         extern int count_missing_values;

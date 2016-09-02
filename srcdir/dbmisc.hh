@@ -135,7 +135,7 @@ public:
 	delete select_stmt;
     }
     int drop() {
-	return MasterDB.exec("DROP TABLE IF EXISTS int_table;");
+	return MasterDB.exec("DROP TABLE IF EXISTS double_table;");
     }
 
     int index() {
