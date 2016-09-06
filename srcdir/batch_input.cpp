@@ -253,6 +253,8 @@ static keyw_t keywords[] = {
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
 
+    {"human_genome_build",                    STRING,     ""},
+
 };
 
 int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);

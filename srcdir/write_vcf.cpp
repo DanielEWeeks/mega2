@@ -47,19 +47,23 @@
 
 #include "write_vcf_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
+#include "vcftools/bcf_file.h"
+#include "vcftools/parameters.h"
+
+Str hg_build;
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
     int pwid, fwid, mwid;
     linkage_ped_top *Top = LPedTreeTop;
 
-//    if ( InputMode == INTERACTIVE_INPUTMODE ) {
-//
-//    }
-//    else {
-//        batch_in();
-//        //inner_file_names(file_names, "", file_name_stem);
-//    }
+    if ( InputMode == INTERACTIVE_INPUTMODE ) {
+        option_menu(file_names,file_name_stem);
+    }
+    else {
+        batch_in();
+        //inner_file_names(file_names, "", file_name_stem);
+    }
 
     //I believe everything goes into one VCF file
     int combine_chromo = 1;
@@ -82,12 +86,15 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     printf("Mega2 created the following file(s) for VCF Format:\n");
     write_VCF_file(Top, file_name_stem,file_names ,pwid, fwid);
     write_VCF_ped(Top, file_name_stem, file_names ,pwid, fwid);
-    //VCFtools_process_cmd_line_w_file()
+
 
     //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
     if(num_traits>1)
         write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
     write_VCF_sh(Top, file_name_stem, file_names);
+
+    printf("Mega2 is using VCF tools to convert to BCF format:\n");
+    convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
 }
 
 
@@ -112,8 +119,9 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(base_pair_position_index > 0)
                 pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in (centimorgans avg, male, female)\">\n");
             pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency\">\n");
-            pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
-            pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
+            //don't know these for now
+            //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
+            //pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
             pr_printf("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
             pr_printf("##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
             first = true;
@@ -121,7 +129,11 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
         void inner(){
             if(first){
-                int diff = _EXLTop->EXLocus[0+num_traits].positions[base_pair_position_index] - _EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index];
+                //int diff = abs(_EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index] - _EXLTop->EXLocus[0+num_traits].positions[base_pair_position_index]);
+                //pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_numchr,diff,"b37");
+
+                //based on PLINK's conversion to VCF we don't want the difference for the contig length we want 1+ the greatest value for length
+                int diff = _EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index] + 1;
                 pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_numchr,diff,"b37");
                 first = false;
             }
@@ -256,8 +268,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("%s\t%s\t",a1.c_str(),a2.c_str());
             pr_printf(".\t");
             pr_printf("PASS\t");
-            //if(base_pair_position_index > 0)
-            //   pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
+            if(base_pair_position_index > 0 && _tlocusp->Marker->pos_avg != 0)
+               pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
             pr_printf("AF=%.6f;",_tlocusp->Allele[_allele2].Frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
             //pr_printf("NS=%d;",0);
@@ -359,17 +371,71 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
     delete lp;
 }
 
-//this will write the output of the VCF file
-void CLASS_VCF::write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *file_names[]) {
+//use VCFTools to turn our VCF output into a BCF file
+void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
+    //we need to make this file_names instead
+    //also add some checking
+    //also call from the vcftools folder probably
+    char *argv[] = {"vcftools", "--vcf", "vcf.22", "--recode-bcf","--out","out.bcf", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
+    parameters params(argc,argv);
+
+    params.recode_bcf = true;
+    //params.output_prefix = "out";
+    params.recode_all_INFO = true;
+    params.vcf_filename = "vcf.22";
+    //params.vcf_filename=file_names[0];
+    //params.read_parameters();
+    params.print_params();
+
+    variant_file *bcf;
+
+    bcf = new bcf_file(params.vcf_filename, params.chrs_to_keep, params.chrs_to_exclude, params.force_write_index, params.gatk);
+    bcf->print_bcf(params.vcf_filename,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
 }
 
-void CLASS_VCF::batch_in(){
+void CLASS_VCF::option_menu (char *file_names[], char *prefix) {
+    int choice, done, stem, build;
+    done = 0;
+    stem = 1;
+    build = 2;
 
+    char* buildname = "hg27";
+
+    while (choice != 0) {
+        draw_line();
+        printf("VCF Analysis Menu:\n");
+        printf("%d) Done with this menu - please proceed\n", done);
+        printf("%d) File name stem:                                             %-15s\n", stem, file_name_stem);
+        printf("%d) Human Genome Build                                          %s\n", build, buildname);
+    }
+}
+
+//this will write the output of the VCF file
+void CLASS_VCF::write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *file_names[]) {
+}
+
+
+void CLASS_VCF::batch_in(){
+    char *fn = this->file_name_stem;
+    BatchValueIfSet(fn,   "file_name_stem");
+
+    BatchValueGet(hg_build, "human_genome_build");
 }
 
 void CLASS_VCF::batch_out(){
+    extern void batchf(batch_item_type *bi);
 
+    Cstr Values[] =  { "file_name_stem",
+                       "human_genome_build",
+    };
+
+    for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
+        batch_item_type *bip = BatchItemGet(Values[i]);
+        if (bip->items_read)
+            batchf(bip);
+    }
 }
 
 void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char *stem) {

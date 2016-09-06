@@ -53,7 +53,11 @@ public:
 
     void write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
 
+    void convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
+
     void write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *file_names[]);
+
+    void option_menu (char *file_names[], char *prefix);
 
     virtual void batch_in();
 
