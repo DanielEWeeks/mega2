@@ -517,7 +517,7 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
             BatchValueSet (minimac_reference_haplotype_file, "minimac_reference_haplotype_file");
             BatchValueSet (map_directory_name, "shapeit_reference_map_directory");
             BatchValueSet (shapeit_directory_name, "shapeit_reference_panel_directory");
-            BatchValueSet (minimac_directory_name, "minimiac_reference_panel_directory");
+            BatchValueSet (minimac_directory_name, "minimac_reference_panel_directory");
 
 
             BatchValueSet (g_cpus, "batch_cpu_count");
@@ -793,7 +793,7 @@ void CLASS_MINIMAC::batch_out()
                        "batch_cpu_count",
                        "shapeit_reference_map_directory",
                        "shapeit_reference_panel_directory",
-                       "minimiac_reference_panel_directory",
+                       "minimac_reference_panel_directory",
 
     };
 
@@ -817,7 +817,7 @@ void CLASS_MINIMAC::batch_in()
     BatchValueGet(minimac_reference_haplotype_file,"minimac_reference_haplotype_file");
     BatchValueGet(g_cpus, "batch_cpu_count");
     BatchValueGet(map_directory_name, "shapeit_reference_map_directory");
-    BatchValueGet(minimac_directory_name, "minimiac_reference_panel_directory");
+    BatchValueGet(minimac_directory_name, "minimac_reference_panel_directory");
     BatchValueGet(shapeit_directory_name, "shapeit_reference_panel_directory");
 
     map_file = reference_map_file;
