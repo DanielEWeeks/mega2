@@ -172,7 +172,7 @@ void db_index_all() {
 void dbmega2_export(linkage_ped_top *Top)
 {
 //  asm("int $3");
-    msgvf("Dumping SQLite3 DB\n");
+    msgvf("Dumping SQLite3 DB to file %s\n", DBfile);
 
     dbmisc_export(Top);
 
@@ -207,21 +207,36 @@ void dbmega2_stat(linkage_ped_top *Top)
     file_table.stat();
     msgvf("This database contains:\n\t%d persons (%d pedigrees)\n",
           Top->IndivCnt, Top->PedCnt);
-    msgvf("\t%d markers (%d traits)\n",
-          Top->LocusTop->MarkerCnt, Top->LocusTop->PhenoCnt);
+    msgvf("\t%d markers\n", Top->LocusTop->MarkerCnt);
+    if (Top->LocusTop->PhenoCnt != 1)
+        msgvf("\t%d traits\n", Top->LocusTop->PhenoCnt);
+    else
+        msgvf("\t1 trait\n");
+    
     if (genetic_distance_index > -1)
+/*
         msgvf("\tgenetic distance(map name/type/idx) \"%s\"/%s/%d, Sex map type %s\n",
               Top->EXLTop->MapNames[genetic_distance_index], 
               Top->EXLTop->map_functions[genetic_distance_index] == 'k' ? "kosambi" : "haldane", 
               genetic_distance_index, 
               genetic_distance_sex_type_map == 0 ? "AVERAGED_MAP" : 
               (genetic_distance_sex_type_map == 1 ? "MALE_MAP" : "FEMALE_SEX_MAP"));
+*/
+        msgvf("\tgenetic distance(map name/type) \"%s\"/%s, Sex map type %s\n",
+              Top->EXLTop->MapNames[genetic_distance_index], 
+              Top->EXLTop->map_functions[genetic_distance_index] == 'k' ? "kosambi" : "haldane", 
+              genetic_distance_sex_type_map == 0 ? "AVERAGED_MAP" : 
+              (genetic_distance_sex_type_map == 1 ? "MALE_MAP" : "FEMALE_SEX_MAP"));
 
     if (base_pair_position_index > -1)
+/*
         msgvf("\tbase pair distance (map name/type/idx) \"%s\"/%s/%d\n\n",
               Top->EXLTop->MapNames[base_pair_position_index], 
               Top->EXLTop->map_functions[base_pair_position_index] == 'p' ? "base pair" : "???",
               base_pair_position_index);
+*/
+        msgvf("\tbase pair distance (map name) \"%s\"\n\n",
+              Top->EXLTop->MapNames[base_pair_position_index]);
 
     show_reset_input();
 
@@ -232,7 +247,7 @@ void dbmega2_stat(linkage_ped_top *Top)
 void dbmega2_import(linkage_ped_top *Top)
 {
 //    asm("int $3");
-    msgvf("Reading SQLite3 DB\n");
+    msgvf("Reading SQLite3 DB from file %s\n", DBfile);
 
     dbmisc_import(Top);
 

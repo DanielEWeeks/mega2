@@ -401,6 +401,23 @@ void order_heterozygous_allele_raw(linkage_ped_top *Top)
 }
 #endif
 
+inline void decode_compression(int the_bits, Alleles_int *allelep, int *all1, int *all2)
+{
+    if (the_bits == 0) {
+        *all2 = *all1 = allelep->Allele_1;
+
+    } else if (the_bits == 1) { // 0
+        *all2 = *all1 = 0;
+
+    } else if (the_bits == 2) { // ne
+        *all1 = allelep->Allele_1;
+        *all2 = allelep->Allele_2;
+
+    } else { // 3:
+        *all2 = *all1 = allelep->Allele_2;
+    }
+}
+
 void get_2alleles(void *mp, int marker, int *all1, int *all2) {
     if (mp == NOTYPED_ALLELES) 
         *all2 = *all1 = 0;
@@ -409,26 +426,14 @@ void get_2alleles(void *mp, int marker, int *all1, int *all2) {
         *all1 = mpd[marker].Alleles.Allele_1;
         *all2 = mpd[marker].Alleles.Allele_2;
     } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
-        Alleles_int *allelep = &MARKER_SCHEME3_alleles[marker];
+//      Alleles_int *allelep = &MARKER_SCHEME3_alleles[marker];
         int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
         int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
         unsigned char *mpd = (unsigned char *) mp;
         int the_byte = mpd[get_byte];
         int the_bits = (the_byte & MARKER_SCHEME3_mask[get_bits]) >> MARKER_SCHEME3_shift[get_bits];
-        if (the_bits == 0) {
-            *all2 = *all1 = allelep->Allele_1;
+        decode_compression(the_bits, &MARKER_SCHEME3_alleles[marker], all1, all2);
 
-        } else if (the_bits == 1) { // 0
-            *all2 = *all1 = 0;
-
-        } else if (the_bits == 2) { // ne
-            *all1 = allelep->Allele_1;
-            *all2 = allelep->Allele_2;
-
-        } else { // 3:
-            *all2 = *all1 = allelep->Allele_2;
-
-        }
     } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
         *all1 = mpd[marker].Allele_1;
