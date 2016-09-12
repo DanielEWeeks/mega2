@@ -65,10 +65,12 @@ extern void menu1(file_format *infl_type,
                   char **freqfl_name, char **penfl_name,
                   char **bedfl_name, char **phefl_name,
                   int *Untyped_ped_opt, int *err_sim_opt,
-                  char **mega2_output_path, double *freq_miscmatch_thresh);
+                  char **mega2_output_path, char **db_name,
+                  double *freq_miscmatch_thresh);
 
 extern void menu1a(int *Untyped_ped_opt, int *err_sim_opt,
-                   char **mega2_output_path, double *freq_miscmatch_thresh);
+                   char **mega2_output_path, char **db_name,
+                   double *freq_miscmatch_thresh);
 
 
 extern void ped_ind_defaults(int unique, analysis_type analysis);

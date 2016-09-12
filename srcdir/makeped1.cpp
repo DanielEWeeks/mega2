@@ -56,6 +56,9 @@
 #include "linkage_ext.h"
 #include "read_files_ext.h"
 #include "utils_ext.h"
+
+#include "batch_input_ext.h"
+
 /*
      error_messages_ext.h:  errorf mssgf my_calloc my_malloc my_realloc
               fcmap_ext.h:  fcmap
@@ -2124,7 +2127,6 @@ static int founder_more_typed(marriage_graph_type *m_graph,
 /* user input on forcing selection of non-founders only */
 
 static int force_no_founders(void)
-
 {
     char yesorno[4];
     int item=-1, force;
@@ -2135,6 +2137,11 @@ static int force_no_founders(void)
         mssgf("Select ANY individual as loop-breaker (DEFAULT)");
         mssgf("as requested in the batch file.");
         return(force);
+    }
+
+    if (BatchValueRead("Select_Loop_Break")) {
+        BatchValueGet(force, "Select_Loop_Break");
+        return force;
     }
 
     draw_line();
@@ -2160,6 +2167,11 @@ static int force_no_founders(void)
         } else if (item == 2) {
             force = 0;
         }
+    }
+
+    if (InputMode == INTERACTIVE_INPUTMODE) {
+        BatchValueSet(force, "Select_Loop_Break");
+        batchf("Select_Loop_Break");
     }
 
     return force;
