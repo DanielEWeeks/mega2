@@ -264,21 +264,21 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             sh_find_pgm("MACH1", cmd1, "mach1");
             sprintf(cmd1, "$%s_program ", "mach1");
 
-            sprintf(cmd2, "%s/%s", "MACH2VCF", "mach2VCF");
-            sh_find_pgm("MACH2VCF", cmd2, "mach2VCF");
-            sprintf(cmd2, "$%s_program ", "mach2VCF");
+            sprintf(cmd2, "%s/%s", "MACH2VCF", "Mach2VCF");
+            sh_find_pgm("MACH2VCF", cmd2, "Mach2VCF");
+            sprintf(cmd2, "$%s_program ", "Mach2VCF");
 
             //we can make the split between minimac3 and minimac3-omp here instead
             if (g_cpus == 1) {
-                sprintf(cmd3, "%s/%s", "MINIMAC3", "minimac3");
-                sh_find_pgm("MINIMAC3", cmd3, "minimac3");
-                sprintf(cmd3, "$%s_program ", "minimac3");
+                sprintf(cmd3, "%s/%s", "MINIMAC3", "Minimac3");
+                sh_find_pgm("MINIMAC3", cmd3, "Minimac3");
+                sprintf(cmd3, "$%s_program ", "Minimac3");
             }
 
             if (g_cpus > 1) {
-                sprintf(cmd3, "%s/%s", "MINIMAC3OMP", "minimac3-omp");
-                sh_find_pgm("MINIMAC3OMP", cmd3, "minimac3-omp");
-                sprintf(cmd3, "$%s_program ", "minimac3-omp");
+                sprintf(cmd3, "%s/%s", "MINIMAC3OMP", "Minimac3-omp");
+                sh_find_pgm("MINIMAC3OMP", cmd3, "Minimac3-omp");
+                sprintf(cmd3, "$%s_program ", "Minimac3-omp");
             }
 
             pr_nl();
@@ -290,7 +290,7 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
 
             //based on what I've read, we want the out put file from mach1 to be the haps file for mach2VCF, I'm assuming the user needs to input a snpfile using the menu
             pr_printf ("#use mach2VCF to create a VCF output of prephased data\n");
-            pr_printf ("%s --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format",cmd2, _numchr,file_names[4],_numchr);
+            pr_printf ("%s --haps Chr%d.Phased.Output.gz --snps %s --prefix Chr%d.Phased.Output.VCF.format",cmd2, _numchr,file_names[4],_numchr);
             pr_nl();
             pr_nl();
 
@@ -397,6 +397,7 @@ void CLASS_MACH::create_output_file(
 
     combine_chromo = 0;
     LoopOverChrm  = ! combine_chromo;
+
 
     //There are no traits for MaCH/Minimac3
     LoopOverTrait = 0;
