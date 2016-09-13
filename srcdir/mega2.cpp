@@ -591,6 +591,7 @@ extern void init_analysis();
 extern void db_open_db();
 extern void db_init_all();
 extern void db_fini_all();
+extern char DBfile[255];
 
 int             main(int argc, char **argv, char **env)
 {
@@ -630,13 +631,15 @@ int             main(int argc, char **argv, char **env)
 
     mega2_opts(argc, argv);
 
-//  DB ON BY DEFAULT if not commented out
+//  DB IS READ BY DEFAULT
     if (database_off)
         database_read = database_dump = 0;
-    else  if ( (database_read || database_dump) == 0) {
+    else  if (! database_read)
+        database_read = ! database_dump;
+/*  else  if ( (database_read || database_dump) == 0) {
         database_read = database_dump = 1;
     }
-
+*/
     init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
 
@@ -723,19 +726,6 @@ int             main(int argc, char **argv, char **env)
     if (AnalyInputMode == NOEXEC_INPUTMODE)
         AnalyInputMode = InputMode;
 
-#if 0
-//  DB ON BY DEFAULT if not commented out
-    extern char DBfile[255];
-    if (database_off)
-        database_read = database_dump = 0;
-    else if (DBfile[0] != 0 || BatchValueRead("DBfile_name")) {
-        if (database_dump == 0)
-            database_read = 1;
-    } else if ( (database_read || database_dump) == 0) {
-        database_read = database_dump = 1;
-    }
-#endif
-
     tod_batch();
     // determine if we should go out to the web and check to see if the user is running the latest release of MEGA2...
     if ((InputMode == BATCH_FILE_INPUTMODE && access(Mega2Batch, F_OK) == 0) ||
@@ -781,10 +771,11 @@ int             main(int argc, char **argv, char **env)
     if (database_dump || ! database_read) {
         mega2_input_file_type[BED][0] = 0;  // just to be safe
         Tod tod_menu1("menu1");
+        char *dbf = DBfile;
         menu1(&infl_type, &pedfl_name, &locusfl_name,
               &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
               &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
-              &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
+              &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath, &dbf,
               &FreqMismatchThreshold);
         tod_menu1();
 
@@ -834,7 +825,8 @@ int             main(int argc, char **argv, char **env)
         log_line(mssgf);
     } else {
         Tod tod_menu1a("menu1a");
-        menu1a(&UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath,
+        char *dbf = DBfile;
+        menu1a(&UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath, &dbf,
                &FreqMismatchThreshold);
         tod_menu1a();
     }
@@ -866,7 +858,8 @@ int             main(int argc, char **argv, char **env)
      
      Select an option between 1-34 > 
      */
-    if (database_dump) {
+    if (database_dump && ! database_read) {
+
         extern Missing_Value missing_value;
         extern Missing_Value missing_values[];
         extern int count_missing_values;
@@ -962,6 +955,8 @@ int             main(int argc, char **argv, char **env)
         Tod dbimport("db_import");
 
         db_open_db();
+        if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("DBfile_name"))
+            batchf("DBfile_name");
         db_init_all();
         dbmega2_import(&SQLop);
         db_fini_all();
@@ -1266,6 +1261,8 @@ int             main(int argc, char **argv, char **env)
 
         extern void dbmega2_export(linkage_ped_top *Top);
         db_open_db();
+        if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("DBfile_name"))
+            batchf("DBfile_name");
         db_init_all();
         dbmega2_export(LPedTreeTop);
         db_fini_all();
@@ -1279,7 +1276,9 @@ int             main(int argc, char **argv, char **env)
         char **argvn = CALLOC((size_t) argc+6, char *);
         argvn[0] = argv[0];
         argvn[1] = (char *)"--dbread";
-        j = 2;
+        argvn[2] = (char *)"--dbfile";
+        argvn[3] = (char *)DBfile;
+        j = 4;
 
         if (InputMode == BATCH_FILE_INPUTMODE)
             argvn[j++] = (char *)"--batch_file";
@@ -1290,7 +1289,7 @@ int             main(int argc, char **argv, char **env)
         argvn[j++] = RunDate;
 
         for (i = 1; i < argc; i++) {
-            if (strcmp(argv[i], "--dbdump") && strcmp(argv[i], "--dbread"))
+            if (strcasecmp(argv[i], "--dbdump") && strcasecmp(argv[i], "--dbread"))
                 argvn[j++] = argv[i];
         }
 
@@ -1346,6 +1345,11 @@ int             main(int argc, char **argv, char **env)
 
 
     Tod tod_fin("epilogue");
+#ifndef HIDEPATH
+    if (database_read)
+        msgvf("SQLite3 database \"%s\" was processed to generate this output.\n",
+              DBfile);
+#endif
     if (output_paths == 0) {
     } else if (!strcmp(output_paths[0], ".") &&
         ((LoopOverTrait == 1 && num_traits > 1) ||

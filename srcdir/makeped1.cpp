@@ -56,6 +56,9 @@
 #include "linkage_ext.h"
 #include "read_files_ext.h"
 #include "utils_ext.h"
+
+#include "batch_input_ext.h"
+
 /*
      error_messages_ext.h:  errorf mssgf my_calloc my_malloc my_realloc
               fcmap_ext.h:  fcmap
@@ -1757,10 +1760,13 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
 		      size_t *females_typed, size_t *half_typed)
 {
 
-    int i,j,k, ind_count=0, typed=0, halftyped=0, untyped=0;
-    int male_count=0, female_count=0;
-    int this_person_typed, this_ped_typed, this_male_typed, this_female_typed;
-    int numloc, l, first_time=1;
+    int i,j;
+    size_t k, l;
+    size_t male_count=0, female_count=0;
+    size_t ind_count=0, typed=0, halftyped=0, untyped=0;
+    size_t this_person_typed, this_ped_typed, this_male_typed, this_female_typed;
+    size_t numloc;
+    int first_time=1;
 
     *peds_typed = *males_typed = *females_typed = 0;
     *half_typed = 0;
@@ -2124,7 +2130,6 @@ static int founder_more_typed(marriage_graph_type *m_graph,
 /* user input on forcing selection of non-founders only */
 
 static int force_no_founders(void)
-
 {
     char yesorno[4];
     int item=-1, force;
@@ -2135,6 +2140,11 @@ static int force_no_founders(void)
         mssgf("Select ANY individual as loop-breaker (DEFAULT)");
         mssgf("as requested in the batch file.");
         return(force);
+    }
+
+    if (BatchValueRead("Select_Loop_Break")) {
+        BatchValueGet(force, "Select_Loop_Break");
+        return force;
     }
 
     draw_line();
@@ -2160,6 +2170,11 @@ static int force_no_founders(void)
         } else if (item == 2) {
             force = 0;
         }
+    }
+
+    if (InputMode == INTERACTIVE_INPUTMODE) {
+        BatchValueSet(force, "Select_Loop_Break");
+        batchf("Select_Loop_Break");
     }
 
     return force;

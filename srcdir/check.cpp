@@ -90,11 +90,11 @@ void clear_ped_status(ped_status *Stat)
     Stat->incomplete_entry = 0;
     Stat->offspring_out_of_range = 0;
 
-    Stat->genotype_invalid = 0;
-    Stat->halftyped = 0;
-    Stat->exceed_allcnt = 0;
-    Stat->entry_unconnected = 0;
-    Stat->checked_sibship = 0;
+    Stat->genotype_invalid = -1;
+    Stat->halftyped = -1;
+    Stat->exceed_allcnt = -1;
+    Stat->entry_unconnected = -1;
+    Stat->checked_sibship = -1;
 
     Stat->bad_ID = 0;
     Stat->bad_sex = 0;

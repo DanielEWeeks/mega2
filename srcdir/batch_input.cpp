@@ -253,6 +253,7 @@ static keyw_t keywords[] = {
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
 
+    {"Select_Loop_Break",                        INT,      "0"},
     {"human_genome_build",                    STRING,     ""},
 
 };
@@ -503,6 +504,7 @@ void check_batch_items(void)
 
     if (ITEM_READ(/* 5 */ Analysis_Option)) {
         batchANALYSIS = 1;
+        if (database_dump) msgvf("Dump ");
         mssgf("Analysis option read in from batch file.");
     } else {
         missing_item_goto_menu(5, "Analysis option menu");
@@ -1139,15 +1141,20 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
 
     // Then Select Analysis Mode
     if (map_get(BatchItemMap, "Analysis_Option", bi)) {
-        if (bi->items_read == 0 && database_dump == 0) {
+//xx        if (bi->items_read == 0 && database_dump == 0)
+        if (bi->items_read == 0)
+        {
             errorvf("%s option not set\n", "Analysis_Option");
             err++;
         } else {
-//5/16      sscanf(bi->value_str.c_str(), "%s", analysis_name);
+//xx
+/*
             if (bi->items_read == 1)
                 strcpy(analysis_name, bi->value_str.c_str());
             else
                 strcpy(analysis_name, "dump");
+*/
+            strcpy(analysis_name, bi->value_str.c_str());
             strcpy(bi->value.name, analysis_name);
 
             // This is where the 'analysis' variable get's assiged too...

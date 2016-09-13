@@ -625,7 +625,7 @@ void CLASS_ROADTRIPS::batch_show()
     msgvf("ROADTRIPS Female Prevalence:              %.4f\n",   female_prevalence);
 
     msgvf("\n");
- }
+}
 
 static void inner_file_names(char **file_names, const char *num, const char *stem /* = "roadtrips" */) {
 
