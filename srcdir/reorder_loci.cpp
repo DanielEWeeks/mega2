@@ -87,6 +87,7 @@
 #include "write_files_ext.h"
 
 #include "class_old.h"
+#include "analysis.h"
 
 /*
  annotated_ped_file_ext.h:  copy_exmap_locmap
@@ -1039,8 +1040,9 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
 
     /* If not one of the options that do not require trait selection */
     if (((option == 1 || option == 3) && main_chromocnt > 0)) {
-        //method added for analysis type that does not need traits/covariate men, select trait loci renders that menu
-        if (!Top->analysis->no_trait_covariate_menu()) {
+        //method added for analysis type that does not need traits/covariate menu, select trait loci renders that menu
+        //we added this back in for specifically with database read mode, this wouldn't make since with database_dump for db uniformity
+        if (!Top->analysis->no_trait_covariate_menu() && database_read) {
             select_trait_loci(Top, *analysis);
         }
     }
@@ -2310,6 +2312,10 @@ static int    chromo_and_loci_selection(linkage_ped_top *LPedTreeTop,
             display_chrom[i] = global_chromo_entries[i];
         }
         qsort(display_chrom, NumChromo, sizeof (int), cmp);
+
+        //if DBREAD and the analysis does not want autosomes, we filter out the list to just autosomes.
+        if(database_read && LPedTreeTop->analysis->only_display_autosomes())
+            only_autosomes = 0;
 #else
         curr_min_chrom=1e6;
         for (i=0; i < NumChromo; i++) {
@@ -2396,6 +2402,8 @@ static int    chromo_and_loci_selection(linkage_ped_top *LPedTreeTop,
             while (do_again) {
                 /* selection phase */
                 printf("Select from the following chromosomes:\n");
+                if(database_read && LPedTreeTop->analysis->only_display_autosomes())
+                    NumChromo = num_auto;
                 for (i = 0; i < NumChromo; i++) {
                     if (Ignore_Unmapped(display_chrom[i])) continue;
                     CHR_STR(display_chrom[i], prchr);

@@ -468,8 +468,6 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
     choice = -1;
     renamed = 0;
 
-
-
     strcpy(prefix, file_name_stem);
 
     char hap_file_input[255];
@@ -478,6 +476,21 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
     Vecs hapsplit;
     haplotype_post = ".1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
     Str directory = ".";
+
+
+    if(getenv("MINIMAC_REF_DIR")!= NULL)
+        directory = getenv("MINIMAC_REF_DIR");
+    else
+        directory = ".";
+
+    if(getenv("MINIMAC_REF_HAP")!= NULL) {
+        mach_reference_haplotype_file = getenv("MINIMAC_REF_HAP");
+        split(hapsplit, mach_reference_haplotype_file, "?");
+        haplotype_pre = hapsplit[0];
+        haplotype_post = hapsplit[1];
+    }
+    else
+        haplotype_post = ".1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
 
     while (choice != 0) {
         draw_line();
@@ -496,8 +509,12 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
         }
 
         else if ( choice == done ) {
-            if (!renamed)
-                strcpy (hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
+            if (!renamed){
+                if(getenv("MINIMAC_REF_HAP")!= NULL)
+                    strcpy(hap_file_input,getenv("MINIMAC_REF_HAP"));
+                else
+                    strcpy (hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
+            }
 
             reference_directory = directory;
 

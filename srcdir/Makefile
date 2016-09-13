@@ -403,6 +403,7 @@ mega2.o: write_mfiles_ext.h write_pap_ext.h write_premakeped_ext.h
 mega2.o: write_prest_ext.h write_sage_files_ext.h write_simulate_files_ext.h
 mega2.o: write_solar_files_ext.h write_vitesse_ext.h version.h class_old.h
 mega2.o: analysis.h write_plink_ext.h plink_core_ext.h write_shapeit_ext.h
+mega2.o: database_dump_ext.h
 write_apm.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_apm.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_apm.o: input_check.h hwe.h compress_ext.h error_messages_ext.h

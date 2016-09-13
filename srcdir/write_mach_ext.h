@@ -57,7 +57,14 @@ public:
     //gives an error if user selects X,Y,etc.
     virtual bool forbid_sex_linked_loci()  { return true; }
 
+    virtual bool only_display_autosomes() {return true; }
+
     // missing values are always replaced with an '-'
+
+
+    //No trait or missing menu displayed (on dbread)
+    virtual bool no_missing_menu() { return true; }
+    virtual bool no_trait_covariate_menu() { return true; }
 
 
 //  virtual bool output_quant_can_define_missing_value() { return false; }

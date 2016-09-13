@@ -55,9 +55,15 @@ public:
 
     virtual bool forbid_sex_linked_loci() { return true; }
 
+    virtual bool only_display_autosomes() {return true; }
+
     virtual bool require_physical_map() { return false; }
 
     virtual bool allele_data_use_name_if_available() { return true; }
+
+    //No trait or missing menu displayed (on dbread)
+    virtual bool no_missing_menu() { return true; }
+    virtual bool no_trait_covariate_menu() { return true; }
 
     virtual void ped_ind_defaults(int unique) {
         OrigIds[0] = 6; /* Keeps Per ID that was input*/

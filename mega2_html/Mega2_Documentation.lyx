@@ -83,12 +83,11 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1123876542 "Justin" 
 \end_header
 
 \begin_body
@@ -34069,7 +34068,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://genome.sph.umich.edu/wiki/Minimac3 
+https://github.com/Santy-8128/Minimac3 
 \end_layout
 
 \end_inset
@@ -34106,6 +34105,129 @@ email: sayantan@umich.edu
 \end_layout
 
 \begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Required Program
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Direct Link for Source Download
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+mach1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://csg.sph.umich.edu/abecasis/MaCH/download/mach.1.0.18.source.tgz
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mach2VCF
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+ftp://share.sph.umich.edu/minimac3/Mach2VCF.v1.Source.Binary.tar.gz
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Minimac3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/Santy-8128/Minimac3/archive/master.zip
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Minimac3 is a low memory implementation of previous iterations of the minimac
  algorithm for genetic imputation, which works on phased genotypes to handle
  very large reference panels by identifying repeat patterns to simply calculatio
@@ -34118,16 +34240,8 @@ ns at no loss to accuracy.
  file is used by mach2VCF.
  The pedigree file is formatted family id, individual id, father id, mother
  id, sex, and the series of markers encoded with A, C, T, and G.
-
-\change_deleted -1123876542 1469551086
- 
-\change_unchanged
  The data file is formatted with an M inndicating marker and then the marker
  number.
-
-\change_deleted -1123876542 1469551086
- 
-\change_unchanged
  The snp file contains the chromsome and physical position information in
  the format chr:pos.
  Along with these data outputs Mega2 will output shell scripts that run
@@ -34158,19 +34272,19 @@ MaCH/Minimac3 Analysis menu:
 \end_layout
 
 \begin_layout LyX-Code
-2) Choose reference haplotype file:                
-\change_inserted -1123876542 1469551725
-    
-\change_unchanged
-?.1000g.Phase3.v5m3vcf.gz
+2) Choose reference haplotype directory:               .
 \end_layout
 
 \begin_layout LyX-Code
-3) Number of CPUS for Minimac3 Imputation:             1
+3) Choose reference haplotype file:                    ?.1000g.Phase3.v5m3vcf.gz
 \end_layout
 
 \begin_layout LyX-Code
-Enter options 0-3 > 0 
+4) Number of CPUS for Minimac3 Imputation:             1
+\end_layout
+
+\begin_layout LyX-Code
+Enter options 0-4 > 0 
 \end_layout
 
 \begin_layout Standard
@@ -34180,7 +34294,9 @@ The file name stem menu item can be changed to allow multiple experiments
 \end_layout
 
 \begin_layout Standard
-The reference haplotype file menu item can be changed to choose which reference
+The reference haplotype directory is the directory storing your reference
+ haplotype files.
+ The reference haplotype file menu item can be changed to choose which reference
  haplotype will be used for imputation by Minimac3.
  A wildcard “?” has been included which will be replaced with the number
  of the chromosome of the specified analysis.
@@ -34256,13 +34372,87 @@ MaCH, mach2VCF and Minimac3 should be downloaded from their respective home
  In the latter case, set the shell environment variables, MACH1, mach2VCF,
  and MINIMAC3, to the path to that directory.
  
-\change_inserted -1123876542 1469551178
+\end_layout
+
+\begin_layout Standard
+You can also use the following environmental variables to set your reference
+ once:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Environmental variable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value it sets
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MINIMAC_REF_DIR
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Choose reference haplotype directory
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MINIMAC_REF_HAP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Choose reference haplotype file
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
 
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1123876542 1469551402
 \begin_inset CommandInset label
 LatexCommand label
 name "ext:minimac-shapeit"
@@ -34280,8 +34470,6 @@ name "sub:Detailed-info-SHAPEIT-Minimac3"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551771
 
 \series bold
 This Analysis Menu option
@@ -34303,8 +34491,6 @@ This Analysis Menu option
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551783
 For imputation to work properly, your input data has to be coded so alleles
  are labelled by A, C, T, or G and a physical map of the markers in the
  same build as your chosen set of reference haplotypes has to be provided.
@@ -34313,8 +34499,6 @@ For imputation to work properly, your input data has to be coded so alleles
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551896
 The scripts produced will only work if the required executables have been
  installed on your computer in your path, or if their locations have been
  set to the environment variables: SHAPEIT and MINIMAC3.
@@ -34328,8 +34512,6 @@ The scripts produced will only work if the required executables have been
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1469552031
-
 \series bold
 Name:
 \series default
@@ -34337,8 +34519,6 @@ Name:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551897
 
 \series bold
 Web:
@@ -34349,8 +34529,6 @@ status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1123876542 1469552002
-
 www.shapeit.fr
 \end_layout
 
@@ -34360,8 +34538,6 @@ www.shapeit.fr
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551942
 
 \series bold
 References:
@@ -34376,8 +34552,6 @@ References:
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551963
 O.
  Delaneau, JF.
  Zagury, J.
@@ -34389,8 +34563,6 @@ O.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551971
 O.
  Delaneau, B.
  Howie, A.
@@ -34401,8 +34573,6 @@ O.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551978
 J.
  O'Connell, D.
  Gurdasani, O.
@@ -34413,8 +34583,6 @@ J.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551978
 O.
  Delaneau, J.
  Marchini, The 1000 Genomes Project Consortium (2014) Integrating sequence
@@ -34425,8 +34593,6 @@ O.
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1469551897
-
 \series bold
 Contact
 \series default
@@ -34434,8 +34600,6 @@ Contact
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469552222
 For Questions about SHAPEIT refer to the 
 \begin_inset CommandInset href
 LatexCommand href
@@ -34448,18 +34612,12 @@ target "https://www.jiscmail.ac.uk/cgi-bin/webadmin?A0=OXSTATGEN"
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469552229
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1123876542 1469552230
-
 https://www.jiscmail.ac.uk/cgi-bin/webadmin?A0=OXSTATGEN
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -34469,8 +34627,6 @@ https://www.jiscmail.ac.uk/cgi-bin/webadmin?A0=OXSTATGEN
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1469551870
-
 \series bold
 Name
 \series default
@@ -34478,8 +34634,6 @@ Name
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469551870
 
 \series bold
 Web
@@ -34490,9 +34644,7 @@ status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1123876542 1469551870
-
-http://genome.sph.umich.edu/wiki/Minimac3 
+hhttps://github.com/Santy-8128/Minimac3
 \end_layout
 
 \end_inset
@@ -34502,8 +34654,6 @@ http://genome.sph.umich.edu/wiki/Minimac3
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1469551870
-
 \series bold
 Contact
 \series default
@@ -34511,38 +34661,120 @@ Contact
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469551870
 Sayantan Das
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469551870
 Abecasis Lab
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469551870
 Center for Statistical Genetics
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469551870
 University of Michigan
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469552298
 email: sayantan@umich.edu
 \end_layout
 
 \begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
 
-\change_inserted -1123876542 1469553018
+\begin_layout Plain Layout
+Required Program
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Direct Link for Source Download
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Shapeit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Only comes precomipled: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html#download
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Minimac3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/Santy-8128/Minimac3/archive/master.zip
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Minimac3 is a low memory implementation of previous iterations of the minimac
  algorithm for genetic imputation, which works on phased genotypes to handle
  very large reference panels by identifying repeat patterns to simply calculatio
@@ -34583,119 +34815,88 @@ extra
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469554332
 Mega2 provides a menu to get supplemental information used by SHAPEIT/Minimac3;
  the items are explained after the menu:
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553165
 ==========================================================
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553178
-Shapeit/Minimac3 Analysis Menu:
+Shapeit/Minimac3 Analysis Menu: 0) Done with this menu - please proceed
+ 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553165
-0) Done with this menu - please proceed 
+1) File name stem:                                             minimac 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553230
-1) File name stem:                                              minimac
+2) Number of CPUS for Shapeit Prephasing/Minimac3 Imputation:  1 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553226
-2) Number of CPUS for Shapeit Prephasing/Minimac3 Imputation:   1
+3) Choose Minimac3 reference panel directory:                  .
+ 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553242
-3) Choose Minimac3 reference sample file:                       ?.1000g.Phase3.v5.Wi
-th.Parameter.Estimates.m3vcf.gz
-\change_unchanged
-
+4) Choose Minimac3 reference sample file (in VCF/M3VCF):       ?.1000g.Phase3.v5.Wit
+h.Parameter.Estimates.
+ m3vcf.gz
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553270
-4) Choose Shapeit map file:                                     genetic_map_chr?
-_combined_b37.txt
-\change_unchanged
-
+5) Choose Shapeit genetic recombination map directory:         .
+ 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553283
-5) Use reference panel in HAPS/SAMPLE format for shapeit?       Yes
-\change_unchanged
-
+6) Choose Shapeit genetic recombination map file:              genetic_map_chr?_
+combined_b37.txt 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553300
-6) Choose Shapeit reference haplotype file:                     1000GP_Phase3_ch
-r?.hap.gz
-\change_unchanged
-
+7) Use reference panel in HAPS/SAMPLE format for shapeit?      Yes 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553318
-7) Choose Shapeit reference legend file:                        1000GP_Phase3_ch
-r?.legend.gz
-\change_unchanged
-
+8) Choose Shapeit reference panel directory:                   .
+ 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469553341
-8) Choose Shapeit reference sample file:                        1000GP_Phase3.sam
-ple
-\change_unchanged
-
+9) Choose Shapeit reference haplotype file:                    1000GP_Phase3_chr
+?.hap.gz 
 \end_layout
 
 \begin_layout LyX-Code
+10) Choose Shapeit reference legend file:                      1000GP_Phase3_chr
+?.legend.gz 
+\end_layout
 
-\change_inserted -1123876542 1469553327
-Enter options 0-8 > 0 
+\begin_layout LyX-Code
+11) Choose Shapeit reference sample file:                      1000GP_Phase3.samp
+le 
+\end_layout
+
+\begin_layout LyX-Code
+Enter selection: 0 - 11 >
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469553396
 Note: for simplicity sake the menu is only shown from after the point of
- selecting 5 to toggle the SHAPEIT reference options.
+ selecting 7 to toggle the SHAPEIT reference options.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469553397
 The file name stem menu item can be changed to allow multiple experiments
  to be recorded in the same directory.
  
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469553430
 The number of CPUs for Minimac3 imputation menu item allows you to choose
  a number of CPUs to use for the imputation calculation.
  This allows you to run the shell script using minimac3-omp which allows
@@ -34703,8 +34904,6 @@ The number of CPUs for Minimac3 imputation menu item allows you to choose
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469553752
 The Minimac3 reference sample file menu item can be changed to choose which
  reference haplotype will be used for imputation by Minimac3, this must
  be in VCF or M3VCF format.
@@ -34714,14 +34913,10 @@ The Minimac3 reference sample file menu item can be changed to choose which
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469553460
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted -1123876542 1469553444
 
 http://genome.sph.umich.edu/wiki/Minimac3#Reference_Panels_for_Download
 \end_layout
@@ -34733,8 +34928,6 @@ http://genome.sph.umich.edu/wiki/Minimac3#Reference_Panels_for_Download
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469553591
 The SHAPEIT map file option allows you to select a genetic map for SHAPEIT
  check mode.
  A wildcard “?” has been included which will be replaced with the number
@@ -34743,18 +34936,12 @@ The SHAPEIT map file option allows you to select a genetic map for SHAPEIT
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469553610
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1123876542 1469553604
-
 https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html#gmap
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -34763,8 +34950,6 @@ https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html#gmap
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469554094
 The 
 \begin_inset Quotes eld
 \end_inset
@@ -34790,18 +34975,12 @@ Use reference panel in HAPS/SAMPLE format for shapeit?
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469554122
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1123876542 1469553909
-
 https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#reference
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -34810,53 +34989,37 @@ https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#reference
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469554159
 The following files are created by Mega2 for SHAPEIT/Minimac3 for a typical
  chromosome (chromosome 5 in this example): 
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469554190
 PLINK map file:          ./minimac.10.bim
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469554205
 PLINK pedigree file:     ./minimac.10.fam
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469554219
 PLINK binary file snp:   ./minimac.10.bed
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469554233
 Minimac Shell File:      ./minimac.10.sh
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -1123876542 1469554243
 MaCH Top Shell File:     ./minimac.top.sh
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469554290
 The bim, fam and bed files are the binary PLINK format output for SHAPEIT.
  The 05.sh is an individual chromosome shell.
  The top.sh runs all shells output by a single Mega2 run.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1469554324
 SHAPEIT and Minimac3 should be downloaded from their respective home pages
  and compiled.
  There are two alternatives that allow the Mega2 generated shell to find
@@ -34866,6 +35029,204 @@ SHAPEIT and Minimac3 should be downloaded from their respective home pages
  In the latter case, set the shell environment variables, SHAPEIT and MINIMAC3,
  to the path to that directory.
  
+\end_layout
+
+\begin_layout Standard
+You can also use the following environmental variables to set your reference
+ once:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Environmental variable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value it sets
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MINIMAC_REF_DIR
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Reference haplotype directory
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MINIMAC_REF_HAP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Reference haplotype file
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MAP_DIR
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Shapeit genetic recombination map directory  
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SHAPEIT_MAP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Shapeit genetic recombination map file
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SHAPEIT_REF_DIR
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Shapeit reference panel directory
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SHAPEIT_MAP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Shapeit reference haplotype file
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SHAPEIT_LEGEND
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Choose Shapeit reference legend file
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SHAPEIT_SAMPLE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout LyX-Code
+Choose Shapeit reference sample file  
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -35824,21 +36185,15 @@ name "sub:SQLite3"
 Mega2 is being converted to a design where the pedigree, phenotypes, and
  genotypes for a given experiment need only to be expensively processed
  once and stored in a database.
- Currently for each new analysis, Mega2 determines
-\change_deleted -1123876542 1469551086
- 
-\change_unchanged
- allele values, computes allele frequencies, checks allele consistency,
- cleans alleles, and recodes letter alleles to numeric alleles.
+ Currently for each new analysis, Mega2 determines allele values, computes
+ allele frequencies, checks allele consistency, cleans alleles, and recodes
+ letter alleles to numeric alleles.
  It also compresses the genotype information as much as possible for use
  by the analysis programs.
  Now, these activities can be performed once and stored in an SQLite3 database.
  Thereafter, all the analysis programs of Mega2 can be run against this
  database eliminating the time-consuming read-in and validation phase.
  Furthermore in the future, filtering on markers, chromosomes and individuals
-\change_deleted -1123876542 1469551086
- 
-\change_unchanged
  will be supported as the database is read.
  
 \end_layout
