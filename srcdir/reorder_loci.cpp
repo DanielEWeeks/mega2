@@ -2369,6 +2369,8 @@ static int    chromo_and_loci_selection(linkage_ped_top *LPedTreeTop,
                the subsequent code, even though it is simply a copy
                of global_chromo_entries */
             *chromosome_list = CALLOC((size_t) NumChromo, int);
+            if(database_read && LPedTreeTop->analysis->only_display_autosomes())
+                    NumChromo = num_auto;
             for (i=0; i< NumChromo; i++) {
                 if (display_chrom[i] != UNKNOWN_CHROMO) {
                     (*num_chromo)++;
