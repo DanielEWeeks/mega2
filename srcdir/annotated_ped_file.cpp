@@ -5625,7 +5625,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
     // We also do some checks on the .bed file for the proper version number, and read the SNP/Individual flag...
     if (PLINK.plink == binary_PED_format) {
 #ifndef HIDEFILE
-        msgvf("Reading PLINK format .fam file: %s (%d columns)\n", pedfile, num_userdef_cols);
+        msgvf("Checking PLINK Binary format file: %s\n", bedfile);
 #endif
         if (plink_info->allele_count == 0) {
             msgvf("WARNING... No alleles were discovered when the PLINK .bim file was read.\n");

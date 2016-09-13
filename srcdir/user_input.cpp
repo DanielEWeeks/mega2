@@ -72,7 +72,8 @@
 */
 
 void batchfdb(int i) {
-    if (! database_dump && ! database_read) 
+//    if (! database_dump && ! database_read) 
+    if (database_dump)
         batchf(i);
 }
 
@@ -87,7 +88,8 @@ void  menu1(file_format *infl_type,
             char **freqfl_name, char **penfl_name,
             char **auxfl_name, char **phefl_name,
             int *Untyped_ped_opt, int *Error_sim_opt,
-            char **output_path, double *freq_mismatch_thresh);
+            char **output_path, char **db_name,
+            double *freq_mismatch_thresh);
 
 void            define_affection_labels(linkage_ped_top *Top,
 					analysis_type analysis);
@@ -727,7 +729,7 @@ static void menu1_batch_set_files(file_format *infl_type,
     }
 }
 
-static void menu1_batch_set_outfiles(char **output_path)
+static void menu1_batch_set_outfiles(char **output_path, char **db_name)
 {
     if (Mega2BatchItems[/* 33 */ Output_Path].items_read) {
         if (access(Mega2BatchItems[/* 33 */ Output_Path].value.name, W_OK) == 0 &&
@@ -744,6 +746,10 @@ static void menu1_batch_set_outfiles(char **output_path)
         missing_optional_keyword(Output_Path,  "using default '.' (current directory)");
         strcpy(*output_path, ".");
     }
+
+    char *cp = *db_name;
+    if (*cp == 0)
+        BatchValueGet(cp, "DBfile_name");
 }
 
 static void menu1_batch_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
@@ -880,7 +886,8 @@ void menu1(file_format *infl_type,
            char **freqfl_name, char **penfl_name,
            char **auxfl_name, char **phefl_name,
            int *Untyped_ped_opt, int *Error_sim_opt,
-           char **output_path, double *freq_mismatch_thresh)
+           char **output_path, char **db_name,
+           double *freq_mismatch_thresh)
 {
     int            i, choice_ = -1;
     char           cchoice[10];
@@ -891,9 +898,9 @@ void menu1(file_format *infl_type,
     int            plink_args_i = 14, plink_phe_i = 15, plink_bed_i = 16;
     int            compress_i = 17, file_format_i = 18, vcf_args_i = 19;
     int            vcf_mak_i = 20, site_vcf_i = 21, site_bcf_i = 22, site_vcf_gz_i = 23, _aux_i = 0;
-    int            in_dir_i = 24, pmap_i = 25;
-    int	           imputed_i = 26, inf_i = 27;
-    int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
+    int            db_file_i = 24, in_dir_i = 25, pmap_i = 26;
+    int	           imputed_i = 27, inf_i = 28;
+    int            idx, choiceA[29]; /* idx should be 1+ largest <>_i value (above)*/
 
     int            plinkf = 0, xcf = 0;
 
@@ -956,7 +963,7 @@ void menu1(file_format *infl_type,
                               freqfl_name, penfl_name, auxfl_name, phefl_name,
                               plinkf, xcf);
 
-        menu1_batch_set_outfiles(output_path);
+        menu1_batch_set_outfiles(output_path, db_name);
 
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
 
@@ -967,6 +974,10 @@ void menu1(file_format *infl_type,
 
     sprintf(*output_path, ".");
     sprintf(*input_path, ".");
+    if (database_dump || database_read) {
+        char *cp1 = *db_name;
+        BatchValueGet(cp1, "DBfile_name");
+    }
 
     int line_len;
     while (!exit_loop) {
@@ -1111,7 +1122,7 @@ void menu1(file_format *infl_type,
         fln_col_sizes();
         line_len = fln_col1234;
 
-        printf("              Mega2 %s input menu:\n", Mega2Version);
+        printf("              Mega2 %s file input menu:\n", Mega2Version);
         draw_line();
         printf("0) Done with this menu - please proceed\n");
         idx=1;
@@ -1192,6 +1203,13 @@ void menu1(file_format *infl_type,
                ((!strcmp(*output_path, "."))?"[ Current directory ]" : *output_path));
         choiceA[idx] = out_i;
         idx++;
+
+        if (database_dump ^ database_read) {
+            printf("%2d) %-*s%s\n", idx, line_len,
+                   "SQLite3 Database file:", *db_name);
+            choiceA[idx] = db_file_i;
+            idx++;
+        }
 
 /*
  * to be turned on some day
@@ -1401,7 +1419,7 @@ void menu1(file_format *infl_type,
         } else if (choice_ == out_i) {   /* The output directory */
             draw_line();
             printf("Please enter output directory name > ");
-            fcmap(stdin, "%s", *output_path); newline;
+          fcmap(stdin, "%s", *output_path); newline;
 
             if (access(*output_path, F_OK)) {
                 char y[100];
@@ -1424,6 +1442,11 @@ void menu1(file_format *infl_type,
                     printf("WARNING: %s is not a writable directory.\n", *output_path);
                     printf("Please specify a new or valid directory.\n");
             }
+        } else if (choice_ == db_file_i) {   /* The database file */
+            draw_line();
+            printf("Please enter SQLite3 database file name > ");
+            fcmap(stdin, "%s", *db_name); newline;
+            BatchValueSet(*db_name, "DBfile_name");
 
         } else if (choice_ == in_dir_i) {   /* The input directory */
             draw_line();
@@ -1568,7 +1591,8 @@ void menu1(file_format *infl_type,
 }
 
 void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
-            char **output_path, double *freq_mismatch_thresh)
+            char **output_path, char **db_name,
+            double *freq_mismatch_thresh)
 {
     int            choice_ = -1;
     char           cchoice[10];
@@ -1588,7 +1612,7 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
     if (batchINPUTFILES) {
 
-        menu1_batch_set_outfiles(output_path);
+        menu1_batch_set_outfiles(output_path, db_name);
 
         if (*fn == 0)
             BatchValueIfSet(fn,   "DBfile_name");
@@ -1602,10 +1626,17 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     if (*fn == 0)
         BatchValueGet(fn,   "DBfile_name");
 
+    printf("\n");
+    printf("If you are looking for the traditional Mega2 menu for specifying input files and their types,\n");
+    printf("you are in the wrong menu.  Hit \"q\" to exit this menu; then restart Mega2 and\n");
+    printf("provide the --DBdump command line argument.  This will get you to the correct menu\n");
+    printf("and will produce an SQLite3 database which can be used in all the subsequent Mega2 analyses.\n");
+    printf("\n");
+
     int line_len = 45;
     while (!exit_loop) {
 
-        printf("              Mega2 %s input menu:\n", Mega2Version);
+        printf("              Mega2 %s Database input menu:\n", Mega2Version);
         draw_line();
         printf("0) Done with this menu - please proceed\n");
         idx=1;
@@ -1625,7 +1656,9 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
                               err_i, untyp_i, _thresh_i, 0 /*compress_i*/,
                               choiceA, idx, line_len);
 
-        printf("Select from options 0-%d > ", idx-1);
+        printf(" q) %-*s\n", line_len, "Exit Mega2.");
+
+        printf("Select from options 0-%d or q> ", idx-1);
 
         while (1) {
             fcmap(stdin, "%s", cchoice); newline;
@@ -1703,7 +1736,6 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     if (InputMode == INTERACTIVE_INPUTMODE) {
 
         BatchValueSet(fn, "DBfile_name");
-        batchf("DBfile_name");
 
         strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
         batchf(Output_Path);

@@ -253,6 +253,7 @@ static keyw_t keywords[] = {
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
 
+    {"Select_Loop_Break",                        INT,      "0"},
 };
 
 int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);
@@ -501,6 +502,7 @@ void check_batch_items(void)
 
     if (ITEM_READ(/* 5 */ Analysis_Option)) {
         batchANALYSIS = 1;
+        if (database_dump) msgvf("Dump ");
         mssgf("Analysis option read in from batch file.");
     } else {
         missing_item_goto_menu(5, "Analysis option menu");

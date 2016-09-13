@@ -1161,15 +1161,15 @@ void write_ped_stats(linkage_ped_top *Top)
     }
 
     /* Leave the first part as it is */
-    mssgf("                                                Marker Genotypes");
-    mssgf("                                                Fully    Half");
-    mssgf("     Pedigrees   People   Males   Females       Typed    Typed     Total");
+    mssgf("                                                  Marker Genotypes");
+    mssgf("                                                  Fully    Half");
+    mssgf("     Pedigrees   People   Males   Females         Typed    Typed     Total");
 
     sprintf(err_msg,
 #ifdef MS_PRINTF
-            "TOTAL   %6d %8Iu %7Iu   %7Iu    %8Iu %8Iu %9Iu",
+            "TOTAL   %6d %8Iu %7Iu   %7Iu    %10Iu %8Iu %10Iu",
 #else
-            "TOTAL   %6d %8zu %7zu   %7zu    %8zu %8zu %9zu",
+            "TOTAL   %6d %8zu %7zu   %7zu    %10zu %8zu %10zu",
 #endif
             Top->PedCnt, individual_count, male_count, female_count,
             typed, half_typed, typed+untyped+half_typed);
