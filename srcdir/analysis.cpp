@@ -180,7 +180,8 @@ analysis_types analysis_list[] = {
     { "ROADTRIPS format",           ROADTRIPS},
     { "MaCH/minimac3 format",       MACH},
     { "SHAPEIT/minimac3 format",    MINIMAC},
-    { "Database",                   DUMP},
+//  { "Database",                   DUMP},    // DUMP is an analysis but can not be chosen
+
 /*
  * You MUST make the appropriate changes here to define the mapping from the name
  * to the new analysis object
