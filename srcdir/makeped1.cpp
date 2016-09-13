@@ -1760,10 +1760,13 @@ void count_pgenotypes(linkage_ped_top *Top, size_t *num_inds,
 		      size_t *females_typed, size_t *half_typed)
 {
 
-    int i,j,k, ind_count=0, typed=0, halftyped=0, untyped=0;
-    int male_count=0, female_count=0;
-    int this_person_typed, this_ped_typed, this_male_typed, this_female_typed;
-    int numloc, l, first_time=1;
+    int i,j;
+    size_t k, l;
+    size_t male_count=0, female_count=0;
+    size_t ind_count=0, typed=0, halftyped=0, untyped=0;
+    size_t this_person_typed, this_ped_typed, this_male_typed, this_female_typed;
+    size_t numloc;
+    int first_time=1;
 
     *peds_typed = *males_typed = *females_typed = 0;
     *half_typed = 0;
