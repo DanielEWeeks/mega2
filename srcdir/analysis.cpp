@@ -227,6 +227,8 @@ void init_analysis()
         for (char *cp = key; *cp; cp++) *cp = (char)tolower(*cp);
         P2A[key] = al->analysis;  // key/string from CLASS_ANALYSIS subclass
     }
+
+    P2A[(char *)"dump"] = DUMP;
 }
 
 void prog_name_to_num(char *prog_name, analysis_type *analysis)
