@@ -478,13 +478,13 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
     Str directory = ".";
 
 
-    if(getenv("MINIMAC_REF_DIR")!= NULL)
-        directory = getenv("MINIMAC_REF_DIR");
+    if(getenv("minimac_reference_panel_directory")!= NULL)
+        directory = getenv("minimac_reference_panel_directory");
     else
         directory = ".";
 
-    if(getenv("MINIMAC_REF_HAP")!= NULL) {
-        mach_reference_haplotype_file = getenv("MINIMAC_REF_HAP");
+    if(getenv("minimac_reference_haplotype_file")!= NULL) {
+        mach_reference_haplotype_file = getenv("minimac_reference_haplotype_file");
         split(hapsplit, mach_reference_haplotype_file, "?");
         haplotype_pre = hapsplit[0];
         haplotype_post = hapsplit[1];

@@ -82,7 +82,7 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     }
 
     int combine_chromo = 0;
-    LoopOverChrm  = ! combine_chromo;
+    LoopOverChrm  = 1;
 
     LoopOverTrait = 0;
     num_traits = 0;
@@ -114,6 +114,7 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
     (*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
+
     create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, file_name_stem, analysis);
 
     //Hindsight 20/20 this is not necessary as it was used for MaCH2VCF, I'll keep the function in, in case I realize we do need it but for now I don't think we need a snps file
@@ -369,7 +370,8 @@ void CLASS_MINIMAC::create_sh_file(linkage_ped_top *Top, char **file_names, cons
 //Override of user_queries method, don't want to query the user about combining chromosomes, genotyping summaries, or filename stem (again)
 //Since I wrote a different option menu function before realizing plink core had this method to override I realize now that it's easier to have a blank method in it's place and hide it's behavior
 void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary) {
-    combine_chromo = 0;
+    *combine_chromo = 0;
+    LoopOverChrm = 1;
     //do nothing since we have another menu.
 }
 
@@ -432,23 +434,23 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
     Vecs m_hapsplit;
 
     //check environment variables or set to default.
-    if(getenv("MINIMAC_REF_DIR")!=NULL)
-        minimac_directory_name = getenv("MINIMAC_REF_DIR");
+    if(getenv("minimac_reference_panel_directory")!=NULL)
+        minimac_directory_name = getenv("minimac_reference_panel_directory");
     else
         minimac_directory_name = ".";
 
-    if(getenv("SHAPEIT_REF_DIR")!=NULL)
-        shapeit_directory_name = getenv("SHAPEIT_REF_DIR");
+    if(getenv("shapeit_reference_panel_directory")!=NULL)
+        shapeit_directory_name = getenv("shapeit_reference_panel_directory");
     else
         shapeit_directory_name = ".";
 
-    if(getenv("MAP_DIR")!=NULL)
-        map_directory_name = getenv("MAP_DIR");
+    if(getenv("shapeit_reference_map_directory")!=NULL)
+        map_directory_name = getenv("shapeit_reference_map_directory");
     else
         map_directory_name = ".";
 
-    if(getenv("MINIMAC_REF_HAP")!=NULL) {
-        minimac_reference_haplotype_file = getenv("MINIMAC_REF_HAP");
+    if(getenv("minimac_reference_haplotype_file")!=NULL) {
+        minimac_reference_haplotype_file = getenv("minimac_reference_haplotype_file");
         split(m_hapsplit, minimac_reference_haplotype_file, "?");
         m_haplotype_pre = m_hapsplit[0];
         m_haplotype_post = m_hapsplit[1];
@@ -458,8 +460,8 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         m_haplotype_post = ".hap.gz";
     }
 
-    if(getenv("SHAPEIT_REF_HAP")!=NULL) {
-        shapeit_reference_haplotype_file = getenv("SHAPEIT_REF_HAP");
+    if(getenv("shapeit_reference_haplotype_file")!=NULL) {
+        shapeit_reference_haplotype_file = getenv("shapeit_reference_haplotype_file");
         split(s_hapsplit, shapeit_reference_haplotype_file, "?");
         s_haplotype_pre = s_hapsplit[0];
         s_haplotype_post = s_hapsplit[1];
@@ -469,8 +471,8 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         s_haplotype_post = ".hap.gz";
     }
 
-    if(getenv("SHAPEIT_MAP")!=NULL) {
-        map_file = getenv("SHAPEIT_MAP");
+    if(getenv("shapeit_reference_map_file")!=NULL) {
+        map_file = getenv("shapeit_reference_map_file");
         split(mapsplit, map_file, "?");
         map_pre = mapsplit[0];
         map_post = mapsplit[1];
@@ -480,8 +482,8 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         map_post = "_combined_b37.txt";
     }
 
-    if(getenv("SHAPEIT_LEGEND")!=NULL) {
-        legend_file = getenv("SHAPEIT_LEGEND");
+    if(getenv("shapeit_reference_legend_file")!=NULL) {
+        legend_file = getenv("shapeit_reference_legend_file");
         split(legendsplit, legend_file, "?");
         legend_pre = legendsplit[0];
         legend_post = legendsplit[1];
@@ -491,8 +493,8 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         legend_post = ".legend.gz";
     }
 
-    if(getenv("SHAPEIT_SAMPLE")!=NULL)
-        reference_sample_file = getenv("SHAPEIT_SAMPLE");
+    if(getenv("shapeit_reference_sample_file")!=NULL)
+        reference_sample_file = getenv("shapeit_reference_sample_file");
     else
         reference_sample_file = "1000GP_Phase3.sample";
 
