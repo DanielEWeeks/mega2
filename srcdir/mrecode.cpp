@@ -1010,7 +1010,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
     allele_list_type *allele;
     void *marker;
     void *marker_copy;
-    int rall;
+//xxint rall;
     const char *all;
     int geno_recoded[2], allele_unrecoded=0;
     const char *all1, *all2;
@@ -1071,7 +1071,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                             int idx = 1;
                             a1 = a2 = 0;
                             while(allele != NULL) {
-                                rall = allele->allele_freq.index;
+//xx                             rall = allele->allele_freq.index;
                                  all = allele->allele_freq.AlleleName;
 
                                 if (allelecmp(all1, all) == 0) {

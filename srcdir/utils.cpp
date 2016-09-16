@@ -603,7 +603,7 @@ void goodbye(int exit)
     free(fl_name);
 
     log_line(mssgf);
-    if (exit == 0) {
+    if (exit == 0 && ! database_dump) {
         mssgf("If you use Mega2 as part of a published work, please reference ");
         /*
           mssgf(" Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2005)");
@@ -620,7 +620,7 @@ void goodbye(int exit)
         mssgf(err_msg);
 
         log_line(mssgf);
-    } else {
+    } else if (exit) {
         mssgf("FAILURE! FAILURE! FAILURE! due to ERROR messages noted previously in the LOG and ERR files.");
     }
     close_logs();
