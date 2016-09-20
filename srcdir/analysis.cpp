@@ -180,7 +180,8 @@ analysis_types analysis_list[] = {
     { "ROADTRIPS format",           ROADTRIPS},
     { "MaCH/minimac3 format",       MACH},
     { "SHAPEIT/minimac3 format",    MINIMAC},
-    { "Database",                   DUMP},
+//  { "Database",                   DUMP},    // DUMP is an analysis but can not be chosen
+
 /*
  * You MUST make the appropriate changes here to define the mapping from the name
  * to the new analysis object
@@ -226,6 +227,8 @@ void init_analysis()
         for (char *cp = key; *cp; cp++) *cp = (char)tolower(*cp);
         P2A[key] = al->analysis;  // key/string from CLASS_ANALYSIS subclass
     }
+
+    P2A[(char *)"dump"] = DUMP;
 }
 
 void prog_name_to_num(char *prog_name, analysis_type *analysis)

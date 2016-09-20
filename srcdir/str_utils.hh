@@ -44,6 +44,9 @@ public:
 
     bool more(Str& token, int dbg=0);
     bool more(const char *& token);
+    void rest(const char *& token) {
+        token = &Cline[fo+1];
+    }
     void rest(Str& token) {
         token = line.substr(of);
     }
