@@ -389,7 +389,7 @@ void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *
 
     params.recode_all_INFO = true;
     params.recode_bcf = true;
-    params.output_prefix = strcat(file_name_stem, "out");
+    params.output_prefix = file_names[0];
     params.recode_bcf_to_stream = false;
 
     params.print_params();
