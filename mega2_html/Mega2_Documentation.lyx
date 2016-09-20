@@ -34410,7 +34410,7 @@ Value it sets
 \begin_inset Text
 
 \begin_layout Plain Layout
-MINIMAC_REF_DIR
+minimac_reference_panel_directory
 \end_layout
 
 \end_inset
@@ -34418,8 +34418,8 @@ MINIMAC_REF_DIR
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
-Choose reference haplotype directory
+\begin_layout Plain Layout
+Minimac3 reference haplotype directory
 \end_layout
 
 \end_inset
@@ -34430,7 +34430,7 @@ Choose reference haplotype directory
 \begin_inset Text
 
 \begin_layout Plain Layout
-MINIMAC_REF_HAP
+minimac_reference_haplotype_file
 \end_layout
 
 \end_inset
@@ -34438,8 +34438,8 @@ MINIMAC_REF_HAP
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
-Choose reference haplotype file
+\begin_layout Plain Layout
+Minimac3 reference haplotype file
 \end_layout
 
 \end_inset
@@ -35067,7 +35067,7 @@ Value it sets
 \begin_inset Text
 
 \begin_layout Plain Layout
-MINIMAC_REF_DIR
+minimac_reference_panel_directory
 \end_layout
 
 \end_inset
@@ -35075,8 +35075,8 @@ MINIMAC_REF_DIR
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
-Reference haplotype directory
+\begin_layout Plain Layout
+Minimac3 Reference haplotype directory
 \end_layout
 
 \end_inset
@@ -35087,7 +35087,7 @@ Reference haplotype directory
 \begin_inset Text
 
 \begin_layout Plain Layout
-MINIMAC_REF_HAP
+minimac_reference_haplotype_file
 \end_layout
 
 \end_inset
@@ -35095,8 +35095,8 @@ MINIMAC_REF_HAP
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
-Reference haplotype file
+\begin_layout Plain Layout
+Minimac3 Reference haplotype file
 \end_layout
 
 \end_inset
@@ -35107,7 +35107,7 @@ Reference haplotype file
 \begin_inset Text
 
 \begin_layout Plain Layout
-MAP_DIR
+shapeit_reference_map_directory
 \end_layout
 
 \end_inset
@@ -35115,7 +35115,7 @@ MAP_DIR
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
+\begin_layout Plain Layout
 Shapeit genetic recombination map directory  
 \end_layout
 
@@ -35127,7 +35127,7 @@ Shapeit genetic recombination map directory
 \begin_inset Text
 
 \begin_layout Plain Layout
-SHAPEIT_MAP
+shapeit_reference_map_file
 \end_layout
 
 \end_inset
@@ -35135,7 +35135,7 @@ SHAPEIT_MAP
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
+\begin_layout Plain Layout
 Shapeit genetic recombination map file
 \end_layout
 
@@ -35147,7 +35147,7 @@ Shapeit genetic recombination map file
 \begin_inset Text
 
 \begin_layout Plain Layout
-SHAPEIT_REF_DIR
+shapeit_reference_panel_directory
 \end_layout
 
 \end_inset
@@ -35155,7 +35155,7 @@ SHAPEIT_REF_DIR
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
+\begin_layout Plain Layout
 Shapeit reference panel directory
 \end_layout
 
@@ -35167,7 +35167,7 @@ Shapeit reference panel directory
 \begin_inset Text
 
 \begin_layout Plain Layout
-SHAPEIT_MAP
+shapeit_reference_haplotype_file
 \end_layout
 
 \end_inset
@@ -35175,7 +35175,7 @@ SHAPEIT_MAP
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
+\begin_layout Plain Layout
 Shapeit reference haplotype file
 \end_layout
 
@@ -35187,7 +35187,7 @@ Shapeit reference haplotype file
 \begin_inset Text
 
 \begin_layout Plain Layout
-SHAPEIT_LEGEND
+shapeit_reference_legend_file
 \end_layout
 
 \end_inset
@@ -35195,8 +35195,8 @@ SHAPEIT_LEGEND
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
-Choose Shapeit reference legend file
+\begin_layout Plain Layout
+Shapeit reference legend file
 \end_layout
 
 \end_inset
@@ -35207,7 +35207,7 @@ Choose Shapeit reference legend file
 \begin_inset Text
 
 \begin_layout Plain Layout
-SHAPEIT_SAMPLE
+shapeit_reference_sample_file
 \end_layout
 
 \end_inset
@@ -35215,8 +35215,8 @@ SHAPEIT_SAMPLE
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout LyX-Code
-Choose Shapeit reference sample file  
+\begin_layout Plain Layout
+Shapeit reference sample file  
 \end_layout
 
 \end_inset
