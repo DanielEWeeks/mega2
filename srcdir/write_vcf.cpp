@@ -48,6 +48,7 @@
 #include "write_vcf_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
 #include "vcftools/bcf_file.h"
+#include "vcftools/vcf_file.h"
 #include "vcftools/parameters.h"
 
 Str hg_build;
@@ -88,7 +89,7 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 
 
     //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
-    if(num_traits>1)
+    //if(num_traits>1)
         write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
     write_VCF_sh(Top, file_name_stem, file_names);
 
@@ -112,7 +113,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             data_loop(*_opath, file_names[0], "w");
         }
         void file_header(){
-            pr_printf("##fileformat=VCFv4.2\n");
+            pr_printf("##fileformat=VCFv4.1\n");
             pr_printf("##filedate=%s\n",__TIMESTAMP__);
             pr_printf("##source=MEGA2\n");
             if(base_pair_position_index > 0)
@@ -141,7 +142,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
     } *hlps = new vcf_vcfs_header_start(Top);
 
-    hlps->setfln(prefix, ".vcf");
     hlps->file_names = file_names;
 
     hlps->load_formats_no_space(-1);
@@ -175,7 +175,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
     } *hlp = new vcf_vcfs_header(Top);
 
-    hlp->setfln(prefix, ".vcf");
     hlp->file_names = file_names;
 
     hlp->load_formats_no_space(-1);
@@ -281,7 +280,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
     } *lp = new vcf_vcfs(Top);
 
-    lp->setfln(prefix, ".vcf");
     lp->file_names = file_names;
 
     lp->load_formats_no_space(-1);
@@ -316,7 +314,6 @@ void CLASS_VCF::write_VCF_ped(linkage_ped_top *Top, const char *prefix, char *fi
         }
     } *lp = new vcf_peds(Top);
 
-    lp->setfln(prefix, ".fam");
     lp->file_names = file_names;
 
     lp->load_formats(fwid, pwid, -1);
@@ -359,7 +356,6 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
         }
     } *lp = new vcf_phenos(Top);
 
-    lp->setfln(prefix, ".phe");
     lp->file_names = file_names;
 
     //lp->load_formats(fwid, pwid, -1);
@@ -372,7 +368,7 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
 
 //use VCFTools to turn our VCF output into a BCF file
 void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
-    char *argv[] = {"vcftools", "--vcf", file_names[0], "--recode-bcf","--out","out.bcf", NULL};
+    char *argv[] = {"vcftools", "--vcf", file_names[0], "--recode-bcf","--out","out", NULL};
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     parameters params(argc,argv);
@@ -384,13 +380,20 @@ void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *
 
     params.recode_all_INFO = true;
     params.recode_bcf = true;
+    params.output_prefix = strcat(file_name_stem, "out");
+    params.recode_bcf_to_stream = false;
 
     params.print_params();
 
-    variant_file *bcf;
+    variant_file *vcf;
+    vcf = new vcf_file(params.vcf_filename,params.vcf_compressed,params.chrs_to_keep,params.chrs_to_exclude,params.force_write_index);
+    vcf->print_bcf(params.output_prefix,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
 
-    bcf = new bcf_file(params.vcf_filename, params.chrs_to_keep, params.chrs_to_exclude, params.force_write_index, params.gatk);
-    bcf->print_bcf(params.vcf_filename,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
+    //this would've read in a bcf and printed a bcf, whoops.
+    //variant_file *bcf;
+
+    //bcf = new bcf_file(params.vcf_filename, params.chrs_to_keep, params.chrs_to_exclude, params.force_write_index, params.gatk);
+    //bcf->print_bcf(params.vcf_filename,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
 }
 
 void CLASS_VCF::option_menu (char *file_names[], char *prefix) {
@@ -470,8 +473,8 @@ void CLASS_VCF::batch_out(){
 void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char *stem) {
 
      sprintf(file_names[0], "%s.%s.vcf", stem, num);
-     sprintf(file_names[1], "%s.%s.ped", stem, num);
-     sprintf(file_names[2], "%s.%s.per", stem, num);
+     sprintf(file_names[1], "%s.ped", stem);
+     sprintf(file_names[2], "%s.phe", stem);
 }
 
 
@@ -482,6 +485,6 @@ void CLASS_VCF::gen_file_names(char **file_names, char *num)
 
 void CLASS_VCF::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
-    change_output_chr(file_names[1], numchr);
-    change_output_chr(file_names[2], numchr);
+    //change_output_chr(file_names[1], numchr);
+    //change_output_chr(file_names[2], numchr);
 }
