@@ -147,6 +147,12 @@ public:
 */
     virtual bool forbid_sex_linked_loci()  { return false; }
 
+    /*
+     * New function to hide nonautosomal Chromosomes.
+     * The Reorder Loci Menu will only display Chr 1-22 if set to true.
+     */
+    virtual bool only_display_autosomes() { return false;}
+
 /*
 */
     virtual bool forbid_trait_directories()  { return false; }

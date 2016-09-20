@@ -60,7 +60,6 @@ bool Token::more(Str& token, int dbg) {
     }
 }
 
-
 bool Token::more(const char *&token) {
     fo = line.find_first_of(sep, of);
     if (fo == std::string::npos) {

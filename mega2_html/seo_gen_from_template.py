@@ -75,7 +75,7 @@ class Citation(object):
     def url(self, ustr):
         self.all.append('  <a class="FlexURL" target="_blank" href="{0}">{1}</a>  '.format(DBREF[ustr]['url'], ustr[:-4]) )
 
-    elements = (('author','{0}'), \
+    elements = (('author','{0}'), ('vauthors','{0}'), \
                 ('last','{0} '),   ('first','{0}'), \
                 ('author2', ', {0}'), ('author3', ', {0}'), \
                 ('author4', ', {0}'), ('author5', ', {0}'), \

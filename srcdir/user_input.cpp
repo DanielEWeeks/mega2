@@ -1627,10 +1627,9 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         BatchValueGet(fn,   "DBfile_name");
 
     printf("\n");
-    printf("If you are looking for the traditional Mega2 menu for specifying input files and their types,\n");
-    printf("you are in the wrong menu.  Hit \"q\" to exit this menu; then restart Mega2 and\n");
-    printf("provide the --DBdump command line argument.  This will get you to the correct menu\n");
-    printf("and will produce an SQLite3 database which can be used in all the subsequent Mega2 analyses.\n");
+    printf("Mega2 will read the input from the database specified in menu item 2 below.\n");
+    printf("To instead read from a set of input files and create a new database, hit 'q'\n");
+    printf("to exit Mega2 and then restart Mega2 with the --DBdump command line argument.\n");
     printf("\n");
 
     int line_len = 45;
@@ -1663,8 +1662,8 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         while (1) {
             fcmap(stdin, "%s", cchoice); newline;
             if (!strcmp(cchoice, "q")) {
-                printf("Exiting Mega2.\n");
-                EXIT(1);
+                close_logs();
+                exit(0);
             }
             choice_ = -1;
             sscanf(cchoice, "%d", &choice_);

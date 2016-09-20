@@ -53,8 +53,6 @@ extern int  MARKER_SCHEME;
 extern Alleles_int *MARKER_SCHEME3_alleles;
 
 void CanonicalAllele_table::db_getall(linkage_ped_top *Top) {
-//xx
-    return;
     int ret = select_stmt && select_stmt->abort();
     int k = 0;
     const char *v = (char *)0;
@@ -145,7 +143,7 @@ void dballele_import(linkage_ped_top *Top) {
 
     MasterDB.begin();
 
-    canonicalallele_table.db_getall(Top);
+//xxcanonicalallele_table.db_getall(Top);
 
     markerscheme_table.db_getall(Top);
 

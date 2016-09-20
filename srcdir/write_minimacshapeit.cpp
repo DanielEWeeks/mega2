@@ -82,7 +82,7 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     }
 
     int combine_chromo = 0;
-    LoopOverChrm  = ! combine_chromo;
+    LoopOverChrm  = 1;
 
     LoopOverTrait = 0;
     num_traits = 0;
@@ -114,6 +114,7 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
     (*analysis)->_suboption = PLINK_SUB_OPTION_SNP_MAJOR_INT;
+
     create_PLINK_files(&LPedTreeTop, file_names, UntypedPedOpt, PLINK_SUB_OPTION_SNP_MAJOR_INT-1, file_name_stem, analysis);
 
     //Hindsight 20/20 this is not necessary as it was used for MaCH2VCF, I'll keep the function in, in case I realize we do need it but for now I don't think we need a snps file
@@ -205,15 +206,15 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
 
             //we can make the split between minimac3 and minimac3-omp here instead
             if (g_cpus == 1) {
-                sprintf(cmd2, "%s/%s", "MINIMAC3", "minimac3");
-                sh_find_pgm("MINIMAC3", cmd2, "minimac3");
-                sprintf(cmd2, "$%s_program ", "minimac3");
+                sprintf(cmd2, "%s/%s", "MINIMAC3", "Minimac3");
+                sh_find_pgm("MINIMAC3", cmd2, "Minimac3");
+                sprintf(cmd2, "$%s_program ", "Minimac3");
             }
 
             if (g_cpus > 1) {
-                sprintf(cmd2, "%s/%s", "MINIMAC3OMP", "minimac3-omp");
-                sh_find_pgm("MINIMAC3OMP", cmd2, "minimac3-omp");
-                sprintf(cmd2, "$%s_program ", "minimac3-omp");
+                sprintf(cmd2, "%s/%s", "MINIMAC3OMP", "Minimac3-omp");
+                sh_find_pgm("MINIMAC3OMP", cmd2, "Minimac3-omp");
+                sprintf(cmd2, "$%s_program ", "Minimac3-omp");
             }
 
             Vecs s_hapsplit;
@@ -296,6 +297,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_nl();
 
         }
+
         //finds the program to run dynamically and gives an error if it can't be found.
         void sh_find_pgm(const char *NAME, const char *fullpath, const char *path) {
             pr_printf("if ( $?%s  ) then\n", NAME);
@@ -368,7 +370,8 @@ void CLASS_MINIMAC::create_sh_file(linkage_ped_top *Top, char **file_names, cons
 //Override of user_queries method, don't want to query the user about combining chromosomes, genotyping summaries, or filename stem (again)
 //Since I wrote a different option menu function before realizing plink core had this method to override I realize now that it's easier to have a blank method in it's place and hide it's behavior
 void CLASS_MINIMAC::user_queries(char **file_names_array, int *combine_chromo, int *create_summary) {
-    combine_chromo = 0;
+    *combine_chromo = 0;
+    LoopOverChrm = 1;
     //do nothing since we have another menu.
 }
 
@@ -430,18 +433,70 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
     Vecs legendsplit;
     Vecs m_hapsplit;
 
-    map_pre = "genetic_map_chr";
-    map_post = "_combined_b37.txt";
-    s_haplotype_pre = "1000GP_Phase3_chr";
-    s_haplotype_post = ".hap.gz";
-    legend_pre = "1000GP_Phase3_chr";
-    legend_post = ".legend.gz";
-    reference_sample_file = "1000GP_Phase3.sample";
-    m_haplotype_pre = "";
-    m_haplotype_post = ".1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
-    minimac_directory_name = ".";
-    shapeit_directory_name = ".";
-    map_directory_name = ".";
+    //check environment variables or set to default.
+    if(getenv("minimac_reference_panel_directory")!=NULL)
+        minimac_directory_name = getenv("minimac_reference_panel_directory");
+    else
+        minimac_directory_name = ".";
+
+    if(getenv("shapeit_reference_panel_directory")!=NULL)
+        shapeit_directory_name = getenv("shapeit_reference_panel_directory");
+    else
+        shapeit_directory_name = ".";
+
+    if(getenv("shapeit_reference_map_directory")!=NULL)
+        map_directory_name = getenv("shapeit_reference_map_directory");
+    else
+        map_directory_name = ".";
+
+    if(getenv("minimac_reference_haplotype_file")!=NULL) {
+        minimac_reference_haplotype_file = getenv("minimac_reference_haplotype_file");
+        split(m_hapsplit, minimac_reference_haplotype_file, "?");
+        m_haplotype_pre = m_hapsplit[0];
+        m_haplotype_post = m_hapsplit[1];
+    }
+    else{
+        m_haplotype_pre = "1000GP_Phase3_chr";
+        m_haplotype_post = ".hap.gz";
+    }
+
+    if(getenv("shapeit_reference_haplotype_file")!=NULL) {
+        shapeit_reference_haplotype_file = getenv("shapeit_reference_haplotype_file");
+        split(s_hapsplit, shapeit_reference_haplotype_file, "?");
+        s_haplotype_pre = s_hapsplit[0];
+        s_haplotype_post = s_hapsplit[1];
+    }
+    else{
+        s_haplotype_pre = "1000GP_Phase3_chr";
+        s_haplotype_post = ".hap.gz";
+    }
+
+    if(getenv("shapeit_reference_map_file")!=NULL) {
+        map_file = getenv("shapeit_reference_map_file");
+        split(mapsplit, map_file, "?");
+        map_pre = mapsplit[0];
+        map_post = mapsplit[1];
+    }
+    else{
+        map_pre = "genetic_map_chr";
+        map_post = "_combined_b37.txt";
+    }
+
+    if(getenv("shapeit_reference_legend_file")!=NULL) {
+        legend_file = getenv("shapeit_reference_legend_file");
+        split(legendsplit, legend_file, "?");
+        legend_pre = legendsplit[0];
+        legend_post = legendsplit[1];
+    }
+    else{
+        legend_pre = "1000GP_Phase3_chr";
+        legend_post = ".legend.gz";
+    }
+
+    if(getenv("shapeit_reference_sample_file")!=NULL)
+        reference_sample_file = getenv("shapeit_reference_sample_file");
+    else
+        reference_sample_file = "1000GP_Phase3.sample";
 
 
     while (choice != 0) {
@@ -478,24 +533,49 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         }
 
         else if ( choice == done ) {
-            if (!map_renamed){
-                strcpy(map_file_input, "genetic_map_chr?_combined_b37.txt");
-                reference_map_file = "genetic_map_chr?_combined_b37.txt";
+            if (!map_renamed) {
+                if (getenv("SHAPEIT_MAP") != NULL) {
+                    strcpy(map_file_input,getenv("SHAPEIT_MAP"));
+                    reference_map_file = getenv("SHAPEIT_MAP");
+                }
+                else {
+                    strcpy(map_file_input, "genetic_map_chr?_combined_b37.txt");
+                    reference_map_file = "genetic_map_chr?_combined_b37.txt";
+                }
             }
             if (!s_hap_renamed){
-                strcpy(s_hap_file_input, "1000GP_Phase3_chr?.hap.gz");
-                shapeit_reference_haplotype_file = "1000GP_Phase3_chr?.hap.gz";
+                if(getenv("SHAPEIT_REF_HAP")!=NULL) {
+                    strcpy(s_hap_file_input, getenv("SHAPEIT_REF_HAP"));
+                    shapeit_reference_haplotype_file = getenv("SHAPEIT_REF_HAP");
+                }
+                else{
+                    strcpy(s_hap_file_input, "1000GP_Phase3_chr?.hap.gz");
+                    shapeit_reference_haplotype_file = "1000GP_Phase3_chr?.hap.gz";
+                }
+
             }
 
 
             if (!legend_renamed){
-                strcpy(legend_file_input, "1000GP_Phase3_chr?.legend.gz");
-                reference_legend_file = "1000GP_Phase3_chr?.legend.gz";
+                if(getenv("SHAPEIT_LEGEND")!=NULL) {
+                    strcpy(legend_file_input, getenv("SHAPEIT_LEGEND"));
+                    reference_legend_file = getenv("SHAPEIT_LEGEND");
+                }
+                else{
+                    strcpy(legend_file_input, "1000GP_Phase3_chr?.legend.gz");
+                    reference_legend_file = "1000GP_Phase3_chr?.legend.gz";
+                }
             }
 
             if (!m_hap_renamed){
-                strcpy(m_hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
-                minimac_reference_haplotype_file = "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
+                if(getenv("MINIMAC_REF_HAP")!=NULL){
+                    strcpy(m_hap_file_input, getenv("MINIMAC_REF_HAP"));
+                    minimac_reference_haplotype_file = getenv("MINIMAC_REF_HAP");
+                }
+                else{
+                    strcpy(m_hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
+                    minimac_reference_haplotype_file = "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
+                }
             }
 
             map_file = reference_map_file;
@@ -517,7 +597,7 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
             BatchValueSet (minimac_reference_haplotype_file, "minimac_reference_haplotype_file");
             BatchValueSet (map_directory_name, "shapeit_reference_map_directory");
             BatchValueSet (shapeit_directory_name, "shapeit_reference_panel_directory");
-            BatchValueSet (minimac_directory_name, "minimiac_reference_panel_directory");
+            BatchValueSet (minimac_directory_name, "minimac_reference_panel_directory");
 
 
             BatchValueSet (g_cpus, "batch_cpu_count");
@@ -759,17 +839,19 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 //need to call inner file names for the names we change
 //need to call file_names_w_stem for PLINK output files
 void CLASS_MINIMAC::gen_file_names(char **file_names, char *num){
-    file_names_w_stem(file_names, num, file_name_stem,
-                      PLINK_SUB_OPTION_SNP_MAJOR_INT);
+    file_names_w_stem(file_names, num, file_name_stem, PLINK_SUB_OPTION_SNP_MAJOR_INT);
     inner_file_names(file_names, num);
 }
 
 //Replace the chromosomes for the PLINK files, bed, bim, fam
 void CLASS_MINIMAC::replace_chr_number(char *file_names[], int numchr) {
+    CLASS_PLINK_CORE::replace_chr_number(file_names, numchr);
+
     //change_output_chr(file_names[10], numchr);
     change_output_chr(file_names[8], numchr);
     change_output_chr(file_names[1], numchr);
     change_output_chr(file_names[3], numchr);
+
 }
 
 /*
@@ -793,7 +875,7 @@ void CLASS_MINIMAC::batch_out()
                        "batch_cpu_count",
                        "shapeit_reference_map_directory",
                        "shapeit_reference_panel_directory",
-                       "minimiac_reference_panel_directory",
+                       "minimac_reference_panel_directory",
 
     };
 
@@ -817,7 +899,7 @@ void CLASS_MINIMAC::batch_in()
     BatchValueGet(minimac_reference_haplotype_file,"minimac_reference_haplotype_file");
     BatchValueGet(g_cpus, "batch_cpu_count");
     BatchValueGet(map_directory_name, "shapeit_reference_map_directory");
-    BatchValueGet(minimac_directory_name, "minimiac_reference_panel_directory");
+    BatchValueGet(minimac_directory_name, "minimac_reference_panel_directory");
     BatchValueGet(shapeit_directory_name, "shapeit_reference_panel_directory");
 
     map_file = reference_map_file;

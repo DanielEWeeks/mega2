@@ -65,6 +65,8 @@ extern int ALLELE_ARRAY;
 extern allele_prop **Allele_Array;
 extern allele_prop *canonical_allele_internal(const char *v);
 
+Str reference_directory = ".";
+
 
 //  Output will like this:
 //  FAM1001   ID1234  0   0   M  A A   A C   C C
@@ -262,33 +264,33 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             sh_find_pgm("MACH1", cmd1, "mach1");
             sprintf(cmd1, "$%s_program ", "mach1");
 
-            sprintf(cmd2, "%s/%s", "MACH2VCF", "mach2VCF");
-            sh_find_pgm("MACH2VCF", cmd2, "mach2VCF");
-            sprintf(cmd2, "$%s_program ", "mach2VCF");
+            sprintf(cmd2, "%s/%s", "MACH2VCF", "Mach2VCF");
+            sh_find_pgm("MACH2VCF", cmd2, "Mach2VCF");
+            sprintf(cmd2, "$%s_program ", "Mach2VCF");
 
             //we can make the split between minimac3 and minimac3-omp here instead
             if (g_cpus == 1) {
-                sprintf(cmd3, "%s/%s", "MINIMAC3", "minimac3");
-                sh_find_pgm("MINIMAC3", cmd3, "minimac3");
-                sprintf(cmd3, "$%s_program ", "minimac3");
+                sprintf(cmd3, "%s/%s", "MINIMAC3", "Minimac3");
+                sh_find_pgm("MINIMAC3", cmd3, "Minimac3");
+                sprintf(cmd3, "$%s_program ", "Minimac3");
             }
 
             if (g_cpus > 1) {
-                sprintf(cmd3, "%s/%s", "MINIMAC3OMP", "minimac3-omp");
-                sh_find_pgm("MINIMAC3OMP", cmd3, "minimac3-omp");
-                sprintf(cmd3, "$%s_program ", "minimac3-omp");
+                sprintf(cmd3, "%s/%s", "MINIMAC3OMP", "Minimac3-omp");
+                sh_find_pgm("MINIMAC3OMP", cmd3, "Minimac3-omp");
+                sprintf(cmd3, "$%s_program ", "Minimac3-omp");
             }
 
             pr_nl();
             //mach1 run, might need additional parameters, specifically do we need hapmap and snps files or are those only used with mach2vcf
             pr_printf ("#use mega2 output in mach1 to prephasedata\n");
-            pr_printf ("%s -d %s -p %s --rounds 20 --states 200 --phase --interim 5 --sample 5 --prefix Chr%d.Phased.Output", cmd1, file_names[1], file_names[0],_numchr);
+            pr_printf ("%s -d %s -p %s --rounds 20 --states 200 --phase --interim 5 --sample 5 --prefix Chr%d.Phased.Output", cmd1 , file_names[1], file_names[0],_numchr);
             pr_nl();
             pr_nl();
 
             //based on what I've read, we want the out put file from mach1 to be the haps file for mach2VCF, I'm assuming the user needs to input a snpfile using the menu
             pr_printf ("#use mach2VCF to create a VCF output of prephased data\n");
-            pr_printf ("%s --haps Chr%d.Phased.Output --snps %s --prefix Chr%d.Phased.Output.VCF.format", cmd2, _numchr,file_names[4],_numchr);
+            pr_printf ("%s --haps Chr%d.Phased.Output.gz --snps %s --prefix Chr%d.Phased.Output.VCF.format",cmd2, _numchr,file_names[4],_numchr);
             pr_nl();
             pr_nl();
 
@@ -299,13 +301,13 @@ static void write_MACH_sh(linkage_ped_top *Top, char *file_names[]) {
             if(hapsplit.size() ==2) {
                 if (g_cpus == 1)
                     pr_printf(
-                            "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",
-                            cmd3, hapsplit[0].c_str(), _numchr, hapsplit[1].c_str(), _numchr, _numchr, _numchr);
+                            "%s --refHaps %s/%s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d\n",
+                            cmd3, reference_directory.c_str(), hapsplit[0].c_str(), _numchr, hapsplit[1].c_str(), _numchr, _numchr, _numchr);
 
                 if (g_cpus > 1)
                     pr_printf(
-                            "%s --refHaps %s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",
-                            cmd3, hapsplit[0].c_str(), _numchr, hapsplit[1].c_str(), _numchr, _numchr, _numchr, g_cpus);
+                            "%s --refHaps %s/%s%d%s --haps Chr%d.Phased.Output.VCF.format.vcf.gz --prefix Chr%d.Imputed.Output --chr %d --cpus %d\n",
+                            cmd3, reference_directory.c_str(), hapsplit[0].c_str(), _numchr, hapsplit[1].c_str(), _numchr, _numchr, _numchr, g_cpus);
             }
             else
                 errorf("Error in input of Minimac3 reference files: haplotype.\n Make sure there to include one (and only one) '?' in the filename to be replaced with the chromosome number.\n");
@@ -396,6 +398,7 @@ void CLASS_MACH::create_output_file(
     combine_chromo = 0;
     LoopOverChrm  = ! combine_chromo;
 
+
     //There are no traits for MaCH/Minimac3
     LoopOverTrait = 0;
     num_traits = 0;
@@ -456,28 +459,48 @@ void CLASS_MACH::create_output_file(
 
 //this will create and parse the options
 void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
-    int done, hap, cpus, choice, renamed, stem;
+    int done, hap, cpus, choice, renamed, stem,dir;
     done = 0;
     stem = 1;
-    hap = 2;
-    cpus = 3;
+    dir = 2;
+    hap = 3;
+    cpus = 4;
     choice = -1;
     renamed = 0;
 
     strcpy(prefix, file_name_stem);
 
     char hap_file_input[255];
+    char dir_input[255];
+    char response[255];
     Vecs hapsplit;
     haplotype_post = ".1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
+    Str directory = ".";
+
+
+    if(getenv("minimac_reference_panel_directory")!= NULL)
+        directory = getenv("minimac_reference_panel_directory");
+    else
+        directory = ".";
+
+    if(getenv("minimac_reference_haplotype_file")!= NULL) {
+        mach_reference_haplotype_file = getenv("minimac_reference_haplotype_file");
+        split(hapsplit, mach_reference_haplotype_file, "?");
+        haplotype_pre = hapsplit[0];
+        haplotype_post = hapsplit[1];
+    }
+    else
+        haplotype_post = ".1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz";
 
     while (choice != 0) {
         draw_line();
         printf("MaCH/Minimac3 Analysis Menu:\n");
         printf("%d) Done with this menu - please proceed\n",done);
         printf("%d) File name stem:                                     %-15s\n", stem, prefix);
+        printf("%d) Choose reference haplotype directory:               %s\n", dir, directory.c_str());
         printf("%d) Choose reference haplotype file:                    %s?%s\n", hap, haplotype_pre.c_str(), haplotype_post.c_str());
         printf("%d) Number of CPUS for Minimac3 Imputation:             %d\n",    cpus, g_cpus);
-        printf("Enter selection: 0 - %d > ",3);
+        printf("Enter selection: 0 - %d > ",4);
 
         fcmap(stdin,"%d", &choice); newline;
 
@@ -486,14 +509,21 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
         }
 
         else if ( choice == done ) {
-            if (!renamed)
-                strcpy (hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
+            if (!renamed){
+                if(getenv("MINIMAC_REF_HAP")!= NULL)
+                    strcpy(hap_file_input,getenv("MINIMAC_REF_HAP"));
+                else
+                    strcpy (hap_file_input, "?.1000g.Phase3.v5.With.Parameter.Estimates.m3vcf.gz");
+            }
+
+            reference_directory = directory;
 
             BatchValueSet (g_cpus, "batch_cpu_count");
 
             free(file_name_stem);
             file_name_stem = strdup(prefix);
             BatchValueSet(file_name_stem, "file_name_stem");
+            BatchValueSet(directory,"minimac_reference_panel_directory");
         }
 
         else if ( choice == stem ) {
@@ -539,6 +569,34 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
             }
         }
 
+        else if ( choice == dir) {
+            while (1) {
+                bool no = 0;
+                printf("Enter reference haplotype directory>\n");
+                fcmap(stdin, "%s", &dir_input);
+                if(!is_dir(dir_input)){
+                    while (1){
+                        printf("This directory does not exist on the current machine, are you sure you want to continue with this value? (Y/N)");
+                        fcmap(stdin, "%s", &response);
+                        if(response[0] =='Y' || response[0] == 'y')
+                            break;
+                        else if (response[0] =='N' || response[0] == 'n'){
+                            no = 1;
+                            break;
+                        }
+                        else{
+                            printf("Unknown response\n");
+                            continue;
+                        }
+                    }
+                }
+                newline;
+                if(!no)
+                    directory = dir_input;
+                break;
+            }
+        }
+
         else {
             printf("Unknown option %d\n", choice);
         }
@@ -577,6 +635,7 @@ void CLASS_MACH::batch_out()
     Cstr Values[] =  { "file_name_stem",
                        "minimac_reference_haplotype_file",
                        "batch_cpu_count",
+                       "minimac_reference_panel_directory",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -592,5 +651,6 @@ void CLASS_MACH::batch_in()
 
     BatchValueIfSet(                fn,   "file_name_stem");
     BatchValueGet(mach_reference_haplotype_file, "minimac_reference_haplotype_file");
+    BatchValueGet(reference_directory,"minimac_reference_panel_directory");
     BatchValueGet(g_cpus, "batch_cpu_count");
 }

@@ -1,5 +1,18 @@
 #!/usr/local/bin/python3
+##
+## It is best to save wik, parsed_wik, tables.html and conversions before running these two programs.
+## First, run seo_parse_raw_wiki.py and compare the parsed_wik vs the saved version.  parsed_wik is
+## very readable and it should be easy to see problems in it.  (Someday I imagine, I will have to
+## give up parsing the raw wiki data and just start with parsed_wik.  Any changes to the wiki page
+## would then be hand editted into the parse_wik.)
 
+## 9/20/16
+## wiki uses the citation keyword "vauthors" rather than "authors"
+## wiki seems to make a <ref name="pmid1234"> if the citation has a pmid.
+##      Let's remove the " and think about appending the "abbrev" (see code)
+
+
+##
 from __future__ import print_function
 
 from optparse import OptionParser
@@ -39,7 +52,7 @@ def get_citations(topic, line):
 
         refclause = m.group(1).split("=")     # define reference name
         if len(refclause) >= 2:
-            refkey = refclause[-1].strip() + '_cit'
+            refkey = refclause[-1].strip().strip('"') + '_cit'
             if refkey in DBREF and fresh:
                 cnt += 1
                 refkey = abbrev + str(cnt) + '_cit'

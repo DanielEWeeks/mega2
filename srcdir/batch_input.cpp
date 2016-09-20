@@ -249,7 +249,7 @@ static keyw_t keywords[] = {
     {"shapeit_haps_file_selected",            INT,        "0"},
     {"shapeit_reference_map_directory",       STRING,     "."},
     {"shapeit_reference_panel_directory",     STRING,     "."},
-    {"minimiac_reference_panel_directory",    STRING,     "."},
+    {"minimac_reference_panel_directory",     STRING,     "."},
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
 
