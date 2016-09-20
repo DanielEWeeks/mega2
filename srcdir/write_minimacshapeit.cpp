@@ -81,7 +81,7 @@ void CLASS_MINIMAC::create_output_file(linkage_ped_top *LPedTreeTop, analysis_ty
         inner_file_names(file_names, "", file_name_stem);
     }
 
-    int combine_chromo = 0;
+    //int combine_chromo = 0;
     LoopOverChrm  = 1;
 
     LoopOverTrait = 0;

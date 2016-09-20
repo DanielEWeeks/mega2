@@ -134,7 +134,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
                 //based on PLINK's conversion to VCF we don't want the difference for the contig length we want 1+ the greatest value for length
                 int diff = _EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index] + 1;
-                pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_numchr,diff,"b37");
+                pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_numchr,diff,hg_build.c_str());
                 first = false;
             }
         }
@@ -372,7 +372,12 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
 
 //use VCFTools to turn our VCF output into a BCF file
 void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
-    char *argv[] = {"vcftools", "--vcf", file_names[0], "--recode-bcf","--out","out", NULL};
+    char vcftools[10] = "vcftools";
+    char vcfflag[10] = "--vcf";
+    char recode[15] = "--recode-bcf";
+    char outflag[10] = "--out";
+    char outname[10] = "out";
+    char *argv[] = {vcftools, vcfflag, file_names[0], recode,outflag,outname, NULL};
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     parameters params(argc,argv);
@@ -407,7 +412,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix) {
     build = 2;
 
     strcpy(prefix,file_name_stem);
-    char* buildname = "hg27";
+    char buildname[5] = "hg27";
     choice = -1;
 
     while (choice != 0) {
