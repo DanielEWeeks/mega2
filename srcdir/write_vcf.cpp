@@ -268,7 +268,11 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("PASS\t");
             if(base_pair_position_index > 0 && _tlocusp->Marker->pos_avg != 0)
                pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
-            pr_printf("AF=%.6f;",_tlocusp->Allele[_allele2].Frequency);
+            double alternate_frequency = 0;
+            for (int allele = 1; allele < _tlocusp->AlleleCnt; allele++) {
+                alternate_frequency += _tlocusp->Allele[allele].Frequency;
+            }
+            pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
             //pr_printf("NS=%d;",0);
             pr_printf("\t");
