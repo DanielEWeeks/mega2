@@ -79,7 +79,6 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     omit_peds(untyped_ped_opt, Top);
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
-    file_name_stem = strdup("vcf");
     inner_file_names(file_names,"",file_name_stem);
 
 
@@ -373,20 +372,19 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
 
 //use VCFTools to turn our VCF output into a BCF file
 void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
-    //we need to make this file_names instead
-    //also add some checking
-    //also call from the vcftools folder probably
-    char *argv[] = {"vcftools", "--vcf", "vcf.22", "--recode-bcf","--out","out.bcf", NULL};
+    char *argv[] = {"vcftools", "--vcf", file_names[0], "--recode-bcf","--out","out.bcf", NULL};
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     parameters params(argc,argv);
 
-    params.recode_bcf = true;
-    //params.output_prefix = "out";
+    params.read_parameters();
+
+    params.vcf_filename=file_names[0];
+    params.vcf_compressed = false;
+
     params.recode_all_INFO = true;
-    params.vcf_filename = "vcf.22";
-    //params.vcf_filename=file_names[0];
-    //params.read_parameters();
+    params.recode_bcf = true;
+
     params.print_params();
 
     variant_file *bcf;
@@ -401,14 +399,46 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix) {
     stem = 1;
     build = 2;
 
+    strcpy(prefix,file_name_stem);
     char* buildname = "hg27";
+    choice = -1;
 
     while (choice != 0) {
         draw_line();
         printf("VCF Analysis Menu:\n");
         printf("%d) Done with this menu - please proceed\n", done);
-        printf("%d) File name stem:                                             %-15s\n", stem, file_name_stem);
+        printf("%d) File name stem:                                             %-15s\n", stem, prefix);
         printf("%d) Human Genome Build                                          %s\n", build, buildname);
+        printf("Enter selection: 0 - %d > ",2);
+        fcmap(stdin,"%d", &choice); newline;
+
+        if ( choice < done ) {
+            printf("Unknown option %d\n", choice);
+        }
+
+        else if ( choice == done ) {
+            strcpy(file_name_stem,prefix);
+            hg_build = buildname;
+        }
+
+        else if ( choice == stem ) {
+            printf("Enter new file name stem > ");
+            fcmap(stdin, "%s", prefix);
+            newline;
+            inner_file_names(file_names, "", prefix);
+        }
+
+        else if ( choice == build ) {
+            printf("Enter human genome build > ");
+            fcmap(stdin, "%s", buildname);
+            newline;
+        }
+
+        else {
+            printf("Unknown option %d\n", choice);
+            newline;
+        }
+
     }
 }
 
@@ -420,7 +450,6 @@ void CLASS_VCF::write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *fil
 void CLASS_VCF::batch_in(){
     char *fn = this->file_name_stem;
     BatchValueIfSet(fn,   "file_name_stem");
-
     BatchValueGet(hg_build, "human_genome_build");
 }
 
@@ -440,10 +469,11 @@ void CLASS_VCF::batch_out(){
 
 void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char *stem) {
 
-     sprintf(file_names[0], "%s", stem);
-     sprintf(file_names[1], "%s", stem);
-     sprintf(file_names[2], "%s", stem);
+     sprintf(file_names[0], "%s.%s.vcf", stem, num);
+     sprintf(file_names[1], "%s.%s.ped", stem, num);
+     sprintf(file_names[2], "%s.%s.per", stem, num);
 }
+
 
 void CLASS_VCF::gen_file_names(char **file_names, char *num)
 {
@@ -451,5 +481,7 @@ void CLASS_VCF::gen_file_names(char **file_names, char *num)
 }
 
 void CLASS_VCF::replace_chr_number(char *file_names[], int numchr) {
-    //change_output_chr(file_names[1], numchr);
+    change_output_chr(file_names[0], numchr);
+    change_output_chr(file_names[1], numchr);
+    change_output_chr(file_names[2], numchr);
 }
