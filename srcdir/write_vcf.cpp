@@ -89,7 +89,7 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 
 
     //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
-    //if(num_traits>1)
+    if(num_traits>1)
         write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
     write_VCF_sh(Top, file_name_stem, file_names);
 
@@ -412,7 +412,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix) {
     build = 2;
 
     strcpy(prefix,file_name_stem);
-    char buildname[5] = "hg27";
+    char buildname[5] = "hg19";
     choice = -1;
 
     while (choice != 0) {
