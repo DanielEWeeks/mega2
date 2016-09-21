@@ -134,7 +134,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
                 //based on PLINK's conversion to VCF we don't want the difference for the contig length we want 1+ the greatest value for length
                 int diff = _EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index] + 1;
-                pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_numchr,diff,hg_build.c_str());
+                pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_tlocusp->Marker->chromosome,diff,hg_build.c_str());
                 first = false;
             }
         }
@@ -222,7 +222,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
 
         void loci_start() {
-            pr_printf("%d\t", _numchr);
+            pr_printf("%d\t", _tlocusp->Marker->chromosome);
             pr_physical_distance(0);
             pr_printf("\t");
             pr_printf("%s\t",_tlocusp->LocusName);
