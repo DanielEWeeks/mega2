@@ -1042,7 +1042,7 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     if (((option == 1 || option == 3) && main_chromocnt > 0)) {
         //method added for analysis type that does not need traits/covariate menu, select trait loci renders that menu
         //we added this back in for specifically with database read mode, this wouldn't make since with database_dump for db uniformity
-        if (!Top->analysis->no_trait_covariate_menu() && database_read) {
+        if (!Top->analysis->no_trait_covariate_menu() && ! database_dump) {
             select_trait_loci(Top, *analysis);
         }
     }
