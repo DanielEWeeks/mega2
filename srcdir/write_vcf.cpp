@@ -314,7 +314,6 @@ void CLASS_VCF::write_VCF_ped(linkage_ped_top *Top, const char *prefix, char *fi
             pr_sex();
             pr_pheno();
             pr_nl();
-
         }
     } *lp = new vcf_peds(Top);
 
@@ -329,34 +328,68 @@ void CLASS_VCF::write_VCF_ped(linkage_ped_top *Top, const char *prefix, char *fi
 
 // this will write the phenotypic data in
 void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
-    vlpCLASS(vcf_phenos,trait,ped_per) {
-        vlpCTOR(vcf_phenos,trait,ped_per) { }
+    vlpCLASS(vcf_phenos_header,trait,null) {
+        vlpCTOR(vcf_phenos_header, trait, null) { }
+        typedef char *str;
+        str *file_names;
+
+        void file_loop() {
+            data_loop(*_opath, file_names[2], "w");
+        }
+        void file_header() {
+            int tr;
+            pr_printf("FID\tIID\t");
+            for (tr=0; tr < num_traits; tr++) {
+                pr_printf("%s\t",_LTop->Pheno[tr].TraitName);
+            }
+            pr_printf("SAMPLEID\n");
+        }
+    } *header = new vcf_phenos_header(Top);
+
+    header->file_names = file_names;
+    header->load_formats_no_space(-1);
+    header->iterate();
+
+    vlpCLASS(vcf_phenos,trait,ped_per_trait) {
+        vlpCTOR(vcf_phenos,trait,ped_per_trait) { }
         typedef char *str;
         str *file_names;
 
         void file_loop() {
             mssgvf("        VCF phenotype file:     %s/%s\n", *_opath, file_names[2]);
-            data_loop(*_opath, file_names[2], "w");
+            data_loop(*_opath, file_names[2], "a");
         }
-        void file_header() {
-            pr_printf("FID\tIID\tA1\tSAMPLEID\n");
+//        void file_header() {
+//            pr_printf("FID\tIID\tA1\tSAMPLEID\n");
 //            pr_printf("FID");
 //            pr_printf("IID");
 //            pr_printf("A1");
 //            pr_printf("SAMPLEID");
 //            pr_nl();
-        }
-        void inner() {
+//        }
+        void per_start(){
             pr_fam();
             pr_printf("\t");
             pr_per();
             pr_printf("\t");
-            pr_pheno();
-            pr_printf("\t");
+        }
+        void per_end(){
             pr_fam();
             pr_printf("_");
             pr_per();
             pr_nl();
+        }
+        void inner() {
+            //pr_fam();
+            //pr_printf("\t");
+            //pr_per();
+            //pr_printf("\t");
+            pr_pheno();
+            pr_printf("\t");
+            //pr_fam();
+            //pr_printf("_");
+            //pr_per();
+            //pr_nl();
         }
     } *lp = new vcf_phenos(Top);
 
@@ -368,6 +401,7 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
     lp->iterate();
 
     delete lp;
+    delete header;
 }
 
 //use VCFTools to turn our VCF output into a BCF file
