@@ -103,7 +103,7 @@ SRCS =  input_check.cpp     select_index.cpp \
 	write_fbat.cpp      write_pseq_files.cpp menu_value_missing.cpp \
 	read_impute.cpp	    read_impute_bgen.cpp read_impute_bgen2.cpp \
 	write_shapeit_files.cpp                  write_roadtrips.cpp \
-	write_mach.cpp      write_minimacshapeit.cpp\
+	write_mach.cpp      write_minimacshapeit.cpp        write_vcf.cpp \
 	dbmega2.cpp         dbmisc.cpp           dbbatch.cpp \
 	dbpedigree.cpp      dballele.cpp         dbloci.cpp \
 	dbmap.cpp           dbgenotype.cpp
@@ -756,6 +756,7 @@ analysis.o: utils_ext.h analysis.h class_old.h write_plink_ext.h
 analysis.o: plink_core_ext.h write_fbat_ext.h write_eigenstrat_ext.h
 analysis.o: write_pangaea_ext.h write_beagle_ext.h write_structure_ext.h
 analysis.o: write_pseq_ext.h write_shapeit_ext.h write_roadtrips_ext.h
+analysis.o: write_mach_ext.h write_minimacshapeit_ext.h write_vcf_ext.h
 analysis.o: write_mach_ext.h write_minimacshapeit_ext.h database_dump_ext.h
 analysis.o: menu_value_missing.h
 class_old.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
@@ -897,16 +898,6 @@ write_mach.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
 write_mach.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_mach.o: user_input_ext.h input_ops.hh str_utils.hh write_mach_ext.h
 write_mach.o: analysis.h write_plink_ext.h plink_core_ext.h
-write_minimacshapeit.o: common.h types.hh typedefs.h errorno.h allutil.h
-write_minimacshapeit.o: linkage.h linkage_external.h makeped.h pedtree.h
-write_minimacshapeit.o: batch_input.h input_check.h hwe.h compress_ext.h
-write_minimacshapeit.o: loop.h file_ops.h zlib.h zconf.h error_messages_ext.h
-write_minimacshapeit.o: utils_ext.h entry.h create_summary_ext.h
-write_minimacshapeit.o: output_routines_ext.h linkage_ext.h sh_util.h
-write_minimacshapeit.o: fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
-write_minimacshapeit.o: user_input_ext.h input_ops.hh str_utils.hh
-write_minimacshapeit.o: write_minimacshapeit_ext.h analysis.h
-write_minimacshapeit.o: write_plink_ext.h plink_core_ext.h
 dbmega2.o: types.hh common.h typedefs.h errorno.h allutil.h linkage.h
 dbmega2.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
 dbmega2.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h
