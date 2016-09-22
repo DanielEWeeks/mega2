@@ -240,8 +240,9 @@ public:
         if (*(p->AlleleName) == 0) p->AlleleName = 0;
         return ret;
     }
-    void print(linkage_allele_rec *p) {
+    double print(linkage_allele_rec *p) {
         printf("A %d %s %f %d\n", p->locus_link, p->AlleleName, p->Frequency, p->index);
+        return p->Frequency;
     }
     void close() {
         delete insert_stmt;
@@ -312,8 +313,8 @@ public:
             && select_stmt->row(idx, p->chromosome, p->col_num, p->locus_link);
     }
     void print(marker_rec *p) {
-        printf("M %d %s, ", p->locus_link, p->MarkerName);
-        printf("%d %d %d %d,",
+        printf("M %d %s ", p->locus_link, p->MarkerName);
+        printf("%d %d %d %d ",
                p->Props.Numbered.Recoded, p->Props.Numbered.NumAlleles,
                p->Props.Numbered.SelectOpt, p->Props.Numbered.EstimateFrequencies);
         printf("%f %f %f %f, ",  p->pos_avg, p->pos_male, p->pos_female, p->error_prob);

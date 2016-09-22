@@ -975,8 +975,8 @@ void menu1(file_format *infl_type,
     sprintf(*output_path, ".");
     sprintf(*input_path, ".");
     if (database_dump || database_read) {
-        char *cp1 = *db_name;
-        BatchValueGet(cp1, "DBfile_name");
+        extern int db_exists_db();
+        (void)db_exists_db();
     }
 
     int line_len;

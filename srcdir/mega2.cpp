@@ -588,6 +588,7 @@ int exceeded_max_morgan_value(const double position) {
 
 extern void init_analysis();
 
+extern int  db_exists_db();
 extern void db_open_db();
 extern void db_init_all();
 extern void db_fini_all();
@@ -632,13 +633,14 @@ int             main(int argc, char **argv, char **env)
     mega2_opts(argc, argv);
 
 //  DB IS READ BY DEFAULT
+/*
     if (database_off)
         database_read = database_dump = 0;
-    else  if (! database_read)
-        database_read = ! database_dump;
-/*  else  if ( (database_read || database_dump) == 0) {
-        database_read = database_dump = 1;
-    }
+    else if (database_dump || database_read) ;
+    else if (db_exists_db())
+        database_read = 1;
+    else
+        database_dump = 1;
 */
     init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
@@ -723,8 +725,19 @@ int             main(int argc, char **argv, char **env)
         strcpy(Mega2Batch, "MEGA2.BATCH");
         backup_file(&(Mega2Batch[0]));
     }
+
     if (AnalyInputMode == NOEXEC_INPUTMODE)
         AnalyInputMode = InputMode;
+
+    if (database_off)
+        database_read = database_dump = 0;
+    else if (database_dump || database_read) ;
+    else if (db_exists_db())
+        database_read = 1;
+    else
+        database_dump = 1;
+    if (InputMode == BATCH_FILE_INPUTMODE)  // may have changed database_read/dump value
+        check_batch_items();
 
     tod_batch();
     // determine if we should go out to the web and check to see if the user is running the latest release of MEGA2...

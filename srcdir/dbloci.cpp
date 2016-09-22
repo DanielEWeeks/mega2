@@ -442,13 +442,12 @@ void dblocus_import(linkage_locus_top *LTop) {
     delete [] Quant_rec;
 
     return;
+
 /*
-    for (int l = 0; l < LocusCnt; l++) {
+    double one = 0.0;
+    for (int l = 0; l < LTop->LocusCnt; l++) {
         linkage_locus_rec *p = LTop->Locus + l;
         locus_table.print(p);
-        for (a = 0; a < p->AlleleCnt; a++) {
-            allele_table.print(p->Allele + a);
-        }
         if (p->Type == NUMBERED || p->Type == XLINKED || p->Type == YLINKED) {
             marker_table.print(p->Marker);
         } else if (p->Type == AFFECTION) {
@@ -456,6 +455,11 @@ void dblocus_import(linkage_locus_top *LTop) {
         } else if (p->Type == QUANT) {
             traitquant_table.print(&(p->Pheno->Props.Quant));
         }
+        one = 0.0;
+        for (a = 0; a < p->AlleleCnt; a++) {
+            one += allele_table.print(&p->Allele[a]);
+        }
+        printf("S %d sum %f\n", p->locus_link, one);
     }
- */
+*/
 }
