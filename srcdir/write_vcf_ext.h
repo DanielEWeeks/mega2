@@ -53,6 +53,11 @@ public:
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
     virtual bool require_physical_map() { return true; }
 
+    virtual void ped_ind_defaults(int unique) {
+        OrigIds[0] = 6; /* Keeps Per ID that was input*/
+        OrigIds[1] = 6; /* Keeps Ped ID that was input*/
+    }
+
     void create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2);
 
     void write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
