@@ -89,8 +89,9 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 
 
     //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
-    if(num_traits>1)
-        write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
+    //if(num_traits>1)
+    //I think we want this all the time since it contains sample id
+    write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
     //write_VCF_sh(Top, file_name_stem, file_names);
 
     //printf("Mega2 is using VCF tools to convert to BCF format:\n");
@@ -109,7 +110,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         bool first;
 
         void file_loop() {
-            mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
+            mssgvf("        VCF format file:        %s/%s\n", *_opath, file_names[0]);
             data_loop(*_opath, file_names[0], "w");
         }
         void file_header(){
@@ -268,11 +269,16 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("PASS\t");
             if(base_pair_position_index > 0 && _tlocusp->Marker->pos_avg != 0)
                pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
-            double alternate_frequency = 0;
+            //double alternate_frequency = 0;
+            pr_printf("AF=");
             for (int allele = 1; allele < _tlocusp->AlleleCnt; allele++) {
-                alternate_frequency += _tlocusp->Allele[allele].Frequency;
+                if(allele < _tlocusp->AlleleCnt-1)
+                    pr_printf("%.6f,",_tlocusp->Allele[allele].Frequency);
+                else
+                    pr_printf("%.6f;",_tlocusp->Allele[allele].Frequency);
+                //alternate_frequency += _tlocusp->Allele[allele].Frequency;
             }
-            pr_printf("AF=%.6f;",alternate_frequency);
+            //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
             //pr_printf("NS=%d;",0);
             pr_printf("\t");
@@ -328,8 +334,8 @@ void CLASS_VCF::write_VCF_ped(linkage_ped_top *Top, const char *prefix, char *fi
 
 // this will write the phenotypic data in
 void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
-    vlpCLASS(vcf_phenos_header,trait,null) {
-        vlpCTOR(vcf_phenos_header, trait, null) { }
+    vlpCLASS(vcf_phenos_header,trait,ped_per_trait) {
+        vlpCTOR(vcf_phenos_header, trait, ped_per_trait) { }
         typedef char *str;
         str *file_names;
 
@@ -340,7 +346,8 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
             int tr;
             pr_printf("FID\tIID\t");
             for (tr=0; tr < num_traits; tr++) {
-                pr_printf("%s\t",_LTop->Pheno[tr].TraitName);
+                if(tr != _trait)
+                    pr_printf("%s\t",_LTop->Pheno[tr].TraitName);
             }
             pr_printf("SAMPLEID\n");
         }
@@ -354,24 +361,24 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
         vlpCTOR(vcf_phenos,trait,ped_per_trait) { }
         typedef char *str;
         str *file_names;
+        linkage_locus_rec *dummy;
+        //bool first;
+        //int i;
 
         void file_loop() {
             mssgvf("        VCF phenotype file:     %s/%s\n", *_opath, file_names[2]);
             data_loop(*_opath, file_names[2], "a");
         }
-//        void file_header() {
-//            pr_printf("FID\tIID\tA1\tSAMPLEID\n");
-//            pr_printf("FID");
-//            pr_printf("IID");
-//            pr_printf("A1");
-//            pr_printf("SAMPLEID");
-//            pr_nl();
-//        }
+        void trait_start(){
+            dummy = _ttraitp;
+        }
         void per_start(){
             pr_fam();
             pr_printf("\t");
             pr_per();
             pr_printf("\t");
+            //first = true;
+            //i=0;
         }
         void per_end(){
             pr_fam();
@@ -380,16 +387,43 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
             pr_nl();
         }
         void inner() {
+            if(_ttraitp != dummy) {
+                pr_pheno();
+                pr_printf("\t");
+            }
+            //if (first) {
+                //if (_ttraitp == &(_LTop->Locus[_trait]))
+
+                //first = false;
+            //}
+//            int tr;
+//            if(first) {
+//                for (tr = 0; tr < num_traits; tr++) {
+//                    if (tr != _trait) {
+//                        _ttraitp = &(_LTop->Locus[tr]);
+//                        pr_pheno();
+//                    }
+//                }
+//                first = false;
+//            }
+
             //pr_fam();
             //pr_printf("\t");
             //pr_per();
             //pr_printf("\t");
-            pr_pheno();
-            pr_printf("\t");
+
+            //if (!first) {
+            //    pr_pheno(_tpersonp, 0);
+            //    pr_printf("\t");
+
+            //}
+            //else
+             //   first = false;
             //pr_fam();
             //pr_printf("_");
             //pr_per();
             //pr_nl();
+            //i++;
         }
     } *lp = new vcf_phenos(Top);
 
@@ -516,8 +550,8 @@ void CLASS_VCF::batch_out(){
 void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char *stem) {
 
      sprintf(file_names[0], "%s.%s.vcf", stem, num);
-     sprintf(file_names[1], "%s.ped", stem);
-     sprintf(file_names[2], "%s.phe", stem);
+     sprintf(file_names[1], "%s.%s.fam", stem, num);
+     sprintf(file_names[2], "%s.%s.phe", stem, num);
 }
 
 
@@ -528,6 +562,6 @@ void CLASS_VCF::gen_file_names(char **file_names, char *num)
 
 void CLASS_VCF::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
-    //change_output_chr(file_names[1], numchr);
-    //change_output_chr(file_names[2], numchr);
+    change_output_chr(file_names[1], numchr);
+    change_output_chr(file_names[2], numchr);
 }
