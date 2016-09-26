@@ -206,18 +206,19 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner() {
-            std::string a1, a2;
             if(_allele1 - 1 == -1)
-                a1 = ".";
+                pr_printf(".");
             else
-                a1 = std::to_string(_allele1-1);
+                pr_printf("%d",_allele1-1);
+
+            pr_printf("/");
 
             if(_allele2 - 1 == -1)
-                a2 = ".";
+                pr_printf(".");
             else
-                a2 = std::to_string(_allele2-1);
+                pr_printf("%d",_allele2-1);
 
-            pr_printf("%s/%s\t",a1.c_str(),a2.c_str());
+            pr_printf("\t");
         }
 
 
