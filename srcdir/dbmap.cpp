@@ -113,7 +113,7 @@ void dbmap_export(linkage_ped_top *Top) {
     stuff_table.insert("map_functions", (unsigned char *)EXLTop->map_functions, EXLTop->MapCnt);
 //  charstar_table.insert("map_functions", EXLTop->map_functions);
 
-    for (i = Top->LocusTop->PhenoCnt; i < EXLTop->LocusCnt; i++) {
+    for (i = Top->LocusTop->PhenoCnt; i < Top->LocusTop->LocusCnt; i++) {
         ext_linkage_locus_rec *EXL = EXLocus + i;
         for (j = 0; j < EXLTop->MapCnt; j++) {
             map_table.insert(i, j, EXL->positions[j], EXL->pos_female[j], EXL->pos_male[j]);
