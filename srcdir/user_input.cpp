@@ -257,6 +257,65 @@ int ReOrderMenu(int num_chromo, int *chromosomes, int *selection)
     return *selection;
 }
 
+void menu0()
+{
+    int line_len = 40;
+    char selectstr[16];
+    int select = -1, set = -1;
+
+    BatchValueGet(set, "Input_Database_Mode");
+    if (InputMode == INTERACTIVE_INPUTMODE) {
+        while (select != 0) {
+            printf("              Mega2 %s database mode menu:\n", Mega2Version);
+            draw_line();
+            printf("0) Done with this menu - please proceed\n");
+            int idx=1;
+
+            printf("%c%d", idx == set ? '*' : ' ', idx);
+            printf(") %-*s\n", line_len, "Select Mega2 database create mode");
+            idx++;
+
+            printf("%c%d", idx == set ? '*' : ' ', idx);
+            printf(") %-*s\n", line_len, "Select Mega2 database read mode");
+            idx++;
+
+            printf("%c%d", idx == set ? '*' : ' ', idx);
+            printf(") %-*s\n", line_len, "Select Mega2 database create \"then use\" mode");
+            idx++;
+
+            printf("%c%d", idx == set ? '*' : ' ', idx);
+            printf(") %-*s\n", line_len, "Select Mega2 \"NO database\" mode");
+            idx++;
+
+            fcmap(stdin, "%s", selectstr);
+            newline;
+            draw_line();
+            sscanf(selectstr, "%d", &select);
+            if (select && select < 5)
+                set = select;
+        }
+        BatchValueSet(set, "Input_Database_Mode");
+        batchf("Input_Database_Mode");
+    }
+
+    if (set == 1) {
+        database_dump = 1;
+        database_read = 0;
+    } else if (set == 2) {
+        database_dump = 0;
+        database_read = 1;
+    } else if (set == 3) {
+        database_dump = 1;
+        database_read = 1;
+    } else if (set == 3) {
+        database_dump = 0;
+        database_read = 0;
+    }
+
+//  printf("dump %d, read %d\n", database_dump, database_read);
+
+}
+
 int invalid_analysis(int opt)
 { 
     if (opt == 6 || opt == 7 || opt == 15) {
@@ -974,10 +1033,6 @@ void menu1(file_format *infl_type,
 
     sprintf(*output_path, ".");
     sprintf(*input_path, ".");
-    if (database_dump || database_read) {
-        extern int db_exists_db();
-        (void)db_exists_db();
-    }
 
     int line_len;
     while (!exit_loop) {
@@ -1205,8 +1260,12 @@ void menu1(file_format *infl_type,
         idx++;
 
         if (database_dump ^ database_read) {
-            printf("%2d) %-*s%s\n", idx, line_len,
-                   "SQLite3 Database file:", *db_name);
+            extern int db_exists_db();
+            int db_exists = db_exists_db();
+
+            printf("%2d) %-*s%s%14s\n", idx, line_len,
+                   "SQLite3 Database file:", *db_name,
+                   db_exists ? (database_dump ? "[overwrite]" : "[exists]") : "[create]");
             choiceA[idx] = db_file_i;
             idx++;
         }
@@ -1601,6 +1660,8 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     int            db_i=7, out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
     int            compress_i = 17;
     int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
+    extern int     db_exists_db();
+    int            db_exists = 0;
     extern char    DBfile[255];
     char          *fn = DBfile;
 
@@ -1646,7 +1707,9 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         choiceA[idx] = out_i;
         idx++;
 
-        printf("%2d) %-*s%s\n", idx, line_len, "Database filename:", fn);
+        db_exists = db_exists_db();
+        printf("%2d) %-*s%s%10s\n", idx, line_len, "Database filename:", fn, 
+               db_exists ? "[exists]" : "[create]");
         choiceA[idx] = db_i;
         idx++;
 

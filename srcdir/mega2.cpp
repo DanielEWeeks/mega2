@@ -632,7 +632,7 @@ int             main(int argc, char **argv, char **env)
 
     mega2_opts(argc, argv);
 
-//  DB IS READ BY DEFAULT
+//  ask IS READ BY DEFAULT
 /*
     if (database_off)
         database_read = database_dump = 0;
@@ -641,7 +641,7 @@ int             main(int argc, char **argv, char **env)
         database_read = 1;
     else
         database_dump = 1;
-*/
+ */
     init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
 
@@ -729,16 +729,19 @@ int             main(int argc, char **argv, char **env)
     if (AnalyInputMode == NOEXEC_INPUTMODE)
         AnalyInputMode = InputMode;
 
+
     if (database_off)
         database_read = database_dump = 0;
     else if (database_dump || database_read) ;
+    else menu0();
+/*
     else if (db_exists_db())
         database_read = 1;
     else
         database_dump = 1;
     if (InputMode == BATCH_FILE_INPUTMODE)  // may have changed database_read/dump value
         check_batch_items();
-
+ */
     tod_batch();
     // determine if we should go out to the web and check to see if the user is running the latest release of MEGA2...
     if ((InputMode == BATCH_FILE_INPUTMODE && access(Mega2Batch, F_OK) == 0) ||

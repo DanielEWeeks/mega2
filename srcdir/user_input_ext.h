@@ -41,6 +41,8 @@ extern int ReOrderMenu(int num_chromo, int *chromsomes, int *selection);
 
 extern void  affected_by_status(linkage_ped_top *Top, int locus);
 
+extern void menu0();
+
 extern int analysis_menu1(analysis_type  *analysis);
 
 
