@@ -118,8 +118,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("##filedate=%s\n",__TIMESTAMP__);
             pr_printf("##source=MEGA2\n");
             if(base_pair_position_index > 0)
-                pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in (centimorgans avg, male, female)\">\n");
-            pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency\">\n");
+                pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
+            pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
             //don't know these for now
             //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
             //pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
@@ -268,7 +268,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("%s\t%s\t",a1.c_str(),a2.c_str());
             pr_printf(".\t");
             pr_printf("PASS\t");
-            if(base_pair_position_index > 0 && _tlocusp->Marker->pos_avg != 0)
+            if(base_pair_position_index > 0)
                pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
             //double alternate_frequency = 0;
             pr_printf("AF=");
