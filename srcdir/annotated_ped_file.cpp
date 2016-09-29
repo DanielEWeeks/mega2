@@ -4236,7 +4236,8 @@ static void insert_m2_map_into_EXLTop(ext_linkage_locus_top *EXLTop,
     // This is the special case where there was no EXLTop created by 'read_annotated_map_file()'
     // and 'read_common_map_file()'.
     if (map_i == 0) {
-        EXLTop->LocusCnt = (int)map.size();
+//      EXLTop->LocusCnt = (int)map.size();
+        EXLTop->LocusCnt = LTop->LocusCnt;
         /* Add a one in case there are any unmapped markers with an Unknown chromosome */
         global_chromo_entries=CALLOC((size_t)MaxChromo + 1, int);
         chromo_loci_count = CALLOC((size_t)MaxChromo + 1, int);

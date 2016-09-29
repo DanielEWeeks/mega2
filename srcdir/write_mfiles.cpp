@@ -1276,7 +1276,8 @@ static void  save_mendel_peds(char *outfl_name, linkage_ped_top *Top,
             }
         }
         fclose(filep);
-        if (nloop == 1) break;     trp++;
+        if (nloop == 1) break;
+        trp++;
     }
     sprintf(err_msg, "        Pedigree file:        %s", outfl_name);
     mssgf(err_msg);

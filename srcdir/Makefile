@@ -175,7 +175,7 @@ dbbatch.o: DFLAGS += $(DpFLAGS)
 # -DHIDEFILE
 annotated_ped_file.o makeped1.o mega2.o read_files.o utils.o: DFLAGS += $(DfFLAGS)
 write_IQLS.o write_beagle.o write_eigenstrat.o write_fbat.o: DFLAGS += $(DfFLAGS)
-write_impute2_files.o write_mach.o write_minimachshapeit.o: DFLAGS += $(DfFLAGS)
+write_impute2_files.o write_mach.o write_minimacshapeit.o: DFLAGS += $(DfFLAGS)
 write_pangaea.o write_plink_files.o: DFLAGS += $(DfFLAGS)
 write_pseq_files.o write_roadtrips.o: DFLAGS += $(DfFLAGS)
 write_shapeit_files.o write_structure.o: DFLAGS += $(DfFLAGS)
@@ -570,7 +570,7 @@ makeped1.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 makeped1.o: linkage_external.h makeped.h pedtree.h batch_input.h
 makeped1.o: input_check.h hwe.h compress_ext.h analysis.h
 makeped1.o: error_messages_ext.h fcmap_ext.h grow_string_ext.h linkage_ext.h
-makeped1.o: read_files_ext.h utils_ext.h
+makeped1.o: read_files_ext.h utils_ext.h batch_input_ext.h
 omit_ped.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 omit_ped.o: linkage_external.h makeped.h pedtree.h batch_input.h
 omit_ped.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
@@ -756,9 +756,8 @@ analysis.o: utils_ext.h analysis.h class_old.h write_plink_ext.h
 analysis.o: plink_core_ext.h write_fbat_ext.h write_eigenstrat_ext.h
 analysis.o: write_pangaea_ext.h write_beagle_ext.h write_structure_ext.h
 analysis.o: write_pseq_ext.h write_shapeit_ext.h write_roadtrips_ext.h
-analysis.o: write_mach_ext.h write_minimacshapeit_ext.h write_vcf_ext.h
 analysis.o: write_mach_ext.h write_minimacshapeit_ext.h database_dump_ext.h
-analysis.o: menu_value_missing.h
+analysis.o: write_vcf_ext.h menu_value_missing.h
 class_old.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 class_old.o: linkage_external.h makeped.h pedtree.h batch_input.h
 class_old.o: input_check.h hwe.h compress_ext.h analysis.h utils_ext.h
@@ -898,6 +897,28 @@ write_mach.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
 write_mach.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_mach.o: user_input_ext.h input_ops.hh str_utils.hh write_mach_ext.h
 write_mach.o: analysis.h write_plink_ext.h plink_core_ext.h
+write_minimacshapeit.o: common.h types.hh typedefs.h errorno.h allutil.h
+write_minimacshapeit.o: linkage.h linkage_external.h makeped.h pedtree.h
+write_minimacshapeit.o: batch_input.h input_check.h hwe.h compress_ext.h
+write_minimacshapeit.o: loop.h file_ops.h zlib.h zconf.h error_messages_ext.h
+write_minimacshapeit.o: utils_ext.h entry.h create_summary_ext.h
+write_minimacshapeit.o: output_routines_ext.h linkage_ext.h sh_util.h
+write_minimacshapeit.o: fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
+write_minimacshapeit.o: user_input_ext.h input_ops.hh str_utils.hh
+write_minimacshapeit.o: write_minimacshapeit_ext.h analysis.h
+write_minimacshapeit.o: write_plink_ext.h plink_core_ext.h
+write_vcf.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+write_vcf.o: linkage_external.h makeped.h pedtree.h batch_input.h
+write_vcf.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h zlib.h
+write_vcf.o: zconf.h error_messages_ext.h utils_ext.h entry.h
+write_vcf.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
+write_vcf.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
+write_vcf.o: user_input_ext.h input_ops.hh str_utils.hh write_files_ext.h
+write_vcf.o: write_vcf_ext.h analysis.h vcftools/mega2_vcftools_interface.h
+write_vcf.o: annotated_ped_file.h vcftools/bcf_file.h vcftools/output_log.h
+write_vcf.o: vcftools/parameters.h vcftools/variant_file.h
+write_vcf.o: vcftools/vcf_entry.h vcftools/bcf_entry.h vcftools/header.h
+write_vcf.o: vcftools/bgzf.h vcftools/vcf_file.h vcftools/parameters.h
 dbmega2.o: types.hh common.h typedefs.h errorno.h allutil.h linkage.h
 dbmega2.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
 dbmega2.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h

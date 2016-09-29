@@ -284,8 +284,10 @@ void menu0()
             idx++;
 
             printf("%c%d", idx == set ? '*' : ' ', idx);
-            printf(") %-*s\n", line_len, "Select Mega2 \"NO database\" mode");
+            printf(") %-*s\n", line_len, "Select Mega2 \"NO database\" legacy mode");
             idx++;
+
+            printf("Select from options 0-%d> ", idx-1);
 
             fcmap(stdin, "%s", selectstr);
             newline;
@@ -1687,12 +1689,13 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     if (*fn == 0)
         BatchValueGet(fn,   "DBfile_name");
 
+/*
     printf("\n");
     printf("Mega2 will read the input from the database specified in menu item 2 below.\n");
     printf("To instead read from a set of input files and create a new database, hit 'q'\n");
     printf("to exit Mega2 and then restart Mega2 with the --DBdump command line argument.\n");
     printf("\n");
-
+*/
     int line_len = 45;
     while (!exit_loop) {
 

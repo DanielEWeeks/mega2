@@ -294,8 +294,9 @@ void write_entry_record(FILE *fp, linkage_ped_top *Top, int ped, int per, int id
 
 //  fprintf(fp, " %-*s ", fpre, Ped->PedPre);      fprintf(fp, " %-*s ",  ppre, Entry->PerPre);
 
-    if (Top->UniqueIds == 1)
+    if (Top->UniqueIds == 1) {
         fprintf(fp, " %-*s ", fnam, Ped->Name);    fprintf(fp, " %-*s ",  uid,  Entry->UniqueID);
+    }
 
     /* print the loop id */
     if ((Entry->loopbreakers != NULL) ||
