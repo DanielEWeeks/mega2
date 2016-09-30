@@ -94,6 +94,11 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
     //write_VCF_sh(Top, file_name_stem, file_names);
 
+    write_VCF_map(Top, file_name_stem, file_names, pwid, fwid);
+    write_VCF_freq(Top, file_name_stem, file_names, pwid, fwid);
+    write_VCF_pen(Top, file_name_stem, file_names, pwid, fwid);
+
+
     //printf("Mega2 is using VCF tools to convert to BCF format:\n");
     //convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
 }
@@ -439,6 +444,45 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
     delete header;
 }
 
+void CLASS_VCF::write_VCF_map(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid) {
+
+}
+
+void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid) {
+    vlpCLASS(VCF_freq_loci,chr,loci) {
+        vlpCTOR(VCF_freq_loci,chr,loci) { }
+        typedef char *str;
+        str *file_names;
+
+        void file_loop() {
+            mssgvf("        VCF freq map file:      %s/%s\n", *_opath, file_names[4]);
+            data_loop(*_opath, file_names[4], "w");
+        }
+
+        void file_header(){
+            for (int tr=0; tr < num_traits; tr++) {
+                for(int al = 0; al < _LTop->Locus[tr].AlleleCnt; al++) {
+                    pr_printf("%s\t%s\t%.4f\n", _LTop->Pheno[tr].TraitName, _LTop->Locus[tr].Allele[al].AlleleName, _LTop->Locus[tr].Allele[al].Frequency);
+                }
+            }
+        }
+        void inner() {
+            for(int i = 0; i < _tlocusp->AlleleCnt; i++) {
+                if(strcmp(_tlocusp->Allele[i].AlleleName,"dummy") != 0)
+                    pr_printf("%s\t%s\t%.4f\n", _tlocusp->LocusName, _tlocusp->Allele[i].AlleleName, _tlocusp->Allele[i].Frequency);
+            }
+        }
+    } *xp = new VCF_freq_loci(Top);
+    xp->file_names     = file_names;
+    xp->iterate();
+    delete xp;
+}
+
+void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid) {
+
+
+}
+
 //use VCFTools to turn our VCF output into a BCF file
 void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
     char vcftools[10] = "vcftools";
@@ -553,6 +597,8 @@ void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char 
      sprintf(file_names[0], "%s.%s.vcf", stem, num);
      sprintf(file_names[1], "%s.%s.fam", stem, num);
      sprintf(file_names[2], "%s.%s.phe", stem, num);
+     sprintf(file_names[3], "%s.%s.map", stem, num);
+     sprintf(file_names[4], "%s.%s.freq", stem, num);
 }
 
 
@@ -565,4 +611,6 @@ void CLASS_VCF::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
     change_output_chr(file_names[1], numchr);
     change_output_chr(file_names[2], numchr);
+    change_output_chr(file_names[3], numchr);
+    change_output_chr(file_names[4], numchr);
 }
