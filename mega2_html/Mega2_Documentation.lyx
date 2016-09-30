@@ -1041,12 +1041,13 @@ Enhancements in Mega2 version 4.9.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1474466341
+\change_inserted -1820302391 1475096500
 Mega2 now computes the same (and only one) database for any particular set
  of input data.
- Use two different file selection (aka input) menus: one to create the database
- (--DBdump) and the other to select the database.
- 
+ There are two different file selection (aka input) menus: one to create
+ the database and the other to select the database.
+ These choices are selected with the new Mega2 database mode menu or command
+ line switches: --DBdump and --DBread.
 \change_unchanged
 
 \end_layout
@@ -1721,31 +1722,102 @@ From within a Unix (or Cygwin) shell, at the Unix prompt, type the command:
 \end_layout
 
 \begin_layout LyX-Code
-mega2 
-\change_inserted -1820302391 1474050466
-
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted -1820302391 1474050460
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--DBdump
-\change_unchanged
+mega2
+\change_inserted -1820302391 1475096567
 
 \end_layout
 
 \begin_layout Standard
+
+\change_inserted -1820302391 1475096919
+Without any supplied arguments, Mega2 will present the 
+\begin_inset Quotes eld
+\end_inset
+
+database mode
+\begin_inset Quotes erd
+\end_inset
+
+ menu:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475096806
+Mega2 4.9.1 database mode menu: 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475096710
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475096727
+0) Done with this menu - please proceed
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475096774
+ 1) Select Mega2 database create mode
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475096735
+*2) Select Mega2 database read mode
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475096775
+ 3) Select Mega2 database create "then use" mode 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475096776
+ 4) Select Mega2 "NO database" legacy mode
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475096822
+Select from options 0-4> 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475096956
+Since there is no existing database, select 
+\begin_inset Quotes eld
+\end_inset
+
+1
+\begin_inset Quotes erd
+\end_inset
+
+ to create a database and then type 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ to leave this menu and enter the 
+\begin_inset Quotes eld
+\end_inset
+
+file input
+\begin_inset Quotes erd
+\end_inset
+
+ menu shown below 
+\change_deleted -1820302391 1475096964
 Assuming that the
 \shape italic
  Mega2
@@ -1753,7 +1825,7 @@ Assuming that the
  program has been installed according to the installation instructions,
  you should now see the first menu
 \change_inserted -1820302391 1474050575
- (
+(
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-input-menu"
@@ -1762,7 +1834,13 @@ reference "sec:The-input-menu"
 
 )
 \change_unchanged
-, like so: 
+, 
+\change_deleted -1820302391 1475096981
+like so: 
+\change_inserted -1820302391 1475096983
+:
+\change_unchanged
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -1895,39 +1973,10 @@ database creation
 \change_unchanged
 .
  
-\change_inserted -1820302391 1474467743
+\change_inserted -1820302391 1475097104
 When processing is completed, an SQLite3 database will be written to the
- file indicated in menu item 10.
- For subsequent invocations of Mega2, do not specify the 
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted -1820302391 1474050751
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--DBdump 
-\emph default
-flag.
- Note that the first menu will no longer have the file items and the alleles
- per marker item (
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:The-alternate-input-menu"
-
-\end_inset
-
-).
-\change_unchanged
+ file indicated in menu item 10 and Mega2 will exit.
+\change_deleted -1820302391 1475097117
 
 \end_layout
 
@@ -1937,6 +1986,169 @@ Note that option 1 allows one to instruct Mega2 to read: PLINK format input
  (VCF) input files in either binary (.bcf), compressed (.vcf.gz), or text (.vcf)
  format; IMPUTE2 Format input files, either in binary BGEN format (.bgen)
  or in text GEN format (.gen or .impute2).
+\change_inserted -1820302391 1475097165
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475097184
+Now again type the command: 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097170
+mega2
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475097224
+without any supplied arguments for:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097170
+Mega2 4.9.1 database mode menu: 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097170
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097170
+0) Done with this menu - please proceed
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097170
+ 1) Select Mega2 database create mode
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097170
+*2) Select Mega2 database read mode
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097170
+ 3) Select Mega2 database create "then use" mode 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097170
+ 4) Select Mega2 "NO database" legacy mode
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097170
+Select from options 0-4> 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475097812
+Since you intend to use the existing database, type 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ to leave this menu and enter the 
+\begin_inset Quotes eld
+\end_inset
+
+database input
+\begin_inset Quotes erd
+\end_inset
+
+ menu (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-alternate-input-menu"
+
+\end_inset
+
+) below: (The other options are explained later (see XXX).)
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097427
+Mega2 X.Y.Z Database input menu: =================================================
+=========
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097433
+0) Done with this menu - please proceed
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097527
+ 1) Output Directory: [ Current directory ]
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097532
+ 2) Database filename: dbmega2.db [exists]
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097533
+ 3) Simulate genotyping errors: [ no ]
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097534
+ 4) Include all pedigrees whether typed or not
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097535
+ 5) Allele frequency error measure threshold: No limit
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475097982
+ q) Exit Mega2.
+ Select from options 0-5 or q> 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475098032
+After you attend to this menu as necessary, hit 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ to proceed to the additional analysis menus.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -3739,8 +3951,27 @@ MEGA.BATCH.pre
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1474055973
-mega2 MEGA.BATCH.pre
+\change_inserted -1820302391 1475098063
+mega2 
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475098060
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DB
+\emph default
+read MEGA.BATCH.pre
 \change_unchanged
 
 \end_layout
@@ -4911,6 +5142,10 @@ update-core
 \end_layout
 
 \begin_layout Standard
+
+\change_inserted -1820302391 1475166817
+(this may no longer by necessary) 
+\change_unchanged
 followed by
 \end_layout
 
@@ -4957,6 +5192,31 @@ pacman -Sy mingw-w64-x86_64-toolchain
 \end_layout
 
 \begin_layout Standard
+
+\change_inserted -1820302391 1475166970
+(Note: the latter command may fail because /mingw64 exists.
+ If so and it is empty just remove the folder and run the command again.
+ If you are in the shell, type 
+\begin_inset Quotes eld
+\end_inset
+
+rmdir /mingw64
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If at the dos shell, 
+\begin_inset Quotes eld
+\end_inset
+
+rmdir /msys64/mingw64
+\begin_inset Quotes erd
+\end_inset
+
+.)
+\end_layout
+
+\begin_layout Standard
 In addition, you might want to install the source control system
 \begin_inset Quotes eld
 \end_inset
@@ -4994,7 +5254,13 @@ The above process is explained in much more detail in the Msys2 wiki.
 \begin_layout LyX-Code
 c:
 \backslash
-msys2
+msys
+\change_inserted -1820302391 1475166981
+64
+\change_deleted -1820302391 1475166980
+2
+\change_unchanged
+
 \backslash
 mingw64
 \backslash
@@ -5008,7 +5274,13 @@ and
 \begin_layout LyX-Code
 c:
 \backslash
-msys2
+msys
+\change_inserted -1820302391 1475166984
+64
+\change_deleted -1820302391 1475166983
+2
+\change_unchanged
+
 \backslash
 usr
 \backslash
@@ -7608,11 +7880,52 @@ feature
 \end_inset
 
  of the PLINK file format is that some of the columns in the files listed
- below may be omitted by using a corresponding flag when starting PLINK.
- Mega2 will accept most of those flags and interpret them as the PLINK program
- would.
- The flags are explained below.
- How to enter these flags is explained in section 
+ below may be omitted by using a corresponding 
+\change_deleted -1820302391 1475248763
+flag
+\change_inserted -1820302391 1475248777
+parameter on the
+\change_unchanged
+ 
+\change_deleted -1820302391 1475248781
+when starting
+\change_unchanged
+ PLINK
+\change_inserted -1820302391 1475248787
+ command line
+\change_unchanged
+.
+ Mega2 will accept most of th
+\change_inserted -1820302391 1475248796
+e 
+\change_deleted -1820302391 1475248795
+o
+\change_unchanged
+s
+\change_inserted -1820302391 1475248801
+am
+\change_unchanged
+e 
+\change_deleted -1820302391 1475248806
+flags
+\change_inserted -1820302391 1475248820
+parameters in a PLINK menu
+\change_unchanged
+ and interpret them as the PLINK program would.
+ The 
+\change_deleted -1820302391 1475248826
+flags
+\change_inserted -1820302391 1475248827
+parameters
+\change_unchanged
+ are explained below.
+ How to enter these 
+\change_deleted -1820302391 1475248832
+flags
+\change_inserted -1820302391 1475248834
+parameters
+\change_unchanged
+ is explained in section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:PLINK-parameters"
@@ -7620,6 +7933,20 @@ reference "sub:PLINK-parameters"
 \end_inset
 
 .
+\change_inserted -1820302391 1475248842
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475249000
+Finally, a PLINK map file may contain a genetic distance column.
+ By default, Mega2 interprets this distance as Kosambi Morgans.
+ There are parameters that can be used to change these units.
+ Internally, Mega2 will convert the genetic distance to the format needed
+ by the analysis program, for example, Merlin requires Haldane centiMorgans.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -7753,7 +8080,13 @@ Q1
 \begin_inset Quotes erd
 \end_inset
 
-, we use the Mega2 PLINK flags:
+, we use the Mega2 PLINK 
+\change_deleted -1820302391 1475249033
+flags
+\change_inserted -1820302391 1475249036
+parameters
+\change_unchanged
+:
 \end_layout
 
 \begin_layout LyX-Code
@@ -7772,7 +8105,13 @@ pre-makeped
  of alleles.
  There is no header for this file, so it includes no information regarding
  the type of trait in the trait column; this information is supplied via
- the use of the Mega2-PLINK options -
+ the use of the Mega2-PLINK 
+\change_deleted -1820302391 1475249053
+options
+\change_inserted -1820302391 1475249054
+paremeter
+\change_unchanged
+ -
 \begin_inset ERT
 status collapsed
 
@@ -7814,9 +8153,21 @@ status collapsed
 
 \end_inset
 
--trait Mega2 PLINK option.
+-trait Mega2 PLINK 
+\change_deleted -1820302391 1475249063
+option
+\change_inserted -1820302391 1475249069
+parameter
+\change_unchanged
+.
  (The name is necessary to correlate this trait with the information in
- the Mega2 penetrance and frequency files.) The Mega2 PLINK flags are:
+ the Mega2 penetrance and frequency files.) The Mega2 PLINK 
+\change_deleted -1820302391 1475249075
+flags
+\change_inserted -1820302391 1475249076
+parameters
+\change_unchanged
+ are:
 \end_layout
 
 \begin_layout Quotation
@@ -7831,8 +8182,14 @@ status collapsed
 
 \begin_layout Plain Layout
 
+\change_deleted -1820302391 1475249079
+
 \series bold
 flag
+\change_inserted -1820302391 1475249080
+parameter
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -8101,7 +8458,13 @@ Below is a small example map file:
 
 \begin_layout Standard
 To read the example map file, under the assumption the genetic map positions
- are specified in Kosambi centiMorgans, we use the Mega2-PLINK flags:
+ are specified in Kosambi centiMorgans, we use the Mega2-PLINK 
+\change_deleted -1820302391 1475249106
+flags
+\change_inserted -1820302391 1475249110
+parameter
+\change_unchanged
+:
 \end_layout
 
 \begin_layout LyX-Code
@@ -8122,7 +8485,13 @@ Map file
  Each row typically includes four fields: the chromosome (1-22, X, Y or
  0), the marker name, the genetic position in Kosambi Morgans, and finally
  the base-pair position.
- The override flags are:
+ The override 
+\change_deleted -1820302391 1475249126
+flags
+\change_inserted -1820302391 1475249128
+parameters
+\change_unchanged
+ are:
 \end_layout
 
 \begin_layout Quotation
@@ -8137,8 +8506,14 @@ Map file
 
 \begin_layout Plain Layout
 
+\change_deleted -1820302391 1475249130
+
 \series bold
 flag
+\change_inserted -1820302391 1475249132
+parameters
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -8460,7 +8835,13 @@ Mega2 requires that this header line be present.
 
 \series default
 \emph default
- There are flags:
+ There are 
+\change_deleted -1820302391 1475249158
+flags
+\change_inserted -1820302391 1475249159
+parameters
+\change_unchanged
+:
 \end_layout
 
 \begin_layout Quotation
@@ -8475,8 +8856,14 @@ Mega2 requires that this header line be present.
 
 \begin_layout Plain Layout
 
+\change_deleted -1820302391 1475249149
+
 \series bold
 flag
+\change_inserted -1820302391 1475249150
+parameter
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -8748,7 +9135,13 @@ Q1
 \begin_inset Quotes erd
 \end_inset
 
-, we use the Mega2 PLINK flags:
+, we use the Mega2 PLINK 
+\change_deleted -1820302391 1475249185
+flags
+\change_inserted -1820302391 1475249186
+parameters
+\change_unchanged
+:
 \end_layout
 
 \begin_layout LyX-Code
@@ -8778,12 +9171,24 @@ file
 Pedigree file
 \series default
  described above: pedigree, person, father, mother, sex, and trait.
- The flags shown earlier and repeated below can be used if the 
+ The 
+\change_deleted -1820302391 1475249207
+flags
+\change_inserted -1820302391 1475249209
+parameters
+\change_unchanged
+ shown earlier and repeated below can be used if the 
 \series bold
 Family file
 \series default
  has fewer than the default six columns.
- The flags are:
+ The 
+\change_deleted -1820302391 1475249192
+flags
+\change_inserted -1820302391 1475249194
+parameters
+\change_unchanged
+ are:
 \end_layout
 
 \begin_layout Quotation
@@ -8798,8 +9203,14 @@ Family file
 
 \begin_layout Plain Layout
 
+\change_deleted -1820302391 1475249197
+
 \series bold
 flag
+\change_inserted -1820302391 1475249199
+parameters
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -9001,7 +9412,13 @@ Map file
  So each row typically includes six fields: the chromosome (1-22, X, Y or
  0), the SNP name, the genetic position in Morgans, the base-pair position,
  and the two allele names.
- The override flags are as before:
+ The override 
+\change_deleted -1820302391 1475249218
+flags
+\change_inserted -1820302391 1475249220
+parameters
+\change_unchanged
+ are as before:
 \end_layout
 
 \begin_layout Quotation
@@ -9016,8 +9433,14 @@ Map file
 
 \begin_layout Plain Layout
 
+\change_deleted -1820302391 1475249223
+
 \series bold
 flag
+\change_inserted -1820302391 1475249224
+parameters
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -9161,7 +9584,13 @@ Mega2 requires that this header be present.
 
 \series default
 \emph default
- Of course there are flags:
+ Of course there are 
+\change_deleted -1820302391 1475249520
+flags
+\change_inserted -1820302391 1475249522
+parameters
+\change_unchanged
+:
 \end_layout
 
 \begin_layout Quotation
@@ -9175,7 +9604,13 @@ Mega2 requires that this header be present.
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\change_deleted -1820302391 1475249236
 flag
+\change_inserted -1820302391 1475249238
+parameters
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -13376,6 +13811,410 @@ Map file conversion
 \begin_layout Standard
 The converter checks the map function type and male or female-specific maps
  from the map file headers, and creates the appropriate Mega2 map file.
+\change_inserted -1820302391 1475098092
+
+\end_layout
+
+\begin_layout Section
+
+\change_inserted -1820302391 1475167129
+The database mode menu 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:The-database-mode"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475160685
+If you invoke Mega2 with a command line that contains, 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475158312
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBdump, -
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475158315
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBread, -
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475158324
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBdump
+\series default
+ and 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475158337
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBread
+\series default
+ or 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475158356
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBoff
+\series default
+, you short circuit the 
+\begin_inset Quotes eld
+\end_inset
+
+database mode
+\begin_inset Quotes erd
+\end_inset
+
+ menu presentation and immediately select the first, second, third and four
+ menu item of that menu and proceed to the next appropriate menu.
+ Otherwise, the 
+\begin_inset Quotes eld
+\end_inset
+
+database mode
+\begin_inset Quotes erd
+\end_inset
+
+ menu (below) is presented.
+\change_unchanged
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475098201
+Mega2 4.9.1 database mode menu: 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475098201
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475098201
+0) Done with this menu - please proceed
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475098201
+ 1) Select Mega2 database create mode
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475098201
+*2) Select Mega2 database read mode
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475098201
+ 3) Select Mega2 database create "then use" mode 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475098201
+ 4) Select Mega2 "NO database" legacy mode
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475160708
+Select from options 0-4> 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475165778
+Item 1 (or the flag 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475160731
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBdump
+\series default
+) indicates that a SQL database should be created.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+file input
+\begin_inset Quotes erd
+\end_inset
+
+ menu (below) (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-input-menu"
+
+\end_inset
+
+) will be presented next.
+ When the database is completed, Mega2 will exit.
+ This choice will always generate a new or replacement database (and will
+ save the old database, if any).
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475165822
+Item 2 (or the flag 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475160932
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBread
+\series default
+) indicates that an existing SQL database should be processed for a Mega2
+ analysis.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+database input
+\begin_inset Quotes erd
+\end_inset
+
+ menu (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-alternate-input-menu"
+
+\end_inset
+
+) will be presented next.
+ As many different analysis as desired can be generated from a single database.
+ Reusing the database saves much parsing and validation time.
+ Note: It is an error if the named database file does not exists.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475161313
+Item 3 (or boths flags 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475161078
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBdump
+\series default
+ and 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475161114
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBread
+\series default
+) indicate that a 
+\begin_inset Quotes eld
+\end_inset
+
+file input
+\begin_inset Quotes erd
+\end_inset
+
+ menu should be processed to yield a database and then Mega2 should 
+\begin_inset Quotes eld
+\end_inset
+
+exec
+\begin_inset Quotes erd
+\end_inset
+
+ (run) using that database to perform an analysis.
+ A subsequent selection of Item3 for a new analysis will create a new database.
+ (This feature is deprecated and will eventually be disabled.)
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475161513
+Item 4 (or the flag 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475161320
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBoff
+\series default
+) indicates that a database should not be created and should operate without
+ a database, like the earlier v4.8.x versions of Mega2.
+ (This feature is very deprecated and is left in for regression testing;
+ it will soon be removed.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475165578
+There is one final database related command line argument, 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475161557
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBfile <filename>
+\series default
+, that can be used to change the default database path name used in the
+ 
+\begin_inset Quotes eld
+\end_inset
+
+file input
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+database input
+\begin_inset Quotes erd
+\end_inset
+
+ menus.
+ By default the database filename is 
+\series bold
+dbmega2.db
+\series default
+.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
@@ -13395,56 +14234,6 @@ name "sec:The-input-menu"
 
 \end_layout
 
-\begin_layout Standard
-
-\change_inserted -1820302391 1474469297
-Mega2 begins by looking for a database to process; by default, the database
- filename is 
-\series bold
-dbmega2.db
-\series default
- in the current directory.
- In this case, Mega2 menus are presented to select the analysis format and
- other operating parameters.
- The first menu specifies the database and a few parameters (
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:The-alternate-input-menu"
-
-\end_inset
-
-).
- In the database does not exist (or Mega2 is invoked with the 
-\series bold
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted -1820302391 1474058188
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--DBdump
-\series default
- flag, Mega2 presents menus to select the input data files (
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:The-input-menu"
-
-\end_inset
-
-) and menus to obtain additional parameters to describe the data, and finally
- Mega2 creates the specified database.
- 
-\end_layout
-
 \begin_layout Subsection
 
 \change_inserted -1820302391 1474058275
@@ -13454,26 +14243,52 @@ Mega2 file input menu
 \end_layout
 
 \begin_layout Standard
-NOTE: If you start Mega2 with the 
-\change_inserted -1820302391 1473883241
-no 
-\change_unchanged
-option
-\change_inserted -1820302391 1473883255
-s i.e.
+NOTE: If you start Mega2 with 
+\change_inserted -1820302391 1475165978
+a database, either by 
+\begin_inset Quotes eld
+\end_inset
 
-\change_unchanged
- to read from a SQLite3 database
-\change_inserted -1820302391 1474469367
- and there is an already existing database
-\change_unchanged
-, th
-\change_deleted -1820302391 1474058302
-e following
-\change_inserted -1820302391 1474058302
-is
-\change_unchanged
- section does not apply and you should skip to the next section 
+database mode
+\begin_inset Quotes erd
+\end_inset
+
+ menu or 
+\series bold
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475165932
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBread
+\series default
+ command line flag, you will skip this menu and proceed to the 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-alternate-input-menu"
+
+\end_inset
+
+ menu.
+\change_deleted -1820302391 1475166022
+
+\end_layout
+
+\begin_layout Standard
+
+\change_deleted -1820302391 1475166012
+the option to read from a SQLite3 database, the following section does not
+ apply and you should skip to the next section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-alternate-input-menu"
@@ -13481,10 +14296,8 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 .
-
-\change_inserted -1820302391 1474469411
- Unfortunately, the presentation is clearer, if we first explain how to
- specify the various input formats that Mega2 supports.
+\change_inserted -1820302391 1475166057
+Yhis menu explains how to specify the various input formats that Mega2 supports.
  Mega2 is capable of preparing data for many analysis programs from its
  input; each subsequent data analysis uses the generated database.
  The input data parsing, data cleaning, allele compressing, and allele frequency
@@ -13495,7 +14308,7 @@ reference "sec:The-alternate-input-menu"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1474469449
+\change_inserted -1820302391 1475166082
 You can start Mega2 with the 
 \series bold
 \emph on
@@ -13526,7 +14339,7 @@ file input menu
 \begin_inset Quotes erd
 \end_inset
 
- described below:
+ described here:
 \end_layout
 
 \begin_layout Standard
@@ -14430,9 +15243,27 @@ plink
 \series default
 \emph default
  program will accept input files with omitted columns if an appropriate
- flag is specified.
- Mega2 also respects these flags and allows them to be set.
- Selecting this option displays the available feature flags:
+ 
+\change_deleted -1820302391 1475249295
+flag
+\change_inserted -1820302391 1475249298
+parameter
+\change_unchanged
+ is specified.
+ Mega2 also respects these 
+\change_deleted -1820302391 1475249308
+flags
+\change_inserted -1820302391 1475249310
+parameters
+\change_unchanged
+ and allows them to be set.
+ Selecting this option displays the available feature 
+\change_deleted -1820302391 1475249289
+flags
+\change_inserted -1820302391 1475249292
+parameters
+\change_unchanged
+:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14448,8 +15279,14 @@ PLINK options: --no-fid --no-parents --no-pheno --1 --map3 ...
 \end_layout
 
 \begin_layout Standard
-Most of these flags are familiar from the previous PLINK file format discussion
- in Section 
+Most of these 
+\change_deleted -1820302391 1475249320
+flags
+\change_inserted -1820302391 1475249323
+parameters
+\change_unchanged
+ are familiar from the previous PLINK file format discussion in Section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:PLINK-file-formats"
@@ -14457,7 +15294,13 @@ reference "sub:PLINK-file-formats"
 \end_inset
 
 .
- The new flags will be explained below: 
+ The new 
+\change_deleted -1820302391 1475249328
+flags
+\change_inserted -1820302391 1475249329
+parameters
+\change_unchanged
+ will be explained below: 
 \end_layout
 
 \begin_layout Standard
@@ -14474,8 +15317,14 @@ reference "sub:PLINK-file-formats"
 
 \begin_layout Plain Layout
 
+\change_deleted -1820302391 1475249332
+
 \series bold
 flag
+\change_inserted -1820302391 1475249333
+parameter
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -14678,7 +15527,13 @@ indicate that the trait is a quantitative trait locus
 \end_layout
 
 \begin_layout Standard
-For reference, we will repeat the PLINK related flags from section 
+For reference, we will repeat the PLINK related 
+\change_deleted -1820302391 1475249339
+flags
+\change_inserted -1820302391 1475249341
+parameters
+\change_unchanged
+ from section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:PLINK-file-formats"
@@ -14700,8 +15555,14 @@ reference "sub:PLINK-file-formats"
 
 \begin_layout Plain Layout
 
+\change_deleted -1820302391 1475249344
+
 \series bold
 flag
+\change_inserted -1820302391 1475249345
+parameters
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -15026,8 +15887,35 @@ Affection status is coded 0 (unaffected) / 1 (affected) / -9 (missing,)
 \end_layout
 
 \begin_layout Standard
-You type the desired flags for the PLINK parameters menu item line and hit
- enter to have the flags (validated and) recorded.
+You 
+\change_deleted -1820302391 1475249386
+type
+\change_inserted -1820302391 1475249387
+specify
+\change_unchanged
+ the desired 
+\change_deleted -1820302391 1475249362
+flags
+\change_inserted -1820302391 1475249370
+parameters
+\change_unchanged
+ for the PLINK
+\change_inserted -1820302391 1475249397
+-P
+\change_deleted -1820302391 1475249395
+ p
+\change_unchanged
+arameters menu item 
+\change_deleted -1820302391 1475249402
+line
+\change_unchanged
+ and hit enter to have the 
+\change_deleted -1820302391 1475249408
+flags
+\change_inserted -1820302391 1475249410
+parameters
+\change_unchanged
+ (validated and) recorded.
 \end_layout
 
 \begin_layout Paragraph
@@ -16807,11 +17695,7 @@ reference "sub:SQLite3"
 \end_layout
 
 \begin_layout Standard
-If you invoke Mega2 with
-\change_inserted -1820302391 1473879710
-out
-\change_unchanged
- the flag, 
+If you invoke Mega2 with the flag, 
 \series bold
 \emph on
 -
@@ -16830,41 +17714,55 @@ status collapsed
 -
 \emph default
 DB
-\change_inserted -1820302391 1473879719
+\change_inserted -1820302391 1475166189
 
 \series default
-dump
-\change_deleted -1820302391 1473879717
-
-\series bold
 read
 \change_unchanged
+, 
+\change_inserted -1820302391 1475166217
+or select item2 from the 
+\begin_inset Quotes eld
+\end_inset
 
-\series default
-, you are requesting that Mega2 get all its pedigree, phenotype and genotype
- data from an SQLite3 database.
+database mode
+\begin_inset Quotes erd
+\end_inset
+
+ menu, 
+\change_unchanged
+you 
+\change_deleted -1820302391 1475166229
+are requesting
+\change_inserted -1820302391 1475166231
+have requested
+\change_unchanged
+ that Mega2 get all its pedigree, phenotype and genotype data from an SQLite3
+ database.
  
-\change_inserted -1820302391 1473880132
+\change_deleted -1820302391 1475166258
 Mega2 reminds you of this by printing the following warning:
+\change_unchanged
+
 \end_layout
 
 \begin_layout Quotation
 
-\change_inserted -1820302391 1473880163
+\change_deleted -1820302391 1475166252
 Mega2 will read the input from the database specified in menu item 2 below.
  
 \end_layout
 
 \begin_layout Quotation
 
-\change_inserted -1820302391 1473880171
+\change_deleted -1820302391 1475166252
 To instead read from a set of input files and create a new database, hit
  'q' 
 \end_layout
 
 \begin_layout Quotation
 
-\change_inserted -1820302391 1473880254
+\change_deleted -1820302391 1475166252
 to exit Mega2 and then restart Mega2 with the -
 \series bold
 \emph on
@@ -16873,8 +17771,6 @@ to exit Mega2 and then restart Mega2 with the -
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1473880254
 
 
 \backslash
@@ -16888,6 +17784,8 @@ status collapsed
 \emph default
 -DBdump command line argument.
  
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -20757,7 +21655,7 @@ Database options
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1474470470
+\change_inserted -1820302391 1475167448
 By default, Mega2 processes the 
 \series bold
 dbmega2.db
@@ -20784,10 +21682,38 @@ status collapsed
 \emph default
  flag.
  (Note you will be given a second opportunity to change the database file
- name in the first Mega2 menu.) Normally, Mega2 starts by reading the database
- file if it exists; if not, it will read one of the sets of supported input
- files and create a database file.
- (Supply the 
+ name in the 
+\begin_inset Quotes eld
+\end_inset
+
+file input
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+database input
+\begin_inset Quotes erd
+\end_inset
+
+ menu.) 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475167427
+Normally, Mega2 starts by presenting a menu (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-database-mode"
+
+\end_inset
+
+) that selects database creation vs use and other details.
+ This menu is superseded if there are specific command line arguments.
+ The 
 \emph on
 -
 \begin_inset ERT
@@ -20806,7 +21732,28 @@ status collapsed
 
 -DBdump
 \emph default
- flag to force database creation.).
+ flag forces database creation while the 
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475167394
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBread
+\emph default
+ flag has Mega2 use an existing database.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -21111,7 +22058,7 @@ status collapsed
 \begin_layout Plain Layout
 
 \change_inserted -1820302391 1474294406
-deprecated 
+
 \end_layout
 
 \end_inset
@@ -21121,7 +22068,7 @@ deprecated
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1474295958
+\change_inserted -1820302391 1475167576
 if specified with 
 \emph on
 -
@@ -21161,27 +22108,7 @@ status collapsed
 
 -DBread
 \emph default
- is ignored (viz.
- 
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted -1820302391 1474295382
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--DBread
-\emph default
- is what Mega2 does with no arguments).
+ is indicates that a database should be read.
 \change_unchanged
 
 \end_layout
@@ -23102,6 +24029,12 @@ Here is an example batch file
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_inserted -1820302391 1475167736
+Input_Database_Mode=3
+\end_layout
+
+\begin_layout LyX-Code
 Input_Pedigree_File=pedin.06
 \end_layout
 
@@ -23156,9 +24089,17 @@ The batch file options are currently classified into 7 different classes
 
 \begin_layout Itemize
 Input menu items 
+\change_inserted -1820302391 1475167779
+
 \end_layout
 
 \begin_deeper
+\begin_layout Enumerate
+
+\change_inserted -1820302391 1475167790
+Input_Database_Mode
+\end_layout
+
 \begin_layout Enumerate
 Input_Format_Type
 \end_layout
@@ -23511,6 +24452,40 @@ The order in which these options appear in the batch file does not affect
 
 \begin_layout Subsection
 Details on batch file items 
+\change_inserted -1820302391 1475167847
+
+\end_layout
+
+\begin_layout Paragraph
+
+\change_inserted -1820302391 1475167865
+Input_Database_Mode
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1475168004
+This item specifies whether Mega2 should create a database (and how to)
+ or use it.
+ The allowed values are 1, 2, 3 or 4; corresponding to the items values
+ in the 
+\begin_inset Quotes eld
+\end_inset
+
+database mode
+\begin_inset Quotes erd
+\end_inset
+
+ menu (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-database-mode"
+
+\end_inset
+
+).
+\change_unchanged
+
 \end_layout
 
 \begin_layout Paragraph
@@ -39419,12 +40394,13 @@ June 14
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1474466606
+\change_inserted -1820302391 1475166358
 Mega2 now computes the same (and only one) database for any particular set
  of input data.
- This database is used in all subsequent processing of the data.
- Use two different file selection (aka input) menus: one to create the database
- (--DBdump) and the other to select the database.
+ There are two different file selection (aka input) menus: one to create
+ the database and the other to select the database.
+ These choices are selected with the new Mega2 database mode menu or command
+ line switches: --DBdump and --DBread.
  Add DBfile_name item to input file menu and save to batch file.
 \end_layout
 
