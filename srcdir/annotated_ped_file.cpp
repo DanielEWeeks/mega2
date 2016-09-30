@@ -5567,18 +5567,23 @@ static ext_linkage_locus_top *read_plink_map_file(const char *map_file,
         tmp[0].input_col = col;
         copy_colname(tmp, map_all_colnames + col);
         map_all_colnames[col].output_col = col;
-        col = 3;
+        col++;
     }
 
     INIT_COLNAME(tmp, 0, INT_AN, "BP.p");
     tmp[0].input_col = col;
     copy_colname(tmp, map_all_colnames + col);
     map_all_colnames[col].output_col = col;
+    col++;
 
 //11
     if (PLINK.plink == binary_PED_format) {
-        map_all_colnames[4].ColName = TKN.MT;
-        map_all_colnames[5].ColName = TKN.MT;
+        map_all_colnames[col].ColName = TKN.MT;
+        map_all_colnames[col].output_col = col;
+        col++;
+        map_all_colnames[col].ColName = TKN.MT;
+        map_all_colnames[col].output_col = col;
+
     }
 
     return read_common_map_file(mapfp, map_file, LTop, 0, reserved_colnames, file_desc, PLINK.plink == binary_PED_format ? &plink_info->alleles : NULL);
