@@ -538,9 +538,12 @@ void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *fi
             for (int tr=0; tr < num_traits; tr++) {
                 if(_LTop->Locus[tr].Type == AFFECTION) {
                     for(int cl=0; cl <_LTop->Pheno[tr].Props.Affection.ClassCnt; cl++) {
-                        pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[2], "autosomal");
-                        pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[2], "female");
-                        pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[2], "male");
+                        if(_LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen != NULL)
+                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[2], "autosomal");
+                        if(_LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen != NULL)
+                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[2], "female");
+                        if(_LTop->Pheno[tr].Props.Affection.Class[cl].MalePen != NULL)
+                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[2], "male");
                     }
                 }
             }
