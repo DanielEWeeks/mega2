@@ -457,8 +457,8 @@ reference "sub:Output-formats"
 \begin_layout Standard
 Mega2 is currently structured so that the user proceeds through a series
  of menus
-\change_inserted -1820302391 1474043149
-, both to create the database and later to transform it
+\change_inserted -1820302391 1475684210
+, both to create the database and later to process it
 \change_unchanged
 , making choices in each 
 \change_deleted -1820302391 1474405879
@@ -567,8 +567,12 @@ reference "sub:PLINK-file-formats"
 \end_layout
 
 \begin_layout Enumerate
-Input support for Variant Call Format (VCF, BCF, compressed VCF) files,
- including flexible filtering on input (See Section 
+Input 
+\change_inserted -1820302391 1475684274
+and output 
+\change_unchanged
+support for Variant Call Format (VCF, BCF, compressed VCF) files, including
+ flexible filtering on input (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:VCF-file-formats"
@@ -973,8 +977,14 @@ MaCH/Minimac3 format
 
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1474299856
+\change_inserted -1820302391 1475684349
 SHAPEIT/Minimac3 format
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1820302391 1475684354
+VCF format
 \change_unchanged
 
 \end_layout
@@ -1041,13 +1051,19 @@ Enhancements in Mega2 version 4.9.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1475096500
-Mega2 now computes the same (and only one) database for any particular set
- of input data.
+\change_inserted -1820302391 1475767550
+Mega2 now computes one database for any particular set of input data.
  There are two different file selection (aka input) menus: one to create
- the database and the other to select the database.
- These choices are selected with the new Mega2 database mode menu or command
- line switches: --DBdump and --DBread.
+ the database and the other to select the database and the analysis.
+ These choices are selected with the new Mega2 
+\begin_inset Quotes eld
+\end_inset
+
+database mode
+\begin_inset Quotes erd
+\end_inset
+
+ menu or via the command line switches: --DBdump and --DBread.
 \change_unchanged
 
 \end_layout
@@ -1074,7 +1090,7 @@ Mega2 now supports VCF output.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1474466426
+\change_inserted -1820302391 1475767594
 Bug: Require only empty file names (
 \begin_inset Quotes eld
 \end_inset
@@ -1095,9 +1111,15 @@ Bug: Fix argument generation for internal exec of Mega2 when requested.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1474048709
+\change_inserted -1820302391 1475684557
 Bug: Remove lambda expressions from code since not all versions of all compilers
  will accept them.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1475684583
+Bug: PLINK --map3 parameter was not handled correctly.
 \end_layout
 
 \begin_layout Itemize
@@ -1121,9 +1143,9 @@ Internals: Reset random seed only for debugging compilation of Mega2.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1474049820
+\change_inserted -1820302391 1475684536
 Internals: Data cleaning and other checks are applied to all markers in
- the database, not some subset of selected markers.
+ the database, not just the chosen subset of markers.
  
 \end_layout
 
@@ -1717,8 +1739,13 @@ Run mega2
 \end_layout
 
 \begin_layout Standard
-From within a Unix (or Cygwin) shell, at the Unix prompt, type the command:
- 
+
+\change_deleted -1820302391 1475684716
+From within a Unix (or Cygwin) shell, at the Unix 
+\change_inserted -1820302391 1475684720
+At the command 
+\change_unchanged
+prompt, type the command: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1992,8 +2019,8 @@ Note that option 1 allows one to instruct Mega2 to read: PLINK format input
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475097184
-Now again type the command: 
+\change_inserted -1820302391 1475684850
+Now that we have created the database, again type the command: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2004,8 +2031,16 @@ mega2
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475097224
-without any supplied arguments for:
+\change_inserted -1820302391 1475684879
+without any supplied arguments to get the 
+\begin_inset Quotes eld
+\end_inset
+
+database menu
+\begin_inset Quotes erd
+\end_inset
+
+ again:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2082,13 +2117,13 @@ reference "sec:The-alternate-input-menu"
 
 \end_inset
 
-) below: (The other options are explained later (see XXX).)
+) below:
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1475097427
-Mega2 X.Y.Z Database input menu: =================================================
+\change_inserted -1820302391 1475684949
+Mega2 4.9.1 Database input menu: =================================================
 =========
 \end_layout
 
@@ -2137,8 +2172,8 @@ Mega2 X.Y.Z Database input menu: ===============================================
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475098032
-After you attend to this menu as necessary, hit 
+\change_inserted -1820302391 1475684966
+After you complete this menu, hit 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3471,6 +3506,10 @@ cmd
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\change_inserted -1820302391 1475685123
+missing 
+\change_unchanged
 dll
 \end_layout
 
@@ -4060,8 +4099,8 @@ read MEGA.BATCH.pre
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1474467985
-which are explained later.
+\change_inserted -1820302391 1475685223
+all these flags are explained later.
 \change_unchanged
 
 \end_layout
@@ -5143,8 +5182,8 @@ update-core
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475166817
-(this may no longer by necessary) 
+\change_inserted -1820302391 1475685272
+(this step may no longer by necessary) 
 \change_unchanged
 followed by
 \end_layout
@@ -5633,7 +5672,7 @@ Mega2 database Input
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1474468886
+\change_inserted -1820302391 1475686338
 In the past, Mega2 read in its data in an existing supported data format
  as described in the next sections, did its validation and then proceeded
  to the analysis.
@@ -5656,15 +5695,15 @@ status collapsed
 
 -DBoff
 \series default
- flag, this is exactly what Mega2 will do still.
+ command line flag, this is exactly what Mega2 will still do.
  
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1474469821
+\change_inserted -1820302391 1475686501
 Mega2 has been redesigned so that  the pedigree, phenotypes, and genotypes
- for a given experiment need only to be expensively processed once and then
+ for a given experiment need only to be thoroughly processed once and then
  stored in a database.
  Mega2 uses the SQLite3 database 
 \begin_inset CommandInset ref
@@ -5675,12 +5714,12 @@ reference "sub:SQLite3"
 
 .
  Mega2 determines allele values, computes allele frequencies, checks allele
- consistency, cleans alleles, and recodes letter alleles to numeric alleles
- while generating an SQLite3 database that stores this information.
+ consistency, cleans alleles, and recodes letter alleles to numeric alleles.
  Mega2 also compresses the genotype information as much as possible for
  use by the analysis programs.
- Once the database is created, all the analysis programs of Mega2 can be
- run against this database eliminating the time-consuming read-in and validation
+ Then it generates an SQLite3 database that stores this information.Once
+ the database is created, all the analysis programs of Mega2 can be run
+ using this database eliminating the time-consuming read-in and validation
  phase.
  Furthermore in the future, filtering on markers, chromosomes and individuals
  will be supported as the database is read.
@@ -7851,8 +7890,13 @@ de facto
  format.
  It also allows for several different formats of the input data and supports
  conversion between these formats.
- Perhaps the most popular (but unreadable) format is its compressed binary
- PED format.
+ Perhaps the most popular (but 
+\change_deleted -1820302391 1475508607
+unreadable
+\change_inserted -1820302391 1475508615
+unintelligible
+\change_unchanged
+) format is its compressed binary PED format.
  Mega2 supports the binary format and one of the text formats, PED.
  We suggest you visit the PLINK documentation web site (
 \begin_inset Flex URL
@@ -7880,13 +7924,9 @@ feature
 \end_inset
 
  of the PLINK file format is that some of the columns in the files listed
- below may be omitted by using a corresponding 
-\change_deleted -1820302391 1475248763
-flag
-\change_inserted -1820302391 1475248777
-parameter on the
-\change_unchanged
- 
+ below may be omitted by using a corresponding flag 
+\change_inserted -1820302391 1475508712
+on the 
 \change_deleted -1820302391 1475248781
 when starting
 \change_unchanged
@@ -7905,11 +7945,9 @@ s
 \change_inserted -1820302391 1475248801
 am
 \change_unchanged
-e 
-\change_deleted -1820302391 1475248806
-flags
-\change_inserted -1820302391 1475248820
-parameters in a PLINK menu
+e flags
+\change_inserted -1820302391 1475686640
+ as parameters in a PLINK menu item
 \change_unchanged
  and interpret them as the PLINK program would.
  The 
@@ -7925,7 +7963,11 @@ flags
 \change_inserted -1820302391 1475248834
 parameters
 \change_unchanged
- is explained in section 
+ 
+\change_inserted -1820302391 1475508788
+in a menu 
+\change_unchanged
+is explained in section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:PLINK-parameters"
@@ -7939,10 +7981,11 @@ reference "sub:PLINK-parameters"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475249000
+\change_inserted -1820302391 1475686766
 Finally, a PLINK map file may contain a genetic distance column.
  By default, Mega2 interprets this distance as Kosambi Morgans.
- There are parameters that can be used to change these units.
+ There are PLINK parameters that can be used to change these units (to Haldane
+ and/or centimorgans).
  Internally, Mega2 will convert the genetic distance to the format needed
  by the analysis program, for example, Merlin requires Haldane centiMorgans.
 \change_unchanged
@@ -8599,6 +8642,11 @@ cM
 
 \begin_layout Plain Layout
 The genetic position is specified in centiMorgans.
+
+\change_inserted -1820302391 1475509053
+ (The default is Morgans.)
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -13830,7 +13878,7 @@ name "sec:The-database-mode"
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475160685
+\change_inserted -1820302391 1475692569
 If you invoke Mega2 with a command line that contains, 
 \series bold
 -
@@ -13926,9 +13974,9 @@ database mode
 \begin_inset Quotes erd
 \end_inset
 
- menu presentation and immediately select the first, second, third and four
- menu item of that menu and proceed to the next appropriate menu.
- Otherwise, the 
+ menu presentation and immediately select the first, second, third or fourth
+ item of that menu and start with the next appropriate menu.
+ With these flags missing, the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -13991,7 +14039,7 @@ Select from options 0-4>
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475165778
+\change_inserted -1820302391 1475692659
 Item 1 (or the flag 
 \series bold
 -
@@ -14028,14 +14076,14 @@ reference "sec:The-input-menu"
 \end_inset
 
 ) will be presented next.
- When the database is completed, Mega2 will exit.
- This choice will always generate a new or replacement database (and will
+ When the database is eventually written, Mega2 will exit.
+ This choice will either generate a new or replacement database (and will
  save the old database, if any).
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475165822
+\change_inserted -1820302391 1475692732
 Item 2 (or the flag 
 \series bold
 -
@@ -14073,14 +14121,14 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 ) will be presented next.
- As many different analysis as desired can be generated from a single database.
+ Many different analysis as desired can be generated from a single database.
  Reusing the database saves much parsing and validation time.
- Note: It is an error if the named database file does not exists.
+ Note: It is a fatal error if the database file does not exists.
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475161313
+\change_inserted -1820302391 1475692772
 Item 3 (or boths flags 
 \series bold
 -
@@ -14135,14 +14183,14 @@ exec
 \begin_inset Quotes erd
 \end_inset
 
- (run) using that database to perform an analysis.
+ (rerun) using that database to perform an analysis.
  A subsequent selection of Item3 for a new analysis will create a new database.
- (This feature is deprecated and will eventually be disabled.)
+ (This feature is deprecated and will eventually be removed.)
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475161513
+\change_inserted -1820302391 1475692814
 Item 4 (or the flag 
 \series bold
 -
@@ -14162,15 +14210,15 @@ status collapsed
 
 -DBoff
 \series default
-) indicates that a database should not be created and should operate without
- a database, like the earlier v4.8.x versions of Mega2.
+) indicates that a database should not be created and Mega2 should operate
+ like the earlier v4.8.x versions of Mega2 without a database.
  (This feature is very deprecated and is left in for regression testing;
  it will soon be removed.
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475165578
+\change_inserted -1820302391 1475692899
 There is one final database related command line argument, 
 \series bold
 -
@@ -14191,7 +14239,7 @@ status collapsed
 -DBfile <filename>
 \series default
 , that can be used to change the default database path name used in the
- 
+ both the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -14199,7 +14247,7 @@ file input
 \begin_inset Quotes erd
 \end_inset
 
- and 
+ and the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -14208,7 +14256,7 @@ database input
 \end_inset
 
  menus.
- By default the database filename is 
+ By default, the database filename is 
 \series bold
 dbmega2.db
 \series default
@@ -14296,8 +14344,8 @@ reference "sec:The-alternate-input-menu"
 \end_inset
 
 .
-\change_inserted -1820302391 1475166057
-Yhis menu explains how to specify the various input formats that Mega2 supports.
+\change_inserted -1820302391 1475692934
+This menu explains how to specify the various input formats that Mega2 supports.
  Mega2 is capable of preparing data for many analysis programs from its
  input; each subsequent data analysis uses the generated database.
  The input data parsing, data cleaning, allele compressing, and allele frequency
@@ -15237,9 +15285,15 @@ reference "sub:PLINK-file-formats"
 \end_inset
 
 , the 
+\change_deleted -1820302391 1475693079
+
 \series bold
 \emph on
 plink
+\change_inserted -1820302391 1475693082
+PLINK
+\change_unchanged
+
 \series default
 \emph default
  program will accept input files with omitted columns if an appropriate
@@ -15300,7 +15354,11 @@ flags
 \change_inserted -1820302391 1475249329
 parameters
 \change_unchanged
- will be explained below: 
+ 
+\change_inserted -1820302391 1475693121
+(unique to Mega2) 
+\change_unchanged
+will be explained below: 
 \end_layout
 
 \begin_layout Standard
@@ -15527,7 +15585,11 @@ indicate that the trait is a quantitative trait locus
 \end_layout
 
 \begin_layout Standard
-For reference, we will repeat the PLINK related 
+For reference, we will repeat the PLINK
+\change_inserted -1820302391 1475698916
+ program
+\change_unchanged
+ related 
 \change_deleted -1820302391 1475249339
 flags
 \change_inserted -1820302391 1475249341
@@ -15915,7 +15977,11 @@ flags
 \change_inserted -1820302391 1475249410
 parameters
 \change_unchanged
- (validated and) recorded.
+ (validated and) recorded
+\change_inserted -1820302391 1475698957
+ for later use
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Paragraph
@@ -16122,8 +16188,14 @@ The flags are a subset of the flags allowed for PLINK input:
 
 \begin_layout Plain Layout
 
+\change_deleted -1820302391 1475699011
+
 \series bold
 flag
+\change_inserted -1820302391 1475699012
+parameter
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -16251,8 +16323,13 @@ indicate that trait is an arbitrary number
 \end_layout
 
 \begin_layout Standard
-Again, we will repeat the supplementary PLINK related flags from section
- 
+Again, we will repeat the supplementary PLINK related 
+\change_deleted -1820302391 1475699026
+flags
+\change_inserted -1820302391 1475699027
+parameters
+\change_unchanged
+ from section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:PLINK-file-formats"
@@ -16274,7 +16351,11 @@ reference "sub:PLINK-file-formats"
 
 \begin_layout Plain Layout
 
+\change_inserted -1820302391 1475699021
+
 \series bold
+parameters
+\change_unchanged
 flag
 \end_layout
 
@@ -16881,9 +16962,13 @@ File input menu item: SQLite3 Database file:
 \change_inserted -1820302391 1474469681
 This specifies the name of the SQLite3 file that is to contain the database
  derived from all the input data indicated in the rest of the input menu.
- This name may also be specified as the value of the command line -
+ This name may also be specified as the value of the command line
+\series bold
+ -
 \backslash
-/-DBfile flag.
+/-DBfile
+\series default
+ flag.
 \end_layout
 
 \begin_layout Subsection
@@ -17813,9 +17898,17 @@ Since t
 \change_inserted -1820302391 1473879798
 T
 \change_unchanged
-here is no need to specify the explicit files that are in the database
-\change_inserted -1820302391 1474469972
- when using a database (
+here is no need to 
+\change_inserted -1820302391 1475699414
+again 
+\change_unchanged
+specify the 
+\change_deleted -1820302391 1475699423
+explicit 
+\change_unchanged
+files that are in the database
+\change_inserted -1820302391 1475699446
+ when using a database for analysis (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-input-menu"
@@ -17967,7 +18060,11 @@ status collapsed
 \emph default
 DBfile
 \series default
-, argument flag.
+, 
+\change_deleted -1820302391 1475700241
+argument
+\change_unchanged
+ flag.
  If both methods are used for the filename, the command line value takes
  precedence.
  
@@ -18028,8 +18125,12 @@ input menu
 , a brief summary is shown 
 \change_inserted -1820302391 1474470184
 when Mega2 is started 
+\change_deleted -1820302391 1475700303
+of
+\change_inserted -1820302391 1475700305
+showing
 \change_unchanged
-of when the SQLite3 database was created as well as its file and data contents.
+ when the SQLite3 database was created as well as its file and data contents.
  A sample is shown below:
 \end_layout
 
@@ -18177,106 +18278,296 @@ After all the input files and the chromosome number have been specified,
 
 \begin_layout LyX-Code
                    0 Sort by Analysis Name
+\change_inserted -1820302391 1475700455
+
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700471
+ 1 SimWalk2 format                 24 Merlin/SimWalk2-NPL format
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700503
+ 2 Vintage Mendel format           25 PREST format
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700571
+ 3 ASPEX format                    26 PAP format                      
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700575
+ 4 GeneHunter-Plus format          27 Merlin format                   
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700576
+ 5 GeneHunter format               28 Loki format                     
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700577
+ 6 APM format [DISABLED]           29 Mendel format                   
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700586
+ 7 APM-MULT format [DISABLED]      30 SUP format                      
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700581
+ 8 Create nuclear families         31 PLINK format                    
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700582
+ 9 SLINK format                    32 CRANEFOOT format                
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700533
+10 SPLINK format                   33 Mega2 format                    
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700535
+11 Homogeneity analyses            34 IQLS/Idcoefs format             
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700538
+12 SIMULATE format                 35 FBAT format                     
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700540
+13 Create summary files            36 PANGAEA MORGAN format           
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700542
+14 Old SAGE format                 37 Beagle format                   
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700545
+15 TDTMax analyses [DISABLED]      38 Eigenstrat format               
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700547
+16 SOLAR format                    39 Structure format                
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700549
+17 Vitesse format                  40 PSEQ format                     
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700553
+18 Linkage format                  41 SHAPEIT format                  
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700554
+19 Test loci for HWE               42 ROADTRIPS format                
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700556
+20 Allegro format                  43 MaCH/minimac3 format            
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700558
+21 MLBQTL format                   44 SHAPEIT/minimac3 format         
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700559
+22 SAGE format                     45 VCF format                      
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475700491
+23 Pre-makeped format                                          
+\change_unchanged
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
  1 SimWalk2 format                 23 Pre-makeped format             
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
  2 Vintage Mendel format           24 Merlin/SimWalk2-NPL format     
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
  3 ASPEX format                    25 PREST format                   
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
  4 GeneHunter-Plus format          26 PAP format                     
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
  5 GeneHunter format               27 Merlin format                  
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
  6 APM format [DISABLED]           28 Loki format                    
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
  7 APM-MULT format [DISABLED]      29 Mendel format                  
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
  8 Create nuclear families         30 SUP format                     
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
  9 SLINK format                    31 PLINK format                   
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 10 SPLINK format                   32 CRANEFOOT format               
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 11 Homogeneity analyses            33 Mega2 format                   
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 12 SIMULATE format                 34 IQLS/Idcoefs format            
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 13 Create summary files            35 FBAT format                    
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 14 Old SAGE format                 36 PANGAEA MORGAN format          
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 15 TDTMax analyses [DISABLED]      37 Beagle format                  
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 16 SOLAR format                    38 Eigenstrat format              
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 17 Vitesse format                  39 Structure format               
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 18 Linkage format                  40 PSEQ format                    
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 19 Test loci for HWE               41 SHAPEIT format                 
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 20 Allegro format                  42 ROADTRIPS format               
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -1820302391 1475700616
 21 MLBQTL format                   43 MaCH/minimac3 format           
 \end_layout
 
 \begin_layout LyX-Code
-22 SAGE format                     
-\change_inserted -1820302391 1473882911
-44 SHAPEIT/mimimac3 format
+
+\change_deleted -1820302391 1475700616
+22 SAGE format                                                       
 \change_unchanged
-                                  
-\end_layout
-
-\begin_layout LyX-Code
 
 \end_layout
 
 \begin_layout LyX-Code
-Select an option between 0-43 >
+
+\end_layout
+
+\begin_layout LyX-Code
+Select an option between 0-4
+\change_inserted -1820302391 1475700622
+5
+\change_deleted -1820302391 1475700622
+3
+\change_unchanged
+ >
 \end_layout
 
 \begin_layout LyX-Code
@@ -18803,7 +19094,7 @@ reference "ext:minimac"
 
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1474299712
+\change_inserted -1820302391 1475700662
 Convert to SHAPEIT/Minimac3 format (Section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -18812,6 +19103,19 @@ reference "ext:minimac-shapeit"
 \end_inset
 
 )
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1820302391 1475700681
+Convert to VCF format (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ext:minimac-shapeit"
+
+\end_inset
+
+) 
 \change_unchanged
 
 \end_layout
@@ -21655,12 +21959,12 @@ Database options
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475167448
+\change_inserted -1820302391 1475700880
 By default, Mega2 processes the 
 \series bold
 dbmega2.db
 \series default
- SQLite3 database to produced custom input data for several analysis programs.
+ SQLite3 database to produced custom input data for sekected analysis programs.
  You may change the name of the database with the 
 \emph on
 -
@@ -21703,15 +22007,15 @@ database input
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1475167427
-Normally, Mega2 starts by presenting a menu (see 
+\change_inserted -1820302391 1475701011
+Mega2 starts by presenting a menu (see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-database-mode"
 
 \end_inset
 
-) that selects database creation vs use and other details.
+) that chooses between database creation and database use.
  This menu is superseded if there are specific command line arguments.
  The 
 \emph on
@@ -21751,14 +22055,14 @@ status collapsed
 
 -DBread
 \emph default
- flag has Mega2 use an existing database.
+ flag forces Mega2 to use an existing database.
 \change_unchanged
 
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1474470607
+\change_inserted -1820302391 1475701169
 Two other flags, 
 \emph on
 -
@@ -21837,7 +22141,7 @@ status collapsed
 -DBdump
 \emph default
  performs as Mega2 v.4.9.0 and creates a new database file for each analysis
- and then processes it to produce the data for the specified analysis.
+ and then processes each to produce the data for the specified analysis.
  Since all database files for a given set of inputs are NOW the same regardless
  of the analysis, this is no longer a necessary feature.
  
@@ -21859,12 +22163,12 @@ status collapsed
 
 -DBoff
 \emph default
- short circuits all the database creation and use and essentially gives
- the old Mega2 (before v4.9.0) behavior.
+ short circuits the database creation and use and behaves like the old Mega2
+ (before v4.9.0).
  For now you can use this feature, but in the future it will not be supported.
- It requires the same internal Mega2 validations and cleaning to be done
- for each analysis which is unnecessary and slow.
- And it precludes optimizations performed when the database is being read.
+ It requires the internal Mega2 validations and cleaning to be done for
+ each analysis which is unnecessary and slow.
+ It precludes optimizations performed when the database is being read.
 \change_unchanged
 
 \end_layout
@@ -21964,8 +22268,8 @@ status collapsed
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1474295068
-write the SQLite3 database file from the specified input files.
+\change_inserted -1820302391 1475701190
+create the SQLite3 database file from the specified input files.
 \end_layout
 
 \end_inset
@@ -22068,6 +22372,31 @@ status collapsed
 
 \begin_layout Plain Layout
 
+\change_inserted -1820302391 1475701312
+if 
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1475701255
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-DBdump
+\emph default
+ is not also specified, indicates that a database should be read.
+\end_layout
+
+\begin_layout Plain Layout
+
 \change_inserted -1820302391 1475167576
 if specified with 
 \emph on
@@ -22089,26 +22418,7 @@ status collapsed
 -DBdump
 \emph default
  first create the database then reinvoke Mega2 and process the database.
- (This was how Mega2 version v4.9.0 operated.) Otherwise 
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted -1820302391 1474295315
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--DBread
-\emph default
- is indicates that a database should be read.
+ (This was how Mega2 version v4.9.0 operated.) 
 \change_unchanged
 
 \end_layout
@@ -22161,9 +22471,9 @@ deprecated
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1474295153
-perform Mega2 conversions without creating or reading a database as was
- the case in earlier releases of Mega2.
+\change_inserted -1820302391 1475701335
+perform Mega2 analysis without creating or reading a database as was the
+ case in earlier releases of Mega2.
 \end_layout
 
 \end_inset
@@ -25181,8 +25491,14 @@ MaCH/mimimac3
 
 \begin_layout Enumerate
 
-\change_inserted -1820302391 1474299563
+\change_inserted -1820302391 1475766852
 SHAPEIT/minimac3
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1820302391 1475766854
+VCF
 \change_unchanged
 
 \end_layout
@@ -36925,7 +37241,7 @@ email: sayantan@umich.edu
 <lyxtabular version="3" rows="4" columns="2">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="left" valignment="top" width="0pt">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -36938,7 +37254,7 @@ Required Program
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36962,7 +37278,7 @@ mach1
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36998,7 +37314,7 @@ Mach2VCF
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37034,7 +37350,7 @@ Minimac3
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37639,7 +37955,7 @@ email: sayantan@umich.edu
 <lyxtabular version="3" rows="3" columns="2">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="left" valignment="top" width="0pt">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -37652,7 +37968,7 @@ Required Program
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37676,7 +37992,7 @@ Shapeit
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37713,7 +38029,7 @@ Minimac3
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38086,10 +38402,10 @@ You can also use the following environmental variables to set your reference
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="2">
 <features rotate="0" tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top" width="0pt">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38100,7 +38416,7 @@ Environmental variable
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38113,7 +38429,7 @@ Value it sets
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38124,7 +38440,7 @@ minimac_reference_panel_directory
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38137,7 +38453,7 @@ Minimac3 Reference haplotype directory
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38148,7 +38464,7 @@ minimac_reference_haplotype_file
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38161,7 +38477,7 @@ Minimac3 Reference haplotype file
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38172,7 +38488,7 @@ shapeit_reference_map_directory
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38185,7 +38501,7 @@ Shapeit genetic recombination map directory
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38196,7 +38512,7 @@ shapeit_reference_map_file
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38209,7 +38525,7 @@ Shapeit genetic recombination map file
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38220,7 +38536,7 @@ shapeit_reference_panel_directory
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38233,7 +38549,7 @@ Shapeit reference panel directory
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38244,7 +38560,7 @@ shapeit_reference_haplotype_file
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38257,7 +38573,7 @@ Shapeit reference haplotype file
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38268,7 +38584,7 @@ shapeit_reference_legend_file
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38281,7 +38597,7 @@ Shapeit reference legend file
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38292,7 +38608,7 @@ shapeit_reference_sample_file
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -39421,8 +39737,8 @@ Patched version
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1474470985
-September 30
+\change_inserted -1820302391 1475767381
+October 14
 \change_deleted -1820302391 1473878119
 June 14
 \change_unchanged
@@ -40394,13 +40710,19 @@ June 14
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1475166358
-Mega2 now computes the same (and only one) database for any particular set
- of input data.
+\change_inserted -1820302391 1475767566
+Mega2 now computes one database for any particular set of input data.
  There are two different file selection (aka input) menus: one to create
- the database and the other to select the database.
- These choices are selected with the new Mega2 database mode menu or command
- line switches: --DBdump and --DBread.
+ the database and the other to select the database and the analysis.
+ These choices are selected with the new Mega2 
+\begin_inset Quotes eld
+\end_inset
+
+database mode
+\begin_inset Quotes erd
+\end_inset
+
+ menu or via the command line switches: --DBdump and --DBread.
  Add DBfile_name item to input file menu and save to batch file.
 \end_layout
 
@@ -40447,9 +40769,15 @@ Bug: Fix argument generation for internal exec of Mega2 when requested.
 
 \begin_layout Itemize
 
-\change_inserted -1820302391 1474466606
+\change_inserted -1820302391 1475767620
 Bug: Remove lambda expressions from code since not all versions of all compilers
  will accept them.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1475767621
+Bug: PLINK --map3 parameter was not handled correctly.
 \end_layout
 
 \begin_layout Itemize

@@ -2268,7 +2268,7 @@ static int get_map_names(int num_cols,
         } else if (Func[map_ind] == 'p' && ext1[0] == 'p') {
             // We saw this map before, but you can only have one physical map for a given Mapname.
             // so that means that this map name was used at least twice for a physical map.
-            errorvf("Duplic ate Physical Map entry for %s\n", map_names[map_ind]);
+            errorvf("Duplicate Physical Map entry for %s\n", map_names[map_ind]);
             EXIT(DATA_TYPE_ERROR);
         }
         
@@ -2417,20 +2417,36 @@ static int get_map_names(int num_cols,
             // This should be a physical map. Again the data for a physical map is stored
             //in the SEX_AVERAGED_MAP slot...
            map_colnames[i].sex_map_number = SEX_AVERAGED_MAP; // 0
+           msgvf("Input Map name: %s, type: physical map\n", MapName);
         } else {
 	    // for the map designations see... common.h: sex_map_types
+            const char *sexx = "";
             switch(tolower((unsigned char)ext2[0])) {
                 case 'm':
                     map_colnames[i].sex_map_number=MALE_SEX_MAP;
+                    sexx = "male";
                     break;
                 case 'f':
                     map_colnames[i].sex_map_number=FEMALE_SEX_MAP;
+                    sexx = "female";
                     break;
-                case 'a':
+	        case 'a':
                 default:
                     map_colnames[i].sex_map_number=SEX_AVERAGED_MAP;
+                    sexx = "average";
                     break;
             }
+            const char *units = "centiMorgans";
+            if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED) {
+                units = "Morgans";
+                if (strcasecmp("Map", MapName) == 0)
+                    if (PLINK.cM)
+                        units = "centiMorgans";
+            }
+            msgvf("Input Map name: %s, type: %s genetic map, units: %s %s\n",
+                  MapName, sexx,
+                  ((tolower((unsigned char)ext1[0]) == 'h') ? "haldane" : "kosambi"),
+                  units);
         }
         /* write all the sex-maps for the same map name together */
         map_colnames[i].output_col=

@@ -42,7 +42,7 @@ extern DBlite MasterDB;
 extern map<int, linkage_ped_rec *> Person_hash;
 
 int Phenotype_table::db_getall(linkage_locus_top *LTop, pheno_pedrec_data **Phenotypes) {
-    int cnt = 0;
+    int knt = 0;
     int ret = select_stmt && select_stmt->abort();
 
     while (ret) {
@@ -54,18 +54,18 @@ int Phenotype_table::db_getall(linkage_locus_top *LTop, pheno_pedrec_data **Phen
             ret = select(link, cnt, bytes, data);
             Phenotypes[link] = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
             memcpy(Phenotypes[link], data, bytes);
-            cnt++;
+            knt++;
         } else if (ret == SQLITE_DONE) {
             ret = 0;
         } else {
             ret = 0;
         }
     }
-    return cnt;
+    return knt;
 }
 
 int Genotype_table::db_getall(linkage_locus_top *LTop, void **Genotypes) {
-    int cnt = 0;
+    int knt = 0;
     int ret = select_stmt && select_stmt->abort();
 
     while (ret) {
@@ -81,14 +81,14 @@ int Genotype_table::db_getall(linkage_locus_top *LTop, void **Genotypes) {
             } else {
                 Genotypes[link] = 0;
             }
-            cnt++;
+            knt++;
         } else if (ret == SQLITE_DONE) {
             ret = 0;
         } else {
             ret = 0;
         }
     }
-    return cnt;
+    return knt;
 }
 
 void dbgenotype_export(linkage_ped_top *Top) {
