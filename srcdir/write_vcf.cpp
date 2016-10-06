@@ -445,24 +445,68 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
 }
 
 void CLASS_VCF::write_VCF_map(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid) {
-
-}
-
-void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid) {
-    vlpCLASS(VCF_freq_loci,chr,loci) {
-        vlpCTOR(VCF_freq_loci,chr,loci) { }
+    vlpCLASS(VCF_map,chr,loci) {
+        vlpCTOR(VCF_map,chr,loci) { }
         typedef char *str;
         str *file_names;
 
         void file_loop() {
-            mssgvf("        VCF freq map file:      %s/%s\n", *_opath, file_names[4]);
+            mssgvf("        VCF map file:           %s/%s\n", *_opath, file_names[3]);
+            data_loop(*_opath, file_names[3], "w");
+        }
+
+        void file_header(){
+            pr_printf("Chromosome\t");
+            pr_printf("Name\t");
+            if (genetic_distance_index >= 0) {
+                if (_LTop->map_distance_type == 'k' || _LTop->map_distance_type == 'h') {
+                    if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT)
+                        pr_printf("Map.%c.a\t",_LTop->map_distance_type);
+                    else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT || genetic_distance_sex_type_map == FEMALE_GDMT)
+                        pr_printf("Map.%c.a\t",_LTop->map_distance_type,_LTop->map_distance_type);
+                }
+            }
+            if (base_pair_position_index >= 0)
+                pr_printf("BP.p\t");
+            pr_nl();
+        }
+
+        void inner() {
+            pr_printf("%d\t", _tlocusp->Marker->chromosome);
+            pr_printf("%s\t",_tlocusp->LocusName);
+            if(genetic_distance_index >= 0){
+                if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT)
+                    pr_printf("%10.6f\t", _EXLTop->EXLocus[_locus].positions[genetic_distance_index]);
+                else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT)
+                    pr_printf("%10.6f\t%10.6f\t", _EXLTop->EXLocus[_locus].pos_female[genetic_distance_index], _EXLTop->EXLocus[_locus].pos_male[genetic_distance_index]);
+            }
+            if (base_pair_position_index >= 0)
+                pr_printf("%10.6f\t", _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
+            pr_nl();
+        }
+
+    } *xp = new VCF_map(Top);
+    xp->file_names = file_names;
+    xp->iterate();
+    delete xp;
+}
+
+void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid) {
+    vlpCLASS(VCF_freq,chr,loci) {
+        vlpCTOR(VCF_freq,chr,loci) { }
+        typedef char *str;
+        str *file_names;
+
+        void file_loop() {
+            mssgvf("        VCF freq file:          %s/%s\n", *_opath, file_names[4]);
             data_loop(*_opath, file_names[4], "w");
         }
 
         void file_header(){
+            pr_printf("Name\tAllele\tFrequency\n");
             for (int tr=0; tr < num_traits; tr++) {
                 for(int al = 0; al < _LTop->Locus[tr].AlleleCnt; al++) {
-                    pr_printf("%s\t%s\t%.4f\n", _LTop->Pheno[tr].TraitName, _LTop->Locus[tr].Allele[al].AlleleName, _LTop->Locus[tr].Allele[al].Frequency);
+                    pr_printf("%s\t%d\t%.4f\n", _LTop->Pheno[tr].TraitName, al+1, _LTop->Locus[tr].Allele[al].Frequency);
                 }
             }
         }
@@ -472,14 +516,49 @@ void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *f
                     pr_printf("%s\t%s\t%.4f\n", _tlocusp->LocusName, _tlocusp->Allele[i].AlleleName, _tlocusp->Allele[i].Frequency);
             }
         }
-    } *xp = new VCF_freq_loci(Top);
-    xp->file_names     = file_names;
+    } *xp = new VCF_freq(Top);
+    xp->file_names = file_names;
     xp->iterate();
     delete xp;
 }
 
 void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid) {
+    vlpCLASS(VCF_pen,trait,null) {
+        vlpCTOR(VCF_pen,trait,null) { }
+        typedef char *str;
+        str *file_names;
 
+        void file_loop() {
+            mssgvf("        VCF pen file:           %s/%s\n", *_opath, file_names[5]);
+            data_loop(*_opath, file_names[5], "w");
+        }
+
+        void file_header(){
+            pr_printf("Name\tClass\tPen.11\tPen.12\tPen.22\tType\n");
+            for (int tr=0; tr < num_traits; tr++) {
+                if(_LTop->Locus[tr].Type == AFFECTION) {
+                    for(int cl=0; cl <_LTop->Pheno[tr].Props.Affection.ClassCnt; cl++) {
+                        if(_LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen != NULL)
+                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[2], "autosomal");
+                        if(_LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen != NULL)
+                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[2], "female");
+                        if(_LTop->Pheno[tr].Props.Affection.Class[cl].MalePen != NULL)
+                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[2], "male");
+                    }
+                }
+            }
+
+        }
+
+        void trait_start() {
+            //pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _ttraitp->LocusName,1,0.00,0.00,0.00,"type");
+        }
+
+
+    } *xp = new VCF_pen(Top);
+    xp->file_names = file_names;
+    xp->iterate();
+    delete xp;
 
 }
 
@@ -599,6 +678,7 @@ void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char 
      sprintf(file_names[2], "%s.%s.phe", stem, num);
      sprintf(file_names[3], "%s.%s.map", stem, num);
      sprintf(file_names[4], "%s.%s.freq", stem, num);
+     sprintf(file_names[5], "%s.%s.pen", stem, num);
 }
 
 
@@ -613,4 +693,5 @@ void CLASS_VCF::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[2], numchr);
     change_output_chr(file_names[3], numchr);
     change_output_chr(file_names[4], numchr);
+    change_output_chr(file_names[5], numchr);
 }

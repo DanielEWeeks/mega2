@@ -89,6 +89,7 @@
 \html_css_as_file 0
 \html_be_strict false
 \author -1820302391 "Robert V. Baron" 
+\author -1123876542 "Justin" 
 \end_header
 
 \begin_body
@@ -2122,15 +2123,14 @@ reference "sec:The-alternate-input-menu"
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1475684949
-Mega2 4.9.1 Database input menu: =================================================
-=========
+\change_inserted -1820302391 1475771543
+Mega2 4.9.1 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted -1820302391 1475097433
-0) Done with this menu - please proceed
+\change_inserted -1820302391 1475771543
+==========================================================
 \end_layout
 
 \begin_layout LyX-Code
@@ -8553,8 +8553,8 @@ parameters
 
 \series bold
 flag
-\change_inserted -1820302391 1475249132
-parameters
+\change_inserted -1820302391 1475771949
+parameter
 \change_unchanged
 
 \end_layout
@@ -9256,7 +9256,7 @@ parameters
 \series bold
 flag
 \change_inserted -1820302391 1475249199
-parameters
+parameter
 \change_unchanged
 
 \end_layout
@@ -9486,7 +9486,7 @@ parameters
 \series bold
 flag
 \change_inserted -1820302391 1475249224
-parameters
+parameter
 \change_unchanged
 
 \end_layout
@@ -9656,7 +9656,7 @@ parameters
 \change_deleted -1820302391 1475249236
 flag
 \change_inserted -1820302391 1475249238
-parameters
+parameter
 \change_unchanged
 
 \end_layout
@@ -15368,7 +15368,7 @@ will be explained below:
 <lyxtabular version="3" rows="6" columns="2">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="left" valignment="top" width="0pt">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -15387,7 +15387,7 @@ parameter
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15426,7 +15426,7 @@ kosambi
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15463,7 +15463,7 @@ haldane
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15500,7 +15500,7 @@ trait
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15534,7 +15534,7 @@ status collapsed
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15567,7 +15567,7 @@ status collapsed
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17965,9 +17965,20 @@ Database
 
 \begin_layout LyX-Code
 
+\change_inserted -1820302391 1475773318
+              Mega2 4.9.1 Database input menu:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1475773301
+
+\end_layout
+
+\begin_layout LyX-Code
+
 \change_inserted -1820302391 1473880443
-              Mega2 4.9.1 Database input menu: ===================================
-=======================
+==========================================================
 \end_layout
 
 \begin_layout LyX-Code
@@ -19111,7 +19122,7 @@ reference "ext:minimac-shapeit"
 Convert to VCF format (Section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "ext:minimac-shapeit"
+reference "sub:Detailed-info-convert-vcf"
 
 \end_inset
 
@@ -37285,7 +37296,7 @@ mach1
 
 \change_inserted -1820302391 1474473109
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -37321,7 +37332,7 @@ Mach2VCF
 
 \change_inserted -1820302391 1474473109
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -37357,7 +37368,7 @@ Minimac3
 
 \change_inserted -1820302391 1474473109
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -37755,7 +37766,7 @@ Web:
 \series default
  
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -37861,7 +37872,7 @@ target "https://www.jiscmail.ac.uk/cgi-bin/webadmin?A0=OXSTATGEN"
 
 \change_inserted -1820302391 1474473109
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -37894,7 +37905,7 @@ Web
 \series default
 : 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -37955,7 +37966,7 @@ email: sayantan@umich.edu
 <lyxtabular version="3" rows="3" columns="2">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
-<column alignment="left" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="5in">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -38000,7 +38011,7 @@ Shapeit
 \change_inserted -1820302391 1474473109
 Only comes precomipled: 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -38036,7 +38047,7 @@ Minimac3
 
 \change_inserted -1820302391 1474473109
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -38118,8 +38129,15 @@ Mega2 provides a menu to get supplemental information used by SHAPEIT/Minimac3;
 \begin_layout LyX-Code
 
 \change_inserted -1820302391 1474473109
-Shapeit/Minimac3 Analysis Menu: 0) Done with this menu - please proceed
- 
+Shapeit/Minimac3 Analysis Menu: 
+\change_inserted -1123876542 1475605377
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1820302391 1474473109
+0) Done with this menu - please proceed 
 \end_layout
 
 \begin_layout LyX-Code
@@ -38242,7 +38260,7 @@ The Minimac3 reference sample file menu item can be changed to choose which
 
 \change_inserted -1820302391 1474473109
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -38271,7 +38289,7 @@ The SHAPEIT map file option allows you to select a genetic map for SHAPEIT
 
 \change_inserted -1820302391 1474473109
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -38316,7 +38334,7 @@ Use reference panel in HAPS/SAMPLE format for shapeit?
 
 \change_inserted -1820302391 1474473109
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -38625,6 +38643,327 @@ Shapeit reference sample file
 \end_inset
 
 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "ext:convert-vcf"
+
+\end_inset
+
+Convert to VCF (Variant Call Format) 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Detailed-info-convert-vcf"
+
+\end_inset
+
+
+\change_inserted -1123876542 1475602440
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1475605324
+
+\series bold
+This analysis menu option
+\series default
+ allows the creation of Variant Call format (VCF) from genetic data read
+ in by Mega2.
+ Variant Call Format (VCF) was designed to store information about genetic
+ variants.
+ Information on the VCF format standard can be found 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1475605018
+
+https://samtools.github.io/hts-specs/VCFv4.2.pdf
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+.
+ VCF is divided into three sections: the first section contains the meta
+ information (lines from the beginning of the file that begin with the double
+ hash mark ’##’), the second section contains only one line which is the
+ header line (this line follows the last meta information line and begins
+ with a single hash mark ’#’), and the third section follows the header
+ line, and contains all of the variant call information.
+ In addition to the standard VCF output Mega2 also will create a .fam file
+ for storing pedigree information (this is not standard for VCF data, it
+ is similar to the plink .fam file).
+ Also mega2 will create a .phe file for addtitional phenotype information
+ as well a mapping between sample ID and the pedigree.
+ Mega2 will also output any map information it has in a .map file.
+ Similarly in a .freq file frequency information, whether calculated by mega2
+ or provided will be output.
+ Finally penetrance of affect traits will be output into a .pen file.
+ Below are some examples of the output of each with more information.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1475605346
+The VCF analysis menu looks as follows:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475605346
+==========================================================
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475605386
+VCF Analysis Menu:
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475605346
+0) Done with this menu - please proceed 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475605410
+1) File name stem:                                    vcf 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475605464
+2) Human Genome Build                                 hg19
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475605415
+Enter selection: 0 - 2 >
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1475605526
+This menu only has two prompts, file name stem which simply lets the user
+ decide what the naming convention for the output files is (in this example
+ vcf.05.vcf, vcf.
+ 05.fam etc.).
+ The human genome build option allows the user to change which human genome
+ build data is in the contig portion of the VCF header.
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475605346
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475603179
+
+\size footnotesize
+##fileformat=VCFv4.1 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475603182
+
+\size footnotesize
+##filedate=Mon Oct  3 16:24:03 2016 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475603186
+
+\size footnotesize
+##source=MEGA2 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475604707
+
+\size footnotesize
+##INFO=<ID=CM,Number=3,Type=Float,Description="Genetic Distance in centimorgans
+ (avg, male, female)">
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475603173
+
+\size footnotesize
+##INFO=<ID=AF,Number=.,Type=Float,Description="Allele Frequency of alternate
+ allele(s)"> 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475603170
+
+\size footnotesize
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype"> 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475605489
+
+\size footnotesize
+##FILTER=<ID=PASS,Description="Passed variant FILTERs"> 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475603633
+
+\size footnotesize
+##contig=<ID=5,length=4,assembly=hg19> 
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475603581
+
+\size footnotesize
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	1_1	1_2	1_3	1_4	1_5	1_6	1_7	1_8	1_
+9
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475604855
+
+\size footnotesize
+5	1     M1	A	T	.	PASS	CM=0.00,-99.99,-99.99;AF=0.500000;	GT	0/1	0/1	1/1	0/1	1/1	1/1	1
+/1	1/1	1/1
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475603610
+
+\size footnotesize
+5    2     M3	C	G	.	PASS	CM=5.00,-99.99,-99.99;AF=0.500000;	GT	1/0	0/0	1/0	1/0	1/0	1/
+0	1/0	1/1	1/1
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -1123876542 1475603614
+
+\size footnotesize
+5    3     M2	A	T	.	PASS	CM=8.00,-99.99,-99.99;AF=0.500000;	GT	1/1	0/0	1/0	1/0	1/0	1/
+1	1/0	1/1	1/1
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1475604867
+This is an example VCF file with 9 sample IDs (1_1, 1_2, etc.) They correspond
+ with the SAMPLEID collumn in the phenotype collumn (or can be inferred
+ from the pedigree and person id).
+ The first collumn represents the chromosome of the marker, the second is
+ it's physical position.
+ Next is whatever internal ID Mega2 was provided for that marker.
+ Next are the reference and alternate alleles.
+ The next is the quality field and the filter field.
+ The info field will have information on the map position in centimorgans
+ as well as the alternate frequency.
+ The next is the format (genotyped).
+ Finally we have the collumns for individuals, here we have 0/1, 1/1, 1/2
+ etc.
+ here 0 refers to the reference allele, 1 refers to the first alternate
+ allele, 2 to the second alternate allele and so on.
+ Additional information on VCF files is available in the section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-File"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1475604113
+The family file (.fam) is the plink fam file as discussed in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:PLINK-family-file"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1475604149
+The phenotype file (.phe) is an augmented form of the plink phenotype file
+ as discussed in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:VCF-Phenotype-File"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1475604209
+The map file (.map) is the standard mega2 map file as discussed here 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Annotated-map-file"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1475604267
+The frequency file (.freq) is a mega2 file which is discussed here 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Annotated-frequency-file"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1475604300
+The penetrance file (.pen) is a mega2 file which can be found here 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Annotated-penetrance-file"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
