@@ -352,9 +352,11 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
         void file_header() {
             int tr;
             pr_printf("FID\tIID\t");
-            for (tr=0; tr < num_traits; tr++) {
-                if(tr != _trait)
-                    pr_printf("%s\t",_LTop->Pheno[tr].TraitName);
+                for (tr=0; tr < num_traits; tr++) {
+                    if(global_trait_entries[tr] < 0)
+                        continue;
+                    if(global_trait_entries[tr] != _trait)
+                        pr_printf("%s\t",_LTop->Pheno[global_trait_entries[tr]].TraitName);
             }
             pr_printf("SAMPLEID\n");
         }
