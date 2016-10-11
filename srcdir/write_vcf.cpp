@@ -509,7 +509,17 @@ void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *fi
                 if(_LTop->Locus[tr].Type == AFFECTION) {
                     for(int cl=0; cl <_LTop->Pheno[tr].Props.Affection.ClassCnt; cl++) {
                         if(_LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen != NULL)
-                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[global_trait_entries[tr]].TraitName, cl+1, _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen[0], _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen[1], _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen[2], "autosomal");
+                            for(int ch =0; ch < main_chromocnt; ch++) {
+                                if (global_chromo_entries[ch] != 23) {
+                                    pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n",
+                                              _LTop->Pheno[global_trait_entries[tr]].TraitName, cl + 1,
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen[0],
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen[1],
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen[2],
+                                              "autosomal");
+                                    break;
+                                }
+                            }
                         for(int ch =0; ch < main_chromocnt; ch++) {
                             if (global_chromo_entries[ch] == 23) {
                                 if (_LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen != NULL)
@@ -519,8 +529,6 @@ void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *fi
                                               _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].FemalePen[1],
                                               _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].FemalePen[2],
                                               "female");
-                            }
-                            if(global_chromo_entries[ch] ==24){
                                 if(_LTop->Pheno[tr].Props.Affection.Class[cl].MalePen != NULL)
                                     pr_printf("%s\t%d\t%.4f\t0.0000\t%.4f\t%s\n",
                                               _LTop->Pheno[global_trait_entries[tr]].TraitName,

@@ -2781,7 +2781,7 @@ static int select_trait_loci(linkage_ped_top *LTop, analysis_type analysis)
                 display_trait_names(num_covariates, covariates,
                                     LTop->LocusTop, 0, global_trait_entries,
                                     cbase, num_traits+1);
-                msgvf("\n");
+                msgvf("]\n");
             }
 
             printf("Enter option 0 - %d > ", item);
