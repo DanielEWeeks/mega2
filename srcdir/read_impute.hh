@@ -87,12 +87,12 @@ class GenotypeReadHelper
 {
 public:
     virtual void genotypes_init() {}
-    virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid,
+    virtual bool genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid,
                                          std::string& pos, std::vector<std::string>& alleles) { return true; }
     virtual void genotypes_skip() {}
-    virtual boolean genotypes_sample_prob(ProbQ& Q) {return true;}
+    virtual bool genotypes_sample_prob(ProbQ& Q) {return true;}
     virtual void genotypes_end() {}
-    virtual boolean genotypes_eol(int person) {return false;}
+    virtual bool genotypes_eol(int person) {return false;}
 };
 
 class ReadImputed : public Input_Ops
@@ -101,7 +101,7 @@ public:
     ReadImputed() :  check_format(0), Ncol(0), HDR(2) { };  // two line header
     ~ReadImputed() { (void) markers[0]; };
 
-    virtual int  use_getops() {return true;}
+    virtual bool  use_getops() {return true;}
 
     virtual void do_menu_display(int &idx, int line_len, int choiceA[]);
     virtual int  do_menu_parse(int choice);
@@ -196,11 +196,11 @@ class ReadImputedGenotypeReadHelper : public GenotypeReadHelper
 {
 public:
     virtual void genotypes_init();
-    virtual boolean genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
+    virtual bool genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
                                          std::string& pos, std::vector<std::string>& alleles);
-    virtual boolean genotypes_sample_prob(ProbQ& Q);
+    virtual bool genotypes_sample_prob(ProbQ& Q);
     virtual void genotypes_end();
-    virtual boolean genotypes_eol(int person);
+    virtual bool genotypes_eol(int person);
 
 public:
     std::string impute_file;

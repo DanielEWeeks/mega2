@@ -155,7 +155,7 @@ void Token::getD(double vec[3], int cnt) {
     }
 }
 
-boolean Token::getDC(d3 &vec, int cnt) {
+bool Token::getDC(d3 &vec, int cnt) {
     const char *token;
     char *fin;
     int i, l;

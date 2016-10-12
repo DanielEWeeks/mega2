@@ -1121,7 +1121,7 @@ void ReadImputedGenotypeReadHelper::genotypes_init()
     line_n = 0;
 }
 
-boolean ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& chrm, string& rsid,
+bool ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string& hmm, string& chrm, string& rsid,
                                                             string& pos, vector<string>& alleles)
 {
     Str tmp;
@@ -1161,10 +1161,10 @@ boolean ReadImputedGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, string&
     return true;
 }
 
-boolean ReadImputedGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
+bool ReadImputedGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
 {
     Token::d3 nums;
-    boolean ok = token.getDC(nums, 3);
+    bool ok = token.getDC(nums, 3);
 
     Q.push(ProbID(nums[0], 1, 1));
     Q.push(ProbID(nums[1], 1, 2));
@@ -1178,7 +1178,7 @@ void ReadImputedGenotypeReadHelper::genotypes_end()
     ifs.close();
 }
 
-boolean ReadImputedGenotypeReadHelper::genotypes_eol(int person) {
+bool ReadImputedGenotypeReadHelper::genotypes_eol(int person) {
     SECTION_ERR_EXTERN(incomplete_prob);
     if (! token.mo) {
         SECTION_ERR(incomplete_prob);
@@ -1269,7 +1269,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
                 continue;
             }
             ProbQ Q;
-            boolean ok = gh.genotypes_sample_prob(Q);
+            bool ok = gh.genotypes_sample_prob(Q);
             if (!ok && gh.genotypes_eol(sam)) {
                 short_prob++;
                 continue;

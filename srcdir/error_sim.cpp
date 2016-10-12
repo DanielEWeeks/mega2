@@ -442,7 +442,7 @@ static genotype select_this_geno(int index, int num_indices,
 
     int i=0, num;
     genotype obs_geno;
-    boolean matches_error;
+    bool matches_error;
     obs_geno.all1 = obs_geno.all2 = 0;
 
     for (num=0; num < num_total_genos; num++) {

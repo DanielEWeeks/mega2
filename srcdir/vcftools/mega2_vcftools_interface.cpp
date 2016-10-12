@@ -672,7 +672,7 @@ static const vector<int> build_person_indv_v(const annotated_ped_rec persons[],
 {
     vector<int> person_indv_v(person_n); // created on the stack
 
-    boolean ManyPerson = false;
+    bool ManyPerson = false;
     const char *ID = 0;
     for (unsigned int pi=0; pi<person_n; pi++) {
         const char *per = persons[pi].ID;

@@ -90,7 +90,7 @@ void BgenParserGenotypeReadHelper::genotypes_init()
     get_sample_ids( [this]( std::string const& id ) { } );
 }
 
-boolean BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
+bool BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
                                                            std::string& pos, vector<string>& alleles)
 {
     bool ret;
@@ -110,7 +110,7 @@ void BgenParserGenotypeReadHelper::genotypes_skip()
     ignore_probs();
 }
 
-boolean BgenParserGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
+bool BgenParserGenotypeReadHelper::genotypes_sample_prob(ProbQ& Q)
 {
     if (n_prob_sample == 0) {
         read_probs(&n_probs);

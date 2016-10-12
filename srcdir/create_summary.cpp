@@ -1608,7 +1608,7 @@ static void            aff_rel_count(ped_top *Top, int *numchr,
     int             tavuncularpairs = 0;	/* Number of affected avuncular pairs */
     int             tavunc_typed = 0;	/* Number of genotyped affected avuncular pairs */
     int             trel[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    boolean         trel_print[9];
+    bool            trel_print[9];
     double           k;
     double          int_part, frac_part;
     ped_tree       *PedTree;

@@ -80,7 +80,7 @@ public:
 class Input_Ops
 {
 public:
-    virtual boolean use_getops() { return false; }
+    virtual bool use_getops() { return false; }
 
     virtual void do_menu_display(int &idx, int line_len, int choiceA[])   { }
     virtual int  do_menu_parse(int choice) { return 0; }   // 0 indicates no match ; but false (above) means this is not called.

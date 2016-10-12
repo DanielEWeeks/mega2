@@ -188,8 +188,6 @@ extern int snprintf(char *buf, int cnt, const char *fmt, ...);
 #ifdef _WIN
 #define _ALLOW_KEYWORD_MACROS	// TRANSITION
 #endif
-#define false 0
-#define true 1
 #define EPSILON 0.000001    /* for floating point comparisons */
 #define LARGE  999999999.0   /* To set upper limits */
 
@@ -204,10 +202,6 @@ extern int snprintf(char *buf, int cnt, const char *fmt, ...);
 #define TRAIT_SELECTED   7
 #define INSIDE_ANALYSIS   8
 #define TERM_MEGA2  9
-
-#ifndef NOBOOLEAN
-typedef int boolean;
-#endif
 
 typedef enum {
   UNKNOWN_SO = 0, HUMAN_SO = 1, HORSE_SO = 2, SHEEP_SO = 3, DOG_SO = 4, MOUSE_SO = 5, COW_SO = 6
