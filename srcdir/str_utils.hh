@@ -29,7 +29,7 @@
 #ifndef STR_UTILS_HH
 #define STR_UTILS_HH
 
-#include <types.hh>
+#include "types.hh"
 
 /*
   read the next N token from a line
