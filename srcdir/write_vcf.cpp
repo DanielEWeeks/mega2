@@ -139,8 +139,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 //pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_numchr,diff,"b37");
 
                 //based on PLINK's conversion to VCF we don't want the difference for the contig length we want 1+ the greatest value for length
-                int diff = _EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index] + 1;
-                pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_tlocusp->Marker->chromosome,diff,hg_build.c_str());
+                double diff = _EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index] + 1;
+                pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n",_tlocusp->Marker->chromosome,diff,hg_build.c_str());
                 first = false;
             }
         }
@@ -348,12 +348,15 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
         void file_loop() {
             data_loop(*_opath, file_names[2], "w");
         }
+
         void file_header() {
             int tr;
             pr_printf("FID\tIID\t");
-            for (tr=0; tr < num_traits; tr++) {
-                if(tr != _trait)
-                    pr_printf("%s\t",_LTop->Pheno[tr].TraitName);
+                for (tr=0; tr < num_traits; tr++) {
+                    if(global_trait_entries[tr] < 0)
+                        continue;
+                    //if(global_trait_entries[tr] != _trait)
+                        pr_printf("%s\t",_LTop->Pheno[global_trait_entries[tr]].TraitName);
             }
             pr_printf("SAMPLEID\n");
         }
@@ -368,8 +371,6 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
         typedef char *str;
         str *file_names;
         linkage_locus_rec *dummy;
-        //bool first;
-        //int i;
 
         void file_loop() {
             mssgvf("        VCF phenotype file:     %s/%s\n", *_opath, file_names[2]);
@@ -383,8 +384,6 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
             pr_printf("\t");
             pr_per();
             pr_printf("\t");
-            //first = true;
-            //i=0;
         }
         void per_end(){
             pr_fam();
@@ -393,43 +392,10 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
             pr_nl();
         }
         void inner() {
-            if(_ttraitp != dummy) {
+            //if(_ttraitp != dummy) {
                 pr_pheno();
                 pr_printf("\t");
-            }
-            //if (first) {
-                //if (_ttraitp == &(_LTop->Locus[_trait]))
-
-                //first = false;
             //}
-//            int tr;
-//            if(first) {
-//                for (tr = 0; tr < num_traits; tr++) {
-//                    if (tr != _trait) {
-//                        _ttraitp = &(_LTop->Locus[tr]);
-//                        pr_pheno();
-//                    }
-//                }
-//                first = false;
-//            }
-
-            //pr_fam();
-            //pr_printf("\t");
-            //pr_per();
-            //pr_printf("\t");
-
-            //if (!first) {
-            //    pr_pheno(_tpersonp, 0);
-            //    pr_printf("\t");
-
-            //}
-            //else
-             //   first = false;
-            //pr_fam();
-            //pr_printf("_");
-            //pr_per();
-            //pr_nl();
-            //i++;
         }
     } *lp = new vcf_phenos(Top);
 
@@ -481,7 +447,7 @@ void CLASS_VCF::write_VCF_map(linkage_ped_top *Top, const char *prefix, char *fi
                     pr_printf("%10.6f\t%10.6f\t", _EXLTop->EXLocus[_locus].pos_female[genetic_distance_index], _EXLTop->EXLocus[_locus].pos_male[genetic_distance_index]);
             }
             if (base_pair_position_index >= 0)
-                pr_printf("%10.6f\t", _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
+                pr_printf("%.0lf\t", _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
             pr_nl();
         }
 
@@ -505,8 +471,10 @@ void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *f
         void file_header(){
             pr_printf("Name\tAllele\tFrequency\n");
             for (int tr=0; tr < num_traits; tr++) {
-                for(int al = 0; al < _LTop->Locus[tr].AlleleCnt; al++) {
-                    pr_printf("%s\t%d\t%.4f\n", _LTop->Pheno[tr].TraitName, al+1, _LTop->Locus[tr].Allele[al].Frequency);
+                if(global_trait_entries[tr] < 0)
+                    continue;
+                for(int al = 0; al < _LTop->Locus[global_trait_entries[tr]].AlleleCnt; al++) {
+                    pr_printf("%s\t%d\t%.4f\n", _LTop->Pheno[global_trait_entries[tr]].TraitName, al+1, _LTop->Locus[global_trait_entries[tr]].Allele[al].Frequency);
                 }
             }
         }
@@ -536,14 +504,39 @@ void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *fi
         void file_header(){
             pr_printf("Name\tClass\tPen.11\tPen.12\tPen.22\tType\n");
             for (int tr=0; tr < num_traits; tr++) {
+                if (global_trait_entries[tr] < 0)
+                    continue;
                 if(_LTop->Locus[tr].Type == AFFECTION) {
                     for(int cl=0; cl <_LTop->Pheno[tr].Props.Affection.ClassCnt; cl++) {
                         if(_LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen != NULL)
-                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen[2], "autosomal");
-                        if(_LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen != NULL)
-                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen[2], "female");
-                        if(_LTop->Pheno[tr].Props.Affection.Class[cl].MalePen != NULL)
-                            pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n", _LTop->Pheno[tr].TraitName, cl+1, _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[0], _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[1], _LTop->Pheno[tr].Props.Affection.Class[cl].MalePen[2], "male");
+                            for(int ch =0; ch < main_chromocnt; ch++) {
+                                if (global_chromo_entries[ch] != 23) {
+                                    pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n",
+                                              _LTop->Pheno[global_trait_entries[tr]].TraitName, cl + 1,
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen[0],
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen[1],
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen[2],
+                                              "autosomal");
+                                    break;
+                                }
+                            }
+                        for(int ch =0; ch < main_chromocnt; ch++) {
+                            if (global_chromo_entries[ch] == 23) {
+                                if (_LTop->Pheno[tr].Props.Affection.Class[cl].FemalePen != NULL)
+                                    pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n",
+                                              _LTop->Pheno[global_trait_entries[tr]].TraitName, cl + 1,
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].FemalePen[0],
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].FemalePen[1],
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].FemalePen[2],
+                                              "female");
+                                if(_LTop->Pheno[tr].Props.Affection.Class[cl].MalePen != NULL)
+                                    pr_printf("%s\t%d\t%.4f\t0.0000\t%.4f\t%s\n",
+                                              _LTop->Pheno[global_trait_entries[tr]].TraitName,
+                                              cl+1, _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].MalePen[0],
+                                              _LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].MalePen[1],
+                                              "male");
+                            }
+                        }
                     }
                 }
             }

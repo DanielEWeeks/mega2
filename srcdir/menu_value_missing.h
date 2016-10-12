@@ -171,8 +171,8 @@ Missing_Value  missing_values[] = {
             /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
 
     { "VCF format",              VCF,
-            /*quant*/       "-9",  Missing_Value::Any, Missing_Value::Varies,
-            /*affect*/      "-9" , Missing_Value::Any, Missing_Value::Varies,
+            /*quant*/       "-9", Missing_Value::Any, Missing_Value::Varies,
+            /*affect*/      "-9", Missing_Value::Any, Missing_Value::Varies,
             /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
 
 
