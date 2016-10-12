@@ -350,7 +350,7 @@ int save_linkage_peds(char *outfl_name, linkage_ped_top *Top,
     int tr, nloop, num_affec=num_traits;
     int ped, entry, locus, non_numeric_peds = 0;
     int *trp, num_loc, locus_id;
-    register linkage_ped_rec *Entry;
+    linkage_ped_rec *Entry;
     linkage_locus_rec *Loc;
     linkage_locus_top *LTop;
     FILE *filep;
@@ -1218,7 +1218,7 @@ static void write_linkage_locfile_inorder_sex_averaged(linkage_locus_top *LTop,
     int tr, nloop, num_affec=num_traits, locus, allele, tmpi, tmpi2;
     int *trp, trnum, num_loci = 0,  *locus_order = NULL, trait_locus = 0; //compiler: too hard
     char fl[2*FILENAME_LENGTH];
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     FILE *filep;
 
     double *positions = NULL; //compiler: too hard
@@ -1405,7 +1405,7 @@ static void write_linkage_locfile_inorder_sex_specific(linkage_locus_top *LTop,
     int tr, nloop, num_affec=num_traits, locus, allele, tmpi, tmpi2;
     int *trp, trnum, num_loci = 0,  *locus_order = NULL, trait_locus = 0; //compiler: too hard
     char fl[2*FILENAME_LENGTH];
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     FILE *filep;
 
     double *positions_male = NULL, *positions_female = NULL; //compiler: too hard

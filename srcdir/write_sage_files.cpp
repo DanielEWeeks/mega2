@@ -698,7 +698,7 @@ static void  write_SAGE_cnt_file(char *poutfl_name,
     int tr, *trp, nloop, ped, entry, locus1, num_affec = num_traits;
     FILE     *filep;
     char     pfl[2*FILENAME_LENGTH], fformat[10], pformat[10];
-    register linkage_ped_rec *Entry;
+    linkage_ped_rec *Entry;
     int b;
 
     create_formats(fwid, pwid, fformat, pformat);
@@ -782,7 +782,7 @@ static int   save_SAGE_peds(char *outfl_name, linkage_ped_top *Top,
     int       *trp, tr, nloop, ped, entry, locus1, num_affec = num_traits;
     char      pedfl[2*FILENAME_LENGTH], fformat[6], pformat[6];
     FILE      *filep;
-    register linkage_ped_rec *Entry;
+    linkage_ped_rec *Entry;
     int  b, l1;
 
     NLOOP;
@@ -924,7 +924,7 @@ static void  write_SAGE_locus_file(char *loutfl_name,
     int             tr, nloop, num_affec=num_traits;
     char            locfl[2*FILENAME_LENGTH];
     FILE            *filep;
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
 
     num=0;
     for (locus1 = 0; locus1 < NumChrLoci; locus1++)  {

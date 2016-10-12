@@ -49,7 +49,7 @@ void cal_n ( int no_allele,int a[LENGTH], int n[MAX_ALLELE] )
   int n[MAX_ALLELE]; */
 
 {
-    register int i, j, l;
+    int i, j, l;
 
     for ( i = 0; i < no_allele; ++i ) {
         l = LL(i, i);

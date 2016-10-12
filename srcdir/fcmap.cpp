@@ -84,7 +84,7 @@ static void skip_past_char(FILE *filep, const char c)
 static int get_sign(FILE *filep, int mode)
 
 {
-    register int sign = 1;
+    int sign = 1;
 
     if (!LCHDEF) GETLCH;
     while ((LCH != EOF) && (LCH_NOT_TERM) && (!isdigit(LCH))
@@ -104,7 +104,7 @@ static int read_int(FILE *filep)
 
 {
     int sign;
-    register int dval;
+    int dval;
 
     dval = 0;
     sign = get_sign(filep, 0);
@@ -229,7 +229,7 @@ int fcmap(FILE *filep, const char *fmt, ... )
 #endif
 {
     va_list ap;
-    register char *chp, tch;
+    char *chp, tch;
     void *ptr;
     int mode = 0;
 

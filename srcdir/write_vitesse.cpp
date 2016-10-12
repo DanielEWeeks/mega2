@@ -692,7 +692,7 @@ static void write_vitesse_locus_file(char *loutfl_name,
 
     int tr, nloop, num_affec=num_traits, locus, allele, tmpi, tmpi2;
     int *trp, num_loci, trait_locus = 0; //compiler: not obvious
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     char fl[2*FILENAME_LENGTH];
     FILE *filep;
 

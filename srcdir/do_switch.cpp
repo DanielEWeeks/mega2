@@ -47,7 +47,7 @@ void do_switch ( int a[LENGTH], Index index, int type );
 void do_switch ( int a[LENGTH], Index index, int type )
 
 {
-    register int k11, k22, k12, k21;
+    int k11, k22, k12, k21;
 
     k11 = L(index.i1, index.j1);
     k12 = L(index.i1, index.j2);

@@ -57,8 +57,8 @@ double ln_p_value (int a[LENGTH], int no_allele, double constant)
   double constant;*/
 
 {
-    register int i, j, l, temp;
-    register double ln_prob;
+    int i, j, l, temp;
+    double ln_prob;
 /*  double log_factorial(int k); */
 
     ln_prob = constant;

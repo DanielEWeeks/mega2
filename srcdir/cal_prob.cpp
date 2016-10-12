@@ -64,7 +64,7 @@ double cal_prob (int a[LENGTH], Index index,double ln_p_old, int *actual_switch 
 {
 
     double p1_ratio, p2_ratio;
-    register double ln_p_new;
+    double ln_p_new;
     double rand_num;
     int switch_ind, type;
 

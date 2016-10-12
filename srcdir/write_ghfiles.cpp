@@ -511,7 +511,7 @@ static void  save_mlb_peds(char *outfl_name, linkage_ped_top *Top,
 {
     int tr, *trp, nloop, num_affec=num_traits, need_dummy=1;
     int i, tmpi, *markers=NULL, ped, entry, *locus, locus1, num_markers;
-    register linkage_ped_rec *Entry1;
+    linkage_ped_rec *Entry1;
     FILE *filep;
     char outfl[2*FILENAME_LENGTH], pformat[6], fformat[6];
 
@@ -672,7 +672,7 @@ static void  save_gh_peds(char *outfl_name, linkage_ped_top *Top,
 {
     int tr, *trp, nloop, num_affec=num_traits, need_dummy=1;
     int i, tmpi, *markers=NULL, ped, entry, *locus, locus1, num_markers;
-    register linkage_ped_rec *Entry1;
+    linkage_ped_rec *Entry1;
     FILE *filep;
     char outfl[2*FILENAME_LENGTH], pformat[6], fformat[6];
 
@@ -1386,7 +1386,7 @@ static void   write_gh_cshell_file(char *gh_script, int *numchr, char *gh_in,
     int  *locus, tmpi, tmpi2, *locus1, ntick;
     double gap, slop, tot, *position, diff, prev;
     int *markers=NULL, num_markers;
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     int   xlinked;
 
     xlinked =(((LTop->SexLinked == 2 && *numchr == SEX_CHROMOSOME) ||

@@ -61,7 +61,7 @@ double cal_const (int no_allele, int n[MAX_ALLELE], int total)
 
 {
     double constant;
-    register int i;
+    int i;
 /*  double log_factorial(int k); */
 
     constant = log_factorial ( total ) - log_factorial ( 2*total );

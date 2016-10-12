@@ -229,7 +229,7 @@ static int compare_index(const void *ptr1, const void *ptr2)
 static void     linkage_swap_loci(linkage_locus_rec *locus1,
 				  linkage_locus_rec *locus2)
 {
-    register linkage_locus_rec tmplocus;
+    linkage_locus_rec tmplocus;
 
     tmplocus = *locus1;
     *locus1 = *locus2;

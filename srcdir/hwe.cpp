@@ -87,7 +87,7 @@ void hwe_test(char *marker_name, const char *infile_name, const char *outfile_na
 
     const char *append_mode = "a";
 
-    register int i, j;
+    int i, j;
 #ifdef __INTEL__
     long t1;
 #else

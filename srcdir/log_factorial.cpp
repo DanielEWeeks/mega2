@@ -47,7 +47,7 @@ double log_factorial (int k)
 
 {
 
-    register double result;
+    double result;
 
     if ( k == 0 )
         result = 0.0;

@@ -933,7 +933,7 @@ void            check_renumber_ped(ped_tree *Ped)
     int             entry;
     int             ok;
 
-    register ped_rec *Entry;
+    ped_rec *Entry;
 
     ok = 1;
     for (entry = 0; (ok) && (entry < Ped->EntryCnt); entry++)

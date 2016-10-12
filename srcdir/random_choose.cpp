@@ -52,7 +52,7 @@
 
 void random_choose (int *k1, int *k2,int k)
 {
-    register int temp, i, not_find;
+    int temp, i, not_find;
     int work[MAX_ALLELE];
 
     for ( i = 0; i < k; ++i )

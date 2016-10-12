@@ -445,8 +445,8 @@ linkage_loop_rec *new_llooprec(void)
 void   free_all_from_llocusrec(linkage_locus_rec *Locus)
 
 {
-    register int    factor;
-    register int classIdx;
+    int    factor;
+    int classIdx;
 
     if (Locus == NULL)
         return;
@@ -1136,7 +1136,7 @@ static void    *lcollapse_iterate(list_data EntryData, void *It)
 
 {
 
-    register id_pair_type *this_id = (id_pair_type *) EntryData;
+    id_pair_type *this_id = (id_pair_type *) EntryData;
 
     if (*(int *)It == this_id->old)
         *(int *)It = this_id->new_linkage;
@@ -1161,7 +1161,7 @@ static void    collapse_lpedtree(linkage_ped_tree *Ped,
     int entry, entry1;
     int newentry;
     int NewEntryCnt;
-    register linkage_ped_rec *Entry, *NEntry;
+    linkage_ped_rec *Entry, *NEntry;
     linkage_ped_rec *NewEntry;
 
     id_pair_type *id_pair;
@@ -1270,7 +1270,7 @@ static void  log_loop_person(linkage_ped_rec *D_entry,
 int  connect_loops(linkage_ped_tree *Ped, linkage_ped_top *Top1)
 
 {
-    register linkage_loop_rec *loop1, *Loop1=NULL, *Loop2=NULL;
+    linkage_loop_rec *loop1, *Loop1=NULL, *Loop2=NULL;
     linkage_ped_rec *D_Entry = NULL, *S_Entry;
     int lb, i, save, *delete_ppl, found_loop=0;
     int j;

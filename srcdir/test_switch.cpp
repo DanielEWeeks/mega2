@@ -57,7 +57,7 @@
 void test_switch(int a[LENGTH], Index index, int *switch_ind, int *switch_type, /* switchability and type of switch */
                  double *p1_rt, double *p2_rt) /* probability ratio */
 {
-    register int k11, k22, k12, k21;
+    int k11, k22, k12, k21;
 
     *switch_ind = 0;
 

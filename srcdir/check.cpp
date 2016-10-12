@@ -603,7 +603,7 @@ int check_ped_relations(ped_tree *PedTree, ped_status *PedStatus)
 
 {
     int entry;
-    register ped_rec *PedEntry;
+    ped_rec *PedEntry;
     char *entryID;
 
     /* if a real file pointer is specified, then also print to stderr */
@@ -684,7 +684,7 @@ int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
                         FILE **reset_fp, bool *first, int reset)
 {
     int entry, iserr;
-    register ped_rec *PedEntry;
+    ped_rec *PedEntry;
     int abortf = 0;
     int all1, all2;
 
@@ -752,7 +752,7 @@ int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
                     FILE **reset_fp, bool *first, int reset)
 {
     int entry;
-    register ped_rec *PedEntry;
+    ped_rec *PedEntry;
     int abortf = 0;
     int all1, all2;
 
@@ -806,7 +806,7 @@ int check_invalid_fam(ped_tree *PedTree, ped_status *PedStatus,
                       ped_rec **Sibs)
 {
     int entry;
-    register ped_rec *PedEntry;
+    ped_rec *PedEntry;
     int err = 0;
 
 /*

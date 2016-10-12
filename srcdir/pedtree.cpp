@@ -237,7 +237,7 @@ static int sort_affecteds(ped_tree *Ped)
 {
     int aff, aff2, lowest_ID;
     ped_rec **lowest_aff = 0; // will be set unless lowest_ID remains 0; but 0 does not allow ref of lowest_aff
-    register ped_rec *tmp_aff;
+    ped_rec *tmp_aff;
 
     for (aff = 0; aff < Ped->AffectedCnt; aff++) {
         lowest_ID = 0;
@@ -274,7 +274,7 @@ static int sort_affecteds(ped_tree *Ped)
 int renumber_ped(ped_tree *Ped)
 {
     int entry, child, flag;
-    register ped_rec *Entry, from_rec, to_rec;
+    ped_rec *Entry, from_rec, to_rec;
     int entry_ID, to_index;
     int *place = CALLOC((size_t) Ped->EntryCnt, int);
     int *mother = CALLOC((size_t) Ped->EntryCnt, int);
@@ -552,10 +552,10 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
     int             ped, entry1, entry, locus1;
     int             locus, mito_locus, l1;
     ped_top        *PTop;
-    register ped_tree *PPed;
-    register linkage_ped_tree *LPed;
-    register ped_rec *PRec;
-    register linkage_ped_rec *LRec;
+    ped_tree *PPed;
+    linkage_ped_tree *LPed;
+    ped_rec *PRec;
+    linkage_ped_rec *LRec;
     linkage_locus_top *LLTop;
     /*  int plocus, LocusMapSize, *LocusMap=NULL; */
 

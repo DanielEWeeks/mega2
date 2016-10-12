@@ -1305,7 +1305,7 @@ void            write_mendel_locus_file(char *file_name,
 {
 
     int      nloop, tr, locus1, allele, tmpi, tmpi2, *trp;
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     char     loutfl_name[2*FILENAME_LENGTH];
     int      numgen, ipen, num_affec = num_traits;
     int      simwalk2;
@@ -1406,7 +1406,7 @@ static int  write_mendel_pen_file(char *fl_name, linkage_locus_top * LTop,
                                   analysis_type analysis)
 {
     int       tr, tmpi2, num_affec=num_traits;
-    register  linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     int       ipen, i, first_time=1;
     FILE      *filep = NULL; //compiler can't figure ...
     char      poutfl_name[2*FILENAME_LENGTH];
@@ -1507,7 +1507,7 @@ static int write_mendel5_pen_file(char *fl_name,
 {
 
     int   *trp, tr, tmpi2, ipen, num_affec=num_traits;
-    register linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     FILE *filep = NULL; //compiler: too hard to tell its assigned.
     char poutfl_name[2*FILENAME_LENGTH];
     int naff=0, first_time=1;

@@ -125,7 +125,7 @@ static int save_SOLAR_peds(char *fl_name, linkage_ped_top *Top)
     int hhid=-1;
     FILE *filep;
     char pedfl[2*FILENAME_LENGTH];
-    register linkage_ped_rec *Entry;
+    linkage_ped_rec *Entry;
 
     /* first figure out if there is a trait called HHID
      */
@@ -241,8 +241,8 @@ static int write_SOLAR_pheno(char *fl_name, linkage_ped_top *Top)
     int      cov, *trp, tr, num_affec=num_traits;
     FILE     *filep;
     char     pfl[2*FILENAME_LENGTH];
-    register linkage_ped_rec *Entry;
-    register linkage_locus_rec *Locus;
+    linkage_ped_rec *Entry;
+    linkage_locus_rec *Locus;
 
     if (num_affec == 0) {
         printf("No trait loci, solar phenotype file not created.\n");
@@ -415,8 +415,8 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
     int tr, nloop, num_affec=num_traits;
     char    gfl[2*FILENAME_LENGTH];
     FILE    *filep;
-    register linkage_ped_rec *Entry;
-    register linkage_locus_rec *Locus;
+    linkage_ped_rec *Entry;
+    linkage_locus_rec *Locus;
 
 
     NLOOP;

@@ -463,7 +463,7 @@ static void write_Idcoefs_pedigree(linkage_ped_top *Top, char *outfl_name,
 
 int index_renumber_ped(ped_tree *Ped, int *index) {
     int entry, flag;
-    register ped_rec *Entry;
+    ped_rec *Entry;
     int entry_ID;
     int *place = CALLOC((size_t) Ped->EntryCnt, int);
     int *mother = CALLOC((size_t) Ped->EntryCnt, int);

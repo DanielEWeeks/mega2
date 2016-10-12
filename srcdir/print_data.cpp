@@ -40,7 +40,7 @@ void print_data(int *a, int no_allele, struct randomization sample,
 
 {
 
-    register int i, j, k, l;
+    int i, j, k, l;
     char line[FILENAME_LENGTH];
 
     line[0] = '-';

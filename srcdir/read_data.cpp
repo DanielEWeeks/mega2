@@ -49,7 +49,7 @@ int read_data (int *a, int *no_allele, int *total,
                struct randomization *sample, FILE **infile)
 
 {
-    register int i, j, l, err = 1;
+    int i, j, l, err = 1;
 
     *total = 0;
 

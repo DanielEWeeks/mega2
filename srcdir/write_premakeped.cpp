@@ -104,7 +104,7 @@ void save_premakeped_peds(char *outfl_name, linkage_ped_top *Top,
     int tr, nloop, num_affec=num_traits;
     int ped, entry, locus, loc1, j;
     int *trp, *aff_status=NULL, *paff_status, *aff_loci = NULL; // silly compiler
-    register linkage_ped_rec *Entry;
+    linkage_ped_rec *Entry;
     linkage_locus_rec *Loc;
     linkage_locus_top *LTop;
     FILE *filep;

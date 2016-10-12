@@ -79,7 +79,7 @@ void csv_save_mendel_peds(char *outfl_name, linkage_ped_top *Top)
 {
     int      nloop, tr, ped, entry, locus1, *trp;
     int      /*num_labels, *labels, */ num_affec = num_traits;
-    register linkage_ped_rec *Entry;
+    linkage_ped_rec *Entry;
     int      affected;
     int      a1, a2;
 
@@ -444,7 +444,7 @@ void csv_mendel7_pen_file(char *fl_name, linkage_ped_top *Top, int sex_linked)
 
 {
     int       tr;
-    register  linkage_locus_rec *Locus;
+    linkage_locus_rec *Locus;
     int       trp, ipen, ped, entry;
     FILE      *filep = NULL;
     char poutfl_name[2*FILENAME_LENGTH];
