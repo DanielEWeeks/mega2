@@ -1390,7 +1390,7 @@ void            affected_by_status(linkage_ped_top *Top, int locus)
             /*      Top->Ped[ped].Entry[entry].Pheno[locus].Affection.Status=aff; */
         }
     }
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
     sprintf(err_msg,
             "Found %d members with affection status 2 at locus %s.\n",
             AffEntryCnt, Top->LocusTop->Locus[locus].LocusName);

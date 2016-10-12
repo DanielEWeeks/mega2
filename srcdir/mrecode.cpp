@@ -1016,7 +1016,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
     const char *all1, *all2;
     int a1, a2;
 
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
     int num_skip;
 
     if (Top->LocusTop->LocusCnt <= 10) {
@@ -2539,7 +2539,7 @@ linkage_ped_top  *create_full_marker_data(
         for (i=0; i < LTop->LocusCnt; i++) {
             tod_fr1.reset();
             tod_fr1_x4.reset();
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
             if (((i+1) % 100) == 0) {
                 printf("Marker %s ..", LTop->Locus[i].LocusName);
             }
@@ -2646,7 +2646,7 @@ file_format check_locus_file_format(FILE *fp)
 }
 
 
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
 
 static void aff_lines(FILE *fp, int nclass, char *name)
 

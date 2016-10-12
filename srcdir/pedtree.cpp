@@ -559,7 +559,7 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
     linkage_locus_top *LLTop;
     /*  int plocus, LocusMapSize, *LocusMap=NULL; */
 
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
     printf("\nConverting to pedigree tree ...\n");
 #endif
 
