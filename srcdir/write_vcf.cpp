@@ -355,7 +355,7 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
                 for (tr=0; tr < num_traits; tr++) {
                     if(global_trait_entries[tr] < 0)
                         continue;
-                    if(global_trait_entries[tr] != _trait)
+                    //if(global_trait_entries[tr] != _trait)
                         pr_printf("%s\t",_LTop->Pheno[global_trait_entries[tr]].TraitName);
             }
             pr_printf("SAMPLEID\n");
@@ -392,10 +392,10 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
             pr_nl();
         }
         void inner() {
-            if(_ttraitp != dummy) {
+            //if(_ttraitp != dummy) {
                 pr_pheno();
                 pr_printf("\t");
-            }
+            //}
         }
     } *lp = new vcf_phenos(Top);
 
