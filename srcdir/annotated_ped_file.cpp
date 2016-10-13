@@ -5729,7 +5729,8 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
     for (; i < num_userdef_cols ; i++) {
         ped_all_colnames[i].ColName = TKN.MT;
     }
-    for (i=0; i < LTop->LocusCnt && i < num_userdef_cols ; i++) {
+//  for (i=0; i < LTop->LocusCnt && i < num_userdef_cols ; i++)
+    for (i=0; i < LTop->LocusCnt; i++) {
         llr = LTop->Locus[i];
         llx = EXLTop->EXLocus[i];
         loctype_to_descriptor(LTop, i, loctype);
