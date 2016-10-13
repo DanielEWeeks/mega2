@@ -2801,6 +2801,14 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
        typically different fp numbers.  (unless they are NA or 0)
      */
     MaxChromo = NumUnmapped = 0;
+    int a1 = 0, a2 = 0;
+    if (PLINK.plink == binary_PED_format && alleles != (char **)NULL) {
+        if (PLINK.map3) {
+            a1 = 3; a2 = 4;
+        } else {
+            a1 = 4; a2 = 5;
+        }
+    }
     while (!feof(mapfp)) {
         line++;
         error_prob = 0.0;
@@ -2846,7 +2854,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
             } else {
                 lch=fcmap(mapfp, "%s", dummy);
                 // This is for processing the allele columns in a PLINK .bim file...
-                if (PLINK.plink == binary_PED_format && alleles != (char **)NULL && j>=4 && j<=5) {
+                if (PLINK.plink == binary_PED_format && alleles != (char **)NULL && j>=a1 && j<=a2) {
                     if (strlen(dummy) == 1) {
                         (*alleles)[alleles_i++] = dummy[0];
                     } else {
@@ -5721,7 +5729,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
     for (; i < num_userdef_cols ; i++) {
         ped_all_colnames[i].ColName = TKN.MT;
     }
-    for (i=0; i < (PLINK.plink != binary_PED_format && PLINK.plink != PED_format ? 0 : LTop->LocusCnt); i++) {
+    for (i=0; i < LTop->LocusCnt && i < num_userdef_cols ; i++)
         llr = LTop->Locus[i];
         llx = EXLTop->EXLocus[i];
         loctype_to_descriptor(LTop, i, loctype);
