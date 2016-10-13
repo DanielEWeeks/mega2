@@ -103,10 +103,10 @@ int is_typed_lentry(linkage_ped_rec Entry, linkage_locus_top *LTop,
 
 void clean_reordered_markers(linkage_locus_top *LTop, analysis_type analysis);
 
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
 static linkage_allele_rec *new_lallelerec();
 static linkage_locus_rec *new_llocusrec(linkage_locus_type Type);
-#endif /* DEBUG */
+#endif /* DEBUG_MEGA2 */
 
 static void    *lcollapse_iterate(list_data EntryData, void *It);
 static void    *loop_list_iterate(list_data EntryData, void *Arg);
@@ -384,7 +384,7 @@ void            clear_llooprec(linkage_loop_rec *Loop)
 }
 
 
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
 linkage_allele_rec *new_lallelerec()
 {
     linkage_allele_rec *newrec = MALLOC(linkage_allele_rec);
@@ -1796,7 +1796,7 @@ void get_loci_on_chromosome(const int numchr)
         }
     }
 
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
     printf("Copied over %d loci\n", NumChrLoci);
 #endif
 }

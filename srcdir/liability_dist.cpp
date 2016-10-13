@@ -257,7 +257,7 @@ static liable_allele_dist *create_allele_dist(linkage_ped_top *LPedTreeTop,
                     allele_dist[kk].STATUSPERCENT(mm,ll,nn,2)=
                         safe_divide(allele_dist[kk].LIABLESTATUS(mm,ll,nn,2),
                                     allele_dist[kk].MARKERTOTAL(mm, nn, 2));
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
                     /*  printf("percent0, %3.2f, percent1 %3.2f, percent2, %3.2f\n",
                         allele_dist[kk].STATUSPERCENT(mm,ll,nn,0),
                         allele_dist[kk].STATUSPERCENT(mm,ll,nn,1),
@@ -275,7 +275,7 @@ static liable_allele_dist *create_allele_dist(linkage_ped_top *LPedTreeTop,
                     allele_dist[kk].GSTATUSPERCENT(mm,ll,nn,2)=
                         safe_divide(allele_dist[kk].GLIABLESTATUS(mm,ll,nn,2),
                                     allele_dist[kk].MARKERGTOTAL(mm, nn, 2));
-#ifdef DEBUG
+#ifdef DEBUG_MEGA2
                     /*	  printf("gpercent0, %3.2f, gpercent1 %3.2f, gpercent2, %3.2f\n",
                           allele_dist[kk].GSTATUSPERCENT(mm,ll,nn,0),
                           allele_dist[kk].GSTATUSPERCENT(mm,ll,nn,1),
