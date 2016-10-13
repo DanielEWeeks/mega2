@@ -5705,13 +5705,14 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
         num_userdef_cols += 2;          /* in "virtual file" but not in actual file */
 
 #ifndef HIDEFILE
-    msgvf("Reading PLINK format ped file: %s (%d columns)\n", pedfile, num_userdef_cols);
+//z msgvf("Reading PLINK format ped file: %s (%d columns)\n", pedfile, num_userdef_cols);
 #endif
 
     // Need to add in the alleles that were gathered from reading the .bim file,
     // since this information will not be found in the .map file.
     // Note that allele_count = 0 if we have read a .map file...
-    i = num_userdef_cols + (PLINK.plink == binary_PED_format ? plink_info->allele_count : 0);
+//z i = num_userdef_cols + (PLINK.plink == binary_PED_format ? plink_info->allele_count : 0);
+    i = num_userdef_cols + (PLINK.plink == PED_format ? 0 : 2 * LTop->MarkerCnt);
     ped_all_colnames = CALLOC((size_t)(i), col_hdr_type);
 #ifdef SHOWSTATUS
     msgvf("ALLOC SPACE: ped_all_colnames: %d MB (%d x %d)\n",
@@ -5729,7 +5730,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
     for (; i < num_userdef_cols ; i++) {
         ped_all_colnames[i].ColName = TKN.MT;
     }
-//  for (i=0; i < LTop->LocusCnt && i < num_userdef_cols ; i++)
+//z  for (i=0; i < LTop->LocusCnt && i < num_userdef_cols ; i++)
     for (i=0; i < LTop->LocusCnt; i++) {
         llr = LTop->Locus[i];
         llx = EXLTop->EXLocus[i];
