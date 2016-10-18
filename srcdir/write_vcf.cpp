@@ -429,11 +429,11 @@ void CLASS_VCF::write_VCF_map(linkage_ped_top *Top, const char *prefix, char *fi
                     if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT)
                         pr_printf("Map.%c.a\t",_LTop->map_distance_type);
                     else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT || genetic_distance_sex_type_map == FEMALE_GDMT)
-                        pr_printf("Map.%c.a\t",_LTop->map_distance_type,_LTop->map_distance_type);
+                        pr_printf("Map.%c.f\tMap.%c.m\t",_LTop->map_distance_type,_LTop->map_distance_type);
                 }
             }
             if (base_pair_position_index >= 0)
-                pr_printf("BP.p\t");
+                pr_printf("%s.p\t",_EXLTop->MapNames[base_pair_position_index]);
             pr_nl();
         }
 
