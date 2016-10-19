@@ -50,6 +50,7 @@
 #include "vcftools/bcf_file.h"
 #include "vcftools/vcf_file.h"
 #include "vcftools/parameters.h"
+#include "zlib-1.2.8/zlib.h"
 
 Str hg_build;
 int cc;
@@ -93,8 +94,8 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     write_VCF_freq(Top, file_name_stem, file_names, pwid, fwid);
     write_VCF_pen(Top, file_name_stem, file_names, pwid, fwid);
 
-    printf("Mega2 is using VCF tools to convert to BCF format:\n");
-    convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
+    //printf("Mega2 is using VCF tools to convert to BCF format:\n");
+    //convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
 }
 
 
@@ -123,7 +124,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             //don't know these for now
             //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
             //pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
-            pr_printf("RF=%.6f;",_tlocusp->Allele[0].Frequency);
             pr_printf("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
             pr_printf("##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
             first = true;
@@ -272,6 +272,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(base_pair_position_index > 0)
                pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
             //double alternate_frequency = 0;
+            pr_printf("RF=%.6f;",_tlocusp->Allele[0].Frequency);
             pr_printf("AF=");
             for (int allele = 1; allele < _tlocusp->AlleleCnt; allele++) {
                 if(allele < _tlocusp->AlleleCnt-1)
@@ -429,7 +430,7 @@ void CLASS_VCF::write_VCF_map(linkage_ped_top *Top, const char *prefix, char *fi
                 }
             }
             if (base_pair_position_index >= 0)
-                pr_printf("%s.p\t",_EXLTop->MapNames[Value_Base_Pair_Position_Index]);
+                pr_printf("%s.p\t",_EXLTop->MapNames[base_pair_position_index]);
             pr_nl();
         }
 
