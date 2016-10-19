@@ -52,35 +52,30 @@
 #include "vcftools/parameters.h"
 
 Str hg_build;
+int cc;
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
     int pwid, fwid, mwid;
     linkage_ped_top *Top = LPedTreeTop;
 
+    int combine_chromo = main_chromocnt > 1;
+
     if ( InputMode == INTERACTIVE_INPUTMODE ) {
-        option_menu(file_names,file_name_stem);
+        option_menu(file_names,file_name_stem, &combine_chromo);
     }
     else {
         batch_in();
         //inner_file_names(file_names, "", file_name_stem);
     }
 
-    //I believe everything goes into one VCF file
-    int combine_chromo = 1;
     LoopOverChrm  = ! combine_chromo;
-
     LoopOverTrait = 0;
-
-    //get_file_names(file_names, Top->OrigIds, Top->UniqueIds, &combine_chromo);
-
-    //We'll want a phenotype file, not sure if we'll want to loop over traits or have them split out
-    //LoopOverTrait = 0;
 
     omit_peds(untyped_ped_opt, Top);
     field_widths(Top, Top->LocusTop, &fwid, &pwid, NULL, &mwid);
 
-    inner_file_names(file_names,"",file_name_stem);
+    inner_file_names(file_names,"",file_name_stem, &combine_chromo);
 
 
     printf("Mega2 created the following file(s) for VCF Format:\n");
@@ -124,7 +119,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("##source=MEGA2\n");
             if(base_pair_position_index > 0)
                 pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
-            pr_printf("##INFO=<ID=RF,Number=1,Type=Float,Description=\"Allele Frequency of reference allele\">\n");
             pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
             //don't know these for now
             //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
@@ -277,7 +271,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(base_pair_position_index > 0)
                pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
             //double alternate_frequency = 0;
-            pr_printf("RF=%.6f;",_tlocusp->Allele[0].Frequency);
             pr_printf("AF=");
             for (int allele = 1; allele < _tlocusp->AlleleCnt; allele++) {
                 if(allele < _tlocusp->AlleleCnt-1)
@@ -431,11 +424,11 @@ void CLASS_VCF::write_VCF_map(linkage_ped_top *Top, const char *prefix, char *fi
                     if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT)
                         pr_printf("Map.%c.a\t",_LTop->map_distance_type);
                     else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT || genetic_distance_sex_type_map == FEMALE_GDMT)
-                        pr_printf("Map.%c.f\tMap.%c.m\t",_LTop->map_distance_type,_LTop->map_distance_type);
+                        pr_printf("Map.%c.a\t",_LTop->map_distance_type,_LTop->map_distance_type);
                 }
             }
             if (base_pair_position_index >= 0)
-                pr_printf("%s.p\t",_EXLTop->MapNames[base_pair_position_index]);
+                pr_printf("BP.p\t");
             pr_nl();
         }
 
@@ -592,11 +585,13 @@ void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *
     //bcf->print_bcf(params.vcf_filename,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
 }
 
-void CLASS_VCF::option_menu (char *file_names[], char *prefix) {
-    int choice, done, stem, build;
+void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo) {
+    int choice, done, stem, build, chromo;
     done = 0;
     stem = 1;
     build = 2;
+    chromo = 3;
+
 
     strcpy(prefix,file_name_stem);
     char buildname[5] = "hg19";
@@ -608,7 +603,14 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix) {
         printf("%d) Done with this menu - please proceed\n", done);
         printf("%d) File name stem:                                             %-15s\n", stem, prefix);
         printf("%d) Human Genome Build                                          %s\n", build, buildname);
-        printf("Enter selection: 0 - %d > ",2);
+        if(main_chromocnt > 1) {
+            if (*combine_chromo)
+                printf("%d) Combine Chromosomes                                         Yes\n", chromo);
+            else
+                printf("%d) Combine Chromosomes                                         No\n", chromo);
+            printf("Enter selection: 0 - %d > ", 3);
+        }
+        printf("Enter selection: 0 - %d > ", 2);
         fcmap(stdin,"%d", &choice); newline;
 
         if ( choice < done ) {
@@ -624,7 +626,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix) {
             printf("Enter new file name stem > ");
             fcmap(stdin, "%s", prefix);
             newline;
-            inner_file_names(file_names, "", prefix);
+            inner_file_names(file_names, "", prefix, combine_chromo);
         }
 
         else if ( choice == build ) {
@@ -633,6 +635,12 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix) {
             newline;
         }
 
+        else if(choice == chromo){
+            if(*combine_chromo)
+                *combine_chromo = 0;
+            else
+                *combine_chromo = 1;
+        }
         else {
             printf("Unknown option %d\n", choice);
             newline;
@@ -666,27 +674,41 @@ void CLASS_VCF::batch_out(){
     }
 }
 
-void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char *stem) {
+void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char *stem, int *combine_chromo) {
 
      sprintf(file_names[0], "%s.%s.vcf", stem, num);
-     sprintf(file_names[1], "%s.%s.fam", stem, num);
-     sprintf(file_names[2], "%s.%s.phe", stem, num);
+     if(main_chromocnt == 1 || *combine_chromo)
+        sprintf(file_names[1], "%s.%s.fam", stem, num);
+    else
+         sprintf(file_names[1], "%s.fam", stem);
+    if(main_chromocnt == 1 || *combine_chromo)
+        sprintf(file_names[2], "%s.%s.phe", stem, num);
+    else
+        sprintf(file_names[2], "%s.phe", stem);
      sprintf(file_names[3], "%s.%s.map", stem, num);
      sprintf(file_names[4], "%s.%s.freq", stem, num);
-     sprintf(file_names[5], "%s.%s.pen", stem, num);
+    if(main_chromocnt == 1 || *combine_chromo)
+        sprintf(file_names[5], "%s.%s.pen", stem, num);
+    else
+        sprintf(file_names[5], "%s.pen", stem);
+
+    cc = *combine_chromo;
 }
 
 
 void CLASS_VCF::gen_file_names(char **file_names, char *num)
 {
-    inner_file_names(file_names, num, file_name_stem);
+    //inner_file_names(file_names, num, file_name_stem);
 }
 
 void CLASS_VCF::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
-    change_output_chr(file_names[1], numchr);
-    change_output_chr(file_names[2], numchr);
+    if(main_chromocnt == 1 || cc)
+        change_output_chr(file_names[1], numchr);
+    if(main_chromocnt == 1 || cc)
+        change_output_chr(file_names[2], numchr);
     change_output_chr(file_names[3], numchr);
     change_output_chr(file_names[4], numchr);
-    change_output_chr(file_names[5], numchr);
+    if(main_chromocnt == 1 || cc)
+        change_output_chr(file_names[5], numchr);
 }

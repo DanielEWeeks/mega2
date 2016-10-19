@@ -78,7 +78,7 @@ public:
 
     void write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *file_names[]);
 
-    void option_menu (char *file_names[], char *prefix);
+    void option_menu (char *file_names[], char *prefix, int *combine_chromo);
 
     virtual void batch_in();
 
@@ -86,7 +86,7 @@ public:
 
     void gen_file_names(char **file_names, char *num);
 
-    void inner_file_names(char **file_names, const char *num, const char *stem);
+    void inner_file_names(char **file_names, const char *num, const char *stem, int *combine_chromo);
 
     void replace_chr_number(char *file_names[], int numchr);
 
