@@ -93,9 +93,8 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     write_VCF_freq(Top, file_name_stem, file_names, pwid, fwid);
     write_VCF_pen(Top, file_name_stem, file_names, pwid, fwid);
 
-
-    //printf("Mega2 is using VCF tools to convert to BCF format:\n");
-    //convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
+    printf("Mega2 is using VCF tools to convert to BCF format:\n");
+    convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
 }
 
 
@@ -119,10 +118,12 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("##source=MEGA2\n");
             if(base_pair_position_index > 0)
                 pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
+            pr_printf("##INFO=<ID=RF,Number=1,Type=Float,Description=\"Allele Frequency of reference allele\">\n");
             pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
             //don't know these for now
             //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
             //pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
+            pr_printf("RF=%.6f;",_tlocusp->Allele[0].Frequency);
             pr_printf("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
             pr_printf("##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
             first = true;
@@ -424,11 +425,11 @@ void CLASS_VCF::write_VCF_map(linkage_ped_top *Top, const char *prefix, char *fi
                     if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT)
                         pr_printf("Map.%c.a\t",_LTop->map_distance_type);
                     else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT || genetic_distance_sex_type_map == FEMALE_GDMT)
-                        pr_printf("Map.%c.a\t",_LTop->map_distance_type,_LTop->map_distance_type);
+                        pr_printf("Map.%c.f\tMap.%c.m\t",_LTop->map_distance_type,_LTop->map_distance_type);
                 }
             }
             if (base_pair_position_index >= 0)
-                pr_printf("BP.p\t");
+                pr_printf("%s.p\t",_EXLTop->MapNames[Value_Base_Pair_Position_Index]);
             pr_nl();
         }
 
