@@ -503,9 +503,9 @@ void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *fi
             for (int tr=0; tr < num_traits; tr++) {
                 if (global_trait_entries[tr] < 0)
                     continue;
-                if(_LTop->Locus[tr].Type == AFFECTION) {
-                    for(int cl=0; cl <_LTop->Pheno[tr].Props.Affection.ClassCnt; cl++) {
-                        if(_LTop->Pheno[tr].Props.Affection.Class[cl].AutoPen != NULL)
+                if(_LTop->Locus[global_trait_entries[tr]].Type == AFFECTION) {
+                    for(int cl=0; cl <_LTop->Pheno[global_trait_entries[tr]].Props.Affection.ClassCnt; cl++) {
+                        if(_LTop->Pheno[global_trait_entries[tr]].Props.Affection.Class[cl].AutoPen != NULL)
                             for(int ch =0; ch < main_chromocnt; ch++) {
                                 if (global_chromo_entries[ch] != 23) {
                                     pr_printf("%s\t%d\t%.4f\t%.4f\t%.4f\t%s\n",
