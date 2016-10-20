@@ -919,6 +919,7 @@ write_vcf.o: annotated_ped_file.h vcftools/bcf_file.h vcftools/output_log.h
 write_vcf.o: vcftools/parameters.h vcftools/variant_file.h
 write_vcf.o: vcftools/vcf_entry.h vcftools/bcf_entry.h vcftools/header.h
 write_vcf.o: vcftools/bgzf.h vcftools/vcf_file.h vcftools/parameters.h
+write_vcf.o: zlib-1.2.8/zlib.h
 dbmega2.o: types.hh common.h typedefs.h errorno.h allutil.h linkage.h
 dbmega2.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
 dbmega2.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h
