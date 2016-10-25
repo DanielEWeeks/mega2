@@ -53,7 +53,7 @@
 #include "zlib-1.2.8/zlib.h"
 
 Str hg_build;
-int cc;
+int combinechromovcf;
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -64,6 +64,7 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 
     if ( InputMode == INTERACTIVE_INPUTMODE ) {
         option_menu(file_names,file_name_stem, &combine_chromo);
+        batch_out();
     }
     else {
         batch_in();
@@ -108,6 +109,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         typedef char *str;
         str *file_names;
         bool first;
+        int dummychr;
+        int dummylocus;
 
         void file_loop() {
             mssgvf("        VCF format file:        %s/%s\n", *_opath, file_names[0]);
@@ -130,14 +133,26 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner(){
-            if(first){
-                //int diff = abs(_EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index] - _EXLTop->EXLocus[0+num_traits].positions[base_pair_position_index]);
-                //pr_printf("##contig=<ID=%d,length=%d,assembly=%s>\n",_numchr,diff,"b37");
-
-                //based on PLINK's conversion to VCF we don't want the difference for the contig length we want 1+ the greatest value for length
-                double diff = _EXLTop->EXLocus[NumChrLoci-1].positions[base_pair_position_index] + 1;
-                pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n",_tlocusp->Marker->chromosome,diff,hg_build.c_str());
-                first = false;
+            if(combinechromovcf){
+                if(first) {
+                    dummychr = _tlocusp->Marker->chromosome;
+                    double diff = _EXLTop->EXLocus[ChrLoci[NumChrLoci - 1]].positions[base_pair_position_index] + 1;
+                    //double diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
+                    pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", _tlocusp->Marker->chromosome, diff, hg_build.c_str());
+                    first = false;
+                }
+                else{
+                    if(dummychr != _tlocusp->Marker->chromosome)
+                        first = true;
+                }
+            }
+            else {
+                if (first) {
+                    //based on PLINK's conversion to VCF we don't want the difference for the contig length we want 1+ the greatest value for length
+                    double diff = _EXLTop->EXLocus[ChrLoci[NumChrLoci - 1]].positions[base_pair_position_index] + 1;
+                    pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", _tlocusp->Marker->chromosome, diff, hg_build.c_str());
+                    first = false;
+                }
             }
         }
 
@@ -596,7 +611,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
 
     strcpy(prefix,file_name_stem);
-    char buildname[5] = "hg19";
+    char buildname[5] = "B36";
     choice = -1;
 
     while (choice != 0) {
@@ -694,7 +709,7 @@ void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char 
     else
         sprintf(file_names[5], "%s.pen", stem);
 
-    cc = *combine_chromo;
+    combinechromovcf = *combine_chromo;
 }
 
 
@@ -705,12 +720,12 @@ void CLASS_VCF::gen_file_names(char **file_names, char *num)
 
 void CLASS_VCF::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
-    if(main_chromocnt == 1 || cc)
+    if(main_chromocnt == 1 || combinechromovcf)
         change_output_chr(file_names[1], numchr);
-    if(main_chromocnt == 1 || cc)
+    if(main_chromocnt == 1 || combinechromovcf)
         change_output_chr(file_names[2], numchr);
     change_output_chr(file_names[3], numchr);
     change_output_chr(file_names[4], numchr);
-    if(main_chromocnt == 1 || cc)
+    if(main_chromocnt == 1 || combinechromovcf)
         change_output_chr(file_names[5], numchr);
 }
