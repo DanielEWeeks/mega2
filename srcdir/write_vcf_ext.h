@@ -53,6 +53,8 @@ public:
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
     virtual bool require_physical_map() { return true; }
 
+    virtual bool allow_no_genetic_map()  { return true; }
+
     virtual bool allow_trait_combination()  { return true; }
 
     virtual void ped_ind_defaults(int unique) {

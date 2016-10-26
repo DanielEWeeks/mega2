@@ -255,7 +255,7 @@ static keyw_t keywords[] = {
     {"Input_Database_Mode",                      INT,     "2"},  
 
     {"Select_Loop_Break",                        INT,     "0"},
-    {"human_genome_build",                    STRING,     "B36"},
+    {"human_genome_build",                    STRING,     "B37"},
 
 };
 

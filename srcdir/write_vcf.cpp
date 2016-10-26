@@ -132,12 +132,21 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             first = true;
         }
 
+        //calculate length and print out number chromosomes
+        //need different behavior for combine chromosome vs not (show all chromosome rows vs just one)
+        //to get the length we loop over the ChrLoci array for the currently saved chromosome to determine the longest one, we need to make sure nothing is a trait so we check for markers
+        //If the chromosome is different from the saved one we assume we need to print a new row
         void inner(){
             if(combinechromovcf){
                 if(first) {
                     dummychr = _tlocusp->Marker->chromosome;
-                    double diff = _EXLTop->EXLocus[ChrLoci[NumChrLoci - 1]].positions[base_pair_position_index] + 1;
-                    //double diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
+                    double diff = 0;
+                    for(int i = 0; i< NumChrLoci; i++ ){
+                        if(_LTop->Locus[ChrLoci[i]].Type== BINARY || _LTop->Locus[ChrLoci[i]].Type==NUMBERED) {
+                            if(_EXLTop->EXLocus[ChrLoci[i]].positions[base_pair_position_index] + 1 > diff  && _LTop->Locus[ChrLoci[i]].Marker->chromosome == _tlocusp->Marker->chromosome)
+                                diff = _EXLTop->EXLocus[ChrLoci[i]].positions[base_pair_position_index] + 1;
+                        }
+                    }
                     pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", _tlocusp->Marker->chromosome, diff, hg_build.c_str());
                     first = false;
                 }
@@ -148,8 +157,13 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             }
             else {
                 if (first) {
-                    //based on PLINK's conversion to VCF we don't want the difference for the contig length we want 1+ the greatest value for length
-                    double diff = _EXLTop->EXLocus[ChrLoci[NumChrLoci - 1]].positions[base_pair_position_index] + 1;
+                    double diff = 0;
+                    for(int i = 0; i< NumChrLoci; i++ ){
+                        if(_LTop->Locus[ChrLoci[i]].Type== BINARY || _LTop->Locus[ChrLoci[i]].Type==NUMBERED) {
+                            if(_EXLTop->EXLocus[ChrLoci[i]].positions[base_pair_position_index] + 1 > diff)
+                                diff = _EXLTop->EXLocus[ChrLoci[i]].positions[base_pair_position_index] + 1;
+                        }
+                    }
                     pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", _tlocusp->Marker->chromosome, diff, hg_build.c_str());
                     first = false;
                 }
@@ -611,7 +625,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
 
     strcpy(prefix,file_name_stem);
-    char buildname[5] = "B36";
+    char buildname[5] = "B37";
     choice = -1;
 
     while (choice != 0) {
