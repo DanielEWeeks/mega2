@@ -278,7 +278,11 @@ void CLASS_SHAPEIT::batch_in()
 
     BatchValueIfSet(        fn,   "Shapeit_file_stem");
     BatchValueGet(c,              "Loop_Over_Chromosomes");
-    LoopOverChrm = (c == 'y' || c == 'Y');
+    if (c != 'y' && c != 'Y') {
+        warnvf("For SHAPEIT, Loop_Over_Chromosomes was %c, but will be read as true ('y')\n", c);
+        warnvf("Each chromosome must be processed separately.\n");
+    }
+    LoopOverChrm = 'y';
 
     if (_suboption == 1) {
         BatchValueGet(this->rdir,  "Shapeit_recomb_rdir");
