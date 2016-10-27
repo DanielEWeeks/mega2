@@ -1992,7 +1992,7 @@ void clean_reordered_markers(linkage_locus_top *LTop, analysis_type analysis)
                 // sex-specific, or female map even though all three maps (a, m, f) are present,
                 // we must take this into consideration. We must also worry about the sequelae of this...
 //              asm("int $3");
-                if (ALLOW_NO_MAP(analysis) ||
+                if (ALLOW_NO_MAP(analysis) || analysis->allow_no_genetic_map() ||
                     // with a sex-averaged map, we only know about the average position...
                     (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT &&
                      LTop->Marker[reordered_marker_loci[j]].pos_avg >= 0.0) ||

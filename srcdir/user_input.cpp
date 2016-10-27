@@ -53,6 +53,7 @@
 #include "vcftools/mega2_vcftools_interface.h"
 
 #include "class_old.h"
+#include "database_dump_ext.h"
 
 #ifdef _WIN
 #define R_OK 4
@@ -3209,10 +3210,10 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     
     //
     // At this point we are either in INTERACTIVE_INPUTMODE, or BATCH_INPUTMODE...
-    
+
     requires_genetic_map_p = AnalysisOpt->allow_no_genetic_map() ? 0 : 1;
     // always require a genetic map for now since genetic maps are entangled in the code...
-    requires_genetic_map_p = 1;
+//  requires_genetic_map_p = 1;
     
     //
     // Here we get a list of the valid maps from the structure that holds the parsing of
@@ -3292,10 +3293,9 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     // If no genetic map is available...
     if (gds == 0 && requires_genetic_map_p == 1) {
         // yet a map is required...
-        errorvf("For the analysis type specified, a genetic map is required,\n       but none are available in the map file.\n");
+        errorvf("For the analysis type specified, a genetic map is required,\nbut none are available in the map file.\n");
         EXIT(INPUT_DATA_ERROR);
-    }
-    
+    }    
     // Check to see if a map has been specified.
     // The only way that this would happen to this point is that it was read from the batch file, or
     // set someplace where the EXLTop stucture is being created (e.g., read_files.c:make_EXLTop_from_LTop).
@@ -3323,7 +3323,7 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
                     break;
                 }
             }
-        
+
         if (!valid_map_p) {
             // didn't find the map...
            errorvf("The Value_Genetic_Distance_Index specified (%d) does not reference a genetic map in the map file.\n",
@@ -3375,7 +3375,7 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
         return;
     }
     
-    if (requires_genetic_map_p == 1 &&
+    if (// requires_genetic_map_p == 1 &&
         (gds == 1 ||
          (InputMode == BATCH_FILE_INPUTMODE && gds > 1))) {
             // A genetic map is required;
@@ -3422,7 +3422,6 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     
     // create a format string that will accomodate the longest map name...
     sprintf(format_str, "%%c%%d) %%%ds: %%13s %%s\n", max_map_name_len);
-    
     option_selected = 1; // pick the first option as the default
     
     // setup for counting the 'None' option if the analysis type selected by the user allows it...
@@ -3523,7 +3522,7 @@ NOTE:
 //
 // For 'AnalysisOpt' in 'RequiresPhysicalMap', do not give the user the 'None' option when
 // allowing them to choose the physical map.
-void exit_pos_req_not_avail() {
+void  check_both_pos_index() {
 
     if (base_pair_position_index == -2 && AnalysisOpt->require_physical_map() ) {
         errorvf("For the analysis type specified, a physical map is required.\n");
@@ -3533,7 +3532,7 @@ void exit_pos_req_not_avail() {
 
     int requires_genetic_map_p = AnalysisOpt->allow_no_genetic_map() ? 0 : 1;
     // always require a genetic map for now since genetic maps are entangled in the code...
-    requires_genetic_map_p = 1;
+//  requires_genetic_map_p = 1;
 
     if (genetic_distance_index == -2 && requires_genetic_map_p) {
         errorvf("For the analysis type specified, a genetic map is required.\n");
@@ -3545,7 +3544,7 @@ void exit_pos_req_not_avail() {
 void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
     int i, requires_physical_map_p = 0, bpps = 0, bpps2, *bppi = NULL;
     int option, option_selected, valid_map_p = 0;
-    
+
     requires_physical_map_p = AnalysisOpt->require_physical_map() ? 1 : 0;
     // Determine how many maps are available....
     // bppi holds the indicies of valid maps.

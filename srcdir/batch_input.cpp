@@ -1284,7 +1284,7 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
     extern Input_Base *createinput(INPUT_FORMAT in_format);
     Input = createinput(Input_Format);
 
-    check_batch_items();
+//  check_batch_items();
 }
 
 //

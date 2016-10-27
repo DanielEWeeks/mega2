@@ -614,8 +614,10 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
                 copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
             main_chromocnt = NumChromo;
         } else {
-            errorvf("For the analysis type specified, a Genetic Map was required, but none was chosen.\n");
-            EXIT(EARLY_TERMINATION);
+            map_num = base_pair_position_index;
+            Top->LocusTop->map_distance_type = Top->EXLTop->map_functions[map_num];
+            Top->LocusTop->SexDiff = NO_SEX_DIFF;
+            main_chromocnt = NumChromo;
         }
 
         set_missing_quant_input(Top, *analysis);
@@ -635,8 +637,9 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     if (genetic_distance_index != -2) {
         map_num = genetic_distance_index;
     } else {
-        errorvf("For the analysis type specified, a Genetic Map was required, but none was chosen.\n");
-        EXIT(EARLY_TERMINATION);
+        map_num = base_pair_position_index;
+//      errorvf("For the analysis type specified, a Genetic Map was required, but none was chosen.\n");
+//      EXIT(EARLY_TERMINATION);
     }
     
     if (*analysis == QUANT_SUMMARY && InputMode == BATCH_FILE_INPUTMODE) {
@@ -721,8 +724,12 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
                         map_num = genetic_distance_index;
                         copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
                     } else {
-                        errorvf("For the analysis type specified, a Genetic Map was required, but none was chosen.\n");
-                        EXIT(EARLY_TERMINATION);
+                        map_num = base_pair_position_index;
+                        Top->LocusTop->map_distance_type = Top->EXLTop->map_functions[map_num];
+                        Top->LocusTop->SexDiff = NO_SEX_DIFF;
+                        main_chromocnt = NumChromo;
+//                      errorvf("For the analysis type specified, a Genetic Map was required, but none was chosen.\n");
+//                      EXIT(EARLY_TERMINATION);
                     }
 #ifdef USEOLDMAPCODE
                 }
@@ -951,16 +958,22 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
                 }
             } //while (selection != 0) {
 
-            if (Top->EXLTop != NULL) {
-                copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
+            if (genetic_distance_index != -2) {
+                if (Top->EXLTop != NULL) {
+                    copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
 #ifdef USEOLDMAPCODE
-                if (InputMode == INTERACTIVE_INPUTMODE) {
-                    Mega2BatchItems[/* 41 */ Output_Map_Num].value.option = map_num + 1;
-                    batchf(Output_Map_Num);
-                }
+                    if (InputMode == INTERACTIVE_INPUTMODE) {
+                        Mega2BatchItems[/* 41 */ Output_Map_Num].value.option = map_num + 1;
+                        batchf(Output_Map_Num);
+                    }
 #endif /* USEOLDMAPCODE */
+                }
+            } else {
+                map_num = base_pair_position_index;
+                Top->LocusTop->map_distance_type = Top->EXLTop->map_functions[map_num];
+                Top->LocusTop->SexDiff = NO_SEX_DIFF;
+                main_chromocnt = NumChromo;
             }
-
           switch (option) {
               case 1:
                   ReOrderLociByChromosome(Top, &(selected_chromosomes[0]), 1);
@@ -3803,13 +3816,15 @@ static int ReOrderMappedLoci_new(linkage_ped_top *Top, int locus_type,
                     && LTop->Marker[i].chromosome == chromosomes[j]) {
 
 		    if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT) {
-		      tmpNumber[count].index = LTop->Marker[i].pos_avg;
+                        tmpNumber[count].index = LTop->Marker[i].pos_avg;
 		    } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT ||
 			       genetic_distance_sex_type_map == FEMALE_GDMT) {
                         tmpNumber[count].index = LTop->Marker[i].pos_female;
+                    } else if (genetic_distance_index == -2) {
+                        tmpNumber[count].index = 0;
 		    } else {
-		      errorvf("You must have specified a genetic distance sex map type.\n");
-		      EXIT(DATA_TYPE_ERROR);
+                        errorvf("You must specify a genetic distance sex map type.\n");
+                        EXIT(DATA_TYPE_ERROR);
 		    }
                     if (base_pair_position_index >= 0)
                         tmpNumber[count].phys = Top->EXLTop->EXLocus[i].positions[base_pair_position_index];

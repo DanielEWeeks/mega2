@@ -729,19 +729,12 @@ int             main(int argc, char **argv, char **env)
     if (AnalyInputMode == NOEXEC_INPUTMODE)
         AnalyInputMode = InputMode;
 
-
     if (database_off)
         database_read = database_dump = 0;
     else if (database_dump || database_read) ;
     else menu0();
-/*
-    else if (db_exists_db())
-        database_read = 1;
-    else
-        database_dump = 1;
     if (InputMode == BATCH_FILE_INPUTMODE)  // may have changed database_read/dump value
         check_batch_items();
- */
     tod_batch();
     // determine if we should go out to the web and check to see if the user is running the latest release of MEGA2...
     if ((InputMode == BATCH_FILE_INPUTMODE && access(Mega2Batch, F_OK) == 0) ||
@@ -963,7 +956,7 @@ int             main(int argc, char **argv, char **env)
     Tod tod_files("read all files");
     if (!database_dump && database_read) {
         extern void dbmega2_import(linkage_ped_top *Top);
-        extern void exit_pos_req_not_avail();
+        extern void check_both_pos_index();
 
         add_allele("NA", zero);
         REC_UNKNOWN = zero;
@@ -979,7 +972,7 @@ int             main(int argc, char **argv, char **env)
 
         dbimport();
 
-        exit_pos_req_not_avail();
+        check_both_pos_index();
 
         LPedTreeTop = &SQLop;
 
