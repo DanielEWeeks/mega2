@@ -468,7 +468,7 @@ void CLASS_ROADTRIPS::get_file_names(char *file_names[], int has_orig, int has_u
         choice = -1;
     }
     *combine_chromo = 1;
-    int tmp = ! *combine_chromo;
+    int tmp = (! *combine_chromo) ? 'y' : 'n';
     BatchValueSet(tmp, "Loop_Over_Chromosomes");
 
     /* output file name menu */
@@ -601,6 +601,7 @@ void CLASS_ROADTRIPS::batch_out()
 
 void CLASS_ROADTRIPS::batch_in()
 {
+    char c;
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(                fn,   "file_name_stem");
@@ -609,7 +610,9 @@ void CLASS_ROADTRIPS::batch_in()
     BatchValueGet(male_prevalence,         "RoadTrips_male_prevalence");
     BatchValueGet(female_prevalence,       "RoadTrips_female_prevalence");
 
-    BatchValueGet(LoopOverChrm,            "Loop_Over_Chromosomes");
+    BatchValueGet(c,                       "Loop_Over_Chromosomes");
+    LoopOverChrm = (c == 'y' || c == 'Y');
+
 }
 
 void CLASS_ROADTRIPS::batch_show()
