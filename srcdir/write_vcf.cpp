@@ -64,14 +64,14 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 
     if ( InputMode == INTERACTIVE_INPUTMODE ) {
         option_menu(file_names,file_name_stem, &combine_chromo);
-        batch_out();
+        LoopOverChrm  = ! combine_chromo;
     }
     else {
         batch_in();
         //inner_file_names(file_names, "", file_name_stem);
+        combine_chromo = ! LoopOverChrm;
     }
 
-    LoopOverChrm  = ! combine_chromo;
     LoopOverTrait = 0;
 
     omit_peds(untyped_ped_opt, Top);
@@ -104,6 +104,7 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 //20 14370 rs6054257 G A 29 PASS NS=3;DP=14;AF=0.5;DB;H2 GT:GQ:DP:HQ 0|0:48:1:51,51 1|0:48:8:51,51 1/1:43:5:.,.
 void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
     //needed a loop to calculate the length for the contig flag
+
     vlpCLASS(vcf_vcfs_header_start,chr,loci) {
         vlpCTOR(vcf_vcfs_header_start, chr, loci) { }
         typedef char *str;
@@ -682,6 +683,8 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 *combine_chromo = 0;
             else
                 *combine_chromo = 1;
+            int tmp = (! combine_chromo) ? 'y' : 'n';
+            BatchValueSet(tmp, "Loop_Over_Chromosomes");
         }
         else {
             printf("Unknown option %d\n", choice);
@@ -697,9 +700,12 @@ void CLASS_VCF::write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *fil
 
 
 void CLASS_VCF::batch_in(){
+    char c;
     char *fn = this->file_name_stem;
     BatchValueIfSet(fn,   "file_name_stem");
     BatchValueGet(hg_build, "human_genome_build");
+    BatchValueGet(c,   "Loop_Over_Chromosomes");
+    LoopOverChrm = c == 'y' || c == 'Y';
 }
 
 void CLASS_VCF::batch_out(){
@@ -707,6 +713,7 @@ void CLASS_VCF::batch_out(){
 
     Cstr Values[] =  { "file_name_stem",
                        "human_genome_build",
+                       "Loop_Over_Chromosomes",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {

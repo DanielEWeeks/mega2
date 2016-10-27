@@ -41,6 +41,13 @@ public:
 
     ~CLASS_VCF() { }
 
+    virtual bool allow_trait_combination()  { return true; }
+    virtual bool allow_no_genetic_map()  { return true; }
+//  virtual bool allow_no_map()  { return true; }
+
+    virtual bool loops() { return true; }
+    virtual bool Loop_Over_Chromosomes_implemented() { return true; }
+
     virtual bool output_quant_can_define_missing_value() { return true; }
     //virtual const char* output_quant_default_value() { return "-9"; }
     //virtual bool output_quant_must_be_numeric() { return true; }
@@ -49,13 +56,8 @@ public:
     //virtual const char* output_affect_default_value() { return "-9"; }
     //virtual bool output_affect_must_be_numeric() { return true; }
 
-    virtual bool loops() { return true; }
-    virtual bool Loop_Over_Chromosomes_implemented() { return true; }
     virtual bool require_physical_map() { return true; }
 
-    virtual bool allow_no_genetic_map()  { return true; }
-
-    virtual bool allow_trait_combination()  { return true; }
 
     virtual void ped_ind_defaults(int unique) {
         OrigIds[0] = 6; /* Keeps Per ID that was input*/

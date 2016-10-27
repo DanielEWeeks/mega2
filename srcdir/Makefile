@@ -371,6 +371,7 @@ user_input.o: grow_string_ext.h output_file_names_ext.h output_routines_ext.h
 user_input.o: plink_ext.h utils_ext.h user_input_ext.h
 user_input.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
 user_input.o: class_old.h analysis.h write_plink_ext.h plink_core_ext.h
+user_input.o: database_dump_ext.h
 cal_prob.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 cal_prob.o: linkage_external.h makeped.h pedtree.h batch_input.h
 cal_prob.o: input_check.h hwe.h compress_ext.h do_switch_ext.h
