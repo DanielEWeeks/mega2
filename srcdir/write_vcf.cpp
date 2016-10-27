@@ -111,6 +111,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         bool first;
         int dummychr;
         int dummylocus;
+        double diff;
 
         void file_loop() {
             mssgvf("        VCF format file:        %s/%s\n", *_opath, file_names[0]);
@@ -139,35 +140,45 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         void inner(){
             if(combinechromovcf){
                 if(first) {
+                    if (_tlocusp->Type == BINARY || _tlocusp->Type == NUMBERED)
+                        diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
                     dummychr = _tlocusp->Marker->chromosome;
-                    double diff = 0;
-                    for(int i = 0; i< NumChrLoci; i++ ){
-                        if(_LTop->Locus[ChrLoci[i]].Type== BINARY || _LTop->Locus[ChrLoci[i]].Type==NUMBERED) {
-                            if(_EXLTop->EXLocus[ChrLoci[i]].positions[base_pair_position_index] + 1 > diff  && _LTop->Locus[ChrLoci[i]].Marker->chromosome == _tlocusp->Marker->chromosome)
-                                diff = _EXLTop->EXLocus[ChrLoci[i]].positions[base_pair_position_index] + 1;
-                        }
-                    }
-                    pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", _tlocusp->Marker->chromosome, diff, hg_build.c_str());
                     first = false;
                 }
-                else{
-                    if(dummychr != _tlocusp->Marker->chromosome)
+                else {
+                    if(dummychr == _tlocusp->Marker->chromosome) {
+                        if (_tlocusp->Type == BINARY || _tlocusp->Type == NUMBERED) {
+                            if (_EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1 > diff) {
+                                diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
+                            }
+                        }
+                    }
+                    else{
+                        pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", dummychr, diff, hg_build.c_str());
                         first = true;
+                    }
                 }
             }
             else {
                 if (first) {
-                    double diff = 0;
-                    for(int i = 0; i< NumChrLoci; i++ ){
-                        if(_LTop->Locus[ChrLoci[i]].Type== BINARY || _LTop->Locus[ChrLoci[i]].Type==NUMBERED) {
-                            if(_EXLTop->EXLocus[ChrLoci[i]].positions[base_pair_position_index] + 1 > diff)
-                                diff = _EXLTop->EXLocus[ChrLoci[i]].positions[base_pair_position_index] + 1;
-                        }
-                    }
-                    pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", _tlocusp->Marker->chromosome, diff, hg_build.c_str());
+                    if (_tlocusp->Type == BINARY || _tlocusp->Type == NUMBERED)
+                        diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
+                    dummychr = _tlocusp->Marker->chromosome;
                     first = false;
                 }
+                else {
+                    if(dummychr == _tlocusp->Marker->chromosome) {
+                        if (_tlocusp->Type == BINARY || _tlocusp->Type == NUMBERED) {
+                            if (_EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1 > diff) {
+                                diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
+                            }
+                        }
+                    }
+                }
             }
+        }
+        void file_trailer(){
+            pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", dummychr, diff, hg_build.c_str());
         }
 
 
