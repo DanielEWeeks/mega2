@@ -4,6 +4,7 @@
 *.CKP
 # Ignore executables
 srcdir/mega2
+mega2_bin/*
 srcdir/mega2_darwin
 srcdir/.cproject
 srcdir/.project

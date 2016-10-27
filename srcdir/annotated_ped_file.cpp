@@ -5578,11 +5578,21 @@ static ext_linkage_locus_top *read_plink_map_file(const char *map_file,
 
     col = 2;
     // Exactly 6 columns for a .bim file...
-    if (file_desc->num_map_cols == 4 || file_desc->num_map_cols == 6) {
+    if ( (file_desc->num_map_cols == 4 && (PLINK.plink != binary_PED_format)) || 
+         (file_desc->num_map_cols == 6 && (PLINK.plink == binary_PED_format))) {
         if (PLINK.map3 == 1) {
             errorvf("You have indicated the map file has 3 columns (via --map3), but it has 4.\n");
             EXIT(INPUT_DATA_ERROR);
         }
+    } else if ( (file_desc->num_map_cols == 3 && (PLINK.plink != binary_PED_format)) || 
+                (file_desc->num_map_cols == 5 && (PLINK.plink == binary_PED_format))) {
+        if (PLINK.map3 != 1) {
+            errorvf("The map file only has 3 columns.  You must specify the PLINK parameter --map3.\n");
+            EXIT(INPUT_DATA_ERROR);
+        }
+    }
+
+    if (PLINK.map3 == 0) {
         if (PLINK.geneticMapType == 0) {
             INIT_COLNAME(tmp, 0, FLOAT_AN, "Map.k.a"); //kosambi
         } else {
