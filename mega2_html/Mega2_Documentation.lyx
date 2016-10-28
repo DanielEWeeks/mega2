@@ -85,11 +85,12 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes false
+\tracking_changes true
 \output_changes true
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1820302391 "Robert V. Baron"
 \end_header
 
 \begin_body
@@ -589,6 +590,26 @@ reference "subsec:MEGA2run.html-and-related"
 \end_inset
 
 ).
+\change_inserted -1820302391 1477597764
+
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1820302391 1477678357
+Creation of extensive data analysis logs, both during database creation:
+ (files MEGA2.DB.LOG and MEGA2.DB.ERR) and during each analysis: (files MEGA2.LOG
+ and MEGA2.ERR)and creation of other informative metadata as appropriate:
+ files MEGA2.* (see Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Additional-Mega2-Output"
+
+\end_inset
+
+)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -998,8 +1019,13 @@ Enhancements in Mega2 version 4.9.1
 
 \begin_layout Itemize
 For any particular set of input data, Mega2 now stores those data in a database.
- Subsequent runs of Mega2 are then much quicker as the data is quickly loaded
- from the database.
+ Subsequent runs of Mega2 are then much 
+\change_deleted -1820302391 1477599007
+quick
+\change_inserted -1820302391 1477599013
+fast
+\change_unchanged
+er as the data is quickly loaded from the database.
  There are two different file selection (aka input) menus: one to create
  the database and the other to select the database and the analysis.
  These choices are selected via the new 
@@ -1010,7 +1036,18 @@ database mode
 \begin_inset Quotes erd
 \end_inset
 
- menu or via the command line switches: 
+ menu
+\change_inserted -1820302391 1477599422
+ (see Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-database-mode"
+
+\end_inset
+
+)
+\change_unchanged
+ or via the command line switches: 
 \series bold
 \emph on
 -
@@ -1073,6 +1110,19 @@ reference "subsec:Detailed-info-convert-vcf"
 \end_inset
 
 .
+\change_inserted -1820302391 1477599462
+
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1477678435
+Mega2 now allows a database to be created without any genetic map information.
+ This is not useful for most previous Mega2 analysis but is common when
+ the output is PLINK, VCF, SHAPEIT, etc and map genetic information is not
+ needed.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
@@ -1744,6 +1794,28 @@ Done with this menu - please proceed
  continue with the Mega2 database creation process.
  When processing is completed, an SQLite3 database will be written to the
  file indicated in menu item 10 and Mega2 will exit.
+
+\change_inserted -1820302391 1477599895
+ Mega2 will also create several files starting with the prefix 
+\begin_inset Quotes eld
+\end_inset
+
+MEGA2
+\begin_inset Quotes erd
+\end_inset
+
+ in this directory to log progress and report errors, viz.
+ MEGA2.DB.ERR, MEGA2.DB.LOG, MEGA2.KEY, MEGA2.RECODE, etc.
+ (See section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Additional-Mega2-Output"
+
+\end_inset
+
+ for more details.)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -1885,7 +1957,34 @@ After you complete this menu, hit
 \begin_inset Quotes erd
 \end_inset
 
- to proceed to the additional analysis menus.
+ to 
+\change_inserted -1820302391 1477600055
+choose the analysis and 
+\change_unchanged
+proceed to the additional analysis menus.
+
+\change_inserted -1820302391 1477600131
+ As before, Mega2 will create several files starting with the prefix 
+\begin_inset Quotes eld
+\end_inset
+
+MEGA2
+\begin_inset Quotes erd
+\end_inset
+
+ in the output directory to log progress and report errors (this time relevant
+ to the analysis processing), viz.
+ MEGA2.ERR, MEGA2.LOG, etc.
+ (See section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Additional-Mega2-Output"
+
+\end_inset
+
+ for more details.)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -3127,8 +3226,44 @@ There are separate native binaries for Microsoft Windows 7 and Microsoft
  MinGW needs two .dll's if you wish to install just Mega2 without the whole
  MinGW.
  They are included and depend on Windows Version.
- The Msys2 version of Mega2 does not need any additional libraries.
- Finally, if you run Mega2 at the 
+ 
+\change_inserted -1820302391 1477600354
+For Windows 10 Cygwin, all the necessary .dll's are in the Windows 10 directory
+ and begin with the prefix 
+\begin_inset Quotes eld
+\end_inset
+
+cyg
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\change_unchanged
+The 
+\change_inserted -1820302391 1477600266
+static 
+\change_unchanged
+Msys2 version of Mega2 does not need any additional libraries.
+ 
+\change_inserted -1820302391 1477678592
+The other Msys2 executable uses the .dll's in the Windows 10 directory beginning
+ with the prefix 
+\begin_inset Quotes eld
+\end_inset
+
+lib
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\change_unchanged
+Finally, if you run 
+\change_inserted -1820302391 1477600493
+a native Windows 
+\change_unchanged
+Mega2 at the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -17056,6 +17191,19 @@ base pair distance(map name) "BP"
 
 \begin_layout LyX-Code
 ========================================================== 
+\change_inserted -1820302391 1477601004
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1477678627
+If during the database creation, you requested cleaning, for example, removing
+ mendelian inconsistencies.
+ A reminder line will be added to this printout for each cleaning request,
+ indicating how many bad markers were found and cleaned.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
@@ -19952,6 +20100,17 @@ ted format map file with physical positions for all the required markers
 
 \begin_layout Section
 Additional Mega2 Output Files
+\change_inserted -1820302391 1477598816
+
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Additional-Mega2-Output"
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -39126,7 +39285,13 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.9.0 to Version 4.9.1 (Released October 28, 2016)
+Changes from Version 4.9.0 to Version 4.9.1 (Released October 
+\change_inserted -1820302391 1477601246
+31
+\change_deleted -1820302391 1477601245
+28,
+\change_unchanged
+ 2016)
 \end_layout
 
 \begin_layout Itemize
@@ -39197,6 +39362,19 @@ reference "ext:minimac-shapeit"
 
 \begin_layout Itemize
 Mega2 now supports VCF output.
+\change_inserted -1820302391 1477601217
+
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1477601218
+Mega2 now allows a database to be created without any genetic map information.
+ This is not useful for most previous Mega2 analysis but is useful when
+ the output is PLINK, VCF, SHAPEIT, etc and map genetic information is not
+ needed.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
