@@ -141,11 +141,6 @@ void dbmisc_export(linkage_ped_top *Top) {
     charstar_table.insert("DBCreateTime", RunDate);
     charstar_table.insert("DBMega2Version", Mega2Version);
     charstar_table.insert("DBVersion", SQLversion);
-    
-    extern int seed1, seed2, seed3;
-    int_table.insert("Seed1", seed1);
-    int_table.insert("Seed2", seed2);
-    int_table.insert("Seed3", seed3);
 
     extern INPUT_FORMAT_t Input_Format;
     int_table.insert("Input_Format", Input_Format);
@@ -235,17 +230,6 @@ void dbmisc_import(linkage_ped_top *Top) {
     charstar_table.get("DBCreateTime", DBCreateTime);
     charstar_table.get("DBMega2Version", DBMega2Version);
     charstar_table.get("DBVersion", DBversion);
-
-
-#ifdef TEST
-#define SETSEED
-#endif
-#ifdef SETSEED
-    extern int seed1, seed2, seed3;
-    int_table.get("Seed1", seed1);
-    int_table.get("Seed2", seed2);
-    int_table.get("Seed3", seed3);
-#endif
 
     extern INPUT_FORMAT_t Input_Format;
     int Input_tmp = 0;
