@@ -137,10 +137,10 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
     int idir = -1, ifile = -1;
     char selection[MAX_NAMELEN], *sp = selection;
     char shapeitopt[16];
-    int tmp = 1;
 
     int Outfile_named = 0;
     *combine_chromo = 0;
+    int tmp = (! *combine_chromo) ? 'y' : 'n';
     BatchValueSet(tmp, "Loop_Over_Chromosomes");
 
     sub_prog_name(_suboption, shapeitopt);
@@ -271,12 +271,18 @@ void CLASS_SHAPEIT::batch_out()
 
 void CLASS_SHAPEIT::batch_in()
 {
+    char c;
     char *fn = this->file_name_stem;
     Str file;
     Vecs filesplit;
 
     BatchValueIfSet(        fn,   "Shapeit_file_stem");
-    BatchValueGet(LoopOverChrm,   "Loop_Over_Chromosomes");
+    BatchValueGet(c,              "Loop_Over_Chromosomes");
+    if (c != 'y' && c != 'Y') {
+        warnvf("For SHAPEIT, Loop_Over_Chromosomes was %c, but will be read as true ('y')\n", c);
+        warnvf("Each chromosome must be processed separately.\n");
+    }
+    LoopOverChrm = 'y';
 
     if (_suboption == 1) {
         BatchValueGet(this->rdir,  "Shapeit_recomb_rdir");
