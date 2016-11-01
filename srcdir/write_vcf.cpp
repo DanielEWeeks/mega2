@@ -95,8 +95,12 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     write_VCF_freq(Top, file_name_stem, file_names, pwid, fwid);
     write_VCF_pen(Top, file_name_stem, file_names, pwid, fwid);
 
-    //printf("Mega2 is using VCF tools to convert to BCF format:\n");
-    //convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
+    printf("\nMega2 is using VCF tools to convert to BCF format:\n");
+    convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
+
+    printf("Mega2 is using zlib to convert to VCF.gz format:\n");
+    convert_vcf_vcfgz(Top,file_name_stem,file_names,pwid,fwid);
+    printf("\n");
 }
 
 
@@ -274,8 +278,16 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             //Here we want to loop over all Alleles, first value is the ref allele, all other comma seperated Alt alelles.
             std::string a1;
             std::string a2;
+            double greatest_frequency = 0;
+            int greatest_allele = 0;
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                if (allele==0){
+                if(_tlocusp->Allele[allele].Frequency > greatest_frequency){
+                    greatest_frequency = _tlocusp->Allele[allele].Frequency;
+                    greatest_allele = allele;
+                }
+            }
+            for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
+                if (allele==greatest_allele){
                     if(!strcmp(_tlocusp->Allele[allele].AlleleName,"dummy"))
                         a1 = ".";
                     else
@@ -313,15 +325,15 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(base_pair_position_index > 0)
                pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
             //double alternate_frequency = 0;
-            pr_printf("RF=%.6f;",_tlocusp->Allele[0].Frequency);
+            pr_printf("RF=%.6f;",_tlocusp->Allele[greatest_allele].Frequency);
             pr_printf("AF=");
-            for (int allele = 1; allele < _tlocusp->AlleleCnt; allele++) {
-                if(allele < _tlocusp->AlleleCnt-1)
-                    pr_printf("%.6f,",_tlocusp->Allele[allele].Frequency);
+            for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
+                if(allele== greatest_allele)
+                    continue;
                 else
-                    pr_printf("%.6f;",_tlocusp->Allele[allele].Frequency);
-                //alternate_frequency += _tlocusp->Allele[allele].Frequency;
+                    pr_printf("%.6f,",_tlocusp->Allele[allele].Frequency);
             }
+            pr_printf(";");
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
             //pr_printf("NS=%d;",0);
@@ -620,13 +632,43 @@ void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *
     variant_file *vcf;
     vcf = new vcf_file(params.vcf_filename,params.vcf_compressed,params.chrs_to_keep,params.chrs_to_exclude,params.force_write_index);
     vcf->print_bcf(params.output_prefix,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
-
-    //this would've read in a bcf and printed a bcf, whoops.
-    //variant_file *bcf;
-
-    //bcf = new bcf_file(params.vcf_filename, params.chrs_to_keep, params.chrs_to_exclude, params.force_write_index, params.gatk);
-    //bcf->print_bcf(params.vcf_filename,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
 }
+
+
+void CLASS_VCF::convert_vcf_vcfgz(linkage_ped_top *Top, const char *prefix, char **file_names, const int pwid, const int fwid) {
+    FILE *infile = fopen(file_names[0], "rb");
+    char outfilename[255];
+    strcpy(outfilename,file_names[0]);
+    strcat(outfilename,".gz");
+
+    gzFile outfile = gzopen(outfilename, "wb");
+    //if (!infile || !outfile) return -1;
+
+    char inbuffer[128];
+    int num_read = 0;
+    unsigned long total_read = 0;
+
+    while ((num_read = fread(inbuffer, 1, sizeof(inbuffer), infile)) > 0) {
+        total_read += num_read;
+        gzwrite(outfile, inbuffer, num_read);
+    }
+
+    fclose(infile);
+    gzclose(outfile);
+
+    printf("Read %ld bytes, Wrote %ld bytes,Compression factor %4.2f%%\n",total_read, file_size(outfilename), (1.0-file_size(outfilename)*1.0/total_read)*100.0);
+
+}
+
+unsigned long CLASS_VCF::file_size(char *filename)
+{
+    FILE *pFile = fopen(filename, "rb");
+    fseek (pFile, 0, SEEK_END);
+    unsigned long size = ftell(pFile);
+    fclose (pFile);
+    return size;
+}
+
 
 void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo) {
     int choice, done, stem, build, chromo;
@@ -634,7 +676,6 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
     stem = 1;
     build = 2;
     chromo = 3;
-
 
     strcpy(prefix,file_name_stem);
     char buildname[5] = "B37";

@@ -45,6 +45,8 @@ public:
     virtual bool allow_no_genetic_map()  { return true; }
 //  virtual bool allow_no_map()  { return true; }
 
+    virtual bool forbid_trait_directories() { return true; }
+
     virtual bool loops() { return true; }
     virtual bool Loop_Over_Chromosomes_implemented() { return true; }
 
@@ -81,6 +83,8 @@ public:
     void convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
 
     void convert_vcf_vcfgz(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
+
+    unsigned long file_size(char *filename);
 
     void write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *file_names[]);
 
