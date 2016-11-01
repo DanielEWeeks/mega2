@@ -3421,7 +3421,7 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
     // At this point we should be in INTERACTIVE_INPUTMODE only...
     
     // create a format string that will accomodate the longest map name...
-    sprintf(format_str, "%%c%%d) %%%ds: %%13s %%s\n", max_map_name_len);
+    sprintf(format_str, "%%d) %%%ds: %%13s %%s\n", max_map_name_len);
     option_selected = 1; // pick the first option as the default
     
     // setup for counting the 'None' option if the analysis type selected by the user allows it...
@@ -3443,11 +3443,12 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
         printf("0) Done with this menu - please proceed\n");
         for (i = 0; i < gds; i++) {
             //printf("%c%d) %s: %s\t%s\n",
+            printf("%c", (((i+1) == option) ? '*' : ' '));
             printf(format_str,
-                   ((i+1) == option) ? '*' : ' ', i+1,
+                   i+1,
                    EXLTop->MapNames[gdi[i]],
                    genetic_distance_map_type_string[gdsm[i]],
-                   (EXLTop->map_functions[gdi[i]] == 'h') ? "Haldane" : "Kosambi"
+                   ((EXLTop->map_functions[gdi[i]] == 'h') ? "Haldane" : "Kosambi")
                    );
         }
         // if the analysis does not require a map, allow the user to select 'None'...
