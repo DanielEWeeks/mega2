@@ -54,6 +54,7 @@
 
 Str hg_build;
 int combinechromovcf;
+int outfiletype;
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -61,6 +62,10 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     linkage_ped_top *Top = LPedTreeTop;
 
     int combine_chromo = main_chromocnt > 1;
+    //1 VCF
+    //2 BCF
+    //3 VCF.gz
+    outfiletype = 1;
 
     if ( InputMode == INTERACTIVE_INPUTMODE ) {
         option_menu(file_names,file_name_stem, &combine_chromo);
@@ -68,10 +73,10 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     }
     else {
         batch_in();
-        //inner_file_names(file_names, "", file_name_stem);
         combine_chromo = ! LoopOverChrm;
     }
 
+    printf("%d",outfiletype);
     LoopOverTrait = 0;
 
     omit_peds(untyped_ped_opt, Top);
@@ -95,11 +100,15 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     write_VCF_freq(Top, file_name_stem, file_names, pwid, fwid);
     write_VCF_pen(Top, file_name_stem, file_names, pwid, fwid);
 
-    printf("\nMega2 is using VCF tools to convert to BCF format:\n");
-    convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
+    if(outfiletype == 2) {
+        printf("\nMega2 is using VCF tools to convert to BCF format:\n");
+        convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
+    }
 
-    printf("Mega2 is using zlib to convert to VCF.gz format:\n");
-    convert_vcf_vcfgz(Top,file_name_stem,file_names,pwid,fwid);
+    if(outfiletype == 3) {
+        printf("Mega2 is using zlib to convert to VCF.gz format:\n");
+        convert_vcf_vcfgz(Top, file_name_stem, file_names, pwid, fwid);
+    }
     printf("\n");
 }
 
@@ -671,11 +680,12 @@ unsigned long CLASS_VCF::file_size(char *filename)
 
 
 void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo) {
-    int choice, done, stem, build, chromo;
+    int choice, choice2, done, stem, build, chromo, fileout;
     done = 0;
     stem = 1;
     build = 2;
-    chromo = 3;
+    chromo = 4;
+    fileout = 3;
 
     strcpy(prefix,file_name_stem);
     char buildname[5] = "B37";
@@ -687,6 +697,12 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         printf("%d) Done with this menu - please proceed\n", done);
         printf("%d) File name stem:                                             %-15s\n", stem, prefix);
         printf("%d) Human Genome Build                                          %s\n", build, buildname);
+        if(outfiletype == 1)
+            printf("%d) VCF/BCF/VCF.gz:                                             VCF\n", fileout);
+        else if(outfiletype == 2)
+            printf("%d) VCF/BCF/VCF.gz:                                             BCF\n", fileout);
+        else if(outfiletype == 3)
+            printf("%d) VCF/BCF/VCF.gz:                                             VCF.gz\n", fileout);
         if(main_chromocnt > 1) {
             if (*combine_chromo)
                 printf("%d) Combine Chromosomes                                         Yes\n", chromo);
@@ -704,13 +720,14 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         else if ( choice == done ) {
             strcpy(file_name_stem,prefix);
             hg_build = buildname;
+            BatchValueSet(hg_build,"human_genome_build");
+            BatchValueSet(outfiletype,"VCF_output_file");
         }
 
         else if ( choice == stem ) {
             printf("Enter new file name stem > ");
             fcmap(stdin, "%s", prefix);
             newline;
-            inner_file_names(file_names, "", prefix, combine_chromo);
         }
 
         else if ( choice == build ) {
@@ -727,6 +744,27 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             int tmp = (! combine_chromo) ? 'y' : 'n';
             BatchValueSet(tmp, "Loop_Over_Chromosomes");
         }
+
+        else if(choice == fileout){
+            choice2 = -1;
+            while(choice2 != 1 || choice2 != 2 || choice2 != 3) {
+                draw_line();
+                printf("Choose output format:\n");
+                printf("1) VCF output\n");
+                printf("2) BCF output\n");
+                printf("3) VCF.gz output\n");
+                printf("Enter selection: 0 - 3 > ");
+                fcmap(stdin, "%d", &choice2);
+                newline;
+                if (choice2 == 1 || choice2 == 2 || choice2 == 3) {
+                    outfiletype = choice2;
+                    break;
+                }
+                else
+                    printf("Unknown option %d\n", choice2);
+            }
+        }
+
         else {
             printf("Unknown option %d\n", choice);
             newline;
@@ -747,6 +785,7 @@ void CLASS_VCF::batch_in(){
     BatchValueGet(hg_build, "human_genome_build");
     BatchValueGet(c,   "Loop_Over_Chromosomes");
     LoopOverChrm = c == 'y' || c == 'Y';
+    BatchValueGet(outfiletype,"VCF_output_file");
 }
 
 void CLASS_VCF::batch_out(){
@@ -755,6 +794,7 @@ void CLASS_VCF::batch_out(){
     Cstr Values[] =  { "file_name_stem",
                        "human_genome_build",
                        "Loop_Over_Chromosomes",
+                       "VCF_output_file",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
