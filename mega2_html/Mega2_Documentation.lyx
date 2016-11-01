@@ -17830,7 +17830,7 @@ reference "ext:minimac-shapeit"
 Convert to VCF format (Section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:Detailed-info-convert-vcf"
+reference "ext:vcf"
 
 \end_inset
 
@@ -36955,7 +36955,7 @@ Shapeit reference sample file
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
-name "ext:convert-vcf"
+name "ext:vcf"
 
 \end_inset
 
