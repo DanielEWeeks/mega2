@@ -37,60 +37,6 @@
 
 extern DBlite MasterDB;
 
-class Map_table {
-    DBstmt *insert_stmt;
-    DBstmt *select_stmt;
-public:
-    Map_table()  {}
-    int create() {
-	return MasterDB.exec(
-	    "CREATE TABLE IF NOT EXISTS map_table (pId INTEGER PRIMARY KEY,"
-            " marker INTEGER, map INTEGER, position DOUBLE, pos_female DOUBLE, pos_male DOUBLE"
-            ");"
-	    );
-    }
-    void init () {
-	insert_stmt = MasterDB.prep(
-            "INSERT INTO map_table(marker, map, position, pos_female, pos_male) VALUES(?, ?, ?, ?, ?);");
-	select_stmt = MasterDB.prep(
-            "SELECT marker, map, position, pos_female, pos_male FROM map_table;");
-    }
-    int insert(int marker, int map, double position, double pos_female, double pos_male) {
-        int idx = 1;
-        return insert_stmt 
-            && insert_stmt->rowbind(idx, marker, map)
-            && insert_stmt->rowbind(idx, position, pos_female, pos_male)
-
-            && insert_stmt->step();
-    }
-    int select(int &marker, int &map, double &position, double &pos_female, double &pos_male) {
-        int idx = 0;
-        return select_stmt 
-            && select_stmt->row(idx, marker, map)
-            && select_stmt->row(idx, position, pos_female, pos_male);
-    }
-    void print(int marker, int map, double position, double pos_female, double pos_male) {
-        printf("M %d %d %f %f %f\n", marker, map, position, pos_female, pos_male);
-    }
-
-    void close() {
-	delete insert_stmt;
-	delete select_stmt;
-    }
-    int drop() {
-	return MasterDB.exec("DROP TABLE IF EXISTS map_table;");
-    }
-
-    int index() {
-	return MasterDB.exec("CREATE Index Idx_map_table IF NOT EXISTS on map_table (key);");
-    }
-
-    void db_getall(linkage_ped_top *Top);
-
-};
-
-extern Map_table map_table;
-
 class MapNames_table {
     DBstmt *insert_stmt;
     DBstmt *select_stmt;
@@ -146,6 +92,61 @@ public:
 };
 
 extern MapNames_table mapnames_table;
+
+
+class Map_table {
+    DBstmt *insert_stmt;
+    DBstmt *select_stmt;
+public:
+    Map_table()  {}
+    int create() {
+	return MasterDB.exec(
+	    "CREATE TABLE IF NOT EXISTS map_table (pId INTEGER PRIMARY KEY,"
+            " marker INTEGER, map INTEGER, position DOUBLE, pos_female DOUBLE, pos_male DOUBLE"
+            ");"
+	    );
+    }
+    void init () {
+	insert_stmt = MasterDB.prep(
+            "INSERT INTO map_table(marker, map, position, pos_female, pos_male) VALUES(?, ?, ?, ?, ?);");
+	select_stmt = MasterDB.prep(
+            "SELECT marker, map, position, pos_female, pos_male FROM map_table;");
+    }
+    int insert(int marker, int map, double position, double pos_female, double pos_male) {
+        int idx = 1;
+        return insert_stmt 
+            && insert_stmt->rowbind(idx, marker, map)
+            && insert_stmt->rowbind(idx, position, pos_female, pos_male)
+
+            && insert_stmt->step();
+    }
+    int select(int &marker, int &map, double &position, double &pos_female, double &pos_male) {
+        int idx = 0;
+        return select_stmt 
+            && select_stmt->row(idx, marker, map)
+            && select_stmt->row(idx, position, pos_female, pos_male);
+    }
+    void print(int marker, int map, double position, double pos_female, double pos_male) {
+        printf("M %d %d %f %f %f\n", marker, map, position, pos_female, pos_male);
+    }
+
+    void close() {
+	delete insert_stmt;
+	delete select_stmt;
+    }
+    int drop() {
+	return MasterDB.exec("DROP TABLE IF EXISTS map_table;");
+    }
+
+    int index() {
+	return MasterDB.exec("CREATE Index Idx_map_table IF NOT EXISTS on map_table (key);");
+    }
+
+    void db_getall(linkage_ped_top *Top);
+
+};
+
+extern Map_table map_table;
 
 extern void dbmap_export(linkage_ped_top *Top);
 extern void dbmap_import(linkage_ped_top *Top);

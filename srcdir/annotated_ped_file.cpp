@@ -2357,7 +2357,8 @@ static int get_map_names(int num_cols,
     
     // Copy the map Name (functions and sex if they exist) to the EXLTop structure...
     EXLTop->MapCnt = mapnum;
-    EXLTop->map_functions = CALLOC((size_t)(mapnum + allocate_additional_maps), char);
+// +1 null at end
+    EXLTop->map_functions = CALLOC((size_t)(mapnum + allocate_additional_maps + 1), char);
     EXLTop->MapNames = CALLOC((size_t)(mapnum + allocate_additional_maps), char*);
 //cpk    EXLTop->SexMaps = CALLOC((size_t)mapnum, sex_map_types*);
     EXLTop->SexMaps = CALLOC((size_t)(mapnum+ allocate_additional_maps), int*);
@@ -4296,7 +4297,7 @@ static void insert_zero_sex_average_genetic_map_in_EXLTop(ext_linkage_locus_top 
     // Allocate an additional slot in EXLTop for the map...
     // NOTE: When extending a region allocated with calloc(3), realloc(3)
     // does not guarantee that the additional memory is also zero-filled.
-    EXLTop->map_functions = (char *)REALLOC(EXLTop->map_functions, EXLTop->MapCnt, char);
+    EXLTop->map_functions = (char *)REALLOC(EXLTop->map_functions, EXLTop->MapCnt+1, char);
     EXLTop->MapNames = (char **)REALLOC(EXLTop->MapNames, EXLTop->MapCnt, char *);
     EXLTop->SexMaps = (int **)REALLOC(EXLTop->SexMaps, EXLTop->MapCnt, int *);
     
@@ -4523,7 +4524,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             EXLTop = new_EXLTop(LTop);
             // SEE: annotated_ped_file.cpp::get_map_names()
             // Continue to set up EXLTop for the '1' map in 'vcf_map'...
-            EXLTop->map_functions = CALLOC((size_t)1, char); // e.g., 'h', 'k', or 'p'
+            EXLTop->map_functions = CALLOC((size_t)2, char); // e.g., 'h', 'k', or 'p'
             EXLTop->MapNames = CALLOC((size_t)1, char*);
             EXLTop->SexMaps = CALLOC((size_t)1, int *);
         }

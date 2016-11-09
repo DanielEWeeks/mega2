@@ -157,7 +157,11 @@ void dbmisc_export(linkage_ped_top *Top) {
     int_table.insert("Program", ELTop->Program);
     int_table.insert("SexDiff", ELTop->SexDiff);
     int_table.insert("SexLinked", ELTop->SexLinked);
-    int_table.insert("MapDistanceType", ELTop->map_distance_type);
+//  int_table.insert("MapDistanceType", ELTop->map_distance_type);
+    char xx[2], *cp = xx;
+    xx[0] = ELTop->map_distance_type;
+    xx[1] = 0;
+    charstar_table.insert("MapDistanceType", cp);
 
 //  calculated elsewhere
 //  int_table.insert("AllelesCnt", ...)
@@ -278,9 +282,9 @@ void dbmisc_import(linkage_ped_top *Top) {
     int_table.get("SexDiff", ELTop->SexDiff);
     int_table.get("SexLinked", ELTop->SexLinked);
 
-    int c = 0;
-    int_table.get("MapDistanceType", c);
-    Top->LocusTop->map_distance_type = (unsigned char)c;
+    char *cc = 0;
+    charstar_table.get("MapDistanceType", cc);
+    Top->LocusTop->map_distance_type = (unsigned char)cc[0];
 
 //asked
     extern int genetic_distance_index;

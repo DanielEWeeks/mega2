@@ -129,8 +129,8 @@ AffectClass_table affectclass_table;
 ClassPen_table classpen_table;
 TraitQuant_table traitquant_table;
 
-Map_table map_table; 
 MapNames_table mapnames_table; 
+Map_table map_table; 
 
 Phenotype_table phenotype_table;
 Genotype_table genotype_table;
@@ -161,8 +161,8 @@ void db_index_all() {
 //    classpen_table.index();
     traitquant_table.index();
 
-    map_table.index();
     mapnames_table.index();
+    map_table.index();
 
     phenotype_table.index();
     genotype_table.index();
@@ -302,8 +302,8 @@ void db_drop_all() {
 //    classpen_table.drop();
     traitquant_table.drop();
 
-    map_table.drop();
     mapnames_table.drop();
+    map_table.drop();
 
     phenotype_table.drop();
     genotype_table.drop();
@@ -409,8 +409,8 @@ void db_init_all() {
 //        classpen_table.create();
         traitquant_table.create();
 
-        map_table.create();
         mapnames_table.create();
+        map_table.create();
 
         phenotype_table.create();
         genotype_table.create();
@@ -441,8 +441,8 @@ void db_init_all() {
 //    classpen_table.init();
     traitquant_table.init();
 
-    map_table.init();
     mapnames_table.init();
+    map_table.init();
 
     phenotype_table.init();
     genotype_table.init();
@@ -498,8 +498,8 @@ void db_fini_all() {
 //    classpen_table.close();
     traitquant_table.close();
 
-    map_table.close();
     mapnames_table.close();
+    map_table.close();
 
     phenotype_table.close();
     genotype_table.close();
