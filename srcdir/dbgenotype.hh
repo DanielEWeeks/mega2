@@ -211,7 +211,7 @@ public:
 
 extern Genotype_table genotype_table;
 
-extern void dbgenotype_export(linkage_ped_top *Top);
+extern void dbgenotype_export(linkage_ped_top *Top, bp_order *bp);
 extern void dbgenotype_import(linkage_ped_top *Top);
 
 #endif

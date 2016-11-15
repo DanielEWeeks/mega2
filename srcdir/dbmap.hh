@@ -148,7 +148,7 @@ public:
 
 extern Map_table map_table;
 
-extern void dbmap_export(linkage_ped_top *Top);
+extern void dbmap_export(linkage_ped_top *Top, bp_order *bp);
 extern void dbmap_import(linkage_ped_top *Top);
 
 #endif

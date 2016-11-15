@@ -235,15 +235,18 @@ linkage_quant_data *Quant_rec;
 int AllelesCnt = 0;
 int AffectClassCnt = 0;
 
-void dblocus_export(linkage_locus_top *Top) {
+void dblocus_export(linkage_locus_top *Top, bp_order *bp) {
+    int i;
+    bp_order *b;
     Tod pedexp("export loci/marker");
 
     int LocusCnt  = Top->LocusCnt;
 
     MasterDB.begin();
 
-    linkage_locus_rec *p = Top->Locus;
-    for (int i = 0; i < LocusCnt; i++, p++) {
+    linkage_locus_rec *p, *p0 = Top->Locus;
+    for (i = 0, b = bp_sort; i < LocusCnt; i++, b++) {
+        p = p0 + b->i;
         p->locus_link = i;
         locus_table.insert(p);
         linkage_allele_rec *a = p->Allele;

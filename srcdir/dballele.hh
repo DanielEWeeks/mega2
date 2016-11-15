@@ -141,7 +141,7 @@ public:
 
 extern MarkerScheme_table markerscheme_table;
 
-extern void dballele_export(linkage_ped_top *Top);
+extern void dballele_export(linkage_ped_top *Top, bp_order *bp);
 extern void dballele_import(linkage_ped_top *Top);
 
 #endif

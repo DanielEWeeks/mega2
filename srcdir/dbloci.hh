@@ -675,7 +675,7 @@ extern TraitQuant_table traitquant_table;
 
 
 
-extern void dblocus_export(linkage_locus_top *LTop);
+extern void dblocus_export(linkage_locus_top *LTop, bp_order *bp);
 
 extern void dblocus_import(linkage_locus_top *LTop);
 

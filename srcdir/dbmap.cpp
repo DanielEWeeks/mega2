@@ -97,8 +97,9 @@ void MapNames_table::db_getall(linkage_ped_top *Top) {
     }
 }
 
-void dbmap_export(linkage_ped_top *Top) {
+void dbmap_export(linkage_ped_top *Top, bp_order *bp) {
     int i, j;
+    bp_order *b;
 
 //a    asm("int $3");
 
@@ -120,8 +121,9 @@ void dbmap_export(linkage_ped_top *Top) {
                               EXLTop->MapNames[j]);
     }
 
-    for (i = Top->LocusTop->PhenoCnt; i < Top->LocusTop->LocusCnt; i++) {
-        ext_linkage_locus_rec *EXL = EXLocus + i;
+    for (i = Top->LocusTop->PhenoCnt, b = bp_sort + Top->LocusTop->PhenoCnt;
+         i < Top->LocusTop->LocusCnt; i++, b++) {
+        ext_linkage_locus_rec *EXL = EXLocus + b->i;
         for (j = 0; j < EXLTop->MapCnt; j++) {
             map_table.insert(i, j, EXL->positions[j], EXL->pos_female[j], EXL->pos_male[j]);
         }

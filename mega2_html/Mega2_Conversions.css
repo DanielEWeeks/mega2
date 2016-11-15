@@ -24,8 +24,14 @@ body {
 	font: 90% sans-serif;
 	background: #f9f9f9;
 	color: black;
-	margin: 10;
+/*	margin: 10;
 	padding: 0;
+*/
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+        min-width: 400px;
+        max-width: 800px;
 }
 
 #globalWrapper {

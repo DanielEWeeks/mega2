@@ -94,8 +94,9 @@ void MarkerScheme_table::db_getall(linkage_ped_top *Top) {
     }
 }
 
-void dballele_export(linkage_ped_top *Top) {
+void dballele_export(linkage_ped_top *Top, bp_order *bp) {
     int i;
+    bp_order *b;
 
     Tod pedexp("export canonical allele/ marker scheme");
 
@@ -112,10 +113,10 @@ void dballele_export(linkage_ped_top *Top) {
     if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         int size = Top->LocusTop->MarkerCnt;
         int offset = Top->LocusTop->PhenoCnt;
-        for (i = offset; i < offset+size; i++) {
+        for (i = offset, b = bp_sort + offset; i < offset + size; i++, b++) {
             markerscheme_table.insert(i,
-                                      MARKER_SCHEME3_alleles[i].Allele_1,
-                                      MARKER_SCHEME3_alleles[i].Allele_2);
+                                      MARKER_SCHEME3_alleles[b->i].Allele_1,
+                                      MARKER_SCHEME3_alleles[b->i].Allele_2);
         }
     }
 
