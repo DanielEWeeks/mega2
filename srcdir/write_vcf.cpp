@@ -52,9 +52,15 @@
 #include "vcftools/parameters.h"
 #include "zlib-1.2.8/zlib.h"
 
+#include "dblite.hh"
+#include "dbmisc.hh"
+
+extern DBlite MasterDB;
+
 Str hg_build;
 int combinechromovcf;
 int outfiletype;
+Str ref_choice;
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -287,16 +293,39 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             //Here we want to loop over all Alleles, first value is the ref allele, all other comma seperated Alt alelles.
             std::string a1;
             std::string a2;
-            double greatest_frequency = 0;
-            int greatest_allele = 0;
-            for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                if(_tlocusp->Allele[allele].Frequency > greatest_frequency){
-                    greatest_frequency = _tlocusp->Allele[allele].Frequency;
-                    greatest_allele = allele;
+
+            //extremum means minimum or maximum
+            double extremum_frequency = 0;
+            int extremum_allele = 0;
+
+            if(ref_choice == "Major Allele"){
+                for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
+                    if (_tlocusp->Allele[allele].Frequency > extremum_frequency) {
+                        extremum_frequency = _tlocusp->Allele[allele].Frequency;
+                        extremum_allele = allele;
+                    }
                 }
             }
+            //change to 1.0 in case so we find the minimum
+            extremum_frequency = 1.0;
+            if(ref_choice == "Minor Allele"){
+                for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
+                    if (_tlocusp->Allele[allele].Frequency < extremum_frequency) {
+                        extremum_frequency = _tlocusp->Allele[allele].Frequency;
+                        extremum_allele = allele;
+                    }
+                }
+            }
+
+            if(ref_choice == "External Reference"){
+                //MasterDB.open();
+                //int ret = MasterDB.exec("SELECT * FROM ref_allele_table");
+                //printf("ret")
+                //MasterDB.close();
+            }
+
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                if (allele==greatest_allele){
+                if (allele==extremum_allele){
                     if(!strcmp(_tlocusp->Allele[allele].AlleleName,"dummy"))
                         a1 = ".";
                     else
@@ -334,10 +363,10 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(base_pair_position_index > 0)
                pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
             //double alternate_frequency = 0;
-            pr_printf("RF=%.6f;",_tlocusp->Allele[greatest_allele].Frequency);
+            pr_printf("RF=%.6f;",_tlocusp->Allele[extremum_allele].Frequency);
             pr_printf("AF=");
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                if(allele== greatest_allele)
+                if(allele== extremum_allele)
                     continue;
                 else
                     pr_printf("%.6f,",_tlocusp->Allele[allele].Frequency);
@@ -680,16 +709,18 @@ unsigned long CLASS_VCF::file_size(char *filename)
 
 
 void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo) {
-    int choice, choice2, done, stem, build, chromo, fileout;
+    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref;
     done = 0;
     stem = 1;
     build = 2;
-    chromo = 4;
-    fileout = 3;
+    chromo = 5;
+    fileout = 4;
+    ref = 3;
 
     strcpy(prefix,file_name_stem);
     char buildname[5] = "B37";
     choice = -1;
+    std::string refchoice = "Major Allele";
 
     while (choice != 0) {
         draw_line();
@@ -697,6 +728,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         printf("%d) Done with this menu - please proceed\n", done);
         printf("%d) File name stem:                                             %-15s\n", stem, prefix);
         printf("%d) Human Genome Build                                          %s\n", build, buildname);
+        printf("%d) Reference Alleles                                           %s\n", ref, refchoice.c_str());
         if(outfiletype == 1)
             printf("%d) VCF/BCF/VCF.gz:                                             VCF\n", fileout);
         else if(outfiletype == 2)
@@ -722,6 +754,8 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             hg_build = buildname;
             BatchValueSet(hg_build,"human_genome_build");
             BatchValueSet(outfiletype,"VCF_output_file");
+
+            ref_choice = refchoice;
         }
 
         else if ( choice == stem ) {
@@ -745,6 +779,34 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             BatchValueSet(tmp, "Loop_Over_Chromosomes");
         }
 
+        else if(choice == ref){
+            choice3 = -1;
+            while(choice3 != 1 || choice3 != 2 || choice3 != 3) {
+                printf("Reference Allele Menu\n");
+                draw_line();
+                printf("1) Use Major Allele Frequency\n");
+                printf("2) Use Minor Allele Frequency\n");
+                printf("3) Use external reference panel in database (see documentation)\n");
+                printf("Enter selection: 1 - 3 > ");
+                fcmap(stdin, "%d", &choice3);
+                newline;
+                if (choice3 == 1) {
+                    refchoice = "Major Allele";
+                    break;
+                }
+                else if (choice3 == 2){
+                    refchoice = "Minor Allele";
+                    break;
+                }
+                else if (choice3 == 3){
+                    refchoice = "External Reference";
+                    break;
+                }
+                else
+                    printf("Unknown option %d\n", choice3);
+            }
+        }
+
         else if(choice == fileout){
             choice2 = -1;
             while(choice2 != 1 || choice2 != 2 || choice2 != 3) {
@@ -753,7 +815,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 printf("1) VCF output\n");
                 printf("2) BCF output\n");
                 printf("3) VCF.gz output\n");
-                printf("Enter selection: 0 - 3 > ");
+                printf("Enter selection: 1 - 3 > ");
                 fcmap(stdin, "%d", &choice2);
                 newline;
                 if (choice2 == 1 || choice2 == 2 || choice2 == 3) {

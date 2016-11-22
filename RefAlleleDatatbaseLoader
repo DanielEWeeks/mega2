@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+"""
+This script allows for cross platform loading of a reference allele file format into the mega2 SQLite3 Database.
+The Reference file should be of the following format (though gzipped):
+CHR POS REF
+This can be made by hand, script or by using the GetRefAlleles.sh on a collection of VCF files.
+
+This python script takes two arguments, first is the mega2 database file, the default name is dbmega2.db
+and is in the home directory where you ran mega2.  However if you renamed it moved it you can choose it here.
+The second argument is the reference allele file, which is a gzipped flat file as described above.
+
+Using this you can load reference alleles into mega2 for creating VCF files etc.
+"""
+
+import sqlite3
+import sys
+import gzip
+import operator
+
+database_file = sys.argv[1]
+ref_filename = sys.argv[2]
+
+print("Using Databse: " + database_file)
+print("Using File: " + ref_filename)
+
+print("Connecting to " + database_file)
+connection = sqlite3.connect(database_file)
+cursor = connection.cursor()
+
+print("Dropping existing Reference Allele Table...")
+cursor.execute("DROP TABLE IF EXISTS ref_allele_table")
+print("Creating Reference Allele Table...")
+cursor.execute('''CREATE TABLE IF NOT EXISTS ref_allele_table(chr integer, pos  integer, marker integer, ref text)''')
+
+print("Creating dictionary of existing markers in database")
+markers = dict()
+for row in cursor.execute("SELECT position, marker FROM map_table WHERE map =\'1\'"):
+    pos = ('%f' % row[0]).rstrip('0').rstrip('.')
+    markers[pos] = row[1]
+
+print("Unzipping " + ref_filename)
+with gzip.open(ref_filename, 'rb') as infile:
+    file_content = infile.readlines()
+
+print("Scanning and inserting " + ref_filename+" into " + database_file)
+for line in file_content:
+    chromosome, position, reference = operator.itemgetter(0,1,2)(line.split( ))
+    marker = markers.get(position)
+    if marker != None:
+        cursor.execute("INSERT INTO ref_allele_table (chr, pos, marker, ref) VALUES (\'"
+        +chromosome+"\',\'"+position+"\',\'"+str(marker)+"\',\'"+reference+"\')")
+
+print("Closing Connection to " + database_file)
+connection.commit()
+connection.close()
+print("Done.")
+
