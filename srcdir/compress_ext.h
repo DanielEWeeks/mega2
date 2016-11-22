@@ -73,6 +73,8 @@ extern void copy_2alleles(void *to, void *from, int marker);
 
 extern void copy_2alleles(void *to, void *from, int tomarker, int frommarker);
 
+extern int copy_2alleles_2staging(void *to, void *from, int tomarker, int frommarker);
+
 extern void order_heterozygous_allele(linkage_ped_top *Top);
 
 #endif /* COMPRESS_H */

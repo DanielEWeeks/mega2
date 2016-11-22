@@ -56,18 +56,18 @@ public:
     int create() {
 	return MasterDB.exec(
 	    "CREATE TABLE IF NOT EXISTS phenotype_table (pId INTEGER PRIMARY KEY,"
-            " person_link INTEGER, cnt INTEGER, bytes INTEGER, data BLOB"
+            " person_link INTEGER, bytes INTEGER, data BLOB"
             ");"
 	    );
     }
     void init () {
 	insert_stmt = MasterDB.prep(
             "INSERT INTO phenotype_table("
-            " person_link, cnt, bytes, data"
-            ")  VALUES(?, ?, ?, ?);");
+            " person_link, bytes, data"
+            ")  VALUES(?, ?, ?);");
 	select_stmt = MasterDB.prep(
             "SELECT "
-            " person_link, cnt, bytes, data"
+            " person_link, bytes, data"
             "  FROM phenotype_table;");
     }
     int insert(linkage_ped_rec *p, int cnt) {
@@ -76,17 +76,17 @@ public:
 //        long long ll = xhash(p->Pheno, size);
 //      printf("PHI: %d %llx\n", p->person_link, ll);
         return insert_stmt 
-            && insert_stmt->rowbind(idx, p->person_link, cnt, size)
+            && insert_stmt->rowbind(idx, p->person_link, size)
             && insert_stmt->bind(idx++, (const void *)(p->Pheno), size)
 
             && insert_stmt->step();
     }
-    int select(int &link, int &cnt, int &bytes, unsigned char * &data) {
+    int select(int &link, int &bytes, unsigned char * &data) {
         int idx = 0;
         int sz = 0;
         const void *v = 0;
         int ret = select_stmt 
-            && select_stmt->row(idx, link, cnt, bytes)
+            && select_stmt->row(idx, link, bytes)
             && select_stmt->column(idx++, v, sz);
         data = (unsigned char *) v;
 //        long long ll = xhash(data, bytes);
@@ -142,18 +142,18 @@ public:
     int create() {
 	return MasterDB.exec(
 	    "CREATE TABLE IF NOT EXISTS genotype_table (pId INTEGER PRIMARY KEY,"
-            " person_link INTEGER, cnt INTEGER, bytes INTEGER, data BLOB"
+            " person_link INTEGER, bytes INTEGER, data BLOB"
             ");"
 	    );
     }
     void init () {
 	insert_stmt = MasterDB.prep(
             "INSERT INTO genotype_table("
-            " person_link, cnt, bytes, data"
-            ")  VALUES(?, ?, ?, ?);");
+            " person_link, bytes, data"
+            ")  VALUES(?, ?, ?);");
 	select_stmt = MasterDB.prep(
             "SELECT "
-            " person_link, cnt, bytes, data"
+            " person_link, bytes, data"
             "  FROM genotype_table;");
     }
     int insert(linkage_ped_rec *p, int cnt, int offset) {
@@ -165,17 +165,17 @@ public:
 //        long long ll = xhash(p->Marker, size);
 //      printf("GHI: %d %llx\n", p->person_link, ll);
         return insert_stmt 
-            && insert_stmt->rowbind(idx, p->person_link, cnt, size)
+            && insert_stmt->rowbind(idx, p->person_link, size)
             && insert_stmt->bind(idx++, v, size)
 
             && insert_stmt->step();
     }
-    int select(int &link, int &cnt, int &bytes, unsigned char * &data) {
+    int select(int &link, int &bytes, unsigned char * &data) {
         int idx = 0;
         int sz = 0;
         const void *v = 0;
         int ret = select_stmt 
-            && select_stmt->row(idx, link, cnt, bytes)
+            && select_stmt->row(idx, link, bytes)
             && select_stmt->column(idx++, v, sz);
         data = (unsigned char *)v;
 //        long long ll = xhash(data, bytes);
@@ -211,7 +211,7 @@ public:
 
 extern Genotype_table genotype_table;
 
-extern void dbgenotype_export(linkage_ped_top *Top);
+extern void dbgenotype_export(linkage_ped_top *Top, bp_order *bp);
 extern void dbgenotype_import(linkage_ped_top *Top);
 
 #endif

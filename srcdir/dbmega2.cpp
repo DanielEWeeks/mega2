@@ -104,6 +104,42 @@ const char *selectcol(const char *select)
     return sval;
 }
 
+bp_order *bp_sort;
+
+static int bp_fwd (const void *p1, const void *p2) {
+    const bp_order *tp1 = (const bp_order *)p1;
+    const bp_order *tp2 = (const bp_order *)p2;
+    if (tp1->chr == tp2->chr)
+        return tp1->pos - tp2->pos; 
+    return tp1->chr - tp2->chr;
+}
+
+static void sort_bp_order(linkage_ped_top *Top)
+{
+    extern int base_pair_position_index;
+
+    bp_sort = CALLOC(Top->LocusTop->LocusCnt, bp_order);
+    bp_order *bpp;
+    int offset = Top->LocusTop->PhenoCnt;
+    int i;
+
+    for (i = 0, bpp = bp_sort; i < offset; i++, bpp++) {
+        bpp->i  = i;
+        bpp->chr = bpp->pos = 0;
+    }
+
+    for (i = offset, bpp = bp_sort+offset; i < Top->LocusTop->LocusCnt; i++, bpp++) {
+        bpp->i = i;
+        bpp->chr = Top->LocusTop->Locus[i].Marker->chromosome;
+        if (base_pair_position_index < 0)
+            bpp->pos = i;
+        else {
+            bpp->pos = Top->EXLTop->EXLocus[i].positions[base_pair_position_index];
+        }
+    }
+    qsort((void *)(bp_sort+offset), Top->LocusTop->MarkerCnt, sizeof (bp_order), bp_fwd);
+}
+
 
 Int_table int_table;
 Double_table double_table;
@@ -129,8 +165,8 @@ AffectClass_table affectclass_table;
 ClassPen_table classpen_table;
 TraitQuant_table traitquant_table;
 
-Map_table map_table; 
 MapNames_table mapnames_table; 
+Map_table map_table; 
 
 Phenotype_table phenotype_table;
 Genotype_table genotype_table;
@@ -161,8 +197,8 @@ void db_index_all() {
 //    classpen_table.index();
     traitquant_table.index();
 
-    map_table.index();
     mapnames_table.index();
+    map_table.index();
 
     phenotype_table.index();
     genotype_table.index();
@@ -171,7 +207,9 @@ void db_index_all() {
 
 void dbmega2_export(linkage_ped_top *Top)
 {
-//  asm("int $3");
+    sort_bp_order(Top);
+
+
     msgvf("Dumping SQLite3 DB ");
 #ifndef HIDEFILE
     msgvf("to file \"%s\"\n", DBfile);
@@ -185,13 +223,14 @@ void dbmega2_export(linkage_ped_top *Top)
 
     dbpedigree_export(Top);
 
-    dballele_export(Top);
+//    asm("int $3");
+    dballele_export(Top, bp_sort);  //sort markerscheme_table
 
-    dblocus_export(Top->LocusTop);
+    dblocus_export(Top->LocusTop, bp_sort); // sort locus_table, allele_table, marker_table
 
-    dbmap_export(Top);
+    dbmap_export(Top, bp_sort); // sort map_table
 
-    dbgenotype_export(Top);
+    dbgenotype_export(Top, bp_sort); // sort row contents of 
 }
 
 void dbmega2_stat(linkage_ped_top *Top)
@@ -302,8 +341,8 @@ void db_drop_all() {
 //    classpen_table.drop();
     traitquant_table.drop();
 
-    map_table.drop();
     mapnames_table.drop();
+    map_table.drop();
 
     phenotype_table.drop();
     genotype_table.drop();
@@ -409,8 +448,8 @@ void db_init_all() {
 //        classpen_table.create();
         traitquant_table.create();
 
-        map_table.create();
         mapnames_table.create();
+        map_table.create();
 
         phenotype_table.create();
         genotype_table.create();
@@ -441,8 +480,8 @@ void db_init_all() {
 //    classpen_table.init();
     traitquant_table.init();
 
-    map_table.init();
     mapnames_table.init();
+    map_table.init();
 
     phenotype_table.init();
     genotype_table.init();
@@ -498,8 +537,8 @@ void db_fini_all() {
 //    classpen_table.close();
     traitquant_table.close();
 
-    map_table.close();
     mapnames_table.close();
+    map_table.close();
 
     phenotype_table.close();
     genotype_table.close();

@@ -610,16 +610,49 @@ void copy_2alleles(void *to, void *from, int tomarker, int frommarker) {
         int get_to_bits = (tomarker - MARKER_SCHEME3_offset) & 3;
 
         int from_byte = frompd[get_from_byte];
-        int from_bits = from_byte & MARKER_SCHEME3_mask[get_from_bits];
+        int from_bits = (from_byte & MARKER_SCHEME3_mask[get_from_bits]) >> MARKER_SCHEME3_shift[get_from_bits];
         int to_byte   = tompd[get_to_byte];
         int to_bits   = to_byte & ~MARKER_SCHEME3_mask[get_to_bits];
-        tompd[get_to_byte] = ((unsigned char) (to_bits | from_bits));
+        tompd[get_to_byte] = ((unsigned char) (to_bits | (from_bits << MARKER_SCHEME3_shift[get_to_bits])));
     } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
         marker_pedrec_char *frompd = (marker_pedrec_char *) from;
         marker_pedrec_char *tompd  = (marker_pedrec_char *) to;
         tompd[tomarker].Allele_1 = frompd[frommarker].Allele_1;
         tompd[tomarker].Allele_2 = frompd[frommarker].Allele_2;
     }
+}
+
+int copy_2alleles_2staging(void *to, void *from, int tomarker, int frommarker) {
+    if (from == NOTYPED_ALLELES) 
+        return 1; // do nothing
+    else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
+        marker_pedrec_data *frompd = (marker_pedrec_data *) from;
+        marker_pedrec_data *tompd  = (marker_pedrec_data *) to;
+        tompd[tomarker].Alleles.Allele_1 = frompd[frommarker].Alleles.Allele_1;
+        tompd[tomarker].Alleles.Allele_2 = frompd[frommarker].Alleles.Allele_2;
+    } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        unsigned char *frompd = (unsigned char *) from;
+        int get_from_byte = (frommarker - MARKER_SCHEME3_offset) >> 2;
+        int get_from_bits = (frommarker - MARKER_SCHEME3_offset) & 3;
+        unsigned char *tompd  = (unsigned char *) to;
+        int get_to_byte = (tomarker - MARKER_SCHEME3_offset) >> 2;
+        int get_to_bits = (tomarker - MARKER_SCHEME3_offset) & 3;
+
+        int from_byte = frompd[get_from_byte];
+        int from_bits = (from_byte & MARKER_SCHEME3_mask[get_from_bits]) >> MARKER_SCHEME3_shift[get_from_bits];
+        int to_byte   = tompd[get_to_byte];
+        int to_bits   = to_byte & ~MARKER_SCHEME3_mask[get_to_bits];
+
+        tompd[get_to_byte] = ((unsigned char) (to_bits | (from_bits << MARKER_SCHEME3_shift[get_to_bits])));
+
+    } else { // if (MARKER_SCHEME == MARKER_SCHEME_BYTE)
+        marker_pedrec_char *frompd = (marker_pedrec_char *) from;
+        marker_pedrec_char *tompd  = (marker_pedrec_char *) to;
+        tompd[tomarker].Allele_1 = frompd[frommarker].Allele_1;
+        tompd[tomarker].Allele_2 = frompd[frommarker].Allele_2;
+    }
+
+    return 0;
 }
 
 #if 1

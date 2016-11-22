@@ -97,8 +97,9 @@ void MapNames_table::db_getall(linkage_ped_top *Top) {
     }
 }
 
-void dbmap_export(linkage_ped_top *Top) {
+void dbmap_export(linkage_ped_top *Top, bp_order *bp) {
     int i, j;
+    bp_order *b;
 
 //a    asm("int $3");
 
@@ -110,15 +111,8 @@ void dbmap_export(linkage_ped_top *Top) {
 
     int_table.insert("MapCnt", EXLTop->MapCnt);
     int_table.insert("GroupCnt", EXLTop->GroupCnt);
-    stuff_table.insert("map_functions", (unsigned char *)EXLTop->map_functions, EXLTop->MapCnt);
-//  charstar_table.insert("map_functions", EXLTop->map_functions);
-
-    for (i = Top->LocusTop->PhenoCnt; i < Top->LocusTop->LocusCnt; i++) {
-        ext_linkage_locus_rec *EXL = EXLocus + i;
-        for (j = 0; j < EXLTop->MapCnt; j++) {
-            map_table.insert(i, j, EXL->positions[j], EXL->pos_female[j], EXL->pos_male[j]);
-        }
-    }
+//  charstar_table.insert("map_functions", (unsigned char *)EXLTop->map_functions);
+    charstar_table.insert("map_functions", EXLTop->map_functions);
 
     for (j = 0; j < EXLTop->MapCnt; j++) {
         mapnames_table.insert(j, EXLTop->SexMaps[j][SEX_AVERAGED_MAP],
@@ -127,14 +121,20 @@ void dbmap_export(linkage_ped_top *Top) {
                               EXLTop->MapNames[j]);
     }
 
+    for (i = Top->LocusTop->PhenoCnt, b = bp_sort + Top->LocusTop->PhenoCnt;
+         i < Top->LocusTop->LocusCnt; i++, b++) {
+        ext_linkage_locus_rec *EXL = EXLocus + b->i;
+        for (j = 0; j < EXLTop->MapCnt; j++) {
+            map_table.insert(i, j, EXL->positions[j], EXL->pos_female[j], EXL->pos_male[j]);
+        }
+    }
+
     MasterDB.commit();
     pedexp();
 }
 
 void dbmap_import(linkage_ped_top *Top) {
     int i;
-    const char *a;
-//a    asm("int $3");
     extern ext_linkage_locus_top *new_EXLTop(linkage_locus_top *LTop);
     ext_linkage_locus_top *EXLTop = new_EXLTop(Top->LocusTop);
     Top->EXLTop = EXLTop;
@@ -145,24 +145,29 @@ void dbmap_import(linkage_ped_top *Top) {
         (CALLOC((size_t) LTop->MarkerCnt, ext_linkage_locus_rec) - LTop->PhenoCnt) : 0;
     EXLTop->EXLocus = EXLocus;
 
+/*
+    const char *a;
     a = "MapCnt";
     if (!map_get(Int_hash, a, EXLTop->MapCnt)) {
         printf("Int read failed for %s\n", a);
     }
-    int mapcnt = EXLTop->MapCnt;
-    EXLTop->SexMaps  = CALLOC((size_t)mapcnt, int *);
-    EXLTop->MapNames = CALLOC((size_t)mapcnt, char *);
-
     a = "GroupCnt";
     if (!map_get(Int_hash, a, EXLTop->GroupCnt)) {
         printf("Int read failed for %s\n", a);
     }
     a = "map_functions";
-    unsigned char *aa = (unsigned char *)0;
+    char *aa = (char *)0;
     if (!map_get(Stuff_hash, a, aa)) {
-        printf("Int read failed for %s\n", a);
+        printf("Charstar read failed for %s\n", a);
     }
-    EXLTop->map_functions = strdup((char *)aa);
+    EXLTop->map_functions = strdup(aa);
+*/
+    int_table.get("MapCnt", EXLTop->MapCnt);
+    int mapcnt = EXLTop->MapCnt;
+    EXLTop->SexMaps  = CALLOC((size_t)mapcnt, int *);
+    EXLTop->MapNames = CALLOC((size_t)mapcnt, char *);
+    int_table.get("GroupCnt", EXLTop->GroupCnt);
+    charstar_table.get("map_functions", EXLTop->map_functions);
 
     for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
         EXLocus[i].positions  = CALLOC((size_t)mapcnt, double);

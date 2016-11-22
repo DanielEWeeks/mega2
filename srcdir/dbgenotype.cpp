@@ -49,9 +49,9 @@ int Phenotype_table::db_getall(linkage_locus_top *LTop, pheno_pedrec_data **Phen
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
 //            ret = select(p);
-            int link = 0, cnt = 0, bytes = 0;
+            int link = 0, bytes = 0;
             unsigned char *data = (unsigned char *)0;
-            ret = select(link, cnt, bytes, data);
+            ret = select(link, bytes, data);
             Phenotypes[link] = CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data);
             memcpy(Phenotypes[link], data, bytes);
             knt++;
@@ -71,9 +71,9 @@ int Genotype_table::db_getall(linkage_locus_top *LTop, void **Genotypes) {
     while (ret) {
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
-            int link = 0, cnt = 0, bytes = 0;
+            int link = 0, bytes = 0;
             unsigned char *data = (unsigned char*)0;
-            ret = select(link, cnt, bytes, data);
+            ret = select(link, bytes, data);
             if (data) {
 //              Genotypes[link] = marker_alloc((size_t) LTop->MarkerCnt, 0);
                 Genotypes[link] = (void *)CALLOC((size_t) bytes, unsigned char);
@@ -91,17 +91,26 @@ int Genotype_table::db_getall(linkage_locus_top *LTop, void **Genotypes) {
     return knt;
 }
 
-void dbgenotype_export(linkage_ped_top *Top) {
+void dbgenotype_export(linkage_ped_top *Top, bp_order *bp) {
+    linkage_locus_top *LTop = Top->LocusTop;
     int ped, per;
     linkage_ped_tree *tpedtreep;
     linkage_ped_rec  *tpersonp;
 
     Tod pedexp("export genotype/phenotype");
 
+//  asm("int $3");
+    // for each genotype (consulting the linkage_ped_top structure)...
+    void *mk = (LTop->MarkerCnt > 0) ? marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt) : 0;
+    void *mks = marker_start(mk, LTop->PhenoCnt);
+    int   sz = marker_size(LTop->MarkerCnt);
+    void *sv;
+    bp_order *b;
+
     MasterDB.begin();
 
-    // for each genotype (consulting the linkage_ped_top structure)...
     int pers = 0;
+    int i;
     for (ped=0; ped < Top->PedCnt; ped++) {
         tpedtreep = &(Top->PedBroken[ped]);  // vs Top->PedRaw
 
@@ -110,13 +119,24 @@ void dbgenotype_export(linkage_ped_top *Top) {
             tpersonp = &(tpedtreep->Entry[per]);
 
 //          if (tpersonp->person_link == 259) asm("int $3");
-            phenotype_table.insert(tpersonp, Top->LocusTop->PhenoCnt);
-            genotype_table.insert(tpersonp, Top->LocusTop->MarkerCnt, Top->LocusTop->PhenoCnt);
+            phenotype_table.insert(tpersonp, LTop->PhenoCnt);
+            sv = tpersonp->Marker;
+            memset(mks, 0, sz);
+            tpersonp->Marker = mk;
+            for (i = LTop->PhenoCnt,
+                     b = bp + LTop->PhenoCnt; i < LTop->LocusCnt; i++, b++) {
+                if (copy_2alleles_2staging(mk, sv, i, b->i)) {
+                    tpersonp->Marker = sv;
+                    break;
+                }
+            }
+            genotype_table.insert(tpersonp, LTop->MarkerCnt, LTop->PhenoCnt);
+            tpersonp->Marker = sv;
         }
     }
 
     MasterDB.commit();
-
+    marker_free(mk, LTop->PhenoCnt);
     pedexp();
 
 }

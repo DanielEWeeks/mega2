@@ -13,12 +13,67 @@ TEMPLATE = "template.html"
 TEMPLAT2 = "template_mega2.html"
 #URME     = "file:///Users/rbaron/mega2/bb/mega2_html"
 URME     = "https://watson.hgen.pitt.edu/docs/mega2_html"
+INPUTS   = ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF', 'IMPUTE2')
 
-DB   = {}
-DBREF= {}
+ITEMS     = {}
+CITS      = {}
+INPUThtml = {}
+
+# Classes:
+## Template() class constructor initialized to some text (file) will transform it.
+##   All keys defined in .map methods are replaced by their value when writing.  If replacement is
+##   a list, insert <ul> {<li>text</li>} ... </ul>
+
+## Table() class constructor initialized to file name. follows table html tags
+
+## HtmlGen class() converts CITS, either url or journal to a formated list of html; one entry
+##  per citation; uses template for journal entry & fills with available fields (.mkcite())
+## 
+
+# Parse "parsed_wik" file:
+## Open "input" file as a "utf8" char file (some of wik[i] may be utf8 characters).
+## Ignore comment and blank lines and look at first field:
+## if == "cit:"  val = rest of line with white space stripped() and initial&trailing "'" removed
+##   use val as a key in CITS hash; corresponding entry is an empty hash
+##   subsequent lines define key/value to store in CITS hash entry. key has trailing : removed
+##   val is rest of line with white space stripped() and initial&trailing "'" removed
+
+## if == name:  val = rest of line with white space stripped() and initial&trailing "'" removed
+##   use val as a key in the ITEMS hash; corresponding entry is an empty array
+##   subsequent lines, all elements are added to array with initial&trailing "'" removed
+
+# Data:
+## INPUTS (static)     === most ITEMS.keys() that do not end with "format"
+## analysis (computed) === ITEMS.keys() ending with "format" NOW not case sensitive
+## 
+## Names coming from INPUTS and ANALYSIS are used as is for html anchor "link text"
+##  For all other uses, Names are converted to lower case, have some embeded punctuation 
+##  characters ("/" and " ") altered, and finally analysis have trailing " format" text removed.
+##  Note: analysis names must end in "format" for them to be recognized.
+
+# Processing:
+#   Create frame_inp_<INPUT>.html; file anchor tag is #inp:
+## INPUTS calc:  for each input in INPUTS [Template T2(Template2)]
+##   Template.write(options.output + "frame_inp_<input>.html); <input> is lower and " " -> "_"
+##    map k/v: **path**/<url>; **anchor**/#inp:<input>; <input> is lower and " " -> "_"
+##   Create INPUThtml[<input>] as HtmlGen for citations describing <input>
+
+#   Create frame_ext_<ANALYSIS>.html file; anchor tag is #ext:
+## analysis Calc: for each entry in analysis
+##   analy is entry; an is first word (to whitespace); anr is an lower and "/" -> "" (remove)
+##   Template.write(options.output + "frame_ext_<anr>.html)
+##    map k/v: **path**/<url>; **anchor**/#ext:<anr>;
+##   Create htmla as HtmlGen for citations describing <analy>
+## 
+#   Create <INPUT>_<ANALYSIS>.html file
+## In same analysis loop (above) with analy/an/anr defined
+##   and for each input in INPUTS
+##  Define file_name as <inpr>_<anr>.html (i.e. name lower case and slightly editted)
+##  file_name goes into Table.col() and "Template" T is expanded and written to file_name.
+
+
 
 def parse_info(options):
-#   pdb.set_trace()
     if not os.path.isfile(options.input):
         print("Not a File: {0}".format(options.input))
     File = io.open(options.input, "r", encoding='utf8')
@@ -33,12 +88,12 @@ def parse_info(options):
             cit = {}
             name = None
             val = fields[1].strip()[1:-1]
-            DBREF[val] = cit
+            CITS[val] = cit
         elif key == 'name:':
             name = []
             cit = None
             val = fields[1].strip()[1:-1]
-            DB[val] = name
+            ITEMS[val] = name
         elif cit is not None:
             val = fields[1].strip()[1:-1]
             cit[key[:-1]] = val
@@ -48,15 +103,15 @@ def parse_info(options):
 
 def show_input():
     for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF', 'IMPUTE2'):
-        print('\n{0}\n\t{1}\n\t{2}\n\t['.format(inp, DB[inp][1], DB[inp][0]))
-#       for ref in DB[inp][0]:
-#            if ref in DBREF:
+        print('\n{0}\n\t{1}\n\t{2}\n\t['.format(inp, ITEMS[inp][1], ITEMS[inp][0]))
+#       for ref in ITEMS[inp][0]:
+#            if ref in CITS:
 #               print('1,' , end="")
 #           else:
 #               print('0,', end="")
 #       print(']\n')
 
-class Citation(object):
+class HtmlGen(object):
     match = None
     repl  = None
     all   = []
@@ -69,12 +124,17 @@ class Citation(object):
     def __iter__(self):
         return self.all.__iter__()
 
+# cite a url with provided anchor text
     def mega2(self, anchr, urme, tag, anly):
         self.all.append(anchr.format(urme, tag.replace(self.match, self.repl), anly) )
 
+# cite a simple url with default anchor text
     def url(self, ustr):
-        self.all.append('  <a class="FlexURL" target="_blank" href="{0}">{1}</a>  '.format(DBREF[ustr]['url'], ustr[:-4]) )
+        self.all.append('  <a class="FlexURL" target="_blank" href="{0}">{1}</a>  '.format(CITS[ustr]['url'], ustr[:-4]) )
 
+# These are all the possible pieces of a doc citation in the accepted order.  If a first element
+# is found in the CITS hash for the 'citename', its value is printed using the format string that
+# is the second element.  (When the first element is empty, just print the second element.)
     elements = (('author','{0}'), ('vauthors','{0}'), \
                 ('last','{0} '),   ('first','{0}'), \
                 ('author2', ', {0}'), ('author3', ', {0}'), \
@@ -88,8 +148,9 @@ class Citation(object):
                 ('doi', ' <span><a class="FlexURL" target="_blank" href="http://doi.org/{0}">doi: {0}</a></span>.'), \
                 ('pmid',' <span><a class="FlexURL" target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/{0}">PMID: {0}</a></span>.'), \
                 ('pmc', ' <span><a class="FlexURL" target="_blank" href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC{0}">PMC{0}</a></span>.') )
+
     def mkcite(self, citename):
-        cite = DBREF[citename]
+        cite = CITS[citename]
         if not cite:
             return
         text = []
@@ -100,6 +161,13 @@ class Citation(object):
                 text.append(el[1].format(cite[el[0]]))
         self.all.append("".join(text))
 
+# determine if the citation is a url or journal
+    def htmltext(self, cit):
+        if cit.endswith('url'):
+            self.url(cit)
+        else:
+            self.mkcite(cit)
+
 class Template(object):
     repl = {}
     href = {}
@@ -109,6 +177,7 @@ class Template(object):
     def __init__(self, Filename):
         if not os.path.isfile(Filename):
             print("Not a File: {0}".format(Filename))
+#xx     File = io.open(Filename, "r", encoding='utf8')
         File = open(Filename)
         self.lines = File.readlines()
         File.close()
@@ -116,10 +185,7 @@ class Template(object):
     def map(self, m, r):
         self.repl[m] = r
 
-    def mapcit(self, m, r):
-        self.repl[m] = '<ul >'
-        self.href[m] = r
-
+#   rewrite the stored template lines to a file performing the subsititutions of vals for keys
     def write(self, Filename):
         File = io.open(Filename, "w", encoding='utf8')
 
@@ -131,18 +197,24 @@ class Template(object):
 
             for k in ks:
                 if k in newline:
-                    newline = newline.replace(k, self.repl[k])
-                    href = self.href.get(k, href)
-
+                    val = self.repl[k]
+                    if isinstance(val, str):
+                        newline = newline.replace(k, val)
+                    else:
+#                       pdb.set_trace()
+                        newline = newline.replace(k, '<ul >')
+                        href = val
             print(newline, file=File, end="")
 
             for xline in href:
                 print('<li>{0}</li>'.format(xline), file=File)
             if href:
                 print('</ul>', file=File)
+
         File.close()
 
 
+# pretty routine class that mimics/generates the html table tags
 class Table(object):
     File   = None
     TabCol = 0
@@ -234,8 +306,7 @@ def main():
 
 
     parse_info(options)
-
-    analysis = [ k for k in sorted(DB.keys()) if k.endswith("format") ]
+    analysis = [ k for k in sorted(ITEMS.keys()) if k.lower().endswith("format") ]
 
     T  = Template(TEMPLATE)
     T2 = Template(TEMPLAT2)
@@ -246,17 +317,30 @@ def main():
 
 #   show_input()
 #   Create frame_inp_<INPUT>.html file
-    for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF', 'IMPUTE2'):
-        inp = inp.replace(' ', '_').lower()
+    for inp in INPUTS:
+        inpr = inp.replace(' ', '_').lower()
         T2.map('**path**', options.urlbase)
-        T2.map('**anchor**', "#inp:{0}".format(inp))
-        file_name = options.output + "/frame_inp_{0}.html".format(inp)
+        T2.map('**anchor**', "#inp:{0}".format(inpr))
+        file_name = options.output + "/frame_inp_{0}.html".format(inpr)
         T2.write(file_name)
 
+        htmli = HtmlGen(' ', '_')
+# First citation will be pointer to Mega2 Input types documentation
+        href_file = "frame_inp_{0}.html".format(inpr)
+        htmli.mega2('<a class="FlexURL" target="_blank" href="{0}"> Mega2 Input documentation: {2}</a>',
+                    href_file, inpr, inp)
+
+# Add the rest of the citations for an input type
+        for cit in ITEMS[inp]:
+            htmli.htmltext(cit)
+        INPUThtml[inp] = htmli
+
+#    pdb.set_trace()
     for analy in analysis:
 #   Create frame_ext_<ANALYSIS>.html file
         an  = analy.split()[0]
         anr = an.replace('/', '').lower()
+        print('\n{0}, "{1}"\n\t{2}\n\n'.format(an, analy, ITEMS[analy]))
 
         T2.map('**path**', options.urlbase)
         T2.map('**anchor**', "#ext:{0}".format(anr))
@@ -264,54 +348,41 @@ def main():
         T2.write(file_name)
 
 #   Create <INPUT>_<ANALYSIS>.html file
-        ahref = Citation('/', '')
+        htmla = HtmlGen('/', '')   # / disappears
 
-#       ahref.mega2('<a href="{0}#ext:{1}"> Mega2 Analysis documentation: {2}</a>',
-#                   options.urlbase, an.lower(), analy)
-        file_name = "frame_ext_{0}.html".format(anr)
-        ahref.mega2('<a class="FlexURL" target="_blank" href="{0}"> Mega2 Analysis documentation: {2}</a>',
-                    file_name, anr, analy)
+# First citation will be pointer to Mega2 Analysis documentation
+        href_file = "frame_ext_{0}.html".format(anr)
+        htmla.mega2('<a class="FlexURL" target="_blank" href="{0}"> Mega2 Analysis documentation: {2}</a>',
+                    href_file, anr, analy)
 
-        for cit in DB[analy]:
-            if cit.endswith('url'):
-                ahref.url(cit)
-            else:
-                ahref.mkcite(cit)
+# Add the rest of the citations for an analysis
+        for cit in ITEMS[analy]:
+            htmla.htmltext(cit)
 
-        print('\n{0}, "{1}"\n\t{2}\n\n'.format(an, analy, DB[analy]))
-
+# New row in Table of "analysis" X "inputs" for the analysis
         TabFile.row()
 
-        for inp in ('LINKAGE', 'Mega2', 'PLINK', 'VCF or BCF', 'IMPUTE2'):
-            inpr = inp.replace(' ', '_').lower()
-
-            ihref = Citation(' ', '_')
-#           ihref.mega2('<a href="{0}#inp:{1}"> Mega2 Input documentation: {2}</a>',
-#                       options.urlbase, inp.lower(), inp)
-            file_name = "frame_inp_{0}.html".format(inpr)
-            ihref.mega2('<a class="FlexURL" target="_blank" href="{0}"> Mega2 Input documentation: {2}</a>',
-                        file_name, inpr, inp)
-
-            for cit in DB[inp]:
-                if cit.endswith('url'):
-                    ihref.url(cit)
-                else:
-                    ihref.mkcite(cit)
+# Loop over inputs for each analysis; generate col in table and file with html
+        for inp in INPUTS:
+            inpr = inp.replace(' ', '_').lower()  # " " becomes _
 
             file_name = options.output + "/{0}_{1}.html".format(inpr, anr)
 
+# Add a new column to the analysis row for each input
             TabFile.col(file_name, analy)
 
+# Now take the main template and rewrite it using the given analysis, input and citations
             T.map('**input**', inp)
             T.map('**analysis**', analy)
-            T.mapcit('**ihref**', ihref)
-            T.mapcit('**ahref**', ahref)
+            T.map('**ihref**', INPUThtml[inp])
+            T.map('**ahref**', htmla)
             T.write(file_name)
 
             TabFile.endcol()
 
+# row is done
         TabFile.endrow()
-
+# table is done
     TabFile.close()
 
 

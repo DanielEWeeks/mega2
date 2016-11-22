@@ -2566,7 +2566,7 @@ static  ext_linkage_locus_top *make_EXLTop_from_LTop(linkage_locus_top *LTop, in
     EXLTop->MapNames[0]=strdup("Map"); // KOSAMBI or HALDANE
     
     /* will be map_function[], one for each map */
-    EXLTop->map_functions = CALLOC((size_t)1, char);
+    EXLTop->map_functions = CALLOC((size_t)2, char);
     EXLTop->map_functions[0] = LTop->map_distance_type; // 'k' or 'h'
     
 //cpk    EXLTop->SexMaps = CALLOC((size_t)1, sex_map_types*);

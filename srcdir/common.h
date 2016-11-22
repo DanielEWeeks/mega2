@@ -470,6 +470,8 @@ extern SubjectOrganismType subject_organism;
 extern const char write_binary[];
 extern const char read_binary[];
 
+typedef struct { int i, chr, pos; } bp_order;
+extern bp_order *bp_sort;
 
 #define UNKNOWN_CHROMO 999
 #define MISSING_CHROMO 888
