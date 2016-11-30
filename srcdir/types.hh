@@ -235,6 +235,7 @@ typedef UM<const void *, int, HH<const void *> >::const_iterator               H
 typedef std::pair<std::string, std::string> Pairss;
 typedef std::pair<std::string, int>         Pairsi;
 typedef std::pair<int, int>                 Pairii;
+typedef std::pair<long long, long long>     Pairll;
 
 ////
 
