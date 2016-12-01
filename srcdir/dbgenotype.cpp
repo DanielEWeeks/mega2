@@ -247,6 +247,9 @@ void dbgenotype_export(linkage_ped_top *Top, bp_order *bp) {
     marker_free(mk, LTop->PhenoCnt);
     pedexp();
 
+    Tod index_genotype("index_genotype");
+    genotype_table.index();
+    index_genotype();
 }
 
 pheno_pedrec_data **Phenotypes;

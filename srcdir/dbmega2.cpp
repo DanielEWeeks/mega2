@@ -33,6 +33,7 @@
 #include "error_messages_ext.h"
 #include "utils_ext.h"
 #include "write_files_ext.h"
+#include "tod.hh"
 
 #include "dblite.hh"
 
@@ -307,12 +308,19 @@ void dbmega2_import(linkage_ped_top *Top)
 
     dbpedigree_import(Top);
 
+    Tod import_allele("import_allele");
     dballele_import(Top);
+    import_allele();
 
+    Tod import_locus("import_locus");
     dblocus_import(Top->LocusTop);
+    import_locus();
 
+
+    Tod import_map("import_map");
     dbmap_import(Top);
     mk_marker_filter(Top);
+    import_map();
 
     dbgenotype_import(Top);
 

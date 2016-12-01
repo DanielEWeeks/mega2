@@ -220,7 +220,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_genotype_table IF NOT EXISTS on genotype_table (UniqueID);");
+	return MasterDB.exec("CREATE Index Idx_genotype_table IF NOT EXISTS on genotype_table (chr);");
     }
 
     int db_getall(linkage_ped_top *Top, void **Genotypes);

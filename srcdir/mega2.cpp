@@ -1232,7 +1232,9 @@ int             main(int argc, char **argv, char **env)
         }
 
         extern void dbgenotype_import_genotype(linkage_ped_top *Top);
+        Tod import_genotype("import_genotype");
         dbgenotype_import_genotype(LPedTreeTop);
+        import_genotype();
     }
 
     if (true || database_dump || ! database_read) {
