@@ -208,7 +208,7 @@ static void write_PLINK_map_data(linkage_ped_top *LPTop,
                     display_error_mallele++;
                 }
 //?x            if (generate_bim_file) continue;
-                continue
+                continue;
             }
             
             //

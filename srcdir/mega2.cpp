@@ -1183,13 +1183,6 @@ int             main(int argc, char **argv, char **env)
         get_base_pair_position_index(LPedTreeTop->EXLTop);
     }
 
-/*
-//?x
-    if (! database_dump && database_read) {
-        extern void dbgenotype_import_genotype(linkage_ped_top *Top);
-        dbgenotype_import_genotype(LPedTreeTop);
-    }
-*/
     Tod tod_reorder("ReOrderLoci");
     /* Reorder the loci */
     LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
@@ -1330,13 +1323,6 @@ int             main(int argc, char **argv, char **env)
 #endif
     }
 
-/*
-//?x
-    if (! database_dump && database_read) {
-        extern void dbgenotype_import_genotype(linkage_ped_top *Top);
-        dbgenotype_import_genotype(LPedTreeTop);
-    }
-*/
     InputMode = AnalyInputMode;  //What was it before the exec
     // Create the data files, and then the shell scripts...
     Tod tod_out("create_output_files");

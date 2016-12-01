@@ -626,7 +626,6 @@ public:
     }
 */
     int select(linkage_quant_data *p); /* {
-        asm("int $3");
         int idx = 0;
         int sz = 0;
         double v = 0;

@@ -331,7 +331,6 @@ void dblocus_import(linkage_locus_top *LTop) {
     Quant_rec = new linkage_quant_data [PhenoCnt];
 
 // LTop parameters
-//  asm("int $3");
 
     extern map<const char *, unsigned char *, charsless> Stuff_hash;
 

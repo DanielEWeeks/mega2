@@ -43,21 +43,19 @@ extern DBlite MasterDB;
 extern map<int, linkage_ped_rec *> Person_hash;
 
 
-typedef std::list<Pairll>                      List2pl;
-typedef std::list<Pairll>::const_iterator      List2plp;
-typedef std::map<int,List2pl*>                 Marker_filter;
-typedef std::map<int,List2pl*>::const_iterator Mfp;
+typedef std::list<Pairll>                      List2ll;
+typedef std::list<Pairll>::const_iterator      List2llp;
+typedef std::map<int,List2ll*>                 Marker_filter;
+typedef std::map<int,List2ll*>::const_iterator Mfp;
 
 Marker_filter marker_filter;
 
-//xx
-int SHOW = 0;
 void marker_filter_add(int bchr, long long bmin, long long bmax)
 {
-    List2pl *blist;
+    List2ll *blist;
 
     if (not map_get(marker_filter, bchr, blist)) {
-        blist = new List2pl;
+        blist = new List2ll;
         marker_filter[bchr] = blist;
     }
     blist->push_back(Pairll(bmin, bmax));
@@ -74,7 +72,7 @@ void mk_marker_filter(linkage_ped_top *Top)
     int bchr = -1;
     int i, io = offset;
     long long bmin, bmax, bp;
-//    asm("int $3");
+
     if (base_pair_position_index < 0)
         bmin = bmax = bp = EXLTop->EXLocus[offset].positions[genetic_distance_index];
     else
@@ -104,11 +102,10 @@ void use_marker_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int b
     int offset = LTop->PhenoCnt;
 
     long long bmin, bmax;
-    List2pl  *blist;
-    List2plp lp;
+    List2ll  *blist;
+    List2llp lp;
     Pairll   pp;
 
-    SHOW = 0;
     if (not map_get(marker_filter, bchr, blist)) {
         if (bchr == -1)
             printf("Marker_filter: person_link %d no data\n", link);
@@ -116,17 +113,6 @@ void use_marker_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int b
             printf("Marker_filter: person_link %d ignoring chromosome %d\n", link, bchr);
         return;
     }
-//xx
-    if (SHOW && bchr == 5) {
-        printf("bchr %d, j %d\n", bchr, bytes);
-        for (int ii = 0; ii < bytes; ii++) {
-            unsigned char uc = *(((unsigned char *)data) + ii);
-            printf("%x%x ", (uc>>4)&0xf, uc&0xf);
-        }
-        printf("\n");
-        asm("int $3");
-    }
-//xx
     for (lp = blist->begin(); lp != blist->end(); lp++) {
         pp = *lp;
         bmin = pp.first;
@@ -135,19 +121,6 @@ void use_marker_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int b
         for (long long i = bmin, dataj = offset; i <= bmax; i++, dataj++)
             copy_2alleles_2staging(mk, marker_start(data, -offset), i, dataj);
     }
-
-//xx
-    if (SHOW && bchr == 5) {
-        printf("bchr %d, j %d\n", bchr, bytes);
-        for (int ii = 2*114, j = 0; j < bytes; j++) {
-            unsigned char uc = *(((unsigned char *)mk) + ii + j);
-            printf("%x%x ", (uc>>4)&0xf, uc&0xf);
-        }
-        printf("\n");
-        asm("int $3");
-    }
-//xx
-    SHOW = 0;
 }
 
 
@@ -158,7 +131,6 @@ int Phenotype_table::db_getall(linkage_locus_top *LTop, pheno_pedrec_data **Phen
     while (ret) {
         ret = select_stmt->step();
         if (ret == SQLITE_ROW) {
-//            ret = select(p);
             int link = 0, bytes = 0;
             unsigned char *data = (unsigned char *)0;
             ret = select(link, bytes, data);
@@ -184,13 +156,11 @@ int Genotype_table::db_getall(linkage_ped_top *Top, void **Genotypes) {
         if (ret == SQLITE_ROW) {
             int link = 0, bytes = 0, chr = -1;
             unsigned char *data = (unsigned char*)0;
-//          asm("int $3");
+
             ret = select(link, chr, bytes, data);
             if (! Genotypes[link]) {
                 if (data) {
                     Genotypes[link] = (LTop->MarkerCnt > 0) ? marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt) : 0;
-//                  Genotypes[link] = (void *)CALLOC((size_t) bytes, unsigned char);
-//                  memcpy(Genotypes[link], data, bytes);
                 }
             }
             use_marker_filter(Genotypes[link], Top, link, chr, bytes, data);
@@ -213,7 +183,6 @@ void dbgenotype_export(linkage_ped_top *Top, bp_order *bp) {
 
     Tod pedexp("export genotype/phenotype");
 
-//  asm("int $3");
     // for each genotype (consulting the linkage_ped_top structure)...
     void *mk = (LTop->MarkerCnt > 0) ? marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt) : 0;
     void *mks = marker_start(mk, LTop->PhenoCnt);
@@ -234,7 +203,6 @@ void dbgenotype_export(linkage_ped_top *Top, bp_order *bp) {
             // record for the individual phenotype and genotype
             tpersonp = &(tpedtreep->Entry[per]);
 
-//          if (tpersonp->person_link == 259) asm("int $3");
             phenotype_table.insert(tpersonp, LTop->PhenoCnt);
             sv = tpersonp->Marker;
             memset(mks, 0, sz);
@@ -244,26 +212,13 @@ void dbgenotype_export(linkage_ped_top *Top, bp_order *bp) {
                      b = bp + offset; i < LTop->LocusCnt; i++, b++) {
 
                 if (b->chr != bchr && bchr != -1) {  // time to write a chr
-//                  asm("int $3"); 
                     if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
                         for (; (j % 4); j++) 
                             set_2alleles(mk, offset + j, NULL, 0, 0); // NULL is not used iff alleles are 0/0 
                     }
                     genotype_table.insert(mks, tpersonp->person_link, bchr, j);
-//xx
-                    if (SHOW && bchr == 5) {
-                        printf("bchr %d, j %d\n", bchr, j);
-                        for (int ii = 0; ii < 2*j; ii++) {
-                            unsigned char uc = *(((unsigned char *)mks) + ii);
-                            printf("%x%x ", (uc>>4)&0xf, uc&0xf);
-                        }
-                        printf("\n");
-                        asm("int $3");
-                    }
-//xx
                     j = 0;
                 }
-
 
                 if (copy_2alleles_2staging(mk, sv, offset + j, b->i)) {
                     tpersonp->Marker = sv;
@@ -275,8 +230,10 @@ void dbgenotype_export(linkage_ped_top *Top, bp_order *bp) {
 //?? if sv is NULL; the above loop is aborted and we end up here
 //?? PS we don't know length of each chr run;
 
-            for (; (j % 4); j++) 
-                set_2alleles(mk, offset + j, NULL, 0, 0);
+            if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+                for (; (j % 4); j++) 
+                    set_2alleles(mk, offset + j, NULL, 0, 0);
+            }
             if (tpersonp->Marker == sv)
                 genotype_table.insert(NULL, tpersonp->person_link, bchr, j);
             else
@@ -342,17 +299,11 @@ void dbgenotype_import_genotype(linkage_ped_top *Top) {
     for (ped = 0; ped < Top->PedCnt; ped ++) {
         for (per = 0; per < (Top->PedBroken + ped)->EntryCnt; per++) {  // vs Top->PedRaw
             int person_link = Top->PedBroken[ped].Entry[per].person_link;
-//?x
-            Top->PedBroken[ped].Entry[per].Marker = marker_start(Genotypes[person_link],
-                                                            Top->LocusTop->PhenoCnt
-                                                           -Top->LocusTop->PhenoCnt);
+            Top->PedBroken[ped].Entry[per].Marker = Genotypes[person_link];
         }
         for (per = 0; per < (Top->PedRaw + ped)->EntryCnt; per++) {  // vs Top->PedRaw
             int person_link = Top->PedRaw[ped].Entry[per].person_link;
-//?x
-            Top->PedRaw[ped].Entry[per].Marker = marker_start(Genotypes[person_link],
-                                                            Top->LocusTop->PhenoCnt
-                                                           -Top->LocusTop->PhenoCnt);
+            Top->PedRaw[ped].Entry[per].Marker = Genotypes[person_link];
         }
     }
 

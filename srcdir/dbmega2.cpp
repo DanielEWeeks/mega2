@@ -226,7 +226,6 @@ void dbmega2_export(linkage_ped_top *Top)
 
     dbpedigree_export(Top);
 
-//    asm("int $3");
     dballele_export(Top, bp_sort);  //sort markerscheme_table
 
     dblocus_export(Top->LocusTop, bp_sort); // sort locus_table, allele_table, marker_table
@@ -295,7 +294,6 @@ void dbmega2_import(linkage_ped_top *Top)
 {
     extern void mk_marker_filter(linkage_ped_top *Top);
 
-//    asm("int $3");
     msgvf("Reading SQLite3 DB ");
 #ifndef HIDEFILE
     msgvf("from file \"%s\"\n", DBfile);
@@ -507,7 +505,6 @@ void db_init_all() {
     k = "k1"; batch_file_parameters.db_get(k, v, i); printf("get: %s, %s, %d\n", "k1", v, i);
     k = "k2"; batch_file_parameters.db_get(k, v, i); printf("get: %s, %s, %d\n", "k2", v, i);
     k = "k3"; batch_file_parameters.db_get(k, v, i); printf("get: %s, %s, %d\n", "k3", v, i);
-    asm("int $3");
 
     batch_file_parameters.db_get("k2", ve, i);
     printf("get: %s, %s, %d\n", "k2", v, i);
