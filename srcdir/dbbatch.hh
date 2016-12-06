@@ -60,7 +60,7 @@ public:
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_batch_parameters IF NOT EXISTS on batch_parameters (key);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_batch_parameters on batch_parameters (key);");
     }
 
     int db_get(const char *&key, const char *&value, int &read)  {
@@ -155,7 +155,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_file_table IF NOT EXISTS on file_table (key);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_file_table on file_table (key);");
     }
 
     int db_getall();

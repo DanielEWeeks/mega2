@@ -114,7 +114,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_phenotype_table IF NOT EXISTS on phenotype_table (Name);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_phenotype_table on phenotype_table (Name);");
     }
 
     int db_getall(linkage_locus_top *LTop, pheno_pedrec_data **Phenotypes);
@@ -220,7 +220,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_genotype_table IF NOT EXISTS on genotype_table (chr);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_genotype_table on genotype_table (chr);");
     }
 
     int db_getall(linkage_ped_top *Top, void **Genotypes);

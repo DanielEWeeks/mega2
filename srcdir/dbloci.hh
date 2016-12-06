@@ -122,7 +122,7 @@ public:
         printf("%d\n", p->AlleleCnt);
     }
     int index() {
-        return MasterDB.exec("CREATE Index Idx_locus_table IF NOT EXISTS on locus_table (UniqueID);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_locus_table on locus_table (UniqueID);");
     }
 
     int db_getall(linkage_locus_rec *t);
@@ -191,7 +191,7 @@ public:
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_locus_table IF NOT EXISTS on locus_table (UniqueID);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_locus_table on locus_table (UniqueID);");
     }
 
     int db_getall(linkage_locus_rec *t);
@@ -253,7 +253,7 @@ public:
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_allele_table IF NOT EXISTS on allele_table (UniqueID);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_allele_table on allele_table (UniqueID);");
     }
 
     int db_getall(linkage_allele_rec *t);
@@ -329,7 +329,7 @@ public:
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_marker_table IF NOT EXISTS on marker_table (UniqueID);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_marker_table on marker_table (UniqueID);");
     }
 
     int db_getall(marker_rec *p);
@@ -401,7 +401,7 @@ typedef struct _linkage_affection_class {
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_trait_table IF NOT EXISTS on traitaff_table (Name);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_trait_table on traitaff_table (Name);");
     }
 
     int db_getall(linkage_affection_data *p);
@@ -494,7 +494,7 @@ typedef struct _linkage_affection_class {
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_trait_table IF NOT EXISTS on affectclass_table (Name);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_trait_table on affectclass_table (Name);");
     }
 
     int db_getall(linkage_affection_class *p);
@@ -570,7 +570,7 @@ typedef struct _linkage_penection_class {
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_trait_table IF NOT EXISTS on classpen_table (Name);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_trait_table on classpen_table (Name);");
     }
 
     int db_getall();
@@ -663,7 +663,7 @@ public:
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_trait_table IF NOT EXISTS on traitquant_table (Name);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_trait_table on traitquant_table (Name);");
     }
 
     int db_getall(linkage_quant_data *p);
