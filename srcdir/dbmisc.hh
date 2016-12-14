@@ -80,7 +80,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_int_table IF NOT EXISTS on int_table (key);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_int_table on int_table (key);");
     }
 
     int db_getall();
@@ -139,7 +139,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_double_table IF NOT EXISTS on double_table (key);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_double_table on double_table (key);");
     }
 
     int db_getall();
@@ -198,7 +198,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_charstar_table IF NOT EXISTS on charstar_table (key);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_charstar_table on charstar_table (key);");
     }
 
     int db_getall();
@@ -263,7 +263,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_stuff_table IF NOT EXISTS on stuff_table (key);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_stuff_table on stuff_table (key);");
     }
 
     int db_getall();

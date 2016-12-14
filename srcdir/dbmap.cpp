@@ -101,8 +101,6 @@ void dbmap_export(linkage_ped_top *Top, bp_order *bp) {
     int i, j;
     bp_order *b;
 
-//a    asm("int $3");
-
     Tod pedexp("export canonical allele/ marker scheme");
 
     ext_linkage_locus_top *EXLTop = Top->EXLTop;

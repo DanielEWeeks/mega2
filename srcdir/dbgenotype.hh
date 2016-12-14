@@ -52,7 +52,7 @@ class Phenotype_table {
         return r;
     }
 public:
-    Phenotype_table()  {}
+    Phenotype_table() : insert_stmt (0), select_stmt (0) { }
     int create() {
 	return MasterDB.exec(
 	    "CREATE TABLE IF NOT EXISTS phenotype_table (pId INTEGER PRIMARY KEY,"
@@ -114,7 +114,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_phenotype_table IF NOT EXISTS on phenotype_table (Name);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_phenotype_table on phenotype_table (Name);");
     }
 
     int db_getall(linkage_locus_top *LTop, pheno_pedrec_data **Phenotypes);
@@ -142,40 +142,51 @@ public:
     int create() {
 	return MasterDB.exec(
 	    "CREATE TABLE IF NOT EXISTS genotype_table (pId INTEGER PRIMARY KEY,"
-            " person_link INTEGER, bytes INTEGER, data BLOB"
+            " person_link INTEGER, chr INTEGER, bytes INTEGER, data BLOB"
             ");"
 	    );
     }
     void init () {
 	insert_stmt = MasterDB.prep(
             "INSERT INTO genotype_table("
-            " person_link, bytes, data"
-            ")  VALUES(?, ?, ?);");
+            " person_link, chr, bytes, data"
+            ")  VALUES(?, ?, ?, ?);");
 	select_stmt = MasterDB.prep(
             "SELECT "
-            " person_link, bytes, data"
+            " person_link, chr, bytes, data"
             "  FROM genotype_table;");
     }
-    int insert(linkage_ped_rec *p, int cnt, int offset) {
+    void init (const char *where) {
+        if (select_stmt != 0) {
+            delete select_stmt;
+            select_stmt = 0;
+        }
+        const char *str = 
+            "SELECT "
+            " person_link, chr, bytes, data"
+            "  FROM genotype_table";
+        int len = strlen(str) + 7 + strlen(where) + 2;
+        char *nstr = CALLOC((size_t) len, char);
+        sprintf(nstr, "%s %s %s;", str, where ? "where" : "", where);
+	select_stmt = MasterDB.prep(nstr);
+        free(nstr);
+    }
+    int insert(void *mk, int p_link, int chrm, int cnt) {
         extern int marker_size(int);
         int idx = 1;
         int size = marker_size(cnt);
-        const void *v = (const void *)marker_start(p->Marker, offset);
-//NOTE: p->Marker can be 0
-//        long long ll = xhash(p->Marker, size);
-//      printf("GHI: %d %llx\n", p->person_link, ll);
         return insert_stmt 
-            && insert_stmt->rowbind(idx, p->person_link, size)
-            && insert_stmt->bind(idx++, v, size)
+            && insert_stmt->rowbind(idx, p_link, chrm, size)
+            && insert_stmt->bind(idx++, mk, size)
 
             && insert_stmt->step();
     }
-    int select(int &link, int &bytes, unsigned char * &data) {
+    int select(int &link, int &chr, int &bytes, unsigned char * &data) {
         int idx = 0;
         int sz = 0;
         const void *v = 0;
         int ret = select_stmt 
-            && select_stmt->row(idx, link, bytes)
+            && select_stmt->row(idx, link, chr, bytes)
             && select_stmt->column(idx++, v, sz);
         data = (unsigned char *)v;
 //        long long ll = xhash(data, bytes);
@@ -195,23 +206,30 @@ public:
     }
 
     void close() {
-	delete insert_stmt;
-	delete select_stmt;
+        if (insert_stmt != 0) {
+            delete insert_stmt;
+            insert_stmt = 0;
+        }
+        if (select_stmt != 0) {
+            delete select_stmt;
+            select_stmt = 0;
+    }
     }
     int drop() {
 	return MasterDB.exec("DROP TABLE IF EXISTS genotype_table;");
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_genotype_table IF NOT EXISTS on genotype_table (UniqueID);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_genotype_table on genotype_table (chr);");
     }
 
-    int db_getall(linkage_locus_top *LTop, void **Genotypes);
+    int db_getall(linkage_ped_top *Top, void **Genotypes);
 };
 
 extern Genotype_table genotype_table;
 
 extern void dbgenotype_export(linkage_ped_top *Top, bp_order *bp);
 extern void dbgenotype_import(linkage_ped_top *Top);
+extern void dbgenotype_import_genotype(linkage_ped_top *Top);
 
 #endif

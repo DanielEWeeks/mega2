@@ -33,6 +33,7 @@
 #include "error_messages_ext.h"
 #include "utils_ext.h"
 #include "write_files_ext.h"
+#include "tod.hh"
 
 #include "dblite.hh"
 
@@ -109,14 +110,19 @@ bp_order *bp_sort;
 static int bp_fwd (const void *p1, const void *p2) {
     const bp_order *tp1 = (const bp_order *)p1;
     const bp_order *tp2 = (const bp_order *)p2;
-    if (tp1->chr == tp2->chr)
-        return tp1->pos - tp2->pos; 
-    return tp1->chr - tp2->chr;
+    if (tp1->chr == tp2->chr) {
+        if (tp1->pos == tp2->pos) {
+            return tp1->i - tp2->i;
+        } else 
+            return tp1->pos - tp2->pos; 
+    } else
+        return tp1->chr - tp2->chr;
 }
 
 static void sort_bp_order(linkage_ped_top *Top)
 {
     extern int base_pair_position_index;
+    extern int genetic_distance_index;
 
     bp_sort = CALLOC(Top->LocusTop->LocusCnt, bp_order);
     bp_order *bpp;
@@ -132,14 +138,13 @@ static void sort_bp_order(linkage_ped_top *Top)
         bpp->i = i;
         bpp->chr = Top->LocusTop->Locus[i].Marker->chromosome;
         if (base_pair_position_index < 0)
-            bpp->pos = i;
+            bpp->pos = Top->EXLTop->EXLocus[i].positions[genetic_distance_index];
         else {
             bpp->pos = Top->EXLTop->EXLocus[i].positions[base_pair_position_index];
         }
     }
     qsort((void *)(bp_sort+offset), Top->LocusTop->MarkerCnt, sizeof (bp_order), bp_fwd);
 }
-
 
 Int_table int_table;
 Double_table double_table;
@@ -207,9 +212,6 @@ void db_index_all() {
 
 void dbmega2_export(linkage_ped_top *Top)
 {
-    sort_bp_order(Top);
-
-
     msgvf("Dumping SQLite3 DB ");
 #ifndef HIDEFILE
     msgvf("to file \"%s\"\n", DBfile);
@@ -217,13 +219,14 @@ void dbmega2_export(linkage_ped_top *Top)
     msgvf("\n");
 #endif
 
+    sort_bp_order(Top);
+
     dbmisc_export(Top);
 
     dbbatch_file_export(Top);
 
     dbpedigree_export(Top);
 
-//    asm("int $3");
     dballele_export(Top, bp_sort);  //sort markerscheme_table
 
     dblocus_export(Top->LocusTop, bp_sort); // sort locus_table, allele_table, marker_table
@@ -290,7 +293,8 @@ void dbmega2_stat(linkage_ped_top *Top)
 
 void dbmega2_import(linkage_ped_top *Top)
 {
-//    asm("int $3");
+    extern void mk_marker_filter(linkage_ped_top *Top);
+
     msgvf("Reading SQLite3 DB ");
 #ifndef HIDEFILE
     msgvf("from file \"%s\"\n", DBfile);
@@ -304,11 +308,19 @@ void dbmega2_import(linkage_ped_top *Top)
 
     dbpedigree_import(Top);
 
+    Tod import_allele("import_allele");
     dballele_import(Top);
+    import_allele();
 
+    Tod import_locus("import_locus");
     dblocus_import(Top->LocusTop);
+    import_locus();
 
+
+    Tod import_map("import_map");
     dbmap_import(Top);
+    mk_marker_filter(Top);
+    import_map();
 
     dbgenotype_import(Top);
 
@@ -338,7 +350,7 @@ void db_drop_all() {
     marker_table.drop();
     traitaff_table.drop();
     affectclass_table.drop();
-//    classpen_table.drop();
+//  classpen_table.drop();
     traitquant_table.drop();
 
     mapnames_table.drop();
@@ -501,7 +513,6 @@ void db_init_all() {
     k = "k1"; batch_file_parameters.db_get(k, v, i); printf("get: %s, %s, %d\n", "k1", v, i);
     k = "k2"; batch_file_parameters.db_get(k, v, i); printf("get: %s, %s, %d\n", "k2", v, i);
     k = "k3"; batch_file_parameters.db_get(k, v, i); printf("get: %s, %s, %d\n", "k3", v, i);
-    asm("int $3");
 
     batch_file_parameters.db_get("k2", ve, i);
     printf("get: %s, %s, %d\n", "k2", v, i);
@@ -534,7 +545,7 @@ void db_fini_all() {
     marker_table.close();
     traitaff_table.close();
     affectclass_table.close();
-//    classpen_table.close();
+//  classpen_table.close();
     traitquant_table.close();
 
     mapnames_table.close();

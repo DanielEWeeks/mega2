@@ -1221,16 +1221,20 @@ int             main(int argc, char **argv, char **env)
 
     } else {
         extern int set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis);
-        extern void allelecnt_check(linkage_ped_top *Top, analysis_type analysis);
-
         if (set_uniq_check(LPedTreeTop, analysis)) {
             extern void create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
             create_unique_ids(LPedTreeTop, analysis);
         }
 
+        extern void allelecnt_check(linkage_ped_top *Top, analysis_type analysis);
         if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */) {
             allelecnt_check(LPedTreeTop, analysis);
         }
+
+        extern void dbgenotype_import_genotype(linkage_ped_top *Top);
+        Tod import_genotype("import_genotype");
+        dbgenotype_import_genotype(LPedTreeTop);
+        import_genotype();
     }
 
     if (true || database_dump || ! database_read) {

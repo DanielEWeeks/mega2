@@ -84,7 +84,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_map_table IF NOT EXISTS on mapnames_table (key);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_map_table on mapnames_table (key);");
     }
 
     void db_getall(linkage_ped_top *Top);
@@ -139,7 +139,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_map_table IF NOT EXISTS on map_table (key);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_map_table on map_table (key);");
     }
 
     void db_getall(linkage_ped_top *Top);

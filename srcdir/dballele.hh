@@ -80,7 +80,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_canonicalallele_table IF NOT EXISTS on canonicalallele_table (key);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_canonicalallele_table on canonicalallele_table (key);");
     }
 
     void db_getall(linkage_ped_top *Top);
@@ -132,7 +132,7 @@ public:
     }
 
     int index() {
-	return MasterDB.exec("CREATE Index Idx_markerscheme_table IF NOT EXISTS on markerScheme_table (key);");
+	return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_markerscheme_table on markerScheme_table (key);");
     }
 
     void db_getall(linkage_ped_top *Top);

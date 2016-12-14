@@ -108,7 +108,7 @@ public:
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_pedigree_table IF NOT EXISTS on pedigree_table (Name);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_pedigree_table on pedigree_table (Name);");
     }
 
     int db_getall(linkage_ped_tree *t, std::map<int, linkage_ped_tree *> &pedigree_hash);
@@ -143,7 +143,7 @@ public:
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_pedigree_brkloop_table IF NOT EXISTS on pedigree_brkloop_table (Name);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_pedigree_brkloop_table on pedigree_brkloop_table (Name);");
     }
 };
 
@@ -259,7 +259,7 @@ public:
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_person_table IF NOT EXISTS on person_table (UniqueID);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_person_table on person_table (UniqueID);");
     }
 
     int db_getall(linkage_ped_rec *p);
@@ -308,7 +308,7 @@ public:
     }
 
     int index() {
-        return MasterDB.exec("CREATE Index Idx_person_brkloop_table IF NOT EXISTS on person_brkloop_table (Name);");
+        return MasterDB.exec("CREATE Index IF NOT EXISTS Idx_person_brkloop_table on person_brkloop_table (Name);");
     }
 };
 

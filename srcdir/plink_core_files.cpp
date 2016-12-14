@@ -207,6 +207,7 @@ static void write_PLINK_map_data(linkage_ped_top *LPTop,
                     warnvf("More than two alleles exist beginning at marker %s.\n", snp);
                     display_error_mallele++;
                 }
+//?x            if (generate_bim_file) continue;
                 continue;
             }
             
@@ -526,8 +527,10 @@ void write_R_PLINK_map_file(linkage_ped_top *LPTop, char *map_file_name) {
     // Use all markers, output centi-Morgans, create a 3-column map file, generate a .BIM file...
 #if defined(_WIN) || defined(MINGW)
     write_PLINK_map_data(LPTop, fp, 0, 0, 1, "%d\t%s\t%7.5f\t%.0f", 0);
+//?xwrite_PLINK_map_data(LPTop, fp, 1, 0, 1, "%d\t%s\t%7.5f\t%.0f", 0);
 #else
     write_PLINK_map_data(LPTop, fp, 0, 0, 1, "%d\t%s\t%7.5lf\t%.0lf", 0);
+//?xwrite_PLINK_map_data(LPTop, fp, 1, 0, 1, "%d\t%s\t%7.5lf\t%.0lf", 0);
 #endif
     fclose(fp);
 }
