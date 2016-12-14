@@ -54,13 +54,20 @@
 
 #include "dblite.hh"
 #include "dbmisc.hh"
+#include "dbrefallele.h"
 
 extern DBlite MasterDB;
+
+extern int  db_exists_db();
+extern void db_open_db();
+extern void db_fini_all();
+extern char DBfile[255];
 
 Str hg_build;
 int combinechromovcf;
 int outfiletype;
 Str ref_choice;
+vector<string> references;
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -73,8 +80,10 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     //3 VCF.gz
     outfiletype = 1;
 
+    db_open_db();
+
     if ( InputMode == INTERACTIVE_INPUTMODE ) {
-        option_menu(file_names,file_name_stem, &combine_chromo);
+        option_menu(file_names,file_name_stem, &combine_chromo, Top);
         LoopOverChrm  = ! combine_chromo;
     }
     else {
@@ -299,6 +308,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             int extremum_allele = 0;
 
             if(ref_choice == "Major Allele"){
+                extremum_frequency = 0;
                 for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                     if (_tlocusp->Allele[allele].Frequency > extremum_frequency) {
                         extremum_frequency = _tlocusp->Allele[allele].Frequency;
@@ -307,8 +317,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
             }
             //change to 1.0 in case so we find the minimum
-            extremum_frequency = 1.0;
             if(ref_choice == "Minor Allele"){
+                extremum_frequency = 1.0;
                 for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                     if (_tlocusp->Allele[allele].Frequency < extremum_frequency) {
                         extremum_frequency = _tlocusp->Allele[allele].Frequency;
@@ -318,11 +328,44 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             }
 
             if(ref_choice == "External Reference"){
-                //MasterDB.open();
-                //int ret = MasterDB.exec("SELECT * FROM ref_allele_table");
-                //printf("ret")
-                //MasterDB.close();
+                //db_open_db();
+                MasterDB.begin();
+
+                DBstmt *select;
+                char select_string[100];
+                if(base_pair_position_index >0)
+                    sprintf(select_string,"SELECT chr, pos, marker, ref FROM ref_allele_table WHERE pos = %.0f AND chr = %d;",_EXLTop->EXLocus[_locus].positions[base_pair_position_index],_tlocusp->Marker->chromosome);
+                select = MasterDB.prep( select_string);
+                int ret = select && select->abort();
+                while (ret){
+                    int chromosome = 0;
+                    int position = 0;
+                    int marker = 0;
+                    char *reference;
+
+                    ret = select->step();
+                    if (ret == SQLITE_ROW) {
+                        select->column(0, chromosome);
+                        select->column(1, position);
+                        select->column(2, marker);
+                        select->column(3, reference);
+
+                        //printf("%d:%d:%d:%s\n",chromosome,position,marker,reference);
+                        for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
+                            if(!strcmp(_tlocusp->Allele[allele].AlleleName,reference)){
+                                extremum_allele = allele;
+                                //printf("%d/%s\n",extremum_allele,_tlocusp->Allele[extremum_allele].AlleleName);
+                            }
+                        }
+                    }
+                    //check for empty return then select major allele?
+                    else
+                        break;
+                }
+
+                MasterDB.commit();
             }
+
 
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if (allele==extremum_allele){
@@ -708,20 +751,48 @@ unsigned long CLASS_VCF::file_size(char *filename)
 }
 
 
-void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo) {
-    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref;
+void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo, linkage_ped_top *Top) {
+    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref,reftableexists;
     done = 0;
     stem = 1;
     build = 2;
     chromo = 5;
     fileout = 4;
     ref = 3;
+    reftableexists = 0;
 
+    //check for reference table:
+    //db_open_db();
+    MasterDB.begin();
+    DBstmt *select;
+    char select_string[255] = "SELECT name FROM sqlite_master WHERE type='table' AND name='ref_allele_table';";
+
+    select = MasterDB.prep( select_string);
+    int ret = select && select->abort();
+    while (ret){
+        ret = select->step();
+        if (ret == SQLITE_ROW)
+            reftableexists = 1;
+        else
+            break;
+    }
+    MasterDB.commit();
+
+    //for testing remove afterwards.
+    reftableexists = 0;
+
+    //set more variables
     strcpy(prefix,file_name_stem);
-    char buildname[5] = "B37";
+    char buildname[255] = "B37";
     choice = -1;
-    std::string refchoice = "Major Allele";
+    std::string refchoice;
+    if(!reftableexists)
+        refchoice = "Major Allele";
+    else
+        refchoice = "External Reference";
 
+
+    // actual menu loop
     while (choice != 0) {
         draw_line();
         printf("VCF Analysis Menu:\n");
@@ -740,9 +811,9 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 printf("%d) Combine Chromosomes                                         Yes\n", chromo);
             else
                 printf("%d) Combine Chromosomes                                         No\n", chromo);
-            printf("Enter selection: 0 - %d > ", 3);
+            printf("Enter selection: 0 - %d > ", 5);
         }
-        printf("Enter selection: 0 - %d > ", 2);
+        printf("Enter selection: 0 - %d > ", 4);
         fcmap(stdin,"%d", &choice); newline;
 
         if ( choice < done ) {
@@ -798,9 +869,19 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                     refchoice = "Minor Allele";
                     break;
                 }
-                else if (choice3 == 3){
-                    refchoice = "External Reference";
-                    break;
+                else if (choice3 == 3) {
+                    if (reftableexists) {
+                        //if the ref table is already there we're all good
+                        refchoice = "External Reference";
+                        break;
+                    }
+                    else {
+                        //otherwise we want to load it up
+                        Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
+                        reference_allele_table->read_ref_allele_file(Top);
+                        reftableexists = 1;
+                        break;
+                    }
                 }
                 else
                     printf("Unknown option %d\n", choice3);

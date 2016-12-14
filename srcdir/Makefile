@@ -106,7 +106,7 @@ SRCS =  input_check.cpp     select_index.cpp \
 	write_mach.cpp      write_minimacshapeit.cpp        write_vcf.cpp \
 	dbmega2.cpp         dbmisc.cpp           dbbatch.cpp \
 	dbpedigree.cpp      dballele.cpp         dbloci.cpp \
-	dbmap.cpp           dbgenotype.cpp
+	dbmap.cpp           dbgenotype.cpp       dbrefallele.cpp
 
 OBJS =  $(SRCS:.cpp=.o)
 

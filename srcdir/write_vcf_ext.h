@@ -28,7 +28,7 @@
 
 
 #ifndef WRITE_VCF_EXT_H
-#define WRITE_MINIWRITE_VCF_EXT_HMAC_EXT_H
+#define WRITE_VCF_EXT_H
 
 #include "analysis.h"
 
@@ -88,7 +88,7 @@ public:
 
     void write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *file_names[]);
 
-    void option_menu (char *file_names[], char *prefix, int *combine_chromo);
+    void option_menu (char *file_names[], char *prefix, int *combine_chromo, linkage_ped_top *Top);
 
     virtual void batch_in();
 
