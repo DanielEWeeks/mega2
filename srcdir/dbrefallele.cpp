@@ -116,12 +116,20 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top) {
             else {
                 int position = Top->EXLTop->EXLocus[locus].positions[base_pair_position_index];
                 //if the chromosome is the same, and position +/- .1% is the same (not many precise matches)
+                //printf("Internal Chromsome = %d, Reference Chromosome = %d\n", Top->LocusTop->Locus[locus].Marker->chromosome, chr);
+                //printf("Internal Position = %d, Reference Position = %d\n",position, pos);
                 if(Top->LocusTop->Locus[locus].Marker->chromosome == chr
-                   && pos - pos/10000 <= position && position <= pos + pos/10000) {
+                    //&& pos - pos/10000 <= position && position <= pos + pos/10000) {
+                    && pos == position) {
+                    //printf("Internal Position = %d, Reference Position = %d\n",position, pos);
+                    //printf("--------------------here\n");
                     //we insert our values, the position internally is inserted sow e can select on it
-                    insert(chr,position,0,token);
+                    insert(chr,pos,locus,token);
                     locus++;
                 }
+                else if(pos > position)
+                    if(locus < Top->LocusTop->LocusCnt -1)
+                        locus++;
                 //ref = token;
                 chr = 0;
                 pos = 0;
