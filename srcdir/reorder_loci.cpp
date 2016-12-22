@@ -2116,6 +2116,11 @@ static int       ReOrderLociByPositionNumber(linkage_ped_top *Top,
                         for (i = 0; i < *num_loci; i++) {
                             (*selected_loci)[i] = number1[i];
                         }
+//12/16 ... Added for symmetry
+                        linkage_set_locus_order_new(*num_loci, *selected_loci);
+                        NumChrLoci = num_reordered;
+                        ChrLoci = reordered_marker_loci;
+//12/16
                         log_marker_selections(Top, *selected_loci, *num_loci,
                                               NULL, (void (*)(const char *)) print_only, ErrorSimOpt);
                         /* sleep(2); */
@@ -2155,6 +2160,7 @@ static int       ReOrderLociByPositionNumber(linkage_ped_top *Top,
         global_chromo_entries = CALLOC((size_t) 1, int);
         main_chromocnt = 1;
         global_chromo_entries[0] = numchr;
+//12/16 ... call below builds reordered_marker_loci
         linkage_set_locus_order_new(*num_loci, *selected_loci);
         mssgf("\nSelected loci (in order)");
         log_marker_selections(Top, *selected_loci, *num_loci, NULL, (void (*)(const char *)) mssgf,
@@ -2167,8 +2173,13 @@ static int       ReOrderLociByPositionNumber(linkage_ped_top *Top,
                 batchf(Loci_Selected);
             }
         }
-        NumChrLoci = *num_loci;
-        ChrLoci = *selected_loci;
+//12/16 NumChrLoci = *num_loci;
+//12/16 ChrLoci = *selected_loci;
+//12/16 lines below mean that we don't need to run ChrLoci[] thru loci_reorder_w_locus_filter[]
+//12/16  to translate markers index.
+        NumChrLoci = num_reordered;
+        ChrLoci = reordered_marker_loci;
+
         /* reset the global_trait_entries data structure */
         for (i = 0, j = 0; i < NumChrLoci; i++) {
             if (LTop->Locus[ChrLoci[i]].Class == TRAIT) {

@@ -43,6 +43,7 @@ using namespace std;
 extern DBlite MasterDB;
 map<int, linkage_locus_rec *> Locus_hash;
 map<pair<int,int>, linkage_affection_class *>AffectClass_hash;
+map<int,Pairii> Chr2Locus;
 
 int Locus_table::db_getall(linkage_locus_rec *t) {
     linkage_locus_rec *ot = t;
@@ -317,12 +318,12 @@ static int trait_quant_sort(const void *a, const void *b) {
 void dblocus_import(linkage_locus_top *LTop) {
     int a, m;
     int locus_link = -1;
-//  int LocusCnt  = LTop->LocusCnt;
+    int LocusCnt  = LTop->LocusCnt;
     int MarkerCnt = LTop->MarkerCnt;
     int PhenoCnt  = LTop->PhenoCnt;
     int PhenoAffectCnt, PhenoQuantCnt;
 
-    LTop->Locus = new linkage_locus_rec [LTop->LocusCnt];
+    LTop->Locus = new linkage_locus_rec [LocusCnt];
     Allele_rec = new linkage_allele_rec [AllelesCnt];
     LTop->Marker = new marker_rec [MarkerCnt];
     LTop->Pheno = new pheno_rec [PhenoCnt];
@@ -383,8 +384,12 @@ void dblocus_import(linkage_locus_top *LTop) {
     }
 
     qsort(LTop->Marker, MarkerCnt, sizeof (marker_rec), marker_rec_sort);
-    for (m = 0; m < MarkerCnt; m++) {
-        marker_rec  *mp = &(LTop->Marker[m]);
+    LTop->Marker -= PhenoCnt;
+    int i = LTop->PhenoCnt;
+    int bchr = LTop->Marker[i].chromosome;
+    int base = i, len = 0;
+    for (; i < LocusCnt; i++) {
+        marker_rec  *mp = &(LTop->Marker[i]);
         linkage_locus_rec *lp;
         if (map_get(Locus_hash, mp->locus_link, lp))
             lp->Marker = mp;
@@ -393,8 +398,15 @@ void dblocus_import(linkage_locus_top *LTop) {
                     mp->locus_link);
             EXIT(0);
         }
+        if (mp->chromosome != bchr) {
+            Chr2Locus[bchr] = make_pair(base, len);
+            base = i;
+            len = 0;
+        }
+        bchr = mp->chromosome;
+        len++;
     }
-    LTop->Marker -= PhenoCnt;
+    Chr2Locus[bchr] = make_pair(base, len);
 
     affectclass_table.db_getall(AffectClass_rec);
 
