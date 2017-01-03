@@ -1213,6 +1213,7 @@ void break_loops(int ped_count, marriage_graph_type *mped,
 
         /* else go on to breaking loops */
         if (min_graph->num_edges > 0) {
+            asm("int $3");
             if (no_founder == -1)
                 no_founder = force_no_founders();
             min_span_tree(min_graph, no_founder, &(mped[i]));
@@ -1532,7 +1533,6 @@ void ptop2top(linkage_ped_top *Top, analysis_type analysis)
             }
             Entry=&(Top->Ped[i].Entry[j]);
             clear_lpedrec(Entry);
-
             make_linkage_record(j, Top->PTop[i], Top->LocusTop, Entry);
         }
 
@@ -1552,7 +1552,6 @@ void ptop2topClear(linkage_ped_top *Top)
 }
 
 int makeped(linkage_ped_top *Top, analysis_type analysis)
-
 {
     /* int quiet; */
     int ped;
@@ -1581,16 +1580,12 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
          * pedigrees will have their loops identified and reconnected.
 	 *
 	 */
-
-        Top->PedBroken = Top->Ped;
-        Top->PedRaw    =  CALLOC((size_t) Top->PedCnt, linkage_ped_tree);
-
-        for (ped = 0; ped < Top->PedCnt; ped++) {
-            copy_lpedtree1(&Top->PedBroken[ped], &Top->PedRaw[ped]);
-            Top->PedRaw[ped].Entry = CALLOC((size_t) Top->PedRaw[ped].EntryCnt,
-                                            linkage_ped_rec);
-          for (int i = 0; i < Top->PedRaw[ped].EntryCnt; i++) {
-                copy_lpedrec(&Top->PedBroken[ped].Entry[i], &Top->PedRaw[ped].Entry[i], Top);
+      if (true || (! database_dump && database_read)) {
+        if (analysis->maintain_broken_loops()) {
+            Top->IndivCnt = 0;
+            for (ped = 0; ped < Top->PedCnt; ped++) {
+                LPed = &(Top->Ped[ped]);
+                Top->IndivCnt += LPed->EntryCnt;
             }
         }
 
@@ -1605,7 +1600,20 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
                 }
             }
         }
-  
+      } else {
+          Top->IndivCnt = 0;
+          for (ped = 0; ped < Top->PedCnt; ped++) {
+              LPed = &(Top->Ped[ped]);
+              asm("int $3");
+              if (LPed->Loops != NULL && analysis->maintain_broken_loops()) {
+                  if (connect_loops(LPed, Top) < 0)   {
+                      errorf("Fatal error connecting loops. Aborting.");
+                      EXIT(LOOP_CONNECTION_ERROR);
+                  }
+              }
+              Top->IndivCnt += LPed->EntryCnt;
+          }
+      }
         check_any(Top);
         return 1;
     }
@@ -1617,6 +1625,19 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
      * add the KEYWORD to the second case statement in function
      * makeped(), which deals with pre-makeped format pedigree files.
      */
+//zz
+    if ( !database_dump) {
+        if (analysis->break_loops())
+            break_loops(Top->PedCnt, Top->PTop, Top->LocusTop, 1);
+        else 
+            break_loops(Top->PedCnt, Top->PTop, Top->LocusTop, 0);
+    } else {
+        break_loops(Top->PedCnt, Top->PTop, Top->LocusTop, 1);
+    }
+  
+    /* copy from one to the other */
+    Top->Ped = CALLOC((size_t) Top->PedCnt, linkage_ped_tree);
+    Top->IndivCnt = 0;
 
     do_marriage(Top->PedCnt, Top->PTop, Top->LocusTop);
 

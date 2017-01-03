@@ -26,17 +26,7 @@
 ===========================================================================
 */
 
-#ifndef WRITE_SIMULATE_FILES_EXT_H
-#define WRITE_SIMULATE_FILES_EXT_H
+#include "types.hh"
 
-extern void create_SIMULATE_format_files(linkage_ped_top **LPedTreeTop,
-					 ped_top *PedTreeTop,
-					 analysis_type *analysis,
-					 file_format *infl_type,
-					 file_format *outfl_type,
-					 int *numchr, char *mapfl_name,
-					 char *fl_names[],
-					 int untyped_ped_opt);
-
-
-#endif
+template <typename T>
+T Outline<T>::operator[](std::size_t i) { return (std::vector<T>::data()[i]); }

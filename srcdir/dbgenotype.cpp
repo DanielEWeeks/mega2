@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+  Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -67,7 +67,7 @@ void marker_filter_add(int bchr, long long bmin, long long bmax)
 
     if (bchr != 1 && bchr != 3) return;
 
-    if (not map_get(marker_filter, bchr, bplist)) {
+    if (! map_get(marker_filter, bchr, bplist)) {
         bplist = new List2ll;
         marker_filter[bchr] = bplist;
     }
@@ -121,7 +121,7 @@ void use_marker_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int b
     List2llp lp;
     Pairll   pp;
 
-    if (not map_get(marker_filter, bchr, bplist)) {
+    if (! map_get(marker_filter, bchr, bplist)) {
         if (bchr == -1)
             printf("Marker_filter: person_link %d no data\n", link);
         else
@@ -149,7 +149,7 @@ void use_locus_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int by
     List3illp  lp;
     Pairill    ill;
 
-    if (not map_get(locus_filter, bchr, locuslist)) {
+    if (! map_get(locus_filter, bchr, locuslist)) {
         if (bchr == -1)
             printf("Marker_filter: person_link %d no data\n", link);
         else
