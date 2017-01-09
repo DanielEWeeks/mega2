@@ -37018,11 +37018,7 @@ The VCF analysis menu looks as follows:
 \end_layout
 
 \begin_layout LyX-Code
-==========================================================
-\end_layout
-
-\begin_layout LyX-Code
-VCF Analysis Menu:
+VCF Analysis Menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -37030,24 +37026,43 @@ VCF Analysis Menu:
 \end_layout
 
 \begin_layout LyX-Code
-1) File name stem:                                    vcf 
+1) File name stem:                                             vcf 
 \end_layout
 
 \begin_layout LyX-Code
-2) Human Genome Build                                 hg19
+2) Human Genome Build                                          B37 
 \end_layout
 
 \begin_layout LyX-Code
-Enter selection: 0 - 2 >
+3) Reference Alleles                                           Major Allele
+ 
+\end_layout
+
+\begin_layout LyX-Code
+4) VCF/BCF/VCF.gz:                                             VCF 
+\end_layout
+
+\begin_layout LyX-Code
+Enter selection: 0 - 4 >
 \end_layout
 
 \begin_layout Standard
-This menu only has two prompts: the file name stem option which simply lets
+This menu has four prompts: the file name stem option which simply lets
  the user specify the prefix of the output files is (in this example vcf.05.vcf,
  vcf.
  05.fam etc.).
  The human genome build option allows the user to change which human genome
  build version is listed in the contig portion of the VCF header.
+ The reference allele decision, which allows you to use Mega2's computed
+ frequencies to use the major or minor allele as your reference, or an external
+ reference panel (see below).
+ And Finally the choice to output as either a VCF, BCF, or gzipped VCF file.
+\end_layout
+
+\begin_layout Standard
+If more than one chromosome is selected, there will be an additional option
+ that allows you to have either one large VCF file or more than one seperated
+ by chromosome.
 \end_layout
 
 \begin_layout LyX-Code
@@ -37219,6 +37234,67 @@ reference "subsec:Annotated-penetrance-file"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Subsubsection
+Use external reference panel in database 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Using-an-external-reference"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A new feature of VCF is the use of an external reference panel.
+ Supposing you have data that you would like to know the reference values
+ from another larger dataset, say 1000 genomes, the funcitonality now exsists
+ to upload that data into Mega2 in order to compare your data against that
+ refernce.
+\end_layout
+
+\begin_layout Standard
+We provice a reference panel for 1000 genomes at [TODO: figure out how we
+ want to host it and put a link here].
+ This file was created using a script called in the mega2 distribution called
+ GetRefAlleles.sh.
+ This script uses BCF tools to get a 3 column file of the form:
+\end_layout
+
+\begin_layout Standard
+CHR POS REF
+\end_layout
+
+\begin_layout Standard
+Mega2 can read in this file in a menu option in the VCF output mode [soon
+ to be moved to the main menu].
+ In the VCF Analysis menu (above) there is option 3 where the user can choose
+ the reference allele they want in their VCF file.
+\end_layout
+
+\begin_layout Standard
+For this example we want to chose 
+\begin_inset Quotes eld
+\end_inset
+
+Use external reference panel in database
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Which prompts you to enter a file.
+ If you enter a file of the form of the reference file provided by Mega2
+ (a gzipped 3 collumn file), it will load those values into the database
+ where there is an overlapped physical position with your dataset.
+ From there you will end up back at the VCF analysis menu, only now external
+ reference will be chosen.
+ If you continue a VCF created will use those reference values, or flag
+ them as no external match [need ot think of a VCF line flag name in these
+ cases] and choose the Major allele them if no match was available.
+ If a reference panel is already in your database from before it will simply
+ load use it as is and continue creating the files requested.
 \end_layout
 
 \begin_layout Section
