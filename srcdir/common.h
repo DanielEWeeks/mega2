@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+  Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -621,5 +621,7 @@ extern int Display_Errors, Display_Messages;
 #define ALLOW_SEX_MAP(analysis)  ((analysis)->allow_sex_map())
 
 #define Ignore_Unmapped(m) (((m) == UNKNOWN_CHROMO) && (NumUnmapped < 1 || !AllowUnmapped))
+
+#define BPT asm("int $3")
 
 #endif
