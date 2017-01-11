@@ -168,6 +168,7 @@
 #include "class_old.h"
 #include "write_shapeit_ext.h"
 #include "database_dump_ext.h"
+#include "dbrefallele.h"
 
 /*
  annotated_ped_file_ext.h:  check_annotated_file_format read_annotated_files Free_annotated_files
@@ -611,6 +612,7 @@ int             main(int argc, char **argv, char **env)
     char           *penfl_name  = NULL;
     char           *bedfl_name  = NULL;
     char           *phefl_name  = NULL;
+    char           *reffl_name  = NULL;
     char           *input_path  = NULL;
     char const     *logdir;
     int            num_cols=0;
@@ -785,7 +787,7 @@ int             main(int argc, char **argv, char **env)
               &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
               &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
               &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath, &dbf,
-              &FreqMismatchThreshold);
+              &FreqMismatchThreshold, &reffl_name);
         tod_menu1();
 
         Input_Files& inf = Input->input_files;  // Input is set in menu1 as soon as possible.
@@ -802,6 +804,7 @@ int             main(int argc, char **argv, char **env)
         *inf.penfl   = penfl_name;
         *inf.bedfl   = bedfl_name;
         *inf.phefl   = phefl_name;
+        *inf.reffl   = reffl_name;
 
         strcpy(&mega2_input_file_type[PEDIGREE][0],  "Pedigree file");
         strcpy(&mega2_input_file_type[LOCUS][0],  "Locus file");
@@ -813,6 +816,7 @@ int             main(int argc, char **argv, char **env)
         if (mega2_input_file_type[BED][0] == 0)
             strcpy(&mega2_input_file_type[BED][0],  "Aux file");
         strcpy(&mega2_input_file_type[PHEfl][0],  "PLINK Phenotype file");
+        strcpy(&mega2_input_file_type[REFfl][0],  "Reference Allele file");
 
         Mega2Status = FILE_NAMES_READ;
         time_stamp_logs();
@@ -1276,11 +1280,19 @@ int             main(int argc, char **argv, char **env)
         db_open_db();
         if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("DBfile_name"))
             batchf("DBfile_name");
+
         db_init_all();
         dbmega2_export(LPedTreeTop);
         db_fini_all();
 
         dbexport();
+    }
+
+    if (database_dump && reffl_name != NULL) {
+        printf("here");
+        MasterDB.open(DBfile);
+        Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
+        reference_allele_table->read_ref_allele_file(LPedTreeTop, reffl_name);
     }
 
     if (database_dump && database_read) {
@@ -1355,7 +1367,6 @@ int             main(int argc, char **argv, char **env)
         write_key_file(Mega2KeysRun, LPedTreeTop);
     }
     tod_nuke_key();
-
 
     Tod tod_fin("epilogue");
 #ifndef HIDEPATH
@@ -1458,6 +1469,9 @@ int             main(int argc, char **argv, char **env)
 
     if (phefl_name != NULL)
         free(phefl_name);
+
+    if (reffl_name != NULL)
+        free(reffl_name);
 
     tod_fin();
 

@@ -547,8 +547,9 @@ fln_t auxO  = {"Aux file:",        Input_Aux_File},        *auxo  = &auxO;
 fln_t pheO  = {"Phenotype file:",  Input_Phenotype_File},  *pheo  = &pheO;
 fln_t infO  = {"Imputed Info file:", -1, "Input_Imputed_Info_File"};
 fln_t *info  = &infO;
+fln_t refO  = {"Reference file:",  -1, "Reference_Allele_File"},  *refo  = &refO;
 
-fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, info, 0};
+fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, refo, info, 0};
 
 static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *sfx1)
 {
@@ -587,6 +588,7 @@ static void fln_init_mega2(int map_req) {
     fln_init(omito, "Mega2", "omit", "[optional]", "omit");
     fln_init(freqo, "Mega2", "freq", "[optional]", "freq", "frequency");
     fln_init(peno,  "Mega2", "pen", "[optional]", "pen", "penetrance");
+    fln_init(refo,  "Mega2", "ref", "[optional]", "ref", "reference");
 }
 
 #define PMAP_REQ 1
@@ -949,20 +951,21 @@ void menu1(file_format *infl_type,
            char **auxfl_name, char **phefl_name,
            int *Untyped_ped_opt, int *Error_sim_opt,
            char **output_path, char **db_name,
-           double *freq_mismatch_thresh)
+           double *freq_mismatch_thresh,
+           char **reffl_name)
 {
     int            i, choice_ = -1;
     char           cchoice[10];
     int            exit_loop=0;
 
-    int            ext_i=1, loc_i=2, ped_i=3, map_i=4, omit_i = 5, freq_i=6, pen_i=7;
-    int            out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
-    int            plink_args_i = 14, plink_phe_i = 15, plink_bed_i = 16;
-    int            compress_i = 17, file_format_i = 18, vcf_args_i = 19;
-    int            vcf_mak_i = 20, site_vcf_i = 21, site_bcf_i = 22, site_vcf_gz_i = 23, _aux_i = 0;
-    int            db_file_i = 24, in_dir_i = 25, pmap_i = 26;
-    int	           imputed_i = 27, inf_i = 28;
-    int            idx, choiceA[29]; /* idx should be 1+ largest <>_i value (above)*/
+    int            ext_i=1, loc_i=2, ped_i=3, map_i=4, omit_i = 5, freq_i=6, pen_i=7, ref_i = 8;
+    int            out_i=9, err_i=10, untyp_i=11, thresh_i=12, miss_i=13, _thresh_i;
+    int            plink_args_i = 15, plink_phe_i = 16, plink_bed_i = 17;
+    int            compress_i = 18, file_format_i = 19, vcf_args_i = 20;
+    int            vcf_mak_i = 21, site_vcf_i = 22, site_bcf_i = 23, site_vcf_gz_i = 24, _aux_i = 0;
+    int            db_file_i = 25, in_dir_i = 26, pmap_i = 27;
+    int	           imputed_i = 28, inf_i = 29;
+    int            idx, choiceA[30]; /* idx should be 1+ largest <>_i value (above)*/
 
     int            plinkf = 0, xcf = 0;
 
@@ -995,6 +998,7 @@ void menu1(file_format *infl_type,
     fln_alloc(auxfl_name,   auxo);
     fln_alloc(phefl_name,   pheo);
     fln_alloc(infofl_name,  info);
+    fln_alloc(reffl_name,   refo);
     if (batchINPUTFILES) {
 
         Input = createinput(Input_Format);
@@ -1256,6 +1260,9 @@ void menu1(file_format *infl_type,
         choiceA[idx] = fln_print(peno, idx, pen_i);
         if (choiceA[idx]) idx++;
 
+        choiceA[idx] = fln_print(refo, idx, ref_i);
+        if (choiceA[idx]) idx++;
+
         printf("%2d) %-*s%s\n", idx, line_len,
                "Output Directory:",
                ((!strcmp(*output_path, "."))?"[ Current directory ]" : *output_path));
@@ -1398,6 +1405,7 @@ void menu1(file_format *infl_type,
                 fln_free_not_present(pheo);
                 fln_free_not_present(mapo);
                 fln_free_not_present(pmapo);
+                fln_free_not_present(refo);
                 fln_free_not_present(info);
             }
 
@@ -1477,6 +1485,9 @@ void menu1(file_format *infl_type,
 
         } else if (choice_ == plink_phe_i) {
             fln_get(pheo, "phenotype");
+
+        } else if (choice_ == ref_i) {
+            fln_get(refo, "reference allele");
 
         } else if (choice_ == out_i) {   /* The output directory */
             draw_line();

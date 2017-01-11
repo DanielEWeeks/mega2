@@ -63,6 +63,7 @@ public:
     char **penfl;
     char **bedfl;
     char **phefl;
+    char **reffl;
 
     Input_Files() :
         pedfl(&mega2_input_files[PEDIGREE]),
@@ -73,7 +74,8 @@ public:
         freqfl(&mega2_input_files[FREQ]),
         penfl(&mega2_input_files[PEN]),
         bedfl(&mega2_input_files[BED]),
-        phefl(&mega2_input_files[PHEfl]) {  };
+        phefl(&mega2_input_files[PHEfl]),
+        reffl(&mega2_input_files[REFfl]) {  };
 
 };
 
