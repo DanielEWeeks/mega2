@@ -547,7 +547,7 @@ fln_t auxO  = {"Aux file:",        Input_Aux_File},        *auxo  = &auxO;
 fln_t pheO  = {"Phenotype file:",  Input_Phenotype_File},  *pheo  = &pheO;
 fln_t infO  = {"Imputed Info file:", -1, "Input_Imputed_Info_File"};
 fln_t *info  = &infO;
-fln_t refO  = {"Reference file:",  -1, "Reference_Allele_File"},  *refo  = &refO;
+fln_t refO  = {"Reference Allele File:",  -1, "Reference_Allele_File"},  *refo  = &refO;
 
 fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, refo, info, 0};
 
@@ -588,7 +588,7 @@ static void fln_init_mega2(int map_req) {
     fln_init(omito, "Mega2", "omit", "[optional]", "omit");
     fln_init(freqo, "Mega2", "freq", "[optional]", "freq", "frequency");
     fln_init(peno,  "Mega2", "pen", "[optional]", "pen", "penetrance");
-    fln_init(refo,  "Mega2", "ref", "[optional]", "ref", "reference");
+    fln_init(refo,  "Alleles", "gz", "[optional]", "ref", "reference");
 }
 
 #define PMAP_REQ 1
@@ -1260,8 +1260,7 @@ void menu1(file_format *infl_type,
         choiceA[idx] = fln_print(peno, idx, pen_i);
         if (choiceA[idx]) idx++;
 
-        choiceA[idx] = fln_print(refo, idx, ref_i);
-        if (choiceA[idx]) idx++;
+
 
         printf("%2d) %-*s%s\n", idx, line_len,
                "Output Directory:",
@@ -1279,6 +1278,9 @@ void menu1(file_format *infl_type,
             choiceA[idx] = db_file_i;
             idx++;
         }
+
+        choiceA[idx] = fln_print(refo, idx, ref_i);
+        if (choiceA[idx]) idx++;
 
 /*
  * to be turned on some day
@@ -1487,6 +1489,13 @@ void menu1(file_format *infl_type,
             fln_get(pheo, "phenotype");
 
         } else if (choice_ == ref_i) {
+            printf("Here you can use an external reference panel to get a set of reference alleles.\n");
+            printf("This process is described in section 27.25.1 of the Mega2 documentation.\n");
+            printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
+            printf("They can be constructed by hand or using a shell script included with Mega2\n");
+            printf("called GetRefAlleles.sh.  Additionally we provide a refrence of 1000 genomes\n");
+            printf("most recent build at ____________. Below enter the name of the reference allele\n");
+            printf("file that was either downloaded or created.\n\n");
             fln_get(refo, "reference allele");
 
         } else if (choice_ == out_i) {   /* The output directory */

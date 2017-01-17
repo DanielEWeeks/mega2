@@ -91,7 +91,7 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
         combine_chromo = ! LoopOverChrm;
     }
 
-    printf("%d",outfiletype);
+    //printf("%d",outfiletype);
     LoopOverTrait = 0;
 
     omit_peds(untyped_ped_opt, Top);
@@ -253,7 +253,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
     hlp->iterate();
 
-
     //finally a large loop for the data
     vlpCLASS(vcf_vcfs,chr,loci_ped_per) {
         vlpCTOR(vcf_vcfs,chr,loci_ped_per) { }
@@ -335,10 +334,12 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
                 DBstmt *select;
                 char select_string[100];
+                //sprintf(select_string,"SELECT pos, ref FROM ref_allele_table;");
                 if(base_pair_position_index >0)
-                    sprintf(select_string,"SELECT chr, pos, marker, ref FROM ref_allele_table WHERE pos = %.0f AND chr = %d;",_EXLTop->EXLocus[_locus].positions[base_pair_position_index],_tlocusp->Marker->chromosome);
+                   sprintf(select_string,"SELECT chr, pos, marker, ref FROM ref_allele_table WHERE pos = %.0f AND chr = %d;",_EXLTop->EXLocus[_locus].positions[base_pair_position_index],_tlocusp->Marker->chromosome);
                 select = MasterDB.prep( select_string);
                 int ret = select && select->abort();
+
                 while (ret){
                     int chromosome = 0;
                     int position = 0;
@@ -427,7 +428,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     pr_printf("%.6f,",_tlocusp->Allele[allele].Frequency);
             }
             pr_printf(";");
-            if(reference_exists)
+            if(!reference_exists)
                 pr_printf("NO;");
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
@@ -446,6 +447,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     lp->load_formats_no_space(-1);
 
     lp->iterate();
+
+    MasterDB.commit();
 
     delete lp;
     delete hlp;
@@ -793,7 +796,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
     MasterDB.commit();
 
     //for testing remove afterwards.
-    reftableexists = 0;
+    //reftableexists = 0;
 
     //set more variables
     strcpy(prefix,file_name_stem);
@@ -813,7 +816,11 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         printf("%d) Done with this menu - please proceed\n", done);
         printf("%d) File name stem:                                             %-15s\n", stem, prefix);
         printf("%d) Human Genome Build                                          %s\n", build, buildname);
-        printf("%d) Reference Alleles                                           %s\n", ref, refchoice.c_str());
+        printf("%d) Reference Alleles                                           %s", ref, refchoice.c_str());
+        if(reftableexists && refchoice == "External Reference")
+            printf("   [exists]\n");
+        else
+            printf("\n");
         if(outfiletype == 1)
             printf("%d) VCF/BCF/VCF.gz:                                             VCF\n", fileout);
         else if(outfiletype == 2)
@@ -871,7 +878,10 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 draw_line();
                 printf("1) Use Major Allele Frequency\n");
                 printf("2) Use Minor Allele Frequency\n");
-                printf("3) Use external reference panel in database (see documentation)\n");
+                if (reftableexists)
+                    printf("3) External Reference   [exists]\n");
+                else
+                    printf("3) External Reference   [create]\n");
                 printf("Enter selection: 1 - 3 > ");
                 fcmap(stdin, "%d", &choice3);
                 newline;
@@ -886,6 +896,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 else if (choice3 == 3) {
                     if (reftableexists) {
                         //if the ref table is already there we're all good
+                        printf("Using the existing external reference table.\n");
                         refchoice = "External Reference";
                         break;
                     }

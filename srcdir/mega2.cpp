@@ -1289,7 +1289,6 @@ int             main(int argc, char **argv, char **env)
     }
 
     if (database_dump && reffl_name != NULL) {
-        printf("here");
         MasterDB.open(DBfile);
         Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
         reference_allele_table->read_ref_allele_file(LPedTreeTop, reffl_name);

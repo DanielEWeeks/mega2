@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/csh -f
 
 #  GetRefAlleles.sh
 #  Allows the construction of a simple reference allele file
@@ -6,9 +6,6 @@
 #  CHR POS REF
 #  This exists for the purposes of creating
 #  reference alleles from external datasets
-#
-#  $1 PATH to BCF-tools head directory
-#  This is used to get /bcftools
 #
 #  $2, $3 the first and second half respectively
 #  for the vcf.gz filenames (before and after chr#)
@@ -26,16 +23,46 @@
 #  And split by chromosome into vcf/vcf.gz files you can choose
 #  Reference Alleles using this script.
 
-for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22
-do
-    if [ -f $2$i$3 ]
-    then
-        echo "$2$i$3 was found"
-        echo "Using BCF-Tools to extract Reference Alleles for Chromosome $i"
-        $1/bcftools query -f '%CHR %POS %REF\n' $2$i$3 >> ref_alleles.txt
-    else
-        echo "$2$i$3 not found."
-    fi
-done
+if ( $?BCFTOOLS ) then
+    set BCFTOOLS_def=1
+else
+    set BCFTOOLS_def=0
+endif
+echo
+if ( "`type -t bcftools`" == "file" ) then
+    echo set bcftools_program=`type -p bcftools`
+    set bcftools_program=`type -p bcftools`
+else if ( $BCFTOOLS_def && -x "BCFTOOLS/bcftools" ) then
+    echo set bcftools_program=BCFTOOLS/bcftools
+    set bcftools_program=BCFTOOLS/bcftools
+else
+    echo The BCFTOOLS/bcftools executable was not found -
+    echo please set your BCFTOOLS environment variable properly so bcftools can be found.
+    echo
+        if (! $BCFTOOLS_def) then
+            echo BCFTOOLS is not defined.
+        else
+            echo BCFTOOLS is set to "$BCFTOOLS".
+        endif
+    echo
+    echo If using Bash and ksh you would use something like this:
+    echo export BCFTOOLS=dir_to_bcftools
+    echo
+    echo If using csh you would use something like this:
+    echo setenv BCFTOOLS dir_to_bcftools
+    echo
+    exit 0
+endif
 
-#What to do for X Y XY MT?  Is there a consistent easy way to do this?
+echo
+set i = 1
+while ($i <= 22 )
+    if ( -f $1$i$2 ) then
+        echo "$1$i$2 was found"
+        echo "Using BCF-Tools to extract Reference Alleles for Chromosome $i"
+        $bcftools_program query -f '%CHROM %POS %REF\n' $1$i$2 >> ref_alleles.txt
+    else
+        echo "$1$i$2 not found."
+    endif
+    @ i++
+end
