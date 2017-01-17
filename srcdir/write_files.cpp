@@ -243,6 +243,9 @@ const char *format_allele(const linkage_locus_rec *locus, const int allele)
     // At this point we look for the string representation of the numeric allele
     // in the map. If it is found, then we return it. If it is not found then
     // we add it, and then return it.
+    if (allele == 2) return "2";
+    if (allele == 1) return "1";
+    if (allele == 0) return "0";
     std::map<int, char *>::iterator it = numbered_format_string_map.find(allele);
     if (it == numbered_format_string_map.end()) {
         char allele_buf[1024], *str;
@@ -254,6 +257,21 @@ const char *format_allele(const linkage_locus_rec *locus, const int allele)
     return it->second;
 }
 
+static const linkage_locus_rec *Locus = NULL;
+static int Allele = 0;
+static const char *Alleles = NULL;
+
+const char *format_allele_cache(const linkage_locus_rec *locus, const int allele)
+{
+    if (Locus == locus && Allele == allele)
+        return Alleles;
+
+    Locus   = locus;
+    Allele  = allele;
+    Alleles = format_allele(locus, allele);
+    return Alleles;
+}
+
 /**
  @brief Print the alleles associated with a person (entry) at a locus
 */
@@ -261,7 +279,11 @@ void write_numbered_data(FILE *filep, const int locusnm, linkage_locus_rec *locu
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
-    fprintf(filep, "  %2s %2s", format_allele(locus, a1), format_allele(locus, a2));
+    const char *a1s = format_allele(locus, a1);
+    if (a1 == a2)
+        fprintf(filep, "  %2s %2s", a1s, a1s);
+    else
+        fprintf(filep, "  %2s %2s", a1s, format_allele(locus, a2));
 }
 
 /* assign consecutive entry ids to entries,

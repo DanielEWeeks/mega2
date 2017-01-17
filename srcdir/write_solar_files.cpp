@@ -84,30 +84,76 @@ static void            SOLARwrite_affection_data(FILE *filep, int locusnm,
         }
 }
 
+typedef std::map<const char *, const char *, charsless> Inmap;                         // 37+43=81
+std::map<const char *, Inmap *, charsless> map2s_2s;
+//typedef std::map<const char *, const char *> Inmap;                         // 37+43=81
+//std::map<const char *, Inmap *> map2s_2s;
+char map_buf1[MAX_NAMELEN];
 
-static void SOLARwrite_numbered_data(FILE *filep, const int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
+static inline const char *fprintf2s_2s (const char *fmt, const char *a1s, const char *a2s)
+{
+    const char *sss;
+    Inmap *inmap;
+
+    if (! map_get(map2s_2s, a1s, inmap)) {
+        inmap = new Inmap;
+        map2s_2s[a1s] = inmap;
+    }
+    if (! map_get(*inmap, a2s, sss)) {
+        sprintf(map_buf1, "%2s/%2s", a1s, a2s);
+        sss = strdup(map_buf1);
+        (*inmap)[a2s] = sss;
+    }
+    return sss;
+}
+/*
+Inmap onemap;
+static inline const char *fprintfD (FILE *filep, const char *fmt, const char* as)
+{
+    const char *sss;
+
+    if (! map_get(onemap, as, sss)) {
+        sprintf(buf1, fmt, as);
+        onemap[as] = strdup(buf1);
+        sss = buf1;
+    }
+    return sss;
+}
+*/
+static const char *SOLARwrite_numbered_data(FILE *filep, const int locusnm, linkage_locus_rec *locus, linkage_ped_rec *entry)
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
     if (a1 == 0)
-        fputs(" 0/ 0", filep);
-    else
-        fprintf(filep, "%2s/%2s", format_allele(locus, a1), format_allele(locus, a2));
+//      fputs(" 0/ 0", filep);
+        return " 0/ 0";
+    else {
+//      fprintf(filep, "%2s/%2s", format_allele(locus, a1), format_allele(locus, a2));
+        const char *a1s = format_allele(locus, a1), *a2s;
+        a2s = (a1 == a2) ? a1s : format_allele(locus, a2);
+//      fputs(fprintf2s_2s("%2s/%2s", a1s, a2s), filep);
+        return fprintf2s_2s("%2s/%2s", a1s, a2s);
+    }
 }
 
-static void            SOLARwrite_numbered_xdata(FILE *filep,
-                                                 const int locusnm,
-                                                 linkage_locus_rec *locus,
-                                                 linkage_ped_rec *entry)
+static const char *SOLARwrite_numbered_xdata(FILE *filep,
+                                             const int locusnm,
+                                             linkage_locus_rec *locus,
+                                             linkage_ped_rec *entry)
 {
     int a1, a2;
     get_2alleles(entry->Marker, locusnm, &a1, &a2);
     if (a1 == 0) {
-        fputs("  / 0", filep);
+//      fputs("  / 0", filep);
+        return "  / 0";
     } else if (a1 == a2) {
-        fprintf(filep, "  /%2s", format_allele(locus, a2));
+//      fprintf(filep, "  /%2s", format_allele(locus, a2));
+        return fprintf2s_2s("  /%2s", " ", format_allele(locus, a2));
     } else {
-        fprintf(filep, "%2s/%2s", format_allele(locus, a1), format_allele(locus, a2));
+        const char *a1s = format_allele(locus, a1), *a2s;
+        a2s = (a1 == a2) ? a1s : format_allele(locus, a2);
+//      fputs(fprintf2s_2s("%2s/%2s", a1s, a2s), filep);
+        return fprintf2s_2s("%2s/%2s", a1s, a2s);
     }
 }
 
@@ -441,6 +487,8 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
             }
         }
         fprintf(filep,"\n");
+        const char **warray = CALLOC(NumChrLoci, const char *);
+        const char *cp;
         for (ped = 0; ped < Top->PedCnt; ped++) {
             if (UntypedPeds != NULL) {
                 if (UntypedPeds[ped]) {
@@ -456,6 +504,7 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
                 prID_per(filep, 0, Entry, "", "");
 
                 /* now write genotype data  */
+                int i = 0, l = 0;
                 for (locus1 = 0; locus1 < NumChrLoci; locus1++)  {
                     int l1=ChrLoci[locus1];
                     switch (Top->LocusTop->Locus[l1].Type)   {
@@ -465,20 +514,37 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
                         break;
                     case BINARY:
                     case NUMBERED:
-                        fprintf(filep,",");
+//                      fprintf(filep,",");
                         if (Top->LocusTop->SexLinked && IS_MALE(*Entry))
-                            SOLARwrite_numbered_xdata(filep, l1, &Top->LocusTop->Locus[l1], Entry);
+                            cp = SOLARwrite_numbered_xdata(filep, l1, &Top->LocusTop->Locus[l1], Entry);
                         else
-                            SOLARwrite_numbered_data(filep, l1, &Top->LocusTop->Locus[l1], Entry);
+                            cp = SOLARwrite_numbered_data(filep, l1, &Top->LocusTop->Locus[l1], Entry);
+                        warray[i++] = cp;
+                        l += strlen(cp) + 1 /* , */;
                         break;
                     default:
                         fprintf(stderr, "unknown locus type (locus %d).\n", l1 + 1);
                     }
                 }    /* End of loop locus1 to Top->LocusTop->LocusCnt */
-                fprintf(filep,"\n");
+
+                char *buf = CALLOC(l+1, char);
+                char *buf1 = buf;
+                int c;
+                for (int j = 0; j < i; j++) {
+                    *buf1++ = ',';
+                    const char *cp = warray[j];
+                    while ( (c = *cp++) != 0) *buf1++ = c;
+                }
+                *buf1++ = '\n';
+//              fprintf(filep,"\n");
+
+                fflush(filep);
+                write(fileno(filep), buf, l+1);
+                free(buf);
 
             }
         }
+        free(warray);
         fclose(filep);
         if (nloop==1) break;
     }
