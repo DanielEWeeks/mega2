@@ -104,6 +104,12 @@ public:
         return strcmp(a, b) < 0;
     }
 };
+class alleleless {
+public:
+    bool operator() (const char *a, const char *b) const {
+        return a[1] && b[1] ? strcmp(a, b) < 0 : a[0] < b[0];
+    }
+};
 typedef std::map<const char *, const char *, charsless>  Mapcc;
 typedef std::map<const char *, int, charsless>           Mapci;
 typedef std::map<int, std::string>                       Mapis;

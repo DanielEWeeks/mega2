@@ -84,10 +84,15 @@ static void            SOLARwrite_affection_data(FILE *filep, int locusnm,
         }
 }
 
-typedef std::map<const char *, const char *, charsless> Inmap;                         // 37+43=81
-std::map<const char *, Inmap *, charsless> map2s_2s;
-//typedef std::map<const char *, const char *> Inmap;                         // 37+43=81
+typedef std::map<const char *, const char *, alleleless> Inmap;                // 37+43=81
+std::map<const char *, Inmap *, alleleless> map2s_2s;
+
+//typedef std::map<const char *, const char *, charsless> Inmap;               // 37+43=81
+//std::map<const char *, Inmap *, charsless> map2s_2s;
+
+//typedef std::map<const char *, const char *> Inmap;                          // 37+43=81
 //std::map<const char *, Inmap *> map2s_2s;
+
 char map_buf1[MAX_NAMELEN];
 
 static inline const char *fprintf2s_2s (const char *fmt, const char *a1s, const char *a2s)
@@ -504,7 +509,7 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
                 prID_per(filep, 0, Entry, "", "");
 
                 /* now write genotype data  */
-                int i = 0, l = 0;
+                int i = 0, l = 0, w;
                 for (locus1 = 0; locus1 < NumChrLoci; locus1++)  {
                     int l1=ChrLoci[locus1];
                     switch (Top->LocusTop->Locus[l1].Type)   {
@@ -539,9 +544,12 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
 //              fprintf(filep,"\n");
 
                 fflush(filep);
-                write(fileno(filep), buf, l+1);
+                w = write(fileno(filep), buf, l+1);
+                if (w != l+1) {
+                    errorvf("Write failed for solar marker file '%s'\n", gfl);
+                    EXIT(FILE_WRITE_ERROR);
+                }
                 free(buf);
-
             }
         }
         free(warray);
