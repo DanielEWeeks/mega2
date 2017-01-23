@@ -182,7 +182,7 @@ Str Reference_Allele_Table::get_filename(){
         printf("This process is described in section 27.25.1 of the Mega2 documentation.\n");
         printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
         printf("They can be constructed by hand or using a shell script included with Mega2\n");
-        printf("called GetRefAlleles.sh.  Additionally we provide a refrence of 1000 genomes\n");
+        printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
         printf("most recent build at ____________. Below enter the name of the reference allele\n");
         printf("file that was either downloaded or created.\n\n");
 

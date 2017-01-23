@@ -30,6 +30,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <ctime>
+#include <map>
 
 #include "common.h"
 #include "typedefs.h"
@@ -52,8 +53,6 @@
 #include "vcftools/parameters.h"
 #include "zlib-1.2.8/zlib.h"
 
-#include "dblite.hh"
-#include "dbmisc.hh"
 #include "dbrefallele.h"
 
 extern DBlite MasterDB;
@@ -67,7 +66,7 @@ Str hg_build;
 int combinechromovcf;
 int outfiletype;
 Str ref_choice;
-vector<string> references;
+
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -264,6 +263,10 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         std::vector<std::string> alt;
         std::string altstring;
         linkage_locus_top *LTop ;
+        bool first;
+
+        std::unordered_map<int, std::string> references;
+        std::unordered_map<int, std::string>:: iterator ireferences;
 
         void file_loop() {
             //mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
@@ -273,6 +276,11 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         void file_header() {
             //want this here since the new line at filep_close() didn't seem to do the trick
             pr_nl();
+
+            if(ref_choice == "External Reference")
+                first = true;
+            else
+                first = false;
         }
 
         void inner() {
@@ -294,6 +302,32 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
 
         void loci_start() {
+            // first time around create a map of all positions and references (if we're using an external map)
+            if(first){
+                MasterDB.begin();
+                DBstmt *select;
+                char select_string[255];
+                sprintf(select_string, "SELECT pos, ref FROM ref_allele_table WHERE chr = %d;",_numchr);
+                select = MasterDB.prep(select_string);
+                int ret = select && select->abort();
+
+                while(ret) {
+                    int position = 0;
+                    char *reference;
+                    ret = select->step();
+                    if (ret == SQLITE_ROW) {
+                        select->column(0, position);
+                        select->column(1, reference);
+                        references[position] = reference;
+                    }
+                    else
+                        break;
+                }
+
+                MasterDB.commit();
+                first = false;
+            }
+
             pr_printf("%d\t", _tlocusp->Marker->chromosome);
             pr_physical_distance(0);
             pr_printf("\t");
@@ -328,57 +362,29 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
             }
 
-            if(ref_choice == "External Reference"){
-                //db_open_db();
-                MasterDB.begin();
-
-                DBstmt *select;
-                char select_string[100];
-                //sprintf(select_string,"SELECT pos, ref FROM ref_allele_table;");
-                if(base_pair_position_index >0)
-                   sprintf(select_string,"SELECT chr, pos, marker, ref FROM ref_allele_table WHERE pos = %.0f AND chr = %d;",_EXLTop->EXLocus[_locus].positions[base_pair_position_index],_tlocusp->Marker->chromosome);
-                select = MasterDB.prep( select_string);
-                int ret = select && select->abort();
-
-                while (ret){
-                    int chromosome = 0;
-                    int position = 0;
-                    int marker = 0;
-                    char *reference;
-
-                    ret = select->step();
-                    if (ret == SQLITE_ROW) {
-                        select->column(0, chromosome);
-                        select->column(1, position);
-                        select->column(2, marker);
-                        select->column(3, reference);
-
-                        //printf("%d:%d:%d:%s\n",chromosome,position,marker,reference);
-                        for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                            if(!strcmp(_tlocusp->Allele[allele].AlleleName,reference)){
-                                extremum_allele = allele;
-                                //printf("%d/%s\n",extremum_allele,_tlocusp->Allele[extremum_allele].AlleleName);
-                                reference_exists = 1;
-                            }
+            if(ref_choice == "External Reference") {
+                ireferences = references.find((int)_EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
+                if(ireferences != references.end()) {
+                    for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
+                        if (!strcmp(_tlocusp->Allele[allele].AlleleName, ireferences->second.c_str())) {
+                            extremum_allele = allele;
+                            reference_exists = 1;
+                            break;
                         }
-                    }
-                    //check for empty return then select major allele
-                    else{
-                        extremum_frequency = 0;
-                        for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                            if (_tlocusp->Allele[allele].Frequency > extremum_frequency) {
-                                extremum_frequency = _tlocusp->Allele[allele].Frequency;
-                                extremum_allele = allele;
-                                reference_exists = 0;
-                            }
-                        }
-
+                        //what if it's not an exiting allele... hmm.
                     }
                 }
-
-                MasterDB.commit();
+                else {
+                    extremum_frequency = 0;
+                    for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
+                        if (_tlocusp->Allele[allele].Frequency > extremum_frequency) {
+                            extremum_frequency = _tlocusp->Allele[allele].Frequency;
+                            extremum_allele = allele;
+                        }
+                    }
+                    reference_exists = 0;
+                }
             }
-
 
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if (allele==extremum_allele){
@@ -408,7 +414,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                             alt.push_back(_tlocusp->Allele[allele].AlleleName);
                             a2 = a2 + ","+ _tlocusp->Allele[allele].AlleleName;
                         }}
-
                 }
 
             }
@@ -422,10 +427,12 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("RF=%.6f;",_tlocusp->Allele[extremum_allele].Frequency);
             pr_printf("AF=");
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                if(allele== extremum_allele)
+                if(allele == extremum_allele)
                     continue;
-                else
+                else if (allele != _tlocusp->AlleleCnt - 1)
                     pr_printf("%.6f,",_tlocusp->Allele[allele].Frequency);
+                else
+                    pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
             }
             pr_printf(";");
             if(!reference_exists)
@@ -448,7 +455,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
     lp->iterate();
 
-    MasterDB.commit();
+    //MasterDB.commit();
 
     delete lp;
     delete hlp;
@@ -845,7 +852,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             strcpy(file_name_stem,prefix);
             hg_build = buildname;
             BatchValueSet(hg_build,"human_genome_build");
-            BatchValueSet(outfiletype,"VCF_output_file");
+            BatchValueSet(outfiletype,"VCF_output_file_type");
 
             ref_choice = refchoice;
         }
@@ -955,7 +962,7 @@ void CLASS_VCF::batch_in(){
     BatchValueGet(hg_build, "human_genome_build");
     BatchValueGet(c,   "Loop_Over_Chromosomes");
     LoopOverChrm = c == 'y' || c == 'Y';
-    BatchValueGet(outfiletype,"VCF_output_file");
+    BatchValueGet(outfiletype,"VCF_output_file_type");
 }
 
 void CLASS_VCF::batch_out(){
@@ -964,7 +971,7 @@ void CLASS_VCF::batch_out(){
     Cstr Values[] =  { "file_name_stem",
                        "human_genome_build",
                        "Loop_Over_Chromosomes",
-                       "VCF_output_file",
+                       "VCF_output_file_type",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {

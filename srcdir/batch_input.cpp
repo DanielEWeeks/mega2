@@ -256,7 +256,7 @@ static keyw_t keywords[] = {
 
     {"Select_Loop_Break",                     INT,        "0"},
     {"human_genome_build",                    STRING,     "B37"},
-    {"VCF_output_file",                       INT,        "1"},
+    {"VCF_output_file_type",                       INT,        "1"},
     {"Reference_Allele_File",                 STRING,     ""},
 
 };

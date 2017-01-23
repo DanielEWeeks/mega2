@@ -405,7 +405,7 @@ mega2.o: write_mfiles_ext.h write_pap_ext.h write_premakeped_ext.h
 mega2.o: write_prest_ext.h write_sage_files_ext.h write_simulate_files_ext.h
 mega2.o: write_solar_files_ext.h write_vitesse_ext.h version.h class_old.h
 mega2.o: analysis.h write_plink_ext.h plink_core_ext.h write_shapeit_ext.h
-mega2.o: database_dump_ext.h
+mega2.o: database_dump_ext.h dbrefallele.h dblite.hh
 write_apm.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_apm.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_apm.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
@@ -921,12 +921,12 @@ write_vcf.o: annotated_ped_file.h vcftools/bcf_file.h vcftools/output_log.h
 write_vcf.o: vcftools/parameters.h vcftools/variant_file.h
 write_vcf.o: vcftools/vcf_entry.h vcftools/bcf_entry.h vcftools/header.h
 write_vcf.o: vcftools/bgzf.h vcftools/vcf_file.h vcftools/parameters.h
-write_vcf.o: zlib-1.2.8/zlib.h
+write_vcf.o: zlib-1.2.8/zlib.h dbrefallele.h dblite.hh
 dbmega2.o: types.hh common.h typedefs.h errorno.h allutil.h linkage.h
 dbmega2.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
 dbmega2.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h
-dbmega2.o: write_files_ext.h dblite.hh dbbatch.hh dbmisc.hh dbpedigree.hh
-dbmega2.o: dballele.hh dbloci.hh dbmap.hh dbgenotype.hh
+dbmega2.o: write_files_ext.h tod.hh dblite.hh dbbatch.hh dbmisc.hh
+dbmega2.o: dbpedigree.hh dballele.hh dbloci.hh dbmap.hh dbgenotype.hh
 dbmisc.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 dbmisc.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
 dbmisc.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h input_ops.hh
@@ -955,3 +955,8 @@ dbgenotype.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 dbgenotype.o: linkage_external.h makeped.h pedtree.h batch_input.h
 dbgenotype.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
 dbgenotype.o: utils_ext.h dblite.hh dbgenotype.hh tod.hh
+dbrefallele.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+dbrefallele.o: linkage_external.h makeped.h pedtree.h batch_input.h
+dbrefallele.o: input_check.h hwe.h compress_ext.h dbrefallele.h dblite.hh
+dbrefallele.o: fcmap_ext.h zlib-1.2.8/zlib.h dbmisc.hh user_input_ext.h
+dbrefallele.o: input_ops.hh str_utils.hh
