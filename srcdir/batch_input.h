@@ -68,7 +68,7 @@ typedef union batch_item_value_ {
 
 enum Batch_Item_Flag {Clear = 0, Add2BatchItemList = 1 };
 typedef struct _batch_item_ {
-    int item_number, items_read, line_number;
+    short item_number, items_read, line_number, mega2rc, mega2rc_read;
     std::string keyword;
     std::string value_str;
     Batch_Item_Flag flag;

@@ -260,11 +260,11 @@ static keyw_t keywords[] = {
     {"minimac_reference_panel_directory",     STRING,     "."},
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
-    {"Input_Database_Mode",                      INT,     "2"},  
+    {"Input_Database_Mode",                   INT,        "2"},  
 
-    {"Select_Loop_Break",                     INT,     "0"},
+    {"Select_Loop_Break",                     INT,        "0"},
     {"human_genome_build",                    STRING,     "B37"},
-    {"VCF_output_file",                       INT,     "1"},
+    {"VCF_output_file",                       INT,        "1"},
 
 };
 
@@ -281,6 +281,9 @@ pair<Cstr,Cstr> keyword_aliases[] = {
     make_pair("Imputed_Allow_Duplicate_Markers", "Imputed_Allow_Duplicates"),
     make_pair("","")  //sentinel
 };
+
+Cstr mega2rc[] = {"Shapeit_recomb_rdir", "Shapeit_recomb_rfile",
+                  ""};
 
 typedef struct kv {
     char *key;
@@ -424,6 +427,7 @@ void batchfile_init_Mega2BatchItems(void)
         item_value_type& type  = keywords[i].type;
         Str& deflt             = keywords[i].default_string;
         bi->keyword     = keywords[i].keyword;
+        bi->mega2rc     = 0;
         bi->value_type  = type;
         bi->item_number = i;
         bi->line_number = 0;
@@ -433,6 +437,7 @@ void batchfile_init_Mega2BatchItems(void)
         Cstr& name      = bi->keyword;
         BatchItemMap[name]  = bi;
 
+/*
         if (env & 1) {
             char *xp = getenv(C(name));
             if (xp != NULL) {
@@ -441,6 +446,7 @@ void batchfile_init_Mega2BatchItems(void)
                 deflt = string(xp);
             }
         }
+*/
         switch(type) {
         case STRING:
         case LINE:
@@ -496,9 +502,6 @@ void batchfile_init_Mega2BatchItems(void)
             err++;
         }
     }
-    if (err) {
-        EXIT(BATCH_FILE_ITEM_ERROR);
-    }
     
     // Aliases
     for (i = 0; keyword_aliases[i].first != ""; i++) {
@@ -510,7 +513,22 @@ void batchfile_init_Mega2BatchItems(void)
 	}
     }
 
-//y find home dir
+    // .mega2rc
+//  Cstr mega2rc[] = { ... "" };
+    for (i = 0; mega2rc[i] != ""; i++) {
+        if (map_get(BatchItemMap, mega2rc[i], bi)) {
+            bi->mega2rc = 1;
+        } else {
+            errorvf("Internal Error!  mega2rc keyword '%s' not found in list of all keywords\n",
+                    C(mega2rc[i]));
+            err++;
+        }
+    }
+
+    if (err) {
+        EXIT(BATCH_FILE_ITEM_ERROR);
+    }
+
     char filename[FILENAME_LENGTH];
     char *cp = NULL;
 #ifdef _WIN
@@ -1192,8 +1210,14 @@ static int parse_batch_file(char *batch_file_name, int rc)
                 }
                 bi->line_number = line_n;
                 if (rc) {
-                    bi->value_str = rhs;
-                    RCBatchItemSet.insert(bi);
+                    if (bi->mega2rc) {
+                        bi->mega2rc_read = 1;
+                        bi->value_str = rhs;
+                        RCBatchItemSet.insert(bi);
+                    } else {
+                        errorvf("Unexpected .mega2rc file option: %s\n", C(lhs));
+                        errtok++;
+                    }
                 } else {
                     bi->items_read = 1;
                     if (inSet(bi, RCBatchItemSet)) {
@@ -1208,11 +1232,15 @@ static int parse_batch_file(char *batch_file_name, int rc)
                 }
                 cnt++;
             } else {
-                errorvf("Unexpected batch file option: %s\n", C(lhs));
+                errorvf("Unexpected %s file option: %s\n",
+                        (rc ? ".mega2rc" :  "batch"),
+                        C(lhs));
                 errtok++;
             }
         } else {
-            errorvf("Odd format batch file line %s\n:", nextline);
+            errorvf("Odd format %s file line %s\n:",
+                    (rc ? ".mega2rc" : "batch"),
+                    nextline);
             errline++;
         }
     }
@@ -1238,6 +1266,30 @@ static void process_rcbatch_file_items()
         if (debug) msgvf("key %s, val %s\n", C(keyword), value);
 
         RawBatchValueSet(value, bi);
+    }
+
+    int err = 0;
+    batch_item_type *biD = BatchItemGet("Shapeit_recomb_rdir");
+    batch_item_type *biF = BatchItemGet("Shapeit_recomb_rfile");
+
+    if (biD->mega2rc_read) {
+        if (access(biD->value.name, R_OK) == 0 && is_dir(biD->value.name)) {
+        } else {
+            errorvf("Shape_it_recomb_rdir '%s' not a directory\n", biD->value.name);
+            err++;
+        }
+    }
+    if (biF->mega2rc_read) {
+        const char *cp = strchr(biF->value.name, '?');
+        if (cp == NULL || (strchr(cp+1, '?') != NULL)) {
+            errorvf("%s: Please include one and only one ? in the file name: '%s'\n",
+                    C(biF->keyword), biF->value.name);
+            err++;
+        }
+    }
+
+    if (err) {
+        EXIT(BATCH_FILE_ITEM_ERROR);
     }
 }
 
@@ -1350,7 +1402,7 @@ static void process_batch_file_items(analysis_type *analysis)
         Str& bivalue = bibatch->value_str;
         strcpy(value, bibatch->value_str.c_str());
         if (debug) msgvf("key %s, val %s\n", C(keyword), value);
-
+/*
         if (env & 2) {
             char *xp = getenv(C(keyword));
             if (xp != NULL) {
@@ -1359,6 +1411,7 @@ static void process_batch_file_items(analysis_type *analysis)
                 strcpy(value, xp);
             }
         }
+*/
 //err: does this do anything
         if (bivalue == "" && !keyword.compare(0, 14, "value_missing_") ) {
             *value = 0;
