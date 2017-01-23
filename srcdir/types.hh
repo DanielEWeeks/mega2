@@ -113,7 +113,7 @@ public:
 class alleleless {
 public:
     bool operator() (const char *a, const char *b) const {
-        return a[1] && b[1] ? strcmp(a, b) < 0 : a[0] < b[0];
+        return (! a[1] && ! b[1]) ? (a[0] < b[0]) : (strcmp(a, b) < 0);
     }
 };
 typedef std::map<const char *, const char *, charsless>  Mapcc;
