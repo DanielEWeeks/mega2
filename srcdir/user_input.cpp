@@ -588,7 +588,7 @@ static void fln_init_mega2(int map_req) {
     fln_init(omito, "Mega2", "omit", "[optional]", "omit");
     fln_init(freqo, "Mega2", "freq", "[optional]", "freq", "frequency");
     fln_init(peno,  "Mega2", "pen", "[optional]", "pen", "penetrance");
-    fln_init(refo,  "Alleles", "gz", "[optional]", "ref", "reference");
+    fln_init(refo,  "Alleles", "", "[optional]", "ref", "reference");
 }
 
 #define PMAP_REQ 1
@@ -1489,13 +1489,13 @@ void menu1(file_format *infl_type,
             fln_get(pheo, "phenotype");
 
         } else if (choice_ == ref_i) {
-            printf("Here you can use an external reference panel to get a set of reference alleles.\n");
-            printf("This process is described in section 27.25.1 of the Mega2 documentation.\n");
+            printf("You can use an external reference panel to get a set of reference alleles.\n");
+            printf("This process is described in the section called'Use external reference panel in .\n");
+            printf("database' In the Mega2 documentation.");
             printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
             printf("They can be constructed by hand or using a shell script included with Mega2\n");
             printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
-            printf("most recent build at ____________. Below enter the name of the reference allele\n");
-            printf("file that was either downloaded or created.\n\n");
+            printf("most recent build at ____________. \n\n");
             fln_get(refo, "reference allele");
 
         } else if (choice_ == out_i) {   /* The output directory */

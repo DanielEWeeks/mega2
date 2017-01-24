@@ -178,13 +178,14 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 Str Reference_Allele_Table::get_filename(){
     char input[255];
     while(1) {
-        printf("Here you can use an external reference panel to get a set of reference alleles.\n");
-        printf("This process is described in section 27.25.1 of the Mega2 documentation.\n");
+        printf("You can use an external reference panel to get a set of reference alleles.\n");
+        printf("This process is described in the section called'Use external reference panel in .\n");
+        printf("database' In the Mega2 documentation.");
         printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
         printf("They can be constructed by hand or using a shell script included with Mega2\n");
         printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
-        printf("most recent build at ____________. Below enter the name of the reference allele\n");
-        printf("file that was either downloaded or created.\n\n");
+        printf("most recent build at ____________. \n\n");
+
 
         printf("Enter filename of reference panel > ");
         fcmap(stdin, "%s", input);
