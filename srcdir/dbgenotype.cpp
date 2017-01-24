@@ -85,7 +85,7 @@ void mk_marker_filter(linkage_ped_top *Top)
     ext_linkage_locus_top *EXLTop = Top->EXLTop;
     int offset = LTop->PhenoCnt;
     int bchr = -1;
-    int i, io = offset;
+    int i;
     long long bmin, bmax, bp;
 
     if (1 /*ALL*/) return;
@@ -100,7 +100,6 @@ void mk_marker_filter(linkage_ped_top *Top)
 
             marker_filter_add(bchr, bmin, bmax);
 
-            io = i;
             bmin = bmax = EXLTop->EXLocus[i].positions[base_pair_position_index < 0 ? genetic_distance_index : base_pair_position_index];
         }
         bchr = LTop->Locus[i].Marker->chromosome;
@@ -209,7 +208,6 @@ int Genotype_table::db_getall(linkage_ped_top *Top, void **Genotypes) {
                 }
             }
             use_locus_filter(Genotypes[link], Top, link, chr, bytes, data);
-
             knt++;
         } else if (ret == SQLITE_DONE) {
             ret = 0;
@@ -340,7 +338,9 @@ static int *convert_marker_filter2locus_filter(linkage_ped_top *Top)
 
     int cnt, *chrs;
 
-    if (false && /*ALL*/ marker_filter.size() == 0) {
+    bool AllChr = false; // seems to work OK; select/use chr's that are required
+//  bool AllChr = true;  // seems to work OK; select all chrs, use what is required
+    if (AllChr && /*ALL*/ marker_filter.size() == 0) {
         int start, len;
         List3ill *locuslist;
         Lesslocus = 0;
@@ -366,8 +366,8 @@ static int *convert_marker_filter2locus_filter(linkage_ped_top *Top)
         return 0;
     }
 // main_chromocnt of global_chromo_entries
-    if ( true) {
-        int start, len;
+    if (! AllChr) {
+        int len;
         List3ill *locuslist;
         Lesslocus = offset;
         chrcnt = 0;
@@ -381,7 +381,7 @@ static int *convert_marker_filter2locus_filter(linkage_ped_top *Top)
         for (i = 0; i < main_chromocnt; i++) {
             bchr = chrs[i];
             Pairii &chrp = Chr2Locus[bchr];
-            start = chrp.first;
+//          start = chrp.first;
             len   = chrp.second;
 
             cmin = 0;
@@ -391,6 +391,7 @@ static int *convert_marker_filter2locus_filter(linkage_ped_top *Top)
                 locuslist = new List3ill;
                 locus_filter[bchr] = locuslist;
             }
+            // use compressed Lesslocus vs start
             locuslist->push_back(make_pair(Lesslocus, Pairll(cmin, cmax)));
             Lesslocus += cmax;
         }
@@ -503,7 +504,6 @@ void compress_loci_w_locus_filter(linkage_ped_top *Top)
     int base;
     Pairii ii;
     List3illp lp;
-    long long k;
     long long newLoc = offset;
 
     for (i = 0; i < cnt; i++) {
@@ -514,10 +514,11 @@ void compress_loci_w_locus_filter(linkage_ped_top *Top)
 
         for (lp = locuslist->begin(); lp != locuslist->end(); lp++) {
             ill = *lp;
-            k = ill.first;
+//          k = ill.first;
             lmin = ill.second.first;
             lmax = ill.second.second;
 //          printf("gceidx %d, chr %d, base %d, k %lld, [%lld, %lld]\n", i, bchr, base, k, lmin, lmax);
+            // newLoc is analog of compressed Locusless vs using start
             for (oldLoc = lmin+base; oldLoc < lmax+base; oldLoc++, newLoc++) {
 //              if (oldLoc-lmin-base < 2 || lmax+base-oldLoc < 2)
 //                  printf("gceidx %lld, chr %d, newLoc %lld, [%lld, %lld]\n", oldLoc, bchr, newLoc, lmin, lmax);

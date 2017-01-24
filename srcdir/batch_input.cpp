@@ -69,9 +69,12 @@ typedef map<Cstr, batch_item_type *> Mapsb;
 typedef map<Cstr, batch_item_type *>::const_iterator Mapsbp;
 typedef std::list<batch_item_type *> Listb;
 typedef std::list<batch_item_type *>::const_iterator Listbp;
+typedef std::set<batch_item_type *> Setb;
+typedef std::set<batch_item_type *>::const_iterator Setbp;
 
 Mapsb BatchItemMap;
 Listb BatchItemList;
+Setb  RCBatchItemSet;
 
 batch_item_type *Mega2BatchItems;
 
@@ -147,6 +150,11 @@ extern void prog_name_to_num(char *prog_name, analysis_type *analysis);
       60    Output_File_Stem
       61    Value_Imputed_Threshold
 */
+
+const char *keywordtype[] = {
+    "YORN", "INT", "FLOAT", "CHAR", "STRING", "LINE",
+    "INT_LIST", "NAME_LIST", "FLOAT_LIST", "CHRM_LIST"
+};
 
 // NOTE: the default value is always represented as a string and converted if necessary.
 static keyw_t keywords[] = {
@@ -275,23 +283,67 @@ pair<Cstr,Cstr> keyword_aliases[] = {
     make_pair("","")  //sentinel
 };
 
+typedef struct kv {
+    char *key;
+    int idx;
+} kv_t;
+
+static int keyword_sort(const void *a, const void *b)
+{
+    return strcasecmp(((kv_t *)a)->key, ((kv_t *)b)->key);
+}
+
 void batch_file_doc(FILE *batchfp)
 {
-    int key;
+    int idx, key;
+
+    kv_t *keylist = CALLOC((size_t) NUM_KEYS, kv_t);
+    for (idx = 0; idx < NUM_KEYS; idx++) {
+        keylist[idx].idx = idx;
+        keylist[idx].key = CALLOC((size_t) keywords[idx].keyword.size()+1, char);
+        strcpy(keylist[idx].key, C(keywords[idx].keyword));
+    }
+
+    qsort((void *)keylist, (size_t) NUM_KEYS, sizeof (kv_t), keyword_sort);
 
     fprintf(batchfp, "%c Lines beginning with %c are comments.\n",
             COMMENT_CHAR, COMMENT_CHAR);
     fprintf(batchfp, "%c \n", COMMENT_CHAR);
-    fprintf(batchfp, "%c Currently implemented keywords:\n",
+    fprintf(batchfp, "%c Currently implemented \"keywords type default_value (.mega2rc value)\":\n",
             COMMENT_CHAR);
-    for (key =0; key < NUM_KEYS; key++) {
+
+    for (idx = 0; idx < NUM_KEYS; idx++) {
+        key = keylist[idx].idx;
         if (keywords[key].keyword.compare(0, (size_t) 3, "REM")) {
-            fprintf(batchfp, "%c   %d) %s \n", COMMENT_CHAR,
-                    key+1, C(keywords[key].keyword));
+            fprintf(batchfp, "%c  %3d) %-36s %10s",
+                    COMMENT_CHAR, idx+1, C(keywords[key].keyword),
+                    keywordtype[keywords[key].type]);
+            if (Mega2BatchItems[key].value_str == "") {
+                if (keywords[key].type == STRING || keywords[key].type == LINE)
+                    fprintf(batchfp, "  \"%s\"\n", C(keywords[key].default_string) );
+                else
+                    fprintf(batchfp, "  %s\n", C(keywords[key].default_string) );
+            } else {
+                if (keywords[key].type == STRING || keywords[key].type == LINE)
+                    fprintf(batchfp, "  \"%s\" (\"%s\")\n",
+                            C(keywords[key].default_string),
+                            C(Mega2BatchItems[key].value_str));
+                else
+                    fprintf(batchfp, "  %s (%s)\n",
+                            C(keywords[key].default_string),
+                            C(Mega2BatchItems[key].value_str));
+            }
         }
     }
-    fprintf(batchfp, "%c \n", COMMENT_CHAR);
+
+    for (idx = 0; idx < NUM_KEYS; idx++) {
+        free(keylist[idx].key);
+    }
+    free(keylist);
+
+    fprintf(batchfp, "\n");
     fprintf(batchfp, "%c Restrictions on usage:\n", COMMENT_CHAR);
+    fprintf(batchfp, "\n");
     fprintf(batchfp,
             "%c   Use either Chromosome_Single or \n",
             COMMENT_CHAR);
@@ -301,7 +353,7 @@ void batch_file_doc(FILE *batchfp)
     fprintf(batchfp,
             "%c     Chromosomes_Multiple and Chromsomes_Multiple_Num\n",
             COMMENT_CHAR);
-    fprintf(batchfp, "%c \n", COMMENT_CHAR);
+    fprintf(batchfp, "\n");
     fprintf(batchfp, "%c  Use either Trait_Single or\n", COMMENT_CHAR);
     fprintf(batchfp, "%c             Traits_Loop_Over or\n",
             COMMENT_CHAR);
@@ -311,29 +363,34 @@ void batch_file_doc(FILE *batchfp)
             COMMENT_CHAR);
     fprintf(batchfp, "%c  keyword    Traits_Loop_Over is defined.\n",
             COMMENT_CHAR);
-    fprintf(batchfp, "%c \n", COMMENT_CHAR);
+    fprintf(batchfp, "\n");
     fprintf(batchfp, "%c     Error_Loci and Error_Loci_Num or\n",
             COMMENT_CHAR);
     fprintf(batchfp,
             "%c     Error_Except_Loci and Error_Loci_Num.\n",
             COMMENT_CHAR);
-    fprintf(batchfp, "%c \n", COMMENT_CHAR);
-    fprintf(batchfp, "%c Default settings :\n", COMMENT_CHAR);
+    fprintf(batchfp, "\n");
+    fprintf(batchfp, "%c Default settings:\n", COMMENT_CHAR);
+    fprintf(batchfp, "\n");
     fprintf(batchfp, "%c Default_Reset_Invalid: \n", COMMENT_CHAR);
     fprintf(batchfp, "%c   \"yes\"= set inconsistent genotypes to 0 and continue.\n", COMMENT_CHAR);
     fprintf(batchfp, "%c   \"no\"= continue without setting inconsistent genotypes to 0.\n",
             COMMENT_CHAR);
+    fprintf(batchfp, "\n");
     fprintf(batchfp, "%c Default_Ignore_Nonfatal : \n", COMMENT_CHAR);
     fprintf(batchfp, "%c   Don't pause for other non-fatal errors in input:\n", COMMENT_CHAR);
+    fprintf(batchfp, "\n");
     fprintf(batchfp, "%c Default_Other_Values: \n", COMMENT_CHAR);
     fprintf(batchfp, "%c   Use Mega2's default values instead of asking user\n", COMMENT_CHAR);
     fprintf(batchfp, "%c   inside analysis-option menus. \n", COMMENT_CHAR);
+    fprintf(batchfp, "\n");
     fprintf(batchfp, "%c Xlinked_Analysis_Mode:\n", COMMENT_CHAR);
     fprintf(batchfp, "%c   Set x-linked based on chromosome number(human).\n",
             COMMENT_CHAR);
     fprintf(batchfp, "%c   treat all markers as autosomal,\n",
             COMMENT_CHAR);
     fprintf(batchfp, "%c   or treat all markers as x-linked.\n", COMMENT_CHAR);
+    fprintf(batchfp, "\n");
     fprintf(batchfp, "%c Count_Genotypes and Count_Halftyped\n", COMMENT_CHAR);
     fprintf(batchfp, "%c   These correspond to the Select Individuals menu\n",
             COMMENT_CHAR);
@@ -341,6 +398,7 @@ void batch_file_doc(FILE *batchfp)
             "%c   within the allele-recoding step.\n",
             COMMENT_CHAR);
     fprintf(batchfp, "%c \n", COMMENT_CHAR);
+    fprintf(batchfp, "\n");
 }
 
 void create_batchfile(void)
@@ -352,6 +410,8 @@ void create_batchfile(void)
     BatchFileCreated=1;
 }
 
+static int parse_batch_file(char *batch_file_name, int rc);
+static void process_rcbatch_file_items(void);
 /* The type of keyword is used only for writing out batch items */
 void batchfile_init_Mega2BatchItems(void)
 {
@@ -450,6 +510,24 @@ void batchfile_init_Mega2BatchItems(void)
             err++;
 	}
     }
+
+//y find home dir
+    char filename[FILENAME_LENGTH];
+    char *cp = NULL;
+#ifdef _WIN
+    cp = getenv("USERPROFILE");
+    if (cp) 
+        strcpy(filename, cp);
+#else
+    cp = getenv("HOME");
+    if (cp) 
+        strcpy(filename, cp);
+#endif
+    if (cp)
+        strcat(filename, (char *)"/");
+    strcat(filename, (char *)".mega2rc");
+    if (parse_batch_file(filename, 1))
+        process_rcbatch_file_items();
 }
 
 
@@ -609,11 +687,13 @@ static void mult_decl(int item)
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
+/*
 static void malformed_batch_line(const char *keyword)
 {
     errorvf("Malformed line for keyword %s.\n", keyword);
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
+*/
 
 static void check_dependencies(analysis_type *analysis)
 {
@@ -725,11 +805,14 @@ void RawBatchValueSet(char *value, batch_item_type *bi)
     int capacity = 8;
     int j;
 
-    bi->items_read = 1;
+//  bi->items_read = 1;  // already set in caller (for caller that matters)
 
     switch(bi->value_type) {
     case STRING:
-        sscanf(value, "%s", bi->value.name);
+        if (*value)
+            sscanf(value, "%s", bi->value.name);
+        else
+            bi->value.name[0] = 0;
         break;
 
     case LINE:
@@ -1058,19 +1141,18 @@ void BatchValueGet(Veci& vec, Cstr &item)   // for lists
     }
 }
 
-static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
+static int parse_batch_file(char *batch_file_name, int rc)
 {
     char nextline[FILENAME_LENGTH];
-    char value[FILENAME_LENGTH];
     int errtok = 0, errline = 0, cnt = 0;
-    extern int debug;
-    extern int env;
 
-    /* First the the verseion number */
     FILE *fp = fopen(batch_file_name, "r");
     if (fp == (FILE *)NULL) {
-        errorvf("could not open %s for reading!\n", batch_file_name);
-        EXIT(FILE_READ_ERROR);
+        if (rc) return 0;
+        else {
+            errorvf("could not open %s for reading!\n", batch_file_name);
+            EXIT(FILE_READ_ERROR);
+        }
     }
 
 #ifdef later
@@ -1086,7 +1168,6 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
     int lz;
     Token token;
     Str lhs, rhs;
-    Mapsbp lookup;
     batch_item_type *bi = (batch_item_type *) NULL;
 
     while (!feof(fp)) {
@@ -1111,10 +1192,21 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
                     mult_decl(bi->item_number);
                 }
                 bi->line_number = line_n;
-                bi->items_read = 1;
-                bi->value_str = rhs;
-                if (bi->flag == Add2BatchItemList)
-                    BatchItemList.push_back(bi);
+                if (rc) {
+                    bi->value_str = rhs;
+                    RCBatchItemSet.insert(bi);
+                } else {
+                    bi->items_read = 1;
+                    if (inSet(bi, RCBatchItemSet)) {
+                        warnvf("BatchItem keyword %s\n", C(bi->keyword));
+                        warnvf(" in file '.mega2rc' is %s and\n", C(bi->value_str));
+                        warnvf(" in batchfile '%s' is %s.  Using latter value.\n",
+                               batch_file_name, C(rhs));
+                    }
+                    bi->value_str = rhs; 
+                    if (bi->flag == Add2BatchItemList)
+                        BatchItemList.push_back(bi);
+                }
                 cnt++;
             } else {
                 errorvf("Unexpected batch file option: %s\n", C(lhs));
@@ -1127,7 +1219,47 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
     }
     fclose(fp);
 
+    if (errtok + errline) {
+        errorvf("\nBatch file Status: %d arguments, %d bad lines, %d unknown options\n", cnt, errline, errtok);
+        EXIT(BATCH_FILE_ITEM_ERROR);
+    }
+    return 1;
+}
+
+// set defaults
+static void process_rcbatch_file_items()
+{
+    char value[FILENAME_LENGTH];
+
+    for (Setbp RCBatchItemSetp = RCBatchItemSet.begin(); RCBatchItemSetp != RCBatchItemSet.end(); RCBatchItemSetp++) {
+        batch_item_type *bi = (*RCBatchItemSetp);
+        Str& keyword = bi->keyword;
+
+        strcpy(value, C(bi->value_str));
+        if (debug) msgvf("key %s, val %s\n", C(keyword), value);
+
+        RawBatchValueSet(value, bi);
+    }
+}
+
+static void process_batch_file_items(analysis_type *analysis)
+{
+    char value[FILENAME_LENGTH];
+
+    batch_item_type *bi = (batch_item_type *) NULL;
     int err = 0;
+
+    extern int debug;
+    extern int env;
+
+    /* First the the version number */
+
+/*
+    for (Setbp RCBatchItemSetp = RCBatchItemSet.begin(); RCBatchItemSetp != RCBatchItemSet.end(); RCBatchItemSetp++) {
+        bi = (*RCBatchItemSetp);
+        bi->items_read = 1;
+    }
+*/
 
     // First Select Input_Format_Type
     if (map_get(BatchItemMap, "Input_Format_Type", bi)) {
@@ -1144,19 +1276,10 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
 
     // Then Select Analysis Mode
     if (map_get(BatchItemMap, "Analysis_Option", bi)) {
-//xx        if (bi->items_read == 0 && database_dump == 0)
-        if (bi->items_read == 0)
-        {
+        if (bi->items_read == 0) {
             errorvf("%s option not set\n", "Analysis_Option");
             err++;
         } else {
-//xx
-/*
-            if (bi->items_read == 1)
-                strcpy(analysis_name, bi->value_str.c_str());
-            else
-                strcpy(analysis_name, "dump");
-*/
             strcpy(analysis_name, bi->value_str.c_str());
             strcpy(bi->value.name, analysis_name);
 
@@ -1241,22 +1364,18 @@ static void parse_batch_file(char *batch_file_name, analysis_type *analysis)
         if (bivalue == "" && !keyword.compare(0, 14, "value_missing_") ) {
             *value = 0;
         } else if (bivalue == "") {
-            malformed_batch_line(C(keyword));
+//170120    malformed_batch_line(C(keyword));
         }
 
         RawBatchValueSet(value, bibatch);
-    }
-
-    if (errtok + errline) {
-        errorvf("\nBatch file Status: %d arguments, %d bad lines, %d unknown options\n", cnt, errline, errtok);
-        EXIT(BATCH_FILE_ITEM_ERROR);
     }
 }
 
 void batchfile_process(char *batch_file_name, analysis_type *analysis)
 {
 	// this is where the batch items are read from the batch file, and checked for consistency...
-    parse_batch_file(batch_file_name, analysis);
+    parse_batch_file(batch_file_name, 0);
+    process_batch_file_items(analysis);
     check_dependencies(analysis);
 
     int input_set = 0;

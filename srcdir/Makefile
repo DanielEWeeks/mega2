@@ -129,8 +129,8 @@ endif
 
 # CC, CFLAGS are defined in Makedefs
 
-dbmega2.o dbmisc.o dbbatch.o dbpedigree.o dballele.o dbloci.o dbmap.o dbgenotype.o : IFLAGS += -Ilib/sqlite3
-dbrefallele.o write_vcf.o: IFLAGS += -Ilib/sqlite3
+dbmega2.o dbmisc.o dbbatch.o dbpedigree.o dballele.o dbloci.o dbmap.o dbgenotype.o: IFLAGS += -Ilib/sqlite3
+dbrefallele.o write_vcf.o : IFLAGS += -Ilib/sqlite3
 
 user_input.o read_impute_bgen2.o: IFLAGS += -Ibgen/genfile/include $(stdC11)
 

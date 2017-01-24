@@ -49,21 +49,25 @@ public:
 #else
 
     Tod():lim(0),str(0) {
-        gettimeofday(&tv_base, (void *) 0);
+        reset();
     }
 
     Tod(int lim):lim(lim), cnt(0), str(0) {
-        gettimeofday(&tv_base, (void *) 0);
+        reset();
     }
 
     Tod(const char *str, int lim=0): lim(lim), cnt(0), str(str) {
-        gettimeofday(&tv_base, (void *) 0);
+        reset();
     }
 
    ~Tod()     { }
 
     void reset(void) {
         gettimeofday(&tv_base, (void *) 0);
+    }
+
+    void operator()(const int xx) {
+        reset();
     }
 
     double operator()(void) {

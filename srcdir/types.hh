@@ -45,6 +45,12 @@ typedef const std::string                   Cstr;
 typedef std::set<std::string>               Sets;
 
 template <typename T>
+bool inline inSet(typename T::value_type& str, T& set) {
+//  return (set.find(str) != set.cend()); // gcc has issues
+    return (set.find(str) != set.end());
+}
+
+template <typename T>
 bool inline inSet(Cstr& str, T& set) {
 //  return (set.find(str) != set.cend()); // gcc has issues
     return (set.find(str) != set.end());
@@ -89,7 +95,7 @@ typedef std::list<std::string>              Lists;
 typedef std::list<std::string>::const_iterator              Listsp;
 
 template <typename T>
-bool inline inList(Cstr& str, T& list) {
+bool inline inList(typename T::value_type& str, T& list) {
 //  return (list.find(str) != list.cend()); // gcc has issues
     return (list.find(str) != list.end());
 }
@@ -102,6 +108,12 @@ class charsless {
 public:
     bool operator() (const char *a, const char *b) const {
         return strcmp(a, b) < 0;
+    }
+};
+class alleleless {
+public:
+    bool operator() (const char *a, const char *b) const {
+        return (! a[1] && ! b[1]) ? (a[0] < b[0]) : (strcmp(a, b) < 0);
     }
 };
 typedef std::map<const char *, const char *, charsless>  Mapcc;
