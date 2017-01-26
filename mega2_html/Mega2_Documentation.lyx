@@ -37061,7 +37061,7 @@ This menu has four prompts: the file name stem option which simply lets
 
 \begin_layout Standard
 If more than one chromosome is selected, there will be an additional option
- that allows you to have either one large VCF file or more than one seperated
+ that allows you to have either one large VCF file or more than one separated
  by chromosome.
 \end_layout
 
@@ -37250,13 +37250,13 @@ name "subsec:Using-an-external-reference"
 \begin_layout Standard
 A new feature of VCF is the use of an external reference panel.
  Supposing you have data that you would like to know the reference values
- from another larger dataset, say 1000 genomes, the funcitonality now exsists
+ from another larger dataset, say 1000 genomes, the functionality now exists
  to upload that data into Mega2 in order to compare your data against that
- refernce.
+ reference.
 \end_layout
 
 \begin_layout Standard
-We provice a reference panel for 1000 genomes at [TODO: figure out how we
+We provide a reference panel for 1000 genomes at [TODO: figure out how we
  want to host it and put a link here].
  This file was created using a script called in the mega2 distribution called
  GetRefAlleles.sh.
@@ -37286,12 +37286,12 @@ Use external reference panel in database
 .
  Which prompts you to enter a file.
  If you enter a file of the form of the reference file provided by Mega2
- (a gzipped 3 collumn file), it will load those values into the database
+ (a gzipped 3 column file), it will load those values into the database
  where there is an overlapped physical position with your dataset.
  From there you will end up back at the VCF analysis menu, only now external
  reference will be chosen.
  If you continue a VCF created will use those reference values, or flag
- them as no external match [need ot think of a VCF line flag name in these
+ them as no external match [need it think of a VCF line flag name in these
  cases] and choose the Major allele them if no match was available.
  If a reference panel is already in your database from before it will simply
  load use it as is and continue creating the files requested.

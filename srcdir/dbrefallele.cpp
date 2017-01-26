@@ -53,16 +53,20 @@ extern void db_open_db();
 extern char DBfile[255];
 
 
-void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top) {
+void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str filename) {
+    printf("Loading reference allele file %s into database\n",filename.c_str());
     //we should only get here if we don't have a table (no need to drop)
     //but drop just to be safe/for testing
     drop();
 
     //make our new table
+    printf("Creating database table\n");
     create();
 
+
+    //now we typically do this on database creation and use the first page
     //get our filename of our reference file
-    Str filename = get_filename();
+    //Str filename = get_filename();
 
     //create our db statements
     init();
@@ -71,6 +75,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top) {
     //we define a buffer
     int length = 0x1000;
     //get a gzipfile and open it
+    printf("Reading database file.\n");
     gzFile file;
     file = gzopen(filename.c_str(),"r");
     //check for errors
@@ -92,6 +97,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top) {
     int chr = 0;
     int pos = 0;
 
+    printf("Matching position values between dataset and reference, this may take a while...\n");
     //read our buffer
     while (1) {
         int err;
@@ -114,6 +120,8 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top) {
                 pos = atoi(token);
                 //if both are set we found a whole entry
             else {
+                if(locus == Top->LocusTop->LocusCnt)
+                    break;
                 int position = Top->EXLTop->EXLocus[locus].positions[base_pair_position_index];
                 //if the chromosome is the same, and position +/- .1% is the same (not many precise matches)
                 //printf("Internal Chromsome = %d, Reference Chromosome = %d\n", Top->LocusTop->Locus[locus].Marker->chromosome, chr);
@@ -170,6 +178,15 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top) {
 Str Reference_Allele_Table::get_filename(){
     char input[255];
     while(1) {
+        printf("You can use an external reference panel to get a set of reference alleles.\n");
+        printf("This process is described in the section called'Use external reference panel in .\n");
+        printf("database' In the Mega2 documentation.");
+        printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
+        printf("They can be constructed by hand or using a shell script included with Mega2\n");
+        printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
+        printf("most recent build at ____________. \n\n");
+
+
         printf("Enter filename of reference panel > ");
         fcmap(stdin, "%s", input);
         newline;

@@ -81,7 +81,7 @@ public:
 
     int db_getall(linkage_ped_tree *t, std::map<int, linkage_ped_tree *> &pedigree_hash);
 
-    void read_ref_allele_file(linkage_ped_top *Top);
+    void read_ref_allele_file(linkage_ped_top *Top, Str filename);
     Str get_filename();
     //int get_marker(int pos);
     //void insert_into_table(int chr, int pos, Str ref);

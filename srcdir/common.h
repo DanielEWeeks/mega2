@@ -212,7 +212,7 @@ typedef enum {
 } PedigreeFileType;
 
 typedef enum {
-    PEDIGREE = 0, LOCUS = 1, MAP = 2, OMIT = 3, FREQ = 4, PEN = 5, BED = 6, PHEfl = 7, PMAP = 8
+    PEDIGREE = 0, LOCUS = 1, MAP = 2, OMIT = 3, FREQ = 4, PEN = 5, BED = 6, PHEfl = 7, PMAP = 8, REFfl = 9,
 } InputFileType;
 
 typedef enum {
@@ -375,7 +375,7 @@ extern InputModeType   InputMode; /* Not batch mode? */
 extern InputModeType   AnalyInputMode; /* Not batch mode? */
 extern file_format     InputFileFormat; /* Annotated or linkage */
 extern char            mega2_path[256]; /* path to mega2 executable */
-#define NUMBER_OF_MEGA2_INPUT_FILES         9
+#define NUMBER_OF_MEGA2_INPUT_FILES         10
 extern char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES];
 extern char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][24];
 extern int             pedfile_type; /* whether input-file is pre-makeped or not */
