@@ -44,6 +44,7 @@
 #include "dbloci.hh"
 #include "dbmap.hh"
 #include "dbgenotype.hh"
+#include "dbrefallele.h"
 
 using namespace std;
 
@@ -233,7 +234,12 @@ void dbmega2_export(linkage_ped_top *Top)
 
     dbmap_export(Top, bp_sort); // sort map_table
 
-    dbgenotype_export(Top, bp_sort); // sort row contents of 
+    dbgenotype_export(Top, bp_sort); // sort row contents of
+
+    if (mega2_input_files[REFfl] != NULL) {
+        Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
+        reference_allele_table->read_ref_allele_file(Top, mega2_input_files[REFfl]);
+    }
 }
 
 void dbmega2_stat(linkage_ped_top *Top)

@@ -34,6 +34,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "types.hh"
 
 #include "loop.h"
 #include "sh_util.h"
@@ -45,6 +46,7 @@
 #include "output_file_names_ext.h"
 #include "user_input_ext.h"
 #include "write_files_ext.h"
+#include "read_files_ext.h"
 
 #include "write_vcf_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
@@ -149,7 +151,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("##fileformat=VCFv4.1\n");
             pr_printf("##filedate=%s\n",__TIMESTAMP__);
             pr_printf("##source=MEGA2\n");
-            if(base_pair_position_index > 0)
+            if(base_pair_position_index >= 0)
                 pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
             pr_printf("##INFO=<ID=RF,Number=1,Type=Float,Description=\"Allele Frequency of reference allele\">\n");
             pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
@@ -264,9 +266,13 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         std::string altstring;
         linkage_locus_top *LTop ;
         bool first;
+        char * dummycanon;
 
-        std::unordered_map<int, std::string> references;
-        std::unordered_map<int, std::string>:: iterator ireferences;
+        HMapis references;
+        //SECTION_LOG_INIT(ref_mismatch);
+        //SECTION_LOG_INIT(ref_not_found);
+
+
 
         void file_loop() {
             //mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
@@ -281,6 +287,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 first = true;
             else
                 first = false;
+
         }
 
         void inner() {
@@ -299,35 +306,49 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("\t");
         }
 
-
-
-        void loci_start() {
-            // first time around create a map of all positions and references (if we're using an external map)
-            if(first){
+        void chr_start() {
+            if (ref_choice == "External Reference") {
                 MasterDB.begin();
                 DBstmt *select;
                 char select_string[255];
-                sprintf(select_string, "SELECT pos, ref FROM ref_allele_table WHERE chr = %d;",_numchr);
+                if (_numchr != -1)
+                    sprintf(select_string, "SELECT pos, ref FROM ref_allele_table WHERE chr = %d;", _numchr);
+                else
+                    //for (int chr = 0; chr < main_chromocnt; chr++)
+                        //global_chromo_entries[chr];
+                sprintf(select_string, "SELECT pos, ref FROM ref_allele_table WHERE chr = %d;",
+                        _tlocusp->Marker->chromosome);
                 select = MasterDB.prep(select_string);
                 int ret = select && select->abort();
 
-                while(ret) {
+                while (ret) {
                     int position = 0;
                     char *reference;
                     ret = select->step();
                     if (ret == SQLITE_ROW) {
                         select->column(0, position);
                         select->column(1, reference);
-                        references[position] = reference;
-                    }
-                    else
+                        references[position] = canonical_allele(reference);
+                    } else
                         break;
                 }
 
                 MasterDB.commit();
-                first = false;
             }
 
+            dummycanon = canonical_allele("dummy");
+        }
+
+
+
+
+        void chr_end() {
+            //SECTION_LOG_FINI(ref_mismatch);
+            //SECTION_LOG_FINI(ref_not_found);
+        }
+
+
+        void loci_start() {
             pr_printf("%d\t", _tlocusp->Marker->chromosome);
             pr_physical_distance(0);
             pr_printf("\t");
@@ -363,15 +384,19 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             }
 
             if(ref_choice == "External Reference") {
-                ireferences = references.find((int)_EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
-                if(ireferences != references.end()) {
+                string ref_return;
+                int lookup = (int)_EXLTop->EXLocus[_locus].positions[base_pair_position_index];
+                if(map_get(references, lookup, ref_return)) {
                     for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                        if (!strcmp(_tlocusp->Allele[allele].AlleleName, ireferences->second.c_str())) {
+                        if (_tlocusp->Allele[allele].AlleleName == canonical_allele(ref_return.c_str())) {
                             extremum_allele = allele;
                             reference_exists = 1;
                             break;
                         }
-                        //what if it's not an exiting allele... hmm.
+                    }
+                    if(!reference_exists) {
+                        //SECTION_LOG(ref_mismatch);
+                        mssgvf("Reference allele value of %s does not exist in dataset at CHR: %d POS: %f\n", ref_return.c_str(), _tlocusp->Marker->chromosome, _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
                     }
                 }
                 else {
@@ -383,12 +408,14 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                         }
                     }
                     reference_exists = 0;
+                    //SECTION_LOG(ref_not_found);
+                    mssgvf("Reference allele match not found for CHR: %d POS: %f\n", _tlocusp->Marker->chromosome,_EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
                 }
             }
 
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if (allele==extremum_allele){
-                    if(!strcmp(_tlocusp->Allele[allele].AlleleName,"dummy"))
+                    if(_tlocusp->Allele[allele].AlleleName == dummycanon)
                         a1 = ".";
                     else
                         a1 = _tlocusp->Allele[allele].AlleleName;
@@ -396,7 +423,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
                 else {
                     if (a2.empty()) {
-                        if (!strcmp(_tlocusp->Allele[allele].AlleleName, "dummy")) {
+                        if (_tlocusp->Allele[allele].AlleleName == dummycanon) {
                             alt.push_back(".");
                             a2 = a2 + ".";
                         }
@@ -406,7 +433,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                         }
                     }
                     else{
-                        if (!strcmp(_tlocusp->Allele[allele].AlleleName, "dummy")) {
+                        if (_tlocusp->Allele[allele].AlleleName == dummycanon) {
                             alt.push_back(".");
                             a2 = a2 + ",.";
                         }
@@ -421,7 +448,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("%s\t%s\t",a1.c_str(),a2.c_str());
             pr_printf(".\t");
             pr_printf("PASS\t");
-            if(base_pair_position_index > 0)
+            if(base_pair_position_index >= 0)
                pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
             //double alternate_frequency = 0;
             pr_printf("RF=%.6f;",_tlocusp->Allele[extremum_allele].Frequency);
@@ -455,7 +482,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
     lp->iterate();
 
-    //MasterDB.commit();
+
+    //MasterDB.close();
 
     delete lp;
     delete hlp;
@@ -508,11 +536,11 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
             int tr;
             pr_printf("FID\tIID\t");
                 for (tr=0; tr < num_traits; tr++) {
-                    if(global_trait_entries[tr] < 0)
+                    if (global_trait_entries[tr] < 0)
                         continue;
-                    //if(global_trait_entries[tr] != _trait)
-                        pr_printf("%s\t",_LTop->Pheno[global_trait_entries[tr]].TraitName);
-            }
+
+                    pr_printf("%s\t", _LTop->Pheno[global_trait_entries[tr]].TraitName);
+                }
             pr_printf("SAMPLEID\n");
         }
     } *header = new vcf_phenos_header(Top);
@@ -525,15 +553,12 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
         vlpCTOR(vcf_phenos,trait,ped_per_trait) { }
         typedef char *str;
         str *file_names;
-        linkage_locus_rec *dummy;
 
         void file_loop() {
             mssgvf("        VCF phenotype file:     %s/%s\n", *_opath, file_names[2]);
             data_loop(*_opath, file_names[2], "a");
         }
-        void trait_start(){
-            dummy = _ttraitp;
-        }
+
         void per_start(){
             pr_fam();
             pr_printf("\t");
@@ -547,16 +572,13 @@ void CLASS_VCF::write_VCF_pheno(linkage_ped_top *Top, const char *prefix, char *
             pr_nl();
         }
         void inner() {
-            //if(_ttraitp != dummy) {
-                pr_pheno();
-                pr_printf("\t");
-            //}
+            pr_pheno();
+            pr_printf("\t");
         }
     } *lp = new vcf_phenos(Top);
 
     lp->file_names = file_names;
 
-    //lp->load_formats(fwid, pwid, -1);
     lp->load_formats_no_space(-1);
 
     lp->iterate();
@@ -617,6 +639,7 @@ void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *f
         vlpCTOR(VCF_freq,chr,loci) { }
         typedef char *str;
         str *file_names;
+        char * dummycanon;
 
         void file_loop() {
             mssgvf("        VCF freq file:          %s/%s\n", *_opath, file_names[4]);
@@ -632,10 +655,11 @@ void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *f
                     pr_printf("%s\t%d\t%.4f\n", _LTop->Pheno[global_trait_entries[tr]].TraitName, al+1, _LTop->Locus[global_trait_entries[tr]].Allele[al].Frequency);
                 }
             }
+            dummycanon = canonical_allele(("dummy"));
         }
         void inner() {
             for(int i = 0; i < _tlocusp->AlleleCnt; i++) {
-                if(strcmp(_tlocusp->Allele[i].AlleleName,"dummy") != 0)
+                if(_tlocusp->Allele[i].AlleleName==dummycanon)
                     pr_printf("%s\t%s\t%.4f\n", _tlocusp->LocusName, _tlocusp->Allele[i].AlleleName, _tlocusp->Allele[i].Frequency);
             }
         }

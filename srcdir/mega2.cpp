@@ -168,7 +168,6 @@
 #include "class_old.h"
 #include "write_shapeit_ext.h"
 #include "database_dump_ext.h"
-#include "dbrefallele.h"
 
 /*
  annotated_ped_file_ext.h:  check_annotated_file_format read_annotated_files Free_annotated_files
@@ -1286,12 +1285,6 @@ int             main(int argc, char **argv, char **env)
         db_fini_all();
 
         dbexport();
-    }
-
-    if (database_dump && reffl_name != NULL) {
-        MasterDB.open(DBfile);
-        Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
-        reference_allele_table->read_ref_allele_file(LPedTreeTop, reffl_name);
     }
 
     if (database_dump && database_read) {
