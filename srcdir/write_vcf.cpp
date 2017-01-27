@@ -70,7 +70,7 @@ int outfiletype;
 Str ref_choice;
 
 SECTION_LOG_INIT(ref_mismatch);
-SECTION_LOG_INIT(ref_not_found);
+SECTION_LOG_INIT(ref_not_available);
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -273,7 +273,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         char * dummycanon;
 
         HMapis references;
-
+        int reference_offset;
         int lastchr;
 
         void file_loop() {
@@ -290,8 +290,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             else
                 first = false;
 
-            //chr_index = 0;
             lastchr = global_chromo_entries[0];
+            reference_offset = 0;
 
         }
 
@@ -299,16 +299,17 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(_allele1 - 1 == -1)
                 pr_printf(".");
             else
-                pr_printf("%d",_allele1-1);
+                pr_printf("%d", _allele1 - 1 + reference_offset);
 
             pr_printf("/");
 
             if(_allele2 - 1 == -1)
                 pr_printf(".");
             else
-                pr_printf("%d",_allele2-1);
+                pr_printf("%d", _allele2 - 1 + reference_offset);
 
             pr_printf("\t");
+
         }
 
         void chr_start() {
@@ -317,7 +318,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
         void chr_end() {
             SECTION_LOG_FINI(ref_mismatch);
-            SECTION_LOG_FINI(ref_not_found);
+            SECTION_LOG_FINI(ref_not_available);
         }
 
 
@@ -393,6 +394,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
             }
 
+
+
             if(ref_choice == "External Reference") {
                 string ref_return;
                 int lookup = (int)_EXLTop->EXLocus[_locus].positions[base_pair_position_index];
@@ -404,12 +407,17 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                             break;
                         }
                     }
-                    if(!reference_exists) {
+                    if (!reference_exists) {
+                        a1 = ref_return;
+                        extremum_allele = -1;
                         SECTION_LOG(ref_mismatch);
-                        mssgvf("Reference allele value of %s does not exist in dataset at CHR: %d POS: %f\n", ref_return.c_str(), _tlocusp->Marker->chromosome, _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
+                        mssgvf("Reference allele value of %s not in the measured allele dataset at CHR: %d POS: %f\n", ref_return.c_str(), _tlocusp->Marker->chromosome, _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
+                        reference_exists = 1;
+                        //need to add 1 in this case since there will be an extra allele value
+                        reference_offset = 1;
                     }
                 }
-                else {
+                else{
                     extremum_frequency = 0;
                     for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                         if (_tlocusp->Allele[allele].Frequency > extremum_frequency) {
@@ -418,13 +426,13 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                         }
                     }
                     reference_exists = 0;
-                    SECTION_LOG(ref_not_found);
-                    mssgvf("Reference allele match not found for CHR: %d POS: %f\n", _tlocusp->Marker->chromosome,_EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
+                    SECTION_LOG(ref_not_available);
+                    mssgvf("Reference allele match not found for CHR: %d POS: %f using major allele for this position. \n", _tlocusp->Marker->chromosome,_EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
                 }
             }
 
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                if (allele==extremum_allele){
+                if (allele == extremum_allele){
                     if(_tlocusp->Allele[allele].AlleleName == dummycanon)
                         a1 = ".";
                     else
@@ -461,7 +469,10 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(base_pair_position_index >= 0)
                pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
             //double alternate_frequency = 0;
-            pr_printf("RF=%.6f;",_tlocusp->Allele[extremum_allele].Frequency);
+            if(extremum_allele == -1)
+                pr_printf("RF=%.6f;",0);
+            else
+                pr_printf("RF=%.6f;",_tlocusp->Allele[extremum_allele].Frequency);
             pr_printf("AF=");
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if(allele == extremum_allele)
@@ -482,6 +493,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void loci_end(){
+            //this is only by locus and set needs to be zero in most cases
+            reference_offset = 0;
             pr_nl();
         }
     } *lp = new vcf_vcfs(Top);
