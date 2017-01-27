@@ -69,6 +69,8 @@ int combinechromovcf;
 int outfiletype;
 Str ref_choice;
 
+SECTION_LOG_INIT(ref_mismatch);
+SECTION_LOG_INIT(ref_not_found);
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -254,6 +256,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
     hlp->iterate();
 
+
+
     //finally a large loop for the data
     vlpCLASS(vcf_vcfs,chr,loci_ped_per) {
         vlpCTOR(vcf_vcfs,chr,loci_ped_per) { }
@@ -269,10 +273,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         char * dummycanon;
 
         HMapis references;
-        //SECTION_LOG_INIT(ref_mismatch);
-        //SECTION_LOG_INIT(ref_not_found);
 
-
+        int lastchr;
 
         void file_loop() {
             //mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
@@ -287,6 +289,9 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 first = true;
             else
                 first = false;
+
+            //chr_index = 0;
+            lastchr = global_chromo_entries[0];
 
         }
 
@@ -307,20 +312,36 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void chr_start() {
-            if (ref_choice == "External Reference") {
+            dummycanon = canonical_allele("dummy");
+        }
+
+        void chr_end() {
+            SECTION_LOG_FINI(ref_mismatch);
+            SECTION_LOG_FINI(ref_not_found);
+        }
+
+
+        void loci_start() {
+            //check the chromsome, if it's chnaged we'll want to select the next set
+            if(lastchr != _tlocusp->Marker->chromosome) {
+                first = true;
+                lastchr = _tlocusp->Marker->chromosome;
+            }
+            //here we grab our reference values and put them into a map
+            if(first){
+                //clear the map if it has values (saves a bit of time)
+                if(!references.empty())
+                    references.clear();
+
+                //db connection
                 MasterDB.begin();
                 DBstmt *select;
                 char select_string[255];
-                if (_numchr != -1)
-                    sprintf(select_string, "SELECT pos, ref FROM ref_allele_table WHERE chr = %d;", _numchr);
-                else
-                    //for (int chr = 0; chr < main_chromocnt; chr++)
-                        //global_chromo_entries[chr];
-                sprintf(select_string, "SELECT pos, ref FROM ref_allele_table WHERE chr = %d;",
-                        _tlocusp->Marker->chromosome);
+                sprintf(select_string, "SELECT pos, ref FROM ref_allele_table WHERE chr = %d;", _tlocusp->Marker->chromosome);
                 select = MasterDB.prep(select_string);
                 int ret = select && select->abort();
 
+                //get position and reference and put them into our map
                 while (ret) {
                     int position = 0;
                     char *reference;
@@ -334,21 +355,10 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
 
                 MasterDB.commit();
+                delete select;
+                first = false;
             }
 
-            dummycanon = canonical_allele("dummy");
-        }
-
-
-
-
-        void chr_end() {
-            //SECTION_LOG_FINI(ref_mismatch);
-            //SECTION_LOG_FINI(ref_not_found);
-        }
-
-
-        void loci_start() {
             pr_printf("%d\t", _tlocusp->Marker->chromosome);
             pr_physical_distance(0);
             pr_printf("\t");
@@ -395,7 +405,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                         }
                     }
                     if(!reference_exists) {
-                        //SECTION_LOG(ref_mismatch);
+                        SECTION_LOG(ref_mismatch);
                         mssgvf("Reference allele value of %s does not exist in dataset at CHR: %d POS: %f\n", ref_return.c_str(), _tlocusp->Marker->chromosome, _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
                     }
                 }
@@ -408,7 +418,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                         }
                     }
                     reference_exists = 0;
-                    //SECTION_LOG(ref_not_found);
+                    SECTION_LOG(ref_not_found);
                     mssgvf("Reference allele match not found for CHR: %d POS: %f\n", _tlocusp->Marker->chromosome,_EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
                 }
             }
@@ -481,9 +491,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     lp->load_formats_no_space(-1);
 
     lp->iterate();
-
-
-    //MasterDB.close();
 
     delete lp;
     delete hlp;
@@ -824,7 +831,9 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         else
             break;
     }
+
     MasterDB.commit();
+    delete select;
 
     //for testing remove afterwards.
     //reftableexists = 0;

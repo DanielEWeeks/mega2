@@ -284,7 +284,12 @@ pair<Cstr,Cstr> keyword_aliases[] = {
 };
 
 Cstr mega2rc[] = {"Shapeit_recomb_rdir", "Shapeit_recomb_rfile",
-                  ""};
+                  "Reference_Allele_File", "shapeit_reference_map_directory",
+                  "shapeit_reference_panel_directory", "minimac_reference_panel_directory",
+                  "shapeit_haps_file_selected", "shapeit_reference_sample_file",
+                  "shapeit_reference_legend_file", "shapeit_reference_haplotype_file",
+                  "shapeit_reference_map_file", "minimac_reference_haplotype_file",
+                  "DBfile_name", "",};
 
 typedef struct kv {
     char *key;
