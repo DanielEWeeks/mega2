@@ -53,7 +53,7 @@ extern void db_open_db();
 extern char DBfile[255];
 
 
-void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str filename) {
+void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str filename, bool use_bp_sort, bp_order *bp) {
     printf("Loading reference allele file %s into database\n",filename.c_str());
     //we should only get here if we don't have a table (no need to drop)
     //but drop just to be safe/for testing
@@ -88,6 +88,10 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     MasterDB.begin();
 
     int locus = Top->LocusTop->PhenoCnt;
+    if (use_bp_sort)
+        bp += locus;
+
+
 
     // we want to break here since this will cause an error
     if(base_pair_position_index == 0 ) {
@@ -96,69 +100,116 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 
     int chr = 0;
     int pos = 0;
+    char * dummy = (char *)"*";
 
     printf("Matching position values between dataset and reference, this may take a while...\n");
     //read our buffer
-    while (1) {
-        int err;
-        int bytes_read;
-        char buffer[length];
-        bytes_read = gzread (file, buffer, length - 1);
-        buffer[bytes_read] = '\0';
+    if(use_bp_sort) {
+        while (1) {
+            int err;
+            int bytes_read;
+            char buffer[length];
+            bytes_read = gzread(file, buffer, length - 1);
+            buffer[bytes_read] = '\0';
 
-
-        //Str ref = "";
-        //int marker = 0;
-        //split our buffer by lines
-        char* token = std::strtok(buffer," \n");
-        while (token != NULL) {
-            // if chr is not set then we found a chr
-            if (chr == 0)
-                chr = atoi(token);
-                //if chr is set but pos isn't we found a pos
-            else if (pos == 0)
-                pos = atoi(token);
-                //if both are set we found a whole entry
-            else {
-                if(locus == Top->LocusTop->LocusCnt)
-                    break;
-                int position = Top->EXLTop->EXLocus[locus].positions[base_pair_position_index];
-                //if the chromosome is the same, and position +/- .1% is the same (not many precise matches)
-                //printf("Internal Chromsome = %d, Reference Chromosome = %d\n", Top->LocusTop->Locus[locus].Marker->chromosome, chr);
-                //printf("Internal Position = %d, Reference Position = %d\n",position, pos);
-                if(Top->LocusTop->Locus[locus].Marker->chromosome == chr
-                    //&& pos - pos/10000 <= position && position <= pos + pos/10000) {
-                    && pos == position) {
+            //Str ref = "";
+            //int marker = 0;
+            //split our buffer by lines
+            char *token = std::strtok(buffer, " \n");
+            while (token != NULL) {
+                // if chr is not set then we found a chr
+                if (chr == 0)
+                    chr = atoi(token);
+                    //if chr is set but pos isn't we found a pos
+                else if (pos == 0)
+                    pos = atoi(token);
+                    //if both are set we found a whole entry
+                else {
+                    if (locus == Top->LocusTop->LocusCnt - 1)
+                        break;
+                    int position = bp->pos;
+                    int chromosome = bp->chr;
+                    //if the chromosome is the same, and position +/- .1% is the same (not many precise matches)
+                    //printf("Internal Chromsome = %d, Reference Chromosome = %d\n", Top->LocusTop->Locus[locus].Marker->chromosome, chr);
                     //printf("Internal Position = %d, Reference Position = %d\n",position, pos);
-                    //printf("--------------------here\n");
-                    //we insert our values, the position internally is inserted sow e can select on it
-                    insert(chr,pos,locus,token);
-                    locus++;
-                }
-                else if(pos > position)
-                    if(locus < Top->LocusTop->LocusCnt -1)
+                    if (chromosome == chr && pos == position) {
+                        //we insert our values, the position internally is inserted sow e can select on it
+                        insert(chromosome, position, locus, token);
+                        bp++;
                         locus++;
-                //ref = token;
-                chr = 0;
-                pos = 0;
-                //ref = "";
+                    }
+                    else if (pos > position && chr == chromosome) {
+                        //if we find a value too large insert a dummy and increment
+                        insert(chromosome, position, locus, dummy);
+                        bp++;
+                        //locus++;
+                    }
+                    chr = 0;
+                    pos = 0;
+                }
+                token = std::strtok(NULL, " \n");
             }
-            token = std::strtok(NULL, " \n");
-        }
 
-        //when the buffer is done
-        if (bytes_read < length - 1) {
-            //we commit transactions by buffer for speed (rather than by row)
-            //is file done?
-            if (gzeof (file)) {
-                break;
+            //when the buffer is done
+            if (bytes_read < length - 1) {
+                //we commit transactions by buffer for speed (rather than by row)
+                //is file done?
+                if (gzeof(file)) {
+                    break;
+                } else {
+                    const char *error_string;
+                    error_string = gzerror(file, &err);
+                    if (err) {
+                        fprintf(stderr, "Error: %s.\n", error_string);
+                        exit(EXIT_FAILURE);
+                    }
+                }
             }
-            else {
-                const char * error_string;
-                error_string = gzerror (file, & err);
-                if (err) {
-                    fprintf (stderr, "Error: %s.\n", error_string);
-                    exit (EXIT_FAILURE);
+        }
+    }
+        //we use this after the database read as bp_sort can't be accessed but the values are sorted.
+        //so this is similar but refences top and is only used after db_read
+    else {
+        while (1) {
+            int err;
+            int bytes_read;
+            char buffer[length];
+            bytes_read = gzread(file, buffer, length - 1);
+            buffer[bytes_read] = '\0';
+
+            char *token = std::strtok(buffer, " \n");
+            while (token != NULL) {
+                if (chr == 0)
+                    chr = atoi(token);
+                else if (pos == 0)
+                    pos = atoi(token);
+                else {
+                    if (locus == Top->LocusTop->LocusCnt)
+                        break;
+                    int position = Top->EXLTop->EXLocus[locus].positions[base_pair_position_index];
+                    int chromosome = Top->LocusTop->Locus[locus].Marker->chromosome;
+                    if(chromosome == chr && position == pos) {
+                        insert(chromosome, position, locus, token);
+                        locus++;
+                    } else if (pos > position) {
+                        insert(chromosome, position, locus, dummy);
+                        locus++;
+                    }
+                    chr = 0;
+                    pos = 0;
+                }
+                token = std::strtok(NULL, " \n");
+            }
+            if (bytes_read < length - 1) {
+                if (gzeof(file)) {
+                    break;
+                } else {
+                    const char *error_string;
+                    error_string = gzerror(file, &err);
+                    if (err) {
+                        fprintf(stderr, "Error: %s.\n", error_string);
+                        exit(EXIT_FAILURE);
+                    }
                 }
             }
         }

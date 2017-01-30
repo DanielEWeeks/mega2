@@ -238,7 +238,7 @@ void dbmega2_export(linkage_ped_top *Top)
 
     if (mega2_input_files[REFfl] != NULL) {
         Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
-        reference_allele_table->read_ref_allele_file(Top, mega2_input_files[REFfl]);
+        reference_allele_table->read_ref_allele_file(Top, mega2_input_files[REFfl], true, bp_sort);
     }
 }
 
