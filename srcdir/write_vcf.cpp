@@ -958,8 +958,9 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                         //keep this here in case someone wants to add to an existing database.
                         //just now the way the file is handled is different
                         Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
-                        reference_allele_table->read_ref_allele_file(Top, reference_allele_table->get_filename());
+                        reference_allele_table->read_ref_allele_file(Top, reference_allele_table->get_filename(), false, 0);
                         reftableexists = 1;
+                        refchoice = "External Reference";
                         break;
                     }
                 }
