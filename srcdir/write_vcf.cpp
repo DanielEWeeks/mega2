@@ -157,7 +157,9 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
             pr_printf("##INFO=<ID=RF,Number=1,Type=Float,Description=\"Allele Frequency of reference allele\">\n");
             pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
-            pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele used instead.\">");
+            //add conditional
+            if(ref_choice == "External Reference")
+                pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele used instead.\"\n>");
             //don't know these for now
             //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
             //pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
@@ -323,13 +325,13 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
 
         void loci_start() {
-            //check the chromsome, if it's chnaged we'll want to select the next set
+            //check the chromsome, if it's changed we'll want to select the next set
             if(lastchr != _tlocusp->Marker->chromosome) {
                 first = true;
                 lastchr = _tlocusp->Marker->chromosome;
             }
             //here we grab our reference values and put them into a map
-            if(first){
+            if(first && ref_choice == "External Reference"){
                 //clear the map if it has values (saves a bit of time)
                 if(!references.empty())
                     references.clear();
@@ -483,7 +485,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
             }
             pr_printf(";");
-            if(!reference_exists)
+            if(!reference_exists && ref_choice == "External Reference")
                 pr_printf("NO;");
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
@@ -679,7 +681,7 @@ void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *f
         }
         void inner() {
             for(int i = 0; i < _tlocusp->AlleleCnt; i++) {
-                if(_tlocusp->Allele[i].AlleleName==dummycanon)
+                if(_tlocusp->Allele[i].AlleleName != dummycanon)
                     pr_printf("%s\t%s\t%.4f\n", _tlocusp->LocusName, _tlocusp->Allele[i].AlleleName, _tlocusp->Allele[i].Frequency);
             }
         }
