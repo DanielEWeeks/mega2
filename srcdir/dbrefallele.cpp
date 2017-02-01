@@ -230,8 +230,8 @@ Str Reference_Allele_Table::get_filename(){
     char input[255];
     while(1) {
         printf("You can use an external reference panel to get a set of reference alleles.\n");
-        printf("This process is described in the section called'Use external reference panel in .\n");
-        printf("database' In the Mega2 documentation.");
+        printf("This process is described in the section called 'External Reference Allele Panel in the Database'.\n");
+        printf("In the Mega2 documentation.\n\n");
         printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
         printf("They can be constructed by hand or using a shell script included with Mega2\n");
         printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
