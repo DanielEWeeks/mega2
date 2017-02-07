@@ -854,7 +854,7 @@ unsigned long CLASS_VCF::file_size(char *filename)
 
 
 void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo, linkage_ped_top *Top) {
-    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref,reftableexists;
+    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref,reftableexists,change_build_allowed;
     done = 0;
     stem = 1;
     build = 2;
@@ -862,6 +862,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
     fileout = 4;
     ref = 3;
     reftableexists = 0;
+    change_build_allowed = 1;
 
     //check for reference table:
     //db_open_db();
@@ -907,6 +908,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             strcpy(buildname,"B19");
         if(rfile.find("HG19")!=std::string::npos || rfile.find("hg19")!=std::string::npos)
             strcpy(buildname,"HG19");
+        change_build_allowed = 0;
     }
 
     // actual menu loop
@@ -957,9 +959,13 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         }
 
         else if ( choice == build ) {
-            printf("Enter human genome build > ");
-            fcmap(stdin, "%s", buildname);
-            newline;
+            if(change_build_allowed) {
+                printf("Enter human genome build > ");
+                fcmap(stdin, "%s", buildname);
+                newline;
+            }
+            else
+                printf("Cannot change build when it's been read in from reference panel.\n");
         }
 
         else if(choice == chromo){
