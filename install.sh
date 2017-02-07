@@ -132,6 +132,7 @@ RSCRIPT
             echo "WARNING: nplplot not installed. To install it you"
             echo "WARNING: will need to start R and run the command:"
             echo "WARNING: install.packages('nplplot')"
+            echo "ERROR: Mega2 installation not completed - retry after installing 'nplplot'"
             exit
         fi
     fi
@@ -167,6 +168,12 @@ RSCRIPT
 
     if [[ $mega2_path == "" ]]; then
         mega2_path=/usr/local/bin
+    fi
+
+    if [ ! -d $mega2_path ]; then
+        echo "The path '$mega2_path' is not a directory.  Please create the directory and"
+        echo "and run install.sh (this script) again."
+        exit
     fi
 
     if [[ "`echo $PATH | grep $mega2_path`" == "" ]] ; then
