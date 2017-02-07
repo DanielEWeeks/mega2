@@ -56,11 +56,12 @@ endif
 
 echo
 set i = 1
+set inner = '1-22'
 while ($i <= 22 )
     if ( -f $1$i$2 ) then
         echo "$1$i$2 was found"
         echo "Using BCF-Tools to extract Reference Alleles for Chromosome $i"
-        $bcftools_program query -f '%CHROM %POS %REF\n' $1$i$2 >> ref_alleles.txt
+$bcftools_program query -f '%CHROM %POS %REF\n' $1$i$2 >> reference_alleles_$1$inner$2
     else
         echo "$1$i$2 not found."
     endif
