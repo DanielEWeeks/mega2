@@ -424,7 +424,6 @@ static void process_rcbatch_file_items(void);
 void batchfile_init_Mega2BatchItems(void)
 {
     int i;
-    extern int env;
 
 //  Mega2BatchItems = CALLOC((size_t)NUM_KEYS, batch_item_type); // Only on OSX
     Mega2BatchItems = new batch_item_type[NUM_KEYS];
@@ -443,16 +442,6 @@ void batchfile_init_Mega2BatchItems(void)
         Cstr& name      = bi->keyword;
         BatchItemMap[name]  = bi;
 
-/*
-        if (env & 1) {
-            char *xp = getenv(C(name));
-            if (xp != NULL) {
-                warnvf("parameter %s\n\treplacing default value (\"%s\") with value from environment (\"%s\")\n",
-                       C(bi->keyword), C(deflt), xp);
-                deflt = string(xp);
-            }
-        }
-*/
         switch(type) {
         case STRING:
         case LINE:
@@ -1307,7 +1296,6 @@ static void process_batch_file_items(analysis_type *analysis)
     int err = 0;
 
     extern int debug;
-    extern int env;
 
     /* First the the version number */
 
@@ -1408,16 +1396,7 @@ static void process_batch_file_items(analysis_type *analysis)
         Str& bivalue = bibatch->value_str;
         strcpy(value, bibatch->value_str.c_str());
         if (debug) msgvf("key %s, val %s\n", C(keyword), value);
-/*
-        if (env & 2) {
-            char *xp = getenv(C(keyword));
-            if (xp != NULL) {
-                warnvf("parameter %s\n\treplacing batch file value (\"%s\") with value from environment (\"%s\")\n",
-                       C(keyword), value, xp);
-                strcpy(value, xp);
-            }
-        }
-*/
+
 //err: does this do anything
         if (bivalue == "" && !keyword.compare(0, 14, "value_missing_") ) {
             *value = 0;

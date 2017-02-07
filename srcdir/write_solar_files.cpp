@@ -86,17 +86,37 @@ static void            SOLARwrite_affection_data(FILE *filep, int locusnm,
 
 typedef std::map<const char *, const char *, alleleless> Inmap;                // 37+43=81
 std::map<const char *, Inmap *, alleleless> map2s_2s;
-
-//typedef std::map<const char *, const char *, charsless> Inmap;               // 37+43=81
-//std::map<const char *, Inmap *, charsless> map2s_2s;
-
-//typedef std::map<const char *, const char *> Inmap;                          // 37+43=81
-//std::map<const char *, Inmap *> map2s_2s;
+std::map<const char *, Inmap, alleleless>   map2s_2sX;
 
 char map_buf1[MAX_NAMELEN];
 
 static inline const char *fprintf2s_2s (const char *fmt, const char *a1s, const char *a2s)
 {
+
+    const char * &ss = map2s_2sX[a1s][a2s];
+
+    if (ss != 0) return ss;
+    sprintf(map_buf1, "%2s/%2s", a1s, a2s);
+    ss = strdup(map_buf1);
+    return ss;
+
+/*
+    const char *sss;
+    Inmap inmap;
+
+    if (! map_get(map2s_2sX, a1s, inmap)) {
+        map2s_2sX.insert(make_pair(a1s, Inmap()));
+//      inmap is MT; so next if will correctly(!) fail
+    }
+    if (! map_get(inmap, a2s, sss)) {
+        sprintf(map_buf1, "%2s/%2s", a1s, a2s);
+        sss = strdup(map_buf1);
+        map2s_2sX[a1s].insert(std::make_pair(a2s, sss));
+    }
+    return sss;
+*/
+
+/*
     const char *sss;
     Inmap *inmap;
 
@@ -110,7 +130,9 @@ static inline const char *fprintf2s_2s (const char *fmt, const char *a1s, const 
         (*inmap)[a2s] = sss;
     }
     return sss;
+*/
 }
+
 /*
 Inmap onemap;
 static inline const char *fprintfD (FILE *filep, const char *fmt, const char* as)
