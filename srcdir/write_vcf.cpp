@@ -414,7 +414,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                             string ref_names = "(";
                             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                                 if(dummycanon == _tlocusp->Allele[allele].AlleleName) {
-                                    ref_names.pop_back();
+                                    ref_names.erase();
                                     continue;
                                 }
                                 if (allele != _tlocusp->AlleleCnt - 1)
