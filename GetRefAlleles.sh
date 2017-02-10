@@ -25,24 +25,43 @@
 
 if( $1 == "") then
     echo
-    echo "This script enables the construction of a simple reference allele file from vcf.gz reference panels for Mega2 to use."
+    echo "This script enables the construction of a simple reference allele file"
+    echo "from vcf.gz reference panels for Mega2 to use."
     echo
-    echo "First, this script uses BCFTools to parse vcf.gz files quickly, it can be obtained at http://www.htslib.org/download/."
+    echo "First, this script uses BCFTools to parse vcf.gz files quickly, it can"
+    echo " be obtained at http://www.htslib.org/download/."
     echo
-    echo "Secondly, you must first obtain a reference panel, this script looks in the current directory for those files."
+    echo "Secondly, you must first obtain a reference panel, this script looks"
+    echo "in the current directory for those files."
     echo
-    echo "A reference panel can be constructed from any data available, or from distributed public data panels such as 1000 genomes, shapeit etc.  As long as those files are in vcf.gz format organized by chromosome, with standardized naming."
+    echo "A reference panel can be constructed from any data available, or from"
+    echo "distributed public data panels such as 1000 genomes, Shapeit etc."
+    echo "As long as those files are in vcf.gz format organized by chromosome,"
+    echo "with standardized naming."
     echo
-    echo "This script requires two command line arguements based on the vcf.gz files you choose to use."
+    echo "This script requires two command line arguments based on the vcf.gz"
+    echo "files you choose to use."
     echo
-    echo "The two command line arguemnts are 1) everything before the chromsome number, 2) everything after the chromosome number."
-    echo "If data is provided in this form this script should loop over all the chromosomes and create a file of reference alles for chromosomes 1-22. "
+    echo "The arguments are 1) everything before the chromosome number,"
+    echo "2) everything after the chromosome number."
+    echo "If data is provided in this form this script should loop over all the "
+    echo "chromosomes and create reference allele file for chromosomes 1-22."
     echo
-    echo "    An exmaple: suppose I downloaded from 1000 genomes ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/, I would get files that look like: ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz."
+    echo "An example: suppose I downloaded from 1000 genomes "
+    echo "ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/, I would get files "
+    echo "that look like: "
+    echo "ALL.chr1.phase3.20130502.genotypes.vcf.gz."
     echo
-    echo "In this case the script would be run with the command 'GetRefAlleles.sh ALL.chr .phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz' which should output: 'RefAlleles.b37.ALL.chr1-22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz.txt.gz' Which is a 3 collumn file of CHR POS and REF, which is gzipped to save size.  The build number is included for Mega2's purposes and is obtained from the contig field (if possible)."
+    echo "In this case the script would be run with the command "
+    echo "'GetRefAlleles.sh ALL.chr .phase3.20130502.genotypes.vcf.gz' "
+    echo "which should output: "
+    echo "'RefAlleles.b37.ALL.chr1-22.phase3.20130502.genotypes.vcf.gz.txt.gz'"
+    echo "Which is a 3 column file of CHR POS and REF, which is Gzipped"
+    echo "to save size.  The build number is included for Mega2's purposes"
+    echo "and is obtained from the contig field (if possible)."
     echo
-    echo "This new file can be used in Mega2 under the menu option Reference Allele file."
+    echo "This new file can be used in Mega2 under the menu option called"
+    echo "Reference Allele file."
     exit 0
 endif
 
@@ -55,26 +74,27 @@ echo
 if ( "`type -t bcftools`" == "file" ) then
     echo set bcftools_program=`type -p bcftools`
     set bcftools_program=`type -p bcftools`
-else if ( $BCFTOOLS_def && -x "BCFTOOLS/bcftools" ) then
-    echo set bcftools_program=$BCFTOOLS/bcftools
-    set bcftools_program=$BCFTOOLS/bcftools
 else
-    echo The $BCFTOOLS/bcftools executable was not found -
-    echo please set your BCFTOOLS environment variable properly so bcftools can be found.
-    echo
-        if (! $BCFTOOLS_def) then
-            echo BCFTOOLS is not defined.
-        else
-            echo BCFTOOLS is set to "$BCFTOOLS".
-        endif
-    echo
-    echo If using Bash and ksh you would use something like this:
-    echo export BCFTOOLS=dir_to_bcftools
-    echo
-    echo If using csh you would use something like this:
-    echo setenv BCFTOOLS dir_to_bcftools
-    echo
-    exit 0
+    if( $BCFTOOLS_def && -x "$BCFTOOLS/bcftools" ) then
+        echo set bcftools_program=$BCFTOOLS/bcftools
+        set bcftools_program=$BCFTOOLS/bcftools
+    else
+        echo please set your BCFTOOLS environment variable properly so bcftools can be found.
+        echo
+            if (! $BCFTOOLS_def) then
+                echo BCFTOOLS is not defined.
+            else
+                echo BCFTOOLS is set to "$BCFTOOLS".
+            endif
+        echo
+        echo If using Bash and ksh you would use something like this:
+        echo export BCFTOOLS=dir_to_bcftools
+        echo
+        echo If using csh you would use something like this:
+        echo setenv BCFTOOLS dir_to_bcftools
+        echo
+        exit 0
+    endif
 endif
 
 echo
