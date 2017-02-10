@@ -35,7 +35,7 @@ if( $1 == "") then
     echo "in the current directory for those files."
     echo
     echo "A reference panel can be constructed from any data available, or from"
-    echo "distributed public data panels such as 1000 genomes, SHAPEIT, etc."
+    echo "distributed public data panels such as 1000 genomes, Minimac3, etc."
     echo "As long as those files are in vcf.gz format organized by chromosome,"
     echo "with standardized naming."
     echo
