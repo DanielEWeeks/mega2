@@ -48,8 +48,8 @@ if( $1 == "") then
     echo "chromosomes and create reference allele file for chromosomes 1-22."
     echo
     echo "An example: suppose I downloaded from 1000 genomes "
-    echo "ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/, I would get files "
-    echo "that look like: "
+    echo "ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/, I would 
+    echo "get files that look like: "
     echo "ALL.chr1.phase3.20130502.genotypes.vcf.gz."
     echo
     echo "In this case the script would be run with the command "
