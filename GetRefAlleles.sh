@@ -31,11 +31,11 @@ if( $1 == "") then
     echo "First, this script uses BCFTools to parse vcf.gz files quickly, it can"
     echo " be obtained at http://www.htslib.org/download/."
     echo
-    echo "Secondly, you must first obtain a reference panel, this script looks"
+    echo "Secondly, you must obtain a reference panel, this script looks"
     echo "in the current directory for those files."
     echo
     echo "A reference panel can be constructed from any data available, or from"
-    echo "distributed public data panels such as 1000 genomes, Shapeit etc."
+    echo "distributed public data panels such as 1000 genomes, SHAPEIT, etc."
     echo "As long as those files are in vcf.gz format organized by chromosome,"
     echo "with standardized naming."
     echo
@@ -54,9 +54,9 @@ if( $1 == "") then
     echo
     echo "In this case the script would be run with the command "
     echo "'GetRefAlleles.sh ALL.chr .phase3.20130502.genotypes.vcf.gz' "
-    echo "which should output: "
+    echo "the script will output: "
     echo "'RefAlleles.b37.ALL.chr1-22.phase3.20130502.genotypes.vcf.gz.txt.gz'"
-    echo "Which is a 3 column file of CHR POS and REF, which is Gzipped"
+    echo "Which is a 3 column file of CHR POS and REF, that is Gzipped"
     echo "to save size.  The build number is included for Mega2's purposes"
     echo "and is obtained from the contig field (if possible)."
     echo
