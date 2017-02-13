@@ -120,5 +120,5 @@ end
 echo "Gzipping the result..."
 gzip RefAlleles.$build.$1$inner$noextension.txt
 
-echo "Done creating: RefAlleles.$1$inner$2.$noextension.txt.gz"
+echo "Done creating: RefAlleles.$build.$1$inner$noextension.txt"
 echo "This file is ready for use with Mega2 as a Reference Allele File."
