@@ -61,6 +61,7 @@ extern void           time_stamp_logs(void);
 extern void           warnf(const char *messg);
 extern void           warnvf(const char *fmt, ...);
 
+extern void           dbgvf(const char *fmt, ...);
 
 /*
 extern void           input_file_error(void);

@@ -110,8 +110,12 @@ void mk_marker_filter(linkage_ped_top *Top)
     marker_filter_add(bchr, bmin, bmax);
 }
 
+SECTION_LOG_INIT(ignore_chromosome);
+
 void use_marker_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int bytes, unsigned char *data)
 {
+    SECTION_LOG_EXTERN(ignore_chromosome);
+
     linkage_locus_top *LTop = Top->LocusTop;
     int offset = LTop->PhenoCnt;
 
@@ -121,10 +125,11 @@ void use_marker_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int b
     Pairll   pp;
 
     if (! map_get(marker_filter, bchr, bplist)) {
+        SECTION_LOG(ignore_chromosome);
         if (bchr == -1)
-            printf("Marker_filter: person_link %d no data\n", link);
+            dbgvf("Marker_filter: person_link %d no data\n", link);
         else
-            printf("Marker_filter: person_link %d ignoring chromosome %d\n", link, bchr);
+            dbgvf("Marker_filter: person_link %d ignoring chromosome %d\n", link, bchr);
         return;
     }
     for (lp = bplist->begin(); lp != bplist->end(); lp++) {
@@ -139,6 +144,8 @@ void use_marker_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int b
 
 void use_locus_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int bytes, unsigned char *data)
 {
+    SECTION_LOG_EXTERN(ignore_chromosome);
+
     linkage_locus_top *LTop = Top->LocusTop;
     int offset = LTop->PhenoCnt;
     void *ds = marker_start(data, -offset);
@@ -149,10 +156,11 @@ void use_locus_filter(void *mk, linkage_ped_top *Top, int link, int bchr, int by
     Pairill    ill;
 
     if (! map_get(locus_filter, bchr, locuslist)) {
+        SECTION_LOG(ignore_chromosome);
         if (bchr == -1)
-            printf("Marker_filter: person_link %d no data\n", link);
+            dbgvf("Locus_filter: person_link %d no data\n", link);
         else
-            printf("Marker_filter: person_link %d ignoring chromosome %d\n", link, bchr);
+            dbgvf("Locus_filter: person_link %d ignoring chromosome %d\n", link, bchr);
         return;
     }
 
@@ -215,6 +223,7 @@ int Genotype_table::db_getall(linkage_ped_top *Top, void **Genotypes) {
             ret = 0;
         }
     }
+    SECTION_LOG_FINI(ignore_chromosome);
     return knt;
 }
 
@@ -576,22 +585,26 @@ void dbgenotype_import_genotype(linkage_ped_top *Top) {
 
     db_open_db();
 
-    if (chrs != 0) {
-        buf  = CALLOC((size_t) 4 * cnt + 9 /* chr in () */ + 1 /* 999 */+ 1 /* \0 */, char);
+    if (chrs != 0 && cnt <= 3) {
+//      buf  = CALLOC((size_t) 4 * cnt + 9 /* chr in () */ + 1 /* 999 */+ 1 /* \0 */, char);
+        buf  = CALLOC((size_t) 15 * cnt + 9, char);
         bufp = buf;
-        sprintf(bufp, "chr in (%d", chrs[0]);
+//      sprintf(bufp, "chr in (%d", chrs[0]);
+//      sprintf(bufp, "+chr = %d", chrs[0]);
+        sprintf(bufp, "chr = %d", chrs[0]);
         bufp += strlen(bufp);
         for (int i = 1; i < cnt; i++) {
-            sprintf(bufp, ", %d", chrs[i]);
+//          sprintf(bufp, ", %d", chrs[i]);
+            sprintf(bufp, " OR chr = %d", chrs[i]);
             bufp += strlen(bufp);
         }
-        sprintf(bufp, ")");
-        warnvf("Select * from genotype_table where %s\n", buf);
+//      sprintf(bufp, ")");
+        dbgvf("Select * from genotype_table where %s\n", buf);
         genotype_table.init(buf);
         free(buf);
         free(chrs);
     } else {
-        warnvf("Select * from genotype_table\n");
+        dbgvf("Select * from genotype_table\n");
         genotype_table.init();
     }
 

@@ -633,9 +633,9 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     if (abortf == 2 || abortl == 3) {
         exclaim();
         if (abortf == 2)   {
-            printf("Fatal errors in pedigree file %s.\n", mega2_input_files[0]);
+            errorvf("Fatal errors in pedigree file %s.\n", mega2_input_files[0]);
         } else if (abortl == 3)   {
-            printf("Fatal errors in locus file %s.\n", mega2_input_files[1]);
+            errorvf("Fatal errors in locus file %s.\n", mega2_input_files[1]);
         }
         exclaim();
         EXIT(DATA_INCONSISTENCY);

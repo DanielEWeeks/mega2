@@ -271,6 +271,33 @@ void msgvf(const char *fmt, ...)
     va_end(ap);
 }
 
+
+#ifdef HIDESTATUS
+void dbgvf(const char *fmt, ...)
+{
+    va_list ap;
+    const char *shout = "DBG: ";
+
+    va_start(ap, fmt);
+    if (Mega2logf != NULL) {
+        fputs(shout, Mega2logf);
+        vfprintf(Mega2logf, fmt, ap);
+        fflush(Mega2logf);
+    }
+    va_end(ap);
+
+    va_start(ap, fmt);
+    if (Display_Messages == 1 || Mega2logf == NULL) {
+        fputs(shout, Mega2logf);
+        vfprintf(stdout, fmt, ap);
+        fflush(stdout);
+    }
+    va_end(ap);
+}
+#else
+void dbgvf(const char *fmt, ...) {}
+#endif
+
 void errsimf(const char *messg)
 
 {
