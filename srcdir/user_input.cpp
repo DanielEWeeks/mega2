@@ -1490,13 +1490,14 @@ void menu1(file_format *infl_type,
 
         } else if (choice_ == ref_i) {
             printf("You can use an external reference panel to get a set of reference alleles.\n");
-            printf("This process is described in the section called 'External Reference Allele Panel in the Database'.\n");
-            printf("In the Mega2 documentation.\n\n");
+            printf("This process is described in the section called 'External Reference Allele Panel in the Database'\n");
+            printf("in the Mega2 documentation.\n\n");
             printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
             printf("They can be constructed by hand or using a shell script included with Mega2\n");
             printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
             printf("most recent build at ____________. \n\n");
             fln_get(refo, "reference allele");
+            BatchValueSet(refo->name,"Reference_Allele_File");
 
         } else if (choice_ == out_i) {   /* The output directory */
             draw_line();

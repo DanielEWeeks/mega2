@@ -102,7 +102,10 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     int pos = 0;
     char * dummy = (char *)"*";
 
-    printf("Matching position values between dataset and reference, this may take a while...\n");
+    int success = 0;
+    int fail = 0;
+
+    printf("Matching position values between dataset and reference, this may take a while for larger GWAS datasets. (a minute or more)\n");
     //read our buffer
     if(use_bp_sort) {
         while (1) {
@@ -137,12 +140,13 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                         insert(chromosome, position, locus, token);
                         bp++;
                         locus++;
-                    }
-                    else if (pos > position && chr == chromosome) {
+                        success++;
+                    } else if (pos > position && chr == chromosome) {
                         //if we find a value too large insert a dummy and increment
                         insert(chromosome, position, locus, dummy);
                         bp++;
                         //locus++;
+                        fail++;
                     }
                     chr = 0;
                     pos = 0;
@@ -167,6 +171,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
             }
         }
     }
+
         //we use this after the database read as bp_sort can't be accessed but the values are sorted.
         //so this is similar but refences top and is only used after db_read
     else {
@@ -215,6 +220,8 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
         }
     }
 
+    printf("Sucessfully Matched %d/%d Chromosome/Base Pair positions in the dataset to the provided reference panel.\n", success,success+fail);
+
     //final commit just in case
     MasterDB.commit();
     //delete our insert statement
@@ -230,8 +237,8 @@ Str Reference_Allele_Table::get_filename(){
     char input[255];
     while(1) {
         printf("You can use an external reference panel to get a set of reference alleles.\n");
-        printf("This process is described in the section called 'External Reference Allele Panel in the Database'.\n");
-        printf("In the Mega2 documentation.\n\n");
+        printf("This process is described in the section called 'External Reference Allele Panel in the Database'\n");
+        printf("n the Mega2 documentation.\n\n");
         printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
         printf("They can be constructed by hand or using a shell script included with Mega2\n");
         printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
