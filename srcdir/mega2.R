@@ -164,38 +164,39 @@ dbmega2_import = function(dbname="/Users/rbaron/mega2/test/mexnly/change_chrom/b
 
     for (tbl in TBLS) {
         if (dbExistsTable(con, tbl)) {
-            assign(tbl, dbReadTable(con, tbl), pos=globalenv());
             cat(tbl, dbListFields(con, tbl), sep="\t", end="\n");
+            assign(tbl, dbReadTable(con, tbl), pos=globalenv());
 #            print(head(get(tbl, pos=globalenv())))
         }
     }
 }
 
-fnsig = signature(a = "raw")
+geno_i = inline::cxxfunction(
+    signature(a = "raw"), 
 
-fnsrc = '
-  Rcpp::RawVector rv(a);
+    '
+    Rcpp::RawVector rv(a);
 
-  Rcpp::NumericVector v(rv.size() * 4);
+    Rcpp::NumericVector v(rv.size() * 4);
 
-  int j = 0;
-  for (int i = 0; i < rv.size(); i++) {
-    int t0 = rv[i];
-    int t1 = (t0 & 0x03) >> 0;
-    int t2 = (t0 & 0x0c) >> 2;
-    int t3 = (t0 & 0x30) >> 4;
-    int t4 = (t0 & 0xc0) >> 6;
-    v[j++] = t1;
-    v[j++] = t2;
-    v[j++] = t3;
-    v[j++] = t4;
-  }
-  return v;
-'
+    int j = 0;
+    for (int i = 0; i < rv.size(); i++) {
+      int t0 = rv[i];
+      int t1 = (t0 & 0x03) >> 0;
+      int t2 = (t0 & 0x0c) >> 2;
+      int t3 = (t0 & 0x30) >> 4;
+      int t4 = (t0 & 0xc0) >> 6;
+      v[j++] = t1;
+      v[j++] = t2;
+      v[j++] = t3;
+      v[j++] = t4;
+    }
+    return v;
+    ',
 
-fn = inline::cxxfunction(fnsig, fnsrc, plugin = "Rcpp");
+  plugin = "Rcpp")
 
-# gg=fn(g)
+# gg=geno_i(g)
 
 # a1=f$AlleleName.x
 # a2=f$AlleleName.y
@@ -206,7 +207,7 @@ get_per = function(pid=1) {
   a2 = allele_table[allele_table$indexX==2,2][-1];
 
   rv = genotype_table[pid, 5][[1]];
-  rv4 = fn(rv);
+  rv4 = geno_i(rv);
 
 #  0 1|1
 #  1 0|0
@@ -230,7 +231,7 @@ mkr = function(marker=1,pheno=1) {
   byte = as.integer(byte / 4);
   marker = marker - 1 - byte * 4;
   rv  = matrix(unlist(genotype_table[, 5]),nrow=dim(person_table)[1],byrow=TRUE)[,byte+1]
-  rv4 = fn(rv)
+  rv4 = geno_i(rv)
   rv4= matrix(rv4,ncol=4,byrow=TRUE)
   rv1 = rv4[,marker+1]
 
@@ -244,249 +245,6 @@ mkr = function(marker=1,pheno=1) {
 
 # ################################################################
 
-
-ftest = inline::cxxfunction(
-  signature(a = "List"),
-
-  '
-  Rcpp::List ll(a);
-
-  Rcpp::NumericVector v(3119);
-
-  Rprintf("this is a test A %d\\n", ll.size());
-
-  v[0] = ll.size();
-  Rprintf("this is a test 1 %d\\n", ll.size());
-  v = ll[1];
-  Rprintf("this is a test 2 %d\\n", ll.size());
-
-  Rcpp::List lx(ll[4]);
-  Rprintf("this is a test 3\\n");
-
-
-  Rprintf("this is a test B %d\\n", lx.size());
-//return lx;
-
-  Rcpp::RawVector rv(lx[1]);
-
-  Rprintf("this is a test C %d\\n", rv.size());
-
-  for (int i = 0; i < lx.size(); i++) {
-
-    Rcpp::RawVector rv(lx[i]);
-
-    Rprintf("%2d: ", i);
-    for (int j = 0; j < 16; j++) {
-         Rprintf("%02x ", rv[j]);
-    }
-    Rprintf("\\n");
-
-  }
-
-//  return rv;
-  ',
-
-  plugin = "Rcpp")
-
-################################################################
-
-p = function(marker=1,pheno=1) {
-
-  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
-  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
-
-  return
-    fp(genotype_table, marker, c(concat(a1, a1), "00", concat(a1, a2), concat(a2, a2)));
- 
-}
-
-m = function(marker=1,pheno=1) {
-
-  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
-  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
-
-  rv1 = fo(genotype_table, marker);
-
-  return
-    ifelse(rv1==0, concat(a1, a1),
-           ifelse(rv1==1, concat("00"),
-                  ifelse(rv1==2, concat(a1, a2), concat(a2,a2))
-                  )
-           )
-  
-}
-
-n = function(marker=1,pheno=1) {
-
-  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
-  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
-
-  rv1 = fo(genotype_table, marker);
-
-  return
-    c(concat(a1, a1), "00", concat(a1, a2), concat(a2, a2))[as.integer(rv1)+1]
- 
-}
-
-fo = inline::cxxfunction(
-  signature(genotype = "List", marker = "NumericVector"),
-
-  '
-  Rcpp::List ll(genotype);
-  Rcpp::NumericVector mv(marker);
-  int markerm1 = (mv[0]) - 1;
-
-  int byte = markerm1 / 4;
-  markerm1 = markerm1 - 4 * byte;
-
-  Rcpp::List lx(ll[4]);           // genotype[,5]
-
-  Rcpp::RawVector out(lx.size());
-  int j = 0;
-
-  for (int i = 0; i < lx.size(); i++) {
-
-    Rcpp::RawVector rv(lx[i]);
-
-    int t0 = rv[byte];
-    if (markerm1 == 0) {
-      out[j++] = (t0 & 0x03) >> 0;
-    } else if (markerm1 == 1) {
-      out[j++] = (t0 & 0x0c) >> 2;
-    } else if (markerm1 == 2) {
-      out[j++] = (t0 & 0x30) >> 4;
-    } else if (markerm1 == 3) {
-      out[j++] = (t0 & 0xc0) >> 6;
-    }
-
-  }
-
-  return out;
-  ',
-
-  plugin = "Rcpp")
-
-################################################################
-
-p = function(marker=1,pheno=1) {
-
-  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
-  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
-
-  return
-    fp(genotype_table, marker, c(concat(a1, a1), "00", concat(a1, a2), concat(a2, a2)));
- 
-}
-
-fp = inline::cxxfunction(
-  signature(genotype = "List", marker = "NumericVector", geno = "CharacterVector"),
-
-  '
-  Rcpp::List ll(genotype);
-  Rcpp::NumericVector mv(marker);
-  int markerm1 = (mv[0]) - 1;
-  Rcpp::CharacterVector g(geno);
-
-  int byte = markerm1 / 4;
-  markerm1 = markerm1 - 4 * byte;
-
-  Rcpp::List lx(ll[4]);           // genotype[,5]
-
-  Rcpp::CharacterVector out(lx.size());
-  int j = 0;
-
-  for (int i = 0; i < lx.size(); i++) {
-
-    Rcpp::RawVector rv(lx[i]);
-
-    int t0 = rv[byte];
-    if (markerm1 == 0) {
-      out[j++] = g[(t0 & 0x03) >> 0];
-    } else if (markerm1 == 1) {
-      out[j++] = g[(t0 & 0x0c) >> 2];
-    } else if (markerm1 == 2) {
-      out[j++] = g[(t0 & 0x30) >> 4];
-    } else if (markerm1 == 3) {
-      out[j++] = g[(t0 & 0xc0) >> 6];
-    }
-
-  }
-
-  return out;
-  ',
-
-  plugin = "Rcpp")
-
-################################################################
-
-q = function(marker=1,pheno=1) {
-
-  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
-  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
-
-  return
-    fq(marker, genotype_table, allele_table, pheno)
- 
-}
-
-fq = inline::cxxfunction(
-  signature(marker = "NumericVector", genotype = "List", allele = "List", phen = "NumericVector"),
-
-  '
-  Rcpp::NumericVector mv(marker);
-  int markerm1 = (mv[0]) - 1;
-
-  Rcpp::List ll(genotype);
-
-  Rcpp::List al(allele);
-  std::vector<std::string> g(4);
-
-  int byte = markerm1 / 4;
-  markerm1 = markerm1 - 4 * byte;
-
-  Rcpp::List lx(ll[4]);           // genotype[,5]
-
-  Rcpp::NumericVector ph(phen);
-  int pheno = ph[0];
-  int off = mv[0] - 1 + pheno;
-  Rprintf("pheno: %d, off: %d\\n", pheno, off);
-
-  Rcpp::CharacterVector aAlleleName(al[1]);
-  std::string al1(aAlleleName[2*off]);
-  std::string al2(aAlleleName[2*off+1]);
-  Rcpp::IntegerVector aindexX(al[3]);
-  Rprintf("al: %d %d %d %d\\n", aindexX[0], aindexX[1], aindexX[2], aindexX[3]);
-  Rprintf("al2: %s%s\\n", al1.c_str(), al2.c_str());
-
-  g[0] = al1 + al1;
-  g[1] = "00";
-  g[2] = al1 + al2;
-  g[3] = al2 + al2;
-
-  Rcpp::CharacterVector out(lx.size());
-  int j = 0;
-
-  for (int i = 0; i < lx.size(); i++) {
-
-    Rcpp::RawVector rv(lx[i]);
-
-    int t0 = rv[byte];
-    if (markerm1 == 0) {
-      out[j++] = g[(t0 & 0x03) >> 0];
-    } else if (markerm1 == 1) {
-      out[j++] = g[(t0 & 0x0c) >> 2];
-    } else if (markerm1 == 2) {
-      out[j++] = g[(t0 & 0x30) >> 4];
-    } else if (markerm1 == 3) {
-      out[j++] = g[(t0 & 0xc0) >> 6];
-    }
-
-  }
-
-  return out;
-  ',
-
-  plugin = "Rcpp")
 
 ################################################################
 
@@ -648,6 +406,7 @@ getmarker_Ri = inline::cxxfunction(
   plugin = "Rcpp")
 
 ################################################################
+
 getmarker = getmarker_C = function(marker=1, pheno=1) {
 
   return
@@ -723,3 +482,32 @@ getmarker_Ci = inline::cxxfunction(
     ',
 
   plugin = "Rcpp")
+
+tst1 = function() {
+
+    cat("getmarker_C", system.time((cc=getmarker_C(1:1000))), "\n");
+    cat("getmarker_R", system.time((dd=getmarker_R(1:1000))), "\n");
+    cat("getmarker_Cbind", system.time((ee=getmarker_Cbind(1:1000))), "\n");
+                
+    print(all(cc==dd));
+    print(all(cc==ee));
+
+    cat("getmarker_C", system.time((cc=getmarker_C(500000:501000))), "\n");
+    cat("getmarker_R", system.time((dd=getmarker_R(500000:501000))), "\n");
+    cat("getmarker_Cbind", system.time((ee=getmarker_Cbind(500000:501000))), "\n");
+                
+    print(all(cc==dd));
+    print(all(cc==ee));
+    
+}
+
+    ## getmarker_C 0.845 0.008 0.854 0 0 
+    ## getmarker_R 1.234 0.023 1.265 0 0 
+    ## getmarker_Cbind 16.954 9.304 26.325 0 0 
+    ## [1] TRUE
+    ## [1] TRUE
+    ## getmarker_C 0.965 0.018 0.984 0 0 
+    ## getmarker_R 1.211 0.018 1.234 0 0 
+    ## getmarker_Cbind 17.339 9.259 26.669 0 0 
+    ## [1] TRUE
+    ## [1] TRUE
