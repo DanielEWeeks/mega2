@@ -1,11 +1,42 @@
+
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software; you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+
+
+
 library(DBI)
 library(RSQLite)
 
-library(Rcpp)
 library(inline)
+library(Rcpp)
 
 concat = function(..., sep="") { return (paste(..., sep=sep)) }
 lhead  = function(obj, ...)    { print(length(obj)); head(obj, ...) }
+
+
 
 # c=(merge(allele_table[allele_table$indexX==1,], markerscheme_table[,c(1,2,3)], by.x="locus_link", by.y="key"))
 # 
@@ -169,7 +200,7 @@ fn = inline::cxxfunction(fnsig, fnsrc, plugin = "Rcpp");
 # a1=f$AlleleName.x
 # a2=f$AlleleName.y
 
-per = function(pid=1) {
+get_per = function(pid=1) {
 
   a1 = allele_table[allele_table$indexX==1,2][-1];
   a2 = allele_table[allele_table$indexX==2,2][-1];
@@ -210,3 +241,485 @@ mkr = function(marker=1,pheno=1) {
                   )
            )
 }
+
+# ################################################################
+
+
+ftest = inline::cxxfunction(
+  signature(a = "List"),
+
+  '
+  Rcpp::List ll(a);
+
+  Rcpp::NumericVector v(3119);
+
+  Rprintf("this is a test A %d\\n", ll.size());
+
+  v[0] = ll.size();
+  Rprintf("this is a test 1 %d\\n", ll.size());
+  v = ll[1];
+  Rprintf("this is a test 2 %d\\n", ll.size());
+
+  Rcpp::List lx(ll[4]);
+  Rprintf("this is a test 3\\n");
+
+
+  Rprintf("this is a test B %d\\n", lx.size());
+//return lx;
+
+  Rcpp::RawVector rv(lx[1]);
+
+  Rprintf("this is a test C %d\\n", rv.size());
+
+  for (int i = 0; i < lx.size(); i++) {
+
+    Rcpp::RawVector rv(lx[i]);
+
+    Rprintf("%2d: ", i);
+    for (int j = 0; j < 16; j++) {
+         Rprintf("%02x ", rv[j]);
+    }
+    Rprintf("\\n");
+
+  }
+
+//  return rv;
+  ',
+
+  plugin = "Rcpp")
+
+################################################################
+
+p = function(marker=1,pheno=1) {
+
+  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
+  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
+
+  return
+    fp(genotype_table, marker, c(concat(a1, a1), "00", concat(a1, a2), concat(a2, a2)));
+ 
+}
+
+m = function(marker=1,pheno=1) {
+
+  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
+  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
+
+  rv1 = fo(genotype_table, marker);
+
+  return
+    ifelse(rv1==0, concat(a1, a1),
+           ifelse(rv1==1, concat("00"),
+                  ifelse(rv1==2, concat(a1, a2), concat(a2,a2))
+                  )
+           )
+  
+}
+
+n = function(marker=1,pheno=1) {
+
+  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
+  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
+
+  rv1 = fo(genotype_table, marker);
+
+  return
+    c(concat(a1, a1), "00", concat(a1, a2), concat(a2, a2))[as.integer(rv1)+1]
+ 
+}
+
+fo = inline::cxxfunction(
+  signature(genotype = "List", marker = "NumericVector"),
+
+  '
+  Rcpp::List ll(genotype);
+  Rcpp::NumericVector mv(marker);
+  int markerm1 = (mv[0]) - 1;
+
+  int byte = markerm1 / 4;
+  markerm1 = markerm1 - 4 * byte;
+
+  Rcpp::List lx(ll[4]);           // genotype[,5]
+
+  Rcpp::RawVector out(lx.size());
+  int j = 0;
+
+  for (int i = 0; i < lx.size(); i++) {
+
+    Rcpp::RawVector rv(lx[i]);
+
+    int t0 = rv[byte];
+    if (markerm1 == 0) {
+      out[j++] = (t0 & 0x03) >> 0;
+    } else if (markerm1 == 1) {
+      out[j++] = (t0 & 0x0c) >> 2;
+    } else if (markerm1 == 2) {
+      out[j++] = (t0 & 0x30) >> 4;
+    } else if (markerm1 == 3) {
+      out[j++] = (t0 & 0xc0) >> 6;
+    }
+
+  }
+
+  return out;
+  ',
+
+  plugin = "Rcpp")
+
+################################################################
+
+p = function(marker=1,pheno=1) {
+
+  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
+  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
+
+  return
+    fp(genotype_table, marker, c(concat(a1, a1), "00", concat(a1, a2), concat(a2, a2)));
+ 
+}
+
+fp = inline::cxxfunction(
+  signature(genotype = "List", marker = "NumericVector", geno = "CharacterVector"),
+
+  '
+  Rcpp::List ll(genotype);
+  Rcpp::NumericVector mv(marker);
+  int markerm1 = (mv[0]) - 1;
+  Rcpp::CharacterVector g(geno);
+
+  int byte = markerm1 / 4;
+  markerm1 = markerm1 - 4 * byte;
+
+  Rcpp::List lx(ll[4]);           // genotype[,5]
+
+  Rcpp::CharacterVector out(lx.size());
+  int j = 0;
+
+  for (int i = 0; i < lx.size(); i++) {
+
+    Rcpp::RawVector rv(lx[i]);
+
+    int t0 = rv[byte];
+    if (markerm1 == 0) {
+      out[j++] = g[(t0 & 0x03) >> 0];
+    } else if (markerm1 == 1) {
+      out[j++] = g[(t0 & 0x0c) >> 2];
+    } else if (markerm1 == 2) {
+      out[j++] = g[(t0 & 0x30) >> 4];
+    } else if (markerm1 == 3) {
+      out[j++] = g[(t0 & 0xc0) >> 6];
+    }
+
+  }
+
+  return out;
+  ',
+
+  plugin = "Rcpp")
+
+################################################################
+
+q = function(marker=1,pheno=1) {
+
+  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
+  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
+
+  return
+    fq(marker, genotype_table, allele_table, pheno)
+ 
+}
+
+fq = inline::cxxfunction(
+  signature(marker = "NumericVector", genotype = "List", allele = "List", phen = "NumericVector"),
+
+  '
+  Rcpp::NumericVector mv(marker);
+  int markerm1 = (mv[0]) - 1;
+
+  Rcpp::List ll(genotype);
+
+  Rcpp::List al(allele);
+  std::vector<std::string> g(4);
+
+  int byte = markerm1 / 4;
+  markerm1 = markerm1 - 4 * byte;
+
+  Rcpp::List lx(ll[4]);           // genotype[,5]
+
+  Rcpp::NumericVector ph(phen);
+  int pheno = ph[0];
+  int off = mv[0] - 1 + pheno;
+  Rprintf("pheno: %d, off: %d\\n", pheno, off);
+
+  Rcpp::CharacterVector aAlleleName(al[1]);
+  std::string al1(aAlleleName[2*off]);
+  std::string al2(aAlleleName[2*off+1]);
+  Rcpp::IntegerVector aindexX(al[3]);
+  Rprintf("al: %d %d %d %d\\n", aindexX[0], aindexX[1], aindexX[2], aindexX[3]);
+  Rprintf("al2: %s%s\\n", al1.c_str(), al2.c_str());
+
+  g[0] = al1 + al1;
+  g[1] = "00";
+  g[2] = al1 + al2;
+  g[3] = al2 + al2;
+
+  Rcpp::CharacterVector out(lx.size());
+  int j = 0;
+
+  for (int i = 0; i < lx.size(); i++) {
+
+    Rcpp::RawVector rv(lx[i]);
+
+    int t0 = rv[byte];
+    if (markerm1 == 0) {
+      out[j++] = g[(t0 & 0x03) >> 0];
+    } else if (markerm1 == 1) {
+      out[j++] = g[(t0 & 0x0c) >> 2];
+    } else if (markerm1 == 2) {
+      out[j++] = g[(t0 & 0x30) >> 4];
+    } else if (markerm1 == 3) {
+      out[j++] = g[(t0 & 0xc0) >> 6];
+    }
+
+  }
+
+  return out;
+  ',
+
+  plugin = "Rcpp")
+
+################################################################
+
+getmarker_Cbind = function(marker=1, pheno=1) {
+
+  return
+    getmarker_Cbindi(marker, genotype_table, allele_table, pheno)
+ 
+}
+
+getmarker_Cbindi = inline::cxxfunction(
+    signature(marker_arg = "NumericVector", genotype_arg = "List", allele_arg = "List", pheno_arg = "NumericVector"),
+
+    '
+    int debug = 0;
+
+    Rcpp::NumericVector markers(marker_arg);
+    int marker_size = markers.size();
+
+    Rcpp::List genotype(genotype_arg);
+    Rcpp::List genotype_sample(genotype[4]);           // genotype[,5]
+    int genotype_sample_size = genotype_sample.size();
+
+    Rcpp::List allele(allele_arg);
+    std::vector<std::string> decode_allele(4);
+
+    Rcpp::NumericVector phenos(pheno_arg);
+    int pheno = phenos[0];
+
+    Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, 0);
+
+    int marker;
+    for (int i = 0; i < marker_size; i++) {
+        marker = markers[i];
+        int markerm1 = marker - 1;
+
+        int byte = markerm1 / 4;
+        markerm1 = markerm1 - 4 * byte;
+
+        int locus = marker - 1 + pheno;
+        if (debug) Rprintf("marker-1 %d, pheno: %d, locus: %d, byte %d, markerm1 %d\\n",
+                           marker-1, pheno, locus, byte, markerm1);
+
+        Rcpp::CharacterVector aAlleleName(allele[1]);
+        std::string allele1(aAlleleName[2*locus]);
+        std::string allele2(aAlleleName[2*locus+1]);
+        if (debug) Rprintf("allele1/2: %s%s; ", allele1.c_str(), allele2.c_str());
+
+        Rcpp::IntegerVector aindexX(allele[3]);
+        if (debug) Rprintf("indexX: %d %d\\n", aindexX[2*locus], aindexX[2*locus+1]);
+
+        decode_allele[0] = allele1 + allele1;
+        decode_allele[1] = "00";
+        decode_allele[2] = allele1 + allele2;
+        decode_allele[3] = allele2 + allele2;
+
+        Rcpp::CharacterVector oneCol(genotype_sample_size);
+        int k = 0;
+
+        for (int j = 0; j < genotype_sample_size; j++) {
+
+          Rcpp::RawVector rv(genotype_sample[j]);
+
+          int t0 = rv[byte];
+          if (markerm1 == 0) {
+            oneCol[k++] = decode_allele[(t0 & 0x03) >> 0];
+          } else if (markerm1 == 1) {
+            oneCol[k++] = decode_allele[(t0 & 0x0c) >> 2];
+          } else if (markerm1 == 2) {
+            oneCol[k++] = decode_allele[(t0 & 0x30) >> 4];
+          } else if (markerm1 == 3) {
+            oneCol[k++] = decode_allele[(t0 & 0xc0) >> 6];
+          }
+        }
+        mtx = Rcpp::cbind(mtx, oneCol);
+    }
+    return mtx;
+    ',
+
+  plugin = "Rcpp")
+
+################################################################
+
+getmarker_R = function(marker=1, pheno=1) {
+
+  return
+    getmarker_Ri(marker, genotype_table, allele_table, pheno)
+ 
+}
+
+getmarker_Ri = inline::cxxfunction(
+    signature(marker_arg = "NumericVector", genotype_arg = "List", allele_arg = "List", pheno_arg = "NumericVector"),
+
+    '
+    int debug = 0;
+
+    Rcpp::NumericVector markers(marker_arg);
+    int marker_size = markers.size();
+
+    Rcpp::List genotype(genotype_arg);
+    Rcpp::List genotype_sample(genotype[4]);           // genotype[,5]
+    int genotype_sample_size = genotype_sample.size();
+
+    Rcpp::List allele(allele_arg);
+    std::vector<std::string> decode_allele(4);
+
+    Rcpp::NumericVector phenos(pheno_arg);
+    int pheno = phenos[0];
+
+    Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, marker_size);
+
+    int marker;
+    for (int j = 0; j < genotype_sample_size; j++) {
+
+        Rcpp::RawVector rv(genotype_sample[j]);
+
+//      Rcpp::CharacterVector oneRow(marker_size);
+
+        for (int i = 0; i < markers.size(); i++) {
+
+            marker = markers[i];
+            int markerm1 = marker - 1;
+
+            int byte = markerm1 / 4;
+            markerm1 = markerm1 - 4 * byte;
+
+            int locus = marker - 1 + pheno;
+            if (debug) Rprintf("marker-1 %d, pheno: %d, locus: %d, byte %d, markerm1 %d\\n",
+                                marker-1, pheno, locus, byte, markerm1);
+
+            Rcpp::CharacterVector aAlleleName(allele[1]);
+            std::string allele1(aAlleleName[2*locus]);
+            std::string allele2(aAlleleName[2*locus+1]);
+            if (debug) Rprintf("allele1/2: %s%s; ", allele1.c_str(), allele2.c_str());
+
+            Rcpp::IntegerVector aindexX(allele[3]);
+            if (debug) Rprintf("indexX: %d %d\\n", aindexX[2*locus], aindexX[2*locus+1]);
+
+            decode_allele[0] = allele1 + allele1;
+            decode_allele[1] = "00";
+            decode_allele[2] = allele1 + allele2;
+            decode_allele[3] = allele2 + allele2;
+
+            int t0 = rv[byte];
+            if (markerm1 == 0) {
+              mtx(j, i) = decode_allele[(t0 & 0x03) >> 0];
+            } else if (markerm1 == 1) {
+              mtx(j, i) = decode_allele[(t0 & 0x0c) >> 2];
+            } else if (markerm1 == 2) {
+              mtx(j, i) = decode_allele[(t0 & 0x30) >> 4];
+            } else if (markerm1 == 3) {
+              mtx(j, i) = decode_allele[(t0 & 0xc0) >> 6];
+            }
+        }
+    }
+    return mtx;
+    ',
+
+  plugin = "Rcpp")
+
+################################################################
+getmarker = getmarker_C = function(marker=1, pheno=1) {
+
+  return
+    getmarker_Ci(marker, genotype_table, allele_table, pheno)
+ 
+}
+
+getmarker_Ci = inline::cxxfunction(
+    signature(marker_arg = "NumericVector", genotype_arg = "List", allele_arg = "List", pheno_arg = "NumericVector"),
+
+    '
+    int debug = 0;
+
+    Rcpp::NumericVector markers(marker_arg);
+    int marker_size = markers.size();
+
+    Rcpp::List genotype(genotype_arg);
+    Rcpp::List genotype_sample(genotype[4]);           // genotype[,5]
+    int genotype_sample_size = genotype_sample.size();
+
+    Rcpp::List allele(allele_arg);
+    std::vector<std::string> decode_allele(4);
+
+    Rcpp::NumericVector phenos(pheno_arg);
+    int pheno = phenos[0];
+
+    Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, marker_size);
+
+    int marker;
+    for (int i = 0; i < marker_size; i++) {
+        marker = markers[i];
+        int markerm1 = marker - 1;
+
+        int byte = markerm1 / 4;
+        markerm1 = markerm1 - 4 * byte;
+
+        int locus = marker - 1 + pheno;
+        if (debug) Rprintf("marker-1 %d, pheno: %d, locus: %d, byte %d, markerm1 %d\\n",
+                           marker-1, pheno, locus, byte, markerm1);
+
+        Rcpp::CharacterVector aAlleleName(allele[1]);
+        std::string allele1(aAlleleName[2*locus]);
+        std::string allele2(aAlleleName[2*locus+1]);
+        if (debug) Rprintf("allele1/2: %s%s; ", allele1.c_str(), allele2.c_str());
+
+        Rcpp::IntegerVector aindexX(allele[3]);
+        if (debug) Rprintf("indexX: %d %d\\n", aindexX[2*locus], aindexX[2*locus+1]);
+
+        decode_allele[0] = allele1 + allele1;
+        decode_allele[1] = "00";
+        decode_allele[2] = allele1 + allele2;
+        decode_allele[3] = allele2 + allele2;
+
+        Rcpp::CharacterVector oneCol(genotype_sample_size);
+
+        for (int j = 0; j < genotype_sample_size; j++) {
+
+          Rcpp::RawVector rv(genotype_sample[j]);
+
+          int t0 = rv[byte];
+          if (markerm1 == 0) {
+            mtx(j, i) = decode_allele[(t0 & 0x03) >> 0];
+          } else if (markerm1 == 1) {
+            mtx(j, i) = decode_allele[(t0 & 0x0c) >> 2];
+          } else if (markerm1 == 2) {
+            mtx(j, i) = decode_allele[(t0 & 0x30) >> 4];
+          } else if (markerm1 == 3) {
+            mtx(j, i) = decode_allele[(t0 & 0xc0) >> 6];
+          }
+        }
+    }
+    return mtx;
+    ',
+
+  plugin = "Rcpp")
