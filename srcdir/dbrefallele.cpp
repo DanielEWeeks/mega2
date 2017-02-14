@@ -105,7 +105,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     int success = 0;
     int fail = 0;
 
-    printf("Matching position values between dataset and reference, this may take a while for larger GWAS datasets. (a minute or more)\n");
+    printf("Matching position values between dataset and reference, this may take a while especially for larger GWAS datasets. (a minute or more)\n");
     //read our buffer
     if(use_bp_sort) {
         while (1) {
@@ -220,7 +220,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
         }
     }
 
-    printf("Sucessfully Matched %d/%d Chromosome/Base Pair positions in the dataset to the provided reference panel.\n", success,success+fail);
+    printf("Successfully matched %d/%d Chromosome/Base Pair positions in the dataset to the provided reference panel.\n", success,success+fail);
 
     //final commit just in case
     MasterDB.commit();
