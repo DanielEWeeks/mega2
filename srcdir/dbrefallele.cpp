@@ -220,7 +220,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
         }
     }
 
-    printf("Successfully matched %d/%d Chromosome/Base Pair positions in the dataset to the provided reference panel.\n", success,success+fail);
+    printf("Successfully matched %d/%d variants in the dataset to the provided reference panel.\n", success,success+fail);
 
     //final commit just in case
     MasterDB.commit();

@@ -299,16 +299,24 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner() {
+            if( _EXLTop->EXLocus[_locus].positions[base_pair_position_index] == 1888369)
+            printf("%d,%d,%d\n",_allele1 - 1,_allele2 - 1,extremum_allele);
+
             int allele1;
             int allele2;
 
-            if(_allele1 -1 == extremum_allele)
+            if(_allele1 == 0)
+                allele1 = 0;
+            else if(_allele1 - 1 == extremum_allele)
                 allele1 = 1;
-            else if(_allele1 -1  < extremum_allele)
+            else if(_allele1 - 1  < extremum_allele)
                 allele1 = _allele1 + 1;
             else
                 allele1 = _allele1;
-            if(_allele2 -1  == extremum_allele)
+
+            if(_allele2 == 0)
+                allele2 = 0;
+            else if(_allele2 - 1 == extremum_allele)
                 allele2 = 1;
             else if(_allele2 - 1 < extremum_allele)
                 allele2 = _allele2 + 1;
@@ -316,14 +324,14 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 allele2 = _allele2;
 
 
-            if (allele1 - 1 == -1)
+            if (allele1  == 0)
                 pr_printf(".");
             else
                 pr_printf("%d", allele1 - 1);
 
             pr_printf("/");
 
-            if (allele2 - 1 == -1)
+            if (allele2 == 0)
                 pr_printf(".");
             else
                 pr_printf("%d", allele2 - 1);
@@ -429,22 +437,18 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                         }
                         if (reference_exists == 0) {
                             a1 = ref_return;
-                            extremum_allele = -1;
                             string ref_names = "(";
                             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                                if(dummycanon == _tlocusp->Allele[allele].AlleleName) {
-                                    ref_names.erase();
-                                    continue;
-                                }
-                                if (allele != _tlocusp->AlleleCnt - 1)
-                                    ref_names = ref_names + _tlocusp->Allele[allele].AlleleName + ",";
+                                if(dummycanon == _tlocusp->Allele[allele].AlleleName)
+                                    ref_names = ref_names + ".";
                                 else
                                     ref_names = ref_names + _tlocusp->Allele[allele].AlleleName;
+                                if (allele != _tlocusp->AlleleCnt - 1)
+                                    ref_names = ref_names + ",";
                             }
                             ref_names += ")";
                             SECTION_LOG(ref_mismatch);
-                            mssgvf("chr%d:%d ref allele %s not in observed alleles %s . \n", _numchr, lookup, ref_return.c_str(), ref_names.c_str());
-                            //mssgvf("Reference allele value of %s not in the measured allele dataset at CHR:%d POS:%d\n", ref_return.c_str(), _tlocusp->Marker->chromosome, _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
+                            mssgvf("chr%d:%d ref allele %s not in observed alleles %s. \n", _numchr, lookup, ref_return.c_str(), ref_names.c_str());
                             reference_exists = -1;
                             auxillary_ref = ref_return;
                         }
@@ -512,15 +516,15 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 if(_tlocusp->Marker->pos_avg != UNKNOWN_POSITION)
                     pr_printf("%.2f,",_tlocusp->Marker->pos_avg);
                 else
-                    pr_printf("NA,");
+                    pr_printf(".,");
                 if(_tlocusp->Marker->pos_male != UNKNOWN_POSITION)
                     pr_printf("%.2f,",_tlocusp->Marker->pos_male);
                 else
-                    pr_printf("NA,");
+                    pr_printf(".,");
                 if(_tlocusp->Marker->pos_female != UNKNOWN_POSITION)
                     pr_printf("%.2f;",_tlocusp->Marker->pos_male);
                 else
-                    pr_printf("NA;");
+                    pr_printf(".;");
 
             }
             //pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
@@ -533,10 +537,10 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if(allele == extremum_allele)
                     continue;
-                else if (allele != _tlocusp->AlleleCnt)
+                else if (allele == _tlocusp->AlleleCnt - 1)
                     pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
                 else
-                    pr_printf("%.6f,",_tlocusp->Allele[allele].Frequency);
+                    pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
             }
             pr_printf(";");
             if(ref_choice == "Use Mega2 Allele DB Table") {
@@ -901,11 +905,39 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         if (ret == SQLITE_ROW)
             reftableexists = 1;
         else
-            break;
+            reftableexists = 0;
+
+        break;
     }
 
     MasterDB.commit();
     delete select;
+
+    //if we find a table we want to check it has values
+    //only do this if the reftable exists
+    if(reftableexists) {
+        DBstmt *select;
+        char select_string2[255] = "SELECT COUNT(pos) FROM 'ref_allele_table'";
+
+        int locuscnt = 0;
+        select = MasterDB.prep(select_string2);
+        int ret = select && select->abort();
+        while (ret) {
+            ret = select->step();
+            if (ret == SQLITE_ROW) {
+                select->column(0, locuscnt);
+                //printf("%d,%d",locuscnt,Top->LocusTop->LocusCnt - 1);
+                if (locuscnt > 0 )
+                    reftableexists = 1;
+                else
+                    reftableexists = 0;
+
+                break;
+            }
+        }
+
+        delete select;
+    }
 
     //for testing remove afterwards.
     //reftableexists = 0;
