@@ -299,9 +299,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner() {
-            if( _EXLTop->EXLocus[_locus].positions[base_pair_position_index] == 1888369)
-            printf("%d,%d,%d\n",_allele1 - 1,_allele2 - 1,extremum_allele);
-
             int allele1;
             int allele2;
 
