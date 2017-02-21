@@ -889,79 +889,79 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
     reftableexists = 0;
     change_build_allowed = 1;
 
-    //check for reference table:
-    //db_open_db();
-    MasterDB.begin();
-    DBstmt *select;
-    char select_string[255] = "SELECT name FROM sqlite_master WHERE type='table' AND name='ref_allele_table';";
+    std::string refchoice = "Major Allele";
+    strcpy(prefix, file_name_stem);
+    char buildname[255] = "B37";
+    choice = -1;
 
-    select = MasterDB.prep( select_string);
-    int ret = select && select->abort();
-    while (ret){
-        ret = select->step();
-        if (ret == SQLITE_ROW)
-            reftableexists = 1;
-        else
-            reftableexists = 0;
-
-        break;
-    }
-
-    MasterDB.commit();
-    delete select;
-
-    //if we find a table we want to check it has values
-    //only do this if the reftable exists
-    if(reftableexists) {
+    //don't want any database activities unless we're in db mode
+    if(database_read) {
+        //check for reference table:
+        //db_open_db();
+        MasterDB.begin();
         DBstmt *select;
-        char select_string2[255] = "SELECT COUNT(pos) FROM 'ref_allele_table'";
+        char select_string[255] = "SELECT name FROM sqlite_master WHERE type='table' AND name='ref_allele_table';";
 
-        int locuscnt = 0;
-        select = MasterDB.prep(select_string2);
+        select = MasterDB.prep(select_string);
         int ret = select && select->abort();
         while (ret) {
             ret = select->step();
-            if (ret == SQLITE_ROW) {
-                select->column(0, locuscnt);
-                //printf("%d,%d",locuscnt,Top->LocusTop->LocusCnt - 1);
-                if (locuscnt > 0 )
-                    reftableexists = 1;
-                else
-                    reftableexists = 0;
+            if (ret == SQLITE_ROW)
+                reftableexists = 1;
+            else
+                reftableexists = 0;
 
-                break;
-            }
+            break;
         }
 
+        MasterDB.commit();
         delete select;
-    }
 
-    //for testing remove afterwards.
-    //reftableexists = 0;
+        //if we find a table we want to check it has values
+        //only do this if the reftable exists
+        if (reftableexists) {
+            DBstmt *select;
+            char select_string2[255] = "SELECT COUNT(pos) FROM 'ref_allele_table'";
 
-    //set more variables
-    strcpy(prefix,file_name_stem);
-    char buildname[255] = "B37";
-    choice = -1;
-    std::string refchoice;
-    if(!reftableexists)
-        refchoice = "Major Allele";
-    else {
-        refchoice = "Use Mega2 Allele DB Table";
-        string rfile = mega2_input_files[REFfl];
-        if(rfile.find("B37")!=std::string::npos || rfile.find("b37")!=std::string::npos)
-           strcpy(buildname,"B37");
-        if(rfile.find("HG37")!=std::string::npos || rfile.find("hg37")!=std::string::npos)
-            strcpy(buildname,"HG37");
-        if(rfile.find("B38")!=std::string::npos || rfile.find("b38")!=std::string::npos)
-            strcpy(buildname,"B38");
-        if(rfile.find("HG38")!=std::string::npos || rfile.find("hg38")!=std::string::npos)
-            strcpy(buildname,"HG38");
-        if(rfile.find("B19")!=std::string::npos || rfile.find("b19")!=std::string::npos)
-            strcpy(buildname,"B19");
-        if(rfile.find("HG19")!=std::string::npos || rfile.find("hg19")!=std::string::npos)
-            strcpy(buildname,"HG19");
-        change_build_allowed = 0;
+            int locuscnt = 0;
+            select = MasterDB.prep(select_string2);
+            int ret = select && select->abort();
+            while (ret) {
+                ret = select->step();
+                if (ret == SQLITE_ROW) {
+                    select->column(0, locuscnt);
+                    //printf("%d,%d",locuscnt,Top->LocusTop->LocusCnt - 1);
+                    if (locuscnt > 0)
+                        reftableexists = 1;
+                    else
+                        reftableexists = 0;
+
+                    break;
+                }
+            }
+
+            delete select;
+        }
+
+        if (!reftableexists)
+            refchoice = "Major Allele";
+        else {
+            refchoice = "Use Mega2 Allele DB Table";
+            string rfile = mega2_input_files[REFfl];
+            if (rfile.find("B37") != std::string::npos || rfile.find("b37") != std::string::npos)
+                strcpy(buildname, "B37");
+            if (rfile.find("HG37") != std::string::npos || rfile.find("hg37") != std::string::npos)
+                strcpy(buildname, "HG37");
+            if (rfile.find("B38") != std::string::npos || rfile.find("b38") != std::string::npos)
+                strcpy(buildname, "B38");
+            if (rfile.find("HG38") != std::string::npos || rfile.find("hg38") != std::string::npos)
+                strcpy(buildname, "HG38");
+            if (rfile.find("B19") != std::string::npos || rfile.find("b19") != std::string::npos)
+                strcpy(buildname, "B19");
+            if (rfile.find("HG19") != std::string::npos || rfile.find("hg19") != std::string::npos)
+                strcpy(buildname, "HG19");
+            change_build_allowed = 0;
+        }
     }
 
     // actual menu loop
@@ -1037,11 +1037,16 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 draw_line();
                 printf("1) Use Major Allele Frequency\n");
                 printf("2) Use Minor Allele Frequency\n");
-                if (reftableexists)
-                    printf("3) Use Mega2 Allele DB Table [exists]\n");
+                if(database_read) {
+                    if (reftableexists)
+                        printf("3) Use Mega2 Allele DB Table [exists]\n");
+                    else
+                        printf("3) Use Mega2 Allele DB Table [create]\n");
+                    printf("Enter selection: 1 - 3 > ");
+                }
                 else
-                    printf("3) Use Mega2 Allele DB Table [create]\n");
-                printf("Enter selection: 1 - 3 > ");
+                    printf("Enter selection: 1 - 2 > ");
+
                 fcmap(stdin, "%d", &choice3);
                 newline;
                 if (choice3 == 1) {
@@ -1052,7 +1057,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                     refchoice = "Minor Allele";
                     break;
                 }
-                else if (choice3 == 3) {
+                else if (choice3 == 3 && database_read) {
                     if (reftableexists) {
                         //if the ref table is already there we're all good
                         printf("Using the existing external reference table.\n");
