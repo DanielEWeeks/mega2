@@ -301,7 +301,7 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
         //finds the program to run dynamically and gives an error if it can't be found.
         void sh_find_pgm(const char *NAME, const char *fullpath, const char *path) {
             pr_printf("if ( $?%s  ) then\n", NAME);
-            pr_printf("  set %s_def=1\n", NAME);
+            pr_printf("  set %s_def=\"%s\"\n", NAME, fullpath);
             pr_printf("else\n");
             pr_printf("  set %s_def=0\n", NAME);
             pr_printf("endif\n");
@@ -309,14 +309,14 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_printf("if ( \"`type -t %s`\" == \"file\" ) then\n", path);
             pr_printf("  echo set %s_program=`type -p %s`\n", path, path);
             pr_printf("  set %s_program=`type -p %s`\n", path, path);
-            pr_printf("else if ( $%s_def && -x \"%s\" ) then\n", NAME, fullpath);
-            pr_printf("  echo set %s_program=%s\n", path, fullpath);
-            pr_printf("  set %s_program=%s\n", path, fullpath);
+            pr_printf("else if ( \"$%s_def\" != \"0\" && -x \"$%s_def\" ) then\n", NAME, NAME);
+            pr_printf("  echo set %s_program=\"$%s_def\"\n", path, NAME);
+            pr_printf("  set %s_program=\"$%s_def\"\n", path, NAME);
             pr_printf("else\n");
             pr_printf("  echo The %s executable was not found - \n", fullpath);
             pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", NAME, path);
             pr_printf("  echo\n");
-            pr_printf("    if (! $%s_def) then\n", NAME);
+            pr_printf("    if (\"$%s_def\" == \"0\") then\n", NAME);
             pr_printf("      echo %s is not defined.\n", NAME);
             pr_printf("    else\n");
             pr_printf("      echo %s is set to \"$%s\".\n", NAME, NAME);
@@ -328,13 +328,15 @@ static void write_MINIMAC_sh(linkage_ped_top *Top, char *file_names[]) {
             pr_printf("  echo If using csh you would use something like this:\n");
             pr_printf("  echo setenv %s dir_to_%s\n", NAME, path);
             pr_printf("  echo\n");
+//          pr_printf("  echo \"Be sure to run 'make %s' to build %s in the %s\"\n",
+//                      pgm, pgm, path);
+//          pr_printf("  echo sub directory of %s.\n", NAME);
             pr_printf("  echo\n");
-            pr_printf("  echo \"For further details, please see SHAPEIT/Minimac3 section of the Mega2 documentation.\"\n");
+            pr_printf("  echo \"For further details, please see '%s' section of the Mega2 documentation.\"\n", NAME);
             pr_printf("  exit 0\n");
             pr_printf("endif\n");
             pr_nl();
         }
-
     } *minimac_shs = new minimac_sh(Top);
 
     minimac_shs->file_names = file_names;
@@ -414,7 +416,7 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
     s_hap_renamed = 0;
     legend_renamed = 0;
     m_hap_renamed = 0;
-    haps_sample_selected = 0;
+    haps_sample_selected = 1;
 
     strcpy(prefix, file_name_stem);
 

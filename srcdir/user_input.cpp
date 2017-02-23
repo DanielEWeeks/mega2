@@ -1279,7 +1279,9 @@ void menu1(file_format *infl_type,
             idx++;
         }
 
-        choiceA[idx] = fln_print(refo, idx, ref_i);
+        if(database_dump)
+            choiceA[idx] = fln_print(refo, idx, ref_i);
+
         if (choiceA[idx]) idx++;
 
 /*
@@ -1490,13 +1492,44 @@ void menu1(file_format *infl_type,
 
         } else if (choice_ == ref_i) {
             printf("You can use an external reference panel to get a set of reference alleles.\n");
-            printf("This process is described in the section called 'External Reference Allele Panel in the Database'.\n");
-            printf("In the Mega2 documentation.\n\n");
+            printf("This process is described in the section called 'External Reference Allele Panel in the Database'\n");
+            printf("in the Mega2 documentation.\n\n");
             printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
             printf("They can be constructed by hand or using a shell script included with Mega2\n");
             printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
             printf("most recent build at ____________. \n\n");
             fln_get(refo, "reference allele");
+            BatchValueSet(refo->name,"Reference_Allele_File");
+            newline;
+            draw_line();
+            char buildname[255];
+
+            Str rfile = refo->name;
+
+            if(rfile.find("B37")!=std::string::npos || rfile.find("b37")!=std::string::npos)
+                strcpy(buildname,"B37");
+            else if(rfile.find("HG37")!=std::string::npos || rfile.find("hg37")!=std::string::npos)
+                strcpy(buildname,"HG37");
+            else if(rfile.find("B38")!=std::string::npos || rfile.find("b38")!=std::string::npos)
+                strcpy(buildname,"B38");
+            else if(rfile.find("HG38")!=std::string::npos || rfile.find("hg38")!=std::string::npos)
+                strcpy(buildname,"HG38");
+            else if(rfile.find("B19")!=std::string::npos || rfile.find("b19")!=std::string::npos)
+                strcpy(buildname,"B19");
+            else if(rfile.find("HG19")!=std::string::npos || rfile.find("hg19")!=std::string::npos)
+                strcpy(buildname,"HG19");
+            else {
+                printf("Enter genome build for Reference File and Dataset > ");
+                fcmap(stdin, "%s", buildname);
+                newline;
+            }
+            printf("Genome build has been set to %s\n",buildname);
+            Str hgbuild = buildname;
+
+            BatchValueSet(hgbuild,"human_genome_build");
+            batchf(BatchItemGet("human_genome_build"));
+
+
 
         } else if (choice_ == out_i) {   /* The output directory */
             draw_line();

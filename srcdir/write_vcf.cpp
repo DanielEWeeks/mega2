@@ -151,15 +151,17 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
         void file_header(){
             pr_printf("##fileformat=VCFv4.1\n");
-            pr_printf("##filedate=%s\n",__TIMESTAMP__);
+            pr_printf("##filedate=<%s>\n",__TIMESTAMP__);
             pr_printf("##source=MEGA2\n");
             if(base_pair_position_index >= 0)
                 pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
             pr_printf("##INFO=<ID=RF,Number=1,Type=Float,Description=\"Allele Frequency of reference allele\">\n");
             pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
             //add conditional
-            if(ref_choice == "Use Mega2 Allele DB Table")
-                pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele used instead.\"\n>");
+            if(ref_choice == "Use Mega2 Allele DB Table") {
+                pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele used instead.\">\n");
+                pr_printf("##INFO=<ID=UNREF,Number=1,Type=String,Description=\"Reference panel had an allele match for this position, but it was not in the measured dataset.\">\n");
+            }
             //don't know these for now
             //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
             //pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
@@ -276,6 +278,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
         HMapis references;
         int lastchr;
+        int extremum_allele;
 
         void file_loop() {
             //mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
@@ -296,20 +299,41 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner() {
-            if(_allele1 - 1 == -1)
+            int allele1;
+            int allele2;
+
+            if(_allele1 == 0)
+                allele1 = 0;
+            else if(_allele1 - 1 == extremum_allele)
+                allele1 = 1;
+            else if(_allele1 - 1  < extremum_allele)
+                allele1 = _allele1 + 1;
+            else
+                allele1 = _allele1;
+
+            if(_allele2 == 0)
+                allele2 = 0;
+            else if(_allele2 - 1 == extremum_allele)
+                allele2 = 1;
+            else if(_allele2 - 1 < extremum_allele)
+                allele2 = _allele2 + 1;
+            else
+                allele2 = _allele2;
+
+
+            if (allele1  == 0)
                 pr_printf(".");
             else
-                pr_printf("%d", _allele1 - 1);
+                pr_printf("%d", allele1 - 1);
 
             pr_printf("/");
 
-            if(_allele2 - 1 == -1)
+            if (allele2 == 0)
                 pr_printf(".");
             else
-                pr_printf("%d", _allele2 - 1);
+                pr_printf("%d", allele2 - 1);
 
             pr_printf("\t");
-
         }
 
         void chr_start() {
@@ -371,7 +395,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
             //extremum means minimum or maximum
             double extremum_frequency = 0;
-            int extremum_allele = 0;
+            extremum_allele = 0;
             int reference_exists = 0;
 
             if(ref_choice == "Major Allele"){
@@ -387,7 +411,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(ref_choice == "Minor Allele"){
                 extremum_frequency = 1.0;
                 for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                    if (_tlocusp->Allele[allele].Frequency < extremum_frequency) {
+                    if (_tlocusp->Allele[allele].Frequency <= extremum_frequency) {
                         extremum_frequency = _tlocusp->Allele[allele].Frequency;
                         extremum_allele = allele;
                     }
@@ -395,7 +419,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             }
 
 
-
+            string auxillary_ref;
             if(ref_choice == "Use Mega2 Allele DB Table") {
                 string ref_return;
                 int lookup = (int) _EXLTop->EXLocus[_locus].positions[base_pair_position_index];
@@ -408,25 +432,22 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                                 break;
                             }
                         }
-                        if (!reference_exists) {
+                        if (reference_exists == 0) {
                             a1 = ref_return;
-                            extremum_allele = -1;
                             string ref_names = "(";
                             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                                if(dummycanon == _tlocusp->Allele[allele].AlleleName) {
-                                    ref_names.erase();
-                                    continue;
-                                }
-                                if (allele != _tlocusp->AlleleCnt - 1)
-                                    ref_names = ref_names + _tlocusp->Allele[allele].AlleleName + ",";
+                                if(dummycanon == _tlocusp->Allele[allele].AlleleName)
+                                    ref_names = ref_names + ".";
                                 else
                                     ref_names = ref_names + _tlocusp->Allele[allele].AlleleName;
+                                if (allele != _tlocusp->AlleleCnt - 1)
+                                    ref_names = ref_names + ",";
                             }
                             ref_names += ")";
                             SECTION_LOG(ref_mismatch);
-                            mssgvf("chr%d:%d ref allele %s not in observed alleles %s . \n", _numchr, lookup, ref_return.c_str(), ref_names.c_str());
-                            //mssgvf("Reference allele value of %s not in the measured allele dataset at CHR:%d POS:%d\n", ref_return.c_str(), _tlocusp->Marker->chromosome, _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
-                            reference_exists = 0;
+                            mssgvf("chr%d:%d ref allele %s not in observed alleles %s. \n", _numchr, lookup, ref_return.c_str(), ref_names.c_str());
+                            reference_exists = -1;
+                            auxillary_ref = ref_return;
                         }
                     }
                     else {
@@ -439,7 +460,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     reference_exists = 0;
 
                 //get major allele instead if there is no reference allele
-                if (reference_exists == 0) {
+                if (reference_exists == 0 || reference_exists == -1) {
                     extremum_frequency = 0;
                     for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                         if (_tlocusp->Allele[allele].Frequency > extremum_frequency) {
@@ -492,15 +513,15 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 if(_tlocusp->Marker->pos_avg != UNKNOWN_POSITION)
                     pr_printf("%.2f,",_tlocusp->Marker->pos_avg);
                 else
-                    pr_printf("NA,");
+                    pr_printf(".,");
                 if(_tlocusp->Marker->pos_male != UNKNOWN_POSITION)
                     pr_printf("%.2f,",_tlocusp->Marker->pos_male);
                 else
-                    pr_printf("NA,");
+                    pr_printf(".,");
                 if(_tlocusp->Marker->pos_female != UNKNOWN_POSITION)
                     pr_printf("%.2f;",_tlocusp->Marker->pos_male);
                 else
-                    pr_printf("NA;");
+                    pr_printf(".;");
 
             }
             //pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
@@ -513,14 +534,18 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if(allele == extremum_allele)
                     continue;
-                else if (allele != _tlocusp->AlleleCnt - 1)
-                    pr_printf("%.6f,",_tlocusp->Allele[allele].Frequency);
+                else if (allele == _tlocusp->AlleleCnt - 1)
+                    pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
                 else
                     pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
             }
             pr_printf(";");
-            if(!reference_exists && ref_choice == "Use Mega2 Allele DB Table")
-                pr_printf("NO;");
+            if(ref_choice == "Use Mega2 Allele DB Table") {
+                if (reference_exists == 0)
+                    pr_printf("NO;");
+                if (reference_exists == -1)
+                    pr_printf("UNREF=%s;", auxillary_ref.c_str());
+            }
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
             //pr_printf("NS=%d;",0);
@@ -864,51 +889,79 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
     reftableexists = 0;
     change_build_allowed = 1;
 
-    //check for reference table:
-    //db_open_db();
-    MasterDB.begin();
-    DBstmt *select;
-    char select_string[255] = "SELECT name FROM sqlite_master WHERE type='table' AND name='ref_allele_table';";
-
-    select = MasterDB.prep( select_string);
-    int ret = select && select->abort();
-    while (ret){
-        ret = select->step();
-        if (ret == SQLITE_ROW)
-            reftableexists = 1;
-        else
-            break;
-    }
-
-    MasterDB.commit();
-    delete select;
-
-    //for testing remove afterwards.
-    //reftableexists = 0;
-
-    //set more variables
-    strcpy(prefix,file_name_stem);
+    std::string refchoice = "Major Allele";
+    strcpy(prefix, file_name_stem);
     char buildname[255] = "B37";
     choice = -1;
-    std::string refchoice;
-    if(!reftableexists)
-        refchoice = "Major Allele";
-    else {
-        refchoice = "Use Mega2 Allele DB Table";
-        string rfile = mega2_input_files[REFfl];
-        if(rfile.find("B37")!=std::string::npos || rfile.find("b37")!=std::string::npos)
-           strcpy(buildname,"B37");
-        if(rfile.find("HG37")!=std::string::npos || rfile.find("hg37")!=std::string::npos)
-            strcpy(buildname,"HG37");
-        if(rfile.find("B38")!=std::string::npos || rfile.find("b38")!=std::string::npos)
-            strcpy(buildname,"B38");
-        if(rfile.find("HG38")!=std::string::npos || rfile.find("hg38")!=std::string::npos)
-            strcpy(buildname,"HG38");
-        if(rfile.find("B19")!=std::string::npos || rfile.find("b19")!=std::string::npos)
-            strcpy(buildname,"B19");
-        if(rfile.find("HG19")!=std::string::npos || rfile.find("hg19")!=std::string::npos)
-            strcpy(buildname,"HG19");
-        change_build_allowed = 0;
+
+    //don't want any database activities unless we're in db mode
+    if(database_read) {
+        //check for reference table:
+        //db_open_db();
+        MasterDB.begin();
+        DBstmt *select;
+        char select_string[255] = "SELECT name FROM sqlite_master WHERE type='table' AND name='ref_allele_table';";
+
+        select = MasterDB.prep(select_string);
+        int ret = select && select->abort();
+        while (ret) {
+            ret = select->step();
+            if (ret == SQLITE_ROW)
+                reftableexists = 1;
+            else
+                reftableexists = 0;
+
+            break;
+        }
+
+        MasterDB.commit();
+        delete select;
+
+        //if we find a table we want to check it has values
+        //only do this if the reftable exists
+        if (reftableexists) {
+            DBstmt *select;
+            char select_string2[255] = "SELECT COUNT(pos) FROM 'ref_allele_table'";
+
+            int locuscnt = 0;
+            select = MasterDB.prep(select_string2);
+            int ret = select && select->abort();
+            while (ret) {
+                ret = select->step();
+                if (ret == SQLITE_ROW) {
+                    select->column(0, locuscnt);
+                    //printf("%d,%d",locuscnt,Top->LocusTop->LocusCnt - 1);
+                    if (locuscnt > 0)
+                        reftableexists = 1;
+                    else
+                        reftableexists = 0;
+
+                    break;
+                }
+            }
+
+            delete select;
+        }
+
+        if (!reftableexists)
+            refchoice = "Major Allele";
+        else {
+            refchoice = "Use Mega2 Allele DB Table";
+            string rfile = mega2_input_files[REFfl];
+            if (rfile.find("B37") != std::string::npos || rfile.find("b37") != std::string::npos)
+                strcpy(buildname, "B37");
+            if (rfile.find("HG37") != std::string::npos || rfile.find("hg37") != std::string::npos)
+                strcpy(buildname, "HG37");
+            if (rfile.find("B38") != std::string::npos || rfile.find("b38") != std::string::npos)
+                strcpy(buildname, "B38");
+            if (rfile.find("HG38") != std::string::npos || rfile.find("hg38") != std::string::npos)
+                strcpy(buildname, "HG38");
+            if (rfile.find("B19") != std::string::npos || rfile.find("b19") != std::string::npos)
+                strcpy(buildname, "B19");
+            if (rfile.find("HG19") != std::string::npos || rfile.find("hg19") != std::string::npos)
+                strcpy(buildname, "HG19");
+            change_build_allowed = 0;
+        }
     }
 
     // actual menu loop
@@ -984,11 +1037,16 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 draw_line();
                 printf("1) Use Major Allele Frequency\n");
                 printf("2) Use Minor Allele Frequency\n");
-                if (reftableexists)
-                    printf("3) Use Mega2 Allele DB Table [exists]\n");
+                if(database_read) {
+                    if (reftableexists)
+                        printf("3) Use Mega2 Allele DB Table [exists]\n");
+                    else
+                        printf("3) Use Mega2 Allele DB Table [create]\n");
+                    printf("Enter selection: 1 - 3 > ");
+                }
                 else
-                    printf("3) Use Mega2 Allele DB Table [create]\n");
-                printf("Enter selection: 1 - 3 > ");
+                    printf("Enter selection: 1 - 2 > ");
+
                 fcmap(stdin, "%d", &choice3);
                 newline;
                 if (choice3 == 1) {
@@ -999,7 +1057,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                     refchoice = "Minor Allele";
                     break;
                 }
-                else if (choice3 == 3) {
+                else if (choice3 == 3 && database_read) {
                     if (reftableexists) {
                         //if the ref table is already there we're all good
                         printf("Using the existing external reference table.\n");
