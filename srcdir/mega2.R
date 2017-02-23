@@ -254,159 +254,74 @@ get_per = function(pid=1) {
            )
 }
 
-mkr = function(marker=1,pheno=1) {
-
-  a1 = allele_table[allele_table$indexX==1,2][marker+pheno];
-  a2 = allele_table[allele_table$indexX==2,2][marker+pheno];
-
-  byte = marker - 1;
-  byte = as.integer(byte / 4);
-  marker = marker - 1 - byte * 4;
-  rv  = matrix(unlist(genotype_table[, 5]),nrow=dim(person_table)[1],byrow=TRUE)[,byte+1]
-  rv4 = geno_i(rv)
-  rv4= matrix(rv4,ncol=4,byrow=TRUE)
-  rv1 = rv4[,marker+1]
-
-  return
-    ifelse(rv1==0, concat(a1, a1),
-           ifelse(rv1==1, concat("00"),
-                  ifelse(rv1==2, concat(a1, a2), concat(a2,a2))
-                  )
-           )
-}
-
 # ################################################################
 
 
 ################################################################
 
-getlocus_Cbind = function(locus=1, pheno=1) {
+getlocus_R = function(locus=1, hocus=1, pheno=1) {
 
   return
-    getlocus_Cbindi(locus, genotype_table, allele_table, pheno)
- 
-}
-
-getlocus_Cbindi = inline::cxxfunction(
-    signature(locus_arg = "NumericVector", genotype_arg = "List", allele_arg = "List", phenocnt_arg = "NumericVector"),
-
-    '
-    int debug = 0;
-
-    Rcpp::NumericVector locuss(locus_arg);
-    int locus_size = locuss.size();
-
-    Rcpp::List genotype(genotype_arg);
-    Rcpp::List genotype_sample(genotype[4]);           // genotype[,5]
-    int genotype_sample_size = genotype_sample.size();
-
-    Rcpp::List allele(allele_arg);
-    std::vector<std::string> decode_allele(4);
-
-    Rcpp::NumericVector phenos(phenocnt_arg);
-    int pheno = phenos[0];
-
-    Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, 0);
-
-    int locus, marker, byte;
-    for (int i = 0; i < locus_size; i++) {
-        locus = locuss[i];
-        marker = locus - pheno;
-
-        byte = marker / 4;
-        marker = marker - 4 * byte;
-
-        if (debug) Rprintf("locus %d, pheno: %d, marker: %d, byte %d, offset %d\\n",
-                            locus, pheno, locus-pheno, byte, marker);
-
-        Rcpp::CharacterVector aAlleleName(allele[1]);
-        std::string allele1(aAlleleName[2*locus]);
-        std::string allele2(aAlleleName[2*locus+1]);
-        if (debug) Rprintf("allele1/2: %s%s; ", allele1.c_str(), allele2.c_str());
-
-        Rcpp::IntegerVector aindexX(allele[3]);
-        if (debug) Rprintf("indexX: %d %d\\n", aindexX[2*locus], aindexX[2*locus+1]);
-
-        decode_allele[0] = allele1 + allele1;
-        decode_allele[1] = "00";
-        decode_allele[2] = allele1 + allele2;
-        decode_allele[3] = allele2 + allele2;
-
-        Rcpp::CharacterVector oneCol(genotype_sample_size);
-        int k = 0;
-
-        for (int j = 0; j < genotype_sample_size; j++) {
-
-          Rcpp::RawVector rv(genotype_sample[j]);
-
-          int t0 = rv[byte];
-          if (marker == 0) {
-            oneCol[k++] = decode_allele[(t0 & 0x03) >> 0];
-          } else if (marker == 1) {
-            oneCol[k++] = decode_allele[(t0 & 0x0c) >> 2];
-          } else if (marker == 2) {
-            oneCol[k++] = decode_allele[(t0 & 0x30) >> 4];
-          } else if (marker == 3) {
-            oneCol[k++] = decode_allele[(t0 & 0xc0) >> 6];
-          }
-        }
-        mtx = Rcpp::cbind(mtx, oneCol);
-    }
-    return mtx;
-    ',
-
-  plugin = "Rcpp")
-
-################################################################
-
-getlocus_R = function(locus=1, pheno=1) {
-
-  return
-    getlocus_Ri(locus, genotype_table, allele_table, pheno)
+    getlocus_Ri(locus, hocus, unified_genotype_table, allele_table, markerscheme_table, pheno)
  
 }
 
 getlocus_Ri = inline::cxxfunction(
-    signature(locus_arg = "NumericVector", genotype_arg = "List", allele_arg = "List", phenocnt_arg = "NumericVector"),
+    signature(locus_arg = "NumericVector", hocus_arg = "NumericVector", genotype_arg = "List", allele_arg = "List", markerscheme_arg = "List", phenocnt_arg = "NumericVector"),
 
     '
     int debug = 0;
 
-    Rcpp::NumericVector locuss(locus_arg);
-    int locus_size = locuss.size();
+    Rcpp::NumericVector loci(locus_arg);
+    Rcpp::NumericVector hoci(locus_arg);
+    int locus_size = loci.size();
 
     Rcpp::List genotype(genotype_arg);
-    Rcpp::List genotype_sample(genotype[4]);           // genotype[,5]
+    Rcpp::List genotype_sample(genotype[1]);           // genotype[,2]
     int genotype_sample_size = genotype_sample.size();
 
     Rcpp::List allele(allele_arg);
     std::vector<std::string> decode_allele(4);
+
+    Rcpp::List markerschemes(markerscheme_arg);
+    Rcpp::IntegerVector allele1_map(markerschemes[2]);   // markerscheme_table[,3]
+    Rcpp::IntegerVector allele2_map(markerschemes[3]);   // markerscheme_table[,4]
 
     Rcpp::NumericVector phenos(phenocnt_arg);
     int pheno = phenos[0];
 
     Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, locus_size);
 
-    int locus, marker, byte;
+    if (locus_size != hoci.size()) {
+        Rprintf("First vector arguments should be the same length, but are %d vs %d\\n",
+                 locus_size, hoci.size());
+        return mtx;
+    }
+
+    int locus, hocus, marker, byte, a1map, a2map;
     for (int j = 0; j < genotype_sample_size; j++) {
 
         Rcpp::RawVector rv(genotype_sample[j]);
 
-        for (int i = 0; i < locuss.size(); i++) {
+        for (int i = 0; i < loci.size(); i++) {
 
-            locus = locuss[i];
-            marker = locus - pheno;
+            locus = loci[i];
+            hocus = hoci[i];
+            marker = hocus - pheno;
 
             byte = marker / 4;
             marker = marker - 4 * byte;
 
-            if (debug) Rprintf("locus %d, pheno: %d, marker: %d, byte %d, offset %d\\n",
-                                locus, pheno, locus-pheno, byte, marker);
+            if (debug) Rprintf("locus %d, hocus %d, pheno: %d, marker: %d, byte %d, offset %d\\n",
+                               locus, hocus, pheno, hocus-pheno, byte, marker);
+
+            a1map = allele1_map(locus - pheno);
+            a2map = allele2_map(locus - pheno);
 
             Rcpp::CharacterVector aAlleleName(allele[1]);
-            std::string allele1(aAlleleName[2*locus]);
-            std::string allele2(aAlleleName[2*locus+1]);
-            if (debug) Rprintf("allele1/2: %s%s; ", allele1.c_str(), allele2.c_str());
+            std::string allele1(aAlleleName[2*locus + a1map - 1]);
+            std::string allele2(aAlleleName[2*locus + a2map - 1]);
+            if (debug) Rprintf("allele%d/%d: %s%s; ", a1map, a2map, allele1.c_str(), allele2.c_str());
 
             Rcpp::IntegerVector aindexX(allele[3]);
             if (debug) Rprintf("indexX: %d %d\\n", aindexX[2*locus], aindexX[2*locus+1]);
@@ -417,6 +332,12 @@ getlocus_Ri = inline::cxxfunction(
             decode_allele[3] = allele2 + allele2;
 
             int t0 = rv[byte];
+            if (0 && debug && j <= 3)
+                Rprintf("byte %d, t0 %x %x %x %x %x %x %x %x %x %x %x %x %x\\n",
+                    byte, t0,
+                    rv(byte-6), rv(byte-5), rv(byte-4), rv(byte-3), rv(byte-2), rv(byte-1),
+                    rv(byte-0), rv(byte+1), rv(byte+2), rv(byte+3), rv(byte+4), rv(byte+5));
+            if (debug && j <= 3) Rprintf("byte %d, t0 %x \\n",  byte, t0);
             if (marker == 0) {
               mtx(j, i) = decode_allele[(t0 & 0x03) >> 0];
             } else if (marker == 1) {
@@ -435,129 +356,24 @@ getlocus_Ri = inline::cxxfunction(
 
 ################################################################
 
-getlocus = getlocus_C = function(locus=1, pheno=1) {
+getlocus = getlocus_C = function(locus=1, hocus=1, pheno=1) {
 
   return
-    getlocus_Ci(locus, genotype_table, allele_table, pheno)
+    getlocus_Ci(locus, hocus, unified_genotype_table, allele_table, markerscheme_table, pheno)
  
 }
 
 getlocus_Ci = inline::cxxfunction(
-    signature(locus_arg = "NumericVector", genotype_arg = "List", allele_arg = "List", phenocnt_arg = "NumericVector"),
+    signature(locus_arg = "NumericVector", hocus_arg = "NumericVector",
+              genotype_arg = "List", allele_arg = "List", markerscheme_arg = "List",
+              phenocnt_arg = "NumericVector"),
 
     '
     int debug = 0;
 
-    Rcpp::NumericVector locuss(locus_arg);
-    int locus_size = locuss.size();
-
-    Rcpp::List genotype(genotype_arg);
-    Rcpp::List genotype_sample(genotype[4]);           // genotype[,5]
-    int genotype_sample_size = genotype_sample.size();
-
-    Rcpp::List allele(allele_arg);
-    std::vector<std::string> decode_allele(4);
-
-    Rcpp::NumericVector phenos(phenocnt_arg);
-    int pheno = phenos[0];
-
-    Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, locus_size);
-
-    int locus, marker, byte;
-    for (int i = 0; i < locus_size; i++) {
-        locus = locuss[i];
-        marker = locus - pheno;
-
-        byte = marker / 4;
-        marker = marker - 4 * byte;
-
-        if (debug) Rprintf("locus %d, pheno: %d, marker: %d, byte %d, offset %d\\n",
-                           locus, pheno, locus-pheno, byte, marker);
-
-        Rcpp::CharacterVector aAlleleName(allele[1]);
-        std::string allele1(aAlleleName[2*locus]);
-        std::string allele2(aAlleleName[2*locus+1]);
-        if (debug) Rprintf("allele1/2: %s%s; ", allele1.c_str(), allele2.c_str());
-
-        Rcpp::IntegerVector aindexX(allele[3]);
-        if (debug) Rprintf("indexX: %d %d\\n", aindexX[2*locus], aindexX[2*locus+1]);
-
-        decode_allele[0] = allele1 + allele1;
-        decode_allele[1] = "00";
-        decode_allele[2] = allele1 + allele2;
-        decode_allele[3] = allele2 + allele2;
-
-        for (int j = 0; j < genotype_sample_size; j++) {
-
-          Rcpp::RawVector rv(genotype_sample[j]);
-
-          int t0 = rv[byte];
-          if (marker == 0) {
-            mtx(j, i) = decode_allele[(t0 & 0x03) >> 0];
-          } else if (marker == 1) {
-            mtx(j, i) = decode_allele[(t0 & 0x0c) >> 2];
-          } else if (marker == 2) {
-            mtx(j, i) = decode_allele[(t0 & 0x30) >> 4];
-          } else if (marker == 3) {
-            mtx(j, i) = decode_allele[(t0 & 0xc0) >> 6];
-          }
-        }
-    }
-    return mtx;
-    ',
-
-  plugin = "Rcpp")
-
-tst1 = function() {
-
-    cat("getlocus_C", system.time((cc=getlocus_C(1:1000))), "\n");
-    cat("getlocus_R", system.time((dd=getlocus_R(1:1000))), "\n");
-                
-    print(all(cc==dd));
-
-    cat("getlocus_C", system.time((cc=getlocus_C(500000:501000))), "\n");
-    cat("getlocus_R", system.time((dd=getlocus_R(500000:501000))), "\n");
-    print(all(cc==dd));
-
-# 25X slower
-#   cat("getlocus_Cbind", system.time((ee=getlocus_Cbind(1:1000))), "\n");
-#   print(all(cc==ee));
-#   cat("getlocus_Cbind", system.time((ee=getlocus_Cbind(500000:501000))), "\n");
-#   print(all(cc==ee));
-    
-    ## getlocus_C 0.845 0.008 0.854 0 0 
-    ## getlocus_R 1.234 0.023 1.265 0 0 
-    ## getlocus_Cbind 16.954 9.304 26.325 0 0 
-    ## [1] TRUE
-    ## [1] TRUE
-    ## getlocus_C 0.965 0.018 0.984 0 0 
-    ## getlocus_R 1.211 0.018 1.234 0 0 
-    ## getlocus_Cbind 17.339 9.259 26.669 0 0 
-    ## [1] TRUE
-    ## [1] TRUE
-
-    ## system.time((a=mkr(500500)))
-    ##    user  system elapsed 
-    ##  24.128   0.841  25.228 
-}
-################################################################
-
-gethocus = gethocus_C = function(locus=1, hocus=1, pheno=1) {
-
-  return
-    gethocus_Ci(locus, hocus, unified_genotype_table, allele_table, markerscheme_table, pheno)
- 
-}
-
-gethocus_Ci = inline::cxxfunction(
-    signature(locus_arg = "NumericVector", hocus_arg = "NumericVector", genotype_arg = "List", allele_arg = "List", markerscheme_arg = "List", phenocnt_arg = "NumericVector"),
-
-    '
-    int debug = 0;
-
-    Rcpp::NumericVector locuss(locus_arg);
-    Rcpp::NumericVector hocuss(hocus_arg);
-    int locus_size = locuss.size();
+    Rcpp::NumericVector loci(locus_arg);
+    Rcpp::NumericVector hoci(hocus_arg);
+    int locus_size = loci.size();
 
     Rcpp::List genotype(genotype_arg);
     Rcpp::List genotype_sample(genotype[1]);           // geno[,2]
@@ -575,10 +391,16 @@ gethocus_Ci = inline::cxxfunction(
 
     Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, locus_size);
 
+    if (locus_size != hoci.size()) {
+        Rprintf("First vector arguments should be the same length, but are %d vs %d\\n",
+                 locus_size, hoci.size());
+        return mtx;
+    }
+
     int locus, hocus, marker, byte, a1map, a2map;
     for (int i = 0; i < locus_size; i++) {
-        locus = locuss[i];
-        hocus = hocuss[i];
+        locus = loci[i];
+        hocus = hoci[i];
         marker = hocus - pheno;
 
         byte = marker / 4;
@@ -629,24 +451,6 @@ gethocus_Ci = inline::cxxfunction(
 
   plugin = "Rcpp")
 
-tst1a = function() {
-
-    cat("gethocus_C", system.time((cc=gethocus_C(1:1000))), "\n");
-#    cat("gethocus_R", system.time((dd=gethocus_R(1:1000))), "\n");
-#    cat("gethocus_Cbind", system.time((ee=gethocus_Cbind(1:1000))), "\n");
-                
-#    print(all(cc==dd));
-#    print(all(cc==ee));
-
-    cat("gethocus_C", system.time((cc=gethocus_C(500000:501000))), "\n");
-#    cat("gethocus_R", system.time((dd=gethocus_R(500000:501000))), "\n");
-#    cat("gethocus_Cbind", system.time((ee=gethocus_Cbind(500000:501000))), "\n");
-                
-#    print(all(cc==dd));
-#    print(all(cc==ee));
-    
-}
-
 ################################################################
 
 allelediff = function(aa=aa, bb=bb, n=24) {
@@ -661,3 +465,39 @@ allelediff = function(aa=aa, bb=bb, n=24) {
               )
       }
 }
+
+################################################################
+
+tst1 = function() {
+
+    cat("getlocus_C", system.time((cc=getlocus_C(1:1000,1:1000,1))), "\n");
+    cat("getlocus_R", system.time((dd=getlocus_R(1:1000,1:1000,1))), "\n");
+                
+    print(all(cc==dd));
+
+    cat("getlocus_C", system.time((cc=getlocus_C(500000:501000,500000:501000,1))), "\n");
+    cat("getlocus_R", system.time((dd=getlocus_R(500000:501000,500000:501000,1))), "\n");
+    print(all(cc==dd));
+
+# 25X slower
+#   cat("getlocus_Cbind", system.time((ee=getlocus_Cbind(1:1000))), "\n");
+#   print(all(cc==ee));
+#   cat("getlocus_Cbind", system.time((ee=getlocus_Cbind(500000:501000))), "\n");
+#   print(all(cc==ee));
+    
+    ## getlocus_C 0.845 0.008 0.854 0 0 
+    ## getlocus_R 1.234 0.023 1.265 0 0 
+    ## getlocus_Cbind 16.954 9.304 26.325 0 0 
+    ## [1] TRUE
+    ## [1] TRUE
+    ## getlocus_C 0.965 0.018 0.984 0 0 
+    ## getlocus_R 1.211 0.018 1.234 0 0 
+    ## getlocus_Cbind 17.339 9.259 26.669 0 0 
+    ## [1] TRUE
+    ## [1] TRUE
+
+    ## system.time((a=mkr(500500)))
+    ##    user  system elapsed 
+    ##  24.128   0.841  25.228 
+}
+################################################################

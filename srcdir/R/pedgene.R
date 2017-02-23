@@ -125,7 +125,7 @@ mkmarkers = function (genes=c("ELL2", "CARD15"),
         pos[[i]]$locus_link_fill = pos[[i]]$locus_link + chr_gap_skip[pos[[i]]$chromosome]
         rownames(pos[[i]]) = NULL
         
-        geno[[i]] = gethocus(pos[[i]]$locus_link, pos[[i]]$locus_link_fill,
+        geno[[i]] = getlocus(pos[[i]]$locus_link, pos[[i]]$locus_link_fill,
                               int_table[int_table$key == 'PhenoCnt',][1,3])
     }
 
@@ -134,7 +134,7 @@ mkmarkers = function (genes=c("ELL2", "CARD15"),
     rownames(pos[[rows+1]]) = NULL
     assign("pos", pos, pos=globalenv())
 
-    geno[[rows+1]] = gethocus(pos[[rows+1]]$locus_link,
+    geno[[rows+1]] = getlocus(pos[[rows+1]]$locus_link,
                               pos[[i+1]]$locus_link_fill,
                               int_table[int_table$key == 'PhenoCnt',][1,3])
     assign("geno", geno, pos=globalenv())
