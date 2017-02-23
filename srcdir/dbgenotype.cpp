@@ -599,12 +599,12 @@ void dbgenotype_import_genotype(linkage_ped_top *Top) {
             bufp += strlen(bufp);
         }
 //      sprintf(bufp, ")");
-        dbgvf("Select * from genotype_table where %s\n", buf);
+        dbgvf("Select * from genotype_table where %s;\n", buf);
         genotype_table.init(buf);
         free(buf);
         free(chrs);
     } else {
-        dbgvf("Select * from genotype_table\n");
+        dbgvf("Select * from genotype_table;\n");
         genotype_table.init();
     }
 

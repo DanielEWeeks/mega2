@@ -288,7 +288,7 @@ void dbgvf(const char *fmt, ...)
 
     va_start(ap, fmt);
     if (Display_Messages == 1 || Mega2logf == NULL) {
-        fputs(shout, Mega2logf);
+        fputs(shout, stdout);
         vfprintf(stdout, fmt, ap);
         fflush(stdout);
     }
