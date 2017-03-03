@@ -44,18 +44,75 @@ library("org.Hs.eg.db")
 
 pedgene.ped = NULL
 
+library(pedgene)
+
 init = function () {
-    dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db")
+    source("/Users/rbaron/mega2/bb/srcdir/mega2.R")
+    source("/Users/rbaron/mega2/bb/srcdir/R/pedgene.R")
+    dbmega2_import("ped3.db")
+#    rm("genotype_table", globalenv())
+
+#   NonmissingPheID=get(load("../NonmissingPheID.RData"))
+    non=read.table("ped3.famphe", header=F)
+    mkped(T)
+    pl=merge(ped.Y[,c(1,3,4)], non[, 2:3], by.x=c("PedPre", "PerPre"), by.y=c("V2", "V3"))
+
+    ped.Y = ped.Y[ped.Y[,1] %in% pl[,3], ]
+    unified_genotype_table = unified_genotype_table[unified_genotype_table$person_link %in% pl[,3],]
+    row.names(ped.Y) = NULL
+    row.names(unified_genotype_table) = NULL
+    assign("ped.Y", ped.Y, globalenv())
+    assign("unified_genotype_table", unified_genotype_table, globalenv())
+
+#   refGene = read.table("../refseq_genes.txt", header= TRUE, stringsAsFactors= FALSE)
+#   refGene$cdsStart <-refGene$cdsEnd <- NULL
+#   refGene = refGene[nchar(refGene$chrom) <= 5, ]
+#   refGene = refGene[refGene$chrom != "chrX" & refGene$chrom != "chrY", ]
+#   refGene = refGene[!duplicated(refGene), ]
+#   row.names(refGene) = NULL
+#   colnames(refGene) = c("XX", "name2", "chrom", "txStart", "txEnd")
+
+    refGene=read.table("ped3.ref",header=F)
+    colnames(refGene) = c("XX", "name2", "chrom", "txStart", "txEnd")
+    refGene = refGene[! duplicated(refGene$name2), ]
+    assign("refGene", refGene, pos=globalenv())
+
+    markers = merge(marker_table[ , c("locus_link","MarkerName","chromosome")],
+                    map_table[ map_table$map == 1, c( "marker", "position")],
+                    by.x="locus_link", by.y="marker")
+    assign("markers", markers, pos=globalenv())
 }
 
-mkped = function () {
+run = function (gs=1:100) {
+    zzz = 0
+    results <- data.frame(chr= character(0), gene= character(0), nvariants= numeric(0), 
+                          start= numeric(0), end= numeric(0), 
+                          pKernel_BT= numeric(0), pBurden_BT= numeric(0), 
+                          pKernel_MB= numeric(0), pBurden_MB= numeric(0),
+                          pKernel_UW= numeric(0), pBurden_UW= numeric(0), 
+                          geneID= numeric(0), stringsAsFactors= FALSE)
+    assign("zzz", zzz, pos=globalenv())
+    assign("results", results, pos=globalenv())
+    unlink("k_Schaid_rare.txt")
 
-    ped.X = merge(pedigree_table[,c("pedigree_link","PedPre")],
-                  person_table[,c("pedigree_link","person_link","PerPre","Father","Mother","Sex")],
+    mkmarkers2(refGene[gs,],indices=3:5,op=pedp)
+}
+
+mkped = function (brkloop=T) {
+
+    if (brkloop) {
+        ped = pedigree_brkloop_table
+        per = person_brkloop_table
+    } else {
+        ped = pedigree_table
+        per = person_table
+    }
+    ped.X = merge(ped[,c("pedigree_link","PedPre")],
+                  per[,c("pedigree_link","person_link","PerPre","Father","Mother","Sex")],
                   by=c("pedigree_link"))
 
     trait = phenotype_table[ , c("person_link", "data")]
-    trait$trait = sapply(trait$data, function (x) { readBin(x, integer(), 2, size=4) })[2,]
+    trait$trait = sapply(trait$data, function (x) { readBin(x, integer(), 2, size=4) })[1,]
     ped.Y = merge(ped.X, trait[ , c("person_link", "trait")], by="person_link")
     assign("ped.Y", ped.Y, pos=globalenv())
     
@@ -72,6 +129,7 @@ mkmarkers = function (genes=c("ELL2", "CARD15"),
     ## dbconn(gene)/dbConn(txdb)
     ## dbReadTable(dbconn(), "tbl")
 
+browser()
     markers = merge(marker_table[ , c("locus_link","MarkerName","chromosome")],
                     map_table[ map_table$map == 1, c( "marker", "position")],
                     by.x="locus_link", by.y="marker")
@@ -121,6 +179,8 @@ mkmarkers = function (genes=c("ELL2", "CARD15"),
     assign("range", range, pos=globalenv())
 
     for (i in 1:rows) {
+        print(i)
+        if (is.na(range[i,6]) || is.na(range[i,8]) || is.na(range[i,9]) ) next
         pos[[i]] = markers[ markers$chromosome == range[i,6] & markers$position <= (range[i,9] + fuzz) & markers$position >= (range[i,8] - fuzz), ]
         pos[[i]]$locus_link_fill = pos[[i]]$locus_link + chr_gap_skip[pos[[i]]$chromosome]
         rownames(pos[[i]]) = NULL
@@ -181,4 +241,204 @@ tst4 = function(genes=c("ELL2"), type="TX", fuzz=0) {
     }
 }
 
+###############
 
+mkmarkers1 = function (genes=c("ELL2", "CARD15"),
+                      type="TX",
+                      fuzz=0,
+                      ranges=matrix(ncol=3,nrow=0),
+                      chrs=vector("integer", 0),
+                      marks=vector("character", 0)) {
+
+    ## dbconn(gene)/dbConn(txdb)
+    ## dbReadTable(dbconn(), "tbl")
+
+browser()
+    markers = merge(marker_table[ , c("locus_link","MarkerName","chromosome")],
+                    map_table[ map_table$map == 1, c( "marker", "position")],
+                    by.x="locus_link", by.y="marker")
+    assign("markers", markers, pos=globalenv())
+
+    txdb = TxDb.Hsapiens.UCSC.hg19.knownGene
+    if (type=="TX")
+        COLS = c("TXNAME", "TXID", "TXSTRAND", "TXCHROM", "TXSTART", "TXEND")
+    else
+        COLS = c("EXONNAME", "EXONID", "EXONSTRAND", "EXONCHROM", "EXONSTART", "EXONEND")
+
+    seqlevels(txdb) = concat("chr", c(1:22, "X", "Y", "M"))
+    
+    genedb=org.Hs.eg.db
+
+    pa = select(genedb, keys=genes, columns=c("ALIAS", "ENTREZID", "SYMBOL"), keytype="ALIAS")
+    pb = select(txdb, keys = pa[,2], columns=COLS, keytype="GENEID")
+    range = merge(pa, pb, by.x="ENTREZID", by.y="GENEID")
+    range[,6] = as.integer( sub("chr", "", range[,6]))
+
+    #chrs
+    for (chr in chrs) { range = rbind(range,
+#           ENTREZID  ALIAS SYMBOL  TXID     TXNAME TXCHROM TXSTRAND  TXSTART    TXEND
+                                    list("-", "-", "-", "-", "-",
+                                         chr, "-", 0, 1000000000) )
+                      }
+    #ranges
+    if (length(ranges))
+    for (i in 1:dim(ranges)[1]) { range = rbind(range,
+#           ENTREZID  ALIAS SYMBOL  TXID     TXNAME TXCHROM TXSTRAND  TXSTART    TXEND
+                                    list("-", "-", "-", "-", "-",
+                                         ranges[i,1], "-", ranges[i,2], ranges[i,3]) )
+                      }
+
+    #marks
+    rows = dim(range)[1]
+    if (length(marks)) {
+        range = rbind(range,
+                        list("-", "-", "-", "-", "-",
+                             0, "-", 0, 0) )
+        pos = vector("list", rows+1)
+        geno = vector("list", rows+1)
+    } else {
+        pos = vector("list", rows)
+        geno = vector("list", rows)
+    }
+    assign("range", range, pos=globalenv())
+
+    for (i in 1:rows) {
+        print(i)
+        if (is.na(range[i,6]) || is.na(range[i,8]) || is.na(range[i,9]) ) next
+        pos[[i]] = markers[ markers$chromosome == range[i,6] & markers$position <= (range[i,9] + fuzz) & markers$position >= (range[i,8] - fuzz), ]
+        pos[[i]]$locus_link_fill = pos[[i]]$locus_link + chr_gap_skip[pos[[i]]$chromosome]
+        rownames(pos[[i]]) = NULL
+        
+        geno[[i]] = getlocus(pos[[i]]$locus_link, pos[[i]]$locus_link_fill,
+                              int_table[int_table$key == 'PhenoCnt',][1,3])
+    }
+
+    pos[[rows+1]] = markers[markers$MarkerName %in% marks, ]
+    pos[[rows+1]]$locus_link_fill = pos[[rows+1]]$locus_link + chr_gap_skip[pos[[rows+1]]$chromosome]
+    rownames(pos[[rows+1]]) = NULL
+    assign("pos", pos, pos=globalenv())
+
+    geno[[rows+1]] = getlocus(pos[[rows+1]]$locus_link,
+                              pos[[i+1]]$locus_link_fill,
+                              int_table[int_table$key == 'PhenoCnt',][1,3])
+    assign("geno", geno, pos=globalenv())
+
+}
+
+################
+
+#mkmarkers2(refGene[1:100,],indices=3:5,op=pedp)
+
+zzz = 0
+
+mkmarkers2 = function (range = matrix(ncol=3,nrow=0),
+                       indices=1:3,
+                       fuzz=0,
+                       mkrs=markers,
+                       op=function (arg, mks) {}) {
+
+    debug = 0
+    zzz = 0
+    
+    rows = dim(range)[1]
+    if (rows == 0) return (FALSE)
+
+    low = indices[2]
+    upp = indices[3]
+    pheno = int_table[int_table$key == 'PhenoCnt',][1,3]
+    chr = indices[1]
+    chrs = as.integer(sub("chr", "", range[,chr]))
+
+    for (i in 1:rows) {
+        print(i)
+        if (is.na(chrs[i]) || is.na(range[i,low]) || is.na(range[i,upp]) ) next
+
+        pos = markers[ markers$chromosome == chrs[i] & markers$position <= (range[i,upp] + fuzz) & markers$position >= (range[i,low] - fuzz), ]
+        pos$locus_link_fill = pos$locus_link + chr_gap_skip[pos$chromosome]
+        rownames(pos) = NULL
+
+        if (dim(pos)[1]) {
+            geno = getlocus(pos$locus_link, pos$locus_link_fill, pheno)
+            op(geno, pos$MarkerName, range[i,])
+        } else {
+            cat("No markers in range:  chr", chrs[i], " between ", range[i,low], " and ", range[i,upp], "\n")
+        }
+
+        if (debug) {
+            pos[[i]] = pos
+            geno[[i]] = geno
+        }
+    }
+
+    if (debug) {
+        assign("pos", pos, pos=globalenv())
+        assign("geno", geno, pos=globalenv())
+    }
+
+}
+
+###############
+
+# pedp = function(g, m) {cat(dim(g), m, "\n")}
+
+pedp = function(g, m, rng) {
+
+    schaidPed = ped.Y[ , c(-1, -2)]
+    colnames(schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
+    pedPer = schaidPed[, 1:2]
+
+    mt = matrix(c("11", "12", "21", "22", "0", "1", "1", "2"), nrow=4,ncol=2)
+    di = dim(g)
+    geno = matrix(0, nrow=(di[1]), ncol=di[2])
+    for (k in 1:(di[2])) {
+        vec = as.integer(mt[match(g[,k], mt), 2])
+        g0 = sum(vec == 0)
+        g1 = sum(vec == 1)
+        g2 = sum(vec == 2)
+        cat(g0, g1, g2, "\n")
+        if (g0 < g2) {
+           geno[, k] = 2 - vec
+        } else {
+           geno[, k] =     vec
+        }
+    }
+
+    geno = matrix(as.integer(geno), nrow=di[1])
+    maf = colMeans(geno)
+    pos = m[maf > 0]
+    if (length(pos) >= 2) {       # at least 2 non-polymorphic variants #    
+        geno <- geno[ ,maf > 0]     # remove nonpolymorphic variants #
+        nsnp    <- ncol(geno)
+        weight <- rep(1, ncol(geno))
+
+        pedgeno <- cbind(pedPer, geno)
+
+        BT <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= FALSE, method= "kounen") 
+        pKernel_BT <- BT$pgdf$pval.kernel
+        pBurden_BT <- BT$pgdf$pval.burden
+
+        MB <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= TRUE, method= "kounen") 
+        pKernel_MB <- MB$pgdf$pval.kernel
+        pBurden_MB <- MB$pgdf$pval.burden
+
+        UW <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= weight, weights.mb= TRUE, method= "kounen", acc.davies=1e-9) 
+        pKernel_UW <- UW$pgdf$pval.kernel
+        pBurden_UW <- UW$pgdf$pval.burden 
+
+        ## read out the results ##
+        chr   <- as.character(rng$chrom)
+        gene  <- as.character(rng$name2)
+        start <- rng$txStart
+        end   <- rng$txEnd
+
+        zzz = zzz + 1
+        results = get("results")
+        results[1, ] <- c(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
+                          pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz)
+#       results[1, ] = xx
+#       print(xx)
+        cat(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
+                          pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz, "\n")
+        write.table(results, file="k_Schaid_rare.txt", append= TRUE, row.names= FALSE, col.names= FALSE, quote= FALSE)
+    }
+}

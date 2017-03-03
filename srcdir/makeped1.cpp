@@ -1231,13 +1231,13 @@ void break_loops(int ped_count, marriage_graph_type *mped,
                         (size_t) (num_persons+min_graph->num_edges_out), person_node_type);
             for (j=0; j < min_graph->num_edges_out; j++) {
                 if (j==0) {
-                    mssgvf("Found loops in pedigree %d.\n", mped[i].ped);
+                    mssgvf("Found loops in Ped %s (#%d).\n", mped[i].Name, mped[i].ped);
                 }
                 proband=j+2;
                 p1=&(mped[i].persons[ind_ids[j][0]]);
                 p2=&(mped[i].persons[num_persons+j]);
-                mssgvf("Broke loops in Pedigree %d at Person %d (original id %d)\n",
-                       mped[i].ped, ind_ids[j][0]+1, p1->indiv);
+                mssgvf("Broke loops in Ped %s (#%d) at Person #%d (original id %s [#%d])\n",
+                       mped[i].Name, mped[i].ped, ind_ids[j][0]+1, p1->uniqueid, p1->indiv);
                 copy_node_remove_parents(proband, p1, p2, (num_persons+j),
                                          (mped[i].max_id+1+j), LTop);
 
@@ -1983,18 +1983,19 @@ static int check_disconnected_inds(marriage_graph_type *mped)
         }
     }
     if (discon > 1) {
-        errorvf("Ped %d: Found %d disconnected individuals:\n",
-                mped->ped, discon);
+        errorvf("Ped %s (#%d): Found %d disconnected individuals:\n",
+                mped->Name, mped->ped, discon);
         for (i=0; i<mped->num_persons; i++) {
             if (disconnected[i]==1) {
-                errorvf("Person %d\n", mped->persons[i].indiv);
+                errorvf("   Person %s (#%d)\n", mped->persons[i].uniqueid, mped->persons[i].indiv);
             }
         }
     } else if (discon == 1) {
         for (i=0; i<mped->num_persons; i++) {
             if (disconnected[i]==1) {
-                errorvf("Ped %d: Found 1 disconnected individual %d\n",
-                        mped->ped, mped->persons[i].indiv);
+                errorvf("Ped %s (#%d): Found 1 disconnected individual %s (#%d)\n",
+                        mped->Name, mped->ped,
+                        mped->persons[i].uniqueid, mped->persons[i].indiv);
                 break;
             }
         }
