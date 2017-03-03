@@ -971,11 +971,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         printf("%d) Done with this menu - please proceed\n", done);
         printf("%d) File name stem:                                  %-15s\n", stem, prefix);
         printf("%d) Human Genome Build                               %s\n", build, buildname);
-        printf("%d) Reference Alleles                                %s", ref, refchoice.c_str());
-        if(reftableexists && refchoice == "Use Mega2 Allele DB Table")
-            printf(" [exists]\n");
-        else
-            printf("\n");
+        printf("%d) Reference Alleles                                %s\n", ref, refchoice.c_str());
         if(outfiletype == 1)
             printf("%d) VCF/BCF/VCF.gz:                                  VCF\n", fileout);
         else if(outfiletype == 2)
@@ -1038,14 +1034,16 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 printf("1) Use Major Allele Frequency\n");
                 printf("2) Use Minor Allele Frequency\n");
                 if(database_read) {
-                    if (reftableexists)
-                        printf("3) Use Mega2 Allele DB Table [exists]\n");
+                    if (reftableexists) {
+                        printf("3) Use Mega2 Allele DB Table\n");
+                        printf("Enter selection: 1 - 3 > ");
+                    }
                     else
-                        printf("3) Use Mega2 Allele DB Table [create]\n");
-                    printf("Enter selection: 1 - 3 > ");
+                        printf("Enter selection: 1 - 2 > ");
                 }
                 else
                     printf("Enter selection: 1 - 2 > ");
+
 
                 fcmap(stdin, "%d", &choice3);
                 newline;
@@ -1065,14 +1063,15 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                         break;
                     }
                     else {
+                        printf("Reference Allele Table does not exist. You must create a new database with a reference panel to use this option.");
                         //otherwise we want to load it up
                         //keep this here in case someone wants to add to an existing database.
                         //just now the way the file is handled is different
-                        Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
-                        reference_allele_table->read_ref_allele_file(Top, reference_allele_table->get_filename(), false, 0);
-                        reftableexists = 1;
-                        refchoice = "Use Mega2 Allele DB Table";
-                        break;
+                        //Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
+                        //reference_allele_table->read_ref_allele_file(Top, reference_allele_table->get_filename(), false, 0);
+                        //reftableexists = 1;
+                        //refchoice = "Use Mega2 Allele DB Table";
+                        //break;
                     }
                 }
                 else
