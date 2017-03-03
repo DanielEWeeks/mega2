@@ -44,6 +44,7 @@
 #include "dbrefallele.h"
 
 #include "user_input_ext.h"
+#include "error_messages_ext.h"
 
 
 extern DBlite MasterDB;
@@ -54,13 +55,13 @@ extern char DBfile[255];
 
 
 void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str filename, bool use_bp_sort, bp_order *bp) {
-    printf("Loading reference allele file %s into database\n",filename.c_str());
+    mssgvf("Loading reference allele file %s into database\n",filename.c_str());
     //we should only get here if we don't have a table (no need to drop)
     //but drop just to be safe/for testing
     drop();
 
     //make our new table
-    printf("Creating database table\n");
+    //printf("Creating database table\n");
     create();
 
 
@@ -75,7 +76,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     //we define a buffer
     int length = 0x1000;
     //get a gzipfile and open it
-    printf("Reading database file.\n");
+    //printf("Reading database file.\n");
     gzFile file;
     file = gzopen(filename.c_str(),"r");
     //check for errors
@@ -220,7 +221,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
         }
     }
 
-    printf("Successfully matched %d/%d variants in the dataset to the provided reference panel.\n", success,success+fail);
+    mssgvf("Successfully matched %d/%d variants in the dataset to the provided reference panel.\n", success,success+fail);
 
     //final commit just in case
     MasterDB.commit();
