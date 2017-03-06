@@ -166,7 +166,9 @@ mk_chr_gap_skip= function() {
     extra_markers = cumsum(4*floor((markersPerChr+3)/4) - markersPerChr)
     extra_markers = c(0, extra_markers)
     names(extra_markers)=NULL
-    assign("chr_gap_skip", extra_markers, pos=globalenv());
+    marker_table$locus_link_fill = marker_table$locus_link + extra_markers[marker_table$chromosome]
+    assign("marker_table", marker_table, pos=globalenv());
+#   assign("chr_gap_skip", extra_markers, pos=globalenv());
 }
 
 mk_unified_genotype_table = function() {
