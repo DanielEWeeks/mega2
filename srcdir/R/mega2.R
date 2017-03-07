@@ -168,7 +168,11 @@ mk_chr_gap_skip= function() {
     names(extra_markers)=NULL
     marker_table$locus_link_fill = marker_table$locus_link + extra_markers[marker_table$chromosome]
     assign("marker_table", marker_table, pos=globalenv());
-#   assign("chr_gap_skip", extra_markers, pos=globalenv());
+
+    markers = merge(marker_table[ , c("locus_link","locus_link_fill","MarkerName","chromosome")],
+                    map_table[ map_table$map == 1, c( "marker", "position")],
+                    by.x="locus_link", by.y="marker")
+    assign("markers", markers, pos=globalenv())
 }
 
 mk_unified_genotype_table = function() {
