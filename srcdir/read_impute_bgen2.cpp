@@ -87,7 +87,17 @@ void BgenParserGenotypeReadHelper::genotypes_init()
 //  asm("int $3");
     open();
     summarise( std::cerr ) ;
-    get_sample_ids( [this]( std::string const& id ) { } );
+    class noop {
+    public:
+        noop()  {}
+       ~noop()  {}
+        void operator() ( std::string const& id ) { }
+    };
+    get_sample_ids(
+/*
+        [this]( std::string const& id ) { }
+*/
+        noop() );
 }
 
 bool BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
@@ -232,7 +242,10 @@ void BgenParser::read_input_file()
         summarise( std::cerr ) ;
 
         get_sample_ids(
+/*
             [this]( std::string const& id ) { n_sample.samples.push_back(id) ; }
+*/
+            fn0(this)
             );
         
         // Output variants

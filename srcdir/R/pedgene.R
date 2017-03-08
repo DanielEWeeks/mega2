@@ -68,7 +68,8 @@ run = function (gs=1:100) {
     assign("zzz", zzz, pos=globalenv())
     assign("results", results, pos=globalenv())
     unlink("k_Schaid_rare.txt")
-
+#+
+set.seed(0x12345686)
     applyFnToRanges(DOpedgene, refGene[gs,], indices=3:5)
 }
 
@@ -79,6 +80,8 @@ DOpedgene = function(genoChar, markerFrame, rng) {
     colnames(schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
     pedPer = schaidPed[, 1:2]
 
+    gene  <- as.character(rng$name2)
+
     mt = matrix(c(11, 12, 21, 22, 0, 1, 1, 2), nrow=4,ncol=2)
     di = dim(genoChar)
     genoInt = matrix(0, nrow=(di[1]), ncol=di[2])
@@ -87,7 +90,7 @@ DOpedgene = function(genoChar, markerFrame, rng) {
         g0 = sum(vec == 0)
         g1 = sum(vec == 1)
         g2 = sum(vec == 2)
-        cat(g0, g1, g2, "\n")
+        cat(gene, markerList[k], g0, g1, g2, "\n")
         if (g0 < g2) {
            genoInt[, k] = 2 - vec
         } else {
@@ -119,7 +122,6 @@ DOpedgene = function(genoChar, markerFrame, rng) {
 
         ## read out the results ##
         chr   <- as.character(rng$chrom)
-        gene  <- as.character(rng$name2)
         start <- rng$txStart
         end   <- rng$txEnd
 

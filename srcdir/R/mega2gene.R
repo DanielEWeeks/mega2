@@ -51,6 +51,14 @@ mkpedigree = function (brkloop=T) {
         ped = pedigree_table
         per = person_table
     }
+    dofam = function(per) {
+        per$Father=per[match(per$Father,per$OrigID),"PerPre"]
+        per[is.na(per$Father),"Father"]=0
+        per$Mother=per[match(per$Mother,per$OrigID),"PerPre"]
+        per[is.na(per$Mother),"Mother"]=0
+        per
+    }
+    per=unsplit(lapply(split(per, per$pedigree_link), dofam), per$pedigree_link)
     ped.X = merge(ped[,c("pedigree_link","PedPre")],
                   per[,c("pedigree_link","person_link","PerPre","Father","Mother","Sex")],
                   by=c("pedigree_link"))

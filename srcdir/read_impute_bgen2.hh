@@ -150,6 +150,16 @@ public:
     private:
         BgenParser *that;
     };
+    class fn0 {
+    public:
+        fn0(BgenParser *hiss) : that(hiss) {}
+        ~fn0() {}
+
+        void operator() ( std::string const& id )
+            { that->n_sample.samples.push_back( id ) ; }
+    private:
+        BgenParser *that;
+    };
     void open( )
     {
         // Open the stream
