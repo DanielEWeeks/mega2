@@ -102,8 +102,9 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 
     inner_file_names(file_names,"",file_name_stem, &combine_chromo);
 
-
     printf("Mega2 created the following file(s) for VCF Format:\n");
+
+    mssgvf("VCF file created using Major/Alt allele setting: %s\n",ref_choice.c_str());
     write_VCF_file(Top, file_name_stem,file_names ,pwid, fwid);
     write_VCF_ped(Top, file_name_stem, file_names ,pwid, fwid);
 
@@ -134,7 +135,9 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 //CHROM POS ID REF ALT QUAL FILTER INFO FORMAT 1_1 1_2 2_1
 //20 14370 rs6054257 G A 29 PASS NS=3;DP=14;AF=0.5;DB;H2 GT:GQ:DP:HQ 0|0:48:1:51,51 1|0:48:8:51,51 1/1:43:5:.,.
 void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
+
     //needed a loop to calculate the length for the contig flag
+
 
     vlpCLASS(vcf_vcfs_header_start,chr,loci) {
         vlpCTOR(vcf_vcfs_header_start, chr, loci) { }
@@ -151,7 +154,9 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
         void file_header(){
             pr_printf("##fileformat=VCFv4.1\n");
-            pr_printf("##filedate=<%s>\n",__TIMESTAMP__);
+            time_t now = time(0);
+            tm *ltm = localtime(&now);
+            pr_printf("##filedate=%d%02d%02d\n", 1900 + ltm->tm_year,1 + ltm->tm_mon,ltm->tm_mday );
             pr_printf("##source=MEGA2\n");
             if(base_pair_position_index >= 0)
                 pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
@@ -240,16 +245,15 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void file_header() {
-            pr_printf("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t");
+            pr_printf("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT");
         }
 
 
         void inner() {
+            pr_printf("\t");
             pr_fam();
             pr_printf("_");
             pr_per();
-            pr_printf("\t");
-
         }
 
     } *hlp = new vcf_vcfs_header(Top);

@@ -451,8 +451,8 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
     else
         map_directory_name = ".";
 
-    if(getenv("minimac_reference_haplotype_file")!=NULL) {
-        minimac_reference_haplotype_file = getenv("minimac_reference_haplotype_file");
+    if(getenv("minimac_reference_haplotype_template")!=NULL) {
+        minimac_reference_haplotype_file = getenv("minimac_reference_haplotype_template");
         split(m_hapsplit, minimac_reference_haplotype_file, "?");
         m_haplotype_pre = m_hapsplit[0];
         m_haplotype_post = m_hapsplit[1];
@@ -462,8 +462,8 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         m_haplotype_post = ".hap.gz";
     }
 
-    if(getenv("shapeit_reference_haplotype_file")!=NULL) {
-        shapeit_reference_haplotype_file = getenv("shapeit_reference_haplotype_file");
+    if(getenv("shapeit_reference_haplotype_template")!=NULL) {
+        shapeit_reference_haplotype_file = getenv("shapeit_reference_haplotype_template");
         split(s_hapsplit, shapeit_reference_haplotype_file, "?");
         s_haplotype_pre = s_hapsplit[0];
         s_haplotype_post = s_hapsplit[1];
@@ -473,8 +473,8 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         s_haplotype_post = ".hap.gz";
     }
 
-    if(getenv("shapeit_reference_map_file")!=NULL) {
-        map_file = getenv("shapeit_reference_map_file");
+    if(getenv("shapeit_reference_map_template")!=NULL) {
+        map_file = getenv("shapeit_reference_map_template");
         split(mapsplit, map_file, "?");
         map_pre = mapsplit[0];
         map_post = mapsplit[1];
@@ -484,8 +484,8 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
         map_post = "_combined_b37.txt";
     }
 
-    if(getenv("shapeit_reference_legend_file")!=NULL) {
-        legend_file = getenv("shapeit_reference_legend_file");
+    if(getenv("shapeit_reference_legend_template")!=NULL) {
+        legend_file = getenv("shapeit_reference_legend_template");
         split(legendsplit, legend_file, "?");
         legend_pre = legendsplit[0];
         legend_post = legendsplit[1];
@@ -591,12 +591,12 @@ void CLASS_MINIMAC::minimac_option_menu (char *file_names[], char *prefix){
             minimac_panel_directory = minimac_directory_name;
 
 
-            BatchValueSet (reference_map_file, "shapeit_reference_map_file");
-            BatchValueSet (shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
-            BatchValueSet (reference_legend_file, "shapeit_reference_legend_file");
+            BatchValueSet (reference_map_file, "shapeit_reference_map_template");
+            BatchValueSet (shapeit_reference_haplotype_file, "shapeit_reference_haplotype_template");
+            BatchValueSet (reference_legend_file, "shapeit_reference_legend_template");
             BatchValueSet (reference_sample_file, "shapeit_reference_sample_file");
             BatchValueSet (haps_sample_selected, "shapeit_haps_file_selected");
-            BatchValueSet (minimac_reference_haplotype_file, "minimac_reference_haplotype_file");
+            BatchValueSet (minimac_reference_haplotype_file, "minimac_reference_haplotype_template");
             BatchValueSet (map_directory_name, "shapeit_reference_map_directory");
             BatchValueSet (shapeit_directory_name, "shapeit_reference_panel_directory");
             BatchValueSet (minimac_directory_name, "minimac_reference_panel_directory");
@@ -868,12 +868,12 @@ void CLASS_MINIMAC::batch_out()
     extern void batchf(batch_item_type *bi);
 
     Cstr Values[] =  { "file_name_stem",
-                       "shapeit_reference_map_file",
-                       "shapeit_reference_haplotype_file",
-                       "shapeit_reference_legend_file",
+                       "shapeit_reference_map_template",
+                       "shapeit_reference_haplotype_template",
+                       "shapeit_reference_legend_template",
                        "shapeit_reference_sample_file",
                        "shapeit_haps_file_selected",
-                       "minimac_reference_haplotype_file",
+                       "minimac_reference_haplotype_template",
                        "batch_cpu_count",
                        "shapeit_reference_map_directory",
                        "shapeit_reference_panel_directory",
@@ -893,12 +893,12 @@ void CLASS_MINIMAC::batch_in()
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(fn,   "file_name_stem");
-    BatchValueGet(reference_map_file, "shapeit_reference_map_file");
-    BatchValueGet(shapeit_reference_haplotype_file, "shapeit_reference_haplotype_file");
-    BatchValueGet(reference_legend_file, "shapeit_reference_legend_file");
+    BatchValueGet(reference_map_file, "shapeit_reference_map_template");
+    BatchValueGet(shapeit_reference_haplotype_file, "shapeit_reference_haplotype_template");
+    BatchValueGet(reference_legend_file, "shapeit_reference_legend_template");
     BatchValueGet(reference_sample_file, "shapeit_reference_sample_file");
     BatchValueGet(haps_sample_selected, "shapeit_haps_file_selected");
-    BatchValueGet(minimac_reference_haplotype_file,"minimac_reference_haplotype_file");
+    BatchValueGet(minimac_reference_haplotype_file,"minimac_reference_haplotype_template");
     BatchValueGet(g_cpus, "batch_cpu_count");
     BatchValueGet(map_directory_name, "shapeit_reference_map_directory");
     BatchValueGet(minimac_directory_name, "minimac_reference_panel_directory");

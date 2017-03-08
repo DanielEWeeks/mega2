@@ -486,8 +486,8 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
     else
         directory = ".";
 
-    if(getenv("minimac_reference_haplotype_file")!= NULL) {
-        mach_reference_haplotype_file = getenv("minimac_reference_haplotype_file");
+    if(getenv("minimac_reference_haplotype_template")!= NULL) {
+        mach_reference_haplotype_file = getenv("minimac_reference_haplotype_template");
         split(hapsplit, mach_reference_haplotype_file, "?");
         haplotype_pre = hapsplit[0];
         haplotype_post = hapsplit[1];
@@ -607,7 +607,7 @@ void CLASS_MACH::mach_option_menu (char *file_names[], char *prefix){
 
     sprintf(file_names[5], "%s", hap_file_input);
     mach_reference_haplotype_file = hap_file_input;
-    BatchValueSet (mach_reference_haplotype_file, "minimac_reference_haplotype_file");
+    BatchValueSet (mach_reference_haplotype_file, "minimac_reference_haplotype_template");
 
 }
 
@@ -636,7 +636,7 @@ void CLASS_MACH::batch_out()
     extern void batchf(batch_item_type *bi);
 
     Cstr Values[] =  { "file_name_stem",
-                       "minimac_reference_haplotype_file",
+                       "minimac_reference_haplotype_template",
                        "batch_cpu_count",
                        "minimac_reference_panel_directory",
     };
@@ -653,7 +653,7 @@ void CLASS_MACH::batch_in()
     char *fn = this->file_name_stem;
 
     BatchValueIfSet(                fn,   "file_name_stem");
-    BatchValueGet(mach_reference_haplotype_file, "minimac_reference_haplotype_file");
+    BatchValueGet(mach_reference_haplotype_file, "minimac_reference_haplotype_template");
     BatchValueGet(reference_directory,"minimac_reference_panel_directory");
     BatchValueGet(g_cpus, "batch_cpu_count");
 }
