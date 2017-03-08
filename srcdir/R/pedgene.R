@@ -33,7 +33,7 @@ init_pedgene = function (db="ped3.db") {
 
 #   NonmissingPheID=get(load("../NonmissingPheID.RData"))
     non=read.table("ped3.famphe", header=F)
-    mkpedigree(T)
+    mkpedigree()
     pl=merge(ped.Y[,c(1,3,4)], non[, 2:3], by.x=c("PedPre", "PerPre"), by.y=c("V2", "V3"))
 
     ped.Y = ped.Y[ped.Y[,1] %in% pl[,3], ]

@@ -161,7 +161,7 @@ TBLS = c("int_table",
 #dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db")
 #dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/rs2/dbmega2.db")
 
-mk_chr_gap_skip= function() {
+mk_markers_with_skip= function(mapselect=1) {
     markersPerChr = sapply(split(marker_table$chromosome, marker_table$chromosome), length)
     extra_markers = cumsum(4*floor((markersPerChr+3)/4) - markersPerChr)
     extra_markers = c(0, extra_markers)
@@ -170,12 +170,12 @@ mk_chr_gap_skip= function() {
     assign("marker_table", marker_table, pos=globalenv());
 
     markers = merge(marker_table[ , c("locus_link","locus_link_fill","MarkerName","chromosome")],
-                    map_table[ map_table$map == 1, c( "marker", "position")],
+                    map_table[ map_table$map == mapselect, c( "marker", "position")],
                     by.x="locus_link", by.y="marker")
     assign("markers", markers, pos=globalenv())
 }
 
-mk_unified_genotype_table = function() {
+mk_unified_genotype_table = function(mapselect=1) {
     samples = split(genotype_table, genotype_table$person_link)
     samplesize = length(samples)
     person_link = unique(genotype_table$person_link)
@@ -193,10 +193,11 @@ mk_unified_genotype_table = function() {
   
     assign("unified_genotype_table", df, pos=globalenv());
 
-    mk_chr_gap_skip()
+    mk_markers_with_skip(mapselect)
 }
 
-dbmega2_import = function(dbname="/Users/rbaron/mega2/test/mexnly/change_chrom/bcf/dbmega2.db") {
+dbmega2_import = function(dbname="/Users/rbaron/mega2/test/mexnly/change_chrom/bcf/dbmega2.db",
+                          mapselect=1) {
     con = dbConnect(RSQLite::SQLite(), dbname=dbname);
 
     for (tbl in TBLS) {
@@ -206,7 +207,7 @@ dbmega2_import = function(dbname="/Users/rbaron/mega2/test/mexnly/change_chrom/b
             print(dim(get(tbl, pos=globalenv())))
         }
     }
-    mk_unified_genotype_table()
+    mk_unified_genotype_table(mapselect)
 }
 
 geno_i = inline::cxxfunction(
@@ -259,9 +260,6 @@ get_per = function(pid=1) {
                   )
            )
 }
-
-# ################################################################
-
 
 ################################################################
 

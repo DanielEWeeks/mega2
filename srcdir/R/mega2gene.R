@@ -42,7 +42,7 @@ library("TxDb.Hsapiens.UCSC.hg19.knownGene")
 
 library("org.Hs.eg.db")
 
-mkpedigree = function (brkloop=T) {
+mkpedigree = function (brkloop=F) {
 
     if (brkloop) {
         ped = pedigree_brkloop_table
@@ -73,19 +73,14 @@ mkpedigree = function (brkloop=T) {
 
 ###############
 
-applyFnToGenes = function (genes=c("ELL2", "CARD15"),
+applyFnToGenes = function (op=function (geno, mrkrs, rng) {},
+                           genes=c("ELL2", "CARD15"),
                            type="TX",
                            fuzz=0,
                            ranges=matrix(ncol=3,nrow=0),
                            chrs=vector("integer", 0),
                            marks=vector("character", 0)) {
 
-    show = function(g, m, r) {
-        print(r)
-        print(m)
-        print(head(g))
-    }
-    
     ## dbconn(gene)/dbConn(txdb)
     ## dbReadTable(dbconn(), "tbl")
 
@@ -118,19 +113,18 @@ applyFnToGenes = function (genes=c("ELL2", "CARD15"),
                                          ranges[i,1], "-", ranges[i,2], ranges[i,3]) )
                       }
 
-    applyFnToRanges(show, range, c(6,8,9))
+    applyFnToRanges(op, range, c(6,8,9))
 
     #marks
     if (length(marks)) {
         positions = markers[markers$MarkerName %in% marks, ]
-        applyFnToRanges(show, pos=positions)
+        applyFnToRanges(op, pos=positions)
     }
-
 }
 
 ################
 
-applyFnToRanges = function (op=function (arg, mks) {},
+applyFnToRanges = function (op=function (geno, mrkrs, rng) {},
                        range = matrix(ncol=3,nrow=0),
                        indices=1:3,
                        pos=NULL,
@@ -194,7 +188,12 @@ tst3 = function(genes=c("ELL2", "CARD15"), type="TX", fuzz=0) {
 
 tst31 = function(genes=c("ELL2", "CARD15"), type="TX", fuzz=0) {
     mkpedigree()
-    mkmarkers1(genes=genes, type=type, fuzz=fuzz,
+    show = function(g, m, r) {
+        print(r)
+        print(m)
+        print(head(g))
+    }
+    applyFnToGenes(show, genes=genes, type=type, fuzz=fuzz,
               matrix(c(11,50000000,50100000,11,60000000,60100000),ncol=3,nrow=2,byrow=T),
               marks=markers[! duplicated(markers$chromosome), 3],
               chrs=c(24,26))
