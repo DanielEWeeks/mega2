@@ -49,9 +49,9 @@ init_pedgene = function (db="ped3.db") {
 #   refGene = refGene[refGene$chrom != "chrX" & refGene$chrom != "chrY", ]
 #   refGene = refGene[!duplicated(refGene), ]
 #   row.names(refGene) = NULL
-#   colnames(refGene) = c("XX", "name2", "chrom", "txStart", "txEnd")
-
-    refGene=read.table("ped3.ref",header=F)
+#   colnames(refGene) = c("XX", "SYMBOL", "TXCHROM", "TXSTART", "TXEND")
+#   write.table(refGene, file=ped3.ref, quote=F, row.names=F)
+    refGene=read.table("ped3.ref",header=T)
     colnames(refGene) = c("XX", "name2", "chrom", "txStart", "txEnd")
     refGene = refGene[! duplicated(refGene$name2), ]
     assign("refGene", refGene, pos=globalenv())
@@ -80,7 +80,7 @@ DOpedgene = function(genoChar, markerFrame, rng) {
     colnames(schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
     pedPer = schaidPed[, 1:2]
 
-    gene  <- as.character(rng$name2)
+    gene  <- as.character(rng$SYMBOL)
 
     mt = matrix(c(11, 12, 21, 22, 0, 1, 1, 2), nrow=4,ncol=2)
     di = dim(genoChar)
@@ -121,16 +121,15 @@ DOpedgene = function(genoChar, markerFrame, rng) {
         pBurden_UW <- UW$pgdf$pval.burden 
 
         ## read out the results ##
-        chr   <- as.character(rng$chrom)
-        start <- rng$txStart
-        end   <- rng$txEnd
-
+        chr   <- as.character(rng$TXCHROM)
+        start <- rng$TXSTART
+        end   <- rng$TXEND
         zzz = zzz + 1
+        cat(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
+                          pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz, "\n")
         results = get("results")
         results[1, ] <- c(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
                           pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz)
-        cat(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
-                          pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz, "\n")
         write.table(results, file="k_Schaid_rare.txt", append= TRUE, row.names= FALSE, col.names= FALSE, quote= FALSE)
     }
 }

@@ -35,3 +35,8 @@ Let me try a "quick" explanation of how to create/run R for mega2.
            NOTE:
 		applyFnToGenes() is similar to the above but has more convenient arguments (?).
                 Look at the function signature.
+
+           NOTE: refGene is a global data.frame that contains 5 variables: ANYTHING, SYMBOL, TXCHROM,
+                  TXSTART, TXEND.  They are unused, gene name, chromosome number, start of transcript
+                  range, end of range.  The explicit latter 5 values are the column headers for refGene.
+                  Obviously, applyFnToGenes does not need refGene to be defined.
