@@ -27,17 +27,18 @@
 
 library(pedgene)
 
-init_pedgene = function (db="ped3.db") {
+init_pedgene = function (db = "ped3.db") {
 
     dbmega2_import(db)
 
 #   NonmissingPheID=get(load("../NonmissingPheID.RData"))
     non=read.table("ped3.famphe", header=F)
     mkpedigree()
-    pl=merge(ped.Y[,c(1,3,4)], non[, 2:3], by.x=c("PedPre", "PerPre"), by.y=c("V2", "V3"))
+    pl=merge(ped.Y[ , c(1, 3, 4)], non[ , 2:3],
+             by.x = c("PedPre", "PerPre"), by.y = c("V2", "V3"))
 
-    ped.Y = ped.Y[ped.Y[,1] %in% pl[,3], ]
-    unified_genotype_table = unified_genotype_table[unified_genotype_table$person_link %in% pl[,3],]
+    ped.Y = ped.Y[ped.Y[ , 1] %in% pl[ , 3], ]
+    unified_genotype_table = unified_genotype_table[unified_genotype_table$person_link %in% pl[ , 3], ]
     row.names(ped.Y) = NULL
     row.names(unified_genotype_table) = NULL
     assign("ped.Y", ped.Y, globalenv())
@@ -48,29 +49,28 @@ init_pedgene = function (db="ped3.db") {
 #   refGene = refGene[nchar(refGene$chrom) <= 5, ]
 #   refGene = refGene[refGene$chrom != "chrX" & refGene$chrom != "chrY", ]
 #   refGene = refGene[!duplicated(refGene), ]
-#   row.names(refGene) = NULL
+#   colnames(refGene) = c("XX", "name2", "chrom", "txStart", "txEnd")
 #   colnames(refGene) = c("XX", "SYMBOL", "TXCHROM", "TXSTART", "TXEND")
+#   row.names(refGene) = NULL
 #   write.table(refGene, file=ped3.ref, quote=F, row.names=F)
-    refGene=read.table("ped3.ref",header=T)
-    colnames(refGene) = c("XX", "name2", "chrom", "txStart", "txEnd")
-    refGene = refGene[! duplicated(refGene$name2), ]
-    assign("refGene", refGene, pos=globalenv())
+    refGene=read.table("ped3.ref", header = T)
+    refGene = refGene[! duplicated(refGene$SYMBOL), ]
+    assign("refGene", refGene, pos = globalenv())
 }
 
-run = function (gs=1:100) {
+run = function (gs = 1:100) {
     zzz = 0
-    results <- data.frame(chr= character(0), gene= character(0), nvariants= numeric(0), 
-                          start= numeric(0), end= numeric(0), 
-                          pKernel_BT= numeric(0), pBurden_BT= numeric(0), 
-                          pKernel_MB= numeric(0), pBurden_MB= numeric(0),
-                          pKernel_UW= numeric(0), pBurden_UW= numeric(0), 
-                          geneID= numeric(0), stringsAsFactors= FALSE)
-    assign("zzz", zzz, pos=globalenv())
-    assign("results", results, pos=globalenv())
+    results <- data.frame(chr = character(0), gene = character(0), nvariants = numeric(0), 
+                          start = numeric(0), end = numeric(0), 
+                          pKernel_BT = numeric(0), pBurden_BT = numeric(0), 
+                          pKernel_MB = numeric(0), pBurden_MB = numeric(0),
+                          pKernel_UW = numeric(0), pBurden_UW = numeric(0), 
+                          geneID = numeric(0), stringsAsFactors = FALSE)
+    assign("zzz", zzz, pos = globalenv())
+    assign("results", results, pos = globalenv())
     unlink("k_Schaid_rare.txt")
-#+
-set.seed(0x12345686)
-    applyFnToRanges(DOpedgene, refGene[gs,], indices=3:5)
+
+    applyFnToRanges(DOpedgene, refGene[gs, ], indices = 3:5)
 }
 
 DOpedgene = function(genoChar, markerFrame, rng) {
@@ -78,31 +78,31 @@ DOpedgene = function(genoChar, markerFrame, rng) {
     markerList = markerFrame$MarkerName
     schaidPed = ped.Y[ , c(-1, -2)]
     colnames(schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
-    pedPer = schaidPed[, 1:2]
+    pedPer = schaidPed[ , 1:2]
 
     gene  <- as.character(rng$SYMBOL)
 
-    mt = matrix(c(11, 12, 21, 22, 0, 1, 1, 2), nrow=4,ncol=2)
+    mt = matrix(c(11, 12, 21, 22, 0, 1, 1, 2), nrow = 4, ncol = 2)
     di = dim(genoChar)
-    genoInt = matrix(0, nrow=(di[1]), ncol=di[2])
+    genoInt = matrix(0, nrow = (di[1]), ncol = di[2])
     for (k in 1:(di[2])) {
-        vec = mt[match(as.integer(genoChar[,k]), mt), 2]
+        vec = mt[match(as.integer(genoChar[ , k]), mt), 2]
         g0 = sum(vec == 0)
         g1 = sum(vec == 1)
         g2 = sum(vec == 2)
         cat(gene, markerList[k], g0, g1, g2, "\n")
         if (g0 < g2) {
-           genoInt[, k] = 2 - vec
+           genoInt[ , k] = 2 - vec
         } else {
-           genoInt[, k] =     vec
+           genoInt[ , k] =     vec
         }
     }
 
-    genoInt = matrix(genoInt, nrow=di[1])
+    genoInt = matrix(genoInt, nrow = di[1])
     maf = colMeans(genoInt)
     pos = markerList[maf > 0]
     if (length(pos) >= 2) {       # at least 2 non-polymorphic variants #    
-        genoInt <- genoInt[ ,maf > 0]     # remove nonpolymorphic variants #
+        genoInt <- genoInt[ , maf > 0]     # remove nonpolymorphic variants #
         nsnp    <- ncol(genoInt)
         weight <- rep(1, ncol(genoInt))
 

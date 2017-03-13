@@ -4,19 +4,19 @@
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
 #   Daniel E. Weeks, and University of Pittsburgh
 #  
-#   This file is part of the Mega2 program, which is free software; you
+#   This file is part of the Mega2 program, which is free software you
 #   can redistribute it and/or modify it under the terms of the GNU
-#   General Public License as published by the Free Software Foundation;
+#   General Public License as published by the Free Software Foundation
 #   either version 3 of the License, or (at your option) any later
 #   version.
 #  
 #   Mega2 is distributed in the hope that it will be useful, but WITHOUT
-#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   ANY WARRANTY without even the implied warranty of MERCHANTABILITY or
 #   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 #   for more details.
 #  
 #   You should have received a copy of the GNU General Public License
-#   along with this program; if not, write to the Free Software
+#   along with this program if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #  
 #   For further information contact:
@@ -38,18 +38,18 @@ lhead  = function(obj, ...)    { print(length(obj)); head(obj, ...) }
 
 
 
-# c=(merge(allele_table[allele_table$indexX==1,], markerscheme_table[,c(1,2,3)], by.x="locus_link", by.y="key"))
+# c=(merge(allele_table[allele_table$indexX==1, ], markerscheme_table[ , 1:3], by.x="locus_link", by.y="key"))
 # 
-# d=(merge(allele_table[allele_table$indexX==2,], markerscheme_table[,c(1,2,4)], by.x="locus_link", by.y="key"))
+# d=(merge(allele_table[allele_table$indexX==2, ], markerscheme_table[ ,c(1, 2, 4)], by.x="locus_link", by.y="key"))
 # 
-# e=(merge(c,d,by="locus_link"))
-# f=(e[,c(1,3,4,7,9,10,13)])
+# e=(merge(c, d, by="locus_link"))
+# f=(e[ , c(1, 3, 4, 7, 9, 10, 13)])
 # 
 # g=(merge(locus_table, f, by="locus_link")
-# h=g[,c(-2,-4,-5,-6,-7)]
+# h=g[ , c(-2, -4, -5, -6, -7)]
 # 
-# head(merge(h, map_table[map_table$map==0,], by.x="locus_link", by.y="marker"))
-# head(merge(h, map_table[map_table$map==1,], by.x="locus_link", by.y="marker"))
+# head(merge(h, map_table[map_table$map==0, ], by.x="locus_link", by.y="marker"))
+# head(merge(h, map_table[map_table$map==1, ], by.x="locus_link", by.y="marker"))
 # 
 #   locus_link  LocusName AlleleCnt AlleleName.x Frequency.x allele1 AlleleName.y
 # 1          1 rs10458597         2            C  0.99967825       1            T
@@ -67,7 +67,7 @@ lhead  = function(obj, ...)    { print(length(obj)); head(obj, ...) }
 # 6 0.0000000000       0  12   1   765269     -99.99   -99.99
 # 
 # ================
-#    >  traitaff_table
+#  >  traitaff_table
 #   pId ClassCnt PenCnt NumLabels Labels locus_link
 # 1   1        1      3         0                 0
 # 
@@ -82,7 +82,7 @@ lhead  = function(obj, ...)    { print(length(obj)); head(obj, ...) }
 # 1 9a, 99, 99, 99, 99, 99, a9, 3f, cd, cc, cc, cc, cc, cc, ec, 3f, cd, cc, cc, cc, cc, cc, ec, 3f
 #   locus_link class_link
 # 1          0          0
-# > affectclass_table[1,5]
+# > affectclass_table[1, 5]
 # [[1]]
 #  [1] 9a 99 99 99 99 99 a9 3f cd cc cc cc cc cc ec 3f
 # 
@@ -90,20 +90,20 @@ lhead  = function(obj, ...)    { print(length(obj)); head(obj, ...) }
 # [[1]]
 #  [1] 9a 99 99 99 99 99 a9 3f cd cc cc cc cc cc ec 3f cd cc cc cc cc cc ec 3f
 # 
-# > affectclass_table[1,5][[1]]
+# > affectclass_table[1, 5][[1]]
 #  [1] 9a 99 99 99 99 99 a9 3f cd cc cc cc cc cc ec 3f
-# > readBin(affectclass_table[1,5][[1]], double(), 2, size=8)
+# > readBin(affectclass_table[1, 5][[1]], double(), 2, size=8)
 # [1] 0.05 0.90
-# > readBin(affectclass_table[1,6][[1]], double(), 3, size=8)
+# > readBin(affectclass_table[1, 6][[1]], double(), 3, size=8)
 # [1] 0.05 0.90 0.90
-# > readBin(affectclass_table[1,7][[1]], double(), 3, size=8)
+# > readBin(affectclass_table[1, 7][[1]], double(), 3, size=8)
 # [1] 0.05 0.90 0.90
 # 
 # 
 # ================================================================
 #   j=(merge(pedigree_table, person_table, by="pedigree_link"))
 # 
-# k=(j[,c(1,37,3,4,13,6,16,18,19,23)])
+# k=(j[ , c(1, 37, 3, 4, 13, 6, 16, 18, 19, 23)])
 # 
 # head(k)
 #   pedigree_link person_link Num EntryCnt      UniqueID   Name PerPre Father
@@ -161,13 +161,13 @@ TBLS = c("int_table",
 #dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db")
 #dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/rs2/dbmega2.db")
 
-mk_markers_with_skip= function(mapselect=1) {
+mk_markers_with_skip = function(mapselect=1) {
     markersPerChr = sapply(split(marker_table$chromosome, marker_table$chromosome), length)
     extra_markers = cumsum(4*floor((markersPerChr+3)/4) - markersPerChr)
     extra_markers = c(0, extra_markers)
     names(extra_markers)=NULL
     marker_table$locus_link_fill = marker_table$locus_link + extra_markers[marker_table$chromosome]
-    assign("marker_table", marker_table, pos=globalenv());
+    assign("marker_table", marker_table, pos=globalenv())
 
     markers = merge(marker_table[ , c("locus_link","locus_link_fill","MarkerName","chromosome")],
                     map_table[ map_table$map == mapselect, c( "marker", "position")],
@@ -186,24 +186,24 @@ mk_unified_genotype_table = function(mapselect=1) {
 
     for (i in 1:samplesize) {
 
-        chrOrder = order(samples[[i]][,3], decreasing=FALSE)
-        v = unlist(samples[[i]][chrOrder,5])
+        chrOrder = order(samples[[i]][ , 3], decreasing=FALSE)
+        v = unlist(samples[[i]][chrOrder, 5])
         df$data[i] = list(v)
     }
   
-    assign("unified_genotype_table", df, pos=globalenv());
+    assign("unified_genotype_table", df, pos=globalenv())
 
     mk_markers_with_skip(mapselect)
 }
 
 dbmega2_import = function(dbname="/Users/rbaron/mega2/test/mexnly/change_chrom/bcf/dbmega2.db",
                           mapselect=1) {
-    con = dbConnect(RSQLite::SQLite(), dbname=dbname);
+    con = dbConnect(RSQLite::SQLite(), dbname=dbname)
 
     for (tbl in TBLS) {
         if (dbExistsTable(con, tbl)) {
-            cat(tbl, dbListFields(con, tbl), sep="\t", end="\n");
-            assign(tbl, dbReadTable(con, tbl), pos=globalenv());
+            cat(tbl, dbListFields(con, tbl), sep="\t", end="\n")
+            assign(tbl, dbReadTable(con, tbl), pos=globalenv())
             print(dim(get(tbl, pos=globalenv())))
         }
     }
@@ -242,11 +242,11 @@ geno_i = inline::cxxfunction(
 
 get_per = function(pid=1) {
 
-  a1 = allele_table[allele_table$indexX==1,2][-1];
-  a2 = allele_table[allele_table$indexX==2,2][-1];
+  a1 = allele_table[allele_table$indexX==1, 2][-1]
+  a2 = allele_table[allele_table$indexX==2, 2][-1]
 
-  rv = genotype_table[pid, 5][[1]];
-  rv4 = geno_i(rv);
+  rv = genotype_table[pid, 5][[1]]
+  rv4 = geno_i(rv)
 
 #  0 1|1
 #  1 0|0
@@ -256,7 +256,7 @@ get_per = function(pid=1) {
   return
     ifelse(rv4==0, concat(a1, a1),
            ifelse(rv4==1, concat("00"),
-                  ifelse(rv4==2, concat(a1, a2), concat(a2,a2))
+                  ifelse(rv4==2, concat(a1, a2), concat(a2, a2))
                   )
            )
 }
@@ -281,15 +281,15 @@ getlocus_Ri = inline::cxxfunction(
     int locus_size = loci.size();
 
     Rcpp::List genotype(genotype_arg);
-    Rcpp::List genotype_sample(genotype[1]);           // genotype[,2]
+    Rcpp::List genotype_sample(genotype[1]);           // genotype[, 2]
     int genotype_sample_size = genotype_sample.size();
 
     Rcpp::List allele(allele_arg);
     std::vector<std::string> decode_allele(4);
 
     Rcpp::List markerschemes(markerscheme_arg);
-    Rcpp::IntegerVector allele1_map(markerschemes[2]);   // markerscheme_table[,3]
-    Rcpp::IntegerVector allele2_map(markerschemes[3]);   // markerscheme_table[,4]
+    Rcpp::IntegerVector allele1_map(markerschemes[2]);   // markerscheme_table[, 3]
+    Rcpp::IntegerVector allele2_map(markerschemes[3]);   // markerscheme_table[, 4]
 
     Rcpp::NumericVector phenos(phenocnt_arg);
     int pheno = phenos[0];
@@ -323,12 +323,13 @@ getlocus_Ri = inline::cxxfunction(
             a2map = allele2_map(locus - pheno);
 
             Rcpp::CharacterVector aAlleleName(allele[1]);
-            std::string allele1(aAlleleName[2*locus + a1map - 1]);
-            std::string allele2(aAlleleName[2*locus + a2map - 1]);
-            if (debug) Rprintf("allele%d/%d: %s%s; ", a1map, a2map, allele1.c_str(), allele2.c_str());
+            std::string allele1(aAlleleName[2 * locus + a1map - 1]);
+            std::string allele2(aAlleleName[2 * locus + a2map - 1]);
+            if (debug) Rprintf("allele%d/%d: %s%s; ", a1map, a2map,
+                               allele1.c_str(), allele2.c_str());
 
             Rcpp::IntegerVector aindexX(allele[3]);
-            if (debug) Rprintf("indexX: %d %d\\n", aindexX[2*locus], aindexX[2*locus+1]);
+            if (debug) Rprintf("indexX: %d %d\\n", aindexX[2 * locus], aindexX[2 * locus+1]);
 
             decode_allele[0] = allele1 + allele1;
             decode_allele[1] = "00";
@@ -380,15 +381,15 @@ getlocus_Ci = inline::cxxfunction(
     int locus_size = loci.size();
 
     Rcpp::List genotype(genotype_arg);
-    Rcpp::List genotype_sample(genotype[1]);           // geno[,2]
+    Rcpp::List genotype_sample(genotype[1]);           // geno[, 2]
     int genotype_sample_size = genotype_sample.size();
 
     Rcpp::List allele(allele_arg);
     std::vector<std::string> decode_allele(4);
 
     Rcpp::List markerschemes(markerscheme_arg);
-    Rcpp::IntegerVector allele1_map(markerschemes[2]);   // markerscheme_table[,3]
-    Rcpp::IntegerVector allele2_map(markerschemes[3]);   // markerscheme_table[,4]
+    Rcpp::IntegerVector allele1_map(markerschemes[2]);   // markerscheme_table[, 3]
+    Rcpp::IntegerVector allele2_map(markerschemes[3]);   // markerscheme_table[, 4]
 
     Rcpp::NumericVector phenos(phenocnt_arg);
     int pheno = phenos[0];
@@ -417,12 +418,13 @@ getlocus_Ci = inline::cxxfunction(
         a2map = allele2_map(locus - pheno);
 
         Rcpp::CharacterVector aAlleleName(allele[1]);
-        std::string allele1(aAlleleName[2*locus + a1map - 1]);
-        std::string allele2(aAlleleName[2*locus + a2map - 1]);
-        if (debug) Rprintf("allele%d/%d: %s%s; ", a1map, a2map, allele1.c_str(), allele2.c_str());
+        std::string allele1(aAlleleName[2 * locus + a1map - 1]);
+        std::string allele2(aAlleleName[2 * locus + a2map - 1]);
+        if (debug) Rprintf("allele%d/%d: %s%s; ", a1map, a2map,
+                            allele1.c_str(), allele2.c_str());
 
         Rcpp::IntegerVector aindexX(allele[3]);
-        if (debug) Rprintf("indexX: %d %d\\n", aindexX[2*locus], aindexX[2*locus+1]);
+        if (debug) Rprintf("indexX: %d %d\\n", aindexX[2 * locus], aindexX[2 * locus+1]);
 
         decode_allele[0] = allele1 + allele1;
         decode_allele[1] = "00";
@@ -460,11 +462,11 @@ getlocus_Ci = inline::cxxfunction(
 allelediff = function(aa=aa, bb=bb, n=24) {
     for (i in 1:24) {
         print(sum(
-                  ( (substr(aa[,i],1,1)==substr(bb[,i],1,1)) &
-                    (substr(aa[,i],2,2)==substr(bb[,i],2,2)) )  |
+                  ( (substr(aa[, i], 1, 1) == substr(bb[ , i], 1, 1)) &
+                    (substr(aa[, i], 2, 2) == substr(bb[ , i], 2, 2)) )  |
 
-                  ( (substr(aa[,i],1,1)==substr(bb[,i],2,2)) &
-                     (substr(aa[,i],2,2)==substr(bb[,i],1,1)) )
+                  ( (substr(aa[, i], 1, 1) == substr(bb[ , i], 2, 2)) &
+                    (substr(aa[, i], 2, 2) == substr(bb[ , i], 1, 1)) )
                   )
               )
       }
@@ -474,20 +476,20 @@ allelediff = function(aa=aa, bb=bb, n=24) {
 
 tst1 = function() {
 
-    cat("getlocus_C", system.time((cc=getlocus_C(1:1000,1:1000,1))), "\n");
-    cat("getlocus_R", system.time((dd=getlocus_R(1:1000,1:1000,1))), "\n");
+    cat("getlocus_C", system.time((cc=getlocus_C(1:1000, 1:1000, 1))), "\n")
+    cat("getlocus_R", system.time((dd=getlocus_R(1:1000, 1:1000, 1))), "\n")
                 
-    print(all(cc==dd));
+    print(all(cc==dd))
 
-    cat("getlocus_C", system.time((cc=getlocus_C(500000:501000,500000:501000,1))), "\n");
-    cat("getlocus_R", system.time((dd=getlocus_R(500000:501000,500000:501000,1))), "\n");
-    print(all(cc==dd));
+    cat("getlocus_C", system.time((cc=getlocus_C(500000:501000, 500000:501000, 1))), "\n")
+    cat("getlocus_R", system.time((dd=getlocus_R(500000:501000, 500000:501000, 1))), "\n")
+    print(all(cc==dd))
 
 # 25X slower
-#   cat("getlocus_Cbind", system.time((ee=getlocus_Cbind(1:1000))), "\n");
-#   print(all(cc==ee));
-#   cat("getlocus_Cbind", system.time((ee=getlocus_Cbind(500000:501000))), "\n");
-#   print(all(cc==ee));
+#   cat("getlocus_Cbind", system.time((ee=getlocus_Cbind(1:1000))), "\n")
+#   print(all(cc==ee))
+#   cat("getlocus_Cbind", system.time((ee=getlocus_Cbind(500000:501000))), "\n")
+#   print(all(cc==ee))
     
     ## getlocus_C 0.845 0.008 0.854 0 0 
     ## getlocus_R 1.234 0.023 1.265 0 0 
