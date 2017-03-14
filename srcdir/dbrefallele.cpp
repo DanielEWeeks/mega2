@@ -142,12 +142,19 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                         bp++;
                         locus++;
                         success++;
-                    } else if (pos > position && chr == chromosome) {
+                    } else if (pos > position && chromosome == chr) {
                         //if we find a value too large insert a dummy and increment
                         insert(chromosome, position, locus, dummy);
                         bp++;
-                        //locus++;
+                        locus++;
                         fail++;
+                    }
+                    else if( chr > chromosome) {
+                        insert(chromosome, position, locus, dummy);
+                        bp++;
+                        locus++;
+                        fail++;
+                        continue;
                     }
                     chr = 0;
                     pos = 0;
