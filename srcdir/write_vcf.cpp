@@ -523,7 +523,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 else
                     pr_printf(".,");
                 if(_tlocusp->Marker->pos_female != UNKNOWN_POSITION)
-                    pr_printf("%.2f;",_tlocusp->Marker->pos_male);
+                    pr_printf("%.2f;",_tlocusp->Marker->pos_female);
                 else
                     pr_printf(".;");
 
@@ -541,7 +541,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 else if (allele == _tlocusp->AlleleCnt - 1)
                     pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
                 else
-                    pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
+                    pr_printf("%.6f,",_tlocusp->Allele[allele].Frequency);
             }
             pr_printf(";");
             if(ref_choice == "Use Mega2 Allele DB Table") {
