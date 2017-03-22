@@ -144,7 +144,7 @@ applyFnToRanges = function (op=function (geno, mrkrs, rng) {},
             posx = markers[ markers$chromosome == chrm[i] & markers$position <= (end[i] + fuzz) & markers$position >= (start[i] - fuzz), ]
 
             if (nrow(posx)) {
-                geno = getlocus(posx$locus_link, posx$locus_link_fill, pheno)
+                geno = getgenotypes(posx$locus_link, posx$locus_link_fill, pheno)
                 op(geno, posx, range[i,])
             } else {
                 cat("No markers in range:  chr", chrm[i], " between ", start[i], " and ", end[i], "\n")
@@ -153,7 +153,7 @@ applyFnToRanges = function (op=function (geno, mrkrs, rng) {},
     }
 
     if (! is.null(pos)) {
-        geno = getlocus(pos$locus_link, pos$locus_link_fill, pheno)
+        geno = getgenotypes(pos$locus_link, pos$locus_link_fill, pheno)
         op(geno, pos, NULL)
     }
 
@@ -281,8 +281,8 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #       pos[[i]]$locus_link_fill = pos[[i]]$locus_link + chr_gap_skip[pos[[i]]$chromosome]
 #       rownames(pos[[i]]) = NULL
         
-        geno[[i]] = getlocus(pos[[i]]$locus_link, pos[[i]]$locus_link_fill,
-                              int_table[int_table$key == 'PhenoCnt', ][1, 3])
+        geno[[i]] = getgenotypes(pos[[i]]$locus_link, pos[[i]]$locus_link_fill,
+                                 int_table[int_table$key == 'PhenoCnt', ][1, 3])
     }
 
     pos[[rows+1]] = markers[markers$MarkerName %in% marks, ]
@@ -290,8 +290,8 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #   rownames(pos[[rows+1]]) = NULL
     assign("pos", pos, pos = globalenv())
 
-    geno[[rows+1]] = getlocus(pos[[rows+1]]$locus_link,
-                              pos[[i+1]]$locus_link_fill,
+    geno[[rows+1]] = getgenotypes(pos[[rows+1]]$locus_link,
+                                  pos[[i+1]]$locus_link_fill,
                               int_table[int_table$key == 'PhenoCnt',][1, 3])
     assign("geno", geno, pos = globalenv())
 

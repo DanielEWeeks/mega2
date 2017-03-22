@@ -44,7 +44,7 @@ public:
     Batch_file_parameters()  {}
     int create() {
         return MasterDB.exec(
-            "CREATE TABLE IF NOT EXISTS batch_parameters (Id INTEGER PRIMARY KEY, Key TEXT, Value TEXT, Read INTEGER);"
+            "CREATE TABLE IF NOT EXISTS batch_parameters (pId INTEGER PRIMARY KEY, Key TEXT, Value TEXT, Read INTEGER);"
             );
     }
     void init () {

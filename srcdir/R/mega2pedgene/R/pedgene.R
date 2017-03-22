@@ -3,30 +3,39 @@
 #   Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
 #   Daniel E. Weeks, and University of Pittsburgh
-#  
+#
 #   This file is part of the Mega2 program, which is free software; you
 #   can redistribute it and/or modify it under the terms of the GNU
 #   General Public License as published by the Free Software Foundation;
 #   either version 3 of the License, or (at your option) any later
 #   version.
-#  
+#
 #   Mega2 is distributed in the hope that it will be useful, but WITHOUT
 #   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 #   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 #   for more details.
-#  
+#
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#  
+#
 #   For further information contact:
 #       Daniel E. Weeks
 #       e-mail: weeks@pitt.edu
-# 
+#
 # ===========================================================================
 
+library(mega2)
 library(pedgene)
 
+#' Title
+#'
+#' @param db
+#'
+#' @return
+#' @export
+#'
+#' @examples
 init_pedgene = function (db = "ped3.db") {
 
     dbmega2_import(db)
@@ -58,13 +67,21 @@ init_pedgene = function (db = "ped3.db") {
     assign("refGene", refGene, pos = globalenv())
 }
 
+#' Title
+#'
+#' @param gs
+#'
+#' @return
+#' @export
+#'
+#' @examples
 run = function (gs = 1:100) {
     zzz = 0
-    results <- data.frame(chr = character(0), gene = character(0), nvariants = numeric(0), 
-                          start = numeric(0), end = numeric(0), 
-                          pKernel_BT = numeric(0), pBurden_BT = numeric(0), 
+    results <- data.frame(chr = character(0), gene = character(0), nvariants = numeric(0),
+                          start = numeric(0), end = numeric(0),
+                          pKernel_BT = numeric(0), pBurden_BT = numeric(0),
                           pKernel_MB = numeric(0), pBurden_MB = numeric(0),
-                          pKernel_UW = numeric(0), pBurden_UW = numeric(0), 
+                          pKernel_UW = numeric(0), pBurden_UW = numeric(0),
                           geneID = numeric(0), stringsAsFactors = FALSE)
     assign("zzz", zzz, pos = globalenv())
     assign("results", results, pos = globalenv())
@@ -73,6 +90,16 @@ run = function (gs = 1:100) {
     applyFnToRanges(DOpedgene, refGene[gs, ], indices = 3:5)
 }
 
+#' Title
+#'
+#' @param genoChar
+#' @param markerFrame
+#' @param rng
+#'
+#' @return
+#' @export
+#'
+#' @examples
 DOpedgene = function(genoChar, markerFrame, rng) {
 
     markerList = markerFrame$MarkerName
@@ -101,24 +128,24 @@ DOpedgene = function(genoChar, markerFrame, rng) {
     genoInt = matrix(genoInt, nrow = di[1])
     maf = colMeans(genoInt)
     pos = markerList[maf > 0]
-    if (length(pos) >= 2) {       # at least 2 non-polymorphic variants #    
+    if (length(pos) >= 2) {       # at least 2 non-polymorphic variants #
         genoInt <- genoInt[ , maf > 0]     # remove nonpolymorphic variants #
         nsnp    <- ncol(genoInt)
         weight <- rep(1, ncol(genoInt))
 
         pedgeno <- cbind(pedPer, genoInt)
 
-        BT <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= FALSE, method= "kounen") 
+        BT <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= FALSE, method= "kounen")
         pKernel_BT <- BT$pgdf$pval.kernel
         pBurden_BT <- BT$pgdf$pval.burden
 
-        MB <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= TRUE, method= "kounen") 
+        MB <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= TRUE, method= "kounen")
         pKernel_MB <- MB$pgdf$pval.kernel
         pBurden_MB <- MB$pgdf$pval.burden
 
-        UW <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= weight, weights.mb= TRUE, method= "kounen", acc.davies=1e-9) 
+        UW <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= weight, weights.mb= TRUE, method= "kounen", acc.davies=1e-9)
         pKernel_UW <- UW$pgdf$pval.kernel
-        pBurden_UW <- UW$pgdf$pval.burden 
+        pBurden_UW <- UW$pgdf$pval.burden
 
         ## read out the results ##
         chr   <- as.character(rng$TXCHROM)

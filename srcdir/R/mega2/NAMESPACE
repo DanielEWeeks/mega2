@@ -1,0 +1,21 @@
+
+# mega2.R
+import(DBI)
+import(RSQLite)
+#import(Rcpp)
+#import(TxDb.Hsapiens.UCSC.hg19.knownGene)
+#import(org.Hs.eg.db)
+
+
+useDynLib(mega2)
+#importFrom(Rcpp, sourceCpp)
+
+# mega2.R
+export(dbmega2_import)
+export(getgenotypes)
+export(tst1)
+
+# mega2gene.R
+export(mkpedigree)
+export(applyFnToGenes)
+export(applyFnToRanges)

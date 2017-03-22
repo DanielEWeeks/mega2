@@ -47,7 +47,7 @@ public:
     Pedigree_table()  {}
     int create() {
         return MasterDB.exec(
-            "CREATE TABLE IF NOT EXISTS pedigree_table (kId INTEGER PRIMARY KEY,"
+            "CREATE TABLE IF NOT EXISTS pedigree_table (pId INTEGER PRIMARY KEY,"
                 " Num Integer, EntryCnt INTEGER, isTyped INTEGER, Name TEXT, PedPre TEXT,"
                 " OriginalID INTEGER, origped INTEGER, Proband INTEGER, Loops BLOB, "
                 " pedigree_link INTEGER);"
@@ -119,7 +119,7 @@ class Pedigree_brkloop_table: public Pedigree_table {
 public:
     int create() {
         return MasterDB.exec(
-            "CREATE TABLE IF NOT EXISTS pedigree_brkloop_table (kId INTEGER PRIMARY KEY,"
+            "CREATE TABLE IF NOT EXISTS pedigree_brkloop_table (pId INTEGER PRIMARY KEY,"
                 " Num Integer, EntryCnt INTEGER, isTyped INTEGER, Name TEXT, PedPre TEXT,"
                 " OriginalID INTEGER, origped INTEGER, Proband INTEGER, Loops BLOB, "
                 " pedigree_link INTEGER);"
@@ -168,7 +168,7 @@ public:
     int create() {
         return
             MasterDB.exec(
-                "CREATE TABLE IF NOT EXISTS person_table (kId INTEGER PRIMARY KEY,"
+                "CREATE TABLE IF NOT EXISTS person_table (pId INTEGER PRIMARY KEY,"
                        " UniqueID TEXT, OrigID TEXT, FamName TEXT, PerPre TEXT,"
                        " ID INTEGER, Father INTEGER, Mother INTEGER,"
                        " First_Offspring INTEGER, Next_PA_Sib INTEGER, Next_MA_Sib INTEGER,"
@@ -270,7 +270,7 @@ public:
     int create() {
         return
             MasterDB.exec(
-                "CREATE TABLE IF NOT EXISTS person_brkloop_table (kId INTEGER PRIMARY KEY,"
+                "CREATE TABLE IF NOT EXISTS person_brkloop_table (pId INTEGER PRIMARY KEY,"
                        " UniqueID TEXT, OrigID TEXT, FamName TEXT, PerPre TEXT,"
                        " ID INTEGER, Father INTEGER, Mother INTEGER,"
                        " First_Offspring INTEGER, Next_PA_Sib INTEGER, Next_MA_Sib INTEGER,"

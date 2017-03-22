@@ -1,0 +1,17 @@
+Package: mega2pedgene
+Title: mega2pedgene (http://bitbucket.com/dweeks/mega2)
+Description: Use Mega2 package to batch run pedgene.
+Version: 0.5.0
+Author: Robert V Baron <rvb5@pitt.edu>
+Maintainer: Robert V Baron <rvb5@pitt.edu>
+Authors@R: c(person("Robert", "Baron",
+    email = "rvb5@pitt.edu", role = c("aut", "cre")))
+Depends:
+    R (>= 3.0.1)
+License: GPL (>= 3)
+LazyData: true
+Imports:
+    mega2,
+    pedgene
+SystemRequirements: Mega2
+#Roxygen: list(wrap = FALSE)
