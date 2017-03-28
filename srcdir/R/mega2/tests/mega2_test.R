@@ -25,6 +25,8 @@
 # 
 # ===========================================================================
 
+library(mega2)
+
 #dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbgap2.db")
 #dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db")
 #dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/rs2/dbmega2.db")
@@ -165,12 +167,12 @@ tst1 = function(db = "/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db") {
 
     ENV = dbmega2_import(db)
     
-    cat("getgenotypes_C", system.time((cc=getgenotypes_C(ENV$markers[1:1000,]))), "\n")
+    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[1:1000,]))), "\n")
     cat("getgenotypes_R", system.time((dd=getgenotypes_R(ENV$markers[1:1000,]))), "\n")
                 
     print(all(cc==dd))
 
-    cat("getgenotypes_C", system.time((cc=getgenotypes_C(ENV$markers[500000:501000,]))), "\n")
+    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[500000:501000,]))), "\n")
     cat("getgenotypes_R", system.time((dd=getgenotypes_R(ENV$markers[500000:501000,]))), "\n")
     print(all(cc==dd))
 

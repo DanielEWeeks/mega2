@@ -187,12 +187,12 @@ dbmega2_import = function(dbname = "/Users/rbaron/mega2/test/mexnly/change_chrom
 #' @examples
 #'\dontrun{
 #'}
-getgenotype_person = function(pid=1) {
+getgenotype_person = function(pid = 1) {
 
-  a1 = allele_table[allele_table$indexX==1, 2][-1]
-  a2 = allele_table[allele_table$indexX==2, 2][-1]
+  a1 = ENV$allele_table[ENV$allele_table$indexX==1, 2][-1]
+  a2 = ENV$allele_table[ENV$allele_table$indexX==2, 2][-1]
 
-  rv = genotype_table[pid, 5][[1]]
+  rv = ENV$genotype_table[pid, 5][[1]]
   rv4 = getgenotypes_forperson(rv)
 
 #  0 1|1
@@ -251,4 +251,4 @@ getgenotypes = getgenotypes_C = function(markers) {
  
 }
 
-Rcpp::sourceCpp("../src/getgenotypes.cpp")
+Rcpp::sourceCpp("src/getgenotypes.cpp")
