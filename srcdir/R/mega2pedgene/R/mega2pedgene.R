@@ -25,33 +25,35 @@
 #
 # ===========================================================================
 
-library(mega2)
-library(pedgene)
+#library(mega2)
+#library(pedgene)
 
-#' Title
+#' init_pedgene ...
 #'
-#' @param db
+#' @param db ...
 #'
-#' @return
+#' @return NO
+#' @importFrom mega2 dbmega2_import mkfam
+#' @importFrom utils read.table write.table
 #' @export
 #'
 #' @examples
+#'\dontrun{
+#'}
 init_pedgene = function (db = "ped3.db") {
 
-    dbmega2_import(db)
+    ENV = dbmega2_import(db)
 
 #   NonmissingPheID=get(load("../NonmissingPheID.RData"))
     non=read.table("ped3.famphe", header=F)
-    mkpedigree()
-    pl=merge(ped.Y[ , c(1, 3, 4)], non[ , 2:3],
+    mkfam()
+    pl=merge(ENV$fam[ , c(1, 3, 4)], non[ , 2:3],
              by.x = c("PedPre", "PerPre"), by.y = c("V2", "V3"))
 
-    ped.Y = ped.Y[ped.Y[ , 1] %in% pl[ , 3], ]
-    unified_genotype_table = unified_genotype_table[unified_genotype_table$person_link %in% pl[ , 3], ]
-    row.names(ped.Y) = NULL
-    row.names(unified_genotype_table) = NULL
-    assign("ped.Y", ped.Y, globalenv())
-    assign("unified_genotype_table", unified_genotype_table, globalenv())
+    ENV$fam = ENV$fam[ENV$fam[ , 1] %in% pl[ , 3], ]
+    ENV$unified_genotype_table = ENV$unified_genotype_table[ENV$unified_genotype_table$person_link %in% pl[ , 3], ]
+    row.names(ENV$ped.Y) = NULL
+    row.names(ENV$unified_genotype_table) = NULL
 
 #   refGene = read.table("../refseq_genes.txt", header= TRUE, stringsAsFactors= FALSE)
 #   refGene$cdsStart <-refGene$cdsEnd <- NULL
@@ -62,51 +64,60 @@ init_pedgene = function (db = "ped3.db") {
 #   colnames(refGene) = c("XX", "SYMBOL", "TXCHROM", "TXSTART", "TXEND")
 #   row.names(refGene) = NULL
 #   write.table(refGene, file=ped3.ref, quote=F, row.names=F)
-    refGene=read.table("ped3.ref", header = T)
-    refGene = refGene[! duplicated(refGene$SYMBOL), ]
-    assign("refGene", refGene, pos = globalenv())
+    ENV$refGene = read.table("ped3.ref", header = T)
+    ENV$refGene = ENV$refGene[! duplicated(ENV$refGene$SYMBOL), ]
+    ENV$refindices = 3:5
+
+    ENV$schaidPed = ENV$fam[ , c(-1, -2)]
+    colnames(ENV$schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
+    ENV$pedPer = ENV$schaidPed[ , 1:2]
+
 }
 
-#' Title
+results <- data.frame(chr = character(0), gene = character(0), nvariants = numeric(0),
+                      start = numeric(0), end = numeric(0),
+                      pKernel_BT = numeric(0), pBurden_BT = numeric(0),
+                      pKernel_MB = numeric(0), pBurden_MB = numeric(0),
+                      pKernel_UW = numeric(0), pBurden_UW = numeric(0),
+                      geneID = numeric(0), stringsAsFactors = FALSE)
+
+#' run
 #'
-#' @param gs
+#' @param gs ...
 #'
-#' @return
+#' @return NO
+#' @importFrom mega2 applyFnToRanges
 #' @export
 #'
 #' @examples
+#'\dontrun{
+#'}
+
 run = function (gs = 1:100) {
-    zzz = 0
-    results <- data.frame(chr = character(0), gene = character(0), nvariants = numeric(0),
-                          start = numeric(0), end = numeric(0),
-                          pKernel_BT = numeric(0), pBurden_BT = numeric(0),
-                          pKernel_MB = numeric(0), pBurden_MB = numeric(0),
-                          pKernel_UW = numeric(0), pBurden_UW = numeric(0),
-                          geneID = numeric(0), stringsAsFactors = FALSE)
-    assign("zzz", zzz, pos = globalenv())
-    assign("results", results, pos = globalenv())
+browser()
     unlink("k_Schaid_rare.txt")
 
-    applyFnToRanges(DOpedgene, refGene[gs, ], indices = 3:5)
+    applyFnToRanges(DOpedgene)
 }
 
-#' Title
+#' DOpedgene call back function
 #'
-#' @param genoChar
-#' @param markerFrame
-#' @param rng
+#' @param genoChar ...
+#' @param markerSet ...
+#' @param rng ...
 #'
-#' @return
+#' @return NO
+#' @importFrom pedgene pedgene
 #' @export
 #'
 #' @examples
-DOpedgene = function(genoChar, markerFrame, rng) {
+#'\dontrun{
+#'}
+DOpedgene = function(genoChar, markerSet, rng) {
 
-    markerList = markerFrame$MarkerName
-    schaidPed = ped.Y[ , c(-1, -2)]
-    colnames(schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
-    pedPer = schaidPed[ , 1:2]
+    ENV = (environment(dbmega2_import))$ENV
 
+    markerList = markerSet$MarkerName
     gene  <- as.character(rng$SYMBOL)
 
     mt = matrix(c(11, 12, 21, 22, 0, 1, 1, 2), nrow = 4, ncol = 2)
@@ -133,17 +144,17 @@ DOpedgene = function(genoChar, markerFrame, rng) {
         nsnp    <- ncol(genoInt)
         weight <- rep(1, ncol(genoInt))
 
-        pedgeno <- cbind(pedPer, genoInt)
+        pedgeno <- cbind(ENV$pedPer, genoInt)
 
-        BT <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= FALSE, method= "kounen")
+        BT <- pedgene(ENV$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= FALSE, method= "kounen")
         pKernel_BT <- BT$pgdf$pval.kernel
         pBurden_BT <- BT$pgdf$pval.burden
 
-        MB <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= TRUE, method= "kounen")
+        MB <- pedgene(ENV$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= TRUE, method= "kounen")
         pKernel_MB <- MB$pgdf$pval.kernel
         pBurden_MB <- MB$pgdf$pval.burden
 
-        UW <- pedgene(schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= weight, weights.mb= TRUE, method= "kounen", acc.davies=1e-9)
+        UW <- pedgene(ENV$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= weight, weights.mb= TRUE, method= "kounen", acc.davies=1e-9)
         pKernel_UW <- UW$pgdf$pval.kernel
         pBurden_UW <- UW$pgdf$pval.burden
 
@@ -151,10 +162,10 @@ DOpedgene = function(genoChar, markerFrame, rng) {
         chr   <- as.character(rng$TXCHROM)
         start <- rng$TXSTART
         end   <- rng$TXEND
-        zzz = zzz + 1
+        zzz = 1
         cat(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
                           pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz, "\n")
-        results = get("results")
+
         results[1, ] <- c(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
                           pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz)
         write.table(results, file="k_Schaid_rare.txt", append= TRUE, row.names= FALSE, col.names= FALSE, quote= FALSE)

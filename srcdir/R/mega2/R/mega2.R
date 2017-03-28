@@ -27,224 +27,173 @@
 
 
 
-library(DBI)
-library(RSQLite)
+#library(DBI)
+#library(RSQLite)
 
-concat = function(..., sep="") { return (paste(..., sep=sep)) }
-lhead  = function(obj, ...)    { print(length(obj)); head(obj, ...) }
+ENV = new.env(parent = emptyenv())
 
-
-
-# c=(merge(allele_table[allele_table$indexX==1, ], markerscheme_table[ , 1:3], by.x="locus_link", by.y="key"))
-# 
-# d=(merge(allele_table[allele_table$indexX==2, ], markerscheme_table[ ,c(1, 2, 4)], by.x="locus_link", by.y="key"))
-# 
-# e=(merge(c, d, by="locus_link"))
-# f=(e[ , c(1, 3, 4, 7, 9, 10, 13)])
-# 
-# g=(merge(locus_table, f, by="locus_link")
-# h=g[ , c(-2, -4, -5, -6, -7)]
-# 
-# head(merge(h, map_table[map_table$map==0, ], by.x="locus_link", by.y="marker"))
-# head(merge(h, map_table[map_table$map==1, ], by.x="locus_link", by.y="marker"))
-# 
-#   locus_link  LocusName AlleleCnt AlleleName.x Frequency.x allele1 AlleleName.y
-# 1          1 rs10458597         2            C  0.99967825       1            T
-# 2          2 rs12565286         2            C  0.97610648       1            G
-# 3          3 rs12082473         2            C  0.97674792       1            T
-# 4          4  rs3094315         2            C  0.03109971       1            T
-# 5          5  rs2286139         2            C  0.12110504       1            T
-# 6          6 rs11240776         2            A  1.00000000       1        dummy
-#    Frequency.y allele2 pId map position pos_female pos_male
-# 1 0.0003217503       2   2   1   564621     -99.99   -99.99
-# 2 0.0238935215       2   4   1   721290     -99.99   -99.99
-# 3 0.0232520847       2   6   1   740857     -99.99   -99.99
-# 4 0.9689002886       2   8   1   752566     -99.99   -99.99
-# 5 0.8788949566       2  10   1   761732     -99.99   -99.99
-# 6 0.0000000000       0  12   1   765269     -99.99   -99.99
-# 
-# ================
-#  >  traitaff_table
-#   pId ClassCnt PenCnt NumLabels Labels locus_link
-# 1   1        1      3         0                 0
-# 
-# > affectclass_table
-#   pId MaleDef FemaleDef AutoDef
-# 1   1       1         1       0
-#                                                          MalePen
-# 1 9a, 99, 99, 99, 99, 99, a9, 3f, cd, cc, cc, cc, cc, cc, ec, 3f
-#                                                                                        FemalePen
-# 1 9a, 99, 99, 99, 99, 99, a9, 3f, cd, cc, cc, cc, cc, cc, ec, 3f, cd, cc, cc, cc, cc, cc, ec, 3f
-#                                                                                          AutoPen
-# 1 9a, 99, 99, 99, 99, 99, a9, 3f, cd, cc, cc, cc, cc, cc, ec, 3f, cd, cc, cc, cc, cc, cc, ec, 3f
-#   locus_link class_link
-# 1          0          0
-# > affectclass_table[1, 5]
-# [[1]]
-#  [1] 9a 99 99 99 99 99 a9 3f cd cc cc cc cc cc ec 3f
-# 
-# > affectclass_table[1,6]
-# [[1]]
-#  [1] 9a 99 99 99 99 99 a9 3f cd cc cc cc cc cc ec 3f cd cc cc cc cc cc ec 3f
-# 
-# > affectclass_table[1, 5][[1]]
-#  [1] 9a 99 99 99 99 99 a9 3f cd cc cc cc cc cc ec 3f
-# > readBin(affectclass_table[1, 5][[1]], double(), 2, size=8)
-# [1] 0.05 0.90
-# > readBin(affectclass_table[1, 6][[1]], double(), 3, size=8)
-# [1] 0.05 0.90 0.90
-# > readBin(affectclass_table[1, 7][[1]], double(), 3, size=8)
-# [1] 0.05 0.90 0.90
-# 
-# 
-# ================================================================
-#   j=(merge(pedigree_table, person_table, by="pedigree_link"))
-# 
-# k=(j[ , c(1, 37, 3, 4, 13, 6, 16, 18, 19, 23)])
-# 
-# head(k)
-#   pedigree_link person_link Num EntryCnt      UniqueID   Name PerPre Father
-# 1             0           0   1        1 SG0026_SG0026 SG0026 SG0026      0
-# 2             1           1   2        1 SG0001_SG0001 SG0001 SG0001      0
-# 3             2           2   3        1 SG0002_SG0002 SG0002 SG0002      0
-# 4             3           3   4        1 SG0003_SG0003 SG0003 SG0003      0
-# 5             4           4   5        1 SG0004_SG0004 SG0004 SG0004      0
-# 6             5           5   6        1 SG0005_SG0005 SG0005 SG0005      0
-#   Mother Sex
-# 1      0   2
-# 2      0   2
-# 3      0   2
-# 4      0   2
-# 5      0   2
-# 6      0   1
-# 
-#  phenotype_table
-#       pId person_link cnt bytes                           data
-# 1       1           0   1     8 00, 00, 00, 00, 01, 00, 00, 00
-# 2       2           1   1     8 00, 00, 00, 00, 01, 00, 00, 00
-# 
-# x=function(y) {readBin(y, integer(), 2, size=4)}
-# lapply(Phenotype_table$data, x)
-#                        
-  
 TBLS = c("int_table",
-         "double_table",
-         "charstar_table",
-         "stuff_table",
-         "batch_parameters",
-         "file_table",
+#        "double_table",
+#        "charstar_table",
+#        "stuff_table",
+#        "batch_parameters",
+#        "file_table",
 
          "pedigree_table",
          "person_table",
          "pedigree_brkloop_table",
          "person_brkloop_table",
 
-         "canonicalallele_table",
-         "locus_table",
+#        "canonicalallele_table",
+#        "locus_table",
          "allele_table",
          "marker_table",
          "markerscheme_table",
          "map_table",
          "mapnames_table",
 
-         "traitaff_table",
-         "affectclass_table",
-         "traitquant_table",
+#        "traitaff_table",
+#        "affectclass_table",
+#        "ptraitquant_table",
 
          "phenotype_table",
-         "genotype_table")
+         "genotype_table"
 
-#dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbgap2.db")
-#dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db")
-#dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/rs2/dbmega2.db")
+## Derived tables
+##        unified_genotype_table
+##        markers
+  )
 
-mk_markers_with_skip = function(mapselect=1) {
-    markersPerChr = sapply(split(marker_table$chromosome, marker_table$chromosome), length)
-    extra_markers = cumsum(4*floor((markersPerChr+3)/4) - markersPerChr)
+#' mk_markers_with_skip
+#'
+#' @param mapselect ...
+#'
+#' @return NO
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#'}
+mk_markers_with_skip = function(mapselect = 1) {
+    markersPerChr = sapply(split(ENV$marker_table$chromosome, ENV$marker_table$chromosome), length)
+    extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
     extra_markers = c(0, extra_markers)
-    names(extra_markers)=NULL
-    marker_table$locus_link_fill = marker_table$locus_link + extra_markers[marker_table$chromosome]
-    assign("marker_table", marker_table, pos=globalenv())
+    names(extra_markers) = NULL
+    ENV$marker_table$locus_link_fill = ENV$marker_table$locus_link + extra_markers[ENV$marker_table$chromosome]
 
-    markers = merge(marker_table[ , c("locus_link","locus_link_fill","MarkerName","chromosome")],
-                    map_table[ map_table$map == mapselect, c( "marker", "position")],
-                    by.x="locus_link", by.y="marker")
-    assign("markers", markers, pos=globalenv())
+    ENV$markers = merge(ENV$marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
+                        ENV$map_table[ ENV$map_table$map == mapselect, c( "marker", "position")],
+                        by.x = "locus_link", by.y = "marker")
 }
 
-mk_unified_genotype_table = function(mapselect=1) {
-    samples = split(genotype_table, genotype_table$person_link)
+#' mk_unified_genotype_table
+#'
+#' @param mapselect ...
+#'
+#' @return NO
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#'}
+mk_unified_genotype_table = function(mapselect = 1) {
+    samples = split(ENV$genotype_table, ENV$genotype_table$person_link)
     samplesize = length(samples)
-    person_link = unique(genotype_table$person_link)
+    person_link = unique(ENV$genotype_table$person_link)
 
-    df = data.frame(row.names=1:samplesize,
-                    person_link=person_link,
-                    data=vector("raw", samplesize))
+    df = data.frame(row.names = 1:samplesize,
+                    person_link = person_link,
+                    data = vector("raw", samplesize))
 
     for (i in 1:samplesize) {
 
-        chrOrder = order(samples[[i]][ , 3], decreasing=FALSE)
+        chrOrder = order(samples[[i]][ , 3], decreasing = FALSE)
         v = unlist(samples[[i]][chrOrder, 5])
         df$data[i] = list(v)
     }
   
-    assign("unified_genotype_table", df, pos=globalenv())
+    ENV$unified_genotype_table = df
+    ENV$genotype_table = NULL
 
     mk_markers_with_skip(mapselect)
 }
 
+#' dbmega2_import
+#'
+#' @param dbname ...
+#' @param mapselect ...
+#'
+#' @return ENV
+#' @importFrom RSQLite dbConnect dbExistsTable dbReadTable dbListFields SQLITE_RO
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#'}
 dbmega2_import = function(dbname = "/Users/rbaron/mega2/test/mexnly/change_chrom/bcf/dbmega2.db",
                           mapselect = 1) {
-    con = tryCatch(dbConnect(RSQLite::SQLite(), dbname=dbname, flags=SQLITE_RO),
+    con = tryCatch(dbConnect(RSQLite::SQLite(), dbname = dbname, flags = SQLITE_RO),
                    error = function(xx) { stop("DB open failed: ", dbname, call. = FALSE) })
 
     for (tbl in TBLS) {
         if (dbExistsTable(con, tbl)) {
-            cat(tbl, dbListFields(con, tbl), sep="\t", end="\n")
-            assign(tbl, dbReadTable(con, tbl), pos=globalenv())
-            print(dim(get(tbl, pos=globalenv())))
+            assign(tbl, dbReadTable(con, tbl), pos = ENV)
+            cat(tbl, dim(get(tbl, pos=ENV)), sep = "\t", end = "\n")
+            cat(tbl, dbListFields(con, tbl), sep = "\t", end = "\n")
+            cat(end = "\n")
         }
     }
     mk_unified_genotype_table(mapselect)
+    return (ENV)
 }
 
-geno_i = inline::cxxfunction(
-    signature(a = "raw"), 
+## geno_i = inline::cxxfunction(
+##     signature(a = "raw"), 
 
-    '
-    Rcpp::RawVector rv(a);
+##     '
+##     Rcpp::RawVector rv(a);
 
-    Rcpp::NumericVector v(rv.size() * 4);
+##     Rcpp::NumericVector v(rv.size() * 4);
 
-    int j = 0;
-    for (int i = 0; i < rv.size(); i++) {
-      int t0 = rv[i];
-      int t1 = (t0 & 0x03) >> 0;
-      int t2 = (t0 & 0x0c) >> 2;
-      int t3 = (t0 & 0x30) >> 4;
-      int t4 = (t0 & 0xc0) >> 6;
-      v[j++] = t1;
-      v[j++] = t2;
-      v[j++] = t3;
-      v[j++] = t4;
-    }
-    return v;
-    ',
+##     int j = 0;
+##     for (int i = 0; i < rv.size(); i++) {
+##       int t0 = rv[i];
+##       int t1 = (t0 & 0x03) >> 0;
+##       int t2 = (t0 & 0x0c) >> 2;
+##       int t3 = (t0 & 0x30) >> 4;
+##       int t4 = (t0 & 0xc0) >> 6;
+##       v[j++] = t1;
+##       v[j++] = t2;
+##       v[j++] = t3;
+##       v[j++] = t4;
+##     }
+##     return v;
+##     ',
 
-  plugin = "Rcpp")
+##   plugin = "Rcpp")
 
 # gg=geno_i(g)
 
 # a1=f$AlleleName.x
 # a2=f$AlleleName.y
 
-get_per = function(pid=1) {
+#' getgenotype_person
+#'
+#' @param pid ...
+#'
+#' @return NO
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#'}
+getgenotype_person = function(pid=1) {
 
   a1 = allele_table[allele_table$indexX==1, 2][-1]
   a2 = allele_table[allele_table$indexX==2, 2][-1]
 
   rv = genotype_table[pid, 5][[1]]
-  rv4 = geno_i(rv)
+  rv4 = getgenotypes_forperson(rv)
 
 #  0 1|1
 #  1 0|0
@@ -252,79 +201,54 @@ get_per = function(pid=1) {
 #  3 2|2
 
   return
-    ifelse(rv4==0, concat(a1, a1),
-           ifelse(rv4==1, concat("00"),
-                  ifelse(rv4==2, concat(a1, a2), concat(a2, a2))
+    ifelse(rv4==0, paste0(a1, a1),
+           ifelse(rv4==1, paste0("00"),
+                  ifelse(rv4==2, paste0(a1, a2), paste0(a2, a2))
                   )
            )
 }
 
 ################################################################
 
-getgenotypes_R = function(locus=1, hocus=1, pheno=1) {
+#' getgenotypes_R
+#'
+#' @param markers ...
+#'
+#' @return NO
+#' @export
+#' @useDynLib mega2
+#'
+#' @examples
+#'\dontrun{
+#'}
+getgenotypes_R = function(markers) {
 
   return
-    getgenotypes_Ri(locus, hocus, unified_genotype_table, allele_table, markerscheme_table, pheno)
+    getgenotypes_Ri(markers$locus_link, markers$locus_link_fill,
+                    ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                    ENV$int_table[ENV$int_table$key == 'PhenoCnt', ][1, 3])
  
 }
 
 
-getgenotypes = getgenotypes_C = function(locus=1, hocus=1, pheno=1) {
+#' getgenotypes
+#'
+#' @param markers ... 
+#'
+#' @return NO
+#' @export
+#' @useDynLib mega2
+#'
+#' @examples
+#'\dontrun{
+#'}
+getgenotypes = getgenotypes_C = function(markers) {
 
   return
-    getgenotypes_Ci(locus, hocus, unified_genotype_table, allele_table, markerscheme_table, pheno)
+    getgenotypes_Ci(markers$locus_link, markers$locus_link_fill,
+                    ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                    ENV$int_table[ENV$int_table$key == 'PhenoCnt', ][1, 3])
  
 }
 
-Rcpp::sourceCpp("/Users/rbaron/mega2/bb/srcdir/R/mega2/src/getgenotypes.cpp")
-
-################################################################
-
-allelediff = function(aa=aa, bb=bb, n=24) {
-    for (i in 1:24) {
-        print(sum(
-                  ( (substr(aa[, i], 1, 1) == substr(bb[ , i], 1, 1)) &
-                    (substr(aa[, i], 2, 2) == substr(bb[ , i], 2, 2)) )  |
-
-                  ( (substr(aa[, i], 1, 1) == substr(bb[ , i], 2, 2)) &
-                    (substr(aa[, i], 2, 2) == substr(bb[ , i], 1, 1)) )
-                  )
-              )
-      }
-}
-
-################################################################
-
-tst1 = function() {
-
-    cat("getgenotypes_C", system.time((cc=getgenotypes_C(1:1000, 1:1000, 1))), "\n")
-    cat("getgenotypes_R", system.time((dd=getgenotypes_R(1:1000, 1:1000, 1))), "\n")
-                
-    print(all(cc==dd))
-
-    cat("getgenotypes_C", system.time((cc=getgenotypes_C(500000:501000, 500000:501000, 1))), "\n")
-    cat("getgenotypes_R", system.time((dd=getgenotypes_R(500000:501000, 500000:501000, 1))), "\n")
-    print(all(cc==dd))
-
-# 25X slower
-#   cat("getgenotypes_Cbind", system.time((ee=getgenotypes_Cbind(1:1000))), "\n")
-#   print(all(cc==ee))
-#   cat("getgenotypes_Cbind", system.time((ee=getgenotypes_Cbind(500000:501000))), "\n")
-#   print(all(cc==ee))
-    
-    ## getgenotypes_C 0.845 0.008 0.854 0 0 
-    ## getgenotypes_R 1.234 0.023 1.265 0 0 
-    ## getgenotypes_Cbind 16.954 9.304 26.325 0 0 
-    ## [1] TRUE
-    ## [1] TRUE
-    ## getgenotypes_C 0.965 0.018 0.984 0 0 
-    ## getgenotypes_R 1.211 0.018 1.234 0 0 
-    ## getgenotypes_Cbind 17.339 9.259 26.669 0 0 
-    ## [1] TRUE
-    ## [1] TRUE
-
-    ## system.time((a=mkr(500500)))
-    ##    user  system elapsed 
-    ##  24.128   0.841  25.228 
-}
-################################################################
+Rcpp::sourceCpp("../src/getgenotypes.cpp")

@@ -63,7 +63,7 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ci(NumericVector locus_arg,
     Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, locus_size);
 
     if (locus_size != hocus_size) {
-        Rprintf("First vector arguments should be the same length, but are %d vs %d\\n",
+        Rf_error("First vector arguments should be the same length, but are %d vs %d\\n",
                    locus_size, hocus_size);
         return mtx;
     }
@@ -78,7 +78,7 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ci(NumericVector locus_arg,
         marker = marker - 4 * byte;
 
         if (debug) Rprintf("locus %d, hocus %d, pheno: %d, marker: %d, byte %d, offset %d\\n",
-                              locus, hocus, pheno, hocus-pheno, byte, marker);
+                           locus, hocus, pheno, hocus-pheno, byte, marker);
 
         a1map = allele1_map(locus - pheno);
         a2map = allele2_map(locus - pheno);
@@ -102,10 +102,13 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ci(NumericVector locus_arg,
           Rcpp::RawVector rv(genotype_sample[j]);
 
           int t0 = rv[byte];
-          if (0&& debug && j <= 3) Rprintf("byte %d, t0 %x %x %x %x %x %x %x %x %x %x %x %x %x\\n",
-                  byte, t0,
-                  rv(byte-6), rv(byte-5), rv(byte-4), rv(byte-3), rv(byte-2), rv(byte-1),
-                  rv(byte-0), rv(byte+1), rv(byte+2), rv(byte+3), rv(byte+4), rv(byte+5));
+/*
+          if (debug && j <= 3)
+              Rprintf("byte %d, t0 %x %x %x %x %x %x %x %x %x %x %x %x %x\\n",
+                       byte, t0,
+                       rv(byte-6), rv(byte-5), rv(byte-4), rv(byte-3), rv(byte-2), rv(byte-1),
+                       rv(byte-0), rv(byte+1), rv(byte+2), rv(byte+3), rv(byte+4), rv(byte+5));
+*/
           if (debug && j <= 3) Rprintf("byte %d, t0 %x \\n",  byte, t0);
           if (marker == 0) {
             mtx(j, i) = decode_allele[(t0 & 0x03) >> 0];
@@ -134,7 +137,7 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
 
     Rcpp::NumericVector loci(locus_arg);
     int locus_size = loci.size();
-    Rcpp::NumericVector hoci(locus_arg);
+    Rcpp::NumericVector hoci(hocus_arg);
     int hocus_size = hoci.size();
 
     Rcpp::List genotype(genotype_arg);
@@ -174,7 +177,7 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
             marker = marker - 4 * byte;
 
             if (debug) Rprintf("locus %d, hocus %d, pheno: %d, marker: %d, byte %d, offset %d\\n",
-                                  locus, hocus, pheno, hocus-pheno, byte, marker);
+                               locus, hocus, pheno, hocus-pheno, byte, marker);
 
             a1map = allele1_map(locus - pheno);
             a2map = allele2_map(locus - pheno);
@@ -194,11 +197,13 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
             decode_allele[3] = allele2 + allele2;
 
             int t0 = rv[byte];
-            if (0 && debug && j <= 3)
+/*
+            if (debug && j <= 3)
                 Rprintf("byte %d, t0 %x %x %x %x %x %x %x %x %x %x %x %x %x\\n",
-                           byte, t0,
-                           rv(byte-6), rv(byte-5), rv(byte-4), rv(byte-3), rv(byte-2), rv(byte-1),
-                        rv(byte-0), rv(byte+1), rv(byte+2), rv(byte+3), rv(byte+4), rv(byte+5));
+                         byte, t0,
+                         rv(byte-6), rv(byte-5), rv(byte-4), rv(byte-3), rv(byte-2), rv(byte-1),
+                         rv(byte-0), rv(byte+1), rv(byte+2), rv(byte+3), rv(byte+4), rv(byte+5));
+*/
             if (debug && j <= 3) Rprintf("byte %d, t0 %x \\n",  byte, t0);
             if (marker == 0) {
               mtx(j, i) = decode_allele[(t0 & 0x03) >> 0];
@@ -212,4 +217,27 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
         }
     }
     return mtx;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericVector getgenotypes_forperson(RawVector raw_arg)
+{
+    Rcpp::RawVector rv(raw_arg);
+
+    Rcpp::NumericVector v(rv.size() * 4);
+
+    int j = 0;
+    for (int i = 0; i < rv.size(); i++) {
+        int t0 = rv[i];
+        int t1 = (t0 & 0x03) >> 0;
+        int t2 = (t0 & 0x0c) >> 2;
+        int t3 = (t0 & 0x30) >> 4;
+        int t4 = (t0 & 0xc0) >> 6;
+        v[j++] = t1;
+        v[j++] = t2;
+        v[j++] = t3;
+        v[j++] = t4;
+    }
+
+    return v;
 }

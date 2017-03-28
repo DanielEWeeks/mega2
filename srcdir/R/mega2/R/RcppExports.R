@@ -9,3 +9,7 @@ getgenotypes_Ri <- function(locus_arg, hocus_arg, genotype_arg, allele_arg, mark
     .Call('mega2_getgenotypes_Ri', PACKAGE = 'mega2', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, phenocnt_arg)
 }
 
+getgenotypes_forperson <- function(raw_arg) {
+    .Call('mega2_getgenotypes_forperson', PACKAGE = 'mega2', raw_arg)
+}
+

@@ -37,3 +37,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getgenotypes_forperson
+Rcpp::NumericVector getgenotypes_forperson(RawVector raw_arg);
+RcppExport SEXP mega2_getgenotypes_forperson(SEXP raw_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< RawVector >::type raw_arg(raw_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(getgenotypes_forperson(raw_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
