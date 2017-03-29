@@ -110,7 +110,7 @@ while ($i <= 22 )
     if ( -f $1$i$2 ) then
         echo "$1$i$2 was found"
         echo "Using BCF-Tools to extract Reference Alleles for Chromosome $i"
-        $bcftools_program query -f '%CHROM %POS %REF\n' $1$i$2 >> RefAlleles.$build.$1$inner$noextension.txt
+        $bcftools_program query -f '%CHROM %POS %REF %ALT{0}\n' $1$i$2 >> RefAlleles.$build.$1$inner$noextension.txt
     else
         echo "$1$i$2 not found."
     endif

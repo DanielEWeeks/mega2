@@ -129,6 +129,20 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     pos = atoi(token);
                     //if both are set we found a whole entry
                 else {
+                    char *ref = new char[255];
+                    char *alt = new char[255];
+                    //set ref to the current token
+                    if(token != NULL)
+                        strcpy(ref, token);
+                    else
+                        strcpy(ref, dummy);
+                    //grab the next token, this will be our alternate allele
+                    token = std::strtok(NULL, " \n");
+                    if (token != NULL)
+                        strcpy(alt, token);
+                    else
+                        strcpy(alt, dummy);
+                    //printf("%s/%s\n",ref,alt);
                     if (locus == Top->LocusTop->LocusCnt - 1)
                         break;
                     int position = bp->pos;
@@ -137,20 +151,20 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     //printf("Internal Chromsome = %d, Reference Chromosome = %d\n", Top->LocusTop->Locus[locus].Marker->chromosome, chr);
                     //printf("Internal Position = %d, Reference Position = %d\n",position, pos);
                     if (chromosome == chr && pos == position) {
-                        //we insert our values, the position internally is inserted sow e can select on it
-                        insert(chromosome, position, locus, token);
+                        //we insert our values, the position internally is inserted so we can select on it
+                        insert(chromosome, position, locus, ref, alt);
                         bp++;
                         locus++;
                         success++;
                     } else if (pos > position && chromosome == chr) {
                         //if we find a value too large insert a dummy and increment
-                        insert(chromosome, position, locus, dummy);
+                        insert(chromosome, position, locus, dummy, dummy);
                         bp++;
                         locus++;
                         fail++;
                     }
                     else if( chr > chromosome) {
-                        insert(chromosome, position, locus, dummy);
+                        insert(chromosome, position, locus, dummy, dummy);
                         bp++;
                         locus++;
                         fail++;
@@ -158,6 +172,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     }
                     chr = 0;
                     pos = 0;
+
                 }
                 token = std::strtok(NULL, " \n");
             }
@@ -197,15 +212,27 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                 else if (pos == 0)
                     pos = atoi(token);
                 else {
+                    char *ref = new char[255];
+                    char *alt = new char[255];
+                    if(token != NULL)
+                        strcpy(ref, token);
+                    else
+                        strcpy(ref, dummy);
+                    token = std::strtok(NULL, " \n");
+                    if (token != NULL)
+                        strcpy(alt, token);
+                    else
+                        strcpy(alt, dummy);
+
                     if (locus == Top->LocusTop->LocusCnt)
                         break;
                     int position = Top->EXLTop->EXLocus[locus].positions[base_pair_position_index];
                     int chromosome = Top->LocusTop->Locus[locus].Marker->chromosome;
                     if(chromosome == chr && position == pos) {
-                        insert(chromosome, position, locus, token);
+                        insert(chromosome, position, locus, ref, alt);
                         locus++;
                     } else if (pos > position) {
-                        insert(chromosome, position, locus, dummy);
+                        insert(chromosome, position, locus, dummy, dummy);
                         locus++;
                     }
                     chr = 0;

@@ -49,26 +49,26 @@ public:
     ~Reference_Allele_Table( ) { }
 
     int create() {
-        return MasterDB.exec("CREATE TABLE IF NOT EXISTS ref_allele_table(chr integer, pos  integer, marker integer, ref text)");
+        return MasterDB.exec("CREATE TABLE IF NOT EXISTS ref_allele_table(chr integer, pos  integer, marker integer, ref text, alt text)");
     }
     int init () {
-        insert_stmt = MasterDB.prep("INSERT INTO ref_allele_table(chr, pos, marker, ref) VALUES(?, ?, ?, ?);");
-        select_stmt = MasterDB.prep("SELECT chr, pos, marker, ref FROM ref_allele_table;");
+        insert_stmt = MasterDB.prep("INSERT INTO ref_allele_table(chr, pos, marker, ref, alt) VALUES(?, ?, ?, ?, ?);");
+        select_stmt = MasterDB.prep("SELECT chr, pos, marker, ref, alt FROM ref_allele_table;");
         return insert_stmt && select_stmt && 1;
     }
-    int insert(int chr, int pos, int marker, char *ref) {
+    int insert(int chr, int pos, int marker, char *ref, char *alt) {
         int idx = 1;
 
         return insert_stmt
                && insert_stmt->rowbind(idx, chr, pos, marker)
-               && insert_stmt->rowbind(idx, ref)
+               && insert_stmt->rowbind(idx, ref, alt)
                && insert_stmt->step();
     }
-    int select(int chr, int pos, int marker, char *ref) {
+    int select(int chr, int pos, int marker, char *ref, char *alt) {
         int idx = 0;
         int ret =
                 select_stmt->row(idx, chr, pos, marker)
-                && select_stmt->row(idx, ref);
+                && select_stmt->row(idx, ref, alt);
         return ret;
     }
     void close() {
