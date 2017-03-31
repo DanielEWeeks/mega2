@@ -31,42 +31,48 @@
 #' init_pedgene ...
 #'
 #' @param db ...
+#' @param verbose ...
 #'
 #' @return NO
-#' @importFrom mega2 dbmega2_import mkfam
+#' @importFrom mega2 dbmega2_import mkfam setfam setRanges
 #' @importFrom utils read.table write.table
 #' @export
 #'
 #' @examples
 #'\dontrun{
 #'}
-init_pedgene = function (db = "ped3.db") {
+init_pedgene = function (db = "ped3.db", verbose = 0) {
 
-    ENV = dbmega2_import(db)
+    ENV = dbmega2_import(db, verbose = verbose)
 
-#   NonmissingPheID=get(load("../NonmissingPheID.RData"))
-    non=read.table("ped3.famphe", header=F)
-    mkfam()
-    pl=merge(ENV$fam[ , c(1, 3, 4)], non[ , 2:3],
-             by.x = c("PedPre", "PerPre"), by.y = c("V2", "V3"))
+##  NonmissingPheID=get(load("../NonmissingPheID.RData"))
+##  This is a rather complicated way to essentiall accomplish the two lines below
+    ## non=read.table("ped3.famphe", header=F)
+    ## fam = mkfam()
+    ## pl=merge(fam[ , c(1, 3, 4)], non[ , 2:3],
+    ##          by.x = c("PedPre", "PerPre"), by.y = c("V2", "V3"))
 
-    ENV$fam = ENV$fam[ENV$fam[ , 1] %in% pl[ , 3], ]
-    ENV$unified_genotype_table = ENV$unified_genotype_table[ENV$unified_genotype_table$person_link %in% pl[ , 3], ]
-    row.names(ENV$ped.Y) = NULL
-    row.names(ENV$unified_genotype_table) = NULL
+    ## fam = fam[fam[ , 1] %in% pl[ , 3], ]
+    ## row.names(fam) = NULL
 
-#   refGene = read.table("../refseq_genes.txt", header= TRUE, stringsAsFactors= FALSE)
-#   refGene$cdsStart <-refGene$cdsEnd <- NULL
-#   refGene = refGene[nchar(refGene$chrom) <= 5, ]
-#   refGene = refGene[refGene$chrom != "chrX" & refGene$chrom != "chrY", ]
-#   refGene = refGene[!duplicated(refGene), ]
-#   colnames(refGene) = c("XX", "name2", "chrom", "txStart", "txEnd")
-#   colnames(refGene) = c("XX", "SYMBOL", "TXCHROM", "TXSTART", "TXEND")
-#   row.names(refGene) = NULL
-#   write.table(refGene, file=ped3.ref, quote=F, row.names=F)
-    ENV$refGene = read.table("ped3.ref", header = T)
-    ENV$refGene = ENV$refGene[! duplicated(ENV$refGene$SYMBOL), ]
-    ENV$refindices = 3:5
+    fam = mkfam()
+    fam = fam[fam$trait != 0, ]
+    setfam(fam)  # also updates unified_genotype_table
+
+#   refRange = read.table("../refseq_genes.txt", header= TRUE, stringsAsFactors= FALSE)
+#   refRange$cdsStart <-refRange$cdsEnd <- NULL
+#   refRange = refRange[nchar(refRange$chrom) <= 5, ]
+#   refRange = refRange[refRange$chrom != "chrX" & refRange$chrom != "chrY", ]
+#   refRange = refRange[!duplicated(refRange), ]
+#   colnames(refRange) = c("XX", "name2", "chrom", "txStart", "txEnd")
+#   colnames(refRange) = c("XX", "SYMBOL", "TXCHROM", "TXSTART", "TXEND")
+#   row.names(refRange) = NULL
+#   write.table(refRange, file=ped3.ref, quote=F, row.names=F)
+
+# if you want your own ranges
+#   refRanges = read.table("ped3.ref", header = T)
+#   refRanges = refRanges[! duplicated(refRanges$SYMBOL), ]
+#   setRanges(refRanges, 3:5)
 
     ENV$schaidPed = ENV$fam[ , c(-1, -2)]
     colnames(ENV$schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
@@ -94,10 +100,12 @@ results <- data.frame(chr = character(0), gene = character(0), nvariants = numer
 #'}
 
 run = function (gs = 1:100) {
-browser()
+
     unlink("k_Schaid_rare.txt")
 
-    applyFnToRanges(DOpedgene)
+#   applyFnToRanges(DOpedgene)
+    ENV = (environment(dbmega2_import))$ENV
+    applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices)
 }
 
 #' DOpedgene call back function
@@ -128,7 +136,8 @@ DOpedgene = function(genoChar, markerSet, rng) {
         g0 = sum(vec == 0)
         g1 = sum(vec == 1)
         g2 = sum(vec == 2)
-        cat(gene, markerList[k], g0, g1, g2, "\n")
+        if (ENV$verbose)
+            cat(gene, markerList[k], g0, g1, g2, "\n")
         if (g0 < g2) {
            genoInt[ , k] = 2 - vec
         } else {
@@ -163,8 +172,9 @@ DOpedgene = function(genoChar, markerSet, rng) {
         start <- rng$TXSTART
         end   <- rng$TXEND
         zzz = 1
-        cat(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
-                          pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz, "\n")
+        if (ENV$verbose)
+            cat(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
+                pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz, "\n")
 
         results[1, ] <- c(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
                           pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz)

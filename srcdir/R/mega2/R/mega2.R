@@ -122,6 +122,7 @@ mk_unified_genotype_table = function(mapselect = 1) {
 #'
 #' @param dbname ...
 #' @param mapselect ...
+#' @param verbose ...
 #'
 #' @return ENV
 #' @importFrom RSQLite dbConnect dbExistsTable dbReadTable dbListFields SQLITE_RO
@@ -131,19 +132,26 @@ mk_unified_genotype_table = function(mapselect = 1) {
 #'\dontrun{
 #'}
 dbmega2_import = function(dbname = "/Users/rbaron/mega2/test/mexnly/change_chrom/bcf/dbmega2.db",
-                          mapselect = 1) {
+                          mapselect = 1,
+                          verbose = 0) {
     con = tryCatch(dbConnect(RSQLite::SQLite(), dbname = dbname, flags = SQLITE_RO),
                    error = function(xx) { stop("DB open failed: ", dbname, call. = FALSE) })
 
+    ENV$verbose = verbose
     for (tbl in TBLS) {
         if (dbExistsTable(con, tbl)) {
             assign(tbl, dbReadTable(con, tbl), pos = ENV)
-            cat(tbl, dim(get(tbl, pos=ENV)), sep = "\t", end = "\n")
-            cat(tbl, dbListFields(con, tbl), sep = "\t", end = "\n")
-            cat(end = "\n")
+#           assign(tbl, dbReadTable(con, tbl, select.cols = "x y z"), pos = ENV)            
+            if (ENV$verbose) {
+                cat(tbl, dim(get(tbl, pos=ENV)), sep = "\t", end = "\n")
+                cat(tbl, dbListFields(con, tbl), sep = "\t", end = "\n")
+                cat(end = "\n")
+            }
         }
     }
+
     mk_unified_genotype_table(mapselect)
+
     return (ENV)
 }
 

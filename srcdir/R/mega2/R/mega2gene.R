@@ -34,6 +34,7 @@
 ## source("https://bioconductor.org/biocLite.R")
 ## biocLite("org.Hs.eg.db")
 
+
 #' mkfam
 #'
 #' @param brkloop ...
@@ -70,44 +71,58 @@ mkfam = function (brkloop = F) {
     ENV$fam = merge(perplus, trait[ , c("person_link", "trait")], by = "person_link")
 }
 
+#' setfam
+#'
+#' @param fam ...
+#'
+#' @return NO
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#'}
+setfam = function (fam) {
+    ENV$fam = fam
+
+    ENV$unified_genotype_table = ENV$unified_genotype_table[ENV$unified_genotype_table$person_link %in% fam[ , 1], ]
+    row.names(ENV$unified_genotype_table) = NULL
+    
+}
 ###############
 
 #' applyFnToGenes
 #'
 #' @param op ...
-#' @param genes ...
+#' @param genes_arg ...
 #' @param type ...
 #' @param fuzz ...
-#' @param ranges ...
-#' @param chrs ...
-#' @param marks ...
+#' @param ranges_arg ...
+#' @param chrs_arg ...
+#' @param markers_arg ...
 #'
 #' @return NO
-## @import TxDb.Hsapiens.UCSC.hg19.knownGene
-## @import org.Hs.eg.db
-## @importClassesFrom GenomicFeatures TxDb
-## @importMethodsFrom AnnotationDbi columns keys keytypes seqlevels select
-## @importMethodsFrom AnnotationDbi select
+#' @importMethodsFrom GenomeInfoDb 'seqlevels<-'
+#' @importFrom AnnotationDbi select
 #' @export
 #'
 #' @examples
 #'\dontrun{
 #'}
 applyFnToGenes = function (op = function (geno, mrkrs, rng) {},
-                           genes = c("ELL2", "CARD15"),
+                           genes_arg = c("ELL2", "CARD15"),
                            type = "TX",
                            fuzz = 0,
-                           ranges = matrix(ncol = 3, nrow = 0),
-                           chrs = vector("integer", 0),
-                           marks = vector("character", 0)) {
+                           ranges_arg  = matrix(ncol = 3, nrow = 0),
+                           chrs_arg  = vector("integer", 0),
+                           markers_arg  = vector("character", 0)) {
 
     ## dbconn(gene)/dbConn(txdb)
     ## dbReadTable(dbconn(), "tbl")
 
-    loadNamespace(TxDb.Hsapiens.UCSC.hg19.knownGene)
-    loadNamespace(org.Hs.eg.db)
+#    env0 = loadNamespace("BiocGenerics")
 
-    txdb = TxDb.Hsapiens.UCSC.hg19.knownGene
+    env1=loadNamespace("TxDb.Hsapiens.UCSC.hg19.knownGene")
+    txdb = get("TxDb.Hsapiens.UCSC.hg19.knownGene", env1)
     if (type=="TX")
         COLS = c("TXNAME", "TXID", "TXSTRAND", "TXCHROM", "TXSTART", "TXEND")
     else
@@ -115,36 +130,54 @@ applyFnToGenes = function (op = function (geno, mrkrs, rng) {},
 
     seqlevels(txdb) = paste("chr", c(1:22, "X", "Y", "M"), sep="")
     
-    genedb = org.Hs.eg.db
+    env2=loadNamespace("org.Hs.eg.db")
+    genedb = get("org.Hs.eg.db", env2)
 
-    pa = select(genedb, keys = genes, columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ALIAS")
-    pb = select(txdb, keys = pa[ , 2], columns = COLS, keytype = "GENEID")
-    range = merge(pa, pb, by.x = "ENTREZID", by.y = "GENEID")
+    entrez = select(genedb, keys = genes_arg, columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ALIAS")
+    pb = select(txdb, keys = entrez[ , 2], columns = COLS, keytype = "GENEID")
+    range = merge(entrez, pb, by.x = "ENTREZID", by.y = "GENEID")
     range[ ,6] = as.integer( sub("chr", "", range[ ,6]))
 
     #chrs
-    for (chr in chrs) { range = rbind(range,
+    for (chr in chrs_arg) { range = rbind(range,
 #           ENTREZID  ALIAS SYMBOL  TXID     TXNAME TXCHROM TXSTRAND  TXSTART    TXEND
                                     list("-", "-", "-", "-", "-",
                                          chr, "-", 0, 1000000000) )
                       }
     #ranges
-    if (length(ranges))
-    for (i in 1:dim(ranges)[1]) { range = rbind(range,
+    if (length(ranges_arg ))
+    for (i in 1:dim(ranges_arg)[1]) { range = rbind(range,
 #           ENTREZID  ALIAS SYMBOL  TXID     TXNAME TXCHROM TXSTRAND  TXSTART    TXEND
                                     list("-", "-", "-", "-", "-",
-                                         ranges[i,1], "-", ranges[i,2], ranges[i,3]) )
+                                         ranges_arg[i,1], "-", ranges_arg[i,2], ranges_arg[i,3]) )
                       }
 
     applyFnToRanges(op, range, c(6, 8, 9))
 
     #marks
-    if (length(marks)) {
-        applyFnToMarkers(op, ENV$markers[ENV$markers$MarkerName %in% marks, ])
+    if (length(markers_arg)) {
+        applyFnToMarkers(op, ENV$markers[ENV$markers$MarkerName %in% markers_arg, ])
     }
 }
 
 ################
+
+#' setRanges
+#'
+#' @param ranges ...
+#' @param indices ...
+#'
+#' @return NO
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#'}
+setRanges = function (ranges, indices) {
+    ENV$refRanges  = ranges
+    ENV$refIndices = indices
+}
+
 
 #' applyFnToRanges
 #'
@@ -165,8 +198,8 @@ applyFnToRanges = function (op = function (geno, mrkrs, rng) {},
                             fuzz = 0 ) {
 
     if (is.null(range)) {
-        range   = ENV$refGene
-        indices = ENV$refindices
+        range   = ENV$refRanges
+        indices = ENV$refIndices
     }
     rows = nrow(range)
     if (rows) {
@@ -185,7 +218,9 @@ applyFnToRanges = function (op = function (geno, mrkrs, rng) {},
                 geno = getgenotypes(markersub)
                 op(geno, markersub, range[i,])
             } else {
-                message("No markers in range:  chr", chrm[i], " between ", start[i], " and ", end[i], "\n")
+                if (ENV$verbose)
+                    message("No markers in range:  chr", chrm[i], " between ", start[i], " and ",
+                            end[i], "\n")
             }
         }
     }

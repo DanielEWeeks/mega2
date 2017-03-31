@@ -27,8 +27,43 @@
 
 library(mega2)
 
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(org.Hs.eg.db)
+
+#dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db", verbose = 1)
+
 pos  = NULL
 geno = NULL
+
+
+#' tst10
+#'
+#' @param genes ...
+#' @param type ...
+#' @param fuzz ...
+#'
+#' @return NO
+#' @importFrom utils head
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#'}
+tst10 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
+
+    mkfam()
+    show = function(g, m, r) {
+        print(r)
+        print(m)
+        print(head(g))
+    }
+    ENV = (environment(dbmega2_import))$ENV
+    applyFnToGenes(show, genes = genes, type = type, fuzz = fuzz,
+              matrix(c(11, 50000000, 50100000,
+                       11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T),
+              markers = ENV$markers[! duplicated(ENV$markers$chromosome), 3],
+              chrs=c(24, 26))
+}
 
 #' mkmarkers
 #'
@@ -50,19 +85,19 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
                       fuzz = 0,
                       ranges = matrix(ncol = 3, nrow = 0),
                       chrs = vector("integer", 0),
-                      marks = vector("character", 0)) {
+                      mrkrs = vector("character", 0)) {
 
     ## dbconn(gene)/dbConn(txdb)
     ## dbReadTable(dbconn(), "tbl")
 
-    marker_table = get("marker_table", pos = ENV)
-    map_table    = get("map_table",    pos = ENV)
+    marker_table = mega2:::ENV$marker_table
+    map_table    = mega2:::ENV$map_table
     markers = merge(
                    marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
                    map_table[ map_table$map == 1, c( "marker", "position")],
                    by.x = "locus_link", by.y = "marker")
-    assign("markers", markers, pos = ENV)
-
+#    mega2:::ENV$markers = markers
+    assign("markers", markers, pos= globalenv())
     txdb = TxDb.Hsapiens.UCSC.hg19.knownGene
     if (type=="TX")
         COLS = c("TXNAME", "TXID", "TXSTRAND", "TXCHROM", "TXSTART", "TXEND")
@@ -94,7 +129,7 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 
     #marks
     rows = dim(range)[1]
-    if (length(marks)) {
+    if (length(mrkrs)) {
         range = rbind(range,
                         list("-", "-", "-", "-", "-",
                              0, "-", 0, 0) )
@@ -104,8 +139,7 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
         pos = vector("list", rows)
         geno = vector("list", rows)
     }
-    assign("range", range, pos = ENV)
-
+    assign("range", range, pos= globalenv())
     for (i in 1:rows) {
         print(i)
         if (is.na(range[i, 6]) || is.na(range[i, 8]) || is.na(range[i, 9]) ) next
@@ -113,23 +147,21 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #       pos[[i]]$locus_link_fill = pos[[i]]$locus_link + chr_gap_skip[pos[[i]]$chromosome]
 #       rownames(pos[[i]]) = NULL
         
-        int_table = get("int_table", pos = ENV)
+        int_table = mega2:::ENV$int_table
         geno[[i]] = getgenotypes(pos[[i]])
     }
 
-    pos[[rows+1]] = markers[markers$MarkerName %in% marks, ]
+    pos[[rows+1]] = markers[markers$MarkerName %in% mrkrs, ]
 #   pos[[rows+1]]$locus_link_fill = pos[[rows+1]]$locus_link + chr_gap_skip[pos[[rows+1]]$chromosome]
 #   rownames(pos[[rows+1]]) = NULL
-    assign("pos", pos, pos = ENV)
+    assign("pos", pos, pos = globalenv())
 
     geno[[rows+1]] = getgenotypes(pos[[rows+1]])
-    assign("geno", geno, pos = ENV)
-
+    assign("geno", geno, pos = globalenv())
 }
 
-################
 
-#' tst2
+#' tst11
 #'
 #' @param genes ...
 #' @param type ...
@@ -142,36 +174,13 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #' @examples
 #'\dontrun{
 #'}
-tst2 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
+tst11 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
     mkfam()
-    mkmarkers(genes=genes, type=type, fuzz=fuzz)
-
-    for (i in 1:dim(range)[1]) {
-        print(range[i, ])
-        print(pos[[i]])
-        print(head(geno[[i]]))
-    }
-}
-
-#' tst3
-#'
-#' @param genes ...
-#' @param type ...
-#' @param fuzz ...
-#'
-#' @return NO
-#' @importFrom utils head 
-#' @export
-#'
-#' @examples
-#'\dontrun{
-#'}
-tst3 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
-    mkfam()
+    ENV = (environment(dbmega2_import))$ENV
     mkmarkers(genes = genes, type = type, fuzz = fuzz,
               matrix(c(11, 50000000, 50100000,
                        11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T),
-              marks = markers[! duplicated(markers$chromosome), 3],
+              mrkrs = ENV$markers[! duplicated(ENV$markers$chromosome), 3],
               chrs=c(24,26))
 
     for (i in 1:dim(range)[1]) {
@@ -181,34 +190,7 @@ tst3 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
     }
 }
 
-#' tst31
-#'
-#' @param genes ...
-#' @param type ...
-#' @param fuzz ...
-#'
-#' @return NO
-#' @importFrom utils head
-#' @export
-#'
-#' @examples
-#'\dontrun{
-#'}
-tst31 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
-    mkfam()
-    show = function(g, m, r) {
-        print(r)
-        print(m)
-        print(head(g))
-    }
-    applyFnToGenes(show, genes = genes, type = type, fuzz = fuzz,
-              matrix(c(11, 50000000, 50100000,
-                       11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T),
-              marks = markers[! duplicated(markers$chromosome), 3],
-              chrs=c(24, 26))
-}
-
-#' tst4
+#' tst12
 #'
 #' @param genes ...
 #' @param type ...
@@ -221,10 +203,10 @@ tst31 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
 #' @examples
 #'\dontrun{
 #'}
-tst4 = function(genes = c("ELL2"), type = "TX", fuzz = 0) {
+tst12 = function(genes = c("ELL2"), type = "TX", fuzz = 0) {
     mkfam()
     mkmarkers(genes = genes, type = type, fuzz = fuzz,
-              marks = c("rs6587762", "rs7521920",
+              mrkrs = c("rs6587762", "rs7521920",
                         "rs10181821", "rs10195681", "rs7594567", "rs4637157") )
 
     for (i in 1:dim(range)[1]) {

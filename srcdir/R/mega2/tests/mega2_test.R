@@ -165,7 +165,7 @@ allelediff = function(aa=aa, bb=bb, n=24) {
 #'}
 tst1 = function(db = "/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db") {
 
-    ENV = dbmega2_import(db)
+    ENV = dbmega2_import(db, verbose = 1)
     
     cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[1:1000,]))), "\n")
     cat("getgenotypes_R", system.time((dd=getgenotypes_R(ENV$markers[1:1000,]))), "\n")
