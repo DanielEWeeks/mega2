@@ -90,4 +90,52 @@ public:
 
 extern Reference_Allele_Table *reference_allele_table;
 
+
+class Reference_Flips_Table {
+protected:
+    DBstmt *insert_stmt;
+    DBstmt *select_stmt;
+
+public:
+    Reference_Flips_Table( ) { }
+
+    ~Reference_Flips_Table( ) { }
+
+    int create() {
+        return MasterDB.exec("CREATE TABLE IF NOT EXISTS ref_allele_flips(marker integer, strand integer, major_minor integer)");
+    }
+    int init () {
+        insert_stmt = MasterDB.prep("INSERT INTO ref_allele_flips(marker, strand, major_minor) VALUES(?, ?, ?);");
+        select_stmt = MasterDB.prep("SELECT marker, strand, major_minor FROM ref_allele_flips;");
+        return insert_stmt && select_stmt && 1;
+    }
+    int insert(int marker, int strand, int major_minor) {
+        int idx = 1;
+
+        return insert_stmt
+               && insert_stmt->rowbind(idx, marker)
+               && insert_stmt->rowbind(idx, strand, major_minor)
+               && insert_stmt->step();
+    }
+    int select(int marker, int strand, int major_minor) {
+        int idx = 0;
+        int ret =
+                select_stmt->row(idx, marker)
+                && select_stmt->row(idx, strand, major_minor);
+        return ret;
+    }
+    void close() {
+        delete insert_stmt;
+        delete select_stmt;
+    }
+    int drop() {
+        return MasterDB.exec("DROP TABLE IF EXISTS ref_allele_flips;");
+    }
+
+    void determine_flips(linkage_ped_top *Top, int locus, const char *data_ref, const char *data_alt, char *ref_ref, char *ref_alt, int chromosome, int position);
+
+    int db_getall(linkage_ped_tree *t, std::map<int, linkage_ped_tree *> &pedigree_hash);
+};
+
+extern Reference_Flips_Table *reference_flips_table;
 #endif

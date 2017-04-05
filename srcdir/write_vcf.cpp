@@ -69,8 +69,8 @@ int combinechromovcf;
 int outfiletype;
 Str ref_choice;
 
-SECTION_LOG_INIT(ref_mismatch);
-SECTION_LOG_INIT(ref_not_available);
+//SECTION_LOG_INIT(ref_mismatch);
+//SECTION_LOG_INIT(ref_not_available);
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -166,7 +166,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(ref_choice == "Use Mega2 Allele DB Table") {
                 pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele used instead.\">\n");
                 pr_printf("##INFO=<ID=UNREF,Number=1,Type=String,Description=\"Reference panel had an allele match for this position, but it was not in the measured dataset.\">\n");
-                pr_printf("##INFO=<ID=FLIP,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset if flipped according to T/G <-> A/C.\">\n");
+                pr_printf("##INFO=<ID=ORIG,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset if flipped according to T/G <-> A/C.\">\n");
             }
             //don't know these for now
             //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
@@ -287,6 +287,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
         HMapis references;
         HMapis alternates;
+        HMapii strand_flips;
+        HMapii major_minor_flips;
         int lastchr;
         int extremum_allele;
 
@@ -356,8 +358,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void chr_end() {
-            SECTION_LOG_FINI(ref_mismatch);
-            SECTION_LOG_FINI(ref_not_available);
+            //SECTION_LOG_FINI(ref_mismatch);
+            //SECTION_LOG_FINI(ref_not_available);
         }
 
 
@@ -401,6 +403,30 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
                 MasterDB.commit();
                 delete select;
+
+                DBstmt *select2;
+                char select_string2[255];
+                sprintf(select_string2, "SELECT marker, strand, major_minor FROM ref_allele_flips");
+                select2 = MasterDB.prep(select_string2);
+                int ret2 = select2 && select2->abort();
+
+                while (ret2) {
+                    int locus = 0;
+                    int strand_flip = 0;
+                    int major_minor = 0;
+                    ret2 = select2->step();
+                    if (ret2 == SQLITE_ROW) {
+                        select2->column(0, locus);
+                        select2->column(1, strand_flip);
+                        select2->column(2, major_minor);
+                        strand_flips[locus] = strand_flip;
+                        major_minor_flips[locus] = major_minor;
+                    } else
+                        break;
+                }
+
+
+                delete select2;
                 first = false;
             }
 
@@ -438,14 +464,16 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
             }
 
-
             string auxillary_ref;
+            string auxillary_alt;
             if(ref_choice == "Use Mega2 Allele DB Table") {
+                //get references
                 string ref_return;
                 string alt_return;
                 int lookup = (int) _EXLTop->EXLocus[_locus].positions[base_pair_position_index];
+                //if we have the reference in the data set it's the extremum
                 if (map_get(references, lookup, ref_return)) {
-                    if(strcmp(ref_return.c_str(), "*") != 0) {
+                    if (strcmp(ref_return.c_str(), "*") != 0) {
                         for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                             if (_tlocusp->Allele[allele].AlleleName == canonical_allele(ref_return.c_str())) {
                                 extremum_allele = allele;
@@ -453,57 +481,16 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                                 break;
                             }
                         }
-                        //check for bi-allelic
-                        if(_tlocusp->AlleleCnt == 2){
-                            //get our alternate value if available
-                            if (map_get(alternates, lookup, alt_return)) {
-                                //compare for T/G <-> A/C strand alignment
-                                //printf("%d Data Alleles %s/%s\nRef Alleles %s/%s\n", lookup, _tlocusp->Allele[0].AlleleName, _tlocusp->Allele[1].AlleleName, ref_return.c_str(), alt_return.c_str());
-                                if(((_tlocusp->Allele[0].AlleleName == canonG && _tlocusp->Allele[1].AlleleName == canonT) ||
-                                        (_tlocusp->Allele[0].AlleleName == canonT && _tlocusp->Allele[1].AlleleName == canonG)) &&
-                                        ((canonical_allele(ref_return.c_str()) == canonA && canonical_allele(alt_return.c_str()) == canonC) ||
-                                                (canonical_allele(ref_return.c_str()) == canonC && canonical_allele(alt_return.c_str()) == canonA))) {
-                                    reference_exists = 2;
-                                }
-
-                                else if(((_tlocusp->Allele[0].AlleleName == canonA && _tlocusp->Allele[1].AlleleName == canonC) ||
-                                         (_tlocusp->Allele[0].AlleleName == canonC && _tlocusp->Allele[1].AlleleName == canonA)) &&
-                                        ((canonical_allele(ref_return.c_str()) == canonG  && canonical_allele(alt_return.c_str()) == canonT) ||
-                                         (canonical_allele(ref_return.c_str()) == canonT && canonical_allele(alt_return.c_str()) == canonG))) {
-                                    reference_exists = 2;
-                                }
-                            }
-                        }
-
-                        if (reference_exists == 0) {
-                            a1 = ref_return;
-                            string ref_names = "(";
-                            for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                                if(dummycanon == _tlocusp->Allele[allele].AlleleName)
-                                    ref_names = ref_names + ".";
-                                else
-                                    ref_names = ref_names + _tlocusp->Allele[allele].AlleleName;
-                                if (allele != _tlocusp->AlleleCnt - 1)
-                                    ref_names = ref_names + ",";
-                            }
-                            ref_names += ")";
-                            SECTION_LOG(ref_mismatch);
-                            mssgvf("chr%d:%d ref allele %s not in observed alleles %s. \n", _numchr, lookup, ref_return.c_str(), ref_names.c_str());
+                        if(reference_exists != 1) {
                             reference_exists = -1;
                             auxillary_ref = ref_return;
+                            if (map_get(alternates, lookup, alt_return))
+                                auxillary_alt = alt_return;
                         }
                     }
-                    else {
-                        reference_exists = 0;
-                        SECTION_LOG(ref_not_available);
-                        mssgvf("chr%d:%d has no reference value, using major allele for this position. \n",_numchr, lookup);
-                    }
                 }
-                else
-                    reference_exists = 0;
-
-                //get major allele instead if there is no reference allele
-                if (reference_exists == 0 || reference_exists == -1) {
+                    //otherwise calculate the extremum
+                else {
                     extremum_frequency = 0;
                     for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                         if (_tlocusp->Allele[allele].Frequency > extremum_frequency) {
@@ -511,9 +498,15 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                             extremum_allele = allele;
                         }
                     }
+                    reference_exists = 0;
+                }
+                //check for strand flips
+                int strand = 0;
+                if (map_get(strand_flips, _locus, strand)) {
+                    if (strand == 1)
+                        reference_exists = 2;
                 }
             }
-
 
 
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
@@ -643,9 +636,9 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 if (reference_exists == 0)
                     pr_printf("NO;");
                 if (reference_exists == -1)
-                    pr_printf("UNREF=%s;", auxillary_ref.c_str());
+                    pr_printf("UNREF=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
                 if (reference_exists == 2)
-                    pr_printf("FLIP=%s,%s;",_tlocusp->Allele[extremum_allele].AlleleName,_tlocusp->Allele[(extremum_allele+1)%2].AlleleName);
+                    pr_printf("ORIG=%s,%s;",_tlocusp->Allele[extremum_allele].AlleleName,_tlocusp->Allele[(extremum_allele+1)%2].AlleleName);
             }
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
