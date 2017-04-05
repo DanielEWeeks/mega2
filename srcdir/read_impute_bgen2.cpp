@@ -89,7 +89,7 @@ void BgenParserGenotypeReadHelper::genotypes_init()
     summarise( std::cerr ) ;
     class noop {
     public:
-        noop()  {}
+        noop(BgenParserGenotypeReadHelper *)  {}
        ~noop()  {}
         void operator() ( std::string const& id ) { }
     };
@@ -97,7 +97,7 @@ void BgenParserGenotypeReadHelper::genotypes_init()
 /*
         [this]( std::string const& id ) { }
 */
-        noop() );
+        noop(this) );
 }
 
 bool BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 

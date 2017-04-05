@@ -149,7 +149,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
     while (choice != 0) {
         printf("  SHAPEIT %s parameters menu:\n", shapeitopt);
         printf("    The recombination map directory defaults to the current directory.\n");
-        printf("    The recombination map file name should contain a ? character which\n");
+        printf("    The recombination map file template should contain a ? character which\n");
         printf("      will be replaced with a chomomosome number.\n");
         draw_line();
         printf("0) Done with this menu - please proceed\n");
@@ -162,8 +162,8 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
                    i, (rdir == "" )? "." : C(rdir));
             idir=i++;
 
-            printf(" %d) Genetic recombination map file name:       \"%s\"\n",
-                   i, BatchItemGet("Shapeit_recomb_rfile")->value.name);
+            printf(" %d) Genetic recombination map file template:   \"%s\"\n",
+                   i, BatchItemGet("Shapeit_recomb_template")->value.name);
             ifile=i++;
         }
 /*
@@ -194,18 +194,18 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
             i = strlen(selection) - 1;
             if (selection[i] == '\n')
                 selection[i] = 0;
-            BatchValueSet(sp, "Shapeit_recomb_rdir");
+            BatchValueSet(sp, "Shapeit_recomb_directory");
             rdir = sp;
 
         } else if (choice == ifile) {
             while (1) {
-                printf("Enter recombination map file name >\n");
+                printf("Enter recombination map file template >\n");
                 printf(" Reserve space for the chromosome number with a ? > ");
                 IgnoreValue(fgets(selection, sizeof(selection)-1, stdin)); newline;
                 i = strlen(selection) - 1;
                 if (selection[i] == '\n')
                     selection[i] = 0;
-                BatchValueSet(sp, "Shapeit_recomb_rfile");
+                BatchValueSet(sp, "Shapeit_recomb_template");
 
                 Cstr file(sp);
                 Vecs filesplit;
@@ -248,16 +248,16 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
 
 /*
 static keyw_t keywords[] = {
-    {"Shapeit_recomb_rdir",                            STRING, ""},
-    {"Shapeit_recomb_rfile",                           STRING, ""} ,
+    {"Shapeit_recomb_directory",                       STRING, ""},
+    {"Shapeit_recomb_template",                        STRING, ""} ,
     {"Shapeit_file_stem",                              STRING, ""}
 };
 */
 
 void CLASS_SHAPEIT::batch_out()
 {
-    Cstr Values[] = { "Shapeit_recomb_rdir",
-                      "Shapeit_recomb_rfile",
+    Cstr Values[] = { "Shapeit_recomb_directory",
+                      "Shapeit_recomb_template",
                       "Shapeit_file_stem",
                       "Loop_Over_Chromosomes",
     };
@@ -285,8 +285,8 @@ void CLASS_SHAPEIT::batch_in()
     LoopOverChrm = 'y';
 
     if (_suboption == 1) {
-        BatchValueGet(this->rdir,  "Shapeit_recomb_rdir");
-        BatchValueGet(       file, "Shapeit_recomb_rfile");
+        BatchValueGet(this->rdir,  "Shapeit_recomb_directory");
+        BatchValueGet(       file, "Shapeit_recomb_template");
 
         if (file == "") return;
         split(filesplit, file, "?");
@@ -305,7 +305,7 @@ void CLASS_SHAPEIT::batch_show()
     msgvf("\n");
     if (_suboption == 1) {
         msgvf("Shapeit recombination data directory:     %s\n",    C(this->rdir));
-        msgvf("Shapeit recombination file:               %s?%s\n", C(this->rpre), C(this->rpost));
+        msgvf("Shapeit recombination file template:      %s?%s\n", C(this->rpre), C(this->rpost));
     }
     if (! DEFAULT_OUTFILES) {
         msgvf("Shapeit data file stem:                   %s\n",    C(this->file_name_stem));
