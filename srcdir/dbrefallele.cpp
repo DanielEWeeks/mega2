@@ -45,6 +45,7 @@
 
 #include "user_input_ext.h"
 #include "error_messages_ext.h"
+#include "read_files_ext.h"
 
 
 extern DBlite MasterDB;
@@ -53,6 +54,8 @@ extern int  db_exists_db();
 extern void db_open_db();
 extern char DBfile[255];
 
+SECTION_LOG_INIT(ref_mismatch);
+SECTION_LOG_INIT(ref_not_available);
 
 void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str filename, bool use_bp_sort, bp_order *bp) {
     mssgvf("Loading reference allele file %s into database\n",filename.c_str());
@@ -64,6 +67,10 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     //printf("Creating database table\n");
     create();
 
+    //make our flip table
+    Reference_Flips_Table *reference_flips_table = new Reference_Flips_Table();
+    reference_flips_table->create();
+    reference_flips_table->init();
 
     //now we typically do this on database creation and use the first page
     //get our filename of our reference file
@@ -129,6 +136,20 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     pos = atoi(token);
                     //if both are set we found a whole entry
                 else {
+                    char *ref = new char[255];
+                    char *alt = new char[255];
+                    //set ref to the current token
+                    if(token != NULL)
+                        strcpy(ref, token);
+                    else
+                        strcpy(ref, dummy);
+                    //grab the next token, this will be our alternate allele
+                    token = std::strtok(NULL, " \n");
+                    if (token != NULL)
+                        strcpy(alt, token);
+                    else
+                        strcpy(alt, dummy);
+                    //printf("%s/%s\n",ref,alt);
                     if (locus == Top->LocusTop->LocusCnt - 1)
                         break;
                     int position = bp->pos;
@@ -137,20 +158,26 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     //printf("Internal Chromsome = %d, Reference Chromosome = %d\n", Top->LocusTop->Locus[locus].Marker->chromosome, chr);
                     //printf("Internal Position = %d, Reference Position = %d\n",position, pos);
                     if (chromosome == chr && pos == position) {
-                        //we insert our values, the position internally is inserted sow e can select on it
-                        insert(chromosome, position, locus, token);
+                        //we insert our values, the position internally is inserted so we can select on it
+                        insert(chromosome, position, locus, ref, alt);
+                        reference_flips_table->determine_flips(Top, locus, Top->LocusTop->Locus[locus].Allele[0].AlleleName,Top->LocusTop->Locus[locus].Allele[1].AlleleName, ref, alt, chromosome, position);
+                        //printf("Ref:%s/%s    Data:%s/%s\n",ref,alt,Top->LocusTop->Locus[locus].Allele[0].AlleleName,Top->LocusTop->Locus[locus].Allele[0].AlleleName);
                         bp++;
                         locus++;
                         success++;
                     } else if (pos > position && chromosome == chr) {
                         //if we find a value too large insert a dummy and increment
-                        insert(chromosome, position, locus, dummy);
+                        SECTION_LOG(ref_not_available);
+                        mssgvf("chr%d:%d has no reference value. \n",chromosome, position);
+                        insert(chromosome, position, locus, dummy, dummy);
                         bp++;
                         locus++;
                         fail++;
                     }
                     else if( chr > chromosome) {
-                        insert(chromosome, position, locus, dummy);
+                        SECTION_LOG(ref_not_available);
+                        mssgvf("chr%d:%d has no reference value. \n",chromosome, position);
+                        insert(chromosome, position, locus, dummy, dummy);
                         bp++;
                         locus++;
                         fail++;
@@ -158,6 +185,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     }
                     chr = 0;
                     pos = 0;
+
                 }
                 token = std::strtok(NULL, " \n");
             }
@@ -197,15 +225,29 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                 else if (pos == 0)
                     pos = atoi(token);
                 else {
+                    char *ref = new char[255];
+                    char *alt = new char[255];
+                    if(token != NULL)
+                        strcpy(ref, token);
+                    else
+                        strcpy(ref, dummy);
+                    token = std::strtok(NULL, " \n");
+                    if (token != NULL)
+                        strcpy(alt, token);
+                    else
+                        strcpy(alt, dummy);
+
                     if (locus == Top->LocusTop->LocusCnt)
                         break;
                     int position = Top->EXLTop->EXLocus[locus].positions[base_pair_position_index];
                     int chromosome = Top->LocusTop->Locus[locus].Marker->chromosome;
                     if(chromosome == chr && position == pos) {
-                        insert(chromosome, position, locus, token);
+                        insert(chromosome, position, locus, ref, alt);
                         locus++;
                     } else if (pos > position) {
-                        insert(chromosome, position, locus, dummy);
+                        SECTION_LOG(ref_not_available);
+                        mssgvf("chr%d:%d has no reference value. \n",chromosome, position);
+                        insert(chromosome, position, locus, dummy, dummy);
                         locus++;
                     }
                     chr = 0;
@@ -228,12 +270,16 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
         }
     }
 
+    SECTION_LOG_FINI(ref_mismatch);
+    SECTION_LOG_FINI(ref_not_available);
+
     mssgvf("Successfully matched %d/%d variants in the dataset to the provided reference panel.\n", success,success+fail);
 
     //final commit just in case
     MasterDB.commit();
     //delete our insert statement
     close();
+    reference_flips_table->close();
     //close db connection
     //MasterDB.close();
     //close gzipped file
@@ -267,46 +313,102 @@ Str Reference_Allele_Table::get_filename(){
     }
 }
 
-//old way probably removing this
-//void Reference_Allele_Table::insert_into_table(int chr, int pos, Str ref) {
-    //db_open_db();
-    //MasterDB.begin();
+void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, const char *data_ref, const char *data_alt, char *ref_ref, char *ref_alt, int chromosome, int position) {
+    int strand = 0;
+    int major_minor = 0;
+    char *dummycanon;
+    char *canonA;
+    char *canonC;
+    char *canonT;
+    char *canonG;
 
-    //DBstmt *insert;
-    //char insert_string[255];
-    //sprintf(insert_string,"INSERT INTO ref_allele_table (chr, pos, marker, ref) VALUES (%d,%d,%d,'%s')",chr,pos,0,ref.c_str());
-    //insert = MasterDB.prep(insert_string);
-    //insert->step();
-    //MasterDB.commit();
-    //insert->fini();
-    //MasterDB.close();
-//}
+    dummycanon = canonical_allele("dummy");
+    canonA = canonical_allele("A");
+    canonC = canonical_allele("C");
+    canonG = canonical_allele("G");
+    canonT = canonical_allele("T");
 
-//old way probably removing this
-//int Reference_Allele_Table::get_marker(int pos) {
-    //db_open_db();
-    //MasterDB.begin();
-//
-//    DBstmt *select;
-//    char select_string[255];
-//    //I think we want to change this to not just 1
-//    sprintf(select_string,"SELECT marker FROM map_table WHERE position = %d.0 AND map = 1",pos);
-//    //printf("%s\n",select_string);
-//    select = MasterDB.prep(select_string);
-//    int ret = select && select->abort();
-//    while (ret){
-//        ret = select->step();
-//        //marker found
-//        if (ret == SQLITE_ROW) {
-//            select->column(0, ret);
-//        } else if (ret == SQLITE_DONE) {
-//            ret = 0;
-//        } else {
-//            ret = 0;
+    char *canondr = canonical_allele(data_ref);
+    char *canonda = canonical_allele(data_alt);
+    char *canonrr = canonical_allele(ref_ref);
+    char *canonra = canonical_allele(ref_alt);
+
+    //biallelic
+    if (Top->LocusTop->Locus[locus].AlleleCnt == 2) {
+        if (((canondr == canonG && canonda == canonT) || (canondr == canonT && canonda == canonG)) &&
+            ((canonrr == canonA && canonra == canonC) || (canonrr == canonC && canonra == canonA))) {
+            strand = 1;
+        } else if (((canondr == canonA && canonda == canonC) || (canondr == canonC && canonda == canonA)) &&
+                   ((canonrr == canonG && canonra == canonT) || (canonrr == canonT && canonra == canonG))) {
+            strand = 1;
+        }
+        if(strand == 0) {
+            if (canonrr == canonda)
+                major_minor = 1;
+            else
+                major_minor = 0;
+        }
+        else {
+            if (canonrr == canonA && canondr != canonT && canonda == canonT)
+                major_minor = 1;
+            else if(canonrr == canonC && canondr != canonG && canonda == canonG)
+                major_minor = 1;
+            else if(canonrr == canonG && canondr != canonC && canonda == canonC)
+                major_minor = 1;
+            else if(canonrr == canonT && canondr != canonA && canonda == canonA)
+                major_minor = 1;
+            else
+                major_minor = 0;
+        }
+    }
+        //higher order
+    else {
+        strand = 0;
+
+        for(int i = 0; i < Top->LocusTop->Locus[locus].AlleleCnt; i++){
+            if(canonrr == Top->LocusTop->Locus[locus].Allele[i].AlleleName)
+                major_minor =1;
+        }
+    }
+
+    if(major_minor == 0 && strand == 0 && canonrr != canondr) {
+        SECTION_LOG(ref_mismatch);
+        mssgvf("chr%d:%d data alleles (%s, %s) not trivially comparable, and do not directly match reference alleles (%s, %s). \n", chromosome, position,data_ref,data_alt, ref_ref,ref_alt);
+    }
+
+    insert(locus, strand, major_minor);
+//do we want this?
+//    if(strand == 1){
+//        DBstmt *update1;
+//        DBstmt *update2;
+//        char update_string1[255];
+//        char update_string2[255];
+//        if(canondr == canonG && canonda == canonT) {
+//            sprintf(update_string1,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 1;", canonC, locus);
+//            sprintf(update_string2,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 2;", canonA, locus);
 //        }
+//        else if(canondr == canonT && canonda == canonG) {
+//            sprintf(update_string1,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 1;", canonA, locus);
+//            sprintf(update_string2,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 2;", canonC, locus);
+//
+//        }
+//        else if(canondr == canonC && canonda == canonA) {
+//            sprintf(update_string1,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 1;", canonG, locus);
+//            sprintf(update_string2,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 2;", canonT, locus);
+//        }
+//        else if(canondr == canonA && canonda == canonC) {
+//            sprintf(update_string1, "UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 1;",canonT, locus);
+//            sprintf(update_string2, "UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 2;",canonG, locus);
+//        }
+//
+//        update1 = MasterDB.prep(update_string1);
+//        update1->step();
+//        delete update1;
+//
+//        update2 = MasterDB.prep(update_string2);
+//        update2->step();
+//        delete update2;
+//
 //    }
-//    MasterDB.commit();
 
-    //return ret;
-
-//}
+}
