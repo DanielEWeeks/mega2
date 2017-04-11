@@ -104,10 +104,14 @@ TBLS = c("int_table",
 #' mk_markers_with_skip(1)
 #'}
 mk_markers_with_skip = function(mapselect = 1) {
-    markersPerChr = sapply(split(ENV$marker_table$chromosome, ENV$marker_table$chromosome), length)
-    extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
-    extra_markers = c(0, extra_markers)
-    names(extra_markers) = NULL
+    if (ENV$MARKER_SCHEME == 1) {
+        markersPerChr = sapply(split(ENV$marker_table$chromosome, ENV$marker_table$chromosome), length)
+        extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
+        extra_markers = c(0, extra_markers)
+        names(extra_markers) = NULL
+    } else if (ENV$MARKER_SCHEME == 2) {
+        extra_markers = c(0)
+    }
     ENV$marker_table$locus_link_fill = ENV$marker_table$locus_link + extra_markers[ENV$marker_table$chromosome]
 
     ENV$markers = merge(ENV$marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
@@ -190,8 +194,21 @@ dbmega2_import = function(dbname,
         }
     }
 
+    ENV$PhenoCnt      = ENV$int_table[ENV$int_table$key == 'PhenoCnt', 3]
+    ENV$MARKER_SCHEME = ENV$int_table[ENV$int_table$key == 'MARKER_SCHEME', 3]
+    if (ENV$MARKER_SCHEME > 2) {
+        stop("Only compressions levels of 1 or 2 are allowed. (",
+             ENV$MARKER_SCHEME, ")", call. = FALSE)
+    }
+    
     mk_unified_genotype_table()
     mk_markers_with_skip(mapselect)
+    if (ENV$MARKER_SCHEME == 2) {
+        message("Partitioninging allele_table by locus_link\n");
+        ENV$locus_allele_table = split(ENV$allele_table, ENV$allele_table$locus_link)
+    } else {
+        ENV$locus_allele_table = NULL
+    }
 
     return (ENV)
 }
@@ -263,8 +280,13 @@ getgenotype_person = function(pid = 1) {
 
 #' fetch genotype matrix for specified markers (assemble by rows)
 #'
-#' @description ...
-#'
+#' @description
+#'  This function calls the C++ function that does all the heavy lifting.  It passes the
+#'  locus_index and the locus_offset in the \emph{unified_genotype_table} from the
+#'  \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
+#'  \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
+#'  another contains the alleles for each marker, and finally there are some bookkeeping related
+#'  data.
 #'
 #' @param markers_arg a data.frame with the following 5 variables:
 #' \describe{
@@ -283,22 +305,36 @@ getgenotype_person = function(pid = 1) {
 #' @export
 #' @useDynLib mega2
 #'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
+#'  there are two bits for each genotype.  This function creates an output matrix by selecting
+#'  from each row all the needed markers and then repeating for each person.
+#'
 #' @examples
 #'\dontrun{
 #'}
 getgenotypes_R = function(markers_arg) {
 
   return
-    getgenotypes_Ri(markers_arg$locus_link, markers_arg$locus_link_fill,
-                    ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
-                    ENV$int_table[ENV$int_table$key == 'PhenoCnt', ][1, 3])
- 
+    if (ENV$MARKER_SCHEME == 1) {
+        getgenotypes_Ri(markers_arg$locus_link, markers_arg$locus_link_fill,
+                        ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                        ENV$PhenoCnt)
+    } else {  # must be == 2
+
+    }
 }
 
 
 #' fetch genotype matrix for specified markers
 #'
-#' @description ...
+#' @description
+#'  This function calls the C++ function that does all the heavy lifting.  It passes the
+#'  locus_index and the locus_offset in the \emph{unified_genotype_table} from the
+#'  \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
+#'  \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
+#'  another contains the alleles for each marker, and finally there are some bookkeeping related
+#'  data.
 #'
 #' @param markers_arg a data.frame with the following 5 variables:
 #' \describe{
@@ -317,16 +353,81 @@ getgenotypes_R = function(markers_arg) {
 #' @export
 #' @useDynLib mega2
 #'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
+#'  there are two bits for each genotype.  This function creates an output matrix by fixing
+#'  the marker and collecting genotype information for each person and then repeating for
+#'  all the needed markers.  Currently, this appears slightly faster than the other scan in
+#'  \emph{genotype_Ri}
+#'
 #' @examples
 #'\dontrun{
 #'}
-getgenotypes = getgenotypes_C = function(markers_arg) {
+getgenotypes = function(markers_arg) {
 
   return
-    getgenotypes_Ci(markers_arg$locus_link, markers_arg$locus_link_fill,
-                    ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
-                    ENV$int_table[ENV$int_table$key == 'PhenoCnt', ][1, 3])
- 
+    if (ENV$MARKER_SCHEME == 1) {
+        getgenotypes_1(markers_arg$locus_link, markers_arg$locus_link_fill,
+                       ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                       ENV$PhenoCnt)
+    } else {  # must be == 2
+        getgenotypes_2(markers_arg$locus_link,
+                       ENV$unified_genotype_table, ENV$locus_allele_table,
+                       ENV$PhenoCnt)
+    }
+}
+
+getgenotypes_C = getgenotypes
+
+#' fetch genotype matrix for specified markers
+#'
+#' @description
+#'  This function calls the C++ function that does all the heavy lifting.  It passes the
+#'  locus_index and the locus_offset in the \emph{unified_genotype_table} from the
+#'  \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
+#'  \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
+#'  another contains the alleles for each marker, and finally there are some bookkeeping related
+#'  data.
+#'
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @return a matrix of genotypes represented as two allele pairs.  There is one column for each
+#'  marker in \emph{markers_arg} argument.  There is one row for each person in the family
+#'  (\emph{fam}) table.
+#'
+#' @export
+#' @useDynLib mega2
+#'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
+#'  there are two bits for each genotype.  This function creates an output matrix by fixing
+#'  the marker and collecting genotype information for each person and then repeating for
+#'  all the needed markers.  Currently, this appears slightly faster than the other scan in
+#'  \emph{genotype_Ri}
+#'
+#' @examples
+#'\dontrun{
+#'}
+getgenotypesraw = function(markers_arg) {
+
+  return
+    if (ENV$MARKER_SCHEME == 1) {
+        getgenotypesraw_1(markers_arg$locus_link, markers_arg$locus_link_fill,
+                          ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                          ENV$PhenoCnt)
+    } else {  # must be == 2
+        getgenotypesraw_2(markers_arg$locus_link,
+                          ENV$unified_genotype_table, ENV$locus_allele_table,
+                          ENV$PhenoCnt)
+    }
 }
 
 Rcpp::sourceCpp("src/getgenotypes.cpp")

@@ -1,44 +1,92 @@
-/*
-  Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
-  Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
-  Daniel E. Weeks, and University of Pittsburgh
 
-  This file is part of the Mega2 program, which is free software; you
-  can redistribute it and/or modify it under the terms of the GNU
-  General Public License as published by the Free Software Foundation;
-  either version 3 of the License, or (at your option) any later
-  version.
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
 
-  Mega2 is distributed in the hope that it will be useful, but WITHOUT
-  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-  for more details.
+library(mega2)
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+goo = function(rng = 10000:11000) {
 
-  For further information contact:
-      Daniel E. Weeks
-      e-mail: weeks@pitt.edu
+    ENV=dbmega2_import("ped1.db")
 
-===========================================================================
-*/
+    cc = getgenotypes(ENV$markers[rng,])
+    c1a = getgenotypesa(ENV$markers[rng,])
+    cat("all(cc == c1a) ")
+    print(all(cc == c1a))
+    c1r = getgenotypesr(ENV$markers[rng,])
 
-#include <string>
-#include "Rcpp.h"
+    c1x = array("0", dim=dim(cc))
+    c1x [c1r == 131074] = "22"
+    c1x [c1r == 65538] = "12"
+    c1x [c1r == 65537] = "11"
+    cat("all(cc == c1x) ")
+    print(all(cc == c1x))
 
-using namespace Rcpp;
+    ENV=dbmega2_import("ped2.db")
+    c2a = getgenotypesa(ENV$markers[rng,])
+    cat("all(ccr==c2a) ")
+    print(all(cc == c2a))
+    c2r = getgenotypesr(ENV$markers[rng,])
+    cat("all(c1r==c2r) ")
+    print(all(c1r == c2r))
 
-// [[Rcpp::export]]
-Rcpp::Matrix<STRSXP> getgenotypes_1(NumericVector locus_arg,
-                                    NumericVector hocus_arg,
-                                    List          genotype_arg,
-                                    List          allele_arg,
-                                    List          markerscheme_arg,
-                                    NumericVector phenocnt_arg)
-{
+    c2x = array("0", dim=dim(cc))
+    c2x [c2r == 131074] = "22"
+    c2x [c2r == 65538] = "12"
+    c2x [c2r == 65537] = "11"
+    cat("all(cc==c2x) ")
+    print(all(cc==c2x))
+}
+
+
+getgenotypesa = function(markers_arg) {
+
+  ENV = mega2:::ENV
+
+  return
+    if (ENV$MARKER_SCHEME == 1) {
+        getgenotypesa1(markers_arg$locus_link, markers_arg$locus_link_fill,
+                       ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                       ENV$PhenoCnt)
+    } else {  # must be == 2
+        getgenotypesa2(markers_arg$locus_link,
+                       ENV$unified_genotype_table, ENV$locus_allele_table,
+                       ENV$PhenoCnt)
+    }
+}
+
+getgenotypesa1 = inline::cxxfunction(
+    signature(locus_arg = "numeric",
+              hocus_arg = "numeric",
+              genotype_arg = "list",
+              allele_arg = "list",
+              markerscheme_arg = "list",
+              phenocnt_arg = "numeric"),
+    body =
+    '
+//getgenotypesa1 
     int debug = 0;
 
     Rcpp::NumericVector loci(locus_arg);
@@ -132,14 +180,19 @@ Rcpp::Matrix<STRSXP> getgenotypes_1(NumericVector locus_arg,
         }
     }
     return mtx;
-}
+    ',
+  verbose = TRUE,
+  plugin = "Rcpp")
 
-// [[Rcpp::export]]
-Rcpp::Matrix<STRSXP> getgenotypes_2(NumericVector locus_arg,
-                                    List          genotype_arg,
-                                    List          allele_arg,
-                                    NumericVector phenocnt_arg)
-{
+
+getgenotypesa2 = inline::cxxfunction(
+    signature(locus_arg = "numeric",
+              genotype_arg = "list",
+              allele_arg = "list",
+              phenocnt_arg = "numeric"),
+    body =
+    '
+//getgenotypesa2
     int debug = 0;
 
     Rcpp::NumericVector loci(locus_arg);
@@ -191,17 +244,39 @@ Rcpp::Matrix<STRSXP> getgenotypes_2(NumericVector locus_arg,
         }
     }
     return mtx;
+    ',
+  verbose = TRUE,
+  plugin = "Rcpp")
+
+
+################
+
+getgenotypesr = function(markers_arg) {
+
+  ENV = mega2:::ENV
+
+  return
+    if (ENV$MARKER_SCHEME == 1) {
+        getgenotypesr1(markers_arg$locus_link, markers_arg$locus_link_fill,
+                       ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                       ENV$PhenoCnt)
+    } else {  # must be == 2
+        getgenotypesr2(markers_arg$locus_link,
+                       ENV$unified_genotype_table, ENV$locus_allele_table,
+                       ENV$PhenoCnt)
+    }
 }
 
-
-// [[Rcpp::export]]
-Rcpp::IntegerMatrix getgenotypesraw_1(NumericVector locus_arg,
-                                      NumericVector hocus_arg,
-                                      List          genotype_arg,
-                                      List          allele_arg,
-                                      List          markerscheme_arg,
-                                      NumericVector phenocnt_arg)
-{
+getgenotypesr1 = inline::cxxfunction(
+    signature(locus_arg = "numeric",
+              hocus_arg = "numeric",
+              genotype_arg = "list",
+              allele_arg = "list",
+              markerscheme_arg = "list",
+              phenocnt_arg = "numeric"),
+    body =
+    '
+ //getgenotypesr1
    int debug = 0;
 
     Rcpp::NumericVector loci(locus_arg);
@@ -296,14 +371,19 @@ Rcpp::IntegerMatrix getgenotypesraw_1(NumericVector locus_arg,
         }
     }
     return mtx;
-}
+    ',
+  verbose = TRUE,
+  plugin = "Rcpp")
 
-// [[Rcpp::export]]
-Rcpp::IntegerMatrix getgenotypesraw_2(NumericVector locus_arg,
-                                      List          genotype_arg,
-                                      List          allele_arg,
-                                      NumericVector phenocnt_arg)
-{
+
+getgenotypesr2 = inline::cxxfunction(
+    signature(locus_arg = "numeric",
+              genotype_arg = "list",
+              allele_arg = "list",
+              phenocnt_arg = "numeric"),
+    body =
+    '
+//getgenotypesr2
     int debug = 0;
 
     Rcpp::NumericVector loci(locus_arg);
@@ -355,143 +435,8 @@ Rcpp::IntegerMatrix getgenotypesraw_2(NumericVector locus_arg,
         }
     }
     return mtx;
-}
+    ',
+  verbose = TRUE,
+  plugin = "Rcpp")
 
-// [[Rcpp::export]]
-Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
-                                     NumericVector hocus_arg,
-                                     List          genotype_arg,
-                                     List          allele_arg,
-                                     List          markerscheme_arg,
-                                     NumericVector phenocnt_arg)
-{
-    int debug = 0;
 
-    Rcpp::NumericVector loci(locus_arg);
-    int locus_size = loci.size();
-    Rcpp::NumericVector hoci(hocus_arg);
-    int hocus_size = hoci.size();
-
-    Rcpp::List genotype(genotype_arg);
-    Rcpp::List genotype_sample(genotype[1]);           // genotype[, 2]
-    int genotype_sample_size = genotype_sample.size();
-
-    Rcpp::List allele(allele_arg);
-    std::vector<std::string> decode_allele(4);
-
-    Rcpp::List markerschemes(markerscheme_arg);
-    Rcpp::IntegerVector allele1_map(markerschemes[2]);   // markerscheme_table[, 3]
-    Rcpp::IntegerVector allele2_map(markerschemes[3]);   // markerscheme_table[, 4]
-
-    Rcpp::NumericVector phenos(phenocnt_arg);
-    int pheno = phenos[0];
-
-    Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, locus_size);
-
-    if (locus_size != hocus_size) {
-        Rf_error("First vector arguments should be the same length, but are %d vs %d\\n",
-                 locus_size, hocus_size);
-        return mtx;
-    }
-
-    int locus, hocus, marker, byte, a1map, a2map;
-    for (int j = 0; j < genotype_sample_size; j++) {
-
-        Rcpp::RawVector rv(genotype_sample[j]);
-
-        for (int i = 0; i < loci.size(); i++) {
-
-            locus = loci[i];
-            hocus = hoci[i];
-            marker = hocus - pheno;
-
-            byte = marker / 4;
-            marker = marker - 4 * byte;
-
-            if (debug) Rprintf("locus %d, hocus %d, pheno: %d, marker: %d, byte %d, offset %d\\n",
-                               locus, hocus, pheno, hocus-pheno, byte, marker);
-
-            a1map = allele1_map(locus - pheno);
-            a2map = allele2_map(locus - pheno);
-
-            Rcpp::CharacterVector aAlleleName(allele[1]);
-            std::string allele1(aAlleleName[2 * locus + a1map - 1]);
-            std::string allele2(aAlleleName[2 * locus + a2map - 1]);
-            if (debug) Rprintf("allele%d/%d: %s%s; ", a1map, a2map,
-                                  allele1.c_str(), allele2.c_str());
-
-            Rcpp::IntegerVector aindexX(allele[3]);
-            if (debug) Rprintf("indexX: %d %d\\n", aindexX[2 * locus], aindexX[2 * locus+1]);
-
-            decode_allele[0] = allele1 + allele1;
-            decode_allele[1] = "00";
-            decode_allele[2] = allele1 + allele2;
-            decode_allele[3] = allele2 + allele2;
-
-            int t0 = rv[byte];
-/*
-            if (debug && j <= 3)
-                Rprintf("byte %d, t0 %x %x %x %x %x %x %x %x %x %x %x %x %x\\n",
-                         byte, t0,
-                         rv(byte-6), rv(byte-5), rv(byte-4), rv(byte-3), rv(byte-2), rv(byte-1),
-                         rv(byte-0), rv(byte+1), rv(byte+2), rv(byte+3), rv(byte+4), rv(byte+5));
-*/
-            if (debug && j <= 3) Rprintf("byte %d, t0 %x \\n",  byte, t0);
-            if (marker == 0) {
-              mtx(j, i) = decode_allele[(t0 & 0x03) >> 0];
-            } else if (marker == 1) {
-              mtx(j, i) = decode_allele[(t0 & 0x0c) >> 2];
-            } else if (marker == 2) {
-              mtx(j, i) = decode_allele[(t0 & 0x30) >> 4];
-            } else if (marker == 3) {
-              mtx(j, i) = decode_allele[(t0 & 0xc0) >> 6];
-            }
-        }
-    }
-    return mtx;
-}
-
-// [[Rcpp::export]]
-Rcpp::NumericVector getgenotypes_forperson(RawVector raw_arg)
-{
-    Rcpp::RawVector rv(raw_arg);
-
-    Rcpp::NumericVector v(rv.size() * 4);
-
-    int j = 0;
-    for (int i = 0; i < rv.size(); i++) {
-        int t0 = rv[i];
-        int t1 = (t0 & 0x03) >> 0;
-        int t2 = (t0 & 0x0c) >> 2;
-        int t3 = (t0 & 0x30) >> 4;
-        int t4 = (t0 & 0xc0) >> 6;
-        v[j++] = t1;
-        v[j++] = t2;
-        v[j++] = t3;
-        v[j++] = t4;
-    }
-
-    return v;
-}
-
-//////////////////////////////////////////////
-// library(inline)                          //
-// library(Rcpp)                            //
-//                                          //
-// getgenotypesa1 = inline::cxxfunction(    //
-//     signature(locus_arg = "numeric",     //
-//               hocus_arg = "numeric",     //
-//               genotype_arg = "list",     //
-//               allele_arg = "list",       //
-//               markerscheme_arg = "list", //
-//               phenocnt_arg = "numeric"), //
-//     body =                               //
-//     '                                    //
-// //getgenotypesa1                         //
-//     int debug = 0;                       //
-//         ...                              //
-//     return mtx;                          //
-//     ',                                   //
-//   verbose = TRUE,                        //
-//   plugin = "Rcpp")                       //
-//////////////////////////////////////////////

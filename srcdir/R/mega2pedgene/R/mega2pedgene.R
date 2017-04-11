@@ -25,21 +25,59 @@
 #
 # ===========================================================================
 
+#' Mega2pedgene package
+#'
+#' @description
+#'  This package runs the \bold{pedgene} program via the \bold{Mega2} BioConductor Framework.
+#'  The framework result is stored in a file and can then be matched to a collection of data
+#'  previously analyzed by manual methods.  The results can be compared.
+#'
+#' @author
+#'  Robert V Baron, rvb5@pitt.edu
+#'  Maintainer: Robert V Baron, <rvb5@pitt.edu>
+#' @docType package
+#' @name Mega2pedgene-package
+#'
+#'@references
+#'  This optional section can contain literature or other references for
+#'  background information.
+#'
+#'@seealso
+#'  Optional links to other man pages
+#'
+#'@examples
+#'  \dontrun{
+#'     ## Optional simple examples of the most important functions
+#'     ## These can be in \dontrun{} and \donttest{} blocks.
+#'  }
+NULL
+
 #library(mega2)
 #library(pedgene)
 
-#' init_pedgene ...
+#' get data for pedgene run using \bold{Mega2} framework
 #'
-#' @param db ...
-#' @param verbose ...
+#' @description
+#'  This populates the \bold{Mega2} data.frames from the specified database.  It also
+#'  prunes the samples to only include members that have a definite case or control
+#'  status.  Undefined samples are ignored; this is necessary for \emph{pedgene}.
 #'
-#' @return NO
+#' @param db specifies a \bold{Mega2} SQLite database containing study data.
+#'
+#' @param verbose default is passed to the \bold{Mega2} framework.  1 indicates that
+#'  diagnostic printouts should be enabled.
+#'
+#' @return None
 #' @importFrom mega2 dbmega2_import mkfam setfam setRanges
 #' @importFrom utils read.table write.table
 #' @export
 #'
+#' @note
+#'  This also records schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
+#'
 #' @examples
 #'\dontrun{
+#' init_pedgene("ped3.db", verbose = 1)
 #'}
 init_pedgene = function (db = "ped3.db", verbose = 0) {
 
@@ -87,18 +125,21 @@ results <- data.frame(chr = character(0), gene = character(0), nvariants = numer
                       pKernel_UW = numeric(0), pBurden_UW = numeric(0),
                       geneID = numeric(0), stringsAsFactors = FALSE)
 
-#' run
+#' execute the pedgene function on a subset of the gene transcript ranges
 #'
-#' @param gs ...
+#' @param gs a subsequence of the gene transcript ranges to calculate the \emph{Dopedgene} function
+#' on.
 #'
-#' @return NO
+#' @return None
 #' @importFrom mega2 applyFnToRanges
 #' @export
 #'
 #' @examples
 #'\dontrun{
+#' run()
+#'
+#' run(1:10)
 #'}
-
 run = function (gs = 1:100) {
 
     unlink("k_Schaid_rare.txt")
@@ -108,52 +149,66 @@ run = function (gs = 1:100) {
     applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices)
 }
 
-#' DOpedgene call back function
+#' pedgene call back function
 #'
-#' @param genoChar ...
-#' @param markerSet ...
-#' @param rng ...
+#' @description ...
 #'
-#' @return NO
+#' @param geno_arg A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.
+#'
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @param range_arg one row of a ranges_arg.  The latter is a data.frame of at least three
+#'  integer columns.  The columns indicate a range:
+#'  a chromosome number, a start base pair value, and an end base pair value.
+#'
+#' @return None
 #' @importFrom pedgene pedgene
 #' @export
 #'
 #' @examples
 #'\dontrun{
 #'}
-DOpedgene = function(genoChar, markerSet, rng) {
+DOpedgene = function(geno_arg, markers_arg, range_arg) {
 
     ENV = (environment(dbmega2_import))$ENV
 
-    markerList = markerSet$MarkerName
-    gene  <- as.character(rng$SYMBOL)
+    markerNames = markers_arg$MarkerName
+    gene  <- as.character(range_arg$SYMBOL)
 
     mt = matrix(c(11, 12, 21, 22, 0, 1, 1, 2), nrow = 4, ncol = 2)
-    di = dim(genoChar)
-    genoInt = matrix(0, nrow = (di[1]), ncol = di[2])
+    di = dim(geno_arg)
+    geno = matrix(0, nrow = (di[1]), ncol = di[2])
     for (k in 1:(di[2])) {
-        vec = mt[match(as.integer(genoChar[ , k]), mt), 2]
+        vec = mt[match(as.integer(geno_arg[ , k]), mt), 2]
         g0 = sum(vec == 0)
         g1 = sum(vec == 1)
         g2 = sum(vec == 2)
         if (ENV$verbose)
-            cat(gene, markerList[k], g0, g1, g2, "\n")
+            cat(gene, markerNames[k], g0, g1, g2, "\n")
         if (g0 < g2) {
-           genoInt[ , k] = 2 - vec
+           geno[ , k] = 2 - vec
         } else {
-           genoInt[ , k] =     vec
+           geno[ , k] =     vec
         }
     }
 
-    genoInt = matrix(genoInt, nrow = di[1])
-    maf = colMeans(genoInt)
-    pos = markerList[maf > 0]
+    geno = matrix(geno, nrow = di[1])
+    maf = colMeans(geno)
+    pos = markerNames[maf > 0]
     if (length(pos) >= 2) {       # at least 2 non-polymorphic variants #
-        genoInt <- genoInt[ , maf > 0]     # remove nonpolymorphic variants #
-        nsnp    <- ncol(genoInt)
-        weight <- rep(1, ncol(genoInt))
+        geno <- geno[ , maf > 0]     # remove nonpolymorphic variants #
+        nsnp    <- ncol(geno)
+        weight <- rep(1, ncol(geno))
 
-        pedgeno <- cbind(ENV$pedPer, genoInt)
+        pedgeno <- cbind(ENV$pedPer, geno)
 
         BT <- pedgene(ENV$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= FALSE, method= "kounen")
         pKernel_BT <- BT$pgdf$pval.kernel
@@ -168,9 +223,9 @@ DOpedgene = function(genoChar, markerSet, rng) {
         pBurden_UW <- UW$pgdf$pval.burden
 
         ## read out the results ##
-        chr   <- as.character(rng$TXCHROM)
-        start <- rng$TXSTART
-        end   <- rng$TXEND
+        chr   <- as.character(range_arg$TXCHROM)
+        start <- range_arg$TXSTART
+        end   <- range_arg$TXEND
         zzz = 1
         if (ENV$verbose)
             cat(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
@@ -178,6 +233,7 @@ DOpedgene = function(genoChar, markerSet, rng) {
 
         results[1, ] <- c(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
                           pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz)
+
         write.table(results, file="k_Schaid_rare.txt", append= TRUE, row.names= FALSE, col.names= FALSE, quote= FALSE)
     }
 }
