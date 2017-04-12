@@ -238,8 +238,8 @@ static keyw_t keywords[] = {
     {"ID_pedigree",                           INT,       "0"},
     {"ID_person",                             INT,       "0"},
 
-    {"Shapeit_recomb_rdir",                   STRING,     ""},
-    {"Shapeit_recomb_rfile",                  STRING,     "?"},
+    {"Shapeit_recomb_directory",              STRING,     ""},
+    {"Shapeit_recomb_template",               STRING,     "?"},
     {"Shapeit_file_stem",                     STRING,     ""},
 
     {"file_name_stem",                        STRING,     ""},
@@ -283,7 +283,7 @@ pair<Cstr,Cstr> keyword_aliases[] = {
     make_pair("","")  //sentinel
 };
 
-Cstr mega2rc[] = {"Shapeit_recomb_rdir", "Shapeit_recomb_rfile",
+Cstr mega2rc[] = {"Shapeit_recomb_directory", "Shapeit_recomb_template",
                   "Reference_Allele_File", "shapeit_reference_map_directory",
                   "shapeit_reference_panel_directory", "minimac_reference_panel_directory",
                   "shapeit_haps_file_selected", "shapeit_reference_sample_file",
@@ -1264,13 +1264,13 @@ static void process_rcbatch_file_items()
     }
 
     int err = 0;
-    batch_item_type *biD = BatchItemGet("Shapeit_recomb_rdir");
-    batch_item_type *biF = BatchItemGet("Shapeit_recomb_rfile");
+    batch_item_type *biD = BatchItemGet("Shapeit_recomb_directory");
+    batch_item_type *biF = BatchItemGet("Shapeit_recomb_template");
 
     if (biD->mega2rc_read) {
         if (access(biD->value.name, R_OK) == 0 && is_dir(biD->value.name)) {
         } else {
-            errorvf("Shape_it_recomb_rdir '%s' not a directory\n", biD->value.name);
+            errorvf("Shape_it_recomb_directory '%s' not a directory\n", biD->value.name);
             err++;
         }
     }

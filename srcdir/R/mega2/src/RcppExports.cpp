@@ -5,9 +5,9 @@
 
 using namespace Rcpp;
 
-// getgenotypes_Ci
-Rcpp::Matrix<STRSXP> getgenotypes_Ci(NumericVector locus_arg, NumericVector hocus_arg, List genotype_arg, List allele_arg, List markerscheme_arg, NumericVector phenocnt_arg);
-RcppExport SEXP mega2_getgenotypes_Ci(SEXP locus_argSEXP, SEXP hocus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP markerscheme_argSEXP, SEXP phenocnt_argSEXP) {
+// getgenotypes_1
+Rcpp::Matrix<STRSXP> getgenotypes_1(NumericVector locus_arg, NumericVector hocus_arg, List genotype_arg, List allele_arg, List markerscheme_arg, NumericVector phenocnt_arg);
+RcppExport SEXP mega2_getgenotypes_1(SEXP locus_argSEXP, SEXP hocus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP markerscheme_argSEXP, SEXP phenocnt_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -17,7 +17,51 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type allele_arg(allele_argSEXP);
     Rcpp::traits::input_parameter< List >::type markerscheme_arg(markerscheme_argSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type phenocnt_arg(phenocnt_argSEXP);
-    rcpp_result_gen = Rcpp::wrap(getgenotypes_Ci(locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, phenocnt_arg));
+    rcpp_result_gen = Rcpp::wrap(getgenotypes_1(locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, phenocnt_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getgenotypes_2
+Rcpp::Matrix<STRSXP> getgenotypes_2(NumericVector locus_arg, List genotype_arg, List allele_arg, NumericVector phenocnt_arg);
+RcppExport SEXP mega2_getgenotypes_2(SEXP locus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP phenocnt_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type locus_arg(locus_argSEXP);
+    Rcpp::traits::input_parameter< List >::type genotype_arg(genotype_argSEXP);
+    Rcpp::traits::input_parameter< List >::type allele_arg(allele_argSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type phenocnt_arg(phenocnt_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(getgenotypes_2(locus_arg, genotype_arg, allele_arg, phenocnt_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getgenotypesraw_1
+Rcpp::IntegerMatrix getgenotypesraw_1(NumericVector locus_arg, NumericVector hocus_arg, List genotype_arg, List allele_arg, List markerscheme_arg, NumericVector phenocnt_arg);
+RcppExport SEXP mega2_getgenotypesraw_1(SEXP locus_argSEXP, SEXP hocus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP markerscheme_argSEXP, SEXP phenocnt_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type locus_arg(locus_argSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type hocus_arg(hocus_argSEXP);
+    Rcpp::traits::input_parameter< List >::type genotype_arg(genotype_argSEXP);
+    Rcpp::traits::input_parameter< List >::type allele_arg(allele_argSEXP);
+    Rcpp::traits::input_parameter< List >::type markerscheme_arg(markerscheme_argSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type phenocnt_arg(phenocnt_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(getgenotypesraw_1(locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, phenocnt_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getgenotypesraw_2
+Rcpp::IntegerMatrix getgenotypesraw_2(NumericVector locus_arg, List genotype_arg, List allele_arg, NumericVector phenocnt_arg);
+RcppExport SEXP mega2_getgenotypesraw_2(SEXP locus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP phenocnt_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type locus_arg(locus_argSEXP);
+    Rcpp::traits::input_parameter< List >::type genotype_arg(genotype_argSEXP);
+    Rcpp::traits::input_parameter< List >::type allele_arg(allele_argSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type phenocnt_arg(phenocnt_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(getgenotypesraw_2(locus_arg, genotype_arg, allele_arg, phenocnt_arg));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -25,13 +25,29 @@
 # 
 # ===========================================================================
 
-
+#' Mega2 package
+#'
+#' @description This package reads a Mega2 SQLite3 database into R dataframes and
+#'	makes the contained genotypes/phenotypes/linkage data available for analysis.
+#'
+#' @author Robert V Baron
+#' @docType package
+#' @name Mega2-package
+NULL
 
 #library(DBI)
 #library(RSQLite)
 
 ENV = new.env(parent = emptyenv())
 
+#' Mega2 SQLite3 tasbles
+#'
+#' @description This indicates which SQLite3 tables and possibly which subset of fields
+#'	to fetch.
+#'
+#' @author Robert V Baron
+#' @docType data
+#' @name Mega2-TBLS
 TBLS = c("int_table",
 #        "double_table",
 #        "charstar_table",
@@ -64,21 +80,38 @@ TBLS = c("int_table",
 ##        markers
   )
 
-#' mk_markers_with_skip
+#' make markers data frame
 #'
-#' @param mapselect ...
+#' @description Create the markers data frame as a subset of the markers_table.  It contains 5
+#'	observations: \describe{
+#'	  \item{locus_link:}{locus offset of this marker}
+#'	  \item{locus_link_fill:}{locus offset plus an accumulating fudge factor that jumps
+#'          with each new chromosome so that the count of markers per chromosome is force to be
+#'          a multiple of 4.  (This number corresponds to the offset of this marker in the
+#'          \code{unified_genotype_table}.)}
+#'	  \item{MarkerName:}{name of this marker}
+#'	  \item{chromosome:}{chromosome number of this marker}
+#'	  \item{position:}{base pair position of this marker (selected by mapselect[below])}
+#'       }
 #'
-#' @return NO
-#' @export
+#' @param mapselect An integer that indicates the map index to use when selecting the
+#'	chromosome/position fields from the map_table to merge with the marker_table.
+#'
+#' @return None
 #'
 #' @examples
 #'\dontrun{
+#' mk_markers_with_skip(1)
 #'}
 mk_markers_with_skip = function(mapselect = 1) {
-    markersPerChr = sapply(split(ENV$marker_table$chromosome, ENV$marker_table$chromosome), length)
-    extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
-    extra_markers = c(0, extra_markers)
-    names(extra_markers) = NULL
+    if (ENV$MARKER_SCHEME == 1) {
+        markersPerChr = sapply(split(ENV$marker_table$chromosome, ENV$marker_table$chromosome), length)
+        extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
+        extra_markers = c(0, extra_markers)
+        names(extra_markers) = NULL
+    } else if (ENV$MARKER_SCHEME == 2) {
+        extra_markers = c(0)
+    }
     ENV$marker_table$locus_link_fill = ENV$marker_table$locus_link + extra_markers[ENV$marker_table$chromosome]
 
     ENV$markers = merge(ENV$marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
@@ -86,17 +119,17 @@ mk_markers_with_skip = function(mapselect = 1) {
                         by.x = "locus_link", by.y = "marker")
 }
 
-#' mk_unified_genotype_table
+#' mk_unified_genotype_table aggregate separate genotype vectors for each chromosome to one extended vector containing all the chromosomes.
 #'
-#' @param mapselect ...
+#' @description The genotype_table contains for each person a separate record for each chromosome.
+#'  We need a single vector for each person.
 #'
-#' @return NO
-#' @export
+#' @return None
 #'
 #' @examples
 #'\dontrun{
 #'}
-mk_unified_genotype_table = function(mapselect = 1) {
+mk_unified_genotype_table = function() {
     samples = split(ENV$genotype_table, ENV$genotype_table$person_link)
     samplesize = length(samples)
     person_link = unique(ENV$genotype_table$person_link)
@@ -114,24 +147,35 @@ mk_unified_genotype_table = function(mapselect = 1) {
   
     ENV$unified_genotype_table = df
     ENV$genotype_table = NULL
-
-    mk_markers_with_skip(mapselect)
 }
 
-#' dbmega2_import
+#' dbmega2_import read Mega2 SQLite tables into R
 #'
-#' @param dbname ...
-#' @param mapselect ...
-#' @param verbose ...
+#' @description read fields of tables necessary later tables processing.
 #'
-#' @return ENV
+#' @usage
+#' dbmega2_import(dbname,
+#'                mapselect = 1,
+#'                verbose = 0)
+#'
+#' @param dbname file path to SQLite database.
+#'
+#' @param mapselect specified which map in the map_table should be used for marker chromosome/position.
+#'
+#' @param verbose For this function, print out statistics on the name/size of each table read and show column headers.
+#'
+#' @return ENV an environment that contains all the tables created from the SQLite tables.
+
 #' @importFrom RSQLite dbConnect dbExistsTable dbReadTable dbListFields SQLITE_RO
 #' @export
 #'
 #' @examples
 #'\dontrun{
+#' dbmega2_import(verbose = 1)
+#'
+#' dbmega2_import("foo.db", verbose = 1)
 #'}
-dbmega2_import = function(dbname = "/Users/rbaron/mega2/test/mexnly/change_chrom/bcf/dbmega2.db",
+dbmega2_import = function(dbname,
                           mapselect = 1,
                           verbose = 0) {
     con = tryCatch(dbConnect(RSQLite::SQLite(), dbname = dbname, flags = SQLITE_RO),
@@ -150,7 +194,21 @@ dbmega2_import = function(dbname = "/Users/rbaron/mega2/test/mexnly/change_chrom
         }
     }
 
-    mk_unified_genotype_table(mapselect)
+    ENV$PhenoCnt      = ENV$int_table[ENV$int_table$key == 'PhenoCnt', 3]
+    ENV$MARKER_SCHEME = ENV$int_table[ENV$int_table$key == 'MARKER_SCHEME', 3]
+    if (ENV$MARKER_SCHEME > 2) {
+        stop("Only compressions levels of 1 or 2 are allowed. (",
+             ENV$MARKER_SCHEME, ")", call. = FALSE)
+    }
+    
+    mk_unified_genotype_table()
+    mk_markers_with_skip(mapselect)
+    if (ENV$MARKER_SCHEME == 2) {
+        message("Partitioninging allele_table by locus_link\n");
+        ENV$locus_allele_table = split(ENV$allele_table, ENV$allele_table$locus_link)
+    } else {
+        ENV$locus_allele_table = NULL
+    }
 
     return (ENV)
 }
@@ -187,9 +245,11 @@ dbmega2_import = function(dbname = "/Users/rbaron/mega2/test/mexnly/change_chrom
 
 #' getgenotype_person
 #'
+#' @description ...
+#'
 #' @param pid ...
 #'
-#' @return NO
+#' @return None
 #' @export
 #'
 #' @examples
@@ -218,45 +278,156 @@ getgenotype_person = function(pid = 1) {
 
 ################################################################
 
-#' getgenotypes_R
+#' fetch genotype matrix for specified markers (assemble by rows)
 #'
-#' @param markers ...
+#' @description
+#'  This function calls the C++ function that does all the heavy lifting.  It passes the
+#'  locus_index and the locus_offset in the \emph{unified_genotype_table} from the
+#'  \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
+#'  \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
+#'  another contains the alleles for each marker, and finally there are some bookkeeping related
+#'  data.
 #'
-#' @return NO
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @return a matrix of genotypes represented as a nucleotide pair.  There is one column for each
+#'  marker in \emph{markers_arg} argument.  There is one row for each person in the family
+#'  (\emph{fam}) table.
+#'
 #' @export
 #' @useDynLib mega2
+#'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
+#'  there are two bits for each genotype.  This function creates an output matrix by selecting
+#'  from each row all the needed markers and then repeating for each person.
 #'
 #' @examples
 #'\dontrun{
 #'}
-getgenotypes_R = function(markers) {
+getgenotypes_R = function(markers_arg) {
 
   return
-    getgenotypes_Ri(markers$locus_link, markers$locus_link_fill,
-                    ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
-                    ENV$int_table[ENV$int_table$key == 'PhenoCnt', ][1, 3])
- 
+    if (ENV$MARKER_SCHEME == 1) {
+        getgenotypes_Ri(markers_arg$locus_link, markers_arg$locus_link_fill,
+                        ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                        ENV$PhenoCnt)
+    } else {  # must be == 2
+
+    }
 }
 
 
-#' getgenotypes
+#' fetch genotype matrix for specified markers
 #'
-#' @param markers ... 
+#' @description
+#'  This function calls the C++ function that does all the heavy lifting.  It passes the
+#'  locus_index and the locus_offset in the \emph{unified_genotype_table} from the
+#'  \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
+#'  \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
+#'  another contains the alleles for each marker, and finally there are some bookkeeping related
+#'  data.
 #'
-#' @return NO
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @return a matrix of genotypes represented as two allele pairs.  There is one column for each
+#'  marker in \emph{markers_arg} argument.  There is one row for each person in the family
+#'  (\emph{fam}) table.
+#'
 #' @export
 #' @useDynLib mega2
+#'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
+#'  there are two bits for each genotype.  This function creates an output matrix by fixing
+#'  the marker and collecting genotype information for each person and then repeating for
+#'  all the needed markers.  Currently, this appears slightly faster than the other scan in
+#'  \emph{genotype_Ri}
 #'
 #' @examples
 #'\dontrun{
 #'}
-getgenotypes = getgenotypes_C = function(markers) {
+getgenotypes = function(markers_arg) {
 
   return
-    getgenotypes_Ci(markers$locus_link, markers$locus_link_fill,
-                    ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
-                    ENV$int_table[ENV$int_table$key == 'PhenoCnt', ][1, 3])
- 
+    if (ENV$MARKER_SCHEME == 1) {
+        getgenotypes_1(markers_arg$locus_link, markers_arg$locus_link_fill,
+                       ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                       ENV$PhenoCnt)
+    } else {  # must be == 2
+        getgenotypes_2(markers_arg$locus_link,
+                       ENV$unified_genotype_table, ENV$locus_allele_table,
+                       ENV$PhenoCnt)
+    }
+}
+
+getgenotypes_C = getgenotypes
+
+#' fetch genotype matrix for specified markers
+#'
+#' @description
+#'  This function calls the C++ function that does all the heavy lifting.  It passes the
+#'  locus_index and the locus_offset in the \emph{unified_genotype_table} from the
+#'  \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
+#'  \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
+#'  another contains the alleles for each marker, and finally there are some bookkeeping related
+#'  data.
+#'
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @return a matrix of genotypes represented as two allele pairs.  There is one column for each
+#'  marker in \emph{markers_arg} argument.  There is one row for each person in the family
+#'  (\emph{fam}) table.
+#'
+#' @export
+#' @useDynLib mega2
+#'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
+#'  there are two bits for each genotype.  This function creates an output matrix by fixing
+#'  the marker and collecting genotype information for each person and then repeating for
+#'  all the needed markers.  Currently, this appears slightly faster than the other scan in
+#'  \emph{genotype_Ri}
+#'
+#' @examples
+#'\dontrun{
+#'}
+getgenotypesraw = function(markers_arg) {
+
+  return
+    if (ENV$MARKER_SCHEME == 1) {
+        getgenotypesraw_1(markers_arg$locus_link, markers_arg$locus_link_fill,
+                          ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
+                          ENV$PhenoCnt)
+    } else {  # must be == 2
+        getgenotypesraw_2(markers_arg$locus_link,
+                          ENV$unified_genotype_table, ENV$locus_allele_table,
+                          ENV$PhenoCnt)
+    }
 }
 
 Rcpp::sourceCpp("src/getgenotypes.cpp")
