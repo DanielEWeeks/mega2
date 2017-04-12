@@ -331,6 +331,12 @@ void dbmega2_import(linkage_ped_top *Top)
     dbgenotype_import(Top);
 
     dbmega2_stat(Top);
+
+    if(_strand_flips) {
+        Reference_Flips_Table *ref_flips_table = new Reference_Flips_Table();
+        ref_flips_table->flip_strands(Top);
+
+    }
 }
 
 void db_drop_all() {

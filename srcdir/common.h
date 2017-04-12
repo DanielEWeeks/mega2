@@ -451,6 +451,9 @@ extern int             SetMarkerPosToSpecial;
 extern int             force_numeric_alleles;
 /* have to break up ASPEX into 4 options */
 
+/*global to keep track of strand flipping*/
+extern int             _strand_flips;
+
 extern int lastautosome;
 
 // The SEX_*, MALE_*, PSEUDO_*, MOTO_* variables are defined in utils.cpp
