@@ -1779,7 +1779,7 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
                               choiceA, idx, line_len);
 
         printf("%2d) %-*s[ %s]\n", idx, line_len,
-               "Simulate genotyping errors:", yorn[*strand_flip_opt]);
+               "Align strands with reference:", yorn[*strand_flip_opt]);
         choiceA[idx++] = flip_i;
 
         printf(" q) %-*s\n", line_len, "Exit Mega2.");
