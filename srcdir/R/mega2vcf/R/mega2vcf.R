@@ -30,7 +30,7 @@ library(mega2)
 #' Mega2VCF package
 #'
 #' @description This package reads a Mega2 SQLite3 database into R dataframes and
-#'	generates a VCF file with the same contents
+#'	generates a VCF file from these same frames.
 #'
 #' @author Robert V Baron
 #' @docType package
@@ -40,56 +40,70 @@ NULL
 #' generate a VCF file
 #'
 #' @description
-#'  Generate a VCF file from the specified Mega2 SQLite database.
+#'  Generate a VCF file from the specified Mega2 SQLite database.  The file is named "prefix".vcf
+#'  If the markers arg is.null(), the entire ENV$markers set is used otherwise markers arg MUST
+#'  be a subset of the ENV$markers data.frame -- same columns, but pruned rows.  
 #'
-#' @param db specify SQLite database to load
+#' @param prefix prefix for vcf file name
+#'
+#' @param markers markers selected to be in output file
 #'
 #' @param mapno specify which map index to use for genetic distances
 #'
 #' @return None
 #'
-#' @importFrom mega2 dbmega2_import getgenotypesraw mkfam setfam
+#' @importFrom mega2 getENV getgenotypesraw 
 #' @importFrom utils write.table
 #' @export
 #'
 #' @examples
 #'\dontrun{
-#' Mega2VCF()
+#' read.Mega2DB("my.db")
+#'
+#' Mega2VCF("foo")
+#'
+#' Mega2VCF("foo", ENV$markers[ENV$markers$chromosome >= 20,])
 #'}
-Mega2VCF = function(db="ped1.db", mapno = 0) {
+Mega2VCF = function(prefix, markers=NULL, mapno = 0) {
 
-    ENV$LocusCnt = ENV$int_table[ENV$int_table$key == 'LocusCnt', 3]
+    unlink(paste0(prefix, ".vcf"))
 
-    ENV = dbmega2_import("ped1.db")
-    setfam(mkfam())
+    ENV = getENV()
 
-    unlink("foo")
+    if (is.null(markers)) markers = ENV$markers
 
-    mkVCFhdr(ENV)
+    mkVCFhdr(prefix, ENV, markers)
 
-    j = 0
-#   "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT"
-    n1 = ENV$allele_table[ENV$allele_table$indexX==1,][-(ENV$PhenoCnt),]
-    n2 = ENV$allele_table[ENV$allele_table$indexX==2,][-(ENV$PhenoCnt),]
+    allele_table = ENV$allele_table[ENV$allele_table$locus_link %in% markers$locus_link,]
+    map_table = ENV$map_table[ENV$map_table$marker %in% markers$locus_link,]
+#   M = ENV$LocusCnt - ENV$PhenoCnt;
+    M = nrow(markers)
+    C = 1000
+
+    QUAL   = rep(".",    times=C)
+    FILTER = rep("PASS", times=C)
+    FORMAT = rep("GT",   times=C)
+
+    n1 = allele_table[allele_table$indexX==1,]
+    n2 = allele_table[allele_table$indexX==2,]
 ## Mega2 "mis-feature"
     n1$AlleleName[n1$AlleleName %in% c("dummy")] = '.'
     n2$AlleleName[n2$AlleleName %in% c("dummy")] = '.'
 
-    M = ENV$LocusCnt - ENV$PhenoCnt;
+    j = 0
     while (TRUE) {
-#      if (M < 1000) browser()
 #      if (M != ENV$LocusCnt - ENV$PhenoCnt) break
-#       print(M)
         if (M <= 0) break
-        N = ((j*1000+1):(j*1000+1000))
+        N = ((j*C+1):(j*C + C))
         L = length(N)
         if (M < L) {
             L = M
-            N = ((j*1000+1):(j*1000+L))
+            N = ((j*C+1):(j*C+L))
         }
         M = M - L
 
-        chrm = ENV$markers[N, c("chromosome", "position", "MarkerName")]
+print(system.time ({        
+        chrm = markers[N, c("chromosome", "position", "MarkerName")]
         names(chrm) = c("#CHROM", "POS", "ID")
 ##new
         REF = n1$AlleleName[N]
@@ -110,24 +124,30 @@ Mega2VCF = function(db="ped1.db", mapno = 0) {
             AF[whichFlip] = XF[whichFlip]
         }
 ##newer
-        GPos = ENV$map_table[ENV$map_table$map==mapno, c("position", "pos_female", "pos_male")][N, ]
+        GPos = map_table[map_table$map==mapno, c("position", "pos_female", "pos_male")][N, ]
         GPosPos = sprintf("%.2f", GPos$position)
-        GPosFem = ifelse (GPos$pos_female != -99.99, sprintf("%f", GPos$pos_female), ".")
-        GPosMal = ifelse (GPos$pos_male != -99.99,   sprintf("%f", GPos$pos_male),   ".")
+        GPosFem = rep(".", L)
+        GPosFem[GPos$pos_female != -99.99] = sprintf("%f", GPos$pos_female)
+        GPosMal = rep(".", L)
+        GPosMal[GPos$pos_male   != -99.99] = sprintf("%f", GPos$pos_male)
+
 ##newer
 ##new
+#   "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT"
         chrm = cbind(chrm,
                      REF,
                      ALT,
-                     QUAL=rep(".",      times=L),
-                     FILTER=rep("PASS", times=L),
+                     QUAL[1:L],
+                     FILTER[1:L],
                      INFO=paste0("CM=", GPosPos, ",", GPosFem, ",", GPosMal,
                                  ";RF=", sprintf("%f", RF),
-                                 ";AF=", sprintf("%f", AF), ";"),
-                     FORMAT=rep("GT",   times=L)
+                                 ";AF=", sprintf("%f", AF),
+## Mega2 "mis-feature"
+                                 ifelse(flip, ",", ""), ";"),
+                     FORMAT[1:L]
                )
 
-        cr = getgenotypesraw(ENV$markers[N, ])
+        cr = getgenotypesraw(markers[N, ])
         a1 = t(cr)
         a2 = a1
         dm = dim(a1)
@@ -137,20 +157,28 @@ Mega2VCF = function(db="ped1.db", mapno = 0) {
         a2 = bitwAnd(a2, 65535)
         attr(a2, "dim") = dm
         if (doFlip) {
-            a1[, whichFlip] = a2[, whichFlip]
-            a2[, whichFlip] = x3[, whichFlip]
-        }
+#             for (xx in whichFlip) {
+#                 a1[xx,] = match(a1[xx, ], c(2, 1), nomatch=0)
+#                 a2[xx,] = match(a2[xx, ], c(2, 1), nomatch=0)
+#             }
+            a1[whichFlip, ] = match(a1[whichFlip, ], c(2, 1), nomatch=0)
+            a2[whichFlip, ] = match(a2[whichFlip, ], c(2, 1), nomatch=0)
+        } 
 
-        a3 = ifelse(a1 != 0, as.character(a1-1), ".")
-        a4 = ifelse(a2 != 0, as.character(a2-1), ".")
+        a3 = as.character(a1-1)
+        a3[a1 == 0] = "."
+        a4 = as.character(a2-1)
+        a4[a2 == 0] = "."
+
         a5 = paste0(a3, "/", a4)
         attr(a5, "dim") = dm
         a6 = cbind(chrm, a5)
         
         if (j == 0) {
             cat(c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"),
-                paste0(ENV$fam$PedPre, "_", ENV$fam$PerPre), sep="\t", append=TRUE, file="foo")
-            cat("\n", append=TRUE, file="foo")
+                paste0(ENV$fam$PedPre, "_", ENV$fam$PerPre),
+                sep="\t", append=TRUE, file=paste0(prefix, ".vcf"))
+            cat("\n", append=TRUE, file=paste0(prefix, ".vcf"))
         }
 
 ## Mega2 "mis-feature"
@@ -159,20 +187,28 @@ Mega2VCF = function(db="ped1.db", mapno = 0) {
         ncols = ncol(a6)
         a6[, ncols] = paste0(a6[, ncols], "\t")
 ##
-        write.table(a6, file="foo", quote=FALSE, append=TRUE, row.names=FALSE, col.names=FALSE, sep="\t")
+ }))
+print(system.time ({        
+        write.table(a6, file=paste0(prefix, ".vcf"), sep="\t", quote=FALSE,
+                    append=TRUE, row.names=FALSE, col.names=FALSE)
+ }))
         j = j + 1
         message(j)
     }
 }
-vcf = Mega2VCF
+vcf = function(fil = "foo", ...) system.time(Mega2VCF(fil, ...))
 
 #' generate required VCF header
 #'
 #' @description
-#'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.  Finally, generate
-#'   ##contig entries for each chromosome.
+#'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
+#'  Finally, generate the ##contig entries for each chromosome.
+#'
+#' @param prefix prefix for vcf file name
 #'
 #' @param ENV "environment" containing SQLite database and other globals
+#'
+#' @param markers data.frame of markers being processed
 #'
 #' @return None
 #'
@@ -180,21 +216,232 @@ vcf = Mega2VCF
 #'
 #' @examples
 #'\dontrun{
-#' mkVCFhdr(ENV)
+#' mkVCFhdr(prefix, ENV, NULL)
 #'}
-mkVCFhdr = function (ENV) {
-    cat('##fileformat=VCFv4.1\n', file="foo", append=TRUE)
-    cat('##filedate=20170407\n', file="foo", append=TRUE)
-    cat('##source=MEGA2\n', file="foo", append=TRUE)
-    cat('##INFO=<ID=CM,Number=3,Type=Float,Description="Genetic Distance in centimorgans (avg, male, female)">\n', file="foo", append=TRUE)
-    cat('##INFO=<ID=RF,Number=1,Type=Float,Description="Allele Frequency of reference allele">\n', file="foo", append=TRUE)
-    cat('##INFO=<ID=AF,Number=.,Type=Float,Description="Allele Frequency of alternate allele(s)">\n', file="foo", append=TRUE)
-    cat('##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">\n', file="foo", append=TRUE)
-    cat('##FILTER=<ID=PASS,Description="Passed variant FILTERs">\n', file="foo", append=TRUE)
+mkVCFhdr = function (prefix, ENV, markers) {
+    file = paste0(prefix, ".vcf")
+
+    if (is.null(markers)) markers = ENV$markers
+
+browser()
+    mkVCFfam(prefix, ENV, markers)
+    mkVCFfreq(prefix, ENV, markers)
+    mkVCFmap(prefix, ENV, markers)
+    mkVCFpen(prefix, ENV, markers)
+    mkVCFphe(prefix, ENV, markers)
+
+    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+    cat('##filedate=20170407\n', file=file, append=TRUE)
+    cat('##source=MEGA2\n', file=file, append=TRUE)
+    cat('##INFO=<ID=CM,Number=3,Type=Float,Description="Genetic Distance in centimorgans (avg, male, female)">\n', file=file, append=TRUE)
+    cat('##INFO=<ID=RF,Number=1,Type=Float,Description="Allele Frequency of reference allele">\n', file=file, append=TRUE)
+    cat('##INFO=<ID=AF,Number=.,Type=Float,Description="Allele Frequency of alternate allele(s)">\n', file=file, append=TRUE)
+    cat('##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">\n', file=file, append=TRUE)
+    cat('##FILTER=<ID=PASS,Description="Passed variant FILTERs">\n', file=file, append=TRUE)
 
     j = 0
-    for (i in sapply(split(ENV$markers, ENV$markers$chromosome), function(x) max(x$position)+1)) {
+    for (i in sapply(split(markers, markers$chromosome), function(x) max(x$position)+1)) {
         j = j + 1
-        cat('##contig=<ID=', j, ',length=', i, ',assembly=B37>\n', file="foo", append=TRUE, sep="")
+        cat('##contig=<ID=', j, ',length=', i, ',assembly=B37>\n', file=file, append=TRUE, sep="")
     }
+}
+
+#' generate required VCF family (.fam) file
+#'
+#' @description
+#'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
+#'  Finally, generate the ##contig entries for each chromosome.
+#'
+#' @param prefix prefix for vcf file name
+#'
+#' @param ENV "environment" containing SQLite database and other globals
+#'
+#' @param markers data.frame of markers being processed
+#'
+#' @return None
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' mkVCFfam(prefix, ENV, NULL)
+#'}
+mkVCFfam = function (prefix, ENV, markers) {
+    file = paste0(prefix, ".fam")
+
+   #######################################
+   ## 100    4524      50      51 2 1   ##
+   ## 100    4525      50      51 2 1   ##
+   ## 100    4526      50      51 2 -9  ##
+   ## 100    4527      50      51 2 2   ##
+   ## 100    4528      50      51 1 2   ##
+   ## 100      50      52      53 1 -9  ##
+   ## 100      51       0       0 2 -9  ##
+   ## 100      52       0       0 1 -9  ##
+   ## 100      53       0       0 2 -9  ##
+   ## 100      54      52      53 1 -9  ##
+   ## 100      55       0       0 2 -9  ##
+   ## 100    7648      54      55 2 2   ##
+   #######################################
+
+    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+
+    if (is.null(markers)) markers = ENV$markers
+}
+
+#' generate required VCF frequency (.freq) file
+#'
+#' @description
+#'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
+#'  Finally, generate the ##contig entries for each chromosome.
+#'
+#' @param prefix prefix for vcf file name
+#'
+#' @param ENV "environment" containing SQLite database and other globals
+#'
+#' @param markers data.frame of markers being processed
+#'
+#' @return None
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' mkVCFfreq(prefix, ENV, NULL)
+#'}
+mkVCFfreq = function (prefix, ENV, markers) {
+    file = paste0(prefix, ".freq")
+
+    ##############################################
+##     Name	Allele	Frequency           ##
+## default	1	0.5000              ##
+## default	2	0.5000              ##
+## exm1517553	1	0.9996              ##
+## exm1517553	2	0.0004              ##
+## exm1517555	1	0.9982              ##
+## exm1517555	2	0.0018              ##
+## exm1517564	1	0.9996              ##
+## exm1517564	2	0.0004              ##
+##############################################
+
+
+    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+
+    if (is.null(markers)) markers = ENV$markers
+}
+
+#' generate required Mega2 map (.map) file
+#'
+#' @description
+#'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
+#'  Finally, generate the ##contig entries for each chromosome.
+#'
+#' @param prefix prefix for vcf file name
+#'
+#' @param ENV "environment" containing SQLite database and other globals
+#'
+#' @param markers data.frame of markers being processed
+#'
+#' @return None
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' mkVCFmap(prefix, ENV, NULL)
+#'}
+mkVCFmap = function (prefix, ENV, markers) {
+    file = paste0(prefix, ".map")
+
+#############################################################
+## Chromosome	Name	Map.k.a	BP.p	                   ##
+## 20	exm1517553	  0.000000	68363	           ##
+## 20	exm1517555	  0.000000	68396	           ##
+## 20	exm1517564	  0.000000	76771	           ##
+## 20	exm1517584	  0.000000	126149	           ##
+## 20	exm1517590	  0.000000	126214	           ##
+#############################################################
+
+    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+
+    if (is.null(markers)) markers = ENV$markers
+}
+
+#' generate required Mega2 penetrance (.pen) file
+#'
+#' @description
+#'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
+#'  Finally, generate the ##contig entries for each chromosome.
+#'
+#' @param prefix prefix for vcf file name
+#'
+#' @param ENV "environment" containing SQLite database and other globals
+#'
+#' @param markers data.frame of markers being processed
+#'
+#' @return None
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' mkVCFpen(prefix, ENV, NULL)
+#'}
+mkVCFpen = function (prefix, ENV, markers) {
+    file = paste0(prefix, ".pen")
+
+##############################################
+## Name	Class	Pen.11	Pen.12	Pen.22	Type
+## default	1	0.0500	0.9000	0.9000	autosomal
+##############################################
+
+
+    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+
+    if (is.null(markers)) markers = ENV$markers
+}
+
+#' generate required PLINK (.phe) file
+#'
+#' @description
+#'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
+#'  Finally, generate the ##contig entries for each chromosome.
+#'
+#' @param prefix prefix for vcf file name
+#'
+#' @param ENV "environment" containing SQLite database and other globals
+#'
+#' @param markers data.frame of markers being processed
+#'
+#' @return None
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' mkVCFphe(prefix, ENV, NULL)
+#'}
+mkVCFphe = function (prefix, ENV, markers) {
+    file = paste0(prefix, ".phe")
+
+##############################################
+## FID	IID	default	SAMPLEID           ##
+## 100	4524	1 	100_4524           ##
+## 100	4525	1 	100_4525           ##
+## 100	4526	-9 	100_4526           ##
+## 100	4527	2 	100_4527           ##
+## 100	4528	2 	100_4528           ##
+## 100	50	-9 	100_50             ##
+## 100	51	-9 	100_51             ##
+## 100	52	-9 	100_52             ##
+## 100	53	-9 	100_53             ##
+## 100	54	-9 	100_54             ##
+## 100	55	-9 	100_55             ##
+## 100	7648	2 	100_7648           ##
+#############################################
+
+
+    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+
+    if (is.null(markers)) markers = ENV$markers
 }

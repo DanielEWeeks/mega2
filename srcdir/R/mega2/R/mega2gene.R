@@ -128,6 +128,33 @@ setfam = function (fam) {
     row.names(ENV$unified_genotype_table) = NULL
     
 }
+#' Load Mega2 database and initialize family structure
+#'
+#' @description
+#'  \emph{dbmega2_import} the specified database and load the environment, \emph{ENV}, with the
+#'  table data.  Also run \emph{mkfam} to initialize the family structure and then \emph{setfam}
+#'  to modify the \emph{unified_genotype_table} to match the family.  By default this will remove
+#'  samples that were replicated to break loops in the pedigree, see \emph{mkfam} for details.
+#'
+#' @param db specify SQLite database to load
+#'
+#' @param ... aditional arguments to pass to \emph{dbmega2_import}
+#'
+#' @return ENV an environment that contains all the tables created from the SQLite tables.
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' read.Mega2DB("database.db")
+#'}
+read.Mega2DB = function(db, ...) {
+
+    ENV = dbmega2_import(db, ...)
+    setfam(mkfam())
+
+    return (ENV)
+}
 ###############
 
 #' apply function to genotypes in genes
