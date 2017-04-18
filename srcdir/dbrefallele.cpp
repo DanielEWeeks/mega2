@@ -335,41 +335,49 @@ void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, con
 
     //biallelic
     if (Top->LocusTop->Locus[locus].AlleleCnt == 2) {
-        if (((canondr == canonG && canonda == canonT) || (canondr == canonT && canonda == canonG)) &&
-            ((canonrr == canonA && canonra == canonC) || (canonrr == canonC && canonra == canonA))) {
-            strand = 1;
-        } else if (((canondr == canonA && canonda == canonC) || (canondr == canonC && canonda == canonA)) &&
-                   ((canonrr == canonG && canonra == canonT) || (canonrr == canonT && canonra == canonG))) {
-            strand = 1;
-        }
-        if(strand == 0) {
-            if (canonrr == canonda)
-                major_minor = 1;
-            else
-                major_minor = 0;
-        }
+        //printf("%s / %s \t %s / %s\t", canondr, canonda, canonrr, canonra);
+        if (canondr == dummycanon || canonda == dummycanon)
+            strand = 0;
         else {
-            if (canonrr == canonA && canondr != canonT && canonda == canonT)
-                major_minor = 1;
-            else if(canonrr == canonC && canondr != canonG && canonda == canonG)
-                major_minor = 1;
-            else if(canonrr == canonG && canondr != canonC && canonda == canonC)
-                major_minor = 1;
-            else if(canonrr == canonT && canondr != canonA && canonda == canonA)
-                major_minor = 1;
-            else
-                major_minor = 0;
+            if (((canondr == canonG && canonda == canonT) || (canondr == canonT && canonda == canonG)) &&
+                     ((canonrr == canonA && canonra == canonC) || (canonrr == canonC && canonra == canonA))) {
+                strand = 1;
+            } else if (((canondr == canonA && canonda == canonC) || (canondr == canonC && canonda == canonA)) &&
+                       ((canonrr == canonG && canonra == canonT) || (canonrr == canonT && canonra == canonG))) {
+                strand = 1;
+            }
+
+            if (strand == 0) {
+                if (canonrr == canonda)
+                    major_minor = 1;
+                else
+                    major_minor = 0;
+            } else {
+                if (canonrr == canonA && canondr != canonT && canonda == canonT)
+                    major_minor = 1;
+                else if (canonrr == canonC && canondr != canonG && canonda == canonG)
+                    major_minor = 1;
+                else if (canonrr == canonG && canondr != canonC && canonda == canonC)
+                    major_minor = 1;
+                else if (canonrr == canonT && canondr != canonA && canonda == canonA)
+                    major_minor = 1;
+                else
+                    major_minor = 0;
+            }
         }
     }
-        //higher order
     else {
         strand = 0;
 
         for(int i = 0; i < Top->LocusTop->Locus[locus].AlleleCnt; i++){
             if(canonrr == Top->LocusTop->Locus[locus].Allele[i].AlleleName)
-                major_minor =1;
+                major_minor = 1;
         }
     }
+
+    //printf("%d / %d\n",strand, major_minor);
+
+
 
     if(major_minor == 0 && strand == 0 && canonrr != canondr) {
         SECTION_LOG(ref_mismatch);
@@ -486,59 +494,63 @@ void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
 
 
     for(int locus = Top->LocusTop->PhenoCnt; locus < Top->LocusTop->LocusCnt; locus ++){
-        if(strand_flips[locus]){
-            for(int i = 0; i<=1; i++){
-                canonAllele = canonical_allele(Top->LocusTop->Locus[locus].Allele[i].AlleleName);
-                //printf("Before: %s\n",canonAllele);
-                if(canonAllele==canonA)
-                    Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonT;
-                else if(canonAllele==canonC)
-                    Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonG;
-                else if(canonAllele==canonG)
-                    Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonC;
-                else if(canonAllele==canonT)
-                    Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonA;
-                //canonAllele = canonical_allele(Top->LocusTop->Locus[locus].Allele[i].AlleleName);
-                //printf("After: %s\n",canonAllele);
-            }
-        }
-        if(major_minor_flips[locus]){
-            int refindex, placeholderindex;
-            const char *refallelename, *placeholderallelename;
-            double reffrequency, placeholderfrequency;
-            int reflocuslink, placeholderlocuslink;
-            int reference_allele_position = 0;
-            for(int allele = 0; allele < Top->LocusTop->Locus[locus].AlleleCnt; allele++){
-                if((references[locus]) == Top->LocusTop->Locus[locus].Allele[allele].AlleleName) {
-                    reference_allele_position = allele;
+        if(Top->LocusTop->Locus[locus].Allele[1].AlleleName != dummycanon) {
+            if (strand_flips[locus]) {
+                for (int i = 0; i <= 1; i++) {
+                    canonAllele = canonical_allele(Top->LocusTop->Locus[locus].Allele[i].AlleleName);
+                    //printf("Before: %s\n",canonAllele);
+                    if (canonAllele == canonA)
+                        Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonT;
+                    else if (canonAllele == canonC)
+                        Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonG;
+                    else if (canonAllele == canonG)
+                        Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonC;
+                    else if (canonAllele == canonT)
+                        Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonA;
+                    //canonAllele = canonical_allele(Top->LocusTop->Locus[locus].Allele[i].AlleleName);
+                    //printf("After: %s\n",canonAllele);
                 }
             }
-            if(reference_allele_position != 0){
-                refindex = Top->LocusTop->Locus[locus].Allele[reference_allele_position].index;
-                refallelename = Top->LocusTop->Locus[locus].Allele[reference_allele_position].AlleleName;
-                reflocuslink = Top->LocusTop->Locus[locus].Allele[reference_allele_position].locus_link;
-                reffrequency = Top->LocusTop->Locus[locus].Allele[reference_allele_position].Frequency;
+            if (major_minor_flips[locus]) {
+                int refindex, placeholderindex;
+                const char *refallelename, *placeholderallelename;
+                double reffrequency, placeholderfrequency;
+                int reflocuslink, placeholderlocuslink;
+                int reference_allele_position = 0;
+                for (int allele = 0; allele < Top->LocusTop->Locus[locus].AlleleCnt; allele++) {
+                    if ((references[locus]) == Top->LocusTop->Locus[locus].Allele[allele].AlleleName) {
+                        reference_allele_position = allele;
+                    }
+                }
+                if (reference_allele_position != 0) {
+                    refindex = Top->LocusTop->Locus[locus].Allele[reference_allele_position].index;
+                    refallelename = Top->LocusTop->Locus[locus].Allele[reference_allele_position].AlleleName;
+                    reflocuslink = Top->LocusTop->Locus[locus].Allele[reference_allele_position].locus_link;
+                    reffrequency = Top->LocusTop->Locus[locus].Allele[reference_allele_position].Frequency;
 
-                placeholderindex = Top->LocusTop->Locus[locus].Allele[0].index;
-                placeholderallelename = Top->LocusTop->Locus[locus].Allele[0].AlleleName;
-                placeholderlocuslink = Top->LocusTop->Locus[locus].Allele[0].locus_link;
-                placeholderfrequency = Top->LocusTop->Locus[locus].Allele[0].Frequency;
+                    placeholderindex = Top->LocusTop->Locus[locus].Allele[0].index;
+                    placeholderallelename = Top->LocusTop->Locus[locus].Allele[0].AlleleName;
+                    placeholderlocuslink = Top->LocusTop->Locus[locus].Allele[0].locus_link;
+                    placeholderfrequency = Top->LocusTop->Locus[locus].Allele[0].Frequency;
 
-                Top->LocusTop->Locus[locus].Allele[0].index = refindex;
-                Top->LocusTop->Locus[locus].Allele[0].AlleleName = refallelename;
-                Top->LocusTop->Locus[locus].Allele[0].locus_link = reflocuslink;
-                Top->LocusTop->Locus[locus].Allele[0].Frequency = reffrequency;
+                    Top->LocusTop->Locus[locus].Allele[0].index = refindex;
+                    Top->LocusTop->Locus[locus].Allele[0].AlleleName = refallelename;
+                    Top->LocusTop->Locus[locus].Allele[0].locus_link = reflocuslink;
+                    Top->LocusTop->Locus[locus].Allele[0].Frequency = reffrequency;
 
-                Top->LocusTop->Locus[locus].Allele[reference_allele_position].index = placeholderindex;
-                Top->LocusTop->Locus[locus].Allele[reference_allele_position].AlleleName = placeholderallelename;
-                Top->LocusTop->Locus[locus].Allele[reference_allele_position].locus_link = placeholderlocuslink;
-                Top->LocusTop->Locus[locus].Allele[reference_allele_position].Frequency = placeholderfrequency;
+                    Top->LocusTop->Locus[locus].Allele[reference_allele_position].index = placeholderindex;
+                    Top->LocusTop->Locus[locus].Allele[reference_allele_position].AlleleName = placeholderallelename;
+                    Top->LocusTop->Locus[locus].Allele[reference_allele_position].locus_link = placeholderlocuslink;
+                    Top->LocusTop->Locus[locus].Allele[reference_allele_position].Frequency = placeholderfrequency;
 
-            }
+
+
+                }
                 //*placeholder = Top->LocusTop->Locus[locus].Allele[0];
                 //Top->LocusTop->Locus[locus].Allele[0] = *reference;
                 //Top->LocusTop->Locus[locus].Allele[reference_allele_position] = *placeholder;
 
+            }
         }
     }
 

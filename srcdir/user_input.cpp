@@ -1721,6 +1721,8 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     int            db_exists = 0;
     extern char    DBfile[255];
     char          *fn = DBfile;
+    extern int     db_table_exists(const char *table);
+    int            db_ref_table_exists = 0;
 
     *Untyped_ped_opt=2; /* Exclude any pedigree with 1 or less untyped people */
     *Error_sim_opt = 0;
@@ -1773,14 +1775,17 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         choiceA[idx] = db_i;
         idx++;
 
+        db_ref_table_exists = db_table_exists("ref_allele_table");
+        if(db_ref_table_exists) {
+            printf("%2d) %-*s[ %s]\n", idx, line_len,
+                   "Align strands with reference:", yorn[*strand_flip_opt]);
+            choiceA[idx++] = flip_i;
+        }
+
         _thresh_i = 1 ?  thresh_i : 0;
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
                               err_i, untyp_i, _thresh_i, 0 /*compress_i*/,
                               choiceA, idx, line_len);
-
-        printf("%2d) %-*s[ %s]\n", idx, line_len,
-               "Align strands with reference:", yorn[*strand_flip_opt]);
-        choiceA[idx++] = flip_i;
 
         printf(" q) %-*s\n", line_len, "Exit Mega2.");
 

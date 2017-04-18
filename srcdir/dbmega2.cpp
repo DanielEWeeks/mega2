@@ -398,6 +398,41 @@ int db_exists_db() {
     return 1;
 }
 
+//allows check for if a table is present
+//currently this is used for the ref_allele_table but should be extensible
+int db_table_exists(const char *table){
+    int exists = 0;
+    MasterDB.open(DBfile);
+
+    if(db_exists_db()){
+        DBstmt *select;
+
+        char select_string[255] = "";
+        strcat(select_string,"SELECT name FROM sqlite_master WHERE type='table' AND name='");
+        strcat(select_string, table);
+        strcat(select_string,"';");
+
+        select = MasterDB.prep(select_string);
+        int ret = select && select->abort();
+        while (ret) {
+            ret = select->step();
+            if (ret == SQLITE_ROW)
+                exists = 1;
+            else
+                exists = 0;
+            break;
+        }
+
+        delete select;
+    }
+    else {
+        exists = 0;
+        EXIT(FILE_NOT_FOUND);
+    }
+
+    return exists;
+}
+
 void db_open_db() {
     extern void delete_file(const char *);
     extern void add_sumdir(char *);
