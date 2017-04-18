@@ -223,9 +223,9 @@ mkVCFhdr = function (prefix, ENV, markers) {
 
     if (is.null(markers)) markers = ENV$markers
 
-browser()
     mkVCFfam(prefix, ENV, markers)
     mkVCFfreq(prefix, ENV, markers)
+browser()
     mkVCFmap(prefix, ENV, markers)
     mkVCFpen(prefix, ENV, markers)
     mkVCFphe(prefix, ENV, markers)
@@ -269,24 +269,10 @@ browser()
 mkVCFfam = function (prefix, ENV, markers) {
     file = paste0(prefix, ".fam")
 
-   #######################################
-   ## 100    4524      50      51 2 1   ##
-   ## 100    4525      50      51 2 1   ##
-   ## 100    4526      50      51 2 -9  ##
-   ## 100    4527      50      51 2 2   ##
-   ## 100    4528      50      51 1 2   ##
-   ## 100      50      52      53 1 -9  ##
-   ## 100      51       0       0 2 -9  ##
-   ## 100      52       0       0 1 -9  ##
-   ## 100      53       0       0 2 -9  ##
-   ## 100      54      52      53 1 -9  ##
-   ## 100      55       0       0 2 -9  ##
-   ## 100    7648      54      55 2 2   ##
-   #######################################
+#   -9 vs 1 for case/control
 
-    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
-
-    if (is.null(markers)) markers = ENV$markers
+    write.table(ENV$fam[, -(1:2)], file=file, sep="\t", quote=FALSE,
+                    row.names=FALSE, col.names=FALSE)
 }
 
 #' generate required VCF frequency (.freq) file
@@ -312,22 +298,26 @@ mkVCFfam = function (prefix, ENV, markers) {
 mkVCFfreq = function (prefix, ENV, markers) {
     file = paste0(prefix, ".freq")
 
-    ##############################################
-##     Name	Allele	Frequency           ##
-## default	1	0.5000              ##
-## default	2	0.5000              ##
-## exm1517553	1	0.9996              ##
-## exm1517553	2	0.0004              ##
-## exm1517555	1	0.9982              ##
-## exm1517555	2	0.0018              ##
-## exm1517564	1	0.9996              ##
-## exm1517564	2	0.0004              ##
-##############################################
+#    unlink(file)
+# where does name for alleles in phenotypes come from
 
+    cat('Name\tAllele\tFrequency\n', file=file)
 
-    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+    allele_pheno = ENV$allele_table[1:2*ENV$PhenoCnt, c("AlleleName", "indexX", "Frequency")]
+    allele_pheno$AlleleName[allele_pheno$AlleleName == ""] = "default"
 
-    if (is.null(markers)) markers = ENV$markers
+    write.table(allele_pheno,
+                file=file, sep="\t", append=TRUE, quote=FALSE,
+                row.names=FALSE, col.names=FALSE)
+
+    allele_table = ENV$allele_table[ENV$allele_table$locus_link %in% markers$locus_link,
+                                    c("locus_link", "indexX", "Frequency")]
+    alleles = merge(markers[, c("locus_link", "MarkerName")],
+                    allele_table[, c("locus_link", "indexX", "Frequency")], by="locus_link")
+    alleles$Freq4 = sprintf("%.4f", alleles$Frequency)
+    write.table(alleles[ , c(-1, -4)],
+                file=file, sep="\t", append=TRUE, quote=FALSE,
+                row.names=FALSE, col.names=FALSE)
 }
 
 #' generate required Mega2 map (.map) file
@@ -353,18 +343,40 @@ mkVCFfreq = function (prefix, ENV, markers) {
 mkVCFmap = function (prefix, ENV, markers) {
     file = paste0(prefix, ".map")
 
-#############################################################
-## Chromosome	Name	Map.k.a	BP.p	                   ##
-## 20	exm1517553	  0.000000	68363	           ##
-## 20	exm1517555	  0.000000	68396	           ##
-## 20	exm1517564	  0.000000	76771	           ##
-## 20	exm1517584	  0.000000	126149	           ##
-## 20	exm1517590	  0.000000	126214	           ##
-#############################################################
+    unlink(file)
 
-    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+    map_table = ENV$map_table[ENV$map_table$marker %in% markers$locus_link,]
+    mapnames_table = ENV$mapnames_table
+    TBL = markers[, c("chromosome", "MarkerName")]
+    hdr = paste("chromosome", "Name", sep="\t")
+    
+    for (m in mapnames_table$map) {
+        if ( (mapnames_table[m+1, "male_sex_map"] == 0) &
+             (mapnames_table[m+1, "female_sex_map"] == 0) ) {
+            TBL = cbind(TBL, map_table[map_table$map == m, "position"])
 
-    if (is.null(markers)) markers = ENV$markers
+            if (mapnames_table[m+1, "sex_averaged_map"] == 0) {
+               hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.bp')
+            } else {
+               hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.k.a')
+            }
+          }
+
+        if ( mapnames_table[m+1, "female_sex_map"] != 0) {
+            TBL = cbind(TBL, map_table[map_table$map == m, "pos_female"])
+            hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.k.f')
+        }
+
+        if ( mapnames_table[m+1, "male_sex_map"] != 0) {
+            TBL = cbind(TBL, map_table[map_table$map == m, "pos_male"])
+            hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.k.m')
+        }
+    }
+                                 
+    cat(hdr, "\n", file=file, sep="")
+    
+    write.table(TBL, file=file, sep="\t", quote=FALSE, append=TRUE,
+                row.names=FALSE, col.names=FALSE)
 }
 
 #' generate required Mega2 penetrance (.pen) file
@@ -390,6 +402,8 @@ mkVCFmap = function (prefix, ENV, markers) {
 mkVCFpen = function (prefix, ENV, markers) {
     file = paste0(prefix, ".pen")
 
+    unlink(file)
+
 ##############################################
 ## Name	Class	Pen.11	Pen.12	Pen.22	Type
 ## default	1	0.0500	0.9000	0.9000	autosomal
@@ -397,8 +411,9 @@ mkVCFpen = function (prefix, ENV, markers) {
 
 
     cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+    write.table(ENV$fam[, -(1:2)], file=file, sep="\t", quote=FALSE,
+                    row.names=FALSE, col.names=FALSE)
 
-    if (is.null(markers)) markers = ENV$markers
 }
 
 #' generate required PLINK (.phe) file
@@ -424,6 +439,8 @@ mkVCFpen = function (prefix, ENV, markers) {
 mkVCFphe = function (prefix, ENV, markers) {
     file = paste0(prefix, ".phe")
 
+    unlink(file)
+
 ##############################################
 ## FID	IID	default	SAMPLEID           ##
 ## 100	4524	1 	100_4524           ##
@@ -442,6 +459,7 @@ mkVCFphe = function (prefix, ENV, markers) {
 
 
     cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
+    write.table(ENV$fam[, -(1:2)], file=file, sep="\t", quote=FALSE,
+                    row.names=FALSE, col.names=FALSE)
 
-    if (is.null(markers)) markers = ENV$markers
 }
