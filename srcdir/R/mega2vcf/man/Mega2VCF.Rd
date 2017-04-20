@@ -4,21 +4,31 @@
 \alias{Mega2VCF}
 \title{generate a VCF file}
 \usage{
-Mega2VCF(db = "ped1.db", mapno = 0)
+Mega2VCF(prefix, markers = NULL, mapno = 0, allowFlip = FALSE)
 }
 \arguments{
-\item{db}{specify SQLite database to load}
+\item{prefix}{prefix for vcf file name}
+
+\item{markers}{markers selected to be in output file}
 
 \item{mapno}{specify which map index to use for genetic distances}
+
+\item{allowFlip}{REF/ALT of higher frequency occurs first}
 }
 \value{
 None
 }
 \description{
-Generate a VCF file from the specified Mega2 SQLite database.
+Generate a VCF file from the specified Mega2 SQLite database.  The file is named "prefix".vcf
+ If the markers arg is.null(), the entire ENV$markers set is used otherwise markers arg MUST
+ be a subset of the ENV$markers data.frame -- same columns, but pruned rows.
 }
 \examples{
 \dontrun{
-Mega2VCF()
+read.Mega2DB("my.db")
+
+Mega2VCF("foo")
+
+Mega2VCF("foo", ENV$markers[ENV$markers$chromosome >= 20,])
 }
 }

@@ -50,6 +50,8 @@ NULL
 #'
 #' @param mapno specify which map index to use for genetic distances
 #'
+#' @param allowFlip REF/ALT of higher frequency occurs first
+#'
 #' @return None
 #'
 #' @importFrom mega2 getENV getgenotypesraw 
@@ -64,7 +66,7 @@ NULL
 #'
 #' Mega2VCF("foo", ENV$markers[ENV$markers$chromosome >= 20,])
 #'}
-Mega2VCF = function(prefix, markers=NULL, mapno = 0) {
+Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
 
     unlink(paste0(prefix, ".vcf"))
 
@@ -76,7 +78,6 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0) {
 
     allele_table = ENV$allele_table[ENV$allele_table$locus_link %in% markers$locus_link,]
     map_table = ENV$map_table[ENV$map_table$marker %in% markers$locus_link,]
-#   M = ENV$LocusCnt - ENV$PhenoCnt;
     M = nrow(markers)
     C = 1000
 
@@ -105,7 +106,7 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0) {
 print(system.time ({        
         chrm = markers[N, c("chromosome", "position", "MarkerName")]
         names(chrm) = c("#CHROM", "POS", "ID")
-##new
+
         REF = n1$AlleleName[N]
         RF  = n1$Frequency[N]
         ALT = n2$AlleleName[N]
@@ -115,7 +116,7 @@ print(system.time ({
         
         flip = RF < AF
         doFlip = sum(flip)
-        if (doFlip) {
+        if (allowFlip && doFlip) {
             whichFlip = which(flip)
             REF[whichFlip] = ALT[whichFlip]
             ALT[whichFlip] = XXF[whichFlip]
@@ -123,7 +124,7 @@ print(system.time ({
             RF[whichFlip] = AF[whichFlip]
             AF[whichFlip] = XF[whichFlip]
         }
-##newer
+
         GPos = map_table[map_table$map==mapno, c("position", "pos_female", "pos_male")][N, ]
         GPosPos = sprintf("%.2f", GPos$position)
         GPosFem = rep(".", L)
@@ -131,8 +132,6 @@ print(system.time ({
         GPosMal = rep(".", L)
         GPosMal[GPos$pos_male   != -99.99] = sprintf("%f", GPos$pos_male)
 
-##newer
-##new
 #   "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT"
         chrm = cbind(chrm,
                      REF,
@@ -143,7 +142,8 @@ print(system.time ({
                                  ";RF=", sprintf("%f", RF),
                                  ";AF=", sprintf("%f", AF),
 ## Mega2 "mis-feature"
-                                 ifelse(flip, ",", ""), ";"),
+##                               ifelse(flip, ",", ""),
+                                 ";"),
                      FORMAT[1:L]
                )
 
@@ -156,11 +156,7 @@ print(system.time ({
         x3 = a1
         a2 = bitwAnd(a2, 65535)
         attr(a2, "dim") = dm
-        if (doFlip) {
-#             for (xx in whichFlip) {
-#                 a1[xx,] = match(a1[xx, ], c(2, 1), nomatch=0)
-#                 a2[xx,] = match(a2[xx, ], c(2, 1), nomatch=0)
-#             }
+        if (allowFlip && doFlip) {
             a1[whichFlip, ] = match(a1[whichFlip, ], c(2, 1), nomatch=0)
             a2[whichFlip, ] = match(a2[whichFlip, ], c(2, 1), nomatch=0)
         } 
@@ -186,8 +182,8 @@ print(system.time ({
 ## Mega2 "mis-feature"
         ncols = ncol(a6)
         a6[, ncols] = paste0(a6[, ncols], "\t")
-##
  }))
+
 print(system.time ({        
         write.table(a6, file=paste0(prefix, ".vcf"), sep="\t", quote=FALSE,
                     append=TRUE, row.names=FALSE, col.names=FALSE)
@@ -225,7 +221,6 @@ mkVCFhdr = function (prefix, ENV, markers) {
 
     mkVCFfam(prefix, ENV, markers)
     mkVCFfreq(prefix, ENV, markers)
-browser()
     mkVCFmap(prefix, ENV, markers)
     mkVCFpen(prefix, ENV, markers)
     mkVCFphe(prefix, ENV, markers)
@@ -239,10 +234,10 @@ browser()
     cat('##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">\n', file=file, append=TRUE)
     cat('##FILTER=<ID=PASS,Description="Passed variant FILTERs">\n', file=file, append=TRUE)
 
-    j = 0
-    for (i in sapply(split(markers, markers$chromosome), function(x) max(x$position)+1)) {
-        j = j + 1
-        cat('##contig=<ID=', j, ',length=', i, ',assembly=B37>\n', file=file, append=TRUE, sep="")
+    maxes = sapply(split(markers, markers$chromosome), function(x) max(x$position)+1)
+    for (i in 1:length(maxes)) {
+        cat('##contig=<ID=', names(maxes)[i], ',length=', maxes[i], ',assembly=B37>\n',
+            file=file, append=TRUE, sep="")
     }
 }
 
@@ -269,8 +264,10 @@ browser()
 mkVCFfam = function (prefix, ENV, markers) {
     file = paste0(prefix, ".fam")
 
-#   -9 vs 1 for case/control
+#   -9 vs 0 for case/control
 
+# mega2 mis
+    ENV$fam[ENV$fam[ , 8] ==0, 8] = -9
     write.table(ENV$fam[, -(1:2)], file=file, sep="\t", quote=FALSE,
                     row.names=FALSE, col.names=FALSE)
 }
@@ -299,13 +296,12 @@ mkVCFfreq = function (prefix, ENV, markers) {
     file = paste0(prefix, ".freq")
 
 #    unlink(file)
-# where does name for alleles in phenotypes come from
 
     cat('Name\tAllele\tFrequency\n', file=file)
-
-    allele_pheno = ENV$allele_table[1:2*ENV$PhenoCnt, c("AlleleName", "indexX", "Frequency")]
-    allele_pheno$AlleleName[allele_pheno$AlleleName == ""] = "default"
-
+    allele_pheno = merge(ENV$locus_table, ENV$allele_table[1:2,], by="locus_link")
+    allele_pheno = allele_pheno[, c("LocusName", "indexX", "Frequency")]
+#std
+    allele_pheno$Frequency = sprintf("%.4f", allele_pheno$Frequency)
     write.table(allele_pheno,
                 file=file, sep="\t", append=TRUE, quote=FALSE,
                 row.names=FALSE, col.names=FALSE)
@@ -314,6 +310,8 @@ mkVCFfreq = function (prefix, ENV, markers) {
                                     c("locus_link", "indexX", "Frequency")]
     alleles = merge(markers[, c("locus_link", "MarkerName")],
                     allele_table[, c("locus_link", "indexX", "Frequency")], by="locus_link")
+#std
+    alleles = alleles[alleles$Frequency != 0, ]
     alleles$Freq4 = sprintf("%.4f", alleles$Frequency)
     write.table(alleles[ , c(-1, -4)],
                 file=file, sep="\t", append=TRUE, quote=FALSE,
@@ -348,27 +346,37 @@ mkVCFmap = function (prefix, ENV, markers) {
     map_table = ENV$map_table[ENV$map_table$marker %in% markers$locus_link,]
     mapnames_table = ENV$mapnames_table
     TBL = markers[, c("chromosome", "MarkerName")]
-    hdr = paste("chromosome", "Name", sep="\t")
+    hdr = paste("Chromosome", "Name", sep="\t")
     
     for (m in mapnames_table$map) {
         if ( (mapnames_table[m+1, "male_sex_map"] == 0) &
              (mapnames_table[m+1, "female_sex_map"] == 0) ) {
-            TBL = cbind(TBL, map_table[map_table$map == m, "position"])
+            POS  = map_table[map_table$map == m, "position"]
 
             if (mapnames_table[m+1, "sex_averaged_map"] == 0) {
-               hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.bp')
+                TBL  = cbind(TBL, POS)
+                hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.p')
             } else {
-               hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.k.a')
+#std
+                POSS = sprintf("%.6f", POS)
+                TBL  = cbind(TBL, POSS)
+                hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.k.a')
             }
           }
 
         if ( mapnames_table[m+1, "female_sex_map"] != 0) {
-            TBL = cbind(TBL, map_table[map_table$map == m, "pos_female"])
+            POSF  = map_table[map_table$map == m, "pos_female"]
+#std
+            POSFS = sprintf("%.6f", POSF)
+            TBL  = cbind(TBL, POSFS)
             hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.k.f')
         }
 
         if ( mapnames_table[m+1, "male_sex_map"] != 0) {
-            TBL = cbind(TBL, map_table[map_table$map == m, "pos_male"])
+            POSM  = map_table[map_table$map == m, "pos_male"]
+#std
+            POSMS = sprintf("%.6f", POSM)
+            TBL  = cbind(TBL, POSMS)
             hdr = paste0(hdr, "\t", mapnames_table[mapnames_table$map == m, "name"], '.k.m')
         }
     }
@@ -404,16 +412,30 @@ mkVCFpen = function (prefix, ENV, markers) {
 
     unlink(file)
 
-##############################################
-## Name	Class	Pen.11	Pen.12	Pen.22	Type
-## default	1	0.0500	0.9000	0.9000	autosomal
-##############################################
+    cat('Name\tClass\tPen.11\tPen.12\tPen.22\tType\n', file=file, append=TRUE)
+    
+    all = merge(merge(ENV$locus_table[1:ENV$PhenoCnt,], ENV$traitaff_table, by="locus_link"),
+                ENV$affectclass_table, by="locus_link")
+    ord = order(all$locus_link, all$class_link)
+    for (i in ord) {
+#       malepen   = all[i, ]$MalePen[[1]]
+#       mpen  = readBin(malepen, numeric(), n = length(malepen)/8, size = 8, endian = .Platform$endian)
+#       mpens = sprintf("%.4f", mpen)
+#       cat(all[i, ]$LocusName, all[i, ]$class_link+1, mpens, file=file, append=TRUE, sep="\t")
+#       cat("\t\tmale\n", file=file, append=TRUE)
 
+#       femalepen = all[i, ]$FemalePen[[1]]
+#       fpen  = readBin(femalepen, numeric(), n = length(femalepen)/8, size = 8, endian = .Platform$endian)
+#       fpens = sprintf("%.4f", fpen)
+#       cat(all[i, ]$LocusName, all[i, ]$class_link+1, fpens, file=file, append=TRUE, sep="\t")
+#       cat("\tfemale\n", file=file, append=TRUE)
 
-    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
-    write.table(ENV$fam[, -(1:2)], file=file, sep="\t", quote=FALSE,
-                    row.names=FALSE, col.names=FALSE)
-
+        autopen   = all[i, ]$AutoPen[[1]]
+        apen  = readBin(autopen, numeric(), n = length(autopen)/8, size = 8, endian = .Platform$endian)
+        apens = sprintf("%.4f", apen)
+        cat(all[i, ]$LocusName, all[i, ]$class_link+1, apens, file=file, append=TRUE, sep="\t")
+        cat("\tautosomal\n", file=file, append=TRUE)
+    }
 }
 
 #' generate required PLINK (.phe) file
@@ -441,25 +463,42 @@ mkVCFphe = function (prefix, ENV, markers) {
 
     unlink(file)
 
-##############################################
-## FID	IID	default	SAMPLEID           ##
-## 100	4524	1 	100_4524           ##
-## 100	4525	1 	100_4525           ##
-## 100	4526	-9 	100_4526           ##
-## 100	4527	2 	100_4527           ##
-## 100	4528	2 	100_4528           ##
-## 100	50	-9 	100_50             ##
-## 100	51	-9 	100_51             ##
-## 100	52	-9 	100_52             ##
-## 100	53	-9 	100_53             ##
-## 100	54	-9 	100_54             ##
-## 100	55	-9 	100_55             ##
-## 100	7648	2 	100_7648           ##
-#############################################
+    phenotype_table = ENV$phenotype_table
+    hdr = 'FID\tIID'
+    
+# linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
+#                        0      1          2       3         4        5        6
 
+    out = ENV$fam[3:4]
 
-    cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
-    write.table(ENV$fam[, -(1:2)], file=file, sep="\t", quote=FALSE,
-                    row.names=FALSE, col.names=FALSE)
+    for (i in 1:ENV$PhenoCnt) {
+        hdr = paste0(hdr, "\t", ENV$locus_table[i, 2]) # 2 == LocusName
 
+        off = (i-1) * 8
+
+        raw = unlist(ENV$phenotype_table[,4])
+        raw = matrix(raw, ncol=8, byrow=T)
+
+        nrows = nrow(raw)
+        if (ENV$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
+            col = vector("integer", nrows)
+            for (j in 1:nrows) {
+                col[j] = readBin(raw[j, (off+1):(off+4)], integer(), n=1, size=4)
+            }
+            col[col==0] = -9
+            out$col = col
+        } else if (ENV$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
+            col = vector("numeric", nrows)
+            for (j in 1:nrows) {
+                col[j] = readBin(raw[j, (off+1):(off+8)], numeric(), n=1, size=8)
+            }
+            out$col = col
+        }
+    }
+    out$SAMPLEID = paste(ENV$fam[,3], ENV$fam[,4], sep="_")
+    
+    cat(hdr, "\tSAMPLEID\n", file=file, append=TRUE)
+
+    write.table(out, file=file, sep="\t", quote=FALSE, append=TRUE,
+                row.names=FALSE, col.names=FALSE)
 }

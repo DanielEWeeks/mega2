@@ -40,7 +40,7 @@ NULL
 
 ENV = new.env(parent = emptyenv())
 
-#' Mega2 SQLite3 tasbles
+#' Mega2 SQLite3 tables
 #'
 #' @description This indicates which SQLite3 tables and possibly which subset of fields
 #'	to fetch.
@@ -61,15 +61,15 @@ TBLS = c("int_table",
          "person_brkloop_table",
 
 #        "canonicalallele_table",
-#        "locus_table",
+         "locus_table",
          "allele_table",
          "marker_table",
          "markerscheme_table",
          "map_table",
          "mapnames_table",
 
-#        "traitaff_table",
-#        "affectclass_table",
+         "traitaff_table",
+         "affectclass_table",
 #        "ptraitquant_table",
 
          "phenotype_table",
@@ -78,6 +78,26 @@ TBLS = c("int_table",
 ## Derived tables
 ##        unified_genotype_table
 ##        markers
+  )
+
+#' Mega2 SQLite3 table filter
+#'
+#' @description For the for mentioned tables in some cases we will only extract a subset of columns
+#'
+#' @author Robert V Baron
+#' @docType data
+#' @name Mega2-TBLSFilter
+#' @note For the data.frames below, only the specified fields are loaded from the SQLite tables
+TBLSFilter = list(
+          locus_table    = "pId, LocusName, Type, AlleleCnt, locus_link",
+
+          marker_table   = "pId, MarkerName, pos_avg, pos_female, pos_male, chromosome, locus_link",
+          pedigree_table = "kId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
+          person_table   = "kId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
+          pedigree_brkloop_table = "kId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
+          person_brkloop_table   = "kId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
+
+          traitaff_table = "pId, ClassCnt, PenCnt, locus_link"
   )
 
 #' make markers data frame
@@ -98,6 +118,8 @@ TBLS = c("int_table",
 #'	chromosome/position fields from the map_table to merge with the marker_table.
 #'
 #' @return None
+#'
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -125,6 +147,8 @@ mk_markers_with_skip = function(bpPosMap = 1) {
 #'  We need a single vector for each person.
 #'
 #' @return None
+#'
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -182,13 +206,20 @@ dbmega2_import = function(dbname,
                    error = function(xx) { stop("DB open failed: ", dbname, call. = FALSE) })
 
     ENV$verbose = verbose
+
     for (tbl in TBLS) {
         if (dbExistsTable(con, tbl)) {
-            assign(tbl, dbReadTable(con, tbl), pos = ENV)
-#           assign(tbl, dbReadTable(con, tbl, select.cols = "x y z"), pos = ENV)            
+            filter = TBLSFilter[tbl][[1]]
+            if (is.null(filter))
+                assign(tbl, dbReadTable(con, tbl), pos = ENV)
+            else
+                assign(tbl, dbReadTable(con, tbl, select.cols = filter), pos = ENV)
             if (ENV$verbose) {
                 cat(tbl, dim(get(tbl, pos=ENV)), sep = "\t", end = "\n")
-                cat(tbl, dbListFields(con, tbl), sep = "\t", end = "\n")
+                if (is.null(filter))
+                    cat(tbl, dbListFields(con, tbl), sep = "\t", end = "\n")
+                else
+                  cat(tbl, strsplit(filter, ", ")[[1]], sep = "\t", end = "\n")
                 cat(end = "\n")
             }
         }

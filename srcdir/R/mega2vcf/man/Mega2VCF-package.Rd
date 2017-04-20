@@ -6,7 +6,7 @@
 \title{Mega2VCF package}
 \description{
 This package reads a Mega2 SQLite3 database into R dataframes and
-generates a VCF file with the same contents
+generates a VCF file from these same frames.
 }
 \author{
 Robert V Baron
