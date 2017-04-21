@@ -203,27 +203,24 @@ print(system.time ({
             a2[whichFlip, ] = match(a2[whichFlip, ], c(2, 1), nomatch=0)
         } 
 
-        for (i in 1:(blockcol-9)) {
-            if (a1[ , i] > 3 || a2[ , i] > 3) {       # 41.32%
+        if (a1[ , ] > 2 || a2[ , ] > 2) {       # 41.32%
                 ##  user  system elapsed 
-                ## 4.575   0.143   4.745 
+                ##  4.086   0.133   4.251 
                 ##  user  system elapsed 
-                ## 1.171   0.049   1.238 
-                a3 = as.character(a1[ , i] - 1)
-                a3[a1[ , i] == 0] = "."
-                a4 = as.character(a2[ , i]-1)
-                a4[a2[ , i] == 0] = "."
-                a5 = paste0(a3, "/", a4)
-                block[BR, 9 + i] = a5
-            } else
-                ##  user  system elapsed 
-                ## 1.098   0.148   1.260 
-                ##  user  system elapsed 
-                ## 1.232   0.050   1.310 
-                block[BR, 9 + i] = zz[cbind(a1[, i]+1, a2[, i]+1)]
-## slower       block[BR, 9 + i] = factor(zz[cbind(a1[, i]+1, a2[, i]+1)], zs)
-        }
-
+                ##  1.275   0.053   1.351 
+            a3 = as.character(a1 - 1)
+            a3[a1 == 0] = "."
+            a4 = as.character(a2-1)
+            a4[a2 == 0] = "."
+            a5 = paste0(a3, "/", a4)
+            block[BR, 10:blockcol] = a5
+        } else
+            ##  user  system elapsed 
+            ##  .774   0.092   0.879 
+            ##  user  system elapsed 
+            ##  1.274   0.056   1.351 
+            block[BR, 10:blockcol] = zz[cbind(as.vector(a1)+1, as.vector(a2)+1)]
+        
 ## Mega2 "mis-feature"
         block[BR, 2] = paste0(block[BR, 2], " ")
 ## Mega2 "mis-feature"
