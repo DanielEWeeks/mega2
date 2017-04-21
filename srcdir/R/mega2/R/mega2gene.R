@@ -159,7 +159,6 @@ read.Mega2DB = function(db, ...) {
 
     return (ENV)
 }
-###############
 
 #' apply function to genotypes in genes
 #'
@@ -299,8 +298,6 @@ applyFnToGenes = function (op = function (geno, markers, range) {},
         applyFnToMarkers(op, ENV$markers[ENV$markers$MarkerName %in% markers_arg, ])
     }
 }
-
-################
 
 #' set default ranges and offset of chromosome, start and end in a range
 #'

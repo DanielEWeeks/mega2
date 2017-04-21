@@ -37,6 +37,34 @@ library(mega2)
 #' @name Mega2VCF-package
 NULL
 
+#' Load Mega2 database and initialize family structure
+#'
+#' @description
+#'  \emph{dbmega2_import} the specified database and load the environment, \emph{ENV}, with the
+#'  table data.  Also run \emph{mkfam} to initialize the family structure and then \emph{setfam}
+#'  to modify the \emph{unified_genotype_table} to match the family.  By default this will remove
+#'  samples that were replicated to break loops in the pedigree, see \emph{mkfam} for details.
+#'
+#' @param db specify SQLite database to load
+#'
+#' @param ... aditional arguments to pass to \emph{dbmega2_import}
+#'
+#' @return ENV an environment that contains all the tables created from the SQLite tables.
+#'
+#' @importFrom mega2 read.Mega2DB
+#' @export
+#'
+#' @note This functions just calls the same named function in the mega2 package
+#'
+#' @examples
+#'\dontrun{
+#' read.Mega2DB("database.db")
+#'}
+read.Mega2DB = function(db, ...) {
+
+    return (mega2::read.Mega2DB(db, ...))
+}
+
 #' generate a VCF file
 #'
 #' @description
@@ -67,8 +95,9 @@ NULL
 #' Mega2VCF("foo", ENV$markers[ENV$markers$chromosome >= 20,])
 #'}
 Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
-
-    unlink(paste0(prefix, ".vcf"))
+    file = paste0(prefix, ".vcf")
+    
+    unlink(file)
 
     ENV = getENV()
 
@@ -81,9 +110,20 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
     M = nrow(markers)
     C = 1000
 
+    block = data.frame(matrix(0, nrow = C, ncol = nrow(ENV$fam) + 9), stringsAsFactors=TRUE)
+    blockcol = ncol(block)
+
     QUAL   = rep(".",    times=C)
     FILTER = rep("PASS", times=C)
     FORMAT = rep("GT",   times=C)
+    block[ , 6] = QUAL
+    block[ , 7] = FILTER
+    block[ , 9] = FORMAT
+
+    names(block) = c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT",
+                         paste0(ENV$fam$PedPre, "_", ENV$fam$PerPre))
+    cat(names(block), sep="\t", append=TRUE, file=file)
+    cat("\n", append=TRUE, file=file)
 
     n1 = allele_table[allele_table$indexX==1,]
     n2 = allele_table[allele_table$indexX==2,]
@@ -95,22 +135,24 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
     while (TRUE) {
 #      if (M != ENV$LocusCnt - ENV$PhenoCnt) break
         if (M <= 0) break
-        N = ((j*C+1):(j*C + C))
-        L = length(N)
+        R = ((j*C+1):(j*C + C))
+        L = length(R)
         if (M < L) {
             L = M
-            N = ((j*C+1):(j*C+L))
+            R = ((j*C+1):(j*C+L))
         }
         M = M - L
+        BR = 1:L
 
+        block[BR , 1] = markers[R , 4]
+        block[BR , 2] = markers[R , 5]
+        block[BR , 3] = markers[R , 3]
 print(system.time ({        
-        chrm = markers[N, c("chromosome", "position", "MarkerName")]
-        names(chrm) = c("#CHROM", "POS", "ID")
 
-        REF = n1$AlleleName[N]
-        RF  = n1$Frequency[N]
-        ALT = n2$AlleleName[N]
-        AF  = n2$Frequency[N]
+        REF = n1$AlleleName[R]
+        RF  = n1$Frequency[R]
+        ALT = n2$AlleleName[R]
+        AF  = n2$Frequency[R]
         XXF = REF
         XF  = RF
         
@@ -125,29 +167,25 @@ print(system.time ({
             AF[whichFlip] = XF[whichFlip]
         }
 
-        GPos = map_table[map_table$map==mapno, c("position", "pos_female", "pos_male")][N, ]
+        GPos = map_table[map_table$map==mapno, c("position", "pos_female", "pos_male")][R, ]
         GPosPos = sprintf("%.2f", GPos$position)
         GPosFem = rep(".", L)
         GPosFem[GPos$pos_female != -99.99] = sprintf("%f", GPos$pos_female)
         GPosMal = rep(".", L)
         GPosMal[GPos$pos_male   != -99.99] = sprintf("%f", GPos$pos_male)
 
-#   "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT"
-        chrm = cbind(chrm,
-                     REF,
-                     ALT,
-                     QUAL[1:L],
-                     FILTER[1:L],
-                     INFO=paste0("CM=", GPosPos, ",", GPosFem, ",", GPosMal,
-                                 ";RF=", sprintf("%f", RF),
-                                 ";AF=", sprintf("%f", AF),
-## Mega2 "mis-feature"
-##                               ifelse(flip, ",", ""),
-                                 ";"),
-                     FORMAT[1:L]
-               )
+        INFO=paste0("CM=", GPosPos, ",", GPosFem, ",", GPosMal,
+                    ";RF=", sprintf("%f", RF),
+                    ";AF=", sprintf("%f", AF),
+                    ";")
+        block[BR , 4] = REF[BR]
+        block[BR , 5] = ALT[BR]
+#       block[BR , 6] = QUAL[BR]
+#       block[BR , 7] = FILTER[BR]
+        block[BR , 8] = INFO
+#       block[BR , 9] = FORMAT[BR]
 
-        cr = getgenotypesraw(markers[N, ])
+        cr = getgenotypesraw(markers[R, ])
         a1 = t(cr)
         a2 = a1
         dm = dim(a1)
@@ -168,24 +206,16 @@ print(system.time ({
 
         a5 = paste0(a3, "/", a4)
         attr(a5, "dim") = dm
-        a6 = cbind(chrm, a5)
-        
-        if (j == 0) {
-            cat(c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"),
-                paste0(ENV$fam$PedPre, "_", ENV$fam$PerPre),
-                sep="\t", append=TRUE, file=paste0(prefix, ".vcf"))
-            cat("\n", append=TRUE, file=paste0(prefix, ".vcf"))
-        }
 
+        block[BR, 10:blockcol] = a5
 ## Mega2 "mis-feature"
-        a6$POS = paste0(a6$POS, " ")
+        block[BR, 2] = paste0(block[BR, 2], " ")
 ## Mega2 "mis-feature"
-        ncols = ncol(a6)
-        a6[, ncols] = paste0(a6[, ncols], "\t")
- }))
+        block[BR, blockcol] = paste0(block[BR, blockcol], "\t")
+      }))
 
 print(system.time ({        
-        write.table(a6, file=paste0(prefix, ".vcf"), sep="\t", quote=FALSE,
+        write.table(block[BR, ], file=file, sep="\t", quote=FALSE,
                     append=TRUE, row.names=FALSE, col.names=FALSE)
  }))
         j = j + 1
@@ -226,7 +256,7 @@ mkVCFhdr = function (prefix, ENV, markers) {
     mkVCFphe(prefix, ENV, markers)
 
     cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
-    cat('##filedate=20170407\n', file=file, append=TRUE)
+    cat('##filedate=19970829\n', file=file, append=TRUE)
     cat('##source=MEGA2\n', file=file, append=TRUE)
     cat('##INFO=<ID=CM,Number=3,Type=Float,Description="Genetic Distance in centimorgans (avg, male, female)">\n', file=file, append=TRUE)
     cat('##INFO=<ID=RF,Number=1,Type=Float,Description="Allele Frequency of reference allele">\n', file=file, append=TRUE)

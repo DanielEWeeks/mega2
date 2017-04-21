@@ -154,9 +154,13 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
         void file_header(){
             pr_printf("##fileformat=VCFv4.1\n");
+#ifdef HIDEDATE
+            pr_printf("##filedate=%d%02d%02d\n", 1997, 8, 29);
+#else
             time_t now = time(0);
             tm *ltm = localtime(&now);
             pr_printf("##filedate=%d%02d%02d\n", 1900 + ltm->tm_year,1 + ltm->tm_mon,ltm->tm_mday );
+#endif
             pr_printf("##source=MEGA2\n");
             if(base_pair_position_index >= 0)
                 pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");

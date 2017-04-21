@@ -183,7 +183,7 @@ write_shapeit_files.o write_structure.o: DFLAGS += $(DfFLAGS)
 dbmega2.o: DFLAGS += $(DfFLAGS)
 
 # -DDATE -DHIDEPATH
-write_mfiles.o write_vitesse.o utils.o: DFLAGS += $(DdFLAGS) $(DpFLAGS)
+write_mfiles.o write_vcf.o write_vitesse.o utils.o: DFLAGS += $(DdFLAGS) $(DpFLAGS)
 
 ifeq  "$(HIDE)" "2"
     DaFLAGS += -DSHOWSTATUS
