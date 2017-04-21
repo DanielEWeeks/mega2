@@ -88,7 +88,7 @@ read.Mega2DB = function(db, ...) {
 #'
 #' @examples
 #'\dontrun{
-#' read.Mega2DB("my.db")
+#' ENV <- read.Mega2DB("my.db")
 #'
 #' Mega2VCF("foo")
 #'
@@ -104,6 +104,11 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
     if (is.null(markers)) markers = ENV$markers
 
     mkVCFhdr(prefix, ENV, markers)
+
+    z = c("./.", "./0", "./1", "./2", "0/.", "0/0", "0/1", "0/2", 
+          "1/.", "1/0", "1/1", "1/2", "2/.", "2/0", "2/1", "2/2")
+    zs = sort(z)
+    zz = matrix(z, nrow = 4, byrow = TRUE)
 
     allele_table = ENV$allele_table[ENV$allele_table$locus_link %in% markers$locus_link,]
     map_table = ENV$map_table[ENV$map_table$marker %in% markers$locus_link,]
@@ -133,7 +138,6 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
 
     j = 0
     while (TRUE) {
-#      if (M != ENV$LocusCnt - ENV$PhenoCnt) break
         if (M <= 0) break
         R = ((j*C+1):(j*C + C))
         L = length(R)
@@ -185,8 +189,8 @@ print(system.time ({
         block[BR , 8] = INFO
 #       block[BR , 9] = FORMAT[BR]
 
-        cr = getgenotypesraw(markers[R, ])
-        a1 = t(cr)
+        cr = getgenotypesraw(markers[R, ])             # 7.17%
+        a1 = t(cr)                                     # 0.86%
         a2 = a1
         dm = dim(a1)
         a1 = bitwShiftR(a1, 16)
@@ -199,15 +203,27 @@ print(system.time ({
             a2[whichFlip, ] = match(a2[whichFlip, ], c(2, 1), nomatch=0)
         } 
 
-        a3 = as.character(a1-1)
-        a3[a1 == 0] = "."
-        a4 = as.character(a2-1)
-        a4[a2 == 0] = "."
+        for (i in 1:(blockcol-9)) {
+            if (a1[ , i] > 3 || a2[ , i] > 3) {       # 41.32%
+                ##  user  system elapsed 
+                ## 4.575   0.143   4.745 
+                ##  user  system elapsed 
+                ## 1.171   0.049   1.238 
+                a3 = as.character(a1[ , i] - 1)
+                a3[a1[ , i] == 0] = "."
+                a4 = as.character(a2[ , i]-1)
+                a4[a2[ , i] == 0] = "."
+                a5 = paste0(a3, "/", a4)
+                block[BR, 9 + i] = a5
+            } else
+                ##  user  system elapsed 
+                ## 1.098   0.148   1.260 
+                ##  user  system elapsed 
+                ## 1.232   0.050   1.310 
+                block[BR, 9 + i] = zz[cbind(a1[, i]+1, a2[, i]+1)]
+## slower       block[BR, 9 + i] = factor(zz[cbind(a1[, i]+1, a2[, i]+1)], zs)
+        }
 
-        a5 = paste0(a3, "/", a4)
-        attr(a5, "dim") = dm
-
-        block[BR, 10:blockcol] = a5
 ## Mega2 "mis-feature"
         block[BR, 2] = paste0(block[BR, 2], " ")
 ## Mega2 "mis-feature"
@@ -215,14 +231,13 @@ print(system.time ({
       }))
 
 print(system.time ({        
-        write.table(block[BR, ], file=file, sep="\t", quote=FALSE,
+        write.table(block[BR, ], file=file, sep="\t", quote=FALSE,     # 48.49%
                     append=TRUE, row.names=FALSE, col.names=FALSE)
  }))
         j = j + 1
         message(j)
     }
 }
-vcf = function(fil = "foo", ...) system.time(Mega2VCF(fil, ...))
 
 #' generate required VCF header
 #'
@@ -460,6 +475,8 @@ mkVCFpen = function (prefix, ENV, markers) {
 #       cat(all[i, ]$LocusName, all[i, ]$class_link+1, fpens, file=file, append=TRUE, sep="\t")
 #       cat("\tfemale\n", file=file, append=TRUE)
 
+# Each penetrance (for female/male/autosome) is 2 or 3 entries.  (This is for a bialleleic system.)
+#  An entry is 8 bytes for a double.      
         autopen   = all[i, ]$AutoPen[[1]]
         apen  = readBin(autopen, numeric(), n = length(autopen)/8, size = 8, endian = .Platform$endian)
         apens = sprintf("%.4f", apen)
@@ -506,6 +523,8 @@ mkVCFphe = function (prefix, ENV, markers) {
 
         off = (i-1) * 8
 
+# phenotype_table contains a blob which is a list of entries.  An entry is either an 8 byte
+#  double for quant, or two 4 byte ints for affect
         raw = unlist(ENV$phenotype_table[,4])
         raw = matrix(raw, ncol=8, byrow=T)
 
