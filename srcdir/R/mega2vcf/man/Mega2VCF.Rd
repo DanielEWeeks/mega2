@@ -25,7 +25,7 @@ Generate a VCF file from the specified Mega2 SQLite database.  The file is named
 }
 \examples{
 \dontrun{
-read.Mega2DB("my.db")
+ENV <- read.Mega2DB("my.db")
 
 Mega2VCF("foo")
 

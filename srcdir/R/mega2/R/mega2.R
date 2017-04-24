@@ -92,10 +92,10 @@ TBLSFilter = list(
           locus_table    = "pId, LocusName, Type, AlleleCnt, locus_link",
 
           marker_table   = "pId, MarkerName, pos_avg, pos_female, pos_male, chromosome, locus_link",
-          pedigree_table = "kId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
-          person_table   = "kId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
-          pedigree_brkloop_table = "kId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
-          person_brkloop_table   = "kId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
+          pedigree_table = "pId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
+          person_table   = "pId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
+          pedigree_brkloop_table = "pId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
+          person_brkloop_table   = "pId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
 
           traitaff_table = "pId, ClassCnt, PenCnt, locus_link"
   )
