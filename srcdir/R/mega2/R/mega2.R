@@ -40,7 +40,7 @@ NULL
 
 ENV = new.env(parent = emptyenv())
 
-#' Mega2 SQLite3 tasbles
+#' Mega2 SQLite3 tables
 #'
 #' @description This indicates which SQLite3 tables and possibly which subset of fields
 #'	to fetch.
@@ -61,15 +61,15 @@ TBLS = c("int_table",
          "person_brkloop_table",
 
 #        "canonicalallele_table",
-#        "locus_table",
+         "locus_table",
          "allele_table",
          "marker_table",
          "markerscheme_table",
          "map_table",
          "mapnames_table",
 
-#        "traitaff_table",
-#        "affectclass_table",
+         "traitaff_table",
+         "affectclass_table",
 #        "ptraitquant_table",
 
          "phenotype_table",
@@ -78,6 +78,26 @@ TBLS = c("int_table",
 ## Derived tables
 ##        unified_genotype_table
 ##        markers
+  )
+
+#' Mega2 SQLite3 table filter
+#'
+#' @description For the for mentioned tables in some cases we will only extract a subset of columns
+#'
+#' @author Robert V Baron
+#' @docType data
+#' @name Mega2-TBLSFilter
+#' @note For the data.frames below, only the specified fields are loaded from the SQLite tables
+TBLSFilter = list(
+          locus_table    = "pId, LocusName, Type, AlleleCnt, locus_link",
+
+          marker_table   = "pId, MarkerName, pos_avg, pos_female, pos_male, chromosome, locus_link",
+          pedigree_table = "pId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
+          person_table   = "pId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
+          pedigree_brkloop_table = "pId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
+          person_brkloop_table   = "pId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
+
+          traitaff_table = "pId, ClassCnt, PenCnt, locus_link"
   )
 
 #' make markers data frame
@@ -91,19 +111,21 @@ TBLS = c("int_table",
 #'          \code{unified_genotype_table}.)}
 #'	  \item{MarkerName:}{name of this marker}
 #'	  \item{chromosome:}{chromosome number of this marker}
-#'	  \item{position:}{base pair position of this marker (selected by mapselect[below])}
+#'	  \item{position:}{base pair position of this marker (selected by bpPosMap[below])}
 #'       }
 #'
-#' @param mapselect An integer that indicates the map index to use when selecting the
+#' @param bpPosMap An integer that indicates the map index to use when selecting the
 #'	chromosome/position fields from the map_table to merge with the marker_table.
 #'
 #' @return None
+#'
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
 #' mk_markers_with_skip(1)
 #'}
-mk_markers_with_skip = function(mapselect = 1) {
+mk_markers_with_skip = function(bpPosMap = 1) {
     if (ENV$MARKER_SCHEME == 1) {
         markersPerChr = sapply(split(ENV$marker_table$chromosome, ENV$marker_table$chromosome), length)
         extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
@@ -115,7 +137,7 @@ mk_markers_with_skip = function(mapselect = 1) {
     ENV$marker_table$locus_link_fill = ENV$marker_table$locus_link + extra_markers[ENV$marker_table$chromosome]
 
     ENV$markers = merge(ENV$marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
-                        ENV$map_table[ ENV$map_table$map == mapselect, c( "marker", "position")],
+                        ENV$map_table[ ENV$map_table$map == bpPosMap, c( "marker", "position")],
                         by.x = "locus_link", by.y = "marker")
 }
 
@@ -125,6 +147,8 @@ mk_markers_with_skip = function(mapselect = 1) {
 #'  We need a single vector for each person.
 #'
 #' @return None
+#'
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -155,17 +179,17 @@ mk_unified_genotype_table = function() {
 #'
 #' @usage
 #' dbmega2_import(dbname,
-#'                mapselect = 1,
+#'                bpPosMap = 1,
 #'                verbose = 0)
 #'
 #' @param dbname file path to SQLite database.
 #'
-#' @param mapselect specified which map in the map_table should be used for marker chromosome/position.
+#' @param bpPosMap specified which map in the map_table should be used for marker chromosome/position.
 #'
 #' @param verbose For this function, print out statistics on the name/size of each table read and show column headers.
 #'
 #' @return ENV an environment that contains all the tables created from the SQLite tables.
-
+#'
 #' @importFrom RSQLite dbConnect dbExistsTable dbReadTable dbListFields SQLITE_RO
 #' @export
 #'
@@ -176,25 +200,33 @@ mk_unified_genotype_table = function() {
 #' dbmega2_import("foo.db", verbose = 1)
 #'}
 dbmega2_import = function(dbname,
-                          mapselect = 1,
+                          bpPosMap = 1,
                           verbose = 0) {
     con = tryCatch(dbConnect(RSQLite::SQLite(), dbname = dbname, flags = SQLITE_RO),
                    error = function(xx) { stop("DB open failed: ", dbname, call. = FALSE) })
 
     ENV$verbose = verbose
+
     for (tbl in TBLS) {
         if (dbExistsTable(con, tbl)) {
-            assign(tbl, dbReadTable(con, tbl), pos = ENV)
-#           assign(tbl, dbReadTable(con, tbl, select.cols = "x y z"), pos = ENV)            
+            filter = TBLSFilter[tbl][[1]]
+            if (is.null(filter))
+                assign(tbl, dbReadTable(con, tbl), pos = ENV)
+            else
+                assign(tbl, dbReadTable(con, tbl, select.cols = filter), pos = ENV)
             if (ENV$verbose) {
                 cat(tbl, dim(get(tbl, pos=ENV)), sep = "\t", end = "\n")
-                cat(tbl, dbListFields(con, tbl), sep = "\t", end = "\n")
+                if (is.null(filter))
+                    cat(tbl, dbListFields(con, tbl), sep = "\t", end = "\n")
+                else
+                  cat(tbl, strsplit(filter, ", ")[[1]], sep = "\t", end = "\n")
                 cat(end = "\n")
             }
         }
     }
 
     ENV$PhenoCnt      = ENV$int_table[ENV$int_table$key == 'PhenoCnt', 3]
+    ENV$LocusCnt      = ENV$int_table[ENV$int_table$key == 'LocusCnt', 3]
     ENV$MARKER_SCHEME = ENV$int_table[ENV$int_table$key == 'MARKER_SCHEME', 3]
     if (ENV$MARKER_SCHEME > 2) {
         stop("Only compressions levels of 1 or 2 are allowed. (",
@@ -202,7 +234,7 @@ dbmega2_import = function(dbname,
     }
     
     mk_unified_genotype_table()
-    mk_markers_with_skip(mapselect)
+    mk_markers_with_skip(bpPosMap)
     if (ENV$MARKER_SCHEME == 2) {
         message("Partitioninging allele_table by locus_link\n");
         ENV$locus_allele_table = split(ENV$allele_table, ENV$allele_table$locus_link)
@@ -210,6 +242,25 @@ dbmega2_import = function(dbname,
         ENV$locus_allele_table = NULL
     }
 
+    return (ENV)
+}
+
+#' return ENV environment from package
+#'
+#' Mega2 uses an environment, \emph{ENV} to store all the tables it reads in.  In addition,
+#'  some package globals are stored there, viz, constants: LocusCnt, PhenoCnt, MARKER_SCEME and
+#'  tables: markers and unified_genotype_table (and possibly locus_allele_table)
+#'
+#' This same \emph{ENV} is returned by \emph{dbmega2_import}
+#'
+#' @return ENV an environment that contains all the tables created from the SQLite tables.
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' getENV()
+#'}
+getENV = function () {
     return (ENV)
 }
 
