@@ -1243,6 +1243,9 @@ int             main(int argc, char **argv, char **env)
         Tod import_genotype("import_genotype");
         dbgenotype_import_genotype(LPedTreeTop);
         import_genotype();
+
+        extern void strand_flip_reference_alleles(linkage_ped_top *Top);
+        strand_flip_reference_alleles(LPedTreeTop);
     }
 
     if (true || database_dump || ! database_read) {

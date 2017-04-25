@@ -1730,6 +1730,8 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
     fln_alloc(output_path);
 
+    *strand_flip_opt = 0;
+
     if (batchINPUTFILES) {
 
         menu1_batch_set_outfiles(output_path, db_name);
@@ -1739,14 +1741,19 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
 
+        char ch;
+        BatchValueGet(ch, "Align_Strand_Input");
+        if(ch == 'y' || ch == 'Y')
+            *strand_flip_opt = 1;
+        else
+            *strand_flip_opt = 0;
+
         return;
     }
 
     sprintf(*output_path, ".");
     if (*fn == 0)
         BatchValueGet(fn,   "DBfile_name");
-
-    *strand_flip_opt=0;
 
 /*
     printf("\n");
@@ -1871,6 +1878,9 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     if (InputMode == INTERACTIVE_INPUTMODE) {
 
         BatchValueSet(fn, "DBfile_name");
+
+        BatchValueSet(yorn[*strand_flip_opt][0], "Align_Strand_Input");
+        batchf("Align_Strand_Input");
 
         strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
         batchf(Output_Path);

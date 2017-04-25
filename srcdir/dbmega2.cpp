@@ -288,8 +288,16 @@ void dbmega2_stat(linkage_ped_top *Top)
               Top->EXLTop->map_functions[base_pair_position_index] == 'p' ? "base pair" : "???",
               base_pair_position_index);
 */
-        msgvf("\tbase pair distance(map name) \"%s\"\n\n",
+        msgvf("\tbase pair distance(map name) \"%s\"\n",
               Top->EXLTop->MapNames[base_pair_position_index]);
+
+    if(mega2_input_files[REFfl]!= NULL){
+        string hgbuild;
+        BatchValueGet(hgbuild,"human_genome_build");
+        msgvf("\treference allele panel: %s\n", mega2_input_files[REFfl]);
+        msgvf("\treference allele build: %s\n", hgbuild.c_str());
+    }
+
 
     show_reset_input();
 
@@ -331,12 +339,6 @@ void dbmega2_import(linkage_ped_top *Top)
     dbgenotype_import(Top);
 
     dbmega2_stat(Top);
-
-    if(_strand_flips) {
-        Reference_Flips_Table *ref_flips_table = new Reference_Flips_Table();
-        ref_flips_table->flip_strands(Top);
-
-    }
 }
 
 void db_drop_all() {
@@ -564,6 +566,18 @@ void db_init_all() {
     batch_file_parameters.db_get("k2", ve, i);
     printf("get: %s, %s, %d\n", "k2", v, i);
 */
+}
+
+/*
+ * This was part of the import process but got moved to after is called dbgenotype_import_genotype to make sure
+ * the marker structure is attached to the pedigree person structure.
+ */
+void strand_flip_reference_alleles(linkage_ped_top *Top) {
+    if(_strand_flips) {
+        Reference_Flips_Table *ref_flips_table = new Reference_Flips_Table();
+        ref_flips_table->flip_strands(Top);
+
+    }
 }
 
 void db_fini_all() {

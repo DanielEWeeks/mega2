@@ -441,6 +441,7 @@ void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
     canonG = canonical_allele("G");
     canonT = canonical_allele("T");
 
+    db_open_db();
     MasterDB.begin();
     DBstmt *select;
     char select_string[255];
@@ -493,7 +494,7 @@ void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
 
 
 
-    for(int locus = Top->LocusTop->PhenoCnt; locus < Top->LocusTop->LocusCnt; locus ++){
+    for(int locus = Top->LocusTop->PhenoCnt; locus < Top->LocusTop->LocusCnt; locus++){
         if(Top->LocusTop->Locus[locus].Allele[1].AlleleName != dummycanon) {
             if (strand_flips[locus]) {
                 for (int i = 0; i <= 1; i++) {
@@ -545,6 +546,29 @@ void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
 
 
 
+                    for (int ped=0; ped < Top->PedCnt; ped++) {
+                        linkage_ped_tree *tpedtreep = &(Top->PedRaw[ped]);
+                        for (int per = 0; per < Top->PedRaw[ped].EntryCnt; per++) {
+                            linkage_ped_rec *tpersonp =  &(tpedtreep->Entry[per]);
+                            //this causes a seg fault.
+
+                            void *mk = tpersonp->Marker;
+                            int a1, a2;
+
+                            get_2alleles(mk, locus, &a1, &a2);
+;
+                            if(a1 == 1)
+                                a1 = 2;
+                            else if(a1 == 2)
+                                a1 =1;
+                            if(a2 == 1)
+                                a2 = 2;
+                            else if(a2 == 2)
+                                a2 =1;
+
+                            set_2alleles(mk, locus, &Top->LocusTop->Locus[locus], a1 , a2);
+                        }
+                    }
                 }
                 //*placeholder = Top->LocusTop->Locus[locus].Allele[0];
                 //Top->LocusTop->Locus[locus].Allele[0] = *reference;

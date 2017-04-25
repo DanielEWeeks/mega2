@@ -314,41 +314,59 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner() {
-            int allele1;
-            int allele2;
+            if(ref_choice == "Original Order" ||  _strand_flips) {
+                pr_printf("\t");
 
-            if(_allele1 == 0)
-                allele1 = 0;
-            else if(_allele1 - 1 == extremum_allele)
-                allele1 = 1;
-            else if(_allele1 - 1  < extremum_allele)
-                allele1 = _allele1 + 1;
-            else
-                allele1 = _allele1;
+                if (_allele1 == 0)
+                    pr_printf(".");
+                else
+                    pr_printf("%d", _allele1 - 1);
 
-            if(_allele2 == 0)
-                allele2 = 0;
-            else if(_allele2 - 1 == extremum_allele)
-                allele2 = 1;
-            else if(_allele2 - 1 < extremum_allele)
-                allele2 = _allele2 + 1;
-            else
-                allele2 = _allele2;
+                pr_printf("/");
 
-            pr_printf("\t");
+                if (_allele2 == 0)
+                    pr_printf(".");
+                else
+                    pr_printf("%d", _allele2 - 1);
+            }
+            else {
+                int allele1;
+                int allele2;
 
 
-            if (allele1  == 0)
-                pr_printf(".");
-            else
-                pr_printf("%d", allele1 - 1);
+                if (_allele1 == 0)
+                    allele1 = 0;
+                else if (_allele1 - 1 == extremum_allele)
+                    allele1 = 1;
+                else if (_allele1 - 1 < extremum_allele)
+                    allele1 = _allele1 + 1;
+                else
+                    allele1 = _allele1;
 
-            pr_printf("/");
+                if (_allele2 == 0)
+                    allele2 = 0;
+                else if (_allele2 - 1 == extremum_allele)
+                    allele2 = 1;
+                else if (_allele2 - 1 < extremum_allele)
+                    allele2 = _allele2 + 1;
+                else
+                    allele2 = _allele2;
 
-            if (allele2 == 0)
-                pr_printf(".");
-            else
-                pr_printf("%d", allele2 - 1);
+                pr_printf("\t");
+
+
+                if (allele1 == 0)
+                    pr_printf(".");
+                else
+                    pr_printf("%d", allele1 - 1);
+
+                pr_printf("/");
+
+                if (allele2 == 0)
+                    pr_printf(".");
+                else
+                    pr_printf("%d", allele2 - 1);
+            }
 
 
         }
@@ -457,7 +475,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             extremum_allele = 0;
             int reference_exists = 0;
 
-            if(ref_choice == "Natural Order"){
+            if(ref_choice == "Original Order"){
                 extremum_allele = 0;
             }
 
@@ -1003,7 +1021,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         }
 
         if (!reftableexists)
-            refchoice = "Natural Order";
+            refchoice = "Original Order";
         else {
             refchoice = "Use Mega2 Allele DB Table";
             string rfile = mega2_input_files[REFfl];
@@ -1022,7 +1040,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             change_build_allowed = 0;
         }
         if(!_strand_flips)
-            refchoice = "Natural Order";
+            refchoice = "Original Order";
 
         if(_strand_flips)
             refchoice = "Use Mega2 Allele DB Table";
@@ -1112,7 +1130,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             while(choice3 != 1 || choice3 != 2 || choice3 != 3 || choice3 != 4) {
                 printf("Allele Ordering Menu\n");
                 draw_line();
-                printf("1) Use Allele Ordering from Input Data\n");
+                printf("1) Use Original Allele Order from Input Data\n");
                 printf("2) Use Major Allele Frequency\n");
                 printf("3) Use Minor Allele Frequency\n");
                 if(database_read) {
@@ -1130,7 +1148,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 fcmap(stdin, "%d", &choice3);
                 newline;
                 if (choice3 == 1) {
-                    refchoice = "Natural Order";
+                    refchoice = "Original Order";
                     break;
                 }
                 if (choice3 == 2) {
