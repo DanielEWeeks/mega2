@@ -25,3 +25,4 @@ Enhances: parallel
 SystemRequirements: Mega2 
 NeedsCompilation: yes
 RoxygenNote: 6.0.1
+#KeepSource: TRUE

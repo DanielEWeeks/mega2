@@ -17,8 +17,13 @@ go = function(db = 0) {
     library(mega2pedgene)
 
     aa=setwd("~/mega2/test/R/yj/realDataAnalysis/mega2")
-    init_pedgene(verbose = 1)
-    run(gs=1:10)
+    init_pedgene("db1/yj1.db", verbose = 1)
+
+    Rprof("prof.out", line.profiling=T, memory.profiling=T)
+    run(gs=1:200)
+    Rprof(NULL)
+    print(summaryRprof("prof.out", lines="both"))
+
     aa=setwd(aa)
 }
 
