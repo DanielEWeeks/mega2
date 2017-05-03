@@ -203,7 +203,7 @@ print(system.time ({
             a2[whichFlip, ] = match(a2[whichFlip, ], c(2, 1), nomatch=0)
         } 
 
-        if (a1[ , ] > 2 || a2[ , ] > 2) {       # 41.32%
+        if ((ENV$MARKER_SCHEME > 1) && (a1 > 2 || a2 > 2)) {       # 41.32%
                 ##  user  system elapsed 
                 ##  4.086   0.133   4.251 
                 ##  user  system elapsed 
@@ -220,7 +220,7 @@ print(system.time ({
             ##  user  system elapsed 
             ##  1.274   0.056   1.351 
             block[BR, 10:blockcol] = zz[cbind(as.vector(a1)+1, as.vector(a2)+1)]
-        
+
 ## Mega2 "mis-feature"
         block[BR, 2] = paste0(block[BR, 2], " ")
 ## Mega2 "mis-feature"
