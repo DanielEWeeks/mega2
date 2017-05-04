@@ -134,6 +134,8 @@ public:
 
     void determine_flips(linkage_ped_top *Top, int locus, const char *data_ref, const char *data_alt, char *ref_ref, char *ref_alt, int chromosome, int position);
 
+    void flip_strands(linkage_ped_top *Top);
+
     int db_getall(linkage_ped_tree *t, std::map<int, linkage_ped_tree *> &pedigree_hash);
 };
 

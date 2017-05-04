@@ -952,7 +952,7 @@ void menu1(file_format *infl_type,
            int *Untyped_ped_opt, int *Error_sim_opt,
            char **output_path, char **db_name,
            double *freq_mismatch_thresh,
-           char **reffl_name)
+           char **reffl_name, int *strand_flip_opt)
 {
     int            i, choice_ = -1;
     char           cchoice[10];
@@ -964,8 +964,8 @@ void menu1(file_format *infl_type,
     int            compress_i = 18, file_format_i = 19, vcf_args_i = 20;
     int            vcf_mak_i = 21, site_vcf_i = 22, site_bcf_i = 23, site_vcf_gz_i = 24, _aux_i = 0;
     int            db_file_i = 25, in_dir_i = 26, pmap_i = 27;
-    int	           imputed_i = 28, inf_i = 29;
-    int            idx, choiceA[30]; /* idx should be 1+ largest <>_i value (above)*/
+    int	           imputed_i = 28, inf_i = 29/*, flip_i = 30*/;
+    int            idx, choiceA[31]; /* idx should be 1+ largest <>_i value (above)*/
 
     int            plinkf = 0, xcf = 0;
 
@@ -1707,7 +1707,7 @@ void menu1(file_format *infl_type,
 
 void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
             char **output_path, char **db_name,
-            double *freq_mismatch_thresh)
+            double *freq_mismatch_thresh, int *strand_flip_opt)
 {
     int            choice_ = -1;
     char           cchoice[10];
@@ -1715,17 +1715,22 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
     int            db_i=7, out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
     int            compress_i = 17;
-    int            idx, choiceA[28]; /* idx should be 1+ largest <>_i value (above)*/
+    int            flip_i = 30;
+    int            idx, choiceA[31]; /* idx should be 1+ largest <>_i value (above)*/
     extern int     db_exists_db();
     int            db_exists = 0;
     extern char    DBfile[255];
     char          *fn = DBfile;
+    extern int     db_table_exists(const char *table);
+    int            db_ref_table_exists = 0;
 
     *Untyped_ped_opt=2; /* Exclude any pedigree with 1 or less untyped people */
     *Error_sim_opt = 0;
     *freq_mismatch_thresh = LARGE;
 
     fln_alloc(output_path);
+
+    *strand_flip_opt = 0;
 
     if (batchINPUTFILES) {
 
@@ -1735,6 +1740,13 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
             BatchValueIfSet(fn,   "DBfile_name");
 
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
+
+        char ch;
+        BatchValueGet(ch, "Align_Strand_Input");
+        if(ch == 'y' || ch == 'Y')
+            *strand_flip_opt = 1;
+        else
+            *strand_flip_opt = 0;
 
         return;
     }
@@ -1769,6 +1781,13 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
                db_exists ? "[exists]" : "[create]");
         choiceA[idx] = db_i;
         idx++;
+
+        db_ref_table_exists = db_table_exists("ref_allele_table");
+        if(db_ref_table_exists) {
+            printf("%2d) %-*s[ %s]\n", idx, line_len,
+                   "Align strands with reference:", yorn[*strand_flip_opt]);
+            choiceA[idx++] = flip_i;
+        }
 
         _thresh_i = 1 ?  thresh_i : 0;
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
@@ -1842,7 +1861,11 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
             printf("Please enter missing value indicator > ");
             fcmap(stdin, "%s", REC_UNKNOWN); newline;
 
-        } else if (menu1_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
+        } else if (choice_ == flip_i){
+            *strand_flip_opt = (*strand_flip_opt + 1) % 2;
+        }
+
+        else if (menu1_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
                                   err_i, untyp_i, thresh_i, compress_i, choice_)) {
                        // above function looks for match and does action
         } else {
@@ -1855,6 +1878,9 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     if (InputMode == INTERACTIVE_INPUTMODE) {
 
         BatchValueSet(fn, "DBfile_name");
+
+        BatchValueSet(yorn[*strand_flip_opt][0], "Align_Strand_Input");
+        batchf("Align_Strand_Input");
 
         strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
         batchf(Output_Path);

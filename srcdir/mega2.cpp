@@ -251,6 +251,7 @@ int             UntypedPedOpt; /* Which peds to omit based on typing */
 int             liability_multiplier;
 int             ErrorSimOpt; /* Flag for whether to introduce errors */
 int             OrigIds[2];
+int             StrandFlipOpt; /*Flag for strand flipping*/
 /* which id field to use from the linkage ped file,
    ele1 - for ind id, ele2, for ped id */
 char           *Outfile_Names[NUM_OUTFILES];
@@ -350,6 +351,8 @@ int             default_output_filenames;
 int             abortflag;
 int             SetMarkerPosToSpecial;
 int             force_numeric_alleles = 0;
+
+int             _strand_flips;
 
 int lastautosome    = 0;
 int pseudoautosome  = 0;
@@ -786,7 +789,7 @@ int             main(int argc, char **argv, char **env)
               &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
               &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
               &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath, &dbf,
-              &FreqMismatchThreshold, &reffl_name);
+              &FreqMismatchThreshold, &reffl_name, &StrandFlipOpt);
         tod_menu1();
 
         Input_Files& inf = Input->input_files;  // Input is set in menu1 as soon as possible.
@@ -839,9 +842,11 @@ int             main(int argc, char **argv, char **env)
         Tod tod_menu1a("menu1a");
         char *dbf = DBfile;
         menu1a(&UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath, &dbf,
-               &FreqMismatchThreshold);
+               &FreqMismatchThreshold, &StrandFlipOpt);
         tod_menu1a();
     }
+
+    _strand_flips = StrandFlipOpt;
 
 //    log_line(mssgf);
     /*
@@ -1238,6 +1243,9 @@ int             main(int argc, char **argv, char **env)
         Tod import_genotype("import_genotype");
         dbgenotype_import_genotype(LPedTreeTop);
         import_genotype();
+
+        extern void strand_flip_reference_alleles(linkage_ped_top *Top);
+        strand_flip_reference_alleles(LPedTreeTop);
     }
 
     if (true || database_dump || ! database_read) {
