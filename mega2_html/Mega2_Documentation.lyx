@@ -1906,15 +1906,19 @@ Mega2 4.9.1 database input menu:
 \end_layout
 
 \begin_layout LyX-Code
- 3) Simulate genotyping errors: [ no ]
+ 3) Align strands with reference: [ no ]
 \end_layout
 
 \begin_layout LyX-Code
- 4) Include all pedigrees whether typed or not
+ 4) Simulate genotyping errors: [ no ]
 \end_layout
 
 \begin_layout LyX-Code
- 5) Allele frequency error measure threshold: No limit
+ 5) Include all pedigrees whether typed or not
+\end_layout
+
+\begin_layout LyX-Code
+ 6) Allele frequency error measure threshold: No limit
 \end_layout
 
 \begin_layout LyX-Code
@@ -1923,7 +1927,7 @@ Mega2 4.9.1 database input menu:
 \end_layout
 
 \begin_layout LyX-Code
-Select from options 0-5 or q> 
+Select from options 0-6 or q> 
 \end_layout
 
 \begin_layout Standard
@@ -16102,13 +16106,13 @@ Which can then gzipped for compression.
 
 \begin_layout Standard
 This file can be created by hand or by any script that outputs this format.
- Or the reference file can be created utilzing a script provided with Mega2.
+ Or the reference file can be created utilizing a script provided with Mega2.
  The scripts name is GetRefAlleles.sh.
  It uses bcftools so for it to be used that must be installed.
  It can be run on panels of vcf.gz files with chromosome specific files.
  For example, Minimac3 has datasets as references for imputation.
  First, get the reference vcfs on their website.
- Next, unpack the references until ther'es a directory of gzipped vcf files,
+ Next, unpack the references until there's a directory of gzipped vcf files,
  one for each chromosome.
  Inspect them to make sure the files are the same name template, for instance
  
@@ -16141,8 +16145,8 @@ GetRefAlleles.sh All.chr .phased.vcf.gz
 \begin_inset Quotes erd
 \end_inset
 
- Where there are two arguements for GetRefAlleles.sh which are: the character
- string for the filename up to the number of the chromsome, and everything
+ Where there are two arguments for GetRefAlleles.sh which are: the character
+ string for the filename up to the number of the chromosome, and everything
  after the chromosome.
  It should create a file called ref_alleles.txt (which can be gzipped for
  size saving).
@@ -16162,14 +16166,24 @@ This file (or a gzipped version of it) can then be input into the option
 \end_layout
 
 \begin_layout Standard
-Currently this reference value can be used when outputting VCF format 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Detailed-info-convert-vcf"
-
+This mode can be used on output data using option 3 
+\begin_inset Quotes eld
 \end_inset
 
-.
+Align strands with reference
+\begin_inset Quotes erd
+\end_inset
+
+ in the database input menu.
+ This strand alignment does two things: for cases where the reference value's
+ reference allele is different from the input data, it sets the data to
+ be harmonized with the reference (e.g.
+ if your data has A/C as the reference and alternate allele for a marker
+ but the reference panel has C/A it will switch it).
+ Second it resolves T/G <-> A/C strand alignment ambiguities, this means
+ that if your reference and alternate in your dataset are T/G and the reference
+ has an A/C it will change it accordingly as we can trivially say the strand
+ is unaligned in the dataset.
 \end_layout
 
 \begin_layout Standard
@@ -17075,7 +17089,11 @@ The Database input menu is shown below and explained immediately following:
 \end_layout
 
 \begin_layout LyX-Code
- 2) Database filename:                           dbmega2.db 
+ 2) Database filename:                           dbmega2.db
+\end_layout
+
+\begin_layout LyX-Code
+ 3) Align strands with reference:                [ no ]
 \end_layout
 
 \begin_layout LyX-Code
@@ -17139,6 +17157,16 @@ DBfile
 , flag.
  If both methods are used for the filename, the command line value takes
  precedence.
+ Align Strands with reference allows you to use an uploaded reference panel
+ (see: 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Using-an-external-reference"
+
+\end_inset
+
+), this then will set the reference allele to the same as the panel, and
+ will also do T/G <->A/C strand alignment.
  
 \emph on
 Simulate genotyping errors

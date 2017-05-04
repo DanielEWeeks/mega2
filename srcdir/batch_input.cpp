@@ -266,6 +266,7 @@ static keyw_t keywords[] = {
     {"human_genome_build",                    STRING,     "B37"},
     {"VCF_output_file_type",                  INT,        "1"},
     {"Reference_Allele_File",                 STRING,     ""},
+    {"Align_Strand_Input",                   YORN,       "n"},
 
 };
 
