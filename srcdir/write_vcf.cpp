@@ -770,13 +770,13 @@ void CLASS_VCF::write_VCF_map(linkage_ped_top *Top, const char *prefix, char *fi
             if (genetic_distance_index >= 0) {
                 if (_LTop->map_distance_type == 'k' || _LTop->map_distance_type == 'h') {
                     if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT)
-                        pr_printf("Map.%c.a\t",_LTop->map_distance_type);
+                        pr_printf("Map.%c.a",_LTop->map_distance_type);
                     else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT || genetic_distance_sex_type_map == FEMALE_GDMT)
-                        pr_printf("Map.%c.f\tMap.%c.m\t",_LTop->map_distance_type,_LTop->map_distance_type);
+                        pr_printf("Map.%c.f\tMap.%c.m",_LTop->map_distance_type,_LTop->map_distance_type);
                 }
             }
             if (base_pair_position_index >= 0)
-                pr_printf("%s.p\t",_EXLTop->MapNames[base_pair_position_index]);
+                pr_printf("\t%s.p",_EXLTop->MapNames[base_pair_position_index]);
             pr_nl();
         }
 
@@ -785,12 +785,12 @@ void CLASS_VCF::write_VCF_map(linkage_ped_top *Top, const char *prefix, char *fi
             pr_printf("%s\t",_tlocusp->LocusName);
             if(genetic_distance_index >= 0){
                 if (genetic_distance_sex_type_map == SEX_AVERAGED_GDMT)
-                    pr_printf("%10.6f\t", _EXLTop->EXLocus[_locus].positions[genetic_distance_index]);
+                    pr_printf("%10.6f", _EXLTop->EXLocus[_locus].positions[genetic_distance_index]);
                 else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT)
-                    pr_printf("%10.6f\t%10.6f\t", _EXLTop->EXLocus[_locus].pos_female[genetic_distance_index], _EXLTop->EXLocus[_locus].pos_male[genetic_distance_index]);
+                    pr_printf("%10.6f\t%10.6f", _EXLTop->EXLocus[_locus].pos_female[genetic_distance_index], _EXLTop->EXLocus[_locus].pos_male[genetic_distance_index]);
             }
             if (base_pair_position_index >= 0)
-                pr_printf("%.0lf\t", _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
+                pr_printf("\t%.0lf", _EXLTop->EXLocus[_locus].positions[base_pair_position_index]);
             pr_nl();
         }
 
