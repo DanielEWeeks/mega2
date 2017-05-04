@@ -1070,11 +1070,11 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
         menu_count++;
         if(outfiletype == 1)
-            printf("%d) VCF/BCF/VCF.gz:                                  VCF\n", menu_count);
+            printf("%d) Choose Format:                                   VCF\n", menu_count);
         else if(outfiletype == 2)
-            printf("%d) VCF/BCF/VCF.gz:                                  BCF\n", menu_count);
+            printf("%d) Choose Format:                                   BCF\n", menu_count);
         else if(outfiletype == 3)
-            printf("%d) VCF/BCF/VCF.gz:                                  VCF.gz\n", menu_count);
+            printf("%d) Choose Format:                                   VCF.gz\n", menu_count);
         fileout = menu_count;
 
         if(main_chromocnt > 1) {
