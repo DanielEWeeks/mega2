@@ -1085,6 +1085,10 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
             chromo = menu_count;
         }
+        else {
+            //make sure this is set to remove a compiler warning.
+            chromo = -1;
+        }
 
 
         printf("Enter selection: 0 - %d > ", menu_count);
