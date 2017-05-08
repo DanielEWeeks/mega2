@@ -563,6 +563,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                             a2 = a2 + ",.";
                         } else {
                             alt.push_back(_tlocusp->Allele[allele].AlleleName);
+                            a2 = a2 + ",";
                             a2 = a2 + _tlocusp->Allele[allele].AlleleName;
                         }
                     }
@@ -599,10 +600,11 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if(allele == extremum_allele)
                     continue;
-                else if(allele > 0 && extremum_allele != 0)
-                    pr_printf(",");
-
-                pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
+                else if((allele == 1 && extremum_allele == 0) || allele == 0)
+                    pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
+                else
+                    pr_printf(",%.6f",_tlocusp->Allele[allele].Frequency);
+                //pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
             }
             pr_printf(";");
             if(_strand_flips) {
