@@ -318,7 +318,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner() {
-            if(ref_choice == "Original Order" ||  _strand_flips) {
+            if(ref_choice == "Original Order" ||  (_strand_flips && extremum_allele == 0)) {
                 pr_printf("\t");
 
                 if (_allele1 == 0)
