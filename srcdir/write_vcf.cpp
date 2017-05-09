@@ -535,8 +535,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     }
                 }
             }
-            if(strcmp(_tlocusp->LocusName,"rs6091583") == 0)
-                printf("here");
 
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if (allele == extremum_allele){
