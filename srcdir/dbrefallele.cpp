@@ -273,7 +273,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     SECTION_LOG_FINI(ref_mismatch);
     SECTION_LOG_FINI(ref_not_available);
 
-    mssgvf("Successfully matched %d/%d variants in the dataset to the provided reference panel.\n", success,success+fail);
+    mssgvf("Matched %d/%d variants in the dataset to the provided reference panel.\n", success,success+fail);
 
     //final commit just in case
     MasterDB.commit();
@@ -346,6 +346,8 @@ void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, con
                        ((canonrr == canonG && canonra == canonT) || (canonrr == canonT && canonra == canonG))) {
                 strand = 1;
             }
+            else
+                strand = 0;
 
             if (strand == 0) {
                 if (canonrr == canonda)
@@ -381,7 +383,7 @@ void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, con
 
     if(major_minor == 0 && strand == 0 && canonrr != canondr) {
         SECTION_LOG(ref_mismatch);
-        mssgvf("chr%d:%d data alleles (%s, %s) not trivially comparable, and do not directly match reference alleles (%s, %s). \n", chromosome, position,data_ref,data_alt, ref_ref,ref_alt);
+        mssgvf("chr%d:%d alleles (%s, %s) not trivially comparable, and do not match reference alleles (%s, %s). \n", chromosome, position,data_ref,data_alt, ref_ref,ref_alt);
     }
 
     insert(locus, strand, major_minor);
@@ -496,7 +498,7 @@ void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
 
     for(int locus = Top->LocusTop->PhenoCnt; locus < Top->LocusTop->LocusCnt; locus++){
         if(Top->LocusTop->Locus[locus].Allele[1].AlleleName != dummycanon) {
-            if (strand_flips[locus]) {
+            if (strand_flips[Top->LocusTop->Locus[locus].locus_link] == 1) {
                 for (int i = 0; i <= 1; i++) {
                     canonAllele = canonical_allele(Top->LocusTop->Locus[locus].Allele[i].AlleleName);
                     //printf("Before: %s\n",canonAllele);
@@ -512,7 +514,7 @@ void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
                     //printf("After: %s\n",canonAllele);
                 }
             }
-            if (major_minor_flips[locus]) {
+            if (major_minor_flips[Top->LocusTop->Locus[locus].locus_link] == 1) {
                 int refindex, placeholderindex;
                 const char *refallelename, *placeholderallelename;
                 double reffrequency, placeholderfrequency;

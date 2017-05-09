@@ -535,7 +535,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     }
                 }
             }
-
+            if(strcmp(_tlocusp->LocusName,"rs6091583") == 0)
+                printf("here");
 
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if (allele == extremum_allele){
@@ -568,7 +569,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                         }
                     }
                 }
-
             }
 
             pr_printf("%s\t%s\t",a1.c_str(),a2.c_str());
@@ -608,32 +608,31 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             }
             pr_printf(";");
             if(_strand_flips) {
-                if (reference_exists == 0)
+                if (reference_exists == 0 && strand_flips[_tlocusp->locus_link] ==0)
                     pr_printf("NO;");
-                if (reference_exists == -1)
-                    pr_printf("UNREF=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
-                if (strand_flips[_locus]){
+                else if (strand_flips[_tlocusp->locus_link] || major_minor_flips[_tlocusp->locus_link]) {
                     //transform back if we want to know the original alleles
                     pr_printf("ORIG=");
-                    if(_tlocusp->Allele[extremum_allele].AlleleName == canonA)
-                        pr_printf("%s",canonT);
-                    if(_tlocusp->Allele[extremum_allele].AlleleName == canonC)
-                        pr_printf("%s",canonG);
-                    if(_tlocusp->Allele[extremum_allele].AlleleName == canonG)
-                        pr_printf("%s",canonC);
-                    if(_tlocusp->Allele[extremum_allele].AlleleName == canonT)
-                        pr_printf("%s",canonA);
+                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonA)
+                        pr_printf("%s", canonT);
+                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonC)
+                        pr_printf("%s", canonG);
+                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonG)
+                        pr_printf("%s", canonC);
+                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonT)
+                        pr_printf("%s", canonA);
 
-                    if(_tlocusp->Allele[(extremum_allele+1)%2].AlleleName == canonA)
-                        pr_printf(",%s",canonT);
-                    if(_tlocusp->Allele[(extremum_allele+1)%2].AlleleName == canonC)
-                        pr_printf(",%s",canonG);
-                    if(_tlocusp->Allele[(extremum_allele+1)%2].AlleleName == canonG)
-                        pr_printf(",%s",canonC);
-                    if(_tlocusp->Allele[(extremum_allele+1)%2].AlleleName == canonT)
-                        pr_printf(",%s",canonA);
+                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonA)
+                        pr_printf(",%s;", canonT);
+                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonC)
+                        pr_printf(",%s;", canonG);
+                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonG)
+                        pr_printf(",%s;", canonC);
+                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonT)
+                        pr_printf(",%s;", canonA);
                 }
-                    //pr_printf("ORIG=%s,%s;",_tlocusp->Allele[extremum_allele].AlleleName,_tlocusp->Allele[(extremum_allele+1)%2].AlleleName);
+                else if(!major_minor_flips[_tlocusp->locus_link] && auxillary_ref != _tlocusp->Allele[extremum_allele].AlleleName && auxillary_alt != _tlocusp->Allele[extremum_allele].AlleleName)
+                    pr_printf("UNREF=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
             }
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
