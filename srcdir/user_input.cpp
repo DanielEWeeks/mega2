@@ -125,6 +125,7 @@ const char *INPUT_FORMAT_STR[] = {
      "IMPUTE2 GEN format (gen/impute2)",
      "IMPUTE2 BGEN format (bgen)",
 //   "IMPUTE2 BGEN format2 (bgen)",
+     "BCF Split by Chromosome",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -179,6 +180,9 @@ Input_Base *createinput(INPUT_FORMAT in_format) {
         break;
     case in_format_bgen2:
         return new Input_BGEN2(in_format);
+        break;
+    case in_format_bcfs:
+        return new Input_BCFs(in_format);
         break;
     case in_format_traditional:
         return new Input_Traditional(in_format);
@@ -1022,6 +1026,10 @@ void menu1(file_format *infl_type,
         } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen2) {
             strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 BGEN file");
         }
+        else if(Input_Format == in_format_bcfs){
+            strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
+            xcf = 1;
+        }
 
 
         menu1_batch_set_files(infl_type, pedfl_name, locusfl_name,
@@ -1168,6 +1176,22 @@ void menu1(file_format *infl_type,
                 _aux_i = imputed_i;
                 fln_init(info, "IMPUTE2", "gen_info", "[optional]", "gen_info", "impute2_info");
 //              fln_init_plink(! PMAP_REQ);
+                fln_init_mega2(! MAP_REQ);
+            }
+            else if(Input_Format == in_format_bcfs) {
+                xcf = 1;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(VCFArgs, "--remove-indels");
+                strcpy(extension_name, "study");
+
+                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init_plink(0);
+                fln_init(auxo, "binary", "bcf", "[required]", "bcf");
+                auxo->title = "Variant file:";
+                strcpy(&mega2_input_file_type[BED][0],  "Binary Variant file");
+                _aux_i = site_bcf_i;
+
                 fln_init_mega2(! MAP_REQ);
             }
             reset_extension = 1;
