@@ -316,6 +316,7 @@ Str Reference_Allele_Table::get_filename(){
 void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, const char *data_ref, const char *data_alt, char *ref_ref, char *ref_alt, int chromosome, int position) {
     int strand = 0;
     int major_minor = 0;
+    int dummy = 0;
     char *dummycanon;
     char *canonA;
     char *canonC;
@@ -336,16 +337,80 @@ void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, con
     //biallelic
     if (Top->LocusTop->Locus[locus].AlleleCnt == 2) {
         //printf("%s / %s \t %s / %s\t", canondr, canonda, canonrr, canonra);
-        if (canondr == dummycanon || canonda == dummycanon)
+        if (canondr == dummycanon)
             strand = 0;
         else {
-            if (((canondr == canonG && canonda == canonT) || (canondr == canonT && canonda == canonG)) &&
+            //First we check our data
+            //AT TA CG and GC are ambiguous strand flips
+            //so we check for those values in the data
+            if((canondr == canonA && canonda == canonT) || (canondr == canonT && canonda == canonA)
+                    || (canondr == canonC && canonda == canonG) || (canondr == canonC && canonda == canonG)) {
+                strand = 0;
+            }
+            //these are split up for readability
+            //check for GT -> AC and TG -> CA
+            else if (((canondr == canonG && canonda == canonT) || (canondr == canonT && canonda == canonG)) &&
                      ((canonrr == canonA && canonra == canonC) || (canonrr == canonC && canonra == canonA))) {
                 strand = 1;
+            //check for AC -> GT and CA -> TG
             } else if (((canondr == canonA && canonda == canonC) || (canondr == canonC && canonda == canonA)) &&
                        ((canonrr == canonG && canonra == canonT) || (canonrr == canonT && canonra == canonG))) {
                 strand = 1;
             }
+            //check for CT -> GA and TC -> AG
+            else if (((canondr == canonC && canonda == canonT) || (canondr == canonT && canonda == canonC)) &&
+                     ((canonrr == canonG && canonra == canonA) || (canonrr == canonA && canonra == canonG))) {
+                strand = 1;
+            //check for AG -> TC and GA -> CT
+            } else if (((canondr == canonA && canonda == canonG) || (canondr == canonG && canonda == canonA)) &&
+                       ((canonrr == canonT && canonra == canonC) || (canonrr == canonC && canonra == canonT))) {
+                strand = 1;
+            //now we handle dummy values
+            //if we have an A/. and the reference contains a T etc., we choose the reference
+            //also for the case of A/. and the reference is A/X we add the reference
+            }else if (canonda == dummycanon) {
+                //flip the strand either way
+                //flip major minor only if it's the reference alt value
+                //I'm still calling this "strand" as the logic for the change will be the same regardless for the labeling
+                if(canondr == canonA) {
+                    if (canonrr == canonA || canonrr == canonT) {
+                        major_minor = 0;
+                        strand = 1;
+                    } else if (canonra == canonA || canonra == canonT) {
+                        major_minor = 1;
+                        strand = 1;
+                    }
+                }
+                else if(canondr == canonC) {
+                    if (canonrr == canonC || canonrr == canonG) {
+                        major_minor = 0;
+                        strand = 1;
+                    } else if (canonra == canonC || canonra == canonG) {
+                        major_minor = 1;
+                        strand = 1;
+                    }
+                }
+                else if(canondr == canonG) {
+                    if (canonrr == canonG || canonrr == canonC) {
+                        major_minor = 0;
+                        strand = 1;
+                    } else if (canonra == canonG || canonra == canonC) {
+                        major_minor = 1;
+                        strand = 1;
+                    }
+                }
+                else if(canondr == canonT) {
+                    if (canonrr == canonT || canonrr == canonA) {
+                        major_minor = 0;
+                        strand = 1;
+                    } else if (canonra == canonT || canonra == canonA) {
+                        major_minor = 1;
+                        strand = 1;
+                    }
+                }
+                dummy = 1;
+            }
+
             else
                 strand = 0;
 
@@ -386,7 +451,7 @@ void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, con
         mssgvf("chr%d:%d alleles (%s, %s) not trivially comparable, and do not match reference alleles (%s, %s). \n", chromosome, position,data_ref,data_alt, ref_ref,ref_alt);
     }
 
-    insert(locus, strand, major_minor);
+    insert(locus, strand, major_minor, dummy);
 //do we want this?
 //    if(strand == 1){
 //        DBstmt *update1;
@@ -497,21 +562,69 @@ void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
 
 
     for(int locus = Top->LocusTop->PhenoCnt; locus < Top->LocusTop->LocusCnt; locus++){
-        if(Top->LocusTop->Locus[locus].Allele[1].AlleleName != dummycanon) {
-            if (strand_flips[Top->LocusTop->Locus[locus].locus_link] == 1) {
-                for (int i = 0; i <= 1; i++) {
-                    canonAllele = canonical_allele(Top->LocusTop->Locus[locus].Allele[i].AlleleName);
-                    //printf("Before: %s\n",canonAllele);
-                    if (canonAllele == canonA)
-                        Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonT;
-                    else if (canonAllele == canonC)
-                        Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonG;
-                    else if (canonAllele == canonG)
-                        Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonC;
-                    else if (canonAllele == canonT)
-                        Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonA;
-                    //canonAllele = canonical_allele(Top->LocusTop->Locus[locus].Allele[i].AlleleName);
-                    //printf("After: %s\n",canonAllele);
+        if (strand_flips[Top->LocusTop->Locus[locus].locus_link] == 1) {
+                //first deal with cases like A/.
+                if(Top->LocusTop->Locus[locus].Allele[1].AlleleName == dummycanon) {
+                    //two cases, The allele in the dataset is in the reference
+                    //or the allele is a compliment T/. -> A/something
+                    //So we technically set this wrong, this is so the alleles and person level markers will change later
+                    //this also got more complicated than it needed to be since I couldn't set Allelename = refere[] etc.
+                    if(strand_flips[Top->LocusTop->Locus[locus].locus_link] == 1) {
+                        if(references[Top->LocusTop->Locus[locus].locus_link] == canonA)
+                            Top->LocusTop->Locus[locus].Allele[1].AlleleName = canonA;
+                        if(references[Top->LocusTop->Locus[locus].locus_link] == canonC)
+                            Top->LocusTop->Locus[locus].Allele[1].AlleleName = canonC;
+                        if(references[Top->LocusTop->Locus[locus].locus_link] == canonG)
+                            Top->LocusTop->Locus[locus].Allele[1].AlleleName = canonG;
+                        if(references[Top->LocusTop->Locus[locus].locus_link] == canonT)
+                            Top->LocusTop->Locus[locus].Allele[1].AlleleName = canonT;
+                        if(alternates[Top->LocusTop->Locus[locus].locus_link] == canonA)
+                            Top->LocusTop->Locus[locus].Allele[0].AlleleName = canonA;
+                        if(alternates[Top->LocusTop->Locus[locus].locus_link] == canonC)
+                            Top->LocusTop->Locus[locus].Allele[0].AlleleName = canonC;
+                        if(alternates[Top->LocusTop->Locus[locus].locus_link] == canonG)
+                            Top->LocusTop->Locus[locus].Allele[0].AlleleName = canonG;
+                        if(alternates[Top->LocusTop->Locus[locus].locus_link] == canonT)
+                            Top->LocusTop->Locus[locus].Allele[0].AlleleName = canonT;
+                    }
+                    else{
+                        if(references[Top->LocusTop->Locus[locus].locus_link] == canonA)
+                            Top->LocusTop->Locus[locus].Allele[0].AlleleName = canonA;
+                        if(references[Top->LocusTop->Locus[locus].locus_link] == canonC)
+                            Top->LocusTop->Locus[locus].Allele[0].AlleleName = canonC;
+                        if(references[Top->LocusTop->Locus[locus].locus_link] == canonG)
+                            Top->LocusTop->Locus[locus].Allele[0].AlleleName = canonG;
+                        if(references[Top->LocusTop->Locus[locus].locus_link] == canonT)
+                            Top->LocusTop->Locus[locus].Allele[0].AlleleName = canonT;
+                        if(alternates[Top->LocusTop->Locus[locus].locus_link] == canonA)
+                            Top->LocusTop->Locus[locus].Allele[1].AlleleName = canonA;
+                        if(alternates[Top->LocusTop->Locus[locus].locus_link] == canonC)
+                            Top->LocusTop->Locus[locus].Allele[1].AlleleName = canonC;
+                        if(alternates[Top->LocusTop->Locus[locus].locus_link] == canonG)
+                            Top->LocusTop->Locus[locus].Allele[1].AlleleName = canonG;
+                        if(alternates[Top->LocusTop->Locus[locus].locus_link] == canonT)
+                            Top->LocusTop->Locus[locus].Allele[1].AlleleName = canonT;
+                        //if only...
+                        //Top->LocusTop->Locus[locus].Allele[0].AlleleName = references[Top->LocusTop->Locus[locus].locus_link];
+                        //Top->LocusTop->Locus[locus].Allele[1].AlleleName = alternates[Top->LocusTop->Locus[locus].locus_link];
+                    }
+                }
+                //now other cases
+                else {
+                    for (int i = 0; i <= 1; i++) {
+                        canonAllele = canonical_allele(Top->LocusTop->Locus[locus].Allele[i].AlleleName);
+                        //printf("Before: %s\n",canonAllele);
+                        if (canonAllele == canonA)
+                            Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonT;
+                        else if (canonAllele == canonC)
+                            Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonG;
+                        else if (canonAllele == canonG)
+                            Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonC;
+                        else if (canonAllele == canonT)
+                            Top->LocusTop->Locus[locus].Allele[i].AlleleName = canonA;
+                        //canonAllele = canonical_allele(Top->LocusTop->Locus[locus].Allele[i].AlleleName);
+                        //printf("After: %s\n",canonAllele);
+                    }
                 }
             }
             if (major_minor_flips[Top->LocusTop->Locus[locus].locus_link] == 1) {
@@ -521,7 +634,7 @@ void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
                 int reflocuslink, placeholderlocuslink;
                 int reference_allele_position = 0;
                 for (int allele = 0; allele < Top->LocusTop->Locus[locus].AlleleCnt; allele++) {
-                    if ((references[locus]) == Top->LocusTop->Locus[locus].Allele[allele].AlleleName) {
+                    if ((references[Top->LocusTop->Locus[locus].locus_link]) == Top->LocusTop->Locus[locus].Allele[allele].AlleleName) {
                         reference_allele_position = allele;
                     }
                 }
@@ -547,36 +660,29 @@ void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
                     Top->LocusTop->Locus[locus].Allele[reference_allele_position].Frequency = placeholderfrequency;
 
 
-
-                    for (int ped=0; ped < Top->PedCnt; ped++) {
+                    for (int ped = 0; ped < Top->PedCnt; ped++) {
                         linkage_ped_tree *tpedtreep = &(Top->PedRaw[ped]);
                         for (int per = 0; per < Top->PedRaw[ped].EntryCnt; per++) {
-                            linkage_ped_rec *tpersonp =  &(tpedtreep->Entry[per]);
+                            linkage_ped_rec *tpersonp = &(tpedtreep->Entry[per]);
                             //this causes a seg fault.
 
                             void *mk = tpersonp->Marker;
                             int a1, a2;
 
-                            get_2alleles(mk, locus, &a1, &a2);
-;
-                            if(a1 == 1)
+                            get_2alleles(mk, locus, &a1, &a2);;
+                            if (a1 == 1)
                                 a1 = 2;
-                            else if(a1 == 2)
-                                a1 =1;
-                            if(a2 == 1)
+                            else if (a1 == 2)
+                                a1 = 1;
+                            if (a2 == 1)
                                 a2 = 2;
-                            else if(a2 == 2)
-                                a2 =1;
+                            else if (a2 == 2)
+                                a2 = 1;
 
-                            set_2alleles(mk, locus, &Top->LocusTop->Locus[locus], a1 , a2);
+                            set_2alleles(mk, locus, &Top->LocusTop->Locus[locus], a1, a2);
                         }
                     }
                 }
-                //*placeholder = Top->LocusTop->Locus[locus].Allele[0];
-                //Top->LocusTop->Locus[locus].Allele[0] = *reference;
-                //Top->LocusTop->Locus[locus].Allele[reference_allele_position] = *placeholder;
-
-            }
         }
     }
 
