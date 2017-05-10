@@ -172,7 +172,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             //add conditional
             if(_strand_flips) {
                 pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele used instead.\">\n");
-                pr_printf("##INFO=<ID=UNREF,Number=1,Type=String,Description=\"Reference panel had an allele match for this position, but it was not in the measured dataset.\">\n");
+                pr_printf("##INFO=<ID=AMBIG,Number=1,Type=String,Description=\"Reference panel has match for this position, but it is ambiguous.\">\n");
                 pr_printf("##INFO=<ID=ORIG,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset if flipped according to T/G <-> A/C.\">\n");
             }
             //don't know these for now
@@ -296,6 +296,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         HMapis alternates;
         HMapii strand_flips;
         HMapii major_minor_flips;
+        HMapii dummies;
         int lastchr;
         int extremum_allele;
 
@@ -318,7 +319,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void inner() {
-            if(ref_choice == "Original Order" ||  _strand_flips) {
+            if(ref_choice == "Original_Order" ||  (_strand_flips && extremum_allele == 0)) {
                 pr_printf("\t");
 
                 if (_allele1 == 0)
@@ -433,7 +434,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
                 DBstmt *select2;
                 char select_string2[255];
-                sprintf(select_string2, "SELECT marker, strand, major_minor FROM ref_allele_flips");
+                sprintf(select_string2, "SELECT marker, strand, major_minor, dummy FROM ref_allele_flips");
                 select2 = MasterDB.prep(select_string2);
                 int ret2 = select2 && select2->abort();
 
@@ -441,13 +442,16 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     int locus = 0;
                     int strand_flip = 0;
                     int major_minor = 0;
+                    int dummy = 0;
                     ret2 = select2->step();
                     if (ret2 == SQLITE_ROW) {
                         select2->column(0, locus);
                         select2->column(1, strand_flip);
                         select2->column(2, major_minor);
+                        select2->column(3, dummy);
                         strand_flips[locus] = strand_flip;
                         major_minor_flips[locus] = major_minor;
+                        dummies[locus] = dummy;
                     } else
                         break;
                 }
@@ -479,11 +483,11 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             extremum_allele = 0;
             int reference_exists = 0;
 
-            if(ref_choice == "Original Order"){
+            if(ref_choice == "Original_Order"){
                 extremum_allele = 0;
             }
 
-            if(ref_choice == "Major Allele"){
+            if(ref_choice == "Major_Allele"){
                 extremum_frequency = 0;
                 for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                     if (_tlocusp->Allele[allele].Frequency > extremum_frequency) {
@@ -493,7 +497,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
             }
             //change to 1.0 in case so we find the minimum
-            if(ref_choice == "Minor Allele"){
+            if(ref_choice == "Minor_Allele"){
                 extremum_frequency = 1.0;
                 for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                     if (_tlocusp->Allele[allele].Frequency <= extremum_frequency) {
@@ -536,7 +540,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
             }
 
-
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if (allele == extremum_allele){
                     if(_tlocusp->Allele[allele].AlleleName == dummycanon)
@@ -563,11 +566,11 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                             a2 = a2 + ",.";
                         } else {
                             alt.push_back(_tlocusp->Allele[allele].AlleleName);
+                            a2 = a2 + ",";
                             a2 = a2 + _tlocusp->Allele[allele].AlleleName;
                         }
                     }
                 }
-
             }
 
             pr_printf("%s\t%s\t",a1.c_str(),a2.c_str());
@@ -599,39 +602,66 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if(allele == extremum_allele)
                     continue;
-                else if(allele > 0 && extremum_allele != 0)
-                    pr_printf(",");
-
-                pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
+                else if((allele == 1 && extremum_allele == 0) || allele == 0)
+                    pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
+                else
+                    pr_printf(",%.6f",_tlocusp->Allele[allele].Frequency);
+                //pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
             }
             pr_printf(";");
             if(_strand_flips) {
-                if (reference_exists == 0)
+                if (reference_exists == 0 && strand_flips[_tlocusp->locus_link] ==0)
                     pr_printf("NO;");
-                if (reference_exists == -1)
-                    pr_printf("UNREF=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
-                if (strand_flips[_locus]){
+                else if (dummies[_tlocusp->locus_link]){
+                    pr_printf("ORIG=");
+                    //this version probably won't come up but better safe than sorry
+                    if(major_minor_flips[_tlocusp->locus_link]){
+                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonA)
+                            pr_printf(".,%s;", canonT);
+                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonC)
+                            pr_printf(".,%s;", canonG);
+                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonG)
+                            pr_printf(".,%s;", canonC);
+                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonT)
+                            pr_printf(".,%s;", canonA);
+                    }
+
+                    else {
+                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonA)
+                            pr_printf("%s,.;", canonT);
+                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonC)
+                            pr_printf("%s,.;", canonG);
+                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonG)
+                            pr_printf("%s,.;", canonC);
+                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonT)
+                            pr_printf("%s,.;", canonA);
+                    }
+
+                }
+                else if (strand_flips[_tlocusp->locus_link] || major_minor_flips[_tlocusp->locus_link]) {
                     //transform back if we want to know the original alleles
                     pr_printf("ORIG=");
-                    if(_tlocusp->Allele[extremum_allele].AlleleName == canonA)
-                        pr_printf("%s",canonT);
-                    if(_tlocusp->Allele[extremum_allele].AlleleName == canonC)
-                        pr_printf("%s",canonG);
-                    if(_tlocusp->Allele[extremum_allele].AlleleName == canonG)
-                        pr_printf("%s",canonC);
-                    if(_tlocusp->Allele[extremum_allele].AlleleName == canonT)
-                        pr_printf("%s",canonA);
+                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonA)
+                        pr_printf("%s", canonT);
+                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonC)
+                        pr_printf("%s", canonG);
+                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonG)
+                        pr_printf("%s", canonC);
+                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonT)
+                        pr_printf("%s", canonA);
 
-                    if(_tlocusp->Allele[(extremum_allele+1)%2].AlleleName == canonA)
-                        pr_printf(",%s",canonT);
-                    if(_tlocusp->Allele[(extremum_allele+1)%2].AlleleName == canonC)
-                        pr_printf(",%s",canonG);
-                    if(_tlocusp->Allele[(extremum_allele+1)%2].AlleleName == canonG)
-                        pr_printf(",%s",canonC);
-                    if(_tlocusp->Allele[(extremum_allele+1)%2].AlleleName == canonT)
-                        pr_printf(",%s",canonA);
+                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonA)
+                        pr_printf(",%s;", canonT);
+                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonC)
+                        pr_printf(",%s;", canonG);
+                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonG)
+                        pr_printf(",%s;", canonC);
+                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonT)
+                        pr_printf(",%s;", canonA);
                 }
-                    //pr_printf("ORIG=%s,%s;",_tlocusp->Allele[extremum_allele].AlleleName,_tlocusp->Allele[(extremum_allele+1)%2].AlleleName);
+                else if(!major_minor_flips[_tlocusp->locus_link]
+                        && auxillary_ref != _tlocusp->Allele[0].AlleleName && auxillary_alt != _tlocusp->Allele[1].AlleleName)
+                    pr_printf("AMBIG=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
             }
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
@@ -970,7 +1000,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
     reftableexists = 0;
     change_build_allowed = 1;
 
-    std::string refchoice = "Major Allele";
+    std::string refchoice = "Major_Allele";
     strcpy(prefix, file_name_stem);
     char buildname[255] = "B37";
     choice = -1;
@@ -1025,7 +1055,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         }
 
         if (!reftableexists)
-            refchoice = "Original Order";
+            refchoice = "Original_Order";
         else {
             refchoice = "Use Mega2 Allele DB Table";
             string rfile = mega2_input_files[REFfl];
@@ -1044,7 +1074,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             change_build_allowed = 0;
         }
         if(!_strand_flips)
-            refchoice = "Original Order";
+            refchoice = "Original_Order";
 
         if(_strand_flips)
             refchoice = "Use Mega2 Allele DB Table";
@@ -1085,6 +1115,10 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
             chromo = menu_count;
         }
+        else {
+            //make sure this is set to remove a compiler warning.
+            chromo = -1;
+        }
 
 
         printf("Enter selection: 0 - %d > ", menu_count);
@@ -1098,10 +1132,11 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         else if ( choice == done ) {
             strcpy(file_name_stem,prefix);
             hg_build = buildname;
+            ref_choice = refchoice;
             BatchValueSet(hg_build,"human_genome_build");
             BatchValueSet(outfiletype,"VCF_output_file_type");
-
-            ref_choice = refchoice;
+            BatchValueSet(file_name_stem,"file_name_stem");
+            BatchValueSet(ref_choice,"VCF_Allele_Order");
         }
 
         else if ( choice == stem ) {
@@ -1152,36 +1187,36 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 fcmap(stdin, "%d", &choice3);
                 newline;
                 if (choice3 == 1) {
-                    refchoice = "Original Order";
+                    refchoice = "Original_Order";
                     break;
                 }
                 if (choice3 == 2) {
-                    refchoice = "Major Allele";
+                    refchoice = "Major_Allele";
                     break;
                 }
                 else if (choice3 == 3){
-                    refchoice = "Minor Allele";
+                    refchoice = "Minor_Allele";
                     break;
                 }
-                else if (choice3 == 4 && database_read) {
-                    if (reftableexists) {
-                        //if the ref table is already there we're all good
-                        printf("Using the existing external reference table.\n");
-                        refchoice = "Use Mega2 Allele DB Table";
-                        break;
-                    }
-                    else {
-                        printf("Reference Allele Table does not exist. You must create a new database with a reference panel to use this option.");
-                        //otherwise we want to load it up
-                        //keep this here in case someone wants to add to an existing database.
-                        //just now the way the file is handled is different
-                        //Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
-                        //reference_allele_table->read_ref_allele_file(Top, reference_allele_table->get_filename(), false, 0);
-                        //reftableexists = 1;
-                        //refchoice = "Use Mega2 Allele DB Table";
-                        //break;
-                    }
-                }
+//                else if (choice3 == 4 && database_read) {
+//                    if (reftableexists) {
+//                        //if the ref table is already there we're all good
+//                        printf("Using the existing external reference table.\n");
+//                        refchoice = "Use Mega2 Allele DB Table";
+//                        break;
+//                    }
+//                    else {
+//                        printf("Reference Allele Table does not exist. You must create a new database with a reference panel to use this option.");
+//                        //otherwise we want to load it up
+//                        //keep this here in case someone wants to add to an existing database.
+//                        //just now the way the file is handled is different
+//                        //Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
+//                        //reference_allele_table->read_ref_allele_file(Top, reference_allele_table->get_filename(), false, 0);
+//                        //reftableexists = 1;
+//                        //refchoice = "Use Mega2 Allele DB Table";
+//                        //break;
+//                    }
+//                }
                 else
                     printf("Unknown option %d\n", choice3);
             }
@@ -1228,6 +1263,7 @@ void CLASS_VCF::batch_in(){
     BatchValueGet(c,   "Loop_Over_Chromosomes");
     LoopOverChrm = c == 'y' || c == 'Y';
     BatchValueGet(outfiletype,"VCF_output_file_type");
+    BatchValueGet(ref_choice,"VCF_Allele_Order");
 }
 
 void CLASS_VCF::batch_out(){
@@ -1237,6 +1273,7 @@ void CLASS_VCF::batch_out(){
                        "human_genome_build",
                        "Loop_Over_Chromosomes",
                        "VCF_output_file_type",
+                       "VCF_Allele_Order"
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
