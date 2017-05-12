@@ -80,9 +80,9 @@ public:
 
     void write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
 
-    void convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
+    void convert_vcf_bcf(char *filename);
 
-    void convert_vcf_vcfgz(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid);
+    void convert_vcf_vcfgz(const char *filename);
 
     unsigned long file_size(char *filename);
 

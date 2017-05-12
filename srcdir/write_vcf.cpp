@@ -122,15 +122,15 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     write_VCF_freq(Top, file_name_stem, file_names, pwid, fwid);
     write_VCF_pen(Top, file_name_stem, file_names, pwid, fwid);
 
-    if(outfiletype == 2) {
-        printf("\nMega2 is using VCF tools to convert to BCF format:\n");
-        convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
-    }
-
-    if(outfiletype == 3) {
-        printf("Mega2 is using zlib to convert to VCF.gz format:\n");
-        convert_vcf_vcfgz(Top, file_name_stem, file_names, pwid, fwid);
-    }
+//    if(outfiletype == 2) {
+//        printf("\nMega2 is using VCF tools to convert to BCF format:\n");
+//        convert_vcf_bcf(Top, file_name_stem, file_names, pwid, fwid);
+//    }
+//
+//    if(outfiletype == 3) {
+//        printf("Mega2 is using zlib to convert to VCF.gz format:\n");
+//        convert_vcf_vcfgz(Top, file_name_stem, file_names, pwid, fwid);
+//    }
     printf("\n");
 }
 
@@ -299,6 +299,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         HMapii dummies;
         int lastchr;
         int extremum_allele;
+
+
 
         void file_loop() {
             //mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
@@ -500,7 +502,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(ref_choice == "Minor_Allele"){
                 extremum_frequency = 1.0;
                 for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
-                    if (_tlocusp->Allele[allele].Frequency <= extremum_frequency) {
+                    if (_tlocusp->Allele[allele].Frequency < extremum_frequency) {
                         extremum_frequency = _tlocusp->Allele[allele].Frequency;
                         extremum_allele = allele;
                     }
@@ -672,6 +674,29 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
         void loci_end(){
             pr_nl();
+        }
+
+        void file_trailer() {
+            //printf("%s/%s\n",*_opath,file_names[0]);
+            if(outfiletype == 2) {
+                CLASS_VCF *vcf = new CLASS_VCF;
+                char file[1000];
+                strcpy(file,*_opath);
+                strcat(file,"/");
+                strcat(file,file_names[0]);
+                printf("\nMega2 is using VCF tools to convert %s to BCF format:\n",file);
+                vcf->convert_vcf_bcf(file);
+            }
+
+            if(outfiletype == 3) {
+                CLASS_VCF *vcf = new CLASS_VCF();
+                char file[1000];
+                strcpy(file,*_opath);
+                strcat(file,"/");
+                strcat(file,file_names[0]);
+                printf("Mega2 is using zlib to convert %s to VCF.gz format:\n", file);
+                vcf->convert_vcf_vcfgz(file);
+            }
         }
     } *lp = new vcf_vcfs(Top);
 
@@ -931,25 +956,26 @@ void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *fi
 }
 
 //use VCFTools to turn our VCF output into a BCF file
-void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
+void CLASS_VCF::convert_vcf_bcf(char *filename){
     char vcftools[10] = "vcftools";
     char vcfflag[10] = "--vcf";
     char recode[15] = "--recode-bcf";
     char outflag[10] = "--out";
     char outname[10] = "out";
-    char *argv[] = {vcftools, vcfflag, file_names[0], recode,outflag,outname, NULL};
+    char *argv[] = {vcftools, vcfflag, filename, recode,outflag,outname, NULL};
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     parameters params(argc,argv);
 
     params.read_parameters();
 
-    params.vcf_filename=file_names[0];
+    params.vcf_filename=filename;
     params.vcf_compressed = false;
 
     params.recode_all_INFO = true;
     params.recode_bcf = true;
-    params.output_prefix = file_names[0];
+    filename[strlen(filename)-4] = '\0';
+    params.output_prefix = filename;
     params.recode_bcf_to_stream = false;
 
     params.print_params();
@@ -960,11 +986,12 @@ void CLASS_VCF::convert_vcf_bcf(linkage_ped_top *Top, const char *prefix, char *
 }
 
 
-void CLASS_VCF::convert_vcf_vcfgz(linkage_ped_top *Top, const char *prefix, char **file_names, const int pwid, const int fwid) {
-    FILE *infile = fopen(file_names[0], "rb");
-    char outfilename[255];
-    strcpy(outfilename,file_names[0]);
+void CLASS_VCF::convert_vcf_vcfgz(const char *filename) {
+    FILE *infile = fopen(filename, "rb");
+    char outfilename[1000];
+    strcpy(outfilename,filename);
     strcat(outfilename,".gz");
+    printf("%s %s\n", filename,outfilename);
 
     gzFile outfile = gzopen(outfilename, "wb");
     //if (!infile || !outfile) return -1;

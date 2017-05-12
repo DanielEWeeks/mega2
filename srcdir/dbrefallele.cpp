@@ -373,37 +373,37 @@ void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, con
                 //flip major minor only if it's the reference alt value
                 //I'm still calling this "strand" as the logic for the change will be the same regardless for the labeling
                 if(canondr == canonA) {
-                    if (canonrr == canonA || canonrr == canonT) {
+                    if (canonrr == canonA) {
                         major_minor = 0;
                         strand = 1;
-                    } else if (canonra == canonA || canonra == canonT) {
+                    } else if (canonra == canonA) {
                         major_minor = 1;
                         strand = 1;
                     }
                 }
                 else if(canondr == canonC) {
-                    if (canonrr == canonC || canonrr == canonG) {
+                    if (canonrr == canonC) {
                         major_minor = 0;
                         strand = 1;
-                    } else if (canonra == canonC || canonra == canonG) {
+                    } else if (canonra == canonC) {
                         major_minor = 1;
                         strand = 1;
                     }
                 }
                 else if(canondr == canonG) {
-                    if (canonrr == canonG || canonrr == canonC) {
+                    if (canonrr == canonG) {
                         major_minor = 0;
                         strand = 1;
-                    } else if (canonra == canonG || canonra == canonC) {
+                    } else if (canonra == canonG) {
                         major_minor = 1;
                         strand = 1;
                     }
                 }
                 else if(canondr == canonT) {
-                    if (canonrr == canonT || canonrr == canonA) {
+                    if (canonrr == canonT) {
                         major_minor = 0;
                         strand = 1;
-                    } else if (canonra == canonT || canonra == canonA) {
+                    } else if (canonra == canonT) {
                         major_minor = 1;
                         strand = 1;
                     }
