@@ -25,7 +25,7 @@
 # 
 # ===========================================================================
 
-library(mega2)
+#library(mega2)
 
 #' Mega2VCF package
 #'
@@ -132,7 +132,7 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
 
     n1 = allele_table[allele_table$indexX==1,]
     n2 = allele_table[allele_table$indexX==2,]
-## Mega2 "mis-feature"
+## Mega2 "mis-feature" to VCF "mis-feature"
     n1$AlleleName[n1$AlleleName %in% c("dummy")] = '.'
     n2$AlleleName[n2$AlleleName %in% c("dummy")] = '.'
 
@@ -221,10 +221,6 @@ print(system.time ({
             ##  1.274   0.056   1.351 
             block[BR, 10:blockcol] = zz[cbind(as.vector(a1)+1, as.vector(a2)+1)]
 
-## Mega2 "mis-feature"
-        block[BR, 2] = paste0(block[BR, 2], " ")
-## Mega2 "mis-feature"
-        block[BR, blockcol] = paste0(block[BR, blockcol], "\t")
       }))
 
 print(system.time ({        
@@ -507,43 +503,46 @@ mkVCFphe = function (prefix, ENV, markers) {
 
     unlink(file)
 
-    phenotype_table = ENV$phenotype_table
-    hdr = 'FID\tIID'
-    
 # linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
 #                        0      1          2       3         4        5        6
 
     out = ENV$fam[3:4]
+    hdr = c("FID", "tIID")
+    
+    phenotype_table = ENV$phenotype_table
+
+    raw = unlist(ENV$phenotype_table[,4])
+    raw = matrix(raw, ncol=8, byrow=T)
+    nrows     = nrow(raw)
+    nrowpheno = nrow(out)
 
     for (i in 1:ENV$PhenoCnt) {
-        hdr = paste0(hdr, "\t", ENV$locus_table[i, 2]) # 2 == LocusName
-
-        off = (i-1) * 8
+        hdr = c(hdr, ENV$locus_table[i, 2]) # 2 == LocusName
 
 # phenotype_table contains a blob which is a list of entries.  An entry is either an 8 byte
 #  double for quant, or two 4 byte ints for affect
-        raw = unlist(ENV$phenotype_table[,4])
-        raw = matrix(raw, ncol=8, byrow=T)
-
-        nrows = nrow(raw)
         if (ENV$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
-            col = vector("integer", nrows)
-            for (j in 1:nrows) {
-                col[j] = readBin(raw[j, (off+1):(off+4)], integer(), n=1, size=4)
+            col = vector("integer", nrowpheno)
+            for (j in 1:nrowpheno) {
+                col[j] = readBin(raw[ENV$PhenoCnt*(j-1)+i, 1:4], integer(), n=1, size=4)
             }
-            col[col==0] = -9
+#           col[col==0] = NA
             out$col = col
+            names(out) = hdr
         } else if (ENV$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
-            col = vector("numeric", nrows)
-            for (j in 1:nrows) {
-                col[j] = readBin(raw[j, (off+1):(off+8)], numeric(), n=1, size=8)
+            col = vector("numeric", nrowpheno)
+            for (j in 1:nrowpheno) {
+                col[j] = readBin(raw[ENV$PhenoCnt*(j-1)+i, 1:8], numeric(), n=1, size=8)
             }
+            col[col==-99] = NA
             out$col = col
+            names(out) = hdr
         }
     }
     out$SAMPLEID = paste(ENV$fam[,3], ENV$fam[,4], sep="_")
     
-    cat(hdr, "\tSAMPLEID\n", file=file, append=TRUE)
+    cat(hdr,  file=file, sep="\t")
+    cat("\n", file=file, append=TRUE)
 
     write.table(out, file=file, sep="\t", quote=FALSE, append=TRUE,
                 row.names=FALSE, col.names=FALSE)

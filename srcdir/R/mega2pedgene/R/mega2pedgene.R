@@ -115,6 +115,7 @@ init_pedgene = function (db = "ped3.db", verbose = 0) {
     ENV$schaidPed = ENV$fam[ , c(-1, -2)]
     colnames(ENV$schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
     ENV$pedPer = ENV$schaidPed[ , 1:2]
+    ENV$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 0), nrow = 5, ncol = 2)
 
 }
 
@@ -183,11 +184,10 @@ DOpedgene = function(geno_arg, markers_arg, range_arg) {
     markerNames = markers_arg$MarkerName
     gene  <- as.character(range_arg$SYMBOL)
 
-    mt = matrix(c(11, 12, 21, 22, 0, 1, 1, 2), nrow = 4, ncol = 2)
     di = dim(geno_arg)
     geno = matrix(0, nrow = (di[1]), ncol = di[2])
     for (k in 1:(di[2])) {
-        vec = mt[match(as.integer(geno_arg[ , k]), mt), 2]
+        vec = ENV$mt[match(as.integer(geno_arg[ , k]), ENV$mt), 2]
         g0 = sum(vec == 0)
         g1 = sum(vec == 1)
         g2 = sum(vec == 2)
