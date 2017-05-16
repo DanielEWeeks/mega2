@@ -115,6 +115,9 @@ mkGenABELtped = function(prefix, ENV, markers=NULL, mapno = 0) {
     SVallele1 = ENV$allele_table$AlleleName[ENV$allele_table$index == 1]
     ENV$allele_table$AlleleName[ENV$allele_table$index == 1] =
         paste0(SVallele1, " ")
+    SVallele2 = ENV$allele_table$AlleleName[ENV$allele_table$index == 2]
+    ENV$allele_table$AlleleName[ENV$allele_table$index == 2] =
+        paste0(SVallele2, " ")
 
     j = 0
     while (TRUE) {
@@ -158,6 +161,7 @@ print(system.time ({
     }
 
     ENV$allele_table$AlleleName[ENV$allele_table$index == 1] = SVallele1
+    ENV$allele_table$AlleleName[ENV$allele_table$index == 2] = SVallele2
 }
 
 #' generate required VCF header

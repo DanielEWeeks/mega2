@@ -88,9 +88,9 @@ mkfam = function (brkloop = FALSE) {
         per = ENV$person_table
     }
     dofam = function(per) {
-        per$Father=per[match(per$Father, per$OrigID), "PerPre"]
+        per$Father=per[match(per$Father, per$ID), "PerPre"]
         per[is.na(per$Father), "Father"] = 0
-        per$Mother=per[match(per$Mother, per$OrigID), "PerPre"]
+        per$Mother=per[match(per$Mother, per$ID), "PerPre"]
         per[is.na(per$Mother), "Mother"] = 0
         per
     }

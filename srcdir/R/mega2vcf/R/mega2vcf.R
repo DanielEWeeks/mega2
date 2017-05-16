@@ -507,7 +507,7 @@ mkVCFphe = function (prefix, ENV, markers) {
 #                        0      1          2       3         4        5        6
 
     out = ENV$fam[3:4]
-    hdr = c("FID", "tIID")
+    hdr = c("FID", "IID")
     
     phenotype_table = ENV$phenotype_table
 
@@ -540,6 +540,7 @@ mkVCFphe = function (prefix, ENV, markers) {
         }
     }
     out$SAMPLEID = paste(ENV$fam[,3], ENV$fam[,4], sep="_")
+    hdr = c(hdr, "SAMPLEID")
     
     cat(hdr,  file=file, sep="\t")
     cat("\n", file=file, append=TRUE)

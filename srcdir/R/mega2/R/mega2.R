@@ -126,18 +126,24 @@ TBLSFilter = list(
 #' mk_markers_with_skip(1)
 #'}
 mk_markers_with_skip = function(bpPosMap = 1) {
+
     if (ENV$MARKER_SCHEME == 1) {
         markersPerChr = sapply(split(ENV$marker_table$chromosome, ENV$marker_table$chromosome), length)
         extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
         extra_markers = c(0, extra_markers)
         names(extra_markers) = NULL
     } else if (ENV$MARKER_SCHEME == 2) {
-        extra_markers = c(0)
+        extra_markers = vector("integer", length(unique(ENV$marker_table$chromosome))+1)
     }
     ENV$marker_table$locus_link_fill = ENV$marker_table$locus_link + extra_markers[ENV$marker_table$chromosome]
 
+    map_table = ENV$map_table[ ENV$map_table$map == bpPosMap, c( "marker", "position")]
+    if (nrow(map_table) == 0) {
+        message("No entry for map == ", bpPosMap, " in map_table.  Using map == 0 instead.")
+        map_table = ENV$map_table[ ENV$map_table$map == 0, c( "marker", "position")]
+    }
     ENV$markers = merge(ENV$marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
-                        ENV$map_table[ ENV$map_table$map == bpPosMap, c( "marker", "position")],
+                        map_table,
                         by.x = "locus_link", by.y = "marker")
 }
 
