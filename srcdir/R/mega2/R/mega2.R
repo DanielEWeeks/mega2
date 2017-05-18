@@ -156,9 +156,6 @@ mk_markers_with_skip = function(bpPosMap = 1) {
 #'
 #' @keywords internal
 #'
-#' @examples
-#'\dontrun{
-#'}
 mk_unified_genotype_table = function() {
     samples = split(ENV$genotype_table, ENV$genotype_table$person_link)
     samplesize = length(samples)
@@ -264,7 +261,7 @@ dbmega2_import = function(dbname,
 #'
 #' @examples
 #'\dontrun{
-#' getENV()
+#' ENV = getENV()
 #'}
 getENV = function () {
     return (ENV)
@@ -311,6 +308,11 @@ getENV = function () {
 #'
 #' @examples
 #'\dontrun{
+#' # genotypes for all markers for n'th person in genotype table
+#' getgenotype_person(1)
+#'
+#' # genotypes for all markers for range of persons in genotype table
+#' getgenotype_person(m:n)
 #'}
 getgenotype_person = function(pid = 1) {
 
@@ -369,6 +371,11 @@ getgenotype_person = function(pid = 1) {
 #'
 #' @examples
 #'\dontrun{
+#' # genotypes for all persons in markers data.frame argument
+#' getgenotypes_R(ENV$markers)
+#'
+#' # genotypes for all persons in chromosome n
+#' getgenotypes_R(ENV$markers[ENV$markers$chromosome == n,])
 #'}
 getgenotypes_R = function(markers_arg) {
 
@@ -419,6 +426,11 @@ getgenotypes_R = function(markers_arg) {
 #'
 #' @examples
 #'\dontrun{
+#' # genotypes for all persons in markers data.frame argument
+#' getgenotypes(ENV$markers)
+#'
+#' # genotypes for all persons in chromosome n
+#' getgenotypes(ENV$markers[ENV$markers$chromosome == n,])
 #'}
 getgenotypes = function(markers_arg) {
 
@@ -472,6 +484,12 @@ getgenotypes_C = getgenotypes
 #'
 #' @examples
 #'\dontrun{
+#' # two ints in upper/lower half integer representing allele for all persons in
+#' # markers data.frame argument
+#' getgenotypesraw(ENV$markers)
+#'
+#' # two ints in upper/lower half integer representing allele # for all persons in chromosome n
+#' getgenotypesraw(ENV$markers[ENV$markers$chromosome == n,])
 #'}
 getgenotypesraw = function(markers_arg) {
 

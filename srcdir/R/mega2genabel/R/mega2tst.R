@@ -25,9 +25,8 @@
 # 
 # ===========================================================================
 
-library(GenABEL)
+#library(GenABEL)
 
-data(srdta)
 
 #' generate required .ped, .fam and .map  for PLINK PED files
 #'
@@ -35,19 +34,21 @@ data(srdta)
 #'  Use provided gwaa.class-object and create a PLINK PED file, PLINK MAP file
 #'  and a PLINK phe file to hold the phenotypes.
 #'
-#' @param gwaa name of gwaa.data-class object
+#' @param gwaa_ name of gwaa.data-class object
 #'
-#' @param prefix prefix for PLINK ped file names
+#' @param pfx prefix for PLINK ped file names
 #'
 #' @return None
 #'
 #' @export
+#' @importFrom utils data
 #'
 #' @examples
 #'\dontrun{
 #' dmpPed()
 #'}
-dmpPed = function(gwaa_= srdta, pfx = "srdta") {
+dmpPed = function(gwaa_ = srdta, pfx = "srdta") {
+
     dfphe = data.frame(gwaa_@phdata)
     dfphe$sex = dfphe$id
     names(dfphe)[1:2] = c("FID", "IID")
@@ -87,6 +88,7 @@ dmpPed = function(gwaa_= srdta, pfx = "srdta") {
 #' @return None
 #'
 #' @export
+#' @importFrom utils data
 #'
 #' @examples
 #'\dontrun{

@@ -176,6 +176,7 @@ run = function (gs = 1:100) {
 #'
 #' @examples
 #'\dontrun{
+#'    applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices)
 #'}
 DOpedgene = function(geno_arg, markers_arg, range_arg) {
 

@@ -176,7 +176,7 @@ print(system.time ({
 #'
 #' @importFrom GenABEL convert.snp.tped load.gwaa.data
 #' @importFrom mega2 getENV
-#' @return None
+#' @return gwaa.class-object of previously read(.Mega2DB) database
 #'
 #' @export
 #'

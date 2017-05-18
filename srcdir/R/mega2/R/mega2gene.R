@@ -48,9 +48,11 @@
 #' }
 #'
 #' @usage
-#' mkfam(brkloop = FALSE)
+#' mkfam(brkloop = FALSE, traitname = "default")
 #'
 #' @param brkloop I haven't needed to set this yet.  Maybe never will.
+#'
+#' @param traitname Name for trait to use as case/control value; by default, "default"
 #'
 #' @export
 #' @return data.frame
@@ -78,7 +80,7 @@
 #'\dontrun{
 #' fam = mkfam()
 #'}
-mkfam = function (brkloop = FALSE) {
+mkfam = function (brkloop = FALSE, traitname = "default") {
 
     if (brkloop) {
         ped = ENV$pedigree_brkloop_table
@@ -99,10 +101,16 @@ mkfam = function (brkloop = FALSE) {
                     per[ , c("pedigree_link", "person_link", "PerPre", "Father", "Mother", "Sex")],
                     by = c("pedigree_link"))
 
+
     trait = ENV$phenotype_table[ , c("person_link", "data")]
-    trait$trait = sapply(trait$data, function (x) { readBin(x, integer(), 2, size = 4) })[1, ]
+    cc = ENV$locus_table[ENV$locus_table$LocusName == traitname, "locus_link"]
+    if (length(cc) == 0) cc = 0
+    trait$trait = sapply(trait$data,
+                         function (x) { readBin(x[(8*cc+1):8*(cc+1)], integer(), 2, size = 4) })[1, ]
+
     ENV$fam = merge(perplus, trait[ , c("person_link", "trait")], by = "person_link")
 }
+
 
 #' reset the pedigree data.frame
 #'
@@ -241,6 +249,27 @@ read.Mega2DB = function(db, ...) {
 #'
 #' @examples
 #'\dontrun{
+#' #    show = function(g, m, r) {
+#' #        print(r)
+#' #        print(m)
+#' #        print(head(g))
+#' #    }
+#' #    ENV = getENV()
+#'
+#'    # apply function "show" to all transcripts on genes ELL2 and CARD15
+#'    applyFnToGenes(show, genes = c("ELL2", "CARD15"))
+#'
+#'    # apply function "show" to all genotypes on chromosomes 11 for two base
+#'    # pair ranges
+#'    applyFnToGenes(show, matrix(c(11, 50000000, 50100000,
+#'                       11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T))
+#'
+#'    # apply function "show" to all genotypes for first marker in each chromosome
+#'    applyFnToGenes(show, markers = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
+#'
+#'    # apply function "show" to all genotypes on chromosomes 24 and 26
+#'    applyFnToGenes(show, chrs=c(24, 26))
+#'
 #'}
 applyFnToGenes = function (op = function (geno, markers, range) {},
                            genes_arg = c("ELL2", "CARD15"),
@@ -372,6 +401,24 @@ setRanges = function (ranges, indices) {
 #'
 #' @examples
 #'\dontrun{
+#' #    show = function(g, m, r) {
+#' #        print(r)
+#' #        print(m)
+#' #        print(head(g))
+#' #    }
+#' #    ENV = getENV()
+#'
+#'    # apply function "show" to all genotypes on chromosomes 11 for two base
+#'    # pair ranges
+#'    applyFnToRanges(show, 
+#'                    matrix(c(11, 50000000, 50100000,
+#'                             11, 60000000, 60100000),
+#'                            ncol = 3, nrow = 2, byrow = T),
+#'                    1:3)
+#'
+#'    # apply function "show" to all genotypes for first marker in each chromosome
+#'    applyFnToRanges(show, markers = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
+#'
 #'}
 applyFnToRanges = function (op          = function (geno, markers, range) {},
                             ranges_arg  = NULL,
@@ -418,6 +465,7 @@ applyFnToRanges = function (op          = function (geno, markers, range) {},
         }
     }
 }
+
 #' apply function to genotypes in a set of markers
 #'
 #' @description
@@ -460,6 +508,16 @@ applyFnToRanges = function (op          = function (geno, markers, range) {},
 #'
 #' @examples
 #'\dontrun{
+#' #    show = function(g, m, r) {
+#' #        print(r)
+#' #        print(m)
+#' #        print(head(g))
+#' #    }
+#' #    ENV = getENV()
+#'
+#'    # apply function "show" to all genotypes in chromosome 20, 21, 22, and 23
+#'    applyFnToMarkers(show, ENV$markers[ENV$markers$chromosome %IN% 20:23),])
+#'
 #'}
 applyFnToMarkers = function (op = function (geno, markers, range) {},
                              markers_arg) {
