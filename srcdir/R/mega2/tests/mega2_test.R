@@ -163,7 +163,9 @@ allelediff = function(aa=aa, bb=bb, n=24) {
 #' @examples
 #'\dontrun{
 #'}
-tst1 = function(db = "/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db") {
+tst1 = function(db = "~/mega2/data/samoaqwas.db") {
+
+    print("## getgenotypes by column and by row; compare two ranges")
 
     ENV = dbmega2_import(db, verbose = 1)
     

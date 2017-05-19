@@ -27,32 +27,43 @@
 
 library(mega2)
 
+## test compressions 1 & 2 and raw vs neucleotide
+
 goo = function(rng = 10000:11000) {
 
-    ENV=dbmega2_import("ped1.db")
+    print("test compressions 1 & 2 and raw vs neucleotide alleles")
+    
+    ENV=dbmega2_import("~/mega2/data/yj1.db")
 
+# get letter and raw compression 1
     cc = getgenotypes(ENV$markers[rng,])
-    c1r = getgenotypesraw(ENV$markers[rng,])
+    c1raw = getgenotypesraw(ENV$markers[rng,])
 
-    c1x = array("0", dim=dim(cc))
-    c1x [c1r == 131074] = "22"
-    c1x [c1r == 65538] = "12"
-    c1x [c1r == 65537] = "11"
-    cat("all(cc == c1x) ")
-    print(all(cc == c1x))
+    c1cnv = array("0", dim=dim(cc))
+    c1cnv [c1raw == 131074] = "22"
+    c1cnv [c1raw == 65538] = "12"
+    c1cnv [c1raw == 65537] = "11"
+    cat("all(cc == c1cnv) ")
+    print(all(cc == c1cnv))
 
-    ENV=dbmega2_import("ped2.db")
+# get letter and raw compression 2
+    ENV=dbmega2_import("~/mega2/data/yj2.db")
     c2a = getgenotypes(ENV$markers[rng,])
-    cat("all(ccr==c2a) ")
+#   cmp compression 1 and 2
+    cat("all(cc==c2a) ")
     print(all(cc == c2a))
-    c2r = getgenotypesraw(ENV$markers[rng,])
-    cat("all(c1r==c2r) ")
-    print(all(c1r == c2r))
+    c2raw = getgenotypesraw(ENV$markers[rng,])
+    cat("all(c1raw==c2raw) ")
+    print(all(c1raw == c2raw))
 
-    c2x = array("0", dim=dim(cc))
-    c2x [c2r == 131074] = "22"
-    c2x [c2r == 65538] = "12"
-    c2x [c2r == 65537] = "11"
-    cat("all(cc==c2x) ")
-    print(all(cc==c2x))
+    c2cnv = array("0", dim=dim(cc))
+    c2cnv [c2raw == 131074] = "22"
+    c2cnv [c2raw == 65538] = "12"
+    c2cnv [c2raw == 65537] = "11"
+    cat("all(cc==c2cnv) ")
+    print(all(cc==c2cnv))
 }
+
+goo()
+
+rm(goo)

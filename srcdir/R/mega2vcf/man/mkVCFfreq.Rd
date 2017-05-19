@@ -25,3 +25,4 @@ Generate the initial boiler plate VCF, then generate ##INFO entries for each ent
 mkVCFfreq(prefix, ENV, NULL)
 }
 }
+\keyword{internal}

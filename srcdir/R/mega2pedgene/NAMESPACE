@@ -2,7 +2,7 @@
 
 export(DOpedgene)
 export(init_pedgene)
-export(run)
+export(run_pedgene)
 importFrom(mega2,applyFnToRanges)
 importFrom(mega2,dbmega2_import)
 importFrom(mega2,mkfam)

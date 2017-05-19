@@ -254,7 +254,7 @@ read.Mega2DB = function(db, ...) {
 #' #        print(m)
 #' #        print(head(g))
 #' #    }
-#' #    ENV = getENV()
+#' #    ENV = getMega2ENV()
 #'
 #'    # apply function "show" to all transcripts on genes ELL2 and CARD15
 #'    applyFnToGenes(show, genes = c("ELL2", "CARD15"))
@@ -406,7 +406,7 @@ setRanges = function (ranges, indices) {
 #' #        print(m)
 #' #        print(head(g))
 #' #    }
-#' #    ENV = getENV()
+#' #    ENV = getMega2ENV()
 #'
 #'    # apply function "show" to all genotypes on chromosomes 11 for two base
 #'    # pair ranges
@@ -513,7 +513,7 @@ applyFnToRanges = function (op          = function (geno, markers, range) {},
 #' #        print(m)
 #' #        print(head(g))
 #' #    }
-#' #    ENV = getENV()
+#' #    ENV = getMega2ENV()
 #'
 #'    # apply function "show" to all genotypes in chromosome 20, 21, 22, and 23
 #'    applyFnToMarkers(show, ENV$markers[ENV$markers$chromosome %IN% 20:23),])

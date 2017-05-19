@@ -51,6 +51,8 @@ geno = NULL
 #'}
 tst10 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
 
+    print("## test latest applyFnToGenes")
+    
     mkfam()
     show = function(g, m, r) {
         print(r)
@@ -86,6 +88,8 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
                       ranges = matrix(ncol = 3, nrow = 0),
                       chrs = vector("integer", 0),
                       mrkrs = vector("character", 0)) {
+
+    ## older version of applyFnToGenes with globals
 
     ## dbconn(gene)/dbConn(txdb)
     ## dbReadTable(dbconn(), "tbl")
@@ -175,6 +179,7 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #'\dontrun{
 #'}
 tst11 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
+    print("## test earlier version applyFnToGenes; same results")
     mkfam()
     ENV = (environment(dbmega2_import))$ENV
     mkmarkers(genes = genes, type = type, fuzz = fuzz,
@@ -204,6 +209,7 @@ tst11 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
 #'\dontrun{
 #'}
 tst12 = function(genes = c("ELL2"), type = "TX", fuzz = 0) {
+    print("## test earlier version applyFnToGenes specific markers")
     mkfam()
     mkmarkers(genes = genes, type = type, fuzz = fuzz,
               mrkrs = c("rs6587762", "rs7521920",

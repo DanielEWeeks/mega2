@@ -37,34 +37,6 @@
 #' @name Mega2VCF-package
 NULL
 
-#' Load Mega2 database and initialize family structure
-#'
-#' @description
-#'  \emph{dbmega2_import} the specified database and load the environment, \emph{ENV}, with the
-#'  table data.  Also run \emph{mkfam} to initialize the family structure and then \emph{setfam}
-#'  to modify the \emph{unified_genotype_table} to match the family.  By default this will remove
-#'  samples that were replicated to break loops in the pedigree, see \emph{mkfam} for details.
-#'
-#' @param db specify SQLite database to load
-#'
-#' @param ... aditional arguments to pass to \emph{dbmega2_import}
-#'
-#' @return ENV an environment that contains all the tables created from the SQLite tables.
-#'
-#' @importFrom mega2 read.Mega2DB
-#' @export
-#'
-#' @note This functions just calls the same named function in the mega2 package
-#'
-#' @examples
-#'\dontrun{
-#' read.Mega2DB("database.db")
-#'}
-read.Mega2DB = function(db, ...) {
-
-    return (mega2::read.Mega2DB(db, ...))
-}
-
 #' generate a VCF file
 #'
 #' @description
@@ -82,7 +54,7 @@ read.Mega2DB = function(db, ...) {
 #'
 #' @return None
 #'
-#' @importFrom mega2 getENV getgenotypesraw 
+#' @importFrom mega2 getMega2ENV getgenotypesraw 
 #' @importFrom utils write.table
 #' @export
 #'
@@ -96,10 +68,9 @@ read.Mega2DB = function(db, ...) {
 #'}
 Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
     file = paste0(prefix, ".vcf")
-    
     unlink(file)
 
-    ENV = getENV()
+    ENV = getMega2ENV()
 
     if (is.null(markers)) markers = ENV$markers
 
@@ -174,9 +145,9 @@ print(system.time ({
         GPos = map_table[map_table$map==mapno, c("position", "pos_female", "pos_male")][R, ]
         GPosPos = sprintf("%.2f", GPos$position)
         GPosFem = rep(".", L)
-        GPosFem[GPos$pos_female != -99.99] = sprintf("%f", GPos$pos_female)
+        GPosFem[GPos$pos_female != -99.99] = sprintf("%f", GPos$pos_female[GPos$pos_female != -99.99])
         GPosMal = rep(".", L)
-        GPosMal[GPos$pos_male   != -99.99] = sprintf("%f", GPos$pos_male)
+        GPosMal[GPos$pos_male   != -99.99] = sprintf("%f", GPos$pos_male[GPos$pos_male != -99.99])
 
         INFO=paste0("CM=", GPosPos, ",", GPosFem, ",", GPosMal,
                     ";RF=", sprintf("%f", RF),
@@ -246,7 +217,7 @@ print(system.time ({
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -293,7 +264,7 @@ mkVCFhdr = function (prefix, ENV, markers) {
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -324,7 +295,7 @@ mkVCFfam = function (prefix, ENV, markers) {
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -370,7 +341,7 @@ mkVCFfreq = function (prefix, ENV, markers) {
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -439,7 +410,7 @@ mkVCFmap = function (prefix, ENV, markers) {
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -492,7 +463,7 @@ mkVCFpen = function (prefix, ENV, markers) {
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{

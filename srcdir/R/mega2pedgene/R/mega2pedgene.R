@@ -119,7 +119,7 @@ init_pedgene = function (db = "ped3.db", verbose = 0) {
 
 }
 
-results <- data.frame(chr = character(0), gene = character(0), nvariants = numeric(0),
+pedgene_results <- data.frame(chr = character(0), gene = character(0), nvariants = numeric(0),
                       start = numeric(0), end = numeric(0),
                       pKernel_BT = numeric(0), pBurden_BT = numeric(0),
                       pKernel_MB = numeric(0), pBurden_MB = numeric(0),
@@ -141,7 +141,7 @@ results <- data.frame(chr = character(0), gene = character(0), nvariants = numer
 #'
 #' run(1:10)
 #'}
-run = function (gs = 1:100) {
+run_pedgene = function (gs = 1:100) {
 
     unlink("k_Schaid_rare.txt")
 
@@ -232,9 +232,9 @@ DOpedgene = function(geno_arg, markers_arg, range_arg) {
             cat(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
                 pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz, "\n")
 
-        results[1, ] <- c(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
+        pedgene_results[1, ] <- c(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
                           pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz)
 
-        write.table(results, file="k_Schaid_rare.txt", append= TRUE, row.names= FALSE, col.names= FALSE, quote= FALSE)
+        write.table(pedgene_results, file="k_Schaid_rare.txt", append= TRUE, row.names= FALSE, col.names= FALSE, quote= FALSE)
     }
 }

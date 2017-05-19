@@ -126,9 +126,12 @@ TBLSFilter = list(
 #' mk_markers_with_skip(1)
 #'}
 mk_markers_with_skip = function(bpPosMap = 1) {
-
     if (ENV$MARKER_SCHEME == 1) {
         markersPerChr = sapply(split(ENV$marker_table$chromosome, ENV$marker_table$chromosome), length)
+        idx = as.integer(names(markersPerChr))
+        m = rep(0, max(idx))
+        m[idx] = markersPerChr
+        markersPerChr = m
         extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
         extra_markers = c(0, extra_markers)
         names(extra_markers) = NULL
@@ -136,6 +139,9 @@ mk_markers_with_skip = function(bpPosMap = 1) {
         extra_markers = vector("integer", length(unique(ENV$marker_table$chromosome))+1)
     }
     ENV$marker_table$locus_link_fill = ENV$marker_table$locus_link + extra_markers[ENV$marker_table$chromosome]
+    if (any(is.na(ENV$marker_table$locus_link_fill))) {
+        stop("Internal Error in mk_markers_with_skip.  Bad fill values.", call. = FALSE)
+    }
 
     map_table = ENV$map_table[ ENV$map_table$map == bpPosMap, c( "marker", "position")]
     if (nrow(map_table) == 0) {
@@ -208,6 +214,8 @@ dbmega2_import = function(dbname,
     con = tryCatch(dbConnect(RSQLite::SQLite(), dbname = dbname, flags = SQLITE_RO),
                    error = function(xx) { stop("DB open failed: ", dbname, call. = FALSE) })
 
+    gc(verbose=FALSE)
+
     ENV$verbose = verbose
 
     for (tbl in TBLS) {
@@ -245,6 +253,7 @@ dbmega2_import = function(dbname,
         ENV$locus_allele_table = NULL
     }
 
+    gc(verbose=FALSE)
     return (ENV)
 }
 
@@ -261,10 +270,27 @@ dbmega2_import = function(dbname,
 #'
 #' @examples
 #'\dontrun{
-#' ENV = getENV()
+#' ENV = getMega2ENV()
 #'}
-getENV = function () {
+getMega2ENV = function () {
     return (ENV)
+}
+
+#' reset ENV environment; this flushes all tables/state.
+#'
+#' Mega2 uses an environment, \emph{ENV} to store all the tables it reads in.  This is reset
+#'  to an empty env() and then the gc is run.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' resetENV()
+#'}
+resetMega2ENV = function () {
+      ENV = new.env(parent = emptyenv())
+      gc(verbose=FALSE)
 }
 
 ## geno_i = inline::cxxfunction(

@@ -38,34 +38,6 @@
 #' @name Mega2GenABEL-package
 NULL
 
-#' Load Mega2 database and initialize family structure
-#'
-#' @description
-#'  \emph{dbmega2_import} the specified database and load the environment, \emph{ENV}, with the
-#'  table data.  Also run \emph{mkfam} to initialize the family structure and then \emph{setfam}
-#'  to modify the \emph{unified_genotype_table} to match the family.  By default this will remove
-#'  samples that were replicated to break loops in the pedigree, see \emph{mkfam} for details.
-#'
-#' @param db specify SQLite database to load
-#'
-#' @param ... aditional arguments to pass to \emph{dbmega2_import}
-#'
-#' @return ENV an environment that contains all the tables created from the SQLite tables.
-#'
-#' @importFrom mega2 read.Mega2DB
-#' @export
-#'
-#' @note This functions just calls the same named function in the mega2 package
-#'
-#' @examples
-#'\dontrun{
-#' read.Mega2DB("database.db")
-#'}
-read.Mega2DB = function(db, ...) {
-
-    return (mega2::read.Mega2DB(db, ...))
-}
-
 #' generate a PLINK TPED file for GenABEL
 #'
 #' @description
@@ -175,7 +147,7 @@ print(system.time ({
 #' @param markers data.frame of markers being processed
 #'
 #' @importFrom GenABEL convert.snp.tped load.gwaa.data
-#' @importFrom mega2 getENV
+#' @importFrom mega2 getMega2ENV
 #' @return gwaa.class-object of previously read(.Mega2DB) database
 #'
 #' @export
@@ -188,7 +160,7 @@ print(system.time ({
 #'}
 Mega2GenABEL = function (prefix, markers = NULL) {
 
-    ENV = getENV()
+    ENV = getMega2ENV()
 
     if (is.null(markers)) markers = ENV$markers
 
