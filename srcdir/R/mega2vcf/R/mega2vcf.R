@@ -293,6 +293,8 @@ mkVCFfam = function (prefix, ENV, markers) {
 #'
 #' @param markers data.frame of markers being processed
 #'
+#' @param recode use 1/2 instead of two given alleles (eg. A/C)
+#'
 #' @return None
 #'
 #' @keywords internal
@@ -301,28 +303,35 @@ mkVCFfam = function (prefix, ENV, markers) {
 #'\dontrun{
 #' mkVCFfreq(prefix, ENV, NULL)
 #'}
-mkVCFfreq = function (prefix, ENV, markers) {
+mkVCFfreq = function (prefix, ENV, markers, recode = FALSE) {
     file = paste0(prefix, ".freq")
 
 #    unlink(file)
 
+    if (recode)
+        col = "indexX"
+    else
+        col = "AlleleName"
     cat('Name\tAllele\tFrequency\n', file=file)
-    allele_pheno = merge(ENV$locus_table, ENV$allele_table[1:2,], by="locus_link")
-    allele_pheno = allele_pheno[, c("LocusName", "indexX", "Frequency")]
+    allele_pheno = merge(ENV$locus_table, ENV$allele_table[1:(2*ENV$PhenoCnt),], by="locus_link")
+    alleles = allele_pheno[, c("LocusName", col, "Frequency")]
+    alleles[alleles[,col] == "", col] = allele_pheno[alleles[,col] == "", "indexX"]
 #std
-    allele_pheno$Frequency = sprintf("%.4f", allele_pheno$Frequency)
-    write.table(allele_pheno,
+    alleles$Frequency = sprintf("%.4f", alleles$Frequency)
+    write.table(alleles,
                 file=file, sep="\t", append=TRUE, quote=FALSE,
                 row.names=FALSE, col.names=FALSE)
 
     allele_table = ENV$allele_table[ENV$allele_table$locus_link %in% markers$locus_link,
-                                    c("locus_link", "indexX", "Frequency")]
+                                    c("locus_link", "AlleleName", "indexX", "Frequency")]
     alleles = merge(markers[, c("locus_link", "MarkerName")],
-                    allele_table[, c("locus_link", "indexX", "Frequency")], by="locus_link")
+                    allele_table[, c("locus_link", "AlleleName", "indexX", "Frequency")],
+                    by="locus_link")
+    alleles[alleles[ , col] == "", col] = alleles[alleles[ , col] == "", "indexX"]
 #std
     alleles = alleles[alleles$Frequency != 0, ]
     alleles$Freq4 = sprintf("%.4f", alleles$Frequency)
-    write.table(alleles[ , c(-1, -4)],
+    write.table(alleles[ , c(-1, -4, -5)],
                 file=file, sep="\t", append=TRUE, quote=FALSE,
                 row.names=FALSE, col.names=FALSE)
 }

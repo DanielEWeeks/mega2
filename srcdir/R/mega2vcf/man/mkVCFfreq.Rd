@@ -4,7 +4,7 @@
 \alias{mkVCFfreq}
 \title{generate required VCF frequency (.freq) file}
 \usage{
-mkVCFfreq(prefix, ENV, markers)
+mkVCFfreq(prefix, ENV, markers, recode = FALSE)
 }
 \arguments{
 \item{prefix}{prefix for vcf file name}
@@ -12,6 +12,8 @@ mkVCFfreq(prefix, ENV, markers)
 \item{ENV}{"environment" containing SQLite database and other globals}
 
 \item{markers}{data.frame of markers being processed}
+
+\item{recode}{use 1/2 instead of two given alleles (eg. A/C)}
 }
 \value{
 None
