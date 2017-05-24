@@ -49,6 +49,7 @@
 #include "vcftools/parameters.h"
 #include "zlib-1.2.8/zlib.h"
 
+#include <ctime>
 #include "dbrefallele.h"
 
 extern DBlite MasterDB;
