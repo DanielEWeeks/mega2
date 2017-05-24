@@ -59,7 +59,6 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     drop();
 
     //make our new table
-    //printf("Creating database table\n");
     create();
 
     //make our flip table
@@ -67,18 +66,13 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     reference_flips_table->create();
     reference_flips_table->init();
 
-    //now we typically do this on database creation and use the first page
-    //get our filename of our reference file
-    //Str filename = get_filename();
-
     //create our db statements
     init();
 
     //begin reading our gzipped file
     //we define a buffer
-    int length = 0x10000;
+    int length = 0x1000;
     //get a gzipfile and open it
-    //printf("Reading database file.\n");
     gzFile file;
     file = gzopen(filename.c_str(),"r");
     //check for errors
@@ -118,9 +112,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
             bytes_read = gzread(file, buffer, length - 1);
             buffer[bytes_read] = '\0';
 
-            //Str ref = "";
-            //int marker = 0;
-            //split our buffer by lines
+            //split our buffer by lines and spaces
             char *token = std::strtok(buffer, " \n");
             while (token != NULL) {
                 // if chr is not set then we found a chr
@@ -136,27 +128,20 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     //set ref to the current token
                     if(token != NULL)
                         strcpy(ref, token);
-                    else
-                        strcpy(ref, dummy);
+
                     //grab the next token, this will be our alternate allele
                     token = std::strtok(NULL, " \n");
                     if (token != NULL)
                         strcpy(alt, token);
-                    else
-                        strcpy(alt, dummy);
-                    //printf("%s/%s\n",ref,alt);
+
                     if (locus == Top->LocusTop->LocusCnt - 1)
                         break;
                     int position = bp->pos;
                     int chromosome = bp->chr;
-                    //if the chromosome is the same, and position +/- .1% is the same (not many precise matches)
-                    //printf("Internal Chromsome = %d, Reference Chromosome = %d\n", Top->LocusTop->Locus[locus].Marker->chromosome, chr);
-                    //printf("Internal Position = %d, Reference Position = %d\n",position, pos);
-                    if (chromosome == chr && pos == position) {
+                    if (chromosome == chr && pos == position && strlen(ref) != 0 && strlen(alt) != 0) {
                         //we insert our values, the position internally is inserted so we can select on it
                         insert(chromosome, position, locus, ref, alt);
                         reference_flips_table->determine_flips(Top, locus, Top->LocusTop->Locus[locus].Allele[0].AlleleName,Top->LocusTop->Locus[locus].Allele[1].AlleleName, ref, alt, chromosome, position);
-                        //printf("Ref:%s/%s    Data:%s/%s\n",ref,alt,Top->LocusTop->Locus[locus].Allele[0].AlleleName,Top->LocusTop->Locus[locus].Allele[0].AlleleName);
                         bp++;
                         locus++;
                         success++;
@@ -203,69 +188,6 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
         }
     }
 
-        //we use this after the database read as bp_sort can't be accessed but the values are sorted.
-        //so this is similar but refences top and is only used after db_read
-        //this shouldn't happen anymore
-//    else {
-//        while (1) {
-//            int err;
-//            int bytes_read;
-//            char buffer[length];
-//            bytes_read = gzread(file, buffer, length - 1);
-//            buffer[bytes_read] = '\0';
-//
-//            char *token = std::strtok(buffer, " \n");
-//            while (token != NULL) {
-//                if (chr == 0)
-//                    chr = atoi(token);
-//                else if (pos == 0)
-//                    pos = atoi(token);
-//                else {
-//                    char *ref = new char[255];
-//                    char *alt = new char[255];
-//                    if(token != NULL)
-//                        strcpy(ref, token);
-//                    else
-//                        strcpy(ref, dummy);
-//                    token = std::strtok(NULL, " \n");
-//                    if (token != NULL)
-//                        strcpy(alt, token);
-//                    else
-//                        strcpy(alt, dummy);
-//
-//                    if (locus == Top->LocusTop->LocusCnt)
-//                        break;
-//                    int position = Top->EXLTop->EXLocus[locus].positions[base_pair_position_index];
-//                    int chromosome = Top->LocusTop->Locus[locus].Marker->chromosome;
-//                    if(chromosome == chr && position == pos) {
-//                        insert(chromosome, position, locus, ref, alt);
-//                        locus++;
-//                    } else if (pos > position) {
-//                        SECTION_LOG(ref_not_available);
-//                        mssgvf("chr%d:%d has no reference value. \n",chromosome, position);
-//                        insert(chromosome, position, locus, dummy, dummy);
-//                        locus++;
-//                    }
-//                    chr = 0;
-//                    pos = 0;
-//                }
-//                token = std::strtok(NULL, " \n");
-//            }
-//            if (bytes_read < length - 1) {
-//                if (gzeof(file)) {
-//                    break;
-//                } else {
-//                    const char *error_string;
-//                    error_string = gzerror(file, &err);
-//                    if (err) {
-//                        fprintf(stderr, "Error: %s.\n", error_string);
-//                        exit(EXIT_FAILURE);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     SECTION_LOG_FINI(ref_mismatch);
     SECTION_LOG_FINI(ref_not_available);
 
@@ -276,9 +198,6 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     //delete our insert statement
     close();
     reference_flips_table->close();
-    //close db connection
-    //MasterDB.close();
-    //close gzipped file
     gzclose (file);
 }
 
@@ -438,50 +357,12 @@ void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, con
         }
     }
 
-    //printf("%d / %d\n",strand, major_minor);
-
-
-
     if(major_minor == 0 && strand == 0 && canonrr != canondr) {
         SECTION_LOG(ref_mismatch);
         mssgvf("chr%d:%d alleles (%s, %s) not trivially comparable, and do not match reference alleles (%s, %s). \n", chromosome, position,data_ref,data_alt, ref_ref,ref_alt);
     }
 
     insert(locus, strand, major_minor, dummy);
-//do we want this?
-//    if(strand == 1){
-//        DBstmt *update1;
-//        DBstmt *update2;
-//        char update_string1[255];
-//        char update_string2[255];
-//        if(canondr == canonG && canonda == canonT) {
-//            sprintf(update_string1,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 1;", canonC, locus);
-//            sprintf(update_string2,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 2;", canonA, locus);
-//        }
-//        else if(canondr == canonT && canonda == canonG) {
-//            sprintf(update_string1,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 1;", canonA, locus);
-//            sprintf(update_string2,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 2;", canonC, locus);
-//
-//        }
-//        else if(canondr == canonC && canonda == canonA) {
-//            sprintf(update_string1,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 1;", canonG, locus);
-//            sprintf(update_string2,"UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 2;", canonT, locus);
-//        }
-//        else if(canondr == canonA && canonda == canonC) {
-//            sprintf(update_string1, "UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 1;",canonT, locus);
-//            sprintf(update_string2, "UPDATE allele_table SET AlleleName = '%s' WHERE locus_link = %d AND indexX = 2;",canonG, locus);
-//        }
-//
-//        update1 = MasterDB.prep(update_string1);
-//        update1->step();
-//        delete update1;
-//
-//        update2 = MasterDB.prep(update_string2);
-//        update2->step();
-//        delete update2;
-//
-//    }
-
 }
 
 void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {
