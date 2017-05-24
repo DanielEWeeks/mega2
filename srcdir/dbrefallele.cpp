@@ -26,10 +26,6 @@
 ===========================================================================
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <ctime>
 #include <cstring>
 
 #include "common.h"
@@ -38,14 +34,13 @@
 #include "dbrefallele.h"
 #include "fcmap_ext.h"
 
-#include "zlib-1.2.8/zlib.h"
-#include "dblite.hh"
-#include "dbmisc.hh"
-#include "dbrefallele.h"
-
 #include "user_input_ext.h"
 #include "error_messages_ext.h"
 #include "read_files_ext.h"
+
+#include "zlib-1.2.8/zlib.h"
+
+#include "dbrefallele.h"
 
 
 extern DBlite MasterDB;

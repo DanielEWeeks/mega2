@@ -26,12 +26,6 @@
 ===========================================================================
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <ctime>
-#include <map>
-
 #include "common.h"
 #include "typedefs.h"
 #include "types.hh"
