@@ -180,6 +180,7 @@ mk_unified_genotype_table = function() {
   
     ENV$unified_genotype_table = df
     ENV$genotype_table = NULL
+    rm(list = "genotype_table", envir = ENV)
 }
 
 #' dbmega2_import read Mega2 SQLite tables into R
@@ -189,7 +190,7 @@ mk_unified_genotype_table = function() {
 #' @usage
 #' dbmega2_import(dbname,
 #'                bpPosMap = 1,
-#'                verbose = 0)
+#'                verbose = FALSE)
 #'
 #' @param dbname file path to SQLite database.
 #'
@@ -204,17 +205,17 @@ mk_unified_genotype_table = function() {
 #'
 #' @examples
 #'\dontrun{
-#' dbmega2_import(verbose = 1)
+#' dbmega2_import(verbose = TRUE)
 #'
-#' dbmega2_import("foo.db", verbose = 1)
+#' dbmega2_import("foo.db", verbose = TRUE)
 #'}
 dbmega2_import = function(dbname,
                           bpPosMap = 1,
-                          verbose = 0) {
+                          verbose = FALSE) {
     con = tryCatch(dbConnect(RSQLite::SQLite(), dbname = dbname, flags = SQLITE_RO),
                    error = function(xx) { stop("DB open failed: ", dbname, call. = FALSE) })
 
-    gc(verbose=FALSE)
+    gc(verbose = FALSE)
 
     ENV$verbose = verbose
 
@@ -253,7 +254,7 @@ dbmega2_import = function(dbname,
         ENV$locus_allele_table = NULL
     }
 
-    gc(verbose=FALSE)
+    gc(verbose = FALSE)
     return (ENV)
 }
 
@@ -289,8 +290,38 @@ getMega2ENV = function () {
 #' resetENV()
 #'}
 resetMega2ENV = function () {
-      ENV = new.env(parent = emptyenv())
-      gc(verbose=FALSE)
+
+    rm(list = ls(ENV), envir = ENV)
+
+    unlockBinding("ENV", environment(resetMega2ENV))
+    assign("ENV", new.env(parent = emptyenv()), environment(resetMega2ENV))
+      lockBinding("ENV", environment(resetMega2ENV))
+
+    gc(verbose = FALSE)
+
+    ENV$refRanges  = refRanges
+    ENV$refIndices = refIndices
+
+    ENV$txdb       = "TxDb.Hsapiens.UCSC.hg19.knownGene"
+    ENV$entrezGene = "org.Hs.eg.db"
+
+    invisible()
+}
+
+#' show the association between mapno and mapname
+#'
+#' Mega2 allows several different physical and genetic maps to be stored and used to select
+#'  distances.  This function show the association between mapno and mapname
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' showMapNames()
+#'}
+showMapNames = function () {
+    ENV$mapnames_table[ , c(6, 2)]
 }
 
 ## geno_i = inline::cxxfunction(

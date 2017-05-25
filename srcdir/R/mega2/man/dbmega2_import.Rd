@@ -6,7 +6,7 @@
 \usage{
 dbmega2_import(dbname,
                bpPosMap = 1,
-               verbose = 0)
+               verbose = FALSE)
 }
 \arguments{
 \item{dbname}{file path to SQLite database.}
@@ -23,8 +23,8 @@ read fields of tables necessary later tables processing.
 }
 \examples{
 \dontrun{
-dbmega2_import(verbose = 1)
+dbmega2_import(verbose = TRUE)
 
-dbmega2_import("foo.db", verbose = 1)
+dbmega2_import("foo.db", verbose = TRUE)
 }
 }

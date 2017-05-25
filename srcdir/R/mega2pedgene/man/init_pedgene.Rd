@@ -4,7 +4,7 @@
 \alias{init_pedgene}
 \title{get data for pedgene run using \bold{Mega2} framework}
 \usage{
-init_pedgene(db = "ped3.db", verbose = 0)
+init_pedgene(db = "ped3.db", verbose = FALSE)
 }
 \arguments{
 \item{db}{specifies a \bold{Mega2} SQLite database containing study data.}
@@ -25,6 +25,6 @@ This also records schaidPed and pedPer that are used later in the \emph{Dopedgen
 }
 \examples{
 \dontrun{
-init_pedgene("ped3.db", verbose = 1)
+init_pedgene("ped3.db", verbose = TRUE)
 }
 }

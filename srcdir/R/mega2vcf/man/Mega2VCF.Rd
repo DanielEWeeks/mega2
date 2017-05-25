@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2vcf.R
 \name{Mega2VCF}
 \alias{Mega2VCF}
-\title{generate a VCF file}
+\title{generate a VCF file collection}
 \usage{
 Mega2VCF(prefix, markers = NULL, mapno = 0, allowFlip = FALSE)
 }
@@ -11,7 +11,8 @@ Mega2VCF(prefix, markers = NULL, mapno = 0, allowFlip = FALSE)
 
 \item{markers}{markers selected to be in output file}
 
-\item{mapno}{specify which map index to use for genetic distances}
+\item{mapno}{specify which map index to use for genetic distances.  The function showMapNames
+will print out the internal map numbers corresponding to all the maps in the Mega2 database.}
 
 \item{allowFlip}{REF/ALT of higher frequency occurs first}
 }
@@ -21,7 +22,10 @@ None
 \description{
 Generate a VCF file from the specified Mega2 SQLite database.  The file is named "prefix".vcf
  If the markers arg is.null(), the entire ENV$markers set is used otherwise markers arg MUST
- be a subset of the ENV$markers data.frame -- same columns, but pruned rows.
+ be a subset of the ENV$markers data.frame -- same columns, but pruned rows.  In addition,
+ several other related files are generated: "prefix".fam, "prefix".freq, "prefix".map,
+ "prefix".phe, and "prefix".pen, being the pedigree, allele frequency, marker genetic and
+ physical map position, member phenotype and phenotype penetrance information.
 }
 \examples{
 \dontrun{

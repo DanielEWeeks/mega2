@@ -868,7 +868,7 @@ void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *f
                 if(global_trait_entries[tr] < 0)
                     continue;
                 for(int al = 0; al < _LTop->Locus[global_trait_entries[tr]].AlleleCnt; al++) {
-                    pr_printf("%s\t%d\t%.4f\n", _LTop->Pheno[global_trait_entries[tr]].TraitName, al+1, _LTop->Locus[global_trait_entries[tr]].Allele[al].Frequency);
+                    pr_printf("%s\t%d\t%.6f\n", _LTop->Pheno[global_trait_entries[tr]].TraitName, al+1, _LTop->Locus[global_trait_entries[tr]].Allele[al].Frequency);
                 }
             }
             dummycanon = canonical_allele(("dummy"));
@@ -876,7 +876,7 @@ void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *f
         void inner() {
             for(int i = 0; i < _tlocusp->AlleleCnt; i++) {
                 if(_tlocusp->Allele[i].AlleleName != dummycanon)
-                    pr_printf("%s\t%s\t%.4f\n", _tlocusp->LocusName, _tlocusp->Allele[i].AlleleName, _tlocusp->Allele[i].Frequency);
+                    pr_printf("%s\t%s\t%.6f\n", _tlocusp->LocusName, _tlocusp->Allele[i].AlleleName, _tlocusp->Allele[i].Frequency);
             }
         }
     } *xp = new VCF_freq(Top);

@@ -40,7 +40,7 @@ go = function(db = 0) {
         tst11()
         tst12()
 
-        rm(list = c("tst1", "tst10", "tst11", "tst12")
+        rm(list = c("tst1", "tst10", "tst11", "tst12"), envir=globalenv())
     }
 
 }
