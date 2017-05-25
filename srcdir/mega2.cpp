@@ -1072,7 +1072,7 @@ int             main(int argc, char **argv, char **env)
         
         
 #ifndef HIDESTATUS
-        mssgf("Pedigree and bim files appear to be in PLINK format.");
+        mssgf("Pedigree (.fam) file appears to be in PLINK format.");
         mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
 #endif
         add_allele("NA", zero);

@@ -103,14 +103,14 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     if(_strand_flips)
         mssgvf("VCF output is aligned using the reference panel:\n   %s\n", mega2_input_files[REFfl]);
 
-    write_VCF_file(Top, file_name_stem,file_names ,pwid, fwid);
-    write_VCF_ped(Top, file_name_stem, file_names ,pwid, fwid);
+    write_VCF_file(Top, file_name_stem, file_names, pwid, fwid);
+    write_VCF_ped(Top, file_name_stem, file_names, pwid, fwid);
 
 
     //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
     //if(num_traits>1)
     //I think we want this all the time since it contains sample id
-    write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
+    write_VCF_pheno(Top, file_name_stem, file_names, pwid, fwid);
     //write_VCF_sh(Top, file_name_stem, file_names);
 
     write_VCF_map(Top, file_name_stem, file_names, pwid, fwid);
