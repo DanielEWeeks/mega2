@@ -30,25 +30,29 @@
 #' Mega2VCF package
 #'
 #' @description This package reads a Mega2 SQLite3 database into R dataframes and
-#'	generates a VCF file from these same frames.
+#'	generates a VCF file and related metadata files from these same frames.
 #'
 #' @author Robert V Baron
 #' @docType package
 #' @name Mega2VCF-package
 NULL
 
-#' generate a VCF file
+#' generate a VCF file collection
 #'
 #' @description
 #'  Generate a VCF file from the specified Mega2 SQLite database.  The file is named "prefix".vcf
 #'  If the markers arg is.null(), the entire ENV$markers set is used otherwise markers arg MUST
-#'  be a subset of the ENV$markers data.frame -- same columns, but pruned rows.  
+#'  be a subset of the ENV$markers data.frame -- same columns, but pruned rows.  In addition,
+#'  several other related files are generated: "prefix".fam, "prefix".freq, "prefix".map,
+#'  "prefix".phe, and "prefix".pen, being the pedigree, allele frequency, marker genetic and
+#'  physical map position, member phenotype and phenotype penetrance information.
 #'
 #' @param prefix prefix for vcf file name
 #'
 #' @param markers markers selected to be in output file
 #'
-#' @param mapno specify which map index to use for genetic distances
+#' @param mapno specify which map index to use for genetic distances.  The function showMapNames
+#' will print out the internal map numbers corresponding to all the maps in the Mega2 database.
 #'
 #' @param allowFlip REF/ALT of higher frequency occurs first
 #'
@@ -317,7 +321,7 @@ mkVCFfreq = function (prefix, ENV, markers, recode = FALSE) {
     alleles = allele_pheno[, c("LocusName", col, "Frequency")]
     alleles[alleles[,col] == "", col] = allele_pheno[alleles[,col] == "", "indexX"]
 #std
-    alleles$Frequency = sprintf("%.4f", alleles$Frequency)
+    alleles$Frequency = sprintf("%.6f", alleles$Frequency)
     write.table(alleles,
                 file=file, sep="\t", append=TRUE, quote=FALSE,
                 row.names=FALSE, col.names=FALSE)
@@ -330,7 +334,7 @@ mkVCFfreq = function (prefix, ENV, markers, recode = FALSE) {
     alleles[alleles[ , col] == "", col] = alleles[alleles[ , col] == "", "indexX"]
 #std
     alleles = alleles[alleles$Frequency != 0, ]
-    alleles$Freq4 = sprintf("%.4f", alleles$Frequency)
+    alleles$Freq4 = sprintf("%.6f", alleles$Frequency)
     write.table(alleles[ , c(-1, -4, -5)],
                 file=file, sep="\t", append=TRUE, quote=FALSE,
                 row.names=FALSE, col.names=FALSE)

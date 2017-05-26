@@ -2778,7 +2778,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     total_maps_to_allocate = num_maps + allocate_additional_maps;
     
 #ifndef HIDESTATUS
-    mssgvf("Found %d possible maps.\n", num_maps);
+    mssgvf("Found %d possible maps in the %s file.\n", num_maps, map_file);
 #endif
     printf("Now checking each record in map file %s ...\n", map_file);
     

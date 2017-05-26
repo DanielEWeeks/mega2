@@ -92,3 +92,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
+static const R_CallMethodDef CallEntries[] = {
+    {"mega2_getgenotypes_1", (DL_FUNC) &mega2_getgenotypes_1, 6},
+    {"mega2_getgenotypes_2", (DL_FUNC) &mega2_getgenotypes_2, 4},
+    {"mega2_getgenotypesraw_1", (DL_FUNC) &mega2_getgenotypesraw_1, 6},
+    {"mega2_getgenotypesraw_2", (DL_FUNC) &mega2_getgenotypesraw_2, 4},
+    {"mega2_getgenotypes_Ri", (DL_FUNC) &mega2_getgenotypes_Ri, 6},
+    {"mega2_getgenotypes_forperson", (DL_FUNC) &mega2_getgenotypes_forperson, 1},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_mega2(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}

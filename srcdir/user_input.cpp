@@ -1778,16 +1778,19 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
         db_exists = db_exists_db();
         printf("%2d) %-*s%s%10s\n", idx, line_len, "Database filename:", fn, 
-               db_exists ? "[exists]" : "[create]");
+               db_exists ? "[exists]" : "[undefined]");
         choiceA[idx] = db_i;
         idx++;
 
-        db_ref_table_exists = db_table_exists("ref_allele_table");
-        if(db_ref_table_exists) {
-            printf("%2d) %-*s[ %s]\n", idx, line_len,
-                   "Align strands with reference:", yorn[*strand_flip_opt]);
-            choiceA[idx++] = flip_i;
-        }
+        if (db_exists) {
+            db_ref_table_exists = db_table_exists("ref_allele_table");
+            if(db_ref_table_exists) {
+                printf("%2d) %-*s[ %s]\n", idx, line_len,
+                       "Align strands with reference:", yorn[*strand_flip_opt]);
+                choiceA[idx++] = flip_i;
+            }
+        } else
+            db_ref_table_exists = 0;
 
         _thresh_i = 1 ?  thresh_i : 0;
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
@@ -1814,7 +1817,10 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         }
 
         if (choice_ == 0) {
-            exit_loop = 1;
+            exit_loop = db_exists_db();
+
+            if (! exit_loop)
+                printf("The database you have specified does not exist.  Please enter a valid database file.\n");
 
         } else if (choice_ == out_i) {   /* The output directory */
             draw_line();

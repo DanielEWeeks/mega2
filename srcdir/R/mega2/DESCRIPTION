@@ -7,7 +7,7 @@ Authors@R: c(person("Robert", "Baron",
 biocViews: Software
 Description: Read a Mega2 SQLite3 database into R; Access genotype, phenotype, and fam information.
 Author: Robert V Baron <rvb5@pitt.edu>
-Maintainer: Robert V Baron <rvb5@pitt.edu>
+Maintainer: Robert V Baron <rvb5@pitt.edu>, Daniel Weeks <weeks@pitt.edu>
 Depends: R (>= 3.0.1)
 License: GPL (>= 3)
 LinkingTo: Rcpp

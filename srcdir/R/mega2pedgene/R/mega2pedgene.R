@@ -77,9 +77,9 @@ NULL
 #'
 #' @examples
 #'\dontrun{
-#' init_pedgene("ped3.db", verbose = 1)
+#' init_pedgene("ped3.db", verbose = TRUE)
 #'}
-init_pedgene = function (db = "ped3.db", verbose = 0) {
+init_pedgene = function (db = "ped3.db", verbose = FALSE) {
 
     ENV = dbmega2_import(db, verbose = verbose)
 

@@ -26,12 +26,6 @@
 ===========================================================================
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <ctime>
-#include <map>
-
 #include "common.h"
 #include "typedefs.h"
 #include "types.hh"
@@ -55,6 +49,7 @@
 #include "vcftools/parameters.h"
 #include "zlib-1.2.8/zlib.h"
 
+#include <ctime>
 #include "dbrefallele.h"
 
 extern DBlite MasterDB;
@@ -108,14 +103,14 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     if(_strand_flips)
         mssgvf("VCF output is aligned using the reference panel:\n   %s\n", mega2_input_files[REFfl]);
 
-    write_VCF_file(Top, file_name_stem,file_names ,pwid, fwid);
-    write_VCF_ped(Top, file_name_stem, file_names ,pwid, fwid);
+    write_VCF_file(Top, file_name_stem, file_names, pwid, fwid);
+    write_VCF_ped(Top, file_name_stem, file_names, pwid, fwid);
 
 
     //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
     //if(num_traits>1)
     //I think we want this all the time since it contains sample id
-    write_VCF_pheno(Top, file_name_stem, file_names ,pwid, fwid);
+    write_VCF_pheno(Top, file_name_stem, file_names, pwid, fwid);
     //write_VCF_sh(Top, file_name_stem, file_names);
 
     write_VCF_map(Top, file_name_stem, file_names, pwid, fwid);
@@ -842,7 +837,7 @@ void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *f
                 if(global_trait_entries[tr] < 0)
                     continue;
                 for(int al = 0; al < _LTop->Locus[global_trait_entries[tr]].AlleleCnt; al++) {
-                    pr_printf("%s\t%d\t%.4f\n", _LTop->Pheno[global_trait_entries[tr]].TraitName, al+1, _LTop->Locus[global_trait_entries[tr]].Allele[al].Frequency);
+                    pr_printf("%s\t%d\t%.6f\n", _LTop->Pheno[global_trait_entries[tr]].TraitName, al+1, _LTop->Locus[global_trait_entries[tr]].Allele[al].Frequency);
                 }
             }
             dummycanon = canonical_allele(("dummy"));
@@ -850,7 +845,7 @@ void CLASS_VCF::write_VCF_freq(linkage_ped_top *Top, const char *prefix, char *f
         void inner() {
             for(int i = 0; i < _tlocusp->AlleleCnt; i++) {
                 if(_tlocusp->Allele[i].AlleleName != dummycanon)
-                    pr_printf("%s\t%s\t%.4f\n", _tlocusp->LocusName, _tlocusp->Allele[i].AlleleName, _tlocusp->Allele[i].Frequency);
+                    pr_printf("%s\t%s\t%.6f\n", _tlocusp->LocusName, _tlocusp->Allele[i].AlleleName, _tlocusp->Allele[i].Frequency);
             }
         }
     } *xp = new VCF_freq(Top);
