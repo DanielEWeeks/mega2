@@ -297,6 +297,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         HMapii strand_flips;
         HMapii major_minor_flips;
         HMapii dummies;
+        HMapis oldrefs;
+        HMapis oldalts;
         int lastchr;
         int extremum_allele;
 
@@ -436,7 +438,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
                 DBstmt *select2;
                 char select_string2[255];
-                sprintf(select_string2, "SELECT marker, strand, major_minor, dummy FROM ref_allele_flips");
+                sprintf(select_string2, "SELECT marker, strand, major_minor, dummy, oldref, oldalt FROM ref_allele_flips");
                 select2 = MasterDB.prep(select_string2);
                 int ret2 = select2 && select2->abort();
 
@@ -445,15 +447,21 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     int strand_flip = 0;
                     int major_minor = 0;
                     int dummy = 0;
+                    char *oldalt;
+                    char *oldref;
                     ret2 = select2->step();
                     if (ret2 == SQLITE_ROW) {
                         select2->column(0, locus);
                         select2->column(1, strand_flip);
                         select2->column(2, major_minor);
                         select2->column(3, dummy);
+                        select2->column(4, oldref);
+                        select2->column(5, oldalt);
                         strand_flips[locus] = strand_flip;
                         major_minor_flips[locus] = major_minor;
                         dummies[locus] = dummy;
+                        oldrefs[locus] = oldref;
+                        oldalts[locus] = oldalt;
                     } else
                         break;
                 }
@@ -612,54 +620,15 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             }
             pr_printf(";");
             if(_strand_flips) {
-                if (reference_exists == 0 && strand_flips[_tlocusp->locus_link] ==0)
+                if (reference_exists == 0 && strand_flips[_tlocusp->locus_link] == 0)
                     pr_printf("NO;");
-                else if (dummies[_tlocusp->locus_link]){
-                    pr_printf("ORIG=");
-                    //this version probably won't come up but better safe than sorry
-                    if(major_minor_flips[_tlocusp->locus_link]){
-                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonA)
-                            pr_printf(".,%s;", canonT);
-                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonC)
-                            pr_printf(".,%s;", canonG);
-                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonG)
-                            pr_printf(".,%s;", canonC);
-                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonT)
-                            pr_printf(".,%s;", canonA);
-                    }
-
-                    else {
-                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonA)
-                            pr_printf("%s,.;", canonT);
-                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonC)
-                            pr_printf("%s,.;", canonG);
-                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonG)
-                            pr_printf("%s,.;", canonC);
-                        if (_tlocusp->Allele[extremum_allele].AlleleName == canonT)
-                            pr_printf("%s,.;", canonA);
-                    }
-
-                }
-                else if (strand_flips[_tlocusp->locus_link] || major_minor_flips[_tlocusp->locus_link]) {
-                    //transform back if we want to know the original alleles
-                    pr_printf("ORIG=");
-                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonA)
-                        pr_printf("%s", canonT);
-                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonC)
-                        pr_printf("%s", canonG);
-                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonG)
-                        pr_printf("%s", canonC);
-                    if (_tlocusp->Allele[extremum_allele].AlleleName == canonT)
-                        pr_printf("%s", canonA);
-
-                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonA)
-                        pr_printf(",%s;", canonT);
-                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonC)
-                        pr_printf(",%s;", canonG);
-                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonG)
-                        pr_printf(",%s;", canonC);
-                    if (_tlocusp->Allele[(extremum_allele + 1) % 2].AlleleName == canonT)
-                        pr_printf(",%s;", canonA);
+                else if(oldrefs[_tlocusp->locus_link] != a1 || oldalts[_tlocusp->locus_link] != a2) {
+                    std::string oldref = oldrefs[_tlocusp->locus_link];
+                    std::string oldalt = oldalts[_tlocusp->locus_link];
+                    if(oldref != dummycanon)
+                        pr_printf("Orig=%s,%s;",oldref.c_str(),oldalt.c_str() );
+                    else
+                        pr_printf("Orig=.,%s;",oldalt.c_str());
                 }
                 else if(!major_minor_flips[_tlocusp->locus_link]
                         && auxillary_ref != _tlocusp->Allele[0].AlleleName && auxillary_alt != _tlocusp->Allele[1].AlleleName)

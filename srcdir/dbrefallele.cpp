@@ -76,7 +76,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 
     //begin reading our gzipped file
     //we define a buffer
-    int length = 0x1000;
+    int length = 0x10000;
     //get a gzipfile and open it
     gzFile file;
     file = gzopen(filename.c_str(),"r");
@@ -364,10 +364,10 @@ void Reference_Flips_Table::determine_flips(linkage_ped_top *Top, int locus, con
 
     if(major_minor == 0 && strand == 0 && canonrr != canondr) {
         SECTION_LOG(ref_mismatch);
-        mssgvf("chr%d:%d alleles (%s, %s) not trivially comparable, and do not match reference alleles (%s, %s). \n", chromosome, position,data_ref,data_alt, ref_ref,ref_alt);
+        mssgvf("chr%d:%d %s alleles (%s, %s) not resolvable, ref. alleles (%s, %s). \n", chromosome, position,Top->LocusTop->Locus[locus].LocusName,data_ref,data_alt, ref_ref,ref_alt);
     }
 
-    insert(locus, strand, major_minor, dummy);
+    insert(locus, strand, major_minor, dummy, data_ref, data_alt);
 }
 
 void Reference_Flips_Table::flip_strands(linkage_ped_top *Top) {

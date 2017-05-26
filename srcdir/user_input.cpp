@@ -404,7 +404,7 @@ int analysis_menu1(analysis_type  *analysis)
                 printf("%-34s %-34s\n", option_col1, option_col2);
             }
 
-            printf("\nSelect an option between 0-%2d > ", count_analysis_list);
+            printf("Select an option between 0-%2d > ", count_analysis_list);
             fcmap(stdin, "%s", choice); newline;
             choice_ = -1;
             sscanf(choice, "%d", &choice_);

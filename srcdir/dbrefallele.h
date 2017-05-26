@@ -102,26 +102,28 @@ public:
     ~Reference_Flips_Table( ) { }
 
     int create() {
-        return MasterDB.exec("CREATE TABLE IF NOT EXISTS ref_allele_flips(marker integer, strand integer, major_minor integer, dummy)");
+        return MasterDB.exec("CREATE TABLE IF NOT EXISTS ref_allele_flips(marker integer, strand integer, major_minor integer, dummy, oldref, oldalt)");
     }
     int init () {
-        insert_stmt = MasterDB.prep("INSERT INTO ref_allele_flips(marker, strand, major_minor, dummy) VALUES(?, ?, ?, ?);");
-        select_stmt = MasterDB.prep("SELECT marker, strand, major_minor,dummy FROM ref_allele_flips;");
+        insert_stmt = MasterDB.prep("INSERT INTO ref_allele_flips(marker, strand, major_minor, dummy, oldref, oldalt) VALUES(?, ?, ?, ?, ?, ?);");
+        select_stmt = MasterDB.prep("SELECT marker, strand, major_minor, dummy, oldref, oldalt FROM ref_allele_flips;");
         return insert_stmt && select_stmt && 1;
     }
-    int insert(int marker, int strand, int major_minor, int dummy) {
+    int insert(int marker, int strand, int major_minor, int dummy, const char *oldref, const char *oldalt) {
         int idx = 1;
 
         return insert_stmt
                && insert_stmt->rowbind(idx, marker)
                && insert_stmt->rowbind(idx, strand, major_minor, dummy)
+               && insert_stmt->rowbind(idx, oldref, oldalt)
                && insert_stmt->step();
     }
-    int select(int marker, int strand, int major_minor, int dummy) {
+    int select(int marker, int strand, int major_minor, int dummy, const char *oldref, const char *oldalt) {
         int idx = 0;
         int ret =
                 select_stmt->row(idx, marker)
-                && select_stmt->row(idx, strand, major_minor, dummy);
+                && select_stmt->row(idx, strand, major_minor, dummy)
+                && select_stmt->row(idx, oldref, oldalt);
         return ret;
     }
     void close() {
