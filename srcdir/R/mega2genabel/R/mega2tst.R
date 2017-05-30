@@ -94,9 +94,9 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta") {
 #'\dontrun{
 #' tst()
 #'}
-tst = function (mega_ = mega, gwaa_ = srdta) {
-    tstph()
-    tstgt()
+Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta) {
+    Mega2GenABELtstph()
+    Mega2GenABELtstgt()
 }
 
 #' test phenotype fields
@@ -114,9 +114,9 @@ tst = function (mega_ = mega, gwaa_ = srdta) {
 #'
 #' @examples
 #'\dontrun{
-#' tstph()
+#' Mega2GenABELtstph()
 #'}
-tstph = function (mega_ = mega, gwaa_ = srdta) {
+Mega2GenABELtstph = function (mega_ = mega, gwaa_ = srdta) {
     print(all(! is.na(mega_@phdata$sex) && ! is.na(gwaa_@phdata$sex) &&
               mega_@phdata$sex == gwaa_@phdata$sex))
 
@@ -154,9 +154,9 @@ tstph = function (mega_ = mega, gwaa_ = srdta) {
 #'
 #' @examples
 #'\dontrun{
-#' tstgt()
+#' Mega2GenABELtstgt()
 #'}
-tstgt = function (mega_ = mega, gwaa_ = srdta) {
+Mega2GenABELtstgt = function (mega_ = mega, gwaa_ = srdta) {
 #    print(all(! is.na(mega_@gtdata$bt) && ! is.na(gwaa_@gtdata$bt) &&
 #              mega_@gtdata$bt == gwaa_@gtdata$bt))
 

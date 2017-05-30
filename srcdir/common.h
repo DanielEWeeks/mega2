@@ -535,7 +535,7 @@ extern int Display_Errors, Display_Messages;
         Display_Errors = Display_##errors##_ = 1;                          \
         fflush(stdout);                                                    \
     } else if (_##errors##_ == (MAX_PED_ERRORS+2)) {                       \
-        fflush(stdout);                                                    \
+        fflush(stdout); Display_Errors = 1;                                \
         errf("===== Too many \"" #errors "\" records, display is temporarily suspended ..", "", 0); \
         fflush(stdout);                                                    \
         Display_Errors = Display_##errors##_ = 0;                          \
@@ -583,7 +583,7 @@ extern int Display_Errors, Display_Messages;
         Display_Messages = Display_##errors##_ = 1;                        \
         fflush(stdout);                                                    \
     } else if (_##errors##_ == (MAX_PED_ERRORS+2)) {                       \
-        fflush(stdout);                                                    \
+        fflush(stdout); Display_Messages = 1;                              \
         mssgf("===== Too many \"" #errors "\" records, display is temporarily suspended ..", 0); \
         fflush(stdout);                                                    \
         Display_Messages = Display_##errors##_ = 0;                        \
