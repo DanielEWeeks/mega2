@@ -30,7 +30,9 @@
 #define MRECODE_EXT_H
 
 extern void assign_dummy_alleles(marker_type *marker_list,
-				 linkage_locus_top *LTop);
+				 linkage_locus_top *LTop,
+                                 char *bimalleles,
+                                 std::vector<Vecc> &VCFalleles);
 
 extern file_format check_locus_file_format(FILE *filep);
 

@@ -42,6 +42,7 @@
 
 #include "dbrefallele.h"
 
+#include "tod.hh"
 
 extern DBlite MasterDB;
 
@@ -101,9 +102,13 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 
     int success = 0;
     int fail = 0;
+    int ttl = 0;
 
     printf("Matching position values between dataset and reference, this may take a while especially for larger GWAS datasets. (a minute or more)\n");
     //read our buffer
+    Todd newish("read ref a file");
+    char *ref;
+    char *alt;
     if(use_bp_sort) {
         while (1) {
             int err;
@@ -123,21 +128,20 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     pos = atoi(token);
                     //if both are set we found a whole entry
                 else {
-                    char *ref = new char[255];
-                    char *alt = new char[255];
                     //set ref to the current token
                     if(token != NULL)
-                        strcpy(ref, token);
+                        ref = token;
 
                     //grab the next token, this will be our alternate allele
                     token = std::strtok(NULL, " \n");
                     if (token != NULL)
-                        strcpy(alt, token);
+                        alt = token;
 
                     if (locus == Top->LocusTop->LocusCnt - 1)
                         break;
                     int position = bp->pos;
                     int chromosome = bp->chr;
+                    ttl++;
                     if (chromosome == chr && pos == position && strlen(ref) != 0 && strlen(alt) != 0) {
                         //we insert our values, the position internally is inserted so we can select on it
                         insert(chromosome, position, locus, ref, alt);
@@ -153,6 +157,11 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                         bp++;
                         locus++;
                         fail++;
+                        if (bp->pos == pos) {
+//xxx
+                            msgvf("oopsee! about to flush good pos\n");
+//                          BPT;
+                        }
                     }
                     else if( chr > chromosome) {
                         SECTION_LOG(ref_not_available);
@@ -165,7 +174,6 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     }
                     chr = 0;
                     pos = 0;
-
                 }
                 token = std::strtok(NULL, " \n");
             }
@@ -187,12 +195,12 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
             }
         }
     }
-
+    newish();
     SECTION_LOG_FINI(ref_mismatch);
     SECTION_LOG_FINI(ref_not_available);
 
     mssgvf("Matched %d/%d variants in the dataset to the provided reference panel.\n", success,success+fail);
-
+    msgvf("Total records read from ref allele file = %d\n", ttl);
     //final commit just in case
     MasterDB.commit();
     //delete our insert statement

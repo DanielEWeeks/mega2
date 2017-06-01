@@ -29,38 +29,25 @@
 #ifndef TOD_HH
 #define TOD_HH
 
-#ifdef TOD
 #include <sys/time.h>
 extern void msgvf(const char *fmt, ...);
-#endif
 
-class Tod {
+class Todd {
 public:
 
-#ifndef TOD
-    Tod() {}
-    Tod(int lim) {}
-    Tod(const char *str, int lim=0) {}
-    void reset(void) {}
-    double operator()(void) {return 0.0;}
-    void   operator()(const char *) {}
-    int ok(void) {return 0;}
-
-#else
-
-    Tod():lim(0),str(0) {
+    Todd():lim(0),str(0) {
         reset();
     }
 
-    Tod(int lim):lim(lim), cnt(0), str(0) {
+    Todd(int lim):lim(lim), cnt(0), str(0) {
         reset();
     }
 
-    Tod(const char *str, int lim=0): lim(lim), cnt(0), str(str) {
+    Todd(const char *str, int lim=0): lim(lim), cnt(0), str(str) {
         reset();
     }
 
-   ~Tod()     { }
+   ~Todd()     { }
 
     void reset(void) {
         gettimeofday(&tv_base, (void *) 0);
@@ -103,7 +90,31 @@ private:
         return diff.tv_sec + diff.tv_usec/1000000.0;
     }
 
+};
+
+class Tod: public Todd {
+public:
+#ifdef TOD
+    Tod() : Todd() {}
+    Tod(int lim) : Todd(lim) {}
+    Tod(const char *str, int lim=0) : Todd(str, lim) {}
+
+#else
+
+    Tod() {}
+    Tod(int lim) {}
+    Tod(const char *str, int lim=0) {}
+
+    void reset(void) {}
+    void operator()(const int xx) {}
+    double operator()(void) {return 0.0;}
+    void   operator()(const char *) {}
+    int ok(void) {return 0;}
+
 #endif
+
+   ~Tod()     { }
+
 
 };
 
