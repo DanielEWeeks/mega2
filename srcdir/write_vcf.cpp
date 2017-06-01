@@ -168,7 +168,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             if(_strand_flips) {
                 pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele used instead.\">\n");
                 pr_printf("##INFO=<ID=AMBIG,Number=1,Type=String,Description=\"Reference panel has match for this position, but it is ambiguous.\">\n");
-                pr_printf("##INFO=<ID=ORIG,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset if flipped according to T/G <-> A/C.\">\n");
+                pr_printf("##INFO=<ID=ORIG,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset flipped according to T/G <-> A/C.\">\n");
+                pr_printf("##INFO=<ID=FLIP,Number=0,Type=Flag,Description=\"REF and ALT values (REF, ALT) from original dataset if REF and ALT alleles were switched in reference.\">\n");
             }
             //don't know these for now
             //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
@@ -615,19 +616,22 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             }
             pr_printf(";");
             if(_strand_flips) {
+                std::string oldref = oldrefs[_tlocusp->locus_link];
+                std::string oldalt = oldalts[_tlocusp->locus_link];
                 if (reference_exists == 0 && strand_flips[_tlocusp->locus_link] == 0)
                     pr_printf("NO;");
-                else if(oldrefs[_tlocusp->locus_link] != a1 || oldalts[_tlocusp->locus_link] != a2) {
-                    std::string oldref = oldrefs[_tlocusp->locus_link];
-                    std::string oldalt = oldalts[_tlocusp->locus_link];
-                    if(oldref != dummycanon)
-                        pr_printf("Orig=%s,%s;",oldref.c_str(),oldalt.c_str() );
+                else if(oldref == a2 && oldalt == a1)
+                    pr_printf("FLIP;");
+                else if(strand_flips[_tlocusp->locus_link]) {
+                    if(oldref == "dummy")
+                        pr_printf("ORIG=%s,.;",oldref.c_str());
+                    else if(oldalt == "dummy")
+                        pr_printf("ORIG=.,%s;",oldalt.c_str() );
                     else
-                        pr_printf("Orig=.,%s;",oldalt.c_str());
+                        pr_printf("ORIG=%s,%s;",oldref.c_str(),oldalt.c_str());
                 }
-                else if(!major_minor_flips[_tlocusp->locus_link]
-                        && auxillary_ref != _tlocusp->Allele[0].AlleleName && auxillary_alt != _tlocusp->Allele[1].AlleleName)
-                    pr_printf("AMBIG=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
+                else if(!major_minor_flips[_tlocusp->locus_link] && oldref != _tlocusp->Allele[0].AlleleName && oldalt != _tlocusp->Allele[1].AlleleName)
+                    pr_printf("AMBIG=%s,%s;", oldref.c_str(),oldalt.c_str());
             }
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");

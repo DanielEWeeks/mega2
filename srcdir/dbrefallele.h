@@ -134,7 +134,7 @@ public:
         return MasterDB.exec("DROP TABLE IF EXISTS ref_allele_flips;");
     }
 
-    void determine_flips(linkage_ped_top *Top, int locus, const char *data_ref, const char *data_alt, char *ref_ref, char *ref_alt, int chromosome, int position);
+    int determine_flips(linkage_ped_top *Top, int locus, const char *data_ref, const char *data_alt, char *ref_ref, char *ref_alt, int chromosome, int position);
 
     void flip_strands(linkage_ped_top *Top);
 
