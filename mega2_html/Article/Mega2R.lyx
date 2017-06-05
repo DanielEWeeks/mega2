@@ -103,7 +103,6 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author 1332494340 "Daniel E. Weeks"
 \end_header
 
 \begin_body
@@ -201,16 +200,11 @@ ysis
 \end_inset
 
 .
- It converts data from several different genetic analysis data formats into
- the specific data requirements for over 40 commonly used linkage analysis
- programs.
- Additional analysis programs have been added over time, but this has required
- software developers keenly knowledgeable in the Mega2 internals.
- The R community and Bioconductor community have developed a variety of
- genetic analysis programs as well.
- Typically, these programs and R interpreter, in general, perform poorly
- when faced with the large amount of raw genotype data arising from current
- GWAS analysis.
+ Additional analysis programs have been added over time, though this has
+ required software developers keenly knowledgeable in the Mega2 internals.
+ Currently, Mega2 converts data from several different genetic analysis
+ data formats into the specific data requirements for over 40 commonly used
+ linkage analysis programs.
  Recently, Mega2 has been enhanced to use an SQLite database 
 \begin_inset Flex URL
 status collapsed
@@ -223,11 +217,12 @@ https://www.sqlite.org/
 \end_inset
 
  as an intermediate data representation.
- Further, bialleleic data are now stored in a highly compressed form, much
- like the GenABEL R facility and PLINK binary format.
- With these enhancements, it is now possible to read the data assembled
- by Mega2 into R data frames and continue processing with R and only decompressi
-ng required genotype data.
+ And, bialleleic genotype data are now stored in a highly compressed form,
+ much like that of the GenABEL R facility and the PLINK binary format.
+ Meanwhile, the R community and Bioconductor community have developed a
+ variety of genetic analysis programs complimentary to the programs available
+ through Mega2.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -235,17 +230,18 @@ ng required genotype data.
 \series bold
 Results: 
 \series default
-We have made it possible to load SQLite3 Mega2 databases into R.
- Accessing data frames holding these data are very straight forward in R
- for whatever purpose the user needs.
- In addition, we have made C++ functions for R to decompress the genotype
- data that are available in the Mega2 database and return them as a simple
- matrix.
- Besides the base Mega2+R package that loads and manipulates data frames,
- we have also created several more R packages that illustrate data access
- as well as perform useful functions: one to run the Bioconductor pedgene
- package on selected marker subsets, one to output data frames data as a
- VCF file 
+We have made it possible to load SQLite3 Mega2 GWSA databases into R.
+ Accessing data frames holding these data for whatever purpose the user
+ needs is very straight forward in R.
+ In addition, we have made C++ functions for R to decompress subsets of
+ the genotype data that are available in the Mega2 database.
+ The extra memory is only occassionally necessary; the data is returned
+ as a simple matrix.
+ We created the base Mega2+R package that loads and manipulates data frames.
+ We have also created several more R packages that illustrate how to use
+ the data frames as well as perform useful functions: one to run the Bioconducto
+r pedgene package on selected marker subsets, one to output data frames
+ data as a VCF file 
 \begin_inset Flex URL
 status collapsed
 
@@ -280,9 +276,10 @@ https://cran.r-project.org/web/packages/GenABEL/index.html
 \end_inset
 
  gwaa.data-class objects.
- (Note: The Mega2 program supports more input data formats than GenABEL
- (such as PLINK bed, VCF and IMPUTE2) and thus using Mega2+R allows these
- formats to be processed by GenABEL.
+ (Note: The Mega2+R program can be used to enhance GenABEL since it supports
+ additional input data formats (such as PLINK bed, VCF and IMPUTE2); thus
+ using Mega2+R allows these formats to be processed by GenABEL.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -290,10 +287,13 @@ https://cran.r-project.org/web/packages/GenABEL/index.html
 \series bold
 Conclusions: Mega2+R
 \series default
- is a collection of R packages that lets users access the GWAS data read
- in by Mega2 and then to do subsequent manipulation of the data in R.
- We have found the results useful and wish to make them available to a wider
- audience.
+ is a collection of R packages that lets users convert the GWAS data read
+ in by Mega2 to data frames.
+ The user can then to do subsequent manipulation of the data in R.
+ The significantly memory consuming genotype data is kept compressed and
+ decompressed to a nucleotide format on demand.
+ We have found these packages useful and wish to make them available to
+ a wider audience.
  Documentation for 
 \series bold
 Mega2+R
@@ -366,35 +366,34 @@ https://bitbucket.org/dweeks/mega2
 .
  The early Mega2 could read input data in a few formats: LINKAGE format
  and Mega2 table format.
- Mega2 augments these input formats with additional information.
+ Mega2 augmented both these input formats with additional information.
  For example, trait locus penetrance information can be specified as well
  as the allele frequencies.
- Of course, the frequencies are calculated if not provided in a file.
- The earliest version of Mega2 was written in the C computer language.
+ (Of course, the frequencies are calculated if not provided in a file.) The
+ earliest version of Mega2 was written in the C computer language.
 \end_layout
 
 \begin_layout Standard
 Over time, Mega2 was upgraded to the C++ computer language and some of the
  internals were rewritten.
- In time, more linkage analysis programs were created (by others) and were
- added to Mega2.
- The data formats that GWAS data were provided in changed over time; now
- Mega2 can also read data in PLINK format, IMPUTE format and VCF format.
+ More linkage analysis programs were created (by others) and were added
+ to Mega2.
+ The data formats that GWAS data were provided in changed over time; thus
+ Mega2 was enhanced to read data in PLINK format, IMPUTE format and VCF
+ format.
  The volume of GWAS marker data increased significantly, so Mega2 was extended
  to support the compression of biallelic genotype data (though still supporting
  multi-satellite and other non-compressed legacy data).
  As the volume of genotype data increased, it became slow and burdensome
  to validity check the genotype data and generate allele frequency data
- for each separate analysis that Mega2 was invoked for.
+ for each separate analysis that Mega2 was invoked on.
  Rather, Mega2 was restructured so that the validation and metadata generation
- was performed once for a given study and stored in a SQLite3 database file.
+ were performed once for a given data set and stored in an SQLite3 database
+ file.
  Mega2 uses this database file, via a menu-driven interface, to provde the
  data needed for any particular analysis.
  The same database file serves as the input for all the different analyses.
- (Note: Mega2 is structured so that the user proceeds through a series of
- menus, both to create the database and later to process it.
- After the desired output files are created, Mega2 exits.
- It is not particularly interactive.)
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -402,72 +401,120 @@ The Sqlite3 Database
 \end_layout
 
 \begin_layout Standard
-Data frames are not a bad way at all to represent database tables.
- (??tidyverse) The earlier Mega2's C (language) structures were mapped into
- SQL database tables with some 
+Initially, Mega2 used C (language) structures to store its intermediate
+ data before analysis; several alternative strategies were possible to dump
+ this data for subsequent reuse without having to recompute, reanalyze,
+ and revalidate the data.
+ The first choice was to dump the raw structure data to disk.
+ To re-read the data is possibly faster but it is much harder to inspect
+ the data for debugging.
+ Also, the pointers used would have to be relocated to new storage areas.
+ A better solution, for a lot of reasons, is to create a SQLite table for
+ each C structure and 
 \begin_inset Quotes eld
 \end_inset
 
-glue
+insert
 \begin_inset Quotes erd
 \end_inset
 
- fields.
- There are tables for loci data, marker data, allele data, map data, phenotype
- data and genotype data as well as pedigree and person data.
- Most tables are composed of integer, numeric and string data.
- The genotype data are composed of multiple values with 8 bytes of data
- per value either representing a quantitative value or an affective value.
- The genotype data is a raw vector with a pair of bytes representing a genotype
- for non biallelic markers or can be a raw compressed bit vector with two
- bits per genotype.
- After the data frames are loaded from the database, you may select 
-\begin_inset Quotes eld
-\end_inset
-
-observations
-\begin_inset Quotes erd
-\end_inset
-
- needed for your particular study.
- There is also a special function for extracting customary nucleotides from
- the genotype data.
-\end_layout
-
-\begin_layout Standard
-Of course, many other programming environments can process databases,
-\begin_inset space ~
-\end_inset
-
- in particular SQLite databases.
+ the structure data into the table.
+ The data is inherently inspectable and there are database tools to help
+ to selectively extract data.
+ The data is portable, so it can be read on different platforms.
+ Since interfaces from many languages are provided for SQLite, the data
+ are accesible in many languanges besides C.
  Of particular interest is R because there is a wealth of existing genetic
- analysis programs already create, well documented, and available in both
+ analysis programs already created, well documented, and available in both
  CRAN and Bioconductor.
- Also, researchers regularly use R to develop analysis because it has been
- used in the past to develop statistical programs and has the resultant
+ Also, researchers regularly use R to develop special analysis because it
+ has been used in the past to develop statistical programs and has the resultant
  libraries readily available.
 \end_layout
 
 \begin_layout Standard
-The rest of this document first shows some examples of package use.
+There are tables for loci data, marker data, allele data, map data, phenotype
+ data and genotype data as well as pedigree and person data.
+ Appendix A shows all the tables and their fields if you care to study them.
+ (The example section, coming next, will list the tables, in passing.) Here,
+ we will make a few observations about the tables in general.
+ The first issue was discussed previously: What to do with pointers.
+ Where necessary a field was added to a table, we call a link field, viz.
+ locus_link.
+ This field is a unique monotonic integer.
+ When the data are read back in, these links are looked up to find a pointer
+ to use.
+ Consider the locus_table and the allele_table.
+ They both have a locus_link.
+ The link in the locus_table is hashed to yield a pointer to the corresponding
+ entry in the locus table.
+ When the allele_table is read, the locus_link is looked up, then a pointer
+ is added to a field in the locus_table (using looked up pointer) to point
+ to the location of the allele_table entry.
+ (These links are also very useful in R to perform the 
+\begin_inset Quotes eld
+\end_inset
+
+merge
+\begin_inset Quotes erd
+\end_inset
+
+ function.
+ For example, in the above case, to produce a table with rows containing
+ both locus and allele data.) These links are also used to associate family
+ with person data as well as phenotype and genotype data with a person.
+\end_layout
+
+\begin_layout Standard
+Most tables are composed of integer, numeric and string data.
+ The phenotype table is an exception.
+ The normal trick of adding an extra column per row to indicate which phenotype'
+s data is contained becomes more complicated because affection and quantitative
+ data have different data types.
+ Instead, the phenotype data for each person is one long byte vector composed
+ of multiple values with 8 bytes of data per value either representing a
+ quantitative value or an affective value.
+ Similarly, the genotype data are a raw vector with a pair of bytes representing
+ a genotype for non biallelic markers.
+ For common biallelic markers, a raw compressed bit vector with two bits
+ per genotype is used.
+ (After the data frames are loaded into the database, you may select genotypes
+ needed for your particular study.
+ There is a function for a extracting a matrix of nucleotide notation data
+ from the genotype table.) Note: the original compressed genotype vector
+ created by Mega2 is one long vector.
+ What is written to the database is split into separate vectors for each
+ chromosome.
+ The end of each vector may have 0, 1, 2, or 3 unused bit pairs representing
+ no genotype.
+ The Mega2 C++ program reassembles the vectors without these gaps.
+ In addition, it can select specific chromosomes and/or specific markers
+ needed for analysis and not needed to store all the bit vector data.
+ The R version is not as sophisticated.
+\end_layout
+
+\begin_layout Standard
+The rest of this document shows some examples of Mega2+R package use.
  Then we discuss the main package, 
 \emph on
 mega2
 \emph default
 .
- The several additional packages, 
+ Several additional packages, 
 \emph on
 mega2pedgene, mega2vcf and mega2genabel
 \emph default
- are presented which not only accomplish there named function but also illustrat
+ are presented which not only accomplish the obvious function but also illustrat
 e examples of how the 
 \emph on
 mega2
 \emph default
- package can be used by other packages.
- Note: the functions here are discussed at an overview level.
+ package and data frames can be used by other packages.
+ After the example section, the implementation section discusses the highlights
+ of each package.
+ Note: the functions there are discussed at an overview level.
  If you need programming details, you should look at the CRAN package documentat
-ion for the package of interest or look at the actual code.
+ion or look at the actual code.
 \end_layout
 
 \begin_layout Section
@@ -482,9 +529,10 @@ It is always difficult to share real data.
  Tsai WY, Hsieh CH, Hung KY, Hsiung CA, Hauser ER., Genet Epidemiol.
  2015 Jan;39(1):20-4.
  doi: 10.1002/gepi.21850.
- Epub 2014 Sep 22.] Download the code from 
+ Epub 2014 Sep 22.] We will provide a small PLINK ped dataset using the simulator.
+ If you wish, you can download the code from 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -494,8 +542,7 @@ https://sourceforge.net/projects/seqsimla/?source=typ_redirect
 \end_inset
 
 .
- To make our results easy to follow, we started from the first example under
- the 
+ We started from the first example under the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -511,9 +558,9 @@ Simulate by Disease status
 \begin_inset Quotes erd
 \end_inset
 
- tab on the tutorial on the 
+ tab on the tutorial page on the 
 \begin_inset Flex URL
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -522,20 +569,17 @@ http://seqsimla.nhri.org.tw/prevalence
 
 \end_inset
 
-page.
+.
  This simulation creates 1380 samples of 500,000 markers; a bit too much
  for sharing.
- In addition, a bit less than 200,000 are actually polymorphic while the
+ But, a bit less than 200,000 markers are actually polymorphic while the
  rest are monomorphic.
  We chose to subsample the latter down to 1380 people and 1000 markers.
- These data will be used to illustrate Mega2 and Mega2+R operations.
+ These data will be used to illustrate Mega2 and Mega2+R operations that
+ follow.
 \end_layout
 
 \begin_layout Subsection
-Creating VCF data files
-\end_layout
-
-\begin_layout Subsubsection
 Reading a Database
 \end_layout
 
@@ -544,16 +588,12 @@ We have provided a tar file,
 \series bold
 Mega2R.tgz
 \series default
-, that contains these data (and more):
-\end_layout
-
-\begin_layout LyX-Code
-Mega2r.ped and Mega2r.map
+, that contains these data, the results of the simulation:
 \end_layout
 
 \begin_layout Standard
-(We will introduce the other files as needed.) These files constitute PLINK
- ped input format data.
+(We will introduce the other files from the archive as needed.) These files
+ are PLINK ped input format data 1380 samples with 1000 markers.
 \end_layout
 
 \begin_layout Standard
@@ -590,9 +630,9 @@ status open
 \end_inset
 
 .
- to understand what follows.
+ to completely understand what follows.
  First, you will invoke Mega2 on your data.
- To make matters simpler, I will use a preconstructed script file to indicate
+ To make matters simpler, I will use a preconstructed script file to select
  processing for Mega2, viz.
 \end_layout
 
@@ -603,23 +643,108 @@ Mega2 Mega2.BATCH.seqsimr
 \begin_layout Standard
 If you do not provide the argument, Mega2 will procede to ask a series of
  questions to collect the needed information to produce a database and it
- will also create this Mega2.BATCH file.
+ will also create this Mega2.BATCH file we suggested you use.
  
 \end_layout
 
 \begin_layout Standard
-This BATCH file (as they all do) begins with a rather long comment indicating
- the values that may be set and their default value.
- Eventually it will show that will Mega2r.ped and Mega2r.map are input as
- PLINK ped files and that Mega2 should produce a database called seqsimr.db.
+This Mega2.BATCH file (as they all do) begins with a rather long comment
+ indicating the keyword values that may be set and their default value.
+ Toward the end, it will select the inputs as Mega2r.ped and Mega2r.map, indicate
+ the input is PLINK ped with parameters and indicate that Mega2 should produce
+ a database called seqsimr.db:
 \end_layout
 
 \begin_layout LyX-Code
-[[show text]]
+Input_Database_Mode=1
+\end_layout
+
+\begin_layout LyX-Code
+Input_Format_Type=4
+\end_layout
+
+\begin_layout LyX-Code
+Input_Pedigree_File=Mega2r.ped
+\end_layout
+
+\begin_layout LyX-Code
+Input_PLINK_Map_File=Mega2r.map
+\end_layout
+
+\begin_layout LyX-Code
+Output_Path=.
+\end_layout
+
+\begin_layout LyX-Code
+Input_Path=.
+\end_layout
+
+\begin_layout LyX-Code
+PLINK_Args= --cM --missing-phenotype -9 --trait default
+\end_layout
+
+\begin_layout LyX-Code
+Input_Untyped_Ped_Option=2
+\end_layout
+
+\begin_layout LyX-Code
+Input_Do_Error_Sim=no 
+\end_layout
+
+\begin_layout LyX-Code
+AlleleFreq_SquaredDev=999999999.000000
+\end_layout
+
+\begin_layout LyX-Code
+Value_Marker_Compression=1
+\end_layout
+
+\begin_layout LyX-Code
+Analysis_Option=Dump
+\end_layout
+
+\begin_layout LyX-Code
+Value_Missing_Quant_On_Input=-9.000000
+\end_layout
+
+\begin_layout LyX-Code
+Value_Missing_Affect_On_Input=-9
+\end_layout
+
+\begin_layout LyX-Code
+Count_Genotypes=4
+\end_layout
+
+\begin_layout LyX-Code
+Count_Halftyped=no 
+\end_layout
+
+\begin_layout LyX-Code
+Value_Genetic_Distance_Index=0
+\end_layout
+
+\begin_layout LyX-Code
+Value_Genetic_Distance_SexTypeMap=0
+\end_layout
+
+\begin_layout LyX-Code
+Value_Base_Pair_Position_Index=1
+\end_layout
+
+\begin_layout LyX-Code
+Default_Reset_Invalid=no 
+\end_layout
+
+\begin_layout LyX-Code
+DBfile_name=seqsimr.db
+\end_layout
+
+\begin_layout LyX-Code
+Default_Outfile_Names=yes
 \end_layout
 
 \begin_layout Standard
-Now we start up the R program.
+After you have the database, start up the R program.
  The first commands you need to type are:
 \end_layout
 
@@ -661,10 +786,11 @@ ENV$locus_table
 \emph on
 locus_table
 \emph default
- variable from ENV as thought it was a real data frame.
- The most important difference is when you change a data frame passed to
- a function, the change does not happen to the original data frame.
- The original environment, on the other hand, will be changed.) 
+ variable from ENV as thought it was a simple data frame.
+ But the difference is when you change a data frame passed to a function,
+ the change does not happen to the original data frame.
+ Only the local value is changed; it is forgotten when the function exits.)
+ 
 \end_layout
 
 \begin_layout Standard
@@ -686,7 +812,1229 @@ will show (something like)
 \end_layout
 
 \begin_layout LyX-Code
-[[ stuff ]]
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+item
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+item
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+item
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[1]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"LocusCnt" 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"MARKER_SCHEME"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"PhenoCnt"
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[4]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"affectclass_table" 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"allele_table"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"entrezGene"
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[7]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"fam" 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"int_table" 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"locus_allele_table"
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[10]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"locus_table" 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"map_table"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"mapnames_table"
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[13]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"marker_table" 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"markers"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"markerscheme_table"
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[16]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"pedigree_brkloop_table"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"pedigree_table"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"person_brkloop_table"
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[19]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"person_table" 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"phenotype_table"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"refIndices"
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[22]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"refRanges" 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"traitaff_table"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"txdb"
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[25]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"unified_genotype_table"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+"verbose"
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A somewhat more informative summary can be had be running:
+\end_layout
+
+\begin_layout LyX-Code
+showMega2ENV() 
+\end_layout
+
+\begin_layout Standard
+Output shown below:
+\end_layout
+
+\begin_layout LyX-Code
+locus count: 1001;  phenotype count: 1; compression: 2 bits 
+\end_layout
+
+\begin_layout LyX-Code
+marker count: 1000; sample count: 1380
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+genetic and physical maps: 
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+index
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+map name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+map number
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+Phenotypes:
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Index
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Index
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Type
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+default
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+affection
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+basic tables: 
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="15" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+rows
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cols
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+affectclass_tables
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allele_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2002
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+34
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+locus_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1001
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+map_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+mapnames
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+marker_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+markerscheme_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pedigree_brkloop_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pedigree_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+person_brkloop_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1380
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+person_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1380
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+phenotype_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1380
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+traiffaff_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+derived tables: 
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+rows
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cols
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+fam
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1380
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+markers
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unified_genotype_table
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1380
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+
 \end_layout
 
 \begin_layout Standard
@@ -699,12 +2047,12 @@ And of course, you can use the customary R tools to examine these data,
 str(ENV$locus_table)
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Writing a VCF File
 \end_layout
 
 \begin_layout Standard
-Creating the VCF and related files is accomplished by creating a directory
+Creating the VCF file and related files is accomplished by creating a directory
  
 \begin_inset Quotes eld
 \end_inset
@@ -750,8 +2098,21 @@ Mega2VCF takes an argument which is the prefix used on all the files it
  We have chosen to make that a path that includes a directory so we keep
  all the generated data in one place.
  Mega2VCF is explained in greater depth in the Implementation Section [].
- Let us just note, that we create the traditional .vcf file as well as a
- .fam file (we do linkage), a .phe file (phenotypes) and a few others.
+ The Mega2VCF function assumes the environment is contained in the global
+ variable ENV.
+ If this is not true supply an additional argument 
+\begin_inset Quotes eld
+\end_inset
+
+envir
+\begin_inset Quotes erd
+\end_inset
+
+ set to the environment you wish to use.
+ Note, that this will create the traditional .vcf file as well as a .fam file
+ (we do linkage), a .phe file (phenotypes) and a few others.
+ Read the code to see how the file data is collected from the data frames.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -781,15 +2142,15 @@ MEGA
 
 \begin_layout Standard
 The argument to Mega2GenAbel is a filename prefix that will be used to name
- the .tped files that are created as an intermediate read by GenABEL to produce
- a gwaa.data-class object.
+ the .tped/.fam files that are created as an intermediate read by GenABEL
+ to produce a gwaa.data-class object.
  (See the Implementation Section [].) At this point, you can use any of the
  GenABEL provided functions on your data.
- Note: It would not make sense to take the original data on this tortuous
+ Note: It would not make sense to take the original PLINK data on this tortuous
  path to get it into GenABEL.
- But, there are several data formats that Mega2 can read and transform into
- a database that are not directly readable by GenABEL.
- All Mega2 databases are read into R and then can be transformed to GenABEL
+ There are several data formats that Mega2 can read and transform into a
+ database that are not directly readable by GenABEL.
+ Any Mega2 databases can be read into R and then can be transformed to GenABEL
  analogous to this example with seqsimr.db.
 \end_layout
 
@@ -802,8 +2163,7 @@ VCF
 \end_layout
 
 \begin_layout Standard
-If you read ahead in the Mega2.tgz file, you noticed a Mega2.BATCH.vcf file;
- its time to use it.
+Its time to use the Mega2.BATCH.vcf file from the tar file .
  At the command prompt, type:
 \end_layout
 
@@ -822,14 +2182,91 @@ This will use the C++ Mega2 program to populate the vcf directory with the
 vcfr
 \emph default
  directory.
- You should compare the two directories.
+ The abbreviated Mega2.BATCH.vcf file is (notice that there are no INPUT FILES):
+\end_layout
+
+\begin_layout LyX-Code
+Input_Database_Mode=2
+\end_layout
+
+\begin_layout LyX-Code
+Align_Strand_Input=no 
+\end_layout
+
+\begin_layout LyX-Code
+Output_Path=vcf
+\end_layout
+
+\begin_layout LyX-Code
+Input_Untyped_Ped_Option=2
+\end_layout
+
+\begin_layout LyX-Code
+Input_Do_Error_Sim=no 
+\end_layout
+
+\begin_layout LyX-Code
+AlleleFreq_SquaredDev=999999999.000000
+\end_layout
+
+\begin_layout LyX-Code
+Analysis_Option=VCF
+\end_layout
+
+\begin_layout LyX-Code
+Value_Missing_Quant_On_Output=-9
+\end_layout
+
+\begin_layout LyX-Code
+Value_Missing_Affect_On_Output=-9
+\end_layout
+
+\begin_layout LyX-Code
+DBfile_name=seqsimr.db
+\end_layout
+
+\begin_layout LyX-Code
+Chromosome_Single=1
+\end_layout
+
+\begin_layout LyX-Code
+Traits_Combine=1 2 e
+\end_layout
+
+\begin_layout LyX-Code
+file_name_stem=vcf
+\end_layout
+
+\begin_layout LyX-Code
+human_genome_build=B37
+\end_layout
+
+\begin_layout LyX-Code
+VCF_output_file_type=1
+\end_layout
+
+\begin_layout LyX-Code
+VCF_Allele_Order=Original_Order
+\end_layout
+
+\begin_layout LyX-Code
+Default_Outfile_Names=yes
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout Standard
+You should compare the two directories: vcf and vcfr.
  Please add the -w flag to the 
 \emph on
 diff -rs
 \emph default
  command.
  This causes the comparison to ignore differences in white space.
- So, what was the difference.
+ You may expressions that contain dates that are different betwee the two
+ runs.
 \end_layout
 
 \begin_layout Subsubsection
@@ -872,6 +2309,106 @@ to write the data from the srdta data into a PLINK .ped and .phe file.
 
 \begin_layout LyX-Code
 Mega2 Mega2.BATCH.srdta
+\end_layout
+
+\begin_layout Standard
+(abbreviated contents of Mega2.BATCH.srdata file
+\end_layout
+
+\begin_layout LyX-Code
+Input_Database_Mode=1
+\end_layout
+
+\begin_layout LyX-Code
+Input_Format_Type=4
+\end_layout
+
+\begin_layout LyX-Code
+Input_Pedigree_File=srdta.ped
+\end_layout
+
+\begin_layout LyX-Code
+Input_PLINK_Map_File=srdta.map
+\end_layout
+
+\begin_layout LyX-Code
+Input_Phenotype_File=srdta.phe
+\end_layout
+
+\begin_layout LyX-Code
+Output_Path=.
+\end_layout
+
+\begin_layout LyX-Code
+Input_Path=.
+\end_layout
+
+\begin_layout LyX-Code
+PLINK_Args= --missing-phenotype -9 --trait default
+\end_layout
+
+\begin_layout LyX-Code
+Input_Untyped_Ped_Option=2
+\end_layout
+
+\begin_layout LyX-Code
+Input_Do_Error_Sim=no 
+\end_layout
+
+\begin_layout LyX-Code
+AlleleFreq_SquaredDev=999999999.000000
+\end_layout
+
+\begin_layout LyX-Code
+Value_Marker_Compression=1
+\end_layout
+
+\begin_layout LyX-Code
+Analysis_Option=Dump
+\end_layout
+
+\begin_layout LyX-Code
+Value_Missing_Quant_On_Input=-9.000000
+\end_layout
+
+\begin_layout LyX-Code
+Value_Missing_Affect_On_Input=-9
+\end_layout
+
+\begin_layout LyX-Code
+Count_Genotypes=4
+\end_layout
+
+\begin_layout LyX-Code
+Count_Halftyped=no 
+\end_layout
+
+\begin_layout LyX-Code
+Value_Genetic_Distance_Index=0
+\end_layout
+
+\begin_layout LyX-Code
+Value_Genetic_Distance_SexTypeMap=0
+\end_layout
+
+\begin_layout LyX-Code
+Value_Base_Pair_Position_Index=1
+\end_layout
+
+\begin_layout LyX-Code
+Default_Reset_Invalid=no 
+\end_layout
+
+\begin_layout LyX-Code
+DBfile_name=srdta.db
+\end_layout
+
+\begin_layout LyX-Code
+Default_Outfile_Names=yes
+\end_layout
+
+\begin_layout Standard
+)
 \end_layout
 
 \begin_layout Standard
@@ -987,7 +2524,7 @@ _table
 \series bold
 fam
 \series default
- dataframe collects data from the 
+ data frame collects data from the 
 \series bold
 pedigree_table, person_table,
 \emph on
@@ -1058,7 +2595,7 @@ unified_genotype_table
 \series bold
 unified_genotype_table
 \series default
- with no 
+ in compressed form with no 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1067,14 +2604,14 @@ virtual markers
 \end_inset
 
  would require a lot of bit manipulations in R which would not be terribly
- efficient while keeping track of the gap is not particularly hard.
- This could all be done in Rcpp why use it if you can use R.
- Of course, the Mega2 program is written cpp and so does, in fact, just
- copy out the markers it needs.)
+ efficient while keeping track of the added gaps is not particularly hard.
+ We could use Rcpp but why use it if we are using R.
+ Of course, the Mega2 C++ program is written C++ and so does, in fact, just
+ copy the bits it needs.)
 \end_layout
 
 \begin_layout Standard
-Another feature worth noting is how we pull together the rows from the 
+As stated above, we pull together the rows from the 
 \series bold
 pedigree_table, person_table,
 \emph on
@@ -1085,8 +2622,12 @@ and
 \series bold
 phenotype_table
 \series default
+ to make a 
+\series bold
+fam
+\series default
 .
- The answer is simple: 
+ The 
 \series bold
 pedigree_table
 \series default
@@ -1106,16 +2647,6 @@ and
 phenotype_table
 \series default
  has a person_link field.
- The data in each 
-\begin_inset Quotes eld
-\end_inset
-
-_link
-\begin_inset Quotes erd
-\end_inset
-
- field is monotonic, unique and was created to capture memory pointers that
- could not be copied to the database.
  These link fields can be readily used by the R merge function operations
  to assemble data.
  As you might imagine, the 
@@ -1155,7 +2686,7 @@ mega2
 \emph on
 setfam
 \emph default
-, may be not necessary.
+, may be not needed.
  The function, 
 \emph on
 mkfam
@@ -1169,7 +2700,7 @@ read.Mega2DB
 fam
 \series default
  table.
- You might want to prune the 
+ You may want to prune the 
 \series bold
 fam
 \series default
@@ -1180,7 +2711,7 @@ fam
 \emph on
 setfam
 \emph default
- will reset the 
+ will set the 
 \series bold
 fam
 \series default
@@ -1250,12 +2781,21 @@ getgenotypesraw
 marker
 \series default
  data frame.
- The offsets are used by the internal code while the name, chromosome and
- position can be used to identify the data to the user.
- These two functions are really dispatches that call into Rcpp code.
+ 
+\series bold
+The marker 
+\series default
+data frame has two offsets that are used by the internal decompression code
+ and it has a name, chromosome and position can be used to identify the
+ data to the user.
+ The two 
+\emph on
+getgenotypes
+\emph default
+ functions are really dispatches that call into Rcpp code.
  They call the proper function for the level of compression: biallelic and
- microsatellite.
- They also collect genotypes and alleles from appropriate 
+ more than two alleles.
+ They also collect genotypes and alleles data from appropriate 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1264,7 +2804,7 @@ R environment
 \end_inset
 
  tables to pass as explicit arguments to the Rcpp code.
- For each marker, 
+ For each marker specified, 
 \emph on
 getgenotypes
 \emph default
@@ -1279,22 +2819,23 @@ getgenotypesraw
  allele.
 \end_layout
 
-\begin_layout Standard
-We might have the genotype data to create a 1000's of samples by 1,0000,000's
- of markers matrix in R.
- But the stress this places on the machine will not be acceptable.
- Thus we introduced more functions to partition the set of markers into
- reasonable chunks.
- In particular, most probably we only wan t to process a chromosome or even
- some genes at a time; not all the markers we know about.
-\end_layout
-
 \begin_layout Subsection
 
 \emph on
 mega2 
 \emph default
 Package Marker Range Functions
+\end_layout
+
+\begin_layout Standard
+We might have the genotype data to create a 1000's of samples by 1,0000,000's
+ of markers matrix in R.
+ But are unlikely to have the memory to support the tables.
+ The genotype data is compressed, but we can not decompress it all at once.
+ We introduce more functions to partition the set of markers into reasonable
+ chunks.
+ In particular, most probably we only want to process a chromosome or even
+ some genes at a time; not all the markers.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1314,8 +2855,8 @@ s.UCSC.hg19.knownGene" into the
 mega2
 \emph default
  package.
- The former translates between gene name or alias and the entrezID of the
- gene.
+ The former translates between a gene name or alias and the entrezID of
+ the gene.
  The latter gives start position, end position and chromosome for each transcrip
 t known for the each gene.
  You might want to use the data from another build available at Bioconductor
@@ -1329,7 +2870,7 @@ mega2
 setGenes
 \emph default
  lets you supply alternate string names for these data.
- Mega2 will load these Namespace from R when you access the 
+ Mega2 will load these Namespaces from R when you access the 
 \emph on
 applyFnToGenes
 \emph default
@@ -1362,10 +2903,9 @@ applyFntoGenes
  The call back function will be called with three arguments: the first is
  a matrix of genotypes for all the markers in the transcript, the second
  is a data frame of the markers for the transcript, and the third is a single
- row from the data frame that defines the transcript (it has the at least
- names, ID, start position, end position, and chromosome).
- The call back function can apply whatever analysis is desired for the markers
- of the gene.
+ row from an internal data frame that defines the transcript (it has the
+ at least names, ID, start position, end position, and chromosome).
+ The call back function can apply whatever analysis is desired for the genotypes.
  It can also access the other data frames available in the 
 \begin_inset Quotes eld
 \end_inset
@@ -1383,11 +2923,13 @@ R environment
 applyFnToGenes
 \emph default
  is intended to be the front end.
- By giving it specific named arguments, you can indicate the call back should
- be applied to each of several sets of markers in arbitrary ranges on chromosome
-s.
- Or you can specify the entire chromosome to define the range of markers.
- And finally, you can just specify an arbitrary list of markers.
+ By giving it named arguments, you can indicate the call back should be
+ applied to each of several sets of markers in arbitrary ranges on chromosomes
+ (ranges_arg =) .
+ Or you can specify the entire chromosome to define the range of markers
+ (chrs_arg =).
+ And finally, you can just specify an arbitrary list of markers (markers_args
+ =).
 \end_layout
 
 \begin_layout Subsubsection
@@ -1403,10 +2945,10 @@ applyFnToRanges
 \end_layout
 
 \begin_layout Standard
-There are several reasons that the specific officially provided ranges for
- the number and placement gene transcripts may not be to your liking.
+There are several reasons that the officially provided ranges for the gene
+ transcripts may not be to your liking.
  Some the transcripts for a gene appear to have the same start/end position
- of others but with a different transcript name.
+ as others but with a different transcript name.
  Some transcripts overlap others.
  The transcripts have one start and one end but do not account for non coding
  regions, promoters, etc.
@@ -1426,9 +2968,14 @@ observations
 \end_inset
 
 .
- It also records a vector of 3 integer that indicates which variable in
- the data frame contains the chromosome, start position and end position.
- These range and selector data are used as a default.
+ It also records a vector of 3 integer that indicates which observation
+ variable in the data frame contains the chromosome, start position and
+ end position.
+ These range and selector data are used as the default for 
+\emph on
+applyFnToRanges
+\emph default
+.
 \end_layout
 
 \begin_layout Standard
@@ -1442,13 +2989,14 @@ applyFnToGenes
 \emph default
 .
  With no additional arguments, it will iterate through each row of the default
- range, compute the contained markers and then invoke the call back.
+ range, compute the markers contained between the start and end, compute
+ the genotype matrix,and then invoke the call back.
  Alternatively, 
 \emph on
 applyFnToRanges
 \emph default
- may be given a range and selector argument which will cause it to use the
- ranges supplied rather than the default.
+ may be given a range argument and a selector argument which will cause
+ it to use the ranges supplied rather than the default.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1466,13 +3014,14 @@ applyFnToMarkers
 \emph default
  is the simplest function that uses the previously discussed call back function.
  It takes one additional argument that is a data frame of markers following
- the layout of the supplied 
+ the column layout of the 
 \series bold
 marker
 \series default
  data frame.
  It creates a genotype matrix for these markers and then invokes the call
- back function with the genotype matrix, the marker data frame and NULL.
+ back function with the genotype matrix, the marker argument data frame
+ and NULL.
  (NULL because there is no range information.)
 \end_layout
 
@@ -1491,6 +3040,17 @@ The CRAN pedgene package,
 
 Gene-Level Statistics for Pedigree Data
 \begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://cran.r-project.org/web/packages/pedgene/index.html
+\end_layout
+
 \end_inset
 
 , performs 
@@ -1525,8 +3085,12 @@ read.Mega2DB
 \emph on
 mega2
 \emph default
- package to load a Mega2 database.
- But it also has to modify the 
+ package to load a Mega2 database (
+\emph on
+dbmega2_import
+\emph default
+).
+ Then it has to modify the 
 \series bold
 fam
 \series default
@@ -1540,18 +3104,14 @@ run_pedgene
 \emph on
 applyFnToRanges
 \emph default
- on the same ranges of data that our previous test used.
- In addition, the call back function, 
+ to the default ranges.
+ The call back function, 
 \emph on
 DOpedgene
 \emph default
-, replicates the code that the previous test used with the genotype data
- slightly adjusted to the new format.
-\end_layout
-
-\begin_layout Standard
-Yes the results produced are the same, but the original test was hand coded
- and hard to change.
+, replicates the code that we used in a previous study; the results produced
+ are the same, but the original test code harness was hand coded and hard
+ to change.
 \end_layout
 
 \begin_layout Subsection
@@ -1565,12 +3125,12 @@ mega2vcf
 \begin_layout Standard
 This package serves several purposes.
  It shows you how to assemble data from the Mega2 database into more conventiona
-l usage.
- It provides a regression for Mega2+R by producing the same results from
- the SQLite database that Mega2 can produce.
- All the VCF related files should be the same.
- Finally, it allows VCF format files to be generated for R analysis that
- need this format input.
+l presentation.
+ It allows VCF format files to be generated for R analysis that use this
+ format input.
+ Finally, it provides a regression for Mega2+R by producing the same results
+ from the SQLite database that Mega2 can produce.
+ All the VCF related files should be the same except for time stamps.
 \end_layout
 
 \begin_layout Standard
@@ -1582,12 +3142,12 @@ function from the
 \emph on
 mega2
 \emph default
- package to load a Mega2 database, before the functions in this package
- can be used.
+ package to load a Mega2 database and store the results in the global variable
+ ENV, before the functions in this package can be used.
  This package takes the data that are available in the Mega2 data frames
  and writes them out into several files.
  The .vcf file is the main output; it is created from the genotype matrix,
- and that data are supplemented by info from the 
+ and that matrix is supplemented by info from the 
 \series bold
 fam
 \series default
@@ -1600,27 +3160,30 @@ allele_table
 \emph on
 Mega2VCF
 \emph default
- program performs this task.
- One interesting aspect of the code is how it deals with a potentially large
- numbers of markers.
- Simply it attacks the problem a chunk at a time, where a chunk contains
- 
+ program uses the default argument ENV; if your environment is not stored
+ there, you must supply the envir = argument to tell where the environment
+ is.
+ One interesting aspect of the code design is how it writes large numbers
+ of markers.
+ It attacks the problem a chunk at a time, where a chunk contains 
 \begin_inset Quotes eld
 \end_inset
 
-C
+X
 \begin_inset Quotes erd
 \end_inset
 
  markers (currently 1000).
- It generates the genotype matrix and related info for the chunk then append
- the results for these markers to the .vcf output file.
- Then it reloads new data into the chunk and writes appends it again.
- This looping strategy might prove useful for other uses of the data.
+ It generates the genotype matrix and related files for each chunk then
+ append the results for these markers to the .vcf and other files.
+ Then it reloads new data, builds a new chunk and appends it again.
+ This looping strategy might prove useful for other problems where the data
+ can be generated incrementally.
 \end_layout
 
 \begin_layout Standard
-We also generate several more files:
+Besides the .vcf file, we generate several more files.
+ Below we indicate the file, the function that generates it, and the contents:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1692,8 +3255,8 @@ Mega2VCF mkVCFhdr
 \begin_inset Text
 
 \begin_layout Plain Layout
-contains the multi column vcf file, each row contains all the samples for
- that marker
+contains the multi column vcf file with header; each row contains all the
+ samples for that marker
 \end_layout
 
 \end_inset
@@ -1872,9 +3435,9 @@ contains the penetrance information
 \end_layout
 
 \begin_layout Standard
-All this information is available in the Mega2 database.
+All this information is stored in a Mega2 database.
  The code in the provided functions illustrates how to assemble the correspondin
-g data from the Mega2 database.
+g data from the Mega2 data frames.
  The 
 \emph on
 mkVCFphe
@@ -1883,16 +3446,17 @@ mkVCFphe
  The database contains a raw vector of 8 * the number of phenotypes byte
  (per person).
  The 8 bytes are either one double precision float number or two integers
- depending on an encoding in the 
+ depending on the encoding in the 
 \series bold
 locus_table
 \series default
-.
- After selecting each 8 byte vector, 
+ (quantitative or affective).
+ 
 \emph on
 readBin
 \emph default
- is used for converting the raw bits to the correct form.
+ is used for converting the raw bits in each reach 8 byte vector to the
+ correct form.
 \end_layout
 
 \begin_layout Subsection
@@ -1924,20 +3488,19 @@ function from the
 \emph on
 mega2
 \emph default
- package to load a Mega2 database, before the functions in this package
- can be used.
+ package and save the returned environment into ENV to load a Mega2 database.
  The function, 
 \emph on
 Mega2GenABEL
 \emph default
 , returns a gwaa.data-class object.
- It operates by writing the Mega2 database data into one of the formats
- that GenABEL supports; in this case PLINK tped format.
+ It operates by writing the Mega2 data into one of the formats that GenABEL
+ supports; in this case PLINK tped format.
  This requires a .fam file, a .phe file and a .tped file.
  The latter looks very much like a VCF .vcf file with entries on each row
  for the genotypes of each sample.
- (There is less fields before the genotype data and the genotype data is
- show as real nucleotides rather than VCF REF/ALT field references.) 
+ (There are less fields before the genotype data and the genotype data show
+ the real nucleotides rather than VCF REF/ALT field references.) 
 \emph on
 Mega2GenABEL
 \emph default
@@ -1949,7 +3512,7 @@ glue
 \begin_inset Quotes erd
 \end_inset
 
- functions to process the 
+ functions to process the a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1957,144 +3520,24 @@ tped
 \begin_inset Quotes erd
 \end_inset
 
- file into a generic format and then to convert that format to a GenABEL
- object.
-\end_layout
-
-\begin_layout Subsection
-Extracting Genotypes
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-An 
-\end_layout
-
+ file into a generic GenABEL 
+\begin_inset Quotes eld
 \end_inset
 
-
-\end_layout
-
+raw
+\begin_inset Quotes erd
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Possible
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Data Statistics
+ format file and then it converts that raw format and a phenotypefile to
+ a GenABEL gwaa.data-class object.
 \end_layout
 
 \begin_layout Section
 Results
 \end_layout
 
-\begin_layout Subsection
-Performance
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Time
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Number
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
 Discussion
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-placement h
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Performance 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Section
@@ -2104,7 +3547,7 @@ Summary
 \begin_layout Standard
 As with all software projects, 
 \series bold
-MegaR2
+Mega2R
 \series default
  is a work in progress, and so there are a number of possible improvements
  that could be made in the future.
@@ -2118,7 +3561,7 @@ Availability and requirements
 \begin_layout Standard
 Project name: 
 \series bold
-MegaR2
+Mega2R
 \end_layout
 
 \begin_layout Standard
@@ -2158,7 +3601,7 @@ status open
 
 \begin_layout Plain Layout
 
-https://watson.hgen.pitt.edu/register/docs/megaR2.html
+https://watson.hgen.pitt.edu/register/docs/mega2R.html
 \end_layout
 
 \end_inset
@@ -2175,7 +3618,7 @@ Programming language: R, C++
 \end_layout
 
 \begin_layout Standard
-Other requirements; R SQLite library
+Other requirements; R, SQLite library
 \end_layout
 
 \begin_layout Standard
@@ -2199,8 +3642,8 @@ Authors' contributions
 \end_layout
 
 \begin_layout Standard
-RVB designed, debugged, and maintains MegaR2.
- DEW provided inspiration and provided the problems that MegaR2 solves.
+RVB designed, debugged, and maintains Mega2+R.
+ DEW provided inspiration and provided the problems that Mega2+R solves.
  RVB, with assistance from DEW, wrote this manuscript.
 \end_layout
 
@@ -2244,41 +3687,633 @@ Appendix
 \end_layout
 
 \begin_layout Standard
-The data from most of these tables are generally useful and made available
- in dataframes.
- For example, the allele_table, contains the 
+The data from most of the Mega2 tables are generally useful and made available
+ in data frames.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+int_table
+\end_layout
+
+\begin_layout Standard
+This table contains data like Phenotype Count and Locus Count; they can
+ be calculated from tables but its faster to have the value available.
+ There also are a 
+\series bold
+double_table
+\series default
+, 
+\series bold
+charstar_table
+\series default
+ and 
+\series bold
+stuff_table
+\series default
+ for storing the Mega2 values: double float, character string and random
+ byte vector respectively.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+name of an integer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+value
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+value for integer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Subsubsection
+pedigree_table (and pedigree_brkloop_table)
+\end_layout
+
+\begin_layout Standard
+This table provides the basic data for a family: name, an index and count
+ of members.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Num
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique ID for pedigree
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+EntryCnt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+number of persons in pedigree
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mega2 alternate name
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PedPre
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID customer entered
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+OriginalID
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mega2 alternate name
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+origped
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mega2 alternate name
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pedigree_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking family members
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+person_table (and person_brkloop_table)
+\end_layout
+
+\begin_layout Standard
+This table provides the basic data for a person: name, an index, parents,
+ and sex.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="12" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+UniqueID
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique ID for person
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+OrigID
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mega2 alternate name
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FamName
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mega2 alternate family name
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PerPre
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID customer entered
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+numeric ID for person
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Father
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+father's ID
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mother
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+mother's ID
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sex
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+person's sex
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pedigree_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking family members
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+person_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking persons
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+pedigree_brkloop_table and person_brkloop_table
+\end_layout
+
+\begin_layout Standard
+These tables are available if the analysis being performed does not accept
+ pedigrees with loops.
+ These tables split the loops and create a 
 \begin_inset Quotes eld
 \end_inset
 
-observations
+doppleganger
 \begin_inset Quotes erd
 \end_inset
 
-:
+ for one person in each loop and adjust the parents of one of the pair to
+ break the loop.
+ Compared to the pedigree_table and person_table, will be an extra person
+ in some families (with loops).
 \end_layout
 
-\begin_layout LyX-Code
-  pId, AlleleName, Frequency, indexX, locus_link
+\begin_layout Subsubsection
+locus_table
 \end_layout
 
-\begin_layout LyX-Code
-
+\begin_layout Standard
+This table provides the basic data for a locus: its name, type and allele
+ count.
 \end_layout
 
 \begin_layout LyX-Code
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="2">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="1.5in">
-<column alignment="center" valignment="top" width="4.5in">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\series bold
-observation
+column
 \end_layout
 
 \end_inset
@@ -2287,31 +4322,87 @@ observation
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\series bold
-meaning
+contents
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\series bold
 pId
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-The database key for this item.
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+LocusName
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+locus (phenotype/genotype) name
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+AlleleCnt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+number of alleles for this marker
 \end_layout
 
 \end_inset
@@ -2322,85 +4413,6 @@ The database key for this item.
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\series bold
-AlleleName
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-The nucleotide (or 1/2 or A/b) for this allele.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Frequency
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-The frequency for this allele in the marker.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-indexX
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-A recoding of this allele into 1/2 format for cases where that presentation
- is preferred rather than nucleotide.
- (Note: 
-\begin_inset Quotes eld
-\end_inset
-
-index
-\begin_inset Quotes erd
-\end_inset
-
- would be a better name for the column, but the database considers that
- to be a reserved word.)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
 locus_link
 \end_layout
 
@@ -2410,13 +4422,1450 @@ locus_link
 \begin_inset Text
 
 \begin_layout Plain Layout
-An integer indicator to associate related locus info
+unique integer linking loci
 \end_layout
 
 \end_inset
 </cell>
 </row>
 </lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+allele_table
+\end_layout
+
+\begin_layout Standard
+This table list the allele data for each locus: name, frequency and a monotonicl
+y increasing index.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+AlleleName
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allele nucleotide
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frequency
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allele frequency
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+indexX
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+numeric index of allele 1-N
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+locus_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking loci
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+marker_table
+\end_layout
+
+\begin_layout Standard
+This table provides the basic data for a marker: its name, chromosome and
+ position.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MarkerName
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+name of marker
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pos_avg
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+prefered average genetic position
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pos_female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+prefered female genetic position
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pos_male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+prefered male genetic position
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+chromosome
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+chromosome of marker
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+locus_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking loci
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+markerscheme_table
+\end_layout
+
+\begin_layout Standard
+This table is used as part of the compression algorithm to compress nucleotide
+ values.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking loci
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allele1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allele 1 value
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allele2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allele 2 value
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+map_table
+\end_layout
+
+\begin_layout Standard
+This table provides the genetic position values for a given marker according
+ to the 
+\begin_inset Quotes eld
+\end_inset
+
+map
+\begin_inset Quotes erd
+\end_inset
+
+ index defined in the table below.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+marker
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking loci
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+position
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+average genetic position
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pos_female
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+female genetic position
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pos_male
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+male genetic position
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Subsubsection
+mapname_table
+\end_layout
+
+\begin_layout Standard
+This table provides a mapping of a map name string to a map index.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+sex_averaged_map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+male_sex_map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+female_sex_map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+traitaff_table
+\end_layout
+
+\begin_layout Standard
+This table indicates the number of classes and number of penetrance entries
+ for each loci.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ClassCnt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+number of classes
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PenCnt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+number of penetrance values
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+locus_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking loci
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+affectclass_table
+\end_layout
+
+\begin_layout Standard
+This table holds penetrance data for each loci for each class.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MaleDef
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FemaleDef
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+AutoDef
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MalePen
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+male penetrance
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FemalePen
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+female penetrance
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+AutoPen
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+autosomal penetrance
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+locus_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking loci
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+class_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking classes
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+phenotype_table
+\end_layout
+
+\begin_layout Standard
+This table holds phenotype data for each person.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+person_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking persons
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+bytes
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+byte count of data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+raw data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+genotype_table
+\end_layout
+
+\begin_layout Standard
+This table holds genotype data for each person.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+column
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contents
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pId
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique database table key
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+person_link
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer linking persons
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+chr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+chromosome number
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+bytes
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+byte count of data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+raw data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+STUFF
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+cc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Performance 
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -2433,24 +5882,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-
-\series bold
-dbVOR
-\series default
- usage: Raw data is loaded into database programs by one of several programs.
- The 
-\series bold
-genout
-\series default
- program accesses the database tables, filters and merges the data and outputs
- genotypes in one of several common formats.
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:dbVOR-usage:-Raw"
-
-\end_inset
-
-
+Possible
 \end_layout
 
 \end_inset
@@ -2461,41 +5893,6 @@ name "fig:dbVOR-usage:-Raw"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Subsection
-Data Schema
-\end_layout
-
-\begin_layout Standard
-Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Schema-1"
-
-\end_inset
-
- is an enhanced entity-relationship diagram illustrating the layout of dbVOR's
- database tables, as drawn by MySQL Work
-\change_deleted 1332494340 1421871875
-s
-\change_unchanged
-bench using Crow's Foot Notation.
- Here the boxes represent tables, the lines between the boxes represent
- relationships between the tables, and cardinality and modality of these
- relationships is represented by the shapes at the ends of the lines.
- However, the lines are not useful in this static presentation.
- But if MySQL Workbench were interactively presenting this schema, hovering
- over table fields and arrows would clearly highlight foreign key dependencies.
- Each field is annotated by a key symbol or diamond symbol whose meanings
- are defined in Table 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab:Symbol-Definitions"
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
@@ -2681,314 +6078,6 @@ The
 \end_inset
 
 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-aa
-\end_layout
-
-\begin_layout Standard
-\begin_inset Preview
-
-\begin_layout Standard
-ENV = read.Mega2DB("/users/rbaron/mega2/data/seqsimr.db", verbose=1)
-\end_layout
-
-\begin_layout Standard
-int_table 34 3 
-\end_layout
-
-\begin_layout Standard
-int_table pId key value 
-\end_layout
-
-\begin_layout Standard
-pedigree_table 20 8 
-\end_layout
-
-\begin_layout Standard
-pedigree_table pId Num EntryCnt Name PedPre OriginalID origped pedigree_link
- 
-\end_layout
-
-\begin_layout Standard
-person_table 1380 11 
-\end_layout
-
-\begin_layout Standard
-person_table pId UniqueID OrigID FamName PerPre ID Father Mother Sex pedigree_li
-nk person_link 
-\end_layout
-
-\begin_layout Standard
-pedigree_brkloop_table 20 8 
-\end_layout
-
-\begin_layout Standard
-pedigree_brkloop_table pId Num EntryCnt Name PedPre OriginalID origped pedigree_
-link 
-\end_layout
-
-\begin_layout Standard
-person_brkloop_table 1380 11 
-\end_layout
-
-\begin_layout Standard
-person_brkloop_table pId UniqueID OrigID FamName PerPre ID Father Mother
- Sex pedigree_link person_link 
-\end_layout
-
-\begin_layout Standard
-locus_table 1001 5 
-\end_layout
-
-\begin_layout Standard
-locus_table pId LocusName Type AlleleCnt locus_link 
-\end_layout
-
-\begin_layout Standard
-allele_table 2002 5 
-\end_layout
-
-\begin_layout Standard
-allele_table pId AlleleName Frequency indexX locus_link 
-\end_layout
-
-\begin_layout Standard
-marker_table 1000 7 
-\end_layout
-
-\begin_layout Standard
-marker_table pId MarkerName pos_avg pos_female pos_male chromosome locus_link
- 
-\end_layout
-
-\begin_layout Standard
-markerscheme_table 1000 4 
-\end_layout
-
-\begin_layout Standard
-markerscheme_table pId key allele1 allele2 
-\end_layout
-
-\begin_layout Standard
-map_table 2000 6 
-\end_layout
-
-\begin_layout Standard
-map_table pId marker map position pos_female pos_male 
-\end_layout
-
-\begin_layout Standard
-mapnames_table 2 6 
-\end_layout
-
-\begin_layout Standard
-mapnames_table pId map sex_averaged_map male_sex_map female_sex_map name
- 
-\end_layout
-
-\begin_layout Standard
-traitaff_table 1 4 
-\end_layout
-
-\begin_layout Standard
-traitaff_table pId ClassCnt PenCnt locus_link 
-\end_layout
-
-\begin_layout Standard
-affectclass_table 1 9 
-\end_layout
-
-\begin_layout Standard
-affectclass_table pId MaleDef FemaleDef AutoDef MalePen FemalePen AutoPen
- locus_link class_link 
-\end_layout
-
-\begin_layout Standard
-phenotype_table 1380 4 
-\end_layout
-
-\begin_layout Standard
-phenotype_table pId person_link bytes data 
-\end_layout
-
-\begin_layout Standard
-genotype_table 1380 5 
-\end_layout
-
-\begin_layout Standard
-genotype_table pId person_link chr bytes data 
-\end_layout
-
-\begin_layout Standard
-> ls(ENV)
-\end_layout
-
-\begin_layout Standard
-[1] "LocusCnt" "MARKER_SCHEME" "PhenoCnt" 
-\end_layout
-
-\begin_layout Standard
-[4] "affectclass_table" "allele_table" "entrezGene" 
-\end_layout
-
-\begin_layout Standard
-[7] "fam" "int_table" "locus_allele_table" 
-\end_layout
-
-\begin_layout Standard
-[10] "locus_table" "map_table" "mapnames_table" 
-\end_layout
-
-\begin_layout Standard
-[13] "marker_table" "markers" "markerscheme_table" 
-\end_layout
-
-\begin_layout Standard
-[16] "pedigree_brkloop_table" "pedigree_table" "person_brkloop_table" 
-\end_layout
-
-\begin_layout Standard
-[19] "person_table" "phenotype_table" "refIndices" 
-\end_layout
-
-\begin_layout Standard
-[22] "refRanges" "traitaff_table" "txdb" 
-\end_layout
-
-\begin_layout Standard
-[25] "unified_genotype_table" "verbose" > 
-\end_layout
-
-\begin_layout Standard
-showMega2ENV() 
-\end_layout
-
-\begin_layout Standard
-locus count: 1001; phenotype count: 1; compression: 2 bits marker count:
- 1000; sample count: 1380
-\end_layout
-
-\begin_layout Standard
-genetic and physical maps: 
-\end_layout
-
-\begin_layout Standard
-map name map number 
-\end_layout
-
-\begin_layout Standard
-1 Map 0
-\end_layout
-
-\begin_layout Standard
-2 BP 1
-\end_layout
-
-\begin_layout Standard
-Phenotypes:
-\end_layout
-
-\begin_layout Standard
-Index Name Type 
-\end_layout
-
-\begin_layout Standard
-1 1 default affection
-\end_layout
-
-\begin_layout Standard
-basic tables: 
-\end_layout
-
-\begin_layout Standard
-rows cols 
-\end_layout
-
-\begin_layout Standard
-affectclass_table 1 9 
-\end_layout
-
-\begin_layout Standard
-allele_table 2002 5 
-\end_layout
-
-\begin_layout Standard
-int_table 34 3 
-\end_layout
-
-\begin_layout Standard
-locus_table 1001 5 
-\end_layout
-
-\begin_layout Standard
-map_table 2000 6 
-\end_layout
-
-\begin_layout Standard
-mapnames_table 2 6 
-\end_layout
-
-\begin_layout Standard
-marker_table 1000 8 
-\end_layout
-
-\begin_layout Standard
-markerscheme_table 1000 4 
-\end_layout
-
-\begin_layout Standard
-pedigree_brkloop_table 20 8 
-\end_layout
-
-\begin_layout Standard
-pedigree_table 20 8 
-\end_layout
-
-\begin_layout Standard
-person_brkloop_table 1380 11 
-\end_layout
-
-\begin_layout Standard
-person_table 1380 11 
-\end_layout
-
-\begin_layout Standard
-phenotype_table 1380 4 
-\end_layout
-
-\begin_layout Standard
-traitaff_table 1 4
-\end_layout
-
-\begin_layout Standard
-derived tables: 
-\end_layout
-
-\begin_layout Standard
-rows cols 
-\end_layout
-
-\begin_layout Standard
-fam 1380 8 
-\end_layout
-
-\begin_layout Standard
-markers 1000 5 
-\end_layout
-
-\begin_layout Standard
-unified_genotype_table 1380 2
-\end_layout
-
-\begin_layout Standard
-> 
 \end_layout
 
 \end_inset
