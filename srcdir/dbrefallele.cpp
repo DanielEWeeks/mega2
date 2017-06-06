@@ -153,7 +153,6 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                         success++;
                         bp++;
                         locus++;
-
                     } else if (pos > position && chromosome == chr) {
                         //if we find a value too large insert a dummy and increment
                         SECTION_LOG(ref_not_available);
@@ -162,11 +161,8 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                         bp++;
                         locus++;
                         fail++;
-                        if (bp->pos == pos) {
-//xxx
-                            msgvf("oopsee! about to flush good pos\n");
-//                          BPT;
-                        }
+                        if (bp->pos == pos)
+                            continue;
                     }
                     else if( chr > chromosome) {
                         SECTION_LOG(ref_not_available);
@@ -179,6 +175,8 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     }
                     chr = 0;
                     pos = 0;
+                    //ref[0] = '\0';
+                    //alt[0] = '\0';
                 }
                 token = std::strtok(NULL, " \n");
             }
@@ -225,7 +223,7 @@ Str Reference_Allele_Table::get_filename(){
         printf("Reference panels are 4 column files of CHR POS REF ALT that are then gzipped.\n");
         printf("They can be constructed by hand or using a shell script included with Mega2\n");
         printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
-        printf("most recent build at ____________. \n\n");
+        printf("most recent build at https://watson.hgen.pitt.edu/mega2/refs/ \n\n");
 
 
         printf("Enter filename of reference panel > ");
