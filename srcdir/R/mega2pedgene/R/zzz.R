@@ -25,22 +25,19 @@
 # 
 # ===========================================================================
 
-go = function() {
+.onLoad <- function(libname = find.package("mega2pedgene"), pkgname = "mega2pedgene") {
+  
+    # CRAN Note avoidance
+    if(getRversion() >= "2.15.1") 
+        utils::globalVariables(
+      # global tables
+            c("ENV"
+              )
 
-    print("## run 200 ranges of pedgene to compare with YJiang's results; and profile")
-
-    library(mega2pedgene)
-
-    aa=setwd("~/mega2/test/R/yj/realDataAnalysis/mega2")
-    envir = init_pedgene("~/mega2/data/yj1.db", verbose = 1)
-
-    Rprof("prof.out", line.profiling=T, memory.profiling=T)
-    run_pedgene(gs=1:200, envir = envir)
-    Rprof(NULL)
-    print(summaryRprof("prof.out", lines="both"))
-
-    aa=setwd(aa)
+                               )
+  invisible()
 }
 
-go()
-
+.onUnload <- function (libpath) {
+#  library.dynam.unload("mega2pedgene", libpath)
+}

@@ -4,16 +4,18 @@
 \alias{init_pedgene}
 \title{get data for pedgene run using \bold{Mega2} framework}
 \usage{
-init_pedgene(db = "ped3.db", verbose = FALSE)
+init_pedgene(db = NULL, filename = NULL, verbose = FALSE)
 }
 \arguments{
 \item{db}{specifies a \bold{Mega2} SQLite database containing study data.}
+
+\item{filename}{to store p-values to.  Historically it is "k_Schaid_rare.txt"}
 
 \item{verbose}{default is passed to the \bold{Mega2} framework.  1 indicates that
 diagnostic printouts should be enabled.}
 }
 \value{
-None
+"environment" containing SQLite database and other globals
 }
 \description{
 This populates the \bold{Mega2} data.frames from the specified database.  It also

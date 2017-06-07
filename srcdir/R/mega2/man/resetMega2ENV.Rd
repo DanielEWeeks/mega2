@@ -7,7 +7,7 @@
 resetMega2ENV()
 }
 \value{
-None
+envir an environment that contains all the tables created from the SQLite tables.
 }
 \description{
 Mega2 uses an environment, \emph{ENV} to store all the tables it reads in.  This is reset
@@ -15,6 +15,6 @@ Mega2 uses an environment, \emph{ENV} to store all the tables it reads in.  This
 }
 \examples{
 \dontrun{
-resetENV()
+resetMega2ENV()
 }
 }

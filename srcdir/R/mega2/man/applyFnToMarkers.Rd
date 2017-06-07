@@ -4,11 +4,12 @@
 \alias{applyFnToMarkers}
 \title{apply function to genotypes in a set of markers}
 \usage{
-applyFnToMarkers(op      = function (geno, markers, range) {},
-                markers_arg)
+applyFnToMarkers(op      = function (geno, markers, range, envir) {},
+                markers_arg,
+                envir = ENV)
 }
 \arguments{
-\item{op}{Is a function of three arguments.  It will be called repeatedly by
+\item{op}{Is a function of four arguments.  It will be called repeatedly by
 \code{applyFnToGenes}.  The arguments are:
 \describe{
 \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
@@ -23,6 +24,7 @@ applyFnToMarkers(op      = function (geno, markers, range) {},
  }
 }
 \item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
+\item{envir}{An R environment holding Mega2 data frames and state data.}
 }}
 
 \item{markers_arg}{a data.frame with the following 5 variables:
@@ -34,6 +36,8 @@ applyFnToMarkers(op      = function (geno, markers, range) {},
 \item{chromosome}{is the integer chromosome number}
 \item{position}{is the integer base pair position of marker}
  }}
+
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 None
@@ -44,12 +48,12 @@ A matrix of the genotypes for all the markers is generated.  Then, your \emph{op
 }
 \examples{
 \dontrun{
-#    show = function(g, m, r) {
+#    show = function(g, m, r, e) {
 #        print(r)
 #        print(m)
 #        print(head(g))
 #    }
-#    ENV = getMega2ENV()
+#    ENV = read.Mega2DB()
 
    # apply function "show" to all genotypes in chromosome 20, 21, 22, and 23
    applyFnToMarkers(show, ENV$markers[ENV$markers$chromosome \%IN\% 20:23),])

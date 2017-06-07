@@ -4,13 +4,14 @@
 \alias{applyFnToRanges}
 \title{apply function to genotypes in each specified range}
 \usage{
-applyFnToRanges(op          = function (geno, markers, range) {},
+applyFnToRanges(op          = function (geno, markers, range, envir) {},
                 ranges_arg  = NULL,
                 indices_arg = NULL,
-                fuzz_arg    = 0 )
+                fuzz_arg    = 0,
+                envir       = ENV)
 }
 \arguments{
-\item{op}{Is a function of three arguments.  It will be called repeatedly by
+\item{op}{Is a function of four arguments.  It will be called repeatedly by
 \code{applyFnToGenes}.  The arguments are:
 \describe{
 \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
@@ -25,6 +26,7 @@ applyFnToRanges(op          = function (geno, markers, range) {},
  }
 }
 \item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
+\item{envir}{An R environment holding Mega2 data frames and state data.}
 }}
 
 \item{ranges_arg}{is a data.frame that contains at least 4 variables: a name, a chromosome, a 
@@ -36,6 +38,8 @@ pair position and end base pair position of each range data.frame.}
 \item{fuzz_arg}{is an integer vector of length one or two.  The first argument is used to reduce
 the start base pair selected from each range and the second to increase the end base pair
 position.  (If only one value is present, it is used for both changes.)}
+
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 None
@@ -49,12 +53,12 @@ If the \code{ranges_arg} is NULL, then the default ranges that have been set by 
 }
 \examples{
 \dontrun{
-#    show = function(g, m, r) {
+#    show = function(g, m, r, e) {
 #        print(r)
 #        print(m)
 #        print(head(g))
 #    }
-#    ENV = getMega2ENV()
+#    ENV = read.Mega2DB()
 
    # apply function "show" to all genotypes on chromosomes 11 for two base
    # pair ranges

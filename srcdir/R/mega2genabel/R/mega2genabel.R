@@ -38,20 +38,66 @@
 #' @name Mega2GenABEL-package
 NULL
 
+#' generate required VCF header
+#'
+#' @description
+#'  Call functions to: create .tped file, .tfam file and .phe file.
+#'  Call the GenABEL functions to process these files.
+#'
+#' @param prefix prefix for vcf file name
+#'
+#' @param markers data.frame of markers being processed
+#'
+#' @param mapno specify which map index to use for genetic distances
+#'
+#' @param envir "environment" containing SQLite database and other globals
+#'
+#' @return gwaa.class-object of previously read(.Mega2DB) database
+#'
+#' @importFrom GenABEL convert.snp.tped load.gwaa.data
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' ENV <- read.Mega2DB("my.db")
+#'
+#' Mega2GenABEL(prefix, NULL)
+#'}
+Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
+
+    if (is.null(markers)) markers = envir$markers
+
+    mkGenABELtped(prefix, markers, mapno = mapno, envir)
+
+    mkGenABELtfam(prefix, envir)
+
+    convert.snp.tped(tpedfile=paste0(prefix,".tped"),
+                     tfamfile=paste0(prefix,".tfam"),
+                     outfile=paste0(prefix, "tped.raw"),
+                     strand="u")
+
+    mkGenABELphe(prefix, envir)
+
+    return (load.gwaa.data(phenofile=paste0(prefix,".phe"),
+                           genofile=paste0(prefix, "tped.raw"),
+                           force = TRUE)
+            )
+}
+
 #' generate a PLINK TPED file for GenABEL
 #'
 #' @description
 #'  Generate a PLINK TPED file from the specified Mega2 SQLite database.  The file is named "prefix".tped
-#'  If the markers arg is.null(), the entire ENV$markers set is used otherwise markers arg MUST
-#'  be a subset of the ENV$markers data.frame -- same columns, but pruned rows.  
+#'  If the markers arg is.null(), the entire envir$markers set is used otherwise markers arg MUST
+#'  be a subset of the envir$markers data.frame -- same columns, but pruned rows.  
 #'
 #' @param prefix prefix for .tped file name
-#'
-#' @param ENV "environment" containing SQLite database and other globals
 #'
 #' @param markers markers selected to be in output file
 #'
 #' @param mapno specify which map index to use for genetic distances
+#'
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
@@ -65,30 +111,30 @@ NULL
 #'
 #' mkGenABELtped("foo", ENV$markers[ENV$markers$chromosome >= 20,])
 #'}
-mkGenABELtped = function(prefix, ENV, markers=NULL, mapno = 0) {
+mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
     file = paste0(prefix, ".tped")
     
     unlink(file)
 
-    if (is.null(markers)) markers = ENV$markers
+    if (is.null(markers)) markers = envir$markers
 
-    allele_table = ENV$allele_table[ENV$allele_table$locus_link %in% markers$locus_link,]
-    map_table = ENV$map_table[ENV$map_table$marker %in% markers$locus_link,]
+    allele_table = envir$allele_table[envir$allele_table$locus_link %in% markers$locus_link,]
+    map_table = envir$map_table[envir$map_table$marker %in% markers$locus_link,]
     M = nrow(markers)
     C = 1000
 
-    block = data.frame(matrix(0, nrow = C, ncol = nrow(ENV$fam) + 4), stringsAsFactors=FALSE)
+    block = data.frame(matrix(0, nrow = C, ncol = nrow(envir$fam) + 4), stringsAsFactors=FALSE)
     blockcol = ncol(block)
 
-    ppl = paste0(ENV$fam$PedPre, "_", ENV$fam$PerPre)
+    ppl = paste0(envir$fam$PedPre, "_", envir$fam$PerPre)
 #   ppl = rbind(ppl, ppl)
     names(block) = c("#CHROM", "ID", "GEN", "POS", ppl)
 
-    SVallele1 = ENV$allele_table$AlleleName[ENV$allele_table$index == 1]
-    ENV$allele_table$AlleleName[ENV$allele_table$index == 1] =
+    SVallele1 = envir$allele_table$AlleleName[envir$allele_table$index == 1]
+    envir$allele_table$AlleleName[envir$allele_table$index == 1] =
         paste0(SVallele1, " ")
-    SVallele2 = ENV$allele_table$AlleleName[ENV$allele_table$index == 2]
-    ENV$allele_table$AlleleName[ENV$allele_table$index == 2] =
+    SVallele2 = envir$allele_table$AlleleName[envir$allele_table$index == 2]
+    envir$allele_table$AlleleName[envir$allele_table$index == 2] =
         paste0(SVallele2, " ")
 
     j = 0
@@ -103,7 +149,7 @@ mkGenABELtped = function(prefix, ENV, markers=NULL, mapno = 0) {
         M = M - L
         BR = 1:L
 
-print(system.time ({        
+## print(system.time ({        
         GPos = map_table[map_table$map==mapno, c("position")][R]
         GPosPos = sprintf("%.2f", GPos)
 
@@ -112,8 +158,8 @@ print(system.time ({
         block[BR , 3] = GPosPos
         block[BR , 4] = markers[R , 5]
 
-        cr = getgenotypes(markers[R, ])             # 7.17%
-        a1 = t(cr)                                  # 0.86%
+        cr = getgenotypes(markers[R, ], envir = envir ) # 7.17%
+        a1 = t(cr)                                      # 0.86%
 
 #       di = dim(a1)
 #       line = paste(substr(a1, start=1, stop=1), substr(a1, start=2, stop=2))
@@ -122,63 +168,18 @@ print(system.time ({
 
         block[BR, 5:blockcol] = a1
 
-      }))
+##      }))
 
-print(system.time ({        
+## print(system.time ({        
         write.table(block[BR, ], file=file, sep="\t", quote=FALSE,     # 48.49%
                     append=TRUE, row.names=FALSE, col.names=FALSE)
- }))
+## }))
         j = j + 1
-        message(j)
+        if (envir$verbose) message(".", appendLF = FALSE)
     }
 
-    ENV$allele_table$AlleleName[ENV$allele_table$index == 1] = SVallele1
-    ENV$allele_table$AlleleName[ENV$allele_table$index == 2] = SVallele2
-}
-
-#' generate required VCF header
-#'
-#' @description
-#'  Call functions to: create .tped file, .tfam file and .phe file.
-#'  Call the GenABEL functions to process these files.
-#'
-#' @param prefix prefix for vcf file name
-#'
-#' @param markers data.frame of markers being processed
-#'
-#' @importFrom GenABEL convert.snp.tped load.gwaa.data
-#' @importFrom mega2 getMega2ENV
-#' @return gwaa.class-object of previously read(.Mega2DB) database
-#'
-#' @export
-#'
-#' @examples
-#'\dontrun{
-#' ENV <- read.Mega2DB("my.db")
-#'
-#' Mega2GenABEL(prefix, NULL)
-#'}
-Mega2GenABEL = function (prefix, markers = NULL) {
-
-    ENV = getMega2ENV()
-
-    if (is.null(markers)) markers = ENV$markers
-
-    mkGenABELtped(prefix, ENV, markers)
-
-    mkGenABELtfam(prefix, ENV, markers)
-
-    convert.snp.tped(tpedfile=paste0(prefix,".tped"),
-                     tfamfile=paste0(prefix,".tfam"),
-                     outfile=paste0(prefix, "tped.raw"),
-                     strand="u")
-
-    mkGenABELphe(prefix, ENV, markers)
-
-    return (load.gwaa.data(phenofile=paste0(prefix,".phe"),
-                           genofile=paste0(prefix, "tped.raw"),
-                           force = TRUE)
-            )
+    envir$allele_table$AlleleName[envir$allele_table$index == 1] = SVallele1
+    envir$allele_table$AlleleName[envir$allele_table$index == 2] = SVallele2
 }
 
 #' generate required fam family for PLINK TPED (.tfam) file
@@ -189,9 +190,7 @@ Mega2GenABEL = function (prefix, markers = NULL) {
 #'
 #' @param prefix prefix for vcf file name
 #'
-#' @param ENV "environment" containing SQLite database and other globals
-#'
-#' @param markers data.frame of markers being processed
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
@@ -199,16 +198,16 @@ Mega2GenABEL = function (prefix, markers = NULL) {
 #'
 #' @examples
 #'\dontrun{
-#' mkGenABELtfam(prefix, ENV, NULL)
+#' mkGenABELtfam(prefix, envir)
 #'}
-mkGenABELtfam = function (prefix, ENV, markers) {
+mkGenABELtfam = function (prefix, envir) {
     file = paste0(prefix, ".tfam")
 
 #   -9 vs 0 for case/control
 
 # mega2 mis
-#   ENV$fam[ENV$fam[ , 8] ==0, 8] = -9
-    fam = ENV$fam
+#   envir$fam[envir$fam[ , 8] ==0, 8] = -9
+    fam = envir$fam
     fam[ , "PerPre"] = paste(fam[ , "PedPre"], fam[ , "PerPre"], sep="_")
     
     write.table(fam[, -(1:2)], file=file, sep="\t", quote=FALSE,
@@ -223,9 +222,7 @@ mkGenABELtfam = function (prefix, ENV, markers) {
 #'
 #' @param prefix prefix for vcf file name
 #'
-#' @param ENV "environment" containing SQLite database and other globals
-#'
-#' @param markers data.frame of markers being processed
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
@@ -233,14 +230,14 @@ mkGenABELtfam = function (prefix, ENV, markers) {
 #'
 #' @examples
 #'\dontrun{
-#' mkGenABELphe(prefix, ENV, NULL)
+#' mkGenABELphe(prefix, envir)
 #'}
-mkGenABELphe = function (prefix, ENV, markers) {
+mkGenABELphe = function (prefix, envir) {
     file = paste0(prefix, ".phe")
 
     unlink(file)
 
-    fam = ENV$fam
+    fam = envir$fam
     fam$id = paste(fam[ , "PedPre"], fam[ , "PerPre"], sep="_")
    
 # linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
@@ -252,30 +249,30 @@ mkGenABELphe = function (prefix, ENV, markers) {
     out$sex = c(NA, 1, 0)[fam$Sex + 1]
     hdr = c("id", "sex")
    
-    phenotype_table = ENV$phenotype_table
+    phenotype_table = envir$phenotype_table
 
-    raw = unlist(ENV$phenotype_table[,4])
+    raw = unlist(envir$phenotype_table[,4])
     raw = matrix(raw, ncol=8, byrow=T)
     nrows     = nrow(raw)
     nrowpheno = nrow(out)
 
-    for (i in 1:ENV$PhenoCnt) {
-        hdr = c(hdr, ENV$locus_table[i, 2]) # 2 == LocusName
+    for (i in 1:envir$PhenoCnt) {
+        hdr = c(hdr, envir$locus_table[i, 2]) # 2 == LocusName
 
 # phenotype_table contains a blob which is a list of entries.  An entry is either an 8 byte
 #  double for quant, or two 4 byte ints for affect
-        if (ENV$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
+        if (envir$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
             col = vector("integer", nrowpheno)
             for (j in 1:nrowpheno) {
-                col[j] = readBin(raw[ENV$PhenoCnt*(j-1)+i, 1:4], integer(), n=1, size=4)
+                col[j] = readBin(raw[envir$PhenoCnt*(j-1)+i, 1:4], integer(), n=1, size=4)
             }
 #           col[col==0] = NA
             out$col = col
             names(out) = hdr
-        } else if (ENV$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
+        } else if (envir$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
             col = vector("numeric", nrowpheno)
             for (j in 1:nrowpheno) {
-                col[j] = readBin(raw[ENV$PhenoCnt*(j-1)+i, 1:8], numeric(), n=1, size=8)
+                col[j] = readBin(raw[envir$PhenoCnt*(j-1)+i, 1:8], numeric(), n=1, size=8)
             }
             col[col==-99] = NA
             out$col = col

@@ -16,7 +16,7 @@ dbmega2_import(dbname,
 \item{verbose}{For this function, print out statistics on the name/size of each table read and show column headers.}
 }
 \value{
-ENV an environment that contains all the tables created from the SQLite tables.
+envir an environment that contains all the tables created from the SQLite tables.
 }
 \description{
 read fields of tables necessary later tables processing.

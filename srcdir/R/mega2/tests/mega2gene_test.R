@@ -49,22 +49,22 @@ geno = NULL
 #' @examples
 #'\dontrun{
 #'}
-tst10 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
+tst10 = function(ENV, genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
 
     print("## test latest applyFnToGenes")
     
-    mkfam()
-    show = function(g, m, r) {
+    mkfam(envir = ENV)
+    show = function(g, m, r, e) {
         print(r)
         print(m)
         print(head(g))
     }
-    ENV = (environment(dbmega2_import))$ENV
     applyFnToGenes(show, genes = genes, type = type, fuzz = fuzz,
               matrix(c(11, 50000000, 50100000,
                        11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T),
               markers = ENV$markers[! duplicated(ENV$markers$chromosome), 3],
-              chrs=c(24, 26))
+              chrs=c(24, 26),
+              envir = ENV)
 }
 
 #' mkmarkers
@@ -87,20 +87,21 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
                       fuzz = 0,
                       ranges = matrix(ncol = 3, nrow = 0),
                       chrs = vector("integer", 0),
-                      mrkrs = vector("character", 0)) {
+                      mrkrs = vector("character", 0),
+                      envir = ENV) {
 
     ## older version of applyFnToGenes with globals
 
     ## dbconn(gene)/dbConn(txdb)
     ## dbReadTable(dbconn(), "tbl")
 
-    marker_table = mega2:::ENV$marker_table
-    map_table    = mega2:::ENV$map_table
+    marker_table = envir$marker_table
+    map_table    = envir$map_table
     markers = merge(
                    marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
                    map_table[ map_table$map == 1, c( "marker", "position")],
                    by.x = "locus_link", by.y = "marker")
-#    mega2:::ENV$markers = markers
+#    envir$markers = markers
     assign("markers", markers, pos= globalenv())
     txdb = TxDb.Hsapiens.UCSC.hg19.knownGene
     if (type=="TX")
@@ -151,8 +152,8 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #       pos[[i]]$locus_link_fill = pos[[i]]$locus_link + chr_gap_skip[pos[[i]]$chromosome]
 #       rownames(pos[[i]]) = NULL
         
-        int_table = mega2:::ENV$int_table
-        geno[[i]] = getgenotypes(pos[[i]])
+        int_table = envir$int_table
+        geno[[i]] = getgenotypes(pos[[i]], envir)
     }
 
     pos[[rows+1]] = markers[markers$MarkerName %in% mrkrs, ]
@@ -160,7 +161,7 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #   rownames(pos[[rows+1]]) = NULL
     assign("pos", pos, pos = globalenv())
 
-    geno[[rows+1]] = getgenotypes(pos[[rows+1]])
+    geno[[rows+1]] = getgenotypes(pos[[rows+1]], envir)
     assign("geno", geno, pos = globalenv())
 }
 
@@ -178,15 +179,15 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #' @examples
 #'\dontrun{
 #'}
-tst11 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
+tst11 = function(ENV, genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
     print("## test earlier version applyFnToGenes; same results")
-    mkfam()
-    ENV = (environment(dbmega2_import))$ENV
+    mkfam(envir = ENV)
     mkmarkers(genes = genes, type = type, fuzz = fuzz,
               matrix(c(11, 50000000, 50100000,
                        11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T),
               mrkrs = ENV$markers[! duplicated(ENV$markers$chromosome), 3],
-              chrs=c(24,26))
+              chrs=c(24,26),
+              envir = ENV)
 
     for (i in 1:dim(range)[1]) {
         print(range[i,])
@@ -208,12 +209,13 @@ tst11 = function(genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
 #' @examples
 #'\dontrun{
 #'}
-tst12 = function(genes = c("ELL2"), type = "TX", fuzz = 0) {
+tst12 = function(ENV, genes = c("ELL2"), type = "TX", fuzz = 0) {
     print("## test earlier version applyFnToGenes specific markers")
-    mkfam()
+    mkfam(envir = ENV)
     mkmarkers(genes = genes, type = type, fuzz = fuzz,
               mrkrs = c("rs6587762", "rs7521920",
-                        "rs10181821", "rs10195681", "rs7594567", "rs4637157") )
+                        "rs10181821", "rs10195681", "rs7594567", "rs4637157"),
+              envir = ENV)
 
     for (i in 1:dim(range)[1]) {
         print(range[i, ])

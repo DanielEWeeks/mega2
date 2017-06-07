@@ -4,7 +4,7 @@
 \alias{setRanges}
 \title{set default ranges and offset of chromosome, start and end in a range}
 \usage{
-setRanges(ranges, indices)
+setRanges(ranges, indices, envir = ENV)
 }
 \arguments{
 \item{ranges}{a data.frame that contains at least 4 variables: a name, a chromosome, a start
@@ -12,6 +12,8 @@ base pair position and an end base pair position.}
 
 \item{indices}{Vector of 3 integers that specify the location of chromosome, start base pair
 position and end base pair position of each range data.frame.}
+
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 None

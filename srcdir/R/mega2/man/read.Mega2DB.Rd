@@ -12,7 +12,7 @@ read.Mega2DB(db, ...)
 \item{...}{aditional arguments to pass to \emph{dbmega2_import}}
 }
 \value{
-ENV an environment that contains all the tables created from the SQLite tables.
+envir an environment that contains all the tables created from the SQLite tables.
 }
 \description{
 \emph{dbmega2_import} the specified database and load the environment, \emph{ENV}, with the

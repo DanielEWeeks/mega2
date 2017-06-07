@@ -64,10 +64,13 @@ NULL
 #'
 #' @param db specifies a \bold{Mega2} SQLite database containing study data.
 #'
+#' @param filename to store p-values to.  Historically it is "k_Schaid_rare.txt"
+#'
 #' @param verbose default is passed to the \bold{Mega2} framework.  1 indicates that
 #'  diagnostic printouts should be enabled.
 #'
-#' @return None
+#' @return "environment" containing SQLite database and other globals
+#'
 #' @importFrom mega2 dbmega2_import mkfam setfam setRanges
 #' @importFrom utils read.table write.table
 #' @export
@@ -79,44 +82,33 @@ NULL
 #'\dontrun{
 #' init_pedgene("ped3.db", verbose = TRUE)
 #'}
-init_pedgene = function (db = "ped3.db", verbose = FALSE) {
+init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 
-    ENV = dbmega2_import(db, verbose = verbose)
+    if (is.null(db))
+        stop("You must specify a database argument!\n")
+    
+    envir = dbmega2_import(db, verbose = verbose)
 
-##  NonmissingPheID=get(load("../NonmissingPheID.RData"))
-##  This is a rather complicated way to essentiall accomplish the two lines below
-    ## non=read.table("ped3.famphe", header=F)
-    ## fam = mkfam()
-    ## pl=merge(fam[ , c(1, 3, 4)], non[ , 2:3],
-    ##          by.x = c("PedPre", "PerPre"), by.y = c("V2", "V3"))
-
-    ## fam = fam[fam[ , 1] %in% pl[ , 3], ]
-    ## row.names(fam) = NULL
-
-    fam = mkfam()
+    fam = mkfam(envir = envir)
     fam = fam[fam$trait != 0, ]
-    setfam(fam)  # also updates unified_genotype_table
-
-#   refRange = read.table("../refseq_genes.txt", header= TRUE, stringsAsFactors= FALSE)
-#   refRange$cdsStart <-refRange$cdsEnd <- NULL
-#   refRange = refRange[nchar(refRange$chrom) <= 5, ]
-#   refRange = refRange[refRange$chrom != "chrX" & refRange$chrom != "chrY", ]
-#   refRange = refRange[!duplicated(refRange), ]
-#   colnames(refRange) = c("XX", "name2", "chrom", "txStart", "txEnd")
-#   colnames(refRange) = c("XX", "SYMBOL", "TXCHROM", "TXSTART", "TXEND")
-#   row.names(refRange) = NULL
-#   write.table(refRange, file=ped3.ref, quote=F, row.names=F)
+    setfam(fam, envir = envir)  # also updates unified_genotype_table
 
 # if you want your own ranges
 #   refRanges = read.table("ped3.ref", header = T)
 #   refRanges = refRanges[! duplicated(refRanges$SYMBOL), ]
 #   setRanges(refRanges, 3:5)
 
-    ENV$schaidPed = ENV$fam[ , c(-1, -2)]
-    colnames(ENV$schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
-    ENV$pedPer = ENV$schaidPed[ , 1:2]
-    ENV$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 0), nrow = 5, ncol = 2)
+    envir$schaidPed = envir$fam[ , c(-1, -2)]
+    colnames(envir$schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
+    envir$pedPer = envir$schaidPed[ , 1:2]
+    envir$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 0), nrow = 5, ncol = 2)
 
+    if (! is.null(filename))
+        envir$pedgene_filename = filename
+    else
+        envir$pedgene_filename = "k_Schaid_rare.txt"
+
+    return (envir)
 }
 
 pedgene_results <- data.frame(chr = character(0), gene = character(0), nvariants = numeric(0),
@@ -131,6 +123,8 @@ pedgene_results <- data.frame(chr = character(0), gene = character(0), nvariants
 #' @param gs a subsequence of the gene transcript ranges to calculate the \emph{Dopedgene} function
 #' on.
 #'
+#' @param envir "environment" containing SQLite database and other globals
+#'
 #' @return None
 #' @importFrom mega2 applyFnToRanges
 #' @export
@@ -141,13 +135,11 @@ pedgene_results <- data.frame(chr = character(0), gene = character(0), nvariants
 #'
 #' run(1:10)
 #'}
-run_pedgene = function (gs = 1:100) {
+run_pedgene = function (gs = 1:100, envir = ENV) {
 
-    unlink("k_Schaid_rare.txt")
+    unlink(envir$pedgene_filename)
 
-#   applyFnToRanges(DOpedgene)
-    ENV = (environment(dbmega2_import))$ENV
-    applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices)
+    applyFnToRanges(DOpedgene, envir$refRanges[gs, ], envir$refIndices, envir = envir)
 }
 
 #' pedgene call back function
@@ -170,17 +162,17 @@ run_pedgene = function (gs = 1:100) {
 #'  integer columns.  The columns indicate a range:
 #'  a chromosome number, a start base pair value, and an end base pair value.
 #'
+#' @param envir "environment" containing SQLite database and other globals
+#'
 #' @return None
 #' @importFrom pedgene pedgene
 #' @export
 #'
 #' @examples
 #'\dontrun{
-#'    applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices)
+#'    applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices, ENV)
 #'}
-DOpedgene = function(geno_arg, markers_arg, range_arg) {
-
-    ENV = (environment(dbmega2_import))$ENV
+DOpedgene = function(geno_arg, markers_arg, range_arg, envir = ENV) {
 
     markerNames = markers_arg$MarkerName
     gene  <- as.character(range_arg$SYMBOL)
@@ -188,11 +180,11 @@ DOpedgene = function(geno_arg, markers_arg, range_arg) {
     di = dim(geno_arg)
     geno = matrix(0, nrow = (di[1]), ncol = di[2])
     for (k in 1:(di[2])) {
-        vec = ENV$mt[match(as.integer(geno_arg[ , k]), ENV$mt), 2]
+        vec = envir$mt[match(as.integer(geno_arg[ , k]), envir$mt), 2]
         g0 = sum(vec == 0)
         g1 = sum(vec == 1)
         g2 = sum(vec == 2)
-        if (ENV$verbose)
+        if (envir$verbose)
             cat(gene, markerNames[k], g0, g1, g2, "\n")
         if (g0 < g2) {
            geno[ , k] = 2 - vec
@@ -209,17 +201,17 @@ DOpedgene = function(geno_arg, markers_arg, range_arg) {
         nsnp    <- ncol(geno)
         weight <- rep(1, ncol(geno))
 
-        pedgeno <- cbind(ENV$pedPer, geno)
+        pedgeno <- cbind(envir$pedPer, geno)
 
-        BT <- pedgene(ENV$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= FALSE, method= "kounen")
+        BT <- pedgene(envir$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= FALSE, method= "kounen")
         pKernel_BT <- BT$pgdf$pval.kernel
         pBurden_BT <- BT$pgdf$pval.burden
 
-        MB <- pedgene(ENV$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= TRUE, method= "kounen")
+        MB <- pedgene(envir$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= NULL, weights.mb= TRUE, method= "kounen")
         pKernel_MB <- MB$pgdf$pval.kernel
         pBurden_MB <- MB$pgdf$pval.burden
 
-        UW <- pedgene(ENV$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= weight, weights.mb= TRUE, method= "kounen", acc.davies=1e-9)
+        UW <- pedgene(envir$schaidPed, pedgeno, male.dose= 2, checkpeds= FALSE, weights= weight, weights.mb= TRUE, method= "kounen", acc.davies=1e-9)
         pKernel_UW <- UW$pgdf$pval.kernel
         pBurden_UW <- UW$pgdf$pval.burden
 
@@ -228,13 +220,14 @@ DOpedgene = function(geno_arg, markers_arg, range_arg) {
         start <- range_arg$TXSTART
         end   <- range_arg$TXEND
         zzz = 1
-        if (ENV$verbose)
+        if (envir$verbose)
             cat(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
                 pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz, "\n")
 
         pedgene_results[1, ] <- c(chr, gene, nsnp, start, end, pKernel_BT, pBurden_BT,
                           pKernel_MB, pBurden_MB, pKernel_UW, pBurden_UW, zzz)
 
-        write.table(pedgene_results, file="k_Schaid_rare.txt", append= TRUE, row.names= FALSE, col.names= FALSE, quote= FALSE)
+        write.table(pedgene_results, file=envir$pedgene_filename, append= TRUE,
+                    row.names= FALSE, col.names= FALSE, quote= FALSE)
     }
 }

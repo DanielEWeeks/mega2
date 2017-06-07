@@ -4,7 +4,7 @@
 \alias{getgenotypesraw}
 \title{fetch genotype matrix for specified markers}
 \usage{
-getgenotypesraw(markers_arg)
+getgenotypesraw(markers_arg, envir = ENV)
 }
 \arguments{
 \item{markers_arg}{a data.frame with the following 5 variables:
@@ -16,6 +16,8 @@ getgenotypesraw(markers_arg)
 \item{chromosome}{is the integer chromosome number}
 \item{position}{is the integer base pair position of marker}
  }}
+
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 a matrix of genotypes represented as two allele pairs.  There is one column for each

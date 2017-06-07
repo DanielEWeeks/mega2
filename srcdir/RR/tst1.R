@@ -36,8 +36,8 @@ goo = function(rng = 10000:11000) {
     ENV=dbmega2_import("~/mega2/data/yj1.db")
 
 # get letter and raw compression 1
-    cc = getgenotypes(ENV$markers[rng,])
-    c1raw = getgenotypesraw(ENV$markers[rng,])
+    cc = getgenotypes(ENV$markers[rng,], ENV)
+    c1raw = getgenotypesraw(ENV$markers[rng,], ENV)
 
     c1cnv = array("0", dim=dim(cc))
     c1cnv [c1raw == 131074] = "22"
@@ -48,11 +48,11 @@ goo = function(rng = 10000:11000) {
 
 # get letter and raw compression 2
     ENV=dbmega2_import("~/mega2/data/yj2.db")
-    c2a = getgenotypes(ENV$markers[rng,])
+    c2a = getgenotypes(ENV$markers[rng,], ENV)
 #   cmp compression 1 and 2
     cat("all(cc==c2a) ")
     print(all(cc == c2a))
-    c2raw = getgenotypesraw(ENV$markers[rng,])
+    c2raw = getgenotypesraw(ENV$markers[rng,], ENV)
     cat("all(c1raw==c2raw) ")
     print(all(c1raw == c2raw))
 

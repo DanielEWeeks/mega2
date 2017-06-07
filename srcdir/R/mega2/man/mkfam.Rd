@@ -4,12 +4,14 @@
 \alias{mkfam}
 \title{assemble pedigree information}
 \usage{
-mkfam(brkloop = FALSE, traitname = "default")
+mkfam(brkloop = FALSE, traitname = "default", envir = ENV)
 }
 \arguments{
 \item{brkloop}{I haven't needed to set this yet.  Maybe never will.}
 
 \item{traitname}{Name for trait to use as case/control value; by default, "default"}
+
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 data.frame

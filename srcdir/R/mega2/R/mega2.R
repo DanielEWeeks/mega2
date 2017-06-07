@@ -38,7 +38,6 @@ NULL
 #library(DBI)
 #library(RSQLite)
 
-ENV = new.env(parent = emptyenv())
 
 #' Mega2 SQLite3 tables
 #'
@@ -117,6 +116,8 @@ TBLSFilter = list(
 #' @param bpPosMap An integer that indicates the map index to use when selecting the
 #'	chromosome/position fields from the map_table to merge with the marker_table.
 #'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
 #' @return None
 #'
 #' @keywords internal
@@ -125,9 +126,9 @@ TBLSFilter = list(
 #'\dontrun{
 #' mk_markers_with_skip(1)
 #'}
-mk_markers_with_skip = function(bpPosMap = 1) {
-    if (ENV$MARKER_SCHEME == 1) {
-        markersPerChr = sapply(split(ENV$marker_table$chromosome, ENV$marker_table$chromosome), length)
+mk_markers_with_skip = function(bpPosMap = 1, envir) {
+    if (envir$MARKER_SCHEME == 1) {
+        markersPerChr = sapply(split(envir$marker_table$chromosome, envir$marker_table$chromosome), length)
         idx = as.integer(names(markersPerChr))
         m = rep(0, max(idx))
         m[idx] = markersPerChr
@@ -135,20 +136,20 @@ mk_markers_with_skip = function(bpPosMap = 1) {
         extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
         extra_markers = c(0, extra_markers)
         names(extra_markers) = NULL
-    } else if (ENV$MARKER_SCHEME == 2) {
-        extra_markers = vector("integer", length(unique(ENV$marker_table$chromosome))+1)
+    } else if (envir$MARKER_SCHEME == 2) {
+        extra_markers = vector("integer", length(unique(envir$marker_table$chromosome))+1)
     }
-    ENV$marker_table$locus_link_fill = ENV$marker_table$locus_link + extra_markers[ENV$marker_table$chromosome]
-    if (any(is.na(ENV$marker_table$locus_link_fill))) {
+    envir$marker_table$locus_link_fill = envir$marker_table$locus_link + extra_markers[envir$marker_table$chromosome]
+    if (any(is.na(envir$marker_table$locus_link_fill))) {
         stop("Internal Error in mk_markers_with_skip.  Bad fill values.", call. = FALSE)
     }
 
-    map_table = ENV$map_table[ ENV$map_table$map == bpPosMap, c( "marker", "position")]
+    map_table = envir$map_table[ envir$map_table$map == bpPosMap, c( "marker", "position")]
     if (nrow(map_table) == 0) {
         message("No entry for map == ", bpPosMap, " in map_table.  Using map == 0 instead.")
-        map_table = ENV$map_table[ ENV$map_table$map == 0, c( "marker", "position")]
+        map_table = envir$map_table[ envir$map_table$map == 0, c( "marker", "position")]
     }
-    ENV$markers = merge(ENV$marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
+    envir$markers = merge(envir$marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
                         map_table,
                         by.x = "locus_link", by.y = "marker")
 }
@@ -158,14 +159,16 @@ mk_markers_with_skip = function(bpPosMap = 1) {
 #' @description The genotype_table contains for each person a separate record for each chromosome.
 #'  We need a single vector for each person.
 #'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
 #' @return None
 #'
 #' @keywords internal
 #'
-mk_unified_genotype_table = function() {
-    samples = split(ENV$genotype_table, ENV$genotype_table$person_link)
+mk_unified_genotype_table = function(envir) {
+    samples = split(envir$genotype_table, envir$genotype_table$person_link)
     samplesize = length(samples)
-    person_link = unique(ENV$genotype_table$person_link)
+    person_link = unique(envir$genotype_table$person_link)
 
     df = data.frame(row.names = 1:samplesize,
                     person_link = person_link,
@@ -178,9 +181,9 @@ mk_unified_genotype_table = function() {
         df$data[i] = list(v)
     }
   
-    ENV$unified_genotype_table = df
-    ENV$genotype_table = NULL
-    rm(list = "genotype_table", envir = ENV)
+    envir$unified_genotype_table = df
+    envir$genotype_table = NULL
+    rm(list = "genotype_table", envir = envir)
 }
 
 #' dbmega2_import read Mega2 SQLite tables into R
@@ -198,7 +201,7 @@ mk_unified_genotype_table = function() {
 #'
 #' @param verbose For this function, print out statistics on the name/size of each table read and show column headers.
 #'
-#' @return ENV an environment that contains all the tables created from the SQLite tables.
+#' @return envir an environment that contains all the tables created from the SQLite tables.
 #'
 #' @importFrom RSQLite dbConnect dbExistsTable dbReadTable dbListFields SQLITE_RO
 #' @export
@@ -215,19 +218,21 @@ dbmega2_import = function(dbname,
     con = tryCatch(dbConnect(RSQLite::SQLite(), dbname = dbname, flags = SQLITE_RO),
                    error = function(xx) { stop("DB open failed: ", dbname, call. = FALSE) })
 
+    envir = resetMega2ENV()
+
     gc(verbose = FALSE)
 
-    ENV$verbose = verbose
+    envir$verbose = verbose
 
     for (tbl in TBLS) {
         if (dbExistsTable(con, tbl)) {
             filter = TBLSFilter[tbl][[1]]
             if (is.null(filter))
-                assign(tbl, dbReadTable(con, tbl), pos = ENV)
+                assign(tbl, dbReadTable(con, tbl), pos = envir)
             else
-                assign(tbl, dbReadTable(con, tbl, select.cols = filter), pos = ENV)
-            if (ENV$verbose) {
-                cat(tbl, dim(get(tbl, pos=ENV)), sep = "\t", end = "\n")
+                assign(tbl, dbReadTable(con, tbl, select.cols = filter), pos = envir)
+            if (envir$verbose) {
+                cat(tbl, dim(get(tbl, pos=envir)), sep = "\t", end = "\n")
                 if (is.null(filter))
                     cat(tbl, dbListFields(con, tbl), sep = "\t", end = "\n")
                 else
@@ -237,44 +242,94 @@ dbmega2_import = function(dbname,
         }
     }
 
-    ENV$PhenoCnt      = ENV$int_table[ENV$int_table$key == 'PhenoCnt', 3]
-    ENV$LocusCnt      = ENV$int_table[ENV$int_table$key == 'LocusCnt', 3]
-    ENV$MARKER_SCHEME = ENV$int_table[ENV$int_table$key == 'MARKER_SCHEME', 3]
-    if (ENV$MARKER_SCHEME > 2) {
+    envir$PhenoCnt      = envir$int_table[envir$int_table$key == 'PhenoCnt', 3]
+    envir$LocusCnt      = envir$int_table[envir$int_table$key == 'LocusCnt', 3]
+    envir$MARKER_SCHEME = envir$int_table[envir$int_table$key == 'MARKER_SCHEME', 3]
+    if (envir$MARKER_SCHEME > 2) {
         stop("Only compressions levels of 1 or 2 are allowed. (",
-             ENV$MARKER_SCHEME, ")", call. = FALSE)
+             envir$MARKER_SCHEME, ")", call. = FALSE)
     }
     
-    mk_unified_genotype_table()
-    mk_markers_with_skip(bpPosMap)
-    if (ENV$MARKER_SCHEME == 2) {
+    mk_unified_genotype_table(envir)
+    mk_markers_with_skip(bpPosMap, envir)
+    if (envir$MARKER_SCHEME == 2) {
         message("Partitioninging allele_table by locus_link\n");
-        ENV$locus_allele_table = split(ENV$allele_table, ENV$allele_table$locus_link)
+        envir$locus_allele_table = split(envir$allele_table, envir$allele_table$locus_link)
     } else {
-        ENV$locus_allele_table = NULL
+        envir$locus_allele_table = NULL
     }
 
     gc(verbose = FALSE)
-    return (ENV)
+    return (envir)
 }
 
-#' return ENV environment from package
+#' show ENV environment, viz. samples, markers and all tables/state.
 #'
-#' Mega2 uses an environment, \emph{ENV} to store all the tables it reads in.  In addition,
-#'  some package globals are stored there, viz, constants: LocusCnt, PhenoCnt, MARKER_SCEME and
-#'  tables: markers and unified_genotype_table (and possibly locus_allele_table)
+#' Mega2 uses an environment, \emph{ENV} to store all the tables it reads in.  This function shows the
+#'  count of samples and markers for the database as well as the tables and their sizes.
 #'
-#' This same \emph{ENV} is returned by \emph{dbmega2_import}
+#' @param envir an environment that contains all the tables created from the SQLite tables.
 #'
-#' @return ENV an environment that contains all the tables created from the SQLite tables.
+#' @return None
 #' @export
 #'
 #' @examples
 #'\dontrun{
-#' ENV = getMega2ENV()
+#' statusMega2ENV()
 #'}
-getMega2ENV = function () {
-    return (ENV)
+showMega2ENV = function(envir = ENV) {
+
+    cat("locus count:  ",       envir$LocusCnt)
+    cat("; phenotype count: ", envir$PhenoCnt)
+    if (envir$MARKER_SCHEME == 1)
+        cat("; compression: 2 bits")
+    else if (envir$MARKER_SCHEME == 2)
+        cat("; compression: 2 bytes")
+    else
+        cat("; compression: illegal")
+    cat("\n")
+    cat("marker count: ",      envir$LocusCnt - envir$PhenoCnt)
+    cat("; sample count: ",    nrow(envir$fam))
+    cat("\n")
+    cat("\n")
+
+    cat("genetic and physical maps:\n")
+    map = envir$mapnames_table[ , c(6, 2)]
+    names(map) = c("map name", "map number")
+    print(map)
+    cat("\n")
+
+    cat("Phenotypes:\n")
+    print(showPhenoNames())
+    cat("\n")
+    cat("\n")
+
+    cat("basic tables:\n")
+    tbls2 = c("fam", "locus_allele_table", "markers", "unified_genotype_table")
+    ls = grep("_table", ls(envir), value = TRUE)
+    tbls =  sort( ls[! ls %in% tbls2 ] )
+    x = sapply(tbls, function(tbl) {dim(get(tbl, envir))})
+    x = t(x)
+    x = matrix(x, ncol = 2)
+    show = data.frame(x)
+    names(show) = c("rows", "cols")
+    row.names(show) = tbls
+    print(show)
+    cat("\n")
+
+    cat("derived tables:\n")
+    if (exists("fam", envir))
+        tbls2 = c("fam", "markers", "unified_genotype_table")
+    else
+        tbls2 = c("markers", "unified_genotype_table")
+    x = sapply(tbls2, function(tbl) {dim(get(tbl, envir))})
+    x = t(x)
+    x = matrix(x, ncol = 2)
+    show = data.frame(x)
+    names(show) = c("rows", "cols")
+    row.names(show) = tbls2
+    print(show)
+    cat("\n")
 }
 
 #' reset ENV environment; this flushes all tables/state.
@@ -282,36 +337,34 @@ getMega2ENV = function () {
 #' Mega2 uses an environment, \emph{ENV} to store all the tables it reads in.  This is reset
 #'  to an empty env() and then the gc is run.
 #'
-#' @return None
+#' @return envir an environment that contains all the tables created from the SQLite tables.
 #' @export
 #'
 #' @examples
 #'\dontrun{
-#' resetENV()
+#' resetMega2ENV()
 #'}
 resetMega2ENV = function () {
 
-    rm(list = ls(ENV), envir = ENV)
-
-    unlockBinding("ENV", environment(resetMega2ENV))
-    assign("ENV", new.env(parent = emptyenv()), environment(resetMega2ENV))
-      lockBinding("ENV", environment(resetMega2ENV))
-
     gc(verbose = FALSE)
 
-    ENV$refRanges  = refRanges
-    ENV$refIndices = refIndices
+    envir = new.env(parent = emptyenv())
 
-    ENV$txdb       = "TxDb.Hsapiens.UCSC.hg19.knownGene"
-    ENV$entrezGene = "org.Hs.eg.db"
+    envir$refRanges  = refRanges
+    envir$refIndices = refIndices
 
-    invisible()
+    envir$txdb       = "TxDb.Hsapiens.UCSC.hg19.knownGene"
+    envir$entrezGene = "org.Hs.eg.db"
+
+    return (envir)
 }
 
 #' show the association between mapno and mapname
 #'
 #' Mega2 allows several different physical and genetic maps to be stored and used to select
 #'  distances.  This function show the association between mapno and mapname
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
 #'
 #' @return None
 #' @export
@@ -320,8 +373,43 @@ resetMega2ENV = function () {
 #'\dontrun{
 #' showMapNames()
 #'}
-showMapNames = function () {
-    ENV$mapnames_table[ , c(6, 2)]
+showMapNames = function (envir = ENV) {
+    envir$mapnames_table[ , c(6, 2)]
+}
+
+#' show the association between index no and phenotype
+#'
+#' Mega2 stores several phenotypes, both affective and quantitative. This function show the
+#'  mapping between phenotype and index and shows the phenotype type.
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' showPhenoNames()
+#'}
+showPhenoNames = function (envir = ENV) {
+   
+# linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
+#                        0      1          2       3         4        5        6
+    hdr = NULL
+    type = NULL
+    df = data.frame(Index = 1:envir$PhenoCnt)
+    for (i in 1:envir$PhenoCnt) {
+        hdr = c(hdr, envir$locus_table[i, 2]) # 2 == LocusName
+
+        if (envir$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
+            type = c(type, "affection")
+        } else if (envir$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
+            type = c(type, "quantitative")
+        }
+    }
+    df$Name = hdr
+    df$Type = type
+    df
 }
 
 ## geno_i = inline::cxxfunction(
@@ -358,7 +446,9 @@ showMapNames = function () {
 #'
 #' @description ...
 #'
-#' @param pid ...
+#' @param perid ...
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
 #'
 #' @return None
 #' @export
@@ -371,12 +461,12 @@ showMapNames = function () {
 #' # genotypes for all markers for range of persons in genotype table
 #' getgenotype_person(m:n)
 #'}
-getgenotype_person = function(pid = 1) {
+getgenotype_person = function(perid = 1, envir = ENV) {
 
-  a1 = ENV$allele_table[ENV$allele_table$indexX==1, 2][-1]
-  a2 = ENV$allele_table[ENV$allele_table$indexX==2, 2][-1]
+  a1 = envir$allele_table[envir$allele_table$indexX==1, 2][-1]
+  a2 = envir$allele_table[envir$allele_table$indexX==2, 2][-1]
 
-  rv = ENV$genotype_table[pid, 5][[1]]
+  rv = envir$genotype_table[perid, 5][[1]]
   rv4 = getgenotypes_forperson(rv)
 
 #  0 1|1
@@ -402,7 +492,7 @@ getgenotype_person = function(pid = 1) {
 #'  \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
 #'  \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
 #'  another contains the alleles for each marker, and finally there are some bookkeeping related
-#'  data.
+#'  data.  Note this function is for Testing only and is not exported.
 #'
 #' @param markers_arg a data.frame with the following 5 variables:
 #' \describe{
@@ -414,11 +504,13 @@ getgenotype_person = function(pid = 1) {
 #' \item{position}{is the integer base pair position of marker}
 #'  }
 #'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
 #' @return a matrix of genotypes represented as a nucleotide pair.  There is one column for each
 #'  marker in \emph{markers_arg} argument.  There is one row for each person in the family
 #'  (\emph{fam}) table.
 #'
-#' @export
+#' @keywords internal
 #' @useDynLib mega2
 #'
 #' @details
@@ -434,13 +526,13 @@ getgenotype_person = function(pid = 1) {
 #' # genotypes for all persons in chromosome n
 #' getgenotypes_R(ENV$markers[ENV$markers$chromosome == n,])
 #'}
-getgenotypes_R = function(markers_arg) {
+getgenotypes_R = function(markers_arg, envir = ENV) {
 
   return
-    if (ENV$MARKER_SCHEME == 1) {
+    if (envir$MARKER_SCHEME == 1) {
         getgenotypes_Ri(markers_arg$locus_link, markers_arg$locus_link_fill,
-                        ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
-                        ENV$PhenoCnt)
+                        envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
+                        envir$PhenoCnt)
     } else {  # must be == 2
 
     }
@@ -467,6 +559,8 @@ getgenotypes_R = function(markers_arg) {
 #' \item{position}{is the integer base pair position of marker}
 #'  }
 #'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
 #' @return a matrix of genotypes represented as two allele pairs.  There is one column for each
 #'  marker in \emph{markers_arg} argument.  There is one row for each person in the family
 #'  (\emph{fam}) table.
@@ -489,17 +583,17 @@ getgenotypes_R = function(markers_arg) {
 #' # genotypes for all persons in chromosome n
 #' getgenotypes(ENV$markers[ENV$markers$chromosome == n,])
 #'}
-getgenotypes = function(markers_arg) {
+getgenotypes = function(markers_arg, envir = ENV) {
 
   return
-    if (ENV$MARKER_SCHEME == 1) {
+    if (envir$MARKER_SCHEME == 1) {
         getgenotypes_1(markers_arg$locus_link, markers_arg$locus_link_fill,
-                       ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
-                       ENV$PhenoCnt)
+                       envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
+                       envir$PhenoCnt)
     } else {  # must be == 2
         getgenotypes_2(markers_arg$locus_link,
-                       ENV$unified_genotype_table, ENV$locus_allele_table,
-                       ENV$PhenoCnt)
+                       envir$unified_genotype_table, envir$locus_allele_table,
+                       envir$PhenoCnt)
     }
 }
 
@@ -525,6 +619,8 @@ getgenotypes_C = getgenotypes
 #' \item{position}{is the integer base pair position of marker}
 #'  }
 #'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
 #' @return a matrix of genotypes represented as two allele pairs.  There is one column for each
 #'  marker in \emph{markers_arg} argument.  There is one row for each person in the family
 #'  (\emph{fam}) table.
@@ -548,17 +644,17 @@ getgenotypes_C = getgenotypes
 #' # two ints in upper/lower half integer representing allele # for all persons in chromosome n
 #' getgenotypesraw(ENV$markers[ENV$markers$chromosome == n,])
 #'}
-getgenotypesraw = function(markers_arg) {
+getgenotypesraw = function(markers_arg, envir = ENV) {
 
   return
-    if (ENV$MARKER_SCHEME == 1) {
+    if (envir$MARKER_SCHEME == 1) {
         getgenotypesraw_1(markers_arg$locus_link, markers_arg$locus_link_fill,
-                          ENV$unified_genotype_table, ENV$allele_table, ENV$markerscheme_table,
-                          ENV$PhenoCnt)
+                          envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
+                          envir$PhenoCnt)
     } else {  # must be == 2
         getgenotypesraw_2(markers_arg$locus_link,
-                          ENV$unified_genotype_table, ENV$locus_allele_table,
-                          ENV$PhenoCnt)
+                          envir$unified_genotype_table, envir$locus_allele_table,
+                          envir$PhenoCnt)
     }
 }
 

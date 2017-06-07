@@ -4,10 +4,12 @@
 \alias{getgenotype_person}
 \title{getgenotype_person}
 \usage{
-getgenotype_person(pid = 1)
+getgenotype_person(perid = 1, envir = ENV)
 }
 \arguments{
-\item{pid}{...}
+\item{perid}{...}
+
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 None

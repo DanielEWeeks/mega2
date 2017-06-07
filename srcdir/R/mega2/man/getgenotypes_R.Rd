@@ -4,7 +4,7 @@
 \alias{getgenotypes_R}
 \title{fetch genotype matrix for specified markers (assemble by rows)}
 \usage{
-getgenotypes_R(markers_arg)
+getgenotypes_R(markers_arg, envir = ENV)
 }
 \arguments{
 \item{markers_arg}{a data.frame with the following 5 variables:
@@ -16,6 +16,8 @@ getgenotypes_R(markers_arg)
 \item{chromosome}{is the integer chromosome number}
 \item{position}{is the integer base pair position of marker}
  }}
+
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 a matrix of genotypes represented as a nucleotide pair.  There is one column for each
@@ -28,7 +30,7 @@ This function calls the C++ function that does all the heavy lifting.  It passes
  \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
  \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
  another contains the alleles for each marker, and finally there are some bookkeeping related
- data.
+ data.  Note this function is for Testing only and is not exported.
 }
 \details{
 The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
@@ -44,3 +46,4 @@ getgenotypes_R(ENV$markers)
 getgenotypes_R(ENV$markers[ENV$markers$chromosome == n,])
 }
 }
+\keyword{internal}

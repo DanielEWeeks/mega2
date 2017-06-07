@@ -4,14 +4,12 @@
 \alias{mkGenABELtfam}
 \title{generate required fam family for PLINK TPED (.tfam) file}
 \usage{
-mkGenABELtfam(prefix, ENV, markers)
+mkGenABELtfam(prefix, envir)
 }
 \arguments{
 \item{prefix}{prefix for vcf file name}
 
-\item{ENV}{"environment" containing SQLite database and other globals}
-
-\item{markers}{data.frame of markers being processed}
+\item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
 None
@@ -22,6 +20,6 @@ Generate the six column .tfam file used with the .tped file.  Note: Only the per
 }
 \examples{
 \dontrun{
-mkGenABELtfam(prefix, ENV, NULL)
+mkGenABELtfam(prefix, envir)
 }
 }

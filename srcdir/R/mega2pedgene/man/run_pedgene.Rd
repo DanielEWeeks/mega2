@@ -4,11 +4,13 @@
 \alias{run_pedgene}
 \title{execute the pedgene function on a subset of the gene transcript ranges}
 \usage{
-run_pedgene(gs = 1:100)
+run_pedgene(gs = 1:100, envir = ENV)
 }
 \arguments{
 \item{gs}{a subsequence of the gene transcript ranges to calculate the \emph{Dopedgene} function
 on.}
+
+\item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
 None

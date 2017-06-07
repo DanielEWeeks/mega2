@@ -4,11 +4,13 @@
 \alias{mk_markers_with_skip}
 \title{make markers data frame}
 \usage{
-mk_markers_with_skip(bpPosMap = 1)
+mk_markers_with_skip(bpPosMap = 1, envir)
 }
 \arguments{
 \item{bpPosMap}{An integer that indicates the map index to use when selecting the
 chromosome/position fields from the map_table to merge with the marker_table.}
+
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 None

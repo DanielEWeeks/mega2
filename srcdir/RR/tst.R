@@ -30,15 +30,18 @@ go = function(db = 0) {
 
     library(mega2)
 
+    ENV = dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db", verbose = 1)
+    assign("ENV", ENV, inherits = TRUE)
+
     if (TRUE) {
 ##  ENV = dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db", verbose = 1)
         source("../R/mega2/tests/mega2_test.R")
-        tst1()
+        tst1(ENV)
 
         source("../R/mega2/tests/mega2gene_test.R")
-        tst10()
-        tst11()
-        tst12()
+        tst10(ENV)
+        tst11(ENV)
+        tst12(ENV)
 
         rm(list = c("tst1", "tst10", "tst11", "tst12"), envir=globalenv())
     }

@@ -164,7 +164,7 @@ Mega2GenABELtstgt = function (mega_ = mega, gwaa_ = srdta) {
     print(all(mega_@gtdata@nsnps == gwaa_@gtdata@nsnps))
     print(all(mega_@gtdata@nbytes == gwaa_@gtdata@nbytes))
 
-#    print(all(mega_@gtdata@idnames == gwaa_@gtdata@idnames))
+#   print(all(mega_@gtdata@idnames == gwaa_@gtdata@idnames))
 
     print(all(mega_@gtdata@snpnames == gwaa_@gtdata@snpnames))
     print(all(mega_@gtdata@chromosome == gwaa_@gtdata@chromosome))

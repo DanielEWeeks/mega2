@@ -4,24 +4,24 @@
 \alias{mkGenABELtped}
 \title{generate a PLINK TPED file for GenABEL}
 \usage{
-mkGenABELtped(prefix, ENV, markers = NULL, mapno = 0)
+mkGenABELtped(prefix, markers = NULL, mapno = 0, envir)
 }
 \arguments{
 \item{prefix}{prefix for .tped file name}
 
-\item{ENV}{"environment" containing SQLite database and other globals}
-
 \item{markers}{markers selected to be in output file}
 
 \item{mapno}{specify which map index to use for genetic distances}
+
+\item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
 Generate a PLINK TPED file from the specified Mega2 SQLite database.  The file is named "prefix".tped
- If the markers arg is.null(), the entire ENV$markers set is used otherwise markers arg MUST
- be a subset of the ENV$markers data.frame -- same columns, but pruned rows.
+ If the markers arg is.null(), the entire envir$markers set is used otherwise markers arg MUST
+ be a subset of the envir$markers data.frame -- same columns, but pruned rows.
 }
 \examples{
 \dontrun{

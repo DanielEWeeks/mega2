@@ -163,19 +163,17 @@ allelediff = function(aa=aa, bb=bb, n=24) {
 #' @examples
 #'\dontrun{
 #'}
-tst1 = function(db = "~/mega2/data/samoaqwas.db") {
+tst1 = function(ENV) {
 
     print("## getgenotypes by column and by row; compare two ranges")
 
-    ENV = dbmega2_import(db, verbose = 1)
-    
-    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[1:1000,]))), "\n")
-    cat("getgenotypes_R", system.time((dd=getgenotypes_R(ENV$markers[1:1000,]))), "\n")
+    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[1:1000,], ENV) )), "\n")
+    cat("getgenotypes_R", system.time((dd=getgenotypes_R(ENV$markers[1:1000,], ENV) )), "\n")
                 
     print(all(cc==dd))
 
-    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[500000:501000,]))), "\n")
-    cat("getgenotypes_R", system.time((dd=getgenotypes_R(ENV$markers[500000:501000,]))), "\n")
+    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[500000:501000,], ENV) )), "\n")
+    cat("getgenotypes_R", system.time((dd=getgenotypes_R(ENV$markers[500000:501000,], ENV) )), "\n")
     print(all(cc==dd))
 
 # 25X slower

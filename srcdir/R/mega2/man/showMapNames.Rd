@@ -4,7 +4,10 @@
 \alias{showMapNames}
 \title{show the association between mapno and mapname}
 \usage{
-showMapNames()
+showMapNames(envir = ENV)
+}
+\arguments{
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 None

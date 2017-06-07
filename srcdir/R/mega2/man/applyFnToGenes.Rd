@@ -4,16 +4,17 @@
 \alias{applyFnToGenes}
 \title{apply function to genotypes in genes}
 \usage{
-applyFnToGenes(op           = function (geno, markers, range) {},
+applyFnToGenes(op           = function (geno, markers, range, envir) {},
                genes_arg    = c("ELL2", "CARD15"),
                ranges_arg   = matrix(ncol = 3, nrow = 0),
                chrs_arg     = vector("integer", 0),
                markers_arg  = vector("character", 0),
                type_arg     = "TX",
-               fuzz_arg     = 0)
+               fuzz_arg     = 0,
+               envir        = ENV)
 }
 \arguments{
-\item{op}{Is a function of three arguments.  It will be called repeatedly by
+\item{op}{Is a function of four arguments.  It will be called repeatedly by
 \code{applyFnToGenes}.  The arguments are:
 \describe{
 \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
@@ -28,6 +29,7 @@ applyFnToGenes(op           = function (geno, markers, range) {},
  }
 }
 \item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
+\item{envir}{An R environment holding Mega2 data frames and state data.}
 }}
 
 \item{genes_arg}{a character vector of gene names to be selected.
@@ -60,6 +62,8 @@ are used.}
 \item{fuzz_arg}{is an integer vector of length one or two.  The first argument is used to reduce
 the start base pair selected from each transcript and the second to increase the end base pair
 position.  (If only one value is present, it is used for both changes.)}
+
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 None
@@ -77,12 +81,12 @@ This function generates a data.frame of ranges.  Each range specifies a chromoso
 }
 \examples{
 \dontrun{
-#    show = function(g, m, r) {
+#    show = function(g, m, r, e) {
 #        print(r)
 #        print(m)
 #        print(head(g))
 #    }
-#    ENV = getMega2ENV()
+#    ENV = read.Mega2DB()
 
    # apply function "show" to all transcripts on genes ELL2 and CARD15
    applyFnToGenes(show, genes = c("ELL2", "CARD15"))

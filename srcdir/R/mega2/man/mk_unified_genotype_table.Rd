@@ -4,7 +4,10 @@
 \alias{mk_unified_genotype_table}
 \title{mk_unified_genotype_table aggregate separate genotype vectors for each chromosome to one extended vector containing all the chromosomes.}
 \usage{
-mk_unified_genotype_table()
+mk_unified_genotype_table(envir)
+}
+\arguments{
+\item{envir}{an environment that contains all the tables created from the SQLite tables.}
 }
 \value{
 None

@@ -4,12 +4,16 @@
 \alias{Mega2GenABEL}
 \title{generate required VCF header}
 \usage{
-Mega2GenABEL(prefix, markers = NULL)
+Mega2GenABEL(prefix, markers = NULL, mapno = 0, envir = ENV)
 }
 \arguments{
 \item{prefix}{prefix for vcf file name}
 
 \item{markers}{data.frame of markers being processed}
+
+\item{mapno}{specify which map index to use for genetic distances}
+
+\item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
 gwaa.class-object of previously read(.Mega2DB) database

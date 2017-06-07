@@ -4,7 +4,7 @@
 \alias{DOpedgene}
 \title{pedgene call back function}
 \usage{
-DOpedgene(geno_arg, markers_arg, range_arg)
+DOpedgene(geno_arg, markers_arg, range_arg, envir = ENV)
 }
 \arguments{
 \item{geno_arg}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
@@ -22,6 +22,8 @@ DOpedgene(geno_arg, markers_arg, range_arg)
 \item{range_arg}{one row of a ranges_arg.  The latter is a data.frame of at least three
 integer columns.  The columns indicate a range:
 a chromosome number, a start base pair value, and an end base pair value.}
+
+\item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
 None
@@ -31,6 +33,6 @@ None
 }
 \examples{
 \dontrun{
-   applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices)
+   applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices, ENV)
 }
 }
