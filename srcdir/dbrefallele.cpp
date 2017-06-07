@@ -72,7 +72,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 
     //begin reading our gzipped file
     //we define a buffer
-    int length = 0x10000;
+    int length = 0x1000;
     //get a gzipfile and open it
     gzFile file;
     file = gzopen(filename.c_str(),"r");
@@ -106,6 +106,9 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 
     int flipfail =0;
 
+    int refset = 0;
+    int altset = 0;
+
     printf("Matching position values between dataset and reference, this may take a while especially for larger GWAS datasets. (a minute or more)\n");
     //read our buffer
     Todd newish("read ref a file");
@@ -122,6 +125,9 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
             //split our buffer by lines and spaces
             char *token = std::strtok(buffer, " \n");
             while (token != NULL) {
+                if (locus == Top->LocusTop->LocusCnt - 1)
+                    break;
+
                 // if chr is not set then we found a chr
                 if (chr == 0)
                     chr = atoi(token);
@@ -129,20 +135,19 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                 else if (pos == 0)
                     pos = atoi(token);
                     //if both are set we found a whole entry
-                else {
-                    //set ref to the current token
-                    if(token != NULL)
-                        ref = token;
+                else if(refset == 0) {
+                    ref = token;
+                    refset = 1;
+                }
+                else if(altset == 0) {
+                    alt = token;
+                    altset = 1;
+                }
 
-                    //grab the next token, this will be our alternate allele
-                    token = std::strtok(NULL, " \n");
-                    if (token != NULL)
-                        alt = token;
-
-                    if (locus == Top->LocusTop->LocusCnt - 1)
-                        break;
+                if( chr != 0  && pos != 0 && refset == 1 && altset == 1) {
                     int position = bp->pos;
                     int chromosome = bp->chr;
+
                     ttl++;
                     if (chromosome == chr && pos == position && strlen(ref) != 0 && strlen(alt) != 0) {
                         //we insert our values, the position internally is inserted so we can select on it
@@ -175,14 +180,14 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     }
                     chr = 0;
                     pos = 0;
-                    //ref[0] = '\0';
-                    //alt[0] = '\0';
+                    refset = 0;
+                    altset = 0;
                 }
                 token = std::strtok(NULL, " \n");
             }
 
             //when the buffer is done
-            if (bytes_read < length - 10) {
+            if (bytes_read < length - 1) {
                 //we commit transactions by buffer for speed (rather than by row)
                 //is file done?
                 if (gzeof(file)) {
