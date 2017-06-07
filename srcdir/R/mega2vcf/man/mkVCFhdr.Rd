@@ -4,14 +4,14 @@
 \alias{mkVCFhdr}
 \title{generate required VCF header}
 \usage{
-mkVCFhdr(prefix, ENV, markers)
+mkVCFhdr(prefix, markers, envir)
 }
 \arguments{
 \item{prefix}{prefix for vcf file name}
 
-\item{ENV}{"environment" containing SQLite database and other globals}
-
 \item{markers}{data.frame of markers being processed}
+
+\item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
 None
@@ -22,7 +22,7 @@ Generate the initial boiler plate VCF, then generate ##INFO entries for each ent
 }
 \examples{
 \dontrun{
-mkVCFhdr(prefix, ENV, NULL)
+mkVCFhdr(prefix, NULL, envir)
 }
 }
 \keyword{internal}

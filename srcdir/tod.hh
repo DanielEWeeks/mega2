@@ -50,7 +50,7 @@ public:
    ~Todd()     { }
 
     void reset(void) {
-        gettimeofday(&tv_base, (void *) 0);
+        gettimeofday(&tv_base, /* (void *) */ 0);
     }
 
     void operator()(const int xx) {
@@ -85,8 +85,14 @@ private:
     struct timeval tv_base, tmp, diff;
 
     double tdiff(void) {
-        gettimeofday(&tmp, (void *) 0);
-        timersub(&tmp, &tv_base, &diff);
+        gettimeofday(&tmp, /* (void *) */ 0);
+//      timersub(&tmp, &tv_base, &diff);
+        diff.tv_sec  = tmp.tv_sec  - tv_base.tv_sec;
+        diff.tv_usec = tmp.tv_usec - tv_base.tv_usec;
+        if (tv_base.tv_usec < 0) {
+            tv_base.tv_sec--;
+            tv_base.tv_usec += 1000000;
+        }
         return diff.tv_sec + diff.tv_usec/1000000.0;
     }
 

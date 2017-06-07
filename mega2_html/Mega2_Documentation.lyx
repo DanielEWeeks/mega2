@@ -208,7 +208,7 @@ status collapsed
 
 \end_inset
 
- 1997-2016 by the University of Pittsburgh 
+ 1997-2017 by the University of Pittsburgh 
 \end_layout
 
 \end_inset
@@ -360,6 +360,11 @@ LatexCommand tableofcontents
 \end_layout
 
 \begin_layout Standard
+Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
+\end_layout
+
+\begin_layout Standard
+Changes from Version 4.9.0 to Version 4.9.1 (Released November 1, 2016)
 \begin_inset Newpage pagebreak
 \end_inset
 
@@ -1011,6 +1016,10 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
+Enhancements in Mega2 version 4.9.2
+\end_layout
+
+\begin_layout Subsection
 Enhancements in Mega2 version 4.9.1
 \end_layout
 
@@ -1621,7 +1630,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 database mode menu: 
+Mega2 4.9.2 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1692,7 +1701,7 @@ reference "sec:The-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 file input menu:
+              Mega2 4.9.2 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1825,7 +1834,7 @@ database menu
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 database mode menu: 
+Mega2 4.9.2 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1886,7 +1895,7 @@ reference "sec:The-alternate-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 database input menu: 
+Mega2 4.9.2 database input menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2156,12 +2165,12 @@ target "http://doi.org/10.1186/s13029-014-0026-y"
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.9.1 should be: 
+ For example, the web site citation for version 4.9.2 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2015) Mega2 (Version 4.9.1).
+ Weeks DE (2015) Mega2 (Version 4.9.2).
  
 \begin_inset Flex URL
 status open
@@ -2439,7 +2448,7 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.9.1 
+The latest version is 4.9.2 
 \end_layout
 
 \begin_layout Enumerate
@@ -2452,7 +2461,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.1_src.tar.gz
+mega2_v4.9.2_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -2467,7 +2476,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.9.1_src.tar.gz 
+gunzip mega2_v4.9.2_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -2481,7 +2490,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.9.1_src.tar 
+tar xvf mega2_v4.9.2_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -2489,7 +2498,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.9.1_src.tar.gz 
+tar xzvf mega2_v4.9.2_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -2502,7 +2511,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.9.1_src
+mega2_v4.9.2_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2682,7 +2691,7 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.9.1_src.tar.gz bundle following
+If you downloaded and unpacked the mega2_v4.9.2_src.tar.gz bundle following
  the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2690,7 +2699,7 @@ reference "subsec:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.9.1_src containing the following
+), you should see a directory named mega2_v4.9.2_src containing the following
  directories (in bold) or files listed in alphabetical order:
 \end_layout
 
@@ -3371,7 +3380,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.9.1_src in above step), type the command:
+ mega2_v4.9.2_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -3422,7 +3431,7 @@ name "subsec:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.9.1_src.tar.gz package also includes a source code folder "srcdir"
+The mega2_v4.9.2_src.tar.gz package also includes a source code folder "srcdir"
  containing C source files, a Makefile, and several OS-specific Makedefs
  files that define compilation flags that govern locations of standard C
  libraries, and other OS-specific behavior.
@@ -3437,7 +3446,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.9.1_src folder, type 
+From within the mega2_v4.9.2_src folder, type 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -3848,7 +3857,7 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.9.1_src folder contains
+The sub-folder called mega2_html/ within the mega2_v4.9.2_src folder contains
  documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
@@ -4511,7 +4520,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.9.1_src.tar.gz.
+The Mega2 distribution package is named mega2_v4.9.2_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -4526,7 +4535,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.1_src.tar
+mega2_v4.9.2_src.tar
 \end_layout
 
 \end_deeper
@@ -4552,7 +4561,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.1_src.tar.tar
+mega2_v4.9.2_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -4560,7 +4569,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.9.1_src.tar.gz
+mega2_v4.9.2_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4568,7 +4577,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.9.1_src.tar.tar mega2_v4.9.1_src.tar.gz
+mv mega2_v4.9.2_src.tar.tar mega2_v4.9.2_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -13498,7 +13507,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 database mode menu: 
+Mega2 4.9.2 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -13830,7 +13839,7 @@ When entering the file input menu, Mega2 initially expects to read input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 file input menu:
+              Mega2 4.9.2 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -13926,7 +13935,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 input file type menu:
+Mega2 4.9.2 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -13998,7 +14007,7 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 file input menu:
+              Mega2 4.9.2 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -16589,7 +16598,7 @@ name "subsec:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 Maximum alleles per marker menu:
+              Mega2 4.9.2 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -17073,7 +17082,7 @@ The Database input menu is shown below and explained immediately following:
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 Database input menu:
+              Mega2 4.9.2 Database input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -17221,7 +17230,7 @@ The path to this SQLite3 database is dbmega2.db.
 \end_layout
 
 \begin_layout LyX-Code
-This database was created using Mega2 version 4.9.1.
+This database was created using Mega2 version 4.9.2.
  
 \end_layout
 
@@ -18053,7 +18062,7 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 Missing Value menu:
+              Mega2 4.9.2 Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -38387,7 +38396,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="26" columns="4">
+<lyxtabular version="3" rows="27" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="right" valignment="top">
@@ -38434,6 +38443,44 @@ Release date
 
 \series bold
 Valid until
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.9.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 14, 2017
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 2018
 \end_layout
 
 \end_inset
@@ -39394,6 +39441,10 @@ March 31, 2008
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
 \end_layout
 
 \begin_layout Subsection

@@ -4,7 +4,8 @@
 \alias{Mega2VCF}
 \title{generate a VCF file collection}
 \usage{
-Mega2VCF(prefix, markers = NULL, mapno = 0, allowFlip = FALSE)
+Mega2VCF(prefix, markers = NULL, mapno = 0, allowFlip = FALSE,
+  envir = ENV)
 }
 \arguments{
 \item{prefix}{prefix for vcf file name}
@@ -15,14 +16,16 @@ Mega2VCF(prefix, markers = NULL, mapno = 0, allowFlip = FALSE)
 will print out the internal map numbers corresponding to all the maps in the Mega2 database.}
 
 \item{allowFlip}{REF/ALT of higher frequency occurs first}
+
+\item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
 Generate a VCF file from the specified Mega2 SQLite database.  The file is named "prefix".vcf
- If the markers arg is.null(), the entire ENV$markers set is used otherwise markers arg MUST
- be a subset of the ENV$markers data.frame -- same columns, but pruned rows.  In addition,
+ If the markers arg is.null(), the entire envir$markers set is used otherwise markers arg MUST
+ be a subset of the envir$markers data.frame -- same columns, but pruned rows.  In addition,
  several other related files are generated: "prefix".fam, "prefix".freq, "prefix".map,
  "prefix".phe, and "prefix".pen, being the pedigree, allele frequency, marker genetic and
  physical map position, member phenotype and phenotype penetrance information.
@@ -33,6 +36,6 @@ ENV <- read.Mega2DB("my.db")
 
 Mega2VCF("foo")
 
-Mega2VCF("foo", ENV$markers[ENV$markers$chromosome >= 20,])
+Mega2VCF("foo", envir$markers[envir$markers$chromosome >= 20,])
 }
 }
