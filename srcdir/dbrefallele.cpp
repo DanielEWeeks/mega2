@@ -42,8 +42,6 @@
 
 #include "dbrefallele.h"
 
-#include "tod.hh"
-
 extern DBlite MasterDB;
 
 extern int  db_exists_db();
@@ -72,7 +70,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 
     //begin reading our gzipped file
     //we define a buffer
-    int length = 0x1000;
+#define BUFLENGTH (0x1000)
     //get a gzipfile and open it
     gzFile file;
     file = gzopen(filename.c_str(),"r");
@@ -111,15 +109,14 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 
     printf("Matching position values between dataset and reference, this may take a while especially for larger GWAS datasets. (a minute or more)\n");
     //read our buffer
-    Todd newish("read ref a file");
     char *ref;
     char *alt;
     if(use_bp_sort) {
         while (1) {
             int err;
             int bytes_read;
-            char buffer[length];
-            bytes_read = gzread(file, buffer, length - 1);
+            char buffer[BUFLENGTH];
+            bytes_read = gzread(file, buffer, BUFLENGTH - 1);
             buffer[bytes_read] = '\0';
 
             //split our buffer by lines and spaces
@@ -187,7 +184,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
             }
 
             //when the buffer is done
-            if (bytes_read < length - 1) {
+            if (bytes_read < BUFLENGTH - 1) {
                 //we commit transactions by buffer for speed (rather than by row)
                 //is file done?
                 if (gzeof(file)) {
@@ -203,7 +200,6 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
             }
         }
     }
-    newish();
     SECTION_LOG_FINI(ref_mismatch);
     SECTION_LOG_FINI(ref_not_available);
 

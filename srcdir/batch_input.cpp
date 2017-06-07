@@ -59,6 +59,12 @@
               utils_ext.h:  EXIT draw_line get_line
 */
 
+
+#ifdef _WIN
+#define R_OK 4
+#define access(str,type) _access(str,type)
+#endif
+
 using namespace std;
 
 #include <iostream>

@@ -365,7 +365,7 @@ static int *convert_marker_filter2locus_filter(linkage_ped_top *Top)
             cmin = 0;
             cmax = len;
 
-            if (not map_get(locus_filter, bchr, locuslist)) {
+            if (! map_get(locus_filter, bchr, locuslist)) {
                 locuslist = new List3ill;
                 locus_filter[bchr] = locuslist;
             }
@@ -396,7 +396,7 @@ static int *convert_marker_filter2locus_filter(linkage_ped_top *Top)
             cmin = 0;
             cmax = len;
 
-            if (not map_get(locus_filter, bchr, locuslist)) {
+            if (! map_get(locus_filter, bchr, locuslist)) {
                 locuslist = new List3ill;
                 locus_filter[bchr] = locuslist;
             }
@@ -425,7 +425,7 @@ static int *convert_marker_filter2locus_filter(linkage_ped_top *Top)
         Pairii ii = Chr2Locus[bchr];
         printf("chr %d, st %d, # %d\n", bchr, ii.first, ii.second);
         bplist = marker_filter[chrs[i]];
-        if (not map_get(locus_filter, bchr, locuslist)) {
+        if (! map_get(locus_filter, bchr, locuslist)) {
             locuslist = new List3ill;
             locus_filter[bchr] = locuslist;
         }
