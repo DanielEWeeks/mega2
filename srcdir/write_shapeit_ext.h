@@ -97,6 +97,12 @@ public:
     Str rdir;
     Str rpre;
     Str rpost;
+	Str rrefdir;
+	Str rhappre;
+	Str rhappost;
+	Str rlegpre;
+	Str rlegpost;
+	Str rsam;
 };
 
 extern CLASS_SHAPEIT *SHAPEIT;
