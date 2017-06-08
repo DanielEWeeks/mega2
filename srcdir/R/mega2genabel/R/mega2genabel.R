@@ -38,21 +38,22 @@
 #' @name Mega2GenABEL-package
 NULL
 
-#' generate required VCF header
+#' generate gwaa.data-class object
 #'
 #' @description
 #'  Call functions to: create .tped file, .tfam file and .phe file.
-#'  Call the GenABEL functions to process these files.
+#'  Call the GenABEL functions to process these files which will additionally
+#'  create a GenABEL .raw file.
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for generated file names
 #'
-#' @param markers data.frame of markers being processed
+#' @param markers data frame of markers being processed
 #'
 #' @param mapno specify which map index to use for genetic distances
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
-#' @return gwaa.class-object of previously read(.Mega2DB) database
+#' @return gwaa.class-object of previously read.Mega2DB database
 #'
 #' @importFrom GenABEL convert.snp.tped load.gwaa.data
 #' @export
@@ -61,7 +62,9 @@ NULL
 #'\dontrun{
 #' ENV <- read.Mega2DB("my.db")
 #'
-#' Mega2GenABEL(prefix, NULL)
+#' gwaa = Mega2GenABEL(prefix, NULL)
+#' str(gwaa)
+#' head(summary(gwaa))
 #'}
 Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 
@@ -188,7 +191,7 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
 #'  Generate the six column .tfam file used with the .tped file.  Note: Only the person id
 #'  column appears to be used by GenABEL.
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for generated file name
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
@@ -220,7 +223,7 @@ mkGenABELtfam = function (prefix, envir) {
 #'  Generate the .phe (phenotype) file for PLINK which is used by GenAbel.  The person
 #'  must match that specified in the .tfam file
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for generated file name
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'

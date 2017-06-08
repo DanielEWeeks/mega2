@@ -85,7 +85,7 @@ NULL
 init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 
     if (is.null(db))
-        stop("You must specify a database argument!\n")
+        stop("You must specify a database argument!\n", call. = FALSE)
     
     envir = dbmega2_import(db, verbose = verbose)
 

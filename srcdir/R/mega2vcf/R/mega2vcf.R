@@ -73,6 +73,11 @@ NULL
 #' Mega2VCF("foo", envir$markers[envir$markers$chromosome >= 20,])
 #'}
 Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE, envir = ENV) {
+
+    if (envir$MARKER_SCHEME > 1)
+        stop("Currently, VCF is only available for bialleleic genetic data.\n",
+             call. = FALSE)
+    
     file = paste0(prefix, ".vcf")
     unlink(file)
 
@@ -239,7 +244,8 @@ mkVCFhdr = function (prefix, markers, envir) {
     mkVCFphe(prefix,           envir)
 
     cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
-    cat('##filedate=19970829\n', file=file, append=TRUE)
+##  cat('##filedate=19970829\n', file=file, append=TRUE)
+    cat('##filedate=', format(Sys.time(), "%Y%m%d"), '\n', sep = "", file=file, append=TRUE)
     cat('##source=MEGA2\n', file=file, append=TRUE)
     cat('##INFO=<ID=CM,Number=3,Type=Float,Description="Genetic Distance in centimorgans (avg, male, female)">\n', file=file, append=TRUE)
     cat('##INFO=<ID=RF,Number=1,Type=Float,Description="Allele Frequency of reference allele">\n', file=file, append=TRUE)

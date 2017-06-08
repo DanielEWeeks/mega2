@@ -582,8 +582,8 @@ void assign_dummy_alleles(marker_type *marker_list,
 {
     int m, mal;
     allele_list_type *all;
-    char allelestr[2], allele1str[2], allele2str[2];
-    allelestr[1] = allele1str[1] = allele2str[1] = 0;
+    char allele1str[2], allele2str[2];
+    allele1str[1] = allele2str[1] = 0;
     int vcf = VCFalleles.size();
 
     SECTION_LOG_INIT(assign_dummy_allele);

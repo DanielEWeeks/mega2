@@ -24,7 +24,7 @@ Generate the initial boiler plate VCF, then generate ##INFO entries for each ent
 }
 \examples{
 \dontrun{
-mkVCFfreq(prefix, NULL, envir)
+mkVCFfreq(prefix, NULL, FALSE, envir)
 }
 }
 \keyword{internal}
