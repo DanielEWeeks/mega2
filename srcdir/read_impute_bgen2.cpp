@@ -73,13 +73,13 @@ void ReadBgen2::read_input_file()
     SECTION_ERR_FINI(bad_marker_name);
 }
 
-void ReadBgen2::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
+void ReadBgen2::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons, vector<Vecc> &veca)
 {
     BgenParserGenotypeReadHelper gh;
     gh.m_filename = impute_file;
     gh.n_rip = this;
 
-    build_internal_genotypes(LTop, persons, gh);
+    build_internal_genotypes(LTop, persons, gh, veca);
 }
 
 void BgenParserGenotypeReadHelper::genotypes_init()

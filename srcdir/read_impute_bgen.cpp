@@ -70,13 +70,13 @@ void ReadBgen::read_input_file()
     SECTION_ERR_FINI(bad_name);
 }
 
-void ReadBgen::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
+void ReadBgen::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons, vector<Vecc> &veca)
 {
     ReadBgenGenotypeReadHelper gh;
     gh.impute_file = impute_file;
     gh.rip = this;
 
-    build_internal_genotypes(LTop, persons, gh);
+    build_internal_genotypes(LTop, persons, gh, veca);
 }
 
 void ReadBgenGenotypeReadHelper::genotypes_init()

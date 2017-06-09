@@ -122,9 +122,9 @@ public:
     }
 
     virtual void read_input_file();
-    virtual void build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
+    virtual void build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons, std::vector<Vecc> &veca);
 
-    void build_internal_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons, GenotypeReadHelper &gh);
+    void build_internal_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons, GenotypeReadHelper &gh, std::vector<Vecc> &VA);
 
     void check_indelsNdups();
     void read_info_file();
