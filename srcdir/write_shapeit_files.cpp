@@ -135,6 +135,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
 {
     int i, choice = -1, istem = -1; //, idef = -1;
     int idir = -1, ifile = -1;
+    int irefdir = -1, irefhap = -1, irefleg= -1, irefsam = -1;
     char selection[MAX_NAMELEN], *sp = selection;
     char shapeitopt[16];
 
@@ -148,31 +149,47 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
     print_outfile_mssg();
     while (choice != 0) {
         printf("  SHAPEIT %s parameters menu:\n", shapeitopt);
-        printf("    The recombination map directory defaults to the current directory.\n");
-        printf("    The recombination map file template should contain a ? character which\n");
-        printf("      will be replaced with a chomomosome number.\n");
+        printf("  Recombination and reference directories default to current directory.\n");
+        printf("  Templates should have a “?” character at the chromosome number.\n");
+        printf("  Genetic maps are required for phased mode, optional for check.\n");
+        printf("  Reference panels are optional, but require all 3 files to be included.\n");
+        //old text
+        //printf("    The recombination map directory defaults to the current directory.\n");
+        //printf("    The recombination map file template should contain a ? character which\n");
+        //printf("      will be replaced with a chomomosome number.\n");
         draw_line();
         printf("0) Done with this menu - please proceed\n");
         i=1;
 
         batch_in();
+        printf(" %d) Genetic map directory:              [optional]    \"%s\"\n", i, (rdir == "" )? "." : C(rdir));
+        idir=i++;
 
-        if (_suboption == 1) {
-            printf(" %d) Genetic recombination map directory:       \"%s\"\n",
-                   i, (rdir == "" )? "." : C(rdir));
-            idir=i++;
+        if(_suboption ==1)
+            printf(" %d) Genetic map template:               [required]    \"%s\"\n", i, BatchItemGet("Shapeit_recomb_template")->value.name);
+        else
+            printf(" %d) Genetic map template:               [optional]    \"%s\"\n", i, BatchItemGet("Shapeit_recomb_template")->value.name);
+        ifile=i++;
 
-            printf(" %d) Genetic recombination map file template:   \"%s\"\n",
-                   i, BatchItemGet("Shapeit_recomb_template")->value.name);
-            ifile=i++;
-        }
+        printf(" %d) Reference panel directory:          [optional]    \"%s\"\n", i, BatchItemGet("shapeit_reference_panel_directory")->value.name);
+        irefdir=i++;
+
+        printf(" %d) Haplotype template:                 [optional]    \"%s\"\n", i, BatchItemGet("shapeit_reference_haplotype_template")->value.name);
+        irefhap=i++;
+
+        printf(" %d) Legend template:                    [optional]    \"%s\"\n", i, BatchItemGet("shapeit_reference_legend_template")->value.name);
+        irefleg=i++;
+
+        printf(" %d) Sample file:                        [optional]    \"%s\"\n", i, BatchItemGet("shapeit_reference_sample_file")->value.name);
+        irefsam=i++;
+
 /*
 	printf(" %d) Use default filenames?                             %s\n",
 	       i, yorn[DEFAULT_OUTFILES]);
 	idef=i++;
 
         if (! DEFAULT_OUTFILES)*/ {
-            printf(" %d) Filenames stem:                            \"%s\"\n",
+            printf(" %d) Filenames stem:                                   \"%s\"\n",
                    i, this->file_name_stem);
         istem=i++;
         }
@@ -201,7 +218,8 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
             while (1) {
                 printf("Enter recombination map file template >\n");
                 printf(" Reserve space for the chromosome number with a ? > ");
-                IgnoreValue(fgets(selection, sizeof(selection)-1, stdin)); newline;
+                IgnoreValue(fgets(selection, sizeof(selection) - 1, stdin));
+                newline;
                 i = strlen(selection) - 1;
                 if (selection[i] == '\n')
                     selection[i] = 0;
@@ -214,7 +232,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
                     printf("Please include one and only one ? in the file name\n");
                     continue;
                 }
-                rpre  = filesplit[0];
+                rpre = filesplit[0];
                 rpost = filesplit[1];
                 break;
             }
@@ -225,6 +243,70 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
             fcmap(stdin, "%s", selection);    newline;
             BatchValueSet(selection[0], "Default_Outfile_Names");
 */
+        } else if (choice == irefdir){
+            printf("Enter directory for reference panel > ");
+            IgnoreValue(fgets(selection, sizeof(selection)-1, stdin)); newline;
+            i = strlen(selection) - 1;
+            if (selection[i] == '\n')
+                selection[i] = 0;
+            BatchValueSet(sp, "shapeit_reference_panel_directory");
+            rrefdir = sp;
+
+        } else if (choice == irefhap) {
+            while (1) {
+                printf("Enter reference panel haplotype file template >\n");
+                printf(" Reserve space for the chromosome number with a ? > ");
+                IgnoreValue(fgets(selection, sizeof(selection) - 1, stdin));
+                newline;
+                i = strlen(selection) - 1;
+                if (selection[i] == '\n')
+                    selection[i] = 0;
+                BatchValueSet(sp, "shapeit_reference_haplotype_template");
+
+                Cstr file(sp);
+                Vecs filesplit;
+                split(filesplit, file, "?");
+                if (filesplit.size() != 2) {
+                    printf("Please include one and only one ? in the file name\n");
+                    continue;
+                }
+                rhappre = filesplit[0];
+                rhappost = filesplit[1];
+                break;
+            }
+
+        } else if (choice == irefleg) {
+            while (1) {
+                printf("Enter reference panel legend file template  >\n");
+                printf(" Reserve space for the chromosome number with a ? > ");
+                IgnoreValue(fgets(selection, sizeof(selection) - 1, stdin));
+                newline;
+                i = strlen(selection) - 1;
+                if (selection[i] == '\n')
+                    selection[i] = 0;
+                BatchValueSet(sp, "shapeit_reference_legend_template");
+
+                Cstr file(sp);
+                Vecs filesplit;
+                split(filesplit, file, "?");
+                if (filesplit.size() != 2) {
+                    printf("Please include one and only one ? in the file name\n");
+                    continue;
+                }
+                rlegpre = filesplit[0];
+                rlegpost = filesplit[1];
+                break;
+            }
+
+        } else if (choice == irefsam) {
+            printf("Enter reference panel sample file > ");
+            IgnoreValue(fgets(selection, sizeof(selection)-1, stdin)); newline;
+            i = strlen(selection) - 1;
+            if (selection[i] == '\n')
+                selection[i] = 0;
+            BatchValueSet(sp, "shapeit_reference_sample_file");
+            rsam = sp;
+
         } else if (choice == istem) {
             printf("Enter new stem for the output file names > ");
             fcmap(stdin, "%s", selection);    newline;
@@ -260,6 +342,10 @@ void CLASS_SHAPEIT::batch_out()
                       "Shapeit_recomb_template",
                       "Shapeit_file_stem",
                       "Loop_Over_Chromosomes",
+                      "shapeit_reference_panel_directory",
+                      "shapeit_reference_haplotype_template",
+                      "shapeit_reference_legend_template",
+                      "shapeit_reference_sample_file",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -269,46 +355,75 @@ void CLASS_SHAPEIT::batch_out()
     }
 }
 
-void CLASS_SHAPEIT::batch_in()
-{
+void CLASS_SHAPEIT::batch_in() {
     char c;
     char *fn = this->file_name_stem;
-    Str file;
-    Vecs filesplit;
+    Str file, file2, file3;
+    Vecs filesplit,filesplit2,filesplit3;
 
-    BatchValueIfSet(        fn,   "Shapeit_file_stem");
-    BatchValueGet(c,              "Loop_Over_Chromosomes");
+    BatchValueIfSet(fn, "Shapeit_file_stem");
+    BatchValueGet(c, "Loop_Over_Chromosomes");
     if (c != 'y' && c != 'Y') {
         warnvf("For SHAPEIT, Loop_Over_Chromosomes was %c, but will be read as true ('y')\n", c);
         warnvf("Each chromosome must be processed separately.\n");
     }
     LoopOverChrm = 'y';
 
-    if (_suboption == 1) {
-        BatchValueGet(this->rdir,  "Shapeit_recomb_directory");
-        BatchValueGet(       file, "Shapeit_recomb_template");
+    BatchValueGet(this->rdir, "Shapeit_recomb_directory");
 
-        if (file == "") return;
+    BatchValueGet(file, "Shapeit_recomb_template");
+
+    if (file != "")
         split(filesplit, file, "?");
-        if (filesplit.size() != 2) {
-            printf("Please include one and only one ? in the file name \"%s\"\n",
-                   C(file));
-            return;
-        }
-        rpre  = filesplit[0];
+    if (filesplit.size() != 2) {
+        printf("Please include one and only one ? in the file name \"%s\"\n",
+               C(file));
+    }else {
+        rpre = filesplit[0];
         rpost = filesplit[1];
     }
+
+    BatchValueGet(this->rrefdir, "shapeit_reference_panel_directory");
+    BatchValueGet(file2, "shapeit_reference_haplotype_template");
+
+    if (file2 != "")
+        split(filesplit2, file2, "?");
+    if (filesplit2.size() != 2) {
+        printf("Please include one and only one ? in the file name \"%s\"\n",
+               C(file));
+    }
+    else {
+        rhappre = filesplit2[0];
+        rhappost = filesplit2[1];
+    }
+
+    BatchValueGet(file3, "shapeit_reference_legend_template");
+
+    if (file3 != "")
+        split(filesplit3, file3, "?");
+    if (filesplit3.size() != 2) {
+        printf("Please include one and only one ? in the file name \"%s\"\n", C(file));
+    }else {
+        rlegpre = filesplit3[0];
+        rlegpost = filesplit3[1];
+    }
+
+    BatchValueGet(this->rsam, "shapeit_reference_sample_file");
 }
 
 void CLASS_SHAPEIT::batch_show()
 {
     msgvf("\n");
     if (_suboption == 1) {
-        msgvf("Shapeit recombination data directory:     %s\n",    C(this->rdir));
-        msgvf("Shapeit recombination file template:      %s?%s\n", C(this->rpre), C(this->rpost));
+        msgvf("Shapeit recombination data directory:         %s\n",    C(this->rdir));
+        msgvf("Shapeit recombination file template:          %s?%s\n", C(this->rpre), C(this->rpost));
+        msgvf("Shapeit reference panel directory:            %s\n",    C(this->rrefdir));
+        msgvf("Shapeit reference haplotype file template:    %s?%s\n", C(this->rhappre), C(this->rhappost));
+        msgvf("Shapeit reference legend file template:       %s?%s\n",    C(this->rlegpre), C(this->rlegpost));
+        msgvf("Shapeit reference sample file :               %s\n", C(this->rsam));
     }
     if (! DEFAULT_OUTFILES) {
-        msgvf("Shapeit data file stem:                   %s\n",    C(this->file_name_stem));
+        msgvf("Shapeit data file stem:                       %s\n",    C(this->file_name_stem));
     }
     msgvf("\n");
  }
@@ -408,12 +523,13 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             pr_printf("echo\n");
             sprintf(cmd, "$_SHAPEIT --input-bed %s%s %s%s %s --input-map ",
                     pfx, file_names_intrnl[3], pfx, file_names_intrnl[1], file_names_intrnl[0]);
-	    if (clss->rdir != "")
-		sprintf(cmd, "%s %s/", cmd, C(clss->rdir));
-            sprintf(cmd, "%s%s%d%s --output-max %s.haps %s.sample %s\n",
-                    cmd, C(clss->rpre), _numchr, C(clss->rpost),
-                    file_names_intrnl[7], file_names_intrnl[7],
-                    "$MoreArgs");
+            if (clss->rdir != "")
+		        sprintf(cmd, "%s%s/", cmd, C(clss->rdir));
+            sprintf(cmd, "%s%s%d%s ",cmd , C(clss->rpre), _numchr, C(clss->rpost));
+            if(clss->rhappre != "" && clss->rhappost != "" && clss->rlegpre != "" && clss->rlegpost != "" &&  clss->rsam != "")
+                sprintf(cmd, "%s --input-ref %s/%s%d%s %s/%s%d%s %s/%s", cmd , C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
+                        C(clss->rrefdir), C(clss->rlegpre), _numchr, C(clss->rlegpost), C(clss->rrefdir), C(clss->rsam));
+            sprintf(cmd, "%s --output-max %s.haps %s.sample %s\n",cmd, file_names_intrnl[7], file_names_intrnl[7], "$MoreArgs");
 
             sh_run("SHAPEIT", cmd);
             pr_nl();
@@ -518,6 +634,19 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             pr_printf("echo\n");
             sprintf(cmd, "$_SHAPEIT -check --input-bed %s%s %s%s %s\n",
                     pfx, file_names_intrnl[3], pfx, file_names_intrnl[1], file_names_intrnl[0]);
+
+            if(clss->rpre != "" && clss->rpost != "") {
+                sprintf(cmd, "%s --input-map ", cmd);
+                if (clss->rdir != "")
+                    sprintf(cmd, "%s%s/", cmd, C(clss->rdir));
+                sprintf(cmd, "%s%s%d%s ", cmd, C(clss->rpre), _numchr, C(clss->rpost));
+            }
+            if(clss->rhappre != "" && clss->rhappost != "" && clss->rlegpre != "" && clss->rlegpost != "" &&  clss->rsam != "")
+                sprintf(cmd, "%s --input-ref %s/%s%d%s %s/%s%d%s %s/%s\n", cmd , C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
+                        C(clss->rrefdir), C(clss->rlegpre), _numchr, C(clss->rlegpost), C(clss->rrefdir), C(clss->rsam));
+            else
+                sprintf(cmd,"%s\n",cmd);
+
 
             sh_run("SHAPEIT", cmd);
             pr_nl();
