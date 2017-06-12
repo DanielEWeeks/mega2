@@ -420,7 +420,7 @@ void CLASS_SHAPEIT::batch_show()
         msgvf("Shapeit reference panel directory:            %s\n",    C(this->rrefdir));
         msgvf("Shapeit reference haplotype file template:    %s?%s\n", C(this->rhappre), C(this->rhappost));
         msgvf("Shapeit reference legend file template:       %s?%s\n",    C(this->rlegpre), C(this->rlegpost));
-        msgvf("Shapeit reference sample file :               %s\n", C(this->rsam));
+        msgvf("Shapeit reference sample file:                %s\n", C(this->rsam));
     }
     if (! DEFAULT_OUTFILES) {
         msgvf("Shapeit data file stem:                       %s\n",    C(this->file_name_stem));

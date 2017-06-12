@@ -16196,9 +16196,15 @@ Align strands with reference
 \end_layout
 
 \begin_layout Standard
-Additionally, we provide a reference panel for 1000 genomes at [TODO: figure
- out how we want to host it and put a link here].
- 
+Additionally, we provide a reference panel for 1000 genomes at 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://watson.hgen.pitt.edu/mega2/refs/"
+target "https://watson.hgen.pitt.edu/mega2/refs/"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
