@@ -547,9 +547,8 @@ fln_t auxO  = {"Aux file:",        Input_Aux_File},        *auxo  = &auxO;
 fln_t pheO  = {"Phenotype file:",  Input_Phenotype_File},  *pheo  = &pheO;
 fln_t infO  = {"Imputed Info file:", -1, "Input_Imputed_Info_File"};
 fln_t *info  = &infO;
-fln_t refO  = {"Reference Allele File:",  -1, "Reference_Allele_File"},  *refo  = &refO;
 
-fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, refo, info, 0};
+fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, info, 0};
 
 static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *sfx1)
 {
@@ -588,7 +587,6 @@ static void fln_init_mega2(int map_req) {
     fln_init(omito, "Mega2", "omit", "[optional]", "omit");
     fln_init(freqo, "Mega2", "freq", "[optional]", "freq", "frequency");
     fln_init(peno,  "Mega2", "pen", "[optional]", "pen", "penetrance");
-    fln_init(refo,  "Alleles", "", "[optional]", "ref", "reference");
 }
 
 #define PMAP_REQ 1
@@ -1000,7 +998,7 @@ void menu1(file_format *infl_type,
     fln_alloc(auxfl_name,   auxo);
     fln_alloc(phefl_name,   pheo);
     fln_alloc(infofl_name,  info);
-    fln_alloc(reffl_name,   refo);
+    fln_alloc(reffl_name);
     if (batchINPUTFILES) {
 
         Input = createinput(Input_Format);
@@ -1034,6 +1032,8 @@ void menu1(file_format *infl_type,
         menu1_batch_set_outfiles(output_path, db_name);
 
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
+
+        BatchValueGet(*reffl_name,"Reference_Allele_File");
 
         return;
     }
@@ -1262,6 +1262,7 @@ void menu1(file_format *infl_type,
         choiceA[idx] = fln_print(peno, idx, pen_i);
         if (choiceA[idx]) idx++;
 
+
         printf("%2d) %-*s%s\n", idx, line_len,
                "Output Directory:",
                ((!strcmp(*output_path, "."))?"[ Current directory ]" : *output_path));
@@ -1279,8 +1280,13 @@ void menu1(file_format *infl_type,
             idx++;
         }
 
-        if(database_dump)
-            choiceA[idx] = fln_print(refo, idx, ref_i);
+        if(database_dump) {
+            if(*reffl_name == NULL)
+                printf("%2d) %-*s%14s%s\n", idx, line_len-14,"Reference Allele File:","[optional] ", "-");
+            else
+                printf("%2d) %-*s%14s%s\n", idx, line_len-14,"Reference Allele File:","[optional] ", *reffl_name);
+            choiceA[idx] = ref_i;
+        }
 
         if (choiceA[idx]) idx++;
 
@@ -1409,7 +1415,6 @@ void menu1(file_format *infl_type,
                 fln_free_not_present(pheo);
                 fln_free_not_present(mapo);
                 fln_free_not_present(pmapo);
-                fln_free_not_present(refo);
                 fln_free_not_present(info);
             }
         } else if (choice_ == file_format_i) {
@@ -1497,13 +1502,13 @@ void menu1(file_format *infl_type,
             printf("They can be constructed by hand or using a shell script included with Mega2\n");
             printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
             printf("most recent build at https://watson.hgen.pitt.edu/mega2/refs/ \n\n");
-            fln_get(refo, "reference allele");
-            BatchValueSet(refo->name,"Reference_Allele_File");
+            printf("Please enter output directory name > ");
+            fcmap(stdin, "%s", *reffl_name); newline;
             newline;
             draw_line();
             char buildname[255];
 
-            Str rfile = refo->name;
+            Str rfile = *reffl_name;
 
             if(rfile.find("B37")!=std::string::npos || rfile.find("b37")!=std::string::npos)
                 strcpy(buildname,"B37");
@@ -1693,6 +1698,9 @@ void menu1(file_format *infl_type,
         Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option = MARKER_SCHEME;
         batchf(Value_Marker_Compression);
 
+
+        BatchValueSet(*reffl_name,"Reference_Allele_File");
+        batchf(BatchItemGet("Reference_Allele_File"));
         BatchValueSet(hgbuild,"human_genome_build");
         batchf(BatchItemGet("human_genome_build"));
     }

@@ -109,8 +109,8 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     //read our buffer
     char buffer[BUFLENGTH];
     char *token;
-    char *ref;
-    char *alt;
+    char *ref = (char *)"";
+    char *alt = (char *)"";
 
     int off = 0;
 //  int bufc = 0; // needed by printf("TK%d ...
