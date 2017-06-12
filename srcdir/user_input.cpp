@@ -1033,7 +1033,8 @@ void menu1(file_format *infl_type,
 
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
 
-        BatchValueGet(*reffl_name,"Reference_Allele_File");
+        if(BatchItemGet("Reference_Allele_File")->items_read)
+            BatchValueGet(*reffl_name,"Reference_Allele_File");
 
         return;
     }
