@@ -87,8 +87,6 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     if (use_bp_sort)
         bp += locus;
 
-
-
     // we want to break here since this will cause an error
     if(base_pair_position_index == 0 ) {
         printf("base pair position index = %d",base_pair_position_index);
@@ -109,19 +107,31 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 
     printf("Matching position values between dataset and reference, this may take a while especially for larger GWAS datasets. (a minute or more)\n");
     //read our buffer
+    char buffer[BUFLENGTH];
+    char *token;
     char *ref;
     char *alt;
+
+    int off = 0;
+    int bufc = 0;
+    int c;
+    char *bufp, *obufp;
     if(use_bp_sort) {
         while (1) {
             int err;
             int bytes_read;
-            char buffer[BUFLENGTH];
-            bytes_read = gzread(file, buffer, BUFLENGTH - 1);
+            bytes_read = gzread(file, buffer+off, BUFLENGTH-off - 1);
+            bytes_read += off;
             buffer[bytes_read] = '\0';
 
-            //split our buffer by lines and spaces
-            char *token = std::strtok(buffer, " \n");
-            while (token != NULL) {
+            bufp = obufp = buffer;
+            while ( (c = *bufp++) && c != '\n') ;
+            bufp[-1] = 0;
+            token = std::strtok(obufp, " \n");
+
+//        printf("TK%d %s\n", ++bufc, token);
+
+            while (c != 0) {
                 if (locus == Top->LocusTop->LocusCnt - 1)
                     break;
 
@@ -146,6 +156,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     int chromosome = bp->chr;
 
                     ttl++;
+//            printf("LN: %d %d %s %s\n", chr, pos, ref, alt);
                     if (chromosome == chr && pos == position && strlen(ref) != 0 && strlen(alt) != 0) {
                         //we insert our values, the position internally is inserted so we can select on it
                         insert(chromosome, position, locus, ref, alt);
@@ -155,6 +166,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                         success++;
                         bp++;
                         locus++;
+//           printf("MCH: %d %d %s %s\n", chr, pos, ref, alt);
                     } else if (pos > position && chromosome == chr) {
                         //if we find a value too large insert a dummy and increment
                         SECTION_LOG(ref_not_available);
@@ -163,6 +175,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                         bp++;
                         locus++;
                         fail++;
+//           printf("ref>: %d %d %s %s\n", chr, pos, ref, alt);
                         if (bp->pos == pos)
                             continue;
                     }
@@ -173,6 +186,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                         bp++;
                         locus++;
                         fail++;
+//           printf("chr>: %d %d %s %s\n", chr, pos, ref, alt);
                         continue;
                     }
                     chr = 0;
@@ -181,7 +195,17 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     altset = 0;
                 }
                 token = std::strtok(NULL, " \n");
+                if (token == NULL) {
+                    obufp = bufp;
+                    while ( (c = *bufp++) && c != '\n') ;
+                    bufp[-1] = 0;
+//           printf("SS: %s\n", obufp);
+                    if (c != 0)
+                        token = std::strtok(obufp, " \n");
+                }
             }
+            off = strlen(obufp);
+            strcpy(buffer, obufp);
 
             //when the buffer is done
             if (bytes_read < BUFLENGTH - 1) {
@@ -198,6 +222,8 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     }
                 }
             }
+
+
         }
     }
     SECTION_LOG_FINI(ref_mismatch);
