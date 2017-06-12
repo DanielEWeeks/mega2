@@ -113,7 +113,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     char *alt;
 
     int off = 0;
-    int bufc = 0;
+    //int bufc = 0;
     int c;
     char *bufp, *obufp;
     if(use_bp_sort) {
@@ -127,7 +127,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
             bufp = obufp = buffer;
             while ( (c = *bufp++) && c != '\n') ;
             bufp[-1] = 0;
-            token = std::strtok(obufp, " \n");
+            token = std::strtok(obufp, " \t\n");
 
 //        printf("TK%d %s\n", ++bufc, token);
 
@@ -194,14 +194,14 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                     refset = 0;
                     altset = 0;
                 }
-                token = std::strtok(NULL, " \n");
+                token = std::strtok(NULL, " \t\n");
                 if (token == NULL) {
                     obufp = bufp;
                     while ( (c = *bufp++) && c != '\n') ;
                     bufp[-1] = 0;
 //           printf("SS: %s\n", obufp);
                     if (c != 0)
-                        token = std::strtok(obufp, " \n");
+                        token = std::strtok(obufp, " \t\n");
                 }
             }
             off = strlen(obufp);

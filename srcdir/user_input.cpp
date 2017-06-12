@@ -985,6 +985,8 @@ void menu1(file_format *infl_type,
     *Error_sim_opt = 0;
     *freq_mismatch_thresh = LARGE;
 
+    Str hgbuild;
+
     fln_alloc(output_path);
     fln_alloc(input_path);
 
@@ -1260,8 +1262,6 @@ void menu1(file_format *infl_type,
         choiceA[idx] = fln_print(peno, idx, pen_i);
         if (choiceA[idx]) idx++;
 
-
-
         printf("%2d) %-*s%s\n", idx, line_len,
                "Output Directory:",
                ((!strcmp(*output_path, "."))?"[ Current directory ]" : *output_path));
@@ -1412,7 +1412,6 @@ void menu1(file_format *infl_type,
                 fln_free_not_present(refo);
                 fln_free_not_present(info);
             }
-
         } else if (choice_ == file_format_i) {
             int ans;
             while (1) {
@@ -1494,7 +1493,7 @@ void menu1(file_format *infl_type,
             printf("You can use an external reference panel to get a set of reference alleles.\n");
             printf("This process is described in the section called 'External Reference Allele Panel in the Database'\n");
             printf("in the Mega2 documentation.\n\n");
-            printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
+            printf("Reference panels are 4 column files of CHR POS REF ALT that are then gzipped.\n");
             printf("They can be constructed by hand or using a shell script included with Mega2\n");
             printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
             printf("most recent build at https://watson.hgen.pitt.edu/mega2/refs/ \n\n");
@@ -1524,13 +1523,7 @@ void menu1(file_format *infl_type,
                 newline;
             }
             printf("Genome build has been set to %s\n",buildname);
-            Str hgbuild = buildname;
-
-            BatchValueSet(hgbuild,"human_genome_build");
-            batchf(BatchItemGet("human_genome_build"));
-
-
-
+            hgbuild = buildname;
         } else if (choice_ == out_i) {   /* The output directory */
             draw_line();
             printf("Please enter output directory name > ");
@@ -1700,6 +1693,8 @@ void menu1(file_format *infl_type,
         Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option = MARKER_SCHEME;
         batchf(Value_Marker_Compression);
 
+        BatchValueSet(hgbuild,"human_genome_build");
+        batchf(BatchItemGet("human_genome_build"));
     }
 
     if (! Input->req_locus_file) fln_free(loco);
