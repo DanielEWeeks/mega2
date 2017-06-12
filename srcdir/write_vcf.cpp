@@ -632,7 +632,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     else
                         pr_printf("ORIG=%s,%s;",oldref.c_str(),oldalt.c_str());
                 }
-                else if(major_minor_flips[_tlocusp->locus_link] == 0 && oldref != auxillary_ref && oldalt != auxillary_alt)
+                else if(major_minor_flips[_tlocusp->locus_link] == 0 && (oldref != auxillary_ref || oldalt != auxillary_alt))
                     pr_printf("AMBIG=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
             }
             //pr_printf("AF=%.6f;",alternate_frequency);
