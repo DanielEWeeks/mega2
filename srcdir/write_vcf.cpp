@@ -167,7 +167,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             //add conditional
             if(_strand_flips) {
                 pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele used instead.\">\n");
-                pr_printf("##INFO=<ID=AMBIG,Number=1,Type=String,Description=\"Reference panel has match for this position, but it is ambiguous.\">\n");
+                pr_printf("##INFO=<ID=AMBIG,Number=2,Type=String,Description=\"Reference panel has match for this position (REF, ALT), but it is ambiguous.\">\n");
                 pr_printf("##INFO=<ID=ORIG,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset flipped according to T/G <-> A/C.\">\n");
                 pr_printf("##INFO=<ID=FLIP,Number=0,Type=Flag,Description=\"REF and ALT values (REF, ALT) from original dataset if REF and ALT alleles were switched in reference.\">\n");
             }
@@ -615,6 +615,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 //pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
             }
             pr_printf(";");
+
+
             if(_strand_flips) {
                 std::string oldref = oldrefs[_tlocusp->locus_link];
                 std::string oldalt = oldalts[_tlocusp->locus_link];
@@ -630,8 +632,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     else
                         pr_printf("ORIG=%s,%s;",oldref.c_str(),oldalt.c_str());
                 }
-                else if(!major_minor_flips[_tlocusp->locus_link] && oldref != _tlocusp->Allele[0].AlleleName && oldalt != _tlocusp->Allele[1].AlleleName)
-                    pr_printf("AMBIG=%s,%s;", oldref.c_str(),oldalt.c_str());
+                else if(oldref != auxillary_ref && oldalt != auxillary_alt)
+                    pr_printf("AMBIG=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
             }
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
