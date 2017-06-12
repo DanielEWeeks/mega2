@@ -1019,6 +1019,45 @@ Recent improvements and changes
 Enhancements in Mega2 version 4.9.2
 \end_layout
 
+\begin_layout Itemize
+Extend VCF output to support VCF.gz and BCF format output.
+ Also specify which allele should be the ref allele: first, greater minor
+ allele frequency, lesser minor allele frequency, match reference panel.
+\end_layout
+
+\begin_layout Itemize
+Add reference allele table and processing; optionally switch allele to reference
+ allele values.
+\end_layout
+
+\begin_layout Itemize
+Add .mega2rc file -- a mini batch file -- to store common values like for
+ reference panels, etc 
+\end_layout
+
+\begin_layout Itemize
+For PLINK bed, VCF and IMPUTE2, use REF/ALT marker alleles that are specified
+ in the input iff the marker is monomorphic.
+\end_layout
+
+\begin_layout Itemize
+For database, write out loci and genotypes in base pair order.
+ Read back only chromosomes that are requested for the analysis.
+ 
+\end_layout
+
+\begin_layout Itemize
+Have minimac and shapeit use a reference panel.
+\end_layout
+
+\begin_layout Itemize
+Bug: Fix SQL index statements.
+\end_layout
+
+\begin_layout Itemize
+Bug: Allow disconnected individuals and fix warning print out.
+\end_layout
+
 \begin_layout Subsection
 Enhancements in Mega2 version 4.9.1
 \end_layout
@@ -39451,6 +39490,50 @@ March 31, 2008
 
 \begin_layout Subsection
 Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
+\end_layout
+
+\begin_layout Itemize
+Extend VCF output to support VCF.gz and BCF format output.
+ Also specify which allele should be the ref allele: first, greater minor
+ allele frequency, lesser minor allele frequency, match reference panel.
+\end_layout
+
+\begin_layout Itemize
+Add reference allele table and processing; optionally switch allele to reference
+ allele values.
+\end_layout
+
+\begin_layout Itemize
+Add .mega2rc file -- a mini batch file -- to store common values like for
+ reference panels, etc 
+\end_layout
+
+\begin_layout Itemize
+For PLINK bed, VCF and IMPUTE2, use REF/ALT marker alleles that are specified
+ in the input iff the marker is monomorphic.
+\end_layout
+
+\begin_layout Itemize
+For database, write out loci and genotypes in base pair order.
+ Read back only chromosomes that are requested for the analysis.
+ 
+\end_layout
+
+\begin_layout Itemize
+Have minimac and shapeit use a reference panel.
+\end_layout
+
+\begin_layout Itemize
+Bug: Fix SQL index statements.
+\end_layout
+
+\begin_layout Itemize
+Bug: Allow disconnected individuals and fix warning print out.
+\end_layout
+
+\begin_layout Itemize
+Bug: Remove all C++ lambda constructs.
+ 
 \end_layout
 
 \begin_layout Subsection
