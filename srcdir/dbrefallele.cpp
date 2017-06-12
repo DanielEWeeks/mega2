@@ -113,7 +113,7 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
     char *alt;
 
     int off = 0;
-    int bufc = 0;
+//  int bufc = 0; // needed by printf("TK%d ...
     int c;
     char *bufp, *obufp;
     if(use_bp_sort) {
