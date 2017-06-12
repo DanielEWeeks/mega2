@@ -806,7 +806,8 @@ int             main(int argc, char **argv, char **env)
         *inf.penfl   = penfl_name;
         *inf.bedfl   = bedfl_name;
         *inf.phefl   = phefl_name;
-        *inf.reffl   = reffl_name;
+        if(strcmp(reffl_name, "") != 0)
+            *inf.reffl   = reffl_name;
 
         strcpy(&mega2_input_file_type[PEDIGREE][0],  "Pedigree file");
         strcpy(&mega2_input_file_type[LOCUS][0],  "Locus file");
