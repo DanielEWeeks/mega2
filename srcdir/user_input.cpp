@@ -1504,7 +1504,7 @@ void menu1(file_format *infl_type,
             printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
             printf("most recent build at https://watson.hgen.pitt.edu/mega2/refs/ \n\n");
             while (1) {
-                printf("Please enter output directory name > ");
+                printf("Please enter Reference Panel file > ");
                 fcmap(stdin, "%s", *reffl_name);
                 newline;
                 newline;

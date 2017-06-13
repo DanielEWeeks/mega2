@@ -166,8 +166,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
             //add conditional
             if(_strand_flips) {
-                pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele used instead.\">\n");
-                pr_printf("##INFO=<ID=AMBIG,Number=2,Type=String,Description=\"Reference panel has match for this position (REF, ALT), but it is ambiguous.\">\n");
+                pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele was used instead.\">\n");
+                pr_printf("##INFO=<ID=AMBIG,Number=2,Type=String,Description=\"Reference panel has a match for this position (REF, ALT), but it is ambiguous.\">\n");
                 pr_printf("##INFO=<ID=ORIG,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset flipped according to T/G <-> A/C.\">\n");
                 pr_printf("##INFO=<ID=FLIP,Number=0,Type=Flag,Description=\"REF and ALT values (REF, ALT) from original dataset if REF and ALT alleles were switched in reference.\">\n");
             }
