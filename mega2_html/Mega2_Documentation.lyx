@@ -359,11 +359,6 @@ LatexCommand tableofcontents
 \end_layout
 
 \begin_layout Standard
-Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
-\end_layout
-
-\begin_layout Standard
-Changes from Version 4.9.0 to Version 4.9.1 (Released November 1, 2016)
 \begin_inset Newpage pagebreak
 \end_inset
 
@@ -372,6 +367,10 @@ Changes from Version 4.9.0 to Version 4.9.1 (Released November 1, 2016)
 
 \begin_layout Section
 Introduction
+\end_layout
+
+\begin_layout Subsection
+Overview of Mega2
 \end_layout
 
 \begin_layout Standard
@@ -39593,14 +39592,37 @@ Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
 \end_layout
 
 \begin_layout Itemize
-Extend VCF output to support VCF.gz and BCF format output.
- Also specify which allele should be the ref allele: first, greater minor
- allele frequency, lesser minor allele frequency, match reference panel.
+The Mega2R suite of R packages provides tools for accessing and processing
+ common genetic data formats in R, making it easy to load SQLite3 Mega2
+ databases directly into R as data frames (See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-Mega2R-suite"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Itemize
-Add reference allele table and processing; optionally switch allele to reference
- allele values.
+Mega2 supports the use of an external reference panel, to facilitate alignment
+ of your data to the reference, resolving strand issues where possible (See
+ Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Using-an-external-reference"
+
+\end_inset
+
+ for details).
+ Add reference allele table and processing; optionally switch allele to
+ reference allele values.
+\end_layout
+
+\begin_layout Itemize
+Extend VCF output to support VCF.gz and BCF format output.
+ Also specify which allele should be the ref allele: first, greater minor
+ allele frequency, lesser minor allele frequency, match reference panel.
 \end_layout
 
 \begin_layout Itemize
