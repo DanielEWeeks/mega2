@@ -527,7 +527,7 @@ p Outfile_Names[10] "2015-11-17-10-44/"
 		        sprintf(cmd, "%s%s/", cmd, C(clss->rdir));
             sprintf(cmd, "%s%s%d%s ",cmd , C(clss->rpre), _numchr, C(clss->rpost));
             if(clss->rhappre != "" && clss->rhappost != "" && clss->rlegpre != "" && clss->rlegpost != "" &&  clss->rsam != "")
-                sprintf(cmd, "%s --input-ref %s/%s%d%s %s/%s%d%s %s/%s", cmd , C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
+                sprintf(cmd, "%s--input-ref %s/%s%d%s %s/%s%d%s %s/%s", cmd , C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
                         C(clss->rrefdir), C(clss->rlegpre), _numchr, C(clss->rlegpost), C(clss->rrefdir), C(clss->rsam));
             sprintf(cmd, "%s --output-max %s.haps %s.sample %s\n",cmd, file_names_intrnl[7], file_names_intrnl[7], "$MoreArgs");
 
@@ -632,7 +632,7 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             char cmd[2*FILENAME_LENGTH];
 
             pr_printf("echo\n");
-            sprintf(cmd, "$_SHAPEIT -check --input-bed %s%s %s%s %s\n",
+            sprintf(cmd, "$_SHAPEIT -check --input-bed %s%s %s%s %s",
                     pfx, file_names_intrnl[3], pfx, file_names_intrnl[1], file_names_intrnl[0]);
 
             if(clss->rpre != "" && clss->rpost != "") {
@@ -642,7 +642,7 @@ p Outfile_Names[10] "2015-11-17-10-44/"
                 sprintf(cmd, "%s%s%d%s ", cmd, C(clss->rpre), _numchr, C(clss->rpost));
             }
             if(clss->rhappre != "" && clss->rhappost != "" && clss->rlegpre != "" && clss->rlegpost != "" &&  clss->rsam != "")
-                sprintf(cmd, "%s --input-ref %s/%s%d%s %s/%s%d%s %s/%s\n", cmd , C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
+                sprintf(cmd, "%s--input-ref %s/%s%d%s %s/%s%d%s %s/%s", cmd , C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
                         C(clss->rrefdir), C(clss->rlegpre), _numchr, C(clss->rlegpost), C(clss->rrefdir), C(clss->rsam));
             else
                 sprintf(cmd,"%s\n",cmd);
