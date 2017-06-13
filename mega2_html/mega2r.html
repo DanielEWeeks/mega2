@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>The Mega2R suite of R packages</title>
+        <meta name="description" content="Mega2R">
+        <link rel="stylesheet" href="Mega2_Documentation.css">
+        <style>
+            body { margin: 20px;}
+            h2 { margin: 15px; }
+            p { margin: 25px; }
+        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    </head>
+    <body>
+    <h1>The Mega2R suite of R packages: tools for accessing and processing common genetic data formats in R</h1>
+        <p>Mega2 has been enhanced to use a SQLite database as an intermediate data representation. Additionally, Mega2 now stores bialleleic genotype data in a highly compressed form, much like that of the GenABEL R facility and the PLINK binary format. Concurrently, the R community and Bioconductor community have developed a variety of genetic analysis programs complimentary to the programs available through Mega2. We have now made it easy to load SQLite3 Mega2 databases directly into R as data frames to use these R facilities. In addition, we have developed C++ functions for R to decompress needed subsets of the genotype data, on the fly, in a memory efficient manner.  We created the base Mega2R package that loads and manipulates data frames. We have also created several more R packages that illustrate how to use the data frames as well as perform useful functions: the Mega2pedgene  package to run the pedgene R package to carry out gene-based association tests on family data using selected marker subsets, the Mega2VCF package to output the Mega2R data as a VCF file and related files (for phenotype and family data), and the Mega2GenABEL package to convert the data frames into GenABEL R gwaa.data-class objects. The Mega2R program enhances GenABEL since it supports additional input data formats (such as PLINK, VCF and IMPUTE2) not currently supported by GenABEL.  </p>
+        <hr>
+        <h2>The R packages</h2>
+        <p><b>Mega2R</b>: <a href="mega2r.tar.gz">mega2r.tar.gz</a></p>
+        <p><b>Mega2pedgene</b>: <a href="mega2pedgene.tar.gz">mega2pedgene.tar.gz</a></p>
+        <p><b>Mega2VCF</b>: <a href="mega2vcf.tar.gz">mega2vcf.tar.gz</a></p>
+        <p><b>Mega2GenABEL</b>: <a href="mega2genabel.tar.gz">mega2genabel.tar.gz</a></p>
+        <hr>
+        <h2>Mega2</h2>
+        <p>Mega2R uses SQLite databases produced by Mega2; documentation for Mega2 can be found <a href="https://watson.hgen.pitt.edu/docs/mega2_html/mega2.html" target="_blank">here</a>.</p>
+    </body>
