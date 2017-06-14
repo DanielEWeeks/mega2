@@ -1,0 +1,105 @@
+---
+title: "Example usage of Mega2R"
+author: "Robert V. Baron and Daniel E. Weeks"
+date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
+output:
+  pdf_document:
+    toc: true
+    number_sections: true
+---
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+require(knitr)
+# Set so that long lines in R will be wrapped:
+opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
+```
+
+# Load Libraries
+
+```{r load_libraries,message=FALSE}
+
+```
+
+# Input directory and files 
+
+```{r}
+# Print the working directory
+getwd()
+```
+The input files used in this analysis are ... and can be found in ... 
+
+# Analysis
+
+## Using the mega2 R package
+
+Create the Mega2 database "seqsimr.db" using `mega2`
+
+```
+mega2 Mega2.BATCH.seqsimr
+```
+
+```{r mega2}
+library(mega2)
+# Read the Mega2 database into R
+ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+# Examine the tables that have been created
+ls(ENV)
+# A more informative overview
+showMega2ENV()
+# Use standard R commands to examine the created data frames
+str(ENV$locus_table)
+```
+
+## Using the mega2pedgene R package
+
+```{r mega2pedgene}
+library(mega2pedgene)
+ENV = init_pedgene("seqsimr.db", verbose = TRUE)
+# 
+# applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
+# applyFnToGenes(DOpedgene, genes_arg = c("FAM5C", "TRABD2B"), envir = ENV)
+applyFnToGenes(DOpedgene, genes_arg = c("GDAP2"), envir = ENV)
+system("cat k_Schaid_rare.txt", intern = TRUE)
+```
+
+## Using the mega2vcf R package
+
+```{r mega2vcf}
+dir.create("vcfr")
+library(mega2vcf)
+Mega2VCF("vcfr/vcf")
+system("ls vcfr", intern = TRUE)
+```
+
+## Using the mega2genabel R package
+
+
+
+```{r mega2genabel}
+library(mega2genabel)
+seqsimgwaa = Mega2GenABEL("MEGA")
+system("ls MEGA.*",intern = TRUE)
+str(seqsimgwaa)
+```
+
+# Regression
+
+## GenABEL regression
+
+```{r}
+library(GenABEL)
+data(srdta)
+dmpPed()
+system("mega2 MEGA2.BATCH.srdta")
+ENV = read.Mega2DB("srdta.db")
+mega = Mega2GenABEL("srdta2")
+Mega2GenABELtst()
+```
+
+
+# Session Information
+
+```{r}
+sessionInfo()
+```
+
