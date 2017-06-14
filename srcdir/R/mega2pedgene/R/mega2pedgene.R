@@ -52,7 +52,7 @@
 #'  }
 NULL
 
-#library(mega2)
+#library(mega2r)
 #library(pedgene)
 
 #' get data for pedgene run using \bold{Mega2} framework
@@ -71,7 +71,7 @@ NULL
 #'
 #' @return "environment" containing SQLite database and other globals
 #'
-#' @importFrom mega2 dbmega2_import mkfam setfam setRanges
+#' @importFrom mega2r dbmega2_import mkfam setfam setRanges
 #' @importFrom utils read.table write.table
 #' @export
 #'
@@ -126,7 +126,7 @@ pedgene_results <- data.frame(chr = character(0), gene = character(0), nvariants
 #' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
-#' @importFrom mega2 applyFnToRanges
+#' @importFrom mega2r applyFnToRanges
 #' @export
 #'
 #' @examples

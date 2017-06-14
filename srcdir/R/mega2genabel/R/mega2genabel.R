@@ -25,7 +25,7 @@
 # 
 # ===========================================================================
 
-#library(mega2)
+#library(mega2r)
 #library(GenABEL)
 
 #' Mega2GenABEL package
@@ -104,7 +104,7 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #'
 #' @return None
 #'
-#' @importFrom mega2 getgenotypes
+#' @importFrom mega2r getgenotypes
 #' @importFrom utils write.table
 #' @export
 #'

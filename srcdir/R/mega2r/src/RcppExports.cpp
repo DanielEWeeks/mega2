@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // getgenotypes_1
 Rcpp::Matrix<STRSXP> getgenotypes_1(NumericVector locus_arg, NumericVector hocus_arg, List genotype_arg, List allele_arg, List markerscheme_arg, NumericVector phenocnt_arg);
-RcppExport SEXP mega2_getgenotypes_1(SEXP locus_argSEXP, SEXP hocus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP markerscheme_argSEXP, SEXP phenocnt_argSEXP) {
+RcppExport SEXP mega2r_getgenotypes_1(SEXP locus_argSEXP, SEXP hocus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP markerscheme_argSEXP, SEXP phenocnt_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,7 +23,7 @@ END_RCPP
 }
 // getgenotypes_2
 Rcpp::Matrix<STRSXP> getgenotypes_2(NumericVector locus_arg, List genotype_arg, List allele_arg, NumericVector phenocnt_arg);
-RcppExport SEXP mega2_getgenotypes_2(SEXP locus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP phenocnt_argSEXP) {
+RcppExport SEXP mega2r_getgenotypes_2(SEXP locus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP phenocnt_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -37,7 +37,7 @@ END_RCPP
 }
 // getgenotypesraw_1
 Rcpp::IntegerMatrix getgenotypesraw_1(NumericVector locus_arg, NumericVector hocus_arg, List genotype_arg, List allele_arg, List markerscheme_arg, NumericVector phenocnt_arg);
-RcppExport SEXP mega2_getgenotypesraw_1(SEXP locus_argSEXP, SEXP hocus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP markerscheme_argSEXP, SEXP phenocnt_argSEXP) {
+RcppExport SEXP mega2r_getgenotypesraw_1(SEXP locus_argSEXP, SEXP hocus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP markerscheme_argSEXP, SEXP phenocnt_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,7 +53,7 @@ END_RCPP
 }
 // getgenotypesraw_2
 Rcpp::IntegerMatrix getgenotypesraw_2(NumericVector locus_arg, List genotype_arg, List allele_arg, NumericVector phenocnt_arg);
-RcppExport SEXP mega2_getgenotypesraw_2(SEXP locus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP phenocnt_argSEXP) {
+RcppExport SEXP mega2r_getgenotypesraw_2(SEXP locus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP phenocnt_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -67,7 +67,7 @@ END_RCPP
 }
 // getgenotypes_Ri
 Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg, NumericVector hocus_arg, List genotype_arg, List allele_arg, List markerscheme_arg, NumericVector phenocnt_arg);
-RcppExport SEXP mega2_getgenotypes_Ri(SEXP locus_argSEXP, SEXP hocus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP markerscheme_argSEXP, SEXP phenocnt_argSEXP) {
+RcppExport SEXP mega2r_getgenotypes_Ri(SEXP locus_argSEXP, SEXP hocus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP markerscheme_argSEXP, SEXP phenocnt_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -83,7 +83,7 @@ END_RCPP
 }
 // getgenotypes_forperson
 Rcpp::NumericVector getgenotypes_forperson(RawVector raw_arg);
-RcppExport SEXP mega2_getgenotypes_forperson(SEXP raw_argSEXP) {
+RcppExport SEXP mega2r_getgenotypes_forperson(SEXP raw_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -94,16 +94,16 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"mega2_getgenotypes_1", (DL_FUNC) &mega2_getgenotypes_1, 6},
-    {"mega2_getgenotypes_2", (DL_FUNC) &mega2_getgenotypes_2, 4},
-    {"mega2_getgenotypesraw_1", (DL_FUNC) &mega2_getgenotypesraw_1, 6},
-    {"mega2_getgenotypesraw_2", (DL_FUNC) &mega2_getgenotypesraw_2, 4},
-    {"mega2_getgenotypes_Ri", (DL_FUNC) &mega2_getgenotypes_Ri, 6},
-    {"mega2_getgenotypes_forperson", (DL_FUNC) &mega2_getgenotypes_forperson, 1},
+    {"mega2r_getgenotypes_1", (DL_FUNC) &mega2r_getgenotypes_1, 6},
+    {"mega2r_getgenotypes_2", (DL_FUNC) &mega2r_getgenotypes_2, 4},
+    {"mega2r_getgenotypesraw_1", (DL_FUNC) &mega2r_getgenotypesraw_1, 6},
+    {"mega2r_getgenotypesraw_2", (DL_FUNC) &mega2r_getgenotypesraw_2, 4},
+    {"mega2r_getgenotypes_Ri", (DL_FUNC) &mega2r_getgenotypes_Ri, 6},
+    {"mega2r_getgenotypes_forperson", (DL_FUNC) &mega2r_getgenotypes_forperson, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_mega2(DllInfo *dll) {
+RcppExport void R_init_mega2r(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

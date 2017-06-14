@@ -25,7 +25,7 @@
 # 
 # ===========================================================================
 
-#library(mega2)
+#library(mega2r)
 
 #' Mega2VCF package
 #'
@@ -60,7 +60,7 @@ NULL
 #'
 #' @return None
 #'
-#' @importFrom mega2 getgenotypesraw 
+#' @importFrom mega2r getgenotypesraw 
 #' @importFrom utils write.table
 #' @export
 #'

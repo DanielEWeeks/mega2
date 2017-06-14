@@ -25,28 +25,28 @@
 # 
 # ===========================================================================
 
-#' Mega2 package
+#' mega2r package
 #'
 #' @description This package reads a Mega2 SQLite3 database into R dataframes and
 #'	makes the contained genotypes/phenotypes/linkage data available for analysis.
 #'
 #' @author Robert V Baron
 #' @docType package
-#' @name Mega2-package
+#' @name mega2r-package
 NULL
 
 #library(DBI)
 #library(RSQLite)
 
 
-#' Mega2 SQLite3 tables
+#' mega2r SQLite3 tables
 #'
 #' @description This indicates which SQLite3 tables and possibly which subset of fields
 #'	to fetch.
 #'
 #' @author Robert V Baron
 #' @docType data
-#' @name Mega2-TBLS
+#' @name mega2r-TBLS
 TBLS = c("int_table",
 #        "double_table",
 #        "charstar_table",
@@ -79,13 +79,13 @@ TBLS = c("int_table",
 ##        markers
   )
 
-#' Mega2 SQLite3 table filter
+#' mega2r SQLite3 table filter
 #'
 #' @description For the for mentioned tables in some cases we will only extract a subset of columns
 #'
 #' @author Robert V Baron
 #' @docType data
-#' @name Mega2-TBLSFilter
+#' @name mega2r-TBLSFilter
 #' @note For the data.frames below, only the specified fields are loaded from the SQLite tables
 TBLSFilter = list(
           locus_table    = "pId, LocusName, Type, AlleleCnt, locus_link",
@@ -511,7 +511,7 @@ getgenotype_person = function(perid = 1, envir = ENV) {
 #'  (\emph{fam}) table.
 #'
 #' @keywords internal
-#' @useDynLib mega2
+#' @useDynLib mega2r
 #'
 #' @details
 #'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
@@ -566,7 +566,7 @@ getgenotypes_R = function(markers_arg, envir = ENV) {
 #'  (\emph{fam}) table.
 #'
 #' @export
-#' @useDynLib mega2
+#' @useDynLib mega2r
 #'
 #' @details
 #'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
@@ -626,7 +626,7 @@ getgenotypes_C = getgenotypes
 #'  (\emph{fam}) table.
 #'
 #' @export
-#' @useDynLib mega2
+#' @useDynLib mega2r
 #'
 #' @details
 #'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector

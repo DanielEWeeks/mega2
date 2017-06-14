@@ -25,12 +25,10 @@
 # 
 # ===========================================================================
 
-library(mega2)
+library(mega2r)
 
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(org.Hs.eg.db)
-
-#dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db", verbose = 1)
 
 pos  = NULL
 geno = NULL
