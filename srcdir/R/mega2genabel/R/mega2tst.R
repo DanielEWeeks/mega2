@@ -117,24 +117,31 @@ Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta) {
 #' Mega2GenABELtstph()
 #'}
 Mega2GenABELtstph = function (mega_ = mega, gwaa_ = srdta) {
+     cat("all(mega_@phdata$sex == gwaa_@phdata$sex)")
     print(all(! is.na(mega_@phdata$sex) && ! is.na(gwaa_@phdata$sex) &&
               mega_@phdata$sex == gwaa_@phdata$sex))
 
+     cat("all(mega_@phdata$age == gwaa_@phdata$age)")
     print(all(! is.na(mega_@phdata$age) && ! is.na(gwaa_@phdata$age) &&
               mega_@phdata$age == gwaa_@phdata$age))
 
+     cat("all(mega_@phdata$qt1 == gwaa_@phdata$qt1)")
     print(all(! is.na(mega_@phdata$qt1) && ! is.na(gwaa_@phdata$qt1) &&
               mega_@phdata$qt1 == gwaa_@phdata$qt1))
 
+     cat("all(mega_@phdata$qt2 == gwaa_@phdata$qt2)")
     print(all(! is.na(mega_@phdata$qt2) && ! is.na(gwaa_@phdata$qt2) &&
               mega_@phdata$qt2 == gwaa_@phdata$qt2))
 
+     cat("all(mega_@phdata$qt3 == gwaa_@phdata$qt3)")
     print(all(! is.na(mega_@phdata$qt3) && ! is.na(gwaa_@phdata$qt3) &&
               mega_@phdata$qt3 == gwaa_@phdata$qt3))
 
+     cat("all(mega_@phdata$bt == gwaa_@phdata$bt)")
     print(all(! is.na(mega_@phdata$bt) && ! is.na(gwaa_@phdata$bt) &&
               mega_@phdata$bt == gwaa_@phdata$bt))
 
+     cat("all(mega_@phdata$default == gwaa_@phdata$default)")
     print(all(! is.na(mega_@phdata$default) && ! is.na(gwaa_@phdata$bt) &&
               mega_@phdata$default == gwaa_@phdata$bt))
 }
@@ -160,18 +167,31 @@ Mega2GenABELtstgt = function (mega_ = mega, gwaa_ = srdta) {
 #    print(all(! is.na(mega_@gtdata$bt) && ! is.na(gwaa_@gtdata$bt) &&
 #              mega_@gtdata$bt == gwaa_@gtdata$bt))
 
+     cat("all(mega_@gtdata@nids == gwaa_@gtdata@nids)")
     print(all(mega_@gtdata@nids == gwaa_@gtdata@nids))
+    
+     cat("all(mega_@gtdata@nsnps == gwaa_@gtdata@nsnps)")
     print(all(mega_@gtdata@nsnps == gwaa_@gtdata@nsnps))
+
+     cat("all(mega_@gtdata@nbytes == gwaa_@gtdata@nbytes)")
     print(all(mega_@gtdata@nbytes == gwaa_@gtdata@nbytes))
 
+#    cat("all(mega_@gtdata@idnames == gwaa_@gtdata@idnames)")
 #   print(all(mega_@gtdata@idnames == gwaa_@gtdata@idnames))
 
+     cat("all(mega_@gtdata@snpnames == gwaa_@gtdata@snpnames)")
     print(all(mega_@gtdata@snpnames == gwaa_@gtdata@snpnames))
+
+     cat("all(mega_@gtdata@chromosome == gwaa_@gtdata@chromosome)")
     print(all(mega_@gtdata@chromosome == gwaa_@gtdata@chromosome))
+#    cat("all(mega_@gtdata@coding == gwaa_@gtdata@coding)")
 #   print(all(mega_@gtdata@coding == gwaa_@gtdata@coding))
+#    cat("all(mega_@gtdata@strand == gwaa_@gtdata@strand)")
 #   print(all(mega_@gtdata@strand == gwaa_@gtdata@strand))
 
+     cat("all(mega_@gtdata@map == gwaa_@gtdata@map)")
     print(all(mega_@gtdata@map == gwaa_@gtdata@map))
+     cat("all(mega_@gtdata@male == gwaa_@gtdata@male)")
     print(all(mega_@gtdata@male == gwaa_@gtdata@male))
 
     ms = as.character(srdta@gtdata)
@@ -193,5 +213,6 @@ Mega2GenABELtstgt = function (mega_ = mega, gwaa_ = srdta) {
     mm[mm == "C/A"] = "A/C"
     mm[is.na(mm)]   = "0/0"
 
+     cat("all(mega_@gtdata == gwaa_@gtdata)")
     print(all(mm == ms))
 }

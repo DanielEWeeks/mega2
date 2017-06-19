@@ -229,5 +229,8 @@ DOpedgene = function(geno_arg, markers_arg, range_arg, envir = ENV) {
 
         write.table(pedgene_results, file=envir$pedgene_filename, append= TRUE,
                     row.names= FALSE, col.names= FALSE, quote= FALSE)
+    } else {
+        if (envir$verbose)
+            message("Only one markers in range.  Ignored!\n")
     }
 }
