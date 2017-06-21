@@ -9,21 +9,23 @@ init_pedgene(db = NULL, filename = NULL, verbose = FALSE)
 \arguments{
 \item{db}{specifies a \bold{Mega2} SQLite database containing study data.}
 
-\item{filename}{to store p-values to.  Historically it is "k_Schaid_rare.txt"}
+\item{filename}{to store p-values to.  By default "pedgene.txt" is used.}
 
-\item{verbose}{default is passed to the \bold{Mega2} framework.  1 indicates that
+\item{verbose}{default is passed to the \bold{Mega2} framework.  TRUE indicates that
 diagnostic printouts should be enabled.}
 }
 \value{
 "environment" containing SQLite database and other globals
 }
 \description{
-This populates the \bold{Mega2} data.frames from the specified database.  It also
+This populates the \bold{Mega2} data frames from the specified database.  It also
  prunes the samples to only include members that have a definite case or control
  status.  Undefined samples are ignored; this is necessary for \emph{pedgene}.
 }
 \note{
 This also records schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
+
+ This also initializes the dataframe "envir$pedgene_results" to zero rows.
 }
 \examples{
 \dontrun{

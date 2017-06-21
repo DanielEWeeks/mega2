@@ -31,6 +31,11 @@ None
 \description{
 ...
 }
+\note{
+This function accumulates output in the data frame, "envir$pedgene_results".  It also
+ optionally may print out the lines as they are generated.  It does not write anything
+ to a file.  You must save the data frame or the "observations" you need by yourself.
+}
 \examples{
 \dontrun{
    applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices, ENV)

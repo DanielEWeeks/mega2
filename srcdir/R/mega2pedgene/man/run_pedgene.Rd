@@ -18,6 +18,11 @@ None
 \description{
 execute the pedgene function on a subset of the gene transcript ranges
 }
+\note{
+This code starts by deleting the output file ("pedgene.txt" by default).  After Dopedgene 
+ is applied to all the chosen transcripts.  The data frame "envir$pedgene_results" is written
+ to the output file.
+}
 \examples{
 \dontrun{
 run()

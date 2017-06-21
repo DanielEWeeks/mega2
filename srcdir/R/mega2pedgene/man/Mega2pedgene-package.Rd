@@ -5,22 +5,11 @@
 \alias{Mega2pedgene-package}
 \title{Mega2pedgene package}
 \description{
-This package runs the \bold{pedgene} program via the \bold{Mega2} BioConductor Framework.
- The framework result is stored in a file and can then be matched to a collection of data
- previously analyzed by manual methods.  The results can be compared.
-}
-\examples{
- \dontrun{
-    ## Optional simple examples of the most important functions
-    ## These can be in \dontrun{} and \donttest{} blocks.
- }
+This package runs the \bold{pedgene} program via the \bold{Mega2} applyFnToRanges Framework.
+ The results are stored in a data frame and can then be written to disk if desired.
 }
 \references{
-This optional section can contain literature or other references for
- background information.
-}
-\seealso{
-Optional links to other man pages
+https://cran.r-project.org/web/packages/pedgene/index.html
 }
 \author{
 Robert V Baron, rvb5@pitt.edu
