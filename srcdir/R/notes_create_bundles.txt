@@ -1,4 +1,4 @@
-tar -X Exclude.mega2 -zcvf mega2.tar.gz mega2
+tar -X Exclude.mega2r -zcvf mega2r.tar.gz mega2r
 tar -X Exclude.mega2vcf -zcvf mega2vcf.tar.gz mega2vcf
 tar -X Exclude.mega2genabel -zcvf mega2genabel.tar.gz mega2genabel
 tar -X Exclude.mega2pedgene -czvf mega2pedgene.tar.gz mega2pedgene

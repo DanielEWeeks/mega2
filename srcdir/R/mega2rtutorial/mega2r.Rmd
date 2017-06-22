@@ -1,5 +1,5 @@
 ---
-title: "Example usage of Mega2R"
+title: "Mega2R tutorial"
 author: "Robert V. Baron and Daniel E. Weeks"
 date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
 output:
@@ -41,7 +41,7 @@ exercises, you should install the CRAN packages *mega2r*, *mega2vcf*,
 preferred way to install will be to use the install.packages()
 command. For now, we prefer to use devtools in R; as in
 
-```{r,cache=TRUE,eval=FALSE}
+```
 devtools::install("../mega2r")
 devtools::install("../mega2pedgene")
 devtools::install("../mega2vcf")
@@ -64,7 +64,7 @@ locations and one to map gene names to the entrez gene IDs. (Note: You
 may choose a different transcript database from Bioconductor or
 construct one of your own.) Please type in R:
 
-```{r,cache=TRUE,eval=FALSE}
+```
 source("https://bioconductor.org/biocLite.R")
 biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene") 
 biocLite("org.Hs.eg.db")
@@ -102,7 +102,7 @@ Mega2 batch file to automate the processing by Mega2. To run Mega2 to
 process and create the SQLite3 database 'seqsimr.db', we issue this
 command at the Unix prompt:
 
-```{bash,results="hide"}
+```
 mega2 MEGA2.BATCH.seqsimr
 ```
 
@@ -185,17 +185,23 @@ There are two ways to accomplish this.  If you assigned the result of
 read.Mega2DB to the variable seqsimr, then you could supply the value
 seqsimr to any Mega2R function as the named argument **envir**:
 
-> showMega2ENV(envir = seqsimr)
+```
+showMega2ENV(envir = seqsimr)
+```
 
 The second choice is a bit of a "hack" but it is very
 convenient. Every Mega2R function (that does not return an
 environment) has a named argument defined as
 
-> envir = ENV
+```
+envir = ENV
+```
 
 as in
 
-> showMega2ENV = function(envir = ENV) { ... }
+```
+showMega2ENV = function(envir = ENV) { ... }
+```
 
 The code above, sets global variable **ENV** to the local 
 variable, envir.  And the argument evaluation mechanism of R will supports
@@ -379,7 +385,7 @@ This will use the C++ Mega2 program to populate the vcf directory with
 the same set of files that the R program created in the vcfr
 directory.  At the Unix command prompt, type:
 
-```{bash,results="hide"}
+```
 mkdir vcf
 mega2 MEGA2.BATCH.vcf
 ```
@@ -410,7 +416,7 @@ You should compare the two directories: vcf and vcfr. Please add the
 differences in white space. You may may notice that expressions that
 contain dates that are different between the two directories.  Type:
 
-```{bash}
+```
 diff -wrs vcf vcfr
 ```
 
@@ -433,7 +439,7 @@ dmpPed()
 
 Then we switch to the Unix command line and run:
 
-```{bash, results="hide"}
+```
 mega2 MEGA2.BATCH.srdta
 ```
 
