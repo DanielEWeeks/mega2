@@ -92,22 +92,7 @@ Robert V.
 
 \begin_layout Date
 \noindent
-6/20/2017
-\end_layout
-
-\begin_layout Section
-\noindent
-Load Libraries
-\end_layout
-
-\begin_layout Standard
-\noindent
-```{r load_libraries,message=FALSE}
-\end_layout
-
-\begin_layout Standard
-\noindent
-```
+6/22/2017
 \end_layout
 
 \begin_layout Section
@@ -129,40 +114,11 @@ cd
 \begin_layout LyX-Code
 \noindent
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="3">
+<lyxtabular version="3" rows="3" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
 <row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -257,49 +213,25 @@ seqsimr.db
 
 \end_layout
 
-\begin_layout Standard
-\noindent
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<wd>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-# Print the working directory
-\end_layout
-
-\begin_layout Plain Layout
-
-getwd()
-\end_layout
-
-\begin_layout Plain Layout
-
-# Print the files
-\end_layout
-
-\begin_layout Plain Layout
-
-list.files(pattern = "mega2.*|seqsimr.db", ignore.case = TRUE)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
 \noindent
 Installation
 \end_layout
 
 \begin_layout Standard
+\noindent
+
+\series bold
 Note: The code in this section should only be executed once, to load the
  packages into R and are NOT run for every R session.
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\series bold
+Also, we will assume that you have started an R session at which to type
+ the commands in the tutorial.
 \end_layout
 
 \begin_layout Standard
@@ -333,7 +265,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<install,cache=TRUE>>=
+<<install,cache=TRUE,eval=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -407,7 +339,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<bioconductor,cache=TRUE>>=
+<<bioconductor,cache=TRUE,eval=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -478,8 +410,18 @@ seqsimr.map
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+If you do not wish to install Mega2 right now, you can use the seqsimr.db
+ database that is in the tutorial directory.
+ Of course, the tutorial steps that invoke Mega2 will fail, mainly the regressio
+n steps.
+\end_layout
+
+\begin_layout Standard
 \noindent
-You will need to obtain the Mega2 program https://watson.hgen.pitt.edu/register/.
+You will need to obtain the Mega2 program from https://watson.hgen.pitt.edu/registe
+r/.
  First, you will invoke Mega2 on your data.
  To make matters simple, we will use a pre-constructed Mega2 batch file
  to automate the processing by Mega2.
@@ -494,7 +436,12 @@ status open
 
 \begin_layout Plain Layout
 
-system("mega2 MEGA2.BATCH.seqsimr", intern=TRUE)
+<<seqsimr, results='hide'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+system("mega2 MEGA2.BATCH.seqsimr")
 \end_layout
 
 \end_inset
@@ -677,8 +624,7 @@ Default_Outfile_Names=yes
 \begin_layout Standard
 \noindent
 You will eventually have to run Mega2 to convert your data.
- But if you want to temporarily avoid the above processing, notice that
- in the mega2rtutorial directory, there is a seqsimr.db file.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -771,23 +717,19 @@ c information than you might need, especially on subsequent runs.
  The second is that all Mega2R functions that do not return an environment,
  need to have an environment supplied as an argument.
  There are two ways to accomplish this.
- If you read "
-\emph on
-seqsimr.db
-\emph default
-" into the variable 
+ If you assigned the result of read.Mega2DB to the variable 
 \emph on
 seqsim
 \emph default
-r, then you could supply as the named argument 
-\series bold
-envir
-\series default
- the value 
+r, then you could supply the value 
 \emph on
 seqsimr
 \emph default
- in the Mega2R function as in:
+ to any Mega2R function as the named argument 
+\series bold
+envir
+\series default
+:
 \end_layout
 
 \begin_layout LyX-Code
@@ -824,8 +766,8 @@ The code above, sets global variable
 \series bold
 ENV
 \series default
- to the local envir variable.
- And the argument evaluation mechanism of R will supports this useage; even
+ to the local variable, envir.
+ And the argument evaluation mechanism of R will supports this usage; even
  though 
 \series bold
 ENV
@@ -953,6 +895,11 @@ status open
 
 \begin_layout Plain Layout
 
+library(pedgene)
+\end_layout
+
+\begin_layout Plain Layout
+
 library(mega2pedgene)
 \end_layout
 
@@ -1057,15 +1004,51 @@ observations
 \end_inset
 
 : prefix of chromosome, gene, number of markers and base pair range followed
- by 6 p-values.
- Two for each of three weightings of the markers.
- It is printed as well, viz.
+ by Pedgene data: kernel and burden, value and p-values, four values for
+ each of three weightings of the markers.
+ It is printed as well when 
+\emph on
+verbose
+\emph default
+ is TRUE, viz.
 \end_layout
 
 \begin_layout LyX-Code
 \noindent
-chr1 CEP104 8 3728644 3773797 0.6297541 0.5158965 0.5138866 0.2264468 0.4111136
- 0.242207 1 
+   chr   gene nvariants   start     end sKernel_BT pKernel_BT sBurden_BT
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+1 chr1 CEP104         8 3728644 3773797   31.96998  0.6297541 -0.6496837
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  pBurden_BT sKernel_MB pKernel_MB sBurden_MB pBurden_MB sKernel_UW pKernel_UW
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+1  0.5158965   1184.995  0.5138866  -1.209563  0.2264468   222.8737  0.4111136
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  sBurden_UW pBurden_UW
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+1  -1.169488   0.242207 
 \end_layout
 
 \begin_layout Standard
@@ -1118,6 +1101,18 @@ Alternatively, you may try searching by Gene.
 \noindent
 TxDb.Hsapiens.UCSC.hg19.knownGene" from Bioconductor.
  Of course you can change it.
+ Type:
+\end_layout
+
+\begin_layout LyX-Code
+setAnnotations("txdb", "genedb")
+\end_layout
+
+\begin_layout Standard
+where "txdb" is a string that is the name of a transcript database that
+ was fetched from Bioconductor, and similarly "genedb" is the name of a
+ Bioconductor database that maps a gene id from the transcript to an entrez
+ gene id.
 \end_layout
 
 \begin_layout Standard
@@ -1155,9 +1150,9 @@ Writing a VCF File using the mega2vcf R package
 \begin_layout Standard
 \noindent
 First create the directory "vcfr"; so we can keep all the generated data
- in one place and then load the library.
- Mega2VCF takes an argument which is the prefix used on all the files it
- generates.
+ in one place and then load the mega2vcf library.
+ The Mega2VCF function takes an argument which is the prefix used on all
+ the files it generates.
  We have chosen to make that a path that includes a directory.
  Mega2VCF is explained in greater depth in the Implementation Section.
  The Mega2VCF function assumes the environment is contained in the global
@@ -1217,7 +1212,18 @@ Creating a GenABEL gwaa.data-class object using the mega2genabel R package
 
 \begin_layout Standard
 \noindent
-GenABEL can process PLINK .tped/.tfam files with the function 
+GenABEL 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.genabel.org/ 
+\end_layout
+
+\end_inset
+
+can process PLINK .tped/.tfam files with the function 
 \emph on
 convert.snp.tped
 \emph default
@@ -1226,13 +1232,23 @@ convert.snp.tped
  object.
  The argument to Mega2GenABEL is a file name prefix that will be used to
  name the .tped/.fam files that are created as an intermediate to be read
- by GenABEL http://www.genabel.org/ 
+ by GenABEL 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://cran.r-project.org/web/packages/GenABEL/index.html 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 \noindent
-https://cran.r-project.org/web/packages/GenABEL/index.html to produce a GenABEL
- "raw" file.
+to produce a GenABEL "raw" file.
  Then the "raw" file and a generated phenotype file are processed by 
 \emph on
 load.gwaa.data
@@ -1260,12 +1276,12 @@ library(mega2genabel)
 
 \begin_layout Plain Layout
 
-seqsimgwaa = Mega2GenABEL("TMP")
+seqsimgwaa = Mega2GenABEL("SEQ")
 \end_layout
 
 \begin_layout Plain Layout
 
-list.files(pattern = "TMP.*")
+list.files(pattern = "SEQ.*")
 \end_layout
 
 \begin_layout Plain Layout
@@ -1327,7 +1343,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<mega2vcf,eval=FALSE>>=
+<<mega2vcf2, results='hide'>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -1454,30 +1470,6 @@ Default_Outfile_Names=yes
 
 \begin_layout Standard
 \noindent
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<mega2vcf2>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-system("mkdir vcf")
-\end_layout
-
-\begin_layout Plain Layout
-
-system("mega2 MEGA2.BATCH.vcf", intern=TRUE)
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
 
 \end_layout
 
@@ -1549,7 +1541,7 @@ data(srdta)
 
 \begin_layout Standard
 \noindent
-We also load the mega2genabel library and dump the GenABEL data as PLINK
+Then we load the mega2genabel library and dump the GenABEL data as PLINK
  .ped/.map/.phe files
 \end_layout
 
@@ -1590,7 +1582,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<reggenabel3, eval=FALSE>>=
+<<megsrdta, results='hide'>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -1760,26 +1752,6 @@ to produce the Mega2 database srdta.db.
 
 \begin_layout Standard
 \noindent
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<megsrdta>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-system("mega2 MEGA2.BATCH.srdta", intern=TRUE)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\noindent
 Then we type R commands:
 \end_layout
 
@@ -1800,12 +1772,12 @@ ENV = read.Mega2DB("srdta.db")
 
 \begin_layout Plain Layout
 
-mega = Mega2GenABEL("TMP2")
+mega = Mega2GenABEL("SRD")
 \end_layout
 
 \begin_layout Plain Layout
 
-list.files(pattern = "TMP2.*")
+list.files(pattern = "SRD.*")
 \end_layout
 
 \end_inset
