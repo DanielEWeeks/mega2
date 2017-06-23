@@ -1,5 +1,5 @@
 ---
-title: "Example usage of Mega2R"
+title: "Mega2R tutorial"
 author: "Robert V. Baron and Daniel E. Weeks"
 date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
 output:
@@ -19,13 +19,15 @@ opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
 The files you will need for this tutorial are in the mega2rtutorial
 directory.  You should **cd** there to do these exercises.:
 
-> You should see the following files:  
+You should see the following files:  
+
+```
 ........................  | ....................  | ...............  
 --------------------------|-----------------------|---------------  
 [1] "MEGA2.BATCH.seqsimr" |  "MEGA2.BATCH.srdta"  |  "MEGA2.BATCH.vcf"      
 [4] "Mega2r.map"          |  "Mega2r.ped"         |  "mega2r.Rmd"   
 [7] "mega2r.pdf"          |  "seqsimr.db"         |    
-
+```
 
 # Installation
 
@@ -41,19 +43,21 @@ exercises, you should install the CRAN packages *mega2r*, *mega2vcf*,
 preferred way to install will be to use the install.packages()
 command. For now, we prefer to use devtools in R; as in
 
-```{r,cache=TRUE,eval=FALSE}
+```
 devtools::install("../mega2r")
 devtools::install("../mega2pedgene")
 devtools::install("../mega2vcf")
 devtools::install("../mega2genabel")
 ```
 
-Certainly, 
+Certainly, issuing these commands at the UNIX prompt:
 
-> R CMD install mega2r  
+```
+R CMD install mega2r  
 R CMD install mega2pedgene  
 R CMD install mega2vcf  
 R CMD install mega2genabel  
+```
 
 will work, too. It may generate warnings about non-package related
 items in the tree. All these packages may fetch other dependent CRAN
@@ -64,7 +68,7 @@ locations and one to map gene names to the entrez gene IDs. (Note: You
 may choose a different transcript database from Bioconductor or
 construct one of your own.) Please type in R:
 
-```{r,cache=TRUE,eval=FALSE}
+```
 source("https://bioconductor.org/biocLite.R")
 biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene") 
 biocLite("org.Hs.eg.db")
@@ -102,7 +106,7 @@ Mega2 batch file to automate the processing by Mega2. To run Mega2 to
 process and create the SQLite3 database 'seqsimr.db', we issue this
 command at the Unix prompt:
 
-```{bash,results="hide"}
+```
 mega2 MEGA2.BATCH.seqsimr
 ```
 
@@ -169,7 +173,7 @@ local value is changed; ALL changes are forgotten when the function
 exits. If you change the data in an environment passed to a function,
 the change is permanent.)
 
-```{r}
+```{r mega2r}
 library(mega2r)
 ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 ```
@@ -185,17 +189,23 @@ There are two ways to accomplish this.  If you assigned the result of
 read.Mega2DB to the variable seqsimr, then you could supply the value
 seqsimr to any Mega2R function as the named argument **envir**:
 
-> showMega2ENV(envir = seqsimr)
+```
+showMega2ENV(envir = seqsimr)
+```
 
 The second choice is a bit of a "hack" but it is very
 convenient. Every Mega2R function (that does not return an
 environment) has a named argument defined as
 
-> envir = ENV
+```
+envir = ENV
+```
 
 as in
 
-> showMega2ENV = function(envir = ENV) { ... }
+```
+showMega2ENV = function(envir = ENV) { ... }
+```
 
 The code above, sets global variable **ENV** to the local 
 variable, envir.  And the argument evaluation mechanism of R will supports
@@ -235,7 +245,7 @@ status. (**fam** merges data from the pedigree_table, person_table and
 phenotype_table as you might expect.)  Finally, it calculates and
 stores some values that will be used repeatedly. viz:
 
-```{r}
+```{r mega2pedgene}
 library(mega2pedgene)
 ENV = init_pedgene("seqsimr.db", verbose = T)
 ```
@@ -249,7 +259,7 @@ about 30,000 records.  The function run_pedgene examines the first 100
 transcripts and prints the results. The first 100 transcripts
 identifies one gene with several markers:
 
-```{r,collapse=TRUE}
+```{r run_pedgene,collapse=TRUE}
 run_pedgene()
 ```
 
@@ -257,7 +267,8 @@ You will see many reports
 of "No markers in range", but occasionally you will see a listing of a
 gene name, markers, and count of 1/1, 1/2 and 2/2 genotypes, viz.
 
-> CEP104 snp24037 520 646 214  
+```
+CEP104 snp24037 520 646 214  
 CEP104 snp24039 940 386 54  
 CEP104 snp24041 1377 3 0  
 CEP104 snp24048 860 460 60  
@@ -265,6 +276,7 @@ CEP104 snp24494 789 501 90
 CEP104 snp24499 891 442 47  
 CEP104 snp24506 891 442 47  
 CEP104 snp24507 789 501 90
+```
 
 The genotypes for these markers, along with the markers info are fed
 to the call back function DOpedgene. DOpedgene converts the genotype
@@ -275,12 +287,14 @@ number of markers and base pair range followed by Pedgene data: kernel
 and burden, value and p-values, four values for each of three
 weightings of the markers. It is printed as well when *verbose* is TRUE, viz.
 
->    chr   gene nvariants   start     end sKernel_BT pKernel_BT sBurden_BT  
+```
+   chr   gene nvariants   start     end sKernel_BT pKernel_BT sBurden_BT  
 1 chr1 CEP104         8 3728644 3773797   31.96998  0.6297541 -0.6496837  
   pBurden_BT sKernel_MB pKernel_MB sBurden_MB pBurden_MB sKernel_UW pKernel_UW  
 1  0.5158965   1184.995  0.5138866  -1.209563  0.2264468   222.8737  0.4111136  
   sBurden_UW pBurden_UW  
 1  -1.169488   0.242207
+```
 
 It would be better to run pedgene on all the default transcript entries. So type:
 
@@ -296,7 +310,9 @@ Alternatively, you may try searching by Gene.  Here the default
 transcript database is TxDb.Hsapiens.UCSC.hg19.knownGene from
 Bioconductor.  Of course you can change it.  Type:
 
-> setAnnotations("txdb", "genedb")
+```
+setAnnotations("txdb", "genedb")
+```
 
 where "txdb" is a string that is the name of transcript database that was
 fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
@@ -327,7 +343,7 @@ others. These files are listed below.
 
 Creating the VCF file and related files is accomplished by typing:
 
-```{r}
+```{r mega2vcf}
 if (! dir.exists("vcfr")) dir.create("vcfr")
 library(mega2vcf)
 Mega2VCF("vcfr/vcf.01", ENV$markers[ENV$markers$chromosome==1 ,])
@@ -379,7 +395,7 @@ This will use the C++ Mega2 program to populate the vcf directory with
 the same set of files that the R program created in the vcfr
 directory.  At the Unix command prompt, type:
 
-```{bash,results="hide"}
+```
 mkdir vcf
 mega2 MEGA2.BATCH.vcf
 ```
@@ -410,7 +426,7 @@ You should compare the two directories: vcf and vcfr. Please add the
 differences in white space. You may may notice that expressions that
 contain dates that are different between the two directories.  Type:
 
-```{bash}
+```
 diff -wrs vcf vcfr
 ```
 
@@ -433,7 +449,7 @@ dmpPed()
 
 Then we switch to the Unix command line and run:
 
-```{bash, results="hide"}
+```
 mega2 MEGA2.BATCH.srdta
 ```
 
