@@ -1,6 +1,6 @@
 Package: mega2r
-Version: 0.5.0
-Date: 2017-04-04
+Version: 0.5.2
+Date: 2017-06-23
 Title: mega2r (http://bitbucket.com/dweeks/mega2)
 Authors@R: c(person("Robert", "Baron",
     email = "rvb5@pitt.edu", role = c("aut", "cre")))
@@ -16,6 +16,7 @@ URL: VignetteBuilder: markdown
 Imports:
     AnnotationDbi,
     GenomeInfoDb,
+    DBI,
     RSQLite
 Suggests: 
     TxDb.Hsapiens.UCSC.hg19.knownGene,

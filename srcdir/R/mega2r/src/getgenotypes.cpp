@@ -109,8 +109,12 @@ Rcpp::Matrix<STRSXP> getgenotypes_1(NumericVector locus_arg,
 
         for (int j = 0; j < genotype_sample_size; j++) {
 
-            Rcpp::RawVector rv(genotype_sample[j]);
-            t0 = (rv.size() != 0) ? rv[byte]: 0x55;
+            if (Rf_isNull(genotype_sample[j])) {
+                t0 = 0x55;
+            } else {
+                Rcpp::RawVector rv(genotype_sample[j]);
+                t0 = (rv.size() != 0) ? rv[byte]: 0x55;
+            }
 /*
           if (debug && j <= 3)
               Rprintf("byte %d, t0 %x %x %x %x %x %x %x %x %x %x %x %x %x\\n",
@@ -170,12 +174,15 @@ Rcpp::Matrix<STRSXP> getgenotypes_2(NumericVector locus_arg,
         int allele1, allele2;
         for (int j = 0; j < genotype_sample_size; j++) {
 
-            Rcpp::RawVector rv(genotype_sample[j]);
-            if (rv.size() != 0) {
-                allele1 = rv[2 * marker];
-                allele2 = rv[2 * marker + 1];
-            } else {
+            if (Rf_isNull(genotype_sample[j])) {
                 allele1 = allele2 = 0;  // indicate empty
+            } else {
+                Rcpp::RawVector rv(genotype_sample[j]);
+                if (rv.size() != 0) {
+                    allele1 = rv[2 * marker];
+                    allele2 = rv[2 * marker + 1];
+                } else
+                    allele1 = allele2 = 0;  // indicate empty
             }
 
 /*
@@ -276,9 +283,14 @@ Rcpp::IntegerMatrix getgenotypesraw_1(NumericVector locus_arg,
         decode_allele[3] = (allele2 << 16) | allele2;
 
         for (int j = 0; j < genotype_sample_size; j++) {
+// Rprintf("J %d %d\n", j, Rf_isNull(genotype_sample[j]));
 
-            Rcpp::RawVector rv(genotype_sample[j]);
-            t0 = (rv.size() != 0) ? rv[byte]: 0x55;
+            if (Rf_isNull(genotype_sample[j])) {
+                t0 = 0x55;
+            } else {
+                Rcpp::RawVector rv(genotype_sample[j]);
+                t0 = (rv.size() != 0) ? rv[byte]: 0x55;
+            }
 /*
           if (debug && j <= 3)
               Rprintf("byte %d, t0 %x %x %x %x %x %x %x %x %x %x %x %x %x\\n",
@@ -338,12 +350,16 @@ Rcpp::IntegerMatrix getgenotypesraw_2(NumericVector locus_arg,
 
         for (int j = 0; j < genotype_sample_size; j++) {
 
-            Rcpp::RawVector rv(genotype_sample[j]);
-            if (rv.size() != 0) {
-                allele1 = rv[2 * marker];
-                allele2 = rv[2 * marker + 1];
-            } else
+            if (Rf_isNull(genotype_sample[j])) {
                 allele1 = allele2 = 0;  // indicate empty
+            } else {
+                Rcpp::RawVector rv(genotype_sample[j]);
+                if (rv.size() != 0) {
+                    allele1 = rv[2 * marker];
+                    allele2 = rv[2 * marker + 1];
+                } else
+                    allele1 = allele2 = 0;  // indicate empty
+            }
 /*
           if (debug && j <= 3)
               Rprintf("marker %d, t0 %x t1 %x %x %x %x %x %x %x %x %x %x %x %x %x\\n",
@@ -400,10 +416,13 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
         return mtx;
     }
 
-    int locus, hocus, marker, byte, a1map, a2map, t0;
+    int locus, hocus, marker, byte, a1map, a2map, t0, rvnull;
     for (int j = 0; j < genotype_sample_size; j++) {
 
-        Rcpp::RawVector rv(genotype_sample[j]);
+        rvnull = Rf_isNull(genotype_sample[j]);
+        Rcpp::RawVector rv;
+        if (! rvnull)
+            rv = Rcpp::RawVector(genotype_sample[j]);
 
         for (int i = 0; i < loci.size(); i++) {
 
@@ -434,7 +453,7 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
             decode_allele[2] = allele1 + allele2;
             decode_allele[3] = allele2 + allele2;
 
-            t0 = (rv.size() != 0) ? rv[byte]: 0x55;
+            t0 = (! rvnull) ? rv[byte]: 0x55;
 /*
             if (debug && j <= 3)
                 Rprintf("byte %d, t0 %x %x %x %x %x %x %x %x %x %x %x %x %x\\n",

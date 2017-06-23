@@ -204,6 +204,7 @@ mk_unified_genotype_table = function(envir) {
 #' @return envir an environment that contains all the tables created from the SQLite tables.
 #'
 #' @importFrom RSQLite dbConnect dbExistsTable dbReadTable dbListFields SQLITE_RO
+#' @importFrom DBI dbGetQuery dbDisconnect
 #' @export
 #'
 #' @examples
@@ -229,8 +230,12 @@ dbmega2_import = function(dbname,
             filter = TBLSFilter[tbl][[1]]
             if (is.null(filter))
                 assign(tbl, dbReadTable(con, tbl), pos = envir)
-            else
-                assign(tbl, dbReadTable(con, tbl, select.cols = filter), pos = envir)
+            else {
+#               assign(tbl, dbReadTable(con, tbl, select.cols = filter), pos = envir)
+#               assign(tbl, dbReadTable(con, tbl), pos = envir)
+#               print(paste0("select ", filter, " from ", tbl));
+                assign(tbl, dbGetQuery(con, paste0("select ", filter, " from ", tbl)), pos = envir)
+            }
             if (envir$verbose) {
                 cat(tbl, dim(get(tbl, pos=envir)), sep = "\t", end = "\n")
                 if (is.null(filter))
@@ -242,9 +247,12 @@ dbmega2_import = function(dbname,
         }
     }
 
+    dbDisconnect(con)
+
     envir$PhenoCnt      = envir$int_table[envir$int_table$key == 'PhenoCnt', 3]
     envir$LocusCnt      = envir$int_table[envir$int_table$key == 'LocusCnt', 3]
     envir$MARKER_SCHEME = envir$int_table[envir$int_table$key == 'MARKER_SCHEME', 3]
+
     if (envir$MARKER_SCHEME > 2) {
         stop("Only compressions levels of 1 or 2 are allowed. (",
              envir$MARKER_SCHEME, ")", call. = FALSE)
