@@ -29,11 +29,11 @@ library(mega2r)
 
 ## test compressions 1 & 2 and raw vs neucleotide
 
-goo = function(rng = 10000:11000) {
+goo = function(rng = 10000:11000, file="~/mega2/data/yj1.db") {
 
     print("test compressions 1 & 2 and raw vs neucleotide alleles")
     
-    ENV=dbmega2_import("~/mega2/data/yj1.db")
+    ENV=dbmega2_import(file)
 
 # get letter and raw compression 1
     cc = getgenotypes(ENV$markers[rng,], ENV)
@@ -43,6 +43,7 @@ goo = function(rng = 10000:11000) {
     c1cnv [c1raw == 131074] = "22"
     c1cnv [c1raw == 65538] = "12"
     c1cnv [c1raw == 65537] = "11"
+    c1cnv [c1raw == 0]     = "00"
     cat("all(cc == c1cnv) ")
     print(all(cc == c1cnv))
 
@@ -60,6 +61,7 @@ goo = function(rng = 10000:11000) {
     c2cnv [c2raw == 131074] = "22"
     c2cnv [c2raw == 65538] = "12"
     c2cnv [c2raw == 65537] = "11"
+    c2cnv [c2raw == 0]     = "00"
     cat("all(cc==c2cnv) ")
     print(all(cc==c2cnv))
 }

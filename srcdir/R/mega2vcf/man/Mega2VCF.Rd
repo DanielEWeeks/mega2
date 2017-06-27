@@ -4,7 +4,7 @@
 \alias{Mega2VCF}
 \title{generate a VCF file collection}
 \usage{
-Mega2VCF(prefix, markers = NULL, mapno = 0, allowFlip = FALSE,
+Mega2VCF(prefix, markers = NULL, mapno = 0, alleleOrder = "default",
   envir = ENV)
 }
 \arguments{
@@ -15,7 +15,7 @@ Mega2VCF(prefix, markers = NULL, mapno = 0, allowFlip = FALSE,
 \item{mapno}{specify which map index to use for genetic distances.  The function showMapNames
 will print out the internal map numbers corresponding to all the maps in the Mega2 database.}
 
-\item{allowFlip}{REF/ALT of higher frequency occurs first}
+\item{alleleOrder}{REF is default, minor allele freq or major allele freq}
 
 \item{envir}{"environment" containing SQLite database and other globals}
 }

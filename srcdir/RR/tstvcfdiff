@@ -35,10 +35,20 @@ for sfx in $FILES2; do
 done
 
 ds=msat
-echo $ds $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.sfx
+echo $ds/vcf/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.sfx
 for sfx in $FILES2; do
-    echo diff -w $ds/$ds.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.$sfx
-    diff -w $ds/$ds.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.$sfx
+    echo diff -w $ds/vcf/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.$sfx
+    diff -w $ds/vcf/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.$sfx
+done
+echo $ds/vcfmaj/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmaj/vcf.16.sfx
+for sfx in $FILES2; do
+    echo diff -w $ds/vcfmaj/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmaj/vcf.16.$sfx
+    diff -w $ds/vcfmaj/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmaj/vcf.16.$sfx
+done
+echo $ds/vcfmin/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmin/vcf.16.sfx
+for sfx in $FILES2; do
+    echo diff -w $ds/vcfmin/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmin/vcf.16.$sfx
+    diff -w $ds/vcfmin/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmin/vcf.16.$sfx
 done
 
 ds=yj1

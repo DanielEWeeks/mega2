@@ -54,7 +54,7 @@ NULL
 #' @param mapno specify which map index to use for genetic distances.  The function showMapNames
 #' will print out the internal map numbers corresponding to all the maps in the Mega2 database.
 #'
-#' @param allowFlip REF/ALT of higher frequency occurs first
+#' @param alleleOrder REF is default, minor allele freq or major allele freq
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
@@ -72,12 +72,8 @@ NULL
 #'
 #' Mega2VCF("foo", envir$markers[envir$markers$chromosome >= 20,])
 #'}
-Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE, envir = ENV) {
+Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', envir = ENV) {
 
-    if (envir$MARKER_SCHEME > 1)
-        stop("Currently, VCF is only available for bialleleic genetic data.\n",
-             call. = FALSE)
-    
     file = paste0(prefix, ".vcf")
     unlink(file)
 
@@ -110,11 +106,26 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE, envir = 
     cat(names(block), sep="\t", append=TRUE, file=file)
     cat("\n", append=TRUE, file=file)
 
+    allele_table[allele_table$AlleleName == "dummy", 2] = '.'
+    atf = allele_table$AlleleName == ""
+    allele_table[atf, 2] = as.character(allele_table[atf, 4])
+    
     n1 = allele_table[allele_table$indexX==1,]
     n2 = allele_table[allele_table$indexX==2,]
-## Mega2 "mis-feature" to VCF "mis-feature"
-    n1$AlleleName[n1$AlleleName %in% c("dummy")] = '.'
-    n2$AlleleName[n2$AlleleName %in% c("dummy")] = '.'
+
+    if (envir$MARKER_SCHEME == 2) {
+        if (alleleOrder == 'default')
+            xn = function (x) x[order(x$indexX),]
+        else if (alleleOrder == 'minor')
+            xn = function(x) { a=order(x$Frequency); x[c(a[1], sort(a[2:length(a)])),] }
+        else if (alleleOrder == 'major')
+            xn = function(x) { a=order(x$Frequency, decreasing=TRUE); x[c(a[1], sort(a[2:length(a)])),] }
+        else if (alleleOrder == 'name')
+            xn = function (x) x[order(x$AlleleName),]
+        else
+            stop("alleleOrder must be 'default', 'minor' or 'major'\n", call.=FALSE)
+        nx = lapply(split(allele_table, allele_table$locus_link), xn)
+    }
 
     j = 0
     while (TRUE) {
@@ -133,24 +144,47 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE, envir = 
         block[BR , 3] = markers[R , 3]
 ## print(system.time ({        
 
-        REF = n1$AlleleName[R]
-        RF  = n1$Frequency[R]
-        ALT = n2$AlleleName[R]
-        AF  = n2$Frequency[R]
-        XXF = REF
-        XF  = RF
-        
-        flip = RF < AF
-        doFlip = sum(flip)
-        if (allowFlip && doFlip) {
-            whichFlip = which(flip)
-            REF[whichFlip] = ALT[whichFlip]
-            ALT[whichFlip] = XXF[whichFlip]
+      if (envir$MARKER_SCHEME == 1) {
+            REF = n1$AlleleName[R]
+            RF  = n1$Frequency[R]
+            ALT = n2$AlleleName[R]
+            AF  = n2$Frequency[R]
+            XXF = REF
+            XF  = RF
 
-            RF[whichFlip] = AF[whichFlip]
-            AF[whichFlip] = XF[whichFlip]
+            if (alleleOrder == 'major' && any(RF < AF)) {
+                whichFlip = which(RF < AF)
+                doFlip = TRUE
+            } else if (alleleOrder == 'minor' && any(AF < RF)) {
+                whichFlip = which(AF < RF)
+                doFlip = TRUE
+            } else
+                doFlip = FALSE
+            if (doFlip) {
+                REF[whichFlip] = ALT[whichFlip]
+                ALT[whichFlip] = XXF[whichFlip]
+
+                RF[whichFlip] = AF[whichFlip]
+                AF[whichFlip] = XF[whichFlip]
+            }
+            AF = sprintf("%.6f", AF)
+        } else if (envir$MARKER_SCHEME == 2) {
+            REF = character(L)
+            ALT = character(L)
+            RF  = numeric(L)
+            AF  = character(L)
+
+            k = 0
+            for (v in R) {
+                k = k + 1
+                nxx = nx[[v]]
+                nrows = nrow(nxx)
+                REF[k] = nxx$AlleleName[1]
+                RF[k]  = nxx$Frequency[1]
+                ALT[k] = paste0(nxx$AlleleName[2:nrows], collapse=",")
+                AF[k]  = paste0(sprintf("%.6f", nxx$Frequency[2:nrows]), collapse=",")
+            }
         }
-
         GPos = map_table[map_table$map==mapno, c("position", "pos_female", "pos_male")][R, ]
         GPosPos = sprintf("%.2f", GPos$position)
         GPosFem = rep(".", L)
@@ -159,8 +193,8 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE, envir = 
         GPosMal[GPos$pos_male   != -99.99] = sprintf("%f", GPos$pos_male[GPos$pos_male != -99.99])
 
         INFO=paste0("CM=", GPosPos, ",", GPosFem, ",", GPosMal,
-                    ";RF=", sprintf("%f", RF),
-                    ";AF=", sprintf("%f", AF),
+                    ";RF=", sprintf("%.6f", RF),
+                    ";AF=", AF,
                     ";")
         block[BR , 4] = REF[BR]
         block[BR , 5] = ALT[BR]
@@ -178,16 +212,26 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE, envir = 
         x3 = a1
         a2 = bitwAnd(a2, 65535)
         attr(a2, "dim") = dm
-        if (allowFlip && doFlip) {
-            a1[whichFlip, ] = match(a1[whichFlip, ], c(2, 1), nomatch=0)
-            a2[whichFlip, ] = match(a2[whichFlip, ], c(2, 1), nomatch=0)
-        } 
+        if (envir$MARKER_SCHEME == 1) {       # 41.32%
+            if (doFlip) {
+                a1[whichFlip, ] = match(a1[whichFlip, ], c(2, 1), nomatch=0)
+                a2[whichFlip, ] = match(a2[whichFlip, ], c(2, 1), nomatch=0)
+            }
+        }
 
-        if ((envir$MARKER_SCHEME > 1) && (a1 > 2 || a2 > 2)) {       # 41.32%
+#       if ((envir$MARKER_SCHEME > 1) && (a1 > 2 || a2 > 2))        # 41.32%
+        if (envir$MARKER_SCHEME > 1) {       # 41.32%
                 ##  user  system elapsed 
                 ##  4.086   0.133   4.251 
                 ##  user  system elapsed 
                 ##  1.275   0.053   1.351 
+            k = 0
+            for (v in R) {
+                k = k + 1
+                nxx = nx[[as.character(markers[v,]$locus_link)]]$indexX
+                a1[k,] = match(a1[k,], nxx, nomatch=0)
+                a2[k,] = match(a2[k,], nxx, nomatch=0)
+            }
             a3 = as.character(a1 - 1)
             a3[a1 == 0] = "."
             a4 = as.character(a2-1)
