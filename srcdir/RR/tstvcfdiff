@@ -13,11 +13,21 @@ for sfx in $FILES2; do
     diff -w $ds/$ds.$sfx $TEST/${ds}${nd}/$BLD/vcf/vcf.05.$sfx
 done
 
-ds=mec
-echo $ds $TEST/${ds}${nd}/$BLD/vcf/vcf.05.sfx
+ds=msat
+echo $ds/vcf/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.sfx
 for sfx in $FILES2; do
-    echo diff -w $ds/$ds.$sfx $TEST/${ds}${nd}/$BLD/vcf/vcf.05.$sfx
-    diff -w $ds/$ds.$sfx $TEST/${ds}${nd}/$BLD/vcf/vcf.05.$sfx
+    echo diff -w $ds/vcf/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.$sfx
+    diff -w $ds/vcf/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.$sfx
+done
+echo $ds/vcfmaj/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmaj/vcf.16.sfx
+for sfx in $FILES2; do
+    echo diff -w $ds/vcfmaj/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmaj/vcf.16.$sfx
+    diff -w $ds/vcfmaj/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmaj/vcf.16.$sfx
+done
+echo $ds/vcfmin/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmin/vcf.16.sfx
+for sfx in $FILES2; do
+    echo diff -w $ds/vcfmin/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmin/vcf.16.$sfx
+    diff -w $ds/vcfmin/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmin/vcf.16.$sfx
 done
 
 ds=mome
@@ -34,21 +44,28 @@ for sfx in $FILES2; do
     diff -w $ds/$ds.$sfx $TEST/Xxample/${ds}${nd}/$BLD/vcf/vcf.22.$sfx
 done
 
-ds=msat
-echo $ds/vcf/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.sfx
+ds=mec
+echo $ds $TEST/${ds}${nd}/$BLD/vcf/vcf.05.sfx
 for sfx in $FILES2; do
-    echo diff -w $ds/vcf/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.$sfx
-    diff -w $ds/vcf/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcf/vcf.16.$sfx
+    echo diff -w $ds/$ds.$sfx $TEST/${ds}${nd}/$BLD/vcf/vcf.05.$sfx
+    diff -w $ds/$ds.$sfx $TEST/${ds}${nd}/$BLD/vcf/vcf.05.$sfx
 done
-echo $ds/vcfmaj/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmaj/vcf.16.sfx
+
+ds=m15k
+echo $ds/vcf/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/bed/vcf/vcf.16.sfx
 for sfx in $FILES2; do
-    echo diff -w $ds/vcfmaj/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmaj/vcf.16.$sfx
-    diff -w $ds/vcfmaj/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmaj/vcf.16.$sfx
+    echo diff -w $ds/vcf/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/bed/vcf/vcf.16.$sfx
+    diff -w $ds/vcf/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/bed/vcf/vcf.16.$sfx
 done
-echo $ds/vcfmin/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmin/vcf.16.sfx
+echo $ds/vcfmaj/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/bed/vcfmaj/vcf.16.sfx
 for sfx in $FILES2; do
-    echo diff -w $ds/vcfmin/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmin/vcf.16.$sfx
-    diff -w $ds/vcfmin/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/plink/vcfmin/vcf.16.$sfx
+    echo diff -w $ds/vcfmaj/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/bed/vcfmaj/vcf.16.$sfx
+    diff -w $ds/vcfmaj/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/bed/vcfmaj/vcf.16.$sfx
+done
+echo $ds/vcfmin/vcf.16.sfx $TEST/${ds}${nd}/change_chrom/bed/vcfmin/vcf.16.sfx
+for sfx in $FILES2; do
+    echo diff -w $ds/vcfmin/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/bed/vcfmin/vcf.16.$sfx
+    diff -w $ds/vcfmin/vcf.16.$sfx $TEST/${ds}${nd}/change_chrom/bed/vcfmin/vcf.16.$sfx
 done
 
 ds=yj1
