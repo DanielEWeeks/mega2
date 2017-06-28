@@ -4,12 +4,14 @@
 \alias{dmpPed}
 \title{generate required .ped, .fam and .map  for PLINK PED files}
 \usage{
-dmpPed(gwaa_ = srdta, pfx = "srdta")
+dmpPed(gwaa_ = srdta, pfx = "srdta", default = "bt")
 }
 \arguments{
 \item{gwaa_}{name of gwaa.data-class object}
 
 \item{pfx}{prefix for PLINK ped file names}
+
+\item{default}{name for phenotype to be 6th col of ped file}
 }
 \value{
 None
@@ -21,5 +23,7 @@ Use provided gwaa.class-object and create a PLINK PED file, PLINK MAP file
 \examples{
 \dontrun{
 dmpPed()
+or
+dmpPed(mygwaa, "name", "cc")
 }
 }

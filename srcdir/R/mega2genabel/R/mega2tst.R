@@ -38,6 +38,8 @@
 #'
 #' @param pfx prefix for PLINK ped file names
 #'
+#' @param default name for phenotype to be 6th col of ped file
+#'
 #' @return None
 #'
 #' @export
@@ -46,11 +48,13 @@
 #' @examples
 #'\dontrun{
 #' dmpPed()
+#' or
+#' dmpPed(mygwaa, "name", "cc")
 #'}
-dmpPed = function(gwaa_ = srdta, pfx = "srdta") {
+dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 
     dfphe = data.frame(gwaa_@phdata)
-    dfphe$sex = dfphe$id
+    dfphe$sex = dfphe$id  # don't want sex but need IID and FID; so duplicate id
     names(dfphe)[1:2] = c("FID", "IID")
     write.table(dfphe, file=paste0(pfx, ".phe"), sep="\t", quote=FALSE,
                 row.names=FALSE, col.names=TRUE)
@@ -65,8 +69,8 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta") {
     dfped$father = 0
     dfped$mother = 0
     dfped$sex    = gwaa_@phdata$sex
-    dfped$sex[dfped$sex == 0] = 2
-    dfped$default    = gwaa_@phdata$bt
+    dfped$sex[dfped$sex == 0] = 2  # here 0 means female
+    dfped$default    = gwaa_@phdata[ , default]  # bt is only affection trait
 
 
     predfped = sub("/", " ", as.character(gwaa_@gtdata))
@@ -95,77 +99,13 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta") {
 #' tst()
 #'}
 Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta) {
-    Mega2GenABELtstph()
-    Mega2GenABELtstgt()
-}
 
-#' test phenotype fields
-#'
-#' @description
-#'  verify that the fields in two gwaa.data-class objects have the same phenotype fields
-#'
-#' @param mega_ name of first gwaa.data-class object
-#'
-#' @param gwaa_ name of first gwaa.data-class object
-#'
-#' @return None
-#'
-#' @export
-#'
-#' @examples
-#'\dontrun{
-#' Mega2GenABELtstph()
-#'}
-Mega2GenABELtstph = function (mega_ = mega, gwaa_ = srdta) {
-     cat("all(mega_@phdata$sex == gwaa_@phdata$sex)")
-    print(all(! is.na(mega_@phdata$sex) && ! is.na(gwaa_@phdata$sex) &&
-              mega_@phdata$sex == gwaa_@phdata$sex))
-
-     cat("all(mega_@phdata$age == gwaa_@phdata$age)")
-    print(all(! is.na(mega_@phdata$age) && ! is.na(gwaa_@phdata$age) &&
-              mega_@phdata$age == gwaa_@phdata$age))
-
-     cat("all(mega_@phdata$qt1 == gwaa_@phdata$qt1)")
-    print(all(! is.na(mega_@phdata$qt1) && ! is.na(gwaa_@phdata$qt1) &&
-              mega_@phdata$qt1 == gwaa_@phdata$qt1))
-
-     cat("all(mega_@phdata$qt2 == gwaa_@phdata$qt2)")
-    print(all(! is.na(mega_@phdata$qt2) && ! is.na(gwaa_@phdata$qt2) &&
-              mega_@phdata$qt2 == gwaa_@phdata$qt2))
-
-     cat("all(mega_@phdata$qt3 == gwaa_@phdata$qt3)")
-    print(all(! is.na(mega_@phdata$qt3) && ! is.na(gwaa_@phdata$qt3) &&
-              mega_@phdata$qt3 == gwaa_@phdata$qt3))
-
-     cat("all(mega_@phdata$bt == gwaa_@phdata$bt)")
-    print(all(! is.na(mega_@phdata$bt) && ! is.na(gwaa_@phdata$bt) &&
-              mega_@phdata$bt == gwaa_@phdata$bt))
-
-     cat("all(mega_@phdata$default == gwaa_@phdata$default)")
-    print(all(! is.na(mega_@phdata$default) && ! is.na(gwaa_@phdata$bt) &&
-              mega_@phdata$default == gwaa_@phdata$bt))
-}
-
-#' test genotype fields
-#'
-#' @description
-#'  verify that the fields in two gwaa.data-class objects have the same genotype fields
-#'
-#' @param mega_ name of first gwaa.data-class object
-#'
-#' @param gwaa_ name of first gwaa.data-class object
-#'
-#' @return None
-#'
-#' @export
-#'
-#' @examples
-#'\dontrun{
-#' Mega2GenABELtstgt()
-#'}
-Mega2GenABELtstgt = function (mega_ = mega, gwaa_ = srdta) {
-#    print(all(! is.na(mega_@gtdata$bt) && ! is.na(gwaa_@gtdata$bt) &&
-#              mega_@gtdata$bt == gwaa_@gtdata$bt))
+    phens = names(gwaa_@phdata)
+    for (phen in phens[2:length(phens)]) {
+        cat("all(mega_@phdata$", phen, " == gwaa_@phdata$", phen, ") ", sep="")
+        print(all(! is.na(mega_@phdata[ , phen]) && ! is.na(gwaa_@phdata[ , phen]) &&
+                  mega_@phdata[ , phen] == gwaa_@phdata[ , phen]))
+    }
 
      cat("all(mega_@gtdata@nids == gwaa_@gtdata@nids)")
     print(all(mega_@gtdata@nids == gwaa_@gtdata@nids))
@@ -184,15 +124,15 @@ Mega2GenABELtstgt = function (mega_ = mega, gwaa_ = srdta) {
 
      cat("all(mega_@gtdata@chromosome == gwaa_@gtdata@chromosome)")
     print(all(mega_@gtdata@chromosome == gwaa_@gtdata@chromosome))
-#    cat("all(mega_@gtdata@coding == gwaa_@gtdata@coding)")
-#   print(all(mega_@gtdata@coding == gwaa_@gtdata@coding))
-#    cat("all(mega_@gtdata@strand == gwaa_@gtdata@strand)")
-#   print(all(mega_@gtdata@strand == gwaa_@gtdata@strand))
-
      cat("all(mega_@gtdata@map == gwaa_@gtdata@map)")
     print(all(mega_@gtdata@map == gwaa_@gtdata@map))
      cat("all(mega_@gtdata@male == gwaa_@gtdata@male)")
     print(all(mega_@gtdata@male == gwaa_@gtdata@male))
+
+#    cat("all(mega_@gtdata@coding == gwaa_@gtdata@coding)")
+#   print(all(mega_@gtdata@coding == gwaa_@gtdata@coding))
+#    cat("all(mega_@gtdata@strand == gwaa_@gtdata@strand)")
+#   print(all(mega_@gtdata@strand == gwaa_@gtdata@strand))
 
     ms = as.character(srdta@gtdata)
     mm = as.character(mega@gtdata)

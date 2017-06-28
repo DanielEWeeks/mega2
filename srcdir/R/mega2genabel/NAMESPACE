@@ -2,8 +2,6 @@
 
 export(Mega2GenABEL)
 export(Mega2GenABELtst)
-export(Mega2GenABELtstgt)
-export(Mega2GenABELtstph)
 export(dmpPed)
 export(mkGenABELphe)
 export(mkGenABELtfam)
