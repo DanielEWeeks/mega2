@@ -512,6 +512,8 @@ getgenotype_person = function(perid = 1, envir = ENV) {
 #' \item{position}{is the integer base pair position of marker}
 #'  }
 #'
+#' @param sepstr separator string for alleles (default is none)
+#'
 #' @param envir an environment that contains all the tables created from the SQLite tables.
 #'
 #' @return a matrix of genotypes represented as a nucleotide pair.  There is one column for each
@@ -534,13 +536,13 @@ getgenotype_person = function(perid = 1, envir = ENV) {
 #' # genotypes for all persons in chromosome n
 #' getgenotypes_R(ENV$markers[ENV$markers$chromosome == n,])
 #'}
-getgenotypes_R = function(markers_arg, envir = ENV) {
+getgenotypes_R = function(markers_arg, sepstr = "", envir = ENV) {
 
   return
     if (envir$MARKER_SCHEME == 1) {
         getgenotypes_Ri(markers_arg$locus_link, markers_arg$locus_link_fill,
                         envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
-                        envir$PhenoCnt)
+                        sepstr, envir$PhenoCnt)
     } else {  # must be == 2
 
     }
@@ -567,6 +569,8 @@ getgenotypes_R = function(markers_arg, envir = ENV) {
 #' \item{position}{is the integer base pair position of marker}
 #'  }
 #'
+#' @param sepstr separator string for alleles (default is none)
+#'
 #' @param envir an environment that contains all the tables created from the SQLite tables.
 #'
 #' @return a matrix of genotypes represented as two allele pairs.  There is one column for each
@@ -591,17 +595,17 @@ getgenotypes_R = function(markers_arg, envir = ENV) {
 #' # genotypes for all persons in chromosome n
 #' getgenotypes(ENV$markers[ENV$markers$chromosome == n,])
 #'}
-getgenotypes = function(markers_arg, envir = ENV) {
+getgenotypes = function(markers_arg, sepstr = "", envir = ENV) {
 
   return
     if (envir$MARKER_SCHEME == 1) {
         getgenotypes_1(markers_arg$locus_link, markers_arg$locus_link_fill,
                        envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
-                       envir$PhenoCnt)
+                       sepstr, envir$PhenoCnt)
     } else {  # must be == 2
         getgenotypes_2(markers_arg$locus_link,
                        envir$unified_genotype_table, envir$locus_allele_table,
-                       envir$PhenoCnt)
+                       sepstr, envir$PhenoCnt)
     }
 }
 

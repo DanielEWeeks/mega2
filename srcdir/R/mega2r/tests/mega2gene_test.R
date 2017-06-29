@@ -151,7 +151,7 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #       rownames(pos[[i]]) = NULL
         
         int_table = envir$int_table
-        geno[[i]] = getgenotypes(pos[[i]], envir)
+        geno[[i]] = getgenotypes(pos[[i]], envir=envir)
     }
 
     pos[[rows+1]] = markers[markers$MarkerName %in% mrkrs, ]
@@ -159,7 +159,7 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
 #   rownames(pos[[rows+1]]) = NULL
     assign("pos", pos, pos = globalenv())
 
-    geno[[rows+1]] = getgenotypes(pos[[rows+1]], envir)
+    geno[[rows+1]] = getgenotypes(pos[[rows+1]], envir=envir)
     assign("geno", geno, pos = globalenv())
 }
 

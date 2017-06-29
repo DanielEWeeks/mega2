@@ -68,13 +68,13 @@ tst1 = function(ENV) {
 
     print("## getgenotypes by column and by row; compare two ranges")
 
-    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[1:1000,], ENV) )), "\n")
-    cat("getgenotypes_R", system.time((dd=mega2r:::getgenotypes_R(ENV$markers[1:1000,], ENV) )), "\n")
+    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[1:1000,], "", ENV) )), "\n")
+    cat("getgenotypes_R", system.time((dd=mega2r:::getgenotypes_R(ENV$markers[1:1000,], "", ENV) )), "\n")
                 
     print(all(cc==dd))
 
-    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[500000:501000,], ENV) )), "\n")
-    cat("getgenotypes_R", system.time((dd=mega2r:::getgenotypes_R(ENV$markers[500000:501000,], ENV) )), "\n")
+    cat("getgenotypes",   system.time((cc=getgenotypes  (ENV$markers[500000:501000,], envir=ENV) )), "\n")
+    cat("getgenotypes_R", system.time((dd=mega2r:::getgenotypes_R(ENV$markers[500000:501000,], envir=ENV) )), "\n")
     print(all(cc==dd))
 
 # 25X slower

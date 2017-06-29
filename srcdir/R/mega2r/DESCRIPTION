@@ -1,5 +1,5 @@
 Package: mega2r
-Version: 0.5.2
+Version: 0.5.4
 Date: 2017-06-23
 Title: mega2r (http://bitbucket.com/dweeks/mega2)
 Authors@R: c(person("Robert", "Baron",

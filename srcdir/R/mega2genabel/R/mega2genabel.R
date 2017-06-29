@@ -133,13 +133,6 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
 #   ppl = rbind(ppl, ppl)
     names(block) = c("#CHROM", "ID", "GEN", "POS", ppl)
 
-    SVallele1 = envir$allele_table$AlleleName[envir$allele_table$index == 1]
-    envir$allele_table$AlleleName[envir$allele_table$index == 1] =
-        paste0(SVallele1, " ")
-    SVallele2 = envir$allele_table$AlleleName[envir$allele_table$index == 2]
-    envir$allele_table$AlleleName[envir$allele_table$index == 2] =
-        paste0(SVallele2, " ")
-
     j = 0
     while (TRUE) {
         if (M <= 0) break
@@ -161,7 +154,7 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
         block[BR , 3] = GPosPos
         block[BR , 4] = markers[R , 5]
 
-        cr = getgenotypes(markers[R, ], envir = envir ) # 7.17%
+        cr = getgenotypes(markers[R, ], sepstr = " ", envir = envir ) # 7.17%
         a1 = t(cr)                                      # 0.86%
 
 #       di = dim(a1)
@@ -180,9 +173,6 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
         j = j + 1
         if (envir$verbose) message(".", appendLF = FALSE)
     }
-
-    envir$allele_table$AlleleName[envir$allele_table$index == 1] = SVallele1
-    envir$allele_table$AlleleName[envir$allele_table$index == 2] = SVallele2
 }
 
 #' generate required fam family for PLINK TPED (.tfam) file

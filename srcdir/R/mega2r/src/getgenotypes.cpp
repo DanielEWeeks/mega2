@@ -37,7 +37,9 @@ Rcpp::Matrix<STRSXP> getgenotypes_1(NumericVector locus_arg,
                                     List          genotype_arg,
                                     List          allele_arg,
                                     List          markerscheme_arg,
-                                    NumericVector phenocnt_arg)
+                                    CharacterVector miscC_arg,
+                                    NumericVector miscN_arg)
+
 {
     int debug = 0;
 
@@ -57,8 +59,11 @@ Rcpp::Matrix<STRSXP> getgenotypes_1(NumericVector locus_arg,
     Rcpp::IntegerVector allele1_map(markerschemes[2]);   // markerscheme_table[, 3]
     Rcpp::IntegerVector allele2_map(markerschemes[3]);   // markerscheme_table[, 4]
 
-    Rcpp::NumericVector phenos(phenocnt_arg);
-    int pheno = phenos[0];
+    Rcpp::NumericVector miscns(miscN_arg);
+    int pheno = miscns[0];
+
+    Rcpp::CharacterVector misccs(miscC_arg);
+    std::string sepstr = std::string(misccs[0]);
 
     Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, locus_size);
 
@@ -102,11 +107,17 @@ Rcpp::Matrix<STRSXP> getgenotypes_1(NumericVector locus_arg,
         if (debug) Rprintf("allele%d/%d: %s%s; ", a1map, a2map,
                               allele1.c_str(), allele2.c_str());
 
-        decode_allele[0] = allele1 + allele1;
-        decode_allele[1] = "00";
-        decode_allele[2] = allele1 + allele2;
-        decode_allele[3] = allele2 + allele2;
-
+        if (sepstr != "") {
+            decode_allele[0] = allele1 + sepstr + allele1;
+            decode_allele[1] = "0" + sepstr + "0";
+            decode_allele[2] = allele1 + sepstr + allele2;
+            decode_allele[3] = allele2 + sepstr + allele2;
+        } else {
+            decode_allele[0] = allele1 + allele1;
+            decode_allele[1] = "00";
+            decode_allele[2] = allele1 + allele2;
+            decode_allele[3] = allele2 + allele2;
+        }
         for (int j = 0; j < genotype_sample_size; j++) {
 
             if (Rf_isNull(genotype_sample[j])) {
@@ -141,7 +152,8 @@ Rcpp::Matrix<STRSXP> getgenotypes_1(NumericVector locus_arg,
 Rcpp::Matrix<STRSXP> getgenotypes_2(NumericVector locus_arg,
                                     List          genotype_arg,
                                     List          allele_arg,
-                                    NumericVector phenocnt_arg)
+                                    CharacterVector miscC_arg,
+                                    NumericVector miscN_arg)
 {
     int debug = 0;
 
@@ -155,8 +167,11 @@ Rcpp::Matrix<STRSXP> getgenotypes_2(NumericVector locus_arg,
     Rcpp::List allele(allele_arg);
     std::vector<int> decode_allele(4);
 
-    Rcpp::NumericVector phenos(phenocnt_arg);
-    int pheno = phenos[0];
+    Rcpp::NumericVector miscns(miscN_arg);
+    int pheno = miscns[0];
+
+    Rcpp::CharacterVector misccs(miscC_arg);
+    std::string sepstr = std::string(misccs[0]);
 
     Rcpp::CharacterMatrix mtx(genotype_sample_size, locus_size);
 
@@ -197,8 +212,10 @@ Rcpp::Matrix<STRSXP> getgenotypes_2(NumericVector locus_arg,
             std::string allele1s(aAlleleName[allele1 > 0 ? allele1 - 1 : 0]);
             std::string allele2s(aAlleleName[allele2 > 0 ? allele2 - 1 : 0]);
 
-            mtx(j, i) = ((allele1 != 0) ? allele1s : "0") + ((allele2 != 0) ? allele2s : "0");
-
+            if (sepstr != "")
+                mtx(j, i) = ((allele1 != 0) ? allele1s : "0") + sepstr + ((allele2 != 0) ? allele2s : "0");
+            else
+                mtx(j, i) = ((allele1 != 0) ? allele1s : "0") + ((allele2 != 0) ? allele2s : "0");
         }
     }
     return mtx;
@@ -211,7 +228,7 @@ Rcpp::IntegerMatrix getgenotypesraw_1(NumericVector locus_arg,
                                       List          genotype_arg,
                                       List          allele_arg,
                                       List          markerscheme_arg,
-                                      NumericVector phenocnt_arg)
+                                      NumericVector miscN_arg)
 {
    int debug = 0;
 
@@ -231,8 +248,8 @@ Rcpp::IntegerMatrix getgenotypesraw_1(NumericVector locus_arg,
     Rcpp::IntegerVector allele1_map(markerschemes[2]);   // markerscheme_table[, 3]
     Rcpp::IntegerVector allele2_map(markerschemes[3]);   // markerscheme_table[, 4]
 
-    Rcpp::NumericVector phenos(phenocnt_arg);
-    int pheno = phenos[0];
+    Rcpp::NumericVector miscns(miscN_arg);
+    int pheno = miscns[0];
 
     Rcpp::IntegerMatrix mtx(genotype_sample_size, locus_size);
 
@@ -317,7 +334,7 @@ Rcpp::IntegerMatrix getgenotypesraw_1(NumericVector locus_arg,
 Rcpp::IntegerMatrix getgenotypesraw_2(NumericVector locus_arg,
                                       List          genotype_arg,
                                       List          allele_arg,
-                                      NumericVector phenocnt_arg)
+                                      NumericVector miscN_arg)
 {
     int debug = 0;
 
@@ -331,8 +348,8 @@ Rcpp::IntegerMatrix getgenotypesraw_2(NumericVector locus_arg,
     Rcpp::List allele(allele_arg);
     std::vector<int> decode_allele(4);
 
-    Rcpp::NumericVector phenos(phenocnt_arg);
-    int pheno = phenos[0];
+    Rcpp::NumericVector miscns(miscN_arg);
+    int pheno = miscns[0];
 
     Rcpp::IntegerMatrix mtx(genotype_sample_size, locus_size);
 
@@ -385,7 +402,8 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
                                      List          genotype_arg,
                                      List          allele_arg,
                                      List          markerscheme_arg,
-                                     NumericVector phenocnt_arg)
+                                     CharacterVector miscC_arg,
+                                     NumericVector miscN_arg)
 {
     int debug = 0;
 
@@ -405,8 +423,11 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
     Rcpp::IntegerVector allele1_map(markerschemes[2]);   // markerscheme_table[, 3]
     Rcpp::IntegerVector allele2_map(markerschemes[3]);   // markerscheme_table[, 4]
 
-    Rcpp::NumericVector phenos(phenocnt_arg);
-    int pheno = phenos[0];
+    Rcpp::NumericVector miscns(miscN_arg);
+    int pheno = miscns[0];
+
+    Rcpp::CharacterVector misccs(miscC_arg);
+    std::string sepstr = std::string(misccs[0]);
 
     Rcpp::Matrix<STRSXP> mtx(genotype_sample_size, locus_size);
 
@@ -448,11 +469,17 @@ Rcpp::Matrix<STRSXP> getgenotypes_Ri(NumericVector locus_arg,
             Rcpp::IntegerVector aindexX(allele[3]);
             if (debug) Rprintf("indexX: %d %d\\n", aindexX[2 * locus], aindexX[2 * locus+1]);
 
-            decode_allele[0] = allele1 + allele1;
-            decode_allele[1] = "00";
-            decode_allele[2] = allele1 + allele2;
-            decode_allele[3] = allele2 + allele2;
-
+            if (sepstr != "") {
+                decode_allele[0] = allele1 + sepstr + allele1;
+                decode_allele[1] = "0" + sepstr + "0";
+                decode_allele[2] = allele1 + sepstr + allele2;
+                decode_allele[3] = allele2 + sepstr + allele2;
+            } else {
+                decode_allele[0] = allele1 + allele1;
+                decode_allele[1] = "00";
+                decode_allele[2] = allele1 + allele2;
+                decode_allele[3] = allele2 + allele2;
+            }
             t0 = (! rvnull) ? rv[byte]: 0x55;
 /*
             if (debug && j <= 3)
@@ -512,7 +539,7 @@ Rcpp::NumericVector getgenotypes_forperson(RawVector raw_arg)
 //               genotype_arg = "list",     //
 //               allele_arg = "list",       //
 //               markerscheme_arg = "list", //
-//               phenocnt_arg = "numeric"), //
+//               misc_arg = "numeric"), //
 //     body =                               //
 //     '                                    //
 // //getgenotypesa1                         //
