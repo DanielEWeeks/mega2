@@ -100,42 +100,71 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #'}
 Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta) {
 
+    ANS = TRUE
     phens = names(gwaa_@phdata)
     for (phen in phens[2:length(phens)]) {
         cat("all(mega_@phdata$", phen, " == gwaa_@phdata$", phen, ") ", sep="")
-        print(all(! is.na(mega_@phdata[ , phen]) && ! is.na(gwaa_@phdata[ , phen]) &&
-                  mega_@phdata[ , phen] == gwaa_@phdata[ , phen]))
+        ans = all(! is.na(mega_@phdata[ , phen]) && ! is.na(gwaa_@phdata[ , phen]) &&
+                  mega_@phdata[ , phen] == gwaa_@phdata[ , phen])
+        print(ans)
+        ANS = ANS && ans
     }
 
      cat("all(mega_@gtdata@nids == gwaa_@gtdata@nids)")
-    print(all(mega_@gtdata@nids == gwaa_@gtdata@nids))
+    ans = all(mega_@gtdata@nids == gwaa_@gtdata@nids)
+    print(ans)
+    ANS = ANS && ans
     
      cat("all(mega_@gtdata@nsnps == gwaa_@gtdata@nsnps)")
-    print(all(mega_@gtdata@nsnps == gwaa_@gtdata@nsnps))
+    ans = all(mega_@gtdata@nsnps == gwaa_@gtdata@nsnps)
+    print(ans)
+    ANS = ANS && ans
 
      cat("all(mega_@gtdata@nbytes == gwaa_@gtdata@nbytes)")
-    print(all(mega_@gtdata@nbytes == gwaa_@gtdata@nbytes))
+    ans = all(mega_@gtdata@nbytes == gwaa_@gtdata@nbytes)
+    print(ans)
+    ANS = ANS && ans
 
-#    cat("all(mega_@gtdata@idnames == gwaa_@gtdata@idnames)")
-#   print(all(mega_@gtdata@idnames == gwaa_@gtdata@idnames))
+#
+     cat("all(mega_@gtdata@idnames == gwaa_@gtdata@idnames)")
+    ans = all(mega_@gtdata@idnames == gwaa_@gtdata@idnames)
+    print(ans)
+    ANS = ANS && ans
 
      cat("all(mega_@gtdata@snpnames == gwaa_@gtdata@snpnames)")
-    print(all(mega_@gtdata@snpnames == gwaa_@gtdata@snpnames))
+    ans = all(mega_@gtdata@snpnames == gwaa_@gtdata@snpnames)
+    print(ans)
+    ANS = ANS && ans
 
      cat("all(mega_@gtdata@chromosome == gwaa_@gtdata@chromosome)")
-    print(all(mega_@gtdata@chromosome == gwaa_@gtdata@chromosome))
+    ans = all(mega_@gtdata@chromosome == gwaa_@gtdata@chromosome)
+    print(ans)
+    ANS = ANS && ans
      cat("all(mega_@gtdata@map == gwaa_@gtdata@map)")
-    print(all(mega_@gtdata@map == gwaa_@gtdata@map))
+    ans = all(mega_@gtdata@map == gwaa_@gtdata@map)
+    print(ans)
+    ANS = ANS && ans
      cat("all(mega_@gtdata@male == gwaa_@gtdata@male)")
-    print(all(mega_@gtdata@male == gwaa_@gtdata@male))
+    ans = all(mega_@gtdata@male == gwaa_@gtdata@male)
+    print(ans)
+    ANS = ANS && ans
+#
+     cat("all(mega_@gtdata@coding == gwaa_@gtdata@coding)")
+    ans = all(mega_@gtdata@coding == gwaa_@gtdata@coding)
+    print(ans)
+    ANS = ANS && ans
+     cat("all(mega_@gtdata@strand == gwaa_@gtdata@strand)")
+    ans = all(mega_@gtdata@strand == gwaa_@gtdata@strand)
+    print(ans)
+    ANS = ANS && ans
 
-#    cat("all(mega_@gtdata@coding == gwaa_@gtdata@coding)")
-#   print(all(mega_@gtdata@coding == gwaa_@gtdata@coding))
-#    cat("all(mega_@gtdata@strand == gwaa_@gtdata@strand)")
-#   print(all(mega_@gtdata@strand == gwaa_@gtdata@strand))
-
-    ms = as.character(srdta@gtdata)
-    mm = as.character(mega@gtdata)
+     cat("all(mega_@gtdata@gtps == gwaa_@gtdata@gtps)")
+    ans = all(mega_@gtdata@gtps == gwaa_@gtdata@gtps)
+    print(ans)
+    ANS = ANS && ans
+    
+    ms = as.character(gwaa_@gtdata)
+    mm = as.character(mega_@gtdata)
 
     ms[ms == "T/G"] = "G/T"
     ms[ms == "T/C"] = "C/T"
@@ -154,5 +183,10 @@ Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta) {
     mm[is.na(mm)]   = "0/0"
 
      cat("all(mega_@gtdata == gwaa_@gtdata)")
-    print(all(mm == ms))
+    ans = all(mm == ms)
+    print(ans)
+    ANS = ANS && ans
+
+    print(rep(ans, 10))
+    print(rep(ans, 10))
 }

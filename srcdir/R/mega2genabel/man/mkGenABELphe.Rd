@@ -4,11 +4,9 @@
 \alias{mkGenABELphe}
 \title{generate required PLINK (.phe) file}
 \usage{
-mkGenABELphe(prefix, envir)
+mkGenABELphe(envir)
 }
 \arguments{
-\item{prefix}{prefix for generated file name}
-
 \item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
@@ -20,6 +18,6 @@ Generate the .phe (phenotype) file for PLINK which is used by GenAbel.  The pers
 }
 \examples{
 \dontrun{
-mkGenABELphe(prefix, envir)
+mkGenABELphe(envir)
 }
 }
