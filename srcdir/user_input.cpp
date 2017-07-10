@@ -1141,13 +1141,16 @@ void menu1(file_format *infl_type,
 
             } else if(Input_Format == in_format_bcfs) {
                 xcf = 1;
+                plinkf = 0;
                 PLINK_clr(not_plink_format);
                 PLINK_str(PLINKArgs, FILENAME_LENGTH);
                 strcpy(VCFArgs, "--remove-indels");
 
                 strcpy(extension_name, "study");
 
-                fln_init_plink(! PMAP_REQ);
+                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init_plink(0);
+
                 fln_init_mega2(! MAP_REQ);
             }
 
@@ -1412,7 +1415,7 @@ void menu1(file_format *infl_type,
                 exit_loop=0;
             }
             if (xcf) {
-                if (access(*auxfl_name, F_OK) != 0) {
+                if (access(*auxfl_name, F_OK) != 0 && Input_Format != in_format_bcfs) {
                     printf("ERROR: You did not specify a Variant file.\n");
                     exit_loop=0;
                 }
@@ -1544,19 +1547,27 @@ void menu1(file_format *infl_type,
             fln_get(pheo, "phenotype");
 
         } else if(choice_ == site_bcfs_dir_i) {
-            draw_line();
-            printf("Please enter BCF directory name > ");
-            fcmap(stdin, "%s", *bcfs_path); newline;
+            while (1) {
+                draw_line();
+                printf("Please enter BCF directory name > ");
+                fcmap(stdin, "%s", *bcfs_path);
+                newline;
 
-            if (access(*bcfs_path, F_OK)) {
-                printf("WARNING: Could not find directory %s\n", *bcfs_path);
-            } else if (! is_dir(*bcfs_path)) {
-                printf("WARNING: %s is not a directory.\n", *bcfs_path);
-                printf("Please specify a new or valid directory.\n");
-                strcpy(*bcfs_path, ".");
-            } else if (access(*bcfs_path, W_OK)) {
-                printf("WARNING: %s is not a writable directory.\n", *bcfs_path);
-                printf("Please specify a new or valid directory.\n");
+                if (access(*bcfs_path, F_OK)) {
+                    printf("WARNING: Could not find directory %s\n", *bcfs_path);
+                    continue;
+                } else if (!is_dir(*bcfs_path)) {
+                    printf("WARNING: %s is not a directory.\n", *bcfs_path);
+                    printf("Please specify a new or valid directory.\n");
+                    strcpy(*bcfs_path, ".");
+                    continue;
+                } else if (access(*bcfs_path, W_OK)) {
+                    printf("WARNING: %s is not a writable directory.\n", *bcfs_path);
+                    printf("Please specify a new or valid directory.\n");
+                    continue;
+                }
+                else
+                    break;
             }
         } else if(choice_ == site_bcfs_template_i) {
             while(1) {

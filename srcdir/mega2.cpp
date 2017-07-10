@@ -812,7 +812,6 @@ int             main(int argc, char **argv, char **env)
         if(strcmp(reffl_name, "") != 0)
             *inf.reffl   = reffl_name;
         *inf.bcfsdir = bcfs_path;
-        *inf.bcfstemp = bcfs_template;
 
         strcpy(&mega2_input_file_type[PEDIGREE][0],  "Pedigree file");
         strcpy(&mega2_input_file_type[LOCUS][0],  "Locus file");
@@ -825,7 +824,6 @@ int             main(int argc, char **argv, char **env)
             strcpy(&mega2_input_file_type[BED][0],  "Aux file");
         strcpy(&mega2_input_file_type[PHEfl][0],  "PLINK Phenotype file");
         strcpy(&mega2_input_file_type[BCFSDIR][0],  "BCF file directory");
-        strcpy(&mega2_input_file_type[BCFSTEMP][0],  "BCF template file");
 
         Mega2Status = FILE_NAMES_READ;
         time_stamp_logs();
