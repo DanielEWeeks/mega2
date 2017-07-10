@@ -42,14 +42,15 @@ enum INPUT_FORMAT {
     in_format_binary_PED = 3,
     in_format_PED = 4,
     in_format_binary_VCF = 5,
-    in_format_compressed_VCF = 6,
-    in_format_VCF = 7,
-    in_format_imputed = 8,
+    in_format_bcfs = 6,
+    in_format_compressed_VCF = 7,
+    in_format_VCF = 8,
+    in_format_imputed = 9,
 //  in_format_bgen  = 9,
 //  in_format_bgen2 = 10,
-    in_format_bgen2 = 9,
-    in_format_bgen  = 10,
-    in_format_bcfs = 11,
+    in_format_bgen2 = 10,
+    in_format_bgen  = 11,
+
     in_format_traditional = 100,
 } INPUT_FORMAT_t;
 
@@ -65,6 +66,8 @@ public:
     char **bedfl;
     char **phefl;
     char **reffl;
+    char **bcfsdir;
+    char **bcfstemp;
 
     Input_Files() :
         pedfl(&mega2_input_files[PEDIGREE]),
@@ -76,7 +79,9 @@ public:
         penfl(&mega2_input_files[PEN]),
         bedfl(&mega2_input_files[BED]),
         phefl(&mega2_input_files[PHEfl]),
-        reffl(&mega2_input_files[REFfl]) {  };
+        reffl(&mega2_input_files[REFfl]),
+        bcfsdir(&mega2_input_files[BCFSDIR]),
+        bcfstemp(&mega2_input_files[BCFSTEMP]) {  };
 
 };
 

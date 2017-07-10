@@ -90,7 +90,9 @@ void  menu1(file_format *infl_type,
             char **auxfl_name, char **phefl_name,
             int *Untyped_ped_opt, int *Error_sim_opt,
             char **output_path, char **db_name,
-            double *freq_mismatch_thresh);
+            double *freq_mismatch_thresh,
+            char **reffl_name, int *strand_flip_opt,
+            char **bcfs_path, char **bcfs_template);
 
 void            define_affection_labels(linkage_ped_top *Top,
 					analysis_type analysis);
@@ -120,12 +122,13 @@ const char *INPUT_FORMAT_STR[] = {
      "PLINK binary PED format (bed)",
      "PLINK PED format (ped)",
      "BCF format (bcf)",
+     "BCF Split by Chromosome",
      "VCF compressed format (vcf.gz)",
      "VCF format (vcf)",
      "IMPUTE2 GEN format (gen/impute2)",
      "IMPUTE2 BGEN format (bgen)",
 //   "IMPUTE2 BGEN format2 (bgen)",
-     "BCF Split by Chromosome",
+
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -166,6 +169,9 @@ Input_Base *createinput(INPUT_FORMAT in_format) {
     case in_format_binary_VCF:
         return new Input_VCF_Binary(in_format);
         break;
+    case in_format_bcfs:
+        return new Input_BCFs(in_format);
+        break;
     case in_format_compressed_VCF:
         return new Input_VCF_Compressed(in_format);
         break;
@@ -180,9 +186,6 @@ Input_Base *createinput(INPUT_FORMAT in_format) {
         break;
     case in_format_bgen2:
         return new Input_BGEN2(in_format);
-        break;
-    case in_format_bcfs:
-        return new Input_BCFs(in_format);
         break;
     case in_format_traditional:
         return new Input_Traditional(in_format);
@@ -956,7 +959,8 @@ void menu1(file_format *infl_type,
            int *Untyped_ped_opt, int *Error_sim_opt,
            char **output_path, char **db_name,
            double *freq_mismatch_thresh,
-           char **reffl_name, int *strand_flip_opt)
+           char **reffl_name, int *strand_flip_opt,
+           char **bcfs_path, char **bcfs_template)
 {
     int            i, choice_ = -1;
     char           cchoice[10];
@@ -968,8 +972,8 @@ void menu1(file_format *infl_type,
     int            compress_i = 18, file_format_i = 19, vcf_args_i = 20;
     int            vcf_mak_i = 21, site_vcf_i = 22, site_bcf_i = 23, site_vcf_gz_i = 24, _aux_i = 0;
     int            db_file_i = 25, in_dir_i = 26, pmap_i = 27;
-    int	           imputed_i = 28, inf_i = 29/*, flip_i = 30*/;
-    int            idx, choiceA[31]; /* idx should be 1+ largest <>_i value (above)*/
+    int	           imputed_i = 28, inf_i = 29, site_bcfs_dir_i=30, site_bcfs_template_i = 31/*, flip_i = 30*/;
+    int            idx, choiceA[32]; /* idx should be 1+ largest <>_i value (above)*/
 
     int            plinkf = 0, xcf = 0;
 
@@ -991,6 +995,8 @@ void menu1(file_format *infl_type,
 
     fln_alloc(output_path);
     fln_alloc(input_path);
+    fln_alloc(bcfs_path);
+    fln_alloc(bcfs_template);
 
     fln_alloc(pedfl_name,   pedo);
     fln_alloc(locusfl_name, loco);
@@ -1012,10 +1018,18 @@ void menu1(file_format *infl_type,
         else if (Input_Format == in_format_binary_PED) {
             strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
             plinkf = 1;
-        } else if (Input_Format == in_format_binary_VCF) {
+        }
+        else if (Input_Format == in_format_binary_VCF) {
             strcpy(&mega2_input_file_type[BED][0],  "Binary Variant file");
             xcf = 1;
-        } else if (Input_Format == in_format_compressed_VCF) {
+        }
+        else if(Input_Format == in_format_bcfs){
+            strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
+            xcf = 1;
+            //set bcf_paths
+            //set bcf_file_template
+        }
+        else if (Input_Format == in_format_compressed_VCF) {
             strcpy(&mega2_input_file_type[BED][0],  "Compressed Variant file");
             xcf = 1;
         } else if (Input_Format == in_format_VCF) {
@@ -1025,10 +1039,6 @@ void menu1(file_format *infl_type,
             strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 GEN file");
         } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen2) {
             strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 BGEN file");
-        }
-        else if(Input_Format == in_format_bcfs){
-            strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
-            xcf = 1;
         }
 
 
@@ -1048,6 +1058,8 @@ void menu1(file_format *infl_type,
 
     sprintf(*output_path, ".");
     sprintf(*input_path, ".");
+    sprintf(*bcfs_path,".");
+    sprintf(*bcfs_template,"?");
 
     int line_len;
     while (!exit_loop) {
@@ -1106,7 +1118,9 @@ void menu1(file_format *infl_type,
 //              fln_init_mega2(! MAP_REQ);
                 fln_init_mega2(-1);
 
-            } else if (Input_Format == in_format_binary_VCF) {
+            }
+
+            else if (Input_Format == in_format_binary_VCF) {
                 xcf = 1;
                 PLINK_clr(not_plink_format);
                 PLINK_str(PLINKArgs, FILENAME_LENGTH);
@@ -1122,7 +1136,19 @@ void menu1(file_format *infl_type,
 
                 fln_init_mega2(! MAP_REQ);
 
-            } else if (Input_Format == in_format_compressed_VCF) {
+            } else if(Input_Format == in_format_bcfs) {
+                xcf = 1;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(VCFArgs, "--remove-indels");
+
+                strcpy(extension_name, "study");
+
+                fln_init_plink(! PMAP_REQ);
+                fln_init_mega2(! MAP_REQ);
+            }
+
+            else if (Input_Format == in_format_compressed_VCF) {
                 xcf = 1;
                 PLINK_clr(not_plink_format);
                 PLINK_str(PLINKArgs, FILENAME_LENGTH);
@@ -1165,7 +1191,7 @@ void menu1(file_format *infl_type,
 //              fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
 
-            } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen2) {
+            } else if (/*Input_Format == in_format_bgen ||*/ Input_Format == in_format_bgen2) {
                 strcpy(extension_name, "bgen");
 
                 fln_init(pedo, "IMPUTE2", "sample", "[required]", "sample");
@@ -1178,22 +1204,7 @@ void menu1(file_format *infl_type,
 //              fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
             }
-            else if(Input_Format == in_format_bcfs) {
-                xcf = 1;
-                PLINK_clr(not_plink_format);
-                PLINK_str(PLINKArgs, FILENAME_LENGTH);
-                strcpy(VCFArgs, "--remove-indels");
-                strcpy(extension_name, "study");
 
-                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
-                fln_init_plink(0);
-                fln_init(auxo, "binary", "bcf", "[required]", "bcf");
-                auxo->title = "Variant file:";
-                strcpy(&mega2_input_file_type[BED][0],  "Binary Variant file");
-                _aux_i = site_bcf_i;
-
-                fln_init_mega2(! MAP_REQ);
-            }
             reset_extension = 1;
         }
         if (reset_extension) {
@@ -1234,6 +1245,19 @@ void menu1(file_format *infl_type,
                 printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             }
+        }
+
+        if(Input_Format == in_format_bcfs){
+            printf("%2d) %-*s%s\n", idx, line_len,
+                   "BCF File Directory:",
+                   ((!strcmp(*bcfs_path, "."))?"[ Current directory ]" : *bcfs_path));
+            choiceA[idx] = site_bcfs_dir_i;
+            idx++;
+
+            printf("%2d) %-*s%s\n", idx, line_len,
+                   "BCF File Template:", *bcfs_template);
+            choiceA[idx] = site_bcfs_template_i;
+            idx++;
         }
 
         if (Input->req_stem_flag) {
@@ -1514,6 +1538,43 @@ void menu1(file_format *infl_type,
         } else if (choice_ == plink_phe_i) {
             fln_get(pheo, "phenotype");
 
+        } else if(choice_ == site_bcfs_dir_i) {
+            draw_line();
+            printf("Please enter BCF directory name > ");
+            fcmap(stdin, "%s", *bcfs_path); newline;
+
+            if (access(*bcfs_path, F_OK)) {
+                printf("WARNING: Could not find directory %s\n", *bcfs_path);
+            } else if (! is_dir(*bcfs_path)) {
+                printf("WARNING: %s is not a directory.\n", *bcfs_path);
+                printf("Please specify a new or valid directory.\n");
+                strcpy(*bcfs_path, ".");
+            } else if (access(*bcfs_path, W_OK)) {
+                printf("WARNING: %s is not a writable directory.\n", *bcfs_path);
+                printf("Please specify a new or valid directory.\n");
+            }
+        } else if(choice_ == site_bcfs_template_i) {
+            while(1) {
+                draw_line();
+                printf("To enter a template please enter a value of the form:\n");
+                printf("[data?.bcf]\nWhere the wildecard '?' will replace the CHR number for all chromosomes.\n");
+                printf("Please enter BCF file template format > ");
+                fcmap(stdin, "%s", *bcfs_template);
+                newline;
+
+                Vecs bcfsplit;
+                split(bcfsplit, *bcfs_template, "?");
+
+                if (bcfsplit.size() != 2) {
+                    printf("Please include one and only one ? in the template name\n");
+                    continue;
+                }
+                else
+                    break;
+            }
+
+
+
         } else if (choice_ == ref_i) {
             printf("You can use an external reference panel to get a set of reference alleles.\n");
             printf("This process is described in the section called 'External Reference Allele Panel in the Database'\n");
@@ -1523,36 +1584,35 @@ void menu1(file_format *infl_type,
             printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
             printf("most recent build at ____________. \n\n");
             fln_get(refo, "reference allele");
-            BatchValueSet(refo->name,"Reference_Allele_File");
+            BatchValueSet(refo->name, "Reference_Allele_File");
             newline;
             draw_line();
             char buildname[255];
 
             Str rfile = refo->name;
 
-            if(rfile.find("B37")!=std::string::npos || rfile.find("b37")!=std::string::npos)
-                strcpy(buildname,"B37");
-            else if(rfile.find("HG37")!=std::string::npos || rfile.find("hg37")!=std::string::npos)
-                strcpy(buildname,"HG37");
-            else if(rfile.find("B38")!=std::string::npos || rfile.find("b38")!=std::string::npos)
-                strcpy(buildname,"B38");
-            else if(rfile.find("HG38")!=std::string::npos || rfile.find("hg38")!=std::string::npos)
-                strcpy(buildname,"HG38");
-            else if(rfile.find("B19")!=std::string::npos || rfile.find("b19")!=std::string::npos)
-                strcpy(buildname,"B19");
-            else if(rfile.find("HG19")!=std::string::npos || rfile.find("hg19")!=std::string::npos)
-                strcpy(buildname,"HG19");
+            if (rfile.find("B37") != std::string::npos || rfile.find("b37") != std::string::npos)
+                strcpy(buildname, "B37");
+            else if (rfile.find("HG37") != std::string::npos || rfile.find("hg37") != std::string::npos)
+                strcpy(buildname, "HG37");
+            else if (rfile.find("B38") != std::string::npos || rfile.find("b38") != std::string::npos)
+                strcpy(buildname, "B38");
+            else if (rfile.find("HG38") != std::string::npos || rfile.find("hg38") != std::string::npos)
+                strcpy(buildname, "HG38");
+            else if (rfile.find("B19") != std::string::npos || rfile.find("b19") != std::string::npos)
+                strcpy(buildname, "B19");
+            else if (rfile.find("HG19") != std::string::npos || rfile.find("hg19") != std::string::npos)
+                strcpy(buildname, "HG19");
             else {
                 printf("Enter genome build for Reference File and Dataset > ");
                 fcmap(stdin, "%s", buildname);
                 newline;
             }
-            printf("Genome build has been set to %s\n",buildname);
+            printf("Genome build has been set to %s\n", buildname);
             Str hgbuild = buildname;
 
-            BatchValueSet(hgbuild,"human_genome_build");
+            BatchValueSet(hgbuild, "human_genome_build");
             batchf(BatchItemGet("human_genome_build"));
-
 
 
         } else if (choice_ == out_i) {   /* The output directory */

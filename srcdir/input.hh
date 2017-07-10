@@ -142,6 +142,14 @@ public:
     Input_Ops Ops;
 };
 
+class Input_BCFs: public Input_VCF_Common{
+public:
+    Input_BCFs(INPUT_FORMAT_t i): Input_VCF_Common(i) { }
+    virtual ~Input_BCFs() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    Input_Ops Ops;
+};
+
 ////////////////
 
 class Input_Impute : public Input_Base {
@@ -184,14 +192,6 @@ public:
    ~Input_BGEN2() {};
     virtual Input_Ops *GetOps() {return &Ops;};
     ReadBgen2 Ops;
-};
-
-class Input_BCFs: public Input_VCF_Common{
-public:
-    Input_BCFs(INPUT_FORMAT_t i): Input_VCF_Common(i) {}
-    virtual ~Input_BCFs() {};
-    virtual Input_Ops *GetOps() {return &Ops;};
-    Input_Ops Ops;
 };
 
 class Input_Traditional : public Input_Old {

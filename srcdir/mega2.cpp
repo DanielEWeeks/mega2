@@ -616,6 +616,8 @@ int             main(int argc, char **argv, char **env)
     char           *phefl_name  = NULL;
     char           *reffl_name  = NULL;
     char           *input_path  = NULL;
+    char           *bcfs_path   = NULL;
+    char           *bcfs_template = NULL;
     char const     *logdir;
     int            num_cols=0;
 /*  int            check_web_ver = 1; */
@@ -789,7 +791,8 @@ int             main(int argc, char **argv, char **env)
               &mapfl_name,  &pmapfl_name, &input_path, &omitfl_name,
               &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
               &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath, &dbf,
-              &FreqMismatchThreshold, &reffl_name, &StrandFlipOpt);
+              &FreqMismatchThreshold, &reffl_name, &StrandFlipOpt,
+              &bcfs_path, &bcfs_template);
         tod_menu1();
 
         Input_Files& inf = Input->input_files;  // Input is set in menu1 as soon as possible.
@@ -807,6 +810,8 @@ int             main(int argc, char **argv, char **env)
         *inf.bedfl   = bedfl_name;
         *inf.phefl   = phefl_name;
         *inf.reffl   = reffl_name;
+        *inf.bcfsdir = bcfs_path;
+        *inf.bcfstemp = bcfs_template;
 
         strcpy(&mega2_input_file_type[PEDIGREE][0],  "Pedigree file");
         strcpy(&mega2_input_file_type[LOCUS][0],  "Locus file");
@@ -818,7 +823,8 @@ int             main(int argc, char **argv, char **env)
         if (mega2_input_file_type[BED][0] == 0)
             strcpy(&mega2_input_file_type[BED][0],  "Aux file");
         strcpy(&mega2_input_file_type[PHEfl][0],  "PLINK Phenotype file");
-        strcpy(&mega2_input_file_type[REFfl][0],  "Reference Allele file");
+        strcpy(&mega2_input_file_type[BCFSDIR][0],  "BCF file directory");
+        strcpy(&mega2_input_file_type[BCFSTEMP][0],  "BCF template file");
 
         Mega2Status = FILE_NAMES_READ;
         time_stamp_logs();
