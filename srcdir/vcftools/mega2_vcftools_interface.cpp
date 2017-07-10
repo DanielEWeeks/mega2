@@ -778,15 +778,16 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
                                        const vector<int> &persons_indv_v,
                                        linkage_locus_top *LTop,
                                        string info_id_alternative_key, 
-                                       string unknown_marker_prefix)
+                                       string unknown_marker_prefix,
+                                       Vecc &alleles)
 {
     vector<string> Alleles;
-    vector<char *> alleles;
+//  vector<char *> alleles;
     char phase;
     pair<int, int> genotype;
     vector<char> variant_line;
-    char *allele1, *allele2;
-    char *allele0 = canonical_allele("0");
+    const char *allele1, *allele2;
+    const char *allele0 = canonical_allele("0");
     string ID;
     int Locus_i;
 
@@ -805,6 +806,7 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
          I != Alleles.end();) {
         alleles.push_back(canonical_allele((*I++).c_str()));
     }
+//rvb where vcf allele array lives
 
     // Get the index in LTop->Locus[] for the marker/locus associated with the entry ID string...
     ID = get_marker_name(info_id_alternative_key, unknown_marker_prefix);
@@ -901,7 +903,8 @@ void VCFtools_process_entries(annotated_ped_rec persons[],
                               const unsigned int person_n,
                               linkage_locus_top *LTop,
                               string info_id_alternative_key,
-                              string unknown_marker_prefix)
+                              string unknown_marker_prefix,
+                              std::vector<Vecc> &VCFalleles)
 {
     if (params == (parameters *)NULL) {
         errorf("INTERNAL: The VCFtools command line arguments were not parsed.");
@@ -924,10 +927,13 @@ void VCFtools_process_entries(annotated_ped_rec persons[],
     // VCFtools_process_file_meta_information_and_header()
     Tod vcfall("VCF all entries");
     Tod vcfpne(50);
+    Vecc VCFallele;
     for (unsigned int entry_i = 0; entry_i < (unsigned int)vf->N_total_sites(); entry_i++) {
         vcfpne.reset();
+        VCFallele.clear();
         VCFtools_process_next_entry(entry_i, persons, person_n, person_indv_v, LTop,
-                                    info_id_alternative_key, unknown_marker_prefix);
+                                    info_id_alternative_key, unknown_marker_prefix, VCFallele);
+        VCFalleles.push_back(VCFallele);
         vcfpne("VCF next entry");
     }
     vcfall();

@@ -411,7 +411,7 @@ int analysis_menu1(analysis_type  *analysis)
                 printf("%-34s %-34s\n", option_col1, option_col2);
             }
 
-            printf("\nSelect an option between 0-%2d > ", count_analysis_list);
+            printf("Select an option between 0-%2d > ", count_analysis_list);
             fcmap(stdin, "%s", choice); newline;
             choice_ = -1;
             sscanf(choice, "%d", &choice_);
@@ -554,9 +554,8 @@ fln_t auxO  = {"Aux file:",        Input_Aux_File},        *auxo  = &auxO;
 fln_t pheO  = {"Phenotype file:",  Input_Phenotype_File},  *pheo  = &pheO;
 fln_t infO  = {"Imputed Info file:", -1, "Input_Imputed_Info_File"};
 fln_t *info  = &infO;
-fln_t refO  = {"Reference Allele File:",  -1, "Reference_Allele_File"},  *refo  = &refO;
 
-fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, refo, info, 0};
+fln_t *fln_array[] = {pedo, loco, mapo, pmapo, omito, freqo, peno, auxo, pheo, info, 0};
 
 static void fln_init(fln_t *fln, const char *type, const char *typefx, const char *stat, const char *sfx1)
 {
@@ -595,7 +594,6 @@ static void fln_init_mega2(int map_req) {
     fln_init(omito, "Mega2", "omit", "[optional]", "omit");
     fln_init(freqo, "Mega2", "freq", "[optional]", "freq", "frequency");
     fln_init(peno,  "Mega2", "pen", "[optional]", "pen", "penetrance");
-    fln_init(refo,  "Alleles", "", "[optional]", "ref", "reference");
 }
 
 #define PMAP_REQ 1
@@ -993,6 +991,8 @@ void menu1(file_format *infl_type,
     *Error_sim_opt = 0;
     *freq_mismatch_thresh = LARGE;
 
+    Str hgbuild;
+
     fln_alloc(output_path);
     fln_alloc(input_path);
     fln_alloc(bcfs_path);
@@ -1008,7 +1008,7 @@ void menu1(file_format *infl_type,
     fln_alloc(auxfl_name,   auxo);
     fln_alloc(phefl_name,   pheo);
     fln_alloc(infofl_name,  info);
-    fln_alloc(reffl_name,   refo);
+    fln_alloc(reffl_name);
     if (batchINPUTFILES) {
 
         Input = createinput(Input_Format);
@@ -1050,6 +1050,9 @@ void menu1(file_format *infl_type,
         menu1_batch_set_outfiles(output_path, db_name);
 
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
+
+        if(BatchItemGet("Reference_Allele_File")->items_read)
+            BatchValueGet(*reffl_name,"Reference_Allele_File");
 
         return;
     }
@@ -1309,7 +1312,6 @@ void menu1(file_format *infl_type,
         if (choiceA[idx]) idx++;
 
 
-
         printf("%2d) %-*s%s\n", idx, line_len,
                "Output Directory:",
                ((!strcmp(*output_path, "."))?"[ Current directory ]" : *output_path));
@@ -1327,8 +1329,13 @@ void menu1(file_format *infl_type,
             idx++;
         }
 
-        if(database_dump)
-            choiceA[idx] = fln_print(refo, idx, ref_i);
+        if(database_dump) {
+            if(*reffl_name == NULL)
+                printf("%2d) %-*s%14s%s\n", idx, line_len-14,"Reference Allele File:","[optional] ", "-");
+            else
+                printf("%2d) %-*s%14s%s\n", idx, line_len-14,"Reference Allele File:","[optional] ", *reffl_name);
+            choiceA[idx] = ref_i;
+        }
 
         if (choiceA[idx]) idx++;
 
@@ -1457,10 +1464,8 @@ void menu1(file_format *infl_type,
                 fln_free_not_present(pheo);
                 fln_free_not_present(mapo);
                 fln_free_not_present(pmapo);
-                fln_free_not_present(refo);
                 fln_free_not_present(info);
             }
-
         } else if (choice_ == file_format_i) {
             int ans;
             while (1) {
@@ -1579,41 +1584,49 @@ void menu1(file_format *infl_type,
             printf("You can use an external reference panel to get a set of reference alleles.\n");
             printf("This process is described in the section called 'External Reference Allele Panel in the Database'\n");
             printf("in the Mega2 documentation.\n\n");
-            printf("Reference panels are 3 column files of CHR POS REF that are then gzipped.\n");
+            printf("Reference panels are 4 column files of CHR POS REF ALT that are then gzipped.\n");
             printf("They can be constructed by hand or using a shell script included with Mega2\n");
             printf("called GetRefAlleles.sh.  Additionally we provide a reference of 1000 genomes\n");
-            printf("most recent build at ____________. \n\n");
-            fln_get(refo, "reference allele");
-            BatchValueSet(refo->name, "Reference_Allele_File");
-            newline;
-            draw_line();
-            char buildname[255];
-
-            Str rfile = refo->name;
-
-            if (rfile.find("B37") != std::string::npos || rfile.find("b37") != std::string::npos)
-                strcpy(buildname, "B37");
-            else if (rfile.find("HG37") != std::string::npos || rfile.find("hg37") != std::string::npos)
-                strcpy(buildname, "HG37");
-            else if (rfile.find("B38") != std::string::npos || rfile.find("b38") != std::string::npos)
-                strcpy(buildname, "B38");
-            else if (rfile.find("HG38") != std::string::npos || rfile.find("hg38") != std::string::npos)
-                strcpy(buildname, "HG38");
-            else if (rfile.find("B19") != std::string::npos || rfile.find("b19") != std::string::npos)
-                strcpy(buildname, "B19");
-            else if (rfile.find("HG19") != std::string::npos || rfile.find("hg19") != std::string::npos)
-                strcpy(buildname, "HG19");
-            else {
-                printf("Enter genome build for Reference File and Dataset > ");
-                fcmap(stdin, "%s", buildname);
+            printf("most recent build at https://watson.hgen.pitt.edu/mega2/refs/ \n\n");
+            while (1) {
+                printf("Please enter Reference Panel file > ");
+                fcmap(stdin, "%s", *reffl_name);
                 newline;
+                newline;
+                draw_line();
+                char buildname[255];
+
+
+                FILE *f = fopen(*reffl_name, "r");
+                if (f == NULL) {
+                    printf("\"%s\" is not a valid file\n", *reffl_name);
+                    continue;
+                } else {
+
+                    Str rfile = *reffl_name;
+
+                    if (rfile.find("B37") != std::string::npos || rfile.find("b37") != std::string::npos)
+                        strcpy(buildname, "B37");
+                    else if (rfile.find("HG37") != std::string::npos || rfile.find("hg37") != std::string::npos)
+                        strcpy(buildname, "HG37");
+                    else if (rfile.find("B38") != std::string::npos || rfile.find("b38") != std::string::npos)
+                        strcpy(buildname, "B38");
+                    else if (rfile.find("HG38") != std::string::npos || rfile.find("hg38") != std::string::npos)
+                        strcpy(buildname, "HG38");
+                    else if (rfile.find("B19") != std::string::npos || rfile.find("b19") != std::string::npos)
+                        strcpy(buildname, "B19");
+                    else if (rfile.find("HG19") != std::string::npos || rfile.find("hg19") != std::string::npos)
+                        strcpy(buildname, "HG19");
+                    else {
+                        printf("Enter genome build for Reference File and Dataset > ");
+                        fcmap(stdin, "%s", buildname);
+                        newline;
+                    }
+                    printf("Genome build has been set to %s\n", buildname);
+                    hgbuild = buildname;
+                    break;
+                }
             }
-            printf("Genome build has been set to %s\n", buildname);
-            Str hgbuild = buildname;
-
-            BatchValueSet(hgbuild, "human_genome_build");
-            batchf(BatchItemGet("human_genome_build"));
-
 
         } else if (choice_ == out_i) {   /* The output directory */
             draw_line();
@@ -1784,6 +1797,11 @@ void menu1(file_format *infl_type,
         Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option = MARKER_SCHEME;
         batchf(Value_Marker_Compression);
 
+
+        BatchValueSet(*reffl_name,"Reference_Allele_File");
+        batchf(BatchItemGet("Reference_Allele_File"));
+        BatchValueSet(hgbuild,"human_genome_build");
+        batchf(BatchItemGet("human_genome_build"));
     }
 
     if (! Input->req_locus_file) fln_free(loco);
@@ -1862,16 +1880,19 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
         db_exists = db_exists_db();
         printf("%2d) %-*s%s%10s\n", idx, line_len, "Database filename:", fn, 
-               db_exists ? "[exists]" : "[create]");
+               db_exists ? "[exists]" : "[undefined]");
         choiceA[idx] = db_i;
         idx++;
 
-        db_ref_table_exists = db_table_exists("ref_allele_table");
-        if(db_ref_table_exists) {
-            printf("%2d) %-*s[ %s]\n", idx, line_len,
-                   "Align strands with reference:", yorn[*strand_flip_opt]);
-            choiceA[idx++] = flip_i;
-        }
+        if (db_exists) {
+            db_ref_table_exists = db_table_exists("ref_allele_table");
+            if(db_ref_table_exists) {
+                printf("%2d) %-*s[ %s]\n", idx, line_len,
+                       "Align strands with reference:", yorn[*strand_flip_opt]);
+                choiceA[idx++] = flip_i;
+            }
+        } else
+            db_ref_table_exists = 0;
 
         _thresh_i = 1 ?  thresh_i : 0;
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
@@ -1898,7 +1919,10 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         }
 
         if (choice_ == 0) {
-            exit_loop = 1;
+            exit_loop = db_exists_db();
+
+            if (! exit_loop)
+                printf("The database you have specified does not exist.  Please enter a valid database file.\n");
 
         } else if (choice_ == out_i) {   /* The output directory */
             draw_line();

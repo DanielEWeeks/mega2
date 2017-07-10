@@ -25,64 +25,42 @@
 # 
 # ===========================================================================
 
-library(mega2)
+#library(mega2r)
 
 #' Mega2VCF package
 #'
 #' @description This package reads a Mega2 SQLite3 database into R dataframes and
-#'	generates a VCF file from these same frames.
+#'	generates a VCF file and related metadata files from these same frames.
 #'
 #' @author Robert V Baron
 #' @docType package
 #' @name Mega2VCF-package
 NULL
 
-#' Load Mega2 database and initialize family structure
-#'
-#' @description
-#'  \emph{dbmega2_import} the specified database and load the environment, \emph{ENV}, with the
-#'  table data.  Also run \emph{mkfam} to initialize the family structure and then \emph{setfam}
-#'  to modify the \emph{unified_genotype_table} to match the family.  By default this will remove
-#'  samples that were replicated to break loops in the pedigree, see \emph{mkfam} for details.
-#'
-#' @param db specify SQLite database to load
-#'
-#' @param ... aditional arguments to pass to \emph{dbmega2_import}
-#'
-#' @return ENV an environment that contains all the tables created from the SQLite tables.
-#'
-#' @importFrom mega2 read.Mega2DB
-#' @export
-#'
-#' @note This functions just calls the same named function in the mega2 package
-#'
-#' @examples
-#'\dontrun{
-#' read.Mega2DB("database.db")
-#'}
-read.Mega2DB = function(db, ...) {
-
-    return (mega2::read.Mega2DB(db, ...))
-}
-
-#' generate a VCF file
+#' generate a VCF file collection
 #'
 #' @description
 #'  Generate a VCF file from the specified Mega2 SQLite database.  The file is named "prefix".vcf
-#'  If the markers arg is.null(), the entire ENV$markers set is used otherwise markers arg MUST
-#'  be a subset of the ENV$markers data.frame -- same columns, but pruned rows.  
+#'  If the markers arg is.null(), the entire envir$markers set is used otherwise markers arg MUST
+#'  be a subset of the envir$markers data.frame -- same columns, but pruned rows.  In addition,
+#'  several other related files are generated: "prefix".fam, "prefix".freq, "prefix".map,
+#'  "prefix".phe, and "prefix".pen, being the pedigree, allele frequency, marker genetic and
+#'  physical map position, member phenotype and phenotype penetrance information.
 #'
 #' @param prefix prefix for vcf file name
 #'
 #' @param markers markers selected to be in output file
 #'
-#' @param mapno specify which map index to use for genetic distances
+#' @param mapno specify which map index to use for genetic distances.  The function showMapNames
+#' will print out the internal map numbers corresponding to all the maps in the Mega2 database.
 #'
-#' @param allowFlip REF/ALT of higher frequency occurs first
+#' @param alleleOrder REF is default, minor allele freq or major allele freq
+#'
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @importFrom mega2 getENV getgenotypesraw 
+#' @importFrom mega2r getgenotypesraw 
 #' @importFrom utils write.table
 #' @export
 #'
@@ -92,30 +70,28 @@ read.Mega2DB = function(db, ...) {
 #'
 #' Mega2VCF("foo")
 #'
-#' Mega2VCF("foo", ENV$markers[ENV$markers$chromosome >= 20,])
+#' Mega2VCF("foo", envir$markers[envir$markers$chromosome >= 20,])
 #'}
-Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
+Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', envir = ENV) {
+
     file = paste0(prefix, ".vcf")
-    
     unlink(file)
 
-    ENV = getENV()
+    if (is.null(markers)) markers = envir$markers
 
-    if (is.null(markers)) markers = ENV$markers
-
-    mkVCFhdr(prefix, ENV, markers)
+    mkVCFhdr(prefix, markers, envir)
 
     z = c("./.", "./0", "./1", "./2", "0/.", "0/0", "0/1", "0/2", 
           "1/.", "1/0", "1/1", "1/2", "2/.", "2/0", "2/1", "2/2")
     zs = sort(z)
     zz = matrix(z, nrow = 4, byrow = TRUE)
 
-    allele_table = ENV$allele_table[ENV$allele_table$locus_link %in% markers$locus_link,]
-    map_table = ENV$map_table[ENV$map_table$marker %in% markers$locus_link,]
+    allele_table = envir$allele_table[envir$allele_table$locus_link %in% markers$locus_link,]
+    map_table = envir$map_table[envir$map_table$marker %in% markers$locus_link,]
     M = nrow(markers)
     C = 1000
 
-    block = data.frame(matrix(0, nrow = C, ncol = nrow(ENV$fam) + 9), stringsAsFactors=TRUE)
+    block = data.frame(matrix(0, nrow = C, ncol = nrow(envir$fam) + 9), stringsAsFactors=TRUE)
     blockcol = ncol(block)
 
     QUAL   = rep(".",    times=C)
@@ -126,15 +102,30 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
     block[ , 9] = FORMAT
 
     names(block) = c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT",
-                         paste0(ENV$fam$PedPre, "_", ENV$fam$PerPre))
+                         paste0(envir$fam$PedPre, "_", envir$fam$PerPre))
     cat(names(block), sep="\t", append=TRUE, file=file)
     cat("\n", append=TRUE, file=file)
 
+    allele_table[allele_table$AlleleName == "dummy", 2] = '.'
+    atf = allele_table$AlleleName == ""
+    allele_table[atf, 2] = as.character(allele_table[atf, 4])
+    
     n1 = allele_table[allele_table$indexX==1,]
     n2 = allele_table[allele_table$indexX==2,]
-## Mega2 "mis-feature"
-    n1$AlleleName[n1$AlleleName %in% c("dummy")] = '.'
-    n2$AlleleName[n2$AlleleName %in% c("dummy")] = '.'
+
+    if (envir$MARKER_SCHEME == 2) {
+        if (alleleOrder == 'default')
+            xn = function (x) x[order(x$indexX),]
+        else if (alleleOrder == 'minor')
+            xn = function(x) { a=order(x$Frequency); x[c(a[1], sort(a[2:length(a)])),] }
+        else if (alleleOrder == 'major')
+            xn = function(x) { a=order(x$Frequency, decreasing=TRUE); x[c(a[1], sort(a[2:length(a)])),] }
+        else if (alleleOrder == 'name')
+            xn = function (x) x[order(x$AlleleName),]
+        else
+            stop("alleleOrder must be 'default', 'minor' or 'major'\n", call.=FALSE)
+        nx = lapply(split(allele_table, allele_table$locus_link), xn)
+    }
 
     j = 0
     while (TRUE) {
@@ -151,36 +142,59 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, allowFlip = FALSE) {
         block[BR , 1] = markers[R , 4]
         block[BR , 2] = markers[R , 5]
         block[BR , 3] = markers[R , 3]
-print(system.time ({        
+## print(system.time ({        
 
-        REF = n1$AlleleName[R]
-        RF  = n1$Frequency[R]
-        ALT = n2$AlleleName[R]
-        AF  = n2$Frequency[R]
-        XXF = REF
-        XF  = RF
-        
-        flip = RF < AF
-        doFlip = sum(flip)
-        if (allowFlip && doFlip) {
-            whichFlip = which(flip)
-            REF[whichFlip] = ALT[whichFlip]
-            ALT[whichFlip] = XXF[whichFlip]
+      if (envir$MARKER_SCHEME == 1) {
+            REF = n1$AlleleName[R]
+            RF  = n1$Frequency[R]
+            ALT = n2$AlleleName[R]
+            AF  = n2$Frequency[R]
+            XXF = REF
+            XF  = RF
 
-            RF[whichFlip] = AF[whichFlip]
-            AF[whichFlip] = XF[whichFlip]
+            if (alleleOrder == 'major' && any(RF < AF)) {
+                whichFlip = which(RF < AF)
+                doFlip = TRUE
+            } else if (alleleOrder == 'minor' && any(AF < RF)) {
+                whichFlip = which(AF < RF)
+                doFlip = TRUE
+            } else
+                doFlip = FALSE
+            if (doFlip) {
+                REF[whichFlip] = ALT[whichFlip]
+                ALT[whichFlip] = XXF[whichFlip]
+
+                RF[whichFlip] = AF[whichFlip]
+                AF[whichFlip] = XF[whichFlip]
+            }
+            AF = sprintf("%.6f", AF)
+        } else if (envir$MARKER_SCHEME == 2) {
+            REF = character(L)
+            ALT = character(L)
+            RF  = numeric(L)
+            AF  = character(L)
+
+            k = 0
+            for (v in R) {
+                k = k + 1
+                nxx = nx[[v]]
+                nrows = nrow(nxx)
+                REF[k] = nxx$AlleleName[1]
+                RF[k]  = nxx$Frequency[1]
+                ALT[k] = paste0(nxx$AlleleName[2:nrows], collapse=",")
+                AF[k]  = paste0(sprintf("%.6f", nxx$Frequency[2:nrows]), collapse=",")
+            }
         }
-
         GPos = map_table[map_table$map==mapno, c("position", "pos_female", "pos_male")][R, ]
         GPosPos = sprintf("%.2f", GPos$position)
         GPosFem = rep(".", L)
-        GPosFem[GPos$pos_female != -99.99] = sprintf("%f", GPos$pos_female)
+        GPosFem[GPos$pos_female != -99.99] = sprintf("%f", GPos$pos_female[GPos$pos_female != -99.99])
         GPosMal = rep(".", L)
-        GPosMal[GPos$pos_male   != -99.99] = sprintf("%f", GPos$pos_male)
+        GPosMal[GPos$pos_male   != -99.99] = sprintf("%f", GPos$pos_male[GPos$pos_male != -99.99])
 
         INFO=paste0("CM=", GPosPos, ",", GPosFem, ",", GPosMal,
-                    ";RF=", sprintf("%f", RF),
-                    ";AF=", sprintf("%f", AF),
+                    ";RF=", sprintf("%.6f", RF),
+                    ";AF=", AF,
                     ";")
         block[BR , 4] = REF[BR]
         block[BR , 5] = ALT[BR]
@@ -189,8 +203,8 @@ print(system.time ({
         block[BR , 8] = INFO
 #       block[BR , 9] = FORMAT[BR]
 
-        cr = getgenotypesraw(markers[R, ])             # 7.17%
-        a1 = t(cr)                                     # 0.86%
+        cr = getgenotypesraw(markers[R, ], envir = envir)   # 7.17%
+        a1 = t(cr)                                          # 0.86%
         a2 = a1
         dm = dim(a1)
         a1 = bitwShiftR(a1, 16)
@@ -198,16 +212,26 @@ print(system.time ({
         x3 = a1
         a2 = bitwAnd(a2, 65535)
         attr(a2, "dim") = dm
-        if (allowFlip && doFlip) {
-            a1[whichFlip, ] = match(a1[whichFlip, ], c(2, 1), nomatch=0)
-            a2[whichFlip, ] = match(a2[whichFlip, ], c(2, 1), nomatch=0)
-        } 
+        if (envir$MARKER_SCHEME == 1) {       # 41.32%
+            if (doFlip) {
+                a1[whichFlip, ] = match(a1[whichFlip, ], c(2, 1), nomatch=0)
+                a2[whichFlip, ] = match(a2[whichFlip, ], c(2, 1), nomatch=0)
+            }
+        }
 
-        if ((ENV$MARKER_SCHEME > 1) && (a1 > 2 || a2 > 2)) {       # 41.32%
+#       if ((envir$MARKER_SCHEME > 1) && (a1 > 2 || a2 > 2))        # 41.32%
+        if (envir$MARKER_SCHEME > 1) {       # 41.32%
                 ##  user  system elapsed 
                 ##  4.086   0.133   4.251 
                 ##  user  system elapsed 
                 ##  1.275   0.053   1.351 
+            k = 0
+            for (v in R) {
+                k = k + 1
+                nxx = nx[[as.character(markers[v,]$locus_link)]]$indexX
+                a1[k,] = match(a1[k,], nxx, nomatch=0)
+                a2[k,] = match(a2[k,], nxx, nomatch=0)
+            }
             a3 = as.character(a1 - 1)
             a3[a1 == 0] = "."
             a4 = as.character(a2-1)
@@ -221,18 +245,14 @@ print(system.time ({
             ##  1.274   0.056   1.351 
             block[BR, 10:blockcol] = zz[cbind(as.vector(a1)+1, as.vector(a2)+1)]
 
-## Mega2 "mis-feature"
-        block[BR, 2] = paste0(block[BR, 2], " ")
-## Mega2 "mis-feature"
-        block[BR, blockcol] = paste0(block[BR, blockcol], "\t")
-      }))
+##      }))
 
-print(system.time ({        
+## print(system.time ({        
         write.table(block[BR, ], file=file, sep="\t", quote=FALSE,     # 48.49%
                     append=TRUE, row.names=FALSE, col.names=FALSE)
- }))
+## }))
         j = j + 1
-        message(j)
+        if (envir$verbose) message(".", appendLF = FALSE)
     }
 }
 
@@ -244,31 +264,32 @@ print(system.time ({
 #'
 #' @param prefix prefix for vcf file name
 #'
-#' @param ENV "environment" containing SQLite database and other globals
-#'
 #' @param markers data.frame of markers being processed
+#'
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
-#' mkVCFhdr(prefix, ENV, NULL)
+#' mkVCFhdr(prefix, NULL, envir)
 #'}
-mkVCFhdr = function (prefix, ENV, markers) {
+mkVCFhdr = function (prefix, markers, envir) {
     file = paste0(prefix, ".vcf")
 
-    if (is.null(markers)) markers = ENV$markers
+    if (is.null(markers)) markers = envir$markers
 
-    mkVCFfam(prefix, ENV, markers)
-    mkVCFfreq(prefix, ENV, markers)
-    mkVCFmap(prefix, ENV, markers)
-    mkVCFpen(prefix, ENV, markers)
-    mkVCFphe(prefix, ENV, markers)
+    mkVCFfam(prefix,           envir)
+    mkVCFfreq(prefix, markers, envir = envir)
+    mkVCFmap(prefix,  markers, envir)
+    mkVCFpen(prefix,           envir)
+    mkVCFphe(prefix,           envir)
 
     cat('##fileformat=VCFv4.1\n', file=file, append=TRUE)
-    cat('##filedate=19970829\n', file=file, append=TRUE)
+##  cat('##filedate=19970829\n', file=file, append=TRUE)
+    cat('##filedate=', format(Sys.time(), "%Y%m%d"), '\n', sep = "", file=file, append=TRUE)
     cat('##source=MEGA2\n', file=file, append=TRUE)
     cat('##INFO=<ID=CM,Number=3,Type=Float,Description="Genetic Distance in centimorgans (avg, male, female)">\n', file=file, append=TRUE)
     cat('##INFO=<ID=RF,Number=1,Type=Float,Description="Allele Frequency of reference allele">\n', file=file, append=TRUE)
@@ -291,26 +312,24 @@ mkVCFhdr = function (prefix, ENV, markers) {
 #'
 #' @param prefix prefix for vcf file name
 #'
-#' @param ENV "environment" containing SQLite database and other globals
-#'
-#' @param markers data.frame of markers being processed
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
-#' mkVCFfam(prefix, ENV, NULL)
+#' mkVCFfam(prefix, envir)
 #'}
-mkVCFfam = function (prefix, ENV, markers) {
+mkVCFfam = function (prefix, envir) {
     file = paste0(prefix, ".fam")
 
 #   -9 vs 0 for case/control
 
 # mega2 mis
-    ENV$fam[ENV$fam[ , 8] ==0, 8] = -9
-    write.table(ENV$fam[, -(1:2)], file=file, sep="\t", quote=FALSE,
+    envir$fam[envir$fam[ , 8] ==0, 8] = -9
+    write.table(envir$fam[, -(1:2)], file=file, sep="\t", quote=FALSE,
                     row.names=FALSE, col.names=FALSE)
 }
 
@@ -322,40 +341,51 @@ mkVCFfam = function (prefix, ENV, markers) {
 #'
 #' @param prefix prefix for vcf file name
 #'
-#' @param ENV "environment" containing SQLite database and other globals
-#'
 #' @param markers data.frame of markers being processed
+#'
+#' @param recode use 1/2 instead of two given alleles (eg. A/C)
+#'
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
-#' mkVCFfreq(prefix, ENV, NULL)
+#' mkVCFfreq(prefix, NULL, FALSE, envir)
 #'}
-mkVCFfreq = function (prefix, ENV, markers) {
+mkVCFfreq = function (prefix, markers, recode = FALSE, envir) {
     file = paste0(prefix, ".freq")
 
 #    unlink(file)
 
+    if (is.null(markers)) markers = envir$markers
+    
+    if (recode)
+        col = "indexX"
+    else
+        col = "AlleleName"
     cat('Name\tAllele\tFrequency\n', file=file)
-    allele_pheno = merge(ENV$locus_table, ENV$allele_table[1:2,], by="locus_link")
-    allele_pheno = allele_pheno[, c("LocusName", "indexX", "Frequency")]
+    allele_pheno = merge(envir$locus_table, envir$allele_table[1:(2*envir$PhenoCnt),], by="locus_link")
+    alleles = allele_pheno[, c("LocusName", col, "Frequency")]
+    alleles[alleles[,col] == "", col] = allele_pheno[alleles[,col] == "", "indexX"]
 #std
-    allele_pheno$Frequency = sprintf("%.4f", allele_pheno$Frequency)
-    write.table(allele_pheno,
+    alleles$Frequency = sprintf("%.6f", alleles$Frequency)
+    write.table(alleles,
                 file=file, sep="\t", append=TRUE, quote=FALSE,
                 row.names=FALSE, col.names=FALSE)
 
-    allele_table = ENV$allele_table[ENV$allele_table$locus_link %in% markers$locus_link,
-                                    c("locus_link", "indexX", "Frequency")]
+    allele_table = envir$allele_table[envir$allele_table$locus_link %in% markers$locus_link,
+                                    c("locus_link", "AlleleName", "indexX", "Frequency")]
     alleles = merge(markers[, c("locus_link", "MarkerName")],
-                    allele_table[, c("locus_link", "indexX", "Frequency")], by="locus_link")
+                    allele_table[, c("locus_link", "AlleleName", "indexX", "Frequency")],
+                    by="locus_link")
+    alleles[alleles[ , col] == "", col] = alleles[alleles[ , col] == "", "indexX"]
+##  alleles = alleles[alleles$Frequency != 0, ]
 #std
-    alleles = alleles[alleles$Frequency != 0, ]
-    alleles$Freq4 = sprintf("%.4f", alleles$Frequency)
-    write.table(alleles[ , c(-1, -4)],
+    alleles$Freq4 = sprintf("%.6f", alleles$Frequency)
+    write.table(alleles[ , c(-1, -4, -5)],
                 file=file, sep="\t", append=TRUE, quote=FALSE,
                 row.names=FALSE, col.names=FALSE)
 }
@@ -368,25 +398,27 @@ mkVCFfreq = function (prefix, ENV, markers) {
 #'
 #' @param prefix prefix for vcf file name
 #'
-#' @param ENV "environment" containing SQLite database and other globals
-#'
 #' @param markers data.frame of markers being processed
+#'
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
-#' mkVCFmap(prefix, ENV, NULL)
+#' mkVCFmap(prefix, NULL, envir)
 #'}
-mkVCFmap = function (prefix, ENV, markers) {
+mkVCFmap = function (prefix, markers, envir) {
     file = paste0(prefix, ".map")
 
     unlink(file)
 
-    map_table = ENV$map_table[ENV$map_table$marker %in% markers$locus_link,]
-    mapnames_table = ENV$mapnames_table
+    if (is.null(markers)) markers = envir$markers
+
+    map_table = envir$map_table[envir$map_table$marker %in% markers$locus_link,]
+    mapnames_table = envir$mapnames_table
     TBL = markers[, c("chromosome", "MarkerName")]
     hdr = paste("Chromosome", "Name", sep="\t")
     
@@ -437,27 +469,25 @@ mkVCFmap = function (prefix, ENV, markers) {
 #'
 #' @param prefix prefix for vcf file name
 #'
-#' @param ENV "environment" containing SQLite database and other globals
-#'
-#' @param markers data.frame of markers being processed
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
-#' mkVCFpen(prefix, ENV, NULL)
+#' mkVCFpen(prefix, envir)
 #'}
-mkVCFpen = function (prefix, ENV, markers) {
+mkVCFpen = function (prefix, envir) {
     file = paste0(prefix, ".pen")
 
     unlink(file)
 
     cat('Name\tClass\tPen.11\tPen.12\tPen.22\tType\n', file=file, append=TRUE)
     
-    all = merge(merge(ENV$locus_table[1:ENV$PhenoCnt,], ENV$traitaff_table, by="locus_link"),
-                ENV$affectclass_table, by="locus_link")
+    all = merge(merge(envir$locus_table[1:envir$PhenoCnt,], envir$traitaff_table, by="locus_link"),
+                envir$affectclass_table, by="locus_link")
     ord = order(all$locus_link, all$class_link)
     for (i in ord) {
 #       malepen   = all[i, ]$MalePen[[1]]
@@ -490,60 +520,62 @@ mkVCFpen = function (prefix, ENV, markers) {
 #'
 #' @param prefix prefix for vcf file name
 #'
-#' @param ENV "environment" containing SQLite database and other globals
-#'
-#' @param markers data.frame of markers being processed
+#' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
-#' mkVCFphe(prefix, ENV, NULL)
+#' mkVCFphe(prefix, envir)
 #'}
-mkVCFphe = function (prefix, ENV, markers) {
+mkVCFphe = function (prefix, envir) {
     file = paste0(prefix, ".phe")
 
     unlink(file)
 
-    phenotype_table = ENV$phenotype_table
-    hdr = 'FID\tIID'
-    
 # linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
 #                        0      1          2       3         4        5        6
 
-    out = ENV$fam[3:4]
+    out = envir$fam[3:4]
+    hdr = c("FID", "IID")
+    
+    phenotype_table = envir$phenotype_table
 
-    for (i in 1:ENV$PhenoCnt) {
-        hdr = paste0(hdr, "\t", ENV$locus_table[i, 2]) # 2 == LocusName
+    raw = unlist(envir$phenotype_table[,4])
+    raw = matrix(raw, ncol=8, byrow=T)
+    nrows     = nrow(raw)
+    nrowpheno = nrow(out)
 
-        off = (i-1) * 8
+    for (i in 1:envir$PhenoCnt) {
+        hdr = c(hdr, envir$locus_table[i, 2]) # 2 == LocusName
 
 # phenotype_table contains a blob which is a list of entries.  An entry is either an 8 byte
 #  double for quant, or two 4 byte ints for affect
-        raw = unlist(ENV$phenotype_table[,4])
-        raw = matrix(raw, ncol=8, byrow=T)
-
-        nrows = nrow(raw)
-        if (ENV$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
-            col = vector("integer", nrows)
-            for (j in 1:nrows) {
-                col[j] = readBin(raw[j, (off+1):(off+4)], integer(), n=1, size=4)
+        if (envir$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
+            col = vector("integer", nrowpheno)
+            for (j in 1:nrowpheno) {
+                col[j] = readBin(raw[envir$PhenoCnt*(j-1)+i, 1:4], integer(), n=1, size=4)
             }
-            col[col==0] = -9
+#           col[col==0] = NA
             out$col = col
-        } else if (ENV$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
-            col = vector("numeric", nrows)
-            for (j in 1:nrows) {
-                col[j] = readBin(raw[j, (off+1):(off+8)], numeric(), n=1, size=8)
+            names(out) = hdr
+        } else if (envir$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
+            col = vector("numeric", nrowpheno)
+            for (j in 1:nrowpheno) {
+                col[j] = readBin(raw[envir$PhenoCnt*(j-1)+i, 1:8], numeric(), n=1, size=8)
             }
+            col[col==-99] = NA
             out$col = col
+            names(out) = hdr
         }
     }
-    out$SAMPLEID = paste(ENV$fam[,3], ENV$fam[,4], sep="_")
+    out$SAMPLEID = paste(envir$fam[,3], envir$fam[,4], sep="_")
+    hdr = c(hdr, "SAMPLEID")
     
-    cat(hdr, "\tSAMPLEID\n", file=file, append=TRUE)
+    cat(hdr,  file=file, sep="\t")
+    cat("\n", file=file, append=TRUE)
 
     write.table(out, file=file, sep="\t", quote=FALSE, append=TRUE,
                 row.names=FALSE, col.names=FALSE)

@@ -697,6 +697,7 @@ static void degree_genotyped(person_node_type *entry, linkage_locus_top *LTop)
     }
 }
 
+SECTION_ERR_INIT(disconnected);
 static int make_marriage_graph(marriage_graph_type *mped)
 
 {
@@ -729,8 +730,13 @@ static int make_marriage_graph(marriage_graph_type *mped)
         }
     }
     mped->num_marriages=num_marriages;
-    mped->marriages=CALLOC((size_t) num_marriages, marriage_node_type);
-    offspring_c=CALLOC((size_t) num_marriages, int);
+    if (num_marriages) {
+        mped->marriages=CALLOC((size_t) num_marriages, marriage_node_type);
+        offspring_c=CALLOC((size_t) num_marriages, int);
+    } else {
+        mped->marriages = 0;
+        offspring_c = 0;
+    }
 
     /* now find out the number of offspring for each marriage */
     father=0; mother=0;
@@ -815,6 +821,7 @@ static int make_marriage_graph(marriage_graph_type *mped)
 
     for (i=0; i < mped->num_persons; i++) {
         if (connected[i] == 0) {
+            SECTION_ERR(disconnected);
             errorvf(" Pedigree %s has disconnected individuals: %s\n",
                     mped->Name, mped->persons[i].uniqueid);
             ped_disconnected=1;
@@ -1186,9 +1193,11 @@ void do_marriage(int ped_count, marriage_graph_type *mped,
         fatal_marriage_err += check_and_reassign_parents(&(mped[i]));
     }
     SECTION_ERR_FINI(beagle_fix);
-
+    SECTION_ERR_FINI(disconnected);
 }
 
+SECTION_ERR_INIT(disconnected_indivs);
+SECTION_ERR_INIT(integrity);
 void break_loops(int ped_count, marriage_graph_type *mped,
 		 linkage_locus_top *LTop)
 {
@@ -1207,7 +1216,7 @@ void break_loops(int ped_count, marriage_graph_type *mped,
 
         if (ped_err) {
             errorvf("Ped %d: Unable to break loops.\n", mped[i].ped);
-            fatal_err += ped_err;
+//xx        fatal_err += ped_err;
             continue;
         }
 
@@ -1248,7 +1257,8 @@ void break_loops(int ped_count, marriage_graph_type *mped,
         }
         free(min_graph);
     }
-
+    SECTION_ERR_FINI(disconnected_indivs);
+    SECTION_ERR_FINI(integrity);
     if (fatal_err) {
         errorvf("Found fatal errors in pedigree file, aborting Mega2.\n");
         EXIT(INPUT_DATA_ERROR);
@@ -1987,12 +1997,14 @@ static int check_disconnected_inds(marriage_graph_type *mped)
                 mped->Name, mped->ped, discon);
         for (i=0; i<mped->num_persons; i++) {
             if (disconnected[i]==1) {
+                SECTION_ERR(disconnected_indivs);
                 errorvf("   Person %s (#%d)\n", mped->persons[i].uniqueid, mped->persons[i].indiv);
             }
         }
     } else if (discon == 1) {
         for (i=0; i<mped->num_persons; i++) {
             if (disconnected[i]==1) {
+                SECTION_ERR(disconnected_indivs);
                 errorvf("Ped %s (#%d): Found 1 disconnected individual %s (#%d)\n",
                         mped->Name, mped->ped,
                         mped->persons[i].uniqueid, mped->persons[i].indiv);
@@ -2006,8 +2018,6 @@ static int check_disconnected_inds(marriage_graph_type *mped)
     free(disconnected);
     return 0;
 }
-
-
 
 static int check_pped_connected(minimizing_graph_type *mped,
 				marriage_graph_type *ped)
@@ -2081,6 +2091,7 @@ static int check_pped_connected(minimizing_graph_type *mped,
             }
         }
 
+        SECTION_ERR(integrity);
         errorvf("Ped %s: found %d disconnected sub-pedigrees:\n",
                 ped->Name, num_graphs);
 
@@ -2094,6 +2105,7 @@ static int check_pped_connected(minimizing_graph_type *mped,
                 }
                 o++;
             }
+            SECTION_ERR(integrity);
             errorvf("Sub-pedigree %d including (but not limited to) individuals\n%s\n",
                     i+1, names);
         }

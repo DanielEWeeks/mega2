@@ -4,14 +4,12 @@
 \alias{mkVCFphe}
 \title{generate required PLINK (.phe) file}
 \usage{
-mkVCFphe(prefix, ENV, markers)
+mkVCFphe(prefix, envir)
 }
 \arguments{
 \item{prefix}{prefix for vcf file name}
 
-\item{ENV}{"environment" containing SQLite database and other globals}
-
-\item{markers}{data.frame of markers being processed}
+\item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
 None
@@ -22,6 +20,7 @@ Generate the initial boiler plate VCF, then generate ##INFO entries for each ent
 }
 \examples{
 \dontrun{
-mkVCFphe(prefix, ENV, NULL)
+mkVCFphe(prefix, envir)
 }
 }
+\keyword{internal}

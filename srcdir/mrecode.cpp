@@ -573,15 +573,21 @@ void convert_to_freq(marker_type *marker_list,
 /* Function to assign one or two dummy alleles to markers
    that have less than 2 alleles */
 
+std::vector<Vecc> VCFallelesNull;
 
 void assign_dummy_alleles(marker_type *marker_list,
-			  linkage_locus_top *LTop)
+			  linkage_locus_top *LTop,
+                          char *bimalleles,
+                          std::vector<Vecc> &VCFalleles)
 {
-    int m;
+    int m, mal;
     allele_list_type *all;
+    char allele1str[2], allele2str[2];
+    allele1str[1] = allele2str[1] = 0;
+    int vcf = VCFalleles.size();
 
-
-    for(m = LTop->PhenoCnt; m < LTop->LocusCnt; m++) {
+    SECTION_LOG_INIT(assign_dummy_allele);
+    for(m = LTop->PhenoCnt, mal = 0; m < LTop->LocusCnt; m++, mal += 2) {
         if (marker_list[m].estimate_frequencies == 0 ) continue;
 
         if (LTop->Locus[m].Type == NUMBERED ||
@@ -592,7 +598,29 @@ void assign_dummy_alleles(marker_type *marker_list,
                     marker_list[m].first_allele->allele_freq.freq=1.0;
                     all=CALLOC((size_t) 1, allele_list_type);
                     all->allele_freq.freq  = 0.0;
-                    all->allele_freq.AlleleName  = canonical_allele("dummy");
+                    if (bimalleles || (vcf && VCFalleles[m].size() == 2) ) {
+                        if (bimalleles) {
+                            allele1str[0] = bimalleles[mal];
+                            allele2str[0] = bimalleles[mal + 1];
+                        } else {
+                            allele1str[0] = VCFalleles[m][0][0];
+                            allele2str[0] = VCFalleles[m][1][0];
+                        }
+                        if (marker_list[m].first_allele->allele_freq.AlleleName[0] ==
+                            allele1str[0] ) {
+                            all->allele_freq.AlleleName = canonical_allele(allele2str);
+                        } else if (marker_list[m].first_allele->allele_freq.AlleleName[0] ==
+                                   allele2str[0] ) {
+                            all->allele_freq.AlleleName = canonical_allele(allele1str);
+                        } else {
+                            SECTION_LOG(assign_dummy_allele);
+                            mssgvf("%s: computed allele (%s) does not match bim alleles %c/%c\n",
+                                   LTop->Locus[m].LocusName,
+                                   marker_list[m].first_allele->allele_freq.AlleleName,
+                                   allele1str[0], allele2str[0]);
+                        }
+                    } else 
+                        all->allele_freq.AlleleName  = canonical_allele("dummy");
                     all->allele_freq.index = 2;
                     all->next = NULL;
                     marker_list[m].first_allele->next = all;
@@ -600,7 +628,29 @@ void assign_dummy_alleles(marker_type *marker_list,
                     marker_list[m].first_allele->allele_freq.freq=1.0;
                     all=CALLOC((size_t) 1, allele_list_type);
                     all->allele_freq.freq  = 0.0;
-                    all->allele_freq.AlleleName  = canonical_allele("dummy");
+                    if (bimalleles || (vcf && VCFalleles[m].size() == 2) ) {
+                        if (bimalleles) {
+                            allele1str[0] = bimalleles[mal];
+                            allele2str[0] = bimalleles[mal + 1];
+                        } else {
+                            allele1str[0] = VCFalleles[m][0][0];
+                            allele2str[0] = VCFalleles[m][1][0];
+                        }
+                        if (marker_list[m].first_allele->allele_freq.AlleleName[0] ==
+                            allele1str[0] ) {
+                            all->allele_freq.AlleleName = canonical_allele(allele2str);
+                        } else if (marker_list[m].first_allele->allele_freq.AlleleName[0] ==
+                                   allele2str[0] ) {
+                            all->allele_freq.AlleleName = canonical_allele(allele1str);
+                        } else {
+                            SECTION_LOG(assign_dummy_allele);
+                            mssgvf("%s: computed allele (%s) does not match bim alleles %c/%c\n",
+                                   LTop->Locus[m].LocusName,
+                                   marker_list[m].first_allele->allele_freq.AlleleName,
+                                   allele1str[0], allele2str[0]);
+                        }
+                    } else 
+                        all->allele_freq.AlleleName  = canonical_allele("dummy");
                     all->allele_freq.index = 1;
                     all->next = marker_list[m].first_allele;
                     marker_list[m].first_allele->allele_freq.index=2;
@@ -610,13 +660,28 @@ void assign_dummy_alleles(marker_type *marker_list,
             } else if (marker_list[m].num_alleles == 0) {
                 all = CALLOC((size_t) 1, allele_list_type);
                 all->allele_freq.freq  = 0.5;
-                all->allele_freq.AlleleName  = canonical_allele("dummy1");
+                if (bimalleles || (vcf && VCFalleles[m].size() == 2) ) {
+                    if (bimalleles) {
+                        allele1str[0] = bimalleles[mal];
+                        allele2str[0] = bimalleles[mal + 1];
+                    } else {
+                        allele1str[0] = VCFalleles[m][0][0];
+                        allele2str[0] = VCFalleles[m][1][0];
+                    }
+                    all->allele_freq.AlleleName = canonical_allele(allele1str);
+                } else {
+                    all->allele_freq.AlleleName = canonical_allele("dummy1");
+                }
                 all->allele_freq.index = 1;
                 marker_list[m].first_allele = all;
 
                 all = CALLOC((size_t) 1, allele_list_type);
                 all->allele_freq.freq  = 0.5;
-                all->allele_freq.AlleleName  = canonical_allele("dummy2");
+                if (bimalleles) {
+                    all->allele_freq.AlleleName = canonical_allele(allele2str);
+                } else {
+                    all->allele_freq.AlleleName = canonical_allele("dummy2");
+                }
                 all->allele_freq.index = 2;
                 all->next = NULL;
                 marker_list[m].first_allele->next = all;
@@ -626,7 +691,7 @@ void assign_dummy_alleles(marker_type *marker_list,
             }
         }
     }
-    return;
+    SECTION_LOG_FINI(assign_dummy_allele);
 }
 
 void write_recode_summary(marker_type *markers,
@@ -2592,7 +2657,7 @@ linkage_ped_top  *create_full_marker_data(
         }
     }
     convert_to_freq(marker_list, Top->LocusTop, count_option, analysis);
-    assign_dummy_alleles(marker_list, Top->LocusTop);
+    assign_dummy_alleles(marker_list, Top->LocusTop, NULL, VCFallelesNull);
 
     write_recode_summary(marker_list, Top->LocusTop, count_halftyped);
     recode_ped_top(marker_list, Top, (plink_info_type *)NULL);

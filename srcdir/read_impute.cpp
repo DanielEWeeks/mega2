@@ -309,11 +309,12 @@ void ReadImputed::do_map(std::vector<m2_map>& additional_maps)
 
 linkage_ped_top *ReadImputed::do_ped(linkage_locus_top *LTop)
 {
+    extern vector<Vecc> VecAlleles;
     int num_peds = 0;
 
     annotated_ped_rec *persons = build_impute2_ped(LTop, &num_peds);
 
-    build_genotypes(LTop, persons);
+    build_genotypes(LTop, persons, VecAlleles);
 
     linkage_ped_top *Top;
     Top = mk_ped_top(persons, this->people.size(), LTop, num_peds,
@@ -1188,18 +1189,18 @@ bool ReadImputedGenotypeReadHelper::genotypes_eol(int person) {
     return ! token.mo;
 }
 
-void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
+void ReadImputed::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons, vector<Vecc> &veca)
 {
     ReadImputedGenotypeReadHelper  gh;
     gh.impute_file = impute_file;
     gh.rip = this;
 
-    build_internal_genotypes(LTop, persons, gh);
+    build_internal_genotypes(LTop, persons, gh, veca);
 }
 
 SECTION_ERR_INIT(incomplete_prob);
 void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
-                                           GenotypeReadHelper &gh)
+                                           GenotypeReadHelper &gh, vector<Vecc> &VA)
 {
 //  asm("int $3");
     int dbg = 0;
@@ -1207,6 +1208,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
     string hmm, chrm, rsid, pos;
     char **calleles = 0;
     Vecs alleles;
+    Vecc tmpalleles;
     int c1, c2;
     Token::d3 nums;
 
@@ -1249,9 +1251,12 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
             delete [] calleles;
         calleles = new char *[alleles.size()+1];
         calleles[0] = canonical_allele(C("0"));
+        tmpalleles.clear();
         for (int i = 1; i <= (int)alleles.size(); i++) {
             calleles[i]  = canonical_allele(C(alleles[i-1]));
+            tmpalleles.push_back(calleles[i]);
         }
+        VA.push_back(tmpalleles);
 
         int sam = 0;
         int zero = 0, poor = 0, good = 0;

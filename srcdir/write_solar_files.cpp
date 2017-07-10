@@ -56,6 +56,10 @@
               utils_ext.h:  EXIT draw_line script_time_stamp
 */
 
+#ifdef _WIN
+#define write _write
+#define fileno _fileno
+#endif
 
 /*==================*/
 
@@ -556,7 +560,7 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
 
                 char *buf = CALLOC(l+1, char);
                 char *buf1 = buf;
-                int c;
+                char c;
                 for (int j = 0; j < i; j++) {
                     *buf1++ = ',';
                     const char *cp = warray[j];

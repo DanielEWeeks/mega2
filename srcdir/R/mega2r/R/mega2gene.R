@@ -1,0 +1,583 @@
+
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software; you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+
+## sqlite3 /Library/Frameworks/R.framework/Versions/3.2/Resources/library/TxDb.Hsapiens.UCSC.hg19.knownGene/extdata/TxDb.Hsapiens.UCSC.hg19.knownGene.sqlite
+## source("https://bioconductor.org/biocLite.R")
+## biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene")
+
+
+## sqlite3 /Library/Frameworks/R.framework/Versions/3.2/Resources/library/org.Hs.eg.db/extdata/org.Hs.eg.sqlite
+## source("https://bioconductor.org/biocLite.R")
+## biocLite("org.Hs.eg.db")
+
+
+#' assemble pedigree information
+#'
+#' Generate a data.frame with a row for each known person.  The observations are:
+#' \tabular{ll}{
+#' \strong{pedigree} \tab family pedigree name\cr
+#' \strong{person} \tab person name\cr
+#' \strong{father} \tab father of person\cr
+#' \strong{mother} \tab mother of person\cr
+#' \strong{sex} \tab sex of person\cr
+#' \strong{trait} \tab value of case/control trait for person
+#' }
+#'
+#' @usage
+#' mkfam(brkloop = FALSE, traitname = "default", envir = ENV)
+#'
+#' @param brkloop I haven't needed to set this yet.  Maybe never will.
+#'
+#' @param traitname Name for trait to use as case/control value; by default, "default"
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
+#' @export
+#' @return data.frame
+#' data.frame is described above
+#'
+# @details
+#' The observations are: \describe{
+#' \item{pedigree}{family pedigree name}
+#' \item{person}{person name}
+#' \item{father}{father of person}
+#' \item{mother}{mother of person}
+#' \item{sex}{sex of person}
+#' \item{trait}{value of case/control trait for person}
+#' }
+#'
+#' @note
+#' The appropriate columns of \emph{pedigree_table}, \emph{person_table}, and \emph{trait_table}
+#' are merged.
+#'
+#' @note
+#' Also, the father and mother columns from \emph{person_table} are translated from a row index to
+#' the corresponding name.
+#'
+#' @examples
+#'\dontrun{
+#' fam = mkfam()
+#'}
+mkfam = function (brkloop = FALSE, traitname = "default", envir = ENV) {
+
+    if (brkloop) {
+        ped = envir$pedigree_brkloop_table
+        per = envir$person_brkloop_table
+    } else {
+        ped = envir$pedigree_table
+        per = envir$person_table
+    }
+    dofam = function(per) {
+        per$Father=per[match(per$Father, per$ID), "PerPre"]
+        per[is.na(per$Father), "Father"] = 0
+        per$Mother=per[match(per$Mother, per$ID), "PerPre"]
+        per[is.na(per$Mother), "Mother"] = 0
+        per
+    }
+    per=unsplit(lapply(split(per, per$pedigree_link), dofam), per$pedigree_link)
+    perplus = merge(ped[ , c("pedigree_link", "PedPre")],
+                    per[ , c("pedigree_link", "person_link", "PerPre", "Father", "Mother", "Sex")],
+                    by = c("pedigree_link"))
+
+
+    trait = envir$phenotype_table[ , c("person_link", "data")]
+    cc = envir$locus_table[envir$locus_table$LocusName == traitname, "locus_link"]
+    if (length(cc) == 0) cc = 0
+    trait$trait = sapply(trait$data,
+                         function (x) { readBin(x[(8*cc+1):8*(cc+1)], integer(), 2, size = 4) })[1, ]
+
+    envir$fam = merge(perplus, trait[ , c("person_link", "trait")], by = "person_link")
+}
+
+
+#' reset the pedigree data.frame
+#'
+#' You should modify the \emph{fam} data.frame to filter the members you need to remove.
+#'  (For example, you might  want to delete members that have an unknown case/control status.)
+#'  This function takes a new data.frame of pedigree information and records it.  Additionally,
+#'  changing the pedigree information will filter the genotypes data records to correspond to
+#'  only those matching the new data.frame, \emph{fam}.  It does the same to the phenotype data
+#'  records
+#'
+#' @param fam Data.frame of family information filtered from \emph{fam} generated by \code{mkfam}
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' setfam(fam)
+#'}
+setfam = function (fam, envir = ENV) {
+    envir$fam = fam
+
+    envir$unified_genotype_table = envir$unified_genotype_table[envir$unified_genotype_table$person_link %in% fam[ , 1], ]
+    row.names(envir$unified_genotype_table) = NULL
+
+    envir$phenotype_table = envir$phenotype_table[(envir$phenotype_table$person_link %in% fam[ ,1]), ]
+    row.names(envir$phenotype_table) = NULL
+    
+}
+#' Load Mega2 database and initialize family structure
+#'
+#' @description
+#'  \emph{dbmega2_import} the specified database and load the environment, \emph{ENV}, with the
+#'  table data.  Also run \emph{mkfam} to initialize the family structure and then \emph{setfam}
+#'  to modify the \emph{unified_genotype_table} to match the family.  By default this will remove
+#'  samples that were replicated to break loops in the pedigree, see \emph{mkfam} for details.
+#'
+#' @param db specify SQLite database to load
+#'
+#' @param ... aditional arguments to pass to \emph{dbmega2_import}
+#'
+#' @return envir an environment that contains all the tables created from the SQLite tables.
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' read.Mega2DB("database.db")
+#'}
+read.Mega2DB = function(db, ...) {
+
+    envir = dbmega2_import(db, ...)
+
+    setfam(mkfam(envir = envir), envir = envir)
+
+    return (envir)
+}
+
+#' apply function to genotypes in genes
+#'
+#' The function \code{op} will be called for every set of markers that is specified by the 
+#'  other arguments to \code{applyFnToGenes}.
+#'
+#' @usage
+#' applyFnToGenes(op           = function (geno, markers, range, envir) {},
+#'                genes_arg    = c("ELL2", "CARD15"),
+#'                ranges_arg   = matrix(ncol = 3, nrow = 0),
+#'                chrs_arg     = vector("integer", 0),
+#'                markers_arg  = vector("character", 0),
+#'                type_arg     = "TX",
+#'                fuzz_arg     = 0,
+#'                envir        = ENV)
+#'
+#' @param op Is a function of four arguments.  It will be called repeatedly by
+#' \code{applyFnToGenes}.  The arguments are:
+#' \describe{
+#' \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
+#' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#' }
+#' \item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
+#' \item{envir}{An R environment holding Mega2 data frames and state data.}
+#' }
+## \tabular{ll}{
+## \strong{geno} \tab A matrix with one row per \emph{fam} pedigree member and one column for each marker that passes the filter.\cr
+## \strong{markers} \tab Marker data for each marker.\cr
+## \strong{range} \tab An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.
+## }
+#'
+#' @param genes_arg a character vector of gene names to be selected.
+#'  All the transcripts identified with the specified gene in BioConductor Annotation,\cr
+#'  \bold{TxDb.Hsapiens.UCSC.hg19.knownGene}, are selected.  This will produce multiple "range"
+#'  elements of chromosome, start base pair, end base pair.  Note: BioCoductor Annotation
+#'  \bold{org.Hs.eg.db} is used to convert from gene name to ENTREZ gene id.
+#'
+#' @param ranges_arg an integer matrix of three columns.  The columns indicate a range:
+#'  a chromosome number, a start base pair value, and an end base pair value.
+#'
+#' @param chrs_arg an integer vector of chromosome numbers.  All of the base pairs on a these
+#'  chromosomes will be selected.
+#'
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the\cr
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @param type_arg a character vector of length 1 that contains \bold{"TX"} or does not.  If it is
+#'  \bold{"TX"}, which is the default, the \bold{TX} fields of BioConductor Annotation,\cr
+#'  \bold{TxDb.Hsapiens.UCSC.hg19.knownGene} are used.  Otherwise, the \bold{CDS} fields
+#'  are used.
+#'
+#' @param fuzz_arg is an integer vector of length one or two.  The first argument is used to reduce
+#'  the start base pair selected from each transcript and the second to increase the end base pair
+#'  position.  (If only one value is present, it is used for both changes.)
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
+#' @return None
+#' @details
+#'  This function generates a data.frame of ranges.  Each range specifies a chromosome, a start
+#'  base pair and end base pair.  A subsequent step (\emph{applyFnToRanges}) will find all the
+#'  markers from the \emph{marker_table} that fall in each range.  A matrix of the genotypes
+#'  for all the found markers is generated.  Finally, your \emph{op} function is called with
+#'  the genotypes, markers and range.
+#'
+#' @importMethodsFrom GenomeInfoDb 'seqlevels<-'
+#' @importFrom AnnotationDbi select
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' #    show = function(g, m, r, e) {
+#' #        print(r)
+#' #        print(m)
+#' #        print(head(g))
+#' #    }
+#' #    ENV = read.Mega2DB()
+#'
+#'    # apply function "show" to all transcripts on genes ELL2 and CARD15
+#'    applyFnToGenes(show, genes = c("ELL2", "CARD15"))
+#'
+#'    # apply function "show" to all genotypes on chromosomes 11 for two base
+#'    # pair ranges
+#'    applyFnToGenes(show, matrix(c(11, 50000000, 50100000,
+#'                       11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T))
+#'
+#'    # apply function "show" to all genotypes for first marker in each chromosome
+#'    applyFnToGenes(show, markers = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
+#'
+#'    # apply function "show" to all genotypes on chromosomes 24 and 26
+#'    applyFnToGenes(show, chrs=c(24, 26))
+#'
+#'}
+applyFnToGenes = function (op = function (geno, markers, range, envir) {},
+                           genes_arg = c("ELL2", "CARD15"),
+                           ranges_arg  = matrix(ncol = 3, nrow = 0),
+                           chrs_arg  = vector("integer", 0),
+                           markers_arg  = vector("character", 0),
+                           type_arg = "TX",
+                           fuzz_arg = 0,
+                           envir = ENV) {
+
+    env1=loadNamespace(envir$txdb)
+    txdb = get(envir$txdb, env1)
+    if (type_arg == "TX")
+        COLS = c("TXNAME", "TXID", "TXSTRAND", "TXCHROM", "TXSTART", "TXEND")
+    else
+        COLS = c("EXONNAME", "EXONID", "EXONSTRAND", "EXONCHROM", "EXONSTART", "EXONEND")
+
+    seqlevels(txdb) = paste("chr", c(1:22, "X", "Y", "M"), sep="")
+    
+    env2=loadNamespace(envir$entrezGene)
+    genedb = get(envir$entrezGene, env2)
+
+    entrez = select(genedb, keys = genes_arg, columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ALIAS")
+    pb = select(txdb, keys = entrez[ , 2], columns = COLS, keytype = "GENEID")
+    ranges = merge(entrez, pb, by.x = "ENTREZID", by.y = "GENEID")
+
+    ranges[ , 6] = as.integer( sub("chr", "", ranges[ ,6]))
+    if (length(fuzz_arg) == 2) {
+        if (fuzz_arg[1] != 0 | fuzz_arg[2] != 0) {
+            ranges[ , 8] = ranges[ , 8] - fuzz_arg[1]
+            ranges[ , 9] = ranges[ , 9] + fuzz_arg[2]
+        }
+    } else if (fuzz_arg[1] != 0) {
+        ranges[ , 8] = ranges[ , 8] - fuzz_arg[1]
+        ranges[ , 9] = ranges[ , 9] + fuzz_arg[1]
+    }
+
+    #chrs
+    for (chr in chrs_arg) { ranges = rbind(ranges,
+#           ENTREZID  ALIAS SYMBOL  TXID     TXNAME TXCHROM TXSTRAND  TXSTART    TXEND
+                                    list("-", "-", "-", "-", "-",
+                                         chr, "-", 0, 1000000000) )
+                      }
+    #ranges
+    if (length(ranges_arg ))
+    for (i in 1:dim(ranges_arg)[1]) { ranges = rbind(ranges,
+#           ENTREZID  ALIAS SYMBOL  TXID     TXNAME TXCHROM TXSTRAND  TXSTART    TXEND
+                                    list("-", "-", "-", "-", "-",
+                                         ranges_arg[i, 1], "-", ranges_arg[i, 2], ranges_arg[i, 3]) )
+                      }
+
+    applyFnToRanges(op, ranges, c(6, 8, 9), envir = envir)
+
+    #marks
+    if (length(markers_arg)) {
+        applyFnToMarkers(op, envir$markers[envir$markers$MarkerName %in% markers_arg, ], envir = envir)
+    }
+}
+
+#' set default ranges and offset of chromosome, start and end in a range
+#'
+#' @description
+#'  This function initializes the default list of ranges used by \emph{applyFnToRanges}.  All
+#'  the ranges will be examined and each set of markers that fall within a range will be
+#'  processed.
+#'
+#' @param ranges a data.frame that contains at least 4 variables: a name, a chromosome, a start
+#' base pair position and an end base pair position.
+#'
+#' @param indices Vector of 3 integers that specify the location of chromosome, start base pair
+#'  position and end base pair position of each range data.frame.
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
+#' @return None
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' setRanges(range, c(3, 4, 5))
+#'}
+setRanges = function (ranges, indices, envir = ENV) {
+    envir$refRanges  = ranges
+    envir$refIndices = indices
+}
+
+#' set default transcription database and mapping of name to entrez gene id
+#'
+#' @description
+#'  This function takes two string parameters:
+#'   One to specify which Bioconductor gene id mapping to use
+#'   The other to map names to entrez gene id's used in the above database
+#'
+#' @param txdb name of Bioconductor transcription database of your choice
+#'
+#' @param entrezGene name of Bioconductor mapping of gene name or gene alias to entrez gene id
+
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
+#' @return None
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' setAnnotations("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db")
+#'}
+setAnnotations = function (txdb, entrezGene, envir = ENV) {
+    envir$txdb = txdb
+    envir$entrezGene = entrezGene
+}
+
+
+#' apply function to genotypes in each specified range
+#'
+#' The function \code{op} will be called for every set of markers that is falls in each range.
+#'  This does the hard work for \code{applyFnToGenes}.
+#'
+#' @usage
+#' applyFnToRanges(op          = function (geno, markers, range, envir) {},
+#'                 ranges_arg  = NULL,
+#'                 indices_arg = NULL,
+#'                 fuzz_arg    = 0,
+#'                 envir       = ENV)
+#' 
+#' @param op Is a function of four arguments.  It will be called repeatedly by
+#' \code{applyFnToGenes}.  The arguments are:
+#' \describe{
+#' \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
+#' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#' }
+#' \item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
+#' \item{envir}{An R environment holding Mega2 data frames and state data.}
+#' }
+#'
+#' @param ranges_arg is a data.frame that contains at least 4 variables: a name, a chromosome, a 
+#'  startbase pair position and an end base pair position.
+#'
+#' @param indices_arg is a vector of 3 integers that specify the location of chromosome, start base
+#'  pair position and end base pair position of each range data.frame.
+#'
+#' @param fuzz_arg is an integer vector of length one or two.  The first argument is used to reduce
+#'  the start base pair selected from each range and the second to increase the end base pair
+#'  position.  (If only one value is present, it is used for both changes.)
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
+#' @return None
+#' @note
+#'  If the \code{ranges_arg} is NULL, then the default ranges that have been set by \code{setRanges}#'  are used.  If \code{setRanges} has not been set, a default set of the RefGene ranges is used.
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' #    show = function(g, m, r, e) {
+#' #        print(r)
+#' #        print(m)
+#' #        print(head(g))
+#' #    }
+#' #    ENV = read.Mega2DB()
+#'
+#'    # apply function "show" to all genotypes on chromosomes 11 for two base
+#'    # pair ranges
+#'    applyFnToRanges(show, 
+#'                    matrix(c(11, 50000000, 50100000,
+#'                             11, 60000000, 60100000),
+#'                            ncol = 3, nrow = 2, byrow = T),
+#'                    1:3)
+#'
+#'    # apply function "show" to all genotypes for first marker in each chromosome
+#'    applyFnToRanges(show, markers = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
+#'
+#'}
+applyFnToRanges = function (op          = function (geno, markers, range, envir) {},
+                            ranges_arg  = NULL,
+                            indices_arg = NULL,
+                            fuzz_arg    = 0,
+                            envir = ENV) {
+
+    if (is.null(ranges_arg)) {
+        ranges  = envir$refRanges
+        indices = envir$refIndices
+    } else {
+        ranges  = ranges_arg
+        indices = indices_arg
+    }
+    rows = nrow(ranges)
+    if (rows) {
+
+        start = ranges[ , indices[2]]
+        end   = ranges[ , indices[3]]
+        if (length(fuzz_arg) == 2) {
+            if (fuzz_arg[1] != 0 | fuzz_arg[2] != 0) {
+                start = start - fuzz_arg[1]
+                end   = end   + fuzz_arg[2]
+            }
+        } else if (fuzz_arg[1] != 0) {
+            start = start - fuzz_arg[1]
+            end   = end   + fuzz_arg[1]
+        }
+        chrm = as.integer(sub("chr", "", ranges[ , indices[1]]))
+
+        for (i in 1:rows) {
+
+            if (is.na(chrm[i]) || is.na(start[i]) || is.na(end[i]) ) next
+
+            markersub = envir$markers[ envir$markers$chromosome == chrm[i] & envir$markers$position <= (end[i]) & envir$markers$position >= (start[i]), ]
+
+            if (nrow(markersub)) {
+                geno = getgenotypes(markersub, envir = envir)
+                tryCatch(op(geno, markersub, ranges[i,], envir),
+                         error = function(e) print(e),
+                         warning = function(w) print(w)
+                         )
+            } else {
+                if (envir$verbose)
+                    message("No markers in range:  chr", chrm[i], " between ", start[i], " and ",
+                            end[i], "\n")
+            }
+        }
+    }
+}
+
+#' apply function to genotypes in a set of markers
+#'
+#' @description
+#'  A matrix of the genotypes for all the markers is generated.  Then, your \emph{op} function
+#'   is called with the genotypes, markers and NULL (for the range).
+#'
+#' @usage
+#' applyFnToMarkers(op      = function (geno, markers, range, envir) {},
+#'                 markers_arg,
+#'                 envir = ENV)
+#'
+#' @param op Is a function of four arguments.  It will be called repeatedly by
+#' \code{applyFnToGenes}.  The arguments are:
+#' \describe{
+#' \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
+#' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#' }
+#' \item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
+#' \item{envir}{An R environment holding Mega2 data frames and state data.}
+#' }
+#'
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @param envir an environment that contains all the tables created from the SQLite tables.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' #    show = function(g, m, r, e) {
+#' #        print(r)
+#' #        print(m)
+#' #        print(head(g))
+#' #    }
+#' #    ENV = read.Mega2DB()
+#'
+#'    # apply function "show" to all genotypes in chromosome 20, 21, 22, and 23
+#'    applyFnToMarkers(show, ENV$markers[ENV$markers$chromosome %IN% 20:23),])
+#'
+#'}
+applyFnToMarkers = function (op = function (geno, markers, range, envir) {},
+                             markers_arg,
+                             envir = ENV) {
+
+    geno = getgenotypes(markers_arg, envir = envir)
+    tryCatch(op(geno, markers_arg, NULL, envir),
+             error = function(e) print(e),
+             warning = function(w) print(w)
+             )
+
+}

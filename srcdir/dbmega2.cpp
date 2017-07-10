@@ -237,8 +237,13 @@ void dbmega2_export(linkage_ped_top *Top)
     dbgenotype_export(Top, bp_sort); // sort row contents of
 
     if (mega2_input_files[REFfl] != NULL) {
-        Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
-        reference_allele_table->read_ref_allele_file(Top, mega2_input_files[REFfl], true, bp_sort);
+        if(fopen(mega2_input_files[REFfl], "r") != NULL) {
+            Reference_Allele_Table *reference_allele_table = new Reference_Allele_Table();
+            reference_allele_table->read_ref_allele_file(Top, mega2_input_files[REFfl], true, bp_sort);
+        }
+        else{
+            mssgvf("Can't find Reference Allele File: %s", mega2_input_files[REFfl]);
+        }
     }
 }
 
@@ -576,7 +581,6 @@ void strand_flip_reference_alleles(linkage_ped_top *Top) {
     if(_strand_flips) {
         Reference_Flips_Table *ref_flips_table = new Reference_Flips_Table();
         ref_flips_table->flip_strands(Top);
-
     }
 }
 

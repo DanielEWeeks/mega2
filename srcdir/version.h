@@ -39,9 +39,9 @@
 
 #define MEGA2VER 4
 #define MEGA2REV 9
-#define MEGA2PATCH 1
+#define MEGA2PATCH 2
 
-#define EXPIRE_YEAR 2017
+#define EXPIRE_YEAR 2018
 /* June */
 #define EXPIRE_MO 5
 #define EXPIRE_DATE 15

@@ -4,14 +4,16 @@
 \alias{mkVCFfreq}
 \title{generate required VCF frequency (.freq) file}
 \usage{
-mkVCFfreq(prefix, ENV, markers)
+mkVCFfreq(prefix, markers, recode = FALSE, envir)
 }
 \arguments{
 \item{prefix}{prefix for vcf file name}
 
-\item{ENV}{"environment" containing SQLite database and other globals}
-
 \item{markers}{data.frame of markers being processed}
+
+\item{recode}{use 1/2 instead of two given alleles (eg. A/C)}
+
+\item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
 None
@@ -22,6 +24,7 @@ Generate the initial boiler plate VCF, then generate ##INFO entries for each ent
 }
 \examples{
 \dontrun{
-mkVCFfreq(prefix, ENV, NULL)
+mkVCFfreq(prefix, NULL, FALSE, envir)
 }
 }
+\keyword{internal}

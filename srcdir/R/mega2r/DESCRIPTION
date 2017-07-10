@@ -1,0 +1,31 @@
+Package: mega2r
+Version: 0.5.4
+Date: 2017-06-23
+Title: mega2r (http://bitbucket.com/dweeks/mega2)
+Authors@R: c(person("Robert", "Baron",
+    email = "rvb5@pitt.edu", role = c("aut", "cre")))
+biocViews: Software
+Description: Read a Mega2 SQLite3 database into R; Access genotype, phenotype, and fam information.
+Author: Robert V Baron <rvb5@pitt.edu>
+Maintainer: Robert V Baron <rvb5@pitt.edu>, Daniel Weeks <weeks@pitt.edu>
+Depends: R (>= 3.0.1)
+License: GPL (>= 3)
+LinkingTo: Rcpp
+LazyData: true
+URL: VignetteBuilder: markdown
+Imports:
+    AnnotationDbi,
+    GenomeInfoDb,
+    DBI,
+    RSQLite
+Suggests: 
+    TxDb.Hsapiens.UCSC.hg19.knownGene,
+    org.Hs.eg.db,
+    mega2pedgene,
+    mega2vcf,
+    mega2genabel
+Enhances: parallel
+SystemRequirements: Mega2 
+NeedsCompilation: yes
+RoxygenNote: 6.0.1
+#KeepSource: TRUE

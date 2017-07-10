@@ -7,11 +7,11 @@ Maintainer: Robert V Baron <rvb5@pitt.edu>
 Authors@R: c(person("Robert", "Baron",
     email = "rvb5@pitt.edu", role = c("aut", "cre")))
 Depends:
-    R (>= 3.0.1)
+    R (>= 3.0.1),
+    mega2r
 License: GPL (>= 3)
 LazyData: true
 Imports:
-    mega2,
     pedgene
 SystemRequirements: Mega2
 #Roxygen: list(wrap = FALSE)

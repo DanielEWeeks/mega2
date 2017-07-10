@@ -41,7 +41,7 @@
 class ReadBgen2 : public ReadImputed {
 public:
     virtual void read_input_file();
-    virtual void build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
+    virtual void build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons, std::vector<Vecc> &veca);
 };
 
 // ProbSetter is a callback object appropriate

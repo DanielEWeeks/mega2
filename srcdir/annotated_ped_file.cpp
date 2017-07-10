@@ -110,6 +110,8 @@
 
 col_hdr_type    ReservedColnames[NUM_PEDCOL_NAMES];
 
+std::vector<Vecc> VecAlleles;
+
 Mapci ped2idx;
 
 #if 0
@@ -1780,7 +1782,8 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
 
         Tod vcfpe(" VCFtools_process_entries(persons, num_ped_records, ...)");
-        VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop, alternative_key, "chr");
+        VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop, alternative_key,
+                                 "chr", VecAlleles);
         VCFtools_close();
         check_ungenotyped = 1;
         vcfpe();
@@ -2778,7 +2781,7 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     total_maps_to_allocate = num_maps + allocate_additional_maps;
     
 #ifndef HIDESTATUS
-    mssgvf("Found %d possible maps.\n", num_maps);
+    mssgvf("Found %d possible maps in the %s file.\n", num_maps, map_file);
 #endif
     printf("Now checking each record in map file %s ...\n", map_file);
     
@@ -4815,7 +4818,18 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     Tod tod_cvt("convert_to_freq");
     if (HasFreqFileBeenRead == 0 || HasFreqFileBeenRead == 2) {
         convert_to_freq(marker_list, Top->LocusTop, count_option, analysis);
-        assign_dummy_alleles(marker_list, Top->LocusTop);
+
+        char *bimalleles = NULL;
+        if (PLINK.plink == binary_PED_format && 
+            plink_info != NULL && plink_info->alleles != (char *)NULL)
+            bimalleles = plink_info->alleles;
+
+//  if (Input_Format == in_format_binary_VCF ||
+//      Input_Format == in_format_compressed_VCF ||
+//      Input_Format == in_format_VCF)
+
+//        assign_dummy_alleles(marker_list, Top->LocusTop, 0);
+        assign_dummy_alleles(marker_list, Top->LocusTop, bimalleles, VecAlleles);
     }
     tod_cvt();
 

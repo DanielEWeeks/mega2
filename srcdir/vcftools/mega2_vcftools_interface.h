@@ -61,7 +61,8 @@ extern void VCFtools_process_entries(annotated_ped_rec persons[],
                                      const unsigned int persons_n,
                                      linkage_locus_top *LTop,
                                      std::string info_id_alternative_key,
-                                     std::string unknown_marker_prefix);
+                                     std::string unknown_marker_prefix,
+                                     std::vector<Vecc> &VCFalleles);
 //
 // Here we strip the .MAP file from the side of the VCF file for those entries
 // that have passed the VCFtools filtering criteria. The 'file' is created as a

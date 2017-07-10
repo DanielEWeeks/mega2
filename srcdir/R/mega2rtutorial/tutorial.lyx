@@ -1,0 +1,1856 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "palatino" "default"
+\font_sans "lmss" "default"
+\font_typewriter "lmtt" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 0
+\use_package mhchem 1
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5cm
+\topmargin 2.5cm
+\rightmargin 2.5cm
+\bottommargin 2.5cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+\noindent
+Example usage of Mega2R
+\end_layout
+
+\begin_layout Author
+\noindent
+Robert V.
+ Baron and Daniel E.
+ Weeks
+\end_layout
+
+\begin_layout Date
+\noindent
+6/22/2017
+\end_layout
+
+\begin_layout Section
+\noindent
+Tutorial directory and files 
+\end_layout
+
+\begin_layout Standard
+\noindent
+The files you will need for this tutorial are in the mega2rtutorial directory.
+ You should 
+\series bold
+cd
+\series default
+ there to do these exercises.
+ You should see the following files:
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MEGA2.BATCH.seqsimr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MEGA2.BATCH.srdta
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MEGA2.BATCH.vcf
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mega2r.map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mega2r.ped
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+mega2r.Rmd
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+mega2r.pdf
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+seqsimr.db
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\noindent
+Installation
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\series bold
+Note: The code in this section should only be executed once, to load the
+ packages into R and are NOT run for every R session.
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\series bold
+Also, we will assume that you have started an R session at which to type
+ the commands in the tutorial.
+\end_layout
+
+\begin_layout Standard
+\noindent
+To run these exercises, you should install the CRAN packages 
+\emph on
+mega2r
+\emph default
+, 
+\emph on
+mega2vcf
+\emph default
+, 
+\emph on
+mega2genabel
+\emph default
+ and 
+\emph on
+mega2pedgene
+\emph default
+.
+ Once they are in CRAN, the preferred way to install will be to use the
+ install.packages() command.
+ For now, we prefer to use devtools in R; as in 
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<install,cache=TRUE,eval=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+devtools::install("../mega2r")
+\end_layout
+
+\begin_layout Plain Layout
+
+devtools::install("../mega2pedgene")
+\end_layout
+
+\begin_layout Plain Layout
+
+devtools::install("../mega2vcf")
+\end_layout
+
+\begin_layout Plain Layout
+
+devtools::install("../mega2genabel")
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Certainly, 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+R CMD install mega2r 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+R CMD install mega2pedgene 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+R CMD install mega2vcf 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+R CMD install mega2genabel 
+\end_layout
+
+\begin_layout Standard
+\noindent
+will work, too.
+ It may generate warnings about non-package related items in the tree.
+ All these packages may fetch other dependent CRAN packages.
+ We also require Bioconductor Annotations that must be loaded manually.
+ The first line loads the Bioconductor loader and the next two lines load
+ two annotation databases.
+ One for gene transcript locations and one to map gene names to the entrez
+ gene IDs.
+ (Note: You may choose a different transcript database from Bioconductor
+ or construct one of your own.) Please type in R:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<bioconductor,cache=TRUE,eval=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+source("https://bioconductor.org/biocLite.R")
+\end_layout
+
+\begin_layout Plain Layout
+
+biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene") 
+\end_layout
+
+\begin_layout Plain Layout
+
+biocLite("org.Hs.eg.db")
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\noindent
+Example Data
+\end_layout
+
+\begin_layout Standard
+\noindent
+We have chosen to use the SeqSIMLA2 program to generate a data set for us.
+ We needed to sub-sample the data down to 1,380 people and 1,000 markers
+ to make the size manageable.
+ These data will be used to illustrate Mega2 and Mega2R operations that
+ follow.
+ 
+\end_layout
+
+\begin_layout Standard
+\noindent
+Note: This simulator only produces markers on chromosome 1.
+\end_layout
+
+\begin_layout Section
+\noindent
+Using Mega2R packages
+\end_layout
+
+\begin_layout Subsection
+\noindent
+Creating a Mega2 database
+\end_layout
+
+\begin_layout Standard
+\noindent
+We have provided files in the mega2rtutorial directory, that contain the
+ data from the simulation.
+ These files are in PLINK ped format data for 1,380 samples with 1,000 markers:
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+seqsimr.ped
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+seqsimr.map
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+If you do not wish to install Mega2 right now, you can use the seqsimr.db
+ database that is in the tutorial directory.
+ Of course, the tutorial steps that invoke Mega2 will fail, mainly the regressio
+n steps.
+\end_layout
+
+\begin_layout Standard
+\noindent
+You will need to obtain the Mega2 program from https://watson.hgen.pitt.edu/registe
+r/.
+ First, you will invoke Mega2 on your data.
+ To make matters simple, we will use a pre-constructed Mega2 batch file
+ to automate the processing by Mega2.
+ To run Mega2 to process and create the SQLite3 database 'seqsimr.db', we
+ issue this Unix command:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<seqsimr, results='hide'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+system("mega2 MEGA2.BATCH.seqsimr")
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+If you do not provide the argument, Mega2 will proceed to ask a series of
+ questions to collect the needed information to produce a database.
+ In addition, it will create a Mega2.BATCH file, we've suggested you use.
+ You can look at the "Quick Start" documentation https://watson.hgen.pitt.edu/docs/
+mega2_html/mega2.html Section 4.
+ to better understand the interactive process.
+ 
+\end_layout
+
+\begin_layout Standard
+\noindent
+This MEGA2.BATCH.seqsimr file begins with a rather long comment indicating
+ the keyword values that may be set and their default value.
+ Toward the end of the file, we set the inputs as 
+\series bold
+Mega2r.ped
+\series default
+ and 
+\series bold
+Mega2r.map
+\series default
+, indicate the input is PLINK ped format with parameters, and indicate that
+ Mega2 should produce a database called s
+\series bold
+eqsimr.db
+\series default
+, etc.
+ (These particular items are in bold face text below.)
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Input_Database_Mode=1
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+I
+\series bold
+nput_Format_Type=4
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Input_Pedigree_File=Mega2r.ped
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Input_PLINK_Map_File=Mega2r.map
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Output_Path=.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Input_Path=.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+PLINK_Args= --cM --missing-phenotype -9 --trait default
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Input_Untyped_Ped_Option=2 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Input_Do_Error_Sim=no 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+AlleleFreq_SquaredDev=999999999.000000 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Marker_Compression=1 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Analysis_Option=Dump
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Missing_Quant_On_Input=-9.000000 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Missing_Affect_On_Input=-9 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Count_Genotypes=4 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Count_Halftyped=no 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Genetic_Distance_Index=0 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Genetic_Distance_SexTypeMap=0 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Base_Pair_Position_Index=1 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Default_Reset_Invalid=no 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+DBfile_name=seqsimr.db
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Default_Outfile_Names=yes 
+\end_layout
+
+\begin_layout Standard
+\noindent
+You will eventually have to run Mega2 to convert your data.
+ 
+\end_layout
+
+\begin_layout Subsection
+\noindent
+Reading a Mega2 database into R
+\end_layout
+
+\begin_layout Standard
+\noindent
+After you have the database, start up the R program.
+ The first R commands you should type are:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<read1,eval=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(mega2r)
+\end_layout
+
+\begin_layout Plain Layout
+
+ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The first argument should be the path to the database.
+ Providing the optional argument, verbose, causes the read function to summarize
+ the tables created, their fields and their sizes.
+ Finally, an "R environment" that contains the database tables is returned.
+ (If you are unfamiliar with environments, you can think of them as data
+ frames.
+ If fact, ENV$locus_table will access the locus_table variable from ENV
+ as though fetching an "observation" from a data frame.
+ The difference is when you change a data frame passed to a function, the
+ change does not affect the original data frame.
+ Only the function's local value is changed; ALL changes are forgotten when
+ the function exits.
+ If you change the data in an environment passed to a function, the change
+ is permanent.) 
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<read2>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(mega2r)
+\end_layout
+
+\begin_layout Plain Layout
+
+ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+We need to make two observations that apply to all Mega2R functions: The
+ first is that when verbose is set in the initial read.Mega2DB, the value
+ will be remembered.
+ It may be used by any subsequent function.
+ If verbose is TRUE, Mega2R functions will possibly print out far more diagnosti
+c information than you might need, especially on subsequent runs.
+ The second is that all Mega2R functions that do not return an environment,
+ need to have an environment supplied as an argument.
+ There are two ways to accomplish this.
+ If you assigned the result of read.Mega2DB to the variable 
+\emph on
+seqsim
+\emph default
+r, then you could supply the value 
+\emph on
+seqsimr
+\emph default
+ to any Mega2R function as the named argument 
+\series bold
+envir
+\series default
+:
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+showMega2ENV(envir = seqsimr)
+\end_layout
+
+\begin_layout Standard
+\noindent
+The second choice is a bit of a "hack" but it is very convenient.
+ Every Mega2R function (that does not return an environment) has a named
+ argument defined as
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+envir = ENV
+\end_layout
+
+\begin_layout Standard
+\noindent
+as in
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+showMega2ENV = function(envir = ENV) { ...
+ }
+\end_layout
+
+\begin_layout Standard
+\noindent
+The code above, sets global variable 
+\series bold
+ENV
+\series default
+ to the local variable, envir.
+ And the argument evaluation mechanism of R will supports this usage; even
+ though 
+\series bold
+ENV
+\series default
+ is not known until runtime.
+\end_layout
+
+\begin_layout Subsubsection
+\noindent
+Back to more examples.
+\end_layout
+
+\begin_layout Standard
+\noindent
+The ls function will show you all the variables in an environment.
+ (You probably used it without arguments to show you the variables in the
+ .GlobalEnv.) Type:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<ls>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ls(ENV)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+\noindent
+A more informative overview of the data base can be seen by:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<show>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+showMega2ENV() 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+\noindent
+Use standard R commands to examine the created data frames
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<str>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+str(ENV$locus_table)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+\noindent
+Running pedgene using the mega2pedgene R package
+\end_layout
+
+\begin_layout Standard
+\noindent
+mega2pedgene is the exception that proves the rule.
+ Rather than use the read.Mega2DB function described above and as used by
+ all the other packages, we use init_pedgene.
+ This function calls a utility function created for read.Mega2DB.
+ Then it creates, edits, and rewrites the 
+\series bold
+fam
+\series default
+ data frame to purge persons with unknown case/control status.
+ (
+\series bold
+fam
+\series default
+ merges data from the pedigree_table, person_table and phenotype_table as
+ you might expect.) Finally, it calculates and stores some values that will
+ be used repeatedly.
+ viz:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<init_pedgene>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(pedgene)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(mega2pedgene)
+\end_layout
+
+\begin_layout Plain Layout
+
+ENV = init_pedgene("seqsimr.db", verbose = T)
+\end_layout
+
+\end_inset
+
+Mega2R has an internal default list of the chromosome and base pair ranges
+ for a number of gene transcripts.
+ These transcripts come from the UCSC Genome Browser reference assembly
+ GRCH37.
+ The list was further modified to eliminate multiple records of the same
+ gene with the exact same transcript start and transcript end.
+ This constitutes about 30,000 records.
+ The function run_pedgene examines the first 100 transcripts and prints
+ the results.
+ The first 100 transcripts identifies one gene with several markers:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<run_pedgene>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+run_pedgene()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+You will see many reports of "No markers in range", but occasionally you
+ will see a listing of a gene name, markers, and count of 1/1, 1/2 and 2/2
+ genotypes, viz.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+CEP104 snp24037 520 646 214 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+CEP104 snp24039 940 386 54 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+CEP104 snp24041 1377 3 0 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+CEP104 snp24048 860 460 60 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+CEP104 snp24494 789 501 90 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+CEP104 snp24499 891 442 47 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+CEP104 snp24506 891 442 47 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+CEP104 snp24507 789 501 90 
+\end_layout
+
+\begin_layout Standard
+\noindent
+The genotypes for these markers, along with the markers info are fed to
+ the call back function DOpedgene.
+ DOpedgene converts the genotype nucleotides to the count of the minor allele
+ and then runs pedgene for several different marker weights.
+ The results are automatically stored in a data frame with 
+\begin_inset Quotes eld
+\end_inset
+
+observations
+\begin_inset Quotes erd
+\end_inset
+
+: prefix of chromosome, gene, number of markers and base pair range followed
+ by Pedgene data: kernel and burden, value and p-values, four values for
+ each of three weightings of the markers.
+ It is printed as well when 
+\emph on
+verbose
+\emph default
+ is TRUE, viz.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+   chr   gene nvariants   start     end sKernel_BT pKernel_BT sBurden_BT
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+1 chr1 CEP104         8 3728644 3773797   31.96998  0.6297541 -0.6496837
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  pBurden_BT sKernel_MB pKernel_MB sBurden_MB pBurden_MB sKernel_UW pKernel_UW
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+1  0.5158965   1184.995  0.5138866  -1.209563  0.2264468   222.8737  0.4111136
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  sBurden_UW pBurden_UW
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+1  -1.169488   0.242207 
+\end_layout
+
+\begin_layout Standard
+\noindent
+It would be better to run pedgene on all the default transcript entries.
+ So type:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<ranges1,eval=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# we will skip this line for the Rmd document production because it takes
+ too long
+\end_layout
+
+\begin_layout Plain Layout
+
+applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+If you run the above test, you will see that gene DISP1 and KIF26B have
+ some p-values less than 0.01 and AK5 and STL7 less than 0.03.
+ If we knew this fact to start with, and hence these were the only genes
+ we were interested in.
+\end_layout
+
+\begin_layout Standard
+\noindent
+Alternatively, you may try searching by Gene.
+ Here the default transcript database is 
+\end_layout
+
+\begin_layout Standard
+\noindent
+TxDb.Hsapiens.UCSC.hg19.knownGene" from Bioconductor.
+ Of course you can change it.
+ Type:
+\end_layout
+
+\begin_layout LyX-Code
+setAnnotations("txdb", "genedb")
+\end_layout
+
+\begin_layout Standard
+where "txdb" is a string that is the name of a transcript database that
+ was fetched from Bioconductor, and similarly "genedb" is the name of a
+ Bioconductor database that maps a gene id from the transcript to an entrez
+ gene id.
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<genes1>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'),
+ envir = ENV)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+NOTE: You will observe that for several genes there are a few transcripts
+ with the same start values and the same end values.
+\end_layout
+
+\begin_layout Subsection
+\noindent
+Writing a VCF File using the mega2vcf R package
+\end_layout
+
+\begin_layout Standard
+\noindent
+First create the directory "vcfr"; so we can keep all the generated data
+ in one place and then load the mega2vcf library.
+ The Mega2VCF function takes an argument which is the prefix used on all
+ the files it generates.
+ We have chosen to make that a path that includes a directory.
+ Mega2VCF is explained in greater depth in the Implementation Section.
+ The Mega2VCF function assumes the environment is contained in the global
+ variable ENV.
+ If this is not true supply an additional argument "envir" set to the environmen
+t you wish to use.
+\end_layout
+
+\begin_layout Standard
+\noindent
+Note, that Mega2VCF will create the expected .vcf file as well as a .fam file
+ (we do linkage), a .phe file (phenotypes) and a few others.
+ These files are listed below.
+ Creating the VCF file and related files is accomplished by typing:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<vcf>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+if (! dir.exists("vcfr")) dir.create("vcfr")
+\end_layout
+
+\begin_layout Plain Layout
+
+library(mega2vcf)
+\end_layout
+
+\begin_layout Plain Layout
+
+Mega2VCF("vcfr/vcf.01", ENV$markers[ENV$markers$chromosome==1 ,])
+\end_layout
+
+\begin_layout Plain Layout
+
+list.files("vcfr")
+\end_layout
+
+\end_inset
+
+Read the package code to see how these files are created from the data frames.
+ 
+\end_layout
+
+\begin_layout Subsection
+\noindent
+Creating a GenABEL gwaa.data-class object using the mega2genabel R package
+\end_layout
+
+\begin_layout Standard
+\noindent
+GenABEL 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.genabel.org/ 
+\end_layout
+
+\end_inset
+
+can process PLINK .tped/.tfam files with the function 
+\emph on
+convert.snp.tped
+\emph default
+ to create a gwaa.data-class object.
+ Currently, we use this mechanism to convert our data frames to a gwaa.data-class
+ object.
+ The argument to Mega2GenABEL is a file name prefix that will be used to
+ name the .tped/.fam files that are created as an intermediate to be read
+ by GenABEL 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://cran.r-project.org/web/packages/GenABEL/index.html 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+to produce a GenABEL "raw" file.
+ Then the "raw" file and a generated phenotype file are processed by 
+\emph on
+load.gwaa.data
+\emph default
+ to yield a gwaa.data-class object.
+ (See the Implementation Section.) This task is analogous to the previous
+ exercise.
+ Type:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<genabel>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(mega2genabel)
+\end_layout
+
+\begin_layout Plain Layout
+
+seqsimgwaa = Mega2GenABEL("SEQ")
+\end_layout
+
+\begin_layout Plain Layout
+
+list.files(pattern = "SEQ.*")
+\end_layout
+
+\begin_layout Plain Layout
+
+str(seqsimgwaa)
+\end_layout
+
+\end_inset
+
+You can use any of the GenABEL provided functions on your data, seqsimgwaa.
+\end_layout
+
+\begin_layout Standard
+\noindent
+Note: There are several data formats that Mega2 can read and transform into
+ a database that are not directly acceptable to GenABEL.
+ Any M1ega2 database that can be read into R, can be transformed to GenABEL
+ following this example with seqsimr.db.
+\end_layout
+
+\begin_layout Section
+\noindent
+Regression
+\end_layout
+
+\begin_layout Standard
+\noindent
+To verify that the R packages described above have worked correctly, we
+ can compare their output files to those created by Mega2 itself, to verify
+ that they are, as expected, identical.
+ This type of testing is known as regression testing.
+\end_layout
+
+\begin_layout Subsection
+\noindent
+VCF regression
+\end_layout
+
+\begin_layout Standard
+\noindent
+It is time to use the MEGA2.BATCH.vcf file from the mega2rtutorial.
+\end_layout
+
+\begin_layout Standard
+\noindent
+This will use the C++ Mega2 program to populate the vcf directory with the
+ same set of files that the R program created in the vcfr directory.
+\end_layout
+
+\begin_layout Standard
+\noindent
+At the  prompt, type:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<mega2vcf2, results='hide'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+system("mkdir vcf")
+\end_layout
+
+\begin_layout Plain Layout
+
+system("mega2 MEGA2.BATCH.vcf", intern=TRUE)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The abbreviated MEGA2.BATCH.vcf file is below (notice that there are no INPUT
+ FILES, just a database file):
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Input_Database_Mode=2 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Align_Strand_Input=no 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Output_Path=vcf
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Input_Untyped_Ped_Option=2 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Input_Do_Error_Sim=no 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+AlleleFreq_SquaredDev=999999999.000000 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Analysis_Option=VCF
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Missing_Quant_On_Output=-9 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Missing_Affect_On_Output=-9 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+DBfile_name=seqsimr.db
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Chromosome_Single=1 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Traits_Combine=1 2 e 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+file_name_stem=vcf
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+human_genome_build=B37 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+VCF_output_file_type=1 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+VCF_Allele_Order=Original_Order 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Default_Outfile_Names=yes 
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+You should compare the two directories: vcf and vcfr.
+ Please add the -w flag to the diff command.
+ This causes the comparison to ignore differences in white space.
+ You may may notice that expressions that contain dates that are different
+ between the two directories.
+ Type:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<diff>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+system("diff -wrs vcf vcfr", intern=TRUE)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+\noindent
+GenABEL regression
+\end_layout
+
+\begin_layout Standard
+\noindent
+This test is a bit more complicated.
+ First, we load GenABEL and access its data:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<reggenabel1>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(GenABEL)
+\end_layout
+
+\begin_layout Plain Layout
+
+data(srdta)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Then we load the mega2genabel library and dump the GenABEL data as PLINK
+ .ped/.map/.phe files
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<reggenabel2>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(mega2genabel)
+\end_layout
+
+\begin_layout Plain Layout
+
+dmpPed()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Then we run:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<megsrdta, results='hide'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+system("mega2 MEGA2.BATCH.srdta", intern=TRUE)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+\noindent
+abbreviated contents of MEGA2.BATCH.srdata file
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Input_Database_Mode=1
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Input_Format_Type=4
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Input_Pedigree_File=srdta.ped
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Input_PLINK_Map_File=srdta.map
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Input_Phenotype_File=srdta.phe
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Output_Path=.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Input_Path=.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+PLINK_Args= --missing-phenotype -9 --trait default 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Input_Untyped_Ped_Option=2 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Input_Do_Error_Sim=no 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+AlleleFreq_SquaredDev=999999999.000000 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Marker_Compression=1 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+Analysis_Option=Dump
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Missing_Quant_On_Input=-9.000000 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Missing_Affect_On_Input=-9 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Count_Genotypes=4 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Count_Halftyped=no 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Genetic_Distance_Index=0 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Genetic_Distance_SexTypeMap=0 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Value_Base_Pair_Position_Index=1 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Default_Reset_Invalid=no 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+
+\series bold
+DBfile_name=srdta.db
+\series default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+Default_Outfile_Names=yes 
+\end_layout
+
+\begin_layout Standard
+\noindent
+to produce the Mega2 database srdta.db.
+\end_layout
+
+\begin_layout Standard
+\noindent
+Then we type R commands:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<readsrdta>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ENV = read.Mega2DB("srdta.db")
+\end_layout
+
+\begin_layout Plain Layout
+
+mega = Mega2GenABEL("SRD")
+\end_layout
+
+\begin_layout Plain Layout
+
+list.files(pattern = "SRD.*")
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\emph on
+mega
+\emph default
+ and 
+\emph on
+srdta
+\emph default
+ should be the same gwaa.data-class object.
+ You can compare them however you prefer.
+ But, Mega2GenABELtst can be used to compare the phenotype and genotype
+ data, viz.
+ in R type:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<gentest>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+Mega2GenABELtst()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\noindent
+Next steps
+\end_layout
+
+\begin_layout Standard
+\noindent
+If you are left with questions as to how you can use Mega2R for your own
+ research, you can:
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+Read our paper "The Mega2R suite of R packages: tools for accessing and
+ processing common genetic data formats in R", which extends this document
+ by providing implementation details.
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+Read the source for the packages if you understand R; the code is not particular
+ly subtle.
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+Write to the Mega2 discussion group: https://groups.google.com/forum/#!forum/mega2
+-users
+\end_layout
+
+\end_body
+\end_document

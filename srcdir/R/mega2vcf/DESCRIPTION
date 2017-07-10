@@ -3,15 +3,15 @@ Title: generate a VCF file from a Mega2 SQLite database
 Description: Generate a VCF file from a Mega2 SQLite database.
 Version: 0.5.0
 Author: Robert V Baron <rvb5@pitt.edu>
-Maintainer: Robert V Baron <rvb5@pitt.edu>
+Maintainer: Robert V Baron <rvb5@pitt.edu>, Daniel Weeks <weeks@pitt.edu>
 Authors@R: c(person("Robert", "Baron",
     email = "rvb5@pitt.edu", role = c("aut", "cre")))
 Depends:
-    R (>= 3.0.1)
+    R (>= 3.0.1),
+    mega2r
 License: GPL (>= 3)
 LazyData: true
 Imports:
-    mega2
 SystemRequirements: Mega2
 #Roxygen: list(wrap = FALSE)
 RoxygenNote: 6.0.1

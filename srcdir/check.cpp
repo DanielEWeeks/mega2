@@ -464,6 +464,7 @@ static void connected_traverse(ped_rec *Entry, const int current_ped)
  * Return the number of members found to be disconnected
  * from the first member.
  */
+SECTION_ERR_EXTERN(check_ped_relations);
 static int check_ped_connected(ped_tree *Ped)
 {
     int entry, conn;
@@ -490,6 +491,7 @@ static int check_ped_connected(ped_tree *Ped)
     }
 
     if (current_ped > 1) {
+        SECTION_ERR(check_ped_relations);
         errorvf("Ped %s: Found %d disconnected sub-pedigrees:\n",
                 Ped->Name, current_ped);
         for (conn = 0; conn < current_ped; conn++) {
@@ -503,9 +505,9 @@ static int check_ped_connected(ped_tree *Ped)
                 }
                 entry++;
             }
-
-            warnvf("Sub-pedigree %d including (but not limited to) individuals\n%s\n",
-		   conn+1, names);
+            SECTION_ERR(check_ped_relations);
+            errorvf("Sub-pedigree %d including (but not limited to) individuals\n%s\n",
+                    conn+1, names);
         }
     }
 

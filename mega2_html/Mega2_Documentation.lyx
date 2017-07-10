@@ -86,11 +86,10 @@
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
-\output_changes true
+\output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author 1332494340 "Daniel E. Weeks"
 \end_header
 
 \begin_body
@@ -208,7 +207,7 @@ status collapsed
 
 \end_inset
 
- 1997-2016 by the University of Pittsburgh 
+ 1997-2017 by the University of Pittsburgh 
 \end_layout
 
 \end_inset
@@ -370,6 +369,10 @@ LatexCommand tableofcontents
 Introduction
 \end_layout
 
+\begin_layout Subsection
+Overview of Mega2
+\end_layout
+
 \begin_layout Standard
 During an association or linkage analysis project, one may need to analyze
  the data with several different programs.
@@ -503,7 +506,33 @@ reference "sec:Genetic-Map-Interpolator"
 \end_layout
 
 \begin_layout Enumerate
-The ability to simulate genotype errors (See section 
+Using the Mega2R suite of R packages, the ability to easily load Mega2-produced
+ SQLite3 databases directly into R as data frames for further processing
+ (See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-Mega2R-suite"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Enumerate
+The ability to align allele labels to a reference and to resolve strand
+ issues (See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Using-an-external-reference"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Enumerate
+The ability to simulate genotype errors (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Simulate-errors"
@@ -595,11 +624,8 @@ reference "subsec:MEGA2run.html-and-related"
 \begin_layout Enumerate
 Creation of extensive data analysis logs, both during database creation:
  (files MEGA2.DB.LOG and MEGA2.DB.ERR) and during each analysis: (files MEGA2.LOG
- and MEGA2.ERR) and creation of other informative meta
-\change_inserted 1332494340 1477928270
- 
-\change_unchanged
-data as appropriate: files MEGA2.* (see Section 
+ and MEGA2.ERR) and creation of other informative meta data as appropriate:
+ files MEGA2.* (see Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Additional-Mega2-Output"
@@ -1008,6 +1034,72 @@ reference "sec:Installation"
 
 \begin_layout Section
 Recent improvements and changes
+\end_layout
+
+\begin_layout Subsection
+Enhancements in Mega2 version 4.9.2
+\end_layout
+
+\begin_layout Itemize
+The Mega2R suite of R packages provides tools for accessing and processing
+ common genetic data formats in R, making it easy to load SQLite3 Mega2
+ databases directly into R as data frames (See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-Mega2R-suite"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Itemize
+Mega2 supports the use of an external reference panel, to facilitate alignment
+ of your data to the reference, resolving strand issues where possible (See
+ Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Using-an-external-reference"
+
+\end_inset
+
+ for details).
+ Add reference allele table and processing; optionally switch allele to
+ reference allele values.
+\end_layout
+
+\begin_layout Itemize
+Extend VCF output to support VCF.gz and BCF format output.
+ Also specify which allele should be the ref allele: first, greater minor
+ allele frequency, lesser minor allele frequency, match reference panel.
+\end_layout
+
+\begin_layout Itemize
+Add .mega2rc file -- a mini batch file -- to store common values like for
+ reference panels, etc 
+\end_layout
+
+\begin_layout Itemize
+For PLINK bed, VCF and IMPUTE2, use REF/ALT marker alleles that are specified
+ in the input iff the marker is monomorphic.
+\end_layout
+
+\begin_layout Itemize
+For database, write out loci and genotypes in base pair order.
+ Read back only chromosomes that are requested for the analysis.
+ 
+\end_layout
+
+\begin_layout Itemize
+Have minimac and shapeit use a reference panel.
+\end_layout
+
+\begin_layout Itemize
+Bug: Fix SQL index statements.
+\end_layout
+
+\begin_layout Itemize
+Bug: Allow disconnected individuals and fix warning print out.
 \end_layout
 
 \begin_layout Subsection
@@ -1621,7 +1713,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 database mode menu: 
+Mega2 4.9.2 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1692,7 +1784,7 @@ reference "sec:The-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 file input menu:
+              Mega2 4.9.2 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1825,7 +1917,7 @@ database menu
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 database mode menu: 
+Mega2 4.9.2 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1886,7 +1978,7 @@ reference "sec:The-alternate-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 database input menu: 
+Mega2 4.9.2 database input menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2156,12 +2248,12 @@ target "http://doi.org/10.1186/s13029-014-0026-y"
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.9.1 should be: 
+ For example, the web site citation for version 4.9.2 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2015) Mega2 (Version 4.9.1).
+ Weeks DE (2015) Mega2 (Version 4.9.2).
  
 \begin_inset Flex URL
 status open
@@ -2439,7 +2531,7 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.9.1 
+The latest version is 4.9.2 
 \end_layout
 
 \begin_layout Enumerate
@@ -2452,7 +2544,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.1_src.tar.gz
+mega2_v4.9.2_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -2467,7 +2559,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.9.1_src.tar.gz 
+gunzip mega2_v4.9.2_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -2481,7 +2573,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.9.1_src.tar 
+tar xvf mega2_v4.9.2_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -2489,7 +2581,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.9.1_src.tar.gz 
+tar xzvf mega2_v4.9.2_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -2502,7 +2594,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.9.1_src
+mega2_v4.9.2_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2682,7 +2774,7 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.9.1_src.tar.gz bundle following
+If you downloaded and unpacked the mega2_v4.9.2_src.tar.gz bundle following
  the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2690,7 +2782,7 @@ reference "subsec:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.9.1_src containing the following
+), you should see a directory named mega2_v4.9.2_src containing the following
  directories (in bold) or files listed in alphabetical order:
 \end_layout
 
@@ -3371,7 +3463,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.9.1_src in above step), type the command:
+ mega2_v4.9.2_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -3422,7 +3514,7 @@ name "subsec:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.9.1_src.tar.gz package also includes a source code folder "srcdir"
+The mega2_v4.9.2_src.tar.gz package also includes a source code folder "srcdir"
  containing C source files, a Makefile, and several OS-specific Makedefs
  files that define compilation flags that govern locations of standard C
  libraries, and other OS-specific behavior.
@@ -3437,7 +3529,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.9.1_src folder, type 
+From within the mega2_v4.9.2_src folder, type 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -3848,7 +3940,7 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.9.1_src folder contains
+The sub-folder called mega2_html/ within the mega2_v4.9.2_src folder contains
  documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
@@ -4511,7 +4603,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.9.1_src.tar.gz.
+The Mega2 distribution package is named mega2_v4.9.2_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -4526,7 +4618,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.1_src.tar
+mega2_v4.9.2_src.tar
 \end_layout
 
 \end_deeper
@@ -4552,7 +4644,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.1_src.tar.tar
+mega2_v4.9.2_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -4560,7 +4652,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.9.1_src.tar.gz
+mega2_v4.9.2_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4568,7 +4660,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.9.1_src.tar.tar mega2_v4.9.1_src.tar.gz
+mv mega2_v4.9.2_src.tar.tar mega2_v4.9.2_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -13107,6 +13199,57 @@ https://watson.hgen.pitt.edu/register/docs/gmi.html
 \end_layout
 
 \begin_layout Section
+The Mega2R suite of R packages
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:The-Mega2R-suite"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Mega2R suite of R packages provides tools for accessing and processing
+ common genetic data formats in R.
+ The Mega2R suite of R packages is available at 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://watson.hgen.pitt.edu/mega2/mega2r"
+target "https://watson.hgen.pitt.edu/mega2/mega2r"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Mega2 has been enhanced to use a SQLite database as an intermediate data
+ representation.
+ Additionally, Mega2 now stores bialleleic genotype data in a highly compressed
+ form, much like that of the GenABEL R facility and the PLINK binary format.
+ Concurrently, the R community and Bioconductor community have developed
+ a variety of genetic analysis programs complimentary to the programs available
+ through Mega2.
+ We have now made it easy to load SQLite3 Mega2 databases directly into
+ R as data frames to use these R facilities.
+ In addition, we have developed C++ functions for R to decompress needed
+ subsets of the genotype data, on the fly, in a memory efficient manner.
+ We created the base Mega2R package that loads and manipulates data frames.
+ We have also created several more R packages that illustrate how to use
+ the data frames as well as perform useful functions: the Mega2pedgene package
+ to run the pedgene R package to carry out gene-based association tests
+ on family data using selected marker subsets, the Mega2VCF package to output
+ the Mega2R data as a VCF file and related files (for phenotype and family
+ data), and the Mega2GenABEL package to convert the data frames into GenABEL
+ R gwaa.data-class objects.
+ The Mega2R program enhances GenABEL since it supports additional input
+ data formats (such as PLINK, VCF and IMPUTE2) not currently supported by
+ GenABEL.
+ 
+\end_layout
+
+\begin_layout Section
 Converting to Mega2's format 
 \begin_inset CommandInset label
 LatexCommand label
@@ -13498,7 +13641,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 database mode menu: 
+Mega2 4.9.2 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -13830,7 +13973,7 @@ When entering the file input menu, Mega2 initially expects to read input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 file input menu:
+              Mega2 4.9.2 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -13926,7 +14069,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.1 input file type menu:
+Mega2 4.9.2 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -13998,7 +14141,7 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 file input menu:
+              Mega2 4.9.2 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -16081,9 +16224,9 @@ name "subsec:Using-an-external-reference"
 \end_layout
 
 \begin_layout Standard
-A new feature of VCF is the use of an external reference panel.
- If there is data that usable as a reference dataset to the normally chosen
- Mega2 data, i.e.
+Mega2 supports the use of an external reference panel, to facilitate alignment
+ of your data to the reference, resolving strand issues where possible.
+ If there are data that are usable as a reference dataset, i.e.
  1000 genomes, the functionality now exists to upload that data into Mega2
  in order to compare your data against that reference.
  This feature requires the database to be turned on as it uses the database
@@ -16091,8 +16234,46 @@ A new feature of VCF is the use of an external reference panel.
 \end_layout
 
 \begin_layout Standard
-A reference panel can be created in a couple ways, in general it is a file
- of the form:
+To use this mode, there are two steps.
+ First, when in Mega2 database create mode, you need to specify the name
+ of the Reference Allele File.
+ We provide several reference panels at 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://watson.hgen.pitt.edu/mega2/refs/"
+target "https://watson.hgen.pitt.edu/mega2/refs/"
+
+\end_inset
+
+.
+ As the database is created, the information from the Reference Allele File
+ is recorded into the database.
+\end_layout
+
+\begin_layout Standard
+Second, after you have created a Mega2 database while having specified a
+ Reference Allele file, then alignment to the chosen reference file can
+ be used by toggling option 3 
+\begin_inset Quotes eld
+\end_inset
+
+Align strands with reference
+\begin_inset Quotes erd
+\end_inset
+
+ in the database input menu (when in 'Mega2 database read mode') to 'yes'.
+ This strand alignment option does two things: for cases where the reference
+ value's reference allele is different from the input data, it sets the
+ data to be harmonized with the reference (e.g.
+ if your data has A/C as the reference and alternate allele for a marker
+ but the reference panel has C/A, it will switch it).
+ Second it resolves T/G <-> A/C strand alignments where possible.
+\end_layout
+
+\begin_layout Standard
+If the provided reference panels are not sufficient, your own reference
+ panel can be created in a couple of ways; in general it is a file of the
+ form:
 \end_layout
 
 \begin_layout Standard
@@ -16100,18 +16281,18 @@ CHR POS REF
 \end_layout
 
 \begin_layout Standard
-Which can then gzipped for compression.
+which can then gzipped for compression.
  
 \end_layout
 
 \begin_layout Standard
 This file can be created by hand or by any script that outputs this format.
  Or the reference file can be created utilizing a script provided with Mega2.
- The scripts name is GetRefAlleles.sh.
- It uses bcftools so for it to be used that must be installed.
+ The script's name is GetRefAlleles.sh.
+ It uses bcftools so for it to be used bcftools must be installed.
  It can be run on panels of vcf.gz files with chromosome specific files.
  For example, Minimac3 has datasets as references for imputation.
- First, get the reference vcfs on their website.
+ First, get the reference vcfs from their website.
  Next, unpack the references until there's a directory of gzipped vcf files,
  one for each chromosome.
  Inspect them to make sure the files are the same name template, for instance
@@ -16135,7 +16316,7 @@ ALL.chr2.phased.vcf.gz
  Then the GetRefAlleles script can be used to parse all chromosomes 1-22
  and create a single smaller reference allele file consisting of the chromosome
  position and reference.
- Please note though, GetRefAlleles requires BCFTools to be installed and
+ Please note though, GetRefAlleles requires bcftools to be installed and
  in your path.
  Finally, to run this in our simplified case, we can use the command 
 \begin_inset Quotes eld
@@ -16145,11 +16326,10 @@ GetRefAlleles.sh All.chr .phased.vcf.gz
 \begin_inset Quotes erd
 \end_inset
 
- Where there are two arguments for GetRefAlleles.sh which are: the character
- string for the filename up to the number of the chromosome, and everything
+ where there are two arguments for GetRefAlleles.sh which are: (1) the character
+ string for the filename up to the number of the chromosome, and (2) everything
  after the chromosome.
- It should create a file called ref_alleles.txt (which can be gzipped for
- size saving).
+ It should create a file called ref_alleles.txt (which can be gzipped).
  
 \end_layout
 
@@ -16162,33 +16342,6 @@ This file (or a gzipped version of it) can then be input into the option
  you wish to use in Mega2, you can continue into database creation.
  At database creation Mega2 will join your reference panel with your provided
  dataset to match reference alleles to those in the data.
- 
-\end_layout
-
-\begin_layout Standard
-This mode can be used on output data using option 3 
-\begin_inset Quotes eld
-\end_inset
-
-Align strands with reference
-\begin_inset Quotes erd
-\end_inset
-
- in the database input menu.
- This strand alignment does two things: for cases where the reference value's
- reference allele is different from the input data, it sets the data to
- be harmonized with the reference (e.g.
- if your data has A/C as the reference and alternate allele for a marker
- but the reference panel has C/A it will switch it).
- Second it resolves T/G <-> A/C strand alignment ambiguities, this means
- that if your reference and alternate in your dataset are T/G and the reference
- has an A/C it will change it accordingly as we can trivially say the strand
- is unaligned in the dataset.
-\end_layout
-
-\begin_layout Standard
-Additionally, we provide a reference panel for 1000 genomes at [TODO: figure
- out how we want to host it and put a link here].
  
 \end_layout
 
@@ -16589,7 +16742,7 @@ name "subsec:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 Maximum alleles per marker menu:
+              Mega2 4.9.2 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -16988,7 +17141,7 @@ Item 3) only appears for linkage format inputs.
 \end_layout
 
 \begin_layout Section
-The Database input menu 
+The database input menu 
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:The-alternate-input-menu"
@@ -17073,7 +17226,7 @@ The Database input menu is shown below and explained immediately following:
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 Database input menu:
+              Mega2 4.9.2 Database input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -17221,7 +17374,7 @@ The path to this SQLite3 database is dbmega2.db.
 \end_layout
 
 \begin_layout LyX-Code
-This database was created using Mega2 version 4.9.1.
+This database was created using Mega2 version 4.9.2.
  
 \end_layout
 
@@ -17979,7 +18132,7 @@ reference "ext:vcf"
 \end_layout
 
 \begin_layout Section
-The Missing Value Menu 
+The missing value menu 
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:The-Value-Missing-menu"
@@ -18053,7 +18206,7 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.1 Missing Value menu:
+              Mega2 4.9.2 Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -38387,7 +38540,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="26" columns="4">
+<lyxtabular version="3" rows="27" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="right" valignment="top">
@@ -38434,6 +38587,44 @@ Release date
 
 \series bold
 Valid until
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.9.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 14, 2017
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 2018
 \end_layout
 
 \end_inset
@@ -39394,6 +39585,77 @@ March 31, 2008
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
+\end_layout
+
+\begin_layout Itemize
+The Mega2R suite of R packages provides tools for accessing and processing
+ common genetic data formats in R, making it easy to load SQLite3 Mega2
+ databases directly into R as data frames (See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-Mega2R-suite"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Itemize
+Mega2 supports the use of an external reference panel, to facilitate alignment
+ of your data to the reference, resolving strand issues where possible (See
+ Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Using-an-external-reference"
+
+\end_inset
+
+ for details).
+ Add reference allele table and processing; optionally switch allele to
+ reference allele values.
+\end_layout
+
+\begin_layout Itemize
+Extend VCF output to support VCF.gz and BCF format output.
+ Also specify which allele should be the ref allele: first, greater minor
+ allele frequency, lesser minor allele frequency, match reference panel.
+\end_layout
+
+\begin_layout Itemize
+Add .mega2rc file -- a mini batch file -- to store common values like for
+ reference panels, etc 
+\end_layout
+
+\begin_layout Itemize
+For PLINK bed, VCF and IMPUTE2, use REF/ALT marker alleles that are specified
+ in the input iff the marker is monomorphic.
+\end_layout
+
+\begin_layout Itemize
+For database, write out loci and genotypes in base pair order.
+ Read back only chromosomes that are requested for the analysis.
+ 
+\end_layout
+
+\begin_layout Itemize
+Have minimac and shapeit use a reference panel.
+\end_layout
+
+\begin_layout Itemize
+Bug: Fix SQL index statements.
+\end_layout
+
+\begin_layout Itemize
+Bug: Allow disconnected individuals and fix warning print out.
+\end_layout
+
+\begin_layout Itemize
+Bug: Remove all C++ lambda constructs.
+ 
 \end_layout
 
 \begin_layout Subsection
