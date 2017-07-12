@@ -25,3 +25,16 @@ getgenotypes_forperson <- function(raw_arg) {
     .Call('mega2r_getgenotypes_forperson', PACKAGE = 'mega2r', raw_arg)
 }
 
+#' @export
+infncpp <- function(raw_arg, tf_arg) {
+    .Call('mega2r_infncpp', PACKAGE = 'mega2r', raw_arg, tf_arg)
+}
+
+getgenotypesgenabel_1 <- function(locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscN_arg) {
+    .Call('mega2r_getgenotypesgenabel_1', PACKAGE = 'mega2r', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscN_arg)
+}
+
+getgenotypesgenabel_2 <- function(locus_arg, genotype_arg, allele_arg, miscN_arg) {
+    .Call('mega2r_getgenotypesgenabel_2', PACKAGE = 'mega2r', locus_arg, genotype_arg, allele_arg, miscN_arg)
+}
+

@@ -56,6 +56,7 @@ NULL
 #' @return gwaa.class-object of previously read.Mega2DB database
 #'
 #' @importFrom GenABEL convert.snp.tped load.gwaa.data
+#' @importFrom methods is new
 #' @export
 #'
 #' @examples
@@ -68,6 +69,7 @@ NULL
 #'}
 Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 
+ print(system.time ({        
     if (is.null(markers)) markers = envir$markers
 
     mkGenABELtped(prefix, markers, mapno = mapno, envir)
@@ -87,11 +89,13 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 
 
 #x  return (load.gwaa.data(phenofile=paste0(prefix,".phe"),
-    return (gwaaO(phenofile=paste0(prefix,".phe"),
-                           genofile=paste0(prefix, "tped.raw"),
-                           force = TRUE,
-                           envir = envir)
-            )
+    ans = (gwaaO(phenofile=paste0(prefix,".phe"),
+                 genofile=paste0(prefix, "tped.raw"),
+                 force = TRUE,
+                 envir = envir)
+          )
+ }))
+    ans
 }
 
 #' generate gwaa.data-class object
@@ -102,6 +106,14 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #' @param markers data frame of markers being processed
 #'
 #' @param mapno specify which map index to use for genetic distances
+#'
+#' @param force pass value to gwaa
+#'
+#' @param makemap pass value to gwaa
+#'
+#' @param sort pass value to gwaa
+#'
+#' @param choose 1 use .cpp getgenotypesgenabel; 2 use R to compress genotype cols; 3 as 2 but use .cpp
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
@@ -118,13 +130,13 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #' head(summary(gwaa))
 #'}
 Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
-                         sort = TRUE, mapno = 0, envir = ENV) {
+                         sort = TRUE, mapno = 0, envir = ENV, choose=1) {
 #browser()
     if (is.null(markers)) markers = envir$markers
 
     gwaa(markers = markers, force = force, 
                    makemap = makemap, sort = sort, 
-                   envir = envir)
+                   envir = envir, choose=choose)
 
 }
 
@@ -323,6 +335,8 @@ mkGenABELphe = function (envir) {
 #'  Each element of the coding vector is a lookup in the GenABEL:::alleleID.codes() array.
 #'  The alleles are ordered so that with the greater frequency appears first.
 #'
+#' @param markers data frame of markers being processed
+#'
 #' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
@@ -377,7 +391,7 @@ Mega2GenABELcoding = function(markers = NULL, envir = ENV) {
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
-#' @importFrom mega2r getgenotypesraw
+#' @importFrom mega2r getgenotypesraw infncpp getgenotypesgenabel
 #' @importFrom stats aggregate
 #' @export
 #'
@@ -389,33 +403,107 @@ Mega2GenABELcoding = function(markers = NULL, envir = ENV) {
 #'\dontrun{
 #' Mega2GenABELconvert(envir)
 #'}
-Mega2GenABELconvert = function(markers = NULL, envir = ENV) {
+Mega2GenABELconvert = function(markers = NULL, envir = ENV, choose = choose) {
 # browser("convert")
     if (is.null(markers)) markers = envir$markers
     nmarkers = nrow(markers)
 
+##browser()
+    if (choose == 1) {
+ print (system.time ({        
+    rag = getgenotypesgenabel(markers, envir = envir)
+ }))
+##browser()
+    return (rag)
+}
+
+ print (system.time ({        
     y=rep(1:(ceiling(nrow(envir$fam)/4)), each=4)
     zz = getgenotypesraw(markers, envir=envir)
     fil= rep(0, length(y)-nrow(zz))
     rag = matrix(raw(0), nrow = length(y)/4, ncol = nmarkers)
 
- print (system.time ({        
-#   for (m in 1:nrow(markers)) 
     for (ms in seq(1, nmarkers, 100)) {
 #
       cat(ms, "  ", sep= " ");  print (system.time ({        
         for (m in seq(ms, ms+100-1, 1)) {
           if (m > nmarkers) break
-            intf = intfn(m, envir = envir)
-            z = c(zz[ , m], fil)
-            gg = aggregate(z, by=list(y), intf)
-            rag[ , m] = as.raw(gg$x)
+#         intf = intfn(m, envir = envir)
+#         z = c(zz[ , m], fil)
+#         gg = aggregate(z, by=list(y), intf)
+#         rag[ , m] = as.raw(gg$x)
+          z = c(zz[ , m], fil)
+          if (choose == 2)
+              rag[ , m] = infn(z, (envir$Frx[m] > envir$Fry[m]) )
+          else
+              rag[ , m] = infncpp(z, (envir$Frx[m] > envir$Fry[m]) )
         }
 #
       }))
     }
  }))
     rag
+}
+
+infn = function(v, xGTy) {
+    if (xGTy) {
+        a = 3; b = 1
+    } else {
+        a = 1; b = 3
+    }
+    ans = raw(length(v) / 4)
+    i = 1
+    for (n in seq(1, length(v), 4)) {
+        B2 = 0
+
+        el = v[n]
+        if (el == 131074) #22
+            b2 = a
+        else if (el == 65537) #11
+            b2 = b
+        else if (el == 131073 || el == 65538) #21 #12
+            b2 = 2
+        else if (el == 0)
+            b2 = 0
+        B2 = bitwOr(B2, bitwShiftL(b2, 6))
+
+        el = v[n+1]
+        if (el == 131074) #22
+            b2 = a
+        else if (el == 65537) #11
+            b2 = b
+        else if (el == 131073 || el == 65538) #21 #12
+            b2 = 2
+        else if (el == 0)
+            b2 = 0
+        B2 = bitwOr(B2, bitwShiftL(b2, 4))
+
+        el = v[n+2]
+        if (el == 131074) #22
+            b2 = a
+        else if (el == 65537) #11
+            b2 = b
+        else if (el == 131073 || el == 65538) #21 #12
+            b2 = 2
+        else if (el == 0)
+            b2 = 0
+        B2 = bitwOr(B2, bitwShiftL(b2, 2))
+
+        el = v[n+3]
+        if (el == 131074) #22
+            b2 = a
+        else if (el == 65537) #11
+            b2 = b
+        else if (el == 131073 || el == 65538) #21 #12
+            b2 = 2
+        else if (el == 0)
+            b2 = 0
+        B2 = bitwOr(B2, b2)
+
+        ans[i] = as.raw(B2)
+        i = i + 1
+    }
+    ans
 }
 
 intfn = function(m, envir = ENV) {
@@ -485,8 +573,9 @@ intfn = function(m, envir = ENV) {
 }
 
 #' @importFrom GenABEL snp.data
+#' @importFrom methods is new
 gwaa = function (markers = NULL, force = TRUE, 
-    makemap = FALSE, sort = TRUE, id = "id", envir = ENV)
+    makemap = FALSE, sort = TRUE, id = "id", envir = ENV, choose=choose)
 {
     if (is.null(markers)) markers = envir$markers
 
@@ -495,20 +584,20 @@ gwaa = function (markers = NULL, force = TRUE,
     ids = paste(envir$fam$PedPre, envir$fam$PerPre, sep="_")
     nids <- length(ids)
     nbytes <- ceiling(nids/4)
-    cat("ids loaded...\n")
+    if (envir$verbose) cat("ids loaded...\n")
 
     mnams = markers$MarkerName
     nsnps <- length(mnams)
-    cat("marker names loaded...\n")
+    if (envir$verbose) cat("marker names loaded...\n")
 
     chrom = as.character(markers$chromosome)
     chrom <- as.factor(chrom)
     gc(verbose = FALSE)
-    cat("chromosome data loaded...\n")
+    if (envir$verbose) cat("chromosome data loaded...\n")
 
     pos = markers$position
-    cat("map data loaded...\n")
-  ver=1 # ?? ??
+    if (envir$verbose) cat("map data loaded...\n")
+ ver=1 # ?? ??
     if (ver == 0) {
         coding <- new("snp.coding", as.raw(rep(1, length(pos))))
         strand <- new("snp.strand", as.raw(rep(0, length(pos))))
@@ -517,16 +606,16 @@ gwaa = function (markers = NULL, force = TRUE,
     {
         coding = Mega2GenABELcoding(markers = markers, envir=envir)
         class(coding) <- "snp.coding"
-        cat("allele coding data loaded...\n")
+        if (envir$verbose) cat("allele coding data loaded...\n")
 
         strand  = raw(nsnps)
         class(strand) <- "snp.strand"
-        cat("strand data loaded...\n")
+        if (envir$verbose) cat("strand data loaded...\n")
     }
 
-    rdta = Mega2GenABELconvert(markers = markers, envir=envir)
+    rdta = Mega2GenABELconvert(markers = markers, envir=envir, choose=choose)
     dim(rdta) <- c(nbytes, nsnps)
- #?? ?? generate compress on person NOT marker
+# generate compress on person NOT marker
     rdta <- new("snp.mx", rdta)
 
     gc(verbose = FALSE)
@@ -536,7 +625,7 @@ gwaa = function (markers = NULL, force = TRUE,
     a <- snp.data(nids = nids, rawdata = rdta, idnames = ids, 
                   snpnames = mnams, chromosome = chrom, map = pos, coding = coding, 
                   strand = strand, male = dta$sex)
-    cat("snp.data object created...\n")
+    if (envir$verbose) cat("snp.data object created...\n")
 
     rm(rdta, ids, mnams, chrom, pos, coding, strand)
     gc(verbose = FALSE)
