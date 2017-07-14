@@ -124,7 +124,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // getgenotypesgenabel_2
-Rcpp::RawMatrix getgenotypesgenabel_2(NumericVector locus_arg, List genotype_arg, List allele_arg, NumericVector miscN_arg);
+Rcpp::List getgenotypesgenabel_2(NumericVector locus_arg, List genotype_arg, List allele_arg, NumericVector miscN_arg);
 RcppExport SEXP mega2r_getgenotypesgenabel_2(SEXP locus_argSEXP, SEXP genotype_argSEXP, SEXP allele_argSEXP, SEXP miscN_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
