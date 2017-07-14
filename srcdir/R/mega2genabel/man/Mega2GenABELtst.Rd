@@ -4,12 +4,15 @@
 \alias{Mega2GenABELtst}
 \title{compare two gwaa.data-class objects}
 \usage{
-Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
+Mega2GenABELtst(mega_ = mega, gwaa_ = srdta, full = TRUE)
 }
 \arguments{
 \item{mega_}{name of first gwaa.data-class object}
 
 \item{gwaa_}{name of first gwaa.data-class object}
+
+\item{full}{if TRUE compare text as.character(gwaa_@gtdata) vs as.character(mega_@gtdata)
+could be rather slow.}
 }
 \value{
 None

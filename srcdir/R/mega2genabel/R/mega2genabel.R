@@ -347,30 +347,34 @@ mkGenABELphe = function (envir) {
 #'\dontrun{
 #' Mega2GenABELcoding(envir)
 #'}
-Mega2GenABELcoding = function(markers = NULL, envir = ENV) {
+Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
     if (is.null(markers)) markers = envir$markers
 
     allele_table = envir$allele_table[envir$allele_table$locus_link %in% markers$locus_link,]
     mm = merge(x=allele_table[allele_table$indexX == 1,],
                y=allele_table[allele_table$indexX == 2,],
                by="locus_link")
-    nn=ifelse(mm$Frequency.x > mm$Frequency.y,
+##  nn=ifelse(mm$Frequency.x > mm$Frequency.y,
+##            paste0(mm$AlleleName.x, mm$AlleleName.y), 
+##            paste0(mm$AlleleName.y, mm$AlleleName.x))
+##  envir$xGTy = mm$Frequency.x > mm$Frequency.y
+    nn=ifelse(Freq.x > (1-Freq.x),
               paste0(mm$AlleleName.x, mm$AlleleName.y), 
               paste0(mm$AlleleName.y, mm$AlleleName.x))
-    envir$xGTy = mm$Frequency.x > mm$Frequency.y
-    envir$Frx = mm$Frequency.x
-    envir$Fry = mm$Frequency.y
+    envir$xGTy = Freq.x > (1-Freq.x)
 
-    nn[mm$Frequency.x == 0 & mm$Frequency.y == 0] = '12'
+    if (any(Freq.x == .5)) {
+      print(mm[which(Freq.x == .5),])
+    }
 
-    fx = mm$Frequency.x == mm$Frequency.y
-#   nn[fx] = paste0(mm[fx, "AlleleName.x"], mm[fx, "AlleleName.y"])
+##  nn[mm$Frequency.x == 0 & mm$Frequency.y == 0] = '12'
+    nn[Freq.x == 2] = '12'
 
-    fy = mm$Frequency.x == 0 & mm$Frequency.y == 1
+    fx = Freq.x == 1
+    nn[fx] = paste0(mm[fx, "AlleleName.x"], mm[fx, "AlleleName.x"])
+
+    fy = Freq.x == 0
     nn[fy] = paste0(mm[fy, "AlleleName.y"], mm[fy, "AlleleName.y"])
-
-    fz = mm$Frequency.x == 1 & mm$Frequency.y == 0
-    nn[fz] = paste0(mm[fz, "AlleleName.x"], mm[fz, "AlleleName.x"])
 
 #this is what genabel does for 0/0
     nn[nn=="00"] = "12"
@@ -411,10 +415,10 @@ Mega2GenABELconvert = function(markers = NULL, envir = ENV, choose = choose) {
 ##browser()
     if (choose == 1) {
  print (system.time ({        
-    rag = getgenotypesgenabel(markers, envir = envir)
+    rag_freq = getgenotypesgenabel(markers, envir = envir)
  }))
 ##browser()
-    return (rag)
+    return (rag_freq)
 }
 
  print (system.time ({        
@@ -597,25 +601,20 @@ gwaa = function (markers = NULL, force = TRUE,
 
     pos = markers$position
     if (envir$verbose) cat("map data loaded...\n")
- ver=1 # ?? ??
-    if (ver == 0) {
-        coding <- new("snp.coding", as.raw(rep(1, length(pos))))
-        strand <- new("snp.strand", as.raw(rep(0, length(pos))))
-    }
-#    else
-    {
-        coding = Mega2GenABELcoding(markers = markers, envir=envir)
-        class(coding) <- "snp.coding"
-        if (envir$verbose) cat("allele coding data loaded...\n")
 
-        strand  = raw(nsnps)
-        class(strand) <- "snp.strand"
-        if (envir$verbose) cat("strand data loaded...\n")
-    }
+    strand  = raw(nsnps)
+    class(strand) <- "snp.strand"
+    if (envir$verbose) cat("strand data loaded...\n")
 
-    rdta = Mega2GenABELconvert(markers = markers, envir=envir, choose=choose)
+    rag_freq = Mega2GenABELconvert(markers = markers, envir=envir, choose=choose)
+    rdta = rag_freq$matrix
     dim(rdta) <- c(nbytes, nsnps)
-# generate compress on person NOT marker
+
+    freq = rag_freq$freq
+    coding = Mega2GenABELcoding(markers = markers, freq, envir=envir)
+    class(coding) <- "snp.coding"
+    if (envir$verbose) cat("allele coding data loaded...\n")
+
     rdta <- new("snp.mx", rdta)
 
     gc(verbose = FALSE)
