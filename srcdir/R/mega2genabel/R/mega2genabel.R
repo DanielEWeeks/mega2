@@ -113,8 +113,6 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #'
 #' @param sort pass value to gwaa
 #'
-#' @param choose 1 use .cpp getgenotypesgenabel; 2 use R to compress genotype cols; 3 as 2 but use .cpp
-#'
 #' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return gwaa.class-object of previously read.Mega2DB database
@@ -130,13 +128,13 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #' head(summary(gwaa))
 #'}
 Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
-                         sort = TRUE, mapno = 0, envir = ENV, choose=1) {
+                         sort = TRUE, mapno = 0, envir = ENV) {
 #browser()
     if (is.null(markers)) markers = envir$markers
 
     gwaa(markers = markers, force = force, 
                    makemap = makemap, sort = sort, 
-                   envir = envir, choose=choose)
+                   envir = envir)
 
 }
 
@@ -337,6 +335,8 @@ mkGenABELphe = function (envir) {
 #'
 #' @param markers data frame of markers being processed
 #'
+#' @param Freq.x frequency of first allele calculated from actual data.
+#'
 #' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
@@ -395,7 +395,7 @@ Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
-#' @importFrom mega2r getgenotypesraw infncpp getgenotypesgenabel
+#' @importFrom mega2r getgenotypesgenabel
 #' @importFrom stats aggregate
 #' @export
 #'
@@ -407,179 +407,20 @@ Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
 #'\dontrun{
 #' Mega2GenABELconvert(envir)
 #'}
-Mega2GenABELconvert = function(markers = NULL, envir = ENV, choose = choose) {
+Mega2GenABELconvert = function(markers = NULL, envir = ENV) {
 # browser("convert")
     if (is.null(markers)) markers = envir$markers
-    nmarkers = nrow(markers)
 
-##browser()
-    if (choose == 1) {
  print (system.time ({        
-    rag_freq = getgenotypesgenabel(markers, envir = envir)
+   rag_freq = getgenotypesgenabel(markers, envir = envir)
  }))
-##browser()
     return (rag_freq)
-}
-
- print (system.time ({        
-    y=rep(1:(ceiling(nrow(envir$fam)/4)), each=4)
-    zz = getgenotypesraw(markers, envir=envir)
-    fil= rep(0, length(y)-nrow(zz))
-    rag = matrix(raw(0), nrow = length(y)/4, ncol = nmarkers)
-
-    for (ms in seq(1, nmarkers, 100)) {
-#
-      cat(ms, "  ", sep= " ");  print (system.time ({        
-        for (m in seq(ms, ms+100-1, 1)) {
-          if (m > nmarkers) break
-#         intf = intfn(m, envir = envir)
-#         z = c(zz[ , m], fil)
-#         gg = aggregate(z, by=list(y), intf)
-#         rag[ , m] = as.raw(gg$x)
-          z = c(zz[ , m], fil)
-          if (choose == 2)
-              rag[ , m] = infn(z, (envir$Frx[m] > envir$Fry[m]) )
-          else
-              rag[ , m] = infncpp(z, (envir$Frx[m] > envir$Fry[m]) )
-        }
-#
-      }))
-    }
- }))
-    rag
-}
-
-infn = function(v, xGTy) {
-    if (xGTy) {
-        a = 3; b = 1
-    } else {
-        a = 1; b = 3
-    }
-    ans = raw(length(v) / 4)
-    i = 1
-    for (n in seq(1, length(v), 4)) {
-        B2 = 0
-
-        el = v[n]
-        if (el == 131074) #22
-            b2 = a
-        else if (el == 65537) #11
-            b2 = b
-        else if (el == 131073 || el == 65538) #21 #12
-            b2 = 2
-        else if (el == 0)
-            b2 = 0
-        B2 = bitwOr(B2, bitwShiftL(b2, 6))
-
-        el = v[n+1]
-        if (el == 131074) #22
-            b2 = a
-        else if (el == 65537) #11
-            b2 = b
-        else if (el == 131073 || el == 65538) #21 #12
-            b2 = 2
-        else if (el == 0)
-            b2 = 0
-        B2 = bitwOr(B2, bitwShiftL(b2, 4))
-
-        el = v[n+2]
-        if (el == 131074) #22
-            b2 = a
-        else if (el == 65537) #11
-            b2 = b
-        else if (el == 131073 || el == 65538) #21 #12
-            b2 = 2
-        else if (el == 0)
-            b2 = 0
-        B2 = bitwOr(B2, bitwShiftL(b2, 2))
-
-        el = v[n+3]
-        if (el == 131074) #22
-            b2 = a
-        else if (el == 65537) #11
-            b2 = b
-        else if (el == 131073 || el == 65538) #21 #12
-            b2 = 2
-        else if (el == 0)
-            b2 = 0
-        B2 = bitwOr(B2, b2)
-
-        ans[i] = as.raw(B2)
-        i = i + 1
-    }
-    ans
-}
-
-intfn = function(m, envir = ENV) {
-    if (envir$Frx[m] > envir$Fry[m]) {
-        a = 3; b = 1
-#    } else if (envir$Frx[m] == envir$Fry[m]) {
-#        a = 3; b = 1
-    } else {
-        a = 1; b = 3
-    }
-    fun = function (v) {
-        B2 = 0
-#       for (el in v) {
-        {
-            el = v[1]
-            if (el == 131074) #22
-                b2 = a
-            else if (el == 65537) #11
-                b2 = b
-            else if (el == 131073 || el == 65538) #21 #12
-                b2 = 2
-            else if (el == 0)
-                b2 = 0
-            B2 = bitwOr(B2, bitwShiftL(b2, 6))
-        }
-#       for (el in v) {
-        {
-            el = v[2]
-            if (el == 131074) #22
-                b2 = a
-            else if (el == 65537) #11
-                b2 = b
-            else if (el == 131073 || el == 65538) #21 #12
-                b2 = 2
-            else if (el == 0)
-                b2 = 0
-            B2 = bitwOr(B2, bitwShiftL(b2, 4))
-        }
-#       for (el in v) {
-        {
-            el = v[3]
-            if (el == 131074) #22
-                b2 = a
-            else if (el == 65537) #11
-                b2 = b
-            else if (el == 131073 || el == 65538) #21 #12
-                b2 = 2
-            else if (el == 0)
-                b2 = 0
-            B2 = bitwOr(B2, bitwShiftL(b2, 2))
-        }
-#       for (el in v) {
-        {
-            el = v[4]
-            if (el == 131074) #22
-                b2 = a
-            else if (el == 65537) #11
-                b2 = b
-            else if (el == 131073 || el == 65538) #21 #12
-                b2 = 2
-            else if (el == 0)
-                b2 = 0
-            B2 = bitwOr(B2, b2)
-        }
-    B2
-    }
 }
 
 #' @importFrom GenABEL snp.data
 #' @importFrom methods is new
 gwaa = function (markers = NULL, force = TRUE, 
-    makemap = FALSE, sort = TRUE, id = "id", envir = ENV, choose=choose)
+    makemap = FALSE, sort = TRUE, id = "id", envir = ENV)
 {
     if (is.null(markers)) markers = envir$markers
 
@@ -606,7 +447,7 @@ gwaa = function (markers = NULL, force = TRUE,
     class(strand) <- "snp.strand"
     if (envir$verbose) cat("strand data loaded...\n")
 
-    rag_freq = Mega2GenABELconvert(markers = markers, envir=envir, choose=choose)
+    rag_freq = Mega2GenABELconvert(markers = markers, envir=envir)
     rdta = rag_freq$matrix
     dim(rdta) <- c(nbytes, nsnps)
 

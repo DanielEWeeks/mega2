@@ -28,6 +28,8 @@
 go = function() {
 
     print("## run 200 ranges of pedgene to compare with YJiang's results; and profile")
+    print("## result environment returned in ENV")
+
 
     library(mega2pedgene)
 
@@ -40,7 +42,9 @@ go = function() {
     print(summaryRprof("prof.out", lines="both"))
 
     aa=setwd(aa)
+
+    envir
 }
 
-go()
+ENV=go()
 
