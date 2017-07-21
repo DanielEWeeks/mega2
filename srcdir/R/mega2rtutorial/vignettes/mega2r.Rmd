@@ -1,15 +1,22 @@
 ---
-title: "Mega2R tutorial"
+title: "Mega2R Tutorial"
 author: "Robert V. Baron and Daniel E. Weeks"
 date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
 output:
+  rmarkdown::html_vignette:
   pdf_document:
     toc: true
     number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Mega2r Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
-require(knitr)
+library(mega2rtutorial)
+library(knitr)
+Mega2=FALSE
 # Set so that long lines in R will be wrapped:
 opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
 ```
@@ -106,7 +113,7 @@ Mega2 batch file to automate the processing by Mega2. To run Mega2 to
 process and create the SQLite3 database 'seqsimr.db', we issue this
 command at the Unix prompt:
 
-```
+```{bash, eval=Mega2}
 mega2 MEGA2.BATCH.seqsimr
 ```
 
@@ -157,7 +164,8 @@ After you have the database, start up the R program. The first R commands you sh
 
 ```{r,eval=FALSE}
 library(mega2r)
-ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+database_file = system.file("exdata", "seqsimr.db", package = "mega2rtutorial")
+ENV = read.Mega2DB(database_file, verbose = TRUE)
 ```
 
 The first argument should be the path to the database. Providing the
@@ -175,7 +183,8 @@ the change is permanent.)
 
 ```{r mega2r}
 library(mega2r)
-ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+database_file = system.file("exdata", "seqsimr.db", package = "mega2rtutorial")
+ENV = read.Mega2DB(database_file, verbose = TRUE)
 ```
 
 We need to make two observations that apply to all Mega2R functions:
@@ -247,7 +256,8 @@ stores some values that will be used repeatedly. viz:
 
 ```{r mega2pedgene}
 library(mega2pedgene)
-ENV = init_pedgene("seqsimr.db", verbose = T)
+database_file = system.file("exdata", "seqsimr.db", package = "mega2rtutorial")
+ENV = init_pedgene(database_file, verbose = T)
 ```
 
 Mega2R has an internal default list of the chromosome and base pair
@@ -395,7 +405,7 @@ This will use the C++ Mega2 program to populate the vcf directory with
 the same set of files that the R program created in the vcfr
 directory.  At the Unix command prompt, type:
 
-```
+```{bash, eval=Mega2}
 mkdir vcf
 mega2 MEGA2.BATCH.vcf
 ```
@@ -426,7 +436,7 @@ You should compare the two directories: vcf and vcfr. Please add the
 differences in white space. You may may notice that expressions that
 contain dates that are different between the two directories.  Type:
 
-```
+```{bash, eval=Mega2}
 diff -wrs vcf vcfr
 ```
 
@@ -449,7 +459,7 @@ dmpPed()
 
 Then we switch to the Unix command line and run:
 
-```
+```{bash, eval=Mega2}
 mega2 MEGA2.BATCH.srdta
 ```
 
@@ -484,8 +494,9 @@ to produce the Mega2 database srdta.db.
 
 Then we go back into R and type:
 
-```{r}
-ENV = read.Mega2DB("srdta.db")
+```{r, eval=Mega2}
+database_file = system.file("exdata", "srdta.db", package = "mega2rtutorial")
+ENV = read.Mega2DB(database_file)
 mega = Mega2GenABEL("SRD")
 list.files(pattern = "SRD.*")
 ```
@@ -494,7 +505,7 @@ list.files(pattern = "SRD.*")
 compare them however you prefer.  But, Mega2GenABELtst can be used to
 compare the phenotype and genotype data, viz. in R type:
 
-```{r}
+```{r, eval=Mega2}
 Mega2GenABELtst()
 ```
 

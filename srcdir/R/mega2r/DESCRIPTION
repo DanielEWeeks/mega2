@@ -18,14 +18,17 @@ Imports:
     GenomeInfoDb,
     DBI,
     RSQLite
-Suggests: 
+Suggests:
     TxDb.Hsapiens.UCSC.hg19.knownGene,
     org.Hs.eg.db,
     mega2pedgene,
     mega2vcf,
-    mega2genabel
+    mega2genabel,
+    knitr,
+    rmarkdown
 Enhances: parallel
 SystemRequirements: Mega2 
 NeedsCompilation: yes
 RoxygenNote: 6.0.1
 #KeepSource: TRUE
+VignetteBuilder: knitr

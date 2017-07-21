@@ -1,0 +1,16 @@
+Package: mega2rtutorial
+Title: Mega2r Tutorial: Docs and Data
+Version: 0.5.4
+Authors@R: c(person("Robert", "Baron",
+    email = "rvb5@pitt.edu", role = c("aut", "cre")))
+Maintainer: Robert V Baron <rvb5@pitt.edu>, Daniel Weeks <weeks@pitt.edu>
+Description: This package holds data for Mega2rtutorial and vignettes.  The data is also used by the various "mega2" packages
+Depends: R (>= 3.3.3)
+Suggests:
+   knitr,
+   rmarkdown
+License: GPL (>= 3)
+RoxygenNote: 6.0.1
+LazyData: true
+#KeepSource: TRUE
+VignetteBuilder: knitr
