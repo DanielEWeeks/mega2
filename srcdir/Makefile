@@ -106,7 +106,8 @@ SRCS =  input_check.cpp     select_index.cpp \
 	write_mach.cpp      write_minimacshapeit.cpp        write_vcf.cpp \
 	dbmega2.cpp         dbmisc.cpp           dbbatch.cpp \
 	dbpedigree.cpp      dballele.cpp         dbloci.cpp \
-	dbmap.cpp           dbgenotype.cpp       dbrefallele.cpp
+	dbmap.cpp           dbgenotype.cpp       dbrefallele.cpp \
+       read_bcfs.cpp
 
 OBJS =  $(SRCS:.cpp=.o)
 
@@ -366,10 +367,10 @@ user_input.o: linkage_external.h makeped.h pedtree.h batch_input.h
 user_input.o: input_check.h hwe.h compress_ext.h input_ops.hh str_utils.hh
 user_input.o: input.hh read_impute.hh annotated_ped_file.h
 user_input.o: read_impute_bgen.hh zlib.h zconf.h read_impute_bgen2.hh
-user_input.o: batch_input_ext.h cw_routines_ext.h error_messages_ext.h
-user_input.o: fcmap_ext.h genetic_utils_ext.h reorder_loci_ext.h
-user_input.o: grow_string_ext.h output_file_names_ext.h output_routines_ext.h
-user_input.o: plink_ext.h utils_ext.h user_input_ext.h
+user_input.o: read_bcfs.hh batch_input_ext.h cw_routines_ext.h
+user_input.o: error_messages_ext.h fcmap_ext.h genetic_utils_ext.h
+user_input.o: reorder_loci_ext.h grow_string_ext.h output_file_names_ext.h
+user_input.o: output_routines_ext.h plink_ext.h utils_ext.h user_input_ext.h
 user_input.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
 user_input.o: class_old.h analysis.h write_plink_ext.h plink_core_ext.h
 user_input.o: database_dump_ext.h
@@ -405,7 +406,7 @@ mega2.o: write_mfiles_ext.h write_pap_ext.h write_premakeped_ext.h
 mega2.o: write_prest_ext.h write_sage_files_ext.h write_simulate_files_ext.h
 mega2.o: write_solar_files_ext.h write_vitesse_ext.h version.h class_old.h
 mega2.o: analysis.h write_plink_ext.h plink_core_ext.h write_shapeit_ext.h
-mega2.o: database_dump_ext.h dbrefallele.h dblite.hh
+mega2.o: database_dump_ext.h
 write_apm.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_apm.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_apm.o: input_check.h hwe.h compress_ext.h error_messages_ext.h
@@ -916,17 +917,19 @@ write_vcf.o: zconf.h error_messages_ext.h utils_ext.h entry.h
 write_vcf.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
 write_vcf.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_vcf.o: user_input_ext.h input_ops.hh str_utils.hh write_files_ext.h
-write_vcf.o: write_vcf_ext.h analysis.h vcftools/mega2_vcftools_interface.h
-write_vcf.o: annotated_ped_file.h vcftools/bcf_file.h vcftools/output_log.h
-write_vcf.o: vcftools/parameters.h vcftools/variant_file.h
-write_vcf.o: vcftools/vcf_entry.h vcftools/bcf_entry.h vcftools/header.h
-write_vcf.o: vcftools/bgzf.h vcftools/vcf_file.h vcftools/parameters.h
-write_vcf.o: zlib-1.2.8/zlib.h dbrefallele.h dblite.hh
+write_vcf.o: read_files_ext.h write_vcf_ext.h analysis.h
+write_vcf.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
+write_vcf.o: vcftools/bcf_file.h vcftools/output_log.h vcftools/parameters.h
+write_vcf.o: vcftools/variant_file.h vcftools/vcf_entry.h
+write_vcf.o: vcftools/bcf_entry.h vcftools/header.h vcftools/bgzf.h
+write_vcf.o: vcftools/vcf_file.h vcftools/parameters.h zlib-1.2.8/zlib.h
+write_vcf.o: dbrefallele.h dblite.hh
 dbmega2.o: types.hh common.h typedefs.h errorno.h allutil.h linkage.h
 dbmega2.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
 dbmega2.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h
 dbmega2.o: write_files_ext.h tod.hh dblite.hh dbbatch.hh dbmisc.hh
 dbmega2.o: dbpedigree.hh dballele.hh dbloci.hh dbmap.hh dbgenotype.hh
+dbmega2.o: dbrefallele.h
 dbmisc.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 dbmisc.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
 dbmisc.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h input_ops.hh
@@ -958,5 +961,14 @@ dbgenotype.o: utils_ext.h dblite.hh dbgenotype.hh tod.hh
 dbrefallele.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 dbrefallele.o: linkage_external.h makeped.h pedtree.h batch_input.h
 dbrefallele.o: input_check.h hwe.h compress_ext.h dbrefallele.h dblite.hh
-dbrefallele.o: fcmap_ext.h zlib-1.2.8/zlib.h dbmisc.hh user_input_ext.h
-dbrefallele.o: input_ops.hh str_utils.hh
+dbrefallele.o: fcmap_ext.h user_input_ext.h input_ops.hh str_utils.hh
+dbrefallele.o: error_messages_ext.h read_files_ext.h zlib-1.2.8/zlib.h
+read_bcfs.o: common.h types.hh tod.hh error_messages_ext.h typedefs.h
+read_bcfs.o: errorno.h allutil.h linkage.h linkage_external.h makeped.h
+read_bcfs.o: pedtree.h batch_input.h input_check.h hwe.h compress_ext.h
+read_bcfs.o: fcmap_ext.h batch_input_ext.h mrecode.h mrecode_ext.h
+read_bcfs.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
+read_bcfs.o: reorder_loci_ext.h plink_ext.h annotated_ped_file_ext.h
+read_bcfs.o: annotated_ped_file.h read_files_ext.h utils_ext.h str_utils.hh
+read_bcfs.o: input.hh input_ops.hh read_impute.hh read_impute_bgen.hh zlib.h
+read_bcfs.o: zconf.h read_impute_bgen2.hh read_bcfs.hh

@@ -34,6 +34,7 @@
 #include "read_impute.hh"
 #include "read_impute_bgen.hh"
 #include "read_impute_bgen2.hh"
+#include "read_bcfs.hh"
 
 
 class Input_Old : public Input_Base {
@@ -136,18 +137,23 @@ public:
 
 class Input_VCF : public Input_VCF_Common {
 public:
-    Input_VCF(INPUT_FORMAT_t i): Input_VCF_Common(i) {}
+    Input_VCF(INPUT_FORMAT_t i): Input_VCF_Common(i) {
+        xcf = 1;
+        req_locus_file = 0;
+        req_map_file   = 0;
+        req_stem_flag  = 1;
+    }
     virtual ~Input_VCF() {};
     virtual Input_Ops *GetOps() {return &Ops;};
     Input_Ops Ops;
 };
 
-class Input_BCFs: public Input_VCF_Common{
+class Input_BCFs: public Input_Base{
 public:
-    Input_BCFs(INPUT_FORMAT_t i): Input_VCF_Common(i) { }
+    Input_BCFs(INPUT_FORMAT_t i): Input_Base(i) { }
     virtual ~Input_BCFs() {};
     virtual Input_Ops *GetOps() {return &Ops;};
-    Input_Ops Ops;
+    ReadBCFs Ops;
 };
 
 ////////////////

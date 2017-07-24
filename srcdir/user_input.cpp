@@ -91,8 +91,7 @@ void  menu1(file_format *infl_type,
             int *Untyped_ped_opt, int *Error_sim_opt,
             char **output_path, char **db_name,
             double *freq_mismatch_thresh,
-            char **reffl_name, int *strand_flip_opt,
-            char **bcfs_path, char **bcfs_template);
+            char **reffl_name, int *strand_flip_opt);
 
 void            define_affection_labels(linkage_ped_top *Top,
 					analysis_type analysis);
@@ -957,8 +956,7 @@ void menu1(file_format *infl_type,
            int *Untyped_ped_opt, int *Error_sim_opt,
            char **output_path, char **db_name,
            double *freq_mismatch_thresh,
-           char **reffl_name, int *strand_flip_opt,
-           char **bcfs_path, char **bcfs_template)
+           char **reffl_name, int *strand_flip_opt)
 {
     int            i, choice_ = -1;
     char           cchoice[10];
@@ -970,7 +968,7 @@ void menu1(file_format *infl_type,
     int            compress_i = 18, file_format_i = 19, vcf_args_i = 20;
     int            vcf_mak_i = 21, site_vcf_i = 22, site_bcf_i = 23, site_vcf_gz_i = 24, _aux_i = 0;
     int            db_file_i = 25, in_dir_i = 26, pmap_i = 27;
-    int	           imputed_i = 28, inf_i = 29, site_bcfs_dir_i=30, site_bcfs_template_i = 31/*, flip_i = 30*/;
+    int	           imputed_i = 28, inf_i = 29/* site_bcfs_dir_i=30, site_bcfs_template_i = 31*//*, flip_i = 30*/;
     int            idx, choiceA[32]; /* idx should be 1+ largest <>_i value (above)*/
 
     int            plinkf = 0, xcf = 0;
@@ -995,8 +993,6 @@ void menu1(file_format *infl_type,
 
     fln_alloc(output_path);
     fln_alloc(input_path);
-    fln_alloc(bcfs_path);
-    fln_alloc(bcfs_template);
 
     fln_alloc(pedfl_name,   pedo);
     fln_alloc(locusfl_name, loco);
@@ -1061,8 +1057,6 @@ void menu1(file_format *infl_type,
 
     sprintf(*output_path, ".");
     sprintf(*input_path, ".");
-    sprintf(*bcfs_path,".");
-    sprintf(*bcfs_template,"?");
 
     int line_len;
     while (!exit_loop) {
@@ -1253,18 +1247,20 @@ void menu1(file_format *infl_type,
             }
         }
 
-        if(Input_Format == in_format_bcfs){
-            printf("%2d) %-*s%s\n", idx, line_len,
-                   "BCF File Directory:",
-                   ((!strcmp(*bcfs_path, "."))?"[ Current directory ]" : *bcfs_path));
-            choiceA[idx] = site_bcfs_dir_i;
-            idx++;
 
-            printf("%2d) %-*s%s\n", idx, line_len,
-                   "BCF File Template:", *bcfs_template);
-            choiceA[idx] = site_bcfs_template_i;
-            idx++;
-        }
+        //replace this with a do_menu_display
+//        if(Input_Format == in_format_bcfs){
+//            printf("%2d) %-*s%s\n", idx, line_len,
+//                   "BCF File Directory:",
+//                   ((!strcmp(*bcfs_path, "."))?"[ Current directory ]" : *bcfs_path));
+//            choiceA[idx] = site_bcfs_dir_i;
+//            idx++;
+//
+//            printf("%2d) %-*s%s\n", idx, line_len,
+//                   "BCF File Template:", *bcfs_template);
+//            choiceA[idx] = site_bcfs_template_i;
+//            idx++;
+//        }
 
         if (Input->req_stem_flag) {
             printf("%2d) %-*s%s\n", idx, line_len, "Input file stem:", extension_name);
@@ -1546,52 +1542,52 @@ void menu1(file_format *infl_type,
         } else if (choice_ == plink_phe_i) {
             fln_get(pheo, "phenotype");
 
-        } else if(choice_ == site_bcfs_dir_i) {
-            while (1) {
-                draw_line();
-                printf("Please enter BCF directory name > ");
-                fcmap(stdin, "%s", *bcfs_path);
-                newline;
-
-                if (access(*bcfs_path, F_OK)) {
-                    printf("WARNING: Could not find directory %s\n", *bcfs_path);
-                    continue;
-                } else if (!is_dir(*bcfs_path)) {
-                    printf("WARNING: %s is not a directory.\n", *bcfs_path);
-                    printf("Please specify a new or valid directory.\n");
-                    strcpy(*bcfs_path, ".");
-                    continue;
-                } else if (access(*bcfs_path, W_OK)) {
-                    printf("WARNING: %s is not a writable directory.\n", *bcfs_path);
-                    printf("Please specify a new or valid directory.\n");
-                    continue;
-                }
-                else
-                    break;
-            }
-        } else if(choice_ == site_bcfs_template_i) {
-            while(1) {
-                draw_line();
-                printf("To enter a template please enter a value of the form:\n");
-                printf("[data?.bcf]\nWhere the wildecard '?' will replace the CHR number for all chromosomes.\n");
-                printf("Please enter BCF file template format > ");
-                fcmap(stdin, "%s", *bcfs_template);
-                newline;
-
-                Vecs bcfsplit;
-                split(bcfsplit, *bcfs_template, "?");
-
-                if (bcfsplit.size() != 2) {
-                    printf("Please include one and only one ? in the template name\n");
-                    continue;
-                }
-                else
-                    break;
-            }
-
-
-
-        } else if (choice_ == ref_i) {
+        }
+            //added to read_bcfs do_menu_parse
+//        else if(choice_ == site_bcfs_dir_i) {
+//            while (1) {
+//                draw_line();
+//                printf("Please enter BCF directory name > ");
+//                fcmap(stdin, "%s", *bcfs_path);
+//                newline;
+//
+//                if (access(*bcfs_path, F_OK)) {
+//                    printf("WARNING: Could not find directory %s\n", *bcfs_path);
+//                    continue;
+//                } else if (!is_dir(*bcfs_path)) {
+//                    printf("WARNING: %s is not a directory.\n", *bcfs_path);
+//                    printf("Please specify a new or valid directory.\n");
+//                    strcpy(*bcfs_path, ".");
+//                    continue;
+//                } else if (access(*bcfs_path, W_OK)) {
+//                    printf("WARNING: %s is not a writable directory.\n", *bcfs_path);
+//                    printf("Please specify a new or valid directory.\n");
+//                    continue;
+//                }
+//                else
+//                    break;
+//            }
+//        } else if(choice_ == site_bcfs_template_i) {
+//            while(1) {
+//                draw_line();
+//                printf("To enter a template please enter a value of the form:\n");
+//                printf("[data?.bcf]\nWhere the wildecard '?' will replace the CHR number for all chromosomes.\n");
+//                printf("Please enter BCF file template format > ");
+//                fcmap(stdin, "%s", *bcfs_template);
+//                newline;
+//
+//                Vecs bcfsplit;
+//                split(bcfsplit, *bcfs_template, "?");
+//
+//                if (bcfsplit.size() != 2) {
+//                    printf("Please include one and only one ? in the template name\n");
+//                    continue;
+//                }
+//                else
+//                    break;
+//            }
+//        }
+        else if (choice_ == ref_i) {
             printf("You can use an external reference panel to get a set of reference alleles.\n");
             printf("This process is described in the section called 'External Reference Allele Panel in the Database'\n");
             printf("in the Mega2 documentation.\n\n");

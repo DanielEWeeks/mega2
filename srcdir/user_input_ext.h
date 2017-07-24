@@ -69,8 +69,7 @@ extern void menu1(file_format *infl_type,
                   int *Untyped_ped_opt, int *err_sim_opt,
                   char **mega2_output_path, char **db_name,
                   double *freq_miscmatch_thresh,
-				  char **reffl_name, int *strand_flip_opt,
-				  char **bcfs_path, char ** bcfs_template);
+				  char **reffl_name, int *strand_flip_opt);
 
 extern void menu1a(int *Untyped_ped_opt, int *err_sim_opt,
                    char **mega2_output_path, char **db_name,
