@@ -89,6 +89,9 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #'
 #' @param gwaa_ name of first gwaa.data-class object
 #'
+#' @param full if TRUE compare text as.character(gwaa_@gtdata) vs as.character(mega_@gtdata)
+#'  could be rather slow.
+#'
 #' @return None
 #'
 #' @export
@@ -98,7 +101,7 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #'\dontrun{
 #' tst()
 #'}
-Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta) {
+Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta, full = TRUE) {
 
     ANS = TRUE
     phens = names(gwaa_@phdata)
@@ -163,30 +166,32 @@ Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta) {
     print(ans)
     ANS = ANS && ans
     
-    ms = as.character(gwaa_@gtdata)
-    mm = as.character(mega_@gtdata)
+    if (full) {
+        ms = as.character(gwaa_@gtdata)
+        mm = as.character(mega_@gtdata)
 
-    ms[ms == "T/G"] = "G/T"
-    ms[ms == "T/C"] = "C/T"
-    ms[ms == "T/A"] = "A/T"
-    ms[ms == "G/C"] = "C/G"
-    ms[ms == "G/A"] = "A/G"
-    ms[ms == "C/A"] = "A/C"
-    ms[is.na(ms)]   = "0/0"
+        ms[ms == "T/G"] = "G/T"
+        ms[ms == "T/C"] = "C/T"
+        ms[ms == "T/A"] = "A/T"
+        ms[ms == "G/C"] = "C/G"
+        ms[ms == "G/A"] = "A/G"
+        ms[ms == "C/A"] = "A/C"
+        ms[is.na(ms)]   = "0/0"
 
-    mm[mm == "T/G"] = "G/T"
-    mm[mm == "T/C"] = "C/T"
-    mm[mm == "T/A"] = "A/T"
-    mm[mm == "G/C"] = "C/G"
-    mm[mm == "G/A"] = "A/G"
-    mm[mm == "C/A"] = "A/C"
-    mm[is.na(mm)]   = "0/0"
+        mm[mm == "T/G"] = "G/T"
+        mm[mm == "T/C"] = "C/T"
+        mm[mm == "T/A"] = "A/T"
+        mm[mm == "G/C"] = "C/G"
+        mm[mm == "G/A"] = "A/G"
+        mm[mm == "C/A"] = "A/C"
+        mm[is.na(mm)]   = "0/0"
 
-     cat("all(mega_@gtdata == gwaa_@gtdata)")
-    ans = all(mm == ms)
-    print(ans)
-    ANS = ANS && ans
+         cat("all(mega_@gtdata == gwaa_@gtdata)")
+        ans = all(mm == ms)
+        print(ans)
+        ANS = ANS && ans
+    }
 
-    print(rep(ans, 10))
-    print(rep(ans, 10))
+    print(rep(ANS, 10))
+    print(rep(ANS, 10))
 }

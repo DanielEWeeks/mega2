@@ -8,7 +8,7 @@ go = function() {
 
     mega = Mega2GenABEL("xyz", envir = ENV)
 
-    Mega2GenABELtst()
+    Mega2GenABELtst(mega, srdta)
 
 }
 

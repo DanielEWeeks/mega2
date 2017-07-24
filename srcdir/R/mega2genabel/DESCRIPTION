@@ -13,7 +13,11 @@ Depends:
 License: GPL (>= 3)
 LazyData: true
 Imports:
+     methods
 SystemRequirements: Mega2
 #Roxygen: list(wrap = FALSE)
 RoxygenNote: 6.0.1
 #KeepSource: TRUE
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr

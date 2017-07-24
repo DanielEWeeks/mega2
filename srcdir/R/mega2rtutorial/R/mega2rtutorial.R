@@ -25,26 +25,33 @@
 # 
 # ===========================================================================
 
-go = function() {
+#' mega2rtutorial package
+#'
+#' @description This package retrieves data stored in the Mega2rtutorial and 
+#'	dumps them in the current directory.
+#'
+#' @author Robert V Baron
+#' @docType package
+#' @name mega2rtutorial-package
+NULL
 
-    print("## run 200 ranges of pedgene to compare with YJiang's results; and profile")
-    print("## result environment returned in ENV")
-
-
-    library(mega2pedgene)
-
-    aa=setwd("~/mega2/test/R/yj/realDataAnalysis/mega2")
-    envir = init_pedgene("~/mega2/data/yj1.db", verbose = 1)
-
-    Rprof("prof.out", line.profiling=T, memory.profiling=T)
-    run_pedgene(gs=1:200, envir = envir)
-    Rprof(NULL)
-    print(summaryRprof("prof.out", lines="both"))
-
-    aa=setwd(aa)
-
-    envir
+#' dump tutorial data
+#'
+#' @description
+#'
+#' @export
+#' @return None
+#'
+#' @examples
+#'\dontrun{
+#' dump_mega2rtutorial_data()
+#'}
+dump_mega2rtutorial_data = function(dir = ".") {
+    for (file in c("MEGA2.BATCH.seqsimr", "MEGA2.BATCH.srdta",
+                   "MEGA2.BATCH.vcf",
+                   "Mega2r.map", "Mega2r.ped", "seqsimr.db")) {
+        from = system.file("exdata", file, package="mega2rtutorial")
+        to   = paste(dir, file, sep="/")
+        file.copy(from, to, copy.mode = TRUE, copy.date = TRUE)
+    }
 }
-
-ENV=go()
-

@@ -56,6 +56,7 @@ NULL
 #' @return gwaa.class-object of previously read.Mega2DB database
 #'
 #' @importFrom GenABEL convert.snp.tped load.gwaa.data
+#' @importFrom methods is new
 #' @export
 #'
 #' @examples
@@ -68,6 +69,7 @@ NULL
 #'}
 Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 
+ print(system.time ({        
     if (is.null(markers)) markers = envir$markers
 
     mkGenABELtped(prefix, markers, mapno = mapno, envir)
@@ -87,11 +89,13 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 
 
 #x  return (load.gwaa.data(phenofile=paste0(prefix,".phe"),
-    return (gwaaO(phenofile=paste0(prefix,".phe"),
-                           genofile=paste0(prefix, "tped.raw"),
-                           force = TRUE,
-                           envir = envir)
-            )
+    ans = (gwaaO(phenofile=paste0(prefix,".phe"),
+                 genofile=paste0(prefix, "tped.raw"),
+                 force = TRUE,
+                 envir = envir)
+          )
+ }))
+    ans
 }
 
 #' generate gwaa.data-class object
@@ -102,6 +106,12 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #' @param markers data frame of markers being processed
 #'
 #' @param mapno specify which map index to use for genetic distances
+#'
+#' @param force pass value to gwaa
+#'
+#' @param makemap pass value to gwaa
+#'
+#' @param sort pass value to gwaa
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
@@ -323,6 +333,10 @@ mkGenABELphe = function (envir) {
 #'  Each element of the coding vector is a lookup in the GenABEL:::alleleID.codes() array.
 #'  The alleles are ordered so that with the greater frequency appears first.
 #'
+#' @param markers data frame of markers being processed
+#'
+#' @param Freq.x frequency of first allele calculated from actual data.
+#'
 #' @param envir "environment" containing SQLite database and other globals
 #'
 #' @return None
@@ -333,30 +347,34 @@ mkGenABELphe = function (envir) {
 #'\dontrun{
 #' Mega2GenABELcoding(envir)
 #'}
-Mega2GenABELcoding = function(markers = NULL, envir = ENV) {
+Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
     if (is.null(markers)) markers = envir$markers
 
     allele_table = envir$allele_table[envir$allele_table$locus_link %in% markers$locus_link,]
     mm = merge(x=allele_table[allele_table$indexX == 1,],
                y=allele_table[allele_table$indexX == 2,],
                by="locus_link")
-    nn=ifelse(mm$Frequency.x > mm$Frequency.y,
+##  nn=ifelse(mm$Frequency.x > mm$Frequency.y,
+##            paste0(mm$AlleleName.x, mm$AlleleName.y), 
+##            paste0(mm$AlleleName.y, mm$AlleleName.x))
+##  envir$xGTy = mm$Frequency.x > mm$Frequency.y
+    nn=ifelse(Freq.x > (1-Freq.x),
               paste0(mm$AlleleName.x, mm$AlleleName.y), 
               paste0(mm$AlleleName.y, mm$AlleleName.x))
-    envir$xGTy = mm$Frequency.x > mm$Frequency.y
-    envir$Frx = mm$Frequency.x
-    envir$Fry = mm$Frequency.y
+    envir$xGTy = Freq.x > (1-Freq.x)
 
-    nn[mm$Frequency.x == 0 & mm$Frequency.y == 0] = '12'
+    if (any(Freq.x == .5)) {
+      print(mm[which(Freq.x == .5),])
+    }
 
-    fx = mm$Frequency.x == mm$Frequency.y
-#   nn[fx] = paste0(mm[fx, "AlleleName.x"], mm[fx, "AlleleName.y"])
+##  nn[mm$Frequency.x == 0 & mm$Frequency.y == 0] = '12'
+    nn[Freq.x == 2] = '12'
 
-    fy = mm$Frequency.x == 0 & mm$Frequency.y == 1
+    fx = Freq.x == 1
+    nn[fx] = paste0(mm[fx, "AlleleName.x"], mm[fx, "AlleleName.x"])
+
+    fy = Freq.x == 0
     nn[fy] = paste0(mm[fy, "AlleleName.y"], mm[fy, "AlleleName.y"])
-
-    fz = mm$Frequency.x == 1 & mm$Frequency.y == 0
-    nn[fz] = paste0(mm[fz, "AlleleName.x"], mm[fz, "AlleleName.x"])
 
 #this is what genabel does for 0/0
     nn[nn=="00"] = "12"
@@ -377,7 +395,7 @@ Mega2GenABELcoding = function(markers = NULL, envir = ENV) {
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
-#' @importFrom mega2r getgenotypesraw
+#' @importFrom mega2r getgenotypesgenabel
 #' @importFrom stats aggregate
 #' @export
 #'
@@ -392,99 +410,15 @@ Mega2GenABELcoding = function(markers = NULL, envir = ENV) {
 Mega2GenABELconvert = function(markers = NULL, envir = ENV) {
 # browser("convert")
     if (is.null(markers)) markers = envir$markers
-    nmarkers = nrow(markers)
-
-    y=rep(1:(ceiling(nrow(envir$fam)/4)), each=4)
-    zz = getgenotypesraw(markers, envir=envir)
-    fil= rep(0, length(y)-nrow(zz))
-    rag = matrix(raw(0), nrow = length(y)/4, ncol = nmarkers)
 
  print (system.time ({        
-#   for (m in 1:nrow(markers)) 
-    for (ms in seq(1, nmarkers, 100)) {
-#
-      cat(ms, "  ", sep= " ");  print (system.time ({        
-        for (m in seq(ms, ms+100-1, 1)) {
-          if (m > nmarkers) break
-            intf = intfn(m, envir = envir)
-            z = c(zz[ , m], fil)
-            gg = aggregate(z, by=list(y), intf)
-            rag[ , m] = as.raw(gg$x)
-        }
-#
-      }))
-    }
+   rag_freq = getgenotypesgenabel(markers, envir = envir)
  }))
-    rag
-}
-
-intfn = function(m, envir = ENV) {
-    if (envir$Frx[m] > envir$Fry[m]) {
-        a = 3; b = 1
-#    } else if (envir$Frx[m] == envir$Fry[m]) {
-#        a = 3; b = 1
-    } else {
-        a = 1; b = 3
-    }
-    fun = function (v) {
-        B2 = 0
-#       for (el in v) {
-        {
-            el = v[1]
-            if (el == 131074) #22
-                b2 = a
-            else if (el == 65537) #11
-                b2 = b
-            else if (el == 131073 || el == 65538) #21 #12
-                b2 = 2
-            else if (el == 0)
-                b2 = 0
-            B2 = bitwOr(B2, bitwShiftL(b2, 6))
-        }
-#       for (el in v) {
-        {
-            el = v[2]
-            if (el == 131074) #22
-                b2 = a
-            else if (el == 65537) #11
-                b2 = b
-            else if (el == 131073 || el == 65538) #21 #12
-                b2 = 2
-            else if (el == 0)
-                b2 = 0
-            B2 = bitwOr(B2, bitwShiftL(b2, 4))
-        }
-#       for (el in v) {
-        {
-            el = v[3]
-            if (el == 131074) #22
-                b2 = a
-            else if (el == 65537) #11
-                b2 = b
-            else if (el == 131073 || el == 65538) #21 #12
-                b2 = 2
-            else if (el == 0)
-                b2 = 0
-            B2 = bitwOr(B2, bitwShiftL(b2, 2))
-        }
-#       for (el in v) {
-        {
-            el = v[4]
-            if (el == 131074) #22
-                b2 = a
-            else if (el == 65537) #11
-                b2 = b
-            else if (el == 131073 || el == 65538) #21 #12
-                b2 = 2
-            else if (el == 0)
-                b2 = 0
-            B2 = bitwOr(B2, b2)
-        }
-    B2
-    }
+    return (rag_freq)
 }
 
 #' @importFrom GenABEL snp.data
+#' @importFrom methods is new
 gwaa = function (markers = NULL, force = TRUE, 
     makemap = FALSE, sort = TRUE, id = "id", envir = ENV)
 {
@@ -495,38 +429,33 @@ gwaa = function (markers = NULL, force = TRUE,
     ids = paste(envir$fam$PedPre, envir$fam$PerPre, sep="_")
     nids <- length(ids)
     nbytes <- ceiling(nids/4)
-    cat("ids loaded...\n")
+    if (envir$verbose) cat("ids loaded...\n")
 
     mnams = markers$MarkerName
     nsnps <- length(mnams)
-    cat("marker names loaded...\n")
+    if (envir$verbose) cat("marker names loaded...\n")
 
     chrom = as.character(markers$chromosome)
     chrom <- as.factor(chrom)
     gc(verbose = FALSE)
-    cat("chromosome data loaded...\n")
+    if (envir$verbose) cat("chromosome data loaded...\n")
 
     pos = markers$position
-    cat("map data loaded...\n")
-  ver=1 # ?? ??
-    if (ver == 0) {
-        coding <- new("snp.coding", as.raw(rep(1, length(pos))))
-        strand <- new("snp.strand", as.raw(rep(0, length(pos))))
-    }
-#    else
-    {
-        coding = Mega2GenABELcoding(markers = markers, envir=envir)
-        class(coding) <- "snp.coding"
-        cat("allele coding data loaded...\n")
+    if (envir$verbose) cat("map data loaded...\n")
 
-        strand  = raw(nsnps)
-        class(strand) <- "snp.strand"
-        cat("strand data loaded...\n")
-    }
+    strand  = raw(nsnps)
+    class(strand) <- "snp.strand"
+    if (envir$verbose) cat("strand data loaded...\n")
 
-    rdta = Mega2GenABELconvert(markers = markers, envir=envir)
+    rag_freq = Mega2GenABELconvert(markers = markers, envir=envir)
+    rdta = rag_freq$matrix
     dim(rdta) <- c(nbytes, nsnps)
- #?? ?? generate compress on person NOT marker
+
+    freq = rag_freq$freq
+    coding = Mega2GenABELcoding(markers = markers, freq, envir=envir)
+    class(coding) <- "snp.coding"
+    if (envir$verbose) cat("allele coding data loaded...\n")
+
     rdta <- new("snp.mx", rdta)
 
     gc(verbose = FALSE)
@@ -536,7 +465,7 @@ gwaa = function (markers = NULL, force = TRUE,
     a <- snp.data(nids = nids, rawdata = rdta, idnames = ids, 
                   snpnames = mnams, chromosome = chrom, map = pos, coding = coding, 
                   strand = strand, male = dta$sex)
-    cat("snp.data object created...\n")
+    if (envir$verbose) cat("snp.data object created...\n")
 
     rm(rdta, ids, mnams, chrom, pos, coding, strand)
     gc(verbose = FALSE)

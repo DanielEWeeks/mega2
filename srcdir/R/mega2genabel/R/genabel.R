@@ -40,6 +40,7 @@ alleleID.codes <- function() {
 }
 
 # ~/rvb/Work/R/pkg/GenABEL/R/Xcheck.R
+#' @importFrom GenABEL crnames perid.summary
 "Xcheck" <-
 function(data,Pgte=0.01,Pssw=0.01,Pmsw=0.01,odds=1000,tabonly=FALSE,Fmale=0.8,Ffemale=0.2) {
 	if (!is(data,"snp.data")) stop("data argument should be of snp.data-class")
@@ -86,7 +87,7 @@ function(data,Pgte=0.01,Pssw=0.01,Pmsw=0.01,odds=1000,tabonly=FALSE,Fmale=0.8,Ff
 }
 
 
-# ~/rvb/Work/R/pkg/GenABEL/R/load.gwaa.data.R
+# 
 #load.gwaa.data =
 gwaaCheckPhe = function(dta, id) {
     coln <- names(dta)
