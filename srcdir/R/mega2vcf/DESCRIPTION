@@ -1,11 +1,16 @@
 Package: mega2vcf
-Title: generate a VCF file from a Mega2 SQLite database
-Description: Generate a VCF file from a Mega2 SQLite database.
 Version: 0.5.0
-Author: Robert V Baron <rvb5@pitt.edu>
-Maintainer: Robert V Baron <rvb5@pitt.edu>, Daniel Weeks <weeks@pitt.edu>
-Authors@R: c(person("Robert", "Baron",
-    email = "rvb5@pitt.edu", role = c("aut", "cre")))
+Date: 2017-07-25
+Title: Generate a VCF File from a Mega2 SQLite Database
+Description: Generate a VCF file from a Mega2 SQLite database.
+Authors@R: c(person("Robert V.", "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
+             person("Daniel", "Weeks",    email = "weeks@pitt.edu", role = c("cre")))
+Author: Robert V. Baron [aut],
+        Daniel Weeks    [cre]
+Maintainer: Daniel Weeks <weeks@pitt.edu>
+URL: https://watson.hgen.pitt.edu/mega2/mega2r/,
+     https://watson.hgen.pitt.edu/mega2/mega2r/mega2r.pdf
+BugReports: https://groups.google.com/forum/#!forum/mega2-users
 Depends:
     R (>= 3.0.1),
     mega2r
@@ -13,9 +18,8 @@ License: GPL (>= 3)
 LazyData: true
 Imports: 
 SystemRequirements: Mega2
-#Roxygen: list(wrap = FALSE)
 RoxygenNote: 6.0.1
-#KeepSource: TRUE
-Suggests: knitr,
+Suggests: mega2rtutorial,
+    knitr,
     rmarkdown
 VignetteBuilder: knitr
