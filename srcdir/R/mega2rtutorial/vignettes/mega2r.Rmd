@@ -22,7 +22,8 @@ opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
 # Tutorial directory and files 
 
 The files you will need for this tutorial are in the mega2rtutorial
-package.  To copy these files to the working directory run:
+package.  The "mega2" executable requires the Mega2.BATCH.name files to be in the
+working directory; to copy these files to the working directory run:
 
 ```{r}
 library(mega2rtutorial)
@@ -36,7 +37,7 @@ You should see the following files:
 --------------------------|-----------------------|---------------  
 [1] "MEGA2.BATCH.seqsimr" |  "MEGA2.BATCH.srdta"  |  "MEGA2.BATCH.vcf"      
 [4] "Mega2r.map"          |  "Mega2r.ped"         |  "mega2r.Rmd"   
-[7] "mega2r.pdf"          |  "seqsimr.db"         |    
+[7] "mega2r.pdf"          |  "seqsimr.db"         |  "srdta.db"   
 ```
 
 When you are done with these exercise, the "clean" command will remove these files:
@@ -112,8 +113,8 @@ We have provided files in the mega2rtutorial package, that contain
 the data from the simulation. These files are in PLINK ped format data
 for 1,380 samples with 1,000 markers:
 
-* seqsimr.ped
-* seqsimr.map
+* Mega2r.ped
+* Mega2r.map
 
 **If you do not wish to install Mega2 right now, you can use the seqsimr.db
 database that is in the tutorial directory.  Of course, the tutorial steps
