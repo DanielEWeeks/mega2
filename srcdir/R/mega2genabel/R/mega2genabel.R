@@ -69,7 +69,7 @@ NULL
 #'}
 Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 
- print(system.time ({        
+## print(system.time ({        
     if (is.null(markers)) markers = envir$markers
 
     mkGenABELtped(prefix, markers, mapno = mapno, envir)
@@ -94,7 +94,7 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
                  force = TRUE,
                  envir = envir)
           )
- }))
+## }))
     ans
 }
 
@@ -363,9 +363,9 @@ Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
               paste0(mm$AlleleName.y, mm$AlleleName.x))
     envir$xGTy = Freq.x > (1-Freq.x)
 
-    if (any(Freq.x == .5)) {
-      print(mm[which(Freq.x == .5),])
-    }
+##  if (any(Freq.x == .5)) {
+##    print(mm[which(Freq.x == .5),])
+##  }
 
 ##  nn[mm$Frequency.x == 0 & mm$Frequency.y == 0] = '12'
     nn[Freq.x == 2] = '12'
@@ -411,9 +411,9 @@ Mega2GenABELconvert = function(markers = NULL, envir = ENV) {
 # browser("convert")
     if (is.null(markers)) markers = envir$markers
 
- print (system.time ({        
+## print (system.time ({        
    rag_freq = getgenotypesgenabel(markers, envir = envir)
- }))
+## }))
     return (rag_freq)
 }
 
