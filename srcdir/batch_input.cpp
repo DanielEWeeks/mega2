@@ -275,6 +275,9 @@ static keyw_t keywords[] = {
     {"Align_Strand_Input",                    YORN,       "n"},
     {"VCF_Allele_Order",                      STRING,     "Original Order"},
 
+    {"BCFs_File_Directory",                   STRING,     "."},
+    {"BCFs_File_Template",                    STRING,     "?"},
+
 };
 
 int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);

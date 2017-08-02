@@ -107,7 +107,7 @@ SRCS =  input_check.cpp     select_index.cpp \
 	dbmega2.cpp         dbmisc.cpp           dbbatch.cpp \
 	dbpedigree.cpp      dballele.cpp         dbloci.cpp \
 	dbmap.cpp           dbgenotype.cpp       dbrefallele.cpp \
-       read_bcfs.cpp
+	read_bcfs.cpp \
 
 OBJS =  $(SRCS:.cpp=.o)
 
@@ -133,7 +133,7 @@ endif
 dbmega2.o dbmisc.o dbbatch.o dbpedigree.o dballele.o dbloci.o dbmap.o dbgenotype.o: IFLAGS += -Ilib/sqlite3
 dbrefallele.o write_vcf.o : IFLAGS += -Ilib/sqlite3
 
-user_input.o read_impute_bgen2.o: IFLAGS += -Ibgen/genfile/include $(stdC11)
+user_input.o read_impute_bgen2.o read_bcfs.o: IFLAGS += -Ibgen/genfile/include $(stdC11)
 
 write_IQLS.o write_beagle.o write_fbat.o write_loki.o write_mfiles.o: DFLAGS += -DRUNSHELL_SETUP
 write_pangaea.o write_plink_files.o write_premakeped.o: DFLAGS += -DRUNSHELL_SETUP

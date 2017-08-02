@@ -1247,21 +1247,6 @@ void menu1(file_format *infl_type,
             }
         }
 
-
-        //replace this with a do_menu_display
-//        if(Input_Format == in_format_bcfs){
-//            printf("%2d) %-*s%s\n", idx, line_len,
-//                   "BCF File Directory:",
-//                   ((!strcmp(*bcfs_path, "."))?"[ Current directory ]" : *bcfs_path));
-//            choiceA[idx] = site_bcfs_dir_i;
-//            idx++;
-//
-//            printf("%2d) %-*s%s\n", idx, line_len,
-//                   "BCF File Template:", *bcfs_template);
-//            choiceA[idx] = site_bcfs_template_i;
-//            idx++;
-//        }
-
         if (Input->req_stem_flag) {
             printf("%2d) %-*s%s\n", idx, line_len, "Input file stem:", extension_name);
             fln_stem = 1;
@@ -1543,50 +1528,7 @@ void menu1(file_format *infl_type,
             fln_get(pheo, "phenotype");
 
         }
-            //added to read_bcfs do_menu_parse
-//        else if(choice_ == site_bcfs_dir_i) {
-//            while (1) {
-//                draw_line();
-//                printf("Please enter BCF directory name > ");
-//                fcmap(stdin, "%s", *bcfs_path);
-//                newline;
-//
-//                if (access(*bcfs_path, F_OK)) {
-//                    printf("WARNING: Could not find directory %s\n", *bcfs_path);
-//                    continue;
-//                } else if (!is_dir(*bcfs_path)) {
-//                    printf("WARNING: %s is not a directory.\n", *bcfs_path);
-//                    printf("Please specify a new or valid directory.\n");
-//                    strcpy(*bcfs_path, ".");
-//                    continue;
-//                } else if (access(*bcfs_path, W_OK)) {
-//                    printf("WARNING: %s is not a writable directory.\n", *bcfs_path);
-//                    printf("Please specify a new or valid directory.\n");
-//                    continue;
-//                }
-//                else
-//                    break;
-//            }
-//        } else if(choice_ == site_bcfs_template_i) {
-//            while(1) {
-//                draw_line();
-//                printf("To enter a template please enter a value of the form:\n");
-//                printf("[data?.bcf]\nWhere the wildecard '?' will replace the CHR number for all chromosomes.\n");
-//                printf("Please enter BCF file template format > ");
-//                fcmap(stdin, "%s", *bcfs_template);
-//                newline;
-//
-//                Vecs bcfsplit;
-//                split(bcfsplit, *bcfs_template, "?");
-//
-//                if (bcfsplit.size() != 2) {
-//                    printf("Please include one and only one ? in the template name\n");
-//                    continue;
-//                }
-//                else
-//                    break;
-//            }
-//        }
+
         else if (choice_ == ref_i) {
             printf("You can use an external reference panel to get a set of reference alleles.\n");
             printf("This process is described in the section called 'External Reference Allele Panel in the Database'\n");

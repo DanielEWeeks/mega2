@@ -48,12 +48,17 @@ public:
 
     virtual void do_menu_display(int &idx, int line_len, int choiceA[]);
     virtual int  do_menu_parse(int choice);
-    //virtual void do_menu2batch();
-    //virtual void do_batch2local();
+    virtual void do_menu2batch();
+    virtual void do_batch2local();
+
+    virtual void do_init(Input_Base *inp);
+    void show_settings();
+
+    void read_BCFs();
 
 public:
-    char **bcfs_path;
-    char **bcfs_template;
+    Str     BCF_path;
+    Str     BCF_template;
 
 protected:
     static const

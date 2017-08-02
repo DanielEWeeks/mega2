@@ -70,44 +70,56 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #define access(str,type) _access(str,type)
 #endif
 
-void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[])
-{
-    printf("%2d) %-*s%s\n", idx, line_len,
-           "BCF File Directory:",
-           ((!strcmp(*bcfs_path, "."))?"[ Current directory ]" : *bcfs_path));
+using namespace std;
+
+/*
+ * Displays menu, adds additional options in menu 1 after input suffix
+ * this gets called in user_input.cpp for whatever input opt is defined
+ */
+void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[]) {
+    printf("%2d) %-*s%s\n", idx, line_len, "BCF File Directory:",
+           ((!strcmp(BatchItemGet("BCFs_File_Directory")->value.name, "."))?"[ Current directory ]" :
+            BatchItemGet("BCFs_File_Directory")->value.name));
     choiceA[idx] = site_bcfs_dir_i;
     idx++;
 
-    printf("%2d) %-*s%s\n", idx, line_len,
-           "BCF File Template:", *bcfs_template);
+    printf("%2d) %-*s%s\n", idx, line_len, "BCF File Template:", BatchItemGet("BCFs_File_Template")->value.name);
     choiceA[idx] = site_bcfs_template_i;
     idx++;
 }
-int ReadBCFs::do_menu_parse(int choice_)
-{
+/*
+ * Parses the menu displayed by ReadBCFs
+ * We are getting a directory and a template for BCF files
+ */
+int ReadBCFs::do_menu_parse(int choice_) {
     int ret = 0;
+    char bcfs_path_array[255], bcfs_template_array[255];
+    char *bcfs_path = &bcfs_path_array[0];
+    char *bcfs_template = &bcfs_template_array[0];
     if(choice_ == site_bcfs_dir_i) {
         while (1) {
             draw_line();
             printf("Please enter BCF directory name > ");
-            fcmap(stdin, "%s", *bcfs_path);
+            fcmap(stdin, "%s", bcfs_path);
             newline;
 
             if (access(bcfs_path, F_OK)) {
-                printf("WARNING: Could not find directory %s\n", *bcfs_path);
+                printf("WARNING: Could not find directory %s\n", bcfs_path);
                 continue;
-            } else if (!is_dir(*bcfs_path)) {
-                printf("WARNING: %s is not a directory.\n", *bcfs_path);
+            } else if (!is_dir(bcfs_path)) {
+                printf("WARNING: %s is not a directory.\n", bcfs_path);
                 printf("Please specify a new or valid directory.\n");
-                strcpy(*bcfs_path, ".");
+                strcpy(bcfs_path, ".");
                 continue;
-            } else if (access(*bcfs_path, W_OK)) {
-                printf("WARNING: %s is not a writable directory.\n", *bcfs_path);
+            } else if (access(bcfs_path, W_OK)) {
+                printf("WARNING: %s is not a writable directory.\n", bcfs_path);
                 printf("Please specify a new or valid directory.\n");
                 continue;
             }
-            else
+            else {
+                BatchValueSet(bcfs_path, "BCFs_File_Directory");
                 break;
+            }
         }
         ret = 1;
     } else if(choice_ == site_bcfs_template_i) {
@@ -116,19 +128,85 @@ int ReadBCFs::do_menu_parse(int choice_)
             printf("To enter a template please enter a value of the form:\n");
             printf("[data?.bcf]\nWhere the wildecard '?' will replace the CHR number for all chromosomes.\n");
             printf("Please enter BCF file template format > ");
-            fcmap(stdin, "%s", *bcfs_template);
+            fcmap(stdin, "%s", bcfs_template);
             newline;
 
             Vecs bcfsplit;
-            split(bcfsplit, *bcfs_template, "?");
+            split(bcfsplit, bcfs_template, "?");
 
             if (bcfsplit.size() != 2) {
                 printf("Please include one and only one ? in the template name\n");
                 continue;
-            } else
+            } else {
+                BatchValueSet(bcfs_template, "BCFs_File_Template");
                 break;
+            }
         }
         ret = 1;
     }
     return ret;
 }
+
+/*
+ * Interpret batch variables
+ */
+void ReadBCFs::do_menu2batch() {
+    Cstr Values[] = {
+            "BCFs_File_Directory",
+            "BCFs_File_Template",
+    };
+
+    for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
+        batch_item_type *bip = BatchItemGet(Values[i]);
+        if (bip->items_read)
+            batchf(bip);
+    }
+}
+/*
+ * Save batch values to internal variables
+ */
+void ReadBCFs::do_batch2local(){
+    BatchValueGet(this->BCF_path, "BCFs_File_Directory");
+    BatchValueGet(this->BCF_template, "BCFs_File_Template");
+}
+
+/*
+ * Prints the settings
+ */
+void ReadBCFs::show_settings() {
+    msgvf("\n");
+    msgvf("BCF File Directory:                         %s\n", C(this->BCF_path));
+    msgvf("BCF File Template:                          %s\n", C(this->BCF_template));
+}
+
+/*
+ * Called in Annotated_Ped_File.cpp
+ * This is where we will call handlers to do vairous other tasks
+ */
+void ReadBCFs::do_init(Input_Base *inp)
+{
+    read_BCFs();
+}
+
+/*
+ * here we will try to check that the files are available and read them
+ */
+void ReadBCFs::read_BCFs( )
+{
+    Str directory = this->BCF_path;
+    Str file_template = this->BCF_template;
+    Vecs filesplit;
+
+    split(filesplit,file_template,"?");
+
+    for(int chr = 1; chr < 23; chr++){
+        ifstream ifs;
+        char * file = NULL;
+        sprintf(file, "%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+        ifs.open(file);
+        if (! ifs.is_open() ) {
+            errorvf("read_BCFs: Can not open \"%s\" file\n", file);
+        }
+    }
+}
+
