@@ -101,7 +101,7 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #'\dontrun{
 #' tst()
 #'}
-Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta, full = TRUE) {
+Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta, full = TRUE, envir = ENV) {
 
     ANS = TRUE
     phens = names(gwaa_@phdata)
@@ -153,9 +153,9 @@ Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta, full = TRUE) {
     ANS = ANS && ans
 #
      cat("all(mega_@gtdata@coding == gwaa_@gtdata@coding)")
-    ans = all(mega_@gtdata@coding == gwaa_@gtdata@coding)
-    print(ans)
-    ANS = ANS && ans
+    ansc = all(mega_@gtdata@coding == gwaa_@gtdata@coding)
+    print(ansc)
+    ANS = ANS && ansc
      cat("all(mega_@gtdata@strand == gwaa_@gtdata@strand)")
     ans = all(mega_@gtdata@strand == gwaa_@gtdata@strand)
     print(ans)
@@ -194,4 +194,19 @@ Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta, full = TRUE) {
 
     print(rep(ANS, 10))
     print(rep(ANS, 10))
+
+    if (! ansc) {
+        allele_table = envir$allele_table[envir$allele_table$locus_link %in% envir$markers$locus_link,]
+        mm = merge(x=allele_table[allele_table$indexX == 1,],
+               y=allele_table[allele_table$indexX == 2,],
+               by="locus_link")
+        cd = which(mega_@gtdata@coding != gwaa_@gtdata@coding)
+        print(envir$markers[cd,])
+        if (envir$MARKER_SCHEME == 1) {
+            ms = envir$markerscheme_table[envir$markerscheme_table$key %in% envir$markers$locus_link,]
+            print(ms[cd,])
+        }
+        print(mm[cd,])
+    }
+
 }

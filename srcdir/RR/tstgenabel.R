@@ -96,6 +96,7 @@ ENV=read.Mega2DB("~/mega2/data/yj1.db", verbose = FALSE)
 mega2=Mega2GenABEL("tstGNA/yj/yj1", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 mega =Mega2ENVGenABEL(ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 Mega2GenABELtst(mega,mega2)
+
 print("yj2")
 ENV=read.Mega2DB("~/mega2/data/yj2.db", verbose = FALSE)
 mega2=Mega2GenABEL("tstGNA/yj/yj2", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)

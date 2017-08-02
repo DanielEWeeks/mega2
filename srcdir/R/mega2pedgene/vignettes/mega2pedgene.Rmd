@@ -1,0 +1,177 @@
+---
+title: "Mega2pedgene Vignette"
+author: "Robert V. Baron and Daniel E. Weeks"
+date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
+output:
+  rmarkdown::html_vignette:
+  pdf_document:
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Mega2pedgene Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+library(knitr)
+# Set so that long lines in R will be wrapped:
+opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
+```
+# Loading genetic annotation data
+Bioconductor Annotations must be loaded
+manually. The first line (below) loads the Bioconductor loader and the next
+two lines load two annotation databases. One for gene transcript
+locations and one to map gene names to the entrez gene IDs. (Note: You
+may choose a different transcript database from Bioconductor or
+construct one of your own.)
+
+Please type in R:
+
+```
+source("https://bioconductor.org/biocLite.R")
+biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene") 
+biocLite("org.Hs.eg.db")
+```
+You type the above code only when you install/upgrade the R executable.
+
+The Mega2r package presumes that the two names shown above are used for the Annotation Databases.
+If you desire to use a different database, you need to load it with biocLite and indicate the name by running the 
+command:
+```
+setAnnotations("transcript database name", "gene map database name")
+```
+where "transcript database name" is a string that is the name of transcript database that was
+fetched from Bioconductor, and similarly "gene map database name" is the name of a Bioconductor
+database that maps a gene id from the transcript to an entrez gene id.
+This command must be issued whenever R is started and the "mega2r" library has been loaded.
+
+# Running pedgene using the mega2pedgene R package
+
+## Loading a Mega2 database
+
+Rather than use
+the read.Mega2DB function described elsewhere and used by all the other
+packages, This package uses *init_pedgene* to read the Mega2 database.
+This function calls a utility function
+shared with read.Mega2DB. Then it creates, edits, and rewrites the family data -- 
+data frame, **fam** .  (**fam** [merges data from the pedigree_table, person_table and
+phenotype_table as you might expect.)
+*init_pedgene* purges persons with unknown case/control
+status which is necessary for the pedgene calculation.   Finally, *init_pedgene* calculates
+some values that will be used repeatedly and stores them in the environment, ENV.
+
+```{r mega2pedgene}
+library(mega2pedgene)
+# ENV = init_pedgene("seqsimr.db", verbose = T)
+# or to use the embeded tutorial data
+library(mega2rtutorial)
+database_file = system.file("exdata", "seqsimr.db", package="mega2rtutorial")
+ENV = init_pedgene(database_file, verbose = T)
+```
+
+## Running pedgene on transcripts
+
+Mega2R has an internal default list of the chromosome and base pair
+ranges for a number of gene transcripts.  These transcripts come from
+the UCSC Genome Browser reference assembly GRCH37.  The list was
+further modified to eliminate multiple records of the same gene with
+the exact same transcript start and transcript end.  This constitutes
+about 29,000 records.  You may load you own range set instead of the default.
+You create a data frame that contains at least a name "observation", a chromosome
+"observation", a start position "observation" and an end position "observation".
+You create an integer vector that contains the column numbers of the chromosome
+"observation", the start position "observation" and the end position "observation".
+These two become the arguments to the *setRanges* function, viz.
+```
+        setRanges(Transcripts, Offsets)
+```
+
+By default, the function run_pedgene examines the first 100
+transcripts and prints the results. For this database, the first 100 transcripts
+identifies one useable transcript with several markers:  (To make this exercise run 
+faster, we noticed that the data appeared at transcript 54; so we will
+restrict pedgene to a small range of transcripts around 54, viz. 50 through
+60.)
+
+```{r run_pedgene,collapse=TRUE}
+run_pedgene(gs = 50:60)
+```
+
+You will see many reports
+of "No markers in range", because the database is a subrange of chromosome 1 whereas the transcripts span
+the entire genome.
+Occasionally you will see a listing of a
+gene name, markers, and count of 1/1, 1/2 and 2/2 genotypes, viz.
+
+```
+CEP104 snp24037 520 646 214  
+CEP104 snp24039 940 386 54  
+CEP104 snp24041 1377 3 0  
+CEP104 snp24048 860 460 60  
+CEP104 snp24494 789 501 90  
+CEP104 snp24499 891 442 47  
+CEP104 snp24506 891 442 47  
+CEP104 snp24507 789 501 90
+```
+
+The genotypes for these markers, along with the markers info are passed
+to the call back function DOpedgene. DOpedgene converts the genotype
+nucleotides to the count of the minor allele and then runs pedgene for
+several different marker weights. The results are automatically stored
+in a data frame with "observations": prefix of chromosome, gene,
+number of markers and base pair range followed by Pedgene data: kernel
+and burden, value and p-values, four values for each of three
+weightings of the markers.
+These data are saved in the data frame, **pedgene_results**, in the environment, ENV.
+They are also printed when *verbose* is TRUE, viz.
+
+```
+   chr   gene nvariants   start     end sKernel_BT pKernel_BT sBurden_BT  
+1 chr1 CEP104         8 3728644 3773797   31.96998  0.6297541 -0.6496837  
+  pBurden_BT sKernel_MB pKernel_MB sBurden_MB pBurden_MB sKernel_UW pKernel_UW  
+1  0.5158965   1184.995  0.5138866  -1.209563  0.2264468   222.8737  0.4111136  
+  sBurden_UW pBurden_UW  
+1  -1.169488   0.242207
+```
+
+We should run pedgene on all the transcript entries. So type:
+
+```{r,eval=FALSE}
+# we will skip this line for the Rmd document production because it takes too long
+applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
+```
+
+If you run the above test, you will see that gene DISP1 and KIF26B
+have some p-values less than 0.01 and AK5 and STL7 less than 0.03.
+
+## Running pedgene on selected genes
+
+You may try searching for transcripts of specific genes.  Here the default
+transcript database is TxDb.Hsapiens.UCSC.hg19.knownGene from
+Bioconductor.  Of course you can change it.  Type:
+
+```
+setAnnotations("txdb", "genedb")
+```
+
+where "txdb" is a string that is the name of transcript database that was
+fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
+database that maps a gene id from the transcript to an entrez gene id.
+
+We leave the command below as an exercise.  It runs a bit slowly.  It needs to find
+all  the transcripts for each gene; then it needs to find all the markers between each pair
+of transcript start/end ranges; and finally it needs to do a small computation on the genotypes
+from each set of markers.
+```{r,eval=FALSE,collapse=TRUE}
+applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
+```
+
+But let us do at least a few genes:
+
+```{r,eval=TRUE,collapse=TRUE}
+applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'AK5'), envir = ENV)
+```
+
+NOTE: You will observe that for several genes there are a few
+transcripts with the same or overlapping start values and end values.

@@ -1,0 +1,479 @@
+---
+title: "Mega2r Vignette"
+author: "Robert V. Baron and Daniel E. Weeks"
+date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
+output:
+  rmarkdown::html_vignette:
+  pdf_document:
+    highlight: pygments
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Mega2r Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+library(knitr)
+# Set so that long lines in R will be wrapped:
+opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
+```
+
+# Tutorial Data 
+
+The files you will need for this tutorial are in the mega2rtutorial
+package.  Most of the vignettes will access the data directly, but the
+mega2rtutorial "vignettes" and the running of the "mega2" executable require
+the files to be in the current directory.  This is done by running:
+
+```{r,eval=FALSE}
+library(mega2rtutorial)
+dump_mega2rtutorial_data()
+```
+
+You should see the following files:  
+
+```
+--------------------------|-----------------------|---------------  
+[1] "MEGA2.BATCH.seqsimr" |  "MEGA2.BATCH.srdta"  |  "MEGA2.BATCH.vcf"      
+[4] "Mega2r.map"          |  "Mega2r.ped"         |  "mega2r.Rmd"   
+[7] "mega2r.pdf"          |  "seqsimr.db"         |  "srdta.db"
+```
+
+The "clean" command will remove these files:
+
+```{r, eval=FALSE}
+clean_mega2rtutorial_data()
+```
+
+# Installation
+
+Mega2 for R consist of the following 5 CRAN packages:  *mega2rtutorial*, *mega2r*, *mega2vcf*,
+*mega2genabel* and *mega2pedgene*.
+*mega2rtutorial* is needed to retrieve data and create a complete vignette/tutorial.
+*mega2r* might be necessary and suffficent for your task.
+*mega2vcf*, *mega2genabel* and *mega2pedgene* perform specific functions (see their package description);
+these load the *mega2r* package when they are loaded.
+
+Mega2r also requires that Bioconductor Annotations must be loaded.
+The first line (below) loads the Bioconductor loader and the next
+two lines load two annotation databases. One for gene transcript
+locations and one to map gene names to the entrez gene IDs. (Note: You
+may choose a different transcript database from Bioconductor or
+construct one of your own.)
+
+```
+source("https://bioconductor.org/biocLite.R")
+biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene") 
+biocLite("org.Hs.eg.db")
+```
+
+The above commands only need to be typed once.
+
+# Example Data
+
+We have chosen to use the SeqSIMLA2 program to generate a data set for
+us.  We needed to sub-sample the data down to 1,380 people and 1,000
+markers to make the size manageable. These data will be used to
+illustrate Mega2 and Mega2R operations that follow.
+
+Note: This simulator only produces markers on chromosome 1.
+
+# Using Mega2R 
+
+## Creating a Mega2 Database
+
+We have provided files in the mega2rtutorial package, that contain
+the data from the simulation. These files are in PLINK ped format.
+
+* Mega2r.ped
+* Mega2r.map
+
+**This vignette will not invoke *mega2*, but use the seqsimr.db
+database that is in the tutorial package.**
+
+If you want, you can obtain the Mega2 program from
+https://watson.hgen.pitt.edu/register/. Then you could invoke Mega2
+on your data. To make matters simple, we will use a pre-constructed
+Mega2 batch file to automate the processing by Mega2. To run Mega2 to
+process and create the SQLite3 database 'seqsimr.db', issue this
+command at the Unix prompt:
+
+```
+mega2 MEGA2.BATCH.seqsimr
+```
+
+**NOTE: To make this tutorial only dependent on R, the above code is not actually run.  And its
+results, shown below, were captured from an environment where we had both R and Mega2 (the C++ program)
+available.**
+
+
+```
+## ==========================================================
+##                           MEGA2 4.9.2
+##      Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+##      Daniel E. Weeks, and University of Pittsburgh
+## 
+##      Last updated: Jun 13 2017, 09:36:42 , valid until June 15, 2018.
+##      Compiled with gcc version 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)
+## 
+##      Mega2 comes with ABSOLUTELY NO WARRANTY.
+##      See LICENSE.txt for terms of copying, modifying & redistributing Mega2.
+## ==========================================================
+## NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.
+## 
+## Run date:                  2017-7-24-10-03
+## 
+## Running Mega2 in batch mode from MEGA2.BATCH.seqsimr.
+## Input filenames and missing value indicator read in from batch file.
+## Dump Analysis option read in from batch file.
+## WARNING: Locus selections not specified in batch file.
+## WARNING: Going to Reorder menu.
+## WARNING: Trait selections not specified in batch file.
+## WARNING: Going to Trait selection menu.
+## ==========================================================
+## Keyword Input_Locus_File not in batch file, Locus file assumed to be unspecified.
+## Keyword Input_Map_File not in batch file, Map file assumed to be unspecified.
+## Keyword Input_Omit_File not in batch file, Omit file assumed to be unspecified.
+## Keyword Input_Frequency_File not in batch file, Frequency file assumed to be unspecified.
+## Keyword Input_Penetrance_File not in batch file, Penetrance file assumed to be unspecified.
+## Keyword Input_Aux_File not in batch file, Aux file assumed to be unspecified.
+## Keyword Input_Phenotype_File not in batch file, Phenotype file assumed to be unspecified.
+## Keyword Input_Imputed_Info_File not in batch file, Imputed Info file assumed to be unspecified.
+## ===========================================================
+## Analysis Class: Dump.
+## Quantitative  Input Missing Value  -9 
+## Affection     Input Missing Value     "-9"
+## Quantitative Output Missing Value      "*"
+## Affection    Output Missing Value      "*"
+## Input Format: PLINK PED format (ped)
+## Pedigree and map files specified as PLINK format.
+## omit, penetrance, and frequency files are always in Mega2 format.
+## Input files will be read in as PLINK or Mega2 format files as appropriate.
+## Reading PLINK map file for names: Mega2r.map
+## Reading map file Mega2r.map ... (4 columns)
+## Input Map name: Map, type: average genetic map, units: kosambi centiMorgans
+## Input Map name: BP, type: physical map
+## Found 2 possible maps in the Mega2r.map file.
+## Now checking each record in map file Mega2r.map ...
+## Done reading map file: Mega2r.map
+## 
+## ===========================================================
+## Total number of loci =  1001
+## 1 trait locus 
+##       1 Affection status locus: 
+##                 default
+##       1000 Marker loci 
+## Number of loci found per chromosome (chromosome:number)
+##    1:1000
+## ===========================================================
+## WARNING: No frequency file provided.
+## WARNING: Allele frequencies for these will be estimated from data.
+## Trait 'default' will be assigned the default penetrance: (0.0500 0.9000 0.9000)
+## Reading PLINK .ped file: Mega2r.ped (2006 columns).
+## 1000 (of 1000) markers to be included from Mega2r.map
+## Reading pedigree information from Mega2r.ped
+## 1380 individuals read from Mega2r.ped
+## 1380 individuals with nonmissing phenotypes
+## 105 cases, 1275 controls, 0 missing
+## 620 males, 760 females, 0 of unspecified sex
+## 0 founders, 1380 non-founders found
+## ===========================================================
+## Input pedigree data contains:
+## Input pedigree file is in PLINK-fam format. 
+##                                                   Marker Genotypes
+##                                                   Fully    Half
+##      Pedigrees   People   Males   Females         Typed    Typed     Total
+## TOTAL       20     1380     620       760       1380000        0    1380000
+## Typed       20     1380     620       760
+## Untyped      0        0       0         0
+## ===========================================================
+## Pedigree exclusion option : Include all pedigrees whether typed or not.
+## Count option: all alleles
+## Count half-typed individuals' alleles : no 
+## ===========================================================
+## Recoding pedigree genotypes ... 
+## ===========================================================
+## Pedigree data summary after recoding:
+## Input pedigree file is in PLINK-fam format. 
+##                                                   Marker Genotypes
+##                                                   Fully    Half
+##      Pedigrees   People   Males   Females         Typed    Typed     Total
+## TOTAL       20     1380     620       760       1380000        0    1380000
+## Typed       20     1380     620       760
+## Untyped      0        0       0         0
+## ===========================================================
+## Created linkage ped tree
+## Done checking locus integrity.
+## Checking pedigree integrity...
+## Done checking pedigree integrity.
+## ==========================================================
+## ===========================================================
+## Pedigree statistics after selecting chromosomes and marker loci:
+## Input pedigree file is in post-makeped format.
+##                                                   Marker Genotypes
+##                                                   Fully    Half
+##      Pedigrees   People   Males   Females         Typed    Typed     Total
+## TOTAL       20     1380     620       760       1380000        0    1380000
+## Typed       20     1380     620       760
+## Untyped      0        0       0         0
+## ===========================================================
+## Database file "seqsimr.db" will be backed up.
+## Moved existing seqsimr.db to seqsimr.db.old
+## Dumping SQLite3 DB to file "seqsimr.db"
+## ===========================================================
+## See run summaries in directory 2017-7-24-10-03 
+##    MEGA2.LOG, MEGA2.RECODE, MEGA2.ERR, MEGA2.KEYS
+## The script 'mega2log2html.pl' exited normally.
+## To view the HTML-formatted run summaries, open
+## /Users/rbaron/mega2/bb/srcdir/R/mega2rtutorial/vignettes/2017-7-24-10-03/MEGA2run.html
+## in a web browser.
+## ===========================================================
+```
+
+If you do not provide the argument, Mega2 will proceed to ask a series
+of questions to collect the needed information to produce a
+database. In addition, it will create a Mega2.BATCH file, we've
+suggested you keep. You can look at the "Quick Start" documentation
+https://watson.hgen.pitt.edu/docs/mega2_html/mega2.html Section 4. to
+better understand the interactive process.
+
+This MEGA2.BATCH.seqsimr file begins with a rather long comment
+indicating the keyword values that may be set and their default
+value. Toward the end of the file, we set the inputs as **Mega2r.ped**
+and **Mega2r.map**, indicate the input is PLINK ped format with
+parameters, and indicate that Mega2 should produce a database called
+**seqsimr.db**, etc. (These particular items are in bold face text
+below.)
+
+> **Input_Database_Mode=1**  
+**Input_Format_Type=4**  
+**Input_Pedigree_File=Mega2r.ped**  
+**Input_PLINK_Map_File=Mega2r.map**  
+Output_Path=.  
+Input_Path=.  
+**PLINK_Args= --cM --missing-phenotype -9 --trait default**  
+Input_Untyped_Ped_Option=2  
+Input_Do_Error_Sim=no  
+AlleleFreq_SquaredDev=999999999.000000  
+Value_Marker_Compression=1  
+**Analysis_Option=Dump**  
+Value_Missing_Quant_On_Input=-9.000000  
+Value_Missing_Affect_On_Input=-9  
+Count_Genotypes=4  
+Count_Halftyped=no  
+Value_Genetic_Distance_Index=0  
+Value_Genetic_Distance_SexTypeMap=0   
+Value_Base_Pair_Position_Index=1  
+Default_Reset_Invalid=no  
+**DBfile_name=seqsimr.db**  
+Default_Outfile_Names=yes  
+
+You will eventually have to run Mega2 to convert your data.
+
+
+## Reading and Examining a Mega2 Database in R
+
+### Reading a Mega2 Database into R
+
+After you have the database, start up the R program. The first R commands you should type are:
+
+```{r,eval=FALSE}
+library(mega2r)
+ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+```
+
+The first argument should be the path to the database. Providing the
+optional argument, verbose, causes the read function to summarize the
+tables created, their fields and their sizes. Finally, an "R
+environment" that contains the database tables is returned. (If you
+are unfamiliar with environments, you can think of them as data
+frames. If fact, ENV$locus_table will access the locus_table variable
+from ENV as though fetching an "observation" from a data frame. The
+difference is when you change a data frame passed to a function, the
+change does not affect the original data frame. Only the function's
+local value is changed; ALL changes are forgotten when the function
+exits. When you change the data in an environment passed to a function,
+the change is permanent and seen inside and outside the function.)
+
+```{r mega2r}
+library(mega2r)
+# ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+# or to use the embeded tutorial data
+library(mega2rtutorial)
+database_file = system.file("exdata", "seqsimr.db", package = "mega2rtutorial")
+ENV = read.Mega2DB(database_file)
+```
+
+We need to make two observations that apply to all Mega2R functions:
+
+### Verbose Flag
+
+When verbose is set in the initial read.Mega2DB, the
+value will be remembered.  It may be used by any subsequent function.
+If verbose is TRUE, Mega2R functions will possibly print out more
+diagnostic information.
+
+### Use of an Environment
+
+All Mega2R functions that do not return an
+environment, need to have an environment supplied as an argument.
+As stated earlier the environment is used to store the data frames that
+contain the database data.
+There are two ways to pass the environment.  If you assigned the result of
+read.Mega2DB to the variable *seqsimr*, then you could supply the value
+*seqsimr* to any Mega2R function as the named argument **envir**, viz.
+
+```
+showMega2ENV(envir = seqsimr)
+```
+
+The second choice is a bit of a "hack" but it is very
+convenient. Every Mega2R function (that does not return an
+environment) has a named argument defined as
+
+```
+envir = ENV
+```
+
+as in
+
+```
+showMega2ENV = function(envir = ENV) { ... }
+```
+
+The code above, sets global variable **ENV** to the local 
+variable, envir.  And the argument evaluation mechanism of R will supports
+this usage; even though **ENV** is not known until runtime.
+
+## Reading Examining a Mega2 Database in R
+
+The ls function will show you all the variables in an
+environment. (You probably used it without arguments to show you the
+variables in the .GlobalEnv.) Type:
+
+```{r}
+ls(ENV)
+```
+
+
+### A more informative overview of the data base can be seen by:
+
+```{r}
+showMega2ENV() 
+```
+
+### Use standard R commands to examine the created data frames
+
+```{r}
+str(ENV$locus_table)
+```
+
+# Iterating through the Transcripts
+
+## Running pedgene on Transcripts
+
+There are two ways to compute a function on all the genotypes (or markers) in a transcript.
+(These examples are explained more thoroughly in the mega2pedgene vignette.)
+
+### applyFnToRanges
+
+Mega2R has an internal default list of the chromosome and base pair
+ranges for a number of gene transcripts.  These transcripts come from
+the UCSC Genome Browser reference assembly GRCH37.  The list was
+further modified to eliminate multiple records of the same gene with
+the exact same transcript start and transcript end.  This constitutes
+about 29,000 records.  You may load you own range set instead of the default.
+You create a data frame that contains at least a name "observation", a chromosome
+"observation", a start position "observation" and an end position "observation".
+You create an integer vector that contains the column numbers of the chromosome
+"observation", the start position "observation" and the end position "observation".
+These two become the arguments to the *setRanges* function, viz.
+```
+        setRanges(Transcripts, Offsets)
+```
+The function:
+
+> applyFnToRanges(DOpedgene, envir = ENV)  
+
+goes through each transcript/range entry and finds the markers that fall within the bounds.
+It then builds a genotype matrix for the samples and each marker.
+
+The first argument of the *applyFnToRanges* function is a call back function.  The function is
+called with three arguments: the genotype matrix, the markers, and the selected transcript/range
+entry.  The call back is invoked repeatedly for each transcript range that has any markers present.
+If it is necessary to store information between successive invocations the environment (*envir*) 
+can be used.
+In mega2pedgene, DOpedgene converts the genotype
+nucleotides to the count of the minor allele and then runs pedgene for
+several different marker weights. 
+
+*applyFnToRanges* can also be explicitly provided ranges.
+```
+applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
+applyFnToRanges(DOpedgene, ENV$refRanges[ENV$refRanges$chromosome == 1,], ENV$refIndices, envir = ENV)
+```
+
+### applyFnToGenes
+
+Alternatively, you may try searching by gene.  Here the default
+transcript database is TxDb.Hsapiens.UCSC.hg19.knownGene from
+Bioconductor.  Of course you can change it.  Type:
+
+```
+setAnnotations("txdb", "genedb")
+```
+
+where "txdb" is a string that is the name of transcript database that was
+fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
+database that maps a gene id from the transcript to an entrez gene id.
+The *setAnnotations* command must be issued whenever R is started and the "mega2r" library has been loaded.
+
+The function:
+
+> applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
+
+will look up all the transcripts for each gene in the Bioconductor database.  It will then behave
+like *applyFnToRanges*, find all the markers in each range and then invoke the call back function with
+the required 3 arguments.
+
+*applyFnToGenes* has several other arguments that allow complete chromosomes, or (multiple) ranges of 
+base pairs along chromosomes to be specified.
+
+# Iterating through the Genotypes
+
+## Cooked Genotypes
+
+The meat of the above two functions is the calculation of the matrix of samples cross markers
+containing the nucleotides (strings).  The
+genotype information is most likely in a compressed 2 bit representation.  A Rcpp function does the
+heavy lifting to convert the compressed genotype data to nucleotides.  The function
+
+> getgenotypes(markers, envir = ENV)
+
+returns the matrix for the specified markers.  It can take one additional argument to indicate a string to 
+separate the two alleles of each nucleotide.
+
+## Raw Genotypes
+
+The function
+
+> getgenotypesraw(markers, envir = ENV)
+
+is similar to the *getgenotypes* function except that the matrix it returns contains integers.  The integers are 
+encoded so that high 16 bits of the integer are the index for allele1 and the low 16 bits are the index for allele2.
+
+
+# Next steps
+
+If you are left with questions as to how you can use Mega2R for your own research, you can:
+
+1. Read our paper "The Mega2R suite of R packages: tools for accessing
+and processing common genetic data formats in R", which extends this
+document by providing implementation details.
+
+2. Read the source for the packages if you understand R; the code is not particularly subtle.
+
+3. Write to the Mega2 discussion group: https://groups.google.com/forum/#!forum/mega2-users

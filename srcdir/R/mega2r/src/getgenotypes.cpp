@@ -634,17 +634,16 @@ Rcpp::List getgenotypesgenabel_1(NumericVector locus_arg,
         }
         double nfreq1 = double(freq1i) / (freq1i + freq2i);
         double nfreq2 = double(freq2i) / (freq1i + freq2i);
-        if ( (freq1i == freq2i) && freq2i != 0) {
-            Rprintf("%d .5 samples[0] %d\n", locus, samples[0]);
-            if (samples[0] == 3) nfreq1 += 1e-8;
-
-        } else if ( (freq1 == nfreq1) && (freq2 == nfreq2) )
-            ;
-
-        else if ( ((freq1 > freq2) != (nfreq1 > nfreq2)) || freq1i == 0 || freq2i == 0)
-            Rprintf("%d mega2 %f/%f gena %f/%f old %d new %d\n",
-                    locus, freq1, freq2, nfreq1, nfreq2, freq1 > freq2, nfreq1 > nfreq2);
-
+        if (debug) {
+            if ( (freq1i == freq2i) && freq2i != 0) {
+                Rprintf("%d .5 samples[0] %d\n", locus, samples[0]);
+            } else if ( (freq1 == nfreq1) && (freq2 == nfreq2) )
+                ;
+            else if ( ((freq1 > freq2) != (nfreq1 > nfreq2)) || freq1i == 0 || freq2i == 0) {
+                Rprintf("%d mega2 %f/%f gena %f/%f old %d new %d\n",
+                        locus, freq1, freq2, nfreq1, nfreq2, freq1 > freq2, nfreq1 > nfreq2);
+            }
+        }
         if (nfreq1 > nfreq2) {
             a = 3; b = 1;
         } else {
@@ -652,8 +651,11 @@ Rcpp::List getgenotypesgenabel_1(NumericVector locus_arg,
         }
         if (nfreq1 == 0 && nfreq2 == 0)
             freq[i] = 2;
-        else
+        else if (allele1 == 1)
             freq[i] = nfreq1;
+        else
+            freq[i] = nfreq2;
+
         decode_allele[0] = b; //(allele1 << 16) | allele1;
         decode_allele[1] = 0;
         decode_allele[2] = 2; //(allele1 << 16) | allele2;
@@ -760,17 +762,16 @@ Rcpp::List getgenotypesgenabel_2(NumericVector locus_arg,
         double nfreq1 = double(freq1i) / (freq1i + freq2i);
         double nfreq2 = double(freq2i) / (freq1i + freq2i);
 
-        if ( (freq1i == freq2i) && freq2i != 0) {
-            Rprintf("%d .5  %d/%d\n", locus, freq1i, freq2i);
-            if (samples1[0] == allelev2 && samples2[0] == allelev2) nfreq1 += 1e-8;
-
-        } else if ( (freq1 == nfreq1) && (freq2 == nfreq2) )
-            ;
-
-        else if ( ((freq1 > freq2) != (nfreq1 > nfreq2)) || freq1i == 0 || freq2i == 0)
-            Rprintf("%d mega2 %f/%f gena %f/%f old %d new %d\n",
-                    locus, freq1, freq2, nfreq1, nfreq2, freq1 > freq2, nfreq1 > nfreq2);
-
+        if (debug) {
+            if ( (freq1i == freq2i) && freq2i != 0) {
+                Rprintf("%d .5  %d/%d\n", locus, freq1i, freq2i);
+            } else if ( (freq1 == nfreq1) && (freq2 == nfreq2) )
+                ;
+            else if ( ((freq1 > freq2) != (nfreq1 > nfreq2)) || freq1i == 0 || freq2i == 0) {
+                Rprintf("%d mega2 %f/%f gena %f/%f old %d new %d\n",
+                        locus, freq1, freq2, nfreq1, nfreq2, freq1 > freq2, nfreq1 > nfreq2);
+            }
+        }
         if (nfreq1 > nfreq2) {
             a = 3; b = 1;
         } else {

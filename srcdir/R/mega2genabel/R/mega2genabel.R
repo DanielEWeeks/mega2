@@ -69,7 +69,7 @@ NULL
 #'}
 Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 
- print(system.time ({        
+## print(system.time ({        
     if (is.null(markers)) markers = envir$markers
 
     mkGenABELtped(prefix, markers, mapno = mapno, envir)
@@ -94,7 +94,7 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
                  force = TRUE,
                  envir = envir)
           )
- }))
+## }))
     ans
 }
 
@@ -354,7 +354,7 @@ Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
     mm = merge(x=allele_table[allele_table$indexX == 1,],
                y=allele_table[allele_table$indexX == 2,],
                by="locus_link")
-##  nn=ifelse(mm$Frequency.x > mm$Frequency.y,
+##  nn=ifelse(mm$Frequency.x > mm$Frequency.y,             # before cleaning
 ##            paste0(mm$AlleleName.x, mm$AlleleName.y), 
 ##            paste0(mm$AlleleName.y, mm$AlleleName.x))
 ##  envir$xGTy = mm$Frequency.x > mm$Frequency.y
@@ -364,7 +364,19 @@ Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
     envir$xGTy = Freq.x > (1-Freq.x)
 
     if (any(Freq.x == .5)) {
-      print(mm[which(Freq.x == .5),])
+        if (envir$MARKER_SCHEME == 1) {
+            ms = envir$markerscheme_table[envir$markerscheme_table$key %in% markers$locus_link,]
+            w = which(Freq.x == .5)
+##          print(mm[w,])
+##          print(ms[w,])
+##          print(envir$markers[w,])
+            ms1 = ms$allele1[w]
+            nn[w] = ifelse(ms1 == 1, paste0(mm$AlleleName.y[w], mm$AlleleName.x[w]),
+                                     paste0(mm$AlleleName.x[w], mm$AlleleName.y[w]))
+        } else if (envir$MARKER_SCHEME == 2) {
+            w = which(Freq.x == .5)
+##          print(mm[w,])
+        }
     }
 
 ##  nn[mm$Frequency.x == 0 & mm$Frequency.y == 0] = '12'
@@ -411,9 +423,9 @@ Mega2GenABELconvert = function(markers = NULL, envir = ENV) {
 # browser("convert")
     if (is.null(markers)) markers = envir$markers
 
- print (system.time ({        
+## print (system.time ({        
    rag_freq = getgenotypesgenabel(markers, envir = envir)
- }))
+## }))
     return (rag_freq)
 }
 

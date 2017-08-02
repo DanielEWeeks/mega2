@@ -35,9 +35,15 @@
 #' @name mega2rtutorial-package
 NULL
 
+FILES = c("MEGA2.BATCH.seqsimr", "MEGA2.BATCH.srdta", "MEGA2.BATCH.vcf",
+          "Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
+
 #' dump tutorial data
 #'
-#' @description
+#' @description This function retrieves data stored in the Mega2rtutorial (inst/exdata).  It 
+#'	dumps them in the current (or specified) directory.
+#'
+#' @param dir The directory to store the tutorial data to.  By default, this is ".".
 #'
 #' @export
 #' @return None
@@ -47,11 +53,31 @@ NULL
 #' dump_mega2rtutorial_data()
 #'}
 dump_mega2rtutorial_data = function(dir = ".") {
-    for (file in c("MEGA2.BATCH.seqsimr", "MEGA2.BATCH.srdta",
-                   "MEGA2.BATCH.vcf",
-                   "Mega2r.map", "Mega2r.ped", "seqsimr.db")) {
+    for (file in FILES) {
         from = system.file("exdata", file, package="mega2rtutorial")
         to   = paste(dir, file, sep="/")
         file.copy(from, to, copy.mode = TRUE, copy.date = TRUE)
     }
 }
+
+#' remove tutorial data
+#'
+#' @description This function removes the Mega2rtutorial (inst/exdata) data that was
+#'	dumped in the specified directory.
+#'
+#' @param dir The directory to store the tutorial data to.  By default, this is ".".
+#'
+#' @export
+#' @return None
+#'
+#' @examples
+#'\dontrun{
+#' clean_mega2rtutorial_data()
+#'}
+clean_mega2rtutorial_data = function(dir = ".") {
+    for (file in FILES) {
+        to = paste(dir, file, sep="/")
+        unlink(to)
+    }
+}
+
