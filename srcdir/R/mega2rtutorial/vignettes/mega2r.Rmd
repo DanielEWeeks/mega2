@@ -25,7 +25,7 @@ The files you will need for this tutorial are in the mega2rtutorial
 package.  The "mega2" executable requires the Mega2.BATCH.name files to be in the
 working directory; to copy these files to the working directory run:
 
-```{r}
+```{r mega2rtutDump}
 library(mega2rtutorial)
 dump_mega2rtutorial_data()
 ```
@@ -42,9 +42,12 @@ You should see the following files:
 
 When you are done with these exercise, the "clean" command will remove these files:
 
-```{r, eval=FALSE}
+```{r, mega2rtutClean,eval=FALSE}
 clean_mega2rtutorial_data()
 ```
+Note: The vignettes for the other packages take an alternate approach to using
+the data directly from the mega2rtutorial package without moving them to the
+working directory.
 
 # Installation
 
@@ -61,11 +64,11 @@ preferred way to install will be to use the install.packages()
 command. For now, we prefer to use devtools in R; as in
 
 ```
-devtools::install("../mega2rtutorial")
-devtools::install("../mega2r")
-devtools::install("../mega2pedgene")
-devtools::install("../mega2vcf")
-devtools::install("../mega2genabel")
+devtools::install("mega2rtutorial")
+devtools::install("mega2r")
+devtools::install("mega2pedgene")
+devtools::install("mega2vcf")
+devtools::install("mega2genabel")
 ```
 
 Certainly, issuing these commands at the UNIX prompt:
@@ -78,14 +81,14 @@ R CMD install mega2vcf
 R CMD install mega2genabel  
 ```
 
-will work, too. It may generate warnings about non-package related
-items in the tree. All these packages may fetch other dependent CRAN
+will work, too. They may generate warnings about non-package related
+items in the tree. Some of these packages may fetch other dependent CRAN
 packages.
 
-We require two Bioconductor Annotations that must be loaded
-manually. The first line (below) loads the Bioconductor loader and the next
-two lines load two annotation databases. One for gene transcript
-locations and one to map gene names to the entrez gene IDs. (Note: You
+In addition, we require two Bioconductor Annotations to be loaded.
+The first line (below) loads the Bioconductor loader and the next
+two lines install two annotation databases. One for gene transcript
+locations and one to map gene names to entrez gene IDs. (Note: You
 may choose a different transcript database from Bioconductor or
 construct one of your own.) Please type in R:
 
@@ -111,7 +114,7 @@ Note: This simulator only produces markers on chromosome 1.
 
 We have provided files in the mega2rtutorial package, that contain
 the data from the simulation. These files are in PLINK ped format data
-for 1,380 samples with 1,000 markers:
+with 1,380 samples of 1,000 markers each:
 
 * Mega2r.ped
 * Mega2r.map
@@ -121,7 +124,7 @@ database that is in the tutorial directory.  Of course, the tutorial steps
 that invoke Mega2 will fail.**
 
 You will need to obtain the Mega2 program from
-https://watson.hgen.pitt.edu/register/. First, you will invoke Mega2
+https://watson.hgen.pitt.edu/register/. Then, you will invoke Mega2
 on your data. To make matters simple, we will use a pre-constructed
 Mega2 batch file to automate the processing by Mega2. To run Mega2 to
 process and create the SQLite3 database 'seqsimr.db', we issue this
@@ -132,8 +135,8 @@ mega2 MEGA2.BATCH.seqsimr
 ```
 
 **NOTE: To make this tutorial only dependent on R, the above code is not actually run.  And its
-results, shown below, were captured from an environment where we had both R and Mega2 (the C++ program)
-available.  This is true for all the invocations of mega2 shown in these exercises.**
+results, shown below, were captured from an environment where we had both R and Mega2 executable
+available.  All the examples of mega2 shown in these exercises have been similarly "fudged".**
 
 ```
 ## ==========================================================
@@ -259,16 +262,16 @@ available.  This is true for all the invocations of mega2 shown in these exercis
 ## ===========================================================
 ```
 
-If you do not provide the argument, Mega2 will proceed to ask a series
-of questions to collect the needed information to produce a
-database. In addition, it will create a Mega2.BATCH file, we've
+If you do not provide an argument, Mega2 will proceed to ask a series
+of questions to collect the information needed to produce a
+database. In addition, it will create a Mega2.BATCH file, we
 suggested you use. You can look at the "Quick Start" documentation
 https://watson.hgen.pitt.edu/docs/mega2_html/mega2.html Section 4. to
 better understand the interactive process.
 
-This MEGA2.BATCH.seqsimr file begins with a rather long comment
+The MEGA2.BATCH.seqsimr file begins with a rather long comment
 indicating the keyword values that may be set and their default
-value. Toward the end of the file, we set the inputs as **Mega2r.ped**
+value. Toward the end of the file, we see the inputs set to **Mega2r.ped**
 and **Mega2r.map**, indicate the input is PLINK ped format with
 parameters, and indicate that Mega2 should produce a database called
 **seqsimr.db**, etc. (These particular items are in bold face text
@@ -304,7 +307,7 @@ You will eventually have to run Mega2 to convert your data.
 
 After you have the database, start up the R program. The first R commands you should type are:
 
-```{r,eval=FALSE}
+```{r, seqsimrdb,eval=FALSE}
 library(mega2r)
 ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 ```
@@ -314,15 +317,15 @@ optional argument, verbose, causes the read function to summarize the
 tables created, their fields and their sizes. Finally, an "R
 environment" that contains the database tables is returned. (If you
 are unfamiliar with environments, you can think of them as data
-frames. If fact, ENV$locus_table will access the locus_table variable
-from ENV as though fetching an "observation" from a data frame. The
+frames. ENV$locus_table will access the locus_table variable
+from ENV similar to fetching an "observation" from a data frame. The
 difference is when you change a data frame passed to a function, the
 change does not affect the original data frame. Only the function's
 local value is changed; ALL changes are forgotten when the function
 exits. If you change the data in an environment passed to a function,
 the change is permanent.)
 
-```{r mega2r}
+```{r seqsimrdb2}
 library(mega2r)
 ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 ```
@@ -330,9 +333,8 @@ ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 We need to make two observations that apply to all Mega2R functions:
 The first is that when verbose is set in the initial read.Mega2DB, the
 value will be remembered.  It may be used by any subsequent function.
-If verbose is TRUE, Mega2R functions will possibly print out far more
-diagnostic information than you might need, especially on subsequent
-runs.  The second is that all Mega2R functions that do not return an
+If verbose is TRUE, Mega2R functions can print diagnostic information.
+The second is that all Mega2R functions that do not return an
 environment, need to have an environment supplied as an argument.
 There are two ways to accomplish this.  If you assigned the result of
 read.Mega2DB to the variable seqsimr, then you could supply the value
@@ -357,29 +359,30 @@ showMega2ENV = function(envir = ENV) { ... }
 ```
 
 The code above, sets global variable **ENV** to the local 
-variable, envir.  And the argument evaluation mechanism of R will supports
-this usage; even though **ENV** is not known until runtime.
+variable, envir.  When *envir* is evaluated in the function, it 
+will lookup the value of **ENV** in the global environment.
+Hopefully, **ENV** was set to the return value of *read.Mega2DB*
 
 ### Back to more examples.
 
 The ls function will show you all the variables in an
-environment. (You probably used it without arguments to show you the
+environment. (You probably have used it without arguments to show you the
 variables in the .GlobalEnv.) Type:
 
-```{r}
+```{r, ls}
 ls(ENV)
 ```
 
 
-### A more informative overview of the data base can be seen by:
+### A more informative overview of the data base can be had with:
 
-```{r}
+```{r, showMega2ENV}
 showMega2ENV() 
 ```
 
 ### Use standard R commands to examine the created data frames
 
-```{r}
+```{r, str}
 str(ENV$locus_table)
 ```
 
@@ -388,17 +391,20 @@ str(ENV$locus_table)
 ### Loading a Mega2 database
 
 Rather than use
-the read.Mega2DB function described elsewhere and used by all the other
-packages, This package uses *init_pedgene* to read the Mega2 database.
+the read.Mega2DB function described previously and used by all the other
+packages, this package uses *init_pedgene* to read the Mega2 database.
 This function calls a utility function
 shared with read.Mega2DB. Then it creates, edits, and rewrites the family data -- 
 data frame, **fam** .  (**fam** [merges data from the pedigree_table, person_table and
-phenotype_table as you might expect.)
+phenotype_table.)
 *init_pedgene* purges persons with unknown case/control
-status which is necessary for the pedgene calculation.   Finally, *init_pedgene* calculates
-some values that will be used repeatedly and stores them in the environment, ENV.
+status which is necessary for the pedgene calculation.
+(When **fam** is filtered, similar adjustments are made to the phenotype_table and the
+genotype_table.)
+Finally, *init_pedgene* calculates
+some values that will be used repeatedly and stores them in the environment that is returned.
 
-```{r mega2pedgene}
+```{r init_pedgene}
 library(mega2pedgene)
 ENV = init_pedgene("seqsimr.db", verbose = TRUE)
 ```
@@ -409,21 +415,24 @@ Mega2R has an internal default list of the chromosome and base pair
 ranges for a number of gene transcripts.  These transcripts come from
 the UCSC Genome Browser reference assembly GRCH37.  The list was
 further modified to eliminate multiple records of the same gene with
-the exact same transcript start and transcript end.  This constitutes
+the exact same transcript start and transcript end.  These data contain
 about 29,000 records.   You may load you own range set instead of the default.
 You create a data frame that contains at least a name "observation", a chromosome
 "observation", a start position "observation" and an end position "observation".
-You create an integer vector that contains the column numbers of the chromosome
+Then you create an integer vector that contains the column numbers of the chromosome
 "observation", the start position "observation" and the end position "observation".
-These two become the arguments to the *setRanges* function, viz.
+These two objects are then arguments to the *setRanges* function, viz.
 ```
-        setRanges(Transcripts, Offsets)
+        setRanges(Transcripts, Columns)
 ```
 
 By default, the function run_pedgene examines the first 100
 transcripts and prints the results. For this database, the first 100 transcripts
-identifies one useable transcript with several markers:  (To make this exercise run 
-faster, we noticed that the gene appeared at transcript 54; so we will
+identifies one useable transcript with several markers: (It is useable 
+because it is on chromosome 1 and it has a range that overlaps with some of the
+markers in our data.)
+(To make this exercise run 
+faster, we noticed that this transcript appeared at transcript 54; so we will
 restrict pedgene to a small range of transcripts around 54, viz. 50 through
 60.)
 
@@ -446,15 +455,17 @@ CEP104 snp24506 891 442 47
 CEP104 snp24507 789 501 90
 ```
 
-The genotypes for these markers, along with the markers info are fed
+The genotypes for these markers, along with data frame of thesemarkers, the range
+used, and the environment are fed
 to the call back function DOpedgene. DOpedgene converts the genotype
-nucleotides to the count of the minor allele and then runs pedgene for
+nucleotides to 0, 1, and 2 to represent the genotype
+and then runs pedgene for
 several different marker weights. The results are automatically stored
 in a data frame with "observations": prefix of chromosome, gene,
 number of markers and base pair range followed by Pedgene data: kernel
 and burden, value and p-values, four values for each of three
 weightings of the markers.
-These data are saved in the data frame, **pedgene_results**, in the environment, ENV.
+These data are saved in the data frame, **pedgene_results**, in the environment.
 They are also printed when *verbose* is TRUE, viz.
 
 ```
@@ -466,19 +477,20 @@ They are also printed when *verbose* is TRUE, viz.
 1  -1.169488   0.242207
 ```
 
-We should run pedgene on all the transcript entries. So type:
+You should run pedgene on all the transcript entries, but it takes a rather long time.
+So type:
 
-```{r,eval=FALSE}
+```{r, FnToRanges,eval=FALSE}
 # we will skip this line for the Rmd document production because it takes too long
 applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
 ```
 
 If you run the above test, you will see that gene DISP1 and KIF26B
-have some p-values less than 0.01 and AK5 and STL7 less than 0.03.
+have one p-value less than 0.01 and AK5 and STL7 less than 0.03.
 
 ### Running pedgene on selected genes
 
-You may try searching for transcripts of specific genes.  Here the default
+You may try searching for transcripts of specific genes.  Here, the default
 transcript database is TxDb.Hsapiens.UCSC.hg19.knownGene from
 Bioconductor.  Of course you can change it.  Type:
 
@@ -488,8 +500,8 @@ setAnnotations("txdb", "genedb")
 
 where "txdb" is a string that is the name of transcript database that was
 fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
-database that maps a gene id from the transcript to an entrez gene id.
-In addition, you need to load the database with biocLite.
+database that maps a gene id from the input to an entrez gene id.
+You need to install any new the database with biocLite, as shown earlier.
 
 We leave the command below as an exercise.  It runs a bit slowly.  It needs to find
 all  the transcripts for each gene; then it needs to find all the markers between each pair
@@ -499,9 +511,9 @@ from each set of markers.
 applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
 ```
 
-But let us do at least a few genes:
+But let us run this function for a few genes:
 
-```{r,eval=TRUE,collapse=TRUE}
+```{r,FnToGenes,eval=TRUE,collapse=TRUE}
 applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'AK5'), envir = ENV)
 ```
 
@@ -510,67 +522,81 @@ transcripts with the same or overlapping start values and end values.
 
 ## Writing a VCF File using the mega2vcf R package
 
-First create the directory "vcfr"; so we can keep all the generated
-data in one place and then load the mega2vcf library.
+First, load the mega2vcf library and then create the directory "vcfr", so we can keep all the generated
+data in one place.
 
-The Mega2VCF function takes an argument which is the prefix used on all the files
-it generates. Here, we have chosen to make that a path that includes a
-directory.  The Mega2VCF function assumes the Mega2 data frames
+```{r mega2vcflib}
+library(mega2vcf)
+
+if (! dir.exists("vcfr")) dir.create("vcfr")
+```
+
+The Mega2VCF function takes an argument which is the prefix used on all
+generated files. We will make that a path that includes the
+directory *vcfr*.  The Mega2VCF function assumes the Mega2 data frames
 are contained in the global variable ENV. If this is not the case, supply a
 named argument "envir" set to the environment you wish to use.
 
-Note, that Mega2VCF will create the expected .vcf file as well as a
+Note, that Mega2VCF will create the .vcf file as well as a
 .fam file (we do linkage), a .phe file (phenotypes) and a few
 others. These files are listed below.
 
 Creating the VCF file and related files is accomplished by typing:
 
 ```{r mega2vcf}
-if (! dir.exists("vcfr")) dir.create("vcfr")
-library(mega2vcf)
 Mega2VCF("vcfr/vcf.01", ENV$markers[ENV$markers$chromosome==1 ,])
 ```
 
-Note: The line above only creates files for chromosome 1.  You can filter ENV$markers as you find necessary.
-If the second argument is not present, all the markers are dumped.
+Note: The line above places the data for only chromosome 1 in the files.
+(Recall that our simulated data is only on chromosome 1.
+You can filter ENV$markers as you wish.
+If the second argument is not present, all the markers are written out.
 
-```{r}
+The generated files are listed below:
+```{r, lsvcf}
 list.files("vcfr")
 ```
 
-Read the package code to see how these files are created from the data frames. 
+You can read the R code to see how these files are created from the data frames.
 
 
 ## Creating a GenABEL gwaa.data-class object using the mega2genabel R package
 
 
-Note: There are several data formats that Mega2 can read and transform
-into a database that are not directly acceptable to GenABEL. Any
+There are several data formats that Mega2 can read and transform
+into a database that are not directly accepted by GenABEL. But any
 Mega2 database that can be read into R, can be transformed to GenABEL
-following this example with seqsimr.db.
+following this example using *seqsimr.db*.
 
 GenABEL (http://www.genabel.org/) can process PLINK .tped/.tfam files with the function
 *convert.snp.tped* to create a gwaa.data-class object.  Currently, we
 use this mechanism to convert Mega2 data frames to a gwaa.data-class
 object.  The argument to Mega2GenABEL is a file name prefix that will
 be used to name the .tped/.fam files that are created.  These files
-are read by GenABEL (https://cran.r-project.org/package=GenABEL/)
+are read by GenABEL's *convert.snp.tped* (https://cran.r-project.org/package=GenABEL)
 to produce a GenABEL "raw" file.  Then the "raw" file and a generated phenotype
 file are processed by *load.gwaa.data* to yield a gwaa.data-class
 object.
 
 Type:
 
-```{r}
+```{r seqsimgwaa}
 library(mega2genabel)
 ENV = read.Mega2DB("seqsimr.db")
+
+# This line converts the database to a gwaa.data-class object. The intermediate
+# files begin with "SEQ"
 seqsimgwaa = Mega2GenABEL("SEQ")
+```
+
+The files generated are:
+
 list.files(pattern = "SEQ.*")
 ```
 
 You can use any of the GenABEL provided functions on the results, seqsimgwaa.
 
-```{r}
+```{r strseqsimgwaa}
 str(seqsimgwaa)
 ```
 
@@ -578,7 +604,7 @@ str(seqsimgwaa)
 
 To verify that the R packages described above have worked correctly,
 we can compare their output files to those created by Mega2 itself, to
-verify that they are, as expected, identical. This type of testing is
+verify that they are identical, as expected. This type of testing is
 known as regression testing.
 
 ## VCF regression
@@ -718,7 +744,7 @@ You should compare the two directories: vcf and vcfr. Please add the
 differences in white space. You may may notice that expressions that
 contain dates that are different between the two directories.  Type:
 
-```{bash, eval=FALSE}
+```{bash, diffvcf,eval=FALSE}
 diff -wrs vcf vcfr
 ```
 
@@ -735,7 +761,7 @@ diff -wrs vcf vcfr
 
 This test is a bit more complicated. First, we load GenABEL and access its data:
 
-```{r}
+```{r srdta}
 library(GenABEL)
 data(srdta)
 ```
@@ -743,7 +769,7 @@ data(srdta)
 Then we load the mega2genabel library and dump the GenABEL data as
 PLINK .ped/.map/.phe files
 
-```{r}
+```{r dmpPed}
 library(mega2genabel)
 dmpPed(gwaa_ = srdta, pfx = "srdta")
 ```
@@ -753,6 +779,10 @@ To produce the Mega2 database srdta.db, we switch to the Unix command line and r
 ```{bash, eval=FALSE}
 mega2 MEGA2.BATCH.srdta
 ```
+
+**NOTE: To make this tutorial only dependent on R, the above code is not actually run.  And its
+results, shown below, were captured from an environment where we had both R and the Mega2 executable
+available.**
 
 ```
 ## ==========================================================
@@ -963,7 +993,10 @@ mega2 MEGA2.BATCH.srdta
 ## ===========================================================
 ```
 
-### (abbreviated contents of MEGA2.BATCH.srdata file
+### The MEGA2.BATCH.srdata file
+
+The abbreviated MEGA2.BATCH.srdta file is below. (The initial comment section
+is not shown and important lines are shown in a bold typeface.)
 
 > **Input_Database_Mode=1**  
 **Input_Format_Type=4**  
@@ -990,19 +1023,33 @@ Default_Reset_Invalid=no
 Default_Outfile_Names=yes  
 
 
-Then we go back into R and type:
+Note: We have provided a copy of the srdta.db database in the mega2rtutorial.  So you can
+proceed with the steps that follow, even if you did not create your own database.
 
-```{r, eval=TRUE}
+So, we go back into R and type:
+
+```{r, srdta.db,eval=TRUE}
 ENV = read.Mega2DB("srdta.db")
+
 mega = Mega2GenABEL("SRD")
 list.files(pattern = "SRD.*")
 ```
 
-*mega* and *srdta* should be the same gwaa.data-class object. You can
-compare them however you prefer.  But, Mega2GenABELtst can be used to
-compare the phenotype and genotype data, viz. in R type:
+*mega* should be the same as the *srdta* gwaa.data-class object. You can
+compare them however you prefer.  But, *Mega2GenABELtst()* can be used to
+compare the phenotype data, genotype data, and object metadata, item by item.
 
-```{r, eval=TRUE}
+In R, type:
+
+```{r strs}
+str(mega)
+str(srdta)
+```
+
+to show the objects and then to compare them type:
+
+```{r, mega2genabeltst,eval=TRUE}
+options(max.print = 30)
 Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
 ```
 
@@ -1018,6 +1065,6 @@ document by providing implementation details.
 
 3. Write to the Mega2 discussion group: https://groups.google.com/forum/#!forum/mega2-users
 
-```{r, eval=TRUE,echo=FALSE}
+```{r, fin,eval=TRUE,echo=FALSE}
 mega2rtutorial::clean_mega2rtutorial_data()
 ```

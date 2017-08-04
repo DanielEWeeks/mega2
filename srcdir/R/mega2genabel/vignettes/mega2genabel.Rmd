@@ -364,5 +364,6 @@ str(srdta)
 to show the objects and then to compare them type:
 
 ```{r mega2genabeltst}
+options(max.print = 30)
 Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
 ```
