@@ -7,14 +7,14 @@
 Mega2GenABELconvert(markers = NULL, envir = ENV)
 }
 \arguments{
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
-The matrix is (# of samples / 4 ) x (# of markers).  (Round samples to multiple of 4.
- Each byte stores data for 4 samples; intfn() generates the 4 - 2 bit encodings.
+The matrix is (# of samples / 4 ) x (# of markers).  (# of samples is rounded to a multiple of 4.
+ Each byte stores data for 4 samples; a byte has 4 - 2 bit encodings.
 }
 \examples{
 \dontrun{

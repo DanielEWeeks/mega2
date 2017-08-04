@@ -5,8 +5,8 @@
 \alias{Mega2GenABEL-package}
 \title{Mega2GenABEL package}
 \description{
-This package reads a Mega2 SQLite3 database into R dataframes and
-generates input data for GenABEL from these same frames.
+This package processes R data frames that represent a Mega2R SQLite3 database and
+generates the corresponding GenABEL gwaa.data-class object.
 }
 \author{
 Robert V Baron

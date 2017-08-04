@@ -7,13 +7,13 @@
 mkGenABELphe(envir)
 }
 \arguments{
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
-Generate the .phe (phenotype) file for PLINK which is used by GenAbel.  The person
+Generate the .phe (PLINK phenotype) file needed by GenAbel.  The person
  must match that specified in the .tfam file
 }
 \examples{
@@ -21,3 +21,4 @@ Generate the .phe (phenotype) file for PLINK which is used by GenAbel.  The pers
 mkGenABELphe(envir)
 }
 }
+\keyword{internal}

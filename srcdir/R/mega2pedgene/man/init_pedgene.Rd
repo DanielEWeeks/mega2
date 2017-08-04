@@ -18,7 +18,7 @@ This value is saved in the returned environment.}
 "environment" containing data frames from an SQLite database and some computed values.
 }
 \description{
-This populates the \bold{R} data frames from the specified \b{Mega2 R} database.  It then
+This populates the \bold{R} data frames from the specified \bold{Mega2 R} database.  It then
  prunes the samples to only include members that have a definite case or control
  status.  Undefined samples are ignored; this is necessary for \emph{pedgene}.
 }

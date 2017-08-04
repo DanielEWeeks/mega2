@@ -117,8 +117,6 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #'
 #' @param sort pass value to gwaa conversion function
 #'
-#' @param mapno specify which map index to use for physical distances
-#'
 #' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @return gwaa.class-object created from Mega2R database
@@ -134,11 +132,11 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #' head(summary(gwaa))
 #'}
 Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
-                         sort = TRUE, mapno = 0, envir = ENV) {
+                         sort = TRUE, envir = ENV) {
 #browser()
     if (is.null(markers)) markers = envir$markers
 
-    gwaa(markers = markers, mapno = mapno, force = force, 
+    gwaa(markers = markers, force = force, 
          makemap = makemap, sort = sort, envir = envir)
 
 }

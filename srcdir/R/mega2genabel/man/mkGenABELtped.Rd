@@ -13,15 +13,15 @@ mkGenABELtped(prefix, markers = NULL, mapno = 0, envir)
 
 \item{mapno}{specify which map index to use for genetic distances}
 
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
 Generate a PLINK TPED file from the specified Mega2 SQLite database.  The file is named "prefix".tped
- If the markers arg is.null(), the entire envir$markers set is used otherwise markers arg MUST
- be a subset of the envir$markers data.frame -- same columns, but pruned rows.
+ If the markers argument is.null(), the entire envir$markers set is include; otherwise the markers argument MUST
+ be a subset of the envir$markers data.frame -- same columns, but fewer rows.
 }
 \examples{
 \dontrun{
@@ -30,3 +30,4 @@ mkGenABELtped("foo")
 mkGenABELtped("foo", ENV$markers[ENV$markers$chromosome >= 20,])
 }
 }
+\keyword{internal}

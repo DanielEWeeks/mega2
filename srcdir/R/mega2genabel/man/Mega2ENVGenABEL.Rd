@@ -5,26 +5,28 @@
 \title{generate gwaa.data-class object}
 \usage{
 Mega2ENVGenABEL(markers = NULL, force = TRUE, makemap = FALSE,
-  sort = TRUE, mapno = 0, envir = ENV)
+  sort = TRUE, envir = ENV)
 }
 \arguments{
-\item{markers}{data frame of markers being processed}
+\item{markers}{data frame of markers to be processed}
 
-\item{force}{pass value to gwaa}
+\item{force}{pass value to gwaa conversion function}
 
-\item{makemap}{pass value to gwaa}
+\item{makemap}{pass value to gwaa conversion function}
 
-\item{sort}{pass value to gwaa}
+\item{sort}{pass value to gwaa conversion function}
 
-\item{mapno}{specify which map index to use for genetic distances}
-
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
-gwaa.class-object of previously read.Mega2DB database
+gwaa.class-object created from Mega2R database
 }
 \description{
-Directly write a gwaa.data-class object from ENV tables
+create a gwaa.data-class object from data frames in a Mega2 environment.  This
+ function calls a front end that eventually calls a C++ Rcpp function that reads
+ the genotype data in Mega2 compressed format and converts it to the GenABEL
+ compressed format.  With any luck, the results of *Mega2ENVGenABEL* are the same
+ as *Mega2GenABEL*, but the calculation is much faster.
 }
 \examples{
 \dontrun{

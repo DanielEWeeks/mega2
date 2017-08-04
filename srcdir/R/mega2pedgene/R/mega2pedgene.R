@@ -46,7 +46,7 @@ NULL
 #' load Mega2 SQLite database into R and perform initialization for pedgene usage
 #'
 #' @description
-#'  This populates the \bold{R} data frames from the specified \b{Mega2 R} database.  It then
+#'  This populates the \bold{R} data frames from the specified \bold{Mega2 R} database.  It then
 #'  prunes the samples to only include members that have a definite case or control
 #'  status.  Undefined samples are ignored; this is necessary for \emph{pedgene}.
 #'

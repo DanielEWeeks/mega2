@@ -2,13 +2,8 @@
 
 export(Mega2ENVGenABEL)
 export(Mega2GenABEL)
-export(Mega2GenABELcoding)
-export(Mega2GenABELconvert)
 export(Mega2GenABELtst)
 export(dmpPed)
-export(mkGenABELphe)
-export(mkGenABELtfam)
-export(mkGenABELtped)
 importFrom(GenABEL,convert.snp.tped)
 importFrom(GenABEL,crnames)
 importFrom(GenABEL,load.gwaa.data)

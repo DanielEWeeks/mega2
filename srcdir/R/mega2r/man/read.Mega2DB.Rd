@@ -18,7 +18,7 @@ envir an environment that contains all the data frames created from the SQLite d
 Call \emph{dbmega2_import()} with the specified database and create an environment, with the
  SQLite table data loaded into data frames.
  Also run \emph{mkfam} to create the pedigree data frame \emph{fam} and then store it with \emph{setfam}.
- This modifies the \emph{unified_genotype_table} (and \empth{phenotype_table} to match the family members
+ This modifies the \emph{unified_genotype_table} (and \emph{phenotype_table} to match the family members
  that remain.  By default, this will remove
  persons that were replicated to break loops in the pedigree, see \emph{setfam} for details.
 }
