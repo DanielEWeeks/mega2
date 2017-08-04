@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2.R
 \name{getgenotypesraw}
 \alias{getgenotypesraw}
-\title{fetch genotype matrix for specified markers}
+\title{fetch genotype integer matrix for specified markers}
 \usage{
 getgenotypesraw(markers_arg, envir = ENV)
 }
@@ -17,27 +17,31 @@ getgenotypesraw(markers_arg, envir = ENV)
 \item{position}{is the integer base pair position of marker}
  }}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
-a matrix of genotypes represented as two allele pairs.  There is one column for each
+a matrix of genotypes represented as integers.  Each 32 bit integer represents contains
+ two allele values: the high 16 bits contains the index of allele1 and the low 16 bits contains
+ the index of allele2.  There is one column for each
  marker in \emph{markers_arg} argument.  There is one row for each person in the family
  (\emph{fam}) table.
 }
 \description{
-This function calls the C++ function that does all the heavy lifting.  It passes the
- locus_index and the locus_offset in the \emph{unified_genotype_table} from the
- \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
- \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
- another contains the alleles for each marker, and finally there are some bookkeeping related
- data.
+This function calls a C++ function that does all the heavy lifting.  It basically passes
+ arguments to this function, some from its existing arguments and some from data frames
+ that are in the "global" environment, \bold{envir}.  From its markers_arg argument, it gets
+ the locus_index and the index in the \emph{unified_genotype_table}.
+ From the "global" environment, \bold{ENV}, it gets a bit vector of compressed genotype information,
+ and some bookkeeping related data.
+ Note: This function also contains a dispatch/switch on the type of compression in the genotype
+ vector.  A different C++ function is called when there is compression versus when there is no
+ compression.
 }
 \details{
 The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
  there are two bits for each genotype.  This function creates an output matrix by fixing
  the marker and collecting genotype information for each person and then repeating for
- all the needed markers.  Currently, this appears slightly faster than the other scan in
- \emph{genotype_Ri}
+ all the needed markers.
 }
 \examples{
 \dontrun{

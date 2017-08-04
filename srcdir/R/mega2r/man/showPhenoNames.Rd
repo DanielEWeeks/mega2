@@ -7,7 +7,7 @@
 showPhenoNames(envir = ENV)
 }
 \arguments{
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None

@@ -2,18 +2,20 @@
 % Please edit documentation in R/mega2.R
 \name{mk_unified_genotype_table}
 \alias{mk_unified_genotype_table}
-\title{mk_unified_genotype_table aggregate separate genotype vectors for each chromosome to one extended vector containing all the chromosomes.}
+\title{concatenate separate genotype vectors for each chromosome to one extended vector containing all the chromosomes
+ and store it in the environment.}
 \usage{
 mk_unified_genotype_table(envir)
 }
 \arguments{
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
-The genotype_table contains for each person a separate record for each chromosome.
- We need a single vector for each person.
+The genotype_table data frame contains for each person a separate record for each chromosome.
+ Concatenate all the separate records for each person in chromosome order and make a data frame of these vectors.
+ Note:  Genotype vectors are "raw" (byte) vectors.
 }
 \keyword{internal}

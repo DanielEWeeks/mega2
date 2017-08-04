@@ -59,7 +59,7 @@ data frame, **fam** .  (**fam** [merges data from the pedigree_table, person_tab
 phenotype_table as you might expect.)
 *init_pedgene* purges persons with unknown case/control
 status which is necessary for the pedgene calculation.   Finally, *init_pedgene* calculates
-some values that will be used repeatedly and stores them in the environment, ENV.
+some values that will be used repeatedly and stores them in the environment it returns.
 
 ```{r mega2pedgene}
 library(mega2pedgene)
@@ -68,6 +68,7 @@ library(mega2pedgene)
 library(mega2rtutorial)
 database_file = system.file("exdata", "seqsimr.db", package="mega2rtutorial")
 ENV = init_pedgene(database_file, verbose = T)
+ls(ENV)
 ```
 
 ## Running pedgene on transcripts
@@ -84,22 +85,27 @@ You create an integer vector that contains the column numbers of the chromosome
 "observation", the start position "observation" and the end position "observation".
 These two become the arguments to the *setRanges* function, viz.
 ```
-        setRanges(Transcripts, Offsets)
+        setRanges(Transcripts, Columns)
 ```
 
 By default, the function run_pedgene examines the first 100
 transcripts and prints the results. For this database, the first 100 transcripts
-identifies one useable transcript with several markers:  (To make this exercise run 
+identifies only one  transcript with several markers:  (To make this exercise run 
 faster, we noticed that the data appeared at transcript 54; so we will
 restrict pedgene to a small range of transcripts around 54, viz. 50 through
 60.)
 
 ```{r run_pedgene,collapse=TRUE}
-run_pedgene(gs = 50:60)
+#tryCatch(
+        run_pedgene(gs = 50:60)
+#        error = function (xx) { print(xx); traceback() },
+#        warning = function (xx) { print(xx); traceback() } )
+
 ```
 
 You will see many reports
-of "No markers in range", because the database is a subrange of chromosome 1 whereas the transcripts span
+of "No markers in range", because the database only contains markers on a subrange of 
+chromosome 1 whereas the transcripts span
 the entire genome.
 Occasionally you will see a listing of a
 gene name, markers, and count of 1/1, 1/2 and 2/2 genotypes, viz.
@@ -117,13 +123,14 @@ CEP104 snp24507 789 501 90
 
 The genotypes for these markers, along with the markers info are passed
 to the call back function DOpedgene. DOpedgene converts the genotype
-nucleotides to the count of the minor allele and then runs pedgene for
+nucleotides  1/1, 1/2 and 2/2 to the values 0, 1 and 2 (or 2, 1, 0) if 1/1 is
+the allele with the minor allele frequency.  Then it runs pedgene for
 several different marker weights. The results are automatically stored
 in a data frame with "observations": prefix of chromosome, gene,
 number of markers and base pair range followed by Pedgene data: kernel
 and burden, value and p-values, four values for each of three
 weightings of the markers.
-These data are saved in the data frame, **pedgene_results**, in the environment, ENV.
+These data are saved in the data frame, **pedgene_results**, in the environment.
 They are also printed when *verbose* is TRUE, viz.
 
 ```
@@ -147,7 +154,7 @@ have some p-values less than 0.01 and AK5 and STL7 less than 0.03.
 
 ## Running pedgene on selected genes
 
-You may try searching for transcripts of specific genes.  Here the default
+You may try searching for transcripts of specific genes.  Here we use the default
 transcript database is TxDb.Hsapiens.UCSC.hg19.knownGene from
 Bioconductor.  Of course you can change it.  Type:
 
@@ -161,8 +168,9 @@ database that maps a gene id from the transcript to an entrez gene id.
 
 We leave the command below as an exercise.  It runs a bit slowly.  It needs to find
 all  the transcripts for each gene; then it needs to find all the markers between each pair
-of transcript start/end ranges; and finally it needs to do a small computation on the genotypes
-from each set of markers.
+of transcript start/end ranges; and finally it needs to do a small computation to extract
+the genotypes from each set of markers.
+
 ```{r,eval=FALSE,collapse=TRUE}
 applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
 ```

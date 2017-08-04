@@ -2,20 +2,21 @@
 % Please edit documentation in R/mega2.R
 \name{getgenotype_person}
 \alias{getgenotype_person}
-\title{getgenotype_person}
+\title{return the genotypes for all markers of a given person}
 \usage{
 getgenotype_person(perid = 1, envir = ENV)
 }
 \arguments{
-\item{perid}{...}
+\item{perid}{person/sample identifier}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
-...
+for selected person, expand genotype bit vector to an integer vector with
+ one integer per marker.  Then convert the integer vector to genotypes.
 }
 \examples{
 \dontrun{
@@ -26,3 +27,4 @@ getgenotype_person(1)
 getgenotype_person(m:n)
 }
 }
+\keyword{internal}

@@ -2,28 +2,28 @@
 % Please edit documentation in R/mega2pedgene.R
 \name{init_pedgene}
 \alias{init_pedgene}
-\title{get data for pedgene run using \bold{Mega2} framework}
+\title{load Mega2 SQLite database into R and perform initialization for pedgene usage}
 \usage{
 init_pedgene(db = NULL, filename = NULL, verbose = FALSE)
 }
 \arguments{
 \item{db}{specifies a \bold{Mega2} SQLite database containing study data.}
 
-\item{filename}{to store p-values to.  By default "pedgene.txt" is used.}
+\item{filename}{in which to store results data frame.  By default "pedgene.txt" is used.}
 
-\item{verbose}{default is passed to the \bold{Mega2} framework.  TRUE indicates that
-diagnostic printouts should be enabled.}
+\item{verbose}{TRUE indicates that diagnostic printouts should be enabled.
+This value is saved in the returned environment.}
 }
 \value{
-"environment" containing SQLite database and other globals
+"environment" containing data frames from an SQLite database and some computed values.
 }
 \description{
-This populates the \bold{Mega2} data frames from the specified database.  It also
+This populates the \bold{R} data frames from the specified \b{Mega2 R} database.  It then
  prunes the samples to only include members that have a definite case or control
  status.  Undefined samples are ignored; this is necessary for \emph{pedgene}.
 }
 \note{
-This also records schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
+This also calculates schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
 
  This also initializes the dataframe "envir$pedgene_results" to zero rows.
 }

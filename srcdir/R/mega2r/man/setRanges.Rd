@@ -2,25 +2,25 @@
 % Please edit documentation in R/mega2gene.R
 \name{setRanges}
 \alias{setRanges}
-\title{set default ranges and offset of chromosome, start and end in a range}
+\title{set default ranges: chromosome and start and end base pair for each element in the default range data}
 \usage{
 setRanges(ranges, indices, envir = ENV)
 }
 \arguments{
-\item{ranges}{a data.frame that contains at least 4 variables: a name, a chromosome, a start
+\item{ranges}{a data frame that contains at least 4 variables: a name, a chromosome, a start
 base pair position and an end base pair position.}
 
-\item{indices}{Vector of 3 integers that specify the location of chromosome, start base pair
-position and end base pair position of each range data.frame.}
+\item{indices}{a vector of 3 integers that specify the location of chromosome column, start base pair
+column and end base pair column of range data frame.}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
-This function initializes the default list of ranges used by \emph{applyFnToRanges}.  All
- the ranges will be examined and each set of markers that fall within a range will be
+This function sets the default list of ranges used by \emph{applyFnToRanges}.  \emph{applyFnToRanges}
+ examines the ranges and each set of markers that fall within a range will be
  processed.
 }
 \examples{

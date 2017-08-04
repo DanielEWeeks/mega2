@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2.R
 \name{getgenotypesgenabel}
 \alias{getgenotypesgenabel}
-\title{fetch genotype matrix for specified markers}
+\title{fetch genotype matrix for specified markers and returns the corresponding GenABEL genotype matrix}
 \usage{
 getgenotypesgenabel(markers_arg, envir = ENV)
 }
@@ -17,7 +17,7 @@ getgenotypesgenabel(markers_arg, envir = ENV)
 \item{position}{is the integer base pair position of marker}
  }}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 a matrix of genotypes represented as two allele pairs.  There is one column for each
@@ -25,27 +25,32 @@ a matrix of genotypes represented as two allele pairs.  There is one column for 
  (\emph{fam}) table.
 }
 \description{
-This function calls the C++ function that does all the heavy lifting.  It passes the
- locus_index and the locus_offset in the \emph{unified_genotype_table} from the
- \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
- \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
- another contains the alleles for each marker, and finally there are some bookkeeping related
- data.
+This function calls a C++ function that does all the heavy lifting.  It basically passes
+ arguments to this function, some from its existing arguments and some from data frames
+ that are in the "global" environment, \bold{envir}.  From its markers_arg argument, it gets
+ the locus_index and the index in the \emph{unified_genotype_table}.
+ From the "global" environment, \bold{ENV}, it gets a bit vector of compressed genotype information,
+ allele information, and some bookkeeping related data.
+ Note: This function also contains a dispatch/switch on the type of compression in the genotype
+ vector.  A different C++ function is called when there is compression versus when there is no
+ compression.
 }
 \details{
-The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
- there are two bits for each genotype.  This function creates an output matrix by fixing
- the marker and collecting genotype information for each person and then repeating for
- all the needed markers.  Currently, this appears slightly faster than the other scan in
- \emph{genotype_Ri}
+The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
+ there are two bits for each genotype;  each byte has the data for 4 markers.  In GenABEL,
+ there is one raw vector per marker, and each byte has the data for 4 persons.  The C++
+ function does this conversion as well as adjust the bit values.  For example, in GenABEL
+ the genotype represented by bits == 0, is what Mega2 represents with 2.
+ Doing the conversion in C++ is 10 - 20 times faster than converting the Mega2 data to
+ PLINK .tped files and then having GenABEL read in an process/convert those files.
 }
 \examples{
 \dontrun{
 # two ints in upper/lower half integer representing allele for all persons in
 # markers data.frame argument
-getgenotypesraw(ENV$markers)
+getgenotypesgenabel(ENV$markers)
 
 # two ints in upper/lower half integer representing allele # for all persons in chromosome n
-getgenotypesraw(ENV$markers[ENV$markers$chromosome == n,])
+getgenotypesgenabel(ENV$markers[ENV$markers$chromosome == n,])
 }
 }

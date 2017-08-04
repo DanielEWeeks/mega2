@@ -10,10 +10,13 @@
 TBLSFilter
 }
 \description{
-For the for mentioned tables in some cases we will only extract a subset of columns
+This package local list contains named values.  The name corresponds to an SQLite database table.
+ The value is a character string of the column names from the "named" table that should be stored.  An entry
+ is in this list, if not all the database table columns are needed.  The columns for each table are separated
+ by commas.
 }
 \note{
-For the data.frames below, only the specified fields are loaded from the SQLite tables
+For the data base tables not in this list, all columns are stored in the corresponding data frame.
 }
 \author{
 Robert V Baron

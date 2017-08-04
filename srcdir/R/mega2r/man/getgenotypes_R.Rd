@@ -19,7 +19,7 @@ getgenotypes_R(markers_arg, sepstr = "", envir = ENV)
 
 \item{sepstr}{separator string for alleles (default is none)}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 a matrix of genotypes represented as a nucleotide pair.  There is one column for each

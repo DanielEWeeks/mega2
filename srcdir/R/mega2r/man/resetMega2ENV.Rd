@@ -2,16 +2,18 @@
 % Please edit documentation in R/mega2.R
 \name{resetMega2ENV}
 \alias{resetMega2ENV}
-\title{reset ENV environment; this flushes all tables/state.}
+\title{return an initialized environment}
 \usage{
 resetMega2ENV()
 }
 \value{
-envir an environment that contains all the tables created from the SQLite tables.
+envir an environment that contains a few initial tables read from the mega2r package.
 }
 \description{
-Mega2 uses an environment, \emph{ENV} to store all the tables it reads in.  This is reset
- to an empty env() and then the gc is run.
+Mega2 uses an environment to store the data frames when it reads in an SQLite database.
+ The environment is also used to store operational data.
+ The function first runs the garbage collector ("gc"), then allocates an empty environment
+ and finally loads some default data into it.
 }
 \examples{
 \dontrun{

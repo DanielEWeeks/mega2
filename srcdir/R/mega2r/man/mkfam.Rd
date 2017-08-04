@@ -2,20 +2,24 @@
 % Please edit documentation in R/mega2gene.R
 \name{mkfam}
 \alias{mkfam}
-\title{assemble pedigree information}
+\title{assemble pedigree information into a data frame}
 \usage{
 mkfam(brkloop = FALSE, traitname = "default", envir = ENV)
 }
 \arguments{
-\item{brkloop}{I haven't needed to set this yet.  Maybe never will.}
+\item{brkloop}{I haven't needed to set this TRUE yet.  Maybe never will.
+If loops are broken, a person will be replaced by a dopple ganger in the same family with a
+different father/mother.  This the number of persons per family will be different when there
+are broken loops.  Also, the person_link numbers will be different for all the persons after
+the first loop is broken.}
 
-\item{traitname}{Name for trait to use as case/control value; by default, "default"}
+\item{traitname}{name for trait to use as case/control value; by default, "default"}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
-data.frame
-data.frame is described above
+data frame
+that is described above
 
 The observations are: \describe{
 \item{pedigree}{family pedigree name}
@@ -27,7 +31,7 @@ The observations are: \describe{
 }
 }
 \description{
-Generate a data.frame with a row for each known person.  The observations are:
+Generate a data.frame with a row for each person.  The observations are:
 \tabular{ll}{
 \strong{pedigree} \tab family pedigree name\cr
 \strong{person} \tab person name\cr
@@ -38,11 +42,10 @@ Generate a data.frame with a row for each known person.  The observations are:
 }
 }
 \note{
-The appropriate columns of \emph{pedigree_table}, \emph{person_table}, and \emph{trait_table}
-are merged.
+The columns of this data frame are from the \emph{pedigree_table}, \emph{person_table}, and \emph{trait_table}.
 
-Also, the father and mother columns from \emph{person_table} are translated from a row index to
-the corresponding name.
+Also, the father and mother columns from \emph{person_table} are translated from a row index in the
+\emph{person_table} to the corresponding name.
 }
 \examples{
 \dontrun{

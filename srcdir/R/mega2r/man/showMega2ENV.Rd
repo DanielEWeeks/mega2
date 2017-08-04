@@ -2,22 +2,24 @@
 % Please edit documentation in R/mega2.R
 \name{showMega2ENV}
 \alias{showMega2ENV}
-\title{show ENV environment, viz. samples, markers and all tables/state.}
+\title{show Mega2r environment, viz. data frames and related info.}
 \usage{
 showMega2ENV(envir = ENV)
 }
 \arguments{
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
-Mega2 uses an environment, \emph{ENV} to store all the tables it reads in.  This function shows the
- count of samples and markers for the database as well as the tables and their sizes.
+Mega2 uses an environment to store the data frames when it reads in SQLite database tables.  
+ This function shows the data frames and their sizes; it also
+ shows the count of samples and markers in the database.
+ Note: It is convenient, though not necessary, if the environment is named \emph{ENV}.
 }
 \examples{
 \dontrun{
-statusMega2ENV()
+showMega2ENV()
 }
 }

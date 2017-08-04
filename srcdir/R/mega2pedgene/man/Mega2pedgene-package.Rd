@@ -13,5 +13,4 @@ https://cran.r-project.org/web/packages/pedgene/index.html
 }
 \author{
 Robert V Baron, rvb5@pitt.edu
- Maintainer: Robert V Baron, <rvb5@pitt.edu>
 }

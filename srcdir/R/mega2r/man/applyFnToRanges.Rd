@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2gene.R
 \name{applyFnToRanges}
 \alias{applyFnToRanges}
-\title{apply function to genotypes in each specified range}
+\title{apply a function to all the genotypes in each of several specified ranges}
 \usage{
 applyFnToRanges(op          = function (geno, markers, range, envir) {},
                 ranges_arg  = NULL,
@@ -12,7 +12,7 @@ applyFnToRanges(op          = function (geno, markers, range, envir) {},
 }
 \arguments{
 \item{op}{Is a function of four arguments.  It will be called repeatedly by
-\code{applyFnToGenes}.  The arguments are:
+\code{applyFnToRanges} in a try/catch context.  The arguments are:
 \describe{
 \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
 \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data.frame with the following 5 variables:
@@ -25,7 +25,7 @@ applyFnToRanges(op          = function (geno, markers, range, envir) {},
 \item{position}{is the integer base pair position of marker}
  }
 }
-\item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
+\item{range}{An indicator of which range argument of \code{applyFnToRanges} these markers correspond to.}
 \item{envir}{An R environment holding Mega2 data frames and state data.}
 }}
 
@@ -33,20 +33,21 @@ applyFnToRanges(op          = function (geno, markers, range, envir) {},
 startbase pair position and an end base pair position.}
 
 \item{indices_arg}{is a vector of 3 integers that specify the location of chromosome, start base
-pair position and end base pair position of each range data.frame.}
+pair column and end base pair column of the range data frame.}
 
 \item{fuzz_arg}{is an integer vector of length one or two.  The first argument is used to reduce
 the start base pair selected from each range and the second to increase the end base pair
-position.  (If only one value is present, it is used for both changes.)}
+position.  (If only one value is present, it is used for both changes.) Note: The values
+can be positive or negative.}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
 The function \code{op} will be called for every set of markers that is falls in each range.
- This does the hard work for \code{applyFnToGenes}.
+ This function is called by \code{applyFnToGenes}.
 }
 \note{
 If the \code{ranges_arg} is NULL, then the default ranges that have been set by \code{setRanges}#'  are used.  If \code{setRanges} has not been set, a default set of the RefGene ranges is used.
@@ -63,13 +64,11 @@ If the \code{ranges_arg} is NULL, then the default ranges that have been set by 
    # apply function "show" to all genotypes on chromosomes 11 for two base
    # pair ranges
    applyFnToRanges(show, 
+                   ranges_arg =
                    matrix(c(11, 50000000, 50100000,
                             11, 60000000, 60100000),
                            ncol = 3, nrow = 2, byrow = T),
-                   1:3)
-
-   # apply function "show" to all genotypes for first marker in each chromosome
-   applyFnToRanges(show, markers = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
+                   indices_arg = 1:3)
 
 }
 }

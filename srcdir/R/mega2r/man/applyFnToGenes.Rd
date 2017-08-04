@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2gene.R
 \name{applyFnToGenes}
 \alias{applyFnToGenes}
-\title{apply function to genotypes in genes}
+\title{apply a function to genotypes (markers) in each gene transcript}
 \usage{
 applyFnToGenes(op           = function (geno, markers, range, envir) {},
                genes_arg    = c("ELL2", "CARD15"),
@@ -15,13 +15,13 @@ applyFnToGenes(op           = function (geno, markers, range, envir) {},
 }
 \arguments{
 \item{op}{Is a function of four arguments.  It will be called repeatedly by
-\code{applyFnToGenes}.  The arguments are:
+\code{applyFnToGenes} in a try/catch context.  The arguments are:
 \describe{
 \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
-\item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data.frame with the following 5 variables:
+\item{markers}{Marker data for each marker selected.  A marker is a data frame with the following 5 variables:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
-\item{locus_link_fill}{is the position of corresponding genotype data in the
+\item{locus_link_fill}{is the position of corresponding marker data in the
 \emph{unified_genotype_table}}
 \item{MarkerName}{is the text name of the marker}
 \item{chromosome}{is the integer chromosome number}
@@ -34,50 +34,55 @@ applyFnToGenes(op           = function (geno, markers, range, envir) {},
 
 \item{genes_arg}{a character vector of gene names to be selected.
 All the transcripts identified with the specified gene in BioConductor Annotation,\cr
-\bold{TxDb.Hsapiens.UCSC.hg19.knownGene}, are selected.  This will produce multiple "range"
-elements of chromosome, start base pair, end base pair.  Note: BioCoductor Annotation
+\bold{TxDb.Hsapiens.UCSC.hg19.knownGene}, are selected.  This produces multiple "range"
+elements containing chromosome, start base pair, end base pair.  Note: BioCoductor Annotation
 \bold{org.Hs.eg.db} is used to convert from gene name to ENTREZ gene id.}
 
 \item{ranges_arg}{an integer matrix of three columns.  The columns indicate a range:
 a chromosome number, a start base pair value, and an end base pair value.}
 
-\item{chrs_arg}{an integer vector of chromosome numbers.  All of the base pairs on a these
-chromosomes will be selected.}
+\item{chrs_arg}{an integer vector of chromosome numbers.  All of the base pairs on each
+chromosomes will be selected as a single range.}
 
 \item{markers_arg}{a data.frame with the following 5 variables:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
-\item{locus_link_fill}{is the position of corresponding genotype data in the\cr
+\item{locus_link_fill}{is the position of corresponding marker data in the\cr
 \emph{unified_genotype_table}}
 \item{MarkerName}{is the text name of the marker}
 \item{chromosome}{is the integer chromosome number}
 \item{position}{is the integer base pair position of marker}
- }}
+}}
 
 \item{type_arg}{a character vector of length 1 that contains \bold{"TX"} or does not.  If it is
 \bold{"TX"}, which is the default, the \bold{TX} fields of BioConductor Annotation,\cr
-\bold{TxDb.Hsapiens.UCSC.hg19.knownGene} are used.  Otherwise, the \bold{CDS} fields
-are used.}
+\bold{TxDb.Hsapiens.UCSC.hg19.knownGene} are used to define the base pair ranges and chromosome.
+Otherwise, the \bold{CDS} fields are used.}
 
 \item{fuzz_arg}{is an integer vector of length one or two.  The first argument is used to reduce
 the start base pair selected from each transcript and the second to increase the end base pair
-position.  (If only one value is present, it is used for both changes.)}
+position.  (If only one value is present, it is used for both adjustments.)  Note: The values
+can be positive or negative.}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
 The function \code{op} will be called for every set of markers that is specified by the 
- other arguments to \code{applyFnToGenes}.
+ arguments of \code{applyFnToGenes}.
 }
 \details{
-This function generates a data.frame of ranges.  Each range specifies a chromosome, a start
- base pair and end base pair.  A subsequent step (\emph{applyFnToRanges}) will find all the
+This function generates a data frame of ranges.  Each range specifies a chromosome, a start
+ base pair and end base pair.  A subsequent step will find all the
  markers from the \emph{marker_table} that fall in each range.  A matrix of the genotypes
  for all the found markers is generated.  Finally, your \emph{op} function is called with
- the genotypes, markers and range.
+ the genotypes, markers, range, and environment.
+}
+\note{
+If it is desired that subsequent calls to \emph{op} share information, this data can be placed in
+ a data frame that is added to the environment.
 }
 \examples{
 \dontrun{
@@ -89,18 +94,18 @@ This function generates a data.frame of ranges.  Each range specifies a chromoso
 #    ENV = read.Mega2DB()
 
    # apply function "show" to all transcripts on genes ELL2 and CARD15
-   applyFnToGenes(show, genes = c("ELL2", "CARD15"))
+   applyFnToGenes(show, genes_arg = c("ELL2", "CARD15"))
 
    # apply function "show" to all genotypes on chromosomes 11 for two base
    # pair ranges
-   applyFnToGenes(show, matrix(c(11, 50000000, 50100000,
+   applyFnToGenes(show, ranges_arg = matrix(c(11, 50000000, 50100000,
                       11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T))
 
    # apply function "show" to all genotypes for first marker in each chromosome
-   applyFnToGenes(show, markers = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
+   applyFnToGenes(show, markers_arg = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
 
    # apply function "show" to all genotypes on chromosomes 24 and 26
-   applyFnToGenes(show, chrs=c(24, 26))
+   applyFnToGenes(show, chrs_arg=c(24, 26))
 
 }
 }

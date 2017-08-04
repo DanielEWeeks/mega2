@@ -2,15 +2,15 @@
 % Please edit documentation in R/mega2gene.R
 \name{applyFnToMarkers}
 \alias{applyFnToMarkers}
-\title{apply function to genotypes in a set of markers}
+\title{apply a function to the genotypes in a set of markers}
 \usage{
 applyFnToMarkers(op      = function (geno, markers, range, envir) {},
                 markers_arg,
                 envir = ENV)
 }
 \arguments{
-\item{op}{Is a function of four arguments.  It will be called repeatedly by
-\code{applyFnToGenes}.  The arguments are:
+\item{op}{Is a function of four arguments.  It will be called once by
+\code{applyFnToMarkers} in a try/catch context.  The arguments are:
 \describe{
 \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
 \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data.frame with the following 5 variables:
@@ -23,11 +23,11 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
 \item{position}{is the integer base pair position of marker}
  }
 }
-\item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
+\item{range}{NULL: to indicate no range in use.}
 \item{envir}{An R environment holding Mega2 data frames and state data.}
 }}
 
-\item{markers_arg}{a data.frame with the following 5 variables:
+\item{markers_arg}{a data frame with the following 5 variables:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
 \item{locus_link_fill}{is the position of corresponding genotype data in the
@@ -37,14 +37,14 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
 \item{position}{is the integer base pair position of marker}
  }}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
-A matrix of the genotypes for all the markers is generated.  Then, your \emph{op} function
-  is called with the genotypes, markers and NULL (for the range).
+A matrix of the genotypes for all the markers is generated.  Then, the call back function, \emph{op},
+  is called with the genotypes, markers, NULL (for the range), and the environment.
 }
 \examples{
 \dontrun{

@@ -10,8 +10,8 @@
 TBLS
 }
 \description{
-This indicates which SQLite3 tables and possibly which subset of fields
-to fetch.
+This package local character vector indicates the names of the Mega2 SQLite3 database tables
+ to load.  (Not all of the possible tables are loaded.)
 }
 \author{
 Robert V Baron

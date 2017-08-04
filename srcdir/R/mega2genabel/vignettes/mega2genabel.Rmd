@@ -22,44 +22,55 @@ opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
 # Creating a GenABEL gwaa.data-class object using the mega2genabel R package
 
 There are several data formats that Mega2 can read and transform
-into a database that are not directly acceptable to GenABEL. Any
+into a database that are not directly accepted by GenABEL. But any
 Mega2 database that can be read into R, can be transformed to GenABEL
-following this example with seqsimr.db.
+following this example using *seqsimr.db*.
 
 GenABEL (http://www.genabel.org/) can process PLINK .tped/.tfam files with the function
 *convert.snp.tped* to create a gwaa.data-class object.  Currently, we
 use this mechanism to convert Mega2 data frames to a gwaa.data-class
 object.  The argument to Mega2GenABEL is a file name prefix that will
 be used to name the .tped/.fam files that are created.  These files
-are read by GenABEL (https://cran.r-project.org/package=GenABEL)
+are read by GenABEL's *convert.snp.tped* (https://cran.r-project.org/package=GenABEL)
 to produce a GenABEL "raw" file.  Then the "raw" file and a generated phenotype
 file are processed by *load.gwaa.data* to yield a gwaa.data-class
 object.
 
 Type:
 
-```{r}
+```{r mega2genabel}
 library(mega2genabel)
 #ENV = read.Mega2DB("seqsimr.db")
+
 # or to use the embeded tutorial data
 library(mega2rtutorial)
 database_file = system.file("exdata", "seqsimr.db", package = "mega2rtutorial")
 ENV = read.Mega2DB(database_file)
 
+# This line converts the database to a gwaa.data-class object. The intermediate
+# files begin with "SEQ"
 seqsimgwaa = Mega2GenABEL("SEQ")
-list.files(pattern = "SEQ.*")
 ```
-You can use any of the GenABEL provided functions on the results, seqsimgwaa.
+
+The files generated are:
 
 ```{r}
+list.files(pattern = "SEQ.*")
+```
+
+You can use any of the GenABEL provided functions on the results, seqsimgwaa.
+
+```{r str}
 str(seqsimgwaa)
 ```
 
 # GenABEL regression
 
-This test is a bit more complicated. First, we load GenABEL and access its data:
+This test is a bit more complicated.  We intend to verify that the object generated 
+by the the previous process is the same as a GenABEL object we started with.
+First, we load GenABEL and access its data:
 
-```{r}
+```{r srdta}
 library(GenABEL)
 data(srdta)
 ```
@@ -67,7 +78,7 @@ data(srdta)
 Then we load the mega2genabel library and dump the GenABEL data as
 PLINK .ped/.map/.phe files
 
-```{r}
+```{r dmpPed}
 library(mega2genabel)
 dmpPed(gwaa_ = srdta, pfx = "srdta")
 ```
@@ -80,7 +91,7 @@ mega2 MEGA2.BATCH.srdta
 ```
 
 **NOTE: To make this tutorial only dependent on R, the above code is not actually run.  And its
-results, shown below, were captured from an environment where we had both R and Mega2 (the C++ program)
+results, shown below, were captured from an environment where we had both R and the Mega2 executable
 available.**
 
 ```
@@ -292,7 +303,11 @@ available.**
 ## ===========================================================
 ```
 
-### (abbreviated contents of MEGA2.BATCH.srdata file
+## The MEGA2.BATCH.srdata file
+
+The abbreviated MEGA2.BATCH.srdta file is below. (The initial comment section
+is not shown and important lines are
+shown in a bold typeface.)
 
 > **Input_Database_Mode=1**  
 **Input_Format_Type=4**  
@@ -318,23 +333,36 @@ Default_Reset_Invalid=no
 **DBfile_name=srdta.db**  
 Default_Outfile_Names=yes  
 
-Then we go back into R and type:
+Note: We have provided a copy of the srdta.db database in the mega2rtutorial.  So you can
+proceed with the steps that follow, even if you did not create your own database.
 
-```{r}
+So, we go back into R and type:
+
+```{r srdtadb}
 # ENV = read.Mega2DB("srdta.db")
+
 # or to use the embeded tutorial data
 library(mega2rtutorial)
 database_file = system.file("exdata", "srdta.db", package = "mega2rtutorial")
 ENV = read.Mega2DB(database_file)
 
-mega = Mega2GenABEL("SRD")
+mega = Mega2GenABEL("SRD", envir = ENV)
 list.files(pattern = "SRD.*")
 ```
 
-*mega* and *srdta* should be the same gwaa.data-class object. You can
-compare them however you prefer.  But, Mega2GenABELtst can be used to
-compare the phenotype and genotype data, viz. in R type:
+*mega* should be the same as the *srdta* gwaa.data-class object. You can
+compare them however you prefer.  The function *Mega2GenABELtst()* can be used to
+compare the phenotype data, genotype data, and object metadata, item by item.
 
-```{r}
+In R, type:
+
+```{r strs}
+str(mega)
+str(srdta)
+```
+
+to show the objects and then to compare them type:
+
+```{r mega2genabeltst}
 Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
 ```

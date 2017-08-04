@@ -5,7 +5,7 @@
 \alias{mega2r-package}
 \title{mega2r package}
 \description{
-This package reads a Mega2 SQLite3 database into R dataframes and
+This package reads a Mega2 SQLite3 database into R data frames and
 makes the contained genotypes/phenotypes/linkage data available for analysis.
 }
 \author{

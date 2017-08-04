@@ -7,14 +7,14 @@
 showMapNames(envir = ENV)
 }
 \arguments{
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
 Mega2 allows several different physical and genetic maps to be stored and used to select
- distances.  This function show the association between mapno and mapname
+ distances.  This function shows the association between mapno and mapname.
 }
 \examples{
 \dontrun{

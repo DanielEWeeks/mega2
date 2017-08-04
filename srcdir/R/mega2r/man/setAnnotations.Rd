@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2gene.R
 \name{setAnnotations}
 \alias{setAnnotations}
-\title{set default transcription database and mapping of name to entrez gene id}
+\title{set default name of transcription database and name of database mapping gene name to entrez gene id}
 \usage{
 setAnnotations(txdb, entrezGene, envir = ENV)
 }
@@ -11,15 +11,15 @@ setAnnotations(txdb, entrezGene, envir = ENV)
 
 \item{entrezGene}{name of Bioconductor mapping of gene name or gene alias to entrez gene id}
 
-\item{envir}{an environment that contains all the tables created from the SQLite tables.}
+\item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
 This function takes two string parameters:
-  One to specify which Bioconductor gene id mapping to use
-  The other to map names to entrez gene id's used in the above database
+  one to specify which Bioconductor gene name to transcripts,
+  the other to map gene names to entrez gene id's.
 }
 \examples{
 \dontrun{

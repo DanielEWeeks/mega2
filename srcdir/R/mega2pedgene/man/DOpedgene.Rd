@@ -7,7 +7,7 @@
 DOpedgene(geno_arg, markers_arg, range_arg, envir = ENV)
 }
 \arguments{
-\item{geno_arg}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
+\item{geno_arg}{A character matrix with one row per \emph{fam} pedigree member and one column for each marker in}
 
 \item{markers_arg}{a data.frame with the following 5 variables:
 \describe{
@@ -19,21 +19,26 @@ DOpedgene(geno_arg, markers_arg, range_arg, envir = ENV)
 \item{position}{is the integer base pair position of marker}
  }}
 
-\item{range_arg}{one row of a ranges_arg.  The latter is a data.frame of at least three
+\item{range_arg}{one row of a ranges_arg.  The latter is a data frame of at least three
 integer columns.  The columns indicate a range:
 a chromosome number, a start base pair value, and an end base pair value.}
 
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
-...
+First, discard ranges that have less than two markers.  Second, convert the genotypes patterns of 1/1, 1/2 (and 2/1)
+ and 2/2 to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
+ minor allele frequency.)  Finally, prepend the pedigree and person columns of the family data
+ to processed genotype matrix.  Finally, invoke pedgene with the family data and converted
+ genotype matrix for several different weights.  Save the kernel and burden, value and p-value for each
+ measurement in *envir$pedgene_results*.
 }
 \note{
-This function accumulates output in the data frame, "envir$pedgene_results".  It also
- optionally may print out the lines as they are generated.  It does not write anything
+This function accumulates output in the data frame, *envir$pedgene_results*.  It will
+ print out the lines as they are generated if *envir$verbose* is TRUE.  It does not write anything
  to a file.  You must save the data frame or the "observations" you need by yourself.
 }
 \examples{

@@ -33,7 +33,6 @@
 #'
 #' @author
 #'  Robert V Baron, rvb5@pitt.edu
-#'  Maintainer: Robert V Baron, <rvb5@pitt.edu>
 #' @docType package
 #' @name Mega2pedgene-package
 #'
@@ -44,28 +43,28 @@ NULL
 #library(mega2r)
 #library(pedgene)
 
-#' get data for pedgene run using \bold{Mega2} framework
+#' load Mega2 SQLite database into R and perform initialization for pedgene usage
 #'
 #' @description
-#'  This populates the \bold{Mega2} data frames from the specified database.  It also
+#'  This populates the \bold{R} data frames from the specified \b{Mega2 R} database.  It then
 #'  prunes the samples to only include members that have a definite case or control
 #'  status.  Undefined samples are ignored; this is necessary for \emph{pedgene}.
 #'
 #' @param db specifies a \bold{Mega2} SQLite database containing study data.
 #'
-#' @param filename to store p-values to.  By default "pedgene.txt" is used.
+#' @param filename in which to store results data frame.  By default "pedgene.txt" is used.
 #'
-#' @param verbose default is passed to the \bold{Mega2} framework.  TRUE indicates that
-#'  diagnostic printouts should be enabled.
+#' @param verbose TRUE indicates that diagnostic printouts should be enabled.
+#'  This value is saved in the returned environment.
 #'
-#' @return "environment" containing SQLite database and other globals
+#' @return "environment" containing data frames from an SQLite database and some computed values.
 #'
 #' @importFrom mega2r dbmega2_import mkfam setfam setRanges
 #' @importFrom utils read.table write.table
 #' @export
 #'
 #' @note
-#'  This also records schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
+#'  This also calculates schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
 #'
 #'  This also initializes the dataframe "envir$pedgene_results" to zero rows.
 #'
@@ -83,11 +82,6 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
     fam = mkfam(envir = envir)
     fam = fam[fam$trait != 0, ]
     setfam(fam, envir = envir)  # also updates unified_genotype_table
-
-# if you want your own ranges
-#   refRanges = read.table("ped3.ref", header = T)
-#   refRanges = refRanges[! duplicated(refRanges$SYMBOL), ]
-#   setRanges(refRanges, 3:5)
 
     envir$schaidPed = envir$fam[ , c(-1, -2)]
     colnames(envir$schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
@@ -119,20 +113,23 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 }
 
 
-#' execute the pedgene function on a subset of the gene transcript ranges
+#' execute the pedgene function on a subset of the default gene transcript ranges
 #'
-#' @param gs a subsequence of the gene transcript ranges to calculate the \emph{Dopedgene} function
-#' on.
+#' @description
+#' Execute the pedgene function on the first gs default gene transcript ranges (gs = 1:100).
+#'  Update the "envir$pedgene_results" data frame with any results.
+#"
+#' @param gs a subrange of the gene transcript ranges over which to calculate the \emph{Dopedgene} function.
 #'
-#' @param envir "environment" containing SQLite database and other globals
+#' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @return None
 #' @importFrom mega2r applyFnToRanges
 #' @export
 #'
 #' @note
-#'  This code starts by deleting the output file ("pedgene.txt" by default).  After Dopedgene 
-#'  is applied to all the chosen transcripts.  The data frame "envir$pedgene_results" is written
+#'  This code starts by deleting the output file set in *init_pedgene* ("pedgene.txt" by default).  After Dopedgene 
+#'  is applied to all the appropriate transcripts.  The data frame "envir$pedgene_results" is written
 #'  to the output file.
 #'
 #' @examples
@@ -153,9 +150,16 @@ run_pedgene = function (gs = 1:100, envir = ENV) {
 
 #' pedgene call back function
 #'
-#' @description ...
+#' @description
+#'  First, discard ranges that have less than two markers.  Second, convert the genotypes patterns of 1/1, 1/2 (and 2/1)
+#'  and 2/2 to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
+#'  minor allele frequency.)  Finally, prepend the pedigree and person columns of the family data
+#'  to processed genotype matrix.  Finally, invoke pedgene with the family data and converted
+#'  genotype matrix for several different weights.  Save the kernel and burden, value and p-value for each
+#'  measurement in *envir$pedgene_results*.
 #'
-#' @param geno_arg A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.
+#' @param geno_arg A character matrix with one row per \emph{fam} pedigree member and one column for each marker in
+#"  markers_arg.  Each cell contains the two characters indicating the nucleotides for the marker.
 #'
 #' @param markers_arg a data.frame with the following 5 variables:
 #' \describe{
@@ -167,19 +171,19 @@ run_pedgene = function (gs = 1:100, envir = ENV) {
 #' \item{position}{is the integer base pair position of marker}
 #'  }
 #'
-#' @param range_arg one row of a ranges_arg.  The latter is a data.frame of at least three
+#' @param range_arg one row of a ranges_arg.  The latter is a data frame of at least three
 #'  integer columns.  The columns indicate a range:
 #'  a chromosome number, a start base pair value, and an end base pair value.
 #'
-#' @param envir "environment" containing SQLite database and other globals
+#' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @return None
 #' @importFrom pedgene pedgene
 #' @export
 #'
 #' @note
-#'  This function accumulates output in the data frame, "envir$pedgene_results".  It also
-#'  optionally may print out the lines as they are generated.  It does not write anything
+#'  This function accumulates output in the data frame, *envir$pedgene_results*.  It will
+#'  print out the lines as they are generated if *envir$verbose* is TRUE.  It does not write anything
 #'  to a file.  You must save the data frame or the "observations" you need by yourself.
 #'
 #' @examples

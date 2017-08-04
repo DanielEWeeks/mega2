@@ -21,26 +21,30 @@ opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
 
 # Writing a VCF File using the mega2vcf R package
 
-First create the directory "vcfr"; so we can keep all the generated
-data in one place and then load the mega2vcf library.
+First load the mega2vcf library and then create the directory "vcfr"; so we can keep all the generated
+data in one place.
+
+```{r mega2vcflib}
+library(mega2vcf)
+
+if (! dir.exists("vcfr")) dir.create("vcfr")
+```
 
 The Mega2VCF function takes an argument which is the prefix used on all the files
-it generates. Here, we have chosen to make that a path that includes a
-directory.  The Mega2VCF function assumes the Mega2 data frames
-are contained in the global variable ENV. If this is not the case, supply a
-named argument "envir" set to the environment you wish to use.
+generated. We will make the prefix path include the
+directory, *vcfr*.  The Mega2VCF function assumes the Mega2 data frames
+are contained in the global variable, **ENV**. If this is not the case, supply a
+named argument *envir* to indicate the environment you wish to use.
 
-Note, that Mega2VCF will create the expected .vcf file as well as a
+Note, that Mega2VCF will create a .vcf file as well as a
 .fam file (we do linkage), a .phe file (phenotypes) and a few
 others. These files are listed below.
 
-Creating the VCF file and related files is accomplished by typing:
+To create the VCF file and related files, type:
 
 ```{r mega2vcf}
-if (! dir.exists("vcfr")) dir.create("vcfr")
-
-library(mega2vcf)
 # ENV = read.Mega2DB("seqsimr.db")
+
 # or to use the embeded tutorial data
 library(mega2rtutorial)
 database_file = system.file("exdata", "seqsimr.db", package = "mega2rtutorial")
@@ -49,27 +53,33 @@ ENV = read.Mega2DB(database_file)
 Mega2VCF("vcfr/vcf.01", ENV$markers[ENV$markers$chromosome==1 ,])
 ```
 
-Note: The line above only creates files for chromosome 1.  You can filter ENV$markers as you find necessary.
-If the second argument is not present, all the markers are dumped.
+Note: This command only creates files for chromosome 1.  You can filter ENV$markers as needed.  
+Note: If the second argument is not present, all the markers are processed.
 
-
+The generated files are listed below:
 ```{r}
 list.files("vcfr")
 ```
 
-Read the package code to see how these files are created from the data frames. 
+You can read the R code to see how these files are created from the data frames. 
 
 
 # VCF regression
 
-If you have a compiled copy of Mega2, you can run this code using
-the MEGA2.BATCH.vcf file and database from the mega2rtutorial package.
-Cut and paste the shell code and you should see similar results to what
-is presented here.
-Otherwise, the text below is an illustration of what should happen.
-These lines use the C++ Mega2 program to populate the vcf directory with
-the same set of files that the R program created in the vcfr
+If you have a executable copy of Mega2, you can run this code using
+the MEGA2.BATCH.vcf file and using the database from the *mega2rtutorial* package.
+
+To copy the batch file and database from the tutorial to the current directory type:
+```{r, eval=FALSE}
+library(mega2rtutorial)
+dump_mega2rtutorial_data()
+```
+
+The C++ Mega2 program can populate the vcf directory with
+the same set of files that the R program, *Mega2VCF*, created in the vcfr
 directory.  
+Cut and paste the shell code (below) and you should see similar results to what
+is presented here.
 
 At the Unix command prompt, type:
 
@@ -78,6 +88,7 @@ mkdir vcf
 mega2 MEGA2.BATCH.vcf
 ```
 
+The output should be (except for timestamps):
 
 ```
 ## ==========================================================
@@ -172,8 +183,10 @@ mega2 MEGA2.BATCH.vcf
 ```
 
 
-The abbreviated MEGA2.BATCH.vcf file is below (notice that there are
-no INPUT FILES, just a database file):
+The abbreviated MEGA2.BATCH.vcf file is below. (The initial comment section
+is not shown and important lines are
+shown in a bold typeface.)
+Notice that there are no INPUT FILES, just a database file. 
 
 > Input_Database_Mode=2  
 Align_Strand_Input=no  
@@ -194,14 +207,16 @@ VCF_Allele_Order=Original_Order
 Default_Outfile_Names=yes  
 
 You should compare the two directories: vcf and vcfr. Please add the
--w flag to the diff command. This causes the comparison to ignore
-differences in white space. You may may notice that expressions that
-contain dates that are different between the two directories.  At a Unix
+-w flag to the **diff** command. This causes the comparison to ignore
+differences in white space. Lines that
+contain dates may be different between the two directories.  At a Unix
 command prompt, type:
 
 ```
 diff -wrs vcf vcfr
 ```
+
+It should show:
 
 ```
 ## Files vcf/vcf.01.fam and vcfr/vcf.01.fam are identical

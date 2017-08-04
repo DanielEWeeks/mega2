@@ -2,26 +2,28 @@
 % Please edit documentation in R/mega2gene.R
 \name{read.Mega2DB}
 \alias{read.Mega2DB}
-\title{Load Mega2 database and initialize family structure}
+\title{load Mega2 database and initialize family data frame and markers data frame}
 \usage{
 read.Mega2DB(db, ...)
 }
 \arguments{
 \item{db}{specify SQLite database to load}
 
-\item{...}{aditional arguments to pass to \emph{dbmega2_import}}
+\item{...}{additional arguments to pass to \emph{dbmega2_import}}
 }
 \value{
-envir an environment that contains all the tables created from the SQLite tables.
+envir an environment that contains all the data frames created from the SQLite database.
 }
 \description{
-\emph{dbmega2_import} the specified database and load the environment, \emph{ENV}, with the
- table data.  Also run \emph{mkfam} to initialize the family structure and then \emph{setfam}
- to modify the \emph{unified_genotype_table} to match the family.  By default this will remove
- samples that were replicated to break loops in the pedigree, see \emph{mkfam} for details.
+Call \emph{dbmega2_import()} with the specified database and create an environment, with the
+ SQLite table data loaded into data frames.
+ Also run \emph{mkfam} to create the pedigree data frame \emph{fam} and then store it with \emph{setfam}.
+ This modifies the \emph{unified_genotype_table} (and \empth{phenotype_table} to match the family members
+ that remain.  By default, this will remove
+ persons that were replicated to break loops in the pedigree, see \emph{setfam} for details.
 }
 \examples{
 \dontrun{
-read.Mega2DB("database.db")
+ENV = read.Mega2DB("database.db")
 }
 }

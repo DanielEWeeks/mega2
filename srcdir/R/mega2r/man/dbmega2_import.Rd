@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2.R
 \name{dbmega2_import}
 \alias{dbmega2_import}
-\title{dbmega2_import read Mega2 SQLite tables into R}
+\title{read Mega2 SQLite database into R}
 \usage{
 dbmega2_import(dbname,
                bpPosMap = 1,
@@ -11,20 +11,22 @@ dbmega2_import(dbname,
 \arguments{
 \item{dbname}{file path to SQLite database.}
 
-\item{bpPosMap}{specified which map in the map_table should be used for marker chromosome/position.}
+\item{bpPosMap}{index that specifies which map in the map_table should be used for marker chromosome/position.}
 
-\item{verbose}{For this function, print out statistics on the name/size of each table read and show column headers.}
+\item{verbose}{print out statistics on the name/size of each table read and show column headers.
+Also, remember the value for use by other Mega2R functions.}
 }
 \value{
-envir an environment that contains all the tables created from the SQLite tables.
+envir an environment that contains all the data frames created from the SQLite database.
 }
 \description{
-read fields of tables necessary later tables processing.
+Read the selected fields of SQLite data base tables into R data frames.  These
+ data frames are stored into an environment which is returned.
 }
 \examples{
 \dontrun{
-dbmega2_import(verbose = TRUE)
+ENV = dbmega2_import("foo.db", verbose = TRUE)
 
-dbmega2_import("foo.db", verbose = TRUE)
+ENV = dbmega2_import("foo.db")
 }
 }
