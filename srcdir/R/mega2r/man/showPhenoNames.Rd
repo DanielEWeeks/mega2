@@ -13,8 +13,8 @@ showPhenoNames(envir = ENV)
 None
 }
 \description{
-Mega2 stores several phenotypes, both affective and quantitative. This function show the
- mapping between phenotype and index and shows the phenotype type.
+Mega2 stores several phenotypes, both affective and quantitative. This function displays the
+ mapping between phenotype and index and adds the phenotype type.
 }
 \examples{
 \dontrun{

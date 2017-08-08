@@ -7,11 +7,11 @@
 resetMega2ENV()
 }
 \value{
-envir an environment that contains a few initial tables read from the mega2r package.
+an environment that contains a few initial tables read from the mega2r package.
 }
 \description{
-Mega2 uses an environment to store the data frames when it reads in an SQLite database.
- The environment is also used to store operational data.
+Mega2 uses an environment to store the data frames when it reads an SQLite database.
+ The environment is also used to store metadata.
  The function first runs the garbage collector ("gc"), then allocates an empty environment
  and finally loads some default data into it.
 }

@@ -7,7 +7,7 @@
 setAnnotations(txdb, entrezGene, envir = ENV)
 }
 \arguments{
-\item{txdb}{name of Bioconductor transcription database of your choice}
+\item{txdb}{name of Bioconductor transcription database.}
 
 \item{entrezGene}{name of Bioconductor mapping of gene name or gene alias to entrez gene id}
 
@@ -18,7 +18,7 @@ None
 }
 \description{
 This function takes two string parameters:
-  one to specify which Bioconductor gene name to transcripts,
+  one to specify entrez gene ids to transcripts,
   the other to map gene names to entrez gene id's.
 }
 \examples{

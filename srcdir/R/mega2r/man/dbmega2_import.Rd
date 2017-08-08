@@ -14,14 +14,14 @@ dbmega2_import(dbname,
 \item{bpPosMap}{index that specifies which map in the map_table should be used for marker chromosome/position.}
 
 \item{verbose}{print out statistics on the name/size of each table read and show column headers.
-Also, remember the value for use by other Mega2R functions.}
+Also, save the verbose value for use by other Mega2R functions.}
 }
 \value{
-envir an environment that contains all the data frames created from the SQLite database.
+envir an environment that contains all the data frames made from the SQLite database.
 }
 \description{
-Read the selected fields of SQLite data base tables into R data frames.  These
- data frames are stored into an environment which is returned.
+Read the necessary fields of SQLite data base tables into R data frames.  These
+ data frames are stored in an "R environment" which is returned.
 }
 \examples{
 \dontrun{

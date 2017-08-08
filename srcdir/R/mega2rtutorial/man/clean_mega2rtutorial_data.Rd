@@ -7,7 +7,7 @@
 clean_mega2rtutorial_data(dir = ".")
 }
 \arguments{
-\item{dir}{The directory to store the tutorial data to.  By default, this is ".".}
+\item{dir}{The directory to remove the tutorial data from.  By default, this is ".".}
 }
 \value{
 None

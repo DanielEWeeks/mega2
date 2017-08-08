@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2gene.R
 \name{applyFnToGenes}
 \alias{applyFnToGenes}
-\title{apply a function to genotypes (markers) in each gene transcript}
+\title{apply a function to the genotypes (markers) in each gene transcript and/or range}
 \usage{
 applyFnToGenes(op           = function (geno, markers, range, envir) {},
                genes_arg    = c("ELL2", "CARD15"),
@@ -17,7 +17,7 @@ applyFnToGenes(op           = function (geno, markers, range, envir) {},
 \item{op}{Is a function of four arguments.  It will be called repeatedly by
 \code{applyFnToGenes} in a try/catch context.  The arguments are:
 \describe{
-\item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
+\item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
 \item{markers}{Marker data for each marker selected.  A marker is a data frame with the following 5 variables:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
@@ -32,19 +32,19 @@ applyFnToGenes(op           = function (geno, markers, range, envir) {},
 \item{envir}{An R environment holding Mega2 data frames and state data.}
 }}
 
-\item{genes_arg}{a character vector of gene names to be selected.
+\item{genes_arg}{a character vector of gene names.
 All the transcripts identified with the specified gene in BioConductor Annotation,\cr
 \bold{TxDb.Hsapiens.UCSC.hg19.knownGene}, are selected.  This produces multiple "range"
 elements containing chromosome, start base pair, end base pair.  Note: BioCoductor Annotation
 \bold{org.Hs.eg.db} is used to convert from gene name to ENTREZ gene id.}
 
-\item{ranges_arg}{an integer matrix of three columns.  The columns indicate a range:
+\item{ranges_arg}{an integer matrix of three columns.  The columns define a range:
 a chromosome number, a start base pair value, and an end base pair value.}
 
 \item{chrs_arg}{an integer vector of chromosome numbers.  All of the base pairs on each
 chromosomes will be selected as a single range.}
 
-\item{markers_arg}{a data.frame with the following 5 variables:
+\item{markers_arg}{a data frame with the following 5 variables:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
 \item{locus_link_fill}{is the position of corresponding marker data in the\cr
@@ -70,18 +70,15 @@ can be positive or negative.}
 None
 }
 \description{
-The function \code{op} will be called for every set of markers that is specified by the 
- arguments of \code{applyFnToGenes}.
-}
-\details{
-This function generates a data frame of ranges.  Each range specifies a chromosome, a start
+This function generates a data frame of many ranges.  Each range specifies a chromosome, a start
  base pair and end base pair.  A subsequent step will find all the
- markers from the \emph{marker_table} that fall in each range.  A matrix of the genotypes
- for all the found markers is generated.  Finally, your \emph{op} function is called with
- the genotypes, markers, range, and environment.
+ markers from the \emph{markers} data frame that fall in each range.  For each range,
+ a matrix of the genotypes
+ for all the found markers is generated.  Finally, the \code{op} function is called for each
+ range with the genotypes, markers, range, and environment.
 }
 \note{
-If it is desired that subsequent calls to \emph{op} share information, this data can be placed in
+If you want subsequent calls to \code{op} to share information, data can be placed in
  a data frame that is added to the environment.
 }
 \examples{

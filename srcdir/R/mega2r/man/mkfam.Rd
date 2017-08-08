@@ -9,7 +9,7 @@ mkfam(brkloop = FALSE, traitname = "default", envir = ENV)
 \arguments{
 \item{brkloop}{I haven't needed to set this TRUE yet.  Maybe never will.
 If loops are broken, a person will be replaced by a dopple ganger in the same family with a
-different father/mother.  This the number of persons per family will be different when there
+different father/mother.  The number of persons per family will be different when there
 are broken loops.  Also, the person_link numbers will be different for all the persons after
 the first loop is broken.}
 
@@ -20,18 +20,9 @@ the first loop is broken.}
 \value{
 data frame
 that is described above
-
-The observations are: \describe{
-\item{pedigree}{family pedigree name}
-\item{person}{person name}
-\item{father}{father of person}
-\item{mother}{mother of person}
-\item{sex}{sex of person}
-\item{trait}{value of case/control trait for person}
-}
 }
 \description{
-Generate a data.frame with a row for each person.  The observations are:
+Generate a data frame with a row for each person.  The observations are:
 \tabular{ll}{
 \strong{pedigree} \tab family pedigree name\cr
 \strong{person} \tab person name\cr
@@ -42,9 +33,9 @@ Generate a data.frame with a row for each person.  The observations are:
 }
 }
 \note{
-The columns of this data frame are from the \emph{pedigree_table}, \emph{person_table}, and \emph{trait_table}.
+The columns of this data frame come from the data frames: \emph{pedigree_table}, \emph{person_table}, and \emph{trait_table}.
 
-Also, the father and mother columns from \emph{person_table} are translated from a row index in the
+Also, the father and mother columns from \emph{person_table} are translated from the row index in the
 \emph{person_table} to the corresponding name.
 }
 \examples{

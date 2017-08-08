@@ -28,13 +28,13 @@
 #library(GenABEL)
 
 
-#' generate required .ped, .fam and .map  for PLINK PED files
+#' generate the .ped, .fam and .map files of PLINK PED representation of the object
 #'
 #' @description
 #'  Use provided gwaa.class-object and create a PLINK .ped file, PLINK .map file
-#'  and a PLINK .phe (phenotypes) file.  By default, srdta (a sample from GenABEL)
+#'  and a PLINK .phe (phenotypes) file.  By default, \bold{srdta} (a sample from GenABEL)
 #'  is used for the gwaa.class-object.  The files are generated with a prefix of
-#'  "srdta" unless a pfx argument is provided.
+#'  \emph{srdta} unless a pfx argument is provided.
 #'  NOTE: These PLINK files may be used by the Mega2 executable to produce a database.
 #'
 #' @param gwaa_ name of gwaa.data-class object used as input
@@ -96,7 +96,7 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #'
 #' @param gwaa_ name of second gwaa.data-class object
 #'
-#' @param full if TRUE convert genotypes to text as.character(gwaa_@gtdata) and as.character(mega_@gtdata).
+#' @param full if TRUE convert genotypes to text as.character(gwaa_@gtdata)\cr and as.character(mega_@gtdata).
 #'  Then standardize the order for heterozygous alleles and finally compare.
 #'  This step is optional because it could be rather slow.
 #'

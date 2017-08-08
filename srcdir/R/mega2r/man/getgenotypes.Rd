@@ -23,17 +23,17 @@ is typically a space, a tab or "/".}
 \item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
-a matrix of genotypes represented as two allele pairs.  There is one column for each
+a matrix of genotypes represented as two allele pairs.  The matrix has one column for each
  marker in \emph{markers_arg} argument.  There is one row for each person in the family
  (\emph{fam}) table.
 }
 \description{
-This function calls a C++ function that does all the heavy lifting.  It basically passes
- arguments to this function, some from its existing arguments and some from data frames
- that are in the "global" environment, \bold{envir}.  From its markers_arg argument, it gets
+This function calls a C++ function that does all the heavy lifting.  It passes the necessary
+ arguments to the C++ function: some from its existing arguments and some from data frames
+ that are in the "global" environment, \bold{envir}.  From the markers_arg argument, it gets
  the locus_index and the index in the \emph{unified_genotype_table}. It passes the allele
- nucleotide separator argument,
- From the "global" environment, \bold{ENV}, it gets a bit vector of compressed genotype information,
+ nucleotide separator argument.
+ From the "global" environment, \bold{envir}, it gets a bit vector of compressed genotype information,
  the alleles for each marker, and some bookkeeping related data.
  Note: This function also contains a dispatch/switch on the type of compression in the genotype
  vector.  A different C++ function is called when there is compression versus when there is no
@@ -43,8 +43,8 @@ This function calls a C++ function that does all the heavy lifting.  It basicall
 The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
  there are two bits for each genotype.  This function creates an output matrix by fixing
  the marker and collecting genotype information for each person and then repeating for
- all the needed markers.  (Currently, this appears slightly faster than the other scan in
- \emph{genotype_Ri} which is fixing the person and iterating over markers.)
+ all the needed markers.  (Currently, this appears slightly faster than the scan in
+ \emph{genotype_Ri} which is fixes the person and iterates over markers.)
 }
 \examples{
 \dontrun{

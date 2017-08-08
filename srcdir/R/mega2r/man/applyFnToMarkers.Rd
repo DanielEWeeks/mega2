@@ -12,8 +12,8 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
 \item{op}{Is a function of four arguments.  It will be called once by
 \code{applyFnToMarkers} in a try/catch context.  The arguments are:
 \describe{
-\item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
-\item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data.frame with the following 5 variables:
+\item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
+\item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 variables:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
 \item{locus_link_fill}{is the position of corresponding genotype data in the
@@ -23,7 +23,7 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
 \item{position}{is the integer base pair position of marker}
  }
 }
-\item{range}{NULL: to indicate no range in use.}
+\item{range}{NULL: to indicate no explicit range was specified.}
 \item{envir}{An R environment holding Mega2 data frames and state data.}
 }}
 
@@ -43,7 +43,7 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
 None
 }
 \description{
-A matrix of the genotypes for all the markers is generated.  Then, the call back function, \emph{op},
+A matrix of the genotypes for all the markers is generated.  Then, the call back function, \code{op},
   is called with the genotypes, markers, NULL (for the range), and the environment.
 }
 \examples{

@@ -7,9 +7,9 @@
 init_pedgene(db = NULL, filename = NULL, verbose = FALSE)
 }
 \arguments{
-\item{db}{specifies a \bold{Mega2} SQLite database containing study data.}
+\item{db}{specifies the path of a \bold{Mega2} SQLite database containing study data.}
 
-\item{filename}{in which to store results data frame.  By default "pedgene.txt" is used.}
+\item{filename}{filename to store results data frame.  By default "pedgene.txt" is used.}
 
 \item{verbose}{TRUE indicates that diagnostic printouts should be enabled.
 This value is saved in the returned environment.}
@@ -20,12 +20,12 @@ This value is saved in the returned environment.}
 \description{
 This populates the \bold{R} data frames from the specified \bold{Mega2 R} database.  It then
  prunes the samples to only include members that have a definite case or control
- status.  Undefined samples are ignored; this is necessary for \emph{pedgene}.
+ status.  Undefined samples are ignored; this is necessary for CRAN \code{pedgene}.
 }
 \note{
-This also calculates schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
+\emph{init_pedgene} calculates schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
 
- This also initializes the dataframe "envir$pedgene_results" to zero rows.
+ It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
 }
 \examples{
 \dontrun{

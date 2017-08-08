@@ -10,8 +10,8 @@
 TBLS
 }
 \description{
-This package local character vector indicates the names of the Mega2 SQLite3 database tables
- to load.  (Not all of the possible tables are loaded.)
+This character vector indicates the names of the Mega2 SQLite3 database tables
+ to load.  (Not all of the existing tables are loaded.)
 }
 \author{
 Robert V Baron

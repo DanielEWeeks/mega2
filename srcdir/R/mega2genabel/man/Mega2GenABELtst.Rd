@@ -11,7 +11,7 @@ Mega2GenABELtst(mega_ = mega, gwaa_ = srdta, full = TRUE, envir = ENV)
 
 \item{gwaa_}{name of second gwaa.data-class object}
 
-\item{full}{if TRUE convert genotypes to text as.character(gwaa_@gtdata) and as.character(mega_@gtdata).
+\item{full}{if TRUE convert genotypes to text as.character(gwaa_@gtdata)\cr and as.character(mega_@gtdata).
 Then standardize the order for heterozygous alleles and finally compare.
 This step is optional because it could be rather slow.}
 

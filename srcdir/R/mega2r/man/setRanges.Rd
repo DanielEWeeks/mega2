@@ -2,12 +2,12 @@
 % Please edit documentation in R/mega2gene.R
 \name{setRanges}
 \alias{setRanges}
-\title{set default ranges: chromosome and start and end base pair for each element in the default range data}
+\title{set default ranges: chromosome and start/end base pair for each element in the default range data}
 \usage{
 setRanges(ranges, indices, envir = ENV)
 }
 \arguments{
-\item{ranges}{a data frame that contains at least 4 variables: a name, a chromosome, a start
+\item{ranges}{a data frame that contains at least 4 observations: a name, a chromosome, a start
 base pair position and an end base pair position.}
 
 \item{indices}{a vector of 3 integers that specify the location of chromosome column, start base pair
@@ -19,7 +19,7 @@ column and end base pair column of range data frame.}
 None
 }
 \description{
-This function sets the default list of ranges used by \emph{applyFnToRanges}.  \emph{applyFnToRanges}
+This function sets the default list of ranges used by \code{applyFnToRanges}.  \code{applyFnToRanges}
  examines the ranges and each set of markers that fall within a range will be
  processed.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2gene.R
 \name{applyFnToRanges}
 \alias{applyFnToRanges}
-\title{apply a function to all the genotypes in each of several specified ranges}
+\title{apply a function to all the genotypes of markers in each of several specified ranges}
 \usage{
 applyFnToRanges(op          = function (geno, markers, range, envir) {},
                 ranges_arg  = NULL,
@@ -14,8 +14,8 @@ applyFnToRanges(op          = function (geno, markers, range, envir) {},
 \item{op}{Is a function of four arguments.  It will be called repeatedly by
 \code{applyFnToRanges} in a try/catch context.  The arguments are:
 \describe{
-\item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum are the two characters indicating the genotype for the marker/member.}
-\item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data.frame with the following 5 variables:
+\item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
+\item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 variables:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
 \item{locus_link_fill}{is the position of corresponding genotype data in the
@@ -29,11 +29,11 @@ applyFnToRanges(op          = function (geno, markers, range, envir) {},
 \item{envir}{An R environment holding Mega2 data frames and state data.}
 }}
 
-\item{ranges_arg}{is a data.frame that contains at least 4 variables: a name, a chromosome, a 
+\item{ranges_arg}{is a data frame that contains at least 4 variables: a name, a chromosome, a 
 startbase pair position and an end base pair position.}
 
 \item{indices_arg}{is a vector of 3 integers that specify the location of chromosome, start base
-pair column and end base pair column of the range data frame.}
+pair column and end base pair column of the ranges_arg data frame.}
 
 \item{fuzz_arg}{is an integer vector of length one or two.  The first argument is used to reduce
 the start base pair selected from each range and the second to increase the end base pair
@@ -47,10 +47,10 @@ None
 }
 \description{
 The function \code{op} will be called for every set of markers that is falls in each range.
- This function is called by \code{applyFnToGenes}.
 }
 \note{
-If the \code{ranges_arg} is NULL, then the default ranges that have been set by \code{setRanges}#'  are used.  If \code{setRanges} has not been set, a default set of the RefGene ranges is used.
+If the \emph{ranges_arg} and \emph{indices_arg} are NULL or missing, then the default ranges that have been set by \code{setRanges}
+ are used.  If \code{setRanges} has not been set, a default set of the RefGene ranges is used.
 }
 \examples{
 \dontrun{

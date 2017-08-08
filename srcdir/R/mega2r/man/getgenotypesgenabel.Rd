@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2.R
 \name{getgenotypesgenabel}
 \alias{getgenotypesgenabel}
-\title{fetch genotype matrix for specified markers and returns the corresponding GenABEL genotype matrix}
+\title{process the genotype matrix for specified markers and return the corresponding GenABEL genotype matrix}
 \usage{
 getgenotypesgenabel(markers_arg, envir = ENV)
 }
@@ -20,16 +20,14 @@ getgenotypesgenabel(markers_arg, envir = ENV)
 \item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
-a matrix of genotypes represented as two allele pairs.  There is one column for each
- marker in \emph{markers_arg} argument.  There is one row for each person in the family
- (\emph{fam}) table.
+a GenABEL gwaa.data-class object representing the Mega2 environment information
 }
 \description{
-This function calls a C++ function that does all the heavy lifting.  It basically passes
- arguments to this function, some from its existing arguments and some from data frames
+This function calls a C++ function that does all the heavy lifting.  It passes the necessary
+ arguments to the C++ function: some from its existing arguments and some from data frames
  that are in the "global" environment, \bold{envir}.  From its markers_arg argument, it gets
  the locus_index and the index in the \emph{unified_genotype_table}.
- From the "global" environment, \bold{ENV}, it gets a bit vector of compressed genotype information,
+ From the "global" environment, \bold{envir}, it gets a bit vector of compressed genotype information,
  allele information, and some bookkeeping related data.
  Note: This function also contains a dispatch/switch on the type of compression in the genotype
  vector.  A different C++ function is called when there is compression versus when there is no
@@ -42,7 +40,7 @@ The \emph{unified_genotype_table} contains one raw vector for each person.  In t
  function does this conversion as well as adjust the bit values.  For example, in GenABEL
  the genotype represented by bits == 0, is what Mega2 represents with 2.
  Doing the conversion in C++ is 10 - 20 times faster than converting the Mega2 data to
- PLINK .tped files and then having GenABEL read in an process/convert those files.
+ PLINK .tped files and then having GenABEL read in and process/convert those files.
 }
 \examples{
 \dontrun{

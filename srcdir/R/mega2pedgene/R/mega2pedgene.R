@@ -48,11 +48,11 @@ NULL
 #' @description
 #'  This populates the \bold{R} data frames from the specified \bold{Mega2 R} database.  It then
 #'  prunes the samples to only include members that have a definite case or control
-#'  status.  Undefined samples are ignored; this is necessary for \emph{pedgene}.
+#'  status.  Undefined samples are ignored; this is necessary for CRAN \code{pedgene}.
 #'
-#' @param db specifies a \bold{Mega2} SQLite database containing study data.
+#' @param db specifies the path of a \bold{Mega2} SQLite database containing study data.
 #'
-#' @param filename in which to store results data frame.  By default "pedgene.txt" is used.
+#' @param filename filename to store results data frame.  By default "pedgene.txt" is used.
 #'
 #' @param verbose TRUE indicates that diagnostic printouts should be enabled.
 #'  This value is saved in the returned environment.
@@ -64,9 +64,9 @@ NULL
 #' @export
 #'
 #' @note
-#'  This also calculates schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
+#'  \emph{init_pedgene} calculates schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
 #'
-#'  This also initializes the dataframe "envir$pedgene_results" to zero rows.
+#'  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
 #'
 #' @examples
 #'\dontrun{
@@ -113,13 +113,13 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 }
 
 
-#' execute the pedgene function on a subset of the default gene transcript ranges
+#' execute the CRAN pedgene function on a subset of the default gene transcript ranges
 #'
 #' @description
-#' Execute the pedgene function on the first gs default gene transcript ranges (gs = 1:100).
-#'  Update the "envir$pedgene_results" data frame with any results.
+#' Execute the pedgene function on the first \emph{gs} default gene transcript ranges (gs = 1:100).
+#'  Update the \emph{envir$pedgene_results} data frame with the results.
 #"
-#' @param gs a subrange of the gene transcript ranges over which to calculate the \emph{Dopedgene} function.
+#' @param gs a subrange of the default transcript ranges over which to calculate the \emph{Dopedgene} function.
 #'
 #' @param envir "R environment" containing SQLite database and other globals
 #'
@@ -128,8 +128,8 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 #' @export
 #'
 #' @note
-#'  This code starts by deleting the output file set in *init_pedgene* ("pedgene.txt" by default).  After Dopedgene 
-#'  is applied to all the appropriate transcripts.  The data frame "envir$pedgene_results" is written
+#'  This code starts by deleting the output file set in \code{init_pedgene} ("pedgene.txt" by default).  Then \code{Dopedgene}
+#'  is applied to all the appropriate ranges.  Finally, the data frame of results, \emph{envir$pedgene_results}, is written
 #'  to the output file.
 #'
 #' @examples
@@ -151,15 +151,16 @@ run_pedgene = function (gs = 1:100, envir = ENV) {
 #' pedgene call back function
 #'
 #' @description
-#'  First, discard ranges that have less than two markers.  Second, convert the genotypes patterns of 1/1, 1/2 (and 2/1)
-#'  and 2/2 to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
+#'  First, ignore call backs that have less than two markers.  Second, convert the genotypes
+#'  patterns of 1/1, 1/2 (and 2/1) and 2/2 in the genotype matrix
+#'  to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
 #'  minor allele frequency.)  Finally, prepend the pedigree and person columns of the family data
-#'  to processed genotype matrix.  Finally, invoke pedgene with the family data and converted
+#'  to processed genotype matrix.  Finally, invoke \code{pedgene} with the family data and converted
 #'  genotype matrix for several different weights.  Save the kernel and burden, value and p-value for each
-#'  measurement in *envir$pedgene_results*.
+#'  measurement in \emph{envir$pedgene_results}.
 #'
 #' @param geno_arg A character matrix with one row per \emph{fam} pedigree member and one column for each marker in
-#"  markers_arg.  Each cell contains the two characters indicating the nucleotides for the marker.
+#'  markers_arg.  Each cell contains the two characters indicating the nucleotides for the marker.
 #'
 #' @param markers_arg a data.frame with the following 5 variables:
 #' \describe{
@@ -182,8 +183,8 @@ run_pedgene = function (gs = 1:100, envir = ENV) {
 #' @export
 #'
 #' @note
-#'  This function accumulates output in the data frame, *envir$pedgene_results*.  It will
-#'  print out the lines as they are generated if *envir$verbose* is TRUE.  It does not write anything
+#'  This function accumulates output in the data frame, \emph{envir$pedgene_results}.  It will
+#'  print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write anything
 #'  to a file.  You must save the data frame or the "observations" you need by yourself.
 #'
 #' @examples

@@ -2,7 +2,7 @@ Package: mega2rtutorial
 Version: 0.5.4
 Date: 2017-07-25
 Title: Mega2r Tutorial: Docs and Data
-Description: Hold data for Mega2rtutorial and vignettes.  The data are also used by the various "mega2" packages.
+Description: Store and retrieve data for Mega2rtutorial and vignettes.  The data are also used by the various "mega2" packages.
 Authors@R: c(person("Robert V.", "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
              person("Daniel", "Weeks",    email = "weeks@pitt.edu", role = c("cre")))
 Author: Robert V. Baron [aut],

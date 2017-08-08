@@ -22,23 +22,23 @@ getgenotypesraw(markers_arg, envir = ENV)
 \value{
 a matrix of genotypes represented as integers.  Each 32 bit integer represents contains
  two allele values: the high 16 bits contains the index of allele1 and the low 16 bits contains
- the index of allele2.  There is one column for each
- marker in \emph{markers_arg} argument.  There is one row for each person in the family
+ the index of allele2.  In the matrix, there is one column for each
+ marker in the \emph{markers_arg} argument.  There is one row for each person in the family
  (\emph{fam}) table.
 }
 \description{
-This function calls a C++ function that does all the heavy lifting.  It basically passes
- arguments to this function, some from its existing arguments and some from data frames
+This function calls a C++ function that does all the heavy lifting.  It passes the necessary
+ arguments to the C++ function: some from its existing arguments and some from data frames
  that are in the "global" environment, \bold{envir}.  From its markers_arg argument, it gets
  the locus_index and the index in the \emph{unified_genotype_table}.
- From the "global" environment, \bold{ENV}, it gets a bit vector of compressed genotype information,
+ From the "global" environment, \bold{envir}, it gets a bit vector of compressed genotype information,
  and some bookkeeping related data.
  Note: This function also contains a dispatch/switch on the type of compression in the genotype
  vector.  A different C++ function is called when there is compression versus when there is no
  compression.
 }
 \details{
-The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
+The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
  there are two bits for each genotype.  This function creates an output matrix by fixing
  the marker and collecting genotype information for each person and then repeating for
  all the needed markers.

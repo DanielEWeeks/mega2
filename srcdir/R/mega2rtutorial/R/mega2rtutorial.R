@@ -28,7 +28,8 @@
 #' mega2rtutorial package
 #'
 #' @description This package retrieves data stored in the Mega2rtutorial and 
-#'	dumps them in the current directory.
+#'   dumps them in the current directory.  The package also builds a vignette
+#'   that shows the usage of all the mega2 packages.
 #'
 #' @author Robert V Baron
 #' @docType package
@@ -65,7 +66,7 @@ dump_mega2rtutorial_data = function(dir = ".") {
 #' @description This function removes the Mega2rtutorial (inst/exdata) data that was
 #'	dumped in the specified directory.
 #'
-#' @param dir The directory to store the tutorial data to.  By default, this is ".".
+#' @param dir The directory to remove the tutorial data from.  By default, this is ".".
 #'
 #' @export
 #' @return None

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2tst.R
 \name{dmpPed}
 \alias{dmpPed}
-\title{generate required .ped, .fam and .map  for PLINK PED files}
+\title{generate the .ped, .fam and .map files of PLINK PED representation of the object}
 \usage{
 dmpPed(gwaa_ = srdta, pfx = "srdta", default = "bt")
 }
@@ -18,9 +18,9 @@ None
 }
 \description{
 Use provided gwaa.class-object and create a PLINK .ped file, PLINK .map file
- and a PLINK .phe (phenotypes) file.  By default, srdta (a sample from GenABEL)
+ and a PLINK .phe (phenotypes) file.  By default, \bold{srdta} (a sample from GenABEL)
  is used for the gwaa.class-object.  The files are generated with a prefix of
- "srdta" unless a pfx argument is provided.
+ \emph{srdta} unless a pfx argument is provided.
  NOTE: These PLINK files may be used by the Mega2 executable to produce a database.
 }
 \examples{
