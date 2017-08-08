@@ -485,7 +485,7 @@ So type:
 applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
 ```
 
-If you run the above test, you will see that gene DISP1 and KIF26B
+If you run the above test, you will see that genes DISP1 and KIF26B
 have at least one p-value less than 0.01 and AK5 and STL7 at least one less than 0.03.
 
 ### Running pedgene on selected genes
@@ -1061,7 +1061,7 @@ Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
 
 If you are left with questions as to how you can use Mega2R for your own research, you can:
 
-1. Read our paper "The Mega2R suite of R packages: tools for accessing
+1. Read our (forthcoming) paper "The Mega2R suite of R packages: tools for accessing
 and processing common genetic data formats in R", which extends this
 document by providing implementation details.
 
