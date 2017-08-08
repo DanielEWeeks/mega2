@@ -1,5 +1,5 @@
 ---
-title: "Mega2r Vignette"
+title: "Mega2R Vignette"
 author: "Robert V. Baron and Daniel E. Weeks"
 date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
 output:
@@ -9,7 +9,7 @@ output:
     toc: true
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{Mega2r Vignette}
+  %\VignetteIndexEntry{Mega2R Vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,9 +23,9 @@ opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
 # Tutorial Data 
 
 The files you will need for this tutorial are in the mega2rtutorial
-package.  Most of the vignettes will access the data directly in **inst/doc**,
-but building or running the
-mega2rtutorial "vignette" and the running of the "mega2" executable, require
+package.  Most of the Mega2R vignettes will access the data directly in **inst/exdata**.
+But building or running the
+mega2rtutorial "vignette" and the running of the "mega2" executable chunks, require
 the files to be in the current directory.  This is done by running:
 
 ```{r,eval=FALSE}
@@ -52,14 +52,14 @@ clean_mega2rtutorial_data()
 
 Mega2 for R consist of the following 5 CRAN packages:  *mega2rtutorial*, *mega2r*, *mega2vcf*,
 *mega2genabel* and *mega2pedgene*.
-*mega2rtutorial* is needed to retrieve data and create a complete vignette/tutorial.
-*mega2r* restrieves a Mega2 SQLite database into a collection of R data frames.
-It is necessary and might be suffficent for your task.
+*mega2rtutorial* is needed to retrieve data and to create a complete vignette/tutorial.
+*mega2r* reads a Mega2 SQLite database into a collection of R data frames.
+This package is needed for all other packages and might, alone, be suffficent for your task.
 *mega2vcf*, *mega2genabel* and *mega2pedgene* perform specific functions (see their package description);
-these load the *mega2r* package when they are loaded.  Their code illustrates how the Mega2 data frames
-can be used.
+they will load the *mega2r* package when they are loaded.  Their code illustrates how data can
+be extracted from the the Mega2 data frames.
 
-Mega2r also requires that Bioconductor Annotations must be loaded.
+Mega2R also requires that Bioconductor Annotations be loaded.
 The first line (below) loads the Bioconductor loader and the next
 two lines load two annotation databases. One for gene transcript
 locations and one to map gene names to the entrez gene IDs. (Note: You
@@ -72,16 +72,16 @@ biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene")
 biocLite("org.Hs.eg.db")
 ```
 
-The above commands only need to be typed once.
+The above commands only need to be run once.
 
 # Example Data
 
-We have chosen to use the SeqSIMLA2 program to generate a data set for
-us.  We needed to sub-sample the data down to 1,380 people and 1,000
+We have chosen to use the SeqSIMLA2 program to simulate a data set for
+these exercises.  We needed to sub-sample the data down to 1,380 people and 1,000
 markers to make the size manageable. These data will be used to
 illustrate Mega2 and Mega2R operations that follow.
 
-Note: This simulator only produces markers on chromosome 1.
+Note: The simulator produces markers on only chromosome 1.
 
 # Using Mega2R 
 
@@ -95,7 +95,7 @@ the data from the simulation. These files are in PLINK ped format.
 
 You can obtain the Mega2 program from
 https://watson.hgen.pitt.edu/register/. Then you could invoke Mega2
-on your data. To make matters simple, we will use a pre-constructed
+on your data. To make the tutorial simple, we will use a pre-constructed
 Mega2 batch file to automate the processing by Mega2. To run Mega2 to
 process and create the SQLite3 database 'seqsimr.db', issue this
 command at the Unix prompt:
@@ -104,13 +104,13 @@ command at the Unix prompt:
 mega2 MEGA2.BATCH.seqsimr
 ```
 
-**This vignette will not invoke *mega2*, but use the seqsimr.db
-database that is in the tutorial package.**
+**Note: This vignette will not invoke *mega2*, but use the seqsimr.db
+database that is in the mega2rtutorial package.**
 
 
-**NOTE: To make this tutorial only dependent on R, the above code is not actually run.  And its
-results, shown below, were captured from an environment where we had both R and the Mega2 executable
-available.**
+**Note: To make this tutorial only dependent on R, the above code is not actually run.  And the
+results, shown below, were captured from an environment where we had both R and the Mega2
+executable available.**
 
 
 ```
@@ -237,8 +237,8 @@ available.**
 ## ===========================================================
 ```
 
-If you do not provide the argument, Mega2 will proceed to ask a series
-of questions to collect the needed information to produce a
+If you do not provide an argument, *Mega2* will proceed to ask a series
+of questions to collect the information needed to produce a
 database. In addition, it will create a Mega2.BATCH file, we
 suggested you keep. You can look at the "Quick Start" documentation
 https://watson.hgen.pitt.edu/docs/mega2_html/mega2.html Section 4. to
@@ -275,14 +275,15 @@ Default_Reset_Invalid=no
 **DBfile_name=seqsimr.db**  
 Default_Outfile_Names=yes  
 
-You will eventually have to run Mega2 to convert your data.
+When you are ready, you will have to run Mega2 to convert your data to a database.
 
 
 ## Reading and Examining a Mega2 Database in R
 
 ### Reading a Mega2 Database into R
 
-After you have the database, start up the R program. The first R commands you should type are:
+After you have the database, start up the R program. Load the *mega2r* library, then
+use the function *read.Mega2DB* to read a Mega2 database into R.
 
 ```{r,eval=FALSE}
 library(mega2r)
@@ -305,6 +306,7 @@ the change is permanent and seen inside and outside the function.)
 ```{r mega2r}
 library(mega2r)
 # ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+
 # or to use the embeded tutorial data
 library(mega2rtutorial)
 database_file = system.file("exdata", "seqsimr.db", package = "mega2rtutorial")
@@ -317,7 +319,7 @@ We need to make two observations that apply to all Mega2R functions:
 
 When verbose is set in the initial read.Mega2DB, the
 value will be remembered.  It may be used by any subsequent function.
-If verbose is TRUE, Mega2R functions will possibly print out more
+If verbose is TRUE, Mega2R functions may print out more
 diagnostic information.
 
 ### Use of an Environment
@@ -349,12 +351,12 @@ showMega2ENV = function(envir = ENV) { ... }
 ```
 
 The code above, sets global variable **ENV** to the local 
-variable, **envir**.  Thus if **envir** is not defined,
+variable, **envir**.  Thus if **envir** is not provided,
 **ENV** (from the global environment) will be used.
 
 ## Reading Examining a Mega2 Database in R
 
-The ls function will show you all the variables in an
+The *ls* function will show you all the variables in an
 environment. (You probably used it without arguments to show you the
 variables in the .GlobalEnv.) Type:
 
@@ -388,11 +390,11 @@ Mega2R has an internal default list of the chromosome and base pair
 ranges for a number of gene transcripts.  These transcripts come from
 the UCSC Genome Browser reference assembly GRCH37.  The list was
 further modified to eliminate multiple records from the same gene with
-the exact same transcript start and transcript end.  This constitutes
+the exact same transcript start and transcript end.  The list contains
 about 29,000 records.  You may load you own range set instead of the default.
 You create a data frame that contains at least a name "observation", a chromosome
 "observation", a start position "observation" and an end position "observation".
-You create an integer vector that contains the column numbers of the chromosome
+And you create an integer vector that contains the column numbers of the chromosome
 "observation", the start position "observation" and the end position "observation".
 These two become the arguments to the *setRanges* function, viz.
 ```
@@ -403,15 +405,16 @@ The function:
 > applyFnToRanges(DOpedgene, envir = ENV)  
 
 goes through each transcript/range entry and finds the markers that fall within the bounds.
-It then builds a genotype matrix for the samples and each marker.
+It then builds a genotype matrix for the samples and each marker in the range.
 
 The first argument of the *applyFnToRanges* function is a call back function.  The function is
-called with four arguments: the genotype matrix, the markers, the selected transcript/range
+called with four arguments: the genotype matrix, the markers in range, the selected transcript/range
 entry and the environment.  The call back is invoked repeatedly for each transcript range that contains any markers.
 If it is necessary to store information between successive invocations the environment (*envir*) 
 can be used.
 In mega2pedgene, DOpedgene converts the genotype
-nucleotides to the count of the minor allele and then runs pedgene for
+nucleotide patters to the values 0, 1, and 2 with 0
+assigned to the  minor allele and it then runs CRAN pedgene for
 several different marker weights. 
 
 *applyFnToRanges* can also be provided explicit ranges.
@@ -422,9 +425,9 @@ applyFnToRanges(DOpedgene, ENV$refRanges[ENV$refRanges$chromosome == 1,], ENV$re
 
 ### applyFnToGenes
 
-Alternatively, you may try searching by gene transcript.  Here, the default
+Alternatively, you may try searching by genes.  Here, the default
 transcript database is TxDb.Hsapiens.UCSC.hg19.knownGene from
-Bioconductor.  Of course you can change it.  Type:
+Bioconductor.  Of course you can change it, by typing:
 
 ```
 setAnnotations("txdb", "genedb")
@@ -439,21 +442,26 @@ The function:
 
 > applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
 
-will find the transcripts for each gene in the Bioconductor database.  It will then behave
-like *applyFnToRanges*, find all the markers in each transcript range and then invoke the call
+will find all the transcripts for each gene requested from the Bioconductor database.  It will then behave
+like *applyFnToRanges*, find all the markers in each transcript range, compute the genotype
+matrix and then invoke the call
 back function with the required four arguments.
 
-*applyFnToGenes* allows several other arguments that specify complete chromosomes, or
-(multiple) ranges of base pairs on chromosomes.
+The *applyFnToGenes* function has several other optional arguments that can
+specify complete chromosomes,
+(multiple) ranges of base pairs on chromosomes,
+or collections of markers.
 
 # Iterating through the Genotypes
 
 ## Cooked Genotypes
 
-The heart of the above two functions is the calculation of the matrix of samples by markers
+The heart of the above two functions is the calculation of the genotype 
+matrix of samples by markers
 containing the nucleotides (strings).  The
-genotype information is most likely stored in a compressed 2 bit representation.  An Rcpp function does the
-heavy lifting to convert the compressed genotype data to nucleotides.  The function
+genotype information is mostly stored in a compressed 2 bit representation.
+An Rcpp function does the
+conversion of the compressed genotype data to nucleotides.  The function
 
 > getgenotypes(markers, envir = ENV)
 
@@ -467,5 +475,5 @@ The function
 > getgenotypesraw(markers, envir = ENV)
 
 is similar to the *getgenotypes* function except that the matrix it returns contains an integer
-for each genotype.  The integer is
-encoded so that high 16 bits of the integer are the index for allele1 and the low 16 bits are the index for allele2.
+encoding each genotype.  The integer's
+high 16 bits are the index for allele1 and the low 16 bits are the index for allele2.

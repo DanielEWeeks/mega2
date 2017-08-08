@@ -34,7 +34,7 @@ The Mega2VCF function takes an argument which is the prefix used on all the file
 generated. We will make the prefix path include the
 directory, *vcfr*.  The Mega2VCF function assumes the Mega2 data frames
 are contained in the global variable, **ENV**. If this is not the case, supply a
-named argument *envir* to indicate the environment you wish to use.
+named argument, *envir*, to indicate the environment you wish to use.
 
 Note, that Mega2VCF will create a .vcf file as well as a
 .fam file (we do linkage), a .phe file (phenotypes) and a few
@@ -66,7 +66,7 @@ You can read the R code to see how these files are created from the data frames.
 
 # VCF regression
 
-If you have a executable copy of Mega2, you can run this code using
+If you have a executable copy of Mega2, you can run the code below using
 the MEGA2.BATCH.vcf file and using the database from the *mega2rtutorial* package.
 
 To copy the batch file and database from the tutorial to the current directory type:
@@ -77,18 +77,18 @@ dump_mega2rtutorial_data()
 
 The C++ Mega2 program can populate the vcf directory with
 the same set of files that the R program, *Mega2VCF*, created in the vcfr
-directory.  
-Cut and paste the shell code (below) and you should see similar results to what
-is presented here.
-
-At the Unix command prompt, type:
+directory.  So, at the Unix command prompt, type:
 
 ```
 mkdir vcf
 mega2 MEGA2.BATCH.vcf
 ```
 
-The output should be (except for timestamps):
+**Note: To make this tutorial only dependent on R, the above code is not actually run.  And the
+results, shown below, were captured from an environment where we had both R and the Mega2
+executable available.**
+
+The output should be similar to that below (except for timestamps):
 
 ```
 ## ==========================================================
@@ -186,7 +186,7 @@ The output should be (except for timestamps):
 The abbreviated MEGA2.BATCH.vcf file is below. (The initial comment section
 is not shown and important lines are
 shown in a bold typeface.)
-Notice that there are no INPUT FILES, just a database file. 
+Notice that there are no input files, other than a database file. 
 
 > Input_Database_Mode=2  
 Align_Strand_Input=no  
@@ -215,6 +215,10 @@ command prompt, type:
 ```
 diff -wrs vcf vcfr
 ```
+
+**Note: To make this tutorial only dependent on R, the above code is not actually run.  And the
+results, shown below, were captured from an environment where we had both R and the Mega2
+executable available.**
 
 It should show:
 
