@@ -1,6 +1,6 @@
 Package: mega2r
-Version: 0.5.4
-Date: 2017-07-25
+Version: 1.0.0
+Date: 2017-08-10
 Title: Read and Process a Database Created by Mega2 in R
 Description: Read a Mega2 SQLite3 database into R; Access genotype, phenotype, and family information.
 Authors@R: c(person("Robert V.", "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
