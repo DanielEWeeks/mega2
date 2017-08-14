@@ -20,8 +20,6 @@ library(knitr)
 opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
 ```
 
-#Please read
+Please read the `mega2rtutorial` package vignette:
 
-#the `mega2rtutorial` package vignette
-
-#sections 1 through 4 and section 5
+See sections 1 through 4 and section 5
