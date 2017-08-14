@@ -13,7 +13,7 @@ dump_mega2rtutorial_data(dir = ".")
 None
 }
 \description{
-This function retrieves data stored in the Mega2rtutorial (inst/exdata).  It 
+This function retrieves data stored in the Mega2rtutorial (inst/exdata).  It
 dumps them in the current (or specified) directory.
 }
 \examples{

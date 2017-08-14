@@ -5,7 +5,7 @@
 \alias{mega2rtutorial-package}
 \title{mega2rtutorial package}
 \description{
-This package retrieves data stored in the Mega2rtutorial and 
+This package retrieves data stored in the Mega2rtutorial and
   dumps them in the current directory.  The package also builds a vignette
   that shows the usage of all the mega2 packages.
 }
