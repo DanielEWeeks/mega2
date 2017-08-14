@@ -10,7 +10,8 @@ Author: Robert V. Baron [aut],
 Maintainer: Daniel E. Weeks <weeks@pitt.edu>
 URL: https://watson.hgen.pitt.edu/mega2/mega2r/
 BugReports: https://groups.google.com/forum/#!forum/mega2-users
-Depends: R (>= 3.3.3)
+Depends: R (>= 3.3.3),
+         R.utils
 License: GPL (>= 3)
 Suggests:
    GenABEL,

@@ -37,7 +37,9 @@
 NULL
 
 FILES = c("MEGA2.BATCH.seqsimr", "MEGA2.BATCH.srdta", "MEGA2.BATCH.vcf",
-          "Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
+          "Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db",
+          "Mega2r.map.gz", "Mega2r.ped.gz", "seqsimr.db.gz", "srdta.db.gz")
+FILES.gz = c("Mega2r.map.gz", "Mega2r.ped.gz", "seqsimr.db.gz", "srdta.db.gz")
 
 #' dump tutorial data
 #'
@@ -58,6 +60,9 @@ dump_mega2rtutorial_data = function(dir = ".") {
         from = system.file("exdata", file, package="mega2rtutorial")
         to   = paste(dir, file, sep="/")
         file.copy(from, to, copy.mode = TRUE, copy.date = TRUE)
+    }
+    for (file in FILES.gz) {
+      gunzip(file)
     }
 }
 
