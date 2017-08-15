@@ -3,3 +3,28 @@ tar -X Exclude.mega2vcf -zcvf mega2vcf.tar.gz mega2vcf
 tar -X Exclude.mega2genabel -zcvf mega2genabel.tar.gz mega2genabel
 tar -X Exclude.mega2pedgene -czvf mega2pedgene.tar.gz mega2pedgene
 tar -X Exclude.mega2rtutorial -czvf mega2rtutorial.tar.gz mega2rtutorial
+
+The 'build' command builds the vignettes:
+
+R CMD build mega2r
+R CMD build mega2vcf
+R CMD build mega2genabel
+R CMD build mega2pedgene
+
+R CMD INSTALL mega2r_1.0.0.tar.gz
+R CMD INSTALL mega2vcf_1.0.0.tar.gz
+R CMD INSTALL mega2genabel_1.0.0.tar.gz
+R CMD INSTALL mega2pedgene_1.0.0.tar.gz
+
+R CMD build mega2rtutorial
+R CMD INSTALL mega2rtutorial_1.0.0.tar.gz
+
+R CMD check --as-cran mega2r_1.0.0.tar.gz
+R CMD check --as-cran mega2vcf_1.0.0.tar.gz
+R CMD check --as-cran mega2genabel_1.0.0.tar.gz
+R CMD check --as-cran mega2pedgene_1.0.0.tar.gz
+R CMD check --as-cran mega2rtutorial_1.0.0.tar.gz
+
+## Test environments
+* Ubuntu 16.04.1, R devel (2017-08-14 r73093)
+* OS X, R 
