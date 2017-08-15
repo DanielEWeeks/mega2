@@ -20,7 +20,6 @@ Imports:
      methods
 SystemRequirements: Mega2
 RoxygenNote: 6.0.1
-Suggests: mega2rtutorial,
-    knitr,
+Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
