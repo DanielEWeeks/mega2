@@ -28,3 +28,36 @@ R CMD check --as-cran mega2rtutorial_1.0.0.tar.gz
 ## Test environments
 * Ubuntu 16.04.1, R devel (2017-08-14 r73093)
 * OS X, R 3.4.1 (2017-06-30)
+
+
+----
+Vignette to HTML:
+
+---
+title: "Mega2R Tutorial"
+author: "Robert V. Baron and Daniel E. Weeks"
+:# date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::html_clean:
+    highlight: kate
+---
+
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=FALSE,
+                     cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+
