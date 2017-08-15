@@ -3,12 +3,12 @@ title: "Mega2R Tutorial"
 author: "Robert V. Baron and Daniel E. Weeks"
 date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
 output:
-  prettydoc::html_pretty:
-    toc: true
-    depth: 3
-    toc_depth: 3
-    number_sections: true
-    theme: leonids
+# prettydoc::html_pretty:
+#   toc: true
+#   depth: 3
+#   toc_depth: 3
+#   number_sections: true
+#   theme: leonids
 
   rmarkdown::html_vignette:
 vignette: >
