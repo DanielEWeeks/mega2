@@ -134,9 +134,9 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 #'
 #' @examples
 #'\dontrun{
-#' run()
+#' run_pedgene()
 #'
-#' run(1:10)
+#' run_pedgene(1:10)
 #'}
 run_pedgene = function (gs = 1:100, envir = ENV) {
 
