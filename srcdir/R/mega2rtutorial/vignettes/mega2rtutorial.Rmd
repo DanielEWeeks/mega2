@@ -679,7 +679,7 @@ restrict pedgene to a small range of transcripts around 54, viz. 50 through
 60: 
 Note: `verbose` needs to be TRUE, for these diagnostics to be printed.
 
-```{r run_pedgene,collapse=TRUE}
+```{r run_pedgene}
 ENV$verbose=TRUE
 run_pedgene(gs=50:60)
 ```
@@ -758,13 +758,13 @@ all  the transcripts for each gene; then it needs to find all the markers betwee
 of transcript start/end ranges; and finally it needs to do a small computation on the genotypes
 from each set of markers.
 
-```{r,eval=FALSE,collapse=TRUE}
+```{r,eval=FALSE}
 applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
 ```
 
 But let us run this function for a few genes:
 
-```{r,FnToGenes,eval=TRUE,collapse=TRUE}
+```{r,FnToGenes,eval=TRUE}
 applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'AK5'), envir = ENV)
 ```
 
