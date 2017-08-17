@@ -1,7 +1,4 @@
-# Version 0.1.0
+Version 1.0.0 (2017-08-17)
+===
 
-  * The initial creation of the package. 
-
-# Version 0.5.0
-
-  * packages works for pedgene
+- Initial CRAN release

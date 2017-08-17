@@ -26,8 +26,16 @@ R CMD check --as-cran mega2pedgene_1.0.0.tar.gz
 R CMD check --as-cran mega2rtutorial_1.0.0.tar.gz
 
 ## Test environments
-* Ubuntu 16.04.1, R devel (2017-08-14 r73093)
-* OS X, R 3.4.1 (2017-06-30)
+* Ubuntu 16.04.1, R devel (2017-08-17 r73102)
+* OS X 10.12.5, R 3.4.1 (2017-06-30)
+
+## R CMD check results
+On Ubuntu, the status is reported as "1 NOTE":
+
+
+On OS X, there were no ERRORs or WARNINGs. 
+
+There was 1 NOTE:
 
 
 ----

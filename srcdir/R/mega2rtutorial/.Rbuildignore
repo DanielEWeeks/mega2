@@ -5,3 +5,5 @@
 ^vignettes/mega2r-full\.Rmd$
 ^inst/doc/mega2r-full\..*$
 .gitignore
+README.md
+cran-comments.md
