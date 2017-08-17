@@ -2,7 +2,7 @@ Package: mega2vcf
 Version: 1.0.0
 Date: 2017-08-17
 Title: Generate a VCF File from a Mega2 SQLite Database
-Description: Generate a VCF file from a Mega2 SQLite database.  Also generate a .fam (family), a .phe (phenotype) and a few related file from the database data.
+Description: Generate a VCF file from a Mega2 SQLite database.  Also generate a .fam (family), a .phe (phenotype) and a few related files from the database data.
 Authors@R: c(person(c("Robert","V."), "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
              person(c("Daniel","E."), "Weeks",    email = "weeks@pitt.edu", role = c("aut","cre")))
 URL: https://watson.hgen.pitt.edu/mega2/mega2r/
