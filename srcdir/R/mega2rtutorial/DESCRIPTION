@@ -2,7 +2,12 @@ Package: mega2rtutorial
 Version: 1.0.0
 Date: 2017-08-17
 Title: A Tutorial Vignette and Example Data for the Mega2R Suite of R Packages 
-Description: Store and retrieve data for Mega2rtutorial and vignettes.  The data are also used by the various "mega2" packages.
+Description: The suite of Mega2R R packages (mega2r, mega2vcf,
+mega2genabel, mega2pedgene) all use as input genetic data that have been
+reformatted and stored in a SQLite database; this database is initially
+created by the standalone Mega2 C++ program.  This particular package,
+mega2rtutorial, provides a single unified vignette for these R packages,
+as well as simulated example data. 
 Authors@R: c(person(c("Robert","V."), "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
              person(c("Daniel","E."), "Weeks",    email = "weeks@pitt.edu", role = c("aut","cre")))
 URL: https://watson.hgen.pitt.edu/mega2/mega2r/
