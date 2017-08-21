@@ -2,34 +2,34 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 getgenotypes_1 <- function(locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscC_arg, miscN_arg) {
-    .Call('_mega2r_getgenotypes_1', PACKAGE = 'mega2r', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscC_arg, miscN_arg)
+    .Call('mega2r_getgenotypes_1', PACKAGE = 'mega2r', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscC_arg, miscN_arg)
 }
 
 getgenotypes_2 <- function(locus_arg, genotype_arg, allele_arg, miscC_arg, miscN_arg) {
-    .Call('_mega2r_getgenotypes_2', PACKAGE = 'mega2r', locus_arg, genotype_arg, allele_arg, miscC_arg, miscN_arg)
+    .Call('mega2r_getgenotypes_2', PACKAGE = 'mega2r', locus_arg, genotype_arg, allele_arg, miscC_arg, miscN_arg)
 }
 
 getgenotypesraw_1 <- function(locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscN_arg) {
-    .Call('_mega2r_getgenotypesraw_1', PACKAGE = 'mega2r', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscN_arg)
+    .Call('mega2r_getgenotypesraw_1', PACKAGE = 'mega2r', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscN_arg)
 }
 
 getgenotypesraw_2 <- function(locus_arg, genotype_arg, allele_arg, miscN_arg) {
-    .Call('_mega2r_getgenotypesraw_2', PACKAGE = 'mega2r', locus_arg, genotype_arg, allele_arg, miscN_arg)
+    .Call('mega2r_getgenotypesraw_2', PACKAGE = 'mega2r', locus_arg, genotype_arg, allele_arg, miscN_arg)
 }
 
 getgenotypes_Ri <- function(locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscC_arg, miscN_arg) {
-    .Call('_mega2r_getgenotypes_Ri', PACKAGE = 'mega2r', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscC_arg, miscN_arg)
+    .Call('mega2r_getgenotypes_Ri', PACKAGE = 'mega2r', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscC_arg, miscN_arg)
 }
 
 getgenotypes_forperson <- function(raw_arg) {
-    .Call('_mega2r_getgenotypes_forperson', PACKAGE = 'mega2r', raw_arg)
+    .Call('mega2r_getgenotypes_forperson', PACKAGE = 'mega2r', raw_arg)
 }
 
 getgenotypesgenabel_1 <- function(locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscN_arg) {
-    .Call('_mega2r_getgenotypesgenabel_1', PACKAGE = 'mega2r', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscN_arg)
+    .Call('mega2r_getgenotypesgenabel_1', PACKAGE = 'mega2r', locus_arg, hocus_arg, genotype_arg, allele_arg, markerscheme_arg, miscN_arg)
 }
 
 getgenotypesgenabel_2 <- function(locus_arg, genotype_arg, allele_arg, miscN_arg) {
-    .Call('_mega2r_getgenotypesgenabel_2', PACKAGE = 'mega2r', locus_arg, genotype_arg, allele_arg, miscN_arg)
+    .Call('mega2r_getgenotypesgenabel_2', PACKAGE = 'mega2r', locus_arg, genotype_arg, allele_arg, miscN_arg)
 }
 

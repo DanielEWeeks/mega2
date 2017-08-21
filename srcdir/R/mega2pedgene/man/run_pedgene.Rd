@@ -25,8 +25,8 @@ This code starts by deleting the output file set in \code{init_pedgene} ("pedgen
 }
 \examples{
 \dontrun{
-run()
+run_pedgene()
 
-run(1:10)
+run_pedgene(1:10)
 }
 }
