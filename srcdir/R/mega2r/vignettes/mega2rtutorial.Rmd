@@ -1367,3 +1367,7 @@ document by providing implementation details.
 ```{r, fin,eval=TRUE,echo=FALSE}
 clean_mega2rtutorial_data()
 ```
+
+# 11 Acknowlegements
+
+The Mega2 C++ program and this Mega2R R package are both open source and are freely available, along with extensive documentation, from our https://watson.hgen.pitt.edu/register web site. This work was supported by NIH grant R01 GM076667 (PI: Weeks). Earlier contributions to our code base were made by Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, and William P. Mulvihill.
