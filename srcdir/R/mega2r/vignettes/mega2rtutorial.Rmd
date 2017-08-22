@@ -91,8 +91,6 @@ programs, other useful features of Mega2 include:
 
 15. Creation of extensive data analysis logs, both during database creation: (files MEGA2.DB.LOG and MEGA2.DB.ERR) and during each analysis: (files MEGA2.LOG and MEGA2.ERR).
 
-## 1.2 Mega2 for R
-
 The features listed above and the documentation, https://watson.hgen.pitt.edu/docs/mega2_html/mega2.html, describe the
 Mega2 executable, written in C++.  The site
 https://watson.hgen.pitt.edu/register/ provides Mega2 binaries for a number
@@ -100,20 +98,33 @@ of different platforms including Windows 7 and 10 as well as the GPL-3
 source.  (The source for Mega2 as well as Mega2R can be found at
 https://bitbucket.org/dweeks/mega2 BitBucket site.)
 
+
+## 1.2 What is Mega2R
+
 Since Mega2 now produces a SQLite database, it is now easy to load
-the data that Mega2 has processed in to R.  This is what Mega2R and
-this tutorial is all about.  This tutorial shows how to read the SQLite
-database into R and how to access tables in it using the package, `mega2r`.
-The tutorial shows how to select subsets
-of the data that corresponds to transcripts or other base pair ranges
-and perform analysis on them.  It is important to point out that
+the data that Mega2 has processed into R.  This is what Mega2R and
+this tutorial is all about.  
+
+Mega2R loads and manipulates data frames containing genotype, 
+phenotype, and family information from the input SQLite database. In
+addition, we have developed C++ functions for R to decompress needed
+subsets of the genotype data, on the fly, in a memory efficient manner.  
+We have also created several more R functions that
+illustrate how to use the data frames as well as perform useful
+functions: these permit one to run the 'pedgene' R package (https://CRAN.R-project.org/package=pedgene) to carry
+out gene-based association tests on family data using selected
+marker subsets, to output subsets of the 'mega2r' data as a VCF file (https://github.com/samtools/hts-specs) and
+related files (for phenotype and family data), and to convert the
+data frames into 'GenABEL' R gwaa.data-class objects (https://CRAN.R-project.org/package=GenABEL).
+
+This tutorial shows how to read the SQLite
+database into R and how to access tables in it using this package, `mega2r`.
+The tutorial shows how to carry out gene-based analyses that select subsets
+of the data that corresponds to transcripts or other base pair ranges.  
+It is important to point out that
 like GenABEL (https://CRAN.R-project.org/package=GenABEL),
 Mega2R keeps its genotype data in a compressed format that is only expanded
-when needed.  Mega2R also provides functionality for interacting with
-the pedgene R package (https://CRAN.R-project.org/package=pedgene) and for interacting with
-the GenABEL R package.
-Mega2R also provides functionality for writing subsets of the database out into
-VCF format files (https://github.com/samtools/hts-specs).
+when needed.  
 
 
 # 2 Example Genome-wide Association Data
@@ -174,8 +185,8 @@ install.packages("mega2r")
 In Section 6 below, we will carry out gene-based association tests, where 'genes' are defined according to a database containing the boundaries of the gene transcripts.
 This requires two Bioconductor Annotations databases to be installed.
 The first line (below) loads the Bioconductor loader and the next
-two lines install two annotation databases. One annotation databases provides the gene transcript
-locations and the other maps gene names to entrez gene IDs. (Note: You
+two lines install two annotation databases. One annotation database provides the gene transcript
+locations and the other maps gene names to entrez gene IDs. (Note: As described in Section 5.3.1, you
 may choose a different transcript database from Bioconductor or
 construct one of your own.) Please type in R:
 
@@ -187,7 +198,7 @@ biocLite("org.Hs.eg.db")
 ```
 The above step is run once.
 
-# 5 Using the `mega2r` R package
+# 5 Using Mega2R to access and process genetic data
 
 ## 5.1 Creating a Mega2 database
 
@@ -345,9 +356,9 @@ The output seen on the screen when we ran Mega2 to create the SQLite3 database i
 ## ===========================================================
 ```
 
-If you do not provide an argument, Mega2 will proceed to ask a series
+If you do not provide the command-line argument giving the name of the BATCH file, Mega2 will proceed to ask a series
 of questions to collect the information needed to produce a
-database. In addition, it will create a Mega2.BATCH file, we
+database. In addition, it will create a Mega2.BATCH file, similar to the one we
 suggested you use. You can look at the "Quick Start" section of the Mega2 documentation
 https://watson.hgen.pitt.edu/docs/mega2_html/mega2.html to
 better understand the interactive process.
@@ -428,8 +439,8 @@ If verbose is TRUE, Mega2R functions can print diagnostic information.
 ### 5.2.3 Use of an Environment
 
 All Mega2R functions that do not return an
-environment, need to have an environment supplied as an argument.
-As stated earlier the environment is used to store the data frames that
+environment need to have an environment supplied as an argument.
+As stated earlier, the environment is used to store the data frames that
 contain the SQLite database.
 There are two ways to pass the environment.  If you assigned the result of
 `read.Mega2DB` to the variable `seqsimr`, then you could supply the value
@@ -469,7 +480,7 @@ ls(ENV)
 ```
 
 
-A more informative overview of the data base can be had with:
+A more informative overview of the database can be had with:
 
 ```{r, showMega2ENV}
 showMega2ENV() 
@@ -494,7 +505,7 @@ ranges for many gene transcripts.  These transcripts come from
 the UCSC Genome Browser reference assembly GRCH37.  The list was
 further modified to eliminate multiple records from the same gene with
 the exact same transcript start and transcript end.  The list contains
-about 29,000 records.  You may load you own range set instead of the default.
+about 29,000 records.  You may load your own range set instead of the default.
 You create a data frame that contains at least a name "observation", a chromosome
 "observation", a start position "observation" and an end position "observation".
 And you create an integer vector that contains the column numbers of the chromosome
@@ -536,7 +547,7 @@ where "txdb" is a string that is the name of transcript database that was
 fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
 database that maps a gene id from the transcript to an entrez gene id.
 The `setAnnotations` command must be issued whenever R is started and the `mega2r`
-library has been loaded.  By way of a reminder, section 4.3  "Installation.Bioconductor",
+library has been loaded.  By way of a reminder, Section 4.2
 explains how to choose and install "TxDb.Hsapiens.UCSC.hg19.knownGene" or a different
 Annotation database.
 
@@ -592,17 +603,20 @@ high 16 bits are the index for allele1 and the low 16 bits are the index for all
 Note: There are actually two different Rcpp functions for each named function in Section 5.4.  One function processes compressed genotype data and the other function processes 
 uncompressed genotype data.
 
-# 6 Using `mega2r` to carry out automated gene-based association tests using `pedgene`
+# 6 Using Mega2R to carry out automated gene-based association tests using `pedgene`
+
+Mega2R provides functions that permit one to run the `pedgene` R package to carry
+out gene-based association tests on family data looping over selected
+marker subsets.  
 
 The `pedgene` R package implements methods for carrying out gene-based association tests on family data, and is available on CRAN as (https://CRAN.R-project.org/package=pedgene).
-It was written by Daniel Schaid and Jason Sinnwell.
-The reference is 
+It was written by Daniel Schaid and Jason Sinnwell: 
 [Schaid DJ, McDonnell SK., Sinnwell JP, Thibodeau SN. (2013) Multiple Genetic Variant Association Testing by Collapsing and Kernel Methods With Pedigree or Population Structured Data, Genet Epidemiol, 37(5):409-18.]
 
 ## 6.1 Gene transcripts reminder
 
 If you plan to select transcripts by gene name, you must load them from
-Bioconductor.  In Section 4.2, "Installation Bioconductor", we indicated that you 
+Bioconductor.  In Section 4.2, we indicated that you 
 needed to type once in R to install the package:
 
 ```
@@ -622,11 +636,9 @@ where `txdb` is the name of Bioconductor transcription database, and `entrezGene
 ## 6.2 Loading a Mega2 database
 
 Rather than read the Mega2 SQLite database with
-the `read.Mega2DB` function described previously and used by all the other
-packages, this package uses `init_pedgene` to read the Mega2 database.
+the `read.Mega2DB` function described previously, here we use a specialized `init_pedgene` function to read the Mega2 database.
 This latter function calls a utility function
-also used by  `read.Mega2DB`. Then it creates, edits, and rewrites the family data -- 
-data frame, `fam` .  (`fam` merges data from the `pedigree_table`, `person_table` and
+also used by  `read.Mega2DB`. Then it creates, edits, and rewrites the family data, storing it in a `pedgene`-compatible data frame, `fam` .  (`fam` merges data from the `pedigree_table`, `person_table` and
 `phenotype_table`.)
 `init_pedgene` purges persons with unknown case/control
 status which is necessary for the pedgene calculation.
@@ -695,8 +707,8 @@ The genotype matrix for these markers, along with the markers, the range
 used, and the environment are passed
 to the call back function `DOpedgene`. `DOpedgene` converts the genotype
 nucleotides  1/1, 1/2 and 2/2 to the values 0, 1 and 2 (or 2, 1, 0) if 1/1 is
-the allele with the minor allele frequency.  Then it runs pedgene for
-several different marker weights. The results are automatically stored
+genotype homozygous for the allele with the minor allele frequency.  Then it runs pedgene. 
+The results are automatically stored
 in a data frame with "observations": prefix of chromosome, gene,
 number of markers and base pair range followed by Pedgene data: kernel
 and burden, value and p-values, four values for each of three
@@ -740,7 +752,7 @@ setAnnotations("txdb", "genedb")
 where "txdb" is a string that is the name of transcript database that was
 fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
 database that maps a gene id from the input to an entrez gene id.
-You need to install any new the database with biocLite, as shown earlier.
+You need to install any new database with biocLite, as shown earlier.
 
 We leave the command below as an exercise.  It runs a bit slowly.  It needs to find
 all  the transcripts for each gene; then it needs to find all the markers between each pair
@@ -765,6 +777,9 @@ transcripts with the same or overlapping start values and end values.
 
 # 7 Outputting Mega2R data to VCF format
 
+The `Mega2VCF` function permits one to output subsets of the 'mega2r' data as a VCF file, accompained by
+related files (for phenotype and family data).
+
 The VCF data format 
 (http://www.internationalgenome.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-40/)
 was originally defined by the 1000 Genomes Project 
@@ -772,7 +787,7 @@ was originally defined by the 1000 Genomes Project
 
 The current version of data format can be found at (http://samtools.github.io/hts-specs/).
 
-## 7.1 Writing a VCF File using the mega2r R package
+## 7.1 Writing a VCF File using Mega2R
 
 First, create the directory "vcfr",
 so we can keep all the generated data in one place.
@@ -788,8 +803,8 @@ directory *vcfr*.  The Mega2VCF function assumes the Mega2 data frames
 are contained in the global variable ENV. If this is not the case, supply a
 named argument `envir` set to the environment you wish to use.
 
-Note, that Mega2VCF will create the .vcf file as well as a
-.fam file (we do linkage), a .phe file (phenotypes) and a few
+Note that Mega2VCF will create the .vcf file as well as a
+.fam file (in linkage format), a .phe file (phenotypes) and a few
 others. These files are listed below.
 
 Creating the VCF file and related files is accomplished by typing:
@@ -812,13 +827,16 @@ You can read the R code to see how these files are created from the data frames.
 
 # 8 Converting Mega2R data to GenABEL format
 
+Mega2R provides support for converting the
+data frames into 'GenABEL' format (e.g. as gwaa.data-class objects).
+
 The GenABEL package is available on CRAN as (https://CRAN.R-project.org/package=GenABEL).
 The reference is 
 [Aulchenko Y.S., Ripke S., Isaacs A., van Duijn C.M. GenABEL: an R package for genome-wide association analysis. Bioinformatics. 2007 23(10):1294-6.]
 
 
 
-## 8.1 Creating a GenABEL gwaa.data-class object using the mega2r R package
+## 8.1 Creating a GenABEL gwaa.data-class object using Mega2R
 
 
 There are several data formats that Mega2 can read and transform
@@ -863,9 +881,9 @@ You can use any of the GenABEL provided functions on the results, `seqsimgwaa`.
 str(seqsimgwaa)
 ```
 
-# 9 Regression
+# 9 Regression testing
 
-To verify that the R packages described above have worked correctly,
+To verify that the R functions described above have worked correctly,
 we can compare their output files to those created by Mega2, itself, to
 verify that they are identical, as expected. This type of testing is
 known as regression testing.
@@ -1360,7 +1378,7 @@ If you are left with questions as to how you can use Mega2R for your own researc
 and processing common genetic data formats in R" (in preparation), which extends this
 document by providing implementation details.
 
-2. Read the source for the packages if you understand R; the code is not particularly subtle.
+2. Read the source of the various functions if you understand R; the code is not particularly subtle.
 
 3. Write to the Mega2 discussion group: https://groups.google.com/forum/#!forum/mega2-users
 
