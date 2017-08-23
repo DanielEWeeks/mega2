@@ -20,8 +20,8 @@ Also, save the verbose value for use by other Mega2R functions.}
 envir an environment that contains all the data frames made from the SQLite database.
 }
 \description{
-Read the necessary fields of SQLite data base tables into R data frames.  These
- data frames are stored in an "R environment" which is returned.
+Read the necessary fields of SQLite data base tables into data frames.  These
+ data frames are stored in an 'environment' which is returned.
 }
 \examples{
 \dontrun{

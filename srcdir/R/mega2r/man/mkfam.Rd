@@ -15,7 +15,7 @@ the first loop is broken.}
 
 \item{traitname}{name for trait to use as case/control value; by default, "default"}
 
-\item{envir}{an environment that contains all the data frames created from the SQLite database.}
+\item{envir}{an 'environment' that contains all the data frames created from the SQLite database.}
 }
 \value{
 data frame

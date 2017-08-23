@@ -27,7 +27,7 @@
 
 #library(pedgene)
 
-#' load Mega2 SQLite database into R and perform initialization for pedgene usage
+#' load Mega2 SQLite database and perform initialization for pedgene usage
 #'
 #' @description
 #'  This populates the \bold{R} data frames from the specified \bold{Mega2 R} database.  It then
@@ -104,7 +104,7 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 #"
 #' @param gs a subrange of the default transcript ranges over which to calculate the \emph{Dopedgene} function.
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
 #' @export
@@ -158,7 +158,7 @@ run_pedgene = function (gs = 1:100, envir = ENV) {
 #'  integer columns.  The columns indicate a range:
 #'  a chromosome number, a start base pair value, and an end base pair value.
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
 #' @importFrom pedgene pedgene

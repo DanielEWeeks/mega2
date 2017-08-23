@@ -29,7 +29,7 @@ applyFnToGenes(op           = function (geno, markers, range, envir) {},
  }
 }
 \item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
-\item{envir}{An R environment holding Mega2 data frames and state data.}
+\item{envir}{An 'environment' holding Mega2 data frames and state data.}
 }}
 
 \item{genes_arg}{a character vector of gene names.
@@ -64,7 +64,7 @@ the start base pair selected from each transcript and the second to increase the
 position.  (If only one value is present, it is used for both adjustments.)  Note: The values
 can be positive or negative.}
 
-\item{envir}{an environment that contains all the data frames created from the SQLite database.}
+\item{envir}{an 'environment' that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
@@ -75,11 +75,11 @@ This function generates a data frame of many ranges.  Each range specifies a chr
  markers from the \emph{markers} data frame that fall in each range.  For each range,
  a matrix of the genotypes
  for all the found markers is generated.  Finally, the \code{op} function is called for each
- range with the genotypes, markers, range, and environment.
+ range with the genotypes, markers, range, and 'environment'.
 }
 \note{
 If you want subsequent calls to \code{op} to share information, data can be placed in
- a data frame that is added to the environment.
+ a data frame that is added to the 'environment'.
 }
 \examples{
 \dontrun{

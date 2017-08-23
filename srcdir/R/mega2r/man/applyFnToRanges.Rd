@@ -26,7 +26,7 @@ applyFnToRanges(op          = function (geno, markers, range, envir) {},
  }
 }
 \item{range}{An indicator of which range argument of \code{applyFnToRanges} these markers correspond to.}
-\item{envir}{An R environment holding Mega2 data frames and state data.}
+\item{envir}{An 'environment' holding Mega2 data frames and state data.}
 }}
 
 \item{ranges_arg}{is a data frame that contains at least 4 variables: a name, a chromosome, a 
@@ -40,7 +40,7 @@ the start base pair selected from each range and the second to increase the end 
 position.  (If only one value is present, it is used for both changes.) Note: The values
 can be positive or negative.}
 
-\item{envir}{an environment that contains all the data frames created from the SQLite database.}
+\item{envir}{an 'environment' that contains all the data frames created from the SQLite database.}
 }
 \value{
 None

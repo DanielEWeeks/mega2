@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2pedgene.R
 \name{init_pedgene}
 \alias{init_pedgene}
-\title{load Mega2 SQLite database into R and perform initialization for pedgene usage}
+\title{load Mega2 SQLite database and perform initialization for pedgene usage}
 \usage{
 init_pedgene(db = NULL, filename = NULL, verbose = FALSE)
 }

@@ -24,7 +24,7 @@ markers_arg.  Each cell contains the two characters indicating the nucleotides f
 integer columns.  The columns indicate a range:
 a chromosome number, a start base pair value, and an end base pair value.}
 
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 None

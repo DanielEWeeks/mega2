@@ -27,7 +27,7 @@
 
 #' mega2r package
 #'
-#' @description This package reads a Mega2 SQLite3 database into R data frames and
+#' @description This package reads a Mega2 SQLite3 database into data frames and
 #'	makes the contained genotypes/phenotypes/linkage data available for analysis.
 #'
 #' @author Robert V Baron
@@ -224,8 +224,8 @@ mk_unified_genotype_table = function(envir) {
 
 #' read Mega2 SQLite database into R
 #'
-#' @description Read the necessary fields of SQLite data base tables into R data frames.  These
-#'  data frames are stored in an "R environment" which is returned.
+#' @description Read the necessary fields of SQLite data base tables into data frames.  These
+#'  data frames are stored in an 'environment' which is returned.
 #'
 #' @usage
 #' dbmega2_import(dbname,

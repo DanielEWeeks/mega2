@@ -48,7 +48,7 @@
 #' 'default' is Mega2order, 'minor' is minor allele freq first, 'major' is major allele freq
 #'  first, and 'name' is ascending ascii character order of allele name.
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
 #'

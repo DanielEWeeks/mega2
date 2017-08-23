@@ -9,7 +9,7 @@ mkGenABELtfam(prefix, envir)
 \arguments{
 \item{prefix}{prefix for generated file name}
 
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 None

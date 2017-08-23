@@ -13,7 +13,7 @@ base pair position and an end base pair position.}
 \item{indices}{a vector of 3 integers that specify the location of chromosome column, start base pair
 column and end base pair column of range data frame.}
 
-\item{envir}{an environment that contains all the data frames created from the SQLite database.}
+\item{envir}{an 'environment' that contains all the data frames created from the SQLite database.}
 }
 \value{
 None

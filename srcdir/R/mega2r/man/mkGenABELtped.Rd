@@ -13,7 +13,7 @@ mkGenABELtped(prefix, markers = NULL, mapno = 0, envir)
 
 \item{mapno}{specify which map index to use for genetic distances}
 
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 None

@@ -100,7 +100,7 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #'  Then standardize the order for heterozygous alleles and finally compare.
 #'  This step is optional because it could be rather slow.
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
 #'

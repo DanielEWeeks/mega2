@@ -15,7 +15,7 @@ Mega2GenABELtst(mega_ = mega, gwaa_ = srdta, full = TRUE, envir = ENV)
 Then standardize the order for heterozygous alleles and finally compare.
 This step is optional because it could be rather slow.}
 
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 None

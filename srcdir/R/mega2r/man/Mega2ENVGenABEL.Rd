@@ -16,7 +16,7 @@ Mega2ENVGenABEL(markers = NULL, force = TRUE, makemap = FALSE,
 
 \item{sort}{pass value to gwaa conversion function}
 
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 gwaa.class-object created from Mega2R database

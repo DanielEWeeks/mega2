@@ -7,7 +7,7 @@
 mkGenABELphe(envir)
 }
 \arguments{
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 None

@@ -11,7 +11,7 @@ setAnnotations(txdb, entrezGene, envir = ENV)
 
 \item{entrezGene}{name of Bioconductor mapping of gene name or gene alias to entrez gene id}
 
-\item{envir}{an environment that contains all the data frames created from the SQLite database.}
+\item{envir}{an 'environment' that contains all the data frames created from the SQLite database.}
 }
 \value{
 None

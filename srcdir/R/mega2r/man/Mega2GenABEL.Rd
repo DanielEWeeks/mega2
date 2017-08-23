@@ -13,7 +13,7 @@ Mega2GenABEL(prefix, markers = NULL, mapno = 0, envir = ENV)
 
 \item{mapno}{specify which map index to use for physical distances}
 
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 gwaa.class-object generated from the Mega2R database

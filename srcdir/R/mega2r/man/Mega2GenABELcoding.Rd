@@ -12,7 +12,7 @@ Mega2GenABELcoding(markers = NULL, Freq.x, envir = ENV)
 \item{Freq.x}{frequency of first allele calculated from actual data.  The Mega2 internal frequencies may be
 a bit stale.  This value is one of two returned by the *Mega2GenABELconvert()* function.}
 
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 None

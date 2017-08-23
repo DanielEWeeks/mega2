@@ -19,7 +19,7 @@ will print out the internal map numbers corresponding to all the maps in the Meg
 'default' is Mega2order, 'minor' is minor allele freq first, 'major' is major allele freq
  first, and 'name' is ascending ascii character order of allele name.}
 
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 None

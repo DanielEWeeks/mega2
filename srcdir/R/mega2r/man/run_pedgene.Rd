@@ -9,7 +9,7 @@ run_pedgene(gs = 1:100, envir = ENV)
 \arguments{
 \item{gs}{a subrange of the default transcript ranges over which to calculate the \emph{Dopedgene} function.}
 
-\item{envir}{"R environment" containing SQLite database and other globals}
+\item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
 None

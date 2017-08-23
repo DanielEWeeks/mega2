@@ -43,7 +43,7 @@
 #'
 #' @param mapno specify which map index to use for physical distances
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return gwaa.class-object generated from the Mega2R database
 #'
@@ -107,7 +107,7 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #'
 #' @param sort pass value to gwaa conversion function
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return gwaa.class-object created from Mega2R database
 #'
@@ -144,7 +144,7 @@ Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
 #'
 #' @param mapno specify which map index to use for genetic distances
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
 #'
@@ -227,7 +227,7 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
 #'
 #' @param prefix prefix for generated file name
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
 #'
@@ -253,7 +253,7 @@ mkGenABELtfam = function (prefix, envir) {
 #'  Generate the .phe (PLINK phenotype) file needed by GenAbel.  The person
 #'  must match that specified in the .tfam file
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
 #'
@@ -322,7 +322,7 @@ mkGenABELphe = function (envir) {
 #' @param Freq.x frequency of first allele calculated from actual data.  The Mega2 internal frequencies may be
 #'  a bit stale.  This value is one of two returned by the *Mega2GenABELconvert()* function.
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
 #'
@@ -390,7 +390,7 @@ Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
 #'  The matrix is (# of samples / 4 ) x (# of markers).  (# of samples is rounded to a multiple of 4.
 #'  Each byte stores data for 4 samples; a byte has 4 - 2 bit encodings.
 #'
-#' @param envir "R environment" containing SQLite database and other globals
+#' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @importFrom stats aggregate
 #'

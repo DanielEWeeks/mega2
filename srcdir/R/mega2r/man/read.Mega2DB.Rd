@@ -12,10 +12,10 @@ read.Mega2DB(db, ...)
 \item{...}{additional arguments to pass to \code{dbmega2_import}}
 }
 \value{
-an environment that contains all the data frames created from the SQLite database.
+an 'environment' that contains all the data frames created from the SQLite database.
 }
 \description{
-Call \code{dbmega2_import()} with the specified database and create an environment, with the
+Call \code{dbmega2_import()} with the specified database and create an 'environment', with the
  SQLite table data loaded into data frames.
  Also run \code{mkfam} to create the pedigree data frame \emph{fam} and then store it with \code{setfam}.
  This modifies the \emph{unified_genotype_table} (and \emph{phenotype_table}) to match the family members

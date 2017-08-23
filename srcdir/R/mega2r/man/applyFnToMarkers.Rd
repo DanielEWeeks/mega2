@@ -24,7 +24,7 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
  }
 }
 \item{range}{NULL: to indicate no explicit range was specified.}
-\item{envir}{An R environment holding Mega2 data frames and state data.}
+\item{envir}{An 'environment' holding Mega2 data frames and state data.}
 }}
 
 \item{markers_arg}{a data frame with the following 5 variables:
@@ -37,14 +37,14 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
 \item{position}{is the integer base pair position of marker}
  }}
 
-\item{envir}{an environment that contains all the data frames created from the SQLite database.}
+\item{envir}{an 'environment' that contains all the data frames created from the SQLite database.}
 }
 \value{
 None
 }
 \description{
 A matrix of the genotypes for all the markers is generated.  Then, the call back function, \code{op},
-  is called with the genotypes, markers, NULL (for the range), and the environment.
+  is called with the genotypes, markers, NULL (for the range), and the 'environment'.
 }
 \examples{
 \dontrun{
