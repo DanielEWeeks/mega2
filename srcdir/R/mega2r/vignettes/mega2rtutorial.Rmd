@@ -829,7 +829,7 @@ list.files("vcfr")
 ```
 
 You can read the code to see how these files are created from the data frames.
-
+It is worth noting that the internal logic does not create a genotype matrix for all the requested markers at once, but rather works on a block of markers at a time, limiting the amount of memory required. The code also illustrates how to extract the phenotype values from the phenotype raw vectors.
 
 # 8 Converting Mega2R data to GenABEL format
 
