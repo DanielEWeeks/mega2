@@ -135,8 +135,9 @@ Note: The simulator produces markers on only chromosome 1.
 
 # 3 Tutorial Data
 
-The files you will need for this tutorial are provided.
-The "mega2" executable requires the Mega2.BATCH.<name> files to be in the
+The files you will need for this tutorial are provided in this package.
+Further, our use of the "mega2" executable expects the Mega2.BATCH.<name> files to be in the
+working directory and the latter files expect their data files to be in the
 working directory.  This is done by running:
 
 ```{r mega2rtutDump, message=FALSE}
@@ -196,7 +197,7 @@ The above step is run once.
 ## 5.1 Creating a Mega2 database
 
 We have provided files in this package that contain
-the data from the simulation. These files are in PLINK ped format data.
+the data from the simulation. These files are in PLINK ped format data:
 
 * Mega2r.ped
 * Mega2r.map
@@ -228,9 +229,12 @@ The output seen on the screen when we ran Mega2 to create the 'SQLite' database 
 ```
 ## ==========================================================
 ##                           MEGA2 4.9.2
-##      Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
-##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
-##      Daniel E. Weeks, and University of Pittsburgh
+##
+##      Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.
+##
+##      Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar, 
+##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill, 
+##      and Daniel E. Weeks. 
 ## 
 ##      Last updated: Jun 13 2017, 09:36:42 , valid until June 15, 2018.
 ##      Compiled with gcc version 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)
@@ -387,7 +391,7 @@ Default_Reset_Invalid=no
 **DBfile_name=seqsimr.db**  
 Default_Outfile_Names=yes  
 
-If you wish to use any of the Mega2R functions described here, you will initially have to run Mega2 to convert your data into an 'SQLite' database.
+If you wish to use any of the Mega2R functions described here on your own data, you will have to run "mega2" to convert your data into an 'SQLite' database.
 
 ## 5.2 Reading and Examining a Mega2 Database
 
@@ -421,6 +425,10 @@ the change is permanent.)
 ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 ```
 
+For each table generated, if 'verbose' is TRUE, we emit two lines: one with
+the number of rows and number of columns of the table and the other with
+the column names of the table.
+
 We need to make two observations that apply to all Mega2R functions:
 
 ### 5.2.2 Verbose Flag
@@ -437,7 +445,7 @@ As stated earlier, the environment is used to store the data frames that
 contain the 'SQLite' database.
 There are two ways to pass the environment.  If you assigned the result of
 `read.Mega2DB` to the variable `seqsimr`, then you could supply the value
-seqsimr to any Mega2R function as the named argument `envir`:
+`seqsimr` to any Mega2R function as the named argument `envir`:
 
 ```
 showMega2ENV(envir = seqsimr)
@@ -457,7 +465,7 @@ as in
 showMega2ENV = function(envir = ENV) { ... }
 ```
 
-The code above, sets global variable `ENV` to the local 
+The code above, assigns global variable `ENV` to the local 
 variable, `envir`.  Thus if `envir` is not provided in the function call, R
 will look up the value of `ENV` in the global environment.
 Hopefully, `ENV` was set to the return value of `read.Mega2DB`
@@ -574,7 +582,7 @@ or collections of markers.
 The heart of the above two functions is the calculation of the genotype 
 matrix of samples by markers
 containing the nucleotides (strings).  The
-genotype information is mostly stored in a compressed 2 bit representation.
+genotype information is most often stored in a compressed 2 bit representation.
 An Rcpp function does the
 conversion of the compressed genotype data to nucleotides.  The function
 
@@ -635,7 +643,7 @@ also used by  `read.Mega2DB`. Then it creates, edits, and rewrites the family da
 `phenotype_table`.)
 `init_pedgene` purges persons with unknown case/control
 status which is necessary for the pedgene calculation.
-(When `fam` is filtered, similar adjustments are made to the phenotype_table and the
+(When `fam` is filtered, similar filtering is done to the phenotype_table and the
 genotype_table.)
 Finally, `init_pedgene` calculates
 some values that will be used repeatedly and stores them in the environment that is returned.
@@ -666,11 +674,12 @@ By default, the function `run_pedgene` examines the first 100
 transcripts and prints the results. For this database, the first 100 transcripts
 identifies only one transcript with several markers (It is found
 because it is on chromosome 1 and it has a range that overlaps with some of the
-markers in our data.)
+markers in our study.)
 To make this tutorial exercise run 
 faster, we noticed that the identified transcript appeared at transcript 54; so we will
 restrict pedgene to a small range of transcripts around 54, viz. 50 through
 60: 
+
 Note: `verbose` needs to be TRUE, for these diagnostics to be printed.
 
 ```{r run_pedgene}
@@ -700,7 +709,7 @@ The genotype matrix for these markers, along with the markers, the range
 used, and the environment are passed
 to the call back function `DOpedgene`. `DOpedgene` converts the genotype
 nucleotides  1/1, 1/2 and 2/2 to the values 0, 1 and 2 (or 2, 1, 0) if 1/1 is
-genotype homozygous for the allele with the minor allele frequency.  Then it runs pedgene. 
+genotype homozygous for the allele with the minor allele frequency.  Then it runs `pedgene`. 
 The results are automatically stored
 in a data frame with "observations": prefix of chromosome, gene,
 number of markers and base pair range followed by Pedgene data: kernel
@@ -721,7 +730,7 @@ when necessary.
 1  -1.169488   0.242207
 ```
 
-You should run pedgene on all the transcript entries, but it takes a rather long time.
+You could run pedgene on all the transcript entries, but it takes a rather long time.
 So type:
 
 ```{r, FnToRanges,eval=FALSE}
@@ -748,9 +757,9 @@ database that maps a gene id from the input to an entrez gene id.
 You need to install any new database with biocLite, as shown earlier.
 
 We leave the command below as an exercise.  It runs a bit slowly.  It needs to find
-all  the transcripts for each gene; then it needs to find all the markers between each pair
-of transcript start/end ranges; and finally it needs to do a small computation on the genotypes
-from each set of markers.
+all  the transcripts for each gene, to find all the markers between each pair
+of transcript start/end ranges, to compute the genotype matrix for these markers,
+and finally to call the callback function with appropriate arguments.
 
 ```{r,eval=FALSE}
 applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
@@ -770,7 +779,7 @@ transcripts with the same or overlapping start values and end values.
 
 # 7 Outputting Mega2R data to VCF format
 
-The `Mega2VCF` function permits one to output subsets of the 'mega2r' data as a VCF file, accompanied by
+The `Mega2VCF` function can output subsets of the mega2r database as a VCF file, accompanied by
 related files (for phenotype and family data).
 
 The VCF data format 
@@ -790,11 +799,13 @@ so we can keep all the generated data in one place.
 if (! dir.exists("vcfr")) dir.create("vcfr")
 ```
 
-The Mega2VCF function takes an argument which is the prefix used on all
-generated files. We will make that a path that includes the
-directory *vcfr*.  The Mega2VCF function assumes the Mega2 data frames
-are contained in the global variable ENV. If this is not the case, supply a
-named argument `envir` set to the environment you wish to use.
+The Mega2VCF function takes an argument which is the prefix used on
+all generated files. We will make it a path that includes the
+directory vcfr. Below, we assume that a Mega2 database was stored in
+the environment, `ENV`. If this is not the case, supply to Mega2VCF a
+named argument, `envir`, set to the environment you wish to use. (You
+will also have to change the references to the `markers` data frame,
+below, from `ENV`$markers to `<environment name>`$markers.)
 
 Note that Mega2VCF will create the .vcf file as well as a
 .fam file (in linkage format), a .phe file (phenotypes) and a few
@@ -808,6 +819,7 @@ Mega2VCF("vcfr/vcf.01", ENV$markers[ENV$markers$chromosome==1 ,])
 
 Note: The line above places the data for only chromosome 1 in the files 
 (Recall that our simulated data is only on chromosome 1).
+
 Note: In general, you can filter `ENV$markers` as needed.
 If the second argument is not present, all the markers are written out.
 
@@ -817,6 +829,7 @@ list.files("vcfr")
 ```
 
 You can read the code to see how these files are created from the data frames.
+
 
 # 8 Converting Mega2R data to GenABEL format
 
@@ -910,9 +923,12 @@ The output should be similar to that below (except for time stamps):
 ```
 ## ==========================================================
 ##                           MEGA2 4.9.2
-##      Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
-##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
-##      Daniel E. Weeks, and University of Pittsburgh
+##
+##      Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.
+##
+##      Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar, 
+##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill, 
+##      and Daniel E. Weeks. 
 ## 
 ##      Last updated: Jun 13 2017, 09:36:42 , valid until June 15, 2018.
 ##      Compiled with gcc version 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)
@@ -1051,7 +1067,7 @@ The *diff* should show:
 
 This test is a bit more complicated.
 We intend to verify that the object generated 
-by the the previous process is the same as a GenABEL object we started with.
+by `Mega2GenABEL` is the same as a GenABEL object we started with.
 First, we load `GenABEL` and access its data:
 
 ```{r srdta}
@@ -1079,9 +1095,12 @@ available.**
 ```
 ## ==========================================================
 ##                           MEGA2 4.9.2
-##      Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
-##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
-##      Daniel E. Weeks, and University of Pittsburgh
+##
+##      Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.
+##
+##      Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar, 
+##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill, 
+##      and Daniel E. Weeks. 
 ## 
 ##      Last updated: Jun 13 2017, 09:36:42 , valid until June 15, 2018.
 ##      Compiled with gcc version 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)
@@ -1345,22 +1364,25 @@ Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
 
 These results are somewhat disappointing.  But ...
 
-The first difference in
+First, "mega2" prefers to use the pedigree id concatenated to the person id as the sample
+name, even if the person id itself is unique.
+
+The second difference in
 **gtdata\@strand** occurs because Mega2 does not keep track of strand
 orientation and always returns 0.  
 
-The second difference is more subtle.  It arises because we convert
-new data using the `convert.snp.tped` function while the `srdta`
-object is generated by GenABEL using the `convert.snp.text`.  The
-**gtdata** comparison line decodes the genotype to characters then
-normalizes the two heterozygous cases to one value.  These results are
-the same for the two different gwaa.class-objects; the data are really
-the same.  But though both functions encode the genotype to a number,
-the `convert.snp.tped` function rearranges the genotype so that
-the major allele appears first, the `convert.snp.text` does no such
-rearrangement.  So because **gtdata\@coding** and **gtdata\@gtps** compare the
-encoded allele pairs and corresponding genotypes after encoding, they
-sometimes appear different.
+The final difference is more subtle.  The **gtdata** comparison line
+decodes the genotype to characters then normalizes the two
+heterozygous cases to one value.  These results are the same for the
+two different gwaa.class-objects; hence the data are really the same.  But
+`Mega2GenABEL` converts the data frames using the `convert.snp.tped`
+function while the `srdta` object, generated by GenABEL, uses the
+`convert.snp.text`.  Though both functions encode the genotype to a
+number, the `convert.snp.tped` function rearranges the genotype so
+that the major allele appears first, the `convert.snp.text` does no
+such rearrangement.  Because **gtdata\@coding** and **gtdata\@gtps**
+compare the encoded allele pairs and corresponding encoded genotypes,
+they sometimes differ.
 
 
 # 10 Next steps

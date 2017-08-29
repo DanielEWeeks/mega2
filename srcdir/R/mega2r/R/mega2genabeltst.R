@@ -212,11 +212,17 @@ Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta, full = TRUE, envir = EN
                y=allele_table[allele_table$indexX == 2,],
                by="locus_link")
         cd = which(mega_@gtdata@coding != gwaa_@gtdata@coding)
+        print("markers that differ")
+        print("markers that differ")
         print(envir$markers[cd,])
         if (envir$MARKER_SCHEME == 1) {
             ms = envir$markerscheme_table[envir$markerscheme_table$key %in% envir$markers$locus_link,]
+            print("markerscheme_table (compression) alleles that differ")
+            print("markerscheme_table (compression) alleles that differ")
             print(ms[cd,])
         }
+        print("allele values for markers that differ")
+        print("allele values for markers that differ")
         print(mm[cd,])
     }
 
