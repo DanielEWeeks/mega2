@@ -1,20 +1,5 @@
 #!/bin/bash -v
 
-R CMD BUILD mega2rtutorial
-R CMD check --as-cran mega2rtutorial_1.0.0.tar.gz
-
-
 R CMD BUILD mega2r
 R CMD check --as-cran mega2r_1.0.0.tar.gz
 
-
-R CMD BUILD mega2pedgene
-R CMD check --as-cran mega2pedgene_1.0.0.tar.gz
-
-
-R CMD BUILD mega2vcf
-R CMD check --as-cran mega2vcf_1.0.0.tar.gz
-
-
-R CMD BUILD mega2genabel
-R CMD check --as-cran mega2genabel_1.0.0.tar.gz

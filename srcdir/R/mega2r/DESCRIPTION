@@ -22,8 +22,7 @@ URL: https://watson.hgen.pitt.edu/mega2/mega2r/
 BugReports: https://groups.google.com/forum/#!forum/mega2-users
 Depends: R (>= 3.3.3),
          GenABEL,
-         pedgene,
-         R.utils
+         pedgene
 License: GPL (>= 3)
 LinkingTo: Rcpp
 LazyData: true
