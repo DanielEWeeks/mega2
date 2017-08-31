@@ -1,3 +1,7 @@
+# This file contains pieces of code from GenABEL
+# https://CRAN.R-project.org/package=GenABEL 
+# GenABEL is GPL-licensed.
+#
 # ~/rvb/Work/R/pkg/GenABEL/R/alleleID.R lines 1:39
 alleleID.alleles <- function() {
 	a <- list();
