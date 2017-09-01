@@ -117,11 +117,11 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 #'
 #' @examples
 #'\dontrun{
-#' run_pedgene()
+#' Mega2pedgene()
 #'
-#' run_pedgene(1:10)
+#' Mega2pedgene(1:10)
 #'}
-run_pedgene = function (gs = 1:100, envir = ENV) {
+Mega2pedgene = function (gs = 1:100, envir = ENV) {
 
     unlink(envir$pedgene_filename)
 

@@ -37,7 +37,7 @@ go = function() {
     envir = init_pedgene("~/mega2/data/yj1.db", verbose = 1)
 
     Rprof("prof.out", line.profiling=T, memory.profiling=T)
-    run_pedgene(gs=1:200, envir = envir)
+    Mega2pedgene(gs=1:200, envir = envir)
     Rprof(NULL)
     print(summaryRprof("prof.out", lines="both"))
 

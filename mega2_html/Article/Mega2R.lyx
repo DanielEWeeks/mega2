@@ -2467,15 +2467,15 @@ setRanges(Transcripts, Columns)
 \end_layout
 
 \begin_layout Standard
-By default, the function `run_pedgene` examines the first 100 transcripts
+By default, the function `Mega2pedgene` examines the first 100 transcripts
  and prints the results.
  (Internally, it calls the function `applyFnToRanges`.) For this database,
  the first 100 transcripts identifies only one transcript with several markers
  (It is found because it is on chromosome 1 and it has a range that overlaps
  with some of the markers in our study.) To make this tutorial exercise run
  faster, we noticed that the identified transcript appeared at transcript
- 54; so we will restrict `run_pedgene` to a small range of transcripts around
- 54, viz.
+ 54; so we will restrict `Mega2pedgene` to a small range of transcripts
+ around 54, viz.
  50 through 60.
 \end_layout
 
@@ -2489,7 +2489,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<run_pedgene>>=
+<<Mega2pedgene>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -2499,7 +2499,7 @@ ENV$verbose=TRUE
 
 \begin_layout Plain Layout
 
-run_pedgene(gs=50:60)
+Mega2pedgene(gs=50:60)
 \end_layout
 
 \end_inset
@@ -2568,9 +2568,9 @@ Note: The results are always appended to the `pedgene_results` data frame.
 \end_layout
 
 \begin_layout Standard
-You could run `run_pedgene` on all the transcript entries, but it takes
+You could run `Mega2pedgene` on all the transcript entries, but it takes
  a rather long time.
- So type:
+ You would type:
 \end_layout
 
 \begin_layout Standard

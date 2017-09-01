@@ -670,7 +670,7 @@ These two objects are then arguments to the `setRanges` function, viz.
         setRanges(Transcripts, Columns)
 ```
 
-By default, the function `run_pedgene` examines the first 100
+By default, the function `Mega2pedgene` examines the first 100
 transcripts and prints the results. For this database, the first 100 transcripts
 identifies only one transcript with several markers (It is found
 because it is on chromosome 1 and it has a range that overlaps with some of the
@@ -682,9 +682,9 @@ restrict pedgene to a small range of transcripts around 54, viz. 50 through
 
 Note: `verbose` needs to be TRUE, for these diagnostics to be printed.
 
-```{r run_pedgene}
+```{r mega2pedgene}
 ENV$verbose=TRUE
-run_pedgene(gs=50:60)
+Mega2pedgene(gs=50:60)
 ```
 
 You will see many reports
@@ -730,8 +730,8 @@ when necessary.
 1  -1.169488   0.242207
 ```
 
-You could run pedgene on all the transcript entries, but it takes a rather long time.
-So type:
+You could run `Mega2pedgene` on all the transcript entries, but it takes a rather long time.
+You would type:
 
 ```{r, FnToRanges,eval=FALSE}
 # we will skip this line for the Rmd document production because it takes too long

@@ -30,6 +30,12 @@
 FILES = c("MEGA2.BATCH.seqsimr", "MEGA2.BATCH.srdta", "MEGA2.BATCH.vcf",
           "Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db",
           "Mega2r.map.gz", "Mega2r.ped.gz", "seqsimr.db.gz", "srdta.db.gz")
+
+GENED = c("SEQ.phe", "SEQ.tfam", "SEQ.tped", "SEQtped.raw",
+          "SRD.phe", "SRD.tfam", "SRD.tped", "SRDtped.raw",
+          "srdta.db.old", "srdta.map", "srdta.ped", "srdta.phe",
+          "pedgene.txt")
+
 FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 
 #' dump tutorial data
@@ -83,9 +89,10 @@ dump_mega2rtutorial_data = function(dir = ".") {
 #' clean_mega2rtutorial_data()
 #'}
 clean_mega2rtutorial_data = function(dir = ".") {
-    for (file in FILES) {
+    for (file in c(FILES, GENED)) {
         to = paste(dir, file, sep="/")
         unlink(to)
     }
+    unlink("vcfr", recursive = TRUE)
 }
 
