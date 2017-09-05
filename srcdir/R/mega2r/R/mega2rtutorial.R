@@ -45,7 +45,6 @@ FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 #'
 #' @param dir The directory to store the tutorial data to.  By default, this is ".".
 #'
-#' @import R.utils
 #' @export
 #' @return None
 #'
