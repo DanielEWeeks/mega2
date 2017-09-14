@@ -1943,6 +1943,20 @@ name "sec:Examples"
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+The R code in the examples below is actually run during the creation of
+ this document using the knitr
+\begin_inset CommandInset citation
+LatexCommand cite
+key "knitrm,knitrc,knitrb"
+
+\end_inset
+
+ R package.
+\end_layout
+
+\begin_layout Standard
 It is always difficult to share private study data.
  We have chosen to use the SeqSIMLA2
 \begin_inset CommandInset citation
