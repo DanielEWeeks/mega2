@@ -510,10 +510,7 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
 
             if (nrow(markersub)) {
                 geno = getgenotypes(markersub, envir = envir)
-                tryCatch(op(geno, markersub, ranges[i,], envir),
-                         error = function(e) print(e),
-                         warning = function(w) print(w)
-                         )
+                tryFn(op, geno, markersub, ranges[i,], envir)
             } else {
                 if (envir$verbose)
                     message("No markers in range:  chr", chrm[i], " between ", start[i], " and ",
@@ -523,6 +520,12 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
     }
 }
 
+tryFn = function(op, geno, markersub, ranges, envir) {
+    tryCatch(op(geno, markersub, ranges, envir),
+             error = function(e) print(e),
+             warning = function(w) print(w)
+             )            
+}
 #' apply a function to the genotypes in a set of markers
 #'
 #' @description
@@ -585,9 +588,5 @@ applyFnToMarkers = function (op = function (geno, markers, range, envir) {},
                              envir = ENV) {
 
     geno = getgenotypes(markers_arg, envir = envir)
-    tryCatch(op(geno, markers_arg, NULL, envir),
-             error = function(e) print(e),
-             warning = function(w) print(w)
-             )
-
+    tryFn(op, geno, markers_arg, NULL, envir)
 }

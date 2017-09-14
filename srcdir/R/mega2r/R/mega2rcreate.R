@@ -39,6 +39,13 @@ NULL
 #library(DBI)
 #library(RSQLite)
 
+#
+# how to load refRanges & refIndices to sysdata
+#
+# setwd("mega2r")
+# devtools::use_data(refRanges, refIndices, internal = TRUE, overwrite = TRUE)
+# setwd("..")
+# tools::resaveRdaFiles("mega2r/R")
 
 #' mega2r SQLite3 tables
 #'
