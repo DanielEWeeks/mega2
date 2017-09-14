@@ -317,6 +317,68 @@ dbmega2_import = function(dbname,
     return (envir)
 }
 
+#' generate required PLINK (.phe) file
+#'
+#' @description
+#'  Convert data in phenotype_table to a data frame of columns that are phenotypes.
+#'  The columns may be affection status or quantitative values
+#'
+#' @param envir "environment" containing SQLite database and other globals
+#'
+#' @return out which is a data frame with FID column, then IID column, and then
+#'  and additional column for each phenotype
+#'
+#' @keywords internal
+#'
+#' @examples
+#'\dontrun{
+#' mkphenotype(prefix, envir)
+#'}
+mkphenotype = function (envir) {
+
+# linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
+#                        0      1          2       3         4        5        6
+
+    out = envir$fam[3:4]
+    hdr = c("FID", "IID")
+
+    phenotype_table = envir$phenotype_table
+
+    raw = unlist(envir$phenotype_table[,4])
+    raw = matrix(raw, ncol=8, byrow=T)
+    nrows     = nrow(raw)
+    nrowpheno = nrow(out)
+
+    type = integer(envir$PhenoCnt)
+    for (i in 1:envir$PhenoCnt) {
+        hdr = c(hdr, envir$locus_table[i, 2]) # 2 == LocusName
+
+# phenotype_table contains a blob which is a list of entries.  An entry is either an 8 byte
+#  double for quant, or two 4 byte ints for affect
+        if (envir$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
+            type[i] = 2
+            col = vector("integer", nrowpheno)
+            for (j in 1:nrowpheno) {
+                col[j] = readBin(raw[envir$PhenoCnt*(j-1)+i, 1:4], integer(), n=1, size=4)
+            }
+#           col[col==0] = NA
+            out$col = col
+            names(out) = hdr
+        } else if (envir$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
+            type[i] = 1
+            col = vector("numeric", nrowpheno)
+            for (j in 1:nrowpheno) {
+                col[j] = readBin(raw[envir$PhenoCnt*(j-1)+i, 1:8], numeric(), n=1, size=8)
+            }
+            col[col==-99] = NA
+            out$col = col
+            names(out) = hdr
+        }
+    }
+    attr(out, "type") = type
+    out
+}
+
 #' show Mega2r environment, viz. data frames and related info.
 #'
 #' Mega2 uses an environment to store the data frames when it reads SQLite database tables.

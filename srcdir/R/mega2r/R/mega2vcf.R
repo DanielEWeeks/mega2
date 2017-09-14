@@ -534,45 +534,10 @@ mkVCFphe = function (prefix, envir) {
 # linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
 #                        0      1          2       3         4        5        6
 
-    out = envir$fam[3:4]
-    hdr = c("FID", "IID")
+    out = mkphenotype(envir)
 
-    phenotype_table = envir$phenotype_table
+    out$SAMPLEID = paste(out[,1], out[,2], sep="_")
 
-    raw = unlist(envir$phenotype_table[,4])
-    raw = matrix(raw, ncol=8, byrow=T)
-    nrows     = nrow(raw)
-    nrowpheno = nrow(out)
-
-    for (i in 1:envir$PhenoCnt) {
-        hdr = c(hdr, envir$locus_table[i, 2]) # 2 == LocusName
-
-# phenotype_table contains a blob which is a list of entries.  An entry is either an 8 byte
-#  double for quant, or two 4 byte ints for affect
-        if (envir$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
-            col = vector("integer", nrowpheno)
-            for (j in 1:nrowpheno) {
-                col[j] = readBin(raw[envir$PhenoCnt*(j-1)+i, 1:4], integer(), n=1, size=4)
-            }
-#           col[col==0] = NA
-            out$col = col
-            names(out) = hdr
-        } else if (envir$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
-            col = vector("numeric", nrowpheno)
-            for (j in 1:nrowpheno) {
-                col[j] = readBin(raw[envir$PhenoCnt*(j-1)+i, 1:8], numeric(), n=1, size=8)
-            }
-            col[col==-99] = NA
-            out$col = col
-            names(out) = hdr
-        }
-    }
-    out$SAMPLEID = paste(envir$fam[,3], envir$fam[,4], sep="_")
-    hdr = c(hdr, "SAMPLEID")
-
-    cat(hdr,  file=file, sep="\t")
-    cat("\n", file=file, append=TRUE)
-
-    write.table(out, file=file, sep="\t", quote=FALSE, append=TRUE,
-                row.names=FALSE, col.names=FALSE)
+    write.table(out, file=file, sep="\t", quote=FALSE, append=FALSE,
+                row.names=FALSE, col.names=TRUE)
 }
