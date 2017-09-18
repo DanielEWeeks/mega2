@@ -4,8 +4,16 @@
 \begin_header
 \save_transient_properties true
 \origin unavailable
-\textclass article
+\textclass extarticle
 \begin_preamble
+\PassOptionsToPackage{a4paper,hmargin=1.8cm,vmargin=2.2cm}{geometry}
+\PassOptionsToPackage{usenames,dvipsnames,table}{xcolor}
+
+\usepackage{f1000_styles}
+
+%% Default: numerical citations
+\usepackage[numbers]{natbib}
+
 \usepackage{tocstyle}
 \usepackage{fullpage}
 \usepackage{changepage}
@@ -34,14 +42,15 @@
 \usepackage{floatpag}
 \floatpagestyle{plain} % Default page style for pages with only floats
 \end_preamble
+\options usenames, dvipsnames
 \use_default_options true
 \begin_modules
 knitr
 \end_modules
 \maintain_unincluded_children false
 \language english
-\language_package default
-\inputencoding auto
+\language_package none
+\inputencoding default
 \fontencoding global
 \font_roman "default" "default"
 \font_sans "default" "default"
@@ -58,7 +67,7 @@ knitr
 \output_sync 0
 \bibtex_command default
 \index_command default
-\paperfontsize default
+\paperfontsize 9
 \spacing double
 \use_hyperref true
 \pdf_bookmarks true
@@ -70,15 +79,15 @@ knitr
 \pdf_colorlinks false
 \pdf_backref false
 \pdf_pdfusetitle true
-\papersize letterpaper
+\papersize a4paper
 \use_geometry true
-\use_package amsmath 1
-\use_package amssymb 1
+\use_package amsmath 0
+\use_package amssymb 0
 \use_package cancel 0
-\use_package esint 1
-\use_package mathdots 1
+\use_package esint 0
+\use_package mathdots 0
 \use_package mathtools 0
-\use_package mhchem 1
+\use_package mhchem 0
 \use_package stackrel 0
 \use_package stmaryrd 0
 \use_package undertilde 0
@@ -117,109 +126,205 @@ knitr
 \begin_body
 
 \begin_layout Standard
-rvb{They want authors first}
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pagestyle{front}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Robert V.
- Baron
-\begin_inset script superscript
+\begin_inset ERT
+status open
 
 \begin_layout Plain Layout
-1
+
+
+\backslash
+title{The Mega2R R merge package: tools for accessing and processing common
+ genetic data formats in R}
 \end_layout
 
 \end_inset
 
-, Justin R.
- Stickel
-\begin_inset script superscript
 
-\begin_layout Plain Layout
-1
-\end_layout
-
-\end_inset
-
-, Daniel E.
- Weeks
-\begin_inset script superscript
-
-\begin_layout Plain Layout
-1,2,*
-\end_layout
-
-\end_inset
-
- 
 \end_layout
 
 \begin_layout Standard
-\begin_inset script superscript
+\begin_inset ERT
+status open
 
 \begin_layout Plain Layout
-1
+
+
+\backslash
+author[1]{Robert V.
+ Baron}
 \end_layout
 
 \end_inset
 
-Department of Human Genetics, Graduate School of Public Health, University
- of Pittsburgh, Pittsburgh, Pennsylvania, 15261, USA
+
 \end_layout
 
 \begin_layout Standard
-\begin_inset script superscript
+\begin_inset ERT
+status open
 
 \begin_layout Plain Layout
-2
+
+
+\backslash
+author[1]{Justin R.
+ Stickel}
 \end_layout
 
 \end_inset
 
-Department of Biostatistics, Graduate School of Public Health, University
- of Pittsburgh, Pittsburgh, Pennsylvania, 15261, USA
+
 \end_layout
 
 \begin_layout Standard
-Email: Robert V.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+author[1,2,*]{Daniel E.
+ Weeks}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+affil[1]{Department of Human Genetics, Graduate School of Public Health,
+ University of Pittsburgh, Pittsburgh, Pennsylvania, 15261, USA}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+affil[2]{Department of Biostatistics, Graduate School of Public Health,
+ University of Pittsburgh, Pittsburgh, Pennsylvania, 15261, USA}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+affil[*]{Corresponding author}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+affil[ ]{Email: Robert V.
  Baron - rvb5@pitt.edu, Justin R.
- Stickel jrs110@pitt.edu, Daniel E.
- Weeks - weeks@pitt.edu
+ Stickel - jrs110@pitt.edu, Daniel E.
+ Weeks - weeks@pitt.edu}
 \end_layout
 
-\begin_layout Standard
-*Corresponding author
-\end_layout
-
-\begin_layout Title
-The Mega2R R package: tools for accessing and processing common genetic
- data formats in R
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
 \end_inset
 
 
 \end_layout
 
-\begin_layout Section
-Abstract Revised to 300 words
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+maketitle
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{front}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-rvb{The abstract is limited to 300 words; currently I count 299}
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{abstract}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 The standalone C++ Mega2 program has been facilitating data-reformatting
- for linkage and analysis programs since 2000.
+ for linkage and association analysis programs since 2000.
  Support for more analysis programs have been added over time.
  Currently, Mega2 converts data from several different genetic analysis
  data formats (including PLINK, VCF, BCF, IMPUTE2) into the specific data
  requirements for over 40 commonly used linkage and association analysis
- programs (including Mendel, Merlin, Morgan, SHAPEIT, ROADTRIPS, MaCH/minimac3,
- etc.).
+ programs (including Mendel, Merlin, Morgan, SHAPEIT, ROADTRIPS, MaCH/minimac3).
  Recently, Mega2 has been enhanced to use a SQLite database as an intermediate
  data representation.
  Additionally, Mega2 now stores bialleleic genotype data in a highly compressed
@@ -227,136 +332,87 @@ The standalone C++ Mega2 program has been facilitating data-reformatting
 \end_layout
 
 \begin_layout Standard
-We have now made it easy to load SQLite3 Mega2 databases directly into R
- as data frames to use R facilities.
+Our Mega2R package now makes it easy to load SQLite3 Mega2 databases directly
+ into R as data frames.
  In addition, we have developed C++ functions for R to decompress needed
  subsets of the genotype data in a memory efficient manner.
- We created the Mega2R package that loads and manipulates data frames.
- In addition to the base functions there are extended functions that illustrate
- how to use the data frames as well as perform useful functions: the Mega2pedgen
-e function to run the pedgene R package to carry out gene-based association
- tests on family data using selected marker subsets, the Mega2VCF function
- to output the Mega2R data as a VCF file and related files (for phenotype
- and family data), and the Mega2GenABEL function to convert the data frames
+ In addition there are extended functions that illustrate how to use the
+ data frames as well as perform useful functions: the Mega2pedgene function
+ to run the pedgene R package to carry out gene-based association tests
+ on family data using selected marker subsets, the Mega2VCF function to
+ output the Mega2R data as a VCF file and related files (for phenotype and
+ family data), and the Mega2GenABEL function to convert the data frames
  into GenABEL R gwaa.data-class objects.
  The Mega2 program and the Mega2R R package are both open source and are
  freely available, along with extensive documentation and a 'quick-start'
  tutorial, from our https://watson.hgen.pitt.edu/register web site.
- This work was supported by NIH grant R01 GM076667 (PI: Weeks).
- Earlier contributions to our code base were made by Charles P.
- Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, and William P.
- Mulvihill.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Newpage pagebreak
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{abstract}
+\end_layout
+
 \end_inset
 
 
 \end_layout
 
-\begin_layout Section
-Abstract Original
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+section*{Keywords}
 \end_layout
 
-\begin_layout Standard
-rvb{The abstract is limited to 300 words; currently I count 433}
-\end_layout
-
-\begin_layout Standard
-Background: The standalone C++ Mega2 program has been facilitating data-reformat
-ting for linkage and analysis programs since 2000.
- Support for more analysis programs have been added over time, though this
- has required software developers keenly knowledgeable in the Mega2 internals.
- Currently, Mega2 converts data from several different genetic analysis
- data formats (including PLINK, VCF, BCF, IMPUTE2) into the specific data
- requirements for over 40 commonly used linkage and association analysis
- programs (including Mendel, Merlin, Morgan, SHAPEIT, ROADTRIPS, MaCH/minimac3,
- etc.).
- Recently, Mega2 has been enhanced to use a SQLite database as an intermediate
- data representation.
- Additionally, Mega2 now stores bialleleic genotype data in a highly compressed
- form, much like that of the GenABEL R facility and the PLINK binary format.
- Concurrently, the R community and Bioconductor community have developed
- a variety of genetic analysis programs complimentary to the programs available
- through Mega2.
- 
-\end_layout
-
-\begin_layout Standard
-Results: We have now made it easy to load SQLite3 Mega2 databases directly
- into R as data frames to use these R facilities.
- In addition, we have developed C++ functions for R to decompress needed
- subsets of the genotype data, on the fly, in a memory efficient manner.
- We created the Mega2R package that loads and manipulates data frames.
- In addition to the base functions there are extended functions that illustrate
- how to use the data frames as well as perform useful functions: the Mega2pedgen
-e function to run the pedgene R package to carry out gene-based association
- tests on family data using selected marker subsets, the Mega2VCF function
- to output the Mega2R data as a VCF file and related files (for phenotype
- and family data), and the Mega2GenABEL function to convert the data frames
- into GenABEL R gwaa.data-class objects.
- The Mega2R program enhances GenABEL since it supports additional input
- data formats (such as PLINK, VCF and IMPUTE2) not currently supported by
- GenABEL.
- The Mega2 program and the Mega2R R package are both open source and are
- freely available, along with extensive documentation and a 'quick-start'
- tutorial, from our https://watson.hgen.pitt.edu/register web site.
- This work was supported by NIH grant R01 GM076667 (PI: Weeks).
- Earlier contributions to our code base were made by Charles P.
- Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, and William P.
- Mulvihill.
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Conclusions: Mega2R
-\series default
- is an R package that lets users convert the GWAS data read in by Mega2
- to data frames.
- The user can then do subsequent manipulation of the data in R.
- The memory consuming genotype data is kept compressed and only decompressed
- to a nucleotide format incrementally.
- We have found this tool useful and wish to make it available to a wider
- audience.
- Documentation for 
-\series bold
-Mega2R
-\series default
- can be found online.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
 \end_inset
 
 
 \end_layout
 
-\begin_layout Section*
-Keywords
+\begin_layout Standard
+database, genotypes, genome-wide association studies, linkage, Mega2, phenotypes
+, R, SQLite3
 \end_layout
 
 \begin_layout Standard
-rvb{The keywords are limited to 8 words; one too many.
- Maybe we eliminate phenotypes ??}
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+clearpage 
 \end_layout
 
-\begin_layout Standard
-association studies, database, genotypes, genome-wide association studies,
- linkage, Mega2, phenotypes, R, SQLite3
+\begin_layout Plain Layout
+
+
+\backslash
+pagestyle{main} 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage pagebreak
+\begin_layout Plain Layout
+
+
+\backslash
+section*{Introduction}
+\end_layout
+
 \end_inset
 
 
-\end_layout
-
-\begin_layout Section
-Introduction
 \end_layout
 
 \begin_layout Standard
@@ -365,24 +421,12 @@ During an association or linkage analysis project, one may need to analyze
  Unfortunately, it can often be quite difficult to get one's data in the
  proper format desired by each different computer program.
  Not only must the data be converted to the proper format, but also the
- loci must be reordered into their proper order.
+ loci must be reordered into the desired order.
  Writing custom reformatting scripts can be error-prone and very time-consuming.
- To address these problems, we created Mega2
+ To address these problems, we created Mega2 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "mega2"
-
-\end_inset
-
- 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-https://en.wikipedia.org/wiki/Mega2,_the_Manipulation_Environment_for_Genetic_Anal
-ysis
-\end_layout
+key "mega2,Baron:2014aa"
 
 \end_inset
 
@@ -410,22 +454,47 @@ https://bitbucket.org/dweeks/mega2
 
 .
  The early Mega2 could read input data in only a few formats: LINKAGE format
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Lathrop:1984ab,Lathrop:1986aa,Lathrop:1988aa"
+
+\end_inset
+
  and Mega2 format.
  The Mega2 format allowed you to specify additional information in a more
- straightfoward way than can be done with LINKAGE format.
- For example, trait locus penetrance information can be specified as well
- as the allele frequencies (Of course, the frequencies are calculated if
- not provided in a file.) The earliest versions of Mega2 were written in
- the C computer language.
+ straightfoward way, via a simple tabular format, than can be done with
+ LINKAGE format.
+ The earliest versions of Mega2 were written in the C computer language.
 \end_layout
 
 \begin_layout Standard
 Over time, Mega2 was upgraded to the C++ computer language and some of the
  internals were rewritten.
- Reformatting data for more linkage analysis programs was gradually added
- to Mega2.
+ Reformatting data for more analysis programs was gradually added to Mega2.
  The data formats for genetic data changed over time; and Mega2 was enhanced
- to read input data in PLINK format, VCF format and IMPUTE2 format.
+ to read input data in PLINK format 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Purcell:2007dq"
+
+\end_inset
+
+, VCF format 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Danecek:2011aa"
+
+\end_inset
+
+, and IMPUTE2 format 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Howie:2009aa,Howie:2011aa,Howie:2012aa,Marchini:2010aa"
+
+\end_inset
+
+.
  The volume of genome-wide marker data increased significantly, so Mega2
  was extended to support the compression of biallelic genotype data (though
  still supporting microsatellite and other polymorphic data as non-compressed
@@ -478,12 +547,35 @@ In addition, the data are inherently inspectable and there are database
  The data are portable and can be shared on different platforms.
  Since interfaces from many languages are provided for SQLite, the data
  are accessible in many languages besides C.
- Of particular interest is R because there is a wealth of existing genetic
- analysis programs already created, well documented, and available at both
- CRAN and Bioconductor.
+ Of particular interest is R 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Team:2017aa"
+
+\end_inset
+
+ because there is a wealth of existing genetic analysis programs already
+ created, well documented, and available in CRAN and Bioconductor.
  Also, researchers regularly use R to develop new analysis algorithms because
  R has been used in the past to develop statistical programs and has many
  useful libraries.
+ We describe here our Mega2R package, which makes it easy to load SQLite3
+ Mega2 databases directly into R as data frames for further analysis and
+ manipulation.
+ In addition we document several R functions that illustrate how to use
+ the Mega2R data frames as well as perform useful functions: the Mega2pedgene
+ function to run the pedgene R package to carry out gene-based association
+ tests on family data using selected marker subsets, the Mega2VCF function
+ to output the Mega2R data as a VCF file and related files (for phenotype
+ and family data), and the Mega2GenABEL function to convert the data frames
+ into GenABEL R gwaa.data-class objects 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "genabel"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -1515,7 +1607,7 @@ Mega2VCF
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1in">
-<column alignment="left" valignment="top" width="4.5in">
+<column alignment="left" valignment="top" width="3.5in">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -1608,7 +1700,7 @@ mkVCFfam
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1820,14 +1912,11 @@ key "genabel"
 
 \end_inset
 
- package is available on CRAN as (https://CRAN.R-project.org/package=GenABEL).
- The reference is [Aulchenko Y.S., Ripke S., Isaacs A., van Duijn C.M.
- GenABEL: an R package for genome-wide association analysis.
- Bioinformatics.
- 2007 23(10):1294-6.] The GenABEL CRAN package provides many functions for
- GWAS analysis and it accepts GWAS data in several formats.
+ package is available on CRAN at (https://CRAN.R-project.org/package=GenABEL).
+ The GenABEL CRAN package provides many functions for GWAS analysis and
+ it accepts GWAS data in several formats.
  But Mega2 accepts input in still more formats, notably, PLINK bed, VCF,
- IMPUTE2 and even linkage.
+ IMPUTE2 and even Linkage.
  Thus 
 \emph on
 Mega2GenABEL
@@ -1958,7 +2047,7 @@ key "knitrm,knitrc,knitrb"
 
 \begin_layout Standard
 It is always difficult to share private study data.
- We have chosen to use the SeqSIMLA2
+ We have chosen to use the SeqSIMLA2 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "seqsim"
@@ -1966,13 +2055,8 @@ key "seqsim"
 \end_inset
 
  program to generate a dataset for us.
- [SeqSIMLA2: simulating correlated quantitative traits accounting for shared
- environmental effects in user-specified pedigree structure, Chung RH1,
- Tsai WY, Hsieh CH, Hung KY, Hsiung CA, Hauser ER., Genet Epidemiol.
- 2015 Jan;39(1):20-4.
- doi: 10.1002/gepi.21850.
- Epub 2014 Sep 22.] We will construct a small PLINK ped dataset using the
- simulator, which is available from 
+ We will construct a small PLINK ped dataset using the simulator, which
+ is available from 
 \begin_inset Flex URL
 status collapsed
 
@@ -2150,7 +2234,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<mega2r>>=
+<<mega2r,message=FALSE,warning=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -6710,13 +6794,25 @@ Authors' contributions
 \end_layout
 
 \begin_layout Standard
-RVB designed, debugged, and maintains Mega2R.
+RVB designed, debugged, and maintains Mega2R; DEW helped prepare the mega2r
+ R package for submission to CRAN.
+ RVB and JRS maintain and extend Mega2.
  DEW provided inspiration and provided the problems that Mega2R solves.
  RVB, with assistance from DEW, wrote this manuscript.
+ All authors contributed to the review of the manuscript and agreed to the
+ final content.
+ 
 \end_layout
 
 \begin_layout Section
 Acknowledgments
+\end_layout
+
+\begin_layout Standard
+This work was supported by NIH grant R01 GM076667 (PI: Weeks).
+ Earlier contributions to our Mega2 code base were made by Charles P.
+ Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, and William P.
+ Mulvihill.
 \end_layout
 
 \begin_layout Standard
