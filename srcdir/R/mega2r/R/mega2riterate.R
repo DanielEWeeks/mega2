@@ -510,22 +510,68 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
 
             if (nrow(markersub)) {
                 geno = getgenotypes(markersub, envir = envir)
-                tryFn(op, geno, markersub, ranges[i,], envir)
+                tryFn(op, geno, markersub, ranges[i, ], envir)
             } else {
                 if (envir$verbose)
-                    message("No markers in range:  chr", chrm[i], " between ", start[i], " and ",
-                            end[i], "\n")
+                    message("tryFn() No markers in range: ", paste(ranges[i, ], collapse=" "))
+#                   message("No markers in range:  chr", chrm[i], " between ", start[i], " and ",
+#                           end[i], "\n")
             }
         }
     }
 }
 
-tryFn = function(op, geno, markersub, ranges, envir) {
-    tryCatch(op(geno, markersub, ranges, envir),
-             error = function(e) print(e),
-             warning = function(w) print(w)
-             )            
+tryFn1 = function(op, geno, markersub, ranges, envir) {
+    withRestarts( #aka    tryCatch
+        withCallingHandlers (
+            { op(geno, markersub, ranges, envir) },
+              error   = function(e) {
+                  message("tryFn() <simpleError:: ", conditionMessage(e), ">")
+                  invokeRestart("abort")
+              },
+              warning = function(w) {
+                  message("tryFn() <simpleWarning:: ", conditionMessage(w), ">")
+                  invokeRestart("muffleWarning")
+             }
+        ),
+      abort = function () {
+          message("tryFn() aborting transcript: ", paste(ranges, collapse=" "))
+      }
+    )
 }
+
+#if warning prints out and  then tryCatch catches; no error
+#if NO warning prints  the errro clause reports
+# w/o warning handler, warnings accumulate
+tryFn2 = function(op, geno, markersub, ranges, envir) {
+    tryCatch( #aka    tryCatch
+            { op(geno, markersub, ranges, envir) },
+              error   = function(e) {
+                  message("tryFn() <simpleError:: ", conditionMessage(e), ">")
+                  message("tryFn() aborting transcript: ", paste(ranges, collapse=" "))
+##              },
+##              warning = function(w) {
+#                  message("tryFn() <simpleWarning:: ", conditionMessage(w), ">")
+             }
+    )
+}
+
+tryFn = function(op, geno, markersub, ranges, envir) {
+    tryCatch(
+        withCallingHandlers (
+            { op(geno, markersub, ranges, envir) },
+              warning = function(w) {
+                  message("tryFn() <simpleWarning:: ", conditionMessage(w), ">")
+                  invokeRestart("muffleWarning")
+             }
+        ),
+        error = function(e) {
+                  message("tryFn() <simpleError:: ", conditionMessage(e), ">")
+                  message("tryFn() aborting transcript: ", paste(ranges, collapse=" "))
+              }
+    )
+}
+
 #' apply a function to the genotypes in a set of markers
 #'
 #' @description
