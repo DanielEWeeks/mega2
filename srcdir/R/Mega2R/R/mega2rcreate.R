@@ -26,14 +26,14 @@
 #
 # ===========================================================================
 
-#' mega2r package
+#' Mega2R package
 #'
 #' @description This package reads a Mega2 SQLite3 database into data frames and
 #'	makes the contained genotypes/phenotypes/linkage data available for analysis.
 #'
 #' @author Robert V Baron
 #' @docType package
-#' @name mega2r
+#' @name Mega2R
 NULL
 
 #library(DBI)
@@ -42,19 +42,19 @@ NULL
 #
 # how to load refRanges & refIndices to sysdata
 #
-# setwd("mega2r")
+# setwd("Mega2R")
 # devtools::use_data(refRanges, refIndices, internal = TRUE, overwrite = TRUE)
 # setwd("..")
-# tools::resaveRdaFiles("mega2r/R")
+# tools::resaveRdaFiles("Mega2R/R")
 
-#' mega2r SQLite3 tables
+#' Mega2R SQLite3 tables
 #'
 #' @description This character vector indicates the names of the Mega2 SQLite3 database tables
 #'  to load.  (Not all of the existing tables are loaded.)
 #'
 #' @author Robert V Baron
 #' @docType data
-#' @name mega2r-TBLS
+#' @name Mega2R-TBLS
 TBLS = c("int_table",
 #        "double_table",
 #        "charstar_table",
@@ -87,7 +87,7 @@ TBLS = c("int_table",
 ##        markers
   )
 
-#' mega2r SQLite3 table filter
+#' Mega2R SQLite3 table filter
 #'
 #' @description This list contains named values.  The name corresponds to an SQLite database table.
 #'  The value is a character string of column names from the "named" table that should be stored.  An entry
@@ -96,7 +96,7 @@ TBLS = c("int_table",
 #'
 #' @author Robert V Baron
 #' @docType data
-#' @name mega2r-TBLSFilter
+#' @name Mega2R-TBLSFilter
 #' @note For the data base tables not in this list, all columns are stored in the corresponding data frame.
 TBLSFilter = list(
           locus_table    = "pId, LocusName, Type, AlleleCnt, locus_link",
@@ -379,7 +379,7 @@ mkphenotype = function (envir) {
     out
 }
 
-#' show Mega2r environment, viz. data frames and related info.
+#' show Mega2R environment, viz. data frames and related info.
 #'
 #' Mega2 uses an environment to store the data frames when it reads SQLite database tables.
 #'  This function shows the data frames and their sizes; it also
@@ -457,7 +457,7 @@ showMega2ENV = function(envir = ENV) {
 #'  The function first runs the garbage collector ("gc"), then allocates an empty environment
 #'  and finally loads some default data into it.
 #'
-#' @return an environment that contains a few initial tables read from the mega2r package.
+#' @return an environment that contains a few initial tables read from the Mega2R package.
 #' @export
 #'
 #' @examples
@@ -607,7 +607,7 @@ getgenotype_person = function(perid = 1, envir = ENV) {
 #'  (\emph{fam}) table.
 #'
 #' @keywords internal
-#' @useDynLib mega2r
+#' @useDynLib Mega2R
 #'
 #' @details
 #'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
@@ -669,7 +669,7 @@ getgenotypes_R = function(markers_arg, sepstr = "", envir = ENV) {
 #'  (\emph{fam}) table.
 #'
 #' @export
-#' @useDynLib mega2r
+#' @useDynLib Mega2R
 #'
 #' @details
 #'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
@@ -734,7 +734,7 @@ getgenotypes_C = getgenotypes
 #'  (\emph{fam}) table.
 #'
 #' @export
-#' @useDynLib mega2r
+#' @useDynLib Mega2R
 #'
 #' @details
 #'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
@@ -793,7 +793,7 @@ getgenotypesraw = function(markers_arg, envir = ENV) {
 #' @return a GenABEL gwaa.data-class object representing the Mega2 environment information
 #'
 #' @export
-#' @useDynLib mega2r
+#' @useDynLib Mega2R
 #'
 #' @details
 #'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
