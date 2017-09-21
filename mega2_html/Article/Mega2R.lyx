@@ -463,7 +463,7 @@ key "Lathrop:1984ab,Lathrop:1986aa,Lathrop:1988aa"
 
  and Mega2 format.
  The Mega2 format allowed you to specify additional information in a more
- straightfoward way, via a simple tabular format, than can be done with
+ straightforward way, via a simple tabular format, than can be done with
  LINKAGE format.
  The earliest versions of Mega2 were written in the C computer language.
 \end_layout
@@ -587,17 +587,9 @@ Environments
 \end_layout
 
 \begin_layout Standard
-Before we discuss the 
-\emph on
-mega2r
-\emph default
- package, we must describe one important convention of how the database
- information is stored and how it is accessed later.
- The 
-\emph on
-mega2r
-\emph default
- R package function, 
+Before we discuss the Mega2R package, we must describe one important convention
+ of how the database information is stored and how it is accessed later.
+ The Mega2R R package function, 
 \emph on
 read.Mega2DB
 \emph default
@@ -614,8 +606,16 @@ R environment
  containing these data frames.
  (If you are unfamiliar with environments, you can think of them as data
  frames.
- `ENV$locus_table` will access the `locus_table` variable from the environment,
- `ENV`, similar to fetching an "observation" from a data frame.
+ 'ENV'$
+\series bold
+locus_table 
+\series default
+will access the 
+\series bold
+locus_table
+\series default
+ variable from the environment, 'ENV', similar to fetching an "observation"
+ from a data frame.
  The difference is when you change data in a data frame passed to a function,
  the change does not affect the original data frame.
  Only the function's local value is changed; ALL changes are forgotten when
@@ -623,10 +623,14 @@ R environment
  If you change the data in an environment passed to a function, the change
  is permanent.) All Mega2R functions that do not return an environment need
  to have an environment supplied as an argument; the environment is used
- to store the data frames that contain the 'SQLite' database.
+ to store the data frames that contain the SQLite database.
  There are two ways to pass the environment.
- If you assigned the result of `read.Mega2DB` to the variable `seqsimr`,
- then you could supply the value 'seqsimr' as the named argument, `envir`:
+ If you assigned the result of 
+\emph on
+read.Mega2DB
+\emph default
+ to the variable 'seqsimr', then you could supply the value 'seqsimr' as
+ the named argument, 'envir':
 \end_layout
 
 \begin_layout LyX-Code
@@ -636,7 +640,7 @@ showMega2ENV(envir = seqsimr)
 \begin_layout Standard
 The second choice is a bit of a "hack" but it is very convenient.
  Every Mega2R function (that does not return an environment) has a named
- argument, `envir`, defined to take on the default value `ENV`: 
+ argument, 'envir', defined to take on the default value 'ENV': 
 \end_layout
 
 \begin_layout LyX-Code
@@ -653,10 +657,14 @@ showMega2ENV = function(envir = ENV) { ...
 \end_layout
 
 \begin_layout Standard
-The code above, assigns the local variable, `envir` the default value `ENV`.
- Thus if `envir` is not provided in the function call, R will use the default
- assignment and look up the value of `ENV`.
- Hopefully, `ENV` was set as the return value of a call to `read.Mega2DB`.
+The code above, assigns the local variable, 'envir' the default value 'ENV'.
+ Thus if 'envir' is not provided in the function call, R will use the default
+ assignment and look up the value of 'ENV'.
+ Hopefully, 'ENV' was set as the return value of a call to 
+\emph on
+read.Mega2DB
+\emph default
+.
 \end_layout
 
 \begin_layout Subsection
@@ -684,12 +692,31 @@ link
  This field is a unique monotonic integer.
  When the data are read back in via C++, these links are looked up to find
  a pointer to use.
- Consider the locus_table and the allele_table.
+ Consider the 
+\series bold
+locus_table
+\series default
+ and the 
+\series bold
+allele_table
+\series default
+.
  They both have a locus_link.
- The link in the locus_table is hashed to yield a pointer to the corresponding
- entry in the locus table.
- When the allele_table is read, the locus_link is looked up, then a pointer
- is inserted into a new field in the 
+ The link in the 
+\series bold
+locus_table
+\series default
+ is hashed to yield a pointer to the corresponding entry in the 
+\series bold
+locus_table
+\series default
+.
+ When the 
+\series bold
+allele_table
+\series default
+ is read, the locus_link is looked up, then a pointer is inserted into a
+ new field in the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -697,9 +724,24 @@ in memory
 \begin_inset Quotes erd
 \end_inset
 
- locus_table (using the look up pointer) to point to the memory location
- of the allele_table entry, i.e.
- the locus_table in memory will point to the allele_table.
+ 
+\series bold
+locus_table
+\series default
+ (using the look up pointer) to point to the memory location of the 
+\series bold
+allele_table
+\series default
+ entry, i.e.
+ the 
+\series bold
+locus_table
+\series default
+ in memory will point to the 
+\series bold
+allele_table
+\series default
+.
  These 
 \begin_inset Quotes eld
 \end_inset
@@ -753,11 +795,7 @@ Most tables are composed of integer, numeric and string data.
 \end_layout
 
 \begin_layout Subsection
-
-\emph on
-mega2r
-\emph default
- Package Base Functions 
+Mega2R Package Base Functions 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:mega2-Package-Primitive"
@@ -786,7 +824,7 @@ status open
 
 \begin_layout Plain Layout
 
-library(mega2r)
+library(Mega2R)
 \end_layout
 
 \begin_layout Plain Layout
@@ -818,9 +856,16 @@ _table
 \end_inset
 
 , viz.
- person_table, locus_table, contain raw data copied directly from the SQLite
- database, although some of the original fields that are only needed for
- C++ Mega2 are not copied.
+ 
+\series bold
+person_table
+\series default
+, 
+\series bold
+locus_table
+\series default
+, contain raw data copied directly from the SQLite database, although some
+ of the original fields that are only needed for C++ Mega2 are not copied.
  
 \end_layout
 
@@ -875,7 +920,7 @@ and
 phenotype_table
 \series default
  has a person_link field.
- These link fields are used by the R `merge` function to assemble the data.
+ These link fields are used by the R 'merge' function to assemble the data.
  (Note: The 
 \series bold
 genotype_table
@@ -933,10 +978,8 @@ The
 \series default
  collects all the raw byte vectors from the 
 \series bold
-\emph on
 genotype_table
 \series default
-\emph default
  by chromosome for each person and concatenates them into a new vector for
  each person.
  The
@@ -955,10 +998,8 @@ virtual markers
  an exact multiple of 4 (genotypes per byte).
  (Note: Creating the 
 \series bold
-\emph on
 unified_genotype_table
 \series default
-\emph default
  with no 
 \begin_inset Quotes eld
 \end_inset
@@ -977,24 +1018,18 @@ virtual markers
 \begin_layout Standard
 The 
 \series bold
-\emph on
 marker_table
 \series default
-\emph default
  contains the offset of the marker genotype data in the 
 \series bold
-\emph on
 genotype_table
 \series default
-\emph default
  data vector column assuming all the markers across all the chromosomes
  are contiguous.
  There is an analogous offset column needed for the 
 \series bold
-\emph on
 unified_genotype_table
 \series default
-\emph default
  accounting for the 
 \begin_inset Quotes eld
 \end_inset
@@ -1005,10 +1040,8 @@ virtual markers
 
  in the gaps; this offset column is computed and added to the 
 \series bold
-\emph on
 marker_table
 \series default
-\emph default
 .
  The 
 \series bold
@@ -1019,32 +1052,22 @@ marker
 \emph default
 data frame is a subset of the 
 \series bold
-\emph on
 marker_table
 \series default
-\emph default
  data containing only the name, chromosome, position, original 
 \series bold
-\emph on
 marker_table
 \series default
-\emph default
  offset and marker offset into the 
 \series bold
-\emph on
 unified_genotype_table
 \series default
-\emph default
  vector.
  
 \end_layout
 
 \begin_layout Subsection
-
-\emph on
-mega2r
-\emph default
- Marker Range Functions
+Mega2R Marker Range Functions
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:mega2-Package-Marker"
@@ -1216,11 +1239,7 @@ Mega2R also loads a list of genes and their transcripts from the Bioconductor
 t known for the each gene.
  You might want to use the transcript data from another build that is available
  at Bioconductor or follow their instructions make your own mapping.
- The 
-\emph on
-mega2r
-\emph default
- function, 
+ The Mega2R function, 
 \emph on
 setAnnotations
 \emph default
@@ -1449,11 +1468,8 @@ init_pedgene
 \emph on
 read.Mega2DB
 \emph default
-; the former uses the function in the 
-\emph on
-mega2r
-\emph default
- package to just load a Mega2 database (
+; the former uses the function in the Mega2R package to just load a Mega2
+ database (
 \emph on
 dbmega2_import
 \emph default
@@ -1463,7 +1479,7 @@ dbmega2_import
 fam
 \series default
  data frame; it must eliminate samples where the case/control is not known
- which is required by `pedgene`.
+ which is required by 'pedgene'.
  In addition, 
 \emph on
 init_pedgene 
@@ -1475,7 +1491,7 @@ pedgene,
 \emph default
  requires an encoding of the genotypes 1/1, 1/2 and 2/2 to 0, 1, and 2 respectiv
 ely; plus the genotypes must be flipped so that 1 is the allele with the
- minor allele frequency.
+ major allele frequency.
  DOpedgene transforms its genotype input matrix and then it calls the 
 \emph on
 pedgene
@@ -1501,7 +1517,7 @@ manual run
 \end_inset
 
 .
- We had the results of running `pedgene` on many transcript ranges for one
+ We had the results of running 'pedgene' on many transcript ranges for one
  of our private dataset and we got the same results running 
 \emph on
 Mega2pedgene
@@ -1573,11 +1589,7 @@ You must first call the
 \emph on
 read.Mega2DB 
 \emph default
-function from the 
-\emph on
-mega2r
-\emph default
- package to load a Mega2 database.
+function from the Mega2R package to load a Mega2 database.
  A .vcf file is the main output of 
 \emph on
 Mega2VCF
@@ -1929,12 +1941,8 @@ You must call the
 \emph on
 read.Mega2DB 
 \emph default
-function from the 
-\emph on
-mega2r
-\emph default
- package to load your database and should save the returned `environment`
- into `ENV.` The function, 
+function from the Mega2R package to load your database and should save the
+ returned 'environment' into 'ENV.' The function, 
 \emph on
 Mega2GenABEL
 \emph default
@@ -2005,18 +2013,14 @@ Mega2ENVGenABEL
 \begin_layout Standard
 The rest of this document shows some complete examples of Mega2R package
  use.
- First, we illustrate the base functions of the package, 
-\emph on
-mega2
-\emph default
-r.
+ First, we illustrate the base functions of the package, Mega2R.
  Then we demonstrate several extended functions, 
 \emph on
 Mega2pedgene, Mega2VCF and Mega2GenABEL
 \emph default
 .
  Note: Not all the arguments and details of the functions are discussed
- in these examples, if you need programming details, look at the 'mega2r'
+ in these examples, if you need programming details, look at the Mega2R
  CRAN package documentation or the actual code in the git repository.
 \end_layout
 
@@ -2121,7 +2125,7 @@ We will assume that you have started an session at which you type the commands
 \end_layout
 
 \begin_layout Standard
-To run any of these exercises, you should install the package 'mega2r'.
+To run any of these exercises, you should install the package Mega2R.
 \end_layout
 
 \begin_layout Standard
@@ -2135,7 +2139,7 @@ status open
 
 \begin_layout Plain Layout
 
-install.packages("mega2r")
+install.packages("Mega2R")
 \end_layout
 
 \end_inset
@@ -2224,7 +2228,7 @@ Tutorial Data
 \end_layout
 
 \begin_layout Standard
-First, you will need to load the 'mega2r' package.
+First, you will need to load the Mega2R package.
  Type:
 \end_layout
 
@@ -2239,7 +2243,7 @@ status open
 
 \begin_layout Plain Layout
 
-library(mega2r)
+library(Mega2R)
 \end_layout
 
 \end_inset
@@ -2491,686 +2495,562 @@ The output seen on the screen when we ran Mega2 to create the 'SQLite' database
 \end_layout
 
 \begin_layout Verbatim
-
 ## ========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ##                           MEGA2 4.9.2 
 \end_layout
 
 \begin_layout Verbatim
-
 ##
 \end_layout
 
 \begin_layout Verbatim
-
 ##      Copyright 1999-2017, University of Pittsburgh.
  All Rights Reserved.
 \end_layout
 
 \begin_layout Verbatim
-
 ##
 \end_layout
 
 \begin_layout Verbatim
-
 ##      Contributors to Mega2: Robert Baron, Justin R.
  Stickel, Charles P.
  Kollar, 
 \end_layout
 
 \begin_layout Verbatim
-
 ##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P.
  Mulvihill, 
 \end_layout
 
 \begin_layout Verbatim
-
 ##      and Daniel E.
  Weeks.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ##  
 \end_layout
 
 \begin_layout Verbatim
-
 ##      Last updated: Jun 13 2017, 09:36:42 , valid until June 15, 2018.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ##      Compiled with gcc version 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)
  
 \end_layout
 
 \begin_layout Verbatim
-
 ##  
 \end_layout
 
 \begin_layout Verbatim
-
 ##      Mega2 comes with ABSOLUTELY NO WARRANTY.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ##      See LICENSE.txt for terms of copying, modifying & redistributing
  Mega2.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## ========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes
  for XY.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ##  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Run date:                  2017-7-24-10-03 
 \end_layout
 
 \begin_layout Verbatim
-
 ##  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Running Mega2 in batch mode from MEGA2.BATCH.seqsimr.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input filenames and missing value indicator read in from batch file.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Dump Analysis option read in from batch file.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Locus selections not specified in batch file.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Going to Reorder menu.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Trait selections not specified in batch file.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Going to Trait selection menu.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## ========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Locus_File not in batch file, Locus file assumed to be
  unspecified.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Map_File not in batch file, Map file assumed to be unspecified.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Omit_File not in batch file, Omit file assumed to be unspecifie
 d.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Frequency_File not in batch file, Frequency file assumed
  to be unspecified.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Penetrance_File not in batch file, Penetrance file assumed
  to be unspecified.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Aux_File not in batch file, Aux file assumed to be unspecified.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Phenotype_File not in batch file, Phenotype file assumed
  to be unspecified.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Imputed_Info_File not in batch file, Imputed Info file
  assumed to be unspecified.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Analysis Class: Dump.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Quantitative  Input Missing Value  -9  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Affection     Input Missing Value     "-9" 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Quantitative Output Missing Value      "*" 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Affection    Output Missing Value      "*" 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input Format: PLINK PED format (ped) 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree and map files specified as PLINK format.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## omit, penetrance, and frequency files are always in Mega2 format.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input files will be read in as PLINK or Mega2 format files as appropriate.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Reading PLINK map file for names: Mega2r.map 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Reading map file Mega2r.map ...
  (4 columns) 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input Map name: Map, type: average genetic map, units: kosambi centiMorgans
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input Map name: BP, type: physical map 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Found 2 possible maps in the Mega2r.map file.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Now checking each record in map file Mega2r.map ...
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Done reading map file: Mega2r.map 
 \end_layout
 
 \begin_layout Verbatim
-
 ##  
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Total number of loci =  1001 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1 trait locus  
 \end_layout
 
 \begin_layout Verbatim
-
 ##       1 Affection status locus:  
 \end_layout
 
 \begin_layout Verbatim
-
 ##                 default 
 \end_layout
 
 \begin_layout Verbatim
-
 ##       1000 Marker loci  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Number of loci found per chromosome (chromosome:number) 
 \end_layout
 
 \begin_layout Verbatim
-
 ##    1:1000 
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: No frequency file provided.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Allele frequencies for these will be estimated from data.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Trait 'default' will be assigned the default penetrance: (0.0500 0.9000
  0.9000) 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Reading PLINK .ped file: Mega2r.ped (2006 columns).
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1000 (of 1000) markers to be included from Mega2r.map 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Reading pedigree information from Mega2r.ped 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1380 individuals read from Mega2r.ped 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1380 individuals with nonmissing phenotypes 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 105 cases, 1275 controls, 0 missing 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 620 males, 760 females, 0 of unspecified sex 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 0 founders, 1380 non-founders found 
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input pedigree data contains: 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input pedigree file is in PLINK-fam format.
   
 \end_layout
 
 \begin_layout Verbatim
-
 ##                                                   Marker Genotypes 
 \end_layout
 
 \begin_layout Verbatim
-
 ##                                                   Fully    Half 
 \end_layout
 
 \begin_layout Verbatim
-
 ##      Pedigrees   People   Males   Females         Typed    Typed    
  Total 
 \end_layout
 
 \begin_layout Verbatim
-
 ## TOTAL       20     1380     620       760       1380000        0    1380000
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Typed       20     1380     620       760 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Untyped      0        0       0         0 
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree exclusion option : Include all pedigrees whether typed or not.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Count option: all alleles 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Count half-typed individuals' alleles : no  
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Recoding pedigree genotypes ...
   
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree data summary after recoding: 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input pedigree file is in PLINK-fam format.
   
 \end_layout
 
 \begin_layout Verbatim
-
 ##                                                   Marker Genotypes 
 \end_layout
 
 \begin_layout Verbatim
-
 ##                                                   Fully    Half 
 \end_layout
 
 \begin_layout Verbatim
-
 ##      Pedigrees   People   Males   Females         Typed    Typed    
  Total 
 \end_layout
 
 \begin_layout Verbatim
-
 ## TOTAL       20     1380     620       760       1380000        0    1380000
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Typed       20     1380     620       760 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Untyped      0        0       0         0 
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Created linkage ped tree 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Done checking locus integrity.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Checking pedigree integrity...
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Done checking pedigree integrity.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## ========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree statistics after selecting chromosomes and marker loci: 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input pedigree file is in post-makeped format.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ##                                                   Marker Genotypes 
 \end_layout
 
 \begin_layout Verbatim
-
 ##                                                   Fully    Half 
 \end_layout
 
 \begin_layout Verbatim
-
 ##      Pedigrees   People   Males   Females         Typed    Typed    
  Total 
 \end_layout
 
 \begin_layout Verbatim
-
 ## TOTAL       20     1380     620       760       1380000        0    1380000
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Typed       20     1380     620       760 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Untyped      0        0       0         0 
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Database file "seqsimr.db" will be backed up.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Moved existing seqsimr.db to seqsimr.db.old 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Dumping SQLite3 DB to file "seqsimr.db" 
 \end_layout
 
 \begin_layout Verbatim
-
 ## =========================================================== 
 \end_layout
 
 \begin_layout Verbatim
-
 ## See run summaries in directory 2017-7-24-10-03  
 \end_layout
 
 \begin_layout Verbatim
-
 ##    MEGA2.LOG, MEGA2.RECODE, MEGA2.ERR, MEGA2.KEYS 
 \end_layout
 
 \begin_layout Verbatim
-
 ## The script 'mega2log2html.pl' exited normally.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## To view the HTML-formatted run summaries, open 
 \end_layout
 
 \begin_layout Verbatim
-
 ## /Users/rbaron/mega2/bb/srcdir/R/mega2rtutorial/vignettes/2017-7-24-10-03/MEGA
 2run.html 
 \end_layout
 
 \begin_layout Verbatim
-
 ## in a web browser.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
@@ -3332,7 +3212,7 @@ Reading and Examining a Mega2 Database
 \end_layout
 
 \begin_layout Standard
-The 'mega2r' package facilitates reading genetic data from a Mega2-created
+The Mega2R package facilitates reading genetic data from a Mega2-created
  'SQLite' database.
 \end_layout
 
@@ -3341,9 +3221,12 @@ Reading a Mega2 database
 \end_layout
 
 \begin_layout Standard
-After you have created the 'SQLite' database, start up the R program.
- Load the 'mega2r' package, then use the function `read.Mega2DB` to read
- a Mega2 database.
+After you have created the SQLite database, start up the R program.
+ Load the Mega2R package, then use the function 
+\emph on
+read.Mega2DB
+\emph default
+ to read a Mega2 database.
 \end_layout
 
 \begin_layout Standard
@@ -3357,7 +3240,7 @@ status open
 
 \begin_layout Plain Layout
 
-library(mega2r)
+library(Mega2R)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3372,13 +3255,13 @@ ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 
 \begin_layout Standard
 The first argument should be the path to the database.
- Providing the optional argument, `verbose`, causes the read function to
+ Providing the optional argument, 'verbose', causes the read function to
  summarize the data frames created, their fields and their sizes.
- Finally, an `environment`, that contains the data frames is returned.
+ Finally, an 'environment', that contains the data frames is returned.
  (
 \color violet
 If you are unfamiliar with environments, you can think of them as data frames.
- `ENV$locus_table` will access the `locus_table` variable from `ENV` similar
+ 'ENV$locus_table' will access the 'locus_table' variable from 'ENV' similar
  to fetching an "observation" from a data frame.
  The difference is when you change a data frame passed to a function, the
  change does not affect the original data frame.
@@ -3442,9 +3325,12 @@ nt supplied as an argument.
  As stated earlier, the environment is used to store the data frames that
  contain the 'SQLite' database.
  There are two ways to pass the environment.
- If you assigned the result of `read.Mega2DB` to the variable `seqsimr`,
- then you could supply the value 'seqsimr' to any Mega2R function as the
- named argument `envir`:
+ If you assigned the result of 
+\emph on
+read.Mega2DB
+\emph default
+ to the variable 'seqsimr', then you could supply the value 'seqsimr' to
+ any Mega2R function as the named argument 'envir':
 \end_layout
 
 \begin_layout LyX-Code
@@ -3458,7 +3344,7 @@ showMega2ENV(envir = seqsimr)
 \color violet
 The second choice is a bit of a "hack" but it is very convenient.
  Every Mega2R function (that does not return an environment) has a named
- `envir` argument defined to take on the default value `ENV`: 
+ 'envir' argument defined to take on the default value 'ENV': 
 \end_layout
 
 \begin_layout LyX-Code
@@ -3483,10 +3369,14 @@ showMega2ENV = function(envir = ENV) { ...
 \begin_layout Standard
 
 \color violet
-The code above, assigns global variable `ENV` to the local variable, `envir`.
- Thus if `envir` is not provided in the function call, R will look up the
- value of `ENV` in the global environment.
- Hopefully, `ENV` was set to the return value of `read.Mega2DB` 
+The code above, assigns global variable 'ENV' to the local variable, 'envir'.
+ Thus if 'envir' is not provided in the function call, R will look up the
+ value of 'ENV' in the global environment.
+ Hopefully, 'ENV' was set to the return value of 
+\emph on
+read.Mega2DB
+\emph default
+.
 \end_layout
 
 \begin_layout Paragraph
@@ -3494,7 +3384,7 @@ Back to more examples.
 \end_layout
 
 \begin_layout Standard
-The `ls` function will show you all the variables in an environment.
+The 'ls' function will show you all the variables in an environment.
  (You probably have used it without arguments to show you the variables
  in the .GlobalEnv.) Type:
 \end_layout
@@ -3615,7 +3505,11 @@ Mega2R has an internal default list of the chromosome and base pair ranges
  And you create an integer vector that contains the column numbers of the
  chromosome "observation", the start position "observation" and the end
  position "observation".
- These two become the arguments to the `setRanges` function, viz.
+ These two become the arguments to the 
+\emph on
+setRanges
+\emph default
+ function, viz.
  
 \end_layout
 
@@ -3643,7 +3537,11 @@ goes through each transcript/range entry and finds the markers that fall
 \end_layout
 
 \begin_layout Standard
-The first argument of the `applyFnToRanges` function is a call back function.
+The first argument of the 
+\emph on
+applyFnToRanges
+\emph default
+ function is a call back function.
  The function is called with four arguments: the genotype matrix, the markers
  in range, the selected transcript/range entry and the environment.
  The call back is invoked repeatedly for each transcript range that contains
@@ -3652,11 +3550,15 @@ The first argument of the `applyFnToRanges` function is a call back function.
 
 \begin_layout Standard
 If it is necessary to store information between successive invocations the
- environment (`envir`) can be used.
+ environment ('envir') can be used.
 \end_layout
 
 \begin_layout Standard
-`applyFnToRanges` can also be provided explicit ranges.
+
+\emph on
+applyFnToRanges
+\emph default
+ can also be provided explicit ranges.
 \end_layout
 
 \begin_layout Standard
@@ -3707,8 +3609,12 @@ setAnnotations("txdb", "genedb")
 where "txdb" is a string that is the name of transcript database that was
  fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
  database that maps a gene id from the transcript to an entrez gene id.
- The `setAnnotations` command must be issued whenever R is started and the
- `mega2r` library has been loaded.
+ The 
+\emph on
+setAnnotations
+\emph default
+ command must be issued whenever R is started and the Mega2R library has
+ been loaded.
  By way of a reminder, Section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -3730,8 +3636,11 @@ library(<name of the transcription database>)
 
 \begin_layout Standard
 but we have chosen not to.
- Instead, you just indicate the database name and the logic of `applyFnToGenes`
- does a `loadNamespace` of the name string and then a `get` of the name
+ Instead, you just indicate the database name and the logic of 
+\emph on
+applyFnToGenes
+\emph default
+ does a 'loadNamespace' of the name string and then a 'get' of the name
  string from the namespace.
 \end_layout
 
@@ -3766,15 +3675,22 @@ applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'),
 \begin_layout Standard
 will find all the transcripts for each gene requested from the Bioconductor
  database.
- It will then behave like `applyFnToRanges`: find all the markers in each
- transcript range, compute the genotype matrix and then invoke the call
- back function with the required four arguments.
+ It will then behave like 
+\emph on
+applyFnToRanges
+\emph default
+: find all the markers in each transcript range, compute the genotype matrix
+ and then invoke the call back function with the required four arguments.
 \end_layout
 
 \begin_layout Standard
-The `applyFnToGenes` function has several other optional arguments that
- can request complete chromosomes, (multiple) ranges of base pairs on chromosome
-s, or collections of markers in addition to the genes_arg argument.
+The 
+\emph on
+applyFnToGenes
+\emph default
+ function has several other optional arguments that can request complete
+ chromosomes, (multiple) ranges of base pairs on chromosomes, or collections
+ of markers in addition to the genes_arg argument.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3825,8 +3741,12 @@ getgenotypesraw(markers, envir = ENV)
 \end_layout
 
 \begin_layout Standard
-is similar to the `getgenotypes` function except that the matrix it returns
- contains an integer encoding for each genotype.
+is similar to the 
+\emph on
+getgenotypes
+\emph default
+ function except that the matrix it returns contains an integer encoding
+ for each genotype.
  The integer's high 16 bits are the index for allele1 and the low 16 bits
  are the index for allele2.
 \end_layout
@@ -3933,7 +3853,7 @@ biocLite("org.Hs.eg.db")
 \begin_layout Standard
 just once to install the package.
  And then, to use the desired transcription data base, use this command
- from the 'mega2r' package as part of your session:
+ from the Mega2R package as part of your session:
 \end_layout
 
 \begin_layout LyX-Code
@@ -3941,8 +3861,8 @@ setAnnotations(txdb, entrezGene)
 \end_layout
 
 \begin_layout Standard
-where `txdb` is the name of Bioconductor transcription database, and `entrezGene
-` is the name of Bioconductor mapping of gene name or gene alias to entrez
+where 'txdb' is the name of Bioconductor transcription database, and 'entrezGene
+' is the name of Bioconductor mapping of gene name or gene alias to entrez
  gene id.
  Note: You do not need this command if you are using the default values
  shown above: TxDb.Hsapiens.UCSC.hg19.knownGene and org.Hs.eg.db.
@@ -3953,19 +3873,66 @@ Loading a Mega2 database
 \end_layout
 
 \begin_layout Standard
-Rather than read the Mega2 'SQLite' database with the `read.Mega2DB` function,
- described previously, here we use a specialized `init_pedgene` function
- to read the Mega2 database.
- This latter function calls a utility function also used by `read.Mega2DB`.
- Then it creates, edits, and rewrites the family data, storing it in a `pedgene`
--compatible data frame, `fam` .
- (`fam` merges data from the `pedigree_table`, `person_table` and `phenotype_tab
-le`.) `init_pedgene` purges persons with unknown case/control status which
- is necessary for the pedgene calculation.
- (When `fam` is updated, similar filtering is done to the persons in the
- phenotype_table and the genotype_table.) Finally, `init_pedgene` calculates
- some values that will be used repeatedly and stores them in the environment
- that is returned.
+Rather than read the Mega2 SQLite database with the 
+\emph on
+read.Mega2DB
+\emph default
+ function, described previously, here we use a specialized 
+\emph on
+init_pedgene
+\emph default
+ function to read the Mega2 database.
+ This latter function calls a utility function also used by 
+\emph on
+read.Mega2DB
+\emph default
+.
+ Then it creates, edits, and rewrites the family data, storing it in a 'pedgene'
+-compatible data frame, 
+\series bold
+fam
+\series default
+ .
+ (
+\series bold
+fam
+\series default
+ merges data from the 
+\series bold
+pedigree_table
+\series default
+, 
+\series bold
+person_table
+\series default
+ and 
+\series bold
+phenotype_table
+\series default
+.) 
+\emph on
+init_pedgene
+\emph default
+ purges persons with unknown case/control status which is necessary for
+ the pedgene calculation.
+ (When 
+\series bold
+fam
+\series default
+ is updated, similar filtering is done to the persons in the 
+\series bold
+phenotype_table
+\series default
+ and the 
+\series bold
+genotype_table
+\series default
+.) Finally, 
+\emph on
+init_pedgene
+\emph default
+ calculates some values that will be used repeatedly and stores them in
+ the environment that is returned.
 \end_layout
 
 \begin_layout Standard
@@ -4006,7 +3973,11 @@ Mega2R has an internal default list of the chromosome and base pair ranges
  Then, you create an integer vector that contains the column numbers of
  the chromosome "observation", the start position "observation" and the
  end position "observation".
- These two objects are then arguments to the `setRanges` function, viz.
+ These two objects are then arguments to the 
+\emph on
+setRanges
+\emph default
+ function, viz.
 \end_layout
 
 \begin_layout LyX-Code
@@ -4014,21 +3985,30 @@ setRanges(Transcripts, Columns)
 \end_layout
 
 \begin_layout Standard
-By default, the function `Mega2pedgene` examines the first 100 transcripts
- and prints the results.
- (Internally, it calls the function `applyFnToRanges`.) For the `seqsimr.db`
- database, the first 100 transcripts finds only one transcript with several
- markers.
+By default, the function 
+\emph on
+Mega2pedgene
+\emph default
+ examines the first 100 transcripts and prints the results.
+ (Internally, it calls the function 
+\emph on
+applyFnToRanges
+\emph default
+.) For the seqsimr.db database, the first 100 transcripts finds only one transcrip
+t with several markers.
  (It is found because it is on chromosome 1 and it has a range that overlaps
  with some of the markers in our study.) To make this tutorial exercise run
  faster, we noticed that the identified transcript appeared at transcript
- 54; so we will restrict `Mega2pedgene` to a small range of transcripts
- around 54, viz.
+ 54; so we will restrict 
+\emph on
+Mega2pedgene
+\emph default
+ to a small range of transcripts around 54, viz.
  50 through 60.
 \end_layout
 
 \begin_layout Standard
-Note: `verbose` needs to be TRUE, for the diagnostics to be printed.
+Note: 'verbose' needs to be TRUE, for the diagnostics to be printed.
 \end_layout
 
 \begin_layout Standard
@@ -4097,27 +4077,38 @@ CEP104 snp24507 789 501 90
 
 \begin_layout Standard
 The genotype matrix for these markers, along with the markers, the range
- used, and the environment are passed to the call back function `DOpedgene`.
- `DOpedgene` converts the genotype nucleotides 1/1, 1/2 and 2/2 to the values
- 0, 1 and 2 (or 2, 1, 0 if 1/1 is the genotype for the allele with the minor
- allele frequency).
+ used, and the environment are passed to the call back function 
+\emph on
+DOpedgene
+\emph default
+.
+ 
+\emph on
+DOpedgene
+\emph default
+ converts the genotype nucleotides 1/1, 1/2 and 2/2 to the values 0, 1 and
+ 2 (or 2, 1, 0 if 1/1 is the genotype for the allele with the minor allele
+ frequency).
  Then it runs 'pedgene'.
  The results are automatically stored in a data frame with "observations":
  prefix of chromosome, gene, number of markers and base pair range followed
  by 'pedgene' data: kernel and burden, value and p-values, four values for
  each of three weightings of the markers.
- These data are saved in the data frame, `pedgene_results`, in the environment.
- They are also printed when `verbose` is TRUE.
+ These data are saved in the data frame, 'pedgene_results', in the environment.
+ They are also printed when 'verbose' is TRUE.
 \end_layout
 
 \begin_layout Standard
-Note: The results are always appended to the `pedgene_results` data frame.
+Note: The results are always appended to the 'pedgene_results' data frame.
  You should truncate it when necessary.
 \end_layout
 
 \begin_layout Standard
-You could run `Mega2pedgene` on all the transcript entries, but it takes
- a rather long time.
+You could run 
+\emph on
+Mega2pedgene
+\emph default
+ on all the transcript entries, but it takes a rather long time.
  You would type:
 \end_layout
 
@@ -4165,7 +4156,7 @@ name "subsec:Running-pedgene-on"
 
 \begin_layout Standard
 You may try searching for transcripts of specific genes.
- Here, the default transcript database is `TxDb.Hsapiens.UCSC.hg19.knownGene`
+ Here, the default transcript database is "TxDb.Hsapiens.UCSC.hg19.knownGene"
  from Bioconductor.
  Of course you can change it.
  Type:
@@ -4235,8 +4226,12 @@ applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'AK5'), envir = ENV)
 \end_layout
 
 \begin_layout Standard
-Note: The default behavior of `DOpedgene` is to append any new results to
- the end of the `pedgene_results` data frame in the environment `envir`.
+Note: The default behavior of 
+\emph on
+DOpedgene
+\emph default
+ is to append any new results to the end of the 'pedgene_results' data frame
+ in the environment 'envir'.
 \end_layout
 
 \begin_layout Standard
@@ -4249,8 +4244,12 @@ Outputting Mega2R data to VCF format
 \end_layout
 
 \begin_layout Standard
-The `Mega2VCF` function can output subsets of the mega2r database as a VCF
- file, accompanied by related files (for phenotype and family data).
+The 
+\emph on
+Mega2VCF
+\emph default
+ function can output subsets of the Mega2R database as a VCF file, accompanied
+ by related files (for phenotype and family data).
 \end_layout
 
 \begin_layout Standard
@@ -4298,18 +4297,27 @@ if (! dir.exists("vcfr")) dir.create("vcfr")
 \end_layout
 
 \begin_layout Standard
-The Mega2VCF function takes an argument which is the prefix used on all
- generated files.
+The 
+\emph on
+Mega2VCF
+\emph default
+ function takes an argument which is the prefix used on all generated files.
  We will make it a path that includes the directory 
 \series bold
 vcfr
 \series default
 .
- Below, we assume that a Mega2 database was stored in the environment, `ENV`.
- If this is not the case, supply to Mega2VCF a named argument, `envir`,
- set to the environment you wish to use.
- (You will also have to change the references to the `markers` data frame,
- below, from `ENV`$markers to `<environment name>`$markers.)
+ Below, we assume that a Mega2 database was stored in the environment, 'ENV'.
+ If this is not the case, supply to 
+\emph on
+Mega2VCF
+\emph default
+ a named argument, 'envir', set to the environment you wish to use.
+ (You will also have to change the references to the 
+\series bold
+markers
+\series default
+ data frame, below, from 'ENV'$markers to '<environment name>'$markers.)
 \end_layout
 
 \begin_layout Standard
@@ -4348,7 +4356,7 @@ Note: The line above places the data for only chromosome 1 in the files
 \end_layout
 
 \begin_layout Standard
-Note: In general, you can filter `ENV$markers` as needed.
+Note: In general, you can filter 'ENV$markers' as needed.
  If the second argument is not present, all the markers are written out.
 \end_layout
 
@@ -4425,14 +4433,21 @@ seqsimr.db
 
 \begin_layout Standard
 GenABEL (http://www.genabel.org/) can process PLINK .tped/.tfam files with the
- function `convert.snp.tped` to create a GenABEL "raw" file.
+ function 'convert.snp.tped' to create a GenABEL "raw" file.
  Then the "raw" file and a generated phenotype file can be processed by
- the function, `load.gwaa.data`, to yield a gwaa.data-class object.
- Currently, the function, `Mega2GenABEL`, uses this mechanism to convert
- Mega2 data frames to a gwaa.data-class object.
- The argument to `Mega2GenABEL` is a file name prefix that will be used
- to name the .tped/.fam/.phe files that are created.
- The GenABEL functions `convert.snp.tped` and `load.gwaa.data` are explained
+ the function, 'load.gwaa.data', to yield a gwaa.data-class object.
+ Currently, the function, 
+\emph on
+Mega2GenABEL
+\emph default
+, uses this mechanism to convert Mega2 data frames to a gwaa.data-class object.
+ The argument to 
+\emph on
+Mega2GenABEL
+\emph default
+ is a file name prefix that will be used to name the .tped/.fam/.phe files
+ that are created.
+ The GenABEL functions 'convert.snp.tped' and 'load.gwaa.data' are explained
  in https://cran.r-project.org/package=GenABEL.
 \end_layout
 
@@ -4503,7 +4518,7 @@ list.files(pattern = "SEQ.*")
 \end_layout
 
 \begin_layout Standard
-You can use any of the GenABEL provided functions on the results, `seqsimgwaa`.
+You can use any of the GenABEL provided functions on the results, 'seqsimgwaa'.
 \end_layout
 
 \begin_layout Standard
@@ -4606,470 +4621,378 @@ The output should be similar to that below (except for time stamps):
 \end_layout
 
 \begin_layout Verbatim
-
 ## ==========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## MEGA2 4.9.2
 \end_layout
 
 \begin_layout Verbatim
-
 ##
 \end_layout
 
 \begin_layout Verbatim
-
 ## Copyright 1999-2017, University of Pittsburgh.
  All Rights Reserved.
 \end_layout
 
 \begin_layout Verbatim
-
 ##
 \end_layout
 
 \begin_layout Verbatim
-
 ## Contributors to Mega2: Robert Baron, Justin R.
  Stickel, Charles P.
  Kollar,
 \end_layout
 
 \begin_layout Verbatim
-
 ## Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P.
  Mulvihill,
 \end_layout
 
 \begin_layout Verbatim
-
 ## and Daniel E.
  Weeks.
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Last updated: Jun 13 2017, 09:36:42 , valid until June 15, 2018.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Compiled with gcc version 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Mega2 comes with ABSOLUTELY NO WARRANTY.
 \end_layout
 
 \begin_layout Verbatim
-
 ## See LICENSE.txt for terms of copying, modifying & redistributing Mega2.
 \end_layout
 
 \begin_layout Verbatim
-
 ## ==========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes
  for XY.
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Run date: 2017-7-24-10-05
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Running Mega2 in batch mode from MEGA2.BATCH.vcf.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Analysis option read in from batch file.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Chromosome(s) and markers read in from batch file.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Trait selection(s) read in from batch file.
 \end_layout
 
 \begin_layout Verbatim
-
 ## ==========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Analysis Class: VCF.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Quantitative Output Missing Value "-9"
 \end_layout
 
 \begin_layout Verbatim
-
 ## Affection Output Missing Value "-9"
 \end_layout
 
 \begin_layout Verbatim
-
 ## Reading SQLite3 DB from file "seqsimr.db"
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## The path to this SQLite3 database is seqsimr.db.
 \end_layout
 
 \begin_layout Verbatim
-
 ## This database was created using Mega2 version 4.9.2.
 \end_layout
 
 \begin_layout Verbatim
-
 ## This database was created using SQLite3 3.9.2 on 2017-7-24-10-03.
 \end_layout
 
 \begin_layout Verbatim
-
 ## This database was processed using SQLite3 3.9.2 on 2017-7-24-10-05.
 \end_layout
 
 \begin_layout Verbatim
-
 ## This database was created from PLINK PED format data using the following
  files:
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree file Mega2r.ped
 \end_layout
 
 \begin_layout Verbatim
-
 ## PLINK Map file Mega2r.map
 \end_layout
 
 \begin_layout Verbatim
-
 ## This database contains:
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1380 persons (20 pedigrees)
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1000 markers
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1 trait
 \end_layout
 
 \begin_layout Verbatim
-
 ## genetic distance(map name/type) "Map"/kosambi, Sex map type AVERAGED_MAP
 \end_layout
 
 \begin_layout Verbatim
-
 ## base pair distance(map name) "BP"
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## ==========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1 trait locus 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1 Affection status locus: 
 \end_layout
 
 \begin_layout Verbatim
-
 ## default
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Selected map Map.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Selected chromosome 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## Output will combine markers and the following selected traits:
 \end_layout
 
 \begin_layout Verbatim
-
 ## default [MARKERS]
 \end_layout
 
 \begin_layout Verbatim
-
 ## After selecting traits and covariates
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1 trait locus 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1 Affection status locus: 
 \end_layout
 
 \begin_layout Verbatim
-
 ## default
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree statistics after selecting chromosomes and marker loci:
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input pedigree file is in post-makeped format.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Marker Genotypes
 \end_layout
 
 \begin_layout Verbatim
-
 ## Fully Half
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigrees People Males Females Typed Typed Total
 \end_layout
 
 \begin_layout Verbatim
-
 ## TOTAL 20 1380 620 760 1380000 0 1380000
 \end_layout
 
 \begin_layout Verbatim
-
 ## Typed 20 1380 620 760
 \end_layout
 
 \begin_layout Verbatim
-
 ## Untyped 0 0 0 0
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Mega2 created the following file(s) for VCF Format:
 \end_layout
 
 \begin_layout Verbatim
-
 ## VCF file created using allele ordering setting: Original_Order
 \end_layout
 
 \begin_layout Verbatim
-
 ## VCF format file: vcf/vcf.01.vcf
 \end_layout
 
 \begin_layout Verbatim
-
 ## VCF pedigree file: vcf/vcf.01.fam
 \end_layout
 
 \begin_layout Verbatim
-
 ## VCF phenotype file: vcf/vcf.01.phe
 \end_layout
 
 \begin_layout Verbatim
-
 ## VCF map file: vcf/vcf.01.map
 \end_layout
 
 \begin_layout Verbatim
-
 ## VCF freq file: vcf/vcf.01.freq
 \end_layout
 
 \begin_layout Verbatim
-
 ## VCF pen file: vcf/vcf.01.pen
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## SQLite3 database "seqsimr.db" was processed to generate this output.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Output is in vcf
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## See run summaries in directory 2017-7-24-10-05 
 \end_layout
 
 \begin_layout Verbatim
-
 ## MEGA2.LOG, MEGA2.ERR, MEGA2.KEYS
 \end_layout
 
 \begin_layout Verbatim
-
 ## The script 'mega2log2html.pl' exited normally.
 \end_layout
 
 \begin_layout Verbatim
-
 ## To view the HTML-formatted run summaries, open
 \end_layout
 
 \begin_layout Verbatim
-
 ## /Users/rbaron/mega2/bb/srcdir/R/mega2rtutorial/vignettes/2017-7-24-10-05/MEGA
 2run.html
 \end_layout
 
 \begin_layout Verbatim
-
 ## in a web browser.
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## If you use Mega2 as part of a published work, please reference 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Baron RV, Kollar C, Mukhopadhyay N, Weeks DE
 \end_layout
 
 \begin_layout Verbatim
-
 ## Mega2: validated data-reformatting for linkage and association analyses
 \end_layout
 
 \begin_layout Verbatim
-
 ## Source Code for Biology and Medicine.2014, 9:26
 \end_layout
 
 \begin_layout Verbatim
-
 ## DOI: 10.1186/s13029-014-0026-y
 \end_layout
 
 \begin_layout Verbatim
-
 ## as well as the version used, which is currently Version 4.9.2
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
@@ -5246,9 +5169,12 @@ GenABEL regression
 
 \begin_layout Standard
 This test is a bit more complicated.
- We intend to verify that the object generated by `Mega2GenABEL` is the
- same as the GenABEL object we started with.
- First, we load `GenABEL` and access its data:
+ We intend to verify that the object generated by 
+\emph on
+Mega2GenABEL
+\emph default
+ is the same as the GenABEL object we started with.
+ First, we load 'GenABEL' and access its data:
 \end_layout
 
 \begin_layout Standard
@@ -5299,7 +5225,7 @@ dmpPed(gwaa_ = srdta, pfx = "srdta")
 \end_layout
 
 \begin_layout Standard
-To produce the Mega2 database `srdta.db`, we switch to the Unix command line
+To produce the Mega2 database 'srdta.db', we switch to the Unix command line
  and run:
 \end_layout
 
@@ -5332,1066 +5258,858 @@ Note: To make this tutorial only dependent on R, the above code is not actually
 \end_layout
 
 \begin_layout Verbatim
-
 ## ==========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## MEGA2 4.9.2
 \end_layout
 
 \begin_layout Verbatim
-
 ##
 \end_layout
 
 \begin_layout Verbatim
-
 ## Copyright 1999-2017, University of Pittsburgh.
  All Rights Reserved.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Contributors to Mega2: Robert Baron, Justin R.
  Stickel, Charles P.
  Kollar,
 \end_layout
 
 \begin_layout Verbatim
-
 ## Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P.
  Mulvihill,
 \end_layout
 
 \begin_layout Verbatim
-
 ## and Daniel E.
  Weeks.
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Last updated: Jun 13 2017, 09:36:42 , valid until June 15, 2018.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Compiled with gcc version 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Mega2 comes with ABSOLUTELY NO WARRANTY.
 \end_layout
 
 \begin_layout Verbatim
-
 ## See LICENSE.txt for terms of copying, modifying & redistributing Mega2.
 \end_layout
 
 \begin_layout Verbatim
-
 ## ==========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes
  for XY.
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Run date: 2017-7-24-10-05
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Running Mega2 in batch mode from MEGA2.BATCH.srdta.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input filenames and missing value indicator read in from batch file.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Dump Analysis option read in from batch file.
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Locus selections not specified in batch file.
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Going to Reorder menu.
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Trait selections not specified in batch file.
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Going to Trait selection menu.
 \end_layout
 
 \begin_layout Verbatim
-
 ## ==========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Locus_File not in batch file, Locus file assumed to be
  unspecified.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Map_File not in batch file, Map file assumed to be unspecified.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Omit_File not in batch file, Omit file assumed to be unspecifie
 d.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Frequency_File not in batch file, Frequency file assumed
  to be unspecified.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Penetrance_File not in batch file, Penetrance file assumed
  to be unspecified.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Aux_File not in batch file, Aux file assumed to be unspecified.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Keyword Input_Imputed_Info_File not in batch file, Imputed Info file
  assumed to be unspecified.
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Analysis Class: Dump.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Quantitative Input Missing Value -9 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Affection Input Missing Value "-9"
 \end_layout
 
 \begin_layout Verbatim
-
 ## Quantitative Output Missing Value "*"
 \end_layout
 
 \begin_layout Verbatim
-
 ## Affection Output Missing Value "*"
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input Format: PLINK PED format (ped)
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree and map files specified as PLINK format.
 \end_layout
 
 \begin_layout Verbatim
-
 ## omit, penetrance, and frequency files are always in Mega2 format.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input files will be read in as PLINK or Mega2 format files as appropriate.
 \end_layout
 
 \begin_layout Verbatim
-
 ## reading phenotype file srdta.phe ...
  (5 columns)
 \end_layout
 
 \begin_layout Verbatim
-
 ## Reading PLINK map file for names: srdta.map
 \end_layout
 
 \begin_layout Verbatim
-
 ## Reading map file srdta.map ...
  (4 columns)
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input Map name: Map, type: average genetic map, units: kosambi Morgans
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input Map name: BP, type: physical map
 \end_layout
 
 \begin_layout Verbatim
-
 ## Found 2 possible maps in the srdta.map file.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Now checking each record in map file srdta.map ...
 \end_layout
 
 \begin_layout Verbatim
-
 ## Done reading map file: srdta.map
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Total number of loci = 839
 \end_layout
 
 \begin_layout Verbatim
-
 ## 6 trait loci 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 2 Affection status loci: 
 \end_layout
 
 \begin_layout Verbatim
-
 ## bt default
 \end_layout
 
 \begin_layout Verbatim
-
 ## 4 Quantitative loci: 
 \end_layout
 
 \begin_layout Verbatim
-
 ## age qt1 qt2 qt3
 \end_layout
 
 \begin_layout Verbatim
-
 ## 833 Marker loci 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Number of loci found per chromosome (chromosome:number)
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1:833
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: No frequency file provided.
 \end_layout
 
 \begin_layout Verbatim
-
 ## WARNING: Allele frequencies for these will be estimated from data.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Trait 'bt' will be assigned the default penetrance: (0.0500 0.9000 0.9000)
 \end_layout
 
 \begin_layout Verbatim
-
 ## Trait 'default' will be assigned the default penetrance: (0.0500 0.9000
  0.9000)
 \end_layout
 
 \begin_layout Verbatim
-
 ## Reading PLINK .ped file: srdta.ped (1672 columns).
 \end_layout
 
 \begin_layout Verbatim
-
 ## 833 (of 833) markers to be included from srdta.map
 \end_layout
 
 \begin_layout Verbatim
-
 ## Reading pedigree information from srdta.ped
 \end_layout
 
 \begin_layout Verbatim
-
 ## 2500 individuals read from srdta.ped
 \end_layout
 
 \begin_layout Verbatim
-
 ## 2500 individuals with nonmissing phenotypes
 \end_layout
 
 \begin_layout Verbatim
-
 ## 0 cases, 1244 controls, 1256 missing
 \end_layout
 
 \begin_layout Verbatim
-
 ## 1275 males, 1225 females, 0 of unspecified sex
 \end_layout
 
 \begin_layout Verbatim
-
 ## 0 founders, 2500 non-founders found
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input pedigree data contains:
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input pedigree file is in PLINK-fam format.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Marker Genotypes
 \end_layout
 
 \begin_layout Verbatim
-
 ## Fully Half
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigrees People Males Females Typed Typed Total
 \end_layout
 
 \begin_layout Verbatim
-
 ## TOTAL 2500 2500 1275 1225 1978958 0 2082500
 \end_layout
 
 \begin_layout Verbatim
-
 ## Typed 2500 2500 1275 1225
 \end_layout
 
 \begin_layout Verbatim
-
 ## Untyped 0 0 0 0
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree exclusion option : Include all pedigrees whether typed or not.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Count option: all alleles
 \end_layout
 
 \begin_layout Verbatim
-
 ## Count half-typed individuals' alleles : no 
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Recoding pedigree genotypes ...
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree data summary after recoding:
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input pedigree file is in PLINK-fam format.
  
 \end_layout
 
 \begin_layout Verbatim
-
 ## Marker Genotypes
 \end_layout
 
 \begin_layout Verbatim
-
 ## Fully Half
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigrees People Males Females Typed Typed Total
 \end_layout
 
 \begin_layout Verbatim
-
 ## TOTAL 2500 2500 1275 1225 1978958 0 2082500
 \end_layout
 
 \begin_layout Verbatim
-
 ## Typed 2500 2500 1275 1225
 \end_layout
 
 \begin_layout Verbatim
-
 ## Untyped 0 0 0 0
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Created linkage ped tree
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===== Messages of type "quant_stat": 
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## Per-pedigree quantitative phenotype summary:
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree Mean Std Dev Minimum Maximum #Phenotypes
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## age
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## p1 43.40000 0.00000 43.40000 43.40000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p2 48.20000 0.00000 48.20000 48.20000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p3 37.90000 0.00000 37.90000 37.90000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p4 53.80000 0.00000 53.80000 53.80000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p5 47.50000 0.00000 47.50000 47.50000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p6 45.00000 0.00000 45.00000 45.00000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p7 52.00000 0.00000 52.00000 52.00000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p8 42.50000 0.00000 42.50000 42.50000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p9 29.70000 0.00000 29.70000 29.70000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===== Too many "quant_stat" records, display is temporarily suspended
  ..
 \end_layout
 
 \begin_layout Verbatim
-
 ## qt1
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## p1 -0.58000 0.00000 -0.58000 -0.58000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p2 0.80000 0.00000 0.80000 0.80000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p3 -0.52000 0.00000 -0.52000 -0.52000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p4 -1.55000 0.00000 -1.55000 -1.55000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p5 0.25000 0.00000 0.25000 0.25000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p6 0.15000 0.00000 0.15000 0.15000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p7 -0.56000 0.00000 -0.56000 -0.56000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p8 0.00000 0.00000 0.00000 0.00000 0
 \end_layout
 
 \begin_layout Verbatim
-
 ## p9 -2.26000 0.00000 -2.26000 -2.26000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===== Too many "quant_stat" records, display is temporarily suspended
  ..
 \end_layout
 
 \begin_layout Verbatim
-
 ## qt2
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## p1 4.46000 0.00000 4.46000 4.46000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p2 6.32000 0.00000 6.32000 6.32000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p3 3.26000 0.00000 3.26000 3.26000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p4 888.00000 0.00000 888.00000 888.00000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p5 5.70000 0.00000 5.70000 5.70000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p6 4.65000 0.00000 4.65000 4.65000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p7 4.64000 0.00000 4.64000 4.64000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p8 5.77000 0.00000 5.77000 5.77000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p9 0.71000 0.00000 0.71000 0.71000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===== Too many "quant_stat" records, display is temporarily suspended
  ..
 \end_layout
 
 \begin_layout Verbatim
-
 ## qt3
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## ------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## p1 1.43000 0.00000 1.43000 1.43000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p2 3.90000 0.00000 3.90000 3.90000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p3 5.05000 0.00000 5.05000 5.05000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p4 3.76000 0.00000 3.76000 3.76000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p5 2.89000 0.00000 2.89000 2.89000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p6 1.87000 0.00000 1.87000 1.87000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p7 2.49000 0.00000 2.49000 2.49000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p8 2.68000 0.00000 2.68000 2.68000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## p9 1.45000 0.00000 1.45000 1.45000 1
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===== Too many "quant_stat" records, display is temporarily suspended
  ..
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===== 2501 total records of type "quant_stat" are in MEGA2.LOG
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===== Messages of type "quant_stat_sum": 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Quantitative trait phenotype statistics
 \end_layout
 
 \begin_layout Verbatim
-
 ## -----------------------------------------------------------------------------
 --
 \end_layout
 
 \begin_layout Verbatim
-
 ## QTL Missing Minimum Maximum Total Pedigrees Total
 \end_layout
 
 \begin_layout Verbatim
-
 ## pedigrees phenotyped phenotypes
 \end_layout
 
 \begin_layout Verbatim
-
 ## -----------------------------------------------------------------------------
 --
 \end_layout
 
 \begin_layout Verbatim
-
 ## age 0 24.100 71.600 2500 2500 2500
 \end_layout
 
 \begin_layout Verbatim
-
 ## qt1 3 -4.600 3.200 2500 2497 2497
 \end_layout
 
 \begin_layout Verbatim
-
 ## qt2 0 0.000 888.000 2500 2500 2500
 \end_layout
 
 \begin_layout Verbatim
-
 ## qt3 11 -1.970 6.340 2500 2489 2489
 \end_layout
 
 \begin_layout Verbatim
-
 ## NOTE: The Missing QTL value on input has been assigned as '-9.00'.
 \end_layout
 
 \begin_layout Verbatim
-
 ## -------------------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## QTL Mean Std Dev Skewness Kurtosis
 \end_layout
 
 \begin_layout Verbatim
-
 ## -------------------------------------------------------------------------
 \end_layout
 
 \begin_layout Verbatim
-
 ## age 50.038 7.060 0.003 -0.063
 \end_layout
 
 \begin_layout Verbatim
-
 ## qt1 -0.298 1.001 -0.075 0.126
 \end_layout
 
 \begin_layout Verbatim
-
 ## qt2 6.122 30.601 28.734 825.077
 \end_layout
 
 \begin_layout Verbatim
-
 ## qt3 2.609 1.101 0.033 -0.090
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===== 4 total records of type "quant_stat_sum" are in MEGA2.LOG
 \end_layout
 
 \begin_layout Verbatim
-
 ## 
 \end_layout
 
 \begin_layout Verbatim
-
 ## Done checking locus integrity.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Checking pedigree integrity...
 \end_layout
 
 \begin_layout Verbatim
-
 ## Done checking pedigree integrity.
 \end_layout
 
 \begin_layout Verbatim
-
 ## ==========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigree statistics after selecting chromosomes and marker loci:
 \end_layout
 
 \begin_layout Verbatim
-
 ## Input pedigree file is in post-makeped format.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Marker Genotypes
 \end_layout
 
 \begin_layout Verbatim
-
 ## Fully Half
 \end_layout
 
 \begin_layout Verbatim
-
 ## Pedigrees People Males Females Typed Typed Total
 \end_layout
 
 \begin_layout Verbatim
-
 ## TOTAL 2500 2500 1275 1225 1978958 0 2082500
 \end_layout
 
 \begin_layout Verbatim
-
 ## Typed 2500 2500 1275 1225
 \end_layout
 
 \begin_layout Verbatim
-
 ## Untyped 0 0 0 0
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## Database file "srdta.db" will be backed up.
 \end_layout
 
 \begin_layout Verbatim
-
 ## Moved existing srdta.db to srdta.db.old
 \end_layout
 
 \begin_layout Verbatim
-
 ## Dumping SQLite3 DB to file "srdta.db"
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
 \begin_layout Verbatim
-
 ## See run summaries in directory 2017-7-24-10-05 
 \end_layout
 
 \begin_layout Verbatim
-
 ## MEGA2.LOG, MEGA2.RECODE, MEGA2.ERR, MEGA2.KEYS
 \end_layout
 
 \begin_layout Verbatim
-
 ## The script 'mega2log2html.pl' exited normally.
 \end_layout
 
 \begin_layout Verbatim
-
 ## To view the HTML-formatted run summaries, open
 \end_layout
 
 \begin_layout Verbatim
-
 ## /Users/rbaron/mega2/bb/srcdir/R/mega2rtutorial/vignettes/2017-7-24-10-05/MEGA
 2run.html
 \end_layout
 
 \begin_layout Verbatim
-
 ## in a web browser.
 \end_layout
 
 \begin_layout Verbatim
-
 ## ===========================================================
 \end_layout
 
@@ -6514,7 +6232,7 @@ Default_Outfile_Names=yes
 \end_layout
 
 \begin_layout Standard
-Note: We have provided a copy of the srdta.db database in the 'mega2r' package.
+Note: We have provided a copy of the srdta.db database in the Mega2R package.
  You can proceed with the steps that follow, even if you did not create
  your own database.
 \end_layout
@@ -6553,7 +6271,7 @@ list.files(pattern = "SRD.*")
 \end_layout
 
 \begin_layout Standard
-`mega` should be the same as the `srdta` gwaa.data-class object.
+'mega' should be the same as the 'srdta' gwaa.data-class object.
  You can
 \end_layout
 
@@ -6588,7 +6306,11 @@ str(srdta)
 
 \begin_layout Standard
 You can compare these printouts by eye.
- Alternatively, the function `Mega2GenABELtst()` can be used to
+ Alternatively, the function 
+\emph on
+Mega2GenABELtst
+\emph default
+() can be used to
 \end_layout
 
 \begin_layout Standard
@@ -6650,12 +6372,15 @@ The final difference is more subtle.
  two heterozygous cases to one value.
  These results are the same for the two different gwaa.class-objects; hence
  the data are really the same.
- But `Mega2GenABEL` converts the data frames using the `convert.snp.tped`
- function while the `srdta` object, generated by GenABEL, uses the `convert.snp.te
-xt`.
- Though both conversion functions encode the genotype to a number, the `convert.s
-np.tped` function rearranges the genotype so that the major allele appears
- first, the `convert.snp.text` does no such rearrangement.
+ But 
+\emph on
+Mega2GenABEL
+\emph default
+ converts the data frames using the 'convert.snp.tped' function while the
+ 'srdta' object, generated by GenABEL, uses the 'convert.snp.text'.
+ Though both conversion functions encode the genotype to a number, the 'convert.s
+np.tped' function rearranges the genotype so that the major allele appears
+ first, the 'convert.snp.text' does no such rearrangement.
  Because 
 \series bold
 gtdata@coding
@@ -6702,8 +6427,12 @@ Mega2R
 \end_layout
 
 \begin_layout Itemize
-defer reading the genotype table until the set of chromosomes that are needed
- can be computed and then only read the required chromosome genotype vectors.
+defer reading the 
+\series bold
+genotype_table
+\series default
+ until the set of chromosomes that are needed can be computed and then only
+ read the required chromosome genotype vectors.
 \end_layout
 
 \begin_layout Section
@@ -6794,7 +6523,7 @@ Authors' contributions
 \end_layout
 
 \begin_layout Standard
-RVB designed, debugged, and maintains Mega2R; DEW helped prepare the mega2r
+RVB designed, debugged, and maintains Mega2R; DEW helped prepare the Mega2R
  R package for submission to CRAN.
  RVB and JRS maintain and extend Mega2.
  DEW provided inspiration and provided the problems that Mega2R solves.
@@ -7842,7 +7571,7 @@ pos_avg
 \begin_inset Text
 
 \begin_layout Plain Layout
-prefered average genetic position
+preferred average genetic position
 \end_layout
 
 \end_inset
@@ -7862,7 +7591,7 @@ pos_female
 \begin_inset Text
 
 \begin_layout Plain Layout
-prefered female genetic position
+preferred female genetic position
 \end_layout
 
 \end_inset
@@ -7882,7 +7611,7 @@ pos_male
 \begin_inset Text
 
 \begin_layout Plain Layout
-prefered male genetic position
+preferred male genetic position
 \end_layout
 
 \end_inset

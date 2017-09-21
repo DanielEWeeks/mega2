@@ -521,6 +521,13 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
     }
 }
 
+# warning = function( ...) {
+#   ...
+#    withRestarts({
+#        .Internal(.signalCondition(cond, message, call))
+#        .Internal(.dfltWarn(message, call))
+#    }, muffleWarning = function() NULL)
+
 tryFn1 = function(op, geno, markersub, ranges, envir) {
     withRestarts( #aka    tryCatch
         withCallingHandlers (
@@ -537,22 +544,6 @@ tryFn1 = function(op, geno, markersub, ranges, envir) {
       abort = function () {
           message("tryFn() aborting transcript: ", paste(ranges, collapse=" "))
       }
-    )
-}
-
-#if warning prints out and  then tryCatch catches; no error
-#if NO warning prints  the errro clause reports
-# w/o warning handler, warnings accumulate
-tryFn2 = function(op, geno, markersub, ranges, envir) {
-    tryCatch( #aka    tryCatch
-            { op(geno, markersub, ranges, envir) },
-              error   = function(e) {
-                  message("tryFn() <simpleError:: ", conditionMessage(e), ">")
-                  message("tryFn() aborting transcript: ", paste(ranges, collapse=" "))
-##              },
-##              warning = function(w) {
-#                  message("tryFn() <simpleWarning:: ", conditionMessage(w), ">")
-             }
     )
 }
 
