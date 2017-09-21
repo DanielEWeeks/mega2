@@ -28,17 +28,17 @@
 go = function(db = 0) {
 #    if (db) browser()
 
-    library(mega2r)
+    library(Mega2R)
 
     ENV = dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db", verbose = 1)
     assign("ENV", ENV, inherits = TRUE)
 
     if (TRUE) {
 ##  ENV = dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db", verbose = 1)
-        source("mega2r/mega2_test.R")
+        source("Mega2R/mega2_test.R")
         tst1(ENV)
 
-        source("mega2r/mega2gene_test.R")
+        source("Mega2R/mega2gene_test.R")
         tst10(ENV)
         tst11(ENV)
         tst12(ENV)

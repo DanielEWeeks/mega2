@@ -25,7 +25,7 @@
 # 
 # ===========================================================================
 
-library(mega2r)
+library(Mega2R)
 
 ## test compressions 1 & 2 and raw vs neucleotide
 

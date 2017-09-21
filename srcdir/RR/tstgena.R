@@ -1,4 +1,4 @@
-library(mega2r)
+library(Mega2R)
 dump_mega2rtutorial_data()
 
 go = function() {

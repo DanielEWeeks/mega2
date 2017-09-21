@@ -54,7 +54,7 @@ FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 #'}
 dump_mega2rtutorial_data = function(dir = ".") {
     for (file in FILES) {
-        from = system.file("exdata", file, package="mega2r")
+        from = system.file("exdata", file, package="Mega2R")
         to   = paste(dir, file, sep="/")
         file.copy(from, to, copy.mode = TRUE, copy.date = TRUE)
     }

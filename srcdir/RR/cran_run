@@ -1,5 +1,5 @@
 #!/bin/bash -v
 
-R CMD BUILD mega2r
-R CMD check --as-cran mega2r_1.0.0.tar.gz
+R CMD BUILD Mega2R
+R CMD check --as-cran Mega2R_1.0.0.tar.gz
 

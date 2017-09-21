@@ -31,7 +31,7 @@ go = function() {
     print("## result environment returned in ENV")
 
 
-    library(mega2r)
+    library(Mega2R)
 
     aa=setwd("~/mega2/test/R/yj/realDataAnalysis/mega2")
     envir = init_pedgene("~/mega2/data/yj1.db", verbose = 1)

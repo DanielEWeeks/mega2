@@ -141,7 +141,7 @@ working directory and the latter files expect their data files to be in the
 working directory.  This is done by running:
 
 ```{r mega2rtutDump, message=FALSE}
-library(mega2r)
+library(Mega2R)
 dump_mega2rtutorial_data()
 ```
 
@@ -404,7 +404,7 @@ use the function `read.Mega2DB` to read a Mega2 database.
 
 
 ```{r, seqsimrdb,eval=FALSE}
-library(mega2r)
+library(Mega2R)
 ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 ```
 

@@ -25,7 +25,7 @@
 # 
 # ===========================================================================
 
-library(mega2r)
+library(Mega2R)
 
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(org.Hs.eg.db)

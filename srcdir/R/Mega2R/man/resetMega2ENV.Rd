@@ -7,7 +7,7 @@
 resetMega2ENV()
 }
 \value{
-an environment that contains a few initial tables read from the mega2r package.
+an environment that contains a few initial tables read from the Mega2R package.
 }
 \description{
 Mega2 uses an environment to store the data frames when it reads an SQLite database.

@@ -26,7 +26,7 @@
 #
 # ===========================================================================
 
-.onLoad <- function(libname = find.package("mega2r"), pkgname = "mega2r") {
+.onLoad <- function(libname = find.package("Mega2R"), pkgname = "Mega2R") {
   
 
     # CRAN Note avoidance
@@ -43,5 +43,5 @@
 }
 
 .onUnload <- function (libpath) {
-    library.dynam.unload("mega2r", libpath)
+    library.dynam.unload("Mega2R", libpath)
 }

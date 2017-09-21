@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2rcreate.R
 \name{showMega2ENV}
 \alias{showMega2ENV}
-\title{show Mega2r environment, viz. data frames and related info.}
+\title{show Mega2R environment, viz. data frames and related info.}
 \usage{
 showMega2ENV(envir = ENV)
 }
