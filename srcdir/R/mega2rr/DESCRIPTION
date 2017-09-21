@@ -1,4 +1,4 @@
-Package: mega2r
+Package: Mega2R
 Version: 1.0.0
 Date: 2017-08-22
 Title: Accessing and Processing a 'Mega2' Genetic Database  
@@ -13,7 +13,7 @@ Description: Uses as input genetic data that have been reformatted
      illustrate how to use the data frames as well as perform useful
      tasks: these permit one to run the 'pedgene' package to carry out
      gene-based association tests on family data using selected marker
-     subsets, to output the 'mega2r' data as a VCF file and related
+     subsets, to output the 'Mega2R' data as a VCF file and related
      files (for phenotype and family data), and to convert the data
      frames into 'GenABEL' gwaa.data-class objects.  
 Authors@R: c(person(c("Robert","V."), "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
