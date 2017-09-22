@@ -5,7 +5,7 @@ date: "`r format(Sys.time(), '%B %d, %Y, %R')`"
 output:
   rmarkdown::html_vignette:
 vignette: >
-  %\VignetteIndexEntry{Mega2r Tutorial}
+  %\VignetteIndexEntry{Mega2R Tutorial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 
@@ -106,12 +106,12 @@ We have also created several more functions that
 illustrate how to use the data frames as well as perform useful
 functions: these permit one to run the 'pedgene' package (https://CRAN.R-project.org/package=pedgene) to carry
 out gene-based association tests on family data using selected
-marker subsets, to output subsets of the 'mega2r' data as a VCF file (https://github.com/samtools/hts-specs) and
+marker subsets, to output subsets of the Mega2R data as a VCF file (https://github.com/samtools/hts-specs) and
 related files (for phenotype and family data), and to convert the
 data frames into 'GenABEL' gwaa.data-class objects (https://CRAN.R-project.org/package=GenABEL).
 
 This tutorial shows how to read the 'SQLite'
-database and how to access tables in it using this package, 'mega2r'.
+database and how to access tables in it using this package, Mega2R.
 The tutorial shows how to carry out gene-based analyses that select subsets
 of the data that corresponds to transcripts or other base pair ranges.  
 It is important to point out that
@@ -167,10 +167,10 @@ clean_mega2rtutorial_data()
 **We will assume that you have started an session at which to type the commands
 in the tutorial.**
 
-To run any of these exercises, you should install the package 'mega2r'.
+To run any of these exercises, you should install the package Mega2R.
 
 ```{r, install,eval=FALSE}
-install.packages("mega2r")
+install.packages("Mega2R")
 ```
 
 
@@ -395,11 +395,11 @@ If you wish to use any of the Mega2R functions described here on your own data, 
 
 ## 5.2 Reading and Examining a Mega2 Database
 
-The 'mega2r' package facilitates reading genetic data from a Mega2-created 'SQLite' database.
+The Mega2R package facilitates reading genetic data from a Mega2-created 'SQLite' database.
 
 ### 5.2.1 Reading a Mega2 database
 
-After you have created the 'SQLite' database, start up the R program. Load the 'mega2r' package, then
+After you have created the 'SQLite' database, start up the R program. Load the Mega2R package, then
 use the function `read.Mega2DB` to read a Mega2 database.
 
 
@@ -547,7 +547,7 @@ setAnnotations("txdb", "genedb")
 where "txdb" is a string that is the name of transcript database that was
 fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
 database that maps a gene id from the transcript to an entrez gene id.
-The `setAnnotations` command must be issued whenever R is started and the `mega2r`
+The `setAnnotations` command must be issued whenever R is started and the `Mega2R`
 library has been loaded.  By way of a reminder, Section 4.2
 explains how to choose and install "TxDb.Hsapiens.UCSC.hg19.knownGene" or a different
 Annotation database.
@@ -627,7 +627,7 @@ biocLite("org.Hs.eg.db")
 ```
 
 
-And then, to use the desired transcription data base, use this command from the 'mega2r' package as part of your session:
+And then, to use the desired transcription data base, use this command from the Mega2R package as part of your session:
 ```
 setAnnotations(txdb, entrezGene)
 ```
@@ -779,7 +779,7 @@ transcripts with the same or overlapping start values and end values.
 
 # 7 Outputting Mega2R data to VCF format
 
-The `Mega2VCF` function can output subsets of the mega2r database as a VCF file, accompanied by
+The `Mega2VCF` function can output subsets of the Mega2R database as a VCF file, accompanied by
 related files (for phenotype and family data).
 
 The VCF data format 
@@ -1334,7 +1334,7 @@ Default_Reset_Invalid=no
 Default_Outfile_Names=yes  
 
 
-Note: We have provided a copy of the srdta.db database in the 'mega2r' package.  So
+Note: We have provided a copy of the srdta.db database in the Mega2R package.  So
 you can proceed with the steps that follow, even if you did not create your own database.
 
 Now, we go back into R and type:

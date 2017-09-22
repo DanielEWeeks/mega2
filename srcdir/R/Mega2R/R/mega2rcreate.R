@@ -328,7 +328,7 @@ dbmega2_import = function(dbname,
 #' @return out which is a data frame with FID column, then IID column, and then
 #'  and additional column for each phenotype
 #'
-#' @keywords internal
+#' @export
 #'
 #' @examples
 #'\dontrun{
