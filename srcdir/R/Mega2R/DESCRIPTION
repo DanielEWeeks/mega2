@@ -1,6 +1,6 @@
 Package: Mega2R
 Version: 1.0.0
-Date: 2017-08-22
+Date: 2017-10-03
 Title: Accessing and Processing a 'Mega2' Genetic Database  
 Description: Uses as input genetic data that have been reformatted
      and stored in a 'SQLite' database; this database is initially
@@ -17,13 +17,14 @@ Description: Uses as input genetic data that have been reformatted
      files (for phenotype and family data), and to convert the data
      frames into 'GenABEL' gwaa.data-class objects.  
 Authors@R: c(person(c("Robert","V."), "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
-             person(c("Daniel","E."), "Weeks",    email = "weeks@pitt.edu", role = c("aut","cre")))
+             person(c("Daniel","E."), "Weeks",    email = "weeks@pitt.edu", role = c("aut","cre")),
+             person("","University of Pittsburgh",role=c("cph")))
 URL: https://watson.hgen.pitt.edu/mega2/mega2r/
 BugReports: https://groups.google.com/forum/#!forum/mega2-users
 Depends: R (>= 3.3.3),
          GenABEL,
          pedgene
-License: GPL (>= 3)
+License: GPL-2
 LinkingTo: Rcpp
 LazyData: true
 Imports:
