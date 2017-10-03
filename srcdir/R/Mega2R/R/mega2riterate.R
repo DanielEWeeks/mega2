@@ -264,7 +264,7 @@ read.Mega2DB = function(db, ...) {
 #'  a data frame that is added to the 'environment'.
 #'
 #' @importMethodsFrom GenomeInfoDb 'seqlevels<-'
-#' @importFrom AnnotationDbi select
+#' @importFrom AnnotationDbi select keys
 #' @export
 #'
 #' @examples
@@ -292,7 +292,7 @@ read.Mega2DB = function(db, ...) {
 #'
 #'}
 applyFnToGenes = function (op = function (geno, markers, range, envir) {},
-                           genes_arg = c("ELL2", "CARD15"),
+                           genes_arg = c("*"),
                            ranges_arg  = matrix(ncol = 3, nrow = 0),
                            chrs_arg  = vector("integer", 0),
                            markers_arg  = vector("character", 0),
@@ -303,20 +303,44 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
     env1=loadNamespace(envir$txdb)
     txdb = get(envir$txdb, env1)
     if (type_arg == "TX")
-        COLS = c("TXNAME", "TXID", "TXSTRAND", "TXCHROM", "TXSTART", "TXEND")
+        COLS = c("GENEID", "TXNAME", "TXID", "TXSTRAND", "TXCHROM", "TXSTART", "TXEND")
     else
         COLS = c("EXONNAME", "EXONID", "EXONSTRAND", "EXONCHROM", "EXONSTART", "EXONEND")
 
-    seqlevels(txdb) = paste("chr", c(1:22, "X", "Y", "M"), sep="")
-    
+    seqlevels(txdb) = paste("chr", c(1:22, "X", "Y", "XY", "M"), sep="")
+
     env2=loadNamespace(envir$entrezGene)
     genedb = get(envir$entrezGene, env2)
 
-    entrez = select(genedb, keys = genes_arg, columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ALIAS")
-    pb = select(txdb, keys = entrez[ , 2], columns = COLS, keytype = "GENEID")
-    ranges = merge(entrez, pb, by.x = "ENTREZID", by.y = "GENEID")
+    if (genes_arg[1] == "*") {
+        entrez = select(genedb, keys = keys(genedb, keytype="ENTREZID"),
+                        columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ENTREZID")
+        entrez = entrez[ !duplicated(entrez[ , 1]), ]
 
-    ranges[ , 6] = as.integer( sub("chr", "", ranges[ ,6]))
+        pb = select(txdb, keys = keys(txdb, keytype="TXID"),
+                    columns = COLS, keytype = "TXID")
+        pb = pb[!duplicated(pb[ , c(4,6,7)]), ]
+    } else {
+        entrez = select(genedb, keys = genes_arg,
+                        columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ALIAS" )
+        entrez = entrez[ !duplicated(entrez[ , 2]), ]
+
+        pb = select(txdb, keys = entrez[ , 2], columns = COLS, keytype = "GENEID")
+        pb = pb[!duplicated(pb[ , c(4,6,7)]), ]
+    }
+
+    chr2int = data.frame(chr = c(1:26, 23:26, 0))
+    chr2int$txchrom = paste("chr", chr2int$chr, sep = "")
+    chr2int[27:31,2] = c("chrX", "chrY", "chrXY", "chrM", "chrUn")
+    xx = function(l) { l[1] }
+    pb$TXCHROM = chr2int$chr[match(sapply(strsplit(pb$TXCHROM, "_"), xx), chr2int$txchrom)]
+
+    ranges = merge(entrez, pb, by.x = "ENTREZID", by.y = "GENEID", all.y = TRUE)
+    if (genes_arg[1] == "*") {
+        ranges[is.na(ranges[,2]),2] = ranges[is.na(ranges[,2]),5]
+        ranges[is.na(ranges[,3]),3] = ranges[is.na(ranges[,3]),5]
+    }
+
     if (length(fuzz_arg) == 2) {
         if (fuzz_arg[1] != 0 | fuzz_arg[2] != 0) {
             ranges[ , 8] = ranges[ , 8] - fuzz_arg[1]
@@ -486,9 +510,9 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
         ranges  = ranges_arg
         indices = indices_arg
     }
+
     rows = nrow(ranges)
     if (rows) {
-
         start = ranges[ , indices[2]]
         end   = ranges[ , indices[3]]
         if (length(fuzz_arg) == 2) {
@@ -502,21 +526,50 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
         }
         chrm = as.integer(sub("chr", "", ranges[ , indices[1]]))
 
+        Uranges    = data.frame(start=integer(rows), end=integer(rows), chrm=integer(rows), i=integer(rows))
+        Umarkersub = vector("list", rows)
+
         for (i in 1:rows) {
 
             if (is.na(chrm[i]) || is.na(start[i]) || is.na(end[i]) ) next
 
             markersub = envir$markers[ envir$markers$chromosome == chrm[i] & envir$markers$position <= (end[i]) & envir$markers$position >= (start[i]), ]
 
+            Umarkersub[[i]] = markersub
+
             if (nrow(markersub)) {
-                geno = getgenotypes(markersub, envir = envir)
-                tryFn(op, geno, markersub, ranges[i, ], envir)
+                j2 = j2 + 1
+                markersubpos     = sort(markersub$position)
+                Uranges$start[i] = markersubpos[1]
+                Uranges$end[i]   = markersubpos[length(markersubpos)]
+                Uranges$chrm[i]  = chrm[i]
+                Uranges$i[i]     = i
             } else {
                 if (envir$verbose)
-                    message("tryFn() No markers in range: ", paste(ranges[i, ], collapse=" "))
+                    message("tryFn() No markers in range: ", paste(ranges[i, ], collapse=", "))
+                next
+            }
+        }
+
+        Uranges =  Uranges[ ! duplicated(Uranges[,1:3]), ]
+
+        for (i in Uranges$i)
+        {
+            if (i == 0) next
+
+#            if (is.na(chrm[i]) || is.na(start[i]) || is.na(end[i]) ) next
+
+#            markersub = envir$markers[ envir$markers$chromosome == chrm[i] & envir$markers$position <= (end[i]) & envir$markers$position >= (start[i]), ]
+             markersub = Umarkersub[[i]]
+#            if (nrow(markersub)) {
+                geno = getgenotypes(markersub, envir = envir)
+                tryFn(op, geno, markersub, ranges[i, ], envir)
+#            } else {
+#                if (envir$verbose)
+#                    message("tryFn() No markers in range: ", paste(ranges[i, ], collapse=", "))
 #                   message("No markers in range:  chr", chrm[i], " between ", start[i], " and ",
 #                           end[i], "\n")
-            }
+#            }
         }
     }
 }
@@ -542,7 +595,7 @@ tryFn1 = function(op, geno, markersub, ranges, envir) {
              }
         ),
       abort = function () {
-          message("tryFn() aborting transcript: ", paste(ranges, collapse=" "))
+          message("tryFn() aborting transcript: ", paste(ranges, collapse=", "))
       }
     )
 }
@@ -558,7 +611,7 @@ tryFn = function(op, geno, markersub, ranges, envir) {
         ),
         error = function(e) {
                   message("tryFn() <simpleError:: ", conditionMessage(e), ">")
-                  message("tryFn() aborting transcript: ", paste(ranges, collapse=" "))
+                  message("tryFn() aborting transcript: ", paste(ranges, collapse=", "))
               }
     )
 }
