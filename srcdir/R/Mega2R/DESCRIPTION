@@ -1,6 +1,6 @@
 Package: Mega2R
 Version: 1.0.0
-Date: 2017-08-22
+Date: 2017-10-03
 Title: Accessing and Processing a 'Mega2' Genetic Database  
 Description: Uses as input genetic data that have been reformatted
      and stored in a 'SQLite' database; this database is initially
