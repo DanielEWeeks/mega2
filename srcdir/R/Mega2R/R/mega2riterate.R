@@ -307,7 +307,7 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
     else
         COLS = c("EXONNAME", "EXONID", "EXONSTRAND", "EXONCHROM", "EXONSTART", "EXONEND")
 
-    seqlevels(txdb) = paste("chr", c(1:22, "X", "Y", "XY", "M"), sep="")
+    seqlevels(txdb) = paste("chr", c(1:22, "X", "Y", "M"), sep="")
 
     env2=loadNamespace(envir$entrezGene)
     genedb = get(envir$entrezGene, env2)
@@ -538,7 +538,6 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
             Umarkersub[[i]] = markersub
 
             if (nrow(markersub)) {
-                j2 = j2 + 1
                 markersubpos     = sort(markersub$position)
                 Uranges$start[i] = markersubpos[1]
                 Uranges$end[i]   = markersubpos[length(markersubpos)]
@@ -557,19 +556,9 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
         {
             if (i == 0) next
 
-#            if (is.na(chrm[i]) || is.na(start[i]) || is.na(end[i]) ) next
-
-#            markersub = envir$markers[ envir$markers$chromosome == chrm[i] & envir$markers$position <= (end[i]) & envir$markers$position >= (start[i]), ]
              markersub = Umarkersub[[i]]
-#            if (nrow(markersub)) {
-                geno = getgenotypes(markersub, envir = envir)
-                tryFn(op, geno, markersub, ranges[i, ], envir)
-#            } else {
-#                if (envir$verbose)
-#                    message("tryFn() No markers in range: ", paste(ranges[i, ], collapse=", "))
-#                   message("No markers in range:  chr", chrm[i], " between ", start[i], " and ",
-#                           end[i], "\n")
-#            }
+             geno = getgenotypes(markersub, envir = envir)
+             tryFn(op, geno, markersub, ranges[i, ], envir)
         }
     }
 }
