@@ -5,7 +5,7 @@
 \title{apply a function to the genotypes (markers) in each gene transcript and/or range}
 \usage{
 applyFnToGenes(op           = function (geno, markers, range, envir) {},
-               genes_arg    = c("ELL2", "CARD15"),
+               genes_arg    = c("*"),
                ranges_arg   = matrix(ncol = 3, nrow = 0),
                chrs_arg     = vector("integer", 0),
                markers_arg  = vector("character", 0),

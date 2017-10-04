@@ -7,8 +7,8 @@
 #
 #   This file is part of the Mega2R program, which is free software; you
 #   can redistribute it and/or modify it under the terms of the GNU
-#   General Public License as published by the Free Software Foundation;
-#   either version 3 of the License, or (at your option) any later
+#   General Public License as published by the Free Software Foundation,
+#   either version 2 of the License, or (at your option) any later
 #   version.
 #
 #   Mega2R is distributed in the hope that it will be useful, but WITHOUT
@@ -197,7 +197,7 @@ read.Mega2DB = function(db, ...) {
 #'
 #' @usage
 #' applyFnToGenes(op           = function (geno, markers, range, envir) {},
-#'                genes_arg    = c("ELL2", "CARD15"),
+#'                genes_arg    = c("*"),
 #'                ranges_arg   = matrix(ncol = 3, nrow = 0),
 #'                chrs_arg     = vector("integer", 0),
 #'                markers_arg  = vector("character", 0),
@@ -329,11 +329,16 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
         pb = pb[!duplicated(pb[ , c(4,6,7)]), ]
     }
 
-    chr2int = data.frame(chr = c(1:26, 23:26, 0))
+    chr2int = data.frame(chr = c(1:26, 23:26))
     chr2int$txchrom = paste("chr", chr2int$chr, sep = "")
-    chr2int[27:31,2] = c("chrX", "chrY", "chrXY", "chrM", "chrUn")
-    xx = function(l) { l[1] }
-    pb$TXCHROM = chr2int$chr[match(sapply(strsplit(pb$TXCHROM, "_"), xx), chr2int$txchrom)]
+    chr2int[27:30,2] = c("chrX", "chrY", "chrXY", "chrM")
+##  deleted chrUn
+##  allow stuff after chr#_
+##  xx = function(l) { l[1] }
+##  pb$TXCHROM = chr2int$chr[match(sapply(strsplit(pb$TXCHROM, "_"), xx), chr2int$txchrom)]
+##  else don't
+    pb$TXCHROM = chr2int$chr[match(pb$TXCHROM, chr2int$txchrom)]
+    pb = pb[! is.na(pb$TXCHROM), ]
 
     ranges = merge(entrez, pb, by.x = "ENTREZID", by.y = "GENEID", all.y = TRUE)
     if (genes_arg[1] == "*") {
