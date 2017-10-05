@@ -8,7 +8,8 @@ mkMarkers(bpPosMap = 1, envir = ENV)
 }
 \arguments{
 \item{bpPosMap}{An integer that indicates the map (index) to use to merge the
-chromosome/position fields from the map_table data frame to the marker_table data frame.}
+chromosome/position fields from the map_table data frame to the marker_table data frame.
+See showMapNames() for the string name to index mapping.}
 
 \item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
@@ -30,7 +31,7 @@ observations: \describe{
 }
 \details{
 Select a map (index) from the map_table to merge with the select marker_table
- data frame to make the marker data frame.  See showMapNames() for map string to map index mapping.
+ data frame to make the marker data frame.  See showMapNames() for the string name to index mapping.
 }
 \examples{
 \dontrun{

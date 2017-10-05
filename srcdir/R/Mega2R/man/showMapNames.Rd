@@ -13,8 +13,8 @@ showMapNames(envir = ENV)
 None
 }
 \description{
-Mega2 allows several different physical and genetic maps to be stored and used to select
- distances.  This function shows the association between mapno and mapname.
+Mega2R allows several different physical and genetic maps to be stored and used to select
+ positions.  This function shows the association between map number and map name.
 }
 \examples{
 \dontrun{

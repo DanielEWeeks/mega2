@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2pedgene.R
 \name{Mega2pedgene}
 \alias{Mega2pedgene}
-\title{execute the CRAN pedgene function on a subset of the default gene transcript ranges}
+\title{execute the CRAN pedgene function on a transcript ranges}
 \usage{
 Mega2pedgene(gs = 1:100, envir = ENV)
 }
@@ -20,7 +20,7 @@ Execute the pedgene function on the first \emph{gs} default gene transcript rang
 }
 \note{
 This code starts by deleting the output file set in \code{init_pedgene} ("pedgene.txt" by default).  Then \code{Dopedgene}
- is applied to all the appropriate ranges.  Finally, the data frame of results, \emph{envir$pedgene_results}, is written
+ is applied to all the selected ranges that contain markers.  Finally, the data frame of results, \emph{envir$pedgene_results}, is written
  to the output file.
 }
 \examples{

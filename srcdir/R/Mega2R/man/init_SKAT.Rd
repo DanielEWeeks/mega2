@@ -22,12 +22,13 @@ variation.  FALSE means ignore markers that show no variation; this is the defau
 "environment" containing data frames from an SQLite database and some computed values.
 }
 \description{
-This populates the \bold{R} data frames from the specified \bold{Mega2 R} database.  It then
+This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite database.  It then
  prunes the samples to only include members that have a definite case or control
  status.  Undefined samples are ignored.
 }
 \note{
-\emph{init_SKAT} calculates phenotypes as a data frame and initializes a matrix to aid
+\emph{init_SKAT} creats a data frame, \emph{envir$phe}, of phenotype observations.
+ In addition, it initializes a matrix to aid
   in translating a genotype allele matrix to a genotype count matrix.
 
  It also initializes the dataframe \emph{envir$SKAT_results} to zero rows.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2riterate.R
 \name{applyFnToMarkers}
 \alias{applyFnToMarkers}
-\title{apply a function to the genotypes in a set of markers}
+\title{apply a function to the genotypes from a set of markers}
 \usage{
 applyFnToMarkers(op      = function (geno, markers, range, envir) {},
                 markers_arg,
@@ -13,10 +13,10 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
 \code{applyFnToMarkers} in a try/catch context.  The arguments are:
 \describe{
 \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
-\item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 variables:
+\item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
-\item{locus_link_fill}{is the position of corresponding genotype data in the
+\item{locus_link_fill}{is the position of corresponding marker genotype data in the
 \emph{unified_genotype_table}}
 \item{MarkerName}{is the text name of the marker}
 \item{chromosome}{is the integer chromosome number}
@@ -24,13 +24,13 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
  }
 }
 \item{range}{NULL: to indicate no explicit range was specified.}
-\item{envir}{An 'environment' holding Mega2 data frames and state data.}
+\item{envir}{An 'environment' holding Mega2R data frames and state data.}
 }}
 
-\item{markers_arg}{a data frame with the following 5 variables:
+\item{markers_arg}{a data frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
-\item{locus_link_fill}{is the position of corresponding genotype data in the
+\item{locus_link_fill}{is the position of corresponding marker genotype data in the
 \emph{unified_genotype_table}}
 \item{MarkerName}{is the text name of the marker}
 \item{chromosome}{is the integer chromosome number}
@@ -43,7 +43,7 @@ applyFnToMarkers(op      = function (geno, markers, range, envir) {},
 None
 }
 \description{
-A matrix of the genotypes for all the markers is generated.  Then, the call back function, \code{op},
+A matrix of the genotypes for all the specified markers is generated.  Then, the call back function, \code{op},
   is called with the genotypes, markers, NULL (for the range), and the 'environment'.
 }
 \examples{

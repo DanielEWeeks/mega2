@@ -10,8 +10,8 @@ mkphenotype(envir)
 \item{envir}{"environment" containing SQLite database and other globals}
 }
 \value{
-out which is a data frame with FID column, then IID column, and then
- and additional column for each phenotype
+is a data frame with FID column, then IID column, and then
+ an additional column for each phenotype.
 }
 \description{
 Convert data in phenotype_table to a data frame of columns that are phenotypes.

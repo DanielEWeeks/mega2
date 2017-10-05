@@ -13,8 +13,8 @@ clean_mega2rtutorial_data(dir = ".")
 None
 }
 \description{
-This function removes the Mega2rtutorial (inst/exdata) data that was
-dumped in the specified directory.
+This function removes the Mega2R tutorial (inst/exdata) data that was
+copied to the specified directory.
 }
 \examples{
 \dontrun{

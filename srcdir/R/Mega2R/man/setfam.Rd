@@ -19,7 +19,7 @@ None
 You should first modify the \emph{fam} data frame to filter the members you need to remove.
  (For example, you might  want to delete members that have an unknown case/control status.)
  This function takes a new data frame of pedigree information and replaces the \emph{fam}
- data frame with it in the 'environment'.  Additionally,
+ data frame in the 'environment' with it.  Additionally,
  changing \emph{fam} data frame will filter the genotypes data frame to only contain persons
  matching those in the \emph{fam} data frame.  \code{setfam} also filters for the phenotype data
  records.

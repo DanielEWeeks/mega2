@@ -15,10 +15,10 @@ applyFnToRanges(op          = function (geno, markers, range, envir) {},
 \code{applyFnToRanges} in a try/catch context.  The arguments are:
 \describe{
 \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
-\item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 variables:
+\item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
-\item{locus_link_fill}{is the position of corresponding genotype data in the
+\item{locus_link_fill}{is the position of corresponding marker genotype data in the
 \emph{unified_genotype_table}}
 \item{MarkerName}{is the text name of the marker}
 \item{chromosome}{is the integer chromosome number}
@@ -26,11 +26,11 @@ applyFnToRanges(op          = function (geno, markers, range, envir) {},
  }
 }
 \item{range}{An indicator of which range argument of \code{applyFnToRanges} these markers correspond to.}
-\item{envir}{An 'environment' holding Mega2 data frames and state data.}
+\item{envir}{An 'environment' holding Mega2R data frames and state data.}
 }}
 
-\item{ranges_arg}{is a data frame that contains at least 4 variables: a name, a chromosome, a 
-startbase pair position and an end base pair position.}
+\item{ranges_arg}{is a data frame that contains at least 4 observations: a name, a chromosome, a 
+start base pair position and an end base pair position.}
 
 \item{indices_arg}{is a vector of 3 integers that specify the location of chromosome, start base
 pair column and end base pair column of the ranges_arg data frame.}
@@ -46,11 +46,13 @@ can be positive or negative.}
 None
 }
 \description{
-The function \code{op} will be called for every set of markers that is falls in each range.
+For each set of
+ markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
+ each range with the genotypes matrix, markers, range, and 'environment'.
 }
 \note{
 If the \emph{ranges_arg} and \emph{indices_arg} are NULL or missing, then the default ranges that have been set by \code{setRanges}
- are used.  If \code{setRanges} has not been set, a default set of the RefGene ranges is used.
+ are used.  If \code{setRanges} has not been called, a default set of the ranges is used.
 }
 \examples{
 \dontrun{

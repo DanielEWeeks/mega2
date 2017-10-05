@@ -7,7 +7,7 @@
 getgenotypesgenabel(markers_arg, envir = ENV)
 }
 \arguments{
-\item{markers_arg}{a data.frame with the following 5 variables:
+\item{markers_arg}{a data.frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
 \item{locus_link_fill}{is the position of corresponding genotype data in the
@@ -20,11 +20,12 @@ getgenotypesgenabel(markers_arg, envir = ENV)
 \item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
-a GenABEL gwaa.data-class object representing the Mega2 environment information
+a list of two elements:  The first is the GenABEL gwaa.data-class object partcomponent
+ that contains the genotype data.  The second is the allele frequencies for each marker.
 }
 \description{
-This function calls a C++ function that does all the heavy lifting.  It passes the necessary
- arguments to the C++ function: some from its existing arguments and some from data frames
+This function calls a C++ function that does all the heavy lifting.  It passes the arguments
+ necessary for the C++ function: some from the caller's arguments and some from data frames
  that are in the "global" environment, \bold{envir}.  From its markers_arg argument, it gets
  the locus_index and the index in the \emph{unified_genotype_table}.
  From the "global" environment, \bold{envir}, it gets a bit vector of compressed genotype information,
@@ -34,21 +35,22 @@ This function calls a C++ function that does all the heavy lifting.  It passes t
  compression.
 }
 \details{
-The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
+This function reads the genotype data in Mega2 compressed format and converts it to the GenABEL
+ compressed format. 
+ The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
  there are two bits for each genotype;  each byte has the data for 4 markers.  In GenABEL,
  there is one raw vector per marker, and each byte has the data for 4 persons.  The C++
- function does this conversion as well as adjust the bit values.  For example, in GenABEL
+ function does the conversion as well as adjust the bits contents.  For example, in GenABEL
  the genotype represented by bits == 0, is what Mega2 represents with 2.
  Doing the conversion in C++ is 10 - 20 times faster than converting the Mega2 data to
  PLINK .tped files and then having GenABEL read in and process/convert those files.
 }
+\note{
+This function is called from \code{Mega2ENVGenABEL}; it is not intended to be called
+ by the programmer.
+}
 \examples{
 \dontrun{
-# two ints in upper/lower half integer representing allele for all persons in
-# markers data.frame argument
-getgenotypesgenabel(ENV$markers)
-
-# two ints in upper/lower half integer representing allele # for all persons in chromosome n
 getgenotypesgenabel(ENV$markers[ENV$markers$chromosome == n,])
 }
 }

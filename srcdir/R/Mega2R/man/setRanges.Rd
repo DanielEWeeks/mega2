@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2riterate.R
 \name{setRanges}
 \alias{setRanges}
-\title{set default ranges: chromosome and start/end base pair for each element in the default range data}
+\title{set default range data: chromosome and start/end base pair}
 \usage{
 setRanges(ranges, indices, envir = ENV)
 }
@@ -20,7 +20,7 @@ None
 }
 \description{
 This function sets the default list of ranges used by \code{applyFnToRanges}.  \code{applyFnToRanges}
- examines the ranges and each set of markers that fall within a range will be
+ examines each range and the set of markers that fall within the range will be
  processed.
 }
 \examples{

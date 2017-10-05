@@ -29,11 +29,11 @@
 #library(GenABEL)
 
 
-#' generate gwaa.data-class object
+#' generate gwaa.data-class object from a \bold{Mega2R} database
 #'
 #' @description
-#'  Call the package's functions to: create a .tped file, a .tfam file and a .phe file.
-#'  Then call the GenABEL functions to process these files; the .tped and the .tfam
+#'  Call the \emph{Mega2R} functions to: create a .tped file, a .tfam file and a .phe file.
+#'  Then call the GenABEL functions to process these files: the .tped and the .tfam
 #'  file are processed by \code{convert.snp.tped} to produce a tped.raw file.  The latter
 #'  is combined with a .phe (phenotype) file by \code{load.gwaa.data} to create a gwaa.data-class
 #'  object in memory.
@@ -95,9 +95,9 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #'
 #' @description
 #'  create a gwaa.data-class object from the data frames in a Mega2 environment.  This
-#'  function calls a front end that eventually calls a C++ Rcpp function that reads
+#'  function is a front end that eventually calls a C++ Rcpp function that reads
 #'  the genotype data in Mega2 compressed format and converts it to the GenABEL
-#'  compressed format.  With any luck, the results of \code{Mega2ENVGenABEL} are the same
+#'  compressed format.  The results of \code{Mega2ENVGenABEL} are/should be the same
 #'  as \code{Mega2GenABEL}, but the calculation is much faster, typically a factor of 10 to 20.
 #'
 #' @param markers data frame of markers to be processed

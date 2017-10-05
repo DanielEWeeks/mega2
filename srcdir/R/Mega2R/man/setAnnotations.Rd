@@ -21,6 +21,10 @@ This function takes two string parameters:
   one to specify entrez gene ids to transcripts,
   the other to map gene names to entrez gene id's.
 }
+\note{
+\bold{Mega2R} will take care to load the necessary databases, but you will have to
+ install them from Bioconductor.  This is explained at length in the package Vignette.
+}
 \examples{
 \dontrun{
 setAnnotations("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db")

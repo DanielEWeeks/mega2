@@ -11,7 +11,7 @@ TBLSFilter
 }
 \description{
 This list contains named values.  The name corresponds to an SQLite database table.
- The value is a character string of column names from the "named" table that should be stored.  An entry
+ The value is a character string of column names from the "named" table that should be fetched.  A table
  is in this list, if not all the database table columns are needed.  The columns for each table are separated
  by commas.
 }

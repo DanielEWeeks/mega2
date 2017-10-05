@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2skat.R
 \name{DOSKAT}
 \alias{DOSKAT}
-\title{DOSKAT call back function}
+\title{SKAT call back function}
 \usage{
 DOSKAT(geno_arg, markers_arg, range_arg, envir, ...)
 }
@@ -11,7 +11,7 @@ DOSKAT(geno_arg, markers_arg, range_arg, envir, ...)
 foreach marker in markers_arg.
 Each cell contains the two characters indicating the nucleotides for the marker.}
 
-\item{markers_arg}{a data.frame with the following 5 variables:
+\item{markers_arg}{a data.frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
 \item{locus_link_fill}{is the position of corresponding genotype data in the
@@ -35,17 +35,17 @@ None
 \description{
 Convert the genotype allele  patterns of 1/1, 1/2 (and 2/1) and 2/2 in the genotype matrix
  to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
- minor allele frequency.)  Ignore markers that have no variants (inless allMarkers is TRUE)
+ minor allele frequency.)  Ignore markers that have no variants (unless allMarkers is TRUE).
  Finally, invoke \code{SKAT} with the converted genotype matrix, Null model saved in envir$obj,
- and any additional supplied arguments.
+ and any additionally supplied arguments.
  Save information about the range and the p.value calculated by \code{SKAT} 
  in \emph{envir$SKAT_results}.
 }
 \note{
 This function accumulates output in the data frame, \emph{envir$SKAT_results}.  It will
  print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write
- the data frame to a file.  You must save the data frame or the "observations" you need
- by yourself.  You also must initialize the data frame when necessary.
+ the data frame to a file.  You must save the data frame.
+ You also must initialize the data frame when necessary.
 }
 \examples{
 \dontrun{

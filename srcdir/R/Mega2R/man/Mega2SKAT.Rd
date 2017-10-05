@@ -11,7 +11,7 @@ Mega2SKAT(f, ty, gs = 1:100, genes = NULL, skat = SKAT::SKAT,
 \item{f}{SKAT_Null_Model formula.  If this is non NULL, envir$obj is initialized by calling
 SKAT_Null_Model(f, out_type = ty).  If you need to specify additional arguments to the Model
 viz. (data, Adjustment, n.Resampling, type.Resampling)
-or need to use a different model viz. SKAT_NULL_emmaX, SKAT_Null_Model_ChrX
+or need to use a different model viz. SKAT_NULL_emmaX, \cr SKAT_Null_Model_ChrX
 set the formula to NULL, then before Mega2SKAT is called, build the model you need and
 assign it to ENV$obj.}
 
@@ -21,7 +21,7 @@ assign it to ENV$obj.}
 the \emph{DOSKAT} function.}
 
 \item{genes}{a list of genes over which to calculate the \emph{DOSKAT} function.
-"*" use all the transcripts in the Bioconductor database.}
+The value, "*", means use all the transcripts in the selected Bioconductor database.}
 
 \item{skat}{alternate SKAT function, viz. SKATBinary, SKAT_CommonRare.  If it is also
 necessary is to pass additional arguments to the SKAT function, they may be added to the end
@@ -29,7 +29,7 @@ of the Mega2SKAT function and will be passed.  See examples}
 
 \item{envir}{'environment' containing SQLite database and other globals}
 
-\item{...}{extra arguments for SKAT}
+\item{...}{extra arguments for skat}
 }
 \value{
 None
@@ -40,10 +40,10 @@ Execute the SKAT function on the first \emph{gs} default gene transcripts (gs = 
 }
 \note{
 This code starts by deleting the output file set in \code{init_SKAT} ("SKAT.txt" by default).
- Then \code{SKAT_Null_Model} is called if the formula is not NULL.  A helper function
+ Then \cr\code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
  \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
  \code{DOSKAT} with the appropriate arguments (including those additional to the
- \code{Mega2SKAT} function.  The function, \code{DOSKAT}, is defined next.
+ \code{Mega2SKAT} function.
  Finally, the data frame of results, \emph{envir$SKAT_results}, is written
  to the output file.
 }

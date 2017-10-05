@@ -29,14 +29,18 @@ Generate a data frame with a row for each person.  The observations are:
 \strong{father} \tab father of person\cr
 \strong{mother} \tab mother of person\cr
 \strong{sex} \tab sex of person\cr
-\strong{trait} \tab value of case/control trait for person
+\strong{trait} \tab value of case/control phenotype for person
 }
 }
 \note{
-The columns of this data frame come from the data frames: \emph{pedigree_table}, \emph{person_table}, and \emph{trait_table}.
+The columns of this data frame come by selecting the values after merging the data frames: \emph{pedigree_table}, \emph{person_table}, and \emph{trait_table}.
 
 Also, the father and mother columns from \emph{person_table} are translated from the row index in the
 \emph{person_table} to the corresponding name.
+
+This function stores the data frame in the 'environment' and also returns it.
+ The function \code{setfam()} stores the data frame
+ into the 'environment' and adjusts the \emph{genotype_table} and the \emph{phenotype_table}.
 }
 \examples{
 \dontrun{

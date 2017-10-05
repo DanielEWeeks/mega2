@@ -46,7 +46,7 @@
 #' \strong{father} \tab father of person\cr
 #' \strong{mother} \tab mother of person\cr
 #' \strong{sex} \tab sex of person\cr
-#' \strong{trait} \tab value of case/control trait for person
+#' \strong{trait} \tab value of case/control phenotype for person
 #' }
 #'
 #' @usage
@@ -78,11 +78,16 @@
 ## }
 #'
 #' @note
-#' The columns of this data frame come from the data frames: \emph{pedigree_table}, \emph{person_table}, and \emph{trait_table}.
+#' The columns of this data frame come by selecting the values after merging the data frames: \emph{pedigree_table}, \emph{person_table}, and \emph{trait_table}.
 #'
 #' @note
 #' Also, the father and mother columns from \emph{person_table} are translated from the row index in the
 #' \emph{person_table} to the corresponding name.
+#'
+#' @note
+#'  This function stores the data frame in the 'environment' and also returns it.
+#'  The function \code{setfam()} stores the data frame
+#'  into the 'environment' and adjusts the \emph{genotype_table} and the \emph{phenotype_table}.
 #'
 #' @examples
 #'\dontrun{
@@ -126,7 +131,7 @@ mkfam = function (brkloop = FALSE, traitname = "default", envir = ENV) {
 #' You should first modify the \emph{fam} data frame to filter the members you need to remove.
 #'  (For example, you might  want to delete members that have an unknown case/control status.)
 #'  This function takes a new data frame of pedigree information and replaces the \emph{fam}
-#'  data frame with it in the 'environment'.  Additionally,
+#'  data frame in the 'environment' with it.  Additionally,
 #'  changing \emph{fam} data frame will filter the genotypes data frame to only contain persons
 #'  matching those in the \emph{fam} data frame.  \code{setfam} also filters for the phenotype data
 #'  records.
@@ -159,10 +164,14 @@ setfam = function (fam, envir = ENV) {
 #' @description
 #'  Call \code{dbmega2_import()} with the specified database and create an 'environment', with the
 #'  SQLite table data loaded into data frames.
-#'  Also run \code{mkfam} to create the pedigree data frame \emph{fam} and then store it with \code{setfam}.
-#'  This modifies the \emph{unified_genotype_table} (and \emph{phenotype_table}) to match the family members
-#'  that remain.  By default, this will remove one of each
-#'  person that was replicated to break loops in the pedigree, see \code{setfam} for details.
+#'  Also run \code{mkfam()} to create the pedigree data frame \emph{fam} and then store it with \code{setfam()}.
+#'  \code{setfam()} modifies the \emph{unified_genotype_table} (and \emph{phenotype_table}) to match the family members
+#'  that remain.
+#' @note
+#' By default, \code{mkfam} will remove one of each
+#'  person that was replicated to break loops in the pedigree, see \code{mkfam} for details.
+#'  If you want to leave loops broken, the code is available, but you will have to write your own
+#'  version of read.Mega2DB with a different invokation of \code{mkfam()}.
 #'
 #' @param db specify SQLite database to load
 #'
@@ -188,10 +197,12 @@ read.Mega2DB = function(db, ...) {
 #' apply a function to the genotypes (markers) in each gene transcript and/or base pair range
 #'
 #' @description
-#'  This function generates data from several ranges.  Each range specifies a chromosome, a start
-#'  base pair and end base pair.  A range could be a gene transcript.
-#'  The first step will find all the
-#'  rows (i.e. markers) from the \emph{markrs} data frame that fall in each range.  For these
+#'  This function generates base pair ranges from its input arguments.
+#'  Each range specifies a chromosome, a start
+#'  base pair and end base pair.  Typically, a range could be a gene transcript, though
+#'  it could be a whole chromosome, or a run of base pairs on a chromosome.  Once the
+#'  ranges are generated, \code{applyFnToRanges} is called to find all the
+#'  rows (i.e. markers) from the \emph{markers} data frame that fall in each range.  For these
 #'  markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
 #'  each range with the genotypes matrix, markers, range, and 'environment'.
 #'
@@ -209,7 +220,7 @@ read.Mega2DB = function(db, ...) {
 #' \code{applyFnToGenes} in a try/catch context.  The arguments are:
 #' \describe{
 #' \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
-#' \item{markers}{Marker data for each marker selected.  A marker is a data frame with the following 5 variables:
+#' \item{markers}{Marker data for each marker selected.  A marker is a data frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
 #' \item{locus_link_fill}{is the position of corresponding marker genotype data in the
@@ -219,14 +230,15 @@ read.Mega2DB = function(db, ...) {
 #' \item{position}{is the integer base pair position of marker}
 #'  }
 #' }
-#' \item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
-#' \item{envir}{An 'environment' holding Mega2 data frames and state data.}
+#' \item{range}{An indicator of which range argument these markers correspond to.}
+#' \item{envir}{An 'environment' holding Mega2R data frames and state data.}
 #' }
 #'
 #' @param genes_arg a character vector of gene names.
 #'  All the transcripts identified with the specified gene in BioConductor Annotation,\cr
 #'  \bold{TxDb.Hsapiens.UCSC.hg19.knownGene}, are selected.  This produces multiple "range"
-#'  elements containing chromosome, start base pair, end base pair.  Note: BioCoductor Annotation
+#'  elements containing chromosome, start base pair, end base pair.  (If the gene name is "*",
+#'  all the transcript will be selected.) Note: BioCoductor Annotation
 #'  \bold{org.Hs.eg.db} is used to convert from gene name to ENTREZ gene id.
 #'
 #' @param ranges_arg an integer matrix of three columns.  The columns define a range:
@@ -235,7 +247,7 @@ read.Mega2DB = function(db, ...) {
 #' @param chrs_arg an integer vector of chromosome numbers.  All of the base pairs on each
 #'  chromosomes will be selected as a single range.
 #'
-#' @param markers_arg a data frame with the following 5 variables:
+#' @param markers_arg a data frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
 #' \item{locus_link_fill}{is the position of corresponding marker genotype data in the\cr
@@ -378,11 +390,11 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
     }
 }
 
-#' set default ranges: chromosome and start/end base pair for each element in the default range data
+#' set default range data: chromosome and start/end base pair
 #'
 #' @description
 #'  This function sets the default list of ranges used by \code{applyFnToRanges}.  \code{applyFnToRanges}
-#'  examines the ranges and each set of markers that fall within a range will be
+#'  examines each range and the set of markers that fall within the range will be
 #'  processed.
 #'
 #' @param ranges a data frame that contains at least 4 observations: a name, a chromosome, a start
@@ -424,6 +436,10 @@ setRanges = function (ranges, indices, envir = ENV) {
 #'
 #' @export
 #'
+#' @note
+#'  \bold{Mega2R} will take care to load the necessary databases, but you will have to
+#'  install them from Bioconductor.  This is explained at length in the package Vignette.
+#'
 #' @examples
 #'\dontrun{
 #' setAnnotations("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db")
@@ -436,7 +452,9 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 
 #' apply a function to all the genotypes of markers in each of several specified ranges
 #'
-#' The function \code{op} will be called for every set of markers that is falls in each range.
+#' For each set of
+#'  markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
+#'  each range with the genotypes matrix, markers, range, and 'environment'.
 #'
 #' @usage
 #' applyFnToRanges(op          = function (geno, markers, range, envir) {},
@@ -449,7 +467,7 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #' \code{applyFnToRanges} in a try/catch context.  The arguments are:
 #' \describe{
 #' \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
-#' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 variables:
+#' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
 #' \item{locus_link_fill}{is the position of corresponding marker genotype data in the
@@ -460,10 +478,10 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #'  }
 #' }
 #' \item{range}{An indicator of which range argument of \code{applyFnToRanges} these markers correspond to.}
-#' \item{envir}{An 'environment' holding Mega2 data frames and state data.}
+#' \item{envir}{An 'environment' holding Mega2R data frames and state data.}
 #' }
 #'
-#' @param ranges_arg is a data frame that contains at least 4 variables: a name, a chromosome, a 
+#' @param ranges_arg is a data frame that contains at least 4 observations: a name, a chromosome, a 
 #'  start base pair position and an end base pair position.
 #'
 #' @param indices_arg is a vector of 3 integers that specify the location of chromosome, start base
@@ -610,10 +628,10 @@ tryFn = function(op, geno, markersub, ranges, envir) {
     )
 }
 
-#' apply a function to the genotypes in a set of markers
+#' apply a function to the genotypes from a set of markers
 #'
 #' @description
-#'  A matrix of the genotypes for all the markers is generated.  Then, the call back function, \code{op},
+#'  A matrix of the genotypes for all the specified markers is generated.  Then, the call back function, \code{op},
 #'   is called with the genotypes, markers, NULL (for the range), and the 'environment'.
 #'
 #' @usage
@@ -625,7 +643,7 @@ tryFn = function(op, geno, markersub, ranges, envir) {
 #' \code{applyFnToMarkers} in a try/catch context.  The arguments are:
 #' \describe{
 #' \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
-#' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 variables:
+#' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
 #' \item{locus_link_fill}{is the position of corresponding marker genotype data in the
@@ -636,10 +654,10 @@ tryFn = function(op, geno, markersub, ranges, envir) {
 #'  }
 #' }
 #' \item{range}{NULL: to indicate no explicit range was specified.}
-#' \item{envir}{An 'environment' holding Mega2 data frames and state data.}
+#' \item{envir}{An 'environment' holding Mega2R data frames and state data.}
 #' }
 #'
-#' @param markers_arg a data frame with the following 5 variables:
+#' @param markers_arg a data frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
 #' \item{locus_link_fill}{is the position of corresponding marker genotype data in the

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2vcf.R
 \name{Mega2VCF}
 \alias{Mega2VCF}
-\title{generate a VCF file collection}
+\title{generate a VCF file set for a collection of markers}
 \usage{
 Mega2VCF(prefix, markers = NULL, mapno = 0, alleleOrder = "default",
   envir = ENV)
@@ -27,7 +27,7 @@ None
 \description{
 Generate a VCF file from the specified Mega2 SQLite database.  The file is named \emph{"prefix".vcf}
  If the markers argument is.null(), the entire \bold{envir$markers} set is used, otherwise markers argument MUST
- be a subset of the markers (\bold{envir$markers}) data frame -- i.e. same columns, but pruned rows.
+ be rows of the markers (\bold{envir$markers}) data frame.
  In addition,
  several other files are generated to hold additional database information: \emph{"prefix".fam}, \emph{"prefix".freq}, \emph{"prefix".map},
  \emph{"prefix".phe}, and \emph{"prefix".pen}, which contain the pedigree, allele frequency, marker genetic and

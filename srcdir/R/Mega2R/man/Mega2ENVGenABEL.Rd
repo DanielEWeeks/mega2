@@ -19,13 +19,13 @@ Mega2ENVGenABEL(markers = NULL, force = TRUE, makemap = FALSE,
 \item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
-gwaa.class-object created from Mega2R database
+gwaa.data-class object created from Mega2R database
 }
 \description{
 create a gwaa.data-class object from the data frames in a Mega2 environment.  This
- function calls a front end that eventually calls a C++ Rcpp function that reads
+ function is a front end that eventually calls a C++ Rcpp function that reads
  the genotype data in Mega2 compressed format and converts it to the GenABEL
- compressed format.  With any luck, the results of \code{Mega2ENVGenABEL} are the same
+ compressed format.  The results of \code{Mega2ENVGenABEL} are/should be the same
  as \code{Mega2GenABEL}, but the calculation is much faster, typically a factor of 10 to 20.
 }
 \examples{

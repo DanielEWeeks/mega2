@@ -7,7 +7,7 @@
 getgenotypesraw(markers_arg, envir = ENV)
 }
 \arguments{
-\item{markers_arg}{a data.frame with the following 5 variables:
+\item{markers_arg}{a data.frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
 \item{locus_link_fill}{is the position of corresponding genotype data in the
@@ -27,8 +27,8 @@ a matrix of genotypes represented as integers.  Each 32 bit integer represents c
  (\emph{fam}) table.
 }
 \description{
-This function calls a C++ function that does all the heavy lifting.  It passes the necessary
- arguments to the C++ function: some from its existing arguments and some from data frames
+This function calls a C++ function that does all the heavy lifting.  It passes the arguments
+ necessary for the C++ function: some from the caller's arguments and some from data frames
  that are in the "global" environment, \bold{envir}.  From its markers_arg argument, it gets
  the locus_index and the index in the \emph{unified_genotype_table}.
  From the "global" environment, \bold{envir}, it gets a bit vector of compressed genotype information,

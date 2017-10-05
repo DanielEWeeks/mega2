@@ -18,12 +18,14 @@ This value is saved in the returned environment.}
 "environment" containing data frames from an SQLite database and some computed values.
 }
 \description{
-This populates the \bold{R} data frames from the specified \bold{Mega2 R} database.  It then
+This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite database.  It then
  prunes the samples to only include members that have a definite case or control
  status.  Undefined samples are ignored; this is necessary for CRAN \code{pedgene}.
 }
 \note{
 \emph{init_pedgene} calculates schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
+ In addition, it initializes a matrix to aid
+  in translating a genotype allele matrix to a genotype count matrix.
 
  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
 }

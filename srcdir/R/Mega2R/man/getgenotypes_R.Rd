@@ -7,7 +7,7 @@
 getgenotypes_R(markers_arg, sepstr = "", envir = ENV)
 }
 \arguments{
-\item{markers_arg}{a data.frame with the following 5 variables:
+\item{markers_arg}{a data.frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
 \item{locus_link_fill}{is the position of corresponding genotype data in the

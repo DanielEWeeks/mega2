@@ -89,9 +89,9 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #' @description
 #'  Verify by fields, all the fields in two gwaa.data-class objects.
 #'  Show more detailed marker information iff the coding values are different.  (When comparing
-#'  the two ways to convert Mega2 data to gwaa.data-class objects, sometimes,
-#'  when the frequency is .5 for both alleles and the alleles are the digits 1/2 vs letters,
-#'  it is too hard to get the coding values (and also the genotype column) not to flip.)
+#'  two gwaa.data-class objects, one native and one created via \bold{Mega2R} sometimes
+#'  when an allele frequency is .5 for both alleles, the allele order 1/2 vs 2/1 can not be
+#'  currently be determined.)
 #'
 #' @param mega_ name of first gwaa.data-class object
 #'
@@ -99,7 +99,7 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #'
 #' @param full if TRUE convert genotypes to text as.character(gwaa_@gtdata)\cr and as.character(mega_@gtdata).
 #'  Then standardize the order for heterozygous alleles and finally compare.
-#'  This step is optional because it could be rather slow.
+#'  This step is optional because it can be rather slow.
 #'
 #' @param envir 'environment' containing SQLite database and other globals
 #'

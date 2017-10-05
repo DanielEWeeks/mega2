@@ -13,10 +13,10 @@ showMega2ENV(envir = ENV)
 None
 }
 \description{
-Mega2 uses an environment to store the data frames when it reads SQLite database tables.
+Mega2R uses an environment to store the data frames when it reads SQLite database tables.
  This function shows the data frames and their sizes; it also
  shows the count of samples and markers in the database.
- Note: It is not necessary toprovide an argument, if the environment is named \emph{ENV}.
+ Note: It is not necessary to provide an argument, if the environment is named \emph{ENV}.
 }
 \examples{
 \dontrun{

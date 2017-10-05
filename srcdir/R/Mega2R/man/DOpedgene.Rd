@@ -7,10 +7,10 @@
 DOpedgene(geno_arg, markers_arg, range_arg, envir = ENV)
 }
 \arguments{
-\item{geno_arg}{A character matrix with one row per \emph{fam} pedigree member and one column for each marker in
+\item{geno_arg}{A character matrix with one row per \emph{fam} pedigree member and one column for  each marker in
 markers_arg.  Each cell contains the two characters indicating the nucleotides for the marker.}
 
-\item{markers_arg}{a data.frame with the following 5 variables:
+\item{markers_arg}{a data.frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
 \item{locus_link_fill}{is the position of corresponding genotype data in the
@@ -31,17 +31,18 @@ None
 }
 \description{
 First, ignore call backs that have less than two markers.  Second, convert the genotypes
- patterns of 1/1, 1/2 (and 2/1) and 2/2 in the genotype matrix
+ patterns of 1/1, 1/2 (and 2/1) and 2/2 from the genotype matrix
  to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
- minor allele frequency.)  Finally, prepend the pedigree and person columns of the family data
- to processed genotype matrix.  Finally, invoke \code{pedgene} with the family data and converted
+ minor allele frequency.)  Next, prepend the pedigree and person columns of the family data
+ to this modified genotype matrix.  Finally, invoke \code{pedgene} with the family data and 
  genotype matrix for several different weights.  Save the kernel and burden, value and p-value for each
  measurement in \emph{envir$pedgene_results}.
 }
 \note{
-This function accumulates output in the data frame, \emph{envir$pedgene_results}.  It will
- print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write anything
- to a file.  You must save the data frame or the "observations" you need by yourself.
+This function appends output to the data frame, \emph{envir$pedgene_results}.  It will
+ print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write 
+ the data frame to a file.  You must save the data frame.
+ You also must initialize the data frame when necessary.
 }
 \examples{
 \dontrun{

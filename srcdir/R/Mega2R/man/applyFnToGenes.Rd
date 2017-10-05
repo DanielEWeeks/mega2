@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2riterate.R
 \name{applyFnToGenes}
 \alias{applyFnToGenes}
-\title{apply a function to the genotypes (markers) in each gene transcript and/or range}
+\title{apply a function to the genotypes (markers) in each gene transcript and/or base pair range}
 \usage{
 applyFnToGenes(op           = function (geno, markers, range, envir) {},
                genes_arg    = c("*"),
@@ -18,24 +18,25 @@ applyFnToGenes(op           = function (geno, markers, range, envir) {},
 \code{applyFnToGenes} in a try/catch context.  The arguments are:
 \describe{
 \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
-\item{markers}{Marker data for each marker selected.  A marker is a data frame with the following 5 variables:
+\item{markers}{Marker data for each marker selected.  A marker is a data frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
-\item{locus_link_fill}{is the position of corresponding marker data in the
+\item{locus_link_fill}{is the position of corresponding marker genotype data in the
 \emph{unified_genotype_table}}
 \item{MarkerName}{is the text name of the marker}
 \item{chromosome}{is the integer chromosome number}
 \item{position}{is the integer base pair position of marker}
  }
 }
-\item{range}{An indicator of which range argument of \code{applyFnToGenes} these markers correspond to.}
-\item{envir}{An 'environment' holding Mega2 data frames and state data.}
+\item{range}{An indicator of which range argument these markers correspond to.}
+\item{envir}{An 'environment' holding Mega2R data frames and state data.}
 }}
 
 \item{genes_arg}{a character vector of gene names.
 All the transcripts identified with the specified gene in BioConductor Annotation,\cr
 \bold{TxDb.Hsapiens.UCSC.hg19.knownGene}, are selected.  This produces multiple "range"
-elements containing chromosome, start base pair, end base pair.  Note: BioCoductor Annotation
+elements containing chromosome, start base pair, end base pair.  (If the gene name is "*",
+all the transcript will be selected.) Note: BioCoductor Annotation
 \bold{org.Hs.eg.db} is used to convert from gene name to ENTREZ gene id.}
 
 \item{ranges_arg}{an integer matrix of three columns.  The columns define a range:
@@ -44,10 +45,10 @@ a chromosome number, a start base pair value, and an end base pair value.}
 \item{chrs_arg}{an integer vector of chromosome numbers.  All of the base pairs on each
 chromosomes will be selected as a single range.}
 
-\item{markers_arg}{a data frame with the following 5 variables:
+\item{markers_arg}{a data frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
-\item{locus_link_fill}{is the position of corresponding marker data in the\cr
+\item{locus_link_fill}{is the position of corresponding marker genotype data in the\cr
 \emph{unified_genotype_table}}
 \item{MarkerName}{is the text name of the marker}
 \item{chromosome}{is the integer chromosome number}
@@ -70,12 +71,14 @@ can be positive or negative.}
 None
 }
 \description{
-This function generates a data frame of many ranges.  Each range specifies a chromosome, a start
- base pair and end base pair.  A subsequent step will find all the
- markers from the \emph{markers} data frame that fall in each range.  For each range,
- a matrix of the genotypes
- for all the found markers is generated.  Finally, the \code{op} function is called for each
- range with the genotypes, markers, range, and 'environment'.
+This function generates base pair ranges from its input arguments.
+ Each range specifies a chromosome, a start
+ base pair and end base pair.  Typically, a range could be a gene transcript, though
+ it could be a whole chromosome, or a run of base pairs on a chromosome.  Once the
+ ranges are generated, \code{applyFnToRanges} is called to find all the
+ rows (i.e. markers) from the \emph{markers} data frame that fall in each range.  For these
+ markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
+ each range with the genotypes matrix, markers, range, and 'environment'.
 }
 \note{
 If you want subsequent calls to \code{op} to share information, data can be placed in

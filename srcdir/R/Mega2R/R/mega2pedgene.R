@@ -31,7 +31,7 @@
 #' load Mega2 SQLite database and perform initialization for pedgene usage
 #'
 #' @description
-#'  This populates the \bold{R} data frames from the specified \bold{Mega2 R} database.  It then
+#'  This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite database.  It then
 #'  prunes the samples to only include members that have a definite case or control
 #'  status.  Undefined samples are ignored; this is necessary for CRAN \code{pedgene}.
 #'
@@ -49,6 +49,8 @@
 #'
 #' @note
 #'  \emph{init_pedgene} calculates schaidPed and pedPer that are used later in the \emph{Dopedgene} calculation.
+#'  In addition, it initializes a matrix to aid
+#'   in translating a genotype allele matrix to a genotype count matrix.
 #'
 #'  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
 #'
@@ -97,7 +99,7 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 }
 
 
-#' execute the CRAN pedgene function on a subset of the default gene transcript ranges
+#' execute the CRAN pedgene function on a transcript ranges
 #'
 #' @description
 #' Execute the pedgene function on the first \emph{gs} default gene transcript ranges (gs = 1:100).
@@ -112,7 +114,7 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 #'
 #' @note
 #'  This code starts by deleting the output file set in \code{init_pedgene} ("pedgene.txt" by default).  Then \code{Dopedgene}
-#'  is applied to all the appropriate ranges.  Finally, the data frame of results, \emph{envir$pedgene_results}, is written
+#'  is applied to all the selected ranges that contain markers.  Finally, the data frame of results, \emph{envir$pedgene_results}, is written
 #'  to the output file.
 #'
 #' @examples
@@ -135,17 +137,17 @@ Mega2pedgene = function (gs = 1:100, envir = ENV) {
 #'
 #' @description
 #'  First, ignore call backs that have less than two markers.  Second, convert the genotypes
-#'  patterns of 1/1, 1/2 (and 2/1) and 2/2 in the genotype matrix
+#'  patterns of 1/1, 1/2 (and 2/1) and 2/2 from the genotype matrix
 #'  to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
 #'  minor allele frequency.)  Next, prepend the pedigree and person columns of the family data
 #'  to this modified genotype matrix.  Finally, invoke \code{pedgene} with the family data and 
 #'  genotype matrix for several different weights.  Save the kernel and burden, value and p-value for each
 #'  measurement in \emph{envir$pedgene_results}.
 #'
-#' @param geno_arg A character matrix with one row per \emph{fam} pedigree member and one column for each marker in
+#' @param geno_arg A character matrix with one row per \emph{fam} pedigree member and one column for  each marker in
 #'  markers_arg.  Each cell contains the two characters indicating the nucleotides for the marker.
 #'
-#' @param markers_arg a data.frame with the following 5 variables:
+#' @param markers_arg a data.frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
 #' \item{locus_link_fill}{is the position of corresponding genotype data in the
@@ -166,9 +168,10 @@ Mega2pedgene = function (gs = 1:100, envir = ENV) {
 #' @export
 #'
 #' @note
-#'  This function accumulates output in the data frame, \emph{envir$pedgene_results}.  It will
-#'  print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write anything
-#'  to a file.  You must save the data frame or the "observations" you need by yourself.
+#'  This function appends output to the data frame, \emph{envir$pedgene_results}.  It will
+#'  print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write 
+#'  the data frame to a file.  You must save the data frame.
+#'  You also must initialize the data frame when necessary.
 #'
 #' @examples
 #'\dontrun{

@@ -17,10 +17,15 @@ an 'environment' that contains all the data frames created from the SQLite datab
 \description{
 Call \code{dbmega2_import()} with the specified database and create an 'environment', with the
  SQLite table data loaded into data frames.
- Also run \code{mkfam} to create the pedigree data frame \emph{fam} and then store it with \code{setfam}.
- This modifies the \emph{unified_genotype_table} (and \emph{phenotype_table}) to match the family members
- that remain.  By default, this will remove one of each
- person that was replicated to break loops in the pedigree, see \code{setfam} for details.
+ Also run \code{mkfam()} to create the pedigree data frame \emph{fam} and then store it with \code{setfam()}.
+ \code{setfam()} modifies the \emph{unified_genotype_table} (and \emph{phenotype_table}) to match the family members
+ that remain.
+}
+\note{
+By default, \code{mkfam} will remove one of each
+ person that was replicated to break loops in the pedigree, see \code{mkfam} for details.
+ If you want to leave loops broken, the code is available, but you will have to write your own
+ version of read.Mega2DB with a different invokation of \code{mkfam()}.
 }
 \examples{
 \dontrun{

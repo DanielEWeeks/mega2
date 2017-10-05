@@ -75,8 +75,8 @@ dump_mega2rtutorial_data = function(dir = ".") {
 
 #' remove tutorial data
 #'
-#' @description This function removes the Mega2rtutorial (inst/exdata) data that was
-#'	dumped in the specified directory.
+#' @description This function removes the Mega2R tutorial (inst/exdata) data that was
+#'	copied to the specified directory.
 #'
 #' @param dir The directory to remove the tutorial data from.  By default, this is ".".
 #'

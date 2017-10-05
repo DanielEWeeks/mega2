@@ -31,7 +31,7 @@
 #' load Mega2 SQLite database and perform initialization for SKAT usage
 #'
 #' @description
-#'  This populates the \bold{R} data frames from the specified \bold{Mega2 R} database.  It then
+#'  This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite database.  It then
 #'  prunes the samples to only include members that have a definite case or control
 #'  status.  Undefined samples are ignored.
 #'
@@ -50,7 +50,8 @@
 #' @export
 #'
 #' @note
-#'  \emph{init_SKAT} calculates phenotypes as a data frame and initializes a matrix to aid
+#'  \emph{init_SKAT} creats a data frame, \emph{envir$phe}, of phenotype observations.
+#'  In addition, it initializes a matrix to aid
 #'   in translating a genotype allele matrix to a genotype count matrix.
 #'
 #'  It also initializes the dataframe \emph{envir$SKAT_results} to zero rows.
@@ -95,7 +96,7 @@ init_SKAT = function (db = NULL, filename = "SKAT.txt", verbose = FALSE, allMark
 #' @param f SKAT_Null_Model formula.  If this is non NULL, envir$obj is initialized by calling
 #'  SKAT_Null_Model(f, out_type = ty).  If you need to specify additional arguments to the Model
 #'  viz. (data, Adjustment, n.Resampling, type.Resampling)
-#'  or need to use a different model viz. SKAT_NULL_emmaX, SKAT_Null_Model_ChrX
+#'  or need to use a different model viz. SKAT_NULL_emmaX, \cr SKAT_Null_Model_ChrX
 #'  set the formula to NULL, then before Mega2SKAT is called, build the model you need and
 #'  assign it to ENV$obj.
 #'
@@ -105,7 +106,7 @@ init_SKAT = function (db = NULL, filename = "SKAT.txt", verbose = FALSE, allMark
 #'  the \emph{DOSKAT} function.
 #'
 #' @param genes a list of genes over which to calculate the \emph{DOSKAT} function.
-#'  "*" use all the transcripts in the Bioconductor database.
+#'  The value, "*", means use all the transcripts in the selected Bioconductor database.
 #'
 #' @param skat alternate SKAT function, viz. SKATBinary, SKAT_CommonRare.  If it is also
 #'  necessary is to pass additional arguments to the SKAT function, they may be added to the end
@@ -113,7 +114,7 @@ init_SKAT = function (db = NULL, filename = "SKAT.txt", verbose = FALSE, allMark
 #'
 #' @param envir 'environment' containing SQLite database and other globals
 #'
-#' @param ... extra arguments for SKAT
+#' @param ... extra arguments for skat
 #'
 #' @return None
 #'
@@ -124,10 +125,10 @@ init_SKAT = function (db = NULL, filename = "SKAT.txt", verbose = FALSE, allMark
 #'
 #' @note
 #'  This code starts by deleting the output file set in \code{init_SKAT} ("SKAT.txt" by default).
-#'  Then \code{SKAT_Null_Model} is called if the formula is not NULL.  A helper function
+#'  Then \cr\code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
 #'  \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
 #'  \code{DOSKAT} with the appropriate arguments (including those additional to the
-#'  \code{Mega2SKAT} function.  The function, \code{DOSKAT}, is defined next.
+#'  \code{Mega2SKAT} function.
 #'  Finally, the data frame of results, \emph{envir$SKAT_results}, is written
 #'  to the output file.
 #'
@@ -166,7 +167,7 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
 #'  to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
 #'  minor allele frequency.)  Ignore markers that have no variants (unless allMarkers is TRUE).
 #'  Finally, invoke \code{SKAT} with the converted genotype matrix, Null model saved in envir$obj,
-#'  and any additional supplied arguments.
+#'  and any additionally supplied arguments.
 #'  Save information about the range and the p.value calculated by \code{SKAT} 
 #'  in \emph{envir$SKAT_results}.
 #'
@@ -174,7 +175,7 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
 #' foreach marker in markers_arg.
 #' Each cell contains the two characters indicating the nucleotides for the marker.
 #'
-#' @param markers_arg a data.frame with the following 5 variables:
+#' @param markers_arg a data.frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
 #' \item{locus_link_fill}{is the position of corresponding genotype data in the
@@ -199,8 +200,8 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
 #' @note
 #'  This function accumulates output in the data frame, \emph{envir$SKAT_results}.  It will
 #'  print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write
-#'  the data frame to a file.  You must save the data frame or the "observations" you need
-#'  by yourself.  You also must initialize the data frame when necessary.
+#'  the data frame to a file.  You must save the data frame.
+#'  You also must initialize the data frame when necessary.
 #'
 #' @examples
 #'\dontrun{

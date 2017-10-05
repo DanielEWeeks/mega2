@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2genabel.R
 \name{Mega2GenABEL}
 \alias{Mega2GenABEL}
-\title{generate gwaa.data-class object}
+\title{generate gwaa.data-class object from a \bold{Mega2R} database}
 \usage{
 Mega2GenABEL(prefix, markers = NULL, mapno = 0, envir = ENV)
 }
@@ -16,11 +16,11 @@ Mega2GenABEL(prefix, markers = NULL, mapno = 0, envir = ENV)
 \item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
-gwaa.class-object generated from the Mega2R database
+gwaa.data-class object generated from the Mega2R database
 }
 \description{
-Call the package's functions to: create a .tped file, a .tfam file and a .phe file.
- Then call the GenABEL functions to process these files; the .tped and the .tfam
+Call the \emph{Mega2R} functions to: create a .tped file, a .tfam file and a .phe file.
+ Then call the GenABEL functions to process these files: the .tped and the .tfam
  file are processed by \code{convert.snp.tped} to produce a tped.raw file.  The latter
  is combined with a .phe (phenotype) file by \code{load.gwaa.data} to create a gwaa.data-class
  object in memory.
