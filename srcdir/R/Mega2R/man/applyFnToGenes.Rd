@@ -78,7 +78,7 @@ This function generates base pair ranges from its input arguments.
  ranges are generated, \code{applyFnToRanges} is called to find all the
  rows (i.e. markers) from the \emph{markers} data frame that fall in each range.  For these
  markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
- each range with the genotypes matrix, markers, range, and 'environment'.
+ each range with the arguments: genotypes matrix, markers, range, and 'environment'.
 }
 \note{
 If you want subsequent calls to \code{op} to share information, data can be placed in

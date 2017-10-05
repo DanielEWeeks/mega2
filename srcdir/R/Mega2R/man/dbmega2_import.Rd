@@ -22,8 +22,10 @@ envir an environment that contains all the data frames made from the SQLite data
 }
 \description{
 Read the fields of SQLite data base tables that are required for Mega2R into
- data frames.  These
- data frames are stored in an 'environment' which is returned.
+ data frames.
+ These data frames are stored in an 'environment' which is returned.
+ This function also adds some state data, extra data frames, and computed data frames
+ to the 'environment'.
 }
 \examples{
 \dontrun{

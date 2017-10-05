@@ -204,7 +204,7 @@ read.Mega2DB = function(db, ...) {
 #'  ranges are generated, \code{applyFnToRanges} is called to find all the
 #'  rows (i.e. markers) from the \emph{markers} data frame that fall in each range.  For these
 #'  markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
-#'  each range with the genotypes matrix, markers, range, and 'environment'.
+#'  each range with the arguments: genotypes matrix, markers, range, and 'environment'.
 #'
 #' @usage
 #' applyFnToGenes(op           = function (geno, markers, range, envir) {},
@@ -450,11 +450,12 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 }
 
 
-#' apply a function to all the genotypes of markers in each of several specified ranges
+#' apply a function to all the genotypes for markers found in several specified ranges
 #'
-#' For each set of
-#'  markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
-#'  each range with the genotypes matrix, markers, range, and 'environment'.
+#' First, for each range, determine the markers that fall between the start and end
+#' base pair of the range.  Then, for each set of
+#'  markers generate a matrix of the genotypes of those markers.  Finally, the \code{op} function is called for
+#'  each range with the arguments: genotypes matrix, markers, range, and 'environment'.
 #'
 #' @usage
 #' applyFnToRanges(op          = function (geno, markers, range, envir) {},

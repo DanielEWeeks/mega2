@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2rcreate.R
 \name{mkphenotype}
 \alias{mkphenotype}
-\title{generate required PLINK (.phe) file}
+\title{generate a phenotype data frame}
 \usage{
 mkphenotype(envir)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2riterate.R
 \name{applyFnToRanges}
 \alias{applyFnToRanges}
-\title{apply a function to all the genotypes of markers in each of several specified ranges}
+\title{apply a function to all the genotypes for markers found in several specified ranges}
 \usage{
 applyFnToRanges(op          = function (geno, markers, range, envir) {},
                 ranges_arg  = NULL,
@@ -46,9 +46,10 @@ can be positive or negative.}
 None
 }
 \description{
-For each set of
- markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
- each range with the genotypes matrix, markers, range, and 'environment'.
+First, for each range, determine the markers that fall between the start and end
+base pair of the range.  Then, for each set of
+ markers generate a matrix of the genotypes of those markers.  Finally, the \code{op} function is called for
+ each range with the arguments: genotypes matrix, markers, range, and 'environment'.
 }
 \note{
 If the \emph{ranges_arg} and \emph{indices_arg} are NULL or missing, then the default ranges that have been set by \code{setRanges}

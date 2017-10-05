@@ -102,11 +102,12 @@ init_SKAT = function (db = NULL, filename = "SKAT.txt", verbose = FALSE, allMark
 #'
 #' @param ty type of phenotype C/D = Continuous/Binary 5 (internal type 1/2)
 #'
-#' @param gs a subrange of the default transcripts over which to calculate
+#' @param gs a subrange of the default transcripts (refRanges) over which to calculate
 #'  the \emph{DOSKAT} function.
 #'
 #' @param genes a list of genes over which to calculate the \emph{DOSKAT} function.
 #'  The value, "*", means use all the transcripts in the selected Bioconductor database.
+#'  If genes is NULL, the gs range of the internal \emph{refRanges} will be used.
 #'
 #' @param skat alternate SKAT function, viz. SKATBinary, SKAT_CommonRare.  If it is also
 #'  necessary is to pass additional arguments to the SKAT function, they may be added to the end
@@ -128,7 +129,7 @@ init_SKAT = function (db = NULL, filename = "SKAT.txt", verbose = FALSE, allMark
 #'  Then \cr\code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
 #'  \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
 #'  \code{DOSKAT} with the appropriate arguments (including those additional to the
-#'  \code{Mega2SKAT} function.
+#'  \code{Mega2SKAT} function).
 #'  Finally, the data frame of results, \emph{envir$SKAT_results}, is written
 #'  to the output file.
 #'

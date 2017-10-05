@@ -20,7 +20,7 @@ getgenotypesgenabel(markers_arg, envir = ENV)
 \item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
-a list of two elements:  The first is the GenABEL gwaa.data-class object partcomponent
+a list of two elements:  The first is the GenABEL gwaa.data-class object component
  that contains the genotype data.  The second is the allele frequencies for each marker.
 }
 \description{
@@ -40,7 +40,7 @@ This function reads the genotype data in Mega2 compressed format and converts it
  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
  there are two bits for each genotype;  each byte has the data for 4 markers.  In GenABEL,
  there is one raw vector per marker, and each byte has the data for 4 persons.  The C++
- function does the conversion as well as adjust the bits contents.  For example, in GenABEL
+ function does the conversion as well as adjusts the bits' contents.  For example, in GenABEL
  the genotype represented by bits == 0, is what Mega2 represents with 2.
  Doing the conversion in C++ is 10 - 20 times faster than converting the Mega2 data to
  PLINK .tped files and then having GenABEL read in and process/convert those files.

@@ -234,8 +234,10 @@ mk_unified_genotype_table = function(envir) {
 #' read Mega2 SQLite database into R
 #'
 #' @description Read the fields of SQLite data base tables that are required for Mega2R into
-#'  data frames.  These
-#'  data frames are stored in an 'environment' which is returned.
+#'  data frames.
+#'  These data frames are stored in an 'environment' which is returned.
+#'  This function also adds some state data, extra data frames, and computed data frames
+#'  to the 'environment'.
 #'
 #' @usage
 #' dbmega2_import(dbname,
@@ -320,7 +322,7 @@ dbmega2_import = function(dbname,
     return (envir)
 }
 
-#' generate required PLINK (.phe) file
+#' generate a phenotype data frame
 #'
 #' @description
 #'  Convert data in phenotype_table to a data frame of columns that are phenotypes.
@@ -793,7 +795,7 @@ getgenotypesraw = function(markers_arg, envir = ENV) {
 #'
 #' @param envir an environment that contains all the data frames created from the SQLite database.
 #'
-#' @return a list of two elements:  The first is the GenABEL gwaa.data-class object partcomponent
+#' @return a list of two elements:  The first is the GenABEL gwaa.data-class object component
 #'  that contains the genotype data.  The second is the allele frequencies for each marker.
 #'
 #' @export
@@ -805,7 +807,7 @@ getgenotypesraw = function(markers_arg, envir = ENV) {
 #'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
 #'  there are two bits for each genotype;  each byte has the data for 4 markers.  In GenABEL,
 #'  there is one raw vector per marker, and each byte has the data for 4 persons.  The C++
-#'  function does the conversion as well as adjust the bits contents.  For example, in GenABEL
+#'  function does the conversion as well as adjusts the bits' contents.  For example, in GenABEL
 #'  the genotype represented by bits == 0, is what Mega2 represents with 2.
 #'  Doing the conversion in C++ is 10 - 20 times faster than converting the Mega2 data to
 #'  PLINK .tped files and then having GenABEL read in and process/convert those files.
