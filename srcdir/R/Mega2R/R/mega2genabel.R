@@ -46,7 +46,7 @@
 #'
 #' @param envir 'environment' containing SQLite database and other globals
 #'
-#' @return gwaa.class-object generated from the Mega2R database
+#' @return gwaa.data-class object generated from the Mega2R database
 #'
 #' @importFrom GenABEL convert.snp.tped load.gwaa.data
 #' @importFrom methods is new
@@ -110,7 +110,7 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #'
 #' @param envir 'environment' containing SQLite database and other globals
 #'
-#' @return gwaa.class-object created from Mega2R database
+#' @return gwaa.data-class object created from Mega2R database
 #'
 #' @export
 #'

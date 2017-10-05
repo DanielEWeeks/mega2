@@ -185,15 +185,15 @@ read.Mega2DB = function(db, ...) {
     return (envir)
 }
 
-#' apply a function to the genotypes (markers) in each gene transcript and/or range
+#' apply a function to the genotypes (markers) in each gene transcript and/or base pair range
 #'
 #' @description
-#'  This function generates a data frame of many ranges.  Each range specifies a chromosome, a start
-#'  base pair and end base pair.  A subsequent step will find all the
-#'  markers from the \emph{markers} data frame that fall in each range.  For each range,
-#'  a matrix of the genotypes
-#'  for all the found markers is generated.  Finally, the \code{op} function is called for each
-#'  range with the genotypes, markers, range, and 'environment'.
+#'  This function generates data from several ranges.  Each range specifies a chromosome, a start
+#'  base pair and end base pair.  A range could be a gene transcript.
+#'  The first step will find all the
+#'  rows (i.e. markers) from the \emph{markrs} data frame that fall in each range.  For these
+#'  markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
+#'  each range with the genotypes matrix, markers, range, and 'environment'.
 #'
 #' @usage
 #' applyFnToGenes(op           = function (geno, markers, range, envir) {},
@@ -212,7 +212,7 @@ read.Mega2DB = function(db, ...) {
 #' \item{markers}{Marker data for each marker selected.  A marker is a data frame with the following 5 variables:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
-#' \item{locus_link_fill}{is the position of corresponding marker data in the
+#' \item{locus_link_fill}{is the position of corresponding marker genotype data in the
 #' \emph{unified_genotype_table}}
 #' \item{MarkerName}{is the text name of the marker}
 #' \item{chromosome}{is the integer chromosome number}
@@ -238,7 +238,7 @@ read.Mega2DB = function(db, ...) {
 #' @param markers_arg a data frame with the following 5 variables:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
-#' \item{locus_link_fill}{is the position of corresponding marker data in the\cr
+#' \item{locus_link_fill}{is the position of corresponding marker genotype data in the\cr
 #' \emph{unified_genotype_table}}
 #' \item{MarkerName}{is the text name of the marker}
 #' \item{chromosome}{is the integer chromosome number}
@@ -452,7 +452,7 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 variables:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
-#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \item{locus_link_fill}{is the position of corresponding marker genotype data in the
 #' \emph{unified_genotype_table}}
 #' \item{MarkerName}{is the text name of the marker}
 #' \item{chromosome}{is the integer chromosome number}
@@ -464,7 +464,7 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #' }
 #'
 #' @param ranges_arg is a data frame that contains at least 4 variables: a name, a chromosome, a 
-#'  startbase pair position and an end base pair position.
+#'  start base pair position and an end base pair position.
 #'
 #' @param indices_arg is a vector of 3 integers that specify the location of chromosome, start base
 #'  pair column and end base pair column of the ranges_arg data frame.
@@ -479,7 +479,7 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #' @return None
 #' @note
 #'  If the \emph{ranges_arg} and \emph{indices_arg} are NULL or missing, then the default ranges that have been set by \code{setRanges}
-#'  are used.  If \code{setRanges} has not been set, a default set of the RefGene ranges is used.
+#'  are used.  If \code{setRanges} has not been called, a default set of the ranges is used.
 #'
 #' @export
 #'
@@ -628,7 +628,7 @@ tryFn = function(op, geno, markersub, ranges, envir) {
 #' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 variables:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
-#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \item{locus_link_fill}{is the position of corresponding marker genotype data in the
 #' \emph{unified_genotype_table}}
 #' \item{MarkerName}{is the text name of the marker}
 #' \item{chromosome}{is the integer chromosome number}
@@ -642,7 +642,7 @@ tryFn = function(op, geno, markersub, ranges, envir) {
 #' @param markers_arg a data frame with the following 5 variables:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
-#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \item{locus_link_fill}{is the position of corresponding marker genotype data in the
 #' \emph{unified_genotype_table}}
 #' \item{MarkerName}{is the text name of the marker}
 #' \item{chromosome}{is the integer chromosome number}

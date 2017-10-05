@@ -137,8 +137,8 @@ Mega2pedgene = function (gs = 1:100, envir = ENV) {
 #'  First, ignore call backs that have less than two markers.  Second, convert the genotypes
 #'  patterns of 1/1, 1/2 (and 2/1) and 2/2 in the genotype matrix
 #'  to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
-#'  minor allele frequency.)  Finally, prepend the pedigree and person columns of the family data
-#'  to processed genotype matrix.  Finally, invoke \code{pedgene} with the family data and converted
+#'  minor allele frequency.)  Next, prepend the pedigree and person columns of the family data
+#'  to this modified genotype matrix.  Finally, invoke \code{pedgene} with the family data and 
 #'  genotype matrix for several different weights.  Save the kernel and burden, value and p-value for each
 #'  measurement in \emph{envir$pedgene_results}.
 #'

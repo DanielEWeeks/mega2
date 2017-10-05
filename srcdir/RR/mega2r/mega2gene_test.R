@@ -114,6 +114,8 @@ mkmarkers = function (genes = c("ELL2", "CARD15"),
     pa = select(genedb, keys = genes, columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ALIAS")
     pb = select(txdb, keys = pa[,2], columns = COLS, keytype = "GENEID")
     range = merge(pa, pb, by.x = "ENTREZID", by.y = "GENEID")
+## new
+    range = range[! duplicated(range[ , c(6, 8, 9)]), ]
     range[ , 6] = as.integer( sub("chr", "", range[ , 6]))
 
     #chrs

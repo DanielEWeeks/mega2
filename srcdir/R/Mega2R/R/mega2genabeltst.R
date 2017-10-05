@@ -29,12 +29,12 @@
 #library(GenABEL)
 
 
-#' generate the .ped, .fam and .map files of PLINK PED representation of the object
+#' generate the .ped, .fam and .map files of PLINK PED representation of a gwaa.data-class object
 #'
 #' @description
-#'  Use provided gwaa.class-object and create a PLINK .ped file, PLINK .map file
+#'  Use provided gwaa.data-class object and create a PLINK .ped file, PLINK .map file
 #'  and a PLINK .phe (phenotypes) file.  By default, \bold{srdta} (a sample from GenABEL)
-#'  is used for the gwaa.class-object.  The files are generated with a prefix of
+#'  is used for the gwaa.data-class object.  The files are generated with a prefix of
 #'  \emph{srdta} unless a pfx argument is provided.
 #'  NOTE: These PLINK files may be used by the Mega2 executable to produce a database.
 #'

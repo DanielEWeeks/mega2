@@ -243,6 +243,7 @@ mk_unified_genotype_table = function(envir) {
 #' @param dbname file path to SQLite database.
 #'
 #' @param bpPosMap index that specifies which map in the map_table should be used for marker chromosome/position.
+#'  \code{showMapNames} shows the association between map name and map number.
 #'
 #' @param verbose print out statistics on the name/size of each table read and show column headers.
 #'  Also, save the verbose value for use by other Mega2R functions.
