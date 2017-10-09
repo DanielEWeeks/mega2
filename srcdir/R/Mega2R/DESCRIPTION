@@ -13,9 +13,11 @@ Description: Uses as input genetic data that have been reformatted
      illustrate how to use the data frames as well as perform useful
      tasks: these permit one to run the 'pedgene' package to carry out
      gene-based association tests on family data using selected marker
-     subsets, to output the 'Mega2R' data as a VCF file and related
-     files (for phenotype and family data), and to convert the data
-     frames into 'GenABEL' gwaa.data-class objects.  
+     subsets, to run the 'SKAT' package to carry out gene-based
+     association tests using selected marker subsets, to output the
+     'Mega2R' data as a VCF file and related files (for phenotype and
+     family data), and to convert the data frames into 'GenABEL'
+     gwaa.data-class objects.  
 Authors@R: c(person(c("Robert","V."), "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
              person(c("Daniel","E."), "Weeks",    email = "weeks@pitt.edu", role = c("aut","cre")),
              person("","University of Pittsburgh",role=c("cph")))
@@ -25,7 +27,7 @@ Depends: R (>= 3.3.3),
          GenABEL,
          SKAT,
          pedgene,
-License: GPL-2
+License: GPL (>= 2)
 LinkingTo: Rcpp
 LazyData: true
 Imports:
