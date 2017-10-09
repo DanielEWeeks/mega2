@@ -517,7 +517,7 @@ These two become the arguments to the `setRanges` function, viz.
 ```
 The function:
 
-> applyFnToRanges(DOpedgene, envir = ENV)  
+> applyFnToRanges(DOcallback, envir = ENV)  
 
 goes through each transcript/range entry and finds the markers that fall within the bounds.
 It then builds a genotype matrix for the samples and each marker in the range.
@@ -535,8 +535,8 @@ can be used.
 
 *applyFnToRanges* can also be provided explicit ranges.
 ```
-applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
-applyFnToRanges(DOpedgene, ENV$refRanges[ENV$refRanges$chromosome == 1,], ENV$refIndices, envir = ENV)
+applyFnToRanges(DOcallback, ENV$refRanges, ENV$refIndices, envir = ENV)
+applyFnToRanges(DOcallback, ENV$refRanges[ENV$refRanges$chromosome == 1,], ENV$refIndices, envir = ENV)
 ```
 
 ### 5.3.2 applyFnToGenes
@@ -568,7 +568,7 @@ the string from the namespace.
 
 The function:
 
-> applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
+> applyFnToGenes(DOcallback, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
 
 will find all the transcripts for each gene requested from the Bioconductor database.  It will then
 call `applyFnToRanges`: find all the markers in each transcript range, compute the genotype
@@ -622,7 +622,43 @@ The 'pedgene' package implements methods for carrying out gene-based association
 It was written by Daniel Schaid and Jason Sinnwell: 
 [Schaid DJ, McDonnell SK., Sinnwell JP, Thibodeau SN. (2013) Multiple Genetic Variant Association Testing by Collapsing and Kernel Methods With Pedigree or Population Structured Data, Genet Epidemiol, 37(5):409-18.]
 
-## 6.1 Gene transcripts reminder
+## 6.1 Loading a Mega2 database
+
+Rather than read the Mega2 'SQLite' database with
+the `read.Mega2DB` function described previously, here we use a specialized `init_pedgene` function to read the Mega2 database.
+This latter function calls a utility function
+also used by  `read.Mega2DB`. Then it creates, edits, and rewrites the family data, storing it in a `pedgene`-compatible data frame, `fam` .  (`fam` merges data from the `pedigree_table`, `person_table` and
+`phenotype_table`.)
+`init_pedgene` purges persons with unknown case/control
+status which is necessary for the pedgene calculation.
+(When `fam` is filtered, similar filtering is done to the phenotype_table and the
+genotype_table.)
+Finally, `init_pedgene` calculates
+some values that will be used repeatedly and stores them in the environment that is returned.
+
+```{r init_pedgene,message=FALSE}
+ENV = init_pedgene("seqsimr.db")
+```
+
+## 6.2 Gene Ranges reminder
+
+Mega2R has an internal default list of the chromosome and base pair
+ranges for a number of gene transcripts.  These transcripts come from
+the UCSC Genome Browser reference assembly GRCH37.  The list was
+further modified to eliminate multiple records of the same gene with
+the exact same transcript start and transcript end.  These data contain
+about 29,000 records.   You may load your own range set instead of the default.
+You create a data frame that contains at least a name "observation", a chromosome
+"observation", a start position "observation" and an end position "observation".
+Then, you create an integer vector that contains the column numbers of the chromosome
+"observation", the start position "observation" and the end position "observation".
+These two objects are then arguments to the `setRanges` function, viz.
+
+```
+        setRanges(Transcripts, Columns)
+```
+
+## 6.3 Gene transcripts reminder
 
 If you plan to select transcripts by gene name, you must load them from
 Bioconductor.  In Section 4.2, we indicated that you 
@@ -642,44 +678,10 @@ setAnnotations(txdb, entrezGene)
 
 where `txdb` is the name of Bioconductor transcription database, and `entrezGene` is the name of Bioconductor mapping of gene name or gene alias to entrez gene id.
 
-## 6.2 Loading a Mega2 database
-
-Rather than read the Mega2 'SQLite' database with
-the `read.Mega2DB` function described previously, here we use a specialized `init_pedgene` function to read the Mega2 database.
-This latter function calls a utility function
-also used by  `read.Mega2DB`. Then it creates, edits, and rewrites the family data, storing it in a `pedgene`-compatible data frame, `fam` .  (`fam` merges data from the `pedigree_table`, `person_table` and
-`phenotype_table`.)
-`init_pedgene` purges persons with unknown case/control
-status which is necessary for the pedgene calculation.
-(When `fam` is filtered, similar filtering is done to the phenotype_table and the
-genotype_table.)
-Finally, `init_pedgene` calculates
-some values that will be used repeatedly and stores them in the environment that is returned.
-
-```{r init_pedgene,message=FALSE}
-ENV = init_pedgene("seqsimr.db")
-```
-
-### 6.3 Running pedgene on transcripts
-
-Mega2R has an internal default list of the chromosome and base pair
-ranges for a number of gene transcripts.  These transcripts come from
-the UCSC Genome Browser reference assembly GRCH37.  The list was
-further modified to eliminate multiple records of the same gene with
-the exact same transcript start and transcript end.  These data contain
-about 29,000 records.   You may load your own range set instead of the default.
-You create a data frame that contains at least a name "observation", a chromosome
-"observation", a start position "observation" and an end position "observation".
-Then, you create an integer vector that contains the column numbers of the chromosome
-"observation", the start position "observation" and the end position "observation".
-These two objects are then arguments to the `setRanges` function, viz.
-
-```
-        setRanges(Transcripts, Columns)
-```
+### 6.4 Running pedgene on transcripts
 
 By default, the function `Mega2pedgene` examines the first 100
-transcripts and prints the results. For this database, the first 100 transcripts
+default transcripts and prints the results. For this database, the first 100 transcripts
 identifies only one transcript with several markers (It is found
 because it is on chromosome 1 and it has a range that overlaps with some of the
 markers in our study.)
@@ -716,8 +718,8 @@ CEP104 snp24507 789 501 90
 The genotype matrix for these markers, along with the markers, the range
 used, and the environment are passed
 to the call back function `DOpedgene`. `DOpedgene` converts the genotype
-nucleotides  1/1, 1/2 and 2/2 to the values 0, 1 and 2 (or 2, 1, 0) if 1/1 is
-genotype homozygous for the allele with the minor allele frequency.  Then it runs `pedgene`. 
+nucleotides  1/1, 1/2 and 2/2 to the values 0, 1 and 2 (or 2, 1, 0) if 1/1 is the
+genotype for the allele with the minor allele frequency.  Then it runs `pedgene`. 
 The results are automatically stored
 in a data frame with "observations": prefix of chromosome, gene,
 number of markers and base pair range followed by Pedgene data: kernel
@@ -749,7 +751,7 @@ applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
 If you run the above test, you will see that genes DISP1 and KIF26B
 have at least one p-value less than 0.01 and AK5 and STL7 at least one less than 0.03.
 
-### 6.4 Running pedgene on selected genes
+### 6.5 Running pedgene on selected genes
 
 You may try searching for transcripts of specific genes.  Here, the default
 transcript database is `TxDb.Hsapiens.UCSC.hg19.knownGene` from
@@ -782,10 +784,194 @@ applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'AK5'), envir = ENV)
 Note: The default behavior of `DOpedgene` is to append any new results to the end of the
 `ENV$pedgene_results` data frame.
 
-NOTE: You will observe that for several genes there are a few
-transcripts with the same or overlapping start values and end values.
+# 7 Using Mega2R to carry out automated gene-based association tests using 'SKAT'
 
-# 7 Outputting Mega2R data to VCF format
+Mega2R provides functions to run the 'SKAT' package to carry
+out gene-based association tests using a kernel regression framework while
+looping over selected marker subsets.
+
+The 'SKAT' package implements methods for carrying out gene-based association tests; 
+it is available on CRAN as (https://CRAN.R-project.org/package=SKAT).
+It was written by Seunggeun Lee and Michael Wu: 
+[Lee, S., Emond, M.J., Bamshad, M.J., Barnes, K.C., Rieder, M.J., Nickerson, D.A., NHLBI GO
+Exome Sequencing Project-ESP Lung Project Team, Christiani, D.C., Wurfel, M.M. and Lin, X.
+(2012) Optimal unified approach for rare variant association testing with application to small sample
+case-control whole-exome sequencing studies. American Journal of Human Genetics, 91, 224-237.]
+
+## 7.1 Loading a Mega2 database
+
+The `init_SKAT` function is used to read the Mega2 database and initialize processing.
+This function calls the utility function, `dbmega2_import`, to read the database.
+Then it creates, edits, and rewrites the family data, storing it in the data frame, `fam`. 
+(`fam` contains data merged from the `pedigree_table`, `person_table` and
+`phenotype_table`.)
+`init_SKAT` purges persons from the `fam` data frame with unknown case/control
+status. `setfam` sets `fam` in the environment and insures that
+filtering is done to the phenotype_table and the genotype_table
+so they all have the same person_link key.
+Next, `init_SKAT` decodes the phenotype_table into a simple data frame, `phe`.
+You will definitely want to examine `ENV`$`phe` to choose which phenotype to use
+for the case/control.
+In addition, `init_SKAT` calculates
+some values that will be used repeatedly and stores them in the environment that is returned.
+Finally, `init_SKAT` stores the argument `allMarkers` which tells later processing to ignore
+markers that show no variation (if FALSE).
+
+```{r init_SKAT,message=FALSE}
+ENV = init_SKAT("seqsimr.db", filename = "SKAT.txt", verbose = F, allMarkers = F)
+```
+
+You can run the command with verbose equals TRUE to see details of the database as it is loaded:
+
+```{r init_SKAT2,eval=FALSE}
+ENV = init_SKAT("seqsimr.db", filename = "SKAT.txt", verbose = T, allMarkers = F)
+```
+
+## 7.2 Gene Ranges reminder
+
+Mega2R also has an internal default list of the chromosome and base pair
+ranges for many gene transcripts.  These transcripts come from
+the UCSC Genome Browser reference assembly GRCH37.  The list was
+further modified to eliminate multiple records from the same gene with
+the exact same transcript start and transcript end.  The list contains
+about 29,000 records.  You may load your own range set instead of the default.
+Create a data frame that contains at least a name "observation", a chromosome
+"observation", a start position "observation" and an end position "observation".
+And create an integer vector that contains the column numbers of the chromosome
+"observation", the start position "observation" and the end position "observation".
+These two become the arguments to the `setRanges` function, viz.
+```
+setRanges(Ranges, Columns)
+```
+
+## 7.3 Gene transcripts reminder
+
+Gene transcripts are defined according to a Bioconductor database containing the boundaries of the gene transcripts
+or defined by an internal table, `refRanges`, with the boundaries.
+The gene transcripts require two Bioconductor Annotations databases to be installed.
+The first line (below) loads the Bioconductor loader and the next
+two lines install two annotation databases. One annotation database provides the gene transcript
+locations and the other maps gene names to entrez gene IDs. (Note: You
+may choose a different transcript database from Bioconductor or
+construct one of your own.) Please type in R:
+
+```
+source("https://bioconductor.org/biocLite.R")
+
+biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene") 
+biocLite("org.Hs.eg.db")
+```
+The above step is run once.
+
+By default, Mega2R presumes that the databases, "TxDb.Hsapiens.UCSC.hg19.knownGene" and "org.Hs.eg.db" are 
+selected.  Otherwise you must make your choices known to Mega2 via the command:
+```
+setAnnotations(txdb, entrezGene)
+```
+where `txdb` is the name of Bioconductor transcription database, and `entrezGene` is the name of Bioconductor mapping of gene name or gene alias to entrez gene id.
+
+## 7.4 Running Mega2SKAT on ranges
+
+You should be familiar with the SKAT functions in CRAN SKAT before you read this section.
+The function, `Mega2SKAT`, is Mega2's interface to SKAT, both to `SKAT_Null_Model` and
+`SKAT`.  It's signature is:
+
+```
+Mega2SKAT = function (f, ty, gs = 1:100, skat = SKAT::SKAT, envir = ENV, ...) { }
+```
+
+The `gs` argument indicates how many default range elements should be processed and the `envir`
+argument specifies the environment that contains all the Mega2R data frames.
+
+Most of the time, before you call `SKAT`, you need to call `SKAT_Null_Model` with a formula
+and an indicator for the type of the phenotype.  `Mega2SKAT` will take its first two arguments,
+a formula and a type (string) and call `SKAT_Null_Model` with this information, viz.
+```
+SKAT_Null_Model(f, out_type = ty)
+```
+and store the results (in obj in the environment).
+
+If the formula, `f`, is NULL, Mega2SKAT will not call `SKAT_Null_Model` and you must do the 
+equivalent before calling `Mega2SKAT`.  Store the result object in ENV$obj.
+There are several reasons a custom call to the build
+the model could be necessary.  You might want to use `SKAT_Null_Model` but provided additional 
+arguments viz. data, Adjustment, n.Resampling, type.Resampling.  Alternatively, you might
+need to use a different model viz. SKAT_NULL_emmaX, SKAT_Null_Model_ChrX.
+
+The `skat` argument specifies the name of the SKAT package function to use; this is 
+commonly SKAT::SKAT, but could be SKAT::SKATBinary, SKAT::SKAT_CommonRare, etc.
+Any additional, arguments needed for the "skat" functions are provided to the `Mega2SKAT`
+function and will be passed to the eventual call.  All the "skat" functions are called with
+a genotype matrix for the markers, the object representing the Null Model and the additional arguments.
+
+The Mega2R loop engine, iterates through each range and determines the
+set of markers contained.  If there are no markers in a range, the
+genotype matrix is empty and Mega2SKAT will issue a warning.  If a
+marker has no variation, Mega2SKAT will omit it, if the variable
+allMarkers is FALSE.  Mega2SKAT will include it, if allMarkers is
+TRUE, but SKAT will more than likely issue a warning.  The Mega2SKAT
+function also defines a callback function that converts the genotype
+information from the forms 1/1, 1/2, and 2/2 to 0, 1, and 2 with the
+Major allele (flipped if neccessary to be) 0 and then calls the
+specified "skat" function with the required arguments.  Finally, the
+callback function stores the results.
+
+By default, the function `Mega2SKAT` examines the first 100 transcripts and prints the results.
+Note: `verbose` is FALSE to eliminate the (excessive) diagnostics.
+A typical invocation of `Mega2SKAT` could be:
+```{r, FnToRangesSKAT,eval=TRUE}
+ENV$verbose = FALSE
+ENV$SKAT_results = ENV$SKAT_results[0, ]
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5,0.5))
+```
+These data are saved in the data frame, `SKAT_results`, in the environment.
+Note: The results are always appended to the data frame.  You should truncate it
+when necessary.
+
+```{r, FnToRangesa,eval=TRUE}
+print(ENV$SKAT_results)
+```
+
+
+```{r, FnToRange2s,eval=FALSE}
+# we will skip this line for the Rmd document production because it takes too long
+ENV$verbose = FALSE
+ENV$SKAT_results = ENV$SKAT_results[0, ]
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5,0.5), gs=1:nrow(ENV$refRanges))
+print(ENV$SKAT_results)
+```
+
+## 7.5 Running Mega2SKAT on genes
+
+Let us run the Mega2SKAT function for a few genes:
+
+```{r,FnToGenesSKAT,eval=TRUE}
+ENV$SKAT_results = ENV$SKAT_results[0, ]
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5,0.5), genes = c('DISP1', 'AK5', 'KIF26B', 'ST7L'), envir = ENV)
+```
+
+```{r, FnToGenesa,eval=TRUE}
+print(ENV$SKAT_results)
+```
+Note: we set verbose to FALSE otherwise there will be a large number of print outs indicating no markers are in the range.  (Recall the samples come
+from part of chromosome one, whereas the ranges cover the whole genome.)
+If you are adventurous you can look at all the transcripts; try:
+
+```{r,FnToGene2s,eval=TRUE}
+ENV$verbose = FALSE
+ENV$SKAT_results = ENV$SKAT_results[0, ]
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5,0.5), genes = '*', envir = ENV)
+```
+
+Note: The default behavior of `Mega2SKAT` is to append any new results to the end of the
+`ENV$SKAT_results` data frame.
+
+```{r, FnToGene2a,eval=TRUE}
+print(ENV$SKAT_results)
+```
+
+
+# 8 Outputting Mega2R data to VCF format
 
 The `Mega2VCF` function can output subsets of the Mega2R database as a VCF file, accompanied by
 related files (for phenotype and family data).
@@ -797,7 +983,7 @@ was originally defined by the 1000 Genomes Project
 
 The current version of data format can be found at (http://samtools.github.io/hts-specs/).
 
-## 7.1 Writing a VCF File using Mega2R
+## 8.1 Writing a VCF File using Mega2R
 
 First, create the directory "vcfr",
 so we can keep all the generated data in one place.
@@ -839,7 +1025,7 @@ list.files("vcfr")
 You can read the code to see how these files are created from the data frames.
 It is worth noting that the internal logic does not create a genotype matrix for all the requested markers at once, but rather works on a block of markers at a time, limiting the amount of memory required. The code also illustrates how to extract the phenotype values from the phenotype raw vectors.
 
-# 8 Converting Mega2R data to GenABEL format
+# 9 Converting Mega2R data to GenABEL format
 
 Mega2R provides support for converting the
 data frames into 'GenABEL' format (e.g. as gwaa.data-class objects).
@@ -850,7 +1036,7 @@ The reference is
 
 
 
-## 8.1 Creating a GenABEL gwaa.data-class object using Mega2R
+## 9.1 Creating a GenABEL gwaa.data-class object using Mega2R
 
 
 There are several data formats that Mega2 can read and transform
@@ -895,14 +1081,14 @@ You can use any of the GenABEL provided functions on the results, `seqsimgwaa`.
 str(seqsimgwaa)
 ```
 
-# 9 Regression testing
+# 10 Regression testing
 
 To verify that the functions described above have worked correctly,
 we can compare their output files to those created by Mega2, itself, to
 verify that they are identical, as expected. This type of testing is
 known as regression testing.
 
-## 9.1 VCF regression
+## 10.1 VCF regression
 
 If you have a executable copy of Mega2, you can run the code below using
 the MEGA2.BATCH.vcf file and provided example database.
@@ -1071,7 +1257,7 @@ The *diff* should show:
 ## Files vcf/vcf.01.vcf and vcfr/vcf.01.vcf are identical
 ```
 
-## 9.2 GenABEL regression
+## 10.2 GenABEL regression
 
 This test is a bit more complicated.
 We intend to verify that the object generated 
@@ -1393,7 +1579,7 @@ compare the encoded allele pairs and corresponding encoded genotypes,
 they sometimes differ.
 
 
-# 10 Next steps
+# 11 Next steps
 
 If you are left with questions as to how you can use Mega2R for your own research, you can:
 
@@ -1409,6 +1595,6 @@ document by providing implementation details.
 clean_mega2rtutorial_data()
 ```
 
-# 11 Acknowlegements
+# 12 Acknowlegements
 
 The Mega2 C++ program and this Mega2R R package are both open source and are freely available, along with extensive documentation, from our https://watson.hgen.pitt.edu/register web site. This work was supported by NIH grant R01 GM076667 (PI: Weeks). 
