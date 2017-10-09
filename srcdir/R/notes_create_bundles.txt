@@ -25,17 +25,48 @@ R CMD check --as-cran mega2genabel_1.0.0.tar.gz
 R CMD check --as-cran mega2pedgene_1.0.0.tar.gz
 R CMD check --as-cran mega2rtutorial_1.0.0.tar.gz
 
+
+
 ## Test environments
-* Ubuntu 16.04.1, R devel (2017-08-17 r73102)
-* OS X 10.12.5, R 3.4.1 (2017-06-30)
+* Ubuntu 16.04.1, R devel (2017-10-09 r73513)
+* OS X 10.12.6, R 3.4.2 (2017-09-28)
 
 ## R CMD check results
-On Ubuntu, the status is reported as "1 NOTE":
+On Ubuntu, the status is reported as "1 NOTE", which mentions a possibly
+invalid URL.  This has to do with an SSL certificate provided by my
+University which newer browsers do not like.  We are trying to get this
+updated, but as this is at the University level, this make take some
+time. 
+
+* using R Under development (unstable) (2017-10-09 r73513)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+...
+* this is package ‘Mega2R’ version ‘1.0.0’
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: ‘Daniel E. Weeks <weeks@pitt.edu>’
+
+New submission
+
+Found the following (possibly) invalid URLs:
+  URL: https://watson.hgen.pitt.edu/mega2/mega2r/
+    From: DESCRIPTION
+    Status: Error
+    Message: libcurl error code 60:
+      	SSL certificate problem: unable to get local issuer certificate
+      	(Status without verification: OK)
 
 
 On OS X, there were no ERRORs or WARNINGs. 
 
-There was 1 NOTE:
+There was 1 NOTE, about this being a New submission to CRAN.
+
+
+WARNING
+LaTeX errors when creating PDF version.
+This typically indicates Rd problems.
+LaTeX errors found:
+!pdfTeX error: pdflatex (file t1-zi4r-0): Font t1-zi4r-0 at 540 not found
+ ==> Fatal error occurred, no output PDF file produced!
 
 
 ----
