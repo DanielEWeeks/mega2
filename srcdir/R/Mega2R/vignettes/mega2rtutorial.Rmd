@@ -521,6 +521,11 @@ The function:
 
 goes through each transcript/range entry and finds the markers that fall within the bounds.
 It then builds a genotype matrix for the samples and each marker in the range.
+For all ranges that contain the same set of markers, only one genotype matrix is generated 
+and the call back function evaluated once.
+(Note: This situation arises either because multiple named transcripts have the same start and end
+positions or because the granularity of the markers sampled is such that small changes in a range
+start and end position do not introduce additional markers into the range.)
 
 The first argument of the *applyFnToRanges* function is a call back function.  The function is
 called with four arguments: the genotype matrix, the markers in range, the selected transcript/range
@@ -565,15 +570,18 @@ The function:
 
 > applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
 
-will find all the transcripts for each gene requested from the Bioconductor database.  It will then behave
-like `applyFnToRanges`: find all the markers in each transcript range, compute the genotype
+will find all the transcripts for each gene requested from the Bioconductor database.  It will then
+call `applyFnToRanges`: find all the markers in each transcript range, compute the genotype
 matrix and then invoke the call
 back function with the required four arguments.
 
 The *applyFnToGenes* function has several other optional arguments that can
 specify complete chromosomes,
 (multiple) ranges of base pairs on chromosomes,
-or collections of markers.
+or collections of markers.  All these arguments define ranges that are passed to *applyFnToRanges*
+for evaluation.
+Note: If the *genes_arg* argument is set to the special "gene" string "*", then all 
+transcripts in the Bioconductor database, will be processed.
 
 ## 5.4 Iterating through the Genotypes
 
