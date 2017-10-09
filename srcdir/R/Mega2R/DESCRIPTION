@@ -27,7 +27,7 @@ Depends: R (>= 3.3.3),
          GenABEL,
          SKAT,
          pedgene,
-License: GPL (>= 2)
+License: GPL-2
 LinkingTo: Rcpp
 LazyData: true
 Imports:
