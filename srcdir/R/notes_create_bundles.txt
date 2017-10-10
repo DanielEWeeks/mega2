@@ -59,6 +59,9 @@ Found the following (possibly) invalid URLs:
 On OS X, there were no ERRORs or WARNINGs. 
 
 There was 1 NOTE, about this being a New submission to CRAN.
+On OS X, it did not complain about the SSL certificate problem
+discussed above.
+
 
 
 WARNING
@@ -67,6 +70,12 @@ This typically indicates Rd problems.
 LaTeX errors found:
 !pdfTeX error: pdflatex (file t1-zi4r-0): Font t1-zi4r-0 at 540 not found
  ==> Fatal error occurred, no output PDF file produced!
+
+Solution: 
+sudo updmap-sys -enable Map=zi4
+
+From: https://wiki.archlinux.org/index.php/TeX_Live_FAQ
+
 
 
 ----
