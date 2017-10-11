@@ -52,7 +52,8 @@
 #'  In addition, it initializes a matrix to aid
 #'   in translating a genotype allele matrix to a genotype count matrix.
 #'
-#'  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
+#'  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows and
+#'  can be give a filename to write out the data frame to.
 #'
 #' @examples
 #'\dontrun{
@@ -74,10 +75,7 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
     envir$pedPer = envir$schaidPed[ , 1:2]
     envir$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 0), nrow = 5, ncol = 2)
 
-    if (! is.null(filename))
-        envir$pedgene_filename = filename
-    else
-        envir$pedgene_filename = "pedgene.txt"
+    envir$pedgene_filename = filename
 
     envir$pedgene_results <- data.frame(chr = character(0), gene = character(0),
                                         nvariants = numeric(0),
@@ -107,6 +105,10 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 #"
 #' @param gs a subrange of the default transcript ranges over which to calculate the \emph{Dopedgene} function.
 #'
+#' @param genes a list of genes over which to calculate the \emph{DOpedgene} function.
+#'  The value, "*", means use all the transcripts in the selected Bioconductor database.
+#'  If genes is NULL, the gs range of the internal \emph{refRanges} will be used.
+#'
 #' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
@@ -123,14 +125,18 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 #'
 #' Mega2pedgene(1:10)
 #'}
-Mega2pedgene = function (gs = 1:100, envir = ENV) {
+Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 
-    unlink(envir$pedgene_filename)
+    if (! is.null(envir$pedgene_filename)) unlink(envir$pedgene_filename)
 
-    applyFnToRanges(DOpedgene, envir$refRanges[gs, ], envir$refIndices, envir = envir)
+    if (is.null(genes)) 
+        applyFnToRanges(DOpedgene, envir$refRanges[gs, ], envir$refIndices, envir = envir)
+    else
+        applyFnToGenes(DOpedgene, genes, envir = envir)
 
-    write.table(envir$pedgene_results, file=envir$pedgene_filename,
-                row.names= FALSE, col.names= TRUE, quote= FALSE)
+    if (! is.null(envir$pedgene_filename))
+        write.table(envir$pedgene_results, file=envir$pedgene_filename,
+                    row.names= FALSE, col.names= TRUE, quote= FALSE)
 }
 
 #' pedgene call back function

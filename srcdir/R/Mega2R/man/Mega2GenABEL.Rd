@@ -4,11 +4,9 @@
 \alias{Mega2GenABEL}
 \title{generate gwaa.data-class object from a \bold{Mega2R} database}
 \usage{
-Mega2GenABEL(prefix, markers = NULL, mapno = 0, envir = ENV)
+Mega2GenABEL(markers = NULL, mapno = 0, envir = ENV)
 }
 \arguments{
-\item{prefix}{prefix for generated file names}
-
 \item{markers}{data frame of markers to be processed}
 
 \item{mapno}{specify which map index to use for physical distances}
@@ -29,7 +27,7 @@ Call the \emph{Mega2R} functions to: create a .tped file, a .tfam file and a .ph
 \dontrun{
 ENV = read.Mega2DB("my.db")
 
-gwaa = Mega2GenABEL(prefix, NULL)
+gwaa = Mega2GenABEL()
 str(gwaa)
 head(summary(gwaa))
 }

@@ -4,10 +4,11 @@
 \alias{dump_mega2rtutorial_data}
 \title{dump tutorial data}
 \usage{
-dump_mega2rtutorial_data(dir = ".")
+dump_mega2rtutorial_data(dir = paste0(tempdir(), "/", "Mega2Rtutorial"))
 }
 \arguments{
-\item{dir}{The directory to store the tutorial data to.  By default, this is ".".}
+\item{dir}{The directory to store the tutorial data to.  By default, this is
+tempdir()/Mega2Rtutorial}
 }
 \value{
 None

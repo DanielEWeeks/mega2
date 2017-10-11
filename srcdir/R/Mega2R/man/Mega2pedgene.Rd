@@ -4,10 +4,14 @@
 \alias{Mega2pedgene}
 \title{execute the CRAN pedgene function on a transcript ranges}
 \usage{
-Mega2pedgene(gs = 1:100, envir = ENV)
+Mega2pedgene(gs = 1:100, genes = NULL, envir = ENV)
 }
 \arguments{
 \item{gs}{a subrange of the default transcript ranges over which to calculate the \emph{Dopedgene} function.}
+
+\item{genes}{a list of genes over which to calculate the \emph{DOpedgene} function.
+The value, "*", means use all the transcripts in the selected Bioconductor database.
+If genes is NULL, the gs range of the internal \emph{refRanges} will be used.}
 
 \item{envir}{'environment' containing SQLite database and other globals}
 }

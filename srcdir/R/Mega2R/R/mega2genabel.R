@@ -38,8 +38,6 @@
 #'  is combined with a .phe (phenotype) file by \code{load.gwaa.data} to create a gwaa.data-class
 #'  object in memory.
 #'
-#' @param prefix prefix for generated file names
-#'
 #' @param markers data frame of markers to be processed
 #'
 #' @param mapno specify which map index to use for physical distances
@@ -56,15 +54,17 @@
 #'\dontrun{
 #' ENV = read.Mega2DB("my.db")
 #'
-#' gwaa = Mega2GenABEL(prefix, NULL)
+#' gwaa = Mega2GenABEL()
 #' str(gwaa)
 #' head(summary(gwaa))
 #'}
-Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
+Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 
 ## print(system.time ({
     if (is.null(markers)) markers = envir$markers
 
+    prefix = paste(tempdir(), "Mega2GenABEL", sep = "/")
+    
     mkGenABELtped(prefix, markers, mapno = mapno, envir)
 
     mkGenABELtfam(prefix, envir)
@@ -88,7 +88,31 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
                  envir = envir)
           )
 ## }))
+
     ans
+}
+
+#' delete temporary PLINK tped files processed by GenABEL
+#'
+#' @description
+#'  Delete the PLINK .tped files:  a .tped file, a .tfam file and a .phe file and 
+#'  the GenABEL tped.raw file.
+#'
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#'
+#' gwaa = Mega2GenABELClean()
+#'}
+Mega2GenABELClean = function () {
+
+    prefix = paste(tempdir(), "Mega2GenABEL", sep = "/")
+
+    unlink(paste0(prefix, ".tped"))
+    unlink(paste0(prefix, ".tfam"))
+    unlink(paste0(prefix, "tped.raw"))
+    unlink(paste0(prefix, ".phe"))
 }
 
 #' generate gwaa.data-class object
@@ -256,7 +280,7 @@ mkGenABELtfam = function (prefix, envir) {
 #'
 #' @param envir 'environment' containing SQLite database and other globals
 #'
-#' @return None
+#' @return out phenotype data frame
 #'
 #' @keywords internal
 #'

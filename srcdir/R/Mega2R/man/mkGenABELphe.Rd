@@ -10,7 +10,7 @@ mkGenABELphe(envir)
 \item{envir}{'environment' containing SQLite database and other globals}
 }
 \value{
-None
+out phenotype data frame
 }
 \description{
 Generate the .phe (PLINK phenotype) file needed by GenAbel.  The person

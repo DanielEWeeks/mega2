@@ -54,13 +54,14 @@
 #'  In addition, it initializes a matrix to aid
 #'   in translating a genotype allele matrix to a genotype count matrix.
 #'
-#'  It also initializes the dataframe \emph{envir$SKAT_results} to zero rows.
+#'  It also initializes the data frame \emph{envir$SKAT_results} to zero rows and
+#'  can be give a filename to write out the data frame to.
 #'
 #' @examples
 #'\dontrun{
 #' init_SKAT("ped3.db", verbose = TRUE)
 #'}
-init_SKAT = function (db = NULL, filename = "SKAT.txt", verbose = FALSE, allMarkers = FALSE) {
+init_SKAT = function (db = NULL, filename = NULL, verbose = FALSE, allMarkers = FALSE) {
 
     if (is.null(db))
         stop("You must specify a database argument!\n", call. = FALSE)
@@ -143,7 +144,8 @@ init_SKAT = function (db = NULL, filename = "SKAT.txt", verbose = FALSE, allMark
 #'}
 Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = ENV, ...) {
 
-    unlink(envir$SKAT_filename)
+    if (! is.null(envir$SKAT_filename)) unlink(envir$SKAT_filename)
+
     if (! is.null(f))
         envir$obj = SKAT_Null_Model(f, out_type = ty)
     envir$skat = skat
@@ -157,8 +159,9 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
     else
         applyFnToGenes(SKAT4arg, genes, envir = envir)
 
-    write.table(envir$SKAT_results, file=envir$SKAT_filename,
-                row.names= FALSE, col.names= TRUE, quote= FALSE)
+    if (! is.null(envir$SKAT_filename))
+        write.table(envir$SKAT_results, file=envir$SKAT_filename,
+                    row.names= FALSE, col.names= TRUE, quote= FALSE)
 }
 
 #' SKAT call back function

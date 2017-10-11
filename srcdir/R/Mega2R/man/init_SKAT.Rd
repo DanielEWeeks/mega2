@@ -4,7 +4,7 @@
 \alias{init_SKAT}
 \title{load Mega2 SQLite database and perform initialization for SKAT usage}
 \usage{
-init_SKAT(db = NULL, filename = "SKAT.txt", verbose = FALSE,
+init_SKAT(db = NULL, filename = NULL, verbose = FALSE,
   allMarkers = FALSE)
 }
 \arguments{
@@ -31,7 +31,8 @@ This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite d
  In addition, it initializes a matrix to aid
   in translating a genotype allele matrix to a genotype count matrix.
 
- It also initializes the dataframe \emph{envir$SKAT_results} to zero rows.
+ It also initializes the data frame \emph{envir$SKAT_results} to zero rows and
+ can be give a filename to write out the data frame to.
 }
 \examples{
 \dontrun{

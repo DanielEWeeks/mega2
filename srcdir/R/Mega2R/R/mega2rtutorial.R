@@ -34,7 +34,7 @@ FILES = c("MEGA2.BATCH.seqsimr", "MEGA2.BATCH.srdta", "MEGA2.BATCH.vcf",
 GENED = c("SEQ.phe", "SEQ.tfam", "SEQ.tped", "SEQtped.raw",
           "SRD.phe", "SRD.tfam", "SRD.tped", "SRDtped.raw",
           "srdta.db.old", "srdta.map", "srdta.ped", "srdta.phe",
-          "pedgene.txt")
+          "pedgene.txt", "SKAT.txt")
 
 FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 
@@ -43,7 +43,8 @@ FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 #' @description This function retrieves data stored in the Mega2rtutorial (inst/exdata).  It
 #'	dumps them in the current (or specified) directory.
 #'
-#' @param dir The directory to store the tutorial data to.  By default, this is ".".
+#' @param dir The directory to store the tutorial data to.  By default, this is
+#'  tempdir()/Mega2Rtutorial
 #'
 #' @export
 #' @return None
@@ -52,7 +53,10 @@ FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 #'\dontrun{
 #' dump_mega2rtutorial_data()
 #'}
-dump_mega2rtutorial_data = function(dir = ".") {
+dump_mega2rtutorial_data = function(dir = paste0(tempdir(), "/", "Mega2Rtutorial")) {
+    if (! dir.exists(dir))
+        dir.create(dir)
+
     for (file in FILES) {
         from = system.file("exdata", file, package="Mega2R")
         to   = paste(dir, file, sep="/")
@@ -60,8 +64,8 @@ dump_mega2rtutorial_data = function(dir = ".") {
     }
     for (file in FILES.gz) {
 #      R.utils::gunzip(file)
-       in.gz = gzfile(paste0(file, ".gz"), "rb")
-       out   = file(file, "wb")
+       in.gz = gzfile(paste0(dir, "/", file, ".gz"), "rb")
+       out   = file(paste(dir, file, sep="/"), "wb")
        while (TRUE) {
            rv = readBin(in.gz, "raw", n = 4096, size = 1)
            ln = length(rv)
@@ -73,12 +77,14 @@ dump_mega2rtutorial_data = function(dir = ".") {
     }
 }
 
+
 #' remove tutorial data
 #'
 #' @description This function removes the Mega2R tutorial (inst/exdata) data that was
 #'	copied to the specified directory.
 #'
-#' @param dir The directory to remove the tutorial data from.  By default, this is ".".
+#' @param dir The directory to remove the tutorial data to.  By default, this is
+#'  tempdir()/Mega2Rtutorial
 #'
 #' @export
 #' @return None
@@ -87,11 +93,31 @@ dump_mega2rtutorial_data = function(dir = ".") {
 #'\dontrun{
 #' clean_mega2rtutorial_data()
 #'}
-clean_mega2rtutorial_data = function(dir = ".") {
+clean_mega2rtutorial_data = function(dir = paste(tempdir(), "Mega2Rtutorial", sep="/")) {
+    if (! dir.exists(dir))
+      return (NULL)
+
     for (file in c(FILES, GENED)) {
         to = paste(dir, file, sep="/")
         unlink(to)
     }
-    unlink("vcfr", recursive = TRUE)
+    unlink(paste(dir, "vcfr", sep="/"), recursive = TRUE)
 }
 
+#' show directory of tutorial data
+#'
+#' @description This function shows the directory the Mega2Rtutorial (inst/exdata) was copied to.
+#'
+#' @param dir The directory to store the tutorial data to.  By default, this is
+#'  tempdir()/Mega2Rtutorial
+#'
+#' @export
+#' @return dir tutorial to hold vignette
+#'
+#' @examples
+#'\dontrun{
+#' where_mega2rtutorial_data()
+#'}
+where_mega2rtutorial_data = function(dir = paste0(tempdir(), "/", "Mega2Rtutorial")) {
+    dir
+}

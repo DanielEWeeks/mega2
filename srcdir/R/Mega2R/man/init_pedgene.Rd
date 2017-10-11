@@ -27,7 +27,8 @@ This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite d
  In addition, it initializes a matrix to aid
   in translating a genotype allele matrix to a genotype count matrix.
 
- It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
+ It also initializes the dataframe \emph{envir$pedgene_results} to zero rows and
+ can be give a filename to write out the data frame to.
 }
 \examples{
 \dontrun{
