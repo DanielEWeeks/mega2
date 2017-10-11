@@ -106,7 +106,8 @@ We have also created several more functions that
 illustrate how to use the data frames as well as perform useful
 functions: these permit one to run the 'pedgene' package (https://CRAN.R-project.org/package=pedgene) to carry
 out gene-based association tests on family data using selected
-marker subsets, to output subsets of the Mega2R data as a VCF file (https://github.com/samtools/hts-specs) and
+marker subsets, to run the 'SKAT' package (https://CRAN.R-project.org/package=SKAT) to carry out gene-based
+association tests using selected marker subsets, to output subsets of the Mega2R data as a VCF file (https://github.com/samtools/hts-specs) and
 related files (for phenotype and family data), and to convert the
 data frames into 'GenABEL' gwaa.data-class objects (https://CRAN.R-project.org/package=GenABEL).
 
@@ -871,6 +872,7 @@ Create a data frame that contains at least a name "observation", a chromosome
 And create an integer vector that contains the column numbers of the chromosome
 "observation", the start position "observation" and the end position "observation".
 These two become the arguments to the `setRanges` function, viz.
+
 ```
 setRanges(Ranges, Columns)
 ```
@@ -896,6 +898,7 @@ The above step is run once.
 
 By default, Mega2R presumes that the databases, "TxDb.Hsapiens.UCSC.hg19.knownGene" and "org.Hs.eg.db" are 
 selected.  Otherwise you must make your choices known to Mega2 via the command:
+
 ```
 setAnnotations(txdb, entrezGene)
 ```
@@ -903,9 +906,9 @@ where `txdb` is the name of Bioconductor transcription database, and `entrezGene
 
 ## 7.4 Running Mega2SKAT on ranges
 
-You should be familiar with the SKAT functions in CRAN SKAT before you read this section.
-The function, `Mega2SKAT`, is Mega2's interface to SKAT, both to `SKAT_Null_Model` and
-`SKAT`.  It's signature is:
+You should be familiar with the SKAT functions of the SKAT package before you read this section.
+The function, `Mega2SKAT`, is Mega2R's interface to SKAT, both to `SKAT_Null_Model` and
+`SKAT`.  Its signature is:
 
 ```
 Mega2SKAT = function (f, ty, gs = 1:100, skat = SKAT::SKAT, envir = ENV, ...) { }
@@ -930,7 +933,7 @@ arguments viz. data, Adjustment, n.Resampling, type.Resampling.  Alternatively, 
 need to use a different model viz. SKAT_NULL_emmaX, SKAT_Null_Model_ChrX.
 
 The `skat` argument specifies the name of the SKAT package function to use; this is 
-commonly SKAT::SKAT, but could be SKAT::SKATBinary, SKAT::SKAT_CommonRare, etc.
+usually SKAT::SKAT, but could be SKAT::SKATBinary, SKAT::SKAT_CommonRare, etc.
 Any additional, arguments needed for the "skat" functions are provided to the `Mega2SKAT`
 function and will be passed to the eventual call.  All the "skat" functions are called with
 a genotype matrix for the markers, the object representing the Null Model and the additional arguments.
@@ -943,18 +946,20 @@ allMarkers is FALSE.  Mega2SKAT will include it, if allMarkers is
 TRUE, but SKAT will more than likely issue a warning.  The Mega2SKAT
 function also defines a callback function that converts the genotype
 information from the forms 1/1, 1/2, and 2/2 to 0, 1, and 2 with the
-Major allele (flipped if neccessary to be) 0 and then calls the
+major allele (flipped if necessary to be) 0 and then calls the
 specified "skat" function with the required arguments.  Finally, the
 callback function stores the results.
 
 By default, the function `Mega2SKAT` examines the first 100 transcripts and prints the results.
 Note: `verbose` is FALSE to eliminate the (excessive) diagnostics.
 A typical invocation of `Mega2SKAT` could be:
+
 ```{r, FnToRangesSKAT,eval=TRUE}
 ENV$verbose = FALSE
 ENV$SKAT_results = ENV$SKAT_results[0, ]
 Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5,0.5))
 ```
+
 These data are saved in the data frame, `SKAT_results`, in the environment.
 Note: The results are always appended to the data frame.  You should truncate it
 when necessary.
@@ -965,7 +970,7 @@ print(ENV$SKAT_results)
 
 
 ```{r, FnToRange2s,eval=FALSE}
-# we will skip this line for the Rmd document production because it takes too long
+# we will skip this line for the Vignette document production because it takes too long
 ENV$verbose = FALSE
 ENV$SKAT_results = ENV$SKAT_results[0, ]
 Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5,0.5), gs=1:nrow(ENV$refRanges))
@@ -984,9 +989,10 @@ Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(
 ```{r, FnToGenesa,eval=TRUE}
 print(ENV$SKAT_results)
 ```
+
 Note: we set verbose to FALSE otherwise there will be a large number of print outs indicating no markers are in the range.  (Recall the samples come
 from part of chromosome one, whereas the ranges cover the whole genome.)
-If you are adventurous you can look at all the transcripts; try:
+If you are adventurous you can look at all the transcripts:
 
 ```{r,FnToGene2s,eval=TRUE}
 ENV$verbose = FALSE
