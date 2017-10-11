@@ -127,7 +127,7 @@ init_SKAT = function (db = NULL, filename = NULL, verbose = FALSE, allMarkers = 
 #'
 #' @note
 #'  This code starts by deleting the output file set in \code{init_SKAT} ("SKAT.txt" by default).
-#'  Then \cr\code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
+#'  Then \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
 #'  \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
 #'  \code{DOSKAT} with the appropriate arguments (including those additional to the
 #'  \code{Mega2SKAT} function).
