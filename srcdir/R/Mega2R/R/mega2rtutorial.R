@@ -41,7 +41,7 @@ FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 #' dump tutorial data
 #'
 #' @description This function retrieves data stored in the Mega2rtutorial (inst/exdata).  It
-#'	dumps them in the current (or specified) directory.
+#'	dumps them in the specified directory.
 #'
 #' @param dir The directory to store the tutorial data to.  By default, this is
 #'  tempdir()/Mega2Rtutorial
