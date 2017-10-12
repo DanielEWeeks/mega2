@@ -1477,7 +1477,15 @@ pedgene
  It returns the p-value of the kernel and burden association statistics
  for each weight.
  The results are stored in a data frame.
- 
+ The data frame will be written to a file if one were specified as the 
+\emph on
+filename
+\emph default
+ argument of 
+\emph on
+init_pedgene
+\emph default
+.
 \end_layout
 
 \begin_layout Standard
@@ -1681,8 +1689,8 @@ allele_table
 Mega2VCF
 \emph default
  generates several additional files.
- Below, we indicate the file, the internal function that generates the file,
- and the file contents:
+ Below, we indicate the file suffix, the internal function that generates
+ the file, and the file contents:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2020,9 +2028,10 @@ function from the Mega2R package to load your database and should save the
 Mega2GenABEL
 \emph default
 , returns a gwaa.data-class object for the selected markers.
- It operates by re-writing the Mega2R data frames into one of the formats
- that GenABEL supports; currently, this is PLINK .tped format.
- This requires a .tped file, a .fam file, and a .phe file.
+ It operates by re-writing the Mega2R data frames into one of the input
+ formats that GenABEL supports; currently, this is PLINK .tped format.
+ This requires a .tped file, a .fam file, and a .phe file; they are stored
+ in a temporary directory.
  The .tped file looks very much like a VCF .vcf file with entries in each
  row for the samples' genotype data for each marker.
  (But, in comparison to the .vcf file, there are fewer fields of genotype
@@ -2051,12 +2060,12 @@ raw
 \begin_inset Quotes erd
 \end_inset
 
- format file and then it converts that raw format file and a phenotype file
+ format file, then it converts that raw format file and a phenotype file
  into a GenABEL gwaa.data-class object via the function, 
 \emph on
 load.gwaa.data
 \emph default
-.
+, and then it deletes the intermediate files.
 \end_layout
 
 \begin_layout Standard
@@ -2961,7 +2970,7 @@ applyFnToRanges(DOcallback, ENV$refRanges[ENV$refRanges$chromosome ==1,],
 
 \begin_layout Plain Layout
 
-       ENV$refIndices, envir = ENV)
+                ENV$refIndices, envir = ENV)
 \end_layout
 
 \end_inset
@@ -3043,7 +3052,11 @@ status open
 \begin_layout Plain Layout
 
 applyFnToGenes(DOcallback, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'),
- envir = ENV)
+\end_layout
+
+\begin_layout Plain Layout
+
+               envir = ENV)
 \end_layout
 
 \end_inset
@@ -3678,21 +3691,6 @@ status open
 
 \begin_layout Plain Layout
 
-db = paste(where_mega2rtutorial_data(), "seqsimr.db", sep="/")
-\end_layout
-
-\begin_layout Plain Layout
-
-skatfile = paste(where_mega2rtutorial_data(), "SKAT.txt", sep="/")
-\end_layout
-
-\begin_layout Plain Layout
-
-#ENV = init_SKAT(db, filename = skatfile, verbose = F, allMarkers = F)
-\end_layout
-
-\begin_layout Plain Layout
-
 ENV = init_SKAT("seqsimr.db", filename = "SKAT.txt", verbose = F, allMarkers
  = F)
 \end_layout
@@ -3714,21 +3712,6 @@ status open
 \begin_layout Plain Layout
 
 <<init_SKATFALSE, eval=FALSE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-db = paste(where_mega2rtutorial_data(), "seqsimr.db", sep="/")
-\end_layout
-
-\begin_layout Plain Layout
-
-skatfile = paste(where_mega2rtutorial_data(), "SKAT.txt", sep="/")
-\end_layout
-
-\begin_layout Plain Layout
-
-#ENV = init_SKAT(db, filename = skatfile, verbose = T, allMarkers = F)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3862,8 +3845,12 @@ ENV$SKAT_results = ENV$SKAT_results[0, ]
 
 \begin_layout Plain Layout
 
-Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5
-,0.5))
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
+\end_layout
+
+\begin_layout Plain Layout
+
+          weights.beta=c(0.5,0.5))
 \end_layout
 
 \end_inset
@@ -3923,8 +3910,12 @@ ENV$SKAT_results = ENV$SKAT_results[0, ]
 
 \begin_layout Plain Layout
 
-Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5
-,0.5), gs=1:nrow(ENV$refRanges))
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
+\end_layout
+
+\begin_layout Plain Layout
+
+          weights.beta=c(0.5,0.5), gs=1:nrow(ENV$refRanges))
 \end_layout
 
 \begin_layout Plain Layout
@@ -3961,8 +3952,17 @@ ENV$SKAT_results = ENV$SKAT_results[0, ]
 
 \begin_layout Plain Layout
 
-Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5
-,0.5), genes = c('DISP1', 'AK5', 'KIF26B', 'ST7L'), envir = ENV)
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
+\end_layout
+
+\begin_layout Plain Layout
+
+          weights.beta=c(0.5,0.5), genes = c('DISP1', 'AK5', 'KIF26B', 'ST7L'),
+\end_layout
+
+\begin_layout Plain Layout
+
+          envir = ENV)
 \end_layout
 
 \end_inset
@@ -3994,10 +3994,7 @@ Note: we set verbose to FALSE otherwise there will be a large number of
  print outs indicating no markers are in the range.
  (Recall the samples come from part of chromosome one, whereas the ranges
  cover the whole genome.) If you are adventurous you can look at all the
- transcripts:
-\end_layout
-
-\begin_layout Standard
+ transcript
 \begin_inset Flex Chunk
 status open
 
@@ -4018,8 +4015,12 @@ ENV$SKAT_results = ENV$SKAT_results[0, ]
 
 \begin_layout Plain Layout
 
-Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5
-,0.5), genes = '*', envir = ENV)
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
+\end_layout
+
+\begin_layout Plain Layout
+
+          weights.beta=c(0.5,0.5), genes = '*', envir = ENV)
 \end_layout
 
 \end_inset
@@ -4241,6 +4242,11 @@ Mega2GenABEL
 .
  The GenABEL functions 'convert.snp.tped' and 'load.gwaa.data' are explained
  in https://cran.r-project.org/package=GenABEL.
+ When 
+\emph on
+Mega2GenABEL 
+\emph default
+is finished, it deletes all the files that it generated.
 \end_layout
 
 \begin_layout Standard
@@ -4279,34 +4285,6 @@ ENV = read.Mega2DB("seqsimr.db")
 \begin_layout Plain Layout
 
 seqsimgwaa = Mega2GenABEL()
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The files generated are:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<lsseq>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-list.files(path = tempdir(), pattern = "Mega2GenABEL.*")
-\end_layout
-
-\begin_layout Plain Layout
-
-Mega2GenABELClean()
 \end_layout
 
 \end_inset
@@ -4735,16 +4713,6 @@ ENV = read.Mega2DB("srdta.db")
 mega = Mega2GenABEL()
 \end_layout
 
-\begin_layout Plain Layout
-
-list.files(path = tempdir(), pattern = "Mega2GenABEL.*")
-\end_layout
-
-\begin_layout Plain Layout
-
-Mega2GenABELClean()
-\end_layout
-
 \end_inset
 
 
@@ -4884,7 +4852,7 @@ status open
 
 \begin_layout Plain Layout
 
-clean_mega2rtutorial_data()
+clean_mega2rtutorial_data(".")
 \end_layout
 
 \end_inset
@@ -4983,7 +4951,7 @@ Other requirements; R, SQLite library
 \end_layout
 
 \begin_layout Standard
-License: GNU GPL 3
+License: GNU GPL 2
 \end_layout
 
 \begin_layout Section
