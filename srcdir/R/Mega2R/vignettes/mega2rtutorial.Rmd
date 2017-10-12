@@ -159,7 +159,7 @@ In that directory, you will see the following files:
 **Note: The temporary directory name, given by `file.path(tempdir(),"Mega2Rtutorial")`, is generated randomly each time this
 vignette is run. **
 
-**Note:  The temporary directory name is also the value of the R expression, where_mega2rtutorial_data().**
+**Note:  The temporary directory name is also the value of the R expression, `where_mega2rtutorial_data()`.**
 
 When you are done with these exercise, the "clean" command will remove these files:
 
@@ -413,11 +413,14 @@ use the function `read.Mega2DB` to read a Mega2 database.
 
 ```{r, seqsimrdb,eval=FALSE}
 library(Mega2R)
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
 ENV = read.Mega2DB(db, verbose = TRUE)
 ```
 
-The first argument should be the path to the database. Providing the
+The first argument `db` should be the name of the database (including the path if needed);  here we have set `db` to point to the `seqsimr.db` example database file provided with this R package. Providing the
 optional argument, `verbose`, causes the read function to summarize the
 tables created, their fields and their sizes. Finally, an "R
 environment", that contains the database tables is returned. (If you
@@ -431,6 +434,9 @@ exits. If you change the data in an environment passed to a function,
 the change is permanent.)
 
 ```{r seqsimrdb2}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
 ENV = read.Mega2DB(db, verbose = TRUE)
 ```
@@ -651,6 +657,9 @@ data frame that is produced later.  (The default filename is NULL which indicate
 data frame should not be written.)
 
 ```{r init_pedgene,message=FALSE}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
 pedfile = file.path(where_mega2rtutorial_data(), "pedgene.txt")
 ENV = init_pedgene(db, filename = pedfile)
@@ -845,6 +854,9 @@ data frame that is produced later.  (The default filename is NULL which indicate
 data frame should not be written.)
 
 ```{r init_SKAT,message=FALSE}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
 skatfile = file.path(where_mega2rtutorial_data(), "SKAT.txt")
 ENV = init_SKAT(db, filename = skatfile, verbose = F, allMarkers = F)
@@ -853,6 +865,9 @@ ENV = init_SKAT(db, filename = skatfile, verbose = F, allMarkers = F)
 You can run the command with verbose equals TRUE to see details of the database as it is loaded:
 
 ```{r init_SKAT2,eval=FALSE}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
 skatfile = file.path(where_mega2rtutorial_data(), "SKAT.txt")
 ENV = init_SKAT(db, filename = skatfile, verbose = T, allMarkers = F)
@@ -902,6 +917,12 @@ selected.  Otherwise you must make your choices known to Mega2 via the command:
 setAnnotations(txdb, entrezGene)
 ```
 where `txdb` is the name of Bioconductor transcription database, and `entrezGene` is the name of Bioconductor mapping of gene name or gene alias to entrez gene id.
+
+Note that, in this case, if `init_SKAT` has been run as indicated above, then it loaded both a `txdb` and a `entrezGene` into the `ENV` environment.  While these are already the set annotations, we could explicitly set them via this command:
+
+```
+setAnnotations(ENV$txdb, ENV$entrezGene)
+```
 
 ## 7.4 Running Mega2SKAT on ranges
 
@@ -1025,6 +1046,9 @@ First, create the directory "vcfr",
 so we can keep all the generated data in one place.
 
 ```{r mega2vcflib}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 vcfdir = file.path(where_mega2rtutorial_data(), "vcfr")
 if (! dir.exists(vcfdir)) dir.create(vcfdir)
 ```
@@ -1045,6 +1069,9 @@ others. These files are listed below.
 Creating the VCF file and related files is accomplished by typing:
 
 ```{r mega2vcf}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 vcffile = file.path(where_mega2rtutorial_data(), "vcfr", "vcf.01")
 Mega2VCF(vcffile, ENV$markers[ENV$markers$chromosome==1 ,])
 ```
@@ -1101,6 +1128,9 @@ If you haven't already, first install the 'GenABEL' package from CRAN.
 Then type:
 
 ```{r seqsimgwaa}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
 ENV = read.Mega2DB(db)
 
@@ -1315,6 +1345,9 @@ Then we dump the GenABEL data as
 PLINK .ped/.map/.phe files
 
 ```{r dmpPed}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 srdtafile = file.path(where_mega2rtutorial_data(), "srdta")
 dmpPed(gwaa_ = srdta, pfx = srdtafile)
 ```
@@ -1578,6 +1611,9 @@ you can proceed with the steps that follow, even if you did not create your own 
 Now, we go back into R and type:
 
 ```{r, srdta.db,eval=TRUE}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 sdb = file.path(where_mega2rtutorial_data(), "srdta.db")
 ENV = read.Mega2DB(sdb)
 
