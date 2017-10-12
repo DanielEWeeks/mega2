@@ -37,7 +37,8 @@
 #'
 #' @param db specifies the path of a \bold{Mega2} SQLite database containing study data.
 #'
-#' @param filename filename to store results data frame. \code{Mega2SKAT} erases and creates a new one each time it is run.
+#' @param filename filename to store results data frame. If the filename is not NULL (the default),
+#'  \code{Mega2SKAT} erases and creates a new file each time it is run.
 #'
 #' @param verbose TRUE indicates that diagnostic printouts should be enabled.
 #'  This value is saved in the returned environment.
@@ -55,7 +56,8 @@
 #'   in translating a genotype allele matrix to a genotype count matrix.
 #'
 #'  It also initializes the data frame \emph{envir$SKAT_results} to zero rows and
-#'  can be give a filename to write out the data frame to.
+#'  can be give a \code{filename} to write out the data frame to.  It remembers the \code{filename}
+#'  as \code{SKAT_filename} in the environment.
 #'
 #' @seealso \code{\link{Mega2SKAT}}
 #'
@@ -128,13 +130,14 @@ init_SKAT = function (db = NULL, filename = NULL, verbose = FALSE, allMarkers = 
 #' @export
 #'
 #' @note
-#'  This code starts by deleting the output file set in \code{init_SKAT} via its \code{filename} argument.
+#'  If the \code{filename} argument set in \code{init_SKAT} is not NULL,
+#'  this code starts by deleting the \code{filename} file.  
 #'  Then \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
 #'  \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
 #'  \code{DOSKAT} with the appropriate arguments (including those additional to the
-#'  \code{Mega2SKAT} function).
-#'  Finally, the data frame of results, \emph{envir$SKAT_results}, is written
-#'  to the output file.
+#'  \code{Mega2SKAT} function).   Finally, if the \code{filename} argument
+#'  set in \code{init_SKAT} is not NULL, the data frame of results, \emph{envir$SKAT_results},
+#'  is written to the output file.
 #'
 #' @seealso \code{\link{init_SKAT}}
 #'

@@ -849,7 +849,7 @@ In addition, `init_SKAT` calculates
 some values that will be used repeatedly and stores them in the environment that is returned.
 Finally, `init_SKAT` stores the argument `allMarkers` which tells later processing to ignore
 markers that show no variation (if FALSE).
-You may specify a "filename" argument to `init_pedgeneSKAT` to indicate where to store the 
+You may specify a "filename" argument to `init_SKAT` to indicate where to store the 
 data frame that is produced later.  (The default filename is NULL which indicates that the 
 data frame should not be written.)
 
@@ -1084,6 +1084,9 @@ If the second argument is not present, all the markers are written out.
 
 The generated files are listed below:
 ```{r, lsvcf}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
 vcfdir = file.path(where_mega2rtutorial_data(), "vcfr")
 list.files(vcfdir)
 ```
@@ -1118,8 +1121,8 @@ object.
 Currently, the function, `Mega2GenABEL`, 
 uses this mechanism to convert Mega2 data frames to a gwaa.data-class
 object.
-The argument to `Mega2GenABEL` is a file name prefix that will
-be used to name the .tped/.fam/.phe files that are created.  The
+The .tped/.fam/.phe files are created in a scratch space, file.path(tempdir(), Mega2GenABEL).
+They are deleted when the `Mega2GenABEL` function exits. The
 GenABEL functions `convert.snp.tped` and `load.gwaa.data` are explained in
 https://cran.r-project.org/package=GenABEL.
 
@@ -1137,14 +1140,6 @@ ENV = read.Mega2DB(db)
 # This line converts the database to a gwaa.data-class object. The intermediate
 # files are in tempdir() and begin with "Mega2GenABEL"
 seqsimgwaa = Mega2GenABEL()
-```
-
-The files generated are:
-
-```{r lsseq}
-path = tempdir()
-list.files(path=path, pattern = "Mega2GenABEL.*")
-Mega2GenABELClean()
 ```
 
 You can use any of the GenABEL provided functions on the results, `seqsimgwaa`.
@@ -1618,9 +1613,6 @@ sdb = file.path(where_mega2rtutorial_data(), "srdta.db")
 ENV = read.Mega2DB(sdb)
 
 mega = Mega2GenABEL()
-path = tempdir()
-list.files(path = path, pattern = "Mega2GenABEL.*")
-Mega2GenABELClean()
 ```
 
 `mega` should be the same as the `srdta` gwaa.data-class object. You can

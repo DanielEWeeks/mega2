@@ -7,7 +7,7 @@
 mkVCFfreq(prefix, markers, recode = FALSE, envir)
 }
 \arguments{
-\item{prefix}{prefix for vcf file name}
+\item{prefix}{prefix for .freq file (frequency)}
 
 \item{markers}{data.frame of markers being processed}
 

@@ -21,7 +21,7 @@ Call the \emph{Mega2R} functions to: create a .tped file, a .tfam file and a .ph
  Then call the GenABEL functions to process these files: the .tped and the .tfam
  file are processed by \code{convert.snp.tped} to produce a tped.raw file.  The latter
  is combined with a .phe (phenotype) file by \code{load.gwaa.data} to create a gwaa.data-class
- object in memory.
+ object in memory.  All these files are deleted when the exits.
 }
 \examples{
 \dontrun{

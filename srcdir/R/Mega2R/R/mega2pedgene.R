@@ -37,7 +37,8 @@
 #'
 #' @param db specifies the path of a \bold{Mega2} SQLite database containing study data.
 #'
-#' @param filename filename to store results data frame. \code{Mega2pedgene} erases and creates a new one each time it is run.
+#' @param filename filename to store results data frame. If filename is not NULL (the default), 
+#' \code{Mega2pedgene} erases and creates a new file each time it is run.
 #'
 #' @param verbose TRUE indicates that diagnostic printouts should be enabled.
 #'  This value is saved in the returned environment.
@@ -53,7 +54,8 @@
 #'   in translating a genotype allele matrix to a genotype count matrix.
 #'
 #'  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows and
-#'  can be give a filename to write out the data frame to.
+#'  can be give a \code{filename} to write out the data frame to.  It remembers the \code{filename}
+#'  as \code{pedgene}_filename in the environment.
 #'
 #' @seealso \code{\link{Mega2pedgene}}
 #'
@@ -117,8 +119,10 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 #' @export
 #'
 #' @note
-#'  This code starts by deleting the output file set in \code{init_pedgene} via its \code{filename} argument.  Then \code{Dopedgene}
-#'  is applied to all the selected ranges that contain markers.  Finally, the data frame of results, \emph{envir$pedgene_results}, is written
+#'  If the \code{filename} argument set in \code{init_pedgene} is not NULL,
+#'  this code starts by deleting the \code{filename} file.  Then \code{Dopedgene}
+#'  is applied to all the selected ranges that contain markers.  Finally, if the \code{filename} argument
+#'  set in \code{init_pedgene} is not NULL, the data frame of results, \emph{envir$pedgene_results}, is written
 #'  to the output file.
 #'
 #' @seealso \code{\link{init_pedgene}}

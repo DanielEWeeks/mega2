@@ -38,7 +38,7 @@
 #'  \emph{"prefix".phe}, and \emph{"prefix".pen}, which contain the pedigree, allele frequency, marker genetic and
 #'  physical map position, member phenotype and phenotype penetrance data.
 #'
-#' @param prefix prefix of output files including the VCF file (see Description section above). This prefix can include the full path.
+#' @param prefix prefix of output files including the VCF file (see Description section above). This prefix can include a path with one or more directories.
 #'
 #' @param markers markers selected to be in the VCF output file
 #'
@@ -70,6 +70,9 @@
 #'}
 Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', envir = ENV) {
 
+    if (missing(prefix))
+        stop("Mega2VCF can not proceed without a filename prefix argument", call. = FALSE)
+        
     file = paste0(prefix, ".vcf")
     unlink(file)
 
@@ -248,7 +251,7 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', en
                     append=TRUE, row.names=FALSE, col.names=FALSE)
 ## }))
         j = j + 1
-        if (envir$verbose) message(".", appendLF = FALSE)
+##      if (envir$verbose) message(".", appendLF = FALSE)
     }
 }
 
@@ -258,7 +261,7 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', en
 #'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
 #'  Finally, generate the ##contig entries for each chromosome.
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for .vcf file
 #'
 #' @param markers data.frame of markers being processed
 #'
@@ -306,7 +309,7 @@ mkVCFhdr = function (prefix, markers, envir) {
 #'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
 #'  Finally, generate the ##contig entries for each chromosome.
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for .fam file (family pedigree)
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
@@ -335,7 +338,7 @@ mkVCFfam = function (prefix, envir) {
 #'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
 #'  Finally, generate the ##contig entries for each chromosome.
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for .freq file (frequency)
 #'
 #' @param markers data.frame of markers being processed
 #'
@@ -392,7 +395,7 @@ mkVCFfreq = function (prefix, markers, recode = FALSE, envir) {
 #'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
 #'  Finally, generate the ##contig entries for each chromosome.
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for .map file
 #'
 #' @param markers data.frame of markers being processed
 #'
@@ -463,7 +466,7 @@ mkVCFmap = function (prefix, markers, envir) {
 #'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
 #'  Finally, generate the ##contig entries for each chromosome.
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for .pen file (penetrance)
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'
@@ -514,7 +517,7 @@ mkVCFpen = function (prefix, envir) {
 #'  Generate the initial boiler plate VCF, then generate ##INFO entries for each entry tag.
 #'  Finally, generate the ##contig entries for each chromosome.
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for .phe file (phenotype)
 #'
 #' @param envir "environment" containing SQLite database and other globals
 #'

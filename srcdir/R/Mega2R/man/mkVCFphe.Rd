@@ -7,7 +7,7 @@
 mkVCFphe(prefix, envir)
 }
 \arguments{
-\item{prefix}{prefix for vcf file name}
+\item{prefix}{prefix for .phe file (phenotype)}
 
 \item{envir}{"environment" containing SQLite database and other globals}
 }

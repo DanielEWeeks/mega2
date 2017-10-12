@@ -36,7 +36,7 @@
 #'  Then call the GenABEL functions to process these files: the .tped and the .tfam
 #'  file are processed by \code{convert.snp.tped} to produce a tped.raw file.  The latter
 #'  is combined with a .phe (phenotype) file by \code{load.gwaa.data} to create a gwaa.data-class
-#'  object in memory.
+#'  object in memory.  All these files are deleted when the exits.
 #'
 #' @param markers data frame of markers to be processed
 #'
@@ -64,6 +64,8 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
     if (is.null(markers)) markers = envir$markers
 
     prefix = file.path(tempdir(), "Mega2GenABEL")
+
+    on.exit(Mega2GenABELClean())
 
     mkGenABELtped(prefix, markers, mapno = mapno, envir)
 
@@ -98,7 +100,7 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 #'  Delete the PLINK .tped files:  a .tped file, a .tfam file and a .phe file and
 #'  the GenABEL tped.raw file.
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -240,7 +242,7 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
                     append=TRUE, row.names=FALSE, col.names=FALSE)
 ## }))
         j = j + 1
-        if (envir$verbose) message(".", appendLF = FALSE)
+##      if (envir$verbose) message(".", appendLF = FALSE)
     }
 }
 

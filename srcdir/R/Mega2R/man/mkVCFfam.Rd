@@ -7,7 +7,7 @@
 mkVCFfam(prefix, envir)
 }
 \arguments{
-\item{prefix}{prefix for vcf file name}
+\item{prefix}{prefix for .fam file (family pedigree)}
 
 \item{envir}{"environment" containing SQLite database and other globals}
 }

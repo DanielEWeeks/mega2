@@ -16,3 +16,4 @@ Delete the PLINK .tped files:  a .tped file, a .tfam file and a .phe file and
 gwaa = Mega2GenABELClean()
 }
 }
+\keyword{internal}

@@ -7,7 +7,7 @@
 mkVCFmap(prefix, markers, envir)
 }
 \arguments{
-\item{prefix}{prefix for vcf file name}
+\item{prefix}{prefix for .map file}
 
 \item{markers}{data.frame of markers being processed}
 

@@ -10,7 +10,8 @@ init_SKAT(db = NULL, filename = NULL, verbose = FALSE,
 \arguments{
 \item{db}{specifies the path of a \bold{Mega2} SQLite database containing study data.}
 
-\item{filename}{filename to store results data frame. \code{Mega2SKAT} erases and creates a new one each time it is run.}
+\item{filename}{filename to store results data frame. If the filename is not NULL (the default),
+\code{Mega2SKAT} erases and creates a new file each time it is run.}
 
 \item{verbose}{TRUE indicates that diagnostic printouts should be enabled.
 This value is saved in the returned environment.}
@@ -32,7 +33,8 @@ This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite d
   in translating a genotype allele matrix to a genotype count matrix.
 
  It also initializes the data frame \emph{envir$SKAT_results} to zero rows and
- can be give a filename to write out the data frame to.
+ can be give a \code{filename} to write out the data frame to.  It remembers the \code{filename}
+ as \code{SKAT_filename} in the environment.
 }
 \examples{
 \dontrun{

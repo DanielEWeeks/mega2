@@ -7,7 +7,7 @@
 mkVCFhdr(prefix, markers, envir)
 }
 \arguments{
-\item{prefix}{prefix for vcf file name}
+\item{prefix}{prefix for .vcf file}
 
 \item{markers}{data.frame of markers being processed}
 

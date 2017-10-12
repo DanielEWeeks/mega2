@@ -7,7 +7,7 @@
 mkVCFpen(prefix, envir)
 }
 \arguments{
-\item{prefix}{prefix for vcf file name}
+\item{prefix}{prefix for .pen file (penetrance)}
 
 \item{envir}{"environment" containing SQLite database and other globals}
 }
