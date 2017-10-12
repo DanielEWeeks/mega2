@@ -38,7 +38,7 @@ Convert the genotype allele  patterns of 1/1, 1/2 (and 2/1) and 2/2 in the genot
  minor allele frequency.)  Ignore markers that have no variants (unless allMarkers is TRUE).
  Finally, invoke \code{SKAT} with the converted genotype matrix, Null model saved in envir$obj,
  and any additionally supplied arguments.
- Save information about the range and the p.value calculated by \code{SKAT} 
+ Save information about the range and the p.value calculated by \code{SKAT}
  in \emph{envir$SKAT_results}.
 }
 \note{

@@ -23,7 +23,7 @@ Execute the pedgene function on the first \emph{gs} default gene transcript rang
  Update the \emph{envir$pedgene_results} data frame with the results.
 }
 \note{
-This code starts by deleting the output file set in \code{init_pedgene} ("pedgene.txt" by default).  Then \code{Dopedgene}
+This code starts by deleting the output file set in \code{init_pedgene} via its \code{filename} argument.  Then \code{Dopedgene}
  is applied to all the selected ranges that contain markers.  Finally, the data frame of results, \emph{envir$pedgene_results}, is written
  to the output file.
 }
@@ -33,4 +33,7 @@ Mega2pedgene()
 
 Mega2pedgene(1:10)
 }
+}
+\seealso{
+\code{\link{init_pedgene}}
 }

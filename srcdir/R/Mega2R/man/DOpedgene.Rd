@@ -34,13 +34,13 @@ First, ignore call backs that have less than two markers.  Second, convert the g
  patterns of 1/1, 1/2 (and 2/1) and 2/2 from the genotype matrix
  to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
  minor allele frequency.)  Next, prepend the pedigree and person columns of the family data
- to this modified genotype matrix.  Finally, invoke \code{pedgene} with the family data and 
+ to this modified genotype matrix.  Finally, invoke \code{pedgene} with the family data and
  genotype matrix for several different weights.  Save the kernel and burden, value and p-value for each
  measurement in \emph{envir$pedgene_results}.
 }
 \note{
 This function appends output to the data frame, \emph{envir$pedgene_results}.  It will
- print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write 
+ print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write
  the data frame to a file.  You must save the data frame.
  You also must initialize the data frame when necessary.
 }

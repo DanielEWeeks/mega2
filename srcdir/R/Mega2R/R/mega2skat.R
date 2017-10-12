@@ -37,7 +37,7 @@
 #'
 #' @param db specifies the path of a \bold{Mega2} SQLite database containing study data.
 #'
-#' @param filename filename to store results data frame.  By default "SKAT.txt" is used.
+#' @param filename filename to store results data frame. \code{Mega2SKAT} erases and creates a new one each time it is run.
 #'
 #' @param verbose TRUE indicates that diagnostic printouts should be enabled.
 #'  This value is saved in the returned environment.
@@ -56,6 +56,8 @@
 #'
 #'  It also initializes the data frame \emph{envir$SKAT_results} to zero rows and
 #'  can be give a filename to write out the data frame to.
+#'
+#' @seealso \code{\link{Mega2_SKAT}}
 #'
 #' @examples
 #'\dontrun{
@@ -126,13 +128,15 @@ init_SKAT = function (db = NULL, filename = NULL, verbose = FALSE, allMarkers = 
 #' @export
 #'
 #' @note
-#'  This code starts by deleting the output file set in \code{init_SKAT} ("SKAT.txt" by default).
+#'  This code starts by deleting the output file set in \code{init_SKAT} via its \code{filename} argument.
 #'  Then \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
 #'  \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
 #'  \code{DOSKAT} with the appropriate arguments (including those additional to the
 #'  \code{Mega2SKAT} function).
 #'  Finally, the data frame of results, \emph{envir$SKAT_results}, is written
 #'  to the output file.
+#'
+#' @seealso \code{\link{init_SKAT}}
 #'
 #' @examples
 #'\dontrun{
@@ -154,7 +158,7 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
         DOSKAT(geno_arg, markers_arg, range_arg, envir, ...)
     }
 
-    if (is.null(genes)) 
+    if (is.null(genes))
         applyFnToRanges(SKAT4arg, envir$refRanges[gs, ], envir$refIndices, envir = envir)
     else
         applyFnToGenes(SKAT4arg, genes, envir = envir)
@@ -172,7 +176,7 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
 #'  minor allele frequency.)  Ignore markers that have no variants (unless allMarkers is TRUE).
 #'  Finally, invoke \code{SKAT} with the converted genotype matrix, Null model saved in envir$obj,
 #'  and any additionally supplied arguments.
-#'  Save information about the range and the p.value calculated by \code{SKAT} 
+#'  Save information about the range and the p.value calculated by \code{SKAT}
 #'  in \emph{envir$SKAT_results}.
 #'
 #' @param geno_arg A character matrix with one row per \emph{fam} pedigree member and one column
@@ -248,7 +252,7 @@ DOSKAT = function(geno_arg, markers_arg, range_arg, envir, ...) {
     nsnps = kk
     if (kk == 0) return (NULL)
     if (kk == 1) geno = matrix(geno, nrow = di[1], ncol = kk)
-    
+
     skat = XSKAT(envir$skat, geno, envir$obj, ...)
 #browser(skipCalls=2)
 

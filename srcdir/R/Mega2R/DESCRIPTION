@@ -29,7 +29,6 @@ Depends: R (>= 3.3.3),
          pedgene,
 License: GPL-2
 LinkingTo: Rcpp
-LazyData: true
 Imports:
     AnnotationDbi,
     DBI,

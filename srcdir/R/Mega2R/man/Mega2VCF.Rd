@@ -8,7 +8,7 @@ Mega2VCF(prefix, markers = NULL, mapno = 0, alleleOrder = "default",
   envir = ENV)
 }
 \arguments{
-\item{prefix}{prefix for VCF file name}
+\item{prefix}{prefix of output files including the VCF file (see Description section above). This prefix can include the full path.}
 
 \item{markers}{markers selected to be in the VCF output file}
 

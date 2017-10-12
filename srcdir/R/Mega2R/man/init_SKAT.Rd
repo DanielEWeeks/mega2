@@ -10,7 +10,7 @@ init_SKAT(db = NULL, filename = NULL, verbose = FALSE,
 \arguments{
 \item{db}{specifies the path of a \bold{Mega2} SQLite database containing study data.}
 
-\item{filename}{filename to store results data frame.  By default "SKAT.txt" is used.}
+\item{filename}{filename to store results data frame. \code{Mega2SKAT} erases and creates a new one each time it is run.}
 
 \item{verbose}{TRUE indicates that diagnostic printouts should be enabled.
 This value is saved in the returned environment.}
@@ -38,4 +38,7 @@ This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite d
 \dontrun{
 init_SKAT("ped3.db", verbose = TRUE)
 }
+}
+\seealso{
+\code{\link{Mega2_SKAT}}
 }
