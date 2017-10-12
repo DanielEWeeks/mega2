@@ -57,7 +57,7 @@
 #'  It also initializes the data frame \emph{envir$SKAT_results} to zero rows and
 #'  can be give a filename to write out the data frame to.
 #'
-#' @seealso \code{\link{Mega2_SKAT}}
+#' @seealso \code{\link{Mega2SKAT}}
 #'
 #' @examples
 #'\dontrun{

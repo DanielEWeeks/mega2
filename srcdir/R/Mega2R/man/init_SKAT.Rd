@@ -40,5 +40,5 @@ init_SKAT("ped3.db", verbose = TRUE)
 }
 }
 \seealso{
-\code{\link{Mega2_SKAT}}
+\code{\link{Mega2SKAT}}
 }
