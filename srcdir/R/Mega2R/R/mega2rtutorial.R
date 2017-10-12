@@ -53,19 +53,19 @@ FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 #'\dontrun{
 #' dump_mega2rtutorial_data()
 #'}
-dump_mega2rtutorial_data = function(dir = paste0(tempdir(), "/", "Mega2Rtutorial")) {
+dump_mega2rtutorial_data = function(dir = file.path(tempdir(), "Mega2Rtutorial")) {
     if (! dir.exists(dir))
         dir.create(dir)
 
     for (file in FILES) {
         from = system.file("exdata", file, package="Mega2R")
-        to   = paste(dir, file, sep="/")
+        to   = file.path(dir, file)
         file.copy(from, to, copy.mode = TRUE, copy.date = TRUE)
     }
     for (file in FILES.gz) {
 #      R.utils::gunzip(file)
-       in.gz = gzfile(paste0(dir, "/", file, ".gz"), "rb")
-       out   = file(paste(dir, file, sep="/"), "wb")
+       in.gz = gzfile(file.path(dir, paste0(file, ".gz")), "rb")
+       out   = file(file.path(dir, file), "wb")
        while (TRUE) {
            rv = readBin(in.gz, "raw", n = 4096, size = 1)
            ln = length(rv)
@@ -93,15 +93,15 @@ dump_mega2rtutorial_data = function(dir = paste0(tempdir(), "/", "Mega2Rtutorial
 #'\dontrun{
 #' clean_mega2rtutorial_data()
 #'}
-clean_mega2rtutorial_data = function(dir = paste(tempdir(), "Mega2Rtutorial", sep="/")) {
+clean_mega2rtutorial_data = function(dir = file.path(tempdir(), "Mega2Rtutorial")) {
     if (! dir.exists(dir))
       return (NULL)
 
     for (file in c(FILES, GENED)) {
-        to = paste(dir, file, sep="/")
+        to = file.path(dir, file)
         unlink(to)
     }
-    unlink(paste(dir, "vcfr", sep="/"), recursive = TRUE)
+    unlink(file.path(dir, "vcfr"), recursive = TRUE)
 }
 
 #' show directory of tutorial data
@@ -118,6 +118,6 @@ clean_mega2rtutorial_data = function(dir = paste(tempdir(), "Mega2Rtutorial", se
 #'\dontrun{
 #' where_mega2rtutorial_data()
 #'}
-where_mega2rtutorial_data = function(dir = paste0(tempdir(), "/", "Mega2Rtutorial")) {
+where_mega2rtutorial_data = function(dir = file.path(tempdir(), "Mega2Rtutorial")) {
     dir
 }

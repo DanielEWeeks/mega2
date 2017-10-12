@@ -7,7 +7,7 @@
 Mega2GenABELClean()
 }
 \description{
-Delete the PLINK .tped files:  a .tped file, a .tfam file and a .phe file and 
+Delete the PLINK .tped files:  a .tped file, a .tfam file and a .phe file and
  the GenABEL tped.raw file.
 }
 \examples{

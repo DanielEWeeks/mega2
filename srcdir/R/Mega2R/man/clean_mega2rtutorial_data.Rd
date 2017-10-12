@@ -4,7 +4,7 @@
 \alias{clean_mega2rtutorial_data}
 \title{remove tutorial data}
 \usage{
-clean_mega2rtutorial_data(dir = paste(tempdir(), "Mega2Rtutorial", sep = "/"))
+clean_mega2rtutorial_data(dir = file.path(tempdir(), "Mega2Rtutorial"))
 }
 \arguments{
 \item{dir}{The directory to remove the tutorial data to.  By default, this is

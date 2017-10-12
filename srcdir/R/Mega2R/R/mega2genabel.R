@@ -63,8 +63,8 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 ## print(system.time ({
     if (is.null(markers)) markers = envir$markers
 
-    prefix = paste(tempdir(), "Mega2GenABEL", sep = "/")
-    
+    prefix = file.path(tempdir(), "Mega2GenABEL")
+
     mkGenABELtped(prefix, markers, mapno = mapno, envir)
 
     mkGenABELtfam(prefix, envir)
@@ -95,7 +95,7 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 #' delete temporary PLINK tped files processed by GenABEL
 #'
 #' @description
-#'  Delete the PLINK .tped files:  a .tped file, a .tfam file and a .phe file and 
+#'  Delete the PLINK .tped files:  a .tped file, a .tfam file and a .phe file and
 #'  the GenABEL tped.raw file.
 #'
 #' @export
@@ -107,7 +107,7 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 #'}
 Mega2GenABELClean = function () {
 
-    prefix = paste(tempdir(), "Mega2GenABEL", sep = "/")
+    prefix = file.path(tempdir(), "Mega2GenABEL")
 
     unlink(paste0(prefix, ".tped"))
     unlink(paste0(prefix, ".tfam"))

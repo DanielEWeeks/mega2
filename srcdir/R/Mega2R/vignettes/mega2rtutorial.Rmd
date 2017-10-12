@@ -146,7 +146,7 @@ library(Mega2R)
 dump_mega2rtutorial_data()
 ```
 
-All the files for this vignette will be created in the directory, `r where_mega2rtutorial_data()`.
+All the files for this vignette will be created in the temporary directory given by `file.path(tempdir(),"Mega2Rtutorial")`.
 In that directory, you will see the following files:  
 
 ```
@@ -156,11 +156,10 @@ In that directory, you will see the following files:
 [7] "mega2r.pdf"          |  "seqsimr.db"         |  "srdta.db"   
 ```
 
-**Note: The directory name, `r where_mega2rtutorial_data()`, is generated randomly each time this
-vignette is run.  You will not get the exact value shown.  You must either run the vignette
-Rmarkdown text as is or cut and paste from it.**
+**Note: The temporary directory name, given by `file.path(tempdir(),"Mega2Rtutorial")`, is generated randomly each time this
+vignette is run. **
 
-**Note:  The directory name is actually the value of the R expression, where_mega2rtutorial_data().**
+**Note:  The temporary directory name is also the value of the R expression, where_mega2rtutorial_data().**
 
 When you are done with these exercise, the "clean" command will remove these files:
 
@@ -218,8 +217,8 @@ https://watson.hgen.pitt.edu/register/. Then, you will invoke Mega2
 on your data. To make matters simple, we will use a pre-constructed
 Mega2 batch file to automate the processing by Mega2. To run Mega2 to
 process and create the 'SQLite' database 'seqsimr.db', we issue the following
-command at the Unix prompt in the directory containing tutorial data:
-`r where_mega2rtutorial_data()`
+command at the Unix prompt in the directory containing tutorial data; the name of this directory is given by the R command:
+`where_mega2rtutorial_data()`
 
 ```{bash, eval=FALSE}
 mega2 MEGA2.BATCH.seqsimr
@@ -414,7 +413,7 @@ use the function `read.Mega2DB` to read a Mega2 database.
 
 ```{r, seqsimrdb,eval=FALSE}
 library(Mega2R)
-db = paste(where_mega2rtutorial_data(), "seqsimr.db", sep="/")
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
 ENV = read.Mega2DB(db, verbose = TRUE)
 ```
 
@@ -432,7 +431,7 @@ exits. If you change the data in an environment passed to a function,
 the change is permanent.)
 
 ```{r seqsimrdb2}
-db = paste(where_mega2rtutorial_data(), "seqsimr.db", sep="/")
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
 ENV = read.Mega2DB(db, verbose = TRUE)
 ```
 
@@ -652,8 +651,8 @@ data frame that is produced later.  (The default filename is NULL which indicate
 data frame should not be written.)
 
 ```{r init_pedgene,message=FALSE}
-db = paste(where_mega2rtutorial_data(), "seqsimr.db", sep="/")
-pedfile = paste(where_mega2rtutorial_data(), "pedgene.txt", sep="/")
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+pedfile = file.path(where_mega2rtutorial_data(), "pedgene.txt")
 ENV = init_pedgene(db, filename = pedfile)
 ```
 
@@ -846,16 +845,16 @@ data frame that is produced later.  (The default filename is NULL which indicate
 data frame should not be written.)
 
 ```{r init_SKAT,message=FALSE}
-db = paste(where_mega2rtutorial_data(), "seqsimr.db", sep="/")
-skatfile = paste(where_mega2rtutorial_data(), "SKAT.txt", sep="/")
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+skatfile = file.path(where_mega2rtutorial_data(), "SKAT.txt")
 ENV = init_SKAT(db, filename = skatfile, verbose = F, allMarkers = F)
 ```
 
 You can run the command with verbose equals TRUE to see details of the database as it is loaded:
 
 ```{r init_SKAT2,eval=FALSE}
-db = paste(where_mega2rtutorial_data(), "seqsimr.db", sep="/")
-skatfile = paste(where_mega2rtutorial_data(), "SKAT.txt", sep="/")
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+skatfile = file.path(where_mega2rtutorial_data(), "SKAT.txt")
 ENV = init_SKAT(db, filename = skatfile, verbose = T, allMarkers = F)
 ```
 
@@ -1026,7 +1025,7 @@ First, create the directory "vcfr",
 so we can keep all the generated data in one place.
 
 ```{r mega2vcflib}
-vcfdir = paste(where_mega2rtutorial_data(), "vcfr", sep="/")
+vcfdir = file.path(where_mega2rtutorial_data(), "vcfr")
 if (! dir.exists(vcfdir)) dir.create(vcfdir)
 ```
 
@@ -1046,7 +1045,7 @@ others. These files are listed below.
 Creating the VCF file and related files is accomplished by typing:
 
 ```{r mega2vcf}
-vcffile = paste(where_mega2rtutorial_data(), "vcfr", "vcf.01", sep="/")
+vcffile = file.path(where_mega2rtutorial_data(), "vcfr", "vcf.01")
 Mega2VCF(vcffile, ENV$markers[ENV$markers$chromosome==1 ,])
 ```
 
@@ -1058,7 +1057,7 @@ If the second argument is not present, all the markers are written out.
 
 The generated files are listed below:
 ```{r, lsvcf}
-vcfdir = paste(where_mega2rtutorial_data(), "vcfr", sep="/")
+vcfdir = file.path(where_mega2rtutorial_data(), "vcfr")
 list.files(vcfdir)
 ```
 
@@ -1102,7 +1101,7 @@ If you haven't already, first install the 'GenABEL' package from CRAN.
 Then type:
 
 ```{r seqsimgwaa}
-db = paste(where_mega2rtutorial_data(), "seqsimr.db", sep="/")
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
 ENV = read.Mega2DB(db)
 
 # This line converts the database to a gwaa.data-class object. The intermediate
@@ -1144,7 +1143,7 @@ These lines use the C++ Mega2 program to populate the *vcf* directory with
 the same set of files that the were created in the *vcfr*
 directory.  
 
-At the Unix command prompt in the directory, `r where_mega2rtutorial_data()`, type:
+At the Unix command prompt in the temporary directory with the name given by `where_mega2rtutorial_data()`, type:
 
 ```{bash, eval=FALSE}
 mkdir vcf
@@ -1279,7 +1278,7 @@ You should compare the two directories: *vcf* and *vcfr*. Please add the
 -w flag to the diff command. This causes the comparison to ignore
 differences in white space.  Lines that
 contain dates may be different between the two directories.
-At the Unix command prompt in the directory, `r where_mega2rtutorial_data()`, type:
+At the Unix command prompt in the temporary directory, with the name given by `where_mega2rtutorial_data()`, type:
 
 ```{bash, diffvcf,eval=FALSE}
 diff -wrs vcf vcfr
@@ -1316,12 +1315,12 @@ Then we dump the GenABEL data as
 PLINK .ped/.map/.phe files
 
 ```{r dmpPed}
-srdtafile = paste(where_mega2rtutorial_data(), "srdta", sep="/")
+srdtafile = file.path(where_mega2rtutorial_data(), "srdta")
 dmpPed(gwaa_ = srdta, pfx = srdtafile)
 ```
 
-To produce the Mega2 database `srdta.db`, we switch to the Unix command line, cd to
-the directory, `r where_mega2rtutorial_data()`, and run:
+To produce the Mega2 database `srdta.db`, we switch to the Unix command line, cd to 
+the temporary directory, with the name given by the results of this R command `where_mega2rtutorial_data()`, and run:
 
 ```{bash, eval=FALSE}
 mega2 MEGA2.BATCH.srdta
@@ -1579,7 +1578,7 @@ you can proceed with the steps that follow, even if you did not create your own 
 Now, we go back into R and type:
 
 ```{r, srdta.db,eval=TRUE}
-sdb = paste(where_mega2rtutorial_data(), "srdta.db", sep="/")
+sdb = file.path(where_mega2rtutorial_data(), "srdta.db")
 ENV = read.Mega2DB(sdb)
 
 mega = Mega2GenABEL()

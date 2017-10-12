@@ -4,7 +4,7 @@
 \alias{where_mega2rtutorial_data}
 \title{show directory of tutorial data}
 \usage{
-where_mega2rtutorial_data(dir = paste0(tempdir(), "/", "Mega2Rtutorial"))
+where_mega2rtutorial_data(dir = file.path(tempdir(), "Mega2Rtutorial"))
 }
 \arguments{
 \item{dir}{The directory to store the tutorial data to.  By default, this is
