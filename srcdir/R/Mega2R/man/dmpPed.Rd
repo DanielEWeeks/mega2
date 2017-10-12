@@ -4,7 +4,7 @@
 \alias{dmpPed}
 \title{generate the .ped, .fam and .map files of PLINK PED representation of a gwaa.data-class object}
 \usage{
-dmpPed(gwaa_ = srdta, pfx = "srdta", default = "bt")
+dmpPed(gwaa_ = srdta, pfx = file.path(tempdir(), "srdta"), default = "bt")
 }
 \arguments{
 \item{gwaa_}{name of gwaa.data-class object used as input}

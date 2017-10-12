@@ -55,7 +55,7 @@
 #' or
 #' dmpPed(mygwaa, "name", "cc")
 #'}
-dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
+dmpPed = function(gwaa_ = srdta, pfx = file.path(tempdir(), "srdta"), default = "bt") {
 
     dfphe = data.frame(gwaa_@phdata)
     dfphe$sex = dfphe$id  # don't want sex but need IID and FID; so duplicate id
