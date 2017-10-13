@@ -17,6 +17,8 @@ If genes is NULL, the gs range of the internal \emph{refRanges} will be used.}
 }
 \value{
 None
+ the data frame with the results is stored in the environment and named \emph{pedgene_results},
+ viz. envir$pedgene_results
 }
 \description{
 Execute the pedgene function on the first \emph{gs} default gene transcript ranges (gs = 1:100).

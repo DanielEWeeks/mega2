@@ -34,6 +34,8 @@ of the Mega2SKAT function and will be passed.  See examples}
 }
 \value{
 None
+ the data frame with the results is stored in the environment and named \emph{SKAT_results},
+ viz. envir$SKAT_results
 }
 \description{
 Execute the SKAT function on the first \emph{gs} default gene transcripts (gs = 1:100).

@@ -114,6 +114,8 @@ init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 #' @param ... extra arguments for skat
 #'
 #' @return None
+#'  the data frame with the results is stored in the environment and named \emph{SKAT_results},
+#'  viz. envir$SKAT_results
 #'
 #' @importFrom utils read.table write.table
 #' @importFrom SKAT SKAT SKATBinary SKAT_CommonRare

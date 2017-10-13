@@ -107,6 +107,9 @@ init_pedgene = function (db = NULL, verbose = FALSE) {
 #' @param envir 'environment' containing SQLite database and other globals
 #'
 #' @return None
+#'  the data frame with the results is stored in the environment and named \emph{pedgene_results},
+#'  viz. envir$pedgene_results
+#'
 #' @export
 #'
 #' @examples
