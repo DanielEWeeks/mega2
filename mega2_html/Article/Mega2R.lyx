@@ -1477,15 +1477,6 @@ pedgene
  It returns the p-value of the kernel and burden association statistics
  for each weight.
  The results are stored in a data frame.
- The data frame will be written to a file if one were specified as the 
-\emph on
-filename
-\emph default
- argument of 
-\emph on
-init_pedgene
-\emph default
-.
 \end_layout
 
 \begin_layout Standard
@@ -3572,7 +3563,7 @@ We leave the command below as an exercise.
  It runs a bit slowly.
  It needs to find all the transcripts for each gene, to find all the markers
  between each pair of transcript start/end ranges, to compute the genotype
- matrix for these markers and finally to call the `Vcallback function with
+ matrix for these markers and finally to call the callback function with
  the appropriate arguments.
 \end_layout
 
@@ -3674,10 +3665,7 @@ The 'init_SKAT' function is used to read the Mega2 database and initialize
  and stores them in the environment that is returned.
  Finally, 'init_SKAT' stores the argument 'allMarkers' which tells later
  processing to ignore markers that show no variation (if FALSE).
- You may specify a "filename" argument to 'init_pedgeneSKAT' to indicate
- where to store the data frame that is produced later.
- (The default filename is NULL which indicates that the data frame should
- not be written.)
+ 
 \end_layout
 
 \begin_layout Standard
@@ -3691,8 +3679,7 @@ status open
 
 \begin_layout Plain Layout
 
-ENV = init_SKAT("seqsimr.db", filename = "SKAT.txt", verbose = F, allMarkers
- = F)
+ENV = init_SKAT("seqsimr.db", verbose = F, allMarkers = F)
 \end_layout
 
 \end_inset
@@ -3716,8 +3703,7 @@ status open
 
 \begin_layout Plain Layout
 
-ENV = init_SKAT("seqsimr.db", filename = "SKAT.txt", verbose = T, allMarkers
- = F)
+ENV = init_SKAT("seqsimr.db", verbose = T, allMarkers = F)
 \end_layout
 
 \end_inset
@@ -3759,8 +3745,8 @@ Mega2SKAT = function (f, ty, gs = 1:100, skat = SKAT::SKAT, envir = ENV,
 
 \begin_layout Standard
 The 'gs' argument indicates how many default range elements should be processed
- and the 'envir' argument specifies the `>environment that contains all
- the Mega2R data frames.
+ and the 'envir' argument specifies the environment that contains all the
+ Mega2R data frames.
 \end_layout
 
 \begin_layout Standard
@@ -3994,7 +3980,7 @@ Note: we set verbose to FALSE otherwise there will be a large number of
  print outs indicating no markers are in the range.
  (Recall the samples come from part of chromosome one, whereas the ranges
  cover the whole genome.) If you are adventurous you can look at all the
- transcript
+ transcripts.
 \begin_inset Flex Chunk
 status open
 
@@ -4577,12 +4563,17 @@ status open
 
 \begin_layout Plain Layout
 
-<<dmpPed>>=
+<<dmpPed,results="hide",warning=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
 
-dmpPed(gwaa_ = srdta, pfx = "srdta")
+export.plink(srdta, transpose = FALSE, filebasename = "srdta",
+\end_layout
+
+\begin_layout Plain Layout
+
+             phenotypes = names(srdta@phdata)[-(1:2)])
 \end_layout
 
 \end_inset
