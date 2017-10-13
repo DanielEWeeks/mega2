@@ -40,14 +40,10 @@ Execute the SKAT function on the first \emph{gs} default gene transcripts (gs = 
  Update the \emph{envir$SKAT_results} data frame with the results.
 }
 \note{
-If the \code{filename} argument set in \code{init_SKAT} is not NULL,
- this code starts by deleting the \code{filename} file.  
- Then \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
+The \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
  \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
  \code{DOSKAT} with the appropriate arguments (including those additional to the
- \code{Mega2SKAT} function).   Finally, if the \code{filename} argument
- set in \code{init_SKAT} is not NULL, the data frame of results, \emph{envir$SKAT_results},
- is written to the output file.
+ \code{Mega2SKAT} function).
 }
 \examples{
 \dontrun{
@@ -57,7 +53,4 @@ Mega2SKAT(ENV$phe ~ 1, "D", gs=1:10)
 
 Mega2SKAT(NULL, NULL, gs=1:1000, kernel = "linear.weighted", weights.beta=c(0.5,0.5))
 }
-}
-\seealso{
-\code{\link{init_SKAT}}
 }

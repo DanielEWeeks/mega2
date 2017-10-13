@@ -22,20 +22,10 @@ None
 Execute the pedgene function on the first \emph{gs} default gene transcript ranges (gs = 1:100).
  Update the \emph{envir$pedgene_results} data frame with the results.
 }
-\note{
-If the \code{filename} argument set in \code{init_pedgene} is not NULL,
- this code starts by deleting the \code{filename} file.  Then \code{Dopedgene}
- is applied to all the selected ranges that contain markers.  Finally, if the \code{filename} argument
- set in \code{init_pedgene} is not NULL, the data frame of results, \emph{envir$pedgene_results}, is written
- to the output file.
-}
 \examples{
 \dontrun{
 Mega2pedgene()
 
 Mega2pedgene(1:10)
 }
-}
-\seealso{
-\code{\link{init_pedgene}}
 }

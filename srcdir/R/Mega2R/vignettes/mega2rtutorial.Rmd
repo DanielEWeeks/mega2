@@ -652,17 +652,13 @@ status which is necessary for the pedgene calculation.
 genotype_table.)
 Finally, `init_pedgene` calculates
 some values that will be used repeatedly and stores them in the environment that is returned.
-You may specify a "filename" argument to `init_pedgene` to indicate where to store the 
-data frame that is produced later.  (The default filename is NULL which indicates that the 
-data frame should not be written.)
 
 ```{r init_pedgene,message=FALSE}
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
 db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
-pedfile = file.path(where_mega2rtutorial_data(), "pedgene.txt")
-ENV = init_pedgene(db, filename = pedfile)
+ENV = init_pedgene(db)
 ```
 
 ## 6.2 Gene Ranges reminder
@@ -849,17 +845,13 @@ In addition, `init_SKAT` calculates
 some values that will be used repeatedly and stores them in the environment that is returned.
 Finally, `init_SKAT` stores the argument `allMarkers` which tells later processing to ignore
 markers that show no variation (if FALSE).
-You may specify a "filename" argument to `init_SKAT` to indicate where to store the 
-data frame that is produced later.  (The default filename is NULL which indicates that the 
-data frame should not be written.)
 
 ```{r init_SKAT,message=FALSE}
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
 db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
-skatfile = file.path(where_mega2rtutorial_data(), "SKAT.txt")
-ENV = init_SKAT(db, filename = skatfile, verbose = F, allMarkers = F)
+ENV = init_SKAT(db, verbose = F, allMarkers = F)
 ```
 
 You can run the command with verbose equals TRUE to see details of the database as it is loaded:
@@ -869,8 +861,7 @@ You can run the command with verbose equals TRUE to see details of the database 
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
 db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
-skatfile = file.path(where_mega2rtutorial_data(), "SKAT.txt")
-ENV = init_SKAT(db, filename = skatfile, verbose = T, allMarkers = F)
+ENV = init_SKAT(db, verbose = T, allMarkers = F)
 ```
 
 ## 7.2 Gene Ranges reminder

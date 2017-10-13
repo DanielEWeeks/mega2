@@ -37,9 +37,6 @@
 #'
 #' @param db specifies the path of a \bold{Mega2} SQLite database containing study data.
 #'
-#' @param filename filename to store results data frame. If the filename is not NULL (the default),
-#'  \code{Mega2SKAT} erases and creates a new file each time it is run.
-#'
 #' @param verbose TRUE indicates that diagnostic printouts should be enabled.
 #'  This value is saved in the returned environment.
 #'
@@ -55,17 +52,13 @@
 #'  In addition, it initializes a matrix to aid
 #'   in translating a genotype allele matrix to a genotype count matrix.
 #'
-#'  It also initializes the data frame \emph{envir$SKAT_results} to zero rows and
-#'  can be give a \code{filename} to write out the data frame to.  It remembers the \code{filename}
-#'  as \code{SKAT_filename} in the environment.
-#'
-#' @seealso \code{\link{Mega2SKAT}}
+#'  It also initializes the data frame \emph{envir$SKAT_results} to zero rows.
 #'
 #' @examples
 #'\dontrun{
 #' init_SKAT("ped3.db", verbose = TRUE)
 #'}
-init_SKAT = function (db = NULL, filename = NULL, verbose = FALSE, allMarkers = FALSE) {
+init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 
     if (is.null(db))
         stop("You must specify a database argument!\n", call. = FALSE)
@@ -77,8 +70,6 @@ init_SKAT = function (db = NULL, filename = NULL, verbose = FALSE, allMarkers = 
     setfam(fam, envir = envir)  # also updates unified_genotype_table
 
     envir$phe  = mkphenotype(envir)
-
-    envir$SKAT_filename = filename
 
     envir$SKAT_results = data.frame(chr = character(0), gene = character(0),
                                      nvariants = numeric(0), start = integer(0), end = integer(0),
@@ -130,16 +121,10 @@ init_SKAT = function (db = NULL, filename = NULL, verbose = FALSE, allMarkers = 
 #' @export
 #'
 #' @note
-#'  If the \code{filename} argument set in \code{init_SKAT} is not NULL,
-#'  this code starts by deleting the \code{filename} file.  
-#'  Then \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
+#'  The \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
 #'  \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
 #'  \code{DOSKAT} with the appropriate arguments (including those additional to the
-#'  \code{Mega2SKAT} function).   Finally, if the \code{filename} argument
-#'  set in \code{init_SKAT} is not NULL, the data frame of results, \emph{envir$SKAT_results},
-#'  is written to the output file.
-#'
-#' @seealso \code{\link{init_SKAT}}
+#'  \code{Mega2SKAT} function).
 #'
 #' @examples
 #'\dontrun{
@@ -150,8 +135,6 @@ init_SKAT = function (db = NULL, filename = NULL, verbose = FALSE, allMarkers = 
 #' Mega2SKAT(NULL, NULL, gs=1:1000, kernel = "linear.weighted", weights.beta=c(0.5,0.5))
 #'}
 Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = ENV, ...) {
-
-    if (! is.null(envir$SKAT_filename)) unlink(envir$SKAT_filename)
 
     if (! is.null(f))
         envir$obj = SKAT_Null_Model(f, out_type = ty)
@@ -165,10 +148,6 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
         applyFnToRanges(SKAT4arg, envir$refRanges[gs, ], envir$refIndices, envir = envir)
     else
         applyFnToGenes(SKAT4arg, genes, envir = envir)
-
-    if (! is.null(envir$SKAT_filename))
-        write.table(envir$SKAT_results, file=envir$SKAT_filename,
-                    row.names= FALSE, col.names= TRUE, quote= FALSE)
 }
 
 #' SKAT call back function
