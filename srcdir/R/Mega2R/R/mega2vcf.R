@@ -38,7 +38,7 @@
 #'  \emph{"prefix".phe}, and \emph{"prefix".pen}, which contain the pedigree, allele frequency, marker genetic and
 #'  physical map position, member phenotype and phenotype penetrance data.
 #'
-#' @param prefix prefix of output files including the VCF file (see Description section above). This prefix can include a path with one or more directories.
+#' @param prefix prefix of output files including the VCF file (see Description section above). This prefix can include a path.
 #'
 #' @param markers markers selected to be in the VCF output file
 #'

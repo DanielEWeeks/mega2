@@ -101,7 +101,7 @@ init_pedgene = function (db = NULL, filename = NULL, verbose = FALSE) {
 }
 
 
-#' execute the CRAN pedgene function on a transcript ranges
+#' Execute the pedgene function on a transcript ranges
 #'
 #' @description
 #' Execute the pedgene function on the first \emph{gs} default gene transcript ranges (gs = 1:100).

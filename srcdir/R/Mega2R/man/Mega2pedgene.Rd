@@ -2,7 +2,7 @@
 % Please edit documentation in R/mega2pedgene.R
 \name{Mega2pedgene}
 \alias{Mega2pedgene}
-\title{execute the CRAN pedgene function on a transcript ranges}
+\title{Execute the pedgene function on a transcript ranges}
 \usage{
 Mega2pedgene(gs = 1:100, genes = NULL, envir = ENV)
 }
