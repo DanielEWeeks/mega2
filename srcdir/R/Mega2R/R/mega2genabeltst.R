@@ -46,7 +46,7 @@
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #' @importFrom utils data
 #'
 #' @examples

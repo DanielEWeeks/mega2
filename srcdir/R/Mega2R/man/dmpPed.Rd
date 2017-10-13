@@ -30,3 +30,4 @@ or
 dmpPed(mygwaa, "name", "cc")
 }
 }
+\keyword{internal}

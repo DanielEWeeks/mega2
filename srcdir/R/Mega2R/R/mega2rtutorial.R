@@ -34,7 +34,7 @@ FILES = c("MEGA2.BATCH.seqsimr", "MEGA2.BATCH.srdta", "MEGA2.BATCH.vcf",
 GENED = c("SEQ.phe", "SEQ.tfam", "SEQ.tped", "SEQtped.raw",
           "SRD.phe", "SRD.tfam", "SRD.tped", "SRDtped.raw",
           "srdta.db.old", "srdta.map", "srdta.ped", "srdta.phe",
-          "pedgene.txt", "SKAT.txt")
+          "pedgene.txt", "SKAT.txt", "srdta.map.ext")
 
 FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 

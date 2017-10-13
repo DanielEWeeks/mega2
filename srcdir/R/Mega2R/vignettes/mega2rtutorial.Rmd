@@ -1339,12 +1339,13 @@ data(srdta)
 Then we dump the GenABEL data as
 PLINK .ped/.map/.phe files
 
-```{r dmpPed}
+```{r dmpPed,results="hide",warning=FALSE}
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
 srdtafile = file.path(where_mega2rtutorial_data(), "srdta")
-dmpPed(gwaa_ = srdta, pfx = srdtafile)
+export.plink(srdta, transpose = FALSE, filebasename = srdtafile,
+             phenotypes = names(srdta@phdata)[-(1:2)])
 ```
 
 To produce the Mega2 database `srdta.db`, we switch to the Unix command line, cd to 
@@ -1361,14 +1362,12 @@ available.**
 ```
 ## ==========================================================
 ##                           MEGA2 4.9.2
-##
 ##      Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.
-##
-##      Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar, 
-##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill, 
-##      and Daniel E. Weeks. 
+##      Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
+##      Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+##      and Daniel E. Weeks.
 ## 
-##      Last updated: Jun 13 2017, 09:36:42 , valid until June 15, 2018.
+##      Last updated: Oct 13 2017, 09:55:04 , valid until June 15, 2018.
 ##      Compiled with gcc version 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)
 ## 
 ##      Mega2 comes with ABSOLUTELY NO WARRANTY.
@@ -1376,7 +1375,7 @@ available.**
 ## ==========================================================
 ## NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.
 ## 
-## Run date:                  2017-7-24-10-05
+## Run date:                  2017-10-13-10-06
 ## 
 ## Running Mega2 in batch mode from MEGA2.BATCH.srdta.
 ## Input filenames and missing value indicator read in from batch file.
@@ -1432,7 +1431,7 @@ available.**
 ## Reading pedigree information from srdta.ped
 ## 2500 individuals read from srdta.ped
 ## 2500 individuals with nonmissing phenotypes
-## 0 cases, 1244 controls, 1256 missing
+## 0 cases, 0 controls, 2500 missing
 ## 1275 males, 1225 females, 0 of unspecified sex
 ## 0 founders, 2500 non-founders found
 ## ===========================================================
@@ -1470,54 +1469,54 @@ available.**
 ## age
 ## ------------------------------------------------------------
 ## ------------------------------------------------------------
-## p1           43.40000    0.00000   43.40000   43.40000        1
-## p2           48.20000    0.00000   48.20000   48.20000        1
-## p3           37.90000    0.00000   37.90000   37.90000        1
-## p4           53.80000    0.00000   53.80000   53.80000        1
-## p5           47.50000    0.00000   47.50000   47.50000        1
-## p6           45.00000    0.00000   45.00000   45.00000        1
-## p7           52.00000    0.00000   52.00000   52.00000        1
-## p8           42.50000    0.00000   42.50000   42.50000        1
-## p9           29.70000    0.00000   29.70000   29.70000        1
+## 1            43.40000    0.00000   43.40000   43.40000        1
+## 2            48.20000    0.00000   48.20000   48.20000        1
+## 3            37.90000    0.00000   37.90000   37.90000        1
+## 4            53.80000    0.00000   53.80000   53.80000        1
+## 5            47.50000    0.00000   47.50000   47.50000        1
+## 6            45.00000    0.00000   45.00000   45.00000        1
+## 7            52.00000    0.00000   52.00000   52.00000        1
+## 8            42.50000    0.00000   42.50000   42.50000        1
+## 9            29.70000    0.00000   29.70000   29.70000        1
 ## ===== Too many "quant_stat" records, display is temporarily suspended ..
 ## qt1
 ## ------------------------------------------------------------
 ## ------------------------------------------------------------
-## p1           -0.58000    0.00000   -0.58000   -0.58000        1
-## p2            0.80000    0.00000    0.80000    0.80000        1
-## p3           -0.52000    0.00000   -0.52000   -0.52000        1
-## p4           -1.55000    0.00000   -1.55000   -1.55000        1
-## p5            0.25000    0.00000    0.25000    0.25000        1
-## p6            0.15000    0.00000    0.15000    0.15000        1
-## p7           -0.56000    0.00000   -0.56000   -0.56000        1
-## p8            0.00000    0.00000    0.00000    0.00000        0
-## p9           -2.26000    0.00000   -2.26000   -2.26000        1
+## 1            -0.58000    0.00000   -0.58000   -0.58000        1
+## 2             0.80000    0.00000    0.80000    0.80000        1
+## 3            -0.52000    0.00000   -0.52000   -0.52000        1
+## 4            -1.55000    0.00000   -1.55000   -1.55000        1
+## 5             0.25000    0.00000    0.25000    0.25000        1
+## 6             0.15000    0.00000    0.15000    0.15000        1
+## 7            -0.56000    0.00000   -0.56000   -0.56000        1
+## 8             0.00000    0.00000    0.00000    0.00000        0
+## 9            -2.26000    0.00000   -2.26000   -2.26000        1
 ## ===== Too many "quant_stat" records, display is temporarily suspended ..
 ## qt2
 ## ------------------------------------------------------------
 ## ------------------------------------------------------------
-## p1            4.46000    0.00000    4.46000    4.46000        1
-## p2            6.32000    0.00000    6.32000    6.32000        1
-## p3            3.26000    0.00000    3.26000    3.26000        1
-## p4          888.00000    0.00000  888.00000  888.00000        1
-## p5            5.70000    0.00000    5.70000    5.70000        1
-## p6            4.65000    0.00000    4.65000    4.65000        1
-## p7            4.64000    0.00000    4.64000    4.64000        1
-## p8            5.77000    0.00000    5.77000    5.77000        1
-## p9            0.71000    0.00000    0.71000    0.71000        1
+## 1             4.46000    0.00000    4.46000    4.46000        1
+## 2             6.32000    0.00000    6.32000    6.32000        1
+## 3             3.26000    0.00000    3.26000    3.26000        1
+## 4           888.00000    0.00000  888.00000  888.00000        1
+## 5             5.70000    0.00000    5.70000    5.70000        1
+## 6             4.65000    0.00000    4.65000    4.65000        1
+## 7             4.64000    0.00000    4.64000    4.64000        1
+## 8             5.77000    0.00000    5.77000    5.77000        1
+## 9             0.71000    0.00000    0.71000    0.71000        1
 ## ===== Too many "quant_stat" records, display is temporarily suspended ..
 ## qt3
 ## ------------------------------------------------------------
 ## ------------------------------------------------------------
-## p1            1.43000    0.00000    1.43000    1.43000        1
-## p2            3.90000    0.00000    3.90000    3.90000        1
-## p3            5.05000    0.00000    5.05000    5.05000        1
-## p4            3.76000    0.00000    3.76000    3.76000        1
-## p5            2.89000    0.00000    2.89000    2.89000        1
-## p6            1.87000    0.00000    1.87000    1.87000        1
-## p7            2.49000    0.00000    2.49000    2.49000        1
-## p8            2.68000    0.00000    2.68000    2.68000        1
-## p9            1.45000    0.00000    1.45000    1.45000        1
+## 1             1.43000    0.00000    1.43000    1.43000        1
+## 2             3.90000    0.00000    3.90000    3.90000        1
+## 3             5.05000    0.00000    5.05000    5.05000        1
+## 4             3.76000    0.00000    3.76000    3.76000        1
+## 5             2.89000    0.00000    2.89000    2.89000        1
+## 6             1.87000    0.00000    1.87000    1.87000        1
+## 7             2.49000    0.00000    2.49000    2.49000        1
+## 8             2.68000    0.00000    2.68000    2.68000        1
+## 9             1.45000    0.00000    1.45000    1.45000        1
 ## ===== Too many "quant_stat" records, display is temporarily suspended ..
 ## ===== 2501 total records of type "quant_stat" are in MEGA2.LOG
 ## 
@@ -1561,11 +1560,11 @@ available.**
 ## Moved existing srdta.db to srdta.db.old
 ## Dumping SQLite3 DB to file "srdta.db"
 ## ===========================================================
-## See run summaries in directory 2017-7-24-10-05 
+## See run summaries in directory 2017-10-13-10-06 
 ##    MEGA2.LOG, MEGA2.RECODE, MEGA2.ERR, MEGA2.KEYS
 ## The script 'mega2log2html.pl' exited normally.
 ## To view the HTML-formatted run summaries, open
-## /Users/rbaron/mega2/bb/srcdir/R/mega2rtutorial/vignettes/2017-7-24-10-05/MEGA2run.html
+## /Users/rbaron/mega2/bb/srcdir/R/2017-10-13-10-06/MEGA2run.html
 ## in a web browser.
 ## ===========================================================
 ```
