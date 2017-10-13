@@ -55,10 +55,10 @@
 #' or
 #' dmpPed(mygwaa, "name", "cc")
 #'}
-dmpPed = function(gwaa_ = srdta, pfx = file.path(tempdir(), "srdta"), default = "bt") {
+dmpPed = function(gwaa_ = srdta, pfx, default = "bt") {
 
     if (missing(pfx))
-        stop("Mega2VCF can not proceed without a filename prefix argument", call. = FALSE)
+        stop("dmpPed can not proceed without a filename prefix argument", call. = FALSE)
 
     dfphe = data.frame(gwaa_@phdata)
     dfphe$sex = dfphe$id  # don't want sex but need IID and FID; so duplicate id
