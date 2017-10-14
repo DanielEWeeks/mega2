@@ -53,9 +53,12 @@
 #'  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
 #'
 #' @examples
-#'\dontrun{
-#' init_pedgene("ped3.db", verbose = TRUE)
-#'}
+#' dump_mega2rtutorial_data()
+#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' ENV = init_pedgene(db)
+#' ls(ENV)
+#' clean_mega2rtutorial_data()
+#'
 init_pedgene = function (db = NULL, verbose = FALSE) {
 
     if (is.null(db))
@@ -113,11 +116,13 @@ init_pedgene = function (db = NULL, verbose = FALSE) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' Mega2pedgene()
+#' dump_mega2rtutorial_data()
+#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' ENV = init_pedgene(db)
+#' ENV$verbose = TRUE
+#' Mega2pedgene(gs = 50:60)
+#' clean_mega2rtutorial_data()
 #'
-#' Mega2pedgene(1:10)
-#'}
 Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 
     if (is.null(genes))
@@ -167,9 +172,13 @@ Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 #'  You also must initialize the data frame when necessary.
 #'
 #' @examples
-#'\dontrun{
-#'    applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices, ENV)
-#'}
+#' dump_mega2rtutorial_data()
+#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' ENV = init_pedgene(db)
+#' ENV$verbose = TRUE
+#' applyFnToGenes(DOpedgene, genes_arg = c("CEP104"), envir = ENV)
+#' clean_mega2rtutorial_data()
+#'
 DOpedgene = function(geno_arg, markers_arg, range_arg, envir = ENV) {
 
     markerNames = markers_arg$MarkerName
