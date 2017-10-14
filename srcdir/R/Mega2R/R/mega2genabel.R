@@ -51,13 +51,12 @@
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' ENV = read.Mega2DB("my.db")
+#' dump_mega2rtutorial_data()
+#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' ENV = read.Mega2DB(db)
+#' seqsimgwaa = Mega2GenABEL(markers=ENV$markers[1:10,])
+#' clean_mega2rtutorial_data()
 #'
-#' gwaa = Mega2GenABEL()
-#' str(gwaa)
-#' head(summary(gwaa))
-#'}
 Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 
 ## print(system.time ({

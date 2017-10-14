@@ -31,7 +31,10 @@ This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite d
  It also initializes the data frame \emph{envir$SKAT_results} to zero rows.
 }
 \examples{
-\dontrun{
-init_SKAT("ped3.db", verbose = TRUE)
-}
+dump_mega2rtutorial_data()
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
+ls(ENV)
+clean_mega2rtutorial_data()
+
 }
