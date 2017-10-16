@@ -24,11 +24,10 @@ Call the \emph{Mega2R} functions to: create a .tped file, a .tfam file and a .ph
  object in memory.  All these files are deleted when the exits.
 }
 \examples{
-\dontrun{
-ENV = read.Mega2DB("my.db")
+dump_mega2rtutorial_data()
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+ENV = read.Mega2DB(db)
+seqsimgwaa = Mega2GenABEL(markers=ENV$markers[1:10,])
+clean_mega2rtutorial_data()
 
-gwaa = Mega2GenABEL()
-str(gwaa)
-head(summary(gwaa))
-}
 }

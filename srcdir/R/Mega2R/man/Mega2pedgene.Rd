@@ -25,9 +25,11 @@ Execute the pedgene function on the first \emph{gs} default gene transcript rang
  Update the \emph{envir$pedgene_results} data frame with the results.
 }
 \examples{
-\dontrun{
-Mega2pedgene()
+dump_mega2rtutorial_data()
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+ENV = init_pedgene(db)
+ENV$verbose = TRUE
+Mega2pedgene(gs = 50:60)
+clean_mega2rtutorial_data()
 
-Mega2pedgene(1:10)
-}
 }

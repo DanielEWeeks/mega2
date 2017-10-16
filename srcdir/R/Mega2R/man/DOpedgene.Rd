@@ -45,7 +45,11 @@ This function appends output to the data frame, \emph{envir$pedgene_results}.  I
  You also must initialize the data frame when necessary.
 }
 \examples{
-\dontrun{
-   applyFnToRanges(DOpedgene, ENV$refRanges[gs, ], ENV$refIndices, ENV)
-}
+dump_mega2rtutorial_data()
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+ENV = init_pedgene(db)
+ENV$verbose = TRUE
+applyFnToGenes(DOpedgene, genes_arg = c("CEP104"), envir = ENV)
+clean_mega2rtutorial_data()
+
 }

@@ -30,7 +30,7 @@ of the Mega2SKAT function and will be passed.  See examples}
 
 \item{envir}{'environment' containing SQLite database and other globals}
 
-\item{...}{extra arguments for skat}
+\item{...}{extra arguments for SKAT}
 }
 \value{
 None
@@ -48,11 +48,14 @@ The \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper f
  \code{Mega2SKAT} function).
 }
 \examples{
-\dontrun{
-Mega2SKAT(ENV$phe ~ 1, "D")
+dump_mega2rtutorial_data()
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
+ENV$verbose = FALSE
+ENV$SKAT_results = ENV$SKAT_results[0, ]
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
+          weights.beta = c(0.5, 0.5), genes=c("CEP104"))
+print(ENV$SKAT_results)
+clean_mega2rtutorial_data()
 
-Mega2SKAT(ENV$phe ~ 1, "D", gs=1:10)
-
-Mega2SKAT(NULL, NULL, gs=1:1000, kernel = "linear.weighted", weights.beta=c(0.5,0.5))
-}
 }

@@ -55,9 +55,12 @@
 #'  It also initializes the data frame \emph{envir$SKAT_results} to zero rows.
 #'
 #' @examples
-#'\dontrun{
-#' init_SKAT("ped3.db", verbose = TRUE)
-#'}
+#' dump_mega2rtutorial_data()
+#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
+#' ls(ENV)
+#' clean_mega2rtutorial_data()
+#'
 init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 
     if (is.null(db))
@@ -111,7 +114,7 @@ init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 #'
 #' @param envir 'environment' containing SQLite database and other globals
 #'
-#' @param ... extra arguments for skat
+#' @param ... extra arguments for SKAT
 #'
 #' @return None
 #'  the data frame with the results is stored in the environment and named \emph{SKAT_results},
@@ -129,13 +132,16 @@ init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 #'  \code{Mega2SKAT} function).
 #'
 #' @examples
-#'\dontrun{
-#' Mega2SKAT(ENV$phe ~ 1, "D")
+#' dump_mega2rtutorial_data()
+#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
+#' ENV$verbose = FALSE
+#' ENV$SKAT_results = ENV$SKAT_results[0, ]
+#' Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
+#'           weights.beta = c(0.5, 0.5), genes=c("CEP104"))
+#' print(ENV$SKAT_results)
+#' clean_mega2rtutorial_data()
 #'
-#' Mega2SKAT(ENV$phe ~ 1, "D", gs=1:10)
-#'
-#' Mega2SKAT(NULL, NULL, gs=1:1000, kernel = "linear.weighted", weights.beta=c(0.5,0.5))
-#'}
 Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = ENV, ...) {
 
     if (! is.null(f))
