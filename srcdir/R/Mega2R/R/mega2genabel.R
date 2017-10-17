@@ -176,10 +176,12 @@ Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
 #' @keywords internal
 #'
 #' @examples
+#'\dontrun{
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #' mkGenABELtped("foo", NULL, 0, ENV)
-#'
+#'}
+#
 mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
     file = paste0(prefix, ".tped")
 
@@ -256,10 +258,12 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
 #' @keywords internal
 #'
 #' @examples
+#'\dontrun{
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #' mkGenABELtfam("foo", ENV)
-#'
+#'}
+#
 mkGenABELtfam = function (prefix, envir) {
     file = paste0(prefix, ".tfam")
 
@@ -283,9 +287,11 @@ mkGenABELtfam = function (prefix, envir) {
 #' @keywords internal
 #'
 #' @examples
+#'\dontrun{
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #' mkGenABELphe(ENV)
+#'}
 #
 mkGenABELphe = function (envir) {
 

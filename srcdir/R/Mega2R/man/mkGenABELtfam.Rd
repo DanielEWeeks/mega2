@@ -19,9 +19,10 @@ Generate the six column .tfam file used with the .tped file.  Note: Only the per
  column appears to be used by GenABEL.
 }
 \examples{
+\dontrun{
 db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = read.Mega2DB(db)
 mkGenABELtfam("foo", ENV)
-
+}
 }
 \keyword{internal}
