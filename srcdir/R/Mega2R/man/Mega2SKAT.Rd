@@ -48,14 +48,12 @@ The \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper f
  \code{Mega2SKAT} function).
 }
 \examples{
-dump_mega2rtutorial_data()
-db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
 ENV$verbose = FALSE
 ENV$SKAT_results = ENV$SKAT_results[0, ]
 Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
           weights.beta = c(0.5, 0.5), genes=c("CEP104"))
 print(ENV$SKAT_results)
-clean_mega2rtutorial_data()
 
 }

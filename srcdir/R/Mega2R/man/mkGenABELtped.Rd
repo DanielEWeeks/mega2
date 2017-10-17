@@ -24,10 +24,9 @@ Generate a PLINK TPED file from the specified Mega2 SQLite database.  The file i
  be a subset of the envir$markers data.frame -- same columns, but fewer rows.
 }
 \examples{
-\dontrun{
-mkGenABELtped("foo")
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+mkGenABELtped("foo", NULL, 0, ENV)
 
-mkGenABELtped("foo", ENV$markers[ENV$markers$chromosome >= 20,])
-}
 }
 \keyword{internal}

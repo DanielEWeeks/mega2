@@ -55,11 +55,9 @@
 #'  It also initializes the data frame \emph{envir$SKAT_results} to zero rows.
 #'
 #' @examples
-#' dump_mega2rtutorial_data()
-#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
 #' ls(ENV)
-#' clean_mega2rtutorial_data()
 #'
 init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 
@@ -132,15 +130,13 @@ init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 #'  \code{Mega2SKAT} function).
 #'
 #' @examples
-#' dump_mega2rtutorial_data()
-#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
 #' ENV$verbose = FALSE
 #' ENV$SKAT_results = ENV$SKAT_results[0, ]
 #' Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
 #'           weights.beta = c(0.5, 0.5), genes=c("CEP104"))
 #' print(ENV$SKAT_results)
-#' clean_mega2rtutorial_data()
 #'
 Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = ENV, ...) {
 
@@ -212,7 +208,7 @@ DOSKAT = function(geno_arg, markers_arg, range_arg, envir, ...) {
     lastp1 = nrow(envir$SKAT_results) + 1
 
     markerNames = markers_arg$MarkerName
-    gene  = as.character(range_arg$SYMBOL)
+    gene  = as.character(range_arg[,envir$refCol[4]])
 
     di = dim(geno_arg)
     geno = matrix(0, nrow = (di[1]), ncol = di[2])
@@ -246,9 +242,9 @@ DOSKAT = function(geno_arg, markers_arg, range_arg, envir, ...) {
     skat = XSKAT(envir$skat, geno, envir$obj, ...)
 #browser(skipCalls=2)
 
-    chr   <- as.character(range_arg$TXCHROM)
-    start <- range_arg$TXSTART
-    end   <- range_arg$TXEND
+    chr   <- as.character(range_arg[,envir$refCol[1]])
+    start <- range_arg[,envir$refCol[2]]
+    end   <- range_arg[,envir$refCol[3]]
 
     result = list(chr, gene, nsnps, start, end, skat$p.value
                   )

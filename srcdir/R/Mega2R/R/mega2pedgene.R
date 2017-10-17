@@ -53,11 +53,9 @@
 #'  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
 #'
 #' @examples
-#' dump_mega2rtutorial_data()
-#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_pedgene(db)
 #' ls(ENV)
-#' clean_mega2rtutorial_data()
 #'
 init_pedgene = function (db = NULL, verbose = FALSE) {
 
@@ -116,12 +114,10 @@ init_pedgene = function (db = NULL, verbose = FALSE) {
 #' @export
 #'
 #' @examples
-#' dump_mega2rtutorial_data()
-#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_pedgene(db)
 #' ENV$verbose = TRUE
 #' Mega2pedgene(gs = 50:60)
-#' clean_mega2rtutorial_data()
 #'
 Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 
@@ -172,17 +168,15 @@ Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 #'  You also must initialize the data frame when necessary.
 #'
 #' @examples
-#' dump_mega2rtutorial_data()
-#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_pedgene(db)
 #' ENV$verbose = TRUE
 #' applyFnToGenes(DOpedgene, genes_arg = c("CEP104"), envir = ENV)
-#' clean_mega2rtutorial_data()
 #'
 DOpedgene = function(geno_arg, markers_arg, range_arg, envir = ENV) {
 
     markerNames = markers_arg$MarkerName
-    gene  <- as.character(range_arg$SYMBOL)
+    gene  = as.character(range_arg[,envir$refCol[4]])
 
     di = dim(geno_arg)
     geno = matrix(0, nrow = (di[1]), ncol = di[2])
@@ -232,9 +226,9 @@ DOpedgene = function(geno_arg, markers_arg, range_arg, envir = ENV) {
 #       call_UW    <- UW$call
 
         ## read out the results ##
-        chr   <- as.character(range_arg$TXCHROM)
-        start <- range_arg$TXSTART
-        end   <- range_arg$TXEND
+        chr   <- as.character(range_arg[,envir$refCol[1]])
+        start <- range_arg[,envir$refCol[2]]
+        end   <- range_arg[,envir$refCol[3]]
 
         result = list(chr, gene, nsnp, start, end,
                    sKernel_BT, pKernel_BT, sBurden_BT, pBurden_BT,

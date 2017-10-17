@@ -25,11 +25,9 @@ Execute the pedgene function on the first \emph{gs} default gene transcript rang
  Update the \emph{envir$pedgene_results} data frame with the results.
 }
 \examples{
-dump_mega2rtutorial_data()
-db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = init_pedgene(db)
 ENV$verbose = TRUE
 Mega2pedgene(gs = 50:60)
-clean_mega2rtutorial_data()
 
 }

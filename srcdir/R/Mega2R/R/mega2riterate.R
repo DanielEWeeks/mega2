@@ -317,7 +317,7 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
     if (type_arg == "TX")
         COLS = c("GENEID", "TXNAME", "TXID", "TXSTRAND", "TXCHROM", "TXSTART", "TXEND")
     else
-        COLS = c("EXONNAME", "EXONID", "EXONSTRAND", "EXONCHROM", "EXONSTART", "EXONEND")
+        COLS = c("GENEID", "EXONNAME", "EXONID", "EXONSTRAND", "EXONCHROM", "EXONSTART", "EXONEND")
 
     seqlevels(txdb) = paste("chr", c(1:22, "X", "Y", "M"), sep="")
 
@@ -341,15 +341,7 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
         pb = pb[!duplicated(pb[ , c(4,6,7)]), ]
     }
 
-    chr2int = data.frame(chr = c(1:26, 23:26))
-    chr2int$txchrom = paste("chr", chr2int$chr, sep = "")
-    chr2int[27:30,2] = c("chrX", "chrY", "chrXY", "chrM")
-##  deleted chrUn
-##  allow stuff after chr#_
-##  xx = function(l) { l[1] }
-##  pb$TXCHROM = chr2int$chr[match(sapply(strsplit(pb$TXCHROM, "_"), xx), chr2int$txchrom)]
-##  else don't
-    pb$TXCHROM = chr2int$chr[match(pb$TXCHROM, chr2int$txchrom)]
+    pb$TXCHROM = envir$chr2int$chr[match(pb$TXCHROM, envir$chr2int$string)]
     pb = pb[! is.na(pb$TXCHROM), ]
 
     ranges = merge(entrez, pb, by.x = "ENTREZID", by.y = "GENEID", all.y = TRUE)
@@ -371,18 +363,23 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
     #chrs
     for (chr in chrs_arg) { ranges = rbind(ranges,
 #           ENTREZID  ALIAS SYMBOL  TXID     TXNAME TXCHROM TXSTRAND  TXSTART    TXEND
-                                    list("-", "-", "-", "-", "-",
+                                    list("-", "-",
+                                         paste0("chr", chr),
+                                         "-", "-",
                                          chr, "-", 0, 1000000000) )
                       }
     #ranges
     if (length(ranges_arg ))
     for (i in 1:dim(ranges_arg)[1]) { ranges = rbind(ranges,
 #           ENTREZID  ALIAS SYMBOL  TXID     TXNAME TXCHROM TXSTRAND  TXSTART    TXEND
-                                    list("-", "-", "-", "-", "-",
+                                    list("-", "-",
+                                         paste0("chr", ranges_arg[i, 1], ":",
+                                                ranges_arg[i, 2], "-",  ranges_arg[i, 3]),
+                                         "-", "-",
                                          ranges_arg[i, 1], "-", ranges_arg[i, 2], ranges_arg[i, 3]) )
                       }
 
-    applyFnToRanges(op, ranges, c(6, 8, 9), envir = envir)
+    applyFnToRanges(op, ranges, c(6, 8, 9, 3), envir = envir)
 
     #marks
     if (length(markers_arg)) {
@@ -400,8 +397,10 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
 #' @param ranges a data frame that contains at least 4 observations: a name, a chromosome, a start
 #' base pair position and an end base pair position.
 #'
-#' @param indices a vector of 3 integers that specify the location of chromosome column, start base pair
-#'  column and end base pair column of range data frame.
+#' @param indices a vector of 3 or 4 integers that specify the chromosome column, start base pair,
+#'  column and end base pair column of range data frame and lastly the name column.  If the vector
+#'  only contains 3 integers, a name will be generated from the three range elements and it will be
+#'  appended to the ranges and the last range column will be added to the indices.
 #'
 #' @param envir an 'environment' that contains all the data frames created from the SQLite database.
 #'
@@ -414,8 +413,29 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
 #' setRanges(range, c(3, 4, 5))
 #'}
 setRanges = function (ranges, indices, envir = ENV) {
-    envir$refRanges  = ranges
-    envir$refIndices = indices
+    fix = fixRanges(ranges, indices, envir)
+    envir$refRanges  = fix[[1]]
+    envir$refIndices = fix[[2]]
+}
+
+fixRanges = function (ranges, indices, envir = ENV) {
+
+    if (class(ranges[ , indices[1]]) == "character")
+        ranges[ , indices[1]] = envir$chr2int$chr[match(ranges[,indices[1]], envir$chr2int$string)]
+
+    ind = length(indices)
+
+    if (ind == 3 || envir$positionVsName) {
+        rangesPlusOne = length(ranges) + 1
+        indices = c(indices[1:3], rangesPlusOne)
+        ranges = cbind(ranges, ChrStartEend = paste0("chr", ranges[ , indices[1]], ":",
+                               ranges[ , indices[2]], "-",  ranges[ , indices[3]]),
+                        stringsAsFactors = FALSE)
+    } else if (ind == 4) {
+    } else
+        stop("setRanges indices should have 3 or 4 entries", calls. = FALSE)
+
+    list(ranges, indices)
 }
 
 #' set default name of transcription database and name of database mapping gene name to entrez gene id
@@ -534,6 +554,10 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
         ranges  = ranges_arg
         indices = indices_arg
     }
+    fix = fixRanges(ranges, indices, envir)
+    ranges  = fix[[1]]
+    indices = fix[[2]]
+    envir$refCol = indices
 
     rows = nrow(ranges)
     if (rows) {

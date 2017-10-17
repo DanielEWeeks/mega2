@@ -10,8 +10,10 @@ setRanges(ranges, indices, envir = ENV)
 \item{ranges}{a data frame that contains at least 4 observations: a name, a chromosome, a start
 base pair position and an end base pair position.}
 
-\item{indices}{a vector of 3 integers that specify the location of chromosome column, start base pair
-column and end base pair column of range data frame.}
+\item{indices}{a vector of 3 or 4 integers that specify the chromosome column, start base pair,
+column and end base pair column of range data frame and lastly the name column.  If the vector
+only contains 3 integers, a name will be generated from the three range elements and it will be
+appended to the ranges and the last range column will be added to the indices.}
 
 \item{envir}{an 'environment' that contains all the data frames created from the SQLite database.}
 }

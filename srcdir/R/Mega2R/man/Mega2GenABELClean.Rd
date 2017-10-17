@@ -13,7 +13,7 @@ Delete the PLINK .tped files:  a .tped file, a .tfam file and a .phe file and
 \examples{
 \dontrun{
 
-gwaa = Mega2GenABELClean()
+Mega2GenABELClean()
 }
 }
 \keyword{internal}

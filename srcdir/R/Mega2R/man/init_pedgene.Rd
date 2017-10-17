@@ -28,10 +28,8 @@ This populates the \bold{R} data frames from the specified \bold{Mega2} SQLite d
  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
 }
 \examples{
-dump_mega2rtutorial_data()
-db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = init_pedgene(db)
 ls(ENV)
-clean_mega2rtutorial_data()
 
 }

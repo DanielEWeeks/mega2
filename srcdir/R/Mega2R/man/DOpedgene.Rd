@@ -45,11 +45,9 @@ This function appends output to the data frame, \emph{envir$pedgene_results}.  I
  You also must initialize the data frame when necessary.
 }
 \examples{
-dump_mega2rtutorial_data()
-db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = init_pedgene(db)
 ENV$verbose = TRUE
 applyFnToGenes(DOpedgene, genes_arg = c("CEP104"), envir = ENV)
-clean_mega2rtutorial_data()
 
 }

@@ -51,11 +51,9 @@
 #' @export
 #'
 #' @examples
-#' dump_mega2rtutorial_data()
-#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #' seqsimgwaa = Mega2GenABEL(markers=ENV$markers[1:10,])
-#' clean_mega2rtutorial_data()
 #'
 Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 
@@ -104,7 +102,7 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 #' @examples
 #'\dontrun{
 #'
-#' gwaa = Mega2GenABELClean()
+#' Mega2GenABELClean()
 #'}
 Mega2GenABELClean = function () {
 
@@ -140,13 +138,12 @@ Mega2GenABELClean = function () {
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' ENV <- read.Mega2DB("my.db")
-#'
-#' gwaa = Mega2ENVGenABEL(NULL)
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#' gwaa = Mega2ENVGenABEL(markers=ENV$markers[1:10,])
 #' str(gwaa)
 #' head(summary(gwaa))
-#'}
+#'
 Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
                          sort = TRUE, envir = ENV) {
 #browser()
@@ -179,11 +176,10 @@ Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
 #' @keywords internal
 #'
 #' @examples
-#'\dontrun{
-#' mkGenABELtped("foo")
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#' mkGenABELtped("foo", NULL, 0, ENV)
 #'
-#' mkGenABELtped("foo", ENV$markers[ENV$markers$chromosome >= 20,])
-#'}
 mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
     file = paste0(prefix, ".tped")
 
@@ -260,9 +256,10 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
 #' @keywords internal
 #'
 #' @examples
-#'\dontrun{
-#' mkGenABELtfam(prefix, envir)
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#' mkGenABELtfam("foo", ENV)
+#'
 mkGenABELtfam = function (prefix, envir) {
     file = paste0(prefix, ".tfam")
 
@@ -286,9 +283,10 @@ mkGenABELtfam = function (prefix, envir) {
 #' @keywords internal
 #'
 #' @examples
-#'\dontrun{
-#' mkGenABELphe(envir)
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#' mkGenABELphe(ENV)
+#
 mkGenABELphe = function (envir) {
 
     fam = envir$fam

@@ -29,11 +29,10 @@ create a gwaa.data-class object from the data frames in a Mega2 environment.  Th
  as \code{Mega2GenABEL}, but the calculation is much faster, typically a factor of 10 to 20.
 }
 \examples{
-\dontrun{
-ENV <- read.Mega2DB("my.db")
-
-gwaa = Mega2ENVGenABEL(NULL)
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+gwaa = Mega2ENVGenABEL(markers=ENV$markers[1:10,])
 str(gwaa)
 head(summary(gwaa))
-}
+
 }

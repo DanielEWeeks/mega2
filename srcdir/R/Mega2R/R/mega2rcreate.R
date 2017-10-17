@@ -477,9 +477,17 @@ resetMega2ENV = function () {
 
     envir$refRanges  = refRanges
     envir$refIndices = refIndices
-
+  
     envir$txdb       = "TxDb.Hsapiens.UCSC.hg19.knownGene"
     envir$entrezGene = "org.Hs.eg.db"
+
+    envir$chr2int = data.frame(chr = c(1:26, 23:26, 1:26, 23:26))
+    envir$chr2int = cbind(envir$chr2int, stringsAsFactors = FALSE,
+                          string = as.character(envir$chr2int$chr))
+    envir$chr2int[27:30,2] = c("X", "Y", "XY", "M")
+    envir$chr2int[31:60,2] = paste0("chr", envir$chr2int[1:30,2])
+
+    envir$positionVsName = FALSE
 
     return (envir)
 }
