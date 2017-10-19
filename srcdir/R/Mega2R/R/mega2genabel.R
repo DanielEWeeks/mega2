@@ -55,6 +55,9 @@
 #' ENV = read.Mega2DB(db)
 #' seqsimgwaa = Mega2GenABEL(markers=ENV$markers[1:10,])
 #'
+#' str(seqsimgwaa)
+#' head(summary(seqsimgwaa))
+#'
 Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 
 ## print(system.time ({
@@ -141,6 +144,7 @@ Mega2GenABELClean = function () {
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #' gwaa = Mega2ENVGenABEL(markers=ENV$markers[1:10,])
+#'
 #' str(gwaa)
 #' head(summary(gwaa))
 #'

@@ -181,11 +181,16 @@ mk_markers_with_skip = function(bpPosMap = 1, envir) {
 #' @param envir an environment that contains all the data frames created from the SQLite database.
 #'
 #' @return None
+#' @export
 #'
 #' @examples
-#'\dontrun{
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db, verbose = TRUE)
+#'
 #' mkMarkers(1)
-#'}
+#'
+#' ENV$markers
+#'
 mkMarkers = function(bpPosMap = 1, envir = ENV) {
     map_table = envir$map_table[ envir$map_table$map == bpPosMap, c( "marker", "position")]
     if (nrow(map_table) == 0) {
@@ -259,11 +264,11 @@ mk_unified_genotype_table = function(envir) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' ENV = dbmega2_import("foo.db", verbose = TRUE)
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = dbmega2_import(db, verbose = TRUE)
 #'
-#' ENV = dbmega2_import("foo.db")
-#'}
+#' ENV = dbmega2_import(db)
+#
 dbmega2_import = function(dbname,
                           bpPosMap = 1,
                           verbose = FALSE) {
@@ -336,9 +341,12 @@ dbmega2_import = function(dbname,
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' mkphenotype(prefix, envir)
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#' out = mkphenotype(ENV)
+#'
+#' out
+#
 mkphenotype = function (envir) {
 
 # linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
@@ -397,9 +405,11 @@ mkphenotype = function (envir) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
 #' showMega2ENV()
-#'}
+#'
 showMega2ENV = function(envir = ENV) {
 
     cat("locus count:  ",       envir$LocusCnt)
@@ -463,7 +473,8 @@ showMega2ENV = function(envir = ENV) {
 #'  and finally loads some default data into it.
 #'
 #' @return an environment that contains a few initial tables read from the Mega2R package.
-#' @export
+#'
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -503,9 +514,11 @@ resetMega2ENV = function () {
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' showMapNames()
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
+#' showMapNames(ENV)
+#'
 showMapNames = function (envir = ENV) {
     envir$mapnames_table[ , c(6, 2)]
 }
@@ -521,9 +534,11 @@ showMapNames = function (envir = ENV) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' showPhenoNames()
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
+#' showPhenoNames(ENV)
+#'
 showPhenoNames = function (envir = ENV) {
 
 # linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
@@ -692,13 +707,11 @@ getgenotypes_R = function(markers_arg, sepstr = "", envir = ENV) {
 #'  which is fixes the person and iterates over markers.)
 #'
 #' @examples
-#'\dontrun{
-#' # genotypes for all persons in markers data.frame argument
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
 #' getgenotypes(ENV$markers)
 #'
-#' # genotypes for all persons in chromosome n
-#' getgenotypes(ENV$markers[ENV$markers$chromosome == n,])
-#'}
 getgenotypes = function(markers_arg, sepstr = "", envir = ENV) {
 
   return
@@ -756,14 +769,12 @@ getgenotypes_C = getgenotypes
 #'  all the needed markers.
 #'
 #' @examples
-#'\dontrun{
-#' # two ints in upper/lower half integer representing allele for all persons in
-#' # markers data.frame argument
-#' getgenotypesraw(ENV$markers)
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
 #'
-#' # two ints in upper/lower half integer representing allele # for all persons in chromosome n
-#' getgenotypesraw(ENV$markers[ENV$markers$chromosome == n,])
-#'}
+#' # two ints in upper/lower half integer representing allele # for all persons in chromosome 1
+#' getgenotypesraw(ENV$markers[ENV$markers$chromosome == 1,])
+#'
 getgenotypesraw = function(markers_arg, envir = ENV) {
 
   return
@@ -823,9 +834,14 @@ getgenotypesraw = function(markers_arg, envir = ENV) {
 #'  by the programmer.
 #'
 #' @examples
-#'\dontrun{
-#' getgenotypesgenabel(ENV$markers[ENV$markers$chromosome == n,])
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
+#' aa = getgenotypesgenabel(ENV$markers[ENV$markers$chromosome == 1,])
+#'
+#' aa[1]
+#' aa[2]
+#'
 getgenotypesgenabel = function(markers_arg, envir = ENV) {
 
   return

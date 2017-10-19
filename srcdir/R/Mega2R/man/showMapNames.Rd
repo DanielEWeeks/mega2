@@ -17,7 +17,9 @@ Mega2R allows several different physical and genetic maps to be stored and used 
  positions.  This function shows the association between map number and map name.
 }
 \examples{
-\dontrun{
-showMapNames()
-}
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
+showMapNames(ENV)
+
 }

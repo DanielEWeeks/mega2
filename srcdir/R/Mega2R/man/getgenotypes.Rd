@@ -47,11 +47,9 @@ The \emph{unified_genotype_table} contains one raw vector for each person.  In t
  which is fixes the person and iterates over markers.)
 }
 \examples{
-\dontrun{
-# genotypes for all persons in markers data.frame argument
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
 getgenotypes(ENV$markers)
 
-# genotypes for all persons in chromosome n
-getgenotypes(ENV$markers[ENV$markers$chromosome == n,])
-}
 }

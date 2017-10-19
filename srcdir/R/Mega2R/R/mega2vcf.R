@@ -61,15 +61,13 @@
 #'  are a bit quirky but the code "explains" it all.
 #'
 #' @examples
-#' dump_mega2rtutorial_data()
-#' db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #' vcfdir = file.path(where_mega2rtutorial_data(), "vcfr")
 #' if (!dir.exists(vcfdir)) dir.create(vcfdir)
 #' vcffile = file.path(where_mega2rtutorial_data(), "vcfr", "vcf.01")
 #' Mega2VCF(vcffile, ENV$markers[ENV$markers$chromosome == 1, ][1:10,])
 #' list.files(vcfdir)
-#' clean_mega2rtutorial_data()
 #'
 Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', envir = ENV) {
 

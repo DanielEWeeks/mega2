@@ -18,7 +18,6 @@ This function retrieves data stored in the Mega2rtutorial (inst/exdata).  It
 dumps them in the specified directory.
 }
 \examples{
-\dontrun{
 dump_mega2rtutorial_data()
-}
+
 }

@@ -17,7 +17,6 @@ dir tutorial to hold vignette
 This function shows the directory the Mega2Rtutorial (inst/exdata) was copied to.
 }
 \examples{
-\dontrun{
-where_mega2rtutorial_data()
-}
+directory = where_mega2rtutorial_data()
+
 }

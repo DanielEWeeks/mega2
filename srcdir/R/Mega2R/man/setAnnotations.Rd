@@ -26,7 +26,12 @@ This function takes two string parameters:
  install them from Bioconductor.  This is explained at length in the package Vignette.
 }
 \examples{
-\dontrun{
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
 setAnnotations("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db")
-}
+
+ENV$txdb
+ENV$entrezGene
+
 }

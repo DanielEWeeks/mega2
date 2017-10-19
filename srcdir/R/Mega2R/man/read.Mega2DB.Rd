@@ -28,7 +28,7 @@ By default, \code{mkfam} will remove one of each
  version of read.Mega2DB with a different invokation of \code{mkfam()}.
 }
 \examples{
-\dontrun{
-ENV = read.Mega2DB("database.db")
-}
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db, verbose = TRUE)
+
 }

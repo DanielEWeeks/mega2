@@ -136,7 +136,8 @@ init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 #' ENV$SKAT_results = ENV$SKAT_results[0, ]
 #' Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
 #'           weights.beta = c(0.5, 0.5), genes=c("CEP104"))
-#' print(ENV$SKAT_results)
+#'
+#' ENV$SKAT_results
 #'
 Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = ENV, ...) {
 
@@ -198,12 +199,24 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
 #'  You also must initialize the data frame when necessary.
 #'
 #' @examples
-#'\dontrun{
-#'    applyFnToRanges(DOSKAT, ENV$refRanges[gs, ], ENV$refIndices, ENV)
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
+#' Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
+#'           weights.beta = c(0.5, 0.5), genes=c("CEP104"))
+#'
+#' # DOSKAT is called internally to Mega2SKAT. init_SKAT and Mega2SKAT need to be
+#' # called to set up the environment for DOSKAT to run.  You should ignore DOSKAT
+#' # and use Mega2SKAT instead
+#' #
+#" ENV$verbose = TRUE
+#' applyFnToRanges(DOSKAT, ENV$refRanges[50:60, ], ENV$refIndices, envir = ENV)
+#'
 # SKAT(<formula>, <out_type>, kernel = "linear.weighted", weights.beta=c(0.5,0.5))
 #
 DOSKAT = function(geno_arg, markers_arg, range_arg, envir, ...) {
+
+    if (is.null(range_arg))
+        stop("DOSKAT: range is not defined.", calls. = FALSE)
 
     lastp1 = nrow(envir$SKAT_results) + 1
 

@@ -90,9 +90,13 @@
 #'  into the 'environment' and adjusts the \emph{genotype_table} and the \emph{phenotype_table}.
 #'
 #' @examples
-#'\dontrun{
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
 #' fam = mkfam()
-#'}
+#'
+#' fam
+#'
 mkfam = function (brkloop = FALSE, traitname = "default", envir = ENV) {
 
     if (brkloop) {
@@ -145,9 +149,16 @@ mkfam = function (brkloop = FALSE, traitname = "default", envir = ENV) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
+#' fam = mkfam()
+#' # remove founders
+#' fam = fam[ !( (fam[ , 5] == fam[ , 6]) & (fam[ , 5] == 0)), ]
 #' setfam(fam)
-#'}
+#'
+#' ENV$fam
+
 setfam = function (fam, envir = ENV) {
     envir$fam = fam
 
@@ -182,9 +193,9 @@ setfam = function (fam, envir = ENV) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' ENV = read.Mega2DB("database.db")
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db, verbose = TRUE)
+#'
 read.Mega2DB = function(db, ...) {
 
     envir = dbmega2_import(db, ...)
@@ -208,7 +219,7 @@ read.Mega2DB = function(db, ...) {
 #'
 #' @usage
 #' applyFnToGenes(op           = function (geno, markers, range, envir) {},
-#'                genes_arg    = c("*"),
+#'                genes_arg    = NULL,
 #'                ranges_arg   = matrix(ncol = 3, nrow = 0),
 #'                chrs_arg     = vector("integer", 0),
 #'                markers_arg  = vector("character", 0),
@@ -280,21 +291,22 @@ read.Mega2DB = function(db, ...) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' #    show = function(g, m, r, e) {
-#' #        print(r)
-#' #        print(m)
-#' #        print(head(g))
-#' #    }
-#' #    ENV = read.Mega2DB()
+#'   db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#'   ENV = read.Mega2DB(db)
+#'
+#'   show = function(g, m, r, e) {
+#'       print(r)
+#'       print(m)
+#'       print(head(g))
+#'   }
 #'
 #'    # apply function "show" to all transcripts on genes ELL2 and CARD15
 #'    applyFnToGenes(show, genes_arg = c("ELL2", "CARD15"))
 #'
 #'    # apply function "show" to all genotypes on chromosomes 11 for two base
 #'    # pair ranges
-#'    applyFnToGenes(show, ranges_arg = matrix(c(11, 50000000, 50100000,
-#'                       11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T))
+#'    applyFnToGenes(show, ranges_arg = matrix(c(1, 5000000, 10000000,
+#'                   1, 10000000, 15000000), ncol = 3, nrow = 2, byrow = TRUE))
 #'
 #'    # apply function "show" to all genotypes for first marker in each chromosome
 #'    applyFnToGenes(show, markers_arg = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
@@ -302,9 +314,9 @@ read.Mega2DB = function(db, ...) {
 #'    # apply function "show" to all genotypes on chromosomes 24 and 26
 #'    applyFnToGenes(show, chrs_arg=c(24, 26))
 #'
-#'}
+#'
 applyFnToGenes = function (op = function (geno, markers, range, envir) {},
-                           genes_arg = c("*"),
+                           genes_arg = NULL,
                            ranges_arg  = matrix(ncol = 3, nrow = 0),
                            chrs_arg  = vector("integer", 0),
                            markers_arg  = vector("character", 0),
@@ -312,61 +324,68 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
                            fuzz_arg = 0,
                            envir = ENV) {
 
-    env1=loadNamespace(envir$txdb)
-    txdb = get(envir$txdb, env1)
-    if (type_arg == "TX")
-        COLS = c("GENEID", "TXNAME", "TXID", "TXSTRAND", "TXCHROM", "TXSTART", "TXEND")
-    else
-        COLS = c("GENEID", "EXONNAME", "EXONID", "EXONSTRAND", "EXONCHROM", "EXONSTART", "EXONEND")
+    if (! is.null(genes_arg)) {
+        env1=loadNamespace(envir$txdb)
+        txdb = get(envir$txdb, env1)
+        if (type_arg == "TX")
+            COLS = c("GENEID", "TXNAME", "TXID", "TXSTRAND", "TXCHROM", "TXSTART", "TXEND")
+        else
+            COLS = c("GENEID", "EXONNAME", "EXONID", "EXONSTRAND", "EXONCHROM", "EXONSTART", "EXONEND")
 
-    seqlevels(txdb) = paste("chr", c(1:22, "X", "Y", "M"), sep="")
+        seqlevels(txdb) = paste("chr", c(1:22, "X", "Y", "M"), sep="")
 
-    env2=loadNamespace(envir$entrezGene)
-    genedb = get(envir$entrezGene, env2)
+        env2=loadNamespace(envir$entrezGene)
+        genedb = get(envir$entrezGene, env2)
 
-    if (genes_arg[1] == "*") {
-        entrez = select(genedb, keys = keys(genedb, keytype="ENTREZID"),
-                        columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ENTREZID")
-        entrez = entrez[ !duplicated(entrez[ , 1]), ]
+        if (genes_arg[1] == "*") {
+            entrez = select(genedb, keys = keys(genedb, keytype="ENTREZID"),
+                            columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ENTREZID")
+            entrez = entrez[ !duplicated(entrez[ , 1]), ]
 
-        pb = select(txdb, keys = keys(txdb, keytype="TXID"),
-                    columns = COLS, keytype = "TXID")
-        pb = pb[!duplicated(pb[ , c(4,6,7)]), ]
-    } else {
-        entrez = select(genedb, keys = genes_arg,
-                        columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ALIAS" )
-        entrez = entrez[ !duplicated(entrez[ , 2]), ]
+            pb = select(txdb, keys = keys(txdb, keytype="TXID"),
+                        columns = COLS, keytype = "TXID")
+            pb = pb[!duplicated(pb[ , c(4,6,7)]), ]
+        } else {
+            entrez = select(genedb, keys = genes_arg,
+                            columns = c("ALIAS", "ENTREZID", "SYMBOL"), keytype = "ALIAS" )
+            entrez = entrez[ !duplicated(entrez[ , 2]), ]
 
-        pb = select(txdb, keys = entrez[ , 2], columns = COLS, keytype = "GENEID")
-        pb = pb[!duplicated(pb[ , c(4,6,7)]), ]
-    }
-
-    pb$TXCHROM = envir$chr2int$chr[match(pb$TXCHROM, envir$chr2int$string)]
-    pb = pb[! is.na(pb$TXCHROM), ]
-
-    ranges = merge(entrez, pb, by.x = "ENTREZID", by.y = "GENEID", all.y = TRUE)
-    if (genes_arg[1] == "*") {
-        ranges[is.na(ranges[,2]),2] = ranges[is.na(ranges[,2]),5]
-        ranges[is.na(ranges[,3]),3] = ranges[is.na(ranges[,3]),5]
-    }
-
-    if (length(fuzz_arg) == 2) {
-        if (fuzz_arg[1] != 0 | fuzz_arg[2] != 0) {
-            ranges[ , 8] = ranges[ , 8] - fuzz_arg[1]
-            ranges[ , 9] = ranges[ , 9] + fuzz_arg[2]
+            pb = select(txdb, keys = entrez[ , 2], columns = COLS, keytype = "GENEID")
+            pb = pb[!duplicated(pb[ , c(4,6,7)]), ]
         }
-    } else if (fuzz_arg[1] != 0) {
-        ranges[ , 8] = ranges[ , 8] - fuzz_arg[1]
-        ranges[ , 9] = ranges[ , 9] + fuzz_arg[1]
-    }
 
+        pb$TXCHROM = envir$chr2int$chr[match(pb$TXCHROM, envir$chr2int$string)]
+        pb = pb[! is.na(pb$TXCHROM), ]
+
+        ranges = merge(entrez, pb, by.x = "ENTREZID", by.y = "GENEID", all.y = TRUE)
+        if (genes_arg[1] == "*") {
+            ranges[is.na(ranges[,2]),2] = ranges[is.na(ranges[,2]),5]
+            ranges[is.na(ranges[,3]),3] = ranges[is.na(ranges[,3]),5]
+        }
+
+        if (length(fuzz_arg) == 2) {
+            if (fuzz_arg[1] != 0 | fuzz_arg[2] != 0) {
+                ranges[ , 8] = ranges[ , 8] - fuzz_arg[1]
+                ranges[ , 9] = ranges[ , 9] + fuzz_arg[2]
+            }
+        } else if (fuzz_arg[1] != 0) {
+            ranges[ , 8] = ranges[ , 8] - fuzz_arg[1]
+            ranges[ , 9] = ranges[ , 9] + fuzz_arg[1]
+        }
+    } else {
+        ranges = data.frame(ENTREZID = character(0), ALIAS = character(0), SYMBOL = character(0),
+                            TXID = integer(0), TXNAME = character(0), TXCHROM = integer(0),
+                            TXSTRAND = character(0),  TXSTART = integer(0), TXEND = integer(0),
+                            stringsAsFactors = FALSE)
+    }
     #chrs
     for (chr in chrs_arg) { ranges = rbind(ranges,
 #           ENTREZID  ALIAS SYMBOL  TXID     TXNAME TXCHROM TXSTRAND  TXSTART    TXEND
                                     list("-", "-",
                                          paste0("chr", chr),
-                                         "-", "-",
-                                         chr, "-", 0, 1000000000) )
+                                         0, "-",
+                                         chr, "-", 0, 1000000000),
+                                         stringsAsFactors = FALSE)
                       }
     #ranges
     if (length(ranges_arg ))
@@ -375,9 +394,13 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
                                     list("-", "-",
                                          paste0("chr", ranges_arg[i, 1], ":",
                                                 ranges_arg[i, 2], "-",  ranges_arg[i, 3]),
-                                         "-", "-",
-                                         ranges_arg[i, 1], "-", ranges_arg[i, 2], ranges_arg[i, 3]) )
+                                         0, "-",
+                                         ranges_arg[i, 1], "-", ranges_arg[i, 2], ranges_arg[i, 3]),
+                                         stringsAsFactors = FALSE)
                       }
+
+    if ( is.null(genes_arg))
+        names(ranges) = c("ENTREZID", "ALIAS", "SYMBOL", "TXID", "TXNAME", "TXCHROM", "TXSTRAND", "TXSTART", "TXEND")
 
     applyFnToRanges(op, ranges, c(6, 8, 9, 3), envir = envir)
 
@@ -409,10 +432,51 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' setRanges(range, c(3, 4, 5))
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
+#' ranges = matrix(c(1, 2240000, 2245000,
+#'                   1, 2245000, 2250000,
+#'                   1, 3760000, 3761000,
+#'                   1, 3761000, 3762000,
+#'                   1, 3762000, 3763000,
+#'                   1, 3763000, 3764000,
+#'                   1, 3764000, 3765000,
+#'                   1, 3765000, 3763760,
+#'                   1, 3763760, 3767000,
+#'                   1, 3767000, 3768000,
+#'                   1, 3768000, 3769000,
+#'                   1, 3769000, 3770000),
+#'                  ncol = 3, nrow = 12, byrow = TRUE)
+#'
+#' setRanges(ranges, 1:3)
+#'
+#' ENV$refRanges
+#'
+#' ranges = matrix(c(1, 2240000, 2245000,
+#'                   1, 2245000, 2250000,
+#'                   1, 3760000, 3761000,
+#'                   1, 3761000, 3762000,
+#'                   1, 3762000, 3763000,
+#'                   1, 3763000, 3764000,
+#'                   1, 3764000, 3765000,
+#'                   1, 3765000, 3763760,
+#'                   1, 3763760, 3767000,
+#'                   1, 3767000, 3768000,
+#'                   1, 3768000, 3769000,
+#'                   1, 3769000, 3770000),
+#'                  ncol = 3, nrow = 12, byrow = TRUE)
+#' ranges = data.frame(ranges)
+#' ranges$name = LETTERS[1:12]
+#' names(ranges) = c("chr", "start", "end", "name")
+#'
+#' setRanges(ranges, 1:4)
+#'
+#' ENV$refRanges
 setRanges = function (ranges, indices, envir = ENV) {
+    ranges = data.frame(ranges, stringsAsFactors = FALSE)
+    if (class(ranges[ , indices[2]]) != "numeric") ranges[ , indices[2]] = as.numeric(ranges[ , indices[2]])
+    if (class(ranges[ , indices[3]]) != "numeric") ranges[ , indices[3]] = as.numeric(ranges[ , indices[3]])
     fix = fixRanges(ranges, indices, envir)
     envir$refRanges  = fix[[1]]
     envir$refIndices = fix[[2]]
@@ -428,7 +492,7 @@ fixRanges = function (ranges, indices, envir = ENV) {
     if (ind == 3 || envir$positionVsName) {
         rangesPlusOne = length(ranges) + 1
         indices = c(indices[1:3], rangesPlusOne)
-        ranges = cbind(ranges, ChrStartEend = paste0("chr", ranges[ , indices[1]], ":",
+        ranges = cbind(ranges, ChrStartEnd = paste0("chr", ranges[ , indices[1]], ":",
                                ranges[ , indices[2]], "-",  ranges[ , indices[3]]),
                         stringsAsFactors = FALSE)
     } else if (ind == 4) {
@@ -461,9 +525,14 @@ fixRanges = function (ranges, indices, envir = ENV) {
 #'  install them from Bioconductor.  This is explained at length in the package Vignette.
 #'
 #' @examples
-#'\dontrun{
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
 #' setAnnotations("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db")
-#'}
+#'
+#' ENV$txdb
+#' ENV$entrezGene
+#'
 setAnnotations = function (txdb, entrezGene, envir = ENV) {
     envir$txdb = txdb
     envir$entrezGene = entrezGene
@@ -523,24 +592,33 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' #    show = function(g, m, r, e) {
-#' #        print(r)
-#' #        print(m)
-#' #        print(head(g))
-#' #    }
-#' #    ENV = read.Mega2DB()
+#'   db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#'   ENV = read.Mega2DB(db)
 #'
-#'    # apply function "show" to all genotypes on chromosomes 11 for two base
-#'    # pair ranges
+#'   show = function(g, m, r, e) {
+#'       print(r)
+#'       print(m)
+#'       print(head(g))
+#'   }
+#'
+#'    # apply function "show" to all genotypes on chromosomes 1 for two base pair
+#'    # ranges
 #'    applyFnToRanges(show, 
 #'                    ranges_arg =
-#'                    matrix(c(11, 50000000, 50100000,
-#'                             11, 60000000, 60100000),
-#'                            ncol = 3, nrow = 2, byrow = T),
+#'                    matrix(c(1, 2244000, 2245000,
+#'                             1, 3762500, 3765000),
+#'                            ncol = 3, nrow = 2, byrow = TRUE),
 #'                    indices_arg = 1:3)
 #'
-#'}
+#'    # apply function "show" to all genotypes on chromosomes 1 for two base pair
+#'    # ranges
+#'    applyFnToRanges(show, 
+#'                    ranges_arg =
+#'                    matrix(c(1, 2240000, 2245000, "range1",
+#'                             1, 3760000, 3765000, "range2"),
+#'                            ncol = 4, nrow = 2, byrow = TRUE),
+#'                    indices_arg = 1:4)
+#'
 applyFnToRanges = function (op          = function (geno, markers, range, envir) {},
                             ranges_arg  = NULL,
                             indices_arg = NULL,
@@ -553,10 +631,13 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
     } else {
         ranges  = ranges_arg
         indices = indices_arg
+        ranges = data.frame(ranges, stringsAsFactors = FALSE)
+        fix = fixRanges(ranges, indices, envir)
+        ranges  = fix[[1]]
+        indices = fix[[2]]
+        if (class(ranges[ , indices[2]]) != "numeric") ranges[ , indices[2]] = as.numeric(ranges[ , indices[2]])
+        if (class(ranges[ , indices[3]]) != "numeric") ranges[ , indices[3]] = as.numeric(ranges[ , indices[3]])
     }
-    fix = fixRanges(ranges, indices, envir)
-    ranges  = fix[[1]]
-    indices = fix[[2]]
     envir$refCol = indices
 
     rows = nrow(ranges)
@@ -698,18 +779,19 @@ tryFn = function(op, geno, markersub, ranges, envir) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
-#' #    show = function(g, m, r, e) {
-#' #        print(r)
-#' #        print(m)
-#' #        print(head(g))
-#' #    }
-#' #    ENV = read.Mega2DB()
+#'   db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#'   ENV = read.Mega2DB(db)
+#
+#'   show = function(g, m, r, e) {
+#'       print(r)
+#'       print(m)
+#'       print(head(g))
+#'   }
 #'
-#'    # apply function "show" to all genotypes in chromosome 20, 21, 22, and 23
-#'    applyFnToMarkers(show, ENV$markers[ENV$markers$chromosome %IN% 20:23),])
+#'    # apply function "show" to all genotypes in chromosome 1, 2, and 3
+#'    applyFnToMarkers(show, ENV$markers[ENV$markers$position > 5000000,])
 #'
-#'}
+#'
 applyFnToMarkers = function (op = function (geno, markers, range, envir) {},
                              markers_arg,
                              envir = ENV) {

@@ -18,7 +18,9 @@ Convert data in phenotype_table to a data frame of columns that are phenotypes.
  The columns may be affection status or quantitative values
 }
 \examples{
-\dontrun{
-mkphenotype(prefix, envir)
-}
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+out = mkphenotype(ENV)
+
+out
 }

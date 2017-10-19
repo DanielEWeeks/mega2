@@ -20,3 +20,4 @@ Mega2 uses an environment to store the data frames when it reads an SQLite datab
 resetMega2ENV()
 }
 }
+\keyword{internal}

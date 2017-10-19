@@ -47,16 +47,16 @@ A matrix of the genotypes for all the specified markers is generated.  Then, the
   is called with the genotypes, markers, NULL (for the range), and the 'environment'.
 }
 \examples{
-\dontrun{
-#    show = function(g, m, r, e) {
-#        print(r)
-#        print(m)
-#        print(head(g))
-#    }
-#    ENV = read.Mega2DB()
+  db = system.file("exdata", "seqsimm.db", package="Mega2R")
+  ENV = read.Mega2DB(db)
+  show = function(g, m, r, e) {
+      print(r)
+      print(m)
+      print(head(g))
+  }
 
-   # apply function "show" to all genotypes in chromosome 20, 21, 22, and 23
-   applyFnToMarkers(show, ENV$markers[ENV$markers$chromosome \%IN\% 20:23),])
+   # apply function "show" to all genotypes in chromosome 1, 2, and 3
+   applyFnToMarkers(show, ENV$markers[ENV$markers$position > 5000000,])
 
-}
+
 }

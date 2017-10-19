@@ -175,6 +175,9 @@ Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 #'
 DOpedgene = function(geno_arg, markers_arg, range_arg, envir = ENV) {
 
+    if (is.null(range_arg))
+        stop("DOpedgene: range is not defined.", calls. = FALSE)
+
     markerNames = markers_arg$MarkerName
     gene  = as.character(range_arg[,envir$refCol[4]])
 

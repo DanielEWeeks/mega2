@@ -17,7 +17,9 @@ Mega2R stores several phenotypes, both affective and quantitative. This function
  mapping between phenotype (name), index, and the phenotype type (affection or quantitative).
 }
 \examples{
-\dontrun{
-showPhenoNames()
-}
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
+showPhenoNames(ENV)
+
 }

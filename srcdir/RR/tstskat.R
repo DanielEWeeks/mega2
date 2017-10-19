@@ -35,7 +35,7 @@ go = function() {
 
     envir = init_SKAT("~/mega2/data/yj1.db", verbose = TRUE)
 
-    Mega2SKAT(envir$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5,0.5), envir = envir)
+    Mega2SKAT(envir$phe[, 3] - 1 ~ 1, "D", gs=1:200, kernel = "linear.weighted", weights.beta=c(0.5,0.5), envir = envir)
 
     Mega2SKAT(envir$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", weights.beta=c(0.5,0.5), envir = envir, gene=c("ELL2", "CARD2", "ARMS2", "CFH"))
 

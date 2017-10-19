@@ -54,6 +54,7 @@ ENV$verbose = FALSE
 ENV$SKAT_results = ENV$SKAT_results[0, ]
 Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
           weights.beta = c(0.5, 0.5), genes=c("CEP104"))
-print(ENV$SKAT_results)
+
+ENV$SKAT_results
 
 }

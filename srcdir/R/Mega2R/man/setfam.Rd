@@ -25,7 +25,13 @@ You should first modify the \emph{fam} data frame to filter the members you need
  records.
 }
 \examples{
-\dontrun{
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
+fam = mkfam()
+# remove founders
+fam = fam[ !( (fam[ , 5] == fam[ , 6]) & (fam[ , 5] == 0)), ]
 setfam(fam)
-}
+
+ENV$fam
 }

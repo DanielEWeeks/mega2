@@ -18,7 +18,6 @@ This function removes the Mega2R tutorial (inst/exdata) data that was
 copied to the specified directory.
 }
 \examples{
-\dontrun{
 clean_mega2rtutorial_data()
-}
+
 }

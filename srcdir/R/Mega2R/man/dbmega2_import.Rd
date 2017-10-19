@@ -28,9 +28,8 @@ Read the fields of SQLite data base tables that are required for Mega2R into
  to the 'environment'.
 }
 \examples{
-\dontrun{
-ENV = dbmega2_import("foo.db", verbose = TRUE)
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = dbmega2_import(db, verbose = TRUE)
 
-ENV = dbmega2_import("foo.db")
-}
+ENV = dbmega2_import(db)
 }

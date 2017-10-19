@@ -35,10 +35,10 @@ go = function(db = 0) {
 
     if (TRUE) {
 ##  ENV = dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db", verbose = 1)
-        source("Mega2R/mega2_test.R")
+        source("../RR/Mega2R/mega2_test.R")
         tst1(ENV)
 
-        source("Mega2R/mega2gene_test.R")
+        source("../RR/Mega2R/mega2gene_test.R")
         tst10(ENV)
         tst11(ENV)
         tst12(ENV)

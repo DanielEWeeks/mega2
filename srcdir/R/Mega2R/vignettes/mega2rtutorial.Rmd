@@ -149,11 +149,8 @@ dump_mega2rtutorial_data()
 All the files for this vignette will be created in the temporary directory given by `file.path(tempdir(),"Mega2Rtutorial")`.
 In that directory, you will see the following files:  
 
-```
---------------------------|-----------------------|---------------  
-[1] "MEGA2.BATCH.seqsimr" |  "MEGA2.BATCH.srdta"  |  "MEGA2.BATCH.vcf"      
-[4] "Mega2r.map"          |  "Mega2r.ped"         |  "mega2r.Rmd"   
-[7] "mega2r.pdf"          |  "seqsimr.db"         |  "srdta.db"   
+```{r mega2rtutDumpls, message=FALSE}
+list.files(where_mega2rtutorial_data())
 ```
 
 **Note: The temporary directory name, given by `file.path(tempdir(),"Mega2Rtutorial")`, is generated randomly each time this
@@ -807,7 +804,7 @@ You would type:
 
 ```{r, FnToGenesall,eval=FALSE}
 # we will skip this line for the Rmd document production because it takes too long
-applyFnToGenes(DOpedgene, envir = ENV)
+applyFnToGenes(DOpedgene, genes_arg = '*', envir = ENV)
 ```
 
 Note: The default behavior of `DOpedgene` is to append any new results to the end of the

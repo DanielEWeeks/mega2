@@ -28,4 +28,7 @@ db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = read.Mega2DB(db)
 seqsimgwaa = Mega2GenABEL(markers=ENV$markers[1:10,])
 
+str(seqsimgwaa)
+head(summary(seqsimgwaa))
+
 }

@@ -50,7 +50,12 @@ This function is called from \code{Mega2ENVGenABEL}; it is not intended to be ca
  by the programmer.
 }
 \examples{
-\dontrun{
-getgenotypesgenabel(ENV$markers[ENV$markers$chromosome == n,])
-}
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
+aa = getgenotypesgenabel(ENV$markers[ENV$markers$chromosome == 1,])
+
+aa[1]
+aa[2]
+
 }

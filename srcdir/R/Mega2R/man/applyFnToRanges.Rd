@@ -56,22 +56,31 @@ If the \emph{ranges_arg} and \emph{indices_arg} are NULL or missing, then the de
  are used.  If \code{setRanges} has not been called, a default set of the ranges is used.
 }
 \examples{
-\dontrun{
-#    show = function(g, m, r, e) {
-#        print(r)
-#        print(m)
-#        print(head(g))
-#    }
-#    ENV = read.Mega2DB()
+  db = system.file("exdata", "seqsimm.db", package="Mega2R")
+  ENV = read.Mega2DB(db)
 
-   # apply function "show" to all genotypes on chromosomes 11 for two base
-   # pair ranges
+  show = function(g, m, r, e) {
+      print(r)
+      print(m)
+      print(head(g))
+  }
+
+   # apply function "show" to all genotypes on chromosomes 1 for two base pair
+   # ranges
    applyFnToRanges(show, 
                    ranges_arg =
-                   matrix(c(11, 50000000, 50100000,
-                            11, 60000000, 60100000),
-                           ncol = 3, nrow = 2, byrow = T),
+                   matrix(c(1, 2244000, 2245000,
+                            1, 3762500, 3765000),
+                           ncol = 3, nrow = 2, byrow = TRUE),
                    indices_arg = 1:3)
 
-}
+   # apply function "show" to all genotypes on chromosomes 1 for two base pair
+   # ranges
+   applyFnToRanges(show, 
+                   ranges_arg =
+                   matrix(c(1, 2240000, 2245000, "range1",
+                            1, 3760000, 3765000, "range2"),
+                           ncol = 4, nrow = 2, byrow = TRUE),
+                   indices_arg = 1:4)
+
 }

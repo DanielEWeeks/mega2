@@ -5,7 +5,7 @@
 \title{apply a function to the genotypes (markers) in each gene transcript and/or base pair range}
 \usage{
 applyFnToGenes(op           = function (geno, markers, range, envir) {},
-               genes_arg    = c("*"),
+               genes_arg    = NULL,
                ranges_arg   = matrix(ncol = 3, nrow = 0),
                chrs_arg     = vector("integer", 0),
                markers_arg  = vector("character", 0),
@@ -85,21 +85,22 @@ If you want subsequent calls to \code{op} to share information, data can be plac
  a data frame that is added to the 'environment'.
 }
 \examples{
-\dontrun{
-#    show = function(g, m, r, e) {
-#        print(r)
-#        print(m)
-#        print(head(g))
-#    }
-#    ENV = read.Mega2DB()
+  db = system.file("exdata", "seqsimm.db", package="Mega2R")
+  ENV = read.Mega2DB(db)
+
+  show = function(g, m, r, e) {
+      print(r)
+      print(m)
+      print(head(g))
+  }
 
    # apply function "show" to all transcripts on genes ELL2 and CARD15
    applyFnToGenes(show, genes_arg = c("ELL2", "CARD15"))
 
    # apply function "show" to all genotypes on chromosomes 11 for two base
    # pair ranges
-   applyFnToGenes(show, ranges_arg = matrix(c(11, 50000000, 50100000,
-                      11, 60000000, 60100000), ncol = 3, nrow = 2, byrow = T))
+   applyFnToGenes(show, ranges_arg = matrix(c(1, 5000000, 10000000,
+                  1, 10000000, 15000000), ncol = 3, nrow = 2, byrow = TRUE))
 
    # apply function "show" to all genotypes for first marker in each chromosome
    applyFnToGenes(show, markers_arg = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
@@ -107,5 +108,5 @@ If you want subsequent calls to \code{op} to share information, data can be plac
    # apply function "show" to all genotypes on chromosomes 24 and 26
    applyFnToGenes(show, chrs_arg=c(24, 26))
 
-}
+
 }

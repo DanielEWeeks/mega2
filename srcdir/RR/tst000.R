@@ -25,26 +25,22 @@
 # 
 # ===========================================================================
 
-go = function() {
+source("../RR/tst.R")
 
-    print("## run 200 ranges of pedgene to compare with YJiang's results; and profile")
-    print("## result environment returned in ENV")
+source("../RR/tst1.R")
 
+source("../RR/tstseq.R") 
 
-    library(Mega2R)
+source("../RR/tstgena.R")
 
-    aa=setwd("~/mega2/test/R/yj/realDataAnalysis/mega2")
-    envir = init_pedgene("~/mega2/data/yj1.db", verbose = 1)
+source("../RR/tstgenabel.R")
 
-#   Rprof("prof.out", line.profiling=T, memory.profiling=T)
-    Mega2pedgene(gs=1:200, envir = envir)
-#   Rprof(NULL)
-#   print(summaryRprof("prof.out", lines="both"))
+source("../RR/tstgenabe2.R")
 
-    aa=setwd(aa)
+source("../RR/tstpedgene.R") 
 
-    envir
-}
+source("../RR/tstskat.R") 
 
-ENV=go()
+source("../RR/tstvcf.R") 
 
+system("cd ../RR/tstVCF; ../tstvcfdiff")

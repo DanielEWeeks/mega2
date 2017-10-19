@@ -50,9 +50,8 @@ FILES.gz = c("Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
 #' @return None
 #'
 #' @examples
-#'\dontrun{
 #' dump_mega2rtutorial_data()
-#'}
+#'
 dump_mega2rtutorial_data = function(dir = file.path(tempdir(), "Mega2Rtutorial")) {
     if (! dir.exists(dir))
         dir.create(dir)
@@ -90,9 +89,8 @@ dump_mega2rtutorial_data = function(dir = file.path(tempdir(), "Mega2Rtutorial")
 #' @return None
 #'
 #' @examples
-#'\dontrun{
 #' clean_mega2rtutorial_data()
-#'}
+#'
 clean_mega2rtutorial_data = function(dir = file.path(tempdir(), "Mega2Rtutorial")) {
     if (! dir.exists(dir))
       return (NULL)
@@ -115,9 +113,10 @@ clean_mega2rtutorial_data = function(dir = file.path(tempdir(), "Mega2Rtutorial"
 #' @return dir tutorial to hold vignette
 #'
 #' @examples
-#'\dontrun{
-#' where_mega2rtutorial_data()
-#'}
+#' directory = where_mega2rtutorial_data()
+#'
 where_mega2rtutorial_data = function(dir = file.path(tempdir(), "Mega2Rtutorial")) {
+    if (! dir.exists(dir))
+        dir.create(dir)
     dir
 }

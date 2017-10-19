@@ -112,9 +112,14 @@ dmpPed = function(gwaa_ = srdta, pfx, default = "bt") {
 #' @importFrom utils data
 #'
 #' @examples
-#'\dontrun{
-#' Mega2GenABELtst()
-#'}
+#' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' ENV = read.Mega2DB(db)
+#'
+#' x = Mega2GenABEL()
+#' y = Mega2ENVGenABEL()
+#'
+#' Mega2GenABELtst(x, y, full = FALSE)
+#'
 Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta, full = TRUE, envir = ENV) {
 
     ANS = TRUE

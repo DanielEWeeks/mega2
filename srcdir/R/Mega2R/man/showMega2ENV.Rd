@@ -19,7 +19,9 @@ Mega2R uses an environment to store the data frames when it reads SQLite databas
  Note: It is not necessary to provide an argument, if the environment is named \emph{ENV}.
 }
 \examples{
-\dontrun{
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
 showMega2ENV()
-}
+
 }

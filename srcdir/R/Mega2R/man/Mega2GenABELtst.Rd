@@ -28,7 +28,12 @@ Verify by fields, all the fields in two gwaa.data-class objects.
  currently be determined.)
 }
 \examples{
-\dontrun{
-Mega2GenABELtst()
-}
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
+x = Mega2GenABEL()
+y = Mega2ENVGenABEL()
+
+Mega2GenABELtst(x, y, full = FALSE)
+
 }

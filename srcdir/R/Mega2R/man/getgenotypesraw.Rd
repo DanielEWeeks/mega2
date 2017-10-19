@@ -44,12 +44,10 @@ The \emph{unified_genotype_table} contains one raw vector for each person.  In t
  all the needed markers.
 }
 \examples{
-\dontrun{
-# two ints in upper/lower half integer representing allele for all persons in
-# markers data.frame argument
-getgenotypesraw(ENV$markers)
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
 
-# two ints in upper/lower half integer representing allele # for all persons in chromosome n
-getgenotypesraw(ENV$markers[ENV$markers$chromosome == n,])
-}
+# two ints in upper/lower half integer representing allele # for all persons in chromosome 1
+getgenotypesraw(ENV$markers[ENV$markers$chromosome == 1,])
+
 }

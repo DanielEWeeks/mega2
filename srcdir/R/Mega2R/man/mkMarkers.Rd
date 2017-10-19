@@ -34,7 +34,11 @@ Select a map (index) from the map_table to merge with the select marker_table
  data frame to make the marker data frame.  See showMapNames() for the string name to index mapping.
 }
 \examples{
-\dontrun{
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db, verbose = TRUE)
+
 mkMarkers(1)
-}
+
+ENV$markers
+
 }

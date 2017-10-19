@@ -26,7 +26,45 @@ This function sets the default list of ranges used by \code{applyFnToRanges}.  \
  processed.
 }
 \examples{
-\dontrun{
-setRanges(range, c(3, 4, 5))
-}
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
+ranges = matrix(c(1, 2240000, 2245000,
+                  1, 2245000, 2250000,
+                  1, 3760000, 3761000,
+                  1, 3761000, 3762000,
+                  1, 3762000, 3763000,
+                  1, 3763000, 3764000,
+                  1, 3764000, 3765000,
+                  1, 3765000, 3763760,
+                  1, 3763760, 3767000,
+                  1, 3767000, 3768000,
+                  1, 3768000, 3769000,
+                  1, 3769000, 3770000),
+                 ncol = 3, nrow = 12, byrow = TRUE)
+
+setRanges(ranges, 1:3)
+
+ENV$refRanges
+
+ranges = matrix(c(1, 2240000, 2245000,
+                  1, 2245000, 2250000,
+                  1, 3760000, 3761000,
+                  1, 3761000, 3762000,
+                  1, 3762000, 3763000,
+                  1, 3763000, 3764000,
+                  1, 3764000, 3765000,
+                  1, 3765000, 3763760,
+                  1, 3763760, 3767000,
+                  1, 3767000, 3768000,
+                  1, 3768000, 3769000,
+                  1, 3769000, 3770000),
+                 ncol = 3, nrow = 12, byrow = TRUE)
+ranges = data.frame(ranges)
+ranges$name = LETTERS[1:12]
+names(ranges) = c("chr", "start", "end", "name")
+
+setRanges(ranges, 1:4)
+
+ENV$refRanges
 }

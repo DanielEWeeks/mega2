@@ -43,7 +43,11 @@ This function stores the data frame in the 'environment' and also returns it.
  into the 'environment' and adjusts the \emph{genotype_table} and the \emph{phenotype_table}.
 }
 \examples{
-\dontrun{
+db = system.file("exdata", "seqsimm.db", package="Mega2R")
+ENV = read.Mega2DB(db)
+
 fam = mkfam()
-}
+
+fam
+
 }
