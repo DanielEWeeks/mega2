@@ -2332,7 +2332,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<possibly_clean,echo=FALSE>>=
+<<possibly_clean,echo=FALSE, results="hide">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -2374,101 +2374,73 @@ dump_mega2rtutorial_data(".")
 You should see the following files: 
 \end_layout
 
-\begin_layout Quotation
-\begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
 \begin_layout Plain Layout
-MEGA2.BATCH.seqsimr
+
+<<mega2rtutDumpxls, echo=FALSE, message=FALSE, results="hide">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+dump_mega2rtutorial_data()
 \end_layout
 
 \end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
 \begin_layout Plain Layout
-MEGA2.BATCH.srdta
+
+<<mega2rtutDumplsFalse, eval=FALSE, message=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+list.files(where_mega2rtutorial_data("."))
 \end_layout
 
 \end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
+
+
+\begin_inset Flex Chunk
+status open
 
 \begin_layout Plain Layout
-MEGA2.BATCH.vcf
+
+<<mega2rtutDumpls, eval=TRUE, echo=FALSE, message=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+list.files(where_mega2rtutorial_data())
 \end_layout
 
 \end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-Mega2r.map
+
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
 \begin_layout Plain Layout
-Mega2r.ped
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
+<<mega2rtutCleanxls, echo=FALSE, message=FALSE, results="hide">>=
+\end_layout
 
 \begin_layout Plain Layout
-mega2r.Rmd
+
+clean_mega2rtutorial_data()
 \end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-mega2r.pdf
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-seqsimr.db
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-srdta.db
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
 
 \end_inset
 
@@ -2494,7 +2466,7 @@ status open
 
 \begin_layout Plain Layout
 
-clean_mega2rtutorial_data()
+clean_mega2rtutorial_data(".")
 \end_layout
 
 \end_inset
