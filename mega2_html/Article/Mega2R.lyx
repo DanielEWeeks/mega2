@@ -121,7 +121,7 @@ knitr
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1820302391 "Robert V. Baron"
+\author 5863607 "me"
 \end_header
 
 \begin_body
@@ -150,12 +150,8 @@ status open
 
 
 \backslash
-title{The Mega2R R 
-\change_deleted -1820302391 1508513548
-merge
-\change_unchanged
- package: tools for accessing and processing common genetic data formats
- in R}
+title{The Mega2R R  package: tools for accessing and processing common genetic
+ data formats in R}
 \end_layout
 
 \end_inset
@@ -341,23 +337,15 @@ Our Mega2R package now makes it easy to load SQLite3 Mega2 databases directly
  into R as data frames.
  In addition, we have developed C++ functions for R to decompress needed
  subsets of the genotype data in a memory efficient manner.
- I
-\change_deleted -1820302391 1508513571
-n addition
-\change_inserted -1820302391 1508513573
-Also,
-\change_unchanged
- there are extended functions that illustrate how to use the data frames
- as well as perform useful functions: the Mega2pedgene function to run the
- pedgene R package to carry out gene-based association tests on family data
- using selected marker subsets, 
-\change_inserted -1820302391 1508513766
-the Mega2SKAT function to run the SKAT R package to carry out gene-based
- association tests on family data using selected marker subsets, 
-\change_unchanged
-the Mega2VCF function to output the Mega2R data as a VCF file and related
- files (for phenotype and family data), and the Mega2GenABEL function to
- convert the data frames into GenABEL R gwaa.data-class objects.
+ Also, there are extended functions that illustrate how to use the data
+ frames as well as perform useful functions: the Mega2pedgene function to
+ run the pedgene R package to carry out gene-based association tests on
+ family data using selected marker subsets, the Mega2SKAT function to run
+ the SKAT R package to carry out gene-based association tests on family
+ data using selected marker subsets, the Mega2VCF function to output the
+ Mega2R data as a VCF file and related files (for phenotype and family data),
+ and the Mega2GenABEL function to convert the data frames into GenABEL R
+ gwaa.data-class objects.
  The Mega2 program and the Mega2R R package are both open source and are
  freely available, along with extensive documentation and a 'quick-start'
  tutorial, from our https://watson.hgen.pitt.edu/register web site.
@@ -577,27 +565,17 @@ key "Team:2017aa"
  We describe here our Mega2R package, which makes it easy to load SQLite3
  Mega2 databases directly into R as data frames for further analysis and
  manipulation.
- In addition
-\change_inserted -1820302391 1508514980
-,
-\change_unchanged
- we document several R functions that illustrate how to use the Mega2R data
- frames as well as perform useful functions: the Mega2pedgene function to
- run the pedgene
-\change_inserted -1820302391 1508515164
- 
+ In addition, we document several R functions that illustrate how to use
+ the Mega2R data frames as well as perform useful functions: the Mega2pedgene
+ function to run the pedgene 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "pedgene"
 
 \end_inset
 
-
-\change_unchanged
  R package to carry out gene-based association tests on family data using
- selected marker subsets, 
-\change_inserted -1820302391 1508515131
-the Mega2SKAT function to run the SKAT 
+ selected marker subsets, the Mega2SKAT function to run the SKAT 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "SKATa"
@@ -605,11 +583,10 @@ key "SKATa"
 \end_inset
 
  R package to carry out gene-based association tests on family data using
- selected marker subsets, 
-\change_unchanged
-the Mega2VCF function to output the Mega2R data as a VCF file and related
- files (for phenotype and family data), and the Mega2GenABEL function to
- convert the data frames into GenABEL R gwaa.data-class objects 
+ selected marker subsets, the Mega2VCF function to output the Mega2R data
+ as a VCF file and related files (for phenotype and family data), and the
+ Mega2GenABEL function to convert the data frames into GenABEL R gwaa.data-class
+ objects 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "genabel"
@@ -657,32 +634,12 @@ locus_table
 \series default
  variable from the environment, 'ENV', similar to fetching an "observation"
  from a data frame.
- The difference is when you change data in a
-\change_inserted -1820302391 1508515322
-n ordinary
-\change_unchanged
- data frame passed to a function, the change does not affect the original
- data frame
-\change_inserted -1820302391 1508515375
-;o
-\change_deleted -1820302391 1508515370
-.
- O
-\change_unchanged
-nly the function's local value is changed
-\change_inserted -1820302391 1508515445
-.
-\change_deleted -1820302391 1508515381
-;
-\change_unchanged
+ The difference is when you change data in an ordinary data frame passed
+ to a function, the change does not affect the original data frame; only
+ the function's local value is changed.
  ALL changes are forgotten when the function exits.
- If you change the data in 
-\change_inserted -1820302391 1508515466
-a data frame of 
-\change_unchanged
-an environment passed to a function, the change is permanent.) 
-\change_inserted -1820302391 1508515513
-
+ If you change the data in a data frame of an environment passed to a function,
+ the change is permanent.) 
 \end_layout
 
 \begin_layout Standard
@@ -723,11 +680,7 @@ showMega2ENV = function(envir = ENV) { ...
 
 \begin_layout Standard
 The code above, assigns the local variable, 'envir' the default value 'ENV'.
- Thus
-\change_inserted -1820302391 1508515580
-,
-\change_unchanged
- if 'envir' is not provided in the function call, R will use the default
+ Thus, if 'envir' is not provided in the function call, R will use the default
  assignment and look up the value of 'ENV'.
  Hopefully, 'ENV' was set as the return value of a call to 
 \emph on
@@ -741,12 +694,9 @@ Mega2 SQLite Database
 \end_layout
 
 \begin_layout Standard
-In the latest Mega2 design, there are SQL
-\change_inserted -1820302391 1508515688
-ite
-\change_unchanged
- tables for loci data, marker data, allele data, map data, phenotype data
- and genotype data as well as pedigree and person data.
+In the latest Mega2 design, there are SQLite tables for loci data, marker
+ data, allele data, map data, phenotype data and genotype data as well as
+ pedigree and person data.
  For completeness, Appendix A shows all the tables and their fields.
  Here, we will make a few general observations about the tables.
  The first issue was mentioned earlier: What should we do with pointers
@@ -778,21 +728,11 @@ allele_table
 \series bold
 locus_table
 \series default
- is hashed 
-\change_deleted -1820302391 1508515848
-to yield
-\change_inserted -1820302391 1508515849
-and
-\change_unchanged
- a pointer to the corresponding entry in the 
+ is hashed and a pointer to the corresponding entry in the 
 \series bold
 locus_table
-\change_inserted -1820302391 1508515857
-
 \series default
- is stored
-\change_unchanged
-.
+ is stored.
  When the 
 \series bold
 allele_table
@@ -836,11 +776,7 @@ links
  For example, in the above case, merge can produce a table with rows containing
  both locus and allele data.
  Similar links are used to associate family data with person data, as well
- as associate person data with phenotype 
-\change_inserted -1820302391 1508516001
-data 
-\change_unchanged
-and genotype data.
+ as associate person data with phenotype data and genotype data.
 \end_layout
 
 \begin_layout Standard
@@ -856,13 +792,8 @@ Most tables are composed of integer, numeric and string data.
  Similarly, the genotype data are a raw vector with a pair of bytes representing
  a genotype for non bialleleic markers and a raw compressed bit vector with
  two bits per genotype for bialleleic markers.
- Note: the 
-\change_deleted -1820302391 1508516231
-original
-\change_inserted -1820302391 1508516233
-internal
-\change_unchanged
- compressed genotype vector created by Mega2 is one long vector.
+ Note: the internal compressed genotype vector created by Mega2 is one long
+ vector.
  The genotype data written to the database is split into separate vectors
  for each chromosome.
  The end of each vector may have 0, 1, 2, or 3 unused bit pairs representing
@@ -873,8 +804,6 @@ internal
  vector data into active memory.
  The R version is not as sophisticated; it reassembles all the chromosome
  vectors and includes these gaps.
-
-\change_inserted -1820302391 1508516460
  It then takes care when referencing the 
 \begin_inset Quotes eld
 \end_inset
@@ -893,8 +822,6 @@ n'th
 \end_inset
 
  marker's chromosome.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -1115,15 +1042,7 @@ virtual markers
  efficient; while keeping track of the virtual markers introduced by the
  gaps is not particularly hard.
  The Mega2 program written C++ does bit manipulations to just copy the bits
- for the markers 
-\change_deleted -1820302391 1508516793
-it will
-\change_unchanged
- need
-\change_inserted -1820302391 1508516797
-ed
-\change_unchanged
- for later analysis.)
+ for the markers needed for later analysis.)
 \end_layout
 
 \begin_layout Standard
@@ -1200,9 +1119,8 @@ We might have genotype data for thousands of samples and millions of markers
  of interest.
  We only decompress the set of markers we need.
  The key idea is we want to find the set of markers that fall in some base
- pair range and process just those markers
-\change_inserted -1820302391 1508517021
- and then we repeat this for the 
+ pair range and process just those markers and then we repeat this for the
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1210,18 +1128,12 @@ next
 \begin_inset Quotes erd
 \end_inset
 
- range
-\change_unchanged
-.
+ range.
  We will introduce two ways to specify these ranges.
  In addition, we want to iterate through multiple ranges as would appear
  in one or more gene transcripts and process the markers.
- Finally, we process
-\change_deleted -1820302391 1508517051
- a
-\change_unchanged
- each range of markers by invoking a callback function on the range, markers
- and related data.
+ Finally, we process each range of markers by invoking a callback function
+ on the range, markers and related data.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1269,16 +1181,12 @@ observations
  and a selector vector of 3 integer that indicates which observation variable
  in the range data frame contains the chromosome, start position and end
  position.
-
-\change_inserted -1820302391 1508518390
  If the range data frame contains a name 
 \begin_inset Quotes eld
 \end_inset
 
 observation, the selector vector should have a final 4th integer that is
  the column of the name.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -1286,13 +1194,7 @@ The
 \emph on
 applyFnToRanges
 \emph default
- function (and 
-\change_deleted -1820302391 1508518435
-later
-\change_inserted -1820302391 1508518435
-also
-\change_unchanged
- 
+ function (and also 
 \emph on
 applyFnToGenes
 \emph default
@@ -1311,11 +1213,8 @@ R environment
 \emph on
  applyFnToRanges,
 \emph default
- with no additional arguments, will iterate through each row of the 
-\change_inserted -1820302391 1508518505
-default 
-\change_unchanged
-Mega2R ranges, determine the markers contained between the start and end,
+ with no additional arguments, will iterate through each row of the default
+ Mega2R ranges, determine the markers contained between the start and end,
  compute the genotype matrix, and then invoke a callback function.
  Alternatively, 
 \emph on
@@ -1338,12 +1237,9 @@ applyFnToRanges
  requires a call back function of four arguments: the first is a matrix
  of genotypes for all the markers in the transcript, the second is a data
  frame of the markers in the transcript, the third is a single row from
- the data frame that defines the 
-\change_inserted -1820302391 1508518587
-range/
-\change_unchanged
-transcript (minimally it has a name, ID, start position, end position, and
- chromosome), and the final argument is the 
+ the data frame that defines the range/transcript (minimally it has a name,
+ ID, start position, end position, and chromosome), and the final argument
+ is the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1385,17 +1281,7 @@ Mega2R also loads a list of genes and their transcripts from the Bioconductor
  data Annotations: "org.Hs.eg.db"and "TxDb.Hsapiens.UCSC.hg19.knownGene".
  The former translates a gene name or alias to the entrez ID of the gene.
  The latter gives start position, end position and chromosome for each transcrip
-t known for 
-\change_deleted -1820302391 1508518680
-the
-\change_unchanged
- 
-\change_deleted -1820302391 1508518673
-each
-\change_inserted -1820302391 1508518673
-every
-\change_unchanged
- gene.
+t known for every gene.
  You might want to use the transcript data from another build that is available
  at Bioconductor or follow their instructions make your own mapping.
  The Mega2R function, 
@@ -1408,11 +1294,7 @@ setAnnotations
 applyFnToGenes
 \emph default
  function.
-
-\change_inserted -1820302391 1508518747
  (You must install them into your R libraries.)
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -1434,12 +1316,8 @@ t ranges: on sub-ranges of chromosomes (ranges_arg argument), on the entire
  
 \emph on
 applyFnToRanges
-\change_inserted -1820302391 1508518852
-
 \emph default
- and proceesed as described above
-\change_unchanged
-.
+ and processed as described above.
  Note: If the special gene name, 
 \begin_inset Quotes eld
 \end_inset
@@ -1482,21 +1360,12 @@ R environment
 \end_inset
 
 .
- (
-\change_inserted -1820302391 1508518954
-The range is 
-\change_unchanged
-NULL because there is no range information
-\change_inserted -1820302391 1508519050
-; this implies that the callback function for applyFnToMarkers
+ (The range is NULL because there is no range information; this implies
+ that the callback function for applyFnToMarkers
 \emph on
  
 \emph default
-must check for a range value of NULL
-\change_deleted -1820302391 1508518965
-.
-\change_unchanged
-)
+must check for a range value of NULL)
 \end_layout
 
 \begin_layout Subsubsection
@@ -1522,28 +1391,12 @@ getgenotypesraw
 \emph default
  return a matrix of nucleotide pairs or a matrix of encoded integers with
  a column for each marker and containing a row per sample.
- Both functions take a
-\change_deleted -1820302391 1508519132
- single
-\change_inserted -1820302391 1508519132
-n
-\change_unchanged
- argument which is rows of the 
+ Both functions take an argument which is rows of the 
 \series bold
 marker
 \series default
- data frame
-\change_inserted -1820302391 1508519142
- and an environment
-\change_unchanged
-.
- Th
-\change_inserted -1820302391 1508519162
-e first
-\change_deleted -1820302391 1508519159
-is
-\change_unchanged
- argument is computed by either the 
+ data frame and an environment.
+ The first argument is computed by either the 
 \emph on
 applyFnToRanges
 \emph default
@@ -1587,15 +1440,8 @@ R environment
 \emph on
 getgenotypes
 \emph default
- will return for each sample the 
-\change_inserted -1820302391 1508519354
-a string of the 
-\change_unchanged
-corresponding pair of nucleotides
-\change_deleted -1820302391 1508519314
- as a string
-\change_unchanged
-, while 
+ will return for each sample a string of the corresponding pair of nucleotides,
+ while 
 \emph on
 getgenotypesraw
 \emph default
@@ -1603,13 +1449,9 @@ getgenotypesraw
  value; the two integers are returned as a single integer with the integer
  for the first allele shifted 16 bits and or'ed to the integer for the second
  allele.
-\change_inserted -1820302391 1508519726
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1508519913
 Below is a brief overview of the several processing functions that Mega2R
  makes available and that illustrate how to build new functions using Mega2R.
  A much more detailed presentation may be found in the 
@@ -1628,8 +1470,6 @@ reference "sec:Examples"
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -1679,11 +1519,7 @@ applyFnToGenes
 \end_layout
 
 \begin_layout Standard
-We 
-\change_inserted -1820302391 1508519422
-first 
-\change_unchanged
-call 
+We first call 
 \emph on
 init_pedgene
 \emph default
@@ -1712,15 +1548,9 @@ computes and saves some state into the environment to be used later.
 \emph on
 pedgene,
 \emph default
- requires 
-\change_deleted -1820302391 1508519488
-an en
-\change_inserted -1820302391 1508519491
-a trans
-\change_unchanged
-coding of the genotypes 1/1, 1/2 and 2/2 to 0, 1, and 2 respectively; plus
- the alleles must be flipped so that 1 is the allele with the major allele
- frequency.
+ requires a transcoding of the genotypes 1/1, 1/2 and 2/2 to 0, 1, and 2
+ respectively; plus the alleles must be flipped so that 1 is the allele
+ with the major allele frequency.
  DOpedgene transforms its genotype input matrix and then it calls the 
 \emph on
 pedgene
@@ -1728,11 +1558,7 @@ pedgene
  function with several different marker weights.
  It returns the p-value of the kernel and burden association statistics
  for each weight.
- The results are stored in a data frame
-\change_inserted -1820302391 1508519548
- in the environment, pedgene_results
-\change_unchanged
-.
+ The results are stored in a data frame in the environment, pedgene_results.
 \end_layout
 
 \begin_layout Standard
@@ -1840,32 +1666,17 @@ SKAT_Null_model
 \series bold
 skat
 \series default
- indicates the particular SKAT 
-\change_inserted -1820302391 1508519665
-package 
-\change_unchanged
-function to call and the 
+ indicates the particular SKAT package function to call and the 
 \series bold
 ...
 
 \series default
- arguments are 
-\change_deleted -1820302391 1508519678
-a 
-\change_unchanged
-place holder
-\change_inserted -1820302391 1508519680
-s
-\change_unchanged
- for any additional arguments that the particular 
+ arguments are place holders for any additional arguments that the particular
+ 
 \series bold
 skat
 \series default
- 
-\change_inserted -1820302391 1508519694
-function 
-\change_unchanged
-needs.
+ function needs.
 \end_layout
 
 \begin_layout Subsection
@@ -2212,13 +2023,8 @@ The code in each function illustrates how to assemble the corresponding
 mkphenotype
 \emph default
  is a bit subtle.
- The database contains a raw vector of 8 bytes 
-\change_inserted -1820302391 1508520264
-times
-\change_deleted -1820302391 1508520262
-*
-\change_unchanged
- the number of phenotypes (per person).
+ The database contains a raw vector of 8 bytes times the number of phenotypes
+ (per person).
  The 8 bytes are either one double precision float number or two integers
  depending on the encoding in the 
 \series bold
@@ -2300,26 +2106,10 @@ Mega2GenABEL
  This requires a .tped file, a .fam file, and a .phe file; they are stored
  in a temporary directory.
  The .tped file looks very much like a VCF .vcf file with entries in each
- 
-\change_inserted -1820302391 1508520540
-marker's 
-\change_unchanged
-row for the samples' genotype data
-\change_deleted -1820302391 1508520553
- for each marker
-\change_unchanged
-.
- (But, in comparison to the .vcf file, there are fewer fields of 
-\change_deleted -1820302391 1508520563
-genotype
-\change_unchanged
- metadata in a .tped file and the genotype data specify real 
-\change_deleted -1820302391 1508520580
-nucleotide
-\change_inserted -1820302391 1508520580
-allele
-\change_unchanged
- labels rather than VCF's REF/ALT field references.) 
+ marker's row for the samples' genotype data.
+ (But, in comparison to the .vcf file, there are fewer fields of metadata
+ in a .tped file and the genotype data specify real allele labels rather
+ than VCF's REF/ALT field references.) 
 \emph on
 Mega2GenABEL
 \emph default
@@ -2348,13 +2138,7 @@ raw
 \emph on
 load.gwaa.data
 \emph default
-, and then it deletes the 
-\change_deleted -1820302391 1508520624
-intermediate
-\change_inserted -1820302391 1508520625
-temporary
-\change_unchanged
- files.
+, and then it deletes the temporary files.
 \end_layout
 
 \begin_layout Standard
@@ -2493,11 +2277,8 @@ R
 \begin_layout Standard
 
 \series bold
-We will assume that you have started an 
-\change_inserted -1820302391 1508520798
-R 
-\change_unchanged
-session at which you type the commands in the tutorial.
+We will assume that you have started an R session at which you type the
+ commands in the tutorial.
 \end_layout
 
 \begin_layout Standard
@@ -3116,25 +2897,25 @@ str(ENV$locus_table)
 
 \begin_layout Subsubsection
 Iterating through Gene Transcripts
-\change_inserted -1820302391 1508526322
+\change_deleted 5863607 1508681904
 
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1508526454
+\change_deleted 5863607 1508681904
 ****************************************
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1508526456
+\change_deleted 5863607 1508681904
 DAN:
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1508526450
+\change_deleted 5863607 1508681904
 NOTE: The next several sections seem to be repeat of sections 1.4.1 - 1.4.4.
  except these below have examples of the function calls and section 1.4 do
  not.
@@ -3145,7 +2926,7 @@ NOTE: The next several sections seem to be repeat of sections 1.4.1 - 1.4.4.
 
 \begin_layout Standard
 
-\change_inserted -1820302391 1508526336
+\change_deleted 5863607 1508681904
 ****************************************
 \change_unchanged
 
@@ -3608,17 +3389,13 @@ setRanges(Transcripts, Columns)
 \end_layout
 
 \begin_layout Subsubsection
-Gene transcripts reminder
-\change_inserted -1820302391 1508528535
- 
+Gene transcripts reminder 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Gene-transcripts-reminder"
 
 \end_inset
 
-
-\change_unchanged
 
 \end_layout
 
@@ -3739,7 +3516,7 @@ Mega2pedgene(gs=50:60)
 
 \begin_layout Standard
 You will see many reports of "No markers in range", because the database
- only contains markers on a subrange of chromosome 1 whereas the transcripts
+ only contains markers on a sub range of chromosome 1 whereas the transcripts
  span the entire genome.
  Occasionally you will see a listing of a gene name, markers, and count
  of 1/1, 1/2 and 2/2 genotypes, viz.
@@ -3793,15 +3570,9 @@ DOpedgene
  frequency).
  Then it runs 'pedgene'.
  The results are automatically stored in a data frame with "observations":
- prefix
-\change_inserted -1820302391 1508527388
- data —
-\change_deleted -1820302391 1508527395
- of
-\change_unchanged
- chromosome, gene, number of markers and base pair range followed by 'pedgene'
- data: kernel and burden, value and p-values, four values for each of three
- weightings of the markers.
+ prefix data — chromosome, gene, number of markers and base pair range followed
+ by 'pedgene' data: kernel and burden, value and p-values, four values for
+ each of three weightings of the markers.
  These data are saved in the data frame, 'pedgene_results', in the environment.
  They are also printed when 'verbose' is TRUE.
 \end_layout
@@ -3969,223 +3740,83 @@ init_SKAT
 
 \begin_layout Standard
 The 
-\change_deleted -1820302391 1508528105
-'
-\change_unchanged
-
 \emph on
 init_SKAT
-\change_deleted -1820302391 1508528107
-'
-\change_unchanged
-
 \emph default
  function is used to read the Mega2 database and initialize processing.
  This function calls the utility function, 
-\change_deleted -1820302391 1508528109
-'
-\change_unchanged
-
 \emph on
 dbmega2_import
-\change_deleted -1820302391 1508528109
-
 \emph default
-'
-\change_unchanged
 , to read the database.
  Then it creates, edits, and rewrites the family data, storing it in the
  data frame, 
-\change_deleted -1820302391 1508528110
-
 \series bold
-'
-\change_unchanged
 fam
-\change_deleted -1820302391 1508528111
-'
-\change_unchanged
-
 \series default
 .
  (
-\change_deleted -1820302391 1508528111
-
 \series bold
-'
-\change_unchanged
 fam
-\change_deleted -1820302391 1508528112
-'
-\change_unchanged
-
 \series default
  contains data merged from the 
-\change_deleted -1820302391 1508528113
-'
-\change_unchanged
-
 \series bold
 pedigree_table
-\change_deleted -1820302391 1508528113
-
 \series default
-'
-\change_unchanged
 , 
-\change_deleted -1820302391 1508528114
-'
-\change_unchanged
-
 \series bold
 person_table
-\change_deleted -1820302391 1508528114
-
 \series default
-'
-\change_unchanged
  and 
-\change_deleted -1820302391 1508528115
-'
-\change_unchanged
-
 \series bold
 phenotype_table
-\change_deleted -1820302391 1508528115
-
 \series default
-'
-\change_unchanged
 .) 
-\change_deleted -1820302391 1508528117
-'
-\change_unchanged
-
 \emph on
 init_SKAT
-\change_deleted -1820302391 1508528117
-
 \emph default
-'
-\change_unchanged
  purges persons from the 
-\change_deleted -1820302391 1508528118
-
 \series bold
-'
-\change_unchanged
 fam
-\change_deleted -1820302391 1508528118
-'
-\change_unchanged
-
 \series default
  data frame with unknown case/control status.
  
-\change_deleted -1820302391 1508528119
-
 \emph on
-'
-\change_unchanged
 setfam
-\change_deleted -1820302391 1508528120
-'
-\change_unchanged
-
 \emph default
  sets 
-\change_deleted -1820302391 1508528120
-
 \series bold
-'
-\change_unchanged
 fam
-\change_deleted -1820302391 1508528121
-'
-\change_unchanged
-
 \series default
  in the environment and insures that filtering is done to the phenotype_table
- and the genotype_table so they all have the same person_link key
-\change_inserted -1820302391 1508528390
- values
-\change_unchanged
-.
+ and the genotype_table so they all have the same person_link key values.
  Next, 
-\change_deleted -1820302391 1508528123
-
 \emph on
-'
-\change_unchanged
 init_SKAT
-\change_deleted -1820302391 1508528179
-
 \emph default
-'
-\change_unchanged
  decodes the phenotype_table into a simple data frame, 
-\change_deleted -1820302391 1508528180
-
 \emph on
-'
-\change_unchanged
 phe
-\change_deleted -1820302391 1508528181
-'
-\change_unchanged
-
 \emph default
 .
  You will definitely want to examine 
-\change_deleted -1820302391 1508528182
-
 \emph on
-'
-\change_unchanged
 ENV
-\change_deleted -1820302391 1508528183
-'
-\change_unchanged
-
 \emph default
 $
-\change_deleted -1820302391 1508528183
-
 \emph on
-'
-\change_unchanged
 phe
-\change_deleted -1820302391 1508528184
-'
-\change_unchanged
-
 \emph default
  to choose which phenotype to use for the case/control.
  In addition, 
-\change_deleted -1820302391 1508528185
-'
-\change_unchanged
-
 \emph on
 init_SKAT
-\change_deleted -1820302391 1508528185
-
 \emph default
-'
-\change_unchanged
  calculates some values that will be used repeatedly and stores them in
  the environment that is returned.
  Finally, 
-\change_deleted -1820302391 1508528186
-'
-\change_unchanged
-
 \emph on
 init_SKAT
-\change_deleted -1820302391 1508528187
-'
-\change_unchanged
-
 \emph default
  stores the argument 'allMarkers' which tells later processing to ignore
  markers that show no variation (if FALSE).
@@ -4240,30 +3871,20 @@ Gene Ranges and Gene transcripts reminder
 \end_layout
 
 \begin_layout Standard
-These 
-\change_deleted -1820302391 1508528737
-data are contained
-\change_inserted -1820302391 1508528744
- notes are shown
-\change_unchanged
- in the section
+These notes are shown in the section
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Gene-Ranges-reminder"
 
 \end_inset
 
- 
-\change_inserted -1820302391 1508528685
-and 
+ and 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Gene-transcripts-reminder"
 
 \end_inset
 
-
-\change_unchanged
 above.
 \end_layout
 
@@ -4275,16 +3896,8 @@ Running Mega2SKAT on ranges
 You should be familiar with the SKAT functions of the SKAT package before
  you read this section.
  The function, 
-\change_deleted -1820302391 1508528904
-
 \emph on
-'
-\change_unchanged
 Mega2SKAT
-\change_deleted -1820302391 1508528900
-'
-\change_unchanged
-
 \emph default
 , is 
 \emph on
@@ -4295,29 +3908,13 @@ Mega2R's
 SKAT
 \emph default
 , both to 
-\change_deleted -1820302391 1508529191
-'
-\change_unchanged
-
 \emph on
 SKAT_Null_Model
-\change_deleted -1820302391 1508529192
-
 \emph default
-'
-\change_unchanged
  and 
-\change_deleted -1820302391 1508529193
-'
-\change_unchanged
-
 \emph on
 SKAT
-\change_deleted -1820302391 1508529193
-
 \emph default
-'
-\change_unchanged
 .
  Its signature is:
 \end_layout
@@ -4335,54 +3932,22 @@ The 'gs' argument indicates how many default range elements should be processed
 
 \begin_layout Standard
 Most of the time, before you call 
-\change_deleted -1820302391 1508529204
-'
-\change_unchanged
-
 \emph on
 SKAT
-\change_deleted -1820302391 1508529204
-
 \emph default
-'
-\change_unchanged
-, you need to call 
-\change_deleted -1820302391 1508529205
-'
-\change_unchanged
-SKAT_
+, you need to call SKAT_
 \emph on
 Null_Model
-\change_deleted -1820302391 1508529206
-
 \emph default
-'
-\change_unchanged
  with a formula and an indicator for the type of the phenotype.
  
-\change_deleted -1820302391 1508529207
-'
-\change_unchanged
-
 \emph on
 Mega2SKAT
-\change_deleted -1820302391 1508529208
-
 \emph default
-'
-\change_unchanged
  will take its first two arguments, a formula and a type (string) and call
  
-\change_deleted -1820302391 1508529209
-'
-\change_unchanged
-
 \emph on
 SKAT_Null_Model
-\change_deleted -1820302391 1508529210
-'
-\change_unchanged
-
 \emph default
  with this information, viz.
 \end_layout
@@ -4401,35 +3966,14 @@ If the formula, 'f', is NULL,
 Mega2SKAT
 \emph default
  will not call 
-\change_deleted -1820302391 1508529218
-'
-\change_unchanged
-
 \emph on
 SKAT_Null_Mode
 \emph default
-l
-\change_deleted -1820302391 1508529219
-'
-\change_unchanged
- and you must do the equivalent before calling 
-\change_deleted -1820302391 1508529224
-'
-\change_unchanged
-
+l and you must do the equivalent before calling 
 \emph on
 Mega2SKAT
-\change_deleted -1820302391 1508529488
-
 \emph default
-'
-\change_inserted -1820302391 1508529496
- and s
-\change_deleted -1820302391 1508529488
-.
- S
-\change_unchanged
-tore the result object in 
+ and store the result object in 
 \emph on
 ENV$obj
 \emph default
@@ -4437,17 +3981,9 @@ ENV$obj
  There are several reasons a custom call to the build the model could be
  necessary.
  You might want to use 
-\change_deleted -1820302391 1508529227
-'
-\change_unchanged
-
 \emph on
 SKAT_Null_Model
-\change_deleted -1820302391 1508529228
-
 \emph default
-'
-\change_unchanged
  but provided additional arguments viz.
  data, Adjustment, n.Resampling, type.Resampling.
  Alternatively, you might need to use a different model viz.
@@ -4481,15 +4017,7 @@ SKAT::SKAT_CommonRare
 \emph default
 , etc.
  Any additional, arguments needed for the "skat" functions are provided
- to the 
-\change_deleted -1820302391 1508529238
-'
-\change_unchanged
-Mega2SKAT
-\change_deleted -1820302391 1508529239
-'
-\change_unchanged
- function and will be passed to the eventual call.
+ to the Mega2SKAT function and will be passed to the eventual call.
  All the "skat" functions are called with a genotype matrix for the markers,
  the object representing the Null Model and the additional arguments.
 \end_layout
@@ -4506,28 +4034,13 @@ Mega2SKAT
 \emph on
 Mega2SKAT
 \emph default
- will omit it, if the variable 
-\change_inserted -1820302391 1508529625
-'
-\change_unchanged
-allMarkers
-\change_inserted -1820302391 1508529631
-'
-\change_unchanged
- is FALSE.
+ will omit it, if the variable 'allMarkers' is FALSE.
  
 \emph on
 Mega2SKAT
 \emph default
- will include it, if 
-\change_inserted -1820302391 1508529637
-'
-\change_unchanged
-allMarkers
-\change_inserted -1820302391 1508529641
-'
-\change_unchanged
- is TRUE, but SKAT will more than likely issue a warning.
+ will include it, if 'allMarkers' is TRUE, but SKAT will more than likely
+ issue a warning.
  The 
 \emph on
 Mega2SKAT
@@ -4541,46 +4054,19 @@ n from the forms 1/1, 1/2, and 2/2 to 0, 1, and 2 with the major allele
 
 \begin_layout Standard
 By default, the function 
-\change_deleted -1820302391 1508529246
-'
-\change_unchanged
-
 \emph on
 Mega2SKAT
-\change_deleted -1820302391 1508529246
-
 \emph default
-'
-\change_unchanged
  examines the first 100 transcripts and prints the results.
- 
-\change_deleted -1820302391 1508529729
-Note: 'verbose' is FALSE to eliminate the (excessive) diagnostics.
-
-\change_unchanged
  A typical invocation of 
-\change_deleted -1820302391 1508529253
-'
-\change_unchanged
-
 \emph on
 Mega2SKAT
-\change_deleted -1820302391 1508529253
-
 \emph default
-'
-\change_unchanged
  could be:
-\change_inserted -1820302391 1508529734
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1508529739
 Note: 'verbose' is FALSE to eliminate the (excessive) diagnostics.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -4618,15 +4104,7 @@ Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
 \end_layout
 
 \begin_layout Standard
-These data are saved in the data frame, 
-\change_deleted -1820302391 1508529254
-'
-\change_unchanged
-SKAT_results
-\change_deleted -1820302391 1508529255
-'
-\change_unchanged
-, in the environment.
+These data are saved in the data frame, SKAT_results, in the environment.
  Note: The results are always appended to the data frame.
  You should truncate it when necessary.
 \end_layout
@@ -4661,11 +4139,8 @@ status open
 
 \begin_layout Plain Layout
 
-# we will skip this line for the 
-\change_deleted -1820302391 1508529814
-Vignette
-\change_unchanged
- document production because it takes too long
+# we will skip this line for the document production because it takes too
+ long
 \end_layout
 
 \begin_layout Plain Layout
@@ -4713,17 +4188,11 @@ status open
 \begin_layout Plain Layout
 
 <<SKATrangegene>>=
-\change_inserted -1820302391 1508529868
-
 \end_layout
 
 \begin_layout Plain Layout
 
-\change_inserted -1820302391 1508529869
-
 ENV$verbose = FALSE
-\change_unchanged
-
 \end_layout
 
 \begin_layout Plain Layout
@@ -4771,22 +4240,12 @@ print(ENV$SKAT_results)
 \end_layout
 
 \begin_layout Standard
-Note: 
-\change_inserted -1820302391 1508529904
-W
-\change_deleted -1820302391 1508529898
-w
-\change_unchanged
-e set verbose to FALSE otherwise there will be a large number of print outs
- indicating no markers are in the range.
+Note: We set verbose to FALSE otherwise there will be a large number of
+ print outs indicating no markers are in the range.
  (Recall the samples come from part of chromosome one, whereas the ranges
  cover the whole genome.) If you are adventurous you can look at all the
  transcripts.
-
-\change_inserted -1820302391 1508529949
  Type:
-\change_unchanged
-
 \begin_inset Flex Chunk
 status open
 
@@ -4822,16 +4281,8 @@ Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
 
 \begin_layout Standard
 Note: The default behavior of 
-\change_deleted -1820302391 1508529277
-
 \emph on
-'
-\change_unchanged
 Mega2SKAT
-\change_deleted -1820302391 1508529278
-'
-\change_unchanged
-
 \emph default
  is to append any new results to the end of the 'ENV$SKAT_results' data
  frame.
@@ -5005,15 +4456,8 @@ Creating a GenABEL gwaa.data-class object using Mega2R
 \begin_layout Standard
 There are several data formats that Mega2 can read and transform into a
  database that are not directly accepted by GenABEL.
- But any Mega2 database 
-\change_deleted -1820302391 1508530281
-that
-\change_unchanged
- can be read into R, 
-\change_inserted -1820302391 1508530288
-and 
-\change_unchanged
-can be transformed to GenABEL following this example using 
+ But any Mega2 database can be read into R, and can be transformed to GenABEL
+ following this example using 
 \series bold
 seqsimr.db
 \series default
@@ -5034,25 +4478,8 @@ Mega2GenABEL
 \emph on
 Mega2GenABEL
 \emph default
- generates the names of the .tped/.fam/.phe files in 
-\change_deleted -1820302391 1508530374
-the 
-\begin_inset Quotes eld
-\end_inset
-
-tempdir()
-\begin_inset Quotes erd
-\end_inset
-
-
-\change_inserted -1820302391 1508530382
-a temporary
-\change_unchanged
- directory with a 
-\change_inserted -1820302391 1508530550
-file name 
-\change_unchanged
-prefix of 
+ generates the names of the .tped/.fam/.phe files in a temporary directory
+ with a file name prefix of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -5141,20 +4568,8 @@ Regression testing
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted -1820302391 1508530759
-T
-\change_inserted -1820302391 1508530771
-There are a few options t
-\change_unchanged
-o verify that the functions described above have worked correctly
-\change_inserted -1820302391 1508530782
-.
-\change_deleted -1820302391 1508530780
-, we can compare their output files to those created by Mega2, itself, to
- verify that they are identical, as expected.
-
-\change_unchanged
+There are a few options to verify that the functions described above have
+ worked correctly.
  This type of testing is known as regression testing.
 \end_layout
 
@@ -5163,8 +4578,6 @@ VCF regression
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1508530739
 We can compare the 
 \emph on
 Mega2VCF
@@ -5175,11 +4588,7 @@ Mega2VCF
 
 \begin_layout Standard
 If you have a executable copy of Mega2, you can run the code below using
- the MEGA2.BATCH.vcf file and 
-\change_inserted -1820302391 1508530819
-the 
-\change_unchanged
-provided example database.
+ the MEGA2.BATCH.vcf file and the provided example database.
 \end_layout
 
 \begin_layout Standard
