@@ -214,8 +214,10 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
 #' # called to set up the environment for DOSKAT to run.  You should ignore DOSKAT
 #' # and use Mega2SKAT instead
 #' #
-#" ENV$verbose = TRUE
+#'\dontrun{ 
+#' ENV$verbose = TRUE
 #' applyFnToRanges(DOSKAT, ENV$refRanges[50:60, ], ENV$refIndices, envir = ENV)
+#'}
 #'
 # SKAT(<formula>, <out_type>, kernel = "linear.weighted", weights.beta=c(0.5,0.5))
 #

@@ -57,7 +57,10 @@ Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
 # called to set up the environment for DOSKAT to run.  You should ignore DOSKAT
 # and use Mega2SKAT instead
 #
+\dontrun{
+ENV$verbose = TRUE
 applyFnToRanges(DOSKAT, ENV$refRanges[50:60, ], ENV$refIndices, envir = ENV)
+}
 
 }
 \seealso{
