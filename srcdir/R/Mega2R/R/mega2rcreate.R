@@ -31,7 +31,7 @@
 #' @description This package reads a Mega2 SQLite3 database into data frames and
 #'	makes the contained genotypes/phenotypes/linkage data available for analysis.
 #'
-#' @author Robert V Baron
+#' @author Robert V. Baron and Daniel E. Weeks
 #' @docType package
 #' @name Mega2R
 NULL
@@ -488,7 +488,7 @@ resetMega2ENV = function () {
 
     envir$refRanges  = refRanges
     envir$refIndices = refIndices
-  
+
     envir$txdb       = "TxDb.Hsapiens.UCSC.hg19.knownGene"
     envir$entrezGene = "org.Hs.eg.db"
 
@@ -822,7 +822,7 @@ getgenotypesraw = function(markers_arg, envir = ENV) {
 #'
 #' @details
 #'  This function reads the genotype data in Mega2 compressed format and converts it to the GenABEL
-#'  compressed format. 
+#'  compressed format.
 #'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
 #'  there are two bits for each genotype;  each byte has the data for 4 markers.  In GenABEL,
 #'  there is one raw vector per marker, and each byte has the data for 4 persons.  The C++

@@ -28,7 +28,7 @@ R CMD check --as-cran mega2rtutorial_1.0.0.tar.gz
 
 
 ## Test environments
-* Ubuntu 16.04.1, R devel (2017-10-09 r73513)
+* Ubuntu 16.04.1, R devel (2017-10-13 r73550)
 * OS X 10.12.6, R 3.4.2 (2017-09-28)
 
 ## R CMD check results
@@ -38,7 +38,7 @@ University which newer browsers do not like.  We are trying to get this
 updated, but as this is at the University level, this make take some
 time. 
 
-* using R Under development (unstable) (2017-10-09 r73513)
+* using R Under development (unstable) (2017-10-13 r73550)
 * using platform: x86_64-pc-linux-gnu (64-bit)
 ...
 * this is package ‘Mega2R’ version ‘1.0.0’
@@ -61,20 +61,6 @@ On OS X, there were no ERRORs or WARNINGs.
 There was 1 NOTE, about this being a New submission to CRAN.
 On OS X, it did not complain about the SSL certificate problem
 discussed above.
-
-
-
-WARNING
-LaTeX errors when creating PDF version.
-This typically indicates Rd problems.
-LaTeX errors found:
-!pdfTeX error: pdflatex (file t1-zi4r-0): Font t1-zi4r-0 at 540 not found
- ==> Fatal error occurred, no output PDF file produced!
-
-Solution: 
-sudo updmap-sys -enable Map=zi4
-
-From: https://wiki.archlinux.org/index.php/TeX_Live_FAQ
 
 
 

@@ -36,7 +36,7 @@ This function calls a C++ function that does all the heavy lifting.  It passes t
 }
 \details{
 This function reads the genotype data in Mega2 compressed format and converts it to the GenABEL
- compressed format. 
+ compressed format.
  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
  there are two bits for each genotype;  each byte has the data for 4 markers.  In GenABEL,
  there is one raw vector per marker, and each byte has the data for 4 persons.  The C++

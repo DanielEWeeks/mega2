@@ -36,3 +36,6 @@ ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
 ls(ENV)
 
 }
+\seealso{
+\code{\link{Mega2SKAT}}
+}

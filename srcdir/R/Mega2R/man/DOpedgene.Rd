@@ -40,9 +40,9 @@ First, ignore call backs that have less than two markers.  Second, convert the g
 }
 \note{
 This function appends output to the data frame, \emph{envir$pedgene_results}.  It will
- print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write
- the data frame to a file.  You must save the data frame.
- You also must initialize the data frame when necessary.
+ print out the lines as they are generated if \emph{envir$verbose} is TRUE. The data frame
+ \emph{envir$pedgene_results} is initialized by \emph{init_pedgene}, and is appended to
+ each time \emph{DOpedgene} is run.
 }
 \examples{
 db = system.file("exdata", "seqsimm.db", package="Mega2R")
@@ -50,4 +50,7 @@ ENV = init_pedgene(db)
 ENV$verbose = TRUE
 applyFnToGenes(DOpedgene, genes_arg = c("CEP104"), envir = ENV)
 
+}
+\seealso{
+\code{\link{init_pedgene}}
 }
