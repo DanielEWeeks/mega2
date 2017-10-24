@@ -29,11 +29,12 @@ applyFnToRanges(op          = function (geno, markers, range, envir) {},
 \item{envir}{An 'environment' holding Mega2R data frames and state data.}
 }}
 
-\item{ranges_arg}{is a data frame that contains at least 4 observations: a name, a chromosome, a 
+\item{ranges_arg}{is a data frame that contains at least 4 observations: a name, a chromosome, a
 start base pair position and an end base pair position.}
 
 \item{indices_arg}{is a vector of 3 integers that specify the location of chromosome, start base
-pair column and end base pair column of the ranges_arg data frame.}
+pair column and end base pair column of the ranges_arg data frame. An optional fourth integer
+indicates the column containing the name of the ranges.}
 
 \item{fuzz_arg}{is an integer vector of length one or two.  The first argument is used to reduce
 the start base pair selected from each range and the second to increase the end base pair
@@ -67,7 +68,7 @@ If the \emph{ranges_arg} and \emph{indices_arg} are NULL or missing, then the de
 
    # apply function "show" to all genotypes on chromosomes 1 for two base pair
    # ranges
-   applyFnToRanges(show, 
+   applyFnToRanges(show,
                    ranges_arg =
                    matrix(c(1, 2244000, 2245000,
                             1, 3762500, 3765000),
@@ -76,7 +77,7 @@ If the \emph{ranges_arg} and \emph{indices_arg} are NULL or missing, then the de
 
    # apply function "show" to all genotypes on chromosomes 1 for two base pair
    # ranges
-   applyFnToRanges(show, 
+   applyFnToRanges(show,
                    ranges_arg =
                    matrix(c(1, 2240000, 2245000, "range1",
                             1, 3760000, 3765000, "range2"),

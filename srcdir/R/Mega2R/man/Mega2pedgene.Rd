@@ -31,3 +31,6 @@ ENV$verbose = TRUE
 Mega2pedgene(gs = 50:60)
 
 }
+\seealso{
+\code{\link{init_pedgene}}
+}

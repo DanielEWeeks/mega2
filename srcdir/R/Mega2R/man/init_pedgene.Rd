@@ -33,3 +33,6 @@ ENV = init_pedgene(db)
 ls(ENV)
 
 }
+\seealso{
+\code{\link{DOpedgene}}, \code{\link{Mega2pedgene}}
+}

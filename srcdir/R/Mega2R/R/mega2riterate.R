@@ -170,7 +170,7 @@ setfam = function (fam, envir = ENV) {
 
     envir$phenotype_table = envir$phenotype_table[(envir$phenotype_table$person_link %in% fam[ ,1]), ]
     row.names(envir$phenotype_table) = NULL
-    
+
 }
 
 #' load Mega2 database and initialize family data frame and markers data frame
@@ -560,7 +560,7 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #'                 indices_arg = NULL,
 #'                 fuzz_arg    = 0,
 #'                 envir       = ENV)
-#' 
+#'
 #' @param op Is a function of four arguments.  It will be called repeatedly by
 #' \code{applyFnToRanges} in a try/catch context.  The arguments are:
 #' \describe{
@@ -579,11 +579,12 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #' \item{envir}{An 'environment' holding Mega2R data frames and state data.}
 #' }
 #'
-#' @param ranges_arg is a data frame that contains at least 4 observations: a name, a chromosome, a 
+#' @param ranges_arg is a data frame that contains at least 4 observations: a name, a chromosome, a
 #'  start base pair position and an end base pair position.
 #'
 #' @param indices_arg is a vector of 3 integers that specify the location of chromosome, start base
-#'  pair column and end base pair column of the ranges_arg data frame.
+#'  pair column and end base pair column of the ranges_arg data frame. An optional fourth integer
+#'  indicates the column containing the name of the ranges.
 #'
 #' @param fuzz_arg is an integer vector of length one or two.  The first argument is used to reduce
 #'  the start base pair selected from each range and the second to increase the end base pair
@@ -611,7 +612,7 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #'
 #'    # apply function "show" to all genotypes on chromosomes 1 for two base pair
 #'    # ranges
-#'    applyFnToRanges(show, 
+#'    applyFnToRanges(show,
 #'                    ranges_arg =
 #'                    matrix(c(1, 2244000, 2245000,
 #'                             1, 3762500, 3765000),
@@ -620,7 +621,7 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #'
 #'    # apply function "show" to all genotypes on chromosomes 1 for two base pair
 #'    # ranges
-#'    applyFnToRanges(show, 
+#'    applyFnToRanges(show,
 #'                    ranges_arg =
 #'                    matrix(c(1, 2240000, 2245000, "range1",
 #'                             1, 3760000, 3765000, "range2"),

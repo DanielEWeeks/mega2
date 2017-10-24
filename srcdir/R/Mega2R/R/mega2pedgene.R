@@ -52,6 +52,8 @@
 #'
 #'  It also initializes the dataframe \emph{envir$pedgene_results} to zero rows.
 #'
+#' @seealso \code{\link{DOpedgene}}, \code{\link{Mega2pedgene}}
+#'
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_pedgene(db)
@@ -113,6 +115,8 @@ init_pedgene = function (db = NULL, verbose = FALSE) {
 #'
 #' @export
 #'
+#' @seealso \code{\link{init_pedgene}}
+#'
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_pedgene(db)
@@ -164,9 +168,11 @@ Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 #'
 #' @note
 #'  This function appends output to the data frame, \emph{envir$pedgene_results}.  It will
-#'  print out the lines as they are generated if \emph{envir$verbose} is TRUE.  It does not write
-#'  the data frame to a file.  You must save the data frame.
-#'  You also must initialize the data frame when necessary.
+#'  print out the lines as they are generated if \emph{envir$verbose} is TRUE. The data frame
+#'  \emph{envir$pedgene_results} is initialized by \emph{init_pedgene}, and is appended to
+#'  each time \emph{DOpedgene} is run.
+#'
+#' @seealso \code{\link{init_pedgene}}
 #'
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")

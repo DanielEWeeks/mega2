@@ -62,3 +62,6 @@ Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
 ENV$SKAT_results
 
 }
+\seealso{
+\code{\link{init_SKAT}}
+}

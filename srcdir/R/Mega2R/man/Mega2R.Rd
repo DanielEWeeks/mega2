@@ -10,5 +10,5 @@ This package reads a Mega2 SQLite3 database into data frames and
 makes the contained genotypes/phenotypes/linkage data available for analysis.
 }
 \author{
-Robert V Baron
+Robert V. Baron and Daniel E. Weeks
 }

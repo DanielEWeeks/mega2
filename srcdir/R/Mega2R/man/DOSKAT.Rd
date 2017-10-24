@@ -61,3 +61,6 @@ Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", gs=1:1)
 applyFnToRanges(DOSKAT, ENV$refRanges[50:60, ], ENV$refIndices)
 
 }
+\seealso{
+\code{\link{init_SKAT}}, \code{\link{Mega2SKAT}}
+}

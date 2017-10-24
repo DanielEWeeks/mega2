@@ -54,6 +54,8 @@
 #'
 #'  It also initializes the data frame \emph{envir$SKAT_results} to zero rows.
 #'
+#' @seealso \code{\link{Mega2SKAT}}
+#'
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
@@ -129,6 +131,8 @@ init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 #'  \code{DOSKAT} with the appropriate arguments (including those additional to the
 #'  \code{Mega2SKAT} function).
 #'
+#' @seealso \code{\link{init_SKAT}}
+#'
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
@@ -196,6 +200,8 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
 #' @return None
 #'
 #' @export
+#'
+#' @seealso \code{\link{init_SKAT}}, \code{\link{Mega2SKAT}}
 #'
 #' @note
 #'  This function accumulates output in the data frame, \emph{envir$SKAT_results}.  It will
