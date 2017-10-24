@@ -31,9 +31,11 @@ Verify by fields, all the fields in two gwaa.data-class objects.
 db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = read.Mega2DB(db)
 
-x = Mega2GenABEL()
 y = Mega2ENVGenABEL()
+Mega2GenABELtst(y, y, full = FALSE)
 
-Mega2GenABELtst(x, y, full = FALSE)
+# if you have more time, try ...
+# x = Mega2GenABEL()
+# Mega2GenABELtst(x, y, full = FALSE)
 
 }

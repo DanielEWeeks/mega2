@@ -66,10 +66,11 @@
 #' vcfdir = file.path(where_mega2rtutorial_data(), "vcfr")
 #' if (!dir.exists(vcfdir)) dir.create(vcfdir)
 #' vcffile = file.path(where_mega2rtutorial_data(), "vcfr", "vcf.01")
-#' Mega2VCF(vcffile, ENV$markers[ENV$markers$chromosome == 1, ][1:10,])
+#' Mega2VCF(vcffile, ENV$markers[ENV$markers$chromosome == 1, ][1:10,], envir = ENV)
 #' list.files(vcfdir)
 #'
 Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
     if (missing(prefix))
         stop("Mega2VCF can not proceed without a filename prefix argument", call. = FALSE)

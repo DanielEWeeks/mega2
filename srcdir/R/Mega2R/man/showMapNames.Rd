@@ -20,6 +20,6 @@ Mega2R allows several different physical and genetic maps to be stored and used 
 db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = read.Mega2DB(db)
 
-showMapNames(ENV)
+showMapNames()
 
 }

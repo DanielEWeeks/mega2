@@ -20,7 +20,7 @@ Convert data in phenotype_table to a data frame of columns that are phenotypes.
 \examples{
 db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = read.Mega2DB(db)
-out = mkphenotype(ENV)
+out = mkphenotype()
 
 out
 }

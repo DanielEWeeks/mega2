@@ -35,7 +35,7 @@ Select a map (index) from the map_table to merge with the select marker_table
 }
 \examples{
 db = system.file("exdata", "seqsimm.db", package="Mega2R")
-ENV = read.Mega2DB(db, verbose = TRUE)
+ENV = read.Mega2DB(db, verbose = FALSE)
 
 mkMarkers(1)
 

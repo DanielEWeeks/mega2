@@ -95,7 +95,7 @@ If you want subsequent calls to \code{op} to share information, data can be plac
   }
 
    # apply function "show" to all transcripts on genes ELL2 and CARD15
-   applyFnToGenes(show, genes_arg = c("ELL2", "CARD15"))
+   applyFnToGenes(show, genes_arg = c("CEP104"))
 
    # apply function "show" to all genotypes on chromosomes 11 for two base
    # pair ranges

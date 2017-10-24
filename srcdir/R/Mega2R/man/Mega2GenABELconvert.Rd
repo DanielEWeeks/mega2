@@ -4,7 +4,7 @@
 \alias{Mega2GenABELconvert}
 \title{generate GenABEL compressed genotype matrix}
 \usage{
-Mega2GenABELconvert(markers = NULL, envir = ENV)
+Mega2GenABELconvert(markers = NULL, envir)
 }
 \arguments{
 \item{envir}{'environment' containing SQLite database and other globals}

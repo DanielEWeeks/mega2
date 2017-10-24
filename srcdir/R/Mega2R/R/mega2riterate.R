@@ -98,6 +98,7 @@
 #' fam
 #'
 mkfam = function (brkloop = FALSE, traitname = "default", envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
     if (brkloop) {
         ped = envir$pedigree_brkloop_table
@@ -160,6 +161,8 @@ mkfam = function (brkloop = FALSE, traitname = "default", envir = ENV) {
 #' ENV$fam
 
 setfam = function (fam, envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
+
     envir$fam = fam
 
     envir$unified_genotype_table = envir$unified_genotype_table[envir$unified_genotype_table$person_link %in% fam[ , 1], ]
@@ -301,7 +304,7 @@ read.Mega2DB = function(db, ...) {
 #'   }
 #'
 #'    # apply function "show" to all transcripts on genes ELL2 and CARD15
-#'    applyFnToGenes(show, genes_arg = c("ELL2", "CARD15"))
+#'    applyFnToGenes(show, genes_arg = c("CEP104"))
 #'
 #'    # apply function "show" to all genotypes on chromosomes 11 for two base
 #'    # pair ranges
@@ -323,6 +326,8 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
                            type_arg = "TX",
                            fuzz_arg = 0,
                            envir = ENV) {
+
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
     if (! is.null(genes_arg)) {
         env1=loadNamespace(envir$txdb)
@@ -474,6 +479,8 @@ applyFnToGenes = function (op = function (geno, markers, range, envir) {},
 #'
 #' ENV$refRanges
 setRanges = function (ranges, indices, envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
+
     ranges = data.frame(ranges, stringsAsFactors = FALSE)
     if (class(ranges[ , indices[2]]) != "numeric") ranges[ , indices[2]] = as.numeric(ranges[ , indices[2]])
     if (class(ranges[ , indices[3]]) != "numeric") ranges[ , indices[3]] = as.numeric(ranges[ , indices[3]])
@@ -534,6 +541,7 @@ fixRanges = function (ranges, indices, envir = ENV) {
 #' ENV$entrezGene
 #'
 setAnnotations = function (txdb, entrezGene, envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
     envir$txdb = txdb
     envir$entrezGene = entrezGene
 }
@@ -624,6 +632,8 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
                             indices_arg = NULL,
                             fuzz_arg    = 0,
                             envir = ENV) {
+
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
     if (is.null(ranges_arg)) {
         ranges  = envir$refRanges
@@ -795,6 +805,8 @@ tryFn = function(op, geno, markersub, ranges, envir) {
 applyFnToMarkers = function (op = function (geno, markers, range, envir) {},
                              markers_arg,
                              envir = ENV) {
+
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
     geno = getgenotypes(markers_arg, envir = envir)
     tryFn(op, geno, markers_arg, NULL, envir)

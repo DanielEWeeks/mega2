@@ -120,6 +120,7 @@ init_pedgene = function (db = NULL, verbose = FALSE) {
 #' Mega2pedgene(gs = 50:60)
 #'
 Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
     if (is.null(genes))
         applyFnToRanges(DOpedgene, envir$refRanges[gs, ], envir$refIndices, envir = envir)
@@ -170,8 +171,11 @@ Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_pedgene(db)
-#' ENV$verbose = TRUE
-#' applyFnToGenes(DOpedgene, genes_arg = c("CEP104"), envir = ENV)
+#' # ENV$verbose = TRUE
+#' applyFnToRanges(DOpedgene, ENV$refRanges[50:60,], ENV$refIndices)
+#'
+#' # try this below if there is time
+#' # applyFnToGenes(DOpedgene, genes_arg = c("CEP104"))
 #'
 DOpedgene = function(geno_arg, markers_arg, range_arg, envir = ENV) {
 

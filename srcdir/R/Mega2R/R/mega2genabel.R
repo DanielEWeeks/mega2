@@ -59,6 +59,7 @@
 #' head(summary(seqsimgwaa))
 #'
 Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
 ## print(system.time ({
     if (is.null(markers)) markers = envir$markers
@@ -151,6 +152,8 @@ Mega2GenABELClean = function () {
 Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
                          sort = TRUE, envir = ENV) {
 #browser()
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
+
     if (is.null(markers)) markers = envir$markers
 
     gwaa(markers = markers, force = force,
@@ -366,7 +369,7 @@ mkGenABELphe = function (envir) {
 #'\dontrun{
 #' Mega2GenABELcoding(envir)
 #'}
-Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
+Mega2GenABELcoding = function(markers = NULL, Freq.x, envir) {
     if (is.null(markers)) markers = envir$markers
 
     allele_table = envir$allele_table[envir$allele_table$locus_link %in% markers$locus_link,]
@@ -436,7 +439,7 @@ Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
 #'\dontrun{
 #' Mega2GenABELconvert(envir)
 #'}
-Mega2GenABELconvert = function(markers = NULL, envir = ENV) {
+Mega2GenABELconvert = function(markers = NULL, envir) {
 # browser("convert")
     if (is.null(markers)) markers = envir$markers
 
@@ -449,7 +452,7 @@ Mega2GenABELconvert = function(markers = NULL, envir = ENV) {
 #' @importFrom GenABEL snp.data
 #' @importFrom methods is new
 gwaa = function (markers = NULL, force = TRUE,
-    makemap = FALSE, sort = TRUE, id = "id", envir = ENV)
+    makemap = FALSE, sort = TRUE, id = "id", envir)
 {
     if (is.null(markers)) markers = envir$markers
 

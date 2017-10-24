@@ -185,13 +185,15 @@ mk_markers_with_skip = function(bpPosMap = 1, envir) {
 #'
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
-#' ENV = read.Mega2DB(db, verbose = TRUE)
+#' ENV = read.Mega2DB(db, verbose = FALSE)
 #'
 #' mkMarkers(1)
 #'
 #' ENV$markers
 #'
 mkMarkers = function(bpPosMap = 1, envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
+
     map_table = envir$map_table[ envir$map_table$map == bpPosMap, c( "marker", "position")]
     if (nrow(map_table) == 0) {
         message("No entry for map == ", bpPosMap, " in map_table.  Using map == 0 instead.")
@@ -343,11 +345,12 @@ dbmega2_import = function(dbname,
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
-#' out = mkphenotype(ENV)
+#' out = mkphenotype()
 #'
 #' out
 #
 mkphenotype = function (envir) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
 # linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
 #                        0      1          2       3         4        5        6
@@ -411,7 +414,7 @@ mkphenotype = function (envir) {
 #' showMega2ENV()
 #'
 showMega2ENV = function(envir = ENV) {
-
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
     cat("locus count:  ",       envir$LocusCnt)
     cat("; phenotype count: ", envir$PhenoCnt)
     if (envir$MARKER_SCHEME == 1)
@@ -433,7 +436,7 @@ showMega2ENV = function(envir = ENV) {
     cat("\n")
 
     cat("Phenotypes:\n")
-    print(showPhenoNames())
+    print(showPhenoNames(envir))
     cat("\n")
     cat("\n")
 
@@ -517,9 +520,10 @@ resetMega2ENV = function () {
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #'
-#' showMapNames(ENV)
+#' showMapNames()
 #'
 showMapNames = function (envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
     envir$mapnames_table[ , c(6, 2)]
 }
 
@@ -537,9 +541,10 @@ showMapNames = function (envir = ENV) {
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #'
-#' showPhenoNames(ENV)
+#' showPhenoNames()
 #'
 showPhenoNames = function (envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
 # linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
 #                        0      1          2       3         4        5        6
@@ -713,6 +718,7 @@ getgenotypes_R = function(markers_arg, sepstr = "", envir = ENV) {
 #' getgenotypes(ENV$markers)
 #'
 getgenotypes = function(markers_arg, sepstr = "", envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
   return
     if (envir$MARKER_SCHEME == 1) {
@@ -776,6 +782,7 @@ getgenotypes_C = getgenotypes
 #' getgenotypesraw(ENV$markers[ENV$markers$chromosome == 1,])
 #'
 getgenotypesraw = function(markers_arg, envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
   return
     if (envir$MARKER_SCHEME == 1) {
@@ -843,6 +850,7 @@ getgenotypesraw = function(markers_arg, envir = ENV) {
 #' aa[2]
 #'
 getgenotypesgenabel = function(markers_arg, envir = ENV) {
+    if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
   return
     if (envir$MARKER_SCHEME == 1) {

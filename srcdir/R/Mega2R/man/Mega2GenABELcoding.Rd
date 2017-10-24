@@ -4,7 +4,7 @@
 \alias{Mega2GenABELcoding}
 \title{generate GenABEL coding vector}
 \usage{
-Mega2GenABELcoding(markers = NULL, Freq.x, envir = ENV)
+Mega2GenABELcoding(markers = NULL, Freq.x, envir)
 }
 \arguments{
 \item{markers}{data frame of markers to be processed}

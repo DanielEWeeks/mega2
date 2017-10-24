@@ -53,7 +53,11 @@ ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
 ENV$verbose = FALSE
 ENV$SKAT_results = ENV$SKAT_results[0, ]
 Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
-          weights.beta = c(0.5, 0.5), genes=c("CEP104"))
+          weights.beta = c(0.5, 0.5), gs=50:60 )
+
+# try this below if there is time
+# Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
+#           weights.beta = c(0.5, 0.5), genes=c("CEP104") )
 
 ENV$SKAT_results
 
