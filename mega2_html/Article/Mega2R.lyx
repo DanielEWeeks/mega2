@@ -116,12 +116,11 @@ knitr
 \papercolumns 1
 \papersides 1
 \paperpagestyle plain
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author 5863607 "me"
 \end_header
 
 \begin_body
@@ -636,7 +635,7 @@ locus_table
  from a data frame.
  The difference is when you change data in an ordinary data frame passed
  to a function, the change does not affect the original data frame; only
- the function's local value is changed.
+ the function's local data is changed.
  ALL changes are forgotten when the function exits.
  If you change the data in a data frame of an environment passed to a function,
  the change is permanent.) 
@@ -682,11 +681,11 @@ showMega2ENV = function(envir = ENV) { ...
 The code above, assigns the local variable, 'envir' the default value 'ENV'.
  Thus, if 'envir' is not provided in the function call, R will use the default
  assignment and look up the value of 'ENV'.
- Hopefully, 'ENV' was set as the return value of a call to 
-\emph on
-read.Mega2DB
-\emph default
-.
+ This "hack" does not handle the case where `ENV` is defined in an outer
+ frame which is not the global environment.
+ In this situation, we want to search backwards/upwards from the calling
+ frame to find the first `ENV` and use it.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -2808,8 +2807,8 @@ Use of an Environment
 The environment returned is used to store the data frames that contain the
  'SQLite' database.
  The code above, stores the environment in global variable 'ENV'.
- If the named argument, 'envir' ,is not provided in any subsequent Mega2R
- function call, R will look up the value of 'ENV' in the global environment.
+ If the named argument, 'envir', is not provided in any subsequent Mega2R
+ function call, R will look up the value of 'ENV'.
 \end_layout
 
 \begin_layout Paragraph
@@ -2897,45 +2896,12 @@ str(ENV$locus_table)
 
 \begin_layout Subsubsection
 Iterating through Gene Transcripts
-\change_deleted 5863607 1508681904
-
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted 5863607 1508681904
-****************************************
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted 5863607 1508681904
-DAN:
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted 5863607 1508681904
-NOTE: The next several sections seem to be repeat of sections 1.4.1 - 1.4.4.
- except these below have examples of the function calls and section 1.4 do
- not.
- I think I should move the example calls back to 1.4 and delete this section
- on iterating.
- Opinions???
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted 5863607 1508681904
-****************************************
-\change_unchanged
-
-\end_layout
-
-\begin_layout Standard
-There are two ways to compute a function on all the genotypes (or markers)
- in a transcript.
- These examples are explained more thoroughly in Section 
+There are two ways to compute a function on the genotypes (or markers) in
+ all the transcripts.
+ These are explained via examples in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:pedgene"
@@ -2957,17 +2923,41 @@ name "par:applyFnToRanges"
 \end_layout
 
 \begin_layout Standard
-Mega2R has an internal default list of the chromosome and base pair ranges
- for many gene transcripts.
- These transcripts come from the UCSC Genome Browser reference assembly
- GRCH37.
- The list was further modified to eliminate multiple records from the same
- gene with the exact same transcript start and transcript end.
- The list contains about 29,000 records.
- You may load your own range set instead of the default.
- You create a data frame that contains at least a name "observation", a
- chromosome "observation", a start position "observation" and an end position
- "observation".
+The default ranges contains about 29,000 records taken from the UCSC Genome
+ Browser reference assembly GRCH37.
+ We show a bit of the data frame below.
+ Each row contains 5 values: a transcript id, the gene id and three position
+ values: chromosome, start base pair and end base pair.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<setrange0>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ dim(ENV$refRanges)
+\end_layout
+
+\begin_layout Plain Layout
+
+ head(ENV$refRanges)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You may load your own range set instead of the default.
+ You create a data frame that contains a chromosome "observation", a start
+ position "observation" and an end position "observation".
  And you create an integer vector that contains the column numbers of the
  chromosome "observation", the start position "observation" and the end
  position "observation".
@@ -2975,12 +2965,238 @@ Mega2R has an internal default list of the chromosome and base pair ranges
 \emph on
 setRanges
 \emph default
- function, viz.
- 
+ function as shown in the example below.
+ When there are only three 
+\begin_inset Quotes eld
+\end_inset
+
+observations
+\begin_inset Quotes erd
+\end_inset
+
+, a name is generate by concatenating the position information and adding
+ it to the range data frame.
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<setrange1>>=
 \end_layout
 
-\begin_layout LyX-Code
-setRanges(Ranges, Columns)
+\begin_layout Plain Layout
+
+ ranges = matrix(c(1, 2240000, 2245000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 2245000, 2250000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3760000, 3761000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3761000, 3762000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3762000, 3763000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3763000, 3764000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3764000, 3765000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3765000, 3763760,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3763760, 3767000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3767000, 3768000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3768000, 3769000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3769000, 3770000),
+\end_layout
+
+\begin_layout Plain Layout
+
+                   ncol = 3, nrow = 12, byrow = TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ setRanges(ranges, 1:3)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ dim(ENV$refRanges)
+\end_layout
+
+\begin_layout Plain Layout
+
+ head(ENV$refRanges)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If you provide an index vector of 4 entries, the last one is assumed to
+ be the column of the name for the range.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<setrange2>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ ranges = matrix(c(1, 2240000, 2245000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 2245000, 2250000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3760000, 3761000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3761000, 3762000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3762000, 3763000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3763000, 3764000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3764000, 3765000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3765000, 3763760,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3763760, 3767000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3767000, 3768000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3768000, 3769000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                   1, 3769000, 3770000),
+\end_layout
+
+\begin_layout Plain Layout
+
+                   ncol = 3, nrow = 12, byrow = TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+ ranges = data.frame(ranges)
+\end_layout
+
+\begin_layout Plain Layout
+
+ ranges$name = LETTERS[1:12]
+\end_layout
+
+\begin_layout Plain Layout
+
+ names(ranges) = c("chr", "start", "end", "name")
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ setRanges(ranges, 1:4)
+\end_layout
+
+\begin_layout Plain Layout
+
+ dim(ENV$refRanges)
+\end_layout
+
+\begin_layout Plain Layout
+
+ head(ENV$refRanges)
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Paragraph
@@ -2988,22 +3204,15 @@ applyFnToRanges
 \end_layout
 
 \begin_layout Standard
-The function:
-\end_layout
-
-\begin_layout LyX-Code
-applyFnToRanges(DOcallback, envir = ENV) 
-\end_layout
-
-\begin_layout Standard
-goes through each transcript/range entry and finds the markers that fall
+The function, 
+\emph on
+applyFnToRanges,
+\emph default
+ goes through each transcript/range entry and finds the markers that fall
  within the bounds.
  It then builds a genotype matrix for the samples and each marker in the
  range.
-\end_layout
-
-\begin_layout Standard
-The first argument of the 
+ The first argument of the 
 \emph on
 applyFnToRanges
 \emph default
@@ -3012,19 +3221,29 @@ applyFnToRanges
  in range, the selected transcript/range entry and the environment.
  The call back is invoked repeatedly for each transcript range that contains
  any markers.
+ If it is necessary to store information between successive invocations,
+ the environment ('envir') can be used.
 \end_layout
 
 \begin_layout Standard
-If it is necessary to store information between successive invocations the
- environment ('envir') can be used.
-\end_layout
+For the examples that follow, we use 
+\begin_inset Quotes eld
+\end_inset
 
-\begin_layout Standard
+show
+\begin_inset Quotes erd
+\end_inset
 
+ as the call back function.
+ As you can see, all it does is prints its range argument, markers argument
+ and the 
 \emph on
-applyFnToRanges
+head
 \emph default
- can also be provided explicit ranges.
+ of the genotype matrix, in that order.
+ It also prints a little banner before each argument.
+ Finally, it does not print the environment argument value; it would always
+ print the same thing.
 \end_layout
 
 \begin_layout Standard
@@ -3033,22 +3252,185 @@ status open
 
 \begin_layout Plain Layout
 
-<<applyF2R,eval=FALSE>>=
+<<callback>>=
 \end_layout
 
 \begin_layout Plain Layout
 
-applyFnToRanges(DOcallback, ENV$refRanges, ENV$refIndices, envir = ENV)
+   show = function(g, m, r, e) {
 \end_layout
 
 \begin_layout Plain Layout
 
-applyFnToRanges(DOcallback, ENV$refRanges[ENV$refRanges$chromosome ==1,],
+	   print("rrrrrrrrrr")
 \end_layout
 
 \begin_layout Plain Layout
 
-                ENV$refIndices, envir = ENV)
+       print(r)
+\end_layout
+
+\begin_layout Plain Layout
+
+	   print("mmmmmmmmmm")
+\end_layout
+
+\begin_layout Plain Layout
+
+       print(m)
+\end_layout
+
+\begin_layout Plain Layout
+
+	   print("g6g6g6g6g6")
+\end_layout
+
+\begin_layout Plain Layout
+
+       print(head(g))
+\end_layout
+
+\begin_layout Plain Layout
+
+   }
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A simple example is shown below with the ranges value that was last set.
+ We see that the ranges named 
+\begin_inset Quotes eld
+\end_inset
+
+A
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+E
+\begin_inset Quotes erd
+\end_inset
+
+ have markers in our example data set.
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<applyfntoranges1,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+    # apply function "show" to all genotypes on chromosomes 1 for two base
+ pair
+\end_layout
+
+\begin_layout Plain Layout
+
+    # ranges
+\end_layout
+
+\begin_layout Plain Layout
+
+    ENV$verbose = FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+    applyFnToRanges(show)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+applyFnToRanges
+\emph default
+ can also be provided explicit ranges as show below.
+ This run is using a different set of ranges and thus finds a different
+ set of ranges with markers: viz.
+ range8m and range9m.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<applyfntoranges2,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+    # apply function "show" to all genotypes on chromosomes 1 
+\end_layout
+
+\begin_layout Plain Layout
+
+    # ranges
+\end_layout
+
+\begin_layout Plain Layout
+
+    applyFnToRanges(show, 
+\end_layout
+
+\begin_layout Plain Layout
+
+                    ranges_arg =
+\end_layout
+
+\begin_layout Plain Layout
+
+                    matrix(c(1, 4000000, 5000000, "range4m",
+\end_layout
+
+\begin_layout Plain Layout
+
+                             1, 5000000, 6000000, "range5m",
+\end_layout
+
+\begin_layout Plain Layout
+
+                             1, 6000000, 7000000, "range6m",
+\end_layout
+
+\begin_layout Plain Layout
+
+                             1, 7000000, 8000000, "range7m",
+\end_layout
+
+\begin_layout Plain Layout
+
+                             1, 8000000, 9000000, "range8m",
+\end_layout
+
+\begin_layout Plain Layout
+
+                             1, 9000000,10000000, "range9m"),
+\end_layout
+
+\begin_layout Plain Layout
+
+                            ncol = 4, nrow = 6, byrow = TRUE),
+\end_layout
+
+\begin_layout Plain Layout
+
+                    indices_arg = 1:4)
 \end_layout
 
 \end_inset
@@ -3061,53 +3443,91 @@ setAnnotations
 \end_layout
 
 \begin_layout Standard
-Alternatively, you may search by genes.
- Here, the default transcript database is "TxDb.Hsapiens.UCSC.hg19.knownGene"
- from Bioconductor.
- Of course you can change it, by typing:
-\end_layout
-
-\begin_layout LyX-Code
-setAnnotations("txdb", "genedb")
+If you are iterating/selecting via genes, the default transcript database
+ is "TxDb.Hsapiens.UCSC.hg19.knownGene" from Bioconductor; it is stored in the
+ environment as shown below:
 \end_layout
 
 \begin_layout Standard
-where "txdb" is a string that is the name of transcript database that was
- fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
- database that maps a gene id from the transcript to an entrez gene id.
- The 
-\emph on
-setAnnotations
-\emph default
- command must be issued whenever R is started and the Mega2R library has
- been loaded.
- By way of a reminder, Section 
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<setannotations0>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ ENV$txdb
+\end_layout
+
+\begin_layout Plain Layout
+
+ ENV$entrezGene
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Of course, you can change this database.
+ Suppose we want to use build 
+\begin_inset Quotes eld
+\end_inset
+
+hg18
+\begin_inset Quotes erd
+\end_inset
+
+, we would run:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<setannotations>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ setAnnotations("TxDb.Hsapiens.UCSC.hg18.knownGene", "org.Hs.eg.db")
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ ENV$txdb
+\end_layout
+
+\begin_layout Plain Layout
+
+ ENV$entrezGene
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By way of a reminder, Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Bioconductor"
 
 \end_inset
 
- explains how to choose and install "TxDb.Hsapiens.UCSC.hg19.knownGene" or a
+ explains how to choose and install "TxDb.Hsapiens.UCSC.hg18.knownGene" or a
  different Annotation database.
-\end_layout
-
-\begin_layout Standard
-Note: We could require that you add to your session
-\end_layout
-
-\begin_layout LyX-Code
-library(<name of the transcription database>)
-\end_layout
-
-\begin_layout Standard
-but we have chosen not to.
- Instead, you just indicate the database name and the logic of 
-\emph on
-applyFnToGenes
-\emph default
- does a 'loadNamespace' of the name string and then a 'get' of the name
- string from the namespace.
 \end_layout
 
 \begin_layout Paragraph
@@ -3115,7 +3535,28 @@ applyFnToGenes
 \end_layout
 
 \begin_layout Standard
-The function:
+The function
+\emph on
+ applyFnToGenes
+\emph default
+ is called below to look for the transcripts of a particular gene, 
+\begin_inset Quotes eld
+\end_inset
+
+CEP104
+\begin_inset Quotes erd
+\end_inset
+
+ we know is in our data.
+ Remember ,this lookup is using 
+\begin_inset Quotes eld
+\end_inset
+
+hg18
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -3124,17 +3565,17 @@ status open
 
 \begin_layout Plain Layout
 
-<<applyF2G,eval=FALSE>>=
+<<applyfntogenes0,eval=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
 
-applyFnToGenes(DOcallback, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'),
+    # apply function "show" to all transcripts on genes ELL2 and CARD15
 \end_layout
 
 \begin_layout Plain Layout
 
-               envir = ENV)
+    applyFnToGenes(show, genes_arg = c("CEP104"))
 \end_layout
 
 \end_inset
@@ -3143,14 +3584,41 @@ applyFnToGenes(DOcallback, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'),
 \end_layout
 
 \begin_layout Standard
-will find all the transcripts for each gene requested from the Bioconductor
- database.
- It will then call 
-\emph on
-applyFnToRanges
-\emph default
-: find all the markers in each transcript range, compute the genotype matrix
- and then invoke the call back function with the required four arguments.
+Switching to 
+\begin_inset Quotes eld
+\end_inset
+
+hg19
+\begin_inset Quotes erd
+\end_inset
+
+, we see a different transcript id and transcript name as well as different
+ start/end.
+ But the same set of markers from our study fall in each range.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<applyfntogenes19,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+    setAnnotations("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db")
+\end_layout
+
+\begin_layout Plain Layout
+
+    applyFnToGenes(show, genes_arg = c("CEP104"))
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3174,6 +3642,103 @@ genes_arg
  in the Bioconductor database, will be processed.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<applyfntogenes,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+    # apply function "show" to all genotypes on chromosomes 1 for two base
+\end_layout
+
+\begin_layout Plain Layout
+
+    # pair ranges
+\end_layout
+
+\begin_layout Plain Layout
+
+    applyFnToGenes(show, ranges_arg = 
+\end_layout
+
+\begin_layout Plain Layout
+
+                            matrix(c(1,  5000000, 10000000,
+\end_layout
+
+\begin_layout Plain Layout
+
+                                     1, 10000000, 15000000),
+\end_layout
+
+\begin_layout Plain Layout
+
+                                    ncol = 3, nrow = 2, byrow = TRUE))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    # apply function "show" to all genotypes for first marker 
+\end_layout
+
+\begin_layout Plain Layout
+
+    # in each chromosome (We only have data for chromosome 1.)
+\end_layout
+
+\begin_layout Plain Layout
+
+    # NOTE: Since we are using an arbitrary collection of markers, the
+\end_layout
+
+\begin_layout Plain Layout
+
+    # range is not available.
+\end_layout
+
+\begin_layout Plain Layout
+
+    applyFnToGenes(show, markers_arg = ENV$markers[! duplicated(ENV$markers$chro
+mosome), 3])
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    # apply function "show" to all genotypes on chromosomes 24 and 26
+\end_layout
+
+\begin_layout Plain Layout
+
+    # remember our example database is only chr 1
+\end_layout
+
+\begin_layout Plain Layout
+
+    applyFnToGenes(show, chrs_arg=c(24, 26))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Iterating through the Genotypes 
 \begin_inset CommandInset label
@@ -3192,21 +3757,41 @@ Encoded Genotypes
 \begin_layout Standard
 The heart of the above two functions is the calculation of the genotype
  matrix of samples by markers containing the nucleotides (strings).
- The genotype information is most often stored in a compressed 2 bit representat
-ion.
- An Rcpp function does the conversion of the compressed genotype data to
- nucleotides.
- The function
-\end_layout
-
-\begin_layout LyX-Code
-getgenotypes(markers, envir = ENV)
+ We will build the matrix for the first 10 markers.
+ Remember our database has 1380 samples so we will just show the 
+\emph on
+head
+\emph default
+ of the matrix.
 \end_layout
 
 \begin_layout Standard
-returns the matrix for the specified markers.
- It can take one additional argument that supplies a string to separate
- the two alleles of each marker.
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<getgenotypes,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ genotype = getgenotypes(ENV$markers[1:10,])
+\end_layout
+
+\begin_layout Plain Layout
+
+ dim(genotype)
+\end_layout
+
+\begin_layout Plain Layout
+
+ head(genotype)
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Paragraph
@@ -3214,35 +3799,48 @@ Raw Genotypes
 \end_layout
 
 \begin_layout Standard
-The function
-\end_layout
-
-\begin_layout LyX-Code
-getgenotypesraw(markers, envir = ENV)
-\end_layout
-
-\begin_layout Standard
-is similar to the 
+The function 
 \emph on
-getgenotypes
+getgenotypesraw
 \emph default
- function except that the matrix it returns contains an integer encoding
- for each genotype.
- The integer's high 16 bits are the index for allele1 and the low 16 bits
- are the index for allele2.
+ will be called with the same 10 markers as above.
+ Recall it returns an integer encoding for each genotype.
+ The integer's high 16 bits are the index for allele 1 and the low 16 bits
+ are the index for allele 2.
 \end_layout
 
 \begin_layout Standard
-Note: There are actually two different Rcpp functions for each named function
- in Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Iterating-through-the"
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<getgenotypesraw,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# two ints in upper/lower half integer representing allele 
+\end_layout
+
+\begin_layout Plain Layout
+
+ raw = getgenotypesraw(ENV$markers[1:10,])
+\end_layout
+
+\begin_layout Plain Layout
+
+ dim(raw)
+\end_layout
+
+\begin_layout Plain Layout
+
+ head(raw)
+\end_layout
 
 \end_inset
 
- One function processes compressed genotype data and the other function
- processes uncompressed genotype data.
+
 \end_layout
 
 \begin_layout Subsection
