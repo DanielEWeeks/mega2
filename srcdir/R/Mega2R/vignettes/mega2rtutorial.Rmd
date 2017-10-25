@@ -481,7 +481,10 @@ showMega2ENV = function(envir = ENV) { ... }
 The code above, assigns global variable `ENV` to the local 
 variable, `envir`.  Thus if `envir` is not provided in the function call, R
 will look up the value of `ENV` in the global environment.
-Hopefully, `ENV` was set to the return value of `read.Mega2DB`
+This "hack" does not handle the case where `ENV` is defined in an outer frame which is
+not the global environment.
+In this situation, we want to search backwards/upwards from the calling frame to find
+the first `ENV` and use it.
 
 ### 5.2.4 Back to more examples.
 
