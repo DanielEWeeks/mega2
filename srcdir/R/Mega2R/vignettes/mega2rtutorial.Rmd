@@ -184,8 +184,8 @@ In Section 6 below, we will carry out gene-based association tests, where 'genes
 This requires two Bioconductor Annotations databases to be installed.
 The first line (below) loads the Bioconductor loader and the next
 two lines install two annotation databases. One annotation database provides the gene transcript
-locations and the other maps gene names to entrez gene IDs. (Note: As described in Section 5.3.1, you
-may choose a different transcript database from Bioconductor or
+locations and the other maps gene names to entrez gene IDs. (Note: As described in Section 5.3.3,
+you may choose a different transcript database from Bioconductor or
 construct one of your own.) Please type in R:
 
 ```
@@ -511,9 +511,8 @@ str(ENV$locus_table)
 
 ## 5.3 Iterating through Gene Transcripts
 
-There are two ways to compute a function on all the genotypes (or markers) in a
-transcript.
-These examples are explained more thoroughly in Section 6 below.)
+There are two ways to compute a function on the genotypes (or markers) in transcripts.
+These examples are explained more thoroughly in below.
 
 ### 5.3.1 applyFnToRanges
 
@@ -522,15 +521,75 @@ ranges for many gene transcripts.  These transcripts come from
 the UCSC Genome Browser reference assembly GRCH37.  The list was
 further modified to eliminate multiple records from the same gene with
 the exact same transcript start and transcript end.  The list contains
-about 29,000 records.  You may load your own range set instead of the default.
-You create a data frame that contains at least a name "observation", a chromosome
-"observation", a start position "observation" and an end position "observation".
+about 29,000 records.  We show a bit of the data
+frame below. Each row contains 5 values: a transcript id, the gene id
+and three position values: chromosome, start base pair and end base
+pair.
+
+```{r,setrange0}
+    dim(ENV$refRanges)
+    head(ENV$refRanges)
+```
+
+You may load your own range set instead of the default.
+You create a data frame that contains at least a chromosome
+"observation", a start position "observation", an end position "observation",
+and possibly a name "observation".
 And you create an integer vector that contains the column numbers of the chromosome
-"observation", the start position "observation" and the end position "observation".
+"observation", the start position "observation", the end position "observation", and optionally
+a name.  If no name position is provided, a name column indicating the position will be added to
+the range.
 These two become the arguments to the `setRanges` function, viz.
+
+```{r,setrange1}
+    ranges = matrix(c(1, 2240000, 2245000,
+                      1, 2245000, 2250000,
+                      1, 3760000, 3761000,
+                      1, 3761000, 3762000,
+                      1, 3762000, 3763000,
+                      1, 3763000, 3764000,
+                      1, 3764000, 3765000,
+                      1, 3765000, 3763760,
+                      1, 3763760, 3767000,
+                      1, 3767000, 3768000,
+                      1, 3768000, 3769000,
+                      1, 3769000, 3770000),
+                      ncol = 3, nrow = 12, byrow = TRUE)
+
+    setRanges(ranges, 1:3)
+
+    dim(ENV$refRanges)
+    head(ENV$refRanges)
 ```
-        setRanges(Ranges, Columns)
+
+If you provide an index vector of 4 entries, the last one is assumed
+to be the column of the name for the range.
+
+```{r,setrange2}
+    ranges = matrix(c(1, 2240000, 2245000,
+                      1, 2245000, 2250000,
+                      1, 3760000, 3761000,
+                      1, 3761000, 3762000,
+                      1, 3762000, 3763000,
+                      1, 3763000, 3764000,
+                      1, 3764000, 3765000,
+                      1, 3765000, 3763760,
+                      1, 3763760, 3767000,
+                      1, 3767000, 3768000,
+                      1, 3768000, 3769000,
+                      1, 3769000, 3770000),
+                      ncol = 3, nrow = 12, byrow = TRUE)
+    ranges = data.frame(ranges)
+    ranges$name = LETTERS[1:12]
+    names(ranges) = c("chr", "start", "end", "name")
+
+    setRanges(ranges, 1:4)
+    dim(ENV$refRanges)
+    head(ENV$refRanges)
 ```
+
+### 5.3.2 applyFnToRanges
+
 The function:
 
 > applyFnToRanges(DOcallback, envir = ENV)  
@@ -539,7 +598,7 @@ goes through each transcript/range entry in the default list of ranges
 and finds the markers that fall within the bounds.
 It then builds a genotype matrix for the samples and each marker in the range.
 For all ranges that contain the same set of markers, only one genotype matrix is generated 
-and the call back function evaluated once.
+and the call back function is evaluated only once.
 (Note: This situation arises either because multiple named transcripts have the same start and end
 positions or because the granularity of the markers sampled is such that small changes in a range
 start and end position do not introduce additional markers into the range.)
@@ -550,55 +609,125 @@ entry and the environment.  The call back is invoked repeatedly for each transcr
 If it is necessary to store information between successive invocations the environment (`envir`) 
 can be used.
 
-*applyFnToRanges* can also be provided explicit ranges.
-```
-applyFnToRanges(DOcallback, ENV$refRanges, ENV$refIndices, envir = ENV)
-applyFnToRanges(DOcallback, ENV$refRanges[ENV$refRanges$chromosome == 1,], ENV$refIndices, envir = ENV)
+For the examples that follow, we use “show” as the call back
+function. As you can see, all it does is prints its range argument,
+markers argument and the head of the genotype argument, in that
+order. It also prints a banner before each argument. Note:
+It does not print the environment argument value because
+it does not change.
+
+```{r,callback}
+    show = function(g, m, r, e) {
+       print("rrrrrrrrrr")
+       print(r)
+       print("mmmmmmmmmm")
+       print(m)
+       print("g6g6g6g6g6")
+       print(head(g))
+    }
 ```
 
-### 5.3.2 applyFnToGenes
+A simple example is shown below with the ranges value that was last
+set. We see that the ranges named “A” and “E” have markers in our
+example data set.
 
-Alternatively, you may search by genes.  Here, the default
-transcript database is "TxDb.Hsapiens.UCSC.hg19.knownGene" from
-Bioconductor.  Of course you can change it, by typing:
-
+```{r,applyfntoranges1,eval=TRUE}
+    # apply function "show" to all genotypes on chromosomes 1 for two base pair
+    # ranges
+    ENV$verbose = FALSE
+    applyFnToRanges(show)
 ```
-setAnnotations("txdb", "genedb")
+
+applyFnToRanges can also be provided explicit ranges as show
+below. This run is using a different set of ranges and thus finds a
+different set of ranges with markers: viz. range8m and range9m.
+
+```{r,applyfntoranges2,eval=TRUE}
+    # apply function "show" to all genotypes on chromosomes 1 
+    # ranges
+    applyFnToRanges(show, 
+                    ranges_arg =
+                    matrix(c(1, 4000000, 5000000, "range4m",
+                             1, 5000000, 6000000, "range5m",
+                             1, 6000000, 7000000, "range6m",
+                             1, 7000000, 8000000, "range7m",
+                             1, 8000000, 9000000, "range8m",
+                             1, 9000000,10000000, "range9m"),
+                            ncol = 4, nrow = 6, byrow = TRUE),
+                    indices_arg = 1:4)
 ```
 
-where "txdb" is a string that is the name of transcript database that was
-fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
-database that maps a gene id from the transcript to an entrez gene id.
+### 5.3.3 setAnnotations
+
+If you are iterating/selecting via genes, the default transcript
+database is "TxDb.Hsapiens.UCSC.hg19.knownGene" from Bioconductor; it
+is stored in the environment as shown below:
+
+```{r,setannotations0}
+    ENV$txdb
+    ENV$entrezGene
+```
+
+Of course, you can change this database. Suppose we want to use build “hg18”, we would run:
+
+```{r,setannotations}
+    setAnnotations("TxDb.Hsapiens.UCSC.hg18.knownGene", "org.Hs.eg.db")
+
+    ENV$txdb
+    ENV$entrezGene
+```
+
 The `setAnnotations` command must be issued whenever R is started and the `Mega2R`
 library has been loaded.  By way of a reminder, Section 4.2
 explains how to choose and install "TxDb.Hsapiens.UCSC.hg19.knownGene" or a different
 Annotation database.
 
-Note: We could require that you add to your session
+### 5.3.4 applyFnToGenes 
+
+The function applyFnToGenes is called below to look for the
+transcripts of genes.  We happen to know gene, “CEP104”, is in our
+data. Remember, this lookup is using “hg18”.
+
+```{r,applyfntogenes0,eval=TRUE}
+    # apply function "show" to all transcripts on genes ELL2 and CARD15
+    applyFnToGenes(show, genes_arg = c("CEP104"))
 ```
-library(<name of the transcription database>)
+
+Switching to “hg19”, we see a different transcript id and transcript
+name as well as different start/end. But the same set of markers from
+our study fall in each range.
+
+```{r,applyfntogenes19,eval=TRUE}
+    setAnnotations("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db")
+    applyFnToGenes(show, genes_arg = c("CEP104"))
 ```
-but we have chosen not to.  Instead, you just indicate the database name and the 
-logic of `applyFnToGenes` does a `loadNamespace` of the string and then a `get` of
-the string from the namespace.
 
+The applyFnToGenes function has several other optional arguments that
+can request complete chromosomes, (multiple) ranges of base pairs on
+chromosomes, or collections of markers, in addition to the genes_arg
+argument. All these arguments define ranges that are passed to
+applyFnToRanges for evaluation. Note: If the genes_arg argument is set
+to the special "gene" string "*", then all transcripts in the
+Bioconductor database, will match and be processed.
 
-The function:
+```{r,applyfntogenes,eval=TRUE}
+    # apply function "show" to all genotypes on chromosomes 1 for two base
+    # pair ranges
+    applyFnToGenes(show, ranges_arg = 
+                            matrix(c(1,  5000000, 10000000,
+                                     1, 10000000, 15000000),
+                                    ncol = 3, nrow = 2, byrow = TRUE))
 
-> applyFnToGenes(DOcallback, genes_arg = c('DISP1', 'KIF26B', 'AK5', 'ST7L'), envir = ENV)
+    # apply function "show" to all genotypes for first marker 
+    # in each chromosome (We only have data for chromosome 1.)
+    # NOTE: Since we are using an arbitrary collection of markers, the
+    # range is not available.
+    applyFnToGenes(show, markers_arg = ENV$markers[! duplicated(ENV$markers$chromosome), 3])
 
-will find all the transcripts for each gene requested from the Bioconductor database.  It will then
-call `applyFnToRanges`: find all the markers in each transcript range, compute the genotype
-matrix and then invoke the call
-back function with the required four arguments.
-
-The *applyFnToGenes* function has several other optional arguments that can
-specify complete chromosomes,
-(multiple) ranges of base pairs on chromosomes,
-or collections of markers.  All these arguments define ranges that are passed to *applyFnToRanges*
-for evaluation.
-Note: If the *genes_arg* argument is set to the special "gene" string "*", then all 
-transcripts in the Bioconductor database, will be processed.
+    # apply function "show" to all genotypes on chromosomes 24 and 26.
+    # remember our example database is only chr 1
+    applyFnToGenes(show, chrs_arg=c(24, 26))
+```
 
 ## 5.4 Iterating through the Genotypes
 
@@ -615,6 +744,15 @@ conversion of the compressed genotype data to nucleotides.  The function
 
 returns the matrix for the specified markers.  It can take one additional argument that
 supplies a string to separate the two alleles of each marker.
+We will build a matrix for the first 10 markers of our data. Remember
+our database has 1380 samples so we will just show the head of the
+matrix.
+
+```{r,getgenotypes,eval=TRUE}
+    genotype = getgenotypes(ENV$markers[1:10,])
+    dim(genotype)
+    head(genotype)
+```
 
 ### 5.4.2 Raw Genotypes
 
@@ -625,9 +763,19 @@ The function
 is similar to the `getgenotypes` function except that the matrix it returns
 contains an integer encoding for each genotype.  The integer's
 high 16 bits are the index for allele1 and the low 16 bits are the index for allele2.
+The function `getgenotypesraw` will be called with the same 10 markers
+as above. 
+
+```{r,getgenotypesraw,eval=TRUE}
+# two ints in upper/lower half integer representing allele 
+    raw = getgenotypesraw(ENV$markers[1:10,])
+    dim(raw)
+    head(raw)
+```
 
 Note: There are actually two different Rcpp functions for each named function in Section 5.4.  One function processes compressed genotype data and the other function processes 
 uncompressed genotype data.
+
 
 # 6 Using Mega2R to carry out automated gene-based association tests using 'pedgene'
 
