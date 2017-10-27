@@ -1177,9 +1177,9 @@ observations
 \begin_inset Quotes erd
 \end_inset
 
- and a selector vector of 3 integer that indicates which observation variable
- in the range data frame contains the chromosome, start position and end
- position.
+ (and optionally a name) and a selector vector of 3 or 4 integers that indicates
+ which observation variable in the range data frame contains the chromosome,
+ start position and end position.
  If the range data frame contains a name 
 \begin_inset Quotes eld
 \end_inset
@@ -1213,8 +1213,8 @@ R environment
  applyFnToRanges,
 \emph default
  with no additional arguments, will iterate through each row of the default
- Mega2R ranges, determine the markers contained between the start and end,
- compute the genotype matrix, and then invoke a callback function.
+ Mega2R ranges, determine the markers contained between the start and end
+ and then invoke a callback function.
  Alternatively, 
 \emph on
 applyFnToRanges
@@ -1233,12 +1233,11 @@ setRanges
 \emph on
 applyFnToRanges
 \emph default
- requires a call back function of four arguments: the first is a matrix
- of genotypes for all the markers in the transcript, the second is a data
- frame of the markers in the transcript, the third is a single row from
- the data frame that defines the range/transcript (minimally it has a name,
- ID, start position, end position, and chromosome), and the final argument
- is the 
+ requires a call back function of three arguments: the first is a data frame
+ of the markers in the transcript, the second is a single row from the data
+ frame that defines the range/transcript (minimally it has a name, ID, start
+ position, end position, and chromosome), and the third argument is the
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1265,6 +1264,15 @@ R environment
 \end_inset
 
 .
+ Typically the callback function will call either 
+\emph on
+getgenotypes
+\emph default
+ or 
+\emph on
+getgenotypesraw
+\emph default
+ to get a matrix of genotypes values for a group of markers.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1311,8 +1319,8 @@ applyFnToGenes
 t ranges: on sub-ranges of chromosomes (ranges_arg argument), on the entire
  chromosome (chrs_arg argument), and/or on an arbitrary list of markers
  (markers_args argument).
- The call back function of four arguments and list of ranges is passed to
- 
+ The call back function of three arguments and list of ranges is passed
+ to 
 \emph on
 applyFnToRanges
 \emph default
@@ -1547,9 +1555,9 @@ computes and saves some state into the environment to be used later.
 \emph on
 pedgene,
 \emph default
- requires a transcoding of the genotypes 1/1, 1/2 and 2/2 to 0, 1, and 2
- respectively; plus the alleles must be flipped so that 1 is the allele
- with the major allele frequency.
+ requires a transcoding of the raw genotypes representations of 1/1, 1/2
+ and 2/2 to 0, 1, and 2 respectively; plus the alleles must be flipped so
+ that 1 is the allele with the major allele frequency.
  DOpedgene transforms its genotype input matrix and then it calls the 
 \emph on
 pedgene
@@ -2164,6 +2172,17 @@ Mega2ENVGenABEL
  be used exclusively.
 \end_layout
 
+\begin_layout Section
+Use Case 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Examples"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 The rest of this document shows some complete examples of Mega2R package
  use.
@@ -2176,17 +2195,6 @@ Mega2pedgene, Mega2SKAT, Mega2VCF and Mega2GenABEL
  Note: Not all the arguments and details of the functions are discussed
  in these examples, if you need programming details, look at the Mega2R
  CRAN package documentation or the actual code in the git repository.
-\end_layout
-
-\begin_layout Section
-Use Case 
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Examples"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -2808,7 +2816,8 @@ The environment returned is used to store the data frames that contain the
  'SQLite' database.
  The code above, stores the environment in global variable 'ENV'.
  If the named argument, 'envir', is not provided in any subsequent Mega2R
- function call, R will look up the value of 'ENV'.
+ function call, R will look up the value of 'ENV' starting at the calling
+ frame and chaining up the call stack to the global environment.
 \end_layout
 
 \begin_layout Paragraph
@@ -3210,17 +3219,17 @@ applyFnToRanges,
 \emph default
  goes through each transcript/range entry and finds the markers that fall
  within the bounds.
- It then builds a genotype matrix for the samples and each marker in the
- range.
  The first argument of the 
 \emph on
 applyFnToRanges
 \emph default
  function is a call back function.
- The function is called with four arguments: the genotype matrix, the markers
- in range, the selected transcript/range entry and the environment.
+ The function is called with three arguments:  the markers in range, the
+ selected transcript/range entry and the environment.
  The call back is invoked repeatedly for each transcript range that contains
  any markers.
+ The call back function builds a genotype matrix or raw genotype matrix
+ for the samples and each marker in the range.
  If it is necessary to store information between successive invocations,
  the environment ('envir') can be used.
 \end_layout
@@ -3240,7 +3249,7 @@ show
 \emph on
 head
 \emph default
- of the genotype matrix, in that order.
+ of the genotype matrix and head of the raw genotype matrix , in that order.
  It also prints a little banner before each argument.
  Finally, it does not print the environment argument value; it would always
  print the same thing.
@@ -3257,7 +3266,7 @@ status open
 
 \begin_layout Plain Layout
 
-   show = function(g, m, r, e) {
+   show = function(m, r, e) {
 \end_layout
 
 \begin_layout Plain Layout
@@ -3287,7 +3296,17 @@ status open
 
 \begin_layout Plain Layout
 
-       print(head(g))
+       print(head(getgenotypes(m)))
+\end_layout
+
+\begin_layout Plain Layout
+
+#	  print("x6x6x6x6x6")
+\end_layout
+
+\begin_layout Plain Layout
+
+#      print(head(getgenotypesraw(m)))
 \end_layout
 
 \begin_layout Plain Layout
@@ -3329,8 +3348,7 @@ status open
 
 \begin_layout Plain Layout
 
-    # apply function "show" to all genotypes on chromosomes 1 for two base
- pair
+    # apply function "show"
 \end_layout
 
 \begin_layout Plain Layout
@@ -3539,7 +3557,8 @@ The function
 \emph on
  applyFnToGenes
 \emph default
- is called below to look for the transcripts of a particular gene, 
+ is called below to look for the transcripts of a particular gene.
+ We know gene, 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3547,8 +3566,8 @@ CEP104
 \begin_inset Quotes erd
 \end_inset
 
- we know is in our data.
- Remember ,this lookup is using 
+, is in our data.
+ Remember, this lookup is using 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3843,6 +3862,30 @@ status open
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<showraw>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+raw.allele.representation = c("0x10001", "0x10002", "0x20001", "0x20002")
+\end_layout
+
+\begin_layout Plain Layout
+
+print(as.numeric(raw.allele.representation))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
@@ -3969,13 +4012,18 @@ Mega2R has an internal default list of the chromosome and base pair ranges
  gene with the exact same transcript start and transcript end.
  These data contain about 29,000 records.
  You may load your own range set instead of the default.
- You create a data frame that contains at least a name "observation", a
- chromosome "observation", a start position "observation" and an end position
- "observation".
+ You create a data frame that contains at least a chromosome "observation",
+ a start position "observation" and an end position "observation".
  Then, you create an integer vector that contains the column numbers of
  the chromosome "observation", the start position "observation" and the
  end position "observation".
- These two objects are then arguments to the 
+ If there is a fourth value for the vector, it is the position in the range
+ data frame of a name, otherwise a name will be generated from the position
+ information and added to the range data frame.
+\end_layout
+
+\begin_layout Standard
+These two objects are then arguments to the 
 \emph on
 setRanges
 \emph default
@@ -4117,7 +4165,7 @@ You will see many reports of "No markers in range", because the database
  only contains markers on a sub range of chromosome 1 whereas the transcripts
  span the entire genome.
  Occasionally you will see a listing of a gene name, markers, and count
- of 1/1, 1/2 and 2/2 genotypes, viz.
+ of 0, 1, and 2 genotypes, viz.
 \end_layout
 
 \begin_layout LyX-Code
@@ -4163,9 +4211,9 @@ DOpedgene
 \emph on
 DOpedgene
 \emph default
- converts the genotype nucleotides 1/1, 1/2 and 2/2 to the values 0, 1 and
- 2 (or 2, 1, 0 if 1/1 is the genotype for the allele with the minor allele
- frequency).
+ converts the raw genotype representation of 1/1, 1/2 and 2/2 to the values
+ 0, 1 and 2 (or 2, 1, 0 if 1/1 is the genotype for the allele with the minor
+ allele frequency).
  Then it runs 'pedgene'.
  The results are automatically stored in a data frame with "observations":
  prefix data — chromosome, gene, number of markers and base pair range followed
@@ -4643,8 +4691,8 @@ Mega2SKAT
 \emph on
 Mega2SKAT
 \emph default
- function also defines a callback function that converts the genotype informatio
-n from the forms 1/1, 1/2, and 2/2 to 0, 1, and 2 with the major allele
+ function also defines a callback function that converts the raw genotype
+ representation of 1/1, 1/2, and 2/2 to 0, 1, and 2 with the major allele
  (flipped if necessary to be) 0 and then calls the specified "skat" function
  with the required arguments.
  Finally, the callback function stores the results.
