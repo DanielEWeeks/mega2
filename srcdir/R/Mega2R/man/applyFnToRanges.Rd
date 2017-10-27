@@ -4,17 +4,16 @@
 \alias{applyFnToRanges}
 \title{apply a function to all the genotypes for markers found in several specified ranges}
 \usage{
-applyFnToRanges(op          = function (geno, markers, range, envir) {},
+applyFnToRanges(op          = function (markers, range, envir) {},
                 ranges_arg  = NULL,
                 indices_arg = NULL,
                 fuzz_arg    = 0,
                 envir       = ENV)
 }
 \arguments{
-\item{op}{Is a function of four arguments.  It will be called repeatedly by
+\item{op}{Is a function of three arguments.  It will be called repeatedly by
 \code{applyFnToRanges} in a try/catch context.  The arguments are:
 \describe{
-\item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
 \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
@@ -50,7 +49,7 @@ None
 First, for each range, determine the markers that fall between the start and end
 base pair of the range.  Then, for each set of
  markers generate a matrix of the genotypes of those markers.  Finally, the \code{op} function is called for
- each range with the arguments: genotypes matrix, markers, range, and 'environment'.
+ each range with the arguments: markers, range, and 'environment'.
 }
 \note{
 If the \emph{ranges_arg} and \emph{indices_arg} are NULL or missing, then the default ranges that have been set by \code{setRanges}
@@ -60,10 +59,10 @@ If the \emph{ranges_arg} and \emph{indices_arg} are NULL or missing, then the de
   db = system.file("exdata", "seqsimm.db", package="Mega2R")
   ENV = read.Mega2DB(db)
 
-  show = function(g, m, r, e) {
+  show = function(m, r, e) {
       print(r)
       print(m)
-      print(head(g))
+      print(head(getgenotypesraw(m, envir = e)))
   }
 
    # apply function "show" to all genotypes on chromosomes 1 for two base pair

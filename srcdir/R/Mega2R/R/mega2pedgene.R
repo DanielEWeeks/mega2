@@ -73,8 +73,9 @@ init_pedgene = function (db = NULL, verbose = FALSE) {
     envir$schaidPed = envir$fam[ , c(-1, -2)]
     colnames(envir$schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
     envir$pedPer = envir$schaidPed[ , 1:2]
-    envir$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 0), nrow = 5, ncol = 2)
-
+#   envir$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 0), nrow = 5, ncol = 2)
+    envir$mt = matrix(c(0x10001, 0x10002, 0x20001, 0x20002, 0,    0, 1, 1, 2, 0),
+                      nrow = 5, ncol = 2)
     envir$pedgene_results <- data.frame(chr = character(0), gene = character(0),
                                         nvariants = numeric(0),
                                         start = numeric(0), end = numeric(0),
@@ -135,16 +136,13 @@ Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 #' pedgene call back function
 #'
 #' @description
-#'  First, ignore call backs that have less than two markers.  Second, convert the genotypes
-#'  patterns of 1/1, 1/2 (and 2/1) and 2/2 from the genotype matrix
-#'  to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
+#'  First, ignore call backs that have less than two markers.  Second, convert the genotypesraw()
+#'  patterns of 0x10001, 0x10002 (or 0x20001), 0x20002, 0 from the genotype matrix
+#'  to the numbers 0, 1, 2, 0 for each marker. (Reverse, the order iff allele "1" has the
 #'  minor allele frequency.)  Next, prepend the pedigree and person columns of the family data
 #'  to this modified genotype matrix.  Finally, invoke \code{pedgene} with the family data and
 #'  genotype matrix for several different weights.  Save the kernel and burden, value and p-value for each
 #'  measurement in \emph{envir$pedgene_results}.
-#'
-#' @param geno_arg A character matrix with one row per \emph{fam} pedigree member and one column for  each marker in
-#'  markers_arg.  Each cell contains the two characters indicating the nucleotides for the marker.
 #'
 #' @param markers_arg a data.frame with the following 5 observations:
 #' \describe{
@@ -183,11 +181,13 @@ Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 #' # try this below if there is time
 #' # applyFnToGenes(DOpedgene, genes_arg = c("CEP104"))
 #'
-DOpedgene = function(geno_arg, markers_arg, range_arg, envir = ENV) {
+DOpedgene = function(markers_arg, range_arg, envir = ENV) {
 
     if (is.null(range_arg))
         stop("DOpedgene: range is not defined.", calls. = FALSE)
 
+    geno_arg = getgenotypesraw(markers_arg, envir);
+    
     markerNames = markers_arg$MarkerName
     gene  = as.character(range_arg[,envir$refCol[4]])
 

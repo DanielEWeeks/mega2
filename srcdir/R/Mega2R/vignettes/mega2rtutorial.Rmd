@@ -483,7 +483,7 @@ variable, `envir`.  Thus if `envir` is not provided in the function call, R
 will look up the value of `ENV` in the global environment.
 This "hack" does not handle the case where `ENV` is defined in an outer frame which is
 not the global environment.
-In this situation, we want to search backwards/upwards from the calling frame to find
+In this situation, we search backwards/upwards from the calling frame to find
 the first `ENV` and use it.
 
 ### 5.2.4 Back to more examples.
@@ -511,7 +511,7 @@ str(ENV$locus_table)
 
 ## 5.3 Iterating through Gene Transcripts
 
-There are two ways to compute a function on the genotypes (or markers) in transcripts.
+There are two ways to compute a function on the genotypes (or markers) in all the transcripts.
 These examples are explained more thoroughly in below.
 
 ### 5.3.1 applyFnToRanges
@@ -595,35 +595,36 @@ The function:
 > applyFnToRanges(DOcallback, envir = ENV)  
 
 goes through each transcript/range entry in the default list of ranges
-and finds the markers that fall within the bounds.
-It then builds a genotype matrix for the samples and each marker in the range.
-For all ranges that contain the same set of markers, only one genotype matrix is generated 
-and the call back function is evaluated only once.
+and finds the markers that fall within the bounds.  It then invokes the callback function
+for the range; the callback function is the first argument of the *applyFnToRanges* function.
+For all ranges that contain the same set of markers, the call back function is evaluated only once.
 (Note: This situation arises either because multiple named transcripts have the same start and end
 positions or because the granularity of the markers sampled is such that small changes in a range
 start and end position do not introduce additional markers into the range.)
 
-The first argument of the *applyFnToRanges* function is a call back function.  The function is
-called with four arguments: the genotype matrix, the markers in range, the selected transcript/range
-entry and the environment.  The call back is invoked repeatedly for each transcript range that contains any markers.
+The callback function is
+called with three arguments: the markers in range, the selected transcript/range
+entry and the environment.  The callback function is expected to build an
+appropriate genotype matrix for the samples and each marker in the range (see Section 5.4).
+The call back is invoked repeatedly for each transcript range that contains any markers.
 If it is necessary to store information between successive invocations the environment (`envir`) 
 can be used.
 
 For the examples that follow, we use “show” as the call back
 function. As you can see, all it does is prints its range argument,
-markers argument and the head of the genotype argument, in that
+markers argument and the head of the generated genotype matrix, in that
 order. It also prints a banner before each argument. Note:
 It does not print the environment argument value because
 it does not change.
 
 ```{r,callback}
-    show = function(g, m, r, e) {
+    show = function(m, r, e) {
        print("rrrrrrrrrr")
        print(r)
        print("mmmmmmmmmm")
        print(m)
        print("g6g6g6g6g6")
-       print(head(g))
+       print(head(getgenotypes(m, envir = e)))
     }
 ```
 
@@ -632,7 +633,7 @@ set. We see that the ranges named “A” and “E” have markers in our
 example data set.
 
 ```{r,applyfntoranges1,eval=TRUE}
-    # apply function "show" to all genotypes on chromosomes 1 for two base pair
+    # apply function "show" to all the ranges
     # ranges
     ENV$verbose = FALSE
     applyFnToRanges(show)
@@ -677,7 +678,11 @@ Of course, you can change this database. Suppose we want to use build “hg18”
     ENV$entrezGene
 ```
 
-The `setAnnotations` command must be issued whenever R is started and the `Mega2R`
+Note: This gene also has transcript uc001akz.2 but its range is included within the uc001aky.1
+transcript, so it is not processed.
+
+If you are not using the "hg19" default,
+the `setAnnotations` command must be issued whenever R is started after the `Mega2R`
 library has been loaded.  By way of a reminder, Section 4.2
 explains how to choose and install "TxDb.Hsapiens.UCSC.hg19.knownGene" or a different
 Annotation database.
@@ -731,11 +736,18 @@ Bioconductor database, will match and be processed.
 
 ## 5.4 Iterating through the Genotypes
 
+The callback functions described above will need the genotype information for the 
+selected markers.  The two functions below will collect that data.  The first, `getgenotypes`,
+will return the allele nucleodides as they were coded in the sample data.
+(This function was illustrated
+by the `show` function above.)  The second, `getgenotypesraw`, will return the
+allele numbers 1 and 2 encoded into an integer.  The corresponding nucleotide can be looked
+up if needed.
+
 ### 5.4.1 Encoded Genotypes
 
-The heart of the above two functions is the calculation of the genotype 
-matrix of samples by markers
-containing the nucleotides (strings).  The
+The heart of the callback functions is the calculation of the genotype 
+matrix of samples by markers.  The
 genotype information is most often stored in a compressed 2 bit representation.
 An Rcpp function does the
 conversion of the compressed genotype data to nucleotides.  The function
@@ -871,7 +883,7 @@ of "No markers in range", because the database only contains markers on a subran
 chromosome 1 whereas the transcripts span
 the entire genome.
 Occasionally you will see a listing of a
-gene name, markers, and count of 1/1, 1/2 and 2/2 genotypes, viz.
+gene name, markers, and count of 0, 1 and 2 genotypes, viz.
 
 ```
 CEP104 snp24037 520 646 214  
@@ -886,8 +898,9 @@ CEP104 snp24507 789 501 90
 
 The genotype matrix for these markers, along with the markers, the range
 used, and the environment are passed
-to the call back function `DOpedgene`. `DOpedgene` converts the genotype
-nucleotides  1/1, 1/2 and 2/2 to the values 0, 1 and 2 (or 2, 1, 0) if 1/1 is the
+to the call back function `DOpedgene`. `DOpedgene` converts the raw genotype
+encodings,  0x10001, 0x10002 (or 0x20001), and 0x20002 to the values 0, 1 and 2 (or 2, 1, 0)
+if 0x10001 is the
 genotype for the allele with the minor allele frequency.  Then it runs `pedgene`. 
 The results are automatically stored
 in a data frame with "observations": prefix of chromosome, gene,
@@ -1103,8 +1116,8 @@ genotype matrix is empty and Mega2SKAT will issue a warning.  If a
 marker has no variation, Mega2SKAT will omit it, if the variable
 allMarkers is FALSE.  Mega2SKAT will include it, if allMarkers is
 TRUE, but SKAT will more than likely issue a warning.  The Mega2SKAT
-function also defines a callback function that converts the genotype
-information from the forms 1/1, 1/2, and 2/2 to 0, 1, and 2 with the
+function also defines a callback function that converts the raw genotype
+information 0x10001, 0x10002 (or 0x20001) and 0x20002 to 0, 1, and 2 with the
 major allele (flipped if necessary to be) 0 and then calls the
 specified "skat" function with the required arguments.  Finally, the
 callback function stores the results.
@@ -1198,8 +1211,8 @@ directory vcfr. Below, we assume that a Mega2 database was stored in
 the environment, `ENV`. If this is not the case, supply to Mega2VCF a
 named argument, `envir`, set to the environment you wish to use. (You
 will also have to change the references to the `markers` data frame,
-below, from `ENV`$markers to
-"<environment name>"$markers.)
+below, from `ENV`\$markers to
+"environment name"\$markers.)
 
 Note that Mega2VCF will create the .vcf file as well as a
 .fam file (in linkage format), a .phe file (phenotypes) and a few

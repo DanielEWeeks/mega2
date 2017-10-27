@@ -4,7 +4,7 @@
 \alias{applyFnToGenes}
 \title{apply a function to the genotypes (markers) in each gene transcript and/or base pair range}
 \usage{
-applyFnToGenes(op           = function (geno, markers, range, envir) {},
+applyFnToGenes(op           = function (markers, range, envir) {},
                genes_arg    = NULL,
                ranges_arg   = matrix(ncol = 3, nrow = 0),
                chrs_arg     = vector("integer", 0),
@@ -14,10 +14,9 @@ applyFnToGenes(op           = function (geno, markers, range, envir) {},
                envir        = ENV)
 }
 \arguments{
-\item{op}{Is a function of four arguments.  It will be called repeatedly by
+\item{op}{Is a function of three arguments.  It will be called repeatedly by
 \code{applyFnToGenes} in a try/catch context.  The arguments are:
 \describe{
-\item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
 \item{markers}{Marker data for each marker selected.  A marker is a data frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
@@ -78,7 +77,7 @@ This function generates base pair ranges from its input arguments.
  ranges are generated, \code{applyFnToRanges} is called to find all the
  rows (i.e. markers) from the \emph{markers} data frame that fall in each range.  For these
  markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
- each range with the arguments: genotypes matrix, markers, range, and 'environment'.
+ each range with the arguments: markers, range, and 'environment'.
 }
 \note{
 If you want subsequent calls to \code{op} to share information, data can be placed in
@@ -88,10 +87,10 @@ If you want subsequent calls to \code{op} to share information, data can be plac
   db = system.file("exdata", "seqsimm.db", package="Mega2R")
   ENV = read.Mega2DB(db)
 
-  show = function(g, m, r, e) {
+  show = function(m, r, e) {
       print(r)
       print(m)
-      print(head(g))
+      print(head(getgenotypes(m, envir = e)))
   }
 
    # apply function "show" to all transcripts on genes ELL2 and CARD15

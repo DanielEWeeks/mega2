@@ -43,7 +43,7 @@ Execute the SKAT function on the first \emph{gs} default gene transcripts (gs = 
 }
 \note{
 The \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
- \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
+ \code{SKAT3arg} is defined for the 3 argument callback function which in turn calls
  \code{DOSKAT} with the appropriate arguments (including those additional to the
  \code{Mega2SKAT} function).
 }

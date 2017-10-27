@@ -4,13 +4,9 @@
 \alias{DOSKAT}
 \title{SKAT call back function}
 \usage{
-DOSKAT(geno_arg, markers_arg, range_arg, envir, ...)
+DOSKAT(markers_arg, range_arg, envir, ...)
 }
 \arguments{
-\item{geno_arg}{A character matrix with one row per \emph{fam} pedigree member and one column
-foreach marker in markers_arg.
-Each cell contains the two characters indicating the nucleotides for the marker.}
-
 \item{markers_arg}{a data.frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
@@ -33,8 +29,8 @@ a chromosome number, a start base pair value, and an end base pair value.}
 None
 }
 \description{
-Convert the genotype allele  patterns of 1/1, 1/2 (and 2/1) and 2/2 in the genotype matrix
- to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
+Convert the genotypesraw() allele patterns of 0x10001, 0x10002 (or 0x20001), 0x20002, 0
+ to the numbers 0, 1, 2, 9 for each marker. (Reverse, the order iff allele "1" has the
  minor allele frequency.)  Ignore markers that have no variants (unless allMarkers is TRUE).
  Finally, invoke \code{SKAT} with the converted genotype matrix, Null model saved in envir$obj,
  and any additionally supplied arguments.
@@ -58,6 +54,7 @@ Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", gs=1:1)
 # called to set up the environment for DOSKAT to run.  You should ignore DOSKAT
 # and use Mega2SKAT instead
 #
+ENV$verbose = TRUE
 applyFnToRanges(DOSKAT, ENV$refRanges[50:60, ], ENV$refIndices)
 
 }

@@ -52,10 +52,10 @@ tst10 = function(ENV, genes = c("ELL2", "CARD15"), type = "TX", fuzz = 0) {
     print("## test latest applyFnToGenes")
     
     mkfam(envir = ENV)
-    show = function(g, m, r, e) {
+    show = function(m, r, e) {
         print(r)
         print(m)
-        print(head(g))
+        print(head(getgenotypes(m)))
     }
     applyFnToGenes(show, genes = genes, type = type, fuzz = fuzz,
               matrix(c(11, 50000000, 50100000,

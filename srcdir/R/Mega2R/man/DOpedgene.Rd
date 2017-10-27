@@ -4,12 +4,9 @@
 \alias{DOpedgene}
 \title{pedgene call back function}
 \usage{
-DOpedgene(geno_arg, markers_arg, range_arg, envir = ENV)
+DOpedgene(markers_arg, range_arg, envir = ENV)
 }
 \arguments{
-\item{geno_arg}{A character matrix with one row per \emph{fam} pedigree member and one column for  each marker in
-markers_arg.  Each cell contains the two characters indicating the nucleotides for the marker.}
-
 \item{markers_arg}{a data.frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
@@ -30,9 +27,9 @@ a chromosome number, a start base pair value, and an end base pair value.}
 None
 }
 \description{
-First, ignore call backs that have less than two markers.  Second, convert the genotypes
- patterns of 1/1, 1/2 (and 2/1) and 2/2 from the genotype matrix
- to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
+First, ignore call backs that have less than two markers.  Second, convert the genotypesraw()
+ patterns of 0x10001, 0x10002 (or 0x20001), 0x20002, 0 from the genotype matrix
+ to the numbers 0, 1, 2, 0 for each marker. (Reverse, the order iff allele "1" has the
  minor allele frequency.)  Next, prepend the pedigree and person columns of the family data
  to this modified genotype matrix.  Finally, invoke \code{pedgene} with the family data and
  genotype matrix for several different weights.  Save the kernel and burden, value and p-value for each

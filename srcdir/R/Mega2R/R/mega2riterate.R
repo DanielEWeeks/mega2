@@ -218,10 +218,10 @@ read.Mega2DB = function(db, ...) {
 #'  ranges are generated, \code{applyFnToRanges} is called to find all the
 #'  rows (i.e. markers) from the \emph{markers} data frame that fall in each range.  For these
 #'  markers, a matrix of the genotypes is generated.  Finally, the \code{op} function is called for
-#'  each range with the arguments: genotypes matrix, markers, range, and 'environment'.
+#'  each range with the arguments: markers, range, and 'environment'.
 #'
 #' @usage
-#' applyFnToGenes(op           = function (geno, markers, range, envir) {},
+#' applyFnToGenes(op           = function (markers, range, envir) {},
 #'                genes_arg    = NULL,
 #'                ranges_arg   = matrix(ncol = 3, nrow = 0),
 #'                chrs_arg     = vector("integer", 0),
@@ -230,10 +230,9 @@ read.Mega2DB = function(db, ...) {
 #'                fuzz_arg     = 0,
 #'                envir        = ENV)
 #'
-#' @param op Is a function of four arguments.  It will be called repeatedly by
+#' @param op Is a function of three arguments.  It will be called repeatedly by
 #' \code{applyFnToGenes} in a try/catch context.  The arguments are:
 #' \describe{
-#' \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
 #' \item{markers}{Marker data for each marker selected.  A marker is a data frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
@@ -297,10 +296,10 @@ read.Mega2DB = function(db, ...) {
 #'   db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #'   ENV = read.Mega2DB(db)
 #'
-#'   show = function(g, m, r, e) {
+#'   show = function(m, r, e) {
 #'       print(r)
 #'       print(m)
-#'       print(head(g))
+#'       print(head(getgenotypes(m, envir = e)))
 #'   }
 #'
 #'    # apply function "show" to all transcripts on genes ELL2 and CARD15
@@ -318,7 +317,7 @@ read.Mega2DB = function(db, ...) {
 #'    applyFnToGenes(show, chrs_arg=c(24, 26))
 #'
 #'
-applyFnToGenes = function (op = function (geno, markers, range, envir) {},
+applyFnToGenes = function (op = function (markers, range, envir) {},
                            genes_arg = NULL,
                            ranges_arg  = matrix(ncol = 3, nrow = 0),
                            chrs_arg  = vector("integer", 0),
@@ -552,19 +551,18 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #' First, for each range, determine the markers that fall between the start and end
 #' base pair of the range.  Then, for each set of
 #'  markers generate a matrix of the genotypes of those markers.  Finally, the \code{op} function is called for
-#'  each range with the arguments: genotypes matrix, markers, range, and 'environment'.
+#'  each range with the arguments: markers, range, and 'environment'.
 #'
 #' @usage
-#' applyFnToRanges(op          = function (geno, markers, range, envir) {},
+#' applyFnToRanges(op          = function (markers, range, envir) {},
 #'                 ranges_arg  = NULL,
 #'                 indices_arg = NULL,
 #'                 fuzz_arg    = 0,
 #'                 envir       = ENV)
 #'
-#' @param op Is a function of four arguments.  It will be called repeatedly by
+#' @param op Is a function of three arguments.  It will be called repeatedly by
 #' \code{applyFnToRanges} in a try/catch context.  The arguments are:
 #' \describe{
-#' \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
 #' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
@@ -604,10 +602,10 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #'   db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #'   ENV = read.Mega2DB(db)
 #'
-#'   show = function(g, m, r, e) {
+#'   show = function(m, r, e) {
 #'       print(r)
 #'       print(m)
-#'       print(head(g))
+#'       print(head(getgenotypesraw(m, envir = e)))
 #'   }
 #'
 #'    # apply function "show" to all genotypes on chromosomes 1 for two base pair
@@ -628,7 +626,7 @@ setAnnotations = function (txdb, entrezGene, envir = ENV) {
 #'                            ncol = 4, nrow = 2, byrow = TRUE),
 #'                    indices_arg = 1:4)
 #'
-applyFnToRanges = function (op          = function (geno, markers, range, envir) {},
+applyFnToRanges = function (op          = function (markers, range, envir) {},
                             ranges_arg  = NULL,
                             indices_arg = NULL,
                             fuzz_arg    = 0,
@@ -697,8 +695,7 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
             if (i == 0) next
 
              markersub = Umarkersub[[i]]
-             geno = getgenotypes(markersub, envir = envir)
-             tryFn(op, geno, markersub, ranges[i, ], envir)
+             tryFn(op, markersub, ranges[i, ], envir)
         }
     }
 }
@@ -710,10 +707,10 @@ applyFnToRanges = function (op          = function (geno, markers, range, envir)
 #        .Internal(.dfltWarn(message, call))
 #    }, muffleWarning = function() NULL)
 
-tryFn1 = function(op, geno, markersub, ranges, envir) {
+tryFn1 = function(op, markersub, ranges, envir) {
     withRestarts( #aka    tryCatch
         withCallingHandlers (
-            { op(geno, markersub, ranges, envir) },
+            { op(markersub, ranges, envir) },
               error   = function(e) {
                   message("tryFn() <simpleError:: ", conditionMessage(e), ">")
                   invokeRestart("abort")
@@ -729,10 +726,10 @@ tryFn1 = function(op, geno, markersub, ranges, envir) {
     )
 }
 
-tryFn = function(op, geno, markersub, ranges, envir) {
+tryFn = function(op, markersub, ranges, envir) {
     tryCatch(
         withCallingHandlers (
-            { op(geno, markersub, ranges, envir) },
+            { op(markersub, ranges, envir) },
               warning = function(w) {
                   message("tryFn() <simpleWarning:: ", conditionMessage(w), ">")
                   invokeRestart("muffleWarning")
@@ -749,17 +746,16 @@ tryFn = function(op, geno, markersub, ranges, envir) {
 #'
 #' @description
 #'  A matrix of the genotypes for all the specified markers is generated.  Then, the call back function, \code{op},
-#'   is called with the genotypes, markers, NULL (for the range), and the 'environment'.
+#'   is called with the markers, NULL (for the range), and the 'environment'.
 #'
 #' @usage
-#' applyFnToMarkers(op      = function (geno, markers, range, envir) {},
+#' applyFnToMarkers(op      = function (markers, range, envir) {},
 #'                 markers_arg,
 #'                 envir = ENV)
 #'
-#' @param op Is a function of four arguments.  It will be called once by
+#' @param op Is a function of three arguments.  It will be called once by
 #' \code{applyFnToMarkers} in a try/catch context.  The arguments are:
 #' \describe{
-#' \item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
 #' \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 observations:
 #' \describe{
 #' \item{locus_link}{is the ordinal ranking of this marker among all loci}
@@ -793,22 +789,21 @@ tryFn = function(op, geno, markersub, ranges, envir) {
 #'   db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #'   ENV = read.Mega2DB(db)
 #
-#'   show = function(g, m, r, e) {
+#'   show = function(m, r, e) {
 #'       print(r)
 #'       print(m)
-#'       print(head(g))
+#'       print(head(getgenotypes(m, envir = e)))
 #'   }
 #'
-#'    # apply function "show" to all genotypes in chromosome 1, 2, and 3
+#'    # apply function "show" to all genotypes > 5,000,000 bp
 #'    applyFnToMarkers(show, ENV$markers[ENV$markers$position > 5000000,])
 #'
 #'
-applyFnToMarkers = function (op = function (geno, markers, range, envir) {},
+applyFnToMarkers = function (op = function (markers, range, envir) {},
                              markers_arg,
                              envir = ENV) {
 
     if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
-    geno = getgenotypes(markers_arg, envir = envir)
-    tryFn(op, geno, markers_arg, NULL, envir)
+    tryFn(op, markers_arg, NULL, envir)
 }

@@ -25,6 +25,20 @@
 # 
 # ===========================================================================
 
+# devtools::document("Mega2R")
+# devtools::install("Mega2R")
+# devtools::check("Mega2R")
+
+# devtools::run_examples("Mega2R")
+# R CMD Rd2pdf Mega2R
+
+# devtools::build_vignettes("Mega2R")
+
+
+##../RR/cran_run
+
+
+
 source("../RR/tst.R")
 
 source("../RR/tst1.R")

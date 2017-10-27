@@ -4,15 +4,14 @@
 \alias{applyFnToMarkers}
 \title{apply a function to the genotypes from a set of markers}
 \usage{
-applyFnToMarkers(op      = function (geno, markers, range, envir) {},
+applyFnToMarkers(op      = function (markers, range, envir) {},
                 markers_arg,
                 envir = ENV)
 }
 \arguments{
-\item{op}{Is a function of four arguments.  It will be called once by
+\item{op}{Is a function of three arguments.  It will be called once by
 \code{applyFnToMarkers} in a try/catch context.  The arguments are:
 \describe{
-\item{geno}{A matrix with one row per \emph{fam} pedigree member and one column for each marker that is selected.  Each datum is two characters indicating the genotype for the marker/member.}
 \item{markers}{Marker data for each marker in \strong{geno}.  A marker is a data frame with the following 5 observations:
 \describe{
 \item{locus_link}{is the ordinal ranking of this marker among all loci}
@@ -44,18 +43,18 @@ None
 }
 \description{
 A matrix of the genotypes for all the specified markers is generated.  Then, the call back function, \code{op},
-  is called with the genotypes, markers, NULL (for the range), and the 'environment'.
+  is called with the markers, NULL (for the range), and the 'environment'.
 }
 \examples{
   db = system.file("exdata", "seqsimm.db", package="Mega2R")
   ENV = read.Mega2DB(db)
-  show = function(g, m, r, e) {
+  show = function(m, r, e) {
       print(r)
       print(m)
-      print(head(g))
+      print(head(getgenotypes(m, envir = e)))
   }
 
-   # apply function "show" to all genotypes in chromosome 1, 2, and 3
+   # apply function "show" to all genotypes > 5,000,000 bp
    applyFnToMarkers(show, ENV$markers[ENV$markers$position > 5000000,])
 
 

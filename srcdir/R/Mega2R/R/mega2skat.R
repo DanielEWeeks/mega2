@@ -79,7 +79,9 @@ init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
                                      skat = numeric(0),
                                      stringsAsFactors = FALSE)
 
-    envir$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 9), nrow = 5, ncol = 2)
+#   envir$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 9), nrow = 5, ncol = 2)
+    envir$mt = matrix(c(0x10001, 0x10002, 0x20001, 0x20002, 0,    0, 1, 1, 2, 0),
+                      nrow = 5, ncol = 2)
 
     envir$allMarkers = allMarkers
 
@@ -127,7 +129,7 @@ init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
 #'
 #' @note
 #'  The \code{SKAT_Null_Model} is called if the formula, f, is not NULL.  A helper function
-#'  \code{SKAT4arg} is defined for the 4 argument callback function which in turn calls
+#'  \code{SKAT3arg} is defined for the 3 argument callback function which in turn calls
 #'  \code{DOSKAT} with the appropriate arguments (including those additional to the
 #'  \code{Mega2SKAT} function).
 #'
@@ -153,31 +155,28 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
     if (! is.null(f))
         envir$obj = SKAT_Null_Model(f, out_type = ty)
     envir$skat = skat
-    SKAT4arg = function(geno_arg, markers_arg, range_arg, envir) {
+    SKAT3arg = function(markers_arg, range_arg, envir) {
 #       do.call(DOSKAT, (list(geno_arg, markers_arg, range_arg, envir, ...)) )
-        DOSKAT(geno_arg, markers_arg, range_arg, envir, ...)
+        DOSKAT(markers_arg, range_arg, envir, ...)
     }
 
     if (is.null(genes))
-        applyFnToRanges(SKAT4arg, envir$refRanges[gs, ], envir$refIndices, envir = envir)
+        applyFnToRanges(SKAT3arg, envir$refRanges[gs, ], envir$refIndices, envir = envir)
     else
-        applyFnToGenes(SKAT4arg, genes, envir = envir)
+        applyFnToGenes(SKAT3arg, genes, envir = envir)
 }
 
 #' SKAT call back function
 #'
 #' @description
-#'  Convert the genotype allele  patterns of 1/1, 1/2 (and 2/1) and 2/2 in the genotype matrix
-#'  to the numbers 0, 1, 2 for each marker. (Reverse, the order iff allele "1" has the
+#'  Convert the genotypesraw() allele patterns of 0x10001, 0x10002 (or 0x20001), 0x20002, 0
+#"  from the genotype matrix
+#'  to the numbers 0, 1, 2, 9 for each marker. (Reverse, the order iff allele "1" has the
 #'  minor allele frequency.)  Ignore markers that have no variants (unless allMarkers is TRUE).
 #'  Finally, invoke \code{SKAT} with the converted genotype matrix, Null model saved in envir$obj,
 #'  and any additionally supplied arguments.
 #'  Save information about the range and the p.value calculated by \code{SKAT}
 #'  in \emph{envir$SKAT_results}.
-#'
-#' @param geno_arg A character matrix with one row per \emph{fam} pedigree member and one column
-#' foreach marker in markers_arg.
-#' Each cell contains the two characters indicating the nucleotides for the marker.
 #'
 #' @param markers_arg a data.frame with the following 5 observations:
 #' \describe{
@@ -222,15 +221,17 @@ Mega2SKAT = function (f, ty, gs = 1:100, genes=NULL, skat = SKAT::SKAT, envir = 
 #' # called to set up the environment for DOSKAT to run.  You should ignore DOSKAT
 #' # and use Mega2SKAT instead
 #' #
-#" ENV$verbose = TRUE
+#' ENV$verbose = TRUE
 #' applyFnToRanges(DOSKAT, ENV$refRanges[50:60, ], ENV$refIndices)
 #'
 # SKAT(<formula>, <out_type>, kernel = "linear.weighted", weights.beta=c(0.5,0.5))
 #
-DOSKAT = function(geno_arg, markers_arg, range_arg, envir, ...) {
+DOSKAT = function(markers_arg, range_arg, envir, ...) {
 
     if (is.null(range_arg))
         stop("DOSKAT: range is not defined.", calls. = FALSE)
+
+    geno_arg = getgenotypesraw(markers_arg, envir);
 
     lastp1 = nrow(envir$SKAT_results) + 1
 
