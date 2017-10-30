@@ -671,11 +671,8 @@ is stored in the environment as shown below:
 
 Of course, you can change this database. Suppose we want to use build “hg18”, we would run:
 
-```{r,setannotations}
+```
     setAnnotations("TxDb.Hsapiens.UCSC.hg18.knownGene", "org.Hs.eg.db")
-
-    ENV$txdb
-    ENV$entrezGene
 ```
 
 Note: This gene also has transcript uc001akz.2 but its range is included within the uc001aky.1
