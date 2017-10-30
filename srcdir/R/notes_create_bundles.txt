@@ -34,7 +34,7 @@ Thank you for the suggestion to create working examples.
 
 As suggested, we have now added working Examples where feasible.
 
-All of these examples except one run in less than 5 seconds on an early 2015 Mac Book Air with a 2.2 GHz Intel Core i7 processor; the exception took 5.71 seconds.  As this is only slightly longer than the requested < 5 seconds, we hope this would be acceptable to CRAN.
+All of these examples run in less than 5 seconds on an early 2015 Mac Book Air with a 2.2 GHz Intel Core i7 processor.  Hopefully they will now run fast enough on your slower test machines.
 
 Regarding this, these words in the DESCRIPTION are spelled correctly:
 
@@ -70,19 +70,19 @@ Found the following (possibly) invalid URLs:
       	SSL certificate problem: unable to get local issuer certificate
       	(Status without verification: OK)
 
-The second Note has to do with a number of exercises that took longer than 5 seconds on this very slow virtual machine; the longest of which took 17.987 seconds (elapsed) time:
+The second Note has to do with two exercises that took longer than 5 seconds on this very slow virtual machine:
 
 * checking examples ... NOTE
-NOTE
 Examples with CPU or elapsed time > 5s
-                      user system elapsed
-DOSKAT              17.612  0.296  17.987
-...
+              user system elapsed
+Mega2SKAT    5.324  0.024   5.366
+Mega2GenABEL 5.056  0.000   5.074
+
 
 
 On OS X, there were no ERRORs or WARNINGs. 
 
-There was 2 NOTEs, the first was about this being a New submission to CRAN, and the second was about one single Example taking longer than 5 seconds:  the DOSKAT exercise took 5.71 seconds.  As this is only slightly longer than the requested < 5 seconds, we hope this would be acceptable to CRAN.
+There was 1 NOTE, about this being a New submission to CRAN.
 
 On OS X, it did not complain about the SSL certificate problem discussed above.
 
