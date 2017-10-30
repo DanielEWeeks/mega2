@@ -34,24 +34,26 @@ Thank you for the suggestion to create working examples.
 
 As suggested, we have now added working Examples where feasible.
 
-All of these examples except one run in less than 5 seconds on an early 2015 Mac Book Air with a 2.2 GHz Intel Core i7 processor; the exception took 5.71 seconds.  As this is only slightly longer than
-the requested < 5 seconds, we hope this would be acceptable to CRAN. 
+All of these examples except one run in less than 5 seconds on an early 2015 Mac Book Air with a 2.2 GHz Intel Core i7 processor; the exception took 5.71 seconds.  As this is only slightly longer than the requested < 5 seconds, we hope this would be acceptable to CRAN.
 
+Regarding this, these words in the DESCRIPTION are spelled correctly:
+
+Possibly mis-spelled words in DESCRIPTION:
+  VCF (18:25)
+  genotype (9:41, 11:28)
+  gwaa (20:6)
+  
 
 
 
 ## Test environments
-* Ubuntu 16.04.1, R devel (2017-10-23 r73589)
+* Ubuntu 16.04.1, R devel (2017-10-30 r73642)
 * OS X 10.12.6, R 3.4.2 (2017-09-28)
 
 ## R CMD check results
-On Ubuntu, the status is reported as "2 NOTEs".  The first Note mentions a possibly
-invalid URL.  This has to do with an SSL certificate provided by my
-University which newer browsers do not like.  We are trying to get this
-updated, but as this is at the University level, this make take some
-time. 
+On Ubuntu, the status is reported as "2 NOTEs".  The first Note mentions a possibly invalid URL.  This has to do with an SSL certificate provided by my University which newer browsers do not like.  We are trying to get this updated, but as this is at the University level, this make take some time. 
 
-* using R Under development (unstable) (2017-10-23 r73589)
+* using R Under development (unstable) (2017-10-30 r73642)
 * using platform: x86_64-pc-linux-gnu (64-bit)
 ...
 * this is package ‘Mega2R’ version ‘1.0.0’
@@ -68,9 +70,7 @@ Found the following (possibly) invalid URLs:
       	SSL certificate problem: unable to get local issuer certificate
       	(Status without verification: OK)
 
-The second Note has to do with a number of exercises that took longer than
-5 seconds on this very slow virtual machine; the longest of which took 17.987 seconds
-(elapsed) time:
+The second Note has to do with a number of exercises that took longer than 5 seconds on this very slow virtual machine; the longest of which took 17.987 seconds (elapsed) time:
 
 * checking examples ... NOTE
 NOTE
@@ -82,13 +82,9 @@ DOSKAT              17.612  0.296  17.987
 
 On OS X, there were no ERRORs or WARNINGs. 
 
-There was 2 NOTEs, the first was about this being a New submission to CRAN,
-and the second was about one single Example taking longer than 5 seconds:  the
-DOSKAT exercise took 5.71 seconds.  As this is only slightly longer than
-the requested < 5 seconds, we hope this would be acceptable to CRAN. 
+There was 2 NOTEs, the first was about this being a New submission to CRAN, and the second was about one single Example taking longer than 5 seconds:  the DOSKAT exercise took 5.71 seconds.  As this is only slightly longer than the requested < 5 seconds, we hope this would be acceptable to CRAN.
 
-On OS X, it did not complain about the SSL certificate problem
-discussed above.
+On OS X, it did not complain about the SSL certificate problem discussed above.
 
 
 
