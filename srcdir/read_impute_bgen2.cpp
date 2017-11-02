@@ -96,11 +96,15 @@ void BgenParserGenotypeReadHelper::genotypes_init()
        ~noop()  {}
         void operator() ( std::string const& id ) { }
     };
+    noop xx(this);
+    get_sample_ids( xx );
+#if 0
     get_sample_ids(
 /*
         [this]( std::string const& id ) { }
 */
         noop(this) );
+#endif
 }
 
 bool BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 
