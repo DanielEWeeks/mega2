@@ -121,6 +121,7 @@ knitr
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1820302391 "Robert V. Baron"
 \end_header
 
 \begin_body
@@ -320,7 +321,7 @@ begin{abstract}
 \begin_layout Standard
 The standalone C++ Mega2 program has been facilitating data-reformatting
  for linkage and association analysis programs since 2000.
- Support for more analysis programs have been added over time.
+ Support for more analysis programs has been added over time.
  Currently, Mega2 converts data from several different genetic analysis
  data formats (including PLINK, VCF, BCF, IMPUTE2) into the specific data
  requirements for over 40 commonly used linkage and association analysis
@@ -328,7 +329,7 @@ The standalone C++ Mega2 program has been facilitating data-reformatting
  Recently, Mega2 has been enhanced to use a SQLite database as an intermediate
  data representation.
  Additionally, Mega2 now stores bialleleic genotype data in a highly compressed
- form, much like that of the GenABEL R facility and the PLINK binary format.
+ form, like that of the GenABEL R package and that of the PLINK binary format.
 \end_layout
 
 \begin_layout Standard
@@ -347,7 +348,8 @@ Our Mega2R package now makes it easy to load SQLite3 Mega2 databases directly
  gwaa.data-class objects.
  The Mega2 program and the Mega2R R package are both open source and are
  freely available, along with extensive documentation and a 'quick-start'
- tutorial, from our https://watson.hgen.pitt.edu/register web site.
+ tutorial, from our https://watson.hgen.pitt.edu/register web site for the
+ C++ code and https://CRAN.R-project.org/package=Mega2R for the R code.
 \end_layout
 
 \begin_layout Standard
@@ -561,7 +563,11 @@ key "Team:2017aa"
  Also, researchers regularly use R to develop new analysis algorithms because
  R has been used in the past to develop statistical programs and has many
  useful libraries.
- We describe here our Mega2R package, which makes it easy to load SQLite3
+ 
+\end_layout
+
+\begin_layout Standard
+We describe here our Mega2R package, which makes it easy to load SQLite3
  Mega2 databases directly into R as data frames for further analysis and
  manipulation.
  In addition, we document several R functions that illustrate how to use
@@ -682,9 +688,13 @@ The code above, assigns the local variable, 'envir' the default value 'ENV'.
  Thus, if 'envir' is not provided in the function call, R will use the default
  assignment and look up the value of 'ENV'.
  This "hack" does not handle the case where `ENV` is defined in an outer
- frame which is not the global environment.
- In this situation, we want to search backwards/upwards from the calling
- frame to find the first `ENV` and use it.
+ frame, not the global environment.
+ In this situation, we
+\change_deleted -1820302391 1510160167
+ 
+\change_unchanged
+ search backwards from the calling frame to find the first `ENV` and use
+ it.
  
 \end_layout
 
@@ -1221,7 +1231,8 @@ applyFnToRanges
 \emph default
  may be given a range argument and a selector argument which will cause
  it to use the ranges supplied rather than the default.
- These two arguments are the same as provided to 
+ These two arguments are the same format as the corresponding arguments
+ provided to 
 \emph on
 setRanges
 \emph default
@@ -1233,7 +1244,7 @@ setRanges
 \emph on
 applyFnToRanges
 \emph default
- requires a call back function of three arguments: the first is a data frame
+ requires a callback function of three arguments: the first is a data frame
  of the markers in the transcript, the second is a single row from the data
  frame that defines the range/transcript (minimally it has a name, ID, start
  position, end position, and chromosome), and the third argument is the
@@ -1246,7 +1257,7 @@ R environment
 \end_inset
 
  that contains all the Mega2R data frames.
- The call back function can apply whatever analysis is required and it can
+ The callback function can apply whatever analysis is required and it can
  access the other data frames available in the 
 \begin_inset Quotes eld
 \end_inset
@@ -1264,7 +1275,7 @@ R environment
 \end_inset
 
 .
- Typically the callback function will call either 
+ Typically, the callback function will call either 
 \emph on
 getgenotypes
 \emph default
@@ -1290,7 +1301,7 @@ Mega2R also loads a list of genes and their transcripts from the Bioconductor
  The latter gives start position, end position and chromosome for each transcrip
 t known for every gene.
  You might want to use the transcript data from another build that is available
- at Bioconductor or follow their instructions make your own mapping.
+ at Bioconductor or follow their instructions to make your own mapping.
  The Mega2R function, 
 \emph on
 setAnnotations
@@ -1319,8 +1330,8 @@ applyFnToGenes
 t ranges: on sub-ranges of chromosomes (ranges_arg argument), on the entire
  chromosome (chrs_arg argument), and/or on an arbitrary list of markers
  (markers_args argument).
- The call back function of three arguments and list of ranges is passed
- to 
+ The callback function of three arguments and list of ranges is passed to
+ 
 \emph on
 applyFnToRanges
 \emph default
@@ -1333,7 +1344,7 @@ applyFnToRanges
 \begin_inset Quotes erd
 \end_inset
 
-, is passed as the only gene argument, all of the ranges for all of transcripts
+, is passed as the only gene argument, the ranges for all of transcripts
  will be chosen.
 \end_layout
 
@@ -1356,8 +1367,11 @@ applyFnToMarkers
 marker
 \series default
  data frame.
- It creates a genotype matrix for these markers and then invokes the call
- back function with the genotype matrix, the marker argument data frame,
+ It
+\change_deleted -1820302391 1510160183
+ 
+\change_unchanged
+ then invokes the callback function with the marker argument data frame,
  NULL, and the 
 \begin_inset Quotes eld
 \end_inset
@@ -1368,9 +1382,9 @@ R environment
 
 .
  (The range is NULL because there is no range information; this implies
- that the callback function for applyFnToMarkers
+ that the callback function for 
 \emph on
- 
+applyFnToMarkers 
 \emph default
 must check for a range value of NULL)
 \end_layout
@@ -1398,7 +1412,7 @@ getgenotypesraw
 \emph default
  return a matrix of nucleotide pairs or a matrix of encoded integers with
  a column for each marker and containing a row per sample.
- Both functions take an argument which is rows of the 
+ Both functions take arguments: rows of the 
 \series bold
 marker
 \series default
@@ -1461,7 +1475,7 @@ getgenotypesraw
 \begin_layout Standard
 Below is a brief overview of the several processing functions that Mega2R
  makes available and that illustrate how to build new functions using Mega2R.
- A much more detailed presentation may be found in the 
+ A much more detailed example may be found in the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1544,8 +1558,8 @@ dbmega2_import
 \series bold
 fam
 \series default
- data frame; it must eliminate samples where the case/control is not known
- which is required by 'pedgene'.
+ data frame; it must eliminate samples where the case/control is not known.
+ This is required by 'pedgene'.
  In addition, 
 \emph on
 init_pedgene 
@@ -1556,20 +1570,25 @@ computes and saves some state into the environment to be used later.
 pedgene,
 \emph default
  requires a transcoding of the raw genotypes representations of 1/1, 1/2
- and 2/2 to 0, 1, and 2 respectively; plus the alleles must be flipped so
- that 1 is the allele with the major allele frequency.
- DOpedgene transforms its genotype input matrix and then it calls the 
+ (and 2/1), and 2/2 (with raw encodings: 65537, 65538 (and 131073), 131074)
+ to 0, 1, and 2 respectively; plus the alleles must be flipped so that 1
+ is the major allele.
+ The callback function, 
+\emph on
+DOpedgene
+\emph default
+, transforms the raw genotype matrix and then it calls the 
 \emph on
 pedgene
 \emph default
  function with several different marker weights.
  It returns the p-value of the kernel and burden association statistics
  for each weight.
- The results are stored in a data frame in the environment, pedgene_results.
+ The results are appended to a data frame in the environment, pedgene_results.
 \end_layout
 
 \begin_layout Standard
-Note: The call back function, 
+Note: The callback function, 
 \emph on
 DOpedgene
 \emph default
@@ -1644,9 +1663,9 @@ init_SKAT
 \emph default
  behaves very much like 
 \emph on
-init_pedgene,
+init_pedgene;
 \emph default
- in addition it computes a phenotype data frame.
+ in addition, it computes a phenotype data frame.
  The Mega2SKAT function has the signature:
 \end_layout
 
@@ -1678,7 +1697,7 @@ skat
 ...
 
 \series default
- arguments are place holders for any additional arguments that the particular
+ arguments are place holders for any additional arguments that the chosen
  
 \series bold
 skat
@@ -2054,12 +2073,11 @@ vcf
 \series default
  file a chunk at a time, where a chunk contains a relatively small number
  of markers (currently 1000).
- We generate the genotype matrix for each chunk then append the results
- for the chunk (of markers) to the .vcf file.
+ We generate the genotype matrix for a chunk then append the results for
+ the chunk (of markers) to the .vcf file.
  Then, we get a new chunk and repeat.
  This looping strategy might prove useful for other situations where the
- results can be written incrementally.
- 
+ results can be written incrementally, a block of markers at a time.
 \end_layout
 
 \begin_layout Subsection
@@ -2186,22 +2204,60 @@ name "sec:Examples"
 \begin_layout Standard
 The rest of this document shows some complete examples of Mega2R package
  use.
- First, we illustrate the base functions of the package, Mega2R.
- Then we demonstrate several extended functions, 
+ First, we illustrate the base functions of the Mega2R package (iteration
+ and get genotype).
+ Then we demonstrate one of the extended functions, 
 \emph on
-Mega2pedgene, Mega2SKAT, Mega2VCF and Mega2GenABEL
+Mega2pedgene.
+
 \emph default
+ The other extended functions,
+\emph on
+ Mega2SKAT, Mega2VCF and Mega2GenABEL
+\emph default
+ are illustrated in the Mega2R package vignette 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://cran.r-project.org/web/packages/Mega2R/vignettes/mega2rtutorial.html
+\end_layout
+
+\end_inset
+
 .
- Note: Not all the arguments and details of the functions are discussed
- in these examples, if you need programming details, look at the Mega2R
- CRAN package documentation or the actual code in the git repository.
+ Further, details of all the Mega2R functions are in 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://cran.r-project.org/web/packages/Mega2R/Mega2R.pdf
+\end_layout
+
+\end_inset
+
+.
+ Finally, the package source can be obtained from CRAN 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=Mega2R
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
 
 \series bold
-The R code in the examples below was actually run during the creation of
- this document using the knitr 
+The R code in the examples below was executed during the creation of this
+ document using the knitr 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "knitrm,knitrc,knitrb"
@@ -2209,6 +2265,10 @@ key "knitrm,knitrc,knitrb"
 \end_inset
 
  R package.
+\end_layout
+
+\begin_layout Subsection
+Simulated Data
 \end_layout
 
 \begin_layout Standard
@@ -2265,7 +2325,7 @@ http://seqsimla.nhri.org.tw/prevalence
  This simulation creates 1,380 samples of 500,000 markers; a bit too much
  for sharing.
  But a bit less than 200,000 markers are actually polymorphic while the
- rest are monomorphic; smaller but the files are still too big.
+ rest are monomorphic; this is smaller but the files are still too big.
  We chose to subsample the latter down to 1,380 people and 1,000 markers.
  These data will be used to illustrate Mega2 and Mega2R operations that
  follow.
@@ -2635,7 +2695,7 @@ tson.hgen.pitt.edu/docs/mega2_html/mega2.html to better understand the interacti
 \begin_layout Standard
 The MEGA2.BATCH.seqsimr file begins with a rather long comment indicating
  the keyword values that may be set and their default value.
- Toward the end of the file, we see the inputs set to 
+ Towards the end of the file, we set the inputs to 
 \series bold
 Mega2r.ped
 \series default
@@ -2945,7 +3005,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<setrange0>>=
+<<setrange0,results="hold">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -2960,7 +3020,7 @@ status open
 
 \end_inset
 
-
+ 
 \end_layout
 
 \begin_layout Standard
@@ -2990,7 +3050,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<setrange1>>=
+<<setrange1,results="hold">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3101,7 +3161,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<setrange2>>=
+<<setrange2,results="hold">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3223,13 +3283,15 @@ applyFnToRanges,
 \emph on
 applyFnToRanges
 \emph default
- function is a call back function.
+ function is a callback function.
  The function is called with three arguments:  the markers in range, the
  selected transcript/range entry and the environment.
- The call back is invoked repeatedly for each transcript range that contains
+ The callback is invoked repeatedly for each transcript range that contains
  any markers.
- The call back function builds a genotype matrix or raw genotype matrix
- for the samples and each marker in the range.
+ If there are no markers contained and the 'verbose' flag is set, a warning
+ will be printed.
+ The callback function needs to build a genotype matrix or raw genotype
+ matrix for the samples and each marker in the range.
  If it is necessary to store information between successive invocations,
  the environment ('envir') can be used.
 \end_layout
@@ -3243,16 +3305,16 @@ show
 \begin_inset Quotes erd
 \end_inset
 
- as the call back function.
+ as the callback function.
  As you can see, all it does is prints its range argument, markers argument
  and the 
 \emph on
 head
 \emph default
- of the genotype matrix and head of the raw genotype matrix , in that order.
+ of the genotype matrix or head of the raw genotype matrix, in that order.
  It also prints a little banner before each argument.
- Finally, it does not print the environment argument value; it would always
- print the same thing.
+ Finally, it does not print the environment argument value; it does not
+ change.
 \end_layout
 
 \begin_layout Standard
@@ -3271,7 +3333,7 @@ status open
 
 \begin_layout Plain Layout
 
-	   print("** Ranges **")
+       print("** Ranges **")
 \end_layout
 
 \begin_layout Plain Layout
@@ -3281,7 +3343,7 @@ status open
 
 \begin_layout Plain Layout
 
-	   print("** Markers **")
+       print("** Markers **")
 \end_layout
 
 \begin_layout Plain Layout
@@ -3291,7 +3353,7 @@ status open
 
 \begin_layout Plain Layout
 
-	   print("** Genotypes **")
+       print("** Genotypes **")
 \end_layout
 
 \begin_layout Plain Layout
@@ -3320,7 +3382,8 @@ status open
 \end_layout
 
 \begin_layout Standard
-A simple example is shown below with the ranges value that was last set.
+A simple example is shown below using the ranges value that were most recently
+ set.
  We see that the ranges named 
 \begin_inset Quotes eld
 \end_inset
@@ -3380,6 +3443,7 @@ applyFnToRanges
  This run is using a different set of ranges and thus finds a different
  set of ranges with markers: viz.
  range8m and range9m.
+ Run this code your self if you can not imagine the results.
 \end_layout
 
 \begin_layout Standard
@@ -3388,7 +3452,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<applyfntoranges2,eval=TRUE>>=
+<<applyfntoranges2,eval=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3472,7 +3536,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<setannotations0>>=
+<<setannotations0, results="hold">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3509,7 +3573,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<setannotations>>=
+<<setannotations, results="hold">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3790,7 +3854,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<getgenotypes,eval=TRUE>>=
+<<getgenotypes,eval=TRUE,results="hold">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3834,7 +3898,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<getgenotypesraw,eval=TRUE>>=
+<<getgenotypesraw,eval=TRUE,results="hold">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3957,7 +4021,8 @@ init_pedgene
 \series bold
 fam
 \series default
- is updated, similar filtering is done to the persons in the 
+ is updated, similar filtering is automatically done to the persons in the
+ 
 \series bold
 phenotype_table
 \series default
@@ -4106,7 +4171,7 @@ where 'txdb' is the name of Bioconductor transcription database, and 'entrezGene
 \end_layout
 
 \begin_layout Subsubsection
-Running pedgene on transcripts
+Running pedgene on ranges
 \end_layout
 
 \begin_layout Standard
@@ -4119,12 +4184,10 @@ Mega2pedgene
 \emph on
 applyFnToRanges
 \emph default
-.) For the seqsimr.db database, the first 100 transcripts finds only one transcrip
-t with several markers.
- (It is found because it is on chromosome 1 and it has a range that overlaps
- with some of the markers in our study.) To make this tutorial exercise run
- faster, we noticed that the identified transcript appeared at transcript
- 54; so we will restrict 
+.) For the seqsimr.db database, the first 100 transcripts contain only one
+ transcript with several markers.
+ To make this tutorial exercise run faster, we noticed that the identified
+ transcript appeared at transcript 54; so we will restrict 
 \emph on
 Mega2pedgene
 \emph default
@@ -4201,8 +4264,8 @@ CEP104 snp24507 789 501 90
 \end_layout
 
 \begin_layout Standard
-The genotype matrix for these markers, along with the markers, the range
- used, and the environment are passed to the call back function 
+The markers, the range used, and the environment are passed to the callback
+ function 
 \emph on
 DOpedgene
 \emph default
@@ -4211,14 +4274,12 @@ DOpedgene
 \emph on
 DOpedgene
 \emph default
- converts the raw genotype representation of 1/1, 1/2 and 2/2 to the values
- 0, 1 and 2 (or 2, 1, 0 if 1/1 is the genotype for the allele with the minor
- allele frequency).
+ converts the raw genotype representation to the values 0, 1 and 2.
  Then it runs 'pedgene'.
  The results are automatically stored in a data frame with "observations":
- prefix data — chromosome, gene, number of markers and base pair range followed
- by 'pedgene' data: kernel and burden, value and p-values, four values for
- each of three weightings of the markers.
+ chromosome, gene, number of markers and base pair range followed by 'pedgene'
+ data: kernel and burden, value and p-values, four values for each of three
+ weightings of the markers.
  These data are saved in the data frame, 'pedgene_results', in the environment.
  They are also printed when 'verbose' is TRUE.
 \end_layout
@@ -4283,19 +4344,8 @@ name "subsec:Running-pedgene-on"
 You may try searching for transcripts of specific genes.
  Here, the default transcript database is "TxDb.Hsapiens.UCSC.hg19.knownGene"
  from Bioconductor.
- Of course you can change it.
- Type:
-\end_layout
-
-\begin_layout LyX-Code
-setAnnotations("txdb", "genedb")
-\end_layout
-
-\begin_layout Standard
-where "txdb" is a string that is the name of transcript database that was
- fetched from Bioconductor, and similarly "genedb" is the name of a Bioconductor
- database that maps a gene id from the input to an entrez gene id.
- You need to install any new database with biocLite, as shown earlier.
+ Of course you can change it, if you install a new database with biocLite,
+ as shown earlier.
 \end_layout
 
 \begin_layout Standard
@@ -4337,12 +4387,36 @@ status open
 
 \begin_layout Plain Layout
 
-<<applyFnToGenes,eval=TRUE>>=
+<<applyFnToGenes,eval=TRUE,messages=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# turn off output & reset results data frame
+\end_layout
+
+\begin_layout Plain Layout
+
+ENV$verbose = FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+ENV$pedgene_results = ENV$pedgene_results[0, ]
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
 
 applyFnToGenes(DOpedgene, genes_arg = c('DISP1', 'AK5'), envir = ENV)
+\end_layout
+
+\begin_layout Plain Layout
+
+print(ENV$pedgene_results)
 \end_layout
 
 \end_inset
@@ -4357,625 +4431,6 @@ DOpedgene
 \emph default
  is to append any new results to the end of the 'pedgene_results' data frame
  in the environment 'envir'.
-\end_layout
-
-\begin_layout Subsection
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:SKAT"
-
-\end_inset
-
- Using Mega2R to carry out automated gene-based association tests using
- SKAT 
-\end_layout
-
-\begin_layout Standard
-Mega2R provides functions that permit one to run the SKAT package to carry
- out gene-based association tests on 
-\color black
-family data looping over selected marker subsets.
- 
-\end_layout
-
-\begin_layout Subsubsection
-Loading a Mega2 database with 
-\emph on
-init_SKAT
-\end_layout
-
-\begin_layout Standard
-The 
-\emph on
-init_SKAT
-\emph default
- function is used to read the Mega2 database and initialize processing.
- This function calls the utility function, 
-\emph on
-dbmega2_import
-\emph default
-, to read the database.
- Then it creates, edits, and rewrites the family data, storing it in the
- data frame, 
-\series bold
-fam
-\series default
-.
- (
-\series bold
-fam
-\series default
- contains data merged from the 
-\series bold
-pedigree_table
-\series default
-, 
-\series bold
-person_table
-\series default
- and 
-\series bold
-phenotype_table
-\series default
-.) 
-\emph on
-init_SKAT
-\emph default
- purges persons from the 
-\series bold
-fam
-\series default
- data frame with unknown case/control status.
- 
-\emph on
-setfam
-\emph default
- sets 
-\series bold
-fam
-\series default
- in the environment and insures that filtering is done to the phenotype_table
- and the genotype_table so they all have the same person_link key values.
- Next, 
-\emph on
-init_SKAT
-\emph default
- decodes the phenotype_table into a simple data frame, 
-\emph on
-phe
-\emph default
-.
- You will definitely want to examine 
-\emph on
-ENV
-\emph default
-$
-\emph on
-phe
-\emph default
- to choose which phenotype to use for the case/control.
- In addition, 
-\emph on
-init_SKAT
-\emph default
- calculates some values that will be used repeatedly and stores them in
- the environment that is returned.
- Finally, 
-\emph on
-init_SKAT
-\emph default
- stores the argument 'allMarkers' which tells later processing to ignore
- markers that show no variation (if FALSE).
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<init_SKAT>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV = init_SKAT("seqsimr.db", verbose = F, allMarkers = F)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-You can run the command with verbose equals TRUE to see details of the database
- as it is loaded:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<init_SKATFALSE, eval=FALSE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV = init_SKAT("seqsimr.db", verbose = T, allMarkers = F)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Gene Ranges and Gene transcripts reminder
-\end_layout
-
-\begin_layout Standard
-These notes are shown in the section
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Gene-Ranges-reminder"
-
-\end_inset
-
- and 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Gene-transcripts-reminder"
-
-\end_inset
-
-above.
-\end_layout
-
-\begin_layout Subsubsection
-Running Mega2SKAT on ranges
-\end_layout
-
-\begin_layout Standard
-You should be familiar with the SKAT functions of the SKAT package before
- you read this section.
- The function, 
-\emph on
-Mega2SKAT
-\emph default
-, is 
-\emph on
-Mega2R's
-\emph default
- interface to 
-\emph on
-SKAT
-\emph default
-, both to 
-\emph on
-SKAT_Null_Model
-\emph default
- and 
-\emph on
-SKAT
-\emph default
-.
- Its signature is:
-\end_layout
-
-\begin_layout LyX-Code
-Mega2SKAT = function (f, ty, gs = 1:100, skat = SKAT::SKAT, envir = ENV,
- ...) 
-\end_layout
-
-\begin_layout Standard
-The 'gs' argument indicates how many default range elements should be processed
- and the 'envir' argument specifies the environment that contains all the
- Mega2R data frames.
-\end_layout
-
-\begin_layout Standard
-Most of the time, before you call 
-\emph on
-SKAT
-\emph default
-, you need to call SKAT_
-\emph on
-Null_Model
-\emph default
- with a formula and an indicator for the type of the phenotype.
- 
-\emph on
-Mega2SKAT
-\emph default
- will take its first two arguments, a formula and a type (string) and call
- 
-\emph on
-SKAT_Null_Model
-\emph default
- with this information, viz.
-\end_layout
-
-\begin_layout LyX-Code
-SKAT_Null_Model(f, out_type = ty)
-\end_layout
-
-\begin_layout Standard
-and store the results (in obj in the environment).
-\end_layout
-
-\begin_layout Standard
-If the formula, 'f', is NULL, 
-\emph on
-Mega2SKAT
-\emph default
- will not call 
-\emph on
-SKAT_Null_Mode
-\emph default
-l and you must do the equivalent before calling 
-\emph on
-Mega2SKAT
-\emph default
- and store the result object in 
-\emph on
-ENV$obj
-\emph default
-.
- There are several reasons a custom call to the build the model could be
- necessary.
- You might want to use 
-\emph on
-SKAT_Null_Model
-\emph default
- but provided additional arguments viz.
- data, Adjustment, n.Resampling, type.Resampling.
- Alternatively, you might need to use a different model viz.
- 
-\emph on
-SKAT_NULL_emmaX
-\emph default
-, 
-\emph on
-SKAT_Null_Model_ChrX
-\emph default
-.
-\end_layout
-
-\begin_layout Standard
-The 'skat' argument specifies the name of the 
-\emph on
-SKAT
-\emph default
- package function to use; this is usually 
-\emph on
-SKAT::SKAT
-\emph default
-, but could be 
-\emph on
-SKAT::SKATBinary
-\emph default
-, 
-\emph on
-SKAT::SKAT_CommonRare
-\emph default
-, etc.
- Any additional, arguments needed for the "skat" functions are provided
- to the Mega2SKAT function and will be passed to the eventual call.
- All the "skat" functions are called with a genotype matrix for the markers,
- the object representing the Null Model and the additional arguments.
-\end_layout
-
-\begin_layout Standard
-The Mega2R loop engine, iterates through each range and determines the set
- of markers contained.
- If there are no markers in a range, the genotype matrix is empty and 
-\emph on
-Mega2SKAT
-\emph default
- will issue a warning.
- If a marker has no variation, 
-\emph on
-Mega2SKAT
-\emph default
- will omit it, if the variable 'allMarkers' is FALSE.
- 
-\emph on
-Mega2SKAT
-\emph default
- will include it, if 'allMarkers' is TRUE, but SKAT will more than likely
- issue a warning.
- The 
-\emph on
-Mega2SKAT
-\emph default
- function also defines a callback function that converts the raw genotype
- representation of 1/1, 1/2, and 2/2 to 0, 1, and 2 with the major allele
- (flipped if necessary to be) 0 and then calls the specified "skat" function
- with the required arguments.
- Finally, the callback function stores the results.
-\end_layout
-
-\begin_layout Standard
-By default, the function 
-\emph on
-Mega2SKAT
-\emph default
- examines the first 100 transcripts and prints the results.
- A typical invocation of 
-\emph on
-Mega2SKAT
-\emph default
- could be:
-\end_layout
-
-\begin_layout Standard
-Note: 'verbose' is FALSE to eliminate the (excessive) diagnostics.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<SKATrange>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV$verbose = FALSE
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV$SKAT_results = ENV$SKAT_results[0, ]
-\end_layout
-
-\begin_layout Plain Layout
-
-Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
-\end_layout
-
-\begin_layout Plain Layout
-
-          weights.beta=c(0.5,0.5))
-\end_layout
-
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Standard
-These data are saved in the data frame, SKAT_results, in the environment.
- Note: The results are always appended to the data frame.
- You should truncate it when necessary.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<SKATrangepr>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-print(ENV$SKAT_results)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<SKATrangelong,eval=FALSE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-# we will skip this line for the document production because it takes too
- long
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV$verbose = FALSE
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV$SKAT_results = ENV$SKAT_results[0, ]
-\end_layout
-
-\begin_layout Plain Layout
-
-Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
-\end_layout
-
-\begin_layout Plain Layout
-
-          weights.beta=c(0.5,0.5), gs=1:nrow(ENV$refRanges))
-\end_layout
-
-\begin_layout Plain Layout
-
-print(ENV$SKAT_results)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Running Mega2SKAT on genes
-\end_layout
-
-\begin_layout Standard
-Let us run the Mega2SKAT function for a few genes:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<SKATrangegene>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV$verbose = FALSE
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV$SKAT_results = ENV$SKAT_results[0, ]
-\end_layout
-
-\begin_layout Plain Layout
-
-Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
-\end_layout
-
-\begin_layout Plain Layout
-
-          weights.beta=c(0.5,0.5), genes = c('DISP1', 'AK5', 'KIF26B', 'ST7L'),
-\end_layout
-
-\begin_layout Plain Layout
-
-          envir = ENV)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<SKATrangegenepr>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-print(ENV$SKAT_results) 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Note: We set verbose to FALSE otherwise there will be a large number of
- print outs indicating no markers are in the range.
- (Recall the samples come from part of chromosome one, whereas the ranges
- cover the whole genome.) If you are adventurous you can look at all the
- transcripts.
- Type:
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<SKATrangegeneall>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV$verbose = FALSE
-\end_layout
-
-\begin_layout Plain Layout
-
-ENV$SKAT_results = ENV$SKAT_results[0, ]
-\end_layout
-
-\begin_layout Plain Layout
-
-Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted",
-\end_layout
-
-\begin_layout Plain Layout
-
-          weights.beta=c(0.5,0.5), genes = '*', envir = ENV)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Note: The default behavior of 
-\emph on
-Mega2SKAT
-\emph default
- is to append any new results to the end of the 'ENV$SKAT_results' data
- frame.
- In the code above, we reset the 'ENV$SKAT_results' data frame to an empty
- data frame before running 
-\emph on
-Mega2SKAT
-\emph default
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<SKATrangegeneallpr>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-tail(ENV$SKAT_results)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<mega2rtutClean2, echo=FALSE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-clean_mega2rtutorial_data(".")
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Section
