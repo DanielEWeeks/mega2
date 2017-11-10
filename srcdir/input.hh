@@ -34,7 +34,7 @@
 #include "read_impute.hh"
 #include "read_impute_bgen.hh"
 #include "read_impute_bgen2.hh"
-#include "read_bcfs.hh"
+#include "read_bcfs.h"
 
 
 class Input_Old : public Input_Base {

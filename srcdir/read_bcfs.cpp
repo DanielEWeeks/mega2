@@ -56,14 +56,14 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #include "annotated_ped_file_ext.h"
 #include "annotated_ped_file.h"
 #include "read_files_ext.h"
-#include "vcftools/mega2_vcftools_interface.h"
 #include "utils_ext.h"
 
 #include "str_utils.hh"
 #include "input.hh"
 #include "input_ops.hh"
 
-#include "read_bcfs.hh"
+#include "read_bcfs.h"
+#include "mega2_bcftools_interface.h"
 
 #ifdef _WIN
 #define R_OK 4
@@ -168,6 +168,7 @@ void ReadBCFs::do_menu2batch() {
 void ReadBCFs::do_batch2local(){
     BatchValueGet(this->BCF_path, "BCFs_File_Directory");
     BatchValueGet(this->BCF_template, "BCFs_File_Template");
+    show_settings();
 }
 
 /*
@@ -186,6 +187,9 @@ void ReadBCFs::show_settings() {
 void ReadBCFs::do_init(Input_Base *inp)
 {
     read_BCFs();
+
+
+    //VCFtools_process_file_meta_information_and_header();
 }
 
 /*
@@ -193,6 +197,12 @@ void ReadBCFs::do_init(Input_Base *inp)
  */
 void ReadBCFs::read_BCFs( )
 {
+
+    vector<string> temp;
+    temp.push_back("bcftools");
+    temp.push_back("view");
+    int argc = 2;
+
     Str directory = this->BCF_path;
     Str file_template = this->BCF_template;
     Vecs filesplit;
@@ -201,12 +211,169 @@ void ReadBCFs::read_BCFs( )
 
     for(int chr = 1; chr < 23; chr++){
         ifstream ifs;
-        char * file = NULL;
-        sprintf(file, "%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+        char file[255];
+        if(chr >= 1  && chr < 10)
+            sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+        else
+            sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
         ifs.open(file);
-        if (! ifs.is_open() ) {
+        if (! ifs.is_open() )
             errorvf("read_BCFs: Can not open \"%s\" file\n", file);
+        else {
+            mssgvf("read_BCFs: Found file \"%s\"\n", file);
+            temp.push_back(file);
+            argc++;
         }
     }
+
+    char *argv[] = { };
+
+    for( int i = 0; i < argc; i++) {
+        argv[i] = &temp[i][0];
+        //printf("%s\n",argv[i]);
+    }
+    argv[argc] = NULL;
+    temp.clear();
+
+    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+    mbi->mega2_main_vcfview(argc, argv);
 }
+
+void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
+{
+    m2_map bcf_map;
+
+    build_bcf_map(bcf_map);
+
+    additional_maps.push_back(bcf_map);
+}
+
+void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
+//    std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
+//
+//    Tod vcfgm("VCF get map");
+//    bcf_map = VCFtools_get_map(alternative_key, "chr");
+//    vcfgm();
+//
+//    Tod vcfmn("VCF map as names");
+//
+//    int pair = 0;
+//    Str directory = this->BCF_path;
+//    Str file_template = this->BCF_template;
+//    Vecs filesplit;
+//    split(filesplit,file_template,"?");
+//
+//    if ( !pair ) pair = BCF_SR_PAIR_EXACT;
+//
+//    int i, j, n;
+//    char **vcf = NULL;
+//
+//    for( int chr = 1; chr < 23; chr++){
+//        char file[255];
+//        if(chr >= 1  && chr < 10)
+//            sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+//        else
+//            sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+//        vcf[chr] = file;
+//    }
+//
+//    // = hts_readlist(argv[optind], 1, &nvcf);
+//
+//    bcf_srs_t *sr = bcf_sr_init();
+//    bcf_sr_set_opt(sr, BCF_SR_PAIR_LOGIC, pair);
+//    bcf_sr_set_opt(sr, BCF_SR_REQUIRE_IDX);
+//    //for (i=0; i<nvcf; i++)
+//    //    if ( !bcf_sr_add_reader(sr,vcf[i]) ) error("Failed to open %s: %s\n", vcf[i],bcf_sr_strerror(sr->errnum));
+//
+//    kstring_t str = {0,0,0};
+//    while ( (n=bcf_sr_next_line(sr)) )
+//    {
+//        for (i=0; i<sr->nreaders; i++)
+//        {
+//            if ( !bcf_sr_has_line(sr,i) ) continue;
+//            bcf1_t *rec = bcf_sr_get_line(sr, i);
+//            printf("%s:%d", bcf_seqname(bcf_sr_get_header(sr,i),rec),rec->pos+1);
+//            break;
+//        }
+//
+//        for (i=0; i<sr->nreaders; i++)
+//        {
+//            printf("\t");
+//
+//            if ( !bcf_sr_has_line(sr,i) )
+//            {
+//                printf("%s","-");
+//                continue;
+//            }
+//
+//            str.l = 0;
+//            bcf1_t *rec = bcf_sr_get_line(sr, i);
+//            kputs(rec->n_allele > 1 ? rec->d.allele[1] : ".", &str);
+//            for (j=2; j<rec->n_allele; j++)
+//            {
+//                kputc(',', &str);
+//                kputs(rec->d.allele[j], &str);
+//            }
+//            printf("%s",str.s);
+//        }
+//        printf("\n");
+//    }
+//
+//    free(str.s);
+//    bcf_sr_destroy(sr);
+//    for (i=0; i<23; i++)
+//        free(vcf[i]);
+//    free(vcf);
+//
+//    //read_m2_map_as_names_file(bcf_map, top, tot_cols, phe_names, phe_types);
+//    //ann_files = 1;
+//    vcfmn();
+}
+
+
+/*
+ * We want to build "names" and genotypes in one pass to only load these BCF files once
+ */
+
+//linkage_locus_top *ReadBCFs::do_names(const char *&names_fn)
+//{
+//    linkage_locus_top *LTop = build_BCFs_names();
+//
+//    return LTop;
+//}
+//
+//linkage_locus_top *ReadBCFs::build_BCFs_names()
+//{
+////    char vcftools[10] = "vcftools";
+////    char vcfflag[10] = "--vcf";
+////    char recode[15] = "--recode-bcf";
+////    char outflag[10] = "--out";
+////    char outname[10] = "out";
+////    char *argv[] = {vcftools, vcfflag, filename, recode,outflag,outname, NULL};
+////    int argc = sizeof(argv) / sizeof(char*) - 1;
+////
+////    parameters params(argc,argv);
+////
+////    params.read_parameters();
+////
+////    params.vcf_filename=filename;
+////    params.vcf_compressed = false;
+////
+////    params.recode_all_INFO = true;
+////    params.recode_bcf = true;
+////    filename[strlen(filename)-4] = '\0';
+////    params.output_prefix = filename;
+////    params.recode_bcf_to_stream = false;
+////
+////    params.print_params();
+////
+////    variant_file *vcf;
+////    vcf = new vcf_file(params.vcf_filename,params.vcf_compressed,params.chrs_to_keep,params.chrs_to_exclude,params.force_write_index);
+////    vcf->print_bcf(params.output_prefix,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
+////
+////    return NULL;
+////
+////    return read_common_marker_data(num_pheno + num_markers, num_markers, names, types,
+////            /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
+//}
 

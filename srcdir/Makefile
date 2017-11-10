@@ -107,7 +107,7 @@ SRCS =  input_check.cpp     select_index.cpp \
 	dbmega2.cpp         dbmisc.cpp           dbbatch.cpp \
 	dbpedigree.cpp      dballele.cpp         dbloci.cpp \
 	dbmap.cpp           dbgenotype.cpp       dbrefallele.cpp \
-	read_bcfs.cpp \
+	read_bcfs.cpp 	     mega2_bcftools_interface.cpp \
 
 OBJS =  $(SRCS:.cpp=.o)
 
@@ -138,6 +138,8 @@ user_input.o read_impute_bgen2.o read_bcfs.o: IFLAGS += -Ibgen/genfile/include $
 write_IQLS.o write_beagle.o write_fbat.o write_loki.o write_mfiles.o: DFLAGS += -DRUNSHELL_SETUP
 write_pangaea.o write_plink_files.o write_premakeped.o: DFLAGS += -DRUNSHELL_SETUP
 write_structure.o: DFLAGS += -DRUNSHELL_SETUP
+
+mega2_bcftools_interface.o read_bcfs.o: IFLAGS += -Ilib/bcftools-1.6
 
 # Used for getting a direct match with the genetic map files with running Beagle Analysis...
 #DFLAGS += -DDONT_CONVERT_TO_HALDANE_FOR_BEAGLE
@@ -217,7 +219,9 @@ ARFLAGS ?= rcs
 AROUT ?=
 
 ZLIBS ?= libz.a
-CLIBS := libvcftools.a libbgen.a $(ZLIBS) libsqlite3.a $(CLIBS)
+CLIBS := libbgen.a $(ZLIBS) libsqlite3.a libbcftools.a $(CLIBS)
+
+BCFFLAGS =  -lz -lm -lbz2 # –llzma
 
 stdC11  ?= -std=c++0x
 WINO    ?=
@@ -245,7 +249,7 @@ tod:
 
 gcc_info.o: $(OBJS)
 
-SUBDIRS = bgen lib/sqlite3 vcftools zlib-1.2.8
+SUBDIRS = bgen lib/sqlite3 zlib-1.2.8 lib/bcftools-1.6
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
 	$(MAKE) $(MFLAGS) -C $@
@@ -255,14 +259,13 @@ bgen: zlib-1.2.8
 
 libsqlite3.a: lib/sqlite3
 
-vcftools: zlib-1.2.8
-libvcftools.a: vcftools
-
 libz.a: zlib-1.2.8
 
-$(MODULE)_$(OSTYPE): $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libvcftools.a libbgen.a libz.a libsqlite3.a
+libbcftools.a: lib/bcftools-1.6 
+
+$(MODULE)_$(OSTYPE): $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libbgen.a libz.a libsqlite3.a libbcftools.a 
 	$(RM) $(MODULE)
-	$(LINK) $(LFLAGS) $(LTARGET) $(OBJS) $(FLAGS) gcc_info.o $(CLIBS)
+	$(LINK) $(LFLAGS) $(LTARGET) $(OBJS) $(FLAGS) gcc_info.o $(CLIBS) $(BCFFLAGS)
 
 ifeq ($(OSTYPE),mingw)
 	cp $(MODULE)_$(OSTYPE).exe $(MODULE).exe
@@ -275,17 +278,17 @@ endif
 clean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
 #	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) RM="$(RM)" clean &&) echo on
-	$(MAKE) $(MFLAGS) -C vcftools   RM="$(RM)" clean
 	$(MAKE) $(MFLAGS) -C bgen       RM="$(RM)" clean
 	$(MAKE) $(MFLAGS) -C zlib-1.2.8 RM="$(RM)" clean
+	$(MAKE) $(MFLAGS) -C lib/bcftools-1.6 RM="$(RM)" clean
 
 distclean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
 #	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) RM="$(RM)" distclean &&) echo on
-	$(MAKE) $(MFLAGS) -C vcftools    RM="$(RM)" distclean
 	$(MAKE) $(MFLAGS) -C bgen        RM="$(RM)" distclean
 	$(MAKE) $(MFLAGS) -C zlib-1.2.8  RM="$(RM)" distclean
 	$(MAKE) $(MFLAGS) -C lib/sqlite3 RM="$(RM)" distclean
+	$(MAKE) $(MFLAGS) -C lib/bcftools-1.6 RM="$(RM)" distclean
 
 clean1:
 	$(RM) *~
@@ -297,7 +300,6 @@ srcdist:
 
 depend:
 	makedepend -Y. -- $(CFLAGS) -- $(SRCS)
-	$(MAKE) -C vcftools    depend
 	$(MAKE) -C bgen        depend
 	$(MAKE) -C lib/sqlite3 depend
 
@@ -367,7 +369,7 @@ user_input.o: linkage_external.h makeped.h pedtree.h batch_input.h
 user_input.o: input_check.h hwe.h compress_ext.h input_ops.hh str_utils.hh
 user_input.o: input.hh read_impute.hh annotated_ped_file.h
 user_input.o: read_impute_bgen.hh zlib.h zconf.h read_impute_bgen2.hh
-user_input.o: read_bcfs.hh batch_input_ext.h cw_routines_ext.h
+user_input.o: read_bcfs.h batch_input_ext.h cw_routines_ext.h
 user_input.o: error_messages_ext.h fcmap_ext.h genetic_utils_ext.h
 user_input.o: reorder_loci_ext.h grow_string_ext.h output_file_names_ext.h
 user_input.o: output_routines_ext.h plink_ext.h utils_ext.h user_input_ext.h
@@ -917,12 +919,7 @@ write_vcf.o: zconf.h error_messages_ext.h utils_ext.h entry.h
 write_vcf.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
 write_vcf.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_vcf.o: user_input_ext.h input_ops.hh str_utils.hh write_files_ext.h
-write_vcf.o: read_files_ext.h write_vcf_ext.h analysis.h
-write_vcf.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
-write_vcf.o: vcftools/bcf_file.h vcftools/output_log.h vcftools/parameters.h
-write_vcf.o: vcftools/variant_file.h vcftools/vcf_entry.h
-write_vcf.o: vcftools/bcf_entry.h vcftools/header.h vcftools/bgzf.h
-write_vcf.o: vcftools/vcf_file.h vcftools/parameters.h zlib-1.2.8/zlib.h
+write_vcf.o: read_files_ext.h write_vcf_ext.h analysis.h zlib-1.2.8/zlib.h
 write_vcf.o: dbrefallele.h dblite.hh
 dbmega2.o: types.hh common.h typedefs.h errorno.h allutil.h linkage.h
 dbmega2.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
@@ -971,4 +968,30 @@ read_bcfs.o: vcftools/mega2_vcftools_interface.h annotated_ped_file.h
 read_bcfs.o: reorder_loci_ext.h plink_ext.h annotated_ped_file_ext.h
 read_bcfs.o: annotated_ped_file.h read_files_ext.h utils_ext.h str_utils.hh
 read_bcfs.o: input.hh input_ops.hh read_impute.hh read_impute_bgen.hh zlib.h
-read_bcfs.o: zconf.h read_impute_bgen2.hh read_bcfs.hh
+read_bcfs.o: zconf.h read_impute_bgen2.hh read_bcfs.h
+read_bcfs.o: mega2_bcftools_interface.h
+mega2_bcftools_interface.o: common.h types.hh typedefs.h errorno.h allutil.h
+mega2_bcftools_interface.o: linkage.h linkage_external.h makeped.h pedtree.h
+mega2_bcftools_interface.o: batch_input.h input_check.h hwe.h compress_ext.h
+mega2_bcftools_interface.o: tod.hh utils_ext.h genetic_utils_ext.h
+mega2_bcftools_interface.o: error_messages_ext.h annotated_ped_file.h
+mega2_bcftools_interface.o: read_files_ext.h marker_lookup_ext.h
+mega2_bcftools_interface.o: phe_lookup_ext.h reorder_loci_ext.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/bcftools.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/hts.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/hts_defs.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/hts_log.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/vcf.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/hts.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/kstring.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/hts_endian.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/synced_bcf_reader.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/vcf.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/tbx.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/vcfutils.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/filter.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/khash_str2int.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/vcfview.c
+mega2_bcftools_interface.o: lib/bcftools-1.6/bcftools.h
+mega2_bcftools_interface.o: lib/bcftools-1.6/filter.h
+mega2_bcftools_interface.o: mega2_bcftools_interface.h

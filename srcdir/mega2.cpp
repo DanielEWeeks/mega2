@@ -1061,14 +1061,14 @@ int             main(int argc, char **argv, char **env)
 	}
 	strcat(cp, bedfl_name);
 
-	if (VCFtools_process_cmd_line_if_necessary_inclusive(cp) != -1) {
-	  errorvf("VCF arguments can not be processed.\n");
-	  EXIT(BATCH_FILE_ITEM_ERROR);
-	}
+	//if (VCFtools_process_cmd_line_if_necessary_inclusive(cp) != -1) {
+	//  errorvf("VCF arguments can not be processed.\n");
+	//  EXIT(BATCH_FILE_ITEM_ERROR);
+	//}
         free(cp);
         
         mssgf("\nProcessing VCF file meta information and header.");
-        VCFtools_process_file_meta_information_and_header();
+        //VCFtools_process_file_meta_information_and_header();
         
         
 #ifndef HIDESTATUS

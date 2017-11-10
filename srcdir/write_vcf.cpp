@@ -43,10 +43,6 @@
 #include "read_files_ext.h"
 
 #include "write_vcf_ext.h"
-#include "vcftools/mega2_vcftools_interface.h"
-#include "vcftools/bcf_file.h"
-#include "vcftools/vcf_file.h"
-#include "vcftools/parameters.h"
 #include "zlib-1.2.8/zlib.h"
 
 #include <ctime>
@@ -513,12 +509,12 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
             }
 
-            string auxillary_ref;
-            string auxillary_alt;
+            std::string auxillary_ref;
+            std::string auxillary_alt;
             if(_strand_flips) {
                 //get references
-                string ref_return;
-                string alt_return;
+                std::string ref_return;
+                std::string alt_return;
                 int lookup = (int) _EXLTop->EXLocus[_locus].positions[base_pair_position_index];
                 //if we have the reference in the data set it's the extremum
                 if (map_get(references, lookup, ref_return)) {
@@ -926,33 +922,66 @@ void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *fi
 }
 
 //use VCFTools to turn our VCF output into a BCF file
+//turning this into a use of HTSLib
 void CLASS_VCF::convert_vcf_bcf(char *filename){
-    char vcftools[10] = "vcftools";
-    char vcfflag[10] = "--vcf";
-    char recode[15] = "--recode-bcf";
-    char outflag[10] = "--out";
-    char outname[10] = "out";
-    char *argv[] = {vcftools, vcfflag, filename, recode,outflag,outname, NULL};
-    int argc = sizeof(argv) / sizeof(char*) - 1;
 
-    parameters params(argc,argv);
+//    htsFile *fp    = hts_open(filename,"rb");
+//    bcf_hdr_t *hdr = bcf_hdr_read(fp);
+//    bcf1_t *rec    = bcf_init1();
+//
+//    char *bcfname = (char*) malloc(strlen(filename)+5);
+//    snprintf(bcfname,strlen(filename)+5,"%s.bcf",filename);
+//    htsFile *out   = hts_open(bcfname,"wg");
+//
+//    bcf_hdr_t *hdr_out = bcf_hdr_dup(hdr);
+//    bcf_hdr_remove(hdr_out,BCF_HL_STR,"unused");
+//    bcf_hdr_remove(hdr_out,BCF_HL_GEN,"unused");
+//    bcf_hdr_remove(hdr_out,BCF_HL_FLT,"Flt");
+//    bcf_hdr_remove(hdr_out,BCF_HL_INFO,"UI");
+//    bcf_hdr_remove(hdr_out,BCF_HL_FMT,"UF");
+//    bcf_hdr_remove(hdr_out,BCF_HL_CTG,"Unused");
+//    bcf_hdr_write(out, hdr_out);
+//
+//
+//    while ( vcf_read(fp, hdr, rec)>=0 )
+//    {
+//        bcf_write1(out, hdr_out, rec);
+//    }
+//
+//    bcf_destroy1(rec);
+//    bcf_hdr_destroy(hdr);
+//    bcf_hdr_destroy(hdr_out);
+//
+//    free(bcfname);
 
-    params.read_parameters();
 
-    params.vcf_filename=filename;
-    params.vcf_compressed = false;
-
-    params.recode_all_INFO = true;
-    params.recode_bcf = true;
-    filename[strlen(filename)-4] = '\0';
-    params.output_prefix = filename;
-    params.recode_bcf_to_stream = false;
-
-    params.print_params();
-
-    variant_file *vcf;
-    vcf = new vcf_file(params.vcf_filename,params.vcf_compressed,params.chrs_to_keep,params.chrs_to_exclude,params.force_write_index);
-    vcf->print_bcf(params.output_prefix,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
+//this is vcftools code to recode into BCF
+//    char vcftools[10] = "vcftools";
+//    char vcfflag[10] = "--vcf";
+//    char recode[15] = "--recode-bcf";
+//    char outflag[10] = "--out";
+//    char outname[10] = "out";
+//    char *argv[] = {vcftools, vcfflag, filename, recode,outflag,outname, NULL};
+//    int argc = sizeof(argv) / sizeof(char*) - 1;
+//
+//    parameters params(argc,argv);
+//
+//    params.read_parameters();
+//
+//    params.vcf_filename=filename;
+//    params.vcf_compressed = false;
+//
+//    params.recode_all_INFO = true;
+//    params.recode_bcf = true;
+//    filename[strlen(filename)-4] = '\0';
+//    params.output_prefix = filename;
+//    params.recode_bcf_to_stream = false;
+//
+//    params.print_params();
+//
+//    variant_file *vcf;
+//    vcf = new vcf_file(params.vcf_filename,params.vcf_compressed,params.chrs_to_keep,params.chrs_to_exclude,params.force_write_index);
+//    vcf->print_bcf(params.output_prefix,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
 }
 
 
@@ -1055,7 +1084,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             refchoice = "Original_Order";
         else {
             refchoice = "Use Mega2 Allele DB Table";
-            string rfile = mega2_input_files[REFfl];
+            std::string rfile = mega2_input_files[REFfl];
             if (rfile.find("B37") != std::string::npos || rfile.find("b37") != std::string::npos)
                 strcpy(buildname, "B37");
             if (rfile.find("HG37") != std::string::npos || rfile.find("hg37") != std::string::npos)
