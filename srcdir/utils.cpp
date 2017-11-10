@@ -1,8 +1,11 @@
 /*
-  Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+  Mega2: Manipulation Environment for Genetic Analysis.
+
+  Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.
+
+  Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
-  Daniel E. Weeks, and University of Pittsburgh
+  and Daniel E. Weeks.
 
   This file is part of the Mega2 program, which is free software; you
   can redistribute it and/or modify it under the terms of the GNU
@@ -397,9 +400,12 @@ void            hello(FILE *fp)
 
     fprintf(fp, "==========================================================\n");
     fprintf(fp, "                          MEGA2 %s\n", Mega2Version);
-    fprintf(fp, "     Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,\n");
+
+    fprintf(fp, "     Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.\n");
+
+    fprintf(fp, "     Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,\n");
     fprintf(fp, "     Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,\n");
-    fprintf(fp, "     Daniel E. Weeks, and University of Pittsburgh\n\n");
+    fprintf(fp, "     and Daniel E. Weeks.\n\n");
 #ifndef HIDEFILE
 #ifdef EXPIRE
     fprintf(fp, "     Last updated: %s, %s ", gcc_compile__DATE__,  gcc_compile__TIME__);

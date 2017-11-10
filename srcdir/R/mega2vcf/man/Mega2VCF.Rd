@@ -8,27 +8,35 @@ Mega2VCF(prefix, markers = NULL, mapno = 0, alleleOrder = "default",
   envir = ENV)
 }
 \arguments{
-\item{prefix}{prefix for vcf file name}
+\item{prefix}{prefix for VCF file name}
 
-\item{markers}{markers selected to be in output file}
+\item{markers}{markers selected to be in the VCF output file}
 
-\item{mapno}{specify which map index to use for genetic distances.  The function showMapNames
+\item{mapno}{specify which map index to use for genetic distances.  The function \code{showMapNames()}
 will print out the internal map numbers corresponding to all the maps in the Mega2 database.}
 
-\item{alleleOrder}{REF is default, minor allele freq or major allele freq}
+\item{alleleOrder}{how to order alleles in VCF file.
+'default' is Mega2order, 'minor' is minor allele freq first, 'major' is major allele freq
+ first, and 'name' is ascending ascii character order of allele name.}
 
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
-Generate a VCF file from the specified Mega2 SQLite database.  The file is named "prefix".vcf
- If the markers arg is.null(), the entire envir$markers set is used otherwise markers arg MUST
- be a subset of the envir$markers data.frame -- same columns, but pruned rows.  In addition,
- several other related files are generated: "prefix".fam, "prefix".freq, "prefix".map,
- "prefix".phe, and "prefix".pen, being the pedigree, allele frequency, marker genetic and
- physical map position, member phenotype and phenotype penetrance information.
+Generate a VCF file from the specified Mega2 SQLite database.  The file is named \emph{"prefix".vcf}
+ If the markers argument is.null(), the entire \bold{envir$markers} set is used, otherwise markers argument MUST
+ be a subset of the markers (\bold{envir$markers}) data frame -- i.e. same columns, but pruned rows.
+ In addition,
+ several other files are generated to hold additional database information: \emph{"prefix".fam}, \emph{"prefix".freq}, \emph{"prefix".map},
+ \emph{"prefix".phe}, and \emph{"prefix".pen}, which contain the pedigree, allele frequency, marker genetic and
+ physical map position, member phenotype and phenotype penetrance data.
+}
+\note{
+This code in this package illustrates how to extract the various kinds of data in the
+ Mega2 data frames to use for further processing.  Some of the data internal representations
+ are a bit quirky but the code "explains" it all.
 }
 \examples{
 \dontrun{
@@ -36,6 +44,6 @@ ENV <- read.Mega2DB("my.db")
 
 Mega2VCF("foo")
 
-Mega2VCF("foo", envir$markers[envir$markers$chromosome >= 20,])
+Mega2VCF("foo", ENV$markers[ENV$markers$chromosome >= 20,])
 }
 }

@@ -1,8 +1,11 @@
 /*
-  Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+  Mega2: Manipulation Environment for Genetic Analysis.
+
+  Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.
+
+  Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
-  Daniel E. Weeks, and University of Pittsburgh
+  and Daniel E. Weeks.
 
   This file is part of the Mega2 program, which is free software; you
   can redistribute it and/or modify it under the terms of the GNU
@@ -93,11 +96,15 @@ void BgenParserGenotypeReadHelper::genotypes_init()
        ~noop()  {}
         void operator() ( std::string const& id ) { }
     };
+    noop xx(this);
+    get_sample_ids( xx );
+#if 0
     get_sample_ids(
 /*
         [this]( std::string const& id ) { }
 */
         noop(this) );
+#endif
 }
 
 bool BgenParserGenotypeReadHelper::genotypes_marker_hdr(int mrk_idx, std::string& hmm, std::string& chrm, std::string& rsid, 

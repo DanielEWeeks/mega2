@@ -1,0 +1,26 @@
+Package: mega2r
+Version: 1.0.0
+Date: 2017-08-17
+Title: Read and Process a Database Created by Mega2 in R
+Description: Read a Mega2 SQLite3 database into R; Access genotype, phenotype, and family information.
+Authors@R: c(person(c("Robert","V."), "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
+             person(c("Daniel","E."), "Weeks",    email = "weeks@pitt.edu", role = c("aut","cre")))
+URL: https://watson.hgen.pitt.edu/mega2/mega2r/
+BugReports: https://groups.google.com/forum/#!forum/mega2-users
+Depends: R (>= 3.0.1)
+License: GPL (>= 3)
+LinkingTo: Rcpp
+LazyData: true
+Imports:
+    AnnotationDbi,
+    DBI,
+    GenomeInfoDb,
+    RSQLite
+Suggests:
+    knitr,
+    rmarkdown
+Enhances: parallel
+SystemRequirements: Mega2 
+NeedsCompilation: yes
+RoxygenNote: 6.0.1
+VignetteBuilder: knitr

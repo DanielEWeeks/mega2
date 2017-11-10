@@ -3,44 +3,48 @@
 #   Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
 #   Daniel E. Weeks, and University of Pittsburgh
-#  
+#
 #   This file is part of the Mega2 program, which is free software you
 #   can redistribute it and/or modify it under the terms of the GNU
 #   General Public License as published by the Free Software Foundation
 #   either version 3 of the License, or (at your option) any later
 #   version.
-#  
+#
 #   Mega2 is distributed in the hope that it will be useful, but WITHOUT
 #   ANY WARRANTY without even the implied warranty of MERCHANTABILITY or
 #   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 #   for more details.
-#  
+#
 #   You should have received a copy of the GNU General Public License
 #   along with this program if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#  
+#
 #   For further information contact:
 #       Daniel E. Weeks
 #       e-mail: weeks@pitt.edu
-# 
+#
 # ===========================================================================
 
 #' mega2rtutorial package
 #'
-#' @description This package retrieves data stored in the Mega2rtutorial and 
-#'	dumps them in the current directory.
+#' @description This package retrieves data stored in the Mega2rtutorial and
+#'   dumps them in the current directory.  The package also builds a vignette
+#'   that shows the usage of all the mega2 packages.
 #'
 #' @author Robert V Baron
 #' @docType package
 #' @name mega2rtutorial-package
+#' @importFrom R.utils gunzip
 NULL
 
 FILES = c("MEGA2.BATCH.seqsimr", "MEGA2.BATCH.srdta", "MEGA2.BATCH.vcf",
-          "Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db")
+          "Mega2r.map", "Mega2r.ped", "seqsimr.db", "srdta.db",
+          "Mega2r.map.gz", "Mega2r.ped.gz", "seqsimr.db.gz", "srdta.db.gz")
+FILES.gz = c("Mega2r.map.gz", "Mega2r.ped.gz", "seqsimr.db.gz", "srdta.db.gz")
 
 #' dump tutorial data
 #'
-#' @description This function retrieves data stored in the Mega2rtutorial (inst/exdata).  It 
+#' @description This function retrieves data stored in the Mega2rtutorial (inst/exdata).  It
 #'	dumps them in the current (or specified) directory.
 #'
 #' @param dir The directory to store the tutorial data to.  By default, this is ".".
@@ -58,6 +62,9 @@ dump_mega2rtutorial_data = function(dir = ".") {
         to   = paste(dir, file, sep="/")
         file.copy(from, to, copy.mode = TRUE, copy.date = TRUE)
     }
+    for (file in FILES.gz) {
+      R.utils::gunzip(file)
+    }
 }
 
 #' remove tutorial data
@@ -65,7 +72,7 @@ dump_mega2rtutorial_data = function(dir = ".") {
 #' @description This function removes the Mega2rtutorial (inst/exdata) data that was
 #'	dumped in the specified directory.
 #'
-#' @param dir The directory to store the tutorial data to.  By default, this is ".".
+#' @param dir The directory to remove the tutorial data from.  By default, this is ".".
 #'
 #' @export
 #' @return None

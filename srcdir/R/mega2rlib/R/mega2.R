@@ -1,0 +1,760 @@
+
+#   Mega2: Manipulation Environment for Genetic Analysis
+#   Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+#   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+#   Daniel E. Weeks, and University of Pittsburgh
+#  
+#   This file is part of the Mega2 program, which is free software you
+#   can redistribute it and/or modify it under the terms of the GNU
+#   General Public License as published by the Free Software Foundation
+#   either version 3 of the License, or (at your option) any later
+#   version.
+#  
+#   Mega2 is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#   for more details.
+#  
+#   You should have received a copy of the GNU General Public License
+#   along with this program if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#  
+#   For further information contact:
+#       Daniel E. Weeks
+#       e-mail: weeks@pitt.edu
+# 
+# ===========================================================================
+
+#' mega2r package
+#'
+#' @description This package reads a Mega2 SQLite3 database into R data frames and
+#'	makes the contained genotypes/phenotypes/linkage data available for analysis.
+#'
+#' @author Robert V Baron
+#' @docType package
+#' @name mega2r-package
+NULL
+
+#library(DBI)
+#library(RSQLite)
+
+
+#' mega2r SQLite3 tables
+#'
+#' @description This character vector indicates the names of the Mega2 SQLite3 database tables
+#'  to load.  (Not all of the existing tables are loaded.)
+#'
+#' @author Robert V Baron
+#' @docType data
+#' @name mega2r-TBLS
+TBLS = c("int_table",
+#        "double_table",
+#        "charstar_table",
+#        "stuff_table",
+#        "batch_parameters",
+#        "file_table",
+
+         "pedigree_table",
+         "person_table",
+         "pedigree_brkloop_table",
+         "person_brkloop_table",
+
+#        "canonicalallele_table",
+         "locus_table",
+         "allele_table",
+         "marker_table",
+         "markerscheme_table",
+         "map_table",
+         "mapnames_table",
+
+         "traitaff_table",
+         "affectclass_table",
+#        "traitquant_table",
+
+         "phenotype_table",
+         "genotype_table"
+
+## Derived tables
+##        unified_genotype_table
+##        markers
+  )
+
+#' mega2r SQLite3 table filter
+#'
+#' @description This list contains named values.  The name corresponds to an SQLite database table.
+#'  The value is a character string of column names from the "named" table that should be stored.  An entry
+#'  is in this list, if not all the database table columns are needed.  The columns for each table are separated
+#'  by commas.
+#'
+#' @author Robert V Baron
+#' @docType data
+#' @name mega2r-TBLSFilter
+#' @note For the data base tables not in this list, all columns are stored in the corresponding data frame.
+TBLSFilter = list(
+          locus_table    = "pId, LocusName, Type, AlleleCnt, locus_link",
+
+          marker_table   = "pId, MarkerName, pos_avg, pos_female, pos_male, chromosome, locus_link",
+          pedigree_table = "pId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
+          person_table   = "pId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
+          pedigree_brkloop_table = "pId, Num, EntryCnt, Name, PedPre, OriginalID, origped, pedigree_link",
+          person_brkloop_table   = "pId, UniqueID, OrigID, FamName, PerPre, ID, Father, Mother, Sex, pedigree_link, person_link",
+
+          traitaff_table = "pId, ClassCnt, PenCnt, locus_link"
+  )
+
+#' make the derived "markers" data frame and store it in the environment.
+#'
+#' @description Create the markers data frame as a subset of the markers_table data frame.  It contains 5
+#'	observations: \describe{
+#'	  \item{locus_link:}{locus offset of this marker}
+#'	  \item{locus_link_fill:}{locus offset plus an accumulating fudge factor that jumps
+#'          with each new chromosome because the count of markers per chromosome is force to be
+#'          a multiple of 4.  (This value corresponds to the offset of the marker in the
+#'          \code{unified_genotype_table}.)}
+#'	  \item{MarkerName:}{name of this marker}
+#'	  \item{chromosome:}{chromosome number of this marker}
+#'	  \item{position:}{base pair position of this marker (selected by bpPosMap[below])}
+#'       }
+#'
+#' @param bpPosMap An integer that indicates the map (index) to use to fetch the
+#'	chromosome/position fields from the map_table data frame to merge with the marker_table.
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return None
+#'
+#' @keywords internal
+#'
+#' @examples
+#'\dontrun{
+#' mk_markers_with_skip(1)
+#'}
+mk_markers_with_skip = function(bpPosMap = 1, envir) {
+    if (envir$MARKER_SCHEME == 1) {
+        markersPerChr = sapply(split(envir$marker_table$chromosome, envir$marker_table$chromosome), length)
+        idx = as.integer(names(markersPerChr))
+        m = rep(0, max(idx))
+        m[idx] = markersPerChr
+        markersPerChr = m
+        extra_markers = cumsum(4 * floor((markersPerChr + 3) / 4) - markersPerChr)
+        extra_markers = c(0, extra_markers)
+        names(extra_markers) = NULL
+    } else if (envir$MARKER_SCHEME == 2) {
+        extra_markers = vector("integer", length(unique(envir$marker_table$chromosome))+1)
+    }
+    envir$marker_table$locus_link_fill = envir$marker_table$locus_link + extra_markers[envir$marker_table$chromosome]
+    if (any(is.na(envir$marker_table$locus_link_fill))) {
+        stop("Internal Error in mk_markers_with_skip.  Bad fill values.", call. = FALSE)
+    }
+    mkMarkers(bpPosMap = bpPosMap, envir = envir)
+}
+
+#' create "markers" data frame
+#'
+#' @description Create the markers data frame.  It contains 5
+#'	observations: \describe{
+#'	  \item{locus_link:}{locus offset of this marker}
+#'	  \item{locus_link_fill:}{locus offset plus an accumulating fudge factor that jumps
+#'          with each new chromosome because the count of markers per chromosome is force to be
+#'          a multiple of 4.  (This value corresponds to the offset of the marker in the
+#'          \code{unified_genotype_table}.)}
+#'	  \item{MarkerName:}{name of the marker}
+#'	  \item{chromosome:}{chromosome number of the marker}
+#'	  \item{position:}{base pair position of the marker (selected by bpPosMap[below])}
+#'       }
+#'
+#' @details Select a map (index) from the map_table to merge with the select marker_table
+#'  data frame to make the marker data frame.  See showMapNames() for map string to map index mapping.
+#'
+#' @param bpPosMap An integer that indicates the map (index) to use to merge the
+#'	chromosome/position fields from the map_table data frame to the marker_table data frame.
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return None
+#'
+#' @examples
+#'\dontrun{
+#' mkMarkers(1)
+#'}
+mkMarkers = function(bpPosMap = 1, envir = ENV) {
+    map_table = envir$map_table[ envir$map_table$map == bpPosMap, c( "marker", "position")]
+    if (nrow(map_table) == 0) {
+        message("No entry for map == ", bpPosMap, " in map_table.  Using map == 0 instead.")
+        map_table = envir$map_table[ envir$map_table$map == 0, c( "marker", "position")]
+    }
+    envir$markers = merge(envir$marker_table[ , c("locus_link", "locus_link_fill", "MarkerName", "chromosome")],
+                        map_table,
+                        by.x = "locus_link", by.y = "marker")
+}
+
+#' concatenate separate genotype vectors for each chromosome to one extended vector containing all the chromosomes
+#'  and store it in the environment.
+#'
+#' @description The genotype_table data frame contains for each person a separate record for each chromosome.
+#'  Concatenate all the separate records for each person in chromosome order and make a data frame of these vectors.
+#'  Note:  Genotype vectors are "raw" (byte) vectors.
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return None
+#'
+#' @keywords internal
+#'
+mk_unified_genotype_table = function(envir) {
+    samples = split(envir$genotype_table, envir$genotype_table$person_link)
+    samplesize = length(samples)
+    person_link = unique(envir$genotype_table$person_link)
+
+    df = data.frame(row.names = 1:samplesize,
+                    person_link = person_link,
+                    data = vector("raw", samplesize))
+
+    for (i in 1:samplesize) {
+
+        chrOrder = order(samples[[i]][ , 3], decreasing = FALSE)
+        v = unlist(samples[[i]][chrOrder, 5])
+        df$data[i] = list(v)
+    }
+  
+    envir$unified_genotype_table = df
+    envir$genotype_table = NULL
+    rm(list = "genotype_table", envir = envir)
+}
+
+#' read Mega2 SQLite database into R 
+#'
+#' @description Read the necessary fields of SQLite data base tables into R data frames.  These
+#'  data frames are stored in an "R environment" which is returned.
+#'
+#' @usage
+#' dbmega2_import(dbname,
+#'                bpPosMap = 1,
+#'                verbose = FALSE)
+#'
+#' @param dbname file path to SQLite database.
+#'
+#' @param bpPosMap index that specifies which map in the map_table should be used for marker chromosome/position.
+#'
+#' @param verbose print out statistics on the name/size of each table read and show column headers.
+#'  Also, save the verbose value for use by other Mega2R functions.
+#'
+#' @return envir an environment that contains all the data frames made from the SQLite database.
+#'
+#' @importFrom RSQLite dbConnect dbExistsTable dbReadTable dbListFields SQLITE_RO
+#' @importFrom DBI dbGetQuery dbDisconnect
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' ENV = dbmega2_import("foo.db", verbose = TRUE)
+#'
+#' ENV = dbmega2_import("foo.db")
+#'}
+dbmega2_import = function(dbname,
+                          bpPosMap = 1,
+                          verbose = FALSE) {
+    con = tryCatch(dbConnect(RSQLite::SQLite(), dbname = dbname, flags = SQLITE_RO),
+                   error = function(xx) { stop("DB open failed: ", dbname, call. = FALSE) })
+
+    envir = resetMega2ENV()
+
+    gc(verbose = FALSE)
+
+    envir$verbose = verbose
+
+    for (tbl in TBLS) {
+        if (dbExistsTable(con, tbl)) {
+            filter = TBLSFilter[tbl][[1]]
+            if (is.null(filter))
+                assign(tbl, dbReadTable(con, tbl), pos = envir)
+            else {
+#               assign(tbl, dbReadTable(con, tbl, select.cols = filter), pos = envir)
+#               assign(tbl, dbReadTable(con, tbl), pos = envir)
+#               print(paste0("select ", filter, " from ", tbl));
+                assign(tbl, dbGetQuery(con, paste0("select ", filter, " from ", tbl)), pos = envir)
+            }
+            if (envir$verbose) {
+                cat(tbl, dim(get(tbl, pos=envir)), sep = "\t", end = "\n")
+                if (is.null(filter))
+                    cat(tbl, dbListFields(con, tbl), sep = "\t", end = "\n")
+                else
+                  cat(tbl, strsplit(filter, ", ")[[1]], sep = "\t", end = "\n")
+                cat(end = "\n")
+            }
+        }
+    }
+
+    dbDisconnect(con)
+
+    envir$PhenoCnt      = envir$int_table[envir$int_table$key == 'PhenoCnt', 3]
+    envir$LocusCnt      = envir$int_table[envir$int_table$key == 'LocusCnt', 3]
+    envir$MARKER_SCHEME = envir$int_table[envir$int_table$key == 'MARKER_SCHEME', 3]
+
+    if (envir$MARKER_SCHEME > 2) {
+        stop("Only compressions levels of 1 or 2 are allowed. (",
+             envir$MARKER_SCHEME, ")", call. = FALSE)
+    }
+    
+    mk_unified_genotype_table(envir)
+    mk_markers_with_skip(bpPosMap, envir)
+    if (envir$MARKER_SCHEME == 2) {
+        message("Partitioninging allele_table by locus_link\n");
+        envir$locus_allele_table = split(envir$allele_table, envir$allele_table$locus_link)
+    } else {
+        envir$locus_allele_table = NULL
+    }
+
+    gc(verbose = FALSE)
+    return (envir)
+}
+
+#' show Mega2r environment, viz. data frames and related info.
+#'
+#' Mega2 uses an environment to store the data frames when it reads SQLite database tables.  
+#'  This function shows the data frames and their sizes; it also
+#'  shows the count of samples and markers in the database.
+#'  Note: It is not necessary toprovide an argument, if the environment is named \emph{ENV}.
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' showMega2ENV()
+#'}
+showMega2ENV = function(envir = ENV) {
+
+    cat("locus count:  ",       envir$LocusCnt)
+    cat("; phenotype count: ", envir$PhenoCnt)
+    if (envir$MARKER_SCHEME == 1)
+        cat("; compression: 2 bits")
+    else if (envir$MARKER_SCHEME == 2)
+        cat("; compression: 2 bytes")
+    else
+        cat("; compression: illegal")
+    cat("\n")
+    cat("marker count: ",      envir$LocusCnt - envir$PhenoCnt)
+    cat("; sample count: ",    nrow(envir$fam))
+    cat("\n")
+    cat("\n")
+
+    cat("genetic and physical maps:\n")
+    map = envir$mapnames_table[ , c(6, 2)]
+    names(map) = c("map name", "map number")
+    print(map)
+    cat("\n")
+
+    cat("Phenotypes:\n")
+    print(showPhenoNames())
+    cat("\n")
+    cat("\n")
+
+    cat("basic tables:\n")
+    tbls2 = c("fam", "locus_allele_table", "markers", "unified_genotype_table")
+    ls = grep("_table", ls(envir), value = TRUE)
+    tbls =  sort( ls[! ls %in% tbls2 ] )
+    x = sapply(tbls, function(tbl) {dim(get(tbl, envir))})
+    x = t(x)
+    x = matrix(x, ncol = 2)
+    show = data.frame(x)
+    names(show) = c("rows", "cols")
+    row.names(show) = tbls
+    print(show)
+    cat("\n")
+
+    cat("derived tables:\n")
+    if (exists("fam", envir))
+        tbls2 = c("fam", "markers", "unified_genotype_table")
+    else
+        tbls2 = c("markers", "unified_genotype_table")
+    x = sapply(tbls2, function(tbl) {dim(get(tbl, envir))})
+    x = t(x)
+    x = matrix(x, ncol = 2)
+    show = data.frame(x)
+    names(show) = c("rows", "cols")
+    row.names(show) = tbls2
+    print(show)
+    cat("\n")
+}
+
+#' return an initialized environment
+#'
+#' Mega2 uses an environment to store the data frames when it reads an SQLite database.
+#'  The environment is also used to store metadata.
+#'  The function first runs the garbage collector ("gc"), then allocates an empty environment
+#'  and finally loads some default data into it.
+#'
+#' @return an environment that contains a few initial tables read from the mega2r package.
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' resetMega2ENV()
+#'}
+resetMega2ENV = function () {
+
+    gc(verbose = FALSE)
+
+    envir = new.env(parent = emptyenv())
+
+    envir$refRanges  = refRanges
+    envir$refIndices = refIndices
+
+    envir$txdb       = "TxDb.Hsapiens.UCSC.hg19.knownGene"
+    envir$entrezGene = "org.Hs.eg.db"
+
+    return (envir)
+}
+
+#' show the association between mapno and mapname
+#'
+#' Mega2 allows several different physical and genetic maps to be stored and used to select
+#'  distances.  This function shows the association between mapno and mapname.
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' showMapNames()
+#'}
+showMapNames = function (envir = ENV) {
+    envir$mapnames_table[ , c(6, 2)]
+}
+
+#' show the association between index no and phenotype
+#'
+#' Mega2 stores several phenotypes, both affective and quantitative. This function displays the
+#'  mapping between phenotype and index and adds the phenotype type.
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#'\dontrun{
+#' showPhenoNames()
+#'}
+showPhenoNames = function (envir = ENV) {
+   
+# linkage.h:    TYPE_UNSET, QUANT, AFFECTION, BINARY, NUMBERED, XLINKED, YLINKED
+#                        0      1          2       3         4        5        6
+    hdr = NULL
+    type = NULL
+    df = data.frame(Index = 1:envir$PhenoCnt)
+    for (i in 1:envir$PhenoCnt) {
+        hdr = c(hdr, envir$locus_table[i, 2]) # 2 == LocusName
+
+        if (envir$locus_table[i, 3] == 2) {              # 3 == Type === AFFECTION
+            type = c(type, "affection")
+        } else if (envir$locus_table[i, 3] == 1) {       # 3 == Type === QUANT
+            type = c(type, "quantitative")
+        }
+    }
+    df$Name = hdr
+    df$Type = type
+    df
+}
+
+
+#' return the genotypes for all markers of a given person
+#'
+#' @description for selected person, expand genotype bit vector to an integer vector with
+#'  one integer per marker.  Then convert the integer vector to genotypes.
+#'
+#' @param perid person/sample identifier
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return None
+#' @export
+#'
+#' @keywords internal
+#'
+#' @examples
+#'\dontrun{
+#' # genotypes for all markers for n'th person in genotype table
+#' getgenotype_person(1)
+#'
+#' # genotypes for all markers for range of persons in genotype table
+#' getgenotype_person(m:n)
+#'}
+getgenotype_person = function(perid = 1, envir = ENV) {
+
+  a1 = envir$allele_table[envir$allele_table$indexX==1, 2][-1]
+  a2 = envir$allele_table[envir$allele_table$indexX==2, 2][-1]
+
+  rv = envir$genotype_table[perid, 5][[1]]
+  rv4 = getgenotypes_forperson(rv)
+
+#  0 1|1
+#  1 0|0
+#  2 1|2
+#  3 2|2
+
+  return
+    ifelse(rv4==0, paste0(a1, a1),
+           ifelse(rv4==1, paste0("00"),
+                  ifelse(rv4==2, paste0(a1, a2), paste0(a2, a2))
+                  )
+           )
+}
+
+################################################################
+
+#' fetch genotype matrix for specified markers (assemble by rows)
+#'
+#' @description
+#'  This function calls the C++ function that does all the heavy lifting.  It passes the
+#'  locus_index and the locus_offset in the \emph{unified_genotype_table} from the
+#'  \emph{markers_arg} argument.  It also gathers other data.frames that are in the "global"
+#'  \bold{ENV} environment. One frame contains a bit vector of compressed genotype information,
+#'  another contains the alleles for each marker, and finally there are some bookkeeping related
+#'  data.  Note this function is for Testing only and is not exported.
+#'
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @param sepstr separator string for alleles (default is none)
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return a matrix of genotypes represented as a nucleotide pair.  There is one column for each
+#'  marker in \emph{markers_arg} argument.  There is one row for each person in the family
+#'  (\emph{fam}) table.
+#'
+#' @keywords internal
+#' @useDynLib mega2r
+#'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
+#'  there are two bits for each genotype.  This function creates an output matrix by selecting
+#'  from each row all the needed markers and then repeating for each person.
+#'
+#' @examples
+#'\dontrun{
+#' # genotypes for all persons in markers data.frame argument
+#' getgenotypes_R(ENV$markers)
+#'
+#' # genotypes for all persons in chromosome n
+#' getgenotypes_R(ENV$markers[ENV$markers$chromosome == n,])
+#'}
+getgenotypes_R = function(markers_arg, sepstr = "", envir = ENV) {
+
+  return
+    if (envir$MARKER_SCHEME == 1) {
+        getgenotypes_Ri(markers_arg$locus_link, markers_arg$locus_link_fill,
+                        envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
+                        sepstr, envir$PhenoCnt)
+    } else {  # must be == 2
+
+    }
+}
+
+
+#' fetch genotype character matrix for specified markers
+#'
+#' @description
+#'  This function calls a C++ function that does all the heavy lifting.  It passes the necessary
+#'  arguments to the C++ function: some from its existing arguments and some from data frames
+#'  that are in the "global" environment, \bold{envir}.  From the markers_arg argument, it gets
+#'  the locus_index and the index in the \emph{unified_genotype_table}. It passes the allele
+#'  nucleotide separator argument.
+#'  From the "global" environment, \bold{envir}, it gets a bit vector of compressed genotype information,
+#'  the alleles for each marker, and some bookkeeping related data.
+#'  Note: This function also contains a dispatch/switch on the type of compression in the genotype
+#'  vector.  A different C++ function is called when there is compression versus when there is no
+#'  compression.
+#'
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @param sepstr separator string inserted between the alleles (default is none).  When present, this
+#'  is typically a space, a tab or "/".
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return a matrix of genotypes represented as two allele pairs.  The matrix has one column for each
+#'  marker in \emph{markers_arg} argument.  There is one row for each person in the family
+#'  (\emph{fam}) table.
+#'
+#' @export
+#' @useDynLib mega2r
+#'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector
+#'  there are two bits for each genotype.  This function creates an output matrix by fixing
+#'  the marker and collecting genotype information for each person and then repeating for
+#'  all the needed markers.  (Currently, this appears slightly faster than the scan in
+#'  \emph{genotype_Ri} which is fixes the person and iterates over markers.)
+#'
+#' @examples
+#'\dontrun{
+#' # genotypes for all persons in markers data.frame argument
+#' getgenotypes(ENV$markers)
+#'
+#' # genotypes for all persons in chromosome n
+#' getgenotypes(ENV$markers[ENV$markers$chromosome == n,])
+#'}
+getgenotypes = function(markers_arg, sepstr = "", envir = ENV) {
+
+  return
+    if (envir$MARKER_SCHEME == 1) {
+        getgenotypes_1(markers_arg$locus_link, markers_arg$locus_link_fill,
+                       envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
+                       sepstr, envir$PhenoCnt)
+    } else {  # must be == 2
+        getgenotypes_2(markers_arg$locus_link,
+                       envir$unified_genotype_table, envir$locus_allele_table,
+                       sepstr, envir$PhenoCnt)
+    }
+}
+
+getgenotypes_C = getgenotypes
+
+#' fetch genotype integer matrix for specified markers
+#'
+#' @description
+#'  This function calls a C++ function that does all the heavy lifting.  It passes the necessary
+#'  arguments to the C++ function: some from its existing arguments and some from data frames
+#'  that are in the "global" environment, \bold{envir}.  From its markers_arg argument, it gets
+#'  the locus_index and the index in the \emph{unified_genotype_table}.
+#'  From the "global" environment, \bold{envir}, it gets a bit vector of compressed genotype information,
+#'  and some bookkeeping related data.
+#'  Note: This function also contains a dispatch/switch on the type of compression in the genotype
+#'  vector.  A different C++ function is called when there is compression versus when there is no
+#'  compression.
+#'
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return a matrix of genotypes represented as integers.  Each 32 bit integer represents contains
+#'  two allele values: the high 16 bits contains the index of allele1 and the low 16 bits contains
+#'  the index of allele2.  In the matrix, there is one column for each
+#'  marker in the \emph{markers_arg} argument.  There is one row for each person in the family
+#'  (\emph{fam}) table.
+#'
+#' @export
+#' @useDynLib mega2r
+#'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
+#'  there are two bits for each genotype.  This function creates an output matrix by fixing
+#'  the marker and collecting genotype information for each person and then repeating for
+#'  all the needed markers.
+#'
+#' @examples
+#'\dontrun{
+#' # two ints in upper/lower half integer representing allele for all persons in
+#' # markers data.frame argument
+#' getgenotypesraw(ENV$markers)
+#'
+#' # two ints in upper/lower half integer representing allele # for all persons in chromosome n
+#' getgenotypesraw(ENV$markers[ENV$markers$chromosome == n,])
+#'}
+getgenotypesraw = function(markers_arg, envir = ENV) {
+
+  return
+    if (envir$MARKER_SCHEME == 1) {
+        getgenotypesraw_1(markers_arg$locus_link, markers_arg$locus_link_fill,
+                          envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
+                          envir$PhenoCnt)
+    } else {  # must be == 2
+        getgenotypesraw_2(markers_arg$locus_link,
+                          envir$unified_genotype_table, envir$locus_allele_table,
+                          envir$PhenoCnt)
+    }
+}
+
+#' process the genotype matrix for specified markers and return the corresponding GenABEL genotype matrix
+#'
+#' @description
+#'  This function calls a C++ function that does all the heavy lifting.  It passes the necessary
+#'  arguments to the C++ function: some from its existing arguments and some from data frames
+#'  that are in the "global" environment, \bold{envir}.  From its markers_arg argument, it gets
+#'  the locus_index and the index in the \emph{unified_genotype_table}.
+#'  From the "global" environment, \bold{envir}, it gets a bit vector of compressed genotype information,
+#'  allele information, and some bookkeeping related data.
+#'  Note: This function also contains a dispatch/switch on the type of compression in the genotype
+#'  vector.  A different C++ function is called when there is compression versus when there is no
+#'  compression.
+#'
+#' @param markers_arg a data.frame with the following 5 variables:
+#' \describe{
+#' \item{locus_link}{is the ordinal ranking of this marker among all loci}
+#' \item{locus_link_fill}{is the position of corresponding genotype data in the
+#' \emph{unified_genotype_table}}
+#' \item{MarkerName}{is the text name of the marker}
+#' \item{chromosome}{is the integer chromosome number}
+#' \item{position}{is the integer base pair position of marker}
+#'  }
+#'
+#' @param envir an environment that contains all the data frames created from the SQLite database.
+#'
+#' @return a GenABEL gwaa.data-class object representing the Mega2 environment information
+#'
+#' @export
+#' @useDynLib mega2r
+#'
+#' @details
+#'  The \emph{unified_genotype_table} contains one raw vector for each person.  In the vector,
+#'  there are two bits for each genotype;  each byte has the data for 4 markers.  In GenABEL,
+#'  there is one raw vector per marker, and each byte has the data for 4 persons.  The C++
+#'  function does this conversion as well as adjust the bit values.  For example, in GenABEL
+#'  the genotype represented by bits == 0, is what Mega2 represents with 2.
+#'  Doing the conversion in C++ is 10 - 20 times faster than converting the Mega2 data to
+#'  PLINK .tped files and then having GenABEL read in and process/convert those files.
+#'
+#' @examples
+#'\dontrun{
+#' # two ints in upper/lower half integer representing allele for all persons in
+#' # markers data.frame argument
+#' getgenotypesgenabel(ENV$markers)
+#'
+#' # two ints in upper/lower half integer representing allele # for all persons in chromosome n
+#' getgenotypesgenabel(ENV$markers[ENV$markers$chromosome == n,])
+#'}
+getgenotypesgenabel = function(markers_arg, envir = ENV) {
+
+  return
+    if (envir$MARKER_SCHEME == 1) {
+        getgenotypesgenabel_1(markers_arg$locus_link, markers_arg$locus_link_fill,
+                              envir$unified_genotype_table, envir$allele_table,
+                              envir$markerscheme_table, envir$PhenoCnt)
+    } else {  # must be == 2
+        getgenotypesgenabel_2(markers_arg$locus_link,
+                              envir$unified_genotype_table, envir$locus_allele_table,
+                              envir$PhenoCnt)
+    }
+}
+
+Rcpp::sourceCpp("src/getgenotypes.cpp")

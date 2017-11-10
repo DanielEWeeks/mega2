@@ -6,8 +6,8 @@
 #  
 #   This file is part of the Mega2 program, which is free software you
 #   can redistribute it and/or modify it under the terms of the GNU
-#   General Public License as published by the Free Software Foundation
-#   either version 3 of the License, or (at your option) any later
+#   General Public License as published by the Free Software Foundation,
+#   either version 2 of the License, or (at your option) any later
 #   version.
 #  
 #   Mega2 is distributed in the hope that it will be useful, but WITHOUT
@@ -25,12 +25,12 @@
 # 
 # ===========================================================================
 
-library(mega2genabel)
+library(Mega2R)
 
 print("################################################################")
 print("mex")
 ENV=read.Mega2DB("~/mega2/data/mexnly.db", verbose = FALSE)
-mega2=Mega2GenABEL("tstGNA/mex", envir = ENV)
+mega2=Mega2GenABEL(envir = ENV)
 mega =Mega2ENVGenABEL(envir = ENV)
 Mega2GenABELtst(mega,mega2)
 
@@ -45,61 +45,61 @@ ENV=read.Mega2DB("~/mega2/data/msatnly.db", verbose = FALSE)
 print("################################################################")
 print("mome")
 ENV=read.Mega2DB("~/mega2/data/momenly.db", verbose = FALSE)
-mega2=Mega2GenABEL("tstGNA/mome/mome", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
+mega2=Mega2GenABEL(ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 mega =Mega2ENVGenABEL(ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 Mega2GenABELtst(mega,mega2)
 
 print("################################################################")
 print("tst")
 ENV=read.Mega2DB("~/mega2/data/tstnly.db", verbose = FALSE)
-mega2=Mega2GenABEL("tstGNA/tst/tst", ENV$markers[ENV$markers$chromosome == 22,], envir = ENV)
+mega2=Mega2GenABEL(ENV$markers[ENV$markers$chromosome == 22,], envir = ENV)
 mega =Mega2ENVGenABEL(ENV$markers[ENV$markers$chromosome == 22,], envir = ENV)
 Mega2GenABELtst(mega,mega2)
 
 print("################################################################")
 print("mec")
 ENV=read.Mega2DB("~/mega2/data/mecnly.db", verbose = FALSE)
-mega2=Mega2GenABEL("tstGNA/mec/mec", envir = ENV)
+mega2=Mega2GenABEL(envir = ENV)
 mega =Mega2ENVGenABEL(envir = ENV)
 Mega2GenABELtst(mega,mega2)
 
 print("################################################################")
 print("m15k")
 ENV=read.Mega2DB("~/mega2/data/m15knly.db", verbose = FALSE)
-mega2=Mega2GenABEL("tstGNA/m15k/m15k", ENV$markers[ENV$markers$chromosome == 16,], envir = ENV)
+mega2=Mega2GenABEL(ENV$markers[ENV$markers$chromosome == 16,], envir = ENV)
 mega =Mega2ENVGenABEL(ENV$markers[ENV$markers$chromosome == 16,], envir = ENV)
 Mega2GenABELtst(mega,mega2)
 
 print("################################################################")
 print("samoaqwas")
 #ENV=read.Mega2DB("~/mega2/data/samoaqwas.db", verbose = FALSE)
-#mega2=Mega2GenABEL("tstGNA/samoaqwas/samoaqwas", ENV$markers[ENV$markers$chromosome %in% c(1, 11, 21),], envir = ENV)
+#mega2=Mega2GenABEL(ENV$markers[ENV$markers$chromosome %in% c(1, 11, 21),], envir = ENV)
 #mega =Mega2ENVGenABEL(ENV$markers[ENV$markers$chromosome %in% c(1, 11, 21),], envir = ENV)
 #Mega2GenABELtst(mega,mega2)
 
 print("################################################################")
 print("seqsimp")
 ENV=read.Mega2DB("~/mega2/data/seqsimp.db", verbose = FALSE)
-mega2=Mega2GenABEL("tstGNA/seqsimp/seqsimp", ENV$markers[1:20000,], envir = ENV)
+mega2=Mega2GenABEL(ENV$markers[1:20000,], envir = ENV)
 mega =Mega2ENVGenABEL(ENV$markers[1:20000,], envir = ENV)
 Mega2GenABELtst(mega,mega2)
 print("################################################################")
 print("seqsimr")
 ENV=read.Mega2DB("~/mega2/data/seqsimr.db", verbose = FALSE)
-mega2=Mega2GenABEL("tstGNA/seqsimr/seqsimr", envir = ENV)
+mega2=Mega2GenABEL(envir = ENV)
 mega =Mega2ENVGenABEL(envir = ENV)
 Mega2GenABELtst(mega,mega2)
 
 print("################################################################")
 print("yj1")
 ENV=read.Mega2DB("~/mega2/data/yj1.db", verbose = FALSE)
-mega2=Mega2GenABEL("tstGNA/yj/yj1", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
+mega2=Mega2GenABEL(ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 mega =Mega2ENVGenABEL(ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 Mega2GenABELtst(mega,mega2)
 
 print("yj2")
 ENV=read.Mega2DB("~/mega2/data/yj2.db", verbose = FALSE)
-mega2=Mega2GenABEL("tstGNA/yj/yj2", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
+mega2=Mega2GenABEL(ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 mega =Mega2ENVGenABEL(ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 Mega2GenABELtst(mega,mega2)
 print("################################################################")

@@ -30,8 +30,8 @@
 
 #' Mega2GenABEL package
 #'
-#' @description This package reads a Mega2 SQLite3 database into R dataframes and
-#'	generates input data for GenABEL from these same frames.
+#' @description This package processes R data frames that represent a Mega2R SQLite3 database and
+#'	generates the corresponding GenABEL gwaa.data-class object.
 #'
 #' @author Robert V Baron
 #' @docType package
@@ -41,19 +41,21 @@ NULL
 #' generate gwaa.data-class object
 #'
 #' @description
-#'  Call functions to: create .tped file, .tfam file and .phe file.
-#'  Call the GenABEL functions to process these files which will additionally
-#'  create a GenABEL .raw file.
+#'  Call the package's functions to: create a .tped file, a .tfam file and a .phe file.
+#'  Then call the GenABEL functions to process these files; the .tped and the .tfam
+#'  file are processed by \code{convert.snp.tped} to produce a tped.raw file.  The latter
+#'  is combined with a .phe (phenotype) file by \code{load.gwaa.data} to create a gwaa.data-class
+#'  object in memory.
 #'
 #' @param prefix prefix for generated file names
 #'
-#' @param markers data frame of markers being processed
+#' @param markers data frame of markers to be processed
 #'
-#' @param mapno specify which map index to use for genetic distances
+#' @param mapno specify which map index to use for physical distances
 #'
-#' @param envir "environment" containing SQLite database and other globals
+#' @param envir "R environment" containing SQLite database and other globals
 #'
-#' @return gwaa.class-object of previously read.Mega2DB database
+#' @return gwaa.class-object generated from the Mega2R database
 #'
 #' @importFrom GenABEL convert.snp.tped load.gwaa.data
 #' @importFrom methods is new
@@ -61,7 +63,7 @@ NULL
 #'
 #' @examples
 #'\dontrun{
-#' ENV <- read.Mega2DB("my.db")
+#' ENV = read.Mega2DB("my.db")
 #'
 #' gwaa = Mega2GenABEL(prefix, NULL)
 #' str(gwaa)
@@ -101,21 +103,23 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #' generate gwaa.data-class object
 #'
 #' @description
-#'  Directly write a gwaa.data-class object from ENV tables
+#'  create a gwaa.data-class object from the data frames in a Mega2 environment.  This
+#'  function calls a front end that eventually calls a C++ Rcpp function that reads
+#'  the genotype data in Mega2 compressed format and converts it to the GenABEL
+#'  compressed format.  With any luck, the results of \code{Mega2ENVGenABEL} are the same
+#'  as \code{Mega2GenABEL}, but the calculation is much faster, typically a factor of 10 to 20.
 #'
-#' @param markers data frame of markers being processed
+#' @param markers data frame of markers to be processed
 #'
-#' @param mapno specify which map index to use for genetic distances
+#' @param force pass value to gwaa conversion function
 #'
-#' @param force pass value to gwaa
+#' @param makemap pass value to gwaa conversion function
 #'
-#' @param makemap pass value to gwaa
+#' @param sort pass value to gwaa conversion function
 #'
-#' @param sort pass value to gwaa
+#' @param envir "R environment" containing SQLite database and other globals
 #'
-#' @param envir "environment" containing SQLite database and other globals
-#'
-#' @return gwaa.class-object of previously read.Mega2DB database
+#' @return gwaa.class-object created from Mega2R database
 #'
 #' @export
 #'
@@ -128,13 +132,12 @@ Mega2GenABEL = function (prefix, markers = NULL, mapno = 0, envir = ENV) {
 #' head(summary(gwaa))
 #'}
 Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
-                         sort = TRUE, mapno = 0, envir = ENV) {
+                         sort = TRUE, envir = ENV) {
 #browser()
     if (is.null(markers)) markers = envir$markers
 
     gwaa(markers = markers, force = force, 
-                   makemap = makemap, sort = sort, 
-                   envir = envir)
+         makemap = makemap, sort = sort, envir = envir)
 
 }
 
@@ -142,8 +145,8 @@ Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
 #'
 #' @description
 #'  Generate a PLINK TPED file from the specified Mega2 SQLite database.  The file is named "prefix".tped
-#'  If the markers arg is.null(), the entire envir$markers set is used otherwise markers arg MUST
-#'  be a subset of the envir$markers data.frame -- same columns, but pruned rows.  
+#'  If the markers argument is.null(), the entire envir$markers set is include; otherwise the markers argument MUST
+#'  be a subset of the envir$markers data.frame -- same columns, but fewer rows.  
 #'
 #' @param prefix prefix for .tped file name
 #'
@@ -151,13 +154,14 @@ Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
 #'
 #' @param mapno specify which map index to use for genetic distances
 #'
-#' @param envir "environment" containing SQLite database and other globals
+#' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
 #' @importFrom mega2r getgenotypes
 #' @importFrom utils write.table
-#' @export
+#"
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -234,11 +238,11 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
 #'
 #' @param prefix prefix for generated file name
 #'
-#' @param envir "environment" containing SQLite database and other globals
+#' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -247,10 +251,6 @@ mkGenABELtped = function(prefix, markers=NULL, mapno = 0, envir) {
 mkGenABELtfam = function (prefix, envir) {
     file = paste0(prefix, ".tfam")
 
-#   -9 vs 0 for case/control
-
-# mega2 mis
-#   envir$fam[envir$fam[ , 8] ==0, 8] = -9
     fam = envir$fam
     fam[ , "PerPre"] = paste(fam[ , "PedPre"], fam[ , "PerPre"], sep="_")
     
@@ -261,14 +261,14 @@ mkGenABELtfam = function (prefix, envir) {
 #' generate required PLINK (.phe) file
 #'
 #' @description
-#'  Generate the .phe (phenotype) file for PLINK which is used by GenAbel.  The person
+#'  Generate the .phe (PLINK phenotype) file needed by GenAbel.  The person
 #'  must match that specified in the .tfam file
 #'
-#' @param envir "environment" containing SQLite database and other globals
+#' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -319,29 +319,25 @@ mkGenABELphe = function (envir) {
         }
     }
 
-#    cat(hdr,  file=file, sep="\t")
-#    cat("\n", file=file, append=TRUE)
-
-#   write.table(out, file=file, sep="\t", quote=FALSE, append=TRUE,
-#               row.names=FALSE, col.names=FALSE)
     out
 }
 
 #' generate GenABEL coding vector 
 #'
 #' @description
-#'  Each element of the coding vector is a lookup in the GenABEL:::alleleID.codes() array.
-#'  The alleles are ordered so that with the greater frequency appears first.
+#'  Each element of the coding vector is the index of the corresponding genotype in the GenABEL:::alleleID.codes() array.
+#'  The genotypes are ordered so the allele with the greater frequency appears first.
 #'
-#' @param markers data frame of markers being processed
+#' @param markers data frame of markers to be processed
 #'
-#' @param Freq.x frequency of first allele calculated from actual data.
+#' @param Freq.x frequency of first allele calculated from actual data.  The Mega2 internal frequencies may be
+#'  a bit stale.  This value is one of two returned by the *Mega2GenABELconvert()* function.
 #'
-#' @param envir "environment" containing SQLite database and other globals
+#' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #'\dontrun{
@@ -402,14 +398,13 @@ Mega2GenABELcoding = function(markers = NULL, Freq.x, envir = ENV) {
 #' generate GenABEL compressed genotype matrix
 #'
 #' @description
-#'  The matrix is (# of samples / 4 ) x (# of markers).  (Round samples to multiple of 4.
-#'  Each byte stores data for 4 samples; intfn() generates the 4 - 2 bit encodings.
+#'  The matrix is (# of samples / 4 ) x (# of markers).  (# of samples is rounded to a multiple of 4.
+#'  Each byte stores data for 4 samples; a byte has 4 - 2 bit encodings.
 #'
-#' @param envir "environment" containing SQLite database and other globals
+#' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @importFrom mega2r getgenotypesgenabel
 #' @importFrom stats aggregate
-#' @export
 #'
 #' @return None
 #'

@@ -6,8 +6,8 @@
 #  
 #   This file is part of the Mega2 program, which is free software you
 #   can redistribute it and/or modify it under the terms of the GNU
-#   General Public License as published by the Free Software Foundation
-#   either version 3 of the License, or (at your option) any later
+#   General Public License as published by the Free Software Foundation,
+#   either version 2 of the License, or (at your option) any later
 #   version.
 #  
 #   Mega2 is distributed in the hope that it will be useful, but WITHOUT
@@ -31,15 +31,15 @@ go = function() {
     print("## result environment returned in ENV")
 
 
-    library(mega2pedgene)
+    library(Mega2R)
 
     aa=setwd("~/mega2/test/R/yj/realDataAnalysis/mega2")
     envir = init_pedgene("~/mega2/data/yj1.db", verbose = 1)
 
-    Rprof("prof.out", line.profiling=T, memory.profiling=T)
-    run_pedgene(gs=1:200, envir = envir)
-    Rprof(NULL)
-    print(summaryRprof("prof.out", lines="both"))
+#   Rprof("prof.out", line.profiling=T, memory.profiling=T)
+    Mega2pedgene(gs=1:200, envir = envir)
+#   Rprof(NULL)
+#   print(summaryRprof("prof.out", lines="both"))
 
     aa=setwd(aa)
 

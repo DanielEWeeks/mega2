@@ -2,31 +2,31 @@
 % Please edit documentation in R/mega2pedgene.R
 \name{run_pedgene}
 \alias{run_pedgene}
-\title{execute the pedgene function on a subset of the gene transcript ranges}
+\title{execute the CRAN pedgene function on a subset of the default gene transcript ranges}
 \usage{
 run_pedgene(gs = 1:100, envir = ENV)
 }
 \arguments{
-\item{gs}{a subsequence of the gene transcript ranges to calculate the \emph{Dopedgene} function
-on.}
+\item{gs}{a subrange of the default transcript ranges over which to calculate the \emph{Dopedgene} function.}
 
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
-execute the pedgene function on a subset of the gene transcript ranges
+Execute the pedgene function on the first \emph{gs} default gene transcript ranges (gs = 1:100).
+ Update the \emph{envir$pedgene_results} data frame with the results.
 }
 \note{
-This code starts by deleting the output file ("pedgene.txt" by default).  After Dopedgene 
- is applied to all the chosen transcripts.  The data frame "envir$pedgene_results" is written
+This code starts by deleting the output file set in \code{init_pedgene} ("pedgene.txt" by default).  Then \code{Dopedgene}
+ is applied to all the appropriate ranges.  Finally, the data frame of results, \emph{envir$pedgene_results}, is written
  to the output file.
 }
 \examples{
 \dontrun{
-run()
+run_pedgene()
 
-run(1:10)
+run_pedgene(1:10)
 }
 }

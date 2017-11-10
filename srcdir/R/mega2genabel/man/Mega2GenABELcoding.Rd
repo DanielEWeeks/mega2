@@ -7,21 +7,23 @@
 Mega2GenABELcoding(markers = NULL, Freq.x, envir = ENV)
 }
 \arguments{
-\item{markers}{data frame of markers being processed}
+\item{markers}{data frame of markers to be processed}
 
-\item{Freq.x}{frequency of first allele calculated from actual data.}
+\item{Freq.x}{frequency of first allele calculated from actual data.  The Mega2 internal frequencies may be
+a bit stale.  This value is one of two returned by the *Mega2GenABELconvert()* function.}
 
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
-Each element of the coding vector is a lookup in the GenABEL:::alleleID.codes() array.
- The alleles are ordered so that with the greater frequency appears first.
+Each element of the coding vector is the index of the corresponding genotype in the GenABEL:::alleleID.codes() array.
+ The genotypes are ordered so the allele with the greater frequency appears first.
 }
 \examples{
 \dontrun{
 Mega2GenABELcoding(envir)
 }
 }
+\keyword{internal}

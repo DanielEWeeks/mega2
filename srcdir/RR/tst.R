@@ -6,8 +6,8 @@
 #  
 #   This file is part of the Mega2 program, which is free software you
 #   can redistribute it and/or modify it under the terms of the GNU
-#   General Public License as published by the Free Software Foundation
-#   either version 3 of the License, or (at your option) any later
+#   General Public License as published by the Free Software Foundation,
+#   either version 2 of the License, or (at your option) any later
 #   version.
 #  
 #   Mega2 is distributed in the hope that it will be useful, but WITHOUT
@@ -28,17 +28,17 @@
 go = function(db = 0) {
 #    if (db) browser()
 
-    library(mega2r)
+    library(Mega2R)
 
     ENV = dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db", verbose = 1)
     assign("ENV", ENV, inherits = TRUE)
 
     if (TRUE) {
 ##  ENV = dbmega2_import("/Users/rbaron/mega2/test/samoan_GWAS/dbmega2.db", verbose = 1)
-        source("../R/mega2r/tests/mega2_test.R")
+        source("../RR/Mega2R/mega2_test.R")
         tst1(ENV)
 
-        source("../R/mega2r/tests/mega2gene_test.R")
+        source("../RR/Mega2R/mega2gene_test.R")
         tst10(ENV)
         tst11(ENV)
         tst12(ENV)

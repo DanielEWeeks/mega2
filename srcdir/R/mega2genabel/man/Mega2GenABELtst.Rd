@@ -4,24 +4,31 @@
 \alias{Mega2GenABELtst}
 \title{compare two gwaa.data-class objects}
 \usage{
-Mega2GenABELtst(mega_ = mega, gwaa_ = srdta, full = TRUE)
+Mega2GenABELtst(mega_ = mega, gwaa_ = srdta, full = TRUE, envir = ENV)
 }
 \arguments{
 \item{mega_}{name of first gwaa.data-class object}
 
-\item{gwaa_}{name of first gwaa.data-class object}
+\item{gwaa_}{name of second gwaa.data-class object}
 
-\item{full}{if TRUE compare text as.character(gwaa_@gtdata) vs as.character(mega_@gtdata)
-could be rather slow.}
+\item{full}{if TRUE convert genotypes to text as.character(gwaa_@gtdata)\cr and as.character(mega_@gtdata).
+Then standardize the order for heterozygous alleles and finally compare.
+This step is optional because it could be rather slow.}
+
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
 None
 }
 \description{
-verify that the fields in two gwaa.data-class objects
+Verify by fields, all the fields in two gwaa.data-class objects.
+ Show more detailed marker information iff the coding values are different.  (When comparing
+ the two ways to convert Mega2 data to gwaa.data-class objects, sometimes,
+ when the frequency is .5 for both alleles and the alleles are the digits 1/2 vs letters,
+ it is too hard to get the coding values (and also the genotype column) not to flip.)
 }
 \examples{
 \dontrun{
-tst()
+Mega2GenABELtst()
 }
 }

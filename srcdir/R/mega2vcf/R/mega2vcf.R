@@ -29,8 +29,8 @@
 
 #' Mega2VCF package
 #'
-#' @description This package reads a Mega2 SQLite3 database into R dataframes and
-#'	generates a VCF file and related metadata files from these same frames.
+#' @description This package reads a Mega2 SQLite3 database into R data frames and
+#'	generates a VCF file and related metadata files from the Mega2 data.
 #'
 #' @author Robert V Baron
 #' @docType package
@@ -40,23 +40,26 @@ NULL
 #' generate a VCF file collection
 #'
 #' @description
-#'  Generate a VCF file from the specified Mega2 SQLite database.  The file is named "prefix".vcf
-#'  If the markers arg is.null(), the entire envir$markers set is used otherwise markers arg MUST
-#'  be a subset of the envir$markers data.frame -- same columns, but pruned rows.  In addition,
-#'  several other related files are generated: "prefix".fam, "prefix".freq, "prefix".map,
-#'  "prefix".phe, and "prefix".pen, being the pedigree, allele frequency, marker genetic and
-#'  physical map position, member phenotype and phenotype penetrance information.
+#'  Generate a VCF file from the specified Mega2 SQLite database.  The file is named \emph{"prefix".vcf}
+#'  If the markers argument is.null(), the entire \bold{envir$markers} set is used, otherwise markers argument MUST
+#'  be a subset of the markers (\bold{envir$markers}) data frame -- i.e. same columns, but pruned rows.
+#'  In addition,
+#'  several other files are generated to hold additional database information: \emph{"prefix".fam}, \emph{"prefix".freq}, \emph{"prefix".map},
+#'  \emph{"prefix".phe}, and \emph{"prefix".pen}, which contain the pedigree, allele frequency, marker genetic and
+#'  physical map position, member phenotype and phenotype penetrance data.
 #'
-#' @param prefix prefix for vcf file name
+#' @param prefix prefix for VCF file name
 #'
-#' @param markers markers selected to be in output file
+#' @param markers markers selected to be in the VCF output file
 #'
-#' @param mapno specify which map index to use for genetic distances.  The function showMapNames
+#' @param mapno specify which map index to use for genetic distances.  The function \code{showMapNames()}
 #' will print out the internal map numbers corresponding to all the maps in the Mega2 database.
 #'
-#' @param alleleOrder REF is default, minor allele freq or major allele freq
+#' @param alleleOrder how to order alleles in VCF file.
+#' 'default' is Mega2order, 'minor' is minor allele freq first, 'major' is major allele freq
+#'  first, and 'name' is ascending ascii character order of allele name.
 #'
-#' @param envir "environment" containing SQLite database and other globals
+#' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
@@ -64,13 +67,17 @@ NULL
 #' @importFrom utils write.table
 #' @export
 #'
+#' @note This code in this package illustrates how to extract the various kinds of data in the
+#'  Mega2 data frames to use for further processing.  Some of the data internal representations
+#'  are a bit quirky but the code "explains" it all.
+#'
 #' @examples
 #'\dontrun{
 #' ENV <- read.Mega2DB("my.db")
 #'
 #' Mega2VCF("foo")
 #'
-#' Mega2VCF("foo", envir$markers[envir$markers$chromosome >= 20,])
+#' Mega2VCF("foo", ENV$markers[ENV$markers$chromosome >= 20,])
 #'}
 Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', envir = ENV) {
 

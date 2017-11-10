@@ -28,17 +28,20 @@
 #library(GenABEL)
 
 
-#' generate required .ped, .fam and .map  for PLINK PED files
+#' generate the .ped, .fam and .map files of PLINK PED representation of the object
 #'
 #' @description
-#'  Use provided gwaa.class-object and create a PLINK PED file, PLINK MAP file
-#'  and a PLINK phe file to hold the phenotypes.
+#'  Use provided gwaa.class-object and create a PLINK .ped file, PLINK .map file
+#'  and a PLINK .phe (phenotypes) file.  By default, \bold{srdta} (a sample from GenABEL)
+#'  is used for the gwaa.class-object.  The files are generated with a prefix of
+#'  \emph{srdta} unless a pfx argument is provided.
+#'  NOTE: These PLINK files may be used by the Mega2 executable to produce a database.
 #'
-#' @param gwaa_ name of gwaa.data-class object
+#' @param gwaa_ name of gwaa.data-class object used as input
 #'
-#' @param pfx prefix for PLINK ped file names
+#' @param pfx prefix for PLINK .ped/.map/.phe file names
 #'
-#' @param default name for phenotype to be 6th col of ped file
+#' @param default name of phenotype used for the 6th column of .ped file
 #'
 #' @return None
 #'
@@ -83,14 +86,21 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #' compare two gwaa.data-class objects
 #'
 #' @description
-#'  verify that the fields in two gwaa.data-class objects
+#'  Verify by fields, all the fields in two gwaa.data-class objects.
+#'  Show more detailed marker information iff the coding values are different.  (When comparing
+#'  the two ways to convert Mega2 data to gwaa.data-class objects, sometimes,
+#'  when the frequency is .5 for both alleles and the alleles are the digits 1/2 vs letters,
+#'  it is too hard to get the coding values (and also the genotype column) not to flip.)
 #'
 #' @param mega_ name of first gwaa.data-class object
 #'
-#' @param gwaa_ name of first gwaa.data-class object
+#' @param gwaa_ name of second gwaa.data-class object
 #'
-#' @param full if TRUE compare text as.character(gwaa_@gtdata) vs as.character(mega_@gtdata)
-#'  could be rather slow.
+#' @param full if TRUE convert genotypes to text as.character(gwaa_@gtdata)\cr and as.character(mega_@gtdata).
+#'  Then standardize the order for heterozygous alleles and finally compare.
+#'  This step is optional because it could be rather slow.
+#'
+#' @param envir "R environment" containing SQLite database and other globals
 #'
 #' @return None
 #'
@@ -99,7 +109,7 @@ dmpPed = function(gwaa_ = srdta, pfx = "srdta", default = "bt") {
 #'
 #' @examples
 #'\dontrun{
-#' tst()
+#' Mega2GenABELtst()
 #'}
 Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta, full = TRUE, envir = ENV) {
 

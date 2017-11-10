@@ -6,8 +6,8 @@
 #  
 #   This file is part of the Mega2 program, which is free software you
 #   can redistribute it and/or modify it under the terms of the GNU
-#   General Public License as published by the Free Software Foundation
-#   either version 3 of the License, or (at your option) any later
+#   General Public License as published by the Free Software Foundation,
+#   either version 2 of the License, or (at your option) any later
 #   version.
 #  
 #   Mega2 is distributed in the hope that it will be useful, but WITHOUT
@@ -25,61 +25,61 @@
 # 
 # ===========================================================================
 
-library(mega2vcf)
+library(Mega2R)
 
 print("################################################################")
 print("mex")
 ENV=read.Mega2DB("~/mega2/data/mexnly.db", verbose = FALSE)
-Mega2VCF("tstVCF/mex/mex", envir = ENV)
+Mega2VCF("../RR/tstVCF/mex/mex", envir = ENV)
 
 print("################################################################")
 print("msat")
 ENV=read.Mega2DB("~/mega2/data/msatnly.db", verbose = FALSE)
-Mega2VCF("tstVCF/msat/vcf/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "default", envir = ENV)
-Mega2VCF("tstVCF/msat/vcfmin/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "minor", envir = ENV)
-Mega2VCF("tstVCF/msat/vcfmaj/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "major", envir = ENV)
+Mega2VCF("../RR/tstVCF/msat/vcf/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "default", envir = ENV)
+Mega2VCF("../RR/tstVCF/msat/vcfmin/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "minor", envir = ENV)
+Mega2VCF("../RR/tstVCF/msat/vcfmaj/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "major", envir = ENV)
 
 print("################################################################")
 print("mome")
 ENV=read.Mega2DB("~/mega2/data/momenly.db", verbose = FALSE)
-Mega2VCF("tstVCF/mome/mome", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
+Mega2VCF("../RR/tstVCF/mome/mome", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 
 print("################################################################")
 print("tst")
 ENV=read.Mega2DB("~/mega2/data/tstnly.db", verbose = FALSE)
-Mega2VCF("tstVCF/tst/tst", ENV$markers[ENV$markers$chromosome == 22,], envir = ENV)
+Mega2VCF("../RR/tstVCF/tst/tst", ENV$markers[ENV$markers$chromosome == 22,], envir = ENV)
 
 print("################################################################")
 print("mec")
 ENV=read.Mega2DB("~/mega2/data/mecnly.db", verbose = FALSE)
-Mega2VCF("tstVCF/mec/mec", envir = ENV)
+Mega2VCF("../RR/tstVCF/mec/mec", envir = ENV)
 
 print("################################################################")
 print("m15k")
 ENV=read.Mega2DB("~/mega2/data/m15knly.db", verbose = FALSE)
-Mega2VCF("tstVCF/m15k/vcf/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "default", envir = ENV)
-Mega2VCF("tstVCF/m15k/vcfmin/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "minor", envir = ENV)
-Mega2VCF("tstVCF/m15k/vcfmaj/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "major", envir = ENV)
+Mega2VCF("../RR/tstVCF/m15k/vcf/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "default", envir = ENV)
+Mega2VCF("../RR/tstVCF/m15k/vcfmin/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "minor", envir = ENV)
+Mega2VCF("../RR/tstVCF/m15k/vcfmaj/vcf.16", ENV$markers[ENV$markers$chromosome == 16,], alleleOrder = "major", envir = ENV)
 
 print("################################################################")
 print("samoaqwas")
 ENV=read.Mega2DB("~/mega2/data/samoaqwas.db", verbose = FALSE)
-# Mega2VCF("tstVCF/samoaqwas/samoaqwas", ENV$markers[ENV$markers$chromosome %in% c(1, 11, 21),], envir = ENV)
+# Mega2VCF("../RR/tstVCF/samoaqwas/samoaqwas", ENV$markers[ENV$markers$chromosome %in% c(1, 11, 21),], envir = ENV)
 
 print("################################################################")
 print("seqsimp")
 ENV=read.Mega2DB("~/mega2/data/seqsimp.db", verbose = FALSE)
-Mega2VCF("tstVCF/seqsimp/seqsimp", ENV$markers[1:20000,], envir = ENV)
+Mega2VCF("../RR/tstVCF/seqsimp/seqsimp", ENV$markers[1:20000,], envir = ENV)
 print("################################################################")
 print("seqsimr")
 ENV=read.Mega2DB("~/mega2/data/seqsimr.db", verbose = FALSE)
-Mega2VCF("tstVCF/seqsimr/seqsimr", envir = ENV)
+Mega2VCF("../RR/tstVCF/seqsimr/seqsimr", envir = ENV)
 
 print("################################################################")
 print("yj1")
 ENV=read.Mega2DB("~/mega2/data/yj1.db", verbose = FALSE)
-Mega2VCF("tstVCF/yj/yj1", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
+Mega2VCF("../RR/tstVCF/yj/yj1", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 print("yj2")
 ENV=read.Mega2DB("~/mega2/data/yj2.db", verbose = FALSE)
-Mega2VCF("tstVCF/yj/yj2", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
+Mega2VCF("../RR/tstVCF/yj/yj2", ENV$markers[ENV$markers$chromosome == 1,], envir = ENV)
 print("################################################################")

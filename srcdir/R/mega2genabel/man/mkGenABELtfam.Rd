@@ -9,7 +9,7 @@ mkGenABELtfam(prefix, envir)
 \arguments{
 \item{prefix}{prefix for generated file name}
 
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
 None
@@ -23,3 +23,4 @@ Generate the six column .tfam file used with the .tped file.  Note: Only the per
 mkGenABELtfam(prefix, envir)
 }
 }
+\keyword{internal}

@@ -9,23 +9,25 @@ Mega2GenABEL(prefix, markers = NULL, mapno = 0, envir = ENV)
 \arguments{
 \item{prefix}{prefix for generated file names}
 
-\item{markers}{data frame of markers being processed}
+\item{markers}{data frame of markers to be processed}
 
-\item{mapno}{specify which map index to use for genetic distances}
+\item{mapno}{specify which map index to use for physical distances}
 
-\item{envir}{"environment" containing SQLite database and other globals}
+\item{envir}{"R environment" containing SQLite database and other globals}
 }
 \value{
-gwaa.class-object of previously read.Mega2DB database
+gwaa.class-object generated from the Mega2R database
 }
 \description{
-Call functions to: create .tped file, .tfam file and .phe file.
- Call the GenABEL functions to process these files which will additionally
- create a GenABEL .raw file.
+Call the package's functions to: create a .tped file, a .tfam file and a .phe file.
+ Then call the GenABEL functions to process these files; the .tped and the .tfam
+ file are processed by \code{convert.snp.tped} to produce a tped.raw file.  The latter
+ is combined with a .phe (phenotype) file by \code{load.gwaa.data} to create a gwaa.data-class
+ object in memory.
 }
 \examples{
 \dontrun{
-ENV <- read.Mega2DB("my.db")
+ENV = read.Mega2DB("my.db")
 
 gwaa = Mega2GenABEL(prefix, NULL)
 str(gwaa)

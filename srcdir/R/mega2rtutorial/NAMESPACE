@@ -2,3 +2,4 @@
 
 export(clean_mega2rtutorial_data)
 export(dump_mega2rtutorial_data)
+importFrom(R.utils,gunzip)
