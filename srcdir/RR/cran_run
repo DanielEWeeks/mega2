@@ -1,5 +1,7 @@
 #!/bin/bash -v
 
+version=1.0.1
+
 R CMD BUILD Mega2R
-R CMD check --as-cran Mega2R_1.0.0.tar.gz
+R CMD check --as-cran "$@" Mega2R_$version.tar.gz
 
