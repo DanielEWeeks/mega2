@@ -126,7 +126,7 @@ MISC_SCRIPTS = \
     misc/plot-roh.py \
     misc/run-roh.pl \
     misc/vcfutils.pl
-TEST_PROGRAMS = test/test-rbuf test/test-regidx
+#TEST_PROGRAMS = test/test-rbuf test/test-regidx
 
 all: 	
 	make -C htslib-1.6
@@ -218,7 +218,7 @@ vcfplugin.o: EXTRA_CPPFLAGS += -DPLUGINPATH='"$(pluginpath)"'
 
 -include $(PLUGINM)
 
-test check: test-plugins
+#test check: test-plugins
 
 else   # PLUGINS_ENABLED
 
@@ -226,11 +226,11 @@ PLUGINC =
 PLUGINS =
 PLUGINM =
 
-test check: test-no-plugins
+#test check: test-no-plugins
 
 endif  # PLUGINS_ENABLED
 
-plugins: $(PLUGINS)
+#plugins: $(PLUGINS)
 
 $(UP)libbcftools.a: $(OBJS)
 	@-rm -f $@
@@ -299,35 +299,35 @@ csq.o: csq.c smpl_ilist.h regidx.h filter.h kheap.h rbuf.h
 # For tests that might use it, set $REF_PATH explicitly to use only reference
 # areas within the test suite (or set it to ':' to use no reference areas).
 # (regression.sh sets $REF_PATH to a subdirectory itself.)
-test-no-plugins: $(PROGRAMS) $(TEST_PROGRAMS) $(BGZIP) $(TABIX)
-	./test/test-rbuf
-	./test/test-regidx
-	REF_PATH=: ./test/test.pl --exec bgzip=$(BGZIP) --exec tabix=$(TABIX)
+#test-no-plugins: $(PROGRAMS) $(TEST_PROGRAMS) $(BGZIP) $(TABIX)
+#	./test/test-rbuf
+#	./test/test-regidx
+#	REF_PATH=: ./test/test.pl --exec bgzip=$(BGZIP) --exec tabix=$(TABIX)
 
-test-plugins: $(PROGRAMS) $(TEST_PROGRAMS) $(BGZIP) $(TABIX) plugins
-	./test/test-rbuf
-	./test/test-regidx
-	REF_PATH=: ./test/test.pl --plugins --exec bgzip=$(BGZIP) --exec tabix=$(TABIX)
+#test-plugins: $(PROGRAMS) $(TEST_PROGRAMS) $(BGZIP) $(TABIX) plugins
+#	./test/test-rbuf
+#	./test/test-regidx
+#	REF_PATH=: ./test/test.pl --plugins --exec bgzip=$(BGZIP) --exec tabix=$#(TABIX)
 
-test/test-rbuf.o: test/test-rbuf.c rbuf.h
+#test/test-rbuf.o: test/test-rbuf.c rbuf.h
 
-test/test-rbuf: test/test-rbuf.o
-	$(CC) $(LDFLAGS) -o $@ $^ $(ALL_LIBS)
+#test/test-rbuf: test/test-rbuf.o
+#	$(CC) $(LDFLAGS) -o $@ $^ $(ALL_LIBS)
 
-test/test-regidx.o: test/test-regidx.c regidx.h
+#test/test-regidx.o: test/test-regidx.c regidx.h
 
-test/test-regidx: test/test-regidx.o regidx.o $(HTSLIB)
-	$(CC) $(ALL_LDFLAGS) -o $@ $^ $(HTSLIB) -lpthread $(HTSLIB_LIB) $(ALL_LIBS)
+#test/test-regidx: test/test-regidx.o regidx.o $(HTSLIB)
+#	$(CC) $(ALL_LDFLAGS) -o $@ $^ $(HTSLIB) -lpthread $(HTSLIB_LIB) $(ALL_LIBS)
 
 
 # make docs target depends the a2x asciidoc program
-doc/bcftools.1: doc/bcftools.txt
-	cd doc && a2x -adate="$(DOC_DATE)" -aversion=$(DOC_VERSION) --doctype manpage --format manpage bcftools.txt
+#doc/bcftools.1: doc/bcftools.txt
+#	cd doc && a2x -adate="$(DOC_DATE)" -aversion=$(DOC_VERSION) --doctype manpage #—format manpage bcftools.txt
 
-doc/bcftools.html: doc/bcftools.txt
-	cd doc && a2x -adate="$(DOC_DATE)" -aversion=$(DOC_VERSION) --doctype manpage --format xhtml bcftools.txt
+#doc/bcftools.html: doc/bcftools.txt
+#	cd doc && a2x -adate="$(DOC_DATE)" -aversion=$(DOC_VERSION) --doctype manpage #—format xhtml bcftools.txt
 
-docs: doc/bcftools.1 doc/bcftools.html
+#docs: doc/bcftools.1 doc/bcftools.html
 
 # To avoid an install dependency on asciidoc, the make install target
 # does not depend on doc/bcftools.1
@@ -347,12 +347,12 @@ clean: testclean clean-plugins
 	rm -f $(UP)libbcftools.a
 	cd htslib-1.6 && $(MAKE) clean
 
-clean-plugins:
-	-rm -f plugins/*.so plugins/*.P
-	-rm -rf plugins/*.dSYM
+#clean-plugins:
+#	-rm -f plugins/*.so plugins/*.P
+#	-rm -rf plugins/*.dSYM
 
-testclean:
-	-rm -f test/*.o test/*~ $(TEST_PROG)
+#testclean:
+#	-rm -f test/*.o test/*~ $(TEST_PROG)
 
 distclean: clean
 	-rm -f config.cache config.h config.log config.mk config.status
