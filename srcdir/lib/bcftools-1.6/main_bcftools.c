@@ -127,10 +127,11 @@ static cmd_t cmds[] =
       .alias = "reheader",
       .help  = "modify VCF/BCF header, change sample names"
     },
-    { .func  = main_sort,
-      .alias = "sort",
-      .help  = "sort VCF/BCF file"
-    },
+    //this gives an error for some reason
+    //{ .func  = main_sort,
+    //  .alias = "sort",
+    //  .help  = "sort VCF/BCF file"
+    //},
     { .func  = main_vcfview,
       .alias = "view",
       .help  = "VCF/BCF conversion, view, subset and filter VCF/BCF files"

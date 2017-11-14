@@ -200,7 +200,7 @@ void ReadBCFs::read_BCFs( )
 
     vector<string> temp;
     temp.push_back("bcftools");
-    temp.push_back("view");
+    //temp.push_back("view");
     int argc = 2;
 
     Str directory = this->BCF_path;
@@ -226,17 +226,22 @@ void ReadBCFs::read_BCFs( )
         }
     }
 
-    char *argv[] = { };
+    char** argv;
+    argv = (char**)malloc(argc * sizeof(char*));
+    for (size_t i = 0; i < argc; i += 1)
+        argv[i] = (char*)malloc(255 * sizeof(char));
 
-    for( int i = 0; i < argc; i++) {
+    for( int i = 0; i < argc; i++ ) {
         argv[i] = &temp[i][0];
         //printf("%s\n",argv[i]);
     }
-    argv[argc] = NULL;
-    temp.clear();
 
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
     mbi->mega2_main_vcfview(argc, argv);
+
+   //for (size_t i = 0; i < argc; i += 1)
+    //    free(argv[i]);
+    //free(argv);
 }
 
 void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)

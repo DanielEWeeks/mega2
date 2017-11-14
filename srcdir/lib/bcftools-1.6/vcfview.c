@@ -39,6 +39,9 @@ THE SOFTWARE.  */
 #include "filter.h"
 #include "htslib/khash_str2int.h"
 
+#include "vcfview.h"
+#define __VCFVIEW_H__
+
 #define FLT_INCLUDE 1
 #define FLT_EXCLUDE 2
 
@@ -55,30 +58,30 @@ THE SOFTWARE.  */
 #define GT_NEED_MISSING 5
 #define GT_NO_MISSING 6
 
-typedef struct _args_t
-{
-    filter_t *filter;
-    char *filter_str;
-    int filter_logic;   // one of FLT_INCLUDE/FLT_EXCLUDE (-i or -e)
+//typedef struct _args_t
+//{
+//    filter_t *filter;
+//    char *filter_str;
+//    int filter_logic;   // one of FLT_INCLUDE/FLT_EXCLUDE (-i or -e)
+//
+//    bcf_srs_t *files;
+//    bcf_hdr_t *hdr, *hnull, *hsub; // original header, sites-only header, subset header
+//    char **argv, *format, *sample_names, *subset_fname, *targets_list, *regions_list;
+//    int argc, clevel, n_threads, output_type, print_header, update_info, header_only, n_samples, *imap, calc_ac;
+//    int trim_alts, sites_only, known, novel, min_alleles, max_alleles, private_vars, uncalled, phased;
+//    int min_ac, min_ac_type, max_ac, max_ac_type, min_af_type, max_af_type, gt_type;
+//    int *ac, mac;
+//    float min_af, max_af;
+//    char *fn_ref, *fn_out, **samples;
+//    int sample_is_file, force_samples;
+//    char *include_types, *exclude_types;
+//    int include, exclude;
+//    int record_cmd_line;
+//    htsFile *out;
+//}
+//args_t;
 
-    bcf_srs_t *files;
-    bcf_hdr_t *hdr, *hnull, *hsub; // original header, sites-only header, subset header
-    char **argv, *format, *sample_names, *subset_fname, *targets_list, *regions_list;
-    int argc, clevel, n_threads, output_type, print_header, update_info, header_only, n_samples, *imap, calc_ac;
-    int trim_alts, sites_only, known, novel, min_alleles, max_alleles, private_vars, uncalled, phased;
-    int min_ac, min_ac_type, max_ac, max_ac_type, min_af_type, max_af_type, gt_type;
-    int *ac, mac;
-    float min_af, max_af;
-    char *fn_ref, *fn_out, **samples;
-    int sample_is_file, force_samples;
-    char *include_types, *exclude_types;
-    int include, exclude;
-    int record_cmd_line;
-    htsFile *out;
-}
-args_t;
-
-static void init_data(args_t *args)
+void init_data_vcfview(args_t *args)
 {
     int i;
     args->hdr = args->files->readers[0].header;
@@ -249,7 +252,7 @@ static void init_data(args_t *args)
         args->filter = filter_init(args->hdr, args->filter_str);
 }
 
-static void destroy_data(args_t *args)
+void destroy_data_vcfview(args_t *args)
 {
     int i;
     if ( args->imap ) {
@@ -483,7 +486,7 @@ void set_allele_type (int *atype, char *atype_string)
     }
 }
 
-static void usage(args_t *args)
+void usage(args_t *args)
 {
     fprintf(stderr, "\n");
     fprintf(stderr, "About:   VCF/BCF conversion, view, subset and filter VCF/BCF files.\n");
@@ -601,7 +604,7 @@ int main_vcfview(int argc, char *argv[])
             case 'l':
                 args->clevel = strtol(optarg,&tmp,10);
                 if ( *tmp ) error("Could not parse argument: --compression-level %s\n", optarg);
-                args->output_type |= FT_GZ; 
+                args->output_type |= FT_GZ;
                 break;
             case 'o': args->fn_out = optarg; break;
             case 'H': args->print_header = 0; break;
@@ -626,7 +629,7 @@ int main_vcfview(int argc, char *argv[])
                 args->min_alleles = strtol(optarg,&tmp,10);
                 if ( *tmp ) error("Could not parse argument: --min-alleles %s\n", optarg);
                 break;
-            case 'M': 
+            case 'M':
                 args->max_alleles = strtol(optarg,&tmp,10);
                 if ( *tmp ) error("Could not parse argument: --max-alleles %s\n", optarg);
                 break;

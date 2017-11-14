@@ -131,7 +131,6 @@ TEST_PROGRAMS = test/test-rbuf test/test-regidx
 all: 	
 	make -C htslib-1.6
 	make lib-static 
-	make mega2
 	
 #all: $(PROGRAMS) $(TEST_PROGRAMS) plugins
 
@@ -186,11 +185,6 @@ print-version:
 
 .c.o:
 	$(CC) $(CFLAGS) $(ALL_CPPFLAGS) $(EXTRA_CPPFLAGS) -c -o $@ $<
-
-mega2:
-#	$(CC) $(CFLAGS) $(ALL_CPPFLAGS) $(EXTRA_CPPFLAGS) -c main_bcftools.c -o main_bcftools.o
-#	$(CC) $(CFLAGS) $(ALL_CPPFLAGS) $(EXTRA_CPPFLAGS) -c mega2_bcftools_interface.cpp -o mega2_bcftools_interface.o
-
 	
 # The polysomy command is not compiled by default because it brings dependency
 # on libgsl. The command can be compiled wth `make USE_GPL=1`. See the INSTALL
@@ -273,7 +267,7 @@ vcfroh.o: vcfroh.c $(roh_h)
 vcfcnv.o: vcfcnv.c $(cnv_h)
 vcfsom.o: vcfsom.c $(htslib_vcf_h) $(htslib_synced_bcf_reader_h) $(htslib_vcfutils_h) $(bcftools_h)
 vcfstats.o: vcfstats.c $(htslib_vcf_h) $(htslib_synced_bcf_reader_h) $(htslib_vcfutils_h) $(htslib_faidx_h) $(bcftools_h) $(filter_h) $(bin_h)
-vcfview.o: vcfview.c $(htslib_vcf_h) $(htslib_synced_bcf_reader_h) $(htslib_vcfutils_h) $(bcftools_h) $(filter_h)
+vcfview.o: vcfview.c $(htslib_vcf_h) $(htslib_synced_bcf_reader_h) $(htslib_vcfutils_h) $(bcftools_h) $(filter_h) vcfview.h
 reheader.o: reheader.c $(htslib_vcf_h) $(htslib_bgzf_h) $(htslib_tbx_h) $(htslib_kseq_h) $(bcftools_h)
 tabix.o: tabix.c $(htslib_bgzf_h) $(htslib_tbx_h)
 ccall.o: ccall.c $(htslib_kfunc_h) $(call_h) kmin.h $(prob1_h)
