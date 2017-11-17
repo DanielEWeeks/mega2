@@ -739,7 +739,7 @@ int main_vcfview(int argc, char *argv[])
     if ( bcf_sr_set_threads(args->files, args->n_threads)<0 ) error("Failed to create threads\n");
     if ( !bcf_sr_add_reader(args->files, fname) ) error("Failed to open %s: %s\n", fname,bcf_sr_strerror(args->files->errnum));
 
-    init_data(args);
+    init_data_vcfview(args);
     bcf_hdr_t *out_hdr = args->hnull ? args->hnull : (args->hsub ? args->hsub : args->hdr);
     if (args->print_header)
         bcf_hdr_write(args->out, out_hdr);

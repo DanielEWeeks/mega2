@@ -128,10 +128,10 @@ MISC_SCRIPTS = \
     misc/vcfutils.pl
 #TEST_PROGRAMS = test/test-rbuf test/test-regidx
 
-all: 	
+all:	
 	make -C htslib-1.6
 	make lib-static 
-	
+
 #all: $(PROGRAMS) $(TEST_PROGRAMS) plugins
 
 ALL_CPPFLAGS = -I. $(HTSLIB_CPPFLAGS) $(CPPFLAGS)
@@ -150,7 +150,7 @@ ifneq "$(PLUGINS_ENABLED)" "no"
 	echo '#define PLUGIN_EXT ".so"' >> $@
 endif
 
-include config.mk
+include ./config.mk
 
 lib-static: $(UP)libbcftools.a
 
@@ -185,7 +185,7 @@ print-version:
 
 .c.o:
 	$(CC) $(CFLAGS) $(ALL_CPPFLAGS) $(EXTRA_CPPFLAGS) -c -o $@ $<
-	
+
 # The polysomy command is not compiled by default because it brings dependency
 # on libgsl. The command can be compiled wth `make USE_GPL=1`. See the INSTALL
 # and LICENSE documents to understand license implications.

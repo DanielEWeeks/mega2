@@ -201,7 +201,8 @@ void ReadBCFs::read_BCFs( )
     vector<string> temp;
     temp.push_back("bcftools");
     //temp.push_back("view");
-    int argc = 2;
+    int argc = 1;
+    int count = 0;
 
     Str directory = this->BCF_path;
     Str file_template = this->BCF_template;
@@ -222,7 +223,7 @@ void ReadBCFs::read_BCFs( )
         else {
             mssgvf("read_BCFs: Found file \"%s\"\n", file);
             temp.push_back(file);
-            argc++;
+            count++;
         }
     }
 
@@ -231,12 +232,17 @@ void ReadBCFs::read_BCFs( )
     for (size_t i = 0; i < argc; i += 1)
         argv[i] = (char*)malloc(255 * sizeof(char));
 
-    for( int i = 0; i < argc; i++ ) {
-        argv[i] = &temp[i][0];
-        //printf("%s\n",argv[i]);
+    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+    argv[0] = &temp[0][0];
+    argc = 2;
+
+    for( int i = 1; i < count; i++ ) {
+        argv[1] = &temp[i][0];
+        printf("%s\n",argv[i]);
+        mbi->mega2_main_vcfview(argc, argv);
     }
 
-    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+    //MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
     mbi->mega2_main_vcfview(argc, argv);
 
    //for (size_t i = 0; i < argc; i += 1)

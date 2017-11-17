@@ -306,8 +306,11 @@ int MEGA2_BCFTOOLS_INTERFACE::mega2_main_vcfview(int argc, char *argv[])
         {
             bcf1_t *line = args->files->readers[0].buffer[0];
             if ( line->errcode && out_hdr!=args->hdr ) error("Undefined tags in the header, cannot proceed in the sample subset mode.\n");
-            if ( subset_vcf(args, line) )
+            if ( subset_vcf(args, line) ) {
+                bcf_unpack(line, BCF_UN_FMT);
                 bcf_write1(args->out, out_hdr, line);
+            }
+
         }
         ret = args->files->errnum;
         if ( ret ) fprintf(stderr,"Error: %s\n", bcf_sr_strerror(args->files->errnum));
