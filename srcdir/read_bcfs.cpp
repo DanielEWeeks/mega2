@@ -182,21 +182,21 @@ void ReadBCFs::show_settings() {
 
 /*
  * Called in Annotated_Ped_File.cpp
- * This is where we will call handlers to do vairous other tasks
+ * This is where we will call handlers to do various other tasks
  */
 void ReadBCFs::do_init(Input_Base *inp)
 {
-    read_BCFs();
+    this->input = inp;
+    this->pedfile = *inp->input_files.pedfl;
 
-
-    //VCFtools_process_file_meta_information_and_header();
 }
 
 /*
  * here we will try to check that the files are available and read them
  */
-void ReadBCFs::read_BCFs( )
+void ReadBCFs::read_BCFs( linkage_locus_top *LPedTreeTop )
 {
+    linkage_locus_top *LTop = LPedTreeTop;
 
     vector<string> temp;
     temp.push_back("bcftools");
@@ -236,30 +236,51 @@ void ReadBCFs::read_BCFs( )
     argv[0] = &temp[0][0];
     argc = 2;
 
-    for( int i = 1; i < count; i++ ) {
+    for( int i = 1; i < count +1; i++ ) {
         argv[1] = &temp[i][0];
-        printf("%s\n",argv[i]);
-        mbi->mega2_main_vcfview(argc, argv);
+        //printf("%d, %s %s\n",argc, argv[0],argv[1]);
+        mbi->mega2_main_vcfview(argc, argv, LTop);
     }
 
     //MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
-    mbi->mega2_main_vcfview(argc, argv);
+    //mbi->mega2_main_vcfview(argc, argv);
 
    //for (size_t i = 0; i < argc; i += 1)
     //    free(argv[i]);
     //free(argv);
 }
 
-void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
+linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
 {
-    m2_map bcf_map;
+//    Tod tod_pf("read ped file");
+//    FILE *filep = this->pedfile ? fopen(this->pedfile, "r") : NULL;
+//    if (filep == NULL) {
+//        errorvf("could not open %s for reading!\n", pedfile);
+//        EXIT(FILE_READ_ERROR);
+//    }
+//
+//    linkage_ped_top *Top = read_common_ped_file(filep, this->pedfile, plink_info, LTop, file_desc,
+//                                                phecols, num_groups, groups,
+//                                                num_ped_records, has_extra_ids);
+//    tod_pf();
+//
+//    return Top;
+    return NULL;
 
-    build_bcf_map(bcf_map);
-
-    additional_maps.push_back(bcf_map);
 }
 
-void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
+
+
+//void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
+//{
+//    m2_map bcf_map;
+
+//    build_bcf_map(bcf_map);
+
+//    additional_maps.push_back(bcf_map);
+//}
+
+//void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
 //    std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
 //
 //    Tod vcfgm("VCF get map");
@@ -339,52 +360,57 @@ void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
 //    //read_m2_map_as_names_file(bcf_map, top, tot_cols, phe_names, phe_types);
 //    //ann_files = 1;
 //    vcfmn();
-}
+//}
 
 
 /*
  * We want to build "names" and genotypes in one pass to only load these BCF files once
  */
 
-//linkage_locus_top *ReadBCFs::do_names(const char *&names_fn)
-//{
-//    linkage_locus_top *LTop = build_BCFs_names();
+linkage_locus_top *ReadBCFs::do_names(const char *&names_fn)
+{
+    //linkage_locus_top *LTop = build_BCFs_names();
+
+    linkage_locus_top *LTop = NULL;
+    read_BCFs(LTop);
+
+    return LTop;
+}
+
+linkage_locus_top *ReadBCFs::build_BCFs_names()
+{
+//    int num_pheno   = sample_file_hdr1b.size() - 5;
+//    int num_markers = markers_filtered;
+//    int num_all     = num_pheno + num_markers;
 //
-//    return LTop;
-//}
+//    char **names    = CALLOC(num_all, char *);
+//    char  *types    = CALLOC(num_all, char);
+//    int i;
+//    i = 0;
+//    Vecsp typep = sample_file_hdr2b.cbegin()+5;
+//    for (Vecsp phep = sample_file_hdr1b.cbegin()+5; i < num_pheno; i++, phep++, typep++) {
+//        names[i] = CALLOC((*phep).size()+1, char);
+//        strcpy(names[i], (*phep).c_str());
+//        types[i] = ( ((*typep) == "B") || ((*typep) == "D") ) ? 'A' : 'T';
+//    }
 //
-//linkage_locus_top *ReadBCFs::build_BCFs_names()
-//{
-////    char vcftools[10] = "vcftools";
-////    char vcfflag[10] = "--vcf";
-////    char recode[15] = "--recode-bcf";
-////    char outflag[10] = "--out";
-////    char outname[10] = "out";
-////    char *argv[] = {vcftools, vcfflag, filename, recode,outflag,outname, NULL};
-////    int argc = sizeof(argv) / sizeof(char*) - 1;
-////
-////    parameters params(argc,argv);
-////
-////    params.read_parameters();
-////
-////    params.vcf_filename=filename;
-////    params.vcf_compressed = false;
-////
-////    params.recode_all_INFO = true;
-////    params.recode_bcf = true;
-////    filename[strlen(filename)-4] = '\0';
-////    params.output_prefix = filename;
-////    params.recode_bcf_to_stream = false;
-////
-////    params.print_params();
-////
-////    variant_file *vcf;
-////    vcf = new vcf_file(params.vcf_filename,params.vcf_compressed,params.chrs_to_keep,params.chrs_to_exclude,params.force_write_index);
-////    vcf->print_bcf(params.output_prefix,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
-////
-////    return NULL;
-////
-////    return read_common_marker_data(num_pheno + num_markers, num_markers, names, types,
-////            /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
-//}
+//    ImpMarker *mp;
+//    for (Vecmarkerpp marp = markers.cbegin(); marp != markers.cend(); marp++) {
+//        mp = *marp;
+//        if (! mp->skip ) {
+//            if (i >= num_all) {
+//                errorvf("Internal Error: build_impute2_names() count of skipped markers too large\n");
+//                EXIT(DATA_INCONSISTENCY);
+//            }
+//            names[i] = CALLOC(mp->name.size()+1, char);
+//            strcpy(names[i], mp->name.c_str());
+//            types[i] = 'M';
+//            i++;
+//        }
+//    }
+//
+//    return read_common_marker_data(num_pheno + num_markers, num_markers, names, types,
+//            /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
+    return NULL;
+}
 

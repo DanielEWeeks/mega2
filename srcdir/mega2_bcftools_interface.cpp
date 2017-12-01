@@ -83,7 +83,7 @@ using namespace std;
 #define GT_NEED_MISSING 5
 #define GT_NO_MISSING 6
 
-int MEGA2_BCFTOOLS_INTERFACE::mega2_main_vcfview(int argc, char *argv[])
+int MEGA2_BCFTOOLS_INTERFACE::mega2_main_vcfview(int argc, char *argv[], linkage_locus_top *LTop)
 {
     int c;
     args_t *args  = (args_t*) calloc(1,sizeof(args_t));
@@ -294,10 +294,10 @@ int MEGA2_BCFTOOLS_INTERFACE::mega2_main_vcfview(int argc, char *argv[])
 
     init_data_vcfview(args);
     bcf_hdr_t *out_hdr = args->hnull ? args->hnull : (args->hsub ? args->hsub : args->hdr);
-    if (args->print_header)
-        bcf_hdr_write(args->out, out_hdr);
-    else if ( args->output_type & FT_BCF )
-        error("BCF output requires header, cannot proceed with -H\n");
+    //if (args->print_header)
+        //bcf_hdr_write(args->out, out_hdr);
+    //else if ( args->output_type & FT_BCF )
+     //   error("BCF output requires header, cannot proceed with -H\n");
 
     int ret = 0;
     if (!args->header_only)
@@ -315,10 +315,11 @@ int MEGA2_BCFTOOLS_INTERFACE::mega2_main_vcfview(int argc, char *argv[])
         ret = args->files->errnum;
         if ( ret ) fprintf(stderr,"Error: %s\n", bcf_sr_strerror(args->files->errnum));
     }
-    hts_close(args->out);
-    destroy_data_vcfview(args);
-    bcf_sr_destroy(args->files);
-    free(args);
+
+    //hts_close(args->out);
+    //destroy_data_vcfview(args);
+    //bcf_sr_destroy(args->files);
+    //free(args);
     return ret;
 }
 

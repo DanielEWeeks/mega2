@@ -75,7 +75,7 @@ public:
 
     ~MEGA2_BCFTOOLS_INTERFACE() { }
 
-    int mega2_main_vcfview(int argc, char *argv[]);
+    int mega2_main_vcfview(int argc, char *argv[], linkage_locus_top *LPedTreeTop);
 
 
     //void init_data(args_t *args);

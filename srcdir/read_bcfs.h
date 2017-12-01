@@ -54,24 +54,28 @@ public:
     virtual void do_init(Input_Base *inp);
     void show_settings();
 
-    void read_BCFs();
-    //linkage_locus_top * do_names(const char *&names_fn);
-    //linkage_locus_top * build_BCFs_names();
+    void read_BCFs(linkage_locus_top *LPedTreeTop);
+    linkage_locus_top * do_names(const char *&names_fn);
+    linkage_locus_top * build_BCFs_names();
 
-    virtual void do_map(std::vector<m2_map>& additional_maps);
-    void build_bcf_map(m2_map& bcf_map);
+    //virtual void do_map(std::vector<m2_map>& additional_maps);
+    //void build_bcf_map(m2_map& bcf_map, linkage_ped_top *LPedTreeTop);
 
-    //virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
+    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
 
 public:
     Str     BCF_path;
     Str     BCF_template;
+    Input_Base   *input;
+
 
 protected:
     static const
     int site_bcfs_dir_i         = 8000001;
     static const
     int site_bcfs_template_i     = 8000002;
+
+    char *pedfile;
 };
 
 #endif

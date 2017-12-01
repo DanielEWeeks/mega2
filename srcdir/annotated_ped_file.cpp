@@ -4362,7 +4362,8 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     int  xcf = Input_Format == in_format_binary_VCF ||
                Input_Format == in_format_compressed_VCF ||
-               Input_Format == in_format_VCF;
+               Input_Format == in_format_VCF ||
+               Input_Format == in_format_bcfs;
 
     init_tokens();
 
@@ -4649,7 +4650,8 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     } else if (PLINK.plink ||
 	Input_Format == in_format_binary_VCF ||
         Input_Format == in_format_compressed_VCF ||
-	Input_Format == in_format_VCF) {
+	Input_Format == in_format_VCF ||
+            Input_Format == in_format_bcfs) {
         pedfile_type = PREMAKEPED_PFT;
         basefile_type = pedfile_type;
         // CPK: If the .ped file is a .fam file, then we process the alleles as per the .bed file..
