@@ -166,7 +166,7 @@ static int check_inheritance(ped_rec *PedEntry,
     // Display_Errors is set by the caller...
     if ((sex_linked  || y_linked) && IS_MALE(*PedEntry)) {
         /* if child is male,  must be a homozygote */
-        if (recode ? (!R(A1,A2)) : (!cR(cA1,cA2)) )) {
+        if (recode ? (!R(A1,A2)) : (!cR(cA1,cA2)) ) {
             SECTION_ERR(check_inheritance);
             warnvf("Ped %s: Male %s is a heterozygote at %c-linked locus %s.\n",
 		   name,
