@@ -34,9 +34,11 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "tod.hh"
 
 #include "pedtree.h"
 
+#include "input_check_ext.h"
 #include "error_messages_ext.h"
 #include "linkage_ext.h"
 /*
@@ -715,6 +717,45 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
     return PTop;
 }
 
+void pedtree_markers_check(linkage_ped_top *LPedTreeTop, analysis_type analysis)
+{
+    ped_top *PedTreeTop = NULL;
+
+    FirstTime=1;
+
+    Tod tod_pedtree("convert_to_pedtree");
+    PedTreeTop=convert_to_pedtree(LPedTreeTop, 0);
+    tod_pedtree();
+
+    Tod tod_fcheck("full_check");
+    full_check(PedTreeTop, LPedTreeTop, analysis);
+    tod_fcheck();
+
+    free_all_including_ped_top(PedTreeTop, NULL, NULL);
+
+    PedTreeTop = NULL;
+    FirstTime=0;
+}
+
+#ifdef DELAY_ZERO
+void pedtree_dozero(linkage_ped_top *LPedTreeTop, analysis_type analysis)
+{
+    ped_top *PedTreeTop = NULL;
+
+    FirstTime=1;
+
+    PedTreeTop=convert_to_pedtree(LPedTreeTop, 0);
+
+    extern void dozero(ped_top *Top, linkage_ped_top *LPedTop, analysis_type analysis);
+    dozero(PedTreeTop, LPedTreeTop, analysis);
+
+    free_all_including_ped_top(PedTreeTop, NULL, NULL);
+
+    PedTreeTop = NULL;
+    FirstTime=0;
+}
+#endif
+
 /*---------------------------------------------------*/
 
 /* reassign_affecteds: after a call to affected_by_status with
@@ -723,7 +764,6 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
 */
 
 void reassign_affecteds(ped_top *PTop)
-
 {
     int ped, entry;
     int affnum;

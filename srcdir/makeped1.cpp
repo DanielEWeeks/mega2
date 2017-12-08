@@ -1418,7 +1418,6 @@ void clear_phenotype_genotype(int pid, marriage_graph_type mped)
 
 int makeped(char *pre_makeped_file, char *output_file, int num_loc,
 	    int num_select, int *loci_select)
-
 {
     int ped_count, i, j, k, num_lines;
     marriage_graph_type *big_graph;
@@ -1620,6 +1619,12 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
         }
   
         check_any(Top);
+
+        Top->Ped = Top->PedRaw;  /* don't want to count doubleganger */
+        Top->IndivCnt = 0;
+        for (int ped = 0; ped < Top->PedCnt; ped++)
+            Top->IndivCnt += Top->Ped[ped].EntryCnt;
+
         return 1;
     }
 
@@ -1655,7 +1660,8 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
     /*    save_linkage_peds(fp, Top, TO_MAKEPED, 0, NULL);  */
     /*    fclose(fp); */
     free_all_from_lpedtop(Top);
-    Top->pedfile_type=POSTMAKEPED_PFT;
+    pedfile_type      = POSTMAKEPED_PFT;
+    Top->pedfile_type = POSTMAKEPED_PFT;
 
     /*  free_all_including_lpedtop(Top);
         fp=fopen("tmp_ped", "r");
@@ -1665,6 +1671,11 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
         fclose(fp); */
     /*  system("/bin/rm -f tmp_ped"); */
     check_any(Top);
+
+    Top->Ped = Top->PedRaw;  /* don't want to count doubleganger */
+    Top->IndivCnt = 0;
+    for (int ped = 0; ped < Top->PedCnt; ped++)
+        Top->IndivCnt += Top->Ped[ped].EntryCnt;
 
     return 1;
 }

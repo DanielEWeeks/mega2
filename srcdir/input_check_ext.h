@@ -37,10 +37,11 @@ extern void            check_renumber_ped(ped_tree *Ped);
 extern void            clear_ped_status(ped_status *Stat);
 
 
-extern void            full_check(ped_top *Top, linkage_ped_top *LPedTop,
-				  analysis_type analysis);
+extern void            full_check(ped_top *Top, linkage_ped_top *LPedTop, analysis_type analysis);
 
-extern void             mito_transmission_report(ped_top *PTop,
+extern void            recode_check(linkage_ped_top *LPedTop, analysis_type analysis);
+
+extern void            mito_transmission_report(ped_top *PTop, int recode,
 						 int *num_hetero, int *num_non_maternal);
 
 

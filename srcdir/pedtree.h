@@ -156,8 +156,12 @@ typedef struct _ped_top {
 /* from check.h */
 
 #define R(a, b) ((!a) || (!b) || (a == b))
+#define cR(a, b) ((a == zero) || (b == zero) || (a == b))
+
 #define HEMI2HOMO(a, b) if (a == 0 && b > 0) {a=b;}	\
     else if (a > 0 && b == 0) {b=a;}
+#define cHEMI2HOMO(a, b) if (a == zero && b != zero) {a=b;}	\
+    else if (a != zero && b == zero) {b=a;}
 
 #define ENTRY_DEFINED(e) (   (e.ID  != UNDEF)           \
                              && (e.Allele_1 != NULL)    \
