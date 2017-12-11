@@ -578,7 +578,7 @@ ped_top        *convert_to_pedtree(linkage_ped_top *Top,
     /* Convert the locus data first. */
     /* Store the mitochondrial marker numbers in a separate list */
     PedTreeMito = NULL;
-    for (l1=0; l1 < main_chromocnt; l1++) {
+    for (l1=0; l1 < NumChromo /*main_chromocnt*/; l1++) {
         if (global_chromo_entries[l1] == MITO_CHROMOSOME) {
             if (l1 == 0) {
                 PedTreeMito = CALLOC((size_t) chromo_loci_count[l1]+1, int);
