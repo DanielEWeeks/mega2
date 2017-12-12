@@ -103,6 +103,8 @@ public:
     virtual void do_map(std::vector<m2_map>& additional_maps)  { }
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop)   { return (linkage_ped_top *) 0; }
     virtual void do_gc() { }
+
+    virtual void do_phe_names(char *phe_file, char ***phe_names, int **phe_types, int phe_cols) { };
 };
 
 class Input_Base {

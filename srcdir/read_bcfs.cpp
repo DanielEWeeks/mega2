@@ -188,6 +188,12 @@ void ReadBCFs::do_init(Input_Base *inp)
 {
     this->input = inp;
     this->pedfile = *inp->input_files.pedfl;
+    this->phefile = *inp->input_files.phefl;
+
+    check_bcf_files();
+    build_samples();
+    build_markers();
+    //checkindelsndups();
 
 }
 
@@ -250,6 +256,74 @@ void ReadBCFs::read_BCFs( linkage_locus_top *LPedTreeTop )
     //free(argv);
 }
 
+void ReadBCFs::check_bcf_files() {
+
+    vector<string> files;
+    int count = 0;
+
+    Str directory = this->BCF_path;
+    Str file_template = this->BCF_template;
+    Vecs filesplit;
+
+    split(filesplit,file_template,"?");
+
+    for(int chr = 1; chr < 23; chr++){
+        ifstream ifs;
+        char file[255];
+        if(chr >= 1  && chr < 10)
+            sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+        else
+            sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+        ifs.open(file);
+        if (! ifs.is_open() )
+            errorvf("read_BCFs: Can not open \"%s\" file\n", file);
+        else {
+            mssgvf("read_BCFs: Found file \"%s\"\n", file);
+            files.push_back(file);
+            count++;
+        }
+    }
+
+    this->filelist = files;
+
+    //for (auto i = fileslist.begin(); i != fileslist.end(); ++i)
+    //    std::cout << *i << "\n";
+
+}
+
+void ReadBCFs::build_samples() {
+
+    vector<string> files = this->filelist;
+    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+
+    int argc = 3;
+
+    vector<string> temp;
+    temp.push_back("bcftools");
+    temp.push_back("-h");
+    temp.push_back(&files[0][0]);
+
+    char** argv;
+    argv = (char**)malloc(argc * sizeof(char*));
+    for (size_t i = 0; i < argc; i += 1) {
+        argv[i] = (char*)malloc(255 * sizeof(char));
+        argv[i] = &temp[i][0];
+    }
+
+    for(int i = 0; i<argc; i++)
+        printf("%s\n",argv[i]);
+
+    linkage_locus_top *LTop = NULL;
+    mbi->mega2_main_vcfview(argc, argv, LTop);
+
+}
+
+void ReadBCFs::build_markers() {
+
+    //want to grab chr pos ref alt
+    //
+}
+
 linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
 {
 //    Tod tod_pf("read ped file");
@@ -271,14 +345,14 @@ linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
 
 
 
-//void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
-//{
-//    m2_map bcf_map;
+void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
+{
+    m2_map bcf_map;
 
-//    build_bcf_map(bcf_map);
+    //build_bcf_map(bcf_map);
 
-//    additional_maps.push_back(bcf_map);
-//}
+    additional_maps.push_back(bcf_map);
+}
 
 //void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
 //    std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
@@ -372,19 +446,29 @@ linkage_locus_top *ReadBCFs::do_names(const char *&names_fn)
     //linkage_locus_top *LTop = build_BCFs_names();
 
     linkage_locus_top *LTop = NULL;
-    read_BCFs(LTop);
+    //read_BCFs(LTop);
 
     return LTop;
 }
 
+void ReadBCFs::do_phe_names(char *phe_file, char ***phe_names, int **phe_types, int phe_cols) {
+    this->phefile = phe_file;
+    this->phecols = phe_cols;
+
+}
+
 linkage_locus_top *ReadBCFs::build_BCFs_names()
 {
-//    int num_pheno   = sample_file_hdr1b.size() - 5;
-//    int num_markers = markers_filtered;
-//    int num_all     = num_pheno + num_markers;
-//
-//    char **names    = CALLOC(num_all, char *);
-//    char  *types    = CALLOC(num_all, char);
+    int num_pheno   = this->phecols;
+    //need to count all markers?
+    //for read_impute the markers are counted in do_init/read_impute_file
+
+
+    //int num_markers = markers_filtered;
+    //int num_all     = num_pheno + num_markers;
+
+    //char **names    = CALLOC(num_all, char *);
+    //char  *types    = CALLOC(num_all, char);
 //    int i;
 //    i = 0;
 //    Vecsp typep = sample_file_hdr2b.cbegin()+5;
@@ -413,4 +497,3 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
 //            /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
     return NULL;
 }
-

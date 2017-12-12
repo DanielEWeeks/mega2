@@ -4369,9 +4369,24 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     Input->GetOps()->do_init(Input);
 
-    if (Input->GetOps()->use_getops()) {
+    if (Input->GetOps()->use_getops() && !xcf) {
         LTop = Input->GetOps()->do_names(names_fn);
-	ann_files = 1;
+	    ann_files = 1;
+    } else if(Input->GetOps()->use_getops() && xcf){
+
+        //printf("%d",PLINK.no_pheno);
+        ann_files = 1;
+        char **phe_names = NULL;
+        int *phe_types   = NULL;
+       /* int tot_cols = */phe_cols = parse_phe_types(phe_file, &phe_names, &phe_types);
+        Input->GetOps()->do_phe_names(phe_file, &phe_names, &phe_types, phe_cols);
+
+        std::vector<m2_map> vcf_maps;
+        Input->GetOps()->do_map(vcf_maps);
+
+        LTop = Input->GetOps()->do_names(names_fn);
+
+
     } else if (PLINK.plink || xcf) {
         char **phe_names = NULL;
         int *phe_types   = NULL;
@@ -4417,7 +4432,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         }
         free(phe_names);
         free(phe_types);
-    } else {
+    }  else {
         ann_files = read_annotated_names_file(names_file, &LTop, &AnnotatedFileInfo);
         names_fn = names_file;
     }

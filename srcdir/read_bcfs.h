@@ -33,10 +33,13 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <string>
 
 #include "input_ops.hh"
 #include "str_utils.hh"
 #include "annotated_ped_file.h"
+
+using namespace std;
 
 class ReadBCFs : public Input_Ops
 {
@@ -56,10 +59,14 @@ public:
 
     void read_BCFs(linkage_locus_top *LPedTreeTop);
     linkage_locus_top * do_names(const char *&names_fn);
+    void  do_phe_names (char *phe_file, char ***phe_names, int **phe_types, int phe_cols);
     linkage_locus_top * build_BCFs_names();
+    void check_bcf_files();
+    void build_samples();
+    void build_markers();
 
-    //virtual void do_map(std::vector<m2_map>& additional_maps);
-    //void build_bcf_map(m2_map& bcf_map, linkage_ped_top *LPedTreeTop);
+    virtual void do_map(std::vector<m2_map>& additional_maps);
+    //m2_map build_bcf_map(m2_map& bcf_map, linkage_ped_top *LPedTreeTop);
 
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
 
@@ -68,6 +75,10 @@ public:
     Str     BCF_template;
     Input_Base   *input;
 
+    Vecmarkerp    markers;
+    int           markers_all;
+
+
 
 protected:
     static const
@@ -75,7 +86,12 @@ protected:
     static const
     int site_bcfs_template_i     = 8000002;
 
-    char *pedfile;
+    vector<string> filelist;
+    char * pedfile;
+    char * phefile;
+    int phecols;
+
+
 };
 
 #endif

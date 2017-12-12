@@ -35,11 +35,12 @@ WINDIR=/
 WINO = -o $@
 endif
 
-CC       = gcc
+#should now use mega2 compiler choice
+#CC       = gcc
 AR     = ar
 RANLIB = ranlib
 CPPFLAGS =
-CFLAGS   = -g -Wall -Wc++-compat -O2
+#CFLAGS   = -g -Wall -Wc++-compat -O2
 LDFLAGS  =
 LIBS     =  -lz -lm -lbz2 –llzma
 

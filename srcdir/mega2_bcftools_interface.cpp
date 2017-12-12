@@ -260,12 +260,7 @@ int MEGA2_BCFTOOLS_INTERFACE::mega2_main_vcfview(int argc, char *argv[], linkage
     if ( args->sample_names && args->update_info) args->calc_ac = 1;
 
     char *fname = NULL;
-    if ( optind>=argc )
-    {
-        if ( !isatty(fileno((FILE *)stdin)) ) fname = "-";  // reading from stdin
-        else usage(args);
-    }
-    else fname = argv[optind];
+    fname = argv[optind];
 
     // read in the regions from the command line
     if ( args->regions_list )
@@ -294,10 +289,10 @@ int MEGA2_BCFTOOLS_INTERFACE::mega2_main_vcfview(int argc, char *argv[], linkage
 
     init_data_vcfview(args);
     bcf_hdr_t *out_hdr = args->hnull ? args->hnull : (args->hsub ? args->hsub : args->hdr);
-    //if (args->print_header)
-        //bcf_hdr_write(args->out, out_hdr);
-    //else if ( args->output_type & FT_BCF )
-     //   error("BCF output requires header, cannot proceed with -H\n");
+    if (args->print_header)
+        bcf_hdr_write(args->out, out_hdr);
+    else if ( args->output_type & FT_BCF )
+        error("BCF output requires header, cannot proceed with -H\n");
 
     int ret = 0;
     if (!args->header_only)
