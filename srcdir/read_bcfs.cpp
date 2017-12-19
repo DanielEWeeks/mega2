@@ -44,6 +44,14 @@
 #include "common.h"
 #include "tod.hh"
 #include "error_messages_ext.h"
+
+extern "C" {
+    #include "bcftools.h"
+    #include "lib/bcftools-1.6/filter.h"
+    #include "lib/bcftools-1.6/vcfview.h"
+    #include "lib/bcftools-1.6/htslib-1.6/htslib/synced_bcf_reader.h"
+}
+
 extern void           Exit(int arg, const char *file, const int line, const char *err);
 #include "typedefs.h"
 #include "fcmap_ext.h"
@@ -191,7 +199,9 @@ void ReadBCFs::do_init(Input_Base *inp)
     this->phefile = *inp->input_files.phefl;
 
     check_bcf_files();
-    build_samples();
+    this->num_samples = build_samples();
+    //for(int i = 0; i< this->num_samples; i++)
+    //    printf("%s\n",this->samples[i].c_str());
     build_markers();
     //checkindelsndups();
 
@@ -202,7 +212,7 @@ void ReadBCFs::do_init(Input_Base *inp)
  */
 void ReadBCFs::read_BCFs( linkage_locus_top *LPedTreeTop )
 {
-    linkage_locus_top *LTop = LPedTreeTop;
+    //linkage_locus_top *LTop = LPedTreeTop;
 
     vector<string> temp;
     temp.push_back("bcftools");
@@ -245,7 +255,7 @@ void ReadBCFs::read_BCFs( linkage_locus_top *LPedTreeTop )
     for( int i = 1; i < count +1; i++ ) {
         argv[1] = &temp[i][0];
         //printf("%d, %s %s\n",argc, argv[0],argv[1]);
-        mbi->mega2_main_vcfview(argc, argv, LTop);
+        mbi->mega2_main_vcfview(argc, argv);
     }
 
     //MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
@@ -285,22 +295,21 @@ void ReadBCFs::check_bcf_files() {
     }
 
     this->filelist = files;
-
+    this->filecount = count;
     //for (auto i = fileslist.begin(); i != fileslist.end(); ++i)
     //    std::cout << *i << "\n";
 
 }
 
-void ReadBCFs::build_samples() {
+int ReadBCFs::build_samples() {
 
     vector<string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
-    int argc = 3;
+    int argc = 2;
 
     vector<string> temp;
     temp.push_back("bcftools");
-    temp.push_back("-h");
     temp.push_back(&files[0][0]);
 
     char** argv;
@@ -310,18 +319,72 @@ void ReadBCFs::build_samples() {
         argv[i] = &temp[i][0];
     }
 
-    for(int i = 0; i<argc; i++)
-        printf("%s\n",argv[i]);
+    args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
+    bcfargs = mbi->get_args(argc, argv);
 
-    linkage_locus_top *LTop = NULL;
-    mbi->mega2_main_vcfview(argc, argv, LTop);
+    bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
 
+    for(int i = 0; i < hdr->n[2]; i++){
+        //printf("%s\n",hdr->samples[i]);
+        this->samples.push_back(hdr->samples[i]);
+    }
+
+    return hdr->n[2];
 }
 
 void ReadBCFs::build_markers() {
 
-    //want to grab chr pos ref alt
-    //
+    vector<string> files = this->filelist;
+    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+
+    int argc = 2;
+
+    vector<string> temp;
+    temp.push_back("bcftools");
+
+    char** argv;
+    argv = (char**)malloc(argc * sizeof(char*));
+    for (size_t i = 0; i < argc; i += 1) {
+        argv[i] = (char*)malloc(255 * sizeof(char));
+        argv[i] = &temp[i][0];
+    }
+
+    int total_markers = 0;
+    for(int i = 0; i < this->filecount; i++) {
+        temp.push_back(files[i]);
+        //for (auto i = temp.begin(); i != temp.end(); ++i)
+        //    std::cout << *i << "\n";
+
+        char **argv;
+        argv = (char **) malloc(argc * sizeof(char *));
+        for (size_t i = 0; i < argc; i += 1) {
+            argv[i] = (char *) malloc(255 * sizeof(char));
+            argv[i] = &temp[i][0];
+        }
+
+        args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
+        bcfargs = mbi->get_args(argc, argv);
+        int count = 0;
+        while ( bcf_sr_next_line(bcfargs->files) ) {
+            bcf1_t *line = bcfargs->files->readers[0].buffer[0];
+            bcf_unpack(line, BCF_UN_FMT);
+            //markers[total_markers].name = line->d.id;
+            //markers[total_markers].chr = line->rid;
+            //markers[total_markers].pos = line->pos;
+            //markers[total_markers].alleles[0] = line->d.allele[0];
+            //markers[total_markers].alleles[1] = line->d.allele[1];
+            //rid is supposed to be chromosome according to the documentation, it seems to always be zero however
+            printf("%s %d %d %s %s\n",line->d.id, line->rid, line->pos, line->d.allele[0],line->d.allele[1]);
+            //count++;
+
+        }
+        temp.pop_back();
+        total_markers += count;
+    }
+
+   // for(int i = 0; i < total_markers; i++){
+   //     printf("%s %d %d %s %s\n",markers[total_markers].name.c_str(), markers[total_markers].chr, markers[total_markers].pos, markers[total_markers].alleles[0].c_str(),markers[total_markers].alleles[1].c_str());
+    //}
 }
 
 linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
@@ -459,7 +522,7 @@ void ReadBCFs::do_phe_names(char *phe_file, char ***phe_names, int **phe_types, 
 
 linkage_locus_top *ReadBCFs::build_BCFs_names()
 {
-    int num_pheno   = this->phecols;
+    //int num_pheno   = this->phecols;
     //need to count all markers?
     //for read_impute the markers are counted in do_init/read_impute_file
 

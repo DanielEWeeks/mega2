@@ -40,6 +40,14 @@
 #include "annotated_ped_file.h"
 
 using namespace std;
+class BCFMarker {
+public:
+    Str name;
+    int chr;
+    int pos;
+    std::vector<std::string> alleles;
+};
+
 
 class ReadBCFs : public Input_Ops
 {
@@ -62,7 +70,7 @@ public:
     void  do_phe_names (char *phe_file, char ***phe_names, int **phe_types, int phe_cols);
     linkage_locus_top * build_BCFs_names();
     void check_bcf_files();
-    void build_samples();
+    int build_samples();
     void build_markers();
 
     virtual void do_map(std::vector<m2_map>& additional_maps);
@@ -75,11 +83,6 @@ public:
     Str     BCF_template;
     Input_Base   *input;
 
-    Vecmarkerp    markers;
-    int           markers_all;
-
-
-
 protected:
     static const
     int site_bcfs_dir_i         = 8000001;
@@ -87,11 +90,21 @@ protected:
     int site_bcfs_template_i     = 8000002;
 
     vector<string> filelist;
+    int filecount;
     char * pedfile;
     char * phefile;
     int phecols;
+    vector<string> samples;
+    int num_samples;
+
+    vector<BCFMarker> markers;
+    int marker_count;
+
+
 
 
 };
 
+
 #endif
+

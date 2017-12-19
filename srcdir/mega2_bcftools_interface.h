@@ -39,18 +39,23 @@
 #include "lib/bcftools-1.6/filter.h"
 #include <lib/bcftools-1.6/htslib-1.6/htslib/synced_bcf_reader.h>
 
+extern "C" {
+    #include "lib/bcftools-1.6/filter.h"
+    #include "lib/bcftools-1.6/vcfview.h"
+};
+
 #ifndef INTERNAL_MEGA2_BCFTOOLS_INTERFACE
 
 class MEGA2_BCFTOOLS_INTERFACE {
 
 public:
-    MEGA2_BCFTOOLS_INTERFACE( ) {
-
-    }
+    MEGA2_BCFTOOLS_INTERFACE( ) { }
 
     ~MEGA2_BCFTOOLS_INTERFACE() { }
 
-    int mega2_main_vcfview(int argc, char *argv[], linkage_locus_top *LPedTreeTop);
+    int mega2_main_vcfview(int argc, char *argv[]);
+
+    args_t * get_args(int argc, char *argv[]);
 
 };
 
