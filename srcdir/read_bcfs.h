@@ -41,13 +41,22 @@
 
 using namespace std;
 class BCFMarker {
+public:    BCFMarker(Cstr& name, Cstr& chr, int pos, std::vector<std::string>& alleles) {
+        this->name = name;
+        this->chr = chr;
+        this->pos = pos;
+        this->alleles = alleles;
+    }
+
 public:
     Str name;
-    int chr;
+    Str chr;
     int pos;
     std::vector<std::string> alleles;
 };
 
+typedef vectordb<BCFMarker *> MarkerVector;
+typedef vectordb<BCFMarker *>::const_iterator MarkerVectorP;
 
 class ReadBCFs : public Input_Ops
 {
@@ -82,6 +91,8 @@ public:
     Str     BCF_path;
     Str     BCF_template;
     Input_Base   *input;
+    MarkerVector markers;
+    int marker_count;
 
 protected:
     static const
@@ -96,12 +107,6 @@ protected:
     int phecols;
     vector<string> samples;
     int num_samples;
-
-    vector<BCFMarker> markers;
-    int marker_count;
-
-
-
 
 };
 

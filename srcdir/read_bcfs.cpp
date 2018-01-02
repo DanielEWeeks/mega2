@@ -339,19 +339,19 @@ void ReadBCFs::build_markers() {
 
     int argc = 2;
 
-    vector<string> temp;
-    temp.push_back("bcftools");
+    vector<string> args;
+    args.push_back("bcftools");
 
     char** argv;
     argv = (char**)malloc(argc * sizeof(char*));
     for (size_t i = 0; i < argc; i += 1) {
         argv[i] = (char*)malloc(255 * sizeof(char));
-        argv[i] = &temp[i][0];
+        argv[i] = &args[i][0];
     }
 
     int total_markers = 0;
     for(int i = 0; i < this->filecount; i++) {
-        temp.push_back(files[i]);
+        args.push_back(files[i]);
         //for (auto i = temp.begin(); i != temp.end(); ++i)
         //    std::cout << *i << "\n";
 
@@ -359,32 +359,47 @@ void ReadBCFs::build_markers() {
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t i = 0; i < argc; i += 1) {
             argv[i] = (char *) malloc(255 * sizeof(char));
-            argv[i] = &temp[i][0];
+            argv[i] = &args[i][0];
         }
 
         args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
         bcfargs = mbi->get_args(argc, argv);
+
+        bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
+
         int count = 0;
+
         while ( bcf_sr_next_line(bcfargs->files) ) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
             bcf_unpack(line, BCF_UN_FMT);
-            //markers[total_markers].name = line->d.id;
-            //markers[total_markers].chr = line->rid;
-            //markers[total_markers].pos = line->pos;
-            //markers[total_markers].alleles[0] = line->d.allele[0];
-            //markers[total_markers].alleles[1] = line->d.allele[1];
-            //rid is supposed to be chromosome according to the documentation, it seems to always be zero however
-            printf("%s %d %d %s %s\n",line->d.id, line->rid, line->pos, line->d.allele[0],line->d.allele[1]);
-            //count++;
+            //the 1 references BCF_DT_CTG in vcf.h
+            //this seems to be the actual way to get the chromosome
+            //strcpy(markers[total_markers].chr ,hdr->id[1][line->rid].key);
+            //printf("%s %s %d %s %s\n", line->d.id, hdr->id[1][line->rid].key, line->pos, line->d.allele[0],
+            //       line->d.allele[1]);
 
+            Vecs alleles(2);
+            alleles.clear();
+            alleles.push_back(line->d.allele[0]);
+            alleles.push_back(line->d.allele[1]);
+            this->markers.push_back(new BCFMarker(line->d.id, hdr->id[1][line->rid].key, line->pos, alleles));
+
+            count++;
         }
-        temp.pop_back();
+
+        //printout to check that the marker array was populated.
+        //BCFMarker *bp = NULL;
+        //for (MarkerVectorP bpp = markers.cbegin(); bpp != markers.cend(); bpp++){
+        //    bp     = *bpp;
+        //    printf("%s %s %d %s %s\n", C(bp->name) , C(bp->chr), bp->pos, C(bp->alleles[0]), C(bp->alleles[1]));
+        //}
+
         total_markers += count;
+        printf("%d\n",total_markers);
+        args.pop_back();
     }
 
-   // for(int i = 0; i < total_markers; i++){
-   //     printf("%s %d %d %s %s\n",markers[total_markers].name.c_str(), markers[total_markers].chr, markers[total_markers].pos, markers[total_markers].alleles[0].c_str(),markers[total_markers].alleles[1].c_str());
-    //}
+    this->marker_count = total_markers;
 }
 
 linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
