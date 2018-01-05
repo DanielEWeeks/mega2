@@ -322,7 +322,7 @@ linkage_ped_top *ReadImputed::do_ped(linkage_locus_top *LTop)
     linkage_ped_top *Top;
     Top = mk_ped_top(persons, this->people.size(), LTop, num_peds,
                      /*untyped*/ 0, /*totaltyped*/ this->people_filtered,
-                     /*groups*/ NULL, 0, 0, 
+                     /*groups*/ NULL, 0, 0,
                      /*num_err*/0, 1);
 
     return Top;

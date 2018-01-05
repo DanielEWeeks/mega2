@@ -4373,12 +4373,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         LTop = Input->GetOps()->do_names(names_fn);
 	    ann_files = 1;
     } else if(Input->GetOps()->use_getops() && xcf){
-
-        //printf("%d",PLINK.no_pheno);
         ann_files = 1;
         char **phe_names = NULL;
         int *phe_types   = NULL;
-       /* int tot_cols = */phe_cols = parse_phe_types(phe_file, &phe_names, &phe_types);
+        phe_cols = parse_phe_types(phe_file, &phe_names, &phe_types);
         Input->GetOps()->do_phe_names(phe_file, &phe_names, &phe_types, phe_cols);
 
         std::vector<m2_map> vcf_maps;
@@ -4658,7 +4656,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     SECTION_ERR_EXTERN(FLOAT_AFFECT);
 
-    if (Input->GetOps()->use_getops()) {
+    if (Input->GetOps()->use_getops() && Input_Format != in_format_bcfs) {
         pedfile_type = PREMAKEPED_PFT;
         basefile_type = pedfile_type;
         Top = Input->GetOps()->do_ped(LTop);

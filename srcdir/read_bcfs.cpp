@@ -417,7 +417,22 @@ linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
 //    tod_pf();
 //
 //    return Top;
-    return NULL;
+
+    //extern vector<Vecc> VecAlleles;
+    //int num_peds = 0;
+
+    //annotated_ped_rec *persons = build_impute2_ped(LTop, &num_peds);
+
+    //build_genotypes(LTop, persons, VecAlleles);
+
+    //linkage_ped_top *Top;
+    //Top = mk_ped_top(persons, this->people.size(), LTop, num_peds,
+    //        /*untyped*/ 0, /*totaltyped*/ this->people_filtered,
+    //        /*groups*/ NULL, 0, 0,
+     //       /*num_err*/0, 1);
+
+    //return Top;
+    //return NULL;
 
 }
 
@@ -427,92 +442,41 @@ void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
 {
     m2_map bcf_map;
 
-    //build_bcf_map(bcf_map);
+    build_bcf_map(bcf_map);
 
     additional_maps.push_back(bcf_map);
 }
 
-//void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
-//    std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
-//
-//    Tod vcfgm("VCF get map");
-//    bcf_map = VCFtools_get_map(alternative_key, "chr");
-//    vcfgm();
-//
-//    Tod vcfmn("VCF map as names");
-//
-//    int pair = 0;
-//    Str directory = this->BCF_path;
-//    Str file_template = this->BCF_template;
-//    Vecs filesplit;
-//    split(filesplit,file_template,"?");
-//
-//    if ( !pair ) pair = BCF_SR_PAIR_EXACT;
-//
-//    int i, j, n;
-//    char **vcf = NULL;
-//
-//    for( int chr = 1; chr < 23; chr++){
-//        char file[255];
-//        if(chr >= 1  && chr < 10)
-//            sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
-//        else
-//            sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
-//        vcf[chr] = file;
-//    }
-//
-//    // = hts_readlist(argv[optind], 1, &nvcf);
-//
-//    bcf_srs_t *sr = bcf_sr_init();
-//    bcf_sr_set_opt(sr, BCF_SR_PAIR_LOGIC, pair);
-//    bcf_sr_set_opt(sr, BCF_SR_REQUIRE_IDX);
-//    //for (i=0; i<nvcf; i++)
-//    //    if ( !bcf_sr_add_reader(sr,vcf[i]) ) error("Failed to open %s: %s\n", vcf[i],bcf_sr_strerror(sr->errnum));
-//
-//    kstring_t str = {0,0,0};
-//    while ( (n=bcf_sr_next_line(sr)) )
-//    {
-//        for (i=0; i<sr->nreaders; i++)
-//        {
-//            if ( !bcf_sr_has_line(sr,i) ) continue;
-//            bcf1_t *rec = bcf_sr_get_line(sr, i);
-//            printf("%s:%d", bcf_seqname(bcf_sr_get_header(sr,i),rec),rec->pos+1);
-//            break;
-//        }
-//
-//        for (i=0; i<sr->nreaders; i++)
-//        {
-//            printf("\t");
-//
-//            if ( !bcf_sr_has_line(sr,i) )
-//            {
-//                printf("%s","-");
-//                continue;
-//            }
-//
-//            str.l = 0;
-//            bcf1_t *rec = bcf_sr_get_line(sr, i);
-//            kputs(rec->n_allele > 1 ? rec->d.allele[1] : ".", &str);
-//            for (j=2; j<rec->n_allele; j++)
-//            {
-//                kputc(',', &str);
-//                kputs(rec->d.allele[j], &str);
-//            }
-//            printf("%s",str.s);
-//        }
-//        printf("\n");
-//    }
-//
-//    free(str.s);
-//    bcf_sr_destroy(sr);
-//    for (i=0; i<23; i++)
-//        free(vcf[i]);
-//    free(vcf);
-//
-//    //read_m2_map_as_names_file(bcf_map, top, tot_cols, phe_names, phe_types);
-//    //ann_files = 1;
-//    vcfmn();
-//}
+void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
+    std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
+
+    BCFMarker *bp = NULL;
+    m2_map_entry map_entry;
+    for (MarkerVectorP bpp = markers.cbegin(); bpp != markers.cend(); bpp++){
+        bp     = *bpp;
+        map_entry.set_chr(bp->chr);
+        map_entry.set_POS(bp->pos);
+        map_entry.set_REF(bp->alleles[0]);
+        map_entry.set_marker_name(bp->name);
+        bcf_map.push_back_entry(map_entry);
+
+        int chr = STR_CHR(C(bp->chr));
+        if (chr == SEX_CHROMOSOME) {
+            human_x++;
+        } else if (chr == MALE_CHROMOSOME) {
+            human_y++;
+        } else if (chr == PSEUDO_X) {
+            human_xy++;
+        } else if (chr == MITO_CHROMOSOME) {
+            human_mt++;
+        } else if (chr == UNKNOWN_CHROMO) {
+            human_unknown++;
+            NumUnmapped++;
+        } else {
+            human_auto++;
+        }
+    }
+}
 
 
 /*
@@ -521,57 +485,58 @@ void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
 
 linkage_locus_top *ReadBCFs::do_names(const char *&names_fn)
 {
-    //linkage_locus_top *LTop = build_BCFs_names();
-
-    linkage_locus_top *LTop = NULL;
-    //read_BCFs(LTop);
-
+    linkage_locus_top *LTop = build_BCFs_names();
     return LTop;
 }
 
 void ReadBCFs::do_phe_names(char *phe_file, char ***phe_names, int **phe_types, int phe_cols) {
     this->phefile = phe_file;
     this->phecols = phe_cols;
-
+    this->phenames = phe_names;
+    this->phetypes = phe_types;
 }
 
 linkage_locus_top *ReadBCFs::build_BCFs_names()
 {
-    //int num_pheno   = this->phecols;
-    //need to count all markers?
-    //for read_impute the markers are counted in do_init/read_impute_file
+    int num_pheno   = this->phecols;
+    int num_markers = this->marker_count;
+    int num_all     = num_pheno + num_markers;
 
+    char **names    = CALLOC(num_all, char *);
+    char  *types    = CALLOC(num_all, char);
 
-    //int num_markers = markers_filtered;
-    //int num_all     = num_pheno + num_markers;
+    int count;
+    count = 0;
 
-    //char **names    = CALLOC(num_all, char *);
-    //char  *types    = CALLOC(num_all, char);
-//    int i;
-//    i = 0;
+    for(int i = 0; i < num_pheno; i++){
+        //names[i] = CALLOC(phenames[i].size()+1, char);
+        //strcpy(names[i], this->phenames[i]);
+        //types[i] = ( ((*typep) == "B") || ((*typep) == "D") ) ? 'A' : 'T';
+        count++;
+    }
+
+    //int i;
+    //i = 0;
 //    Vecsp typep = sample_file_hdr2b.cbegin()+5;
 //    for (Vecsp phep = sample_file_hdr1b.cbegin()+5; i < num_pheno; i++, phep++, typep++) {
 //        names[i] = CALLOC((*phep).size()+1, char);
 //        strcpy(names[i], (*phep).c_str());
 //        types[i] = ( ((*typep) == "B") || ((*typep) == "D") ) ? 'A' : 'T';
 //    }
-//
-//    ImpMarker *mp;
-//    for (Vecmarkerpp marp = markers.cbegin(); marp != markers.cend(); marp++) {
-//        mp = *marp;
-//        if (! mp->skip ) {
-//            if (i >= num_all) {
-//                errorvf("Internal Error: build_impute2_names() count of skipped markers too large\n");
-//                EXIT(DATA_INCONSISTENCY);
-//            }
-//            names[i] = CALLOC(mp->name.size()+1, char);
-//            strcpy(names[i], mp->name.c_str());
-//            types[i] = 'M';
-//            i++;
-//        }
-//    }
-//
-//    return read_common_marker_data(num_pheno + num_markers, num_markers, names, types,
-//            /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
-    return NULL;
+
+    BCFMarker *bp;
+    for (MarkerVectorP vecp = markers.cbegin(); vecp != markers.cend(); vecp++) {
+        bp = *vecp;
+        if (count >= num_all) {
+            errorvf("Internal Error: build_impute2_names() count of skipped markers too large\n");
+            EXIT(DATA_INCONSISTENCY);
+        }
+        names[count] = CALLOC(bp->name.size()+1, char);
+        strcpy(names[count], bp->name.c_str());
+        types[count] = 'M';
+        count++;
+    }
+
+    return read_common_marker_data(num_pheno + num_markers, num_markers, names, types,
+            /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
 }

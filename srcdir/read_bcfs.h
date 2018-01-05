@@ -83,7 +83,7 @@ public:
     void build_markers();
 
     virtual void do_map(std::vector<m2_map>& additional_maps);
-    //m2_map build_bcf_map(m2_map& bcf_map, linkage_ped_top *LPedTreeTop);
+    void build_bcf_map(m2_map& bcf_map);
 
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
 
@@ -102,11 +102,16 @@ protected:
 
     vector<string> filelist;
     int filecount;
+
     char * pedfile;
-    char * phefile;
-    int phecols;
+
     vector<string> samples;
     int num_samples;
+
+    char * phefile;
+    int phecols;
+    char ***phenames;
+    int **phetypes;
 
 };
 
