@@ -4373,18 +4373,21 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         LTop = Input->GetOps()->do_names(names_fn);
 	    ann_files = 1;
     } else if(Input->GetOps()->use_getops() && xcf){
-        ann_files = 1;
+        //std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
+
         char **phe_names = NULL;
         int *phe_types   = NULL;
-        phe_cols = parse_phe_types(phe_file, &phe_names, &phe_types);
+        int tot_cols = phe_cols = parse_phe_types(phe_file, &phe_names, &phe_types);
         Input->GetOps()->do_phe_names(phe_file, &phe_names, &phe_types, phe_cols);
 
         std::vector<m2_map> vcf_maps;
         Input->GetOps()->do_map(vcf_maps);
+        vcf_map = save_vcf_map = vcf_maps[0];
 
         LTop = Input->GetOps()->do_names(names_fn);
 
-
+        //read_m2_map_as_names_file(vcf_map, &LTop, tot_cols, phe_names, phe_types);
+        ann_files = 1;
     } else if (PLINK.plink || xcf) {
         char **phe_names = NULL;
         int *phe_types   = NULL;
@@ -4661,10 +4664,11 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         basefile_type = pedfile_type;
         Top = Input->GetOps()->do_ped(LTop);
     } else if (PLINK.plink ||
-	Input_Format == in_format_binary_VCF ||
-        Input_Format == in_format_compressed_VCF ||
-	Input_Format == in_format_VCF ||
+	    Input_Format == in_format_binary_VCF ||
+            Input_Format == in_format_compressed_VCF ||
+	    Input_Format == in_format_VCF ||
             Input_Format == in_format_bcfs) {
+
         pedfile_type = PREMAKEPED_PFT;
         basefile_type = pedfile_type;
         // CPK: If the .ped file is a .fam file, then we process the alleles as per the .bed file..
