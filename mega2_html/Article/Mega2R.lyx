@@ -1173,19 +1173,8 @@ applyFnToGenes
  markers that lie within the region/gene of interest.
  To do this, one has to have well-defined gene boundaries.
  To assist in this, by default, Mega2R provides an internal list of the
- chromosome and base pair ranges for the gene transcripts from the UCSC
- Genome Browser reference assembly GRCH37
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Is this list derived from Bioconductor, or is this the one we contructed
- ourselves?
-\end_layout
-
-\end_inset
-
-.
+ chromosome and base pair ranges for the gene transcripts constructed the
+ refGene table from the UCSC Genome Browser reference assembly GRCH37.
  The list was modified to eliminate multiple records of the same gene with
  the exact same transcript start and transcript end.
  The list contains about 29,000 records.
@@ -1201,33 +1190,13 @@ Is this list derived from Bioconductor, or is this the one we contructed
 \emph on
 setRanges
 \emph default
- function lets you store custom ranges; it has two arguments: 
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-The man page for setRanges makes it sound like 'name' is not optional? 
-\end_layout
-
-\end_inset
-
-a range data frame that has at least the start position, end position, and
- chromosome 
-\begin_inset Quotes eld
-\end_inset
-
-observations
-\begin_inset Quotes erd
-\end_inset
-
- (and optionally a name) and a selector vector of 3 integers that indicates
- which observation variable in the range data frame contains the chromosome,
+ function lets you store custom ranges; it has two arguments: a range data
+ frame that specifies at least the chromosome, the start position, end position
+ (and optionally a name) of each range, and a selector vector of 3 integers
+ that indicates which columns in the range data frame contain the chromosome,
  start position and end position.
- If the range data frame contains a name 
-\begin_inset Quotes eld
-\end_inset
-
-observation, the selector vector should have a final 4
+ If the range data frame also contains a name column, the selector vector
+ should have a final 4
 \begin_inset script superscript
 
 \begin_layout Plain Layout
@@ -1454,25 +1423,7 @@ getgenotypesraw
 marker
 \series default
  data frame and an environment.
- 
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Don't understand what you mean by 
-\begin_inset Quotes eld
-\end_inset
-
-the first argument is computed
-\begin_inset Quotes erd
-\end_inset
-
-? 
-\end_layout
-
-\end_inset
-
-The first argument is computed by either the 
+ The first argument is usually computed by one of the 
 \emph on
 applyFnToRanges
 \emph default
@@ -1484,7 +1435,7 @@ applyFnToGenes,
 \emph on
 applyFnToMarkers
 \emph default
- function.
+ functions.
  The
 \series bold
  marker 
@@ -1525,23 +1476,6 @@ getgenotypesraw
  allele shifted 16 bits and or'ed to the integer for the second allele.
 \end_layout
 
-\begin_layout Standard
-\begin_inset VSpace medskip
-\end_inset
-
-Below is a brief overview of the several processing functions that Mega2R
- makes available and that illustrate how to build new functions using Mega2R.
- A much more detailed example may be found in the 
-\begin_inset Quotes eld
-\end_inset
-
-Use Case
-\begin_inset Quotes erd
-\end_inset
-
- section.
-\end_layout
-
 \begin_layout Subsection
 The 
 \emph on
@@ -1558,10 +1492,23 @@ name "subsec:mega2pedgene-Package-Functions"
 \end_layout
 
 \begin_layout Standard
-The 'pedgene' package performs gene-level association tests with disease
- status for pedigree data on family data, and is available on CRAN as (https://C
-RAN.R-project.org/package=pedgene).
- It was written by Daniel Schaid and Jason Sinnwell
+We now give a brief overview of the several processing functions that Mega2R
+ makes available and that illustrate how to build new functions using Mega2R.
+ A much more detailed example may be found in the 
+\begin_inset Quotes eld
+\end_inset
+
+Use Case
+\begin_inset Quotes erd
+\end_inset
+
+ section.
+ 
+\end_layout
+
+\begin_layout Standard
+The 'pedgene' R package (https://CRAN.R-project.org/package=pedgene) performs
+ gene-level association tests with disease status for pedigree data 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "pedgene"
@@ -1569,27 +1516,30 @@ key "pedgene"
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-
+ Mega2R enhances 'pedgene' via the
+\emph on
+ Mega2pedgene
+\emph default
+ function, which automates and eases computation of the 'pedgene' statistics
+ for all the genes in the genome.
+ The 
 \emph on
 Mega2pedgene
 \emph default
- invokes 
+ function does this by invoking 
 \emph on
 applyFnToRanges
 \emph default
- on the default ranges or calls 
+ on the specified ranges or calls 
 \emph on
 applyFnToGenes
 \emph default
  on gene names.
- 
-\end_layout
-
-\begin_layout Standard
-We first call 
+ Before running the
+\emph on
+ Mega2pedgene
+\emph default
+ function, we first call 
 \emph on
 init_pedgene
 \emph default
@@ -1597,31 +1547,52 @@ init_pedgene
 \emph on
 read.Mega2DB
 \emph default
-; the former uses the function in the Mega2R package to just load a Mega2
- database (
+; the former uses the function in the Mega2R package to load the Mega2 database
+ (
 \emph on
 dbmega2_import
 \emph default
 ).
- Then it generates a modified the 
+ Then it generates a modified 
 \series bold
 fam
 \series default
- data frame; it must eliminate samples where the case/control is not known.
+ data frame 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Is the reader going to know what the 'fam' data frame is?
+\end_layout
+
+\end_inset
+
+; it must eliminate individuals where the case/control disease status is
+ not known.
  This is required by 'pedgene'.
  In addition, 
 \emph on
 init_pedgene 
 \emph default
-computes and saves some state into the environment to be used later.
+computes and saves some state 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+What does this mean?
+\end_layout
+
+\end_inset
+
+ into the environment to be used later.
  The 
 \emph on
 pedgene
 \emph default
- package requires a transcoding of the raw genotypes representations of
- 1/1, 1/2 (and 2/1), and 2/2 (with raw encodings: 65537, 65538 (and 131073),
- 131074) to 0, 1, and 2 respectively; plus the alleles must be flipped so
- that 1 is the major allele.
+ package requires recoding of the genotypes 1/1, 1/2 (and 2/1), and 2/2
+ (with raw encodings: 65537, 65538 (and 131073), 131074) to 0, 1, and 2
+ respectively; plus the alleles must be flipped as needed so that 1 is the
+ major allele.
  The callback function, 
 \emph on
 DOpedgene
@@ -1630,33 +1601,15 @@ DOpedgene
 \emph on
 pedgene
 \emph default
- function with several different marker weights.
+ function with several different marker weights (e.g., unweighted, Madsen-Browning
+ weights, and 
+\begin_inset Formula $\beta$
+\end_inset
+
+ density weights).
  It returns the p-value of the kernel and burden association statistics
  for each weight.
  The results are appended to a data frame in the environment, pedgene_results.
-\end_layout
-
-\begin_layout Standard
-Note: The callback function, 
-\emph on
-DOpedgene
-\emph default
-, duplicates the code that we used in an earlier 
-\begin_inset Quotes erd
-\end_inset
-
-manual run
-\begin_inset Quotes erd
-\end_inset
-
-.
- We had the results of running 'pedgene' on many transcript ranges for one
- of our private dataset and we got the same results running 
-\emph on
-Mega2pedgene
-\emph default
- on the same dataset.
- But the original code harness was hand coded and hard to change.
 \end_layout
 
 \begin_layout Subsection
@@ -1675,28 +1628,45 @@ name "subsec:Mega2SKAT-Function"
 \end_layout
 
 \begin_layout Standard
-The SKAT
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+The big advantage is that we can pull gene boundaries from Bioconductor
+ databases quite easily.
+ 
+\end_layout
+
+\end_inset
+
+ If one has a sample of unrelated individuals, the 
+\emph on
+Mega2SKAT
+\emph default
+ function eases the process of applying the region-based association tests
+ that are implemented in the SKAT
 \begin_inset CommandInset citation
 LatexCommand cite
 key "SKATc,SKATa,SKATb"
 
 \end_inset
 
- package also performs 
-\begin_inset Quotes eld
-\end_inset
+ package.
+ This package uses kernel regression approaches to compute association statistic
+s such as the Sequence Kernel Association Test (SKAT) and its optimized
+ version (SKAT-O), both for quantitative and dichotomous traits.
+ 
+\begin_inset Note Note
+status open
 
-kernel-regression-based association tests including Burden test, SKAT and
- SKAT-O.
- These methods aggregate individual SNP score statistics in a SNP set and
- efficiently compute SNP-set level p-values.
-\begin_inset Quotes erd
-\end_inset
-
-
+\begin_layout Plain Layout
+I don't find this following text that informative - feels too detailed and
+ low level.
+ 
 \end_layout
 
-\begin_layout Standard
+\end_inset
+
 The 
 \emph on
 Mega2SKAT
@@ -1770,25 +1740,25 @@ name "subsec:mega2vcf-Package-Functions"
 \end_layout
 
 \begin_layout Standard
-The VCF
-\begin_inset CommandInset citation
-LatexCommand cite
-key "VCForig"
-
-\end_inset
-
- data format (http://www.internationalgenome.org/wiki/Analysis/Variant%20Call%20Fo
-rmat/vcf-variant-call-format-version-40/) was originally defined by the
- 1000 Genomes Project
+The VCF data format (http://www.internationalgenome.org/wiki/Analysis/Variant%20Ca
+ll%20Format/vcf-variant-call-format-version-40/) was originally defined
+ by the 1000 Genomes Project
 \begin_inset CommandInset citation
 LatexCommand cite
 key "genomes1000"
 
 \end_inset
 
- (http://www.internationalgenome.org/home) for data storage.
- The current version of data format can be found at (http://samtools.github.io/hts
--specs/)
+ (http://www.internationalgenome.org/home) for data storage 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "VCForig"
+
+\end_inset
+
+ .
+ The current version of data format can be found at http://samtools.github.io/hts-
+specs/ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "VCF"
@@ -1813,11 +1783,15 @@ Mega2VCF
 \end_layout
 
 \begin_layout Standard
-You must first call the 
+Before running the 
+\emph on
+Mega2VCF
+\emph default
+ function, you should first call the 
 \emph on
 read.Mega2DB 
 \emph default
-function from the Mega2R package to load a Mega2 database.
+function to load a Mega2 database.
  A .vcf file is the main output of 
 \emph on
 Mega2VCF
@@ -1836,7 +1810,7 @@ allele_table
 \emph on
 Mega2VCF
 \emph default
- generates several additional files.
+ generates several additional complementary files.
  Below, we indicate the file suffix, the internal function that generates
  the file, and the file contents:
 \end_layout
@@ -1944,7 +1918,17 @@ mkVCFfam
 \begin_inset Text
 
 \begin_layout Plain Layout
-contains the first 6 columns of the pedigree or .fam file
+contains the first 6 columns of the pedigree or .fam file 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+What 'file'?
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -2044,7 +2028,17 @@ mkphenotype
 
 \begin_layout Plain Layout
 contains the phenotype information: quantitative and affection status (Note:
- This function was moved to the mega2rcreate.R file.)
+ This function was moved to the mega2rcreate.R file.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Why does the reader need to know where this function is defined?
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \end_inset
@@ -2097,11 +2091,11 @@ The code in each function illustrates how to assemble the corresponding
 \emph on
 mkphenotype
 \emph default
- is a bit subtle.
+ function is a bit subtle.
  The database contains a raw vector of 8 bytes times the number of phenotypes
  (per person).
  The 8 bytes are either one double precision float number or two integers
- depending on the encoding in the 
+ depending on the encoding of the trait phenotype in the 
 \series bold
 locus_table
 \series default
@@ -2121,7 +2115,7 @@ Another interesting aspect of the code design is how we compute genotype
 vcf
 \series default
  file a chunk at a time, where a chunk contains a relatively small number
- of markers (currently 1000).
+ of markers (currently 1,000).
  We generate the genotype matrix for a chunk then append the results for
  the chunk (of markers) to the .vcf file.
  Then, we get a new chunk and repeat.
@@ -2165,7 +2159,11 @@ Mega2GenABEL
 \end_layout
 
 \begin_layout Standard
-You must call the 
+Before running the 
+\emph on
+Mega2GenABEL
+\emph default
+ function, you must call the 
 \emph on
 read.Mega2DB 
 \emph default
@@ -2237,6 +2235,25 @@ Mega2GenABEL
 Mega2ENVGenABEL
 \emph default
  be used exclusively.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Can we complete this testing? Or maybe word this differently - 
+\begin_inset Quotes eld
+\end_inset
+
+Currently under development...
+ will be in the next release of Mega2R
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
