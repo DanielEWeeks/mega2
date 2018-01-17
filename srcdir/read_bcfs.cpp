@@ -418,21 +418,21 @@ linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
 //
 //    return Top;
 
-    //extern vector<Vecc> VecAlleles;
-    //int num_peds = 0;
-
-    //annotated_ped_rec *persons = build_impute2_ped(LTop, &num_peds);
-
-    //build_genotypes(LTop, persons, VecAlleles);
-
-    //linkage_ped_top *Top;
-    //Top = mk_ped_top(persons, this->people.size(), LTop, num_peds,
-    //        /*untyped*/ 0, /*totaltyped*/ this->people_filtered,
-    //        /*groups*/ NULL, 0, 0,
-     //       /*num_err*/0, 1);
-
-    //return Top;
-    //return NULL;
+//    extern vector<Vecc> VecAlleles;
+//    int num_peds = 0;
+//
+//    annotated_ped_rec *persons = build_impute2_ped(LTop, &num_peds);
+//
+//    build_genotypes(LTop, persons, VecAlleles);
+//
+//    linkage_ped_top *Top;
+//    Top = mk_ped_top(persons, this->people.size(), LTop, num_peds,
+//            /*untyped*/ 0, /*totaltyped*/ this->people_filtered,
+//            /*groups*/ NULL, 0, 0,
+//            /*num_err*/0, 1);
+//
+//    return Top;
+//    return NULL;
 
 }
 
@@ -528,7 +528,7 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
     for (MarkerVectorP vecp = markers.cbegin(); vecp != markers.cend(); vecp++) {
         bp = *vecp;
         if (count >= num_all) {
-            errorvf("Internal Error: build_impute2_names() count of skipped markers too large\n");
+            errorvf("Internal Error: build_BCFs_names() count of skipped markers too large\n");
             EXIT(DATA_INCONSISTENCY);
         }
         names[count] = CALLOC(bp->name.size()+1, char);
@@ -539,4 +539,53 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
 
     return read_common_marker_data(num_pheno + num_markers, num_markers, names, types,
             /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
+}
+
+void ReadBCFs::do_alleles(linkage_locus_top *LTop, annotated_ped_rec *persons) {
+    vector<string> files = this->filelist;
+    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+
+    int argc = 2;
+
+    vector<string> args;
+    args.push_back("bcftools");
+
+    char** argv;
+    argv = (char**)malloc(argc * sizeof(char*));
+    for (size_t i = 0; i < argc; i += 1) {
+        argv[i] = (char*)malloc(255 * sizeof(char));
+        argv[i] = &args[i][0];
+    }
+
+    int total_markers = 0;
+    for(int i = 0; i < this->filecount; i++) {
+        args.push_back(files[i]);
+
+        char **argv;
+        argv = (char **) malloc(argc * sizeof(char *));
+        for (size_t i = 0; i < argc; i += 1) {
+            argv[i] = (char *) malloc(255 * sizeof(char));
+            argv[i] = &args[i][0];
+        }
+
+        args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
+        bcfargs = mbi->get_args(argc, argv);
+
+        bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
+
+        int count = 0;
+
+        while ( bcf_sr_next_line(bcfargs->files) ) {
+            bcf1_t *line = bcfargs->files->readers[0].buffer[0];
+            bcf_unpack(line, BCF_UN_FMT);
+
+            for(int j = 0; j< num_samples; j++){
+                set_2alleles(persons[j].marker,count, &LTop->Locus[j],line->d.allele[0],line->d.allele[1]);
+                //printf("%s %s %d %s %s\n", line->d.id, hdr->id[1][line->rid].key, line->pos, line->d.allele[0],
+                //       line->d.allele[1]);
+            }
+            count++;
+        }
+        args.pop_back();
+    }
 }

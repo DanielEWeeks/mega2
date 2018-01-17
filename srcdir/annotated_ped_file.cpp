@@ -1790,6 +1790,12 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         //VCFtools_close();
         check_ungenotyped = 1;
         //vcfpe();
+
+
+        //here we need to call BCFTools to do something equivalent to VCFtools_process_entries
+        if(Input->GetOps()->use_getops())
+            Input->GetOps()->do_alleles(LTop,persons);
+
     }
 
     // CPK: At this point we have finished processing the .bed file...
@@ -4663,7 +4669,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         pedfile_type = PREMAKEPED_PFT;
         basefile_type = pedfile_type;
         Top = Input->GetOps()->do_ped(LTop);
-    } else if (PLINK.plink ||
+    }  else if (PLINK.plink ||
 	    Input_Format == in_format_binary_VCF ||
             Input_Format == in_format_compressed_VCF ||
 	    Input_Format == in_format_VCF ||

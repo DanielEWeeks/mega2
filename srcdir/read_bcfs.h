@@ -86,6 +86,7 @@ public:
     void build_bcf_map(m2_map& bcf_map);
 
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
+    void do_alleles(linkage_locus_top *LTop, annotated_ped_rec *persons);
 
 public:
     Str     BCF_path;
