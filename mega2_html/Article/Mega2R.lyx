@@ -1570,21 +1570,16 @@ Is the reader going to know what the 'fam' data frame is?
 ; it must eliminate individuals where the case/control disease status is
  not known.
  This is required by 'pedgene'.
- In addition, 
-\emph on
-init_pedgene 
-\emph default
-computes and saves some state 
+ 
 \begin_inset Note Note
 status open
 
 \begin_layout Plain Layout
-What does this mean?
+I don't think we need to do this filtering.
 \end_layout
 
 \end_inset
 
- into the environment to be used later.
  The 
 \emph on
 pedgene
@@ -1918,17 +1913,7 @@ mkVCFfam
 \begin_inset Text
 
 \begin_layout Plain Layout
-contains the first 6 columns of the pedigree or .fam file 
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-What 'file'?
-\end_layout
-
-\end_inset
-
-
+contains the 6 columns of the .fam file 
 \end_layout
 
 \end_inset
@@ -2027,18 +2012,7 @@ mkphenotype
 \begin_inset Text
 
 \begin_layout Plain Layout
-contains the phenotype information: quantitative and affection status (Note:
- This function was moved to the mega2rcreate.R file.
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Why does the reader need to know where this function is defined?
-\end_layout
-
-\end_inset
-
-)
+contains the phenotype information: quantitative and affection status
 \end_layout
 
 \end_inset
@@ -2218,7 +2192,7 @@ The function
 \emph on
 Mega2ENVGenABEL
 \emph default
- is experimental but should produce same object as 
+ produces the same object as 
 \emph on
 Mega2GenABEL
 \emph default
@@ -2230,30 +2204,7 @@ Mega2GenABEL
 Mega2GenABEL
 \emph default
  function.
- A bit more testing and we will suggest 
-\emph on
-Mega2ENVGenABEL
-\emph default
- be used exclusively.
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Can we complete this testing? Or maybe word this differently - 
-\begin_inset Quotes eld
-\end_inset
-
-Currently under development...
- will be in the next release of Mega2R
-\begin_inset Quotes erd
-\end_inset
-
-.
-\end_layout
-
-\end_inset
-
-
+ 
 \end_layout
 
 \begin_layout Section
