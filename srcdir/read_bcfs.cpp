@@ -371,7 +371,6 @@ void ReadBCFs::build_markers() {
 
         while ( bcf_sr_next_line(bcfargs->files) ) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
-            bcf_unpack(line, BCF_UN_FMT);
             //the 1 references BCF_DT_CTG in vcf.h
             //this seems to be the actual way to get the chromosome
             //strcpy(markers[total_markers].chr ,hdr->id[1][line->rid].key);
@@ -380,10 +379,15 @@ void ReadBCFs::build_markers() {
 
             Vecs alleles(2);
             alleles.clear();
-            alleles.push_back(line->d.allele[0]);
-            alleles.push_back(line->d.allele[1]);
-            this->markers.push_back(new BCFMarker(line->d.id, hdr->id[1][line->rid].key, line->pos, alleles));
+            char *al1 = canonical_allele(line->d.allele[0]);
+            char *al2 = canonical_allele(line->d.allele[1]);
+            //printf("%s %s",canonical_allele(line->d.allele[0]), canonical_allele(line->d.allele[0]));
+            alleles.push_back(al1);
+            alleles.push_back(al2);
 
+            this->markers.push_back(new BCFMarker(line->d.id, hdr->id[BCF_DT_CTG][line->rid].key, line->pos, alleles));
+
+            //printf("%s,%s\n",al1,al2);
             count++;
         }
 
@@ -433,6 +437,7 @@ linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
 //
 //    return Top;
 //    return NULL;
+    return NULL;
 
 }
 
@@ -541,7 +546,7 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
             /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
 }
 
-void ReadBCFs::do_alleles(linkage_locus_top *LTop, annotated_ped_rec *persons) {
+void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons) {
     vector<string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
@@ -577,13 +582,45 @@ void ReadBCFs::do_alleles(linkage_locus_top *LTop, annotated_ped_rec *persons) {
 
         while ( bcf_sr_next_line(bcfargs->files) ) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
-            bcf_unpack(line, BCF_UN_FMT);
+            //bcf_unpack(line, BCF_UN_ALL);
 
-            for(int j = 0; j< num_samples; j++){
-                set_2alleles(persons[j].marker,count, &LTop->Locus[j],line->d.allele[0],line->d.allele[1]);
-                //printf("%s %s %d %s %s\n", line->d.id, hdr->id[1][line->rid].key, line->pos, line->d.allele[0],
-                //       line->d.allele[1]);
+            //vcf_format gets a kstring without having to use bcf_write
+            kstring_t str = { 0, 0, NULL };
+            vcf_format(hdr,line, &str);
+            
+
+            if(str.l > 0) {
+                Vecs linesplit;
+                const char *delimiter = "\t";
+                char outline[str.m];
+
+                strcpy(outline, str.s);
+                split(linesplit, outline, delimiter);
+                int person = 0;
+                for(int s = 9; s < sizeof(linesplit); s++){
+                    //printf("linesplit at %d: %s\n",s, linesplit[s].c_str());
+                    Vecs personsplit;
+                    const char *delimter2 = "/";
+
+                    split(personsplit,linesplit[s].c_str(),delimter2);
+                    if(strcmp(personsplit[0].c_str(),".") !=0) {
+
+                        int index1 = stoi(personsplit[0]);
+                        int index2 = stoi(personsplit[1]);
+                        //printf("allele values of s: %s %s\n", personsplit[0].c_str(),
+                        //       personsplit[1].c_str());
+                        set_2Ralleles(persons[person].marker,count,&LTop->Locus[person],canonical_allele(line->d.allele[index1]),canonical_allele(line->d.allele[index2]));
+                        //printf("%s %s-",canonical_allele(line->d.allele[index1]),canonical_allele(line->d.allele[index2]));
+
+                    }
+                    else{
+                        set_2Ralleles(persons[person].marker,count,&LTop->Locus[person],canonical_allele("."),canonical_allele("."));
+                        //printf("allele values of s: . .\n");
+                    }
+                    person++;
+                }
             }
+            free(str.s);
             count++;
         }
         args.pop_back();

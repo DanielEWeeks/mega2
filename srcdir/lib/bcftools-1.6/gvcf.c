@@ -175,7 +175,7 @@ bcf1_t *gvcf_write(gvcf_t *gvcf, htsFile *fh, bcf_hdr_t *hdr, bcf1_t *rec, int i
             gvcf->npl = bcf_get_format_int32(hdr, rec, "PL", &gvcf->pl, &gvcf->mpl);
 
             gvcf->nqsum = bcf_get_info_float(hdr,rec,"QS",&gvcf->qsum,&gvcf->mqsum);
-            gvcf->ngts  = bcf_get_genotypes(hdr,rec,&gvcf->gts,&gvcf->mgts);
+            gvcf->ngts  = (hdr,rec,&gvcf->gts,&gvcf->mgts);
 
             gvcf->rid    = rec->rid;
             gvcf->start  = rec->pos;

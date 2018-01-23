@@ -1780,6 +1780,10 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     }
     tod_cp_smj();
 
+    //here we need to call BCFTools to do something equivalent to VCFtools_process_entries
+    if(Input->GetOps()->use_getops())
+        Input->GetOps()->do_genotypes(LTop,persons);
+
     if (xcf) {
 //      if (! getenv("_")) { asm("int $3"); }
         std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
@@ -1790,12 +1794,6 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
         //VCFtools_close();
         check_ungenotyped = 1;
         //vcfpe();
-
-
-        //here we need to call BCFTools to do something equivalent to VCFtools_process_entries
-        if(Input->GetOps()->use_getops())
-            Input->GetOps()->do_alleles(LTop,persons);
-
     }
 
     // CPK: At this point we have finished processing the .bed file...
