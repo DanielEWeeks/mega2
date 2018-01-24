@@ -1274,7 +1274,7 @@ void mito_transmission_report(ped_top *PTop,
             int entry;
             for (entry = 0; entry < PTop->PedTree[ped].EntryCnt; entry++) {
                 int A1 = 0, A2 = 0;
-                const char *cA1, *cA2;
+                const char *cA1 = zero, *cA2 = zero;
                 if (recode) {
                     get_2alleles(PTop->PedTree[ped].Entry[entry].Marker, lloc, &A1, &A2);
                     if (! R(A1,A2)) {

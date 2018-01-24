@@ -337,18 +337,7 @@ static int *convert_marker_filter2locus_filter(linkage_ped_top *Top)
 {
     ext_linkage_locus_top *EXLTop = Top->EXLTop;
     int offset = Top->LocusTop->PhenoCnt;
-    int bchr, i, chrcnt, iii;
-    long long bmin, bmax, bp;
-
-    long cmin, cmax;
-
-    List2ll  *bplist;
-    List2llp lp;
-    Pairll   pp;
-
-    List3ill *locuslist;
-
-    int cnt, *chrs;
+    int bchr, i, chrcnt, *chrs;
 
     bool AllChr = false; // seems to work OK; select/use chr's that are required
 //  bool AllChr = true;  // seems to work OK; select all chrs, use what is required
@@ -410,6 +399,17 @@ static int *convert_marker_filter2locus_filter(linkage_ped_top *Top)
         return chrs;
     }
 
+    int iii;
+    long long bmin, bmax, bp;
+    long cmin, cmax;
+
+    List2ll  *bplist;
+    List2llp lp;
+    Pairll   pp;
+
+    List3ill *locuslist;
+
+    int cnt;;
 //  cnt = main_chromocnt;
     cnt = marker_filter.size();
 
@@ -572,7 +572,7 @@ void compress_loci_w_locus_filter(linkage_ped_top *Top)
     LTop->MarkerCnt  = Lesslocus - offset;
     EXLTop->LocusCnt = Lesslocus;
 
-    for (int i = 0; i < num_reordered; i++) {
+    for (i = 0; i < num_reordered; i++) {
         reordered_marker_loci[i] = loci_reorder_w_locus_filter[ reordered_marker_loci[i] ];
     }
 }

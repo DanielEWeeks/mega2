@@ -566,8 +566,8 @@ static int write_SOLAR_geno(char *flname, linkage_ped_top *Top, int sex_linked)
                 char c;
                 for (int j = 0; j < i; j++) {
                     *buf1++ = ',';
-                    const char *cp = warray[j];
-                    while ( (c = *cp++) != 0) *buf1++ = c;
+                    const char *cxp = warray[j];
+                    while ( (c = *cxp++) != 0) *buf1++ = c;
                 }
                 *buf1++ = '\n';
 //              fprintf(filep,"\n");

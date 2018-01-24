@@ -1443,13 +1443,12 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                         continue;
                     }
                     */
+                    linkage_ped_rec *pBp = Top->PedBroken[i].Entry + j;
                     if (Mega2Status <= INSIDE_RECODE && Top->LocusTop->PedRecDataType == Raw_postmake) {
-                        linkage_ped_rec *pp = Top->PedBroken[i].Entry + j;
-                        this_person_typed = num_typed_2Ralleles(pp->Marker, k);
+                        this_person_typed = num_typed_2Ralleles(pBp->Marker, k);
 
                     } else {
-                        linkage_ped_rec *pp = Top->PedBroken[i].Entry + j;
-                        this_person_typed = num_typed_2alleles(pp->Marker, k);
+                        this_person_typed = num_typed_2alleles(pBp->Marker, k);
                     }
                     Top->Ped[i].Entry[j].IsTyped += this_person_typed;
                     /* If we are in recode, we are counting half-types,

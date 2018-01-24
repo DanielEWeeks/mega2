@@ -1010,14 +1010,14 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         //check for reference table:
         //db_open_db();
         MasterDB.begin();
-        DBstmt *select;
+        DBstmt *check;
         char select_string[255] = "SELECT name FROM sqlite_master WHERE type='table' AND name='ref_allele_table';";
 
-        select = MasterDB.prep(select_string);
-        int ret = select && select->abort();
-        while (ret) {
-            ret = select->step();
-            if (ret == SQLITE_ROW)
+        check = MasterDB.prep(select_string);
+        int retcheck = check && check->abort();
+        while (retcheck) {
+            retcheck = check->step();
+            if (retcheck == SQLITE_ROW)
                 reftableexists = 1;
             else
                 reftableexists = 0;
@@ -1026,7 +1026,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         }
 
         MasterDB.commit();
-        delete select;
+        delete check;
 
         //if we find a table we want to check it has values
         //only do this if the reftable exists

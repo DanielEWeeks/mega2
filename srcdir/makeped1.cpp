@@ -1622,7 +1622,7 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
 
         Top->Ped = Top->PedRaw;  /* don't want to count doubleganger */
         Top->IndivCnt = 0;
-        for (int ped = 0; ped < Top->PedCnt; ped++)
+        for (ped = 0; ped < Top->PedCnt; ped++)
             Top->IndivCnt += Top->Ped[ped].EntryCnt;
 
         return 1;
@@ -1674,7 +1674,7 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
 
     Top->Ped = Top->PedRaw;  /* don't want to count doubleganger */
     Top->IndivCnt = 0;
-    for (int ped = 0; ped < Top->PedCnt; ped++)
+    for (ped = 0; ped < Top->PedCnt; ped++)
         Top->IndivCnt += Top->Ped[ped].EntryCnt;
 
     return 1;
