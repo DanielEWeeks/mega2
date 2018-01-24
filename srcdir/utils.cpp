@@ -1,7 +1,7 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis.
 
-  Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.
+  Copyright 1999-2018, University of Pittsburgh. All Rights Reserved.
 
   Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
@@ -401,7 +401,7 @@ void            hello(FILE *fp)
     fprintf(fp, "==========================================================\n");
     fprintf(fp, "                          MEGA2 %s\n", Mega2Version);
 
-    fprintf(fp, "     Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.\n");
+    fprintf(fp, "     Copyright 1999-2018, University of Pittsburgh. All Rights Reserved.\n");
 
     fprintf(fp, "     Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,\n");
     fprintf(fp, "     Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,\n");
