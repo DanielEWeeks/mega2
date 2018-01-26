@@ -37,13 +37,15 @@ libexecdir   = ${exec_prefix}/libexec
 datarootdir  = ${prefix}/share
 mandir       = ${datarootdir}/man
 
-CC     = gcc
-RANLIB = ranlib
+## PASS THRU FROM CALLER
+## CC     = gcc
+## RANLIB = ranlib
 
-CPPFLAGS = 
-CFLAGS   = -g -O2
-LDFLAGS  = 
-LIBS     = -lbz2 -lz 
+## CPPFLAGS = 
+## CFLAGS   = -g -O2
+## LDFLAGS  = 
+## LIBS     = -lbz2 -lz 
+## PASS THRU FROM CALLER
 
 PLATFORM   = Darwin
 PLUGIN_EXT = .bundle

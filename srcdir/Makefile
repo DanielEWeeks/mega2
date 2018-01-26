@@ -213,6 +213,7 @@ export CC
 export AR
 export ARFLAGS
 export AROUT
+export RANLIB
 export SQLxDEFS
 
 LINK ?= $(CXX)
@@ -220,12 +221,12 @@ LTARGET ?= -o $(EXEC)
 AR ?= ar
 ARFLAGS ?= rcs
 AROUT ?=
+RANLIB = ranlib
 
 ZLIBS ?= libz.a
 CLIBS := libbgen.a $(ZLIBS) libsqlite3.a libbcftools.a $(CLIBS)
 
 BCFFLAGS =  -lz -lm -lbz2 # –llzma
-
 stdC11  ?= -std=c++0x
 WINO    ?=
 
@@ -264,9 +265,14 @@ libsqlite3.a: lib/sqlite3
 
 libz.a: zlib-1.2.8
 
-libbcftools.a: lib/bcftools-1.6 
+libbcftools.a: lib/bcftools-1.6
 
-$(MODULE)_$(OSTYPE): $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libbgen.a libz.a libsqlite3.a libbcftools.a
+CFG = bcftool-1.6scfg
+
+bcftool-1.6scfg:
+	$(MAKE) $(MFLAGS) -C lib/bcftools-1.6 config
+
+$(MODULE)_$(OSTYPE): $(CFG) $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libbgen.a libz.a libsqlite3.a libbcftools.a
 	$(RM) $(MODULE)
 	$(LINK) $(LFLAGS) $(LTARGET) $(OBJS) $(FLAGS) gcc_info.o $(CLIBS) $(BCFFLAGS)
 
