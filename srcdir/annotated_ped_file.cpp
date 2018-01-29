@@ -1626,7 +1626,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     int check_ungenotyped = 0;
     int xcf = Input_Format == in_format_binary_VCF ||
 	      Input_Format == in_format_compressed_VCF ||
-              Input_Format == in_format_VCF ;
+              Input_Format == in_format_VCF;
 
     // allele_count should be == 0 when using a .ped file...
 
