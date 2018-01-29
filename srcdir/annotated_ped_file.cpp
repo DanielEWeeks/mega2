@@ -1,7 +1,7 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis.
 
-  Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.
+  Copyright 1999-2018, University of Pittsburgh. All Rights Reserved.
 
   Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
@@ -1626,7 +1626,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     int check_ungenotyped = 0;
     int xcf = Input_Format == in_format_binary_VCF ||
 	      Input_Format == in_format_compressed_VCF ||
-              Input_Format == in_format_VCF ;
+              Input_Format == in_format_VCF;
 
     // allele_count should be == 0 when using a .ped file...
 

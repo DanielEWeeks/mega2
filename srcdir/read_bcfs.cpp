@@ -1,6 +1,6 @@
 /*
   Mega2: Manipulation Environment for Genetic Analysis
-  Copyright (C) 1999-2017 Robert Baron, Justin R. Stickel, Charles P. Kollar,
+  Copyright (C) 1999-2018 Robert Baron, Justin R. Stickel, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
   Daniel E. Weeks, and University of Pittsburgh
 
@@ -545,23 +545,26 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
 }
 
 void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons) {
-    vector<string> files = this->filelist;
+    //std::clock_t start;
+    //start = std::clock();
+    vector <string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
     int argc = 2;
 
-    vector<string> args;
+    vector <string> args;
     args.push_back("bcftools");
 
-    char** argv;
-    argv = (char**)malloc(argc * sizeof(char*));
+    char **argv;
+    argv = (char **) malloc(argc * sizeof(char *));
     for (size_t i = 0; i < argc; i += 1) {
-        argv[i] = (char*)malloc(255 * sizeof(char));
+        argv[i] = (char *) malloc(255 * sizeof(char));
         argv[i] = &args[i][0];
     }
 
-    int total_markers = 0;
-    for(int i = 0; i < this->filecount; i++) {
+    int markers = 0;
+    int count= 0;
+    for (int i = 0; i < this->filecount; i++) {
         args.push_back(files[i]);
 
         char **argv;
@@ -571,56 +574,125 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
             argv[i] = &args[i][0];
         }
 
-        args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
+        args_t *bcfargs = (args_t *) calloc(1, sizeof(args_t));
         bcfargs = mbi->get_args(argc, argv);
 
         bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
 
-        int count = 0;
-
-        while ( bcf_sr_next_line(bcfargs->files) ) {
+        while (bcf_sr_next_line(bcfargs->files)) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
-            //bcf_unpack(line, BCF_UN_ALL);
 
-            //vcf_format gets a kstring without having to use bcf_write
-            kstring_t str = { 0, 0, NULL };
-            vcf_format(hdr,line, &str);
-            
+            //let's try this instead using bcf_get_genotypes
+            int m, n, i;
 
-            if(str.l > 0) {
-                Vecs linesplit;
-                const char *delimiter = "\t";
-                char outline[str.m];
+            //uses convert object so we need our own void * instead
+            void *dat = NULL;
 
-                strcpy(outline, str.s);
-                split(linesplit, outline, delimiter);
-                int person = 0;
-                for(int s = 9; s < sizeof(linesplit); s++){
-                    //printf("linesplit at %d: %s\n",s, linesplit[s].c_str());
-                    Vecs personsplit;
-                    const char *delimter2 = "/";
+            m = 0;
+            n = bcf_get_genotypes(hdr, line, &dat, &m);
+            //probably not necessary
+            //convert->ndat = m * sizeof(int32_t);
 
-                    split(personsplit,linesplit[s].c_str(),delimter2);
-                    if(strcmp(personsplit[0].c_str(),".") !=0) {
-
-                        int index1 = stoi(personsplit[0]);
-                        int index2 = stoi(personsplit[1]);
-                        //printf("allele values of s: %s %s\n", personsplit[0].c_str(),
-                        //       personsplit[1].c_str());
-                        set_2Ralleles(persons[person].marker,count,&LTop->Locus[person],canonical_allele(line->d.allele[index1]),canonical_allele(line->d.allele[index2]));
-                        //printf("%s %s-",canonical_allele(line->d.allele[index1]),canonical_allele(line->d.allele[index2]));
-
-                    }
-                    else{
-                        set_2Ralleles(persons[person].marker,count,&LTop->Locus[person],canonical_allele("."),canonical_allele("."));
-                        //printf("allele values of s: . .\n");
-                    }
-                    person++;
-                }
+            if (n <= 0) {
+                error("Error parsing GT tag at %s:%d\n", bcf_seqname(hdr,line),line->pos+1);
             }
-            free(str.s);
-            count++;
+
+            char *canons[line->d.m_allele];
+            for (int al = 0; al < line->d.m_allele; al++) {
+                canons[al] = canonical_allele(line->d.allele[al]);
+            }
+            //should give number of allele options per marker
+            n /= num_samples;
+            for (i = 0; i < num_samples; i++) {
+                int32_t *ptr = (int32_t *) dat + i * n;
+                int j;
+                for (j = 0; j < n; j++)
+                    if (ptr[j] == bcf_int32_vector_end) break;
+
+                // diploid
+                if (j == 2) {
+                    if (bcf_gt_is_missing(ptr[0]))
+                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], 0, 0);
+                        //kputs(" 0.33 0.33 0.33", str);
+                    else if (bcf_gt_allele(ptr[0]) != bcf_gt_allele(ptr[1]))
+                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[0], canons[1]);
+                        //kputs(" 0 1 0", str);       // HET
+                    else if (bcf_gt_allele(ptr[0]) == 1)
+                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[1], canons[1]);
+                        //kputs(" 0 0 1", str);       // ALT HOM, first ALT allele
+                    else
+                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[0], canons[0]);
+                    //kputs(" 1 0 0", str);       // REF HOM or something else than first ALT
+                    // haploid
+                } else if (j == 1) {
+                    if (bcf_gt_is_missing(ptr[0]))
+                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], 0, 0);
+                        //kputs(" 0.5 0.0 0.5", str);
+                    else if (bcf_gt_allele(ptr[0]) == 1)
+                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[1], canons[1]);
+                        //kputs(" 0 0 1", str);       // first ALT allele
+                    else
+                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[0], canons[0]);
+                    //kputs(" 1 0 0", str);       // REF or something else than first ALT
+                } else error("FIXME: not ready for ploidy %d\n", j);
+
+            }
+            markers++;
         }
         args.pop_back();
     }
+    //std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
 }
+
+
+
+//my inital attempt at unpacking genotype data from bcfs using vcf_format and string manipulation
+//this ran a good deal slower than using bcf_get_genotypes and handling pointers
+//
+//            /*this is the code using vcf_format and split to get vecs as values for set 2Ralleles */
+//            bcf1_t *line = bcfargs->files->readers[0].buffer[0];
+//            //bcf_unpack(line, BCF_UN_ALL);
+//
+//            //vcf_format gets a kstring without having to use bcf_write
+//            kstring_t str = { 0, 0, NULL };
+//            vcf_format(hdr,line, &str);
+//
+//
+//            if(str.l > 0) {
+//                Vecs linesplit;
+//                const char *delimiter = "\t";
+//                char outline[str.m];
+//
+//                strcpy(outline, str.s);
+//                split(linesplit, outline, delimiter);
+//                int person = 0;
+//                for(int s = 9; s < sizeof(linesplit); s++){
+//                    //printf("linesplit at %d: %s\n",s, linesplit[s].c_str());
+//                    Vecs personsplit;
+//                    const char *delimter2 = "/";
+//
+//                    split(personsplit,linesplit[s].c_str(),delimter2);
+//                    if(strcmp(personsplit[0].c_str(),".") !=0) {
+//
+//                        int index1 = stoi(personsplit[0]);
+//                        int index2 = stoi(personsplit[1]);
+//                        //printf("allele values of s: %s %s\n", personsplit[0].c_str(),
+//                        //       personsplit[1].c_str());
+//                        set_2Ralleles(persons[person].marker,count,&LTop->Locus[count],canonical_allele(line->d.allele[index1]),canonical_allele(line->d.allele[index2]));
+//                        //printf("%s %s-",canonical_allele(line->d.allele[index1]),canonical_allele(line->d.allele[index2]));
+//
+//                    }
+//                    else{
+//                        set_2Ralleles(persons[person].marker,count,&LTop->Locus[count],canonical_allele("."),canonical_allele("."));
+//                        //printf("allele values of s: . .\n");
+//                    }
+//                    person++;
+//                }
+//            }
+//            free(str.s);
+//            count++;
+//        }
+//        args.pop_back();
+//    }
+//    std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
+//}
