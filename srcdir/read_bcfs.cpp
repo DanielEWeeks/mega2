@@ -67,8 +67,6 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #include "utils_ext.h"
 
 #include "str_utils.hh"
-#include "input.hh"
-#include "input_ops.hh"
 
 #include "read_bcfs.h"
 #include "mega2_bcftools_interface.h"

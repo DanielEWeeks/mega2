@@ -91,7 +91,7 @@ public:
 
 };
 
-extern Reference_Allele_Table *reference_allele_table;
+//extern Reference_Allele_Table *reference_allele_table;
 
 
 class Reference_Flips_Table {
@@ -144,5 +144,5 @@ public:
     int db_getall(linkage_ped_tree *t, std::map<int, linkage_ped_tree *> &pedigree_hash);
 };
 
-extern Reference_Flips_Table *reference_flips_table;
+//extern Reference_Flips_Table *reference_flips_table;
 #endif

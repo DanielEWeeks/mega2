@@ -1041,7 +1041,9 @@ void recode_locus_top(marker_type *marker_list, pheno_type *pheno_list, linkage_
         }
     }
 
-    LTop->SexDiff = LTop->Interference = 0;
+//  SexDiff was calculated already now that recode is done later.
+//  LTop->SexDiff = LTop->Interference = 0;
+    LTop->Interference = 0;
     if (LTop->MarkerCnt > 1) {
         LTop->MaleRecomb = CALLOC((size_t) LTop->LocusCnt - 1, double);
         for (all = 0; all < LTop->LocusCnt - 1; all++)
@@ -2589,6 +2591,16 @@ linkage_ped_top  *create_full_marker_data(
     }
     omit_peds(*untyped_ped_opt, Top);
 
+    if (database_dump || ! database_read) {
+        extern void pedtree_markers_check(linkage_ped_top *LPedTreeTop, analysis_type analysis);
+
+        Tod tod_makeped("makeped1");
+        makeped(Top, analysis);  // if --db, might connect loops based on analysis
+        tod_makeped();
+
+        pedtree_markers_check(Top, analysis);
+    }
+
     mssgf("Counting alleles and computing frequencies ...");
 
     {
@@ -2663,7 +2675,10 @@ linkage_ped_top  *create_full_marker_data(
     assign_dummy_alleles(marker_list, Top->LocusTop, NULL, VCFallelesNull);
 
     write_recode_summary(marker_list, Top->LocusTop, count_halftyped);
+
+    Top->Ped = Top->PedBroken;  /* count doubleganger */
     recode_ped_top(marker_list, Top, (plink_info_type *)NULL);
+    Top->Ped = Top->PedRaw;     /* don't count doubleganger */
     recode_locus_top(marker_list, pheno_list, Top->LocusTop);
     Mega2Status = DONE_RECODE;
     log_line(mssgf);

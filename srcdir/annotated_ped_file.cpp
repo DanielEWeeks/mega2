@@ -4692,6 +4692,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     } else
         Top = read_annotated_ped_file(ped_file, LTop, &AnnotatedFileInfo,
                                       num_groups, groups);
+    if (Top->PTop == NULL) {
+        Top->PedRaw    = Top->Ped;
+        Top->PedBroken = Top->Ped;
+    }
 
     if (AnnotatedFileInfo.ped_file_columns)
         free(AnnotatedFileInfo.ped_file_columns);
@@ -4753,6 +4757,16 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     clear_YLINKED_females(Top, 1, 1);
     tod_omit();
+
+    if (database_dump || ! database_read) {
+        extern void pedtree_markers_check(linkage_ped_top *LPedTreeTop, analysis_type analysis);
+
+        Tod tod_makeped("makeped0");
+        makeped(Top, analysis);  // if --db, might connect loops based on analysis
+        tod_makeped();
+
+        pedtree_markers_check(Top, analysis);
+    }
 
     /* recode and compute frequencies if necessary */
     Mega2Status = INSIDE_RECODE;
@@ -4822,8 +4836,6 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         SECTION_ERR_FINI(y_female);
         tod_cal();
     }
-
-
     Tod tod_cra("count_raw_alleles/check recoding");
     count_raw_alleles(marker_list, Top->LocusTop);
 
@@ -4873,7 +4885,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     tod_dtp();
 
     Tod tod_rped("recode_ped_top"); // 199.470821
+    Top->Ped = Top->PedBroken;  /* count doubleganger */
     recode_ped_top(marker_list, Top, plink_info);
+    Top->Ped = Top->PedRaw;     /* don't count doubleganger */
+    Mega2Status = DONE_RECODE;
     tod_rped();
 
     Tod tod_rloc("recode locus top");
@@ -4982,7 +4997,7 @@ static void Free_ped(linkage_ped_top *PTop)
         }
         free(PPeds);
     } else {                  /* Raw_postmake: Ped linkage_ped_tree EntryCnt Entry[i] linkage_ped_tree*/
-        LPedT = PTop->Ped;      /* UniqueID[], OrigID[], FamName[] sib-pointers */
+        LPedT = PTop->PedBroken; /* UniqueID[], OrigID[], FamName[] sib-pointers */
         for (p = 0; p < PTop->PedCnt; p++) {
             LPed = LPedT[p].Entry;
             for (i = 0; i < LPedT[p].EntryCnt; i++) {

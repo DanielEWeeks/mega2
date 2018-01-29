@@ -41,6 +41,8 @@ endif
 L0xFLAGS= -std=c++11
 CFLAGS += -Igenfile/include 
 
+ZSTDDIR = zstd-1.1.0/lib
+ZSTD = bgenzstd.a
 OUT = $(UP)libbgen.a
 
 #SRC = example/bgen_to_vcf.cpp src/MissingValue.cpp src/bgen.cpp src/zlib.cpp
@@ -55,7 +57,7 @@ LOCFLAGS += -I..
 
 .SUFFIXES: .cpp
 .cpp.o:
-	$(CXX) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) $(FLAGS) -c $< $(WINO)
+	$(CXX) -I$(ZSTDDIR) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) $(FLAGS) -c $< $(WINO)
 
 all: $(OUT)
 
@@ -68,10 +70,15 @@ example/bgen_to_vcf.o: example/bgen_to_vcf.cpp
 example/bgen_to_vcf.o: CFLAGS += $(L0xFLAGS)
 
 
-$(OUT): $(BOBJ)
-	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(BOBJ)
+$(OUT): $(ZSTDDIR)$(WINDIR)$(ZSTD) $(BOBJ)
+	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(BOBJ) $(subst /,$(WINDIR),$(wildcard $(ZSTDDIR)/*/*.o))
+#	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(BOBJ) $(ZSTDDIR)\decompress\huf_decompress.o $(ZSTDDIR)\decompress\zbuff_decompress.o $(ZSTDDIR)\decompress\zstd_decompress.o $(ZSTDDIR)\common\entropy_common.o  $(ZSTDDIR)\common\fse_decompress.o  $(ZSTDDIR)\common\xxhash.o  $(ZSTDDIR)\common\zstd_common.o $(ZSTDDIR)\dictBuilder\divsufsort.o  $(ZSTDDIR)\dictBuilder\zdict.o $(ZSTDDIR)\legacy\zstd_v01.o  $(ZSTDDIR)\legacy\zstd_v02.o $(ZSTDDIR)\legacy\zstd_v03.o $(ZSTDDIR)\legacy\zstd_v04.o $(ZSTDDIR)\legacy\zstd_v05.o $(ZSTDDIR)\legacy\zstd_v06.o $(ZSTDDIR)\legacy\zstd_v07.o foo
+
+$(ZSTDDIR)$(WINDIR)$(ZSTD):
+	$(MAKE) -C $(ZSTDDIR) $(ZSTD)
 
 clean:
+	$(MAKE) -C $(ZSTDDIR) $@
 	$(RM) $(WOBJ) $(OUT) Makefile.bak
 	$(RM) example$(WINDIR)bgen_to_vcf
 

@@ -69,7 +69,7 @@
 
 int Display_Errors, Display_Messages;
 extern int lastautosome;
-
+char          *zero;
 /* prototype definitions */
 void            full_check(ped_top *Top, linkage_ped_top *LPedTop,
 			   analysis_type analysis);
@@ -312,15 +312,46 @@ void allelecnt_check(linkage_ped_top *Top, analysis_type analysis)
     }
 }
 
+#ifdef DELAY_ZERO
+genozero delay_zero;
+void dozero(ped_top *Top, linkage_ped_top *LPedTop, analysis_type analysis)
+{
+   linkage_locus_top *LLTop = LPedTop->LocusTop;
+
+    for (genozerop gp = delay_zero.begin(); gp != delay_zero.end(); gp++) {
+        int locus = gp->locus;
+        int ped   = gp->ped;
+        int per   = gp->per;
+
+        if (per != -1) {
+                /*
+                set_2alleles(Top->PedTree[ped].Entry[per].Marker, locus,
+                             &LLTop->Locus[locus], 0, 0);
+                */
+                set_2alleles(LPedTop->PedBroken[ped].Entry[per].Marker, locus,
+                             &LLTop->Locus[locus], 0, 0);
+        } else {
+            for (int entry=0; entry < LPedTop->PedBroken[ped].EntryCnt; entry ++) {
+
+                    set_2alleles(LPedTop->PedBroken[ped].Entry[entry].Marker, locus,
+                                 &LLTop->Locus[locus], 0, 0);
+            }
+        }
+    }
+}
+#endif
+
 ped_status      PedStat;
-void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
-		     analysis_type analysis)
+void full_check(ped_top *Top, linkage_ped_top *LPedTop, analysis_type analysis)
 {
     int chr;
-    int             entry, ped, locus, select=-1, menu_item=0;
+#ifndef DELAY_ZERO
+    int             entry;
+#endif
+    int             ped, locus, select=-1, menu_item=0;
     int             stat, abortl=0, abortf=0, loc_err=0;
     /* below are the error flags */
-    int             aexceed, imend, hmend, freq_mis;
+    int             aexceed, imend, hmend, freq_mis = 0;
     int             chk_aexceed, chk_imend, chk_hmend;
     int             set_uniq=0, nonuniq;
     linkage_locus_top *LLTop = LPedTop->LocusTop;
@@ -331,10 +362,10 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     int             exit_select=-1, halftyped_select=-1;
     int             exceedall_select = -1, invalid_select=-1;
     int             uniq_select = -1;
-
-    int             plink_locus_num;
-
+//  int             plink_locus_num;
     int             num_mito_hetero = 0, num_mito_non_maternal = 0;
+
+    zero = REC_UNKNOWN;
 
     clear_ped_status(&PedStat);
 
@@ -342,6 +373,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
        for QUANT summary. This can be modified to accommodate other
        cases where marker loci need not be changed */
 
+#ifdef need_recode_alleles
     /*   if (num_traits > 0) { */
     /*     printf("Checking locus integrity...\n"); */
     /*     for (locus = 0; locus < num_traits; locus++) { */
@@ -364,6 +396,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
 
     tod_cl();
+#endif
 
     if (! database_dump) {
         if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */) {
@@ -421,7 +454,10 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     Tod tod_mito("mito_transmission_report");
     for (chr=0; chr < MaxChromo; chr++) {
         if (global_chromo_entries[chr] == MITO_CHROMOSOME) {
-            mito_transmission_report(Top, &num_mito_hetero, &num_mito_non_maternal);
+            mito_transmission_report(Top,
+                                     LLTop->PedRecDataType == Postmakeped || 
+                                       LLTop->PedRecDataType == Premakeped,
+                                     &num_mito_hetero, &num_mito_non_maternal);
             if (num_mito_hetero > 0 || num_mito_non_maternal > 0)
                 abortf = imax(abortf, 1);
             break;
@@ -434,6 +470,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     printf("Done checking pedigree integrity.\n");
     tod_mito();
 
+#ifdef need_recoded_alleles
     Tod tod_iofc("input_observed_freq_check");
     if (LLTop->MarkerCnt > 0 /* && analysis != TO_PLINK */) {
         freq_mis = input_observed_freq_check(LPedTop, FreqMismatchThreshold);
@@ -443,7 +480,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
         freq_mis=0;
     }
     tod_iofc();
-
+#endif
     Tod tod_cepi("check epilog code: do reset");
     /* set imend and hmend to 1 if errors are present */
     imend = chk_imend   = 1;
@@ -680,7 +717,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             for (locus = LLTop->PhenoCnt; locus < LLTop->LocusCnt; locus++) {
                 if (LLTop->Locus[locus].Marker->chromosome == MISSING_CHROMO) continue;
                 stat = check_half_type(&(Top->PedTree[ped]), &PedStat, LLTop,
-                                       ped, locus, LPedTop->UniqueIds,
+                                       ped, locus, LPedTop->UniqueIds, ped,
                                        &reset_fp, &first, hmend);
                 abortf = imax(abortf, stat);
                 if (stat) {
@@ -719,7 +756,7 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
             for (locus = LLTop->PhenoCnt; locus < LLTop->LocusCnt; locus++) {
                 if (LLTop->Locus[locus].Marker->chromosome == MISSING_CHROMO) continue;
                 stat = check_out_of_bounds(&(Top->PedTree[ped]), &PedStat, LLTop,
-                                           ped, locus, LPedTop->UniqueIds,
+                                           ped, locus, LPedTop->UniqueIds, ped,
                                            &reset_fp, &first, aexceed);
                 abortf = imax(abortf, stat);
                 if (stat) {
@@ -747,6 +784,9 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     Tod tod_imend_all("reset ALL non mendelian");
     Tod tod_imend(20);
     if (/*chk_*/imend) {
+#ifndef DELAY_ZERO
+        int recode = LLTop->PedRecDataType == Postmakeped || LLTop->PedRecDataType == Premakeped;
+#endif
         FILE *reset_fp = NULL;
         mssgf("Setting any inconsistent genotypes to unknowns for the indicated pedigree/locus combinations.");
         int rm;
@@ -781,11 +821,19 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
 
                     NonMendelianReset = 1;
                     if (imend) {
+#ifdef DELAY_ZERO
+                        delay_zero.push_back(geno(locus, ped, -1));
+#else
                         for (entry=0; entry < Top->PedTree[ped].EntryCnt; entry ++) {
                             /* set invalid genos to 0 0 */
-                            set_2alleles(Top->PedTree[ped].Entry[entry].Marker, locus,
-                                         &LLTop->Locus[locus], 0, 0);
+                            if (recode)
+                                set_2alleles(Top->PedTree[ped].Entry[entry].Marker, locus,
+                                             &LLTop->Locus[locus], 0, 0);
+                            else
+                                set_2Ralleles(Top->PedTree[ped].Entry[entry].Marker, locus,
+                                              &LLTop->Locus[locus], zero, zero);
                         }
+#endif
                     }
                 }
             }
@@ -908,6 +956,40 @@ void      full_check(ped_top *Top, linkage_ped_top *LPedTop,
     }
     Display_Messages=1;
     Display_Errors=1;
+}
+
+void recode_check(linkage_ped_top *LPedTop, analysis_type analysis)
+{
+    linkage_locus_top *LLTop = LPedTop->LocusTop;
+    int stat, abortl = 0;
+    Tod tod_cl("check_locus");
+
+    // check_locus() needs recode_locus_top() to have been run.
+    // it is not looking at alleles.
+    int plink_locus_num = LLTop->MarkerCnt;
+    if (plink_locus_num > 0) {
+        for (int locus = LLTop->PhenoCnt; locus < LLTop->LocusCnt; locus++) {
+            if (LLTop->Locus[locus].Marker->chromosome == MISSING_CHROMO) continue;
+            stat=check_locus(LLTop->Locus + locus, analysis, &plink_locus_num);
+            abortl = imax(abortl, stat);
+        }
+        SECTION_ERR_FINI(check_locus);
+        SECTION_ERR_FINI(biallele);
+    }
+    tod_cl();
+
+    int abortf = 0, freq_mis = 0;
+
+    // input_observed_freq_check also needs recode_locus_top() to have been run.
+    Tod tod_iofc("input_observed_freq_check");
+    if (LLTop->MarkerCnt > 0 /* && analysis != TO_PLINK */) {
+        freq_mis = input_observed_freq_check(LPedTop, FreqMismatchThreshold);
+        if (freq_mis > 0)
+            abortf = imax(abortf, 1);
+    } else {
+        freq_mis=0;
+    }
+    tod_iofc();
 }
 
 void show_reset_input() {

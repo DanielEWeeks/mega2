@@ -34,8 +34,10 @@ ENV = read.Mega2DB(db)
 y = Mega2ENVGenABEL()
 Mega2GenABELtst(y, y, full = FALSE)
 
-# if you have more time, try ...
-# x = Mega2GenABEL()
-# Mega2GenABELtst(x, y, full = FALSE)
+\donttest{
+# donttestcheck: if you have more time, try ...
+x = Mega2GenABEL()
+Mega2GenABELtst(x, y, full = FALSE)
+}
 
 }

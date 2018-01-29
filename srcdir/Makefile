@@ -112,6 +112,7 @@ SRCS =  input_check.cpp     select_index.cpp \
 	dbmap.cpp           dbgenotype.cpp       dbrefallele.cpp \
 	read_bcfs.cpp 	     mega2_bcftools_interface.cpp \
 
+
 OBJS =  $(SRCS:.cpp=.o)
 
 # The flags for including the libraries:
@@ -136,7 +137,7 @@ endif
 dbmega2.o dbmisc.o dbbatch.o dbpedigree.o dballele.o dbloci.o dbmap.o dbgenotype.o: IFLAGS += -Ilib/sqlite3
 dbrefallele.o write_vcf.o : IFLAGS += -Ilib/sqlite3
 
-user_input.o read_impute_bgen2.o read_bcfs.o: IFLAGS += -Ibgen/genfile/include $(stdC11)
+user_input.o read_impute_bgen2.o: IFLAGS += -Ibgen/genfile/include -Ibgen/zstd-1.1.0/lib $(stdC11)
 
 write_IQLS.o write_beagle.o write_fbat.o write_loki.o write_mfiles.o: DFLAGS += -DRUNSHELL_SETUP
 write_pangaea.o write_plink_files.o write_premakeped.o: DFLAGS += -DRUNSHELL_SETUP

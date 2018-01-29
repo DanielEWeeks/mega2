@@ -7,10 +7,17 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <climits>
 #include <algorithm>
 #include <iomanip>
 #include "genfile/types.hpp"
 #include "genfile/bgen/bgen.hpp"
+
+#ifdef CHAR_BIT
+#if (CHAR_BIT != 8)
+#error CHAR_BIT "Sorry, this implementation assumes 8-bit bytes. It won't work on your platform"
+#endif
+#endif
 
 namespace genfile {
 	namespace bgen {
@@ -273,7 +280,7 @@ namespace genfile {
 			std::cerr << "genfile::bgen::impl::read_snp_identifying_data(): flags = 0x" << std::hex << context.flags << ".\n" ;
 #endif
 			uint32_t const layout = context.flags & e_Layout ;
-			if( layout == e_v11Layout || layout == e_v12Layout ) {
+			if( layout == e_Layout1 || layout == e_Layout2 ) {
 				// forward to v12 version which handles multiple alleles.
 				impl::TwoAlleleSetter allele_setter( first_allele, second_allele ) ;
 				return bgen::read_snp_identifying_data(
@@ -282,7 +289,7 @@ namespace genfile {
 					&impl::check_for_two_alleles,
 					allele_setter
 				) ;
-			} else if( layout == e_v10Layout ) {
+			} else if( layout == e_Layout0 ) {
 				return v10::read_snp_identifying_data( aStream, context, SNPID, RSID, chromosome, SNP_position, first_allele, second_allele ) ;
 			} else {
 				assert(0) ;
@@ -290,59 +297,14 @@ namespace genfile {
 			return true ;
 		}
 		
-		void write_snp_identifying_data(
-			std::ostream& aStream,
-			Context const& context,
-			std::string SNPID,
-			std::string RSID,
-			std::string chromosome,
-			uint32_t SNP_position,
-			std::string first_allele,
-			std::string second_allele
-		) {
-			uint32_t const layout = context.flags & e_Layout ;
-			assert( layout == e_v11Layout || layout == e_v12Layout ) ;
-
-			if( layout == e_v11Layout ) {
-				write_little_endian_integer( aStream, context.number_of_samples ) ;
-				// otherwise appears in the probability data block below.
-			}
-
-			std::size_t const max_allele_length = std::numeric_limits< uint32_t >::max() ;
-			std::size_t const max_id_length = std::numeric_limits< uint16_t >::max() ;
-			assert( SNPID.size() <= static_cast< std::size_t >( max_id_length )) ;
-			assert( RSID.size() <= static_cast< std::size_t >( max_id_length )) ;
-			if( first_allele.size() > static_cast< std::size_t >( max_allele_length ) ) {
-				std::cerr << "Warning: at SNP " << SNPID << " " << RSID << " pos=" << SNP_position << ", truncating first allele of size " << first_allele.size() << ".\n" ;
-				first_allele.resize( max_allele_length - 3 ) ;
-				first_allele += "..." ;
-			}
-			if( second_allele.size() > static_cast< std::size_t >( max_allele_length ) ) {
-				std::cerr << "Warning: at SNP " << SNPID << " " << RSID << " pos=" << SNP_position << ", truncating second allele of size " << second_allele.size() << ".\n" ;
-				second_allele.resize( max_allele_length - 3 ) ;
-				second_allele += "..." ;
-			}
-			write_length_followed_by_data( aStream, uint16_t( SNPID.size() ), SNPID.data() ) ;
-			write_length_followed_by_data( aStream, uint16_t( RSID.size() ), RSID.data() ) ;
-			write_length_followed_by_data( aStream, uint16_t( chromosome.size() ), chromosome ) ;
-			write_little_endian_integer( aStream, SNP_position ) ;
-			
-			if( layout == e_v12Layout ) {
-				// v12 has an explicit allele count, here equal to 2.
-				write_little_endian_integer( aStream, uint16_t(2) ) ;
-			}
-			write_length_followed_by_data( aStream, uint32_t( first_allele.size() ), first_allele.data() ) ;
-			write_length_followed_by_data( aStream, uint32_t( second_allele.size() ), second_allele.data() ) ;
-		}
-
 		namespace v11 {
 			namespace impl {
 				double get_probability_conversion_factor( uint32_t flags ) {
 					uint32_t layout = flags & e_Layout ;
-					if( layout == e_v10Layout ) {
+					if( layout == e_Layout0 ) {
 						// v1.0-style blocks, deprecated
 						return 10000.0 ;
-					} else if( layout == e_v11Layout ) {
+					} else if( layout == e_Layout1 ) {
 						// v1.1-style blocks
 						return 32768.0 ;
 					} else {
@@ -358,10 +320,18 @@ namespace genfile {
 			std::istream& aStream,
 			Context const& context
 		) {
-			if( context.flags & bgen::e_CompressedSNPBlocks ) {
+			if( (context.flags & bgen::e_CompressedSNPBlocks) != e_NoCompression ) {
 				uint32_t compressed_data_size = 0 ;
 				read_little_endian_integer( aStream, &compressed_data_size ) ;
-				aStream.ignore( compressed_data_size ) ;
+				if( compressed_data_size > 0 ) {
+					// gcc std::istream::ignore() has a bug / feature in which
+					// it peeks at the next char and sets eof() if you ignore all the bytes in the file.
+					// This breaks our expected invariant and means subsequent calls to peekg() fail with -1,
+					// which stops us getting file size.
+					// We deal with this by simply ignoring one less character here.
+					aStream.ignore( compressed_data_size - 1 ) ;
+					aStream.get() ;
+				}
 			}
 			else {
 				aStream.ignore( 6 * context.number_of_samples ) ;
@@ -374,7 +344,7 @@ namespace genfile {
 			std::vector< byte_t >* buffer
 		) {
 			uint32_t payload_size = 0 ;
-			if( (context.flags & e_Layout) == e_v12Layout || (context.flags & e_CompressedSNPBlocks) ) {
+			if( (context.flags & e_Layout) == e_Layout2 || ((context.flags & e_CompressedSNPBlocks) != e_NoCompression ) ) {
 				read_little_endian_integer( aStream, &payload_size ) ;
 			} else {
 				payload_size = 6 * context.number_of_samples ;
@@ -389,17 +359,22 @@ namespace genfile {
 			std::vector< byte_t >* buffer
 		) {
 			// compressed_data contains the (compressed or uncompressed) probability data.
-			if( context.flags & bgen::e_CompressedSNPBlocks ) {
+			uint32_t const compressionType = (context.flags & bgen::e_CompressedSNPBlocks) ;
+			if( compressionType != e_NoCompression ) {
 				byte_t const* begin = &compressed_data[0] ;
 				byte_t const* const end = &compressed_data[0] + compressed_data.size() ;
 				uint32_t uncompressed_data_size = 0 ;
-				if( (context.flags & e_Layout) == e_v11Layout ) {
+				if( (context.flags & e_Layout) == e_Layout1 ) {
 					uncompressed_data_size = 6 * context.number_of_samples ;
 				} else {
 					begin = read_little_endian_integer( begin, end, &uncompressed_data_size ) ;
 				}
 				buffer->resize( uncompressed_data_size ) ;
-				zlib_uncompress( begin, end, buffer ) ;
+				if( compressionType == e_ZlibCompression ) {
+					zlib_uncompress( begin, end, buffer ) ;
+				} else if( compressionType == e_ZstdCompression ) {
+					zstd_uncompress( begin, end, buffer ) ;
+				}
 				assert( buffer->size() == uncompressed_data_size ) ;
 			}
 			else {
@@ -421,11 +396,10 @@ namespace genfile {
 					int* size,
 					uint8_t const bits
 				) {
-					assert( CHAR_BIT == 8 ) ;
-					assert( bits <= 64 - CHAR_BIT ) ;
+					assert( bits <= 64 - 8 ) ;
 					while( (*size) < bits && buffer < end ) {
 						(*data) |= uint64_t( *(reinterpret_cast< byte_t const* >( buffer++ ))) << (*size) ;
-						(*size) += CHAR_BIT ;
+						(*size) += 8 ;
 					}
 					if( (*size) < bits ) {
 						throw BGenError() ;
@@ -473,7 +447,7 @@ namespace genfile {
 				}
 
 				void compute_approximate_probabilities( double* p, std::size_t* index, std::size_t const n, int const number_of_bits ) {
-                                    double const scale = (double)( 0xFFFFFFFFFFFFFFFF >> ( 64 - number_of_bits ) ) ;
+                                        double const scale = (double const)( 0xFFFFFFFFFFFFFFFF >> ( 64 - number_of_bits ) ) ;
 					double total_fractional_part = 0.0 ;
 					double sum = 0.0 ;
 					for( std::size_t i = 0; i < n; ++i ) {
@@ -493,7 +467,7 @@ namespace genfile {
 					// Total fractional part is therefore of the form r ± delta where r is an integer.
 					// Since scale = sum_i floor(p_i) + r, rounding up r of the p_i's yields a
 					// set of integers summing to scale.
-					std::size_t const r = (std::size_t)std::floor( total_fractional_part + 0.5 ) ;
+					std::size_t const r = (std::size_t const)std::floor( total_fractional_part + 0.5 ) ;
 					std::sort( index, index + n, CompareFractionalPart( p, n ) ) ;
 
 					for( std::size_t i = 0; i < r; ++i ) {

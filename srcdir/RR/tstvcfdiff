@@ -4,7 +4,8 @@ TEST=~/mega2/test
 BLD=change_chrom/bed
 FILES1="fam freq map pen phe vcf"
 FILES2="fam freq map pen vcf"
-nd=492
+#nd=492
+nd=49r
 
 ds=mex
 echo $ds $TEST/${ds}${nd}/$BLD/vcf/vcf.05.sfx

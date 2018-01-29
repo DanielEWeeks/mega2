@@ -45,16 +45,19 @@ This function accumulates output in the data frame, \emph{envir$SKAT_results}.  
 }
 \examples{
 db = system.file("exdata", "seqsimm.db", package="Mega2R")
-ENV = init_SKAT(db, verbose = FALSE, allMarkers = FALSE)
+ENV = init_SKAT(db, verbose = TRUE, allMarkers = FALSE)
 Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", gs=1:1)
 
-# try this below instead if there is time
+\donttest{
+# donttestcheck: try this below instead if there is time
+Mega2SKAT(ENV$phe[, 3] - 1 ~ 1, "D", kernel = "linear.weighted", 
+          weights.beta = c(0.5, 0.5), genes=c("CEP104") )
+}
 
 # DOSKAT is called internally to Mega2SKAT. init_SKAT and Mega2SKAT need to be
 # called to set up the environment for DOSKAT to run.  You should ignore DOSKAT
 # and use Mega2SKAT instead
 #
-ENV$verbose = TRUE
 applyFnToRanges(DOSKAT, ENV$refRanges[50:60, ], ENV$refIndices)
 
 }

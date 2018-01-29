@@ -175,11 +175,13 @@ Mega2pedgene = function (gs = 1:100, genes = NULL, envir = ENV) {
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = init_pedgene(db)
-#' # ENV$verbose = TRUE
+#' ENV$verbose = TRUE
 #' applyFnToRanges(DOpedgene, ENV$refRanges[50:60,], ENV$refIndices)
 #'
-#' # try this below if there is time
-#' # applyFnToGenes(DOpedgene, genes_arg = c("CEP104"))
+#' \donttest{
+#' # donttestcheck: try this below if there is time
+#' applyFnToGenes(DOpedgene, genes_arg = c("CEP104"))
+#' }
 #'
 DOpedgene = function(markers_arg, range_arg, envir = ENV) {
 

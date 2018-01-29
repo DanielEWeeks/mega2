@@ -44,11 +44,13 @@ This function appends output to the data frame, \emph{envir$pedgene_results}.  I
 \examples{
 db = system.file("exdata", "seqsimm.db", package="Mega2R")
 ENV = init_pedgene(db)
-# ENV$verbose = TRUE
+ENV$verbose = TRUE
 applyFnToRanges(DOpedgene, ENV$refRanges[50:60,], ENV$refIndices)
 
-# try this below if there is time
-# applyFnToGenes(DOpedgene, genes_arg = c("CEP104"))
+\donttest{
+# donttestcheck: try this below if there is time
+applyFnToGenes(DOpedgene, genes_arg = c("CEP104"))
+}
 
 }
 \seealso{

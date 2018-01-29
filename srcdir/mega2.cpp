@@ -602,7 +602,6 @@ extern char DBfile[255];
 
 int             main(int argc, char **argv, char **env)
 {
-    ped_top        *PedTreeTop = NULL;
     linkage_ped_top *LPedTreeTop = NULL;
     linkage_ped_top *Top2 = NULL;
     file_format     infl_type;
@@ -1155,12 +1154,17 @@ int             main(int argc, char **argv, char **env)
     }
 
     if (database_dump || ! database_read) {
-        Tod tod_makeped("makeped");
-        makeped(LPedTreeTop, analysis);  // if --db, might connect loops based on analysis
-        tod_makeped();
+//orig  Tod tod_makeped("makeped");
+//orig  makeped(LPedTreeTop, analysis);  // if --db, might connect loops based on analysis
+//orig  tod_makeped();
+
+#ifdef DELAY_ZERO
+        extern void pedtree_dozero(linkage_ped_top *LPedTreeTop, analysis_type analysis);
+        pedtree_dozero(LPedTreeTop, analysis);
+#endif
     }
+
     if (database_dump) {
-        LPedTreeTop->Ped = LPedTreeTop->PedRaw;  // largest set of persons
     } else {
         if ( (basefile_type == POSTMAKEPED_PFT && analysis->maintain_broken_loops()) ||
              (basefile_type != POSTMAKEPED_PFT && analysis->break_loops()) ) 
@@ -1184,21 +1188,17 @@ int             main(int argc, char **argv, char **env)
         // see user_input.c:analysis_type RequiresGeneticlMap[]
         //
         // If these variables are -1 then they have not been specified by the batch file...
-        if (LPedTreeTop->EXLTop == NULL)  {
-            genetic_distance_index = -3;
-            base_pair_position_index = -3;
-        }
 
-        get_genetic_distance_index(LPedTreeTop->EXLTop);
-        // see user_input.c:analysis_type RequiresPhysicalMap[]
-        get_base_pair_position_index(LPedTreeTop->EXLTop);
+        distance_init_dump(LPedTreeTop, &analysis);
+    } else {
+        /* Reorder the loci */
+        Tod tod_reorder("ReOrderLoci");
+        LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
+        tod_reorder();
     }
 
-    Tod tod_reorder("ReOrderLoci");
-    /* Reorder the loci */
-    LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
-
     LPedTreeTop->LocusTop->SexLinked = x_linked_check(main_chromocnt, global_chromo_entries, analysis);
+
     /* Now set the default names of the output files */
     if (main_chromocnt >= 1) {
         // When the user selects more than one chromosome, this is the vector that holds their numbers.
@@ -1207,28 +1207,12 @@ int             main(int argc, char **argv, char **env)
     } else {
         numchr = 0;
     }
-    tod_reorder();
 
     /* Convert to PedTree for checking purposes,
        don't need to assign affecteds */
     if (database_dump || ! database_read) {
-        FirstTime=1;
 
-        Tod tod_pedtree("convert_to_pedtree");
-        PedTreeTop=convert_to_pedtree(LPedTreeTop, 0);
-        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-        tod_pedtree();
-
-    //NrvB: PedTreeTop->Locus ONLY contains markers!!
-        Tod tod_fcheck("full_check");
-        full_check(PedTreeTop, LPedTreeTop, analysis);
-        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-        tod_fcheck();
-
-        free_all_including_ped_top(PedTreeTop, NULL, NULL);
-        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-        PedTreeTop = NULL;
-        FirstTime=0;
+        recode_check(LPedTreeTop, analysis);
 
     } else {
         extern int set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis);
