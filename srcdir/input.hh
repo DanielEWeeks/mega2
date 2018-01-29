@@ -151,18 +151,6 @@ public:
     Input_Ops Ops;
 };
 
-class Input_BCFs: public Input_Base{
-public:
-    Input_BCFs(INPUT_FORMAT_t i): Input_Base(i) {
-        req_locus_file = 0;
-        req_map_file   = 0;
-        req_stem_flag = 1;
-    }
-    virtual ~Input_BCFs() {};
-    virtual Input_Ops *GetOps() {return &Ops;};
-    ReadBCFs Ops;
-};
-
 ////////////////
 
 class Input_Impute : public Input_Base {
@@ -179,6 +167,20 @@ public:
     ReadImputed Ops;
 };
 
+class Input_BGEN2 : public Input_Base {
+public:
+    Input_BGEN2(INPUT_FORMAT_t i) : Input_Base(i) {
+        req_aux_file   = 1;
+        req_locus_file = 0;
+        req_map_file   = 0;
+        req_stem_flag  = 1;
+        impute         = 1;
+    };
+   ~Input_BGEN2() {};
+    virtual Input_Ops *GetOps() {return &Ops;};
+    ReadBgen2 Ops;
+};
+
 class Input_BGEN : public Input_Base {
 public:
     Input_BGEN(INPUT_FORMAT_t i) : Input_Base(i) {
@@ -193,18 +195,16 @@ public:
     ReadBgen Ops;
 };
 
-class Input_BGEN2 : public Input_Base {
+class Input_BCFs: public Input_Base{
 public:
-    Input_BGEN2(INPUT_FORMAT_t i) : Input_Base(i) {
-        req_aux_file   = 1;
+    Input_BCFs(INPUT_FORMAT_t i): Input_Base(i) {
         req_locus_file = 0;
         req_map_file   = 0;
-        req_stem_flag  = 1;
-        impute         = 1;
-    };
-   ~Input_BGEN2() {};
+        req_stem_flag = 1;
+    }
+    virtual ~Input_BCFs() {};
     virtual Input_Ops *GetOps() {return &Ops;};
-    ReadBgen2 Ops;
+    ReadBCFs Ops;
 };
 
 class Input_Traditional : public Input_Old {

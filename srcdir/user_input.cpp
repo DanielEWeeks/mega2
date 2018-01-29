@@ -118,19 +118,18 @@ INPUT_FORMAT_t Input_Format = in_format_mega2;
 Input_Base *Input;
 
 const char *INPUT_FORMAT_STR[] = {
-     "Mega2 format with header",
+/*0*/"Mega2 format with header",
      "Linkage format",
      "Linkage with Mega2 names file",
      "PLINK binary PED format (bed)",
      "PLINK PED format (ped)",
-     "BCF format (bcf)",
-     "BCF Split by Chromosome",
+/*5*/"BCF format (bcf)",
      "VCF compressed format (vcf.gz)",
      "VCF format (vcf)",
      "IMPUTE2 GEN format (gen/impute2)",
-     "IMPUTE2 BGEN format (bgen)",
-//   "IMPUTE2 BGEN format2 (bgen)",
-
+     "IMPUTE2 BGEN 1.3 format (bgen)",
+/*a*/"IMPUTE2 BGEN format (bgen)",
+     "BCF Split by Chromosome",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -171,9 +170,6 @@ Input_Base *createinput(INPUT_FORMAT in_format) {
     case in_format_binary_VCF:
         return new Input_VCF_Binary(in_format);
         break;
-    case in_format_bcfs:
-        return new Input_BCFs(in_format);
-        break;
     case in_format_compressed_VCF:
         return new Input_VCF_Compressed(in_format);
         break;
@@ -188,6 +184,10 @@ Input_Base *createinput(INPUT_FORMAT in_format) {
         break;
     case in_format_bgen2:
         return new Input_BGEN2(in_format);
+        break;
+    case in_format_bcfs:
+//      BPT;
+        return new Input_BCFs(in_format);
         break;
     case in_format_traditional:
         return new Input_Traditional(in_format);

@@ -1788,12 +1788,12 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 //      if (! getenv("_")) { asm("int $3"); }
         std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
 
-        //Tod vcfpe(" VCFtools_process_entries(persons, num_ped_records, ...)");
-        //VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop, alternative_key,
-        //                         "chr", VecAlleles);
-        //VCFtools_close();
+        Tod vcfpe(" VCFtools_process_entries(persons, num_ped_records, ...)");
+        VCFtools_process_entries(persons, (unsigned int)num_ped_records, LTop, alternative_key,
+                                 "chr", VecAlleles);
+        VCFtools_close();
         check_ungenotyped = 1;
-        //vcfpe();
+        vcfpe();
     }
 
     // CPK: At this point we have finished processing the .bed file...
@@ -4410,7 +4410,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             // It will later be coppied to EXLTop, and the map object will be deleted by C++
             // when it goes out of scope.
             Tod vcfgm("VCF get map");
-            //vcf_map = VCFtools_get_map(alternative_key, "chr");
+            vcf_map = VCFtools_get_map(alternative_key, "chr");
             vcfgm();
 
             // Store the map so that we can pull out the VCF reference alleles and drop then into a
