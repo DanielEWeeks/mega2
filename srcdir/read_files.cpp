@@ -2061,6 +2061,10 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
         mssgf("Input pedigree data contains:");
 
         order_heterozygous_allele(Top);
+
+        Top->PedRaw    = Top->Ped;
+        Top->PedBroken = Top->Ped;
+
         write_ped_stats(Top);
         if (omitfl_name != NULL) {
             premakeped_omit_file(Top, omitfl_name, 0);
@@ -2096,6 +2100,14 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
     // set this so that the omit_peds() calls inside the options files do not have any effect
     untyped_ped_opt=2;
     
+    if (database_dump || ! database_read) {
+        extern void pedtree_markers_check(linkage_ped_top *LPedTreeTop, analysis_type analysis);
+
+        makeped(Top, analysis);  // if --db, might connect loops based on analysis
+
+        pedtree_markers_check(Top, analysis);
+    }
+
     return Top;
 }
 

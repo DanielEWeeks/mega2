@@ -128,7 +128,8 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
             buffer[bytes_read] = '\0';
 
             bufp = obufp = buffer;
-            while ( (c = *bufp++) && c != '\n') ;
+//          while ( (c = *bufp++) && c != '\n') ;
+            for (c = *bufp++; c && c != '\n'; c = *bufp++) ;
             bufp[-1] = 0;
             token = std::strtok(obufp, " \t\n");
 
@@ -200,7 +201,8 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
                 token = std::strtok(NULL, " \t\n");
                 if (token == NULL) {
                     obufp = bufp;
-                    while ( (c = *bufp++) && c != '\n') ;
+//                  while ( (c = *bufp++) && c != '\n') ;
+                    for (c = *bufp++; c && c != '\n'; c = *bufp++) ;
                     bufp[-1] = 0;
 //           printf("SS: %s\n", obufp);
                     if (c != 0)

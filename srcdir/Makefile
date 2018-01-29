@@ -112,6 +112,7 @@ SRCS =  input_check.cpp     select_index.cpp \
 	dbmap.cpp           dbgenotype.cpp       dbrefallele.cpp \
 	read_bcfs.cpp 	     mega2_bcftools_interface.cpp \
 
+
 OBJS =  $(SRCS:.cpp=.o)
 
 # The flags for including the libraries:
@@ -136,7 +137,7 @@ endif
 dbmega2.o dbmisc.o dbbatch.o dbpedigree.o dballele.o dbloci.o dbmap.o dbgenotype.o: IFLAGS += -Ilib/sqlite3
 dbrefallele.o write_vcf.o : IFLAGS += -Ilib/sqlite3
 
-user_input.o read_impute_bgen2.o read_bcfs.o: IFLAGS += -Ibgen/genfile/include $(stdC11)
+user_input.o read_impute_bgen2.o: IFLAGS += -Ibgen/genfile/include -Ibgen/zstd-1.1.0/lib $(stdC11)
 
 write_IQLS.o write_beagle.o write_fbat.o write_loki.o write_mfiles.o: DFLAGS += -DRUNSHELL_SETUP
 write_pangaea.o write_plink_files.o write_premakeped.o: DFLAGS += -DRUNSHELL_SETUP
@@ -213,6 +214,7 @@ export CC
 export AR
 export ARFLAGS
 export AROUT
+export RANLIB
 export SQLxDEFS
 
 LINK ?= $(CXX)
@@ -220,12 +222,12 @@ LTARGET ?= -o $(EXEC)
 AR ?= ar
 ARFLAGS ?= rcs
 AROUT ?=
+RANLIB = ranlib
 
 ZLIBS ?= libz.a
-CLIBS := libbgen.a $(ZLIBS) libsqlite3.a libbcftools.a $(CLIBS)
+CLIBS := libvcftools.a libbgen.a $(ZLIBS) libsqlite3.a libbcftools.a $(CLIBS)
 
 BCFFLAGS =  -lz -lm -lbz2 # –llzma
-
 stdC11  ?= -std=c++0x
 WINO    ?=
 
@@ -252,7 +254,7 @@ tod:
 
 gcc_info.o: $(OBJS)
 
-SUBDIRS = bgen lib/sqlite3 zlib-1.2.8 lib/bcftools-1.6
+SUBDIRS = bgen lib/sqlite3 vcftools zlib-1.2.8 lib/bcftools-1.6
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
 	$(MAKE) $(MFLAGS) -C $@
@@ -262,11 +264,19 @@ bgen: zlib-1.2.8
 
 libsqlite3.a: lib/sqlite3
 
+vcftools: zlib-1.2.8
+libvcftools.a: vcftools
+
 libz.a: zlib-1.2.8
 
-libbcftools.a: lib/bcftools-1.6 
+libbcftools.a: lib/bcftools-1.6
 
-$(MODULE)_$(OSTYPE): $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libbgen.a libz.a libsqlite3.a libbcftools.a
+CFG = bcftool-1.6scfg
+
+bcftool-1.6scfg:
+	$(MAKE) $(MFLAGS) -C lib/bcftools-1.6 config
+
+$(MODULE)_$(OSTYPE): $(CFG) $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libvcftools.a libbgen.a libz.a libsqlite3.a libbcftools.a
 	$(RM) $(MODULE)
 	$(LINK) $(LFLAGS) $(LTARGET) $(OBJS) $(FLAGS) gcc_info.o $(CLIBS) $(BCFFLAGS)
 
@@ -281,6 +291,7 @@ endif
 clean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
 #	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) RM="$(RM)" clean &&) echo on
+	$(MAKE) $(MFLAGS) -C vcftools   RM="$(RM)" clean
 	$(MAKE) $(MFLAGS) -C bgen       RM="$(RM)" clean
 	$(MAKE) $(MFLAGS) -C zlib-1.2.8 RM="$(RM)" clean
 	$(MAKE) $(MFLAGS) -C lib/bcftools-1.6 RM="$(RM)" clean
@@ -288,6 +299,7 @@ clean:
 distclean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
 #	$(foreach dir,$(SUBDIRS),$(MAKE) -C $(dir) RM="$(RM)" distclean &&) echo on
+	$(MAKE) $(MFLAGS) -C vcftools    RM="$(RM)" distclean
 	$(MAKE) $(MFLAGS) -C bgen        RM="$(RM)" distclean
 	$(MAKE) $(MFLAGS) -C zlib-1.2.8  RM="$(RM)" distclean
 	$(MAKE) $(MFLAGS) -C lib/sqlite3 RM="$(RM)" distclean
@@ -303,6 +315,7 @@ srcdist:
 
 depend:
 	makedepend -Y. -- $(CFLAGS) -- $(SRCS)
+	$(MAKE) -C vcftools    depend
 	$(MAKE) -C bgen        depend
 	$(MAKE) -C lib/sqlite3 depend
 

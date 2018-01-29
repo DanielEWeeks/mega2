@@ -92,6 +92,7 @@ extern void test_modified(int choice);
 
 extern char *untyped_ped_messg(int opt, char *msg);
 
+extern void distance_init_dump(linkage_ped_top *Top, analysis_type *analysis);
 extern void get_genetic_distance_index(ext_linkage_locus_top *EXLTop);
 extern void get_base_pair_position_index(ext_linkage_locus_top *EXLTop);
 

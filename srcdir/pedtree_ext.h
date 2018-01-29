@@ -41,6 +41,8 @@ extern void free_all_including_ped_top(ped_top *Top,
 
 extern int is_typed(ped_rec *Entry, linkage_locus_top *LTop, int mode);
 
+extern void pedtree_markers_check(linkage_ped_top *LPedTreeTop, analysis_type analysis);
+
 extern void reassign_affecteds(ped_top *Top);
 
 extern void remove_untyped_affecteds(ped_tree *Ped, linkage_locus_top *LTop, int mode,

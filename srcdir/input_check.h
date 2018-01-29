@@ -72,4 +72,19 @@ typedef struct _file_info
     int line_count;
 } file_info;
 
+#ifdef DELAY_ZERO
+class geno {
+public:
+    geno(int locus, int ped, int per) {
+        this->locus = locus;
+        this->ped   = ped;
+        this->per   = per;
+    }
+    int locus, ped, per;
+};
+typedef std::vector<geno> genozero;
+typedef std::vector<geno>::iterator genozerop;
+extern genozero delay_zero;
+#endif
+
 #endif

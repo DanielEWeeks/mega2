@@ -222,10 +222,13 @@ void BgenParser::validate_marker_name(string& rsid, string& chrm, string& rsid_f
 
 std::ostream& BgenParser::summarise( std::ostream& o ) const
 {
+     std::string cmprss[] = {"uncompressed", "zlib compressed", "zstd compressed", "??? compressed" };
+
     msgvf("BgenParser: bgen file (");
-    msgvf( m_context.flags & genfile::bgen::e_v12Layout ? "v1.2 layout" : "v1.1 layout" );
+    msgvf( m_context.flags & genfile::bgen::e_Layout2 ? "v1.2 layout" : "v1.1 layout" );
     msgvf(", ");
-    msgvf( m_context.flags & genfile::bgen::e_CompressedSNPBlocks ? "compressed" : "uncompressed" );
+//  msgvf( m_context.flags & genfile::bgen::e_CompressedSNPBlocks ? "compressed" : "uncompressed" );
+    msgvf("%s", C(cmprss[m_context.flags & genfile::bgen::e_CompressedSNPBlocks]));
     msgvf( ") with %d samples and %d variants.\n",
            (int)m_context.number_of_samples,
            (int)m_context.number_of_variants);

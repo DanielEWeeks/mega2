@@ -48,8 +48,12 @@ ZLIBS = zlib.lib
 
 # compiler options
 
-OPT ?= -O2
-CFLAGS = $(OPT) -nologo -MD -Zi -W4 -D_CRT_SECURE_NO_WARNINGS -D_WIN -EHsc
+ifeq ($(OPT),-g)
+WOPT=
+else
+WOPT=-O2
+endif
+CFLAGS = $(WOPT) -nologo -MD -Zi -W4 -D_CRT_SECURE_NO_WARNINGS -D_WIN -EHsc
 
 RM=del /Q
 

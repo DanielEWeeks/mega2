@@ -34,6 +34,8 @@
 
 extern void  Free_reorder_loci(void);
 
+extern linkage_ped_top *ReOrderLoci_dump(linkage_ped_top *Top, analysis_type *analysis);
+
 extern linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
 				    analysis_type *analysis);
 

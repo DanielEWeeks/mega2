@@ -1243,7 +1243,7 @@ static void write_linkage_locfile_inorder_sex_averaged(linkage_locus_top *LTop,
     int tr, nloop, num_affec=num_traits, locus, allele, tmpi, tmpi2;
     int *trp, trnum, num_loci = 0,  *locus_order = NULL, trait_locus = 0; //compiler: too hard
     char fl[2*FILENAME_LENGTH];
-    linkage_locus_rec *Locus;
+    linkage_locus_rec *TLocus;
     FILE *filep;
 
     double *positions = NULL; //compiler: too hard
@@ -1321,51 +1321,51 @@ static void write_linkage_locfile_inorder_sex_averaged(linkage_locus_top *LTop,
         if (analysis == TO_VITESSE || analysis == TO_SUP) // hopefully to make compiler happy
         for (locus = 0; locus < num_loci; locus++) {
             if (locus_order[locus] == -9) {
-                Locus=&(LTop->Locus[*trp]);
+                TLocus=&(LTop->Locus[*trp]);
                 trait_locus=locus;
             } else  {
-                Locus=&(LTop->Locus[locus_order[locus]]);
+                TLocus=&(LTop->Locus[locus_order[locus]]);
             }
-            fprintf(filep, "%d %d", Locus->Type - 1, Locus->AlleleCnt);
-            if (Locus->LocusName != NULL)
-                fprintf(filep, " #%s\n", Locus->LocusName);
-            for (allele = 0; allele < Locus->AlleleCnt; allele++) {
-                fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
+            fprintf(filep, "%d %d", TLocus->Type - 1, TLocus->AlleleCnt);
+            if (TLocus->LocusName != NULL)
+                fprintf(filep, " #%s\n", TLocus->LocusName);
+            for (allele = 0; allele < TLocus->AlleleCnt; allele++) {
+                fprintf(filep, " %.6f", TLocus->Allele[allele].Frequency);
             }
             fputc('\n', filep);
-            switch(Locus->Type) {
+            switch(TLocus->Type) {
             case QUANT:
-                fprintf(filep, "%d\n", Locus->Pheno->Props.Quant.ClassCnt);
-                for (tmpi = Locus->Pheno->Props.Quant.ClassCnt; tmpi > 0; tmpi--)
+                fprintf(filep, "%d\n", TLocus->Pheno->Props.Quant.ClassCnt);
+                for (tmpi = TLocus->Pheno->Props.Quant.ClassCnt; tmpi > 0; tmpi--)
                     for (tmpi2 = 0; tmpi2 < 3; tmpi2++)
-                        fprintf(filep," %.6f", Locus->Pheno->Props.Quant.Mean[tmpi-1][tmpi2]);
+                        fprintf(filep," %.6f", TLocus->Pheno->Props.Quant.Mean[tmpi-1][tmpi2]);
                 fprintf(filep, " << GENOTYPE MEANS\n");
                 /* ASSUMES only one trait per qtl */
-                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Variance[0][0]);
-                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Multiplier);
+                fprintf(filep," %.6f\n", TLocus->Pheno->Props.Quant.Variance[0][0]);
+                fprintf(filep," %.6f\n", TLocus->Pheno->Props.Quant.Multiplier);
                 break;
             case AFFECTION:
-                fprintf(filep, "%d\n", Locus->Pheno->Props.Affection.ClassCnt);
-                for (tmpi = 0; tmpi < Locus->Pheno->Props.Affection.ClassCnt; tmpi++) {
+                fprintf(filep, "%d\n", TLocus->Pheno->Props.Affection.ClassCnt);
+                for (tmpi = 0; tmpi < TLocus->Pheno->Props.Affection.ClassCnt; tmpi++) {
                     if (sex_linked) {
-                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < TLocus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", TLocus->Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                         fputc('\n', filep);
-                        for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < TLocus->AlleleCnt; tmpi2++)
+                            fprintf(filep, " %.4f", TLocus->Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                         fputc('\n', filep);
                     } else {
-                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < TLocus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", TLocus->Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                         fputc('\n', filep);
                     }
                 }
                 break;
             case BINARY:
-                fprintf(filep, "%d\n", Locus->Marker->Props.Binary.FactorCnt);
-                for (tmpi = 0; tmpi < Locus->Marker->Props.Binary.FactorCnt; tmpi++) {
-                    for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                        fprintf(filep, " %d", (int) Locus->Marker->Props.Binary.Factor[tmpi][tmpi2]);
+                fprintf(filep, "%d\n", TLocus->Marker->Props.Binary.FactorCnt);
+                for (tmpi = 0; tmpi < TLocus->Marker->Props.Binary.FactorCnt; tmpi++) {
+                    for (tmpi2 = 0; tmpi2 < TLocus->AlleleCnt; tmpi2++)
+                        fprintf(filep, " %d", (int) TLocus->Marker->Props.Binary.Factor[tmpi][tmpi2]);
                     fputc('\n', filep);
                 }
                 break;
@@ -1430,7 +1430,7 @@ static void write_linkage_locfile_inorder_sex_specific(linkage_locus_top *LTop,
     int tr, nloop, num_affec=num_traits, locus, allele, tmpi, tmpi2;
     int *trp, trnum, num_loci = 0,  *locus_order = NULL, trait_locus = 0; //compiler: too hard
     char fl[2*FILENAME_LENGTH];
-    linkage_locus_rec *Locus;
+    linkage_locus_rec *TLocus;
     FILE *filep;
 
     double *positions_male = NULL, *positions_female = NULL; //compiler: too hard
@@ -1513,51 +1513,51 @@ static void write_linkage_locfile_inorder_sex_specific(linkage_locus_top *LTop,
         if (analysis == TO_VITESSE || analysis == TO_SUP) // hopefully to make compiler happy
         for (locus = 0; locus < num_loci; locus++) {
             if (locus_order[locus] == -9) {
-                Locus=&(LTop->Locus[*trp]);
+                TLocus=&(LTop->Locus[*trp]);
                 trait_locus=locus;
             } else  {
-                Locus=&(LTop->Locus[locus_order[locus]]);
+                TLocus=&(LTop->Locus[locus_order[locus]]);
             }
-            fprintf(filep, "%d %d", Locus->Type - 1, Locus->AlleleCnt);
-            if (Locus->LocusName != NULL)
-                fprintf(filep, " #%s\n", Locus->LocusName);
-            for (allele = 0; allele < Locus->AlleleCnt; allele++) {
-                fprintf(filep, " %.6f", Locus->Allele[allele].Frequency);
+            fprintf(filep, "%d %d", TLocus->Type - 1, TLocus->AlleleCnt);
+            if (TLocus->LocusName != NULL)
+                fprintf(filep, " #%s\n", TLocus->LocusName);
+            for (allele = 0; allele < TLocus->AlleleCnt; allele++) {
+                fprintf(filep, " %.6f", TLocus->Allele[allele].Frequency);
             }
             fputc('\n', filep);
-            switch(Locus->Type) {
+            switch(TLocus->Type) {
             case QUANT:
-                fprintf(filep, "%d\n", Locus->Pheno->Props.Quant.ClassCnt);
-                for (tmpi = Locus->Pheno->Props.Quant.ClassCnt; tmpi > 0; tmpi--)
+                fprintf(filep, "%d\n", TLocus->Pheno->Props.Quant.ClassCnt);
+                for (tmpi = TLocus->Pheno->Props.Quant.ClassCnt; tmpi > 0; tmpi--)
                     for (tmpi2 = 0; tmpi2 < 3; tmpi2++)
-                        fprintf(filep," %.6f", Locus->Pheno->Props.Quant.Mean[tmpi-1][tmpi2]);
+                        fprintf(filep," %.6f", TLocus->Pheno->Props.Quant.Mean[tmpi-1][tmpi2]);
                 fprintf(filep, " << GENOTYPE MEANS\n");
                 /* ASSUMES only one trait per qtl */
-                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Variance[0][0]);
-                fprintf(filep," %.6f\n", Locus->Pheno->Props.Quant.Multiplier);
+                fprintf(filep," %.6f\n", TLocus->Pheno->Props.Quant.Variance[0][0]);
+                fprintf(filep," %.6f\n", TLocus->Pheno->Props.Quant.Multiplier);
                 break;
             case AFFECTION:
-                fprintf(filep, "%d\n", Locus->Pheno->Props.Affection.ClassCnt);
-                for (tmpi = 0; tmpi < Locus->Pheno->Props.Affection.ClassCnt; tmpi++) {
+                fprintf(filep, "%d\n", TLocus->Pheno->Props.Affection.ClassCnt);
+                for (tmpi = 0; tmpi < TLocus->Pheno->Props.Affection.ClassCnt; tmpi++) {
                     if (sex_linked) {
-                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < TLocus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", TLocus->Pheno->Props.Affection.Class[tmpi].FemalePen[tmpi2]);
                         fputc('\n', filep);
-                        for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < TLocus->AlleleCnt; tmpi2++)
+                            fprintf(filep, " %.4f", TLocus->Pheno->Props.Affection.Class[tmpi].MalePen[tmpi2]);
                         fputc('\n', filep);
                     } else {
-                        for (tmpi2 = 0; tmpi2 < Locus->Pheno->Props.Affection.PenCnt; tmpi2++)
-                            fprintf(filep, " %.4f", Locus->Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
+                        for (tmpi2 = 0; tmpi2 < TLocus->Pheno->Props.Affection.PenCnt; tmpi2++)
+                            fprintf(filep, " %.4f", TLocus->Pheno->Props.Affection.Class[tmpi].AutoPen[tmpi2]);
                         fputc('\n', filep);
                     }
                 }
                 break;
             case BINARY:
-                fprintf(filep, "%d\n", Locus->Marker->Props.Binary.FactorCnt);
-                for (tmpi = 0; tmpi < Locus->Marker->Props.Binary.FactorCnt; tmpi++) {
-                    for (tmpi2 = 0; tmpi2 < Locus->AlleleCnt; tmpi2++)
-                        fprintf(filep, " %d", (int) Locus->Marker->Props.Binary.Factor[tmpi][tmpi2]);
+                fprintf(filep, "%d\n", TLocus->Marker->Props.Binary.FactorCnt);
+                for (tmpi = 0; tmpi < TLocus->Marker->Props.Binary.FactorCnt; tmpi++) {
+                    for (tmpi2 = 0; tmpi2 < TLocus->AlleleCnt; tmpi2++)
+                        fprintf(filep, " %d", (int) TLocus->Marker->Props.Binary.Factor[tmpi][tmpi2]);
                     fputc('\n', filep);
                 }
                 break;

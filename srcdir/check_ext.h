@@ -34,7 +34,7 @@
 
 extern int check_half_type(ped_tree *PedTree, ped_status *PedStatus,
                            linkage_locus_top *LTop1, int ped_num, int locus,
-                           int uniqueids,
+                           int uniqueids, int ped,
                            FILE **reset_fp, bool *first, int reset);
 
 extern int check_invalid_fam(ped_tree *PedTree, ped_status *PedStatus,
@@ -48,7 +48,7 @@ extern int check_locus(linkage_locus_rec *Locus,
 
 extern int check_out_of_bounds(ped_tree *PedTree, ped_status *PedStatus,
                                linkage_locus_top *LTop1, int ped_num, int locus,
-                               int uniqueids,
+                               int uniqueids, int ped,
                                FILE **reset_fp, bool *first, int reset);
 
 extern int check_ped_relations(ped_tree *PedTree, ped_status *PedStatus);

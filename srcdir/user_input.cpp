@@ -54,7 +54,7 @@
 #include "utils_ext.h"
 #include "user_input_ext.h"
 #include "vcftools/mega2_vcftools_interface.h"
-
+#include "write_files_ext.h"
 #include "class_old.h"
 #include "database_dump_ext.h"
 
@@ -118,19 +118,18 @@ INPUT_FORMAT_t Input_Format = in_format_mega2;
 Input_Base *Input;
 
 const char *INPUT_FORMAT_STR[] = {
-     "Mega2 format with header",
+/*0*/"Mega2 format with header",
      "Linkage format",
      "Linkage with Mega2 names file",
      "PLINK binary PED format (bed)",
      "PLINK PED format (ped)",
-     "BCF format (bcf)",
-     "BCF Split by Chromosome",
+/*5*/"BCF format (bcf)",
      "VCF compressed format (vcf.gz)",
      "VCF format (vcf)",
      "IMPUTE2 GEN format (gen/impute2)",
-     "IMPUTE2 BGEN format (bgen)",
-//   "IMPUTE2 BGEN format2 (bgen)",
-
+     "IMPUTE2 BGEN 1.3 format (bgen)",
+/*a*/"IMPUTE2 BGEN format (bgen)",
+     "BCF Split by Chromosome",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -171,9 +170,6 @@ Input_Base *createinput(INPUT_FORMAT in_format) {
     case in_format_binary_VCF:
         return new Input_VCF_Binary(in_format);
         break;
-    case in_format_bcfs:
-        return new Input_BCFs(in_format);
-        break;
     case in_format_compressed_VCF:
         return new Input_VCF_Compressed(in_format);
         break;
@@ -188,6 +184,10 @@ Input_Base *createinput(INPUT_FORMAT in_format) {
         break;
     case in_format_bgen2:
         return new Input_BGEN2(in_format);
+        break;
+    case in_format_bcfs:
+//      BPT;
+        return new Input_BCFs(in_format);
         break;
     case in_format_traditional:
         return new Input_Traditional(in_format);
@@ -3274,6 +3274,39 @@ analysis_type SexSpecificMapSupport[] = {
   IQLS, TO_MENDEL, TO_MENDEL4, TO_LINKAGE, TO_PREMAKEPED, TO_NUKE, TO_VITESSE, TO_SLINK, TO_GeneHunter, TO_GeneHunterPlus
 };
 
+void distance_init_dump(linkage_ped_top *Top, analysis_type *analysis)
+{
+    if (Top->EXLTop == NULL)  {
+        genetic_distance_index = -3;
+        base_pair_position_index = -3;
+    }
+    get_genetic_distance_index(Top->EXLTop);
+    // see user_input.c:analysis_type RequiresPhysicalMap[]
+    get_base_pair_position_index(Top->EXLTop);
+
+//  Top = ReOrderLoci_dump(Top, &analysis);
+
+    int map_num = 0; //silly compiler
+
+    if (genetic_distance_index != -2) {
+        extern void copy_exmap_locmap(linkage_locus_top *LTop,
+                                      ext_linkage_locus_top *EXLTop,
+                                      int map_num);
+        map_num = genetic_distance_index;
+        if (Top->EXLTop)
+            copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
+        main_chromocnt = NumChromo;
+    } else {
+        map_num = base_pair_position_index;
+        Top->LocusTop->map_distance_type = Top->EXLTop->map_functions[map_num];
+        Top->LocusTop->SexDiff = NO_SEX_DIFF;
+        main_chromocnt = NumChromo;
+    }
+
+    set_missing_quant_input(Top, *analysis);
+    if (write_quant_stats(Top, *analysis) != 0)
+        set_missing_quant_output(Top, *analysis);
+}
 
 static void print_information_based_on_genetic_distance_sex_type_map(genetic_distance_map_type gdsm) {
     switch (gdsm) {

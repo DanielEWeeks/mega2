@@ -22,9 +22,19 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
+ifeq ($(OSTYPE),windows)
+UP = ..\\..\\
+WINDIR=\\
+WINO = -Fo$*.o
+else
+UP = ../../
+WINDIR=/
+WINO = -o $@
+endif
+
 #CC     = gcc
-AR     = ar
-RANLIB = ranlib
+#AR     = ar
+#RANLIB = ranlib
 
 # Default libraries to link if configure is not used
 htslib_default_libs = -lz -lm -lbz2 -llzma
@@ -33,7 +43,7 @@ CPPFLAGS =
 # TODO: probably update cram code to make it compile cleanly with -Wc++-compat
 # For testing strict C99 support add -std=c99 -D_XOPEN_SOURCE=600
 #CFLAGS   = -g -Wall -O2 -pedantic -std=c99 -D_XOPEN_SOURCE=600 -D__FUNCTION__=__func__
-CFLAGS   = -g -Wall -O2
+#CFLAGS   = -g -Wall -O2
 EXTRA_CFLAGS_PIC = -fpic
 LDFLAGS  =
 LIBS     = $(htslib_default_libs)
@@ -116,11 +126,12 @@ show-version:
 
 .SUFFIXES: .bundle .c .cygdll .dll .o .pico .so
 
+#	$(CC) $(CFLAGS) -I. $(CPPFLAGS) -c -o $@ $<
 .c.o:
-	$(CC) $(CFLAGS) -I. $(CPPFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -I. $(CPPFLAGS) -c $< $(WINO)
 
 .c.pico:
-	$(CC) $(CFLAGS) -I. $(CPPFLAGS) $(EXTRA_CFLAGS_PIC) -c -o $@ $<
+	$(CC) $(CFLAGS) -I. $(CPPFLAGS) $(EXTRA_CFLAGS_PIC) -c $< $(WINO)
 
 
 LIBHTS_OBJS = \
@@ -238,8 +249,8 @@ plugins: $(BUILT_PLUGINS)
 
 
 libhts.a: $(LIBHTS_OBJS)
-	@-rm -f $@
-	$(AR) -rc $@ $(LIBHTS_OBJS)
+	-$(RM) $@
+	$(AR) $(ARFLAGS) $@ $(LIBHTS_OBJS)
 	-$(RANLIB) $@
 
 print-config:

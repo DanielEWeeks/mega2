@@ -601,6 +601,31 @@ int STR_CHR(const char *dummy)
     return chr;
 }
 
+linkage_ped_top *ReOrderLoci_dump(linkage_ped_top *Top, analysis_type *analysis)
+{
+    int map_num = 0; //silly compiler
+
+    if (genetic_distance_index != -2) {
+        map_num = genetic_distance_index;
+        if (Top->EXLTop)
+            copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
+        main_chromocnt = NumChromo;
+    } else {
+        map_num = base_pair_position_index;
+        Top->LocusTop->map_distance_type = Top->EXLTop->map_functions[map_num];
+        Top->LocusTop->SexDiff = NO_SEX_DIFF;
+        main_chromocnt = NumChromo;
+    }
+
+    set_missing_quant_input(Top, *analysis);
+    if (write_quant_stats(Top, *analysis) != 0)
+        set_missing_quant_output(Top, *analysis);
+
+//  Mega2Status = LOCI_REORDERED;
+
+    return Top;
+}
+
 linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
 			     analysis_type *analysis)
 {
@@ -609,28 +634,6 @@ linkage_ped_top *ReOrderLoci(linkage_ped_top *Top, int *numchr,
     int i, chr_valid = 0;
     int num_chromo, *selected_chromosomes = NULL;
     int num_loci, *selected_loci = NULL, has_quant;
-
-    if (database_dump) {
-        if (genetic_distance_index != -2) {
-            map_num = genetic_distance_index;
-            if (Top->EXLTop)
-                copy_exmap_locmap(Top->LocusTop, Top->EXLTop, map_num);
-            main_chromocnt = NumChromo;
-        } else {
-            map_num = base_pair_position_index;
-            Top->LocusTop->map_distance_type = Top->EXLTop->map_functions[map_num];
-            Top->LocusTop->SexDiff = NO_SEX_DIFF;
-            main_chromocnt = NumChromo;
-        }
-
-        set_missing_quant_input(Top, *analysis);
-        if (write_quant_stats(Top, *analysis) != 0)
-            set_missing_quant_output(Top, *analysis);
-
-        Mega2Status = LOCI_REORDERED;
-
-        return Top;
-    }
 
     ManualReorder = 0;
 
