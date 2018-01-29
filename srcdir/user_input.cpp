@@ -1017,18 +1017,10 @@ void menu1(file_format *infl_type,
         else if (Input_Format == in_format_binary_PED) {
             strcpy(&mega2_input_file_type[BED][0],  "PLINK Bed file");
             plinkf = 1;
-        }
-        else if (Input_Format == in_format_binary_VCF) {
+        } else if (Input_Format == in_format_binary_VCF) {
             strcpy(&mega2_input_file_type[BED][0],  "Binary Variant file");
             xcf = 1;
-        }
-        else if(Input_Format == in_format_bcfs){
-            strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
-            xcf = 1;
-            //set bcf_paths
-            //set bcf_file_template
-        }
-        else if (Input_Format == in_format_compressed_VCF) {
+        } else if (Input_Format == in_format_compressed_VCF) {
             strcpy(&mega2_input_file_type[BED][0],  "Compressed Variant file");
             xcf = 1;
         } else if (Input_Format == in_format_VCF) {
@@ -1038,6 +1030,11 @@ void menu1(file_format *infl_type,
             strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 GEN file");
         } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen2) {
             strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 BGEN file");
+        } else if(Input_Format == in_format_bcfs){
+            strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
+            xcf = 1;
+            //set bcf_paths
+            //set bcf_file_template
         }
 
 
@@ -1136,19 +1133,6 @@ void menu1(file_format *infl_type,
 
                 fln_init_mega2(! MAP_REQ);
 
-            } else if(Input_Format == in_format_bcfs) {
-                xcf = 1;
-                plinkf = 0;
-                PLINK_clr(not_plink_format);
-                PLINK_str(PLINKArgs, FILENAME_LENGTH);
-                strcpy(VCFArgs, "--remove-indels");
-
-                strcpy(extension_name, "study");
-
-                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
-                fln_init_plink(0);
-
-                fln_init_mega2(! MAP_REQ);
             }
 
             else if (Input_Format == in_format_compressed_VCF) {
@@ -1206,8 +1190,21 @@ void menu1(file_format *infl_type,
                 fln_init(info, "IMPUTE2", "gen_info", "[optional]", "gen_info", "impute2_info");
 //              fln_init_plink(! PMAP_REQ);
                 fln_init_mega2(! MAP_REQ);
-            }
 
+            } else if(Input_Format == in_format_bcfs) {
+                xcf = 1;
+                plinkf = 0;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(VCFArgs, "--remove-indels");
+
+                strcpy(extension_name, "study");
+
+                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init_plink(0);
+
+                fln_init_mega2(! MAP_REQ);
+            }
             reset_extension = 1;
         }
         if (reset_extension) {
@@ -1418,13 +1415,13 @@ void menu1(file_format *infl_type,
                 }
                 strcat(VCFArgs_w_file, *auxfl_name);
                 
-               // if (VCFtools_process_cmd_line_w_file(VCFArgs_w_file) != -1) {
-               //     printf("ERROR: VCF argument list is invalid.  Please fix it.\n");
-               //     exit_loop=0;
-               // } else {
-               //     Mega2BatchItems[VCF_Args].items_read = 1;
-               // }
-               // free(VCFArgs_w_file);
+                if (VCFtools_process_cmd_line_w_file(VCFArgs_w_file) != -1) {
+                    printf("ERROR: VCF argument list is invalid.  Please fix it.\n");
+                    exit_loop=0;
+                } else {
+                    Mega2BatchItems[VCF_Args].items_read = 1;
+                }
+                free(VCFArgs_w_file);
             }
             if (PLINK.plink && PLINK.no_pheno == 0 && PLINK.trait[0] == 0) {
                 printf("ERROR: You did not specify the pedigree file trait name.\n");
@@ -1650,7 +1647,7 @@ void menu1(file_format *infl_type,
         } else if (choice_ == vcf_args_i) {
 
 	    char new_VCFArgs[FILENAME_LENGTH];
-	    //VCFtools_printf_supported_cmd_line_options();
+	    VCFtools_printf_supported_cmd_line_options();
             while (1) {
                 printf("\nCurrent VCF parameters:  %s\n", VCFArgs);
                 // 3) When doing the vcftools filtering, it wasn't clear to me at first which set
@@ -1667,10 +1664,10 @@ void menu1(file_format *infl_type,
                 if (new_VCFArgs[i-1] == '\n') new_VCFArgs[i-1] = 0;
                 if (new_VCFArgs[i-1] == '\r') new_VCFArgs[i-1] = 0;
                 if (strlen(new_VCFArgs) == 0) break;
-                //if (VCFtools_process_cmd_line_wo_file(new_VCFArgs) == -1) {
-                //    strcpy(VCFArgs, new_VCFArgs);
-                //    break;
-                //}
+                if (VCFtools_process_cmd_line_wo_file(new_VCFArgs) == -1) {
+                    strcpy(VCFArgs, new_VCFArgs);
+                    break;
+                }
             }
 
         } else if (choice_ == vcf_mak_i) {

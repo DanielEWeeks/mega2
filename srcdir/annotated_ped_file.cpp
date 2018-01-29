@@ -4437,7 +4437,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         }
         free(phe_names);
         free(phe_types);
-    }  else {
+    } else {
         ann_files = read_annotated_names_file(names_file, &LTop, &AnnotatedFileInfo);
         names_fn = names_file;
     }
