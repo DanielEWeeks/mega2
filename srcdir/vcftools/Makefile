@@ -1,10 +1,7 @@
 #   Mega2: Manipulation Environment for Genetic Analysis
-#  
-#   Copyright 1999-2018, University of Pittsburgh. All Rights Reserved.
-#  
-#   Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
+#   Copyright (C) 1999-2016 Robert Baron, Justin R. Stickel, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
-#   and Daniel E. Weeks.
+#   Daniel E. Weeks, and University of Pittsburgh
 #  
 #   This file is part of the Mega2 program, which is free software; you
 #   can redistribute it and/or modify it under the terms of the GNU
@@ -69,10 +66,8 @@ default: $(OUT)
 .c.o:
 	$(CC) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) $(FLAGS) -c $< $(WINO)
 
-bgzf: bgzf.c bgzf.h
-
-$(OUT): $(OBJ) bgzf.o
-	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(OBJ) bgzf.o
+$(OUT): $(OBJ) #bgzf.o
+	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(OBJ) #bgzf.o
 
 depend:
 	makedepend -Y. -- $(CFLAGS) $(LOCFLAGS) -- $(INCLUDES) $(SRC) bgzf.c

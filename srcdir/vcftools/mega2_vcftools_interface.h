@@ -1,11 +1,8 @@
 /*
-  Mega2: Manipulation Environment for Genetic Analysis.
-
-  Copyright 1999-2017, University of Pittsburgh. All Rights Reserved.
-
-  Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
+  Mega2: Manipulation Environment for Genetic Analysis
+  Copyright (C) 1999-2016 Robert Baron, Charles P. Kollar,
   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
-  and Daniel E. Weeks.
+  Daniel E. Weeks, and University of Pittsburgh
 
   This file is part of the Mega2 program, which is free software; you
   can redistribute it and/or modify it under the terms of the GNU

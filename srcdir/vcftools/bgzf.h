@@ -44,22 +44,6 @@ typedef signed __int64 ssize_t;
 #define BGZF_ERR_IO     4
 #define BGZF_ERR_MISUSE 8
 
-#define bgzf_flush_try bgzfO_flush_try 
-#define bgzf_dopen bgzfO_dopen 
-#define bgzf_open bgzfO_open 
-#define bgzf_seek bgzfO_seek 
-#define bgzf_read_block bgzfO_read_block 
-#define bgzf_flush bgzfO_flush 
-#define bgzf_is_bgzf bgzfO_is_bgzf 
-#define bgzf_set_cache_size bgzfO_set_cache_size 
-#define bgzf_write bgzfO_write 
-#define bgzf_close bgzfO_close 
-#define bgzf_getline bgzfO_getline 
-#define bgzf_read bgzfO_read 
-#define bgzf_getc bgzfO_getc 
-#define bgzf_check_EOF bgzfO_check_EOF 
-#define BGZF BGZFO
-
 typedef struct {
 	int errcode:16, is_write:2, is_be:2, compress_level:12;
 	int cache_size;

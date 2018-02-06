@@ -198,6 +198,7 @@ public:
 class Input_BCFs: public Input_Base{
 public:
     Input_BCFs(INPUT_FORMAT_t i): Input_Base(i) {
+        xcf = 1;
         req_locus_file = 0;
         req_map_file   = 0;
         req_stem_flag = 1;
