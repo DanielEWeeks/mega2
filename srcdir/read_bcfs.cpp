@@ -608,7 +608,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
                 // diploid
                 if (j == 2) {
                     if (bcf_gt_is_missing(ptr[0]))
-                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], 0, 0);
+                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], "0", "0");
                         //kputs(" 0.33 0.33 0.33", str);
                     else if (bcf_gt_allele(ptr[0]) != bcf_gt_allele(ptr[1]))
                         set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[0], canons[1]);
@@ -622,7 +622,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
                     // haploid
                 } else if (j == 1) {
                     if (bcf_gt_is_missing(ptr[0]))
-                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], 0, 0);
+                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], "0", "0");
                         //kputs(" 0.5 0.0 0.5", str);
                     else if (bcf_gt_allele(ptr[0]) == 1)
                         set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[1], canons[1]);
