@@ -188,7 +188,10 @@ void ReadBCFs::show_settings() {
     msgvf("\n");
     msgvf("BCF File Directory:                         %s\n", C(this->BCF_path));
     msgvf("BCF File Template:                          %s\n", C(this->BCF_template));
-    msgvf("Input File:                                 %s\n", C(this->inpfile));
+    if(this->inpfile != NULL)
+        msgvf("Input File:                                 %s\n", C(this->inpfile));
+    else
+        msgvf("Input File:                              <NULL>\n");
 }
 
 
