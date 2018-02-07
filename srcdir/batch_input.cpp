@@ -1436,7 +1436,8 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
 
         input_set = 1;
         if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
-            Input_Format == in_format_VCF)
+            Input_Format == in_format_VCF        || Input_Format == in_format_bcfs ||
+            Input_Format == in_format_gzcfs      || Input_Format == in_format_vcfs)
             xcf = 1;
 
     }

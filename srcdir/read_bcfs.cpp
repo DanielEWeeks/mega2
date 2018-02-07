@@ -563,7 +563,6 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
     char  *types    = CALLOC(num_all, char);
 
     int count = 0;
-    char ltype[10];
 
     for(int i = 0; i < num_pheno; i++){
         names[i] = strdup(phenames[i]);
