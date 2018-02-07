@@ -69,7 +69,6 @@
 
 int Display_Errors, Display_Messages;
 extern int lastautosome;
-char          *zero;
 /* prototype definitions */
 void            full_check(ped_top *Top, linkage_ped_top *LPedTop,
 			   analysis_type analysis);

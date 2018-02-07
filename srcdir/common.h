@@ -321,6 +321,7 @@ extern const char     *genetic_distance_map_type_string[3];
 extern int             LoopOverTrait; /* flag for looping over traits */
 extern int             LoopOverChrm; /* flag for looping over chromosomes */
 extern int             ManualReorder; /* flag denoting whether option 2 of reorder menu was used */
+extern char           *zero;
 extern char            ProgName[100]; /* descriptive option name */
 extern char            Mega2Log[FILENAME_LENGTH], Mega2LogRun[FILENAME_LENGTH]; /* Log file name */
 extern char            Mega2Err[FILENAME_LENGTH], Mega2ErrRun[FILENAME_LENGTH]; /* Error file name */

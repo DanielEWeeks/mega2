@@ -65,6 +65,7 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #include "annotated_ped_file.h"
 #include "read_files_ext.h"
 #include "utils_ext.h"
+#include "phe_lookup_ext.h"
 
 #include "str_utils.hh"
 
@@ -174,6 +175,9 @@ void ReadBCFs::do_menu2batch() {
 void ReadBCFs::do_batch2local(){
     BatchValueGet(this->BCF_path, "BCFs_File_Directory");
     BatchValueGet(this->BCF_template, "BCFs_File_Template");
+
+    this->inpfile = *Input->input_files.bedfl;
+
     show_settings();
 }
 
@@ -184,6 +188,15 @@ void ReadBCFs::show_settings() {
     msgvf("\n");
     msgvf("BCF File Directory:                         %s\n", C(this->BCF_path));
     msgvf("BCF File Template:                          %s\n", C(this->BCF_template));
+    msgvf("Input File:                                 %s\n", C(this->inpfile));
+}
+
+
+void ReadBCFs::init_filters() {
+    int it = PLINK_Args;
+
+    if (Mega2BatchItems[it].items_read)
+        PLINK_args(Mega2BatchItems[it].value.name, 1);
 }
 
 /*
@@ -192,6 +205,8 @@ void ReadBCFs::show_settings() {
  */
 void ReadBCFs::do_init(Input_Base *inp)
 {
+    init_filters();
+
     this->input = inp;
     this->pedfile = *inp->input_files.pedfl;
     this->phefile = *inp->input_files.phefl;
@@ -222,22 +237,37 @@ void ReadBCFs::read_BCFs( linkage_locus_top *LPedTreeTop )
     Str file_template = this->BCF_template;
     Vecs filesplit;
 
-    split(filesplit,file_template,"?");
+    ifstream ifs;
 
-    for(int chr = 1; chr < 23; chr++){
-        ifstream ifs;
-        char file[255];
-        if(chr >= 1  && chr < 10)
-            sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
-        else
-            sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
-        ifs.open(file);
+    char *ofile = *Input->input_files.bedfl;
+    if (ofile)  { // no ?
+        ifs.open(ofile);
         if (! ifs.is_open() )
-            errorvf("read_BCFs: Can not open \"%s\" file\n", file);
+            errorvf("read_BCFs: Can not open \"%s\" file\n", ofile);
         else {
-            mssgvf("read_BCFs: Found file \"%s\"\n", file);
-            temp.push_back(file);
+            mssgvf("read_BCFs: Found file \"%s\"\n", ofile);
+            temp.push_back(ofile);
             count++;
+        }
+    } else {
+        split(filesplit,file_template,"?");
+
+        for(int chr = 1; chr < 23; chr++){
+            ifstream ifs;
+            char file[255];
+            if(chr >= 1  && chr < 10)
+                sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+            else
+                sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+            ifs.open(file);
+            if (! ifs.is_open() )
+                errorvf("read_BCFs: Can not open \"%s\" file\n", file);
+            else {
+                mssgvf("read_BCFs: Found file \"%s\"\n", file);
+                temp.push_back(file);
+                count++;
+                ifs.close();
+            }
         }
     }
 
@@ -273,25 +303,40 @@ void ReadBCFs::check_bcf_files() {
     Str file_template = this->BCF_template;
     Vecs filesplit;
 
-    split(filesplit,file_template,"?");
+    ifstream ifs;
 
-    for(int chr = 1; chr < 23; chr++){
-        ifstream ifs;
-        char file[255];
-        if(chr >= 1  && chr < 10)
-            sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
-        else
-            sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
-        ifs.open(file);
+    char *ofile = *Input->input_files.bedfl;
+    if (ofile)  { // no ?
+        ifs.open(ofile);
         if (! ifs.is_open() )
-            errorvf("read_BCFs: Can not open \"%s\" file\n", file);
+            errorvf("read_BCFs: Can not open \"%s\" file\n", ofile);
         else {
-            mssgvf("read_BCFs: Found file \"%s\"\n", file);
-            files.push_back(file);
+            mssgvf("read_BCFs: Found file \"%s\"\n", ofile);
+            files.push_back(ofile);
             count++;
         }
-    }
+    } else {
+        split(filesplit,file_template,"?");
 
+        for(int chr = 1; chr < 23; chr++){
+            ifstream ifs;
+            char file[255];
+
+            if(chr >= 1  && chr < 10)
+                sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+            else
+                sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+            ifs.open(file);
+            if (! ifs.is_open() )
+                errorvf("read_BCFs: Can not open \"%s\" file\n", file);
+            else {
+                mssgvf("read_BCFs: Found file \"%s\"\n", file);
+                files.push_back(file);
+                count++;
+                ifs.close();
+            }
+        }
+    }
     this->filelist = files;
     this->filecount = count;
     //for (auto i = fileslist.begin(); i != fileslist.end(); ++i)
@@ -383,7 +428,7 @@ void ReadBCFs::build_markers() {
             alleles.push_back(al1);
             alleles.push_back(al2);
 
-            this->markers.push_back(new BCFMarker(line->d.id, hdr->id[BCF_DT_CTG][line->rid].key, line->pos, alleles));
+            this->markers.push_back(new BCFMarker(line->d.id, hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1, alleles)); // pos + 1 matches the VCF line pos field.
 
             //printf("%s,%s\n",al1,al2);
             count++;
@@ -406,6 +451,7 @@ void ReadBCFs::build_markers() {
 
 linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
 {
+    BPT;
 //    Tod tod_pf("read ped file");
 //    FILE *filep = this->pedfile ? fopen(this->pedfile, "r") : NULL;
 //    if (filep == NULL) {
@@ -443,7 +489,7 @@ linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
 
 void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
 {
-    m2_map bcf_map;
+    m2_map bcf_map("VCF", 'p');
 
     build_bcf_map(bcf_map);
 
@@ -486,13 +532,18 @@ void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
  * We want to build "names" and genotypes in one pass to only load these BCF files once
  */
 
+static void phenotype_file_SAMPLEID_entry_checks();
+
 linkage_locus_top *ReadBCFs::do_names(const char *&names_fn)
 {
     linkage_locus_top *LTop = build_BCFs_names();
+
+    phenotype_file_SAMPLEID_entry_checks();
+
     return LTop;
 }
 
-void ReadBCFs::do_phe_names(char *phe_file, char ***phe_names, int **phe_types, int phe_cols) {
+void ReadBCFs::do_phe_names(char *phe_file, char **phe_names, int *phe_types, int phe_cols) {
     this->phefile = phe_file;
     this->phecols = phe_cols;
     this->phenames = phe_names;
@@ -512,9 +563,8 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
     count = 0;
 
     for(int i = 0; i < num_pheno; i++){
-        //names[i] = CALLOC(phenames[i].size()+1, char);
-        //strcpy(names[i], this->phenames[i]);
-        //types[i] = ( ((*typep) == "B") || ((*typep) == "D") ) ? 'A' : 'T';
+        names[i] = strdup(phenames[i]);
+        types[i] = ( phetypes[i] == 0 ) ? 'A' : 'T';
         count++;
     }
 
@@ -544,6 +594,68 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
             /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
 }
 
+/**
+ This routine processes the SAMPLEID information in the phenotype file, and the sample information
+ in the VCF file and will give the user a message if any of the following occurs:
+ 1) a SAMPLEID in the Phenotype File is not found (or found multiple times) as a VCF file
+    sample label (found in the VCF file header line)
+ 2) a SAMPLEID entry has been excluded through the vcftools filtering mechanism
+ 3) a sample label in the VCF file is not found in the SAMPLEID column of the phenotype file.
+ */
+extern sample_map_type *SAMPLEIDS;
+static void phenotype_file_SAMPLEID_entry_checks()
+{
+    if (SAMPLEIDS == NULL) {
+        mssgf("The SAMPLEID column was not included in the phenotype file.");
+        return;
+    }
+    mssgf("The SAMPLEID column was included in the phenotype file.");
+    
+#if 0
+    // Iterate over the SAMPLEID information from the phenotype file...
+    for (sample_map_type::iterator it = SAMPLEIDS->begin(); it != SAMPLEIDS->end(); it++) {
+        string map_sample = it->first;
+        int found = 0;
+        
+        // Look for the SAMPLEID (map_sample) in the VCF file...
+        for (int ui=0; ui < vf->N_total_indv(); ui++) {
+            string vcf_file_sample = vf->indv[(size_t)ui];
+            if (vcf_file_sample == map_sample) {
+                // It was found...
+                if (vf->include_indv[(size_t)ui] == false && found == 0) {
+                    mssgvf("SAMPLEID '%s' has been excluded by the vcftools filters.\n", map_sample.c_str());
+                }
+                found++; // SAMPLEID found in the VCF file...
+            }
+        }
+        if (found == 0) {
+            mssgvf("SAMPLEID '%s' was not found in the VCF file.\n", map_sample.c_str());
+        } else if (found > 1) {
+            mssgvf("SAMPLEID '%s' was found multiple times in the VCF file.\n", map_sample.c_str());
+        } // else if (fount == 1) all is well!
+    } // for (sample_map_type::iterator it ...
+    
+    // Look through all of the samples in the VCF file....
+    for (int ui=0; ui < vf->N_total_indv(); ui++) {
+        if (vf->include_indv[(size_t)ui] == false) continue;
+        string vcf_file_sample = vf->indv[(size_t)ui];
+        int found = 0;
+        // Determine if it matches any sample in the SAMPLEID column of the phenotype file...
+        for (sample_map_type::iterator it = SAMPLEIDS->begin(); it != SAMPLEIDS->end(); it++) {
+            string map_sample = it->first;
+            if (vcf_file_sample == map_sample) {
+                found++;
+                break;
+            }
+        }
+        if (found == 0) {
+            mssgvf("The VCF file sample '%s' was not found in the SAMPLEID column\n", vcf_file_sample.c_str());
+            mssgf("included in the phenotype file.");
+        }
+    }
+#endif
+}
+
 void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons) {
     //std::clock_t start;
     //start = std::clock();
@@ -562,8 +674,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
         argv[i] = &args[i][0];
     }
 
-    int markers = 0;
-    int count= 0;
+    int mrkindex = LTop->PhenoCnt;
     for (int i = 0; i < this->filecount; i++) {
         args.push_back(files[i]);
 
@@ -612,32 +723,32 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
                 // diploid
                 if (j == 2) {
                     if (bcf_gt_is_missing(ptr[0]))
-                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], 0, 0);
+                        set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                         //kputs(" 0.33 0.33 0.33", str);
                     else if (bcf_gt_allele(ptr[0]) != bcf_gt_allele(ptr[1]))
-                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[0], canons[1]);
+                        set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
                         //kputs(" 0 1 0", str);       // HET
                     else if (bcf_gt_allele(ptr[0]) == 1)
-                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[1], canons[1]);
+                        set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
                         //kputs(" 0 0 1", str);       // ALT HOM, first ALT allele
                     else
-                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[0], canons[0]);
+                        set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
                     //kputs(" 1 0 0", str);       // REF HOM or something else than first ALT
                     // haploid
                 } else if (j == 1) {
                     if (bcf_gt_is_missing(ptr[0]))
-                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], 0, 0);
+                        set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                         //kputs(" 0.5 0.0 0.5", str);
                     else if (bcf_gt_allele(ptr[0]) == 1)
-                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[1], canons[1]);
+                        set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
                         //kputs(" 0 0 1", str);       // first ALT allele
                     else
-                        set_2Ralleles(persons[i].marker, markers, &LTop->Locus[markers], canons[0], canons[0]);
+                        set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
                     //kputs(" 1 0 0", str);       // REF or something else than first ALT
                 } else error("FIXME: not ready for ploidy %d\n", j);
 
             }
-            markers++;
+            mrkindex++;
         }
         args.pop_back();
     }

@@ -129,7 +129,9 @@ const char *INPUT_FORMAT_STR[] = {
      "IMPUTE2 GEN format (gen/impute2)",
      "IMPUTE2 BGEN 1.3 format (bgen)",
 /*a*/"IMPUTE2 BGEN format (bgen)",
-     "BCF Split by Chromosome",
+     "BCF via htslib",
+     "GZIP VCF via htslib",
+     "VCF via htslib",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -186,8 +188,13 @@ Input_Base *createinput(INPUT_FORMAT in_format) {
         return new Input_BGEN2(in_format);
         break;
     case in_format_bcfs:
-//      BPT;
-        return new Input_BCFs(in_format);
+        return new Input_BCFS(in_format);
+        break;
+    case in_format_gzcfs:
+        return new Input_GZCFS(in_format);
+        break;
+    case in_format_vcfs:
+        return new Input_VCFS(in_format);
         break;
     case in_format_traditional:
         return new Input_Traditional(in_format);

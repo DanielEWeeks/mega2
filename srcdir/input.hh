@@ -195,6 +195,7 @@ public:
     ReadBgen Ops;
 };
 
+
 class Input_BCFs: public Input_Base{
 public:
     Input_BCFs(INPUT_FORMAT_t i): Input_Base(i) {
@@ -206,6 +207,22 @@ public:
     virtual Input_Ops *GetOps() {return &Ops;};
     ReadBCFs Ops;
 };
+
+class Input_BCFS: public Input_BCFs {
+public:
+    Input_BCFS(INPUT_FORMAT_t i): Input_BCFs(i) {};
+};
+
+class Input_GZCFS: public Input_BCFs {
+public:
+    Input_GZCFS(INPUT_FORMAT_t i): Input_BCFs(i) {};
+};
+
+class Input_VCFS: public Input_BCFs {
+public:
+    Input_VCFS(INPUT_FORMAT_t i): Input_BCFs(i) {};
+};
+
 
 class Input_Traditional : public Input_Old {
 public:

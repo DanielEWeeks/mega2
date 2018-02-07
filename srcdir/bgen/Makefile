@@ -98,3 +98,4 @@ src/bgen.o: genfile/include/genfile/bgen/bgen.hpp
 src/bgen.o: genfile/include/genfile/zlib.hpp
 src/bgen.o: genfile/include/genfile/MissingValue.hpp
 src/zlib.o: genfile/include/genfile/zlib.hpp
+src/zlib.o: genfile/include/genfile/types.hpp

@@ -71,12 +71,13 @@ public:
     virtual void do_menu2batch();
     virtual void do_batch2local();
 
+    void init_filters();
     virtual void do_init(Input_Base *inp);
     void show_settings();
 
     void read_BCFs(linkage_locus_top *LPedTreeTop);
     linkage_locus_top * do_names(const char *&names_fn);
-    void  do_phe_names (char *phe_file, char ***phe_names, int **phe_types, int phe_cols);
+    void  do_phe_names (char *phe_file, char **phe_names, int *phe_types, int phe_cols);
     linkage_locus_top * build_BCFs_names();
     void check_bcf_files();
     int build_samples();
@@ -105,16 +106,16 @@ protected:
     vector<string> filelist;
     int filecount;
 
-    char * pedfile;
+    char *pedfile;
+    char *inpfile;
 
     vector<string> samples;
     int num_samples;
 
-    char * phefile;
-    int phecols;
-    char ***phenames;
-    int **phetypes;
-
+    char  *phefile;
+    int    phecols;
+    char **phenames;
+    int   *phetypes;
 };
 
 

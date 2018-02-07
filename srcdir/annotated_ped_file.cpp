@@ -1626,7 +1626,10 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     int check_ungenotyped = 0;
     int xcf = Input_Format == in_format_binary_VCF ||
 	      Input_Format == in_format_compressed_VCF ||
-              Input_Format == in_format_VCF;
+              Input_Format == in_format_VCF ||
+              Input_Format == in_format_bcfs ||
+              Input_Format == in_format_gzcfs||
+              Input_Format == in_format_vcfs;
 
     // allele_count should be == 0 when using a .ped file...
 
@@ -1668,6 +1671,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     p=0;
     Tod tod_cp_all_eof("read ped file");
     Tod tod_cp_eof(20);
+
     while (!feof(filep)) {
         c=fgetc(filep);
         if (c == -1) {
@@ -1783,8 +1787,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     //here we need to call BCFTools to do something equivalent to VCFtools_process_entries
     if(Input->GetOps()->use_getops())
         Input->GetOps()->do_genotypes(LTop,persons);
-
-    if (xcf) {
+    else if (xcf) {
 //      if (! getenv("_")) { asm("int $3"); }
         std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
 
@@ -4366,8 +4369,10 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     int  xcf = Input_Format == in_format_binary_VCF ||
                Input_Format == in_format_compressed_VCF ||
-               Input_Format == in_format_VCF ||
-               Input_Format == in_format_bcfs;
+               Input_Format == in_format_VCF  ||
+               Input_Format == in_format_bcfs ||
+               Input_Format == in_format_gzcfs||
+               Input_Format == in_format_vcfs;
 
     init_tokens();
 
@@ -4382,7 +4387,15 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         char **phe_names = NULL;
         int *phe_types   = NULL;
         int tot_cols = phe_cols = parse_phe_types(phe_file, &phe_names, &phe_types);
-        Input->GetOps()->do_phe_names(phe_file, &phe_names, &phe_types, phe_cols);
+
+        if (PLINK.no_pheno == 0) {  /* there is an extra row ... if no_pheno == 0 */
+            phe_names[tot_cols] = CALLOC(strlen(PLINK.trait)+1, char);
+            strcpy(phe_names[tot_cols], PLINK.trait);
+            phe_types[tot_cols] = PLINK.traitType;
+            tot_cols++;
+        }
+//      Input->GetOps()->do_phe_names(phe_file, &phe_names, &phe_types, phe_cols);
+        Input->GetOps()->do_phe_names(phe_file, phe_names, phe_types, tot_cols);
 
         std::vector<m2_map> vcf_maps;
         Input->GetOps()->do_map(vcf_maps);
@@ -4663,15 +4676,11 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     SECTION_ERR_EXTERN(FLOAT_AFFECT);
 
-    if (Input->GetOps()->use_getops() && Input_Format != in_format_bcfs) {
+    if (Input->GetOps()->use_getops() && !xcf) {
         pedfile_type = PREMAKEPED_PFT;
         basefile_type = pedfile_type;
         Top = Input->GetOps()->do_ped(LTop);
-    }  else if (PLINK.plink ||
-	    Input_Format == in_format_binary_VCF ||
-            Input_Format == in_format_compressed_VCF ||
-	    Input_Format == in_format_VCF ||
-            Input_Format == in_format_bcfs) {
+    }  else if (PLINK.plink || xcf) {
 
         pedfile_type = PREMAKEPED_PFT;
         basefile_type = pedfile_type;
@@ -5395,9 +5404,10 @@ int PLINK_args(char *str, int xcf)
     PLINK.xcf = xcf;
 
 
-    if (Input_Format == in_format_binary_VCF ||
-        Input_Format == in_format_compressed_VCF ||
-	Input_Format == in_format_VCF) {
+//  if (Input_Format == in_format_binary_VCF ||
+//      Input_Format == in_format_compressed_VCF ||
+//      Input_Format == in_format_VCF) 
+    if (xcf) {
         // nada
     } else if (PLINK.plink != binary_PED_format && PLINK.plink != PED_format) {
 //for NEW batch files w/o --bfile/file

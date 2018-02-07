@@ -52,6 +52,8 @@ enum INPUT_FORMAT {
     in_format_bgen2 = 9,
     in_format_bgen = 10,
     in_format_bcfs = 11,
+    in_format_gzcfs = 12,
+    in_format_vcfs = 13,
 
     in_format_traditional = 100,
 } INPUT_FORMAT_t;
@@ -103,7 +105,7 @@ public:
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop)   { return (linkage_ped_top *) 0; }
     virtual void do_gc() { }
 
-    virtual void do_phe_names(char *phe_file, char ***phe_names, int **phe_types, int phe_cols) { };
+    virtual void do_phe_names(char *phe_file, char **phe_names, int *phe_types, int phe_cols) { };
     virtual void do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)   { };
 };
 

@@ -65,8 +65,6 @@ void mito_transmission_report(ped_top *PTop, int recode,
 
 /*-----------------------*/
 
-extern char *zero;
-
 /* static functions */
 /*  static int check_ordinal(ped_tree *PedTree, ped_status *PedStatus); */
 

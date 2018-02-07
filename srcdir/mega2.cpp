@@ -228,6 +228,7 @@ const char *genetic_distance_map_type_string[3] = {
 int             LoopOverTrait; /* flag for looping over traits */
 int             LoopOverChrm; /* flag for looping over chromosomes */
 int             ManualReorder; /* flag denoting whether option 2 of reorder menu was used */
+char           *zero;
 char            ProgName[100]; /* descriptive option name */
 analysis_type   AnalysisOpt; /* analysis option */
 char            Mega2Log[FILENAME_LENGTH], Mega2LogRun[FILENAME_LENGTH]; /* Log file name */
@@ -626,7 +627,8 @@ int             main(int argc, char **argv, char **env)
     int            ferr = 0; /* error opening one or more files*/
 
     plink_info_type *plink_info = (plink_info_type *)NULL;
-    char          *zero = canonical_allele("0");
+
+    zero = canonical_allele("0");
     
     Tod tod_all("total elapsed time");
     Tod tod_init("mega2 init");
