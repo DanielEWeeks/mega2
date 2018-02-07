@@ -1787,6 +1787,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     //here we need to call BCFTools to do something equivalent to VCFtools_process_entries
     if(Input->GetOps()->use_getops())
         Input->GetOps()->do_genotypes(LTop,persons);
+
     else if (xcf) {
 //      if (! getenv("_")) { asm("int $3"); }
         std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
@@ -4382,7 +4383,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         LTop = Input->GetOps()->do_names(names_fn);
 	    ann_files = 1;
     } else if(Input->GetOps()->use_getops() && xcf){
-        //std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
+        std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
 
         char **phe_names = NULL;
         int *phe_types   = NULL;
@@ -4403,7 +4404,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
         LTop = Input->GetOps()->do_names(names_fn);
 
-        //read_m2_map_as_names_file(vcf_map, &LTop, tot_cols, phe_names, phe_types);
+        read_m2_map_as_names_file(vcf_map, &LTop, tot_cols, phe_names, phe_types);
         ann_files = 1;
     } else if (PLINK.plink || xcf) {
         char **phe_names = NULL;

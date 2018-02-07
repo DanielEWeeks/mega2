@@ -80,8 +80,8 @@ public:
     void  do_phe_names (char *phe_file, char **phe_names, int *phe_types, int phe_cols);
     linkage_locus_top * build_BCFs_names();
     void check_bcf_files();
-    int build_samples();
-    void build_markers();
+    //int build_samples();
+    void build_markers_and_samples();
 
     virtual void do_map(std::vector<m2_map>& additional_maps);
     void build_bcf_map(m2_map& bcf_map);

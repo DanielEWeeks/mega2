@@ -69,10 +69,8 @@ default: $(OUT)
 .c.o:
 	$(CC) $(INCLUDES) $(CFLAGS) $(LOCFLAGS) $(FLAGS) -c $< $(WINO)
 
-bgzf: bgzf.c bgzf.h
-
-$(OUT): $(OBJ) bgzf.o
-	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(OBJ) bgzf.o
+$(OUT): $(OBJ) #bgzf.o
+	$(AR) $(ARFLAGS) $(AROUT)$(OUT) $(OBJ) #bgzf.o
 
 depend:
 	makedepend -Y. -- $(CFLAGS) $(LOCFLAGS) -- $(INCLUDES) $(SRC) bgzf.c

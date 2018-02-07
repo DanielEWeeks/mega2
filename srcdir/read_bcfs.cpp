@@ -212,10 +212,8 @@ void ReadBCFs::do_init(Input_Base *inp)
     this->phefile = *inp->input_files.phefl;
 
     check_bcf_files();
-    this->num_samples = build_samples();
-    //for(int i = 0; i< this->num_samples; i++)
-    //    printf("%s\n",this->samples[i].c_str());
-    build_markers();
+    build_markers_and_samples();
+
     //checkindelsndups();
 
 }
@@ -344,38 +342,38 @@ void ReadBCFs::check_bcf_files() {
 
 }
 
-int ReadBCFs::build_samples() {
+//int ReadBCFs::build_samples() {
+//
+//    vector<string> files = this->filelist;
+//    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+//
+//    int argc = 2;
+//
+//    vector<string> temp;
+//    temp.push_back("bcftools");
+//    temp.push_back(&files[0][0]);
+//
+//    char** argv;
+//    argv = (char**)malloc(argc * sizeof(char*));
+//    for (size_t i = 0; i < argc; i += 1) {
+//        argv[i] = (char*)malloc(255 * sizeof(char));
+//        argv[i] = &temp[i][0];
+//    }
+//
+//    args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
+//    bcfargs = mbi->get_args(argc, argv);
+//
+//    bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
+//
+//    for(int i = 0; i < hdr->n[2]; i++){
+//        //printf("%s\n",hdr->samples[i]);
+//        this->samples.push_back(hdr->samples[i]);
+//    }
+//
+//    return hdr->n[2];
+//}
 
-    vector<string> files = this->filelist;
-    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
-
-    int argc = 2;
-
-    vector<string> temp;
-    temp.push_back("bcftools");
-    temp.push_back(&files[0][0]);
-
-    char** argv;
-    argv = (char**)malloc(argc * sizeof(char*));
-    for (size_t i = 0; i < argc; i += 1) {
-        argv[i] = (char*)malloc(255 * sizeof(char));
-        argv[i] = &temp[i][0];
-    }
-
-    args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
-    bcfargs = mbi->get_args(argc, argv);
-
-    bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
-
-    for(int i = 0; i < hdr->n[2]; i++){
-        //printf("%s\n",hdr->samples[i]);
-        this->samples.push_back(hdr->samples[i]);
-    }
-
-    return hdr->n[2];
-}
-
-void ReadBCFs::build_markers() {
+void ReadBCFs::build_markers_and_samples() {
 
     vector<string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
@@ -432,6 +430,10 @@ void ReadBCFs::build_markers() {
 
             //printf("%s,%s\n",al1,al2);
             count++;
+
+            //Bob pointed out that build samples ran through the same code all over again and we can just move all of that to here
+            this->samples.push_back(hdr->samples[i]);
+            this->num_samples = hdr->n[2];
         }
 
         //printout to check that the marker array was populated.
@@ -481,6 +483,7 @@ linkage_ped_top *ReadBCFs::do_ped(linkage_locus_top *LTop)
 //
 //    return Top;
 //    return NULL;
+
     return NULL;
 
 }
@@ -559,23 +562,14 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
     char **names    = CALLOC(num_all, char *);
     char  *types    = CALLOC(num_all, char);
 
-    int count;
-    count = 0;
+    int count = 0;
+    char ltype[10];
 
     for(int i = 0; i < num_pheno; i++){
         names[i] = strdup(phenames[i]);
         types[i] = ( phetypes[i] == 0 ) ? 'A' : 'T';
         count++;
     }
-
-    //int i;
-    //i = 0;
-//    Vecsp typep = sample_file_hdr2b.cbegin()+5;
-//    for (Vecsp phep = sample_file_hdr1b.cbegin()+5; i < num_pheno; i++, phep++, typep++) {
-//        names[i] = CALLOC((*phep).size()+1, char);
-//        strcpy(names[i], (*phep).c_str());
-//        types[i] = ( ((*typep) == "B") || ((*typep) == "D") ) ? 'A' : 'T';
-//    }
 
     BCFMarker *bp;
     for (MarkerVectorP vecp = markers.cbegin(); vecp != markers.cend(); vecp++) {
