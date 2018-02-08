@@ -188,7 +188,7 @@ void ReadBCFs::show_settings() {
     msgvf("\n");
     msgvf("BCF File Directory:                         %s\n", C(this->BCF_path));
     msgvf("BCF File Template:                          %s\n", C(this->BCF_template));
-    msgvf("Input File:                                 %s\n", C(this->inpfile));
+    msgvf("Input File:                                 %s\n", ((this->inpfile) ? C(this->inpfile) : ""));
 }
 
 
@@ -385,9 +385,9 @@ void ReadBCFs::build_markers_and_samples() {
 
     char** argv;
     argv = (char**)malloc(argc * sizeof(char*));
-    for (size_t i = 0; i < argc; i += 1) {
-        argv[i] = (char*)malloc(255 * sizeof(char));
-        argv[i] = &args[i][0];
+    for (size_t ii = 0; ii < argc; ii += 1) {
+        argv[ii] = (char*)malloc(255 * sizeof(char));
+        argv[ii] = &args[ii][0];
     }
 
     int total_markers = 0;
@@ -398,9 +398,9 @@ void ReadBCFs::build_markers_and_samples() {
 
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
-        for (size_t i = 0; i < argc; i += 1) {
-            argv[i] = (char *) malloc(255 * sizeof(char));
-            argv[i] = &args[i][0];
+        for (size_t ii = 0; ii < argc; ii += 1) {
+            argv[ii] = (char *) malloc(255 * sizeof(char));
+            argv[ii] = &args[ii][0];
         }
 
         args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
@@ -418,13 +418,17 @@ void ReadBCFs::build_markers_and_samples() {
             //printf("%s %s %d %s %s\n", line->d.id, hdr->id[1][line->rid].key, line->pos, line->d.allele[0],
             //       line->d.allele[1]);
 
-            Vecs alleles(2);
+            Vecs alleles(line->d.m_allele);
             alleles.clear();
-            char *al1 = canonical_allele(line->d.allele[0]);
-            char *al2 = canonical_allele(line->d.allele[1]);
+            for (int al = 0; al < line->d.m_allele; al++) {
+                alleles.push_back(canonical_allele(line->d.allele[al]));
+            }
+//Justin ?
+//            char *al1 = canonical_allele(line->d.allele[0]);
+//            char *al2 = canonical_allele(line->d.allele[1]);
             //printf("%s %s",canonical_allele(line->d.allele[0]), canonical_allele(line->d.allele[0]));
-            alleles.push_back(al1);
-            alleles.push_back(al2);
+//            alleles.push_back(al1);
+//            alleles.push_back(al2);
 
             this->markers.push_back(new BCFMarker(line->d.id, hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1, alleles)); // pos + 1 matches the VCF line pos field.
 
@@ -649,7 +653,8 @@ static void phenotype_file_SAMPLEID_entry_checks()
 #endif
 }
 
-void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons) {
+void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
+                            std::vector<Vecc> &VecAlleles) {
     //std::clock_t start;
     //start = std::clock();
     vector <string> files = this->filelist;
@@ -662,9 +667,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
 
     char **argv;
     argv = (char **) malloc(argc * sizeof(char *));
-    for (size_t i = 0; i < argc; i += 1) {
-        argv[i] = (char *) malloc(255 * sizeof(char));
-        argv[i] = &args[i][0];
+    for (size_t ii = 0; ii < argc; ii += 1) {
+        argv[ii] = (char *) malloc(255 * sizeof(char));
+        argv[ii] = &args[ii][0];
     }
 
     int mrkindex = LTop->PhenoCnt;
@@ -673,9 +678,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
 
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
-        for (size_t i = 0; i < argc; i += 1) {
-            argv[i] = (char *) malloc(255 * sizeof(char));
-            argv[i] = &args[i][0];
+        for (size_t ii = 0; ii < argc; ii += 1) {
+            argv[ii] = (char *) malloc(255 * sizeof(char));
+            argv[ii] = &args[ii][0];
         }
 
         args_t *bcfargs = (args_t *) calloc(1, sizeof(args_t));
@@ -701,10 +706,12 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons)
                 error("Error parsing GT tag at %s:%d\n", bcf_seqname(hdr,line),line->pos+1);
             }
 
-            char *canons[line->d.m_allele];
+            Vecc canons(line->d.m_allele);
             for (int al = 0; al < line->d.m_allele; al++) {
                 canons[al] = canonical_allele(line->d.allele[al]);
             }
+            VecAlleles.push_back(canons);
+
             //should give number of allele options per marker
             n /= num_samples;
             for (i = 0; i < num_samples; i++) {

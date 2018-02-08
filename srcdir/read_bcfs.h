@@ -87,7 +87,8 @@ public:
     void build_bcf_map(m2_map& bcf_map);
 
     virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
-    void do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons);
+    void do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
+                      std::vector<Vecc> &VecAllels);
 
 public:
     Str     BCF_path;

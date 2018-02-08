@@ -1786,7 +1786,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 
     //here we need to call BCFTools to do something equivalent to VCFtools_process_entries
     if(Input->GetOps()->use_getops())
-        Input->GetOps()->do_genotypes(LTop,persons);
+        Input->GetOps()->do_genotypes(LTop, persons, VecAlleles);
 
     else if (xcf) {
 //      if (! getenv("_")) { asm("int $3"); }
