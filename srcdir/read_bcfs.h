@@ -75,7 +75,7 @@ public:
     virtual void do_init(Input_Base *inp);
     void show_settings();
 
-    void read_BCFs(linkage_locus_top *LPedTreeTop);
+    //void read_BCFs(linkage_locus_top *LPedTreeTop);
     linkage_locus_top * do_names(const char *&names_fn);
     void  do_phe_names (char *phe_file, char **phe_names, int *phe_types, int phe_cols);
     linkage_locus_top * build_BCFs_names();
@@ -93,6 +93,7 @@ public:
 public:
     Str     BCF_path;
     Str     BCF_template;
+    Str     BCF_Args;
     Input_Base   *input;
     MarkerVector markers;
     int marker_count;
@@ -103,6 +104,8 @@ protected:
     int site_bcfs_dir_i         = 8000001;
     static const
     int site_bcfs_template_i     = 8000002;
+    static const
+    int site_bcfs_args     = 8000003;
 
     vector<string> filelist;
     int filecount;

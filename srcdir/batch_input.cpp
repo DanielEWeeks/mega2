@@ -280,6 +280,7 @@ static keyw_t keywords[] = {
 
     {"BCFs_File_Directory",                   STRING,     "."},
     {"BCFs_File_Template",                    STRING,     "?"},
+    {"BCF_Args",                              LINE,       ""},
 
 };
 

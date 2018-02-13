@@ -4395,7 +4395,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             phe_types[tot_cols] = PLINK.traitType;
             tot_cols++;
         }
-//      Input->GetOps()->do_phe_names(phe_file, &phe_names, &phe_types, phe_cols);
+      //Input->GetOps()->do_phe_names(phe_file, &phe_names, &phe_types, phe_cols);
         Input->GetOps()->do_phe_names(phe_file, phe_names, phe_types, tot_cols);
 
         std::vector<m2_map> vcf_maps;

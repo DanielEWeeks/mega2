@@ -93,6 +93,10 @@ void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[]) {
     printf("%2d) %-*s%s\n", idx, line_len, "BCF File Template:", BatchItemGet("BCFs_File_Template")->value.name);
     choiceA[idx] = site_bcfs_template_i;
     idx++;
+
+    printf("%2d) %-*s%s\n", idx, line_len, "BCFtools Parameters", BatchItemGet("BCF_Args")->value.name);
+    choiceA[idx] = site_bcfs_args;
+    idx++;
 }
 /*
  * Parses the menu displayed by ReadBCFs
@@ -100,9 +104,10 @@ void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[]) {
  */
 int ReadBCFs::do_menu_parse(int choice_) {
     int ret = 0;
-    char bcfs_path_array[255], bcfs_template_array[255];
+    char bcfs_path_array[FILENAME_LENGTH], bcfs_template_array[FILENAME_LENGTH];
     char *bcfs_path = &bcfs_path_array[0];
     char *bcfs_template = &bcfs_template_array[0];
+    char bcf_args[FILENAME_LENGTH] = "";
     if(choice_ == site_bcfs_dir_i) {
         while (1) {
             draw_line();
@@ -151,6 +156,47 @@ int ReadBCFs::do_menu_parse(int choice_) {
         }
         ret = 1;
     }
+    else if(choice_ == site_bcfs_args) {
+        while (1) {
+            draw_line();
+            printf("\nCurrent BCF parameters:  %s\n", this->BCF_Args.c_str());
+            printf("  For more additional information on BCFTools flags\n");
+            printf("see the documentation at samtools.github.io/bcftools/bcftools\n");
+            printf("Valid options in Mega2 include:\n");
+            printf("--known  --novel --phased --exclude-phased --uncalled --exclude-uncalled\n");
+            printf("--min-ac --max-ac --min-alleles [INT]\n");
+            printf("--min-af --max-af [FLOAT]");
+            printf("--exclude --include [EXPRESSION]\n");
+            printf("--apply-filters [LIST]");
+
+            printf("Please enter BCFTools arguements > \n");
+
+            //this code was in user input for vcf arguements
+            //it seems fcmap terminates on whitespace but we want a whole line
+
+            fflush(stdout);
+            IgnoreValue(fgets(bcf_args, sizeof(bcf_args)-1, stdin)); newline;
+            int l = (int)strlen(bcf_args);
+            if (bcf_args[l-1] == '\n') bcf_args[l-1] = 0;
+            if (bcf_args[l-1] == '\r') bcf_args[l-1] = 0;
+            /*if (BCF_args(bcf_args)) {*/
+                this->BCF_Args = strdup(bcf_args);
+                BatchValueSet(this->BCF_Args, "BCF_Args");
+                break;
+            //}
+
+
+            //fcmap terminates on whitespace and we want to allow that
+            //fcmap(stdin, "%s",bcf_args);
+            //newline;
+            //printf("%s\n",bcf_args);
+
+
+            break;
+        }
+        ret = 1;
+    }
+
     return ret;
 }
 
@@ -161,6 +207,7 @@ void ReadBCFs::do_menu2batch() {
     Cstr Values[] = {
             "BCFs_File_Directory",
             "BCFs_File_Template",
+            "BCF_Args",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -175,6 +222,7 @@ void ReadBCFs::do_menu2batch() {
 void ReadBCFs::do_batch2local(){
     BatchValueGet(this->BCF_path, "BCFs_File_Directory");
     BatchValueGet(this->BCF_template, "BCFs_File_Template");
+    BatchValueGet(this->BCF_Args, "BCF_Args");
 
     this->inpfile = *Input->input_files.bedfl;
 
@@ -189,6 +237,7 @@ void ReadBCFs::show_settings() {
     msgvf("BCF File Directory:                         %s\n", C(this->BCF_path));
     msgvf("BCF File Template:                          %s\n", C(this->BCF_template));
     msgvf("Input File:                                 %s\n", ((this->inpfile) ? C(this->inpfile) : ""));
+    msgvf("BCF Arguements:                             %s\n", C(this->BCF_Args));
 }
 
 
@@ -219,78 +268,78 @@ void ReadBCFs::do_init(Input_Base *inp)
 }
 
 /*
- * here we will try to check that the files are available and read them
+ * read_BCFs was deprecated, the lionsshare of this code got moved into check_bcf_files
  */
-void ReadBCFs::read_BCFs( linkage_locus_top *LPedTreeTop )
-{
-    //linkage_locus_top *LTop = LPedTreeTop;
-
-    vector<string> temp;
-    temp.push_back("bcftools");
-    //temp.push_back("view");
-    int argc = 1;
-    int count = 0;
-
-    Str directory = this->BCF_path;
-    Str file_template = this->BCF_template;
-    Vecs filesplit;
-
-    ifstream ifs;
-
-    char *ofile = *Input->input_files.bedfl;
-    if (ofile)  { // no ?
-        ifs.open(ofile);
-        if (! ifs.is_open() )
-            errorvf("read_BCFs: Can not open \"%s\" file\n", ofile);
-        else {
-            mssgvf("read_BCFs: Found file \"%s\"\n", ofile);
-            temp.push_back(ofile);
-            count++;
-        }
-    } else {
-        split(filesplit,file_template,"?");
-
-        for(int chr = 1; chr < 23; chr++){
-            ifstream ifs;
-            char file[255];
-            if(chr >= 1  && chr < 10)
-                sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
-            else
-                sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
-            ifs.open(file);
-            if (! ifs.is_open() )
-                errorvf("read_BCFs: Can not open \"%s\" file\n", file);
-            else {
-                mssgvf("read_BCFs: Found file \"%s\"\n", file);
-                temp.push_back(file);
-                count++;
-                ifs.close();
-            }
-        }
-    }
-
-    char** argv;
-    argv = (char**)malloc(argc * sizeof(char*));
-    for (size_t i = 0; i < argc; i += 1)
-        argv[i] = (char*)malloc(255 * sizeof(char));
-
-    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
-    argv[0] = &temp[0][0];
-    argc = 2;
-
-    for( int i = 1; i < count +1; i++ ) {
-        argv[1] = &temp[i][0];
-        //printf("%d, %s %s\n",argc, argv[0],argv[1]);
-        mbi->mega2_main_vcfview(argc, argv);
-    }
-
-    //MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
-    //mbi->mega2_main_vcfview(argc, argv);
-
-   //for (size_t i = 0; i < argc; i += 1)
-    //    free(argv[i]);
-    //free(argv);
-}
+//void ReadBCFs::read_BCFs( linkage_locus_top *LPedTreeTop )
+//{
+//    //linkage_locus_top *LTop = LPedTreeTop;
+//
+//    vector<string> temp;
+//    temp.push_back("bcftools");
+//    //temp.push_back("view");
+//    int argc = 1;
+//    int count = 0;
+//
+//    Str directory = this->BCF_path;
+//    Str file_template = this->BCF_template;
+//    Vecs filesplit;
+//
+//    ifstream ifs;
+//
+//    char *ofile = *Input->input_files.bedfl;
+//    if (ofile)  { // no ?
+//        ifs.open(ofile);
+//        if (! ifs.is_open() )
+//            errorvf("read_BCFs: Can not open \"%s\" file\n", ofile);
+//        else {
+//            mssgvf("read_BCFs: Found file \"%s\"\n", ofile);
+//            temp.push_back(ofile);
+//            count++;
+//        }
+//    } else {
+//        split(filesplit,file_template,"?");
+//
+//        for(int chr = 1; chr < 23; chr++){
+//            ifstream ifs;
+//            char file[255];
+//            if(chr >= 1  && chr < 10)
+//                sprintf(file, "./%s/%s0%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+//            else
+//                sprintf(file, "./%s/%s%d%s",directory.c_str(),filesplit[0].c_str(),chr,filesplit[1].c_str());
+//            ifs.open(file);
+//            if (! ifs.is_open() )
+//                errorvf("read_BCFs: Can not open \"%s\" file\n", file);
+//            else {
+//                mssgvf("read_BCFs: Found file \"%s\"\n", file);
+//                temp.push_back(file);
+//                count++;
+//                ifs.close();
+//            }
+//        }
+//    }
+//
+//    char** argv;
+//    argv = (char**)malloc(argc * sizeof(char*));
+//    for (size_t i = 0; i < argc; i += 1)
+//        argv[i] = (char*)malloc(255 * sizeof(char));
+//
+//    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+//    argv[0] = &temp[0][0];
+//    argc = 2;
+//
+//    for( int i = 1; i < count +1; i++ ) {
+//        argv[1] = &temp[i][0];
+//        //printf("%d, %s %s\n",argc, argv[0],argv[1]);
+//        mbi->mega2_main_vcfview(argc, argv);
+//    }
+//
+//    //MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+//    //mbi->mega2_main_vcfview(argc, argv);
+//
+//   //for (size_t i = 0; i < argc; i += 1)
+//    //    free(argv[i]);
+//    //free(argv);
+//}
 
 void ReadBCFs::check_bcf_files() {
 
@@ -316,6 +365,7 @@ void ReadBCFs::check_bcf_files() {
     } else {
         split(filesplit,file_template,"?");
 
+        //check numbered chromosomes
         for(int chr = 1; chr < 23; chr++){
             ifstream ifs;
             char file[255];
@@ -334,6 +384,27 @@ void ReadBCFs::check_bcf_files() {
                 ifs.close();
             }
         }
+        //now need to check X, Y, XY, MT
+        vector<string> XYMT;
+        XYMT.push_back("X");
+        XYMT.push_back("Y");
+        XYMT.push_back("XY");
+        XYMT.push_back("MT");
+        for(int j = 0; j < 4; j++) {
+            char xymtfile[255];
+            string chromosome = XYMT[j];
+            sprintf(xymtfile, "./%s/%s%s%s",directory.c_str(),filesplit[0].c_str(),chromosome.c_str(),filesplit[1].c_str());
+            ifs.open(xymtfile);
+            if (! ifs.is_open() )
+                errorvf("read_BCFs: Can not open \"%s\" file\n", xymtfile);
+            else {
+                mssgvf("read_BCFs: Found file \"%s\"\n", xymtfile);
+                files.push_back(xymtfile);
+                count++;
+                ifs.close();
+            }
+        }
+
     }
     this->filelist = files;
     this->filecount = count;
@@ -383,17 +454,20 @@ void ReadBCFs::build_markers_and_samples() {
     vector<string> args;
     args.push_back("bcftools");
 
-    char** argv;
-    argv = (char**)malloc(argc * sizeof(char*));
-    for (size_t ii = 0; ii < argc; ii += 1) {
-        argv[ii] = (char*)malloc(255 * sizeof(char));
-        argv[ii] = &args[ii][0];
+    Vecs argssplit;
+    string extraargs = this->BCF_Args;
+    if(!extraargs.empty()) {
+        split(argssplit, extraargs, " ");
+        for (int a = 0; a < argssplit.size(); a++) {
+            args.push_back(argssplit[a]);
+            argc++;
+        }
     }
 
     int total_markers = 0;
     for(int i = 0; i < this->filecount; i++) {
         args.push_back(files[i]);
-        //for (auto i = temp.begin(); i != temp.end(); ++i)
+        //for (auto i = args.begin(); i != args.end(); ++i)
         //    std::cout << *i << "\n";
 
         char **argv;
@@ -402,6 +476,10 @@ void ReadBCFs::build_markers_and_samples() {
             argv[ii] = (char *) malloc(255 * sizeof(char));
             argv[ii] = &args[ii][0];
         }
+
+        //for(int c = 0; c< argc; c++){
+        //    printf("%s\n",argv[c]);
+        //}
 
         args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
         bcfargs = mbi->get_args(argc, argv);
@@ -424,11 +502,11 @@ void ReadBCFs::build_markers_and_samples() {
                 alleles.push_back(canonical_allele(line->d.allele[al]));
             }
 //Justin ?
-//            char *al1 = canonical_allele(line->d.allele[0]);
-//            char *al2 = canonical_allele(line->d.allele[1]);
+            //char *al1 = canonical_allele(line->d.allele[0]);
+            //char *al2 = canonical_allele(line->d.allele[1]);
             //printf("%s %s",canonical_allele(line->d.allele[0]), canonical_allele(line->d.allele[0]));
-//            alleles.push_back(al1);
-//            alleles.push_back(al2);
+            //alleles.push_back(al1);
+            //alleles.push_back(al2);
 
             this->markers.push_back(new BCFMarker(line->d.id, hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1, alleles)); // pos + 1 matches the VCF line pos field.
 
@@ -448,7 +526,7 @@ void ReadBCFs::build_markers_and_samples() {
         //}
 
         total_markers += count;
-        printf("%d\n",total_markers);
+        //printf("%d\n",total_markers);
         args.pop_back();
     }
 
@@ -665,11 +743,14 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     vector <string> args;
     args.push_back("bcftools");
 
-    char **argv;
-    argv = (char **) malloc(argc * sizeof(char *));
-    for (size_t ii = 0; ii < argc; ii += 1) {
-        argv[ii] = (char *) malloc(255 * sizeof(char));
-        argv[ii] = &args[ii][0];
+    Vecs argssplit;
+    string extraargs = this->BCF_Args;
+    if(!extraargs.empty()) {
+        split(argssplit, extraargs, " ");
+        for (int a = 0; a < argssplit.size(); a++) {
+            args.push_back(argssplit[a]);
+            argc++;
+        }
     }
 
     int mrkindex = LTop->PhenoCnt;
@@ -756,7 +837,6 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 }
 
 
-
 //my inital attempt at unpacking genotype data from bcfs using vcf_format and string manipulation
 //this ran a good deal slower than using bcf_get_genotypes and handling pointers
 //
@@ -807,3 +887,4 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 //    }
 //    std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
 //}
+
