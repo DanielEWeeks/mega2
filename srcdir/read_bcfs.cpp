@@ -133,7 +133,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
         while (1) {
             draw_line();
             printf("To enter a template please enter a value of the form:\n");
-            printf("[data?.bcf]\nWhere the wildecard '?' will replace the CHR number for all chromosomes.\n");
+            printf("[data?.bcf]\nWhere the wildcard '?' will replace the CHR number for all chromosomes.\n");
             printf("Please enter BCF file template format > ");
             fcmap(stdin, "%s", bcfs_template);
             newline;
