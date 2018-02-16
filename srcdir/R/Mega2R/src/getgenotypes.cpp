@@ -532,12 +532,12 @@ Rcpp::NumericVector getgenotypes_forperson(RawVector raw_arg)
 
 
 // [[Rcpp::export]]
-Rcpp::List getgenotypesgenabel_1(NumericVector locus_arg,
-                                 NumericVector hocus_arg,
-                                 List          genotype_arg,
-                                 List          allele_arg,
-                                 List          markerscheme_arg,
-                                 NumericVector miscN_arg)
+Rcpp::RawMatrix getgenotypesgenabel_1(NumericVector locus_arg,
+                                          NumericVector hocus_arg,
+                                          List          genotype_arg,
+                                          List          allele_arg,
+                                          List          markerscheme_arg,
+                                          NumericVector miscN_arg)
 {
     int debug = 0;
 
@@ -565,16 +565,16 @@ Rcpp::List getgenotypesgenabel_1(NumericVector locus_arg,
     Rcpp::RawMatrix mtx((genotype_sample_size + 3) / 4, locus_size);
     Rcpp::DoubleVector freq(locus_size);
 
-    Rcpp::RawVector samples(genotype_sample_size);
+//xx
+//    Rcpp::RawVector samples(genotype_sample_size);
 
     if (locus_size != hocus_size) {
         Rf_error("First vector arguments should be the same length, but are %d vs %d\\n",
                  locus_size, hocus_size);
-        List::create(Named("matrix") = mtx, Named("freq") = freq);
     }
 
     int locus, hocus, marker, byte, a1map, a2map, t0;
-    int a, b, b2, k = 0, dbg = 0;
+    int a, b, k = 0, dbg = 0;
     for (int i = 0; i < locus_size; i++) {
         k = 0;
         locus = loci[i];
@@ -604,6 +604,44 @@ Rcpp::List getgenotypesgenabel_1(NumericVector locus_arg,
         Rcpp::IntegerVector aindexX(allele[3]);
         if (debug) Rprintf("indexX: %d %d\\n", aindexX[2 * locus], aindexX[2 * locus+1]);
 
+        if (freq1 > freq2) {
+            a = 3; b = 1;
+        } else {
+            a = 1; b = 3;
+        }
+
+        decode_allele[0] = b; //(allele1 << 16) | allele1;
+        decode_allele[1] = 0;
+        decode_allele[2] = 2; //(allele1 << 16) | allele2;
+        decode_allele[3] = a; //(allele2 << 16) | allele2;
+
+        int b2;
+#if 1
+        int n2 = 0, i4 = 0, markerX2 = 2 * marker;
+        for (int j = 0; j < genotype_sample_size; j++) {
+
+            if ((j >= genotype_sample_size) || Rf_isNull(genotype_sample[j]))
+                t0 = 0x55;
+            else {
+                Rcpp::RawVector rv(genotype_sample[j]);
+                t0 = (rv.size() != 0) ? rv[byte]: 0x55;
+            }
+            b2 = (t0 & (0x3 << markerX2)) >> markerX2;
+
+            if (j < genotype_sample_size)
+                n2 |= decode_allele[b2] << (6 - 2 * i4);
+            if (++i4 == 4) {
+                i4 = 0;
+                mtx(k++, i) = n2;
+                if (dbg) Rprintf("G %d %d %x\n", k, i, n2);
+                n2 = 0;
+            }
+        }
+        if (i4) {
+            mtx(k++, i) = n2;
+            if (dbg) Rprintf("G %d %d %x\n", k, i, n2);
+        }
+#else
         for (int j = 0; j < genotype_sample_size; j++) {
 
             if ((j >= genotype_sample_size) || Rf_isNull(genotype_sample[j]))
@@ -622,37 +660,7 @@ Rcpp::List getgenotypesgenabel_1(NumericVector locus_arg,
                 b2 =  (t0 & 0xc0) >> 6;
 
             samples[j] = b2;
-
         }
-        if (debug) {
-/*
-            if ( (freq1i == freq2i) && freq2i != 0) {
-                Rprintf("%d .5 samples[0] %d\n", locus, samples[0]);
-            } else if ( (freq1 == nfreq1) && (freq2 == nfreq2) )
-                ;
-            else if ( ((freq1 > freq2) != (nfreq1 > nfreq2)) || freq1i == 0 || freq2i == 0) {
-                Rprintf("%d mega2 %f/%f gena %f/%f old %d new %d\n",
-                        locus, freq1, freq2, nfreq1, nfreq2, freq1 > freq2, nfreq1 > nfreq2);
-            }
-*/
-        }
-        if (freq1 > freq2) {
-            a = 3; b = 1;
-        } else {
-            a = 1; b = 3;
-        }
-        if (freq1 == 0 && freq2 == 0)
-            freq[i] = 2;
-        else if (allele1 == 1)
-            freq[i] = freq1;
-        else
-            freq[i] = freq2;
-
-        decode_allele[0] = b; //(allele1 << 16) | allele1;
-        decode_allele[1] = 0;
-        decode_allele[2] = 2; //(allele1 << 16) | allele2;
-        decode_allele[3] = a; //(allele2 << 16) | allele2;
-
         for (int j = 0; j < genotype_sample_size; j+=4) {
             b2 = 0;
 
@@ -665,18 +673,19 @@ Rcpp::List getgenotypesgenabel_1(NumericVector locus_arg,
                 b2 |= decode_allele[samples[j+3]];
 
             mtx(k++, i) = b2;
-            if(dbg)Rprintf("G %d %d %x\n", k, i, b2);
+            if(dbg)Rprintf("GG+1 %d %d %x\n", k, i, b2);
         }
+#endif
     }
-    return List::create(Named("matrix") = mtx, Named("freq") = freq);
+    return mtx;
 }
 
 
 // [[Rcpp::export]]
-Rcpp::List getgenotypesgenabel_2(NumericVector locus_arg,
-                                 List          genotype_arg,
-                                 List          allele_arg,
-                                 NumericVector miscN_arg)
+Rcpp::RawMatrix getgenotypesgenabel_2(NumericVector locus_arg,
+                                      List          genotype_arg,
+                                      List          allele_arg,
+                                      NumericVector miscN_arg)
 {
     int debug = 0;
 
@@ -698,11 +707,12 @@ Rcpp::List getgenotypesgenabel_2(NumericVector locus_arg,
     Rcpp::RawMatrix mtx((genotype_sample_size + 3) / 4, locus_size);
     Rcpp::DoubleVector freq(locus_size);
 
-    Rcpp::RawVector samples1(genotype_sample_size);
-    Rcpp::RawVector samples2(genotype_sample_size);
+//xx
+//    Rcpp::RawVector samples1(genotype_sample_size);
+//    Rcpp::RawVector samples2(genotype_sample_size);
 
     int locus, marker;
-    int a, b, b2 = 0, k = 0;
+    int a, b, k = 0;
     for (int i = 0; i < locus_size; i++) {
         k = 0;
         locus = loci[i];
@@ -715,16 +725,33 @@ Rcpp::List getgenotypesgenabel_2(NumericVector locus_arg,
         Rcpp::IntegerVector aAlleleIndex(alleleList[3]);
         Rcpp::DoubleVector aFreq(alleleList[2]);
         int allele1 = 0, allele2 = 0;
-        int allelev1 = (aAlleleIndex[0]);
-        int allelev2 = (aAlleleIndex[1]);
+//      int allelev1 = (aAlleleIndex[0]);
+//      int allelev2 = (aAlleleIndex[1]);
         double freq1 = (aFreq[0]);
         double freq2 = (aFreq[1]);
         if (debug) Rprintf("allele %d/%d freq %f/%f\n", allele1, allele2, freq1, freq2);
 
-//        int freq1i = 0, freq2i = 0;
-//        unsigned char allelev1 = 0, allelev2 = 0;
+//      int freq1i = 0, freq2i = 0;
+//      unsigned char allelev1 = 0, allelev2 = 0;
+        if (freq1 > freq2) {
+            a = 3; b = 1;
+        } else {
+            a = 1; b = 3;
+        }
+
+        decode_allele[0] = 0;
+        decode_allele[1] = 0;
+        decode_allele[2] = b; //(allele1 << 16) | allele1;
+        decode_allele[3] = 2; //(allele1 << 16) | allele2;
+        decode_allele[4] = a; //(allele2 << 16) | allele2;
+
+        if (debug) Rprintf("decode %d/%d %d/%d/%d\n", decode_allele[0], decode_allele[1],
+                           decode_allele[2], decode_allele[3], decode_allele[4]);
+
+#if 1
+        int n2 = 0, i4 = 0;
         for (int j = 0; j < genotype_sample_size; j++) {
-            b2 = 0;
+
             if ((j >= genotype_sample_size) || Rf_isNull(genotype_sample[j]))
                 allele1 = allele2 = 0;  // indicate empty
             else {
@@ -736,8 +763,38 @@ Rcpp::List getgenotypesgenabel_2(NumericVector locus_arg,
                     allele1 = allele2 = 0;  // indicate empty
             }
 
-//            if (allelev1 == 0) allelev1 = allele1;
-//            if (allelev2 == 0 && allele2 != allelev1) allelev2 = allele2;
+            if (debug) Rprintf("%d: %d/%d ", j, allele1, allele2);
+            if (debug && ((j % 10) == 0)) Rprintf("\n");
+
+        
+            if (j < genotype_sample_size)
+                n2 |= decode_allele[allele1 + allele2] << (6 - 2 * i4);
+            if (++i4 == 4) {
+                i4 = 0;
+                mtx(k++, i) = n2;
+                if (debug) Rprintf("G %d %d %x\n", k, i, n2);
+                n2 = 0;
+            }
+        }
+        if (i4) {
+            mtx(k++, i) = n2;
+            if (debug) Rprintf("G %d %d %x\n", k, i, n2);
+        }
+#else
+        for (int j = 0; j < genotype_sample_size; j++) {
+            if ((j >= genotype_sample_size) || Rf_isNull(genotype_sample[j]))
+                allele1 = allele2 = 0;  // indicate empty
+            else {
+                Rcpp::RawVector rv(genotype_sample[j]);
+                if (rv.size() != 0) {
+                    allele1 = rv[2 * marker];
+                    allele2 = rv[2 * marker + 1];
+                } else
+                    allele1 = allele2 = 0;  // indicate empty
+            }
+
+//          if (allelev1 == 0) allelev1 = allele1;
+//          if (allelev2 == 0 && allele2 != allelev1) allelev2 = allele2;
 
             samples1[j] = allele1;
             samples2[j] = allele2;
@@ -745,35 +802,8 @@ Rcpp::List getgenotypesgenabel_2(NumericVector locus_arg,
             if (debug && ((j % 10) == 0)) Rprintf("\n");
         }
 
-        if (debug) {
-/*
-            if ( (freq1i == freq2i) && freq2i != 0) {
-                Rprintf("%d .5  %d/%d\n", locus, freq1i, freq2i);
-            } else if ( (freq1 == nfreq1) && (freq2 == nfreq2) )
-                ;
-            else if ( ((freq1 > freq2) != (nfreq1 > nfreq2)) || freq1i == 0 || freq2i == 0) {
-                Rprintf("%d mega2 %f/%f gena %f/%f old %d new %d\n",
-                        locus, freq1, freq2, nfreq1, nfreq2, freq1 > freq2, nfreq1 > nfreq2);
-            }
-*/
-        }
-        if (freq1 > freq2) {
-            a = 3; b = 1;
-        } else {
-            a = 1; b = 3;
-        }
-        if (freq1 == 0 && freq2 == 0)
-            freq[i] = 2;
-        else
-            freq[i] = freq1;
-        decode_allele[0] = 0;
-        decode_allele[1] = 0;
-        decode_allele[2] = b; //(allele1 << 16) | allele1;
-        decode_allele[3] = 2; //(allele1 << 16) | allele2;
-        decode_allele[4] = a; //(allele2 << 16) | allele2;
-        if (debug) Rprintf("decode %d/%d %d/%d/%d\n", decode_allele[0], decode_allele[1],
-                           decode_allele[2], decode_allele[3], decode_allele[4]);
 
+        int b2;
         for (int j = 0; j < genotype_sample_size; j+=4) {
             b2 = 0;
 
@@ -788,8 +818,9 @@ Rcpp::List getgenotypesgenabel_2(NumericVector locus_arg,
             mtx(k++, i) = b2;
             if (debug) Rprintf("G %d %d %x\n", k, i, b2);
         }
+#endif
     }
-    return List::create(Named("matrix") = mtx, Named("freq") = freq);
+    return mtx;
 }
 
 
