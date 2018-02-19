@@ -20,8 +20,7 @@ getgenotypesgenabel(markers_arg, envir = ENV)
 \item{envir}{an environment that contains all the data frames created from the SQLite database.}
 }
 \value{
-a list of two elements:  The first is the GenABEL gwaa.data-class object component
- that contains the genotype data.  The second is the allele frequencies for each marker.
+the GenABEL gwaa.data-class object component that contains the genotype data.
 }
 \description{
 This function calls a C++ function that does all the heavy lifting.  It passes the arguments
@@ -55,7 +54,6 @@ ENV = read.Mega2DB(db)
 
 aa = getgenotypesgenabel(ENV$markers[ENV$markers$chromosome == 1,])
 
-aa[1]
-aa[2]
+aa
 
 }

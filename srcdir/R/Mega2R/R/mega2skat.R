@@ -80,8 +80,10 @@ init_SKAT = function (db = NULL, verbose = FALSE, allMarkers = FALSE) {
                                      stringsAsFactors = FALSE)
 
 #   envir$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 9), nrow = 5, ncol = 2)
-    envir$mt = matrix(c(0x10001, 0x10002, 0x20001, 0x20002, 0,    0, 1, 1, 2, 0),
-                      nrow = 5, ncol = 2)
+#   envir$mt = matrix(c(0x10001, 0x10002, 0x20001, 0x20002, 0,    0, 1, 1, 2, 0),
+#                     nrow = 5, ncol = 2)
+    envir$mt1 = c(0x10001, 0x10002, 0x20001, 0x20002, 0)
+    envir$mt2 = c(      0,       1,       1,       2, 0)
 
     envir$allMarkers = allMarkers
 
@@ -245,7 +247,7 @@ DOSKAT = function(markers_arg, range_arg, envir, ...) {
     geno = matrix(0, nrow = (di[1]), ncol = di[2])
     kk = 0
     for (k in 1:(di[2])) {
-        vec = envir$mt[match(as.integer(geno_arg[ , k]), envir$mt), 2]
+        vec = envir$mt2[match(as.integer(geno_arg[ , k]), envir$mt1)]
         g0 = sum(vec == 0)
         g1 = sum(vec == 1)
         g2 = sum(vec == 2)

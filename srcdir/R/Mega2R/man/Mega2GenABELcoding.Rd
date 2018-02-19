@@ -4,13 +4,10 @@
 \alias{Mega2GenABELcoding}
 \title{generate GenABEL coding vector}
 \usage{
-Mega2GenABELcoding(markers = NULL, Freq.x, envir)
+Mega2GenABELcoding(markers = NULL, envir)
 }
 \arguments{
 \item{markers}{data frame of markers to be processed}
-
-\item{Freq.x}{frequency of first allele calculated from actual data.  The Mega2 internal frequencies may be
-a bit stale.  This value is one of two returned by the *Mega2GenABELconvert()* function.}
 
 \item{envir}{'environment' containing SQLite database and other globals}
 }

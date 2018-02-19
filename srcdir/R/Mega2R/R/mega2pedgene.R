@@ -67,15 +67,21 @@ init_pedgene = function (db = NULL, verbose = FALSE) {
     envir = dbmega2_import(db, verbose = verbose)
 
     fam = mkfam(envir = envir)
-    fam = fam[fam$trait != 0, ]
+#   fam = fam[fam$trait != 0, ]  # b,c vs a
+#   vs
+    fam$trantrait = NA
+    fam$trantrait[fam$trait == 1] = 0
+    fam$trantrait[fam$trait == 2] = 1
+    fam$trait = NULL
+
     setfam(fam, envir = envir)  # also updates unified_genotype_table
 
     envir$schaidPed = envir$fam[ , c(-1, -2)]
     colnames(envir$schaidPed) = c("ped", "person", "father", "mother", "sex", "trait")
     envir$pedPer = envir$schaidPed[ , 1:2]
 #   envir$mt = matrix(c(11, 12, 21, 22, 0,    0, 1, 1, 2, 0), nrow = 5, ncol = 2)
-    envir$mt = matrix(c(0x10001, 0x10002, 0x20001, 0x20002, 0,    0, 1, 1, 2, 0),
-                      nrow = 5, ncol = 2)
+    envir$mt1 = c(0x10001, 0x10002, 0x20001, 0x20002, 0)
+    envir$mt2 = c(      0,       1,       1,       2, 0)
     envir$pedgene_results <- data.frame(chr = character(0), gene = character(0),
                                         nvariants = numeric(0),
                                         start = numeric(0), end = numeric(0),
@@ -196,7 +202,7 @@ DOpedgene = function(markers_arg, range_arg, envir = ENV) {
     di = dim(geno_arg)
     geno = matrix(0, nrow = (di[1]), ncol = di[2])
     for (k in 1:(di[2])) {
-        vec = envir$mt[match(as.integer(geno_arg[ , k]), envir$mt), 2]
+        vec = envir$mt2[match(as.integer(geno_arg[ , k]), envir$mt1)]
         g0 = sum(vec == 0)
         g1 = sum(vec == 1)
         g2 = sum(vec == 2)

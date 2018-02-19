@@ -565,9 +565,6 @@ Rcpp::RawMatrix getgenotypesgenabel_1(NumericVector locus_arg,
     Rcpp::RawMatrix mtx((genotype_sample_size + 3) / 4, locus_size);
     Rcpp::DoubleVector freq(locus_size);
 
-//xx
-//    Rcpp::RawVector samples(genotype_sample_size);
-
     if (locus_size != hocus_size) {
         Rf_error("First vector arguments should be the same length, but are %d vs %d\\n",
                  locus_size, hocus_size);
@@ -615,9 +612,7 @@ Rcpp::RawMatrix getgenotypesgenabel_1(NumericVector locus_arg,
         decode_allele[2] = 2; //(allele1 << 16) | allele2;
         decode_allele[3] = a; //(allele2 << 16) | allele2;
 
-        int b2;
-#if 1
-        int n2 = 0, i4 = 0, markerX2 = 2 * marker;
+        int b2, n2 = 0, i4 = 0, markerX2 = 2 * marker;
         for (int j = 0; j < genotype_sample_size; j++) {
 
             if ((j >= genotype_sample_size) || Rf_isNull(genotype_sample[j]))
@@ -641,41 +636,6 @@ Rcpp::RawMatrix getgenotypesgenabel_1(NumericVector locus_arg,
             mtx(k++, i) = n2;
             if (dbg) Rprintf("G %d %d %x\n", k, i, n2);
         }
-#else
-        for (int j = 0; j < genotype_sample_size; j++) {
-
-            if ((j >= genotype_sample_size) || Rf_isNull(genotype_sample[j]))
-                t0 = 0x55;
-            else {
-                Rcpp::RawVector rv(genotype_sample[j]);
-                t0 = (rv.size() != 0) ? rv[byte]: 0x55;
-            }
-            if (marker == 0)
-                b2 =  (t0 & 0x03);
-            else if (marker == 1)
-                b2 =  (t0 & 0x0c) >> 2;
-            else if (marker == 2)
-                b2 =  (t0 & 0x30) >> 4;
-            else if (marker == 3)
-                b2 =  (t0 & 0xc0) >> 6;
-
-            samples[j] = b2;
-        }
-        for (int j = 0; j < genotype_sample_size; j+=4) {
-            b2 = 0;
-
-            b2 |= decode_allele[samples[j+0]] << 6;
-            if (j+1 < genotype_sample_size)
-                b2 |= decode_allele[samples[j+1]] << 4;
-            if (j+2 < genotype_sample_size)
-                b2 |= decode_allele[samples[j+2]] << 2;
-            if (j+3 < genotype_sample_size)
-                b2 |= decode_allele[samples[j+3]];
-
-            mtx(k++, i) = b2;
-            if(dbg)Rprintf("GG+1 %d %d %x\n", k, i, b2);
-        }
-#endif
     }
     return mtx;
 }
@@ -706,10 +666,6 @@ Rcpp::RawMatrix getgenotypesgenabel_2(NumericVector locus_arg,
 //          genotype_sample_size, locus_size, (genotype_sample_size + 3) / 4);
     Rcpp::RawMatrix mtx((genotype_sample_size + 3) / 4, locus_size);
     Rcpp::DoubleVector freq(locus_size);
-
-//xx
-//    Rcpp::RawVector samples1(genotype_sample_size);
-//    Rcpp::RawVector samples2(genotype_sample_size);
 
     int locus, marker;
     int a, b, k = 0;
@@ -748,7 +704,6 @@ Rcpp::RawMatrix getgenotypesgenabel_2(NumericVector locus_arg,
         if (debug) Rprintf("decode %d/%d %d/%d/%d\n", decode_allele[0], decode_allele[1],
                            decode_allele[2], decode_allele[3], decode_allele[4]);
 
-#if 1
         int n2 = 0, i4 = 0;
         for (int j = 0; j < genotype_sample_size; j++) {
 
@@ -780,45 +735,6 @@ Rcpp::RawMatrix getgenotypesgenabel_2(NumericVector locus_arg,
             mtx(k++, i) = n2;
             if (debug) Rprintf("G %d %d %x\n", k, i, n2);
         }
-#else
-        for (int j = 0; j < genotype_sample_size; j++) {
-            if ((j >= genotype_sample_size) || Rf_isNull(genotype_sample[j]))
-                allele1 = allele2 = 0;  // indicate empty
-            else {
-                Rcpp::RawVector rv(genotype_sample[j]);
-                if (rv.size() != 0) {
-                    allele1 = rv[2 * marker];
-                    allele2 = rv[2 * marker + 1];
-                } else
-                    allele1 = allele2 = 0;  // indicate empty
-            }
-
-//          if (allelev1 == 0) allelev1 = allele1;
-//          if (allelev2 == 0 && allele2 != allelev1) allelev2 = allele2;
-
-            samples1[j] = allele1;
-            samples2[j] = allele2;
-            if (debug) Rprintf("%d: %d/%d ", j, allele1, allele2);
-            if (debug && ((j % 10) == 0)) Rprintf("\n");
-        }
-
-
-        int b2;
-        for (int j = 0; j < genotype_sample_size; j+=4) {
-            b2 = 0;
-
-                b2 |= decode_allele[samples1[j+0] + samples2[j+0]] << 6;
-            if (j+1 < genotype_sample_size)
-                b2 |= decode_allele[samples1[j+1] + samples2[j+1]] << 4;
-            if (j+2 < genotype_sample_size)
-                b2 |= decode_allele[samples1[j+2] + samples2[j+2]] << 2;
-            if (j+3 < genotype_sample_size)
-                b2 |= decode_allele[samples1[j+3] + samples2[j+3]];
-
-            mtx(k++, i) = b2;
-            if (debug) Rprintf("G %d %d %x\n", k, i, b2);
-        }
-#endif
     }
     return mtx;
 }
