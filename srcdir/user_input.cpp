@@ -123,15 +123,15 @@ const char *INPUT_FORMAT_STR[] = {
      "Linkage with Mega2 names file",
      "PLINK binary PED format (bed)",
      "PLINK PED format (ped)",
-/*5*/"BCF format (bcf)",
-     "VCF compressed format (vcf.gz)",
-     "VCF format (vcf)",
+/*5*/"BCF format up to v2.1 (bcf)",
+     "Legacy VCF compressed format (vcf.gz)",
+     "Legacy VCF format (vcf)",
      "IMPUTE2 GEN format (gen/impute2)",
      "IMPUTE2 BGEN 1.3 format (bgen)",
 /*a*/"IMPUTE2 BGEN format (bgen)",
-     "BCF via htslib",
-     "GZIP VCF via htslib",
-     "VCF via htslib",
+     "BCF v2.2 or higher (bcf)",
+     "VCF compressed format (vcf.gz)",
+     "VCF format (vcf)",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 

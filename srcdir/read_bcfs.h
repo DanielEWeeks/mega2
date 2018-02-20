@@ -75,25 +75,21 @@ public:
     virtual void do_init(Input_Base *inp);
     void show_settings();
 
-    //void read_BCFs(linkage_locus_top *LPedTreeTop);
     linkage_locus_top * do_names(const char *&names_fn);
     void  do_phe_names (char *phe_file, char **phe_names, int *phe_types, int phe_cols);
     linkage_locus_top * build_BCFs_names();
     void check_bcf_files();
-    //int build_samples();
     void build_markers_and_samples();
 
     virtual void do_map(std::vector<m2_map>& additional_maps);
     void build_bcf_map(m2_map& bcf_map);
 
-    virtual linkage_ped_top *do_ped(linkage_locus_top *LTop);
     void do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
-                      std::vector<Vecc> &VecAllels);
+                      std::vector<Vecc> &VecAlleles);
 
 public:
-    Str     BCF_path;
-    Str     BCF_template;
-    Str     BCF_Args;
+    Str     BCF_args;
+    Str     BCF_file;
     Input_Base   *input;
     MarkerVector markers;
     int marker_count;
@@ -101,11 +97,9 @@ public:
 
 protected:
     static const
-    int site_bcfs_dir_i         = 8000001;
+    int site_bcfs_args_i     = 8000003;
     static const
-    int site_bcfs_template_i     = 8000002;
-    static const
-    int site_bcfs_args     = 8000003;
+    int site_bcfs_file_i     = 8000004;
 
     vector<string> filelist;
     int filecount;
