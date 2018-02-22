@@ -159,14 +159,14 @@ Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
 
     if (is.null(markers)) markers = envir$markers
 
-    if (is.null(mget("load.gwaa.data.mega2", inherits=TRUE, ifnotfound = list(NULL))[[1]])) {
+    fn = get0("load.gwaa.data.mega2", inherits=TRUE, ifnotfound = NULL)
+    if (is.null(fn)) {
         V2.gwaa.data.mega2(markers, force = force,
              makemap = makemap, sort = sort, envir = envir)
 #       gwaa(markers = markers, force = force,
 #            makemap = makemap, sort = sort, envir = envir)
     } else {
-        load.gwaa.data.mega2(markers, force = force,
-               makemap = makemap, sort = sort, envir = envir)
+        fn(markers, force = force, makemap = makemap, sort = sort, envir = envir)
     }
 }
 

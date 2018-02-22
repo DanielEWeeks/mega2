@@ -675,19 +675,9 @@ function(markers, force = TRUE, makemap=FALSE, sort=TRUE, id="id", envir=ENV) {
 	cat("chromosome data loaded...\n")
         pos <- markers$position
 	cat("map data loaded...\n")
-        ver <- 0
-	if (ver==0) {
-		coding <- new("snp.coding",as.raw(rep(1,length(pos))))
-                strand <- raw(length(pos))
-                class(strand) = "snp.strand"
-	} else {
-		coding <- scan(file=ifile,what=raw(),nlines=1,quiet=TRUE)
-		class(coding) <- "snp.coding"
-		cat("allele coding data loaded...\n")
-		strand <- scan(file=ifile,what=raw(),nlines=1,quiet=TRUE)
-		class(strand) <- "snp.strand"
-		cat("strand data loaded...\n")
-	}
+
+        strand <- raw(length(pos))
+        class(strand) = "snp.strand"
 
         coding <- envir$Mega2R$mkGenABELcoding(markers = markers, envir=envir)
         class(coding) <- "snp.coding"
