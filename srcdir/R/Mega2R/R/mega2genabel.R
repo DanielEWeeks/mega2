@@ -159,12 +159,14 @@ Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
 
     if (is.null(markers)) markers = envir$markers
 
-    if (0)
-        gwaa(markers = markers, force = force,
-             makemap = makemap, sort = sort, envir = envir)
-    else {
+    if (is.null(mget("load.gwaa.data.mega2", inherits=TRUE, ifnotfound = list(NULL))[[1]])) {
         V2.gwaa.data.mega2(markers, force = force,
              makemap = makemap, sort = sort, envir = envir)
+#       gwaa(markers = markers, force = force,
+#            makemap = makemap, sort = sort, envir = envir)
+    } else {
+        load.gwaa.data.mega2(markers, force = force,
+               makemap = makemap, sort = sort, envir = envir)
     }
 }
 
@@ -451,59 +453,4 @@ mkGenABELgenotype = function(markers = NULL, envir) {
     raw_mtx = getgenotypesgenabel(markers, envir = envir)
 ## }))
     return (raw_mtx)
-}
-
-#' @importFrom GenABEL snp.data
-#' @importFrom methods is new
-gwaa = function (markers = NULL, force = TRUE,
-    makemap = FALSE, sort = TRUE, id = "id", envir)
-{
-    if (is.null(markers)) markers = envir$markers
-
-    dta = mkGenABELphenotype(envir = envir)
-    dta = gwaaCheckPhe(dta, id)
-    ids = paste(envir$fam$PedPre, envir$fam$PerPre, sep="_")
-    nids <- length(ids)
-    nbytes <- ceiling(nids/4)
-    if (envir$verbose) cat("ids loaded...\n")
-
-    mnams = markers$MarkerName
-    nsnps <- length(mnams)
-    if (envir$verbose) cat("marker names loaded...\n")
-
-    chrom = as.character(markers$chromosome)
-    chrom <- as.factor(chrom)
-    gc(verbose = FALSE)
-    if (envir$verbose) cat("chromosome data loaded...\n")
-
-    pos = markers$position
-    if (envir$verbose) cat("map data loaded...\n")
-
-    strand  = raw(nsnps)
-    class(strand) <- "snp.strand"
-    if (envir$verbose) cat("strand data loaded...\n")
-
-    raw_mtx = mkGenABELgenotype(markers = markers, envir=envir)
-    rdta = raw_mtx
-    dim(rdta) <- c(nbytes, nsnps)
-
-    coding = mkGenABELcoding(markers = markers, envir=envir)
-    class(coding) <- "snp.coding"
-    if (envir$verbose) cat("allele coding data loaded...\n")
-
-    rdta <- new("snp.mx", rdta)
-
-    gc(verbose = FALSE)
-    dta = gwaaCheckPersons(dta, ids)
-
-    gc(verbose = FALSE)
-    a <- snp.data(nids = nids, rawdata = rdta, idnames = ids,
-                  snpnames = mnams, chromosome = chrom, map = pos, coding = coding,
-                  strand = strand, male = dta$sex)
-    if (envir$verbose) cat("snp.data object created...\n")
-
-    rm(rdta, ids, mnams, chrom, pos, coding, strand)
-    gc(verbose = FALSE)
-
-    gwaaEpilog(a, dta, force, makemap, sort)
 }

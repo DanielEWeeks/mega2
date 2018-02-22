@@ -281,6 +281,61 @@ gwaaO = function (phenofile = "pheno.dat", genofile = "geno.raw", force = TRUE,
     gwaaEpilog(a, dta, force, makemap, sort)
 }
 
+#' @importFrom GenABEL snp.data
+#' @importFrom methods is new
+gwaa = function (markers = NULL, force = TRUE,
+    makemap = FALSE, sort = TRUE, id = "id", envir)
+{
+    if (is.null(markers)) markers = envir$markers
+
+    dta = mkGenABELphenotype(envir = envir)
+    dta = gwaaCheckPhe(dta, id)
+    ids = paste(envir$fam$PedPre, envir$fam$PerPre, sep="_")
+    nids <- length(ids)
+    nbytes <- ceiling(nids/4)
+    if (envir$verbose) cat("ids loaded...\n")
+
+    mnams = markers$MarkerName
+    nsnps <- length(mnams)
+    if (envir$verbose) cat("marker names loaded...\n")
+
+    chrom = as.character(markers$chromosome)
+    chrom <- as.factor(chrom)
+    gc(verbose = FALSE)
+    if (envir$verbose) cat("chromosome data loaded...\n")
+
+    pos = markers$position
+    if (envir$verbose) cat("map data loaded...\n")
+
+    strand  = raw(nsnps)
+    class(strand) <- "snp.strand"
+    if (envir$verbose) cat("strand data loaded...\n")
+
+    raw_mtx = mkGenABELgenotype(markers = markers, envir=envir)
+    rdta = raw_mtx
+    dim(rdta) <- c(nbytes, nsnps)
+
+    coding = mkGenABELcoding(markers = markers, envir=envir)
+    class(coding) <- "snp.coding"
+    if (envir$verbose) cat("allele coding data loaded...\n")
+
+    rdta <- new("snp.mx", rdta)
+
+    gc(verbose = FALSE)
+    dta = gwaaCheckPersons(dta, ids)
+
+    gc(verbose = FALSE)
+    a <- snp.data(nids = nids, rawdata = rdta, idnames = ids,
+                  snpnames = mnams, chromosome = chrom, map = pos, coding = coding,
+                  strand = strand, male = dta$sex)
+    if (envir$verbose) cat("snp.data object created...\n")
+
+    rm(rdta, ids, mnams, chrom, pos, coding, strand)
+    gc(verbose = FALSE)
+
+    gwaaEpilog(a, dta, force, makemap, sort)
+}
+
 ################################################################
 ################################################################
 # ~/rvb/Work/R/pkg/GenABEL/R/load.gwaa.data.R  5609 Feb 19 13:47 load.gwaa.data.V0
