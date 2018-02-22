@@ -489,6 +489,8 @@ resetMega2ENV = function () {
 
     envir = new.env(parent = emptyenv())
 
+    envir$Mega2R     = environment(resetMega2ENV)
+    
     envir$refRanges  = refRanges
     envir$refIndices = refIndices
 

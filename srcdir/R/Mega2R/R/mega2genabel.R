@@ -79,17 +79,20 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 
     file = paste0(prefix, ".phe")
     unlink(file)
-    out = mkGenABELphe(envir)
+    out = mkGenABELphenotype(envir)
     write.table(out, file=file, sep="\t", quote=FALSE,
                 row.names=FALSE, col.names=TRUE)
 
 
 #x  return (load.gwaa.data(phenofile=paste0(prefix,".phe"),
-    ans = (gwaaO(phenofile=paste0(prefix,".phe"),
-                 genofile=paste0(prefix, "tped.raw"),
-                 force = TRUE,
-                 envir = envir)
-          )
+    if (0)
+        ans = gwaaO(phenofile=paste0(prefix,".phe"),
+                   genofile=paste0(prefix, "tped.raw"),
+                   force = TRUE)
+    else
+        ans = load.gwaa.data(phenofile=paste0(prefix,".phe"),
+                   genofile=paste0(prefix, "tped.raw"),
+                   force = TRUE)
 ## }))
 
     ans
@@ -156,9 +159,13 @@ Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
 
     if (is.null(markers)) markers = envir$markers
 
-    gwaa(markers = markers, force = force,
-         makemap = makemap, sort = sort, envir = envir)
-
+    if (0)
+        gwaa(markers = markers, force = force,
+             makemap = makemap, sort = sort, envir = envir)
+    else {
+        V2.gwaa.data.mega2(markers, force = force,
+             makemap = makemap, sort = sort, envir = envir)
+    }
 }
 
 #' generate a PLINK TPED file for GenABEL
@@ -297,10 +304,10 @@ mkGenABELtfam = function (prefix, envir) {
 #'\dontrun{
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
-#' mkGenABELphe(ENV)
+#' mkGenABELphenotype(ENV)
 #'}
 #
-mkGenABELphe = function (envir) {
+mkGenABELphenotype = function (envir) {
 
     fam = envir$fam
     fam$id = paste(fam[ , "PedPre"], fam[ , "PerPre"], sep="_")
@@ -364,9 +371,9 @@ mkGenABELphe = function (envir) {
 #'
 #' @examples
 #'\dontrun{
-#' Mega2GenABELcoding(envir)
+#' mkGenABELcoding(envir)
 #'}
-Mega2GenABELcoding = function(markers = NULL, envir) {
+mkGenABELcoding = function(markers = NULL, envir) {
     if (is.null(markers)) markers = envir$markers
 
     allele_table = envir$allele_table[envir$allele_table$locus_link %in% markers$locus_link,]
@@ -434,9 +441,9 @@ Mega2GenABELcoding = function(markers = NULL, envir) {
 #'
 #' @examples
 #'\dontrun{
-#' Mega2GenABELconvert(envir)
+#' mkGenABELgenotype(envir)
 #'}
-Mega2GenABELconvert = function(markers = NULL, envir) {
+mkGenABELgenotype = function(markers = NULL, envir) {
 # browser("convert")
     if (is.null(markers)) markers = envir$markers
 
@@ -453,7 +460,7 @@ gwaa = function (markers = NULL, force = TRUE,
 {
     if (is.null(markers)) markers = envir$markers
 
-    dta = mkGenABELphe(envir = envir)
+    dta = mkGenABELphenotype(envir = envir)
     dta = gwaaCheckPhe(dta, id)
     ids = paste(envir$fam$PedPre, envir$fam$PerPre, sep="_")
     nids <- length(ids)
@@ -476,11 +483,11 @@ gwaa = function (markers = NULL, force = TRUE,
     class(strand) <- "snp.strand"
     if (envir$verbose) cat("strand data loaded...\n")
 
-    raw_mtx = Mega2GenABELconvert(markers = markers, envir=envir)
+    raw_mtx = mkGenABELgenotype(markers = markers, envir=envir)
     rdta = raw_mtx
     dim(rdta) <- c(nbytes, nsnps)
 
-    coding = Mega2GenABELcoding(markers = markers, envir=envir)
+    coding = mkGenABELcoding(markers = markers, envir=envir)
     class(coding) <- "snp.coding"
     if (envir$verbose) cat("allele coding data loaded...\n")
 
