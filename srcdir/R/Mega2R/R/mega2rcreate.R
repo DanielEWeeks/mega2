@@ -489,6 +489,8 @@ resetMega2ENV = function () {
 
     envir = new.env(parent = emptyenv())
 
+    envir$Mega2R     = environment(resetMega2ENV)
+    
     envir$refRanges  = refRanges
     envir$refIndices = refIndices
 
@@ -821,8 +823,7 @@ getgenotypesraw = function(markers_arg, envir = ENV) {
 #'
 #' @param envir an environment that contains all the data frames created from the SQLite database.
 #'
-#' @return a list of two elements:  The first is the GenABEL gwaa.data-class object component
-#'  that contains the genotype data.  The second is the allele frequencies for each marker.
+#' @return the GenABEL gwaa.data-class object component that contains the genotype data.
 #'
 #' @export
 #' @useDynLib Mega2R
@@ -846,8 +847,7 @@ getgenotypesraw = function(markers_arg, envir = ENV) {
 #'
 #' aa = getgenotypesgenabel(ENV$markers[ENV$markers$chromosome == 1,])
 #'
-#' aa[1]
-#' aa[2]
+#' aa
 #'
 getgenotypesgenabel = function(markers_arg, envir = ENV) {
     if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)

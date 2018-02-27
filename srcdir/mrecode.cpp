@@ -1854,6 +1854,8 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
     int sex, entrycount;
 //  record_type rec;
     linkage_locus_type LocType = Top->LocusTop->Locus[locus].Type;
+    int chrom = Top->LocusTop->Marker[locus].chromosome;
+    extern int pseudoautosome;
     allele_list_type *al1p, *al2p;
 
     Display_Errors = 1;
@@ -1920,7 +1922,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                             marker_listi->ht_founders++;
                     }
                     sex = te->Sex;
-                    if (LocType == NUMBERED) {
+                    if (LocType == NUMBERED || chrom == pseudoautosome) {
                         marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
                         if (al1p) al1p->allele_freq.everyone_count++;
                         if (al2p) al2p->allele_freq.everyone_count++;
@@ -2019,7 +2021,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
                             marker_listi->ht_founders++;
                     }
                     sex = tp->gender;
-                    if (LocType == NUMBERED) {
+                    if (LocType == NUMBERED || chrom == pseudoautosome) {
                         marker_listi->num_everyone++;  // one or the other must be != REC_UNKNOWN
                         if (al1p) al1p->allele_freq.everyone_count++;
                         if (al2p) al2p->allele_freq.everyone_count++;
