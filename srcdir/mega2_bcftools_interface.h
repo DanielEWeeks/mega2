@@ -56,6 +56,7 @@ public:
     int mega2_main_vcfview(int argc, char *argv[]);
 
     args_t * get_args(int argc, char *argv[]);
+    int test_args(int argc, char *argv[]);
 
 };
 

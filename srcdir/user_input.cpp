@@ -124,8 +124,8 @@ const char *INPUT_FORMAT_STR[] = {
      "PLINK binary PED format (bed)",
      "PLINK PED format (ped)",
 /*5*/"BCF format up to v2.1 (bcf)",
-     "Legacy VCF compressed format (vcf.gz)",
-     "Legacy VCF format (vcf)",
+     "Legacy Implementation VCF compressed format (vcf.gz)",
+     "Legacy Implementation VCF format (vcf)",
      "IMPUTE2 GEN format (gen/impute2)",
      "IMPUTE2 BGEN 1.3 format (bgen)",
 /*a*/"IMPUTE2 BGEN format (bgen)",
@@ -1040,8 +1040,6 @@ void menu1(file_format *infl_type,
         } else if(Input_Format == in_format_bcfs){
             strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
             xcf = 1;
-            //set bcf_paths
-            //set bcf_file_template
         }
 
 
@@ -1203,7 +1201,6 @@ void menu1(file_format *infl_type,
                 plinkf = 0;
                 PLINK_clr(not_plink_format);
                 PLINK_str(PLINKArgs, FILENAME_LENGTH);
-                strcpy(VCFArgs, "--remove-indels");
 
                 strcpy(extension_name, "study");
 
@@ -1240,16 +1237,18 @@ void menu1(file_format *infl_type,
                 printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             } else if (xcf) {
-                char tmp[2000];
-                printf("%2d) %-*s%s\n", idx, line_len, "Enter VCF parameters:", VCFArgs);
-                choiceA[idx++] = vcf_args_i;
+                if(Input_Format != in_format_bcfs) {
+                    char tmp[2000];
+                    printf("%2d) %-*s%s\n", idx, line_len, "Enter VCF parameters:", VCFArgs);
+                    choiceA[idx++] = vcf_args_i;
+
+                    if (strcmp(VCFMarkerAlternativeKey, "") == 0) sprintf(tmp, "%s", "ID field");
+                    else sprintf(tmp, "%s sub-field of the INFO field", VCFMarkerAlternativeKey);
+                    printf("%2d) %-*s%s\n", idx, line_len, "Read marker names from the:", tmp);
+                    choiceA[idx++] = vcf_mak_i;
+                }
                 
-                if (strcmp(VCFMarkerAlternativeKey,"") == 0) sprintf(tmp, "%s", "ID field");
-                else sprintf(tmp, "%s sub-field of the INFO field", VCFMarkerAlternativeKey);
-                printf("%2d) %-*s%s\n", idx, line_len, "Read marker names from the:", tmp);
-                choiceA[idx++] = vcf_mak_i;
-                
-                printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
+                printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK phenotype parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             }
         }
@@ -1406,6 +1405,14 @@ void menu1(file_format *infl_type,
                 if (access(*auxfl_name, F_OK) != 0 && Input_Format != in_format_bcfs) {
                     printf("ERROR: You did not specify a Variant file.\n");
                     exit_loop=0;
+                }
+                if(Input_Format == in_format_bcfs) {
+                    char *bcfsfile_name[FILENAME_LENGTH];
+                    BatchValueGet(*bcfsfile_name, "BCFs_File");
+                    if (access(*bcfsfile_name, F_OK) != 0) {
+                        printf("ERROR: You did not specify a BCF file.\n");
+                        exit_loop = 0;
+                    }
                 }
                 //
                 // So that we can use the already available VCFtools command line

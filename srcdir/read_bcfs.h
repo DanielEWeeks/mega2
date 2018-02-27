@@ -97,9 +97,9 @@ public:
 
 protected:
     static const
-    int site_bcfs_args_i     = 8000003;
+    int site_bcfs_args_i     = 8000001;
     static const
-    int site_bcfs_file_i     = 8000004;
+    int site_bcfs_file_i     = 8000002;
 
     vector<string> filelist;
     int filecount;

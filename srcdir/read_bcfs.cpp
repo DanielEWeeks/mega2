@@ -84,12 +84,12 @@ using namespace std;
  * this gets called in user_input.cpp for whatever input opt is defined
  */
 void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[]) {
-    printf("%2d) %-*s%s\n", idx, line_len, "BCF File:", BatchItemGet("BCFs_File")->value.name);
-    choiceA[idx] = site_bcfs_file_i;
-    idx++;
-
     printf("%2d) %-*s%s\n", idx, line_len, "BCFtools Parameters", BatchItemGet("BCF_Args")->value.name);
     choiceA[idx] = site_bcfs_args_i;
+    idx++;
+
+    printf("%2d) %-*s%s%s\n", idx, line_len-11, "BCF File:","[required] ", BatchItemGet("BCFs_File")->value.name);
+    choiceA[idx] = site_bcfs_file_i;
     idx++;
 }
 /*
@@ -101,6 +101,9 @@ int ReadBCFs::do_menu_parse(int choice_) {
     char bcfs_file_array[FILENAME_LENGTH];
     char *bcfs_file = &bcfs_file_array[0];
     char bcf_args[FILENAME_LENGTH] = "";
+    vector<string> files = this->filelist;
+    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+
     if(choice_ == site_bcfs_file_i) {
         while (1){
             draw_line();
@@ -120,46 +123,78 @@ int ReadBCFs::do_menu_parse(int choice_) {
     }
 
     else if(choice_ == site_bcfs_args_i) {
-        while (1) {
-            draw_line();
-            printf("\nCurrent BCF parameters:  %s\n", this->BCF_args.c_str());
-            printf("  For more additional information on BCFTools flags\n");
-            printf("see the documentation at samtools.github.io/bcftools/bcftools\n");
-            printf("Valid options in Mega2 include:\n");
-            printf("--known  --novel --phased --exclude-phased --uncalled --exclude-uncalled --threads\n");
-            printf("--min-ac --max-ac --min-alleles [INT]\n");
-            printf("--min-af --max-af [FLOAT]");
-            printf("--exclude --include [EXPRESSION]\n");
-            printf("--apply-filters [LIST]\n");
+        draw_line();
+        printf("\nCurrent BCF parameters:  %s\n", BatchItemGet("BCF_Args")->value.name);
+        printf("  For more additional information on BCFTools flags\n");
+        printf("see the documentation at samtools.github.io/bcftools/bcftools\n");
+        printf("Valid options in Mega2 include:\n");
+        printf("--known  --novel --phased --exclude-phased --uncalled --exclude-uncalled\n");
+        printf("--min-ac --max-ac --min-alleles --threads[INT]\n");
+        printf("--min-af --max-af [FLOAT]");
+        printf("--exclude --include [EXPRESSION]\n");
+        printf("--regions [chr:to-from] --regions-file [FILE]\n");
+        printf("--apply-filters [LIST]\n");
 
+        while (1) {
             printf("Please enter BCFTools arguments > \n");
 
-            //this code was in user input for vcf arguements
+            //this code was in user input for vcf arguments
             //it seems fcmap terminates on whitespace but we want a whole line
-
             fflush(stdout);
             IgnoreValue(fgets(bcf_args, sizeof(bcf_args)-1, stdin)); newline;
             int l = (int)strlen(bcf_args);
             if (bcf_args[l-1] == '\n') bcf_args[l-1] = 0;
             if (bcf_args[l-1] == '\r') bcf_args[l-1] = 0;
-            /*if (BCF_args(bcf_args)) {*/
+
+            // We want to test out the arguments we get
+            //to do this we construct an argc and argv
+            int argc = 2;
+            vector<string> args;
+            args.push_back("bcftools");
+
+            Vecs argssplit;
+            string extraargs = strdup(bcf_args);
+            if(extraargs.find("clear") == 0) {
+                mssgvf("Clearing BCFTools options.\n");
+                this->BCF_args = "";
+                BatchValueSet(this->BCF_args, "BCF_Args");
+                break;
+            }
+            if(extraargs.find("-") != 0) {
+                mssgvf("BCFTools options must begin with \"--\"\n");
+                continue;
+            }
+
+            if(!extraargs.empty()) {
+                split(argssplit, extraargs, " ");
+                for (int a = 0; a < argssplit.size(); a++) {
+                    args.push_back(argssplit[a]);
+                    argc++;
+                }
+            }
+            //we need some sort of file to end our testargs
+            args.push_back("dummy.bcf");
+
+            char **argv;
+            argv = (char **) malloc(argc * sizeof(char *));
+            for (size_t ii = 0; ii < argc; ii += 1) {
+                argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
+                argv[ii] = &args[ii][0];
+            }
+
+            int test = mbi->test_args(argc, argv);
+
+            if(test == 1) {
                 this->BCF_args = strdup(bcf_args);
                 BatchValueSet(this->BCF_args, "BCF_Args");
                 break;
-            //}
-
-
-            //fcmap terminates on whitespace and we want to allow that
-            //fcmap(stdin, "%s",bcf_args);
-            //newline;
-            //printf("%s\n",bcf_args);
-
-
-            break;
+            }
+            else {
+                continue;
+            }
         }
-        ret = 1;
     }
-
+    free(mbi);
     return ret;
 }
 
@@ -195,8 +230,8 @@ void ReadBCFs::do_batch2local(){
  */
 void ReadBCFs::show_settings() {
     msgvf("\n");
-    msgvf("Input File:                                 %s\n", ((this->inpfile) ? C(this->inpfile) : ""));
-    msgvf("BCF Arguements:                             %s\n", C(this->BCF_args));
+    msgvf("Input File:                                 %s\n", ((this->inpfile) ? C(this->inpfile) : C(this->BCF_file)));
+    msgvf("BCF Arguments:                              %s\n", C(this->BCF_args));
 }
 
 
@@ -221,8 +256,6 @@ void ReadBCFs::do_init(Input_Base *inp)
 
     check_bcf_files();
     build_markers_and_samples();
-
-    //checkindelsndups();
 
 }
 
@@ -287,7 +320,6 @@ void ReadBCFs::check_bcf_files() {
 }
 
 void ReadBCFs::build_markers_and_samples() {
-
     vector<string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
@@ -313,7 +345,7 @@ void ReadBCFs::build_markers_and_samples() {
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
-            argv[ii] = (char *) malloc(255 * sizeof(char));
+            argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
             argv[ii] = &args[ii][0];
         }
 
@@ -512,8 +544,6 @@ static void phenotype_file_SAMPLEID_entry_checks()
 
 void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                             std::vector<Vecc> &VecAlleles) {
-    //std::clock_t start;
-    //start = std::clock();
     vector <string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
@@ -539,7 +569,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
-            argv[ii] = (char *) malloc(255 * sizeof(char));
+            argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
             argv[ii] = &args[ii][0];
         }
 
@@ -551,7 +581,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         while (bcf_sr_next_line(bcfargs->files)) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
 
-            if ( subset_vcf(bcfargs, line) ) {
+            if ( subset_vcf(bcfargs, line) && mrkindex < LTop->LocusCnt) {
                 int m, n, i;
 
                 //uses convert object so we need our own void * instead
