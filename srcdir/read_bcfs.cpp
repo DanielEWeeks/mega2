@@ -77,6 +77,9 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #define access(str,type) _access(str,type)
 #endif
 
+#define cbegin() begin()
+#define cend()   end()
+
 using namespace std;
 
 /*
@@ -148,7 +151,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
 
             // We want to test out the arguments we get
             //to do this we construct an argc and argv
-            int argc = 2;
+            unsigned int argc = 2;
             vector<string> args;
             args.push_back("bcftools");
 
@@ -167,7 +170,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
 
             if(!extraargs.empty()) {
                 split(argssplit, extraargs, " ");
-                for (int a = 0; a < argssplit.size(); a++) {
+                for (unsigned int a = 0; a < argssplit.size(); a++) {
                     args.push_back(argssplit[a]);
                     argc++;
                 }
@@ -280,7 +283,7 @@ void ReadBCFs::check_bcf_files() {
     else if ( this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "bcf"
               || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "vcf"
               || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "vcf.gz"){
-        ifs.open(this->BCF_file);
+      ifs.open(C(this->BCF_file));
         if (! ifs.is_open() )
                 warnvf("read_BCFs: Can not open \"%s\" file\n", this->BCF_file.c_str());
             else {
@@ -292,7 +295,7 @@ void ReadBCFs::check_bcf_files() {
     }
         //manifest file split by lines with escape characters
     else {
-        ifs.open(this->BCF_file);
+      ifs.open(C(this->BCF_file));
         Str line;
         while (getline(ifs, line)){
             if('#' == this->BCF_file.c_str()[0]) {
@@ -301,7 +304,7 @@ void ReadBCFs::check_bcf_files() {
             }
             else {
                 ifstream innerifs;
-                innerifs.open(line);
+                innerifs.open(C(line));
                 if (! innerifs.is_open() )
                     warnvf("read_BCFs: Can not open \"%s\" file\n", line.c_str());
                 else {
@@ -323,7 +326,7 @@ void ReadBCFs::build_markers_and_samples() {
     vector<string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
-    int argc = 2;
+    unsigned int argc = 2;
 
     vector<string> args;
     args.push_back("bcftools");
@@ -332,7 +335,7 @@ void ReadBCFs::build_markers_and_samples() {
     string extraargs = this->BCF_args;
     if(!extraargs.empty()) {
         split(argssplit, extraargs, " ");
-        for (int a = 0; a < argssplit.size(); a++) {
+        for (unsigned int a = 0; a < argssplit.size(); a++) {
             args.push_back(argssplit[a]);
             argc++;
         }
@@ -547,7 +550,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     vector <string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
-    int argc = 2;
+    unsigned int argc = 2;
 
     vector <string> args;
     args.push_back("bcftools");
@@ -556,7 +559,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     string extraargs = this->BCF_args;
     if(!extraargs.empty()) {
         split(argssplit, extraargs, " ");
-        for (int a = 0; a < argssplit.size(); a++) {
+        for (unsigned int a = 0; a < argssplit.size(); a++) {
             args.push_back(argssplit[a]);
             argc++;
         }
@@ -596,9 +599,11 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                     error("Error parsing GT tag at %s:%d\n", bcf_seqname(hdr, line), line->pos + 1);
                 }
 
-                Vecc canons(line->d.m_allele);
+
+
+                Vecc canons;
                 for (int al = 0; al < line->d.m_allele; al++) {
-                    canons[al] = canonical_allele(line->d.allele[al]);
+                    canons.push_back(canonical_allele(line->d.allele[al]));
                 }
                 VecAlleles.push_back(canons);
 

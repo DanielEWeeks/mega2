@@ -583,11 +583,14 @@ void assign_dummy_alleles(marker_type *marker_list,
                           char *bimalleles,
                           std::vector<Vecc> &VCFalleles)
 {
-    int m, mal;
+    int m, mal, moffset;
     allele_list_type *all;
     char allele1str[2], allele2str[2];
     allele1str[1] = allele2str[1] = 0;
     int vcf = VCFalleles.size();
+    //we want an offset value of LTop->PhenoCnt
+    //in the case that we have a vcf/impute additional map they do not contain phenotypes
+    moffset = LTop->PhenoCnt;
 
     SECTION_LOG_INIT(assign_dummy_allele);
     for(m = LTop->PhenoCnt, mal = 0; m < LTop->LocusCnt; m++, mal += 2) {
@@ -601,13 +604,13 @@ void assign_dummy_alleles(marker_type *marker_list,
                     marker_list[m].first_allele->allele_freq.freq=1.0;
                     all=CALLOC((size_t) 1, allele_list_type);
                     all->allele_freq.freq  = 0.0;
-                    if (bimalleles || (vcf && VCFalleles[m].size() == 2) ) {
+                    if (bimalleles || (vcf && VCFalleles[m-moffset].size() == 2) ) {
                         if (bimalleles) {
                             allele1str[0] = bimalleles[mal];
                             allele2str[0] = bimalleles[mal + 1];
                         } else {
-                            allele1str[0] = VCFalleles[m][0][0];
-                            allele2str[0] = VCFalleles[m][1][0];
+                            allele1str[0] = VCFalleles[m-moffset][0][0];
+                            allele2str[0] = VCFalleles[m-moffset][1][0];
                         }
                         if (marker_list[m].first_allele->allele_freq.AlleleName[0] ==
                             allele1str[0] ) {
@@ -631,13 +634,13 @@ void assign_dummy_alleles(marker_type *marker_list,
                     marker_list[m].first_allele->allele_freq.freq=1.0;
                     all=CALLOC((size_t) 1, allele_list_type);
                     all->allele_freq.freq  = 0.0;
-                    if (bimalleles || (vcf && VCFalleles[m].size() == 2) ) {
+                    if (bimalleles || (vcf && VCFalleles[m-moffset].size() == 2) ) {
                         if (bimalleles) {
                             allele1str[0] = bimalleles[mal];
                             allele2str[0] = bimalleles[mal + 1];
                         } else {
-                            allele1str[0] = VCFalleles[m][0][0];
-                            allele2str[0] = VCFalleles[m][1][0];
+                            allele1str[0] = VCFalleles[m-moffset][0][0];
+                            allele2str[0] = VCFalleles[m-moffset][1][0];
                         }
                         if (marker_list[m].first_allele->allele_freq.AlleleName[0] ==
                             allele1str[0] ) {
@@ -663,13 +666,13 @@ void assign_dummy_alleles(marker_type *marker_list,
             } else if (marker_list[m].num_alleles == 0) {
                 all = CALLOC((size_t) 1, allele_list_type);
                 all->allele_freq.freq  = 0.5;
-                if (bimalleles || (vcf && VCFalleles[m].size() == 2) ) {
+                if (bimalleles || (vcf && VCFalleles[m-moffset].size() == 2) ) {
                     if (bimalleles) {
                         allele1str[0] = bimalleles[mal];
                         allele2str[0] = bimalleles[mal + 1];
                     } else {
-                        allele1str[0] = VCFalleles[m][0][0];
-                        allele2str[0] = VCFalleles[m][1][0];
+                        allele1str[0] = VCFalleles[m-moffset][0][0];
+                        allele2str[0] = VCFalleles[m-moffset][1][0];
                     }
                     all->allele_freq.AlleleName = canonical_allele(allele1str);
                 } else {

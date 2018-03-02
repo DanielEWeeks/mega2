@@ -60,6 +60,15 @@
 extern "C" {
 #endif
 
+#define regidx_seq_nregs regidX_seq_nregs
+#define regidx_nregs regidX_nregs
+#define regidx_insert regidX_insert
+#define regidx_init regidX_init
+#define regidx_parse_tab regidX_parse_tab
+#define regidx_parse_bed regidX_parse_bed
+#define regidx_destroy regidX_destroy
+#define regidx_overlap regidX_overlap
+
 typedef struct _regidx_t regidx_t;
 typedef struct
 {
