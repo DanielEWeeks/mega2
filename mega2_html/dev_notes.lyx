@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass article
 \begin_preamble
 \newcommand{\dwcomment}[1]{{\color{red}[DW: #1]}}
@@ -16,16 +18,16 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
-\font_sans default
-\font_typewriter default
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -97,7 +99,7 @@ Mega2 Development Notes
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="1">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" usebox="none">
@@ -447,6 +449,10 @@ Towards the head of analysis_ext.h, you should add: include "write_fbat_ext.h"
 \begin_layout Enumerate
 Towards the end of analysis_ext.h, you should export the new class (I named
  it CLASS_FBAT):
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -459,6 +465,10 @@ extern CLASS_FBAT *FBAT;
 \begin_layout Enumerate
 Towards the head of analysis.cpp, before analysis_list[] is defined, you
  should instantiate FBAT 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -471,6 +481,10 @@ CLASS_FBAT *FBAT = new CLASS_FBAT();
 \begin_layout Enumerate
 Towards the head of analysis.cpp, in the analysis_list[] definition, you
  should add FBAT 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -628,7 +642,7 @@ pr_
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="16" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -3079,7 +3093,7 @@ in the Mega2 directory.
 \begin_layout Quotation
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -3510,6 +3524,47 @@ This command forces a breakpoint.
 \begin_layout Standard
 A current goal is to use gdb (or lldb) to debug on Eclipse, so far this
  has not been accomplished.
+\end_layout
+
+\begin_layout Section
+Update BCFTools
+\end_layout
+
+\begin_layout Standard
+So if a new version of BCFTools comes out this is a general guidline so
+ we can update it.
+ The idea is to grab the new sourecode from them, when it was incorporated
+ it was at version 1.6.
+\end_layout
+
+\begin_layout Standard
+BCFtools is under /srcdir/lib.
+ What should generally get done is we take out the the make files of the
+ version currently in the Mega2 tree.
+ These have some changes to build static libraries of htslib and bcftools.
+\end_layout
+
+\begin_layout Standard
+Also in the current version of vcfview.h we've commented out the reference
+ to args_t and instead are using it internally in read_bcfs, they defined
+ it in each file basically and it wouldn't get reference properly while
+ static.
+\end_layout
+
+\begin_layout Standard
+There were also some function name changes that had to occur for compilation
+ (htslib and bcftools have some similarly named functions) some definitions
+ were made and might need to be preserved to make sure that we still resolve
+ that issue.
+\end_layout
+
+\begin_layout Standard
+#define regidx_seq_nregs regidX_seq_nregs 
+\end_layout
+
+\begin_layout Standard
+For instance definitions like that are in bcftools1.6/hstlib1.6/htslib/regidx.h,
+ since bcftools has it's own regidx
 \end_layout
 
 \end_body

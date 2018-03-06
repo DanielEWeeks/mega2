@@ -132,7 +132,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
         printf("see the documentation at samtools.github.io/bcftools/bcftools\n");
         printf("Valid options in Mega2 include:\n");
         printf("--known  --novel --phased --exclude-phased --uncalled --exclude-uncalled\n");
-        printf("--min-ac --max-ac --min-alleles --threads[INT]\n");
+        printf("--min-ac --max-ac --min-alleles --max-alleles[INT]\n");
         printf("--min-af --max-af [FLOAT]");
         printf("--exclude --include [EXPRESSION]\n");
         printf("--regions [chr:to-from] --regions-file [FILE]\n");
