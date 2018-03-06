@@ -143,7 +143,7 @@ write_IQLS.o write_beagle.o write_fbat.o write_loki.o write_mfiles.o: DFLAGS += 
 write_pangaea.o write_plink_files.o write_premakeped.o: DFLAGS += -DRUNSHELL_SETUP
 write_structure.o: DFLAGS += -DRUNSHELL_SETUP
 
-mega2_bcftools_interface.o read_bcfs.o: IFLAGS += -Ilib/bcftools-1.6
+mega2_bcftools_interface.o read_bcfs.o: IFLAGS += -Ilib/bcftools-1.6 -Ilib/bcftools-1.6/htslib-1.6 
 
 # Used for getting a direct match with the genetic map files with running Beagle Analysis...
 #DFLAGS += -DDONT_CONVERT_TO_HALDANE_FOR_BEAGLE
