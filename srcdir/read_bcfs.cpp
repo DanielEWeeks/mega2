@@ -91,7 +91,7 @@ void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[]) {
     choiceA[idx] = site_bcfs_args_i;
     idx++;
 
-    printf("%2d) %-*s%s%s\n", idx, line_len-11, "BCF File:","[required] ", BatchItemGet("BCFs_File")->value.name);
+    printf("%2d) %-*s%s%s\n", idx, line_len-11, "Variant File:","[required] ", BatchItemGet("BCFs_File")->value.name);
     choiceA[idx] = site_bcfs_file_i;
     idx++;
 }

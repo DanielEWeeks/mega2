@@ -85,9 +85,7 @@ public:
 
     void convert_vcf_bcf(char *filename);
 
-    void convert_vcf_vcfgz(const char *filename);
-
-    unsigned long file_size(char *filename);
+    void convert_vcf_vcfgz(char *filename);
 
     void write_VCF_sh(linkage_ped_top *Top, const char *prefix, char *file_names[]);
 

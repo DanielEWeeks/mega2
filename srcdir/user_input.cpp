@@ -1410,7 +1410,7 @@ void menu1(file_format *infl_type,
                     char *bcfsfile_name[FILENAME_LENGTH];
                     BatchValueGet(*bcfsfile_name, "BCFs_File");
                     if (access(*bcfsfile_name, F_OK) != 0) {
-                        printf("ERROR: You did not specify a BCF file.\n");
+                        printf("ERROR: You did not specify a Variant file.\n");
                         exit_loop = 0;
                     }
                 }

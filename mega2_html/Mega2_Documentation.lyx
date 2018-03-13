@@ -85,11 +85,12 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes false
+\tracking_changes true
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1123876542 "Justin"
 \end_header
 
 \begin_body
@@ -2269,8 +2270,12 @@ https://watson.hgen.pitt.edu/mega2.html
 \end_layout
 
 \begin_layout Standard
-Use of Mega2 to convert VCF or BCF input files makes use of a built-in copy
- of VCFtools; you should cite the following paper:
+Use of Mega2 to convert 
+\change_inserted -1123876542 1520959816
+Legacy 
+\change_unchanged
+VCF or BCF input files makes use of a built-in copy of VCFtools; you should
+ cite the following paper:
 \end_layout
 
 \begin_layout Quote
@@ -2286,6 +2291,31 @@ target "http://dx.doi.org/10.1093/bioinformatics/btr330"
  DePristo, Robert Handsaker, Gerton Lunter, Gabor Marth, Stephen T.
  Sherry, Gilean McVean, Richard Durbin and 1000 Genomes Project Analysis
  Group, Bioinformatics (2011) 27 (15): 2156-2158.
+\change_inserted -1123876542 1520961915
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1520962065
+Use of Mega2 to convert Legacy VCF or BCF input files makes use of a built-in
+ copy of BCFtools; you should cite the following paper:
+\end_layout
+
+\begin_layout Quote
+
+\change_inserted -1123876542 1520962046
+\begin_inset CommandInset href
+LatexCommand href
+name "BCFtools/csq: haplotype-aware variant consequences."
+target "https://www.ncbi.nlm.nih.gov/pubmed/28205675"
+
+\end_inset
+
+Petr Danecek, Shane A.
+ McCarthy Bioinformatics.
+ 2017 Feb 16 Published online 2017 Feb 16.
+ doi: 10.1093/bioinformatics/btx100
 \end_layout
 
 \begin_layout Standard
@@ -3984,18 +4014,45 @@ reference "subsec:GNU-General-Public"
 \end_layout
 
 \begin_layout Standard
-Mega2 uses three libraries developed by other external groups, the sources
- of which are included with the Mega2 sources.
+Mega2 uses 
+\change_deleted -1123876542 1520960235
+three
+\change_inserted -1123876542 1520962136
+four
+\change_unchanged
+ libraries developed by other external groups, the sources of which are
+ included with the Mega2 sources.
  Minimal modifications have been made to these two libraries to facilitate
  their integration with Mega2.
  The VCFtools library handles reading of the various Variant Call Format
  (VCF) input files.
+
+\change_inserted -1123876542 1520960317
+ In addition BCFTools was included for faster VCF processing as well as
+ handling current version of BCF files.
+ As part of the BCFTools library a copy of the HTSLIb is included as well,
+ this is simply the library BCFTools runs on.
+
+\change_unchanged
  The BGEN library handles the reading of the binary IMPUTE2 BGEN format
  input file.
  ZLIB is needed by the VCFtools and BGEN libraries and is also used to format
  Beagle output.
- The VCFtools library is released under the GNU Lesser General Public License
- Version 3 (
+ 
+\change_deleted -1123876542 1520960322
+The 
+\change_unchanged
+VCFtools
+\change_inserted -1123876542 1520960334
+, BCFTools
+\change_unchanged
+ library 
+\change_inserted -1123876542 1520962111
+are
+\change_deleted -1123876542 1520962110
+is
+\change_unchanged
+ released under the GNU Lesser General Public License Version 3 (
 \begin_inset CommandInset href
 LatexCommand href
 name "LGPLv3"
@@ -5374,6 +5431,10 @@ PLINK PED format
 
 \end_deeper
 \begin_layout Enumerate
+
+\change_inserted -1123876542 1520960353
+Legacy 
+\change_unchanged
 Variant Call Format (See 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -5429,8 +5490,36 @@ binary IMPUTE2 BGEN format
 \end_deeper
 \begin_layout Enumerate
 Mega2 database Input
+\change_inserted -1123876542 1520960368
+
 \end_layout
 
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1520962156
+Varuant Format (using BCFTools)
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1520960374
+BCF format
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1520960492
+VCF compressed Format
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1520960498
+VCF format
+\end_layout
+
+\end_deeper
 \begin_layout Standard
 In the past, Mega2 read in its data in an existing supported data format
  as described in the next sections, did its validation and then proceeded
@@ -16174,6 +16263,12 @@ Input Format: BCF v2.2 or higher
 \begin_layout Standard
 This is an updated input method implementing BCFTools and htslib in order
  to quickly process BCF files.
+
+\change_inserted -1123876542 1520960712
+ Additionally this processes BCF files of version 2.2 or higher which VCFTools
+ did not support.
+
+\change_unchanged
  BCF files are the binary compressed version of a VCF file (See 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -16185,13 +16280,24 @@ reference "subsec:VCF-file-formats"
 \end_layout
 
 \begin_layout Subsubsection*
-Menu item: BCF File
+Menu item: 
+\change_deleted -1123876542 1520961593
+BCF
+\change_inserted -1123876542 1520961597
+Variant
+\change_unchanged
+ File
 \end_layout
 
 \begin_layout Standard
-This can take two styles inputs for the BCF file, it can either be a bcf
- file encoded in bcf version 2.2 or later, or a text file containing a list
- of bcf files of the same criteria.
+This can take two styles inputs for the 
+\change_deleted -1123876542 1520961492
+BCF
+\change_inserted -1123876542 1520961493
+Variant
+\change_unchanged
+ file, it can either be a bcf file encoded in bcf version 2.2 or later, or
+ a text file containing a list of bcf files of the same criteria.
  
 \end_layout
 
@@ -16591,10 +16697,54 @@ reference "par:VCF-Menu-item-PLINK-parameters"
 
 \begin_layout Subsection
 Input Format: VCF in Compressed Format
+\change_inserted -1123876542 1520960674
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1520961534
+This is an updated input method implementing BCFTools and htslib in order
+ to quickly process VCF.gz files.
+ This input mode is for processing an individual VCF.gz file using the BCFTools
+ library internal to Mega2.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1520961634
+Here variant file allows you to enter a VCF.gz file and vcftools parameters
+ works as discussed in the BCF format above.
 \end_layout
 
 \begin_layout Subsection
-Input Format: VCF Format
+Input Format: VCF Forma
+\change_inserted -1123876542 1520961564
+t
+\change_deleted -1123876542 1520961562
+t
+\change_inserted -1123876542 1520961561
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1520961581
+This is an updated input method implementing BCFTools and htslib in order
+ to quickly process VCF files.
+ This input mode is for processing an individual VCF file using the BCFTools
+ library internal to Mega2.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1520961585
+Here variant file allows you to enter a VCF file and vcftools parameters
+ works as discussed in the BCF format above.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -24253,6 +24403,28 @@ binary IMPUTE2 BGEN format (bgen)
 
 \begin_layout Enumerate
 Traditional (4.6.1) input file format
+\change_inserted -1123876542 1520961670
+
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1520961688
+BCF v2.2 or higher (bcf) 
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1520961693
+VCF compressed format (vcf.gz) 
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1520961683
+VCF format (vcf)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Paragraph

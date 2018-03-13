@@ -960,6 +960,15 @@ write_vcf.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
 write_vcf.o: user_input_ext.h input_ops.hh str_utils.hh annotated_ped_file.h
 write_vcf.o: write_files_ext.h read_files_ext.h write_vcf_ext.h analysis.h
 write_vcf.o: zlib-1.2.8/zlib.h dbrefallele.h dblite.hh
+write_vcf.o: lib/bcftools-1.6/filter.h lib/bcftools-1.6/vcfview.h
+write_vcf.o: lib/bcftools-1.6/htslib-1.6/htslib/synced_bcf_reader.h
+write_vcf.o: lib/bcftools-1.6/htslib-1.6/htslib/hts.h
+write_vcf.o: lib/bcftools-1.6/htslib-1.6/htslib/hts_defs.h
+write_vcf.o: lib/bcftools-1.6/htslib-1.6/htslib/hts_log.h
+write_vcf.o: lib/bcftools-1.6/htslib-1.6/htslib/vcf.h
+write_vcf.o: lib/bcftools-1.6/htslib-1.6/htslib/kstring.h
+write_vcf.o: lib/bcftools-1.6/htslib-1.6/htslib/hts_endian.h
+write_vcf.o: lib/bcftools-1.6/htslib-1.6/htslib/tbx.h
 dbmega2.o: types.hh common.h typedefs.h errorno.h allutil.h linkage.h
 dbmega2.o: linkage_external.h makeped.h pedtree.h batch_input.h input_check.h
 dbmega2.o: hwe.h compress_ext.h error_messages_ext.h utils_ext.h
