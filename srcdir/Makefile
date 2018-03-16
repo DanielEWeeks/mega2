@@ -115,8 +115,6 @@ SRCS =  input_check.cpp     select_index.cpp \
 
 OBJS =  $(SRCS:.cpp=.o)
 
-BCFTOOLS=1.6
-
 # The flags for including the libraries:
 
 IFLAGS = -I$(TOP)
@@ -145,8 +143,8 @@ write_IQLS.o write_beagle.o write_fbat.o write_loki.o write_mfiles.o: DFLAGS += 
 write_pangaea.o write_plink_files.o write_premakeped.o: DFLAGS += -DRUNSHELL_SETUP
 write_structure.o: DFLAGS += -DRUNSHELL_SETUP
 
-mega2_bcftools_interface.o read_bcfs.o: IFLAGS += -Ilib/bcftools-$(BCFTOOLS) -Ilib/bcftools-$(BCFTOOLS)/htslib-$(BCFTOOLS) 
-write_vcf.o: IFLAGS += -Ilib/bcftools-$(BCFTOOLS)/htslib-$(BCFTOOLS) 
+BCFTOOLS_VERSION=1.6
+mega2_bcftools_interface.o read_bcfs.o write_vcf.o: IFLAGS += -Ilib/bcftools-$(BCFTOOLS_VERSION) -Ilib/bcftools-$(BCFTOOLS_VERSION)/htslib-$(BCFTOOLS_VERSION) -Ilib/bcftools-$(BCFTOOLS_VERSION)/htslib-$(BCFTOOLS_VERSION)/htslib
 
 # Used for getting a direct match with the genetic map files with running Beagle Analysis...
 #DFLAGS += -DDONT_CONVERT_TO_HALDANE_FOR_BEAGLE
@@ -257,7 +255,8 @@ tod:
 
 gcc_info.o: $(OBJS)
 
-SUBDIRS = bgen lib/sqlite3 vcftools zlib-1.2.8 lib/bcftools-$(BCFTOOLS)
+SUBDIRS = bgen lib/sqlite3 vcftools zlib-1.2.8 lib/bcftools-$(BCFTOOLS_VERSION)
+
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
 	$(MAKE) $(MFLAGS) -C $@
@@ -272,12 +271,12 @@ libvcftools.a: vcftools
 
 libz.a: zlib-1.2.8
 
-libbcftools.a: lib/bcftools-$(BCFTOOLS)
+libbcftools.a: lib/bcftools-$(BCFTOOLS_VERSION)
 
-CFG = bcftool-$(BCFTOOLS)scfg
+CFG = bcftool-$(BCFTOOLS_VERSION)scfg
 
-bcftool-$(BCFTOOLS)scfg:
-	$(MAKE) $(MFLAGS) -C lib/bcftools-$(BCFTOOLS) config
+bcftool-$(BCFTOOLS_VERSION)scfg:
+	$(MAKE) $(MFLAGS) -C lib/bcftools-$(BCFTOOLS_VERSION) config
 
 $(MODULE)_$(OSTYPE): $(CFG) $(SUBDIRS) $(OBJS) $(HDRS) gcc_info.o libvcftools.a libbgen.a libz.a libsqlite3.a libbcftools.a
 	$(RM) $(MODULE)
@@ -297,7 +296,7 @@ clean:
 	$(MAKE) $(MFLAGS) -C vcftools   RM="$(RM)" clean
 	$(MAKE) $(MFLAGS) -C bgen       RM="$(RM)" clean
 	$(MAKE) $(MFLAGS) -C zlib-1.2.8 RM="$(RM)" clean
-	$(MAKE) $(MFLAGS) -C lib/bcftools-$(BCFTOOLS) RM="$(RM)" clean
+	$(MAKE) $(MFLAGS) -C lib/bcftools-$(BCFTOOLS_VERSION) RM="$(RM)" clean
 
 distclean:
 	$(RM) $(OBJS) gcc_info.o $(EXEC) $(MODULE) $(EXEC).exe $(MODULE).exe
@@ -306,7 +305,7 @@ distclean:
 	$(MAKE) $(MFLAGS) -C bgen        RM="$(RM)" distclean
 	$(MAKE) $(MFLAGS) -C zlib-1.2.8  RM="$(RM)" distclean
 	$(MAKE) $(MFLAGS) -C lib/sqlite3 RM="$(RM)" distclean
-	$(MAKE) $(MFLAGS) -C lib/bcftools-$(BCFTOOLS) RM="$(RM)" distclean
+	$(MAKE) $(MFLAGS) -C lib/bcftools-$(BCFTOOLS_VERSION) RM="$(RM)" distclean
 
 clean1:
 	$(RM) *~
