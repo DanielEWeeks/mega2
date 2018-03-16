@@ -122,6 +122,10 @@ void split(Vecc &fields, char *line, const char *sep=" \t\n\r", int cnt=0);
 
 void join(Vecs &vec, Str& ans, Cstr& sep);
 
+Str& rtrim(Str& str, Cstr& trim=" \t\n\r");
+
+Str& ltrim(Str& str, Cstr& trim=" \t\n\r");
+
 class Globals {
 public:
     Globals() {

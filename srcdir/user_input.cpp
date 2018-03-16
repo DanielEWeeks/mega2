@@ -1040,6 +1040,12 @@ void menu1(file_format *infl_type,
         } else if(Input_Format == in_format_bcfs){
             strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
             xcf = 1;
+        } else if(Input_Format == in_format_gzcfs){
+            strcpy(&mega2_input_file_type[BED][0], "GZ.VCF Split by Chromosome");
+            xcf = 1;
+        } else if(Input_Format == in_format_vcfs){
+            strcpy(&mega2_input_file_type[BED][0], "VCF Split by Chromosome");
+            xcf = 1;
         }
 
 
@@ -1208,6 +1214,32 @@ void menu1(file_format *infl_type,
                 fln_init_plink(0);
 
                 fln_init_mega2(! MAP_REQ);
+
+            } else if(Input_Format == in_format_gzcfs) {
+                xcf = 1;
+                plinkf = 0;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+
+                strcpy(extension_name, "study");
+
+                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init_plink(0);
+
+                fln_init_mega2(! MAP_REQ);
+
+            } else if(Input_Format == in_format_vcfs) {
+                xcf = 1;
+                plinkf = 0;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+
+                strcpy(extension_name, "study");
+
+                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init_plink(0);
+
+                fln_init_mega2(! MAP_REQ);
             }
             reset_extension = 1;
         }
@@ -1237,7 +1269,8 @@ void menu1(file_format *infl_type,
                 printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             } else if (xcf) {
-                if(Input_Format != in_format_bcfs) {
+                if (Input_Format != in_format_bcfs && Input_Format != in_format_gzcfs &&
+                    Input_Format != in_format_vcfs) {
                     char tmp[2000];
                     printf("%2d) %-*s%s\n", idx, line_len, "Enter VCF parameters:", VCFArgs);
                     choiceA[idx++] = vcf_args_i;
@@ -1402,11 +1435,13 @@ void menu1(file_format *infl_type,
                 exit_loop=0;
             }
             if (xcf) {
-                if (access(*auxfl_name, F_OK) != 0 && Input_Format != in_format_bcfs) {
+                if (access(*auxfl_name, F_OK) != 0 && Input_Format != in_format_bcfs &&
+                    Input_Format != in_format_gzcfs && Input_Format != in_format_vcfs) {
                     printf("ERROR: You did not specify a Variant file.\n");
                     exit_loop=0;
                 }
-                if(Input_Format == in_format_bcfs) {
+                if (Input_Format == in_format_bcfs || Input_Format == in_format_gzcfs ||
+                    Input_Format == in_format_vcfs) {
                     char *bcfsfile_name[FILENAME_LENGTH];
                     BatchValueGet(*bcfsfile_name, "BCFs_File");
                     if (access(*bcfsfile_name, F_OK) != 0) {

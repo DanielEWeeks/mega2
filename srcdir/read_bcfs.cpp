@@ -298,7 +298,9 @@ void ReadBCFs::check_bcf_files() {
       ifs.open(C(this->BCF_file));
         Str line;
         while (getline(ifs, line)){
-            if('#' == this->BCF_file.c_str()[0]) {
+            line = rtrim(line);
+            line = ltrim(line);
+            if (line.size() == 0 || "#" == line.substr(0, 1)) {
                 mssgvf("read_BCFs: ignoring \"%s\"\n",line.c_str());
                 continue;
             }
@@ -364,11 +366,19 @@ void ReadBCFs::build_markers_and_samples() {
             if ( subset_vcf(bcfargs, line) ) {
                 Vecs alleles(line->d.m_allele);
                 alleles.clear();
-                for (int al = 0; al < line->d.m_allele; al++) {
+// rvb: which is right
+                for (int al = 0; al < line->/*d.m_allele*/n_allele; al++) {
                     alleles.push_back(canonical_allele(line->d.allele[al]));
                 }
 
-                this->markers.push_back(new BCFMarker(line->d.id, hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1,
+                Str name = line->d.id;
+//rvb: and another
+                if (name == ".") {
+                    char pos[50];
+                    sprintf(pos, "chr%s_%d", hdr->id[BCF_DT_CTG][line->rid].key, line->pos+1);
+                    name = pos;
+                }
+                this->markers.push_back(new BCFMarker(name, hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1,
                                                       alleles)); // pos + 1 matches the VCF line pos field.
 
                 count++;
@@ -602,7 +612,8 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
 
                 Vecc canons;
-                for (int al = 0; al < line->d.m_allele; al++) {
+// rvb: which is right
+                for (int al = 0; al < line->/*d.m_allele*/n_allele; al++) {
                     canons.push_back(canonical_allele(line->d.allele[al]));
                 }
                 VecAlleles.push_back(canons);

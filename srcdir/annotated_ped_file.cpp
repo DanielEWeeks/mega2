@@ -4629,6 +4629,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     NumChromo=get_chromosome_list(LTop, global_chromo_entries,
                                   chromo_loci_count, 0, analysis);
+    main_chromocnt = NumChromo;
     tod_cl();
 
     Tod tod_lstat("write_locus_stats");
