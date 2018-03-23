@@ -85,17 +85,9 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 
 
 #x  return (load.gwaa.data(phenofile=paste0(prefix,".phe"),
-    if (0)
-        ans = gwaaO(phenofile=paste0(prefix,".phe"),
-                   genofile=paste0(prefix, "tped.raw"),
-                   force = TRUE)
-    else
-        ans = load.gwaa.data(phenofile=paste0(prefix,".phe"),
-                   genofile=paste0(prefix, "tped.raw"),
-                   force = TRUE)
-## }))
-
-    ans
+    ans = load.gwaa.data(phenofile=paste0(prefix,".phe"),
+                         genofile=paste0(prefix, "tped.raw"),
+                         force = TRUE)
 }
 
 #' delete temporary PLINK tped files processed by GenABEL
@@ -159,12 +151,14 @@ Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
 
     if (is.null(markers)) markers = envir$markers
 
-    fn = get0("load.gwaa.data.mega2", inherits=TRUE, ifnotfound = NULL)
+## If there is any chance that load.gwaa.data.mega2 exists in GenABEL, ... but that
+## may never happen 3/23/18.  Thus the code may always live in mega2genabelexternal.R.
+## 
+##  fn = get0("load.gwaa.data.mega2", inherits=TRUE, ifnotfound = NULL)
+    fn = NULL
     if (is.null(fn)) {
         V2.gwaa.data.mega2(markers, force = force,
-             makemap = makemap, sort = sort, envir = envir)
-#       gwaa(markers = markers, force = force,
-#            makemap = makemap, sort = sort, envir = envir)
+            makemap = makemap, sort = sort, envir = envir)
     } else {
         fn(markers, force = force, makemap = makemap, sort = sort, envir = envir)
     }
