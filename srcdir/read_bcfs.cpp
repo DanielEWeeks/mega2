@@ -364,10 +364,10 @@ void ReadBCFs::build_markers_and_samples() {
         while ( bcf_sr_next_line(bcfargs->files) ) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
             if ( subset_vcf(bcfargs, line) ) {
-                Vecs alleles(line->d.m_allele);
+                Vecs alleles(line->n_allele);
                 alleles.clear();
-// rvb: which is right
-                for (int al = 0; al < line->/*d.m_allele*/n_allele; al++) {
+
+                for (int al = 0; al < line->n_allele; al++) {
                     alleles.push_back(canonical_allele(line->d.allele[al]));
                 }
 
@@ -612,8 +612,8 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
 
                 Vecc canons;
-// rvb: which is right
-                for (int al = 0; al < line->/*d.m_allele*/n_allele; al++) {
+
+                for (int al = 0; al < line->n_allele; al++) {
                     canons.push_back(canonical_allele(line->d.allele[al]));
                 }
                 VecAlleles.push_back(canons);
