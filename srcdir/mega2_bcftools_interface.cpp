@@ -337,8 +337,11 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
     static struct option loptions[] =
             {
                     {"threads",required_argument,NULL,9},
+                    {"header-only",no_argument,NULL,'h'},
+                    {"no-header",no_argument,NULL,'H'},
                     {"exclude",required_argument,NULL,'e'},
                     {"include",required_argument,NULL,'i'},
+                    {"drop-genotypes",no_argument,NULL,'G'},
                     {"uncalled",no_argument,NULL,'u'},
                     {"exclude-uncalled",no_argument,NULL,'U'},
                     {"apply-filters",required_argument,NULL,'f'},
@@ -369,6 +372,9 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
         char allele_type[8] = "nref";
         switch (c)
         {
+            case 'H': args->print_header = 0; break;
+            case 'h': args->header_only = 1; break;
+
             case 't': args->targets_list = optarg; break;
             case 'T': args->targets_list = optarg; targets_is_file = 1; break;
             case 'r': args->regions_list = optarg; break;
@@ -379,6 +385,7 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
             case  1 : args->force_samples = 1; break;
             case 'a': args->trim_alts = 1; args->calc_ac = 1; break;
             case 'I': args->update_info = 0; break;
+            case 'G': args->sites_only = 1; break;
 
             case 'f': args->files->apply_filters = optarg; break;
             case 'k': args->known = 1; break;
@@ -490,7 +497,6 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
 
     init_data_vcfview(args);
 
-    optind = 1;
     return args;
 
 }
