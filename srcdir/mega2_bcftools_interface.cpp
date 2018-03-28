@@ -497,6 +497,8 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
 
     init_data_vcfview(args);
 
+    //need to reset optind, since bcftools doesn't
+    optind = 1;
     return args;
 
 }

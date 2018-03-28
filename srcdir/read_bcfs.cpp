@@ -350,7 +350,7 @@ void ReadBCFs::build_markers_and_samples() {
 
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for chromosome %d: ",i+1);
+        printf("\nRunning the following bcftools command for chromosome %d:\n",i+1);
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
@@ -382,8 +382,7 @@ void ReadBCFs::build_markers_and_samples() {
     args.push_back("-G");
     argc++;
 
-    //need to reset optind, since bcftools doesn't
-    optind = 1;
+
 
     int total_markers = 0;
     for(int i = 0; i < this->filecount; i++) {
@@ -391,7 +390,7 @@ void ReadBCFs::build_markers_and_samples() {
 
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for chromosome %d: ",i+1);
+        printf("\nRunning the following bcftools command for chromosome %d:\n",i+1);
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
@@ -631,7 +630,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for chromosome %d: ",i+1);
+        printf("\nRunning the following bcftools command for chromosome %d:\n",i+1);
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
