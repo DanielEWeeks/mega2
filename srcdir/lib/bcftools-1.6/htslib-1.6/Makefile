@@ -39,7 +39,7 @@ endif
 # Default libraries to link if configure is not used
 htslib_default_libs = -lz -lm -lbz2 -llzma
 
-CPPFLAGS =
+CPPFLAGS = $(IFLAGS)
 # TODO: probably update cram code to make it compile cleanly with -Wc++-compat
 # For testing strict C99 support add -std=c99 -D_XOPEN_SOURCE=600
 #CFLAGS   = -g -Wall -O2 -pedantic -std=c99 -D_XOPEN_SOURCE=600 -D__FUNCTION__=__func__

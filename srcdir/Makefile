@@ -117,7 +117,8 @@ OBJS =  $(SRCS:.cpp=.o)
 
 # The flags for including the libraries:
 
-IFLAGS = -I$(TOP)
+iFLAGS = -I$(TOP)
+IFLAGS = -I$(shell pwd)
 
 ifneq ($(MINGW),)
 	RM=del 
@@ -134,17 +135,17 @@ endif
 
 # CC, CFLAGS are defined in Makedefs
 
-dbmega2.o dbmisc.o dbbatch.o dbpedigree.o dballele.o dbloci.o dbmap.o dbgenotype.o: IFLAGS += -Ilib/sqlite3
-dbrefallele.o write_vcf.o : IFLAGS += -Ilib/sqlite3
+dbmega2.o dbmisc.o dbbatch.o dbpedigree.o dballele.o dbloci.o dbmap.o dbgenotype.o: iFLAGS += -Ilib/sqlite3
+dbrefallele.o write_vcf.o : iFLAGS += -Ilib/sqlite3
 
-user_input.o read_impute_bgen2.o: IFLAGS += -Ibgen/genfile/include -Ibgen/zstd-1.1.0/lib $(stdC11)
+user_input.o read_impute_bgen2.o: iFLAGS += -Ibgen/genfile/include -Ibgen/zstd-1.1.0/lib $(stdC11)
 
 write_IQLS.o write_beagle.o write_fbat.o write_loki.o write_mfiles.o: DFLAGS += -DRUNSHELL_SETUP
 write_pangaea.o write_plink_files.o write_premakeped.o: DFLAGS += -DRUNSHELL_SETUP
 write_structure.o: DFLAGS += -DRUNSHELL_SETUP
 
 BCFTOOLS_VERSION=1.6
-mega2_bcftools_interface.o read_bcfs.o write_vcf.o: IFLAGS += -Ilib/bcftools-$(BCFTOOLS_VERSION) -Ilib/bcftools-$(BCFTOOLS_VERSION)/htslib-$(BCFTOOLS_VERSION) -Ilib/bcftools-$(BCFTOOLS_VERSION)/htslib-$(BCFTOOLS_VERSION)/htslib
+mega2_bcftools_interface.o read_bcfs.o write_vcf.o: iFLAGS += -Ilib/bcftools-$(BCFTOOLS_VERSION) -Ilib/bcftools-$(BCFTOOLS_VERSION)/htslib-$(BCFTOOLS_VERSION) -Ilib/bcftools-$(BCFTOOLS_VERSION)/htslib-$(BCFTOOLS_VERSION)/htslib
 
 # Used for getting a direct match with the genetic map files with running Beagle Analysis...
 #DFLAGS += -DDONT_CONVERT_TO_HALDANE_FOR_BEAGLE
@@ -210,6 +211,7 @@ read_files.o compress.o: DFLAGS += $(DlFLAGS)
 export FLAGS
 export OSTYPE
 export CFLAGS
+export IFLAGS
 export CXX
 export CC
 export AR
@@ -236,13 +238,13 @@ WINO    ?=
 ifeq ($(MINGW),)
 	$(RM) $*.o
 endif
-	$(CC) $(CFLAGS) $(DFLAGS) $(FLAGS) -c $(IFLAGS) $*.c $(WINO)
+	$(CC) $(CFLAGS) $(DFLAGS) $(FLAGS) -c $(iFLAGS) $*.c $(WINO)
 
 .cpp.o:	
 ifeq ($(MINGW),)
 	$(RM) $*.o
 endif
-	$(CXX) $(CFLAGS) $(DFLAGS) $(FLAGS) -c $(IFLAGS) $*.cpp $(WINO)
+	$(CXX) $(CFLAGS) $(DFLAGS) $(FLAGS) -c $(iFLAGS) $*.cpp $(WINO)
 
 all: $(MODULE)_$(OSTYPE)
 
