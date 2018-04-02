@@ -279,7 +279,7 @@ static keyw_t keywords[] = {
     {"VCF_Allele_Order",                      STRING,     "Original Order"},
 
     {"BCFs_File",                             STRING,     ""},
-    {"BCF_Args",                              LINE,       "--exclude-types indels"},
+    {"BCF_Args",                              LINE,       "-m2 -M2 -v snps"},
 
 };
 

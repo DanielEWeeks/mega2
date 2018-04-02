@@ -282,7 +282,7 @@ void ReadBCFs::check_bcf_files() {
         //single bcf/vcf/vcf.gz etc.
     else if ( this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "bcf"
               || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "vcf"
-              || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "vcf.gz"){
+              || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "gz"){
       ifs.open(C(this->BCF_file));
         if (! ifs.is_open() )
                 warnvf("read_BCFs: Can not open \"%s\" file\n", this->BCF_file.c_str());
@@ -346,11 +346,11 @@ void ReadBCFs::build_markers_and_samples() {
 
 
     for(int i = 0; i < this->filecount; i++) {
-        auto start = std::chrono::system_clock::now();
+        //auto start = std::chrono::system_clock::now();
 
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for chromosome %d:\n",i+1);
+        printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
@@ -368,11 +368,11 @@ void ReadBCFs::build_markers_and_samples() {
         this->num_samples = hdr->n[2];
         args.pop_back();
 
-        auto end = std::chrono::system_clock::now();
-        std::time_t time = std::chrono::system_clock::to_time_t(end);
-        std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Samples for chromosome " << i + 1 << " completed\n" << std::ctime(&time)
-                  << "Duration: " << elapsed_seconds.count() << "\n";
+        //auto end = std::chrono::system_clock::now();
+        //std::time_t time = std::chrono::system_clock::to_time_t(end);
+        //std::chrono::duration<double> elapsed_seconds = end-start;
+        //std::cout << "Samples for  " << files[i] << " completed\n" << std::ctime(&time)
+        //          << "Duration: " << elapsed_seconds.count() << "\n";
     }
 
     args.pop_back();
@@ -386,11 +386,11 @@ void ReadBCFs::build_markers_and_samples() {
 
     int total_markers = 0;
     for(int i = 0; i < this->filecount; i++) {
-        auto start = std::chrono::system_clock::now();
+        //auto start = std::chrono::system_clock::now();
 
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for chromosome %d:\n",i+1);
+        printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
@@ -434,11 +434,11 @@ void ReadBCFs::build_markers_and_samples() {
         total_markers += count;
         args.pop_back();
 
-        auto end = std::chrono::system_clock::now();
-        std::time_t time = std::chrono::system_clock::to_time_t(end);
-        std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Alleles for chromosome " << i + 1 << " completed\n" << std::ctime(&time)
-                  << "Duration: " << elapsed_seconds.count() << "\n";
+        //auto end = std::chrono::system_clock::now();
+        //std::time_t time = std::chrono::system_clock::to_time_t(end);
+        //std::chrono::duration<double> elapsed_seconds = end-start;
+        //std::cout << "Alleles for  " << files[i] << " completed\n" << std::ctime(&time)
+        //          << "Duration: " << elapsed_seconds.count() << "\n";
     }
 
     this->marker_count = total_markers;
@@ -626,15 +626,16 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     int mrkindex = LTop->PhenoCnt;
 
     for (int i = 0; i < this->filecount; i++) {
-        auto start = std::chrono::system_clock::now();
+        //auto start = std::chrono::system_clock::now();
 
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for chromosome %d:\n",i+1);
+        printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
+            argv[ii] = &args[ii][0];
             printf("%s ",argv[ii]);
         }
         printf("\n");
@@ -712,11 +713,11 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         }
         args.pop_back();
 
-        auto end = std::chrono::system_clock::now();
-        std::time_t time = std::chrono::system_clock::to_time_t(end);
-        std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Genotypes for chromosome " << i + 1 << " completed\n" << std::ctime(&time)
-                  << "Duration: " << elapsed_seconds.count() << "\n";
+        //auto end = std::chrono::system_clock::now();
+        //std::time_t time = std::chrono::system_clock::to_time_t(end);
+        //std::chrono::duration<double> elapsed_seconds = end-start;
+        //std::cout << "Genotypes for  " << files[i] << " completed\n" << std::ctime(&time)
+        //          << "Duration: " << elapsed_seconds.count() << "\n";
     }
 }
 
