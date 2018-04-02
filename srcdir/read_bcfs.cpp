@@ -635,6 +635,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
+            argv[ii] = &args[ii][0];
             printf("%s ",argv[ii]);
         }
         printf("\n");
