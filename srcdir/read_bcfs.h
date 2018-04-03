@@ -34,6 +34,7 @@
 #include <vector>
 #include <queue>
 #include <string>
+#include <types.hh>
 
 #include "input_ops.hh"
 #include "str_utils.hh"
@@ -80,6 +81,7 @@ public:
     linkage_locus_top * build_BCFs_names();
     void check_bcf_files();
     void build_markers_and_samples();
+    void check_dups();
 
     virtual void do_map(std::vector<m2_map>& additional_maps);
     void build_bcf_map(m2_map& bcf_map);
@@ -114,6 +116,8 @@ protected:
     int    phecols;
     char **phenames;
     int   *phetypes;
+
+    Hmapsi markerMap;
 };
 
 
