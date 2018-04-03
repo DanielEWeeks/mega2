@@ -25,6 +25,9 @@ R CMD check --as-cran mega2genabel_1.0.0.tar.gz
 R CMD check --as-cran mega2pedgene_1.0.0.tar.gz
 R CMD check --as-cran mega2rtutorial_1.0.0.tar.gz
 
+It is recommended to check your package in R-devel before submission, 
+using devtools::check_win_devel() or devtools::check_rhub(), both of 
+which will check your package against the latest R-devel.
 
 
 
