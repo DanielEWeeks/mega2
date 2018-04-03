@@ -80,6 +80,8 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #define cbegin() begin()
 #define cend()   end()
 
+SECTION_LOG_INIT(dup_marker_relabeled);
+
 using namespace std;
 
 /*
@@ -91,7 +93,7 @@ void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[]) {
     choiceA[idx] = site_bcfs_args_i;
     idx++;
 
-    printf("%2d) %-*s%s%s\n", idx, line_len-11, "Variant File:","[required] ", BatchItemGet("BCFs_File")->value.name);
+    printf("%2d) %-*s%s%s\n", idx, line_len-11, "Template File:","[required] ", BatchItemGet("BCFs_File")->value.name);
     choiceA[idx] = site_bcfs_file_i;
     idx++;
 }
@@ -259,7 +261,7 @@ void ReadBCFs::do_init(Input_Base *inp)
 
     check_bcf_files();
     build_markers_and_samples();
-
+    check_dups();
 }
 
 
@@ -371,8 +373,8 @@ void ReadBCFs::build_markers_and_samples() {
         //auto end = std::chrono::system_clock::now();
         //std::time_t time = std::chrono::system_clock::to_time_t(end);
         //std::chrono::duration<double> elapsed_seconds = end-start;
-        //std::cout << "Samples for  " << files[i] << " completed\n" << std::ctime(&time)
-        //          << "Duration: " << elapsed_seconds.count() << "\n";
+        std::cout << "Samples for  " << files[i] << " completed\n";// << std::ctime(&time)
+                  //<< "Duration: " << elapsed_seconds.count() << "\n";
     }
 
     args.pop_back();
@@ -437,11 +439,33 @@ void ReadBCFs::build_markers_and_samples() {
         //auto end = std::chrono::system_clock::now();
         //std::time_t time = std::chrono::system_clock::to_time_t(end);
         //std::chrono::duration<double> elapsed_seconds = end-start;
-        //std::cout << "Alleles for  " << files[i] << " completed\n" << std::ctime(&time)
-        //          << "Duration: " << elapsed_seconds.count() << "\n";
+        std::cout << "Alleles for  " << files[i] << " completed\n";// << std::ctime(&time)
+                 // << "Duration: " << elapsed_seconds.count() << "\n";
     }
 
     this->marker_count = total_markers;
+}
+
+
+
+void ReadBCFs::check_dups() {
+    SECTION_LOG(dup_marker_relabeled);
+    for(int i = 0; i < this->marker_count; i++){
+        Str name = this->markers[i]->name;
+        if (markerMap.find(name) == markerMap.end())
+            markerMap[name] = 1;
+        else {
+            int value = markerMap[name] + 1;
+            char newname[50] ;
+            sprintf(newname, "%s_%d", name.c_str(), value);
+            markerMap[newname] = 1;
+            markerMap[name] = value;
+            this->markers[i]->name = newname;
+            mssgvf("Duplicate marker name found for %s relabeling %s:%d as %s\n", name.c_str(),
+                   this->markers[i]->chr.c_str(), this->markers[i]->pos, newname);
+        }
+    }
+    SECTION_LOG_FINI(dup_marker_relabeled);
 }
 
 void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
@@ -713,11 +737,11 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         }
         args.pop_back();
 
-        //auto end = std::chrono::system_clock::now();
+       // auto end = std::chrono::system_clock::now();
         //std::time_t time = std::chrono::system_clock::to_time_t(end);
         //std::chrono::duration<double> elapsed_seconds = end-start;
-        //std::cout << "Genotypes for  " << files[i] << " completed\n" << std::ctime(&time)
-        //          << "Duration: " << elapsed_seconds.count() << "\n";
+        std::cout << "Genotypes for  " << files[i] << " completed\n"; //<< std::ctime(&time)
+                  //<< "Duration: " << elapsed_seconds.count() << "\n";
     }
 }
 
