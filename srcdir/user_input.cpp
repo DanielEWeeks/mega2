@@ -1442,9 +1442,9 @@ void menu1(file_format *infl_type,
                 }
                 if (Input_Format == in_format_bcfs || Input_Format == in_format_gzcfs ||
                     Input_Format == in_format_vcfs) {
-                    char *bcfsfile_name[FILENAME_LENGTH];
-                    BatchValueGet(*bcfsfile_name, "BCFs_File");
-                    if (access(*bcfsfile_name, F_OK) != 0) {
+                    char bcfsfile_name[FILENAME_LENGTH], *bcfsfile = bcfsfile_name;
+                    BatchValueGet(bcfsfile, "BCFs_File");
+                    if (access(bcfsfile, F_OK) != 0) {
                         printf("ERROR: You did not specify a Variant file.\n");
                         exit_loop = 0;
                     }

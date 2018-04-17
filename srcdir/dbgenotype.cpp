@@ -205,6 +205,8 @@ int Genotype_table::db_getall(linkage_ped_top *Top, void **Genotypes) {
     int knt = 0;
     linkage_locus_top *LTop = Top->LocusTop;
 
+    genotype_table.mkCBuffer(Top);
+
     int ret = select_stmt && select_stmt->abort();
     while (ret) {
         ret = select_stmt->step();
@@ -235,6 +237,8 @@ void dbgenotype_export(linkage_ped_top *Top, bp_order *bp) {
     int ped, per;
     linkage_ped_tree *tpedtreep;
     linkage_ped_rec  *tpersonp;
+
+    genotype_table.mkCBuffer(Top);
 
     Tod pedexp("export genotype/phenotype");
 

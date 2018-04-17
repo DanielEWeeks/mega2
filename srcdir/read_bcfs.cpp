@@ -418,13 +418,16 @@ void ReadBCFs::build_markers_and_samples() {
                 }
 
                 Str name = line->d.id;
+                const char *posp = hdr->id[BCF_DT_CTG][line->rid].key;
+                if (strncmp(posp, "chr", 3) == 0) posp += 3;
 //rvb: and another
                 if (name == ".") {
                     char pos[50];
-                    sprintf(pos, "chr%s_%d", hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1);
+                    sprintf(pos, "chr%s_%d", posp, line->pos + 1);
                     name = pos;
                 }
-                this->markers.push_back(new BCFMarker(name, hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1,
+                    
+                this->markers.push_back(new BCFMarker(name, posp, line->pos + 1,
                                                       alleles)); // pos + 1 matches the VCF line pos field.
 
                 count++;
@@ -666,11 +669,13 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
 
                 Vecc canons;
+//                extern void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
 
                 for (int al = 0; al < line->n_allele; al++) {
                     canons.push_back(canonical_allele(line->d.allele[al]));
                 }
                 VecAlleles.push_back(canons);
+//                set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
 
                 //should give number of allele options per marker
                 n /= num_samples;

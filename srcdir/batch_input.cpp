@@ -269,6 +269,7 @@ static keyw_t keywords[] = {
     {"minimac_reference_panel_directory",     STRING,     "."},
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
+    {"DBcompression",                         INT,        "1"},
     {"Input_Database_Mode",                   INT,        "2"},  
 
     {"Select_Loop_Break",                     INT,        "0"},

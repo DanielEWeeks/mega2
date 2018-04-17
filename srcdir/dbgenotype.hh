@@ -38,6 +38,8 @@
 #include "common.h"
 #include "typedefs.h"
 
+#include "zlib.h"
+
 extern DBlite MasterDB;
 
 class Phenotype_table {
@@ -129,6 +131,8 @@ extern Phenotype_table phenotype_table;
 class Genotype_table {
     DBstmt *insert_stmt;
     DBstmt *select_stmt;
+    Bytef *CBuffer;
+    long   CBsize;
     long long xhash(void *v, int sz) {
         if (v == 0) return 0;
         const char *cp = (const char *)v;
@@ -142,6 +146,12 @@ class Genotype_table {
     }
 public:
     Genotype_table()  {}
+    void mkCBuffer(linkage_ped_top *Top) {
+        int cnt = Top->LocusTop->MarkerCnt;
+        int bytes = marker_size(cnt);
+        CBuffer = CALLOC(bytes, unsigned char);
+        CBsize  = bytes;
+    }
     int create() {
 	return MasterDB.exec(
 	    "CREATE TABLE IF NOT EXISTS genotype_table (pId INTEGER PRIMARY KEY,"
@@ -177,10 +187,15 @@ public:
     int insert(void *mk, int p_link, int chrm, int cnt) {
         extern int marker_size(int);
         int idx = 1;
-        int size = marker_size(cnt);
+
+        long svsize = marker_size(cnt);
+        unsigned char *data = (unsigned char *) mk;
+        long size = CBsize;
+        data = select_stmt->db_compress(CBuffer, &size, data, svsize);
+
         return insert_stmt 
-            && insert_stmt->rowbind(idx, p_link, chrm, size)
-            && insert_stmt->bind(idx++, mk, size)
+            && insert_stmt->rowbind(idx, p_link, chrm, svsize)
+            && insert_stmt->bind(idx++, data, size)
 
             && insert_stmt->step();
     }
@@ -191,8 +206,11 @@ public:
         int ret = select_stmt 
             && select_stmt->row(idx, link, chr, bytes)
             && select_stmt->column(idx++, v, sz);
-        data = (unsigned char *)v;
-//        long long ll = xhash(data, bytes);
+
+        long bufsize = CBsize;
+        data = select_stmt->db_decompress(CBuffer, &bufsize, (unsigned char *)v, sz, bytes);
+
+//      long long ll = xhash(data, bytes);
 //      printf("GHS: %d %llx\n", link, ll);
         return ret;
     }
