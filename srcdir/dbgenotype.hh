@@ -149,6 +149,7 @@ public:
     void mkCBuffer(linkage_ped_top *Top) {
         int cnt = Top->LocusTop->MarkerCnt;
         int bytes = marker_size(cnt);
+        if (bytes < 128) bytes = 128;
         CBuffer = CALLOC(bytes, unsigned char);
         CBsize  = bytes;
     }
