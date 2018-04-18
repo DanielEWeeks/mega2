@@ -1,6 +1,6 @@
 Package: Mega2R
 Version: 1.0.2
-Date: 2018-02-22
+Date: 2018-04-03
 Title: Accessing and Processing a 'Mega2' Genetic Database  
 Description: Uses as input genetic data that have been reformatted
      and stored in a 'SQLite' database; this database is initially
@@ -23,7 +23,7 @@ Authors@R: c(person(c("Robert","V."), "Baron", email = "rvb5@pitt.edu",  role = 
              person("","University of Pittsburgh",role=c("cph")))
 URL: https://watson.hgen.pitt.edu/mega2/mega2r/
 BugReports: https://groups.google.com/forum/#!forum/mega2-users
-Depends: R (>= 3.3.3),
+Depends: R (>= 3.3),
          GenABEL,
          SKAT,
          pedgene,

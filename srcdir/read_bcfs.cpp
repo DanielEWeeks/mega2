@@ -80,6 +80,8 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #define cbegin() begin()
 #define cend()   end()
 
+SECTION_LOG_INIT(dup_marker_relabeled);
+
 using namespace std;
 
 /*
@@ -91,7 +93,7 @@ void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[]) {
     choiceA[idx] = site_bcfs_args_i;
     idx++;
 
-    printf("%2d) %-*s%s%s\n", idx, line_len-11, "Variant File:","[required] ", BatchItemGet("BCFs_File")->value.name);
+    printf("%2d) %-*s%s%s\n", idx, line_len-11, "Template File:","[required] ", BatchItemGet("BCFs_File")->value.name);
     choiceA[idx] = site_bcfs_file_i;
     idx++;
 }
@@ -259,7 +261,7 @@ void ReadBCFs::do_init(Input_Base *inp)
 
     check_bcf_files();
     build_markers_and_samples();
-
+    check_dups();
 }
 
 
@@ -282,7 +284,7 @@ void ReadBCFs::check_bcf_files() {
         //single bcf/vcf/vcf.gz etc.
     else if ( this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "bcf"
               || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "vcf"
-              || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "vcf.gz"){
+              || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "gz"){
       ifs.open(C(this->BCF_file));
         if (! ifs.is_open() )
                 warnvf("read_BCFs: Can not open \"%s\" file\n", this->BCF_file.c_str());
@@ -346,11 +348,11 @@ void ReadBCFs::build_markers_and_samples() {
 
 
     for(int i = 0; i < this->filecount; i++) {
-        auto start = std::chrono::system_clock::now();
+        //auto start = std::chrono::system_clock::now();
 
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for chromosome %d:\n",i+1);
+        printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
@@ -368,11 +370,11 @@ void ReadBCFs::build_markers_and_samples() {
         this->num_samples = hdr->n[2];
         args.pop_back();
 
-        auto end = std::chrono::system_clock::now();
-        std::time_t time = std::chrono::system_clock::to_time_t(end);
-        std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Samples for chromosome " << i + 1 << " completed\n" << std::ctime(&time)
-                  << "Duration: " << elapsed_seconds.count() << "\n";
+        //auto end = std::chrono::system_clock::now();
+        //std::time_t time = std::chrono::system_clock::to_time_t(end);
+        //std::chrono::duration<double> elapsed_seconds = end-start;
+        std::cout << "Samples for  " << files[i] << " completed\n";// << std::ctime(&time)
+                  //<< "Duration: " << elapsed_seconds.count() << "\n";
     }
 
     args.pop_back();
@@ -386,11 +388,11 @@ void ReadBCFs::build_markers_and_samples() {
 
     int total_markers = 0;
     for(int i = 0; i < this->filecount; i++) {
-        auto start = std::chrono::system_clock::now();
+        //auto start = std::chrono::system_clock::now();
 
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for chromosome %d:\n",i+1);
+        printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
@@ -437,14 +439,36 @@ void ReadBCFs::build_markers_and_samples() {
         total_markers += count;
         args.pop_back();
 
-        auto end = std::chrono::system_clock::now();
-        std::time_t time = std::chrono::system_clock::to_time_t(end);
-        std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Alleles for chromosome " << i + 1 << " completed\n" << std::ctime(&time)
-                  << "Duration: " << elapsed_seconds.count() << "\n";
+        //auto end = std::chrono::system_clock::now();
+        //std::time_t time = std::chrono::system_clock::to_time_t(end);
+        //std::chrono::duration<double> elapsed_seconds = end-start;
+        std::cout << "Alleles for  " << files[i] << " completed\n";// << std::ctime(&time)
+                 // << "Duration: " << elapsed_seconds.count() << "\n";
     }
 
     this->marker_count = total_markers;
+}
+
+
+
+void ReadBCFs::check_dups() {
+    SECTION_LOG(dup_marker_relabeled);
+    for(int i = 0; i < this->marker_count; i++){
+        Str name = this->markers[i]->name;
+        if (markerMap.find(name) == markerMap.end())
+            markerMap[name] = 1;
+        else {
+            int value = markerMap[name] + 1;
+            char newname[50] ;
+            sprintf(newname, "%s_%d", name.c_str(), value);
+            markerMap[newname] = 1;
+            markerMap[name] = value;
+            this->markers[i]->name = newname;
+            mssgvf("Duplicate marker name found for %s relabeling %s:%d as %s\n", name.c_str(),
+                   this->markers[i]->chr.c_str(), this->markers[i]->pos, newname);
+        }
+    }
+    SECTION_LOG_FINI(dup_marker_relabeled);
 }
 
 void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
@@ -629,11 +653,11 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     int mrkindex = LTop->PhenoCnt;
 
     for (int i = 0; i < this->filecount; i++) {
-        auto start = std::chrono::system_clock::now();
+        //auto start = std::chrono::system_clock::now();
 
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for chromosome %d:\n",i+1);
+        printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
@@ -718,11 +742,11 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         }
         args.pop_back();
 
-        auto end = std::chrono::system_clock::now();
-        std::time_t time = std::chrono::system_clock::to_time_t(end);
-        std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Genotypes for chromosome " << i + 1 << " completed\n" << std::ctime(&time)
-                  << "Duration: " << elapsed_seconds.count() << "\n";
+       // auto end = std::chrono::system_clock::now();
+        //std::time_t time = std::chrono::system_clock::to_time_t(end);
+        //std::chrono::duration<double> elapsed_seconds = end-start;
+        std::cout << "Genotypes for  " << files[i] << " completed\n"; //<< std::ctime(&time)
+                  //<< "Duration: " << elapsed_seconds.count() << "\n";
     }
 }
 
