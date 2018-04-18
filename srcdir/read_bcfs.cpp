@@ -452,7 +452,7 @@ void ReadBCFs::build_markers_and_samples() {
 
 
 void ReadBCFs::check_dups() {
-    SECTION_LOG(dup_marker_relabeled);
+    SECTION_LOG_INIT(dup_marker_relabeled);
     for(int i = 0; i < this->marker_count; i++){
         Str name = this->markers[i]->name;
         if (markerMap.find(name) == markerMap.end())
@@ -464,6 +464,7 @@ void ReadBCFs::check_dups() {
             markerMap[newname] = 1;
             markerMap[name] = value;
             this->markers[i]->name = newname;
+            SECTION_LOG(dup_marker_relabeled);
             mssgvf("Duplicate marker name found for %s relabeling %s:%d as %s\n", name.c_str(),
                    this->markers[i]->chr.c_str(), this->markers[i]->pos, newname);
         }
