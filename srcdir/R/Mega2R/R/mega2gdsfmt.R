@@ -136,11 +136,6 @@ Mega2gdsfmtSeq = function(filename, markers, snp.order, envir) {
         sampleFirst(genf, markers, "data", vdim, envir)
     }
 
-    if (append_genotype_a || snp.order) {
-        ggen = index.gdsn(g, "genotype/data")
-        compression.gdsn(ggen, compress=COMPRESSION)
-    }
-
     geif = add.gdsn(genf, "extra.index", valdim=c(3,0), compress=COMPRESSION, storage="int32")
     gext = add.gdsn(genf, "extra", valdim=c(0), compress=COMPRESSION, storage="int16")
 
@@ -169,8 +164,15 @@ Mega2gdsfmtSeq = function(filename, markers, snp.order, envir) {
 
     closefn.gds(g)
 
-    if (append_genotype_a || snp.order)
+    if (append_genotype_a || snp.order) {
+        g = openfn.gds(filename, readonly=F)
+        ggen = index.gdsn(g, "genotype/data")
+        compression.gdsn(ggen, compress=COMPRESSION)
+        closefn.gds(g)
+
         cleanup.gds(filename)
+    }
+    
 # }))
 
     openfn.gds(filename)
@@ -225,11 +227,6 @@ Mega2gdsfmtSNP = function(filename, markers, snp.order, envir) {
         sampleFirst(genf, markers, "genotype", vdim, envir)
     }
     
-    if (append_genotype_a || snp.order) {
-        ggen = index.gdsn(g, "genotype")
-        compression.gdsn(ggen, compress=COMPRESSION)
-    }
-    
     df = data.frame(sample.id = envir$fam$PerPre,
                     family.id = envir$fam$PedPre,
                     father.id = envir$fam$Father,
@@ -243,8 +240,14 @@ Mega2gdsfmtSNP = function(filename, markers, snp.order, envir) {
 
     closefn.gds(g)
 
-    if (append_genotype_a || snp.order)
+    if (append_genotype_a || snp.order) {
+        g = openfn.gds(filename, readonly=F)
+        ggen = index.gdsn(g, "genotype")
+        compression.gdsn(ggen, compress=COMPRESSION)
+        closefn.gds(g)
+    
         cleanup.gds(filename)
+    }
 
 # }))
     
@@ -461,7 +464,7 @@ sampleFirst = function(gds, markers, genotype, vdim, envir) {
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
-#' setfam(uniqueFamMember(envir = ENV)
+#' setfam(uniqueFamMember(envir = ENV))
 #'
 uniqueFamMember = function(envir = ENV) {
 
