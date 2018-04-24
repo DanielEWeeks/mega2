@@ -229,10 +229,15 @@ mk_unified_genotype_table = function(envir) {
     for (i in 1:samplesize) {
 
         chrOrder = order(samples[[i]][ , 3], decreasing = FALSE)
-        v = unlist(samples[[i]][chrOrder, 5])
-        df$data[i] = list(v)
+        v = samples[[i]][chrOrder, 5]
+        if (envir$DBcompress && ! is.na(v)) {
+            xx = lapply(v, function(a) memDecompress(a, "gzip"))
+            uv = unlist(xx)
+        } else {
+            uv = unlist(v)
+        }
+        df$data[i] = list(uv)
     }
-
     envir$unified_genotype_table = df
     envir$genotype_table = NULL
     rm(list = "genotype_table", envir = envir)
@@ -310,7 +315,10 @@ dbmega2_import = function(dbname,
     envir$PhenoCnt      = envir$int_table[envir$int_table$key == 'PhenoCnt', 3]
     envir$LocusCnt      = envir$int_table[envir$int_table$key == 'LocusCnt', 3]
     envir$MARKER_SCHEME = envir$int_table[envir$int_table$key == 'MARKER_SCHEME', 3]
+    envir$DBcompress    = envir$int_table[envir$int_table$key == 'dbCompression', 3]
 
+    if ( length(envir$DBcompress) == 0) envir$DBcompress = 0
+    
     if (envir$MARKER_SCHEME > 2) {
         stop("Only compressions levels of 1 or 2 are allowed. (",
              envir$MARKER_SCHEME, ")", call. = FALSE)

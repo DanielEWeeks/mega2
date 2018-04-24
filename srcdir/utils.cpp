@@ -1880,6 +1880,7 @@ extern int lastautosome, pseudoautosome, mitoautosome;
 extern int missingv_flags;
 extern char *quant_in, *quant_out, *affect_in, *affect_out;
 extern InputModeType InputMode;
+extern int dump_dbCompress, dbCompress;
 int env = 0;
 
 void mega2_opts(int argc, char **argv)
@@ -2009,7 +2010,11 @@ void mega2_opts(int argc, char **argv)
                     exit(0);
                 } else if (strcasecmp(as, "version") == 0)
                     print_mega2_version();
-                else {
+                else if (strcasecmp(as, "dbcompress") == 0) {
+		    argv++; --argc;
+		    dump_dbCompress = 1;
+		    dbCompress = atoi(*argv);
+                } else {
                     print_mega2_help();
                     EXIT(INPUT_DATA_ERROR);
                 }
@@ -2105,6 +2110,8 @@ void print_mega2_help(void)
     printf("                only dump the database; do not do any analysis.\n");
     printf("             --DBread\n");
     printf("                read an existing database file and do an analysis.\n");
+    printf("             --DBcompress <value>\n");
+    printf("                set database compression level: 0 == off; 1 == gzip.\n");
 
     printf("             --cow\n");
     printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for cow.\n");

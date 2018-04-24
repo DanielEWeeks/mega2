@@ -432,13 +432,16 @@ void ReadBCFs::build_markers_and_samples() {
                 }
 
                 Str name = line->d.id;
+                const char *posp = hdr->id[BCF_DT_CTG][line->rid].key;
+                if (strncmp(posp, "chr", 3) == 0) posp += 3;
 //rvb: and another
                 if (name == ".") {
                     char pos[50];
-                    sprintf(pos, "chr%s_%d", hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1);
+                    sprintf(pos, "chr%s_%d", posp, line->pos + 1);
                     name = pos;
                 }
-                this->markers.push_back(new BCFMarker(name, hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1,
+                    
+                this->markers.push_back(new BCFMarker(name, posp, line->pos + 1,
                                                       alleles)); // pos + 1 matches the VCF line pos field.
 
                 count++;
@@ -461,7 +464,7 @@ void ReadBCFs::build_markers_and_samples() {
 
 
 void ReadBCFs::check_dups() {
-    SECTION_LOG(dup_marker_relabeled);
+    SECTION_LOG_INIT(dup_marker_relabeled);
     for(int i = 0; i < this->marker_count; i++){
         Str name = this->markers[i]->name;
         if (markerMap.find(name) == markerMap.end())
@@ -473,6 +476,7 @@ void ReadBCFs::check_dups() {
             markerMap[newname] = 1;
             markerMap[name] = value;
             this->markers[i]->name = newname;
+            SECTION_LOG(dup_marker_relabeled);
             mssgvf("Duplicate marker name found for %s relabeling %s:%d as %s\n", name.c_str(),
                    this->markers[i]->chr.c_str(), this->markers[i]->pos, newname);
         }
@@ -704,11 +708,17 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                 }
 
                 Vecc canons;
+//                extern void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
 
                 for (int al = 0; al < line->n_allele; al++) {
                     canons.push_back(canonical_allele(line->d.allele[al]));
                 }
                 VecAlleles.push_back(canons);
+<<<<<<< HEAD
+=======
+//                set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
+
+>>>>>>> 6545e1ab35b5e56f5ec2570c2617d52063ead645
                 //should give number of allele options per marker
                 n /= num_samples;
                 for (i = 0; i < num_samples; i++) {

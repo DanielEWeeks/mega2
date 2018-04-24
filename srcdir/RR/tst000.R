@@ -135,4 +135,13 @@ print("")
 print("system('cd ../RR/tstVCF; ../tstvcfdiff')")
 system("cd ../RR/tstVCF; ../tstvcfdiff")
 
+print("")
+
+print("################################################################")
+print("################################################################")
+print("")
+print("source('../RR/tstgdsfmt.R')")
+source("../RR/tstgdsfmt.R") 
+
+
 setwd(wdir)

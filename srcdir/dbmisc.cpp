@@ -200,6 +200,9 @@ void dbmisc_export(linkage_ped_top *Top) {
     int_table.insert("genetic_distance_sex_type_map", genetic_distance_sex_type_map);
     int_table.insert("base_pair_position_index", base_pair_position_index);
 
+    extern int dbCompress;
+    int_table.insert("dbCompression", dbCompress);
+
     stuff_table.insert("MaleRecomb", (unsigned char *)(ELTop->MaleRecomb), sizeof(double) * (ELTop->LocusCnt - 1));
     if (ELTop->Program == LINKMAP)
         stuff_table.insert("recomb_frac", (unsigned char *)(ELTop->Run.linkmap.recomb_frac), sizeof(double) * (ELTop->LocusCnt - 1));
@@ -296,6 +299,14 @@ void dbmisc_import(linkage_ped_top *Top) {
     int_table.get("genetic_distance_index", genetic_distance_index);
     int_table.get("genetic_distance_sex_type_map", genetic_distance_sex_type_map);
     int_table.get("base_pair_position_index", base_pair_position_index);
+
+    extern int dbCompress;
+//  int_table.get("dbCompression", dbCompress);
+    const char *key = "dbCompression";
+    if (!map_get(Int_hash, key, dbCompress)) {
+        warnvf("Database has no compression flag; assuming it is not compressed (i.e. 0)\n");
+        dbCompress = 0;
+    }
 
 //needed
 

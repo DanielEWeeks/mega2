@@ -348,6 +348,8 @@ int             *ChrLoci; /* Contains selected marker loci on selected
 			     chromosomes
 			     For LoopOverTrait=0, list may have trait_loci as well */
 int             NumChrLoci; /* Number of ChrLoci */
+int             dump_dbCompress;  /* compress genotypes if non zero save as dbCompress in DB */
+int             dbCompress;  /* compress genotypes if non zero */
 int             NumChrSite; /* Number of markers */
 int             human_x, human_xy, human_y, human_mt, human_unknown, human_auto;
 int             default_output_filenames;
@@ -510,6 +512,8 @@ static void    init_globals(char *argv0)
     default_output_filenames=1;
     FirstIterMenu = 1;
     ChrLoci = NULL;
+    dump_dbCompress = 0;
+    dbCompress = 0;
 }
 
 static void free_globals(void)
@@ -715,6 +719,10 @@ int             main(int argc, char **argv, char **env)
         genetic_distance_index = Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option;
         base_pair_position_index = Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option;
         genetic_distance_sex_type_map = Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option;
+
+        if (! dump_dbCompress)
+            BatchValueGet(dbCompress, "DBcompression");
+
 //      MARKER_SCHEME = Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option;
         BatchValueIfSet(MARKER_SCHEME, "Value_Marker_Compression");
         if (marker_scheme_mega2_opts)
@@ -1273,6 +1281,13 @@ int             main(int argc, char **argv, char **env)
 
     // EXPORTS
     if (database_dump) {
+        if (dump_dbCompress) {
+            int redd = BatchValueRead("DBcompression");
+            BatchValueSet(dbCompress, "DBcompression");
+            if (! redd)
+                batchf("DBcompression");
+        }
+
         Tod dbexport("db_export");
 
         extern void dbmega2_export(linkage_ped_top *Top);

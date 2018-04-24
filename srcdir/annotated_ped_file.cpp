@@ -5708,7 +5708,6 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
     int  num_ped_records;
     char loctype[2];
     linkage_locus_rec llr;
-    ext_linkage_locus_rec llx;
     double pos;
 
     col_hdr_type *ped_all_colnames;
@@ -5811,7 +5810,6 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
 //z  for (i=0; i < LTop->LocusCnt && i < num_userdef_cols ; i++)
     for (i=0; i < LTop->LocusCnt; i++) {
         llr = LTop->Locus[i];
-        llx = EXLTop->EXLocus[i];
         loctype_to_descriptor(LTop, i, loctype);
         if ( (loctype[0] == 'M' && loctype[1] == 'M') ||
              (loctype[0] == 'X' && loctype[1] == 'X') ||
@@ -5819,6 +5817,7 @@ static linkage_ped_top *read_plink_ped_file(char *pedfile,
              (loctype[0] == 'Y' && loctype[1] == 'Y') ||
              (loctype[0] == 'Y' && loctype[1] == 'M') ||
              (loctype[0] == 'U' && loctype[1] == 'U')) {
+            ext_linkage_locus_rec llx = EXLTop->EXLocus[i];
             for (j = 0; j < /*llr.AlleleCnt*/2; j++) {
                 INIT_COLNAME(tmp, 0, STRING_AN, llr.LocusName);
                 tmp[0].input_col = output_col;
