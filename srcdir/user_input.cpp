@@ -1210,7 +1210,7 @@ void menu1(file_format *infl_type,
 
                 strcpy(extension_name, "study");
 
-                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
                 fln_init_plink(0);
 
                 fln_init_mega2(! MAP_REQ);
@@ -1223,7 +1223,7 @@ void menu1(file_format *infl_type,
 
                 strcpy(extension_name, "study");
 
-                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
                 fln_init_plink(0);
 
                 fln_init_mega2(! MAP_REQ);
@@ -1236,7 +1236,7 @@ void menu1(file_format *infl_type,
 
                 strcpy(extension_name, "study");
 
-                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
                 fln_init_plink(0);
 
                 fln_init_mega2(! MAP_REQ);
@@ -1404,8 +1404,12 @@ void menu1(file_format *infl_type,
                 }
             }
             if (access(*pedfl_name, F_OK) != 0) {
-                printf("ERROR: You must specify a pedigree file.\n");
-                exit_loop=0;
+                if(!(Input_Format == in_format_bcfs ||
+                   Input_Format == in_format_vcfs ||
+                   Input_Format == in_format_gzcfs)) {
+                    printf("ERROR: You must specify a pedigree file.\n");
+                    exit_loop = 0;
+                }
             }
             if (Input->req_map_file)
             {

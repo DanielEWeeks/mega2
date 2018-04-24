@@ -801,6 +801,9 @@ int             main(int argc, char **argv, char **env)
         plink_info->plinkf = (Input_Format == in_format_binary_PED) ? binary_PED_format : 
                                (Input_Format == in_format_PED) ? PED_format : not_plink_format;
 
+        if(!(Input_Format == in_format_bcfs ||
+             Input_Format == in_format_bcfs ||
+             Input_Format == in_format_gzcfs ) && (strcmp(*inf.pedfl,"-") !=0))
         *inf.pedfl   = pedfl_name;
         *inf.locusfl = locusfl_name;
         *inf.mapfl   = mapfl_name;
