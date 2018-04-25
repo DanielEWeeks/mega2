@@ -726,7 +726,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
                     const char *  chromosome = hdr->id[BCF_DT_CTG][line->rid].key;
                     int is_x_chr = 0;
-                    printf("%s", chromosome);
+                    //printf("%s", chromosome);
                     if(((strcmp(chromosome,"X") == 0) || (strcmp(chromosome,"x") == 0) ||
                         (strcmp(chromosome,"CHRX") == 0) || (strcmp(chromosome,"ChrX") == 0) ||
                         (strcmp(chromosome,"23") == 0)) && (persons[i].Sex == 1))
