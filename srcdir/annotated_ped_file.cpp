@@ -4678,7 +4678,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     SECTION_ERR_EXTERN(FLOAT_AFFECT);
 
-    if (Input->GetOps()->use_getops() && (!xcf || (xcf && (strcmp(ped_file,"-.fam")==0)))) {
+    if (Input->GetOps()->use_getops() && (!xcf || (xcf && (strcmp(ped_file,"-.fam")==0 | strcmp(ped_file,"-")==0)))) {
         pedfile_type = PREMAKEPED_PFT;
         basefile_type = pedfile_type;
         Top = Input->GetOps()->do_ped(LTop);
