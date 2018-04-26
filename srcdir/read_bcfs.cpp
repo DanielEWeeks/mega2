@@ -829,9 +829,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 linkage_ped_top* ReadBCFs::do_ped(linkage_locus_top *LTop)   {
     extern vector<Vecc> VecAlleles;
 
-    mssgvf("A Pedigree file (.fam) was not provided so a template is being constructed internally for reference with no family structure.\n"
+    mssgvf("\nA Pedigree file (.fam) was not provided so a template is being constructed internally for reference with no family structure.\n"
            "Please note it is only used to organize samples within Mega2 and will not be reflective of any actual pedigree structure in the data.\n"
-           "If you have pedigree information that you did not include please go back to Menu 1 and and include a Pedigree file (.fam).");
+           "If you have pedigree information that you did not include please go back to Menu 1 and include a Pedigree file (.fam).\n");
     annotated_ped_rec *persons = build_bcf_ped(LTop);
 
     do_genotypes(LTop, persons, VecAlleles);
