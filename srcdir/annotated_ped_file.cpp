@@ -4678,7 +4678,11 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     SECTION_ERR_EXTERN(FLOAT_AFFECT);
 
-    if (Input->GetOps()->use_getops() && (!xcf || (xcf && (strcmp(ped_file,"-.fam")==0 | strcmp(ped_file,"-")==0)))) {
+    //split out some logic to make sure the ped file is some dummy value
+    //the interactive makes it into -.fam, batch just takes -
+    int xcf_ped_file_present = (strcmp(ped_file,"-.fam")==0) || (strcmp(ped_file,"-")==0);
+
+    if (Input->GetOps()->use_getops() && (!xcf || (xcf && xcf_ped_file_present))) {
         pedfile_type = PREMAKEPED_PFT;
         basefile_type = pedfile_type;
         Top = Input->GetOps()->do_ped(LTop);
