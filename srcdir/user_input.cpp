@@ -766,9 +766,10 @@ static void menu1_batch_set_files(file_format *infl_type,
             bi = BatchItemGet(i);
         }
         if (bi->items_read) {
-            if (access(bi->value.name, F_OK) == 0) {
+            if (access(bi->value.name, F_OK) == 0 || (strcmp((*fln)->name, "-.fam"))) {
                 strcpy((*fln)->name, bi->value.name);
-            } else {
+            }
+            else {
                 errorvf("Could not find file or path %s named by keyword %s.\n",
                         bi->value.name,
                         C(bi->keyword));
@@ -1207,10 +1208,11 @@ void menu1(file_format *infl_type,
                 plinkf = 0;
                 PLINK_clr(not_plink_format);
                 PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(extension_name, "-");
+                strcpy(pedo->name,"-");
+                pedo->specified = true;
 
-                strcpy(extension_name, "study");
-
-                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
                 fln_init_plink(0);
 
                 fln_init_mega2(! MAP_REQ);
@@ -1220,10 +1222,11 @@ void menu1(file_format *infl_type,
                 plinkf = 0;
                 PLINK_clr(not_plink_format);
                 PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(extension_name, "-");
+                strcpy(pedo->name,"-");
+                pedo->specified = true;
 
-                strcpy(extension_name, "study");
-
-                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
                 fln_init_plink(0);
 
                 fln_init_mega2(! MAP_REQ);
@@ -1233,10 +1236,11 @@ void menu1(file_format *infl_type,
                 plinkf = 0;
                 PLINK_clr(not_plink_format);
                 PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(extension_name, "-");
+                strcpy(pedo->name,"-");
+                pedo->specified = true;
 
-                strcpy(extension_name, "study");
-
-                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
                 fln_init_plink(0);
 
                 fln_init_mega2(! MAP_REQ);
@@ -1404,8 +1408,12 @@ void menu1(file_format *infl_type,
                 }
             }
             if (access(*pedfl_name, F_OK) != 0) {
-                printf("ERROR: You must specify a pedigree file.\n");
-                exit_loop=0;
+                if(!(Input_Format == in_format_bcfs ||
+                   Input_Format == in_format_vcfs ||
+                   Input_Format == in_format_gzcfs)) {
+                    printf("ERROR: You must specify a pedigree file.\n");
+                    exit_loop = 0;
+                }
             }
             if (Input->req_map_file)
             {

@@ -83,6 +83,9 @@ public:
     void build_markers_and_samples();
     void check_dups();
 
+    linkage_ped_top *do_ped(linkage_locus_top *LTop);
+    annotated_ped_rec *build_bcf_ped(linkage_locus_top *LTop);
+
     virtual void do_map(std::vector<m2_map>& additional_maps);
     void build_bcf_map(m2_map& bcf_map);
 
@@ -118,6 +121,7 @@ protected:
     int   *phetypes;
 
     Hmapsi markerMap;
+    Hmapsi sampleMap;
 };
 
 

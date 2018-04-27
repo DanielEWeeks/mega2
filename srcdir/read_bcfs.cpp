@@ -348,33 +348,45 @@ void ReadBCFs::build_markers_and_samples() {
 
 
     for(int i = 0; i < this->filecount; i++) {
-        //auto start = std::chrono::system_clock::now();
-
         args.push_back(files[i]);
 
-        printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
+        printf("\nRunning the following bcftools command for file: %s\n", files[i].c_str());
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
             argv[ii] = &args[ii][0];
-            printf("%s ",argv[ii]);
+            printf("%s ", argv[ii]);
         }
         printf("\n");
 
-        args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
+        args_t *bcfargs = (args_t *) calloc(1, sizeof(args_t));
         bcfargs = mbi->get_args(argc, argv);
 
         bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
-        this->samples.push_back(hdr->samples[i]);
-        this->num_samples = hdr->n[2];
+        //consistancy between the number of samples (only way to tell if there's less in subsequent files
+        if(i == 0)
+            this->num_samples = hdr->n[2];
+        else if( this->num_samples != hdr->n[2])
+            errorvf("Different number of sample columns between first file in manifest and file %s\n",files[i].c_str());
+
+        for (int j = 0; j < this->num_samples; j++) {
+            Str name = hdr->samples[j];
+            //first file just add
+            if (i == 0) {
+                this->samples.push_back(name);
+                Pairsi pair(name,1);
+                sampleMap.insert(pair);
+            }
+            //other files use sampleMap to check the names are the same
+            else {
+                if (markerMap.find(name) == markerMap.end())
+                    errorvf("Sample in file %s not found in first file from manifest\n", files[i].c_str());
+            }
+        }
         args.pop_back();
 
-        //auto end = std::chrono::system_clock::now();
-        //std::time_t time = std::chrono::system_clock::to_time_t(end);
-        //std::chrono::duration<double> elapsed_seconds = end-start;
         std::cout << "Samples for  " << files[i] << " completed\n";// << std::ctime(&time)
-                  //<< "Duration: " << elapsed_seconds.count() << "\n";
     }
 
     args.pop_back();
@@ -652,6 +664,8 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     }
 
     int mrkindex = LTop->PhenoCnt;
+    int zeroed_genotypes_nonx = 0;
+    int zeroed_genotypes_x = 0;
 
     for (int i = 0; i < this->filecount; i++) {
         //auto start = std::chrono::system_clock::now();
@@ -673,10 +687,12 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
         bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
 
+
+
+
         while (bcf_sr_next_line(bcfargs->files)) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
-
-            if ( subset_vcf(bcfargs, line) && mrkindex < LTop->LocusCnt) {
+                if ( subset_vcf(bcfargs, line) && mrkindex < LTop->LocusCnt) {
                 int m, n, i;
 
                 //uses convert object so we need our own void * instead
@@ -690,8 +706,6 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                 if (n <= 0) {
                     error("Error parsing GT tag at %s:%d\n", bcf_seqname(hdr, line), line->pos + 1);
                 }
-
-
 
                 Vecc canons;
                 extern void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
@@ -710,31 +724,88 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                     for (j = 0; j < n; j++)
                         if (ptr[j] == bcf_int32_vector_end) break;
 
+                    const char *  chromosome = hdr->id[BCF_DT_CTG][line->rid].key;
+                    int is_x_chr = 0;
+                    //printf("%s", chromosome);
+                    if(((strcasecmp(chromosome,"X") == 0) ||
+                        (strcasecmp(chromosome,"CHRX") == 0) ||
+                        (strcmp(chromosome,"23") == 0)) && (persons[i].Sex == 1))
+                        is_x_chr = 1;
+
+
                     // diploid
                     if (j == 2) {
-                        if (bcf_gt_is_missing(ptr[0]))
+                        // ./.
+                        if (bcf_gt_is_missing(ptr[0]) && bcf_gt_is_missing(ptr[1]))
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
-                            //kputs(" 0.33 0.33 0.33", str);
+                        // ./ALT
+                        else if (bcf_gt_is_missing(ptr[0]) && bcf_gt_allele(ptr[1]) == 1) {
+                            if (MARKER_SCHEME > 1)
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[1]);
+                            else {
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                if(is_x_chr)
+                                    zeroed_genotypes_x++;
+                                else
+                                    zeroed_genotypes_nonx++;
+                            }
+                        }
+                        // ./REF
+                        else if (bcf_gt_is_missing(ptr[0])) {
+                            if (MARKER_SCHEME > 1)
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[0]);
+                            else {
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                if(is_x_chr)
+                                    zeroed_genotypes_x++;
+                                else
+                                    zeroed_genotypes_nonx++;
+                            }
+                        }
+                        // ALT/.
+                        else if (bcf_gt_is_missing(ptr[1]) && bcf_gt_allele(ptr[0]) == 1) {
+                            if(MARKER_SCHEME > 1)
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], zero);
+                            else {
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                if(is_x_chr)
+                                    zeroed_genotypes_x++;
+                                else
+                                    zeroed_genotypes_nonx++;
+                            }
+                        }
+                        // REF/.
+                        else if (bcf_gt_is_missing(ptr[1])) {
+                            if(MARKER_SCHEME > 1)
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], zero);
+                            else {
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                if(is_x_chr)
+                                    zeroed_genotypes_x++;
+                                else
+                                    zeroed_genotypes_nonx++;
+                            }
+                        }
+                        // ALT/REF
                         else if (bcf_gt_allele(ptr[0]) != bcf_gt_allele(ptr[1]))
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
-                            //kputs(" 0 1 0", str);       // HET
+                        // ALT/ALT
                         else if (bcf_gt_allele(ptr[0]) == 1)
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
-                            //kputs(" 0 0 1", str);       // ALT HOM, first ALT allele
+                        // REF/REF
                         else
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
-                        //kputs(" 1 0 0", str);       // REF HOM or something else than first ALT
                         // haploid
                     } else if (j == 1) {
+                        // single missing genotypes
                         if (bcf_gt_is_missing(ptr[0]))
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
-                            //kputs(" 0.5 0.0 0.5", str);
+                        // single ALT
                         else if (bcf_gt_allele(ptr[0]) == 1)
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
-                            //kputs(" 0 0 1", str);       // first ALT allele
+                        // single REF
                         else
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
-                        //kputs(" 1 0 0", str);       // REF or something else than first ALT
                     } else error("FIXME: not ready for ploidy %d\n", j);
 
                 }
@@ -748,7 +819,77 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         //std::chrono::duration<double> elapsed_seconds = end-start;
         std::cout << "Genotypes for  " << files[i] << " completed\n"; //<< std::ctime(&time)
                   //<< "Duration: " << elapsed_seconds.count() << "\n";
+        if(zeroed_genotypes_nonx + zeroed_genotypes_x > 0)
+            warnvf("We encountered %d half-typed genotypes that were set to missing.\n"
+                   "If you would like to read these in, set the maximum number of alleles per marker in the 'File Input Menu' to more than 2.\n"
+                   "Also, there were %d half-typed genotypes in males on chromosome X that were treated as valid.\n",zeroed_genotypes_nonx,zeroed_genotypes_x);
     }
 }
+
+linkage_ped_top* ReadBCFs::do_ped(linkage_locus_top *LTop)   {
+    extern vector<Vecc> VecAlleles;
+
+    mssgvf("\nA Pedigree file (.fam) was not provided so a template is being constructed internally for reference with no family structure.\n"
+           "Please note it is only used to organize samples within Mega2 and will not be reflective of any actual pedigree structure in the data.\n"
+           "If you have pedigree information that you did not include please go back to Menu 1 and include a Pedigree file (.fam).\n");
+    annotated_ped_rec *persons = build_bcf_ped(LTop);
+
+    do_genotypes(LTop, persons, VecAlleles);
+    linkage_ped_top *Top;
+
+    Top = mk_ped_top(persons, this->num_samples, LTop, this->num_samples,
+            /*untyped*/ 0, /*totaltyped*/ 0,
+            /*groups*/ NULL, 0, 0,
+            /*num_err*/0, 1);
+
+    return Top;
+}
+
+annotated_ped_rec * ReadBCFs::build_bcf_ped(linkage_locus_top *LTop) {
+    annotated_ped_rec *persons;
+    int num_ped_records = this->num_samples;
+    if ((persons = CALLOC((size_t) num_ped_records, annotated_ped_rec)) == NULL) {
+        errorf("Build_BCF_Ped: Could not allocate enough memory, exiting.");
+        EXIT(MEMORY_ALLOC_ERROR);
+    }
+
+    for (int i = 0; i < this->num_samples; i++) {
+        annotated_ped_rec *entry = &persons[i];
+
+        entry->pheno = (LTop->PhenoCnt > 0) ?
+                       CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data) : 0;
+
+        entry->marker = (LTop->MarkerCnt > 0) ?
+                        marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt) : 0;
+
+        entry->rec_num = i + 1;  // really p+1 now
+
+        entry->Pedigree = canonicalColName(this->samples[i].c_str());
+        entry->ID = canonicalColName(this->samples[i].c_str());
+
+        PLINK.individuals += 1;
+        entry->per_index = i;
+        entry->ped_index = i + 1;
+
+        entry->Father = canonicalColName("0");
+        entry->Mother = canonicalColName("0");
+
+        PLINK.unspecified_sex += 1;
+        entry->Sex = '1';
+
+
+        entry->LinkPerID = i;
+        entry->LinkPedID = i;
+
+        entry->PedID = entry->Pedigree;
+        entry->PerID = entry->ID;
+
+    }
+
+    return persons;
+}
+
+
+
 
 
