@@ -167,13 +167,12 @@ int num_typed_2Ralleles(void *mp, int marker) {
 }
 
 void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *all1, const char *all2) {
-#ifdef ORDER_HETEROZYGOTE
-    if (all1 != all2 && strcmp(all1, all2) > 0) {
+    if (SORT_HETEROZYGOTE && all1 != all2 && strcmp(all1, all2) > 0) {
         const char *tmp = all1;
         all1 = all2;
         all2 = tmp;
     }
-#endif /* ORDER_HETEROZYGOTE */
+
     if (mp == NOTYPED_ALLELES) 
         ; // do nothing
     else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
@@ -230,6 +229,32 @@ void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *a
         marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
         mpd[marker].Allele_1 = ((unsigned char) allele2allele_prop_idx(all1));
         mpd[marker].Allele_2 = ((unsigned char) allele2allele_prop_idx(all2));
+    }
+}
+
+void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2) {
+    if (all1 == REC_UNKNOWN && all2 == REC_UNKNOWN) return;
+
+/*rvb tmp
+    if (all1 != all2 && strcmp(all1, all2) > 0) {
+        const char *tmp = all1;
+        all1 = all2;
+        all2 = tmp;
+    }
+*/
+    if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        Alleles_str *allelep = &MARKER_SCHEME3_Ralleles[marker];
+        allelep->Allele_1 = all1;
+        allelep->Allele_2 = all2;
+    }
+}
+
+void get_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char **all1, const char **all2) {
+
+    if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        Alleles_str *allelep = &MARKER_SCHEME3_Ralleles[marker];
+        *all1 = allelep->Allele_1;
+        *all2 = allelep->Allele_2;
     }
 }
 
@@ -298,7 +323,8 @@ void copy_2Ralleles(void *to, void *from, int marker) {
 #if 1
 void order_heterozygous_allele_raw(linkage_ped_top *Top)
 {
-#ifdef ORDER_HETEROZYGOTE
+    if (! SORT_HETEROZYGOTE) return;
+
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
     if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
@@ -351,12 +377,12 @@ void order_heterozygous_allele_raw(linkage_ped_top *Top)
     if (cnt > 0)
         msgvf("Fix raw alleles: %d/%d heterozygotes flipped to 1/2.\n", cnt, all);
 
-#endif /* ORDER_HETEROZYGOTE */
 }
 #else
 void order_heterozygous_allele_raw(linkage_ped_top *Top)
 {
-#ifdef ORDER_HETEROZYGOTE
+    if (! SORT_HETEROZYGOTE) return;
+
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
     if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
@@ -400,7 +426,6 @@ void order_heterozygous_allele_raw(linkage_ped_top *Top)
     }
     if (cnt > 0)
         msgvf("Fix raw alleles: %d/%d heterozygotes flipped to 1/2.\n", cnt, all);
-#endif /* ORDER_HETEROZYGOTE */
 }
 #endif
 
@@ -469,13 +494,13 @@ int num_typed_2alleles(void *mp, int marker) {
 }
 
 void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int all2) {
-#ifdef ORDER_HETEROZYGOTE
-    if (all1 > all2) {
+
+    if (SORT_HETEROZYGOTE && all1 > all2) {
         int tmp = all1;
         all1 = all2;
         all2 = tmp;
     }
-#endif /* ORDER_HETEROZYGOTE */
+
     if (mp == NOTYPED_ALLELES) 
         ; // do nothing
     else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
@@ -661,7 +686,8 @@ int copy_2alleles_2staging(void *to, void *from, int tomarker, int frommarker) {
 #if 1
 void order_heterozygous_allele(linkage_ped_top *Top)
 {
-#ifdef ORDER_HETEROZYGOTE
+    if (! SORT_HETEROZYGOTE) return;
+
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
     if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
@@ -711,12 +737,12 @@ void order_heterozygous_allele(linkage_ped_top *Top)
 
     if (cnt > 0)
         msgvf("Fix alleles: %d/%d heterozygotes flipped to 1/2.\n", cnt, all);
-#endif /* ORDER_HETEROZYGOTE */
 }
 #else
 void order_heterozygous_allele(linkage_ped_top *Top)
 {
-#ifdef ORDER_HETEROZYGOTE
+    if (! SORT_HETEROZYGOTE) return;
+
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
     if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
@@ -757,7 +783,6 @@ void order_heterozygous_allele(linkage_ped_top *Top)
     }
     if (cnt > 0)
         msgvf("Fix alleles: %d/%d heterozygotes flipped to 1/2.\n", cnt, all);
-#endif /* ORDER_HETEROZYGOTE */
 }
 #endif
 

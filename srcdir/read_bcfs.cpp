@@ -694,13 +694,13 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
 
                 Vecc canons;
-//                extern void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
+                extern void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
 
                 for (int al = 0; al < line->n_allele; al++) {
                     canons.push_back(canonical_allele(line->d.allele[al]));
                 }
                 VecAlleles.push_back(canons);
-//                set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
+                set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
 
                 //should give number of allele options per marker
                 n /= num_samples;

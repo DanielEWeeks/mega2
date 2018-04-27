@@ -1057,6 +1057,10 @@ static int read_annotated_pedrec(FILE *filep,
                     int SNP_data;       // byte from the binary file
                     allele1[0] = plink_info->alleles[allele_i++];
                     allele2[0] = plink_info->alleles[allele_i++];
+///                    if (*curr_per_index) {
+///                        set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], 
+///                                            search_allele_cache(allele1),
+///                                            search_allele_cache(allele2));
                     process_binary_genotype(plink_info->bed_filep, entry, mrkindex, &SNP_count, &SNP_data, 
                                             &LTop->Locus[mrkindex], allele1, allele2);
                     i++;
@@ -1770,6 +1774,11 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
                     tod_plink.reset();
                     allele1[0] = plink_info->alleles[allele_i++]; // allele characters from the string
                     allele2[0] = plink_info->alleles[allele_i++];
+///                  set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex],
+//                                            search_allele_cache(allele1),
+//                                            search_allele_cacheallele2));
+
+
                     for (pp=0; pp < num_ped_records; pp++) {
                         // looping through the individuals...
                         process_binary_genotype(plink_info->bed_filep, &(persons[pp]), mrkindex, &SNP_count, &SNP_data, 
@@ -4827,6 +4836,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             tod_fr.reset();
             tod_fr_x4.reset();
             if (marker_list[i].estimate_frequencies) {
+
                 create_allele_list(Top, (int) i, &(marker_list[i]),
                                    member_ids, count_halftyped);
                 tod_fr("create allele list 1 freq");

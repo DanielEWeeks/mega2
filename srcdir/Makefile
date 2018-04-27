@@ -153,7 +153,7 @@ mega2_bcftools_interface.o read_bcfs.o write_vcf.o: iFLAGS += -Ilib/bcftools-$(B
 # The not yet ready for prime time object oriented batch file interface....
 #DFLAGS += -DNEW_BATCH
 
-mega2.o utils.o: DFLAGS += -DEXPIRE
+mega2.o utils.o: DFLAGS += -DEXPIRE 
 
 ifdef TEST
     DtFLAGS += -DTEST
@@ -202,10 +202,9 @@ annotated_ped_file.o mrecode.o: DFLAGS += $(DaFLAGS)
 
 ifeq  "$(TEST)" "2"
     DlFLAGS += -DLOGDIR
-    DlFLAGS += -DORDER_HETEROZYGOTE
 endif
 output_file_names.o: DFLAGS += $(DlFLAGS)
-read_files.o compress.o: DFLAGS += $(DlFLAGS)
+mega2.o: DFLAGS += -DSORT_HETEROZYGOUS
 
 # export CFLAGS so that the called Makefile can find it...
 export FLAGS

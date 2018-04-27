@@ -221,6 +221,7 @@ write_simulate_files_ext.h:  create_SIMULATE_format_files
 /* global variables that control output behaviour*/
 // strings associated with common.h: genetic_distance_map_type
 int             MARKER_SCHEME;
+int             SORT_HETEROZYGOTE;
 int             marker_scheme_mega2_opts = 0;
 const char *genetic_distance_map_type_string[3] = {
   "sex-averaged", "sex-specific", "female"
@@ -412,6 +413,11 @@ static void    init_globals(char *argv0)
 #endif
     check_web_ver = 1;
     MARKER_SCHEME = MARKER_SCHEME_BITS;
+#ifdef SORT_HETEROZYGOUS
+    SORT_HETEROZYGOTE = 1;
+#else
+    SORT_HETEROZYGOTE = 0;
+#endif
     IgnoreValue(getcwd(InputPath, (size_t) FILENAME_LENGTH));
     strcpy(mega2_path1, argv0);
     path_end=strrchr(mega2_path1, '/');

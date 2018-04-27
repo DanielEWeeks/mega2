@@ -1260,6 +1260,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
             tmpalleles.push_back(calleles[i]);
         }
         VA.push_back(tmpalleles);
+///      set_2Ralleles_2bits(mrk_idx, locus, C(alleles[0]), C(alleles[1]));
 
         int sam = 0;
         int zero = 0, poor = 0, good = 0;

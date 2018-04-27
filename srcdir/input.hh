@@ -199,10 +199,12 @@ public:
 class Input_BCFs: public Input_Base{
 public:
     Input_BCFs(INPUT_FORMAT_t i): Input_Base(i) {
+        extern int SORT_HETEROZYGOTE;
         xcf = 1;
         req_locus_file = 0;
         req_map_file   = 0;
         req_stem_flag = 1;
+        SORT_HETEROZYGOTE = 0;
     }
     virtual ~Input_BCFs() {};
     virtual Input_Ops *GetOps() {return &Ops;};
@@ -223,7 +225,6 @@ class Input_VCFS: public Input_BCFs {
 public:
     Input_VCFS(INPUT_FORMAT_t i): Input_BCFs(i) {};
 };
-
 
 class Input_Traditional : public Input_Old {
 public:
