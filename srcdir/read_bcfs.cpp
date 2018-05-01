@@ -380,7 +380,7 @@ void ReadBCFs::build_markers_and_samples() {
             }
             //other files use sampleMap to check the names are the same
             else {
-                if (markerMap.find(name) == markerMap.end())
+                if (sampleMap.find(name) == sampleMap.end())
                     errorvf("Sample in file %s not found in first file from manifest\n", files[i].c_str());
             }
         }
@@ -447,6 +447,14 @@ void ReadBCFs::build_markers_and_samples() {
                 count++;
             }
         }
+        int err = bcfargs->files->errnum;
+        if ( err ) {
+            fprintf(stderr,"Error: %s\n", bcf_sr_strerror(bcfargs->files->errnum));
+            errorf("BCFTools encountered a problem with the given command.\n"
+                   "Mega2 was unable to process allele labels and is exiting.\n"
+                   "Please verify your BCFTools command is valid.\n");
+        }
+
 
         total_markers += count;
         args.pop_back();
@@ -812,6 +820,15 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                 mrkindex++;
             }
         }
+        int err = bcfargs->files->errnum;
+        if ( err ) {
+            fprintf(stderr,"Error: %s\n", bcf_sr_strerror(bcfargs->files->errnum));
+            errorf("BCFTools encountered a problem with the given command.\n"
+                   "Mega2 was unable to process allele labels and is exiting.\n"
+                   "Please verify your BCFTools command is valid.\n");
+        }
+
+
         args.pop_back();
 
        // auto end = std::chrono::system_clock::now();
@@ -830,7 +847,7 @@ linkage_ped_top* ReadBCFs::do_ped(linkage_locus_top *LTop)   {
     extern vector<Vecc> VecAlleles;
 
     mssgvf("\nA Pedigree file (.fam) was not provided so a template is being constructed internally for reference with no family structure.\n"
-           "Please note it is only used to organize samples within Mega2 and will not be reflective of any actual pedigree structure in the data.\n"
+           "It is only used to organize samples within Mega2 and will not be reflective of any real pedigree structure in the data.\n"
            "If you have pedigree information that you did not include please go back to Menu 1 and include a Pedigree file (.fam).\n");
     annotated_ped_rec *persons = build_bcf_ped(LTop);
 

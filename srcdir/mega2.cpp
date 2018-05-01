@@ -815,9 +815,6 @@ int             main(int argc, char **argv, char **env)
         plink_info->plinkf = (Input_Format == in_format_binary_PED) ? binary_PED_format : 
                                (Input_Format == in_format_PED) ? PED_format : not_plink_format;
 
-        if(!(Input_Format == in_format_bcfs ||
-             Input_Format == in_format_bcfs ||
-             Input_Format == in_format_gzcfs ) && (strcmp(*inf.pedfl,"-") !=0))
         *inf.pedfl   = pedfl_name;
         *inf.locusfl = locusfl_name;
         *inf.mapfl   = mapfl_name;
@@ -848,9 +845,19 @@ int             main(int argc, char **argv, char **env)
         for (ii = 0; ii < NUMBER_OF_MEGA2_INPUT_FILES; ii++) {
             if (mega2_input_files[ii]) {
                 if ((fp=fopen(mega2_input_files[ii], "r")) == NULL) {
-                    errorvf("Could not open %s (\"%s\") for reading!\n",
-                            mega2_input_file_type[ii], mega2_input_files[ii]);
-                    ferr += 1;
+                    if(ii == PEDIGREE &&
+                       (Input_Format == in_format_bcfs ||
+                        Input_Format == in_format_bcfs ||
+                        Input_Format == in_format_gzcfs ) &&
+                       (strcmp(pedfl_name,"-.fam") ==0)) {
+                        mssgvf("No pedigree file provided, so one with no family structure will be constructed.\n");
+                        fclose(fp);
+                    }
+                    else {
+                        errorvf("Could not open %s (\"%s\") for reading!\n",
+                                mega2_input_file_type[ii], mega2_input_files[ii]);
+                        ferr += 1;
+                    }
                 } else
                     fclose(fp);
             }

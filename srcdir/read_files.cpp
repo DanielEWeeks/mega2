@@ -3137,7 +3137,7 @@ void check_size_dos(void)
             break;
         }
 
-        if (mega2_input_files[i] != NULL && strcmp(mega2_input_files[i], "-")) {
+        if (mega2_input_files[i] != NULL && strcmp(mega2_input_files[i], "-") && strcmp(mega2_input_files[i],"-.fam")!=0) {
 
             empty[i] = check_empty(mega2_input_files[i]);
 
