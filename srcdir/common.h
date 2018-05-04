@@ -317,6 +317,7 @@ typedef enum
 /* global variables that control output behaviour*/
 extern int             MARKER_SCHEME;
 extern int             SORT_HETEROZYGOTE;
+extern int             PREORDER_ALLELES;
 extern int             database_read, database_dump, database_off;
 extern const char     *genetic_distance_map_type_string[3];
 extern int             LoopOverTrait; /* flag for looping over traits */

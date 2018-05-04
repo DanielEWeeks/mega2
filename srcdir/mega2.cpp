@@ -222,6 +222,7 @@ write_simulate_files_ext.h:  create_SIMULATE_format_files
 // strings associated with common.h: genetic_distance_map_type
 int             MARKER_SCHEME;
 int             SORT_HETEROZYGOTE;
+int             PREORDER_ALLELES;
 int             marker_scheme_mega2_opts = 0;
 const char *genetic_distance_map_type_string[3] = {
   "sex-averaged", "sex-specific", "female"
@@ -416,8 +417,9 @@ static void    init_globals(char *argv0)
 #ifdef SORT_HETEROZYGOUS
     SORT_HETEROZYGOTE = 1;
 #else
-    SORT_HETEROZYGOTE = 0;
+    SORT_HETEROZYGOTE = 1;
 #endif
+    PREORDER_ALLELES = 0;
     IgnoreValue(getcwd(InputPath, (size_t) FILENAME_LENGTH));
     strcpy(mega2_path1, argv0);
     path_end=strrchr(mega2_path1, '/');
@@ -815,11 +817,6 @@ int             main(int argc, char **argv, char **env)
         plink_info->plinkf = (Input_Format == in_format_binary_PED) ? binary_PED_format : 
                                (Input_Format == in_format_PED) ? PED_format : not_plink_format;
 
-/*et tu: if not new bfs && pedfl not -
-        if(!(Input_Format == in_format_bcfs ||
-             Input_Format == in_format_vcfs ||
-             Input_Format == in_format_gzcfs ) && (strcmp(*pedfl_name,"-") !=0))
-*/
         *inf.pedfl   = pedfl_name;
         *inf.locusfl = locusfl_name;
         *inf.mapfl   = mapfl_name;
@@ -850,9 +847,19 @@ int             main(int argc, char **argv, char **env)
         for (ii = 0; ii < NUMBER_OF_MEGA2_INPUT_FILES; ii++) {
             if (mega2_input_files[ii]) {
                 if ((fp=fopen(mega2_input_files[ii], "r")) == NULL) {
-                    errorvf("Could not open %s (\"%s\") for reading!\n",
-                            mega2_input_file_type[ii], mega2_input_files[ii]);
-                    ferr += 1;
+                    if(ii == PEDIGREE &&
+                       (Input_Format == in_format_bcfs ||
+                        Input_Format == in_format_bcfs ||
+                        Input_Format == in_format_gzcfs ) &&
+                       (strcmp(pedfl_name,"-.fam") ==0)) {
+                        mssgvf("No pedigree file provided, so one with no family structure will be constructed.\n");
+                        fclose(fp);
+                    }
+                    else {
+                        errorvf("Could not open %s (\"%s\") for reading!\n",
+                                mega2_input_file_type[ii], mega2_input_files[ii]);
+                        ferr += 1;
+                    }
                 } else
                     fclose(fp);
             }

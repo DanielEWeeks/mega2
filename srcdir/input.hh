@@ -200,11 +200,13 @@ class Input_BCFs: public Input_Base{
 public:
     Input_BCFs(INPUT_FORMAT_t i): Input_Base(i) {
         extern int SORT_HETEROZYGOTE;
+        extern int PREORDER_ALLELES;
         xcf = 1;
         req_locus_file = 0;
         req_map_file   = 0;
         req_stem_flag = 1;
         SORT_HETEROZYGOTE = 0;
+        PREORDER_ALLELES = 1;
     }
     virtual ~Input_BCFs() {};
     virtual Input_Ops *GetOps() {return &Ops;};

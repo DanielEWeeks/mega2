@@ -1639,7 +1639,7 @@ The big advantage is that we can pull gene boundaries from Bioconductor
 Mega2SKAT
 \emph default
  function eases the process of applying the region-based association tests
- that are implemented in the SKAT
+ that are implemented in the SKAT 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "SKATc,SKATa,SKATb"
@@ -1689,15 +1689,15 @@ Mega2SKAT = function (f, ty, gs = 1:100, skat = SKAT::SKAT, envir = ENV,
 \end_layout
 
 \begin_layout Standard
-
+The parameters
 \series bold
-f
+ f
 \series default
  and 
 \series bold
 ty
 \series default
- are the formula and phenotype type that are used to invoke 
+ specify the formula and phenotype type that are used to invoke 
 \emph on
 SKAT_Null_model
 \emph default
@@ -2059,6 +2059,9 @@ contains the penetrance information
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
 The code in each function illustrates how to assemble the corresponding
  data from the Mega2R data frames.
  The 
@@ -2068,17 +2071,18 @@ mkphenotype
  function is a bit subtle.
  The database contains a raw vector of 8 bytes times the number of phenotypes
  (per person).
- The 8 bytes are either one double precision float number or two integers
+ The 8 bytes encode either one double precision float number or two integers
  depending on the encoding of the trait phenotype in the 
 \series bold
 locus_table
 \series default
  (quantitative or affection status).
- 
+ The 
 \emph on
 readBin
 \emph default
- is used to convert the raw bytes in each 8 byte vector to the correct form.
+ function is used to convert the raw bytes in each 8 byte vector to the
+ correct form.
 \end_layout
 
 \begin_layout Standard
@@ -2092,7 +2096,7 @@ vcf
  of markers (currently 1,000).
  We generate the genotype matrix for a chunk then append the results for
  the chunk (of markers) to the .vcf file.
- Then, we get a new chunk and repeat.
+ Then we get a new chunk and repeat.
  This looping strategy might prove useful for other situations where the
  results can be written incrementally, a block of markers at a time.
 \end_layout
@@ -2113,7 +2117,7 @@ name "subsec:mega2genabel-Package-Functions"
 \end_layout
 
 \begin_layout Standard
-The 'GenABEL'
+The 'GenABEL' 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "genabel"
@@ -2123,7 +2127,7 @@ key "genabel"
  package is available on CRAN (https://CRAN.R-project.org/package=GenABEL).
  The GenABEL  package provides many functions for GWAS analysis and it accepts
  GWAS data in several formats.
- But Mega2 accepts input in still more formats, notably, PLINK bed, VCF,
+ But Mega2 accepts input in still more formats, notably VCF, PLINK bed,
  IMPUTE2 and even Linkage.
  Thus 
 \emph on
@@ -2219,8 +2223,7 @@ name "sec:Examples"
 \end_layout
 
 \begin_layout Standard
-The rest of this document shows some complete examples of Mega2R package
- use.
+The rest of this document shows some examples of how to use Mega2R.
  First, we illustrate the base functions of the Mega2R package (iteration
  and get genotype).
  Then we demonstrate one of the extended functions, 
@@ -2232,7 +2235,7 @@ Mega2pedgene.
 \emph on
  Mega2SKAT, Mega2VCF and Mega2GenABEL
 \emph default
- are illustrated in the Mega2R package vignette 
+ are illustrated in the Mega2R package vignette, available at 
 \begin_inset Flex URL
 status collapsed
 
@@ -2256,9 +2259,9 @@ https://cran.r-project.org/web/packages/Mega2R/Mega2R.pdf
 \end_inset
 
 .
- Finally, the package source can be obtained from CRAN 
+ Finally, the package source can be obtained from CRAN (
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -2267,21 +2270,19 @@ https://CRAN.R-project.org/package=Mega2R
 
 \end_inset
 
-.
+).
 \end_layout
 
 \begin_layout Standard
-
-\series bold
 The R code in the examples below was executed during the creation of this
- document using the knitr 
+ document using the knitr R package 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "knitrm,knitrc,knitrb"
 
 \end_inset
 
- R package.
+.
 \end_layout
 
 \begin_layout Subsection
@@ -2289,37 +2290,34 @@ Simulated Data
 \end_layout
 
 \begin_layout Standard
-It is always difficult to share private study data.
- We have chosen to use the SeqSIMLA2 
+We have chosen to use the SeqSIMLA2 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "seqsim"
 
 \end_inset
 
- program to generate a dataset for us.
- We will construct a small PLINK ped dataset using the simulator, which
- is available from 
+ program, which is available from 
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
-https://sourceforge.net/projects/seqsimla/?source=typ_redirect
+https://sourceforge.net/projects/seqsimla/
 \end_layout
 
 \end_inset
 
-.
- We started with the first example under the 
+, to simulate an example dataset.
+ To do this, we started with the first example under the 
 \begin_inset Quotes eld
 \end_inset
 
-prevelance
+Prevelance
 \begin_inset Quotes erd
 \end_inset
 
- tab on the 
+ tab within the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2327,7 +2325,7 @@ Simulate by Disease status
 \begin_inset Quotes erd
 \end_inset
 
- tab on the tutorial page on the 
+ tab on the tutorial page 
 \begin_inset Flex URL
 status collapsed
 
@@ -2339,15 +2337,14 @@ http://seqsimla.nhri.org.tw/prevalence
 \end_inset
 
 .
- This simulation creates 1,380 samples of 500,000 markers; a bit too much
- for sharing.
+ This simulation creates 1,380 samples of 500,000 markers on a subrange
+ of chromosome 1; a bit too much for sharing.
  But a bit less than 200,000 markers are actually polymorphic while the
  rest are monomorphic; this is smaller but the files are still too big.
  We chose to subsample the latter down to 1,380 people and 1,000 markers.
- These data will be used to illustrate Mega2 and Mega2R operations that
+ These data will be used to illustrate the Mega2 and Mega2R operations that
  follow.
- Note: The simulator produces markers for only a subrange of chromosome
- 1.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -2361,12 +2358,12 @@ R
 \begin_layout Standard
 
 \series bold
-We will assume that you have started an R session at which you type the
- commands in the tutorial.
+We will assume that you have started an R session in which you type the
+ commands in this use case.
 \end_layout
 
 \begin_layout Standard
-To run any of these exercises, you should install the package Mega2R.
+To run any of these examples, you should first install the package Mega2R.
 \end_layout
 
 \begin_layout Standard
@@ -2400,30 +2397,17 @@ name "subsec:Bioconductor"
 \end_layout
 
 \begin_layout Standard
-In Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:pedgene"
-
-\end_inset
-
- below, we will carry out gene-based association tests, where 'genes' are
- defined according to a database containing the boundaries of the gene transcrip
-ts.
+In the section about 'pedgene' below, we will carry out gene-based association
+ tests, where 'genes' are defined according to a database containing the
+ boundaries of the gene transcripts.
  This requires two Bioconductor Annotations databases to be installed.
- The first line (below) loads the Bioconductor loader and the next two lines
- install two annotation databases.
+ The first line below loads the Bioconductor biocLite loader and the next
+ two lines install two annotation databases.
  One annotation database provides the gene transcript locations and the
  other maps gene names to entrez gene IDs.
- (Note: As described in Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Running-pedgene-on"
-
-\end_inset
-
-, you may choose a different transcript database from Bioconductor or construct
- one of your own.
+ (Note: As described in the section about pedgene below, you may choose
+ a different transcript database from Bioconductor or construct one of your
+ own.
  If so, you should install it with 
 \emph on
 biocLite
@@ -2669,7 +2653,18 @@ If you do not wish to install Mega2 right now, you can use the seqsimr.db
 \end_layout
 
 \begin_layout Standard
-You can obtain the Mega2 program from https://watson.hgen.pitt.edu/register/.
+You can obtain the Mega2 program from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register/
+\end_layout
+
+\end_inset
+
+.
  Then, you will invoke Mega2 on your data.
  To make matters simple, we will use a pre-constructed Mega2 batch file
  to automate the processing by Mega2.
@@ -2688,30 +2683,39 @@ Note: This document will not invoke
 \emph on
 mega2
 \emph default
-, but use the seqsimr.db database that is in this package.
+, but instead will use the seqsimr.db database that is in the Mega2R package.
 \end_layout
 
 \begin_layout Standard
 
 \series bold
 Note: The vignette associated with the Mega2R  package illustrates what
- this Mega2 run would look like.
+ the results of this Mega2 run would look like.
 \end_layout
 
 \begin_layout Standard
 If you do not provide the command-line argument giving the name of a BATCH
- file, Mega2 will proceed to ask a series of questions to collect the informatio
-n needed to produce a database.
+ file, Mega2 will proceed to ask a series of interactive questions to collect
+ the information needed to produce a database.
  In addition, it will create a Mega2.BATCH file, similar to the one we suggested
  you use.
- You can look at the "Quick Start" section of the Mega2 documentation https://wa
-tson.hgen.pitt.edu/docs/mega2_html/mega2.html to better understand the interactive
- process.
+ You can look at the "Quick Start" section of the Mega2 documentation 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/docs/mega2_html/mega2.html
+\end_layout
+
+\end_inset
+
+ to better understand the interactive process.
 \end_layout
 
 \begin_layout Standard
 The MEGA2.BATCH.seqsimr file begins with a rather long comment indicating
- the keyword values that may be set and their default value.
+ the keyword values that may be set and their default values.
  Towards the end of the file, we set the inputs to 
 \series bold
 Mega2r.ped
@@ -2727,7 +2731,7 @@ seqsimr.db
 \series default
 , etc.
  (The initial comment section is not shown and unimportant lines are elided.)
- Notice that there is no analysis, just a database creation.)
+ 
 \end_layout
 
 \begin_layout Quotation
@@ -2780,7 +2784,7 @@ DBfile_name=seqsimr.db
 
 \begin_layout Standard
 If you wish to use any of the Mega2R functions described here on your own
- data, you will have to run 
+ data, you will have to first run 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2842,7 +2846,7 @@ ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 The first argument should be the path to the database.
  Providing the optional argument, 'verbose', causes the read function to
  summarize the data frames created, their fields and their sizes.
- Finally, an 'environment', that contains the data frames is returned.
+ Finally, an 'environment', which contains the data frames, is returned.
  
 \end_layout
 
@@ -2857,7 +2861,7 @@ status open
 
 \begin_layout Plain Layout
 
-ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+ENV = read.Mega2DB("seqsimr.db")
 \end_layout
 
 \end_inset
@@ -2866,9 +2870,13 @@ ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 \end_layout
 
 \begin_layout Standard
-For each table generated, if 'verbose' is TRUE, we emit two lines: one with
- the number of rows and number of columns of the data frame and the other
- with the column names of the data frame.
+For each data frame in 'ENV' generated, if 'verbose' is TRUE, 
+\emph on
+read.Mega2DB
+\emph default
+ emits two lines per data frame: one with the number of rows and number
+ of columns of the data frame and the other with the column names of the
+ data frame.
 \end_layout
 
 \begin_layout Paragraph
@@ -2891,7 +2899,7 @@ Use of an Environment
 \color black
 The environment returned is used to store the data frames that contain the
  'SQLite' database.
- The code above, stores the environment in global variable 'ENV'.
+ The code above stores the environment in global variable 'ENV'.
  If the named argument, 'envir', is not provided in any subsequent Mega2R
  function call, R will look up the value of 'ENV' starting at the calling
  frame and chaining up the call stack to the global environment.
@@ -2904,7 +2912,7 @@ Back to more examples.
 \begin_layout Standard
 The 'ls' function will show you all the variables in an environment.
  (You probably have used it without arguments to show you the variables
- in the .GlobalEnv.) Type:
+ in the global environment .GlobalEnv.) Type:
 \end_layout
 
 \begin_layout Standard
@@ -2987,14 +2995,7 @@ Iterating through Gene Transcripts
 \begin_layout Standard
 There are two ways to compute a function on the genotypes (or markers) in
  all the transcripts.
- These are explained via examples in Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:pedgene"
-
-\end_inset
-
- below.)
+ These are explained via examples in section about 'pedgene' below.
 \end_layout
 
 \begin_layout Paragraph
@@ -3009,8 +3010,8 @@ name "par:applyFnToRanges"
 \end_layout
 
 \begin_layout Standard
-The default ranges contains about 29,000 records taken from the UCSC Genome
- Browser reference assembly GRCH37.
+The default ranges contains 29,062 records taken from the UCSC Genome Browser
+ reference assembly GRCH37.
  We show a bit of the data frame below.
  Each row contains 5 values: a transcript id, the gene id and three position
  values: chromosome, start base pair and end base pair.
@@ -3022,7 +3023,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<setrange0,results="hold">>=
+<<setrange0>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3032,7 +3033,7 @@ status open
 
 \begin_layout Plain Layout
 
- head(ENV$refRanges)
+ head(ENV$refRanges, 4)
 \end_layout
 
 \end_inset
@@ -3060,14 +3061,14 @@ observations
 \begin_inset Quotes erd
 \end_inset
 
-, a name is generate by concatenating the position information and adding
+, a name is generated by concatenating the position information and adding
  it to the range data frame.
 \begin_inset Flex Chunk
 status open
 
 \begin_layout Plain Layout
 
-<<setrange1,results="hold">>=
+<<setrange1>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3082,57 +3083,12 @@ status open
 
 \begin_layout Plain Layout
 
-                   1, 3760000, 3761000,
+                   1, 3760000, 3761000),
 \end_layout
 
 \begin_layout Plain Layout
 
-                   1, 3761000, 3762000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3762000, 3763000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3763000, 3764000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3764000, 3765000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3765000, 3763760,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3763760, 3767000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3767000, 3768000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3768000, 3769000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3769000, 3770000),
-\end_layout
-
-\begin_layout Plain Layout
-
-                   ncol = 3, nrow = 12, byrow = TRUE)
+                   ncol = 3, nrow = 3, byrow = TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3178,7 +3134,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<setrange2,results="hold">>=
+<<setrange2>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3198,52 +3154,12 @@ status open
 
 \begin_layout Plain Layout
 
-                   1, 3761000, 3762000,
+                   1, 3761000, 3762000),
 \end_layout
 
 \begin_layout Plain Layout
 
-                   1, 3762000, 3763000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3763000, 3764000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3764000, 3765000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3765000, 3763760,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3763760, 3767000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3767000, 3768000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3768000, 3769000,
-\end_layout
-
-\begin_layout Plain Layout
-
-                   1, 3769000, 3770000),
-\end_layout
-
-\begin_layout Plain Layout
-
-                   ncol = 3, nrow = 12, byrow = TRUE)
+                   ncol = 3, nrow = 4, byrow = TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3253,7 +3169,7 @@ status open
 
 \begin_layout Plain Layout
 
- ranges$name = LETTERS[1:12]
+ ranges$name = LETTERS[1:4]
 \end_layout
 
 \begin_layout Plain Layout
@@ -3401,7 +3317,7 @@ status open
 \begin_layout Standard
 A simple example is shown below using the ranges value that were most recently
  set.
- We see that the ranges named 
+ We see that the range named 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3409,15 +3325,7 @@ A
 \begin_inset Quotes erd
 \end_inset
 
- and 
-\begin_inset Quotes eld
-\end_inset
-
-E
-\begin_inset Quotes erd
-\end_inset
-
- have markers in our example data set.
+ contains markers in our example data set.
 \begin_inset Flex Chunk
 status open
 
@@ -3460,7 +3368,7 @@ applyFnToRanges
  This run is using a different set of ranges and thus finds a different
  set of ranges with markers: viz.
  range8m and range9m.
- Run this code your self if you can not imagine the results.
+ Run this code yourself if you can not imagine the results.
 \end_layout
 
 \begin_layout Standard
@@ -3617,18 +3525,6 @@ status open
 
 \end_layout
 
-\begin_layout Standard
-By way of a reminder, Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Bioconductor"
-
-\end_inset
-
- explains how to choose and install "TxDb.Hsapiens.UCSC.hg18.knownGene" or a
- different Annotation database.
-\end_layout
-
 \begin_layout Paragraph
 applyFnToGenes 
 \end_layout
@@ -3639,7 +3535,7 @@ The function
  applyFnToGenes
 \emph default
  is called below to look for the transcripts of a particular gene.
- We know gene, 
+ We know gene 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3647,54 +3543,8 @@ CEP104
 \begin_inset Quotes erd
 \end_inset
 
-, is in our data.
- Remember, this lookup is using 
-\begin_inset Quotes eld
-\end_inset
-
-hg18
-\begin_inset Quotes erd
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<applyfntogenes0,eval=TRUE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-    # apply function "show" to all transcripts on genes ELL2 and CARD15
-\end_layout
-
-\begin_layout Plain Layout
-
-    applyFnToGenes(show, genes_arg = c("CEP104"))
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Switching to 
-\begin_inset Quotes eld
-\end_inset
-
-hg19
-\begin_inset Quotes erd
-\end_inset
-
-, we see a different transcript id and transcript name as well as different
- start/end.
- But the same set of markers from our study fall in each range.
+ is in our data.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -3704,6 +3554,11 @@ status open
 \begin_layout Plain Layout
 
 <<applyfntogenes19,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+    # Switch back to using build hg19
 \end_layout
 
 \begin_layout Plain Layout
@@ -3871,7 +3726,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<getgenotypes,eval=TRUE,results="hold">>=
+<<getgenotypes,eval=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3886,7 +3741,7 @@ status open
 
 \begin_layout Plain Layout
 
- head(genotype)
+ head(genotype, 4)
 \end_layout
 
 \end_inset
@@ -3915,7 +3770,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<getgenotypesraw,eval=TRUE,results="hold">>=
+<<getgenotypesraw,eval=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3935,7 +3790,7 @@ status open
 
 \begin_layout Plain Layout
 
- head(raw)
+ head(raw, 4)
 \end_layout
 
 \end_inset
@@ -3968,19 +3823,27 @@ print(as.numeric(raw.allele.representation))
 \end_layout
 
 \begin_layout Subsection
+Using Mega2R to carry out automated gene-based association tests using 'pedgene'
+ 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:pedgene"
 
 \end_inset
 
- Using Mega2R to carry out automated gene-based association tests using
- 'pedgene' 
+ 
 \end_layout
 
 \begin_layout Standard
-Mega2R provides functions that permit one to run the 'pedgene' package to
- carry out gene-based association tests on 
+Mega2R provides functions that permit one to run the 'pedgene' function
+ by Schaid et al 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pedgene"
+
+\end_inset
+
+ to carry out gene-based association tests on 
 \color black
 family data looping over selected marker subsets.
 \end_layout

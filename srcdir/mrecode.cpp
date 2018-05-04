@@ -1917,7 +1917,7 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
 
         allele_prop_reset();
 
-        if (SORT_HETEROZYGOTE == 0) {
+        if (PREORDER_ALLELES) {
             const char *aname1, *aname2;
             allele_list_type *allelefp;
             extern void get_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char **all1, const char **all2);
