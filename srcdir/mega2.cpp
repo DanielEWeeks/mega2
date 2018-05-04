@@ -417,7 +417,7 @@ static void    init_globals(char *argv0)
 #ifdef SORT_HETEROZYGOUS
     SORT_HETEROZYGOTE = 1;
 #else
-    SORT_HETEROZYGOTE = 1;
+    SORT_HETEROZYGOTE = 0;
 #endif
     PREORDER_ALLELES = 0;
     IgnoreValue(getcwd(InputPath, (size_t) FILENAME_LENGTH));
