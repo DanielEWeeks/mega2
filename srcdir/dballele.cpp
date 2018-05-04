@@ -113,7 +113,7 @@ void dballele_export(linkage_ped_top *Top, bp_order *bp) {
                                      allele_prop_allele(Allele_Array[i]));
     }
 
-    if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+    if (0 && MARKER_SCHEME == MARKER_SCHEME_BITS) {
         int size = Top->LocusTop->MarkerCnt;
         int offset = Top->LocusTop->PhenoCnt;
         for (i = offset, b = bp_sort + offset; i < offset + size; i++, b++) {
@@ -143,14 +143,19 @@ void dballele_import(linkage_ped_top *Top) {
         int offset = Top->LocusTop->PhenoCnt;
 
         MARKER_SCHEME3_alleles = CALLOC(size + offset, Alleles_int);
+        Alleles_int *p = MARKER_SCHEME3_alleles;
+        for (int locus = offset; locus < Top->LocusTop->LocusCnt; locus++, p++) {
+            p->Allele_1 = 1;
+            p->Allele_2 = 2;
+        }
     }
 
-    MasterDB.begin();
+//  MasterDB.begin();
 
 //xxcanonicalallele_table.db_getall(Top);
 
-    markerscheme_table.db_getall(Top);
+//xxmarkerscheme_table.db_getall(Top);
 
-    MasterDB.commit();
+//  MasterDB.commit();
 
 }

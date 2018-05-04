@@ -99,6 +99,7 @@ extern MapNames_table mapnames_table;
 
 class Map_table {
     DBstmt *insert_stmt;
+    DBstmt *insert_short_stmt;
     DBstmt *select_stmt;
 public:
     Map_table()  {}
@@ -112,6 +113,8 @@ public:
     void init () {
 	insert_stmt = MasterDB.prep(
             "INSERT INTO map_table(marker, map, position, pos_female, pos_male) VALUES(?, ?, ?, ?, ?);");
+	insert_short_stmt = MasterDB.prep(
+            "INSERT INTO map_table(marker, map, position, pos_female, pos_male) VALUES(?, ?, ?, NULL, NULL);");
 	select_stmt = MasterDB.prep(
             "SELECT marker, map, position, pos_female, pos_male FROM map_table;");
     }
@@ -122,6 +125,14 @@ public:
             && insert_stmt->rowbind(idx, position, pos_female, pos_male)
 
             && insert_stmt->step();
+    }
+    int insert(int marker, int map, double position) {
+        int idx = 1;
+        return insert_short_stmt 
+            && insert_short_stmt->rowbind(idx, marker, map)
+            && insert_short_stmt->rowbind(idx, position)
+
+            && insert_short_stmt->step();
     }
     int select(int &marker, int &map, double &position, double &pos_female, double &pos_male) {
         int idx = 0;
@@ -135,6 +146,7 @@ public:
 
     void close() {
 	delete insert_stmt;
+	delete insert_short_stmt;
 	delete select_stmt;
     }
     int drop() {

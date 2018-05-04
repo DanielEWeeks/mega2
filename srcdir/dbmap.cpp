@@ -126,7 +126,10 @@ void dbmap_export(linkage_ped_top *Top, bp_order *bp) {
          i < Top->LocusTop->LocusCnt; i++, b++) {
         ext_linkage_locus_rec *EXL = EXLocus + b->i;
         for (j = 0; j < EXLTop->MapCnt; j++) {
-            map_table.insert(i, j, EXL->positions[j], EXL->pos_female[j], EXL->pos_male[j]);
+            if (EXL->pos_female[j] == -99.99 && EXL->pos_male[j] == -99.99)
+                map_table.insert(i, j, EXL->positions[j]);
+            else
+                map_table.insert(i, j, EXL->positions[j], EXL->pos_female[j], EXL->pos_male[j]);
         }
     }
 

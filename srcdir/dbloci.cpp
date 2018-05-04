@@ -261,7 +261,7 @@ void dblocus_export(linkage_locus_top *Top, bp_order *bp) {
         }
         if (p->Type == NUMBERED || p->Type == XLINKED || p->Type == YLINKED) {
             p->Marker->locus_link = i;
-            marker_table.insert(p->Marker);
+            marker_table.insert(p->Marker, p->Marker->pos_male, p->Marker->pos_female);
         } else if (p->Type == AFFECTION) {
             p->Pheno->Props.Affection.locus_link = i;
             traitaff_table.insert(&(p->Pheno->Props.Affection));
