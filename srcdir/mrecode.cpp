@@ -1100,7 +1100,6 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
     allele_list_type *allele;
     void *marker;
     void *marker_copy;
-    int rall;
     const char *all;
     int geno_recoded[2], allele_unrecoded=0;
     const char *all1, *all2;
@@ -1123,6 +1122,18 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
 #ifndef HIDESTATUS
     mssgf("Recoding pedigree genotypes ... ");
 #endif
+
+    if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        extern Alleles_int *MARKER_SCHEME3_alleles;
+        int mkr; Alleles_int *p;
+        for (mkr = Top->LocusTop->PhenoCnt, p = MARKER_SCHEME3_alleles;
+             mkr < Top->LocusTop->LocusCnt;
+             mkr++, p++) {
+            p->Allele_1 = 1;
+            p->Allele_2 = 2;
+        }
+    }
+
     SECTION_ERR_INIT(allele_recode);
     for(ped=0; ped < Top->PedCnt; ped++) {
         entrycnt = ((pedfile_type == POSTMAKEPED_PFT) ?
@@ -1142,6 +1153,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                         all1 = all2 = "0";  // for compiler; line above guarantees all1/2 not used
                     } else {
                         get_2Ralleles(marker, m, &all1, &all2);
+
                         geno_recoded[0]=geno_recoded[1]=0;
 
                         if (allelecmp(all1, REC_UNKNOWN) == 0) {
@@ -1156,24 +1168,32 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
 
                         if (allelecmp(all1, REC_UNKNOWN) ||
                             allelecmp(all2, REC_UNKNOWN)) {
-                            a1 = a2 = 0;
                             allele = marker_list[m].first_allele;
 
+                            int idx = 1, jdx = 1;
                             a1 = a2 = 0;
                             while(allele != NULL) {
-                                rall = allele->allele_freq.index;
-                                 all = allele->allele_freq.AlleleName;
+                                all = allele->allele_freq.AlleleName;
 
                                 if (allelecmp(all1, all) == 0) {
-                                    a1 = rall;
-                                    geno_recoded[0]=1;
+                                    if (allelecmp(all2, all1) == 0) {
+                                        a1 = a2 = idx;
+                                        geno_recoded[0] = geno_recoded[1] = 1;
+                                        break;
+                                    } else {
+                                        a1 = idx;
+                                        geno_recoded[0]=1;
+                                        if (jdx++ == 2) break;
+                                    }
+                                }
+                                if (allelecmp(all2, all) == 0) {
+                                    a2 = idx;
+                                    geno_recoded[1]=1;
+                                    if (jdx++ == 2) break;
                                 }
 
-                                if (allelecmp(all2, all) == 0) {
-                                    a2 = rall;
-                                    geno_recoded[1]=1;
-                                }
                                 allele = allele->next;
+                                idx++;
                             }
                         }
                     }

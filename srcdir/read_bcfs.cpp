@@ -380,7 +380,7 @@ void ReadBCFs::build_markers_and_samples() {
             }
             //other files use sampleMap to check the names are the same
             else {
-                if (markerMap.find(name) == markerMap.end())
+                if (sampleMap.find(name) == sampleMap.end())
                     errorvf("Sample in file %s not found in first file from manifest\n", files[i].c_str());
             }
         }

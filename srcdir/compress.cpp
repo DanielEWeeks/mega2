@@ -235,13 +235,6 @@ void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *a
 void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2) {
     if (all1 == REC_UNKNOWN && all2 == REC_UNKNOWN) return;
 
-/*rvb tmp
-    if (all1 != all2 && strcmp(all1, all2) > 0) {
-        const char *tmp = all1;
-        all1 = all2;
-        all2 = tmp;
-    }
-*/
     if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         Alleles_str *allelep = &MARKER_SCHEME3_Ralleles[marker];
         allelep->Allele_1 = all1;
@@ -525,7 +518,7 @@ void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int 
             } else if (allelep->Allele_2 == 0) {
                 if (allelep->Allele_1 != all1)
                     allelep->Allele_2 = all1;
-                else if (all1 != all2 ) // Alllele1 = all1
+                else if (all1 != all2 )
                     allelep->Allele_2 = all2;
             } 
             if (MARKER_SCHEME3_check) {
