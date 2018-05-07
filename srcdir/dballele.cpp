@@ -143,7 +143,7 @@ void dballele_import(linkage_ped_top *Top) {
         int offset = Top->LocusTop->PhenoCnt;
 
         MARKER_SCHEME3_alleles = CALLOC(size + offset, Alleles_int);
-        Alleles_int *p = MARKER_SCHEME3_alleles;
+        Alleles_int *p = MARKER_SCHEME3_alleles + offset;
         for (int locus = offset; locus < Top->LocusTop->LocusCnt; locus++, p++) {
             p->Allele_1 = 1;
             p->Allele_2 = 2;
