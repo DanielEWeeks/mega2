@@ -851,9 +851,8 @@ int             main(int argc, char **argv, char **env)
                        (Input_Format == in_format_bcfs ||
                         Input_Format == in_format_bcfs ||
                         Input_Format == in_format_gzcfs ) &&
-                       (strcmp(pedfl_name,"-.fam") ==0)) {
+                       (strcmp(pedfl_name,"-.fam") == 0)) {
                         mssgvf("No pedigree file provided, so one with no family structure will be constructed.\n");
-                        fclose(fp);
                     }
                     else {
                         errorvf("Could not open %s (\"%s\") for reading!\n",

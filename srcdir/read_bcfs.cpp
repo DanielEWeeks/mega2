@@ -188,6 +188,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
             }
 
             int test = mbi->test_args(argc, argv);
+            free(argv);
 
             if(test == 1) {
                 this->BCF_args = strdup(bcf_args);
@@ -199,6 +200,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
             }
         }
     }
+
     free(mbi);
     return ret;
 }
@@ -328,7 +330,6 @@ void ReadBCFs::check_bcf_files() {
 
 void ReadBCFs::build_markers_and_samples() {
     vector<string> files = this->filelist;
-    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
     unsigned int argc = 3;
     vector<string> args;
@@ -361,7 +362,11 @@ void ReadBCFs::build_markers_and_samples() {
         printf("\n");
 
         args_t *bcfargs = (args_t *) calloc(1, sizeof(args_t));
+        MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
         bcfargs = mbi->get_args(argc, argv);
+
+        free(argv);
+        free(mbi);
 
         bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
         //consistancy between the number of samples (only way to tell if there's less in subsequent files
@@ -385,8 +390,9 @@ void ReadBCFs::build_markers_and_samples() {
             }
         }
         args.pop_back();
+        free(bcfargs);
 
-        std::cout << "Samples for  " << files[i] << " completed\n";// << std::ctime(&time)
+        std::cout << "Samples for " << files[i] << " completed\n";// << std::ctime(&time)
     }
 
     args.pop_back();
@@ -415,7 +421,11 @@ void ReadBCFs::build_markers_and_samples() {
         printf("\n");
 
         args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
+        MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
         bcfargs = mbi->get_args(argc, argv);
+
+        free(argv);
+        free(mbi);
 
         bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
 
@@ -462,8 +472,10 @@ void ReadBCFs::build_markers_and_samples() {
         //auto end = std::chrono::system_clock::now();
         //std::time_t time = std::chrono::system_clock::to_time_t(end);
         //std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Alleles for  " << files[i] << " completed\n";// << std::ctime(&time)
+        std::cout << "Alleles for " << files[i] << " completed\n";// << std::ctime(&time)
                  // << "Duration: " << elapsed_seconds.count() << "\n";
+
+        free(bcfargs);
     }
 
     this->marker_count = total_markers;
@@ -693,10 +705,10 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         args_t *bcfargs = (args_t *) calloc(1, sizeof(args_t));
         bcfargs = mbi->get_args(argc, argv);
 
+        free(argv);
+        free(mbi);
+
         bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
-
-
-
 
         while (bcf_sr_next_line(bcfargs->files)) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
@@ -828,18 +840,19 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                    "Please verify your BCFTools command is valid.\n");
         }
 
-
         args.pop_back();
 
        // auto end = std::chrono::system_clock::now();
         //std::time_t time = std::chrono::system_clock::to_time_t(end);
         //std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Genotypes for  " << files[i] << " completed\n"; //<< std::ctime(&time)
+        std::cout << "Genotypes for " << files[i] << " completed\n"; //<< std::ctime(&time)
                   //<< "Duration: " << elapsed_seconds.count() << "\n";
         if(zeroed_genotypes_nonx + zeroed_genotypes_x > 0)
             warnvf("We encountered %d half-typed genotypes that were set to missing.\n"
                    "If you would like to read these in, set the maximum number of alleles per marker in the 'File Input Menu' to more than 2.\n"
                    "Also, there were %d half-typed genotypes in males on chromosome X that were treated as valid.\n",zeroed_genotypes_nonx,zeroed_genotypes_x);
+
+        free(bcfargs);
     }
 }
 
