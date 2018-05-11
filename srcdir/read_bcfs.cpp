@@ -184,10 +184,13 @@ int ReadBCFs::do_menu_parse(int choice_) {
             argv = (char **) malloc(argc * sizeof(char *));
             for (size_t ii = 0; ii < argc; ii += 1) {
                 argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
-                argv[ii] = &args[ii][0];
+                strcpy(argv[ii], &args[ii][0]);
             }
 
             int test = mbi->test_args(argc, argv);
+            for (size_t ii = 0; ii < argc; ii += 1) {
+                free(argv[ii]);
+            }
             free(argv);
 
             if(test == 1) {
@@ -356,7 +359,7 @@ void ReadBCFs::build_markers_and_samples() {
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
-            argv[ii] = &args[ii][0];
+            strcpy(argv[ii], &args[ii][0]);
             printf("%s ", argv[ii]);
         }
         printf("\n");
@@ -365,6 +368,9 @@ void ReadBCFs::build_markers_and_samples() {
         MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
         bcfargs = mbi->get_args(argc, argv);
 
+        for (size_t ii = 0; ii < argc; ii += 1) {
+            free(argv[ii]);
+        }
         free(argv);
         free(mbi);
 
@@ -415,7 +421,7 @@ void ReadBCFs::build_markers_and_samples() {
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
-            argv[ii] = &args[ii][0];
+            strcpy(argv[ii], &args[ii][0]);
             printf("%s ",argv[ii]);
         }
         printf("\n");
@@ -424,6 +430,9 @@ void ReadBCFs::build_markers_and_samples() {
         MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
         bcfargs = mbi->get_args(argc, argv);
 
+        for (size_t ii = 0; ii < argc; ii += 1) {
+            free(argv[ii]);
+        }
         free(argv);
         free(mbi);
 
@@ -491,7 +500,7 @@ void ReadBCFs::check_dups() {
             markerMap[name] = 1;
         else {
             int value = markerMap[name] + 1;
-            char newname[50] ;
+            char newname[FILENAME_LENGTH] ;
             sprintf(newname, "%s_%d", name.c_str(), value);
             markerMap[newname] = 1;
             markerMap[name] = value;
@@ -501,6 +510,7 @@ void ReadBCFs::check_dups() {
                    this->markers[i]->chr.c_str(), this->markers[i]->pos, newname);
         }
     }
+
     SECTION_LOG_FINI(dup_marker_relabeled);
 }
 
@@ -697,7 +707,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
-            argv[ii] = &args[ii][0];
+            strcpy(argv[ii], &args[ii][0]);
             printf("%s ",argv[ii]);
         }
         printf("\n");
@@ -705,6 +715,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         args_t *bcfargs = (args_t *) calloc(1, sizeof(args_t));
         bcfargs = mbi->get_args(argc, argv);
 
+        for (size_t ii = 0; ii < argc; ii += 1) {
+            free(argv[ii]);
+        }
         free(argv);
         free(mbi);
 
