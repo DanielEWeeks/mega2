@@ -491,6 +491,7 @@ void convert_to_freq(marker_type *marker_list,
     int total_count;
     allele_list_type *allelep;
 
+    SECTION_LOG_INIT(convert_to_freq);
     for (m=0; m < LTop->LocusCnt; m++) {
         if (LTop->Locus[m].Type == NUMBERED ||
                 LTop->Locus[m].Type == XLINKED ||
@@ -568,11 +569,10 @@ void convert_to_freq(marker_type *marker_list,
                     } else {
                         if (allelep->next == NULL) {
                             if (LTop->Locus[m].number != -1) {
-                                warnf("No genotyped individuals found among those selected.");
-                                sprintf(err_msg,
-                                        "All allele frequencies will be set to 0 for marker %s.",
-                                        LTop->Locus[m].LocusName);
-                                warnf(err_msg);
+                                SECTION_LOG(convert_to_freq);
+                                warnvf("No genotyped individuals found among those selected.\n\
+All allele frequencies will be set to 0 for marker %s.\n",
+                                       LTop->Locus[m].LocusName);
                             }
                         }
                         allelep->allele_freq.freq = 0.0;
@@ -582,6 +582,7 @@ void convert_to_freq(marker_type *marker_list,
             }
         }
     }
+    SECTION_LOG_FINI(convert_to_freq);
 }
 
 /*----------------------end of convert_to_freq----------------------*/
@@ -1123,17 +1124,6 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
     mssgf("Recoding pedigree genotypes ... ");
 #endif
 
-    if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
-        extern Alleles_int *MARKER_SCHEME3_alleles;
-        int mkr; Alleles_int *p;
-        for (mkr = Top->LocusTop->PhenoCnt, p = MARKER_SCHEME3_alleles;
-             mkr < Top->LocusTop->LocusCnt;
-             mkr++, p++) {
-            p->Allele_1 = 1;
-            p->Allele_2 = 2;
-        }
-    }
-
     SECTION_ERR_INIT(allele_recode);
     for(ped=0; ped < Top->PedCnt; ped++) {
         entrycnt = ((pedfile_type == POSTMAKEPED_PFT) ?
@@ -1174,6 +1164,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                             a1 = a2 = 0;
                             while(allele != NULL) {
                                 all = allele->allele_freq.AlleleName;
+                                idx = allele->allele_freq.index;
 
                                 if (allelecmp(all1, all) == 0) {
                                     if (allelecmp(all2, all1) == 0) {
@@ -1193,7 +1184,6 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                                 }
 
                                 allele = allele->next;
-                                idx++;
                             }
                         }
                     }

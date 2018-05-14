@@ -46,11 +46,10 @@
 #'
 #' @return gwaa.data-class object generated from the Mega2R database
 #'
-#' @importFrom GenABEL convert.snp.tped load.gwaa.data
-#' @importFrom methods is new
 #' @export
 #'
 #' @examples
+#' require("GenABEL")
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #' seqsimgwaa = Mega2GenABEL(markers=ENV$markers[1:10,])
@@ -61,6 +60,13 @@
 Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
     if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
+    genABEL.convert.snp.tped = get0("convert.snp.tped", inherits = TRUE)
+    genABEL.load.gwaa.data   = get0("load.gwaa.data",   inherits = TRUE)
+    if ( is.null(genABEL.convert.snp.tped) ||
+         is.null(genABEL.load.gwaa.data)) {
+      warning("genABEL has been archived and is not available\n")
+      return (NULL)
+    }
 ## print(system.time ({
     if (is.null(markers)) markers = envir$markers
 
@@ -72,10 +78,10 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 
     mkGenABELtfam(prefix, envir)
 
-    convert.snp.tped(tpedfile=paste0(prefix,".tped"),
-                     tfamfile=paste0(prefix,".tfam"),
-                     outfile=paste0(prefix, "tped.raw"),
-                     strand="u")
+    genABEL.convert.snp.tped(tpedfile=paste0(prefix,".tped"),
+                            tfamfile=paste0(prefix,".tfam"),
+                            outfile=paste0(prefix, "tped.raw"),
+                            strand="u")
 
     file = paste0(prefix, ".phe")
     unlink(file)
@@ -85,9 +91,9 @@ Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
 
 
 #x  return (load.gwaa.data(phenofile=paste0(prefix,".phe"),
-    ans = load.gwaa.data(phenofile=paste0(prefix,".phe"),
-                         genofile=paste0(prefix, "tped.raw"),
-                         force = TRUE)
+    ans = genABEL.load.gwaa.data(phenofile=paste0(prefix,".phe"),
+                                 genofile=paste0(prefix, "tped.raw"),
+                                 force = TRUE)
 }
 
 #' delete temporary PLINK tped files processed by GenABEL
@@ -137,6 +143,7 @@ Mega2GenABELClean = function () {
 #' @export
 #'
 #' @examples
+#' require("GenABEL")
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
 #' gwaa = Mega2ENVGenABEL(markers=ENV$markers[1:10,])
@@ -386,19 +393,23 @@ mkGenABELcoding = function(markers = NULL, envir) {
 ##  envir$xGTy = Freq.x > (1-Freq.x)
 
     if (any(mm$Frequency.x == .5)) {
-        if (envir$MARKER_SCHEME == 1) {
-            ms = envir$markerscheme_table[envir$markerscheme_table$key %in% markers$locus_link,]
-            w = which(mm$Frequency.x == .5)
+        w = which(mm$Frequency.x == .5)
+        xx = getgenotypesraw(markers[w,], envir)
+        yy = xx[1,] == 65537
+        nn[w] = ifelse(yy, paste0(mm$AlleleName.x, mm$AlleleName.y), paste0(mm$AlleleName.y, mm$AlleleName.x))
+##      if (envir$MARKER_SCHEME == 1) {
+##          ms = envir$markerscheme_table[envir$markerscheme_table$key %in% markers$locus_link,]
 ##          print(mm[w,])
 ##          print(ms[w,])
 ##          print(envir$markers[w,])
-            ms1 = ms$allele1[w]
-            nn[w] = ifelse(ms1 == 1, paste0(mm$AlleleName.y[w], mm$AlleleName.x[w]),
-                                     paste0(mm$AlleleName.x[w], mm$AlleleName.y[w]))
-        } else if (envir$MARKER_SCHEME == 2) {
-            w = which(mm$Frequency.x == .5)
+##          ms1 = ms$allele1[w]
+##          nn[w] = ifelse(ms1 == 1, paste0(mm$AlleleName.y[w], mm$AlleleName.x[w]),
+##                                   paste0(mm$AlleleName.x[w], mm$AlleleName.y[w]))
+##      } else if (envir$MARKER_SCHEME == 2) {
 ##          print(mm[w,])
-        }
+##      }
+        print(mm[w,])
+        print(nn[w])
     }
 
     nn[mm$Frequency.x == 0 & mm$Frequency.y == 0] = '12'

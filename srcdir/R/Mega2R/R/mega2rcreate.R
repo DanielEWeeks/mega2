@@ -670,7 +670,7 @@ getgenotypes_R = function(markers_arg, sepstr = "", envir = ENV) {
   return
     if (envir$MARKER_SCHEME == 1) {
         getgenotypes_Ri(markers_arg$locus_link, markers_arg$locus_link_fill,
-                        envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
+                        envir$unified_genotype_table, envir$allele_table,
                         sepstr, envir$PhenoCnt)
     } else {  # must be == 2
 
@@ -733,7 +733,7 @@ getgenotypes = function(markers_arg, sepstr = "", envir = ENV) {
   return
     if (envir$MARKER_SCHEME == 1) {
         getgenotypes_1(markers_arg$locus_link, markers_arg$locus_link_fill,
-                       envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
+                       envir$unified_genotype_table, envir$allele_table,
                        sepstr, envir$PhenoCnt)
     } else {  # must be == 2
         getgenotypes_2(markers_arg$locus_link,
@@ -797,7 +797,7 @@ getgenotypesraw = function(markers_arg, envir = ENV) {
   return
     if (envir$MARKER_SCHEME == 1) {
         getgenotypesraw_1(markers_arg$locus_link, markers_arg$locus_link_fill,
-                          envir$unified_genotype_table, envir$allele_table, envir$markerscheme_table,
+                          envir$unified_genotype_table, envir$allele_table,
                           envir$PhenoCnt)
     } else {  # must be == 2
         getgenotypesraw_2(markers_arg$locus_link,
@@ -864,7 +864,7 @@ getgenotypesgenabel = function(markers_arg, envir = ENV) {
     if (envir$MARKER_SCHEME == 1) {
         getgenotypesgenabel_1(markers_arg$locus_link, markers_arg$locus_link_fill,
                               envir$unified_genotype_table, envir$allele_table,
-                              envir$markerscheme_table, envir$PhenoCnt)
+                              envir$PhenoCnt)
     } else {  # must be == 2
         getgenotypesgenabel_2(markers_arg$locus_link,
                               envir$unified_genotype_table, envir$locus_allele_table,

@@ -24,7 +24,6 @@ Authors@R: c(person(c("Robert","V."), "Baron", email = "rvb5@pitt.edu",  role = 
 URL: https://watson.hgen.pitt.edu/mega2/mega2r/
 BugReports: https://groups.google.com/forum/#!forum/mega2-users
 Depends: R (>= 3.3),
-         GenABEL,
          SKAT,
          pedgene,
          gdsfmt
@@ -37,6 +36,7 @@ Imports:
     RSQLite,
     methods
 Suggests:
+    GenABEL,
     knitr,
     rmarkdown,
     formatR,

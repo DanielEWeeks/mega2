@@ -116,7 +116,8 @@ Mega2gdsfmtsnptst = function(aa, bb, ss="aa bb") {
         b[b=="G/C"] = "C/G"; b[b=="G/A"] = "A/G"; b[b=="C/A"] = "A/C"
         (a==b)
     }
-    gdsn(aa, bb, "snp.allele", fn)
+##  gdsn(aa, bb, "snp.allele", fn)
+    gdsn(aa, bb, "snp.allele")
 
     gdsn(aa, bb, "genotype")
 }
@@ -228,3 +229,14 @@ tx = function() {
 }
 
 tx()
+
+function() {
+    snp=openfn.gds("Gdsfmt/aa.snp.gds")
+    ssma=Mega2gdsfmt("ssma.gds", SeqArray=F)
+    ENV=read.Mega2DB("Gdsfmt/dbmega2.db", bp=0)
+    Mega2gdsfmtsnptst(snp, ssma, "native Snp vs mega2 Snp Sam")
+
+    o = read.gdsn(index.gdsn(snp, "genotype"))
+    n = read.gdsn(index.gdsn(ssma, "genotype"))
+
+}

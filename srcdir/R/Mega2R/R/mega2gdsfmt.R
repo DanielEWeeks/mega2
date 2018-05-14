@@ -516,19 +516,20 @@ mkAlleles = function(markers = NULL, separator = "/", envir = ENV) {
     envir$xGTy = mm$Frequency.x > mm$Frequency.y
 
     if (any(mm$Frequency.x == .5)) {
-        if (envir$MARKER_SCHEME == 1) {
-            ms = envir$markerscheme_table[envir$markerscheme_table$key %in% markers$locus_link,]
-            w = which(mm$Frequency.x == .5)
+        w = which(mm$Frequency.x == .5)
+##      if (envir$MARKER_SCHEME == 1) {
+##          ms = envir$markerscheme_table[envir$markerscheme_table$key %in% markers$locus_link,]
 ##          print(mm[w,])
 ##          print(ms[w,])
 ##          print(envir$markers[w,])
-            ms1 = ms$allele1[w]
-            nn[w] = ifelse(ms1 == 1, paste0(mm$AlleleName.y[w], separator, mm$AlleleName.x[w]),
-                                     paste0(mm$AlleleName.x[w], separator, mm$AlleleName.y[w]))
-        } else if (envir$MARKER_SCHEME == 2) {
-            w = which(mm$Frequency.x == .5)
+##          ms1 = ms$allele1[w]
+##          nn[w] = ifelse(ms1 == 1, paste0(mm$AlleleName.y[w], separator, mm$AlleleName.x[w]),
+##                                   paste0(mm$AlleleName.x[w], separator, mm$AlleleName.y[w]))
+##      } else if (envir$MARKER_SCHEME == 2) {
 ##          print(mm[w,])
-        }
+##      }
+        print(mm[w,])
+        print(nn[w])
     }
 
     nn[mm$Frequency.x == 0 & mm$Frequency.y == 0] = paste0('0', separator, '0')

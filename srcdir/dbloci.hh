@@ -299,7 +299,7 @@ public:
             "SELECT "
             " MarkerName,"
             " Recoded, NumAlleles, SelectOpt, EstFreq,"
-            " pos_avg, pos_male, pos_female, error_prob,"
+            " pos_avg, ifnull(pos_male,-99.99), ifnull(pos_female,-99.99), error_prob,"
             " chromosome, col_num, locus_link"
             "   FROM marker_table;");
         return insert_stmt && select_stmt && 1;

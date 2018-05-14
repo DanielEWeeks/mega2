@@ -116,7 +116,7 @@ public:
 	insert_short_stmt = MasterDB.prep(
             "INSERT INTO map_table(marker, map, position, pos_female, pos_male) VALUES(?, ?, ?, NULL, NULL);");
 	select_stmt = MasterDB.prep(
-            "SELECT marker, map, position, pos_female, pos_male FROM map_table;");
+            "SELECT marker, map, position, ifnull(pos_female,-99.99), ifnull(pos_male,-99.99) FROM map_table;");
     }
     int insert(int marker, int map, double position, double pos_female, double pos_male) {
         int idx = 1;

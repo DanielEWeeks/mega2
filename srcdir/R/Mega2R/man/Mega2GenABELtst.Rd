@@ -29,6 +29,7 @@ Verify by fields, all the fields in two gwaa.data-class objects.
 }
 \examples{
 db = system.file("exdata", "seqsimm.db", package="Mega2R")
+require("GenABEL")
 ENV = read.Mega2DB(db)
 
 y = Mega2ENVGenABEL()
