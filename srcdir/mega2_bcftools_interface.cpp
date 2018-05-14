@@ -643,8 +643,8 @@ int MEGA2_BCFTOOLS_INTERFACE::test_args(int argc, char *argv[]){
 
     if ( args->sample_names && args->update_info) args->calc_ac = 1;
 
-    char *fname = NULL;
-    fname = argv[optind];
+    //char *fname = NULL;
+    //fname = argv[optind];
 
     // read in the regions from the command line
     if ( args->regions_list )
