@@ -498,7 +498,7 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
     init_data_vcfview(args);
 
     //need to reset optind, since bcftools doesn't
-    optind = 1;
+    optind = 0;
     return args;
 
 }
@@ -670,8 +670,8 @@ int MEGA2_BCFTOOLS_INTERFACE::test_args(int argc, char *argv[]){
 
     if ( bcf_sr_set_threads(args->files, args->n_threads)<0 ) error("Failed to create threads\n");
 
-    //optind needs to be reset to 1 run bcftools again after testing that this is a correct string
-    optind = 1;
+    //global optind needs to be reset to ZERO not 1 it would appear in order to use bcftools multiple times
+    optind = 0;
     destroy_data_vcfview(args);
     bcf_sr_destroy(args->files);
     free(args);
