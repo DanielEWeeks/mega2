@@ -26,6 +26,7 @@
 # ===========================================================================
 
 library(Mega2R)
+require("GenABEL")
 
 #     1. GenABEL:::alleleID.codes()
 #         [1] "12" "AB" "AT" "AG" "AC" "A-" "TA" "TG" "TC" "T-" "GA" "GT" "GC" "G-" "CA"

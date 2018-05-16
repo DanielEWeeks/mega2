@@ -1280,6 +1280,7 @@ If you haven't already, first install the 'GenABEL' package from CRAN.
 Then type:
 
 ```{r seqsimgwaa}
+require("GenABEL")
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
@@ -1481,7 +1482,7 @@ by `Mega2GenABEL` is the same as a GenABEL object we started with.
 First, we load `GenABEL` and access its data:
 
 ```{r srdta}
-library(GenABEL)
+require(GenABEL)
 data(srdta)
 ```
 
@@ -1754,6 +1755,7 @@ you can proceed with the steps that follow, even if you did not create your own 
 Now, we go back into R and type:
 
 ```{r, srdta.db,eval=TRUE}
+require("GenABEL")
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
@@ -1775,6 +1777,7 @@ the function *Mega2GenABELtst()* can be used to
 compare the phenotype data, genotype data, and object metadata, item by item.
 
 ```{r mega2genabeltst}
+require("GenABEL")
 options(max.print = 30)
 Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
 ```

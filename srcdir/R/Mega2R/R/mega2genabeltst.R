@@ -113,6 +113,7 @@ dmpPed = function(gwaa_ = srdta, pfx, default = "bt") {
 #'
 #' @examples
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
+#' require("GenABEL")
 #' ENV = read.Mega2DB(db)
 #'
 #' y = Mega2ENVGenABEL()
@@ -127,6 +128,10 @@ dmpPed = function(gwaa_ = srdta, pfx, default = "bt") {
 Mega2GenABELtst = function (mega_ = mega, gwaa_ = srdta, full = TRUE, envir = ENV) {
     if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
 
+    if (is.null(mega_) || is.null(gwaa_)) {
+        warning("One or both GenABEL arguments are NULL.  Aborting.\n")
+        return (NULL)
+    }
     ANS = TRUE
     phens = names(gwaa_@phdata)
     for (phen in phens[2:length(phens)]) {

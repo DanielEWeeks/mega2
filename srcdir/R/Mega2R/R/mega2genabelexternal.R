@@ -53,9 +53,17 @@ alleleID.codes <- function() {
 }
 
 # ~/rvb/Work/R/pkg/GenABEL/R/Xcheck.R
-#' @importFrom GenABEL crnames perid.summary
+#' @importFrom methods is
 "Xcheck" <-
 function(data,Pgte=0.01,Pssw=0.01,Pmsw=0.01,odds=1000,tabonly=FALSE,Fmale=0.8,Ffemale=0.2) {
+	genABEL.crnames         = get0("crnames",       inherits = TRUE)
+	genABEL.perid.summary   = get0("perid.summary", inherits = TRUE)
+	if ( is.null(genABEL.crnames) ||
+		is.null(genABEL.perid.summary)) {
+          warning("genABEL has been archived and is not available\n")
+          return
+	}
+
 	if (!is(data,"snp.data")) stop("data argument should be of snp.data-class")
 	if (any(data@chromosome != "X")) stop("All markers should be X-linked")
 	male <- (data@male==1)
@@ -66,7 +74,7 @@ function(data,Pgte=0.01,Pssw=0.01,Pmsw=0.01,odds=1000,tabonly=FALSE,Fmale=0.8,Ff
 		xdat <- as.numeric(data[male,])
 		if (any(xdat==1,na.rm=T)) {
 			out$xerr <- 1
-			out$Xerrtab <- crnames(dimnames(xdat),which(xdat==1))
+			out$Xerrtab <- genABEL.crnames(dimnames(xdat),which(xdat==1))
 			colnames(out$Xerrtab) <- c("ID","SNP")
 		}
 	}
@@ -92,7 +100,7 @@ function(data,Pgte=0.01,Pssw=0.01,Pmsw=0.01,odds=1000,tabonly=FALSE,Fmale=0.8,Ff
 	idODDs <- idprob.1-idprob.0
 	out$ismale <- names(idprob.1[idODDs>log(odds)])
 # find people with strange F
-	pis <- perid.summary(data)
+	pis <- genABEL.perid.summary(data)
 	out$otherSexErr <- rownames(pis)[pis$F > Ffemale & pis$F < Fmale]
 # return object
 	out$Xidfail <- unique(c(out$ismale,out$isfemale,out$othersexErr))
@@ -104,10 +112,17 @@ function(data,Pgte=0.01,Pssw=0.01,Pmsw=0.01,odds=1000,tabonly=FALSE,Fmale=0.8,Ff
 ################################################################
 # ~/rvb/Work/R/pkg/GenABEL/R/load.gwaa.data.R  5609 Feb 19 13:47 load.gwaa.data.V0
 # original source code taken from above file
-#' @importFrom GenABEL snp.data
-#' @importFrom GenABEL sortmap.internal
+#' @importFrom methods new
 "V0.gwaa.data" <-
 function(phenofile = "pheno.dat", genofile = "geno.raw",force = TRUE, makemap=FALSE, sort=TRUE, id="id") {
+        genABEL.snp.data         = get0("snp.data",         inherits = TRUE)
+        genABEL.sortmap.internal = get0("sortmap.internal", inherits = TRUE)
+        if ( is.null(genABEL.snp.data) ||
+             is.null(genABEL.sortmap.internal)) {
+          warning("genABEL has been archived and is not available\n")
+          return (NULL)
+        }
+
 # check that ID and SEX are correct
 	dta <- read.table(phenofile,header=TRUE,as.is=TRUE)
 	coln <- names(dta)
@@ -196,7 +211,7 @@ function(phenofile = "pheno.dat", genofile = "geno.raw",force = TRUE, makemap=FA
 	newdta <- data.frame(dta[mlst,])
 	rm(dta);gc(verbose=FALSE)
 
-	a <- snp.data(nids=nids,rawdata=rdta,idnames=ids,snpnames=mnams,chromosome=chrom,map=pos,coding=coding,strand=strand,male=newdta$sex)
+	a <- genABEL.snp.data(nids=nids,rawdata=rdta,idnames=ids,snpnames=mnams,chromosome=chrom,map=pos,coding=coding,strand=strand,male=newdta$sex)
 	cat("snp.data object created...\n")
 	rm(rdta,ids,mnams,chrom,pos,coding,strand);gc(verbose=FALSE)
 
@@ -247,7 +262,7 @@ function(phenofile = "pheno.dat", genofile = "geno.raw",force = TRUE, makemap=FA
 #		if (any(chr=="Y")) chr <- replace(chr,(chr=="Y"),(mxC+4))
 #		chr <- as.numeric(chr)
 #		ord <- order(chr,out@gtdata@map)
-		ord <- sortmap.internal(out@gtdata@chromosome,out@gtdata@map)
+		ord <- genABEL.sortmap.internal(out@gtdata@chromosome,out@gtdata@map)
 		out <- out[,ord$ix]
 	}
 	out
@@ -273,10 +288,17 @@ function(markers=NULL, force = TRUE, makemap=FALSE, sort=TRUE, id="id", envir=EN
 	load.gwaa.data.common(dta,ifile,force=force,makemap=makemap,sort=sort,id=id,markers=markers,envir=envir)
 }
 
-#' @importFrom GenABEL snp.data
-#' @importFrom GenABEL sortmap.internal
+#' @importFrom methods new
 "load.gwaa.data.common" <-
 function(dta, ifile, force = force, makemap=makemap, sort=sort, id=id, markers=markers, envir=envir) {
+        genABEL.snp.data         = get0("snp.data",         inherits = TRUE)
+        genABEL.sortmap.internal = get0("sortmap.internal", inherits = TRUE)
+        if ( is.null(genABEL.snp.data) ||
+             is.null(genABEL.sortmap.internal)) {
+          warning("genABEL has been archived and is not available\n")
+          return (NULL)
+        }
+
 # check that ID and SEX are correct
 	coln <- names(dta)
 	idColumn <- match(id,coln)
@@ -396,7 +418,7 @@ function(dta, ifile, force = force, makemap=makemap, sort=sort, id=id, markers=m
 	newdta <- data.frame(dta[mlst,])
 	rm(dta);gc(verbose=FALSE)
 
-	a <- snp.data(nids=nids,rawdata=rdta,idnames=ids,snpnames=mnams,chromosome=chrom,map=pos,coding=coding,strand=strand,male=newdta$sex)
+	a <- genABEL.snp.data(nids=nids,rawdata=rdta,idnames=ids,snpnames=mnams,chromosome=chrom,map=pos,coding=coding,strand=strand,male=newdta$sex)
 	cat("snp.data object created...\n")
 	rm(rdta,ids,mnams,chrom,pos,coding,strand);gc(verbose=FALSE)
 
@@ -447,7 +469,7 @@ function(dta, ifile, force = force, makemap=makemap, sort=sort, id=id, markers=m
 #		if (any(chr=="Y")) chr <- replace(chr,(chr=="Y"),(mxC+4))
 #		chr <- as.numeric(chr)
 #		ord <- order(chr,out@gtdata@map)
-		ord <- sortmap.internal(out@gtdata@chromosome,out@gtdata@map)
+		ord <- genABEL.sortmap.internal(out@gtdata@chromosome,out@gtdata@map)
 		out <- out[,ord$ix]
 	}
 	out

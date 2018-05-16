@@ -1,4 +1,5 @@
 library(Mega2R)
+require("exGenABEL")
 dump_mega2rtutorial_data(".")
 
 go = function() {
