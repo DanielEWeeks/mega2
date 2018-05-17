@@ -60,7 +60,11 @@ Mega2gdsfmtseqtst = function(aa, bb, cc="aa bb") {
     gdsn(aa, bb, "chromosome", function(a,b) {a[a=="X"] = "23"; a==b })
 
     fn = function(a,b) {
-        a=sub(",", "/", a)
+        a = sub(",", "/", a)
+        a[a=="T/A"] = "A/T"; a[a=="T/C"] = "C/T"; a[a=="T/G"] = "G/T"
+        a[a=="G/C"] = "C/G"; a[a=="G/A"] = "A/G"; a[a=="C/A"] = "A/C"
+        b[b=="T/A"] = "A/T"; b[b=="T/C"] = "C/T"; b[b=="T/G"] = "G/T"
+        b[b=="G/C"] = "C/G"; b[b=="G/A"] = "A/G"; b[b=="C/A"] = "A/C"
         b[b=="G/<CN0>"] = "<CN0>/G";   b[b=="A/<CN0>"] = "<CN0>/A"
         (a==b)
     }
@@ -110,6 +114,7 @@ Mega2gdsfmtsnptst = function(aa, bb, ss="aa bb") {
     gdsn(aa, bb, "snp.chromosome", function(a,b) {a[a=="X"] = "23"; a==b })
 
     fn = function(a,b) {
+        a = sub(",", "/", a)
         a[a=="T/A"] = "A/T"; a[a=="T/C"] = "C/T"; a[a=="T/G"] = "G/T"
         a[a=="G/C"] = "C/G"; a[a=="G/A"] = "A/G"; a[a=="C/A"] = "A/C"
         b[b=="T/A"] = "A/T"; b[b=="T/C"] = "C/T"; b[b=="T/G"] = "G/T"
