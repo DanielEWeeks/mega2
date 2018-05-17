@@ -1174,6 +1174,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                             a1 = a2 = 0;
                             while(allele != NULL) {
                                 all = allele->allele_freq.AlleleName;
+                                idx = allele->allele_freq.index;
 
                                 if (allelecmp(all1, all) == 0) {
                                     if (allelecmp(all2, all1) == 0) {
@@ -1193,7 +1194,6 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                                 }
 
                                 allele = allele->next;
-                                idx++;
                             }
                         }
                     }
