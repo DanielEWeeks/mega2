@@ -194,7 +194,7 @@ static allele_list_type *insert_into_allele_list(allele_list_type **marker_item,
     allele_list_type *new_entry;
 
     /* all_val comes from {P,}RAllele ... already canonical */
-    if (allelecmp(all_val, REC_UNKNOWN) == 0) {
+    if ( (allelecmp(all_val, REC_UNKNOWN) == 0) && index == 0) {
         return (allele_list_type *) 0;
     }
 
@@ -981,8 +981,6 @@ void recode_liability_class(pheno_type *pheno_list, linkage_locus_top *LTop,  in
    values, except for the NUMBERED alleles, where we have frequencies
    and allele_counts */
 
-extern void get_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char **all1, const char **all2);
-
 void recode_locus_top(marker_type *marker_list, pheno_type *pheno_list, linkage_locus_top *LTop)
 {
     int m, all;
@@ -1138,6 +1136,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                 marker_copy = marker_alloc((size_t) Top->LocusTop->MarkerCnt, Top->LocusTop->PhenoCnt);
                 for(m = Top->LocusTop->PhenoCnt; m < Top->LocusTop->LocusCnt; m++) {
                     a1 = a2 = 0;
+
                     if (UntypedPeds[ped] == 1) {
                         geno_recoded[0]=geno_recoded[1]=1;
                         all1 = all2 = "0";  // for compiler; line above guarantees all1/2 not used
@@ -1187,6 +1186,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                             }
                         }
                     }
+
                     set_2alleles(marker_copy, m,
                                  &Top->LocusTop->Locus[m], a1, a2);
                     /* free the raw alleles */
@@ -1910,9 +1910,19 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
         if (PREORDER_ALLELES) {
             const char *aname1, *aname2;
             allele_list_type *allelefp;
-            extern void get_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char **all1, const char **all2);
 
             get_2Ralleles_2bits(locus, &(Top->LocusTop->Locus[locus]), &aname1, &aname2);  // G/C
+            if (aname1 == 0 || aname2 == 0) {
+                BPT;
+            }
+//BPT
+            if (strcmp(aname1, "0") == 0) {
+                if (strcmp(aname2, "0") == 0) {
+                } else {
+                    aname1 = aname2;
+                    aname2 = zero;
+                }
+            }
 
             allelefp = insert_into_allele_list(&(marker_listi->first_allele), aname1, 1);
             allele2allele_prop_prop(aname1) = allelefp;

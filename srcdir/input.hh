@@ -93,6 +93,8 @@ class Input_PED_Binary : public Input_PLINK_Common {
 public:
     Input_PED_Binary(INPUT_FORMAT_t i): Input_PLINK_Common(i) {
         req_aux_file   = 1;
+        SORT_HETEROZYGOTE = 0;
+        PREORDER_ALLELES = 1;
     }
     virtual ~Input_PED_Binary() {};
     virtual Input_Ops *GetOps() {return &Ops;};
@@ -116,6 +118,8 @@ public:
         req_locus_file = 0;
         req_map_file   = 0;
         req_stem_flag  = 1;
+        SORT_HETEROZYGOTE = 0;
+        PREORDER_ALLELES = 1;
 }
     virtual ~Input_VCF_Common() {};
     virtual Input_Ops *GetOps() {return &Ops;};
@@ -161,6 +165,8 @@ public:
         req_map_file   = 0;
         req_stem_flag  = 1;
         impute         = 1;
+        SORT_HETEROZYGOTE = 0;
+        PREORDER_ALLELES = 1;
     }
     virtual ~Input_Impute() {};
     virtual Input_Ops *GetOps() {return &Ops;};
@@ -175,6 +181,8 @@ public:
         req_map_file   = 0;
         req_stem_flag  = 1;
         impute         = 1;
+        SORT_HETEROZYGOTE = 0;
+        PREORDER_ALLELES = 1;
     };
    ~Input_BGEN2() {};
     virtual Input_Ops *GetOps() {return &Ops;};
@@ -189,6 +197,8 @@ public:
         req_map_file   = 0;
         req_stem_flag  = 1;
         impute         = 1;
+        SORT_HETEROZYGOTE = 0;
+        PREORDER_ALLELES = 1;
     };
    ~Input_BGEN() {};
     virtual Input_Ops *GetOps() {return &Ops;};

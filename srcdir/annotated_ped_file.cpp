@@ -1057,16 +1057,16 @@ static int read_annotated_pedrec(FILE *filep,
                     int SNP_data;       // byte from the binary file
                     allele1[0] = plink_info->alleles[allele_i++];
                     allele2[0] = plink_info->alleles[allele_i++];
-///                    if (*curr_per_index) {
-///                        set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], 
-///                                            search_allele_cache(allele1),
-///                                            search_allele_cache(allele2));
+                    if (*curr_per_index) {
+                        set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], 
+                                            search_allele_cache(allele1),
+                                            search_allele_cache(allele2));
+                    }
                     process_binary_genotype(plink_info->bed_filep, entry, mrkindex, &SNP_count, &SNP_data, 
                                             &LTop->Locus[mrkindex], allele1, allele2);
                     i++;
                 }
             }
-            
         }
         tod_pl_nmj();
 //        @@ plink process indiv major: 0.157030 original design
@@ -1747,7 +1747,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 #endif
 /*   printf("%d\n", num_ped_records); */
     
-    Tod tod_cp_smj("plink read snp major bed");
+    Tod tod_cp_smj("plink read snp major bed"); //verified 2bits
     if   (PLINK.plink == binary_PED_format &&
           plink_info != NULL &&
           plink_info->bed_filep != (FILE *)NULL &&
@@ -1774,10 +1774,9 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
                     tod_plink.reset();
                     allele1[0] = plink_info->alleles[allele_i++]; // allele characters from the string
                     allele2[0] = plink_info->alleles[allele_i++];
-///                  set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex],
-//                                            search_allele_cache(allele1),
-//                                            search_allele_cacheallele2));
-
+                    set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex],
+                                        search_allele_cache(allele1),
+                                        search_allele_cache(allele2));
 
                     for (pp=0; pp < num_ped_records; pp++) {
                         // looping through the individuals...

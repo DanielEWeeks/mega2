@@ -235,6 +235,12 @@ void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *a
 void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2) {
     if (all1 == REC_UNKNOWN && all2 == REC_UNKNOWN) return;
 
+    if (SORT_HETEROZYGOTE && all1 != all2 && strcmp(all1, all2) > 0) {
+        const char *tmp = all1;
+        all1 = all2;
+        all2 = tmp;
+    }
+
     if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         Alleles_str *allelep = &MARKER_SCHEME3_Ralleles[marker];
         allelep->Allele_1 = all1;
