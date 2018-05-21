@@ -111,4 +111,12 @@ options(max.print="75")
 opts_knit$set(width=75)
 ```
 
+----
+* checking for missing documentation entries ... WARNING
+Undocumented code objects:
+  ‘Mega2gdsfmt’ ‘uniqueFamMember’
+All user-level objects in a package should have documentation entries.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
 
+----
