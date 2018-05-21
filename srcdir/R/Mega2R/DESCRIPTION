@@ -36,12 +36,13 @@ Imports:
     RSQLite,
     methods
 Suggests:
-    GenABEL,
     knitr,
     rmarkdown,
     formatR,
     TxDb.Hsapiens.UCSC.hg19.knownGene,
     org.Hs.eg.db
+Enhances:
+    GenABEL
 NeedsCompilation: yes
 RoxygenNote: 6.0.1
 LazyData: true
