@@ -1488,21 +1488,25 @@ This test is a bit more complicated.
 We intend to verify that the object generated 
 by `Mega2GenABEL` is the same as a GenABEL object we started with.
 First, we load `GenABEL` and access its data:
+**NOTE: The code in this section can not really be executed, if you do not have GenABEL available on your machine.**
 
 ```{r srdta}
-require(GenABEL)
-data(srdta)
+GotGenABEL = require("GenABEL", quietly=FALSE)
+if (GotGenABEL) data(srdta)
 ```
 
-Then we dump the GenABEL data as
-PLINK .ped/.map/.phe files
+Then we use the GenABEL export.plink() function to dump the GenABEL data as
+PLINK .ped/.map/.phe files.  The latter will be processed by Mega2 to generate a
+database.
 
 ```{r dmpPed,results="hide",warning=FALSE}
+GotGenABEL = require("GenABEL", quietly=FALSE)
+
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
 srdtafile = file.path(where_mega2rtutorial_data(), "srdta")
-export.plink(srdta, transpose = FALSE, filebasename = srdtafile,
+if (GotGenABEL) export.plink(srdta, transpose = FALSE, filebasename = srdtafile,
              phenotypes = names(srdta@phdata)[-(1:2)])
 ```
 
@@ -1760,10 +1764,10 @@ Default_Outfile_Names=yes
 Note: We have provided a copy of the srdta.db database in the Mega2R package.  So
 you can proceed with the steps that follow, even if you did not create your own database.
 
-Now, we go back into R and type:
+Now, we go back into R and run Mega2GenABEL().  Type:
 
 ```{r, srdta.db,eval=TRUE}
-require("GenABEL")
+GotGenABEL = require("GenABEL", quietly=FALSE)
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
@@ -1773,23 +1777,28 @@ ENV = read.Mega2DB(sdb)
 mega = Mega2GenABEL()
 ```
 
+**NOTE: The code below will check if you have GenABEL available on your machine,
+if it is not available the code in this section can not really be executed.**
+
 `mega` should be the same as the `srdta` gwaa.data-class object. You can
 compare them however you prefer.    For example, in R, type:
 
 ```{r strs}
+GotGenABEL = require("GenABEL", quietly=FALSE)
 str(mega)
-str(srdta)
+if (GotGenABEL) str(srdta)
 ```
+
 You can compare these printouts by eye.  Alternatively, 
 the function *Mega2GenABELtst()* can be used to
 compare the phenotype data, genotype data, and object metadata, item by item.
 
 ```{r mega2genabeltst}
-require("GenABEL")
+GotGenABEL = require("GenABEL", quietly=FALSE)
 options(max.print = 30)
 Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
 ```
-
+**NOTE
 These results are somewhat disappointing.  But ...
 
 First, "mega2" prefers to use the pedigree id concatenated to the person id as the sample
