@@ -51,10 +51,10 @@ Possibly mis-spelled words in DESCRIPTION:
 
 ## Test environments
 * Ubuntu 16.04.1, R devel (2018-04-03 r74509)
-* OS X 10.12.6, R 3.4.4 (2018-03-15)
+* OS X 10.12.6, R 3.5.0 (2018-04-23)
 
 ## R CMD check results
-On Ubuntu, the status is reported as "2 NOTEs".  The first Note mentions a possibly invalid URL.  This has to do with an SSL certificate provided by my University which newer browsers do not like.  We are trying to get this updated, but as this is at the University level, this make take some time. 
+On Ubuntu, the status is reported as "2 NOTEs".  The first Note mentions a possibly invalid URL.  This has to do with an SSL certificate issue. 
 
 * using R Under development (unstable) (2018-04-03 r74509)
 * using platform: x86_64-pc-linux-gnu (64-bit)
