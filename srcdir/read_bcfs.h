@@ -71,6 +71,7 @@ public:
     virtual int  do_menu_parse(int choice);
     virtual void do_menu2batch();
     virtual void do_batch2local();
+    virtual void do_gc();
 
     void init_filters();
     virtual void do_init(Input_Base *inp);
