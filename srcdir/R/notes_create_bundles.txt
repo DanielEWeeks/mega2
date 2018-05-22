@@ -47,7 +47,15 @@ Possibly mis-spelled words in DESCRIPTION:
   gwaa (20:6)
   
 
+----
+This update is mainly making adjustments to remove the strict requiring
+of the GenABEL package, because the GenABEL package is scheduled to be
+archived on May 24, 2018.  We hope that it is still OK to retain our
+functions that convert data to GenABEL format while stating that our
+package only 'enhances' GenABEL instead of requiring or suggesting it.
 
+We have verified that the revised package passes the checks when the
+GenABEL package is not avaiable (although this does generate a NOTE).
 
 ## Test environments
 * Ubuntu 16.04.1, R devel (2018-05-22 r74755)
@@ -78,6 +86,9 @@ May 24, 2018):
 
 * checking package dependencies ... NOTE
 Package which this enhances but not available for checking: ‘GenABEL’
+
+When checked with the GenABEL package installed, this Note does not
+appear and no additional problems are revealed.
 
 On OS X, it did not complain about the SSL certificate problem discussed above.
 
