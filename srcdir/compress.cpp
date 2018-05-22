@@ -233,7 +233,7 @@ void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *a
 }
 
 void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2) {
-    if (all1 == REC_UNKNOWN && all2 == REC_UNKNOWN) return;
+//  if (all1 == REC_UNKNOWN && all2 == REC_UNKNOWN) return;
 
     if (SORT_HETEROZYGOTE && all1 != all2 && strcmp(all1, all2) > 0) {
         const char *tmp = all1;
