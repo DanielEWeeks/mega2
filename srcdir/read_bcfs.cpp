@@ -751,7 +751,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                 for (int al = 0; al < line->n_allele; al++) {
                     canons.push_back(canonical_allele(line->d.allele[al]));
                 }
-                VecAlleles.push_back(canons);
+                //VecAlleles.push_back(canons);
                 set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
 
                 //should give number of allele options per marker
@@ -850,6 +850,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
                 canons.clear();
                 Vecc().swap(canons);
+                free(dat);
 
                 mrkindex++;
             }
