@@ -396,6 +396,8 @@ void ReadBCFs::build_markers_and_samples() {
             }
         }
         args.pop_back();
+
+        destroy_data_vcfview(bcfargs);
         free(bcfargs);
 
         std::cout << "Samples for " << files[i] << " completed\n";// << std::ctime(&time)
@@ -412,7 +414,6 @@ void ReadBCFs::build_markers_and_samples() {
 
     int total_markers = 0;
     for(int i = 0; i < this->filecount; i++) {
-        //auto start = std::chrono::system_clock::now();
 
         args.push_back(files[i]);
 
@@ -441,10 +442,9 @@ void ReadBCFs::build_markers_and_samples() {
         int count = 0;
 
         while ( bcf_sr_next_line(bcfargs->files) ) {
-            bcf1_t *line = bcfargs->files->readers[0].buffer[0];
+            bcf1_t * line = bcfargs->files->readers[0].buffer[0];
             if ( subset_vcf(bcfargs, line) ) {
-                Vecs alleles(line->n_allele);
-                alleles.clear();
+                Vecs alleles;
 
                 for (int al = 0; al < line->n_allele; al++) {
                     alleles.push_back(canonical_allele(line->d.allele[al]));
@@ -455,14 +455,21 @@ void ReadBCFs::build_markers_and_samples() {
                 if (strncmp(posp, "chr", 3) == 0) posp += 3;
 //rvb: and another
                 if (name == ".") {
-                    char pos[50];
+                    char * pos = new char[50];
                     sprintf(pos, "chr%s_%d", posp, line->pos + 1);
                     name = pos;
+                    //delete [] pos;
                 }
-                    
-                this->markers.push_back(new BCFMarker(name, posp, line->pos + 1,
-                                                      alleles)); // pos + 1 matches the VCF line pos field.
 
+                BCFMarker * line_marker = new BCFMarker(name, posp, line->pos + 1, alleles);// pos + 1 matches the VCF line pos field.
+                this->markers.push_back(line_marker);
+                //line_marker->alleles.clear();
+                //std::vector<std::string>().swap(line_marker->alleles);
+                //line_marker->alleles.shrink_to_fit();
+                //free(line_marker);
+
+                alleles.clear();
+                std::vector<std::string>().swap(alleles);
                 count++;
             }
         }
@@ -478,13 +485,11 @@ void ReadBCFs::build_markers_and_samples() {
         total_markers += count;
         args.pop_back();
 
-        //auto end = std::chrono::system_clock::now();
-        //std::time_t time = std::chrono::system_clock::to_time_t(end);
-        //std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Alleles for " << files[i] << " completed\n";// << std::ctime(&time)
-                 // << "Duration: " << elapsed_seconds.count() << "\n";
+        std::cout << "Alleles for " << files[i] << " completed\n";
 
+        destroy_data_vcfview(bcfargs);
         free(bcfargs);
+
     }
 
     this->marker_count = total_markers;
@@ -842,6 +847,10 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                     } else error("FIXME: not ready for ploidy %d\n", j);
 
                 }
+
+                canons.clear();
+                Vecc().swap(canons);
+
                 mrkindex++;
             }
         }
@@ -855,16 +864,14 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
         args.pop_back();
 
-       // auto end = std::chrono::system_clock::now();
-        //std::time_t time = std::chrono::system_clock::to_time_t(end);
-        //std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "Genotypes for " << files[i] << " completed\n"; //<< std::ctime(&time)
-                  //<< "Duration: " << elapsed_seconds.count() << "\n";
+        std::cout << "Genotypes for " << files[i] << " completed\n";
+
         if(zeroed_genotypes_nonx + zeroed_genotypes_x > 0)
             warnvf("We encountered %d half-typed genotypes that were set to missing.\n"
                    "If you would like to read these in, set the maximum number of alleles per marker in the 'File Input Menu' to more than 2.\n"
                    "Also, there were %d half-typed genotypes in males on chromosome X that were treated as valid.\n",zeroed_genotypes_nonx,zeroed_genotypes_x);
 
+        destroy_data_vcfview(bcfargs);
         free(bcfargs);
     }
 }
@@ -932,7 +939,22 @@ annotated_ped_rec * ReadBCFs::build_bcf_ped(linkage_locus_top *LTop) {
     return persons;
 }
 
+void ReadBCFs::do_gc() {
+    markerMap.clear();
+    Hmapsi().swap(markerMap);
 
+    sampleMap.clear();
+    Hmapsi().swap(sampleMap);
+
+    samples.clear();
+    vector<string>().swap(samples);
+
+    filelist.clear();
+    vector<string>().swap(filelist);
+
+    markers.clear();
+    MarkerVector().swap(markers);
+}
 
 
 
