@@ -50,20 +50,18 @@ Possibly mis-spelled words in DESCRIPTION:
 
 
 ## Test environments
-* Ubuntu 16.04.1, R devel (2018-04-03 r74509)
+* Ubuntu 16.04.1, R devel (2018-05-22 r74755)
 * OS X 10.12.6, R 3.5.0 (2018-04-23)
 
 ## R CMD check results
 On Ubuntu, the status is reported as "2 NOTEs".  The first Note mentions a possibly invalid URL.  This has to do with an SSL certificate issue. 
 
-* using R Under development (unstable) (2018-04-03 r74509)
+* using R Under development (unstable) (2018-05-22 r74755)
 * using platform: x86_64-pc-linux-gnu (64-bit)
 ...
-* this is package ‘Mega2R’ version ‘1.0.2’
+* this is package ‘Mega2R’ version ‘1.0.3’
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: ‘Daniel E. Weeks <weeks@pitt.edu>’
-
-New submission
 
 Found the following (possibly) invalid URLs:
   URL: https://watson.hgen.pitt.edu/mega2/mega2r/
@@ -73,15 +71,14 @@ Found the following (possibly) invalid URLs:
       	SSL certificate problem: unable to get local issuer certificate
       	(Status without verification: OK)
 
-The second Note has to do with one exercise that took longer than 5 seconds on this very slow virtual machine:
 
-* checking examples ... NOTE
-Examples with CPU or elapsed time > 5s
-          user system elapsed
-Mega2SKAT 5.26   0.02   5.292
+The second Note has to do with the GenABEL package not being available
+(which it soon will not be, as it is scheduled to be archived on 
+May 24, 2018):
 
+* checking package dependencies ... NOTE
+Package which this enhances but not available for checking: ‘GenABEL’
 
-On OS X, there were no ERRORs or WARNINGs. 
 On OS X, it did not complain about the SSL certificate problem discussed above.
 
 
