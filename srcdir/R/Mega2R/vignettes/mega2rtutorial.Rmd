@@ -1252,10 +1252,10 @@ The 'GenABEL' package is available on CRAN as either as a toplevel
 package (https://CRAN.R-project.org/package=GenABEL) or in the
 archive.  The Mega2R library does not implicitly include GenABEL.
 You must explicitly add the GenABEL library to your workspace.
-If Mega2R, finds GenABEL in your workspace, the functions described
-below, Mega2GenABEL() and Mega2ENVGenABEL() will be available.  Otherwise,
+If Mega2R finds GenABEL in your workspace, the functions 
+`Mega2GenABEL` and `Mega2ENVGenABEL` will be available.  Otherwise,
 the functions will just return NULL.  (In the example below, we use
-"require" vs "library" to illustrate this behavior".)
+"require" instead of "library" to illustrate this behavior".)
 
 The reference for GenABEL is 
 [Aulchenko Y.S., Ripke S., Isaacs A., van Duijn C.M. GenABEL: an R package for genome-wide association analysis. Bioinformatics. 2007 23(10):1294-6.]
