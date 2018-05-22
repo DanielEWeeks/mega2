@@ -1912,10 +1912,6 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
             allele_list_type *allelefp;
 
             get_2Ralleles_2bits(locus, &(Top->LocusTop->Locus[locus]), &aname1, &aname2);  // G/C
-            if (aname1 == 0 || aname2 == 0) {
-                BPT;
-            }
-//BPT
             if (strcmp(aname1, "0") == 0) {
                 if (strcmp(aname2, "0") == 0) {
                 } else {
