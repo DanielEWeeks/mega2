@@ -80,6 +80,8 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', en
 
     if (is.null(markers)) markers = envir$markers
 
+    match49r = FALSE
+    
     mkVCFhdr(prefix, markers, envir)
 
     z = c("./.", "./0", "./1", "./2", "0/.", "0/0", "0/1", "0/2",
@@ -158,6 +160,11 @@ Mega2VCF = function(prefix, markers=NULL, mapno = 0, alleleOrder = 'default', en
                 doFlip = TRUE
             } else if (alleleOrder == 'minor' && any(AF < RF)) {
                 whichFlip = which(AF < RF)
+                doFlip = TRUE
+            } else if (match49r && any (ALT < REF) ) {
+                whichFlip = which(ALT < REF)
+                whichFlip = whichFlip[ALT[whichFlip] != "0"]
+                whichFlip = whichFlip[AF[whichFlip] != 0]
                 doFlip = TRUE
             } else
                 doFlip = FALSE

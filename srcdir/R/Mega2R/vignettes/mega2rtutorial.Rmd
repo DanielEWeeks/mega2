@@ -1280,7 +1280,7 @@ If you haven't already, first install the 'GenABEL' package from CRAN.
 Then type:
 
 ```{r seqsimgwaa}
-require("exGenABEL")
+require("GenABEL")
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
