@@ -491,7 +491,7 @@ void convert_to_freq(marker_type *marker_list,
     int total_count;
     allele_list_type *allelep;
 
-    SECTION_LOG_INIT(convert_to_freq);
+    SECTION_ERR_INIT(convert_to_freq);
     for (m=0; m < LTop->LocusCnt; m++) {
         if (LTop->Locus[m].Type == NUMBERED ||
                 LTop->Locus[m].Type == XLINKED ||
@@ -569,7 +569,7 @@ void convert_to_freq(marker_type *marker_list,
                     } else {
                         if (allelep->next == NULL) {
                             if (LTop->Locus[m].number != -1) {
-                                SECTION_LOG(convert_to_freq);
+                                SECTION_ERR(convert_to_freq);
                                 warnvf("No genotyped individuals found among those selected.\n\
 All allele frequencies will be set to 0 for marker %s.\n",
                                        LTop->Locus[m].LocusName);
@@ -582,7 +582,7 @@ All allele frequencies will be set to 0 for marker %s.\n",
             }
         }
     }
-    SECTION_LOG_FINI(convert_to_freq);
+    SECTION_ERR_FINI(convert_to_freq);
 }
 
 /*----------------------end of convert_to_freq----------------------*/
