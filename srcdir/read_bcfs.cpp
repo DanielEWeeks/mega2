@@ -462,20 +462,16 @@ void ReadBCFs::build_markers_and_samples() {
                     char * pos = new char[50];
                     sprintf(pos, "chr%s_%d", posp, line->pos + 1);
                     name = pos;
-                    //delete [] pos;
                 }
 
                 BCFMarker * line_marker = new BCFMarker(name, posp, line->pos + 1, alleles);// pos + 1 matches the VCF line pos field.
                 this->markers.push_back(line_marker);
-                //line_marker->alleles.clear();
-                //std::vector<std::string>().swap(line_marker->alleles);
-                //line_marker->alleles.shrink_to_fit();
-                //free(line_marker);
 
                 alleles.clear();
                 std::vector<std::string>().swap(alleles);
                 count++;
             }
+            if(line) bcf_clear(line);
         }
         int err = bcfargs->files->errnum;
         if ( err ) {
@@ -709,8 +705,6 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     int zeroed_genotypes_x = 0;
 
     for (int i = 0; i < this->filecount; i++) {
-        //auto start = std::chrono::system_clock::now();
-
         args.push_back(files[i]);
 
         printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
@@ -744,8 +738,6 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
                 m = 0;
                 n = bcf_get_genotypes(hdr, line, &dat, &m);
-                //probably not necessary
-                //convert->ndat = m * sizeof(int32_t);
 
                 if (n <= 0) {
                     error("Error parsing GT tag at %s:%d\n", bcf_seqname(hdr, line), line->pos + 1);
@@ -760,7 +752,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                 VecAlleles.push_back(canons);
                 set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
 
-                const char *  chromosome = hdr->id[BCF_DT_CTG][line->rid].key;
+                const char * chromosome = hdr->id[BCF_DT_CTG][line->rid].key;
 
                 //should give number of allele options per marker
                 n /= num_samples;
@@ -772,7 +764,6 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
 
                     int is_x_chr = 0;
-                    //printf("%s", chromosome);
                     if(((strcasecmp(chromosome,"X") == 0) ||
                         (strcasecmp(chromosome,"CHRX") == 0) ||
                         (strcmp(chromosome,"23") == 0)) && (persons[i].Sex == 1))
@@ -862,6 +853,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
                 mrkindex++;
             }
+            if(line) bcf_clear(line);
         }
         int err = bcfargs->files->errnum;
         if ( err ) {
