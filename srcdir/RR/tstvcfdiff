@@ -5,7 +5,8 @@ BLD=change_chrom/bed
 FILES1="fam freq map pen phe vcf"
 FILES2="fam freq map pen vcf"
 #nd=492
-nd=49r
+#nd=49r
+nd=49s
 
 ds=mex
 echo $ds $TEST/${ds}${nd}/$BLD/vcf/vcf.05.sfx
