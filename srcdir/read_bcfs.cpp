@@ -193,6 +193,9 @@ int ReadBCFs::do_menu_parse(int choice_) {
             }
             free(argv);
 
+            args.clear();
+            std::vector<std::string>().swap(args);
+
             if(test == 1) {
                 this->BCF_args = strdup(bcf_args);
                 BatchValueSet(this->BCF_args, "BCF_Args");
@@ -201,6 +204,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
             else {
                 continue;
             }
+
         }
     }
 
@@ -491,6 +495,8 @@ void ReadBCFs::build_markers_and_samples() {
         free(bcfargs);
 
     }
+    args.clear();
+    std::vector<std::string>().swap(args);
 
     this->marker_count = total_markers;
 }
@@ -751,8 +757,10 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                 for (int al = 0; al < line->n_allele; al++) {
                     canons.push_back(canonical_allele(line->d.allele[al]));
                 }
-                //VecAlleles.push_back(canons);
+                VecAlleles.push_back(canons);
                 set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
+
+                const char *  chromosome = hdr->id[BCF_DT_CTG][line->rid].key;
 
                 //should give number of allele options per marker
                 n /= num_samples;
@@ -762,7 +770,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                     for (j = 0; j < n; j++)
                         if (ptr[j] == bcf_int32_vector_end) break;
 
-                    const char *  chromosome = hdr->id[BCF_DT_CTG][line->rid].key;
+
                     int is_x_chr = 0;
                     //printf("%s", chromosome);
                     if(((strcasecmp(chromosome,"X") == 0) ||
@@ -872,6 +880,8 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                    "If you would like to read these in, set the maximum number of alleles per marker in the 'File Input Menu' to more than 2.\n"
                    "Also, there were %d half-typed genotypes in males on chromosome X that were treated as valid.\n",zeroed_genotypes_nonx,zeroed_genotypes_x);
 
+        args.clear();
+        std::vector<std::string>().swap(args);
         destroy_data_vcfview(bcfargs);
         free(bcfargs);
     }
