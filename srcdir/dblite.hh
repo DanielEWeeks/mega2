@@ -329,8 +329,8 @@ public:
         } else if (*bsize != esize) {
             printf("sqlite3 uncompress: compression size is %ld should be %ld\n",
                    *bsize, esize);
-        } else if (*bsize >= mxsize) {
-            printf("sqlite3 uncompress: compression exceeds buffer is %ld should be < %ld\n",
+        } else if (*bsize > mxsize) {
+            printf("sqlite3 uncompress: compression exceeds buffer is %ld should be <= %ld\n",
                    *bsize, mxsize);
         }
         return data;
