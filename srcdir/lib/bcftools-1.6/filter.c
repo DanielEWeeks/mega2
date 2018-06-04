@@ -582,7 +582,9 @@ static void filters_set_format_int(filter_t *flt, bcf1_t *line, token_t *tok)
     {
         hts_expand(double,tok->nvalues,tok->mvalues,tok->values);
         int nvals = tok->nvalues / line->n_sample;
+#ifndef __Mega2__
         int idx = tok->idx >= 0 ? tok->idx : 0;
+#endif
         int is_missing = 1;
         int k, j = 0, end = tok->idxs[tok->nidxs-1] < 0 ? nvals - 1 : tok->nidxs - 1;
         if ( end >= nvals ) end = nvals - 1;
@@ -647,7 +649,9 @@ static void filters_set_format_float(filter_t *flt, bcf1_t *line, token_t *tok)
     {
         hts_expand(double,tok->nvalues,tok->mvalues,tok->values);
         int nvals = tok->nvalues / line->n_sample;
+#ifndef __Mega2__
         int idx = tok->idx >= 0 ? tok->idx : 0;
+#endif
         int is_missing = 1;
         int k, j = 0, end = tok->idxs[tok->nidxs-1] < 0 ? nvals - 1 : tok->nidxs - 1;
         if ( end >= nvals ) end = nvals - 1;
@@ -820,8 +824,9 @@ static void filters_set_genotype_string(filter_t *flt, bcf1_t *line, token_t *to
         return;
     }
     int i, blen = 4, nsmpl = bcf_hdr_nsamples(flt->hdr);
+#ifndef __Mega2__
     kstring_t str;
-
+#endif
 gt_length_too_big:
     tok->str_value.l = 0;
     for (i=0; i<nsmpl; i++)
@@ -868,7 +873,11 @@ static void filters_set_alt_string(filter_t *flt, bcf1_t *line, token_t *tok)
     }
     else if ( tok->idx==-2 )
     {
+#ifdef __Mega2__
+        int i, end = tok->idxs[tok->nidxs-1] < 0 ? line->n_allele - 1 : tok->nidxs - 1;
+#else
         int i, j = 0, end = tok->idxs[tok->nidxs-1] < 0 ? line->n_allele - 1 : tok->nidxs - 1;
+#endif
         if ( end >= line->n_allele - 1 ) end = line->n_allele - 2;
         for (i=0; i<=end; i++)
             if ( i>=tok->nidxs || tok->idxs[i] )

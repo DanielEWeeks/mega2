@@ -31,6 +31,9 @@
  *  read lines reseting stringstream/vector each line
  */
 
+// for centos ...
+#define __STDC_LIMIT_MACROS 1
+
 #include <stdlib.h>
 
 #include <iostream>

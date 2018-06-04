@@ -48,7 +48,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `bz2' library (-lbz2). */
-#define HAVE_LIBBZ2 1
+/* #undef HAVE_LIBBZ2 */
 
 /* Define if libcurl file access is enabled. */
 /* #undef HAVE_LIBCURL */

@@ -117,8 +117,8 @@ OBJS =  $(SRCS:.cpp=.o)
 
 # The flags for including the libraries:
 
-iFLAGS = -I$(TOP)
-IFLAGS = -I$(shell pwd)
+iFLAGS = -D__Mega2__ -I$(TOP)
+IFLAGS = -D__Mega2__ -I$(shell pwd)
 
 ifneq ($(MINGW),)
 	RM=del 
@@ -229,7 +229,7 @@ RANLIB = ranlib
 ZLIBS ?= libz.a
 CLIBS := libvcftools.a libbgen.a $(ZLIBS) libsqlite3.a libbcftools.a $(CLIBS)
 
-BCFFLAGS =  -lz -lm -lbz2 # –llzma
+##BCFFLAGS =  -lz -lm -lbz2 # –llzma
 stdC11  ?= -std=c++0x
 WINO    ?=
 

@@ -29,6 +29,9 @@
 ===========================================================================
 */
 
+// for centos ...
+#define __STDC_LIMIT_MACROS 1
+
 #include "common.h"
 #include "typedefs.h"
 #include "types.hh"
@@ -940,7 +943,7 @@ void CLASS_VCF::convert_vcf_bcf(char *filename){
     args.push_back(strcat(filename,extension));
     args.push_back(filename2);
 
-    int argc = 6;
+    size_t argc = 6;
     char **argv;
     argv = (char **) malloc(argc * sizeof(char *));
     for (size_t ii = 0; ii < argc; ii += 1) {
@@ -965,7 +968,7 @@ void CLASS_VCF::convert_vcf_vcfgz(char *filename) {
     args.push_back(strcat(filename,extension));
     args.push_back(filename2);
 
-    int argc = 6;
+    size_t argc = 6;
     char **argv;
     argv = (char **) malloc(argc * sizeof(char *));
     for (size_t ii = 0; ii < argc; ii += 1) {

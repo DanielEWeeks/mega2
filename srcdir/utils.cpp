@@ -364,7 +364,7 @@ void check_expiration(void)
     if (expired) {
         errorvf("MEGA2 %s has expired, please obtain an up-to-date version.\n",
 		Mega2Version);
-        EXIT(SYSTEM_ERROR);
+//      EXIT(SYSTEM_ERROR);
     }
 }
 #endif

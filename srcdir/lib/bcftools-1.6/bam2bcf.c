@@ -655,7 +655,11 @@ int bcf_call_combine(int n, const bcf_callret1_t *calls, bcf_callaux_t *bca, int
             assert( call->n_alleles<=B2B_MAX_ALLELES );   // this is always true for SNPs and so far for indels as well
 
             // reorder ADR,ADF to match the allele ordering at this site
+#ifndef __Mega2__
             int32_t tmp[B2B_MAX_ALLELES];
+#else
+            int32_t tmp[B2B_MAX_ALLELES] = {0, };
+#endif
             int32_t *adr = call->ADR + B2B_MAX_ALLELES, *adr_out = call->ADR + B2B_MAX_ALLELES;
             int32_t *adf = call->ADF + B2B_MAX_ALLELES, *adf_out = call->ADF + B2B_MAX_ALLELES;
             int32_t *adr_tot = call->ADR;   // the first bin stores total counts per site

@@ -26,6 +26,9 @@ Mega2: Manipulation Environment for Genetic Analysis
 ===========================================================================
 */
 
+// for centos ...
+#define __STDC_LIMIT_MACROS 1
+
 #include <string.h>
 #include <vector>
 #include <errno.h>
