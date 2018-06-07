@@ -31,7 +31,7 @@
 
 # NOTE: Please refer to 'srcdir/version.h' which also encodes the Mega2 version
 # information.
-#VERSION=v4.9.3
+#VERSION=v5.0.0
 
 VERSION_H='./srcdir/version.h'
 MEGA2VER=`grep MEGA2VER ${VERSION_H} | sed -n 's/^#define MEGA2VER \(.*\)/\1/p'`

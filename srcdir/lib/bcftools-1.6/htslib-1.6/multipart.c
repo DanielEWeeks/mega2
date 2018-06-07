@@ -78,7 +78,11 @@ open_next:
     if (fp->currentfp == NULL) {
         if (fp->current < fp->nparts) {
             const hfile_part *p = &fp->parts[fp->current];
+#ifdef _mega2_
+            hts_log_debug("Opening part #%" PRz "u of %" PRz "u: \"%.120s%s\"",
+#else
             hts_log_debug("Opening part #%zu of %zu: \"%.120s%s\"",
+#endif
                 fp->current+1, fp->nparts, p->url,
                 (strlen(p->url) > 120)? "..." : "");
 

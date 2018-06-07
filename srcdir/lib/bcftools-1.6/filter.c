@@ -27,8 +27,12 @@ THE SOFTWARE.  */
 #include <strings.h>
 #include <errno.h>
 #include <math.h>
+#if defined(_mega2_) && defined(_WIN32)
+#include "regex/regex.h"
+#else
 #include <wordexp.h>
 #include <regex.h>
+#endif
 #include <htslib/khash_str2int.h>
 #include "filter.h"
 #include "bcftools.h"
@@ -1509,6 +1513,8 @@ static int filters_init1(filter_t *filter, char *str, int len, token_t *tok)
         return 0;
     }
 
+#if defined(_mega2_) && defined(_WIN32)
+#else
     // is it a file?
     if ( str[0]=='@' )
     {
@@ -1536,6 +1542,7 @@ static int filters_init1(filter_t *filter, char *str, int len, token_t *tok)
         free(list);
         return 0;
     }
+#endif
 
     int is_fmt = -1;
     if ( !strncasecmp(str,"FMT/",4) ) { str += 4; len -= 4; is_fmt = 1; }

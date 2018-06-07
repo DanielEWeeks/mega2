@@ -63,7 +63,11 @@
 #define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have a working `mmap' system call. */
+#if defined(_mega2_) && defined(_WIN32)
+/* #undef HAVE_MMAP */
+#else
 #define HAVE_MMAP 1
+#endif
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1

@@ -219,7 +219,11 @@ static faidx_t *fai_read(hFILE *fp, const char *fname)
         }
         n = sscanf(p, "%"SCNd64"%"SCNu64"%d%d", &len, &offset, &line_blen, &line_len);
         if (n != 4) {
+#ifdef _mega2_
+            hts_log_error("Could not understand FAI %s line %" PRz "d", fname, lnum);
+#else
             hts_log_error("Could not understand FAI %s line %zd", fname, lnum);
+#endif
             goto fail;
         }
         if (fai_insert_index(fai, buf, len, line_len, line_blen, offset) != 0) {

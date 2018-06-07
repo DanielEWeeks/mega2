@@ -32,6 +32,12 @@ WINDIR=/
 WINO = -o $@
 endif
 
+ifneq ($(OSTYPE),msys2)
+knetfile.o bgzf.o faidx.o multipart.o sam.o: CFLAGS += -DPRI64=\"ll\" -DPRz=\"z\"
+else
+knetfile.o bgzf.o faidx.o multipart.o sam.o: CFLAGS +=-DPRI64=\"I64\" -DPRz=\"I64\"
+endif
+
 #CC     = gcc
 #AR     = ar
 #RANLIB = ranlib

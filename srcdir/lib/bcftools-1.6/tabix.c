@@ -84,7 +84,9 @@ int main_tabix(int argc, char *argv[])
         {
             // auto-detect file type by file name
             int l = strlen(argv[optind]);
+#ifndef _mega2_
             int strcasecmp(const char *s1, const char *s2);
+#endif
             if (l>=7 && strcasecmp(argv[optind]+l-7, ".gff.gz") == 0) conf = tbx_conf_gff;
             else if (l>=7 && strcasecmp(argv[optind]+l-7, ".bed.gz") == 0) conf = tbx_conf_bed;
             else if (l>=7 && strcasecmp(argv[optind]+l-7, ".sam.gz") == 0) conf = tbx_conf_sam;
