@@ -55,7 +55,7 @@ SRC =  	mega2_vcftools_interface.cpp \
 OBJ = $(SRC:.cpp=.o)
 
 # include directories '.' for other vcftools headers, '..' for Mega2 headers... and zlib headers
-LOCFLAGS += -D__Mega2__ -I..
+LOCFLAGS += -D_mega2_ -I..
 
 # CC, CFLAGS are defined in Mega2 Makedefs
 

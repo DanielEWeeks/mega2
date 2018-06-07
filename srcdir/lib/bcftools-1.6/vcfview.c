@@ -544,7 +544,7 @@ int main_vcfview(int argc, char *argv[])
     args->record_cmd_line = 1;
     args->min_ac = args->max_ac = args->min_af = args->max_af = -1;
     int targets_is_file = 0, regions_is_file = 0;
-#ifdef __Mega2__
+#ifdef _mega2_
     extern void destroy_data(args_t *args);
 #endif
     static struct option loptions[] =

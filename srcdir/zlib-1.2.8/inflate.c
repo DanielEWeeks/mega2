@@ -1504,7 +1504,7 @@ z_streamp strm;
 {
     struct inflate_state FAR *state;
 
-#ifdef __Mega2__
+#ifdef _mega2_
     if (strm == Z_NULL || strm->state == Z_NULL) return -(1L << 16);
 #else
     if (strm == Z_NULL || strm->state == Z_NULL) return -1L << 16;

@@ -117,8 +117,8 @@ OBJS =  $(SRCS:.cpp=.o)
 
 # The flags for including the libraries:
 
-iFLAGS = -D__Mega2__ -I$(TOP)
-IFLAGS = -D__Mega2__ -I$(shell pwd)
+iFLAGS = -D_mega2_ -I$(TOP)
+IFLAGS = -D_mega2_ -I$(shell pwd)
 
 ifneq ($(MINGW),)
 	RM=del 

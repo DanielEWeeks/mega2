@@ -122005,7 +122005,7 @@ static void constructAutomaticIndex(
   Expr *pPartial = 0;         /* Partial Index Expression */
   int iContinue = 0;          /* Jump here to skip excluded rows */
   struct SrcList_item *pTabItem;  /* FROM clause term being indexed */
-#ifdef __Mega2__
+#ifdef _mega2_
   int addrCounter = 0;        /* Address where integer counter is initialized */
 #else
   int addrCounter;            /* Address where integer counter is initialized */
