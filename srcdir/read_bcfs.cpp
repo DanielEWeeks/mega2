@@ -115,7 +115,12 @@ int ReadBCFs::do_menu_parse(int choice_) {
     if(choice_ == site_bcfs_file_i) {
         while (1){
             draw_line();
-            printf("Enter a BCF file or a file that contains a list of BCF files to be read:\n");
+            if(Input->input_format == in_format_bcfs)
+                printf("Enter a BCF file or a file that contains a list of BCF files to be read:\n");
+            else if(Input->input_format == in_format_gzcfs)
+                printf("Enter a VCF.gz file or a file that contains a list of VCF.gz files to be read:\n");
+            else if(Input->input_format == in_format_vcfs)
+                printf("Enter a VCF file or a file that contains a list of VCF files to be read:\n");
             fcmap(stdin, "%s", bcfs_file);
             newline;
 
@@ -125,6 +130,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
             }
             else {
                 BatchValueSet(bcfs_file, "BCFs_File");
+                ret = 1;
                 break;
             }
         }
@@ -133,16 +139,18 @@ int ReadBCFs::do_menu_parse(int choice_) {
     else if(choice_ == site_bcfs_args_i) {
         draw_line();
         printf("\nCurrent BCF parameters:  %s\n", BatchItemGet("BCF_Args")->value.name);
-        printf("  For more additional information on BCFTools flags\n");
-        printf("see the documentation at samtools.github.io/bcftools/bcftools\n");
-        printf("Valid options in Mega2 include:\n");
-        printf("--known  --novel --phased --exclude-phased --uncalled --exclude-uncalled\n");
-        printf("--min-ac --max-ac --min-alleles --max-alleles[INT]\n");
-        printf("--min-af --max-af [FLOAT]");
-        printf("--exclude --include [EXPRESSION]\n");
+        printf("   For more additional information on BCFTools flags\n");
+        printf("see documentation at samtools.github.io/bcftools/bcftools.\n");
+        printf("Mega2's BCFTools option is based off of BCFTools view\n");
+        printf("and allows a subset of BCFTools view flags.\n");
+        printf("\nValid BCFTools view options for Mega2 include:\n");
+        printf("--known  --novel \n--phased --exclude-phased \n--uncalled --exclude-uncalled\n");
+        printf("--min-ac [INT] --max-ac [INT] \n--min-alleles [INT] --max-alleles[INT]\n");
+        printf("--min-af [FLOAT] --max-af [FLOAT]\n");
+        printf("--exclude [EXPRESSION] --include [EXPRESSION]\n");
         printf("--regions [chr:to-from] --regions-file [FILE]\n");
-        printf("--apply-filters [LIST]\n");
-        printf("To remove all options currently selected please enter \"clear\"");
+        printf("--apply-filters [LIST]\n\n");
+        printf("To remove all current BCFTools options enter \"clear\"\n");
 
         while (1) {
             printf("Please enter BCFTools arguments > \n");
@@ -203,6 +211,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
             if(test == 1) {
                 this->BCF_args = strdup(bcf_args);
                 BatchValueSet(this->BCF_args, "BCF_Args");
+                ret = 1;
                 break;
             }
             else {
@@ -368,6 +377,8 @@ void ReadBCFs::build_markers_and_samples() {
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
             strcpy(argv[ii], &args[ii][0]);
+            if(ii == 1)
+                printf("view ");
             printf("%s ", argv[ii]);
         }
         printf("\n");
@@ -431,6 +442,8 @@ void ReadBCFs::build_markers_and_samples() {
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
             strcpy(argv[ii], &args[ii][0]);
+            if(ii == 1)
+                printf("view ");
             printf("%s ",argv[ii]);
         }
         printf("\n");
@@ -717,6 +730,8 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
             strcpy(argv[ii], &args[ii][0]);
+            if(ii == 1)
+                printf("view ");
             printf("%s ",argv[ii]);
         }
         printf("\n");
@@ -886,9 +901,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 linkage_ped_top* ReadBCFs::do_ped(linkage_locus_top *LTop)   {
     extern vector<Vecc> VecAlleles;
 
-    mssgvf("\nA Pedigree file (.fam) was not provided so a template is being constructed internally for reference with no family structure.\n"
-           "It is only used to organize samples within Mega2 and will not be reflective of any real pedigree structure in the data.\n"
-           "If you have pedigree information that you did not include please go back to Menu 1 and include a Pedigree file (.fam).\n");
+    //mssgvf("\nAs a pedigree (.fam) file was not provided, we have assumed everyone is unrelated.\n"
+    //       "If you have pedigree information that you did not include please rerun providing a pedigree file.\n"
+    //       "All sex values have been set to male as a default.\n");
     annotated_ped_rec *persons = build_bcf_ped(LTop);
 
     do_genotypes(LTop, persons, VecAlleles);
