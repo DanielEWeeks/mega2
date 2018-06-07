@@ -54,10 +54,11 @@ OBJS     = main_bcftools.o vcfindex.o tabix.o \
            vcfcnv.o HMM.o vcfplugin.o consensus.o ploidy.o bin.o hclust.o version.o \
            regidx.o smpl_ilist.o csq.o vcfbuf.o \
            mpileup.o bam2bcf.o bam2bcf_indel.o bam_sample.o \
-           ccall.o em.o prob1.o kmin.o \
-           regex/regex.o ##regex/random.o
-
+           ccall.o em.o prob1.o kmin.o 
+ifeq ($(OSTYPE),msys2)
+OBJS +=    regex/regex.o ##regex/random.o
 regex/regex.o: CFLAGS += -D__USE_GNU -Iregex
+endif
 
 #objects from hts for our archive
 HTS_OBJS  =	htslib-1.6/kfunc.o \
