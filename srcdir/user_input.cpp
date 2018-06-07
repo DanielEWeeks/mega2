@@ -38,9 +38,6 @@
 #include "common.h"
 #include "typedefs.h"
 
-#include "input_ops.hh"
-#include "input.hh"
-
 #include "batch_input_ext.h"
 #include "cw_routines_ext.h"
 #include "error_messages_ext.h"
@@ -57,6 +54,9 @@
 #include "write_files_ext.h"
 #include "class_old.h"
 #include "database_dump_ext.h"
+
+#include "input_ops.hh"
+#include "input.hh"
 
 #ifdef _WIN
 #define R_OK 4

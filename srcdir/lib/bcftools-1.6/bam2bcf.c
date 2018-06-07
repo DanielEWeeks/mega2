@@ -655,7 +655,7 @@ int bcf_call_combine(int n, const bcf_callret1_t *calls, bcf_callaux_t *bca, int
             assert( call->n_alleles<=B2B_MAX_ALLELES );   // this is always true for SNPs and so far for indels as well
 
             // reorder ADR,ADF to match the allele ordering at this site
-#ifndef __Mega2__
+#ifndef _mega2_
             int32_t tmp[B2B_MAX_ALLELES];
 #else
             int32_t tmp[B2B_MAX_ALLELES] = {0, };

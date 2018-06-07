@@ -898,8 +898,10 @@ void            enter_number(int *num)
 }
 
 int RANDS = 0;
-double randomnum( void )
 
+extern "C" {
+
+double randomnum( void )
 {
     /*Global variable used:  seed1*/
     double r;
@@ -966,13 +968,13 @@ void seed_random(void) {
     time_t secs;
 #endif
 
-
     time(&secs);
     /* printf("random seed: %d\n\n", (int) tv.tv_usec); */
     seed1 = (int) (secs % 30000);
 }
-
 #endif
+
+}
 
 void Exit(int arg, const char *file, const int line, const char *err)
 {
