@@ -142,6 +142,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
         printf("--exclude --include [EXPRESSION]\n");
         printf("--regions [chr:to-from] --regions-file [FILE]\n");
         printf("--apply-filters [LIST]\n");
+        printf("To remove all options currently selected please enter \"clear\"");
 
         while (1) {
             printf("Please enter BCFTools arguments > \n");
@@ -169,7 +170,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
                 break;
             }
             if(extraargs.find("-") != 0) {
-                mssgvf("BCFTools options must begin with \"--\"\n");
+                mssgvf("BCFTools options must begin with \"-\" or \"--\"\n");
                 continue;
             }
 
