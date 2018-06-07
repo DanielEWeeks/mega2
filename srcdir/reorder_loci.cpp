@@ -583,7 +583,7 @@ int STR_CHR(const char *dummy)
         chr=MALE_CHROMOSOME;
     } else if (!strcasecmp(dummy, "XY") || !strcasecmp(dummy, PSEUDO_X_STR)) {
         chr=PSEUDO_X;
-    } else if (!strcasecmp(dummy, "MT") || !strcasecmp(dummy, MITO_CHROMOSOME_STR)) {
+    } else if (!strcasecmp(dummy, "MT") || !strcasecmp(dummy, "M") || !strcasecmp(dummy, MITO_CHROMOSOME_STR)) {
         chr=MITO_CHROMOSOME;
         // PLINK allows the value of '0' to represent "unplaced"
     } else if (!strcasecmp(dummy, "U") || !strcasecmp(dummy, "0") || !strcasecmp(dummy, UNKNOWN_CHROMO_STR)) {
