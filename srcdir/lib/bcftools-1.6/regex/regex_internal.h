@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if (defined __Mega2__) && (defined _WIN32)
+#if (defined _mega2_) && (defined _WIN32)
 #else
 #include <langinfo.h>
 #endif

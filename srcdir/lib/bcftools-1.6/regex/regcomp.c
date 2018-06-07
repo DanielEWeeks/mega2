@@ -886,7 +886,7 @@ init_dfa (re_dfa_t *dfa, size_t pat_len)
   dfa->map_notascii = (_NL_CURRENT_WORD (LC_CTYPE, _NL_CTYPE_MAP_TO_NONASCII)
 		       != 0);
 #else
-#if (defined __Mega2__) && (defined _WIN32)
+#if (defined _mega2_) && (defined _WIN32)
     dfa->is_utf8 = 1;
 #else
   codeset_name = nl_langinfo (CODESET);
