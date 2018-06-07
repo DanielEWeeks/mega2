@@ -776,7 +776,7 @@ static void menu1_batch_set_files(file_format *infl_type,
                 EXIT(FILE_NOT_FOUND);
             }
         } else {
-            if (i == Input_Pedigree_File || 
+            if (i == Input_Pedigree_File ||
                 ((i == Input_Locus_File) && Input->req_locus_file) ||
                 ((i == Input_Aux_File) && Input->req_aux_file) ) {
                 missing_mandatory_keyword(i);
@@ -1413,6 +1413,11 @@ void menu1(file_format *infl_type,
                    Input_Format == in_format_gzcfs)) {
                     printf("ERROR: You must specify a pedigree file.\n");
                     exit_loop = 0;
+                }
+                else {
+                    mssgvf("\nAs a pedigree (.fam) file was not provided, we have assumed everyone is unrelated.\n"
+                           "If you have pedigree information that you did not include please rerun providing a pedigree file.\n"
+                           "All sex values have been set to male as a default.\n\n");
                 }
             }
             if (Input->req_map_file)
