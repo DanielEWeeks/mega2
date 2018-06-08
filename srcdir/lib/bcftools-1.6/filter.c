@@ -435,7 +435,11 @@ static void filters_set_info_int(filter_t *flt, bcf1_t *line, token_t *tok)
     }
     else
     {
+#ifdef _mega2_
+        int64_t value = 0;
+#else
         int64_t value;
+#endif
         if ( bcf_get_info_value(line,tok->hdr_id,tok->idx,&value) <= 0 )
             tok->nvalues = 0;
         else
@@ -469,7 +473,11 @@ static void filters_set_info_float(filter_t *flt, bcf1_t *line, token_t *tok)
     }
     else
     {
+#ifdef _mega2_
+        double value = 0.0;
+#else
         double value;
+#endif
         if ( bcf_get_info_value(line,tok->hdr_id,tok->idx,&value) <= 0 )
             tok->nvalues = 0;
         else
