@@ -144,12 +144,19 @@ int ReadBCFs::do_menu_parse(int choice_) {
         printf("Mega2's BCFTools option is based off of BCFTools view\n");
         printf("and allows a subset of BCFTools view flags.\n");
         printf("\nValid BCFTools view options for Mega2 include:\n");
-        printf("--known  --novel \n--phased --exclude-phased \n--uncalled --exclude-uncalled\n");
-        printf("--min-ac [INT] --max-ac [INT] \n--min-alleles [INT] --max-alleles[INT]\n");
-        printf("--min-af [FLOAT] --max-af [FLOAT]\n");
-        printf("--exclude [EXPRESSION] --include [EXPRESSION]\n");
-        printf("--regions [chr:to-from] --regions-file [FILE]\n");
-        printf("--apply-filters [LIST]\n\n");
+        printf("--known                     --novel \n");
+        printf("--phased                    --exclude-phased \n");
+        printf("--uncalled                  --exclude-uncalled\n");
+        printf("--min-ac [INT]              --max-ac [INT] \n");
+        printf("--min-alleles [INT]         --max-alleles[INT]\n");
+        printf("--min-af [FLOAT]            --max-af [FLOAT]\n");
+        printf("--exclude [EXPRESSION]      --include [EXPRESSION]\n");
+        printf("--types [LIST]              --exclude-types [LIST]\n");
+        printf("--regions [chr:to-from]     --regions-file [FILE]\n");
+        printf("--targets [chr:to-from]     --targets-file [FILE]\n");
+        printf("--samples [LIST]            --samples-file [FILE]\n");
+        printf("--force-samples             --apply-filters [LIST]\n");
+        printf("and their single letter counterparts.\n\n");
         printf("To remove all current BCFTools options enter \"clear\"\n");
 
         while (1) {
@@ -178,7 +185,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
                 break;
             }
             if(extraargs.find("-") != 0) {
-                mssgvf("BCFTools options must begin with \"-\" or \"--\"\n");
+                mssgvf("BCFTools options must begin with \"-\", \"--\", or be \"clear\".\n");
                 continue;
             }
 
