@@ -133,8 +133,8 @@ MISC_SCRIPTS = \
 #TEST_PROGRAMS = test/test-rbuf test/test-regidx
 
 all:	
-	make -C htslib-1.6 lib-static
-	make lib-static 
+	$(MAKE) -C htslib-1.6 lib-static
+	$(MAKE) lib-static 
 
 #all: $(PROGRAMS) $(TEST_PROGRAMS) plugins
 
@@ -246,7 +246,7 @@ endif  # PLUGINS_ENABLED
 #plugins: $(PLUGINS)
 
 $(UP)libbcftools.a: $(OBJS)
-	@-rm -f $@
+	@-$(RM) -f $@
 	$(AR) $(ARFLAGS) $@ $(OBJS) $(HTS_OBJS)
 	-$(RANLIB) $@
 
@@ -355,22 +355,22 @@ install: $(PROG) $(PLUGINS)
 	$(INSTALL_PROGRAM) plugins/*.so $(DESTDIR)$(plugindir)
 
 clean: testclean clean-plugins
-	-rm -f gmon.out *.o *~ $(PROG) version.h plugins/*.so plugins/*.P
-	-rm -rf *.dSYM plugins/*.dSYM test/*.dSYM
-	rm -f $(UP)libbcftools.a
+	-$(RM) -f gmon.out *.o *~ $(PROG) version.h plugins/*.so plugins/*.P
+	-$(RM) -rf *.dSYM plugins/*.dSYM test/*.dSYM
+	$(RM) -f $(UP)libbcftools.a
 	cd htslib-1.6 && $(MAKE) clean
 
 #clean-plugins:
-#	-rm -f plugins/*.so plugins/*.P
-#	-rm -rf plugins/*.dSYM
+#	-$(RM) -f plugins/*.so plugins/*.P
+#	-$(RM) -rf plugins/*.dSYM
 
 #testclean:
-#	-rm -f test/*.o test/*~ $(TEST_PROG)
+#	-$(RM) -f test/*.o test/*~ $(TEST_PROG)
 
 distclean: clean
-	-rm -f config.cache config.h config.log config.mk config.status
-	-rm -rf autom4te.cache
-	-rm -f TAGS
+	-$(RM) -f config.cache config.h config.log config.mk config.status
+	-$(RM) -rf autom4te.cache
+	-$(RM) -f TAGS
 
 clean-all: clean clean-htslib
 

@@ -490,30 +490,30 @@ htslib-uninstalled.pc: htslib.pc.tmp
 
 
 testclean:
-	-rm -f test/*.tmp test/*.tmp.* test/tabix/*.tmp.* test/tabix/FAIL*
+	-$(RM) -f test/*.tmp test/*.tmp.* test/tabix/*.tmp.* test/tabix/FAIL*
 
 mostlyclean: testclean
-	-rm -f *.o *.pico cram/*.o cram/*.pico test/*.o test/*.dSYM version.h
+	-$(RM) -f *.o *.pico cram/*.o cram/*.pico test/*.o test/*.dSYM version.h
 
 clean: mostlyclean clean-$(SHLIB_FLAVOUR)
-	-rm -f libhts.a $(BUILT_PROGRAMS) $(BUILT_PLUGINS) $(BUILT_TEST_PROGRAMS) $(BUILT_THRASH_PROGRAMS)
+	-$(RM) -f libhts.a $(BUILT_PROGRAMS) $(BUILT_PLUGINS) $(BUILT_TEST_PROGRAMS) $(BUILT_THRASH_PROGRAMS)
 
 distclean maintainer-clean: clean
-	-rm -f config.cache config.h config.log config.mk config.status
-	-rm -f TAGS *.pc.tmp *-uninstalled.pc htslib_static.mk
-	-rm -rf autom4te.cache
+	-$(RM) -f config.cache config.h config.log config.mk config.status
+	-$(RM) -f TAGS *.pc.tmp *-uninstalled.pc htslib_static.mk
+	-$(RM) -rf autom4te.cache
 
 clean-so:
-	-rm -f libhts.so libhts.so.*
+	-$(RM) -f libhts.so libhts.so.*
 
 clean-cygdll:
-	-rm -f cyghts-*.dll libhts.dll.a
+	-$(RM) -f cyghts-*.dll libhts.dll.a
 
 clean-dll:
-	-rm -f hts-*.dll hts.dll.a
+	-$(RM) -f hts-*.dll hts.dll.a
 
 clean-dylib:
-	-rm -f libhts.dylib libhts.*.dylib
+	-$(RM) -f libhts.dylib libhts.*.dylib
 
 
 tags TAGS:
