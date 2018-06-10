@@ -108,7 +108,7 @@ void default_outfile_names(const analysis_type  analysis,
                            int *numchr, char *file_names[],
                            const char *logdir)
 {
-    char            num[3];
+    char            num[4];
 
     /* This is approximately the contents of the file_names[] array
        file_names[0] = outfl_name (pedigree file)

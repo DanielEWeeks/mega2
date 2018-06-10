@@ -1284,9 +1284,9 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
                 continue;
             }
             probid = Q.top();
+            nums[0] = nums[1] = nums[2] = 0;
 /*
             if (mrk_idx == 237) {
-                nums[0] = nums[1] = nums[2] = 0;
                 for (int ii = 0; ii < 3; ii++) {
                     ProbID probid = Q.top();
                     Q.pop();

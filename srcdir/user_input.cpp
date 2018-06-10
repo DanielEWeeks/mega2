@@ -878,7 +878,7 @@ static int menu1_show_misc(int *Untyped_ped_opt, int *Error_sim_opt,
                            int err_i, int untyp_i, int _thresh_i, int compress_i,
                            int *choiceA, int idx, int line_len)
 {
-    char messg[100], float_str[11];
+    char messg[100], float_str[16];
 
     printf("%2d) %-*s[ %s]\n", idx, line_len,
            "Simulate genotyping errors:", yorn[*Error_sim_opt]);

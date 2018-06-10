@@ -337,7 +337,7 @@ extern const char      *NOcTIME;
 extern char            Mega2Version[20];
 extern int             Mega2Ver, Mega2Rev, Mega2Patch; /* Version */
 extern char            Mega2WebVersion[50]; /* web-site file name */
-extern char            err_msg[2*FILENAME_LENGTH]; /* array for error, warning and log messages */
+extern char            err_msg[4*FILENAME_LENGTH]; /* array for error, warning and log messages */
 extern char            **output_paths; /* trait directories prepended with output_dir */
 extern char            **trait_paths;  /* list of directory names for each trait */
 extern char            InputPath[FILENAME_LENGTH];

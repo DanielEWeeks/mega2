@@ -245,7 +245,7 @@ const char      *NOcTIME;
 char            Mega2Version[20];
 int             Mega2Ver, Mega2Rev, Mega2Patch; /* Version */
 char            Mega2WebVersion[50]; /* web-site file name */
-char            err_msg[2*FILENAME_LENGTH]; /* array for error, warning and log messages */
+char            err_msg[4*FILENAME_LENGTH]; /* array for error, warning and log messages */
 char            **output_paths; /* trait directories prepended with output_dir */
 char            **trait_paths;  /* list of directory names for each trait */
 char            InputPath[FILENAME_LENGTH];
@@ -1348,7 +1348,7 @@ int             main(int argc, char **argv, char **env)
         fflush(stdout);
         fflush(stderr);
         close_logs();
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
         eans = _spawnvpe(P_WAIT, name, argvn, env);
         exit(eans);
 #else

@@ -187,7 +187,7 @@ void BgenParserGenotypeReadHelper::genotypes_end()
 
 void BgenParser::fix_marker_pos(string& ccpos, unsigned long pos)
 {
-    char cpos[10];
+    char cpos[16];
     sprintf(cpos, "%ld", pos);
     ccpos = string(cpos);
 }

@@ -34,7 +34,7 @@
 #include <string.h>
 #include <errno.h>
 
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
 #include <winsock2.h>
 
 #ifdef MINGW
@@ -327,7 +327,7 @@ SOCK http_request(const char *request, const char *host, unsigned short port)
     SOCK fd = socket_fd(host, port);
     if (SOCK_ERRh(fd)) return INVALID_SOCKET;
 
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
     int soptbuff = 5 * 1000;
 #else
     struct timeval soptbuff = { 5, 0};
@@ -364,7 +364,7 @@ SOCK socket_fd(const char *host, unsigned short port)
 //    struct hostent *mega2_server;
     struct addrinfo hints, *result = 0, *rp;
 
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
     WSADATA wsaData;
     WORD    version = MAKEWORD( 2, 2 ); /* current 2.2 */
 
@@ -386,13 +386,13 @@ SOCK socket_fd(const char *host, unsigned short port)
     err = getaddrinfo(host, port_s, &hints, &result);
     if (err < 0) {
         warnvf("socket_fd: getaddrinfo(%s, %d) failed\n", host, port);
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
         WSACleanup();
 #endif
         return INVALID_SOCKET;
     }
 
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
     int soptbuff;
 #else
     int fl;
@@ -405,14 +405,14 @@ SOCK socket_fd(const char *host, unsigned short port)
             if (errno) {
                 warnvf("socket_fd: socket() failed with errno %d (\"%s\")\n", errno, errstr);
                 STR_ERR();
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
                 WSACleanup();
 #endif
                 return INVALID_SOCKET;
             }
         }
 
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
         soptbuff = 1;
         if (ioctlsocket(sfd, FIONBIO, (u_long *)&soptbuff) != NO_ERROR) {
             ERR_STR();
@@ -438,7 +438,7 @@ SOCK socket_fd(const char *host, unsigned short port)
     if (rp == 0) {
         warnvf("socket_fd: connect's() on all getaddrinfo failed\n");
         STR_ERR();
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
         WSACleanup();
 #endif
         return INVALID_SOCKET;
@@ -453,7 +453,7 @@ SOCK socket_fd(const char *host, unsigned short port)
     err = select(sfd + 1, NULL, &fds, NULL, &sopttm);
 
     if (SOCK_ERR(err) || err == 0) {
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
         if (err == 0) {
             errno = 0;
             errstr = "Operation timed out";
@@ -475,7 +475,7 @@ SOCK socket_fd(const char *host, unsigned short port)
         }
     }
 
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
     soptbuff = 0;
     if (ioctlsocket(sfd, FIONBIO, (u_long *)&soptbuff) != NO_ERROR) {
         ERR_STR();
@@ -489,7 +489,7 @@ SOCK socket_fd(const char *host, unsigned short port)
 
 void socket_close_s(SOCK fd)
 {
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
     closesocket(fd);
     WSACleanup();
 #else
@@ -499,7 +499,7 @@ void socket_close_s(SOCK fd)
 
 void socket_close_fd(FILE *FD)
 {
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
 //  int fd = FD->_file;
     int fd = _fileno(FD);
     closesocket(fd);

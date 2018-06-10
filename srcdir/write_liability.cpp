@@ -216,7 +216,7 @@ static char *create_class_headers(int lclasses, int *header_p,
 				  int ou_percent, int tab_text)
 
 {
-    char *header_str, *header_pos, lb_st[17];
+    char *header_str, *header_pos, lb_st[32];
     int i, l, num_cols=0;
     size_t pos;
     int col_width, len_header=0;

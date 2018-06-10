@@ -838,7 +838,7 @@ static void     set_nuked_pednames(linkage_ped_top *Topp)
 
     int j, i, *count = CALLOC((size_t) Topp->PedCnt, int);
     int ext_ped_num = -1, next_ped=0;
-    char tmpName[MAX_NAMELEN];
+    char tmpName[MAX_NAMELEN * 2];
 
 
     /* First count how many nuclear pedigrees each pedigree has */
@@ -884,7 +884,7 @@ void            create_nuked_fids(linkage_ped_top *Topp)
     int *names = CALLOC((size_t) Topp->PedCnt, int);
     int ext_ped_num = -1, next_ped=0;
     int clash=0, multiplier=NukedMultiplier;
-    char tmpName[MAX_NAMELEN];
+    char tmpName[MAX_NAMELEN * 2];
 
     /* First count how many nuclear pedigrees each pedigree has */
     for (i = 0; i < Topp->PedCnt; i++) {

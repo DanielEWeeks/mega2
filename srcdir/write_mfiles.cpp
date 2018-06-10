@@ -906,7 +906,7 @@ static void            m5write_affection_data(FILE *filep, int locusnm, linkage_
      linkage_locus_rec *locus;
      linkage_ped_rec *entry; */
 {
-    char trait_phen[8];
+    char trait_phen[16];
 
     if (entry->Pheno[locusnm].Affection.Status == 0) {
         fprintf(filep, "        ");
@@ -1313,7 +1313,7 @@ void            write_mendel_locus_file(char *file_name,
     int      numgen, ipen, num_affec = num_traits;
     int      simwalk2;
     FILE     *fp;
-    char trait_phen[8];
+    char trait_phen[16];
 
     simwalk2  = (SIMWALK2(analysis)? 1 : 0);
     NLOOP;
@@ -1514,7 +1514,7 @@ static int write_mendel5_pen_file(char *fl_name,
     FILE *filep = NULL; //compiler: too hard to tell its assigned.
     char poutfl_name[2*FILENAME_LENGTH];
     int naff=0, first_time=1;
-    char trait_phen[8];
+    char trait_phen[16];
 
     for(tr=0; tr < num_affec; tr++) {
         if (global_trait_entries[tr] < 0) {

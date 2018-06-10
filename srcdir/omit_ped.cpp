@@ -143,7 +143,7 @@ void omit_peds(int untyped_ped_opt, linkage_ped_top *LPedTreeTop)
     int i, j, IsTyped, entry_count;
     char messg[100];
     entry_type Entry;
-    double percent_typed;
+    double percent_typed = 0.0;
 
     if (Mega2Status >= INSIDE_ANALYSIS && !HasMarkers) {
         return;

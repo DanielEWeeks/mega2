@@ -42,10 +42,12 @@ ifeq ($(OSTYPE), )
 	    OSTYPE = windows
 	else
 	    OSTYPE := $(shell uname -s)
+            GCCVERSION := $(shell gcc -dumpversion)
 	endif
     else
         OSTYPE := $(shell uname -s)
     endif
+    $(info type $(OSTYPE) gcc $(GCCVERSION))
     ifeq "$(OSTYPE)" "Darwin"
 	OSTYPE = darwin
     else ifeq "$(OSTYPE)" "Linux"
@@ -59,7 +61,11 @@ ifeq ($(OSTYPE), )
     else ifeq "$(findstring MINGW64,$(OSTYPE))" "MINGW64"
 	OSTYPE = msys2
     else ifeq "$(findstring MSYS_NT,$(OSTYPE))" "MSYS_NT"
-	OSTYPE = msys2
+        ifeq ($(GCCVERSION),7.3.0)
+		OSTYPE = msys2_7
+	else
+		OSTYPE = msys2
+	endif
     else
         $(warning OSTYPE is $(OSTYPE))
     endif

@@ -555,7 +555,7 @@ void goodbye(int exit)
     // BIG NOTE: this script assumes that MEGA2.BATCH is found in 'sumdir'.
 #ifndef HIDESTATUS
     exit_status = System((const char *)syscmd);
-#if defined(_WIN) || defined(MINGW) || (! defined(WIFEXITED))
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7)) || (! defined(WIFEXITED))
 #define WIFEXITED(exit_status) (exit_status & 0x7f)
 #define WEXITSTATUS(exit_status) ((exit_status>>8) & 0xff)
 #endif
@@ -1276,7 +1276,7 @@ void makedir(char *dirname)
     if (access(dirname, F_OK)) {
 #ifdef _WIN
         err = _mkdir(dirname);
-#elif defined(MINGW)
+#elif defined(MINGW) && ! defined(MSYS2_7)
         err = mkdir(dirname);
 #else
         err = mkdir(dirname, 0775);
