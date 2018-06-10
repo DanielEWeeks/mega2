@@ -980,7 +980,7 @@ void CLASS_VCF::convert_vcf_vcfgz(char *filename) {
 }
 
 void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo, linkage_ped_top *Top) {
-    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref,reftableexists,change_build_allowed;
+    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref,reftableexists,change_build_allowed, indmenu, pedmenu;
     reftableexists = 0;
     change_build_allowed = 1;
 
@@ -1064,6 +1064,9 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             refchoice = "Use Mega2 Allele DB Table";
     }
 
+    OrigIds[0] = 6;
+    OrigIds[1] = 6;
+
     // actual menu loop
     while (choice != 0) {
         //change this up to be more dynamic, incrementing menu count and assigning the variables here.
@@ -1072,37 +1075,44 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         done = menu_count;
         printf("VCF Analysis Menu:\n");
         printf("%d) Done with this menu - please proceed\n", done);
-        printf("%d) File name stem:                                  %-15s\n", ++menu_count, prefix);
+        printf(" %d) File name stem:                                  %-15s\n", ++menu_count, prefix);
         stem = menu_count;
 
-        printf("%d) Human Genome Build                               %s\n", ++menu_count, buildname);
+        printf(" %d) Human Genome Build                               %s\n", ++menu_count, buildname);
         build = menu_count;
 
         if(!_strand_flips)
-            printf("%d) Allele Ordering                                  %s\n", ++menu_count, refchoice.c_str());
+            printf(" %d) Allele Ordering                                  %s\n", ++menu_count, refchoice.c_str());
         ref = menu_count;
 
         menu_count++;
         if(outfiletype == 1)
-            printf("%d) Choose Format:                                   VCF\n", menu_count);
+            printf(" %d) Choose Format:                                   VCF\n", menu_count);
         else if(outfiletype == 2)
-            printf("%d) Choose Format:                                   BCF\n", menu_count);
+            printf(" %d) Choose Format:                                   BCF\n", menu_count);
         else if(outfiletype == 3)
-            printf("%d) Choose Format:                                   VCF.gz\n", menu_count);
+            printf(" %d) Choose Format:                                   VCF.gz\n", menu_count);
         fileout = menu_count;
 
         if(main_chromocnt > 1) {
             if (*combine_chromo)
-                printf("%d) Combine Chromosomes                              Yes\n", ++menu_count);
+                printf(" %d) Combine Chromosomes                              Yes\n", ++menu_count);
             else
-                printf("%d) Combine Chromosomes                              No\n", ++menu_count);
+                printf( "%d) Combine Chromosomes                              No\n", ++menu_count);
 
             chromo = menu_count;
         }
+
         else {
             //make sure this is set to remove a compiler warning.
             chromo = -1;
         }
+
+
+        indmenu = ++menu_count;
+        individual_id_item(indmenu, VCF, OrigIds[0], 43, 2, 0, 0);
+        pedmenu = ++menu_count;
+        pedigree_id_item(pedmenu, VCF, OrigIds[1], 43, 2, 0);
 
 
         printf("Enter selection: 0 - %d > ", menu_count);
@@ -1224,6 +1234,13 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 else
                     printf("Unknown option %d\n", choice2);
             }
+        }
+        else if(choice == indmenu) {
+            OrigIds[0] = individual_id_item(0, VCF, OrigIds[0], 35, 1,
+                                       Top->OrigIds, Top->UniqueIds);
+        }
+        else if(choice == pedmenu) {
+            OrigIds[1] = pedigree_id_item(0, VCF, OrigIds[1], 35, 1, Top->OrigIds);
         }
 
         else {
