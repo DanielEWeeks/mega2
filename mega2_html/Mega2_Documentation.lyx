@@ -90,7 +90,6 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1123876542 "Justin"
 \end_header
 
 \begin_body
@@ -2270,12 +2269,8 @@ https://watson.hgen.pitt.edu/mega2.html
 \end_layout
 
 \begin_layout Standard
-Use of Mega2 to convert 
-\change_inserted -1123876542 1520959816
-Legacy 
-\change_unchanged
-VCF or BCF input files makes use of a built-in copy of VCFtools; you should
- cite the following paper:
+Use of Mega2 to convert Legacy VCF or BCF input files makes use of a built-in
+ copy of VCFtools; you should cite the following paper:
 \end_layout
 
 \begin_layout Quote
@@ -2291,20 +2286,14 @@ target "http://dx.doi.org/10.1093/bioinformatics/btr330"
  DePristo, Robert Handsaker, Gerton Lunter, Gabor Marth, Stephen T.
  Sherry, Gilean McVean, Richard Durbin and 1000 Genomes Project Analysis
  Group, Bioinformatics (2011) 27 (15): 2156-2158.
-\change_inserted -1123876542 1520961915
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1520962065
 Use of Mega2 to convert Legacy VCF or BCF input files makes use of a built-in
  copy of BCFtools; you should cite the following paper:
 \end_layout
 
 \begin_layout Quote
-
-\change_inserted -1123876542 1520962046
 \begin_inset CommandInset href
 LatexCommand href
 name "BCFtools/csq: haplotype-aware variant consequences."
@@ -4014,45 +4003,22 @@ reference "subsec:GNU-General-Public"
 \end_layout
 
 \begin_layout Standard
-Mega2 uses 
-\change_deleted -1123876542 1520960235
-three
-\change_inserted -1123876542 1520962136
-four
-\change_unchanged
- libraries developed by other external groups, the sources of which are
- included with the Mega2 sources.
+Mega2 uses four libraries developed by other external groups, the sources
+ of which are included with the Mega2 sources.
  Minimal modifications have been made to these two libraries to facilitate
  their integration with Mega2.
  The VCFtools library handles reading of the various Variant Call Format
  (VCF) input files.
-
-\change_inserted -1123876542 1520960317
  In addition BCFTools was included for faster VCF processing as well as
  handling current version of BCF files.
  As part of the BCFTools library a copy of the HTSLIb is included as well,
  this is simply the library BCFTools runs on.
-
-\change_unchanged
  The BGEN library handles the reading of the binary IMPUTE2 BGEN format
  input file.
  ZLIB is needed by the VCFtools and BGEN libraries and is also used to format
  Beagle output.
- 
-\change_deleted -1123876542 1520960322
-The 
-\change_unchanged
-VCFtools
-\change_inserted -1123876542 1520960334
-, BCFTools
-\change_unchanged
- library 
-\change_inserted -1123876542 1520962111
-are
-\change_deleted -1123876542 1520962110
-is
-\change_unchanged
- released under the GNU Lesser General Public License Version 3 (
+ VCFtools, BCFTools library are released under the GNU Lesser General Public
+ License Version 3 (
 \begin_inset CommandInset href
 LatexCommand href
 name "LGPLv3"
@@ -5431,11 +5397,7 @@ PLINK PED format
 
 \end_deeper
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1520960353
-Legacy 
-\change_unchanged
-Variant Call Format (See 
+Legacy Variant Call Format (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:VCF-file-formats"
@@ -5490,32 +5452,22 @@ binary IMPUTE2 BGEN format
 \end_deeper
 \begin_layout Enumerate
 Mega2 database Input
-\change_inserted -1123876542 1520960368
-
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1520962156
 Varuant Format (using BCFTools)
 \end_layout
 
 \begin_deeper
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1520960374
 BCF format
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1520960492
 VCF compressed Format
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1520960498
 VCF format
 \end_layout
 
@@ -16258,17 +16210,21 @@ Often, the RSID field is made up of several subfields that we need to process.
 
 \begin_layout Subsection
 Input Format: BCF v2.2 or higher
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Input-Format:-BCFTools"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 This is an updated input method implementing BCFTools and htslib in order
- to quickly process BCF files.
-
-\change_inserted -1123876542 1520960712
+ to quickly process BCF files, process larger bcf files, and process bcf
+ panels of multiple files.
  Additionally this processes BCF files of version 2.2 or higher which VCFTools
  did not support.
-
-\change_unchanged
  BCF files are the binary compressed version of a VCF file (See 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -16279,33 +16235,409 @@ reference "subsec:VCF-file-formats"
 ).
 \end_layout
 
+\begin_layout Subsubsection
+BCF v2.2 or higher menu
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="18" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0) Done with this menu 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+please proceed 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1) Select input file format: 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BCF v2.2 or higher (bcf) 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2) Enter PLINK phenotype parameters:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--missing-phenotype -9 --trait default 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3) Input file stem:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+- 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4) BCFtools Parameters
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-m2 -M2 -v snps -c 1 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5) Template File: 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[required] 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6) Pedigree file: (PLINK .fam) [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7) Phenotype file:(PLINK .phe) [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8) Map file: (Mega2 .map) [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9) Omit file: (Mega2 .omit)[optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10) Frequency file: (Mega2 .freq)[optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11) Penetrance file: (Mega2 .pen) [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12) Output Directory: [ Current directory ]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13) SQLite3 Database file: dbmega2.db [overwrite]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+14) Reference Allele File: [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15) Simulate genotyping errors: 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[ no ] 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+16) Include all pedigrees whether typed or not 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+17) Maximum number of alleles per marker: 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2 alleles
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection*
-Menu item: 
-\change_deleted -1123876542 1520961593
-BCF
-\change_inserted -1123876542 1520961597
-Variant
-\change_unchanged
- File
+Menu item: PLINK parameters
 \end_layout
 
 \begin_layout Standard
-This can take two styles inputs for the 
-\change_deleted -1123876542 1520961492
-BCF
-\change_inserted -1123876542 1520961493
-Variant
-\change_unchanged
- file, it can either be a bcf file encoded in bcf version 2.2 or later, or
- a text file containing a list of bcf files of the same criteria.
+Like in the Common variant call format you can a restricted list of PLINK
+ parameters which apply to phenotyping and pedigree values.
  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:VCF-Menu-item-PLINK-parameters"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Menu item: Input file stem
 \end_layout
 
 \begin_layout Standard
-The text file is split by lines and can use '#' as an escape character if
- you do not want a specific file included.
- This can be conveniently used with options like find to get load an entire
- panel of BCF files split into chunks or by chromosome.
+Like other input methods the input file stem can be used to set multiple
+ files simultaneously with a similar stem.
+ The one distinction to be made however is that the Template file is not
+ affected by this.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -16313,15 +16645,64 @@ Menu item: BCFTools parameters
 \end_layout
 
 \begin_layout Standard
-This allows a subset of the BCFTools parameters to be used and applied to
- data.
+Mega2 uses the BCFTools view command in order to browse variant files.
+ Due BCFTools style parameter flags can be added to your Mega2 inputs.
+ By default Mega2 has the following values:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Quotes eld
+\end_inset
+
+-m2 -M2 -v snps -c 1
+\begin_inset Quotes erd
+\end_inset
+
+ which stand for the following.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+-m2 -M2 -v snps
+\begin_inset Quotes erd
+\end_inset
+
+ selects only biallelic markers (corresponding to Mega2's default compression),
+ additionally 
+\begin_inset Quotes eld
+\end_inset
+
+-c 1
+\begin_inset Quotes erd
+\end_inset
+
+ only reads in markers of allele count of 1 or higher.
+\end_layout
+
+\begin_layout Standard
+If you choose to remove the 
+\begin_inset Quotes eld
+\end_inset
+
+-m2 -M2 -v snps
+\begin_inset Quotes erd
+\end_inset
+
+ from your arguments in order to read more than 2 alleles at a site, be
+ sure to change the maximum number of alleles per marker (menu item 17)
+\end_layout
+
+\begin_layout Standard
+This allows a subset of the BCFTools view parameters to be used and applied
+ to data.
  The allowed BCFTools parameters are the following:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="3">
+<lyxtabular version="3" rows="16" columns="4">
 <features tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -16331,6 +16712,15 @@ This allows a subset of the BCFTools parameters to be used and applied to
 
 \begin_layout Plain Layout
 Flag
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Alias
 \end_layout
 
 \end_inset
@@ -16368,6 +16758,15 @@ Description
 \begin_inset Text
 
 \begin_layout Plain Layout
+-k -n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 none
 \end_layout
 
@@ -16389,6 +16788,15 @@ print known sites only/print novel sites only
 
 \begin_layout Plain Layout
 --phased --exclude-phased
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-p -P
 \end_layout
 
 \end_inset
@@ -16426,6 +16834,15 @@ print/exclude sites where all samples are phased
 \begin_inset Text
 
 \begin_layout Plain Layout
+-u -U
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 none
 \end_layout
 
@@ -16447,6 +16864,15 @@ print sites without a called genotype/exclude
 
 \begin_layout Plain Layout
 --min-ac --max-ac
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-c -C
 \end_layout
 
 \end_inset
@@ -16484,6 +16910,15 @@ set minimum or maximum allele count
 \begin_inset Text
 
 \begin_layout Plain Layout
+-m -M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 int
 \end_layout
 
@@ -16513,6 +16948,15 @@ only read sites with min/max alleles total
 \begin_inset Text
 
 \begin_layout Plain Layout
+-q -Q
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 float
 \end_layout
 
@@ -16534,6 +16978,15 @@ minimum/maximum allele frequency
 
 \begin_layout Plain Layout
 --exclude --include
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-e -i
 \end_layout
 
 \end_inset
@@ -16578,6 +17031,15 @@ target "https://samtools.github.io/bcftools/bcftools-man.html#expressions"
 \begin_inset Text
 
 \begin_layout Plain Layout
+-r
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 crh:to-from
 \end_layout
 
@@ -16599,6 +17061,15 @@ comma-separated list of region
 
 \begin_layout Plain Layout
 --regions-file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-R
 \end_layout
 
 \end_inset
@@ -16631,11 +17102,226 @@ target "https://samtools.github.io/bcftools/bcftools-man.html#common_options"
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--targets
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-t
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+crh:to-from
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+comma-separated list of targets
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--targets-file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-T
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tab delimited target file 
+\begin_inset CommandInset href
+LatexCommand href
+name "BCFTools Common Options"
+target "https://samtools.github.io/bcftools/bcftools-man.html#common_options"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--samples
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-s
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+list
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+comma-seperated list of samples
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--samples-file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-S
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+sample per line file 
+\begin_inset CommandInset href
+LatexCommand href
+name "BCFTools Common Options"
+target "https://samtools.github.io/bcftools/bcftools-man.html#common_options"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--force-samples
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+N/A
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+none
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+only warn about unknown subset samples
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 --apply-filters
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-f
 \end_layout
 
 \end_inset
@@ -16678,32 +17364,94 @@ target "https://samtools.github.io/bcftools/bcftools.html"
 .
 \end_layout
 
-\begin_layout Subsubsection*
-Menu item: PLINK parameters
+\begin_layout Standard
+Please note for expressions and complex filtering only the double quote
+ 
+\begin_inset Quotes eld
+\end_inset
+
+ character is supported and not the single quote ' character.
+ For instance 
+\begin_inset Quotes eld
+\end_inset
+
+MAF > .05
+\begin_inset Quotes erd
+\end_inset
+
+ is a valid filter.
 \end_layout
 
 \begin_layout Standard
-Like in the Common variant call format you can a restricted list of PLINK
- parameters which apply to phenotyping and pedigree values.
+Additionally in this menu you can enter 
+\begin_inset Quotes eld
+\end_inset
+
+clear
+\begin_inset Quotes erd
+\end_inset
+
+ to remove all selected options.
+\end_layout
+
+\begin_layout Subsubsection*
+Menu item: Template File
+\end_layout
+
+\begin_layout Standard
+This is the only required value for this mode.
+ Mega2 can take two styles inputs for the Template file, it can either be
+ a bcf file encoded in bcf version 2.2 or later, or a text file containing
+ a list of bcf files of the same criteria.
  
+\end_layout
+
+\begin_layout Standard
+The text file is split by lines and can use '#' as an escape character if
+ you do not want a specific file included.
+ This can be conveniently used with options like find to get load an entire
+ panel of BCF files split into chunks or by chromosome.
+\end_layout
+
+\begin_layout Subsubsection*
+Menu item: Pedigree File
+\end_layout
+
+\begin_layout Standard
+This format and the other new VCF formats are unique in that a pedigree
+ file is not required.
+ If one is not provided Mega2 will construct a simulated pedigree with entirely
+ unrelated data using the sample id's within the BCF file.
+ 
+\emph on
+It will also set all of the samples to a male sex by default.
+
+\emph default
+ Each member in this pedigree will be in a family identified by their sample
+ ID and will have their sample ID as their person ID.
+ No relatedness will be determined.
+ This is purely a feature for convenience for unrelated data where there
+ is no utility to constructing a pedigree outside of Mega2.
+\end_layout
+
+\begin_layout Standard
+If you have relatedness data that you want to use, include the pedigree
+ file in this field and it will attach to the VCF by sample ID, where sampleID
+ is set to familyID_personID as discussed in the Legacy VCF section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "par:VCF-Menu-item-PLINK-parameters"
+reference "subsec:VCF-File"
 
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Subsection
 Input Format: VCF in Compressed Format
-\change_inserted -1123876542 1520960674
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1520961534
 This is an updated input method implementing BCFTools and htslib in order
  to quickly process VCF.gz files.
  This input mode is for processing an individual VCF.gz file using the BCFTools
@@ -16712,25 +17460,23 @@ This is an updated input method implementing BCFTools and htslib in order
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1520961634
-Here variant file allows you to enter a VCF.gz file and vcftools parameters
+Here variant file allows you to enter a VCF.gz file and BCFTools parameters
  works as discussed in the BCF format above.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-Format:-BCFTools"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
-Input Format: VCF Forma
-\change_inserted -1123876542 1520961564
-t
-\change_deleted -1123876542 1520961562
-t
-\change_inserted -1123876542 1520961561
-
+Input Format: VCF Format
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1520961581
 This is an updated input method implementing BCFTools and htslib in order
  to quickly process VCF files.
  This input mode is for processing an individual VCF file using the BCFTools
@@ -16739,11 +17485,15 @@ This is an updated input method implementing BCFTools and htslib in order
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1520961585
-Here variant file allows you to enter a VCF file and vcftools parameters
+Here variant file allows you to enter a VCF file and BCFTools parameters
  works as discussed in the BCF format above.
-\change_unchanged
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-Format:-BCFTools"
+
+\end_inset
+
 
 \end_layout
 
@@ -24403,28 +25153,18 @@ binary IMPUTE2 BGEN format (bgen)
 
 \begin_layout Enumerate
 Traditional (4.6.1) input file format
-\change_inserted -1123876542 1520961670
-
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1520961688
 BCF v2.2 or higher (bcf) 
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1520961693
 VCF compressed format (vcf.gz) 
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1520961683
 VCF format (vcf)
-\change_unchanged
-
 \end_layout
 
 \begin_layout Paragraph
