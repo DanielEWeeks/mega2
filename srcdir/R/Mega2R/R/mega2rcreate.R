@@ -327,15 +327,26 @@ dbmega2_import = function(dbname,
     envir$DBcompress     = envir$int_table[envir$int_table$key == 'dbCompression', 3]
     envir$DBMega2Version = envir$charstar_table[envir$charstar_table$key == 'DBMega2Version', 3]
     
+    lt3 = function(aa, bb) {
+                            ( (aa[1] < bb[1]) || ( (aa[1] == bb[1]) &&
+                                            ( (aa[2] < bb[2]) || (aa[2] == bb[2] && (aa[3] < bb[3])) ) ) )
+            }
+    lt2 = function(aa, bb) {
+                            ( (aa[1] < bb[1]) || ( (aa[1] == bb[1]) && (aa[2] < bb[2]) ) ) 
+            }
     cc = envir$DBMega2Version != 'X.Y.Z'
     if (cc) {
         aa = as.numeric(strsplit(envir$DBMega2Version, split=".", fixed=T)[[1]])
         bb = as.numeric(strsplit(Mega2RVersion,        split=".", fixed=T)[[1]])
-        cc = ( (aa[1] < bb[1]) || ( (aa[1] == bb[1]) &&
-                                   ( (aa[2] < bb[2]) || (aa[2] == bb[2] && (aa[3] < bb[3])) ) ) )
-        if (cc) {
+        lt = lt2(aa, bb)
+        if (lt) {
            message("NOTE: Mega2R cannot read the Mega2 database because its version (", envir$DBMega2Version, ") is too old.")
-           stop("Please recreate the database using the current version of Mega2.")
+           stop("Please recreate the database using the current version of Mega2.", call.=FALSE)
+        }
+        lt = lt2(bb, aa)
+        if (lt) {
+           message("NOTE: Mega2R cannot read the Mega2 database because Mega2R version (", Mega2Version, ") is too old.")
+           stop("Please get the latest version of Mega2R from CRAN.", call.=FALSE)
         }
     }
 
