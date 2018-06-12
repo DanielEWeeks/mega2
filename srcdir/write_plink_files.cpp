@@ -346,6 +346,8 @@ void CLASS_PLINK::create_output_file(
     int *numchr,
     linkage_ped_top **Top2) {
 
+    plink_ped_ind_menu(LPedTreeTop);
+
     // The missing phenotype value for quantitative traits is, by default, -9.
     // Here we use the value of 'MissingQuant' which should be derived from the batch
     // file item "Value_Missing_Quant_On_Input".
@@ -675,4 +677,35 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
         delete sh;
     }
     tod_sh();
+}
+
+void CLASS_PLINK::plink_ped_ind_menu(linkage_ped_top *Top) {
+    int i, iindid, ipedid, choice;
+    choice = -1;
+    OrigIds[0] = 6;
+    OrigIds[1] = 6;
+    while(choice){
+        draw_line();
+        printf("Individual and Pedigree ID selection menu:\n");
+        printf("0) Done with this menu - please proceed\n");
+        i = 1;
+
+        iindid=i++;
+        individual_id_item(iindid, TO_PLINK, OrigIds[0], 43, 2, 0, 0);
+        ipedid=i++;
+        pedigree_id_item(ipedid, TO_PLINK, OrigIds[1], 43, 2, 0);
+        printf("Enter selection: 0 - %d > ", i);
+
+        fcmap(stdin,"%d", &choice); newline;
+        if(choice == iindid){
+            OrigIds[0] = individual_id_item(0, TO_PLINK, OrigIds[0], 35, 1,Top->OrigIds , Top->UniqueIds);
+        }
+        else if(choice == ipedid) {
+            OrigIds[1] = pedigree_id_item(0, TO_PLINK, OrigIds[1], 35, 1, Top->OrigIds);
+        }
+        else if(choice > ipedid || choice < 0) {
+            printf("Unknown option %d\n", choice);
+        }
+
+    }
 }
