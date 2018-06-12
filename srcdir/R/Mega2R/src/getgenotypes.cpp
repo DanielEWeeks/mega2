@@ -581,13 +581,17 @@ Rcpp::RawMatrix getgenotypesgenabel_1(NumericVector locus_arg,
 
         if (freq1 > freq2) {
             a = 3; b = 1;
+        } else {
+            a = 1; b = 3;
+        }
 //
+/*
         } else if (freq1 < freq2) {
             a = 1; b = 3;
         } else if (freq1 == .5) {
             a = 0; b = 0;
         }
-
+*/
         decode_allele[0] = b; //(allele1 << 16) | allele1;
         decode_allele[1] = 0;
         decode_allele[2] = 2; //(allele1 << 16) | allele2;

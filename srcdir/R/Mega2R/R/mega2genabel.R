@@ -392,11 +392,11 @@ mkGenABELcoding = function(markers = NULL, envir) {
 ##            paste0(mm$AlleleName.y, mm$AlleleName.x))
 ##  envir$xGTy = Freq.x > (1-Freq.x)
 
-    if (any(mm$Frequency.x == .5)) {
+    if (any(mm$Frequency.x == .5) && FALSE) {
         w = which(mm$Frequency.x == .5)
         xx = getgenotypesraw(markers[w,], envir)
         yy = xx[1,] == 65537
-        nn[w] = ifelse(yy, paste0(mm$AlleleName.x, mm$AlleleName.y), paste0(mm$AlleleName.y, mm$AlleleName.x))
+        nn[w] = ifelse(yy, paste0(mm$AlleleName.x, mm$AlleleName.y)[w], paste0(mm$AlleleName.y, mm$AlleleName.x)[w])
 ##      if (envir$MARKER_SCHEME == 1) {
 ##          ms = envir$markerscheme_table[envir$markerscheme_table$key %in% markers$locus_link,]
 ##          print(mm[w,])
