@@ -90,6 +90,7 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1820302391 "Robert V. Baron"
 \author -1123876542 "Justin"
 \end_header
 
@@ -208,7 +209,13 @@ status collapsed
 
 \end_inset
 
- 1997-2017 by the University of Pittsburgh 
+ 1997-201
+\change_inserted -1820302391 1528905457
+8
+\change_deleted -1820302391 1528905457
+7
+\change_unchanged
+ by the University of Pittsburgh 
 \end_layout
 
 \end_inset
@@ -688,6 +695,38 @@ end{adjustwidth*}
 
 \change_inserted -1123876542 1528900592
 Overview of Mega2R
+\change_inserted -1820302391 1528916249
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1528916256
+Mega2 has been enhanced to use a SQLite database as an intermediate data
+ representation.
+ Additionally, Mega2 now stores bialleleic genotype data in a highly compressed
+ form, much like that of the GenABEL R facility and the PLINK binary format.
+ Concurrently, the R community and Bioconductor community have developed
+ a variety of genetic analysis programs complimentary to the programs available
+ through Mega2.
+ We have now made it easy to load SQLite3 Mega2 databases directly into
+ R as data frames to use these R facilities.
+ In addition, we have developed C++ functions for R to decompress needed
+ subsets of the genotype data, on the fly, in a memory efficient manner.
+ We created the base Mega2R package that loads and manipulates data frames.
+ We have also created several more R packages that illustrate how to use
+ the data frames as well as perform useful functions: the Mega2pedgene package
+ to run the pedgene R package to carry out gene-based association tests
+ on family data using selected marker subsets, the Mega2VCF package to output
+ the Mega2R data as a VCF file and related files (for phenotype and family
+ data), and the Mega2GenABEL package to convert the data frames into GenABEL
+ R gwaa.data-class objects.
+ The Mega2R program enhances GenABEL since it supports additional input
+ data formats (such as PLINK, VCF and IMPUTE2) not currently supported by
+ GenABEL.
+ 
+\change_inserted -1123876542 1528900592
+
 \end_layout
 
 \begin_layout Standard
@@ -705,6 +744,8 @@ reference "sec:The-database-mode"
  Mega2R allows a Mega2-created database to be converted to R data frames
  for use in R analysis packages.
  
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -719,12 +760,26 @@ reference "subsec:Input-formats"
 \end_inset
 
 .
+
+\change_deleted -1820302391 1528916448
  
+\change_inserted -1820302391 1528916398
+ The Mega2R suite of R packages is available at 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://watson.hgen.pitt.edu/mega2/mega2r"
+target "https://watson.hgen.pitt.edu/mega2/mega2r"
+
+\end_inset
+
+.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -1123876542 1528901325
+\change_deleted -1820302391 1528916417
 To learn more about how to use Mega2R read the Mega2R section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -740,6 +795,8 @@ target "https://watson.hgen.pitt.edu/mega2/mega2r"
 
 \end_inset
 
+
+\change_inserted -1123876542 1528901325
 
 \end_layout
 
@@ -1226,7 +1283,94 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
+Enhancements in Mega2 version 
+\change_inserted -1820302391 1528905587
+5.0.0
+\change_deleted -1820302391 1528905585
+4.9.2
+\change_inserted -1820302391 1528908512
+
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914466
+In addition to supporting the old BCF/VCF file format, Mega2 can now read
+ the latest BCF format (version 2.2) using the BCF tools library.
+ Mega2 will generate a .fam file from the sample data, if none is provided.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914466
+BGEN version 1.3 is now supported.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914466
+For inputs that have an allele order: VCF, VCF.gz, BCF, IMPUTE, BGEN and
+ PLINK BED, this order will be preserved in the Mega2 database and Mega2
+ analysis outputs.
+ This feature requires bialleleic markers and genotype compression set to
+ 1 (aka 2 bits).
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914466
+Mega2 now computes the allele frequencies after pruning for Mendelian inconsiste
+ncies, half typed alleles, etc has taken place.
+ In the past, the counting was performed before the pruning and might thus
+ have been incorrect.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914466
+The Mega2 SQLite database has been made more compact.
+ The genotypes table is now compressed with gzlib.
+ Numeric values used to represent the unknown value (-99.99) are just stored
+ in the database as NULL.
+ Finally, the Mega2 design has been revised so that the marker_scheme3_alleles
+ table is no longer required and is not generated.
+ The new Mega2 SQLite database is comparable in size to the corresponding
+ VCF.gz input file, or corresponding BCF input file.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914466
+Improve Mega2R vignette and documentation and make Mega2R pass CRAN acceptance
+ testing.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914466
+Mega2R now can generate CRAN SeqArray/SnpArray format objects.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528917325
+Mega2R has deprecated GenABEL support now that the latter has been archived.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528917346
+There is no Mega2 program compiled using the native Microsoft compilers.
+ This should be available in release 5.0.1.
+ For the present, you should use Msys2 Mega2.
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1820302391 1528905578
 Enhancements in Mega2 version 4.9.2
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
@@ -1902,7 +2046,13 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 database mode menu: 
+Mega2 
+\change_deleted -1820302391 1528905630
+4.9.2
+\change_inserted -1820302391 1528905630
+5.0.0
+\change_unchanged
+ database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1973,7 +2123,13 @@ reference "sec:The-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 file input menu:
+              Mega2 
+\change_deleted -1820302391 1528905631
+4.9.2
+\change_inserted -1820302391 1528905631
+5.0.0
+\change_unchanged
+ file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2106,7 +2262,13 @@ database menu
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 database mode menu: 
+Mega2 
+\change_deleted -1820302391 1528905632
+4.9.2
+\change_inserted -1820302391 1528905632
+5.0.0
+\change_unchanged
+ database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2167,7 +2329,13 @@ reference "sec:The-alternate-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 database input menu: 
+Mega2 
+\change_deleted -1820302391 1528905634
+4.9.2
+\change_inserted -1820302391 1528905634
+5.0.0
+\change_unchanged
+ database input menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2437,12 +2605,24 @@ target "http://doi.org/10.1186/s13029-014-0026-y"
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.9.2 should be: 
+ For example, the web site citation for version 
+\change_deleted -1820302391 1528905639
+4.9.2
+\change_inserted -1820302391 1528905639
+5.0.0
+\change_unchanged
+ should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2015) Mega2 (Version 4.9.2).
+ Weeks DE (2015) Mega2 (Version 
+\change_deleted -1820302391 1528905658
+4.9.2
+\change_inserted -1820302391 1528905658
+5.0.0
+\change_unchanged
+).
  
 \begin_inset Flex URL
 status open
@@ -2739,7 +2919,13 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.9.2 
+The latest version is 
+\change_deleted -1820302391 1528905661
+4.9.2
+\change_inserted -1820302391 1528905661
+5.0.0
+\change_unchanged
+ 
 \end_layout
 
 \begin_layout Enumerate
@@ -2752,7 +2938,13 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.2_src.tar.gz
+mega2_v
+\change_deleted -1820302391 1528905662
+4.9.2
+\change_inserted -1820302391 1528905662
+5.0.0
+\change_unchanged
+_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -2767,7 +2959,13 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.9.2_src.tar.gz 
+gunzip mega2_v
+\change_deleted -1820302391 1528905663
+4.9.2
+\change_inserted -1820302391 1528905663
+5.0.0
+\change_unchanged
+_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -2781,7 +2979,13 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.9.2_src.tar 
+tar xvf mega2_v
+\change_deleted -1820302391 1528905663
+4.9.2
+\change_inserted -1820302391 1528905663
+5.0.0
+\change_unchanged
+_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -2789,7 +2993,13 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.9.2_src.tar.gz 
+tar xzvf mega2_v
+\change_deleted -1820302391 1528905664
+4.9.2
+\change_inserted -1820302391 1528905664
+5.0.0
+\change_unchanged
+_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -2802,7 +3012,13 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.9.2_src
+mega2_v
+\change_deleted -1820302391 1528905665
+4.9.2
+\change_inserted -1820302391 1528905665
+5.0.0
+\change_unchanged
+_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2982,16 +3198,27 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.9.2_src.tar.gz bundle following
- the download section (
+If you downloaded and unpacked the mega2_v
+\change_deleted -1820302391 1528905667
+4.9.2
+\change_inserted -1820302391 1528905667
+5.0.0
+\change_unchanged
+_src.tar.gz bundle following the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.9.2_src containing the following
- directories (in bold) or files listed in alphabetical order:
+), you should see a directory named mega2_v
+\change_deleted -1820302391 1528905668
+4.9.2
+\change_inserted -1820302391 1528905668
+5.0.0
+\change_unchanged
+_src containing the following directories (in bold) or files listed in alphabeti
+cal order:
 \end_layout
 
 \begin_layout Quotation
@@ -3510,9 +3737,25 @@ cyg
 \end_inset
 
 .
- The static Msys2 version of Mega2 does not need any additional libraries.
- The other Msys2 executable uses the .dll's in the Windows 10 directory beginning
- with the prefix 
+ The static Msys2 version of Mega2 
+\change_deleted -1820302391 1528906487
+does not need any additional libraries
+\change_inserted -1820302391 1528906595
+only needs the msys-2.0.dll library which is available if you have installed
+ msys2 on your machine
+\change_unchanged
+.
+ The other Msys2 executable
+\change_inserted -1820302391 1528906524
+s
+\change_unchanged
+ use
+\change_deleted -1820302391 1528908287
+s
+\change_unchanged
+ the .dll's in the 
+\change_deleted -1820302391 1528906626
+Windows 10 directory beginning with the prefix 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3520,8 +3763,22 @@ lib
 \begin_inset Quotes erd
 \end_inset
 
+
+\change_inserted -1820302391 1528906825
+msys2 or msys2_7 directories respectively for the 2.7.0 or 2.10.0 msys2 executable;
+ again, these will be already available if you installed msys2.
+ 
+\change_deleted -1820302391 1528906732
 .
- Finally, if you run a native Windows Mega2 at the 
+
+\change_unchanged
+ 
+\change_inserted -1820302391 1528908256
+If you are just using the executable and corresponding .dll's, you should
+ copy all of them to the same directory.
+ 
+\change_unchanged
+Finally, if you run a native Windows Mega2 at the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3671,7 +3928,13 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.9.2_src in above step), type the command:
+ mega2_v
+\change_deleted -1820302391 1528905671
+4.9.2
+\change_inserted -1820302391 1528905671
+5.0.0
+\change_unchanged
+_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -3722,10 +3985,16 @@ name "subsec:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.9.2_src.tar.gz package also includes a source code folder "srcdir"
- containing C source files, a Makefile, and several OS-specific Makedefs
- files that define compilation flags that govern locations of standard C
- libraries, and other OS-specific behavior.
+The mega2_v
+\change_deleted -1820302391 1528905674
+4.9.2
+\change_inserted -1820302391 1528905674
+5.0.0
+\change_unchanged
+_src.tar.gz package also includes a source code folder "srcdir" containing
+ C source files, a Makefile, and several OS-specific Makedefs files that
+ define compilation flags that govern locations of standard C libraries,
+ and other OS-specific behavior.
 \end_layout
 
 \begin_layout Standard
@@ -3737,7 +4006,13 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.9.2_src folder, type 
+From within the mega2_v
+\change_deleted -1820302391 1528905675
+4.9.2
+\change_inserted -1820302391 1528905675
+5.0.0
+\change_unchanged
+_src folder, type 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -4148,8 +4423,13 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.9.2_src folder contains
- documentation for mega2.
+The sub-folder called mega2_html/ within the mega2_v
+\change_deleted -1820302391 1528905680
+4.9.2
+\change_inserted -1820302391 1528905680
+5.0.0
+\change_unchanged
+_src folder contains documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
 
@@ -4839,7 +5119,13 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.9.2_src.tar.gz.
+The Mega2 distribution package is named mega2_v
+\change_deleted -1820302391 1528905684
+4.9.2
+\change_inserted -1820302391 1528905684
+5.0.0
+\change_unchanged
+_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -4854,7 +5140,13 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.2_src.tar
+mega2_v
+\change_deleted -1820302391 1528905685
+4.9.2
+\change_inserted -1820302391 1528905685
+5.0.0
+\change_unchanged
+_src.tar
 \end_layout
 
 \end_deeper
@@ -4880,7 +5172,13 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.2_src.tar.tar
+mega2_v
+\change_deleted -1820302391 1528905685
+4.9.2
+\change_inserted -1820302391 1528905685
+5.0.0
+\change_unchanged
+_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -4888,7 +5186,13 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.9.2_src.tar.gz
+mega2_v
+\change_deleted -1820302391 1528905686
+4.9.2
+\change_inserted -1820302391 1528905686
+5.0.0
+\change_unchanged
+_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4896,7 +5200,19 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.9.2_src.tar.tar mega2_v4.9.2_src.tar.gz
+mv mega2_v
+\change_deleted -1820302391 1528905686
+4.9.2
+\change_inserted -1820302391 1528905686
+5.0.0
+\change_unchanged
+_src.tar.tar mega2_v
+\change_deleted -1820302391 1528905688
+4.9.2
+\change_inserted -1820302391 1528905688
+5.0.0
+\change_unchanged
+_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4925,6 +5241,18 @@ name "subsec:Windows-Mingw-installation"
 
 \begin_layout Subsubsection
 Mingw POSIX windows environment
+\change_inserted -1820302391 1528906941
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1820302391 1528907032
+Mingw is no longer supported for Mega2.
+ Please consider using Msys2 instead.
+ Instruction for Msys2 follow this section.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -5157,7 +5485,19 @@ Installing Msys2
 \end_layout
 
 \begin_layout Standard
-Download and execute the Msys2 sourceforge page download image
+Download and 
+\change_deleted -1820302391 1528907202
+execute
+\change_inserted -1820302391 1528907204
+install
+\change_unchanged
+ the Msys2 
+\change_deleted -1820302391 1528907233
+sourceforge page download image
+\change_inserted -1820302391 1528907235
+from
+\change_unchanged
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -5166,7 +5506,13 @@ status open
 
 \begin_layout Plain Layout
 
-http://sourceforge.net/projects/msys2/
+http://
+\change_deleted -1820302391 1528907241
+sourceforge.net/projects/msys2/
+\change_inserted -1820302391 1528907246
+www.msys2.org
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -5192,7 +5538,11 @@ update-core
 \end_layout
 
 \begin_layout LyX-Code
-pacman -Su
+pacman -S
+\change_inserted -1820302391 1528907272
+y
+\change_unchanged
+u
 \end_layout
 
 \begin_layout Standard
@@ -13957,7 +14307,13 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 database mode menu: 
+Mega2 
+\change_deleted -1820302391 1528905690
+4.9.2
+\change_inserted -1820302391 1528905690
+5.0.0
+\change_unchanged
+ database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -14289,7 +14645,13 @@ When entering the file input menu, Mega2 initially expects to read input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 file input menu:
+              Mega2 
+\change_deleted -1820302391 1528905692
+4.9.2
+\change_inserted -1820302391 1528905692
+5.0.0
+\change_unchanged
+ file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14385,7 +14747,13 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 input file type menu:
+Mega2 
+\change_deleted -1820302391 1528905694
+4.9.2
+\change_inserted -1820302391 1528905694
+5.0.0
+\change_unchanged
+ input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14457,7 +14825,13 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 file input menu:
+              Mega2 
+\change_deleted -1820302391 1528905696
+4.9.2
+\change_inserted -1820302391 1528905696
+5.0.0
+\change_unchanged
+ file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -18381,7 +18755,13 @@ name "subsec:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 Maximum alleles per marker menu:
+              Mega2 
+\change_deleted -1820302391 1528905697
+4.9.2
+\change_inserted -1820302391 1528905697
+5.0.0
+\change_unchanged
+ Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -18865,7 +19245,13 @@ The Database input menu is shown below and explained immediately following:
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 Database input menu:
+              Mega2 
+\change_deleted -1820302391 1528905699
+4.9.2
+\change_inserted -1820302391 1528905699
+5.0.0
+\change_unchanged
+ Database input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -19013,7 +19399,13 @@ The path to this SQLite3 database is dbmega2.db.
 \end_layout
 
 \begin_layout LyX-Code
-This database was created using Mega2 version 4.9.2.
+This database was created using Mega2 version 
+\change_deleted -1820302391 1528905705
+4.9.2
+\change_inserted -1820302391 1528905705
+5.0.0
+\change_unchanged
+.
  
 \end_layout
 
@@ -19845,7 +20237,13 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 Missing Value menu:
+              Mega2 
+\change_deleted -1820302391 1528905707
+4.9.2
+\change_inserted -1820302391 1528905707
+5.0.0
+\change_unchanged
+ Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -40191,7 +40589,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="27" columns="4">
+<lyxtabular version="3" rows="28" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="right" valignment="top">
@@ -40257,6 +40655,66 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\change_deleted -1820302391 1528905757
+4.9.2
+\change_inserted -1820302391 1528905759
+5.0.0
+\change_unchanged
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 14, 201
+\change_inserted -1820302391 1528905751
+8
+\change_deleted -1820302391 1528905751
+7
+\change_unchanged
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 201
+\change_deleted -1820302391 1528905744
+8
+\change_inserted -1820302391 1528905745
+9
+\change_unchanged
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1528905734
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1528905734
 4.9.2
 \end_layout
 
@@ -40266,6 +40724,8 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\change_inserted -1820302391 1528905734
 June 14, 2017
 \end_layout
 
@@ -40275,6 +40735,8 @@ June 14, 2017
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\change_inserted -1820302391 1528905734
 June 15, 2018
 \end_layout
 
@@ -41239,7 +41701,108 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
+Changes from Version 4.9.
+\change_inserted -1820302391 1528905874
+2
+\change_deleted -1820302391 1528905871
+1
+\change_unchanged
+ to Version 
+\change_deleted -1820302391 1528905881
+4.9.2
+\change_inserted -1820302391 1528905882
+5.0.0
+\change_unchanged
+ (Released June 14, 201
+\change_deleted -1820302391 1528905887
+7
+\change_inserted -1820302391 1528905887
+8
+\change_unchanged
+)
+\change_inserted -1820302391 1528909760
+
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528913278
+In addition to supporting the old BCF/VCF file format, Mega2 can now read
+ the latest BCF format (version 2.2) using the BCF tools library.
+ Mega2 will generate a .fam file from the sample data, if none is provided.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528913294
+BGEN version 1.3 is now supported.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528913352
+For inputs that have an allele order: VCF, VCF.gz, BCF, IMPUTE, BGEN and
+ PLINK BED, this order will be preserved in the Mega2 database and Mega2
+ analysis outputs.
+ This feature requires bialleleic markers and genotype compression set to
+ 1 (aka 2 bits).
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914336
+Mega2 now computes the allele frequencies after pruning for Mendelian inconsiste
+ncies, half typed alleles, etc has taken place.
+ In the past, the counting was performed before the pruning and might thus
+ have been incorrect.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914367
+The Mega2 SQLite database has been made more compact.
+ The genotypes table is now compressed with gzlib.
+ Numeric values used to represent the unknown value (-99.99) are just stored
+ in the database as NULL.
+ Finally, the Mega2 design has been revised so that the marker_scheme3_alleles
+ table is no longer required and is not generated.
+ The new Mega2 SQLite database is comparable in size to the corresponding
+ VCF.gz input file, or corresponding BCF input file.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914396
+Improve Mega2R vignette and documentation and make Mega2R pass CRAN acceptance
+ testing.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528914415
+Mega2R now can generate CRAN SeqArray/SnpArray format objects.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528917119
+Mega2R has deprecated GenABEL support now that the latter has been archived.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1528917366
+There is no Mega2 program compiled using the native Microsoft compilers.
+ This should be available in release 5.0.1.
+ For the present, you should use Msys2 Mega2.
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1820302391 1528905863
 Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Itemize
