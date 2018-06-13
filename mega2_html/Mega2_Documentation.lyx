@@ -90,6 +90,7 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1123876542 "Justin"
 \end_header
 
 \begin_body
@@ -641,7 +642,7 @@ Graphical overview of Mega2 (from 2013)
 
 \begin_layout Standard
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -667,9 +668,197 @@ begin{adjustwidth*}{-1.5cm}{-1.5cm}
 
 \begin_layout Standard
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
+
+
+\backslash
+end{adjustwidth*}
+\end_layout
+
+\end_inset
+
+
+\change_inserted -1123876542 1528898845
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1123876542 1528900592
+Overview of Mega2R
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528901345
+Mega2R was designed as an efficient pathway from Mega2 input data formats
+ into R utilizing the Mega2-created database 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-database-mode"
+
+\end_inset
+
+.
+ Mega2R allows a Mega2-created database to be converted to R data frames
+ for use in R analysis packages.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528901377
+As an input Mega2R takes a Mega2 database which can be created by using
+ Mega2 and any of Mega2's input formats 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-formats"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528901325
+To learn more about how to use Mega2R read the Mega2R section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-Mega2R-suite"
+
+\end_inset
+
+ or visit 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://watson.hgen.pitt.edu/mega2/mega2r"
+target "https://watson.hgen.pitt.edu/mega2/mega2r"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528901636
+Additionally Mega2R supports several functions directly within the package
+ itself , these include pedgene, GenABEL, VCF and SKAT.
+ These can be accused using the Mega2R function calls.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1528901827
+The Ability to create R data frames conveniently from Mega2 databases.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1528901829
+The Ability to easily load multiple data formats into R utilizing Mega2.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1528901835
+Allows for memory efficient extraction of data within genotype regions.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1528901877
+Mega2 compresses the genotype data during storage in the Mega2 database
+ to save space.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1528901921
+Mega2R utilizes an iterative wrapper which operates on gene regions so that
+ single gene analysis functions can be called on multiple genes with one
+ call.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1528901928
+Mega2R contains Mega2pedgene for using the pedgene package on data within
+ a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1528901933
+Mega2R contains Mega2GenABEL for using the GenABEL package on data within
+ a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1528901934
+Mega2R contains Mega2SKAT for using the SKAT package on data within a Mega2
+ database.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -1123876542 1528901935
+Mega2R contains Mega2VCF for outputting data to VCF from data within a Mega2
+ database in R.
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -1123876542 1528900299
+Graphical overview of Mega2R (from 2017)
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528900484
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1528900300
+
+
+\backslash
+begin{adjustwidth*}{-1.5cm}{-1.5cm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528900497
+\begin_inset Graphics
+	filename Mega2R_poster_2017_resized.pdf
+	scale 83
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528900293
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -1123876542 1528900293
 
 
 \backslash
@@ -4009,16 +4198,40 @@ Mega2 uses four libraries developed by other external groups, the sources
  their integration with Mega2.
  The VCFtools library handles reading of the various Variant Call Format
  (VCF) input files.
- In addition BCFTools was included for faster VCF processing as well as
- handling current version of BCF files.
- As part of the BCFTools library a copy of the HTSLIb is included as well,
- this is simply the library BCFTools runs on.
+ In addition 
+\change_inserted -1123876542 1528898600
+BCFtools
+\change_deleted -1123876542 1528898600
+BCFTools
+\change_unchanged
+ was included for faster VCF processing as well as handling current version
+ of BCF files.
+ As part of the 
+\change_inserted -1123876542 1528898600
+BCFtools
+\change_deleted -1123876542 1528898600
+BCFTools
+\change_unchanged
+ library a copy of the HTSLIb is included as well, this is simply the library
+ 
+\change_inserted -1123876542 1528898600
+BCFtools
+\change_deleted -1123876542 1528898600
+BCFTools
+\change_unchanged
+ runs on.
  The BGEN library handles the reading of the binary IMPUTE2 BGEN format
  input file.
  ZLIB is needed by the VCFtools and BGEN libraries and is also used to format
  Beagle output.
- VCFtools, BCFTools library are released under the GNU Lesser General Public
- License Version 3 (
+ VCFtools, 
+\change_inserted -1123876542 1528898600
+BCFtools
+\change_deleted -1123876542 1528898600
+BCFTools
+\change_unchanged
+ library are released under the GNU Lesser General Public License Version
+ 3 (
 \begin_inset CommandInset href
 LatexCommand href
 name "LGPLv3"
@@ -5455,7 +5668,13 @@ Mega2 database Input
 \end_layout
 
 \begin_layout Enumerate
-Varuant Format (using BCFTools)
+Varuant Format (using 
+\change_inserted -1123876542 1528898600
+BCFtools
+\change_deleted -1123876542 1528898600
+BCFTools
+\change_unchanged
+)
 \end_layout
 
 \begin_deeper
@@ -11478,8 +11697,26 @@ target "http://en.wikipedia.org/wiki/Variant_Call_Format"
 \end_inset
 
 ).
- Mega2 currently uses source code from the popular VCFtools program (See:
  
+\change_inserted -1123876542 1528898307
+
+\end_layout
+
+\begin_layout Standard
+Mega2 currently uses 
+\change_deleted -1123876542 1528898312
+source code 
+\change_inserted -1123876542 1528898334
+two applications for parsing VCF and BCF files, these are VCFtools and BCFtools.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528898350
+Mega2 currently uses 
+\change_unchanged
+from the popular VCFtools program (See: 
 \begin_inset CommandInset href
 LatexCommand href
 name "VCFtools"
@@ -11536,6 +11773,44 @@ reference "par:VCF_Args"
 \end_inset
 
 ).
+\change_inserted -1123876542 1528898333
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528898565
+A new addition to Mega2 is the using the source code of the BCFtools program
+ (See: 
+\begin_inset CommandInset href
+LatexCommand href
+name "BCFtools"
+target "https://samtools.github.io/bcftools/bcftools.html"
+
+\end_inset
+
+) in new input modes.
+ BCFtools supports VCF Format v4.0 and higher as well as BCF format v2.2 and
+ higher.
+ Mega2 supports a subset of the 
+\begin_inset Quotes eld
+\end_inset
+
+view
+\begin_inset Quotes erd
+\end_inset
+
+ options that are included in the documentation of the new input methods.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-Format:-BCFTools"
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -16210,6 +16485,10 @@ Often, the RSID field is made up of several subfields that we need to process.
 
 \begin_layout Subsection
 Input Format: BCF v2.2 or higher
+\change_inserted -1123876542 1528898811
+ utilizing BCFtools
+\change_unchanged
+
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Input-Format:-BCFTools"
@@ -16220,7 +16499,7 @@ name "subsec:Input-Format:-BCFTools"
 \end_layout
 
 \begin_layout Standard
-This is an updated input method implementing BCFTools and htslib in order
+This is an updated input method implementing BCFtools and htslib in order
  to quickly process BCF files, process larger bcf files, and process bcf
  panels of multiple files.
  Additionally this processes BCF files of version 2.2 or higher which VCFTools
@@ -16641,12 +16920,12 @@ Like other input methods the input file stem can be used to set multiple
 \end_layout
 
 \begin_layout Subsubsection*
-Menu item: BCFTools parameters
+Menu item: BCFtools parameters
 \end_layout
 
 \begin_layout Standard
-Mega2 uses the BCFTools view command in order to browse variant files.
- Due BCFTools style parameter flags can be added to your Mega2 inputs.
+Mega2 uses the BCFtools view command in order to browse variant files.
+ Due BCFtools style parameter flags can be added to your Mega2 inputs.
  By default Mega2 has the following values:
 \end_layout
 
@@ -16693,9 +16972,9 @@ If you choose to remove the
 \end_layout
 
 \begin_layout Standard
-This allows a subset of the BCFTools view parameters to be used and applied
+This allows a subset of the BCFtools view parameters to be used and applied
  to data.
- The allowed BCFTools parameters are the following:
+ The allowed BCFtools parameters are the following:
 \end_layout
 
 \begin_layout Standard
@@ -17353,7 +17632,7 @@ Check filter column for list values
 \end_layout
 
 \begin_layout Standard
-For additional explanation about BCFTools and it's options see the 
+For additional explanation about BCFtools and it's options see the 
 \begin_inset CommandInset href
 LatexCommand href
 name "BCFTools Documentation "
@@ -17435,6 +17714,28 @@ It will also set all of the samples to a male sex by default.
 \end_layout
 
 \begin_layout Standard
+Additionally when using this feature, the file name for the pedigree file
+ is used as 
+\begin_inset Quotes eld
+\end_inset
+
+-.fam
+\begin_inset Quotes erd
+\end_inset
+
+ and you will see that in your batch output.
+ To use this feature in batch mode simply use 
+\begin_inset Quotes eld
+\end_inset
+
+Input_Pedigree_File-.fam
+\begin_inset Quotes erd
+\end_inset
+
+ as the line in the batch file.
+\end_layout
+
+\begin_layout Standard
 If you have relatedness data that you want to use, include the pedigree
  file in this field and it will attach to the VCF by sample ID, where sampleID
  is set to familyID_personID as discussed in the Legacy VCF section 
@@ -17449,18 +17750,22 @@ reference "subsec:VCF-File"
 
 \begin_layout Subsection
 Input Format: VCF in Compressed Format
+\change_inserted -1123876542 1528898802
+ utilizing BCFtools
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
-This is an updated input method implementing BCFTools and htslib in order
+This is an updated input method implementing BCFtools and htslib in order
  to quickly process VCF.gz files.
- This input mode is for processing an individual VCF.gz file using the BCFTools
+ This input mode is for processing an individual VCF.gz file using the BCFtools
  library internal to Mega2.
  
 \end_layout
 
 \begin_layout Standard
-Here variant file allows you to enter a VCF.gz file and BCFTools parameters
+Here variant file allows you to enter a VCF.gz file and BCFtools parameters
  works as discussed in the BCF format above.
  
 \begin_inset CommandInset ref
@@ -17474,18 +17779,22 @@ reference "subsec:Input-Format:-BCFTools"
 
 \begin_layout Subsection
 Input Format: VCF Format
+\change_inserted -1123876542 1528898806
+ utilizing BCFtools
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
-This is an updated input method implementing BCFTools and htslib in order
+This is an updated input method implementing BCFtools and htslib in order
  to quickly process VCF files.
- This input mode is for processing an individual VCF file using the BCFTools
+ This input mode is for processing an individual VCF file using the BCFtools
  library internal to Mega2.
  
 \end_layout
 
 \begin_layout Standard
-Here variant file allows you to enter a VCF file and BCFTools parameters
+Here variant file allows you to enter a VCF file and BCFtools parameters
  works as discussed in the BCF format above.
  
 \begin_inset CommandInset ref
@@ -48488,6 +48797,10 @@ http://zlib.net/
 
 \begin_layout Subsection
 GNU Lesser General Public License Version 3 for VCFtools
+\change_inserted -1123876542 1528902225
+ and BCFtools
+\change_unchanged
+
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:GNU-Lesser-General"
@@ -48503,6 +48816,19 @@ We have included VCFTools source code in the srcdir/vcftools directory of
  This code has been minimally modified so as to integrate it with Mega2.
  While the VCFtools source code as a whole is licensed under the Lesser
  GPL license, two of files contain the MIT license, listed above.
+\change_inserted -1123876542 1528902258
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -1123876542 1528902389
+We have also included the BCFtools source code in the srcdir/lib/bcftools
+ directory of the Mega2 distribution.
+ This code has been minimally modified so as to integrate it with Mega2.
+ The BCFtools source code as a whole is licensed under the Lesser GPL license.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -48821,6 +49147,8 @@ http://www.sqlite.org/
 
 .
  This software is in the public domain.
+\change_inserted -1123876542 1528902126
+
 \end_layout
 
 \begin_layout Section
