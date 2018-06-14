@@ -1,4 +1,4 @@
-# Version 1.0.4 (2018-06-13)
+# Version 1.0.4 (2018-06-14)
 
 -- Improvements to use compressed data created by Mega2 version 5.0.0 or higher.
 
