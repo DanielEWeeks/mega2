@@ -16,8 +16,8 @@ Description: Uses as input genetic data that have been reformatted
      subsets, to run the 'SKAT' package to carry out gene-based
      association tests using selected marker subsets, to output the
      'Mega2R' data as a VCF file and related files (for phenotype and
-     family data), and to convert the data frames into 'GenABEL'
-     gwaa.data-class objects.  
+     family data), and to convert the data frames into 
+     CoreArray Genomic Data Structure (GDS) format.  
 Authors@R: c(person(c("Robert","V."), "Baron", email = "rvb5@pitt.edu",  role = c("aut")),
              person(c("Daniel","E."), "Weeks",    email = "weeks@pitt.edu", role = c("aut","cre")),
              person("","University of Pittsburgh",role=c("cph")))
@@ -41,8 +41,6 @@ Suggests:
     formatR,
     TxDb.Hsapiens.UCSC.hg19.knownGene,
     org.Hs.eg.db
-Enhances:
-    GenABEL
 NeedsCompilation: yes
 RoxygenNote: 6.0.1
 LazyData: true
