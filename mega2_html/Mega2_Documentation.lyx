@@ -85,13 +85,11 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1820302391 "Robert V. Baron"
-\author -1123876542 "Justin"
 \end_header
 
 \begin_body
@@ -209,13 +207,7 @@ status collapsed
 
 \end_inset
 
- 1997-201
-\change_inserted -1820302391 1528905457
-8
-\change_deleted -1820302391 1528905457
-7
-\change_unchanged
- by the University of Pittsburgh 
+ 1997-2018 by the University of Pittsburgh 
 \end_layout
 
 \end_inset
@@ -514,9 +506,9 @@ reference "sec:Genetic-Map-Interpolator"
 \end_layout
 
 \begin_layout Enumerate
-Using the Mega2R suite of R packages, the ability to easily load Mega2-produced
- SQLite3 databases directly into R as data frames for further processing
- (See Section 
+Using the Mega2R R package, the ability to easily load Mega2-produced SQLite3
+ databases directly into R as data frames for further processing (See Section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-Mega2R-suite"
@@ -687,51 +679,77 @@ end{adjustwidth*}
 \end_inset
 
 
-\change_inserted -1123876542 1528898845
-
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1123876542 1528900592
 Overview of Mega2R
-\change_inserted -1820302391 1528916249
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1528916256
 Mega2 has been enhanced to use a SQLite database as an intermediate data
  representation.
  Additionally, Mega2 now stores bialleleic genotype data in a highly compressed
  form, much like that of the GenABEL R facility and the PLINK binary format.
- Concurrently, the R community and Bioconductor community have developed
- a variety of genetic analysis programs complimentary to the programs available
- through Mega2.
+ Concurrently, the R community and the Bioconductor community have developed
+ a variety of genetic analysis programs complimentary to the programs supported
+ by Mega2.
  We have now made it easy to load SQLite3 Mega2 databases directly into
  R as data frames to use these R facilities.
  In addition, we have developed C++ functions for R to decompress needed
  subsets of the genotype data, on the fly, in a memory efficient manner.
- We created the base Mega2R package that loads and manipulates data frames.
- We have also created several more R packages that illustrate how to use
- the data frames as well as perform useful functions: the Mega2pedgene package
- to run the pedgene R package to carry out gene-based association tests
- on family data using selected marker subsets, the Mega2VCF package to output
- the Mega2R data as a VCF file and related files (for phenotype and family
- data), and the Mega2GenABEL package to convert the data frames into GenABEL
- R gwaa.data-class objects.
- The Mega2R program enhances GenABEL since it supports additional input
- data formats (such as PLINK, VCF and IMPUTE2) not currently supported by
- GenABEL.
- 
-\change_inserted -1123876542 1528900592
+ We have also created several functions that illustrate how to use the data
+ frames in useful ways: these permit one to run the 'pedgene' package (
+\begin_inset Flex URL
+status open
 
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=pedgene
+\end_layout
+
+\end_inset
+
+) to carry out gene-based association tests on family data using selected
+ marker subsets, to run the 'SKAT' package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=SKAT
+\end_layout
+
+\end_inset
+
+) to carry out gene-based association tests using selected marker subsets,
+ to output subsets of the Mega2R data as a VCF file (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/samtools/hts-specs
+\end_layout
+
+\end_inset
+
+) and related files (for phenotype and family data), and to convert the
+ data frames into 'GenABEL' gwaa.data-class objects (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=GenABEL
+\end_layout
+
+\end_inset
+
+).
+ 
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1528901345
 Mega2R was designed as an efficient pathway from Mega2 input data formats
  into R utilizing the Mega2-created database 
 \begin_inset CommandInset ref
@@ -744,13 +762,9 @@ reference "sec:The-database-mode"
  Mega2R allows a Mega2-created database to be converted to R data frames
  for use in R analysis packages.
  
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1528901377
 As an input Mega2R takes a Mega2 database which can be created by using
  Mega2 and any of Mega2's input formats 
 \begin_inset CommandInset ref
@@ -760,11 +774,7 @@ reference "subsec:Input-formats"
 \end_inset
 
 .
-
-\change_deleted -1820302391 1528916448
- 
-\change_inserted -1820302391 1528916398
- The Mega2R suite of R packages is available at 
+ The Mega2R R package is available at 
 \begin_inset CommandInset href
 LatexCommand href
 name "https://watson.hgen.pitt.edu/mega2/mega2r"
@@ -773,117 +783,82 @@ target "https://watson.hgen.pitt.edu/mega2/mega2r"
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted -1820302391 1528916417
-To learn more about how to use Mega2R read the Mega2R section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:The-Mega2R-suite"
-
-\end_inset
-
- or visit 
-\begin_inset CommandInset href
-LatexCommand href
-name "https://watson.hgen.pitt.edu/mega2/mega2r"
-target "https://watson.hgen.pitt.edu/mega2/mega2r"
-
-\end_inset
-
-
-\change_inserted -1123876542 1528901325
-
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -1123876542 1528901636
 Additionally Mega2R supports several functions directly within the package
- itself , these include pedgene, GenABEL, VCF and SKAT.
+ itself, these include pedgene, GenABEL, SKAT, VCF, and GDS.
  These can be accused using the Mega2R function calls.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1528901827
-The Ability to create R data frames conveniently from Mega2 databases.
+The ability to create R data frames conveniently from Mega2 databases.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1528901829
-The Ability to easily load multiple data formats into R utilizing Mega2.
+The ability to easily load multiple data formats into R utilizing Mega2.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1528901835
 Allows for memory efficient extraction of data within genotype regions.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1528901877
 Mega2 compresses the genotype data during storage in the Mega2 database
  to save space.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1528901921
 Mega2R utilizes an iterative wrapper which operates on gene regions so that
  single gene analysis functions can be called on multiple genes with one
  call.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1528901928
-Mega2R contains Mega2pedgene for using the pedgene package on data within
- a Mega2 database.
+Mega2R contains the Mega2pedgene function for using the pedgene R package
+ on data within a Mega2 database.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1528901933
-Mega2R contains Mega2GenABEL for using the GenABEL package on data within
- a Mega2 database.
+Mega2R contains the Mega2GenABEL function for using the GenABEL R package
+ on data within a Mega2 database.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1528901934
-Mega2R contains Mega2SKAT for using the SKAT package on data within a Mega2
- database.
+Mega2R contains the Mega2SKAT function for using the SKAT R package on data
+ within a Mega2 database.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -1123876542 1528901935
-Mega2R contains Mega2VCF for outputting data to VCF from data within a Mega2
- database in R.
+Mega2R contains the Mega2VCF function for outputting data to VCF from data
+ within a Mega2 database in R.
 \end_layout
 
-\begin_layout Subsection
-
-\change_inserted -1123876542 1528900299
-Graphical overview of Mega2R (from 2017)
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -1123876542 1528900484
-\begin_inset ERT
+\begin_layout Enumerate
+Mega2R contains the Mega2gdsfmt function for outputting data from a Mega2
+ database in CoreArray Genomic Data Structure (GDS) format (
+\begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted -1123876542 1528900300
+https://bioconductor.org/packages/release/bioc/html/gdsfmt.html
+\end_layout
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsection
+Graphical overview of Mega2R (from 2017)
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
 
 
 \backslash
@@ -896,8 +871,6 @@ begin{adjustwidth*}{-1.5cm}{-1.5cm}
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1528900497
 \begin_inset Graphics
 	filename Mega2R_poster_2017_resized.pdf
 	scale 83
@@ -908,14 +881,10 @@ begin{adjustwidth*}{-1.5cm}{-1.5cm}
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1528900293
 \begin_inset ERT
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted -1123876542 1528900293
 
 
 \backslash
@@ -1019,7 +988,7 @@ reference "subsec:SQLite3"
 \end_layout
 
 \begin_layout Subsubsection
-Output formats 
+Mega2 output formats 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Output-formats"
@@ -1248,6 +1217,41 @@ end{multicols}
 
 \end_layout
 
+\begin_layout Subsubsection
+Mega2R output formats 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Output-formats-1"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Mega2R R package supports the following:
+\end_layout
+
+\begin_layout Enumerate
+The pedgene R package
+\end_layout
+
+\begin_layout Enumerate
+The SKAT R package
+\end_layout
+
+\begin_layout Enumerate
+The GenABEL R package
+\end_layout
+
+\begin_layout Enumerate
+VCF format
+\end_layout
+
+\begin_layout Enumerate
+CoreArray Genomic Data Structure (GDS format)
+\end_layout
+
 \begin_layout Section
 Download Mega2
 \end_layout
@@ -1283,42 +1287,29 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
-Enhancements in Mega2 version 
-\change_inserted -1820302391 1528905587
-5.0.0
-\change_deleted -1820302391 1528905585
-4.9.2
-\change_inserted -1820302391 1528908512
-
+Enhancements in Mega2 version 5.0.0
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914466
 In addition to supporting the old BCF/VCF file format, Mega2 can now read
- the latest BCF format (version 2.2) using the BCF tools library.
- Mega2 will generate a .fam file from the sample data, if none is provided.
+ the latest BCF format (≥ version 2.2) using the BCF tools library.
+ Mega2 will generate a dummy .fam pedigree file from the sample data, if
+ none is provided.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914466
 BGEN version 1.3 is now supported.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914466
-For inputs that have an allele order: VCF, VCF.gz, BCF, IMPUTE, BGEN and
- PLINK BED, this order will be preserved in the Mega2 database and Mega2
- analysis outputs.
+For inputs that have a defined reference/alternate allele order: VCF, VCF.gz,
+ BCF, IMPUTE, BGEN and PLINK BED, this order will be preserved in the Mega2
+ database and Mega2 analysis outputs.
  This feature requires bialleleic markers and genotype compression set to
  1 (aka 2 bits).
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914466
 Mega2 now computes the allele frequencies after pruning for Mendelian inconsiste
 ncies, half typed alleles, etc has taken place.
  In the past, the counting was performed before the pruning and might thus
@@ -1326,12 +1317,10 @@ ncies, half typed alleles, etc has taken place.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914466
 The Mega2 SQLite database has been made more compact.
- The genotypes table is now compressed with gzlib.
- Numeric values used to represent the unknown value (-99.99) are just stored
- in the database as NULL.
+ The genotypes table is now compressed using gzlib.
+ Numeric values used to represent the unknown value (-99.99) are now stored
+ more efficiently in the database as NULL.
  Finally, the Mega2 design has been revised so that the marker_scheme3_alleles
  table is no longer required and is not generated.
  The new Mega2 SQLite database is comparable in size to the corresponding
@@ -1339,44 +1328,33 @@ The Mega2 SQLite database has been made more compact.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914466
-Improve Mega2R vignette and documentation and make Mega2R pass CRAN acceptance
+Improved Mega2R vignette and documentation and make Mega2R pass CRAN acceptance
  testing.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914466
 Mega2R now can generate CRAN SeqArray/SnpArray format objects.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528917325
-Mega2R has deprecated GenABEL support now that the latter has been archived.
+Mega2R now 'enhanves' GenABEL instead of requires GenABEL because the GenABEL
+ R package has been archived.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528917346
 There is no Mega2 program compiled using the native Microsoft compilers.
  This should be available in release 5.0.1.
- For the present, you should use Msys2 Mega2.
+ For the present, you should use Msys2 Mega2 instead.
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1528905578
 Enhancements in Mega2 version 4.9.2
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
-The Mega2R suite of R packages provides tools for accessing and processing
- common genetic data formats in R, making it easy to load SQLite3 Mega2
- databases directly into R as data frames (See Section 
+The Mega2R R package provides tools for accessing and processing common
+ genetic data formats in R, making it easy to load SQLite3 Mega2 databases
+ directly into R as data frames (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-Mega2R-suite"
@@ -2046,13 +2024,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 
-\change_deleted -1820302391 1528905630
-4.9.2
-\change_inserted -1820302391 1528905630
-5.0.0
-\change_unchanged
- database mode menu: 
+Mega2 5.0.0 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2123,13 +2095,7 @@ reference "sec:The-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1528905631
-4.9.2
-\change_inserted -1820302391 1528905631
-5.0.0
-\change_unchanged
- file input menu:
+              Mega2 5.0.0 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2262,13 +2228,7 @@ database menu
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 
-\change_deleted -1820302391 1528905632
-4.9.2
-\change_inserted -1820302391 1528905632
-5.0.0
-\change_unchanged
- database mode menu: 
+Mega2 5.0.0 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2329,13 +2289,7 @@ reference "sec:The-alternate-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 
-\change_deleted -1820302391 1528905634
-4.9.2
-\change_inserted -1820302391 1528905634
-5.0.0
-\change_unchanged
- database input menu: 
+Mega2 5.0.0 database input menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2605,24 +2559,12 @@ target "http://doi.org/10.1186/s13029-014-0026-y"
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 
-\change_deleted -1820302391 1528905639
-4.9.2
-\change_inserted -1820302391 1528905639
-5.0.0
-\change_unchanged
- should be: 
+ For example, the web site citation for version 5.0.0 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2015) Mega2 (Version 
-\change_deleted -1820302391 1528905658
-4.9.2
-\change_inserted -1820302391 1528905658
-5.0.0
-\change_unchanged
-).
+ Weeks DE (2018) Mega2 (Version 5.0.0).
  
 \begin_inset Flex URL
 status open
@@ -2919,13 +2861,7 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 
-\change_deleted -1820302391 1528905661
-4.9.2
-\change_inserted -1820302391 1528905661
-5.0.0
-\change_unchanged
- 
+The latest version is 5.0.0 
 \end_layout
 
 \begin_layout Enumerate
@@ -2938,13 +2874,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1528905662
-4.9.2
-\change_inserted -1820302391 1528905662
-5.0.0
-\change_unchanged
-_src.tar.gz
+mega2_v5.0.0_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -2959,13 +2889,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v
-\change_deleted -1820302391 1528905663
-4.9.2
-\change_inserted -1820302391 1528905663
-5.0.0
-\change_unchanged
-_src.tar.gz 
+gunzip mega2_v5.0.0_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -2979,13 +2903,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v
-\change_deleted -1820302391 1528905663
-4.9.2
-\change_inserted -1820302391 1528905663
-5.0.0
-\change_unchanged
-_src.tar 
+tar xvf mega2_v5.0.0_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -2993,13 +2911,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v
-\change_deleted -1820302391 1528905664
-4.9.2
-\change_inserted -1820302391 1528905664
-5.0.0
-\change_unchanged
-_src.tar.gz 
+tar xzvf mega2_v5.0.0_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -3012,13 +2924,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v
-\change_deleted -1820302391 1528905665
-4.9.2
-\change_inserted -1820302391 1528905665
-5.0.0
-\change_unchanged
-_src
+mega2_v5.0.0_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -3198,27 +3104,16 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v
-\change_deleted -1820302391 1528905667
-4.9.2
-\change_inserted -1820302391 1528905667
-5.0.0
-\change_unchanged
-_src.tar.gz bundle following the download section (
+If you downloaded and unpacked the mega2_v5.0.0_src.tar.gz bundle following
+ the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v
-\change_deleted -1820302391 1528905668
-4.9.2
-\change_inserted -1820302391 1528905668
-5.0.0
-\change_unchanged
-_src containing the following directories (in bold) or files listed in alphabeti
-cal order:
+), you should see a directory named mega2_v5.0.0_src containing the following
+ directories (in bold) or files listed in alphabetical order:
 \end_layout
 
 \begin_layout Quotation
@@ -3737,48 +3632,14 @@ cyg
 \end_inset
 
 .
- The static Msys2 version of Mega2 
-\change_deleted -1820302391 1528906487
-does not need any additional libraries
-\change_inserted -1820302391 1528906595
-only needs the msys-2.0.dll library which is available if you have installed
- msys2 on your machine
-\change_unchanged
-.
- The other Msys2 executable
-\change_inserted -1820302391 1528906524
-s
-\change_unchanged
- use
-\change_deleted -1820302391 1528908287
-s
-\change_unchanged
- the .dll's in the 
-\change_deleted -1820302391 1528906626
-Windows 10 directory beginning with the prefix 
-\begin_inset Quotes eld
-\end_inset
-
-lib
-\begin_inset Quotes erd
-\end_inset
-
-
-\change_inserted -1820302391 1528906825
-msys2 or msys2_7 directories respectively for the 2.7.0 or 2.10.0 msys2 executable;
- again, these will be already available if you installed msys2.
- 
-\change_deleted -1820302391 1528906732
-.
-
-\change_unchanged
- 
-\change_inserted -1820302391 1528908256
-If you are just using the executable and corresponding .dll's, you should
+ The static Msys2 version of Mega2 only needs the msys-2.0.dll library which
+ is available if you have installed msys2 on your machine.
+ The other Msys2 executables use the .dll's in the msys2 or msys2_7 directories
+ respectively for the 2.7.0 or 2.10.0 msys2 executable; again, these will be
+ already available if you installed msys2.
+ If you are just using the executable and corresponding .dll's, you should
  copy all of them to the same directory.
- 
-\change_unchanged
-Finally, if you run a native Windows Mega2 at the 
+ Finally, if you run a native Windows Mega2 at the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3928,13 +3789,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v
-\change_deleted -1820302391 1528905671
-4.9.2
-\change_inserted -1820302391 1528905671
-5.0.0
-\change_unchanged
-_src in above step), type the command:
+ mega2_v5.0.0_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -3985,16 +3840,10 @@ name "subsec:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v
-\change_deleted -1820302391 1528905674
-4.9.2
-\change_inserted -1820302391 1528905674
-5.0.0
-\change_unchanged
-_src.tar.gz package also includes a source code folder "srcdir" containing
- C source files, a Makefile, and several OS-specific Makedefs files that
- define compilation flags that govern locations of standard C libraries,
- and other OS-specific behavior.
+The mega2_v5.0.0_src.tar.gz package also includes a source code folder "srcdir"
+ containing C source files, a Makefile, and several OS-specific Makedefs
+ files that define compilation flags that govern locations of standard C
+ libraries, and other OS-specific behavior.
 \end_layout
 
 \begin_layout Standard
@@ -4006,13 +3855,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v
-\change_deleted -1820302391 1528905675
-4.9.2
-\change_inserted -1820302391 1528905675
-5.0.0
-\change_unchanged
-_src folder, type 
+From within the mega2_v5.0.0_src folder, type 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -4423,13 +4266,8 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v
-\change_deleted -1820302391 1528905680
-4.9.2
-\change_inserted -1820302391 1528905680
-5.0.0
-\change_unchanged
-_src folder contains documentation for mega2.
+The sub-folder called mega2_html/ within the mega2_v5.0.0_src folder contains
+ documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
 
@@ -4478,40 +4316,16 @@ Mega2 uses four libraries developed by other external groups, the sources
  their integration with Mega2.
  The VCFtools library handles reading of the various Variant Call Format
  (VCF) input files.
- In addition 
-\change_inserted -1123876542 1528898600
-BCFtools
-\change_deleted -1123876542 1528898600
-BCFTools
-\change_unchanged
- was included for faster VCF processing as well as handling current version
- of BCF files.
- As part of the 
-\change_inserted -1123876542 1528898600
-BCFtools
-\change_deleted -1123876542 1528898600
-BCFTools
-\change_unchanged
- library a copy of the HTSLIb is included as well, this is simply the library
- 
-\change_inserted -1123876542 1528898600
-BCFtools
-\change_deleted -1123876542 1528898600
-BCFTools
-\change_unchanged
- runs on.
+ In addition BCFtools was included for faster VCF processing as well as
+ handling current version of BCF files.
+ As part of the BCFtools library a copy of the HTSLIb is included as well,
+ this is simply the library BCFtools runs on.
  The BGEN library handles the reading of the binary IMPUTE2 BGEN format
  input file.
  ZLIB is needed by the VCFtools and BGEN libraries and is also used to format
  Beagle output.
- VCFtools, 
-\change_inserted -1123876542 1528898600
-BCFtools
-\change_deleted -1123876542 1528898600
-BCFTools
-\change_unchanged
- library are released under the GNU Lesser General Public License Version
- 3 (
+ VCFtools, BCFtools library are released under the GNU Lesser General Public
+ License Version 3 (
 \begin_inset CommandInset href
 LatexCommand href
 name "LGPLv3"
@@ -5119,13 +4933,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v
-\change_deleted -1820302391 1528905684
-4.9.2
-\change_inserted -1820302391 1528905684
-5.0.0
-\change_unchanged
-_src.tar.gz.
+The Mega2 distribution package is named mega2_v5.0.0_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -5140,13 +4948,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1528905685
-4.9.2
-\change_inserted -1820302391 1528905685
-5.0.0
-\change_unchanged
-_src.tar
+mega2_v5.0.0_src.tar
 \end_layout
 
 \end_deeper
@@ -5172,13 +4974,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1528905685
-4.9.2
-\change_inserted -1820302391 1528905685
-5.0.0
-\change_unchanged
-_src.tar.tar
+mega2_v5.0.0_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -5186,13 +4982,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v
-\change_deleted -1820302391 1528905686
-4.9.2
-\change_inserted -1820302391 1528905686
-5.0.0
-\change_unchanged
-_src.tar.gz
+mega2_v5.0.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -5200,19 +4990,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v
-\change_deleted -1820302391 1528905686
-4.9.2
-\change_inserted -1820302391 1528905686
-5.0.0
-\change_unchanged
-_src.tar.tar mega2_v
-\change_deleted -1820302391 1528905688
-4.9.2
-\change_inserted -1820302391 1528905688
-5.0.0
-\change_unchanged
-_src.tar.gz
+mv mega2_v5.0.0_src.tar.tar mega2_v5.0.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -5241,18 +5019,12 @@ name "subsec:Windows-Mingw-installation"
 
 \begin_layout Subsubsection
 Mingw POSIX windows environment
-\change_inserted -1820302391 1528906941
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1820302391 1528907032
 Mingw is no longer supported for Mega2.
  Please consider using Msys2 instead.
  Instruction for Msys2 follow this section.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -5485,19 +5257,7 @@ Installing Msys2
 \end_layout
 
 \begin_layout Standard
-Download and 
-\change_deleted -1820302391 1528907202
-execute
-\change_inserted -1820302391 1528907204
-install
-\change_unchanged
- the Msys2 
-\change_deleted -1820302391 1528907233
-sourceforge page download image
-\change_inserted -1820302391 1528907235
-from
-\change_unchanged
-
+Download and install the Msys2 from
 \end_layout
 
 \begin_layout LyX-Code
@@ -5506,13 +5266,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://
-\change_deleted -1820302391 1528907241
-sourceforge.net/projects/msys2/
-\change_inserted -1820302391 1528907246
-www.msys2.org
-\change_unchanged
-
+http://www.msys2.org
 \end_layout
 
 \end_inset
@@ -5538,11 +5292,7 @@ update-core
 \end_layout
 
 \begin_layout LyX-Code
-pacman -S
-\change_inserted -1820302391 1528907272
-y
-\change_unchanged
-u
+pacman -Syu
 \end_layout
 
 \begin_layout Standard
@@ -5960,7 +5710,7 @@ PLINK PED format
 
 \end_deeper
 \begin_layout Enumerate
-Legacy Variant Call Format (See 
+Legacy Variant Call Format (using VCFtools) (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:VCF-file-formats"
@@ -5976,7 +5726,7 @@ reference "subsec:VCF-file-formats"
 
 \begin_deeper
 \begin_layout Enumerate
-BCF format 
+BCF format (BCF format v2.1) 
 \end_layout
 
 \begin_layout Enumerate
@@ -6018,18 +5768,12 @@ Mega2 database Input
 \end_layout
 
 \begin_layout Enumerate
-Varuant Format (using 
-\change_inserted -1123876542 1528898600
-BCFtools
-\change_deleted -1123876542 1528898600
-BCFTools
-\change_unchanged
-)
+Varuant Format (using BCFtools)
 \end_layout
 
 \begin_deeper
 \begin_layout Enumerate
-BCF format
+BCF format (BCF format v2.2 and higher.)
 \end_layout
 
 \begin_layout Enumerate
@@ -12048,25 +11792,19 @@ target "http://en.wikipedia.org/wiki/Variant_Call_Format"
 
 ).
  
-\change_inserted -1123876542 1528898307
-
 \end_layout
 
 \begin_layout Standard
-Mega2 currently uses 
-\change_deleted -1123876542 1528898312
-source code 
-\change_inserted -1123876542 1528898334
-two applications for parsing VCF and BCF files, these are VCFtools and BCFtools.
+Mega2 currently uses two applications for parsing VCF and BCF files, these
+ are VCFtools and BCFtools.
+ The former is called the 'legacy' mode because it reads the earlier BCF
+ format 2.1 bcf files, while the later reads the current BCF format files
+ (v2.2 and higher).
  
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1528898350
-Mega2 currently uses 
-\change_unchanged
-from the popular VCFtools program (See: 
+Mega2 uses from the popular VCFtools program (See: 
 \begin_inset CommandInset href
 LatexCommand href
 name "VCFtools"
@@ -12074,7 +11812,7 @@ target "http://vcftools.sourceforge.net"
 
 \end_inset
 
-) as its underlying engine for parsing VCF files.
+) as its underlying engine for parsing VCF files in 'legacy' mode.
  VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format
  v4.1 (See: 
 \begin_inset CommandInset href
@@ -12123,15 +11861,10 @@ reference "par:VCF_Args"
 \end_inset
 
 ).
-\change_inserted -1123876542 1528898333
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1528898565
-A new addition to Mega2 is the using the source code of the BCFtools program
- (See: 
+Mega2 now also uses the source code of the BCFtools program (See: 
 \begin_inset CommandInset href
 LatexCommand href
 name "BCFtools"
@@ -12139,7 +11872,7 @@ target "https://samtools.github.io/bcftools/bcftools.html"
 
 \end_inset
 
-) in new input modes.
+) in new input modes for VCF and BCF format files.
  BCFtools supports VCF Format v4.0 and higher as well as BCF format v2.2 and
  higher.
  Mega2 supports a subset of the 
@@ -12158,8 +11891,6 @@ reference "subsec:Input-Format:-BCFTools"
 
 \end_inset
 
-
-\change_unchanged
 
 \end_layout
 
@@ -12235,13 +11966,15 @@ reference "sec:The-analysis-menu"
 \end_layout
 
 \begin_layout Standard
-When using VCF-format input files, one needs to provide several files, which
- are described below.
- At a minimum, two files are required: 1) the VCF file containing the marker
- genotypes, and 2) the PLINK-format family file containing the family structure
- information.
- Optional files include a phenotype file, a map file, an omit file, an allele
- frequency file, and a penetrance file.
+When using VCF-format or BCF-format input files, one needs to provide several
+ files, which are described below.
+ At a minimum, one files is required: the VCF or BCF file containing the
+ marker genotypes.
+ It is highly recommended to also provide the PLINK-format family file containin
+g the family structure and gender information (if one is not provided, a
+ dummy pedigree file will be constructed where everyone is coded to be male)..
+ Other optional files include a phenotype file, a map file, an omit file,
+ an allele frequency file, and a penetrance file.
  The phenotype file may include a SAMPLEID column specifying the key mapping
  individuals in the family file to the samples in the VCF file.
 \end_layout
@@ -13865,7 +13598,7 @@ https://watson.hgen.pitt.edu/register/docs/gmi.html
 \end_layout
 
 \begin_layout Section
-The Mega2R suite of R packages
+The Mega2R R package
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:The-Mega2R-suite"
@@ -13876,9 +13609,9 @@ name "sec:The-Mega2R-suite"
 \end_layout
 
 \begin_layout Standard
-The Mega2R suite of R packages provides tools for accessing and processing
- common genetic data formats in R.
- The Mega2R suite of R packages is available at 
+The Mega2R R package provides tools for accessing and processing common
+ genetic data formats in R.
+ The Mega2R R package is available at 
 \begin_inset CommandInset href
 LatexCommand href
 name "https://watson.hgen.pitt.edu/mega2/mega2r"
@@ -13901,18 +13634,157 @@ Mega2 has been enhanced to use a SQLite database as an intermediate data
  R as data frames to use these R facilities.
  In addition, we have developed C++ functions for R to decompress needed
  subsets of the genotype data, on the fly, in a memory efficient manner.
- We created the base Mega2R package that loads and manipulates data frames.
- We have also created several more R packages that illustrate how to use
- the data frames as well as perform useful functions: the Mega2pedgene package
- to run the pedgene R package to carry out gene-based association tests
- on family data using selected marker subsets, the Mega2VCF package to output
- the Mega2R data as a VCF file and related files (for phenotype and family
- data), and the Mega2GenABEL package to convert the data frames into GenABEL
- R gwaa.data-class objects.
- The Mega2R program enhances GenABEL since it supports additional input
- data formats (such as PLINK, VCF and IMPUTE2) not currently supported by
- GenABEL.
+ We have also created several functions that illustrate how to use the data
+ frames in useful ways: these permit one to run the 'pedgene' package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=pedgene
+\end_layout
+
+\end_inset
+
+) to carry out gene-based association tests on family data using selected
+ marker subsets, to run the 'SKAT' package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=SKAT
+\end_layout
+
+\end_inset
+
+) to carry out gene-based association tests using selected marker subsets,
+ to output subsets of the Mega2R data as a VCF file (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/samtools/hts-specs
+\end_layout
+
+\end_inset
+
+) and related files (for phenotype and family data), and to convert the
+ data frames into 'GenABEL' gwaa.data-class objects (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=GenABEL
+\end_layout
+
+\end_inset
+
+).
  
+\end_layout
+
+\begin_layout Standard
+Mega2R was designed as an efficient pathway from Mega2 input data formats
+ into R utilizing the Mega2-created database 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-database-mode"
+
+\end_inset
+
+.
+ Mega2R allows a Mega2-created database to be converted to R data frames
+ for use in R analysis packages.
+ 
+\end_layout
+
+\begin_layout Standard
+As an input Mega2R takes a Mega2 database which can be created by using
+ Mega2 and any of Mega2's input formats 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-formats"
+
+\end_inset
+
+.
+ The Mega2R R package is available at 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://watson.hgen.pitt.edu/mega2/mega2r"
+target "https://watson.hgen.pitt.edu/mega2/mega2r"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Additionally Mega2R supports several functions directly within the package
+ itself, these include pedgene, GenABEL, SKAT, VCF, and GDS.
+ These can be accused using the Mega2R function calls.
+\end_layout
+
+\begin_layout Enumerate
+The ability to create R data frames conveniently from Mega2 databases.
+\end_layout
+
+\begin_layout Enumerate
+The ability to easily load multiple data formats into R utilizing Mega2.
+\end_layout
+
+\begin_layout Enumerate
+Allows for memory efficient extraction of data within genotype regions.
+\end_layout
+
+\begin_layout Enumerate
+Mega2 compresses the genotype data during storage in the Mega2 database
+ to save space.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R utilizes an iterative wrapper which operates on gene regions so that
+ single gene analysis functions can be called on multiple genes with one
+ call.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2pedgene function for using the pedgene R package
+ on data within a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2GenABEL function for using the GenABEL R package
+ on data within a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2SKAT function for using the SKAT R package on data
+ within a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2VCF function for outputting data to VCF from data
+ within a Mega2 database in R.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2gdsfmt function for outputting data from a Mega2
+ database in CoreArray Genomic Data Structure (GDS) format (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://bioconductor.org/packages/release/bioc/html/gdsfmt.html
+\end_layout
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Section
@@ -14307,13 +14179,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 
-\change_deleted -1820302391 1528905690
-4.9.2
-\change_inserted -1820302391 1528905690
-5.0.0
-\change_unchanged
- database mode menu: 
+Mega2 5.0.0 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -14645,13 +14511,7 @@ When entering the file input menu, Mega2 initially expects to read input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1528905692
-4.9.2
-\change_inserted -1820302391 1528905692
-5.0.0
-\change_unchanged
- file input menu:
+              Mega2 5.0.0 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14747,13 +14607,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 
-\change_deleted -1820302391 1528905694
-4.9.2
-\change_inserted -1820302391 1528905694
-5.0.0
-\change_unchanged
- input file type menu:
+Mega2 5.0.0 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14825,13 +14679,7 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1528905696
-4.9.2
-\change_inserted -1820302391 1528905696
-5.0.0
-\change_unchanged
- file input menu:
+              Mega2 5.0.0 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -16858,11 +16706,7 @@ Often, the RSID field is made up of several subfields that we need to process.
 \end_layout
 
 \begin_layout Subsection
-Input Format: BCF v2.2 or higher
-\change_inserted -1123876542 1528898811
- utilizing BCFtools
-\change_unchanged
-
+Input Format: BCF v2.2 or higher utilizing BCFtools
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Input-Format:-BCFTools"
@@ -18123,11 +17967,7 @@ reference "subsec:VCF-File"
 \end_layout
 
 \begin_layout Subsection
-Input Format: VCF in Compressed Format
-\change_inserted -1123876542 1528898802
- utilizing BCFtools
-\change_unchanged
-
+Input Format: VCF in Compressed Format utilizing BCFtools
 \end_layout
 
 \begin_layout Standard
@@ -18152,11 +17992,7 @@ reference "subsec:Input-Format:-BCFTools"
 \end_layout
 
 \begin_layout Subsection
-Input Format: VCF Format
-\change_inserted -1123876542 1528898806
- utilizing BCFtools
-\change_unchanged
-
+Input Format: VCF Format utilizing BCFtools
 \end_layout
 
 \begin_layout Standard
@@ -18755,13 +18591,7 @@ name "subsec:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1528905697
-4.9.2
-\change_inserted -1820302391 1528905697
-5.0.0
-\change_unchanged
- Maximum alleles per marker menu:
+              Mega2 5.0.0 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -19245,13 +19075,7 @@ The Database input menu is shown below and explained immediately following:
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1528905699
-4.9.2
-\change_inserted -1820302391 1528905699
-5.0.0
-\change_unchanged
- Database input menu:
+              Mega2 5.0.0 Database input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -19399,13 +19223,7 @@ The path to this SQLite3 database is dbmega2.db.
 \end_layout
 
 \begin_layout LyX-Code
-This database was created using Mega2 version 
-\change_deleted -1820302391 1528905705
-4.9.2
-\change_inserted -1820302391 1528905705
-5.0.0
-\change_unchanged
-.
+This database was created using Mega2 version 5.0.0.
  
 \end_layout
 
@@ -20237,13 +20055,7 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 
-\change_deleted -1820302391 1528905707
-4.9.2
-\change_inserted -1820302391 1528905707
-5.0.0
-\change_unchanged
- Missing Value menu:
+              Mega2 5.0.0 Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -40655,13 +40467,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_deleted -1820302391 1528905757
-4.9.2
-\change_inserted -1820302391 1528905759
 5.0.0
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -40670,13 +40476,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-June 14, 201
-\change_inserted -1820302391 1528905751
-8
-\change_deleted -1820302391 1528905751
-7
-\change_unchanged
-
+June 14, 2018
 \end_layout
 
 \end_inset
@@ -40685,13 +40485,7 @@ June 14, 201
 \begin_inset Text
 
 \begin_layout Plain Layout
-June 15, 201
-\change_deleted -1820302391 1528905744
-8
-\change_inserted -1820302391 1528905745
-9
-\change_unchanged
-
+June 15, 2019
 \end_layout
 
 \end_inset
@@ -40702,8 +40496,6 @@ June 15, 201
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1528905734
 Patched version
 \end_layout
 
@@ -40713,8 +40505,6 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1528905734
 4.9.2
 \end_layout
 
@@ -40724,8 +40514,6 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1528905734
 June 14, 2017
 \end_layout
 
@@ -40735,8 +40523,6 @@ June 14, 2017
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\change_inserted -1820302391 1528905734
 June 15, 2018
 \end_layout
 
@@ -41701,56 +41487,28 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 4.9.
-\change_inserted -1820302391 1528905874
-2
-\change_deleted -1820302391 1528905871
-1
-\change_unchanged
- to Version 
-\change_deleted -1820302391 1528905881
-4.9.2
-\change_inserted -1820302391 1528905882
-5.0.0
-\change_unchanged
- (Released June 14, 201
-\change_deleted -1820302391 1528905887
-7
-\change_inserted -1820302391 1528905887
-8
-\change_unchanged
-)
-\change_inserted -1820302391 1528909760
-
+Changes from Version 4.9.2 to Version 5.0.0 (Released June 14, 2018)
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528913278
-In addition to supporting the old BCF/VCF file format, Mega2 can now read
+In addition to supporting the old BCF/VCF file formats, Mega2 can now read
  the latest BCF format (version 2.2) using the BCF tools library.
- Mega2 will generate a .fam file from the sample data, if none is provided.
+ Mega2 will generate a dummy .fam file from the sample data, if none is provided.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528913294
 BGEN version 1.3 is now supported.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528913352
-For inputs that have an allele order: VCF, VCF.gz, BCF, IMPUTE, BGEN and
- PLINK BED, this order will be preserved in the Mega2 database and Mega2
- analysis outputs.
+For inputs that have a reference/alternate allele order: VCF, VCF.gz, BCF,
+ IMPUTE, BGEN and PLINK BED, this order will be preserved in the Mega2 database
+ and Mega2 analysis outputs.
  This feature requires bialleleic markers and genotype compression set to
  1 (aka 2 bits).
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914336
 Mega2 now computes the allele frequencies after pruning for Mendelian inconsiste
 ncies, half typed alleles, etc has taken place.
  In the past, the counting was performed before the pruning and might thus
@@ -41758,8 +41516,6 @@ ncies, half typed alleles, etc has taken place.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914367
 The Mega2 SQLite database has been made more compact.
  The genotypes table is now compressed with gzlib.
  Numeric values used to represent the unknown value (-99.99) are just stored
@@ -41771,44 +41527,31 @@ The Mega2 SQLite database has been made more compact.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914396
-Improve Mega2R vignette and documentation and make Mega2R pass CRAN acceptance
- testing.
+Improved Mega2R vignette and documentation and Mega2R is now in CRAN.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528914415
 Mega2R now can generate CRAN SeqArray/SnpArray format objects.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528917119
 Mega2R has deprecated GenABEL support now that the latter has been archived.
 \end_layout
 
 \begin_layout Itemize
-
-\change_inserted -1820302391 1528917366
 There is no Mega2 program compiled using the native Microsoft compilers.
  This should be available in release 5.0.1.
  For the present, you should use Msys2 Mega2.
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -1820302391 1528905863
 Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
-\change_unchanged
-
 \end_layout
 
 \begin_layout Itemize
-The Mega2R suite of R packages provides tools for accessing and processing
- common genetic data formats in R, making it easy to load SQLite3 Mega2
- databases directly into R as data frames (See Section 
+The Mega2R R package provides tools for accessing and processing common
+ genetic data formats in R, making it easy to load SQLite3 Mega2 databases
+ directly into R as data frames (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-Mega2R-suite"
@@ -49359,11 +49102,7 @@ http://zlib.net/
 \end_layout
 
 \begin_layout Subsection
-GNU Lesser General Public License Version 3 for VCFtools
-\change_inserted -1123876542 1528902225
- and BCFtools
-\change_unchanged
-
+GNU Lesser General Public License Version 3 for VCFtools and BCFtools
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:GNU-Lesser-General"
@@ -49379,19 +49118,13 @@ We have included VCFTools source code in the srcdir/vcftools directory of
  This code has been minimally modified so as to integrate it with Mega2.
  While the VCFtools source code as a whole is licensed under the Lesser
  GPL license, two of files contain the MIT license, listed above.
-\change_inserted -1123876542 1528902258
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -1123876542 1528902389
 We have also included the BCFtools source code in the srcdir/lib/bcftools
  directory of the Mega2 distribution.
  This code has been minimally modified so as to integrate it with Mega2.
  The BCFtools source code as a whole is licensed under the Lesser GPL license.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -49710,8 +49443,6 @@ http://www.sqlite.org/
 
 .
  This software is in the public domain.
-\change_inserted -1123876542 1528902126
-
 \end_layout
 
 \begin_layout Section

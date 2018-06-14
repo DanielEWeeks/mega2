@@ -345,7 +345,7 @@ dbmega2_import = function(dbname,
         }
         lt = lt2(bb, aa)
         if (lt) {
-           message("NOTE: Mega2R cannot read the Mega2 database because Mega2R version (", Mega2Version, ") is too old.")
+           message("NOTE: Mega2R cannot read the Mega2 database because Mega2R version (", Mega2RVersion, ") is too old.")
            stop("Please get the latest version of Mega2R from CRAN.", call.=FALSE)
         }
     }
