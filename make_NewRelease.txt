@@ -1,4 +1,4 @@
-Verify that the expiration date is correct.
+Verify that the expiration date is correct. 
 
 1. ./install.sh
      update VERSION=
