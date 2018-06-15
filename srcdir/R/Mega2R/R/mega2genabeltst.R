@@ -112,14 +112,16 @@ dmpPed = function(gwaa_ = srdta, pfx, default = "bt") {
 #' @importFrom utils data
 #'
 #' @examples
+#'\dontrun{
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' require("GenABEL")
 #' ENV = read.Mega2DB(db)
 #'
 #' y = Mega2ENVGenABEL()
 #' Mega2GenABELtst(y, y, full = FALSE)
+#'}
 #'
-#' \donttest{
+#' \dontrun{
 #' # donttestcheck: if you have more time, try ...
 #' x = Mega2GenABEL()
 #' Mega2GenABELtst(x, y, full = FALSE)

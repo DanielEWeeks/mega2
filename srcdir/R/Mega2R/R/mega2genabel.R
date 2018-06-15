@@ -49,6 +49,7 @@
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' require("GenABEL")
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
@@ -56,6 +57,7 @@
 #'
 #' str(seqsimgwaa)
 #' head(summary(seqsimgwaa))
+#'}
 #'
 Mega2GenABEL = function (markers = NULL, mapno = 0, envir = ENV) {
     if (missing(envir)) envir = get("ENV", parent.frame(), inherits = TRUE)
@@ -143,6 +145,7 @@ Mega2GenABELClean = function () {
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' require("GenABEL")
 #' db = system.file("exdata", "seqsimm.db", package="Mega2R")
 #' ENV = read.Mega2DB(db)
@@ -150,6 +153,7 @@ Mega2GenABELClean = function () {
 #'
 #' str(gwaa)
 #' head(summary(gwaa))
+#'}
 #'
 Mega2ENVGenABEL = function (markers = NULL, force = TRUE, makemap = FALSE,
                          sort = TRUE, envir = ENV) {

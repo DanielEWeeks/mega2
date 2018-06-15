@@ -1281,11 +1281,12 @@ They are deleted when the `Mega2GenABEL` function exits. The
 GenABEL functions `convert.snp.tped` and `load.gwaa.data` are explained in
 https://cran.r-project.org/package=GenABEL.
 
-If you haven't already, first install the 'GenABEL' package from CRAN.
+If you haven't already, first install the 'GenABEL' package from CRAN.  Since 'GenABEL' is not
+readily available (and only available from the CRAN Archive), we will show you the commands and then what you would have seen if you had 'GenABEL' installed.
 
-Then type:
+If you typed:
 
-```{r seqsimgwaa}
+```{r seqsimgwaa, eval=FALSE}
 require("GenABEL")
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
@@ -1298,10 +1299,83 @@ ENV = read.Mega2DB(db)
 seqsimgwaa = Mega2GenABEL()
 ```
 
-You can use any of the GenABEL provided functions on the results, `seqsimgwaa`.
+You would see:
 
-```{r strseqsimgwaa}
+```
+require("GenABEL")
+
+## Loading required package: GenABEL
+## Loading required package: MASS
+## 
+## Attaching package: 'MASS'
+## The following object is masked _by_ '.GlobalEnv':
+## 
+##     genotype
+
+## Loading required package: GenABEL.data
+# Before issuing the next command, make sure you have issued this command
+# `dump_mega2rtutorial_data()` first as instructed in the 'sTutorial Data' section
+# above.
+
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+ENV = read.Mega2DB(db)
+
+# This line converts the database to a gwaa.data-class object. The intermediate
+# files are in tempdir() and begin with 'Mega2GenABEL'
+seqsimgwaa = Mega2GenABEL()
+
+## Reading individual ids from file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABEL.tfam' ...
+## ... done.  Read 1380 individual ids from file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABEL.tfam'
+## Reading genotypes from file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABEL.tped' ...
+## ...done.  Read 1000 SNPs from file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABEL.tped'
+## Writing to file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABELtped.raw'
+## ...
+## ... done.
+## ids loaded...
+## marker names loaded...
+## chromosome data loaded...
+## map data loaded...
+## allele coding data loaded...
+## strand data loaded...
+## genotype data loaded...
+## snp.data object created...
+## assignment of gwaa.data object FORCED; X-errors were not checked!
+```
+
+You can use any of the GenABEL provided functions on the results, `seqsimgwaa`.  If you typed:
+
+```{r strseqsimgwaa, eval=FALSE}
 str(seqsimgwaa)
+```
+
+You would see:
+
+```
+str(seqsimgwaa)
+
+## Formal class 'gwaa.data' [package "GenABEL"] with 2 slots
+##   ..@ phdata:'data.frame':   1380 obs. of  3 variables:
+##   .. ..$ id     : chr [1:1380] "1SAP039_H05-0107" "1SAP039_H05-0106" "1SAP039_SAP039F14" "1SAP039_SAP039F13" ...
+##   .. ..$ sex    : int [1:1380] 0 1 1 1 1 0 0 0 0 0 ...
+##   .. ..$ default: int [1:1380] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..@ gtdata:Formal class 'snp.data' [package "GenABEL"] with 11 slots
+##   .. .. ..@ nbytes    : num 345
+##   .. .. ..@ nids      : int 1380
+##   .. .. ..@ nsnps     : int 1000
+##   .. .. ..@ idnames   : chr [1:1380] "1SAP039_H05-0107" "1SAP039_H05-0106" "1SAP039_SAP039F14" "1SAP039_SAP039F13" ...
+##   .. .. ..@ snpnames  : chr [1:1000] "snp1" "snp2" "snp3" "snp4" ...
+##   .. .. ..@ chromosome: Factor w/ 1 level "1": 1 1 1 1 1 1 1 1 1 1 ...
+##   .. .. .. ..- attr(*, "names")= chr [1:1000] "snp1" "snp2" "snp3" "snp4" ...
+##   .. .. ..@ map       : Named num [1:1000] 2 3 4 5 201 ...
+##   .. .. .. ..- attr(*, "names")= chr [1:1000] "snp1" "snp2" "snp3" "snp4" ...
+##   .. .. ..@ coding    :Formal class 'snp.coding' [package "GenABEL"] with 1 slot
+##   .. .. .. .. ..@ .Data: raw [1:1000] 01 01 01 01 ...
+##   .. .. ..@ strand    :Formal class 'snp.strand' [package "GenABEL"] with 1 slot
+##   .. .. .. .. ..@ .Data: raw [1:1000] 00 00 00 00 ...
+##   .. .. ..@ male      : Named int [1:1380] 0 1 1 1 1 0 0 0 0 0 ...
+##   .. .. .. ..- attr(*, "names")= chr [1:1380] "1SAP039_H05-0107" "1SAP039_H05-0106" "1SAP039_SAP039F14" "1SAP039_SAP039F13" ...
+##   .. .. ..@ gtps      :Formal class 'snp.mx' [package "GenABEL"] with 1 slot
+##   .. .. .. .. ..@ .Data: raw [1:345, 1:1000] 59 55 55 55 ...
 ```
 
 # 10 Regression testing
@@ -1486,27 +1560,33 @@ This test is a bit more complicated.
 We intend to verify that the object generated 
 by `Mega2GenABEL` is the same as a GenABEL object we started with.
 First, we load `GenABEL` and access its data:
-**NOTE: The code in this section can not really be executed, if you do not have GenABEL available on your machine.**
+**NOTE: The code in this section can not really be executed, if you do not have GenABEL available on your machine.**  But we have an old version of GenABEL and will show you in the example below
+what you should see.
 
-```{r srdta}
+```{r srdta, eval=FALSE}
 GotGenABEL = require("GenABEL", quietly=FALSE)
-if (GotGenABEL) data(srdta)
+if (GotGenABEL) data(srdta) else srdta=NULL
+```
+```
+The previous code does not display anything.
 ```
 
 Then we use the GenABEL export.plink() function to dump the GenABEL data as
 PLINK .ped/.map/.phe files.  The latter will be processed by Mega2 to generate a
 database.
 
-```{r dmpPed,results="hide",warning=FALSE}
+```{r dmpPed,results="hide",warning=FALSE,eval=FALSE}
 GotGenABEL = require("GenABEL", quietly=FALSE)
 
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
 # as instructed in the "Tutorial Data' section above.
+
 srdtafile = file.path(where_mega2rtutorial_data(), "srdta")
 if (GotGenABEL) export.plink(srdta, transpose = FALSE, filebasename = srdtafile,
              phenotypes = names(srdta@phdata)[-(1:2)])
 ```
+The previous code does not display anything.
 
 To produce the Mega2 database `srdta.db`, we switch to the Unix command line, cd to 
 the temporary directory, with the name given by the results of this R command `where_mega2rtutorial_data()`, and run:
@@ -1762,9 +1842,9 @@ Default_Outfile_Names=yes
 Note: We have provided a copy of the srdta.db database in the Mega2R package.  So
 you can proceed with the steps that follow, even if you did not create your own database.
 
-Now, we go back into R and run Mega2GenABEL().  Type:
+Now, we go back into R and run Mega2GenABEL().  If you type:
 
-```{r, srdta.db,eval=TRUE}
+```{r, srdta.db,eval=FALSE}
 GotGenABEL = require("GenABEL", quietly=FALSE)
 # Before issuing the next command, make sure you have issued
 # this command `dump_mega2rtutorial_data()` first
@@ -1774,28 +1854,174 @@ ENV = read.Mega2DB(sdb)
 
 mega = Mega2GenABEL()
 ```
+You will see:
+```
+GotGenABEL = require("GenABEL", quietly = FALSE)
+
+# Before issuing the next command, make sure you have issued this command
+# `dump_mega2rtutorial_data()` first as instructed in the 'Tutorial Data' section
+# above.
+
+sdb = file.path(where_mega2rtutorial_data(), "srdta.db")
+ENV = read.Mega2DB(sdb)
+
+mega = Mega2GenABEL()
+
+## Reading individual ids from file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABEL.tfam' ...
+## ... done.  Read 2500 individual ids from file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABEL.tfam'
+## Reading genotypes from file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABEL.tped' ...
+## ...done.  Read 833 SNPs from file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABEL.tped'
+## Writing to file '/var/folders/kn/h793jrls0n39bdym6d7531qr0000gp/T//RtmpNtrIhU/Mega2GenABELtped.raw' ...
+## ... done.
+## ids loaded...
+## marker names loaded...
+## chromosome data loaded...
+## map data loaded...
+## allele coding data loaded...
+## strand data loaded...
+## genotype data loaded...
+## snp.data object created...
+## assignment of gwaa.data object FORCED; X-errors were not checked!
+```
 
 **NOTE: The code below will check if you have GenABEL available on your machine,
-if it is not available the code in this section can not really be executed.**
+if it is not available the code in this section can not really be executed.
+But, we will show you the expected results.**
 
 `mega` should be the same as the `srdta` gwaa.data-class object. You can
-compare them however you prefer.    For example, in R, type:
+compare them however you prefer.    For example, in R, if you type:
 
-```{r strs}
+```{r strs, eval=FALSE}
 GotGenABEL = require("GenABEL", quietly=FALSE)
 str(mega)
 if (GotGenABEL) str(srdta)
+```
+You will see:
+```
+GotGenABEL = require("GenABEL", quietly=FALSE)
+str(mega)
+
+## Formal class 'gwaa.data' [package "GenABEL"] with 2 slots
+##   ..@ phdata:'data.frame':   2500 obs. of  8 variables:
+##   .. ..$ id     : chr [1:2500] "1_p1" "2_p2" "3_p3" "4_p4" ...
+##   .. ..$ sex    : int [1:2500] 1 1 0 1 1 0 0 1 0 0 ...
+##   .. ..$ age    : num [1:2500] 43.4 48.2 37.9 53.8 47.5 45 52 42.5 29.7 45.8 ...
+##   .. ..$ qt1    : num [1:2500] -0.58 0.8 -0.52 -1.55 0.25 0.15 -0.56 -9 -2.26 -1.32 ...
+##   .. ..$ qt2    : num [1:2500] 4.46 6.32 3.26 888 5.7 4.65 4.64 5.77 0.71 3.26 ...
+##   .. ..$ qt3    : num [1:2500] 1.43 3.9 5.05 3.76 2.89 1.87 2.49 2.68 1.45 0.85 ...
+##   .. ..$ bt     : int [1:2500] 0 1 1 1 1 0 0 1 0 0 ...
+##   .. ..$ default: int [1:2500] 0 0 0 0 0 0 0 0 0 0 ...
+##   ..@ gtdata:Formal class 'snp.data' [package "GenABEL"] with 11 slots
+##   .. .. ..@ nbytes    : num 625
+##   .. .. ..@ nids      : int 2500
+##   .. .. ..@ nsnps     : int 833
+##   .. .. ..@ idnames   : chr [1:2500] "1_p1" "2_p2" "3_p3" "4_p4" ...
+##   .. .. ..@ snpnames  : chr [1:833] "rs10" "rs18" "rs29" "rs65" ...
+##   .. .. ..@ chromosome: Factor w/ 1 level "1": 1 1 1 1 1 1 1 1 1 1 ...
+##   .. .. .. ..- attr(*, "names")= chr [1:833] "rs10" "rs18" "rs29" "rs65" ...
+##   .. .. ..@ map       : Named num [1:833] 2500 3500 5750 13500 14250 ...
+##   .. .. .. ..- attr(*, "names")= chr [1:833] "rs10" "rs18" "rs29" "rs65" ...
+##   .. .. ..@ coding    :Formal class 'snp.coding' [package "GenABEL"] with 1 slot
+##   .. .. .. .. ..@ .Data: raw [1:833] 08 0b 0c 07 ...
+##   .. .. ..@ strand    :Formal class 'snp.strand' [package "GenABEL"] with 1 slot
+##   .. .. .. .. ..@ .Data: raw [1:833] 00 00 00 00 ...
+##   .. .. ..@ male      : Named int [1:2500] 1 1 0 1 1 0 0 1 0 0 ...
+##   .. .. .. ..- attr(*, "names")= chr [1:2500] "1_p1" "2_p2" "3_p3" "4_p4" ...
+##   .. .. ..@ gtps      :Formal class 'snp.mx' [package "GenABEL"] with 1 slot
+##   .. .. .. .. ..@ .Data: raw [1:625, 1:833] 55 59 55 a5 ...
+
+
+if (GotGenABEL) str(srdta)
+
+
+## Formal class 'gwaa.data' [package "GenABEL"] with 2 slots
+##   ..@ phdata:'data.frame':   2500 obs. of  7 variables:
+##   .. ..$ id : chr [1:2500] "p1" "p2" "p3" "p4" ...
+##   .. ..$ sex: int [1:2500] 1 1 0 1 1 0 0 1 0 0 ...
+##   .. ..$ age: num [1:2500] 43.4 48.2 37.9 53.8 47.5 45 52 42.5 29.7 45.8 ...
+##   .. ..$ qt1: num [1:2500] -0.58 0.8 -0.52 -1.55 0.25 0.15 -0.56 NA -2.26 -1.32 ...
+##   .. ..$ qt2: num [1:2500] 4.46 6.32 3.26 888 5.7 4.65 4.64 5.77 0.71 3.26 ...
+##   .. ..$ qt3: num [1:2500] 1.43 3.9 5.05 3.76 2.89 1.87 2.49 2.68 1.45 0.85 ...
+##   .. ..$ bt : int [1:2500] 0 1 1 1 1 0 0 1 0 0 ...
+##   ..@ gtdata:Formal class 'snp.data' [package "GenABEL"] with 11 slots
+##   .. .. ..@ nbytes    : num 625
+##   .. .. ..@ nids      : int 2500
+##   .. .. ..@ nsnps     : int 833
+##   .. .. ..@ idnames   : chr [1:2500] "p1" "p2" "p3" "p4" ...
+##   .. .. ..@ snpnames  : chr [1:833] "rs10" "rs18" "rs29" "rs65" ...
+##   .. .. ..@ chromosome: Factor w/ 1 level "1": 1 1 1 1 1 1 1 1 1 1 ...
+##   .. .. .. ..- attr(*, "names")= chr [1:833] "rs10" "rs18" "rs29" "rs65" ...
+##   .. .. ..@ map       : Named num [1:833] 2500 3500 5750 13500 14250 ...
+##   .. .. .. ..- attr(*, "names")= chr [1:833] "rs10" "rs18" "rs29" "rs65" ...
+##   .. .. ..@ coding    :Formal class 'snp.coding' [package "GenABEL"] with 1 slot
+##   .. .. .. .. ..@ .Data: raw [1:833] 08 0b 0c 03 ...
+##   .. .. ..@ strand    :Formal class 'snp.strand' [package "GenABEL"] with 1 slot
+##   .. .. .. .. ..@ .Data: raw [1:833] 01 01 02 01 ...
+##   .. .. ..@ male      : Named int [1:2500] 1 1 0 1 1 0 0 1 0 0 ...
+##   .. .. .. ..- attr(*, "names")= chr [1:2500] "p1" "p2" "p3" "p4" ...
+##   .. .. ..@ gtps      :Formal class 'snp.mx' [package "GenABEL"] with 1 slot
+##   .. .. .. .. ..@ .Data: raw [1:625, 1:833] 55 59 55 a5 ...
 ```
 
 You can compare these printouts by eye.  Alternatively, 
 the function *Mega2GenABELtst()* can be used to
 compare the phenotype data, genotype data, and object metadata, item by item.
+If you type:
 
-```{r mega2genabeltst}
+```{r mega2genabeltst, eval=FALSE}
 GotGenABEL = require("GenABEL", quietly=FALSE)
 options(max.print = 30)
 Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
 ```
+You will see:
+```
+GotGenABEL = require("GenABEL", quietly = FALSE)
+options(max.print = 30)
+Mega2GenABELtst(mega_ = mega, gwaa_ = srdta)
+
+## all(mega_@phdata$sex == gwaa_@phdata$sex) [1] TRUE
+## all(mega_@phdata$age == gwaa_@phdata$age) [1] TRUE
+## all(mega_@phdata$qt1 == gwaa_@phdata$qt1) [1] TRUE
+## all(mega_@phdata$qt2 == gwaa_@phdata$qt2) [1] TRUE
+## all(mega_@phdata$qt3 == gwaa_@phdata$qt3) [1] TRUE
+## all(mega_@phdata$bt == gwaa_@phdata$bt) [1] TRUE
+## all(mega_@gtdata@nids == gwaa_@gtdata@nids)[1] TRUE
+## all(mega_@gtdata@nsnps == gwaa_@gtdata@nsnps)[1] TRUE
+## all(mega_@gtdata@nbytes == gwaa_@gtdata@nbytes)[1] TRUE
+## all(mega_@gtdata@idnames == gwaa_@gtdata@idnames)[1] FALSE
+## all(mega_@gtdata@snpnames == gwaa_@gtdata@snpnames)[1] TRUE
+## all(mega_@gtdata@chromosome == gwaa_@gtdata@chromosome)[1] TRUE
+## all(mega_@gtdata@map == gwaa_@gtdata@map)[1] TRUE
+## all(mega_@gtdata@male == gwaa_@gtdata@male)[1] TRUE
+## all(mega_@gtdata@coding == gwaa_@gtdata@coding)[1] FALSE
+## all(mega_@gtdata@strand == gwaa_@gtdata@strand)[1] FALSE
+## all(mega_@gtdata@gtps == gwaa_@gtdata@gtps)[1] FALSE
+## all(mega_@gtdata == gwaa_@gtdata)[1] TRUE
+##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [1] "markers that differ"
+## [1] "markers that differ"
+##     locus_link locus_link_fill MarkerName chromosome position
+## 4            9               9       rs65          1    13500
+## 8           13              13      rs130          1    27250
+## 10          15              15      rs150          1    33250
+## 20          25              25      rs324          1    82500
+## 23          28              28      rs348          1    88000
+## 24          29              29      rs361          1    90000
+##  [ reached getOption("max.print") -- omitted 209 rows ]
+## [1] "allele values for markers that differ"
+## [1] "allele values for markers that differ"
+##     locus_link pId.x AlleleName.x Frequency.x indexX.x pId.y AlleleName.y
+## 4            9    19            A  0.28027754        1    20            T
+## 8           13    27            A  0.30622110        1    28            G
+## 10          15    31            A  0.65998312        1    32            C
+##     Frequency.y indexX.y
+## 4    0.71972246        2
+## 8    0.69377890        2
+## 10   0.34001688        2
+##  [ reached getOption("max.print") -- omitted 212 rows ]
+```
+
 **NOTE
 These results are somewhat disappointing.  But ...
 
