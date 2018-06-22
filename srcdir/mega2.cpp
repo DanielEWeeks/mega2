@@ -728,9 +728,6 @@ int             main(int argc, char **argv, char **env)
         base_pair_position_index = Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option;
         genetic_distance_sex_type_map = Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option;
 
-        if (! dump_dbCompress)
-            BatchValueGet(dbCompress, "DBcompression");
-
 //      MARKER_SCHEME = Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option;
         BatchValueIfSet(MARKER_SCHEME, "Value_Marker_Compression");
         if (marker_scheme_mega2_opts)
@@ -749,6 +746,10 @@ int             main(int argc, char **argv, char **env)
         strcpy(Mega2Batch, "MEGA2.BATCH");
         backup_file(&(Mega2Batch[0]));
     }
+
+    if (! dump_dbCompress)
+        BatchValueGet(dbCompress, "DBcompression");
+
 
     if (AnalyInputMode == NOEXEC_INPUTMODE)
         AnalyInputMode = InputMode;

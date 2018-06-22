@@ -295,7 +295,7 @@ void menu0()
             printf("%c%d", idx == set ? '*' : ' ', idx);
             printf(") %-*s\n", line_len, "Select Mega2 database read mode");
             idx++;
-
+        /*
             printf("%c%d", idx == set ? '*' : ' ', idx);
             printf(") %-*s\n", line_len, "Select Mega2 database create \"then use\" mode");
             idx++;
@@ -303,14 +303,14 @@ void menu0()
             printf("%c%d", idx == set ? '*' : ' ', idx);
             printf(") %-*s\n", line_len, "Select Mega2 \"NO database\" legacy mode");
             idx++;
-
+        */
             printf("Select from options 0-%d> ", idx-1);
 
             fcmap(stdin, "%s", selectstr);
             newline;
             draw_line();
             sscanf(selectstr, "%d", &select);
-            if (select && select < 5)
+            if (select && select < idx)
                 set = select;
         }
         BatchValueSet(set, "Input_Database_Mode");
@@ -323,12 +323,14 @@ void menu0()
     } else if (set == 2) {
         database_dump = 0;
         database_read = 1;
+/*
     } else if (set == 3) {
         database_dump = 1;
         database_read = 1;
     } else if (set == 3) {
         database_dump = 0;
         database_read = 0;
+*/
     }
 
 //  printf("dump %d, read %d\n", database_dump, database_read);
