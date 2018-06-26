@@ -121,7 +121,6 @@ protected:
     char **phenames;
     int   *phetypes;
 
-    Hmapsi markerMap;
     Hmapsi sampleMap;
 };
 

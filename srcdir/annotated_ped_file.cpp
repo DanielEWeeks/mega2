@@ -4390,8 +4390,8 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     if (Input->GetOps()->use_getops() && !xcf) {
         LTop = Input->GetOps()->do_names(names_fn);
 	    ann_files = 1;
+
     } else if(Input->GetOps()->use_getops() && xcf){
-        std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
 
         char **phe_names = NULL;
         int *phe_types   = NULL;
@@ -4403,17 +4403,11 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             phe_types[tot_cols] = PLINK.traitType;
             tot_cols++;
         }
-      //Input->GetOps()->do_phe_names(phe_file, &phe_names, &phe_types, phe_cols);
         Input->GetOps()->do_phe_names(phe_file, phe_names, phe_types, tot_cols);
 
-        std::vector<m2_map> vcf_maps;
-        Input->GetOps()->do_map(vcf_maps);
-        vcf_map = save_vcf_map = vcf_maps[0];
-
         LTop = Input->GetOps()->do_names(names_fn);
-
-        read_m2_map_as_names_file(vcf_map, &LTop, tot_cols, phe_names, phe_types);
         ann_files = 1;
+
     } else if (PLINK.plink || xcf) {
         char **phe_names = NULL;
         int *phe_types   = NULL;
@@ -4622,6 +4616,9 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         }
     }
 
+    for (size_t i = 0; i < additional_maps.size(); i++) {
+        additional_maps[i].gc();
+    }
     free(AnnotatedFileInfo.map_file_columns);
 
     if (EXLTop->MapCnt > 0) {

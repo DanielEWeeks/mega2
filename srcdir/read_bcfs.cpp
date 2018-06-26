@@ -468,7 +468,7 @@ void ReadBCFs::build_markers_and_samples() {
         bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
 
         int count = 0;
-
+        char sname[50];
         while ( bcf_sr_next_line(bcfargs->files) ) {
             bcf1_t * line = bcfargs->files->readers[0].buffer[0];
             if ( subset_vcf(bcfargs, line) ) {
@@ -483,9 +483,8 @@ void ReadBCFs::build_markers_and_samples() {
                 if (strncmp(posp, "chr", 3) == 0) posp += 3;
 //rvb: and another
                 if (name == ".") {
-                    char * pos = new char[50];
-                    sprintf(pos, "chr%s_%d", posp, line->pos + 1);
-                    name = pos;
+                    sprintf(sname, "chr%s_%d", posp, line->pos + 1);
+                    name = sname;
                 }
 
                 BCFMarker * line_marker = new BCFMarker(name, posp, line->pos + 1, alleles);// pos + 1 matches the VCF line pos field.
@@ -524,6 +523,8 @@ void ReadBCFs::build_markers_and_samples() {
 
 
 void ReadBCFs::check_dups() {
+    Hmapsi markerMap;
+
     SECTION_LOG_INIT(dup_marker_relabeled);
     for(int i = 0; i < this->marker_count; i++){
         Str name = this->markers[i]->name;
@@ -543,6 +544,9 @@ void ReadBCFs::check_dups() {
     }
 
     SECTION_LOG_FINI(dup_marker_relabeled);
+
+    markerMap.clear();
+    Hmapsi().swap(markerMap);
 }
 
 void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
@@ -969,8 +973,6 @@ annotated_ped_rec * ReadBCFs::build_bcf_ped(linkage_locus_top *LTop) {
 }
 
 void ReadBCFs::do_gc() {
-    markerMap.clear();
-    Hmapsi().swap(markerMap);
 
     sampleMap.clear();
     Hmapsi().swap(sampleMap);
@@ -981,6 +983,9 @@ void ReadBCFs::do_gc() {
     filelist.clear();
     vector<string>().swap(filelist);
 
+    for (MarkerVectorP bpp = markers.cbegin(); bpp != markers.cend(); bpp++) {
+        delete *bpp;
+    }
     markers.clear();
     MarkerVector().swap(markers);
 }
