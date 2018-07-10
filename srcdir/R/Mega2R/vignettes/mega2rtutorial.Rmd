@@ -1378,14 +1378,161 @@ str(seqsimgwaa)
 ##   .. .. .. .. ..@ .Data: raw [1:345, 1:1000] 59 55 55 55 ...
 ```
 
-# 10 Regression testing
+# 10 Converting Mega2R data to GDS (CoreArray) format
+
+CoreArray Genetic Data Structure (GDS)^[Zheng, Xiuwen, David Levine, Jess Shen, Stephanie M. Gogarten, Cathy Laurie, and Bruce S. Weir. 2012. “A High-Performance Computing Toolset for Relatedness and Principal Component Analysis of Snp Data.” Bioinformatics (Oxford, England) 28 (24):3326–8. https://doi.org/10.1093/bioinformatics/bts606.]
+is a C++ package available from SourceForge^[http://sourceforge.net] as http://corearray.sourceforge.net.
+The Bioconductor^[Gentleman, Robert C., Vincent J. Carey, Douglas M. Bates, Ben Bolstad, Marcel Dettling, Sandrine Dudoit, Byron Ellis, et al. 2004. “Bioconductor: Open Software Development for Computational Biology and Bioinformatics.” Genome Biology 5 (10):1–16. https://doi.org/10.1186/gb-2004-5-10-r80.]
+package 
+`gdsfmt` (http://bioconductor.org/packages/gdsfmt) provides a machine independent 
+R^[R Core Team. 2016. “R: A Language and Environment for Statistical Computing.”]
+language interface to GDS.  `gdsfmt` provides access to the underlying
+named vector hierarchy and named matrix hierarchy.  The Bioconductor package
+SeqArray (http://www.bioconductor.org/packages/SeqArray)
+uses the 
+named CoreArray GDS variables to store (and retrieve) a complete VCF file.  The SeqArray API can be used to apply analysis
+functions to the underlying GWAS data.  In addition, SeqArray data may be converted to a related format
+SNPArray (Note the package is called 
+SNPRelate (http://www.bioconductor.org/packages/SNPRelate).)
+which allows linkage analysis to be performed on the GWAS data.
+
+It is not our intention in this document to explain the CoreArray structure or all the structures that
+are used to represent the VCF GWS data.  The reader is encourage to examine the above references.  If your data
+were available in VCF format, or another format that can be processed to produce a Mega2 database, the following
+section shows how to convert the Mega2 database to either a SNPArray or SeqArray.
+
+Note: Since the packages used here are sourced from Bioconductor, installation is performed by:
+```
+        source("http://bioconductor.org/biocLite.R")
+        biocLite("gdsfmt")
+        biocLite("SeqggggggggggggggArray")
+        biocLite("SNPArray")
+```
+After the installation is performed, you may use the 'library()' function to add the code to your R workspace.
+
+## 10.1 CoreArray features vs Mega2R database features 
+
+There are two important issues that are necessary to understand when converting a Mega2R database to CoreArray
+format.  First, because of the design of CoreArray it is easier (and probably more efficient) to add sucessive new
+columns to the genotype array.  The Mega2R design makes it easy to retrieve complete columns representing samples
+of arbitrary markers.  Thus, the default usage is to create a genotype array that is indexed by sample and then marker.
+This layout is optimal to fetch columns of samples from the array.  However, if there are multiple program that you 
+will use that fetch some markers for selected samples, the genotype array should be organized as markers by samples.
+In this case, it would be best to create the array with the latter organization; there is an option to make this
+choice.
+
+Second, SeqArray is designed to store all the information in any VCF file.  In particular, it can distinguish
+both haplotypes and genotypes markers.  And it can represent biallelic and multi-allelic markers.  Mega2R can
+not handle either of these options. (Actually, Mega2R does fine with multi-alleleic markers but that is not yet
+supported by Mega2gdsfmt.)  Mega2R will always present the heterozygous genotype value as Ref Allele, then
+Alt allele.  The SNPArray format, like Mega2R, does not support haplotypes or multi-alleleic markers.
+
+## 10.2 Creating a GDS file using Mega2R
+
+The Mega2R function, `Mega2gdsfmt()`, creates a '.gds' file from the Mega2R database; it is called as shown below
+```
+    Mega2gdsfmt(filename = "test.gds", markers = NULL, snp.order = FALSE, SeqArray = FALSE, envir = ENV)
+
+The arguments are:
+
+```
+
+- *filename*  - CoreArray (gds) file to create
+
+- *markers*  - data frame of markers to be processed
+
+- *snp.order* - TRUE indicates that the "genotype" data matrix has SNP as the first index
+   (which changes more quickly than subsequent indices).  FALSE indicates that SAMPLE is the
+   the first index.  Default is FALSE.
+
+- *SeqArray* - TRUE uses SeqArray labels for the CoreArray elements.  FALSE uses SNPRelate labels.
+   Default is FALSE.
+
+- *envir* - 'environment' containing SQLite database and other globals.
+
+- *returns* - the "filename" file containing the CoreArray data.  Then returns an internal
+   pointer, class .gds, to the file data.
+
+
+We will illustrate the CoreArray files when they are created.  
+```{r mega2gds}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
+db = file.path(where_mega2rtutorial_data(), "seqsimr.db")
+ENV = read.Mega2DB(db)
+```
+
+Below, we assume that a Mega2 database was stored in
+the environment, `ENV`. If this is not the case, supply the
+named argument, `envir`, wherever `ENV` is used.
+
+### 10.2.1 Creating the GDS file in SeqArray gdsfmt format
+Type:
+
+```{r mega2gdsfx1}
+# NOTE: the gds file to be created must be closed with the function below,
+# or by using an on.exit(closefn.gds(<name>))
+showfile.gds(closeall=T, verbose=F)
+
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
+gdsfile = file.path(where_mega2rtutorial_data(), "foo.gds")
+gdsn = Mega2gdsfmt(gdsfile, ENV$markers[ENV$markers$chromosome==1 ,], SeqArray=TRUE)
+```
+
+Note: The line above places the data for only chromosome 1 in the gds file.
+(Recall that our simulated data is only on chromosome 1).
+Note: In general, you can filter the second argument, `ENV$markers`, as needed.
+If the second argument is not present, all the markers are written out.
+
+The created gds file with its variable heirarchy values is listed below:
+```{r, mega2gdspr1}
+print(gdsn)
+closefn.gds(gdsn)
+```
+### 10.2.2 Creating the SNPRelate file in SNPArray gdsfmt format
+Type:
+
+```{r mega2gdsfx2,message=FALSE,warning=FALSE}
+# NOTE: the gds file to be created must be closed with the function below,
+# or by using an on.exit(closefn.gds(<name>))
+showfile.gds(closeall=T, verbose=F)
+```
+
+```{r mega2gdsfx3,message=FALSE,warning=FALSE}
+# Before issuing the next command, make sure you have issued
+# this command `dump_mega2rtutorial_data()` first
+# as instructed in the "Tutorial Data' section above.
+gdsfile = file.path(where_mega2rtutorial_data(), "foo.gds")
+gdsn = Mega2gdsfmt(gdsfile, ENV$markers[ENV$markers$chromosome==1 ,], SeqArray=FALSE)
+```
+
+Note: The line above places the data for only chromosome 1 in the gds file.
+(Recall that our simulated data is only on chromosome 1).
+Note: In general, you can filter the second argument, `ENV$markers`, as needed.
+If the second argument is not present, all the markers are written out.
+
+The generated file and contents are listed below:
+```{r, mega2gdspr2}
+print(gdsn)
+closefn.gds(gdsn)
+```
+
+You can process these files by programs that are designed to read them.  For example, 
+the SNPRelate library has functions that perform: LD-based pruning, PCA, and relatedness
+by IBD.  The SeqArray format file has functions that perform: missing rates for variants,
+missing rates for samples, allele frequencies as well as PCA and inbreeding coefficients.
+
+# 11 Regression testing
 
 To verify that the functions described above have worked correctly,
 we can compare their output files to those created by Mega2, itself, to
 verify that they are identical, as expected. This type of testing is
 known as regression testing.
 
-## 10.1 VCF regression
+## 11.1 VCF regression
 
 If you have a executable copy of Mega2, you can run the code below using
 the MEGA2.BATCH.vcf file and provided example database.
@@ -1554,7 +1701,7 @@ The *diff* should show:
 ## Files vcf/vcf.01.vcf and vcfr/vcf.01.vcf are identical
 ```
 
-## 10.2 GenABEL regression
+## 11.2 GenABEL regression
 
 This test is a bit more complicated.
 We intend to verify that the object generated 
@@ -2045,8 +2192,42 @@ such rearrangement.  Because **gtdata\@coding** and **gtdata\@gtps**
 compare the encoded allele pairs and corresponding encoded genotypes,
 they sometimes differ.
 
+## 11.3 SeqArray regression
 
-# 11 Next steps
+Rather than spell out all the details, this time we will only sketch how to match the 
+SeqArray/SNPArray files calculated by R library APIs and converted from a Mega2R
+database.
+
+First, you will need to find a suitable VCF file.  (As stated earlier, it would be preferable if
+the genotype data were without haplotypes and if the markers were bi-alleleic.)
+Section **11.1**
+explains how to convert a VCF file to a Mega2 database.  Earlier, in Section **10.2/10.2.1**
+and
+**10.2/10.2.2**,
+we showed how to convert the Mega2 database to SeqArray format and SnpArray format, respectively.
+
+Next, the `SeqArray` library contains a function, `seqVCF2SEQ()`, that converts a VCF file to a SeqArray.
+In addition, `SeqArray` contains another function, `seqSEQ2SNP()`, that converts a CoreArray file in SeqArray
+format to SNPArray format.
+
+Our goal is to compare the underlying data calculated in the above two paragraphs.  Let us illustrate with
+the SNPArray data.
+The Mega2R calculation gives you an open `gdsfmt` file descriptor.  If you `print` the descriptor, it will
+show all the CoreArray variables; one of which is 'sample.id'.  The native calculation uses `seqVCF2SEQ()` and 
+then `seqSEQ2SNP()` to produce SNPArray data in a gdsfmt file.
+Open this gdsfmt file
+using `openfn.gds(<file name>)`, and then proceed to print the gds object and look at its variables.  To compare
+both versions of 'sample.id's, use the low level gdsfmt primitives, 'read.gsdn', and 'index.gdsn' as in:
+```
+        all(read.gdsn(index.gdsn(<file name open descriptor>, 'sample.id')) ==
+            read.gdsn(index.gdsn(Mega2Rgdsfmt descriptor>, 'sample.id')) )
+```
+The above test should be applied to all the variables in the gds object hierarchy.
+Further, a similar test can be applied to the
+gds variables of a SeqArray, using the SeqArray variable hierarchy rather than those of the SNPArray.
+
+
+# 12 Next steps
 
 If you are left with questions as to how you can use Mega2R for your own research, you can:
 
@@ -2062,6 +2243,9 @@ document by providing implementation details.
 clean_mega2rtutorial_data()
 ```
 
-# 12 Acknowlegements
+# 13 Acknowlegements
 
 The Mega2 C++ program and this Mega2R R package are both open source and are freely available, along with extensive documentation, from our https://watson.hgen.pitt.edu/register web site. This work was supported by NIH grant R01 GM076667 (PI: Weeks). 
+
+
+# 14 References
