@@ -2016,6 +2016,14 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
                                       &untyped_ped_opt,
                                       LTop, col2locus, analysis);
         Top->EXLTop = EXLTop;
+
+        fclose(pfilep); fclose(lfilep);
+
+        if (Top == NULL) {
+            errorvf("Reading pedigree file.\n");
+            EXIT(DATA_INCONSISTENCY);
+        }
+
     } else {
         // Process what we hope to be linkage file format...
         
@@ -2087,26 +2095,27 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
 #endif
             write_ped_stats(Top);
         }
+
+        fclose(pfilep); fclose(lfilep);
+
+        if (Top == NULL) {
+            errorvf("Reading pedigree file.\n");
+            EXIT(DATA_INCONSISTENCY);
+        }
+
+        if (database_dump || ! database_read) {
+            extern void pedtree_markers_check(linkage_ped_top *LPedTreeTop, analysis_type analysis);
+
+            makeped(Top, analysis);  // if --db, might connect loops based on analysis
+
+            pedtree_markers_check(Top, analysis);
+        }
     }
 
-    fclose(pfilep); fclose(lfilep);
-
-    if (Top == NULL) {
-        errorvf("Reading pedigree file.\n");
-        EXIT(DATA_INCONSISTENCY);
-    }
     /* removed some code from here, should be in the read_locus_file function */
 
     // set this so that the omit_peds() calls inside the options files do not have any effect
     untyped_ped_opt=2;
-    
-    if (database_dump || ! database_read) {
-        extern void pedtree_markers_check(linkage_ped_top *LPedTreeTop, analysis_type analysis);
-
-        makeped(Top, analysis);  // if --db, might connect loops based on analysis
-
-        pedtree_markers_check(Top, analysis);
-    }
 
     return Top;
 }
