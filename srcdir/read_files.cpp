@@ -1357,6 +1357,11 @@ linkage_ped_top *read_linkage_ped_file(FILE *filep,
 
     Top->PedCnt = PedCnt;
     Top->Ped = CALLOC((size_t) PedCnt, linkage_ped_tree);
+//Ped*
+    if (Top->PTop == NULL) {
+        Top->PedBroken = Top->Ped;
+        Top->PedRaw = Top->Ped;
+    }
     for (ped = 0; ped < PedCnt; ped++) {
         NewPed = (linkage_ped_tree *) pop_first_list_entry(PedList);
         copy_lpedtree1(NewPed, &(Top->Ped[ped]));
@@ -2069,9 +2074,9 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
         mssgf("Input pedigree data contains:");
 
         order_heterozygous_allele(Top);
-
-        Top->PedRaw    = Top->Ped;
-        Top->PedBroken = Top->Ped;
+//Ped*
+//      Top->PedRaw    = Top->Ped;
+//      Top->PedBroken = Top->Ped;
 
         write_ped_stats(Top);
         if (omitfl_name != NULL) {

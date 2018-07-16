@@ -1443,6 +1443,7 @@ void count_lgenotypes(linkage_ped_top *Top, size_t *num_inds,
                         continue;
                     }
                     */
+//Ped*
                     linkage_ped_rec *pBp = Top->PedBroken[i].Entry + j;
                     if (Mega2Status <= INSIDE_RECODE && Top->LocusTop->PedRecDataType == Raw_postmake) {
                         this_person_typed = num_typed_2Ralleles(pBp->Marker, k);
