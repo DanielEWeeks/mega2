@@ -295,11 +295,11 @@ void menu0()
             printf("%c%d", idx == set ? '*' : ' ', idx);
             printf(") %-*s\n", line_len, "Select Mega2 database read mode");
             idx++;
-        /*
+
             printf("%c%d", idx == set ? '*' : ' ', idx);
             printf(") %-*s\n", line_len, "Select Mega2 database create \"then use\" mode");
             idx++;
-
+        /*
             printf("%c%d", idx == set ? '*' : ' ', idx);
             printf(") %-*s\n", line_len, "Select Mega2 \"NO database\" legacy mode");
             idx++;
@@ -323,10 +323,10 @@ void menu0()
     } else if (set == 2) {
         database_dump = 0;
         database_read = 1;
-/*
     } else if (set == 3) {
         database_dump = 1;
         database_read = 1;
+/*
     } else if (set == 3) {
         database_dump = 0;
         database_read = 0;
