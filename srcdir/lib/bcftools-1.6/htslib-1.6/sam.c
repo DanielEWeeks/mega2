@@ -1205,7 +1205,11 @@ err_recover:
         ret = sam_parse1(&fp->line, h, b);
         fp->line.l = 0;
         if (ret < 0) {
+#ifdef _mega2_
+            hts_log_warning("Parse error at line %" PRI64 "d", (long long)fp->lineno);
+#else
             hts_log_warning("Parse error at line %lld", (long long)fp->lineno);
+#endif
             if (h->ignore_sam_err) goto err_recover;
         }
         return ret;

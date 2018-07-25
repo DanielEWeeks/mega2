@@ -85,6 +85,7 @@ void ReadBgen2::build_genotypes(linkage_locus_top *LTop, annotated_ped_rec *pers
     build_internal_genotypes(LTop, persons, gh, veca);
 }
 
+void xxyy( std::string const& xy ) { }
 void BgenParserGenotypeReadHelper::genotypes_init()
 {
 //  asm("int $3");
@@ -96,8 +97,9 @@ void BgenParserGenotypeReadHelper::genotypes_init()
        ~noop()  {}
         void operator() ( std::string const& id ) { }
     };
-    noop xx(this);
-    get_sample_ids( xx );
+//  noop xx(this);
+//  get_sample_ids( xx );
+    get_sample_ids( xxyy );
 #if 0
     get_sample_ids(
 /*
@@ -187,7 +189,7 @@ void BgenParserGenotypeReadHelper::genotypes_end()
 
 void BgenParser::fix_marker_pos(string& ccpos, unsigned long pos)
 {
-    char cpos[10];
+    char cpos[16];
     sprintf(cpos, "%ld", pos);
     ccpos = string(cpos);
 }

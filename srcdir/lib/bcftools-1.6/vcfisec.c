@@ -85,7 +85,12 @@ void mkdir_p(const char *fmt, ...)
         if ( !*p ) break;
         char ctmp = *p;
         *p = 0;
+#if defined(_mega2_) && defined(_WIN32)
+        #include <direct.h>
+        int ret = _mkdir(tmp);
+#else
         int ret = mkdir(tmp,S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#endif
         if ( ret!=0 && errno!=EEXIST ) error("Error creating directory %s: %s\n", path,strerror(errno));
         *p = ctmp;
         while ( *p && *p=='/' ) p++;

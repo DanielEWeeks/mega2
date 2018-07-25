@@ -48,7 +48,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `bz2' library (-lbz2). */
-#define HAVE_LIBBZ2 1
+/* #undef HAVE_LIBBZ2 */
 
 /* Define if libcurl file access is enabled. */
 /* #undef HAVE_LIBCURL */
@@ -63,7 +63,11 @@
 #define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have a working `mmap' system call. */
+#if defined(_mega2_) && defined(_WIN32)
+/* #undef HAVE_MMAP */
+#else
 #define HAVE_MMAP 1
+#endif
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1

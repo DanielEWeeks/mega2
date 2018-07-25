@@ -369,11 +369,11 @@ void join(Vecs &vec, Str& ans, Cstr& sep) {
     }
 }
 
-Str& rtrim(Str& str, Cstr& trim=" \t\n\r") {
+Str& rtrim(Str& str, Cstr& trim) {
     return str.erase(str.find_last_not_of(trim)+1);
 }
 
-Str& ltrim(Str& str, Cstr& trim=" \t\n\r") {
+Str& ltrim(Str& str, Cstr& trim) {
     return str.erase(0, str.find_first_not_of(trim));
 }
 

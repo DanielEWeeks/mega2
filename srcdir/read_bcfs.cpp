@@ -31,6 +31,9 @@
  *  read lines reseting stringstream/vector each line
  */
 
+// for centos ...
+#define __STDC_LIMIT_MACROS 1
+
 #include <stdlib.h>
 
 #include <iostream>
@@ -80,6 +83,8 @@ extern void           Exit(int arg, const char *file, const int line, const char
 #define cbegin() begin()
 #define cend()   end()
 
+SECTION_LOG_INIT(dup_marker_relabeled);
+
 using namespace std;
 
 /*
@@ -91,7 +96,7 @@ void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[]) {
     choiceA[idx] = site_bcfs_args_i;
     idx++;
 
-    printf("%2d) %-*s%s%s\n", idx, line_len-11, "BCF File:","[required] ", BatchItemGet("BCFs_File")->value.name);
+    printf("%2d) %-*s%s%s\n", idx, line_len-11, "Template File:","[required] ", BatchItemGet("BCFs_File")->value.name);
     choiceA[idx] = site_bcfs_file_i;
     idx++;
 }
@@ -110,7 +115,12 @@ int ReadBCFs::do_menu_parse(int choice_) {
     if(choice_ == site_bcfs_file_i) {
         while (1){
             draw_line();
-            printf("Enter a BCF file or a file that contains a list of BCF files to be read:\n");
+            if(Input->input_format == in_format_bcfs)
+                printf("Enter a BCF file or a file that contains a list of BCF files to be read:\n");
+            else if(Input->input_format == in_format_gzcfs)
+                printf("Enter a VCF.gz file or a file that contains a list of VCF.gz files to be read:\n");
+            else if(Input->input_format == in_format_vcfs)
+                printf("Enter a VCF file or a file that contains a list of VCF files to be read:\n");
             fcmap(stdin, "%s", bcfs_file);
             newline;
 
@@ -120,6 +130,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
             }
             else {
                 BatchValueSet(bcfs_file, "BCFs_File");
+                ret = 1;
                 break;
             }
         }
@@ -128,15 +139,25 @@ int ReadBCFs::do_menu_parse(int choice_) {
     else if(choice_ == site_bcfs_args_i) {
         draw_line();
         printf("\nCurrent BCF parameters:  %s\n", BatchItemGet("BCF_Args")->value.name);
-        printf("  For more additional information on BCFTools flags\n");
-        printf("see the documentation at samtools.github.io/bcftools/bcftools\n");
-        printf("Valid options in Mega2 include:\n");
-        printf("--known  --novel --phased --exclude-phased --uncalled --exclude-uncalled\n");
-        printf("--min-ac --max-ac --min-alleles --max-alleles[INT]\n");
-        printf("--min-af --max-af [FLOAT]");
-        printf("--exclude --include [EXPRESSION]\n");
-        printf("--regions [chr:to-from] --regions-file [FILE]\n");
-        printf("--apply-filters [LIST]\n");
+        printf("   For more additional information on BCFTools flags\n");
+        printf("see documentation at samtools.github.io/bcftools/bcftools.\n");
+        printf("Mega2's BCFTools option is based off of BCFTools view\n");
+        printf("and allows a subset of BCFTools view flags.\n");
+        printf("\nValid BCFTools view options for Mega2 include:\n");
+        printf("--known                     --novel \n");
+        printf("--phased                    --exclude-phased \n");
+        printf("--uncalled                  --exclude-uncalled\n");
+        printf("--min-ac [INT]              --max-ac [INT] \n");
+        printf("--min-alleles [INT]         --max-alleles[INT]\n");
+        printf("--min-af [FLOAT]            --max-af [FLOAT]\n");
+        printf("--exclude [EXPRESSION]      --include [EXPRESSION]\n");
+        printf("--types [LIST]              --exclude-types [LIST]\n");
+        printf("--regions [chr:to-from]     --regions-file [FILE]\n");
+        printf("--targets [chr:to-from]     --targets-file [FILE]\n");
+        printf("--samples [LIST]            --samples-file [FILE]\n");
+        printf("--force-samples             --apply-filters [LIST]\n");
+        printf("and their single letter counterparts.\n\n");
+        printf("To remove all current BCFTools options enter \"clear\"\n");
 
         while (1) {
             printf("Please enter BCFTools arguments > \n");
@@ -164,7 +185,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
                 break;
             }
             if(extraargs.find("-") != 0) {
-                mssgvf("BCFTools options must begin with \"--\"\n");
+                mssgvf("BCFTools options must begin with \"-\", \"--\", or be \"clear\".\n");
                 continue;
             }
 
@@ -182,21 +203,31 @@ int ReadBCFs::do_menu_parse(int choice_) {
             argv = (char **) malloc(argc * sizeof(char *));
             for (size_t ii = 0; ii < argc; ii += 1) {
                 argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
-                argv[ii] = &args[ii][0];
+                strcpy(argv[ii], &args[ii][0]);
             }
 
             int test = mbi->test_args(argc, argv);
+            for (size_t ii = 0; ii < argc; ii += 1) {
+                free(argv[ii]);
+            }
+            free(argv);
+
+            args.clear();
+            std::vector<std::string>().swap(args);
 
             if(test == 1) {
                 this->BCF_args = strdup(bcf_args);
                 BatchValueSet(this->BCF_args, "BCF_Args");
+                ret = 1;
                 break;
             }
             else {
                 continue;
             }
+
         }
     }
+
     free(mbi);
     return ret;
 }
@@ -259,7 +290,7 @@ void ReadBCFs::do_init(Input_Base *inp)
 
     check_bcf_files();
     build_markers_and_samples();
-
+    check_dups();
 }
 
 
@@ -282,7 +313,7 @@ void ReadBCFs::check_bcf_files() {
         //single bcf/vcf/vcf.gz etc.
     else if ( this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "bcf"
               || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "vcf"
-              || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "vcf.gz"){
+              || this->BCF_file.substr(this->BCF_file.find_last_of(".") + 1) == "gz"){
       ifs.open(C(this->BCF_file));
         if (! ifs.is_open() )
                 warnvf("read_BCFs: Can not open \"%s\" file\n", this->BCF_file.c_str());
@@ -298,7 +329,9 @@ void ReadBCFs::check_bcf_files() {
       ifs.open(C(this->BCF_file));
         Str line;
         while (getline(ifs, line)){
-            if('#' == this->BCF_file.c_str()[0]) {
+            line = rtrim(line);
+            line = ltrim(line);
+            if (line.size() == 0 || "#" == line.substr(0, 1)) {
                 mssgvf("read_BCFs: ignoring \"%s\"\n",line.c_str());
                 continue;
             }
@@ -324,10 +357,8 @@ void ReadBCFs::check_bcf_files() {
 
 void ReadBCFs::build_markers_and_samples() {
     vector<string> files = this->filelist;
-    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
-    unsigned int argc = 2;
-
+    unsigned int argc = 3;
     vector<string> args;
     args.push_back("bcftools");
 
@@ -340,50 +371,182 @@ void ReadBCFs::build_markers_and_samples() {
             argc++;
         }
     }
+    //only read header to get samples
+    args.push_back("-h");
 
-    int total_markers = 0;
+
     for(int i = 0; i < this->filecount; i++) {
         args.push_back(files[i]);
 
+        printf("\nRunning the following bcftools command for file: %s\n", files[i].c_str());
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
-            argv[ii] = &args[ii][0];
+            strcpy(argv[ii], &args[ii][0]);
+            if(ii == 1)
+                printf("view ");
+            printf("%s ", argv[ii]);
         }
+        printf("\n");
+
+        args_t *bcfargs = (args_t *) calloc(1, sizeof(args_t));
+        MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+        bcfargs = mbi->get_args(argc, argv);
+
+        for (size_t ii = 0; ii < argc; ii += 1) {
+            free(argv[ii]);
+        }
+        free(argv);
+        free(mbi);
+
+        bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
+        //consistancy between the number of samples (only way to tell if there's less in subsequent files
+        if(i == 0)
+            this->num_samples = hdr->n[2];
+        else if( this->num_samples != hdr->n[2])
+            errorvf("Different number of sample columns between first file in manifest and file %s\n",files[i].c_str());
+
+        for (int j = 0; j < this->num_samples; j++) {
+            Str name = hdr->samples[j];
+            //first file just add
+            if (i == 0) {
+                this->samples.push_back(name);
+                Pairsi pair(name,1);
+                sampleMap.insert(pair);
+            }
+            //other files use sampleMap to check the names are the same
+            else {
+                if (sampleMap.find(name) == sampleMap.end())
+                    errorvf("Sample in file %s not found in first file from manifest\n", files[i].c_str());
+            }
+        }
+        args.pop_back();
+
+        destroy_data_vcfview(bcfargs);
+        free(bcfargs);
+
+        std::cout << "Samples for " << files[i] << " completed\n";// << std::ctime(&time)
+    }
+
+    args.pop_back();
+    //no header since we have the samples
+    args.push_back("-H");
+    //drop genotypes to not read them while getting allele labels
+    args.push_back("-G");
+    argc++;
+
+
+
+    int total_markers = 0;
+    for(int i = 0; i < this->filecount; i++) {
+
+        args.push_back(files[i]);
+
+        printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
+        char **argv;
+        argv = (char **) malloc(argc * sizeof(char *));
+        for (size_t ii = 0; ii < argc; ii += 1) {
+            argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
+            strcpy(argv[ii], &args[ii][0]);
+            if(ii == 1)
+                printf("view ");
+            printf("%s ",argv[ii]);
+        }
+        printf("\n");
 
         args_t *bcfargs  = (args_t*) calloc(1,sizeof(args_t));
+        MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
         bcfargs = mbi->get_args(argc, argv);
+
+        for (size_t ii = 0; ii < argc; ii += 1) {
+            free(argv[ii]);
+        }
+        free(argv);
+        free(mbi);
 
         bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
 
         int count = 0;
-
+        char sname[50];
         while ( bcf_sr_next_line(bcfargs->files) ) {
-            bcf1_t *line = bcfargs->files->readers[0].buffer[0];
+            bcf1_t * line = bcfargs->files->readers[0].buffer[0];
             if ( subset_vcf(bcfargs, line) ) {
-                Vecs alleles(line->d.m_allele);
-                alleles.clear();
-                for (int al = 0; al < line->d.m_allele; al++) {
+                Vecs alleles;
+
+                for (int al = 0; al < line->n_allele; al++) {
                     alleles.push_back(canonical_allele(line->d.allele[al]));
                 }
 
-                this->markers.push_back(new BCFMarker(line->d.id, hdr->id[BCF_DT_CTG][line->rid].key, line->pos + 1,
-                                                      alleles)); // pos + 1 matches the VCF line pos field.
+                Str name = line->d.id;
+                const char *posp = hdr->id[BCF_DT_CTG][line->rid].key;
+                if (strncmp(posp, "chr", 3) == 0) posp += 3;
+//rvb: and another
+                if (name == ".") {
+                    sprintf(sname, "chr%s_%d", posp, line->pos + 1);
+                    name = sname;
+                }
 
+                BCFMarker * line_marker = new BCFMarker(name, posp, line->pos + 1, alleles);// pos + 1 matches the VCF line pos field.
+                this->markers.push_back(line_marker);
+
+                alleles.clear();
+                std::vector<std::string>().swap(alleles);
                 count++;
-
-                //Bob pointed out that build samples ran through the same code all over again and we can just move all of that to here
-                this->samples.push_back(hdr->samples[i]);
-                this->num_samples = hdr->n[2];
             }
+            if(line) bcf_clear(line);
         }
+        int err = bcfargs->files->errnum;
+        if ( err ) {
+            fprintf(stderr,"Error: %s\n", bcf_sr_strerror(bcfargs->files->errnum));
+            errorf("BCFTools encountered a problem with the given command.\n"
+                   "Mega2 was unable to process allele labels and is exiting.\n"
+                   "Please verify your BCFTools command is valid.\n");
+        }
+
 
         total_markers += count;
         args.pop_back();
+
+        std::cout << "Alleles for " << files[i] << " completed\n";
+
+        destroy_data_vcfview(bcfargs);
+        free(bcfargs);
+
     }
+    args.clear();
+    std::vector<std::string>().swap(args);
 
     this->marker_count = total_markers;
+}
+
+
+
+void ReadBCFs::check_dups() {
+    Hmapsi markerMap;
+
+    SECTION_LOG_INIT(dup_marker_relabeled);
+    for(int i = 0; i < this->marker_count; i++){
+        Str name = this->markers[i]->name;
+        if (markerMap.find(name) == markerMap.end())
+            markerMap[name] = 1;
+        else {
+            int value = markerMap[name] + 1;
+            char newname[FILENAME_LENGTH] ;
+            sprintf(newname, "%s_%d", name.c_str(), value);
+            markerMap[newname] = 1;
+            markerMap[name] = value;
+            this->markers[i]->name = newname;
+            SECTION_LOG(dup_marker_relabeled);
+            mssgvf("Duplicate marker name found for %s relabeling %s:%d as %s\n", name.c_str(),
+                   this->markers[i]->chr.c_str(), this->markers[i]->pos, newname);
+        }
+    }
+
+    SECTION_LOG_FINI(dup_marker_relabeled);
+
+    markerMap.clear();
+    Hmapsi().swap(markerMap);
 }
 
 void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
@@ -566,25 +729,38 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     }
 
     int mrkindex = LTop->PhenoCnt;
+    int zeroed_genotypes_nonx = 0;
+    int zeroed_genotypes_x = 0;
+
     for (int i = 0; i < this->filecount; i++) {
         args.push_back(files[i]);
 
+        printf("\nRunning the following bcftools command for file: %s\n",files[i].c_str());
         char **argv;
         argv = (char **) malloc(argc * sizeof(char *));
         for (size_t ii = 0; ii < argc; ii += 1) {
             argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
-            argv[ii] = &args[ii][0];
+            strcpy(argv[ii], &args[ii][0]);
+            if(ii == 1)
+                printf("view ");
+            printf("%s ",argv[ii]);
         }
+        printf("\n");
 
         args_t *bcfargs = (args_t *) calloc(1, sizeof(args_t));
         bcfargs = mbi->get_args(argc, argv);
+
+        for (size_t ii = 0; ii < argc; ii += 1) {
+            free(argv[ii]);
+        }
+        free(argv);
+        free(mbi);
 
         bcf_hdr_t *hdr = bcfargs->hnull ? bcfargs->hnull : (bcfargs->hsub ? bcfargs->hsub : bcfargs->hdr);
 
         while (bcf_sr_next_line(bcfargs->files)) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
-
-            if ( subset_vcf(bcfargs, line) && mrkindex < LTop->LocusCnt) {
+                if ( subset_vcf(bcfargs, line) && mrkindex < LTop->LocusCnt) {
                 int m, n, i;
 
                 //uses convert object so we need our own void * instead
@@ -592,20 +768,21 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
                 m = 0;
                 n = bcf_get_genotypes(hdr, line, &dat, &m);
-                //probably not necessary
-                //convert->ndat = m * sizeof(int32_t);
 
                 if (n <= 0) {
                     error("Error parsing GT tag at %s:%d\n", bcf_seqname(hdr, line), line->pos + 1);
                 }
 
-
-
                 Vecc canons;
-                for (int al = 0; al < line->d.m_allele; al++) {
+                extern void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
+
+                for (int al = 0; al < line->n_allele; al++) {
                     canons.push_back(canonical_allele(line->d.allele[al]));
                 }
                 VecAlleles.push_back(canons);
+                set_2Ralleles_2bits(mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
+
+                const char * chromosome = hdr->id[BCF_DT_CTG][line->rid].key;
 
                 //should give number of allele options per marker
                 n /= num_samples;
@@ -615,39 +792,203 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                     for (j = 0; j < n; j++)
                         if (ptr[j] == bcf_int32_vector_end) break;
 
+
+                    int is_x_chr = 0;
+                    if(((strcasecmp(chromosome,"X") == 0) ||
+                        (strcasecmp(chromosome,"CHRX") == 0) ||
+                        (strcmp(chromosome,"23") == 0)) && (persons[i].Sex == 1))
+                        is_x_chr = 1;
+
+
                     // diploid
                     if (j == 2) {
-                        if (bcf_gt_is_missing(ptr[0]))
+                        // ./.
+                        if (bcf_gt_is_missing(ptr[0]) && bcf_gt_is_missing(ptr[1]))
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
-                            //kputs(" 0.33 0.33 0.33", str);
+                        // ./ALT
+                        else if (bcf_gt_is_missing(ptr[0]) && bcf_gt_allele(ptr[1]) == 1) {
+                            if (MARKER_SCHEME > 1)
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[1]);
+                            else {
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                if(is_x_chr)
+                                    zeroed_genotypes_x++;
+                                else
+                                    zeroed_genotypes_nonx++;
+                            }
+                        }
+                        // ./REF
+                        else if (bcf_gt_is_missing(ptr[0])) {
+                            if (MARKER_SCHEME > 1)
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[0]);
+                            else {
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                if(is_x_chr)
+                                    zeroed_genotypes_x++;
+                                else
+                                    zeroed_genotypes_nonx++;
+                            }
+                        }
+                        // ALT/.
+                        else if (bcf_gt_is_missing(ptr[1]) && bcf_gt_allele(ptr[0]) == 1) {
+                            if(MARKER_SCHEME > 1)
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], zero);
+                            else {
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                if(is_x_chr)
+                                    zeroed_genotypes_x++;
+                                else
+                                    zeroed_genotypes_nonx++;
+                            }
+                        }
+                        // REF/.
+                        else if (bcf_gt_is_missing(ptr[1])) {
+                            if(MARKER_SCHEME > 1)
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], zero);
+                            else {
+                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                if(is_x_chr)
+                                    zeroed_genotypes_x++;
+                                else
+                                    zeroed_genotypes_nonx++;
+                            }
+                        }
+                        // ALT/REF
                         else if (bcf_gt_allele(ptr[0]) != bcf_gt_allele(ptr[1]))
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
-                            //kputs(" 0 1 0", str);       // HET
+                        // ALT/ALT
                         else if (bcf_gt_allele(ptr[0]) == 1)
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
-                            //kputs(" 0 0 1", str);       // ALT HOM, first ALT allele
+                        // REF/REF
                         else
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
-                        //kputs(" 1 0 0", str);       // REF HOM or something else than first ALT
                         // haploid
                     } else if (j == 1) {
+                        // single missing genotypes
                         if (bcf_gt_is_missing(ptr[0]))
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
-                            //kputs(" 0.5 0.0 0.5", str);
+                        // single ALT
                         else if (bcf_gt_allele(ptr[0]) == 1)
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
-                            //kputs(" 0 0 1", str);       // first ALT allele
+                        // single REF
                         else
                             set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
-                        //kputs(" 1 0 0", str);       // REF or something else than first ALT
                     } else error("FIXME: not ready for ploidy %d\n", j);
 
                 }
+
+                canons.clear();
+                Vecc().swap(canons);
+                free(dat);
+
                 mrkindex++;
             }
+            if(line) bcf_clear(line);
         }
+        int err = bcfargs->files->errnum;
+        if ( err ) {
+            fprintf(stderr,"Error: %s\n", bcf_sr_strerror(bcfargs->files->errnum));
+            errorf("BCFTools encountered a problem with the given command.\n"
+                   "Mega2 was unable to process allele labels and is exiting.\n"
+                   "Please verify your BCFTools command is valid.\n");
+        }
+
         args.pop_back();
+
+        std::cout << "Genotypes for " << files[i] << " completed\n";
+
+        if(zeroed_genotypes_nonx + zeroed_genotypes_x > 0)
+            warnvf("We encountered %d half-typed genotypes that were set to missing.\n"
+                   "If you would like to read these in, set the maximum number of alleles per marker in the 'File Input Menu' to more than 2.\n"
+                   "Also, there were %d half-typed genotypes in males on chromosome X that were treated as valid.\n",zeroed_genotypes_nonx,zeroed_genotypes_x);
+
+        args.clear();
+        std::vector<std::string>().swap(args);
+        destroy_data_vcfview(bcfargs);
+        free(bcfargs);
     }
 }
+
+linkage_ped_top* ReadBCFs::do_ped(linkage_locus_top *LTop)   {
+    extern vector<Vecc> VecAlleles;
+
+    //mssgvf("\nAs a pedigree (.fam) file was not provided, we have assumed everyone is unrelated.\n"
+    //       "If you have pedigree information that you did not include please rerun providing a pedigree file.\n"
+    //       "All sex values have been set to male as a default.\n");
+    annotated_ped_rec *persons = build_bcf_ped(LTop);
+
+    do_genotypes(LTop, persons, VecAlleles);
+    linkage_ped_top *Top;
+
+    Top = mk_ped_top(persons, this->num_samples, LTop, this->num_samples,
+            /*untyped*/ 0, /*totaltyped*/ 0,
+            /*groups*/ NULL, 0, 0,
+            /*num_err*/0, 1);
+
+    return Top;
+}
+
+annotated_ped_rec * ReadBCFs::build_bcf_ped(linkage_locus_top *LTop) {
+    annotated_ped_rec *persons;
+    int num_ped_records = this->num_samples;
+    if ((persons = CALLOC((size_t) num_ped_records, annotated_ped_rec)) == NULL) {
+        errorf("Build_BCF_Ped: Could not allocate enough memory, exiting.");
+        EXIT(MEMORY_ALLOC_ERROR);
+    }
+
+    for (int i = 0; i < this->num_samples; i++) {
+        annotated_ped_rec *entry = &persons[i];
+
+        entry->pheno = (LTop->PhenoCnt > 0) ?
+                       CALLOC((size_t) LTop->PhenoCnt, pheno_pedrec_data) : 0;
+
+        entry->marker = (LTop->MarkerCnt > 0) ?
+                        marker_alloc((size_t) LTop->MarkerCnt, LTop->PhenoCnt) : 0;
+
+        entry->rec_num = i + 1;  // really p+1 now
+
+        entry->Pedigree = canonicalColName(this->samples[i].c_str());
+        entry->ID = canonicalColName(this->samples[i].c_str());
+
+        PLINK.individuals += 1;
+        entry->per_index = i;
+        entry->ped_index = i + 1;
+
+        entry->Father = canonicalColName("0");
+        entry->Mother = canonicalColName("0");
+
+        PLINK.unspecified_sex += 1;
+        entry->Sex = '1';
+
+
+        entry->LinkPerID = i;
+        entry->LinkPedID = i;
+
+        entry->PedID = entry->Pedigree;
+        entry->PerID = entry->ID;
+
+    }
+
+    return persons;
+}
+
+void ReadBCFs::do_gc() {
+
+    sampleMap.clear();
+    Hmapsi().swap(sampleMap);
+
+    samples.clear();
+    vector<string>().swap(samples);
+
+    filelist.clear();
+    vector<string>().swap(filelist);
+
+    for (MarkerVectorP bpp = markers.cbegin(); bpp != markers.cend(); bpp++) {
+        delete *bpp;
+    }
+    markers.clear();
+    MarkerVector().swap(markers);
+}
+
 
 

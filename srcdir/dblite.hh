@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <zlib.h>
 
 extern void msgvf(const char *fmt, ...);
 
@@ -168,6 +169,10 @@ public:
         if (verbose > 1) printf("bind: %d %d\n", col, val);
         return ok(sqlite3_bind_int(stmt, col, val), "bind");
     }
+    int bind(int col, long val) {
+        if (verbose > 1) printf("bind: %d %ld\n", col, val);
+        return ok(sqlite3_bind_int(stmt, col, val), "bind");
+    }
     int bind(int col, long long val) {
 #ifdef MS_PRINTF
         if (verbose > 1) printf("bind: %d %I64d\n", col, val);
@@ -277,6 +282,60 @@ public:
         db_mutex_leave(db);
         return ret;
     }
+
+    unsigned char *db_compress(unsigned char *data, long *bsize, unsigned char *sdata, long ssize) {
+        extern int dbCompress;
+        long mxsize = *bsize;
+
+        // mt buffer [all zeros]
+        if ( ((void *)sdata == 0) || ssize == 0) {
+            *bsize = 0;
+            return (unsigned char *)0 ;
+        } else if (dbCompress == 0) {
+            *bsize = ssize;
+            return sdata;
+        }
+
+        // compress
+        int zok = compress((Bytef *)data, (uLongf *)bsize, (const Bytef *)sdata, ssize);
+        if (zok != Z_OK) {
+            printf("sqlite3 compress: error %d\n", zok);
+            data = (unsigned char *)0;
+        } else if (*bsize >= mxsize) {
+            printf("sqlite3 compress: compression exceeds buffer is %ld should be < %ld\n",
+                   *bsize, mxsize);
+        }
+        return data;
+    }
+
+    unsigned char *db_decompress(unsigned char *data, long *bsize, unsigned char *sdata, long ssize, long esize) {
+        extern int dbCompress;
+        long mxsize = *bsize;
+
+        // mt buffer [all zeros]
+        if ( ((void *)sdata == 0) || ssize == 0) {
+            *bsize = 0;
+            return (unsigned char *)0 ;
+        } else if (dbCompress == 0) {
+            *bsize = ssize;
+            return sdata;
+        }
+
+        // decompress
+        int zok = uncompress((Bytef *)data, (uLongf *)bsize, (const Bytef *)sdata, ssize);
+        if (zok != Z_OK) {
+            printf("sqlite3 uncompress: error %d\n", zok);
+            data = (unsigned char *)0;
+        } else if (*bsize != esize) {
+            printf("sqlite3 uncompress: compression size is %ld should be %ld\n",
+                   *bsize, esize);
+        } else if (*bsize > mxsize) {
+            printf("sqlite3 uncompress: compression exceeds buffer is %ld should be <= %ld\n",
+                   *bsize, mxsize);
+        }
+        return data;
+    }
+
 };
 
 

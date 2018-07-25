@@ -23,6 +23,7 @@ CFLAGS=-O
 #CFLAGS=-g -DDEBUG
 #CFLAGS=-O3 -Wall -Wwrite-strings -Wpointer-arith -Wconversion \
 #           -Wstrict-prototypes -Wmissing-prototypes
+CFLAGS += -D_mega2_
 
 SFLAGS=-O
 LDFLAGS=

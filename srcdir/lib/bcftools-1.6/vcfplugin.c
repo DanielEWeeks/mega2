@@ -38,7 +38,10 @@ THE SOFTWARE.  */
 #include <htslib/synced_bcf_reader.h>
 #include <htslib/kseq.h>
 #include <htslib/khash_str2int.h>
+#if defined(_mega2_) && defined(_WIN32)
+#else
 #include <dlfcn.h>
+#endif
 #include "bcftools.h"
 #include "vcmp.h"
 #include "filter.h"

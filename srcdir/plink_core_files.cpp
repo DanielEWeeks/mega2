@@ -231,7 +231,7 @@ static void write_PLINK_map_data(linkage_ped_top *LPTop,
                     // But tell the user about it if used for a sex linked chromosome...
 //                  if ((LType == XLINKED || LType == YLINKED) && display_error_sagm == 0)
                     if ((chr == SEX_CHROMOSOME || chr == MALE_CHROMOSOME) && display_error_sagm == 0) {
-                        warnvf("Since only a sex-averaged genetic map was used, these positions have been used for markers (%d, %s) on the X and Y chromosomes.\n", chr, snp);
+                        warnvf("Since only a sex-averaged genetic map was used, these positions have been used for markers (chr%d, marker %s) on the X and Y chromosomes.\n", chr, snp);
                         display_error_sagm++;
                     }
                 } else if (genetic_distance_sex_type_map == SEX_SPECIFIC_GDMT) {

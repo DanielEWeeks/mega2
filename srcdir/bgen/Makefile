@@ -42,7 +42,11 @@ WINO = -o $@
 endif
 
 L0xFLAGS= -std=c++11
-CFLAGS += -Igenfile/include 
+CFLAGS += -D_mega2_ -Igenfile/include
+
+ifeq ($(OSTYPE),msys2_7)
+CFLAGS +=  -Wimplicit-fallthrough=0
+endif
 
 ZSTDDIR = zstd-1.1.0/lib
 ZSTD = bgenzstd.a

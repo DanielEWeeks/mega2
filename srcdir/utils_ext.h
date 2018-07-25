@@ -103,13 +103,17 @@ extern void           print_mega2_version(void);
 
 extern void           print_only (const char *messg);
 
+extern "C" {
+
 extern int            randomindex(int N);
 
 extern double         randomnum(void);
 
-extern void           script_time_stamp(FILE *script_fp);
-
 extern void           seed_random(void);
+
+}
+
+extern void           script_time_stamp(FILE *script_fp);
 
 extern int            show_system_cmd(const char *str, const char *file, const int line);
 

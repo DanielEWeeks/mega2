@@ -746,9 +746,9 @@ void write_nuc_ped_key_file(char *ID_file,
     oper = imax(oper, (int) strlen("Person"));
     oped = imax(oped, (int) strlen("Pedigree"));
 
-    if ((fp = fopen(ID_file, "a")) == NULL) {
-        fprintf(fp, "Unable to open Mega2 keys file %s for writing.\n",
-                ID_file);
+    fp = fopen(ID_file, "a");
+    if (fp == NULL) {
+        errorvf("Unable to open Mega2 keys file %s for writing.\n", ID_file);
         exit(FILE_WRITE_ERROR);
     }
 

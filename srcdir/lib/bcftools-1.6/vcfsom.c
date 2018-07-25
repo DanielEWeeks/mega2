@@ -37,6 +37,18 @@ THE SOFTWARE.  */
 #include <htslib/vcfutils.h>
 #include <inttypes.h>
 #include "bcftools.h"
+#if defined(_mega2_) && defined(_WIN32)
+// Note: randomnum() and seed_random() are
+// defined in utils.c in srcdir with "C" linkage/
+
+extern double randomnum (void);
+#define random() (randomnum()*RAND_MAX)
+
+extern void seed_random(void);
+extern int seed1;
+#define srandom(x) {seed1 = (x); seed_random();}
+#endif
+
 
 #define SOM_TRAIN    1
 #define SOM_CLASSIFY 2

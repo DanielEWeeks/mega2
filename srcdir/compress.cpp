@@ -167,13 +167,12 @@ int num_typed_2Ralleles(void *mp, int marker) {
 }
 
 void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *all1, const char *all2) {
-#ifdef ORDER_HETEROZYGOTE
-    if (all1 != all2 && strcmp(all1, all2) > 0) {
+    if (SORT_HETEROZYGOTE && all1 != all2 && strcmp(all1, all2) > 0) {
         const char *tmp = all1;
         all1 = all2;
         all2 = tmp;
     }
-#endif /* ORDER_HETEROZYGOTE */
+
     if (mp == NOTYPED_ALLELES) 
         ; // do nothing
     else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
@@ -230,6 +229,31 @@ void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *a
         marker_pedrec_char *mpd = (marker_pedrec_char *) mp;
         mpd[marker].Allele_1 = ((unsigned char) allele2allele_prop_idx(all1));
         mpd[marker].Allele_2 = ((unsigned char) allele2allele_prop_idx(all2));
+    }
+}
+
+void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2) {
+//  if (all1 == REC_UNKNOWN && all2 == REC_UNKNOWN) return;
+
+    if (SORT_HETEROZYGOTE && all1 != all2 && strcmp(all1, all2) > 0) {
+        const char *tmp = all1;
+        all1 = all2;
+        all2 = tmp;
+    }
+
+    if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        Alleles_str *allelep = &MARKER_SCHEME3_Ralleles[marker];
+        allelep->Allele_1 = all1;
+        allelep->Allele_2 = all2;
+    }
+}
+
+void get_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char **all1, const char **all2) {
+
+    if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
+        Alleles_str *allelep = &MARKER_SCHEME3_Ralleles[marker];
+        *all1 = allelep->Allele_1;
+        *all2 = allelep->Allele_2;
     }
 }
 
@@ -298,7 +322,8 @@ void copy_2Ralleles(void *to, void *from, int marker) {
 #if 1
 void order_heterozygous_allele_raw(linkage_ped_top *Top)
 {
-#ifdef ORDER_HETEROZYGOTE
+    if (! SORT_HETEROZYGOTE) return;
+
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
     if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
@@ -351,12 +376,12 @@ void order_heterozygous_allele_raw(linkage_ped_top *Top)
     if (cnt > 0)
         msgvf("Fix raw alleles: %d/%d heterozygotes flipped to 1/2.\n", cnt, all);
 
-#endif /* ORDER_HETEROZYGOTE */
 }
 #else
 void order_heterozygous_allele_raw(linkage_ped_top *Top)
 {
-#ifdef ORDER_HETEROZYGOTE
+    if (! SORT_HETEROZYGOTE) return;
+
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
     if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
@@ -400,24 +425,23 @@ void order_heterozygous_allele_raw(linkage_ped_top *Top)
     }
     if (cnt > 0)
         msgvf("Fix raw alleles: %d/%d heterozygotes flipped to 1/2.\n", cnt, all);
-#endif /* ORDER_HETEROZYGOTE */
 }
 #endif
 
 inline void decode_compression(int the_bits, Alleles_int *allelep, int *all1, int *all2)
 {
     if (the_bits == 0) {
-        *all2 = *all1 = allelep->Allele_1;
+        *all2 = *all1 = 1;
 
     } else if (the_bits == 1) { // 0
         *all2 = *all1 = 0;
 
     } else if (the_bits == 2) { // ne
-        *all1 = allelep->Allele_1;
-        *all2 = allelep->Allele_2;
+        *all1 = 1;
+        *all2 = 2;
 
     } else { // 3:
-        *all2 = *all1 = allelep->Allele_2;
+        *all2 = *all1 = 2;
     }
 }
 
@@ -469,13 +493,13 @@ int num_typed_2alleles(void *mp, int marker) {
 }
 
 void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int all2) {
-#ifdef ORDER_HETEROZYGOTE
-    if (all1 > all2) {
+
+    if (SORT_HETEROZYGOTE && all1 > all2) {
         int tmp = all1;
         all1 = all2;
         all2 = tmp;
     }
-#endif /* ORDER_HETEROZYGOTE */
+
     if (mp == NOTYPED_ALLELES) 
         ; // do nothing
     else if (MARKER_SCHEME == MARKER_SCHEME_PTR) {
@@ -483,7 +507,7 @@ void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int 
          mpd[marker].Alleles.Allele_1 = all1;
          mpd[marker].Alleles.Allele_2 = all2;
     } else if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
-        Alleles_int *allelep = &MARKER_SCHEME3_alleles[marker];
+//      Alleles_int *allelep = &MARKER_SCHEME3_alleles[marker];
         int get_byte = (marker - MARKER_SCHEME3_offset) >> 2;
         int get_bits = (marker - MARKER_SCHEME3_offset) & 3;
         unsigned char *mpd = (unsigned char *) mp;
@@ -493,37 +517,9 @@ void set_2alleles(void *mp, int marker, linkage_locus_rec *locus, int all1, int 
         if (all1 == 0 && all2 == 0) {
             the_field = 1;
         } else {
-            if (allelep->Allele_1 == 0) {
-                allelep->Allele_1 = all1;
-                if (all1 != all2 && allelep->Allele_2 == 0)
-                    allelep->Allele_2 = all2;
-            } else if (allelep->Allele_2 == 0) {
-                if (allelep->Allele_1 != all1)
-                    allelep->Allele_2 = all1;
-                else if (all1 != all2 ) // Alllele1 = all1
-                    allelep->Allele_2 = all2;
-            } 
-            if (MARKER_SCHEME3_check) {
-                if (all1 == 0 || all2 == 0) {
-                    errorvf("You set the maximum number of alleles to 2.\nHalf type genotypes are not allowed in 2 allele mode: %d/%d.\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n",
-                            all1, all2);
-                    EXIT(OUTOF_BOUNDS_ERROR);
-                }
-                const char * estr = "While you set the maximum number of alleles to 2, there are more than two alleles in the data:\nMarker %s has the alleles %d, %d; trying to add%d.\nPlease adjust the \"maximum number of alleles per marker\" option in the initial input menu.\n";
-                if ( (all1 != allelep->Allele_1) && (all1 != allelep->Allele_2) ) {
-                    errorvf(estr, locus->LocusName, allelep->Allele_1, allelep->Allele_2, all1);
-                    EXIT(OUTOF_BOUNDS_ERROR);
-                }
-                if ( (all2 != allelep->Allele_1) && (all2 != allelep->Allele_2) ) {
-                    errorvf(estr, locus->LocusName, allelep->Allele_1, allelep->Allele_2, all2);
-                    EXIT(OUTOF_BOUNDS_ERROR);
-                }
-
-            }
-
             if (all1 != all2)
                 the_field = 2;
-            else if (all1 == allelep->Allele_1)
+            else if (all1 == 1)
                 the_field = 0;
             else
                 the_field = 3;
@@ -661,7 +657,10 @@ int copy_2alleles_2staging(void *to, void *from, int tomarker, int frommarker) {
 #if 1
 void order_heterozygous_allele(linkage_ped_top *Top)
 {
-#ifdef ORDER_HETEROZYGOTE
+    return;
+
+    if (! SORT_HETEROZYGOTE) return;
+
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
     if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
@@ -711,12 +710,14 @@ void order_heterozygous_allele(linkage_ped_top *Top)
 
     if (cnt > 0)
         msgvf("Fix alleles: %d/%d heterozygotes flipped to 1/2.\n", cnt, all);
-#endif /* ORDER_HETEROZYGOTE */
 }
 #else
 void order_heterozygous_allele(linkage_ped_top *Top)
 {
-#ifdef ORDER_HETEROZYGOTE
+    return;
+
+    if (! SORT_HETEROZYGOTE) return;
+
     int i, ped, entrycount, per, cnt = 0, all = 0;
 
     if (MARKER_SCHEME != MARKER_SCHEME_BITS) return;
@@ -757,7 +758,6 @@ void order_heterozygous_allele(linkage_ped_top *Top)
     }
     if (cnt > 0)
         msgvf("Fix alleles: %d/%d heterozygotes flipped to 1/2.\n", cnt, all);
-#endif /* ORDER_HETEROZYGOTE */
 }
 #endif
 

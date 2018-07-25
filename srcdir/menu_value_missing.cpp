@@ -141,14 +141,24 @@ static void Value_Missing_menu(analysis_type *analysis)
         draw_line();
         printf("              Mega2 %s Missing Value menu:\n", Mega2Version);
         draw_line();
-        printf("If it is necessary, specify a different value to indicate that a trait is missing\n");
+        printf("If it is necessary, specify the value used to indicate that a trait is missing\n");
         if (database_dump || ! database_read)
             printf("both for input to Mega2 and/or output from Mega2.\n");
         else
             printf("for output from Mega2.\n");
-        printf("Note: Output entries that are marked with a \"#\" can not be changed.\n\n");
+        printf("Note: Output entries that are marked with a \"#\" can not be changed.\n");
 
-        printf("0) Done with this menu - please proceed\n");
+        int allow1 = fix_Value_Missing_check_allow(analysis, 1);
+        int allow3 = fix_Value_Missing_check_allow(analysis, 3);
+
+        if (database_dump || ! database_read) {
+            printf("0) Done with this menu - please proceed\n");
+        } else {
+            if (allow1 == 0 && allow3 == 0)
+                ; // printf(" Mega2 will proceed automatically to the next menu.\n");
+            else
+                printf("0) Done with this menu - please proceed\n");
+        }
 /*
         if (1) {
             printf("%2d) Specify default for ALL missing traits:                         %s\n",
@@ -175,9 +185,6 @@ static void Value_Missing_menu(analysis_type *analysis)
             printf("\n");
             trans[ttl] = ain_i;
         }
-
-        int allow1 = fix_Value_Missing_check_allow(analysis, 1);
-        int allow3 = fix_Value_Missing_check_allow(analysis, 3);
 
         show = Value_Missing[qout_i-2].str;
 //      if (!*show) show = (*analysis)->output_quant_default_value();
@@ -226,7 +233,8 @@ static void Value_Missing_menu(analysis_type *analysis)
         if (database_dump || ! database_read) {
         } else {
             if (allow1 == 0 && allow3 == 0) {
-                printf("   NOTE: output missing values can not be changed.\n");
+                printf("NOTE:  neither output missing values can be changed.\n");
+                printf("Mega2 will automatically proceed to the next menu.\n");
             }
         }
 

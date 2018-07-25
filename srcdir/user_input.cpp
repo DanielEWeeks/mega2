@@ -38,9 +38,6 @@
 #include "common.h"
 #include "typedefs.h"
 
-#include "input_ops.hh"
-#include "input.hh"
-
 #include "batch_input_ext.h"
 #include "cw_routines_ext.h"
 #include "error_messages_ext.h"
@@ -57,6 +54,9 @@
 #include "write_files_ext.h"
 #include "class_old.h"
 #include "database_dump_ext.h"
+
+#include "input_ops.hh"
+#include "input.hh"
 
 #ifdef _WIN
 #define R_OK 4
@@ -299,18 +299,18 @@ void menu0()
             printf("%c%d", idx == set ? '*' : ' ', idx);
             printf(") %-*s\n", line_len, "Select Mega2 database create \"then use\" mode");
             idx++;
-
+        /*
             printf("%c%d", idx == set ? '*' : ' ', idx);
             printf(") %-*s\n", line_len, "Select Mega2 \"NO database\" legacy mode");
             idx++;
-
+        */
             printf("Select from options 0-%d> ", idx-1);
 
             fcmap(stdin, "%s", selectstr);
             newline;
             draw_line();
             sscanf(selectstr, "%d", &select);
-            if (select && select < 5)
+            if (select && select < idx)
                 set = select;
         }
         BatchValueSet(set, "Input_Database_Mode");
@@ -326,9 +326,11 @@ void menu0()
     } else if (set == 3) {
         database_dump = 1;
         database_read = 1;
+/*
     } else if (set == 3) {
         database_dump = 0;
         database_read = 0;
+*/
     }
 
 //  printf("dump %d, read %d\n", database_dump, database_read);
@@ -766,16 +768,17 @@ static void menu1_batch_set_files(file_format *infl_type,
             bi = BatchItemGet(i);
         }
         if (bi->items_read) {
-            if (access(bi->value.name, F_OK) == 0) {
+            if (access(bi->value.name, F_OK) == 0 || (strcmp((*fln)->name, "-.fam"))) {
                 strcpy((*fln)->name, bi->value.name);
-            } else {
+            }
+            else {
                 errorvf("Could not find file or path %s named by keyword %s.\n",
                         bi->value.name,
                         C(bi->keyword));
                 EXIT(FILE_NOT_FOUND);
             }
         } else {
-            if (i == Input_Pedigree_File || 
+            if (i == Input_Pedigree_File ||
                 ((i == Input_Locus_File) && Input->req_locus_file) ||
                 ((i == Input_Aux_File) && Input->req_aux_file) ) {
                 missing_mandatory_keyword(i);
@@ -877,7 +880,7 @@ static int menu1_show_misc(int *Untyped_ped_opt, int *Error_sim_opt,
                            int err_i, int untyp_i, int _thresh_i, int compress_i,
                            int *choiceA, int idx, int line_len)
 {
-    char messg[100], float_str[11];
+    char messg[100], float_str[16];
 
     printf("%2d) %-*s[ %s]\n", idx, line_len,
            "Simulate genotyping errors:", yorn[*Error_sim_opt]);
@@ -1040,6 +1043,12 @@ void menu1(file_format *infl_type,
         } else if(Input_Format == in_format_bcfs){
             strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
             xcf = 1;
+        } else if(Input_Format == in_format_gzcfs){
+            strcpy(&mega2_input_file_type[BED][0], "GZ.VCF Split by Chromosome");
+            xcf = 1;
+        } else if(Input_Format == in_format_vcfs){
+            strcpy(&mega2_input_file_type[BED][0], "VCF Split by Chromosome");
+            xcf = 1;
         }
 
 
@@ -1201,10 +1210,39 @@ void menu1(file_format *infl_type,
                 plinkf = 0;
                 PLINK_clr(not_plink_format);
                 PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(extension_name, "-");
+                strcpy(pedo->name,"-");
+                pedo->specified = true;
 
-                strcpy(extension_name, "study");
+                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
+                fln_init_plink(0);
 
-                fln_init(pedo, "PLINK", "fam", "[required]", "fam");
+                fln_init_mega2(! MAP_REQ);
+
+            } else if(Input_Format == in_format_gzcfs) {
+                xcf = 1;
+                plinkf = 0;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(extension_name, "-");
+                strcpy(pedo->name,"-");
+                pedo->specified = true;
+
+                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
+                fln_init_plink(0);
+
+                fln_init_mega2(! MAP_REQ);
+
+            } else if(Input_Format == in_format_vcfs) {
+                xcf = 1;
+                plinkf = 0;
+                PLINK_clr(not_plink_format);
+                PLINK_str(PLINKArgs, FILENAME_LENGTH);
+                strcpy(extension_name, "-");
+                strcpy(pedo->name,"-");
+                pedo->specified = true;
+
+                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
                 fln_init_plink(0);
 
                 fln_init_mega2(! MAP_REQ);
@@ -1237,7 +1275,8 @@ void menu1(file_format *infl_type,
                 printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             } else if (xcf) {
-                if(Input_Format != in_format_bcfs) {
+                if (Input_Format != in_format_bcfs && Input_Format != in_format_gzcfs &&
+                    Input_Format != in_format_vcfs) {
                     char tmp[2000];
                     printf("%2d) %-*s%s\n", idx, line_len, "Enter VCF parameters:", VCFArgs);
                     choiceA[idx++] = vcf_args_i;
@@ -1371,8 +1410,17 @@ void menu1(file_format *infl_type,
                 }
             }
             if (access(*pedfl_name, F_OK) != 0) {
-                printf("ERROR: You must specify a pedigree file.\n");
-                exit_loop=0;
+                if(!(Input_Format == in_format_bcfs ||
+                   Input_Format == in_format_vcfs ||
+                   Input_Format == in_format_gzcfs)) {
+                    printf("ERROR: You must specify a pedigree file.\n");
+                    exit_loop = 0;
+                }
+                else {
+                    mssgvf("\nAs a pedigree (.fam) file was not provided, we have assumed everyone is unrelated.\n"
+                           "If you have pedigree information that you did not include please rerun providing a pedigree file.\n"
+                           "All sex values have been set to male as a default.\n\n");
+                }
             }
             if (Input->req_map_file)
             {
@@ -1402,15 +1450,17 @@ void menu1(file_format *infl_type,
                 exit_loop=0;
             }
             if (xcf) {
-                if (access(*auxfl_name, F_OK) != 0 && Input_Format != in_format_bcfs) {
+                if (access(*auxfl_name, F_OK) != 0 && Input_Format != in_format_bcfs &&
+                    Input_Format != in_format_gzcfs && Input_Format != in_format_vcfs) {
                     printf("ERROR: You did not specify a Variant file.\n");
                     exit_loop=0;
                 }
-                if(Input_Format == in_format_bcfs) {
-                    char *bcfsfile_name[FILENAME_LENGTH];
-                    BatchValueGet(*bcfsfile_name, "BCFs_File");
-                    if (access(*bcfsfile_name, F_OK) != 0) {
-                        printf("ERROR: You did not specify a BCF file.\n");
+                if (Input_Format == in_format_bcfs || Input_Format == in_format_gzcfs ||
+                    Input_Format == in_format_vcfs) {
+                    char bcfsfile_name[FILENAME_LENGTH], *bcfsfile = bcfsfile_name;
+                    BatchValueGet(bcfsfile, "BCFs_File");
+                    if (access(bcfsfile, F_OK) != 0) {
+                        printf("ERROR: You did not specify a Variant file.\n");
                         exit_loop = 0;
                     }
                 }

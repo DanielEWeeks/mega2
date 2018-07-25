@@ -27,8 +27,12 @@ THE SOFTWARE.  */
 #include <strings.h>
 #include <errno.h>
 #include <math.h>
+#if defined(_mega2_) && defined(_WIN32)
+#include "regex/regex.h"
+#else
 #include <wordexp.h>
 #include <regex.h>
+#endif
 #include <htslib/khash_str2int.h>
 #include "filter.h"
 #include "bcftools.h"
@@ -431,7 +435,11 @@ static void filters_set_info_int(filter_t *flt, bcf1_t *line, token_t *tok)
     }
     else
     {
+#ifdef _mega2_
+        int64_t value = 0;
+#else
         int64_t value;
+#endif
         if ( bcf_get_info_value(line,tok->hdr_id,tok->idx,&value) <= 0 )
             tok->nvalues = 0;
         else
@@ -465,7 +473,11 @@ static void filters_set_info_float(filter_t *flt, bcf1_t *line, token_t *tok)
     }
     else
     {
+#ifdef _mega2_
+        double value = 0.0;
+#else
         double value;
+#endif
         if ( bcf_get_info_value(line,tok->hdr_id,tok->idx,&value) <= 0 )
             tok->nvalues = 0;
         else
@@ -582,7 +594,9 @@ static void filters_set_format_int(filter_t *flt, bcf1_t *line, token_t *tok)
     {
         hts_expand(double,tok->nvalues,tok->mvalues,tok->values);
         int nvals = tok->nvalues / line->n_sample;
+#ifndef _mega2_
         int idx = tok->idx >= 0 ? tok->idx : 0;
+#endif
         int is_missing = 1;
         int k, j = 0, end = tok->idxs[tok->nidxs-1] < 0 ? nvals - 1 : tok->nidxs - 1;
         if ( end >= nvals ) end = nvals - 1;
@@ -647,7 +661,9 @@ static void filters_set_format_float(filter_t *flt, bcf1_t *line, token_t *tok)
     {
         hts_expand(double,tok->nvalues,tok->mvalues,tok->values);
         int nvals = tok->nvalues / line->n_sample;
+#ifndef _mega2_
         int idx = tok->idx >= 0 ? tok->idx : 0;
+#endif
         int is_missing = 1;
         int k, j = 0, end = tok->idxs[tok->nidxs-1] < 0 ? nvals - 1 : tok->nidxs - 1;
         if ( end >= nvals ) end = nvals - 1;
@@ -820,8 +836,9 @@ static void filters_set_genotype_string(filter_t *flt, bcf1_t *line, token_t *to
         return;
     }
     int i, blen = 4, nsmpl = bcf_hdr_nsamples(flt->hdr);
+#ifndef _mega2_
     kstring_t str;
-
+#endif
 gt_length_too_big:
     tok->str_value.l = 0;
     for (i=0; i<nsmpl; i++)
@@ -868,7 +885,11 @@ static void filters_set_alt_string(filter_t *flt, bcf1_t *line, token_t *tok)
     }
     else if ( tok->idx==-2 )
     {
+#ifdef _mega2_
+        int i, end = tok->idxs[tok->nidxs-1] < 0 ? line->n_allele - 1 : tok->nidxs - 1;
+#else
         int i, j = 0, end = tok->idxs[tok->nidxs-1] < 0 ? line->n_allele - 1 : tok->nidxs - 1;
+#endif
         if ( end >= line->n_allele - 1 ) end = line->n_allele - 2;
         for (i=0; i<=end; i++)
             if ( i>=tok->nidxs || tok->idxs[i] )
@@ -1500,6 +1521,8 @@ static int filters_init1(filter_t *filter, char *str, int len, token_t *tok)
         return 0;
     }
 
+#if defined(_mega2_) && defined(_WIN32)
+#else
     // is it a file?
     if ( str[0]=='@' )
     {
@@ -1527,6 +1550,7 @@ static int filters_init1(filter_t *filter, char *str, int len, token_t *tok)
         free(list);
         return 0;
     }
+#endif
 
     int is_fmt = -1;
     if ( !strncasecmp(str,"FMT/",4) ) { str += 4; len -= 4; is_fmt = 1; }

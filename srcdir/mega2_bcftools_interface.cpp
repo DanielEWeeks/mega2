@@ -26,6 +26,9 @@ Mega2: Manipulation Environment for Genetic Analysis
 ===========================================================================
 */
 
+// for centos ...
+#define __STDC_LIMIT_MACROS 1
+
 #include <string.h>
 #include <vector>
 #include <errno.h>
@@ -337,8 +340,11 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
     static struct option loptions[] =
             {
                     {"threads",required_argument,NULL,9},
+                    {"header-only",no_argument,NULL,'h'},
+                    {"no-header",no_argument,NULL,'H'},
                     {"exclude",required_argument,NULL,'e'},
                     {"include",required_argument,NULL,'i'},
+                    {"drop-genotypes",no_argument,NULL,'G'},
                     {"uncalled",no_argument,NULL,'u'},
                     {"exclude-uncalled",no_argument,NULL,'U'},
                     {"apply-filters",required_argument,NULL,'f'},
@@ -369,6 +375,9 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
         char allele_type[8] = "nref";
         switch (c)
         {
+            case 'H': args->print_header = 0; break;
+            case 'h': args->header_only = 1; break;
+
             case 't': args->targets_list = optarg; break;
             case 'T': args->targets_list = optarg; targets_is_file = 1; break;
             case 'r': args->regions_list = optarg; break;
@@ -379,6 +388,7 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
             case  1 : args->force_samples = 1; break;
             case 'a': args->trim_alts = 1; args->calc_ac = 1; break;
             case 'I': args->update_info = 0; break;
+            case 'G': args->sites_only = 1; break;
 
             case 'f': args->files->apply_filters = optarg; break;
             case 'k': args->known = 1; break;
@@ -490,7 +500,8 @@ args_t * MEGA2_BCFTOOLS_INTERFACE::get_args(int argc, char *argv[]){
 
     init_data_vcfview(args);
 
-    optind = 1;
+    //need to reset optind, since bcftools doesn't
+    optind = 0;
     return args;
 
 }
@@ -635,8 +646,8 @@ int MEGA2_BCFTOOLS_INTERFACE::test_args(int argc, char *argv[]){
 
     if ( args->sample_names && args->update_info) args->calc_ac = 1;
 
-    char *fname = NULL;
-    fname = argv[optind];
+    //char *fname = NULL;
+    //fname = argv[optind];
 
     // read in the regions from the command line
     if ( args->regions_list )
@@ -662,8 +673,8 @@ int MEGA2_BCFTOOLS_INTERFACE::test_args(int argc, char *argv[]){
 
     if ( bcf_sr_set_threads(args->files, args->n_threads)<0 ) error("Failed to create threads\n");
 
-    //optind needs to be reset to 1 run bcftools again after testing that this is a correct string
-    optind = 1;
+    //global optind needs to be reset to ZERO not 1 it would appear in order to use bcftools multiple times
+    optind = 0;
     destroy_data_vcfview(args);
     bcf_sr_destroy(args->files);
     free(args);

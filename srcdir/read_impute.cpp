@@ -1260,6 +1260,7 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
             tmpalleles.push_back(calleles[i]);
         }
         VA.push_back(tmpalleles);
+        set_2Ralleles_2bits(mrk_idx, locus, calleles[1], calleles[2]);
 
         int sam = 0;
         int zero = 0, poor = 0, good = 0;
@@ -1283,9 +1284,9 @@ void ReadImputed::build_internal_genotypes(linkage_locus_top *LTop, annotated_pe
                 continue;
             }
             probid = Q.top();
+            nums[0] = nums[1] = nums[2] = 0;
 /*
             if (mrk_idx == 237) {
-                nums[0] = nums[1] = nums[2] = 0;
                 for (int ii = 0; ii < 3; ii++) {
                     ProbID probid = Q.top();
                     Q.pop();

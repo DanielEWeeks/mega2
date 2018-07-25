@@ -56,6 +56,10 @@ extern int num_typed_2Ralleles(void *mp, int marker);
 
 extern void set_2Ralleles(void *mp, int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
 
+extern void get_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char **all1, const char **all2);
+
+extern void set_2Ralleles_2bits(int marker, linkage_locus_rec *locus, const char *all1, const char *all2);
+
 extern int crunch_Rnotype(void **p, linkage_locus_top *LTop);
 
 extern void copy_2Ralleles(void *to, void *from, int marker);

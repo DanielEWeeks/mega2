@@ -77,6 +77,7 @@ void CanonicalAllele_table::db_getall(linkage_ped_top *Top) {
     }
 }
 
+// No longer called
 void MarkerScheme_table::db_getall(linkage_ped_top *Top) {
     int ret = select_stmt && select_stmt->abort();
     int k = 0, allele1 = 0, allele2 = 0;
@@ -99,7 +100,7 @@ void MarkerScheme_table::db_getall(linkage_ped_top *Top) {
 
 void dballele_export(linkage_ped_top *Top, bp_order *bp) {
     int i;
-    bp_order *b;
+//  bp_order *b;
 
     Tod pedexp("export canonical allele/ marker scheme");
 
@@ -112,7 +113,7 @@ void dballele_export(linkage_ped_top *Top, bp_order *bp) {
         canonicalallele_table.insert(Allele_Array[i]->idx,
                                      allele_prop_allele(Allele_Array[i]));
     }
-
+/*
     if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         int size = Top->LocusTop->MarkerCnt;
         int offset = Top->LocusTop->PhenoCnt;
@@ -122,7 +123,7 @@ void dballele_export(linkage_ped_top *Top, bp_order *bp) {
                                       MARKER_SCHEME3_alleles[b->i].Allele_2);
         }
     }
-
+*/
     MasterDB.commit();
     pedexp();
 
@@ -138,19 +139,20 @@ void dballele_import(linkage_ped_top *Top) {
     if (Allele_Array) free(Allele_Array);
     Allele_Array = CALLOC((size_t) ALLELE_ARRAY, allele_prop *);
 
+/*
     if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         int size   = Top->LocusTop->MarkerCnt;
         int offset = Top->LocusTop->PhenoCnt;
 
         MARKER_SCHEME3_alleles = CALLOC(size + offset, Alleles_int);
     }
+  MasterDB.begin();
 
-    MasterDB.begin();
+  //xxcanonicalallele_table.db_getall(Top);
 
-//xxcanonicalallele_table.db_getall(Top);
+  markerscheme_table.db_getall(Top);
 
-    markerscheme_table.db_getall(Top);
+  MasterDB.commit();
 
-    MasterDB.commit();
-
+*/
 }

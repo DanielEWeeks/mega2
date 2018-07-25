@@ -221,6 +221,8 @@ write_simulate_files_ext.h:  create_SIMULATE_format_files
 /* global variables that control output behaviour*/
 // strings associated with common.h: genetic_distance_map_type
 int             MARKER_SCHEME;
+int             SORT_HETEROZYGOTE;
+int             PREORDER_ALLELES;
 int             marker_scheme_mega2_opts = 0;
 const char *genetic_distance_map_type_string[3] = {
   "sex-averaged", "sex-specific", "female"
@@ -243,7 +245,7 @@ const char      *NOcTIME;
 char            Mega2Version[20];
 int             Mega2Ver, Mega2Rev, Mega2Patch; /* Version */
 char            Mega2WebVersion[50]; /* web-site file name */
-char            err_msg[2*FILENAME_LENGTH]; /* array for error, warning and log messages */
+char            err_msg[4*FILENAME_LENGTH]; /* array for error, warning and log messages */
 char            **output_paths; /* trait directories prepended with output_dir */
 char            **trait_paths;  /* list of directory names for each trait */
 char            InputPath[FILENAME_LENGTH];
@@ -279,7 +281,7 @@ InputModeType   AnalyInputMode = NOEXEC_INPUTMODE; // see common.h
 file_format     InputFileFormat; /* Annotated or linkage */
 char            mega2_path[256]; /* path to mega2 executable */
 char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES]; /* ped, loc, map, freq, pen, and omit files */
-char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][24];
+char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][32];
 int             pedfile_type; /* whether input-file is pre-makeped or not */
 int             basefile_type; /* type for original pedfile type */
 int             HasLoops;
@@ -348,6 +350,8 @@ int             *ChrLoci; /* Contains selected marker loci on selected
 			     chromosomes
 			     For LoopOverTrait=0, list may have trait_loci as well */
 int             NumChrLoci; /* Number of ChrLoci */
+int             dump_dbCompress;  /* compress genotypes if non zero save as dbCompress in DB */
+int             dbCompress;  /* compress genotypes if non zero */
 int             NumChrSite; /* Number of markers */
 int             human_x, human_xy, human_y, human_mt, human_unknown, human_auto;
 int             default_output_filenames;
@@ -410,6 +414,12 @@ static void    init_globals(char *argv0)
 #endif
     check_web_ver = 1;
     MARKER_SCHEME = MARKER_SCHEME_BITS;
+#ifdef SORT_HETEROZYGOUS
+    SORT_HETEROZYGOTE = 1;
+#else
+    SORT_HETEROZYGOTE = 0;
+#endif
+    PREORDER_ALLELES = 0;
     IgnoreValue(getcwd(InputPath, (size_t) FILENAME_LENGTH));
     strcpy(mega2_path1, argv0);
     path_end=strrchr(mega2_path1, '/');
@@ -510,6 +520,8 @@ static void    init_globals(char *argv0)
     default_output_filenames=1;
     FirstIterMenu = 1;
     ChrLoci = NULL;
+    dump_dbCompress = 0;
+    dbCompress = 0;
 }
 
 static void free_globals(void)
@@ -715,6 +727,7 @@ int             main(int argc, char **argv, char **env)
         genetic_distance_index = Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option;
         base_pair_position_index = Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option;
         genetic_distance_sex_type_map = Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option;
+
 //      MARKER_SCHEME = Mega2BatchItems[/* 52 */ Value_Marker_Compression].value.option;
         BatchValueIfSet(MARKER_SCHEME, "Value_Marker_Compression");
         if (marker_scheme_mega2_opts)
@@ -733,6 +746,10 @@ int             main(int argc, char **argv, char **env)
         strcpy(Mega2Batch, "MEGA2.BATCH");
         backup_file(&(Mega2Batch[0]));
     }
+
+    if (! dump_dbCompress)
+        BatchValueGet(dbCompress, "DBcompression");
+
 
     if (AnalyInputMode == NOEXEC_INPUTMODE)
         AnalyInputMode = InputMode;
@@ -831,9 +848,18 @@ int             main(int argc, char **argv, char **env)
         for (ii = 0; ii < NUMBER_OF_MEGA2_INPUT_FILES; ii++) {
             if (mega2_input_files[ii]) {
                 if ((fp=fopen(mega2_input_files[ii], "r")) == NULL) {
-                    errorvf("Could not open %s (\"%s\") for reading!\n",
-                            mega2_input_file_type[ii], mega2_input_files[ii]);
-                    ferr += 1;
+                    if(ii == PEDIGREE &&
+                       (Input_Format == in_format_bcfs ||
+                        Input_Format == in_format_bcfs ||
+                        Input_Format == in_format_gzcfs ) &&
+                       (strcmp(pedfl_name,"-.fam") == 0)) {
+                        mssgvf("No pedigree file provided, so one with no family structure will be constructed.\n");
+                    }
+                    else {
+                        errorvf("Could not open %s (\"%s\") for reading!\n",
+                                mega2_input_file_type[ii], mega2_input_files[ii]);
+                        ferr += 1;
+                    }
                 } else
                     fclose(fp);
             }
@@ -1270,6 +1296,13 @@ int             main(int argc, char **argv, char **env)
 
     // EXPORTS
     if (database_dump) {
+        if (dump_dbCompress) {
+            int redd = BatchValueRead("DBcompression");
+            BatchValueSet(dbCompress, "DBcompression");
+            if (! redd)
+                batchf("DBcompression");
+        }
+
         Tod dbexport("db_export");
 
         extern void dbmega2_export(linkage_ped_top *Top);
@@ -1316,7 +1349,7 @@ int             main(int argc, char **argv, char **env)
         fflush(stdout);
         fflush(stderr);
         close_logs();
-#if defined(_WIN) || defined(MINGW)
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
         eans = _spawnvpe(P_WAIT, name, argvn, env);
         exit(eans);
 #else

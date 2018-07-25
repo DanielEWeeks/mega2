@@ -364,7 +364,7 @@ void check_expiration(void)
     if (expired) {
         errorvf("MEGA2 %s has expired, please obtain an up-to-date version.\n",
 		Mega2Version);
-        EXIT(SYSTEM_ERROR);
+//      EXIT(SYSTEM_ERROR);
     }
 }
 #endif
@@ -555,7 +555,7 @@ void goodbye(int exit)
     // BIG NOTE: this script assumes that MEGA2.BATCH is found in 'sumdir'.
 #ifndef HIDESTATUS
     exit_status = System((const char *)syscmd);
-#if defined(_WIN) || defined(MINGW) || (! defined(WIFEXITED))
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7)) || (! defined(WIFEXITED))
 #define WIFEXITED(exit_status) (exit_status & 0x7f)
 #define WEXITSTATUS(exit_status) ((exit_status>>8) & 0xff)
 #endif
@@ -898,8 +898,10 @@ void            enter_number(int *num)
 }
 
 int RANDS = 0;
-double randomnum( void )
 
+extern "C" {
+
+double randomnum( void )
 {
     /*Global variable used:  seed1*/
     double r;
@@ -966,13 +968,13 @@ void seed_random(void) {
     time_t secs;
 #endif
 
-
     time(&secs);
     /* printf("random seed: %d\n\n", (int) tv.tv_usec); */
     seed1 = (int) (secs % 30000);
 }
-
 #endif
+
+}
 
 void Exit(int arg, const char *file, const int line, const char *err)
 {
@@ -1274,7 +1276,7 @@ void makedir(char *dirname)
     if (access(dirname, F_OK)) {
 #ifdef _WIN
         err = _mkdir(dirname);
-#elif defined(MINGW)
+#elif defined(MINGW) && ! defined(MSYS2_7)
         err = mkdir(dirname);
 #else
         err = mkdir(dirname, 0775);
@@ -1880,6 +1882,7 @@ extern int lastautosome, pseudoautosome, mitoautosome;
 extern int missingv_flags;
 extern char *quant_in, *quant_out, *affect_in, *affect_out;
 extern InputModeType InputMode;
+extern int dump_dbCompress, dbCompress;
 int env = 0;
 
 void mega2_opts(int argc, char **argv)
@@ -2009,7 +2012,11 @@ void mega2_opts(int argc, char **argv)
                     exit(0);
                 } else if (strcasecmp(as, "version") == 0)
                     print_mega2_version();
-                else {
+                else if (strcasecmp(as, "dbcompress") == 0) {
+		    argv++; --argc;
+		    dump_dbCompress = 1;
+		    dbCompress = atoi(*argv);
+                } else {
                     print_mega2_help();
                     EXIT(INPUT_DATA_ERROR);
                 }
@@ -2105,6 +2112,8 @@ void print_mega2_help(void)
     printf("                only dump the database; do not do any analysis.\n");
     printf("             --DBread\n");
     printf("                read an existing database file and do an analysis.\n");
+    printf("             --DBcompress <value>\n");
+    printf("                set database compression level: 0 == off; 1 == gzip.\n");
 
     printf("             --cow\n");
     printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for cow.\n");

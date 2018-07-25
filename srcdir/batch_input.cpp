@@ -269,6 +269,7 @@ static keyw_t keywords[] = {
     {"minimac_reference_panel_directory",     STRING,     "."},
 
     {"DBfile_name",                           STRING,     "dbmega2.db"},
+    {"DBcompression",                         INT,        "1"},
     {"Input_Database_Mode",                   INT,        "2"},  
 
     {"Select_Loop_Break",                     INT,        "0"},
@@ -279,7 +280,7 @@ static keyw_t keywords[] = {
     {"VCF_Allele_Order",                      STRING,     "Original Order"},
 
     {"BCFs_File",                             STRING,     ""},
-    {"BCF_Args",                              LINE,       "--types snps"},
+    {"BCF_Args",                              LINE,       "-m2 -M2 -v snps -c 1"},
 
 };
 

@@ -36,6 +36,10 @@ DEALINGS IN THE SOFTWARE.  */
 #include "htslib/hfile.h"
 #include "hfile_internal.h"
 
+#if defined(_mega2_) && defined(_WIN32)
+#include <io.h>
+#endif
+
 #ifndef ENOTSUP
 #define ENOTSUP EINVAL
 #endif
@@ -556,7 +560,11 @@ static int fd_flush(hFILE *fpv)
         ret = fdatasync(fp->fd);
 #elif defined(HAVE_FSYNC)
         hFILE_fd *fp = (hFILE_fd *) fpv;
+#if defined(_mega2_) && defined(_WIN32)
+        ret = _commit(fp->fd);
+#else
         ret = fsync(fp->fd);
+#endif
 #endif
         // Ignore invalid-for-fsync(2) errors due to being, e.g., a pipe,
         // and operation-not-supported errors (Mac OS X)

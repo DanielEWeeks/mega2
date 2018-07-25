@@ -31,7 +31,7 @@
 
 # NOTE: Please refer to 'srcdir/version.h' which also encodes the Mega2 version
 # information.
-#VERSION=v4.9.2
+#VERSION=v5.0.0
 
 VERSION_H='./srcdir/version.h'
 MEGA2VER=`grep MEGA2VER ${VERSION_H} | sed -n 's/^#define MEGA2VER \(.*\)/\1/p'`
@@ -235,6 +235,10 @@ elif [[ ${OSTYPE:0:10} == MINGW32_NT ]]; then
     OSTYPE=mingw
 elif [[ ${OSTYPE:0:7} == MSYS_NT ]]; then
     OSTYPE=msys2
+    GCV=`gcc -dumpversion`
+    if [[ $GCV == "7.3.0" ]]; then
+        OSTYPE=msys2_7
+    fi
 fi
 export OSTYPE
 echo OS $OSTYPE
@@ -295,6 +299,11 @@ for scr in $scripts; do
             which=where
             v=`uname -r|sed -n -e "s/\\(.*\\)(.*)/\\1/p"`
             pgm=mega2_${VERSION}_msys2.${v}
+        elif [[ $OSTYPE == msys2_7 ]]; then
+            CC=gcc
+            which=where
+            v=`uname -r|sed -n -e "s/\\(.*\\)(.*)/\\1/p"`
+            pgm=mega2_${VERSION}_msys2_7.${v}
         fi
 
         if [[ -x mega2_bin/$pgm && $pgm != "none" && $scr != "mega2compile" ]]; then

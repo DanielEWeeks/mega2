@@ -34,6 +34,7 @@
 #include <vector>
 #include <queue>
 #include <string>
+#include <types.hh>
 
 #include "input_ops.hh"
 #include "str_utils.hh"
@@ -70,6 +71,7 @@ public:
     virtual int  do_menu_parse(int choice);
     virtual void do_menu2batch();
     virtual void do_batch2local();
+    virtual void do_gc();
 
     void init_filters();
     virtual void do_init(Input_Base *inp);
@@ -80,6 +82,10 @@ public:
     linkage_locus_top * build_BCFs_names();
     void check_bcf_files();
     void build_markers_and_samples();
+    void check_dups();
+
+    linkage_ped_top *do_ped(linkage_locus_top *LTop);
+    annotated_ped_rec *build_bcf_ped(linkage_locus_top *LTop);
 
     virtual void do_map(std::vector<m2_map>& additional_maps);
     void build_bcf_map(m2_map& bcf_map);
@@ -114,6 +120,8 @@ protected:
     int    phecols;
     char **phenames;
     int   *phetypes;
+
+    Hmapsi sampleMap;
 };
 
 

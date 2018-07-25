@@ -824,6 +824,8 @@ static int VCFtools_process_next_entry(const unsigned int entry_i,
                 LTop->Locus[Locus_i].LocusName, ID.c_str());
         EXIT(SYSTEM_ERROR);
     }
+    set_2Ralleles_2bits(Locus_i, &LTop->Locus[Locus_i], alleles[0], alleles[1]);
+    
     // Consistency check: Make sure that the type of the Locus is really a marker...
     linkage_locus_rec *LLR = &LTop->Locus[Locus_i];
     linkage_locus_type lltype = LLR->Type;

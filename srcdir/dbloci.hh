@@ -266,6 +266,7 @@ extern Allele_table allele_table;
 
 class Marker_table {
     DBstmt *insert_stmt;
+    DBstmt *insert_short_stmt;
     DBstmt *select_stmt;
 public:
     Marker_table()  {}
@@ -287,11 +288,18 @@ public:
             " pos_avg, pos_male, pos_female, error_prob,"
             " chromosome, col_num, locus_link"
             ")   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,   ?, ?);");
+        insert_short_stmt = MasterDB.prep(
+            "INSERT INTO marker_table("
+            " MarkerName,"
+            " Recoded, NumAlleles, SelectOpt, EstFreq,"
+            " pos_avg, pos_male, pos_female, error_prob,"
+            " chromosome, col_num, locus_link"
+            ")   VALUES(?, ?, ?, ?, ?, ?, NULL, NULL, ?, ?,   ?, ?);");
         select_stmt = MasterDB.prep(
             "SELECT "
             " MarkerName,"
             " Recoded, NumAlleles, SelectOpt, EstFreq,"
-            " pos_avg, pos_male, pos_female, error_prob,"
+            " pos_avg, ifnull(pos_male,-99.99), ifnull(pos_female,-99.99), error_prob,"
             " chromosome, col_num, locus_link"
             "   FROM marker_table;");
         return insert_stmt && select_stmt && 1;
@@ -306,6 +314,20 @@ public:
             && insert_stmt->rowbind(idx, p->chromosome, p->col_num, p->locus_link)
 
             && insert_stmt->step();
+    }
+    int insert(marker_rec *p, double pos_male, double pos_female) {
+        int idx = 1;
+        if (pos_male == -99.99 && pos_female == -99.99)
+            return insert_short_stmt
+                && insert_short_stmt->rowbind(idx, p->MarkerName)
+                && insert_short_stmt->rowbind(idx, p->Props.Numbered.Recoded, p->Props.Numbered.NumAlleles)
+                && insert_short_stmt->rowbind(idx, p->Props.Numbered.SelectOpt, p->Props.Numbered.EstimateFrequencies)
+                && insert_short_stmt->rowbind(idx, p->pos_avg, p->error_prob)
+                && insert_short_stmt->rowbind(idx, p->chromosome, p->col_num, p->locus_link)
+
+                && insert_short_stmt->step();
+        else
+            return insert(p);
     }
     int select(marker_rec *p) {
         int idx = 0;
@@ -325,6 +347,7 @@ public:
     }
     void close() {
         delete insert_stmt;
+        delete insert_short_stmt;
         delete select_stmt;
     }
     int drop() {

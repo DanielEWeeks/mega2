@@ -205,6 +205,8 @@ int Genotype_table::db_getall(linkage_ped_top *Top, void **Genotypes) {
     int knt = 0;
     linkage_locus_top *LTop = Top->LocusTop;
 
+    genotype_table.mkCBuffer(Top);
+
     int ret = select_stmt && select_stmt->abort();
     while (ret) {
         ret = select_stmt->step();
@@ -235,6 +237,8 @@ void dbgenotype_export(linkage_ped_top *Top, bp_order *bp) {
     int ped, per;
     linkage_ped_tree *tpedtreep;
     linkage_ped_rec  *tpersonp;
+
+    genotype_table.mkCBuffer(Top);
 
     Tod pedexp("export genotype/phenotype");
 
@@ -483,7 +487,7 @@ void compress_loci_w_locus_filter(linkage_ped_top *Top)
     List3ill  *locuslist;
     Pairill    ill;
 
-    Alleles_int *alleles = NULL;
+//  Alleles_int *alleles = NULL;
 
     int cnt = locus_filter.size();
 
@@ -502,8 +506,8 @@ void compress_loci_w_locus_filter(linkage_ped_top *Top)
     ext_linkage_locus_rec *NEXLocus  = new ext_linkage_locus_rec [ Lesslocus - offset ];
     NEXLocus -= offset;
 
-    if (MARKER_SCHEME == MARKER_SCHEME_BITS)
-        alleles = CALLOC(Lesslocus, Alleles_int);
+//  if (MARKER_SCHEME == MARKER_SCHEME_BITS)
+//      alleles = CALLOC(Lesslocus, Alleles_int);
 
     loci_reorder_w_locus_filter = CALLOC((size_t) LTop->LocusCnt, int);
     memset(loci_reorder_w_locus_filter, -1, (size_t) LTop->LocusCnt * sizeof (int));
@@ -539,12 +543,12 @@ void compress_loci_w_locus_filter(linkage_ped_top *Top)
                 NMarker[newLoc]  = LTop->Marker[oldLoc];
                 NLocus[newLoc].Marker = &NMarker[newLoc];
                 NEXLocus[newLoc] = EXLTop->EXLocus[oldLoc]; 
-
+/*
                 if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
                     extern Alleles_int *MARKER_SCHEME3_alleles;
                     alleles[newLoc] = MARKER_SCHEME3_alleles[oldLoc];
                 }
-
+*/
                 loci_reorder_w_locus_filter[oldLoc] = newLoc;
             }
         }
@@ -562,12 +566,13 @@ void compress_loci_w_locus_filter(linkage_ped_top *Top)
     free(EXLTop->EXLocus);
     EXLTop->EXLocus = NEXLocus;
 
+/*
     if (MARKER_SCHEME == MARKER_SCHEME_BITS) {
         extern Alleles_int *MARKER_SCHEME3_alleles;
         free(MARKER_SCHEME3_alleles);
         MARKER_SCHEME3_alleles = alleles;
     }
-
+*/
     LTop->LocusCnt   = Lesslocus;
     LTop->MarkerCnt  = Lesslocus - offset;
     EXLTop->LocusCnt = Lesslocus;

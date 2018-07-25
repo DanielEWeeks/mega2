@@ -29,6 +29,9 @@
 ===========================================================================
 */
 
+// for centos ...
+#define __STDC_LIMIT_MACROS 1
+
 #include "common.h"
 #include "typedefs.h"
 #include "types.hh"
@@ -50,6 +53,7 @@
 
 #include <ctime>
 #include "dbrefallele.h"
+#include "mega2_bcftools_interface.h"
 
 extern DBlite MasterDB;
 
@@ -62,6 +66,8 @@ Str hg_build;
 int combinechromovcf;
 int outfiletype;
 Str ref_choice;
+
+
 
 //SECTION_LOG_INIT(ref_mismatch);
 //SECTION_LOG_INIT(ref_not_available);
@@ -653,7 +659,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 strcpy(file,*_opath);
                 strcat(file,"/");
                 strcat(file,file_names[0]);
-                printf("\nMega2 is using VCF tools to convert %s to BCF format:\n",file);
+                printf("\nMega2 is using BCFTools to convert %s to BCF format:\n",file);
                 vcf->convert_vcf_bcf(file);
             }
 
@@ -663,7 +669,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 strcpy(file,*_opath);
                 strcat(file,"/");
                 strcat(file,file_names[0]);
-                printf("Mega2 is using zlib to convert %s to VCF.gz format:\n", file);
+                printf("Mega2 is using BCFTools to convert %s to VCF.gz format:\n", file);
                 vcf->convert_vcf_vcfgz(file);
             }
         }
@@ -924,108 +930,57 @@ void CLASS_VCF::write_VCF_pen(linkage_ped_top *Top, const char *prefix, char *fi
 
 }
 
-//use VCFTools to turn our VCF output into a BCF file
-//turning this into a use of HTSLib
+
 void CLASS_VCF::convert_vcf_bcf(char *filename){
+    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+    std::vector<std::string> args;
+    args.push_back("bcftools");
+    args.push_back("--output-type");
+    args.push_back("b");
+    args.push_back("--output-file");
+    const char * extension = ".bcf";
+    char * filename2 = strdup(filename);
+    args.push_back(strcat(filename,extension));
+    args.push_back(filename2);
 
-//    htsFile *fp    = hts_open(filename,"rb");
-//    bcf_hdr_t *hdr = bcf_hdr_read(fp);
-//    bcf1_t *rec    = bcf_init1();
-//
-//    char *bcfname = (char*) malloc(strlen(filename)+5);
-//    snprintf(bcfname,strlen(filename)+5,"%s.bcf",filename);
-//    htsFile *out   = hts_open(bcfname,"wg");
-//
-//    bcf_hdr_t *hdr_out = bcf_hdr_dup(hdr);
-//    bcf_hdr_remove(hdr_out,BCF_HL_STR,"unused");
-//    bcf_hdr_remove(hdr_out,BCF_HL_GEN,"unused");
-//    bcf_hdr_remove(hdr_out,BCF_HL_FLT,"Flt");
-//    bcf_hdr_remove(hdr_out,BCF_HL_INFO,"UI");
-//    bcf_hdr_remove(hdr_out,BCF_HL_FMT,"UF");
-//    bcf_hdr_remove(hdr_out,BCF_HL_CTG,"Unused");
-//    bcf_hdr_write(out, hdr_out);
-//
-//
-//    while ( vcf_read(fp, hdr, rec)>=0 )
-//    {
-//        bcf_write1(out, hdr_out, rec);
-//    }
-//
-//    bcf_destroy1(rec);
-//    bcf_hdr_destroy(hdr);
-//    bcf_hdr_destroy(hdr_out);
-//
-//    free(bcfname);
-
-
-//this is vcftools code to recode into BCF
-//    char vcftools[10] = "vcftools";
-//    char vcfflag[10] = "--vcf";
-//    char recode[15] = "--recode-bcf";
-//    char outflag[10] = "--out";
-//    char outname[10] = "out";
-//    char *argv[] = {vcftools, vcfflag, filename, recode,outflag,outname, NULL};
-//    int argc = sizeof(argv) / sizeof(char*) - 1;
-//
-//    parameters params(argc,argv);
-//
-//    params.read_parameters();
-//
-//    params.vcf_filename=filename;
-//    params.vcf_compressed = false;
-//
-//    params.recode_all_INFO = true;
-//    params.recode_bcf = true;
-//    filename[strlen(filename)-4] = '\0';
-//    params.output_prefix = filename;
-//    params.recode_bcf_to_stream = false;
-//
-//    params.print_params();
-//
-//    variant_file *vcf;
-//    vcf = new vcf_file(params.vcf_filename,params.vcf_compressed,params.chrs_to_keep,params.chrs_to_exclude,params.force_write_index);
-//    vcf->print_bcf(params.output_prefix,params.recode_INFO_to_keep,params.recode_all_INFO,params.recode_bcf_to_stream);
-}
-
-
-void CLASS_VCF::convert_vcf_vcfgz(const char *filename) {
-    FILE *infile = fopen(filename, "rb");
-    char outfilename[1000];
-    strcpy(outfilename,filename);
-    strcat(outfilename,".gz");
-    printf("%s %s\n", filename,outfilename);
-
-    gzFile outfile = gzopen(outfilename, "wb");
-    //if (!infile || !outfile) return -1;
-
-    char inbuffer[128];
-    int num_read = 0;
-    unsigned long total_read = 0;
-
-    while ((num_read = fread(inbuffer, 1, sizeof(inbuffer), infile)) > 0) {
-        total_read += num_read;
-        gzwrite(outfile, inbuffer, num_read);
+    size_t argc = 6;
+    char **argv;
+    argv = (char **) malloc(argc * sizeof(char *));
+    for (size_t ii = 0; ii < argc; ii += 1) {
+        argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
+        argv[ii] = &args[ii][0];
     }
 
-    fclose(infile);
-    gzclose(outfile);
-
-    printf("Read %ld bytes, Wrote %ld bytes,Compression factor %4.2f%%\n",total_read, file_size(outfilename), (1.0-file_size(outfilename)*1.0/total_read)*100.0);
+    mbi->mega2_main_vcfview(argc,argv);
 
 }
 
-unsigned long CLASS_VCF::file_size(char *filename)
-{
-    FILE *pFile = fopen(filename, "rb");
-    fseek (pFile, 0, SEEK_END);
-    unsigned long size = ftell(pFile);
-    fclose (pFile);
-    return size;
-}
 
+void CLASS_VCF::convert_vcf_vcfgz(char *filename) {
+    MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
+    std::vector<std::string> args;
+    args.push_back("bcftools");
+    args.push_back("--output-type");
+    args.push_back("z");
+    args.push_back("--output-file");
+    const char * extension = ".gz";
+    char * filename2 = strdup(filename);
+    args.push_back(strcat(filename,extension));
+    args.push_back(filename2);
+
+    size_t argc = 6;
+    char **argv;
+    argv = (char **) malloc(argc * sizeof(char *));
+    for (size_t ii = 0; ii < argc; ii += 1) {
+        argv[ii] = (char *) malloc(FILENAME_LENGTH * sizeof(char));
+        argv[ii] = &args[ii][0];
+    }
+
+    mbi->mega2_main_vcfview(argc,argv);
+}
 
 void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo, linkage_ped_top *Top) {
-    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref,reftableexists,change_build_allowed;
+    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref,reftableexists,change_build_allowed, indmenu, pedmenu;
     reftableexists = 0;
     change_build_allowed = 1;
 
@@ -1109,6 +1064,9 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             refchoice = "Use Mega2 Allele DB Table";
     }
 
+    OrigIds[0] = 6;
+    OrigIds[1] = 6;
+
     // actual menu loop
     while (choice != 0) {
         //change this up to be more dynamic, incrementing menu count and assigning the variables here.
@@ -1117,37 +1075,44 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         done = menu_count;
         printf("VCF Analysis Menu:\n");
         printf("%d) Done with this menu - please proceed\n", done);
-        printf("%d) File name stem:                                  %-15s\n", ++menu_count, prefix);
+        printf(" %d) File name stem:                                  %-15s\n", ++menu_count, prefix);
         stem = menu_count;
 
-        printf("%d) Human Genome Build                               %s\n", ++menu_count, buildname);
+        printf(" %d) Human Genome Build                               %s\n", ++menu_count, buildname);
         build = menu_count;
 
         if(!_strand_flips)
-            printf("%d) Allele Ordering                                  %s\n", ++menu_count, refchoice.c_str());
+            printf(" %d) Allele Ordering                                  %s\n", ++menu_count, refchoice.c_str());
         ref = menu_count;
 
         menu_count++;
         if(outfiletype == 1)
-            printf("%d) Choose Format:                                   VCF\n", menu_count);
+            printf(" %d) Choose Format:                                   VCF\n", menu_count);
         else if(outfiletype == 2)
-            printf("%d) Choose Format:                                   BCF\n", menu_count);
+            printf(" %d) Choose Format:                                   BCF\n", menu_count);
         else if(outfiletype == 3)
-            printf("%d) Choose Format:                                   VCF.gz\n", menu_count);
+            printf(" %d) Choose Format:                                   VCF.gz\n", menu_count);
         fileout = menu_count;
 
         if(main_chromocnt > 1) {
             if (*combine_chromo)
-                printf("%d) Combine Chromosomes                              Yes\n", ++menu_count);
+                printf(" %d) Combine Chromosomes                              Yes\n", ++menu_count);
             else
-                printf("%d) Combine Chromosomes                              No\n", ++menu_count);
+                printf( "%d) Combine Chromosomes                              No\n", ++menu_count);
 
             chromo = menu_count;
         }
+
         else {
             //make sure this is set to remove a compiler warning.
             chromo = -1;
         }
+
+
+        indmenu = ++menu_count;
+        individual_id_item(indmenu, VCF, OrigIds[0], 43, 2, 0, 0);
+        pedmenu = ++menu_count;
+        pedigree_id_item(pedmenu, VCF, OrigIds[1], 43, 2, 0);
 
 
         printf("Enter selection: 0 - %d > ", menu_count);
@@ -1269,6 +1234,13 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 else
                     printf("Unknown option %d\n", choice2);
             }
+        }
+        else if(choice == indmenu) {
+            OrigIds[0] = individual_id_item(0, VCF, OrigIds[0], 35, 1,
+                                       Top->OrigIds, Top->UniqueIds);
+        }
+        else if(choice == pedmenu) {
+            OrigIds[1] = pedigree_id_item(0, VCF, OrigIds[1], 35, 1, Top->OrigIds);
         }
 
         else {

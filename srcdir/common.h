@@ -316,6 +316,8 @@ typedef enum
 /* int             quiet; */
 /* global variables that control output behaviour*/
 extern int             MARKER_SCHEME;
+extern int             SORT_HETEROZYGOTE;
+extern int             PREORDER_ALLELES;
 extern int             database_read, database_dump, database_off;
 extern const char     *genetic_distance_map_type_string[3];
 extern int             LoopOverTrait; /* flag for looping over traits */
@@ -335,7 +337,7 @@ extern const char      *NOcTIME;
 extern char            Mega2Version[20];
 extern int             Mega2Ver, Mega2Rev, Mega2Patch; /* Version */
 extern char            Mega2WebVersion[50]; /* web-site file name */
-extern char            err_msg[2*FILENAME_LENGTH]; /* array for error, warning and log messages */
+extern char            err_msg[4*FILENAME_LENGTH]; /* array for error, warning and log messages */
 extern char            **output_paths; /* trait directories prepended with output_dir */
 extern char            **trait_paths;  /* list of directory names for each trait */
 extern char            InputPath[FILENAME_LENGTH];
@@ -382,7 +384,7 @@ extern file_format     InputFileFormat; /* Annotated or linkage */
 extern char            mega2_path[256]; /* path to mega2 executable */
 #define NUMBER_OF_MEGA2_INPUT_FILES         12
 extern char            *mega2_input_files[NUMBER_OF_MEGA2_INPUT_FILES];
-extern char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][24];
+extern char            mega2_input_file_type[NUMBER_OF_MEGA2_INPUT_FILES][32];
 extern int             pedfile_type; /* whether input-file is pre-makeped or not */
 extern int             basefile_type; /* type for original pedfile type */
 extern int             HasLoops;

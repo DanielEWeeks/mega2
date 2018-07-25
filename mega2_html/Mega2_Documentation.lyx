@@ -207,7 +207,7 @@ status collapsed
 
 \end_inset
 
- 1997-2017 by the University of Pittsburgh 
+ 1997-2018 by the University of Pittsburgh 
 \end_layout
 
 \end_inset
@@ -506,9 +506,9 @@ reference "sec:Genetic-Map-Interpolator"
 \end_layout
 
 \begin_layout Enumerate
-Using the Mega2R suite of R packages, the ability to easily load Mega2-produced
- SQLite3 databases directly into R as data frames for further processing
- (See Section 
+Using the Mega2R R package, the ability to easily load Mega2-produced SQLite3
+ databases directly into R as data frames for further processing (See Section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-Mega2R-suite"
@@ -641,7 +641,7 @@ Graphical overview of Mega2 (from 2013)
 
 \begin_layout Standard
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -667,7 +667,222 @@ begin{adjustwidth*}{-1.5cm}{-1.5cm}
 
 \begin_layout Standard
 \begin_inset ERT
-status collapsed
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{adjustwidth*}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Overview of Mega2R
+\end_layout
+
+\begin_layout Standard
+Mega2 has been enhanced to use a SQLite database as an intermediate data
+ representation.
+ Additionally, Mega2 now stores bialleleic genotype data in a highly compressed
+ form, much like that of the GenABEL R facility and the PLINK binary format.
+ Concurrently, the R community and the Bioconductor community have developed
+ a variety of genetic analysis programs complimentary to the programs supported
+ by Mega2.
+ We have now made it easy to load SQLite3 Mega2 databases directly into
+ R as data frames to use these R facilities.
+ In addition, we have developed C++ functions for R to decompress needed
+ subsets of the genotype data, on the fly, in a memory efficient manner.
+ We have also created several functions that illustrate how to use the data
+ frames in useful ways: these permit one to run the 'pedgene' package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=pedgene
+\end_layout
+
+\end_inset
+
+) to carry out gene-based association tests on family data using selected
+ marker subsets, to run the 'SKAT' package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=SKAT
+\end_layout
+
+\end_inset
+
+) to carry out gene-based association tests using selected marker subsets,
+ to output subsets of the Mega2R data as a VCF file (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/samtools/hts-specs
+\end_layout
+
+\end_inset
+
+) and related files (for phenotype and family data), and to convert the
+ data frames into 'GenABEL' gwaa.data-class objects (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=GenABEL
+\end_layout
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+Mega2R was designed as an efficient pathway from Mega2 input data formats
+ into R utilizing the Mega2-created database 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-database-mode"
+
+\end_inset
+
+.
+ Mega2R allows a Mega2-created database to be converted to R data frames
+ for use in R analysis packages.
+ 
+\end_layout
+
+\begin_layout Standard
+As an input Mega2R takes a Mega2 database which can be created by using
+ Mega2 and any of Mega2's input formats 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-formats"
+
+\end_inset
+
+.
+ The Mega2R R package is available at 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://watson.hgen.pitt.edu/mega2/mega2r"
+target "https://watson.hgen.pitt.edu/mega2/mega2r"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Additionally Mega2R supports several functions directly within the package
+ itself, these include pedgene, GenABEL, SKAT, VCF, and GDS.
+ These can be accused using the Mega2R function calls.
+\end_layout
+
+\begin_layout Enumerate
+The ability to create R data frames conveniently from Mega2 databases.
+\end_layout
+
+\begin_layout Enumerate
+The ability to easily load multiple data formats into R utilizing Mega2.
+\end_layout
+
+\begin_layout Enumerate
+Allows for memory efficient extraction of data within genotype regions.
+\end_layout
+
+\begin_layout Enumerate
+Mega2 compresses the genotype data during storage in the Mega2 database
+ to save space.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R utilizes an iterative wrapper which operates on gene regions so that
+ single gene analysis functions can be called on multiple genes with one
+ call.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2pedgene function for using the pedgene R package
+ on data within a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2GenABEL function for using the GenABEL R package
+ on data within a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2SKAT function for using the SKAT R package on data
+ within a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2VCF function for outputting data to VCF from data
+ within a Mega2 database in R.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2gdsfmt function for outputting data from a Mega2
+ database in CoreArray Genomic Data Structure (GDS) format (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://bioconductor.org/packages/release/bioc/html/gdsfmt.html
+\end_layout
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsection
+Graphical overview of Mega2R (from 2017)
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{adjustwidth*}{-1.5cm}{-1.5cm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Mega2R_poster_2017_resized.pdf
+	scale 83
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
 
 \begin_layout Plain Layout
 
@@ -773,7 +988,7 @@ reference "subsec:SQLite3"
 \end_layout
 
 \begin_layout Subsubsection
-Output formats 
+Mega2 output formats 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Output-formats"
@@ -1002,6 +1217,41 @@ end{multicols}
 
 \end_layout
 
+\begin_layout Subsubsection
+Mega2R output formats 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Output-formats-1"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Mega2R R package supports the following:
+\end_layout
+
+\begin_layout Enumerate
+The pedgene R package
+\end_layout
+
+\begin_layout Enumerate
+The SKAT R package
+\end_layout
+
+\begin_layout Enumerate
+The GenABEL R package
+\end_layout
+
+\begin_layout Enumerate
+VCF format
+\end_layout
+
+\begin_layout Enumerate
+CoreArray Genomic Data Structure (GDS format)
+\end_layout
+
 \begin_layout Section
 Download Mega2
 \end_layout
@@ -1037,13 +1287,74 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
+Enhancements in Mega2 version 5.0.0
+\end_layout
+
+\begin_layout Itemize
+In addition to supporting the old BCF/VCF file format, Mega2 can now read
+ the latest BCF format (≥ version 2.2) using the BCF tools library.
+ Mega2 will generate a dummy .fam pedigree file from the sample data, if
+ none is provided.
+\end_layout
+
+\begin_layout Itemize
+BGEN version 1.3 is now supported.
+\end_layout
+
+\begin_layout Itemize
+For inputs that have a defined reference/alternate allele order: VCF, VCF.gz,
+ BCF, IMPUTE, BGEN and PLINK BED, this order will be preserved in the Mega2
+ database and Mega2 analysis outputs.
+ This feature requires bialleleic markers and genotype compression set to
+ 1 (aka 2 bits).
+\end_layout
+
+\begin_layout Itemize
+Mega2 now computes the allele frequencies after pruning for Mendelian inconsiste
+ncies, half typed alleles, etc has taken place.
+ In the past, the counting was performed before the pruning and might thus
+ have been incorrect.
+\end_layout
+
+\begin_layout Itemize
+The Mega2 SQLite database has been made more compact.
+ The genotypes table is now compressed using gzlib.
+ Numeric values used to represent the unknown value (-99.99) are now stored
+ more efficiently in the database as NULL.
+ Finally, the Mega2 design has been revised so that the marker_scheme3_alleles
+ table is no longer required and is not generated.
+ The new Mega2 SQLite database is comparable in size to the corresponding
+ VCF.gz input file, or corresponding BCF input file.
+\end_layout
+
+\begin_layout Itemize
+Improved Mega2R vignette and documentation and make Mega2R pass CRAN acceptance
+ testing.
+\end_layout
+
+\begin_layout Itemize
+Mega2R now can generate CRAN SeqArray/SnpArray format objects.
+\end_layout
+
+\begin_layout Itemize
+Mega2R now 'enhanves' GenABEL instead of requires GenABEL because the GenABEL
+ R package has been archived.
+\end_layout
+
+\begin_layout Itemize
+There is no Mega2 program compiled using the native Microsoft compilers.
+ This should be available in release 5.0.1.
+ For the present, you should use Msys2 Mega2 instead.
+\end_layout
+
+\begin_layout Subsection
 Enhancements in Mega2 version 4.9.2
 \end_layout
 
 \begin_layout Itemize
-The Mega2R suite of R packages provides tools for accessing and processing
- common genetic data formats in R, making it easy to load SQLite3 Mega2
- databases directly into R as data frames (See Section 
+The Mega2R R package provides tools for accessing and processing common
+ genetic data formats in R, making it easy to load SQLite3 Mega2 databases
+ directly into R as data frames (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-Mega2R-suite"
@@ -1713,7 +2024,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 database mode menu: 
+Mega2 5.0.0 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1784,7 +2095,7 @@ reference "sec:The-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 file input menu:
+              Mega2 5.0.0 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -1917,7 +2228,7 @@ database menu
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 database mode menu: 
+Mega2 5.0.0 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1978,7 +2289,7 @@ reference "sec:The-alternate-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 database input menu: 
+Mega2 5.0.0 database input menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2248,12 +2559,12 @@ target "http://doi.org/10.1186/s13029-014-0026-y"
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 4.9.2 should be: 
+ For example, the web site citation for version 5.0.0 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2015) Mega2 (Version 4.9.2).
+ Weeks DE (2018) Mega2 (Version 5.0.0).
  
 \begin_inset Flex URL
 status open
@@ -2269,8 +2580,8 @@ https://watson.hgen.pitt.edu/mega2.html
 \end_layout
 
 \begin_layout Standard
-Use of Mega2 to convert VCF or BCF input files makes use of a built-in copy
- of VCFtools; you should cite the following paper:
+Use of Mega2 to convert Legacy VCF or BCF input files makes use of a built-in
+ copy of VCFtools; you should cite the following paper:
 \end_layout
 
 \begin_layout Quote
@@ -2286,6 +2597,25 @@ target "http://dx.doi.org/10.1093/bioinformatics/btr330"
  DePristo, Robert Handsaker, Gerton Lunter, Gabor Marth, Stephen T.
  Sherry, Gilean McVean, Richard Durbin and 1000 Genomes Project Analysis
  Group, Bioinformatics (2011) 27 (15): 2156-2158.
+\end_layout
+
+\begin_layout Standard
+Use of Mega2 to convert Legacy VCF or BCF input files makes use of a built-in
+ copy of BCFtools; you should cite the following paper:
+\end_layout
+
+\begin_layout Quote
+\begin_inset CommandInset href
+LatexCommand href
+name "BCFtools/csq: haplotype-aware variant consequences."
+target "https://www.ncbi.nlm.nih.gov/pubmed/28205675"
+
+\end_inset
+
+Petr Danecek, Shane A.
+ McCarthy Bioinformatics.
+ 2017 Feb 16 Published online 2017 Feb 16.
+ doi: 10.1093/bioinformatics/btx100
 \end_layout
 
 \begin_layout Standard
@@ -2531,7 +2861,7 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 4.9.2 
+The latest version is 5.0.0 
 \end_layout
 
 \begin_layout Enumerate
@@ -2544,7 +2874,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.2_src.tar.gz
+mega2_v5.0.0_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -2559,7 +2889,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v4.9.2_src.tar.gz 
+gunzip mega2_v5.0.0_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -2573,7 +2903,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v4.9.2_src.tar 
+tar xvf mega2_v5.0.0_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -2581,7 +2911,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v4.9.2_src.tar.gz 
+tar xzvf mega2_v5.0.0_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -2594,7 +2924,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v4.9.2_src
+mega2_v5.0.0_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2774,7 +3104,7 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v4.9.2_src.tar.gz bundle following
+If you downloaded and unpacked the mega2_v5.0.0_src.tar.gz bundle following
  the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2782,7 +3112,7 @@ reference "subsec:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v4.9.2_src containing the following
+), you should see a directory named mega2_v5.0.0_src containing the following
  directories (in bold) or files listed in alphabetical order:
 \end_layout
 
@@ -3302,17 +3632,13 @@ cyg
 \end_inset
 
 .
- The static Msys2 version of Mega2 does not need any additional libraries.
- The other Msys2 executable uses the .dll's in the Windows 10 directory beginning
- with the prefix 
-\begin_inset Quotes eld
-\end_inset
-
-lib
-\begin_inset Quotes erd
-\end_inset
-
-.
+ The static Msys2 version of Mega2 only needs the msys-2.0.dll library which
+ is available if you have installed msys2 on your machine.
+ The other Msys2 executables use the .dll's in the msys2 or msys2_7 directories
+ respectively for the 2.7.0 or 2.10.0 msys2 executable; again, these will be
+ already available if you installed msys2.
+ If you are just using the executable and corresponding .dll's, you should
+ copy all of them to the same directory.
  Finally, if you run a native Windows Mega2 at the 
 \begin_inset Quotes eld
 \end_inset
@@ -3463,7 +3789,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v4.9.2_src in above step), type the command:
+ mega2_v5.0.0_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -3514,7 +3840,7 @@ name "subsec:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v4.9.2_src.tar.gz package also includes a source code folder "srcdir"
+The mega2_v5.0.0_src.tar.gz package also includes a source code folder "srcdir"
  containing C source files, a Makefile, and several OS-specific Makedefs
  files that define compilation flags that govern locations of standard C
  libraries, and other OS-specific behavior.
@@ -3529,7 +3855,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v4.9.2_src folder, type 
+From within the mega2_v5.0.0_src folder, type 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -3940,7 +4266,7 @@ Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v4.9.2_src folder contains
+The sub-folder called mega2_html/ within the mega2_v5.0.0_src folder contains
  documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
@@ -3984,18 +4310,22 @@ reference "subsec:GNU-General-Public"
 \end_layout
 
 \begin_layout Standard
-Mega2 uses three libraries developed by other external groups, the sources
+Mega2 uses four libraries developed by other external groups, the sources
  of which are included with the Mega2 sources.
  Minimal modifications have been made to these two libraries to facilitate
  their integration with Mega2.
  The VCFtools library handles reading of the various Variant Call Format
  (VCF) input files.
+ In addition BCFtools was included for faster VCF processing as well as
+ handling current version of BCF files.
+ As part of the BCFtools library a copy of the HTSLIb is included as well,
+ this is simply the library BCFtools runs on.
  The BGEN library handles the reading of the binary IMPUTE2 BGEN format
  input file.
  ZLIB is needed by the VCFtools and BGEN libraries and is also used to format
  Beagle output.
- The VCFtools library is released under the GNU Lesser General Public License
- Version 3 (
+ VCFtools, BCFtools library are released under the GNU Lesser General Public
+ License Version 3 (
 \begin_inset CommandInset href
 LatexCommand href
 name "LGPLv3"
@@ -4603,7 +4933,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v4.9.2_src.tar.gz.
+The Mega2 distribution package is named mega2_v5.0.0_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -4618,7 +4948,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.2_src.tar
+mega2_v5.0.0_src.tar
 \end_layout
 
 \end_deeper
@@ -4644,7 +4974,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v4.9.2_src.tar.tar
+mega2_v5.0.0_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -4652,7 +4982,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v4.9.2_src.tar.gz
+mega2_v5.0.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4660,7 +4990,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v4.9.2_src.tar.tar mega2_v4.9.2_src.tar.gz
+mv mega2_v5.0.0_src.tar.tar mega2_v5.0.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4689,6 +5019,12 @@ name "subsec:Windows-Mingw-installation"
 
 \begin_layout Subsubsection
 Mingw POSIX windows environment
+\end_layout
+
+\begin_layout Standard
+Mingw is no longer supported for Mega2.
+ Please consider using Msys2 instead.
+ Instruction for Msys2 follow this section.
 \end_layout
 
 \begin_layout Standard
@@ -4921,7 +5257,7 @@ Installing Msys2
 \end_layout
 
 \begin_layout Standard
-Download and execute the Msys2 sourceforge page download image
+Download and install the Msys2 from
 \end_layout
 
 \begin_layout LyX-Code
@@ -4930,7 +5266,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://sourceforge.net/projects/msys2/
+http://www.msys2.org
 \end_layout
 
 \end_inset
@@ -4956,7 +5292,7 @@ update-core
 \end_layout
 
 \begin_layout LyX-Code
-pacman -Su
+pacman -Syu
 \end_layout
 
 \begin_layout Standard
@@ -5374,7 +5710,7 @@ PLINK PED format
 
 \end_deeper
 \begin_layout Enumerate
-Variant Call Format (See 
+Legacy Variant Call Format (using VCFtools) (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:VCF-file-formats"
@@ -5390,7 +5726,7 @@ reference "subsec:VCF-file-formats"
 
 \begin_deeper
 \begin_layout Enumerate
-BCF format 
+BCF format (BCF format v2.1) 
 \end_layout
 
 \begin_layout Enumerate
@@ -5431,6 +5767,24 @@ binary IMPUTE2 BGEN format
 Mega2 database Input
 \end_layout
 
+\begin_layout Enumerate
+Varuant Format (using BCFtools)
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+BCF format (BCF format v2.2 and higher.)
+\end_layout
+
+\begin_layout Enumerate
+VCF compressed Format
+\end_layout
+
+\begin_layout Enumerate
+VCF format
+\end_layout
+
+\end_deeper
 \begin_layout Standard
 In the past, Mega2 read in its data in an existing supported data format
  as described in the next sections, did its validation and then proceeded
@@ -11437,8 +11791,20 @@ target "http://en.wikipedia.org/wiki/Variant_Call_Format"
 \end_inset
 
 ).
- Mega2 currently uses source code from the popular VCFtools program (See:
  
+\end_layout
+
+\begin_layout Standard
+Mega2 currently uses two applications for parsing VCF and BCF files, these
+ are VCFtools and BCFtools.
+ The former is called the 'legacy' mode because it reads the earlier BCF
+ format 2.1 bcf files, while the later reads the current BCF format files
+ (v2.2 and higher).
+ 
+\end_layout
+
+\begin_layout Standard
+Mega2 uses from the popular VCFtools program (See: 
 \begin_inset CommandInset href
 LatexCommand href
 name "VCFtools"
@@ -11446,7 +11812,7 @@ target "http://vcftools.sourceforge.net"
 
 \end_inset
 
-) as its underlying engine for parsing VCF files.
+) as its underlying engine for parsing VCF files in 'legacy' mode.
  VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format
  v4.1 (See: 
 \begin_inset CommandInset href
@@ -11495,6 +11861,37 @@ reference "par:VCF_Args"
 \end_inset
 
 ).
+\end_layout
+
+\begin_layout Standard
+Mega2 now also uses the source code of the BCFtools program (See: 
+\begin_inset CommandInset href
+LatexCommand href
+name "BCFtools"
+target "https://samtools.github.io/bcftools/bcftools.html"
+
+\end_inset
+
+) in new input modes for VCF and BCF format files.
+ BCFtools supports VCF Format v4.0 and higher as well as BCF format v2.2 and
+ higher.
+ Mega2 supports a subset of the 
+\begin_inset Quotes eld
+\end_inset
+
+view
+\begin_inset Quotes erd
+\end_inset
+
+ options that are included in the documentation of the new input methods.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-Format:-BCFTools"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11569,13 +11966,15 @@ reference "sec:The-analysis-menu"
 \end_layout
 
 \begin_layout Standard
-When using VCF-format input files, one needs to provide several files, which
- are described below.
- At a minimum, two files are required: 1) the VCF file containing the marker
- genotypes, and 2) the PLINK-format family file containing the family structure
- information.
- Optional files include a phenotype file, a map file, an omit file, an allele
- frequency file, and a penetrance file.
+When using VCF-format or BCF-format input files, one needs to provide several
+ files, which are described below.
+ At a minimum, one files is required: the VCF or BCF file containing the
+ marker genotypes.
+ It is highly recommended to also provide the PLINK-format family file containin
+g the family structure and gender information (if one is not provided, a
+ dummy pedigree file will be constructed where everyone is coded to be male)..
+ Other optional files include a phenotype file, a map file, an omit file,
+ an allele frequency file, and a penetrance file.
  The phenotype file may include a SAMPLEID column specifying the key mapping
  individuals in the family file to the samples in the VCF file.
 \end_layout
@@ -13199,7 +13598,7 @@ https://watson.hgen.pitt.edu/register/docs/gmi.html
 \end_layout
 
 \begin_layout Section
-The Mega2R suite of R packages
+The Mega2R R package
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:The-Mega2R-suite"
@@ -13210,9 +13609,9 @@ name "sec:The-Mega2R-suite"
 \end_layout
 
 \begin_layout Standard
-The Mega2R suite of R packages provides tools for accessing and processing
- common genetic data formats in R.
- The Mega2R suite of R packages is available at 
+The Mega2R R package provides tools for accessing and processing common
+ genetic data formats in R.
+ The Mega2R R package is available at 
 \begin_inset CommandInset href
 LatexCommand href
 name "https://watson.hgen.pitt.edu/mega2/mega2r"
@@ -13235,18 +13634,157 @@ Mega2 has been enhanced to use a SQLite database as an intermediate data
  R as data frames to use these R facilities.
  In addition, we have developed C++ functions for R to decompress needed
  subsets of the genotype data, on the fly, in a memory efficient manner.
- We created the base Mega2R package that loads and manipulates data frames.
- We have also created several more R packages that illustrate how to use
- the data frames as well as perform useful functions: the Mega2pedgene package
- to run the pedgene R package to carry out gene-based association tests
- on family data using selected marker subsets, the Mega2VCF package to output
- the Mega2R data as a VCF file and related files (for phenotype and family
- data), and the Mega2GenABEL package to convert the data frames into GenABEL
- R gwaa.data-class objects.
- The Mega2R program enhances GenABEL since it supports additional input
- data formats (such as PLINK, VCF and IMPUTE2) not currently supported by
- GenABEL.
+ We have also created several functions that illustrate how to use the data
+ frames in useful ways: these permit one to run the 'pedgene' package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=pedgene
+\end_layout
+
+\end_inset
+
+) to carry out gene-based association tests on family data using selected
+ marker subsets, to run the 'SKAT' package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=SKAT
+\end_layout
+
+\end_inset
+
+) to carry out gene-based association tests using selected marker subsets,
+ to output subsets of the Mega2R data as a VCF file (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/samtools/hts-specs
+\end_layout
+
+\end_inset
+
+) and related files (for phenotype and family data), and to convert the
+ data frames into 'GenABEL' gwaa.data-class objects (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=GenABEL
+\end_layout
+
+\end_inset
+
+).
  
+\end_layout
+
+\begin_layout Standard
+Mega2R was designed as an efficient pathway from Mega2 input data formats
+ into R utilizing the Mega2-created database 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-database-mode"
+
+\end_inset
+
+.
+ Mega2R allows a Mega2-created database to be converted to R data frames
+ for use in R analysis packages.
+ 
+\end_layout
+
+\begin_layout Standard
+As an input Mega2R takes a Mega2 database which can be created by using
+ Mega2 and any of Mega2's input formats 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-formats"
+
+\end_inset
+
+.
+ The Mega2R R package is available at 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://watson.hgen.pitt.edu/mega2/mega2r"
+target "https://watson.hgen.pitt.edu/mega2/mega2r"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Additionally Mega2R supports several functions directly within the package
+ itself, these include pedgene, GenABEL, SKAT, VCF, and GDS.
+ These can be accused using the Mega2R function calls.
+\end_layout
+
+\begin_layout Enumerate
+The ability to create R data frames conveniently from Mega2 databases.
+\end_layout
+
+\begin_layout Enumerate
+The ability to easily load multiple data formats into R utilizing Mega2.
+\end_layout
+
+\begin_layout Enumerate
+Allows for memory efficient extraction of data within genotype regions.
+\end_layout
+
+\begin_layout Enumerate
+Mega2 compresses the genotype data during storage in the Mega2 database
+ to save space.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R utilizes an iterative wrapper which operates on gene regions so that
+ single gene analysis functions can be called on multiple genes with one
+ call.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2pedgene function for using the pedgene R package
+ on data within a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2GenABEL function for using the GenABEL R package
+ on data within a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2SKAT function for using the SKAT R package on data
+ within a Mega2 database.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2VCF function for outputting data to VCF from data
+ within a Mega2 database in R.
+\end_layout
+
+\begin_layout Enumerate
+Mega2R contains the Mega2gdsfmt function for outputting data from a Mega2
+ database in CoreArray Genomic Data Structure (GDS) format (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://bioconductor.org/packages/release/bioc/html/gdsfmt.html
+\end_layout
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Section
@@ -13641,7 +14179,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 database mode menu: 
+Mega2 5.0.0 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -13973,7 +14511,7 @@ When entering the file input menu, Mega2 initially expects to read input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 file input menu:
+              Mega2 5.0.0 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14069,7 +14607,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 4.9.2 input file type menu:
+Mega2 5.0.0 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14141,7 +14679,7 @@ Line 6
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 file input menu:
+              Mega2 5.0.0 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -16168,12 +16706,22 @@ Often, the RSID field is made up of several subfields that we need to process.
 \end_layout
 
 \begin_layout Subsection
-Input Format: BCF v2.2 or higher
+Input Format: BCF v2.2 or higher utilizing BCFtools
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Input-Format:-BCFTools"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-This is an updated input method implementing BCFTools and htslib in order
- to quickly process BCF files.
+This is an updated input method implementing BCFtools and htslib in order
+ to quickly process BCF files, process larger bcf files, and process bcf
+ panels of multiple files.
+ Additionally this processes BCF files of version 2.2 or higher which VCFTools
+ did not support.
  BCF files are the binary compressed version of a VCF file (See 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -16184,38 +16732,474 @@ reference "subsec:VCF-file-formats"
 ).
 \end_layout
 
-\begin_layout Subsubsection*
-Menu item: BCF File
-\end_layout
-
-\begin_layout Standard
-This can take two styles inputs for the BCF file, it can either be a bcf
- file encoded in bcf version 2.2 or later, or a text file containing a list
- of bcf files of the same criteria.
- 
-\end_layout
-
-\begin_layout Standard
-The text file is split by lines and can use '#' as an escape character if
- you do not want a specific file included.
- This can be conveniently used with options like find to get load an entire
- panel of BCF files split into chunks or by chromosome.
-\end_layout
-
-\begin_layout Subsubsection*
-Menu item: BCFTools parameters
-\end_layout
-
-\begin_layout Standard
-This allows a subset of the BCFTools parameters to be used and applied to
- data.
- The allowed BCFTools parameters are the following:
+\begin_layout Subsubsection
+BCF v2.2 or higher menu
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="3">
+<lyxtabular version="3" rows="18" columns="2">
 <features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0) Done with this menu 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+please proceed 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1) Select input file format: 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BCF v2.2 or higher (bcf) 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2) Enter PLINK phenotype parameters:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--missing-phenotype -9 --trait default 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3) Input file stem:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+- 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4) BCFtools Parameters
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-m2 -M2 -v snps -c 1 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5) Template File: 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[required] 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6) Pedigree file: (PLINK .fam) [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7) Phenotype file:(PLINK .phe) [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8) Map file: (Mega2 .map) [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9) Omit file: (Mega2 .omit)[optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10) Frequency file: (Mega2 .freq)[optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11) Penetrance file: (Mega2 .pen) [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12) Output Directory: [ Current directory ]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13) SQLite3 Database file: dbmega2.db [overwrite]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+14) Reference Allele File: [optional]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+_
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15) Simulate genotyping errors: 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[ no ] 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+16) Include all pedigrees whether typed or not 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+17) Maximum number of alleles per marker: 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2 alleles
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Menu item: PLINK parameters
+\end_layout
+
+\begin_layout Standard
+Like in the Common variant call format you can a restricted list of PLINK
+ parameters which apply to phenotyping and pedigree values.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:VCF-Menu-item-PLINK-parameters"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Menu item: Input file stem
+\end_layout
+
+\begin_layout Standard
+Like other input methods the input file stem can be used to set multiple
+ files simultaneously with a similar stem.
+ The one distinction to be made however is that the Template file is not
+ affected by this.
+\end_layout
+
+\begin_layout Subsubsection*
+Menu item: BCFtools parameters
+\end_layout
+
+\begin_layout Standard
+Mega2 uses the BCFtools view command in order to browse variant files.
+ Due BCFtools style parameter flags can be added to your Mega2 inputs.
+ By default Mega2 has the following values:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Quotes eld
+\end_inset
+
+-m2 -M2 -v snps -c 1
+\begin_inset Quotes erd
+\end_inset
+
+ which stand for the following.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+-m2 -M2 -v snps
+\begin_inset Quotes erd
+\end_inset
+
+ selects only biallelic markers (corresponding to Mega2's default compression),
+ additionally 
+\begin_inset Quotes eld
+\end_inset
+
+-c 1
+\begin_inset Quotes erd
+\end_inset
+
+ only reads in markers of allele count of 1 or higher.
+\end_layout
+
+\begin_layout Standard
+If you choose to remove the 
+\begin_inset Quotes eld
+\end_inset
+
+-m2 -M2 -v snps
+\begin_inset Quotes erd
+\end_inset
+
+ from your arguments in order to read more than 2 alleles at a site, be
+ sure to change the maximum number of alleles per marker (menu item 17)
+\end_layout
+
+\begin_layout Standard
+This allows a subset of the BCFtools view parameters to be used and applied
+ to data.
+ The allowed BCFtools parameters are the following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="16" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -16225,6 +17209,15 @@ This allows a subset of the BCFTools parameters to be used and applied to
 
 \begin_layout Plain Layout
 Flag
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Alias
 \end_layout
 
 \end_inset
@@ -16262,6 +17255,15 @@ Description
 \begin_inset Text
 
 \begin_layout Plain Layout
+-k -n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 none
 \end_layout
 
@@ -16283,6 +17285,15 @@ print known sites only/print novel sites only
 
 \begin_layout Plain Layout
 --phased --exclude-phased
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-p -P
 \end_layout
 
 \end_inset
@@ -16320,6 +17331,15 @@ print/exclude sites where all samples are phased
 \begin_inset Text
 
 \begin_layout Plain Layout
+-u -U
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 none
 \end_layout
 
@@ -16341,6 +17361,15 @@ print sites without a called genotype/exclude
 
 \begin_layout Plain Layout
 --min-ac --max-ac
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-c -C
 \end_layout
 
 \end_inset
@@ -16378,6 +17407,15 @@ set minimum or maximum allele count
 \begin_inset Text
 
 \begin_layout Plain Layout
+-m -M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 int
 \end_layout
 
@@ -16407,6 +17445,15 @@ only read sites with min/max alleles total
 \begin_inset Text
 
 \begin_layout Plain Layout
+-q -Q
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 float
 \end_layout
 
@@ -16428,6 +17475,15 @@ minimum/maximum allele frequency
 
 \begin_layout Plain Layout
 --exclude --include
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-e -i
 \end_layout
 
 \end_inset
@@ -16472,6 +17528,15 @@ target "https://samtools.github.io/bcftools/bcftools-man.html#expressions"
 \begin_inset Text
 
 \begin_layout Plain Layout
+-r
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 crh:to-from
 \end_layout
 
@@ -16493,6 +17558,15 @@ comma-separated list of region
 
 \begin_layout Plain Layout
 --regions-file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-R
 \end_layout
 
 \end_inset
@@ -16525,11 +17599,226 @@ target "https://samtools.github.io/bcftools/bcftools-man.html#common_options"
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--targets
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-t
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+crh:to-from
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+comma-separated list of targets
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--targets-file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-T
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tab delimited target file 
+\begin_inset CommandInset href
+LatexCommand href
+name "BCFTools Common Options"
+target "https://samtools.github.io/bcftools/bcftools-man.html#common_options"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--samples
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-s
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+list
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+comma-seperated list of samples
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--samples-file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-S
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+sample per line file 
+\begin_inset CommandInset href
+LatexCommand href
+name "BCFTools Common Options"
+target "https://samtools.github.io/bcftools/bcftools-man.html#common_options"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+--force-samples
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+N/A
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+none
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+only warn about unknown subset samples
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 --apply-filters
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-f
 \end_layout
 
 \end_inset
@@ -16561,7 +17850,7 @@ Check filter column for list values
 \end_layout
 
 \begin_layout Standard
-For additional explanation about BCFTools and it's options see the 
+For additional explanation about BCFtools and it's options see the 
 \begin_inset CommandInset href
 LatexCommand href
 name "BCFTools Documentation "
@@ -16572,17 +17861,130 @@ target "https://samtools.github.io/bcftools/bcftools.html"
 .
 \end_layout
 
-\begin_layout Subsubsection*
-Menu item: PLINK parameters
+\begin_layout Standard
+Please note for expressions and complex filtering only the double quote
+ 
+\begin_inset Quotes eld
+\end_inset
+
+ character is supported and not the single quote ' character.
+ For instance 
+\begin_inset Quotes eld
+\end_inset
+
+MAF > .05
+\begin_inset Quotes erd
+\end_inset
+
+ is a valid filter.
 \end_layout
 
 \begin_layout Standard
-Like in the Common variant call format you can a restricted list of PLINK
- parameters which apply to phenotyping and pedigree values.
+Additionally in this menu you can enter 
+\begin_inset Quotes eld
+\end_inset
+
+clear
+\begin_inset Quotes erd
+\end_inset
+
+ to remove all selected options.
+\end_layout
+
+\begin_layout Subsubsection*
+Menu item: Template File
+\end_layout
+
+\begin_layout Standard
+This is the only required value for this mode.
+ Mega2 can take two styles inputs for the Template file, it can either be
+ a bcf file encoded in bcf version 2.2 or later, or a text file containing
+ a list of bcf files of the same criteria.
+ 
+\end_layout
+
+\begin_layout Standard
+The text file is split by lines and can use '#' as an escape character if
+ you do not want a specific file included.
+ This can be conveniently used with options like find to get load an entire
+ panel of BCF files split into chunks or by chromosome.
+\end_layout
+
+\begin_layout Subsubsection*
+Menu item: Pedigree File
+\end_layout
+
+\begin_layout Standard
+This format and the other new VCF formats are unique in that a pedigree
+ file is not required.
+ If one is not provided Mega2 will construct a simulated pedigree with entirely
+ unrelated data using the sample id's within the BCF file.
+ 
+\emph on
+It will also set all of the samples to a male sex by default.
+
+\emph default
+ Each member in this pedigree will be in a family identified by their sample
+ ID and will have their sample ID as their person ID.
+ No relatedness will be determined.
+ This is purely a feature for convenience for unrelated data where there
+ is no utility to constructing a pedigree outside of Mega2.
+\end_layout
+
+\begin_layout Standard
+Additionally when using this feature, the file name for the pedigree file
+ is used as 
+\begin_inset Quotes eld
+\end_inset
+
+-.fam
+\begin_inset Quotes erd
+\end_inset
+
+ and you will see that in your batch output.
+ To use this feature in batch mode simply use 
+\begin_inset Quotes eld
+\end_inset
+
+Input_Pedigree_File-.fam
+\begin_inset Quotes erd
+\end_inset
+
+ as the line in the batch file.
+\end_layout
+
+\begin_layout Standard
+If you have relatedness data that you want to use, include the pedigree
+ file in this field and it will attach to the VCF by sample ID, where sampleID
+ is set to familyID_personID as discussed in the Legacy VCF section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:VCF-File"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Input Format: VCF in Compressed Format utilizing BCFtools
+\end_layout
+
+\begin_layout Standard
+This is an updated input method implementing BCFtools and htslib in order
+ to quickly process VCF.gz files.
+ This input mode is for processing an individual VCF.gz file using the BCFtools
+ library internal to Mega2.
+ 
+\end_layout
+
+\begin_layout Standard
+Here variant file allows you to enter a VCF.gz file and BCFtools parameters
+ works as discussed in the BCF format above.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "par:VCF-Menu-item-PLINK-parameters"
+reference "subsec:Input-Format:-BCFTools"
 
 \end_inset
 
@@ -16590,11 +17992,28 @@ reference "par:VCF-Menu-item-PLINK-parameters"
 \end_layout
 
 \begin_layout Subsection
-Input Format: VCF in Compressed Format
+Input Format: VCF Format utilizing BCFtools
 \end_layout
 
-\begin_layout Subsection
-Input Format: VCF Format
+\begin_layout Standard
+This is an updated input method implementing BCFtools and htslib in order
+ to quickly process VCF files.
+ This input mode is for processing an individual VCF file using the BCFtools
+ library internal to Mega2.
+ 
+\end_layout
+
+\begin_layout Standard
+Here variant file allows you to enter a VCF file and BCFtools parameters
+ works as discussed in the BCF format above.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-Format:-BCFTools"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -17172,7 +18591,7 @@ name "subsec:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 Maximum alleles per marker menu:
+              Mega2 5.0.0 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -17656,7 +19075,7 @@ The Database input menu is shown below and explained immediately following:
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 Database input menu:
+              Mega2 5.0.0 Database input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -17804,7 +19223,7 @@ The path to this SQLite3 database is dbmega2.db.
 \end_layout
 
 \begin_layout LyX-Code
-This database was created using Mega2 version 4.9.2.
+This database was created using Mega2 version 5.0.0.
  
 \end_layout
 
@@ -18636,7 +20055,7 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 4.9.2 Missing Value menu:
+              Mega2 5.0.0 Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -24253,6 +25672,18 @@ binary IMPUTE2 BGEN format (bgen)
 
 \begin_layout Enumerate
 Traditional (4.6.1) input file format
+\end_layout
+
+\begin_layout Enumerate
+BCF v2.2 or higher (bcf) 
+\end_layout
+
+\begin_layout Enumerate
+VCF compressed format (vcf.gz) 
+\end_layout
+
+\begin_layout Enumerate
+VCF format (vcf)
 \end_layout
 
 \begin_layout Paragraph
@@ -38970,7 +40401,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="27" columns="4">
+<lyxtabular version="3" rows="28" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="right" valignment="top">
@@ -39017,6 +40448,44 @@ Release date
 
 \series bold
 Valid until
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5.0.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 14, 2018
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 2019
 \end_layout
 
 \end_inset
@@ -40018,13 +41487,71 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
+Changes from Version 4.9.2 to Version 5.0.0 (Released June 14, 2018)
+\end_layout
+
+\begin_layout Itemize
+In addition to supporting the old BCF/VCF file formats, Mega2 can now read
+ the latest BCF format (version 2.2) using the BCF tools library.
+ Mega2 will generate a dummy .fam file from the sample data, if none is provided.
+\end_layout
+
+\begin_layout Itemize
+BGEN version 1.3 is now supported.
+\end_layout
+
+\begin_layout Itemize
+For inputs that have a reference/alternate allele order: VCF, VCF.gz, BCF,
+ IMPUTE, BGEN and PLINK BED, this order will be preserved in the Mega2 database
+ and Mega2 analysis outputs.
+ This feature requires bialleleic markers and genotype compression set to
+ 1 (aka 2 bits).
+\end_layout
+
+\begin_layout Itemize
+Mega2 now computes the allele frequencies after pruning for Mendelian inconsiste
+ncies, half typed alleles, etc has taken place.
+ In the past, the counting was performed before the pruning and might thus
+ have been incorrect.
+\end_layout
+
+\begin_layout Itemize
+The Mega2 SQLite database has been made more compact.
+ The genotypes table is now compressed with gzlib.
+ Numeric values used to represent the unknown value (-99.99) are just stored
+ in the database as NULL.
+ Finally, the Mega2 design has been revised so that the marker_scheme3_alleles
+ table is no longer required and is not generated.
+ The new Mega2 SQLite database is comparable in size to the corresponding
+ VCF.gz input file, or corresponding BCF input file.
+\end_layout
+
+\begin_layout Itemize
+Improved Mega2R vignette and documentation and Mega2R is now in CRAN.
+\end_layout
+
+\begin_layout Itemize
+Mega2R now can generate CRAN SeqArray/SnpArray format objects.
+\end_layout
+
+\begin_layout Itemize
+Mega2R has deprecated GenABEL support now that the latter has been archived.
+\end_layout
+
+\begin_layout Itemize
+There is no Mega2 program compiled using the native Microsoft compilers.
+ This should be available in release 5.0.1.
+ For the present, you should use Msys2 Mega2.
+\end_layout
+
+\begin_layout Subsection
 Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
 \end_layout
 
 \begin_layout Itemize
-The Mega2R suite of R packages provides tools for accessing and processing
- common genetic data formats in R, making it easy to load SQLite3 Mega2
- databases directly into R as data frames (See Section 
+The Mega2R R package provides tools for accessing and processing common
+ genetic data formats in R, making it easy to load SQLite3 Mega2 databases
+ directly into R as data frames (See Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:The-Mega2R-suite"
@@ -47575,7 +49102,7 @@ http://zlib.net/
 \end_layout
 
 \begin_layout Subsection
-GNU Lesser General Public License Version 3 for VCFtools
+GNU Lesser General Public License Version 3 for VCFtools and BCFtools
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:GNU-Lesser-General"
@@ -47591,6 +49118,13 @@ We have included VCFTools source code in the srcdir/vcftools directory of
  This code has been minimally modified so as to integrate it with Mega2.
  While the VCFtools source code as a whole is licensed under the Lesser
  GPL license, two of files contain the MIT license, listed above.
+\end_layout
+
+\begin_layout Standard
+We have also included the BCFtools source code in the srcdir/lib/bcftools
+ directory of the Mega2 distribution.
+ This code has been minimally modified so as to integrate it with Mega2.
+ The BCFtools source code as a whole is licensed under the Lesser GPL license.
 \end_layout
 
 \begin_layout Standard
