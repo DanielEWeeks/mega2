@@ -2124,7 +2124,18 @@ key "genabel"
 
 \end_inset
 
- package is available on CRAN (https://CRAN.R-project.org/package=GenABEL).
+ package is available in the archive section of CRAN (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=GenABEL
+\end_layout
+
+\end_inset
+
+).
  The GenABEL  package provides many functions for GWAS analysis and it accepts
  GWAS data in several formats.
  But Mega2 accepts input in still more formats, notably VCF, PLINK bed,
@@ -2223,9 +2234,9 @@ name "sec:Examples"
 \end_layout
 
 \begin_layout Standard
-The rest of this document shows some examples of how to use Mega2R.
- First, we illustrate the base functions of the Mega2R package (iteration
- and get genotype).
+We now show some examples of how to use Mega2R.
+ First, we illustrate the base functionality of the Mega2R package (e.g.,
+ iterating over gene ranges and getting genotypes from the database).
  Then we demonstrate one of the extended functions, 
 \emph on
 Mega2pedgene.
@@ -2290,7 +2301,7 @@ Simulated Data
 \end_layout
 
 \begin_layout Standard
-We have chosen to use the SeqSIMLA2 
+We used the SeqSIMLA2 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "seqsim"
@@ -2338,12 +2349,9 @@ http://seqsimla.nhri.org.tw/prevalence
 
 .
  This simulation creates 1,380 samples of 500,000 markers on a subrange
- of chromosome 1; a bit too much for sharing.
- But a bit less than 200,000 markers are actually polymorphic while the
- rest are monomorphic; this is smaller but the files are still too big.
- We chose to subsample the latter down to 1,380 people and 1,000 markers.
- These data will be used to illustrate the Mega2 and Mega2R operations that
- follow.
+ of chromosome 1.
+ To illustrate the Mega2 and Mega2R operations that follow, we subsampled
+ the data down to 1,380 people and 1,000 polymorphic markers.
  
 \end_layout
 
@@ -2356,14 +2364,12 @@ R
 \end_layout
 
 \begin_layout Standard
-
-\series bold
 We will assume that you have started an R session in which you type the
  commands in this use case.
 \end_layout
 
 \begin_layout Standard
-To run any of these examples, you should first install the package Mega2R.
+You should first install the package Mega2R.
 \end_layout
 
 \begin_layout Standard
@@ -2404,15 +2410,10 @@ In the section about 'pedgene' below, we will carry out gene-based association
  The first line below loads the Bioconductor biocLite loader and the next
  two lines install two annotation databases.
  One annotation database provides the gene transcript locations and the
- other maps gene names to entrez gene IDs.
- (Note: As described in the section about pedgene below, you may choose
- a different transcript database from Bioconductor or construct one of your
- own.
- If so, you should install it with 
-\emph on
-biocLite
-\emph default
- as illustrated below.) Please type in R:
+ other maps gene names to Entrez gene IDs.
+ (As described in the section about pedgene below, you may choose a different
+ transcript database from Bioconductor or construct one of your own.) Please
+ type in R:
 \end_layout
 
 \begin_layout Standard
@@ -2496,9 +2497,8 @@ clean_mega2rtutorial_data()
 \end_layout
 
 \begin_layout Standard
-The files you will need for this tutorial are provided in this package.
- You need to extract these files to the current directory.
- This is done by running:
+The files you will need for this tutorial are provided in the Mega2R package.
+ You need to extract these files to the current directory via this command:
 \end_layout
 
 \begin_layout Standard
@@ -2601,7 +2601,7 @@ clean_mega2rtutorial_data()
 Note: The use of the "mega2" executable in our examples expects the Mega2.BATCH.<n
 ame> files to be in the working directory and the latter files expect their
  data files to be in the working directory.
- When you are done with these exercise, the "clean" command will remove
+ When you are done with these exercises, the "clean" command will remove
  these files and other temporary files:
 \end_layout
 
@@ -2646,10 +2646,9 @@ Mega2r.map
 \end_layout
 
 \begin_layout Standard
-
-\series bold
-If you do not wish to install Mega2 right now, you can use the seqsimr.db
- database that is in the tutorial directory.
+If you do not wish to install Mega2 right now, you can skip this database
+ creation step and instead later use the seqsimr.db database that is in the
+ tutorial directory.
 \end_layout
 
 \begin_layout Standard
@@ -2669,21 +2668,12 @@ https://watson.hgen.pitt.edu/register/
  To make matters simple, we will use a pre-constructed Mega2 batch file
  to automate the processing by Mega2.
  To run Mega2 to process and create the 'SQLite' database 'seqsimr.db', we
- issue this command at the Unix prompt:
+ issue this command at the Unix prompt from within the tutorial directory
+ containing the tutorial example files:
 \end_layout
 
 \begin_layout LyX-Code
 mega2 MEGA2.BATCH.seqsimr
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Note: This document will not invoke 
-\emph on
-mega2
-\emph default
-, but instead will use the seqsimr.db database that is in the Mega2R package.
 \end_layout
 
 \begin_layout Standard
@@ -2714,7 +2704,7 @@ https://watson.hgen.pitt.edu/docs/mega2_html/mega2.html
 \end_layout
 
 \begin_layout Standard
-The MEGA2.BATCH.seqsimr file begins with a rather long comment indicating
+The MEGA2.BATCH.seqsimr file begins with a rather long comment section indicating
  the keyword values that may be set and their default values.
  Towards the end of the file, we set the inputs to 
 \series bold
@@ -2810,8 +2800,8 @@ Reading a Mega2 database
 \end_layout
 
 \begin_layout Standard
-After you have created the SQLite database, start up the R program.
- Load the Mega2R package, then use the function 
+After you have created the SQLite database "seqsimr.db", start up R, load
+ the Mega2R package, then use the function 
 \emph on
 read.Mega2DB
 \emph default
@@ -2834,7 +2824,7 @@ library(Mega2R)
 
 \begin_layout Plain Layout
 
-ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+ENV = read.Mega2DB("seqsimr.db", verbose = FALSE)
 \end_layout
 
 \end_inset
@@ -2844,8 +2834,13 @@ ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 
 \begin_layout Standard
 The first argument should be the path to the database.
- Providing the optional argument, 'verbose', causes the read function to
- summarize the data frames created, their fields and their sizes.
+ If 'verbose' is TRUE, for each data frame created in 'ENV', 
+\emph on
+read.Mega2DB
+\emph default
+ emits two lines per data frame: one with the number of rows and number
+ of columns of the data frame and the other with the column names of the
+ data frame.
  Finally, an 'environment', which contains the data frames, is returned.
  
 \end_layout
@@ -2856,7 +2851,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<seqsimrdb2>>=
+<<seqsimrdb2,echo=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -2869,16 +2864,6 @@ ENV = read.Mega2DB("seqsimr.db")
 
 \end_layout
 
-\begin_layout Standard
-For each data frame in 'ENV' generated, if 'verbose' is TRUE, 
-\emph on
-read.Mega2DB
-\emph default
- emits two lines per data frame: one with the number of rows and number
- of columns of the data frame and the other with the column names of the
- data frame.
-\end_layout
-
 \begin_layout Paragraph
 Verbose Flag
 \end_layout
@@ -2886,7 +2871,7 @@ Verbose Flag
 \begin_layout Standard
 When verbose is set in the initial read.Mega2DB, the value will be remembered.
  It may be used by any subsequent function.
- If verbose is TRUE, Mega2R functions can print diagnostic information.
+ If verbose is TRUE, Mega2R functions will print diagnostic information.
  
 \end_layout
 
@@ -2910,7 +2895,7 @@ Back to more examples.
 \end_layout
 
 \begin_layout Standard
-The 'ls' function will show you all the variables in an environment.
+The 'ls(ENV)' function will show you all the variables in the 'ENV' environment.
  (You probably have used it without arguments to show you the variables
  in the global environment .GlobalEnv.) Type:
 \end_layout
@@ -2957,10 +2942,6 @@ showMega2ENV()
 
 \end_layout
 
-\begin_layout LyX-Code
-
-\end_layout
-
 \begin_layout Paragraph
 Use standard R operations to examine the created data frames 
 \end_layout
@@ -2993,9 +2974,9 @@ Iterating through Gene Transcripts
 \end_layout
 
 \begin_layout Standard
-There are two ways to compute a function on the genotypes (or markers) in
- all the transcripts.
- These are explained via examples in section about 'pedgene' below.
+Mega2R provides two ways to compute a function on the genotypes (or markers)
+ in each of the transcripts.
+ These are further illustrated via examples in section about 'pedgene' below.
 \end_layout
 
 \begin_layout Paragraph
@@ -3033,7 +3014,7 @@ status open
 
 \begin_layout Plain Layout
 
- head(ENV$refRanges, 4)
+ head(ENV$refRanges, 3)
 \end_layout
 
 \end_inset
@@ -3043,26 +3024,18 @@ status open
 
 \begin_layout Standard
 You may load your own range set instead of the default.
- You create a data frame that contains a chromosome "observation", a start
- position "observation" and an end position "observation".
- And you create an integer vector that contains the column numbers of the
- chromosome "observation", the start position "observation" and the end
- position "observation".
+ You create a data frame that lists, for each range, the chromosome, the
+ start position, and the end position.
+ And you create an integer index vector that indicates which column contains
+ which data.
  These two become the arguments to the 
 \emph on
 setRanges
 \emph default
  function as shown in the example below.
- When there are only three 
-\begin_inset Quotes eld
-\end_inset
-
-observations
-\begin_inset Quotes erd
-\end_inset
-
-, a name is generated by concatenating the position information and adding
- it to the range data frame.
+ When the index vector contains only three entries, a range name is generated
+ by concatenating the position information and adding it to the range data
+ frame.
 \begin_inset Flex Chunk
 status open
 
@@ -3124,8 +3097,8 @@ status open
 \end_layout
 
 \begin_layout Standard
-If you provide an index vector of 4 entries, the last one is assumed to
- be the column of the name for the range.
+If you provide an index vector with four entries, the fourth one indicates
+ the column containing the names of the ranges.
 \end_layout
 
 \begin_layout Standard
@@ -3210,23 +3183,21 @@ The function,
 \emph on
 applyFnToRanges,
 \emph default
- goes through each transcript/range entry and finds the markers that fall
- within the bounds.
+ goes through each range and finds the markers that fall within the bounds.
  The first argument of the 
 \emph on
 applyFnToRanges
 \emph default
- function is a callback function.
- The function is called with three arguments:  the markers in range, the
- selected transcript/range entry and the environment.
+ function is a callback function with three arguments:  the markers in range,
+ the selected range entry and the environment.
  The callback is invoked repeatedly for each transcript range that contains
  any markers.
  If there are no markers contained and the 'verbose' flag is set, a warning
  will be printed.
- The callback function needs to build a genotype matrix or raw genotype
- matrix for the samples and each marker in the range.
- If it is necessary to store information between successive invocations,
- the environment ('envir') can be used.
+ The callback function builds a genotype matrix for the samples and each
+ marker in the range.
+ If necessary, the environment ('envir') can be used to store information
+ between successive invocations.
 \end_layout
 
 \begin_layout Standard
@@ -3238,13 +3209,9 @@ show
 \begin_inset Quotes erd
 \end_inset
 
- as the callback function.
- As you can see, all it does is prints its range argument, markers argument
- and the 
-\emph on
-head
-\emph default
- of the genotype matrix or head of the raw genotype matrix, in that order.
+ as the callback function, which simply prints, for each range, the range
+ itself, the first three lines of the markers within the range, and the
+ first three lines of the genotype matrix, in that order.
  It also prints a little banner before each argument.
  Finally, it does not print the environment argument value; it does not
  change.
@@ -3281,7 +3248,7 @@ status open
 
 \begin_layout Plain Layout
 
-       print(m)
+       print(head(m,3))
 \end_layout
 
 \begin_layout Plain Layout
@@ -3291,17 +3258,7 @@ status open
 
 \begin_layout Plain Layout
 
-       print(head(getgenotypes(m)))
-\end_layout
-
-\begin_layout Plain Layout
-
-#	  print("** Raw Genotypes **")
-\end_layout
-
-\begin_layout Plain Layout
-
-#      print(head(getgenotypesraw(m)))
+       print(head(getgenotypes(m),3))
 \end_layout
 
 \begin_layout Plain Layout
@@ -3336,16 +3293,6 @@ status open
 
 \begin_layout Plain Layout
 
-    # apply function "show"
-\end_layout
-
-\begin_layout Plain Layout
-
-    # ranges
-\end_layout
-
-\begin_layout Plain Layout
-
     ENV$verbose = FALSE
 \end_layout
 
@@ -3364,11 +3311,7 @@ status open
 \emph on
 applyFnToRanges
 \emph default
- can also be provided explicit ranges as show below.
- This run is using a different set of ranges and thus finds a different
- set of ranges with markers: viz.
- range8m and range9m.
- Run this code yourself if you can not imagine the results.
+ can also be provided explicit ranges by using the 'ranges_arg' argument:
 \end_layout
 
 \begin_layout Standard
@@ -3378,16 +3321,6 @@ status open
 \begin_layout Plain Layout
 
 <<applyfntoranges2,eval=FALSE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-    # apply function "show" to all genotypes on chromosomes 1 
-\end_layout
-
-\begin_layout Plain Layout
-
-    # ranges
 \end_layout
 
 \begin_layout Plain Layout
@@ -3534,17 +3467,13 @@ The function
 \emph on
  applyFnToGenes
 \emph default
- is called below to look for the transcripts of a particular gene.
- We know gene 
-\begin_inset Quotes eld
-\end_inset
-
+ can apply the 'show' function to the transcripts of a particular gene via
+ the genes_arg argument.
+ For example, here we apply the 'show' function to transcripts of the 
+\shape italic
 CEP104
-\begin_inset Quotes erd
-\end_inset
-
- is in our data.
- 
+\shape default
+ gene: 
 \end_layout
 
 \begin_layout Standard
@@ -3583,7 +3512,7 @@ applyFnToGenes
 \emph default
  function has several other optional arguments that can request complete
  chromosomes, (multiple) ranges of base pairs on chromosomes, or collections
- of markers in addition to the genes_arg argument.
+ of markers.
  All these arguments define ranges that are passed to 
 \emph on
 applyFnToRanges
@@ -3604,16 +3533,6 @@ status open
 \begin_layout Plain Layout
 
 <<applyfntogenes,eval=TRUE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-    # apply function "show" to all genotypes on chromosomes 1 for two base
-\end_layout
-
-\begin_layout Plain Layout
-
-    # pair ranges
 \end_layout
 
 \begin_layout Plain Layout
@@ -3642,12 +3561,7 @@ status open
 
 \begin_layout Plain Layout
 
-    # apply function "show" to all genotypes for first marker 
-\end_layout
-
-\begin_layout Plain Layout
-
-    # in each chromosome (We only have data for chromosome 1.)
+    # apply function "show" to all genotypes at the 'snp1' marker 
 \end_layout
 
 \begin_layout Plain Layout
@@ -3662,8 +3576,7 @@ status open
 
 \begin_layout Plain Layout
 
-    applyFnToGenes(show, markers_arg = ENV$markers[! duplicated(ENV$markers$chro
-mosome), 3])
+    applyFnToGenes(show, markers_arg = "snp1")
 \end_layout
 
 \begin_layout Plain Layout
@@ -3695,7 +3608,7 @@ mosome), 3])
 \end_layout
 
 \begin_layout Subsubsection
-Iterating through the Genotypes 
+Getting the Genotypes 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Iterating-through-the"
@@ -3741,7 +3654,7 @@ status open
 
 \begin_layout Plain Layout
 
- head(genotype, 4)
+ head(genotype, 3)
 \end_layout
 
 \end_inset
@@ -3790,7 +3703,7 @@ status open
 
 \begin_layout Plain Layout
 
- head(raw, 4)
+ head(raw, 3)
 \end_layout
 
 \end_inset
