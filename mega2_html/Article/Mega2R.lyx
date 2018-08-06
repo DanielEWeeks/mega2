@@ -1192,20 +1192,11 @@ setRanges
 \emph default
  function lets you store custom ranges; it has two arguments: a range data
  frame that specifies at least the chromosome, the start position, end position
- (and optionally a name) of each range, and a selector vector of 3 integers
+ (and optionally a name) of each range, and an index vector of three integers
  that indicates which columns in the range data frame contain the chromosome,
  start position and end position.
- If the range data frame also contains a name column, the selector vector
- should have a final 4
-\begin_inset script superscript
-
-\begin_layout Plain Layout
-th
-\end_layout
-
-\end_inset
-
- integer that indicates the column containing the name.
+ If the range data frame also contains a name column, the index vector should
+ have a final fourth integer that indicates the column containing the name.
 \end_layout
 
 \begin_layout Standard
@@ -2365,7 +2356,7 @@ R
 
 \begin_layout Standard
 We will assume that you have started an R session in which you type the
- commands in this use case.
+ commands in this Use Case.
 \end_layout
 
 \begin_layout Standard
@@ -2403,9 +2394,9 @@ name "subsec:Bioconductor"
 \end_layout
 
 \begin_layout Standard
-In the section about 'pedgene' below, we will carry out gene-based association
- tests, where 'genes' are defined according to a database containing the
- boundaries of the gene transcripts.
+Below we will use 'pedgene' carry out gene-based association tests, where
+ 'genes' are defined according to a database containing the boundaries of
+ the gene transcripts.
  This requires two Bioconductor Annotations databases to be installed.
  The first line below loads the Bioconductor biocLite loader and the next
  two lines install two annotation databases.
@@ -2450,7 +2441,7 @@ The above steps are run once.
 \end_layout
 
 \begin_layout Subsection
-Tutorial Data
+Use Case Data
 \end_layout
 
 \begin_layout Standard
@@ -2497,7 +2488,7 @@ clean_mega2rtutorial_data()
 \end_layout
 
 \begin_layout Standard
-The files you will need for this tutorial are provided in the Mega2R package.
+The files you will need for this Use Case are provided in the Mega2R package.
  You need to extract these files to the current directory via this command:
 \end_layout
 
@@ -2647,8 +2638,12 @@ Mega2r.map
 
 \begin_layout Standard
 If you do not wish to install Mega2 right now, you can skip this database
- creation step and instead later use the seqsimr.db database that is in the
- tutorial directory.
+ creation step and instead later use the seqsimr.db database that was placed
+ in your directory by the 
+\shape italic
+dump_mega2rtutorial_data(".")
+\shape default
+ command.
 \end_layout
 
 \begin_layout Standard
@@ -2668,8 +2663,8 @@ https://watson.hgen.pitt.edu/register/
  To make matters simple, we will use a pre-constructed Mega2 batch file
  to automate the processing by Mega2.
  To run Mega2 to process and create the 'SQLite' database 'seqsimr.db', we
- issue this command at the Unix prompt from within the tutorial directory
- containing the tutorial example files:
+ issue this command at the Unix prompt from within the directory containing
+ the Use Case example files:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2677,8 +2672,6 @@ mega2 MEGA2.BATCH.seqsimr
 \end_layout
 
 \begin_layout Standard
-
-\series bold
 Note: The vignette associated with the Mega2R  package illustrates what
  the results of this Mega2 run would look like.
 \end_layout
@@ -3624,9 +3617,9 @@ Encoded Genotypes
 
 \begin_layout Standard
 The heart of the above two functions is the calculation of the genotype
- matrix of samples by markers containing the nucleotides (strings).
+ matrix of the samples.
  We will build the matrix for the first 10 markers.
- Remember our database has 1380 samples so we will just show the 
+ Remember our database has 1,380 samples so we will just show the 
 \emph on
 head
 \emph default
@@ -3758,7 +3751,7 @@ key "pedgene"
 
  to carry out gene-based association tests on 
 \color black
-family data looping over selected marker subsets.
+family data looping over selected transcripts.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3772,7 +3765,7 @@ Rather than read the Mega2 SQLite database with the
 \emph on
 read.Mega2DB
 \emph default
- function, described previously, here we use a specialized 
+ function as described previously, here we use a specialized 
 \emph on
 init_pedgene
 \emph default
@@ -3787,7 +3780,7 @@ read.Mega2DB
 \series bold
 fam
 \series default
- .
+.
  (
 \series bold
 fam
@@ -3869,27 +3862,12 @@ Mega2R has an internal default list of the chromosome and base pair ranges
  The list was further modified to eliminate multiple records of the same
  gene with the exact same transcript start and transcript end.
  These data contain about 29,000 records.
- You may load your own range set instead of the default.
- You create a data frame that contains at least a chromosome "observation",
- a start position "observation" and an end position "observation".
- Then, you create an integer vector that contains the column numbers of
- the chromosome "observation", the start position "observation" and the
- end position "observation".
- If there is a fourth value for the vector, it is the position in the range
- data frame of a name, otherwise a name will be generated from the position
- information and added to the range data frame.
-\end_layout
-
-\begin_layout Standard
-These two objects are then arguments to the 
-\emph on
+ You may use the 
+\shape italic
 setRanges
-\emph default
- function, viz.
-\end_layout
-
-\begin_layout LyX-Code
-setRanges(Transcripts, Columns)
+\shape default
+ function to load your own range set instead of the default, as described
+ above.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3904,63 +3882,33 @@ name "subsec:Gene-transcripts-reminder"
 \end_layout
 
 \begin_layout Standard
-If you plan to select transcripts by gene name, you must load them from
- Bioconductor.
- In Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Bioconductor"
-
+By default, the 
+\shape italic
+init_pedgene
+\shape default
+ function sets the transcript database to 
+\begin_inset Quotes eld
 \end_inset
 
-, we indicated that you needed to type:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<bioc2,eval=FALSE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-source("https://bioconductor.org/biocLite.R")
-\end_layout
-
-\begin_layout Plain Layout
-
-biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene") 
-\end_layout
-
-\begin_layout Plain Layout
-
-biocLite("org.Hs.eg.db")
-\end_layout
-
+TxDb.Hsapiens.UCSC.hg19.knownGene
+\begin_inset Quotes erd
 \end_inset
 
+ and the Entrez gene name mapping database to 
+\begin_inset Quotes eld
+\end_inset
 
-\end_layout
+org.Hs.eg.db
+\begin_inset Quotes erd
+\end_inset
 
-\begin_layout Standard
-just once to install the package.
- And then, to use the desired transcription data base, use this command
- from the Mega2R package as part of your session:
-\end_layout
-
-\begin_layout LyX-Code
-setAnnotations(txdb, entrezGene)
-\end_layout
-
-\begin_layout Standard
-where 'txdb' is the name of Bioconductor transcription database, and 'entrezGene
-' is the name of Bioconductor mapping of gene name or gene alias to entrez
- gene id.
- Note: You do not need this command if you are using the default values
- shown above: TxDb.Hsapiens.UCSC.hg19.knownGene and org.Hs.eg.db.
+.
+ If you wish to use different databases to select transcripts by gene name,
+ you must use the 
+\shape italic
+setAnnotations
+\shape default
+ function to load them from Bioconductor, as discussed above.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3979,13 +3927,13 @@ applyFnToRanges
 \emph default
 .) For the seqsimr.db database, the first 100 transcripts contain only one
  transcript with several markers.
- To make this tutorial exercise run faster, we noticed that the identified
- transcript appeared at transcript 54; so we will restrict 
+ To make this Use Case run faster, we noticed that the identified transcript
+ appeared at transcript 54; so we will restrict 
 \emph on
 Mega2pedgene
 \emph default
  to a small range of transcripts around 54, viz.
- 50 through 60.
+ 53 through 55.
 \end_layout
 
 \begin_layout Standard
@@ -4008,7 +3956,7 @@ ENV$verbose=TRUE
 
 \begin_layout Plain Layout
 
-Mega2pedgene(gs=50:60)
+Mega2pedgene(gs=53:55)
 \end_layout
 
 \end_inset
@@ -4017,11 +3965,11 @@ Mega2pedgene(gs=50:60)
 \end_layout
 
 \begin_layout Standard
-You will see many reports of "No markers in range", because the database
+You will see some reports of "No markers in range", because the database
  only contains markers on a sub range of chromosome 1 whereas the transcripts
  span the entire genome.
- Occasionally you will see a listing of a gene name, markers, and count
- of 0, 1, and 2 genotypes, viz.
+ Then you will see a listing of a gene name, a marker name, and count of
+ 0, 1, and 2 genotypes, e.g.,.
 \end_layout
 
 \begin_layout LyX-Code
@@ -4029,31 +3977,8 @@ CEP104 snp24037 520 646 214
 \end_layout
 
 \begin_layout LyX-Code
-CEP104 snp24039 940 386 54 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24041 1377 3 0 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24048 860 460 60 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24494 789 501 90 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24499 891 442 47 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24506 891 442 47 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24507 789 501 90
+...
+ 
 \end_layout
 
 \begin_layout Standard
@@ -4069,10 +3994,10 @@ DOpedgene
 \emph default
  converts the raw genotype representation to the values 0, 1 and 2.
  Then it runs 'pedgene'.
- The results are automatically stored in a data frame with "observations":
- chromosome, gene, number of markers and base pair range followed by 'pedgene'
- data: kernel and burden, value and p-values, four values for each of three
- weightings of the markers.
+ The results are automatically stored in a data frame with columns: chromosome,
+ gene, number of markers and base pair range followed by 'pedgene' data:
+ kernel and burden, value and p-values, four values for each of three weightings
+ of the markers.
  These data are saved in the data frame, 'pedgene_results', in the environment.
  They are also printed when 'verbose' is TRUE.
 \end_layout
@@ -4098,12 +4023,6 @@ status open
 \begin_layout Plain Layout
 
 <<FnToRanges,eval=FALSE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-# we will skip this line for the document production because it takes too
- long
 \end_layout
 
 \begin_layout Plain Layout
@@ -4137,16 +4056,15 @@ name "subsec:Running-pedgene-on"
 You may try searching for transcripts of specific genes.
  Here, the default transcript database is "TxDb.Hsapiens.UCSC.hg19.knownGene"
  from Bioconductor.
- Of course you can change it, if you install a new database with biocLite,
+ Of course you can change it, if you install a new database from Bioconductor,
  as shown earlier.
 \end_layout
 
 \begin_layout Standard
-We leave the command below as an exercise.
- It runs a bit slowly.
+We leave the command below as an exercise, as it runs a bit slowly.
  It needs to find all the transcripts for each gene, to find all the markers
  between each pair of transcript start/end ranges, to compute the genotype
- matrix for these markers and finally to call the callback function with
+ matrix for these markers, and finally to call the callback function with
  the appropriate arguments.
 \end_layout
 
@@ -4185,7 +4103,7 @@ status open
 
 \begin_layout Plain Layout
 
-# turn off output & reset results data frame
+# turn off output & reset pedgene_results data frame
 \end_layout
 
 \begin_layout Plain Layout
@@ -4217,17 +4135,18 @@ print(ENV$pedgene_results)
 
 \end_layout
 
-\begin_layout Standard
-Note: The default behavior of 
-\emph on
-DOpedgene
-\emph default
- is to append any new results to the end of the 'pedgene_results' data frame
- in the environment 'envir'.
-\end_layout
-
 \begin_layout Section
 Summary 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+This summary is too brief, and only lists one thing.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4250,23 +4169,23 @@ genotype_table
 \end_layout
 
 \begin_layout Section
-Availability and requirements
+Software Availability and requirements
 \end_layout
 
 \begin_layout Standard
-Project name: 
+Software name: 
 \series bold
 Mega2R
 \end_layout
 
 \begin_layout Standard
-Project home page: 
+Software available from: 
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-https://watson.hgen.pitt.edu/register
+https://CRAN.R-project.org/package=Mega2R
 \end_layout
 
 \end_inset
@@ -4275,13 +4194,13 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-Project BitBucket repository: 
+BitBucket repository: 
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-https://bitbucket.org/dweeks/mega2/
+https://bitbucket.org/dweeks/mega2r/
 \end_layout
 
 \end_inset
@@ -4290,7 +4209,7 @@ https://bitbucket.org/dweeks/mega2/
 \end_layout
 
 \begin_layout Standard
-Project documentation page: 
+Documentation page: 
 \begin_inset Flex URL
 status open
 
@@ -4318,10 +4237,6 @@ Other requirements; R, SQLite library
 
 \begin_layout Standard
 License: GNU GPL 2
-\end_layout
-
-\begin_layout Section
-List of abbreviations used
 \end_layout
 
 \begin_layout Section
@@ -4369,23 +4284,11 @@ options "bmc_article"
 
 \end_layout
 
-\begin_layout Section
-Illustrations and figures
-\end_layout
-
-\begin_layout Subsection
-Figure captions
-\end_layout
-
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
 
 
-\end_layout
-
-\begin_layout Section
-Additional files
 \end_layout
 
 \begin_layout Section
