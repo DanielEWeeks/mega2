@@ -116,11 +116,12 @@ knitr
 \papercolumns 1
 \papersides 1
 \paperpagestyle plain
-\tracking_changes false
+\tracking_changes true
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -1820302391 "Robert V. Baron"
 \end_header
 
 \begin_body
@@ -150,7 +151,21 @@ status open
 
 \backslash
 title{The Mega2R R package: tools for accessing and processing common genetic
- data formats in R}
+ data formats in R
+\change_deleted -1820302391 1533668078
+}
+\change_inserted -1820302391 1533671281
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\change_inserted -1820302391 1533667987
+
+The Mega2R R package: R tools for accessing and processing genetic data
+ in common formats}
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -346,7 +361,13 @@ Our Mega2R package now makes it easy to load SQLite3 Mega2 databases directly
  The Mega2R package enhances GenABEL since it supports additional input
  data formats (such as PLINK, VCF, and IMPUTE2) not currently supported
  by GenABEL.
- The Mega2 program and the Mega2R R package are both open source and are
+ 
+\change_inserted -1820302391 1533668246
+The marker subsets are the markers in transcripts of selected genes or are
+ specified by a table of start/end positions.
+ 
+\change_unchanged
+The Mega2 program and the Mega2R R package are both open source and are
  freely available, along with extensive documentation and a 'quick-start'
  tutorial, from https://watson.hgen.pitt.edu/register for Mega2 and https://CRAN.R-p
 roject.org/package=Mega2R for Mega2R.
@@ -513,8 +534,14 @@ key "Howie:2009aa,Howie:2011aa,Howie:2012aa,Marchini:2010aa"
 \begin_layout Standard
 Initially, Mega2 used C language structures to store its intermediate data
  before analysis.
- Several alternative strategies were considered to dump these data for subsequen
-t reuse without having to recompute, reanalyze, and revalidate the data.
+ Several alternative strategies were considered to 
+\change_deleted -1820302391 1533656508
+dump
+\change_inserted -1820302391 1533656509
+save
+\change_unchanged
+ these data for subsequent reuse without having to recompute, reanalyze,
+ and revalidate the data.
  The first choice was to dump the raw structure data to disk.
  Reloading the data is fast but it is much harder to inspect the data for
  debugging.
@@ -539,8 +566,12 @@ insert
 \end_inset
 
  the C structure data into the table.
- Mega2 uses this database, via a menu-driven interface, to provide the data
- needed for any particular analysis.
+ Mega2 
+\change_inserted -1820302391 1533656591
+later 
+\change_unchanged
+uses this database, via a menu-driven interface, to provide the data needed
+ for any particular analysis.
  The same database provides the data for all the different analyses.
  
 \end_layout
@@ -560,7 +591,15 @@ key "Team:2017aa"
 
  because there is a wealth of existing genetic analysis programs already
  created, well documented, and available in standard repositories such as
- The Comprehensive R Archive Network (CRAN) and Bioconductor.
+ The Comprehensive R Archive Network (CRAN)
+\change_inserted -1820302391 1533656765
+ [?? citation]
+\change_unchanged
+ and Bioconductor
+\change_inserted -1820302391 1533656775
+ [?? citation]
+\change_unchanged
+.
  Also, researchers regularly use R to develop new analysis algorithms because
  R provides a rich environment for statistical computing with many useful
  libraries.
@@ -599,6 +638,16 @@ key "genabel"
 \end_inset
 
 .
+
+\change_inserted -1820302391 1533657008
+ Typically, these R function are designed to process a small collection
+ of markers.
+ Our versions process all the markers in a transcript for as many genes
+ as desired.
+ Alternatively, the transcripts can be abstracted to just a table of chromosome/
+start/end base pairs.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
@@ -637,8 +686,13 @@ will access the
 \series bold
 locus_table
 \series default
- variable from the environment, 'ENV', similar to fetching an "observation"
- from a data frame.
+ variable from the environment, 'ENV'
+\change_inserted -1820302391 1533657071
+; this is
+\change_deleted -1820302391 1533657067
+,
+\change_unchanged
+ similar to fetching an "observation" from a data frame.
  The difference is when you change data in an ordinary data frame passed
  to a function, the change does not affect the original data frame; only
  the function's local data is changed.
@@ -651,7 +705,11 @@ locus_table
 All Mega2R functions that do not return an environment need to have an environme
 nt supplied as an argument; the environment is used to store the data frames
  that contain the SQLite database.
- There are two ways to pass the environment.
+ There are two ways to pass the environment
+\change_inserted -1820302391 1533657201
+ to a Mega2R function
+\change_unchanged
+.
  If you assigned the result of 
 \emph on
 read.Mega2DB
@@ -709,7 +767,19 @@ loci data, marker data, allele data, map data, phenotype data, and genotype
  Here, we will make a few general observations about the tables.
  The first issue was mentioned earlier: What should we do with pointers
  in C++.
- Where necessary, a field was added to a table, we call a 
+ Where necessary, 
+\change_inserted -1820302391 1533657358
+we added 
+\change_unchanged
+a field 
+\change_deleted -1820302391 1533657373
+was added
+\change_unchanged
+ to a table, 
+\change_inserted -1820302391 1533657381
+which 
+\change_unchanged
+we call a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -720,8 +790,11 @@ link
  field, viz.
  locus_link.
  This field is a unique integer.
- When the data are read back in via C++, these links are looked up to find
- a pointer to use.
+ When the data are read back in 
+\change_inserted -1820302391 1533657447
+to a Mega2 program 
+\change_unchanged
+via C++, these links are looked up to find a pointer to use.
  Consider the 
 \series bold
 locus_table
@@ -794,7 +867,12 @@ Most tables are composed of integer, numeric and string data.
  to indicate which phenotype's data is contained in the row becomes more
  complicated because affection status traits and quantitative traits have
  different data types and number of values.
- Instead, the phenotype data for each person is stored as one long byte
+ Instead, the phenotype data for each person is stored as one long 
+\change_deleted -1820302391 1533657751
+byte
+\change_inserted -1820302391 1533657751
+raw
+\change_unchanged
  vector composed of multiple values with 8 bytes of data per value either
  representing an affection status value or a quantitative value.
  Similarly, the genotype data are a raw vector with a pair of bytes representing
@@ -1122,13 +1200,22 @@ name "subsec:mega2-Package-Marker"
 
 \begin_layout Standard
 We might have genotype data for thousands of samples and millions of markers
- in a study, but we are unlikely to have the memory to support this large
- a matrix in R.
+ in a study, but we are unlikely to have the memory to support 
+\change_deleted -1820302391 1533658166
+this large a matrix
+\change_inserted -1820302391 1533658173
+the associated genotype matrix
+\change_unchanged
+ in R.
  The Mega2 genotype data is compressed in the SQLite database and remains
  compressed in its data frame.
  Most of the time, we do not need to decompress all of it at once.
  We typically want to examine the markers on a specific chromosome or in
- the region of of some genes of interest.
+ the region of 
+\change_deleted -1820302391 1533658250
+of
+\change_unchanged
+ some genes of interest.
  We only decompress the set of markers we need.
  The key idea is we want to find the set of markers that lie within some
  base pair range and process just those markers and then we repeat this
@@ -1141,7 +1228,13 @@ next
 \end_inset
 
  range.
- We describe two ways to specify these ranges.
+ We 
+\change_deleted -1820302391 1533658305
+describe
+\change_inserted -1820302391 1533658306
+provide
+\change_unchanged
+ two ways to specify these ranges.
  In addition, we want to iterate through multiple ranges as would appear
  in a set of selected gene transcripts and process the markers.
  Finally, we process each range of markers by invoking a callback function
@@ -1169,12 +1262,30 @@ applyFnToRanges
 \emph on
 applyFnToGenes
 \emph default
- functions, to loop over a list of ranges or genes, for each one selecting
- markers that lie within the region/gene of interest.
+ functions, to loop over a list of ranges or genes, 
+\change_inserted -1820302391 1533658374
+and 
+\change_unchanged
+for each one selecting markers that lie within the region/gene of interest.
  To do this, one has to have well-defined gene boundaries.
- To assist in this, by default, Mega2R provides an internal list of the
- chromosome and base pair ranges for the gene transcripts constructed the
- refGene table from the UCSC Genome Browser reference assembly GRCH37.
+ 
+\change_deleted -1820302391 1533658484
+To assist in this, b
+\change_inserted -1820302391 1533658484
+B
+\change_unchanged
+y default, Mega2R provides an internal list of the chromosome and base pair
+ ranges for the gene transcripts 
+\change_deleted -1820302391 1533658514
+constructed
+\change_inserted -1820302391 1533658515
+defined
+\change_unchanged
+ 
+\change_inserted -1820302391 1533658500
+in 
+\change_unchanged
+the refGene table from the UCSC Genome Browser reference assembly GRCH37.
  The list was modified to eliminate multiple records of the same gene with
  the exact same transcript start and transcript end.
  The list contains about 29,000 records.
@@ -1296,8 +1407,16 @@ setAnnotations and applyFnToGenes
 \end_layout
 
 \begin_layout Standard
-Mega2R also loads a list of genes and their transcripts from the Bioconductor
- data annotations: "org.Hs.eg.db"and "TxDb.Hsapiens.UCSC.hg19.knownGene".
+Mega2R 
+\change_inserted -1820302391 1533658902
+can 
+\change_unchanged
+also load
+\change_deleted -1820302391 1533658906
+s
+\change_unchanged
+ a list of genes and their transcripts from the Bioconductor data annotations:
+ "org.Hs.eg.db"and "TxDb.Hsapiens.UCSC.hg19.knownGene".
  The former translates a gene name or alias to the entrez ID of the gene.
  The latter gives start position, end position, and chromosome for each
  transcript known for every gene.
@@ -1313,7 +1432,14 @@ setAnnotations
 applyFnToGenes
 \emph default
  function.
- (You must install them into your R library first.)
+ (You must install 
+\change_deleted -1820302391 1533659001
+them into your R library first
+\change_inserted -1820302391 1533659046
+the Bioconductor data into your R library by using the custom loader biocLite
+ [part of Bioconductor]
+\change_unchanged
+.)
 \end_layout
 
 \begin_layout Standard
@@ -1443,7 +1569,13 @@ marker
 getgenotypes
 \emph default
  functions are dispatches that call Rcpp code.
- They collect genotype and allele data from the 
+ 
+\change_deleted -1820302391 1533659269
+They collect
+\change_inserted -1820302391 1533659283
+The R code collects
+\change_unchanged
+ genotype and allele data from the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1451,7 +1583,20 @@ R environment
 \begin_inset Quotes erd
 \end_inset
 
- data frames and pass these data arguments to the Rcpp code; they also call
+ data frames and pass
+\change_inserted -1820302391 1533659296
+es
+\change_unchanged
+ these data arguments to the Rcpp code; 
+\change_deleted -1820302391 1533659311
+they
+\change_inserted -1820302391 1533659311
+it
+\change_unchanged
+ also call
+\change_inserted -1820302391 1533659314
+s
+\change_unchanged
  the proper function for the level of compression: 2 bits or 2 bytes per
  marker.
  For each marker specified, 
@@ -1548,7 +1693,17 @@ dbmega2_import
 \series bold
 fam
 \series default
- data frame 
+ data frame
+\change_inserted -1820302391 1533660117
+,
+\change_unchanged
+ 
+\change_inserted -1820302391 1533660103
+a kind of .fam file where the case/control values of 0/1/2 are translated
+ to NA/0/1.
+ 
+\change_unchanged
+
 \begin_inset Note Note
 status open
 
@@ -1558,9 +1713,13 @@ Is the reader going to know what the 'fam' data frame is?
 
 \end_inset
 
-; it must eliminate individuals where the case/control disease status is
- not known.
+; 
+\change_deleted -1820302391 1533660148
+it must eliminate individuals where the case/control disease status is not
+ known.
  This is required by 'pedgene'.
+
+\change_unchanged
  
 \begin_inset Note Note
 status open
@@ -1675,8 +1834,11 @@ init_pedgene;
 \end_layout
 
 \begin_layout LyX-Code
-Mega2SKAT = function (f, ty, gs = 1:100, skat = SKAT::SKAT, envir = ENV,
- ...) 
+Mega2SKAT = function (f, ty, gs = 1:100, 
+\change_inserted -1820302391 1533660346
+genes = NULL, 
+\change_unchanged
+skat = SKAT::SKAT, envir = ENV, ...) 
 \end_layout
 
 \begin_layout Standard
@@ -2147,8 +2309,11 @@ Mega2GenABEL
 \emph on
 read.Mega2DB 
 \emph default
-function from the Mega2R package to load your database and should save the
- returned 'environment' into 'ENV.' The function, 
+function from the Mega2R package to load your database and 
+\change_inserted -1820302391 1533660653
+you 
+\change_unchanged
+should save the returned 'environment' into 'ENV.' The function, 
 \emph on
 Mega2GenABEL
 \emph default
@@ -2272,7 +2437,11 @@ https://CRAN.R-project.org/package=Mega2R
 
 \end_inset
 
-).
+)
+\change_inserted -1820302391 1533661020
+ or it can be obtained via git from https://bitbucket.org/dweeks/Mega2R
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Standard
@@ -2831,9 +3000,12 @@ The first argument should be the path to the database.
 \emph on
 read.Mega2DB
 \emph default
- emits two lines per data frame: one with the number of rows and number
- of columns of the data frame and the other with the column names of the
- data frame.
+ emits two lines
+\change_deleted -1820302391 1533661429
+ per data frame
+\change_unchanged
+: one with the number of rows and number of columns of the data frame and
+ the other with the column names of the data frame.
  Finally, an 'environment', which contains the data frames, is returned.
  
 \end_layout
@@ -3775,8 +3947,11 @@ init_pedgene
 read.Mega2DB
 \emph default
 .
- Then it creates, edits, and rewrites the family data, storing it in a 'pedgene'
--compatible data frame, 
+ Then it creates, edits, and rewrites the family 
+\change_inserted -1820302391 1533665056
+(.fam) 
+\change_unchanged
+data, storing it in a 'pedgene'-compatible data frame, 
 \series bold
 fam
 \series default
@@ -3798,23 +3973,38 @@ person_table
 phenotype_table
 \series default
 .) 
+\change_deleted -1820302391 1533665032
+
 \emph on
 init_pedgene
 \emph default
  purges persons with unknown case/control status which is necessary for
  the pedgene calculation.
+
+\change_unchanged
  (When 
 \series bold
 fam
 \series default
- is updated, similar filtering is automatically done to the persons in the
- 
+ is updated, 
+\change_deleted -1820302391 1533665104
+similar
+\change_unchanged
+ filtering is automatically done to the persons in the 
 \series bold
 phenotype_table
 \series default
  and the 
 \series bold
 genotype_table
+\change_inserted -1820302391 1533665141
+
+\series default
+ to remove any persons removed from 
+\series bold
+fam
+\change_unchanged
+
 \series default
 .) Finally, 
 \emph on
@@ -3969,7 +4159,19 @@ You will see some reports of "No markers in range", because the database
  only contains markers on a sub range of chromosome 1 whereas the transcripts
  span the entire genome.
  Then you will see a listing of a gene name, a marker name, and count of
- 0, 1, and 2 genotypes, e.g.,.
+ 
+\change_deleted -1820302391 1533666182
+0, 1, and 2
+\change_inserted -1820302391 1533666240
+major alleles, heterozygote alleles, and minor alleles
+\change_unchanged
+ 
+\change_inserted -1820302391 1533666279
+(each pair counted once) 
+\change_deleted -1820302391 1533666250
+genotypes
+\change_unchanged
+, e.g.,.
 \end_layout
 
 \begin_layout LyX-Code
@@ -3992,7 +4194,13 @@ DOpedgene
 \emph on
 DOpedgene
 \emph default
- converts the raw genotype representation to the values 0, 1 and 2.
+ converts the 
+\change_deleted -1820302391 1533666140
+raw genotype
+\change_inserted -1820302391 1533666146
+getgenotypesraw
+\change_unchanged
+ representation to the values 0, 1 and 2.
  Then it runs 'pedgene'.
  The results are automatically stored in a data frame with columns: chromosome,
  gene, number of markers and base pair range followed by 'pedgene' data:
@@ -4027,7 +4235,25 @@ status open
 
 \begin_layout Plain Layout
 
-applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
+\change_deleted -1820302391 1533666378
+
+applyFnToRanges(DO
+\change_inserted -1820302391 1533666379
+Mega2
+\change_unchanged
+pedgene
+\change_inserted -1820302391 1533666405
+(gs=1:nrow(
+\change_deleted -1820302391 1533666390
+, 
+\change_unchanged
+ENV$refRanges
+\change_inserted -1820302391 1533666413
+)
+\change_deleted -1820302391 1533666431
+, ENV$refIndices
+\change_unchanged
+, envir = ENV)
 \end_layout
 
 \end_inset
@@ -4062,10 +4288,17 @@ You may try searching for transcripts of specific genes.
 
 \begin_layout Standard
 We leave the command below as an exercise, as it runs a bit slowly.
- It needs to find all the transcripts for each gene, to find all the markers
- between each pair of transcript start/end ranges, to compute the genotype
- matrix for these markers, and finally to call the callback function with
- the appropriate arguments.
+ It needs to find all the transcripts for each gene, 
+\change_inserted -1820302391 1533666511
+then 
+\change_unchanged
+to find all the markers between each pair of transcript start/end ranges,
+ 
+\change_inserted -1820302391 1533666521
+then 
+\change_unchanged
+to compute the genotype matrix for these markers, and finally to call the
+ callback function with the appropriate arguments.
 \end_layout
 
 \begin_layout Standard
@@ -4166,6 +4399,40 @@ genotype_table
 \series default
  until the set of chromosomes that are needed can be computed and then only
  read the required chromosome genotype vectors.
+\change_inserted -1820302391 1533666826
+
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1533668946
+analogously to Mega2SKAT, add support for the R famSKATRC package [?? citation].
+ famSKAT_RC is another package for family or unrelated linkage analysis
+ for a mix of rare variants and common variants.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1533667304
+analogously to Mega2GenABEL, add support for the CoreArray data storage
+ system (aka gdsfmt [?? citation]).
+ This will support both the SNPRelate and the SeqArray data representations.
+ This makes analysis that depend on these data formats available to Mega2R.
+\end_layout
+
+\begin_layout Itemize
+
+\change_inserted -1820302391 1533669057
+apply more aggressive compression of the database.
+ For one, the genotype raw vector can be further compressed by gzip [??
+ citation] or a similar compression protocol.
+ Additionally, since C does not have a way to represent missing data, we
+ use -99.99 to represent it which is stored in the database as a floating
+ point number (8 bytes).
+ But the database (via NULL) and R (via NA) can efficiently represent a
+ missing values, so we will will convert C missing (-99.99) to SQLite (NULL).
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
