@@ -321,10 +321,10 @@ begin{abstract}
 The standalone C++ Mega2 program has been facilitating data-reformatting
  for linkage and association analysis programs since 2000.
  Support for more analysis programs has been added over time.
- Currently, Mega2 converts data from several different genetic analysis
- data formats (including PLINK, VCF, BCF, and IMPUTE2) into the specific
- data requirements for over 40 commonly used linkage and association analysis
- programs (including Mendel, Merlin, Morgan, SHAPEIT, ROADTRIPS, MaCH/minimac3).
+ Currently, Mega2 converts data from several different genetic data formats
+ (including PLINK, VCF, BCF, and IMPUTE2) into the specific data requirements
+ for over 40 commonly used linkage and association analysis programs (including
+ Mendel, Merlin, Morgan, SHAPEIT, ROADTRIPS, MaCH/minimac3).
  Recently, Mega2 has been enhanced to use a SQLite database as an intermediate
  data representation.
  Additionally, Mega2 now stores bialleleic genotype data in a highly compressed
@@ -332,13 +332,13 @@ The standalone C++ Mega2 program has been facilitating data-reformatting
 \end_layout
 
 \begin_layout Standard
-Our Mega2R package now makes it easy to load SQLite Mega2 databases directly
- into R as data frames.
+Our new Mega2R package now makes it easy to load Mega2 SQLite databases
+ directly into R as data frames.
  In addition, Mega2R is memory efficient, keeping its genotype data in a
  compressed format, portions of which are only expanded when needed.
  Mega2R has functions that ease the process of applying gene-based tests
- by efficiently looping over genes, efficiently pulling out genotypes for
- variants within the gene boundaries.
+ by looping over genes, efficiently pulling out genotypes for variants within
+ the desired boundaries.
  We have also created several more functions that illustrate how to use
  the data frames: these permit one to run the pedgene package to carry out
  gene-based association tests on family data, to run the SKAT package to
@@ -349,8 +349,7 @@ Our Mega2R package now makes it easy to load SQLite Mega2 databases directly
  data formats (such as PLINK, VCF, and IMPUTE2) not currently supported
  by GenABEL.
  The Mega2 program and the Mega2R R package are both open source and are
- freely available, along with extensive documentation and a 'quick-start'
- tutorial, from 
+ freely available, along with extensive documentation, from 
 \begin_inset Flex URL
 status open
 
@@ -409,7 +408,7 @@ section*{Keywords}
 
 \begin_layout Standard
 database, genotypes, genome-wide association studies, linkage, Mega2, phenotypes
-, R, SQLite3
+, R, SQLite, gene-based association tests
 \end_layout
 
 \begin_layout Standard
@@ -499,7 +498,7 @@ key "Lathrop:1984ab,Lathrop:1986aa,Lathrop:1988aa"
 Over time, Mega2 was upgraded to the C++ computer language and some of the
  internals were rewritten.
  Reformatting data for more analysis programs was gradually added to Mega2.
- The data formats for genetic data changed over time, and Mega2 was enhanced
+ The formats for genetic data changed over time, and Mega2 was enhanced
  to read input data in PLINK format 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -534,8 +533,8 @@ key "Howie:2009aa,Howie:2011aa,Howie:2012aa,Marchini:2010aa"
 \end_layout
 
 \begin_layout Standard
-Initially, Mega2 used C language structures to store its intermediate data
- before analysis.
+Until recently, Mega2 used C language structures to store its intermediate
+ data before analysis.
  Several alternative strategies were considered to save these data for subsequen
 t reuse without having to recompute, reanalyze, and revalidate the data.
  The first choice was to dump the raw structure data to disk.
@@ -564,16 +563,11 @@ insert
  the C structure data into the table.
  Mega2 later uses this database, via a menu-driven interface, to provide
  the data needed for any particular analysis.
- The same database provides the data for all the different analyses.
- 
-\end_layout
-
-\begin_layout Standard
-In addition, the data are inherently inspectable and there are database
- tools to help to selectively extract data.
+ In addition, the data in the database are inherently inspectable and there
+ are database tools to help to selectively extract data.
  The data are portable and can be shared on different platforms.
- Since interfaces from many languages are provided for SQLite, the data
- are accessible in many languages besides C.
+ Since interfaces for many languages are provided for SQLite, the data are
+ accessible in many languages besides C.
  Of particular interest is R 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -650,6 +644,10 @@ key "genabel"
  as desired.
  Alternatively, the transcripts can be abstracted to just a table of chromosome/
 start/end base pair positions.
+ Mega2R eases this process of looping over genes, efficiently pulling out
+ genotypes for variants within the transcript boundaries.
+ In addition to describing the functionality of our Mega2R package, we also
+ provide a Use Case illustrating how to apply it in practice.
 \end_layout
 
 \begin_layout Section
@@ -680,7 +678,7 @@ R environment
  containing these data frames.
  (If you are unfamiliar with environments, you can think of them as data
  frames.
- 'ENV'$
+ For example, 'ENV'$
 \series bold
 locus_table 
 \series default
@@ -692,8 +690,8 @@ locus_table
 on" from a data frame.
  The difference is when you change data in an ordinary data frame passed
  to a function, the change does not affect the original data frame; only
- the function's local data is changed.
- ALL changes are forgotten when the function exits.
+ the function's local data is changed and all changes are forgotten when
+ the function exits.
  If you change the data in a data frame of an environment passed to a function,
  the change is permanent.) 
 \end_layout
@@ -745,10 +743,9 @@ The Mega2 SQLite Database
 In the current Mega2 design, there are SQLite tables for loci data, marker
  data, allele data, map data, phenotype data, and genotype data as well
  as pedigree and person data.
- For completeness, Appendix A shows all the tables and their fields.
+ For completeness, the Appendix  shows all the tables and their fields.
  Here, we will make a few general observations about the tables.
- The first issue was mentioned earlier: What should we do with pointers
- in C++.
+ The first issue was mentioned earlier: How should we handle pointers.
  Where necessary, we added a field to a table, which we call a 
 \begin_inset Quotes eld
 \end_inset
@@ -824,11 +821,11 @@ links
  For example, in the above case, a merge can produce a table with rows containin
 g both locus and allele data.
  Similar links are used to associate family data with person data, as well
- as associate person data with phenotype data and genotype data.
+ as to associate person data with phenotype data and genotype data.
 \end_layout
 
 \begin_layout Standard
-Most tables are composed of integer, numeric and string data.
+Most tables are composed of integer, numeric and string data (see the Appendix).
  The phenotype table is an exception.
  The normal trick of adding an extra column (e.g., the phenotype id) per row
  to indicate which phenotype's data is contained in the row becomes more
@@ -837,20 +834,17 @@ Most tables are composed of integer, numeric and string data.
  Instead, the phenotype data for each person is stored as one long raw vector
  composed of multiple values with 8 bytes of data per value either representing
  an affection status value or a quantitative value.
- Similarly, the genotype data are a raw vector with a pair of bytes representing
- a genotype for non bialleleic markers and a raw compressed bit vector with
- two bits per genotype for bialleleic markers.
- Note: the internal compressed genotype vector created by Mega2 is one long
- vector.
- The genotype data written to the database is split into separate vectors
- for each chromosome.
+ Similarly, the genotype data are stored as a raw vector with a pair of
+ bytes representing a genotype for non bialleleic markers and a raw compressed
+ bit vector with two bits per genotype for bialleleic markers.
+ Note that the internal compressed genotype vector used by Mega2 is one
+ long vector, while the genotype data written to the database is split into
+ separate vectors for each chromosome.
  The end of each vector may have 0, 1, 2, or 3 unused bit pairs representing
  no markers.
- The Mega2 C++ program reassembles the vectors without these gaps.
- In addition, it can select specific chromosomes and/or specific markers
- needed for analysis and so does not need to store all the genotype bit
- vector data into active memory.
- The R version is not as sophisticated; it reassembles all the chromosome
+ When reading back in from the database, the Mega2 C++ program reassembles
+ the vectors without these gaps.
+ The R version is not as sophisticated: it reassembles all the chromosome
  vectors and includes these gaps.
  It then takes care when referencing the n
 \begin_inset script superscript
@@ -961,8 +955,7 @@ locus_table
 \series default
 .
  These contain raw data copied directly from the Mega2 SQLite database (although
- some of the original fields that are only needed for C++ Mega2 are not
- copied).
+ some of the original fields that are only needed for Mega2 are not copied).
  
 \end_layout
 
@@ -971,12 +964,12 @@ The
 \emph on
 read.Mega2DB
 \emph default
- function also creates other data frames contain derived information.
- The function, 
+ function also creates other data frames containing derived information.
+ The function 
 \emph on
 mkfam
 \emph default
-, is called by 
+ is called by 
 \emph on
 read.Mega2DB
 \emph default
@@ -1022,20 +1015,7 @@ phenotype_table
 \series default
  has a person_link field.
  These link fields are used by the R 'merge' function to assemble the data.
- (Note: The 
-\series bold
-genotype_table
-\series default
- also has a person_link field, and the analog to these person 
-\begin_inset Quotes eld
-\end_inset
-
-_link
-\begin_inset Quotes erd
-\end_inset
-
- fields for marker data frames is the locus_link field.) Later, you may want
- to prune the 
+  Later, you may want to prune the 
 \series bold
 fam
 \series default
@@ -1060,7 +1040,7 @@ phenotype_table
 \series default
  and 
 \series bold
-genotype_table
+unified_genotype_table
 \series default
  to contain only those persons left in the 
 \series bold
@@ -1075,12 +1055,9 @@ The
 \series bold
  unified_genotype_table
 \series default
- collects all the raw byte vectors from the 
-\series bold
-genotype_table
-\series default
- by chromosome for each person and concatenates them into a new vector for
- each person.
+ collects all the raw byte vectors from the genotype_table stored in the
+ input SQLite database by chromosome for each person and concatenates them
+ into a new vector for each person.
  The
 \series bold
  
@@ -1095,20 +1072,12 @@ virtual markers
 
  (as mentioned above) at the end of each chromosome if the number of markers
  contained is not an exact multiple of 4 (genotypes per byte).
- 
-\end_layout
-
-\begin_layout Standard
-The 
+ The 
 \series bold
 marker_table
 \series default
- contains the offset of the marker genotype data in the 
-\series bold
-genotype_table
-\series default
- data vector column assuming all the markers across all the chromosomes
- are contiguous.
+ contains the offset of the marker genotype data assuming all the markers
+ across all the chromosomes are contiguous.
  There is an analogous offset column needed for the 
 \series bold
 unified_genotype_table
@@ -1128,7 +1097,7 @@ marker_table
 .
  The 
 \series bold
-marker
+markers
 \series default
 \emph on
  
@@ -3836,7 +3805,7 @@ phenotype_table
 \series default
  and the 
 \series bold
-genotype_table
+unified_genotype_table
 \series default
  to remove any persons removed from 
 \series bold
@@ -4180,9 +4149,9 @@ Mega2R
 \end_layout
 
 \begin_layout Itemize
-defer reading the 
+defer constructing the 
 \series bold
-genotype_table
+unified_genotype_table
 \series default
  until the set of chromosomes that are needed can be computed and then only
  read the required chromosome genotype vectors.
@@ -5277,7 +5246,7 @@ This table provides the basic data for a marker: its name, chromosome and
 
 \begin_layout LyX-Code
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="2">
+<lyxtabular version="3" rows="9" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -5422,7 +5391,7 @@ chromosome of marker
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5431,11 +5400,31 @@ locus_link
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 unique integer linking loci info
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+locus_link_fill
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer indexing into the unified genotype table
 \end_layout
 
 \end_inset
@@ -6387,11 +6376,11 @@ raw data
 \end_layout
 
 \begin_layout Subsection
-Genotype Table
+Unified Genotype Table
 \end_layout
 
 \begin_layout Subsubsection
-genotype_table
+unified_genotype_table
 \end_layout
 
 \begin_layout Standard
@@ -6400,7 +6389,7 @@ This table holds genotype data for each person.
 
 \begin_layout LyX-Code
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="2">
+<lyxtabular version="3" rows="3" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -6429,26 +6418,6 @@ contents
 \begin_inset Text
 
 \begin_layout Plain Layout
-pId
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-unique database table key
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 person_link
 \end_layout
 
@@ -6459,46 +6428,6 @@ person_link
 
 \begin_layout Plain Layout
 unique integer linking person info
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-chr
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-chromosome number
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-bytes
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-byte count of data
 \end_layout
 
 \end_inset
