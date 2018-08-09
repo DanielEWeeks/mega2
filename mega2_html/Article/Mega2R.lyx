@@ -121,8 +121,6 @@ knitr
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -1820302391 "Robert V. Baron"
-\author 1332494340 "Daniel E. Weeks"
 \end_header
 
 \begin_body
@@ -334,30 +332,47 @@ The standalone C++ Mega2 program has been facilitating data-reformatting
 \end_layout
 
 \begin_layout Standard
-Our Mega2R package now makes it easy to load SQLite3 Mega2 databases directly
+Our Mega2R package now makes it easy to load SQLite Mega2 databases directly
  into R as data frames.
- In addition, we have developed C++ functions for R to decompress needed
- subsets of the genotype data in a memory efficient manner.
+ In addition, Mega2R is memory efficient, keeping its genotype data in a
+ compressed format, portions of which are only expanded when needed.
+ Mega2R has functions that ease the process of applying gene-based tests
+ by efficiently looping over genes, efficiently pulling out genotypes for
+ variants within the gene boundaries.
  We have also created several more functions that illustrate how to use
- the data frames as well as perform useful tasks: these permit one to run
- the pedgene package to carry out gene-based association tests on family
- data using selected marker subsets, to run the SKAT package to carry out
- gene-based association tests using selected marker subsets, to output the
- Mega2R data as a VCF file and related files (for phenotype and family data),
- and to convert the data frames into GenABEL format.
+ the data frames: these permit one to run the pedgene package to carry out
+ gene-based association tests on family data, to run the SKAT package to
+ carry out gene-based association tests, to output the Mega2R data as a
+ VCF file and related files (for phenotype and family data), and to convert
+ the data frames into GenABEL format.
  The Mega2R package enhances GenABEL since it supports additional input
  data formats (such as PLINK, VCF, and IMPUTE2) not currently supported
  by GenABEL.
- 
-\change_inserted -1820302391 1533668246
-The marker subsets are the markers in transcripts of selected genes or are
- specified by a table of start/end positions.
- 
-\change_unchanged
-The Mega2 program and the Mega2R R package are both open source and are
+ The Mega2 program and the Mega2R R package are both open source and are
  freely available, along with extensive documentation and a 'quick-start'
- tutorial, from https://watson.hgen.pitt.edu/register for Mega2 and https://CRAN.R-p
-roject.org/package=Mega2R for Mega2R.
+ tutorial, from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register
+\end_layout
+
+\end_inset
+
+ for Mega2 and 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=Mega2R
+\end_layout
+
+\end_inset
+
+ for Mega2R.
 \end_layout
 
 \begin_layout Standard
@@ -568,15 +583,29 @@ key "Team:2017aa"
 
  because there is a wealth of existing genetic analysis programs already
  created, well documented, and available in standard repositories such as
- The Comprehensive R Archive Network (CRAN)
-\change_inserted -1820302391 1533656765
- [?? citation]
-\change_unchanged
- and Bioconductor
-\change_inserted -1820302391 1533656775
- [?? citation]
-\change_unchanged
-.
+ The Comprehensive R Archive Network (CRAN) (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://cran.r-project.org/
+\end_layout
+
+\end_inset
+
+)and Bioconductor (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.bioconductor.org/
+\end_layout
+
+\end_inset
+
+).
  Also, researchers regularly use R to develop new analysis algorithms because
  R provides a rich environment for statistical computing with many useful
  libraries.
@@ -615,16 +644,12 @@ key "genabel"
 \end_inset
 
 .
-
-\change_inserted -1820302391 1533657008
- Typically, these R function are designed to process a small collection
- of markers.
+ Typically, these R functions are designed to process a small collection
+ of markers at a time.
  Our versions process all the markers in a transcript for as many genes
  as desired.
  Alternatively, the transcripts can be abstracted to just a table of chromosome/
-start/end base pairs.
-\change_unchanged
-
+start/end base pair positions.
 \end_layout
 
 \begin_layout Section
@@ -1513,8 +1538,19 @@ Use Case
 \end_layout
 
 \begin_layout Standard
-The 'pedgene' R package (https://CRAN.R-project.org/package=pedgene) performs
- gene-level association tests with disease status for pedigree data 
+The 'pedgene' R package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=pedgene
+\end_layout
+
+\end_inset
+
+) performs gene-level association tests with disease status for pedigree
+ data 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "pedgene"
@@ -1563,12 +1599,8 @@ dbmega2_import
 \series bold
 fam
 \series default
- data frame, a kind of 
-\change_inserted 1332494340 1533764481
-family
-\change_unchanged
- file where the case/control values of 0/1/2 are translated to NA/0/1, as
- required by 
+ data frame, a kind of family file where the case/control values of 0/1/2
+ are translated to NA/0/1, as required by 
 \shape italic
 pedgene
 \shape default
@@ -1616,18 +1648,7 @@ name "subsec:Mega2SKAT-Function"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-The big advantage is that we can pull gene boundaries from Bioconductor
- databases quite easily.
- 
-\end_layout
-
-\end_inset
-
- If one has a sample of unrelated individuals, the 
+If one has a sample of unrelated individuals, the 
 \emph on
 Mega2SKAT
 \emph default
@@ -1640,9 +1661,9 @@ key "SKATc,SKATa,SKATb"
 \end_inset
 
  package.
- This package uses kernel regression approaches to compute association statistic
-s such as the Sequence Kernel Association Test (SKAT) and its optimized
- version (SKAT-O), both for quantitative and dichotomous traits.
+ The SKAT package uses kernel regression approaches to compute association
+ statistics such as the Sequence Kernel Association Test (SKAT) and its
+ optimized version (SKAT-O), both for quantitative and dichotomous traits.
  The 
 \emph on
 Mega2SKAT
@@ -1716,25 +1737,33 @@ name "subsec:mega2vcf-Package-Functions"
 \end_layout
 
 \begin_layout Standard
-The VCF data format (http://www.internationalgenome.org/wiki/Analysis/Variant%20Ca
-ll%20Format/vcf-variant-call-format-version-40/) was originally defined
- by the 1000 Genomes Project
+The VCF data format was originally defined by the 1000 Genomes Project 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "genomes1000"
 
 \end_inset
 
- (http://www.internationalgenome.org/home) for data storage 
+ for data storage 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "VCForig"
 
 \end_inset
 
- .
- The current version of data format can be found at http://samtools.github.io/hts-
-specs/ 
+.
+ The current version of data format can be found at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://samtools.github.io/hts-specs/
+\end_layout
+
+\end_inset
+
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "VCF"
@@ -3966,19 +3995,7 @@ You will see some reports of "No markers in range", because the database
  only contains markers on a sub range of chromosome 1 whereas the transcripts
  span the entire genome.
  Then you will see a listing of a gene name, a marker name, and count of
- 
-\change_deleted -1820302391 1533666182
-0, 1, and 2
-\change_inserted -1820302391 1533666240
-major alleles, heterozygote alleles, and minor alleles
-\change_unchanged
- 
-\change_inserted -1820302391 1533666279
-(each pair counted once) 
-\change_deleted -1820302391 1533666250
-genotypes
-\change_unchanged
-, e.g.,.
+ the 1/1, 1/2, and 2/2 genotypes (where '1' is the major allele), e.g.,.
 \end_layout
 
 \begin_layout LyX-Code
@@ -4001,13 +4018,11 @@ DOpedgene
 \emph on
 DOpedgene
 \emph default
- converts the 
-\change_deleted -1820302391 1533666140
-raw genotype
-\change_inserted -1820302391 1533666146
+ converts the raw genotype representation returned by 
+\shape italic
 getgenotypesraw
-\change_unchanged
- representation to the values 0, 1 and 2.
+\shape default
+ to the values 0, 1 and 2.
  Then it runs 'pedgene'.
  The results are automatically stored in a data frame with columns: chromosome,
  gene, number of markers and base pair range followed by 'pedgene' data:
@@ -4174,22 +4189,45 @@ genotype_table
 \end_layout
 
 \begin_layout Itemize
-analogously to Mega2SKAT, add support for the R famSKATRC package [?? citation].
- famSKAT_RC is another package for family or unrelated linkage analysis
- for a mix of rare variants and common variants.
+analogously to Mega2SKAT, add support for the R famSKATRC package 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Saad:2014aa,famSKATRC"
+
+\end_inset
+
+.
+ famSKAT_RC is another package for family or unrelated gene-based association
+ analysis for a mix of rare variants and common variants.
 \end_layout
 
 \begin_layout Itemize
 analogously to Mega2GenABEL, add support for the CoreArray data storage
- system (aka gdsfmt [?? citation]).
- This will support both the SNPRelate and the SeqArray data representations.
- This makes analysis that depend on these data formats available to Mega2R.
+ system (e.g.
+ Genomic Data Structure (GDS) format 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Zheng:2012aa"
+
+\end_inset
+
+).
+ This will support conversion to GDS format in both the SNPRelate and the
+ SeqArray data representations 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Zheng:2017aa"
+
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Itemize
 apply more aggressive compression of the database.
- For one, the genotype raw vector can be further compressed by gzip [??
- citation] or a similar compression protocol.
+ For one, the genotype raw vector can be further compressed by gzip or a
+ similar compression protocol.
  Additionally, since C does not have a way to represent missing data, we
  use -99.99 to represent it which is stored in the database as a floating
  point number (8 bytes).
