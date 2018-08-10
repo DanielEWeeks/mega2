@@ -667,15 +667,7 @@ read.Mega2DB
 \emph default
 , reads the tables needed by Mega2R from a Mega2 SQLite database into a
  collection of data frames.
- It returns an 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- containing these data frames.
+ It returns an R environment containing these data frames.
  (If you are unfamiliar with environments, you can think of them as data
  frames.
  For example, 'ENV'$
@@ -1150,11 +1142,31 @@ next
 \end_inset
 
  range.
- We provide two ways to specify these ranges.
+ We provide two ways to specify these ranges, via the 
+\emph on
+setRanges
+\emph default
+ and 
+\emph on
+setAnnotations
+\emph default
+ functions.
  In addition, we want to iterate through multiple ranges as would appear
  in a set of selected gene transcripts and process the markers.
- Finally, we process each range of markers by invoking a callback function
- on the range, markers and related data.
+ To do this, we process each range of markers by invoking a callback function
+ on the range, markers and related data, via one of the 
+\emph on
+applyFnToRanges
+\emph default
+, 
+\emph on
+applyFnToGenes
+\emph default
+, or 
+\emph on
+applyFnToMarkers
+\emph default
+ functions.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1182,24 +1194,18 @@ applyFnToGenes
  markers that lie within the region/gene of interest.
  To do this, one has to have well-defined gene boundaries.
  By default, Mega2R provides an internal list of the chromosome and base
- pair ranges for the gene transcripts defined in the refGene table from
- the UCSC Genome Browser reference assembly GRCH37.
+ pair ranges for the transcripts defined in the refGene table from the UCSC
+ Genome Browser reference assembly GRCH37.
  The list was modified to eliminate multiple records of the same gene with
  the exact same transcript start and transcript end.
- The list contains about 29,000 records.
- But there are several reasons that the default transcript ranges may not
- be to your liking.
- Sometimes the transcripts for a gene appear to have overlapping start/end
- positions.
- The transcripts have one start and one end but may not account for non
- coding regions, promoters, etc.
- Perhaps you would prefer to specify transcript names and for each name
- provide a start position, end position and chromosome.
+ The list contains 29,062 records.
+ But there are several reasons that the default ranges may not be to your
+ liking.
  The 
 \emph on
 setRanges
 \emph default
- function lets you store custom ranges; it has two arguments: a range data
+ function lets you use custom ranges; it has two arguments: a range data
  frame that specifies at least the chromosome, the start position, end position
  (and optionally a name) of each range, and an index vector of three integers
  that indicates which columns in the range data frame contain the chromosome,
@@ -1213,28 +1219,21 @@ The
 \emph on
 applyFnToRanges
 \emph default
- function (and also 
+ function (and also the 
 \emph on
 applyFnToGenes
 \emph default
- function) take an initial argument that is a callback function that is
- called repeatedly for each transcript that has markers present.
- They also take a final argument that is an 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
-.
-
+ function, described below) take an initial argument that is a callback
+ function that is called repeatedly for each transcript that has markers
+ present.
+ They also take a final argument that is an R environment.
+ The
 \emph on
- applyFnToRanges,
+ applyFnToRanges
 \emph default
- with no additional arguments, will iterate through each row of the default
- Mega2R ranges, determine the markers contained between the start and end
- and then invoke a callback function.
+ function, with no additional arguments, will iterate through each row of
+ the default Mega2R ranges, determine the markers contained between the
+ start and end and then invoke a callback function.
  Alternatively, 
 \emph on
 applyFnToRanges
@@ -1255,36 +1254,13 @@ The
 applyFnToRanges
 \emph default
  function requires a callback function of three arguments: the first is
- a data frame of the markers in the transcript, the second is a single row
- from the data frame that defines the range/transcript (minimally it has
- a name, ID, start position, end position, and chromosome), and the third
- argument is the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- that contains all the Mega2R data frames.
+ a data frame of the markers in the range, the second is a single row from
+ the data frame that defines the range (minimally it has a name, ID, start
+ position, end position, and chromosome), and the third argument is the
+ R environment that contains all the Mega2R data frames.
  The callback function can apply whatever analysis is required and it can
- access the other data frames available in the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- and even store intermediate results back into the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
-.
+ access the other data frames available in the R environment and even store
+ intermediate results back into the R environment.
  Typically, the callback function will call either 
 \emph on
 getgenotypes
@@ -1293,7 +1269,7 @@ getgenotypes
 \emph on
 getgenotypesraw
 \emph default
- to get a matrix of genotypes values for a group of markers.
+ to get a matrix of genotypes values for the markers in the range.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1375,20 +1351,12 @@ The
  function.
  It takes one argument that contains selected rows of the 
 \series bold
-marker
+markers
 \series default
  data frame.
  It then invokes the callback function with the marker argument data frame,
- a NULL range, and the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- (The range is NULL because there is no range information; this implies
- that the callback function for 
+ a NULL range, and the R environment (The range is NULL because there is
+ no range information; this implies that the callback function for 
 \emph on
 applyFnToMarkers 
 \emph default
@@ -1420,7 +1388,7 @@ getgenotypesraw
  a column for each marker and containing a row per sample.
  Both functions take two arguments: rows of the 
 \series bold
-marker
+markers
 \series default
  data frame and an environment.
  The first argument is usually computed by one of the 
@@ -1438,29 +1406,18 @@ applyFnToMarkers
  functions.
  The
 \series bold
- marker 
+ markers 
 \series default
 data frame has two offsets that are used internally by the decompression
- code; the 
-\series bold
-marker
-\series default
- also has a name, chromosome number and position that can be used to identify
- a marker to the user.
+ code; it also has a name, chromosome number and position that can be used
+ to identify a marker to the user.
  The two 
 \emph on
 getgenotypes
 \emph default
  functions are dispatches that call Rcpp code.
- The R code collects genotype and allele data from the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- data frames and passes these data arguments to the Rcpp code; it also calls
+ The R code collects genotype and allele data from the R environment's data
+ frames and passes these data arguments to the Rcpp code; it also calls
  the proper function for the level of compression: 2 bits or 2 bytes per
  marker.
  For each marker specified, 
@@ -1492,7 +1449,7 @@ name "subsec:mega2pedgene-Package-Functions"
 \end_layout
 
 \begin_layout Standard
-We now give a brief overview of the several processing functions that Mega2R
+We now give a brief overview of several processing functions that Mega2R
  makes available and that illustrate how to build new functions using Mega2R.
  A much more detailed example may be found in the 
 \begin_inset Quotes eld
@@ -1558,12 +1515,11 @@ init_pedgene
 \emph on
 read.Mega2DB
 \emph default
-; the former uses the function in the Mega2R package to load the Mega2 database
- (
+; the former uses the function 
 \emph on
 dbmega2_import
 \emph default
-).
+ to load the Mega2 database.
  Then it generates a modified 
 \series bold
 fam
@@ -1622,14 +1578,14 @@ If one has a sample of unrelated individuals, the
 Mega2SKAT
 \emph default
  function eases the process of applying the region-based association tests
- that are implemented in the SKAT 
+ that are implemented in the SKAT package 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "SKATc,SKATa,SKATb"
 
 \end_inset
 
- package.
+.
  The SKAT package uses kernel regression approaches to compute association
  statistics such as the Sequence Kernel Association Test (SKAT) and its
  optimized version (SKAT-O), both for quantitative and dichotomous traits.
@@ -1642,21 +1598,28 @@ Mega2SKAT
 Mega2pedgene
 \emph default
  (above).
- 
+ The 
 \emph on
 init_SKAT
 \emph default
- behaves very much like 
+ function behaves very much like 
 \emph on
 init_pedgene;
 \emph default
  in addition, it computes a phenotype data frame.
- The Mega2SKAT function has the signature:
+ The 
+\shape italic
+Mega2SKAT
+\shape default
+ function has the signature:
 \end_layout
 
 \begin_layout LyX-Code
 Mega2SKAT = function (f, ty, gs = 1:100, genes = NULL, skat = SKAT::SKAT,
- envir = ENV, ...) 
+\end_layout
+
+\begin_layout LyX-Code
+envir = ENV, ...) 
 \end_layout
 
 \begin_layout Standard
@@ -1673,11 +1636,12 @@ ty
 SKAT_Null_model
 \emph default
 .
- 
+ The 
 \series bold
 skat
 \series default
- indicates the particular SKAT package function to call and the 
+ argument indicates the particular SKAT package function to call and the
+ 
 \series bold
 ...
 
@@ -1745,15 +1709,15 @@ key "VCF"
 Mega2VCF
 \emph default
  function serves several purposes.
- It allows VCF format files to be generated for analysis by R programs that
+ It allows VCF format files to be generated for analysis by programs that
  require VCF input.
  It shows how to extract data provided in the Mega2R data frames for subsequent
  analysis by other R packages.
  Finally, it provides a regression for Mega2R by producing the same files
  from an SQLite database via R code that Mega2 can produce from the identical
  database via C++ code.
- The VCF file and related files calculated both ways should be the same
- except for time stamps.
+ The VCF file and related files created both ways should be the same except
+ for time stamps.
 \end_layout
 
 \begin_layout Standard
@@ -1766,7 +1730,7 @@ Mega2VCF
 read.Mega2DB 
 \emph default
 function to load a Mega2 database.
- A .vcf file is the main output of 
+ A .vcf VCF file is the main output of 
 \emph on
 Mega2VCF
 \emph default
@@ -1858,8 +1822,8 @@ Mega2VCF mkVCFhdr
 \begin_inset Text
 
 \begin_layout Plain Layout
-contains the multi column VCF file with header; each row contains all the
- samples for that marker
+contains the multi column VCF file with header; each row contains genotypes
+ for all the samples for that marker
 \end_layout
 
 \end_inset
@@ -2066,13 +2030,9 @@ readBin
 
 \begin_layout Standard
 Another interesting aspect of the code design is how we compute genotype
- data for a large numbers of markers without needing large amount of memory.
- We build the .
-\series bold
-vcf
-\series default
- file a chunk at a time, where a chunk contains a relatively small number
- of markers (currently 1,000).
+ data for a large numbers of markers without needing large amounts of memory.
+ We build the .vcf file a chunk at a time, where a chunk contains a relatively
+ small number of markers (currently 1,000).
  We generate the genotype matrix for a chunk then append the results for
  the chunk (of markers) to the .vcf file.
  Then we get a new chunk and repeat.
@@ -2096,7 +2056,7 @@ name "subsec:mega2genabel-Package-Functions"
 \end_layout
 
 \begin_layout Standard
-The 'GenABEL' 
+The GenABEL 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "genabel"
@@ -2115,10 +2075,10 @@ https://CRAN.R-project.org/package=GenABEL
 \end_inset
 
 ).
- The GenABEL  package provides many functions for GWAS analysis and it accepts
- GWAS data in several formats.
- But Mega2 accepts input in still more formats, notably VCF, PLINK bed,
- IMPUTE2 and even Linkage.
+ The GenABEL  package provides many functions for genome-wide association
+ analysis and it accepts data in several formats.
+ But Mega2 accepts input in still more formats, notably VCF, PLINK, IMPUTE2
+ and even Linkage format.
  Thus 
 \emph on
 Mega2GenABEL
@@ -2135,8 +2095,8 @@ Mega2GenABEL
 \emph on
 read.Mega2DB 
 \emph default
-function from the Mega2R package to load your database and you should save
- the returned 'environment' into 'ENV.' The function, 
+function to load your database and you should save the returned environment
+ into 'ENV.' The function, 
 \emph on
 Mega2GenABEL
 \emph default
@@ -2191,8 +2151,8 @@ Mega2ENVGenABEL
 Mega2GenABEL
 \emph default
 .
- It does not write out files, but rather converts the Mega2R genotype and
- related data in memory to a gwaa.data-class object.
+ It does not write out any temporary files, but rather converts the Mega2R
+ genotype and related data in memory to a GenABEL gwaa.data-class object.
  It is mainly written in Rcpp and runs 10 to 20 times faster than the 
 \emph on
 Mega2GenABEL
@@ -2784,7 +2744,7 @@ Reading and Examining a Mega2 Database
 
 \begin_layout Standard
 The Mega2R package facilitates reading genetic data from a Mega2-created
- 'SQLite' database.
+ SQLite database.
 \end_layout
 
 \begin_layout Paragraph
@@ -4288,9 +4248,9 @@ Authors' contributions
 \end_layout
 
 \begin_layout Standard
-RVB designed, debugged, and maintains Mega2R; DEW helped prepare the Mega2R
- R package for submission to CRAN.
- RVB and JRS maintain and extend Mega2.
+RVB designed, debugged, and maintains Mega2R; DEW helped test and prepare
+ the Mega2R R package for submission to CRAN.
+ RVB and JRS maintain and extend Mega2 with guidance from DEW.
  DEW provided inspiration and provided the problems that Mega2R solves.
  RVB, with assistance from DEW, wrote this manuscript.
  All authors contributed to the review of the manuscript and agreed to the
@@ -4303,7 +4263,8 @@ Acknowledgments
 \end_layout
 
 \begin_layout Standard
-This work was supported by NIH grant R01 GM076667 (PI: Weeks).
+This work was supported by NIH grant R01 GM076667 (PI: Daniel E.
+ Weeks).
  Earlier contributions to our Mega2 code base were made by Charles P.
  Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, and William P.
  Mulvihill.
