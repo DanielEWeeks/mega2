@@ -323,7 +323,7 @@ The standalone C++ Mega2 program has been facilitating data-reformatting
  Support for more analysis programs has been added over time.
  Currently, Mega2 converts data from several different genetic data formats
  (including PLINK, VCF, BCF, and IMPUTE2) into the specific data requirements
- for over 40 commonly used linkage and association analysis programs (including
+ for over 40 commonly-used linkage and association analysis programs (including
  Mendel, Merlin, Morgan, SHAPEIT, ROADTRIPS, MaCH/minimac3).
  Recently, Mega2 has been enhanced to use a SQLite database as an intermediate
  data representation.
@@ -588,7 +588,7 @@ https://cran.r-project.org/
 
 \end_inset
 
-)and Bioconductor (
+) and Bioconductor (
 \begin_inset Flex URL
 status open
 
@@ -791,7 +791,11 @@ locus_table
 \series bold
 allele_table
 \series default
- entry, i.e.
+ entry, 
+\shape italic
+i.e.
+
+\shape default
  the 
 \series bold
 locus_table
@@ -819,10 +823,13 @@ g both locus and allele data.
 \begin_layout Standard
 Most tables are composed of integer, numeric and string data (see the Appendix).
  The phenotype table is an exception.
- The normal trick of adding an extra column (e.g., the phenotype id) per row
- to indicate which phenotype's data is contained in the row becomes more
- complicated because affection status traits and quantitative traits have
- different data types and number of values.
+ The normal trick of adding an extra column (
+\shape italic
+e.g.
+\shape default
+, the phenotype id) per row to indicate which phenotype's data is contained
+ in the row becomes more complicated because affection status traits and
+ quantitative traits have different data types and number of values.
  Instead, the phenotype data for each person is stored as one long raw vector
  composed of multiple values with 8 bytes of data per value either representing
  an affection status value or a quantitative value.
@@ -1546,8 +1553,11 @@ DOpedgene
 \emph on
 pedgene
 \emph default
- function with several different marker weights (e.g., unweighted, Madsen-Browning
- weights, and 
+ function with several different marker weights (
+\shape italic
+e.g.
+\shape default
+, unweighted, Madsen-Browning weights, and 
 \begin_inset Formula $\beta$
 \end_inset
 
@@ -2174,8 +2184,11 @@ name "sec:Examples"
 
 \begin_layout Standard
 We now show some examples of how to use Mega2R.
- First, we illustrate the base functionality of the Mega2R package (e.g.,
- iterating over gene ranges and getting genotypes from the database).
+ First, we illustrate the base functionality of the Mega2R package (
+\shape italic
+e.g.
+\shape default
+, iterating over gene ranges and getting genotypes from the database).
  Then we demonstrate one of the extended functions, 
 \emph on
 Mega2pedgene.
@@ -3924,7 +3937,11 @@ You will see some reports of "No markers in range", because the database
  only contains markers on a sub range of chromosome 1 whereas the transcripts
  span the entire genome.
  Then you will see a listing of a gene name, a marker name, and count of
- the 1/1, 1/2, and 2/2 genotypes (where '1' is the major allele), e.g.,.
+ the 1/1, 1/2, and 2/2 genotypes (where '1' is the major allele), 
+\shape italic
+e.g.
+\shape default
+,.
 \end_layout
 
 \begin_layout LyX-Code
@@ -4132,7 +4149,10 @@ key "Saad:2014aa,famSKATRC"
 
 \begin_layout Itemize
 analogously to Mega2GenABEL, add support for the CoreArray data storage
- system (e.g.
+ system (
+\shape italic
+e.g.,
+\shape default
  Genomic Data Structure (GDS) format 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -4232,6 +4252,28 @@ Other requirements; R, SQLite library
 \end_layout
 
 \begin_layout Standard
+Archived source code (v1.0.4) at the time of publication: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://doi.org/10.5281/zenodo.1343587
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "robert_v_baron_2018_1343587"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 License: GNU GPL 2
 \end_layout
 
@@ -4264,7 +4306,7 @@ Acknowledgments
 
 \begin_layout Standard
 This work was supported by NIH grant R01 GM076667 (PI: Daniel E.
- Weeks).
+ Weeks) and the University of Pittsburgh.
  Earlier contributions to our Mega2 code base were made by Charles P.
  Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, and William P.
  Mulvihill.
