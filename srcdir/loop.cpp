@@ -478,6 +478,8 @@ void dataloop::loci::data_loop(const char *dir, const char *fl_name, const char 
 
     filep_open(dir, fl_name, mode);
 
+    loci_start();
+
     for (m=0; m < NumChrLoci; m++) {
         // The actual Loci number associated with a SELECTED Loci...
         _locus = ChrLoci[m];
@@ -492,5 +494,6 @@ void dataloop::loci::data_loop(const char *dir, const char *fl_name, const char 
             inner();
         }
     }
+    loci_end();
     filep_close();
 }

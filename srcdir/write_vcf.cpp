@@ -55,6 +55,14 @@
 #include "dbrefallele.h"
 #include "mega2_bcftools_interface.h"
 
+extern "C" {
+    #include "bcftools.h"
+    #include "lib/bcftools-1.6/htslib-1.6/htslib/vcf.h"
+    //#include "lib/bcftools-1.6/filter.h"
+    //#include "lib/bcftools-1.6/vcfview.h"
+    //#include "lib/bcftools-1.6/htslib-1.6/htslib/synced_bcf_reader.h"
+}
+
 extern DBlite MasterDB;
 
 extern int  db_exists_db();
@@ -67,10 +75,13 @@ int combinechromovcf;
 int outfiletype;
 Str ref_choice;
 
-
-
-//SECTION_LOG_INIT(ref_mismatch);
-//SECTION_LOG_INIT(ref_not_available);
+bcf_hdr_t *bcfheader[50];
+int contigchrs[50];
+float contigdist[50];
+kstring_t *kstringbcf;
+bcf1_t *bcfline;
+htsFile *htsfileout;
+int bcf_hdr_cnt;
 
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
@@ -138,101 +149,148 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 //CHROM POS ID REF ALT QUAL FILTER INFO FORMAT 1_1 1_2 2_1
 //20 14370 rs6054257 G A 29 PASS NS=3;DP=14;AF=0.5;DB;H2 GT:GQ:DP:HQ 0|0:48:1:51,51 1|0:48:8:51,51 1/1:43:5:.,.
 void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
-
     //needed a loop to calculate the length for the contig flag
-
-
     vlpCLASS(vcf_vcfs_header_start,chr,loci) {
         vlpCTOR(vcf_vcfs_header_start, chr, loci) { }
         typedef char *str;
         str *file_names;
-        bool first;
         int dummychr;
         int dummylocus;
         double diff;
+        int first;
 
         void file_loop() {
             mssgvf("        VCF format file:        %s/%s\n", *_opath, file_names[0]);
             data_loop(*_opath, file_names[0], "w");
         }
-        void file_header(){
-            pr_printf("##fileformat=VCFv4.1\n");
+
+        void chr_start(){
+            if (first != 1) {
+                first = 0;
+                bcf_hdr_cnt = 0;
+            }
+        }
+        void loci_start() {
+            if (first == 0)
+                first = 1;
+            else
+                bcf_hdr_cnt++;
+
+            contigchrs[bcf_hdr_cnt] = 0;
+            contigdist[bcf_hdr_cnt] = 0;
+
+            bcfheader[bcf_hdr_cnt] = bcf_hdr_init("w");
+
+            bcf_hdr_append(bcfheader[bcf_hdr_cnt], "##fileformat=VCFv4.3\n");
+            //pr_printf("##fileformat=VCFv4.1\n");
 #ifdef HIDEDATE
-            pr_printf("##filedate=%d%02d%02d\n", 1997, 8, 29);
+            bcf_hdr_printf(bcfheader[bcf_hdr_cnt],"##filedate=%d%02d%02d\n", 1997, 8, 29);
+            //pr_printf("##filedate=%d%02d%02d\n", 1997, 8, 29);
 #else
             time_t now = time(0);
             tm *ltm = localtime(&now);
-            pr_printf("##filedate=%d%02d%02d\n", 1900 + ltm->tm_year,1 + ltm->tm_mon,ltm->tm_mday );
+            bcf_hdr_printf(bcfheader[bcf_hdr_cnt], "##filedate=%d%02d%02d\n", 1900 + ltm->tm_year, 1 + ltm->tm_mon,
+                           ltm->tm_mday);
+            //pr_printf("##filedate=%d%02d%02d\n", 1900 + ltm->tm_year,1 + ltm->tm_mon,ltm->tm_mday );
 #endif
-            pr_printf("##source=MEGA2\n");
-            if(base_pair_position_index >= 0)
-                pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
-            pr_printf("##INFO=<ID=RF,Number=1,Type=Float,Description=\"Allele Frequency of reference allele\">\n");
-            pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
+            bcf_hdr_append(bcfheader[bcf_hdr_cnt], "##source=MEGA2\n");
+            //pr_printf("##source=MEGA2\n");
+            if (base_pair_position_index >= 0)
+                bcf_hdr_append(bcfheader[bcf_hdr_cnt],
+                               "##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
+            //pr_printf("##INFO=<ID=CM,Number=3,Type=Float,Description=\"Genetic Distance in centimorgans (avg, male, female)\">\n");
+            bcf_hdr_append(bcfheader[bcf_hdr_cnt],
+                           "##INFO=<ID=RF,Number=1,Type=Float,Description=\"Allele Frequency of reference allele\">\n");
+            //pr_printf("##INFO=<ID=RF,Number=1,Type=Float,Description=\"Allele Frequency of reference allele\">\n");
+            bcf_hdr_append(bcfheader[bcf_hdr_cnt],
+                           "##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
+            //pr_printf("##INFO=<ID=AF,Number=.,Type=Float,Description=\"Allele Frequency of alternate allele(s)\">\n");
             //add conditional
-            if(_strand_flips) {
-                pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele was used instead.\">\n");
-                pr_printf("##INFO=<ID=AMBIG,Number=2,Type=String,Description=\"Reference panel has a match for this position (REF, ALT), but it is ambiguous.\">\n");
-                pr_printf("##INFO=<ID=ORIG,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset flipped according to T/G <-> A/C.\">\n");
-                pr_printf("##INFO=<ID=FLIP,Number=0,Type=Flag,Description=\"REF and ALT values (REF, ALT) from original dataset if REF and ALT alleles were switched in reference.\">\n");
+            if (_strand_flips) {
+                bcf_hdr_append(bcfheader[bcf_hdr_cnt],
+                               "##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele was used instead.\">\n");
+                //pr_printf("##INFO=<ID=NO,Number=0,Type=Flag,Description=\"No external reference allele panel match to this position. Major Allele was used instead.\">\n");
+                bcf_hdr_append(bcfheader[bcf_hdr_cnt],
+                               "##INFO=<ID=AMBIG,Number=2,Type=String,Description=\"Reference panel has a match for this position (REF, ALT), but it is ambiguous.\">\n");
+                //pr_printf("##INFO=<ID=AMBIG,Number=2,Type=String,Description=\"Reference panel has a match for this position (REF, ALT), but it is ambiguous.\">\n");
+                bcf_hdr_append(bcfheader[bcf_hdr_cnt],
+                               "##INFO=<ID=ORIG,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset flipped according to T/G <-> A/C.\">\n");
+                //pr_printf("##INFO=<ID=ORIG,Number=2,Type=String,Description=\"REF and ALT values (REF,ALT) from original dataset flipped according to T/G <-> A/C.\">\n");
+                bcf_hdr_append(bcfheader[bcf_hdr_cnt],
+                               "##INFO=<ID=FLIP,Number=0,Type=Flag,Description=\"REF and ALT values (REF, ALT) from original dataset if REF and ALT alleles were switched in reference.\">\n");
+                //pr_printf("##INFO=<ID=FLIP,Number=0,Type=Flag,Description=\"REF and ALT values (REF, ALT) from original dataset if REF and ALT alleles were switched in reference.\">\n");
             }
             //don't know these for now
             //pr_printf("##INFO=<ID=GC,Number=G,Type=Integer,Description=\"Genotype Counts\">\n");
             //pr_printf("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
-            pr_printf("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
-            pr_printf("##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
-            first = true;
+            bcf_hdr_append(bcfheader[bcf_hdr_cnt], "##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
+            //pr_printf("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
+            bcf_hdr_append(bcfheader[bcf_hdr_cnt], "##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
+            //pr_printf("##FILTER=<ID=PASS,Description=\"Passed variant FILTERs\">\n");
         }
 
         //calculate length and print out number chromosomes
         //need different behavior for combine chromosome vs not (show all chromosome rows vs just one)
         //to get the length we loop over the ChrLoci array for the currently saved chromosome to determine the longest one, we need to make sure nothing is a trait so we check for markers
         //If the chromosome is different from the saved one we assume we need to print a new row
-        void inner(){
-            if(combinechromovcf){
-                if(first) {
-                    if (_tlocusp->Type == BINARY || _tlocusp->Type == NUMBERED)
-                        diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
-                    dummychr = _tlocusp->Marker->chromosome;
-                    first = false;
+        void inner() {
+            if (_tlocusp->Type == BINARY || _tlocusp->Type == NUMBERED) {
+                if (contigchrs[bcf_hdr_cnt]  == 0)
+                    contigchrs[bcf_hdr_cnt]  = _tlocusp->Marker->chromosome;
+                if (contigdist[bcf_hdr_cnt] == 0)
+                    contigdist[bcf_hdr_cnt] = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
+                if(_tlocusp->Marker->chromosome != contigchrs[bcf_hdr_cnt] ) {
+                    contigchrs[bcf_hdr_cnt]  = _tlocusp->Marker->chromosome;
+                    contigdist[bcf_hdr_cnt] = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
                 }
-                else {
-                    if(dummychr == _tlocusp->Marker->chromosome) {
-                        if (_tlocusp->Type == BINARY || _tlocusp->Type == NUMBERED) {
-                            if (_EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1 > diff) {
-                                diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
-                            }
-                        }
-                    }
-                    else{
-                        pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", dummychr, diff, hg_build.c_str());
-                        first = true;
-                    }
-                }
+                if (_EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1 > diff)
+                    contigdist[bcf_hdr_cnt] = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
             }
-            else {
-                if (first) {
-                    if (_tlocusp->Type == BINARY || _tlocusp->Type == NUMBERED)
-                        diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
-                    dummychr = _tlocusp->Marker->chromosome;
-                    first = false;
-                }
-                else {
-                    if(dummychr == _tlocusp->Marker->chromosome) {
-                        if (_tlocusp->Type == BINARY || _tlocusp->Type == NUMBERED) {
-                            if (_EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1 > diff) {
-                                diff = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
-                            }
-                        }
+        }
+        void loci_end(){
+            bcf_hdr_printf(bcfheader[bcf_hdr_cnt],"##contig=<ID=%d,length=%.0lf,assembly=%s>\n", contigchrs[bcf_hdr_cnt], contigdist[bcf_hdr_cnt], hg_build.c_str());
+
+            //make our own ped/per loop so that it plays nicely with bcftools header writer.
+            //when it was a sepreate loop structure the contig wasn't saved properly and it wasn't writing the sample names
+            //to each of the files, we didn't need the full functionality of the loop structure, just a list of samples
+            for (int ped=0; ped < _Top->PedCnt; ped++) {
+                linkage_ped_tree *tpedtreep = &(_Top->Ped[ped]);
+                for (int per = 0; per < _Top->Ped[ped].EntryCnt; per++) {
+                    linkage_ped_rec  *tpersonp = &(tpedtreep->Entry[per]);
+                    char pedigree[16];
+                    char person[16];
+
+                    if (OrigIds[1] == 2) {
+                        sprintf(pedigree, "%s", tpedtreep->Name);
+                    } else if (OrigIds[1] == 3) {
+                        sprintf(pedigree, "%d", ped + 1);
+                    } else if (OrigIds[1] == 4) {
+                        sprintf(pedigree, "%s", tpedtreep->Name);
+                    } else if (OrigIds[1] == 6) {
+                        sprintf(pedigree, "%s", tpedtreep->PedPre);
+                    } else {
+                        sprintf(pedigree, "%s", tpedtreep->PedPre);
                     }
+
+                    if (OrigIds[0] == 1) {
+                        sprintf(person, "%s", tpersonp->OrigID);
+                    } else if (OrigIds[0] == 2) {
+                        sprintf(person, "%s", tpersonp->OrigID);
+                    } else if ((OrigIds[0] == 3) || (OrigIds[0] == 4)) {
+                        sprintf(person, "%s", tpersonp->UniqueID);
+                    } else if (OrigIds[0] == 6) {
+                        sprintf(person, "%s", tpersonp->PerPre);
+                    } else {
+                        sprintf(person, "%s", tpersonp->PerPre);
+                    }
+
+                    char sample[33];
+                    sprintf(sample, "%s_%s", tpedtreep->PedPre, tpersonp->PerPre);
+
+                    bcf_hdr_add_sample(bcfheader[bcf_hdr_cnt], sample);
                 }
             }
         }
-        void file_trailer(){
-            pr_printf("##contig=<ID=%d,length=%.0lf,assembly=%s>\n", dummychr, diff, hg_build.c_str());
-        }
-
-
     } *hlps = new vcf_vcfs_header_start(Top);
 
     hlps->file_names = file_names;
@@ -240,40 +298,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     hlps->load_formats_no_space(-1);
 
     hlps->iterate();
-
-    //then we need a loop to make the header for the individuals 1_1 1_2 etc.
-    vlpCLASS(vcf_vcfs_header,chr,ped_per) {
-        vlpCTOR(vcf_vcfs_header, chr, ped_per) { }
-        typedef char *str;
-        str *file_names;
-        bool first;
-
-        void file_loop() {
-            //mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
-            data_loop(*_opath, file_names[0], "a");
-        }
-
-        void file_header() {
-            pr_printf("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT");
-        }
-
-
-        void inner() {
-            pr_printf("\t");
-            pr_fam();
-            pr_printf("_");
-            pr_per();
-        }
-
-    } *hlp = new vcf_vcfs_header(Top);
-
-    hlp->file_names = file_names;
-
-    hlp->load_formats_no_space(-1);
-
-    hlp->iterate();
-
-
 
     //finally a large loop for the data
     vlpCLASS(vcf_vcfs,chr,loci_ped_per) {
@@ -302,17 +326,45 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         HMapis oldalts;
         int lastchr;
         int extremum_allele;
-
-
+        int bcf_first;
 
         void file_loop() {
             //mssgvf("        VCF format file:      %s/%s\n", *_opath, file_names[0]);
             data_loop(*_opath, file_names[0], "a");
         }
+
+        void chr_start() {
+            dummycanon = canonical_allele("dummy");
+            canonA = canonical_allele("A");
+            canonC = canonical_allele("C");
+            canonG = canonical_allele("G");
+            canonT = canonical_allele("T");
+
+            if(bcf_first != 1) {
+                bcf_hdr_cnt = 0;
+                bcf_first = 0;
+            }
+
+            if (bcf_first == 0)
+                bcf_first = 1;
+            else
+                bcf_hdr_cnt++;
+
+            if(outfiletype == 1)
+                htsfileout = hts_open(file_names[0], "w");
+            else if(outfiletype == 2)
+                htsfileout = hts_open(file_names[0], "wb");
+            else if(outfiletype == 3)
+                htsfileout = hts_open(file_names[0], "wg");
+
+            bcf_hdr_write(htsfileout,bcfheader[bcf_hdr_cnt]);
+
+
+        }
         //here we can put the VCF header data
         void file_header() {
             //want this here since the new line at filep_close() didn't seem to do the trick
-            pr_nl();
+            //pr_nl();
 
             if(_strand_flips)
                 first = true;
@@ -321,23 +373,30 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
             lastchr = global_chromo_entries[0];
 
+
         }
 
         void inner() {
             if(ref_choice == "Original_Order" ||  (_strand_flips && extremum_allele == 0)) {
-                pr_printf("\t");
+                ksprintf(kstringbcf,"%s","\t");
+                //pr_printf("\t");
 
                 if (_allele1 == 0)
-                    pr_printf(".");
+                    ksprintf(kstringbcf,"%s",".");
+                    //pr_printf(".");
                 else
-                    pr_printf("%d", _allele1 - 1);
+                    ksprintf(kstringbcf,"%d",_allele1 - 1);
+                    //pr_printf("%d", _allele1 - 1);
 
-                pr_printf("/");
+                ksprintf(kstringbcf,"%s","/");
+                //pr_printf("/");
 
                 if (_allele2 == 0)
-                    pr_printf(".");
+                    ksprintf(kstringbcf,"%s",".");
+                    //pr_printf(".");
                 else
-                    pr_printf("%d", _allele2 - 1);
+                    ksprintf(kstringbcf,"%d",_allele2 - 1);
+                    //pr_printf("%d", _allele2 - 1);
             }
             else {
                 int allele1;
@@ -362,41 +421,37 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 else
                     allele2 = _allele2;
 
-                pr_printf("\t");
+                ksprintf(kstringbcf,"%s","\t");
+                //pr_printf("\t");
 
 
                 if (allele1 == 0)
-                    pr_printf(".");
+                    ksprintf(kstringbcf,"%s",".");
+                    //pr_printf(".");
                 else
-                    pr_printf("%d", allele1 - 1);
+                    ksprintf(kstringbcf,"%d",_allele1 - 1);
+                    //pr_printf("%d", allele1 - 1);
 
-                pr_printf("/");
+                ksprintf(kstringbcf,"%s","/");
+                //pr_printf("/");
 
                 if (allele2 == 0)
-                    pr_printf(".");
+                    ksprintf(kstringbcf,"%s",".");
+                    //pr_printf(".");
                 else
-                    pr_printf("%d", allele2 - 1);
+                    ksprintf(kstringbcf,"%d",_allele2 - 1);
+                    //pr_printf("%d", allele2 - 1);
             }
 
 
         }
 
-        void chr_start() {
-            dummycanon = canonical_allele("dummy");
-            canonA = canonical_allele("A");
-            canonC = canonical_allele("C");
-            canonG = canonical_allele("G");
-            canonT = canonical_allele("T");
-
-        }
-
-        void chr_end() {
-            //SECTION_LOG_FINI(ref_mismatch);
-            //SECTION_LOG_FINI(ref_not_available);
-        }
-
-
         void loci_start() {
+
+
+
+            kstringbcf = new kstring_t();
+
             //check the chromsome, if it's changed we'll want to select the next set
             if(lastchr != _tlocusp->Marker->chromosome) {
                 first = true;
@@ -472,18 +527,21 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 first = false;
             }
 
-            pr_printf("%d\t", _tlocusp->Marker->chromosome);
+            ksprintf(kstringbcf,"%d\t",_tlocusp->Marker->chromosome);
+            //pr_printf("%d\t", _tlocusp->Marker->chromosome);
             //pr_physical_distance has an extra space
             //so this is basically the same code from in that function with the space removed
             double base_pair_position = 0.0;
             if (base_pair_position_index >= 0) {
                 base_pair_position = _EXLTop->EXLocus[_locus].positions[base_pair_position_index];
             }
-            pr_printf("%.0lf\t", base_pair_position);
+            ksprintf(kstringbcf,"%.0lf\t",base_pair_position);
+            //pr_printf("%.0lf\t", base_pair_position);
 
             //pr_physical_distance(0);
             //pr_printf("\t");
-            pr_printf("%s\t",_tlocusp->LocusName);
+            ksprintf(kstringbcf,"%s\t",_tlocusp->LocusName);
+            //pr_printf("%s\t",_tlocusp->LocusName);
 
             //Here we want to loop over all Alleles, first value is the ref allele, all other comma separated Alt alleles.
             std::string a1;
@@ -584,94 +642,101 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 }
             }
 
-            pr_printf("%s\t%s\t",a1.c_str(),a2.c_str());
-            pr_printf(".\t");
-            pr_printf("PASS\t");
+            ksprintf(kstringbcf,"%s\t%s\t.\tPASS\t",a1.c_str(),a2.c_str());
+            //pr_printf("%s\t%s\t",a1.c_str(),a2.c_str());
+            //pr_printf(".\t");
+            //pr_printf("PASS\t");
             if(base_pair_position_index >= 0){
-                pr_printf("CM=");
+                ksprintf(kstringbcf,"%s","CM=");
+                //pr_printf("CM=");
                 if(_tlocusp->Marker->pos_avg != UNKNOWN_POSITION)
-                    pr_printf("%.2f,",_tlocusp->Marker->pos_avg);
+                    ksprintf(kstringbcf,"%.2f,",_tlocusp->Marker->pos_avg);
+                    //pr_printf("%.2f,",_tlocusp->Marker->pos_avg);
                 else
-                    pr_printf(".,");
+                    ksprintf(kstringbcf,"%s",".,");
+                    //pr_printf(".,");
                 if(_tlocusp->Marker->pos_male != UNKNOWN_POSITION)
-                    pr_printf("%.2f,",_tlocusp->Marker->pos_male);
+                    ksprintf(kstringbcf,"%.2f,",_tlocusp->Marker->pos_male);
+                    //pr_printf("%.2f,",_tlocusp->Marker->pos_male);
                 else
-                    pr_printf(".,");
+                    ksprintf(kstringbcf,"%s",".,");
+                    //pr_printf(".,");
                 if(_tlocusp->Marker->pos_female != UNKNOWN_POSITION)
-                    pr_printf("%.2f;",_tlocusp->Marker->pos_female);
+                    ksprintf(kstringbcf,"%s%.2f;",kstringbcf->s,_tlocusp->Marker->pos_female);
+                    //pr_printf("%.2f;",_tlocusp->Marker->pos_female);
                 else
-                    pr_printf(".;");
+                    ksprintf(kstringbcf,"%s",".;");
+                    //pr_printf(".;");
 
             }
             //pr_printf("CM=%.2f,%.2f,%.2f;",_tlocusp->Marker->pos_avg,_tlocusp->Marker->pos_male,_tlocusp->Marker->pos_female);
             //double alternate_frequency = 0;
             if(extremum_allele == -1)
-                pr_printf("RF=%.6f;",0);
+                ksprintf(kstringbcf,"RF=%.6f;",0.0);
+                //pr_printf("RF=%.6f;",0);
             else
-                pr_printf("RF=%.6f;",_tlocusp->Allele[extremum_allele].Frequency);
-            pr_printf("AF=");
+                ksprintf(kstringbcf,"RF=%.6f;",_tlocusp->Allele[extremum_allele].Frequency);
+                //pr_printf("RF=%.6f;",_tlocusp->Allele[extremum_allele].Frequency);
+            ksprintf(kstringbcf,"%s","AF=");
+            //pr_printf("AF=");
             for (int allele = 0; allele < _tlocusp->AlleleCnt; allele++) {
                 if(allele == extremum_allele)
                     continue;
                 else if((allele == 1 && extremum_allele == 0) || allele == 0)
-                    pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
+                    ksprintf(kstringbcf,"%.6f",_tlocusp->Allele[allele].Frequency);
+                    //pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
                 else
-                    pr_printf(",%.6f",_tlocusp->Allele[allele].Frequency);
-                //pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
+                    ksprintf(kstringbcf,"%.6f",_tlocusp->Allele[allele].Frequency);
+                    //pr_printf(",%.6f",_tlocusp->Allele[allele].Frequency);
+                    //pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
             }
-            pr_printf(";");
+            ksprintf(kstringbcf,"%s",";");
+            //pr_printf(";");
 
 
             if(_strand_flips) {
                 std::string oldref = oldrefs[_tlocusp->locus_link];
                 std::string oldalt = oldalts[_tlocusp->locus_link];
                 if (reference_exists == 0 && strand_flips[_tlocusp->locus_link] == 0)
-                    pr_printf("NO;");
+                    ksprintf(kstringbcf,"%s","NO;");
+                    //pr_printf("NO;");
                 else if(oldref == a2 && oldalt == a1)
-                    pr_printf("FLIP;");
+                    ksprintf(kstringbcf,"%s","FLIP;");
+                    //pr_printf("FLIP;");
                 else if(strand_flips[_tlocusp->locus_link]) {
                     if(oldref == "dummy")
-                        pr_printf("ORIG=%s,.;",oldref.c_str());
+                        ksprintf(kstringbcf,"ORIG=%s,.;",oldref.c_str());
+                        //pr_printf("ORIG=%s,.;",oldref.c_str());
                     else if(oldalt == "dummy")
-                        pr_printf("ORIG=.,%s;",oldalt.c_str() );
+                        ksprintf(kstringbcf,"ORIG=.,%s;",oldref.c_str());
+                        //pr_printf("ORIG=.,%s;",oldalt.c_str() );
                     else
-                        pr_printf("ORIG=%s,%s;",oldref.c_str(),oldalt.c_str());
+                        ksprintf(kstringbcf,"ORIG=%s,%s;",oldref.c_str(),oldalt.c_str());
+                        //pr_printf("ORIG=%s,%s;",oldref.c_str(),oldalt.c_str());
                 }
                 else if(major_minor_flips[_tlocusp->locus_link] == 0 && (oldref != auxillary_ref || oldalt != auxillary_alt))
-                    pr_printf("AMBIG=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
+                    ksprintf(kstringbcf,"AMBIG=%s,%s;",auxillary_ref.c_str(),auxillary_alt.c_str());
+                    //pr_printf("AMBIG=%s,%s;", auxillary_ref.c_str(),auxillary_alt.c_str());
             }
             //pr_printf("AF=%.6f;",alternate_frequency);
             //pr_printf("GC=%s,%s,%s;","count1","count2","count3");
             //pr_printf("NS=%d;",0);
-            pr_printf("\t");
-            pr_printf("GT");
+            ksprintf(kstringbcf,"%s","\tGT");
+            //pr_printf("\t");
+            //pr_printf("GT");
         }
 
         void loci_end(){
-            pr_nl();
+            bcfline = bcf_init();
+            vcf_parse(kstringbcf,bcfheader[bcf_hdr_cnt],bcfline);
+            bcf_write(htsfileout,bcfheader[bcf_hdr_cnt],bcfline);
+            ks_release(kstringbcf);
+            bcf_empty(bcfline);
+            //pr_nl();
         }
 
         void file_trailer() {
-            //printf("%s/%s\n",*_opath,file_names[0]);
-            if(outfiletype == 2) {
-                CLASS_VCF *vcf = new CLASS_VCF;
-                char file[1000];
-                strcpy(file,*_opath);
-                strcat(file,"/");
-                strcat(file,file_names[0]);
-                printf("\nMega2 is using BCFTools to convert %s to BCF format:\n",file);
-                vcf->convert_vcf_bcf(file);
-            }
-
-            if(outfiletype == 3) {
-                CLASS_VCF *vcf = new CLASS_VCF();
-                char file[1000];
-                strcpy(file,*_opath);
-                strcat(file,"/");
-                strcat(file,file_names[0]);
-                printf("Mega2 is using BCFTools to convert %s to VCF.gz format:\n", file);
-                vcf->convert_vcf_vcfgz(file);
-            }
+            vcf_close(htsfileout);
         }
     } *lp = new vcf_vcfs(Top);
 
@@ -682,7 +747,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     lp->iterate();
 
     delete lp;
-    delete hlp;
+    //delete hlp;
     delete hlps;
 }
 
@@ -1098,7 +1163,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             if (*combine_chromo)
                 printf(" %d) Combine Chromosomes                              Yes\n", ++menu_count);
             else
-                printf( "%d) Combine Chromosomes                              No\n", ++menu_count);
+                printf( " %d) Combine Chromosomes                              No\n", ++menu_count);
 
             chromo = menu_count;
         }
@@ -1286,7 +1351,12 @@ void CLASS_VCF::batch_out(){
 
 void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char *stem, int *combine_chromo) {
 
-     sprintf(file_names[0], "%s.%s.vcf", stem, num);
+    if(outfiletype == 1)
+        sprintf(file_names[0], "%s.%s.vcf", stem, num);
+    else if( outfiletype == 2)
+        sprintf(file_names[0], "%s.%s.bcf", stem, num);
+    else if (outfiletype == 3)
+        sprintf(file_names[0], "%s.%s.vcf.gz", stem, num);
      if(main_chromocnt == 1 || *combine_chromo)
         sprintf(file_names[1], "%s.%s.fam", stem, num);
     else

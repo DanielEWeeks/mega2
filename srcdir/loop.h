@@ -323,6 +323,8 @@ namespace dataloop {
 
         void data_loop(const char *dir, const char *fl_name, const char *mode);
         virtual void inner() {}
+        virtual void loci_start() {}
+        virtual void loci_end() {}
     };
 
 };
