@@ -149,8 +149,8 @@ status open
 
 
 \backslash
-title{The Mega2R R package: tools for accessing and processing common genetic
- data formats in R}
+title{The Mega2R package: R tools for accessing and processing genetic data
+ in common formats}
 \end_layout
 
 \end_inset
@@ -321,10 +321,10 @@ begin{abstract}
 The standalone C++ Mega2 program has been facilitating data-reformatting
  for linkage and association analysis programs since 2000.
  Support for more analysis programs has been added over time.
- Currently, Mega2 converts data from several different genetic analysis
- data formats (including PLINK, VCF, BCF, and IMPUTE2) into the specific
- data requirements for over 40 commonly used linkage and association analysis
- programs (including Mendel, Merlin, Morgan, SHAPEIT, ROADTRIPS, MaCH/minimac3).
+ Currently, Mega2 converts data from several different genetic data formats
+ (including PLINK, VCF, BCF, and IMPUTE2) into the specific data requirements
+ for over 40 commonly-used linkage and association analysis programs (including
+ Mendel, Merlin, Morgan, SHAPEIT, ROADTRIPS, MaCH/minimac3).
  Recently, Mega2 has been enhanced to use a SQLite database as an intermediate
  data representation.
  Additionally, Mega2 now stores bialleleic genotype data in a highly compressed
@@ -332,24 +332,46 @@ The standalone C++ Mega2 program has been facilitating data-reformatting
 \end_layout
 
 \begin_layout Standard
-Our Mega2R package now makes it easy to load SQLite3 Mega2 databases directly
- into R as data frames.
- In addition, we have developed C++ functions for R to decompress needed
- subsets of the genotype data in a memory efficient manner.
+Our new Mega2R package now makes it easy to load Mega2 SQLite databases
+ directly into R as data frames.
+ In addition, Mega2R is memory efficient, keeping its genotype data in a
+ compressed format, portions of which are only expanded when needed.
+ Mega2R has functions that ease the process of applying gene-based tests
+ by looping over genes, efficiently pulling out genotypes for variants within
+ the desired boundaries.
  We have also created several more functions that illustrate how to use
- the data frames as well as perform useful tasks: these permit one to run
- the pedgene package to carry out gene-based association tests on family
- data using selected marker subsets, to run the SKAT package to carry out
- gene-based association tests using selected marker subsets, to output the
- Mega2R data as a VCF file and related files (for phenotype and family data),
- and to convert the data frames into GenABEL format.
+ the data frames: these permit one to run the pedgene package to carry out
+ gene-based association tests on family data, to run the SKAT package to
+ carry out gene-based association tests, to output the Mega2R data as a
+ VCF file and related files (for phenotype and family data), and to convert
+ the data frames into GenABEL format.
  The Mega2R package enhances GenABEL since it supports additional input
  data formats (such as PLINK, VCF, and IMPUTE2) not currently supported
  by GenABEL.
  The Mega2 program and the Mega2R R package are both open source and are
- freely available, along with extensive documentation and a 'quick-start'
- tutorial, from https://watson.hgen.pitt.edu/register for Mega2 and https://CRAN.R-p
-roject.org/package=Mega2R for Mega2R.
+ freely available, along with extensive documentation, from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register
+\end_layout
+
+\end_inset
+
+ for Mega2 and 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=Mega2R
+\end_layout
+
+\end_inset
+
+ for Mega2R.
 \end_layout
 
 \begin_layout Standard
@@ -386,7 +408,7 @@ section*{Keywords}
 
 \begin_layout Standard
 database, genotypes, genome-wide association studies, linkage, Mega2, phenotypes
-, R, SQLite3
+, R, SQLite, gene-based association tests
 \end_layout
 
 \begin_layout Standard
@@ -476,7 +498,7 @@ key "Lathrop:1984ab,Lathrop:1986aa,Lathrop:1988aa"
 Over time, Mega2 was upgraded to the C++ computer language and some of the
  internals were rewritten.
  Reformatting data for more analysis programs was gradually added to Mega2.
- The data formats for genetic data changed over time, and Mega2 was enhanced
+ The formats for genetic data changed over time, and Mega2 was enhanced
  to read input data in PLINK format 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -511,9 +533,9 @@ key "Howie:2009aa,Howie:2011aa,Howie:2012aa,Marchini:2010aa"
 \end_layout
 
 \begin_layout Standard
-Initially, Mega2 used C language structures to store its intermediate data
- before analysis.
- Several alternative strategies were considered to dump these data for subsequen
+Until recently, Mega2 used C language structures to store its intermediate
+ data before analysis.
+ Several alternative strategies were considered to save these data for subsequen
 t reuse without having to recompute, reanalyze, and revalidate the data.
  The first choice was to dump the raw structure data to disk.
  Reloading the data is fast but it is much harder to inspect the data for
@@ -539,18 +561,13 @@ insert
 \end_inset
 
  the C structure data into the table.
- Mega2 uses this database, via a menu-driven interface, to provide the data
- needed for any particular analysis.
- The same database provides the data for all the different analyses.
- 
-\end_layout
-
-\begin_layout Standard
-In addition, the data are inherently inspectable and there are database
- tools to help to selectively extract data.
+ Mega2 later uses this database, via a menu-driven interface, to provide
+ the data needed for any particular analysis.
+ In addition, the data in the database are inherently inspectable and there
+ are database tools to help to selectively extract data.
  The data are portable and can be shared on different platforms.
- Since interfaces from many languages are provided for SQLite, the data
- are accessible in many languages besides C.
+ Since interfaces for many languages are provided for SQLite, the data are
+ accessible in many languages besides C.
  Of particular interest is R 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -560,7 +577,29 @@ key "Team:2017aa"
 
  because there is a wealth of existing genetic analysis programs already
  created, well documented, and available in standard repositories such as
- The Comprehensive R Archive Network (CRAN) and Bioconductor.
+ The Comprehensive R Archive Network (CRAN) (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://cran.r-project.org/
+\end_layout
+
+\end_inset
+
+) and Bioconductor (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.bioconductor.org/
+\end_layout
+
+\end_inset
+
+).
  Also, researchers regularly use R to develop new analysis algorithms because
  R provides a rich environment for statistical computing with many useful
  libraries.
@@ -599,6 +638,16 @@ key "genabel"
 \end_inset
 
 .
+ Typically, these R functions are designed to process a small collection
+ of markers at a time.
+ Our versions process all the markers in a transcript for as many genes
+ as desired.
+ Alternatively, the transcripts can be abstracted to just a table of chromosome/
+start/end base pair positions.
+ Mega2R eases this process of looping over genes, efficiently pulling out
+ genotypes for variants within the transcript boundaries.
+ In addition to describing the functionality of our Mega2R package, we also
+ provide a Use Case illustrating how to apply it in practice.
 \end_layout
 
 \begin_layout Section
@@ -618,18 +667,10 @@ read.Mega2DB
 \emph default
 , reads the tables needed by Mega2R from a Mega2 SQLite database into a
  collection of data frames.
- It returns an 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- containing these data frames.
+ It returns an R environment containing these data frames.
  (If you are unfamiliar with environments, you can think of them as data
  frames.
- 'ENV'$
+ For example, 'ENV'$
 \series bold
 locus_table 
 \series default
@@ -637,12 +678,12 @@ will access the
 \series bold
 locus_table
 \series default
- variable from the environment, 'ENV', similar to fetching an "observation"
- from a data frame.
+ variable from the environment, 'ENV'; this is similar to fetching an "observati
+on" from a data frame.
  The difference is when you change data in an ordinary data frame passed
  to a function, the change does not affect the original data frame; only
- the function's local data is changed.
- ALL changes are forgotten when the function exits.
+ the function's local data is changed and all changes are forgotten when
+ the function exits.
  If you change the data in a data frame of an environment passed to a function,
  the change is permanent.) 
 \end_layout
@@ -651,7 +692,7 @@ locus_table
 All Mega2R functions that do not return an environment need to have an environme
 nt supplied as an argument; the environment is used to store the data frames
  that contain the SQLite database.
- There are two ways to pass the environment.
+ There are two ways to pass the environment to a Mega2R function.
  If you assigned the result of 
 \emph on
 read.Mega2DB
@@ -691,25 +732,13 @@ The Mega2 SQLite Database
 \end_layout
 
 \begin_layout Standard
-In the current Mega2 design, there are SQLite tables for 
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-This list is distracting for me, because I end up trying to guess what is
- stored in the various tables and it is hard to do so.
- 
-\end_layout
-
-\end_inset
-
-loci data, marker data, allele data, map data, phenotype data, and genotype
- data as well as pedigree and person data.
- For completeness, Appendix A shows all the tables and their fields.
+In the current Mega2 design, there are SQLite tables for loci data, marker
+ data, allele data, map data, phenotype data, and genotype data as well
+ as pedigree and person data.
+ For completeness, the Appendix  shows all the tables and their fields.
  Here, we will make a few general observations about the tables.
- The first issue was mentioned earlier: What should we do with pointers
- in C++.
- Where necessary, a field was added to a table, we call a 
+ The first issue was mentioned earlier: How should we handle pointers.
+ Where necessary, we added a field to a table, which we call a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -720,8 +749,8 @@ link
  field, viz.
  locus_link.
  This field is a unique integer.
- When the data are read back in via C++, these links are looked up to find
- a pointer to use.
+ When the data are read back in by Mega2 via C++, these links are looked
+ up to find a pointer to use.
  Consider the 
 \series bold
 locus_table
@@ -762,7 +791,11 @@ locus_table
 \series bold
 allele_table
 \series default
- entry, i.e.
+ entry, 
+\shape italic
+i.e.
+
+\shape default
  the 
 \series bold
 locus_table
@@ -784,33 +817,33 @@ links
  For example, in the above case, a merge can produce a table with rows containin
 g both locus and allele data.
  Similar links are used to associate family data with person data, as well
- as associate person data with phenotype data and genotype data.
+ as to associate person data with phenotype data and genotype data.
 \end_layout
 
 \begin_layout Standard
-Most tables are composed of integer, numeric and string data.
+Most tables are composed of integer, numeric and string data (see the Appendix).
  The phenotype table is an exception.
- The normal trick of adding an extra column (e.g., the phenotype id) per row
- to indicate which phenotype's data is contained in the row becomes more
- complicated because affection status traits and quantitative traits have
- different data types and number of values.
- Instead, the phenotype data for each person is stored as one long byte
- vector composed of multiple values with 8 bytes of data per value either
- representing an affection status value or a quantitative value.
- Similarly, the genotype data are a raw vector with a pair of bytes representing
- a genotype for non bialleleic markers and a raw compressed bit vector with
- two bits per genotype for bialleleic markers.
- Note: the internal compressed genotype vector created by Mega2 is one long
- vector.
- The genotype data written to the database is split into separate vectors
- for each chromosome.
+ The normal trick of adding an extra column (
+\shape italic
+e.g.
+\shape default
+, the phenotype id) per row to indicate which phenotype's data is contained
+ in the row becomes more complicated because affection status traits and
+ quantitative traits have different data types and number of values.
+ Instead, the phenotype data for each person is stored as one long raw vector
+ composed of multiple values with 8 bytes of data per value either representing
+ an affection status value or a quantitative value.
+ Similarly, the genotype data are stored as a raw vector with a pair of
+ bytes representing a genotype for non bialleleic markers and a raw compressed
+ bit vector with two bits per genotype for bialleleic markers.
+ Note that the internal compressed genotype vector used by Mega2 is one
+ long vector, while the genotype data written to the database is split into
+ separate vectors for each chromosome.
  The end of each vector may have 0, 1, 2, or 3 unused bit pairs representing
  no markers.
- The Mega2 C++ program reassembles the vectors without these gaps.
- In addition, it can select specific chromosomes and/or specific markers
- needed for analysis and so does not need to store all the genotype bit
- vector data into active memory.
- The R version is not as sophisticated; it reassembles all the chromosome
+ When reading back in from the database, the Mega2 C++ program reassembles
+ the vectors without these gaps.
+ The R version is not as sophisticated: it reassembles all the chromosome
  vectors and includes these gaps.
  It then takes care when referencing the n
 \begin_inset script superscript
@@ -921,8 +954,7 @@ locus_table
 \series default
 .
  These contain raw data copied directly from the Mega2 SQLite database (although
- some of the original fields that are only needed for C++ Mega2 are not
- copied).
+ some of the original fields that are only needed for Mega2 are not copied).
  
 \end_layout
 
@@ -931,12 +963,12 @@ The
 \emph on
 read.Mega2DB
 \emph default
- function also creates other data frames contain derived information.
- The function, 
+ function also creates other data frames containing derived information.
+ The function 
 \emph on
 mkfam
 \emph default
-, is called by 
+ is called by 
 \emph on
 read.Mega2DB
 \emph default
@@ -982,20 +1014,7 @@ phenotype_table
 \series default
  has a person_link field.
  These link fields are used by the R 'merge' function to assemble the data.
- (Note: The 
-\series bold
-genotype_table
-\series default
- also has a person_link field, and the analog to these person 
-\begin_inset Quotes eld
-\end_inset
-
-_link
-\begin_inset Quotes erd
-\end_inset
-
- fields for marker data frames is the locus_link field.) Later, you may want
- to prune the 
+  Later, you may want to prune the 
 \series bold
 fam
 \series default
@@ -1020,7 +1039,7 @@ phenotype_table
 \series default
  and 
 \series bold
-genotype_table
+unified_genotype_table
 \series default
  to contain only those persons left in the 
 \series bold
@@ -1035,12 +1054,9 @@ The
 \series bold
  unified_genotype_table
 \series default
- collects all the raw byte vectors from the 
-\series bold
-genotype_table
-\series default
- by chromosome for each person and concatenates them into a new vector for
- each person.
+ collects all the raw byte vectors from the genotype_table stored in the
+ input SQLite database by chromosome for each person and concatenates them
+ into a new vector for each person.
  The
 \series bold
  
@@ -1055,20 +1071,12 @@ virtual markers
 
  (as mentioned above) at the end of each chromosome if the number of markers
  contained is not an exact multiple of 4 (genotypes per byte).
- 
-\end_layout
-
-\begin_layout Standard
-The 
+ The 
 \series bold
 marker_table
 \series default
- contains the offset of the marker genotype data in the 
-\series bold
-genotype_table
-\series default
- data vector column assuming all the markers across all the chromosomes
- are contiguous.
+ contains the offset of the marker genotype data assuming all the markers
+ across all the chromosomes are contiguous.
  There is an analogous offset column needed for the 
 \series bold
 unified_genotype_table
@@ -1088,7 +1096,7 @@ marker_table
 .
  The 
 \series bold
-marker
+markers
 \series default
 \emph on
  
@@ -1122,13 +1130,13 @@ name "subsec:mega2-Package-Marker"
 
 \begin_layout Standard
 We might have genotype data for thousands of samples and millions of markers
- in a study, but we are unlikely to have the memory to support this large
- a matrix in R.
+ in a study, but we are unlikely to have the memory to support the associated
+ genotype matrix in R.
  The Mega2 genotype data is compressed in the SQLite database and remains
  compressed in its data frame.
  Most of the time, we do not need to decompress all of it at once.
  We typically want to examine the markers on a specific chromosome or in
- the region of of some genes of interest.
+ the region of some genes of interest.
  We only decompress the set of markers we need.
  The key idea is we want to find the set of markers that lie within some
  base pair range and process just those markers and then we repeat this
@@ -1141,11 +1149,31 @@ next
 \end_inset
 
  range.
- We describe two ways to specify these ranges.
+ We provide two ways to specify these ranges, via the 
+\emph on
+setRanges
+\emph default
+ and 
+\emph on
+setAnnotations
+\emph default
+ functions.
  In addition, we want to iterate through multiple ranges as would appear
  in a set of selected gene transcripts and process the markers.
- Finally, we process each range of markers by invoking a callback function
- on the range, markers and related data.
+ To do this, we process each range of markers by invoking a callback function
+ on the range, markers and related data, via one of the 
+\emph on
+applyFnToRanges
+\emph default
+, 
+\emph on
+applyFnToGenes
+\emph default
+, or 
+\emph on
+applyFnToMarkers
+\emph default
+ functions.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1172,40 +1200,25 @@ applyFnToGenes
  functions, to loop over a list of ranges or genes, for each one selecting
  markers that lie within the region/gene of interest.
  To do this, one has to have well-defined gene boundaries.
- To assist in this, by default, Mega2R provides an internal list of the
- chromosome and base pair ranges for the gene transcripts constructed the
- refGene table from the UCSC Genome Browser reference assembly GRCH37.
+ By default, Mega2R provides an internal list of the chromosome and base
+ pair ranges for the transcripts defined in the refGene table from the UCSC
+ Genome Browser reference assembly GRCH37.
  The list was modified to eliminate multiple records of the same gene with
  the exact same transcript start and transcript end.
- The list contains about 29,000 records.
- But there are several reasons that the default transcript ranges may not
- be to your liking.
- Sometimes the transcripts for a gene appear to have overlapping start/end
- positions.
- The transcripts have one start and one end but may not account for non
- coding regions, promoters, etc.
- Perhaps you would prefer to specify transcript names and for each name
- provide a start position, end position and chromosome.
+ The list contains 29,062 records.
+ But there are several reasons that the default ranges may not be to your
+ liking.
  The 
 \emph on
 setRanges
 \emph default
- function lets you store custom ranges; it has two arguments: a range data
+ function lets you use custom ranges; it has two arguments: a range data
  frame that specifies at least the chromosome, the start position, end position
- (and optionally a name) of each range, and a selector vector of 3 integers
+ (and optionally a name) of each range, and an index vector of three integers
  that indicates which columns in the range data frame contain the chromosome,
  start position and end position.
- If the range data frame also contains a name column, the selector vector
- should have a final 4
-\begin_inset script superscript
-
-\begin_layout Plain Layout
-th
-\end_layout
-
-\end_inset
-
- integer that indicates the column containing the name.
+ If the range data frame also contains a name column, the index vector should
+ have a final fourth integer that indicates the column containing the name.
 \end_layout
 
 \begin_layout Standard
@@ -1213,28 +1226,21 @@ The
 \emph on
 applyFnToRanges
 \emph default
- function (and also 
+ function (and also the 
 \emph on
 applyFnToGenes
 \emph default
- function) take an initial argument that is a callback function that is
- called repeatedly for each transcript that has markers present.
- They also take a final argument that is an 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
-.
-
+ function, described below) take an initial argument that is a callback
+ function that is called repeatedly for each transcript that has markers
+ present.
+ They also take a final argument that is an R environment.
+ The
 \emph on
- applyFnToRanges,
+ applyFnToRanges
 \emph default
- with no additional arguments, will iterate through each row of the default
- Mega2R ranges, determine the markers contained between the start and end
- and then invoke a callback function.
+ function, with no additional arguments, will iterate through each row of
+ the default Mega2R ranges, determine the markers contained between the
+ start and end and then invoke a callback function.
  Alternatively, 
 \emph on
 applyFnToRanges
@@ -1255,36 +1261,13 @@ The
 applyFnToRanges
 \emph default
  function requires a callback function of three arguments: the first is
- a data frame of the markers in the transcript, the second is a single row
- from the data frame that defines the range/transcript (minimally it has
- a name, ID, start position, end position, and chromosome), and the third
- argument is the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- that contains all the Mega2R data frames.
+ a data frame of the markers in the range, the second is a single row from
+ the data frame that defines the range (minimally it has a name, ID, start
+ position, end position, and chromosome), and the third argument is the
+ R environment that contains all the Mega2R data frames.
  The callback function can apply whatever analysis is required and it can
- access the other data frames available in the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- and even store intermediate results back into the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
-.
+ access the other data frames available in the R environment and even store
+ intermediate results back into the R environment.
  Typically, the callback function will call either 
 \emph on
 getgenotypes
@@ -1293,7 +1276,7 @@ getgenotypes
 \emph on
 getgenotypesraw
 \emph default
- to get a matrix of genotypes values for a group of markers.
+ to get a matrix of genotypes values for the markers in the range.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1305,7 +1288,7 @@ setAnnotations and applyFnToGenes
 \end_layout
 
 \begin_layout Standard
-Mega2R also loads a list of genes and their transcripts from the Bioconductor
+Mega2R can also load a list of genes and their transcripts from the Bioconductor
  data annotations: "org.Hs.eg.db"and "TxDb.Hsapiens.UCSC.hg19.knownGene".
  The former translates a gene name or alias to the entrez ID of the gene.
  The latter gives start position, end position, and chromosome for each
@@ -1322,7 +1305,7 @@ setAnnotations
 applyFnToGenes
 \emph default
  function.
- (You must install them into your R library first.)
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1375,20 +1358,12 @@ The
  function.
  It takes one argument that contains selected rows of the 
 \series bold
-marker
+markers
 \series default
  data frame.
  It then invokes the callback function with the marker argument data frame,
- a NULL range, and the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- (The range is NULL because there is no range information; this implies
- that the callback function for 
+ a NULL range, and the R environment (The range is NULL because there is
+ no range information; this implies that the callback function for 
 \emph on
 applyFnToMarkers 
 \emph default
@@ -1420,7 +1395,7 @@ getgenotypesraw
  a column for each marker and containing a row per sample.
  Both functions take two arguments: rows of the 
 \series bold
-marker
+markers
 \series default
  data frame and an environment.
  The first argument is usually computed by one of the 
@@ -1438,29 +1413,18 @@ applyFnToMarkers
  functions.
  The
 \series bold
- marker 
+ markers 
 \series default
 data frame has two offsets that are used internally by the decompression
- code; the 
-\series bold
-marker
-\series default
- also has a name, chromosome number and position that can be used to identify
- a marker to the user.
+ code; it also has a name, chromosome number and position that can be used
+ to identify a marker to the user.
  The two 
 \emph on
 getgenotypes
 \emph default
  functions are dispatches that call Rcpp code.
- They collect genotype and allele data from the 
-\begin_inset Quotes eld
-\end_inset
-
-R environment
-\begin_inset Quotes erd
-\end_inset
-
- data frames and pass these data arguments to the Rcpp code; they also call
+ The R code collects genotype and allele data from the R environment's data
+ frames and passes these data arguments to the Rcpp code; it also calls
  the proper function for the level of compression: 2 bits or 2 bytes per
  marker.
  For each marker specified, 
@@ -1492,7 +1456,7 @@ name "subsec:mega2pedgene-Package-Functions"
 \end_layout
 
 \begin_layout Standard
-We now give a brief overview of the several processing functions that Mega2R
+We now give a brief overview of several processing functions that Mega2R
  makes available and that illustrate how to build new functions using Mega2R.
  A much more detailed example may be found in the 
 \begin_inset Quotes eld
@@ -1507,8 +1471,19 @@ Use Case
 \end_layout
 
 \begin_layout Standard
-The 'pedgene' R package (https://CRAN.R-project.org/package=pedgene) performs
- gene-level association tests with disease status for pedigree data 
+The 'pedgene' R package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=pedgene
+\end_layout
+
+\end_inset
+
+) performs gene-level association tests with disease status for pedigree
+ data 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "pedgene"
@@ -1547,39 +1522,21 @@ init_pedgene
 \emph on
 read.Mega2DB
 \emph default
-; the former uses the function in the Mega2R package to load the Mega2 database
- (
+; the former uses the function 
 \emph on
 dbmega2_import
 \emph default
-).
+ to load the Mega2 database.
  Then it generates a modified 
 \series bold
 fam
 \series default
- data frame 
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Is the reader going to know what the 'fam' data frame is?
-\end_layout
-
-\end_inset
-
-; it must eliminate individuals where the case/control disease status is
- not known.
- This is required by 'pedgene'.
- 
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-I don't think we need to do this filtering.
-\end_layout
-
-\end_inset
-
+ data frame, a kind of family file where the case/control values of 0/1/2
+ are translated to NA/0/1, as required by 
+\shape italic
+pedgene
+\shape default
+.
  The 
 \emph on
 pedgene
@@ -1596,8 +1553,11 @@ DOpedgene
 \emph on
 pedgene
 \emph default
- function with several different marker weights (e.g., unweighted, Madsen-Browning
- weights, and 
+ function with several different marker weights (
+\shape italic
+e.g.
+\shape default
+, unweighted, Madsen-Browning weights, and 
 \begin_inset Formula $\beta$
 \end_inset
 
@@ -1623,46 +1583,23 @@ name "subsec:Mega2SKAT-Function"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-The big advantage is that we can pull gene boundaries from Bioconductor
- databases quite easily.
- 
-\end_layout
-
-\end_inset
-
- If one has a sample of unrelated individuals, the 
+If one has a sample of unrelated individuals, the 
 \emph on
 Mega2SKAT
 \emph default
  function eases the process of applying the region-based association tests
- that are implemented in the SKAT 
+ that are implemented in the SKAT package 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "SKATc,SKATa,SKATb"
 
 \end_inset
 
- package.
- This package uses kernel regression approaches to compute association statistic
-s such as the Sequence Kernel Association Test (SKAT) and its optimized
- version (SKAT-O), both for quantitative and dichotomous traits.
- 
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-I don't find this following text that informative - feels too detailed and
- low level.
- 
-\end_layout
-
-\end_inset
-
-The 
+.
+ The SKAT package uses kernel regression approaches to compute association
+ statistics such as the Sequence Kernel Association Test (SKAT) and its
+ optimized version (SKAT-O), both for quantitative and dichotomous traits.
+ The 
 \emph on
 Mega2SKAT
 \emph default
@@ -1671,21 +1608,28 @@ Mega2SKAT
 Mega2pedgene
 \emph default
  (above).
- 
+ The 
 \emph on
 init_SKAT
 \emph default
- behaves very much like 
+ function behaves very much like 
 \emph on
 init_pedgene;
 \emph default
  in addition, it computes a phenotype data frame.
- The Mega2SKAT function has the signature:
+ The 
+\shape italic
+Mega2SKAT
+\shape default
+ function has the signature:
 \end_layout
 
 \begin_layout LyX-Code
-Mega2SKAT = function (f, ty, gs = 1:100, skat = SKAT::SKAT, envir = ENV,
- ...) 
+Mega2SKAT = function (f, ty, gs = 1:100, genes = NULL, skat = SKAT::SKAT,
+\end_layout
+
+\begin_layout LyX-Code
+envir = ENV, ...) 
 \end_layout
 
 \begin_layout Standard
@@ -1702,11 +1646,12 @@ ty
 SKAT_Null_model
 \emph default
 .
- 
+ The 
 \series bold
 skat
 \series default
- indicates the particular SKAT package function to call and the 
+ argument indicates the particular SKAT package function to call and the
+ 
 \series bold
 ...
 
@@ -1735,25 +1680,33 @@ name "subsec:mega2vcf-Package-Functions"
 \end_layout
 
 \begin_layout Standard
-The VCF data format (http://www.internationalgenome.org/wiki/Analysis/Variant%20Ca
-ll%20Format/vcf-variant-call-format-version-40/) was originally defined
- by the 1000 Genomes Project
+The VCF data format was originally defined by the 1000 Genomes Project 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "genomes1000"
 
 \end_inset
 
- (http://www.internationalgenome.org/home) for data storage 
+ for data storage 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "VCForig"
 
 \end_inset
 
- .
- The current version of data format can be found at http://samtools.github.io/hts-
-specs/ 
+.
+ The current version of data format can be found at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://samtools.github.io/hts-specs/
+\end_layout
+
+\end_inset
+
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "VCF"
@@ -1766,15 +1719,15 @@ key "VCF"
 Mega2VCF
 \emph default
  function serves several purposes.
- It allows VCF format files to be generated for analysis by R programs that
+ It allows VCF format files to be generated for analysis by programs that
  require VCF input.
  It shows how to extract data provided in the Mega2R data frames for subsequent
  analysis by other R packages.
  Finally, it provides a regression for Mega2R by producing the same files
  from an SQLite database via R code that Mega2 can produce from the identical
  database via C++ code.
- The VCF file and related files calculated both ways should be the same
- except for time stamps.
+ The VCF file and related files created both ways should be the same except
+ for time stamps.
 \end_layout
 
 \begin_layout Standard
@@ -1787,7 +1740,7 @@ Mega2VCF
 read.Mega2DB 
 \emph default
 function to load a Mega2 database.
- A .vcf file is the main output of 
+ A .vcf VCF file is the main output of 
 \emph on
 Mega2VCF
 \emph default
@@ -1879,8 +1832,8 @@ Mega2VCF mkVCFhdr
 \begin_inset Text
 
 \begin_layout Plain Layout
-contains the multi column VCF file with header; each row contains all the
- samples for that marker
+contains the multi column VCF file with header; each row contains genotypes
+ for all the samples for that marker
 \end_layout
 
 \end_inset
@@ -2087,13 +2040,9 @@ readBin
 
 \begin_layout Standard
 Another interesting aspect of the code design is how we compute genotype
- data for a large numbers of markers without needing large amount of memory.
- We build the .
-\series bold
-vcf
-\series default
- file a chunk at a time, where a chunk contains a relatively small number
- of markers (currently 1,000).
+ data for a large numbers of markers without needing large amounts of memory.
+ We build the .vcf file a chunk at a time, where a chunk contains a relatively
+ small number of markers (currently 1,000).
  We generate the genotype matrix for a chunk then append the results for
  the chunk (of markers) to the .vcf file.
  Then we get a new chunk and repeat.
@@ -2117,18 +2066,29 @@ name "subsec:mega2genabel-Package-Functions"
 \end_layout
 
 \begin_layout Standard
-The 'GenABEL' 
+The GenABEL 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "genabel"
 
 \end_inset
 
- package is available on CRAN (https://CRAN.R-project.org/package=GenABEL).
- The GenABEL  package provides many functions for GWAS analysis and it accepts
- GWAS data in several formats.
- But Mega2 accepts input in still more formats, notably VCF, PLINK bed,
- IMPUTE2 and even Linkage.
+ package is available in the archive section of CRAN (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://CRAN.R-project.org/package=GenABEL
+\end_layout
+
+\end_inset
+
+).
+ The GenABEL  package provides many functions for genome-wide association
+ analysis and it accepts data in several formats.
+ But Mega2 accepts input in still more formats, notably VCF, PLINK, IMPUTE2
+ and even Linkage format.
  Thus 
 \emph on
 Mega2GenABEL
@@ -2145,8 +2105,8 @@ Mega2GenABEL
 \emph on
 read.Mega2DB 
 \emph default
-function from the Mega2R package to load your database and should save the
- returned 'environment' into 'ENV.' The function, 
+function to load your database and you should save the returned environment
+ into 'ENV.' The function, 
 \emph on
 Mega2GenABEL
 \emph default
@@ -2201,8 +2161,8 @@ Mega2ENVGenABEL
 Mega2GenABEL
 \emph default
 .
- It does not write out files, but rather converts the Mega2R genotype and
- related data in memory to a gwaa.data-class object.
+ It does not write out any temporary files, but rather converts the Mega2R
+ genotype and related data in memory to a GenABEL gwaa.data-class object.
  It is mainly written in Rcpp and runs 10 to 20 times faster than the 
 \emph on
 Mega2GenABEL
@@ -2223,9 +2183,12 @@ name "sec:Examples"
 \end_layout
 
 \begin_layout Standard
-The rest of this document shows some examples of how to use Mega2R.
- First, we illustrate the base functions of the Mega2R package (iteration
- and get genotype).
+We now show some examples of how to use Mega2R.
+ First, we illustrate the base functionality of the Mega2R package (
+\shape italic
+e.g.
+\shape default
+, iterating over gene ranges and getting genotypes from the database).
  Then we demonstrate one of the extended functions, 
 \emph on
 Mega2pedgene.
@@ -2270,7 +2233,18 @@ https://CRAN.R-project.org/package=Mega2R
 
 \end_inset
 
-).
+) or it can be obtained via git from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://bitbucket.org/dweeks/Mega2R
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -2290,7 +2264,7 @@ Simulated Data
 \end_layout
 
 \begin_layout Standard
-We have chosen to use the SeqSIMLA2 
+We used the SeqSIMLA2 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "seqsim"
@@ -2338,12 +2312,9 @@ http://seqsimla.nhri.org.tw/prevalence
 
 .
  This simulation creates 1,380 samples of 500,000 markers on a subrange
- of chromosome 1; a bit too much for sharing.
- But a bit less than 200,000 markers are actually polymorphic while the
- rest are monomorphic; this is smaller but the files are still too big.
- We chose to subsample the latter down to 1,380 people and 1,000 markers.
- These data will be used to illustrate the Mega2 and Mega2R operations that
- follow.
+ of chromosome 1.
+ To illustrate the Mega2 and Mega2R operations that follow, we subsampled
+ the data down to 1,380 people and 1,000 polymorphic markers.
  
 \end_layout
 
@@ -2356,14 +2327,12 @@ R
 \end_layout
 
 \begin_layout Standard
-
-\series bold
 We will assume that you have started an R session in which you type the
- commands in this use case.
+ commands in this Use Case.
 \end_layout
 
 \begin_layout Standard
-To run any of these examples, you should first install the package Mega2R.
+You should first install the package Mega2R.
 \end_layout
 
 \begin_layout Standard
@@ -2397,22 +2366,17 @@ name "subsec:Bioconductor"
 \end_layout
 
 \begin_layout Standard
-In the section about 'pedgene' below, we will carry out gene-based association
- tests, where 'genes' are defined according to a database containing the
- boundaries of the gene transcripts.
+Below we will use 'pedgene' carry out gene-based association tests, where
+ 'genes' are defined according to a database containing the boundaries of
+ the gene transcripts.
  This requires two Bioconductor Annotations databases to be installed.
  The first line below loads the Bioconductor biocLite loader and the next
  two lines install two annotation databases.
  One annotation database provides the gene transcript locations and the
- other maps gene names to entrez gene IDs.
- (Note: As described in the section about pedgene below, you may choose
- a different transcript database from Bioconductor or construct one of your
- own.
- If so, you should install it with 
-\emph on
-biocLite
-\emph default
- as illustrated below.) Please type in R:
+ other maps gene names to Entrez gene IDs.
+ (As described in the section about pedgene below, you may choose a different
+ transcript database from Bioconductor or construct one of your own.) Please
+ type in R:
 \end_layout
 
 \begin_layout Standard
@@ -2449,7 +2413,7 @@ The above steps are run once.
 \end_layout
 
 \begin_layout Subsection
-Tutorial Data
+Use Case Data
 \end_layout
 
 \begin_layout Standard
@@ -2496,9 +2460,8 @@ clean_mega2rtutorial_data()
 \end_layout
 
 \begin_layout Standard
-The files you will need for this tutorial are provided in this package.
- You need to extract these files to the current directory.
- This is done by running:
+The files you will need for this Use Case are provided in the Mega2R package.
+ You need to extract these files to the current directory via this command:
 \end_layout
 
 \begin_layout Standard
@@ -2601,7 +2564,7 @@ clean_mega2rtutorial_data()
 Note: The use of the "mega2" executable in our examples expects the Mega2.BATCH.<n
 ame> files to be in the working directory and the latter files expect their
  data files to be in the working directory.
- When you are done with these exercise, the "clean" command will remove
+ When you are done with these exercises, the "clean" command will remove
  these files and other temporary files:
 \end_layout
 
@@ -2646,10 +2609,13 @@ Mega2r.map
 \end_layout
 
 \begin_layout Standard
-
-\series bold
-If you do not wish to install Mega2 right now, you can use the seqsimr.db
- database that is in the tutorial directory.
+If you do not wish to install Mega2 right now, you can skip this database
+ creation step and instead later use the seqsimr.db database that was placed
+ in your directory by the 
+\shape italic
+dump_mega2rtutorial_data(".")
+\shape default
+ command.
 \end_layout
 
 \begin_layout Standard
@@ -2669,7 +2635,8 @@ https://watson.hgen.pitt.edu/register/
  To make matters simple, we will use a pre-constructed Mega2 batch file
  to automate the processing by Mega2.
  To run Mega2 to process and create the 'SQLite' database 'seqsimr.db', we
- issue this command at the Unix prompt:
+ issue this command at the Unix prompt from within the directory containing
+ the Use Case example files:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2677,18 +2644,6 @@ mega2 MEGA2.BATCH.seqsimr
 \end_layout
 
 \begin_layout Standard
-
-\series bold
-Note: This document will not invoke 
-\emph on
-mega2
-\emph default
-, but instead will use the seqsimr.db database that is in the Mega2R package.
-\end_layout
-
-\begin_layout Standard
-
-\series bold
 Note: The vignette associated with the Mega2R  package illustrates what
  the results of this Mega2 run would look like.
 \end_layout
@@ -2714,7 +2669,7 @@ https://watson.hgen.pitt.edu/docs/mega2_html/mega2.html
 \end_layout
 
 \begin_layout Standard
-The MEGA2.BATCH.seqsimr file begins with a rather long comment indicating
+The MEGA2.BATCH.seqsimr file begins with a rather long comment section indicating
  the keyword values that may be set and their default values.
  Towards the end of the file, we set the inputs to 
 \series bold
@@ -2802,7 +2757,7 @@ Reading and Examining a Mega2 Database
 
 \begin_layout Standard
 The Mega2R package facilitates reading genetic data from a Mega2-created
- 'SQLite' database.
+ SQLite database.
 \end_layout
 
 \begin_layout Paragraph
@@ -2810,8 +2765,8 @@ Reading a Mega2 database
 \end_layout
 
 \begin_layout Standard
-After you have created the SQLite database, start up the R program.
- Load the Mega2R package, then use the function 
+After you have created the SQLite database "seqsimr.db", start up R, load
+ the Mega2R package, then use the function 
 \emph on
 read.Mega2DB
 \emph default
@@ -2834,7 +2789,7 @@ library(Mega2R)
 
 \begin_layout Plain Layout
 
-ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
+ENV = read.Mega2DB("seqsimr.db", verbose = FALSE)
 \end_layout
 
 \end_inset
@@ -2844,8 +2799,12 @@ ENV = read.Mega2DB("seqsimr.db", verbose = TRUE)
 
 \begin_layout Standard
 The first argument should be the path to the database.
- Providing the optional argument, 'verbose', causes the read function to
- summarize the data frames created, their fields and their sizes.
+ If 'verbose' is TRUE, for each data frame created in 'ENV', 
+\emph on
+read.Mega2DB
+\emph default
+ emits two lines: one with the number of rows and number of columns of the
+ data frame and the other with the column names of the data frame.
  Finally, an 'environment', which contains the data frames, is returned.
  
 \end_layout
@@ -2856,7 +2815,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<seqsimrdb2>>=
+<<seqsimrdb2,echo=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -2869,16 +2828,6 @@ ENV = read.Mega2DB("seqsimr.db")
 
 \end_layout
 
-\begin_layout Standard
-For each data frame in 'ENV' generated, if 'verbose' is TRUE, 
-\emph on
-read.Mega2DB
-\emph default
- emits two lines per data frame: one with the number of rows and number
- of columns of the data frame and the other with the column names of the
- data frame.
-\end_layout
-
 \begin_layout Paragraph
 Verbose Flag
 \end_layout
@@ -2886,7 +2835,7 @@ Verbose Flag
 \begin_layout Standard
 When verbose is set in the initial read.Mega2DB, the value will be remembered.
  It may be used by any subsequent function.
- If verbose is TRUE, Mega2R functions can print diagnostic information.
+ If verbose is TRUE, Mega2R functions will print diagnostic information.
  
 \end_layout
 
@@ -2910,7 +2859,7 @@ Back to more examples.
 \end_layout
 
 \begin_layout Standard
-The 'ls' function will show you all the variables in an environment.
+The 'ls(ENV)' function will show you all the variables in the 'ENV' environment.
  (You probably have used it without arguments to show you the variables
  in the global environment .GlobalEnv.) Type:
 \end_layout
@@ -2957,10 +2906,6 @@ showMega2ENV()
 
 \end_layout
 
-\begin_layout LyX-Code
-
-\end_layout
-
 \begin_layout Paragraph
 Use standard R operations to examine the created data frames 
 \end_layout
@@ -2993,9 +2938,9 @@ Iterating through Gene Transcripts
 \end_layout
 
 \begin_layout Standard
-There are two ways to compute a function on the genotypes (or markers) in
- all the transcripts.
- These are explained via examples in section about 'pedgene' below.
+Mega2R provides two ways to compute a function on the genotypes (or markers)
+ in each of the transcripts.
+ These are further illustrated via examples in section about 'pedgene' below.
 \end_layout
 
 \begin_layout Paragraph
@@ -3033,7 +2978,7 @@ status open
 
 \begin_layout Plain Layout
 
- head(ENV$refRanges, 4)
+ head(ENV$refRanges, 3)
 \end_layout
 
 \end_inset
@@ -3043,26 +2988,18 @@ status open
 
 \begin_layout Standard
 You may load your own range set instead of the default.
- You create a data frame that contains a chromosome "observation", a start
- position "observation" and an end position "observation".
- And you create an integer vector that contains the column numbers of the
- chromosome "observation", the start position "observation" and the end
- position "observation".
+ You create a data frame that lists, for each range, the chromosome, the
+ start position, and the end position.
+ And you create an integer index vector that indicates which column contains
+ which data.
  These two become the arguments to the 
 \emph on
 setRanges
 \emph default
  function as shown in the example below.
- When there are only three 
-\begin_inset Quotes eld
-\end_inset
-
-observations
-\begin_inset Quotes erd
-\end_inset
-
-, a name is generated by concatenating the position information and adding
- it to the range data frame.
+ When the index vector contains only three entries, a range name is generated
+ by concatenating the position information and adding it to the range data
+ frame.
 \begin_inset Flex Chunk
 status open
 
@@ -3124,8 +3061,8 @@ status open
 \end_layout
 
 \begin_layout Standard
-If you provide an index vector of 4 entries, the last one is assumed to
- be the column of the name for the range.
+If you provide an index vector with four entries, the fourth one indicates
+ the column containing the names of the ranges.
 \end_layout
 
 \begin_layout Standard
@@ -3210,23 +3147,21 @@ The function,
 \emph on
 applyFnToRanges,
 \emph default
- goes through each transcript/range entry and finds the markers that fall
- within the bounds.
+ goes through each range and finds the markers that fall within the bounds.
  The first argument of the 
 \emph on
 applyFnToRanges
 \emph default
- function is a callback function.
- The function is called with three arguments:  the markers in range, the
- selected transcript/range entry and the environment.
+ function is a callback function with three arguments:  the markers in range,
+ the selected range entry and the environment.
  The callback is invoked repeatedly for each transcript range that contains
  any markers.
  If there are no markers contained and the 'verbose' flag is set, a warning
  will be printed.
- The callback function needs to build a genotype matrix or raw genotype
- matrix for the samples and each marker in the range.
- If it is necessary to store information between successive invocations,
- the environment ('envir') can be used.
+ The callback function builds a genotype matrix for the samples and each
+ marker in the range.
+ If necessary, the environment ('envir') can be used to store information
+ between successive invocations.
 \end_layout
 
 \begin_layout Standard
@@ -3238,13 +3173,9 @@ show
 \begin_inset Quotes erd
 \end_inset
 
- as the callback function.
- As you can see, all it does is prints its range argument, markers argument
- and the 
-\emph on
-head
-\emph default
- of the genotype matrix or head of the raw genotype matrix, in that order.
+ as the callback function, which simply prints, for each range, the range
+ itself, the first three lines of the markers within the range, and the
+ first three lines of the genotype matrix, in that order.
  It also prints a little banner before each argument.
  Finally, it does not print the environment argument value; it does not
  change.
@@ -3281,7 +3212,7 @@ status open
 
 \begin_layout Plain Layout
 
-       print(m)
+       print(head(m,3))
 \end_layout
 
 \begin_layout Plain Layout
@@ -3291,17 +3222,7 @@ status open
 
 \begin_layout Plain Layout
 
-       print(head(getgenotypes(m)))
-\end_layout
-
-\begin_layout Plain Layout
-
-#	  print("** Raw Genotypes **")
-\end_layout
-
-\begin_layout Plain Layout
-
-#      print(head(getgenotypesraw(m)))
+       print(head(getgenotypes(m),3))
 \end_layout
 
 \begin_layout Plain Layout
@@ -3336,16 +3257,6 @@ status open
 
 \begin_layout Plain Layout
 
-    # apply function "show"
-\end_layout
-
-\begin_layout Plain Layout
-
-    # ranges
-\end_layout
-
-\begin_layout Plain Layout
-
     ENV$verbose = FALSE
 \end_layout
 
@@ -3364,11 +3275,7 @@ status open
 \emph on
 applyFnToRanges
 \emph default
- can also be provided explicit ranges as show below.
- This run is using a different set of ranges and thus finds a different
- set of ranges with markers: viz.
- range8m and range9m.
- Run this code yourself if you can not imagine the results.
+ can also be provided explicit ranges by using the 'ranges_arg' argument:
 \end_layout
 
 \begin_layout Standard
@@ -3378,16 +3285,6 @@ status open
 \begin_layout Plain Layout
 
 <<applyfntoranges2,eval=FALSE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-    # apply function "show" to all genotypes on chromosomes 1 
-\end_layout
-
-\begin_layout Plain Layout
-
-    # ranges
 \end_layout
 
 \begin_layout Plain Layout
@@ -3534,17 +3431,13 @@ The function
 \emph on
  applyFnToGenes
 \emph default
- is called below to look for the transcripts of a particular gene.
- We know gene 
-\begin_inset Quotes eld
-\end_inset
-
+ can apply the 'show' function to the transcripts of a particular gene via
+ the genes_arg argument.
+ For example, here we apply the 'show' function to transcripts of the 
+\shape italic
 CEP104
-\begin_inset Quotes erd
-\end_inset
-
- is in our data.
- 
+\shape default
+ gene: 
 \end_layout
 
 \begin_layout Standard
@@ -3583,7 +3476,7 @@ applyFnToGenes
 \emph default
  function has several other optional arguments that can request complete
  chromosomes, (multiple) ranges of base pairs on chromosomes, or collections
- of markers in addition to the genes_arg argument.
+ of markers.
  All these arguments define ranges that are passed to 
 \emph on
 applyFnToRanges
@@ -3604,16 +3497,6 @@ status open
 \begin_layout Plain Layout
 
 <<applyfntogenes,eval=TRUE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-    # apply function "show" to all genotypes on chromosomes 1 for two base
-\end_layout
-
-\begin_layout Plain Layout
-
-    # pair ranges
 \end_layout
 
 \begin_layout Plain Layout
@@ -3642,12 +3525,7 @@ status open
 
 \begin_layout Plain Layout
 
-    # apply function "show" to all genotypes for first marker 
-\end_layout
-
-\begin_layout Plain Layout
-
-    # in each chromosome (We only have data for chromosome 1.)
+    # apply function "show" to all genotypes at the 'snp1' marker 
 \end_layout
 
 \begin_layout Plain Layout
@@ -3662,8 +3540,7 @@ status open
 
 \begin_layout Plain Layout
 
-    applyFnToGenes(show, markers_arg = ENV$markers[! duplicated(ENV$markers$chro
-mosome), 3])
+    applyFnToGenes(show, markers_arg = "snp1")
 \end_layout
 
 \begin_layout Plain Layout
@@ -3695,7 +3572,7 @@ mosome), 3])
 \end_layout
 
 \begin_layout Subsubsection
-Iterating through the Genotypes 
+Getting the Genotypes 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Iterating-through-the"
@@ -3711,9 +3588,9 @@ Encoded Genotypes
 
 \begin_layout Standard
 The heart of the above two functions is the calculation of the genotype
- matrix of samples by markers containing the nucleotides (strings).
+ matrix of the samples.
  We will build the matrix for the first 10 markers.
- Remember our database has 1380 samples so we will just show the 
+ Remember our database has 1,380 samples so we will just show the 
 \emph on
 head
 \emph default
@@ -3741,7 +3618,7 @@ status open
 
 \begin_layout Plain Layout
 
- head(genotype, 4)
+ head(genotype, 3)
 \end_layout
 
 \end_inset
@@ -3790,7 +3667,7 @@ status open
 
 \begin_layout Plain Layout
 
- head(raw, 4)
+ head(raw, 3)
 \end_layout
 
 \end_inset
@@ -3845,7 +3722,7 @@ key "pedgene"
 
  to carry out gene-based association tests on 
 \color black
-family data looping over selected marker subsets.
+family data looping over selected transcripts.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3859,7 +3736,7 @@ Rather than read the Mega2 SQLite database with the
 \emph on
 read.Mega2DB
 \emph default
- function, described previously, here we use a specialized 
+ function as described previously, here we use a specialized 
 \emph on
 init_pedgene
 \emph default
@@ -3869,12 +3746,12 @@ init_pedgene
 read.Mega2DB
 \emph default
 .
- Then it creates, edits, and rewrites the family data, storing it in a 'pedgene'
--compatible data frame, 
+ Then it creates, edits, and rewrites the family (.fam) data, storing it
+ in a 'pedgene'-compatible data frame, 
 \series bold
 fam
 \series default
- .
+.
  (
 \series bold
 fam
@@ -3891,24 +3768,21 @@ person_table
 \series bold
 phenotype_table
 \series default
-.) 
-\emph on
-init_pedgene
-\emph default
- purges persons with unknown case/control status which is necessary for
- the pedgene calculation.
- (When 
+.) (When 
 \series bold
 fam
 \series default
- is updated, similar filtering is automatically done to the persons in the
- 
+ is updated, filtering is automatically done to the persons in the 
 \series bold
 phenotype_table
 \series default
  and the 
 \series bold
-genotype_table
+unified_genotype_table
+\series default
+ to remove any persons removed from 
+\series bold
+fam
 \series default
 .) Finally, 
 \emph on
@@ -3956,27 +3830,12 @@ Mega2R has an internal default list of the chromosome and base pair ranges
  The list was further modified to eliminate multiple records of the same
  gene with the exact same transcript start and transcript end.
  These data contain about 29,000 records.
- You may load your own range set instead of the default.
- You create a data frame that contains at least a chromosome "observation",
- a start position "observation" and an end position "observation".
- Then, you create an integer vector that contains the column numbers of
- the chromosome "observation", the start position "observation" and the
- end position "observation".
- If there is a fourth value for the vector, it is the position in the range
- data frame of a name, otherwise a name will be generated from the position
- information and added to the range data frame.
-\end_layout
-
-\begin_layout Standard
-These two objects are then arguments to the 
-\emph on
+ You may use the 
+\shape italic
 setRanges
-\emph default
- function, viz.
-\end_layout
-
-\begin_layout LyX-Code
-setRanges(Transcripts, Columns)
+\shape default
+ function to load your own range set instead of the default, as described
+ above.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3991,63 +3850,33 @@ name "subsec:Gene-transcripts-reminder"
 \end_layout
 
 \begin_layout Standard
-If you plan to select transcripts by gene name, you must load them from
- Bioconductor.
- In Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Bioconductor"
-
+By default, the 
+\shape italic
+init_pedgene
+\shape default
+ function sets the transcript database to 
+\begin_inset Quotes eld
 \end_inset
 
-, we indicated that you needed to type:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<bioc2,eval=FALSE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-source("https://bioconductor.org/biocLite.R")
-\end_layout
-
-\begin_layout Plain Layout
-
-biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene") 
-\end_layout
-
-\begin_layout Plain Layout
-
-biocLite("org.Hs.eg.db")
-\end_layout
-
+TxDb.Hsapiens.UCSC.hg19.knownGene
+\begin_inset Quotes erd
 \end_inset
 
+ and the Entrez gene name mapping database to 
+\begin_inset Quotes eld
+\end_inset
 
-\end_layout
+org.Hs.eg.db
+\begin_inset Quotes erd
+\end_inset
 
-\begin_layout Standard
-just once to install the package.
- And then, to use the desired transcription data base, use this command
- from the Mega2R package as part of your session:
-\end_layout
-
-\begin_layout LyX-Code
-setAnnotations(txdb, entrezGene)
-\end_layout
-
-\begin_layout Standard
-where 'txdb' is the name of Bioconductor transcription database, and 'entrezGene
-' is the name of Bioconductor mapping of gene name or gene alias to entrez
- gene id.
- Note: You do not need this command if you are using the default values
- shown above: TxDb.Hsapiens.UCSC.hg19.knownGene and org.Hs.eg.db.
+.
+ If you wish to use different databases to select transcripts by gene name,
+ you must use the 
+\shape italic
+setAnnotations
+\shape default
+ function to load them from Bioconductor, as discussed above.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4066,13 +3895,13 @@ applyFnToRanges
 \emph default
 .) For the seqsimr.db database, the first 100 transcripts contain only one
  transcript with several markers.
- To make this tutorial exercise run faster, we noticed that the identified
- transcript appeared at transcript 54; so we will restrict 
+ To make this Use Case run faster, we noticed that the identified transcript
+ appeared at transcript 54; so we will restrict 
 \emph on
 Mega2pedgene
 \emph default
  to a small range of transcripts around 54, viz.
- 50 through 60.
+ 53 through 55.
 \end_layout
 
 \begin_layout Standard
@@ -4095,7 +3924,7 @@ ENV$verbose=TRUE
 
 \begin_layout Plain Layout
 
-Mega2pedgene(gs=50:60)
+Mega2pedgene(gs=53:55)
 \end_layout
 
 \end_inset
@@ -4104,11 +3933,15 @@ Mega2pedgene(gs=50:60)
 \end_layout
 
 \begin_layout Standard
-You will see many reports of "No markers in range", because the database
+You will see some reports of "No markers in range", because the database
  only contains markers on a sub range of chromosome 1 whereas the transcripts
  span the entire genome.
- Occasionally you will see a listing of a gene name, markers, and count
- of 0, 1, and 2 genotypes, viz.
+ Then you will see a listing of a gene name, a marker name, and count of
+ the 1/1, 1/2, and 2/2 genotypes (where '1' is the major allele), 
+\shape italic
+e.g.
+\shape default
+,.
 \end_layout
 
 \begin_layout LyX-Code
@@ -4116,31 +3949,8 @@ CEP104 snp24037 520 646 214
 \end_layout
 
 \begin_layout LyX-Code
-CEP104 snp24039 940 386 54 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24041 1377 3 0 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24048 860 460 60 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24494 789 501 90 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24499 891 442 47 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24506 891 442 47 
-\end_layout
-
-\begin_layout LyX-Code
-CEP104 snp24507 789 501 90
+...
+ 
 \end_layout
 
 \begin_layout Standard
@@ -4154,12 +3964,16 @@ DOpedgene
 \emph on
 DOpedgene
 \emph default
- converts the raw genotype representation to the values 0, 1 and 2.
+ converts the raw genotype representation returned by 
+\shape italic
+getgenotypesraw
+\shape default
+ to the values 0, 1 and 2.
  Then it runs 'pedgene'.
- The results are automatically stored in a data frame with "observations":
- chromosome, gene, number of markers and base pair range followed by 'pedgene'
- data: kernel and burden, value and p-values, four values for each of three
- weightings of the markers.
+ The results are automatically stored in a data frame with columns: chromosome,
+ gene, number of markers and base pair range followed by 'pedgene' data:
+ kernel and burden, value and p-values, four values for each of three weightings
+ of the markers.
  These data are saved in the data frame, 'pedgene_results', in the environment.
  They are also printed when 'verbose' is TRUE.
 \end_layout
@@ -4189,13 +4003,7 @@ status open
 
 \begin_layout Plain Layout
 
-# we will skip this line for the document production because it takes too
- long
-\end_layout
-
-\begin_layout Plain Layout
-
-applyFnToRanges(DOpedgene, ENV$refRanges, ENV$refIndices, envir = ENV)
+Mega2pedgene(gs=1:nrow(ENV$refRanges), envir = ENV)
 \end_layout
 
 \end_inset
@@ -4224,17 +4032,16 @@ name "subsec:Running-pedgene-on"
 You may try searching for transcripts of specific genes.
  Here, the default transcript database is "TxDb.Hsapiens.UCSC.hg19.knownGene"
  from Bioconductor.
- Of course you can change it, if you install a new database with biocLite,
+ Of course you can change it, if you install a new database from Bioconductor,
  as shown earlier.
 \end_layout
 
 \begin_layout Standard
-We leave the command below as an exercise.
- It runs a bit slowly.
- It needs to find all the transcripts for each gene, to find all the markers
- between each pair of transcript start/end ranges, to compute the genotype
- matrix for these markers and finally to call the callback function with
- the appropriate arguments.
+We leave the command below as an exercise, as it runs a bit slowly.
+ It needs to find all the transcripts for each gene, then to find all the
+ markers between each pair of transcript start/end ranges, then to compute
+ the genotype matrix for these markers, and finally to call the callback
+ function with the appropriate arguments.
 \end_layout
 
 \begin_layout Standard
@@ -4272,7 +4079,7 @@ status open
 
 \begin_layout Plain Layout
 
-# turn off output & reset results data frame
+# turn off output & reset pedgene_results data frame
 \end_layout
 
 \begin_layout Plain Layout
@@ -4304,15 +4111,6 @@ print(ENV$pedgene_results)
 
 \end_layout
 
-\begin_layout Standard
-Note: The default behavior of 
-\emph on
-DOpedgene
-\emph default
- is to append any new results to the end of the 'pedgene_results' data frame
- in the environment 'envir'.
-\end_layout
-
 \begin_layout Section
 Summary 
 \end_layout
@@ -4328,32 +4126,82 @@ Mega2R
 \end_layout
 
 \begin_layout Itemize
-defer reading the 
+defer constructing the 
 \series bold
-genotype_table
+unified_genotype_table
 \series default
  until the set of chromosomes that are needed can be computed and then only
  read the required chromosome genotype vectors.
 \end_layout
 
+\begin_layout Itemize
+analogously to Mega2SKAT, add support for the R famSKATRC package 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Saad:2014aa,famSKATRC"
+
+\end_inset
+
+.
+ famSKAT_RC is another package for family or unrelated gene-based association
+ analysis for a mix of rare variants and common variants.
+\end_layout
+
+\begin_layout Itemize
+analogously to Mega2GenABEL, add support for the CoreArray data storage
+ system (
+\shape italic
+e.g.,
+\shape default
+ Genomic Data Structure (GDS) format 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Zheng:2012aa"
+
+\end_inset
+
+).
+ This will support conversion to GDS format in both the SNPRelate and the
+ SeqArray data representations 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Zheng:2017aa"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+apply more aggressive compression of the database.
+ For one, the genotype raw vector can be further compressed by gzip or a
+ similar compression protocol.
+ Additionally, since C does not have a way to represent missing data, we
+ use -99.99 to represent it which is stored in the database as a floating
+ point number (8 bytes).
+ But the database (via NULL) and R (via NA) can efficiently represent a
+ missing values, so we will will convert C missing (-99.99) to SQLite (NULL).
+\end_layout
+
 \begin_layout Section
-Availability and requirements
+Software Availability and requirements
 \end_layout
 
 \begin_layout Standard
-Project name: 
+Software name: 
 \series bold
 Mega2R
 \end_layout
 
 \begin_layout Standard
-Project home page: 
+Software available from: 
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-https://watson.hgen.pitt.edu/register
+https://CRAN.R-project.org/package=Mega2R
 \end_layout
 
 \end_inset
@@ -4362,13 +4210,13 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-Project BitBucket repository: 
+BitBucket repository: 
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-https://bitbucket.org/dweeks/mega2/
+https://bitbucket.org/dweeks/mega2r/
 \end_layout
 
 \end_inset
@@ -4377,7 +4225,7 @@ https://bitbucket.org/dweeks/mega2/
 \end_layout
 
 \begin_layout Standard
-Project documentation page: 
+Documentation page: 
 \begin_inset Flex URL
 status open
 
@@ -4404,11 +4252,29 @@ Other requirements; R, SQLite library
 \end_layout
 
 \begin_layout Standard
-License: GNU GPL 2
+Archived source code (v1.0.4) at the time of publication: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://doi.org/10.5281/zenodo.1343587
 \end_layout
 
-\begin_layout Section
-List of abbreviations used
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "robert_v_baron_2018_1343587"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+License: GNU GPL 2
 \end_layout
 
 \begin_layout Section
@@ -4424,9 +4290,9 @@ Authors' contributions
 \end_layout
 
 \begin_layout Standard
-RVB designed, debugged, and maintains Mega2R; DEW helped prepare the Mega2R
- R package for submission to CRAN.
- RVB and JRS maintain and extend Mega2.
+RVB designed, debugged, and maintains Mega2R; DEW helped test and prepare
+ the Mega2R R package for submission to CRAN.
+ RVB and JRS maintain and extend Mega2 with guidance from DEW.
  DEW provided inspiration and provided the problems that Mega2R solves.
  RVB, with assistance from DEW, wrote this manuscript.
  All authors contributed to the review of the manuscript and agreed to the
@@ -4439,7 +4305,8 @@ Acknowledgments
 \end_layout
 
 \begin_layout Standard
-This work was supported by NIH grant R01 GM076667 (PI: Weeks).
+This work was supported by NIH grant R01 GM076667 (PI: Daniel E.
+ Weeks) and the University of Pittsburgh.
  Earlier contributions to our Mega2 code base were made by Charles P.
  Kollar, Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, and William P.
  Mulvihill.
@@ -4456,23 +4323,11 @@ options "bmc_article"
 
 \end_layout
 
-\begin_layout Section
-Illustrations and figures
-\end_layout
-
-\begin_layout Subsection
-Figure captions
-\end_layout
-
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
 
 
-\end_layout
-
-\begin_layout Section
-Additional files
 \end_layout
 
 \begin_layout Section
@@ -5394,7 +5249,7 @@ This table provides the basic data for a marker: its name, chromosome and
 
 \begin_layout LyX-Code
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="2">
+<lyxtabular version="3" rows="9" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -5539,7 +5394,7 @@ chromosome of marker
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5548,11 +5403,31 @@ locus_link
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 unique integer linking loci info
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+locus_link_fill
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique integer indexing into the unified genotype table
 \end_layout
 
 \end_inset
@@ -6504,11 +6379,11 @@ raw data
 \end_layout
 
 \begin_layout Subsection
-Genotype Table
+Unified Genotype Table
 \end_layout
 
 \begin_layout Subsubsection
-genotype_table
+unified_genotype_table
 \end_layout
 
 \begin_layout Standard
@@ -6517,7 +6392,7 @@ This table holds genotype data for each person.
 
 \begin_layout LyX-Code
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="2">
+<lyxtabular version="3" rows="3" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -6546,26 +6421,6 @@ contents
 \begin_inset Text
 
 \begin_layout Plain Layout
-pId
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-unique database table key
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 person_link
 \end_layout
 
@@ -6576,46 +6431,6 @@ person_link
 
 \begin_layout Plain Layout
 unique integer linking person info
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-chr
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-chromosome number
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-bytes
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-byte count of data
 \end_layout
 
 \end_inset
