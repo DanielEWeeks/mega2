@@ -240,6 +240,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 if (contigdist[bcf_hdr_cnt] == 0)
                     contigdist[bcf_hdr_cnt] = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
                 if(_tlocusp->Marker->chromosome != contigchrs[bcf_hdr_cnt] ) {
+                    if(combinechromovcf)
+                        bcf_hdr_printf(bcfheader[bcf_hdr_cnt],"##contig=<ID=%d,length=%.0lf,assembly=%s>\n", contigchrs[bcf_hdr_cnt], contigdist[bcf_hdr_cnt], hg_build.c_str());
                     contigchrs[bcf_hdr_cnt]  = _tlocusp->Marker->chromosome;
                     contigdist[bcf_hdr_cnt] = _EXLTop->EXLocus[_locus].positions[base_pair_position_index] + 1;
                 }
