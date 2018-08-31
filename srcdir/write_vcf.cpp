@@ -352,28 +352,38 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             else
                 bcf_hdr_cnt++;
 
-            if(outfiletype == 1)
-                htsfileout = hts_open(file_names[0], "w");
-            else if(outfiletype == 2)
-                htsfileout = hts_open(file_names[0], "wb");
-            else if(outfiletype == 3)
-                htsfileout = hts_open(file_names[0], "wg");
-
-            bcf_hdr_write(htsfileout,bcfheader[bcf_hdr_cnt]);
+            //this had to get moved since path_ isn't defined in chr_start()
+            //file_names[0] doesn't include the directory so causes an error in output.
+            //keeping this commented here for now in case there's an issue
+//            if(outfiletype == 1)
+//                htsfileout = hts_open(file_names[0], "w");
+//            else if(outfiletype == 2)
+//                htsfileout = hts_open(file_names[0], "wb");
+//            else if(outfiletype == 3)
+//                htsfileout = hts_open(file_names[0], "wg");
+//
+//            bcf_hdr_write(htsfileout,bcfheader[bcf_hdr_cnt]);
 
 
         }
+
         //here we can put the VCF header data
         void file_header() {
-            //want this here since the new line at filep_close() didn't seem to do the trick
-            //pr_nl();
-
             if(_strand_flips)
                 first = true;
             else
                 first = false;
 
             lastchr = global_chromo_entries[0];
+
+            if(outfiletype == 1)
+                htsfileout = hts_open(path_, "w");
+            else if(outfiletype == 2)
+                htsfileout = hts_open(path_, "wb");
+            else if(outfiletype == 3)
+                htsfileout = hts_open(path_, "wg");
+
+            bcf_hdr_write(htsfileout,bcfheader[bcf_hdr_cnt]);
 
 
         }
@@ -449,12 +459,9 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void loci_start() {
-
-
-
             kstringbcf = new kstring_t();
 
-            //check the chromsome, if it's changed we'll want to select the next set
+            //check the chromosome, if it's changed we'll want to select the next set
             if(lastchr != _tlocusp->Marker->chromosome) {
                 first = true;
                 lastchr = _tlocusp->Marker->chromosome;
