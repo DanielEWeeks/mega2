@@ -695,10 +695,10 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     ksprintf(kstringbcf,"%.6f",_tlocusp->Allele[allele].Frequency);
                     //pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
                 else
-                    ksprintf(kstringbcf,"%.6f",_tlocusp->Allele[allele].Frequency);
+                    ksprintf(kstringbcf,",%.6f",_tlocusp->Allele[allele].Frequency);
                     //pr_printf(",%.6f",_tlocusp->Allele[allele].Frequency);
-                    //pr_printf("%.6f",_tlocusp->Allele[allele].Frequency);
             }
+            
             ksprintf(kstringbcf,"%s",";");
             //pr_printf(";");
 
