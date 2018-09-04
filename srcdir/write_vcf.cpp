@@ -671,7 +671,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     ksprintf(kstringbcf,"%s",".,");
                     //pr_printf(".,");
                 if(_tlocusp->Marker->pos_female != UNKNOWN_POSITION)
-                    ksprintf(kstringbcf,"%s%.2f;",kstringbcf->s,_tlocusp->Marker->pos_female);
+                    ksprintf(kstringbcf,"%.2f;",_tlocusp->Marker->pos_female);
                     //pr_printf("%.2f;",_tlocusp->Marker->pos_female);
                 else
                     ksprintf(kstringbcf,"%s",".;");
@@ -698,7 +698,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     ksprintf(kstringbcf,",%.6f",_tlocusp->Allele[allele].Frequency);
                     //pr_printf(",%.6f",_tlocusp->Allele[allele].Frequency);
             }
-            
+
             ksprintf(kstringbcf,"%s",";");
             //pr_printf(";");
 
