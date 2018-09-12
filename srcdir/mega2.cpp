@@ -140,12 +140,14 @@
 #include "marker_lookup_ext.h"
 #include "mega2annot_ext.h"
 #include "menu_value_missing_ext.h"
+#include "mrecode.h"
 #include "output_file_names_ext.h"
 #include "output_routines_ext.h"
 #include "pedtree_ext.h"
 #include "plink_ext.h"
 #include "read_files_ext.h"
 #include "reorder_loci_ext.h"
+#include "select_individuals_ext.h"
 #include "scripts_ext.h"
 #include "slink_ext.h"
 #include "splink_ext.h"
@@ -978,16 +980,27 @@ int             main(int argc, char **argv, char **env)
                 }
             } else if ((af == 3) || (af == 4))
                 Input_Format = in_format_mega2;
-            msgvf("Input Format Deduced as: %s\n", INPUT_FORMAT_STR[Input_Format]);
+            msgvf("\nInput Format Deduced as: %s\n", INPUT_FORMAT_STR[Input_Format]);
     #ifndef HIDESTATUS
             guess = 1;
     #endif
+
         } else {
-            msgvf("Input Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
+            msgvf("\nInput Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
     #ifndef HIDESTATUS
             guess = 0;
     #endif
         }
+//new
+        (void) break_no_founders_menu();
+
+        extern void hwe_menu(void);
+        hwe_menu();
+
+        int count_halftyped = 0;
+        (void) get_count_option(1, &count_halftyped,
+                                "Select individuals to compute allele frequencies\n       for recoded marker loci:");
+
     }
 
     extern linkage_ped_top SQLop;

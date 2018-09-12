@@ -57,6 +57,8 @@ extern linkage_ped_top *read_pre_makeped(FILE *fp, int pedcount,
                                          int *col2locus);
 
 
+extern int break_no_founders_menu(void);
+
 /*
 extern void break_loops(int ped_count, marriage_graph_type *mped,
 			linkage_locus_top *LTop, int break_loop);

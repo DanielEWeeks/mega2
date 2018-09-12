@@ -340,184 +340,27 @@ void dozero(ped_top *Top, linkage_ped_top *LPedTop, analysis_type analysis)
 }
 #endif
 
-ped_status      PedStat;
-void full_check(ped_top *Top, linkage_ped_top *LPedTop, analysis_type analysis)
-{
-    int chr;
-#ifndef DELAY_ZERO
-    int             entry;
-#endif
-    int             ped, locus, select=-1, menu_item=0;
-    int             stat, abortl=0, abortf=0, loc_err=0;
-    /* below are the error flags */
-    int             aexceed, imend, hmend, freq_mis = 0;
-    int             chk_aexceed, chk_imend, chk_hmend;
-    int             set_uniq=0, nonuniq;
-    linkage_locus_top *LLTop = LPedTop->LocusTop;
-    char            select_[10];
-    char            toggle_str[50];
+int aexceed = 0;
+int freq_mis = 0;
+int hmend = 0;
+int imend = 0;
+int nonuniq = 0;
+int set_uniq = 0;
 
-    /* These are set if the corresponding menu item is toggled */
+ped_status      PedStat;
+
+void hwe_menu() {
+    int             select=-1, menu_item=0;
+    int             chk_aexceed, chk_imend, chk_hmend;
     int             exit_select=-1, halftyped_select=-1;
     int             exceedall_select = -1, invalid_select=-1;
     int             uniq_select = -1;
-//  int             plink_locus_num;
-    int             num_mito_hetero = 0, num_mito_non_maternal = 0;
+    char            toggle_str[50];
+    char            select_[10];
 
-    zero = REC_UNKNOWN;
-
-    clear_ped_status(&PedStat);
-
-    /* changed the locus checking loop to skip numbered loci
-       for QUANT summary. This can be modified to accommodate other
-       cases where marker loci need not be changed */
-
-#ifdef need_recode_alleles
-    /*   if (num_traits > 0) { */
-    /*     printf("Checking locus integrity...\n"); */
-    /*     for (locus = 0; locus < num_traits; locus++) { */
-    /*       if (global_trait_entries[locus] >= 0) { */
-    /* 	stat=check_locus(&(LTop->Locus[global_trait_entries[locus]])); */
-    /* 	abortl = imax(abortl, stat); */
-    /*       }	 */
-    /*     } */
-    Tod tod_cl("check_locus");
-
-    plink_locus_num = LLTop->MarkerCnt;
-    if (plink_locus_num > 0) {
-        for (locus = LLTop->PhenoCnt; locus < LLTop->LocusCnt; locus++) {
-            if (LLTop->Locus[locus].Marker->chromosome == MISSING_CHROMO) continue;
-            stat=check_locus(LLTop->Locus + locus, analysis, &plink_locus_num);
-            abortl = imax(abortl, stat);
-        }
-        SECTION_ERR_FINI(check_locus);
-        SECTION_ERR_FINI(biallele);
-    }
-
-    tod_cl();
-#endif
-
-    if (! database_dump) {
-        if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */) {
-            allelecnt_check(LPedTop, analysis);
-        }
-        if (abortl > 0 && abortl <= 4) {
-            loc_err=1;
-        }
-    }
-
-    printf("Done checking locus integrity.\n");
-    if (Display_Errors == 0) {
-        printf("Check error logs for full list of locus data problems.\n");
-        draw_line();
-        Display_Errors=1;
-    }
-
-    if (LPedTop->UniqueIds && analysis != TO_PAP && analysis != IQLS) {
-        nonuniq = check_unique_ids(LPedTop); 
-    } else {
-        /* Mega2 created unique IDs */
-        nonuniq = 0;
-    }
-
-    if (! database_dump) {
-        if (analysis == TO_PAP || analysis == IQLS) {
-            set_uniq = 1;
-        } else {
-            if (nonuniq) {
-//              printf("Warning: Duplicate values in the \"ID\" column.\n");
-                if (analysis == CRANEFOOT) {
-//                  printf("    Unique IDs will be automatically generated as required by %s\n",
-//                         ProgName);
-                    set_uniq = 1;
-                } else {
-                    set_uniq = 0;
-                }
-            }
-        }
-    }
-
-    printf("Checking pedigree integrity...\n");
-    /* separated out the checking of pedigree ids and relationships from
-       checking genotypes, so that we can skip the latter, if there are no
-       marker loci.
-    */
-    Tod tod_cpr("check_ped_relations");
-    for (ped = 0; ped < Top->PedCnt; ped++)   {
-        stat = check_ped_relations(&(Top->PedTree[ped]), &PedStat);
-        abortf = imax(abortf, stat);
-    }
-    SECTION_ERR_FINI(check_ped_relations); // does not use MSSG but should
-    tod_cpr();
-
-    Tod tod_mito("mito_transmission_report");
-    for (chr=0; chr < MaxChromo; chr++) {
-        if (global_chromo_entries[chr] == MITO_CHROMOSOME) {
-            mito_transmission_report(Top,
-                                     LLTop->PedRecDataType == Postmakeped || 
-                                       LLTop->PedRecDataType == Premakeped,
-                                     &num_mito_hetero, &num_mito_non_maternal);
-            if (num_mito_hetero > 0 || num_mito_non_maternal > 0)
-                abortf = imax(abortf, 1);
-            break;
-        }
-    }
-    if (Display_Errors == 0) {
-        printf("Check ERROR or LOG file for a complete list of errors.\n");
-        Display_Errors=1;
-    }
-    printf("Done checking pedigree integrity.\n");
-    tod_mito();
-
-#ifdef need_recoded_alleles
-    Tod tod_iofc("input_observed_freq_check");
-    if (LLTop->MarkerCnt > 0 /* && analysis != TO_PLINK */) {
-        freq_mis = input_observed_freq_check(LPedTop, FreqMismatchThreshold);
-        if (freq_mis > 0)
-            abortf = imax(abortf, 1);
-    } else {
-        freq_mis=0;
-    }
-    tod_iofc();
-#endif
-    Tod tod_cepi("check epilog code: do reset");
-    /* set imend and hmend to 1 if errors are present */
     imend = chk_imend   = 1;
     hmend = chk_hmend   = (Input_Format == in_format_binary_PED) ? 0 : 1; // PLINK binary is NEVER halftyped
     aexceed = chk_aexceed = (Input_Format == in_format_linkage) ? 1 : 0;    // only necessary for Linkage
-    if (loc_err == 1 || PedStat.entry_unconnected > 0 || freq_mis || nonuniq ||
-        num_mito_hetero > 0 || num_mito_non_maternal > 0) {
-        draw_line();  exclaim();
-        warnvf("Thus far found these problems/errors in input data (see MEGA2.ERR for details): \n");
-        if (loc_err == 1) {
-            warnvf(" -> Invalid markers seen: unacceptible allele count or frequencies don't sum to 1.0\n");
-        }
-
-        if (PedStat.entry_unconnected > 0) {
-            warnvf(" -> Unconnected entries\n");
-        }
-
-        if (freq_mis) {
-            warnvf(" -> Input and observed allele frequencies do not match.\n");
-        }
-
-        if (nonuniq) {
-            warnvf(" -> Duplicate values in the \"ID\" column.\n");
-        }
-
-        if (num_mito_hetero > 0) {
-            warnvf(" ->  Found one or more heterozygous mitochondrial genotypes.\n");
-        }
-
-        if (num_mito_non_maternal > 0) {
-            warnvf(" ->  Found one or more non-maternal mitochondrial transmissions.\n");
-        }
-
-        /*    depending on which menu-items will be displayed,
-              set the three _select items which denote which flag to
-              toggle or to exit */
-        exclaim(); draw_line();
-    }
 
     // Default_Reset_Invalid
     // This option defines how invalid genotypes should be handled without pausing for user-input
@@ -548,6 +391,8 @@ void full_check(ped_top *Top, linkage_ped_top *LPedTop, analysis_type analysis)
     } else {
         int imendf = 0, hmendf = 0, aexceedf = 0;
         int mask = 0;
+        printf("\n");
+        draw_line();
         printf("Specify whether to reset Mendelianly inconsistent loci to missing: \n");
         while (select != 0) {
             strcpy(toggle_str, "");
@@ -666,6 +511,139 @@ void full_check(ped_top *Top, linkage_ped_top *LPedTop, analysis_type analysis)
         hmend = hmendf;
         imend = imendf;
         aexceed = aexceedf;
+    }
+}
+
+void full_check(ped_top *Top, linkage_ped_top *LPedTop, analysis_type analysis)
+{
+    int chr;
+#ifndef DELAY_ZERO
+    int             entry;
+#endif
+    int             ped, locus;
+    int             stat, abortl=0, abortf=0, loc_err=0;
+    linkage_locus_top *LLTop = LPedTop->LocusTop;
+
+    /* These are set if the corresponding menu item is toggled */
+    int             num_mito_hetero = 0, num_mito_non_maternal = 0;
+
+    zero = REC_UNKNOWN;
+
+    clear_ped_status(&PedStat);
+
+    /* changed the locus checking loop to skip numbered loci
+       for QUANT summary. This can be modified to accommodate other
+       cases where marker loci need not be changed */
+
+    if (! database_dump) {
+        if ((analysis == TO_PLINK || analysis == IQLS) /* && plink_locus_num < LTop->LocusCnt */) {
+            allelecnt_check(LPedTop, analysis);
+        }
+        if (abortl > 0 && abortl <= 4) {
+            loc_err=1;
+        }
+    }
+
+    printf("Done checking locus integrity.\n");
+    if (Display_Errors == 0) {
+        printf("Check error logs for full list of locus data problems.\n");
+        draw_line();
+        Display_Errors=1;
+    }
+
+    if (LPedTop->UniqueIds && analysis != TO_PAP && analysis != IQLS) {
+        nonuniq = check_unique_ids(LPedTop); 
+    } else {
+        /* Mega2 created unique IDs */
+        nonuniq = 0;
+    }
+
+    if (! database_dump) {
+        if (analysis == TO_PAP || analysis == IQLS) {
+            set_uniq = 1;
+        } else {
+            if (nonuniq) {
+//              printf("Warning: Duplicate values in the \"ID\" column.\n");
+                if (analysis == CRANEFOOT) {
+//                  printf("    Unique IDs will be automatically generated as required by %s\n",
+//                         ProgName);
+                    set_uniq = 1;
+                } else {
+                    set_uniq = 0;
+                }
+            }
+        }
+    }
+
+    printf("Checking pedigree integrity...\n");
+    /* separated out the checking of pedigree ids and relationships from
+       checking genotypes, so that we can skip the latter, if there are no
+       marker loci.
+    */
+    Tod tod_cpr("check_ped_relations");
+    for (ped = 0; ped < Top->PedCnt; ped++)   {
+        stat = check_ped_relations(&(Top->PedTree[ped]), &PedStat);
+        abortf = imax(abortf, stat);
+    }
+    SECTION_ERR_FINI(check_ped_relations); // does not use MSSG but should
+    tod_cpr();
+
+    Tod tod_mito("mito_transmission_report");
+    for (chr=0; chr < MaxChromo; chr++) {
+        if (global_chromo_entries[chr] == MITO_CHROMOSOME) {
+            mito_transmission_report(Top,
+                                     LLTop->PedRecDataType == Postmakeped || 
+                                       LLTop->PedRecDataType == Premakeped,
+                                     &num_mito_hetero, &num_mito_non_maternal);
+            if (num_mito_hetero > 0 || num_mito_non_maternal > 0)
+                abortf = imax(abortf, 1);
+            break;
+        }
+    }
+    if (Display_Errors == 0) {
+        printf("Check ERROR or LOG file for a complete list of errors.\n");
+        Display_Errors=1;
+    }
+    printf("Done checking pedigree integrity.\n");
+    tod_mito();
+
+
+//   hwe_menu();
+    Tod tod_cepi("check epilog code: do reset");
+    /* set imend and hmend to 1 if errors are present */
+
+    if (loc_err == 1 || PedStat.entry_unconnected > 0 || freq_mis || nonuniq ||
+        num_mito_hetero > 0 || num_mito_non_maternal > 0) {
+        draw_line();  exclaim();
+        warnvf("Thus far found these problems/errors in input data (see MEGA2.ERR for details): \n");
+        if (loc_err == 1) {
+            warnvf(" -> Invalid markers seen: unacceptible allele count or frequencies don't sum to 1.0\n");
+        }
+
+        if (PedStat.entry_unconnected > 0) {
+            warnvf(" -> Unconnected entries\n");
+        }
+
+        if (freq_mis) {
+            warnvf(" -> Input and observed allele frequencies do not match.\n");
+        }
+
+        if (nonuniq) {
+            warnvf(" -> Duplicate values in the \"ID\" column.\n");
+        }
+
+        if (num_mito_hetero > 0) {
+            warnvf(" ->  Found one or more heterozygous mitochondrial genotypes.\n");
+        }
+
+        if (num_mito_non_maternal > 0) {
+            warnvf(" ->  Found one or more non-maternal mitochondrial transmissions.\n");
+        }
+
+        /*    depending on which menu-items will be displayed,
+              set the three _select items which denote which flag to
+              toggle or to exit */
+        exclaim(); draw_line();
     }
 
     tod_cepi();

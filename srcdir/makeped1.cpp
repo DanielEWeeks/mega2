@@ -52,6 +52,7 @@
 #include "analysis.h"
 
 #include "makeped.h"
+#include "makeped_ext.h"
 
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
@@ -106,7 +107,6 @@ static int check_disconnected_inds(marriage_graph_type *mped);
 static int founder_more_typed(marriage_graph_type *m_graph,
 			      marriage_edge_type *edges,
 			      int nedges);
-static int force_no_founders(void);
 
 /*----------exported functions----------- */
 int check_pre_makeped(FILE *fp, int *num_lines);
@@ -1226,7 +1226,7 @@ void break_loops(int ped_count, marriage_graph_type *mped,
         /* else go on to breaking loops */
         if (min_graph->num_edges > 0) {
             if (no_founder == -1)
-                no_founder = force_no_founders();
+                no_founder = break_no_founders_menu();
             min_span_tree(min_graph, no_founder, &(mped[i]));
             ind_ids=find_split_nodes(min_graph);
 #ifdef DEBUG_MAKEPED1
@@ -2156,7 +2156,7 @@ static int founder_more_typed(marriage_graph_type *m_graph,
 
 /* user input on forcing selection of non-founders only */
 
-static int force_no_founders(void)
+int break_no_founders_menu(void)
 {
     char yesorno[4];
     int item=-1, force;
@@ -2174,6 +2174,7 @@ static int force_no_founders(void)
         return force;
     }
 
+    printf("\n");
     draw_line();
     printf("Mega2 does not restrict loop-breakers ");
     printf("to be non-founders\nby default. ");

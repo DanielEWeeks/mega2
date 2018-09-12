@@ -273,39 +273,46 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
     char choice[10], stars[5];
     int i, menu_select = 0, count_type=0;
 
-    if (InputMode == BATCH_FILE_INPUTMODE) {
+    menu_select = InputMode == INTERACTIVE_INPUTMODE;
+// allow multiple calls ... only first counts
+//  if (InputMode == BATCH_FILE_INPUTMODE) {
         // Default Select Individuals...
-        if ((Mega2Status == INSIDE_RECODE && Mega2BatchItems[Count_Genotypes].items_read) ||
-            (Mega2Status == INSIDE_ANALYSIS && Mega2BatchItems[Count_HWE_genotypes].items_read)) {
-            if (Mega2Status == INSIDE_RECODE) {
-                SelectIndividuals = Mega2BatchItems[/* 34 */ Count_Genotypes].value.option;
-            } else {
+        if ( (Mega2Status == INSIDE_ANALYSIS && Mega2BatchItems[Count_HWE_genotypes].items_read) ||
+              Mega2BatchItems[Count_Genotypes].items_read) {
+            menu_select = 0;
+            if (Mega2Status == INSIDE_ANALYSIS) {
                 SelectIndividuals = Mega2BatchItems[/* 38 */ Count_HWE_genotypes].value.option;
+            } else {
+                SelectIndividuals = Mega2BatchItems[/* 34 */ Count_Genotypes].value.option;
             }
 
             if (halftyped_item && Mega2BatchItems[/* 36 */ Count_Halftyped].items_read) {
                 *include_halftyped =
                     ((tolower((unsigned char)Mega2BatchItems[/* 36 */ Count_Halftyped].value.copt) == 'y')?
                      1 : 0);
+                menu_select = 0;
             } else {
                 *include_halftyped = 0;
+                menu_select = 0;
             }
-            menu_select=0;
         } else {
             menu_select = 1;
         }
-    }
-    if (InputMode == INTERACTIVE_INPUTMODE || menu_select) {
-        if (Mega2Status == INSIDE_RECODE) {
-            SelectIndividuals = DEFAULT_SelectIndividuals;
-        } else {
+//  }
+    if (! menu_select) {
+
+    } else {
+        if (Mega2Status == INSIDE_ANALYSIS) {
             SelectIndividuals = HWE_DEFAULT_SelectIndividuals;
+        } else {
+            SelectIndividuals = DEFAULT_SelectIndividuals;
         }
         count_type = SelectIndividuals;
         *include_halftyped=0;
         while (count_type){
             strcpy(stars, "    ");
             stars[SelectIndividuals-1]='*';
+            draw_line();
             printf("%s\n", messg);
             draw_line();
             printf("0) Done with this menu, please proceed.\n");
@@ -319,7 +326,8 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
                        stars[i-1], i);
                 i++;
             }
-            printf("%c%d) All genotyped individuals\n", stars[i-1], i);
+            printf("%c%d) All genotyped individuals\n", 
+                   (Mega2Status == INSIDE_RECODE) ? stars[i-1] : stars[i], i);
             if (halftyped_item) {
                 i++;
                 printf(" %d) Count half-typed individuals' alleles. [%s]\n",
@@ -342,8 +350,10 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
                 SelectIndividuals = 2;
                 break;
             case 3:
-                SelectIndividuals = 3;
-                break;
+                if (Mega2Status == INSIDE_RECODE) {
+                    SelectIndividuals = 3;
+                    break;
+                }
             case 4:
                 if (Mega2Status == INSIDE_RECODE) {
                     SelectIndividuals = 4;
@@ -368,15 +378,15 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
         sprintf(err_msg, "Count option: founder + random alleles");
         break;
     case 3:
-        if (Mega2Status == INSIDE_RECODE) {
+        if (Mega2Status == INSIDE_RECODE || Mega2Status == ANALYSIS_NAME_READ) {
             sprintf(err_msg, "Count option: founder + all new alleles");
         } else {
-            sprintf(err_msg, "Count option: all alleles");
+            sprintf(err_msg, "Count option: all individuals");
         }
         break;
     case 4:
-        if (Mega2Status == INSIDE_RECODE) {
-            sprintf(err_msg, "Count option: all alleles");
+        if (Mega2Status == INSIDE_RECODE || Mega2Status == ANALYSIS_NAME_READ) {
+            sprintf(err_msg, "Count option: all individuals");
         }
         break;
     default:
@@ -391,15 +401,16 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
     log_line(mssgf);
 
     if (InputMode == INTERACTIVE_INPUTMODE) {
-        if (Mega2Status == INSIDE_RECODE) {
-            Mega2BatchItems[/* 34 */ Count_Genotypes].value.option = SelectIndividuals;
+        if (Mega2Status == INSIDE_RECODE || Mega2Status == ANALYSIS_NAME_READ) {
+            BatchValueSet(SelectIndividuals, "Count_Genotypes");
             batchf(Count_Genotypes);
         } else {
-            Mega2BatchItems[/* 38 */ Count_HWE_genotypes].value.option = SelectIndividuals;
+            BatchValueSet(SelectIndividuals, "Count_HWE_Genotypes");
             batchf(Count_HWE_genotypes);
         }
         if (halftyped_item) {
-            Mega2BatchItems[/* 36 */ Count_Halftyped].value.copt = yorn[*include_halftyped][0];
+            char c = yorn[*include_halftyped][0];
+            BatchValueSet(c, "Count_Halftyped");
             batchf(Count_Halftyped);
         }
     }
