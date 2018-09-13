@@ -321,6 +321,8 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
                    stars[1]);
             printf("    from pedigrees without genotyped founders.\n");
             i=3;
+// next time: choose[i++] = 1:5
+// then later switch(choose[count_type]) { 1: ...; 2: ... ; 3: ...; 4: ...; 5: ...; }
             if (Mega2Status == INSIDE_RECODE) {
                 printf("%c%d) Genotyped founders + genotyped individuals with unique alleles\n",
                        stars[i-1], i);
@@ -350,10 +352,14 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
                 SelectIndividuals = 2;
                 break;
             case 3:
+//              SelectIndividuals = 3;
+// I believe the above is wrong if INSIDE_ANALYSIS
                 if (Mega2Status == INSIDE_RECODE) {
                     SelectIndividuals = 3;
-                    break;
+                } else {
+                    SelectIndividuals = 4;
                 }
+                break;
             case 4:
                 if (Mega2Status == INSIDE_RECODE) {
                     SelectIndividuals = 4;
