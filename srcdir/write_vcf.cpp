@@ -441,7 +441,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     ksprintf(kstringbcf,"%s",".");
                     //pr_printf(".");
                 else
-                    ksprintf(kstringbcf,"%d",_allele1 - 1);
+                    ksprintf(kstringbcf,"%d", allele1 - 1);
                     //pr_printf("%d", allele1 - 1);
 
                 ksprintf(kstringbcf,"%s","/");
@@ -451,11 +451,9 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                     ksprintf(kstringbcf,"%s",".");
                     //pr_printf(".");
                 else
-                    ksprintf(kstringbcf,"%d",_allele2 - 1);
+                    ksprintf(kstringbcf,"%d", allele2 - 1);
                     //pr_printf("%d", allele2 - 1);
             }
-
-
         }
 
         void loci_start() {
