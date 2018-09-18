@@ -737,8 +737,8 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             bcfline = bcf_init();
             vcf_parse(kstringbcf,bcfheader[bcf_hdr_cnt],bcfline);
             bcf_write(htsfileout,bcfheader[bcf_hdr_cnt],bcfline);
-            ks_release(kstringbcf);
             free(kstringbcf->s);
+            ks_release(kstringbcf);
             delete(kstringbcf);
             bcf_empty(bcfline);
             //pr_nl();
