@@ -1796,6 +1796,7 @@ static linkage_locus_top *read_linkage_locus_file(FILE *filep, int linkagecols, 
             Marker->MarkerName = Locus->LocusName;
             marker1++;
             clear_llocusdata(Locus, NUMBERED);
+            Locus->Marker->Props.Numbered.SelectOpt = SelectIndividuals;
             LTop->NumPedigreeCols += 2;
             colnxt += 2;
             break;
