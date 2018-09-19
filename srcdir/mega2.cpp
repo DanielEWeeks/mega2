@@ -957,8 +957,6 @@ int             main(int argc, char **argv, char **env)
 #endif
     }
 
-    Value_Missing_get(&analysis);  // needed before file read
-
 #ifndef HIDESTATUS
     int guess;
 #endif
@@ -992,14 +990,16 @@ int             main(int argc, char **argv, char **env)
     #endif
         }
 //new
-        (void) break_no_founders_menu();
-
-        extern void hwe_menu(void);
-        hwe_menu();
+        Value_Missing_get(&analysis);  // needed before file read
 
         int count_halftyped = 0;
         (void) get_count_option(1, &count_halftyped,
                                 "Select individuals to compute allele frequencies\n       for recoded marker loci:");
+
+        extern void hwe_menu(void);
+        hwe_menu();
+
+        (void) break_no_founders_menu();
 
     }
 
@@ -1039,6 +1039,8 @@ int             main(int argc, char **argv, char **env)
         get_trait_list(LPedTreeTop->LocusTop, 1);
 
         log_line(mssgf);
+
+        Value_Missing_get(&analysis);  // needed before file read
 
 //      Mega2OutputPath = strdup((char *)".");
 
