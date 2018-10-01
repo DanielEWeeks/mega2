@@ -1905,15 +1905,15 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
         marker_listi->ht_founders = marker_listi->ht_random = 0;
         marker_listi->ht_unique   = marker_listi->ht_everyone = 0;
 
-        allele_prop_reset();
+//      allele_prop_reset();
 
         if (PREORDER_ALLELES) {
             const char *aname1, *aname2;
             allele_list_type *allelefp;
 
             get_2Ralleles_2bits(locus, &(Top->LocusTop->Locus[locus]), &aname1, &aname2);  // G/C
-            if (strcmp(aname1, "0") == 0) {
-                if (strcmp(aname2, "0") == 0) {
+            if (!allelecmp(aname1, REC_UNKNOWN)) {
+                if (!allelecmp(aname2, REC_UNKNOWN)) {
                 } else {
                     aname1 = aname2;
                     aname2 = zero;
@@ -2134,6 +2134,13 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
         }
         Display_Errors = 1;
     }
+
+    allele_list_type *next = marker_listi->first_allele;
+    while (next != NULL) {
+        allele2allele_prop_prop(next->allele_freq.AlleleName) = 0;
+        next = next->next;
+    }
+
     return Top;
 }
 
@@ -2152,7 +2159,6 @@ linkage_ped_top *count_allele_list(linkage_ped_top *Top,
     allele_list_type *allelep;
     linkage_locus_type LocType = Top->LocusTop->Locus[locus].Type;
 //  allele_list_type *alp;
-
     if ((LocType == NUMBERED) || (LocType == XLINKED) || (LocType == YLINKED)) {
         marker_listi->num_people=0;
         marker_listi->num_half_typed=0;

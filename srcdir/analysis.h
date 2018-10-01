@@ -293,6 +293,11 @@ public:
     virtual bool skip_trait(linkage_locus_top *LocusTop, int trait)  { return false; }
 
 /*
+  let create_output_file make the filenames
+ */
+    virtual bool new_set_file_name_and_paths() { return false; }
+
+/*
   Add keyword to ped_ind_defaults(). This function decides which of
   the three individual ids, and two pedigree ids will be selected as
   the default output ids. This is critical if the target analysis has

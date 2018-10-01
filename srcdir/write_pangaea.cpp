@@ -40,6 +40,7 @@
 #include "loop.h"
 #include "sh_util.h"
 
+#include "batch_input_ext.h"
 #include "error_messages_ext.h"
 #include "fcmap_ext.h"
 #include "genetic_utils_ext.h"
@@ -1101,17 +1102,37 @@ void CLASS_PANGAEA::create_output_file(
     linkage_ped_top **Top2)
 {
     linkage_ped_top *Top = LPedTreeTop;
-    int pwid, fwid, mwid;
     int combine_chromo = 0;
+
+    default_batch_in(LPedTreeTop);
+    batch_in();
+    combine_chromo = !LoopOverChrm;
+
+    get_file_names(Top->OrigIds, Top->UniqueIds, &combine_chromo);
+    combine_chromo = 0;  // override ... requires 1 chrm per file
+    LoopOverChrm   = !combine_chromo;
+
+    set_file_names(LPedTreeTop, file_names, &combine_chromo);
+
+    run_analysis(LPedTreeTop, analysis, file_names, untyped_ped_opt, numchr, Top2);
+
+}
+
+void CLASS_PANGAEA::run_analysis(
+    linkage_ped_top *LPedTreeTop,
+    analysis_type *analysis,
+    char *file_names[],
+    int untyped_ped_opt,
+    int *numchr,
+    linkage_ped_top **Top2)
+{
+    linkage_ped_top *Top = LPedTreeTop;
+
+    int pwid, fwid, mwid;
     char prefix[100];
 
     // if 'combine_chromo == 0' each chromosome gets it's own file.
     // if 'combine_chromo == 1' all informaiton goes into one file with the '.all' suffix.
-    combine_chromo = 0;
-
-    get_file_names(file_names, prefix, Top->OrigIds, Top->UniqueIds, &combine_chromo);
-    combine_chromo = 0;
-    LoopOverChrm   = 1;
 
     // the analysis parameter is not used by this function...
     create_mssg(*analysis);
@@ -1121,7 +1142,6 @@ void CLASS_PANGAEA::create_output_file(
     
     // Omit pedigrees under certain circumstances...
     omit_peds(untyped_ped_opt, Top);
-
 
     save_PANGAEA_peds(Top, file_names, pwid, fwid, _suboption);
 
@@ -1136,6 +1156,7 @@ void CLASS_PANGAEA::create_output_file(
         write_PANGAEA_map(Top, file_names, _suboption);
     }
 
+#if 0
     sub_prog_name(_suboption, prefix);
     sprintf(file_names[3], "%s..sh", prefix);
     sprintf(file_names[4], "%s.top.sh", prefix);
@@ -1146,7 +1167,7 @@ void CLASS_PANGAEA::create_output_file(
     sprintf(file_names[9], "%s.par_var", prefix);
     sprintf(file_names[10], "%s.par_trt", prefix);
     sprintf(file_names[11], "..dat");
-
+#endif
     write_PANGAEA_sh(Top, file_names, prefix, _suboption);
 
     switch (_suboption) {
@@ -1163,6 +1184,20 @@ void CLASS_PANGAEA::create_output_file(
 
 /* so compiler won't complain, "use" template */
     case -99:  write_PANGAEA_par_template(Top, file_names, prefix);   break;
+    }
+}
+
+const char *sub_prog_string(int sub_opt) {
+    switch(sub_opt) {
+    case 0:
+    case 1:  return "pangaea_pedcheck";              break;
+    case 2:  return "pangaea_kin";                   break;
+    case 3:  return "pangaea_translink";             break;
+    case 4:  return "pangaea_lod_lm_linkage";        break;
+    case 5:  return "pangaea_lod_lm_bayes";          break;
+    case 6:  return "pangaea_lm_ibdtests";           break;
+    case 7:  return "pangaea_lm_ibdtests_lr";        break;
+    default: return "pangaea_???";                   break;
     }
 }
 
@@ -1219,6 +1254,8 @@ void CLASS_PANGAEA::interactive_sub_prog_name_to_sub_option(analysis_type *analy
         }
     }
     (*analysis)->_suboption = selection;
+    free((*analysis)->file_name_stem);
+    (*analysis)->file_name_stem = strdup(sub_prog_string((*analysis)->_suboption));
 }
 
 void CLASS_PANGAEA::sub_prog_name_to_sub_option(char *sub_prog_name, analysis_type *analysis) {
@@ -1250,18 +1287,19 @@ void CLASS_PANGAEA::sub_prog_name_to_sub_option(char *sub_prog_name, analysis_ty
         }
         break;
     }
+    free((*analysis)->file_name_stem);
+    (*analysis)->file_name_stem = strdup(sub_prog_string((*analysis)->_suboption));
+
 }
 
-void CLASS_PANGAEA::get_file_names(char *file_names[], char *prefix,
-                                   int has_orig, int has_uniq, int *combine_chromo)
+void CLASS_PANGAEA::get_file_names(int has_orig, int has_uniq, int *combine_chromo)
 {
     int i, choice;
     int igl, ipre, iphen, ish, ioui, ioup, isum, isumf;
+    char prefix[MAX_NAMELEN];
     analysis_type analysis = this;
 
-    strcpy(prefix, "pangaea");
-
-    if (DEFAULT_OUTFILES) {
+    if (DEFAULT_OUTFILES || (InputMode != INTERACTIVE_INPUTMODE)) {
         mssgf("Output file names set to defaults.");
         choice = 0;
     } else {
@@ -1275,13 +1313,6 @@ void CLASS_PANGAEA::get_file_names(char *file_names[], char *prefix,
             *combine_chromo = (tolower((unsigned char)Mega2BatchItems[/* 50 */ Loop_Over_Chromosomes].value.copt) == 'y') ? 0 : 1;
         else
             *combine_chromo=0;
-    }
-
-    if (main_chromocnt > 1 && *combine_chromo) {
-        // replaces <extension> with 'all', keeping <extension> and <rest> if they exist...
-        analysis->replace_chr_number(file_names, 0);
-    } else {
-        analysis->replace_chr_number(file_names, global_chromo_entries[0]);
     }
 
     /* output file name menu */
@@ -1301,7 +1332,7 @@ void CLASS_PANGAEA::get_file_names(char *file_names[], char *prefix,
             igl=i++;
         }
 
-        printf(" %d) File name stem:                           %-15s\n", i, prefix);
+        printf(" %d) File name stem:                      %-15s\n", i, file_name_stem);
         ipre=i++;
 
         individual_id_item(i, analysis, OrigIds[0], 43, 2, 0, 0);
@@ -1321,21 +1352,21 @@ void CLASS_PANGAEA::get_file_names(char *file_names[], char *prefix,
 
         } else if (choice == igl) {
             *combine_chromo = TOGGLE(*combine_chromo);
+#if 0
             if (main_chromocnt > 1 && *combine_chromo) {
                 // replaces <extension> with 'all', keeping <extension> and <rest> if they exist...
                 analysis->replace_chr_number(file_names, 0);
             } else {
                 analysis->replace_chr_number(file_names, global_chromo_entries[0]);
             }
-
+#endif
         } else if (choice == ipre) {
             printf("Enter new file name stem > ");
             fcmap(stdin, "%s", prefix);    newline;
-            inner_file_names(file_names, "", prefix);
-            if (main_chromocnt > 1 && *combine_chromo)
-                analysis->replace_chr_number(file_names, 0);
-            else
-                analysis->replace_chr_number(file_names, global_chromo_entries[0]);
+            free(file_name_stem);
+            file_name_stem = strdup(prefix);
+            BatchValueSet(file_name_stem, "file_name_stem");
+            batchf("file_name_stem");
 
         } else if (choice == ioui) {
             OrigIds[0] = individual_id_item(0, analysis, OrigIds[0], 35, 1, has_orig, has_uniq);
@@ -1349,6 +1380,53 @@ void CLASS_PANGAEA::get_file_names(char *file_names[], char *prefix,
             printf("Unknown option %d\n", choice);
         }
     }
+}
+
+void CLASS_PANGAEA::set_file_names(linkage_ped_top *LPedTreeTop, char *file_names[], int *combine_chromo)
+{
+    batch_show();
+
+    extern void set_file_names_and_paths(const analysis_type analysis,
+                                         linkage_ped_top *LPedTreeTop);
+
+    set_file_names_and_paths(this, LPedTreeTop);
+    if (main_chromocnt > 1 && *combine_chromo)
+        replace_chr_number(file_names, 0);
+    else
+        replace_chr_number(file_names, global_chromo_entries[0]);
+}
+
+void CLASS_PANGAEA::default_batch_in(linkage_ped_top *LPedTreeTop)
+{
+    char c;
+
+//  BatchValueGet(c, "Loop_Over_Chromosomes");
+//  LoopOverChrm = (c == 'y' || c == 'Y');
+
+    file_name_stem = strdup(sub_prog_string(_suboption));
+    batch_item_type *bi = BatchItemGet("file_name_stem");
+    if (bi->items_read) {
+        free(file_name_stem);
+        file_name_stem = strdup(bi->value.name);
+    }
+}
+
+void CLASS_PANGAEA::batch_in()
+{
+//  BatchValueGet(additional_program_args, "additional_program_args");
+
+}
+
+void CLASS_PANGAEA::batch_show()
+{
+    msgvf("\n");
+    msgvf("Output file stem:                       %s\n",    C(file_name_stem));
+    
+//  msgvf("Additional PANGAEA program args:        %s\n",
+//        (additional_program_args.size() > 0 ? C(additional_program_args) : 
+//          "<none specified>"));
+
+    msgvf("\n");
 }
 
 static void inner_file_names(char **file_names, const char *num, const char *stem /* = "pangaea" */) {
@@ -1368,7 +1446,7 @@ static void inner_file_names(char **file_names, const char *num, const char *ste
 
 void CLASS_PANGAEA::gen_file_names(char **file_names, char *num)
 {
-    inner_file_names(file_names, num);
+    inner_file_names(file_names, num, file_name_stem);
 }
 
 void CLASS_PANGAEA::replace_chr_number(char *file_names[], int numchr) {

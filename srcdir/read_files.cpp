@@ -658,7 +658,8 @@ char *canonical_allele(const char *ra)
 
 /*      printf("ra: %s %p %p %p\n", ra, Ara, cra, &allele2allele_prop_prop(cra)); */
 
-        allele_prop_reset();
+//      allele_prop_reset();
+        Ara->prop = (void *) 0 ;
     }
     return cra;
 }

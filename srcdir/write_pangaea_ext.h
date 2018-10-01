@@ -57,6 +57,8 @@ public:
 
     virtual bool qtl_allow()        { return true; }
 
+    virtual bool new_set_file_name_and_paths() { return true; }
+
     virtual void ped_ind_defaults(int unique)  {
         OrigIds[0] = 4; /* uniqueIds */
         OrigIds[1] = 2; /* Ped num */
@@ -75,10 +77,29 @@ public:
 			    int *numchr,
                             linkage_ped_top **Top2);
 
-    void get_file_names(char *file_names[], char *prefix,
-                        int has_orig, int has_uniq, int *combine_chromo);
+    void get_file_names(int has_orig, int has_uniq, int *combine_chromo);
+    void set_file_names(linkage_ped_top *LPedTreeTop, char *file_names[], int *combine_chromo);
+
+    void run_analysis(linkage_ped_top *LPedTreeTop,
+                      analysis_type *analysis,
+                      char *file_names[],
+                      int untyped_ped_opt,
+                      int *numchr,
+                      linkage_ped_top **Top2);
+
     void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
+
+    virtual void default_batch_in(linkage_ped_top *LPedTreeTop);
+    virtual void batch_in();
+
+    virtual void batch_out() {}
+
+    virtual void batch_show();
+
+public:
+
+//  Str    additional_program_args;
 };
 
 extern CLASS_PANGAEA            *PANGAEA;

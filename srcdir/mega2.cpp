@@ -989,7 +989,7 @@ int             main(int argc, char **argv, char **env)
             guess = 0;
     #endif
         }
-//new
+//
         Value_Missing_get(&analysis);  // needed before file read
 
         int count_halftyped = 0;
@@ -1293,19 +1293,6 @@ int             main(int argc, char **argv, char **env)
         tod_stat1();
     }
 
-    {
-        /*  Mega2Status=TRAIT_SELECTED_M2S; */
-        default_outfile_names(analysis, &(global_chromo_entries[0]), Outfile_Names, logdir);
-
-        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-        set_output_paths(analysis, LPedTreeTop);
-
-        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-
-        /* Now to analysis-specific options */
-        ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
-    }
-
     Mega2Status = INSIDE_ANALYSIS;
     /*  printf("num-traits = %d\n", num_traits); sleep(2); */
 
@@ -1377,20 +1364,41 @@ int             main(int argc, char **argv, char **env)
     InputMode = AnalyInputMode;  //What was it before the exec
     // Create the data files, and then the shell scripts...
     Tod tod_out("create_output_files");
+
+    if (! analysis->new_set_file_name_and_paths() ) {
+        extern void set_file_names_and_paths(const analysis_type analysis,
+                                             linkage_ped_top *LPedTreeTop);
+
+        set_file_names_and_paths(analysis, LPedTreeTop);
+    }
+
+    /* Now to analysis-specific options */
+    ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
+
     analysis->create_output_file(LPedTreeTop, 
                                  &analysis, Outfile_Names,
                                  UntypedPedOpt, &numchr, &Top2);
     tod_out();
+
     Tod tod_sh("create_shell_file");
     analysis->create_sh_file(LPedTreeTop, Outfile_Names, numchr);
     tod_sh();
 
-    if (FirstIterMenu == 1 && InputMode == INTERACTIVE_INPUTMODE) {
+    if (InputMode == INTERACTIVE_INPUTMODE) {
 	analysis->batch_out();
-        if (analysis != SHAPEIT) {
-            Mega2BatchItems[/* 25 */ Default_Outfile_Names].value.copt = 'y';
+        int sel = 0;
+        if (FirstIterMenu == 1) {
+            sel = 'y';
+        } else {
+            if (BatchValueRead("file_name_stem")) {
+                sel = 'n';
+            } else if (analysis == SHAPEIT) {
+//              sel = 'y';
+            } else 
+                sel = 'y';
         }
-	batchf(/* 25 */ Default_Outfile_Names);
+        BatchValueSet(sel, "Default_Outfile_Names");
+        batchf(/* 25 */ Default_Outfile_Names);
     }
     Mega2Status = TERM_MEGA2;
 
