@@ -90,7 +90,6 @@ public:
     void gen_file_names(char **file_names, char *num);
     void replace_chr_number(char *file_names[], int numchr);
 
-    virtual void default_batch_in(linkage_ped_top *LPedTreeTop);
     virtual void batch_in();
 
     virtual void batch_out() {}

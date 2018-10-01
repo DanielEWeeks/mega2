@@ -1104,7 +1104,6 @@ void CLASS_PANGAEA::create_output_file(
     linkage_ped_top *Top = LPedTreeTop;
     int combine_chromo = 0;
 
-    default_batch_in(LPedTreeTop);
     batch_in();
     combine_chromo = !LoopOverChrm;
 
@@ -1396,9 +1395,11 @@ void CLASS_PANGAEA::set_file_names(linkage_ped_top *LPedTreeTop, char *file_name
         replace_chr_number(file_names, global_chromo_entries[0]);
 }
 
-void CLASS_PANGAEA::default_batch_in(linkage_ped_top *LPedTreeTop)
+void CLASS_PANGAEA::batch_in()
 {
-    char c;
+//  char c;
+
+//  BatchValueGet(additional_program_args, "additional_program_args");
 
 //  BatchValueGet(c, "Loop_Over_Chromosomes");
 //  LoopOverChrm = (c == 'y' || c == 'Y');
@@ -1409,12 +1410,6 @@ void CLASS_PANGAEA::default_batch_in(linkage_ped_top *LPedTreeTop)
         free(file_name_stem);
         file_name_stem = strdup(bi->value.name);
     }
-}
-
-void CLASS_PANGAEA::batch_in()
-{
-//  BatchValueGet(additional_program_args, "additional_program_args");
-
 }
 
 void CLASS_PANGAEA::batch_show()
