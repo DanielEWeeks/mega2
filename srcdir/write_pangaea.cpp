@@ -324,7 +324,8 @@ static void write_PANGAEA_sh(linkage_ped_top *Top, char *file_names[], char *pgm
             sh_need_data(pgm, target);
 
             sprintf(cmd, "cat %spar_chr_trt %s.par_trt",
-                    file_names[5], pgm);
+//                    file_names[5], pgm);
+                    file_names[5], file_names[6]);
 
             sprintf(target, "%spar", file_names[5]);
             sh_cat(cmd, target);
@@ -1126,9 +1127,9 @@ void CLASS_PANGAEA::run_analysis(
     linkage_ped_top **Top2)
 {
     linkage_ped_top *Top = LPedTreeTop;
+    char sub_prog[32];
 
     int pwid, fwid, mwid;
-    char prefix[100];
 
     // if 'combine_chromo == 0' each chromosome gets it's own file.
     // if 'combine_chromo == 1' all informaiton goes into one file with the '.all' suffix.
@@ -1142,13 +1143,13 @@ void CLASS_PANGAEA::run_analysis(
     // Omit pedigrees under certain circumstances...
     omit_peds(untyped_ped_opt, Top);
 
+    sub_prog_name(_suboption, sub_prog);
+
     save_PANGAEA_peds(Top, file_names, pwid, fwid, _suboption);
 
     if (_suboption > 2) {
         // need trait ...
         if (! have_trait_b(Top->LocusTop, /*affect=*/true, /*quant=*/false)) {
-            char sub_prog[32];
-            sub_prog_name(_suboption, sub_prog);
             errorvf("Morgan option %s requires that a trait be specified.\n", sub_prog);
             EXIT(DATA_INCONSISTENCY);
         }
@@ -1167,22 +1168,22 @@ void CLASS_PANGAEA::run_analysis(
     sprintf(file_names[10], "%s.par_trt", prefix);
     sprintf(file_names[11], "..dat");
 #endif
-    write_PANGAEA_sh(Top, file_names, prefix, _suboption);
+    write_PANGAEA_sh(Top, file_names, sub_prog, _suboption);
 
     switch (_suboption) {
     case 0:
-    case 1:  write_PANGAEA_par_pedcheck(Top, file_names, prefix);   break;
-    case 2:  write_PANGAEA_par_kin(Top, file_names, prefix);   break;
-    case 3:  write_PANGAEA_par_translink(Top, file_names, prefix);   break;
-    case 4:  write_PANGAEA_par_lod(Top, file_names, prefix, _suboption);   break;
-    case 5:  write_PANGAEA_par_lod(Top, file_names, prefix, _suboption);   break;
-    case 6:  write_PANGAEA_par_ibd_tests(Top, file_names, prefix, _suboption);   break;
-    case 7:  write_PANGAEA_par_ibd_tests(Top, file_names, prefix, _suboption);   break;
+    case 1:  write_PANGAEA_par_pedcheck(Top, file_names, sub_prog);   break;
+    case 2:  write_PANGAEA_par_kin(Top, file_names, sub_prog);   break;
+    case 3:  write_PANGAEA_par_translink(Top, file_names, sub_prog);   break;
+    case 4:  write_PANGAEA_par_lod(Top, file_names, sub_prog, _suboption);   break;
+    case 5:  write_PANGAEA_par_lod(Top, file_names, sub_prog, _suboption);   break;
+    case 6:  write_PANGAEA_par_ibd_tests(Top, file_names, sub_prog, _suboption);   break;
+    case 7:  write_PANGAEA_par_ibd_tests(Top, file_names, sub_prog, _suboption);   break;
     default:
         break;
 
 /* so compiler won't complain, "use" template */
-    case -99:  write_PANGAEA_par_template(Top, file_names, prefix);   break;
+    case -99:  write_PANGAEA_par_template(Top, file_names, sub_prog);   break;
     }
 }
 
