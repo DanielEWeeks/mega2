@@ -227,7 +227,8 @@ static keyw_t keywords[] = {
     {"VCF_Marker_Alternative_INFO_Key",       LINE,       ""},
     {"Value_Missing_Affect_On_Input",         LINE,      "0"},
     {"Value_Missing_Affect_On_Output",        LINE,      "0"},
-    {"Output_File_Stem",                      STRING,     ""},
+//  {"Output_File_Stem",                      STRING,     ""},
+    {"Show_Ped_Stats",                        YORN,      "y"},
 
     {"Default_Reset_Halftype",                YORN,      "y"},
     {"Default_Reset_Mendelerr",               YORN,      "y"},
@@ -249,7 +250,6 @@ static keyw_t keywords[] = {
 
     {"Shapeit_recomb_directory",              STRING,     ""},
     {"Shapeit_recomb_template",               STRING,     "?"},
-    {"Shapeit_file_stem",                     STRING,     ""},
 
     {"file_name_stem",                        STRING,     ""},
     {"additional_program_args",               LINE,       ""},
@@ -295,6 +295,10 @@ pair<Cstr,Cstr> keyword_aliases[] = {
     make_pair("Count_Halftyped", "Count_Halftypes"),
     make_pair("REMOutput_Map_Num", "Output_Map_Num"),
     make_pair("Imputed_Allow_Duplicate_Markers", "Imputed_Allow_Duplicates"),
+
+//  make_pair("file_name_stem", "Shapeit_file_stem"),
+    make_pair("file_name_stem", "Output_File_Stem"),
+
     make_pair("","")  //sentinel
 };
 

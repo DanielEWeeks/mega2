@@ -2617,11 +2617,14 @@ linkage_ped_top  *create_full_marker_data(
         Top = read_linkage_ped_file(fp, LTop, col2locus);
     }
     basefile_type = pedfile_type;
-    log_line(mssgf);
-    mssgf("Input pedigree data contains:");
 
     order_heterozygous_allele(Top);
-    write_ped_stats(Top);
+    if (show_ped_stats) {
+        log_line(mssgf);
+        mssgf("Input pedigree data contains:");
+        write_ped_stats(Top);
+    }
+
     if (omitfl_name != NULL) {
         premakeped_omit_file(Top, omitfl_name,1);
     }
@@ -2738,9 +2741,11 @@ linkage_ped_top  *create_full_marker_data(
     Top->Ped = Top->PedRaw;     /* don't count doubleganger */
     recode_locus_top(marker_list, pheno_list, Top->LocusTop);
     Mega2Status = DONE_RECODE;
-    log_line(mssgf);
-    mssgf("Pedigree data summary after recoding:");
-    write_ped_stats(Top);
+    if (show_ped_stats) {
+        log_line(mssgf);
+        mssgf("Pedigree data summary after recoding:");
+        write_ped_stats(Top);
+    }
 
     for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
         free_marker_item(marker_list[i].first_allele);

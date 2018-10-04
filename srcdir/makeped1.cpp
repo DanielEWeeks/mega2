@@ -1655,7 +1655,8 @@ int makeped(linkage_ped_top *Top, analysis_type analysis)
 
     /* copy from one to the other */
     Top->OrigIds=1;
-    printf("Created linkage ped tree\n");
+    log_line(mssgf);
+    mssgf("Created linkage ped tree.");
     /*    fp=fopen("tmp_ped", "w"); */
     /*    save_linkage_peds(fp, Top, TO_MAKEPED, 0, NULL);  */
     /*    fclose(fp); */

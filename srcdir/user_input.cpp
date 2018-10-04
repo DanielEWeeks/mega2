@@ -868,6 +868,16 @@ static void menu1_batch_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
     } else {
         missing_optional_keyword(AlleleFreq_SquaredDev, "using default = 'no limit'");
     }
+
+    /* Show Ped Stats */
+    batch_item_type *bi = BatchItemGet("Show_Ped_Stats");
+    char c = tolower((unsigned char)bi->value.copt);
+    if (c == 'y' || c == 'n') {
+        show_ped_stats = (c == 'y') ? 1 : 0;
+    } else {
+        invalid_value_field("Show_Ped_Stats");
+    }
+
 #ifdef USER_UNKNOWN
     if (Mega2BatchItems[/* 42 */ Value_Missing_Allele].items_read) {
         strcpy(REC_UNKNOWN, Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name);
@@ -876,7 +886,7 @@ static void menu1_batch_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
 }
 
 static int menu1_show_misc(int *Untyped_ped_opt, int *Error_sim_opt,
-                           double *freq_mismatch_thresh,
+                           double *freq_mismatch_thresh, int showtyp_i,
                            int err_i, int untyp_i, int _thresh_i, int compress_i,
                            int *choiceA, int idx, int line_len)
 {
@@ -889,6 +899,10 @@ static int menu1_show_misc(int *Untyped_ped_opt, int *Error_sim_opt,
     printf("%2d) %-*s\n", idx, line_len,
            untyped_ped_messg(*Untyped_ped_opt, messg));
     choiceA[idx++] = untyp_i;
+
+    printf("%2d) %-*s[ %s]\n", idx, line_len,
+           "Show pedigree typing statistics:", yorn[show_ped_stats]);
+    choiceA[idx++] = showtyp_i;
 
     if (_thresh_i) {
         thresh_string(*freq_mismatch_thresh, float_str);
@@ -908,7 +922,7 @@ static int menu1_show_misc(int *Untyped_ped_opt, int *Error_sim_opt,
 }
 
 static int menu1_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
-                          double *freq_mismatch_thresh,
+                          double *freq_mismatch_thresh, int showtyp_i,
                           int err_i, int untyp_i, int thresh_i, int compress_i,
                           int choice_)
 {
@@ -919,6 +933,8 @@ static int menu1_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
     } else if (choice_ == untyp_i) {
         draw_line();
         untyped_ped_menu(Untyped_ped_opt);
+    } else if (choice_ == showtyp_i) {
+        show_ped_stats = TOGGLE(show_ped_stats);
     } else if (choice_ == thresh_i) {
         draw_line();
         printf("Please enter threshold value > ");
@@ -956,6 +972,9 @@ static void menu1_batch_save_misc(int *Untyped_ped_opt, int *Error_sim_opt,
     Mega2BatchItems[/* 24 */ Input_Do_Error_Sim].value.copt = yorn[*Error_sim_opt][0];
     batchf(Input_Do_Error_Sim);
 
+    BatchValueSet(yorn[show_ped_stats][0], "Show_Ped_Stats");
+    batchf("Show_Ped_Stats");
+
     Mega2BatchItems[/* 37 */ AlleleFreq_SquaredDev].value.fvalue = *freq_mismatch_thresh;
     batchf(AlleleFreq_SquaredDev);
 }
@@ -981,7 +1000,8 @@ void menu1(file_format *infl_type,
     int            compress_i = 18, file_format_i = 19, vcf_args_i = 20;
     int            vcf_mak_i = 21, site_vcf_i = 22, site_bcf_i = 23, site_vcf_gz_i = 24, _aux_i = 0;
     int            db_file_i = 25, in_dir_i = 26, pmap_i = 27;
-    int	           imputed_i = 28, inf_i = 29/* site_bcfs_dir_i=30, site_bcfs_template_i = 31*//*, flip_i = 30*/;
+    int	           imputed_i = 28, inf_i = 29, showtyp_i = 31;
+    /* site_bcfs_dir_i=30, site_bcfs_template_i = 31*//*, flip_i = 30*/;
     int            idx, choiceA[32]; /* idx should be 1+ largest <>_i value (above)*/
 
     int            plinkf = 0, xcf = 0;
@@ -1380,7 +1400,7 @@ void menu1(file_format *infl_type,
 
         _thresh_i = (access(*freqfl_name, R_OK) == 0) ?  thresh_i : 0;
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
-                              err_i, untyp_i, _thresh_i, compress_i,
+                              showtyp_i, err_i, untyp_i, _thresh_i, compress_i,
                               choiceA, idx, line_len);
 
         printf("Select from options 0-%d > ", idx-1);
@@ -1757,7 +1777,7 @@ void menu1(file_format *infl_type,
                 break;
             }
         } else if (menu1_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
-                                  err_i, untyp_i, thresh_i, compress_i, choice_)) {
+                                  showtyp_i, err_i, untyp_i, thresh_i, compress_i, choice_)) {
                        // above function looks for match and does action
         } else {
             printf("Invalid option %s, select from options 0-%d.\n", cchoice, idx-1);
@@ -1831,7 +1851,8 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     int            db_i=7, out_i=8, err_i=9, untyp_i=10, thresh_i=11, miss_i=12, _thresh_i;
     int            compress_i = 17;
     int            flip_i = 30;
-    int            idx, choiceA[31]; /* idx should be 1+ largest <>_i value (above)*/
+    int            showtyp_i = 31;
+    int            idx, choiceA[32]; /* idx should be 1+ largest <>_i value (above)*/
     extern int     db_exists_db();
     int            db_exists = 0;
     extern char    DBfile[255];
@@ -1909,7 +1930,7 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
         _thresh_i = 1 ?  thresh_i : 0;
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
-                              err_i, untyp_i, _thresh_i, 0 /*compress_i*/,
+                              showtyp_i, err_i, untyp_i, _thresh_i, 0 /*compress_i*/,
                               choiceA, idx, line_len);
 
         printf(" q) %-*s\n", line_len, "Exit Mega2.");
@@ -1987,7 +2008,7 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         }
 
         else if (menu1_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
-                                  err_i, untyp_i, thresh_i, compress_i, choice_)) {
+                                showtyp_i, err_i, untyp_i, thresh_i, compress_i, choice_)) {
                        // above function looks for match and does action
         } else {
             printf("Invalid option %s, select from options 0-%d.\n", cchoice, idx-1);

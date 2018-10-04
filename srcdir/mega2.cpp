@@ -348,6 +348,7 @@ int             HasLocFileBeenRead;
 
 int             *UntypedPeds; /* vector of flags to indicate whether to leave out a pedigree */
 int             NumTypedPeds; /* just a count of positive flags */
+int             show_ped_stats; /* count typed markers by sex * marker * persons */
 int             *ChrLoci; /* Contains selected marker loci on selected
 			     chromosomes
 			     For LoopOverTrait=0, list may have trait_loci as well */
@@ -460,6 +461,7 @@ static void    init_globals(char *argv0)
 #endif
     UntypedPedOpt = -1;
     UntypedPeds = NULL;
+    show_ped_stats = 1;
     HalfTypedReset=-1;
     NonMendelianReset=-1;
     NOcTIME = "Fri Aug 29 02:14:00 1997\n";
@@ -1278,7 +1280,9 @@ int             main(int argc, char **argv, char **env)
         strand_flip_reference_alleles(LPedTreeTop);
     }
 
-    if (true || database_dump || ! database_read) {
+//  if ( true || database_dump || ! database_read) 
+    if (show_ped_stats || database_read) 
+    {
         Tod tod_stat1("write_ped_stat [again]");
         /* Output ped stats one more time */
         if (analysis != QUANT_SUMMARY) {

@@ -444,6 +444,7 @@ extern int             HasLocFileBeenRead;
 /* Global variables that control output data */
 
 extern int             *UntypedPeds; /* vector of flags to indicate whether to leave out a pedigree */
+extern int             show_ped_stats; /* show count of typed alleles by sex * marker * person */
 extern int             NumTypedPeds; /* just a count of positive flags */
 extern int             *ChrLoci; /* Contains selected marker loci on selected
                                     chromosomes

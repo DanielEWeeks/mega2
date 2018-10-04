@@ -116,7 +116,9 @@ void dbpedigree_export(linkage_ped_top *Top) {
             tpersonp = &(tpedtreep->Entry[per]);
             tpersonp->pedigree_link = ped;
             tpersonp->person_link   = pers;
+//
             tpersonp->IsTyped       = 0;
+//
             tpersonp->Ngeno         = 0;
 
             Geno2idx[tpersonp->Pheno] = pers;
@@ -134,7 +136,9 @@ void dbpedigree_export(linkage_ped_top *Top) {
 
             perl = Geno2idx[tpersonp->Pheno];
             tpersonp->person_link = perl;
+//
             tpersonp->IsTyped     = 0;
+//
             tpersonp->Ngeno       = 0;
             person_table.insert(tpersonp);
         }
