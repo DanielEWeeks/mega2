@@ -1253,8 +1253,12 @@ int             main(int argc, char **argv, char **env)
         numchr = 0;
     }
 
+    int recount_typed = LPedTreeTop->LocusTop->MarkerCnt != num_reordered;
+    msgvf("LPedTreeTop->LocusTop->MarkerCnt %d, num_reordered %d\n",
+          LPedTreeTop->LocusTop->MarkerCnt, num_reordered);
     /* Convert to PedTree for checking purposes,
        don't need to assign affecteds */
+
     if (database_dump || ! database_read) {
 
         recode_check(LPedTreeTop, analysis);
@@ -1281,7 +1285,10 @@ int             main(int argc, char **argv, char **env)
     }
 
 //  if ( true || database_dump || ! database_read) 
-    if (show_ped_stats || database_read) 
+//    if (show_ped_stats || database_read)
+    if ( database_dump || 
+         (database_read && ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) ||
+                             (recount_typed)) ))
     {
         Tod tod_stat1("write_ped_stat [again]");
         /* Output ped stats one more time */

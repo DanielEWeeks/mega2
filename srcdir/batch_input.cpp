@@ -296,7 +296,6 @@ pair<Cstr,Cstr> keyword_aliases[] = {
     make_pair("REMOutput_Map_Num", "Output_Map_Num"),
     make_pair("Imputed_Allow_Duplicate_Markers", "Imputed_Allow_Duplicates"),
 
-//  make_pair("file_name_stem", "Shapeit_file_stem"),
     make_pair("file_name_stem", "Output_File_Stem"),
 
     make_pair("","")  //sentinel
