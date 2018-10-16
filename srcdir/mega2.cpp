@@ -461,7 +461,7 @@ static void    init_globals(char *argv0)
 #endif
     UntypedPedOpt = -1;
     UntypedPeds = NULL;
-    show_ped_stats = 1;
+    show_ped_stats = 0;
     HalfTypedReset=-1;
     NonMendelianReset=-1;
     NOcTIME = "Fri Aug 29 02:14:00 1997\n";
@@ -1254,8 +1254,9 @@ int             main(int argc, char **argv, char **env)
     }
 
     int recount_typed = LPedTreeTop->LocusTop->MarkerCnt != num_reordered;
-    msgvf("LPedTreeTop->LocusTop->MarkerCnt %d, num_reordered %d\n",
-          LPedTreeTop->LocusTop->MarkerCnt, num_reordered);
+//  msgvf("LPedTreeTop->LocusTop->MarkerCnt %d, num_reordered %d\n",
+//        LPedTreeTop->LocusTop->MarkerCnt, num_reordered);
+
     /* Convert to PedTree for checking purposes,
        don't need to assign affecteds */
 
@@ -1285,10 +1286,10 @@ int             main(int argc, char **argv, char **env)
     }
 
 //  if ( true || database_dump || ! database_read) 
-//    if (show_ped_stats || database_read)
+//  if (show_ped_stats || database_read)
     if ( database_dump || 
-         (database_read && ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) ||
-                             (recount_typed)) ))
+         (database_read && analysis->IsTypedNgeno() &&
+          ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) || (recount_typed)) ) )
     {
         Tod tod_stat1("write_ped_stat [again]");
         /* Output ped stats one more time */

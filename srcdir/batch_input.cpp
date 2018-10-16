@@ -228,7 +228,7 @@ static keyw_t keywords[] = {
     {"Value_Missing_Affect_On_Input",         LINE,      "0"},
     {"Value_Missing_Affect_On_Output",        LINE,      "0"},
 //  {"Output_File_Stem",                      STRING,     ""},
-    {"Show_Ped_Stats",                        YORN,      "y"},
+    {"Show_Ped_Stats",                        YORN,      "n"},
 
     {"Default_Reset_Halftype",                YORN,      "y"},
     {"Default_Reset_Mendelerr",               YORN,      "y"},
@@ -277,7 +277,7 @@ static keyw_t keywords[] = {
     {"VCF_output_file_type",                  INT,        "1"},
     {"Reference_Allele_File",                 STRING,     ""},
     {"Align_Strand_Input",                    YORN,       "n"},
-    {"VCF_Allele_Order",                      STRING,     "Original Order"},
+    {"VCF_Allele_Order",                      STRING,     "Original_Order"},
 
     {"BCFs_File",                             STRING,     ""},
     {"BCF_Args",                              LINE,       "-m2 -M2 -v snps -c 1"},

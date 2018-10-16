@@ -173,6 +173,8 @@ public:
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
 
+    virtual bool IsTypedNgeno()  { return true; }
+
     virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
            set individual default to person field */
@@ -580,6 +582,8 @@ public:
 
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
+
+    virtual bool IsTypedNgeno()  { return true; }
 
     virtual void ped_ind_defaults(int unique)  {
         /* Always unique ids for persons */
@@ -1093,7 +1097,9 @@ public:
     // missing output quant batch file item in this version of SAGE.
 //  virtual bool output_quant_can_define_missing_value() { return false; }
 
-    virtual bool qtl_allow() { return true; }
+    virtual bool qtl_allow()    { return true; }
+
+    virtual bool IsTypedNgeno() { return true; }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
 			    analysis_type *analysis,
@@ -1125,7 +1131,9 @@ public:
     virtual bool output_affect_can_define_missing_value() { return true; }
     virtual const char* output_affect_default_value() { return "NA"; }
 
-    virtual bool qtl_allow() { return true; }
+    virtual bool qtl_allow()    { return true; }
+
+    virtual bool IsTypedNgeno() { return true; }
 
     virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
@@ -1189,7 +1197,9 @@ public:
     virtual const char* output_affect_default_value() { return "0"; }
     virtual bool output_affect_must_be_numeric() { return true; }
 
-    virtual bool qtl_allow() { return true; }
+    virtual bool qtl_allow()    { return true; }
+
+    virtual bool IsTypedNgeno() { return true; }
 
     void create_output_file(linkage_ped_top *LPedTreeTop,
 			    analysis_type *analysis,
@@ -1304,6 +1314,7 @@ public:
     virtual bool require_traits()  { return true; }
     virtual bool is_sub_option()  { return true; }
     virtual bool qtl_disallow() { return true; }
+    virtual bool IsTypedNgeno() { return true; }
 
     virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
