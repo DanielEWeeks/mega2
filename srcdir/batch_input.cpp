@@ -625,7 +625,7 @@ void check_batch_items(void)
     if (ITEM_READ(/* 7 */ Chromosome_Single) || (ITEM_READ(/* 8 */ Chromosomes_Multiple_Num) && ITEM_READ(/* 9 */ Chromosomes_Multiple))) {
         batchREORDER = 1;
         mssgf("Chromosome(s) and markers read in from batch file.");
-    } else {
+    } else if (! database_dump) {
         warnf("Locus selections not specified in batch file.");
         missing_item_goto_menu(-1, "Reorder menu");
         batchREORDER = 0;
@@ -634,7 +634,7 @@ void check_batch_items(void)
     if (ITEM_READ(/* 12 */ Trait_Single) || ITEM_READ(/* 14 */ Traits_Loop_Over) || ITEM_READ(/* 15 */ Traits_Combine)) {
         batchTRAIT = 1;
         mssgf("Trait selection(s) read in from batch file.");
-    } else {
+    } else if (! database_dump) {
         warnf("Trait selections not specified in batch file.");
         missing_item_goto_menu(-1, "Trait selection menu");
         batchTRAIT = 0;

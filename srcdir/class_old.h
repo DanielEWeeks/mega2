@@ -582,9 +582,10 @@ public:
 
     // Accepts character alleles...
     virtual bool allele_data_use_name_if_available() { return true; }
-
-    virtual bool IsTypedNgeno()  { return true; }
-
+/*
+ *   ignore by analysis
+ *   virtual bool IsTypedNgeno()  { return true; }
+ */
     virtual void ped_ind_defaults(int unique)  {
         /* Always unique ids for persons */
         /* Set the output pedigree and per field choices */
@@ -1133,8 +1134,10 @@ public:
 
     virtual bool qtl_allow()    { return true; }
 
-    virtual bool IsTypedNgeno() { return true; }
-
+/*
+ *  Does not count # genotypes (viz. sage_cnt.xx)
+ *  virtual bool IsTypedNgeno() { return true; }
+ */
     virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
            set individual default to person field */
@@ -1314,8 +1317,10 @@ public:
     virtual bool require_traits()  { return true; }
     virtual bool is_sub_option()  { return true; }
     virtual bool qtl_disallow() { return true; }
-    virtual bool IsTypedNgeno() { return true; }
-
+/*
+ *   recalc'ed by analysis
+ *   virtual bool IsTypedNgeno() { return true; }
+ */
     virtual void ped_ind_defaults(int unique)  {
         /* Set the pedigree default to pedigree field
            set individual default to person field */

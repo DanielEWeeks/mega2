@@ -38,7 +38,7 @@ ifneq ($(OSTYPE),windows)
 CFLAGS += -Wall -Wextra -Wcast-qual -Wcast-align -Wshadow -Wstrict-aliasing=1 \
           -Wswitch-enum -Wdeclaration-after-statement -Wstrict-prototypes -Wundef
 endif
-FLAGS   = $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(MOREFLAGS)
+ALLFLAGS   = $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(MOREFLAGS)
 
 
 ZSTD_FILES := common/*.c compress/*.c decompress/*.c dictBuilder/*.c
@@ -76,7 +76,7 @@ endif
 
 .SUFFIXES: .c
 .c.o:
-	$(CC) $(FLAGS) -c $< $(WINO)
+	$(CC) $(ALLFLAGS) -c $< $(WINO)
 
 .PHONY: default all clean install uninstall
 
@@ -86,11 +86,11 @@ all: clean libzstd
 
 libzstd: $(ZSTD_FILES)
 	@echo compiling static library
-	@$(CC) $(FLAGS) -c $^
+	@$(CC) $(ALLFLAGS) -c $^
 	@$(AR) rcs $@.a *.o
 	$(AR) rcs $@.a *.o
 	@echo compiling dynamic library $(LIBVER)
-	@$(CC) $(FLAGS) -shared $^ -fPIC $(SONAME_FLAGS) -o $@.$(SHARED_EXT_VER)
+	@$(CC) $(ALLFLAGS) -shared $^ -fPIC $(SONAME_FLAGS) -o $@.$(SHARED_EXT_VER)
 	@echo creating versioned links
 	@ln -sf $@.$(SHARED_EXT_VER) $@.$(SHARED_EXT_MAJOR)
 	@ln -sf $@.$(SHARED_EXT_VER) $@.$(SHARED_EXT)
