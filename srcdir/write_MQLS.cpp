@@ -83,7 +83,7 @@ void CLASS_MQLS::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type 
 
     inner_file_names(file_names,"",file_name_stem, &combine_chromo);
 
-    printf("Mega2 created the following file(s) for VCF Format:\n");
+    printf("Mega2 created the following file(s) for MQLS-XM/KinInbcoef Format:\n");
 
     write_MQLS_genofile(Top, file_name_stem, file_names, pwid, fwid);
     write_MQLS_phenofile(Top, file_name_stem, file_names, pwid, fwid);
@@ -379,8 +379,8 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
             else {
                 pr_printf("#use KinInbcoefX on output to create to calculate X-Chromosome breeding coeficients\n");
                 // ./KinInbcoefX pedtestX listtestX out error
-                pr_printf("%s %s %s %s%d%s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/,
-                          "kininbcoefx.",_numchr,".out", "kininbcoefx.error");
+                pr_printf("%s %s %s %sX%s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/,
+                          "kininbcoefx.",".out", "kininbcoefx.error");
             }
 
             pr_nl();
@@ -389,7 +389,7 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
             //kinfile is the output from KinInbcoef/X
             //if chromsome 23 we need the -x flag otherwise no
             if(_numchr == 23)
-                pr_printf("%s -g %s -p %s -k %s%d%s -r %s -x -u -m -h\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/);
+                pr_printf("%s -g %s -p %s -k %sX%s -r %s -x -u -m -h\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", ".out", file_names[7]/*prevalencefilename*/);
             //add a zero if under 10
             else if(_numchr < 10)
                 pr_printf("%s -g %s -p %s -k %s0%d%s -r %s -u -m -h\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/);

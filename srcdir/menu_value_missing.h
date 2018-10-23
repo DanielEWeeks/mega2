@@ -179,8 +179,8 @@ Missing_Value  missing_values[] = {
             /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
 
     { "MQLS-XM/KinInbcoef format",              MQLS,
-            /*quant*/       "-9", Missing_Value::Any, Missing_Value::Varies,
-            /*affect*/      "-9", Missing_Value::Any, Missing_Value::Varies,
+            /*quant*/       "0", Missing_Value::Any, Missing_Value::Varies,
+            /*affect*/      "0", Missing_Value::Any, Missing_Value::Varies,
             /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
 
 
