@@ -178,6 +178,11 @@ Missing_Value  missing_values[] = {
             /*affect*/      "-9", Missing_Value::Any, Missing_Value::Varies,
             /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
 
+    { "MQLS-XM/KinInbcoef format",              MQLS,
+            /*quant*/       "-9", Missing_Value::Any, Missing_Value::Varies,
+            /*affect*/      "-9", Missing_Value::Any, Missing_Value::Varies,
+            /*allele*/      "NN", Missing_Value::Any, Missing_Value::Fixed },
+
 
 
     { "Mendel format",              TO_MENDEL7_CSV,

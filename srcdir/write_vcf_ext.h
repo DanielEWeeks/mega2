@@ -39,7 +39,7 @@ class CLASS_VCF: public CLASS_ANALYSIS {
 public:
     CLASS_VCF() : CLASS_ANALYSIS() {
         _name = "VCF";
-        file_name_stem = strdup("vcf");
+        file_name_stem = strdup("bcf");
     }
 
     ~CLASS_VCF() { }
