@@ -348,6 +348,7 @@ int             HasLocFileBeenRead;
 
 int             *UntypedPeds; /* vector of flags to indicate whether to leave out a pedigree */
 int             NumTypedPeds; /* just a count of positive flags */
+int             show_ped_stats; /* count typed markers by sex * marker * persons */
 int             *ChrLoci; /* Contains selected marker loci on selected
 			     chromosomes
 			     For LoopOverTrait=0, list may have trait_loci as well */
@@ -460,6 +461,7 @@ static void    init_globals(char *argv0)
 #endif
     UntypedPedOpt = -1;
     UntypedPeds = NULL;
+    show_ped_stats = 0;
     HalfTypedReset=-1;
     NonMendelianReset=-1;
     NOcTIME = "Fri Aug 29 02:14:00 1997\n";
@@ -957,8 +959,6 @@ int             main(int argc, char **argv, char **env)
 #endif
     }
 
-    Value_Missing_get(&analysis);  // needed before file read
-
 #ifndef HIDESTATUS
     int guess;
 #endif
@@ -991,15 +991,17 @@ int             main(int argc, char **argv, char **env)
             guess = 0;
     #endif
         }
-//new
-        (void) break_no_founders_menu();
-
-        extern void hwe_menu(void);
-        hwe_menu();
+//
+        Value_Missing_get(&analysis);  // needed before file read
 
         int count_halftyped = 0;
         (void) get_count_option(1, &count_halftyped,
                                 "Select individuals to compute allele frequencies\n       for recoded marker loci:");
+
+        extern void hwe_menu(void);
+        hwe_menu();
+
+        (void) break_no_founders_menu();
 
     }
 
@@ -1039,6 +1041,8 @@ int             main(int argc, char **argv, char **env)
         get_trait_list(LPedTreeTop->LocusTop, 1);
 
         log_line(mssgf);
+
+        Value_Missing_get(&analysis);  // needed before file read
 
 //      Mega2OutputPath = strdup((char *)".");
 
@@ -1249,8 +1253,13 @@ int             main(int argc, char **argv, char **env)
         numchr = 0;
     }
 
+    int recount_typed = LPedTreeTop->LocusTop->MarkerCnt != num_reordered;
+//  msgvf("LPedTreeTop->LocusTop->MarkerCnt %d, num_reordered %d\n",
+//        LPedTreeTop->LocusTop->MarkerCnt, num_reordered);
+
     /* Convert to PedTree for checking purposes,
        don't need to assign affecteds */
+
     if (database_dump || ! database_read) {
 
         recode_check(LPedTreeTop, analysis);
@@ -1276,7 +1285,12 @@ int             main(int argc, char **argv, char **env)
         strand_flip_reference_alleles(LPedTreeTop);
     }
 
-    if (true || database_dump || ! database_read) {
+//  if ( true || database_dump || ! database_read) 
+//  if (show_ped_stats || database_read)
+    if ( database_dump || 
+         (database_read && analysis->IsTypedNgeno() &&
+          ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) || (recount_typed)) ) )
+    {
         Tod tod_stat1("write_ped_stat [again]");
         /* Output ped stats one more time */
         if (analysis != QUANT_SUMMARY) {
@@ -1289,19 +1303,6 @@ int             main(int argc, char **argv, char **env)
             simulate_errors(LPedTreeTop, numchr, Outfile_Names);
         }
         tod_stat1();
-    }
-
-    {
-        /*  Mega2Status=TRAIT_SELECTED_M2S; */
-        default_outfile_names(analysis, &(global_chromo_entries[0]), Outfile_Names, logdir);
-
-        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-        set_output_paths(analysis, LPedTreeTop);
-
-        /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
-
-        /* Now to analysis-specific options */
-        ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
     }
 
     Mega2Status = INSIDE_ANALYSIS;
@@ -1375,20 +1376,41 @@ int             main(int argc, char **argv, char **env)
     InputMode = AnalyInputMode;  //What was it before the exec
     // Create the data files, and then the shell scripts...
     Tod tod_out("create_output_files");
+
+    if (! analysis->new_set_file_name_and_paths() ) {
+        extern void set_file_names_and_paths(const analysis_type analysis,
+                                             linkage_ped_top *LPedTreeTop);
+
+        set_file_names_and_paths(analysis, LPedTreeTop);
+    }
+
+    /* Now to analysis-specific options */
+    ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
+
     analysis->create_output_file(LPedTreeTop, 
                                  &analysis, Outfile_Names,
                                  UntypedPedOpt, &numchr, &Top2);
     tod_out();
+
     Tod tod_sh("create_shell_file");
     analysis->create_sh_file(LPedTreeTop, Outfile_Names, numchr);
     tod_sh();
 
-    if (FirstIterMenu == 1 && InputMode == INTERACTIVE_INPUTMODE) {
+    if (InputMode == INTERACTIVE_INPUTMODE) {
 	analysis->batch_out();
-        if (analysis != SHAPEIT) {
-            Mega2BatchItems[/* 25 */ Default_Outfile_Names].value.copt = 'y';
+        int sel = 0;
+        if (FirstIterMenu == 1) {
+            sel = 'y';
+        } else {
+            if (BatchValueRead("file_name_stem")) {
+                sel = 'n';
+            } else if (analysis == SHAPEIT) {
+//              sel = 'y';
+            } else 
+                sel = 'y';
         }
-	batchf(/* 25 */ Default_Outfile_Names);
+        BatchValueSet(sel, "Default_Outfile_Names");
+        batchf(/* 25 */ Default_Outfile_Names);
     }
     Mega2Status = TERM_MEGA2;
 

@@ -4753,15 +4753,16 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         EXIT(INPUT_DATA_ERROR);
     }
 
-    log_line(mssgf);
-    mssgf("Input pedigree data contains:");
-
     Tod tod_hraw("order_heterozygous_allele_raw ");
     order_heterozygous_allele_raw(Top);
     tod_hraw();
 
     Tod tod_pstat("write_ped_stats");
-    write_ped_stats(Top);
+    if (show_ped_stats) {
+        log_line(mssgf);
+        mssgf("Input pedigree data contains:");
+        write_ped_stats(Top);
+    }
     tod_pstat();
 
     Tod tod_omit("read annotated omit file");
@@ -4918,12 +4919,14 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
 
     Mega2Status = DONE_RECODE;
 
-    log_line(mssgf);
-#ifndef HIDESTATUS
-    mssgf("Pedigree data summary after recoding:");
-#endif
     Tod tod_pstat2("write_ped_stats 2");
-    write_ped_stats(Top);
+    if (show_ped_stats) {
+        log_line(mssgf);
+#ifndef HIDESTATUS
+        mssgf("Pedigree data summary after recoding:");
+#endif
+        write_ped_stats(Top);
+    }
     tod_pstat2();
 
 

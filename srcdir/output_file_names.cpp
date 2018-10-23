@@ -105,8 +105,8 @@ void          print_outfile_mssg(void);
 /*--------------end of prototypes-------------*/
 
 void default_outfile_names(const analysis_type  analysis,
-                           int *numchr, char *file_names[],
-                           const char *logdir)
+                           int *numchr, char *file_names[])
+//                         const char *logdir)
 {
     char            num[4];
 
@@ -266,8 +266,6 @@ void change_output_chr(char *OP_files, const int numchr)
 
 void           set_output_paths(analysis_type analysis,
 				linkage_ped_top *Top)
-
-
 {
     int i, j, choice = -1;
     char cchoice[10];
@@ -449,6 +447,18 @@ void           set_output_paths(analysis_type analysis,
         }
     }
     return;
+}
+
+void set_file_names_and_paths(const analysis_type analysis,
+                              linkage_ped_top *LPedTreeTop)
+{
+    /*  Mega2Status=TRAIT_SELECTED_M2S; */
+    default_outfile_names(analysis, &(global_chromo_entries[0]), Outfile_Names);
+
+    /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
+    set_output_paths(analysis, LPedTreeTop);
+
+    /*   printf("Mega2Status = %d\n", Mega2Status); sleep(2);  */
 }
 
 void Free_output_paths(analysis_type analysis) {

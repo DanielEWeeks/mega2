@@ -160,6 +160,12 @@ void invalid_value_field(int batch_item)
     EXIT(BATCH_FILE_ITEM_ERROR);
 }
 
+void invalid_value_field(const char *item)
+{
+    errorvf("Keyword %s has invalid value in batch file.\n", item);
+    EXIT(BATCH_FILE_ITEM_ERROR);
+}
+
 void unknown_prog(char *prog_name)
 {
     errorvf("Analysis option %s does not match a known option.\n", prog_name);

@@ -1905,15 +1905,15 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
         marker_listi->ht_founders = marker_listi->ht_random = 0;
         marker_listi->ht_unique   = marker_listi->ht_everyone = 0;
 
-        allele_prop_reset();
+//      allele_prop_reset();
 
         if (PREORDER_ALLELES) {
             const char *aname1, *aname2;
             allele_list_type *allelefp;
 
             get_2Ralleles_2bits(locus, &(Top->LocusTop->Locus[locus]), &aname1, &aname2);  // G/C
-            if (strcmp(aname1, "0") == 0) {
-                if (strcmp(aname2, "0") == 0) {
+            if (!allelecmp(aname1, REC_UNKNOWN)) {
+                if (!allelecmp(aname2, REC_UNKNOWN)) {
                 } else {
                     aname1 = aname2;
                     aname2 = zero;
@@ -2134,6 +2134,13 @@ linkage_ped_top *create_allele_list(linkage_ped_top *Top,
         }
         Display_Errors = 1;
     }
+
+    allele_list_type *next = marker_listi->first_allele;
+    while (next != NULL) {
+        allele2allele_prop_prop(next->allele_freq.AlleleName) = 0;
+        next = next->next;
+    }
+
     return Top;
 }
 
@@ -2152,7 +2159,6 @@ linkage_ped_top *count_allele_list(linkage_ped_top *Top,
     allele_list_type *allelep;
     linkage_locus_type LocType = Top->LocusTop->Locus[locus].Type;
 //  allele_list_type *alp;
-
     if ((LocType == NUMBERED) || (LocType == XLINKED) || (LocType == YLINKED)) {
         marker_listi->num_people=0;
         marker_listi->num_half_typed=0;
@@ -2611,11 +2617,14 @@ linkage_ped_top  *create_full_marker_data(
         Top = read_linkage_ped_file(fp, LTop, col2locus);
     }
     basefile_type = pedfile_type;
-    log_line(mssgf);
-    mssgf("Input pedigree data contains:");
 
     order_heterozygous_allele(Top);
-    write_ped_stats(Top);
+    if (show_ped_stats) {
+        log_line(mssgf);
+        mssgf("Input pedigree data contains:");
+        write_ped_stats(Top);
+    }
+
     if (omitfl_name != NULL) {
         premakeped_omit_file(Top, omitfl_name,1);
     }
@@ -2732,9 +2741,11 @@ linkage_ped_top  *create_full_marker_data(
     Top->Ped = Top->PedRaw;     /* don't count doubleganger */
     recode_locus_top(marker_list, pheno_list, Top->LocusTop);
     Mega2Status = DONE_RECODE;
-    log_line(mssgf);
-    mssgf("Pedigree data summary after recoding:");
-    write_ped_stats(Top);
+    if (show_ped_stats) {
+        log_line(mssgf);
+        mssgf("Pedigree data summary after recoding:");
+        write_ped_stats(Top);
+    }
 
     for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
         free_marker_item(marker_list[i].first_allele);

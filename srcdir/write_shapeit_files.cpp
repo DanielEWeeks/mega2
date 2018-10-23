@@ -315,7 +315,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
             fcmap(stdin, "%s", selection);    newline;
             free(file_name_stem);
             file_name_stem = strdup(selection);
-            BatchValueSet(file_name_stem, "Shapeit_file_stem");
+            BatchValueSet(file_name_stem, "file_name_stem");
             Outfile_named++;
             selection[0] = 'n';
             BatchValueSet(selection[0], "Default_Outfile_Names");
@@ -335,7 +335,7 @@ void CLASS_SHAPEIT::user_queries(char **file_names_array,
 static keyw_t keywords[] = {
     {"Shapeit_recomb_directory",                       STRING, ""},
     {"Shapeit_recomb_template",                        STRING, ""} ,
-    {"Shapeit_file_stem",                              STRING, ""}
+    {"file_name_stem",                                 STRING, ""}
 };
 */
 
@@ -343,7 +343,7 @@ void CLASS_SHAPEIT::batch_out()
 {
     Cstr Values[] = { "Shapeit_recomb_directory",
                       "Shapeit_recomb_template",
-                      "Shapeit_file_stem",
+                      "file_name_stem",
                       "Loop_Over_Chromosomes",
                       "shapeit_reference_panel_directory",
                       "shapeit_reference_haplotype_template",
@@ -364,7 +364,7 @@ void CLASS_SHAPEIT::batch_in() {
     Str file, file2, file3;
     Vecs filesplit,filesplit2,filesplit3;
 
-    BatchValueIfSet(fn, "Shapeit_file_stem");
+    BatchValueIfSet(fn, "file_name_stem");
     BatchValueGet(c, "Loop_Over_Chromosomes");
     if (c != 'y' && c != 'Y') {
         warnvf("For SHAPEIT, Loop_Over_Chromosomes was %c, but will be read as true ('y')\n", c);

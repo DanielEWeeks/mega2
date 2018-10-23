@@ -34,6 +34,7 @@
 
 #include "common.h"
 #include "typedefs.h"
+#include "tod.hh"
 #include "types.hh"
 
 #include "loop.h"
@@ -83,6 +84,7 @@ bcf1_t *bcfline;
 htsFile *htsfileout;
 int bcf_hdr_cnt;
 
+char Allele[] = { '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2) {
     int pwid, fwid, mwid;
@@ -119,9 +121,11 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     if(_strand_flips)
         mssgvf("VCF output is aligned using the reference panel:\n   %s\n", mega2_input_files[REFfl]);
 
+    Tod w_vcf("write_VCF_file");
     write_VCF_file(Top, file_name_stem, file_names, pwid, fwid);
+    w_vcf();
+    Tod w_vcf_fin("write_VCF rest");
     write_VCF_ped(Top, file_name_stem, file_names, pwid, fwid);
-
 
     //we only want a phenotype file if we have more than one trait, the first trait is always put into the pedigree fam file by convention
     //if(num_traits>1)
@@ -132,6 +136,7 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     write_VCF_map(Top, file_name_stem, file_names, pwid, fwid);
     write_VCF_freq(Top, file_name_stem, file_names, pwid, fwid);
     write_VCF_pen(Top, file_name_stem, file_names, pwid, fwid);
+    w_vcf_fin();
 
 //    if(outfiletype == 2) {
 //        printf("\nMega2 is using VCF tools to convert to BCF format:\n");
@@ -149,7 +154,12 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
 //CHROM POS ID REF ALT QUAL FILTER INFO FORMAT 1_1 1_2 2_1
 //20 14370 rs6054257 G A 29 PASS NS=3;DP=14;AF=0.5;DB;H2 GT:GQ:DP:HQ 0|0:48:1:51,51 1|0:48:8:51,51 1/1:43:5:.,.
 void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *file_names[], const int pwid, const int fwid){
+
+    kstringbcf = new kstring_t();
+
     //needed a loop to calculate the length for the contig flag
+
+    Tod w_vcf_linef("w_vcf fixed part");
     vlpCLASS(vcf_vcfs_header_start,chr,loci) {
         vlpCTOR(vcf_vcfs_header_start, chr, loci) { }
         typedef char *str;
@@ -300,7 +310,9 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     hlps->load_formats_no_space(-1);
 
     hlps->iterate();
+    w_vcf_linef();
 
+    Tod w_vcf_lineb("w_vcf genotype");
     //finally a large loop for the data
     vlpCLASS(vcf_vcfs,chr,loci_ped_per) {
         vlpCTOR(vcf_vcfs,chr,loci_ped_per) { }
@@ -364,7 +376,6 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 //
 //            bcf_hdr_write(htsfileout,bcfheader[bcf_hdr_cnt]);
 
-
         }
 
         //here we can put the VCF header data
@@ -390,27 +401,20 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
         void inner() {
             if(ref_choice == "Original_Order" ||  (_strand_flips && extremum_allele == 0)) {
-                ksprintf(kstringbcf,"%s","\t");
-                //pr_printf("\t");
 
-                if (_allele1 == 0)
-                    ksprintf(kstringbcf,"%s",".");
-                    //pr_printf(".");
+                kputc_('\t', kstringbcf);
+                if (_allele1 < 11)
+                    kputc_(Allele[_allele1], kstringbcf);
                 else
                     ksprintf(kstringbcf,"%d",_allele1 - 1);
-                    //pr_printf("%d", _allele1 - 1);
 
-                ksprintf(kstringbcf,"%s","/");
-                //pr_printf("/");
-
-                if (_allele2 == 0)
-                    ksprintf(kstringbcf,"%s",".");
-                    //pr_printf(".");
+                kputc_('/', kstringbcf);
+                if (_allele2 < 11)
+                    kputc_(Allele[_allele2], kstringbcf);
                 else
                     ksprintf(kstringbcf,"%d",_allele2 - 1);
-                    //pr_printf("%d", _allele2 - 1);
-            }
-            else {
+
+            } else {
                 int allele1;
                 int allele2;
 
@@ -433,32 +437,21 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                 else
                     allele2 = _allele2;
 
-                ksprintf(kstringbcf,"%s","\t");
-                //pr_printf("\t");
-
-
-                if (allele1 == 0)
-                    ksprintf(kstringbcf,"%s",".");
-                    //pr_printf(".");
+                kputc_('\t', kstringbcf);
+                if (allele1 < 11)
+                    kputc_(Allele[allele1], kstringbcf);
                 else
-                    ksprintf(kstringbcf,"%d", allele1 - 1);
-                    //pr_printf("%d", allele1 - 1);
+                    ksprintf(kstringbcf,"%d",allele1 - 1);
 
-                ksprintf(kstringbcf,"%s","/");
-                //pr_printf("/");
-
-                if (allele2 == 0)
-                    ksprintf(kstringbcf,"%s",".");
-                    //pr_printf(".");
+                kputc_('/', kstringbcf);
+                if (allele2 < 11)
+                    kputc_(Allele[allele2], kstringbcf);
                 else
-                    ksprintf(kstringbcf,"%d", allele2 - 1);
-                    //pr_printf("%d", allele2 - 1);
+                    ksprintf(kstringbcf,"%d",allele2 - 1);
             }
         }
 
         void loci_start() {
-            kstringbcf = new kstring_t();
-
             //check the chromosome, if it's changed we'll want to select the next set
             if(lastchr != _tlocusp->Marker->chromosome) {
                 first = true;
@@ -734,13 +727,15 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         }
 
         void loci_end(){
+            kputc_(0, kstringbcf);
             bcfline = bcf_init();
             vcf_parse(kstringbcf,bcfheader[bcf_hdr_cnt],bcfline);
             bcf_write(htsfileout,bcfheader[bcf_hdr_cnt],bcfline);
-            free(kstringbcf->s);
-            ks_release(kstringbcf);
-            delete(kstringbcf);
             bcf_empty(bcfline);
+
+            kstringbcf->l = 0;
+            kstringbcf->s[0] = 0;
+
             //pr_nl();
         }
 
@@ -755,9 +750,15 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
     lp->iterate();
 
+    w_vcf_lineb();
+
     delete lp;
     //delete hlp;
     delete hlps;
+
+    free(kstringbcf->s);
+    ks_release(kstringbcf);
+    delete(kstringbcf);
 }
 
 //this will write the pedigree in the PLINK fam file format

@@ -727,10 +727,11 @@ static void hwe_R_setup(char *hwe_option, linkage_ped_top *Top,
     fprintf(Rfl, "  file<-paste(\"%s\", markers[i], sep=\".\");\n",
             geno_file);
     fprintf(Rfl, "  alleles <- read.table(file, header=T);\n");
-    fprintf(Rfl, "  genos <- \n");
+    fprintf(Rfl, "  tryCatch( \n");
+    fprintf(Rfl, "    genos <- \n");
     fprintf(Rfl,
-            "      genotype(alleles$allele1, alleles$allele2, reorder=\"no\");\n");
-
+            "      genotype(alleles$allele1, alleles$allele2, reorder=\"no\"),\n");
+    fprintf(Rfl, "    error = function(e) {print(e); print(markers[i]); print(alleles)}); \n");
     if (!strcmp(hwe_option, "EXACT")) {
         /* store pvalue, and observed genotypes */
         fprintf(Rfl, "  hwe <- HWE.exact(genos);\n");

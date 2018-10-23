@@ -406,7 +406,7 @@ int get_count_option(int halftyped_item, int *include_halftyped, const char *mes
     }
     log_line(mssgf);
 
-    if (InputMode == INTERACTIVE_INPUTMODE) {
+    if (menu_select && InputMode == INTERACTIVE_INPUTMODE) {
         if (Mega2Status == INSIDE_RECODE || Mega2Status == ANALYSIS_NAME_READ) {
             BatchValueSet(SelectIndividuals, "Count_Genotypes");
             batchf(Count_Genotypes);

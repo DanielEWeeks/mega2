@@ -35,6 +35,7 @@
 extern char           sumdir[];
 
 extern void           invalid_value_field(int batch_item);
+extern void           invalid_value_field(const char *item);
 extern void           unknown_prog(char *prog_name);
 
 extern int            hashtable_strcmp(const void *prev, const void *next);

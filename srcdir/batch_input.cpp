@@ -227,7 +227,8 @@ static keyw_t keywords[] = {
     {"VCF_Marker_Alternative_INFO_Key",       LINE,       ""},
     {"Value_Missing_Affect_On_Input",         LINE,      "0"},
     {"Value_Missing_Affect_On_Output",        LINE,      "0"},
-    {"Output_File_Stem",                      STRING,     ""},
+//  {"Output_File_Stem",                      STRING,     ""},
+    {"Show_Ped_Stats",                        YORN,      "n"},
 
     {"Default_Reset_Halftype",                YORN,      "y"},
     {"Default_Reset_Mendelerr",               YORN,      "y"},
@@ -249,7 +250,6 @@ static keyw_t keywords[] = {
 
     {"Shapeit_recomb_directory",              STRING,     ""},
     {"Shapeit_recomb_template",               STRING,     "?"},
-    {"Shapeit_file_stem",                     STRING,     ""},
 
     {"file_name_stem",                        STRING,     ""},
     {"additional_program_args",               LINE,       ""},
@@ -277,7 +277,7 @@ static keyw_t keywords[] = {
     {"VCF_output_file_type",                  INT,        "1"},
     {"Reference_Allele_File",                 STRING,     ""},
     {"Align_Strand_Input",                    YORN,       "n"},
-    {"VCF_Allele_Order",                      STRING,     "Original Order"},
+    {"VCF_Allele_Order",                      STRING,     "Original_Order"},
 
     {"BCFs_File",                             STRING,     ""},
     {"BCF_Args",                              LINE,       "-m2 -M2 -v snps -c 1"},
@@ -296,6 +296,9 @@ pair<Cstr,Cstr> keyword_aliases[] = {
     make_pair("Count_Halftyped", "Count_Halftypes"),
     make_pair("REMOutput_Map_Num", "Output_Map_Num"),
     make_pair("Imputed_Allow_Duplicate_Markers", "Imputed_Allow_Duplicates"),
+
+    make_pair("file_name_stem", "Output_File_Stem"),
+
     make_pair("","")  //sentinel
 };
 
@@ -623,7 +626,7 @@ void check_batch_items(void)
     if (ITEM_READ(/* 7 */ Chromosome_Single) || (ITEM_READ(/* 8 */ Chromosomes_Multiple_Num) && ITEM_READ(/* 9 */ Chromosomes_Multiple))) {
         batchREORDER = 1;
         mssgf("Chromosome(s) and markers read in from batch file.");
-    } else {
+    } else if (! database_dump) {
         warnf("Locus selections not specified in batch file.");
         missing_item_goto_menu(-1, "Reorder menu");
         batchREORDER = 0;
@@ -632,7 +635,7 @@ void check_batch_items(void)
     if (ITEM_READ(/* 12 */ Trait_Single) || ITEM_READ(/* 14 */ Traits_Loop_Over) || ITEM_READ(/* 15 */ Traits_Combine)) {
         batchTRAIT = 1;
         mssgf("Trait selection(s) read in from batch file.");
-    } else {
+    } else if (! database_dump) {
         warnf("Trait selections not specified in batch file.");
         missing_item_goto_menu(-1, "Trait selection menu");
         batchTRAIT = 0;
