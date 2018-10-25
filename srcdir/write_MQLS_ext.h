@@ -95,6 +95,7 @@ public:
 
     char * prevalencefilename;
     bool hasXdata;
+    Str additional_arguments;
 
 };
 

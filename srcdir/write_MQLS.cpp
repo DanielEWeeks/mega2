@@ -68,6 +68,7 @@ void CLASS_MQLS::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type 
     }
     else {
         batch_in();
+        batch_show();
     }
 
     hasXdata=false;
@@ -96,23 +97,31 @@ void CLASS_MQLS::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type 
 }
 
 void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chromo, linkage_ped_top *Top) {
-    int i, done, choice, istem, iprev;
-    i = 1;
+    int i, done, choice, istem, iprev, iadd;
     istem = 0;
     iprev = 0;
+    iadd = 0;
     choice = -1;
     done = 0;
+    char selection[MAX_NAMELEN];
+    char *selectionp = selection;
 
 
     while(choice != 0){
         draw_line();
+        i = 1;
         printf("MQLS-XM/KinInbcoef Analysis Menu:\n");
         printf(" 0) Done with this menu - please proceed\n");
-
-        printf(" %d) Filenames stem:                                   \"%s\"\n", i++, this->file_name_stem);
         istem=i;
-        printf(" %d) Prevalence file name:                             \"%s\"\n", i++, this->prevalencefilename);
+        printf(" %d) Filenames stem:                                   \"%s\"\n", i++, this->file_name_stem);
         iprev=i;
+        printf(" %d) Prevalence file name:                             \"%s\"\n", i++, this->prevalencefilename);
+        iadd=i;
+        if(!this->additional_arguments.empty())
+            printf(" %d) Additional arguments:                             \"%s\"\n", i++, this->additional_arguments.c_str());
+        else
+            printf(" %d) Additional arguments:                             \"<none specified>\"\n", i++);
+
 
         printf("Enter options 0-%d > ", i-1);
         fcmap(stdin, "%d", &choice); printf("\n");
@@ -120,9 +129,10 @@ void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chrom
             printf("Unknown option %d\n", choice);
         }
         else if(choice == done){
-            BatchValueSet(file_name_stem,"file_name_stem");
+            BatchValueSet(this->file_name_stem,"file_name_stem");
             BatchValueSet(this->prevalencefilename, "prevalence_file");
-            //force seperated chromosomes
+            BatchValueSet(this->additional_arguments,"additional_program_args");
+            //force separated chromosomes
             *combine_chromo = 1;
             int tmp = (! *combine_chromo) ? 'y' : 'n';
             BatchValueSet(tmp, "Loop_Over_Chromosomes");
@@ -137,6 +147,19 @@ void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chrom
             printf("Enter prevalence file name > ");
             fcmap(stdin, "%s", this->prevalencefilename);
             newline;
+        }
+        else if(choice == iadd) {
+            printf("The options allowed are: -u -m -h\n"
+                   "Read the Mega2 and MQLS-XM documentation for more information on these flags.\n");
+            printf("Enter flags for MQLS-XM > ");
+            IgnoreValue(fgets(selection, MAX_NAMELEN-1, stdin));
+            int nl = strlen(selection);
+            if (selection[nl-1] == '\n') selection[nl-1] = 0;
+            BatchValueSet(selectionp, "additional_program_args");
+            additional_arguments = selectionp;
+
+            //fcmap(stdin, "%s", this->additional_arguments.c_str());
+            //newline;
         }
         else {
             printf("Unknown option %d\n", choice);
@@ -317,16 +340,17 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
 
     vlpCLASS(mqls_sh, both, sh_exec) {
         vlpCTOR(mqls_sh, both, sh_exec) { }
+        typedef char *str;
+        str *file_names;
+        sh_exec *sh;
+        bool has_x;
+        const char *additional_arguments;
+
 
         void file_loop() {
             mssgvf("        MQLS-XM/KinInbcoef Shell File:       %s/%s\n", *_opath, file_names[6]);
             data_loop(*_opath, file_names[6], "w");
         }
-
-        typedef char *str;
-        str *file_names;
-        sh_exec *sh;
-        bool has_x;
 
         void file_header() {
             if (sh)
@@ -350,19 +374,19 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
             if(_numchr != 23) {
                 sprintf(cmd1, "%s/%s", "KININBCOEF", "KinInbcoef");
                 sh_find_pgm("KININBCOEF", cmd1, "KinInbcoef");
-                sprintf(cmd1, "$%s_program ", "KinInbcoef");
+                sprintf(cmd1, "$%s_program ", "KININBCOEF");
             }
 
             else {
                 sprintf(cmd2, "%s/%s", "KININBCOEFX", "KinInbcoefX");
                 sh_find_pgm("KININBCOEFX", cmd2, "KinInbcoefX");
-                sprintf(cmd2, "$%s_program ", "KinInbcoefX");
+                sprintf(cmd2, "$%s_program ", "KININBCOEFX");
             }
 
             //always use MQLS-XM
-            sprintf(cmd3, "%s/%s", "MQLS_XM", "MQLS");
-            sh_find_pgm("MQLS_XM", cmd3, "MQLS");
-            sprintf(cmd3, "$%s_program ", "MQLS");
+            sprintf(cmd3, "%s/%s", "MQLSXM", "MQLS-XM");
+            sh_find_pgm("MQLSXM", cmd3, "MQLS-XM");
+            sprintf(cmd3, "$%s_program ", "MQLSXM");
 
             pr_nl();
             if(_numchr != 23) {
@@ -389,18 +413,20 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
             //kinfile is the output from KinInbcoef/X
             //if chromsome 23 we need the -x flag otherwise no
             if(_numchr == 23)
-                pr_printf("%s -g %s -p %s -k %sX%s -r %s -x -u -m -h\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", ".out", file_names[7]/*prevalencefilename*/);
+                pr_printf("%s -g %s -p %s -k %sX%s -r %s -x %s\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
             //add a zero if under 10
             else if(_numchr < 10)
-                pr_printf("%s -g %s -p %s -k %s0%d%s -r %s -u -m -h\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/);
+                pr_printf("%s -g %s -p %s -k %s0%d%s -r %s %s\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
             else
-                pr_printf("%s -g %s -p %s -k %s%d%s -r %s -u -m -h\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/);
+                pr_printf("%s -g %s -p %s -k %s%d%s -r %s -%s\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/,additional_arguments);
 
             pr_printf("exit 0\n");
 
             pr_nl();
         }
 
+        //slight changes to this version compared to others, MQLS-XM can't be a variable name so the code was modififed
+        //slightly but should have the same behavior.
         //finds the program to run dynamically and gives an error if it can't be found.
         void sh_find_pgm(const char *NAME, const char *fullpath, const char *path) {
             pr_printf("if ( $?%s  ) then\n", NAME);
@@ -410,11 +436,11 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
             pr_printf("endif\n");
             pr_printf("echo\n");
             pr_printf("if ( \"`type -t %s`\" == \"file\" ) then\n", path);
-            pr_printf("  echo set %s_program=`type -p %s`\n", path, path);
-            pr_printf("  set %s_program=`type -p %s`\n", path, path);
+            pr_printf("  echo set %s_program=`type -p %s`\n", NAME, path);
+            pr_printf("  set %s_program=`type -p %s`\n", NAME, path);
             pr_printf("else if ( \"$%s_def\" != \"0\" && -x \"$%s_def\" ) then\n", NAME, NAME);
-            pr_printf("  echo set %s_program=\"$%s_def\"\n", path, NAME);
-            pr_printf("  set %s_program=\"$%s_def\"\n", path, NAME);
+            pr_printf("  echo set %s_program=\"$%s_def\"\n", NAME, NAME);
+            pr_printf("  set %s_program=\"`$%s_def`\"\n", NAME, NAME);
             pr_printf("else\n");
             pr_printf("  echo The %s executable was not found - \n", fullpath);
             pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", NAME, path);
@@ -440,9 +466,11 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
             pr_printf("endif\n");
             pr_nl();
         }
+
     } *mqls_shs = new mqls_sh(Top);
 
     mqls_shs->file_names = file_names;
+    mqls_shs->additional_arguments = C(additional_arguments);
 
     mqls_shs->sh  = sh;
     mqls_shs->iterate();
@@ -464,6 +492,7 @@ void CLASS_MQLS::batch_in() {
     BatchValueIfSet(fn,   "file_name_stem");
     BatchValueGet(c,"Loop_Over_Chromosomes");
     BatchValueGet(prevalencefilename, "prevalence_file");
+    BatchValueGet(additional_arguments, "additional_program_args");
     LoopOverChrm = (c == 'y' || c == 'Y');
 }
 
@@ -472,6 +501,7 @@ void CLASS_MQLS::batch_out() {
 
     Cstr Values[] =  { "file_name_stem",
                        "prevalence_file",
+                       "additional_program_args"
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -485,6 +515,9 @@ void CLASS_MQLS::batch_show() {
     msgvf("\n");
     msgvf("Output file stem:                         %s\n",    C(file_name_stem));
     msgvf("Prevalence file:                          %s\n",    C(prevalencefilename));
+    msgvf("Additional ROADTRIPS program args:        %s\n",
+          (additional_arguments.size() > 0 ? C(additional_arguments) :
+           "<none specified>"));
     msgvf("\n");
 }
 
