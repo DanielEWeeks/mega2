@@ -94,7 +94,12 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     //1 VCF
     //2 BCF
     //3 VCF.gz
-    outfiletype = 2;
+
+    //new
+    //1 BCF
+    //2 VCF.gz
+    //3 VCF
+    outfiletype = 1;
 
     db_open_db();
 
@@ -388,11 +393,11 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
             lastchr = global_chromo_entries[0];
 
             if(outfiletype == 1)
-                htsfileout = hts_open(path_, "w");
-            else if(outfiletype == 2)
                 htsfileout = hts_open(path_, "wb");
-            else if(outfiletype == 3)
+            else if(outfiletype == 2)
                 htsfileout = hts_open(path_, "wg");
+            else if(outfiletype == 3)
+                htsfileout = hts_open(path_, "w");
 
             bcf_hdr_write(htsfileout,bcfheader[bcf_hdr_cnt]);
 
@@ -1153,11 +1158,11 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
         menu_count++;
         if(outfiletype == 1)
-            printf(" %d) Choose Format:                                   VCF\n", menu_count);
-        else if(outfiletype == 2)
             printf(" %d) Choose Format:                                   BCF\n", menu_count);
-        else if(outfiletype == 3)
+        else if(outfiletype == 2)
             printf(" %d) Choose Format:                                   VCF.gz\n", menu_count);
+        else if(outfiletype == 3)
+            printf(" %d) Choose Format:                                   VCF\n", menu_count);
         fileout = menu_count;
 
         printf(" %d) File name stem:                                  %-15s\n", ++menu_count, prefix);
@@ -1304,16 +1309,8 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 fcmap(stdin, "%d", &choice2);
                 newline;
                 //didn't want to change the internal numbering for batch files but wanted to reorder this menu
-                if (choice2 == 1){
-                    outfiletype = 2;
-                    break;
-                }
-                else if( choice2 == 2) {
-                    outfiletype = 3;
-                    break;
-                }
-                else if (choice2 == 3) {
-                    outfiletype = 1;
+                if (choice2 == 1 || choice2 == 2 ||  choice2 == 3){
+                    outfiletype = choice2;
                     break;
                 }
                 else
@@ -1372,11 +1369,11 @@ void CLASS_VCF::batch_out(){
 void CLASS_VCF::inner_file_names(char **file_names, const char *num, const char *stem, int *combine_chromo) {
 
     if(outfiletype == 1)
-        sprintf(file_names[0], "%s.%s.vcf", stem, num);
-    else if( outfiletype == 2)
         sprintf(file_names[0], "%s.%s.bcf", stem, num);
-    else if (outfiletype == 3)
+    else if( outfiletype == 2)
         sprintf(file_names[0], "%s.%s.vcf.gz", stem, num);
+    else if (outfiletype == 3)
+        sprintf(file_names[0], "%s.%s.vcf", stem, num);
      if(main_chromocnt == 1 || *combine_chromo)
         sprintf(file_names[1], "%s.%s.fam", stem, num);
     else
