@@ -281,6 +281,7 @@ static keyw_t keywords[] = {
 
     {"BCFs_File",                             STRING,     ""},
     {"BCF_Args",                              LINE,       "-m2 -M2 -v snps -c 1"},
+    {"prevalence_file",                       STRING,     "prevalence.txt"}
 
 };
 

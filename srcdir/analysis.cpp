@@ -56,6 +56,7 @@
 #include "write_minimacshapeit_ext.h"
 #include "database_dump_ext.h"
 #include "write_vcf_ext.h"
+#include "write_MQLS_ext.h"
 /*
  * You MUST make the appropriate changes here to define the new header and class.
  * (item 1.)
@@ -131,6 +132,7 @@ CLASS_MACH               *MACH = new CLASS_MACH();
 CLASS_MINIMAC            *MINIMAC = new CLASS_MINIMAC();
 CLASS_VCF                *VCF = new CLASS_VCF();
 CLASS_DUMP               *DUMP = new CLASS_DUMP();
+CLASS_MQLS               *MQLS = new CLASS_MQLS();
 
 
 /*
@@ -187,6 +189,7 @@ analysis_types analysis_list[] = {
     { "SHAPEIT/minimac3 format",    MINIMAC},
     { "VCF format",                 VCF},
 //  { "Database",                   DUMP},    // DUMP is an analysis but can not be chosen
+    { "MQLS-XM/KinInbcoef format",  MQLS},
 
 /*
  * You MUST make the appropriate changes here to define the mapping from the name
