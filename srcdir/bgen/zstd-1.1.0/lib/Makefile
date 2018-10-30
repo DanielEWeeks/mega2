@@ -37,6 +37,9 @@ CFLAGS ?= -O3
 ifneq ($(OSTYPE),windows)
 CFLAGS += -Wall -Wextra -Wcast-qual -Wcast-align -Wshadow -Wstrict-aliasing=1 \
           -Wswitch-enum -Wdeclaration-after-statement -Wstrict-prototypes -Wundef
+ifdef FALLTHROUGH
+CFLAGS += -Wimplicit-fallthrough=0
+endif
 endif
 ALLFLAGS   = $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(MOREFLAGS)
 

@@ -413,7 +413,7 @@ void            create_SPLINK(linkage_ped_top **LPTop,
     linkage_ped_top *Top2; /* *Copy; */
     linkage_ped_rec *tpe;
     FILE           *fp, *cfp;
-    char            fl_stat[12], cchoice[10], syscmd[100];
+    char            fl_stat[12], cchoice[10], syscmd[2*FILENAME_LENGTH+9];
     int             select, choice;
     char            pedfl_name[2*FILENAME_LENGTH+MAX_NAMELEN];
     char            cshfl_name[2*FILENAME_LENGTH];

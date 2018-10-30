@@ -234,28 +234,52 @@ static char *create_class_headers(int lclasses, int *header_p,
             pos=0;
             header_pos=&header_str[pos];
             if (header_p[0]) {
+#ifdef _mega2_
+                memcpy(header_pos, "\tUnknown", strlen("\tUnknown"));
+#else
                 strncpy(header_pos, "\tUnknown", strlen("\tUnknown"));
+#endif
                 pos += strlen("\tUnknown");
                 header_pos = &header_str[pos];
+#ifdef _mega2_
+                if (ou_percent) memcpy(header_pos, "\t", (size_t) 1);
+#else
                 if (ou_percent) strncpy(header_pos, "\t", (size_t) 1);
+#endif
                 pos += ou_percent * strlen("\t");
             }
             header_pos=&header_str[pos];
 
             if (header_p[1]) {
+#ifdef _mega2_
+                memcpy(header_pos, "\tNormal", strlen("\tNormal"));
+#else
                 strncpy(header_pos, "\tNormal", strlen("\tNormal"));
+#endif
                 pos += strlen("\tNormal");
                 header_pos=&header_str[pos];
+#ifdef _mega2_
+                if (ou_percent) memcpy(header_pos, "\t", (size_t) 1);
+#else
                 if (ou_percent) strncpy(header_pos, "\t", (size_t) 1);
+#endif
                 pos += ou_percent;
             }
             header_pos=&header_str[pos];
 
             if (header_p[2]){
+#ifdef _mega2_
+                memcpy(header_pos, "\tAffected", strlen("\tAffected"));
+#else
                 strncpy(header_pos, "\tAffected", strlen("\tAffected"));
+#endif
                 pos += strlen("\tAffected");
                 header_pos=&header_str[pos];
+#ifdef _mega2_
+                if (ou_percent) memcpy(header_pos, "\t", (size_t)  1);
+#else
                 if (ou_percent) strncpy(header_pos, "\t", (size_t)  1);
+#endif
                 pos += ou_percent;
                 header_pos = &(header_str[pos]);
                 /* don't put a tab after the last column */
@@ -286,7 +310,11 @@ static char *create_class_headers(int lclasses, int *header_p,
                     sprintf(lb_st, "\tUnk(%1d)\t", l);
                 else
                     sprintf(lb_st, "\tUnk(%1d)", l);
+#ifdef _mega2_
+                memcpy(header_pos, lb_st, (size_t)  col_width);
+#else
                 strncpy(header_pos, lb_st, (size_t)  col_width);
+#endif
                 pos += strlen(lb_st);
             }
             if (header_p[i+1]) {
@@ -295,7 +323,11 @@ static char *create_class_headers(int lclasses, int *header_p,
                     sprintf(lb_st, "\tNorm(%1d)\t", l);
                 else
                     sprintf(lb_st, "\tNorm(%1d)", l);
+#ifdef _mega2_
+                memcpy(header_pos, lb_st, (size_t)  col_width);
+#else
                 strncpy(header_pos, lb_st, (size_t)  col_width);
+#endif
                 pos +=  strlen(lb_st);
             }
             if (header_p[i+2]) {
@@ -304,7 +336,11 @@ static char *create_class_headers(int lclasses, int *header_p,
                     sprintf(lb_st, "\tAff(%1d)\t", l);
                 else
                     sprintf(lb_st, "\tAff(%1d)", l);
+#ifdef _mega2_
+                memcpy(header_pos, lb_st, (size_t)  col_width);
+#else
                 strncpy(header_pos, lb_st, (size_t)  col_width);
+#endif
                 pos +=  strlen(lb_st);
             }
             i += 3; l++;
@@ -321,17 +357,29 @@ static char *create_class_headers(int lclasses, int *header_p,
             header_str=CALLOC((size_t) len_header+1, char);
             pos=0; header_pos = &(header_str[pos]);
             if (header_p[0]) {
+#ifdef _mega2_
+                memcpy(header_pos, "    Unknown     ", (size_t)  col_width);
+#else
                 strncpy(header_pos, "    Unknown     ", (size_t)  col_width);
+#endif
                 pos += col_width;
             }
             if (header_p[1]) {
                 header_pos = &(header_str[pos]);
+#ifdef _mega2_
+                memcpy(header_pos, "     Normal     ", (size_t) col_width);
+#else
                 strncpy(header_pos, "     Normal     ", (size_t) col_width);
+#endif
                 pos += col_width;
             }
             if (header_p[2]) {
                 header_pos = &(header_str[pos]);
+#ifdef _mega2_
+                memcpy(header_pos, "    Affected    ", (size_t) col_width);
+#else
                 strncpy(header_pos, "    Affected    ", (size_t) col_width);
+#endif
                 pos += col_width;
             }
         } /* lclasses <=1 */
@@ -349,19 +397,31 @@ static char *create_class_headers(int lclasses, int *header_p,
                 if (header_p[i]) {
                     header_pos = &(header_str[pos]);
                     sprintf(lb_st,"  (Unknown,%1d)   ", l);
+#ifdef _mega2_
+                    memcpy(header_pos, lb_st, (size_t) col_width);
+#else
                     strncpy(header_pos, lb_st, (size_t) col_width);
+#endif
                     pos += strlen(lb_st);
                 }
                 if (header_p[i+1]) {
                     header_pos = &(header_str[pos]);
                     sprintf(lb_st,"  (Normal,%1d)    ", l);
+#ifdef _mega2_
+                    memcpy(header_pos, lb_st, (size_t) col_width);
+#else
                     strncpy(header_pos, lb_st, (size_t) col_width);
+#endif
                     pos += strlen(lb_st);
                 }
                 if (header_p[i+2]) {
                     header_pos = &(header_str[pos]);
                     sprintf(lb_st, "  (Affected,%1d)  ", l);
+#ifdef _mega2_
+                    memcpy(header_pos, lb_st, (size_t) col_width);
+#else
                     strncpy(header_pos, lb_st, (size_t) col_width);
+#endif
                     pos += strlen(lb_st);
                 }
                 l++; i += 3;
@@ -411,7 +471,11 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
                 sprintf(file_ext, "_%s.%s", disease_name, ltop->Locus[loci_NUMBERED[nn]].LocusName);
                 ou_file_name =
                     CALLOC((strlen(liablefl_name[1])+strlen(file_ext)+1), char);
+#ifdef _mega2_
+                memcpy(ou_file_name, liablefl_name[1], strlen(liablefl_name[1]));
+#else
                 strncpy(ou_file_name, liablefl_name[1], strlen(liablefl_name[1]));
+#endif
                 strcat(ou_file_name, file_ext);
                 fp = fopen(ou_file_name, "w");
             }
@@ -556,7 +620,11 @@ void write_liable_dist(liable_allele_dist *allele_dist, char **liablefl_name,
                 /* reallocate output file name */
                 ou_file_name =
                     CALLOC((strlen(liablefl_name[2])+strlen(file_ext)+1), char);
+#ifdef _mega2_
+                memcpy(ou_file_name, liablefl_name[2], strlen(liablefl_name[2]));
+#else
                 strncpy(ou_file_name, liablefl_name[2], strlen(liablefl_name[2]));
+#endif
                 strcat(ou_file_name, file_ext);
                 /* open the genotype file for writing */
                 fp = fopen(ou_file_name, "w");

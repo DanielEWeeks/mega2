@@ -323,6 +323,7 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
         }
 
         void inner () {
+            int lc;
             char cmd[2*FILENAME_LENGTH];
             char target[FILENAME_LENGTH];
             
@@ -335,17 +336,25 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
                 sprintf(cmd, "%s/%s", "$ROADTRIPS", "KinInbcoef");
                 sh_find_pgm("ROADTRIPS", cmd, "KinInbcoef");
                 sprintf(cmd, "$%s_program ", "KinInbcoef");
+                lc = strlen(cmd);
 
                 mkfln(target, prefix, ".fams");
                 sh_need_data(lpgm, target);
-                sprintf(cmd, "%s %s", cmd, target);
+#define Sadd(cmd, add) strcpy(cmd + lc, add), lc += strlen(add);
+//              sprintf(cmd, "%s %s", cmd, target);
+                Sadd(cmd, " ");
+                Sadd(cmd, target);
 
                 mkfln(target, prefix, ".lst");
                 sh_need_data(lpgm, target);
-                sprintf(cmd, "%s %s", cmd, target);
+//              sprintf(cmd, "%s %s", cmd, target);
+                Sadd(cmd, " ");
+                Sadd(cmd, target);
 
                 mkfln(target, prefix, ".kins");
-                sprintf(cmd, "%s %s", cmd, target);
+//              sprintf(cmd, "%s %s", cmd, target);
+                Sadd(cmd, " ");
+                Sadd(cmd, target);
                 pr_nl();
 
                 mkfln(target, prefix, ".log");
@@ -363,10 +372,13 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
             sprintf(cmd, "%s/%s", "$ROADTRIPS", "roadtrips");
             sh_find_pgm("ROADTRIPS", cmd, "roadtrips");
             sprintf(cmd, "$%s_program ", "roadtrips");
+            lc = strlen(cmd);
 
             mkfln(target, prefix, ".phes");
             sh_need_data(pgm, target);
-            sprintf(cmd, "%s -p %s", cmd, target);
+//          sprintf(cmd, "%s -p %s", cmd, target);
+            Sadd(cmd, " -p ");
+            Sadd(cmd, target);
 
             if (do_pedigree) 
                 mkfln(target, prefix, ".kins");
@@ -374,18 +386,26 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
                 mkfln(target, prefix, ".peds");
 
             sh_need_data(pgm, target);
-            sprintf(cmd, "%s -k %s", cmd, target);
+//          sprintf(cmd, "%s -k %s", cmd, target);
+            Sadd(cmd, " -k ");
+            Sadd(cmd, target);
 
             mkfln(target, pfx, prefix, ".XX.tpeds");
             sh_need_data(pgm, target);
-            sprintf(cmd, "%s -g %s", cmd, target);
+//          sprintf(cmd, "%s -g %s", cmd, target);
+            Sadd(cmd, " -g ");
+            Sadd(cmd, target);
 
             mkfln(target, pfx, prefix, ".prvl");
             sh_need_data(pgm, target);
-            sprintf(cmd, "%s -r %s", cmd, target);
+//          sprintf(cmd, "%s -r %s", cmd, target);
+            Sadd(cmd, " -r ");
+            Sadd(cmd, target);
             pr_nl();
 
-            sprintf(cmd, "%s %s ", cmd, additional_program_args);
+//          sprintf(cmd, "%s %s ", cmd, additional_program_args);
+            Sadd(cmd, " ");
+            Sadd(cmd, additional_program_args);
             pr_nl();
 
             mkfln(target, prefix, ".XX.log");

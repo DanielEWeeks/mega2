@@ -866,7 +866,8 @@ static void     set_nuked_pednames(linkage_ped_top *Topp)
                 for(i=0; i < count[j]; i++) {
                     sprintf(tmpName, "%s-%d",
                             Topp->Ped[i+next_ped].Name, i+1);
-                    sprintf(Topp->Ped[i+next_ped].Name, "%s", tmpName);
+//                  sprintf(Topp->Ped[i+next_ped].Name, "%s", tmpName);
+                    strcpy(Topp->Ped[i+next_ped].Name, tmpName);
                 }
             }
         }
@@ -910,7 +911,8 @@ void            create_nuked_fids(linkage_ped_top *Topp)
                 for(i=0; i < count[j]; i++) {
                     sprintf(tmpName, "%s_%d",
                             Topp->Ped[i+next_ped].Name, i+1);
-                    sprintf(Topp->Ped[i+next_ped].Name,"%s",tmpName);
+//                  sprintf(Topp->Ped[i+next_ped].Name, "%s", tmpName);
+                    strcpy(Topp->Ped[i+next_ped].Name, tmpName);
                 }
             }
         }

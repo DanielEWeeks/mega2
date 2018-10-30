@@ -224,6 +224,7 @@ export ARFLAGS
 export AROUT
 export RANLIB
 export SQLxDEFS
+export FALLTHROUGH
 
 LINK ?= $(CXX)
 LTARGET ?= -o $(EXEC)

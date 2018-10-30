@@ -205,7 +205,11 @@ void execute_gen(char *gen_executable_name, char *locus_name, const char *gen_ou
     char *infile_name, *exec_str;
 
     infile_name= CALLOC(strlen(locus_name)+9, char);
+#ifdef _mega2_
+    memcpy(infile_name, "gen_dat.", (size_t) 8);
+#else
     strncpy(infile_name, "gen_dat.", (size_t) 8);
+#endif
     strcat(infile_name, locus_name);
     exec_str= CALLOC((size_t) 50, char);
     sprintf(exec_str, "cp %s Gen.in", infile_name);

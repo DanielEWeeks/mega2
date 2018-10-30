@@ -966,7 +966,8 @@ static void  write_sex_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
     int             i, j, k, p,  width, allele_width, num_alleles;
     int             max_width;
     double           expected_geno;
-    char            blanks[10], format_str[6], float_format[7];
+//  char            blanks[10], format_str[6], float_format[7];
+    char            blanks[10];
 
     strcpy(blanks, "         "); /* 9 blanks */
 
@@ -1064,9 +1065,10 @@ static void  write_sex_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
     for (j = 0; j < num_alleles; j++) {
         if (ar->Female_Allele_Bin[j] > 0)  {
             /* print this allele */
-            sprintf(format_str, " %%%dd)", max_width);
+//          sprintf(format_str, " %%%dd)", max_width);
             fprintf(filep, "\n");
-            fprintf(filep, format_str, j+1);
+//          fprintf(filep, format_str, j+1);
+            fprintf(filep, " %*d)", max_width, j+1);
 
             for (p = 0; p <= j; p++) {
                 if (ar->Female_Allele_Bin[p] > 0) {
@@ -1074,8 +1076,9 @@ static void  write_sex_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
                         for (k=0; k < max_width; k++) fprintf(filep, " ");
                         fprintf(filep, "-");
                     } else {
-                        sprintf(format_str, " %%%dd", max_width);
-                        fprintf(filep, format_str, ar->genotype_matrix[j][p]);
+//                      sprintf(format_str, " %%%dd", max_width);
+//                      fprintf(filep, format_str, ar->genotype_matrix[j][p]);
+                        fprintf(filep, " %*d", max_width, ar->genotype_matrix[j][p]);
                     }
                 }
             }
@@ -1087,8 +1090,9 @@ static void  write_sex_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
                     expected_geno = (double) ar->FemalesGenotyped *
                         ar->female_allele_freq[j] * ar->female_allele_freq[i];
                     if (i != j) expected_geno = 2.0 * expected_geno;
-                    sprintf(float_format, " %%%d.0f", max_width);
-                    fprintf(filep, float_format, expected_geno);
+//                  sprintf(float_format, " %%%d.0f", max_width);
+//                  fprintf(filep, float_format, expected_geno);
+                    fprintf(filep, " %*.0f", max_width, expected_geno);
                 }
             }
             fprintf(filep, "\n");
@@ -1100,8 +1104,9 @@ static void  write_sex_allele_freq_table(FILE *filep, linkage_ped_top *Top1,
 
     for (k = 0; k < num_alleles; k++) {
         if (ar->Female_Allele_Bin[k] > 0) {
-            sprintf(format_str, " %%%dd", max_width);
-            fprintf(filep, format_str, k + 1);
+//          sprintf(format_str, " %%%dd", max_width);
+//          fprintf(filep, format_str, k + 1);
+            fprintf(filep, " %*d", max_width, k + 1);
         }
     }
 
@@ -1195,7 +1200,8 @@ static void            write_allele_freq_table(FILE *filep,
     int             i, j, k, width, allele_width;
     int             num_alleles, max_width;
     double           expected_geno;
-    char            blanks[10], format_str[10], float_format[10];
+//  char            blanks[10], format_str[10], float_format[10];
+    char            blanks[10];
 
     strcpy(blanks, "         "); /* 9 blanks */
 
@@ -1260,9 +1266,10 @@ static void            write_allele_freq_table(FILE *filep,
     for (i=0; i < num_alleles; i++) {
         if (ar->Allele_Bin[i] > 0) {
             /* print <allele>) */
-            sprintf(format_str, " %%%dd)", max_width);
+//          sprintf(format_str, " %%%dd)", max_width);
             fprintf(filep, "\n");
-            fprintf(filep, format_str, i+1);
+//          fprintf(filep, format_str, i+1);
+            fprintf(filep, " %*d)", max_width, i+1);
 
             /* if total allele count is positive, there is at least one non-zero genotype */
             for (j=0; j<=i; j++) {
@@ -1274,8 +1281,9 @@ static void            write_allele_freq_table(FILE *filep,
                         fprintf(filep, "-");
                     } else {
                         /* print the allele count */
-                        sprintf(format_str, " %%%dd", max_width);
-                        fprintf(filep, format_str, ar->genotype_matrix[i][j]);
+//                      sprintf(format_str, " %%%dd", max_width);
+//                      fprintf(filep, format_str, ar->genotype_matrix[i][j]);
+                        fprintf(filep, " %*d", max_width, ar->genotype_matrix[i][j]);
                     }
                 }
             }
@@ -1291,8 +1299,9 @@ static void            write_allele_freq_table(FILE *filep,
                     else
                         expected_geno = ((double) ar->GenoCount)*(ar->allele_freq[i])*
                             (ar->allele_freq[i]);
-                    sprintf(float_format, " %%%d.0f", max_width);
-                    fprintf(filep, float_format, expected_geno);
+//                  sprintf(float_format, " %%%d.0f", max_width);
+//                  fprintf(filep, float_format, expected_geno);
+                    fprintf(filep, " %*.0f", max_width, expected_geno);
                 }
             }
             fprintf(filep, "\n");
@@ -1304,8 +1313,9 @@ static void            write_allele_freq_table(FILE *filep,
 
     for (i = 0; i < num_alleles; i++)  {
         if (ar->Allele_Bin[i] > 0) {
-            sprintf(format_str, " %%%dd", max_width);
-            fprintf(filep, format_str, i + 1);
+//          sprintf(format_str, " %%%dd", max_width);
+//          fprintf(filep, format_str, i + 1);
+            fprintf(filep, " %*d", max_width, i + 1);
         }
     }
     fprintf(filep, " <- allele #\n");

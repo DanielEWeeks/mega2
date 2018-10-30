@@ -461,7 +461,7 @@ static void  create_apmult_script_file(linkage_ped_top *Copy,
     int             *numbered, *num_p;
     double          dx, theta;
     FILE            *fp;
-    char            script_name[2*FILENAME_LENGTH], syscmd[200];
+    char            script_name[2*FILENAME_LENGTH], syscmd[2*FILENAME_LENGTH+9];
 
 
     numbered=CALLOC((size_t) Copy->LocusTop->LocusCnt, int);
@@ -623,7 +623,8 @@ void create_APMULT(char *pedfl_name, char *locusfl_name, int disease_locus,
         }
         if (main_chromocnt > 1) {
             /* .sh was stripped, so put a dummy chromosome + .sh */
-            sprintf(file_names[3], "%s.01.sh", file_names[3]);
+//          sprintf(file_names[3], "%s.01.sh", file_names[3]);
+            strcat(file_names[3], ".01.sh");
         }
     }
 

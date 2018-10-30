@@ -271,7 +271,7 @@ static void write_SAGE_cntcsh(char *cshfl_name, char *cntfl_name,
 {
     int *trp, tr, nloop, num_affec=num_traits;
     FILE *csh_unit;
-    char     syscmd[2*FILENAME_LENGTH], cfl[2*FILENAME_LENGTH];
+    char     syscmd[2*FILENAME_LENGTH+9], cfl[2*FILENAME_LENGTH];
     int i, num_inds=0;
 
     for (i=0; i<Top->PedCnt; i++) {
@@ -379,7 +379,7 @@ static void     write_SAGE_csh(char *cshfl_name, char *outfl_name,
 
 {
     FILE *csh_unit;
-    char cfl[2*FILENAME_LENGTH], syscmd[2*FILENAME_LENGTH];
+    char cfl[2*FILENAME_LENGTH], syscmd[2*FILENAME_LENGTH+9];
     int num_inds=0;
     int i, tr, nloop, num_affec=num_traits;
 

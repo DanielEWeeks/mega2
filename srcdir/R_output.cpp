@@ -348,7 +348,7 @@ static void draw_graphs(R_plot_params_type Rplot_params,
     char output_file[2*FILENAME_LENGTH], rscr[20+FILENAME_LENGTH];
     char Rerror_file[FILENAME_LENGTH+3];
     FILE *Rp;
-    char legend_str[FILENAME_LENGTH], rdataf[FILENAME_LENGTH];
+    char legend_str[FILENAME_LENGTH], rdataf[2*FILENAME_LENGTH+1];
     char mega2_map[20+FILENAME_LENGTH];
     
     if (base_pair_position_index >= 0) {
@@ -1819,7 +1819,7 @@ static void convert_merlin2R(R_plot_params_type Rplot_params,
     char merlinoutfile[FILENAME_LENGTH], *syscmd, chr_str[3];
     FILE *shfp;
     char rshfl[20+FILENAME_LENGTH];
-    char rdataf[FILENAME_LENGTH];
+    char rdataf[2*FILENAME_LENGTH+1];
 
     sprintf(rshfl, "%s/%s", output_paths[0], Rshell_file);
     shfp = fopen(rshfl, "w");

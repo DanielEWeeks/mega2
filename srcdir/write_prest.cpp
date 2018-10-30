@@ -266,7 +266,7 @@ static void prest_shell_file(char *sh_file, char *pedfile,
 {
 
     FILE *filep;
-    char syscmd[100], shell_file[2*FILENAME_LENGTH];
+    char syscmd[2*FILENAME_LENGTH+9], shell_file[2*FILENAME_LENGTH];
 
     sprintf(shell_file, "%s/%s", output_paths[0], sh_file);
     if ((filep = fopen(shell_file, "w")) == NULL) {

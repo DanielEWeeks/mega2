@@ -1383,7 +1383,7 @@ static void   write_gh_cshell_file(char *gh_script, int *numchr, char *gh_in,
 {
 
     int             i, nloop, num_affec=num_traits, i2;
-    char            chr_str[3], gh_scr[2*FILENAME_LENGTH], syscmd[100];
+    char            chr_str[3], gh_scr[2*FILENAME_LENGTH], syscmd[2*FILENAME_LENGTH+9];
     char            ghp[4];
     FILE            *fp;
     int  *locus, tmpi, tmpi2, *locus1, ntick;
@@ -1702,7 +1702,7 @@ static void write_mlb_cshell_file(char *gh_script, int *numchr,
 {
     int   i, nloop, num_affec=num_traits;
     FILE            *fp;
-    char  chr_str[3], gh_scr[2*FILENAME_LENGTH], syscmd[100];
+    char  chr_str[3], gh_scr[2*FILENAME_LENGTH], syscmd[2*FILENAME_LENGTH+9];
 
     NLOOP;
     CHR_STR(*numchr, chr_str);

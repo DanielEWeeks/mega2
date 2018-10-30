@@ -371,7 +371,7 @@ if try $CC -c $CFLAGS $test.c; then
   :
 else
   echo "Compiler error reporting is too harsh for $0 (perhaps remove -Werror)." | tee -a configure.log
-  leave 1
+#  leave 1
 fi
 
 echo >> configure.log

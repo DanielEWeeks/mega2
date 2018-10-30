@@ -575,17 +575,17 @@ void set_chromosomes(const int autosome, const int xy, const int mito)
     SEX_CHROMOSOME  = autosome + 1;
     MALE_CHROMOSOME = autosome + 2;
 
-    sprintf(SEX_CHROMOSOME_STR,  "%d", SEX_CHROMOSOME);
-    sprintf(MALE_CHROMOSOME_STR, "%d", MALE_CHROMOSOME);
+    snprintf(SEX_CHROMOSOME_STR,  4, "%d", SEX_CHROMOSOME);
+    snprintf(MALE_CHROMOSOME_STR, 4, "%d", MALE_CHROMOSOME);
 
     if (xy) {
         PSEUDO_X        = xy == 1 ? autosome + 3 : xy;
-        sprintf(PSEUDO_X_STR,        "%d", PSEUDO_X);
+        snprintf(PSEUDO_X_STR, 4,        "%d", PSEUDO_X);
         pseudoautosome = xy;
     }
     if (mito) {
         MITO_CHROMOSOME = mito == 1 ? autosome + 4 : mito;
-        sprintf(MITO_CHROMOSOME_STR, "%d", MITO_CHROMOSOME);
+        snprintf(MITO_CHROMOSOME_STR, 4, "%d", MITO_CHROMOSOME);
         mitoautosome = mito;
     }
 }
@@ -635,7 +635,6 @@ int             main(int argc, char **argv, char **env)
     char           *phefl_name  = NULL;
     char           *reffl_name  = NULL;
     char           *input_path  = NULL;
-    char const     *logdir;
     int            num_cols=0;
 /*  int            check_web_ver = 1; */
 
@@ -680,7 +679,7 @@ int             main(int argc, char **argv, char **env)
 #ifdef EXPIRE
     check_expiration();
 #endif
-    logdir = mklogdir();
+    (void) mklogdir();
     LogFileNames();
     open_logs();
     hello(stdout);

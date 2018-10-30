@@ -2064,7 +2064,11 @@ static int cram_populate_ref(cram_fd *fd, int id, ref_entry *r) {
     char *path2;
     /* Search local files in REF_PATH; we can open them and return as above */
     if (!local_path && (path2 = find_path(tag->str+3, ref_path))) {
+#ifdef _mega2_
+	memcpy(path, path2, PATH_MAX);
+#else
 	strncpy(path, path2, PATH_MAX);
+#endif
 	free(path2);
 	if (is_file(path)) // incase it's too long
 	    local_path = 1;
@@ -3662,7 +3666,11 @@ static void full_path(char *out, char *in) {
 	// Windows paths
 	(in_l > 3 && toupper(*in) >= 'A'  && toupper(*in) <= 'Z' &&
 	 in[1] == ':' && (in[2] == '/' || in[2] == '\\'))) {
+#ifdef _mega2_
+	memcpy(out, in, PATH_MAX);
+#else
 	strncpy(out, in, PATH_MAX);
+#endif
 	out[PATH_MAX-1] = 0;
     } else {
 	int len;
@@ -3670,7 +3678,11 @@ static void full_path(char *out, char *in) {
 	// unable to get dir or out+in is too long
 	if (!getcwd(out, PATH_MAX) ||
 	    (len = strlen(out))+1+strlen(in) >= PATH_MAX) {
+#ifdef _mega2_
+	    memcpy(out, in, PATH_MAX);
+#else
 	    strncpy(out, in, PATH_MAX);
+#endif
 	    out[PATH_MAX-1] = 0;
 	    return;
 	}

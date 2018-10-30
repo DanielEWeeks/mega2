@@ -1436,10 +1436,11 @@ int display_selections(linkage_ped_top *Top, int *entries,
         double_col = 1;
     }
 
-    sprintf(namestr, "%%%ds ", locnamewidth);
+//  sprintf(namestr, "%%%ds ", locnamewidth);
 
     if (double_col) {
-        printf("       ");  printf(namestr, "Name");
+//      printf("       ");  printf(namestr, "Name");
+        printf("       ");  printf("%*s", locnamewidth, "Name");
         if (traits_only == 1) {
             printf("  Type     |");
         } else {

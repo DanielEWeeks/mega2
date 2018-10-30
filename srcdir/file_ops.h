@@ -84,7 +84,7 @@ public:
        @param[in] mode      string "w"rite, "a"ppend
     */
     void filep_open(const char *dir, const char *file, const char *mode) {
-        char path[2*FILENAME_LENGTH];
+        char path[2*FILENAME_LENGTH+2];
         sprintf(path, "%s/%s", dir, _fln ? _fln : file);
         path_ = strdup(path);
 

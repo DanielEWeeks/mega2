@@ -429,7 +429,7 @@ void batch_file_doc(FILE *batchfp)
 
 void create_batchfile(void)
 {
-    char syscmd[100];
+    char syscmd[FILENAME_LENGTH+25];
 
     sprintf(syscmd, "/bin/cp /dev/null %s\n", Mega2Batch);
     System(syscmd);

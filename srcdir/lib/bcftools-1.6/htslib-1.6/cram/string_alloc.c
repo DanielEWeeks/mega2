@@ -148,7 +148,11 @@ char *string_ndup(string_alloc_t *a_str, char *instr, size_t len) {
     
     if (NULL == str) return NULL;
     
+#ifdef _mega2_
+    memcpy(str, instr, len);
+#else
     strncpy(str, instr, len);
+#endif
     str[len] = 0;
     
     return str;

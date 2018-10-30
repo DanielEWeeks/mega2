@@ -858,7 +858,7 @@ static void write_slink_shell(char *shell_name, char *loutfl_name,
 			      char *outfl_name, char *slinkin_name)
 
 {
-    char shfl[2*FILENAME_LENGTH], syscmd[100];
+    char shfl[2*FILENAME_LENGTH], syscmd[2*FILENAME_LENGTH+9];
     FILE *slink_shell_p;
     int nloop, tr, num_affec=num_traits;
     int i;

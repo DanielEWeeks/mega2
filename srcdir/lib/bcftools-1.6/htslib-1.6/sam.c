@@ -230,7 +230,11 @@ int bam_hdr_write(BGZF *fp, const bam_hdr_t *h)
     char buf[4];
     int32_t i, name_len, x;
     // write "BAM1"
+#ifdef _mega2_
+    memcpy(buf, "BAM\1", 4);
+#else
     strncpy(buf, "BAM\1", 4);
+#endif
     if (bgzf_write(fp, buf, 4) < 0) return -1;
     // write plain text and the number of reference sequences
     if (fp->is_be) {

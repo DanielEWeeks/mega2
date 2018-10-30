@@ -647,9 +647,12 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             if(clss->rhappre != "" && clss->rhappost != "" && clss->rlegpre != "" && clss->rlegpost != "" &&  clss->rsam != "")
                 sprintf(cmd, "%s--input-ref %s/%s%d%s %s/%s%d%s %s/%s", cmd , C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
                         C(clss->rrefdir), C(clss->rlegpre), _numchr, C(clss->rlegpost), C(clss->rrefdir), C(clss->rsam));
-            else
-                sprintf(cmd,"%s\n",cmd);
-
+            else {
+//              sprintf(cmd,"%s\n",cmd);
+                int cmdl = strlen(cmd);
+                cmd[cmdl] = '\n';
+                cmd[cmdl+1] = 0;
+            }
 
             sh_run("SHAPEIT", cmd);
             pr_nl();
