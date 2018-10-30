@@ -296,7 +296,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
                         sprintf(person, "%s", tpersonp->PerPre);
                     }
 
-                    char sample[33];
+                    char sample[2 * MAX_NAMELEN + 1];
                     sprintf(sample, "%s_%s", tpedtreep->PedPre, tpersonp->PerPre);
 
                     bcf_hdr_add_sample(bcfheader[bcf_hdr_cnt], sample);

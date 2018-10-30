@@ -36,6 +36,8 @@ stdC11 = -std=gnu++0x
 OPT ?= -O3
 CFLAGS = -Wall $(OPT)
 
+FALLTHROUGH = 1
+
 CLIBS = -lm
 
 #mega2.o cw_routines.o: DFLAGS += -DCYGWIN_OS
