@@ -471,8 +471,9 @@ old_new        *add_new_to_old(int oldped, int newped, int oldmem, int newmem, o
 void            help_sib_map(void)
 {
     int             i;
-
-    const char           *(tcl_map_help_support[]) =
+    typedef const char *ccp;
+//  const char           *(tcl_map_help_support[]) =
+    ccp tcl_map_help_support[] = 
         {
             " ",
             "'support'-specifies the LOD score cutoff for support",
@@ -483,7 +484,8 @@ void            help_sib_map(void)
             NULL
         };
 
-    const char           *(tcl_map_help_epsilon[]) =
+//  const char           *(tcl_map_help_epsilon[]) =
+    ccp tcl_map_help_epsilon[] = 
         {
             " ",
             "'EPSILON' - specifies the convergence criterion for the",
@@ -492,7 +494,8 @@ void            help_sib_map(void)
             NULL
         };
 
-    const char           *(tcl_map_help_do_shuffle[]) =
+//  const char           *(tcl_map_help_do_shuffle[]) =
+    ccp tcl_map_help_do_shuffle[] = 
         {
             " ",
             "'do_shuffle ' - a boolean value: specifies if sib_map should",

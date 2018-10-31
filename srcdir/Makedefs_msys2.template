@@ -35,6 +35,7 @@ CC = gcc
 #CFLAGS = -Wall -g
 OPT ?= -O3
 CFLAGS = -Wall $(OPT)
+FALLTHROUGH = 1
 
 ifdef STATIC
 CLIBS = -lm -lws2_32 -static-libstdc++ -static-libgcc -static -lpthread

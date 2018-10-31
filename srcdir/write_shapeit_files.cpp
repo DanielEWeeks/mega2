@@ -523,16 +523,27 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             sh_echo(cmd);
             pr_nl();
 
+#define Sadd(cmd, add) strcpy(cmd + lc, add), lc += strlen(add);
+            int lc = 0;
             pr_printf("echo\n");
             sprintf(cmd, "$_SHAPEIT --input-bed %s%s %s%s %s --input-map ",
                     pfx, file_names_intrnl[3], pfx, file_names_intrnl[1], file_names_intrnl[0]);
-            if (clss->rdir != "")
-		        sprintf(cmd, "%s%s/", cmd, C(clss->rdir));
-            sprintf(cmd, "%s%s%d%s ",cmd , C(clss->rpre), _numchr, C(clss->rpost));
-            if(clss->rhappre != "" && clss->rhappost != "" && clss->rlegpre != "" && clss->rlegpost != "" &&  clss->rsam != "")
-                sprintf(cmd, "%s--input-ref %s/%s%d%s %s/%s%d%s %s/%s", cmd , C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
+            lc = strlen(cmd);
+            if (clss->rdir != "") {
+//	        sprintf(cmd, "%s%s/", cmd, C(clss->rdir));
+                Sadd(cmd, C(clss->rdir));
+}
+//          sprintf(cmd, "%s%s%d%s ",cmd , C(clss->rpre), _numchr, C(clss->rpost));
+            Sadd(cmd, C(clss->rpre));
+            char num_[12];
+            sprintf(num_, "%d", _numchr);
+            Sadd(cmd, num_);
+            Sadd(cmd, C(clss->rpost));
+            if(clss->rhappre != "" && clss->rhappost != "" && clss->rlegpre != "" && clss->rlegpost != "" &&  clss->rsam != "") {
+                sprintf(&cmd[strlen(cmd)], "--input-ref %s/%s%d%s %s/%s%d%s %s/%s", C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
                         C(clss->rrefdir), C(clss->rlegpre), _numchr, C(clss->rlegpost), C(clss->rrefdir), C(clss->rsam));
-            sprintf(cmd, "%s --output-max %s.haps %s.sample %s\n",cmd, file_names_intrnl[7], file_names_intrnl[7], "$MoreArgs");
+            }
+            sprintf(&cmd[strlen(cmd)], " --output-max %s.haps %s.sample %s\n", file_names_intrnl[7], file_names_intrnl[7], "$MoreArgs");
 
             sh_run("SHAPEIT", cmd);
             pr_nl();
@@ -638,14 +649,19 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             sprintf(cmd, "$_SHAPEIT -check --input-bed %s%s %s%s %s",
                     pfx, file_names_intrnl[3], pfx, file_names_intrnl[1], file_names_intrnl[0]);
 
+            int lc = strlen(cmd);
             if(clss->rpre != "" && clss->rpost != "") {
-                sprintf(cmd, "%s --input-map ", cmd);
-                if (clss->rdir != "")
-                    sprintf(cmd, "%s%s/", cmd, C(clss->rdir));
-                sprintf(cmd, "%s%s%d%s ", cmd, C(clss->rpre), _numchr, C(clss->rpost));
+//              sprintf(cmd, "%s --input-map ", cmd);
+                Sadd(cmd, " --input-map ");
+                if (clss->rdir != "") {
+//                  sprintf(cmd, "%s%s/", cmd, C(clss->rdir));
+                    Sadd(cmd, C(clss->rdir));
+                    Sadd(cmd, "/");
+                }
+                sprintf(&cmd[strlen(cmd)], "%s%d%s ", C(clss->rpre), _numchr, C(clss->rpost));
             }
             if(clss->rhappre != "" && clss->rhappost != "" && clss->rlegpre != "" && clss->rlegpost != "" &&  clss->rsam != "")
-                sprintf(cmd, "%s--input-ref %s/%s%d%s %s/%s%d%s %s/%s", cmd , C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
+                sprintf(&cmd[strlen(cmd)], "--input-ref %s/%s%d%s %s/%s%d%s %s/%s", C(clss->rrefdir), C(clss->rhappre), _numchr, C(clss->rhappost),
                         C(clss->rrefdir), C(clss->rlegpre), _numchr, C(clss->rlegpost), C(clss->rrefdir), C(clss->rsam));
             else {
 //              sprintf(cmd,"%s\n",cmd);

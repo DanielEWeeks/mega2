@@ -642,16 +642,32 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
             if (xcf) sprintf(reference_allele_option, " --reference-allele %s", file_names[9]);
             else reference_allele_option[0] = '\0';
             
+#define Sadd(cmd, add) strcpy(cmd + lc, add), lc += strlen(add);
+              int lc = 0;
 #ifdef RUNSHELL_SETUP
-            sprintf(cmd, "$_PLINK --noweb %s%s%s --missing-phenotype %s --assoc --out %s\n",
-                    file_option, file_names[7], reference_allele_option,
-                    Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
-                    file_names[7]);
+//            sprintf(cmd, "$_PLINK --noweb %s%s%s --missing-phenotype %s --assoc --out %s\n",
+//                  file_option, file_names[7], reference_allele_option,
+//                  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
+//                  file_names[7]);
+              Sadd(cmd, "$_PLINK --noweb ");
+              Sadd(cmd, file_option);
+              Sadd(cmd, file_names[7]);
+              Sadd(cmd, reference_allele_option);
+              Sadd(cmd, " --missing-phenotype ");
+              Sadd(cmd, Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
+              Sadd(cmd, " --assoc --out ");
+              Sadd(cmd, file_names[7]);
+              Sadd(cmd, "\n");
 #else /* RUNSHELL_SETUP */
-            sprintf(cmd, "plink %s%s%s --missing-phenotype %s --assoc --out %s\n",
-                    file_option, file_names[7], reference_allele_option,
-                    Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
-                    file_names[7]);
+              Sadd(cmd, "plink ");
+              Sadd(cmd, file_option);
+              Sadd(cmd, file_names[7]);
+              Sadd(cmd, reference_allele_option);
+              Sadd(cmd, " --missing-phenotype ");
+              Sadd(cmd, Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
+              Sadd(cmd, " --assoc --out ");
+              Sadd(cmd, file_names[7]);
+              Sadd(cmd, "\n");
 #endif /* RUNSHELL_SETUP */
             sh_run("PLINK", cmd);
             fprintf_status_check_csh(_filep, "PLINK", 1);
