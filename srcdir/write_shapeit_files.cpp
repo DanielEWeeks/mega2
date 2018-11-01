@@ -532,6 +532,7 @@ p Outfile_Names[10] "2015-11-17-10-44/"
             if (clss->rdir != "") {
 //	        sprintf(cmd, "%s%s/", cmd, C(clss->rdir));
                 Sadd(cmd, C(clss->rdir));
+                Sadd(cmd, "/");
 }
 //          sprintf(cmd, "%s%s%d%s ",cmd , C(clss->rpre), _numchr, C(clss->rpost));
             Sadd(cmd, C(clss->rpre));

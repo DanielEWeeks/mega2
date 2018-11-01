@@ -2017,7 +2017,11 @@ static int cram_populate_ref(cram_fd *fd, int id, ref_entry *r) {
     char *ref_path = getenv("REF_PATH");
     SAM_hdr_type *ty;
     SAM_hdr_tag *tag;
+#ifdef _mega2_
+    char path[PATH_MAX], path_tmp[PATH_MAX+30];
+#else
     char path[PATH_MAX], path_tmp[PATH_MAX];
+#endif
     char cache[PATH_MAX], cache_root[PATH_MAX];
     char *local_cache = getenv("REF_CACHE");
     mFILE *mf;
