@@ -56,7 +56,7 @@ public:
 
     virtual void ped_ind_defaults(int unique)  {
         OrigIds[0] = 2; /* Unique person name */
-        OrigIds[1] = 2; /* _tpedtreep->Name */
+        OrigIds[1] = 3; /* consecutive numbers for pedigree */
     }
 
     void option_menu (char *file_names[], char *prefix, int *combine_chromo, linkage_ped_top *Top);
