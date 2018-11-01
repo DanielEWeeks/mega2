@@ -1201,6 +1201,10 @@ SHAPEIT/Minimac3 format
 VCF format
 \end_layout
 
+\begin_layout Enumerate
+MQLS-XM/KinInbcoef
+\end_layout
+
 \begin_layout Standard
 \begin_inset ERT
 status collapsed
@@ -19419,11 +19423,12 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-22 SAGE format                     45 VCF format                      
+22 SAGE format                     45 VCF format                     
 \end_layout
 
 \begin_layout LyX-Code
-23 Pre-makeped format                                          
+23 Pre-makeped format              46 MQLS-XM/KinInbcoef format        
+                   
 \end_layout
 
 \begin_layout LyX-Code
@@ -19435,7 +19440,7 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-Select an option between 0-45 >
+Select an option between 0-46 >
 \end_layout
 
 \begin_layout LyX-Code
@@ -19978,6 +19983,17 @@ reference "ext:vcf"
 \end_inset
 
 ) 
+\end_layout
+
+\begin_layout Enumerate
+Conver to MQLS-XM/KinInbcoef format (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Conver-to-MQLS-XM/KinInbcoef"
+
+\end_inset
+
+ )
 \end_layout
 
 \begin_layout Section
@@ -39155,6 +39171,21 @@ https://samtools.github.io/hts-specs/VCFv4.2.pdf
 \end_layout
 
 \begin_layout Standard
+VCF, BCF (the new default) and VCF gzipped formats are now all output via
+ an internal implementation of BCFtools (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Input-Format:-BCFTools"
+
+\end_inset
+
+) This means that BCF is the new default as internally it is what BCFTools
+ represents data as and is therefore the fastest.
+ For large datasets we recommend not outputting VCF as the file size will
+ scale accordingly and write time will increase.
+\end_layout
+
+\begin_layout Standard
 In addition to creating the standard VCF output file, Mega2 also will create
  a .fam file similar to a PLINK .fam file for storing pedigree information
  (this is not standard for VCF data ).
@@ -39181,29 +39212,37 @@ VCF Analysis Menu:
 \end_layout
 
 \begin_layout LyX-Code
-1) File name stem:                                             vcf 
+1) VCF format file:                             BCF 
 \end_layout
 
 \begin_layout LyX-Code
-2) Human Genome Build                                          B37 
+2) File name stem:                              bcf 
 \end_layout
 
 \begin_layout LyX-Code
-3) Reference Alleles                                           Major Allele
- 
+3) Human Genome Build                           B37 
 \end_layout
 
 \begin_layout LyX-Code
-4) VCF/BCF/VCF.gz:                                             VCF 
+4) Reference Allele                             Original_Order 
 \end_layout
 
 \begin_layout LyX-Code
-Enter selection: 0 - 4 >
+5) Person id in output pedigree file:           Original pre makeped person
+\end_layout
+
+\begin_layout LyX-Code
+6) Pedigree id in output pedigree file:         Original pre makeped pedigree
+\end_layout
+
+\begin_layout LyX-Code
+Enter selection: 0 - 6 >
 \end_layout
 
 \begin_layout Standard
-This menu has four prompts: the file name stem option which simply lets
- the user specify the prefix of the output files is (in this example vcf.05.vcf,
+This menu has six prompts: First is the output format as either a BCV, VCF,
+ or gzipped VCF file, next the file name stem option which simply lets the
+ user specify the prefix of the output files is (in this example vcf.05.vcf,
  vcf.
  05.fam etc.).
  The human genome build option allows the user to change which human genome
@@ -39223,8 +39262,10 @@ reference "subsec:Using-an-external-reference"
 .
  If the reference allele table already exists it will continue with that
  data.
- The final choice is the output format as either a VCF, BCF, or gzipped
- VCF file.
+ The last two fields determine how Mega2 represents your family and person
+ ID data, the default is to use the values put in by the input data but
+ this can be changed ot values such as monotonically increasing numbers
+ etc.
 \end_layout
 
 \begin_layout Standard
@@ -39296,29 +39337,28 @@ If more than one chromosome is selected, there will be an additional option
 \begin_layout LyX-Code
 
 \size footnotesize
-#CHROM POS ID REF ALT	QUAL	FILTER	INFO	FORMAT	1_1	1_2	1_3	1_4	1_5	1_6	1_7	1_8	1_
-9
+#CHROM POS ID REF ALT	QUAL	FILTER	INFO	FORMAT	1_1	1_2	1_3	1_4	1_5	1_6	1_7
 \end_layout
 
 \begin_layout LyX-Code
 
 \size footnotesize
 5	1    M1	A	T	.	PASS	CM=0.00,-99.99,-99.99;RF=0.50;AF=0.50;	GT	0/1	0/1	1/1	0/1	1/1	1/1
-	1/1	1/1	1/1
+	1/1	
 \end_layout
 
 \begin_layout LyX-Code
 
 \size footnotesize
 5    2    M3	C	G	.	PASS	CM=5.00,-99.99,-99.99;RF=0.50;AF=0.50;	GT	1/0	0/0	1/0	1/0	1/0	
-1/0	1/0	1/1	1/1
+1/0	1/0
 \end_layout
 
 \begin_layout LyX-Code
 
 \size footnotesize
 5    3    M2	A	T	.	PASS	CM=8.00,-99.99,-99.99;RF=0.50;AF=0.50;	GT	1/1	0/0	1/0	1/0	1/0	
-1/1	1/0	1/1	1/1
+1/1	1/0
 \end_layout
 
 \begin_layout Standard
@@ -39401,6 +39441,409 @@ reference "subsec:Annotated-penetrance-file"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Subsection
+Conver to MQLS-XM/KinInbcoef format 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Conver-to-MQLS-XM/KinInbcoef"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This analysis menu option
+\series default
+ allows for the creation of data to be used with the MQLS-XM application.
+ MQLS.
+ MQLS-XM is a C program that performs single-SNP, case-control association
+ testing for the autosomal chromosomes and the X-chromosome in samples with
+ known relatedness.(
+\begin_inset CommandInset href
+LatexCommand href
+name "MQLS-XM Webpage"
+target "https://www.stat.uchicago.edu/~mcpeek/software/MQLS_XM/index.html"
+
+\end_inset
+
+).
+ To set up the kinship and inbreeding data that MQLS-XM utilizes there are
+ two other pieces of software used, the first is KinInbcoef which is a C++
+ program that computes inbreeding and kinship coefficients for general pedigrees
+ using the algorithm ( 
+\begin_inset CommandInset href
+LatexCommand href
+name "KinInbcoef Webpage"
+target "https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoef/index.html"
+
+\end_inset
+
+ ).
+ The other is KinInbcoefX which is a C++ program that calculates X-chromosome
+ kinship coefficients for pairs of individuals (and X-chromosome inbreeding
+ coefficients for each individual), based on pedigree and sex information
+ ( 
+\begin_inset CommandInset href
+LatexCommand href
+name "KinInbcoefX Webpage"
+target "https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoefX/index.htm"
+
+\end_inset
+
+ ).
+ For the autosomes KinInbcoef is used, whereas on the X chromosome KinInbcoefX
+ is used.
+\end_layout
+
+\begin_layout Standard
+This mode creates several files to be used with KinInbcoef, KinInbcoefX
+ and MQLS-XM.
+ The first is the .gen file, which is the genotype file (tped format) that
+ stores the genetic data that MQLS-XM uses for analysis.
+ Next is the MQLS-XM phenotype information file which is labeled .fam, this
+ is used by MQLS-XM to organize family structure and phenotype information
+ for analysis.
+ Next are the .kininbcoef and the .kininbcoefx files, these are used by their
+ respective applications and will only be created if the appropriate chromosome
+ (autosome or X) is selected.
+ these files are modified fam files with less columns used by the KinInbcoef
+ and KinInbcoefX applications.
+ Next is the Kininbcoef list file (.txt file), this file is used by both
+ the KinInbcoef and KinInbcoefX file and is a two column list of all related
+ pairs within families.
+ Finally there are shell files per chromosome and a top shell file that
+ run all subsequent shell files.
+\end_layout
+
+\begin_layout Standard
+The MQLS-XM?KinINbcoef format menu looks like the following:
+\end_layout
+
+\begin_layout LyX-Code
+MQLS-XM/KinInbcoef Analysis Menu:
+\end_layout
+
+\begin_layout LyX-Code
+0) Done with this menu - please proceed 
+\end_layout
+
+\begin_layout LyX-Code
+1) Filename stem:                            
+\begin_inset Quotes eld
+\end_inset
+
+mqls
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout LyX-Code
+2) Prevalence file name:                     
+\begin_inset Quotes eld
+\end_inset
+
+prevalence.txt" 
+\end_layout
+
+\begin_layout LyX-Code
+3) Additional arguments:                     "<none specified>"
+\end_layout
+
+\begin_layout LyX-Code
+Enter options 0-3 > 
+\end_layout
+
+\begin_layout Standard
+The first menu prompt is the stem which all the files created will have.
+ The second is a prevalence file name used by MQLS-XM, it is a two value
+ file that contains decimal prevalence values, see their documentation for
+ more on that file.
+ The last are additional arguments for MQLS-XM, those arguments are as follows:
+\end_layout
+
+\begin_layout Itemize
+-u Allows the user to exclude individuals with unknown phenotype from the
+ analysis for the three test statistics.
+ All individuals will be included in the analysis if this option is not
+ used.
+\end_layout
+
+\begin_layout Itemize
+-m Allows the user to specify that only individuals who have nonmissing
+ genotypes at a marker will be included in calculating the MQLS and XM statistic
+s at that SNP, i.e., phenotype information for individuals with missing genotype
+ data at a SNP will not be used.
+ If this option is not used, the MQLS and XM statistics will incorporate
+ phenotype information for individuals with missing genotype data at a SNP
+ being tested, provided that those individuals have a sampled relative who
+ is genotyped at the marker.
+ 
+\end_layout
+
+\begin_layout Itemize
+-h Allows the user to specify that the association test statistics will
+ be calculated using a variance estimator that assumes HWE.
+ The association test statistics will be calculated using a robust variance
+ estimator if this option is not used.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Name:
+\series default
+ MQLS-XM (version 1.0, released 2012) 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Web:
+\series default
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.stat.uchicago.edu/~mcpeek/software/MQLS_XM/index.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+References:
+\series default
+ Thornton T., McPeek M.
+ S.
+ "Case-Control Association Testing with Related Individuals: A More Powerful
+ Quasi-Likelihood Score Test" (2007) American Journal of Human Genetics,
+ vol 81, pp.
+ 321-337 
+\end_layout
+
+\begin_layout Standard
+Thornton T, Zhang Q, Cai X, Ober C, and McPeek MS XM: Association Testing
+ on the X-Chromosome in Case-Control Samples with Related Individuals" (2012)
+ Genetic Epidemiology 36, vol 36:438-450 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Contact
+\series default
+:
+\end_layout
+
+\begin_layout LyX-Code
+Timothy A.
+ Thornton 
+\end_layout
+
+\begin_layout LyX-Code
+Department of Biostatistics 
+\end_layout
+
+\begin_layout LyX-Code
+University of Washington 
+\end_layout
+
+\begin_layout LyX-Code
+Health Sciences Building 
+\end_layout
+
+\begin_layout LyX-Code
+F-600 Box 357232 
+\end_layout
+
+\begin_layout LyX-Code
+Seattle, WA 98195-7232 
+\end_layout
+
+\begin_layout LyX-Code
+email: 
+\begin_inset CommandInset href
+LatexCommand href
+name "tathornt@u.washington.edu"
+target "tathornt@u.washington.edu"
+type "mailto:"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Name:
+\series default
+ KinInbcoef (version 1.1, released 2009) 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Web:
+\series default
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoef/index.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Contact
+\series default
+:
+\end_layout
+
+\begin_layout LyX-Code
+Catherine Bourgain 
+\end_layout
+
+\begin_layout LyX-Code
+INSERM U535 
+\end_layout
+
+\begin_layout LyX-Code
+Bat.Leriche 
+\end_layout
+
+\begin_layout LyX-Code
+Hopital Paul Brousse 
+\end_layout
+
+\begin_layout LyX-Code
+BP 1000 
+\end_layout
+
+\begin_layout LyX-Code
+94817 Villejuif Cedex France 
+\end_layout
+
+\begin_layout LyX-Code
+Tel : +33 1 45 59 53 85 
+\end_layout
+
+\begin_layout LyX-Code
+Fax : +33 1 45 59 53 31 
+\end_layout
+
+\begin_layout LyX-Code
+email: 
+\begin_inset CommandInset href
+LatexCommand href
+name "bourgain@vjf.inserm.fr"
+target "bourgain@vjf.inserm.fr"
+type "mailto:"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Name:
+\series default
+ KinInbcoefX (version 2.0, release 200912) 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Web:
+\series default
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoefX/index.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Contact
+\series default
+:
+\end_layout
+
+\begin_layout LyX-Code
+Catherine Bourgain 
+\end_layout
+
+\begin_layout LyX-Code
+INSERM U535 
+\end_layout
+
+\begin_layout LyX-Code
+Bat.Leriche 
+\end_layout
+
+\begin_layout LyX-Code
+Hopital Paul Brousse 
+\end_layout
+
+\begin_layout LyX-Code
+BP 1000 
+\end_layout
+
+\begin_layout LyX-Code
+94817 Villejuif Cedex France 
+\end_layout
+
+\begin_layout LyX-Code
+Tel : +33 1 45 59 53 85 
+\end_layout
+
+\begin_layout LyX-Code
+Fax : +33 1 45 59 53 31 
+\end_layout
+
+\begin_layout LyX-Code
+email: 
+\begin_inset CommandInset href
+LatexCommand href
+name "bourgain@vjf.inserm.fr"
+target "bourgain@vjf.inserm.fr"
+type "mailto:"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
