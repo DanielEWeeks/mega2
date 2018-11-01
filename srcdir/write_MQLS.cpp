@@ -113,7 +113,7 @@ void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chrom
         printf("MQLS-XM/KinInbcoef Analysis Menu:\n");
         printf(" 0) Done with this menu - please proceed\n");
         istem=i;
-        printf(" %d) Filenames stem:                                   \"%s\"\n", i++, this->file_name_stem);
+        printf(" %d) Filename stem:                                   \"%s\"\n", i++, this->file_name_stem);
         iprev=i;
         printf(" %d) Prevalence file name:                             \"%s\"\n", i++, this->prevalencefilename);
         iadd=i;
@@ -302,7 +302,7 @@ void CLASS_MQLS::write_MQLS_listfile(linkage_ped_top *Top, const char *prefix, c
         str *file_names;
 
         void file_loop() {
-            mssgvf("        MQLS list file:                      %s/%s\n", *_opath, file_names[4]);
+            mssgvf("        KinInbcoef list file:                %s/%s\n", *_opath, file_names[4]);
             data_loop(*_opath, file_names[4], "w");
         }
         void inner() {
