@@ -338,6 +338,106 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
         sh = new dataloop::sh_exec(Top);
         sh->filep_open(output_paths[0], file_names[5], "w");
         sh->sh_main();
+        //adding kininbcoef finding/running code to the top shell so it only gets run once
+        sh->pr_nl();
+        sh->pr_printf("#For the top shell we will have the KinInbcoef/X running code\n");
+        char cmd1[2*FILENAME_LENGTH];
+        char cmd2[2*FILENAME_LENGTH];
+
+        sprintf(cmd1, "%s/%s", "KININBCOEF", "KININBCOEF");
+
+        sh->pr_printf("if ( $?%s  ) then\n", "KININBCOEF");
+        sh->pr_printf("  set %s_def=\"%s\"\n", "KININBCOEF", "KININBCOEF/KININBCOEF");
+        sh->pr_printf("else\n");
+        sh->pr_printf("  set %s_def=0\n", "KININBCOEF");
+        sh->pr_printf("endif\n");
+        sh->pr_printf("echo\n");
+        sh->pr_printf("if ( \"`type -t %s`\" == \"file\" ) then\n", "KinInbcoef");
+        sh->pr_printf("  echo set %s_program=`type -p %s`\n", "KININBCOEF", "KinInbcoef");
+        sh->pr_printf("  set %s_program=`type -p %s`\n", "KININBCOEF", "KinInbcoef");
+        sh->pr_printf("else if ( \"$%s_def\" != \"0\" && -x \"$%s_def\" ) then\n", "KININBCOEF", "KININBCOEF");
+        sh->pr_printf("  echo set %s_program=\"$%s_def\"\n", "KININBCOEF", "KININBCOEF");
+        sh->pr_printf("  set %s_program=\"`$%s_def`\"\n", "KININBCOEF", "KININBCOEF");
+        sh->pr_printf("else\n");
+        sh->pr_printf("  echo The %s executable was not found - \n", "KININBCOEF/KININBCOEF");
+        sh->pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", "KININBCOEF", "KinInbcoef");
+        sh->pr_printf("  echo\n");
+        sh->pr_printf("    if (\"$%s_def\" == \"0\") then\n", "KININBCOEF");
+        sh->pr_printf("      echo %s is not defined.\n", "KININBCOEF");
+        sh->pr_printf("    else\n");
+        sh->pr_printf("      echo %s is set to \"$%s\".\n", "KININBCOEF", "KININBCOEF");
+        sh->pr_printf("    endif\n");
+        sh->pr_printf("  echo\n");
+        sh->pr_printf("  echo If using Bash and ksh you would use something like this:\n");
+        sh->pr_printf("  echo export %s=dir_to_%s\n", "KININBCOEF", "KinInbcoef");
+        sh->pr_printf("  echo\n");
+        sh->pr_printf("  echo If using csh you would use something like this:\n");
+        sh->pr_printf("  echo setenv %s dir_to_%s\n", "KININBCOEF", "KinInbcoef");
+        sh->pr_printf("  echo\n");
+        sh->pr_printf("  echo\n");
+        sh->pr_printf("  echo \"For further details, please see '%s' section of the Mega2 documentation.\"\n", "KININBCOEF");
+        sh->pr_printf("  exit 0\n");
+        sh->pr_printf("endif\n");
+        sh->pr_nl();
+
+        sprintf(cmd1, "$%s_program ", "KININBCOEF");
+
+
+        if(hasXdata)  {
+            sprintf(cmd2, "%s/%s", "KININBCOEFX", "KinInbcoefX");
+
+            sh->pr_printf("if ( $?%s  ) then\n", "KININBCOEFX");
+            sh->pr_printf("  set %s_def=\"%s\"\n", "KININBCOEFX", "KININBCOEFX/KININBCOEFX");
+            sh->pr_printf("else\n");
+            sh->pr_printf("  set %s_def=0\n", "KININBCOEFX");
+            sh->pr_printf("endif\n");
+            sh->pr_printf("echo\n");
+            sh->pr_printf("if ( \"`type -t %s`\" == \"file\" ) then\n", "KinInbcoefX");
+            sh->pr_printf("  echo set %s_program=`type -p %s`\n", "KININBCOEFX", "KinInbcoefX");
+            sh->pr_printf("  set %s_program=`type -p %s`\n", "KININBCOEFX", "KinInbcoefX");
+            sh->pr_printf("else if ( \"$%s_def\" != \"0\" && -x \"$%s_def\" ) then\n", "KININBCOEFX", "KININBCOEFX");
+            sh->pr_printf("  echo set %s_program=\"$%s_def\"\n", "KININBCOEFX", "KININBCOEFX");
+            sh->pr_printf("  set %s_program=\"`$%s_def`\"\n", "KININBCOEFX", "KININBCOEFX");
+            sh->pr_printf("else\n");
+            sh->pr_printf("  echo The %s executable was not found - \n", "KININBCOEFX/KININBCOEFX");
+            sh->pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", "KININBCOEFX", "KinInbcoefX");
+            sh->pr_printf("  echo\n");
+            sh->pr_printf("    if (\"$%s_def\" == \"0\") then\n", "KININBCOEFX");
+            sh->pr_printf("      echo %s is not defined.\n", "KININBCOEFX");
+            sh->pr_printf("    else\n");
+            sh->pr_printf("      echo %s is set to \"$%s\".\n", "KININBCOEFX", "KININBCOEFX");
+            sh->pr_printf("    endif\n");
+            sh->pr_printf("  echo\n");
+            sh->pr_printf("  echo If using Bash and ksh you would use something like this:\n");
+            sh->pr_printf("  echo export %s=dir_to_%s\n", "KININBCOEFX", "KinInbcoefX");
+            sh->pr_printf("  echo\n");
+            sh->pr_printf("  echo If using csh you would use something like this:\n");
+            sh->pr_printf("  echo setenv %s dir_to_%s\n", "KININBCOEFX", "KinInbcoefX");
+            sh->pr_printf("  echo\n");
+            sh->pr_printf("  echo\n");
+            sh->pr_printf("  echo \"For further details, please see '%s' section of the Mega2 documentation.\"\n", "KININBCOEFX");
+            sh->pr_printf("  exit 0\n");
+            sh->pr_printf("endif\n");
+            sh->pr_nl();
+
+            sprintf(cmd2, "$%s_program ", "KININBCOEFX");
+        }
+
+        sh->pr_printf("#use KinInbcoef on output to create to calculate autosomal breeding coeficients\n");
+        sh->pr_printf("echo\n");
+        // Try ./KinInbcoef pedtest listtest out
+        sh->pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.out");
+        sh->pr_printf("%s %s %s %s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.out");
+        if(hasXdata) {
+            sh->pr_printf("#use KinInbcoefX on output to create to calculate X-Chromosome breeding coeficients\n");
+            // ./KinInbcoefX pedtestX listtestX out error
+            sh->pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.out", "kininbcoefx.error");
+            sh->pr_printf("%s %s %s %s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.out", "kininbcoefx.error");
+        }
+        sh->pr_printf("echo\n");
+        sh->pr_printf("echo KinInbcoef/X Done \n");
+        sh->pr_printf("echo\n");
+
     }
 
     vlpCLASS(mqls_sh, both, sh_exec) {
@@ -345,7 +445,6 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
         typedef char *str;
         str *file_names;
         sh_exec *sh;
-        bool has_x;
         const char *additional_arguments;
 
 
@@ -367,23 +466,7 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
 #endif /* RUNSHELL_SETUP */
         }
         void inner() {
-            char cmd1[2*FILENAME_LENGTH];
-            char cmd2[2*FILENAME_LENGTH];
             char cmd3[2*FILENAME_LENGTH];
-
-            //check our applications are available by running sh_find_pgm
-            //only Kininbcoef or KininbcoefX is valid in one file so we don't need to check or use both
-            if(_numchr != 23) {
-                sprintf(cmd1, "%s/%s", "KININBCOEF", "KinInbcoef");
-                sh_find_pgm("KININBCOEF", cmd1, "KinInbcoef");
-                sprintf(cmd1, "$%s_program ", "KININBCOEF");
-            }
-
-            else {
-                sprintf(cmd2, "%s/%s", "KININBCOEFX", "KinInbcoefX");
-                sh_find_pgm("KININBCOEFX", cmd2, "KinInbcoefX");
-                sprintf(cmd2, "$%s_program ", "KININBCOEFX");
-            }
 
             //always use MQLS-XM
             sprintf(cmd3, "%s/%s", "MQLSXM", "MQLS-XM");
@@ -391,53 +474,19 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
             sprintf(cmd3, "$%s_program ", "MQLSXM");
 
             pr_nl();
-            if(_numchr != 23) {
-                pr_printf("#use KinInbcoef on output to create to calculate autosomal breeding coeficients\n");
-                pr_printf("echo\n");
-                // Try ./KinInbcoef pedtest listtest out
-                //we want to add a 0 if under 10
-                if(_numchr < 10) {
-                    pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s0%d%s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.", _numchr, ".out");
-                    pr_printf("%s %s %s %s0%d%s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.", _numchr, ".out");
-                }
-                else {
-                    pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s%d\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.", _numchr, ".out");
-                    pr_printf("%s %s %s %s%d%s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.", _numchr, ".out");
-                }
-            }
-            else {
-                pr_printf("#use KinInbcoefX on output to create to calculate X-Chromosome breeding coeficients\n");
-                // ./KinInbcoefX pedtestX listtestX out error
-                pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %sX%s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.",".out", "kininbcoefx.error");
-                pr_printf("%s %s %s %sX%s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.",".out", "kininbcoefx.error");
-            }
-
-            pr_printf("echo\n");
-            pr_printf("echo KinInbcoef/X Done \n");
-            pr_printf("echo\n");
-
-            pr_nl();
             pr_printf("#use MQLS-XM to perform single-SNP, case-control association testing on the autosomal chromosomes and the X-chromosome \n");
             // ./MQLS-XM -g genofile -p phenofile -k kinfile -r prevalence -x -u -m -h
             //kinfile is the output from KinInbcoef/X
             //if chromsome 23 we need the -x flag otherwise no
             if(_numchr == 23) {
-                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %sX%s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
                 pr_printf("echo\n");
-                pr_printf("%s -g %s -p %s -k %sX%s -r %s -x %s\n", cmd2, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                pr_printf("%s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
             }
-            //add a zero if under 10
-            else if(_numchr < 10) {
-                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s0%d%s -r %s %s\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
-                pr_printf("echo\n");
-                pr_printf("%s -g %s -p %s -k %s0%d%s -r %s %s\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
-
-            }
-
             else {
-                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s%d%s -r %s -%s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s -%s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
                 pr_printf("echo\n");
-                pr_printf("%s -g %s -p %s -k %s%d%s -r %s -%s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                pr_printf("%s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
             }
 
             pr_printf("echo MQLS-XM Done.\n");
@@ -557,5 +606,3 @@ void CLASS_MQLS::replace_chr_number(char *file_names[], int numchr) {
     change_output_chr(file_names[0], numchr);
     change_output_chr(file_names[6], numchr);
 }
-
-
