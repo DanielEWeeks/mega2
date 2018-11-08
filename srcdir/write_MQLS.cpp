@@ -149,7 +149,9 @@ void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chrom
             newline;
         }
         else if(choice == iadd) {
-            printf("The options allowed are: -u -m -h\n"
+            printf("-u    Exclude individuals with unknown phenotype from the analysis\n"
+                   "-m   Do not use phenotype information for individuals with missing genotype data at a SNP\n"
+                   "-h    Use a (non-robust) variance estimator that assumes HWE\n"
                    "Read the Mega2 and MQLS-XM documentation for more information on these flags.\n");
             printf("Enter flags for MQLS-XM > ");
             IgnoreValue(fgets(selection, MAX_NAMELEN-1, stdin));
@@ -391,35 +393,54 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
             pr_nl();
             if(_numchr != 23) {
                 pr_printf("#use KinInbcoef on output to create to calculate autosomal breeding coeficients\n");
+                pr_printf("echo\n");
                 // Try ./KinInbcoef pedtest listtest out
                 //we want to add a 0 if under 10
-                if(_numchr < 10)
-                pr_printf("%s %s %s %s0%d%s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/,
-                          "kininbcoef.", _numchr, ".out");
-                else
-                    pr_printf("%s %s %s %s%d%s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/,
-                              "kininbcoef.", _numchr, ".out");
+                if(_numchr < 10) {
+                    pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s0%d%s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.", _numchr, ".out");
+                    pr_printf("%s %s %s %s0%d%s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.", _numchr, ".out");
+                }
+                else {
+                    pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s%d\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.", _numchr, ".out");
+                    pr_printf("%s %s %s %s%d%s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.", _numchr, ".out");
+                }
             }
             else {
                 pr_printf("#use KinInbcoefX on output to create to calculate X-Chromosome breeding coeficients\n");
                 // ./KinInbcoefX pedtestX listtestX out error
-                pr_printf("%s %s %s %sX%s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/,
-                          "kininbcoefx.",".out", "kininbcoefx.error");
+                pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %sX%s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.",".out", "kininbcoefx.error");
+                pr_printf("%s %s %s %sX%s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.",".out", "kininbcoefx.error");
             }
+
+            pr_printf("echo\n");
+            pr_printf("echo KinInbcoef/X Done \n");
+            pr_printf("echo\n");
 
             pr_nl();
             pr_printf("#use MQLS-XM to perform single-SNP, case-control association testing on the autosomal chromosomes and the X-chromosome \n");
             // ./MQLS-XM -g genofile -p phenofile -k kinfile -r prevalence -x -u -m -h
             //kinfile is the output from KinInbcoef/X
             //if chromsome 23 we need the -x flag otherwise no
-            if(_numchr == 23)
-                pr_printf("%s -g %s -p %s -k %sX%s -r %s -x %s\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+            if(_numchr == 23) {
+                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %sX%s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                pr_printf("echo\n");
+                pr_printf("%s -g %s -p %s -k %sX%s -r %s -x %s\n", cmd2, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+            }
             //add a zero if under 10
-            else if(_numchr < 10)
+            else if(_numchr < 10) {
+                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s0%d%s -r %s %s\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                pr_printf("echo\n");
                 pr_printf("%s -g %s -p %s -k %s0%d%s -r %s %s\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
-            else
-                pr_printf("%s -g %s -p %s -k %s%d%s -r %s -%s\n",cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/,"kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/,additional_arguments);
 
+            }
+
+            else {
+                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s%d%s -r %s -%s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                pr_printf("echo\n");
+                pr_printf("%s -g %s -p %s -k %s%d%s -r %s -%s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", _numchr, ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+            }
+
+            pr_printf("echo MQLS-XM Done.\n");
             pr_printf("exit 0\n");
 
             pr_nl();
