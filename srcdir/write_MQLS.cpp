@@ -484,12 +484,30 @@ void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefi
                 pr_printf("%s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
             }
             else {
-                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s -%s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
                 pr_printf("echo\n");
                 pr_printf("%s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
             }
-
             pr_printf("echo MQLS-XM Done.\n");
+            pr_printf("echo Renaming MQLS-XM results.\n");
+            if(_numchr == 23) {
+                pr_printf("mv MQLStest.out MQLS.X.out \n", _numchr);
+                pr_printf("mv MQLStest.top MQLS.X.top\n", _numchr);
+                pr_printf("mv MQLStest.testvalues MQLS.X.testvalues\n", _numchr);
+                pr_printf("mv MQLStest.pvalues MQLS.X.pvalues\n", _numchr);
+            }
+            else if(_numchr<10) {
+                pr_printf("mv MQLStest.out MQLS.0%d.out \n", _numchr);
+                pr_printf("mv MQLStest.top MQLS.0%d.top\n", _numchr);
+                pr_printf("mv MQLStest.testvalues MQLS.0%d.testvalues\n", _numchr);
+                pr_printf("mv MQLStest.pvalues MQLS.0%d.pvalues\n", _numchr);
+            }
+            else {
+                pr_printf("mv MQLStest.out MQLS.%d.out \n", _numchr);
+                pr_printf("mv MQLStest.top MQLS.%d.top\n", _numchr);
+                pr_printf("mv MQLStest.testvalues MQLS.%d.testvalues\n", _numchr);
+                pr_printf("mv MQLStest.pvalues MQLS.%d.pvalues\n", _numchr);
+            }
             pr_printf("exit 0\n");
 
             pr_nl();
