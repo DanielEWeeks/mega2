@@ -69,6 +69,8 @@ void CLASS_MQLS::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type 
     else {
         batch_in();
         batch_show();
+        int combine_chromo = 0;
+        LoopOverChrm   = ! combine_chromo;
     }
 
     hasXdata=false;

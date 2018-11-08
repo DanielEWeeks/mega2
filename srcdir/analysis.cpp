@@ -187,7 +187,7 @@ analysis_types analysis_list[] = {
     { "ROADTRIPS format",           ROADTRIPS},
     { "MaCH/minimac3 format",       MACH},
     { "SHAPEIT/minimac3 format",    MINIMAC},
-    { "VCF format",                 VCF},
+    { "BCF/VCF format",             VCF},
 //  { "Database",                   DUMP},    // DUMP is an analysis but can not be chosen
     { "MQLS-XM/KinInbcoef format",  MQLS},
 
