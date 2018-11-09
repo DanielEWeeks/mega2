@@ -1919,6 +1919,7 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         idx++;
 
         if (db_exists) {
+            *strand_flip_opt = 1;
             db_ref_table_exists = db_table_exists("ref_allele_table");
             if(db_ref_table_exists) {
                 printf("%2d) %-*s[ %s]\n", idx, line_len,

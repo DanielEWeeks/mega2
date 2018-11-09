@@ -61,7 +61,8 @@ void CLASS_MQLS::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type 
     int combine_chromo = 0;
     LoopOverChrm   = ! combine_chromo;
 
-    this->prevalencefilename = strdup("prevalence.txt");
+    this->maleprevalence = .1;
+    this->femaleprevalence = .1;
 
     if ( InputMode == INTERACTIVE_INPUTMODE ) {
         option_menu(file_names,file_name_stem, &combine_chromo, Top);
@@ -94,14 +95,16 @@ void CLASS_MQLS::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type 
     if(hasXdata)
         write_KinInbcoefX_ped(Top, file_name_stem, file_names, pwid, fwid);
     write_MQLS_listfile(Top, file_name_stem, file_names, pwid, fwid);
+    write_MQLS_prevalence_file(Top, file_name_stem, file_names, pwid, fwid, maleprevalence, femaleprevalence);
     write_IQLS_shell_script(Top, file_name_stem, file_names);
 
 }
 
 void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chromo, linkage_ped_top *Top) {
-    int i, done, choice, istem, iprev, iadd;
+    int i, done, choice, istem, iprev1, iprev2, iadd;
     istem = 0;
-    iprev = 0;
+    iprev1 = 0;
+    iprev2 = 0;
     iadd = 0;
     choice = -1;
     done = 0;
@@ -116,13 +119,15 @@ void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chrom
         printf(" 0) Done with this menu - please proceed\n");
         istem=i;
         printf(" %d) Filename stem:                                   \"%s\"\n", i++, this->file_name_stem);
-        iprev=i;
-        printf(" %d) Prevalence file name:                             \"%s\"\n", i++, this->prevalencefilename);
+        iprev1=i;
+        printf(" %d) Male prevalence value:                           %-15.4f\n", i++, maleprevalence);
+        iprev2=i;
+        printf(" %d) Female prevalence value:                         %-15.4f\n", i++, femaleprevalence);
         iadd=i;
         if(!this->additional_arguments.empty())
-            printf(" %d) Additional arguments:                             \"%s\"\n", i++, this->additional_arguments.c_str());
+            printf(" %d) Additional arguments:                            \"%s\"\n", i++, this->additional_arguments.c_str());
         else
-            printf(" %d) Additional arguments:                             \"<none specified>\"\n", i++);
+            printf(" %d) Additional arguments:                            \"<none specified>\"\n", i++);
 
 
         printf("Enter options 0-%d > ", i-1);
@@ -132,7 +137,7 @@ void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chrom
         }
         else if(choice == done){
             BatchValueSet(this->file_name_stem,"file_name_stem");
-            BatchValueSet(this->prevalencefilename, "prevalence_file");
+            //BatchValueSet(this->prevalencefilename, "prevalence_file");
             BatchValueSet(this->additional_arguments,"additional_program_args");
             //force separated chromosomes
             *combine_chromo = 1;
@@ -145,10 +150,17 @@ void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chrom
             fcmap(stdin, "%s", this->file_name_stem);
             newline;
         }
-        else if(choice == iprev){
-            printf("Enter prevalence file name > ");
-            fcmap(stdin, "%s", this->prevalencefilename);
+        else if(choice == iprev1){
+            printf("Enter male prevalence value > ");
+            fcmap(stdin, "%g", maleprevalence);
             newline;
+            BatchValueSet(maleprevalence, "MQLS_male_prevalence");
+        }
+        else if(choice == iprev2){
+            printf("Enter female prevalence value > ");
+            fcmap(stdin, "%g", femaleprevalence);
+            newline;
+            BatchValueSet(femaleprevalence, "MQLS_female_prevalence");
         }
         else if(choice == iadd) {
             printf("-u    Exclude individuals with unknown phenotype from the analysis\n"
@@ -329,6 +341,33 @@ void CLASS_MQLS::write_MQLS_listfile(linkage_ped_top *Top, const char *prefix, c
 
     sp->iterate();
 
+    delete sp;
+}
+
+void CLASS_MQLS::write_MQLS_prevalence_file(linkage_ped_top *Top, const char *prefix, char **file_names, const int pwid,
+                                            const int fwid, double mprev, double fprev) {
+    vlpCLASS(mqls_prev,once,null) {
+        vlpCTOR(mqls_prev,once,null) { }
+        double maleprevalence, femaleprevalence;
+        typedef char *str;
+        str *file_names;
+
+        void file_loop() {
+            mssgvf("        MQLS prevalence file:                %s/%s\n", *_opath, file_names[7]);
+            data_loop(*_opath, file_names[7], "w");
+        }
+        void inner() {
+            pr_printf("%.4f %.4f\n", maleprevalence, femaleprevalence);
+        }
+
+    } *sp = new mqls_prev(Top);
+
+    sp->maleprevalence = maleprevalence;
+    sp->femaleprevalence = femaleprevalence;
+    sp->file_names=file_names;
+
+    sp->load_formats(fwid, pwid, -1);
+    sp->iterate();
     delete sp;
 }
 
@@ -581,7 +620,8 @@ void CLASS_MQLS::batch_in() {
     char *fn = this->file_name_stem;
     BatchValueIfSet(fn,   "file_name_stem");
     BatchValueGet(c,"Loop_Over_Chromosomes");
-    BatchValueGet(prevalencefilename, "prevalence_file");
+    BatchValueGet(maleprevalence, "MQLS_male_prevalence");
+    BatchValueGet(femaleprevalence, "MQLS_female_prevalence");
     BatchValueGet(additional_arguments, "additional_program_args");
     LoopOverChrm = (c == 'y' || c == 'Y');
 }
@@ -590,7 +630,8 @@ void CLASS_MQLS::batch_out() {
     extern void batchf(batch_item_type *bi);
 
     Cstr Values[] =  { "file_name_stem",
-                       "prevalence_file",
+                       "MQLS_male_prevalence",
+                       "MQLS_female_prevalence",
                        "additional_program_args"
     };
 
@@ -604,7 +645,8 @@ void CLASS_MQLS::batch_out() {
 void CLASS_MQLS::batch_show() {
     msgvf("\n");
     msgvf("Output file stem:                         %s\n",    C(file_name_stem));
-    msgvf("Prevalence file:                          %s\n",    C(prevalencefilename));
+    msgvf("Male prevalence:                          %f\n",    maleprevalence);
+    msgvf("Female prevalence:                        %f\n",    femaleprevalence);
     msgvf("Additional ROADTRIPS program args:        %s\n",
           (additional_arguments.size() > 0 ? C(additional_arguments) :
            "<none specified>"));
@@ -619,7 +661,7 @@ void CLASS_MQLS::inner_file_names(char **file_names, const char *num, const char
     sprintf(file_names[4], "%s.txt", stem);
     sprintf(file_names[5], "%s.top.sh", stem);
     sprintf(file_names[6], "%s.%s.sh", stem, num);
-    sprintf(file_names[7], "%s", prevalencefilename);
+    sprintf(file_names[7], "%s.prevalence", stem);
 }
 
 void CLASS_MQLS::replace_chr_number(char *file_names[], int numchr) {
