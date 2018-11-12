@@ -1866,8 +1866,6 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
     fln_alloc(output_path);
 
-    *strand_flip_opt = 0;
-
     if (batchINPUTFILES) {
 
         menu1_batch_set_outfiles(output_path, db_name);
@@ -1887,6 +1885,14 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         return;
     }
 
+    if(db_exists_db())
+        db_ref_table_exists = db_table_exists("ref_allele_table");
+    else
+        db_ref_table_exists = 0;
+
+    if(db_ref_table_exists)
+        *strand_flip_opt = 1;
+
     sprintf(*output_path, ".");
     if (*fn == 0)
         BatchValueGet(fn,   "DBfile_name");
@@ -1898,6 +1904,7 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     printf("to exit Mega2 and then restart Mega2 with the --DBdump command line argument.\n");
     printf("\n");
 */
+
     int line_len = 45;
     while (!exit_loop) {
 
@@ -1918,16 +1925,10 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         choiceA[idx] = db_i;
         idx++;
 
-        if (db_exists) {
-            *strand_flip_opt = 1;
-            db_ref_table_exists = db_table_exists("ref_allele_table");
-            if(db_ref_table_exists) {
-                printf("%2d) %-*s[ %s]\n", idx, line_len,
-                       "Align strands with reference:", yorn[*strand_flip_opt]);
+        if(db_ref_table_exists) {
+                printf("%2d) %-*s[ %s]\n", idx, line_len, "Align strands with reference:", yorn[*strand_flip_opt]);
                 choiceA[idx++] = flip_i;
-            }
-        } else
-            db_ref_table_exists = 0;
+        }
 
         _thresh_i = 1 ?  thresh_i : 0;
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
