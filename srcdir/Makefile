@@ -823,10 +823,10 @@ write_pangaea.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_pangaea.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h
 write_pangaea.o: error_messages_ext.h utils_ext.h entry.h
 write_pangaea.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
-write_pangaea.o: sh_util.h fcmap_ext.h genetic_utils_ext.h omit_ped_ext.h
-write_pangaea.o: output_file_names_ext.h user_input_ext.h input_ops.hh
-write_pangaea.o: str_utils.hh annotated_ped_file.h write_pangaea_ext.h
-write_pangaea.o: analysis.h
+write_pangaea.o: sh_util.h batch_input_ext.h fcmap_ext.h genetic_utils_ext.h
+write_pangaea.o: omit_ped_ext.h output_file_names_ext.h user_input_ext.h
+write_pangaea.o: input_ops.hh str_utils.hh annotated_ped_file.h
+write_pangaea.o: write_pangaea_ext.h analysis.h
 write_beagle.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_beagle.o: linkage_external.h makeped.h pedtree.h batch_input.h
 write_beagle.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h
@@ -960,7 +960,7 @@ write_minimacshapeit.o: write_minimacshapeit_ext.h analysis.h
 write_minimacshapeit.o: write_plink_ext.h plink_core_ext.h
 write_vcf.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_vcf.o: linkage_external.h makeped.h pedtree.h batch_input.h
-write_vcf.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h
+write_vcf.o: input_check.h hwe.h compress_ext.h tod.hh loop.h file_ops.h
 write_vcf.o: error_messages_ext.h utils_ext.h entry.h create_summary_ext.h
 write_vcf.o: output_routines_ext.h linkage_ext.h sh_util.h fcmap_ext.h
 write_vcf.o: omit_ped_ext.h output_file_names_ext.h user_input_ext.h
@@ -1058,11 +1058,11 @@ mega2_bcftools_interface.o: ./lib/bcftools-1.6/htslib-1.6/htslib/hts_endian.h
 mega2_bcftools_interface.o: ./lib/bcftools-1.6/htslib-1.6/htslib/tbx.h
 mega2_bcftools_interface.o: lib/bcftools-1.6/htslib-1.6/htslib/vcfutils.h
 mega2_bcftools_interface.o: mega2_bcftools_interface.h
-write_MQLS.o: write_MQLS_ext.h analysis.h common.h types.hh typedefs.h
-write_MQLS.o: errorno.h allutil.h linkage.h linkage_external.h makeped.h
-write_MQLS.o: pedtree.h batch_input.h input_check.h hwe.h compress_ext.h
-write_MQLS.o: loop.h file_ops.h error_messages_ext.h utils_ext.h entry.h
-write_MQLS.o: create_summary_ext.h output_routines_ext.h linkage_ext.h
-write_MQLS.o: sh_util.h fcmap_ext.h omit_ped_ext.h output_file_names_ext.h
-write_MQLS.o: user_input_ext.h input_ops.hh str_utils.hh annotated_ped_file.h
-write_MQLS.o: write_files_ext.h
+write_MQLS.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
+write_MQLS.o: linkage_external.h makeped.h pedtree.h batch_input.h
+write_MQLS.o: input_check.h hwe.h compress_ext.h loop.h file_ops.h
+write_MQLS.o: error_messages_ext.h utils_ext.h entry.h create_summary_ext.h
+write_MQLS.o: output_routines_ext.h linkage_ext.h sh_util.h fcmap_ext.h
+write_MQLS.o: omit_ped_ext.h output_file_names_ext.h user_input_ext.h
+write_MQLS.o: input_ops.hh str_utils.hh annotated_ped_file.h
+write_MQLS.o: write_files_ext.h write_MQLS_ext.h analysis.h

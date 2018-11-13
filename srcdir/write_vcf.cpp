@@ -55,6 +55,7 @@
 #include <ctime>
 #include "dbrefallele.h"
 #include "mega2_bcftools_interface.h"
+#include "dbmisc.hh"
 
 extern "C" {
     #include "bcftools.h"
@@ -70,6 +71,7 @@ extern int  db_exists_db();
 extern void db_open_db();
 extern void db_fini_all();
 extern char DBfile[255];
+extern Charstar_table charstar_table;
 
 Str hg_build;
 int combinechromovcf;
@@ -1066,11 +1068,23 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
     std::string refchoice = "Major_Allele";
     strcpy(prefix, file_name_stem);
-    char buildname[255] = "B37";
+    char buildname[FILENAME_LENGTH];
     choice = -1;
 
     //don't want any database activities unless we're in db mode
     if(database_read) {
+        //get human genome build from the charstar_table
+        //in this case we actually just call the charstar_hash so we don't print out an error if it's missing.
+        extern std::map<const char *, char *, charsless> Charstar_hash;
+        char * _buildname;
+        const char * _keyname = strdup("human_genome_build");
+        if (!map_get(Charstar_hash, _keyname, _buildname)) {
+            strcpy(buildname,"B37");
+            //printf("Char* read failed for %s\n", _keyname);
+        }
+        else
+            strcpy(buildname,_buildname);
+
         //check for reference table:
         //db_open_db();
         MasterDB.begin();

@@ -142,6 +142,7 @@ int genetic_distance_index;
 //cpk genetic_distance_map_type genetic_distance_sex_type_map; // see common.h
 int genetic_distance_sex_type_map; // see common.h
 int base_pair_position_index;
+char _hgbuild[FILENAME_LENGTH];
 
 /*===========================================================================*/
 /*
@@ -1084,6 +1085,9 @@ void menu1(file_format *infl_type,
         if(BatchItemGet("Reference_Allele_File")->items_read)
             BatchValueGet(*reffl_name,"Reference_Allele_File");
 
+        BatchValueGet(hgbuild,"human_genome_build");
+        strcpy(_hgbuild,hgbuild.c_str());
+
         return;
     }
 
@@ -1835,6 +1839,8 @@ void menu1(file_format *infl_type,
         batchf(BatchItemGet("Reference_Allele_File"));
         BatchValueSet(hgbuild,"human_genome_build");
         batchf(BatchItemGet("human_genome_build"));
+
+        strcpy(_hgbuild,hgbuild.c_str());
     }
 
     if (! Input->req_locus_file) fln_free(loco);
@@ -1892,6 +1898,8 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
     if(db_ref_table_exists)
         *strand_flip_opt = 1;
+    else
+        *strand_flip_opt = 0;
 
     sprintf(*output_path, ".");
     if (*fn == 0)
@@ -1991,6 +1999,13 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
             draw_line();
             printf("Please enter SQLite database filename > ");
             fcmap(stdin, "%s", fn); newline;
+
+            db_ref_table_exists = db_table_exists("ref_allele_table");
+
+            if(db_ref_table_exists)
+                *strand_flip_opt = 1;
+            else
+                *strand_flip_opt = 0;
             
 /*
             if (access(*output_path, F_OK)) {
