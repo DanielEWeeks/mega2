@@ -258,6 +258,7 @@ function pgm_linux() {
         v=`sed -n /etc/centos-release -e "1s/^CentOS Linux release \\([0-9\\.]*\\) (Core)/\\1/p"`
         if [ "$v" != "" ] ; then
             pgm=mega2_${VERSION}_linux_centos.${v}
+	    export CXX=g++
             return
         fi
     fi

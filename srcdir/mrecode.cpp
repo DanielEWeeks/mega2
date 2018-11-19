@@ -436,6 +436,11 @@ static void order_numeric_alleles(marker_type *marker)
         allelep = allelep->next;
     }
 
+    if (PREORDER_ALLELES) {
+        if (order != kvstore)
+            free(order);
+        return;
+    }
     qsort(order, nalleles, sizeof(struct kv), kvsort);
 
     allelep = order[0].val;

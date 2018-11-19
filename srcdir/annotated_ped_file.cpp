@@ -4836,18 +4836,37 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
         for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++) {
             tod_fr.reset();
             tod_fr_x4.reset();
-            if (marker_list[i].estimate_frequencies) {
 
-                create_allele_list(Top, (int) i, &(marker_list[i]),
+            marker_type *markerlistp = marker_list + i;
+            if (markerlistp->estimate_frequencies) {
+
+                create_allele_list(Top, (int) i, markerlistp,
                                    member_ids, count_halftyped);
                 tod_fr("create allele list 1 freq");
 
                 if ( (count_option == 1 || count_option == 2 || count_option == 3
                       /* || analysis == TO_HWETEST || analysis == TO_SIMULATE */) &&
                      LTop->Locus[i].number != -1 ) {
-                    count_allele_list(Top, (int) i, count_option, &(marker_list[i]),
+                    count_allele_list(Top, (int) i, count_option, markerlistp,
                                       member_ids, count_halftyped);
                     tod_fr_x4("create allele list 4 freq");
+                }
+            } else if (PREORDER_ALLELES) {
+                const char *aname1, *aname2;
+
+                get_2Ralleles_2bits(i, &(Top->LocusTop->Locus[i]), &aname1, &aname2);  // G/C
+                if (!allelecmp(aname1, REC_UNKNOWN)) {
+                    if (!allelecmp(aname2, REC_UNKNOWN)) {
+                    } else {
+                        aname1 = aname2;
+                        aname2 = zero;
+                    }
+                }
+                const char *a1 = markerlistp->first_allele->      allele_freq.AlleleName;
+                const char *a2 = markerlistp->first_allele->next->allele_freq.AlleleName;
+                if (a1 != aname1 || a2 != aname2) {
+                     markerlistp->first_allele->      allele_freq.index = 2;
+                     markerlistp->first_allele->next->allele_freq.index = 1;
                 }
             }
         }
