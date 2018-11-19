@@ -522,7 +522,7 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
             if(_numchr == 23) {
                 pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
                 pr_printf("echo\n");
-                pr_printf("%s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.", ".out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                pr_printf("%s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
             }
             else {
                 pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
