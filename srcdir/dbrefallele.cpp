@@ -136,7 +136,8 @@ void Reference_Allele_Table::read_ref_allele_file(linkage_ped_top *Top, Str file
 //        printf("TK%d %s\n", ++bufc, token);
 
             while (c != 0) {
-                if (locus == Top->LocusTop->LocusCnt - 1)
+                //this was minus 1... but that seems to have caused a row not to process.
+                if (locus == Top->LocusTop->LocusCnt)
                     break;
 
                 // if chr is not set then we found a chr

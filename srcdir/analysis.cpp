@@ -187,7 +187,7 @@ analysis_types analysis_list[] = {
     { "ROADTRIPS format",           ROADTRIPS},
     { "MaCH/minimac3 format",       MACH},
     { "SHAPEIT/minimac3 format",    MINIMAC},
-    { "VCF format",                 VCF},
+    { "BCF/VCF format",             VCF},
 //  { "Database",                   DUMP},    // DUMP is an analysis but can not be chosen
     { "MQLS-XM/KinInbcoef format",  MQLS},
 
@@ -356,6 +356,9 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
             *analysis = MACH; //MACH
             break;
 
+        case 's':
+            *analysis = MQLS;
+            break;
 
         default:
             unknown_prog(prog_name);

@@ -142,6 +142,7 @@ int genetic_distance_index;
 //cpk genetic_distance_map_type genetic_distance_sex_type_map; // see common.h
 int genetic_distance_sex_type_map; // see common.h
 int base_pair_position_index;
+char _hgbuild[FILENAME_LENGTH];
 
 /*===========================================================================*/
 /*
@@ -1084,6 +1085,9 @@ void menu1(file_format *infl_type,
         if(BatchItemGet("Reference_Allele_File")->items_read)
             BatchValueGet(*reffl_name,"Reference_Allele_File");
 
+        BatchValueGet(hgbuild,"human_genome_build");
+        strcpy(_hgbuild,hgbuild.c_str());
+
         return;
     }
 
@@ -1835,6 +1839,8 @@ void menu1(file_format *infl_type,
         batchf(BatchItemGet("Reference_Allele_File"));
         BatchValueSet(hgbuild,"human_genome_build");
         batchf(BatchItemGet("human_genome_build"));
+
+        strcpy(_hgbuild,hgbuild.c_str());
     }
 
     if (! Input->req_locus_file) fln_free(loco);
@@ -1866,8 +1872,6 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
     fln_alloc(output_path);
 
-    *strand_flip_opt = 0;
-
     if (batchINPUTFILES) {
 
         menu1_batch_set_outfiles(output_path, db_name);
@@ -1887,6 +1891,16 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         return;
     }
 
+    if(db_exists_db())
+        db_ref_table_exists = db_table_exists("ref_allele_table");
+    else
+        db_ref_table_exists = 0;
+
+    if(db_ref_table_exists)
+        *strand_flip_opt = 1;
+    else
+        *strand_flip_opt = 0;
+
     sprintf(*output_path, ".");
     if (*fn == 0)
         BatchValueGet(fn,   "DBfile_name");
@@ -1898,6 +1912,7 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     printf("to exit Mega2 and then restart Mega2 with the --DBdump command line argument.\n");
     printf("\n");
 */
+
     int line_len = 45;
     while (!exit_loop) {
 
@@ -1918,15 +1933,10 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         choiceA[idx] = db_i;
         idx++;
 
-        if (db_exists) {
-            db_ref_table_exists = db_table_exists("ref_allele_table");
-            if(db_ref_table_exists) {
-                printf("%2d) %-*s[ %s]\n", idx, line_len,
-                       "Align strands with reference:", yorn[*strand_flip_opt]);
+        if(db_ref_table_exists) {
+                printf("%2d) %-*s[ %s]\n", idx, line_len, "Align strands with reference:", yorn[*strand_flip_opt]);
                 choiceA[idx++] = flip_i;
-            }
-        } else
-            db_ref_table_exists = 0;
+        }
 
         _thresh_i = 1 ?  thresh_i : 0;
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
@@ -1989,6 +1999,13 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
             draw_line();
             printf("Please enter SQLite database filename > ");
             fcmap(stdin, "%s", fn); newline;
+
+            db_ref_table_exists = db_table_exists("ref_allele_table");
+
+            if(db_ref_table_exists)
+                *strand_flip_opt = 1;
+            else
+                *strand_flip_opt = 0;
             
 /*
             if (access(*output_path, F_OK)) {
