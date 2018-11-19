@@ -356,6 +356,9 @@ void prog_name_to_num(char *prog_name, analysis_type *analysis)
             *analysis = MACH; //MACH
             break;
 
+        case 's':
+            *analysis = MQLS;
+            break;
 
         default:
             unknown_prog(prog_name);

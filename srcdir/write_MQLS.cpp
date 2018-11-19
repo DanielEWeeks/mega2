@@ -96,7 +96,7 @@ void CLASS_MQLS::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type 
         write_KinInbcoefX_ped(Top, file_name_stem, file_names, pwid, fwid);
     write_MQLS_listfile(Top, file_name_stem, file_names, pwid, fwid);
     write_MQLS_prevalence_file(Top, file_name_stem, file_names, pwid, fwid, maleprevalence, femaleprevalence);
-    write_IQLS_shell_script(Top, file_name_stem, file_names);
+    write_MQLS_shell_script(Top, file_name_stem, file_names);
 
 }
 
@@ -371,7 +371,7 @@ void CLASS_MQLS::write_MQLS_prevalence_file(linkage_ped_top *Top, const char *pr
     delete sp;
 }
 
-void CLASS_MQLS::write_IQLS_shell_script(linkage_ped_top *Top, const char *prefix, char **file_names) {
+void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefix, char **file_names) {
     int top_shell = 1;
 
     dataloop::sh_exec *sh = 0;

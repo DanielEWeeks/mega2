@@ -29,8 +29,8 @@
 ===========================================================================
 */
 
-#ifndef WRITE_IQLS_EXT_H
-#define WRITE_IQLS_EXT_H
+#ifndef WRITE_MQLS_EXT_H
+#define WRITE_MQLS_EXT_H
 
 #include "analysis.h"
 
@@ -84,7 +84,7 @@ public:
 
     //creates the Kininbcoef/X shells and the MQLS shells
     //these shells create the kinfile for MQLS
-    void write_IQLS_shell_script(linkage_ped_top *Top, const char *prefix, char *file_names[]);
+    void write_MQLS_shell_script(linkage_ped_top *Top, const char *prefix, char *file_names[]);
 
     void inner_file_names(char **file_names, const char *num, const char *stem /* = "MQLS" */, int *combine_chromo);
 

@@ -168,6 +168,7 @@
 #include "write_simulate_files_ext.h"
 #include "write_solar_files_ext.h"
 #include "write_vitesse_ext.h"
+#include "write_MQLS_ext.h"
 #include "version.h"
 
 #include "class_old.h"
@@ -1234,7 +1235,18 @@ int             main(int argc, char **argv, char **env)
         // If these variables are -1 then they have not been specified by the batch file...
 
         distance_init_dump(LPedTreeTop, &analysis);
-    } else {
+    }else if(database_read && analysis == MQLS) {
+        genetic_distance_index = -1;
+        genetic_distance_sex_type_map = -1;
+        distance_init_dump(LPedTreeTop,&analysis);
+        //get_genetic_distance_index(LPedTreeTop->EXLTop); 
+
+        /* Reorder the loci */
+        Tod tod_reorder("ReOrderLoci");
+        LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
+        tod_reorder();
+    }
+    else {
         /* Reorder the loci */
         Tod tod_reorder("ReOrderLoci");
         LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
