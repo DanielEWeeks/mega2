@@ -31,6 +31,13 @@ MAKEDEFS = DEFINED
 # c compiler
 CC = gcc
 
+ifeq "7.3.0" "$(shell gcc -dumpfullversion)"
+FALLTHROUGH = 1
+endif
+ifeq "8" "$(shell gcc -dumpversion)"
+FALLTHROUGH = 1
+endif
+
 # compiler options
 #CFLAGS = -Wall -ggdb
 OPT ?= -O3
