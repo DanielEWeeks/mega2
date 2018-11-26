@@ -36,6 +36,7 @@ ifneq ($(OSTYPE),msys2)
 knetfile.o bgzf.o faidx.o multipart.o sam.o: CFLAGS += -DPRI64=\"ll\" -DPRz=\"z\"
 else
 knetfile.o bgzf.o faidx.o multipart.o sam.o: CFLAGS +=-DPRI64=\"I64\" -DPRz=\"I64\"
+kstring.o: CFLAGS += -D_MSYS2_
 endif
 
 #CC     = gcc
