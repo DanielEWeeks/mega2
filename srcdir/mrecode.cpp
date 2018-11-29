@@ -1097,6 +1097,11 @@ void recode_locus_top(marker_type *marker_list, pheno_type *pheno_list, linkage_
    each person whose genotype at that marker is equal to the
    allele-name. */
 
+typedef UM<void *, void *, HH<void *> >                    HMapvv;
+typedef UM<void *, void *, HH<void *> >::const_iterator    HMapvvp;
+
+HMapvv recode_ped_hash;
+
 void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_type *plink_info)
 
 {
@@ -1127,6 +1132,7 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
     mssgf("Recoding pedigree genotypes ... ");
 #endif
 
+    recode_ped_hash[0] = 0;
     SECTION_ERR_INIT(allele_recode);
     for(ped=0; ped < Top->PedCnt; ped++) {
         entrycnt = ((pedfile_type == POSTMAKEPED_PFT) ?
@@ -1223,6 +1229,8 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
                     }
                 }
 // put it back
+                recode_ped_hash[marker] = marker_copy;
+                // printf("rPedTop %d:%d %p %p\n", ped, per, marker, marker_copy); fflush(stdout);
                 if (Top->pedfile_type == POSTMAKEPED_PFT) {
                     Top->Ped[ped].Entry[per].Marker = marker_copy;
                 } else {
@@ -1253,6 +1261,30 @@ void recode_ped_top(marker_type *marker_list, linkage_ped_top *Top, plink_info_t
     }
 
     order_heterozygous_allele(Top);
+
+    for(ped=0; ped < Top->PedCnt; ped++) {
+        entrycnt = ((pedfile_type == POSTMAKEPED_PFT) ?
+                    Top->PedRaw[ped].EntryCnt :
+                    Top->PTop[ped].num_persons);
+        for(per=0; per < entrycnt; per++) {
+
+            marker = (pedfile_type == POSTMAKEPED_PFT)?
+                      Top->PedRaw[ped].Entry[per].Marker :
+                      Top->PTop[ped].persons[per].marker;
+
+            if (map_get(recode_ped_hash, marker, marker_copy)) {
+                // printf("yPedTop %d:%d %p %p\n", ped, per, marker, marker_copy); fflush(stdout);
+                if (Top->pedfile_type == POSTMAKEPED_PFT) {
+                    Top->PedRaw[ped].Entry[per].Marker = marker_copy;
+                } else {
+                    Top->PTop[ped].persons[per].marker = marker_copy;
+                }
+            } else {
+                warnvf("recode_ped_hash lookup failed on %d:%d %p\n",
+                       ped, per, marker);
+            }
+        }
+    }
 }
 
 /*-----------------------end of recode_ped_top------------------*/
