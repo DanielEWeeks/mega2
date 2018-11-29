@@ -6279,7 +6279,14 @@ name "subsec:Annotated-pedigree-file"
 There are 5 required columns and 9 optional columns with fixed column names,
  which primarily refer to the pedigree information.
  The required columns are ID, Pedigree, Father, Mother, and Sex.
- The optional columns allowed in the pedigree file are: PerID, PedID, MZTwin,
+ Mega2 is designed so that it either needs both Father and Mother to be
+ defined or for both to be undefined, you cannot have one defined and the
+ other set to unknown.
+ 
+\end_layout
+
+\begin_layout Standard
+The optional columns allowed in the pedigree file are: PerID, PedID, MZTwin,
  DZTwin, Proband, Group, FirstOff, NextMatSib, NextPatSib .
  
 \end_layout
@@ -13189,6 +13196,23 @@ sex
 0
 \series default
 .
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Father
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+Mother
+\begin_inset Quotes erd
+\end_inset
+
+ must both be specified, one cannot be 0 while the other is defined.
  The second line of the header is extended for each column, and contains
  codes indicating the type of variable stored in each column.
  Mega2 maps codes 
@@ -18129,25 +18153,48 @@ Align strands with reference
  if your data has A/C as the reference and alternate allele for a marker
  but the reference panel has C/A, it will switch it).
  Second it resolves T/G <-> A/C strand alignments where possible.
+ Note that strand alignment can only be done on data that is in A, C, G,
+ T form.
+ Harmonizing to the reference value is possible as long as the reference
+ value matches the inputted data, this can include indels or numeric valued
+ alleles.
 \end_layout
 
 \begin_layout Standard
-If the provided reference panels are not sufficient, your own reference
- panel can be created in a couple of ways; in general it is a file of the
- form:
+If the provided Mega2 reference panels are not sufficient, your own reference
+ panel can be created in a couple of ways; in general it is a 4 column file,
+ without a header, of the form:
 \end_layout
 
 \begin_layout Standard
-CHR POS REF
+CHR
+\begin_inset space \quad{}
+\end_inset
+
+POS
+\begin_inset space \quad{}
+\end_inset
+
+REF
+\begin_inset space \quad{}
+\end_inset
+
+ALT
 \end_layout
 
 \begin_layout Standard
-which can then gzipped for compression.
- 
+this file must be 
+\series bold
+tab delimited
+\series default
+, space delimters will seem to be read but will not be parsed correctly.
+ This file can then gzipped to save hard disk space and still be parsed
+ by Mega2.
 \end_layout
 
 \begin_layout Standard
-This file can be created by hand or by any script that outputs this format.
+This file can be created by hand or by any script that outputs this specified
+ format.
  Or the reference file can be created utilizing a script provided with Mega2.
  The script's name is GetRefAlleles.sh.
  It uses bcftools so for it to be used bcftools must be installed.
@@ -39471,7 +39518,7 @@ This mode creates several files to be used with KinInbcoef, KinInbcoefX
 \end_layout
 
 \begin_layout Standard
-The MQLS-XM?KinINbcoef format menu looks like the following:
+The MQLS-XM/KinInbcoef format menu looks like the following:
 \end_layout
 
 \begin_layout LyX-Code
@@ -39542,6 +39589,17 @@ s at that SNP, i.e., phenotype information for individuals with missing genotype
  be calculated using a variance estimator that assumes HWE.
  The association test statistics will be calculated using a robust variance
  estimator if this option is not used.
+\end_layout
+
+\begin_layout Standard
+A caution about maps for the Genetic Map Selection Menu.
+ Mega2 is designed to filter data based on the map data.
+ However when running analysis on the X chromosome if there are no map values
+ then it will filter out the data.
+ This can lead to empty files being output by Mega2.
+ The menu's have been redesigned so that the Genetic Map Selection Menu
+ will come up on database read, allowing selection of the appropriate genetic
+ map for each run so as to not filter out valid data.
 \end_layout
 
 \begin_layout Standard
