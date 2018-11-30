@@ -84,7 +84,7 @@ float contigdist[50];
 kstring_t *kstringbcf;
 bcf1_t *bcfline;
 htsFile *htsfileout;
-int bcf_hdr_cnt;
+int bcf_hdr_cnt = 0;
 
 char Allele[] = { '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
@@ -168,7 +168,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
 
     Tod w_vcf_linef("w_vcf fixed part");
     vlpCLASS(vcf_vcfs_header_start,chr,loci) {
-        vlpCTOR(vcf_vcfs_header_start, chr, loci) { }
+        vlpCTOR(vcf_vcfs_header_start, chr, loci) { first = 0; }
         typedef char *str;
         str *file_names;
         int dummychr;
@@ -322,7 +322,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     Tod w_vcf_lineb("w_vcf genotype");
     //finally a large loop for the data
     vlpCLASS(vcf_vcfs,chr,loci_ped_per) {
-        vlpCTOR(vcf_vcfs,chr,loci_ped_per) { bcf_hdr_cnt = 0; bcf_first = 0; }
+        vlpCTOR(vcf_vcfs,chr,loci_ped_per)  { bcf_first = 0; }
         typedef char *str;
         str *file_names;
         //need to save the ref for comparison
@@ -331,7 +331,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         std::vector<std::string> alt;
         std::string altstring;
         linkage_locus_top *LTop ;
-        bool first;
+        bool first = false;
         char * dummycanon;
         char * canonA;
         char * canonC;
