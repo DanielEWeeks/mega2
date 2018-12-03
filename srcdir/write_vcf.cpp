@@ -322,7 +322,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
     Tod w_vcf_lineb("w_vcf genotype");
     //finally a large loop for the data
     vlpCLASS(vcf_vcfs,chr,loci_ped_per) {
-        vlpCTOR(vcf_vcfs,chr,loci_ped_per)  { bcf_first = 0; }
+        vlpCTOR(vcf_vcfs,chr,loci_ped_per)  { first = false; bcf_first = 0; }
         typedef char *str;
         str *file_names;
         //need to save the ref for comparison
@@ -331,7 +331,7 @@ void CLASS_VCF::write_VCF_file(linkage_ped_top *Top, const char *prefix, char *f
         std::vector<std::string> alt;
         std::string altstring;
         linkage_locus_top *LTop ;
-        bool first = false;
+        bool first;
         char * dummycanon;
         char * canonA;
         char * canonC;
