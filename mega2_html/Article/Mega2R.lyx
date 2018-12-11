@@ -3749,182 +3749,6 @@ status open
 
 \begin_layout Plain Layout
 
-<<show2,eval=TRUE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-show2 = function(m, r, e) {
-\end_layout
-
-\begin_layout Plain Layout
-
-      print(r)
-\end_layout
-
-\begin_layout Plain Layout
-
-#     print(m)
-\end_layout
-
-\begin_layout Plain Layout
-
-# collect genotypes for the set of markers "m"      
-\end_layout
-
-\begin_layout Plain Layout
-
-      mm = getgenotypes(m, envir=e) 
-\end_layout
-
-\begin_layout Plain Layout
-
-#     colnames(mm) = m$MarkerName 
-\end_layout
-
-\begin_layout Plain Layout
-
-#     print(head(mm)) 
-\end_layout
-
-\begin_layout Plain Layout
-
-# apply fisher.test of trait vs marker (accumulating samples)       
-\end_layout
-
-\begin_layout Plain Layout
-
-      pv = apply(mm, 2,
-\end_layout
-
-\begin_layout Plain Layout
-
-                     function(x) {tryCatch(fisher.test(table(e$fam$trait,
- x)),
-\end_layout
-
-\begin_layout Plain Layout
-
-                                  error = function(e) {list(p.value = 0)}
- ) $p.value } )
-\end_layout
-
-\begin_layout Plain Layout
-
-      names(pv) = m$MarkerName
-\end_layout
-
-\begin_layout Plain Layout
-
-      print(pv)
-\end_layout
-
-\begin_layout Plain Layout
-
- } 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<show3,eval=TRUE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-show3 = function(m, r, e) {
-\end_layout
-
-\begin_layout Plain Layout
-
-      print(r) 
-\end_layout
-
-\begin_layout Plain Layout
-
-#     print(m) 
-\end_layout
-
-\begin_layout Plain Layout
-
-# collect genotypes for the set of markers "m"
-\end_layout
-
-\begin_layout Plain Layout
-
-      mm = getgenotypes(m, envir=e) 
-\end_layout
-
-\begin_layout Plain Layout
-
-#     colnames(mm) = m$MarkerName 
-\end_layout
-
-\begin_layout Plain Layout
-
-#     print(head(mm)) 
-\end_layout
-
-\begin_layout Plain Layout
-
-# apply chisq.test of trait vs marker (accumulating samples)
-\end_layout
-
-\begin_layout Plain Layout
-
-      pv = apply(mm, 2,
-\end_layout
-
-\begin_layout Plain Layout
-
-                     function(x) {tryCatch(chisq.test(table(e$fam$trait,
- x)),
-\end_layout
-
-\begin_layout Plain Layout
-
-                                  error = function(e) {list(p.value = 0)}
- ) $p.value } )
-\end_layout
-
-\begin_layout Plain Layout
-
-      names(pv) = m$MarkerName
-\end_layout
-
-\begin_layout Plain Layout
-
-      print(pv)
-\end_layout
-
-\begin_layout Plain Layout
-
- } 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-or
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
 <<showstat,eval=TRUE>>=
 \end_layout
 
@@ -3994,45 +3818,7 @@ show2 = function(m, r, e) {
 
 \begin_layout Plain Layout
 
-                   error = function(e) {list(p.value = 0)}) $p.value }
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-    show.stat(m, r, e, f)
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-show3 = function(m, r, e) {
-\end_layout
-
-\begin_layout Plain Layout
-
-    f = function(x) {
-\end_layout
-
-\begin_layout Plain Layout
-
-          tryCatch(chisq.test(table(e$fam$trait, x)),
-\end_layout
-
-\begin_layout Plain Layout
-
-                   error = function(e) {list(p.value = 0)}) $p.value }
+                   error = function(e) {list(p.value = NA)}) $p.value }
 \end_layout
 
 \begin_layout Plain Layout
@@ -4055,7 +3841,7 @@ show3 = function(m, r, e) {
 \end_layout
 
 \begin_layout Standard
-Now try using these functions:
+Now this function yields:
 \end_layout
 
 \begin_layout Standard
@@ -4070,25 +3856,6 @@ status open
 \begin_layout Plain Layout
 
 applyFnToGenes(show2, genes_arg = c("CEP104"))
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex Chunk
-status open
-
-\begin_layout Plain Layout
-
-<<xshow3,eval=TRUE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-applyFnToGenes(show3, genes_arg = c("CEP104"))
 \end_layout
 
 \end_inset
